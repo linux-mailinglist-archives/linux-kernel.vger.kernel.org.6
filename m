@@ -1,145 +1,210 @@
-Return-Path: <linux-kernel+bounces-402012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F361E9C223C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:37:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571D69C2263
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADBEB211D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1776B282E63
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468771C3F28;
-	Fri,  8 Nov 2024 16:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EB621C16E;
+	Fri,  8 Nov 2024 16:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="tHt9+qY4"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="L+uvjbMu"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4122198E6E;
-	Fri,  8 Nov 2024 16:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D65E1974FA;
+	Fri,  8 Nov 2024 16:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083810; cv=none; b=p5e9AQRQGyDAnlI4/EVjZDrWDHnM29y0nGlD7T/rF8e5xs6xxoTlRIm7AEi+ie7Sx+YR+/xom5kQtD9bmekfw2XsnE6hbgUaavolnCJYw5/BjEwbX0O0yV3E9BJJcjZLN10Q+Gqeu8+hcnK+HkxCxdUhlmnLyy2MxnruHc1i2Ws=
+	t=1731084395; cv=none; b=kgViCzX/CvAys0mentgFMng3e60+2GuTqb9ZS3YZm9ix5STC/UVvhWt1M1FrKTCWJ0+NXrGF1X7eIg6ZbtHW0X8h5wUXkEnsQAl60jb29xUvk7QpDLYmNkqA0nOKnaAuOLDkbJyr2vmW/80bKk7KOBF6gUkyLUe67l0JAq65l7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083810; c=relaxed/simple;
-	bh=GgXqbrgnjscz1GJY/vuo3+8bT02sjpcVS4HHPzVjjeI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sp1DVC+DolsfMajlle57rqGTelj8rxHcHVI5P83XH/u9VBGPzAhzaz8elGgHBvKpgT7ITzA/mZUOJq6rflSzc0vwXnmuTGZiv5UKil9lNlNOb1RRxwqtzM3sp2GqTjPIKtbdc3rGZNgf7tztUZ8eC39SGgzL0HtaB/lg2MwM/F0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=tHt9+qY4; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: a2882f4a9def11efbd192953cf12861f-20241109
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=K2LlcVPkVu2AiR+BkVm1jRgLTSzsLTgqctnGu+62FH4=;
-	b=tHt9+qY44y0nXuwkEmvsZ3DneuPdCf6+8+wX0/CvEm/7aC7y26cBacfZj7vgU1g37PtkZm5kZlJh8S+/4s/yiIN2eHqD2P13pzk0CsQHi0+aM1EQBrV09XIXCE7OtbVmAxaNaNgx+hunRc/cEjM3T/IjorULbTxwWcGvocJ5B4s=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:14b8040a-79ae-46cc-b631-fcca190ef1b7,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:37fcd91b-4f51-4e1d-bb6a-1fd98b6b19d2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: a2882f4a9def11efbd192953cf12861f-20241109
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
-	(envelope-from <skylake.huang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1926155311; Sat, 09 Nov 2024 00:36:42 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 9 Nov 2024 00:36:40 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 9 Nov 2024 00:36:40 +0800
-From: Sky Huang <SkyLake.Huang@mediatek.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Daniel Golle
-	<daniel@makrotopia.org>, Qingfang Deng <dqfext@gmail.com>, SkyLake Huang
-	<SkyLake.Huang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Simon
- Horman <horms@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>
-CC: Steven Liu <Steven.Liu@mediatek.com>, SkyLake.Huang
-	<skylake.huang@mediatek.com>
-Subject: [PATCH net-next v3 5/5] net: phy: mediatek: add MT7530 & MT7531's PHY ID macros
-Date: Sat, 9 Nov 2024 00:34:55 +0800
-Message-ID: <20241108163455.885-6-SkyLake.Huang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
-References: <20241108163455.885-1-SkyLake.Huang@mediatek.com>
+	s=arc-20240116; t=1731084395; c=relaxed/simple;
+	bh=TULGYlML1sIhPReD5NLf2WnpNAK3uqkDVsOXeFWx3Gw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b1Ih4zFNYiY/NVC+u1ajGeV+Ag+kalY3kp60VPubUQ7vrCm6e5BmHtqE4pWWPjdzNxAsyDUxJKkZ1hbfd/EKnTyAAt1ssT9mFMxz3k044BZ6yqyowK9qkP/bFkcpyMgEeMi3djYD1H7MJ3S1WjUqVKHRihBYfAB+ODE3qViivjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=L+uvjbMu reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 816be685936a7f17; Fri, 8 Nov 2024 17:46:26 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 03B14834811;
+	Fri,  8 Nov 2024 17:46:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731084386;
+	bh=TULGYlML1sIhPReD5NLf2WnpNAK3uqkDVsOXeFWx3Gw=;
+	h=From:Subject:Date;
+	b=L+uvjbMuK9pjUTo6SZn+P63DXXYsKpy5vMm98PaeSakg5NcIXCXdV9/Dz7Fapg+7b
+	 DdpGN0lubgwWrmn5VIq9sItWsVRHNFvPqE6Neq0wtrA/409/U5D+/cBTrAq40xxhG0
+	 mDCAsfXnLcpaDtiNNjSmLBh6u6ECh14P6sY5RPNmo8DirrNrV1JQl4nLAn0wUc87NJ
+	 qzVAayKKryPDRNi8880vXD58UbrE1Dk9zbz9CNn/sWc5Z8tpvSiH1SyZJktw9daz7B
+	 sqReUkXvtODBrQ8xz42OzKgMVHg2ySmeDw0gqxbEK9GkXIai2lyVgS5cyU2ucmWpiH
+	 +bp1hA6SHxUoA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Len Brown <len.brown@intel.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Morten Rasmussen <morten.rasmussen@arm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Subject:
+ [RFC][PATCH v0.1 1/6] PM: EM: Move perf rebuilding function from schedutil to
+ EM
+Date: Fri, 08 Nov 2024 17:36:29 +0100
+Message-ID: <3263759.5fSG56mABF@rjwysocki.net>
+In-Reply-To: <3607404.iIbC2pHGDl@rjwysocki.net>
+References: <3607404.iIbC2pHGDl@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdeklecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthg
+X-DCC--Metrics: v370.home.net.pl 0; Body=10 Fuz1=10 Fuz2=10
 
-From: "SkyLake.Huang" <skylake.huang@mediatek.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This patch adds MT7530 & MT7531's PHY ID macros in mtk-ge.c so that
-it follows the same rule of mtk-ge-soc.c.
+The sugov_eas_rebuild_sd() function defined in the schedutil cpufreq
+governor implements generic functionality that may be useful in other
+places.  In particular, going forward it will be used in the intel_pstate
+driver.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: SkyLake.Huang <skylake.huang@mediatek.com>
+For this reason, move it from schedutil to the energy model code and
+rename it to em_rebuild_perf_domains().
+
+This also involves getting rid of some #ifdeffery in schedutil which
+is a plus.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/net/phy/mediatek/mtk-ge.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ include/linux/energy_model.h     |    2 ++
+ kernel/power/energy_model.c      |   17 +++++++++++++++++
+ kernel/sched/cpufreq_schedutil.c |   33 ++++++---------------------------
+ 3 files changed, 25 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/net/phy/mediatek/mtk-ge.c b/drivers/net/phy/mediatek/mtk-ge.c
-index 9122899..ed2617b 100644
---- a/drivers/net/phy/mediatek/mtk-ge.c
-+++ b/drivers/net/phy/mediatek/mtk-ge.c
-@@ -5,6 +5,9 @@
- 
- #include "mtk.h"
- 
-+#define MTK_GPHY_ID_MT7530		0x03a29412
-+#define MTK_GPHY_ID_MT7531		0x03a29441
+Index: linux-pm/kernel/power/energy_model.c
+===================================================================
+--- linux-pm.orig/kernel/power/energy_model.c
++++ linux-pm/kernel/power/energy_model.c
+@@ -908,3 +908,20 @@ int em_update_performance_limits(struct
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(em_update_performance_limits);
 +
- #define MTK_EXT_PAGE_ACCESS		0x1f
- #define MTK_PHY_PAGE_STANDARD		0x0000
- #define MTK_PHY_PAGE_EXTENDED		0x0001
-@@ -59,7 +62,7 @@ static int mt7531_phy_config_init(struct phy_device *phydev)
++static void rebuild_sd_workfn(struct work_struct *work)
++{
++	rebuild_sched_domains_energy();
++}
++
++static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
++
++void em_rebuild_perf_domains(void)
++{
++	/*
++	 * When called from the cpufreq_register_driver() path, the
++	 * cpu_hotplug_lock is already held, so use a work item to
++	 * avoid nested locking in rebuild_sched_domains().
++	 */
++	schedule_work(&rebuild_sd_work);
++}
+Index: linux-pm/kernel/sched/cpufreq_schedutil.c
+===================================================================
+--- linux-pm.orig/kernel/sched/cpufreq_schedutil.c
++++ linux-pm/kernel/sched/cpufreq_schedutil.c
+@@ -604,31 +604,6 @@ static const struct kobj_type sugov_tuna
  
- static struct phy_driver mtk_gephy_driver[] = {
- 	{
--		PHY_ID_MATCH_EXACT(0x03a29412),
-+		PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7530),
- 		.name		= "MediaTek MT7530 PHY",
- 		.config_init	= mt7530_phy_config_init,
- 		/* Interrupts are handled by the switch, not the PHY
-@@ -73,7 +76,7 @@ static struct phy_driver mtk_gephy_driver[] = {
- 		.write_page	= mtk_phy_write_page,
- 	},
- 	{
--		PHY_ID_MATCH_EXACT(0x03a29441),
-+		PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7531),
- 		.name		= "MediaTek MT7531 PHY",
- 		.config_init	= mt7531_phy_config_init,
- 		/* Interrupts are handled by the switch, not the PHY
-@@ -91,8 +94,8 @@ static struct phy_driver mtk_gephy_driver[] = {
- module_phy_driver(mtk_gephy_driver);
+ /********************** cpufreq governor interface *********************/
  
- static struct mdio_device_id __maybe_unused mtk_gephy_tbl[] = {
--	{ PHY_ID_MATCH_EXACT(0x03a29441) },
--	{ PHY_ID_MATCH_EXACT(0x03a29412) },
-+	{ PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7530) },
-+	{ PHY_ID_MATCH_EXACT(MTK_GPHY_ID_MT7531) },
- 	{ }
- };
+-#ifdef CONFIG_ENERGY_MODEL
+-static void rebuild_sd_workfn(struct work_struct *work)
+-{
+-	rebuild_sched_domains_energy();
+-}
+-
+-static DECLARE_WORK(rebuild_sd_work, rebuild_sd_workfn);
+-
+-/*
+- * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
+- * on governor changes to make sure the scheduler knows about it.
+- */
+-static void sugov_eas_rebuild_sd(void)
+-{
+-	/*
+-	 * When called from the cpufreq_register_driver() path, the
+-	 * cpu_hotplug_lock is already held, so use a work item to
+-	 * avoid nested locking in rebuild_sched_domains().
+-	 */
+-	schedule_work(&rebuild_sd_work);
+-}
+-#else
+-static inline void sugov_eas_rebuild_sd(void) { };
+-#endif
+-
+ struct cpufreq_governor schedutil_gov;
  
--- 
-2.45.2
+ static struct sugov_policy *sugov_policy_alloc(struct cpufreq_policy *policy)
+@@ -783,7 +758,11 @@ static int sugov_init(struct cpufreq_pol
+ 	if (ret)
+ 		goto fail;
+ 
+-	sugov_eas_rebuild_sd();
++	/*
++	 * EAS shouldn't be attempted without sugov, so rebuild the sched_domains
++	 * on governor changes to make sure the scheduler knows about it.
++	 */
++	em_rebuild_perf_domains();
+ 
+ out:
+ 	mutex_unlock(&global_tunables_lock);
+@@ -827,7 +806,7 @@ static void sugov_exit(struct cpufreq_po
+ 	sugov_policy_free(sg_policy);
+ 	cpufreq_disable_fast_switch(policy);
+ 
+-	sugov_eas_rebuild_sd();
++	em_rebuild_perf_domains();
+ }
+ 
+ static int sugov_start(struct cpufreq_policy *policy)
+Index: linux-pm/include/linux/energy_model.h
+===================================================================
+--- linux-pm.orig/include/linux/energy_model.h
++++ linux-pm/include/linux/energy_model.h
+@@ -179,6 +179,7 @@ int em_dev_compute_costs(struct device *
+ int em_dev_update_chip_binning(struct device *dev);
+ int em_update_performance_limits(struct em_perf_domain *pd,
+ 		unsigned long freq_min_khz, unsigned long freq_max_khz);
++void em_rebuild_perf_domains(void);
+ 
+ /**
+  * em_pd_get_efficient_state() - Get an efficient performance state from the EM
+@@ -404,6 +405,7 @@ int em_update_performance_limits(struct
+ {
+ 	return -EINVAL;
+ }
++static inline void em_rebuild_perf_domains(void) {}
+ #endif
+ 
+ #endif
+
+
 
 
