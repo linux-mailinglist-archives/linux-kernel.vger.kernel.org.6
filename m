@@ -1,156 +1,712 @@
-Return-Path: <linux-kernel+bounces-402040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5917E9C2293
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:58:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC4C9C2296
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4586B22AA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:58:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C070E1F25021
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2FE1E883E;
-	Fri,  8 Nov 2024 16:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941C199FBF;
+	Fri,  8 Nov 2024 16:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bMKljHRs"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGq8fPhF"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17631E907A
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FBD1991BD;
+	Fri,  8 Nov 2024 16:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731085088; cv=none; b=HQCIewJkcO8nmXSJQlDRxbqFGkDzpRsEPUe4a0BGG6l6eXNPeZUq8z6MFDrzb2EGezX0xj9pnZM9xfsztED2msL/rltDNtwgA/pbhdmnLdRbI0Vuj/6TFgBDslyKpuOZX+/gnXcARDscxAGHEfcFv1obeZj/g3TisHSwgQ8akE0=
+	t=1731085157; cv=none; b=cZKrd27i9hBwF5Iy8aUUS1Rayrc6FBVfvwjPUzmDWDcPK4wbwUFm6VybGb/+G0ROAxEfNL9DTmarUoRiMfPhc2TRh9xAqC9oBN0ItPLEMVQpt5aiRalqHQerZKlA8tF35TQ+beGSIPmZ5VMRgGDAXT+HjAzBEv1UOLuZenbeZ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731085088; c=relaxed/simple;
-	bh=rR6oxh4TsPeJEFTyjlpe/mmrrtWMwgdViIyTgLo9Ezs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ksbv89Fdogp0C+6hfffN0q9OfJrUWqizCADn3OjBcA82m/fpfm7CXhh7c4FnvgbfRuwFFYqKHaXLC7i8yFy9vMBTO321juJ1WvKVV787kPWK1Kmb5RfYj3C/lhThB/i5uFCM2wuzQPAU6jrrkCssLkuNbMbrUQvDP2nDEuJuM2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bMKljHRs; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8FCsva028463
-	for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2024 16:58:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HWI14o00dzdsEyLD1xZkH5uhQvD1CWU2kS6AnH4E94s=; b=bMKljHRsJuTHnWCe
-	/bvKdX1jaZ07Q5YIJUalHojqML7Bb6NmjDMkjBUtGFrre2svtF+xCVlPYxRaA/Bc
-	p+IMbbgQuU4fCJMUmb7Ae3L15fzuZdzqwjxdpegfJUYgQf+3VJUy0b0wk7Gpzww2
-	3sAGb29W5aipYDq4yLHQPuK9Pk4uNye4hKfiVUZmzhKowrnNfzVEhIrOC5NHbXUG
-	625z+7D2ygNWTnHlaugTQqjKz8IMnOvztAxf8R6wtlqquEwtSTLEorqZM3GvlrVZ
-	9YVajFEv4emHvvakQ3KRoNPK8IEscmrssetDw20OoIOA7zQeJANwaYHb8VPnhlLU
-	Jx9RHQ==
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com [209.85.222.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gda5vf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:58:04 +0000 (GMT)
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-855ce9448a8so97020241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 08:58:04 -0800 (PST)
+	s=arc-20240116; t=1731085157; c=relaxed/simple;
+	bh=2qB1921ES3d5nrERKUCxgmUiFU3TkRIyVhBBHQ8tV60=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQBtwSUCtdJuAPlx0GSACRh5CjjWGiFsGBCXRwp510GkRS/QAW/C6ARpsChWtV8720AL9SpmY4EWovFCCOfEGrVp10IjOkzDlGumsUmfnmlrfHrsNgks1Xis54NAP2ArSGVsh822XttdXnSJMRHPhdDt8kdM0c1eISeWH09KAA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGq8fPhF; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cdb889222so26287115ad.3;
+        Fri, 08 Nov 2024 08:59:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731085155; x=1731689955; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IofYjQ/qG0kmEmRFikBuLLYs/9nTQ05zsuJrnNg5qcE=;
+        b=jGq8fPhFzhzpqP5DhjU5K1CHPRGRc701qeHBPQk6ymXds44wxBZKL12bSxfhD5E5az
+         k1InQWnXm7W2z/FCx7U5RHp5Z14i3ZXOAbfBiYvsbNT/BzsI+o8jwChHLxtKWeRx1b7e
+         eeZOWCG9R4kFDuo7glCNOH96L8ClIrPpuMU1xLE+oZMCph72Xgz3fjaSrgp2BMVZcIju
+         P9wosApCEjprD2TJmcNqCt7nUec2WYSFoBPaWDZywoxZjPJ7YAo3o6XDuVFz95Hbeji0
+         AlOcymMJM5DMLWRsqbgm+tBxc++m/eduONCZe+sMR/+3HSbBCS9Ik8eDDB9tX0PqVH9t
+         mX1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731085084; x=1731689884;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HWI14o00dzdsEyLD1xZkH5uhQvD1CWU2kS6AnH4E94s=;
-        b=tOcOh+SDc7QqpEFOQPhx9DMnUfntJJdRe0R9Flr/SQ98Wx5VGZVFF4J1nenXUx4g4I
-         0oH6THEGEaw7TerDkA8rLCs6G8v3k0lDgRAj1iPRdmp99pgG5GiiKy2qI62j/gwVzs2j
-         4NAetMEfYq17XmvqEJ0OI7Gk1o9zeCyWZNvu5iuJes1BsrbMNH7jg8OWkbiLrqO7MWX+
-         UjJmGVCo8XLtLwPxmT3uf24T5ywTKzDGWF8UA7vE7sd/AYjN/fMYjdglt9MNncKCYObh
-         EC5LkVStPPEoZNpjqBjRkIGqC9KowvDeGFfKtCRGpePd13F2J+EcaQD2tumao0WsFE8T
-         80nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXSkZoiJD7CLPg2oRQaIaYKfI9SIWoMaebFuHS3n2DJJtmfoR18udsUggMSTfOe1HwOEDqGH7+cb188kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6WPWaE2uR8YYSLHAdu0oObbzUGZsv8GXecH3rnKGCCYvrDHc4
-	zWDjZIhkZTQIOzjZDxeih1bYQrhtJW7HieyN5eQbQC/Rzl99OGLuz4xSt0uLpKtDZQw+jUi+0Li
-	nO32j8k+DxUNkG0H3eYN2DWsBd6iHAW67lhGGc34pH8k/6BY2nnlm5W/tEkzT4YQ=
-X-Received: by 2002:a05:6102:3311:b0:4a4:8268:9a65 with SMTP id ada2fe7eead31-4aae138b9cbmr1471537137.3.1731085083628;
-        Fri, 08 Nov 2024 08:58:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFY/osSz3UlDBbQ0ox84O5Rchw1d3JTWrCxq8eAaHipugtEjyXcxITf9weaSejsQ7bLHn/nnw==
-X-Received: by 2002:a05:6102:3311:b0:4a4:8268:9a65 with SMTP id ada2fe7eead31-4aae138b9cbmr1471530137.3.1731085083296;
-        Fri, 08 Nov 2024 08:58:03 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a184dasm254433666b.30.2024.11.08.08.58.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 08:58:02 -0800 (PST)
-Message-ID: <3bc06d82-7443-4c89-947b-8931cabd787f@oss.qualcomm.com>
-Date: Fri, 8 Nov 2024 17:57:58 +0100
+        d=1e100.net; s=20230601; t=1731085155; x=1731689955;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IofYjQ/qG0kmEmRFikBuLLYs/9nTQ05zsuJrnNg5qcE=;
+        b=USrp1LWQ6/TtJpEMSkFsIQ4O9wy6u8Oc59vO90KToooXl697kWjQ8qfELeO17xuqk9
+         3yC4Ui5js8or0uiqFqjR8jQvNstQ295zIqJWEuDjuKFjGohmNHapvPtU9SXySbb7revY
+         C+Kz4Zp3EOAxkskCskFb8WS/qsbOoA1CyBJY63trveQr8cas17ov8C38/4idoBysLpf5
+         95wwtvgwEeqX6g6TB8OAnr1vXe3OnD5jud+ERwWCujOX5ywf1yroOfZ/XvOkoAM9/yrX
+         27hM8aNn1fBOq5Wep2eGIumJUMoBxfVU758wxMlKB4acWj9ajn4Yhrl4mO30ygDyi26y
+         sIdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhpZpGDPkcYz4yw0mOHiGXYPzkllRtuqJ1DcDlrjrdRg/QHSR2ocAfROPfUxn4B/6jstP9gaotpHjVPlW8@vger.kernel.org, AJvYcCUpCKt6ubCgRgPRsirhlKSI88AttU4CA7nmq3CL8tsklj7C5hbZXqYlcV88umYY4Byc2vp5WFaQXkZV@vger.kernel.org, AJvYcCVA2SzdL4hACQavVELQYrtczq/fcyUSe2Wrq+Dzgv+oTqBsmzMBb2Y/W4q5fdLfxm7qDyNETNrv+tNX@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrDmR0PVrpCwR80Ww7+G+Wt/ymw37CW67rLUOQUZZrExTEIQID
+	cYlvKftwdTTlGBHLUUmzWWZiKygJ5wZm4KEwC8lYS/vcskjOClel
+X-Google-Smtp-Source: AGHT+IGWhVnJ8w8dTGunU5iAlULOxossc9AZhrsRoesM9ToCvxdS3BRUFy4sHpX7pUR/XHkEvCP+iw==
+X-Received: by 2002:a17:902:d50c:b0:20b:449c:8978 with SMTP id d9443c01a7336-21183559ba4mr46386325ad.31.1731085154634;
+        Fri, 08 Nov 2024 08:59:14 -0800 (PST)
+Received: from fan ([2601:646:8f03:9fee:dc4:4a61:fe94:d7ed])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5aa01sm32435205ad.211.2024.11.08.08.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 08:59:14 -0800 (PST)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Fri, 8 Nov 2024 08:59:10 -0800
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
+	sudeep.holla@arm.com, jassisinghbrar@gmail.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+	rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
+	dave.hansen@linux.intel.com, naoya.horiguchi@nec.com,
+	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com,
+	erdemaktas@google.com, pgonda@google.com, duenwen@google.com,
+	gthelen@google.com, wschwartz@amperecomputing.com,
+	dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
+	nifan.cxl@gmail.com, tanxiaofei@huawei.com,
+	prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
+	kangkang.shen@futurewei.com, wanghuiqiang@huawei.com,
+	linuxarm@huawei.com
+Subject: Re: [PATCH v15 11/15] EDAC: Add memory repair control feature
+Message-ID: <Zy5DXjsbsm4cQGaS@fan>
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-12-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/14] thermal/drivers/qcom/tsens-v1: Add support for
- MSM8937 tsens
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
- <20241107-msm8917-v3-9-6ddc5acd978b@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241107-msm8917-v3-9-6ddc5acd978b@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: nzvzewZv2k-2xUgJee0G4rZO5IjGVq3g
-X-Proofpoint-ORIG-GUID: nzvzewZv2k-2xUgJee0G4rZO5IjGVq3g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
- adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411080141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241101091735.1465-12-shiju.jose@huawei.com>
 
-On 7.11.2024 6:02 PM, Barnabás Czémán wrote:
-> Add support for tsens v1.4 block what can be found in
-> MSM8937 and MSM8917.
+On Fri, Nov 01, 2024 at 09:17:29AM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> Add generic EDAC memory repair control, eg. PPR(Post Package Repair),
+> memory sparing etc, control driver in order to control memory repairs
+> in the system. Supports sPPR(soft PPR), hPPR(hard PPR), soft/hard memory
+> sparing, memory sparing at cacheline/row/bank/rank granularity etc.
+> Device with memory repair features registers with EDAC device driver,
+> which retrieves memory repair descriptor from EDAC memory repair driver and
+> exposes the sysfs repair control attributes to userspace in
+> /sys/bus/edac/devices/<dev-name>/mem_repairX/.
+> 
+> The common memory repair control interface abstracts the control of
+> arbitrary memory repair functionality into a standardized set of functions.
+> The sysfs memory repair attribute nodes are only available if the client
+> driver has implemented the corresponding attribute callback function and
+> provided operations to the EDAC device driver during registration.
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 > ---
->  drivers/thermal/qcom/tsens-v1.c | 13 +++++++++++++
->  drivers/thermal/qcom/tsens.c    |  3 +++
->  drivers/thermal/qcom/tsens.h    |  2 +-
->  3 files changed, 17 insertions(+), 1 deletion(-)
+>  .../ABI/testing/sysfs-edac-memory-repair      | 168 ++++++++
+>  drivers/edac/Makefile                         |   2 +-
+>  drivers/edac/edac_device.c                    |  32 ++
+>  drivers/edac/mem_repair.c                     | 367 ++++++++++++++++++
+>  include/linux/edac.h                          |  87 +++++
+>  5 files changed, 655 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-edac-memory-repair
+>  create mode 100755 drivers/edac/mem_repair.c
 > 
-> diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
-> index dc1c4ae2d8b01b42a0edbb7f12a5780b25d0c8ac..50787cf68bfae48da6061d8e75956308f41053be 100644
-> --- a/drivers/thermal/qcom/tsens-v1.c
-> +++ b/drivers/thermal/qcom/tsens-v1.c
-> @@ -162,6 +162,19 @@ struct tsens_plat_data data_tsens_v1 = {
->  	.fields	= tsens_v1_regfields,
+> diff --git a/Documentation/ABI/testing/sysfs-edac-memory-repair b/Documentation/ABI/testing/sysfs-edac-memory-repair
+> new file mode 100644
+> index 000000000000..393206b8d418
+...
+ @@ -610,6 +611,7 @@ int edac_dev_register(struct device *parent, char *name,
+>  		      const struct edac_dev_feature *ras_features)
+>  {
+>  	const struct attribute_group **ras_attr_groups;
+> +	int mem_repair_cnt = 0, mem_repair_inst = 0;
+>  	int scrub_cnt = 0, scrub_inst = 0;
+>  	struct edac_dev_data *dev_data;
+>  	struct edac_dev_feat_ctx *ctx;
+> @@ -626,6 +628,10 @@ int edac_dev_register(struct device *parent, char *name,
+>  			attr_gcnt++;
+>  			scrub_cnt++;
+>  			break;
+> +		case RAS_FEAT_MEM_REPAIR:
+> +			attr_gcnt++;
+> +			mem_repair_cnt++;
+> +			break;
+>  		case RAS_FEAT_ECS:
+>  			attr_gcnt += ras_features[feat].ecs_info.num_media_frus;
+>  			break;
+> @@ -652,6 +658,14 @@ int edac_dev_register(struct device *parent, char *name,
+>  		}
+>  	}
+>  
+> +	if (mem_repair_cnt) {
+> +		ctx->mem_repair = kcalloc(mem_repair_cnt, sizeof(*ctx->mem_repair), GFP_KERNEL);
+> +		if (!ctx->mem_repair) {
+> +			ret = -ENOMEM;
+> +			goto groups_free;
+
+If the function returns here, we will have a leak from memory pointed by ctx->scrub.
+
+Fan
+> +		}
+> +	}
+> +
+>  	attr_gcnt = 0;
+>  	for (feat = 0; feat < num_features; feat++, ras_features++) {
+>  		switch (ras_features->ft_type) {
+> @@ -686,6 +700,23 @@ int edac_dev_register(struct device *parent, char *name,
+>  
+>  			attr_gcnt += ras_features->ecs_info.num_media_frus;
+>  			break;
+> +		case RAS_FEAT_MEM_REPAIR:
+> +			if (!ras_features->mem_repair_ops ||
+> +			    mem_repair_inst != ras_features->instance)
+> +				goto data_mem_free;
+> +
+> +			dev_data = &ctx->mem_repair[mem_repair_inst];
+> +			dev_data->instance = mem_repair_inst;
+> +			dev_data->mem_repair_ops = ras_features->mem_repair_ops;
+> +			dev_data->private = ras_features->ctx;
+> +			ret = edac_mem_repair_get_desc(parent, &ras_attr_groups[attr_gcnt],
+> +						       ras_features->instance);
+> +			if (ret)
+> +				goto data_mem_free;
+> +
+> +			mem_repair_inst++;
+> +			attr_gcnt++;
+> +			break;
+>  		default:
+>  			ret = -EINVAL;
+>  			goto data_mem_free;
+> @@ -712,6 +743,7 @@ int edac_dev_register(struct device *parent, char *name,
+>  	return devm_add_action_or_reset(parent, edac_dev_unreg, &ctx->dev);
+>  
+>  data_mem_free:
+> +	kfree(ctx->mem_repair);
+>  	kfree(ctx->scrub);
+>  groups_free:
+>  	kfree(ras_attr_groups);
+> diff --git a/drivers/edac/mem_repair.c b/drivers/edac/mem_repair.c
+> new file mode 100755
+> index 000000000000..93246ad0c9eb
+> --- /dev/null
+> +++ b/drivers/edac/mem_repair.c
+> @@ -0,0 +1,367 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * The generic EDAC memory repair driver is designed to control the memory
+> + * devices with memory repair features, such as Post Package Repair (PPR),
+> + * memory sparing etc. The common sysfs memory repair interface abstracts
+> + * the control of various arbitrary memory repair functionalities into a
+> + * unified set of functions.
+> + *
+> + * Copyright (c) 2024 HiSilicon Limited.
+> + */
+> +
+> +#include <linux/edac.h>
+> +
+> +enum edac_mem_repair_attributes {
+> +	MEM_REPAIR_TYPE,
+> +	MEM_REPAIR_PERSIST_MODE_AVAIL,
+> +	MEM_REPAIR_PERSIST_MODE,
+> +	MEM_REPAIR_DPA_SUPPORT,
+> +	MEM_REPAIR_SAFE_IN_USE,
+> +	MEM_REPAIR_HPA,
+> +	MEM_REPAIR_DPA,
+> +	MEM_REPAIR_NIBBLE_MASK,
+> +	MEM_REPAIR_BANK_GROUP,
+> +	MEM_REPAIR_BANK,
+> +	MEM_REPAIR_RANK,
+> +	MEM_REPAIR_ROW,
+> +	MEM_REPAIR_COLUMN,
+> +	MEM_REPAIR_CHANNEL,
+> +	MEM_REPAIR_SUB_CHANNEL,
+> +	MEM_REPAIR_QUERY,
+> +	MEM_DO_REPAIR,
+> +	MEM_REPAIR_MAX_ATTRS
+> +};
+> +
+> +struct edac_mem_repair_dev_attr {
+> +	struct device_attribute dev_attr;
+> +	u8 instance;
+> +};
+> +
+> +struct edac_mem_repair_context {
+> +	char name[EDAC_FEAT_NAME_LEN];
+> +	struct edac_mem_repair_dev_attr mem_repair_dev_attr[MEM_REPAIR_MAX_ATTRS];
+> +	struct attribute *mem_repair_attrs[MEM_REPAIR_MAX_ATTRS + 1];
+> +	struct attribute_group group;
+> +};
+> +
+> +#define TO_MEM_REPAIR_DEV_ATTR(_dev_attr)      \
+> +		container_of(_dev_attr, struct edac_mem_repair_dev_attr, dev_attr)
+> +
+> +#define EDAC_MEM_REPAIR_ATTR_SHOW(attrib, cb, type, format)			\
+> +static ssize_t attrib##_show(struct device *ras_feat_dev,			\
+> +			     struct device_attribute *attr, char *buf)		\
+> +{										\
+> +	u8 inst = TO_MEM_REPAIR_DEV_ATTR(attr)->instance;			\
+> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);		\
+> +	const struct edac_mem_repair_ops *ops =					\
+> +				ctx->mem_repair[inst].mem_repair_ops;		\
+> +	type data;								\
+> +	int ret;								\
+> +										\
+> +	ret = ops->cb(ras_feat_dev->parent, ctx->mem_repair[inst].private,	\
+> +		      &data);							\
+> +	if (ret)								\
+> +		return ret;							\
+> +										\
+> +	return sysfs_emit(buf, format, data);					\
+> +}
+> +
+> +EDAC_MEM_REPAIR_ATTR_SHOW(repair_type, get_repair_type, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(persist_mode, get_persist_mode, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(dpa_support, get_dpa_support, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(repair_safe_when_in_use, get_repair_safe_when_in_use, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(hpa, get_hpa, u64, "0x%llx\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(dpa, get_dpa, u64, "0x%llx\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(nibble_mask, get_nibble_mask, u64, "0x%llx\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(bank_group, get_bank_group, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(bank, get_bank, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(rank, get_rank, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(row, get_row, u64, "0x%llx\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(column, get_column, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(channel, get_channel, u32, "%u\n")
+> +EDAC_MEM_REPAIR_ATTR_SHOW(sub_channel, get_sub_channel, u32, "%u\n")
+> +
+> +#define EDAC_MEM_REPAIR_ATTR_STORE(attrib, cb, type, conv_func)			\
+> +static ssize_t attrib##_store(struct device *ras_feat_dev,			\
+> +			      struct device_attribute *attr,			\
+> +			      const char *buf, size_t len)			\
+> +{										\
+> +	u8 inst = TO_MEM_REPAIR_DEV_ATTR(attr)->instance;			\
+> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);		\
+> +	const struct edac_mem_repair_ops *ops =					\
+> +				ctx->mem_repair[inst].mem_repair_ops;		\
+> +	type data;								\
+> +	int ret;								\
+> +										\
+> +	ret = conv_func(buf, 0, &data);						\
+> +	if (ret < 0)								\
+> +		return ret;							\
+> +										\
+> +	ret = ops->cb(ras_feat_dev->parent, ctx->mem_repair[inst].private,	\
+> +		      data);							\
+> +	if (ret)								\
+> +		return ret;							\
+> +										\
+> +	return len;								\
+> +}
+> +
+> +EDAC_MEM_REPAIR_ATTR_STORE(persist_mode, set_persist_mode, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(hpa, set_hpa, u64, kstrtou64)
+> +EDAC_MEM_REPAIR_ATTR_STORE(dpa, set_dpa, u64, kstrtou64)
+> +EDAC_MEM_REPAIR_ATTR_STORE(nibble_mask, set_nibble_mask, u64, kstrtou64)
+> +EDAC_MEM_REPAIR_ATTR_STORE(bank_group, set_bank_group, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(bank, set_bank, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(rank, set_rank, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(row, set_row, u64, kstrtou64)
+> +EDAC_MEM_REPAIR_ATTR_STORE(column, set_column, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(channel, set_channel, unsigned long, kstrtoul)
+> +EDAC_MEM_REPAIR_ATTR_STORE(sub_channel, set_sub_channel, unsigned long, kstrtoul)
+> +
+> +#define EDAC_MEM_REPAIR_DO_OP(attrib, cb)						\
+> +static ssize_t attrib##_store(struct device *ras_feat_dev,				\
+> +			      struct device_attribute *attr,				\
+> +			      const char *buf, size_t len)				\
+> +{											\
+> +	u8 inst = TO_MEM_REPAIR_DEV_ATTR(attr)->instance;				\
+> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);			\
+> +	const struct edac_mem_repair_ops *ops = ctx->mem_repair[inst].mem_repair_ops;	\
+> +	int ret;									\
+> +											\
+> +	ret = ops->cb(ras_feat_dev->parent, ctx->mem_repair[inst].private);		\
+> +	if (ret)									\
+> +		return ret;								\
+> +											\
+> +	return len;									\
+> +}
+> +
+> +EDAC_MEM_REPAIR_DO_OP(query, do_query)
+> +EDAC_MEM_REPAIR_DO_OP(repair, do_repair)
+> +
+> +static ssize_t persist_mode_avail_show(struct device *ras_feat_dev,
+> +				       struct device_attribute *attr, char *buf)
+> +{
+> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	u8 inst = TO_MEM_REPAIR_DEV_ATTR(attr)->instance;
+> +	const struct edac_mem_repair_ops *ops = ctx->mem_repair[inst].mem_repair_ops;
+> +
+> +	return ops->get_persist_mode_avail(ras_feat_dev->parent,
+> +					   ctx->mem_repair[inst].private, buf);
+> +}
+> +
+> +static umode_t mem_repair_attr_visible(struct kobject *kobj, struct attribute *a, int attr_id)
+> +{
+> +	struct device *ras_feat_dev = kobj_to_dev(kobj);
+> +	struct device_attribute *dev_attr = container_of(a, struct device_attribute, attr);
+> +	struct edac_dev_feat_ctx *ctx = dev_get_drvdata(ras_feat_dev);
+> +	u8 inst = TO_MEM_REPAIR_DEV_ATTR(dev_attr)->instance;
+> +	const struct edac_mem_repair_ops *ops = ctx->mem_repair[inst].mem_repair_ops;
+> +
+> +	switch (attr_id) {
+> +	case MEM_REPAIR_TYPE:
+> +		if (ops->get_repair_type)
+> +			return a->mode;
+> +		break;
+> +	case MEM_REPAIR_PERSIST_MODE_AVAIL:
+> +		if (ops->get_persist_mode_avail)
+> +			return a->mode;
+> +		break;
+> +	case MEM_REPAIR_PERSIST_MODE:
+> +		if (ops->get_persist_mode) {
+> +			if (ops->set_persist_mode)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_DPA_SUPPORT:
+> +		if (ops->get_dpa_support)
+> +			return a->mode;
+> +		break;
+> +	case MEM_REPAIR_SAFE_IN_USE:
+> +		if (ops->get_repair_safe_when_in_use)
+> +			return a->mode;
+> +		break;
+> +	case MEM_REPAIR_HPA:
+> +		if (ops->get_hpa) {
+> +			if (ops->set_hpa)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_DPA:
+> +		if (ops->get_dpa) {
+> +			if (ops->set_dpa)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_NIBBLE_MASK:
+> +		if (ops->get_nibble_mask) {
+> +			if (ops->set_nibble_mask)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_BANK_GROUP:
+> +		if (ops->get_bank_group) {
+> +			if (ops->set_bank_group)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_BANK:
+> +		if (ops->get_bank) {
+> +			if (ops->set_bank)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_RANK:
+> +		if (ops->get_rank) {
+> +			if (ops->set_rank)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_ROW:
+> +		if (ops->get_row) {
+> +			if (ops->set_row)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_COLUMN:
+> +		if (ops->get_column) {
+> +			if (ops->set_column)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_CHANNEL:
+> +		if (ops->get_channel) {
+> +			if (ops->set_channel)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_SUB_CHANNEL:
+> +		if (ops->get_sub_channel) {
+> +			if (ops->set_sub_channel)
+> +				return a->mode;
+> +			else
+> +				return 0444;
+> +		}
+> +		break;
+> +	case MEM_REPAIR_QUERY:
+> +		if (ops->do_query)
+> +			return a->mode;
+> +		break;
+> +	case MEM_DO_REPAIR:
+> +		if (ops->do_repair)
+> +			return a->mode;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +#define EDAC_MEM_REPAIR_ATTR_RO(_name, _instance)       \
+> +	((struct edac_mem_repair_dev_attr) { .dev_attr = __ATTR_RO(_name), \
+> +					     .instance = _instance })
+> +
+> +#define EDAC_MEM_REPAIR_ATTR_WO(_name, _instance)       \
+> +	((struct edac_mem_repair_dev_attr) { .dev_attr = __ATTR_WO(_name), \
+> +					     .instance = _instance })
+> +
+> +#define EDAC_MEM_REPAIR_ATTR_RW(_name, _instance)       \
+> +	((struct edac_mem_repair_dev_attr) { .dev_attr = __ATTR_RW(_name), \
+> +					     .instance = _instance })
+> +
+> +static int mem_repair_create_desc(struct device *dev,
+> +				  const struct attribute_group **attr_groups,
+> +				  u8 instance)
+> +{
+> +	struct edac_mem_repair_context *ctx;
+> +	struct attribute_group *group;
+> +	int i;
+> +	struct edac_mem_repair_dev_attr dev_attr[] = {
+> +		[MEM_REPAIR_TYPE] = EDAC_MEM_REPAIR_ATTR_RO(repair_type,
+> +							    instance),
+> +		[MEM_REPAIR_PERSIST_MODE_AVAIL] =
+> +				EDAC_MEM_REPAIR_ATTR_RO(persist_mode_avail,
+> +							instance),
+> +		[MEM_REPAIR_PERSIST_MODE] =
+> +				EDAC_MEM_REPAIR_ATTR_RW(persist_mode, instance),
+> +		[MEM_REPAIR_DPA_SUPPORT] =
+> +				EDAC_MEM_REPAIR_ATTR_RO(dpa_support, instance),
+> +		[MEM_REPAIR_SAFE_IN_USE] =
+> +				EDAC_MEM_REPAIR_ATTR_RO(repair_safe_when_in_use,
+> +							instance),
+> +		[MEM_REPAIR_HPA] = EDAC_MEM_REPAIR_ATTR_RW(hpa, instance),
+> +		[MEM_REPAIR_DPA] = EDAC_MEM_REPAIR_ATTR_RW(dpa, instance),
+> +		[MEM_REPAIR_NIBBLE_MASK] =
+> +				EDAC_MEM_REPAIR_ATTR_RW(nibble_mask, instance),
+> +		[MEM_REPAIR_BANK_GROUP] =
+> +				EDAC_MEM_REPAIR_ATTR_RW(bank_group, instance),
+> +		[MEM_REPAIR_BANK] = EDAC_MEM_REPAIR_ATTR_RW(bank, instance),
+> +		[MEM_REPAIR_RANK] = EDAC_MEM_REPAIR_ATTR_RW(rank, instance),
+> +		[MEM_REPAIR_ROW] = EDAC_MEM_REPAIR_ATTR_RW(row, instance),
+> +		[MEM_REPAIR_COLUMN] = EDAC_MEM_REPAIR_ATTR_RW(column, instance),
+> +		[MEM_REPAIR_CHANNEL] = EDAC_MEM_REPAIR_ATTR_RW(channel, instance),
+> +		[MEM_REPAIR_SUB_CHANNEL] =
+> +				EDAC_MEM_REPAIR_ATTR_RW(sub_channel, instance),
+> +		[MEM_REPAIR_QUERY] = EDAC_MEM_REPAIR_ATTR_WO(query, instance),
+> +		[MEM_DO_REPAIR] = EDAC_MEM_REPAIR_ATTR_WO(repair, instance)
+> +	};
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < MEM_REPAIR_MAX_ATTRS; i++) {
+> +		memcpy(&ctx->mem_repair_dev_attr[i].dev_attr,
+> +		       &dev_attr[i], sizeof(dev_attr[i]));
+> +		ctx->mem_repair_attrs[i] =
+> +				&ctx->mem_repair_dev_attr[i].dev_attr.attr;
+> +	}
+> +
+> +	sprintf(ctx->name, "%s%d", "mem_repair", instance);
+> +	group = &ctx->group;
+> +	group->name = ctx->name;
+> +	group->attrs = ctx->mem_repair_attrs;
+> +	group->is_visible  = mem_repair_attr_visible;
+> +	attr_groups[0] = group;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * edac_mem_repair_get_desc - get EDAC memory repair descriptors
+> + * @dev: client device with memory repair feature
+> + * @attr_groups: pointer to attribute group container
+> + * @instance: device's memory repair instance number.
+> + *
+> + * Return:
+> + *  * %0	- Success.
+> + *  * %-EINVAL	- Invalid parameters passed.
+> + *  * %-ENOMEM	- Dynamic memory allocation failed.
+> + */
+> +int edac_mem_repair_get_desc(struct device *dev,
+> +			     const struct attribute_group **attr_groups, u8 instance)
+> +{
+> +	if (!dev || !attr_groups)
+> +		return -EINVAL;
+> +
+> +	return mem_repair_create_desc(dev, attr_groups, instance);
+> +}
+> diff --git a/include/linux/edac.h b/include/linux/edac.h
+> index 04385b1a9283..b52730d63088 100644
+> --- a/include/linux/edac.h
+> +++ b/include/linux/edac.h
+> @@ -670,6 +670,7 @@ static inline struct dimm_info *edac_get_dimm(struct mem_ctl_info *mci,
+>  enum edac_dev_feat {
+>  	RAS_FEAT_SCRUB,
+>  	RAS_FEAT_ECS,
+> +	RAS_FEAT_MEM_REPAIR,
+>  	RAS_FEAT_MAX
 >  };
 >  
-> +static const struct tsens_ops ops_8937 = {
-> +	.init		= init_common,
-> +	.calibrate	= tsens_calibrate_common,
-> +	.get_temp	= get_temp_tsens_valid,
+> @@ -731,11 +732,95 @@ int edac_ecs_get_desc(struct device *ecs_dev,
+>  		      const struct attribute_group **attr_groups,
+>  		      u16 num_media_frus);
+>  
+> +enum edac_mem_repair_type {
+> +	EDAC_TYPE_SPPR,
+> +	EDAC_TYPE_HPPR,
+> +	EDAC_TYPE_CACHELINE_MEM_SPARING,
+> +	EDAC_TYPE_ROW_MEM_SPARING,
+> +	EDAC_TYPE_BANK_MEM_SPARING,
+> +	EDAC_TYPE_RANK_MEM_SPARING,
 > +};
+> +
+> +enum edac_mem_repair_persist_mode {
+> +	EDAC_MEM_REPAIR_SOFT, /* soft memory repair */
+> +	EDAC_MEM_REPAIR_HARD, /* hard memory repair */
+> +};
+> +
+> +/**
+> + * struct edac_mem_repair_ops - memory repair device operations
+> + * (all elements optional)
+> + * @get_repair_type: get the memory repair type, listed in enum edac_mem_repair_type.
+> + * @get_persist_mode_avail: get the persist modes supported in the device.
+> + * @get_persist_mode: get the persist mode of the memory repair instance.
+> + * @set_persist_mode: set the persist mode for the memory repair instance.
+> + * @get_dpa_support: get dpa support flag.
+> + * @get_repair_safe_when_in_use: get whether memory media is accessible and
+> + *			       data is retained during repair operation.
+> + * @get_hpa: get HPA for memory repair.
+> + * @set_hpa: set HPA for memory repair.
+> + * @get_dpa: get DPA for memory repair.
+> + * @set_dpa: set DPA for memory repair.
+> + * @get_nibble_mask: get nibble mask for memory repair.
+> + * @set_nibble_mask: set nibble mask for memory repair.
+> + * @get_bank_group: get bank group for memory repair.
+> + * @set_bank_group: set bank group for memory repair.
+> + * @get_bank: get bank for memory repair.
+> + * @set_bank: set bank for memory repair.
+> + * @get_rank: get rank for memory repair.
+> + * @set_rank: set rank for memory repair.
+> + * @get_row: get row for memory repair.
+> + * @set_row: set row for memory repair.
+> + * @get_column: get column for memory repair.
+> + * @set_column: set column for memory repair.
+> + * @get_channel: get channel for memory repair.
+> + * @set_channel: set channel for memory repair.
+> + * @get_sub_channel: get sub channel for memory repair.
+> + * @set_sub_channel: set sub channel for memory repair.
+> + * @do_query: Query memory repair operation for the HPA/DPA/other attrs set
+> + *	      is supported or not.
+> + * @do_repair: start memory repair operation for the HPA/DPA/other attrs set.
+> + */
+> +struct edac_mem_repair_ops {
+> +	int (*get_repair_type)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*get_persist_mode_avail)(struct device *dev, void *drv_data, char *buf);
+> +	int (*get_persist_mode)(struct device *dev, void *drv_data, u32 *mode);
+> +	int (*set_persist_mode)(struct device *dev, void *drv_data, u32 mode);
+> +	int (*get_dpa_support)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*get_repair_safe_when_in_use)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*get_hpa)(struct device *dev, void *drv_data, u64 *hpa);
+> +	int (*set_hpa)(struct device *dev, void *drv_data, u64 hpa);
+> +	int (*get_dpa)(struct device *dev, void *drv_data, u64 *dpa);
+> +	int (*set_dpa)(struct device *dev, void *drv_data, u64 dpa);
+> +	int (*get_nibble_mask)(struct device *dev, void *drv_data, u64 *val);
+> +	int (*set_nibble_mask)(struct device *dev, void *drv_data, u64 val);
+> +	int (*get_bank_group)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_bank_group)(struct device *dev, void *drv_data, u32 val);
+> +	int (*get_bank)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_bank)(struct device *dev, void *drv_data, u32 val);
+> +	int (*get_rank)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_rank)(struct device *dev, void *drv_data, u32 val);
+> +	int (*get_row)(struct device *dev, void *drv_data, u64 *val);
+> +	int (*set_row)(struct device *dev, void *drv_data, u64 val);
+> +	int (*get_column)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_column)(struct device *dev, void *drv_data, u32 val);
+> +	int (*get_channel)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_channel)(struct device *dev, void *drv_data, u32 val);
+> +	int (*get_sub_channel)(struct device *dev, void *drv_data, u32 *val);
+> +	int (*set_sub_channel)(struct device *dev, void *drv_data, u32 val);
+> +	int (*do_query)(struct device *dev, void *drv_data);
+> +	int (*do_repair)(struct device *dev, void *drv_data);
+> +};
+> +
+> +int edac_mem_repair_get_desc(struct device *dev,
+> +			     const struct attribute_group **attr_groups,
+> +			     u8 instance);
+> +
+>  /* EDAC device feature information structure */
+>  struct edac_dev_data {
+>  	union {
+>  		const struct edac_scrub_ops *scrub_ops;
+>  		const struct edac_ecs_ops *ecs_ops;
+> +		const struct edac_mem_repair_ops *mem_repair_ops;
+>  	};
+>  	u8 instance;
+>  	void *private;
+> @@ -746,6 +831,7 @@ struct edac_dev_feat_ctx {
+>  	void *private;
+>  	struct edac_dev_data *scrub;
+>  	struct edac_dev_data ecs;
+> +	struct edac_dev_data *mem_repair;
+>  };
+>  
+>  struct edac_dev_feature {
+> @@ -754,6 +840,7 @@ struct edac_dev_feature {
+>  	union {
+>  		const struct edac_scrub_ops *scrub_ops;
+>  		const struct edac_ecs_ops *ecs_ops;
+> +		const struct edac_mem_repair_ops *mem_repair_ops;
+>  	};
+>  	void *ctx;
+>  	struct edac_ecs_ex_info ecs_info;
+> -- 
+> 2.34.1
+> 
 
-Rename ops_8976 to ops_common and reuse it
-
-Konrad
-
+-- 
+Fan Ni
 
