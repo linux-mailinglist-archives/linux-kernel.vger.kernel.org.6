@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-402192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930429C24E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:33:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD6C49C24EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA50B1C22241
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:33:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B15DB22F85
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310671A9B36;
-	Fri,  8 Nov 2024 18:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66DFC199EB2;
+	Fri,  8 Nov 2024 18:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q0i+zgV5"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVJPPh5j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD52233D6E;
-	Fri,  8 Nov 2024 18:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6475233D6E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731090803; cv=none; b=pKXB1yrbHqpt1UZjDAyG4QtUcREsgia5azP6pHinLys2Id0yhaT9A881/JVToFBXvc0jYKwAJHxRudgZPWVF6ZK7NHUj4VbJNnsJ3/zWMU/JF78Dy9U8I/53XbRv6s2PEh/2ux/kDLCANlM88mH1dUq0DnqObpXeIbarhZCL9N0=
+	t=1731090810; cv=none; b=tYhuAmZACTqwLemF0mrkFe0F23gWp5eZJXaPmHSj5+Lsy/58w/p5vHUeMgclTdKPSiFBoz7ekshFeTy/6CaqL8BwjmMg0TMeJJB1EggpmhVpURPCgaMGZnU6G1goVf1o7dVgdjZ9cOfnMFrMjMgIJMwZuwJIJhJQvOnNAE9YQYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731090803; c=relaxed/simple;
-	bh=BUrUKcrOBLuOYRhDXsyK+/CBvZBzVAsJ75G04lAWNeM=;
+	s=arc-20240116; t=1731090810; c=relaxed/simple;
+	bh=ZnnP3TJUy8XOOKGAyDmqnCFgzbiZaQ2OFC3bYeXIWjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AckDVjoLEwV8sNMx7CGaL8+ajkyyRhUkXIhgH5vgirk6W46qu9zYsc3sV5RWXViznmHidlIH3EZELfWeASwikenqyTrhMo594+uJWXNFiKOAt9qyavfv1KkqHXdqcMhAskjsdqHuJEXV549LV39mf+s7HAA3owfd8GmynMWtito=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q0i+zgV5; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BPleluZ0wE/8aNLphmAdE2uJITOE+HSyY7uzrnMww8M=; b=q0i+zgV5EGWxt2QNrgNCzIHcaw
-	SP8QoN+i7fs2yOVbyuIGhhu7MGRJb7qJzH5jQVhklWOIVEYwMCjsw6vUaIVuCPjDmn4SKaJTKbNUP
-	IO83P4bZEVBMFtVe1dxqeNjq3YOFSaOS3mMyAXTzryMcNm6ZFJB2nCG37IcILnkzGzu1IQgfQeRe7
-	BjrkRdB9fCBNfVpcEr/2dCmHoG7bj4o8Elug+NGxDI9FO/BlVs+RBZuEgqG3XIGra0Rtov6H5A0ZF
-	GngwTb/al4rIUSZ6MBbCQ6vvevelvnwQw+LhzHtLf82iNyknEfvDW0Z0Sg/O+hdcEB/TkHg5G5k3w
-	9q3BFAXA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9TnL-00000009B9r-1HO5;
-	Fri, 08 Nov 2024 18:33:19 +0000
-Date: Fri, 8 Nov 2024 18:33:19 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/13] fs: add read support for RWF_UNCACHED
-Message-ID: <Zy5Zb8Twe7QBkHMh@casper.infradead.org>
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-9-axboe@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJELLJO+yHW0TZnj5euq+dw4xjYq9wv2zDaxXgHyQM5CpV/2n3JCvsRyAuQCjDStvqbbpUTgWvdJVuJnRCB6cBavu4oiaBrvnNXKCEvPxJrV3v51YARwz+C8VYyDP4W2VM0sV6EL7t5MWjRkqIjxvmCJe04OvbJS6H5WS63o/LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVJPPh5j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A23C4CECD;
+	Fri,  8 Nov 2024 18:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731090810;
+	bh=ZnnP3TJUy8XOOKGAyDmqnCFgzbiZaQ2OFC3bYeXIWjM=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=MVJPPh5jUl5T+CC0kBAxzzbwEq+GSYJrd/YPTDf19DxGNKFkpWnFa67JXNTWboi2W
+	 DJx6DIMGkf7pOAWlczoG9OA957+F+/W3smtklIrOYpTUY6OUBDbT9SVj7zNqb8SyZd
+	 fqN/UAOQn+Ao2prEDjgyOIdvg6LzQCDUxG2AN5VUIQoX7mKnnuoq26FfmC2LBbaf04
+	 XvVntHjjPWKbUg4YYo3tBj7F+X56eYu/O7cCxuaTs3sWeknV7f1A/7EzE9pF3NzUdy
+	 q9HZDWaIHF/is5Gp7+maz9rfTsECbbTREy8HXoLDbXKfAWkPFW0/B55yQX0oBOK/jx
+	 Bu5L/6o4HL4Lw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 00191CE09E4; Fri,  8 Nov 2024 10:33:29 -0800 (PST)
+Date: Fri, 8 Nov 2024 10:33:29 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Marco Elver <elver@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+	cl@linux.com, iamjoonsoo.kim@lge.com, longman@redhat.com,
+	penberg@kernel.org, rientjes@google.com, sfr@canb.auug.org.au
+Subject: Re: [PATCH v3 0/4] scftorture: Avoid kfree from IRQ context.
+Message-ID: <18b237cf-d510-49bf-b21b-78f9cebd1e3d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241108104217.3759904-1-bigeasy@linutronix.de>
+ <Zy5OX5Wy0LsFPdjO@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +66,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108174505.1214230-9-axboe@kernel.dk>
+In-Reply-To: <Zy5OX5Wy0LsFPdjO@Boquns-Mac-mini.local>
 
-On Fri, Nov 08, 2024 at 10:43:31AM -0700, Jens Axboe wrote:
-> +++ b/mm/swap.c
-> @@ -472,6 +472,8 @@ static void folio_inc_refs(struct folio *folio)
->   */
->  void folio_mark_accessed(struct folio *folio)
->  {
-> +	if (folio_test_uncached(folio))
-> +		return;
->  	if (lru_gen_enabled()) {
+On Fri, Nov 08, 2024 at 09:46:07AM -0800, Boqun Feng wrote:
+> On Fri, Nov 08, 2024 at 11:39:30AM +0100, Sebastian Andrzej Siewior wrote:
+> > Hi,
+> > 
+> > Paul reported kfree from IRQ context in scftorture which is noticed by
+> > lockdep since the recent PROVE_RAW_LOCK_NESTING switch.
+> > 
+> > The last patch in this series adresses the issues, the other things
+> > happened on the way.
+> > 
+> > v2...v3:
+> >   - The clean up on module exit must not be done with thread numbers.
+> >     Reported by Boqun Feng.
+> >   - Move the clean up on module exit prior to torture_cleanup_end().
+> >     Reported by Paul.
+> > 
+> > v1...v2:
+> >   - Remove kfree_bulk(). I get more invocations per report without it.
+> >   - Pass `cpu' to scf_cleanup_free_list in scftorture_invoker() instead
+> >     of scfp->cpu. The latter is the thread number which can be larger
+> >     than the number CPUs leading to a crash in such a case. Reported by
+> >     Boqun Feng.
+> >   - Clean up the per-CPU lists on module exit. Reported by Boqun Feng.
+> > 
+> > Sebastian
+> > 
+> 
+> For the whole series:
+> 
+> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> Tested-by: Boqun Feng <boqun.feng@gmail.com>
 
-This feels like it might be a problem.  If, eg, process A is doing
-uncached IO and process B comes along and, say, mmap()s it, I think
-we'll need to clear the uncached flag in order to have things work
-correctly.  It's a performance problem, not a correctness problem.
+Thank you both!
+
+Sebastian, I am guessing that the Kconfig change exposing the bugs fixed
+by your series is headed to mainline for the upcoming merge window?
+
+If so, I should of course push these in as well.
+
+							Thanx, Paul
 
