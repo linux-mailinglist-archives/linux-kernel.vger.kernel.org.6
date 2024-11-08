@@ -1,123 +1,205 @@
-Return-Path: <linux-kernel+bounces-401308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A955C9C18A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:00:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0D09C18A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:01:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5859F1F226C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7CC1C228BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971901CF291;
-	Fri,  8 Nov 2024 09:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D1C1E0DAC;
+	Fri,  8 Nov 2024 09:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d8lDBsz+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rlysotjo"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4791F1D0164;
-	Fri,  8 Nov 2024 09:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C2C1CFEC0;
+	Fri,  8 Nov 2024 09:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056434; cv=none; b=PbJmdvvDglfk5DljqzxBgTzSD8lxYQmGasENN+YOSVDDUcurm0N4MU4Oryrqga+OCsVm4zJ382iNi3J+49eKRCZcp0n2jYqB/7D1VqNU4ueXfkncSkvcfoUkSanhXE/CdKk1kNp+GlD7bRcBRXenNkR49l4apNbEPd+YF01F2To=
+	t=1731056475; cv=none; b=p8Fkzp38drZLAGiZkogkwpVtGkATVsg5V/WGCaWxGHJhfLIQsxruF4IreSczqs8ta9otmI9Yq+WX7Jit0aYkMXH9SElcykdjQdlDTslFL03Fch9eeT35w5/YDi7D6XLRQv0xqvQcSsR3uisogVqEZx5inqNS7Z7IEeHWH1ZSBrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056434; c=relaxed/simple;
-	bh=CrWKUfftFBZ+wGLTC10F8LpLBdIyBX00HenmHhZlwc0=;
+	s=arc-20240116; t=1731056475; c=relaxed/simple;
+	bh=r7dhSFhEQTew+9UGW/kckZn/abgjeJ3S6PdMpu3oaMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFEqJb7qXgzOmykKvHMwIwX07NNPlYGIR/lZmPtb/LDGMk8dYHbl7KZG4rvj1EEAvGESkFW83aIrRLMC27e3ITGkHQOi9a9uoeaJWzhC11BYIxSEDu1ri1PdpMn55NdknFO3KJ39pvWromNULrGBdSotmTvv+D9ibPaqqSWiG0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d8lDBsz+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=q0aUDxAYn5YeExddRWD2diDvkGNWUz6lbURBYyNRMws=; b=d8lDBsz+T3r5iY9iWi9iHdiJS/
-	vzyM6gIJSbD8yWA0s2Pq+V1KM7rOb1uTvN05cMFQ6SmM6EpuBqroelhIRqt9B5X/h39XvfgvKaTjN
-	GU0KRleG1AEcgJL+YWeQus5WurpdDX0YqXVlIjvgSxxwmYya11pojSo9M01GTtFQraYsVq/FYrCC0
-	sLB4EnSDYVQI57F2KIvCtYFGP4OJofwY93GXlLW83yPcaiCEHsjdhWXigs7915XeMTtIABOaRT0ds
-	JDQUWB1e+OiRV/JOlHFo4Xu6jYneDSnB3jRiDcvxlpborQ4DBj6s++WzG0uDLKWU0WdfPINOChc4V
-	bMQtGiEw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9Kqt-00000008awS-2qSz;
-	Fri, 08 Nov 2024 09:00:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E2E6230049D; Fri,  8 Nov 2024 10:00:23 +0100 (CET)
-Date: Fri, 8 Nov 2024 10:00:23 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] uprobes: get RCU trace lock before list iteration
-Message-ID: <20241108090023.GE38786@noisy.programming.kicks-ass.net>
-References: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lX8Fd6nkACaq1myDaMjze7HKa9iZ7g6QAld68W4D+o2DWBUy3cHQhtaWp2YkQPw83yXtNFOmLFaelwfRpPx2ONEjJZ7wrzcL58Jvkh6aFVlLH+gbNziKSr/5R3C4Sy8xz+lwd+yqpAj8yKqdbavyWLRokoOJzPhfdXZmR/MnHT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rlysotjo; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cd76c513cso17959285ad.3;
+        Fri, 08 Nov 2024 01:01:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731056473; x=1731661273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B6cfQLZyY3ukfMaKhn8AcRbL5Ti2ytAzkKnIriORiIs=;
+        b=Rlysotjoj6eHIsovMngZ6xkAvzX7h/i4Rmd2dEiyt2JC9avqPq82dDml8cGmEpLFwR
+         opn1i+GxlRPjrdaVYo4J9tQq3zgvRx74ghBmi8l2Ds1tf6UY5462cjTp58YsNuRa/wxU
+         B0IbVCg4P9TStPGv+IncMrllC/mmBmBEmyU3GLe85wio4Z+ddsbFCmm0D0P6OKbmdFb0
+         4ryKUA544HN5LsTXaJy1AN/YOgMi6hABjIybgN7g4LUaoSaDygBz8qmqI/6dnS6m5P61
+         GH0rDodchf7SHUdMixsUo7zyRC1jB9b9eKg4wYKzroo2k8P9ERbVbDtwTbYHBdVovnCv
+         M6Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731056473; x=1731661273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B6cfQLZyY3ukfMaKhn8AcRbL5Ti2ytAzkKnIriORiIs=;
+        b=EyK58+2v6fZHDrJsG19kzWJkE4r1WtOdb6fyq7yOOK3QMKzHjucYeTfVzsvYFG0cdm
+         kXW3MR7f0ztXkdzcL9WmekhPhWmOdD1v7q6tv7NBAacrXDc2687pRQvJxTIky+e6jRlA
+         0ItMCxAWeNOgrRaR7Hy+jIGXAk2PTYR+gjPaco1iBLp0MbFjxZEhQqbLcLkQ1Q3Fo5HN
+         //kcKh4mnmO50JCQlbAbkGutEvCtjqTFCqHW6dRteurPACTgUWBoFsiSqmMr/U5DTJS1
+         Lh96wYmriRQBPQJpP0b/GMVnLA0sBj84w6fuNPl12LfCAOcQkh4DAnCECntcdUjDYgr6
+         xtgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+hbD+WYFeOPWSWQsxQslC7ut7Zz3NPMjwdRKkUTEfWsSpiGgzez/I3uHNE5MFeBEZ9PjAkwljvC4=@vger.kernel.org, AJvYcCUD+zVYkM29b3pu/uaSB4h9ukz7tlOqAgN+Y+mu5/Q2d1N7ZQkLjT1dVS35+kFDPrjqxRFh4IXY75VAwuSz@vger.kernel.org, AJvYcCV/cLkshYUSkOGTrVbdSS5kcQ5HHhMp/0gG9Z+t1pU1kyRjxTGF6wt/lg8SYJzHQR+l/yfMM0oJAtU6hudAptBV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdNyqoyKNtbbNBsSMKOe1n0c+CeqgTtrmAnT7ylkM0YxskvlQv
+	cp3eWijwD8EFsdEPBgirvhqmL+DvZHLWMmFYP4VBEs3FAbSLIZXQ
+X-Google-Smtp-Source: AGHT+IFAKsAR11eiAB06tJVCWRmKkiTYy+qwV59/n1Yu3J0B6yv38u/J2j1MdEsTHqkgJx1Aehln/A==
+X-Received: by 2002:a17:903:298c:b0:20c:ee32:759f with SMTP id d9443c01a7336-211835d8bc0mr26836995ad.39.1731056473362;
+        Fri, 08 Nov 2024 01:01:13 -0800 (PST)
+Received: from archie.me ([103.124.138.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf0f5sm25712355ad.79.2024.11.08.01.01.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 01:01:12 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 63F6841E4B82; Fri, 08 Nov 2024 16:01:10 +0700 (WIB)
+Date: Fri, 8 Nov 2024 16:01:10 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, will@kernel.org,
+	robin.murphy@arm.com, dwmw2@infradead.org, shuah@kernel.org,
+	iommu@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	baolu.lu@linux.intel.com, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 13/13] Documentation: userspace-api: iommufd: Update
+ vIOMMU
+Message-ID: <Zy3TVlLKAg8QM9yP@archie.me>
+References: <cover.1730836219.git.nicolinc@nvidia.com>
+ <7e4302064e0d02137c1b1e139342affc0485ed3f.1730836219.git.nicolinc@nvidia.com>
+ <ZywQP3_TpdttuCy8@archie.me>
+ <ZywZcSidYCWkJgrw@Asurada-Nvidia>
+ <ZywyEUmL4HvM8B9v@archie.me>
+ <Zyw8OUTLrG3Yx+Yx@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1FskY10utNP/LXKg"
 Content-Disposition: inline
-In-Reply-To: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org>
-
-On Thu, Nov 07, 2024 at 09:14:45AM -0800, Breno Leitao wrote:
-> Acquire RCU trace lock in filter_chain() to protect
-> list_for_each_entry_rcu() iteration, protecting the list iteration in a
-> RCU read section.
-> 
-> Prior to this fix, list_for_each_entry_srcu() was called without holding
-> the required lock, triggering warnings when RCU_PROVING is enabled:
-> 
-> 	kernel/events/uprobes.c:937 RCU-list traversed without holding the required lock!!
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessly under SRCU protection")
-> ---
->  kernel/events/uprobes.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index fa04b14a7d72353adc440742016b813da6c812d2..afdaa45a43ac3948f7983175eda808c989e8738a 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1103,11 +1103,13 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
->  	bool ret = false;
->  
->  	down_read(&uprobe->consumer_rwsem);
-> +	rcu_read_lock_trace();
->  	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
-
-Maybe I'm confused, but isn't uprobe->consumer list protected by
-uprobe->consumer_rwsem, which we hold for reading?
-
-That is, AFAICT this is a false positive and we should be doing this
-instead, no?
+In-Reply-To: <Zyw8OUTLrG3Yx+Yx@Asurada-Nvidia>
 
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index a76ddc5fc982..a5405e9ef9f5 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1104,7 +1104,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
- 	bool ret = false;
- 
- 	down_read(&uprobe->consumer_rwsem);
--	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
-+	list_for_each_entry(uc, &uprobe->consumers, cons_node) {
- 		ret = consumer_filter(uc, mm);
- 		if (ret)
- 			break;
+--1FskY10utNP/LXKg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 06, 2024 at 08:04:09PM -0800, Nicolin Chen wrote:
+> On Thu, Nov 07, 2024 at 10:20:49AM +0700, Bagas Sanjaya wrote:
+> > On Wed, Nov 06, 2024 at 05:35:45PM -0800, Nicolin Chen wrote:
+> > > On Thu, Nov 07, 2024 at 07:56:31AM +0700, Bagas Sanjaya wrote:
+> > > > On Tue, Nov 05, 2024 at 12:04:29PM -0800, Nicolin Chen wrote:
+> > > > > With the introduction of the new object and its infrastructure, u=
+pdate the
+> > > > > doc to reflect that and add a new graph.
+> > > > >=20
+> > > > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> > > > > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> > > > > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > > > > ---
+> > > > >  Documentation/userspace-api/iommufd.rst | 69 +++++++++++++++++++=
++++++-
+> > > > >  1 file changed, 68 insertions(+), 1 deletion(-)
+> > > > >=20
+> > > > > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentat=
+ion/userspace-api/iommufd.rst
+> > > > > index 2deba93bf159..a8b7766c2849 100644
+> > > > > --- a/Documentation/userspace-api/iommufd.rst
+> > > > > +++ b/Documentation/userspace-api/iommufd.rst
+> > > > > @@ -63,6 +63,37 @@ Following IOMMUFD objects are exposed to users=
+pace:
+> > > > >    space usually has mappings from guest-level I/O virtual addres=
+ses to guest-
+> > > > >    level physical addresses.
+> > > > > =20
+> > > > > +- IOMMUFD_OBJ_VIOMMU, representing a slice of the physical IOMMU=
+ instance,
+> > > > > +  passed to or shared with a VM. It may be some HW-accelerated v=
+irtualization
+> > > > > +  features and some SW resources used by the VM. For examples:
+> > > > > +  * Security namespace for guest owned ID, e.g. guest-controlled=
+ cache tags
+> > > > > +  * Non-device-affiliated event reporting, e.g. invalidation que=
+ue errors
+> > > > > +  * Access to a sharable nesting parent pagetable across physica=
+l IOMMUs
+> > > > > +  * Virtualization of various platforms IDs, e.g. RIDs and others
+> > > > > +  * Delivery of paravirtualized invalidation
+> > > > > +  * Direct assigned invalidation queues
+> > > > > +  * Direct assigned interrupts
+> > > >=20
+> > > > The bullet list above is outputted in htmldocs build as long-runnin=
+g paragraph
+> > > > instead.
+> > >=20
+> > > Oh, I overlooked this list.
+> > >=20
+> > > Would the following change be okay?
+> > >=20
+> > > -------------------------------------------------
+> > > diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/=
+userspace-api/iommufd.rst
+> > > index 0ef22b3ca30b..011cbc71b6f5 100644
+> > > --- a/Documentation/userspace-api/iommufd.rst
+> > > +++ b/Documentation/userspace-api/iommufd.rst
+> > > @@ -68,2 +68,3 @@ Following IOMMUFD objects are exposed to userspace:
+> > >    features and some SW resources used by the VM. For examples:
+> > > +
+> > >    * Security namespace for guest owned ID, e.g. guest-controlled cac=
+he tags
+> > > @@ -75,2 +76,3 @@ Following IOMMUFD objects are exposed to userspace:
+> > >    * Direct assigned interrupts
+> > > +
+> > >    Such a vIOMMU object generally has the access to a nesting parent =
+pagetable
+> > > -------------------------------------------------
+> > >=20
+> > > The outputted html is showing a list with this.
+> >=20
+> > Yup, that's right!
+>=20
+> Thank you! Would it be possible for you to give a Reviewed-by,
+> given the condition of squashing this diff?
+
+Alright, here it goes...
+
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--1FskY10utNP/LXKg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZy3TVgAKCRD2uYlJVVFO
+owxHAQDaL5k6OGmeg6OIUkQWv58q/7TdrLW4R+pXT2qiFeOTVgEAxgUGl1Wm834W
+z966YlZs2fScS9LRewetFnpFHRzY7gU=
+=wjrM
+-----END PGP SIGNATURE-----
+
+--1FskY10utNP/LXKg--
 
