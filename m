@@ -1,142 +1,246 @@
-Return-Path: <linux-kernel+bounces-402228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAE89C2539
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:58:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E010D9C253C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E531F23990
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:58:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13B521C21875
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1652E1AA1C1;
-	Fri,  8 Nov 2024 18:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2EE1AA1C5;
+	Fri,  8 Nov 2024 19:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xq5j5PJA"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UGq7vzHX"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC3C19924D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661D41A9B52
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731092302; cv=none; b=M4johQzbEvrlz8vjJ38wjeV/53/TokrJSXkd8sZEhUAJG1/C4nqy6QKvImpt/dod1VkmqvgG2FeHcrtIZEbwtu2yoC34hPNwJKo3DP20XjYk/zu0C/jzEpuZCm7em2xpGbMbzX2LKB7WiUIxzGkX00J1oFc3zJ/8cCXSCal3qVU=
+	t=1731092415; cv=none; b=WpEY+JPtD0B62uv6CNZB89EI4euUCZzcQOQXuUzY8nZGBZK3lo6FNjnnygxUdDZXaSkw7iISu1okll9UO2GVx3WvV7ilO7HRSYBsC9yvMPOB+1mKuPXzMHgCakFukM4SrDVh+on9YFf38QqZ0KCNr+peIcale6j+raYOtO6PdyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731092302; c=relaxed/simple;
-	bh=y5z+A9NupvZs4nnBpZrmvKCzP+8ZODrJ/XnKXmyBZO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nn6Tg/1wxAOhlGVPdUI1hR+qpopLGYihYhPUmsC7XKKCzwD8MBp8gPvqn3wfIuVc/3H+6PS5+CVeKB3j/jZs+9bscD6nU5a/AbgxQdsef6r0dtY2cR1BRe4/wmIhNb7TaMhplVvKb37rvd6X6Z4mAy3J2x1XnYSUiW3YoJNkKEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xq5j5PJA; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e4833d40-31d9-4de6-94b2-964870671006@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731092297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uKOz2Ke3deWKx3LB9Ol2VggCwIo/TvK8NNumftjVwTM=;
-	b=Xq5j5PJA9CgtkmeafRikaDn8aGf9Tv9Nhpqunc9lWXEq7vCl1W4FWeC/HaS7GkGFr8Xf7k
-	eq7io/Hys8sHq5dO135k6r/GkvSNv0pAri6W735l6BrK387GeAuR7OuE/u8/1bh6HVTALi
-	KDwjsa00h6dPh+bKaEbi8c3yVT6f0Gk=
-Date: Fri, 8 Nov 2024 10:58:09 -0800
+	s=arc-20240116; t=1731092415; c=relaxed/simple;
+	bh=WqYp6yg5pPwKFS2C+i3dSgKmWNxHXbSzx1xoi1gpdu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pkJNs3oyw3jPijSARLTyPrDyPDpojYJYvgLJiDjHUw37rA6T3ORSEM0mDiBY8fvAfrr3KncT1P0VsF/Rh4C+N27gGZidGpWUO7y9Qtiq/D/1eT//yrquUJeka8ml1lN75sUf2RHu1GfNRKMvdCTSk5PhS1AAhmfcBfigkDOlIAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UGq7vzHX; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c87b0332cso15155ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:00:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731092412; x=1731697212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KgUoiaIvwmd0dqXDVNwJZBRERye992Iv81OIK7UWxZo=;
+        b=UGq7vzHXLDJoWsP7B5Djcx/Z+CfNjIp5tjpOsgqeIiR0kBgE8FwN72lhCMZhqnKp5y
+         NKVVhnK1BGm7dzleYSOCEzXEu80EXpI3X1R5SC0QcjR8qoe1mxhBSi2+x9x0+4YXEe8J
+         qA8qD4rSHt6iPRDbHUEUQD6Fdt3WUXO+E41B1YbIxY0MGOLJE35Z1o3/vMoNiWITFFiu
+         8mdV8afJg910GxgBmvSrMpUYgT6MT5lAsJjBK2fo5CR4GXZ09aaabvFAzsJNXM0yJy7I
+         ctwI4xDNcwcqD23P7eJLWm9nuX6JJD1S/s430VgJqbkD+J2F1ReQTBb4ZVmSNOBWWg70
+         d7Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731092412; x=1731697212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KgUoiaIvwmd0dqXDVNwJZBRERye992Iv81OIK7UWxZo=;
+        b=DSpuKGr5NE/pblqqz61MIAOUA0XzRY3bPxWASWkO5QFHfOHeYG0lu8BgeFfmh502PR
+         VgTaZCmyqphh+RpcIEpgegEKT8hoFzgMdzjO39HvX06jSBip2+HUABwF81T/XNTVuLMh
+         zrbSop8I1SSM59cybALmB8ziOZLLJLAi4jkIvRGUTfiYZnwvnaROUd2bYAMuK/1FWKyG
+         NUiGrqYHvYo307HlL5ppNsm2ivXAS3qtDlIWiGbMlkRKKo39hiJc4JauhXbdlnsRj0KS
+         CMyDvyJssfMIW60LUc1MaNAQ0ys9+VKb1RXQ44uqHNlqBuFugsFPeisz5O0XCdB1Ft14
+         eHnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsj3Vz44Nx3JENSYyLMTY+S6OqIA9zZrgCRtAjr/JxMkegIgooxNCsCmJZP5zlUW7mbkpMyB6n/0LRuHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4c7zvI+NMWlOQhXmtfcvfOHfQcdn+A7zmI8htMYZzpc9Wv6lL
+	R2IpteTwrA0AABiaDzHLlcq1ETgN560apx8dRWUCxkC/d69PblQ5H13NDS89NvGBcEnqEw0xJgr
+	pSujUmrojNWVoM1pRCRx77MO3fUJzjr5y+z4M
+X-Gm-Gg: ASbGncvjjbvBw1LKOtdZ90PANewPI6AufptGGVIlX9FzKR+i4GWYT+WkUfKP3vlq66F
+	f/JCpKejRtUAeFpoZ7v5vrhJbEbPxhvgS
+X-Google-Smtp-Source: AGHT+IGbkZj+JMTOqmjdWQBlay0wkfJ4YtvQ+jjTvTX1drjgAdh01rmyeaMVQcVNM/9W5ndlugybvJQ8F6IRVI5txY0=
+X-Received: by 2002:a17:902:f908:b0:20b:b52:3f7c with SMTP id
+ d9443c01a7336-2118df7660fmr108525ad.18.1731092411428; Fri, 08 Nov 2024
+ 11:00:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [BUG] WARNING: at lib/vsprintf.c:2659 format_decode+0x121a/0x1c00
-To: Yeqi Fu <fufuyqqqqqq@gmail.com>,
- "jakub@cloudflare.com" <jakub@cloudflare.com>,
- "john.fastabend@gmail.com" <john.fastabend@gmail.com>,
- "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
- bonan.ruan@u.nus.edu
-References: <D47BDD2E-217F-4F16-A74C-ADE4DA025FED@gmail.com>
-Content-Language: en-GB
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <D47BDD2E-217F-4F16-A74C-ADE4DA025FED@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241026121758.143259-1-irogers@google.com> <CAP-5=fXf9HtqKZyvfXNbKLTB-dL_Ax5Hd0_Gn1J-y0T1SE9wLQ@mail.gmail.com>
+ <78eb729c-7594-460f-9d79-97fb683d8b5e@linaro.org> <CAHBxVyFXWpczMmWJbpWoLUjQ4nfNC2_h1yZqSd7kSr6N8Rvm5Q@mail.gmail.com>
+In-Reply-To: <CAHBxVyFXWpczMmWJbpWoLUjQ4nfNC2_h1yZqSd7kSr6N8Rvm5Q@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 8 Nov 2024 10:59:59 -0800
+Message-ID: <CAP-5=fV23r-_yVvGP3n5gjH8uZ2rEXmbZEwxr2wF+bpg=m745A@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is provided
+To: Atish Kumar Patra <atishp@rivosinc.com>
+Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ben Gainey <ben.gainey@arm.com>, 
+	Junhao He <hejunhao3@huawei.com>, linux-riscv@lists.infradead.org, beeman@rivosinc.com, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Dominique Martinet <asmadeus@codewreck.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-
-On 11/8/24 6:28 AM, Yeqi Fu wrote:
-> Hi there,
-> A warning is triggered in lib/vsprintf.c due to an unsupported '%' in a format string. This issue occurs in the function format_decode at line 2659 of kernel version 6.12.0-rc3-gb22db8b8befe. A proof-of-concept is available, and I have manually reproduced this bug.
-
-I think the below patch set (not merged yet)
-   https://lore.kernel.org/bpf/20241028195343.2104-1-rabbelkin@mail.ru/
-should fix this issue.
-
+On Fri, Nov 8, 2024 at 10:38=E2=80=AFAM Atish Kumar Patra <atishp@rivosinc.=
+com> wrote:
 >
-> Report:
-> ```
-> Please remove unsupported % in format string
-> WARNING: CPU: 1 PID: 29307 at lib/vsprintf.c:2659 format_decode+0x121a/0x1c00 lib/vsprintf.c:2659
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 29307 Comm: syz.5.9298 Not tainted 6.12.0-rc3-gb22db8b8befe #2
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-> RIP: 0010:format_decode+0x121a/0x1c00 lib/vsprintf.c:2659
-> Code: 8b 9c 24 80 00 00 00 48 89 d8 48 c1 e8 03 42 8a 04 30 84 c0 0f 85 d5 09 00 00 0f b6 33 48 c7 c7 00 bd eb 92 e8 b7 59 67 fc 90 <0f> 0b 90 90 4d 89 f7 48 8b 5c 24 18 e9 d7 fc ff ff 89 d1 80 e1 07
-> RSP: 0018:ffff888041197600 EFLAGS: 00010246
-> RAX: ea46d93351edcc00 RBX: ffff88804119792c RCX: ffff888009a78000
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: ffff8880411976f0 R08: ffffffff8ebc8e3b R09: 1ffff1100d9e515a
-> R10: dffffc0000000000 R11: ffffed100d9e515b R12: ffff0000ffffff00
-> R13: ffff888041197700 R14: dffffc0000000000 R15: dffffc0000000000
-> FS: 00007fbe06321640(0000) GS:ffff88806cf00000(0000) knlGS:0000000000000000
-> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000020a8c000 CR3: 00000000404b6005 CR4: 0000000000370ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
-> <TASK>
-> bstr_printf+0x136/0x1260 lib/vsprintf.c:3232
-> ____bpf_trace_printk kernel/trace/bpf_trace.c:389 [inline]
-> bpf_trace_printk+0x1a1/0x220 kernel/trace/bpf_trace.c:374
-> bpf_prog_7ee8fe4dad0c4460+0x4e/0x50
-> bpf_dispatcher_nop_func include/linux/bpf.h:1257 [inline]
-> __bpf_prog_run include/linux/filter.h:692 [inline]
-> bpf_prog_run include/linux/filter.h:708 [inline]
-> bpf_test_run+0x7a9/0x910 net/bpf/test_run.c:433
-> bpf_prog_test_run_skb+0xc47/0x1750 net/bpf/test_run.c:1094
-> bpf_prog_test_run+0x2df/0x350 kernel/bpf/syscall.c:4247
-> __sys_bpf+0x484/0x850 kernel/bpf/syscall.c:5652
-> __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
-> __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
-> __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xd8/0x1c0 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x67/0x6f
-> RIP: 0033:0x7fbe07ccd72d
-> Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fbe06320f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> RAX: ffffffffffffffda RBX: 00007fbe07ea5f80 RCX: 00007fbe07ccd72d
-> RDX: 0000000000000050 RSI: 0000000020000700 RDI: 000000000000000a
-> RBP: 00007fbe07d57584 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00007fbe07ea5f80 R15: 00007fbe06301000
-> </TASK>
-> irq event stamp: 39314
-> hardirqs last enabled at (39324): [<ffffffff8ed766cb>] __up_console_sem kernel/printk/printk.c:344 [inline]
-> hardirqs last enabled at (39324): [<ffffffff8ed766cb>] __console_unlock+0xfb/0x130 kernel/printk/printk.c:2844
-> hardirqs last disabled at (39335): [<ffffffff8ed766b0>] __up_console_sem kernel/printk/printk.c:342 [inline]
-> hardirqs last disabled at (39335): [<ffffffff8ed766b0>] __console_unlock+0xe0/0x130 kernel/printk/printk.c:2844
-> softirqs last enabled at (38482): [<ffffffff9195aaea>] bpf_test_run+0x31a/0x910
-> softirqs last disabled at (38484): [<ffffffff9195aaea>] bpf_test_run+0x31a/0x910
-> ---[ end trace 0000000000000000 ]---
-> ```
-[...]
+> On Fri, Nov 8, 2024 at 4:16=E2=80=AFAM James Clark <james.clark@linaro.or=
+g> wrote:
+> >
+> >
+> >
+> > On 07/11/2024 18:51, Ian Rogers wrote:
+> > > On Sat, Oct 26, 2024 at 5:18=E2=80=AFAM Ian Rogers <irogers@google.co=
+m> wrote:
+> > >>
+> > >> At the RISC-V summit the topic of avoiding event data being in the
+> > >> RISC-V PMU kernel driver came up. There is a preference for sysfs/JS=
+ON
+> > >> events being the priority when no PMU is provided so that legacy
+> > >> events maybe supported via json. Originally Mark Rutland also
+> > >> expressed at LPC 2023 that doing this would resolve bugs on ARM Appl=
+e
+> > >> M? processors, but James Clark more recently tested this and believe=
+s
+> > >> the driver issues there may not have existed or have been resolved. =
+In
+> > >> any case, it is inconsistent that with a PMU event names avoid legac=
+y
+> > >> encodings, but when wildcarding PMUs (ie without a PMU with the even=
+t
+> > >> name) the legacy encodings have priority.
+> > >>
+> > >> The patch doing this work was reverted in a v6.10 release candidate
+> > >> as, even though the patch was posted for weeks and had been on
+> > >> linux-next for weeks without issue, Linus was in the habit of using
+> > >> explicit legacy events with unsupported precision options on his
+> > >> Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+> > >> where ARM decided to call the events bus_cycles and cycles, the latt=
+er
+> > >> being also a legacy event name. ARM haven't renamed the cycles event
+> > >> to a more consistent cpu_cycles and avoided the problem. With these
+> > >> changes the problematic event will now be skipped, a large warning
+> > >> produced, and perf record will continue for the other PMU events. Th=
+is
+> > >> solution was proposed by Arnaldo.
+> > >>
+> > >> Two minor changes have been added to help with the error message and
+> > >> to work around issues occurring with "perf stat metrics (shadow stat=
+)
+> > >> test".
+> > >>
+> > >> The patches have only been tested on my x86 non-hybrid laptop.
+> > >
+> > > Hi Atish and James,
+> > >
+> > > Could I get your tags for this series?
+> > >
+>
+> Hi Ian,
+> Thanks for your patches. It definitely helps to have a clean slate
+> implementation
+> for the perf tool. However, I have some open questions about other use ca=
+ses
+> that we discussed during the RVI Summit.
+
+Thanks Atish, could I get your acked/reviewed/tested tags?
+
+Ian
+
+> > > The patches were originally motivated by wanting to make the behavior
+> > > of events parsed like "cycles" match that of "cpu/cycles/", the PMU i=
+s
+> > > wildcarded to "cpu" in the first case. This was divergent because of
+> > > ARM we switched from preferring legacy (type =3D PERF_TYPE_HARDWARE,
+> > > config =3D PERF_COUNT_HW_CPU_CYCLES) to sysfs/json (type=3D<core PMU'=
+s
+> > > type>, config=3D<encoding from event>) when a PMU name was given. Thi=
+s
+> > > aligns with RISC-V wanting to use json encodings to avoid complexity
+> > > in the PMU driver.
+> > >
+> >
+> > I couldn't find the thread, but I remember fairly recently it was
+> > mentioned that RISC-V would be supporting the legacy events after all,
+> > maybe it was a comment from Atish? I'm not sure if that changes the
+> > requirements for this or not?
+> >
+> > I still can't really imagine how tooling would work if every tool has t=
+o
+> > maintain the mappings of basic events like instructions and branches.
+> > For example all the perf_event_open tests in ltp use the legacy events.
+> >
+>
+> No it has not changed. While this series helps to avoid clunky vendor
+> specific encodings
+> in the driver for perf tool, I am still unsure how we will manage
+> other applications
+> (directly passing legacy events through perf_event_open or
+> perf_evlist__open) will work.
+>
+> I have only anecdotal data about folks relying perf legacy events
+> directly to profile
+> their application. All of them use mostly cycle/instruction events though=
+.
+> Are there any users who use other legacy events directly without perf too=
+l ?
+>
+> If not, we may have only cycle/instruction mapping in the driver and
+> rely on json for everything else.
+> The other use case is virtualization. I have been playing with these
+> patches to find a clean solution to
+> enable all the use cases. If you have any other ideas, please let me know=
+.
+>
+> > And wouldn't porting existing software to RISC-V would be an issue if i=
+t
+> > doesn't behave in a similar way to what's there already?
+> >
+> > > James, could you show the neoverse with the cmn PMU behavior for perf
+> > > record of "cycles:pp" due to sensitivities there.
+> > >
+> >
+> > Yep I can check this on Monday.
+> >
+> > > Thanks,
+> > > Ian
+> > >
+> >
+> >
+> > >
+> > >
+> > >
+> > >> Ian Rogers (4):
+> > >>    perf evsel: Add pmu_name helper
+> > >>    perf stat: Fix find_stat for mixed legacy/non-legacy events
+> > >>    perf record: Skip don't fail for events that don't open
+> > >>    perf parse-events: Reapply "Prefer sysfs/JSON hardware events ove=
+r
+> > >>      legacy"
+> > >>
+> > >>   tools/perf/builtin-record.c    | 22 +++++++---
+> > >>   tools/perf/util/evsel.c        | 10 +++++
+> > >>   tools/perf/util/evsel.h        |  1 +
+> > >>   tools/perf/util/parse-events.c | 26 +++++++++---
+> > >>   tools/perf/util/parse-events.l | 76 +++++++++++++++++-------------=
+----
+> > >>   tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
+> > >>   tools/perf/util/pmus.c         | 20 +++++++--
+> > >>   tools/perf/util/stat-shadow.c  |  3 +-
+> > >>   8 files changed, 145 insertions(+), 73 deletions(-)
+> > >>
+> > >> --
+> > >> 2.47.0.163.g1226f6d8fa-goog
+> > >>
 
