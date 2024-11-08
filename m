@@ -1,128 +1,203 @@
-Return-Path: <linux-kernel+bounces-402317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584369C2641
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:08:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F18369C2643
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A2C284C0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:08:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6C4284E0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDB61D0F4F;
-	Fri,  8 Nov 2024 20:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E921D014C;
+	Fri,  8 Nov 2024 20:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WPii5cto"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTrJPVMV"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47E81C1F08;
-	Fri,  8 Nov 2024 20:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB971C1F33;
+	Fri,  8 Nov 2024 20:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096518; cv=none; b=PJZA/w2oNNSc6eBtM7QgcJRNHcUWJol3MtdFFncn8BtgIN2sWE4OtHpUmgj4UQ/v5Q/55CDOKHJzvHeAK3azyTVUeaOxVISwpAQ/c9WiJY/u9WUgSXMzm0Y9qw4JXHv08Mon4U02kHleYBu1aO9HcUep6vnttGHLRQlsOFS2heY=
+	t=1731096546; cv=none; b=kLbNYfAgWrB7vrrjB7ztn+rWlaI74wFUT5rNkTYVzUpYBxW4FPTxOh7xtZ4gzddKLC4IQ7dRf4JHAO08WKZvzZlXt4RlR/ZhLCpic2RlLpstYD047tAPwb2qxowtdx2MSMRuLQMBH1MwjBLdXbVOUTknTizU6kIdwVgFkxKKRp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096518; c=relaxed/simple;
-	bh=BAtIgroBAlsvoKNehcDGJXbrxqEbn0HAAWSSvFkJwWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V74unjROtoJe/S0j+hNA5g9aQ6g6ixq8h3UzC5oRqv3ntaqKmbj9cdu2pgQrSRn9Dq0xE2Huyh4B24frqy9iGqcFwsoOXZyFiNtk3aaCWITBhdEBjubOGQtYdP/2zGQEzZxjexTlBQzP+WNv9/3at8bF7XIBDwCTELhDmd7CWX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WPii5cto; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=/ek8CdD57enc0HssxhsqMq6TsdAatE+3OGsK8sqC6bc=; b=WPii5ctojURmzr6uwYdS8rCYAk
-	JluRwP6YHU8SDiadXuPFkUCVIaRspsijUapWPDn5uUivOv4CYU3Lkz8gDicjbYH4mVCH796zx8ijh
-	FbVj8hIJtGIeWzqhcr56QHCMDVCrSroJ5JuEf/cXgzf6ardsjBuZpe9pI9T0Ce8gFbPcmcP3c+m1D
-	clWz5Y3Zqm0INiYHewIRBvm9j3UWlVBF19Bx+xwqQUc8b+hGctj12m1C91SvX6VL25+9n1iq+wJzL
-	v4g4jv1z7uu5Mmva6/bk45xHqzBNPD654WP00nhqynISpzAK39RyMNvkZxTfddX7XV16t25dWqBeU
-	XEQjancw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9VHL-00000009GU9-0wga;
-	Fri, 08 Nov 2024 20:08:24 +0000
-Message-ID: <2b1f6b86-0d56-445e-bed0-1e33b9882d48@infradead.org>
-Date: Fri, 8 Nov 2024 12:08:17 -0800
+	s=arc-20240116; t=1731096546; c=relaxed/simple;
+	bh=cVHXkXl4YfbFHHGVd+O5NWSSdeuYOemYbz9sSO834Rk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jy7L7ni2YOsWrJgKWV3bTQF0VFQXvLYn0sTVD+uMyu60Gp/Op42CkXWcAzChNfbEINq/f41bOI5l3kOSSOs1cCCaFU+ONt9gR8jKlfA8lGJa0CRAg8v9OvAkH1wuCdLxpjp856de/hxsMTIeP2PSCdz3+XSkACi/AZqMXMnkZ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTrJPVMV; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4609c9b39d0so16330491cf.1;
+        Fri, 08 Nov 2024 12:09:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731096544; x=1731701344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NI6P3TUYrkoyoEc/tfD3lrh0bzVj5BXDH9t+6MLHSl4=;
+        b=MTrJPVMVbNXNipptKiCwEY5MpthTkp8uqntGqSpH87rFVOgcEHKiFgTBk4BQRE08ht
+         q7hzRA/uz4sCK0RH4n7NCZFnwAveN/Bk0x463GennLAThjJ0TtXZXr0yxz/YkPNt37+1
+         xg2mNy5fhtd23zgVcfoSa3XAZI9F7hJAI+Bmu3i0vGFxoKlOfmaomsLM1ygwn9EC0ED3
+         4VoSF5wFKlUIuDdS/OrIeXPzXIKrBgS9PiKrXs+MIlH+J+HsUBg47QLp8OvI+fRFLHGC
+         CxnFd3HfsUK6TeE7h34CDEqTpxL5XYRzozPMX3bExGWQ9iyXcBa0UmFkbJ8/GT7ez4kl
+         mufg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731096544; x=1731701344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NI6P3TUYrkoyoEc/tfD3lrh0bzVj5BXDH9t+6MLHSl4=;
+        b=D13Ip0VWPpm1b+AtJK8C4nc7tZubK6ABqi1I5zuGnnQRZcjQpuTyGzF1rT0gOUIRKH
+         qkL2dYG3vmoHo6yfQ4KICT4Fsikmcek6l7xfhbxyxhze+JnRoY5UKLpg2OOWvbN21O1z
+         VrHp9xJ8diHH28VD08WMG6Q6hrV9/TPAA9iSSF6TyLYWxpJy/ispsGCxZr7ePF1xD/3L
+         S9yUKARhgsTdfRX3fZDRyHEb+UlNhzOrK1U2tkP1NFW9P3EX/QFV14E8eYnADmZP8NGU
+         1WzPUE0DTWlAyufDiOlZdJzv+hg7IGdJDbWit7bZDmZv1TBriA9N/s0/nzny0J5+xehw
+         OXyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoDBvbCZGkgnbBa4T8s4iBUfYGi39RzjM9Rt527tyjwnKGfpI9bw4fPyM8O94BWG5IRXbZ2V74xcVtDyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJuXHEMnNh6Y+JH7Z+tOEO0rHYUqe/jIGtg1TZhukPwkxmMv92
+	4UyBf0Uic8RGY3IlhZg+AAq+tcSu/GiD6Hl8UGgA6MWCUl0GlF2O
+X-Google-Smtp-Source: AGHT+IE82TZXwTUiZGRTAp/L5/S3ZlnP1aQ28alBcXNmIEDpLw5fXICy0ok9tKG1jh+N+mTRfrzA/A==
+X-Received: by 2002:ac8:5a91:0:b0:458:23fc:f345 with SMTP id d75a77b69052e-463093ecfdamr48531501cf.38.1731096544010;
+        Fri, 08 Nov 2024 12:09:04 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff47c162sm24151271cf.53.2024.11.08.12.09.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 12:09:03 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	u.kleine-koenig@baylibre.com,
+	tgamblin@baylibre.com,
+	fabrice.gasnier@st.com,
+	benjamin.gaignard@linaro.org,
+	lee@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v2] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
+Date: Fri,  8 Nov 2024 20:09:00 +0000
+Message-Id: <20241108200900.44727-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for unacceptable
- behaviors
-To: Shuah Khan <skhan@linuxfoundation.org>, gregkh@linuxfoundation.org,
- corbet@lwn.net
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams <dan.j.williams@intel.com>
-References: <20241108161853.12325-1-skhan@linuxfoundation.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241108161853.12325-1-skhan@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi--
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
-On 11/8/24 8:18 AM, Shuah Khan wrote:
-> The Code of Conduct committee's goal first and foremost is to bring about
-> change to ensure our community continues to foster respectful discussions.
-> 
-> In the interest of transparency, the CoC enforcement policy is formalized
-> for unacceptable behaviors.
-> 
-> Update the Code of Conduct Interpretation document with the enforcement
-> information.
-> 
-> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Jonathan Corbet <corbet@lwn.net>
-> Acked-by: Steven Rostedt <rostedt@goodmis.org>
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> ---
->  .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
-> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
-> index 66b07f14714c..21dd1cd871d2 100644
-> --- a/Documentation/process/code-of-conduct-interpretation.rst
-> +++ b/Documentation/process/code-of-conduct-interpretation.rst
-> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
->  Because how we interpret and enforce the Code of Conduct will evolve over
->  time, this document will be updated when necessary to reflect any
->  changes.
-> +
-> +Enforcement for Unacceptable Behavior Code of Conduct Violations
-> +----------------------------------------------------------------
-> +
-> +The Code of Conduct committee works to ensure that our community continues
-> +to be inclusive and fosters diverse discussions and viewpoints, and works
-> +to improve those characteristics over time. The Code of Conduct committee
-> +takes measures to restore productive and respectful collaboration when an
-> +unacceptable behavior has negatively impacted that relationship.
-> +
-> +Seek public apology for the violation
-> +*************************************
-> +
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
-According to Documentation/doc-guide/sphinx.rst, kernel documentation tries to
-use "~~~~~~~~~~~~~~~~~~~" for subsections (not "******************").
+v1 -> v2:
 
-This is not enforced -- it's more of a guideline.
+1. Remove unsuitable dev_err_probe().
+---
+ drivers/iio/trigger/stm32-timer-trigger.c | 32 ++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 7 deletions(-)
 
-Thanks.
-
+diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
+index 0684329956d9..e1e077122f73 100644
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -119,7 +119,7 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 			     unsigned int frequency)
+ {
+ 	unsigned long long prd, div;
+-	int prescaler = 0;
++	int prescaler = 0, ret;
+ 	u32 ccer;
+ 
+ 	/* Period and prescaler values depends of clock rate */
+@@ -153,7 +153,11 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 	mutex_lock(&priv->lock);
+ 	if (!priv->enabled) {
+ 		priv->enabled = true;
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret) {
++			mutex_unlock(&priv->lock);
++			return ret;
++		}
+ 	}
+ 
+ 	regmap_write(priv->regmap, TIM_PSC, prescaler);
+@@ -307,7 +311,7 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 	struct stm32_timer_trigger *priv = dev_get_drvdata(dev);
+ 	struct iio_trigger *trig = to_iio_trigger(dev);
+ 	u32 mask, shift, master_mode_max;
+-	int i;
++	int i, ret;
+ 
+ 	if (stm32_timer_is_trgo2_name(trig->name)) {
+ 		mask = TIM_CR2_MMS2;
+@@ -326,7 +330,11 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 			if (!priv->enabled) {
+ 				/* Clock should be enabled first */
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret) {
++					mutex_unlock(&priv->lock);
++					return ret;
++				}
+ 			}
+ 			regmap_update_bits(priv->regmap, TIM_CR2, mask,
+ 					   i << shift);
+@@ -482,6 +490,7 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 				   int val, int val2, long mask)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
++	int ret;
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+@@ -496,7 +505,11 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 		if (val) {
+ 			if (!priv->enabled) {
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret) {
++					mutex_unlock(&priv->lock);
++					return ret;
++				}
+ 			}
+ 			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
+ 		} else {
+@@ -601,7 +614,7 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 				 unsigned int mode)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
+-	int sms = stm32_enable_mode2sms(mode);
++	int sms = stm32_enable_mode2sms(mode), ret;
+ 
+ 	if (sms < 0)
+ 		return sms;
+@@ -611,7 +624,12 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 	 */
+ 	mutex_lock(&priv->lock);
+ 	if (sms == 6 && !priv->enabled) {
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret) {
++			mutex_unlock(&priv->lock);
++			return ret;
++		}
++
+ 		priv->enabled = true;
+ 	}
+ 	mutex_unlock(&priv->lock);
 -- 
-~Randy
+2.25.1
 
 
