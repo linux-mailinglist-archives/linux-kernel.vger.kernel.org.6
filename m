@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-401549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05D49C1C27
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:26:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F379C1C25
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA9F2859AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A872285150
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633901E3DFF;
-	Fri,  8 Nov 2024 11:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8697D1E47A1;
+	Fri,  8 Nov 2024 11:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f2cThlHc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZIDgS/2"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E3E1E32CE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EF11E3DCD;
+	Fri,  8 Nov 2024 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731065170; cv=none; b=fn1uIvNvabz27F3lJDc/b2O/fFN/9ulClhydUgXtmzaHDmA8QIYyc0mHPGYwgGLBU9LJIXKs/wbg81pTJsaxBf48U1nlOyP943Im5+5pJ19GnzvpIyBv3JiRkw3+Mdwsx4ewr+vdJuAx7xxuInJUwYLuOLiu/7Un5UCfunZygio=
+	t=1731065114; cv=none; b=BU+iZEHlHDZjB4clD5iabORKgJj1x5A27YxsW3twDhK6+dXaREwEe0girB5eT+W6FKCqQVDh23NaixFIzwNWRUJIGjkxm9OvWxdkMzbAZrt2tRiMpFO8/yK6aobZKfho8KUOzo63qPlVRnPm90yxV0o7qNEIR3YMAHEU0vdBHys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731065170; c=relaxed/simple;
-	bh=0+ge+/Rcb9ZiQmSIKTsHdoYQ1uzdC64gDpNAib8hkwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAyxLfOGTsDSgx8LzFz/BNEpzTyc0PMNnzqYd89PMR/3lVnOoq+Ro6EpVbFroTfAZANSxCScpbvm4hVhDWH9xnEw1c+qwyvyxT9p/O/FGePvE7/FqVQByuCr9dM2VhDnv5879eoCSkUQsKCOnyhfEmh8YN8DPp5dRSoux/LI9n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f2cThlHc; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731065169; x=1762601169;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0+ge+/Rcb9ZiQmSIKTsHdoYQ1uzdC64gDpNAib8hkwQ=;
-  b=f2cThlHcoJHB+JzffHfZ6s14AQXdOj4dOhvkE1E/H+xk7BGMsJTudpKU
-   6gc1k0j6mtURV1kGoDkd3+7O+ALg+GU94AvR2v9QzKUJeAMpc5J7Q6bSe
-   H6PMZamDsEFlfvbAU4LVnrbiWhgmRJsP7BSXQVCXqUDm9Edbej/hxs2Q6
-   VNiEnScXn1wNs+aX4zHRMKonMcbKxbuva6lJGPzfMUXyTDadZFQ9EbmLO
-   5uG1PqxBAF7nDCG4jRR4cvXpSjsoYFwOJzKMNiO7/2ua5QXsTcHiUgfN0
-   2C76SYLTSAom2u11n1TRpdHNkdL8NCiw8SmhpSti8QB24Set4D1h94dJj
-   w==;
-X-CSE-ConnectionGUID: zhslKwrKTsGQHsmJF61wdQ==
-X-CSE-MsgGUID: 4H47PeukSgyJtDecfDFXrw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30799747"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30799747"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 03:26:08 -0800
-X-CSE-ConnectionGUID: BoVfgHG/Sqi/BuIE1Z8Fmw==
-X-CSE-MsgGUID: FZWxUu/5SAy/9TGBziW+lw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="90652907"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2024 03:26:00 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9N7m-000rMS-1T;
-	Fri, 08 Nov 2024 11:25:58 +0000
-Date: Fri, 8 Nov 2024 19:25:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
-	hughd@google.com
-Cc: oe-kbuild-all@lists.linux.dev, willy@infradead.org, david@redhat.com,
-	wangkefeng.wang@huawei.com, 21cnbao@gmail.com, ryan.roberts@arm.com,
-	ioworker0@gmail.com, da.gomez@samsung.com,
-	baolin.wang@linux.alibaba.com, linux-mm@kvack.org,
+	s=arc-20240116; t=1731065114; c=relaxed/simple;
+	bh=oorU9etKZz31ATOvsE2qkwWf0ZAysP4RE7tBX3sYQJ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=psUAkZF7eU6ePU3fsGhnZIeMIrFjIasnN/G4SzemzOrrkgaM7XdztSUY5CgZ5VY7SQ3dGaCfIkDgzZjKEgDO4PwXw0EbE8b01RrML47FB5CJVEMdAPkaXARMWno8Gq7WsVR+9u52Uh5GzWyiWuGRFDXbSh1pPcK6+9wMx82ZJ9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZIDgS/2; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314f38d274so23726985e9.1;
+        Fri, 08 Nov 2024 03:25:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731065110; x=1731669910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lPPN5xIzS/w8CYU5eR0ocFrGPTZX7vjfWAjdag9gQtg=;
+        b=UZIDgS/2nA5OyA9Jz3qpxw+wBnjTwp3U6JD8dWfpS5Ze2SYbiKK8//1ZMn9smn2kbd
+         +6fyrzhcNPH2dDmSfQl6KN6B7HI8PmMdfx5SrFFyCRB2sqzSXYGlZqyKSOfXRUD6NwOZ
+         udZRDmxPnehT83lFluiY6E7Yti37oy14joHJ7NKGH7LzXXpF47PbgEG/M/yBFrI4pCAu
+         je2rb8o5TkiUKL8DAWJfN3Qp8fZXQPFcdxpBC9oUdyD905sLSZAS4AGENm12RKAhcYe6
+         3uGiRjdSwn/I+nkMeTWsowEp/iHqWQ0KYaucLPvSM5vATOw2m15A5j7+rMrgPEZyUWVv
+         mTWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731065110; x=1731669910;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lPPN5xIzS/w8CYU5eR0ocFrGPTZX7vjfWAjdag9gQtg=;
+        b=EOR+8ZBoIHYm4bomZWJXeJCpjwz2BhdMoK2KAZkVqwYlDEWB/RD5OVpBhzB3mVUrqv
+         XX4qto0bBjgQO/ylXi7MXnsZFotGyLC4DdIqayJd5eriIyn3E0iYGSVjfZbyvN97kzqr
+         ZnVBSn0Dw3rQXM/dpd9oh5gbfKiVplFwnMK0E0/dF0ro9JB/EncLBHL96tNfM43gAirH
+         o66tZWt0bwd1WqElRLYO9ZOUK/jCRz+E5+/tB6nBGO9r6tQS4orb5cjCKFDYRtzPYe/t
+         rlddFQizeF+JS7a1S6zPJTyDkU+aU9AX7RWcv1vMUF9asR38jG1g4KzaYZaxR4q62YXR
+         onbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUypt+VXLoIT1rKKEkMZUVN0RtY1LH2F3NNMy2EsC+qhxwjAipLjG/NoxrAt/0YfY9Ws3vcYBprxw==@vger.kernel.org, AJvYcCVkcEDXDVIoQSFOTblgQ+iIxa/SRAOdwgM9LUbHidJ0q3wh9F6Hogpkjgmvby+YTEEJO7wNaeUxqTWlL0Ck@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0HoWC2rAnYEr+4F63oAIVFr27GAeSWMDk6lrqVt/xBOfDpxKe
+	1cHngyhCW6+0joSVQnMlnnBr/6GKYv6Fqp+x26gV7uFO+CeLwOqN
+X-Google-Smtp-Source: AGHT+IGtCu/powZ0rYyIfXvvEAudEgsxmtLbffeMfZB/PaBUVK7ffLSIvMWZ1WHorKPrLM/ll51prQ==
+X-Received: by 2002:a05:600c:19c8:b0:431:4847:47c0 with SMTP id 5b1f17b1804b1-432b74fec2emr22646035e9.7.1731065110415;
+        Fri, 08 Nov 2024 03:25:10 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e8dsm100926605e9.6.2024.11.08.03.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 03:25:10 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Tyler Hicks <code@tyhicks.com>,
+	Christian Brauner <brauner@kernel.org>,
+	ecryptfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mm: shmem: add large folio support for tmpfs
-Message-ID: <202411081926.LQ3wEK7l-lkp@intel.com>
-References: <e2f4e483f75e54be0654fafb2147822faacac16d.1731038280.git.baolin.wang@linux.alibaba.com>
+Subject: [PATCH][next] ecryptfs: Fix spelling mistake "validationg" -> "validating"
+Date: Fri,  8 Nov 2024 11:25:09 +0000
+Message-Id: <20241108112509.109891-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e2f4e483f75e54be0654fafb2147822faacac16d.1731038280.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Baolin,
+There is a spelling mistake in an error message literal string. Fix it.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/ecryptfs/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on next-20241108]
-[cannot apply to linus/master v6.12-rc6]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Baolin-Wang/mm-factor-out-the-order-calculation-into-a-new-helper/20241108-121545
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/e2f4e483f75e54be0654fafb2147822faacac16d.1731038280.git.baolin.wang%40linux.alibaba.com
-patch subject: [PATCH 3/4] mm: shmem: add large folio support for tmpfs
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241108/202411081926.LQ3wEK7l-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411081926.LQ3wEK7l-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411081926.LQ3wEK7l-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/shmem.c:567: warning: Function parameter or struct member 'write_end' not described in 'shmem_mapping_size_orders'
->> mm/shmem.c:567: warning: Excess function parameter 'size' description in 'shmem_mapping_size_orders'
-
-
-vim +567 mm/shmem.c
-
-   551	
-   552	/**
-   553	 * shmem_mapping_size_orders - Get allowable folio orders for the given file size.
-   554	 * @mapping: Target address_space.
-   555	 * @index: The page index.
-   556	 * @size: The suggested size of the folio to create.
-   557	 *
-   558	 * This returns a high order for folios (when supported) based on the file size
-   559	 * which the mapping currently allows at the given index. The index is relevant
-   560	 * due to alignment considerations the mapping might have. The returned order
-   561	 * may be less than the size passed.
-   562	 *
-   563	 * Return: The orders.
-   564	 */
-   565	static inline unsigned int
-   566	shmem_mapping_size_orders(struct address_space *mapping, pgoff_t index, loff_t write_end)
- > 567	{
-   568		unsigned int order;
-   569		size_t size;
-   570	
-   571		if (!mapping_large_folio_support(mapping) || !write_end)
-   572			return 0;
-   573	
-   574		/* Calculate the write size based on the write_end */
-   575		size = write_end - (index << PAGE_SHIFT);
-   576		order = filemap_get_order(size);
-   577		if (!order)
-   578			return 0;
-   579	
-   580		/* If we're not aligned, allocate a smaller folio */
-   581		if (index & ((1UL << order) - 1))
-   582			order = __ffs(index);
-   583	
-   584		order = min_t(size_t, order, MAX_PAGECACHE_ORDER);
-   585		return order > 0 ? BIT(order + 1) - 1 : 0;
-   586	}
-   587	
-
+diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
+index c9aa80e534c2..8dd1d7189c3b 100644
+--- a/fs/ecryptfs/main.c
++++ b/fs/ecryptfs/main.c
+@@ -451,7 +451,7 @@ static int ecryptfs_get_tree(struct fs_context *fc)
+ 	mount_crypt_stat = &sbi->mount_crypt_stat;
+ 	rc = ecryptfs_validate_options(fc);
+ 	if (rc) {
+-		err = "Error validationg options";
++		err = "Error validating options";
+ 		goto out;
+ 	}
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
