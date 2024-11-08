@@ -1,302 +1,158 @@
-Return-Path: <linux-kernel+bounces-402079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269A29C2356
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:37:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380909C239B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA731C23175
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692951C23AC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5631AA1E0;
-	Fri,  8 Nov 2024 17:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E5221FDA2;
+	Fri,  8 Nov 2024 17:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYhI/IQi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Fohz+Qnn"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F701AA1CD;
-	Fri,  8 Nov 2024 17:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C881E220D50
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087231; cv=none; b=YN6Vzyi2iNSj6f7gKvbyDmclV0Q1jx92FLZz+IPelouF19lDYGpFvz8BQbLIsJKPsd1Co0khCH7+woFMubbz2pF3OL2NlLlwit0HyacDQFJpftsFqoL+GyO+MTSSCbUr3kf4lFyUMg1/uBBPPKyl7KTBo1V9OwVTJnzqrpLsHq8=
+	t=1731087297; cv=none; b=qdkTpQX/OWng30eJj/1MjLn5ZN7thec/kv2af3acJAUV/vH1/WfDj5GXh33QpXYp39tiHf3R8JYgs4Le0ne7rl+WyBHNfWPOC2qKlcr70CcoSfz7LIswmuZ51c4dqnzbc6mkMiXqBDo9NFzsKdQGg1cRu4awS5s01B9u+l6/I2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087231; c=relaxed/simple;
-	bh=U5J1HmfJsWmud23RBXlyYA8mRtwKa7CaZ254KKiPaio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pwdx4wjNxBHWZdmdW4acTBE+RQHsFAVfCOU14H6YqU8bg9KBZdDLIzltku5du409+zRaoBJ6Nx2X8w8saRRReDrKR8lXXNsDvb7lI6pPI3vz7jMd6N1vg4ydVrw31598ByHYxUdI8RGzNdzc97fsOGkgdbik2nX6SN8T8UgeNLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYhI/IQi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C8A1C4CED9;
-	Fri,  8 Nov 2024 17:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731087231;
-	bh=U5J1HmfJsWmud23RBXlyYA8mRtwKa7CaZ254KKiPaio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYhI/IQiTwP+svRp9j6ppeDtUjiZbL+XIVA8SFmxzZXTL+6Y8I9WcltJCTbN8MBM6
-	 TdJI0vR4tRR2cRB98Hvw2ep5PeJ9YhwQHJS+Aak9JpZRypAWFDR8xeLuZOSbxLVQAx
-	 GZQKtIdJzyJHT7THgFXN1JvGtT/td339FW18Vz8P39l10RXarGv1vy3RYVQWP9r3XM
-	 WgQ8PVfxU6h8SrnVDvHRU9EaUciHhPkQTOzxIMzT7Oo7mrBYnzgLAl0Wrk+UD9eCEI
-	 +OXS79c/n9QJYzfw8aiWs5Nv5tgva46uSpuu/YUgcfAf9zoVZ4a+pcs+A6nXuCHPTp
-	 a4HSaA3Ko9SBg==
-Date: Fri, 8 Nov 2024 09:33:47 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Kajol Jain <kjain@linux.ibm.com>, Atish Patra <atishp@rivosinc.com>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Anup Patel <anup@brainfault.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v3 04/20] perf disasm: Add e_machine/e_flags to struct
- arch
-Message-ID: <Zy5Le-xn4gzQ2WLo@google.com>
-References: <20241017002520.59124-1-irogers@google.com>
- <20241017002520.59124-5-irogers@google.com>
+	s=arc-20240116; t=1731087297; c=relaxed/simple;
+	bh=m77clOypg5Bb/p6J91Pp5cNEQ360BjUrerAGfHRmROU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=b0c9lYiJC7sKBSQ5WoOjVATZcKTmLCd2Kyh8UvHKYs88D206QXos2GvkmunKxSJ/EntaY9TCmTh3lK41uTQve+6dseF2vgqk/UWmjewjz9pQDXEsOtFg+x9tAO+/svmX/q1yy2JzhzqPn0nE5UHdcUBLFKNelrsOP2QSghJ3F+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Fohz+Qnn; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([92.33.209.142])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A8HYNHV1690340
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 8 Nov 2024 09:34:26 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A8HYNHV1690340
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1731087267;
+	bh=rOuuF4jpluR9N/k0kAaAWHUMFnZhlKp7iRd4kN/VJpo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Fohz+Qnn54Hjr9ErA1GDOIasHQsk39D+34OyXQDogYwJU6IswLzrxYM+o/u2E9+15
+	 aaS+kqnoB+C1NcC5g9s/nbWgyfmdzD885ql/rQ6YJ8oUQ6wVXsmdKzd3QarBmlDByk
+	 t0zynKjfKYB0GDwwzNiJKT8WO1svMLgtHzBGDfO5ouZ5TQTQCNoMVFUjEAukpjmwdu
+	 aVS/jN6kWawpSJIs3YZrT8eUdnlE/8BRfqL9+a84CN8VSjMFeMpcb1nm1MPYOh4+ch
+	 ZaHzIbTFCfI+mq7njTjwN3rcJN7we10AOe6Ih9CWbkPtnCvHSGzEedfBVfl8oZmVdh
+	 Nuy8HFzISe3tw==
+Date: Fri, 08 Nov 2024 18:34:15 +0100
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Nathan Chancellor <nathan@kernel.org>
+CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_1/1=5D_x86/cpu=3A_Make_sure_fl?=
+ =?US-ASCII?Q?ag=5Fis=5Fchangeable=5Fp=28=29_is_always_being_used?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241108172920.GB2564051@thelio-3990X>
+References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com> <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com> <Zy4xHC3MCtAqlSxy@smile.fi.intel.com> <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com> <20241108172920.GB2564051@thelio-3990X>
+Message-ID: <106B0D31-F58E-49EA-9FEC-5573B684ACC7@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241017002520.59124-5-irogers@google.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 16, 2024 at 05:25:04PM -0700, Ian Rogers wrote:
-> Currently functions like get_dwarf_regnum only work with the host
-> architecture. Carry the elf machine and flags in struct arch so that
-> in disassembly these can be used to allow cross platform disassembly.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/arch/arc/annotate/instructions.c       | 2 ++
->  tools/perf/arch/arm/annotate/instructions.c       | 2 ++
->  tools/perf/arch/arm64/annotate/instructions.c     | 2 ++
->  tools/perf/arch/csky/annotate/instructions.c      | 7 ++++++-
->  tools/perf/arch/loongarch/annotate/instructions.c | 2 ++
->  tools/perf/arch/mips/annotate/instructions.c      | 2 ++
->  tools/perf/arch/powerpc/annotate/instructions.c   | 2 ++
->  tools/perf/arch/riscv64/annotate/instructions.c   | 2 ++
->  tools/perf/arch/s390/annotate/instructions.c      | 2 ++
->  tools/perf/arch/sparc/annotate/instructions.c     | 2 ++
->  tools/perf/arch/x86/annotate/instructions.c       | 3 ++-
->  tools/perf/util/disasm.h                          | 4 ++++
->  12 files changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/arch/arc/annotate/instructions.c b/tools/perf/arch/arc/annotate/instructions.c
-> index 2f00e995c7e3..e5619770a1af 100644
-> --- a/tools/perf/arch/arc/annotate/instructions.c
-> +++ b/tools/perf/arch/arc/annotate/instructions.c
-> @@ -5,5 +5,7 @@ static int arc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  {
->  	arch->initialized = true;
->  	arch->objdump.comment_char = ';';
-> +	arch->e_machine = EM_ARC;
-> +	arch->e_flags = 0;
->  	return 0;
->  }
-> diff --git a/tools/perf/arch/arm/annotate/instructions.c b/tools/perf/arch/arm/annotate/instructions.c
-> index 2ff6cedeb9c5..cf91a43362b0 100644
-> --- a/tools/perf/arch/arm/annotate/instructions.c
-> +++ b/tools/perf/arch/arm/annotate/instructions.c
-> @@ -53,6 +53,8 @@ static int arm__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  	arch->associate_instruction_ops   = arm__associate_instruction_ops;
->  	arch->objdump.comment_char	  = ';';
->  	arch->objdump.skip_functions_char = '+';
-> +	arch->e_machine = EM_ARM;
-> +	arch->e_flags = 0;
->  	return 0;
->  
->  out_free_call:
-> diff --git a/tools/perf/arch/arm64/annotate/instructions.c b/tools/perf/arch/arm64/annotate/instructions.c
-> index f86d9f4798bd..d465d093e7eb 100644
-> --- a/tools/perf/arch/arm64/annotate/instructions.c
-> +++ b/tools/perf/arch/arm64/annotate/instructions.c
-> @@ -113,6 +113,8 @@ static int arm64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  	arch->associate_instruction_ops   = arm64__associate_instruction_ops;
->  	arch->objdump.comment_char	  = '/';
->  	arch->objdump.skip_functions_char = '+';
-> +	arch->e_machine = EM_AARCH64;
-> +	arch->e_flags = 0;
->  	return 0;
->  
->  out_free_call:
-> diff --git a/tools/perf/arch/csky/annotate/instructions.c b/tools/perf/arch/csky/annotate/instructions.c
-> index 5337bfb7d5fc..14270311d215 100644
-> --- a/tools/perf/arch/csky/annotate/instructions.c
-> +++ b/tools/perf/arch/csky/annotate/instructions.c
-> @@ -43,6 +43,11 @@ static int csky__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  	arch->initialized = true;
->  	arch->objdump.comment_char = '/';
->  	arch->associate_instruction_ops = csky__associate_ins_ops;
-> -
-> +	arch->e_machine = EM_CSKY;
-> +#if defined(__CSKYABIV2__)
-> +	arch->e_flags = EF_CSKY_ABIV2;
-> +#else
-> +	arch->e_flags = EF_CSKY_ABIV1;
-> +#endif
+On November 8, 2024 6:29:20 PM GMT+01:00, Nathan Chancellor <nathan@kernel=
+=2Eorg> wrote:
+>On Fri, Nov 08, 2024 at 04:48:16PM +0100, H=2E Peter Anvin wrote:
+>> On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy=2Eshe=
+vchenko@linux=2Eintel=2Ecom> wrote:
+>> >On Fri, Nov 08, 2024 at 04:35:17PM +0100, H=2E Peter Anvin wrote:
+>> >> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy=2E=
+shevchenko@linux=2Eintel=2Ecom> wrote:
+>> >
+>> >> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused s=
+tatic
+>> >> >inline functions for W=3D1 build")=2E
+>> >
+>> >^^^ (1)
+>> >
+>> >> Looks good to me:
+>> >>=20
+>> >> Reviewed-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
+>> >
+>> >Thank you!
+>> >
+>> >> But another question: why the hell does clang complain about an unus=
+ed static inline function?!
+>> >
+>> >Does (1) shed a bit of light to this?
+>> >
+>>=20
+>> How on earth is that supposed to work?! We have static inline functions=
+ in headers all over the place that are only used in certain circumstances=
+=2E=20
+>>=20
+>> Is this a good thing, really? Or is it noise?
+>
+>Did you read the commit message of 6863f5643dd7 or just the title?
+>
+>The difference between Clang and GCC is only around static inline
+>function in =2Ec files, not =2Eh files=2E
+>
+>  $ cat test=2Eh
+>  static inline void unused_inline_in_h(void) {}
+>
+>  $ cat test=2Ec
+>  #include "test=2Eh"
+>
+>  static inline void unused_inline_in_c(void) {}
+>
+>  static void unused_in_c(void) {}
+>
+>  $ gcc -Wall -c -o /dev/null test=2Ec
+>  test=2Ec:5:13: warning: =E2=80=98unused_in_c=E2=80=99 defined but not u=
+sed [-Wunused-function]
+>      5 | static void unused_in_c(void) {}
+>        |             ^~~~~~~~~~~
+>
+>  $ clang -fsyntax-only -Wall test=2Ec
+>  test=2Ec:3:20: warning: unused function 'unused_inline_in_c' [-Wunused-=
+function]
+>      3 | static inline void unused_inline_in_c(void) {}
+>        |                    ^~~~~~~~~~~~~~~~~~
+>  test=2Ec:5:13: warning: unused function 'unused_in_c' [-Wunused-functio=
+n]
+>      5 | static void unused_in_c(void) {}
+>        |             ^~~~~~~~~~~
+>  2 warnings generated=2E
+>
+>I do not think there are too many instances of unused static inline
+>functions in =2Ec files but Andy might be able to speak more around how
+>many instances he has had to fix across the tree=2E I can see how this
+>difference can be useful for catching dead code and maybe even making
+>code cleaner but if it proves to be too much of an annoyance for the
+>wider community, we could potentially discuss reverting 6863f5643dd7=2E
+>
+>Cheers,
+>Nathan
 
-By moving this into the general code, it should take care of old systems
-that doesn't have the macro.
+I'm on the road traveling and have limited ability to look things up at th=
+e moment=2E=20
 
-  In file included from util/disasm.c:109:                                        
-  /linux/tools/perf/arch/csky/annotate/instructions.c: In function 'csky__annotate_init':
-  /linux/tools/perf/arch/csky/annotate/instructions.c:50:25: error: 'EF_CSKY_ABIV1' undeclared (first use in this function)
-     50 |         arch->e_flags = EF_CSKY_ABIV1;                                  
-        |                         ^~~~~~~~~~~~~                                   
-  /linux/tools/perf/arch/csky/annotate/instructions.c:50:25: note: each undeclared identifier is reported only once for each function it appears in
-
-Also, I think __CSKYABIV2__ is defined only when the host is csky.  So
-it'll use ABI v1 on cross env.  I'm not sure if it's a problem.  We may
-need to save the ABI somewhere in the metadata later.
-
-Thanks,
-Namhyung
-
-
->  	return 0;
->  }
-> diff --git a/tools/perf/arch/loongarch/annotate/instructions.c b/tools/perf/arch/loongarch/annotate/instructions.c
-> index ab43b1ab51e3..70262d5f1444 100644
-> --- a/tools/perf/arch/loongarch/annotate/instructions.c
-> +++ b/tools/perf/arch/loongarch/annotate/instructions.c
-> @@ -131,6 +131,8 @@ int loongarch__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->associate_instruction_ops = loongarch__associate_ins_ops;
->  		arch->initialized = true;
->  		arch->objdump.comment_char = '#';
-> +		arch->e_machine = EM_LOONGARCH;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/mips/annotate/instructions.c b/tools/perf/arch/mips/annotate/instructions.c
-> index 340993f2a897..b50b46c613d6 100644
-> --- a/tools/perf/arch/mips/annotate/instructions.c
-> +++ b/tools/perf/arch/mips/annotate/instructions.c
-> @@ -40,6 +40,8 @@ int mips__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->associate_instruction_ops = mips__associate_ins_ops;
->  		arch->initialized = true;
->  		arch->objdump.comment_char = '#';
-> +		arch->e_machine = EM_MIPS;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
-> index 54478cf5cccc..ca567cfdcbdb 100644
-> --- a/tools/perf/arch/powerpc/annotate/instructions.c
-> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
-> @@ -309,6 +309,8 @@ static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->associate_instruction_ops = powerpc__associate_instruction_ops;
->  		arch->objdump.comment_char      = '#';
->  		annotate_opts.show_asm_raw = true;
-> +		arch->e_machine = EM_PPC;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/riscv64/annotate/instructions.c b/tools/perf/arch/riscv64/annotate/instructions.c
-> index 869a0eb28953..55cf911633f8 100644
-> --- a/tools/perf/arch/riscv64/annotate/instructions.c
-> +++ b/tools/perf/arch/riscv64/annotate/instructions.c
-> @@ -28,6 +28,8 @@ int riscv64__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->associate_instruction_ops = riscv64__associate_ins_ops;
->  		arch->initialized = true;
->  		arch->objdump.comment_char = '#';
-> +		arch->e_machine = EM_RISCV;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/s390/annotate/instructions.c b/tools/perf/arch/s390/annotate/instructions.c
-> index eeac25cca699..c61193f1e096 100644
-> --- a/tools/perf/arch/s390/annotate/instructions.c
-> +++ b/tools/perf/arch/s390/annotate/instructions.c
-> @@ -166,6 +166,8 @@ static int s390__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  			if (s390__cpuid_parse(arch, cpuid))
->  				err = SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING;
->  		}
-> +		arch->e_machine = EM_S390;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return err;
-> diff --git a/tools/perf/arch/sparc/annotate/instructions.c b/tools/perf/arch/sparc/annotate/instructions.c
-> index 2614c010c235..68c31580ccfc 100644
-> --- a/tools/perf/arch/sparc/annotate/instructions.c
-> +++ b/tools/perf/arch/sparc/annotate/instructions.c
-> @@ -163,6 +163,8 @@ static int sparc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->initialized = true;
->  		arch->associate_instruction_ops = sparc__associate_instruction_ops;
->  		arch->objdump.comment_char = '#';
-> +		arch->e_machine = EM_SPARC;
-> +		arch->e_flags = 0;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/x86/annotate/instructions.c b/tools/perf/arch/x86/annotate/instructions.c
-> index c869abe3c31d..ae94b1f0b9cc 100644
-> --- a/tools/perf/arch/x86/annotate/instructions.c
-> +++ b/tools/perf/arch/x86/annotate/instructions.c
-> @@ -202,7 +202,8 @@ static int x86__annotate_init(struct arch *arch, char *cpuid)
->  		if (x86__cpuid_parse(arch, cpuid))
->  			err = SYMBOL_ANNOTATE_ERRNO__ARCH_INIT_CPUID_PARSING;
->  	}
-> -
-> +	arch->e_machine = EM_X86_64;
-> +	arch->e_flags = 0;
->  	arch->initialized = true;
->  	return err;
->  }
-> diff --git a/tools/perf/util/disasm.h b/tools/perf/util/disasm.h
-> index 486c269b29ba..c135db2416b5 100644
-> --- a/tools/perf/util/disasm.h
-> +++ b/tools/perf/util/disasm.h
-> @@ -44,6 +44,10 @@ struct arch {
->  				struct data_loc_info *dloc, Dwarf_Die *cu_die,
->  				struct disasm_line *dl);
->  #endif
-> +	/** @e_machine: ELF machine associated with arch. */
-> +	unsigned int e_machine;
-> +	/** @e_flags: Optional ELF flags associated with arch. */
-> +	unsigned int e_flags;
->  };
->  
->  struct ins {
-> -- 
-> 2.47.0.105.g07ac214952-goog
-> 
+However, in =2Ec files the value becomes very very small: in =2Eh files an=
+ unused inline becomes a drag on compile time because it effects a number o=
+f compilation units, but for a =2Ec file it is just one=2E
 
