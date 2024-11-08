@@ -1,231 +1,193 @@
-Return-Path: <linux-kernel+bounces-401597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1420E9C1CBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:17:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F839C1CBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:17:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C572842EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E63E284223
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:17:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768191E7C13;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE781E47CC;
 	Fri,  8 Nov 2024 12:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S9mL2cEJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wwpsiSV/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="S9mL2cEJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wwpsiSV/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sLGL7xCd"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B391E47C9;
-	Fri,  8 Nov 2024 12:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E86C7B3E1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731068209; cv=none; b=l6G0xhDIQ2XVnFX7uibTke3oUAGG2uL5le5Ziv2KRyAJkrw1MpIV2bHdLWE+iEosD9oRK18X9dB1NFDZbE0N7Q00b+yjGwAb/YeKHft/coJsxBduq6/Y6P+AtqOzWPQHQfu7ATdEIJRuKnvAACHwM9IEtDkgBU+FPCcViFcHfQI=
+	t=1731068209; cv=none; b=FqfLm2a8YaaczuQYFt/kFPTL/t9DjIpL9+sLt9LY03haWxmWexrubuHeJpFHoLI9uJfjCE51oR4bxfv/o0OzQMd/T1g/8MvKqhNso1WjVH72UL4DW5S4bLi+IeTVd1LMxRCV7mVlB6vt7ra3VrFUSI4X2U6D4tHL8f53PehdNOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731068209; c=relaxed/simple;
-	bh=gjsTU5zrQ2zDUzbpfpsWBcPtapZeAHmaHA/k5xZZjSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QGXVZrSAK1ojaA8dM0KKqJnRRPs402rltqHgnKXoObdVoE+4J0gVoMtvF3518KYB0HVJi+od4x/VOletLsdWExpLL6Ecz2aFRz1S4S3JtcqtZacg99fyEXdmHJoep1NqFwBIY5NAfKeMAEMDBvQL4PZNgqFH6BNdHNLPKXDmHB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S9mL2cEJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wwpsiSV/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=S9mL2cEJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wwpsiSV/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 17D231F785;
-	Fri,  8 Nov 2024 12:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=S9mL2cEJkNNnEiEL3O/eZ6Okc6Qel2vQTfa+01vkf4+7o3HV1du/VFgWSRPT0oPGZJbVm5
-	DkPPAw7dLEHflqyYphZWQrzp+K3Cp1JIPqVpEuquamBSZla3dVMvnH7Zkllt1NsAbZ4pUE
-	UPV52CdFzy6LO7NsgUYdlKniZcYg/Z0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=wwpsiSV/GCAAjs5bqw4PVE0jVqEt4SHhQ3b6USWoIo0uUUYYPVXhXItBPSGP4Je9q/Gjcx
-	4rtO1oYqSMga3EDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731068206; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=S9mL2cEJkNNnEiEL3O/eZ6Okc6Qel2vQTfa+01vkf4+7o3HV1du/VFgWSRPT0oPGZJbVm5
-	DkPPAw7dLEHflqyYphZWQrzp+K3Cp1JIPqVpEuquamBSZla3dVMvnH7Zkllt1NsAbZ4pUE
-	UPV52CdFzy6LO7NsgUYdlKniZcYg/Z0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731068206;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=91wz85Kq4u2M5I6//x2vL50txoQXie6q+0zeeFpP5HM=;
-	b=wwpsiSV/GCAAjs5bqw4PVE0jVqEt4SHhQ3b6USWoIo0uUUYYPVXhXItBPSGP4Je9q/Gjcx
-	4rtO1oYqSMga3EDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 032E313967;
-	Fri,  8 Nov 2024 12:16:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3MVbAC4BLmdLWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 08 Nov 2024 12:16:45 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B018EA0AF4; Fri,  8 Nov 2024 13:16:41 +0100 (CET)
-Date: Fri, 8 Nov 2024 13:16:41 +0100
-From: Jan Kara <jack@suse.cz>
-To: Asahi Lina <lina@asahilina.net>
-Cc: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sergio Lopez Pascual <slp@redhat.com>,
-	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
-Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
-Message-ID: <20241108121641.jz3qdk2qez262zw2@quack3>
-References: <20241101-dax-page-size-v1-1-eedbd0c6b08f@asahilina.net>
- <20241104105711.mqk4of6frmsllarn@quack3>
- <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
- <ZylHyD7Z+ApaiS5g@dread.disaster.area>
- <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
- <20241106121255.yfvlzcomf7yvrvm7@quack3>
- <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
- <20241107100105.tktkxs5qhkjwkckg@quack3>
- <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+	bh=INR+4hF4QADHM4c27Irlv2yAX6TqyDNccEXTVlS880U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBb6RnkMpQn049iTNw/Vp9DUfXjmX1dRzsfo06Yxkkm51FJor6Sz4pXz33+C8XBkF3E1h3kp0F9yvsXrlHZ6lJGjUYnveuGxjk4Z+3VvnKjKTJPxT+MIqr9G3f79tMLfk1UX+ubmn2CQAjoYjnEo4SXJ8NAwR4d7CFDNhvVCflw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sLGL7xCd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so3314569e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 04:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731068205; x=1731673005; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JZ3fBc9vrdhfjlvvoxQNCflIXe7o6g5VS5PYdFJEVS8=;
+        b=sLGL7xCdskoEI6X77FlWDiMbUvnKFX/bfujjdgCnKm7laZ8Mj0sTOfEhBo4Z8o5ghp
+         MZ9liewtTDRliForMwdw0JM7WoK5uRadAPWDCCH0FRE9m+731eIUuaOIGdxkL55zWy6G
+         ciKm2szcelaMKwhogPK05m2RqZ5XenfSYaB9ZMy1i7mbUi+y5ZA3p+xDiQ0qwximFlCj
+         7WTZhnr6DefJ6VRjT+ebwKzvFhTWmjhf4yjod0TWuJOhfzcSiogmRKXE1kGox7esSSvB
+         Rz0Wor9womsJqPbrBLFNSIDeQGxX7WeRgJuATqxjNOJnfyRnjlyRMFUCEFowgeGnZef7
+         086g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731068205; x=1731673005;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JZ3fBc9vrdhfjlvvoxQNCflIXe7o6g5VS5PYdFJEVS8=;
+        b=wdyVrfm+K87RDpTX2KAoKjFqNyjIGGeakgW5z28c/C/7rrc1zeoOTgIDJNYOO8KOGa
+         Ty6foAdnOJ6kQ5qZOf8HXJk/Ymiubrk+KO08SCsMNxW8ni6OEoQiiWdcAOjR2bx5oPca
+         d0QVaqHb/q9OzGrzrbWXZnYUtLt+LLnsKzfBbVL/6p/4JDa6od9VjPTVBMk+soF2F9gH
+         DMiPfrD6Q4x0iouSI1zYihkeefgkdh88Thb6o25qWGv1ckwPLfAaINuVSw38+/Dq6zQI
+         4d4ZfjDvP4sfCJhT+c72pSmfiG8v9vvF48HFwImGV8ET7fYayTdS2G/85P/Q5WXb5G2w
+         Mbhw==
+X-Gm-Message-State: AOJu0YzNvIoEN7xIZT8NFk1L/uNcbJmzYdEahDbakXEl6CTZosLM7+dL
+	YOReZwbLpBe1YA/bM3TeeFNymKnGrdk7qnIfgp7VkIk+VYFjP5py+7JkSEwpStw=
+X-Google-Smtp-Source: AGHT+IH1zvqcdZ/LuDqh+mCVw6B8DRN5b7XSyMB+43BYdxRmxl6Kvigd3I21b2SuUwGtr/lV246iLg==
+X-Received: by 2002:a05:6512:3da5:b0:536:7362:5923 with SMTP id 2adb3069b0e04-53d862275c6mr1434785e87.1.1731068205513;
+        Fri, 08 Nov 2024 04:16:45 -0800 (PST)
+Received: from [172.20.144.15] ([89.101.134.25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa523a0esm96371185e9.0.2024.11.08.04.16.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 04:16:45 -0800 (PST)
+Message-ID: <78eb729c-7594-460f-9d79-97fb683d8b5e@linaro.org>
+Date: Fri, 8 Nov 2024 12:16:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] Prefer sysfs/JSON events also when no PMU is
+ provided
+To: Ian Rogers <irogers@google.com>, Atish Patra <atishp@rivosinc.com>,
+ linux-perf-users@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ben Gainey <ben.gainey@arm.com>,
+ Junhao He <hejunhao3@huawei.com>, linux-riscv@lists.infradead.org,
+ beeman@rivosinc.com, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
+ Weilin Wang <weilin.wang@intel.com>,
+ Dominique Martinet <asmadeus@codewreck.org>
+References: <20241026121758.143259-1-irogers@google.com>
+ <CAP-5=fXf9HtqKZyvfXNbKLTB-dL_Ax5Hd0_Gn1J-y0T1SE9wLQ@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fXf9HtqKZyvfXNbKLTB-dL_Ax5Hd0_Gn1J-y0T1SE9wLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri 08-11-24 01:09:54, Asahi Lina wrote:
-> On 11/7/24 7:01 PM, Jan Kara wrote:
-> > On Wed 06-11-24 11:59:44, Dan Williams wrote:
-> >> Jan Kara wrote:
-> >> [..]
-> >>>> This WARN still feels like the wrong thing, though. Right now it is the
-> >>>> only thing in DAX code complaining on a page size/block size mismatch
-> >>>> (at least for virtiofs). If this is so important, I feel like there
-> >>>> should be a higher level check elsewhere, like something happening at
-> >>>> mount time or on file open. It should actually cause the operations to
-> >>>> fail cleanly.
-> >>>
-> >>> That's a fair point. Currently filesystems supporting DAX check for this in
-> >>> their mount code because there isn't really a DAX code that would get
-> >>> called during mount and would have enough information to perform the check.
-> >>> I'm not sure adding a new call just for this check makes a lot of sense.
-> >>> But if you have some good place in mind, please tell me.
-> >>
-> >> Is not the reason that dax_writeback_mapping_range() the only thing
-> >> checking ->i_blkbits because 'struct writeback_control' does writeback
-> >> in terms of page-index ranges?
-> > 
-> > To be fair, I don't remember why we've put the assertion specifically into
-> > dax_writeback_mapping_range(). But as Dave explained there's much more to
-> > this blocksize == pagesize limitation in DAX than just doing writeback in
-> > terms of page-index ranges. The whole DAX entry tracking in xarray would
-> > have to be modified to properly support other entry sizes than just PTE &
-> > PMD sizes because otherwise the entry locking just doesn't provide the
-> > guarantees that are expected from filesystems (e.g. you could have parallel
-> > modifications happening to a single fs block in pagesize < blocksize case).
-> > 
-> >> All other dax entry points are filesystem controlled that know the
-> >> block-to-pfn-to-mapping relationship.
-> >>
-> >> Recall that dax_writeback_mapping_range() is historically for pmem
-> >> persistence guarantees to make sure that applications write through CPU
-> >> cache to media.
-> > 
-> > Correct.
-> > 
-> >> Presumably there are no cache coherency concerns with fuse and dax
-> >> writes from the guest side are not a risk of being stranded in CPU
-> >> cache. Host side filesystem writeback will take care of them when / if
-> >> the guest triggers a storage device cache flush, not a guest page cache
-> >> writeback.
-> > 
-> > I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
-> > should provide persistency guarantees on the file contents even in case of
-> > *host* power failure. So if the guest is directly mapping host's page cache
-> > pages through virtiofs, filemap_fdatawrite() call in the guest must result
-> > in fsync(2) on the host to persist those pages. And as far as I vaguely
-> > remember that happens by KVM catching the arch_wb_cache_pmem() calls and
-> > issuing fsync(2) on the host. But I could be totally wrong here.
+
+
+On 07/11/2024 18:51, Ian Rogers wrote:
+> On Sat, Oct 26, 2024 at 5:18 AM Ian Rogers <irogers@google.com> wrote:
+>>
+>> At the RISC-V summit the topic of avoiding event data being in the
+>> RISC-V PMU kernel driver came up. There is a preference for sysfs/JSON
+>> events being the priority when no PMU is provided so that legacy
+>> events maybe supported via json. Originally Mark Rutland also
+>> expressed at LPC 2023 that doing this would resolve bugs on ARM Apple
+>> M? processors, but James Clark more recently tested this and believes
+>> the driver issues there may not have existed or have been resolved. In
+>> any case, it is inconsistent that with a PMU event names avoid legacy
+>> encodings, but when wildcarding PMUs (ie without a PMU with the event
+>> name) the legacy encodings have priority.
+>>
+>> The patch doing this work was reverted in a v6.10 release candidate
+>> as, even though the patch was posted for weeks and had been on
+>> linux-next for weeks without issue, Linus was in the habit of using
+>> explicit legacy events with unsupported precision options on his
+>> Neoverse-N1. This machine has SLC PMU events for bus and CPU cycles
+>> where ARM decided to call the events bus_cycles and cycles, the latter
+>> being also a legacy event name. ARM haven't renamed the cycles event
+>> to a more consistent cpu_cycles and avoided the problem. With these
+>> changes the problematic event will now be skipped, a large warning
+>> produced, and perf record will continue for the other PMU events. This
+>> solution was proposed by Arnaldo.
+>>
+>> Two minor changes have been added to help with the error message and
+>> to work around issues occurring with "perf stat metrics (shadow stat)
+>> test".
+>>
+>> The patches have only been tested on my x86 non-hybrid laptop.
 > 
-> I don't think that's how it actually works, at least on arm64.
-> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
-> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
+> Hi Atish and James,
 > 
-> There was some discussion of this here:
-> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
-
-I see. Thanks for correcting me.
-
-> But I'm not sure that all really made sense then.
+> Could I get your tags for this series?
 > 
-> msync() and fsync() should already provide persistence. Those end up
-> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
-> (or fdatasyncs) the whole file. What I'm not so sure is whether there
-> are any other codepaths that also need to provide those guarantees which
-> *don't* end up calling fsync on the VFS. For example, the manpages kind
-> of imply munmap() syncs, though as far as I can tell that's not actually
-> the case. If there are missing sync paths, then I think those might just
-> be broken right now...
+> The patches were originally motivated by wanting to make the behavior
+> of events parsed like "cycles" match that of "cpu/cycles/", the PMU is
+> wildcarded to "cpu" in the first case. This was divergent because of
+> ARM we switched from preferring legacy (type = PERF_TYPE_HARDWARE,
+> config = PERF_COUNT_HW_CPU_CYCLES) to sysfs/json (type=<core PMU's
+> type>, config=<encoding from event>) when a PMU name was given. This
+> aligns with RISC-V wanting to use json encodings to avoid complexity
+> in the PMU driver.
+> 
 
-munmap(2) is not an issue because that has no persistency guarantees in
-case of power failure attached to it. Thinking about it some more I agree
-that just dropping dax_writeback_mapping_range() from virtiofs should be
-safe. The modifications are going to be persisted by the host eventually
-(so writeback as such isn't needed) and all crash-safe guarantees are
-revolving around calls like fsync(2), sync(2), sync_fs(2) which get passed
-by fuse and hopefully acted upon on the host. I'm quite confident with this
-because even standard filesystems such as ext4 flush disk caches only in
-response to operations like these (plus some in journalling code but that's
-a separate story).
+I couldn't find the thread, but I remember fairly recently it was 
+mentioned that RISC-V would be supporting the legacy events after all, 
+maybe it was a comment from Atish? I'm not sure if that changes the 
+requirements for this or not?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I still can't really imagine how tooling would work if every tool has to 
+maintain the mappings of basic events like instructions and branches. 
+For example all the perf_event_open tests in ltp use the legacy events.
+
+And wouldn't porting existing software to RISC-V would be an issue if it 
+doesn't behave in a similar way to what's there already?
+
+> James, could you show the neoverse with the cmn PMU behavior for perf
+> record of "cycles:pp" due to sensitivities there.
+> 
+
+Yep I can check this on Monday.
+
+> Thanks,
+> Ian
+> 
+
+
+> 
+> 
+> 
+>> Ian Rogers (4):
+>>    perf evsel: Add pmu_name helper
+>>    perf stat: Fix find_stat for mixed legacy/non-legacy events
+>>    perf record: Skip don't fail for events that don't open
+>>    perf parse-events: Reapply "Prefer sysfs/JSON hardware events over
+>>      legacy"
+>>
+>>   tools/perf/builtin-record.c    | 22 +++++++---
+>>   tools/perf/util/evsel.c        | 10 +++++
+>>   tools/perf/util/evsel.h        |  1 +
+>>   tools/perf/util/parse-events.c | 26 +++++++++---
+>>   tools/perf/util/parse-events.l | 76 +++++++++++++++++-----------------
+>>   tools/perf/util/parse-events.y | 60 ++++++++++++++++++---------
+>>   tools/perf/util/pmus.c         | 20 +++++++--
+>>   tools/perf/util/stat-shadow.c  |  3 +-
+>>   8 files changed, 145 insertions(+), 73 deletions(-)
+>>
+>> --
+>> 2.47.0.163.g1226f6d8fa-goog
+>>
 
