@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-402447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 631229C279B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:33:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A169F9C27A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A682848A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AE11C21565
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE3F1F26DF;
-	Fri,  8 Nov 2024 22:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551901F4712;
+	Fri,  8 Nov 2024 22:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DgqwLv0T"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YC8fqG/R"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA67A233D89;
-	Fri,  8 Nov 2024 22:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572851E0B67;
+	Fri,  8 Nov 2024 22:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731105207; cv=none; b=IpL2O5YhPmVgV+edNnjXzw+dv9ZXFansDzn9U3M5NuBEpn4Mbn+FnuI7VjlXpWT7KMREVienv8qw4XjVNfoE4En3dGpjtlZgUMJvOgrh2csoMYhpegRXrlmaw3DN5fDm0O+4aO1Ztxb3Gf9E1gj2P/XODL0BGhlHlzAd6oRwbwU=
+	t=1731105485; cv=none; b=kyynE7mpT6M5hxMutcex9zXyAHsA3vhIaRFYqUbfvRBsHEBt9lLJcEyE6YRYi7XOexo5g8bl+x6in77g01J52NmzbdBWqdwKq6VXqWayGJ31oRXeUcfz2Zyvt3qQbQFbByMoal4AFdt/OwL8FIR1r/6xq4/kWgeUf3reSmxezp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731105207; c=relaxed/simple;
-	bh=+LF7CsJ7/io270zqeQKsXvXgBShIfl+NXbOKX6jVzM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GEv8HUBiabPCysnhVbUMN67e7bDbnbTNbOkhKdn8GN6+ir0tJeYn29PAV//9YZA/ms1nM8grco2NJkT8wa2CPlaweaKypY8eqQJZlGhzTRxrvghJPOeJ4l5jbZoYCQqll9qwtkE/1jFqi6D8T0pT7SGneMyQeCDl9DrktQXyskI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DgqwLv0T; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731105206; x=1762641206;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+LF7CsJ7/io270zqeQKsXvXgBShIfl+NXbOKX6jVzM4=;
-  b=DgqwLv0T9pPicR6S1TQsJkz/8RW9iWhzNzdz3abrEN7af1r7MYjUFKlA
-   LXKwKK0Ox/kbg0EqnMufscSbAPNkaotm9UHqL5Ig62ZawXg82SVHwRWof
-   bXxBip7/udTm11VpO9UQDoYo0eWdOXSLX5VTChA/RSfs/01dsGX4HNOKc
-   hQ/qIBZEHGNHV8Gk5Ajh4cTZpT1t/V4dezcCsFxWvseu86QNRd1EawnJh
-   2W6Q7XhuWKv7G4AUOp8aNvQJclqEufxAzp7GFy5nrXgortBJ4d0p4Z2+D
-   Qb4U34jazjI431m4xuny3XjbpQQYQpk3uhMTwFKIFYkeftQ+9y7UDxGXu
-   g==;
-X-CSE-ConnectionGUID: ivD9u5uHQ4efH0JvPrZ5SA==
-X-CSE-MsgGUID: NEqYNUdxRoSzdoolNSbTXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30417942"
-X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="30417942"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 14:33:25 -0800
-X-CSE-ConnectionGUID: sJHMUEGrSS6OVqSv/oK2bw==
-X-CSE-MsgGUID: MBjI+FrtT1iEbSuKCrdJWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="90867165"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2024 14:33:21 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9XXb-000rqk-0O;
-	Fri, 08 Nov 2024 22:33:19 +0000
-Date: Sat, 9 Nov 2024 06:33:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
-Message-ID: <202411090610.oPYJJG00-lkp@intel.com>
-References: <20241108054006.2550856-3-fj5100bi@fujitsu.com>
+	s=arc-20240116; t=1731105485; c=relaxed/simple;
+	bh=HG/Z4aeyO39LhZI4pi8ETl903UTWXgOSj7cXHjFbK7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FKlPlAbHF15VSwlZZotbI/adOwnvv+Ml2MWkiewGhmqIIwzQk90yjkZRzmC0j0Gcx4rnhNiCGKuIgr6kTPLZBhLaNPA2PGMsYJFYQOJl0cgpfY7TBGJ3AGJCmsI0RjejqFhR/r37AfG+Hg542l1e/52SjHSegjtmZSlfd6SVz6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YC8fqG/R; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ee53b30470so974026eaf.3;
+        Fri, 08 Nov 2024 14:38:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731105482; x=1731710282; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ef+nuKAweoLnQLtJWrC9nc5IytkziH8wSsoYPVks8Jo=;
+        b=YC8fqG/RtWfMD81sz7B6jIlUv81M+5V9zaW4Ch+/3tL3DGvjNIrtVDq+hx+A0FdwhW
+         uFfJU6LfUWRfQofDBH6IzEwX78q/vy6h06eLQ+J/l6ZrulDWCAOYqPY5iWcz4A0hQxfV
+         39ku1V6moK1WJPdu0AqpxcVPC46UYeaPzkYDYrppuTgv3KLfeTh/9a2jN8J05sqMnCA+
+         EyrV5eAEvR9F/oU8ymEhn/a4/Hc7kDcKorttYGxRXkM00mv+Pf84Vg+vkzXit/moWUE/
+         EusId5y+IY8NQ4UZ/t9HrYRQZJ5RxGED+5MSb32TftQO+82CQHL3DAqg/zPEMI3BwrJJ
+         cY0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731105482; x=1731710282;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ef+nuKAweoLnQLtJWrC9nc5IytkziH8wSsoYPVks8Jo=;
+        b=p4g5bkZOM+t7bGi71374dNpQ176RbgJMO5YSyf/3FYXthk0dLDeJVuiJbLjlvn58WI
+         PUhzCVfTuzc8hslwjxQ/aDfNLSPaxIJx50UnFNYZm1k/xa2cVVDTmfK3pMFPVKSd6TQx
+         b1mWRw/btDNwnJAiq1rqnx01avqZNeIXgLiEWaJOJKDu8Jr9Vh3cdmyUPhLwXBSUDWu2
+         uIsYh2DtcU3Jn+mM4CbLDb0qoD1AfBmN4NfKx2cYv06gbuQYZAqlD7wQQXUz1sSjNEbA
+         Ebtz1x5cVUZDWyjQ1nNmxB5PlJsl0aYx3Gj+aVsiZdu018dfIW2W7DM9I5k9Y6n60po/
+         ZcqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7B+XNfuRd3Y1Ae7Mz4O3smf9TRpz2wM2Zg5IOdTIMf8EB02iWtPmG0y+k9Jkky8uQSr9NcEnA8HHz2y7G@vger.kernel.org, AJvYcCX8zjL7og2RKMpZtXNuOdkIT2ylPPX5gMYlORMe5F++WZKB/X9YTE+HNqhNuPjXjG4eOwpN1eiaAok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI7oEeM/I8pm5l39XJTNKopn3YVnWkDhmc6rWjoBsGHMa6VXJj
+	+lFv74s2OhX1kzq1hMcCW3xwaSVOgvHpo6HdJsQ3GrFT+223sCDyS1+DlEk6t9baoOhdefdsk5d
+	C9/NCWhy8nvaVLTxXz35zhKgJRA8=
+X-Google-Smtp-Source: AGHT+IFw6L6MwIPVpm5m/vqu5nv3hx0uQ5SgPG1RClTH3XyEoMn2m2/XX0pYOfOXJO+8xyxYfL3hQETyezKTEt3DEME=
+X-Received: by 2002:a05:6820:1e85:b0:5e1:d741:6f04 with SMTP id
+ 006d021491bc7-5ee57cbee48mr4056662eaf.3.1731105482352; Fri, 08 Nov 2024
+ 14:38:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108054006.2550856-3-fj5100bi@fujitsu.com>
+References: <20241107020555.321245-1-sanman.p211993@gmail.com> <20241107102044.4e5ba38f@kernel.org>
+In-Reply-To: <20241107102044.4e5ba38f@kernel.org>
+From: Sanman Pradhan <sanman.p211993@gmail.com>
+Date: Fri, 8 Nov 2024 14:37:26 -0800
+Message-ID: <CAG4C-OmPAqNe2RHwgBZ9+1MBq48bOOLgDdFnPiRyPz6Duy15nQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] eth: fbnic: Add PCIe hardware statistics
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kernel-team@meta.com, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, horms@kernel.org, 
+	corbet@lwn.net, mohsin.bashr@gmail.com, sanmanpradhan@meta.com, 
+	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev, jdamato@fastly.com, 
+	sdf@fomichev.me, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yoshihiro,
+On Thu, 7 Nov 2024 at 10:20, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Wed,  6 Nov 2024 18:05:55 -0800 Sanman Pradhan wrote:
+> > +     FBNIC_HW_STAT("pcie_ob_rd_tlp", pcie.ob_rd_tlp),
+> > +     FBNIC_HW_STAT("pcie_ob_rd_dword", pcie.ob_rd_dword),
+> > +     FBNIC_HW_STAT("pcie_ob_wr_tlp", pcie.ob_wr_tlp),
+> > +     FBNIC_HW_STAT("pcie_ob_wr_dword", pcie.ob_wr_dword),
+> > +     FBNIC_HW_STAT("pcie_ob_cpl_tlp", pcie.ob_cpl_tlp),
+> > +     FBNIC_HW_STAT("pcie_ob_cpl_dword", pcie.ob_cpl_dword),
+> > +     FBNIC_HW_STAT("pcie_ob_rd_no_tag", pcie.ob_rd_no_tag),
+> > +     FBNIC_HW_STAT("pcie_ob_rd_no_cpl_cred", pcie.ob_rd_no_cpl_cred),
+> > +     FBNIC_HW_STAT("pcie_ob_rd_no_np_cred", pcie.ob_rd_no_np_cred),
+>
+> Having thought about this a bit longer I think Andrew's point is valid.
+> Let's move these to a debugfs file. Sorry for the flip flop.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on tip/smp/core]
-[also build test WARNING on linus/master v6.12-rc6]
-[cannot apply to arm64/for-next/core arm-perf/for-next/perf next-20241108]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Yoshihiro-Furudera/perf-Fujitsu-Add-the-Uncore-MAC-PMU-driver/20241108-134245
-base:   tip/smp/core
-patch link:    https://lore.kernel.org/r/20241108054006.2550856-3-fj5100bi%40fujitsu.com
-patch subject: [PATCH 2/2] perf: Fujitsu: Add the Uncore PCI PMU driver
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241109/202411090610.oPYJJG00-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411090610.oPYJJG00-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411090610.oPYJJG00-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/perf/fujitsu_pci_pmu.c:584:36: warning: 'fujitsu_pci_pmu_acpi_match' defined but not used [-Wunused-const-variable=]
-     584 | static const struct acpi_device_id fujitsu_pci_pmu_acpi_match[] = {
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/fujitsu_pci_pmu_acpi_match +584 drivers/perf/fujitsu_pci_pmu.c
-
-   583	
- > 584	static const struct acpi_device_id fujitsu_pci_pmu_acpi_match[] = {
-   585		{ "FUJI200D", },
-   586		{ }
-   587	};
-   588	MODULE_DEVICE_TABLE(acpi, fujitsu_pci_pmu_acpi_match);
-   589	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks for the review, I have submitted v3 with the necessary changes.
 
