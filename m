@@ -1,204 +1,268 @@
-Return-Path: <linux-kernel+bounces-402167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4099C249B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B545A9C24A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4B891F21468
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D7528AF5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3C9233D72;
-	Fri,  8 Nov 2024 18:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCD9233D9A;
+	Fri,  8 Nov 2024 18:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X2Bi2FTO"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="V04qsCof"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA57233D64
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29165233D80;
+	Fri,  8 Nov 2024 18:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731089096; cv=none; b=IcK+FJHlTZupR8ngNobH7CKRCFhJlsnFLCm4F0zz+/BpcyK1PF89A85Ee/8z6/ZObFHhEKAzxHPyh00YONR/5mjdWhShFLbybU1yfQAG696Czt9onVP8YqkjI6doIrqYpr0I3qG1YyTz6lY6LvTtd0lsAo6kubzf9LIpuqmOwPQ=
+	t=1731089280; cv=none; b=r2VM6MeskUgEngxacCxkQcc6+UYW3GGzqUxi9Du0McEVCWoN2CrCHuGuOlCTYXxpafBy/JcTYflJhND6MljTMdbZM/KsKVlzmQZiZxJxc2MIWmv5whdz+ewPhGnj1hIyF8MQ5IhYTmquX8Zay36LLPTI++G4uDzSg97rxtwL6jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731089096; c=relaxed/simple;
-	bh=8AZVL9gMG6qybamE87HfK41H6Zu9BeLnnBaAKkRhhsk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SQPxwiZhMjxNy/v1re1pyRupd+c1WLaI0GJekQrIv9dM03XKl524Wpp5fuo41kqn0j6TelJQK/NVsXlh94jPdsv1QviX96u5ZAmOjz58I1zQsUtj8soiI0XsjYIXKKSCMKYtqzW/j4DXsv/o81RvbV7ne/0QYpZU4p/uCySV5TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X2Bi2FTO; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e19d8c41so897e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:04:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731089092; x=1731693892; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tY6MX6G2iuh1hwT0r0xv8GFRuWlJgXq9lNuDxr3taP8=;
-        b=X2Bi2FTO3/Ehx/V1k1u4XuAmv69X33U2KgLRCX/ZtKzVitesJZDEgsGGQrj6QoXoau
-         FXcPVfdCju+rReC0lEmVnQvx3s6d6U+jXbCiNUydvgdangjr+D6jj0/N6isg2eHEtYmV
-         AcZGOZU1H0a61Sx8XPQW0axGviSZcfBrrui7oozxQnC89kJVLTIGTsP35vo8uByilvSW
-         nF/Q17/DRvqgN8bBnrUepIznna75qbvIZQ0Hza/eJuZXup/cK+4MEvjckCVd2Q1DmHxY
-         +tc5DY73ce58T30mAlR1amlIVmlxJt310XTlwinGIRQBxGUbqWaf9M4BNJgZqztTUhfG
-         Nvzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731089092; x=1731693892;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tY6MX6G2iuh1hwT0r0xv8GFRuWlJgXq9lNuDxr3taP8=;
-        b=tWp1L9A0Y702GHFzjjpelM2SRL0dIfgxIKY+9kZjKUfJVgdkI93loToGPf9qQoRLPN
-         nZJZhv9dRyEwuCACTvuYoGqc9mSvcLjQxqUG5ZBF7QZv2np5C/6UeMyBtxcz116KepCF
-         wNAidOO62Wq6ZNHChevJGQcEAyDeKjZS8y2vzGuo/TN7PvvcvMjSEFJgCuNnouZ3EkaY
-         eEhWHkkpgyoo1JXiR+5KyDiJ/Uk3fGRSctO2jhaglUEl/xtomzX02oyQlnlNB28An4zK
-         hSVi76Fq6YlFY4GVvHE/bymkN8hhODgBWvs4KjPU9fByAgYBEJAJ52O83lwlp8UPG3nO
-         pq8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpctRDYElCHySysEbgw5EJ20Ab/h8G6Mmd6NBHxq6DCSzQbFQ+957Y2MVBOsC2uV0fot/FD29AS0n9DrM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPQA2VMzDhDmxu77CFj1D4ErpPPDshcgm6NTtakY0Mn/HILJrC
-	SR4zpL88B4IXfgksxxeubdCIp5IUAgnhjT1NWRjbC6e1yGAcQKVToI02DEFEUOWKALmG9gRkN8K
-	HGYzK0cH2Q9o1DaNPSrDYgumfBOuGtSCK8zMe
-X-Gm-Gg: ASbGnctH6Yp0UaUIaIag9vtkq0MlBZlGvyU1C5QKTV+8ozmjr4Tq5HSyv7LDF5fBheJ
-	CpfrCAyqMn+D9v9LJPRgCi32BjWRbfThqNuEIvmIuHWJBl2H97bWkpDcbiHs=
-X-Google-Smtp-Source: AGHT+IGj2IqDXz+/Aet3CYfAPxn/D2mSXM68OjaFUwS87DjQkIufp1pkYuA8Lybz4NCssvKIyXdVwN+eL7wErfuawL8=
-X-Received: by 2002:ac2:4d9a:0:b0:53c:75e8:a5c9 with SMTP id
- 2adb3069b0e04-53d8122b836mr892006e87.4.1731089091827; Fri, 08 Nov 2024
- 10:04:51 -0800 (PST)
+	s=arc-20240116; t=1731089280; c=relaxed/simple;
+	bh=9Fy8f6wTEancl/b7oGAdJU6XSqQhdH/xQ/IEUwsnIoM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BCj8WvkoJlAkNJGK4VKPEBuQzj4MeeBCJFLxYhfDfRhhNAQvC+jvlJNPSrnqmDcUrIFvjOLY9zLxM01FZ4PTKY2l7HRlWl/LK2dGT0XRK1d59cYyR3SJMKO5aL+DzIKdM0FWM5r1csVc4dOMy18p4Bd9H/WM93kUBWA0gk8g8Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=V04qsCof; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731089212; x=1731694012; i=w_armin@gmx.de;
+	bh=9Fy8f6wTEancl/b7oGAdJU6XSqQhdH/xQ/IEUwsnIoM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=V04qsCofJfMI/JEhWoQNoPqw9IE7mQFmHaF7b7c49b7yiRMRwHdqDgfasTLNO8eh
+	 xJjfsw0VAR4CTFj3kCFk72OYkuwzyNHyOTWSqCDYQEfojhHnRq7+ockjVD4cCjlSz
+	 BE1iaLzv3VTw6mUyx3KOdOUwmzmFXDLi/eoahpNTnYnhMTBwZvOS8wlRMrQOlPirz
+	 BAaPrEbhV94K58NjBI80Qs68LcYD2vnMA0qAMEjR7KI76qoOAOt+m3nbi7t18zpWw
+	 Cl1zAgQOuee67HJ58PfnTkXBy9EYIHpfHCzamXwmduZWtIHyMadZDkbn6cy8frqpQ
+	 MjLGqNzDYOY2wjyRTg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVeI8-1tH8tb3iJo-00U5PY; Fri, 08
+ Nov 2024 19:06:52 +0100
+Message-ID: <0ffe9b8b-814e-4b5a-a960-22797e327b4a@gmx.de>
+Date: Fri, 8 Nov 2024 19:06:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
- <c0199a7d7097521bbc183739b1fa6793081d726b.1730360798.git.zhengqi.arch@bytedance.com>
- <CAG48ez0bv_y1k3cqMCsj0sJGPR4iK9zmHTa6124+N6i+s4+bTA@mail.gmail.com> <5d371247-853d-49ca-a28c-689a709905d4@bytedance.com>
-In-Reply-To: <5d371247-853d-49ca-a28c-689a709905d4@bytedance.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 8 Nov 2024 19:04:15 +0100
-Message-ID: <CAG48ez3sG_=G6gttsEZnvUE4J-yHEUqyaNQfsdXR-LT-EqY2Yw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/7] mm: pgtable: try to reclaim empty PTE page in madvise(MADV_DONTNEED)
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de, 
-	muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org, 
-	zokeefe@google.com, rientjes@google.com, peterx@redhat.com, 
-	catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/20] ACPI: platform_profile: Add choices attribute
+ for class interface
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-12-mario.limonciello@amd.com>
+ <7e302f04-cb4d-4ecd-b1a1-4b89f09e692b@gmx.de>
+ <9dd1709c-de87-4aa3-aa33-8a520a305545@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <9dd1709c-de87-4aa3-aa33-8a520a305545@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:i6KkzGhtCShDZYq1bTXadJhCYusk/tewsN/WYepNcmbXkHhtFj2
+ Pdst82mAqSHgDvhJAjTV+Mya6nXqEek8GqQk8c7P/jFSQXmkTo9YSwETLx1oFLPt82k/C+g
+ Mu7XtPdvPb8zA0QOaDaJRGgQBt6By2s2SKA8acGWC0g0QU9JfFLvSkG/eFz3v1XpBpJ5XhS
+ yYdUeJzYwLh8AR2SkJ1Uw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7F1LpOvsouI=;Wo/jQ98kjZ3U1U8zk8Ce57H/Sva
+ iyFWl/mQO+j/jlHZzPwMx/i5j0+P8qWWK7U6a7pbTomIGNKcgBsIJEZhzvSNjD2bl8zrh+ukV
+ iruavtwEV6KmR+w3tvee41Opdk7m/xZdqihb15hqmKrd5Rll+GrkBA57mWo8JjiKABLOT8J47
+ EV9K1iVuGXeKjVVZQsnbCwQs0p2X+a0IZ2xWxycpRo0M8MKB7rSN1d+qlT8zjOG+Tmr53TVr0
+ 1cVr48X0oJD8Iy0c7c62NIojCKKanwaWjBKBlBESyhwToTvIpPnu1mUogD+Y71N/y1FZhNNqu
+ IWcQSZFHulYKd/69UBCSD9HffZBRa49IpLe2g0n+mqGXdW+sa3CIchkKxZU5AFtfodzjmP0IU
+ FW84X/fvXwcLQiFpPvBTSWf09xLjq9nhltpwtUcWn81GN345GrLH+14TrQGhmWkBRFNDD6LgK
+ GRRJd908BF3m4oncsQXNsXw9Mm4Sw41V5fr9UaCSUR4CSnaCkF9y7PGYQEk5MIfP32h/GYcuC
+ vIe83h5obhtecRHlCaWIgx337OBdw+XBENQH945zzPZ6pwmt9vr+5Xr5hr1KSxAUoOhcelL+6
+ NkeS/jwagLhMopEvmp/ZOrAASrizEy6ial4mdS8ErppYo3bplQX7LolPcc5/2cd2o5O5y7bM1
+ +tCL9BpGy6zvTEeE5TdkpDmQ8yw6s0Ka6syNKg9N8o+21Wc/e7a6bqLoG17i550+/m04j9Jz1
+ UfkrzplgQCQ24gAWDZ1PFboaurLUL3ugfhPEgB+NAXRp0CJ7fg9CkFWsMS0NqP/iBmMXWjRnM
+ BxDjj/RvDdZPSKNebxMpw+iryTqKHIHh68ql/k9qsaaifY34jiLhmJAgNZs5EgyxZ74L8ydIy
+ RrIP+KTnyiYP94n5Wq0WZ6W2ptTqC5t9YQrnKVlYVL5YlDLE7nB2v90B/
 
-On Fri, Nov 8, 2024 at 8:13=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedance.com=
-> wrote:
-> On 2024/11/8 07:35, Jann Horn wrote:
-> > On Thu, Oct 31, 2024 at 9:14=E2=80=AFAM Qi Zheng <zhengqi.arch@bytedanc=
-e.com> wrote:
-> >> As a first step, this commit aims to synchronously free the empty PTE
-> >> pages in madvise(MADV_DONTNEED) case. We will detect and free empty PT=
-E
-> >> pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclu=
-de
-> >> cases other than madvise(MADV_DONTNEED).
-> >>
-> >> Once an empty PTE is detected, we first try to hold the pmd lock withi=
-n
-> >> the pte lock. If successful, we clear the pmd entry directly (fast pat=
-h).
-> >> Otherwise, we wait until the pte lock is released, then re-hold the pm=
-d
-> >> and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-de=
-tect
-> >> whether the PTE page is empty and free it (slow path).
-> >
-> > How does this interact with move_pages_pte()? I am looking at your
-> > series applied on top of next-20241106, and it looks to me like
-> > move_pages_pte() uses pte_offset_map_rw_nolock() and assumes that the
-> > PMD entry can't change. You can clearly see this assumption at the
-> > WARN_ON_ONCE(pmd_none(*dst_pmd)). And if we race the wrong way, I
->
-> In move_pages_pte(), the following conditions may indeed be triggered:
->
->         /* Sanity checks before the operation */
->         if (WARN_ON_ONCE(pmd_none(*dst_pmd)) || WARN_ON_ONCE(pmd_none(*sr=
-c_pmd)) ||
->             WARN_ON_ONCE(pmd_trans_huge(*dst_pmd)) ||
-> WARN_ON_ONCE(pmd_trans_huge(*src_pmd))) {
->                 err =3D -EINVAL;
->                 goto out;
->         }
->
-> But maybe we can just remove the WARN_ON_ONCE(), because...
->
-> > think for example move_present_pte() can end up moving a present PTE
-> > into a page table that has already been scheduled for RCU freeing.
->
-> ...this situation is impossible to happen. Before performing move
-> operation, the pte_same() check will be performed after holding the
-> pte lock, which can ensure that the PTE page is stable:
->
-> CPU 0                    CPU 1
->
-> zap_pte_range
->
->                         orig_src_pte =3D ptep_get(src_pte);
->
-> pmd_lock
-> pte_lock
-> check if all PTEs are pte_none()
-> --> clear pmd entry
-> unlock pte
-> unlock pmd
->
->                         src_pte_lock
->                         pte_same(orig_src_pte, ptep_get(src_pte))
->                         --> return false and will skip the move op
+Am 07.11.24 um 23:09 schrieb Mario Limonciello:
 
-Yes, that works for the source PTE. But what about the destination?
-
-Operations on the destination PTE in move_pages_pte() are, when moving
-a normal present source PTE pointing to an order-0 page, and assuming
-that the optimistic folio_trylock(src_folio) and
-anon_vma_trylock_write(src_anon_vma) succeed:
-
-dst_pte =3D pte_offset_map_rw_nolock(mm, dst_pmd, dst_addr,
-&dummy_pmdval, &dst_ptl)
-[check that dst_pte is non-NULL]
-some racy WARN_ON_ONCE() checks
-spin_lock(dst_ptl);
-orig_dst_pte =3D ptep_get(dst_pte);
-spin_unlock(dst_ptl);
-[bail if orig_dst_pte isn't none]
-double_pt_lock(dst_ptl, src_ptl)
-[check pte_same(ptep_get(dst_pte), orig_dst_pte)]
-
-and then we're past the point of no return. Note that there is a
-pte_same() check against orig_dst_pte, but pte_none(orig_dst_pte) is
-intentionally pte_none(), so the pte_same() check does not guarantee
-that the destination page table is still linked in.
-
-> >> diff --git a/mm/memory.c b/mm/memory.c
-> >> index 002aa4f454fa0..c4a8c18fbcfd7 100644
-> >> --- a/mm/memory.c
-> >> +++ b/mm/memory.c
-> >> @@ -1436,7 +1436,7 @@ copy_page_range(struct vm_area_struct *dst_vma, =
-struct vm_area_struct *src_vma)
-> >>   static inline bool should_zap_cows(struct zap_details *details)
-> >>   {
-> >>          /* By default, zap all pages */
-> >> -       if (!details)
-> >> +       if (!details || details->reclaim_pt)
-> >>                  return true;
-> >>
-> >>          /* Or, we zap COWed pages only if the caller wants to */
-> >
-> > This looks hacky - when we have a "details" object, its ->even_cows
-> > member is supposed to indicate whether COW pages should be zapped. So
-> > please instead set .even_cows=3Dtrue in madvise_dontneed_single_vma().
+> On 11/7/2024 02:28, Armin Wolf wrote:
+>> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+>>
+>>> The `choices` file will show all possible choices that a given platfor=
+m
+>>> profile handler can support.
+>>>
+>>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> v5:
+>>> =C2=A0 * Fix kdoc
+>>> =C2=A0 * Add tag
+>>> =C2=A0 * Fix whitespace
+>>> =C2=A0 * Adjust mutex use
+>>> ---
+>>> =C2=A0 drivers/acpi/platform_profile.c | 65
+>>> +++++++++++++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 65 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
+>>> platform_profile.c
+>>> index f605c2bd35c68..5e0bb91c5f451 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -25,6 +25,46 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D
+>>> PLATFORM_PROFILE_LAST);
+>>>
+>>> =C2=A0 static DEFINE_IDA(platform_profile_ida);
+>>>
+>>> +/**
+>>> + * _commmon_choices_show - Show the available profile choices
+>>> + * @choices: The available profile choices
+>>> + * @buf: The buffer to write to
+>>> + * Return: The number of bytes written
+>>> + */
+>>> +static ssize_t _commmon_choices_show(unsigned long choices, char *buf=
+)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 int i, len =3D 0;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, &choices, PLATFORM_PROFILE_LAS=
+T) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (len =3D=3D 0)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le=
+n +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le=
+n +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 len +=3D sysfs_emit_at(buf, len, "\n");
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return len;
+>>> +}
+>>> +
+>>> +/**
+>>> + * _get_class_choices - Get the available profile choices for a
+>>> class device
+>>> + * @dev: The class device
+>>> + * @choices: Pointer to return the available profile choices
+>>> + * Return: The available profile choices
+>>> + */
+>>> +static int _get_class_choices(struct device *dev, unsigned long
+>>> *choices)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
+>>> +=C2=A0=C2=A0=C2=A0 int i;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
+>>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
+>>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, handler->choices, PLATFORM_PRO=
+FILE_LAST)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *choices |=3D BIT(i);
+>>
+>> Maybe just copying the bitmask would be enough here? In this case we
+>> could also drop
+>> this function as well.
 >
-> But the details->reclaim_pt should continue to be set, right? Because
-> we need to use .reclaim_pt to indicate whether the empty PTE page
-> should be reclaimed.
+> Right now this could work, but choices and the use of it has gone
+> through great lengths to ensure that once there are too many profiles
+> it automatically becomes a bigger variable.
+>
+> =C2=A0=C2=A0=C2=A0=C2=A0unsigned long choices[BITS_TO_LONGS(PLATFORM_PRO=
+FILE_LAST)];
+>
+> So I would rather keep this as is.
+>
+I think users of this function can do the locking themself and instead use=
+ the functions from bitmap.h. Because _get_class_choices() will break once=
+ "choices" becomes bigger.
 
-Yeah, you should set both.
+Thanks,
+Armin Wolf
+
+>>
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> =C2=A0 /**
+>>> =C2=A0=C2=A0 * name_show - Show the name of the profile handler
+>>> =C2=A0=C2=A0 * @dev: The device
+>>> @@ -44,9 +84,34 @@ static ssize_t name_show(struct device *dev,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ERESTARTSYS;
+>>> =C2=A0 }
+>>>
+>>> +/**
+>>> + * choices_show - Show the available profile choices
+>>> + * @dev: The device
+>>> + * @attr: The attribute
+>>> + * @buf: The buffer to write to
+>>> + */
+>>> +static ssize_t choices_show(struct device *dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 char *buf)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 unsigned long choices =3D 0;
+>>> +=C2=A0=C2=A0=C2=A0 int err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
+>>> &profile_lock) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D _get_class_choices=
+(dev, &choices);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn err;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>
+>> Please directly use the choices field here, no need for a mutex since
+>> the choices are static
+>> across the lifetime of the platform profile.
+>
+> But similarly to my other message, the class could be unregistered and
+> this needs to be protected.
+>
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(choices, buf);
+>>> +}
+>>> +
+>>> =C2=A0 static DEVICE_ATTR_RO(name);
+>>> +static DEVICE_ATTR_RO(choices);
+>>> +
+>>> =C2=A0 static struct attribute *profile_attrs[] =3D {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
+>>> +=C2=A0=C2=A0=C2=A0 &dev_attr_choices.attr,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL
+>>> =C2=A0 };
+>>> =C2=A0 ATTRIBUTE_GROUPS(profile);
+>
 
