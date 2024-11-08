@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-401125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25469C1630
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 554DB9C162D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:51:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FE51F22168
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:52:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA481F2455B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446A61CF7B1;
-	Fri,  8 Nov 2024 05:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98AF1CF5E3;
+	Fri,  8 Nov 2024 05:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imDMGRyR"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bHq0Uo+m"
+Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9048F1CF5C8;
-	Fri,  8 Nov 2024 05:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E74194AD6
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 05:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731045120; cv=none; b=QiMQnF15C0qKIfHJt5GihvdwYpzIjAWZFY/ctTDtFUbNRSGxc5LUKqNHs/YcRI8wl27Ph5db6ITqYbRaHAA0E1KWiPqOnEFMnVKGHGTAJPbITbPovFJcz9s/i4l5srDbBMmhLWW3CIqSJEyIknChzxC78vnPrqLJZpbIzIZRWMQ=
+	t=1731045092; cv=none; b=n7LnF378qXZJBvco22KE3heWCmpIOoOeiE31zkMxbqP7rrqsGTRgn+cgM75aGaGovJcwIYJ8fbtg5AwqPEQoJ801Ui+NI+ZZmh0qwA7No0F3cNk5Z/KT/WQ3renof1hd5Bdw5jqhoH9GGc0/U3JM4o1uckg/a2U3lYerVg+fVn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731045120; c=relaxed/simple;
-	bh=FldH5ezVCKzA4ilhWwESkXoEsqQSxz+NQnJCrsnSmDo=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=AQ+O2oTe9fn+Y7cKCAwahkd/hS5+lsubLpdJdnziHdYIc03Xouw8Q35Lvk+CL+nnL3xnfj4agdAyAhnMJ0TT3KFySJC9p1glhP7VcYXMCfEegOAdlVh4OwDtY/z06W5j4QEKDgL0nrqjnKhbHPlDV8P+uwUBw6gqGryOifEv/kQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imDMGRyR; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-288661760d3so935197fac.3;
-        Thu, 07 Nov 2024 21:51:58 -0800 (PST)
+	s=arc-20240116; t=1731045092; c=relaxed/simple;
+	bh=mCm6SBZrWhEj9BkK+TF+1X3UsFI2+ZSNSSa9eNwKMhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ODNhKifFuo5Eo/pwgcPem0I0TZynhnhrGEHohklfZ+BDfVIWPAFKOGirWT1xIT3DCo1BszuxZmpZnduNnFCOYXzqcdMRArDI0escrLNWq00c4O/iJ2MDQJleNWHvRMbke0qRvFQcN4N8P/dN3KlMGUyOF8vkincApYgTk2JpLIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bHq0Uo+m; arc=none smtp.client-ip=209.85.167.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso1626625e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 21:51:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731045117; x=1731649917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OqQKVoQIIB/alco7tDnCa7tsUMIzxx7+4InKayAOpSw=;
-        b=imDMGRyRqwhaM7xaIuhA8vIf7aO3Uv7G2chzV4oPGqJDRvUFoqCtCJ4ah0oixEBcH/
-         5cYdkjDuy0+JFcLzduPfqMdcI6lD2wCTOZyD1DeYBakFOssH6BelvRrC9iiCzLZ5cYAh
-         wD5dqHRscZKWGQSLai4isgYpSstR2ftfxJpP2T/xx2TGtfFukBMbtjSWk1HR+F+mt06u
-         hPTeJ2Tcu296eiik7O0QXLZ5yVvE3KV2mIsA+lET6rVZ3ru6Brhozn8+vDMdUIsKn8IO
-         eFi+hty103KE8F05g4DZK/tVHer7dj3zgOceo1Qlsju2ny210jrzs9zDpM+DNRvNEaPw
-         U4ng==
+        d=suse.com; s=google; t=1731045088; x=1731649888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C8W06lc2t9tIXnzyhc0K76SKMARK1scFjPbtxIgSIUg=;
+        b=bHq0Uo+mQUR82j3Yug0jX0fh6QIZdZYSXjjpwqqzRsohO539OG6CTkEgwNqy6n81WF
+         UOI7NA/QU69XGN/qcNYsynvjUeEyjDgaZTSQz9Iwpfn7S4uMGn3lzIJ9hqWPx7WeN3/I
+         2j2X9G79rt2QqXuhCYnnm5uv4kHV7Nk3NelNbo/pKl4sTkQIYaqne6EbaMMzFbw7Q8rG
+         +n2z3OywEpiiSAzmYq9PJS9YFjGRTj68GsaVqyTUPAtg0JYF3RvFPpaFuYEtWLCa8/Gd
+         z7wrWMAdBBv70x6bL7GOlqxj2b1EV89jhr1SulwimmvYAeXg3nfHP6uzGwz133XvIyup
+         XFMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731045117; x=1731649917;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OqQKVoQIIB/alco7tDnCa7tsUMIzxx7+4InKayAOpSw=;
-        b=IfFDqdttZ6P3pxfVUn4mdwSQ2/+NvkEu7uc50Qbh4j5KkclorBUCnKUeH9fCgwV0Ya
-         R6MiiY7T2JTSDoglW5dAduPwN5Lo1lhpCCoOvmmKHvuhS+mNT6ERAS8rYdfc9DqTiq4A
-         xBX9PPQmErPxRcJph+mY5VwVDOviYYoRZHO6Fc0hzygWFwYR2TkAoargKugLxujRGYCb
-         iOnpmWxVpkX4HwJHhByGw4FPS0n2YFWNTmpuWgmAO0ZmFns6t+S/kI9vC8BAj/HcisHW
-         3lVQDpPz00l7gQVPzcHDLfbxzEi64bamSndG/yr02DdYRFcNfhK4GU/ibHODJxq7SX38
-         cPRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6MhxjwRCVTCVaCk7oq6D7QZHyHczF0rrSlQClZjypGsl98F2qjqsoxM9B1xG2rahaUFAyGEQ6ZgHCo56H@vger.kernel.org, AJvYcCWHCoCTHeQMgF2gNimVKZSvTxgzQe9KG5SMitXo4TwbmyUmpEy3IMNzK81bDd8y4wRhcL37pjZMG4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyxr58X9BEBPKXqYi/sf+eblEeqyqV8wx70rKs2EUDfFgpkkiS
-	xQ4htwgBfVSaMG74CxYGM9MtTjwY7n3Z6X95Wqdil+LUwET0J1ki
-X-Google-Smtp-Source: AGHT+IFkZaTZJxaNXXPpZuSOVEsTRJR2nEjo5hkiRAfTbYsTwu37oqi4krQ0l4Ej1anGCJLRJlEz4A==
-X-Received: by 2002:a05:6870:5e53:b0:27b:55af:ca2b with SMTP id 586e51a60fabf-295600c5b27mr1930081fac.11.1731045117421;
-        Thu, 07 Nov 2024 21:51:57 -0800 (PST)
-Received: from 1337 (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ec7sm2752918b3a.55.2024.11.07.21.51.56
+        d=1e100.net; s=20230601; t=1731045088; x=1731649888;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C8W06lc2t9tIXnzyhc0K76SKMARK1scFjPbtxIgSIUg=;
+        b=UBLOwHHb14+cv4vSBd6vJ3vXGe198DGuErlIcpCgc+dhfbk3E0kV1iSzgM6EYJ6R/8
+         Jq93xAkcUPi2yMd9btgcpzSZCsnQ68tk5mlyELyUJ6DMY9dEEmeta967bXLTh9D0LVqD
+         8ocbJlp5g8SZGAv59+ug2tYS0XRhgVNSwemonZcmMZ00GCakOtQVvb4Vg13AY5xTNMTr
+         NTJ+wgL6fVXH+/XIQt5bG8xWT0JpKd2lIJrboLirzHs0buaUmKMIbHGImzjY/yVDCLZY
+         FQkkj6W8UYiEv5roYcojoAtshT9A1lUSYY14PUjiltZsjnvYwBI5DHnxikDkyFdSPx7F
+         gIkg==
+X-Gm-Message-State: AOJu0YzsCITm2ThGo1bGznR92rNF7atSZJsHnElIGLo/8TVwnaFEtbna
+	ivAD8RdzR8Y8+RB8DuhHcXY9AbtE6l+Z9jHR+iKeEmeEJxow5QwZbESWXz/yFZNN2bIgCTPHGGg
+	9zLh7MfrC
+X-Google-Smtp-Source: AGHT+IEoZH/FynT5NC7cHyUxVRiAOEePqm6FaAj1VvoPv2YxexuX6AIFW5aSbiyYUDtzlZjPe6B6Nw==
+X-Received: by 2002:a05:6512:282a:b0:53a:40e:d55f with SMTP id 2adb3069b0e04-53d86289b09mr657317e87.15.1731045088131;
+        Thu, 07 Nov 2024 21:51:28 -0800 (PST)
+Received: from localhost ([2401:e180:8800:eb21:7695:a769:ff9c:3830])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5c3eesm22663225ad.216.2024.11.07.21.51.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2024 21:51:56 -0800 (PST)
-References: <20241107063042.106228-1-xandfury@gmail.com>
- <464b1628-957a-485b-87d9-47636491de22@infradead.org>
-User-agent: mu4e 1.6.10; emacs 28.1
-From: Abhinav Saxena <xandfury@gmail.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, Zhihao Cheng
- <chengzhihao1@huawei.com>, Richard Weinberger <richard@nod.at>
-Subject: Re: [PATCH 1/2] Documentation/mm: Fix spelling in hwpoison.rst
-Date: Thu, 07 Nov 2024 22:50:46 -0700
-In-reply-to: <464b1628-957a-485b-87d9-47636491de22@infradead.org>
-Message-ID: <87ed3me0j3.fsf@gmail.com>
+        Thu, 07 Nov 2024 21:51:27 -0800 (PST)
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: cve@kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Subject: [PATCH vulns 1/2] add a .vulnerable id for CVE-2024-49888
+Date: Fri,  8 Nov 2024 13:51:13 +0800
+Message-ID: <20241108055118.28631-1-shung-hsi.yu@suse.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Link: https://lore.kernel.org/all/klr4llu43s4osw4o7234no33k6eujo2wvpeyhft2z5zgib6zac@hvg72k5q7w3f/
+Signed-off-by: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+---
+Add vulnerable commit IDs as Greg previously suggested[1].
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+I posted analysis separately and referenced them with the Link tag
+instead of including the whole analysis in the commit message. Let me
+know if an alternative approach is preferred.
 
-> On 11/6/24 10:30 PM, Abhinav Saxena wrote:
->> Fix spelling of "focusses" to "focuses" to follow standard English usage.
->>=20
->
-> We accept British spellings.
->
-> internet says:
-> "Both spellings are acceptable in American and British English."
+1: https://lore.kernel.org/all/2024102419-deserving-veneering-6641@gregkh/
+---
+ cve/published/2024/CVE-2024-49888.vulnerable | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 cve/published/2024/CVE-2024-49888.vulnerable
 
-Ah. I should've checked contributing.rst[1] first. checkpatch.pl flagged it
-for me. I did not look more into it.
+diff --git a/cve/published/2024/CVE-2024-49888.vulnerable b/cve/published/2024/CVE-2024-49888.vulnerable
+new file mode 100644
+index 00000000..b7b1891d
+--- /dev/null
++++ b/cve/published/2024/CVE-2024-49888.vulnerable
+@@ -0,0 +1 @@
++ec0e2da95f72
+-- 
+2.47.0
 
-Thanks for the detailed reply!
-
-[1] - Documentation/doc-guide/contributing.rst
-
->
-> "Focused" is the past tense of the verb "focus" and can also be used as a=
-n adjective to mean clear. For example, "She had a focused approach in trai=
-ning".=20
-> The plural of the noun "focus" can be either "foci" or "focuses".=20
->
->     FOCUS definition and meaning | Collins English Dictionary
->     ), plural, 3rd person singular present tense focuses , focusing , pas=
-t tense, past participle focused language note: The spellings...
->     Collins Dictionary
->
-> Focussed vs Focused | Spelling, Explanation & Examples - QuillBot
-> Sep 10, 2024 =E2=80=94 Published on September 10, 2024 by Trevor Marshall=
-, MSc. Revised on October 29, 2024. Both focussed and focused are ac...
-> QuillBot
-> Spelling Tips: Focused or Focussed? | Australia's Best Writing Tips
-> May 7, 2020 =E2=80=94 Summary: Focused or Focussed? 'Focused' and 'focuss=
-ed' are two spellings of the same word: Focused (one 's') is the sta...
-> getproofed.com.au
->
->     Show all
->
-> "
->> Checkpatch.pl reported this issue.
->>=20
->> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
->> ---
->>  Documentation/mm/hwpoison.rst | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/Documentation/mm/hwpoison.rst b/Documentation/mm/hwpoison.r=
-st
->> index 483b72aa7c11..dd02fae484dc 100644
->> --- a/Documentation/mm/hwpoison.rst
->> +++ b/Documentation/mm/hwpoison.rst
->> @@ -17,7 +17,7 @@ To quote the overview comment::
->>  	hardware as being corrupted usually due to a 2bit ECC memory or cache
->>  	failure.
->>=20=20
->> -	This focusses on pages detected as corrupted in the background.
->> +	This focuses on pages detected as corrupted in the background.
->>  	When the current CPU tries to consume corruption the currently
->>  	running process can just be killed directly instead. This implies
->>  	that if the error cannot be handled for some reason it's safe to
-
-
---=20
---=20
-Abhinav Saxena
 
