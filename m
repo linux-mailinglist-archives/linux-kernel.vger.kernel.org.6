@@ -1,102 +1,541 @@
-Return-Path: <linux-kernel+bounces-401565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E869C1C52
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:42:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 550929C1C57
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:43:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438C51C22E9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94621F242F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A471E47C4;
-	Fri,  8 Nov 2024 11:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808241E503C;
+	Fri,  8 Nov 2024 11:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hUo86sKI"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="IgvGN62/"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1757B3E1
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889DA7B3E1;
+	Fri,  8 Nov 2024 11:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066149; cv=none; b=hCTtmRxAvK+OTjzxmAuOgBS4t0vSYZCYWQIv0Zh3rC52mhS6fZWZ57ngDHKPG1kZbLH6dKOZob2dSJLm80Dl2KWOQ8TieQu1FjHDXKIwnQcDD91ikcr9WbAVzmREriZGg0qInOy/4GDDrHX+rsICb0v/g8g2Ow/99/cm4rCp+TU=
+	t=1731066188; cv=none; b=RCIdLvKs+K4SSYJzbHDRmff0g6fOAyWP/wsweursUtGij6Ymul1Qfsd24iXnPRRIwdRbXS49xPmt77giuzQRMftOiEUy9WbbZw1+/HJz99ZWbeS0l90IrHq4RjARh5LzoH2MGbdrAE2mtKwqwkGcNcc0ZDwxY1tVbtlnvWq6pXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066149; c=relaxed/simple;
-	bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oo+6m5UpGnigdhV5+lac+ngCfC8VFcIE9TxwEKlML+0kcv9TGgan4cEoAyskYmAK84FficecdCq2ltabZoxwHWKzvWORg/F4YiU754xbjwwLLXDU5bOHsPeTYzJ0bVdX9/v3QKCohIz6U+G3FAyiSdXHMknap5jiSzBQvB9mJ98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hUo86sKI; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so1282182f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:42:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731066145; x=1731670945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
-        b=hUo86sKIaFf65neG4PL5agGkFsQsByTWyg4c0dPfhCnKKEBHcZwgovFfJByOxTp0xV
-         M8ZXd1n7fUQY4ifBYWbROYEZxU5F9Gb/RUFH1UstXtf7UTTTEJSY5uiFaaKRa+DDRlEO
-         53+UneoaY98r0ssxyXjGycwIuFX49EQl18FeWV+Uum3Z+esZrv6ciH+WVOLJLH4y4hrE
-         70Eb8W7jN6vmdWwN+floRN2bvZm8LwKIja22jvaN5QNjcLhLLb4gEaxnG15FxJrJlZtj
-         hFxEDCwwff0gca6gQviiTqLKFkjn2FAQQ9TM2GYXlJe42SDMTXZaRM+5tqFLN85wJOvN
-         LmBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731066145; x=1731670945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QSYeNCRrMACG703/tZ42was+9GV5MlAmzjGVyTIcV80=;
-        b=Thwq/z93/8BpLXpYHkd+AyWu706eTgAJA3XSrSJFb0z1LAKyoWn//sOGe5VXz9ES1a
-         aHCSkeLyngy5+p7xZyAa98oHv/C5vU5lu5Og0JVEyl5XRU/fVdDrKgUU0wbJfYXOdHqW
-         Herm8uS4g+cdKTR973UZNFA1fQMDl5gmQx8a/gsuF5e4o+wKbAWDqlwlgowPzCiBrNqK
-         Z8N8wQ/eaXGwidKqgGi1Y6AKdmKVWUZvZOkLZGPugvMSbUgHNSQKM0D36GUtA50OnJI7
-         cQLfWife2JIisvGBfD7f8URgDxbPGnG0ZvUy61xJa8XWnBJ6KvezXr3qV0WHF9sq201A
-         n4mA==
-X-Forwarded-Encrypted: i=1; AJvYcCURN+TpA2w5swlN/PlMCLTPTLpLqxnnaBz3a0zkW16RgQJqGFrK27EXZ6vDloFt/29D0+yVbnctlAscnD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW1aRDF2jBi2kCU2ckGf122LrgV8BDO4+weX32VxLYfCCDA6JC
-	bGJ7Xr1oXPG6ri7sE36kmunQPB+/JnzjVjCDZPBwJXS0Qos57l6y9MYvKbxvKMaJprM6zoVCLYt
-	o5/rvVKUltUxv0dEfeDPUBXdKL++3fFUf+7uJ
-X-Google-Smtp-Source: AGHT+IHwq++S1UFkctL0ms+SbLu6Jboh5uhqAxESNgvmcj+xrJ6NQ6q3WEQenfMQG5a8FwXU+DeMKJZxGjzaBtTZ3zE=
-X-Received: by 2002:a05:6000:1868:b0:374:c3e4:d6de with SMTP id
- ffacd0b85a97d-381f1885dd9mr2122596f8f.41.1731066145385; Fri, 08 Nov 2024
- 03:42:25 -0800 (PST)
+	s=arc-20240116; t=1731066188; c=relaxed/simple;
+	bh=zbYO/1NB/+gNBdZpKxIp2w8dCQN5Jsvjfv7ErVnPOn0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S7H+QHaNFOkgwiVEZPmwlD1zQl/EALZ2vX+WAVMvP7PpXJl/l59YHrpqwPsL/an9rNrqDlrWw6GDxM9z0uRYGcHGw8PZ1b6Ql1Cr3IRs2jhoHvjlxC0SUKIVmJvxtoaD8pu6RZBgpFdLgHiw9G4655drwRSnreL+8sxaEtOaqts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=IgvGN62/; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=FwTrzwv674lJ7/jefdJjg08FQjpqD2Ar32gnGbB5/0Q=;
+	t=1731066186; x=1732275786; b=IgvGN62/nmox57rHEYPlvdWtLa+FcwCcFvTsFKnbEfas8U4
+	hPTq/+S0PppXVspNmu6GOuFwaYgUZyAVrU4LRZzw5V9b0GkhQ23jZn44Jz59TUpoJ+tH8p7muMUXG
+	4013DaqDhNxx1z7Se5Y2VtSWKuGowGQOtvhojc+xGOKT1U2pEHlbBgsE/VoJW3q8gt27ufna5g+Er
+	oqpFK/qoUg8Ss8FtDGMK1cUnWaMExvOkwqTYq+ZPDx2EmgdzgJ2S33QYGAYa9HP2NVjNK3y8wkK+d
+	ugSNkoBFh+9yhkCLmQHo1FY4/aFwFnoBOYSCmODH1M3ActQVfddkDTfxDvm5yzEQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1t9NOG-0000000HEKm-1zD4;
+	Fri, 08 Nov 2024 12:43:00 +0100
+Message-ID: <685d782d68bfc664c4fcc594dff96546ffc30e5f.camel@sipsolutions.net>
+Subject: Re: [PATCH v5 09/17] wifi: cc33xx: Add main.c
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Michael Nemanov <michael.nemanov@ti.com>, Kalle Valo <kvalo@kernel.org>,
+  "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sabeeh Khan <sabeeh-khan@ti.com>
+Date: Fri, 08 Nov 2024 12:42:59 +0100
+In-Reply-To: <20241107125209.1736277-10-michael.nemanov@ti.com>
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+	 <20241107125209.1736277-10-michael.nemanov@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com> <20241104-borrow-mut-v2-5-de650678648d@gmail.com>
-In-Reply-To: <20241104-borrow-mut-v2-5-de650678648d@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 8 Nov 2024 12:42:13 +0100
-Message-ID: <CAH5fLgji1CX=OGygvzoBPggYDss7PvgvHC+NhW4tR031H6Tbfw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] rust: reorder `ForeignOwnable` items
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Mon, Nov 4, 2024 at 10:20=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> `{into,from}_foreign` before `borrow` is slightly more logical.
->
-> This removes an inconsistency with `kbox.rs` which already uses this
-> ordering.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Hi,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+reading through this anyway looking for mac80211 integration, so I'll
+nitpick too ... ;-)
 
-I don't think this is super important, but shrug.
+> +#define CC33XX_FW_RX_PACKET_RAM (9 * 1024)
+> +static int no_recovery     =3D -1;
+
+that makes it look related?
+
+> +static const u8 cc33xx_rate_to_idx_2ghz[] =3D {
+> +	CONF_HW_RXTX_RATE_UNSUPPORTED,
+> +	0,              /* RATE_INDEX_1MBPS */
+
+for all of these arrays - use C99? sure it'll give the compiler a lot
+more work, but it looks better and is less error-prone...
+
+	[0] =3D UNSUPPORTED,
+	[RATE_INDEX_1MBPS] =3D 0,
+	...
+
+> +/* can't be const, mac80211 writes to this */
+
+Technically, I believe that's cfg80211.
+
+
+> +	/* If we started out as wide, we can change the operation mode. If we
+> +	 * thought this was a 20mhz AP, we have to reconnect
+
+MHz
+
+> +	if (wlvif->sta.role_chan_type !=3D NL80211_CHAN_HT40MINUS &&
+> +	    wlvif->sta.role_chan_type !=3D NL80211_CHAN_HT40PLUS)
+> +		ieee80211_connection_loss(cc33xx_wlvif_to_vif(wlvif));
+
+You seem to support HE (PPE thresholds above and all that), but then you
+still use CHAN_HT40MINUS/PLUS?! That seems ... rather wrong? You should
+probably track in terms of NL80211_CHAN_WIDTH_*, I'm not even sure how
+you get NL80211_CHAN_* values in the first place, mac80211 should never
+use them now?
+
+> +static void cc33xx_rc_update_work(struct work_struct *work)
+> +{
+> +	struct cc33xx_vif *wlvif =3D container_of(work, struct cc33xx_vif,
+> +						rc_update_work);
+> +	struct cc33xx *cc =3D wlvif->cc;
+> +	struct ieee80211_vif *vif =3D cc33xx_wlvif_to_vif(wlvif);
+> +
+> +	mutex_lock(&cc->mutex);
+
+Given the way the wiphy mutex now works, I'd strongly recommend not
+having your own mutex any more - it's a huge simplification in a lot of
+places, and there's very little downside since everything coming from
+higher layers holds the wiphy mutex already (and almost certainly needs
+to acquire your own mutex.)
+
+> +static inline void cc33xx_tx_watchdog_work(struct work_struct *work)
+> +{
+> +	container_of(to_delayed_work(work), struct cc33xx, tx_watchdog_work);
+> +}
+
+I don't think that does what you think it does. Well, I don't know what
+you think it does, but ...
+
+Also there should be (almost) no inline in C files, and even if it were
+correct you'd probably just use it exactly once?
+
+> +#define CTRL_TYPE_BITS 4
+> +static int get_type(struct control_info_descriptor *control_info_descrip=
+tor)
+> +{
+> +	u16 type_mask =3D GENMASK(CTRL_TYPE_BITS - 1, 0);
+> +
+> +	return le16_to_cpu(control_info_descriptor->type_and_length) & type_mas=
+k;
+
+could use le16_get_bits()
+
+> +static unsigned int get_length(struct control_info_descriptor *control_i=
+nfo_descriptor)
+> +{
+> +	return le16_to_cpu(control_info_descriptor->type_and_length) >> CTRL_TY=
+PE_BITS;
+> +}
+
+more interesting here
+
+> +static int parse_control_message(struct cc33xx *cc,
+> +				 const u8 *buffer, size_t buffer_length)
+> +{
+> +	u8 *const end_of_payload =3D (u8 *const)buffer + buffer_length;
+> +	u8 *const start_of_payload =3D (u8 *const)buffer;
+
+I don't think the "u8 *const" is useful here, and the cast is awkward.
+If anything you'd want "const u8 *const" (which should make it not need
+the cast), but the const you have adds no value... do you even know what
+it means? ;-)
+
+> +	struct NAB_header *nab_header;
+
+surely checkpatch complained about CamelCase or so with the struct name
+like that?
+
+> +/* caller must not hold cc->mutex, as it might deadlock */
+
+Exactly the type of problem you don't even have to think about if you
+only use the wiphy mutex/wiphy work.
+
+> +static void cc33xx_recovery_work(struct work_struct *work)
+> +{
+> +	struct cc33xx *cc =3D container_of(work, struct cc33xx, recovery_work);
+> +	struct cc33xx_vif *wlvif;
+> +	struct ieee80211_vif *vif;
+> +
+> +	cc33xx_notice("CC33xx driver attempting recovery");
+> +
+> +	if (cc->conf.core.no_recovery) {
+> +		cc33xx_info("Recovery disabled by configuration, driver will not resta=
+rt.");
+> +		return;
+> +	}
+> +
+> +	if (test_bit(CC33XX_FLAG_DRIVER_REMOVED, &cc->flags)) {
+> +		cc33xx_info("Driver being removed, recovery disabled");
+> +		return;
+> +	}
+> +
+> +	cc->state =3D CC33XX_STATE_RESTARTING;
+> +	set_bit(CC33XX_FLAG_RECOVERY_IN_PROGRESS, &cc->flags);
+> +
+> +	mutex_lock(&cc->mutex);
+> +	while (!list_empty(&cc->wlvif_list)) {
+> +		wlvif =3D list_first_entry(&cc->wlvif_list,
+> +					 struct cc33xx_vif, list);
+> +		vif =3D cc33xx_wlvif_to_vif(wlvif);
+> +
+> +		if (test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags))
+> +			ieee80211_connection_loss(vif);
+> +
+> +		__cc33xx_op_remove_interface(cc, vif, false);
+> +	}
+> +	mutex_unlock(&cc->mutex);
+> +
+> +	cc33xx_turn_off(cc);
+> +	msleep(500);
+> +
+> +	mutex_lock(&cc->mutex);
+> +	cc33xx_init_fw(cc);
+> +	mutex_unlock(&cc->mutex);
+> +
+> +	ieee80211_restart_hw(cc->hw);
+> +
+> +	mutex_lock(&cc->mutex);
+> +	clear_bit(CC33XX_FLAG_RECOVERY_IN_PROGRESS, &cc->flags);
+> +	mutex_unlock(&cc->mutex);
+
+even more so with the awful locking/unlocking/... here (also no need to
+unlock to call restart_hw, I think?)
+
+and using both a mutex and atomic ops seems ... odd?
+
+
+> +	/* PLT init: Role enable + Role start + plt Init  */
+> +	int ret =3D 0;
+> +
+> +	/* Role enable */
+> +	u8  returned_role_id =3D CC33XX_INVALID_ROLE_ID;
+
+
+extra whitespace
+
+> +	u8 bcast_addr[ETH_ALEN] =3D {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+
+should probably be static const
+
+> +	if (ret >=3D 0) {
+> +		cc33xx_info("PLT init Role Start succeed!, PLT roleID is: %u ",
+> +			    returned_role_id);
+> +	} else {
+> +		cc33xx_info("PLT init Role Start FAILED! , PLT roleID is: %u ",
+> +			    returned_role_id);
+> +	}
+
+no need for braces
+
+> +static void cc33xx_op_tx(struct ieee80211_hw *hw,
+> +			 struct ieee80211_tx_control *control,
+> +			 struct sk_buff *skb)
+> +{
+> +	struct cc33xx *cc =3D hw->priv;
+> +	struct ieee80211_tx_info *info =3D IEEE80211_SKB_CB(skb);
+> +	struct ieee80211_vif *vif =3D info->control.vif;
+> +	struct cc33xx_vif *wlvif =3D NULL;
+> +	enum cc33xx_queue_stop_reason stop_reason =3D CC33XX_QUEUE_STOP_REASON_=
+WATERMARK;
+> +	unsigned long flags;
+> +	int q, mapping;
+> +	u8 hlid;
+> +
+> +	if (!vif) {
+> +		ieee80211_free_txskb(hw, skb);
+> +		return;
+> +	}
+> +
+> +	wlvif =3D cc33xx_vif_to_data(vif);
+> +	mapping =3D skb_get_queue_mapping(skb);
+> +	q =3D cc33xx_tx_get_queue(mapping);
+> +
+> +	hlid =3D cc33xx_tx_get_hlid(cc, wlvif, skb, control->sta);
+> +
+> +	spin_lock_irqsave(&cc->cc_lock, flags);
+> +
+> +	/* drop the packet if the link is invalid or the queue is stopped
+> +	 * for any reason but watermark. Watermark is a "soft"-stop so we
+> +	 * allow these packets through.
+> +	 */
+> +
+> +	if (hlid =3D=3D CC33XX_INVALID_LINK_ID ||
+> +	    (!test_bit(hlid, wlvif->links_map)) ||
+> +	    (cc33xx_is_queue_stopped_locked(cc, wlvif, q) &&
+> +	    !cc33xx_is_queue_stopped_by_reason_locked(cc, wlvif, q,
+> +						      stop_reason))) {
+> +		cc33xx_debug(DEBUG_TX, "DROP skb hlid %d q %d ", hlid, q);
+> +		ieee80211_free_txskb(hw, skb);
+> +		goto out;
+> +	}
+
+I'd consider converting to itxq APIs, you already use them anyway via
+ieee80211_handle_wake_tx_queue so you don't gain anything from not doing
+it, but you gain a lot of flexibility from doing it and don't have to do
+things like this?
+
+It's not _that_ hard.
+
+> +/* Allocates an RX filter returned through f
+> + * which needs to be freed using rx_filter_free()
+> + */
+> +static int
+> +cc33xx_convert_wowlan_pattern_to_rx_filter(struct cfg80211_pkt_pattern *=
+p,
+> +					   struct cc33xx_rx_filter **f)
+
+use ERR_PTR() etc instead of **f?
+
+> +static void cc33xx_configure_resume(struct cc33xx *cc, struct cc33xx_vif=
+ *wlvif)
+> +{
+> +	int ret =3D 0;
+> +	bool is_ap =3D wlvif->bss_type =3D=3D BSS_TYPE_AP_BSS;
+> +	bool is_sta =3D wlvif->bss_type =3D=3D BSS_TYPE_STA_BSS;
+> +	struct cc33xx_core_conf *core_conf =3D &cc->conf.core;
+> +
+> +	if (!is_ap && !is_sta)
+> +		return;
+> +
+> +	if ((is_sta && !test_bit(WLVIF_FLAG_STA_ASSOCIATED, &wlvif->flags)) ||
+> +	    (is_ap && !test_bit(WLVIF_FLAG_AP_STARTED, &wlvif->flags)))
+> +		return;
+> +
+> +	cc33xx_configure_wowlan(cc, NULL);
+> +
+> +	if (is_sta) {
+> +		if (core_conf->suspend_wake_up_event =3D=3D core_conf->wake_up_event &=
+&
+> +		    core_conf->suspend_listen_interval =3D=3D core_conf->listen_interv=
+al)
+> +			return;
+> +
+> +		ret =3D cc33xx_acx_wake_up_conditions(cc, wlvif,
+> +						    core_conf->wake_up_event,
+> +						    core_conf->listen_interval);
+> +
+> +		if (ret < 0)
+> +			cc33xx_error("resume: wake up conditions failed: %d",
+> +				     ret);
+> +
+> +	} else if (is_ap) {
+> +		ret =3D cc33xx_acx_beacon_filter_opt(cc, wlvif, false);
+
+That never uses that ret assignment here, will almost certainly cause
+compiler warnings later
+
+> +static inline void cc33xx_op_stop(struct ieee80211_hw *hw, bool suspend)=
+ {}
+
+inline again
+
+> +	switch (wlvif->bss_type) {
+> +	case BSS_TYPE_AP_BSS:
+> +		if (wlvif->p2p)
+> +			return CC33XX_ROLE_P2P_GO;
+> +		else if (ieee80211_vif_is_mesh(vif))
+> +			return CC33XX_ROLE_MESH_POINT;
+> +		else
+> +			return CC33XX_ROLE_AP;
+
+no need for else, that also makes it clearer that there's no need for
+break/fallthrough
+
+(and checkpatch didn't notice??)
+
+> +	/* mac80211 configures some values globally, while we treat them
+> +	 * per-interface. thus, on init, we have to copy them from cc
+> +	 */
+> +	wlvif->band =3D cc->band;
+
+I don't know what you do (yet, at this point of the patch), but mac80211
+certainly does not configure a band globally unless you specifically
+wanted it to...
+
+> +	wlvif->power_level =3D cc->power_level;
+> +
+> +	INIT_WORK(&wlvif->rc_update_work, cc33xx_rc_update_work);
+> +	INIT_DELAYED_WORK(&wlvif->channel_switch_work,
+> +			  cc33xx_channel_switch_work);
+
+This might be problematic if you get here via HW restart and the work
+might be pending/running? There's a check before, but I'm not sure how
+you'd get to remove_interface in restart first?
+
+Also seems like a lot of races there (that comment about "some very
+corner case" ...) - again something avoided by relying more on wiphy
+mutex.
+
+> +static int cc33xx_allocate_hw_queue_base(struct cc33xx *cc,
+> +					 struct cc33xx_vif *wlvif)
+> +{
+> +	struct ieee80211_vif *vif =3D cc33xx_wlvif_to_vif(wlvif);
+> +	struct cc33xx_hw_queue_iter_data iter_data =3D {};
+> +	int i, q_base;
+> +
+> +	if (vif->type =3D=3D NL80211_IFTYPE_P2P_DEVICE) {
+> +		vif->cab_queue =3D IEEE80211_INVAL_HW_QUEUE;
+> +		return 0;
+> +	}
+> +
+> +	iter_data.vif =3D vif;
+> +
+> +	/* mark all bits taken by active interfaces */
+> +	ieee80211_iterate_active_interfaces_atomic(cc->hw,
+> +						   IEEE80211_IFACE_ITER_RESUME_ALL,
+> +					cc33xx_hw_queue_iter, &iter_data);
+
+probably don't need atomic in this context
+
+> +	/* Last AP, have more stations. Configure sleep auth according to STA.
+> +	 * Don't do thin on unintended recovery.
+
+typo
+
+> +unlock:
+> +	mutex_unlock(&cc->mutex);
+> +
+> +	cancel_work_sync(&wlvif->rc_update_work);
+> +	cancel_delayed_work_sync(&wlvif->connection_loss_work);
+> +	cancel_delayed_work_sync(&wlvif->channel_switch_work);
+> +	cancel_delayed_work_sync(&wlvif->pending_auth_complete_work);
+> +	cancel_delayed_work_sync(&wlvif->roc_timeout_work);
+> +
+> +	mutex_lock(&cc->mutex);
+
+also this kind of thing ... just use wiphy mutex/work
+
+> +	if (sta_rate_set) {
+> +		wlvif->rate_set =3D cc33xx_tx_enabled_rates_get(cc, sta_rate_set,
+> +							      wlvif->band);
+> +	}
+
+you have a thing for extra braces ;-)
+(also in many other places)
+
+
+> +static int cc33xx_op_config(struct ieee80211_hw *hw, u32 changed)
+> +{
+> +	struct cc33xx *cc =3D hw->priv;
+
+Yeah, ok, now I see why you have issues with band setting and whatnot.
+You probably should not implement this op in a multi-role capable device
+with anything other than "return 0"? We should probably change mac80211
+to not require it.
+
+> +	/* configure each interface */
+> +	cc33xx_for_each_wlvif(cc, wlvif) {
+> +		ret =3D cc33xx_config_vif(cc, wlvif, conf, changed);
+> +		if (ret < 0)
+> +			goto out;
+> +	}
+
+that kind of thing is just awful ... use channel contexts etc. instead?
+What part does it need to still do through here that's for each *vif*?
+
+> +static int cc33xx_init_ieee80211(struct cc33xx *cc)
+> +{
+> +	unsigned int i;
+> +
+> +	if (cc->conf.core.mixed_mode_support) {
+> +		static const u32 cipher_suites[] =3D {
+> +			WLAN_CIPHER_SUITE_CCMP,
+> +			WLAN_CIPHER_SUITE_AES_CMAC,
+> +			WLAN_CIPHER_SUITE_TKIP,
+> +			WLAN_CIPHER_SUITE_GCMP,
+> +			WLAN_CIPHER_SUITE_GCMP_256,
+> +			WLAN_CIPHER_SUITE_BIP_GMAC_128,
+> +			WLAN_CIPHER_SUITE_BIP_GMAC_256,
+> +		};
+> +		cc->hw->wiphy->cipher_suites =3D cipher_suites;
+> +		cc->hw->wiphy->n_cipher_suites =3D ARRAY_SIZE(cipher_suites);
+> +
+> +	} else {
+> +		static const u32 cipher_suites[] =3D {
+> +			WLAN_CIPHER_SUITE_CCMP,
+> +			WLAN_CIPHER_SUITE_AES_CMAC,
+> +			WLAN_CIPHER_SUITE_GCMP,
+> +			WLAN_CIPHER_SUITE_GCMP_256,
+> +			WLAN_CIPHER_SUITE_BIP_GMAC_128,
+> +			WLAN_CIPHER_SUITE_BIP_GMAC_256,
+> +		};
+
+I don't see you have GEM here, yet you handle it in other places above,
+that seems odd. Also I'm not sure it can work at all now that we removed
+the whole extended IV mess, unless you offloaded that?
+
+> +	/* clear channel flags from the previous usage
+> +	 * and restore max_power & max_antenna_gain values.
+> +	 */
+> +	for (i =3D 0; i < ARRAY_SIZE(cc33xx_channels); i++) {
+> +		cc33xx_band_2ghz.channels[i].flags =3D 0;
+> +		cc33xx_band_2ghz.channels[i].max_power =3D CC33XX_MAX_TXPWR;
+> +		cc33xx_band_2ghz.channels[i].max_antenna_gain =3D 0;
+> +	}
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(cc33xx_channels_5ghz); i++) {
+> +		cc33xx_band_5ghz.channels[i].flags =3D 0;
+> +		cc33xx_band_5ghz.channels[i].max_power =3D CC33XX_MAX_TXPWR;
+> +		cc33xx_band_5ghz.channels[i].max_antenna_gain =3D 0;
+> +	}
+> +
+> +	/* Enable/Disable He based on conf file params */
+> +	if (!cc->conf.mac.he_enable) {
+> +		cc33xx_band_2ghz.iftype_data =3D NULL;
+> +		cc33xx_band_2ghz.n_iftype_data =3D 0;
+> +
+> +		cc33xx_band_5ghz.iftype_data =3D NULL;
+> +		cc33xx_band_5ghz.n_iftype_data =3D 0;
+> +	}
+
+it seems wrong to modify the global data here
+
+> +	/* We keep local copies of the band structs because we need to
+> +	 * modify them on a per-device basis.
+> +	 */
+> +	memcpy(&cc->bands[NL80211_BAND_2GHZ], &cc33xx_band_2ghz,
+> +	       sizeof(cc33xx_band_2ghz));
+> +	memcpy(&cc->bands[NL80211_BAND_2GHZ].ht_cap,
+> +	       &cc->ht_cap[NL80211_BAND_2GHZ],
+> +	       sizeof(*cc->ht_cap));
+
+and in particular if you *then* do that??
+
+> +#define create_high_prio_freezable_workqueue(name)			\
+> +	alloc_workqueue("%s", __WQ_LEGACY | WQ_FREEZABLE | WQ_UNBOUND |	\
+> +			WQ_MEM_RECLAIM | WQ_HIGHPRI, 1, (name))
+
+not much value in this macro, you're hopefully not going to do many of
+these?
+
+johannes
 
