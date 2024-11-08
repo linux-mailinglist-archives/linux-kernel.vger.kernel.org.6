@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C169C250F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:48:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0DB9C2510
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F391F23969
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:48:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BB61B23F26
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFE81A9B30;
-	Fri,  8 Nov 2024 18:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CF11C1F10;
+	Fri,  8 Nov 2024 18:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dGfPNsS6"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lsJfQ+nV"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B8B1AA1DE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBABB1AA1F4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091681; cv=none; b=uKGxJUiQUoTafPzjbBZzAnFqB/srevnxVnvCSaG1T5W2ryXkoq1JNEAqLntiYhCPYmYniAwqWXtW1KMgWx74KvQTg/jwAervGl8TjyL/x7dPOIqTewpMahDfQqpJQVq5Onxgf2P4O/ur9lPvAlLYqr/9Kl8v0AtZYbl+8whH3nI=
+	t=1731091683; cv=none; b=iS5a5YeECHMBfCJl2e3Kgol9E5msRxy950AYiFp0yd9kThVsh+g3wsfozMpY0lmoX6zeL4ydvkiALW2iD6LCG1lrOlvAyahmKQ06ioDduBTttCW0XEZ30KLIqRVl1xlln/+zOWe0P0I0nLF12gCgAqswFH8qWD8Ogp/Ck4ANdxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091681; c=relaxed/simple;
-	bh=zJbDeXbNdPoRBGyGBBECIqArwWiKJU3G1l8a5LilCS4=;
+	s=arc-20240116; t=1731091683; c=relaxed/simple;
+	bh=xunf4UD8j9u0pgFlFlHCMfIam9X2Ammz7QNjpmkuuIY=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=beDuwySgVuZFRffZhkdTzlEpkM02xHCM+G7/eZ5AsUGsd8c59Gukrx5SfLl96/twYJgcXDZOkU125NkmniTrtZhD51o0VaPoTrfec2/9RB9NLLe9S+OGSwY4spLKZI/Kfh7T7+U8F36iGSsSGvmCHSs+RbVZ0iiRp9vTzpb1xqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dGfPNsS6; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=dMYH5/Gj7BQPLzyYXAP2KW1EABOtozCZ6GcSokBBEDgK1zuQfWKAqWXPxXGZ7m+OukYkZya/eZ6+WX3q4UCoRrdPbnqbVnrUmQwOe/JEZj6SqNPzm+N0LLSvsuXQW5SOPIdDKorF/vRgVlG3TTXsjRMNXD98P4KPpE0LC0/+cbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lsJfQ+nV; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30d7b4205eso3875905276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:47:59 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e59dc7df64so30616267b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:48:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731091679; x=1731696479; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731091681; x=1731696481; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2kVFB+40RZnsaL/T0qEJlgCASFyLZGTMmhekp/4F3Qw=;
-        b=dGfPNsS6iGlkrTia9mmgyyMLsAsy4/FRG2TNA9O5bHdbtgtxNaM+nDG6iaa0mkpjM+
-         40VlcQZurNI+nryHVj0s0ZRoq3SXJPt/6OGExkp681CZJ/YuhUesD+1Y982s1PVS1p/N
-         IHnl7lKe8hWNHqFOuG8P7u4R2+2KEYBwYAUfu264xK30CAIAqSBA8qvMzLjVpQRi5Koy
-         bq38/po9MRP4ntMvRfJ6EVWicIbo9EHC/ax6T1oWLuFh1rLJKqFN8SXc1GNpJlA00mkc
-         UEEOgJWfVxLETWJ7SZ8aqVHI1JEifMarOUz8FxkgvbsnBBpqAMQOA/D8n1zSpq/NB3kq
-         wiWQ==
+        bh=lh8Vm/QOELe+otL4qaVRvKv87LkZrYQhVCrXoxQ0vBg=;
+        b=lsJfQ+nVBNXjXiJCTTxWWhHGrw5R7Uyk5iD4xMHhxRtXffSFQMM4LXLYoPNUZFFlHf
+         gMuBmbbDvtGcg/duAKxSU2hTchSYRMmhirMCnzngota4kLcT2seuTbEdKm8Q3axn00G/
+         S5/f2rrZMifE8IRTcpWO74G8MvZWmHs/PracsP7H9xArmjlCmCl+tfbZyHA8NXkU2WaV
+         WIO9h7uHXm+YOs5zNvGcyXwOXD+rP5CtE+b5ZEwLYa96dg1pWdrNVBDivmVc/ndPqqVo
+         zQwQEBBWe1JekxrtTr5XVI7vxO1/0b5Tx3aaXdhKSN3YCW3MBORH5iLzfnIBwj72dNw1
+         ebhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091679; x=1731696479;
+        d=1e100.net; s=20230601; t=1731091681; x=1731696481;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kVFB+40RZnsaL/T0qEJlgCASFyLZGTMmhekp/4F3Qw=;
-        b=hVEY74KfMiZG5CVI4ChtnjxwuD7dYgpytp4XZytyUaIs3YtSJNb+JwwjItFXb5I+r0
-         wVU0Dsy9RXEvQo1x1AVRtZIZTpDse4t2aVJlBQFIwAiK3aN4N0O3XhOE8HDv21UB0Zxa
-         DVfhagSNiDP7711i4nZ7MTzttynUJsnCn75GqIcH2hk5UUisPzjShRHCfgPmWtwAQCdc
-         vW/0UAIGGumH8q94TtiWUue5vm8PNk/vdCEfO9fzgB06oUBfv4gPylI3WFdG99bs3hFo
-         NgUWfDeR5ff/yApI95jUqVhNOPJkEY6ki1A9mMGGKUO62u/SveNzHiLyxNAdbd8bbUc0
-         yMlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmUYgyAoLLMgm95NWwbQfG3W3nDWymXPIE8SevWbBRMfbPBglDwIB0Y8Yv26LZaeZXXKCfMQKr8zldn9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4E/W92aV6dNBWM7qduKHHpL6mKcMhsQMLmAxzuhMmrBsZid+c
-	9yKAIUjSQGVXnH8r3sDHv3xMWwJh7zPFNaY1HmgaKTxTRUdwXEp2eXPSpqYYa7hR5Y/JLfqQMob
-	coZrZ7g==
-X-Google-Smtp-Source: AGHT+IFqdBwud7OOCiL30I7xSw+TFazRJGlyNedcf34zMGfEnAXXKZnLcvMzt3bK0UHlmTlKre0Sq7d7VUv7
+        bh=lh8Vm/QOELe+otL4qaVRvKv87LkZrYQhVCrXoxQ0vBg=;
+        b=iQDn4u6GxgxBH21+6t+W669rZhUjaKVY/PCYeYo7ydB3IHqFAX3vBypn4xFu6gxhnC
+         nXoOfsH7s5AqNuJ/vB7PVHx9sv3FqMDLn8bb+tOD4IyPp/MlYvH/XkrWOHUWjuNtNRdS
+         /+/4Pkkulz3ViAjeOH9qis6KvyncJ6GLoRvItMwyA48mHahGslMOm0c2MdANMRtiM46l
+         PrhtxYv+YPZQ/0purjFeZue7ivNvOpjYd2gaphzHbBszSQnjdGPTD/OiDkGZ9YJBqHDw
+         p4z5T2zq3sT5ZoKxQ5oSC3THcUfeakBR0OltZZNFextGX8XVvONCTmhFSEYMI9XD/RAg
+         eEUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZdA5OhX6pOkObvf1OGPag9qwWoCSHLX9JqwabwKCGRDEvu9LNcAemXe8tNNeNJr0ZGi2OSx1vJVwffpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo3NbD1O6tgHT2qlQ5Qo63RT0/UidWc/Pni4ebvavXeAv6Ig/T
+	sdvLc2s4gRHqzsEf25VQjMgewh/O8fhDOF+TyGsyCdG3FibHHKC4yg4J8hi4Z+NZpGlU27zIqe4
+	hM6RS4A==
+X-Google-Smtp-Source: AGHT+IFPk7Rumt8mMYRdDzGIzXRZaVCwQYz/e0WwSEXkae/UW6D+RBmX2yv8dudXz0wiceaycmFGRt5CNVcv
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:6fd2:1e36:6d8c:7c49])
- (user=irogers job=sendgmr) by 2002:a25:3357:0:b0:e2e:330b:faab with SMTP id
- 3f1490d57ef6-e337f77f022mr3761276.0.1731091678809; Fri, 08 Nov 2024 10:47:58
- -0800 (PST)
-Date: Fri,  8 Nov 2024 10:47:47 -0800
+ (user=irogers job=sendgmr) by 2002:a0d:ef05:0:b0:6ea:881b:b545 with SMTP id
+ 00721157ae682-6eade535166mr659907b3.4.1731091681015; Fri, 08 Nov 2024
+ 10:48:01 -0800 (PST)
+Date: Fri,  8 Nov 2024 10:47:48 -0800
 In-Reply-To: <20241108184751.359237-1-irogers@google.com>
-Message-Id: <20241108184751.359237-3-irogers@google.com>
+Message-Id: <20241108184751.359237-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241108184751.359237-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v4 2/6] perf trace-event: Constify print arguments
+Subject: [PATCH v4 3/6] perf trace-event: Always build trace-event-info.c
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -94,40 +94,74 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	"Steven Rostedt (Google)" <rostedt@goodmis.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Capture that these functions don't mutate their input.
+trace-event-info.c has no libtraceevent depdendencies, always build it
+and use it in builtin-record and perf_event_attr printing.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/trace-event-parse.c | 2 +-
- tools/perf/util/trace-event.h       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-record.c               | 2 --
+ tools/perf/util/Build                     | 2 +-
+ tools/perf/util/perf_event_attr_fprintf.c | 4 ----
+ 3 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/trace-event-parse.c b/tools/perf/util/trace-event-parse.c
-index d97830cdbd7e..9f218ba787d8 100644
---- a/tools/perf/util/trace-event-parse.c
-+++ b/tools/perf/util/trace-event-parse.c
-@@ -99,7 +99,7 @@ unsigned long long read_size(struct tep_event *event, void *ptr, int size)
- 	return tep_read_number(event->tep, ptr, size);
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index f83252472921..0b637cea4850 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -1748,10 +1748,8 @@ static void record__init_features(struct record *rec)
+ 	if (rec->no_buildid)
+ 		perf_header__clear_feat(&session->header, HEADER_BUILD_ID);
+ 
+-#ifdef HAVE_LIBTRACEEVENT
+ 	if (!have_tracepoints(&rec->evlist->core.entries))
+ 		perf_header__clear_feat(&session->header, HEADER_TRACING_DATA);
+-#endif
+ 
+ 	if (!rec->opts.branch_stack)
+ 		perf_header__clear_feat(&session->header, HEADER_BRANCH_STACK);
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 1eedead5f2f2..609c69995c51 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -85,7 +85,7 @@ perf-util-y += pmu-flex.o
+ perf-util-y += pmu-bison.o
+ perf-util-y += tool_pmu.o
+ perf-util-y += svghelper.o
+-perf-util-$(CONFIG_LIBTRACEEVENT) += trace-event-info.o
++perf-util-y += trace-event-info.o
+ perf-util-y += trace-event-scripting.o
+ perf-util-$(CONFIG_LIBTRACEEVENT) += trace-event.o
+ perf-util-$(CONFIG_LIBTRACEEVENT) += trace-event-parse.o
+diff --git a/tools/perf/util/perf_event_attr_fprintf.c b/tools/perf/util/perf_event_attr_fprintf.c
+index 59fbbba79697..a73c74b99a3b 100644
+--- a/tools/perf/util/perf_event_attr_fprintf.c
++++ b/tools/perf/util/perf_event_attr_fprintf.c
+@@ -212,7 +212,6 @@ static void __p_config_hw_cache_id(char *buf, size_t size, u64 value)
+ 	}
  }
  
--void event_format__fprintf(struct tep_event *event,
-+void event_format__fprintf(const struct tep_event *event,
- 			   int cpu, void *data, int size, FILE *fp)
+-#ifdef HAVE_LIBTRACEEVENT
+ static void __p_config_tracepoint_id(char *buf, size_t size, u64 value)
  {
- 	struct tep_record record;
-diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
-index 0e5133f1b910..4292977e1cbf 100644
---- a/tools/perf/util/trace-event.h
-+++ b/tools/perf/util/trace-event.h
-@@ -39,7 +39,7 @@ trace_event__tp_format(const char *sys, const char *name);
+ 	char *str = tracepoint_id_to_name(value);
+@@ -220,7 +219,6 @@ static void __p_config_tracepoint_id(char *buf, size_t size, u64 value)
+ 	print_id_hex(str);
+ 	free(str);
+ }
+-#endif
  
- struct tep_event *trace_event__tp_format_id(int id);
- 
--void event_format__fprintf(struct tep_event *event,
-+void event_format__fprintf(const struct tep_event *event,
- 			   int cpu, void *data, int size, FILE *fp);
- 
- int parse_ftrace_file(struct tep_handle *pevent, char *buf, unsigned long size);
+ static void __p_config_id(struct perf_pmu *pmu, char *buf, size_t size, u32 type, u64 value)
+ {
+@@ -238,9 +236,7 @@ static void __p_config_id(struct perf_pmu *pmu, char *buf, size_t size, u32 type
+ 	case PERF_TYPE_HW_CACHE:
+ 		return __p_config_hw_cache_id(buf, size, value);
+ 	case PERF_TYPE_TRACEPOINT:
+-#ifdef HAVE_LIBTRACEEVENT
+ 		return __p_config_tracepoint_id(buf, size, value);
+-#endif
+ 	case PERF_TYPE_RAW:
+ 	case PERF_TYPE_BREAKPOINT:
+ 	default:
 -- 
 2.47.0.277.g8800431eea-goog
 
