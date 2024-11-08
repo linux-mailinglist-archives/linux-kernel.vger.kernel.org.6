@@ -1,114 +1,152 @@
-Return-Path: <linux-kernel+bounces-402474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826659C281E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:29:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CB79C2822
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA05C1C21BC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:29:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149321C21C4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66651E22F8;
-	Fri,  8 Nov 2024 23:29:28 +0000 (UTC)
-Received: from mail115-79.sinamail.sina.com.cn (mail115-79.sinamail.sina.com.cn [218.30.115.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6621F26C7;
+	Fri,  8 Nov 2024 23:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcglRDNL"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7E81A9B5D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BA4610D;
+	Fri,  8 Nov 2024 23:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731108568; cv=none; b=GG/r/vW9xvbmZgaGR0TvlwWbqDX9AjTJ7cDMePo1j+DFFWcd/vIwovC9cyt1zMctGV793D3+Cnp9Shzcbdo8kQcNGCdXi8FyzEpiBrjil5KVzGDsTG4N87aFoRRI+/umw6zCZD0VtcdozUO02sO2PNDzSBIULaMlIBDem8Nfnec=
+	t=1731108686; cv=none; b=nd5596sQ8xCFXpSrvoylSrn9qUrrodqiOFhdTdNSeigJgi36TAuUCrOKg4tr1VtDAMB0N7gfc2Go3wVj0o+LIjuXQ5B6NTjbPGfm7oVc6B0WXlPScWZpYg/G1R9kd8pPXAhumcNC6/Nr6qWSYRBWAhRsMQTDdaOFDHGL58YE+VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731108568; c=relaxed/simple;
-	bh=4ywU9b9z/sMfwWqnaVzKjZq2lVo605h7mWL+ApSPlXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WAYXTPCL/dvgg9Lzxmhjoxpvz7J1fNWKaFkljuHJLZZc2f8eD3JO2eepwQEbZgSqb+k6oWgUhpQ8T1LMu4Uy0mHD7FRJs9Not7iYxWMWpjjhuTrg8+jtY9ekm5QgVwqGYyDCjMUerHNDwADKJKy5jGTdkY4DxVHoJg3VBLr/twc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.10.37])
-	by sina.com (10.185.250.22) with ESMTP
-	id 672E9EC500002876; Fri, 9 Nov 2024 07:29:13 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 1008147602647
-X-SMAIL-UIID: A42BBD2DC59F46A78B6BCC9E5FA1A1AA-20241109-072913-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+078be8bfa863cb9e0c6b@syzkaller.appspotmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	syzkaller-bugs@googlegroups.com,
-	Kairui Song <ryncsn@gmail.com>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>
-Subject: Re: [syzbot] [mm?] general protection fault in swap_reclaim_full_clusters
-Date: Sat,  9 Nov 2024 07:29:01 +0800
-Message-Id: <20241108232901.3631-1-hdanton@sina.com>
-In-Reply-To: <20241107142335.GB1172372@cmpxchg.org>
-References: <672ac50b.050a0220.2edce.1517.GAE@google.com>
+	s=arc-20240116; t=1731108686; c=relaxed/simple;
+	bh=iz0xZ4OrldyN72hxlwwvIedXENVbkH2RVnLuwHEYJIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGevyd4/cdsmRF33DHwUImuyJgZ0kCscweFV/YM1JgL9bOyTYk+beyaz4PAUf6HLHtTvAbPlVa8nyf1uGid1S3KBcV69FkqSSls16TjS56ZLZY7WIy/1X1Yag3eMwZub7nxo6kxtdAedSVkVf2ocwPhBmcrnCb+mh93uqe+DBWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcglRDNL; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso21226775e9.1;
+        Fri, 08 Nov 2024 15:31:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731108682; x=1731713482; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CWrDohYO+E65fwPGOZN9UBAmDMASN0TGavNQ90zX+Bo=;
+        b=WcglRDNLkU61TEKCuZI+AHsOW3GjV36VKxK9GA9l745tXJS6nBji6i7F8bbuO8JhzC
+         9LX9qs+7S7eda7jlENtEanXFwkE4bMHkcuzfHczCbt+dzMQ/ynx9DzjEdTrFkP7mQRWP
+         8gDdYYuUgTr9+IhGJngckO2CsH1MmKkrRWpU0Ab9h+GKNQep1WxWHr05GO/hWStw3e4w
+         dDWUFnTi307kb1mcXDNPso+d9rnPVoL3l1gQURPRXkc1/VUIa1zc5h2x5e78XEPDUGkG
+         g7urOi39perIddwGlTr9hFJq53gPHsAzu42Gr7z5CxwZwvinnLrpZ69lnSiPzV/5P8iy
+         bH5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731108682; x=1731713482;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWrDohYO+E65fwPGOZN9UBAmDMASN0TGavNQ90zX+Bo=;
+        b=hOn0K+n8jO/AfvisGSjue8BxZ07p0flQRUhYoqZdsqnlVgppbD0BTBQANBXj7luvD0
+         8x48jfvUw5MGQp1DADseo62IaQb9XsSXC3usnB7qPeIXkQl5JtwkWluT1qrj7DIQokSz
+         CQRZ/pDw+UWf1MW4L/szATFW++yxQO+xEM4uZz9mj7ag4Ff0MKOu/Ica8CMWe3FxqDEA
+         5+/QIA28DW0rfinxkIXEZYWTwfXKuVU8qJX59YKeHMv/XyL8gV+BjCaPR6pVwuCeNEln
+         Vgg1NP1ObVe1sNFPkIv6+b4ZqROHoxgQPY769Ch2D86gZ36eRGb99Ct0ft+QH/x4MINs
+         HJZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0DDmSLmXYb3g1yAEaGylNtXQDov+LIYg60rS8qDq39KNkr7gPoHraavLtqB6Y4t2j2eFk1aNEBgftzlZSQOBG@vger.kernel.org, AJvYcCVBRNAh0uZDQ17JQo/UCqPePOMLPAM21ar7/L8OW2E2gxb4eytD6+Jkb2lB+2wOT9bJMrrlj2Ct@vger.kernel.org, AJvYcCVTQTLZySZ+nHOfs8UQhK/Hb8nbJo8xkTBuKWgZyUWGCygWu9JDqSXwBaBRQoYtW2ZlmsGoYItf+9fVi/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLIr5L28HXq0SbH4uHnBF7tEG1Ts5QAbIvVmwMihkzmgtXWCp9
+	3rSD/OaX/a2aDTMA2XNOxi2SGz1MgQLAhhXFYWe0BAEd1pE+bHY8
+X-Google-Smtp-Source: AGHT+IEq0HpFAdbYoKoNxwFjF5hrl6ar3mEYDoZ/2WaWDU7Y0dC50eiEpClDhBtuHHsfPTK8kXu8kQ==
+X-Received: by 2002:a05:600c:8608:b0:431:4c14:abf4 with SMTP id 5b1f17b1804b1-432b7887154mr37537395e9.14.1731108682324;
+        Fri, 08 Nov 2024 15:31:22 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432bc46751asm9938215e9.0.2024.11.08.15.31.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 15:31:21 -0800 (PST)
+Message-ID: <21c0887b-1c7d-424d-a723-2a8d212cbde1@gmail.com>
+Date: Sat, 9 Nov 2024 01:31:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 03/23] ovpn: add basic netlink support
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 7 Nov 2024 09:23:35 -0500 Johannes Weiner <hannes@cmpxchg.org>
-> On Tue, Nov 05, 2024 at 05:23:23PM -0800, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    59b723cd2adb Linux 6.12-rc6
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1076c740580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=b77c8a55ccf1d9e2
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=078be8bfa863cb9e0c6b
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167aa1f7980000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=110d86a7980000
+On 29.10.2024 12:47, Antonio Quartulli wrote:
+> This commit introduces basic netlink support with family
+> registration/unregistration functionalities and stub pre/post-doit.
+> 
+> More importantly it introduces the YAML uAPI description along
+> with its auto-generated files:
+> - include/uapi/linux/ovpn.h
+> - drivers/net/ovpn/netlink-gen.c
+> - drivers/net/ovpn/netlink-gen.h
+> 
+> Cc: donald.hunter@gmail.com
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
 
-#syz test
+[skipped]
 
-The syzbot console output indicates a virtual environment where
-swapfile is on a rotational device. In this case, clusters aren't
-actually used, and si->full_clusters is not initialized. Daan's report
-is from qemu, so likely rotational too.
+> diff --git a/drivers/net/ovpn/ovpnstruct.h b/drivers/net/ovpn/ovpnstruct.h
+> --- /dev/null
+> +++ b/drivers/net/ovpn/ovpnstruct.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*  OpenVPN data channel offload
+> + *
+> + *  Copyright (C) 2019-2024 OpenVPN, Inc.
+> + *
+> + *  Author:	James Yonan <james@openvpn.net>
+> + *		Antonio Quartulli <antonio@openvpn.net>
+> + */
+> +
+> +#ifndef _NET_OVPN_OVPNSTRUCT_H_
+> +#define _NET_OVPN_OVPNSTRUCT_H_
+> +
+> +#include <net/net_trackers.h>
+> +
+> +/**
+> + * struct ovpn_struct - per ovpn interface state
+> + * @dev: the actual netdev representing the tunnel
+> + * @dev_tracker: reference tracker for associated dev
+> + */
+> +struct ovpn_struct {
 
-Make sure to only schedule the cluster reclaim work when clusters are
-actually in use.
+There is no standard convention how to entitle such structures, so the 
+question is basically of out-of-curiosity class. For me, having a 
+sturcuture with name 'struct' is like having no name. Did you consider 
+to use such names as ovpn_dev or ovpn_iface? Meaning, using a name that 
+gives a clue regarding the scope of the content.
 
-Link: https://lore.kernel.org/lkml/672ac50b.050a0220.2edce.1517.GAE@google.com/
-Link: https://github.com/systemd/systemd/issues/35044
-Fixes: 5168a68eb78f ("mm, swap: avoid over reclaim of full clusters")
-Reported-by: syzbot+078be8bfa863cb9e0c6b@syzkaller.appspotmail.com
-Reported-by: Daan De Meyer <daan.j.demeyer@gmail.com>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/swapfile.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For interface functions, when the pointer assigned in such manner as 
+`ovpn = netdev_priv(dev)`, it is clear what is inside. But for functions 
+like ovpn_peer_get_by_id() it is a bit tricky to quickly realize, what 
+is this for.
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 46bd4b1a3c07..9c85bd46ab7f 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -929,7 +929,7 @@ static void swap_range_alloc(struct swap_info_struct *si, unsigned long offset,
- 		si->highest_bit = 0;
- 		del_from_avail_list(si);
- 
--		if (vm_swap_full())
-+		if (si->cluster_info && vm_swap_full())
- 			schedule_work(&si->reclaim_work);
- 	}
- }
--- 
-2.47.0
+> +	struct net_device *dev;
+> +	netdevice_tracker dev_tracker;
+> +};
+> +
+> +#endif /* _NET_OVPN_OVPNSTRUCT_H_ */
+
+--
+Sergey
 
