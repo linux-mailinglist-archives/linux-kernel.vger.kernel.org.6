@@ -1,152 +1,145 @@
-Return-Path: <linux-kernel+bounces-401515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3F89C1BA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:57:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823139C1B7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:55:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27351F23B6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4765D2840B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D4E1E6DC7;
-	Fri,  8 Nov 2024 10:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149EF1F7090;
+	Fri,  8 Nov 2024 10:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="L4No0hir"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtGpet/S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3661F81BE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3D31F669D;
+	Fri,  8 Nov 2024 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063080; cv=none; b=XVF8mr/Nb9TtriKPGZ0rlaXUYhbqW43ke2XOGE2k58ouXgXGsL/24+HKQnzzl5j0ByD23HAl0EPL2PRjcy605YBs785uPHgo3JBej48xchyysTtd9FMXpT4I0U64D+JekJ4N4Bt0nU7M4uO7wWvpY40NXz7HR2kQTbWlUlyKvPc=
+	t=1731063061; cv=none; b=g2MDVvlcOOOpa1khsLH6XAZVt8kOLE9thRr3TFtqvWno+Ry+GpdSJZiM0LDfxzQKGwp+ZrO9DODSlxBceYN0axl6Gk6kCbheCUkRMmbK9op+lPalA6d15STBevj5R25RIpIRfmy9MrExcCQNdw22/6igxk8jutIQCrZiXQ5xuOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063080; c=relaxed/simple;
-	bh=FwNBb8PJKDitrkt9zMvuYiryGV3LO5HO7z0/y1frDmk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jyqqSI/QCX+FLpfvXWLvi8VhYlC1LUvBjI7EPcDtHGsIGPCV+69KLX1smQ93WgYX35/ugE8YKgkH4AhfJGUHPAncSCKZG9ZuYL31HwGH357u2Q1cnc/YwAz1oxqXwd8o9e9monqZTNrc9H1dhqt/oFaXjiAPYiab72KvRtwepQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=L4No0hir; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso5350088a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:51:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731063076; x=1731667876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Yv9S6ASNoJOmHUs/658HSVVjNOTRq4qk+h2A23x1rM=;
-        b=L4No0hirQsa0zWYexQpA4aEGhpsFi9xkR5Ds9DbAAfqRnqtl1h3tR1vflk16FPLZra
-         DLexmGk2PSxNQCrfFtJ1n8OPTl7POoT0kbhcrX/XT/xN63zbNBtG9fmy4jJARTQoEQqg
-         hOQJlJMWdWfhYLcfSIZ7Yg5D1StHa7fQkr1T258iuP4VQpE/yZkxRLMiKsCF1ZUWoUSs
-         epQDTinBxJ9zHXIJQJpGJbnq3mHUVx3uQ9xBT/Yfdb/7brzHZyGBiosZHU6pb7FHfs8m
-         NhzXHV9RlpWi1rKATds1xz0zkezuhyTCoM8xJHUCLYlLoBBVDccv8/U/8PyaYZnk9RWQ
-         LCOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063076; x=1731667876;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1Yv9S6ASNoJOmHUs/658HSVVjNOTRq4qk+h2A23x1rM=;
-        b=XGu+uJp7T+9MAT6ExqC/nC/PBTfMAPUFAiruhsHn7+2OZay8GVU3sDlNyaz0YhJcRW
-         dm1g8/avaKLLnsjpJ3eLb6e+h8XjZPlqEXMhTDxbpTx/jDU1y9gH1+ASDn/knrnagTob
-         Q84ohXcmswhUnxTbYB2S6QLYvlGInQQESOMQxsa8twZ0UGubZnIix3/z6cuINZkmK0ON
-         e6qP4ZGPBsQyWL99Kjt0nCykLepCfWrcKi+ywuhuKHLOQC7vL61SDTNtj82Wgtlf7JC5
-         W+4xZiTaMMlhaU6RyDVyJANqU68PFPMUhEPs4aL3lBEbV1G/URBfmDoiq6SBjzTQYlzM
-         Ermg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcBL26wWI2zapo/eeaOx1RDgKK/y0hjJXuJFZbbNrojOXw3LyFFn6BOTgnIQXNBWspyRmjAbWvz0s9MFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy86Whr4HMIkd7Obhbazb+iNe4r1/nVnLzWlv0adnN6IexGtz6R
-	Q62AcYOgKkbueAJSkg7ahE3l8j7v6KgutpjGuYpcI9fQG1jwToShSUD0b/bx2Y8=
-X-Google-Smtp-Source: AGHT+IFuBqaKmSlpAgIXdyExoaT/W1PzCgtdHUGxj4xhW8TXs0GWnsMiDurm3/upr/LpAR0vUHYMIw==
-X-Received: by 2002:a17:907:3188:b0:a9e:c4df:e3c9 with SMTP id a640c23a62f3a-a9eeff97fcemr219403566b.24.1731063076495;
-        Fri, 08 Nov 2024 02:51:16 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:51:15 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	magnus.damm@gmail.com,
-	linus.walleij@linaro.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	p.zabel@pengutronix.de
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 25/25] arm64: dts: renesas: rzg3s-smarc: Add sound card
-Date: Fri,  8 Nov 2024 12:49:58 +0200
-Message-Id: <20241108104958.2931943-26-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1731063061; c=relaxed/simple;
+	bh=dk1mu5lTqhAoWaUh/fvmV70El26cHpvXmwS6kDk07AQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgoHBVfNgVhAkBHNsp1nfzAwsy7RM1iHsLSVamvjj68+bmh4Hr2O1Nd6+NF7/tftFC41md0vocKtp7Qei1FjQ8RjO5kxHgXTnBzB5QZGmiAvHtxY8CsYmqJIPRNBSu/0B+0WBqICkZXaFrTJY/D/nI4u1akoMl+C6FA1gT09iAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KtGpet/S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1600C4CED2;
+	Fri,  8 Nov 2024 10:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731063059;
+	bh=dk1mu5lTqhAoWaUh/fvmV70El26cHpvXmwS6kDk07AQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KtGpet/SFgaXzrIBIP4cB2KDeG3SXOcEEkf6H5HkrK/cyY7Drw51ToCAmBwpUX7Gp
+	 9VY1ztHsK6rUEBUHuZimo26lPWBv+i0XNdOxFCKpXJHacu4dXkNvjYx6zAuisLXKi1
+	 FX/3v9/Z5KLV7vbmkmVM0FISHrinSqZSFRd4w6IPbYKx7s27sPFOvN1zQgHSwzIuCW
+	 Ewlh+lS3Ro7BBPvl42UZiUefkqg5qoIDnJdL4bLXWn/cicLtZOrqkRF/CkfCQ7QUKc
+	 jhRx4K1An3Ws18+qK4umaPSLAZKc54oROYsTCA4EZ5Gt8PRq1foCzMXA8b6+T8x33k
+	 w+hmdDJnFmANw==
+Message-ID: <12ac2212-e176-4d39-85fe-c7afa16dc822@kernel.org>
+Date: Fri, 8 Nov 2024 11:50:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: Switch back to struct platform_driver::remove()
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Paul Cercueil
+ <paul@crapouillou.net>, Yong Wu <yong.wu@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-tegra@vger.kernel.org
+References: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 07/11/2024 15:57, Uwe Kleine-König wrote:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below drivers/memory to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> A few white space changes are included to make indention consistent.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
-Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+Thank you for the patch.
+It is too late in the cycle for me to pick it up. I will take it after
+the merge window.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v2:
-- none
-
- arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-index 6dd439e68bd4..89673bbaee6d 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
-@@ -44,6 +44,23 @@ key-3 {
- 		};
- 	};
- 
-+	snd_rzg3s: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&cpu_dai>;
-+		simple-audio-card,frame-master = <&cpu_dai>;
-+		simple-audio-card,mclk-fs = <256>;
-+
-+		cpu_dai: simple-audio-card,cpu {
-+			sound-dai = <&ssi3>;
-+		};
-+
-+		codec_dai: simple-audio-card,codec {
-+			sound-dai = <&da7212>;
-+			clocks = <&versa3 1>;
-+		};
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "SDHI1 Vcc";
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
