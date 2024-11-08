@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-402271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B5D9C25A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:40:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0143E9C25B2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDE85283BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A76A1C23372
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD6F1AA1FB;
-	Fri,  8 Nov 2024 19:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335291C1F11;
+	Fri,  8 Nov 2024 19:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="FQWfElQA"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="eFof62/o"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF13F1990B3
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DD517A5BE;
+	Fri,  8 Nov 2024 19:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731094793; cv=none; b=hy2lS29N6GaY9NMPgpXL3x8wq3sArmlno/cV7mezaBZpLbmpUKGKDolBIE38lVcdQAis7hB1NRza01HY2YzVQxPSVlWSpY1nK4traLGlpLQ24peUlqM3Md2TNyyt6iMmH8yzu5M3/cUA4xLKkgWx3Q4D+95ddb9cciPlPKqfxQ0=
+	t=1731094871; cv=none; b=i9wPpjIVB550ua6+92nuTXF7+dRKN1kpM/RJFysMz5tbR6FewF+KvgfQOzTVnx5MelSiaUNuTMGGsiKS23gli+OsYivLYQWJ2geZ2lxz8DsqdIyD2ehUKjonSUd2RWOTzdNF3IS91QInzAypY2RdJTT0aBw6rwQ+lnLN5e1YAsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731094793; c=relaxed/simple;
-	bh=ACJIA0sqIQ9XQMuUSUlwosVy00j65iH755TUdVJPLpg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k167zdvw3BxXZ5ie3kLn+brfOlKruaS3LvOx9BlSWf4UgLTqN3Qquy7aZiRIDc4bRBOBXReLTXZFt4C+lvFaE7atdrYtsxH3z1F8RAsSyG8Pca1Ivv1Ix5o6fFIbxJ/Ns8TfSPjB1Qn8RCB9a+rqRvDo5/b9cEO5GdgKmb5vXFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=FQWfElQA; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7f3e30a43f1so1889976a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731094790; x=1731699590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wwmZsfFFbi7cobcL9jxcusnRbLSuEsEWqsjcIRuLUfM=;
-        b=FQWfElQA9p7/ow6WMB+aBCPUHuSyz8omKO1Pfh+rvlRD7I6DP2q0SzETz2xylCe3gf
-         cynAZk66rA5AYkvuI/QC8F2h5rFQBFw3/J28i7lDdy9cGagYXSWzylriFvVgmPeFlFuF
-         Rc0PhAJV3q2zcNeu+t/m3AKqVjwDMmYJEx42rX+AuukFj0QvC5d4kmFVLuIlSUlOFO/D
-         baz88p8Oa3ZAX+2KwHPo88ZdO19sx6i/uPAeOAQLh+kr+i9h1tgPz4YdHBEu2AQxNlMd
-         dBkdinxTL/8391IzdvtzNSxXv84ndULdza97k3/T4PcrscYM59Vy+3TnuzM1kxb5xhH9
-         TsPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731094790; x=1731699590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wwmZsfFFbi7cobcL9jxcusnRbLSuEsEWqsjcIRuLUfM=;
-        b=fFWi7V5Jud/XrLOSAuJRguKQAX48XAemPHYlhTMHw0ERGOagO8Q/nZ+3wBXziUnBx0
-         m8y5mrdTm8liwp5xm6M6D6bd9uBrtVrmIlVu/Bz+qBlJp5yLUNv7wtGileKuw2VYlY7Y
-         ZB4oGQEmOSQSfF3W3J5UQhP40eS1NSadYzsWPhwW6L/XZIV6TJjb6AUAodS3e9x1YhFv
-         iOmpLf2Wxqv0HqXdBE8Ga36oW/sp62PWEj5utkyRCATzX1KFKGkGr3QH4uBaVav2pju3
-         GSum/6xi67sMKMPCT4+6cpMDmU+keNbXGbinoc48pvz0Io2Hi/Il3KU6mSMPjyM5l/qr
-         iVMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJViUHZ9myfSxyk33D1UrFJoWbanAZeX+kbMp/6xI0cbg/rvgZuykVuaTWItOlyGhh4QUmYbQFOnNIZck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx6CtNufmoCwRU/DE+gR0S7GPs6tNxb0IdHUtHY7HJz5AjrVOF
-	7AGw2B9E+C6QvtwLUpPyk59Xxx1F7MXE8c0j43wzyvP4JKxpfQQMllgXE7RxJLI=
-X-Google-Smtp-Source: AGHT+IHcBRCBpDW3TBXViEBFHUC8FpAPlT1eul9WqJ4zQOOWKW0wvckZZYCnbg3TRo+l3/XzG/VGIQ==
-X-Received: by 2002:a17:90b:4ac9:b0:2e9:4967:244 with SMTP id 98e67ed59e1d1-2e9b177352fmr5324433a91.24.1731094789997;
-        Fri, 08 Nov 2024 11:39:49 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a348dd6sm6081261a91.0.2024.11.08.11.39.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 11:39:49 -0800 (PST)
-Message-ID: <75bf5237-efc4-4fb7-9e24-061354bff9ac@kernel.dk>
-Date: Fri, 8 Nov 2024 12:39:48 -0700
+	s=arc-20240116; t=1731094871; c=relaxed/simple;
+	bh=KhWTv6Xz+p6/uRt5a0JjkR7Y5OsaggoRDeYnfKiG8p8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UqNav30XEILnAyhWhhefAWxsGw+Pn8aHwJziVyCnY7XIL3pe4vMNVA0T0EClNM/XV/BF6TE6bTQKWaJB0o9jebMPUkZs/nPVLTVJVhl5KXThiStLq1kKQ40pOUivlCvxQDGha6/Zgpe873G472Y2WXiwbNm3u4MPLYyr4cuEd6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=eFof62/o; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1731094868;
+	bh=KhWTv6Xz+p6/uRt5a0JjkR7Y5OsaggoRDeYnfKiG8p8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=eFof62/o+3Ah7YL4swFSXp9NNbyWhpE/jpxAp1V0hqddWcsJbT70qSYUBEJ9Cc6Nq
+	 i1Ht5pUIVwOv7ozD3OuoIfG8ndi7iDXyHZeqyBUFw9vDsX5T9JYdLuGNuomxOnNfZp
+	 lPZXw/EGjMFvq/nlF4MyDGcxz4ho4GZfDRp3RCKo=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id C978D40681; Fri,  8 Nov 2024 11:41:08 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id C7119401C7;
+	Fri,  8 Nov 2024 11:41:08 -0800 (PST)
+Date: Fri, 8 Nov 2024 11:41:08 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+cc: linux-pm@vger.kernel.org, kvm@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+    linux-arch@vger.kernel.org, catalin.marinas@arm.com, will@kernel.org, 
+    tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+    dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+    pbonzini@redhat.com, vkuznets@redhat.com, rafael@kernel.org, 
+    daniel.lezcano@linaro.org, peterz@infradead.org, arnd@arndb.de, 
+    lenb@kernel.org, mark.rutland@arm.com, harisokn@amazon.com, 
+    mtosatti@redhat.com, sudeep.holla@arm.com, maz@kernel.org, 
+    misono.tomohiro@fujitsu.com, maobibo@loongson.cn, zhenglifeng1@huawei.com, 
+    joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, 
+    konrad.wilk@oracle.com
+Subject: Re: [PATCH v9 01/15] asm-generic: add barrier
+ smp_cond_load_relaxed_timeout()
+In-Reply-To: <87v7wy2mbi.fsf@oracle.com>
+Message-ID: <88b3b176-97c7-201e-0f89-c77f1802ffd9@gentwo.org>
+References: <20241107190818.522639-1-ankur.a.arora@oracle.com> <20241107190818.522639-2-ankur.a.arora@oracle.com> <9cecd8a5-82e5-69ef-502b-45219a45006b@gentwo.org> <87v7wy2mbi.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/13] mm: add PG_uncached page flag
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-4-axboe@kernel.dk>
- <u5ug67m23arro2zlpr4c6sy3xivqpuvxosflfsdhed4ssjui3x@4br4puj5ckjs>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <u5ug67m23arro2zlpr4c6sy3xivqpuvxosflfsdhed4ssjui3x@4br4puj5ckjs>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 11/8/24 12:25 PM, Kirill A. Shutemov wrote:
-> On Fri, Nov 08, 2024 at 10:43:26AM -0700, Jens Axboe wrote:
->> Add a page flag that file IO can use to indicate that the IO being done
->> is uncached, as in it should not persist in the page cache after the IO
->> has been completed.
-> 
-> Flag bits are precious resource. It would be nice to re-use an existing
-> bit if possible.
+On Thu, 7 Nov 2024, Ankur Arora wrote:
 
-I knoew, like I mentioned in the reply to willy, I knew this one would
-be an interesting discussion in and of itself.
+> > Calling the clock retrieval function repeatedly should be fine and is
+> > typically done in user space as well as in kernel space for functions that
+> > need to wait short time periods.
+>
+> The problem is that you might have multiple CPUs polling in idle
+> for prolonged periods of time. And, so you want to minimize
+> your power/thermal envelope.
 
-> PG_reclaim description looks suspiciously close to what you want.
-> I wounder if it would be valid to re-define PG_reclaim behaviour to drop
-> the page after writeback instead of moving to the tail of inactive list.
+On ARM that maps to YIELD which does not do anything for the power
+envelope AFAICT. It switches to the other hyperthread.
 
-You're the mm expert - I added the flag since then it has a clearly
-defined meaning, and I would not need to worry about any kind of odd
-overlap in paths I didn't know about. Would definitely entertain reusing
-something else, but I'll leave that in the hands of the people that know
-this code and the various intricacies and assumptions a lot better than
-I do.
+> For instance see commit 4dc2375c1a4e "cpuidle: poll_state: Avoid
+> invoking local_clock() too often" which originally added a similar
+> rate limit to poll_idle() where they saw exactly that issue.
 
--- 
-Jens Axboe
+Looping w/o calling local_clock may increase the wait period etc.
+
+For power saving most arches have special instructions like ARMS
+WFE/WFET. These are then causing more accurate wait times than the looping
+thing?
+
+
 
