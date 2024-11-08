@@ -1,103 +1,91 @@
-Return-Path: <linux-kernel+bounces-401165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026819C16A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:57:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABD09C16BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 835E2B23DCC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:57:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A70B227D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:04:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469271D0E1C;
-	Fri,  8 Nov 2024 06:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="psRnedlV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1360A1CF5F4;
-	Fri,  8 Nov 2024 06:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2B71D0E31;
+	Fri,  8 Nov 2024 07:04:10 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AD4E567;
+	Fri,  8 Nov 2024 07:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731049020; cv=none; b=U1ury2muGZzg1rExoIqF9B52asGusXDZfsFsTcSc+NWU0l2uJW2NB/XMt1Ia8yfMpVhfdlhTyaTz5oEjIPorqBxfrpTOMQIrblLlo5oyCfD22AQIbVxmzkDGzKOGP/UxRVQ91XEa4zGaTVniLkx8qRv623hH0U6RIZjI5gtN0To=
+	t=1731049450; cv=none; b=D0X2x5Q3+DSPGIComgFEauVnY8qLEpz7GRlYWvTjLVATz189+NPFQppT3B/LutX2mH65E6WGO+P30Sq4fbp8HJwv5xpeSRGM9qaZrdVRDlaFZy5/H8fFP3uN/w6i47rsEL8SdJjKFcDAfTD3zYj7aKWimeHfH6FxbMU+nmNPhZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731049020; c=relaxed/simple;
-	bh=krPF8bE1Pw+JIEbBWkHjdlETlrvcr/RPLZzkQc7cRgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tDv/THfFOdeyDNnRfgKVTN1zmE8v85HXncnk3nmQ4WNiATsYsulx1XJmQJMMy/osw4w5Lrm3VbDT/3kWJcGYVnwf5Qf3u5dr7kxWyppU2y5L7DG5nasLlY5dbxrUAPDHVDUj/q1IxJHlRN6gvuIE/6s8HdSLFxHQfYH7KmQuzxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=psRnedlV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731049014;
-	bh=LQGyr1XSjGE9ZDiGrm/yDf2dGEiFCy3MIqS0AIM0Wg0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=psRnedlVLhvL1xwwjLulAcUugSj1Kvf8XVgJlpu1dhMnivJgePQmWp4iS1yKVVbv4
-	 gkQhu55nqT01nTh00RKXPA09ONRK4Aqh/WcapbLALY2QHU7iq2shqhvlDxF1bmIQFJ
-	 sLszjTNhSiBz8iS+b56/Yr9yczqwOJRme8k4/0VHKp6/CWa15IQ6rRPMlv3CB1JC1S
-	 ZN+N1xrs3bYdb0Bvs+TYu89x347z8aV0vPjfLdHE0pnA7qkNEoYj74rsXxt5/d9QRp
-	 fTKRJTMT8L1kLp975pVzo/NVl5e2C6lYvFqNdYAe/kp0/mOG965SOq9F/jvoJzNWhS
-	 NoHzdL9kVppuQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl8r52c5zz4wbx;
-	Fri,  8 Nov 2024 17:56:53 +1100 (AEDT)
-Date: Fri, 8 Nov 2024 17:56:55 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>
-Cc: Philipp Stanner <pstanner@redhat.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the drm-misc tree
-Message-ID: <20241108175655.6d3fcfb7@canb.auug.org.au>
+	s=arc-20240116; t=1731049450; c=relaxed/simple;
+	bh=peSOGyeku45gCExt/EdaEM4utZZ4vfU/YR5z9P4uZ48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cdEvd0XeHqwunfktqKqgj0KO5m0/RYMTcGNfNs9D5UkLFkLjm2uSlF3MaDAeFJZp1ycq4IWx58DibT91ReQNS3pu7bhcOmvEVc3yaQio5NWNR96Wt/RcQL9bVTnZUB8UrQcMjxRtQZcmPJhe2Q0AW3MxGU1WPU/+04vSxuzZAx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5672db7e0759-ef76b;
+	Fri, 08 Nov 2024 15:04:02 +0800 (CST)
+X-RM-TRANSID:2ee5672db7e0759-ef76b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9672db7dfeba-8c721;
+	Fri, 08 Nov 2024 15:04:02 +0800 (CST)
+X-RM-TRANSID:2ee9672db7dfeba-8c721
+From: liujing <liujing@cmss.chinamobile.com>
+To: trondmy@kernel.org
+Cc: anna@kernel.org,
+	chuck.lever@oracle.com,
+	jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	sagi@grimberg.me,
+	linux-nfs@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] xprtrdma: Fix spelling errors of asynchronously
+Date: Fri,  8 Nov 2024 15:03:58 +0800
+Message-Id: <20241108070358.10257-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9cS_GSxxYOx_.WHv0fv0wLh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/9cS_GSxxYOx_.WHv0fv0wLh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-Hi all,
+diff --git a/net/sunrpc/xprtrdma/xprt_rdma.h b/net/sunrpc/xprtrdma/xprt_rdma.h
+index 8147d2b41494..99086a9f3900 100644
+--- a/net/sunrpc/xprtrdma/xprt_rdma.h
++++ b/net/sunrpc/xprtrdma/xprt_rdma.h
+@@ -179,7 +179,7 @@ enum {
+ 
+ /*
+  * struct rpcrdma_rep -- this structure encapsulates state required
+- * to receive and complete an RPC Reply, asychronously. It needs
++ * to receive and complete an RPC Reply, asynchronously. It needs
+  * several pieces of state:
+  *
+  *   o receive buffer and ib_sge (donated to provider)
+-- 
+2.27.0
 
-After merging the drm-misc tree, today's linux-next build (htmldocs)
-produced this warning:
 
-Documentation/gpu/drm-mm:571: /home/sfr/next/next/drivers/gpu/drm/scheduler=
-/sched_main.c:1359: ERROR: Unexpected indentation.
 
-Introduced by commit
-
-  baf4afc58314 ("drm/sched: Improve teardown documentation")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9cS_GSxxYOx_.WHv0fv0wLh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcttjcACgkQAVBC80lX
-0GyaaAf/eOLS6c0HIrzh5Q3g4RELU5f9WzYrcmAembUOfNR9nM8XcJi0AkTAC/xD
-a2h9KC05+oN2rVMbRQ06ewyPAyMuifQelDoG6CShmie4pZp5QxDUxbkb0ZwvH/KS
-r0H/VhPmcWFwtE/gyY1dNhk0cEMLQEjZR9cPfkbXvCEBUvlH/e2aerHn0jEYJCIJ
-mQgO7USdzwhGp0q9vGgZPLo8jMO7QIVuAusc21ILmY6F2iFS46Ds0Zb0tEAz04d1
-hHXpv724oO+MnFpw5YUf6AVhx6LdmirUallkO9cyJZuqvsHJGRn81x33wRaJr7W3
-qL7D0Y2Mxt72KFIEGx6ahnhOh4EIDw==
-=KhiW
------END PGP SIGNATURE-----
-
---Sig_/9cS_GSxxYOx_.WHv0fv0wLh--
 
