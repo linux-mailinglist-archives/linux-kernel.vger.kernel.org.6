@@ -1,148 +1,212 @@
-Return-Path: <linux-kernel+bounces-402236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF119C2554
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:07:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3849C2558
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8519D1C21A90
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:07:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86DA1C21BFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B55B1AA1D7;
-	Fri,  8 Nov 2024 19:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7361C1F04;
+	Fri,  8 Nov 2024 19:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="tnj/yjbE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MZlI8QPy"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KebCbmGh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92429233D86;
-	Fri,  8 Nov 2024 19:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ADF1AA1EB;
+	Fri,  8 Nov 2024 19:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731092865; cv=none; b=ccpHjhJI9SRZg5WChUPw93TuPcFFn13gNLFGQQ3vZO4DS/XWXzztloMyDq2Y7S0vc8orHadIp5iWiBCjwzRaRsh7WMPmBFVXNEYpPwhNCEom9d0/YYwZsFffmdRqy0xZbqGJlWYF8tbt9qH86uPmjJypeSkKZ3qcDHpQKtkIFp0=
+	t=1731092962; cv=none; b=Y2WDLCAX8A67uUx/NKdNCdW5Cd8clIgm4WSwa/lvi8LdhJ4iiuKcIgepgfu67kbR8EnifpQiXaIZXf3t1ib0zsraBWerZS/HvtFp1AF1CmoFK4vEyg7bM6P9uN0B8v1a9w4MpY34FWE+bxoyRQ66QQdkimQNm47+5ksqLyM/HjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731092865; c=relaxed/simple;
-	bh=9RFCnV1HA+JAMGMxBOD4CMeBoBWK3KP2OGb0KFop63E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aPoDkhP05sC0pA9ovHLwlhTGQESog8/NUdCG4bxxBVWhnlP591e7rzcoV24ar5q+GJKhKh0MhyH0pfIRBWMv9LWLwbcfdYp18/bqMyNejR+/I2lhhK5zyMWpdlIB3k+ubSemmCMWY78HdG7L7cuoeZfatzkzUwCJOM/lcED9xsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=tnj/yjbE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MZlI8QPy; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 65A2125400F5;
-	Fri,  8 Nov 2024 14:07:42 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Fri, 08 Nov 2024 14:07:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1731092862; x=1731179262; bh=HiAM5eMjVhyB5MoM7JC3x
-	XR5NMnN7n646cNyYK+b9As=; b=tnj/yjbEUwceOgjbH5h1PeM60rKs5nTVEuRo1
-	Wa4gP17ReZCArCBvz67XlfdysP+YLhltEkjWvhTiWLkdXD/7XAx3CWlhX8O0EELi
-	MSsUdU/xb83BX/DYB+/91l6Ea31LGMJDG86mpHL09E7sNO7/8FRGPP5JrFxpJda0
-	haWltxdnVAqOargkV5/u0kVQ4EYBAZpjFRlTiBrPlznRkHdFiRswKI2ezmO5qpWP
-	dig6fJkZOR/HumvxKKhpmxgQbSsZyuhYA0Rnt8v7MYbCTGPwHnRB7mNRlKvRGQXz
-	OAebEj9HrzCUvAI+ci4xG/6m5uqi7W2k4QfieGyUB3YaJp0rQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731092862; x=1731179262; bh=HiAM5eMjVhyB5MoM7JC3xXR5NMnN7n646cN
-	yYK+b9As=; b=MZlI8QPyepJsdYqP+8iuijG2mdHQWs+r8lBtBgdDxviK5iBVWzs
-	axS+u2mCnZQD6GbLQmbojq/hqR10laxjSYJZz8uZ9iMdb+bnM6Mb7hVKp1V6ZTpc
-	iQSjvITAD5WC05yya3aRZj0ZMwpw+xwCXnEeLTYxQ6nZZnLXRgyoHi7FHkpVLpWS
-	hWLG1sxWdkftzt1kIR/uHbkOb5iNOatUq0S36qZOfaSIh+hB986zafYBa2Wru0EL
-	7UnXA9TFrNEN5x3sfrDGbb6DPTWuBso1JHmLU1vFBbTENiYPVG8iQ3SUOpKyLdpB
-	3wbstrLcMmzeW+BwJ1jZRiyyNR77wmZQaFw==
-X-ME-Sender: <xms:fWEuZ0gCh9ga0YbktLacWKLgrjmTAaZvI9eKl4GK8aH6FnE601ZPjA>
-    <xme:fWEuZ9DE3k-moOOKOdZbkL5mJP6gSteTuJImj_qfBzC1ByM1HJDjLx8JM9jjTmADV
-    cR9uIzgZQTwUsYYhA>
-X-ME-Received: <xmr:fWEuZ8EEze2dk8AXTGpC7FlYLYazYuBA-R25kkJH1TWv_bJXeTn1GGh78EpbJWLHObqLUqfJ3oATY32MTywDFSkjb8isavV4p2NjJCWdD00ZVL0rOvNo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdduudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlje
-    dtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeffrghn
-    ihgvlhcuighuuceougiguhesugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepvd
-    eggfetgfelhefhueefkeduvdfguedvhfegleejudduffffgfetueduieeikeejnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguh
-    huuhdrgiihiidpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopehmihgthhgrvghlrdgthhgrnhessghrohgruggtohhmrdgtohhmpdhrtghpth
-    htohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthes
-    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnh
-    gvthdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhrtghp
-    thhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehmrghrthhinh
-    drlhgruheslhhinhhugidruggvvhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:fWEuZ1TYX3f8G8NR5So9K9FRwO15b-rJNEYFunddunX4kolZQ0rpDQ>
-    <xmx:fWEuZxxY3nG3AE-ditLud_rtSDAroUqZcJrC6HBNYP59k0icrqtj5A>
-    <xmx:fWEuZz5Ii0Hq3AbLRj6Pd7156JrsplK1kcmTVBFw3xMMCOeglkaQdg>
-    <xmx:fWEuZ-wH-9r61teeYOAHzBzc8VHsNZDpZLPP_toi7DOWneSr2rOPHQ>
-    <xmx:fmEuZ2opO6Nj7z2dGyr4qbjMwF5b5qTIBL9udWNwWt6di9vohkHsKLzh>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Nov 2024 14:07:40 -0500 (EST)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: michael.chan@broadcom.com,
-	kuba@kernel.org,
-	edumazet@google.com,
-	davem@davemloft.net,
-	andrew+netdev@lunn.ch,
-	pabeni@redhat.com,
-	martin.lau@linux.dev
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH net-next] bnxt_en: ethtool: Supply ntuple rss context action
-Date: Fri,  8 Nov 2024 12:07:29 -0700
-Message-ID: <384c034c23d63dec14e0cc333b8b0b2a778edcf1.1731092818.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1731092962; c=relaxed/simple;
+	bh=R+CGtLg7J7cZFkaK6iEbxTqVB/sl271eFJkHFX8PQlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IusGCqn759Hu1FkFnVgdqIzJYz0hDUaPlH+3E5Ih80JHIAgm1Og+rdWsPJUbdt72lRDa/2lN+XUck+oRvlAckdDFVl5SY/ZaNS27xIK6ST1Z18cDUIrPd5qnczr5CWO+yr+j4pqEDuJjplR8BxXpiKdYZeYmi492uGFlVcCbjpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KebCbmGh; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731092961; x=1762628961;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=R+CGtLg7J7cZFkaK6iEbxTqVB/sl271eFJkHFX8PQlI=;
+  b=KebCbmGh19EEBAcHD3JOc6i0JRSGd/9MQXY2t7pITZRqSUFd9h0ei+IG
+   CLPYXI18NAXQfL4VIvxZaNccch7aQR7IIxBYIacwxd3DAHQ2l7GLSB6g0
+   /8c4Ie9SfB7/qLyOjyzFofdZZCPu5mwhxOsBoCfOxr2MJmeeSZl1gz26W
+   BUzBOOhaj6kSJ8u9oFhnQxJEe0/YVF+maFvWfj7gUgETrmQEqXKRk0F/i
+   /maBcl5xSCFsZrgpZt/XgJuj9NVD4N+314ulRA7L4yEPVz2jbTIqgha04
+   ZqQ6nj9ozbhFZWoBLTaBh8d6GOEELYDJwoRWlcl95p1cXIX8AtsDDtQcW
+   w==;
+X-CSE-ConnectionGUID: DMqkhL3GT7monTCuWSujyg==
+X-CSE-MsgGUID: Es9/yF12SSuq3cIG1SFRIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="42086783"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="42086783"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 11:09:20 -0800
+X-CSE-ConnectionGUID: XD1n0tMySAq3Ut+3KlDDLQ==
+X-CSE-MsgGUID: YGwNEXImR2OgQ2epJ63MLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="90231501"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Nov 2024 11:09:15 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9UM5-000ria-11;
+	Fri, 08 Nov 2024 19:09:13 +0000
+Date: Sat, 9 Nov 2024 03:08:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexey Romanov <avromanov@salutedevices.com>, neil.armstrong@linaro.org,
+	clabbe@baylibre.com, herbert@gondor.apana.org.au,
+	davem@davemloft.net, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, khilman@baylibre.com, jbrunet@baylibre.com,
+	martin.blumenstingl@googlemail.com, vadim.fedorenko@linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-crypto@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com,
+	Alexey Romanov <avromanov@salutedevices.com>
+Subject: Re: [PATCH v10 09/22] crypto: amlogic - Process more than MAXDESCS
+ descriptors
+Message-ID: <202411090235.a7vEgZQo-lkp@intel.com>
+References: <20241108102907.1788584-10-avromanov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108102907.1788584-10-avromanov@salutedevices.com>
 
-Commit 2f4f9fe5bf5f ("bnxt_en: Support adding ntuple rules on RSS
-contexts") added support for redirecting to an RSS context as an ntuple
-rule action. However, it forgot to update the ETHTOOL_GRXCLSRULE
-codepath. This caused `ethtool -n` to always report the action as
-"Action: Direct to queue 0" which is wrong.
+Hi Alexey,
 
-Fix by teaching bnxt driver to report the RSS context when applicable.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+[auto build test WARNING on herbert-cryptodev-2.6/master]
+[also build test WARNING on next-20241108]
+[cannot apply to herbert-crypto-2.6/master robh/for-next linus/master v6.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index cfd2c65b1c90..a218802befa8 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -1187,10 +1187,14 @@ static int bnxt_grxclsrule(struct bnxt *bp, struct ethtool_rxnfc *cmd)
- 		}
- 	}
- 
--	if (fltr->base.flags & BNXT_ACT_DROP)
-+	if (fltr->base.flags & BNXT_ACT_DROP) {
- 		fs->ring_cookie = RX_CLS_FLOW_DISC;
--	else
-+	} else if (fltr->base.flags & BNXT_ACT_RSS_CTX) {
-+		fs->flow_type |= FLOW_RSS;
-+		cmd->rss_context = fltr->base.fw_vnic_id;
-+	} else {
- 		fs->ring_cookie = fltr->base.rxq;
-+	}
- 	rc = 0;
- 
- fltr_err:
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexey-Romanov/crypto-amlogic-Don-t-hardcode-IRQ-count/20241108-183503
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20241108102907.1788584-10-avromanov%40salutedevices.com
+patch subject: [PATCH v10 09/22] crypto: amlogic - Process more than MAXDESCS descriptors
+config: x86_64-buildonly-randconfig-002-20241109 (https://download.01.org/0day-ci/archive/20241109/202411090235.a7vEgZQo-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411090235.a7vEgZQo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411090235.a7vEgZQo-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/crypto/amlogic/amlogic-gxl-cipher.c:14:
+   In file included from include/crypto/scatterwalk.h:16:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/x86/include/asm/cacheflush.h:5:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/crypto/amlogic/amlogic-gxl-cipher.c:235:13: warning: variable 'new_iv_phys' set but not used [-Wunused-but-set-variable]
+     235 |         dma_addr_t new_iv_phys;
+         |                    ^
+   2 warnings generated.
+
+
+vim +/new_iv_phys +235 drivers/crypto/amlogic/amlogic-gxl-cipher.c
+
+   220	
+   221	static int meson_kick_hardware(struct cipher_ctx *ctx)
+   222	{
+   223		struct meson_cipher_req_ctx *rctx = skcipher_request_ctx(ctx->areq);
+   224		struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(ctx->areq);
+   225		struct meson_cipher_tfm_ctx *op = crypto_skcipher_ctx(tfm);
+   226		struct skcipher_alg *alg = crypto_skcipher_alg(tfm);
+   227		struct meson_alg_template *algt = container_of(alg,
+   228							       struct meson_alg_template,
+   229							       alg.skcipher.base);
+   230		struct meson_dev *mc = op->mc;
+   231		unsigned int ivsize = crypto_skcipher_ivsize(tfm);
+   232		unsigned int blockmode = algt->blockmode;
+   233		enum dma_data_direction new_iv_dir;
+   234		struct scatterlist *sg_head;
+ > 235		dma_addr_t new_iv_phys;
+   236		void *new_iv;
+   237		int err;
+   238	
+   239		if (blockmode == DESC_OPMODE_CBC) {
+   240			struct scatterlist *sg_current;
+   241			unsigned int offset;
+   242	
+   243			if (rctx->op_dir == MESON_ENCRYPT) {
+   244				sg_current = ctx->dst_sg;
+   245				sg_head = ctx->areq->dst;
+   246				offset = ctx->dst_offset;
+   247				new_iv_dir = DMA_FROM_DEVICE;
+   248			} else {
+   249				sg_current = ctx->src_sg;
+   250				sg_head = ctx->areq->src;
+   251				offset = ctx->src_offset;
+   252				new_iv_dir = DMA_TO_DEVICE;
+   253			}
+   254	
+   255			if (ctx->areq->src == ctx->areq->dst)
+   256				new_iv_dir = DMA_BIDIRECTIONAL;
+   257	
+   258			offset -= ivsize;
+   259			new_iv = sg_virt(sg_current) + offset;
+   260			new_iv_phys = sg_dma_address(sg_current) + offset;
+   261		}
+   262	
+   263		if (blockmode == DESC_OPMODE_CBC &&
+   264		    rctx->op_dir == MESON_DECRYPT) {
+   265			dma_sync_sg_for_cpu(mc->dev, sg_head,
+   266					    sg_nents(sg_head), new_iv_dir);
+   267			memcpy(ctx->areq->iv, new_iv, ivsize);
+   268		}
+   269	
+   270		reinit_completion(&mc->chanlist[rctx->flow].complete);
+   271		meson_dma_start(mc, rctx->flow);
+   272		err = wait_for_completion_interruptible_timeout(&mc->chanlist[rctx->flow].complete,
+   273								msecs_to_jiffies(500));
+   274		if (err == 0) {
+   275			dev_err(mc->dev, "DMA timeout for flow %d\n", rctx->flow);
+   276			return -EINVAL;
+   277		} else if (err < 0) {
+   278			dev_err(mc->dev, "Waiting for DMA completion is failed (%d)\n", err);
+   279			return err;
+   280		}
+   281	
+   282		if (blockmode == DESC_OPMODE_CBC &&
+   283		    rctx->op_dir == MESON_ENCRYPT) {
+   284			dma_sync_sg_for_cpu(mc->dev, sg_head,
+   285					    sg_nents(sg_head), new_iv_dir);
+   286			memcpy(ctx->areq->iv, new_iv, ivsize);
+   287		}
+   288	
+   289		ctx->tloffset = 0;
+   290	
+   291		return 0;
+   292	}
+   293	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
