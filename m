@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-401237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0352A9C1783
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC25F9C178A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0811F23D6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629AE1F23E74
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6797D1D515C;
-	Fri,  8 Nov 2024 08:08:48 +0000 (UTC)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4481DD55B;
+	Fri,  8 Nov 2024 08:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gDfDMZsc"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314061D3578;
-	Fri,  8 Nov 2024 08:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C41D221D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731053328; cv=none; b=Wd3SYQPiOLfF34c0c0PwgXQAAWioJpwhNpEr4+YqaJlpdN0ptnfSUW1QUrolxXLrVW/asjOE5pOFVDg/icy1HF4uYG27dJjpGlh7m4mFtJyV5l+L3wyTBOUAT2VuO+mDeyQ1/qbqDTDHkcWJSDw3gaAXarxWPWQ5cn5yoJ8KgAw=
+	t=1731053349; cv=none; b=Xd/BfShb9pNMOeENdzYdjo8riUWLqxh1T0Ik4AtUBB9tPGiklsymgUYyvJEo+WHG322M7Jvki675HSAs24LE4f1PgAZRR8CjLjiJQZ8rDzRFAQu/OqLAaRdS/AapYvo3/gL/LiDbwitq/CqV0aybvOGCquz8XbycvkkVA3PauwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731053328; c=relaxed/simple;
-	bh=LD2eDfz4SMAlB7umwDHTDu0TvSKpT8mglT8E9NBfcjU=;
+	s=arc-20240116; t=1731053349; c=relaxed/simple;
+	bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=niY0H8IHUElTqA/Fa+Q5DcibYDk/2d5OYhUmWIeu/H+3bZxPrgB9J3ffWqKJQGqbJSNaqTMZC3nhmcdVGREi5FtEou+DXhEqDTVk7Sb4XVKXYPsCn8sJp4RuA9nrXrSXZTkUqlOajBobG0SNDasxzIuqLMG6hrYFjlzbxyPvM5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e29047bec8fso2383095276.0;
-        Fri, 08 Nov 2024 00:08:45 -0800 (PST)
+	 To:Cc:Content-Type; b=jWq9raeVNx9XzX31rOoMesQvRzJV09lELrRbnOA6Gicq2+l08eaypx5oiQ//yTKi1sU296DW7HXNVESfR6b8Jp3lScogppAYCislduAIFBXiw0lIlO1Mx8xuvaZmSDm0X9SMblTigdDv+FKBLh4s5c3SNPwUI98UVmzoFB4mFGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gDfDMZsc; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb443746b8so15876331fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731053345; x=1731658145; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
+        b=gDfDMZsc/rmQTR8GkAm2GQjLPVA76RZd56HY1vbpuTZMFuKi0nPDy+5+rtTH7D6c4G
+         XclK8OpyFqfQ635pBPD1VA2y+w8PtyaPYe4kwXX8/LvlFdb+sgY0kMSX1JQzNhlDSX5O
+         AroVCYJKswjBwsztSgSF5yi7ERQeUMztNU89BM2YWcx/n7RJFKjG5v9nBEGSpVpMVG3L
+         FH85ljAM+UxhrNr4J3vh55MI99dqzaXWqIEanj0Mselsc//CjDkxAdbnP2ODus/5loCT
+         oXQUxZ1QGdyFb5sQkAAXia0SgYM4YCMN9ihtgzGfR8XqHkYe+p0tVlVJPC1PLNlghDAM
+         c+jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731053324; x=1731658124;
+        d=1e100.net; s=20230601; t=1731053345; x=1731658145;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0AcfQIh4eL6wqtezh6vPlrQwPcncc/rwq6AytHbkvyU=;
-        b=dAEhA+l+qguEDzp+cmRK/jIIOs9e0bbyUqhYm7wGCgbbXRNBLAIVedmU+4zr05buuS
-         JDbAFPJhKvW4Lt81zFJI7Ia4zHfDmxmAbX2llDWgCkLCyYnrHWxPbukrAguTCin8hUnb
-         0aOauTdIv8i5Zi6XYkyQqpbN3cn40sQznSrE/i+Q3qVjLSZdpaVDoqllCLjw4fGTTDZT
-         JpUuXLNl6W+fGykH8XgGc4gYrYbKKVlDR81rfEUo0fq9t0JAb+LSZoohe4jWpt3jkjXs
-         7RUJwLze8DtHEq27pXrHfl8Hov8YYSofbdG6LPVSh7dZRr8MFrQxgR6u9J0/sZNzQMnY
-         Ww4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsYb2SiK+qZQ0hU6TNM6c0bFo0mEQZGvnmQ69izMgG4Gx6Pd9VZzZmEYwowMiE6wETh/bZk1zgLxpHKm8=@vger.kernel.org, AJvYcCVGPjXlLSVlMFcD8EfIROWGw4E53qHDGsC/xY5imbzE12AuHxFjfN6p5ijfkcuJPX3P4o2nucwcJptlDr4DDg==@vger.kernel.org, AJvYcCXUcGLUjWGbSY48MfiLNKqnOrhGwsU0a0U3Q4w4vnun0vPQ/YsVVKCAc8QjJf5wrLDOTXX4j5IQ5tfKV0IB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/BvNF9YyiMd04svx6zkLUFB1zjBUUine8z9cDliHJw2Q9aJ3x
-	1DRGmw+JIcY+daKXDM0SDe8HcbyNGBLwS5sFuiu1b8mcYHvm1ZUrPq0KcwwO
-X-Google-Smtp-Source: AGHT+IEMiGBY1n86Ty1i9Vt5vHiCM2UQhC579mG35SG/6bcIepIg9x3jPY0EGjCNR1X+O0F0sYPpGA==
-X-Received: by 2002:a05:690c:39f:b0:6e3:ceb:9e49 with SMTP id 00721157ae682-6eadc18ed23mr21295537b3.16.1731053324422;
-        Fri, 08 Nov 2024 00:08:44 -0800 (PST)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eaceb7a6f0sm6301847b3.104.2024.11.08.00.08.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 00:08:43 -0800 (PST)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29047bec8fso2383072276.0;
-        Fri, 08 Nov 2024 00:08:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVfb8tX8Un0JRRm+UrKTWogxKAzu4vDb8+TXPbvkNQlyACdX+N2SG3iVwch/WLZOY4x/q9jT7Ke/KokKzA=@vger.kernel.org, AJvYcCXQH+hOZEyCF+4Yem/AXIyvFXWzET3+b1xk3Je7S9XTs1TLgH+/dE0QP7fN3bCZe6rWjk8GNva7u0csH519@vger.kernel.org, AJvYcCXruCFqMNQxMX1sLWI+o8vRqY+bsH9cvKnWNys1Tp1HMGDIezzw0Z+ol9FA6JG7YBlvDJs7cuTy8DyPvLNJpQ==@vger.kernel.org
-X-Received: by 2002:a05:690c:9686:b0:664:74cd:5548 with SMTP id
- 00721157ae682-6eadc0a205fmr22121087b3.1.1731053322861; Fri, 08 Nov 2024
- 00:08:42 -0800 (PST)
+        bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
+        b=gh9QJPecnALXSNA0QvaKIHQA5MWK/zONzpTRrfP/w2VfxnZYbGnoap+4t5I4SiNH6E
+         JMmP1iR981rnVj9486/wlCdjfpLbM06vqZ6/Sw94UniXBRY0G4tBdruxgOhL62gJLyYC
+         osDA+nr5vQh4aPyeHUtY1rONV0HgbYeDzkBXnKqGyJkVmn7vqKFIEzTAlok3dwh38Xqf
+         wWsIVZK+OC0jV4dZKR0VempSSu0/9/qUGmijwrrj+E7ZY2MUnNHDuhkiYXC7YEpNfsUa
+         q4jPFCVTXNpbKDLVr67lhbCu1IW1DLVvFmuxkPrVvKUCw1UmWG2+PuM03eNQdpVeIXRZ
+         bfag==
+X-Forwarded-Encrypted: i=1; AJvYcCVZaN5UnhfckIQUTShqNHwPJxQiWsgvOmmKYxijfSoSRt1tt2GSLO7iGQkv7i/Lcv30tnBx4a7i7bXfdpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkWASowf7NyxtGiljM+E9WE3avcYpzoEf7TetzUIGamBbiPj5Y
+	02A+yEIcBorqOGJkKuTATSsXutgAJEWVD6ulXsdAKjcjNtO0p0gGAfYRrnHMgk/xmkC7VeK1TCb
+	N9NI9UKydp1qA0g1qSwpImOM8J7voJcoW65Puow==
+X-Google-Smtp-Source: AGHT+IF0UB7o0vuS6Bty4AeOnjqYdCjSMRlYLH8+QDSVbXDnav7cLaan9vUhNYyE5wm0llxN2dvFNKermU2/At8KL/Y=
+X-Received: by 2002:a05:651c:b06:b0:2fa:cc86:f217 with SMTP id
+ 38308e7fff4ca-2ff20307f42mr8533711fa.35.1731053345351; Fri, 08 Nov 2024
+ 00:09:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106190240.GR10375@noisy.programming.kicks-ass.net> <ZyxSdayBstBGhAeO@infradead.org>
-In-Reply-To: <ZyxSdayBstBGhAeO@infradead.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Nov 2024 09:08:30 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUgO83KksK59XEmF+EqXWHWBd1FLML0Ee1dQ7nOiGV2Eg@mail.gmail.com>
-Message-ID: <CAMuHMdUgO83KksK59XEmF+EqXWHWBd1FLML0Ee1dQ7nOiGV2Eg@mail.gmail.com>
-Subject: Re: [RFC] module: Strict per-modname namespaces
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, 
-	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com, 
-	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, gregkh@linuxfoundation.org
+References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org> <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
+In-Reply-To: <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 8 Nov 2024 09:08:54 +0100
+Message-ID: <CACRpkdZ8YFfpqmgoahXBk9b88CGKm6Ny0Am4vvUf1ekUz0bEng@mail.gmail.com>
+Subject: Re: [PATCH v2 04/15] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 6:39=E2=80=AFAM Christoph Hellwig <hch@infradead.org=
-> wrote:
-> On Wed, Nov 06, 2024 at 08:02:40PM +0100, Peter Zijlstra wrote:
-> > It reserves and disallows imports on any "MODULE_${name}" namespace,
-> > while it implicitly adds the same namespace to every module.
+On Thu, Oct 31, 2024 at 2:19=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
+<barnabas.czeman@mainlining.org> wrote:
+
+> The PM8937 provides 4 MPPs.
+> Add a compatible to support them.
 >
-> Ah nice.  This is pretty similar to what I want and had badly prototyped
-> a while ago.
->
-> > This allows exports targeted at specific modules and no others -- one
-> > random example included. I've hated the various kvm exports we've had
-> > for a while, and strictly limiting them to the kvm module helps
-> > alleviate some abuse potential.
->
-> And this was one of the targets on my list.  Specific kunits tests
-> would be another category.
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+.org>
 
-Indeed. E.g. making the scsi_lib KUnit tests modular would require
-exporting an internal symbol[1], which the SCSI maintainers don't like.
+Patch applied for v6.13.
 
-[1] "[PATCH] scsi: core: Make scsi_lib KUnit tests modular for real"
-    https://lore.kernel.org/all/48ca5e827ca420bbdbabb1643e2179dc95c9e0b7.17=
-10849638.git.geert@linux-m68k.org/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
 
