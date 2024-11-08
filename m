@@ -1,127 +1,172 @@
-Return-Path: <linux-kernel+bounces-401811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AA89C1F80
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCC69C1F83
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876A92828F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7431F21E13
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:43:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EDD1F131F;
-	Fri,  8 Nov 2024 14:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91ECE1F4711;
+	Fri,  8 Nov 2024 14:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="WmMpNN/V"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fqRcpZxf"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93F38DC8
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196BA188CC6;
+	Fri,  8 Nov 2024 14:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731076785; cv=none; b=nEJLeZGWBa6NwG2q/bFx1OwvDfjcPtwnDl7wPnYZpn1Bnn9EI+Jnz2TNgqzjHEQwvAkZWJD4pGoD9sEVaZuCcl47gJsjDHfMtMNcR9iO3ELuovAMgghRJylhdCtTIWQjSmH7y5G5xpUQQ7lsSGievhee9zmVIzshRetUnVSEjoM=
+	t=1731076975; cv=none; b=s7yrqacCxzx5nTA/C52jI2p2xTc9FoIVUNsZhM8Bre1vDcMq6kZpC4zzIRxehcv/JcFsY75WAT7nJgM5yJ6bTmf05g237eHOuNfz7HWknYWfFY546FeXYl7wVMAvGXDh/VjYnZD1PDzPMMdU2bOv3HcwduzM7pCLnzv7UZlZuVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731076785; c=relaxed/simple;
-	bh=53qQR13oD92PNNQk+kdkbfDxG393O5NLmtcjVDp6qjs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject; b=M4v33bqP22cPbdp335UmpHSn6W1evEzNpDon3t6bRc5TTYJv63beGhmqRN1KjZzY+4HwjeNtRVK3ueW1G/QQhHHwnOhRvVkwN+HM+kFqko3sfD+Q+RoNfHGUlIwb+p140KSR/ejf4DVUSo6hPZpv3tnm6ItCZZGkDsXJembWq/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=WmMpNN/V; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1731076975; c=relaxed/simple;
+	bh=0vi+xxM9vbYC0ABIEErdvdskYnYP7GEmBfVDVMfmNRw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GsLC+5xqqt331YGkjHtVyIyaJ9hd0KN4k1c9PBTNtG2zOwqu8hTMO40WofHo+TdqG6yDS/KQTtYj3u4YEpCXDbQjR1mEHX/50CrEzCnL0mcM2GhrY0pY9GZLpwYZEwcL1Ywc4iE3aWcioSk79u1R/c1i+sElJpEKYQ2iUyJO0to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fqRcpZxf; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A8Egg15049601;
+	Fri, 8 Nov 2024 08:42:42 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731076962;
+	bh=lwaXLo9fSftAJDId5wRFfi2VOW7QLA5Bl3KKudg18sI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fqRcpZxf6F0wkcCRz/30OVau3Yj8NgcLI+lVEGgbfo00GAe2DgZrWJ91qaXpX5TiO
+	 Yo5nuc2UhpBrSouiSrdbvewIL3YWrkvOUmNH5xbjnVQMuy+/+qa7oSk0l/GwDfBnAK
+	 DpecWhnnGqMWU+PBw8WnjMnF1k70gHGq1IEBaZaQ=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8EggPe111457
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 8 Nov 2024 08:42:42 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
+ Nov 2024 08:42:42 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 8 Nov 2024 08:42:42 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8EgfIO039345;
+	Fri, 8 Nov 2024 08:42:41 -0600
+Date: Fri, 8 Nov 2024 20:12:40 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Pekka Varis <p-varis@ti.com>
+Subject: Re: [PATCH net-next 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
+ to priority map for RX
+Message-ID: <208a1472-c69b-4c20-9bb2-25158edfd7d8@ti.com>
+References: <20241105-am65-cpsw-multi-rx-dscp-v1-0-38db85333c88@kernel.org>
+ <20241105-am65-cpsw-multi-rx-dscp-v1-2-38db85333c88@kernel.org>
+ <8e6053ca-77fc-4f03-ae54-3f6af0addb88@ti.com>
+ <7ae1ccf9-67c0-45ba-9cb9-886701adb488@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1731076780;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=jC6RQvdalAaD3FEmS6MVpWwqzOr/U1gTtWFRsxOXO2A=;
-	b=WmMpNN/VRhm60XQWaSOd1o3BdHKeoKqGm9/1RxF0tQIkzkrEcr762T5SmCiXwMRsX20Bl6
-	964+kLod+7CT8RTo+jdR2sgBesZojCKwGCqGvGFkGippzggnybF4arbF8f6FHmLe7cok+8
-	AFD49u5XuinB4AFATHB1ANdHEMxsKKcZQAnE94YXG6eeaI0+O9twMeTsqa2Mac9nGfdmTj
-	7QvB7z1l03OQnWBVdpOq3m/VXEhPQ4mP8unMeS3WfPsmWNQPpVSHurBftufKl7I++igf59
-	6+3naGX9zCuSiN6PUMJkRt6h2mes1IrY/d6HISG0wZd9wNWfq8In37i1vdTzcA==
-Content-Type: multipart/signed;
- boundary=71c104a0a8a0a912df6151f652c3536d0c5dbd311ec259957e1ff91df396;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 08 Nov 2024 15:39:30 +0100
-Message-Id: <D5GVI1Q30BTS.1ZVQ4YC4OJYEL@cknow.org>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: <linux-kernel@vger.kernel.org>
-Cc: <linux-rockchip@lists.infradead.org>, "Shawn Lin"
- <shawn.lin@rock-chips.com>, "Sudeep Holla" <sudeep.holla@arm.com>
-Subject: Q: Kconfig: 'If unsure, say N'
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7ae1ccf9-67c0-45ba-9cb9-886701adb488@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
---71c104a0a8a0a912df6151f652c3536d0c5dbd311ec259957e1ff91df396
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, Nov 08, 2024 at 02:55:18PM +0200, Roger Quadros wrote:
+> Hi Siddharth,
+> 
+> On 08/11/2024 14:30, Siddharth Vadapalli wrote:
 
-Hi,
+[...]
 
-In quite a number of Kconfig help text entries I see this:
-"If unsure, say N."
+> >> +#define AM65_CPSW_PORTN_REG_CTL			0x004
+> > 
+> > nitpick: indentation needs to be fixed here to align with the macros
+> > below.
+> 
+> It is fine in the code and in my editor in this reply email.
 
-But that raises the question: How can I be sure?
+That's strange. But it appears the same to me as seen at:
+https://lore.kernel.org/r/20241105-am65-cpsw-multi-rx-dscp-v1-2-38db85333c88@kernel.org/
+where the indentation looks incorrect.
 
-To me, this comes across as that the person who implemented the feature
-recommends *against* using it, unless you think you know better then the
-person who implemented it. Which is quite a high bar.
+[...]
 
-IIRC I did come across an entry which paraphrased said:
-"This module can be useful in situation Y, but you run a real risk of
-physically damaging your board when you use it.
-So normally you REALLY should not enable this, but if you still need it
-then the functionality is implemented in this module.
+> 
+> >> +
+> >> +	if (dscp > AM65_CPSW_DSCP_MAX)
+> >> +		return -EINVAL;
+> > 
+> > am65_cpsw_port_set_dscp_map() seems to be invoked by
+> > am65_cpsw_port_enable_dscp_map() below, where the above check is guaranteed
+> > to be satisfied. Is the check added for future-proofing this function?
+> > 
+> 
+> Right, future callers can't be guaranteed to do the check so I'd prefer
+> to have the check here.
 
-If unsure, say N."
+Thank you for the confirmation.
 
-Which is an excellent reason not to enable it ;-)
-Moreover, it specifies when you can/should go against the advise and
-tells you what the risk is if you do.
+> 
+> >> +
+> >> +	if (pri > AM65_CPSW_PRI_MAX)
+> >> +		return -EINVAL;
+> >> +
+> >> +	reg_ofs = (dscp / 8) * 4;	/* reg offset to this dscp */
+> >> +	bit_ofs = 4 * (dscp % 8);	/* bit offset to this dscp */
+> > 
+> > Maybe a macro can be used for the "4" since it is not clear what it
+> 
+> First 4 was for 4 bytes per register. Not sure if we need a macro for this.
+> The comment already mentions register offset and we know each register is
+> 32-bits wide.
+> 
+> We could add a macro for the 8 though
+> #define AM65_CPSW_DSCP_PRI_PER_REG	8
+> 
+> The second 4 is actually 4 bits per DSCP field. I could add a macro for this.
+> #define AM65_CPSW_DSCP_PRI_FIELD_WIDTH	4
 
-But the vast majority just says "If unsure, say N."
+This looks good to me, but I am fine either way, in case you prefer to
+drop the macros.
 
-The problem is that I'd need a better justification to enable (as 'y' or
-'m') a module then "Based on (the rest of) the Help text, this looks
-really useful".
+> 
+> 
+> > corresponds to. Or maybe two macros can be used for "reg_ofs" and
+> > "bit_ofs".
+> > 
+> >> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> >> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+> >> +	val |= pri << bit_ofs;			/* set */
+> >> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> >> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> > 
+> > The above readback seems to be just to flush the writel(). A comment of
+> > the form:
+> > /* flush */
+> > might help, considering that other drivers do the same. Also, assigning
+> > the returned value to "val" might not be required unless it is intended to
+> > be checked.
+> 
+> This was actually left over debug code. I'll drop the readl.
 
-Not to discuss these specifically, but just for illustration:
-``drivers/firmware/arm_scmi/transports/Kconfig`` has this
-option: ``ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE``
-which IIUC enables an *optional* feature for an atomic transaction.
+Ok.
 
-Which sounds useful and harmless, yet ... "If unsure, say N."
-
-And the trigger which caused me to actually write this email was
-"scsi: ufs: rockchip: initial support for UFS"
-which I interpret as: if you want to use UFS on Rockchip based devices,
-you should enable this. But ... "If unsure, say N."
-
-So it would be really helpful if the Kconfig help text:
-1) did not say "If unsure, say N."
-2) If the recommendation is indeed to NOT enable it ('normally'),
-   specify why and under what situation/condition you can go against the
-   maintainer/implementers recommendation
-
-Cheers,
-  Diederik
-
---71c104a0a8a0a912df6151f652c3536d0c5dbd311ec259957e1ff91df396
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZy4ipAAKCRDXblvOeH7b
-bqMkAQC+MkAusJ4jN8vz+TnQ8cKySh54NYC+Uqvx6Mxbo3h9TAD9Fh6D/GyHLhJ4
-6ek1YXYij0Te73Vj/b4O5NkeJC++ewQ=
-=DMd0
------END PGP SIGNATURE-----
-
---71c104a0a8a0a912df6151f652c3536d0c5dbd311ec259957e1ff91df396--
+Regards,
+Siddharth.
 
