@@ -1,152 +1,108 @@
-Return-Path: <linux-kernel+bounces-400882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC629C139B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:26:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086529C13A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC591C23380
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16042837CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5A43D96A;
-	Fri,  8 Nov 2024 01:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682D212E5D;
+	Fri,  8 Nov 2024 01:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYYuiUPy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qs2kRLz8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270D136126;
-	Fri,  8 Nov 2024 01:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49B41BD9FF;
+	Fri,  8 Nov 2024 01:28:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731029170; cv=none; b=uXz9XKKrzFE0zfMGSuRxbT2DF1yaZMfjdaiznzi8YhYeDsUYiqQ+idgm85CRWrNVqQ4jQ3fgayyWhkj6bxF9gjdvyj0Z9FNbeXXzpEKGj9GW/UxmjUPNqE5KWDFZqcY27rDTlKGW2QEWYmBQsVqfzhD2ejInHQdUqsBBzOgAuaQ=
+	t=1731029335; cv=none; b=T+kZGgPyOCyAZnEPfLVNkGJK40JJj87E11Eec9H4uqYeE3dIc9v9E5svOwQ052FR1NdmHCYGWOCGRvN3sDKIN8VlsMEEtaXjSVDguiYJqAborHVHO408wf2d8GWDnnSL76QaMnKrYtd2vpAydP6j4c6EO+zOVdMbgmUw3XSvEtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731029170; c=relaxed/simple;
-	bh=gPIkxehSKAI0ucltkZ1fut7ZW6Iq4yCbo00XEqZNTOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hGiazbfdwH4mt3CZGNFvTjMjjJGP5ZyfmRgm37dhNY12JWDuzk8F4NmRVpkUxlqpWf1XancB99Xm1+Op+BHi1cqEnG89w9Gysw0WKrs7T5UXPfxGNZxHxPFEHXSbLGzCNGsuHrRyX+j+/6Cs5CGkRcPtkFSzKmZb/bwcNEpshpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYYuiUPy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562B1C4CECC;
-	Fri,  8 Nov 2024 01:26:08 +0000 (UTC)
+	s=arc-20240116; t=1731029335; c=relaxed/simple;
+	bh=orXzfModlC+h8VXuMWnwE+DTQBw5X/hVKIxqx7Bad7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MLZvYPI7ILm6nFlqm1HXmEvvXSNXbruOihwspesu0BXVNO756BKgFmPuE9bfi6y4SlqiHBdwRmC7yhD0MLy4aN5WZ5vxeH+S05mZGSOeN/fMWt1sxuIaVUeJmRZx0UsLhxV21AgIv0ZvXXRX/oB+4zLv+ZzMfVWjKdUnSDeZhOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qs2kRLz8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3D6C4CED3;
+	Fri,  8 Nov 2024 01:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731029170;
-	bh=gPIkxehSKAI0ucltkZ1fut7ZW6Iq4yCbo00XEqZNTOA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qYYuiUPyH2Mz0ezkEkyom8E7Qbs7K7xqKi2IvL1VTAx2L734ePruCTPrW7ThfMImg
-	 /W4qtabEK7FGQmQTK9UPjmAdP3QGvnYuY24zgSL/zSu4WZGdoUqIygrKUeFW141Zst
-	 mlNI+MchNG2a9DiCri44oi1jDnuKa8fUsTPBr44d/a8ZaxnFAwdanhG0eQxu5c3Hqv
-	 L7Iz/po0ubzM4m9PBbKj5jaDQ+vgTJGkyLsPqBQ06LK5qF4OngOCSeX2Jb2fVLPHE3
-	 Ys4b1voheyLFTfOzkw74JdCJalsk8Wefy+47L7AEjtickLM5BCC8JMgodZSTG1fNqy
-	 TG2JnHsGOWi8Q==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@vger.kernel.org,
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Subject: [PATCH 4/4] f2fs: fix to requery extent which cross boundary of inquiry
-Date: Fri,  8 Nov 2024 09:25:57 +0800
-Message-Id: <20241108012557.572782-4-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241108012557.572782-1-chao@kernel.org>
-References: <20241108012557.572782-1-chao@kernel.org>
+	s=k20201202; t=1731029335;
+	bh=orXzfModlC+h8VXuMWnwE+DTQBw5X/hVKIxqx7Bad7I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Qs2kRLz8n0tn+EhumEYCQ4J9RKwQ5cGQn00kHJjtJLDQUGWv9TLtKSs776mJXLwRA
+	 aBzR8xIknDNG0sHvEUAfUEEjOMf4Ie5R7vQI1u7+Fjtky3ebN78V0NqKEOko9hC4Wf
+	 99+8nIz2dCAHABIYNJRllBVjjFgS3LYItUpEvdTNwxFV7qf9XgNq6w1KGQ7Ybm9SX+
+	 CU9nRsZCTYboiqQzxqdvE3AD9M7Q3wQ7A7AWEVKtWTpNY4EpEHoiNRFPcuGcgEAxjd
+	 7FGoDb3nNxtAjvnc3bSefp8HAIW7Tlb/zXicoKtHKmaPKoDne7v2mH6Ldhf82LwrXA
+	 vGVHrrz3egduQ==
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a6e960fa2dso5483815ab.0;
+        Thu, 07 Nov 2024 17:28:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWCHaI+RJjRUKbBQNsj2lu20hO2h3Q7JAXN11JWuVQVbYJE3x1ANSBaTra7rctXNkZKwzYzUNwg4JE7D7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEOqdbAaRm2YAbQ3u28byP3QgowHim9utxl5cx1lTkUHDjAnc+
+	WMbEv0HidPpkbj2p5jyFcJvzrYUnQzx57wVNPbD+idDCaO8hjXO8ze+HfWXzXGymF1HCr5JYhCP
+	VgfZcbItAPaSlqDyvvwDU7rIbB4k=
+X-Google-Smtp-Source: AGHT+IGgh52W80CXpJXK/c0azIqLpPpL0bGERDo8/cskb2ZEUiH7+HGQ8Cf3OHlPvz3jONXeE41gBvevmpiJaMmf8h0=
+X-Received: by 2002:a05:6e02:2686:b0:3a0:bd91:3842 with SMTP id
+ e9e14a558f8ab-3a6f1a75a07mr15375065ab.24.1731029334738; Thu, 07 Nov 2024
+ 17:28:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
+ <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com> <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
+In-Reply-To: <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
+From: Song Liu <song@kernel.org>
+Date: Thu, 7 Nov 2024 17:28:43 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+Message-ID: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+Subject: Re: [PATCH md-6.13] md: remove bitmap file support
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-dd if=/dev/zero of=file bs=4k count=5
-xfs_io file -c "fiemap -v 2 16384"
-file:
-   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-     0: [0..31]:         139272..139303      32 0x1000
-     1: [32..39]:        139304..139311       8 0x1001
-xfs_io file -c "fiemap -v 0 16384"
-file:
-   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-     0: [0..31]:         139272..139303      32 0x1000
-xfs_io file -c "fiemap -v 0 16385"
-file:
-   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
-     0: [0..39]:         139272..139311      40 0x1001
+On Thu, Nov 7, 2024 at 5:03=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> wr=
+ote:
+>
+> Hi,
+>
+> =E5=9C=A8 2024/11/08 7:41, Song Liu =E5=86=99=E9=81=93:
+> > On Thu, Nov 7, 2024 at 5:02=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com=
+> wrote:
+> >>
+> >> From: Yu Kuai <yukuai3@huawei.com>
+> >>
+> >> The bitmap file has been marked as deprecated for more than a year now=
+,
+> >> let's remove it, and we don't need to care about this case in the new
+> >> bitmap.
+> >>
+> >> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> >
+> > What happens when an old array with bitmap file boots into a kernel
+> > without bitmap file support?
+>
+> If mdadm is used with bitmap file support, then kenel will just ignore
+> the bitmap, the same as none bitmap. Perhaps it's better to leave a
+> error message?
 
-There are two problems:
-- continuous extent is split to two
-- FIEMAP_EXTENT_LAST is missing in last extent
+Yes, we should print some error message before assembling the array.
 
-The root cause is: if upper boundary of inquiry crosses extent,
-f2fs_map_blocks() will truncate length of returned extent to
-F2FS_BYTES_TO_BLK(len), and also, it will stop to query latter
-extent or hole to make sure current extent is last or not.
+> And if mdadm is updated, reassemble will fail.
 
-In order to fix this issue, once we found an extent locates
-in the end of inquiry range by f2fs_map_blocks(), we need to
-expand inquiry range to requiry.
+I think we should ship this with 6.14 (not 6.13), so that we have
+more time testing different combinations of old/new mdadm
+and kernel. WDYT?
 
-Cc: stable@vger.kernel.org
-Fixes: 7f63eb77af7b ("f2fs: report unwritten area in f2fs_fiemap")
-Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 69f1cb0490ee..ee5614324df0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1896,7 +1896,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		u64 start, u64 len)
- {
- 	struct f2fs_map_blocks map;
--	sector_t start_blk, last_blk;
-+	sector_t start_blk, last_blk, blk_len, max_len;
- 	pgoff_t next_pgofs;
- 	u64 logical = 0, phys = 0, size = 0;
- 	u32 flags = 0;
-@@ -1940,14 +1940,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 
- 	start_blk = F2FS_BYTES_TO_BLK(start);
- 	last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
--
--	if (len & F2FS_BLKSIZE_MASK)
--		len = round_up(len, F2FS_BLKSIZE);
-+	blk_len = last_blk - start_blk + 1;
-+	max_len = F2FS_BYTES_TO_BLK(maxbytes) - start_blk;
- 
- next:
- 	memset(&map, 0, sizeof(map));
- 	map.m_lblk = start_blk;
--	map.m_len = F2FS_BYTES_TO_BLK(len);
-+	map.m_len = blk_len;
- 	map.m_next_pgofs = &next_pgofs;
- 	map.m_seg_type = NO_CHECK_TYPE;
- 
-@@ -1970,6 +1969,17 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		flags |= FIEMAP_EXTENT_LAST;
- 	}
- 
-+	/*
-+	 * current extent may cross boundary of inquiry, increase len to
-+	 * requery.
-+	 */
-+	if (!compr_cluster && (map.m_flags & F2FS_MAP_MAPPED) &&
-+				map.m_lblk + map.m_len - 1 == last_blk &&
-+				blk_len != max_len) {
-+		blk_len = max_len;
-+		goto next;
-+	}
-+
- 	compr_appended = false;
- 	/* In a case of compressed cluster, append this to the last extent */
- 	if (compr_cluster && ((map.m_flags & F2FS_MAP_DELALLOC) ||
--- 
-2.40.1
-
+Thanks,
+Song
 
