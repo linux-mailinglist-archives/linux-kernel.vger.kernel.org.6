@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-402378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100B69C26E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:04:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E969C26E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:05:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC6028439B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1275E1C22A46
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751CB1EBFEC;
-	Fri,  8 Nov 2024 21:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A471E22F3;
+	Fri,  8 Nov 2024 21:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iyu6snDm"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRKL2K6h"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102211A9B33
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 21:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679FC233D92;
+	Fri,  8 Nov 2024 21:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731099839; cv=none; b=HgO6Hv6bxCnIZdPkjsEo2jKcGxpE0QVrGEKrzdWBTnfq2vo7CvWWwrZSrQwth38mV8mXNhzOlRFowtNvgd59O0XV8hcH6DPL08bMV7K47xWZ8UnCDBKEhjPzNQFYD2du0GoKkniBZho4MLV9gatzQlHah6gJoh4pEHb/lSXWt+Q=
+	t=1731099945; cv=none; b=lI6NoG7u+iXiSn150z8DkV2JoDz5teuvvPmNgaiWpbLe2PE0+BxtB+b3QNPuFsVFNh9T92Tq8Uq8qJ4fMSduzNyWMFU7F5PP/bskP1i3nVf7XnqFKPG8KvC7GWJkFRBnOqOQa0oeQN7pnTa74d0TiCUTmxCG45KLvspnD5DX0/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731099839; c=relaxed/simple;
-	bh=IkNuEqLuf4OrCzNDLZRVbJpPF1vImSQUmOQC882HGN4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uO/KixDj3FSlle1iFrc0U2fPkIW2LDmWwSRRF1lfq9Zm4hdE5wDFB6GEI+dY1aNtUcHpnqP0ua1J3crrkT6NUsoZVanWqhSlMQsUTYXkwH+WEbg+JYid44jIrWNuy6gJE/MmtCnrpZtYg2RHgItQjZxl4Ye82SynPuwzy/YV5Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iyu6snDm; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2939664d-e38d-4ac4-b8cf-3ef60c5fd5c6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731099834;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XF3709v11aOgpaO8P8xpLOs+rNMk6jNKKDcoy1EW6y0=;
-	b=iyu6snDmqrfG4YYqMXj7lPbnzwB/5Fc9Q1TjKpsetYbx0Ili1ClQLLJmq/6vOgOeGUTRkr
-	TPrEZIwAJq6fQkFnnowIZHUOVQXzgvxLd9jjPnweI6+gZlo9MNsibAa0+gB5QQSIaKGgc1
-	WRqHAhSESFke2240BWpSLTrAo9/SgBk=
-Date: Fri, 8 Nov 2024 13:03:45 -0800
+	s=arc-20240116; t=1731099945; c=relaxed/simple;
+	bh=/KHRFjkuE/A9C0WJxDMVSW1WywPTRFQXWtQZ2q5dcwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IWYtAZM2S22/xc5CIuAO8fbRyGbrKjKjSja4anrw+aZh3YBs7EDBfHQ1O0+GnuSBUq/aZ81UJtWSazyfK7hlU8jepwzsCtsrT1Uf3oESuQzpPrvhvl395KmhiTr6htGIvDbSshQeeeKSjNtyAe9Wgq7c3vemSrMcAqn7bZPQiM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRKL2K6h; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ede26dc527so383447a12.3;
+        Fri, 08 Nov 2024 13:05:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731099943; x=1731704743; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DwfI1+gidb4OWd62usyzOyDsH2cgtSWFP9TdDL/qVTc=;
+        b=iRKL2K6hiul9V/SP4omiL34F/v+FM1tSeT5i9hN9u9rx1HfnbSfJ9YzOpRxAMVisCS
+         5wqdXIztWPxIF+4k7hTmD55SiguJ7a329NNKFmiNcY+yqnF0fLxq2XafdhWNjnFjHuDL
+         JBUXHeuTxVuyIpqUgFKva7si/Ngz2l6k7O5XYSIa5cp0fsW/Ayi0qGZ4GRKxMFIp49eg
+         n0huoI/P9gqMY1aDleW6JuRodVgMrev1BjYvhstLnFgryiaHUAlz6Gm6amd0u99Pu3Ez
+         vhvtlg5SZ2n+7tjrZ41jwvSD2MLUJQmQWc80KTANyE5tvBUegnoLomeJKcZp9nP2NQIN
+         HbIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731099943; x=1731704743;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DwfI1+gidb4OWd62usyzOyDsH2cgtSWFP9TdDL/qVTc=;
+        b=P3jjFZQM+v/TGYC4/hSCohQHKL8ngDP0JlUShLzXm0t9hrStQ4zfUD29hltJ4jIYbl
+         gBKUsPTFTLi/YzTtMTudem7uV2ccCADrRkBMf4ij0DILguY9YA3kXd0E0JiQ9SAUkOF9
+         raDZOlk1eEnM8zFVFkEmfobpPWBsVclQtwgCzAUJDCw5hGRMFLuWXznpe7hdj8NeGKyp
+         4VKKEOWiDdIXtuG55fu26dAbNhbACo2no24jkYV4OAOAWzo5TuD2HMLmT1hDzLVPz7xY
+         fLs6ZQCIbnHyMl6SzbPYWUF7yDs7R1Tq7lcApNfMRqMr0DKZzWaFo/eF1CpUV0tnASrp
+         7wYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE4ZBKNUSZ4Iu9VJN1ojwh0VjiHGixLqAedOjaOc4gZXfhfSamjJrjY2yaGghCSb39qC8nkXSFfXpFQBRWGqE=@vger.kernel.org, AJvYcCUcpseySPrWG2UyOZXLgP8zZHxAtvkGmSC2b5cMLWpY+i0VbJ8s537BfekQNcOzHxBcHN3709aWdmT13g==@vger.kernel.org, AJvYcCVF1nohX2Zx7HRj0HZAnquOsh62CDlXf0kmsM6DC6MhJPFUeUVkaDuILTlcqyA2r32BHRwnuD9nd5rpaLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvmPuqmWeR0hbnmx1CVkBP2K+2UPM+LNlpnUjfIMwUvi6A9Q6z
+	ZmZN0vhVvZLU3ozgeEC3TdRKhIccLYIQY2aSsSYrqxEF3jukVB1AiXYxSWLT7yjLi5qWVmlxsk8
+	nbo3RjsFdu9JIdJ8bAlCQOhFUKJU=
+X-Google-Smtp-Source: AGHT+IHcK4oGgKoSMwwVhFYzHLBNuSvAjv06YVdNylUSXyd7Uk5t9tf8n3kxozjG5BXCxuVtL0/4/c3dmeHM7ZxYVzU=
+X-Received: by 2002:a17:90b:4b41:b0:2e7:8a36:a9ad with SMTP id
+ 98e67ed59e1d1-2e9b1773084mr2542113a91.9.1731099942706; Fri, 08 Nov 2024
+ 13:05:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf] bpf: fix recursive lock when verdict program return
- SK_PASS
-To: mrpre <mrpre@163.com>, John Fastabend <john.fastabend@gmail.com>,
- Jakub Sitnicki <jakub@cloudflare.com>
-Cc: edumazet@google.com, jakub@cloudflare.com, davem@davemloft.net,
- dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, bpf@vger.kernel.orgc, linux-kernel@vger.kernel.org,
- Vincent Whitchurch <vincent.whitchurch@datadoghq.com>
-References: <20241106124431.5583-1-mrpre@163.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20241106124431.5583-1-mrpre@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241108152149.28459a72@canb.auug.org.au> <20241108095933.72400ee1@gandalf.local.home>
+ <CAH5fLgj6zSDH6Oe3oqfE7F+NQSgSLxh8x7X3ewrrDAdOHOh0YA@mail.gmail.com> <20241108153503.1db26d04@gandalf.local.home>
+In-Reply-To: <20241108153503.1db26d04@gandalf.local.home>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 8 Nov 2024 22:05:30 +0100
+Message-ID: <CANiq72mP15rjfR3cMZH-z9hkTDQfqgEaM4M+71B1KWLmw=3cPA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the ftrace tree
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, Miguel Ojeda <ojeda@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/6/24 4:44 AM, mrpre wrote:
-> When the stream_verdict program returns SK_PASS, it places the received skb
-> into its own receive queue, but a recursive lock eventually occurs, leading
-> to an operating system deadlock. This issue has been present since v6.9.
-> 
-> '''
-> sk_psock_strp_data_ready
->      write_lock_bh(&sk->sk_callback_lock)
->      strp_data_ready
->        strp_read_sock
->          read_sock -> tcp_read_sock
->            strp_recv
->              cb.rcv_msg -> sk_psock_strp_read
->                # now stream_verdict return SK_PASS without peer sock assign
->                __SK_PASS = sk_psock_map_verd(SK_PASS, NULL)
->                sk_psock_verdict_apply
->                  sk_psock_skb_ingress_self
->                    sk_psock_skb_ingress_enqueue
->                      sk_psock_data_ready
->                        read_lock_bh(&sk->sk_callback_lock) <= dead lock
-> 
-> '''
-> 
-> This topic has been discussed before, but it has not been fixed.
-> Previous discussion:
-> https://lore.kernel.org/all/6684a5864ec86_403d20898@john.notmuch
+On Fri, Nov 8, 2024 at 9:35=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> I can reproduce it with the attached config.
 
-Is the selftest included in this link still useful to reproduce this bug?
-If yes, please include that also.
+Something like this should work I think:
 
-> 
-> Fixes: 6648e613226e ("bpf, skmsg: Fix NULL pointer dereference in sk_psock_skb_ingress_enqueue")
-> Reported-by: Vincent Whitchurch <vincent.whitchurch@datadoghq.com>
-> Signed-off-by: Jiayuan Chen <mrpre@163.com>
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index f29280ec4820..37c15f05cb81 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -2,6 +2,8 @@
+ ccflags-y +=3D -I$(src)                          # needed for trace events
 
-Please also use the real name in the author (i.e. the email sender). The patch 
-needs a real author name also. I had manually fixed one of your earlier 
-lock_sock fix before applying.
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)              +=3D rust_minimal.o
+-obj-$(CONFIG_SAMPLE_RUST_PRINT)                        +=3D
+rust_print.o rust_print_events.o
++
++obj-$(CONFIG_SAMPLE_RUST_PRINT) +=3D rust_print_combined.o
++rust_print_combined-y :=3D rust_print.o rust_print_events.o
 
-pw-bot: cr
+ subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)         +=3D hostprogs
 
-> Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-
-The patch and the earlier discussion make sense to me.
-John and JakubS, please help to take another look in the next respin.
-
+Cheers,
+Miguel
 
