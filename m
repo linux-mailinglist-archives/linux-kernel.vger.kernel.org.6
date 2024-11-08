@@ -1,137 +1,168 @@
-Return-Path: <linux-kernel+bounces-401038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B88B9C154C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:13:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A629C1519
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16C21F23DB5
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:13:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F41B21C50
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2321DC195;
-	Fri,  8 Nov 2024 04:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906D61BC09A;
+	Fri,  8 Nov 2024 04:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HWzlD2nz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alwh7b0Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFDC1946DF;
-	Fri,  8 Nov 2024 04:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09473BBEA;
+	Fri,  8 Nov 2024 04:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039070; cv=none; b=ut6NlleBvn0DZ0tbFicO/8/RNCXiaGeE4ynlz8DLi64waV8eaH7TCKzb85CzjkIJjzE579HrTsVtL2mWZk2dd75tZfkVMKjzQEgg5Zqsrjc03d/fbVC39JAHeHFIUcfyQiGT4aqvqY5rggTW4NHkdizw68Fs8fOqWD9qVgG4zss=
+	t=1731038982; cv=none; b=n8Pptf+SisX0UYztuHrBtEoLQhrAVM6b1rj9tsAtAngsGtpo4gK1FIl9r1doUFh2eTRRVp/F/17tkCSO1oVRSTUYZi+IgbgbLO2B6xXpOfiOzkaAp+mfe+H+6t/0ixv30+o7iWgtduti3EeTg4e3HexofCABgViqYiO9SYHVy0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039070; c=relaxed/simple;
-	bh=LB0ERSXQL/Llu9CsxiUVYqiS/OzFA+1sg2d30cc2eNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=cgIBVvpIPj9L2xMkOwOGt7On3cgdE8NzZgwp7ZLo0XPyphayAJBMAs7Qlbqlp3IXGamlvZEsLT9TMn+hH4ClcjBNrmQJn1/r6AItMPqrIFndRKqMduiOfbhOPzVsZFa8+CopGijTnNDjFTJzYTsLOprO2lWL1kzByc8knRXSUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HWzlD2nz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Mb2bV030659;
-	Fri, 8 Nov 2024 04:10:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t1cA9NDwFLH5+vfmPGgF5z/CRZpfWRBSGlRVBz5PXQE=; b=HWzlD2nzjTsPUkYW
-	4GZDqH7hqdwse2TbOtJ78C+VGiDXfdXwfJahU/OurYTWsa4GKY/F13nIwaFcrJfE
-	L1YzmndH8h/jUSn5DRr5k3n3fqeWv9JRozSbMLwv375TSkxau56XP5M+T5EQp2Io
-	z5tkGc9TB2dqgn6eS1uN0kwwmUSrtH7ba1y/Ox37nFl75YP3ao/CWFtXeazQf3hq
-	nQZjH3KKntd/36HxyPAGw8fTIj+ef7ZomwS/tcmPG8CvDEb5p0bVxynuZzP0+w6q
-	ZyDK4ICaUG6P5WtQcPkV5GSU775A/h6wMmidwjcqQJWEMNlSrVLGIMzyIodV3UDm
-	Av52NA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gdrkpu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 04:10:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A84AdI1017790
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 8 Nov 2024 04:10:39 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 7 Nov 2024 20:10:34 -0800
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Fri, 8 Nov 2024 09:39:28 +0530
-Subject: [PATCH v3 11/11] arm64: defconfig: Enable QCS615 clock controllers
+	s=arc-20240116; t=1731038982; c=relaxed/simple;
+	bh=yf7JU5fBLWjEU8ccpkE6YuYyOOgPIIIfzkIiBJH0mFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ktJaHJHvMlPFsgOZEvMxg/HwbX3yayGE61AA0L5WhCO6refcX36KvFXON+nNgYRKgSNSbhqozhwVYNKuDsmH2lbSQzcIT5hON4TGgFLFLDuRJJUwUs5j2iYs1SeFcpomDvuCqyTYyjK8qOYWRORQ2i58Tj/uNPf387tzFSktPkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alwh7b0Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BBB7C4CECE;
+	Fri,  8 Nov 2024 04:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731038981;
+	bh=yf7JU5fBLWjEU8ccpkE6YuYyOOgPIIIfzkIiBJH0mFk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=alwh7b0ZScHo44wGMYroZHNE/e0P7HNpp+fW0hjPjJA1AuvNlvMZnp28h2wJ8+MsA
+	 V+OBIjhlG50H0VCQLyUDaqT+BtmoFS8o6paG3PKvuB8b/o9c11NSo70V0vvQiSYOfj
+	 CuLiEJBLOHXmD12jDbZ6Y1pgRo+NHgEC8K/BW4ESCVcvCNJSBfldK6TSKNb8QGYZRt
+	 VJAdsCnNBpsmwp56CBycX4m8F+97/cAKiGfysQ0/ptAGYuqvbN0WcLmA3hQtBf5VNJ
+	 s0L7gchBPLlzo7pjirOXUh8ZwdLK2+pvxqUPQIhfqOYNGbQsq53a2ct4EnYmhmu4K3
+	 qbHxTi7no+yxQ==
+Date: Thu, 7 Nov 2024 20:09:40 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Moon Yeounsu <yyyynoom@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
+Subject: Re: [PATCH net-next v2] net: dlink: add support for reporting stats
+ via `ethtool -S`
+Message-ID: <20241107200940.4dff026d@kernel.org>
+In-Reply-To: <20241107151929.37147-5-yyyynoom@gmail.com>
+References: <20241107151929.37147-5-yyyynoom@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241108-qcs615-mm-clockcontroller-v3-11-7d3b2d235fdf@quicinc.com>
-References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
-In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Abhishek Sahu
-	<absahu@codeaurora.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lzLao80oBNAttmrh5-Ggi8TzDY48jHFT
-X-Proofpoint-ORIG-GUID: lzLao80oBNAttmrh5-Ggi8TzDY48jHFT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxscore=0 mlxlogscore=693 lowpriorityscore=0 bulkscore=0 phishscore=0
- adultscore=0 suspectscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411080034
 
-Enable the QCS615 display, video, camera and graphics clock controller
-for their respective functionalities on the Qualcomm QCS615 ride
-platform.
+On Fri,  8 Nov 2024 00:19:33 +0900 Moon Yeounsu wrote:
+> +}, mac_stats[] = {
+> +	DEFINE_MAC_STATS(tx_packets, FramesXmtOk,
+> +			 u32, FramesTransmittedOK),
+> +	DEFINE_MAC_STATS(rx_packets, FramesRcvOk,
+> +			 u32, FramesReceivedOK),
+> +	DEFINE_MAC_STATS(tx_bytes, OctetXmtOk,
+> +			 u32, OctetsTransmittedOK),
+> +	DEFINE_MAC_STATS(rx_bytes, OctetRcvOk,
+> +			 u32, OctetsReceivedOK),
+> +	DEFINE_MAC_STATS(single_collisions, SingleColFrames,
+> +			 u32, SingleCollisionFrames),
+> +	DEFINE_MAC_STATS(multi_collisions, MultiColFrames,
+> +			 u32, MultipleCollisionFrames),
+> +	DEFINE_MAC_STATS(late_collisions, LateCollisions,
+> +			 u32, LateCollisions),
+> +	DEFINE_MAC_STATS(rx_frames_too_long_errors, FrameTooLongErrors,
+> +			 u16, FrameTooLongErrors),
+> +	DEFINE_MAC_STATS(rx_in_range_length_errors, InRangeLengthErrors,
+> +			 u16, InRangeLengthErrors),
+> +	DEFINE_MAC_STATS(rx_frames_check_seq_errors, FramesCheckSeqErrors,
+> +			 u16, FrameCheckSequenceErrors),
+> +	DEFINE_MAC_STATS(rx_frames_lost_errors, FramesLostRxErrors,
+> +			 u16, FramesLostDueToIntMACRcvError),
+> +	DEFINE_MAC_STATS(tx_frames_abort, FramesAbortXSColls,
+> +			 u16, FramesAbortedDueToXSColls),
+> +	DEFINE_MAC_STATS(tx_carrier_sense_errors, CarrierSenseErrors,
+> +			 u16, CarrierSenseErrors),
+> +	DEFINE_MAC_STATS(tx_multicast_frames, McstFramesXmtdOk,
+> +			 u32, MulticastFramesXmittedOK),
+> +	DEFINE_MAC_STATS(rx_multicast_frames, McstFramesRcvdOk,
+> +			 u32, MulticastFramesReceivedOK),
+> +	DEFINE_MAC_STATS(tx_broadcast_frames, BcstFramesXmtdOk,
+> +			 u16, BroadcastFramesXmittedOK),
+> +	DEFINE_MAC_STATS(rx_broadcast_frames, BcstFramesRcvdOk,
+> +			 u16, BroadcastFramesReceivedOK),
+> +	DEFINE_MAC_STATS(tx_frames_deferred, FramesWDeferredXmt,
+> +			 u32, FramesWithDeferredXmissions),
+> +	DEFINE_MAC_STATS(tx_frames_excessive_deferral, FramesWEXDeferal,
+> +			 u16, FramesWithExcessiveDeferral),
+> +}, rmon_stats[] = {
+> +	DEFINE_RMON_STATS(rmon_under_size_packets,
+> +			  EtherStatsUndersizePkts, undersize_pkts),
+> +	DEFINE_RMON_STATS(rmon_fragments,
+> +			  EtherStatsFragments, fragments),
+> +	DEFINE_RMON_STATS(rmon_jabbers,
+> +			  EtherStatsJabbers, jabbers),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_64,
+> +			  EtherStatsPkts64OctetTransmit, hist_tx[0]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_64,
+> +			  EtherStats64Octets, hist[0]),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_65to127,
+> +			  EtherStats65to127OctetsTransmit, hist_tx[1]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_64to127,
+> +			  EtherStatsPkts65to127Octets, hist[1]),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_128to255,
+> +			  EtherStatsPkts128to255OctetsTransmit, hist_tx[2]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_128to255,
+> +			  EtherStatsPkts128to255Octets, hist[2]),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_256to511,
+> +			  EtherStatsPkts256to511OctetsTransmit, hist_tx[3]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_256to511,
+> +			  EtherStatsPkts256to511Octets, hist[3]),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_512to1023,
+> +			  EtherStatsPkts512to1023OctetsTransmit, hist_tx[4]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_512to1203,
+> +			  EtherStatsPkts512to1023Octets, hist[4]),
+> +	DEFINE_RMON_STATS(rmon_tx_byte_1204to1518,
+> +			  EtherStatsPkts1024to1518OctetsTransmit, hist_tx[5]),
+> +	DEFINE_RMON_STATS(rmon_rx_byte_1204to1518,
+> +			  EtherStatsPkts1024to1518Octets, hist[5])
+> +};
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
+Do these macro wrappers really buy you anything?
+They make the code a lot harder to follow :(
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 730f303350c36a75661dc267fdd0f8f3088153fc..2fa666156b88b44a8298651e276c196cded9a7f8 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1322,7 +1322,11 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
+> +static void get_ethtool_mac_stats(struct net_device *dev,
+> +				  struct ethtool_eth_mac_stats *mac_base)
+> +{
+> +	struct netdev_private *np = netdev_priv(dev);
+> +
+> +	get_stats(dev);
+> +
+> +	if (mac_base->src != ETHTOOL_MAC_STATS_SRC_AGGREGATE)
+> +		return;
+> +
+> +	for (int i = 0; i < MAC_STATS_SIZE; i++)
+> +		READ_DATA(mac_stats, mac_base, i) = READ_STAT(mac_stats, np, i);
+> +}
+> +
+> +
 
+nit: multiple empty lines, checkpatch --strict should catch this
+
+> +static void get_strings(struct net_device *dev, u32 stringset, u8 *data)
+> +{
+> +	switch (stringset) {
+> +	case ETH_SS_STATS:
+> +		for (int i = 0; i < STATS_SIZE; i++) {
+> +			memcpy(data, stats[i].string, ETH_GSTRING_LEN);
+> +			data += ETH_GSTRING_LEN;
+
+We've been getting conversion patches replacing such code with
+ethtool_puts() lately, let's use it from the start.
 -- 
-2.45.2
-
+pw-bot: cr
 
