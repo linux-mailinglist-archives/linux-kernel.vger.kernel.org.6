@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-402433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8AA9C2772
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:21:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFC49C2775
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:23:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1AA1F22401
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85857B216DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFCD1E203F;
-	Fri,  8 Nov 2024 22:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41FC1E22E9;
+	Fri,  8 Nov 2024 22:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iWtoo3Vg"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="OCr7evBA"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E25233D8C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241D6233D8C;
+	Fri,  8 Nov 2024 22:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731104478; cv=none; b=OCunb9zOi34r5okPh3CSQDd4dHevwkGBC2tHukeEmGHZUeMn9teNH6FHw/Ex4RvYKa006edOFzYMuzTjyxjSp/NV8n7W/I9lf5TVOgtsAOwn8U4KpBWBs8WojllCiikce/afDS3fEhlEEW3hMZBjBd6vdLluG9sDqf0bMFHw23U=
+	t=1731104571; cv=none; b=SfVQGKgATDGbGf+cU1w02UTY0PBunfXULNn8CjY2BF59De13n300vBDI4H2u+WGLVywqPSctE59US/7JSK1vXPjRaypn10zyi2eZDmVI6DuzFozNbMIEmsVql7H1L25i+9788i2sztWIicwiKIBoz1e7+7vT0CFbRspo92JX8g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731104478; c=relaxed/simple;
-	bh=W1ZiWT8LoXEaj2sAEB9yYQV+WMQK0SyaJfoj5NdD4mM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Voxig79V1eRVyBDmPazhmRWxWhiL/c7fLCMIfUEkSOce33T12TzUq7U3FPBpDItCJg6qSNiBCTroVETnbEqJEb7pS8/uHvS8hs2sRLW1WbnbAq9mPtX+Y9FAxpMNkzqZCLFjlE1cRATeKx/E005Q76Ay1gR6GbnhjEKiOSkbmjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iWtoo3Vg; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 8 Nov 2024 14:21:05 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731104472;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z1Ptippr8U80MLfwMylqbY3GBCBNohqHFsVTsoCWnoA=;
-	b=iWtoo3VgzB8fTxFnKYWHljRWnkmFJTCz26g6g+9xm75hYdSW/g+rEIWhqH/g25N/2+5CIl
-	Jua0e1RhWJuPVGRKSkERqCMiwaZj+ooMJGAXd42T6o7SEy7Z56EnN1kliV7WNHvDzB4YYo
-	8G19e/uBy8zTA1ZmcmMOgYpCWnmjIN0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 1/3] memcg/hugetlb: Introduce memcg_accounts_hugetlb
-Message-ID: <elww7lzpj4htuhgdeu2e3j5mhogi54x6w75fk5sodaptletk3x@r2fnnh7gz72h>
-References: <20241108212946.2642085-1-joshua.hahnjy@gmail.com>
- <20241108212946.2642085-2-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1731104571; c=relaxed/simple;
+	bh=VUMNYqBqRk+bOB2rzDRhOy4I7Q2ptnmdSgkVoXxejhc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=TXvqqdRYAynTuRd5aQRjzYCnq9Z2wnBPBa88cckKE8RLrtcf8E3CUZJAhiIcicYAV6zG90+T1X0dcqORvXFeaiDEJKw+S5mvut8bioJ8QLAB+aqaPPvrbTxyvU3sViMgatLgCpSvSdf0OIXxz9KuiwU8920grJcXML0VTHSrOcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=OCr7evBA; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id 9XNFtMV3pFhC09XNFtsbar; Fri, 08 Nov 2024 23:22:40 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731104560;
+	bh=xsrkrId2lIYJCFt7oB7Y6EgOkBTSbKIAh53Ak1OYI3Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=OCr7evBAcLliDBH7JIO9KPXO4GVZDPVDjUgFQ9LlzM5RBLMwhuKMYawIHNoAxKCVq
+	 cMyopUJjii8GKWWvR06KKD5u3GhPD+jxh9S/7AV65E3byZCtMUuQ5zqXEycIcgvQhM
+	 JH45ITWtTzTg0lYCPt7KYOwVoCV0Q4V7qd6He13S571rsTIroeXFmcMpDgwOAA7yE2
+	 CinZpsO8TC3kN1gxSUB17xNqmuG1BYGeNsnJfNCX/pktLwCsYxr0WqgNi47YCfUreu
+	 LqiuSLBvqAKMdgexiPIkUCGTGNNzQ23PJliHTkBsLzuLzC15GXW4cdRwTrSUAz0kA7
+	 pH6ZiIeBx4KZQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 08 Nov 2024 23:22:40 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <9ea17ec0-921f-4197-904e-52a91f6a5170@wanadoo.fr>
+Date: Fri, 8 Nov 2024 23:22:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108212946.2642085-2-joshua.hahnjy@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
+To: Christian Marangi <ansuelsmth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <olteanv@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241108200217.2761-1-ansuelsmth@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241108200217.2761-1-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 08, 2024 at 01:29:44PM -0800, Joshua Hahn wrote:
-> This patch isolates the check for whether memcg accounts hugetlb.
-> This condition can only be true if the memcg mount option
-> memory_hugetlb_accounting is on, which includes hugetlb usage
-> in memory.current.
-> 
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> 
+
+Le 08/11/2024 à 21:02, Christian Marangi a écrit :
+> Some DSA driver can be simplified if devres takes care of unregistering
+> the DSA switch. This permits to effectively drop the remove OP from
+> driver that just execute the dsa_unregister_switch() and nothing else.
+
+Nit: s/driver/drivers/
+
+> Suggested-by: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+
+Please, remove the "Marion &"
+
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  mm/memcontrol.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index f3a9653cef0e..97f63ec9c9fb 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1425,6 +1425,9 @@ unsigned long memcg_page_state_local_output(struct mem_cgroup *memcg, int item)
->  		memcg_page_state_output_unit(item);
->  }
->  
-> +/* Forward declaration */
-> +bool memcg_accounts_hugetlb(void);
+>   include/net/dsa.h |  1 +
+>   net/dsa/dsa.c     | 19 +++++++++++++++++++
+>   2 files changed, 20 insertions(+)
+>
+> diff --git a/include/net/dsa.h b/include/net/dsa.h
+> index 72ae65e7246a..c703d5dc3fb0 100644
+> --- a/include/net/dsa.h
+> +++ b/include/net/dsa.h
+> @@ -1355,6 +1355,7 @@ static inline void dsa_tag_generic_flow_dissect(const struct sk_buff *skb,
+>   
+>   void dsa_unregister_switch(struct dsa_switch *ds);
+>   int dsa_register_switch(struct dsa_switch *ds);
+> +int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds);
+>   void dsa_switch_shutdown(struct dsa_switch *ds);
+>   struct dsa_switch *dsa_switch_find(int tree_index, int sw_index);
+>   void dsa_flush_workqueue(void);
+> diff --git a/net/dsa/dsa.c b/net/dsa/dsa.c
+> index 5a7c0e565a89..5cf1bac367ca 100644
+> --- a/net/dsa/dsa.c
+> +++ b/net/dsa/dsa.c
+> @@ -1544,6 +1544,25 @@ int dsa_register_switch(struct dsa_switch *ds)
+>   }
+>   EXPORT_SYMBOL_GPL(dsa_register_switch);
+>   
+> +static void devm_dsa_unregister_switch(void *data)
 
-No need for forward declaration. Just define it here and make it static.
+I was also wondering if it would make sense to have callbacks used by 
+devm_add_action_or_reset() have the __cold annotation.
+(AFAIK, it is never used for that up to now)
 
-> +
->  static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  {
->  	int i;
-> @@ -1446,7 +1449,7 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  
->  #ifdef CONFIG_HUGETLB_PAGE
->  		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
-> -		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-> +			!memcg_accounts_hugetlb())
->  			continue;
->  #endif
->  		size = memcg_page_state_output(memcg, memory_stats[i].idx);
-> @@ -4483,6 +4486,15 @@ int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t gfp)
->  	return ret;
->  }
->  
-> +bool memcg_accounts_hugetlb(void)
+CJ
+
 > +{
-> +#ifdef CONFIG_HUGETLB_PAGE
-> +	return cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING;
-> +#else
-> +	return false;
-> +#endif
+> +	struct dsa_switch *ds = data;
+> +
+> +	dsa_unregister_switch(ds);
 > +}
 > +
->  /**
->   * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb folio
->   * @memcg: memcg to charge.
-> @@ -4508,8 +4520,7 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
->  	 * but do not attempt to commit charge later (or cancel on error) either.
->  	 */
->  	if (mem_cgroup_disabled() || !memcg ||
-> -		!cgroup_subsys_on_dfl(memory_cgrp_subsys) ||
-> -		!(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-> +		!cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accounts_hugetlb())
->  		return -EOPNOTSUPP;
->  
->  	if (try_charge(memcg, gfp, nr_pages))
-> -- 
-> 2.43.5
-> 
+> +int devm_dsa_register_switch(struct device *dev, struct dsa_switch *ds)
+> +{
+> +	int err;
+> +
+> +	err = dsa_register_switch(ds);
+> +	if (err)
+> +		return err;
+> +
+> +	return devm_add_action_or_reset(dev, devm_dsa_unregister_switch, ds);
+> +}
+> +EXPORT_SYMBOL_GPL(dsa_register_switch);
+> +
+>   static void dsa_switch_remove(struct dsa_switch *ds)
+>   {
+>   	struct dsa_switch_tree *dst = ds->dst;
 
