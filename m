@@ -1,146 +1,108 @@
-Return-Path: <linux-kernel+bounces-401048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74269C1561
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:22:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4A39C1563
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D92371C22636
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F7E283DAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670091C68A3;
-	Fri,  8 Nov 2024 04:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65111CC88D;
+	Fri,  8 Nov 2024 04:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EQr1+wiI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tYFPsCb0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A5E7DA95;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF17194A60;
 	Fri,  8 Nov 2024 04:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039714; cv=none; b=h8Dkxgx9FiSMTkIa4VPQSMfRJn2aHeC9N+l3+bAuo2i+TrSH8SZtOtTLFyGiR8fFHUb9+V0QrwMtJmkhPO6oSxuSeTFTw5Y3vswZ0DGpm9TZaekafBq8FDgRs0b1GFe/u1FIoAisY8awboSH4frIQl0TxH8k1AGYF8YUJW1sics=
+	t=1731039717; cv=none; b=Czd3TAW2ecrV2TVKrmDqTvpetjcywtgxNo6oi/jmePtmXk/EF1RRgLFUFrgh4MeKuDDc2LllqclvtnnjSEc3ToEp5V04qmlYbq4qFsz+lyBPmEPyJTJACkYFBZ1ew9EsVVc0W/fCHFH1v1nBgb25AmUa4zRa3SzzV+sAghH+2o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039714; c=relaxed/simple;
-	bh=1n2L2doiBZ2X85DwBXNbtzaJ+cTWmnfXCmDSppPtlYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nGNS/Q2onAbtoJsVFqy4J/nRyMfn91J8MLPSk/SOYeFr7JCOHnvhb5lV7WW+0POymMN5VHT3qUgHcb7YAfmRNs7/1NevRAd1IP3swsRWxP+qtowYKn/AJZlxZJc2cB3uUVblUwJI2e4R9tn3FhpYa30W5xzq0GCffnKBL0UBR3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EQr1+wiI; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731039712; x=1762575712;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1n2L2doiBZ2X85DwBXNbtzaJ+cTWmnfXCmDSppPtlYE=;
-  b=EQr1+wiIxJYWSByfAZlfnIe7QakaRkFdcbhTlfoBdgX02w/FVpXDT1bx
-   HXkoraHg8PphAP2LDwifTYBPbNWmxqybg6NxRvi57xAswKBIWXuHQWat7
-   E02xdg1oppexsWGN2bfuM68kuzaI5/LZ6o4NmSGmaFK95cJTabaf8XZHa
-   agbFAHE5RYHTc4DjbhUiBpMl87ly3lx1x98lI3qc9S5qlLfT9r9XaRFSw
-   ziqxZsBxlNWxTRwJmcAsHKYKrGnPjV/PTFxNT8xUXAcJ2Vloo9oDmRmSm
-   zZM/H7FDe/DiZqCD/w79dHxexDyxrOVkrDVZiXmAS/uWzWZY7SVyyiAyV
-   A==;
-X-CSE-ConnectionGUID: ojVMK+7vQKijWmH8HI4WUA==
-X-CSE-MsgGUID: gH6As6RoRTOwQOq/aWnY0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="34696146"
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="34696146"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 20:21:52 -0800
-X-CSE-ConnectionGUID: Y0PcV1vwTCKm5JHftQYVfw==
-X-CSE-MsgGUID: jytUMIO2S7WVovrh9bs/VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="90188296"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 Nov 2024 20:21:48 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9GVG-000r0k-1Z;
-	Fri, 08 Nov 2024 04:21:46 +0000
-Date: Fri, 8 Nov 2024 12:21:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Kaiyuan Zhang <kaiyuanz@google.com>,
-	Samiullah Khawaja <skhawaja@google.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Subject: Re: [PATCH net-next v2 5/5] netmem: add netmem_prefetch
-Message-ID: <202411081130.CxioaC2A-lkp@intel.com>
-References: <20241107212309.3097362-6-almasrymina@google.com>
+	s=arc-20240116; t=1731039717; c=relaxed/simple;
+	bh=WLAYAQuM6g3eUxoZL7++yop/ovFVrHcp3kxdSG+HlFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ny24Qt0WPT5gphpGwPWtJVt93CiD7fJQdMwAG5V0/sZA6i+rVA0rPVL7P863cS5MtGqigA8bQmPONY/cezpHLuzOXpkil0+nVKs8r2QTLx12PSNhRXjpo97uVkQuSdMbM87XnmA7GMwie2oaiXQh22ATyD6mR+eqVMswx3Hv99c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tYFPsCb0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731039708;
+	bh=BV7yEOVmPoEKWjC4VxAa/JB2VNxwxkUnuKXMNJfGEFM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tYFPsCb0N1/7JGisoJBPTPucxHyDl0z9JBVdLg2Iaj5fSodMjq1G0/toFIQoUxaiW
+	 ZAfq8f3ESuwCEcJ+yvrRWsgGvTMnN3h2QcJCm4YSzEv/ZdGsTkwrqtdfXjQZ0G+Xvj
+	 4qaAnkS9Crh9UoBt86OQZKvWNkz+PdBcZgdnlmzvxQmZTiloxmZmF836Vjw+P8RTJq
+	 6FMH1354r311+NE80yK+W6BvURFECrIufEGANPMaoNd1OJTnnOO3lMRWXYnzyFYWQs
+	 /fV2ZFMMEQuhtdFF2mxOdUDOHQWUkgpUzNYjIr7qsDpSc7bOU1I7IWgL0HbektsxMa
+	 pkZkPyapHYolA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl5P84CYqz4wj2;
+	Fri,  8 Nov 2024 15:21:48 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 15:21:49 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the ftrace tree
+Message-ID: <20241108152149.28459a72@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241107212309.3097362-6-almasrymina@google.com>
+Content-Type: multipart/signed; boundary="Sig_/FlwKDpLYPmJWWG31Wgqa=w.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Mina,
+--Sig_/FlwKDpLYPmJWWG31Wgqa=w.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build errors:
+Hi all,
 
-[auto build test ERROR on net-next/main]
+After merging the ftrace tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mina-Almasry/net-page_pool-rename-page_pool_alloc_netmem-to-_netmems/20241108-052530
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241107212309.3097362-6-almasrymina%40google.com
-patch subject: [PATCH net-next v2 5/5] netmem: add netmem_prefetch
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241108/202411081130.CxioaC2A-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411081130.CxioaC2A-lkp@intel.com/reproduce)
+ERROR: modpost: missing MODULE_LICENSE() in samples/rust/rust_print_events.o
+ERROR: modpost: "__tracepoint_rust_sample_loaded" [samples/rust/rust_print.=
+ko] undefined!
+ERROR: modpost: "rust_do_trace_rust_sample_loaded" [samples/rust/rust_print=
+.ko] undefined!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411081130.CxioaC2A-lkp@intel.com/
+Caused by commit
 
-All errors (new ones prefixed by >>):
+  91d39024e1b0 ("rust: samples: add tracepoint to Rust sample")
 
-   In file included from include/linux/skbuff.h:40,
-                    from include/linux/if_ether.h:19,
-                    from arch/s390/include/asm/diag.h:12,
-                    from arch/s390/include/asm/kvm_para.h:25,
-                    from include/uapi/linux/kvm_para.h:37,
-                    from include/linux/kvm_para.h:5,
-                    from include/linux/kvm_host.h:41,
-                    from arch/s390/kernel/asm-offsets.c:11:
-   include/net/netmem.h: In function 'netmem_prefetch':
->> include/net/netmem.h:179:9: error: implicit declaration of function 'prefetch' [-Wimplicit-function-declaration]
-     179 |         prefetch(netmem_to_page(netmem));
-         |         ^~~~~~~~
-   make[3]: *** [scripts/Makefile.build:102: arch/s390/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1203: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:224: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:224: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+I have used the ftrace tree from next-20241107 for today.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-vim +/prefetch +179 include/net/netmem.h
+--Sig_/FlwKDpLYPmJWWG31Wgqa=w.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-   173	
-   174	static inline void netmem_prefetch(netmem_ref netmem)
-   175	{
-   176		if (netmem_is_net_iov(netmem))
-   177			return;
-   178	
- > 179		prefetch(netmem_to_page(netmem));
+-----BEGIN PGP SIGNATURE-----
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctkd0ACgkQAVBC80lX
+0GzBEwf+PLcqWwRRvVaVUk5Zp5k5SPurtRvc8KGCYGE9BnyekIJS4a7g1y8Ehvms
+8VQjEKtfUfVr2vIuLt9JuqgvudFPCgb5NdNRfKVa8yZpJPjqWzinFk6mtEZ0mGly
+HNMnqu58OrMTztr7GdNpnWkU+oP4WgsV2RD0RtorHwxGILCz2ZC2af4b/LRnQRDD
+LhZVzhDKNRLA3PpTJtKxV3hpTDsonZoe290eKvqBqEKoOpboaLPAkWTelku1gJ+Z
+aoZ4sWct0IRXYV5K/m67AJmdizbLpHxcV3njUhqqo3D21PHJFq7bexBupCo3povB
+ijHcrwUsWgxiWqK8qLyg4DzHTvqbPQ==
+=gWzj
+-----END PGP SIGNATURE-----
+
+--Sig_/FlwKDpLYPmJWWG31Wgqa=w.--
 
