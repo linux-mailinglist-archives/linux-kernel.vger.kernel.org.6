@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-401218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261989C174E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:51:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0AA09C1751
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E862830F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A561F2330A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC841D1735;
-	Fri,  8 Nov 2024 07:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1912A1D356C;
+	Fri,  8 Nov 2024 07:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Gidv643O"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QdBYMvYq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0C1D89EF;
-	Fri,  8 Nov 2024 07:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E911D2F54;
+	Fri,  8 Nov 2024 07:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731052245; cv=none; b=S0XNAW41BE9gzoz4jPjxn5mNcPGgBkNUiIZQfGrframb/P/ztBPU6buvmLu6CTMxIiG4uREsbmcjlmCK6rchKATYp5w9PbCPXzx/PF0/c50fZxEHJACS35AOqzcBIC1D2lokuqNUbMT7JdXchBHTwstda9cGwBNCfqhqb0cwHqU=
+	t=1731052252; cv=none; b=JqHP7E2acvCOti/UI7SOz5ydpHHwMbVC521mwN04crdSkEteVWBMLvMPZoe3SbQtHV+fyn7nL7U/uTfYQmqXwCRChrrXULC94NvMKaXNgyjDv0LlIdD7Xfepz/+OoylHLZR8lijpXaxU32vksccquHj/dKu1aTHnccitrOC3Icc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731052245; c=relaxed/simple;
-	bh=n5edx28hASoLed754TtbyekLHxQf7teMnccHrRubeyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rabIkI94RCSXD4IOM+n5HsONjCW5MQr0hqTAZIDHYpG6avK5KTNXSHKO2bjep20OfOvrQKkAMqZg2WHw0GUEpLJkpX1RbN5ptLSZGIyv/60EIiAp1apDQ9W3s+Cbt98KmaMHgnsWg8lJnwxyxmf5VA153yRhqb6ea8rofcPrNE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Gidv643O; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731052237;
-	bh=0/r25AA/H6+H6jUlgI0pfryas969CBHleQFKUsA0MWM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Gidv643OsczyEm7kWahn9RNKXPgYoLyNfDmVQNuaCCZgf45A10qVZmp2pise8gD1p
-	 Hqe75anZjpoPGCiZH21llvO4/eGwxy0vWRj68H6RtdbBf40AAwSFQfNSm+3XlB9qLS
-	 MU7q7OcrefcU5RQw/OrzYnv+aFh1Jbz8jFwpvitArFKKjeofKqtiqIkG2SnjNizNy7
-	 vT0EmzUMZEdO17JwVaIdmpQwGHt1mUc3YvGAqLbDQ+Y7rNRuS0BdDkUovTQZT9t/Up
-	 2f6V3xqaX06Dw4Fsgsc6XG1j7kz7jD1ND/9Mwv87WBVZaeuWb3X0SCkZvsknQW7siZ
-	 zdlowE+st/8OQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XlB2435vmz4wbr;
-	Fri,  8 Nov 2024 18:50:36 +1100 (AEDT)
-Date: Fri, 8 Nov 2024 18:50:37 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>, Pierre-Louis Bossart
- <pierre-louis.bossart@linux.dev>, Pierre-Louis Bossart
- <pierre-louis.bossart@linux.intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Message-ID: <20241108185037.59cded26@canb.auug.org.au>
+	s=arc-20240116; t=1731052252; c=relaxed/simple;
+	bh=PidCOc5vam5FIUslcJaLD9YUGnOw3EfiaT/M3s5atqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnyZdV9TX53hzfWc/cBdNL6yYwoyeRMED3IpQk2tttuXrUIYDIjSoIBBYy09W5bJeFPds2xFyVIUHzfZrleZTbVBWdlG7guRZD2IBlW+LRgFDqFd/aGOQcpP0I2y5HdcAwhXahVvg3uRJt1ZKiKU3PEuy6Wyc1/Wowi0cHFnF7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QdBYMvYq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 558AFC4CECE;
+	Fri,  8 Nov 2024 07:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731052251;
+	bh=PidCOc5vam5FIUslcJaLD9YUGnOw3EfiaT/M3s5atqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QdBYMvYq4Jbk51kd714CXMpJdgnw3V2SYQDUcIzQspywKEJQEdo+y+CSDIow1AEUc
+	 OywSSlv45J8DHb6AH/LqP3z1ddfzU+PhIr33lGY+yXmGchC61vgxPCE/AVsKuESlRC
+	 Angg1LHb4c6FXoNvDyTKWIdYB/dwnDdTV4LnDdig=
+Date: Fri, 8 Nov 2024 08:50:49 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hagar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 5.4 000/461] 5.4.285-rc2 review
+Message-ID: <2024110817-ozone-tanning-0df8@gregkh>
+References: <20241107063341.146657755@linuxfoundation.org>
+ <05671820-dee5-4b31-b585-5e1f034e65f6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/1Eyak/NWKPCKj3G=WwmGlPD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05671820-dee5-4b31-b585-5e1f034e65f6@gmail.com>
 
---Sig_/1Eyak/NWKPCKj3G=WwmGlPD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Nov 07, 2024 at 08:39:39AM -0800, Florian Fainelli wrote:
+> 
+> 
+> On 11/6/2024 10:47 PM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.4.285 release.
+> > There are 461 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat, 09 Nov 2024 06:32:59 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.285-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on
+> BMIPS_GENERIC:
+> 
+> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> 
+> There are however new build warnings, on 32-bit:
+> 
+> In file included from ./include/linux/mm.h:29,
+>                  from ./include/linux/pagemap.h:8,
+>                  from ./include/linux/buffer_head.h:14,
+>                  from fs/udf/udfdecl.h:12,
+>                  from fs/udf/inode.c:32:
+> fs/udf/inode.c: In function 'udf_current_aext':
+> ./include/linux/overflow.h:61:22: warning: comparison of distinct pointer
+> types lacks a cast
+>    61 |         (void) (&__a == __d);                   \
+>       |                      ^~
+> fs/udf/inode.c:2202:21: note: in expansion of macro 'check_add_overflow'
+>  2202 |                 if (check_add_overflow(sizeof(struct allocExtDesc),
+>       |                     ^~~~~~~~~~~~~~~~~~
+> 
+> 
+> On 64-bit:
+> 
+> fs/udf/inode.c: In function 'udf_current_aext':
+> ./include/linux/overflow.h:60:15: warning: comparison of distinct pointer
+> types lacks a cast
+>   (void) (&__a == &__b);   \
+>                ^~
+> fs/udf/inode.c:2202:7: note: in expansion of macro 'check_add_overflow'
+>    if (check_add_overflow(sizeof(struct allocExtDesc),
+>        ^~~~~~~~~~~~~~~~~~
+> ./include/linux/overflow.h:61:15: warning: comparison of distinct pointer
+> types lacks a cast
+>   (void) (&__a == __d);   \
+>                ^~
+> fs/udf/inode.c:2202:7: note: in expansion of macro 'check_add_overflow'
+>    if (check_add_overflow(sizeof(struct allocExtDesc),
+>        ^~~~~~~~~~~~~~~~~~
+> 
+> In file included from ./include/linux/mm.h:29,
+>                  from ./include/linux/pagemap.h:8,
+>                  from ./include/linux/buffer_head.h:14,
+>                  from fs/udf/udfdecl.h:12,
+>                  from fs/udf/super.c:41:
+> fs/udf/super.c: In function 'udf_fill_partdesc_info':
+> ./include/linux/overflow.h:60:15: warning: comparison of distinct pointer
+> types lacks a cast
+>   (void) (&__a == &__b);   \
+>                ^~
+> fs/udf/super.c:1162:7: note: in expansion of macro 'check_add_overflow'
+>    if (check_add_overflow(map->s_partition_len,
+>        ^~~~~~~~~~~~~~~~~~
 
-Hi all,
+Yes, this is due to commit d219d2a9a92e ("overflow: Allow mixed type
+arguments") not being backported to 5.4 and 5.10.y trees.  If people
+want to see these warnings removed, perhaps someone can provide a
+working backport of this commit :)
 
-After merging the sound-asoc tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+thanks,
 
-ld: sound/soc/intel/common/soc-acpi-intel-mtl-match.o:(.data.rel+0x6a0): un=
-defined reference to `snd_soc_acpi_intel_sdca_is_device_rt712_vb'
-
-Caused by commit
-
-  5703ab86ff7b ("ASoC: Intel: soc-acpi: add is_device_rt712_vb() helper")
-
-CONFIG_SND_SOC_ACPI_INTEL_MATCH is enabled even though CONFIG_ACPI is not.
-Presumably as a result of the previous warning I reported.
-
-I have applied the following patch for today (a revert of the above
-commit did not easily work).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 8 Nov 2024 18:18:39 +1100
-Subject: [PATCH] remove COMPILE_TEST from SND_SOC_INTEL_SST_TOPLEVEL for now
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- sound/soc/intel/Kconfig     | 2 +-
- sound/soc/sof/intel/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index 46b45f390ae9..0a368df2874e 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -2,7 +2,7 @@
- config SND_SOC_INTEL_SST_TOPLEVEL
- 	bool "Intel ASoC SST drivers"
- 	default y
--	depends on X86 || COMPILE_TEST
-+	depends on X86
- 	select SND_SOC_INTEL_MACH
- 	help
- 	  Intel ASoC SST Platform Drivers. If you have a Intel machine that
-diff --git a/sound/soc/sof/intel/Kconfig b/sound/soc/sof/intel/Kconfig
-index 2c43558d96b9..3ef861187e6c 100644
---- a/sound/soc/sof/intel/Kconfig
-+++ b/sound/soc/sof/intel/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config SND_SOC_SOF_INTEL_TOPLEVEL
- 	bool "SOF support for Intel audio DSPs"
--	depends on X86 || COMPILE_TEST
-+	depends on X86
- 	help
- 	  This adds support for Sound Open Firmware for Intel(R) platforms.
- 	  Say Y if you have such a device.
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1Eyak/NWKPCKj3G=WwmGlPD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctws0ACgkQAVBC80lX
-0Gx75gf+IjlWSIpkZSPS5s8wh8GCGLf5IJY677At7gKey7b66Ibve8hdM2ENIaal
-wDfBFxnW+e6boH3GwRGJCpMRppBkz8O8aHUj0HsKQzXmruR59frSOXmXhJL9feJF
-KvY+ObpfHS3huf0f0s1Tz/+PJvcryevYWWsZDueRl+9Dbbu8wG4CrF0/X/uvjH3v
-tqOyoifanDxDnok8+wp59XxLWZp8aJe3fA3BmpKpMPrQjsxmJ6DcrBBP8gKgFjEw
-UZ0tZdxpV2RYR6Xjh/CHyLv1uwnsqlkusMZy771u2kv77AXgizT4hBhxbm3Kjqps
-UjY3rFpKZzVe0TGFMOiGnwJeyJZZPw==
-=IC5O
------END PGP SIGNATURE-----
-
---Sig_/1Eyak/NWKPCKj3G=WwmGlPD--
+greg k-h
 
