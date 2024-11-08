@@ -1,236 +1,314 @@
-Return-Path: <linux-kernel+bounces-401195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171C09C1715
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:38:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740889C1720
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5C62851B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:38:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B75EAB232F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447BA1D2781;
-	Fri,  8 Nov 2024 07:38:27 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419EA1D2F54;
+	Fri,  8 Nov 2024 07:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FjlgQJ+S"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2871D14F6
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E4F1E0DE2
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731051506; cv=none; b=TENxD8wat4m3UEbtqd6i7HPCpPEyrSr7N6qrg92y4DvvH9cOLB8D/9lTJy6jC0jwYr6PcnvT+l1sQWVnY4CC24XY31UukULVkgtFS3sdv55+zenfE2/Vn62czTdbksmT6g5lEylyiNDH10OqXx8MMAODW1LxnlWbaoerG/SLQ2M=
+	t=1731051533; cv=none; b=ZjN64oFrWFgAwyg18QriXDZiUoFCXzC1Xw3joQx5VCWQab2hwqu4uSzkKvCRcnZxx2XwryvSatd8LrwHtEK7Fvso/i/fMpyegSwSWncE7SIW9A+NmZsm8bdMWzutoY3lttLTcSKJ2LoVkQXikGz7drVmUyAa/EDXRprSgO77QTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731051506; c=relaxed/simple;
-	bh=XA3YutDlsteCXOj7lAEKcn8lJH/n6R8v8oPAMzv/0yQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O/37HGJjGpNyLqMgD1Ter8/4n24mpAY4p9oBjEzR769+zNzRfG8xJRShT5fzGhz8/+k+OGS1bKW6t+jk1kamjfC7hMgMFA9zbrSQx9tSsLgb3qGLaMNLtYj+R8J+ZqjQ9yFA1AoLHN4/fKb6qe6GwPyji8timo7EcpVMFPi9AQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso23384485ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 23:38:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731051504; x=1731656304;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1731051533; c=relaxed/simple;
+	bh=fhiV2B/i42rcXx0gV5deWy6qvjlJvMGk4HDwmFyljno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ptafVcQQuOVWFQeqwlAGf83lBaKanO14vV3J0Ahuhqw2b77VzEoZg5o6X3aZruhi4kEpCDmeE3IraB+UYgOrkCDX9wdRD4v1FqfQwVrLffOfFMn5JbdpvHbcjaFrwOu9Hr8ivlmW9EUA5oOPnlpjBSiEsNLKLWwFUrL7gGVqNSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FjlgQJ+S; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-723f37dd76cso1847166b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 23:38:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1731051530; x=1731656330; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XU5RRIBS+hCjtr95d03rnjZEZvv+SRN27jYx8sROZEc=;
-        b=gOU8NWbO2X5BZhlFzhRSB4EEenNiaw/KuMLpgr8g5dKuLAQrTSBulOuUO4+jcIKwKM
-         ttDH0eqgynn28mAsvZuwd6skaCo9nRhF4r3UFaSBy/aBT+OLARKN8t2e/SbLH7PQx989
-         yAfIEjrM5n+2ETXv9PpOQZEXv2jjZe6K432DLd0hvJZ4dQJq84gzDkpy8anV0kxaEvdz
-         CbuYOGuakh0f2KaBojzxrXYgdc0f8xkR1tZUa9ERtHuvCMvH5DNCRP+n1/Yb50jXS41b
-         35JUdo8GUyp0QpjhO0yJiJqA5cXTRJejjqVpaN6rLN8B9y9/7/6LqJurqiIH67asCdel
-         VUOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlPoO9wCc2pdKaGtwCMRYMuaO7qwRD7W5uDws9BAR8gSInJnFoxBhXdlve7I8t0YztHLnR0SevYF0aUyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNxujKvhG79xQ/O+hHE1NL/DUODSgjEQrw1Z4G8DEQPenEHg5N
-	i5BXII5W4rKmokd68ObRdLH8XljycDh4yrbt+6wT7akpm9v60L6MqCVNXGb3KVU/lLD2281kvcl
-	pYv/DmHEnXTZyN+vphLJeSBUgkxS9v3fBTxSFcWa4cEW0/rKTsT+kd0g=
-X-Google-Smtp-Source: AGHT+IF6tj7Uz4k188SrwIDR1TxnnPKnK+tqsRpi2/fUC9IxSY58PuZcDPymaBk0Ei4GzIS/6DNHT6H3e6p1fXukstW5IUvA/Oed
+        bh=mu6NYk5h6l9e4x73wJ0Oq7+ktjt603TFHhfxu3JPm2w=;
+        b=FjlgQJ+SVG/P3l9LC1HBamWmbTWRnYN0nBURZwkbjBGk/j8bQ7vC8Aka3XYJlRsifl
+         QbveSmc0FOis4f3AZUSsocUwogEVYhV4yQzbV/Kj0DSyAIqP8Oy14hTgX5ffLWHV28gS
+         t7GuC6kGDM5cZkSmqgDHp7Bs46mjR7hyyHh8xhoaeP1YIKvwLTBnzwBcucCGCGrB5P1G
+         1/9MoernE8bgmNCC9SkwsJuv+WR8BdcOV87uExuEcgX5A78Kyllua93Wt6923WCDWVNd
+         Vc/6RUxn9LxahSrV5hi2HfQE3EV4AOGlkXEW9b/LGE1Rdk7w4PLkXiAjRJTXay9WEMom
+         +b9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731051530; x=1731656330;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mu6NYk5h6l9e4x73wJ0Oq7+ktjt603TFHhfxu3JPm2w=;
+        b=UYP9pkdijMi2yeFEivf32IDMQCoYRz00pUUhgJ5P0Ykjo8BAUviZXxH9pw0q8AWFNv
+         pr0hQ4i4E/KMiwdEgk2XWfHzHj5iBJNXrnv9CDItTQ/XuMWuDA5hrD4QYl9IQdWiTUjN
+         AykIFU3abQv3Xk6Qke81CtMz5jmvc5U14MRHKqcEUOWchnb3Fd4pATq76uVqIwto6+J5
+         R2QTrZtQu/othhVXnt+oW/msmwR36PegxCccpPwJag97I4E/xiz+oz4fafBedznIECPO
+         W1t49v5HMGLoXyFB+8D9VqrifXCoe+WviB+BDK2ZKAITS5WE6VTG1JpmaCH8H6IsW4MG
+         hRIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6lQsIi4dheG3DnBY/1VCaLOD8VcuWtQhS4QZYs4PUEI+I38e38g0ynczicF/6mttkKpcaSy59A+Hb7yI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ljghn1meJQog4YXF7rK1HUmRcQ+fx4CY0/5L2g9lPFa+fqZP
+	sNAVbiE9LtXszC4RrZ33VTzQOU/MDjW6AnE/VVbkjrLdzgvLRqWGnkyJUbxqWo0=
+X-Google-Smtp-Source: AGHT+IEMuiK4oRALWDBrVch+hPLKui8J9k1Rw8yVjg/V/fJA5pCZyDIryCWFFbqE8aW1H8eSGsevHw==
+X-Received: by 2002:a05:6a20:72ab:b0:1db:d8fe:9d4 with SMTP id adf61e73a8af0-1dc229a6b5dmr2373750637.16.1731051530278;
+        Thu, 07 Nov 2024 23:38:50 -0800 (PST)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7c50sm3077427b3a.60.2024.11.07.23.38.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 23:38:49 -0800 (PST)
+Message-ID: <e308363a-0c1e-421f-a35e-5bb750992554@bytedance.com>
+Date: Fri, 8 Nov 2024 15:38:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a87:b0:3a4:e8cc:2aaa with SMTP id
- e9e14a558f8ab-3a6f1a07897mr26508475ab.10.1731051504167; Thu, 07 Nov 2024
- 23:38:24 -0800 (PST)
-Date: Thu, 07 Nov 2024 23:38:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672dbff0.050a0220.69327.0002.GAE@google.com>
-Subject: [syzbot] [ntfs3?] possible deadlock in mark_as_free_ex (2)
-From: syzbot <syzbot+8df514c431bd240c5644@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] x86: mm: free page table pages by RCU instead of
+ semi RCU
+Content-Language: en-US
+To: Jann Horn <jannh@google.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
+ catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
+ <c45cf245592ad4ccc86429f71500d3fc378ac4a4.1730360798.git.zhengqi.arch@bytedance.com>
+ <CAG48ez0XhKnr3uVODu+iihRi4XwLupy=YX8BHa==1Y-ZvrmKjg@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAG48ez0XhKnr3uVODu+iihRi4XwLupy=YX8BHa==1Y-ZvrmKjg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hi Jann,
 
-syzbot found the following issue on:
+On 2024/11/8 06:39, Jann Horn wrote:
+> +x86 MM maintainers - x86@kernel.org was already cc'ed, but I don't
+> know if that is enough for them to see it, and I haven't seen them
+> comment on this series yet; I think you need an ack from them for this
+> change.
 
-HEAD commit:    74741a050b79 Add linux-next specific files for 20241107
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f6035f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d3ef0574c9dc8b00
-dashboard link: https://syzkaller.appspot.com/bug?extid=8df514c431bd240c5644
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Yes, thanks to Jann for cc-ing x86 MM maintainers, and look forward to
+their feedback!
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> On Thu, Oct 31, 2024 at 9:14 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>> Now, if CONFIG_MMU_GATHER_RCU_TABLE_FREE is selected, the page table pages
+>> will be freed by semi RCU, that is:
+>>
+>>   - batch table freeing: asynchronous free by RCU
+>>   - single table freeing: IPI + synchronous free
+>>
+>> In this way, the page table can be lockless traversed by disabling IRQ in
+>> paths such as fast GUP. But this is not enough to free the empty PTE page
+>> table pages in paths other that munmap and exit_mmap path, because IPI
+>> cannot be synchronized with rcu_read_lock() in pte_offset_map{_lock}().
+>>
+>> In preparation for supporting empty PTE page table pages reclaimation,
+>> let single table also be freed by RCU like batch table freeing. Then we
+>> can also use pte_offset_map() etc to prevent PTE page from being freed.
+> 
+> I applied your series locally and followed the page table freeing path
+> that the reclaim feature would use on x86-64. Looks like it goes like
+> this with the series applied:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8993ea1d09da/disk-74741a05.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dab7bc3c6e88/vmlinux-74741a05.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/fda543ad532f/bzImage-74741a05.xz
+Yes.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8df514c431bd240c5644@syzkaller.appspotmail.com
+> 
+> free_pte
+>    pte_free_tlb
+>      __pte_free_tlb
+>        ___pte_free_tlb
+>          paravirt_tlb_remove_table
+>            tlb_remove_table [!CONFIG_PARAVIRT, Xen PV, Hyper-V, KVM]
+>              [no-free-memory slowpath:]
+>                tlb_table_invalidate
+>                tlb_remove_table_one
+>                  tlb_remove_table_sync_one [does IPI for GUP-fast]
 
-loop3: detected capacity change from 0 to 4096
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc6-next-20241107-syzkaller #0 Not tainted
-------------------------------------------------------
-syz.3.1671/10772 is trying to acquire lock:
-ffff88803034a270 (&wnd->rw_lock){++++}-{4:4}, at: mark_as_free_ex+0x3e/0x390 fs/ntfs3/fsntfs.c:2484
+		   ^
+		   It seems that this step can be ommitted when
+		   CONFIG_PT_RECLAIM is enabled, because GUP-fast will
+		   disable IRQ, which can also serve as the RCU critical
+		   section.
 
-but task is already holding lock:
-ffff888069fc0908 (&ni->file.run_lock#2){++++}-{4:4}, at: ntfs_truncate fs/ntfs3/file.c:505 [inline]
-ffff888069fc0908 (&ni->file.run_lock#2){++++}-{4:4}, at: ntfs_setattr+0x6d3/0xb80 fs/ntfs3/file.c:824
+>                  __tlb_remove_table_one [frees via RCU]
+>              [fastpath:]
+>                tlb_table_flush
+>                  tlb_remove_table_free [frees via RCU]
+>            native_tlb_remove_table [CONFIG_PARAVIRT on native]
+>              tlb_remove_table [see above]
+> 
+> Basically, the only remaining case in which
+> paravirt_tlb_remove_table() does not use tlb_remove_table() with RCU
+> delay is !CONFIG_PARAVIRT && !CONFIG_PT_RECLAIM. Given that
+> CONFIG_PT_RECLAIM is defined as "default y" when supported, I guess
+> that means X86's direct page table freeing path will almost never be
+> used? If it stays that way and the X86 folks don't see a performance
+> impact from using RCU to free tables on munmap() / process exit, I
+> guess we might want to get rid of the direct page table freeing path
+> on x86 at some point to simplify things...
 
-which lock already depends on the new lock.
+In theory, using RCU to asynchronously free PTE pages should make
+munmap() / process exit path faster. I can try to grab some data.
 
+> 
+> (That simplification might also help prepare for Intel Remote Action
+> Request, if that is a thing people want...)
 
-the existing dependency chain (in reverse order) is:
+If so, even better!
 
--> #1 (&ni->file.run_lock#2){++++}-{4:4}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       run_unpack_ex+0x55e/0x9e0 fs/ntfs3/run.c:1119
-       ntfs_read_mft fs/ntfs3/inode.c:401 [inline]
-       ntfs_iget5+0x1f9a/0x37b0 fs/ntfs3/inode.c:537
-       ntfs_dir_emit fs/ntfs3/dir.c:335 [inline]
-       ntfs_read_hdr+0x700/0xb80 fs/ntfs3/dir.c:383
-       ntfs_readdir+0x91f/0xf00 fs/ntfs3/dir.c:494
-       iterate_dir+0x571/0x800 fs/readdir.c:108
-       __do_sys_getdents fs/readdir.c:322 [inline]
-       __se_sys_getdents+0x1fd/0x4e0 fs/readdir.c:308
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+>> Like pte_free_defer(), we can also safely use ptdesc->pt_rcu_head to free
+>> the page table pages:
+>>
+>>   - The pt_rcu_head is unioned with pt_list and pmd_huge_pte.
+>>
+>>   - For pt_list, it is used to manage the PGD page in x86. Fortunately
+>>     tlb_remove_table() will not be used for free PGD pages, so it is safe
+>>     to use pt_rcu_head.
+>>
+>>   - For pmd_huge_pte, we will do zap_deposited_table() before freeing the
+>>     PMD page, so it is also safe.
+> 
+> Please also update the comments on "struct ptdesc" accordingly.
 
--> #0 (&wnd->rw_lock){++++}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
-       down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
-       mark_as_free_ex+0x3e/0x390 fs/ntfs3/fsntfs.c:2484
-       run_deallocate_ex+0x244/0x5f0 fs/ntfs3/attrib.c:122
-       attr_set_size+0x168d/0x4300 fs/ntfs3/attrib.c:753
-       ntfs_truncate fs/ntfs3/file.c:506 [inline]
-       ntfs_setattr+0x7a4/0xb80 fs/ntfs3/file.c:824
-       notify_change+0xbca/0xe90 fs/attr.c:552
-       do_truncate+0x220/0x310 fs/open.c:65
-       handle_truncate fs/namei.c:3449 [inline]
-       do_open fs/namei.c:3832 [inline]
-       path_openat+0x2e1e/0x3590 fs/namei.c:3987
-       do_filp_open+0x27f/0x4e0 fs/namei.c:4014
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_creat fs/open.c:1495 [inline]
-       __se_sys_creat fs/open.c:1489 [inline]
-       __x64_sys_creat+0x123/0x170 fs/open.c:1489
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+OK, will do.
 
-other info that might help us debug this:
+> 
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   arch/x86/include/asm/tlb.h | 19 +++++++++++++++++++
+>>   arch/x86/kernel/paravirt.c |  7 +++++++
+>>   arch/x86/mm/pgtable.c      | 10 +++++++++-
+>>   mm/mmu_gather.c            |  9 ++++++++-
+>>   4 files changed, 43 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+>> index 580636cdc257b..e223b53a8b190 100644
+>> --- a/arch/x86/include/asm/tlb.h
+>> +++ b/arch/x86/include/asm/tlb.h
+>> @@ -34,4 +34,23 @@ static inline void __tlb_remove_table(void *table)
+>>          free_page_and_swap_cache(table);
+>>   }
+>>
+>> +#ifdef CONFIG_PT_RECLAIM
+>> +static inline void __tlb_remove_table_one_rcu(struct rcu_head *head)
+>> +{
+>> +       struct page *page;
+>> +
+>> +       page = container_of(head, struct page, rcu_head);
+>> +       free_page_and_swap_cache(page);
+>> +}
+> 
+> Why free_page_and_swap_cache()? Page tables shouldn't have swap cache,
+> so I think something like put_page() would do the job.
 
- Possible unsafe locking scenario:
+Ah, I just did the same thing as __tlb_remove_table(). But I also
+have the same doubt as you, why does __tlb_remove_table() need to
+call free_page_and_swap_cache() instead of put_page().
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ni->file.run_lock#2);
-                               lock(&wnd->rw_lock);
-                               lock(&ni->file.run_lock#2);
-  lock(&wnd->rw_lock);
+Thanks,
+Qi
 
- *** DEADLOCK ***
-
-4 locks held by syz.3.1671/10772:
- #0: ffff88803034c420 (sb_writers#22){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
- #1: ffff888069fc0af0 (&sb->s_type->i_mutex_key#35){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:817 [inline]
- #1: ffff888069fc0af0 (&sb->s_type->i_mutex_key#35){+.+.}-{4:4}, at: do_truncate+0x20c/0x310 fs/open.c:63
- #2: ffff888069fc0858 (&ni->ni_lock#2/5){+.+.}-{4:4}, at: ni_lock fs/ntfs3/ntfs_fs.h:1110 [inline]
- #2: ffff888069fc0858 (&ni->ni_lock#2/5){+.+.}-{4:4}, at: ntfs_truncate fs/ntfs3/file.c:503 [inline]
- #2: ffff888069fc0858 (&ni->ni_lock#2/5){+.+.}-{4:4}, at: ntfs_setattr+0x6bf/0xb80 fs/ntfs3/file.c:824
- #3: ffff888069fc0908 (&ni->file.run_lock#2){++++}-{4:4}, at: ntfs_truncate fs/ntfs3/file.c:505 [inline]
- #3: ffff888069fc0908 (&ni->file.run_lock#2){++++}-{4:4}, at: ntfs_setattr+0x6d3/0xb80 fs/ntfs3/file.c:824
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 10772 Comm: syz.3.1671 Not tainted 6.12.0-rc6-next-20241107-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5226
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- down_write_nested+0xa2/0x220 kernel/locking/rwsem.c:1693
- mark_as_free_ex+0x3e/0x390 fs/ntfs3/fsntfs.c:2484
- run_deallocate_ex+0x244/0x5f0 fs/ntfs3/attrib.c:122
- attr_set_size+0x168d/0x4300 fs/ntfs3/attrib.c:753
- ntfs_truncate fs/ntfs3/file.c:506 [inline]
- ntfs_setattr+0x7a4/0xb80 fs/ntfs3/file.c:824
- notify_change+0xbca/0xe90 fs/attr.c:552
- do_truncate+0x220/0x310 fs/open.c:65
- handle_truncate fs/namei.c:3449 [inline]
- do_open fs/namei.c:3832 [inline]
- path_openat+0x2e1e/0x3590 fs/namei.c:3987
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_creat fs/open.c:1495 [inline]
- __se_sys_creat fs/open.c:1489 [inline]
- __x64_sys_creat+0x123/0x170 fs/open.c:1489
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fca7137e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fca720ea038 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007fca71535f80 RCX: 00007fca7137e719
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020002440
-RBP: 00007fca713f139e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fca71535f80 R15: 00007fffe9ba7408
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+>> +static inline void __tlb_remove_table_one(void *table)
+>> +{
+>> +       struct page *page;
+>> +
+>> +       page = table;
+>> +       call_rcu(&page->rcu_head, __tlb_remove_table_one_rcu);
+>> +}
+>> +#define __tlb_remove_table_one __tlb_remove_table_one
+>> +#endif /* CONFIG_PT_RECLAIM */
+>> +
+>>   #endif /* _ASM_X86_TLB_H */
+>> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+>> index fec3815335558..89688921ea62e 100644
+>> --- a/arch/x86/kernel/paravirt.c
+>> +++ b/arch/x86/kernel/paravirt.c
+>> @@ -59,10 +59,17 @@ void __init native_pv_lock_init(void)
+>>                  static_branch_enable(&virt_spin_lock_key);
+>>   }
+>>
+>> +#ifndef CONFIG_PT_RECLAIM
+>>   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+>>   {
+>>          tlb_remove_page(tlb, table);
+>>   }
+>> +#else
+>> +static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+>> +{
+>> +       tlb_remove_table(tlb, table);
+>> +}
+>> +#endif
+>>
+>>   struct static_key paravirt_steal_enabled;
+>>   struct static_key paravirt_steal_rq_enabled;
+>> diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+>> index 5745a354a241c..69a357b15974a 100644
+>> --- a/arch/x86/mm/pgtable.c
+>> +++ b/arch/x86/mm/pgtable.c
+>> @@ -19,12 +19,20 @@ EXPORT_SYMBOL(physical_mask);
+>>   #endif
+>>
+>>   #ifndef CONFIG_PARAVIRT
+>> +#ifndef CONFIG_PT_RECLAIM
+>>   static inline
+>>   void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
+>>   {
+>>          tlb_remove_page(tlb, table);
+>>   }
+>> -#endif
+>> +#else
+>> +static inline
+>> +void paravirt_tlb_remove_table(struct mmu_gather *tlb, void *table)
+>> +{
+>> +       tlb_remove_table(tlb, table);
+>> +}
+>> +#endif /* !CONFIG_PT_RECLAIM */
+>> +#endif /* !CONFIG_PARAVIRT */
+>>
+>>   gfp_t __userpte_alloc_gfp = GFP_PGTABLE_USER | PGTABLE_HIGHMEM;
+>>
+>> diff --git a/mm/mmu_gather.c b/mm/mmu_gather.c
+>> index 99b3e9408aa0f..d948479ca09e6 100644
+>> --- a/mm/mmu_gather.c
+>> +++ b/mm/mmu_gather.c
+>> @@ -311,10 +311,17 @@ static inline void tlb_table_invalidate(struct mmu_gather *tlb)
+>>          }
+>>   }
+>>
+>> +#ifndef __tlb_remove_table_one
+>> +static inline void __tlb_remove_table_one(void *table)
+>> +{
+>> +       __tlb_remove_table(table);
+>> +}
+>> +#endif
+>> +
+>>   static void tlb_remove_table_one(void *table)
+>>   {
+>>          tlb_remove_table_sync_one();
+>> -       __tlb_remove_table(table);
+>> +       __tlb_remove_table_one(table);
+>>   }
+>>
+>>   static void tlb_table_flush(struct mmu_gather *tlb)
+>> --
+>> 2.20.1
+>>
 
