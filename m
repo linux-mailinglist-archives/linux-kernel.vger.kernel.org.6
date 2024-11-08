@@ -1,134 +1,125 @@
-Return-Path: <linux-kernel+bounces-401303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB7D9C188A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:56:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7280D9C188D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206B81F24389
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:56:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37020284F58
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000A11E049C;
-	Fri,  8 Nov 2024 08:56:31 +0000 (UTC)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9421E04A9;
+	Fri,  8 Nov 2024 08:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HuP5/+52"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB67047F69;
-	Fri,  8 Nov 2024 08:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3970A47F69;
+	Fri,  8 Nov 2024 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056191; cv=none; b=H8kpo6gQJcY2asF11IN2fx2efBd2fDcABbtHftiv3hW77TKvvqJZ7F1lu5uI6rYB9naKcYIaxsL6PntUNs5S3QaIChUMmReIrBv5loKP0wO2LpIGKuBOlji7EX1ZUiqPpiTBIDv8FlVcQE1S8x4/Nx+/iPk1wn4np61y0M+9UXg=
+	t=1731056339; cv=none; b=VncnwmQicteYGUrNelJrA2vApbtKkPig9XrwqEOuUj0X5FiYSMWLQTSm8ZFHgpo+3Q4NwlKQVsiFP6bu+pi6mlzgQc6+bar5qzjf4pd42l7GmgksJbcaMp4OPd6fqHXSOy5K7WoqPdBkgCcMq4bGlCXOCHeYGsoKqA5rG5mW9c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056191; c=relaxed/simple;
-	bh=rrmgunvTJ+LbeosaRNs9WFk6xpnbkpOpbqPD4AJK4s0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MfW9KPpNOa8of8r/nWIwpjycQs2XbGkIK2cN0PgFYpJOp2B6OFR34m4grlGHJMnTtYKRldDzrM63wC+FyEhqHOQaftciEI5OsDvTmwxofU5aea6uTqUiMEB7McUvXhQDwlBr9CoYGvuR6D5J9BwLmVBpagJdJrDlAYXqV+YV3sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1731056339; c=relaxed/simple;
+	bh=ePwEc/N6mQu3ciKPFSKeo1yjhMAFOZFYMAdR5v8/zJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dZo3DHTFE3ARxzXA356m1FoEId5/mgnSLVPc63zJ/6JEbjrfxQ4Ws8CBJE8iQMo/dgBEVIZarMPEne8YOQLcWQM4E7U8ajYqj05DX5Vywlr6RlAEq3WU1iYmieLoeu+HMKM8ebF4iKfPWOekTnE+0iOHyEaVw9NKnaCln6uniCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HuP5/+52; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2915f00c12so1962993276.0;
-        Fri, 08 Nov 2024 00:56:29 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20ce5e3b116so18177175ad.1;
+        Fri, 08 Nov 2024 00:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731056335; x=1731661135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePwEc/N6mQu3ciKPFSKeo1yjhMAFOZFYMAdR5v8/zJ0=;
+        b=HuP5/+52YVqnEYPCg0eVWTALD5g8gy1N1ym4ZUIvbrwRXOU466ZXe1EK7kBCklTVLg
+         dq0hTIu7WcLKyPiGArH1Y/pgY/c5VrNI5+PTABR1D3Qc9wLefh3QBgd/KdaGj6zMPa2c
+         M8CDwWQ0Lq9ptymhD/WP55eqQzHQqK0KPwE6kJPMiTJz6EMuUHnQh0rdaPmHg1q0r2Tq
+         iLylXO5IfsraFZu4fsxKhSWSeLMhV58ItAt9LmKqzHvBQ88xPo76q6gG8nMqnTuAerX2
+         DhQ1wn7SF3PaIJyb7PsFytwe76oZQAHcNWSsMVxbhgFFRdji25iSyC5cSP/o0EtarSbo
+         q26w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731056188; x=1731660988;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/wpmVEsmuJB7pcIow0lnOOrf5v2idmphGsuBkI3kTvk=;
-        b=UrzI+WyMWzS9WJatjwiGS90AUMbJIlbaDxuKwY3bLJRAIHTdHsTT8sHGliGbTGRnaM
-         SXydcsYML1c428oEWW9tEEB2OTwD7D9rR72UIWutCRLa94fSf3tgOoiIuC/3m/GXUJ63
-         UXWTD7JsWcFf1cyJURfkvJRTuiba4ZmQRpV6c59YoZo284ouVUHT6XJQ/GK7DYH+dOum
-         H9zx4wupHbsVgtjjU0t3YCbEAzLNksw/EIxqcLWsehurJCZZrpXmXab95xhoa+Lyx/iQ
-         hxHE/GZ/atM8uMjpS8U3E1e+ka1RZtIq0IOB7ijwapwb3wj6MA6pkDFcEnEshYNDY4vj
-         +DDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFXFMz8uNQMNCdi+JAKyFNnG/p0vBNvN4VcAXIChv3UlNWnxf9yQw+vEp3FEzNKIcxhp3HJO5jtUnR@vger.kernel.org, AJvYcCV4PoS5i22gNs1zFIToRffG2e5S1yHBLpnm0vXW0wRkHMgxZrys4RYnoia6pvqbZo9PwqrMvsJvqwdggOkt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya7F41RfWKvX9HZTNpBEvcRLVNOwhD5oS++hlik7eYsCiJb821
-	WoeqRMDnxOAMNc6WZnqW726bGpZuTfvzdK5tjybF25rw3L4rZvXbehUpZWDO
-X-Google-Smtp-Source: AGHT+IGeY/s5J2bVGu0icsdUQxxyXhyZjLlUf1CpjeDtenCVESqXV3O3mlgWWPkltQEYdZEPvGn5bw==
-X-Received: by 2002:a05:6902:e0d:b0:e29:4818:bf13 with SMTP id 3f1490d57ef6-e337f8be9cemr1758803276.41.1731056188030;
-        Fri, 08 Nov 2024 00:56:28 -0800 (PST)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336ef24de5sm622220276.17.2024.11.08.00.56.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 00:56:27 -0800 (PST)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e290e857d56so1912721276.1;
-        Fri, 08 Nov 2024 00:56:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW7UCEvosAAJ0wLbyHfT8+2D8OIk2XbqQ4YYxo1KFTmGJpVU75ViR0FPx/Hbe3dh1GrJjIgt14KKTMxhnrK@vger.kernel.org, AJvYcCWZQUnW5Ida+/f/a1aXbttcotysYqSSZL4VW8frMRicYRZZwwSiVM8SvktPZ8ajQxqGC+TqsHoW1slH@vger.kernel.org
-X-Received: by 2002:a05:690c:4b90:b0:6ea:7198:fb64 with SMTP id
- 00721157ae682-6eaddfa4910mr21644887b3.41.1731056187520; Fri, 08 Nov 2024
- 00:56:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731056335; x=1731661135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ePwEc/N6mQu3ciKPFSKeo1yjhMAFOZFYMAdR5v8/zJ0=;
+        b=Z+jJvc9DT5Fy3O/PSyN+kOpAOBcTbFGFAG2B8UKPUisyg3k8K2yft6IgC6XZh16k0D
+         ajPlDo/DRD8d4e4SdU8FjLMiOpuIVY0aHQoMyAbBHtuY7xfI8mWhrYA+2h3WxsZDQn4F
+         AUPD3Q1a7vRtQcSjk2ojBoaQ+3YOFlpPvZA/1xpNZYTevwn2vJYgBPG4tYGg+HDGNgp+
+         l3TJ0OTkJsYUTYmoys4X/393XkckNAx7+8X10N/gOfIEBMjItTiv5YGgMgRCpw58j8Hz
+         jxd7WkQ4oASI0VXSBbzMYzYyzOYu8h7ev7cpfuCRs6n0nFmg150dODwO5DyKBA5lKT4c
+         I4Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNtEXJbhexKjmf14JQWFCfxWHwMNMmWmlXDjAKpVDJYLWF65AiN2oVmBUAVWPXe/2OgzWJXRsyz8qTTqM=@vger.kernel.org, AJvYcCXOJgYZah42X5ABnz5V1rt2m2dZTHfmH2rV5m8mC1obNDBGtxmE9MgVhvm+b6W4H9JHkJ5gI+rYvwKaqrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAHWbW1fOU8zFRNSaRFYpJvcK7tV4kmzKUXTIR2/5MeM8IO40M
+	8OtFsvznRc93Avbj9J6VxdK5U8M+/ZHxW/Hky9VOiSLJyB6/9tPO
+X-Google-Smtp-Source: AGHT+IGTunI+zWGBgwG/tsHTdt8sjAPFWfeG7cDWe3Cawk7O/1zAMUQn8OPhGWXOdMiI0HSCWJCTYw==
+X-Received: by 2002:a17:903:41c4:b0:20b:8642:9863 with SMTP id d9443c01a7336-21183d3fb38mr24630915ad.18.1731056335255;
+        Fri, 08 Nov 2024 00:58:55 -0800 (PST)
+Received: from archie.me ([103.124.138.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5a9ebsm25608855ad.198.2024.11.08.00.58.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 00:58:53 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 5A12241E4B82; Fri, 08 Nov 2024 15:58:49 +0700 (WIB)
+Date: Fri, 8 Nov 2024 15:58:49 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+	hverkuil-cisco@xs4all.nl, mauro.chehab@linux.intel.com,
+	kernel@collabora.com, bob.beckett@collabora.com,
+	nicolas.dufresne@collabora.com
+Subject: Re: [PATCH 0/2] Documentation: Debugging guide
+Message-ID: <Zy3SybM9e84LmgFo@archie.me>
+References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
+ <87ttcj0z8x.fsf@trenco.lwn.net>
+ <20241108082416.u6vvdmmhadfqtiau@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016212016.887552-1-sboyd@kernel.org> <20241017203810.GA814469-robh@kernel.org>
- <38153cbf2616a4a6706412952778eec1.sboyd@kernel.org>
-In-Reply-To: <38153cbf2616a4a6706412952778eec1.sboyd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 8 Nov 2024 09:56:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWp84u66Y-ELtbbRmySYwQch_=2qQiXzWJzrSkGeLZYBA@mail.gmail.com>
-Message-ID: <CAMuHMdWp84u66Y-ELtbbRmySYwQch_=2qQiXzWJzrSkGeLZYBA@mail.gmail.com>
-Subject: Re: [PATCH] of: Allow overlay kunit tests to run CONFIG_OF_OVERLAY=n
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	kunit-dev@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VBvAy2aHw5c/hOWU"
+Content-Disposition: inline
+In-Reply-To: <20241108082416.u6vvdmmhadfqtiau@basti-XPS-13-9310>
+
+
+--VBvAy2aHw5c/hOWU
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+On Fri, Nov 08, 2024 at 09:24:16AM +0100, Sebastian Fricke wrote:
+> Hmmm my Google-Fu is not strong enough, I can't find a docs-next
+> anywhere neither in https://git.kernel.org/ nor in the Linux Kernel
+> documentation, can you point me to the tree?
 
-On Sat, Oct 19, 2024 at 12:21=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wr=
-ote:
-> Quoting Rob Herring (2024-10-17 13:38:10)
-> > On Wed, Oct 16, 2024 at 02:20:15PM -0700, Stephen Boyd wrote:
-> > > Some configurations want to enable CONFIG_KUNIT without enabling
-> > > CONFIG_OF_OVERLAY. The kunit overlay code already skips if
-> > > CONFIG_OF_OVERLAY isn't enabled, so this select here isn't really doi=
-ng
-> > > anything besides making it easier to run the tests without them
-> > > skipping. Remove the select and move the config setting to the
-> > > drivers/of/.kunitconfig file so that the overlay tests can be run wit=
-h
-> > > or without CONFIG_OF_OVERLAY set to test either behavior.
+git fetch git://git.lwn.net/linux.git docs-next
 
-Thanks for your patch, which is now commit 027af8c26fdc0642 ("of: Allow
-overlay kunit tests to run CONFIG_OF_OVERLAY=3Dn") in dt-rh/for-next.
-
-> > > Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test mana=
-ged APIs")
-> >
-> > Doesn't really seem like a fix.
->
-> Ok. Feel free to drop the tag.
->
-> > Does this need to go into 6.12?
->
-> It's only important for 6.12 if kernel configurators want to build the
-> kernel with OF_OVERLAY_KUNIT_TEST enabled and not be forced to enable
-> CONFIG_OF_OVERLAY. I don't mind if it waits a while.
-
-I'd say it's a fix, so please keep at last the Fixes tag. Merely
-enabling kunit tests (which can be modular) should not increase the
-possible attack vector on a product by enabling extra unneeded code.
-
-So
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks.
 
 --=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+An old man doll... just what I always wanted! - Clara
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--VBvAy2aHw5c/hOWU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZy3SxAAKCRD2uYlJVVFO
+o6m2AP0YE86zsukCHUF7W8fOPfBiBHAL8qjVO//8VWtrnnOKtQEA47g5Kr/Ill87
+t6Sv8w0C0UtfxuH8LY1XWZO35v/Djgw=
+=468n
+-----END PGP SIGNATURE-----
+
+--VBvAy2aHw5c/hOWU--
 
