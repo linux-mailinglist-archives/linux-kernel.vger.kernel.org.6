@@ -1,146 +1,236 @@
-Return-Path: <linux-kernel+bounces-401722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0256C9C1E60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCD79C1E5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9F71C216AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3667D1F23147
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D03F1F4FBA;
-	Fri,  8 Nov 2024 13:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccwiiFHh"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1765D1EE022;
+	Fri,  8 Nov 2024 13:47:22 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CB91EF084;
-	Fri,  8 Nov 2024 13:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045DF1F4700;
+	Fri,  8 Nov 2024 13:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073663; cv=none; b=JvKb6tA4mysWuJCHU3/I62mN08AdaFxC/bCkD0au5J1KGvGrasOyszhFzPVPolifoYHPE1i3qnXsnisAVe6y99grwJSGYWS6NkpoWiqNolX8ZNVOGarOJDuX7Yvtyj8Yetdd1WBWjsoqgQgGe3Hy+7LJaj5ob67yTBmquZuAAXs=
+	t=1731073641; cv=none; b=bLDXc8jzXlcRy3OSNQUZ/OYmnLLvd7JAWfMvq5P4UUvv3QxMzsHsoKxiMAajk6gLf2pZWKrnyC5LOcrdxZUMnxTrL+RrGVTx1OS7CBXjClCq6vN3Q2Hwze1PrdIYetyA3psC01aHkFUQuB3Nuv549YJLrKJ/Cm2Y4ueEqMBamtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073663; c=relaxed/simple;
-	bh=5tuQIhLYLrmdFUF7osaQlsBi++fNez6g63FsiyDgnHU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BhMDRmjRoYYP1bIogBiPqtgO8JFrOkn7f5FukAzXOlVyP7mJXdvEK8pI1sYk/uD+52TphIW0KCrB5jilAPSzer1hl+PvtT6ZxCi1w24pnuSBgrJX5aS5hrbXjF01pXzsQGW2gxmc9HV4pFNIXddx7LvoB150FbgAek/E+wdYa4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccwiiFHh; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso25549825e9.0;
-        Fri, 08 Nov 2024 05:47:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731073660; x=1731678460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KsIe4tKwDw18rlGzCIKWB3zmvgLSJBWJguSHhwKJcXA=;
-        b=ccwiiFHh1WsPadWzVvvOgJ2CENoXheE6fGzfFGks1X+qkgNGSrTmVFssE8hPZtIOMa
-         y/xKyBXqFumQgDmzWYNO8nyPzqOHYt/A5jw5Ws3Du19w2fpLx+itMuNgxgSyxwLtILgz
-         UwcOt/IZ7wboz6gWqx4utWIIjG0bDXDPSzdwJKsqgsFwM1ibAmaA+VXUAgo6s6bGmfV2
-         K3GICt2VyNh5iotWakOa5pqECnm1ygnrBL7NDhpZDjSmrJGU45Nigjx47d/ZoS9K4RXH
-         TA3iqaQ4qpiWZs9yWICUe07U6jAwOBpLKk4bv829vPZOOGaa/LchS9FpbRSdG6WPvpCG
-         5ljg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731073660; x=1731678460;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KsIe4tKwDw18rlGzCIKWB3zmvgLSJBWJguSHhwKJcXA=;
-        b=mdNRumAjS+MPw1YfXpojIKb0nsrpCrBnWviRRUoLXW4eLZawTuZJxoclRuIp7tRWv9
-         rCNxurAdXYUGAYUci/xFm4bxp9vFZyudYjmE3/15Tk+1cPMaNRBOxtwsZ9McR0jny3xY
-         MwuOYtP9v0UozFehfthuqEBEugEuqXLzX99ajhC3SREGmlaR12t9SN6IDmgk+ZQMOObr
-         25YPjZtZYPEp2jKmd+wtoPUuafzfCFvylLWUTf24hwVZ1erZvbf/N/rdxxdcy10upUHd
-         Y622ejk5X/Wdx0ogAxuo+TRry2GAvaeIsSZTyH2YR4OAudqh0fZCLNYk8jtMo+2zdsjJ
-         2dow==
-X-Forwarded-Encrypted: i=1; AJvYcCXBnmwpGZ0QJEnhmWJteoz3Si3Onx5wKtVqqPOAKc+IVEOAngLF76xcjcjh54oiW3c1/xHoHbzjuzIflNGYOUs=@vger.kernel.org, AJvYcCXKx1g0x4AWV5ghysX2NajEmoY3hW37mXdI1H6w01GHcQ94MBbZlDuKEeH54Tqy3g3L1NUB5XBdE9bP9slS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgQNbIAH0CRO0rI57L8VxBpbpW0yKgtySr0xu5457FdVonjbWa
-	dKOQoP6nPfqgk1vFeQpzQn3FRKovK6Bcqyq9QNi5fhvWtfTQs0+7
-X-Google-Smtp-Source: AGHT+IGBV/K9g17UrlomSZXt3CV0Ro5BSBwbqEK26k34DyKiySC7XGPzuPWIzwPsTKf4naXH4fjnaw==
-X-Received: by 2002:a05:600c:3b12:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-432b74fec83mr26576155e9.5.1731073659819;
-        Fri, 08 Nov 2024 05:47:39 -0800 (PST)
-Received: from void.void ([31.210.177.224])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997320sm4974190f8f.47.2024.11.08.05.47.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 05:47:39 -0800 (PST)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
-Date: Fri,  8 Nov 2024 15:47:15 +0200
-Message-ID: <20241108134728.25515-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.0.245.gfacbe4f633
+	s=arc-20240116; t=1731073641; c=relaxed/simple;
+	bh=8knQ7wE4fQq4x8sY3mGFsnXaStycaIQDHgUGvkXqYZk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NZpOeuoVsRIC7ZVA9h6gw4fvimFE6lNxdFfW9ZnCZPuG2rDj2XBTh9CmuoGHeHnZr/5S9uiHl367s3SxPjoMceU9oN5vhfZ1dwXlx0I4x/BLqPlKCipNxhCnOI5x+sdOoZWiNLeAVGePCEYeEpdT5oDLg1OjimZSrfrqQTmSasw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XlKvd3Mp6z6K95G;
+	Fri,  8 Nov 2024 21:45:33 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 96EED140133;
+	Fri,  8 Nov 2024 21:47:16 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 8 Nov 2024 14:47:16 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Fri, 8 Nov 2024 14:47:16 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Fan Ni <nifan.cxl@gmail.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"Jonathan Cameron" <jonathan.cameron@huawei.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "jassisinghbrar@gmail.com"
+	<jassisinghbrar@gmail.com>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
+	<jiaqiyan@google.com>, "Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>, "james.morse@arm.com"
+	<james.morse@arm.com>, "jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>, "erdemaktas@google.com"
+	<erdemaktas@google.com>, "pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>, "gthelen@google.com"
+	<gthelen@google.com>, "wschwartz@amperecomputing.com"
+	<wschwartz@amperecomputing.com>, "dferguson@amperecomputing.com"
+	<dferguson@amperecomputing.com>, "wbs@os.amperecomputing.com"
+	<wbs@os.amperecomputing.com>, tanxiaofei <tanxiaofei@huawei.com>, "Zengtao
+ (B)" <prime.zeng@hisilicon.com>, "Roberto Sassu" <roberto.sassu@huawei.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
+	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v15 02/15] EDAC: Add scrub control feature
+Thread-Topic: [PATCH v15 02/15] EDAC: Add scrub control feature
+Thread-Index: AQHbLD7vCzL+HgVM6Umrx0HY63Gx9LKsgzCAgADs7ZA=
+Date: Fri, 8 Nov 2024 13:47:16 +0000
+Message-ID: <f6b1be9f02b94bc6a05ba4494e5b973b@huawei.com>
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+	<20241101091735.1465-3-shiju.jose@huawei.com> <Zy1dAazN9OPR0POI@fan>
+In-Reply-To: <Zy1dAazN9OPR0POI@fan>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-There are some typos in fprintf messages.
-Fix them via codespell.
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- tools/perf/util/intel-bts.c | 2 +-
- tools/perf/util/intel-pt.c  | 2 +-
- tools/perf/util/tsc.c       | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+>-----Original Message-----
+>From: Fan Ni <nifan.cxl@gmail.com>
+>Sent: 08 November 2024 00:36
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+>acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+>bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net; Jonathan
+>Cameron <jonathan.cameron@huawei.com>; gregkh@linuxfoundation.org;
+>sudeep.holla@arm.com; jassisinghbrar@gmail.com; dave.jiang@intel.com;
+>alison.schofield@intel.com; vishal.l.verma@intel.com; ira.weiny@intel.com;
+>david@redhat.com; Vilas.Sridharan@amd.com; leo.duran@amd.com;
+>Yazen.Ghannam@amd.com; rientjes@google.com; jiaqiyan@google.com;
+>Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+>naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+>duenwen@google.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
+>Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
+>wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
+><linuxarm@huawei.com>
+>Subject: Re: [PATCH v15 02/15] EDAC: Add scrub control feature
+>
+>On Fri, Nov 01, 2024 at 09:17:20AM +0000, shiju.jose@huawei.com wrote:
+>> From: Shiju Jose <shiju.jose@huawei.com>
+>>
+>> Add a generic EDAC scrub control to manage memory scrubbers in the syste=
+m.
+>> Devices with a scrub feature register with the EDAC device driver,
+>> which retrieves the scrub descriptor from the EDAC scrub driver and
+>> exposes the sysfs scrub control attributes for a scrub instance to
+>> userspace at /sys/bus/edac/devices/<dev-name>/scrubX/.
+>>
+>> The common sysfs scrub control interface abstracts the control of
+>> arbitrary scrubbing functionality into a common set of functions. The
+>> sysfs scrub attribute nodes are only present if the client driver has
+>> implemented the corresponding attribute callback function and passed
+>> the
+>> operations(ops) to the EDAC device driver during registration.
+>>
+>> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>> ---
+>
+>Minor comments inline.
+>
+>>  Documentation/ABI/testing/sysfs-edac-scrub |  74 ++++++++
+>>  drivers/edac/Makefile                      |   1 +
+>>  drivers/edac/edac_device.c                 |  40 +++-
+>>  drivers/edac/scrub.c                       | 209 +++++++++++++++++++++
+>>  include/linux/edac.h                       |  34 ++++
+>>  5 files changed, 354 insertions(+), 4 deletions(-)  create mode
+>> 100644 Documentation/ABI/testing/sysfs-edac-scrub
+>>  create mode 100755 drivers/edac/scrub.c
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-edac-scrub
+>> b/Documentation/ABI/testing/sysfs-edac-scrub
+>> new file mode 100644
+>> index 000000000000..d8d11165ff2a
+>> --- /dev/null
+>> +++ b/Documentation/ABI/testing/sysfs-edac-scrub
+>
+>...
+>
+>> diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+>> index e9229b5f8afe..cd700a64406e 100644
+>> --- a/drivers/edac/edac_device.c
+>> +++ b/drivers/edac/edac_device.c
+>> @@ -576,6 +576,7 @@ static void edac_dev_release(struct device *dev)
+>> {
+>>  	struct edac_dev_feat_ctx *ctx =3D container_of(dev, struct
+>> edac_dev_feat_ctx, dev);
+>>
+>> +	kfree(ctx->scrub);
+>>  	kfree(ctx->dev.groups);
+>>  	kfree(ctx);
+>>  }
+>> @@ -609,6 +610,8 @@ int edac_dev_register(struct device *parent, char
+>*name,
+>>  		      const struct edac_dev_feature *ras_features)  {
+>>  	const struct attribute_group **ras_attr_groups;
+>> +	int scrub_cnt =3D 0, scrub_inst =3D 0;
+>> +	struct edac_dev_data *dev_data;
+>>  	struct edac_dev_feat_ctx *ctx;
+>>  	int attr_gcnt =3D 0;
+>>  	int ret, feat;
+>> @@ -619,7 +622,10 @@ int edac_dev_register(struct device *parent, char
+>*name,
+>>  	/* Double parse to make space for attributes */
+>>  	for (feat =3D 0; feat < num_features; feat++) {
+>>  		switch (ras_features[feat].ft_type) {
+>> -		/* Add feature specific code */
+>> +		case RAS_FEAT_SCRUB:
+>> +			attr_gcnt++;
+>> +			scrub_cnt++;
+>> +			break;
+>>  		default:
+>>  			return -EINVAL;
+>>  		}
+>> @@ -635,13 +641,37 @@ int edac_dev_register(struct device *parent, char
+>*name,
+>>  		goto ctx_free;
+>>  	}
+>>
+>> +	if (scrub_cnt) {
+>> +		ctx->scrub =3D kcalloc(scrub_cnt, sizeof(*ctx->scrub),
+>GFP_KERNEL);
+>> +		if (!ctx->scrub) {
+>> +			ret =3D -ENOMEM;
+>> +			goto groups_free;
+>> +		}
+>> +	}
+>> +
+>>  	attr_gcnt =3D 0;
+>
+>If we use scrub_cnt the same way as we use attr_gcnt, we do not need
+>scrub_inst.
 
-diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-index 3ea82d5e8d2e..a7c589fecb98 100644
---- a/tools/perf/util/intel-bts.c
-+++ b/tools/perf/util/intel-bts.c
-@@ -808,7 +808,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
- static const char * const intel_bts_info_fmts[] = {
- 	[INTEL_BTS_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
- 	[INTEL_BTS_TIME_SHIFT]		= "  Time Shift         %"PRIu64"\n",
--	[INTEL_BTS_TIME_MULT]		= "  Time Muliplier     %"PRIu64"\n",
-+	[INTEL_BTS_TIME_MULT]		= "  Time Multiplier    %"PRIu64"\n",
- 	[INTEL_BTS_TIME_ZERO]		= "  Time Zero          %"PRIu64"\n",
- 	[INTEL_BTS_CAP_USER_TIME_ZERO]	= "  Cap Time Zero      %"PRId64"\n",
- 	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 3fe67bf652b6..30be6dfe09eb 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -4110,7 +4110,7 @@ static int intel_pt_parse_vm_tm_corr_args(struct intel_pt *pt)
- static const char * const intel_pt_info_fmts[] = {
- 	[INTEL_PT_PMU_TYPE]		= "  PMU Type            %"PRId64"\n",
- 	[INTEL_PT_TIME_SHIFT]		= "  Time Shift          %"PRIu64"\n",
--	[INTEL_PT_TIME_MULT]		= "  Time Muliplier      %"PRIu64"\n",
-+	[INTEL_PT_TIME_MULT]		= "  Time Multiplier     %"PRIu64"\n",
- 	[INTEL_PT_TIME_ZERO]		= "  Time Zero           %"PRIu64"\n",
- 	[INTEL_PT_CAP_USER_TIME_ZERO]	= "  Cap Time Zero       %"PRId64"\n",
- 	[INTEL_PT_TSC_BIT]		= "  TSC bit             %#"PRIx64"\n",
-diff --git a/tools/perf/util/tsc.c b/tools/perf/util/tsc.c
-index 2e33a20e1e1b..511a517ce613 100644
---- a/tools/perf/util/tsc.c
-+++ b/tools/perf/util/tsc.c
-@@ -119,7 +119,7 @@ size_t perf_event__fprintf_time_conv(union perf_event *event, FILE *fp)
- 	size_t ret;
- 
- 	ret  = fprintf(fp, "\n... Time Shift      %" PRI_lu64 "\n", tc->time_shift);
--	ret += fprintf(fp, "... Time Muliplier  %" PRI_lu64 "\n", tc->time_mult);
-+	ret += fprintf(fp, "... Time Multiplier %" PRI_lu64 "\n", tc->time_mult);
- 	ret += fprintf(fp, "... Time Zero       %" PRI_lu64 "\n", tc->time_zero);
- 
- 	/*
--- 
-2.47.0.245.gfacbe4f633
-
+Hi Fan,
+Thanks for suggestion. Modified and done the same for EDAC memory repair fe=
+ature as well.=20
+>
+>Fan
+>>  	for (feat =3D 0; feat < num_features; feat++, ras_features++) {
+>>  		switch (ras_features->ft_type) {
+>> -		/* Add feature specific code */
+[...]
+>--
+>Fan Ni
+>
+Thanks,
+Shiju
 
