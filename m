@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-401349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1109C1921
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:32:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E189C1920
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 003191C20A2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:32:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26F05285010
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275C41E1029;
-	Fri,  8 Nov 2024 09:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jf/xsqBu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72E41E009D;
+	Fri,  8 Nov 2024 09:31:45 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C051E0E05
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E612F1C3F01
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731058326; cv=none; b=V+LanQ71CMmmuB3Yoit1UcwYJ+Q3x9nFCgAgA9BInDTjR7Mzq5JXwsIRXac6TBCyGYPmaKmKi38wbUTHT20q7+IzI68e2Qn9OXY7NRBpyqV/xR/Svocx1FYP/FHeSNlLaPq8sk35gqUsxnMc+2kL6nfgfG72Z54Wd7L++Ds85AM=
+	t=1731058305; cv=none; b=FLnlC+YrGQuSeZnwZWHsg7E9hkzrNbG356cULJCwlOAsdLbNQdxhM/ETlnwBe5Zm3EEZyGjqI5kzIFEn5e0ql4ATxT9If9UrY5PloTXdGkwVxf8gwR5kv5DyohYCk5kOEs3Dy/E/KZ6++GCI3MlvkWFlebmiF9GLANchBFzl42w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731058326; c=relaxed/simple;
-	bh=Je9ZZ9CFGMZQKQGj3EiPzKjUT5V1O4+C4dgnzRBMpEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNJjWJm83n4IZT9VgUvlWU+yVjl+mt+f/Fnx9DUJ6FEUJo38lzfN81q+EElULypEXkboVUtgXu8ZaEwMr9D75L+GqeZhi7ko8wBUhl4u7jAspaCt50VpkA6NpN62EJsyjchSF1RYFMECOSn7i3S+CjEbwm0tnAB9yvYHoZkXau0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jf/xsqBu; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731058325; x=1762594325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Je9ZZ9CFGMZQKQGj3EiPzKjUT5V1O4+C4dgnzRBMpEY=;
-  b=jf/xsqBuNpJcc97faQLY/GEPtvOTVsjxNnjLgjVb9FfeOYpcy3sf17FR
-   sde40fQK7NIAsP/A6Qwf3x8Dm40Yquw03QRzN7npceyOpneFgn4u6kkAB
-   kKTfyk78P04fAROAMPvqtif+CvYOXl4kGKMua2SRYpjwk1hV3CpLg/UIK
-   8F3pYuCV/9lbQ5S5WG1txnz1qfCiGP5uBfo8AvURwhzuTdR2jHjGV1l6Z
-   LYDyuYbKc5g3DiwaY9JaHJu7l8uhu7Td3KIZQWXDjNCaoNCNFK3E2f0rf
-   ssKpoovmZf+s886/FJtFgf9KScuL+evr1Gfiaf6O35IU6/eAlgkmfbjO5
-   g==;
-X-CSE-ConnectionGUID: qHKIqooCTkC+4g9TlZfg0A==
-X-CSE-MsgGUID: dXFc+qLJQ2OKxN2sWDWK6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31102915"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31102915"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 01:31:07 -0800
-X-CSE-ConnectionGUID: e2FT6bEBSXq8BSTQ93CwFw==
-X-CSE-MsgGUID: yQeAcDm9TM+f67Wm6Rn+aQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="90348414"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 01:31:03 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t9LKV-0000000CYUU-3Jdq;
-	Fri, 08 Nov 2024 11:30:59 +0200
-Date: Fri, 8 Nov 2024 11:30:59 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] sched/fair: Mark cfs_bandwidth_used() and
- m*_vruntime() with __maybe_unused
-Message-ID: <Zy3aU4g-lBim39CS@smile.fi.intel.com>
-References: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1731058305; c=relaxed/simple;
+	bh=f2eZkzt0K6IeztS4Cimx83IL/Xp6H6rm712UcddE51o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=bEetUDIx5ymkEJHo49PEdTRsHtjFXslA+0i9GnHR6CgoRt1D9c76LgQqkqtvLO9eeyIXpfSKz/kumBH2oTnnWKlf5VKd57VffUfsykNABMpxy12Dio8+jrpirpN/DhsKKPnDCc+IXVG6l369lwoz+vDQv3sJKNO+FVBHNZLNoW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6bf539ceaso26508135ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:31:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731058303; x=1731663103;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0tcNgegoo6ncsvOFtN0x5NMcojGXD6XLkdx81B1ReZQ=;
+        b=SGUX+1fbRlsLK2u6pyvIsWIvm5v5sqGhDDLNkNFau1YbvdqIYZwnFD5XttfmHhlPKR
+         WiBY1a7MwE7kQajDsPCtZgamZRKYnPZZ2Q7DoT7WdQXJGjcvrWxNzTW5tUKFusfFkxnI
+         vrC3aVKluZxodNcJKAZRjeqozO2MYgePpVzAknePoyIoEIqayIDDwIDUhVYiK7o+2Ums
+         scRE7dPT1pkElOunT+T/D0mET7z7BXxwwa7UWFJgt5gavLCHsPFWMQxWX5Va/PuKOFTy
+         n0FAUBaukNy3iEnw/kTR0MljYg2lrQ4h+qFEMGLcON3PKsa166WNnOFKWwt3L1SEGV82
+         zU0A==
+X-Gm-Message-State: AOJu0Yww4A+aSzxzBrvbsPriEpcNFbXoDYW/e644mtAgy7IcaaUk7rQ8
+	N16CEur6GDLff67Y4dyHLZRS08gqygGHAYC+TltHAcVSzw8s4r3kbnbSGUobwUeZ1LGEYgL/zc5
+	1S+LhDPJfu86fWVWHC8agUCPHLkyUntIYNv64DEI5CpYZ87s8gsxFGW8=
+X-Google-Smtp-Source: AGHT+IGNLrX/EWkqnWjv2Bsrj581IIWNc5IJf9AWMY5SxTr2rdAAHweHyFp9YH3tLHbKQbAcy52+0h/i8vYLaWHtJwizX6Ag/vLh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905171210.267626-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:f94:b0:3a6:aade:5644 with SMTP id
+ e9e14a558f8ab-3a6f11698a7mr24058165ab.4.1731058303103; Fri, 08 Nov 2024
+ 01:31:43 -0800 (PST)
+Date: Fri, 08 Nov 2024 01:31:43 -0800
+In-Reply-To: <672b9f03.050a0220.350062.0276.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672dda7f.050a0220.3d9cb.000a.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
+From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 05, 2024 at 08:12:10PM +0300, Andy Shevchenko wrote:
-> When cfs_bandwidth_used() is unused, it prevents kernel builds
-> with clang, `make W=1` and CONFIG_WERROR=y:
-> 
-> kernel/sched/fair.c:526:19: error: unused function 'max_vruntime' [-Werror,-Wunused-function]
->   526 | static inline u64 max_vruntime(u64 max_vruntime, u64 vruntime)
->       |                   ^~~~~~~~~~~~
-> kernel/sched/fair.c:6580:20: error: unused function 'cfs_bandwidth_used' [-Werror,-Wunused-function]
->  6580 | static inline bool cfs_bandwidth_used(void)
->       |                    ^~~~~~~~~~~~~~~~~~
-> 
-> Fix this by marking them with __maybe_unused (all cases for the sake of
-> symmetry).
-> 
-> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> inline functions for W=1 build").
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Any comments on this? Can it be eventually applied, please?
+***
 
--- 
-With Best Regards,
-Andy Shevchenko
+Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
+Author: lizhi.xu@windriver.com
 
+net device has been unregistered ?
 
+#syz test
+
+diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
+index c0e2da5072be..57de7ca7954b 100644
+--- a/net/mac802154/iface.c
++++ b/net/mac802154/iface.c
+@@ -683,6 +683,10 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
+ {
+ 	ASSERT_RTNL();
+ 
++	printk("sd: %p, sdl: %p, dev: %p, %s\n", sdata, sdata->list, sdata->dev, __func__);
++	if (sdata->dev->reg_state == NETREG_UNREGISTERING)
++		return;
++
+ 	mutex_lock(&sdata->local->iflist_mtx);
+ 	list_del_rcu(&sdata->list);
+ 	mutex_unlock(&sdata->local->iflist_mtx);
+@@ -697,6 +701,7 @@ void ieee802154_remove_interfaces(struct ieee802154_local *local)
+ 
+ 	mutex_lock(&local->iflist_mtx);
+ 	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
++		printk("sd: %p, sdl: %p, dev: %p, %s\n", sdata, sdata->list, sdata->dev, __func__);
+ 		list_del(&sdata->list);
+ 
+ 		unregister_netdevice(sdata->dev);
 
