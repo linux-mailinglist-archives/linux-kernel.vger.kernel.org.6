@@ -1,150 +1,97 @@
-Return-Path: <linux-kernel+bounces-401958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB279C218E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:06:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA3B9C2194
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:08:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D8201C24802
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302E52826CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E15C137750;
-	Fri,  8 Nov 2024 16:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266E3126C0A;
+	Fri,  8 Nov 2024 16:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NfOCR5kO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9339C8EB;
-	Fri,  8 Nov 2024 16:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lExX0xwh"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CE5A41
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082006; cv=none; b=bAG4YsCCNLCFWHqr3KF49cLOCz5qsrCRlvOf55IGVwpdx3PlWDuFIHXjnxcHS0o9IoUvFgFkFV/yStlpBgVbex06G7VY19bcnUneuzytszxDnEIFfzg+haC6+qHSqr6U1vuzOCzmhZ/5ZCxLSkkLi/weT6Ig37zya25kivgDwb8=
+	t=1731082074; cv=none; b=FAZsD/BrSTtlh1vmL0B4/nJJKZ7diucXRm03STwsexPntkMYY7ruSt36my0g1071JqMwX/zp/R2r4Yb0NtivLxMIk6+t9tfwQDqKZB3OvsHS6uykdLGC5UAzb+TPqU5QGWN5cNKxqL69PaNFNkIRFk7ZL7cXa9STSdwakcXc/+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082006; c=relaxed/simple;
-	bh=6LSa1bRrJgKUR49mqBK1J02SyFpaBrod093WWPObqKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6Ar9ugkM52gpChON9zoGSmyCYDnfo4nGSXsTKuiYWhifwljcnRwf1dcfJJJ+lTqcfp61sNgiytn2ZtfMQDWCFcUu+OfQCzGQCwvN9TTPIx5GN0Vy+bYrHHzPS/AQam8dFiirJB5ZzEUJPvK3LWEiloWcC3aC87jsa6yFajsP1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NfOCR5kO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731082005; x=1762618005;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6LSa1bRrJgKUR49mqBK1J02SyFpaBrod093WWPObqKw=;
-  b=NfOCR5kOtBZF0VAabneZZBRLVWk2tv7NZZQtEXhdESHHcshNxWm1pPiR
-   St1Ut0eOYWbR9x+EtxThbbDfrrHNjhFRS41xEYdgFzpty/k/U+z7bX8FZ
-   ZsbFqjh5+rrwKnPmWQe/zNJCxk9DzbitdDscBj8+sFW7kVu35KpqGGMDC
-   s5U/M+I5tGZbZ5dHrH8vYeHFY2KWNK5K4JyrrOAnE0pXbOuXQFVX11IiF
-   yLqULy+8ouk6YxEJkXQrUS+bDF5Brkx36NloXBiiRklyRiqZtGMDcSHzV
-   VdztpDlriTXd+BV4qyLSJ4GvNrldl/vcEch3iLHJ1DgEgNQljr4jzcOXD
-   g==;
-X-CSE-ConnectionGUID: 8wIvmWzwRF60PKGBiOO+yg==
-X-CSE-MsgGUID: KBY/tQOITqyJ6rKQpz9P2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="42357195"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="42357195"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:06:44 -0800
-X-CSE-ConnectionGUID: JUm8/uH4SZqt/cLVuEw3SA==
-X-CSE-MsgGUID: wIJE8lAEReGMgGkU2tka+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="123141563"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:06:42 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 90D5411F9BF;
-	Fri,  8 Nov 2024 18:06:39 +0200 (EET)
-Date: Fri, 8 Nov 2024 16:06:39 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 1/1] media: ov7251: Remap "reset" to "enable" for
- OV7251
-Message-ID: <Zy43D7wAZLrBDtiX@kekkonen.localdomain>
-References: <20241108145024.1490536-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1731082074; c=relaxed/simple;
+	bh=eZ0ufCR7x7V8u8i228PrKdkRdcKvQm8IHFgkZKgybnY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=s6iQaREEdoqMT+6rTh/5oqKKEsZmA9CjXREEm/Lxo5jegzZi8S6urH25FFZsDrlMI8kRd1XPIN8UD8aJwA908pWrU81D7ntqjBt1rslkDGmh79Azuflh1TiCV3eOs9HjPHmPbKKPpwCqu9AO0AlLqdCLRukT5AYAy/eL86+ExvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=lExX0xwh; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=hEhGJ
+	1xX3uCm4kvCLfzAWwIoCelgH6XJ5bt8Ue0YouY=; b=lExX0xwhuxAk3JpM2hXup
+	1LIkkujSZydfQmd/L+8G+gXkkBZL5fENycwh4g2bczveJhU2JdiBthNVY0xfMqez
+	Br48ZKL/tDOgRm8MNlh3DfX+4Io3iUn6k6rZhT3Q+q/AAh4PQ5V831r9pJejtgkj
+	ibH+vVG+it7ROVlQhsTqAw=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3v3c3Ny5ngwX8GA--.64895S4;
+	Sat, 09 Nov 2024 00:07:35 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width() for decimal values
+Date: Sat,  9 Nov 2024 00:07:17 +0800
+Message-Id: <20241108160717.9547-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108145024.1490536-1-andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v3c3Ny5ngwX8GA--.64895S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyxXw4xKFykGF4xtr47Arb_yoW8GF17pa
+	yakFW3Aw48uw1Yq3W7Jan7Zwn8W3WYqF4Fk3Zakw4fA3Wjgr1vgr1avF13tr4akr9rZw45
+	ZF90gw18tw4UWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUyE_tUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQ6RqmcuNe8YfQAAsq
 
-Hi Andy,
+seq_printf() is costy, on a system with m interrupts and n CPUs, there
+would be m*n decimal values yield via seq_printf() when reading
+/proc/interrupts, the cost parsing format strings grows with number of
+CPU. Profiling on a x86 8-core system indicates seq_printf() takes ~47%
+samples of show_interrupts(), and replace seq_printf() with
+seq_put_decimal_ull_width() could have near 30% performance gain.
 
-Thanks for the patch.
+The improvement has pratical significance, considering many monitoring
+tools would read /proc/interrupts periodically.
 
-On Fri, Nov 08, 2024 at 04:50:24PM +0200, Andy Shevchenko wrote:
-> The driver of OmniVision OV7251 expects "enable" pin instead of "reset".
-> Remap "reset" to "enable" and update polarity.
-> 
-> In particular, the Linux kernel can't load the camera sensor
-> driver on Microsoft Surface Book without this change:
-> 
->  ov7251 i2c-INT347E:00: supply vdddo not found, using dummy regulator
->  ov7251 i2c-INT347E:00: supply vddd not found, using dummy regulator
->  ov7251 i2c-INT347E:00: supply vdda not found, using dummy regulator
->  ov7251 i2c-INT347E:00: cannot get enable gpio
->  ov7251 i2c-INT347E:00: probe with driver ov7251 failed with error -2
-> 
-> Suggested-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: David Wang <00107082@163.com>
+---
+ kernel/irq/proc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Should this be cc'd to stable? I guess it's not exactly a fix in the driver
-but a BIOS bug, but it can be worked around in the driver. :-)
-
-> ---
->  drivers/media/i2c/ov7251.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/drivers/media/i2c/ov7251.c b/drivers/media/i2c/ov7251.c
-> index 30f61e04ecaf..7b35add1e0ed 100644
-> --- a/drivers/media/i2c/ov7251.c
-> +++ b/drivers/media/i2c/ov7251.c
-> @@ -1696,7 +1696,21 @@ static int ov7251_probe(struct i2c_client *client)
->  		return PTR_ERR(ov7251->analog_regulator);
->  	}
->  
-> +	/*
-> +	 * The device-tree bindings call this pin "enable", but the
-> +	 * datasheet describes the pin as "reset (active low with internal
-> +	 * pull down resistor)". The ACPI tables describing this sensor
-
-It's the functionality that matters albeit I guess this is somewhat a
-matter of taste: a similar pin was named "reset" for MIPI CCS.
-
-> +	 * on, e.g., the Microsoft Surface Book use the ACPI equivalent of
-> +	 * "reset" as pin name, which ACPI glue code then maps to "reset".
-> +	 * Check for a "reset" pin if there is no "enable" pin.
-> +	 */
->  	ov7251->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(ov7251->enable_gpio) &&
-> +	    PTR_ERR(ov7251->enable_gpio) != -EPROBE_DEFER) {
-> +		ov7251->enable_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-
-This looks like it'd benefit from a line wrap. I can do that if there's no
-need for v2 otherwise.
-
-> +		if (!IS_ERR(ov7251->enable_gpio))
-> +			gpiod_toggle_active_low(ov7251->enable_gpio);
-> +	}
->  	if (IS_ERR(ov7251->enable_gpio)) {
->  		dev_err(dev, "cannot get enable gpio\n");
->  		return PTR_ERR(ov7251->enable_gpio);
-
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 9081ada81c3d..988ce781e813 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -494,9 +494,11 @@ int show_interrupts(struct seq_file *p, void *v)
+ 	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
+ 		goto outsparse;
+ 
+-	seq_printf(p, "%*d: ", prec, i);
++	seq_printf(p, "%*d:", prec, i);
+ 	for_each_online_cpu(j)
+-		seq_printf(p, "%10u ", desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0);
++		seq_put_decimal_ull_width(p, " ",
++					  desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0,
++					  10);
+ 
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
+ 	if (desc->irq_data.chip) {
 -- 
-Kind regards,
+2.39.2
 
-Sakari Ailus
 
