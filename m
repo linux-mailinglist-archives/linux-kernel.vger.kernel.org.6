@@ -1,111 +1,174 @@
-Return-Path: <linux-kernel+bounces-400997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059829C14D3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:47:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F089C14DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB37282679
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9BC1C21BF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046FC19DF8C;
-	Fri,  8 Nov 2024 03:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7909B1C32E5;
+	Fri,  8 Nov 2024 03:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="kATa4A91"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD388F54;
-	Fri,  8 Nov 2024 03:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b="E+ALW2Mn"
+Received: from classfun.cn (unknown [129.204.178.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724A88F54;
+	Fri,  8 Nov 2024 03:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.204.178.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731037611; cv=none; b=deMW+meZSURZkEop9rKVIGwejAi1DCG+M2RGaQ+7yfwIrnAnW7BD+elkO5WI2vQVshzkfhCXToEgcuCwF/R4kxLyLFQFfumiWnt2iXbF+2jWmFxbJBFGB796SBItMefQHnUwSSrQGxMNrhmNEQiYXIXY2wJgcbXEHbzqBBML+LE=
+	t=1731037755; cv=none; b=gvaLsWNhShKBwQL/oxCFpJIPAOuNDIYRChr7BoXc+hX/w/vQwnErWkgrE++BVE2wU7axPnXKk5946oLlKiaQLfnagxjEMLz7uu1fTg2KTVS7OWiZzqALaVKQSVMaojYnhDOuI9cBFZ74wgdv6Lno42J0shjtHaFfzf9K1EuzTZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731037611; c=relaxed/simple;
-	bh=hQ1tNZ9NSB3X7PHVvGSf5uuryDBEbpwgPwLn6a4+CsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UEGKOiP77otvNQTVpRbOB3Mm+OqHWOYkD29kYSMiXwP+sK0mqZLD9LQ4zBQnzXK4kUHZuadcCrrSOKs41MOnnxuiGAQOKl6lFYSQNXjzIjSqgOgE5qnPmdfSAQUIAkn/h7174F2gH62v40oVyns6063VASxpuNnBgOVR3nBkqeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=kATa4A91; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xLD1+IPnnDR18qsUyzu48ieOa/lzgJDmVUJY9mnwPm4=; b=kATa4A91a99uU3AmVjShv8rnEr
-	1aTUThrFRa/iUZuglf0T6yDzjuUxz95J2w36icuAw0GULxblR3e2ALKNscTZ/nwzArWbwYXDN9OJB
-	H7wCMlr9F4YRoU0zf/uBx3oLYS2AWJWCS+GjcWz5+fUu3f/6rleYwwVrO3gkW+YGp2oJ/gVATWU2c
-	2Yje4crEyYk6gfszagRR7YWn1WUaM70ndoSpnCDLj4LiPZADtOnS9q9HAG4hBLo2GlJB22lJktwDl
-	QGhA06sw1ruak/Z62b0GzM5RqMRlew+GrYLza6SXYo6ZUwwGnNZRkeFRENWreEJv4JcGXHWE/+DDT
-	DZDctj9Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9FxO-0000000CUPP-1BbQ;
-	Fri, 08 Nov 2024 03:46:46 +0000
-Date: Fri, 8 Nov 2024 03:46:46 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Saru2003 <sarvesh20123@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fixed null-ptr-deref Read in drop_buffers
-Message-ID: <20241108034646.GY1350452@ZenIV>
-References: <20241108023717.8613-1-sarvesh20123@gmail.com>
+	s=arc-20240116; t=1731037755; c=relaxed/simple;
+	bh=MXe6IYQzEOrzfZcmjrcC+xeinHkhz6G2TN1/BMXAynw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H0gg32oJrdu4jzrfONHZRE1fp2rUPOf/U6xJeW9r2o37DnkOj9qjNB82xLkRVk3HWex3JVFxyp+WbAjPdDhd2k2vjWIcSYWNjj1rk2rAgB5qjnKSmor3xGJUbzHzM1va1WNAPo/YIgBwJkRHlvmgwTS/MFlXcME09fJLlCsXa3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn; spf=pass smtp.mailfrom=classfun.cn; dkim=pass (1024-bit key) header.d=classfun.cn header.i=@classfun.cn header.b=E+ALW2Mn; arc=none smtp.client-ip=129.204.178.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=classfun.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=classfun.cn
+Received: from [192.168.0.160] (unknown [120.32.101.155])
+	(Authenticated sender: bigfoot)
+	by classfun.cn (Postfix) with ESMTPSA id 2CD777892D;
+	Fri,  8 Nov 2024 11:49:04 +0800 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 classfun.cn 2CD777892D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=classfun.cn;
+	s=default; t=1731037750;
+	bh=3B/wDt2bOqNsA638987AnsCuaRwFSHdyN6e3dd6uRWs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=E+ALW2MnvftkIzO17VOsGIQg22QbPsXe9/be2g7Px6bhaYtwj8TYvzBsOxmMG9qxZ
+	 TaZetswj/qwGv/3WW0NWlFX5iLYKHNEgI9fru2ysjzYR5Ehb05WjLXS6Ve1oIADmei
+	 eoZTqSBOtrKCyPPAWju58G0dTUgIIQ8za1/rhogE=
+Message-ID: <6e748aa6-de2c-4a90-b07f-7a9d3e441d19@classfun.cn>
+Date: Fri, 8 Nov 2024 11:48:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108023717.8613-1-sarvesh20123@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/9] leds: add Photonicat PMU LED driver
+To: Lee Jones <lee@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Jean Delvare <jdelvare@suse.com>,
+ Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Sebastian Reichel <sre@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Heiko Stuebner <heiko@sntech.de>,
+ Chukun Pan <amadeus@jmu.edu.cn>, Junhao Xie <bigfoot@classfun.cn>
+References: <20240906093630.2428329-1-bigfoot@classfun.cn>
+ <20240906093630.2428329-8-bigfoot@classfun.cn>
+ <20241002153536.GG7504@google.com>
+Content-Language: en-US
+From: Junhao Xie <bigfoot@classfun.cn>
+In-Reply-To: <20241002153536.GG7504@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 08:07:17AM +0530, Saru2003 wrote:
-> Signed-off-by: Saru2003 <sarvesh20123@gmail.com>
-> ---
->  fs/buffer.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+On 2024/10/2 23:35, Lee Jones wrote:
+> On Fri, 06 Sep 2024, Junhao Xie wrote:
 > 
-> diff --git a/fs/buffer.c b/fs/buffer.c
-> index 1fc9a50def0b..e32420d8b9e3 100644
-> --- a/fs/buffer.c
-> +++ b/fs/buffer.c
-> @@ -2888,14 +2888,23 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
->  	struct buffer_head *head = folio_buffers(folio);
->  	struct buffer_head *bh;
->  
-> +	if (!head) {
-> +		goto failed;
-> +	}
+>> Photonicat has a network status LED that can be controlled by system.
+>> The LED status can be set through command 0x19.
+[...]
+>> +config LEDS_PHOTONICAT_PMU
+>> +	tristate "LED Support for Photonicat PMU"
+>> +	depends on LEDS_CLASS
+>> +	depends on MFD_PHOTONICAT_PMU
+>> +	help
+>> +	  Photonicat has a network status LED that can be controlled by system,
+> 
+> "the system"
+> 
+>> +	  this option enables support for LEDs connected to the Photonicat PMU.
+[...]
+>> +++ b/drivers/leds/leds-photonicat.c
+>> @@ -0,0 +1,75 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2024 Junhao Xie <bigfoot@classfun.cn>
+>> + */
+>> +
+>> +#include <linux/mfd/photonicat-pmu.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/leds.h>
+> 
+> Alphabetical.
+> 
+>> +struct pcat_leds {
+>> +	struct device *dev;
+> 
+> Where is this used?
 
-Which caller can hit that?
+I used it to print logs, but now it doesn't, I will remove it.
 
->  	bh = head;
->  	do {
-> +		if (!bh)
-> +			goto failed;
+> 
+>> +	struct pcat_pmu *pmu;
+> 
+> Why do you need to store this?
+> 
+> Can't you get this at the call-site by:
+> 
+>   dev_get_drvdata(cdev->dev->parent)
 
-Huh?  How the hell can _that_ happen?  "Somehow got called for a folio
-without associated buffer_heads" is one thing, but this would require
-an obvious memory corruption; a NULL forward pointer in the middle of
-a cyclic list.
+Yes, I will change it.
 
->  		if (buffer_busy(bh))
->  			goto failed;
->  		bh = bh->b_this_page;
->  	} while (bh != head);
->  
->  	do {
-> +		if (!bh)
-> +			goto failed;
+>> +	struct led_classdev cdev;
+>> +};
+[...]
+>> +static int pcat_leds_probe(struct platform_device *pdev)
+>> +{
+>> +	int ret;
+> 
+> Small sized variables at the bottom please.
+> 
+>> +	struct device *dev = &pdev->dev;
+>> +	struct pcat_leds *leds;
+>> +	const char *label;
+>> +
+>> +	leds = devm_kzalloc(dev, sizeof(*leds), GFP_KERNEL);
+>> +	if (!leds)
+>> +		return -ENOMEM;
+>> +
+>> +	leds->dev = dev;
+> 
+> Where is this used?
+> 
+>> +	leds->pmu = dev_get_drvdata(dev->parent);
+>> +	platform_set_drvdata(pdev, leds);
+> 
+> Where do you platform_get_drvdata()
+> 
+>> +	ret = of_property_read_string(dev->of_node, "label", &label);
+[...]
+>> +static const struct of_device_id pcat_leds_dt_ids[] = {
+>> +	{ .compatible = "ariaboard,photonicat-pmu-leds", },
+> 
+> How many LEDs are there?
 
-NAK.  In the best case you are papering over unrelated memory corruption.
+Photonicat has three LEDs:
+ - system operation status indicator
+ - charging status indicator
+ - network status indicator
+and currently only one LED (network status indicator) can be controlled.
 
-Please, explain what's going on.  Random checks for pointers being NULL
-are not magical unicorn piss to be sprinkled all over the place...
+>> +	{ /* sentinel */ }
+>> +};
+[...]
+>> -- 
+>> 2.46.0
 
-And "fixed null-pointer-deref" does *not* work as an explanation - not
-with otherwise empty commit message.
+Thanks for your review, I will fix all problems in next version!
+
+Best regards,
+Junhao
 
