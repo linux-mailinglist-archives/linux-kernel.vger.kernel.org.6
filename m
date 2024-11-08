@@ -1,108 +1,147 @@
-Return-Path: <linux-kernel+bounces-401380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331059C197C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:47:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D84679C1981
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:49:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D7D1C24E04
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:47:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5A01C21E98
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCFE1E0B74;
-	Fri,  8 Nov 2024 09:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BB41E0B76;
+	Fri,  8 Nov 2024 09:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKXPLmlB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CHSGivyi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5025E1171C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94A1CC152
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731059220; cv=none; b=k6df7iNgZo7SLMT5tQIJH3LEBY6qwE1lZljw55EJeEK/tt0I1dR+GA/kusVjSABSKFBdTJ54HftRZ5qLZqOOOMUXSbY8i6Eck2MfbKYEpaD6nvl37f4j8ZZII1Pex2wmg3j+6Pz3CY3taSoofX4SHQjFKzm2DKzaaT597/dlN/s=
+	t=1731059362; cv=none; b=NnW0pqEIrMviThmD4Ozmid9jgCK/rAKpGp+l0JJ8bT9J4JU5VYL6pocR0gUNZLPti5v0Mpc+8oaUEiREK62zQzzJDDwIFZb666ifryrKgVsK93N5aEcVw3yE6r6AZo0qpo/SJ1gRYeLMIU11QjdpHK1fzdd+cZWLja1/WIjYYls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731059220; c=relaxed/simple;
-	bh=gftxDemJKqLJb4mPXXdNi/TfrkvP+Tbn9Ob+u48LGdg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nlHaNJRzOEP77p6oCtV4H2qY6FtuZmdFHR3pIKaXDfGHnhLlA99elVbXFTfKO8HEm4XpRKiHusk7z9QYpZlZB2moKHfVpBnSCs0YpYdpLztkS9UVw1eoADB4PRDQmBSExEX5Lb3MKW90sdcUOkWH3y/J1FM6Vg1bFMFPzQJKGO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKXPLmlB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C13C4CECD;
-	Fri,  8 Nov 2024 09:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731059219;
-	bh=gftxDemJKqLJb4mPXXdNi/TfrkvP+Tbn9Ob+u48LGdg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=KKXPLmlBGCfy1R0l/7mT7SkOr71BSLUeo7+zKNEUxKi8NkXAFa5KpOdZYZFvPOLml
-	 PQ3/cFBFJ5ZllbyLnHzk0lb9YueYLDkKyO0lO0WoP3wirO1hj1qIEfq49OaQvVSxfm
-	 L6FMmrsEPB4nzBLwS9IDgGoVDn+0GR/yssRro1NELONKB82oN0KrxHKwBQwC1kIKA1
-	 DboLEOeUE6egG5QljdrXnsCtRTrd/OiTXPYA56+2VGo5Uk84DQ6lrWvi6W6oCdjlRr
-	 5Lh+7TOm6r9yXJUso1CVWpU8fsqlCCrg38oTKXS3LeKMHCetR90LOgkO+BBlV186vL
-	 az2Oir+syI2hg==
-Message-ID: <a1471ca1-e119-4106-8965-cd954c373a62@kernel.org>
-Date: Fri, 8 Nov 2024 17:46:54 +0800
+	s=arc-20240116; t=1731059362; c=relaxed/simple;
+	bh=PXvut3Vo+m5s6hjZebEMEvM3H0niTeOoVZ5iaSEkSOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PQ6QLySkg/DDL6XJVb5E2u3Qknpp7ViTTYrAro+AzKV3uKh8B4OiLtBisvzx8bS0CCmaRyR1eqWwjrz+kLBOd9oW4RWTkrMWCyt5iyAnBDs+cp42LYMWoChzVTKPBQqbE+jBxNa3U4fBQgFnPFWvnv4k5JDmNve67dP6rnD7X4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CHSGivyi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A89e7A7001975;
+	Fri, 8 Nov 2024 09:48:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=y/p3P3mwMqo3YL4RmYx19kAvOKcnUNWKfwWqWgLH9
+	gg=; b=CHSGivyiSbXf0+3jn7j3b/u8JmezvUYfuJrprnuO70k9XFcjA58IDOr7e
+	uH1vFr1fGWIMNaMB2m4n18230T7dyqvB3Nhu4QMxU/yBtBPs871DIp+MHE16P2+2
+	2DEUOv5IYsG9uc7UlyWr0qMfV0GdKEiIH9kNIfSEy5jjeWygrDIN4In2bJBMyFw1
+	kceIDA94wGCEdxy/JxkVAPhy7p5z8ipYsGfsi09cG705CNG9v7gnZKoKhQ4NcgZN
+	tVq8TuOXy8yEpbfP0EjVrISUQ6fLmI7QhyPp7Pc/ili0w+CpN8YOPMxwUaZL4miG
+	c9VwDxkMbZ/SfmiOh47R+Zt73q/HQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sg75819q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 09:48:49 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A89mn3A020305;
+	Fri, 8 Nov 2024 09:48:49 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sg75819j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 09:48:49 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Nm7hp012243;
+	Fri, 8 Nov 2024 09:48:48 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p1411wpp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 09:48:48 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A89miwC23003758
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Nov 2024 09:48:44 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 743FE20043;
+	Fri,  8 Nov 2024 09:48:44 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 735F320040;
+	Fri,  8 Nov 2024 09:48:42 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.124.214.45])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  8 Nov 2024 09:48:42 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen@kernel.org, maddy@linux.ibm.com, vaibhav@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arch/powerpc/pseries: Fix KVM guest detection for disabling hardlockup detector
+Date: Fri,  8 Nov 2024 15:18:37 +0530
+Message-ID: <20241108094839.33084-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH] parse_options(): replace deprecated strcpy with strscpy
-To: Daniel Yang <danielyangkang@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241106025858.495458-1-danielyangkang@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241106025858.495458-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: TqaLWbICowCfrMa8p4l-NLqSb7OTJbhA
+X-Proofpoint-GUID: 3heSwDM0UHwUDkhfVkZZM3-R6wXFLhnV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0 mlxscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080077
 
-On 2024/11/6 10:58, Daniel Yang wrote:
-> strcpy is deprecated. Kernel docs recommend replacing strcpy with
-> strscpy. The function strcpy() return value isn't used so there
-> shouldn't be an issue replacing with the safer alternative strscpy.
+As per the kernel documentation[1], hardlockup detector should be
+disabled in KVM guests as it may give false positives. On PPC, hardlockup
+detector is enabled inside KVM guests because disable_hardlockup_detector()
+is marked as early_initcall and it relies on kvm_guest static key 
+(is_kvm_guest()) which is initialized later during boot by 
+check_kvm_guest(), which is a core_initcall. check_kvm_guest() is also 
+called in pSeries_smp_probe(), which is called before initcalls, but it is
+skipped if KVM guest does not have doorbell support or if the guest is 
+launched with SMT=1.
 
-It's better to add "f2fs: " prefix for commit title.
+Call check_kvm_guest() in disable_hardlockup_detector() so that
+is_kvm_guest() check goes through fine and hardlockup detector can be
+disabled inside the KVM guest.
 
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
->   fs/f2fs/super.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 87ab5696b..ee8861b95 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -1158,7 +1158,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   				break;
->   			}
->   
-> -			strcpy(ext[ext_cnt], name);
-> +			strscpy(ext[ext_cnt], name);
+[1]: Documentation/admin-guide/sysctl/kernel.rst
 
-Needs to handle return value of strscpy()?
+Fixes: 633c8e9800f3 ("powerpc/pseries: Enable hardlockup watchdog for PowerVM partitions")
+Cc: stable@vger.kernel.org # v5.14+
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+v1 -> v2:
+1. Call check_kvm_guest() call in disable_hardlockup_detector() instead
+of relying on pSeries_smp_probe()
+2. Add the fixes and stable tags
+3. Some changes in patch description
 
->   			F2FS_OPTION(sbi).compress_ext_cnt++;
->   			kfree(name);
->   			break;
-> @@ -1187,7 +1187,7 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   				break;
->   			}
->   
-> -			strcpy(noext[noext_cnt], name);
-> +			strscpy(noext[noext_cnt], name);
+ arch/powerpc/kernel/setup_64.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Ditto,
-
-Thanks,
-
->   			F2FS_OPTION(sbi).nocompress_ext_cnt++;
->   			kfree(name);
->   			break;
+diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+index 22f83fbbc762..1edc7cd68c10 100644
+--- a/arch/powerpc/kernel/setup_64.c
++++ b/arch/powerpc/kernel/setup_64.c
+@@ -920,6 +920,7 @@ static int __init disable_hardlockup_detector(void)
+ 	hardlockup_detector_disable();
+ #else
+ 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
++		check_kvm_guest();
+ 		if (is_kvm_guest())
+ 			hardlockup_detector_disable();
+ 	}
+-- 
+2.47.0
 
 
