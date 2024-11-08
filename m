@@ -1,123 +1,87 @@
-Return-Path: <linux-kernel+bounces-401860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D2A9C203A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:18:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C6A9C203B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 463871C249BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50591F2406C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA88C2022F6;
-	Fri,  8 Nov 2024 15:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CKTNM4ft"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A4920262D;
+	Fri,  8 Nov 2024 15:19:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAE02003D5
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5D62003D5
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079115; cv=none; b=AXVTTmAwRwXGTQYG43HQUfoZ5pbbNsyHfBr6VbsOVZeQFLV2qFHq9b2G96839ON1hmP6IFTgYWALCDh9l3DSfPRYse9FXcSw8KdiiX1W1udRdjXr+Kj+Da4y2LnnQpRVvan6FlRzenEbJpMfGxqj5wSxmqXuXAK3IcZkPIPjbuY=
+	t=1731079147; cv=none; b=hIqhcQ8+0xAK4okakhUshRGOMRAFjfbedLZea93vi+m519pFmivCzon7+3K3yGGp5ru1KTGInYefT7znZDDrw5No8C7pRdIYc6KpDZhntF+yD7YpnxYJ6Gab/dKCPCWipKYZaw6omYARoRJxUSPChSGgZzz275IeZT6YzgVFFtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079115; c=relaxed/simple;
-	bh=6CyNBow/ikiCq4DVbqLUJoxugAdW1qE9b6hF+ci4Cc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G7BxZx09q5LBu+Lb/isxNPO8pMXKlDwNDkr2DPGBfXSVZXYEjTbDrE41S7hSEFKKaoDuQ1ij5x9aTT3bYMxCX9qCZ43twmSGTm6EAMvlk0AG+P127eybUvnkwuIOOtKsa28AZdkFxwNIc1YJdYo5U//UPgnTjhx4AxIKtBgCL+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CKTNM4ft; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731079113; x=1762615113;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6CyNBow/ikiCq4DVbqLUJoxugAdW1qE9b6hF+ci4Cc0=;
-  b=CKTNM4ftPVXlyhINz5eMW7rFXeoCtMdwM3eDl0hlAhq+q7/v3gV76rB2
-   vFHgfDeh2iFcmoId5vv3+nH2oC7gj7TN/kfmMyKY24CMyLxRqvv2am1ND
-   KcEhpYSSpeJ9P9l568KSeOfLhQxD4smfFl2fRmT68kxq4gpMpZvrZZ4iU
-   y9RxjiP25IBRNBUlY8AiFe7qbOccxNnxwuHU2dxWcqr6sjy2EqpyMXj6n
-   h6YrIynxRq9mt3ktiDumkn8fniFyv42FB54pQAUpGvlCiVhyMixo2IRtY
-   OaxAJKuYMPK9tC523PnkaCEKGq2I92vmrEcITxiRWpPbeOynJ76eAX6bs
-   w==;
-X-CSE-ConnectionGUID: AKjIHA6yS56iP0OzYfu2ew==
-X-CSE-MsgGUID: Z1mw3aL9Q1OiezDnJPujMg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30820127"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30820127"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:18:33 -0800
-X-CSE-ConnectionGUID: FkU38R7cSUS3vUhsPL65cw==
-X-CSE-MsgGUID: 9cDQF4RuTHinr33EgfiAYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="90716779"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:18:31 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t9Qkl-0000000Ceiq-1gYg;
-	Fri, 08 Nov 2024 17:18:27 +0200
-Date: Fri, 8 Nov 2024 17:18:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH v4 1/1] x86/cpu: Make sure flag_is_changeable_p() is
- always being used
-Message-ID: <Zy4rw-yx0JL7_-lk@smile.fi.intel.com>
-References: <20241108141235.1456557-1-andriy.shevchenko@linux.intel.com>
- <B7F5B222-2982-43D5-87A5-7510EDCCB4DF@zytor.com>
+	s=arc-20240116; t=1731079147; c=relaxed/simple;
+	bh=NTlSyeoD2+4EQKqu/2Gh4WGqdk3IDoK71aSW0ypZhJg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TSnsuJFybuVkhmNucrBC6Zq52NFK1dCRy7XOa2pheZ6FJeAIgCGo7TUte1nr8MBproxotBsV8QHcsvqDwnVyN6sgFbwhkBTMqmcpLqGk/2e74QKjfjrKGUVF+fSglsKIe5IUuk8eOlkiwt45tetfFLEvjxJOlWLIv9l/uSyukn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab3d46472so235625339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:19:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731079145; x=1731683945;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bo+njan6p1yRRIokQZvopQsTfBYUHrG3Vr76u9l3srg=;
+        b=ine4JrxL06zM3LhAnRYEzwCWqbKKDaYD+KdWsoMM3ubey8a8d1rNeCXpcNltTb6bMi
+         0m38Wbm0H+nAtnTetdAa7aCa2laK70sg9Y0u3jG7VUBEyoF2lHZdRSP4hAkt7YPxPOYF
+         HNSAA9JDmIDb7bD/hj86LafN6+USxeW8IlrR/sAGpNMcoDQhHpf62hFe/aYkfYc+RkNS
+         wOsSQJ3bWGRb7TilSy5iQ7NSLV+1wu5MP06BcfdKLN/IISe3DdmlYIdESU/mAMlTtIl0
+         ylYUBxvEgdRKXUu6ikcqWOlLMoCFaLJDbes/LJQUUjIDX7bR4/iYZpW64aiHecpPhX5u
+         hjXA==
+X-Gm-Message-State: AOJu0YzZGJXcKZ0TQTxAK5s+lpTxHyWKmdD6rf1due+qfWgllfX8Q8r4
+	lshQxGFRsnWsH6z5DMgrSmJLqz0HbPu+vXA7a/wfQNFZpGDS1hfhm48IjdPH14AwavhXceTkgeR
+	mDstZf/Sy5WR78Du28GCb0qfbseyfzcM6bHZoTY6VMz+4szCjpzvM8BE=
+X-Google-Smtp-Source: AGHT+IEKoS9Wb3KaLv0vzUXaqlOb4GGG8H0Mu8s/1eGI3S+mj+V6VvDG1tEi+vMhY1j8ITI0IJohiJOFZXGlmtQAE/g2itJ4fdns
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <B7F5B222-2982-43D5-87A5-7510EDCCB4DF@zytor.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:1fc9:b0:3a0:9fd8:f70b with SMTP id
+ e9e14a558f8ab-3a6f19a221cmr37673755ab.6.1731079144825; Fri, 08 Nov 2024
+ 07:19:04 -0800 (PST)
+Date: Fri, 08 Nov 2024 07:19:04 -0800
+In-Reply-To: <CAHiZj8innKODZYdJr0mV8CJrR_vk8VKw7Gf+wkoUYCp2Mq=v2g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672e2be8.050a0220.69fce.0019.GAE@google.com>
+Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl (2)
+From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08, 2024 at 04:13:05PM +0100, H. Peter Anvin wrote:
-> On November 8, 2024 3:11:46 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> >When flag_is_changeable_p() is unused, it prevents kernel builds
-> >with clang, `make W=1` and CONFIG_WERROR=y:
-> >
-> >arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
-> >  351 | static inline int flag_is_changeable_p(u32 flag)
-> >      |                   ^~~~~~~~~~~~~~~~~~~~
-> >
-> >Fix this by moving core around to make sure flag_is_changeable_p() is
-> >always being used.
-> >
-> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-> >inline functions for W=1 build").
-> >
-> >While at it, fix the argument type to be unsigned long, although it currently
-> >only runs in 32-bit cases.
+Hello,
 
-...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> It's good that you are changing the return type, but we need to be consistent
-> and change f1, f2 to match. At the same time, I suggest changing the return
-> type to bool.
+Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
 
-Ah, that makes sense!
+Tested on:
 
--- 
-With Best Regards,
-Andy Shevchenko
+commit:         906bd684 Merge tag 'spi-fix-v6.12-rc6' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1207ee30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174220c0580000
 
-
+Note: testing is done by a robot and is best-effort only.
 
