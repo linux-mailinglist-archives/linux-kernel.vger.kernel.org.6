@@ -1,61 +1,79 @@
-Return-Path: <linux-kernel+bounces-401171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BD99C16C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:08:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7BD9C16CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0381F24EB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487F61C2122D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:09:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B210C1D0F51;
-	Fri,  8 Nov 2024 07:08:21 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA435DDA8
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5B1D174B;
+	Fri,  8 Nov 2024 07:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r6yauIT5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C1E1D0DF6;
+	Fri,  8 Nov 2024 07:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731049701; cv=none; b=TLkW+WO2fy4bUTkua5SHBu7saJx0XSirJyRon4rgb/zmykY1sHgG6oihbBztppkG0PSvNyoH14rdrB8d4wTjHBnySy1h2DxjEIOTlNFr5Z9t4u/BenmvpjAFl4ApNDO/wVa7cDWfG2CMJjw8W39HB8ME4Ofqod+RU0dVVDFOKLA=
+	t=1731049714; cv=none; b=CHmvnXPyGm3l/ouSfS79/xj7n75McQ05VOpGwwSF2yyzIWtW7s8nptDTSCN6dgFXkqjrVOIPhC8NPmL2I1vc4jBuTmzT0rP3ADPFSd0LHDxJeAIdE5KCURMRBY+F9OEMDeal9wRGu2kjnkeLasVgSUhXgpIp/mUBnz6h/8Jb5oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731049701; c=relaxed/simple;
-	bh=Ew36ksT+oX+8/RU8nWQadFRWIm7fTggzOfZ9S3UXCDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H3K4E5RsR50Qz0Lt21XEV4RkbOfC0apADd946uGT96X/5yoCTCYZm7P40DpqAc2qxCt+A0bJFygDAtbFQmW195TuXw2DS5fuJ0g95OmQ1PxcAT3BR1+19+cJjawq0fbzPydImHjzCimxCVtsAGh1OEkrYOYZijt6fG8Nq/MRDFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2D2CC68AFE; Fri,  8 Nov 2024 08:08:07 +0100 (CET)
-Date: Fri, 8 Nov 2024 08:08:06 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Bob Beckett <bob.beckett@collabora.com>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	kernel@collabora.com, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme-pci: 512 byte dma pool segment quirk
-Message-ID: <20241108070806.GA9216@lst.de>
-References: <ZyE0kYvRZbek7H_g@kbusch-mbp.dhcp.thefacebook.com> <20241107165131.3462171-1-bob.beckett@collabora.com> <Zyz2oiQ2pco15HHT@kbusch-mbp>
+	s=arc-20240116; t=1731049714; c=relaxed/simple;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ep0peQRvozkyfj5hx7ofBChjR5mtLsLCGOx9693OYo8gyKSTsA2egQdRzJks7xi6ey6GX660T26VLfYbtN5KffTmtGuthu0e2okhcCt/7zW7MuT9/GJqS3XetUU4pF8jnyryY9f4qDjN1RMxvZTyIHGja0utxuiFxT+Ymadj2E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r6yauIT5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 88BD1212D51F; Thu,  7 Nov 2024 23:08:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88BD1212D51F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731049712;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r6yauIT5ny53DDMb7kV7cioffV0ER8go7d6Yk184ivO+H1YbKufnIBLl/QNUcmNoZ
+	 HRYvZgAeBF08FIwXwIosJFKrxDmMEY747yiwT1iHvnCheUZqYTkfZL7XRszLg1lpfg
+	 v80KP7hPnAVzgMHzwEHpEQMJ4pf1N0m3IOnSgLu0=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hagar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.1] 6.1.116-rc1 review
+Date: Thu,  7 Nov 2024 23:08:32 -0800
+Message-Id: <1731049712-19002-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20241106120306.038154857@linuxfoundation.org>
+References: <20241106120306.038154857@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zyz2oiQ2pco15HHT@kbusch-mbp>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Nov 07, 2024 at 10:19:30AM -0700, Keith Busch wrote:
-> We have a constant expression currently, and this is changing it a full
-> division in the IO path. :(
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-Yeah.  Given that the device is broken I'd just have it pay the price
-and never use the small prp pool instead, which just adds a single
-extra branch to the fast path.
+
+
+
+Thanks,
+Hardik
 
