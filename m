@@ -1,112 +1,146 @@
-Return-Path: <linux-kernel+bounces-401134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF0A9C165A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:10:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC0F9C165D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90281F23CD0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937131F23611
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F701D0170;
-	Fri,  8 Nov 2024 06:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621B51D0BB5;
+	Fri,  8 Nov 2024 06:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKHLiO6q"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qcpaop2v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEA1CEEB6;
-	Fri,  8 Nov 2024 06:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB81D0146;
+	Fri,  8 Nov 2024 06:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731046210; cv=none; b=qOX+RWdPpKqS8CKidUkKG3X+mVg5SCIq3C4rtmyn4qg+YDSV8aR17hT6TZLnCUm34mdiMgDH8/bNl2isv/nS9VUPUxQRE8BQSIWjBQ+Qwiu6xfY3LkWXn974Ihf1AZjUgsQ9noX7inDdJ2Uc/6kAUnpOEBogdc6pWQClP6M2TTI=
+	t=1731046501; cv=none; b=H8ED5vOTt7ZU273r44uX+667dOz6FhnEGxf3er+EbXwrqNFhOn4+sDdISKAzAot9f+zjyUqxL/ZKXZUAIfWxfYwUngLSXefVjTHgd6Qwu2uPG0nveeucokbdTH7r5+XQ73QxA2hJWGbVGnBrW0prosuCVrcD1ZfyT+Gu7icraLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731046210; c=relaxed/simple;
-	bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FeKgXsRrGWha8+WY03/XTrHT/nFhp+SxI/DJT/lSxLDiR3Ife9Bb7uSezAoTyWkFw38/w8yg283kF5X9LMAUqf4eULl5vELK8gJ404hlQTewZnl6qYltGvwbbhk2SGD0GY5mzyxFIx4901n2ZmuP7cQZPXvkPr0eRLfAafeVZvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKHLiO6q; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e9ed5e57a7so14853877b3.1;
-        Thu, 07 Nov 2024 22:10:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731046208; x=1731651008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
-        b=hKHLiO6qIvV4X7pDmYH7jbZvupO+ApIEz/VKn8wmaUxK3oQzmBO2fgjFPMf0d9sVeM
-         s7xuRlL//KRtVR850/ZciHWrbKg+DJo8m47RvkUYpJV+DhS6vulGSp5E/C/myb9EKLxN
-         +B245Xi8vnx7Ivm2uuvMc0NvI09to1l7kHl29kmn5ssdzXr3dZznTWh4pHUWvUIbem45
-         DgU+CGd49zFw4UDxM+NN2hzBJ5ThUWYwWMX2eFdVAmVACIcQvoCIn+kZkH2IG/n4MnP+
-         ouY65Kn9esBW5je0JKtoSHrItQy+NoKKs8r8W5pMnuJUEFFFlD21zAMqbO2IheDT2O26
-         zQew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731046208; x=1731651008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QNRHmkQNttL4XBC1OFrUpsQWNzgq+Jf7VcqAcf7oIns=;
-        b=swyN9Z6S5jaeNcBeIGUIsQnkOwydjAeIky2ybAkbBgkiph5YBK1V5X+tuT+Hva3Fu6
-         A6WJZHuHQNwcCXvqvzjlhlE1Q7SQZvhsd9dxW4U9qFcbQJGEHUNuu1gQbgyQP+L5sQjS
-         4N1oo84UbtHt0l71rCWevFD/53zRwo9DF4kK0ueJR3AAk9zHoN0dDPYPZmvMtZZRktpm
-         bm6JNY71PGAEnm7gaNygsmkGEpPdFilflSyIe1uvlHru6qqztTMTtDUSaD2V2NYngqO0
-         nVx675MOKmWvoOzoluCK4a8gcaTu8ISJDJEtG09rxXOxUeGwf/neMmPIhOKYwvpdxQAL
-         SMOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUi6Jsh2vsldJsDp1Nq05FZxAK1Fe5axlA4Yui7R5PWvCWdxmwjMeIhqwfOhERWfnBinj2ppUIp/Om7S5M=@vger.kernel.org, AJvYcCUijrNVhA13IEZsxPaksq+lxII/CgOk7V3/SO9rdmeNsHdqjz5MyqWxgJcYLmbesN03PZmCE2y0oZlW@vger.kernel.org, AJvYcCX7RSAFyALU5Sc0lPzWGQ6Ts9oTYb3HBgayyB/MlPa348M9IP92u72fZNt2K/xxmgJ8CkW4URwR@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVTNaY/+KTYth3AmgPJ6CXEMa2nQf9YfUqnmM9e6TN/04M2oQe
-	ES6GgbMrNfSDjxJy0xebnHS9JpQ8v04whERG8o1qSvJm1/BqxUjs0M9WW+k93Q3LG3Ezut4gTi4
-	SQZ/nAO2l2mVh3reLjLAoRnX2r+U=
-X-Google-Smtp-Source: AGHT+IHHn/w8b4Tg7Hd4Sr58w27FsTmfn+08/QY7kx6hk8l4BQYd7+PswpjPKal/gGm8RzZk8IrMXvQgoIbSuzppJkw=
-X-Received: by 2002:a05:690c:6302:b0:6e5:bf26:578 with SMTP id
- 00721157ae682-6eaddd96d06mr19916317b3.17.1731046208488; Thu, 07 Nov 2024
- 22:10:08 -0800 (PST)
+	s=arc-20240116; t=1731046501; c=relaxed/simple;
+	bh=eUXmnG82VK1Ao9xpUP1276Kus2acS1r2yCCwIcj0U+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XMSrurb78mE7gzRqzTFVB5v2pYmMOcUvTfXFAY2PJ0Sh25JGK+mwWfzgvjioZyN550CWk81sUSKpz3+umpSnuhAh65tJwhXSJQMzI0/nmGPRo/KMNIPXeUuJHpJJ81MiziDR8uqh41Pq2B75zRljmcUXZGeh4A5ucmlaP6Y4EHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qcpaop2v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB7A1C4CECE;
+	Fri,  8 Nov 2024 06:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731046501;
+	bh=eUXmnG82VK1Ao9xpUP1276Kus2acS1r2yCCwIcj0U+E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qcpaop2vlOf+Mf6MiI0DTcS7oNOTEhJ6BJlHAQx369kVmkDgLBI8kEprmVFj2EKbM
+	 WRaPkQfxhxTHcBbXXb0xcg9riLSr8/mOKrJ7rH9IJh+/aR8s7HBMgx9pz4w6jwg+QT
+	 HCK7ALJIX2lKdVtp5/4eA0yykQNmlcLp4V3mvF0MvwqBYDCOarj+zS5jpn7y4ZSSyT
+	 7GobeXv13yHA8bcwF9vwZiRzYO7B6tlCZyicNKw2ZDuMe+LxlxD5VM9Yx98i7PD9AC
+	 gC6bCiQbSA3pvrChpRsi6b/ksh9HsqLDhamBzKUn0WCu+RRPlkeQM5oLyVGZy9PnG3
+	 hk3A45QAg9YqA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Kees Cook <kees@kernel.org>
+Subject: [PATCH v2 0/4] perf lock contention: Symbolize locks using slab cache names
+Date: Thu,  7 Nov 2024 22:14:55 -0800
+Message-ID: <20241108061500.2698340-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104092434.2677-1-dqfext@gmail.com> <7e0df321-e297-4d32-aac5-a885de906ad5@redhat.com>
-In-Reply-To: <7e0df321-e297-4d32-aac5-a885de906ad5@redhat.com>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Fri, 8 Nov 2024 14:09:37 +0800
-Message-ID: <CALW65jaKn7HQth6oYYHWYvg7CTZJj2QH66nHyo41BNjAA15Y7g@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ppp: remove ppp->closing check
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, linux-ppp@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Paolo,
+Hello,
 
-On Thu, Nov 7, 2024 at 8:08=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> wrot=
-e:
->
->
->
-> On 11/4/24 10:24, Qingfang Deng wrote:
-> > ppp->closing was used to test if an interface is closing down. But upon
-> > .ndo_uninit() where ppp->closing is set to 1, dev_close() is already
-> > called to bring down an interface and a synchronize_net() guarantees
-> > that no pending TX/RX can take place, so the check is unnecessary.
-> > Remove the check.
->
-> I'm unsure we can remote such check. The TX callback can be triggered
-> even from a write on the controlling file, and it looks like such file
-> will be untouched by uninit.
+This is to support symbolization of dynamic locks using slab
+allocator's metadata.  The kernel support is in the bpf-next tree now.
 
-ppp_release (when the file is closed) calls unregister_netdevice, and
-no more writes can happen after that.
+It provides the new "kmem_cache" BPF iterator and "bpf_get_kmem_cache"
+kfunc to get the information from an address.  The feature detection is
+done using BTF type info and it won't have any effect on old kernels.
 
->
-> Cheers,
->
-> Paolo
->
+v2 changes)
+
+ * don't use libbpf_get_error()  (Andrii)
+
+v1) https://lore.kernel.org/linux-perf-users/20241105172635.2463800-1-namhyung@kernel.org
+
+With this change, it can show locks in a slab object like below.  I
+added "&" sign to distinguish them from global locks.
+
+    # perf lock con -abl sleep 1
+     contended   total wait     max wait     avg wait            address   symbol
+    
+             2      1.95 us      1.77 us       975 ns   ffff9d5e852d3498   &task_struct (mutex)
+             1      1.18 us      1.18 us      1.18 us   ffff9d5e852d3538   &task_struct (mutex)
+             4      1.12 us       354 ns       279 ns   ffff9d5e841ca800   &kmalloc-cg-512 (mutex)
+             2       859 ns       617 ns       429 ns   ffffffffa41c3620   delayed_uprobe_lock (mutex)
+             3       691 ns       388 ns       230 ns   ffffffffa41c0940   pack_mutex (mutex)
+             3       421 ns       164 ns       140 ns   ffffffffa3a8b3a0   text_mutex (mutex)
+             1       409 ns       409 ns       409 ns   ffffffffa41b4cf8   tracepoint_srcu_srcu_usage (mutex)
+             2       362 ns       239 ns       181 ns   ffffffffa41cf840   pcpu_alloc_mutex (mutex)
+             1       220 ns       220 ns       220 ns   ffff9d5e82b534d8   &signal_cache (mutex)
+             1       215 ns       215 ns       215 ns   ffffffffa41b4c28   tracepoint_srcu_srcu_usage (mutex)
+
+The first two were from "task_struct" slab cache.  It happened to
+match with the type name of object but there's no guarantee.  We need
+to add type info to slab cache to resolve the lock inside the object.
+Anyway, the third one has no dedicated slab cache and was allocated by
+kmalloc.
+
+Those slab objects can be used to filter specific locks using -L or
+ --lock-filter option.  (It needs quotes to avoid special handling in
+the shell).
+
+    # perf lock con -ab -L '&task_struct' sleep 1
+       contended   total wait     max wait     avg wait         type   caller
+    
+               1     25.10 us     25.10 us     25.10 us        mutex   perf_event_exit_task+0x39
+               1     21.60 us     21.60 us     21.60 us        mutex   futex_exit_release+0x21
+               1      5.56 us      5.56 us      5.56 us        mutex   futex_exec_release+0x21
+
+The code is available at 'perf/lock-slab-v2' branch in my tree
+
+git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+
+Thanks,
+Namhyung
+
+
+Namhyung Kim (4):
+  perf lock contention: Add and use LCB_F_TYPE_MASK
+  perf lock contention: Run BPF slab cache iterator
+  perf lock contention: Resolve slab object name using BPF
+  perf lock contention: Handle slab objects in -L/--lock-filter option
+
+ tools/perf/builtin-lock.c                     |  39 ++++-
+ tools/perf/util/bpf_lock_contention.c         | 140 +++++++++++++++++-
+ .../perf/util/bpf_skel/lock_contention.bpf.c  |  70 ++++++++-
+ tools/perf/util/bpf_skel/lock_data.h          |  15 +-
+ tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |   8 +
+ tools/perf/util/lock-contention.h             |   2 +
+ 6 files changed, 267 insertions(+), 7 deletions(-)
+
+-- 
+2.47.0.277.g8800431eea-goog
+
 
