@@ -1,180 +1,166 @@
-Return-Path: <linux-kernel+bounces-401536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FBC9C1BDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:08:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F1589C1BE2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23552817CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0425A281AE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1031E32A6;
-	Fri,  8 Nov 2024 11:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D031E32D5;
+	Fri,  8 Nov 2024 11:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qB7OWp97"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="c1xowD7s"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C401E285C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620891D0400;
+	Fri,  8 Nov 2024 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731064126; cv=none; b=tZFJmU2rJ6Rj050kXUcYksd1b0m9SK25ss7gwPe9bjash3OW2Ns1+aJoErJogSjCRd9Y+BB/zE+79/BJ+uFpbvUGwDEGq/Sst7eDltgfffAE6vu9jAqKUNiaG6s2ILCiEKvj8XJTk3ND6WtH1dSeBra/rtW4g9plZR5TQOAS0Ic=
+	t=1731064187; cv=none; b=r8qBa7BEp8qcbp+ey2slxp4LfXJnh6tCpLq0i4LYYF8bgAkS8HEbkJcR18R2lbG6Hm4zoWqxaMaaW1HYxsyUeWAcUJM/DIiGKQ9L4qWsaRVM7pqxODaeG44RZ5hSBe1ue1UhrP+Sf8GVhboN7VsgQpq5aiBq0FbGKNbNM5ApqOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731064126; c=relaxed/simple;
-	bh=x2rWF8xSiioHF52bAADo4nEdsFYbxG0f5o7nh2o6zwE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=fGtKLOrFqU3YSUV8eApV0F7GmVQ39OPoDjmjSLebclOztLwNjEDsiYaqvyCKR0lU9XkF/+T4iRvRbFmPPXbaLjiA3LEaHAPt4ILPXO1qBap2CSUBfjwwYLczO0gNP/jFXU5FrHZFBf8moHF+5I1yiQKEyolCAdFUHXkDFoZghhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qB7OWp97; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so1050285e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:08:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731064123; x=1731668923; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YL1Rgp45aNCeqluD7CNTr/BqOhZWdGker07rC0pXvB4=;
-        b=qB7OWp973bBEvABqMWK5oPjPRqRAal+klKe3AZJsVVilMczGOEOPDXYrt4G60Rddo8
-         n3RXeKK2Dkq475yzCABiuQCfxl4XionCd3pOtdViMj99+5QbzWFCOH+7Obbf+I9ff6YZ
-         5ByIyObBLuSE57FvZsYFxItWmJkpP4knbkOmc/EPkHCaUFN3KpwDHx3X64zj8KaSiF3c
-         oQwBPaNGUYwboJOIfE0SUpUvdguGfyGoWsuAiFRtQAxL7jchs+VHTDz+f3ypJCJTdCGp
-         pql4ZrtHADplOakKrY1dp18mD8r9KO0cr/Yo0DHfVv68v2Dr8srV8BkFrfRP6tD5huEb
-         w1Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731064123; x=1731668923;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YL1Rgp45aNCeqluD7CNTr/BqOhZWdGker07rC0pXvB4=;
-        b=lW3NAGe4JUADRWbAPhdIttu8yjcZkNgzOxGlg9S17qLkOpkraWb47szwcoIF+q7s4z
-         DX8Bh1CEmmcpHwoTX5O36Iko3xwfkcRHkJTHPKqi/sMUTQO9mufTQE/SS44L6MxdJKIe
-         p5WeBx51y56YrhigcBB0sn2NRGPH9u2KBX8VZNrhX1+WTn5j3k/U2wI9vS9FoaBNI0TN
-         EWuOX30g/ihK1utE8ui1BiYVKd4oVhTb+iJFFN/qWBal+ZH+j+npjLRFtAeC9ckf9tqv
-         nIgZ1K/ek4kRM43aYFRQqoHsdxySCkS3Xio/jFNH9MH1caVIg7O6ZdCfRk72O1U5NMPz
-         6P/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVAkCbYpApLq5XF09ySS+4I+zyjQvxFPktMsAeB9uGRKMo/9AW1zMhX0rhAzW1StZ5/esm5xPE0gh8r6nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFsRNOOzueFdvjEZr9o5Shd8WXZPKmTbihpZY6K/qna6ezSUyp
-	69PcjCbVESx7wRPEQHObgmtkZq/iAAWGKo1t9XUN2EyRskoE/1RJtlbouG0yvzY=
-X-Google-Smtp-Source: AGHT+IGj3BOQZ14AiQY13aS/5gS5f1lxEfbLYLKCMVX8PhMYJaBS9XktQAJj1VkL3pEbWfTw7n9xKw==
-X-Received: by 2002:a05:600c:4e90:b0:42c:ba6c:d9b1 with SMTP id 5b1f17b1804b1-432b77fde6emr7620575e9.4.1731064122872;
-        Fri, 08 Nov 2024 03:08:42 -0800 (PST)
-Received: from [172.16.24.83] ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa70a234sm97153065e9.34.2024.11.08.03.08.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 03:08:42 -0800 (PST)
-Message-ID: <c50d36ca-2268-4149-8bf0-c44fc1786d9c@linaro.org>
-Date: Fri, 8 Nov 2024 12:08:41 +0100
+	s=arc-20240116; t=1731064187; c=relaxed/simple;
+	bh=clnanh8taykWM/pNRBjvl0RzxbskTo+dn00sfc90TeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQKDlRjI/tdTWiO95k+7WMRiMYgUjpEN8LSJwhX3Lnyd7/1kexVNRmieSxfa/kbVwF4O2wEXCIYd5kQtkrFzOkgL66bUgaGTuH7G96eUYU2O3he/VU2D8tJN5QI8JP9VALaAghKo56C1MBDXDO5m2apFJ6oHtcA3P8aQBEYqtws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=c1xowD7s; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XulOllBIkuytFC+Y8jjBL4AZiw+lKhgqpGZMJSaBx5k=; b=c1xowD7s4OuJURB6/lfb3SpnaM
+	WCf+aB8UmNdac55vpex+o8Z4RQxK3FPf7BaUvS3r9k4rnVslK0z49jwLb/WjuUCazjE78wGNNcQUg
+	U+i9FcmUCfXGvWlFZcYTXhbH5QEcuEQ2BlyxacYunkZSSOpiiTYje7VyI7PZYl+xIUls7OsGhYEcE
+	SOjOS2pZ1DhtQv8jGu5HWWtkQH3/E2DHnEdNnZyoFKKgoF9pALFMgjUsgGY9QM1wUpUaMa20JI0fb
+	qGDoN0d4LJmWqcP22iXd73XqPWk92zq073ALIAv2fKHzkJkRt4jqD5EhycRwy3VBshLroYG63IjGr
+	X85XvVKA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43764)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1t9Mrt-0004yj-0n;
+	Fri, 08 Nov 2024 11:09:33 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1t9Mrq-0002ER-17;
+	Fri, 08 Nov 2024 11:09:30 +0000
+Date: Fri, 8 Nov 2024 11:09:30 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v3 3/3] net: phy: Add Airoha AN8855 Internal
+ Switch Gigabit PHY
+Message-ID: <Zy3xaviqqT6X8Ows@shell.armlinux.org.uk>
+References: <20241106122254.13228-1-ansuelsmth@gmail.com>
+ <20241106122254.13228-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] perf: Fujitsu: Add the Uncore MAC PMU driver
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Yoshihiro Furudera <fj5100bi@fujitsu.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Jonathan Corbet <corbet@lwn.net>,
- Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org,
- Bjorn Andersson <quic_bjorande@quicinc.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241108054006.2550856-1-fj5100bi@fujitsu.com>
- <20241108054006.2550856-2-fj5100bi@fujitsu.com>
- <f66a649a-60dc-44ba-b8b0-b049c9e357fb@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <f66a649a-60dc-44ba-b8b0-b049c9e357fb@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106122254.13228-4-ansuelsmth@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 08/11/2024 12:03, Krzysztof Kozlowski wrote:
-> On 08/11/2024 06:40, Yoshihiro Furudera wrote:
->> This adds a new dynamic PMU to the Perf Events framework to program and
->> control the Uncore MAC PMUs in Fujitsu chips.
->>
->> This driver was created with reference to drivers/perf/qcom_l3_pmu.c.
+On Wed, Nov 06, 2024 at 01:22:38PM +0100, Christian Marangi wrote:
+> +/* MII Registers Page 1 */
+> +#define AN8855_PHY_EXT_REG_14			0x14
+> +#define   AN8855_PHY_EN_DOWN_SHFIT		BIT(4)
 
-This confused me...
+Shouldn't "AN8855_PHY_EN_DOWN_SHFIT" be "AN8855_PHY_EN_DOWN_SHIFT"
+(notice the I and F are swapped) ?
 
->>  CONFIG_ARM_SPE_PMU=m
->> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
->> index bab8ba64162f..4705c605e286 100644
->> --- a/drivers/perf/Kconfig
->> +++ b/drivers/perf/Kconfig
->> @@ -178,6 +178,15 @@ config FSL_IMX9_DDR_PMU
->>  	 can give information about memory throughput and other related
->>  	 events.
->>  
->> +config FUJITSU_MAC_PMU
->> +	bool "Fujitsu Uncore MAC PMU"
->> +	depends on (ARM64 && ACPI) || (COMPILE_TEST && 64BIT)
-> 
-> Missing depends on specific ARCH.
-> 
-> Sorry, this looks like work for some out of tree arch support. I don't
-> think we have any interest in taking it... unless it is part of bigger
-> patchset/work? If so, then provide *lore* link to relevant patchset.
-> 
+> +static int an8855_get_downshift(struct phy_device *phydev, u8 *data)
+> +{
+> +	int saved_page;
+> +	int val;
+> +	int ret;
+> +
+> +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
+> +	if (saved_page >= 0)
+> +		val = __phy_read(phydev, AN8855_PHY_EXT_REG_14);
+> +	ret = phy_restore_page(phydev, saved_page, val);
+> +	if (ret)
+> +		return ret;
 
--ENOTENOUGHCOFFEE, I see now ACPI dependency so there will be no SoC
-folks for this, right?  Then anyway split work per subsystem and send
-defconfig to Soc maintainers.
+This function is entirely broken.
 
-Best regards,
-Krzysztof
+phy_restore_page() will return "val" if everything went successfully,
+so here you end up returning "val" via this very return statement
+without executing any further code in the function. The only time
+further code will be executed is if "val" was successfully read as
+zero.
 
+Please use the helpers provided:
+
+	ret = phy_read_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
+			     AN8855_PHY_EXT_REG_14);
+	if (ret < 0)
+		return ret;
+
+ret now contains what you're using as "val" below. No need to open code
+phy_read_paged().
+
+> +
+> +	*data = val & AN8855_PHY_EXT_REG_14 ? DOWNSHIFT_DEV_DEFAULT_COUNT :
+> +					      DOWNSHIFT_DEV_DISABLE;
+
+Here, the test is against the register number rather than the bit that
+controls downshift. Shouldn't AN8855_PHY_EXT_REG_14 be
+AN8855_PHY_EN_DOWN_SH(F)I(F)T ?
+
+> +static int an8855_set_downshift(struct phy_device *phydev, u8 cnt)
+> +{
+> +	int saved_page;
+> +	int ret;
+> +
+> +	saved_page = phy_select_page(phydev, AN8855_PHY_PAGE_EXTENDED_1);
+> +	if (saved_page >= 0) {
+> +		if (cnt != DOWNSHIFT_DEV_DISABLE)
+> +			ret = __phy_set_bits(phydev, AN8855_PHY_EXT_REG_14,
+> +					     AN8855_PHY_EN_DOWN_SHFIT);
+> +		else
+> +			ret = __phy_clear_bits(phydev, AN8855_PHY_EXT_REG_14,
+> +					       AN8855_PHY_EN_DOWN_SHFIT);
+> +	}
+> +
+> +	return phy_restore_page(phydev, saved_page, ret);
+
+This entire thing can be simplified to:
+
+	u16 ds = cnt != DOWNSHIFT_DEV_DISABLE ? AN8855_PHY_EN_DOWN_SHFIT: 0;
+
+	return phy_modify_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
+				AN8855_PHY_EXT_REG_14, AN8855_PHY_EN_DOWN_SHFIT,
+				ds);
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
