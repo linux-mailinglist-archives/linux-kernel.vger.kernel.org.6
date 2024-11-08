@@ -1,139 +1,412 @@
-Return-Path: <linux-kernel+bounces-402324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638C09C2666
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:20:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308909C266C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C9F1F238B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:20:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EF6EB2366D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302481AA1FA;
-	Fri,  8 Nov 2024 20:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05D71F26CC;
+	Fri,  8 Nov 2024 20:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIfSu7OZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pP7ptgzz"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03801C1F0B;
-	Fri,  8 Nov 2024 20:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC521EBA03
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731097224; cv=none; b=mDfFuOgDhrFdcWKlZ+gmGF4xmuj7QzznwzwEDJ0VMT2qEM8mwNg9idJ8V61D9D7hjWjyFFtnUS2Z8qX1G+BGZyPZF/GNx/u7ORC3doafQCb3Y4mlbfegCazXbCg057w9MGKrWJqY/5fygXN8ptLBwbKbHXDW0hiYiCI1bSEKpUo=
+	t=1731097380; cv=none; b=dqxH5KrzJ6e0M5Ta2tJduEN5pRQdLUckGbkVXoMoNJtu/xwpXe6Z/U8k70JQ/KxUp+j2lre1Be6oBzCqxAgeamRhs4aPP4hjtaI9SczfCaXtdSyijTWlgD2GA9RQmqTH9w5EZZpoIKtQ1n2huFY9TU2WYAHGgtStuKwU6zFQrJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731097224; c=relaxed/simple;
-	bh=Cex5OFKLdepISNlr/zMsoMKZr4c1wz925xujO/RtmjM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCCLB2ZfBv2gCpg2ED7qVL9rsyAHyv5IZ4iFT7my7rr8Kuhgg3wTM96yOdk38PGhHTxaxu3LXIOXI0ofbgSqCj22Qi1h28qtyK5vyBlWBWBxHFJTcAIkbOnLrQKqryhc6NTlCHHl63IzKJgSppYZ9HrwKjEaDMufTqcanqQqANQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIfSu7OZ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731097222; x=1762633222;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Cex5OFKLdepISNlr/zMsoMKZr4c1wz925xujO/RtmjM=;
-  b=YIfSu7OZlO0S5pIz0+o6DcB5cBXet2ETi1kIEf6ZEaMeHuhHrPG4fZ3u
-   EWicq8pafqNLZZSJCqKuCKKcRVIHQXOwa7mmlkf+yWWkCJWF2q/gij2Hd
-   qP8bzGJ/qEBX+piki0impNfyyp6SHpd3xawE/TgYfOG9q//mnOQ1sUYGn
-   wF3+Jn+qSjyhfVRRqDeZauPPEU71cXKmMjfYQYIy5WjN4RFBIkK3TLNeM
-   uyxd94ayyJO+dQ7UcyTgeVZYw99tIMOY7j7DZaOgma6405KZw38ZHOeAX
-   6Nz7sLq0pa8lzSuXWM/G/wvIzfPVvzBph2iEbfoysXSTlzQRDPO8A67Ac
-   A==;
-X-CSE-ConnectionGUID: xczEsJKSSFanVlUJGMjgsA==
-X-CSE-MsgGUID: QHkkMecFS9Wm/niKD+UYNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="34780330"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="34780330"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 12:20:21 -0800
-X-CSE-ConnectionGUID: z9jpa/nIQaS3xVbzK89FJg==
-X-CSE-MsgGUID: RntjX9eYQR62U2yHDkNiXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="90835236"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2024 12:20:17 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9VSo-000rlS-2Y;
-	Fri, 08 Nov 2024 20:20:14 +0000
-Date: Sat, 9 Nov 2024 04:19:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 1/2] perf: Fujitsu: Add the Uncore MAC PMU driver
-Message-ID: <202411090451.quuiocP9-lkp@intel.com>
-References: <20241108054006.2550856-2-fj5100bi@fujitsu.com>
+	s=arc-20240116; t=1731097380; c=relaxed/simple;
+	bh=3TaFMvCIfdL7mNUddxjurzlwZsffRo/yJgzOOsh8UkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uoAvAX4F7yNXe41JeaSxke+i+FTe89eQ14CXjBjJPzIoxNah6RAzoqyGJH1+gFFdAewfFakO/kvcRTmsZYxQyEA7cfKYHgoY7YPYhnjJDX5GQJtmCR2JyZ3TplBGKIj/BQh+plehntSo5JHVNpAJNSblIDi9l6BcRPATUTtYViM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pP7ptgzz; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7181885ac34so1701121a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 12:22:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731097378; x=1731702178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j2hzwMt1vCXwnRJDBw66UYNW1buQGS3Aq1RmBj4RhN4=;
+        b=pP7ptgzz8FrBtFhwwg1QOafw2OZx5i6x5MDqmYEmbyq6uGC6d8KKJHLpU3fVVVNkYY
+         EtDiBg0sm1qJZgS6fh1FSrHfeb4SgpeACHq7wLKSw2hAdu1xa1+5U9D7OQ6gjiU6LQCG
+         6cbim6iWGkHKqibcURTCRwNjZiT3fgXDogUQmVlT4MNkhiMPYdNE0tddUfYiYd4tuIJI
+         JzTLPhMFT4T7U86QMilGvX+JreNG9LDSnzq5Cgtszflk7rzsRSjKtsTa/KXy6RHlRcLa
+         oofvbIAS4Wl8SIqrGn9Mzi+HewmTuH6ubfkqj/r1r4hCQnYMCpPp3kW4GUEBIo8j1sTG
+         yvBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731097378; x=1731702178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j2hzwMt1vCXwnRJDBw66UYNW1buQGS3Aq1RmBj4RhN4=;
+        b=w5/1dPI/cBr9KxjoZVOqea1J52vGtWVJBs8qGYXVZ5C4ln3vm/ugkrndpaMCnZ0bLy
+         gRA82ZnDinZA85FI3wUGl05Jsjme+TsyXpjjiDzJqO72dIoA6jcCieFlT8Ey/BGybNZV
+         x8UV8I4ooEUTBjGPxhucfxxCtzCgPz4phwnDb0ZW/GsmwM3FUUhZZ5wIrEV3tMuHKFaG
+         dru2zH6vviYhy3sGCChw30yxhngvZChGx0EDW4T0K7gMiDTMwPvZIRqPky+NP8Dg4w3m
+         S/n8j7vzKv/fom+5//Gc2td/ElrrvWPAT5rwoounOemJOvLJtB2Ozkr/DYvF1P6gzq3t
+         mM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWcyn6L6Myl7AbIi1VJ2mwJWhVm1rc6//7dz4rZcEQGXFxmXQDA+5hMIxt15C6JnzixWC8krIa+AkeTSz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzhqvmY0HUcoM15g6+zESS0SiUWkAo9pFLvxnkRtRpwufGt/Gw
+	ARYUub+vFU7+d2dSTzzeS3JDgZF+7VsyJEY1os+uKh+wcKdf2IJSvqdv9a7Cs5KfXps8Q8t8+Mh
+	o3OhxHvZWWJb+ufflBQDeOidUPG+LZhbtqVHg
+X-Google-Smtp-Source: AGHT+IFjyt9auLSTN4OrHmI8xBiTct7D6gWyd04J3d54pyx6QKB4P4jpozUdfP8sQsvTQ9DB0xUuNIhWiKVawHd0fqg=
+X-Received: by 2002:a05:6358:5d84:b0:1bc:d0a4:3d3a with SMTP id
+ e5c5f4694b2df-1c641ec23bcmr361609655d.12.1731097377665; Fri, 08 Nov 2024
+ 12:22:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108054006.2550856-2-fj5100bi@fujitsu.com>
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com>
+ <20241106192105.6731-10-kanchana.p.sridhar@intel.com> <20241107172056.GC1172372@cmpxchg.org>
+ <SJ0PR11MB5678FA2EA40FEFE20521AC6BC95C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB5678FA2EA40FEFE20521AC6BC95C2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 8 Nov 2024 12:22:21 -0800
+Message-ID: <CAJD7tkZrdrez2mohU_SRb3SYho5JGgwGYK4-imvfCNvSHfe=Eg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/13] mm: zswap: Modify struct crypto_acomp_ctx to be
+ configurable in nr of acomp_reqs.
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"nphamcs@gmail.com" <nphamcs@gmail.com>, "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "zanussi@kernel.org" <zanussi@kernel.org>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yoshihiro,
+On Thu, Nov 7, 2024 at 2:21=E2=80=AFPM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Hi Johannes,
+>
+> > -----Original Message-----
+> > From: Johannes Weiner <hannes@cmpxchg.org>
+> > Sent: Thursday, November 7, 2024 9:21 AM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > yosryahmed@google.com; nphamcs@gmail.com;
+> > chengming.zhou@linux.dev; usamaarif642@gmail.com;
+> > ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
+> > 21cnbao@gmail.com; akpm@linux-foundation.org; linux-
+> > crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> > <kristen.c.accardi@intel.com>; zanussi@kernel.org; Feghali, Wajdi K
+> > <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v3 09/13] mm: zswap: Modify struct crypto_acomp_ctx
+> > to be configurable in nr of acomp_reqs.
+> >
+> > On Wed, Nov 06, 2024 at 11:21:01AM -0800, Kanchana P Sridhar wrote:
+> > > Modified the definition of "struct crypto_acomp_ctx" to represent a
+> > > configurable number of acomp_reqs and the required number of buffers.
+> > >
+> > > Accordingly, refactored the code that allocates/deallocates the acomp=
+_ctx
+> > > resources, so that it can be called to create a regular acomp_ctx wit=
+h
+> > > exactly one acomp_req/buffer, for use in the the existing non-batchin=
+g
+> > > zswap_store(), as well as to create a separate "batching acomp_ctx" w=
+ith
+> > > multiple acomp_reqs/buffers for IAA compress batching.
+> > >
+> > > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> > > ---
+> > >  mm/zswap.c | 149 ++++++++++++++++++++++++++++++++++++++----------
+> > -----
+> > >  1 file changed, 107 insertions(+), 42 deletions(-)
+> > >
+> > > diff --git a/mm/zswap.c b/mm/zswap.c
+> > > index 3e899fa61445..02e031122fdf 100644
+> > > --- a/mm/zswap.c
+> > > +++ b/mm/zswap.c
+> > > @@ -143,9 +143,10 @@ bool zswap_never_enabled(void)
+> > >
+> > >  struct crypto_acomp_ctx {
+> > >     struct crypto_acomp *acomp;
+> > > -   struct acomp_req *req;
+> > > +   struct acomp_req **reqs;
+> > > +   u8 **buffers;
+> > > +   unsigned int nr_reqs;
+> > >     struct crypto_wait wait;
+> > > -   u8 *buffer;
+> > >     struct mutex mutex;
+> > >     bool is_sleepable;
+> > >  };
+> > > @@ -241,6 +242,11 @@ static inline struct xarray
+> > *swap_zswap_tree(swp_entry_t swp)
+> > >     pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,         \
+> > >              zpool_get_type((p)->zpool))
+> > >
+> > > +static int zswap_create_acomp_ctx(unsigned int cpu,
+> > > +                             struct crypto_acomp_ctx *acomp_ctx,
+> > > +                             char *tfm_name,
+> > > +                             unsigned int nr_reqs);
+> >
+> > This looks unnecessary.
+>
+> Thanks for the code review comments. I will make sure to avoid the
+> forward declarations.
+>
+> >
+> > > +
+> > >  /*********************************
+> > >  * pool functions
+> > >  **********************************/
+> > > @@ -813,69 +819,128 @@ static void zswap_entry_free(struct
+> > zswap_entry *entry)
+> > >  /*********************************
+> > >  * compressed storage functions
+> > >  **********************************/
+> > > -static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_nod=
+e
+> > *node)
+> > > +static int zswap_create_acomp_ctx(unsigned int cpu,
+> > > +                             struct crypto_acomp_ctx *acomp_ctx,
+> > > +                             char *tfm_name,
+> > > +                             unsigned int nr_reqs)
+> > >  {
+> > > -   struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
+> > node);
+> > > -   struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
+> > >acomp_ctx, cpu);
+> > >     struct crypto_acomp *acomp;
+> > > -   struct acomp_req *req;
+> > > -   int ret;
+> > > +   int ret =3D -ENOMEM;
+> > > +   int i, j;
+> > >
+> > > +   acomp_ctx->nr_reqs =3D 0;
+> > >     mutex_init(&acomp_ctx->mutex);
+> > >
+> > > -   acomp_ctx->buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL,
+> > cpu_to_node(cpu));
+> > > -   if (!acomp_ctx->buffer)
+> > > -           return -ENOMEM;
+> > > -
+> > > -   acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0, 0,
+> > cpu_to_node(cpu));
+> > > +   acomp =3D crypto_alloc_acomp_node(tfm_name, 0, 0,
+> > cpu_to_node(cpu));
+> > >     if (IS_ERR(acomp)) {
+> > >             pr_err("could not alloc crypto acomp %s : %ld\n",
+> > > -                           pool->tfm_name, PTR_ERR(acomp));
+> > > -           ret =3D PTR_ERR(acomp);
+> > > -           goto acomp_fail;
+> > > +                           tfm_name, PTR_ERR(acomp));
+> > > +           return PTR_ERR(acomp);
+> > >     }
+> > > +
+> > >     acomp_ctx->acomp =3D acomp;
+> > >     acomp_ctx->is_sleepable =3D acomp_is_async(acomp);
+> > >
+> > > -   req =3D acomp_request_alloc(acomp_ctx->acomp);
+> > > -   if (!req) {
+> > > -           pr_err("could not alloc crypto acomp_request %s\n",
+> > > -                  pool->tfm_name);
+> > > -           ret =3D -ENOMEM;
+> > > +   acomp_ctx->buffers =3D kmalloc_node(nr_reqs * sizeof(u8 *),
+> > > +                                     GFP_KERNEL, cpu_to_node(cpu));
+> > > +   if (!acomp_ctx->buffers)
+> > > +           goto buf_fail;
+> > > +
+> > > +   for (i =3D 0; i < nr_reqs; ++i) {
+> > > +           acomp_ctx->buffers[i] =3D kmalloc_node(PAGE_SIZE * 2,
+> > > +                                                GFP_KERNEL,
+> > cpu_to_node(cpu));
+> > > +           if (!acomp_ctx->buffers[i]) {
+> > > +                   for (j =3D 0; j < i; ++j)
+> > > +                           kfree(acomp_ctx->buffers[j]);
+> > > +                   kfree(acomp_ctx->buffers);
+> > > +                   ret =3D -ENOMEM;
+> > > +                   goto buf_fail;
+> > > +           }
+> > > +   }
+> > > +
+> > > +   acomp_ctx->reqs =3D kmalloc_node(nr_reqs * sizeof(struct acomp_re=
+q
+> > *),
+> > > +                                  GFP_KERNEL, cpu_to_node(cpu));
+> > > +   if (!acomp_ctx->reqs)
+> > >             goto req_fail;
+> > > +
+> > > +   for (i =3D 0; i < nr_reqs; ++i) {
+> > > +           acomp_ctx->reqs[i] =3D acomp_request_alloc(acomp_ctx-
+> > >acomp);
+> > > +           if (!acomp_ctx->reqs[i]) {
+> > > +                   pr_err("could not alloc crypto acomp_request
+> > reqs[%d] %s\n",
+> > > +                          i, tfm_name);
+> > > +                   for (j =3D 0; j < i; ++j)
+> > > +                           acomp_request_free(acomp_ctx->reqs[j]);
+> > > +                   kfree(acomp_ctx->reqs);
+> > > +                   ret =3D -ENOMEM;
+> > > +                   goto req_fail;
+> > > +           }
+> > >     }
+> > > -   acomp_ctx->req =3D req;
+> > >
+> > > +   /*
+> > > +    * The crypto_wait is used only in fully synchronous, i.e., with =
+scomp
+> > > +    * or non-poll mode of acomp, hence there is only one "wait" per
+> > > +    * acomp_ctx, with callback set to reqs[0], under the assumption =
+that
+> > > +    * there is at least 1 request per acomp_ctx.
+> > > +    */
+> > >     crypto_init_wait(&acomp_ctx->wait);
+> > >     /*
+> > >      * if the backend of acomp is async zip, crypto_req_done() will
+> > wakeup
+> > >      * crypto_wait_req(); if the backend of acomp is scomp, the callb=
+ack
+> > >      * won't be called, crypto_wait_req() will return without blockin=
+g.
+> > >      */
+> > > -   acomp_request_set_callback(req,
+> > CRYPTO_TFM_REQ_MAY_BACKLOG,
+> > > +   acomp_request_set_callback(acomp_ctx->reqs[0],
+> > CRYPTO_TFM_REQ_MAY_BACKLOG,
+> > >                                crypto_req_done, &acomp_ctx->wait);
+> > >
+> > > +   acomp_ctx->nr_reqs =3D nr_reqs;
+> > >     return 0;
+> > >
+> > >  req_fail:
+> > > +   for (i =3D 0; i < nr_reqs; ++i)
+> > > +           kfree(acomp_ctx->buffers[i]);
+> > > +   kfree(acomp_ctx->buffers);
+> > > +buf_fail:
+> > >     crypto_free_acomp(acomp_ctx->acomp);
+> > > -acomp_fail:
+> > > -   kfree(acomp_ctx->buffer);
+> > >     return ret;
+> > >  }
+> > >
+> > > -static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node
+> > *node)
+> > > +static void zswap_delete_acomp_ctx(struct crypto_acomp_ctx
+> > *acomp_ctx)
+> > >  {
+> > > -   struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
+> > node);
+> > > -   struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
+> > >acomp_ctx, cpu);
+> > > -
+> > >     if (!IS_ERR_OR_NULL(acomp_ctx)) {
+> > > -           if (!IS_ERR_OR_NULL(acomp_ctx->req))
+> > > -                   acomp_request_free(acomp_ctx->req);
+> > > +           int i;
+> > > +
+> > > +           for (i =3D 0; i < acomp_ctx->nr_reqs; ++i)
+> > > +                   if (!IS_ERR_OR_NULL(acomp_ctx->reqs[i]))
+> > > +                           acomp_request_free(acomp_ctx->reqs[i]);
+> > > +           kfree(acomp_ctx->reqs);
+> > > +
+> > > +           for (i =3D 0; i < acomp_ctx->nr_reqs; ++i)
+> > > +                   kfree(acomp_ctx->buffers[i]);
+> > > +           kfree(acomp_ctx->buffers);
+> > > +
+> > >             if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+> > >                     crypto_free_acomp(acomp_ctx->acomp);
+> > > -           kfree(acomp_ctx->buffer);
+> > > +
+> > > +           acomp_ctx->nr_reqs =3D 0;
+> > > +           acomp_ctx =3D NULL;
+> > >     }
+> > > +}
+> > > +
+> > > +static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_nod=
+e
+> > *node)
+> > > +{
+> > > +   struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
+> > node);
+> > > +   struct crypto_acomp_ctx *acomp_ctx;
+> > > +
+> > > +   acomp_ctx =3D per_cpu_ptr(pool->acomp_ctx, cpu);
+> > > +   return zswap_create_acomp_ctx(cpu, acomp_ctx, pool->tfm_name,
+> > 1);
+> > > +}
+> > > +
+> > > +static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node
+> > *node)
+> > > +{
+> > > +   struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
+> > node);
+> > > +   struct crypto_acomp_ctx *acomp_ctx;
+> > > +
+> > > +   acomp_ctx =3D per_cpu_ptr(pool->acomp_ctx, cpu);
+> > > +   zswap_delete_acomp_ctx(acomp_ctx);
+> > >
+> > >     return 0;
+> > >  }
+> >
+> > There are no other callers to these functions. Just do the work
+> > directly in the cpu callbacks here like it used to be.
+>
+> There will be other callers to zswap_create_acomp_ctx() and
+> zswap_delete_acomp_ctx() in patches 10 and 11 of this series, when the
+> per-cpu "acomp_batch_ctx" is introduced in struct zswap_pool. I was tryin=
+g
+> to modularize the code first, so as to split the changes into smaller com=
+mits.
+>
+> The per-cpu "acomp_batch_ctx" resources are allocated in patch 11 in the
+> "zswap_pool_can_batch()" function, that allocates batching resources
+> for this cpu. This was to address Yosry's earlier comment about minimizin=
+g
+> the memory footprint cost of batching.
+>
+> The way I decided to do this is by reusing the code that allocates the de=
+-facto
+> pool->acomp_ctx for the selected compressor for all cpu's in zswap_pool_c=
+reate().
+> However, I did not want to add the acomp_batch_ctx multiple reqs/buffers
+> allocation to the cpuhp_state_add_instance() code path which would incur =
+the
+> memory cost on all cpu's.
+>
+> Instead, the approach I chose to follow is to allocate the batching resou=
+rces
+> in patch 11 only as needed, on "a given cpu" that has to store a large fo=
+lio. Hope
+> this explains the purpose of the modularization better.
+>
+> Other ideas towards accomplishing this are very welcome.
 
-kernel test robot noticed the following build warnings:
+If we remove the sysctl as suggested by Johannes, then we can just
+allocate the number of buffers based on the compressor and whether it
+supports batching during the pool initialization in the cpu callbacks
+only.
 
-[auto build test WARNING on tip/smp/core]
-[also build test WARNING on linus/master v6.12-rc6]
-[cannot apply to arm64/for-next/core arm-perf/for-next/perf next-20241108]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Right?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yoshihiro-Furudera/perf-Fujitsu-Add-the-Uncore-MAC-PMU-driver/20241108-134245
-base:   tip/smp/core
-patch link:    https://lore.kernel.org/r/20241108054006.2550856-2-fj5100bi%40fujitsu.com
-patch subject: [PATCH 1/2] perf: Fujitsu: Add the Uncore MAC PMU driver
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20241109/202411090451.quuiocP9-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411090451.quuiocP9-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411090451.quuiocP9-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/perf/fujitsu_mac_pmu.c:604:36: warning: 'fujitsu_mac_pmu_acpi_match' defined but not used [-Wunused-const-variable=]
-     604 | static const struct acpi_device_id fujitsu_mac_pmu_acpi_match[] = {
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/fujitsu_mac_pmu_acpi_match +604 drivers/perf/fujitsu_mac_pmu.c
-
-   603	
- > 604	static const struct acpi_device_id fujitsu_mac_pmu_acpi_match[] = {
-   605		{ "FUJI200C", },
-   606		{ }
-   607	};
-   608	MODULE_DEVICE_TABLE(acpi, fujitsu_mac_pmu_acpi_match);
-   609	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>
+> Thanks,
+> Kanchana
+>
+> >
+> > Otherwise it looks good to me.
 
