@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-401461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E70C9C1AB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:35:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D333D9C1AB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3EEE1F23576
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10FDD1C267F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A971E3DEF;
-	Fri,  8 Nov 2024 10:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034E21E500F;
+	Fri,  8 Nov 2024 10:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jw6VeM7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m9sTXmEz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a5DY6RyL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4F91E32B2;
-	Fri,  8 Nov 2024 10:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019811E4924
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731061959; cv=none; b=Xrt8AmF+xkWE/Qri6yGBsJ+ghNLjIrBbFb3o7uMBKKE+zhaglAQYHxqp3zldeca8UkxmdJfZmOXu39YE6bwmccUkh8Xp3tCKRHVLjiHuESDGAYTI30V7bvt6m25x4NPVLhPIU9SsMw3E3XhEd27jaw+fSM0Z++QtBFX5nIzaMmc=
+	t=1731061977; cv=none; b=NaLLe2AInTt1eNJa9DlmF9t9DVDuW+p3sB1ZvPdyQt7Rxlmoziwo5f6s1lPOBW/qlWSm/04j77tX8aSaHB5lnILQeaJh468DguRc1XwpizkrOufpZAWOjeJX8nkfmwwNHDKUsb9vnuYg5MsXElxa/iGwWeL/kiyw0yWDywbNNl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731061959; c=relaxed/simple;
-	bh=Y1DchAs7VMC2A3AGrg36PWB96mQ+5c2bZIG4uYsYJGI=;
+	s=arc-20240116; t=1731061977; c=relaxed/simple;
+	bh=LcKAwSjv5Z1dRNKufRhjACYmla++QX+PDXyeASO5DKI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AA3SlFgbgQcVYU+XBBBNBHVSL1IQri5vtRwaOsczu2Q8Mq71ODD1OQwXzooO4Yz1XoI+gJgByIJUtWJmpQuOVSE1310AlD4CYb4shf3OWKVEZaCHRwsSjju1YJL9pIAiZu/OuxfoF+N2ZMwuVZ9JilU93X08Pq4DOwwRI2w9IB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jw6VeM7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99DE6C4AF49;
-	Fri,  8 Nov 2024 10:32:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731061958;
-	bh=Y1DchAs7VMC2A3AGrg36PWB96mQ+5c2bZIG4uYsYJGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jw6VeM7MaoKm+BRhRuHk3uLHXcMx10Mp43ZXO8qkVP07TcVCTGaaKCCf1ISwKQF+E
-	 ODf8D5xssLYaBDXUmqde42crwmLhEN4FwkeWH0HFoD6jk4r0WXjv6NkGusQQY86P5z
-	 cooUnndltc6JqeV9A1WrmJACVsETpoOl2+rJx/uZ3zOMHqXjr2MWS7dhUYI2qIVHIl
-	 UqxrRWAV/AmdfgARnJvMhDGuf9viIVi57RRSwNGeFMygGoKm7EmqMu0ONkoVXP2H0J
-	 dIEg1K6q8VZxXHnRSguReDmSdElq5qwCuacw4DLT0U3OGArQpEGo26cjXGwdK12BQZ
-	 aFZWVfmb4ZbwA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t9MIC-0000000081z-29in;
-	Fri, 08 Nov 2024 11:32:40 +0100
-Date: Fri, 8 Nov 2024 11:32:40 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Hemant Kumar <quic_hemantk@quicinc.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Maxim Kochetkov <fido_max@inbox.ru>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bhaumik Bhatt <bbhatt@codeaurora.org>
-Subject: Re: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
-Message-ID: <Zy3oyGLdsnDY9C0p@hovoldconsulting.com>
-References: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROmgBq+VKSnuD5/G9eEIWldxRN7HFOiw2QH0130DWuhUEtUN2GWj2IZcI3uR8oPEZ2qkKAcQ1NiXzjlwmRM/OJvxL1cIGfxN+bjS0+pMOW5GysSTPsORuuhk4wVO4ngZWQWpP8Ezf+o00DXhNsVgfcvBM5oFlcoUizv7OEHlnfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m9sTXmEz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a5DY6RyL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 8 Nov 2024 11:32:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731061974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J79gOJvhB5tRp7HnYvETBA8AX34Or6W938K5FMMyFqg=;
+	b=m9sTXmEzo1OGqioxW833sOpy3qO95AweykCn9D31VdYuUiiZOE3XgmIHAK1gunqguIxxb8
+	duPi80rbAJv74tSgAsg2HqdtbwW6e2C2aL9wVLnuCCOI5RMbi7bypHa2+YTpdMPm/Xq3im
+	UInqD79dVTOCkl8g+UROv1UxjjbmxxPHPL/nyaEz8chQ5gCfNUTic5PZJIyR+6Jk+B2KyM
+	0qbAmjgjIevPit6qOxzWc8N8WNHCHs2fc/WSeifAmKlb/30jErR3BfqQjjeA2rpvMklmkj
+	Ae/9BVg55HBU6rNenmoZsHm5KcvERjxGDDHQEjpjDJKv6V8ZVSw56TFipHWPiw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731061974;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J79gOJvhB5tRp7HnYvETBA8AX34Or6W938K5FMMyFqg=;
+	b=a5DY6RyLjc1BaL5rujJNW0ITFBElHzCIdjrDA3wURPTkmocNc304lO7ma32Ewh+3x0Khoe
+	565c6CC71m4xqXBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, "Paul E. McKenney" <paulmck@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Gleixner <tglx@linutronix.de>,
+	Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org,
+	cl@linux.com, iamjoonsoo.kim@lge.com, longman@redhat.com,
+	penberg@kernel.org, rientjes@google.com, sfr@canb.auug.org.au
+Subject: Re: [PATCH v2 3/3] scftorture: Use a lock-less list to free memory.
+Message-ID: <20241108103252.4EVzazwC@linutronix.de>
+References: <20241107111821.3417762-1-bigeasy@linutronix.de>
+ <20241107111821.3417762-4-bigeasy@linutronix.de>
+ <Zy0m5TBz3Ne55syG@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
+In-Reply-To: <Zy0m5TBz3Ne55syG@Boquns-Mac-mini.local>
 
-On Mon, Nov 04, 2024 at 05:29:37PM -0800, Chris Lew wrote:
-> From: Bhaumik Bhatt <bbhatt@codeaurora.org>
+On 2024-11-07 12:45:25 [-0800], Boqun Feng wrote:
+> > @@ -538,6 +567,8 @@ static void scf_torture_cleanup(void)
+> >  
+> >  end:
+> >  	torture_cleanup_end();
+> > +	for (i = 0; i < nthreads; i++)
 > 
-> The call to qrtr_endpoint_register() was moved before
-> mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
-> callback can occur before the qrtr endpoint is registered.
+> This needs to be:
 > 
-> Now the reverse can happen where qrtr will try to send a packet
-> before the channels are prepared. Add a wait in the sending path to
-> ensure the channels are prepared before trying to do a ul transfer.
+> 	for (i = 0; i < nr_cpu_ids; i++)
 > 
-> Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
-> Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
-> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+> because nthreads can be larger than nr_cpu_ids, and it'll access a
+> out-of-bound percpu section.
 
-> @@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
->  	if (skb->sk)
->  		sock_hold(skb->sk);
->  
-> +	rc = wait_for_completion_interruptible(&qdev->prepared);
-> +	if (rc)
-> +		goto free_skb;
-> +
->  	rc = skb_linearize(skb);
->  	if (rc)
->  		goto free_skb;
-> @@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
->  	qdev->mhi_dev = mhi_dev;
->  	qdev->dev = &mhi_dev->dev;
->  	qdev->ep.xmit = qcom_mhi_qrtr_send;
-> +	init_completion(&qdev->prepared);
->  
->  	dev_set_drvdata(&mhi_dev->dev, qdev);
->  	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
-> @@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
->  		qrtr_endpoint_unregister(&qdev->ep);
->  		return rc;
->  	}
-> +	complete_all(&qdev->prepared);
->  
->  	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
+And I though I learned my lesson last time.
+Thank you.
 
-While this probably works, it still looks like a bit of a hack.
+> Regards,
+> Boqun
 
-Why can't you restructure the code so that the channels are fully
-initialised before you register or enable them instead?
-
-Johan
+Sebastian
 
