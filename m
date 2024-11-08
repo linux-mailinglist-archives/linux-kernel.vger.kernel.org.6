@@ -1,133 +1,161 @@
-Return-Path: <linux-kernel+bounces-401901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5651A9C20D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:43:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 596239C20CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849221C23302
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AC63283064
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A36421A71E;
-	Fri,  8 Nov 2024 15:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeT8uUh3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382441E5708;
-	Fri,  8 Nov 2024 15:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E9421A70F;
+	Fri,  8 Nov 2024 15:41:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7204208C4;
+	Fri,  8 Nov 2024 15:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731080589; cv=none; b=KjuvM/of2k6C7zjfXEeb501FR+kiZRuFJcGurP32hYnYdM+dml8mi087wf+Rj7aD+LX7MW4QcEkzYKqVA6IosgjAw6vmHf3MEL2gRdoKzJvnoddthvtRbwp2e/NeDDhTAoTEaZoJUqxU9GnF8YJDQ7IfFjFoGgnvWCnXIwPGf0c=
+	t=1731080518; cv=none; b=dp0A8NWwn5CQDX87tscpT4k9hsUMuoBL4p24vNuSElGph/p7ezTnHwNUcb5o6MF/v1G6Eb/sH/jb/4XfF4CHIRXq7RuC3CXa4XiBbR6lZVhJkIOePxYRh+vpzCrmIL39fjxNBU8uUSgshkZk59IH6bHXmgEeaJWbu3ceMcXCmnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731080589; c=relaxed/simple;
-	bh=NzE5MSJ2xz8N9ugZtUdKSolSCu1jOrtA4IXvq5aMGu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mj5W593eLmeQ/4PrRi5y7+31UC4zKxJHKGCP2+5YwObLi3rmwjt8jIEOJMlbh/MAwqtx30S6CG89qTu0aWDsAc7ZGI6/1pHFF7HwBbuAd5+sj2do34MAHM0cVAFsjUk0SvMR+PH8paAoXz2M0gAkmoIrM+jzl9ggQH4w7i++kVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeT8uUh3; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731080587; x=1762616587;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NzE5MSJ2xz8N9ugZtUdKSolSCu1jOrtA4IXvq5aMGu0=;
-  b=LeT8uUh3ddRmnyJRON7PPTdUjU+4fOvz7Gno3Z1pqqhbERTtSbbKKdRo
-   KIv1UzzUjn/nyW2DlLUQ32HNVt3WgWZN9nuWhSGqS11S+Nln/Cpc42Hyo
-   KubovXQkeAWBMFNJPDn4jYNWpKGr2s7I91+4ffWYxOzxAz2OqnIthkdlE
-   Kst7kfcWyikXazWcL57oyJZAft1HeDWxu+sq/pu2+NEQDrI67lVrs8AR5
-   xwm2VpH/pMMZJ8SPq346G8iee6B+7gJKnNp6TPKnvdTImM96UHbig8UiB
-   vjGUtZbxfpqAiuB66nspRsZHmFWO5o1lnzqm2JtBvJfsniaW9jhDtYTtY
-   w==;
-X-CSE-ConnectionGUID: Z/LzXZgPSdiwQ7YCXJC4Cg==
-X-CSE-MsgGUID: rrYipEuDTxS3WdTif9EhMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30365246"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="30365246"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 07:43:06 -0800
-X-CSE-ConnectionGUID: IYN3AeMwRJu/7kq/oChlUw==
-X-CSE-MsgGUID: bL+cn89fTCCpMoIrqWsAGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="90460017"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by orviesa005.jf.intel.com with ESMTP; 08 Nov 2024 07:43:04 -0800
-Received: from pkitszel-desk.tendawifi.com (unknown [10.245.246.238])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id 422E22876E;
-	Fri,  8 Nov 2024 15:43:02 +0000 (GMT)
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-To: megi@xff.cz,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1731080518; c=relaxed/simple;
+	bh=p6Q2kENGgJYnVKYy7IH0dBBMNKRWl7ZQDQlbhq5EMfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBJX+yK6vVr2l6qHWyj52UDS7MALeT78tFZs2yI+7AHy6VqLMG35F48TKwBwbi0kGbZLO72WCICM6duI7qWEFI4dWVHCVe7xchz1f/PuOwn+6iuxZnBOLUEW3MUCRrdxJM89Omm7jOlSoYJZZzXWFBIqJYbntAw0HAkmQB4e8UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0C60339;
+	Fri,  8 Nov 2024 07:42:24 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C0EA3F528;
+	Fri,  8 Nov 2024 07:41:54 -0800 (PST)
+Date: Fri, 8 Nov 2024 15:41:52 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Hendrik Brueckner <brueckner@linux.ibm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	hpa@zytor.com,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	kernel test robot <lkp@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
-Date: Fri,  8 Nov 2024 16:41:27 +0100
-Message-ID: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
-X-Mailer: git-send-email 2.46.0
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	H Peter Anvin <hpa@zytor.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH V14 08/11] perf tools: Add missing_features for
+ aux_start_paused, aux_pause, aux_resume
+Message-ID: <20241108154152.GA197781@e132581.arm.com>
+References: <20241022155920.17511-1-adrian.hunter@intel.com>
+ <20241022155920.17511-9-adrian.hunter@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022155920.17511-9-adrian.hunter@intel.com>
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi Adrian,
 
-Add mising braces after an if condition that contains scoped_guard().
+On Tue, Oct 22, 2024 at 06:59:14PM +0300, Adrian Hunter wrote:
+> 
+> Display "feature is not supported" error message if aux_start_paused,
+> aux_pause or aux_resume result in a perf_event_open() error.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Acked-by: Ian Rogers <irogers@google.com>
+> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+> ---
+> 
+> 
+> Changes in V13:
+>         Add error message also in EOPNOTSUPP case (Leo)
+> 
+> 
+>  tools/perf/util/evsel.c | 12 ++++++++++++
+>  tools/perf/util/evsel.h |  1 +
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 95593b55d9a7..88b31a005ac6 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2102,6 +2102,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
+>                 perf_missing_features.inherit_sample_read = true;
+>                 pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
+>                 return true;
+> +       } else if (!perf_missing_features.aux_pause_resume &&
+> +           (evsel->core.attr.aux_pause || evsel->core.attr.aux_resume ||
+> +            evsel->core.attr.aux_start_paused)) {
+> +               perf_missing_features.aux_pause_resume = true;
+> +               pr_debug2_peo("Kernel has no aux_pause/aux_resume support, bailing out\n");
+> +               return false;
 
-This style is both preferred and necessary here, to fix warning after
-scoped_guard() change in commit fcc22ac5baf0 ("cleanup: Adjust
-scoped_guard() macros to avoid potential warning") to have if-else inside
-of the macro. Current (no braces) use in af8133j_set_scale() yields
-the following warnings:
-af8133j.c:315:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
-af8133j.c:316:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+This patch fails to apply on the latest perf-tools-next branch due to
+conflict:
 
-Fixes: fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409270848.tTpyEAR7-lkp@intel.com/
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
----
-I have forgot to add this patch prior to the cited Fixes: commit,
-so Stephen Rothwell had to reinvent it, in order to fix linux-next.
-original posting by Stephen Rothwell:
-https://lore.kernel.org/lkml/20241028165336.7b46ce25@canb.auug.org.au/
----
- drivers/iio/magnetometer/af8133j.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+  https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+  branch: perf-tools-next
 
-diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
-index d81d89af6283..acd291f3e792 100644
---- a/drivers/iio/magnetometer/af8133j.c
-+++ b/drivers/iio/magnetometer/af8133j.c
-@@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
- 	 * When suspended, just store the new range to data->range to be
- 	 * applied later during power up.
- 	 */
--	if (!pm_runtime_status_suspended(dev))
-+	if (!pm_runtime_status_suspended(dev)) {
- 		scoped_guard(mutex, &data->mutex)
- 			ret = regmap_write(data->regmap,
- 					   AF8133J_REG_RANGE, range);
-+	}
- 
- 	pm_runtime_enable(dev);
- 
--- 
-2.46.0
+You might need to rebase it on the latest code base.
 
+Thanks,
+Leo
+
+>         } else if (!perf_missing_features.branch_counters &&
+>             (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COUNTERS)) {
+>                 perf_missing_features.branch_counters = true;
+> @@ -3279,6 +3285,10 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
+>                         return scnprintf(msg, size,
+>         "%s: PMU Hardware doesn't support 'aux_output' feature",
+>                                          evsel__name(evsel));
+> +               if (evsel->core.attr.aux_action)
+> +                       return scnprintf(msg, size,
+> +       "%s: PMU Hardware doesn't support 'aux_action' feature",
+> +                                       evsel__name(evsel));
+>                 if (evsel->core.attr.sample_period != 0)
+>                         return scnprintf(msg, size,
+>         "%s: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'",
+> @@ -3309,6 +3319,8 @@ int evsel__open_strerror(struct evsel *evsel, struct target *target,
+>                         return scnprintf(msg, size, "clockid feature not supported.");
+>                 if (perf_missing_features.clockid_wrong)
+>                         return scnprintf(msg, size, "wrong clockid (%d).", clockid);
+> +               if (perf_missing_features.aux_pause_resume)
+> +                       return scnprintf(msg, size, "The 'aux_pause / aux_resume' feature is not supported, update the kernel.");
+>                 if (perf_missing_features.aux_output)
+>                         return scnprintf(msg, size, "The 'aux_output' feature is not supported, update the kernel.");
+>                 if (!target__has_cpu(target))
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 9fcaf417b277..87135012217d 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -205,6 +205,7 @@ struct perf_missing_features {
+>         bool weight_struct;
+>         bool read_lost;
+>         bool branch_counters;
+> +       bool aux_pause_resume;
+>         bool inherit_sample_read;
+>  };
+> 
+> --
+> 2.43.0
+> 
+> 
 
