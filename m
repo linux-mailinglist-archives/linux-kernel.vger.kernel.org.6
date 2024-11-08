@@ -1,135 +1,199 @@
-Return-Path: <linux-kernel+bounces-402068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409E99C22F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:31:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E359C22FC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A6A282777
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:31:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9532E1F22BF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EE8199949;
-	Fri,  8 Nov 2024 17:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8821F6673;
+	Fri,  8 Nov 2024 17:31:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGPlTwLS"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P1JI7XtX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED62191F8E
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2298C1CF5FA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087057; cv=none; b=SAzF0a42Nasg6vblq63Wi7NUq1SXIEyzh0Qqd6EGisY/DFAdUrit1xBH1wSZeUu7jkAZAJbwFP9uYR4jGyV9J+AKgBaOKQRWL9tPnVdRlACLWV+K7axqbHhsyz1l+wKZNlZZtHaHr+ZqXD0xTa/8E5ePAMiqndAjpSMmbyHrMR0=
+	t=1731087117; cv=none; b=Uss3afG4M9WnMpD3E5/DX0a7HIXSHC3vhQCh8sxywx/+D4fhU9jyoGY4L5cxfFc7vSfC9Lm7imITvIgjQLBg0LHENRiJcd0CnBitrrdAbR2g1TrfoamplOoA4Ez/6QMuy7CVDgkIq6xJzEsS2f+JvzAo7C2zkBOQqlgLnWCPz/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087057; c=relaxed/simple;
-	bh=CXGOR8dp2cvOBQjL2frknhXNbqPTi2sDD8uCs4QUQdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aNf8NSIJZNn1wNchCKFS/9hZGaFaH2bOSRwPCLFXcoihDHbd6zY0e4bS+bg9NUmhwxRzK7txcUUCyA9cEO2J6aYmre9GDo5sSowVyVDYqC9amBPRUG7YbgslE9pHF3SkwV8QglV+92oXzVMHslvv2oa/23+02/kViZCmXp8bchA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NGPlTwLS; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f1292a9bso3139402e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:30:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731087053; x=1731691853; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HR2TxMgpZ8/rc/m1AMgMu7w77GdSFVU9VMdbXA9s9WI=;
-        b=NGPlTwLS8okEIFlVUK2RKYpy5gwQUyaDigvCu07ARTHcWFXtA9+8hUXhseNGDK887x
-         Jj+FkE435BOR9MIGKHGCnDN/vsDAS+dvMTf8SYoM5yMqu8G+gHDRJLCsV639Hp/fvfAJ
-         sNtL8cBRF/W+x+grR7gT4PTMTVvbSblZ32WM9GUWOsp6bte2tEbk3Rng9PAlwy75tEai
-         uHpox1R1nScPxpy7XDt2EE+VEwaF2ehKbdM2RcldlGm6LDTb6p9dsccbz/+/TfKjBEg4
-         XYAiTpiENZeMXzXedt+1TltXCPT9bJygAimH7yvr5dRII3BKsgMSBoOQvIL2WOqlIgnp
-         v3Xw==
+	s=arc-20240116; t=1731087117; c=relaxed/simple;
+	bh=NJuiGu3PlwZ+2Oktvoo+Y3RvZx0dhbgHrcUsyVpM6Mw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H7owpq9g90JwD+JOHotnBIq0JfLw28Tqa3PtVlgwAvnmdXE9/6VkDpPV01WcEorc+lYYkkDVWkHOpStVQpJmITH3DnCkjlbzecElZQ7qs7pNFizywmjuGmLMgesXB0QoTvLXKxAliLMK1UBWEysrNesOG0jE/Fr+DuDIKgYdw3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P1JI7XtX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731087115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yd4O8mZKu4eBAZvLdoHZhgPng6vXj2+Z+n0AqkWNQHs=;
+	b=P1JI7XtXiIKu+6ZhalCUjJyO+lvQJscvxYt9sxeIGGPDl3lnkDUqLVhYJBUsdHAxvYg8fX
+	vgI6cWZhpTvrc5vohdvgOUjqWDlJOgCHihOEenrRYDdF88KRwmEhNx7nthOwFrQ4Nu3hxr
+	kOCiqDs0frtaCYbXvzIzYK5dNwvbgp8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-265-_TzlIGlpMOW72PLqSuIuWg-1; Fri, 08 Nov 2024 12:31:52 -0500
+X-MC-Unique: _TzlIGlpMOW72PLqSuIuWg-1
+X-Mimecast-MFC-AGG-ID: _TzlIGlpMOW72PLqSuIuWg
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d5a3afa84so1402422f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:31:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731087053; x=1731691853;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HR2TxMgpZ8/rc/m1AMgMu7w77GdSFVU9VMdbXA9s9WI=;
-        b=kUto0pMO1nW42GJt2UPeyF7TavR43aQsI4nr7qqbwREYVPy5I1HXUZmirchocbSqyt
-         2Z95zrOlEm+laqFVtqFW1GFNKStanuWoP8blEoWDMry8UgTW+4UowBt4WElGrf30t50c
-         oWPiNFt6m5tqqUdb5vqnvW3DUTJe8GluyZ5rDwYgHiAXjyS9XK4w4Wnxv/AoxnIiu/tG
-         RzEHuilo/JWu5Sk9WWj5pwh8r4MQJDA4Fb1f7+9djpVzt6CyHtNWSXNL8n7MRrxIH3mm
-         6vJDKiyFJZJyD02k29fRM2yKDxR1lTcePMdrGpWeg3vU3SjYHMgB80bdy3Rp8RX6bAuK
-         hTEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUF7QQG6iqdxmHWKWh9XiAuyAm9iYok5gRLOOFNSeXJ1zmXqzu0XYxFgDsuakETsSokxWqYmYXDoPc0lP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzpahi1ko7U5dXP3q6XrmddNKbrWzK+PU+fm5cm45OW1BLlxGrh
-	SdtR2TiN1LI4bfJUQbGJyuaJ6wzWB7j4x1I4PbJf8bdSn5tHZfZGkuSJ0y/Tc8tuh6ch35sPRTc
-	AZx4=
-X-Google-Smtp-Source: AGHT+IEmbAp1aw5z0/qXYi1N2m9p7W/TyNvIQC6pE89E1FbB47EbyRo3HzALuncBJye8XgeVFDi31Q==
-X-Received: by 2002:a05:6512:318c:b0:539:e333:1822 with SMTP id 2adb3069b0e04-53d862b4664mr2119678e87.4.1731087053381;
-        Fri, 08 Nov 2024 09:30:53 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82685ea4sm680867e87.78.2024.11.08.09.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 09:30:52 -0800 (PST)
-Date: Fri, 8 Nov 2024 19:30:49 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: Use valid node names for GPI
- DMAs
-Message-ID: <lbulzegpd5xachy6v7qgqwwmsy7h6pj5ykf4ni6fz7idpjdbr5@3nhx32yrz6gj>
-References: <20241107-topic-sa8775_dma-v1-1-eb633e07b007@oss.qualcomm.com>
- <b22836bb-4fa2-4605-86ca-c3cb83560292@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1731087111; x=1731691911;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yd4O8mZKu4eBAZvLdoHZhgPng6vXj2+Z+n0AqkWNQHs=;
+        b=kX41rjaYBDMegs/WUFI1zqxXLRIle0xt2dST3vB30ET0TWualTIO+EFOEl3PFWkZZL
+         hsq7SPPemMLiy2b0NWpM2ndpcKPQ5BnIhiJSGGmguLPYtyud6Ar1m+Qt9KhOxr7QjPgp
+         DpbV1p6L6e0h1fawm1FGQBJlQd7ukHkOVkaE4fYfV3QOQ01xC3H3Pc2pNZ0LAElf464P
+         mLnwnvxRcXEteWwi1vo6NnMZTRKwHcjaBPK5GPoTPSMI30qUSfHTWuphguihZ952mVyb
+         LDpUDnytN4Vx4ENAlISrCoohSHQYR7zudJn8TaHAhtK99FfcB8JtfnDBZoRT+jKo/rDE
+         vnEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGQNtxc9iv0g3MxzGJqXw4eZqGzGz+IgMPqJUkJyFWlSsNK6HFlfu4kuIDnVUuVx5DLHowdTIUXtyUz6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkBU9Ta7IBujXArR6AuOSfIQsIhQPUTWUPgv4MYvlQJwdWbz7Q
+	pPdxzxtKiq2omr9p/fju9Nk8LveuXqyHcWqqWILQ6v6R8YxT9xpksTldHemEGvvdnlZEAYKDA+/
+	ygpkZECh6D43kIj+ZQ6i9v2kaYTkPH/f52i5xYrKm+9zWebL1/UGGe8N0vwg0kw==
+X-Received: by 2002:a5d:6d8a:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-381f186d184mr3065616f8f.34.1731087110729;
+        Fri, 08 Nov 2024 09:31:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3QWFDdRozO+PK2MbzpOgYsv6Dill3GhRB3QqEZymzjtGl7Y3z7IR1KySm+lULn51+VPdYsA==
+X-Received: by 2002:a5d:6d8a:0:b0:37d:4e80:516 with SMTP id ffacd0b85a97d-381f186d184mr3065582f8f.34.1731087110333;
+        Fri, 08 Nov 2024 09:31:50 -0800 (PST)
+Received: from [192.168.10.47] ([151.49.84.243])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed998e6esm5551930f8f.55.2024.11.08.09.31.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 09:31:49 -0800 (PST)
+Message-ID: <10ffac79-0dba-4c30-991e-f3ca2b5ff639@redhat.com>
+Date: Fri, 8 Nov 2024 18:31:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b22836bb-4fa2-4605-86ca-c3cb83560292@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
+ guest_memfd
+To: Matthew Wilcox <willy@infradead.org>, Shivank Garg <shivankg@amd.com>
+Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, kvm@vger.kernel.org,
+ chao.gao@intel.com, pgonda@google.com, thomas.lendacky@amd.com,
+ seanjc@google.com, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, arnd@arndb.de, kees@kernel.org,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ Neeraj.Upadhyay@amd.com, linux-coco@lists.linux.dev,
+ Linux API <linux-api@vger.kernel.org>
+References: <20241105164549.154700-1-shivankg@amd.com>
+ <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+ <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+ <ZyzYUOX_r3uWin5f@casper.infradead.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <ZyzYUOX_r3uWin5f@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Nov 07, 2024 at 10:15:32PM +0100, Konrad Dybcio wrote:
-> On 7.11.2024 10:14 PM, Konrad Dybcio wrote:
-> > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > 
-> > As pointed out by Intel's robot, the node name doesn't adhere to
-> > dt-bindings.
-> > 
-> > Fix errors like this one:
-> > 
-> > qcs9100-ride.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
-> > 
-> > Fixes: 34d17ccb5db8 ("arm64: dts: qcom: sa8775p: Add GPI configuration")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202411080206.vFLRjIBZ-lkp@intel.com/
-> > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > index 9f315a51a7c14cd4116ec5a66a60285361d343f1..ebfa049515c63a0f1a333315dd370e6f78501129 100644
-> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> > @@ -854,7 +854,7 @@ ipcc: mailbox@408000 {
-> >  			#mbox-cells = <2>;
-> >  		};
-> >  
-> > -		gpi_dma2: qcom,gpi-dma@800000  {
-> > +		gpi_dma2: dma-controller@800000  {
-> >  			compatible = "qcom,sm6350-gpi-dma";
+On 11/7/24 16:10, Matthew Wilcox wrote:
+> On Thu, Nov 07, 2024 at 02:24:20PM +0530, Shivank Garg wrote:
+>> The folio allocation path from guest_memfd typically looks like this...
+>>
+>> kvm_gmem_get_folio
+>>    filemap_grab_folio
+>>      __filemap_get_folio
+>>        filemap_alloc_folio
+>>          __folio_alloc_node_noprof
+>>            -> goes to the buddy allocator
+>>
+>> Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
 > 
-> Now that I sent it, this also doesn't look right..
+> It only takes that path if cpuset_do_page_mem_spread() is true.  Is the
+> real problem that you're trying to solve that cpusets are being used
+> incorrectly?
 
-For the node renames:
+If it's false it's not very different, it goes to alloc_pages_noprof(). 
+Then it respects the process's policy, but the policy is not 
+customizable without mucking with state that is global to the process.
 
+Taking a step back: the problem is that a VM can be configured to have 
+multiple guest-side NUMA nodes, each of which will pick memory from the 
+right NUMA node in the host.  Without a per-file operation it's not 
+possible to do this on guest_memfd.  The discussion was whether to use 
+ioctl() or a new system call.  The discussion ended with the idea of 
+posting a *proposal* asking for *comments* as to whether the system call 
+would be useful in general beyond KVM.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Commenting on the system call itself I am not sure I like the 
+file_operations entry, though I understand that it's the simplest way to 
+implement this in an RFC series.  It's a bit surprising that fbind() is 
+a total no-op for everything except KVM's guest_memfd.
 
+Maybe whatever you pass to fbind() could be stored in the struct file *, 
+and used as the default when creating VMAs; as if every mmap() was 
+followed by an mbind(), except that it also does the right thing with 
+MAP_POPULATE for example.  Or maybe that's a horrible idea?
 
--- 
-With best wishes
-Dmitry
+Adding linux-api to get input; original thread is at
+https://lore.kernel.org/kvm/20241105164549.154700-1-shivankg@amd.com/.
+
+Paolo
+
+> Backing up, it seems like you want to make a change to the page cache,
+> you've had a long discussion with people who aren't the page cache
+> maintainer, and you all understand the pros and cons of everything,
+> and here you are dumping a solution on me without talking to me, even
+> though I was at Plumbers, you didn't find me to tell me I needed to go
+> to your talk.
+> 
+> So you haven't explained a damned thing to me, and I'm annoyed at you.
+> Do better.  Starting with your cover letter.
+> 
+
 
