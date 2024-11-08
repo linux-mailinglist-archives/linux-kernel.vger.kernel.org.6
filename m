@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-401498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C299C1B4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:52:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B307F9C1B51
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:53:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22FFF1C267DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:52:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69D011F23A46
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78681EE02F;
-	Fri,  8 Nov 2024 10:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACAB1EF0AF;
+	Fri,  8 Nov 2024 10:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MCezlR8B"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IX7OwyH3"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C5F1E47D1
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4201EE03C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063037; cv=none; b=GuzQpHFGvbN+2nk0GfQzoOuYx1uy1h+wIkFDUd7f/pTpwuj7874ZyWR/K40Ex8xt+fmFJ88Ucx4UavkT7LfaAfKnhDafjXhmYkftVSeaI6QXLoLprNRAGt2mqObJUwp6bzWJmNMSQQ1NeitFDU9Ze952sk1q5ksH73a9p+5Pb6g=
+	t=1731063039; cv=none; b=ogOTEniCF+thC8dmRP+4lcJq3Sl/bADfQRE3I/nfLMDWAm59j7Rlt6Gf6aSQhTlbrZYn8g7FnyUSXp1A8uPWo71H3IgbuLZgbem4cuWAycY9dpvnk9ndQLhACUxHO8HmfrVjMl+Maz+5KDjOhzCgM37H77fnt4Pns3Gbj0HAr00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063037; c=relaxed/simple;
-	bh=JjIahQr6A0j7MFD+w6mZNB6iEn2WX+1Wm4FASvWAtvU=;
+	s=arc-20240116; t=1731063039; c=relaxed/simple;
+	bh=UDN/MsefSC8JXCNstGfSjjMFoiHdel1xmd8dafnOSoQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a84Z+Hhem53XlTJbf1I5EQyPx3KTsYpLbI9+BvRKoFNcZqmPJl6QhahXOYB49+wWF9HLCyaiL6v+HAzG5olO0s1LuP76D7j5PB2MeG2JbHbk+NxMTAnO32EtzoNFEYSI3fz2QRHQ3cQo1sJwOSUQ/AhLj3vLgyTRIa2QDmnONEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MCezlR8B; arc=none smtp.client-ip=209.85.218.44
+	 MIME-Version; b=DUdezb8iMaYLeyEcEzqJwguawS2HvjymY6aO6Usfkv8B+PzH5GAuyi6fis06cVeSi49vLL/MgnwxrbWGDnVBq2rt+CUpbDU4kV0aothnd8CpFOtZmayaJ8sKI8rJ4K6wfmJwhG6X/txO0MW5pxjx/3TqKPIF7W43JXX7PnR5A5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IX7OwyH3; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a4031f69fso329970166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:50:34 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99ebb390a5so569007966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:50:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731063033; x=1731667833; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1731063036; x=1731667836; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l8RwfIDsdAPmonZ2TVWnj8OzE+nZU+M7zjNrbRKY8/4=;
-        b=MCezlR8BYV7NJ7y1eHnLvPoXVcOHurcSRg5/doI7sph4NSWJKwT5Gbic4XuxFkjKj/
-         qa7zS1Kr7YjRaDb8v9Yu2EbO77BGyoxtdpOl5lvagAA6VKcgC5uwQAJ7Bvk1MVhavbEg
-         dfjY1CKsjkA4VKrNFoIY6SH1zHEDp+/jPm2FpuplxfeisxwnvSsIkJ3OvGbfqhVznI7p
-         liEoUNMZ8T+a1JPPS/UPmE1Do5o5GV4myKflWwqipS98UoV6Q7ev9bYwy9BTyxs6Nl17
-         SvP9S5iU1kZh8yc751wLctE1fhiU+3ffUcu2AHqeFd5Rp+CjxDzg60mwcLEKl2V+dNgL
-         4RQw==
+        bh=uBhbS3W72o/kN5HMA2yyeByauQZo+wVZ0wMkHWgTSh0=;
+        b=IX7OwyH3u+RUKusPRAAoFdngkZk26ymUmU/NZPgzW/hI3smr3SUzwZkyW3GVSn7S0O
+         GXpMANoyBml4G4n3g8J8/G1PbciHjn0UnsVI1BwMYO8o4QSKhGcMF0/y1uiZvdSDqX4a
+         LcVAP1M3qq1H/FAv0OU5m1QgWTOY27tRkyuJxMGakdnTdF5nnSxncrXU+4iDqLzSdeWA
+         eCnMD2CK93IGrxTbLRexlPpZbAxW2PEJnNCJFRwMRdEbcvgP83ue40eP4jwk9CHV1HDw
+         C9TXhpLf8Zy44YSmWPLnH6o8eCN6eG7QgRrykxQoP7ng4Kuq+uCX1DQnDdPhHty7Y+v/
+         7r/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063033; x=1731667833;
+        d=1e100.net; s=20230601; t=1731063036; x=1731667836;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l8RwfIDsdAPmonZ2TVWnj8OzE+nZU+M7zjNrbRKY8/4=;
-        b=rBCRSrTjJlOyoq2iJyxaBGHp1EsTB9NfYOW9egZ475+FWMRqLLPzV0Xi57Kp5Tslc/
-         i3xE6jJugpNK97j+/dMuI1ZywzoXm/ESML+08G5+SGa7sbuHyTetenFMEYoIpvEQclTr
-         0wySztkiQF02YCnmo0nVrHYxDeuMaIeRNelEPhqY0L0n6v5HkqgbNBqvtyGOscYdv9tL
-         N62jDJ0gwTvmL8l4MTmfAJVNksCg7eG9LgBfSnE39o11wZMTq500pXO8K5mVj8rxK6JF
-         KicyyCycz/7r4EJSt08tlimsTputYmOWga6uZ0+pJSb/GC4OLBR1dyI5hHxDybxqdjtO
-         SxvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW62iEwU/JdA6wk2EZqA9f9ti5TtM0b//DwmIVXLL50Ak7kcyiHLetyQ3eNgbIh2fxjXagofsFvTp+MfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDYXkOl/R6O0lFrvpWosibxFPgq2K4AeCW6PoCmfH0APxXX7+g
-	Fy94b0tlwXcjqDwXr/70fMU49i/mGjVOPHSWo/ZbSaHAFze5raxwnOJsAykxixE=
-X-Google-Smtp-Source: AGHT+IFPnrgFfPbNd3TP73wQjFYRKTrU9RrXTJRvMfUQhEiSnGU8niQr6Ks7xN8nlYRGUMQMvIJMJg==
-X-Received: by 2002:a17:907:84a:b0:a9a:be:37f8 with SMTP id a640c23a62f3a-a9ef0018b3bmr208920566b.43.1731063033457;
-        Fri, 08 Nov 2024 02:50:33 -0800 (PST)
+        bh=uBhbS3W72o/kN5HMA2yyeByauQZo+wVZ0wMkHWgTSh0=;
+        b=ldt/o4sftLDumAi1OSQPQ2epG6cErU7oi+cokh0UDB5qClDyIhbIX2RXfGL/jNBaFT
+         sx9XnCVdxagdfhXyqCZpOZIloXKKteMKshMT4nN1elUOBpvdE1Jg7dzr+ds3xvvTXahd
+         M4q+rg8/MRZ1KixfNae7VBgM4opSxnk2/Lpo4ukFBh8T7YT+AQP1vvekTqHHa3SuDwvX
+         UoB1tVwvdiCZPnq8IhtB57PuacXHfsXcIJPnrjcAfJThyxBdyza+ubkxpEY/sAMQMZEW
+         nGKwvuyEI4YNjQMnAHtvjh3Tu9KDO3F88WnWe1uDi1fAN/5ln5if91q3yBeZ3ZY2PWji
+         oegA==
+X-Forwarded-Encrypted: i=1; AJvYcCULQxXM5dUqknOd2jqvdPGPw6vJ/7V8/oLaCFIjBFzCHDMOjEQ0UXsQ/qIfKXy/FJB077ZxiOgYTpfbrJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOTgsAroCJh36XFRdXjfAd0HU0U5rF/3yJ0lVU5czB5CVhxmb7
+	npjPr4oEb4YqWZR6bVuoXBSYR9vH1utg6gHQfJ44yDasu096yrYBhMvSanIH1ZA=
+X-Google-Smtp-Source: AGHT+IHmQAxrHn6g8ivXKNKkvkcI1idTgMBasUX1xBaIWYqflPwTH9v07OxZX2Fp7AcqbL4NFB1cFA==
+X-Received: by 2002:a17:907:9492:b0:a9a:1575:23e3 with SMTP id a640c23a62f3a-a9eefeecbf6mr214458266b.19.1731063036148;
+        Fri, 08 Nov 2024 02:50:36 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.30
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc574dsm220464866b.101.2024.11.08.02.50.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 02:50:32 -0800 (PST)
+        Fri, 08 Nov 2024 02:50:35 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -91,9 +91,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 09/25] ASoC: sh: rz-ssi: Remove pdev member of struct rz_ssi_priv
-Date: Fri,  8 Nov 2024 12:49:42 +0200
-Message-Id: <20241108104958.2931943-10-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 10/25] ASoC: sh: rz-ssi: Remove the rz_ssi_get_dai() function
+Date: Fri,  8 Nov 2024 12:49:43 +0200
+Message-Id: <20241108104958.2931943-11-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
@@ -107,7 +107,8 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Remove the pdev member of struct rz_ssi_priv as it is not used.
+Remove the rz_ssi_get_dai() function as there are already helpers that
+can give the same output that rz_ssi_get_dai() gives.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
@@ -115,29 +116,57 @@ Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Changes in v2:
 - none
 
- sound/soc/renesas/rz-ssi.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/renesas/rz-ssi.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
 diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c
-index a4d65be17eb1..a359235b55af 100644
+index a359235b55af..4c33663a0ae4 100644
 --- a/sound/soc/renesas/rz-ssi.c
 +++ b/sound/soc/renesas/rz-ssi.c
-@@ -99,7 +99,6 @@ struct rz_ssi_stream {
+@@ -162,14 +162,6 @@ static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
+ 	writel(val, (priv->base + reg));
+ }
  
- struct rz_ssi_priv {
- 	void __iomem *base;
--	struct platform_device *pdev;
- 	struct reset_control *rstc;
- 	struct device *dev;
- 	struct clk *sfr_clk;
-@@ -1043,7 +1042,6 @@ static int rz_ssi_probe(struct platform_device *pdev)
- 	if (!ssi)
- 		return -ENOMEM;
+-static inline struct snd_soc_dai *
+-rz_ssi_get_dai(struct snd_pcm_substream *substream)
+-{
+-	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
+-
+-	return snd_soc_rtd_to_cpu(rtd, 0);
+-}
+-
+ static inline bool rz_ssi_stream_is_play(struct rz_ssi_priv *ssi,
+ 					 struct snd_pcm_substream *substream)
+ {
+@@ -243,15 +235,15 @@ static void rz_ssi_stream_init(struct rz_ssi_stream *strm,
+ static void rz_ssi_stream_quit(struct rz_ssi_priv *ssi,
+ 			       struct rz_ssi_stream *strm)
+ {
+-	struct snd_soc_dai *dai = rz_ssi_get_dai(strm->substream);
++	struct device *dev = ssi->dev;
  
--	ssi->pdev = pdev;
- 	ssi->dev = &pdev->dev;
- 	ssi->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(ssi->base))
+ 	rz_ssi_set_substream(strm, NULL);
+ 
+ 	if (strm->oerr_num > 0)
+-		dev_info(dai->dev, "overrun = %d\n", strm->oerr_num);
++		dev_info(dev, "overrun = %d\n", strm->oerr_num);
+ 
+ 	if (strm->uerr_num > 0)
+-		dev_info(dai->dev, "underrun = %d\n", strm->uerr_num);
++		dev_info(dev, "underrun = %d\n", strm->uerr_num);
+ }
+ 
+ static int rz_ssi_clk_setup(struct rz_ssi_priv *ssi, unsigned int rate,
+@@ -988,7 +980,8 @@ static int rz_ssi_pcm_open(struct snd_soc_component *component,
+ static snd_pcm_uframes_t rz_ssi_pcm_pointer(struct snd_soc_component *component,
+ 					    struct snd_pcm_substream *substream)
+ {
+-	struct snd_soc_dai *dai = rz_ssi_get_dai(substream);
++	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
++	struct snd_soc_dai *dai = snd_soc_rtd_to_cpu(rtd, 0);
+ 	struct rz_ssi_priv *ssi = snd_soc_dai_get_drvdata(dai);
+ 	struct rz_ssi_stream *strm = rz_ssi_stream_get(ssi, substream);
+ 
 -- 
 2.39.2
 
