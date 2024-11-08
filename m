@@ -1,74 +1,143 @@
-Return-Path: <linux-kernel+bounces-402179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90619C24C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:18:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F81D9C24C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F263B244D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43B35282647
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CF21A9B3B;
-	Fri,  8 Nov 2024 18:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBDD1A9B22;
+	Fri,  8 Nov 2024 18:19:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LhtkU6/e"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J+I/rZaI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D78193418;
-	Fri,  8 Nov 2024 18:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922FF233D6E;
+	Fri,  8 Nov 2024 18:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731089914; cv=none; b=KBqRwYUVOQulePwztqK/hKVcpiSl6/MstZ8dJFmd8fCdxEk+FSrEWAu8gqrRRWJYvmhyMcqC78CcUenYG/esi+PG7MhiUW41j96VoixezQyLS4Hn297qE9LBXk07cTIubWQQplODG9ng44ge1OM+h5NfzWYS0y6FOA+Gp6jDdpA=
+	t=1731089943; cv=none; b=B0Gq9oVTneNkGetXcRO/xiSpeFHgEMXALXxDY5RWEtYSFm2qsyIsiYeywwKNaeMvkTucAB9Rn36lUiyqLjxdYTWwUu4hrYofcxWMRGzmzbwUDbrz9LM7Xdcwwf69vgaYqdmX/kN0cvlEhfB0XFND9eYs5QHlXWkFAY0aCUsDJjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731089914; c=relaxed/simple;
-	bh=LP4RAM0qR/ytuVuwTD7htBAHrnyPxX123oRj1JPz/OQ=;
+	s=arc-20240116; t=1731089943; c=relaxed/simple;
+	bh=rOFwXUAy+/+iBDIpO72Sr6FxlUBXqL2IRqthrCUDx6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kvcpDALY1snb0K2+cCfCqXFzevN4OJbQXKbwOhrs5CvWGyFT+baqu4yJ7scQo/J7ewQGwShDgMEZljv4ppCeKjax1TMYm5wA7F9WMOo8Na0KQ0DVp5mElzlAzaUb9XvsRu5L6me/6TCIo8Fkp+AYgBYrHji3jCyX8rXHWUO7mMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LhtkU6/e; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LP4RAM0qR/ytuVuwTD7htBAHrnyPxX123oRj1JPz/OQ=; b=LhtkU6/ekHvmRvAnCjsFNmAeLw
-	tpI/kQn+9L/nuY21XAz2GguZcDU0OOeqFqYKS+jUJG3xnEK9nuK+7zvl3qvadqG5xwuMRMtdlxPrL
-	1iJ5WFPtupZs77x2nRrZN3yfujegpl1MVEzUmuLT00+ZiJU6Y4TckgnJjrexEqp3Ag6MVc0c+6a92
-	myGNfqEkVJfM5ilwS7LrVgFvreH5nU6R0k2IVSmfTnZW2wxPdoJa7XRa7Hp/DyB/81HyJn4AKbPBm
-	BWt3dAWooJfCckcXYKRLy7op8xLmvcGsGE0b6BvQfqNUEFmFWEuqAJw19/9SQYwhVwwYzobj904pn
-	BUytuv1A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9TYz-00000009AMP-2qiG;
-	Fri, 08 Nov 2024 18:18:29 +0000
-Date: Fri, 8 Nov 2024 18:18:29 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/13] mm/filemap: change filemap_create_folio() to take
- a struct kiocb
-Message-ID: <Zy5V9QmrUzWV7jv6@casper.infradead.org>
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-2-axboe@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HfRq2BIeD4v3+gjibJRJb4Ia3rnJkRk6NTTzX/LqfA6KVFLcMis7zVwBf2BN0d7VGyQXK7R6VOSi/EdXgIri4P9sIEMU/FRUvPx/NjDSbqPSTfm1Lkq+rnSae5DWu7KvhQXw6I79r4p4HleDXQ7aD5p+gfTWI57XG/M8kMCFfeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J+I/rZaI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2617DC4CECD;
+	Fri,  8 Nov 2024 18:19:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731089943;
+	bh=rOFwXUAy+/+iBDIpO72Sr6FxlUBXqL2IRqthrCUDx6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J+I/rZaIJH/u4ImDPs5UDAlW/pHq8uykK80/adHL//d5M9XqjXpqnkR5IclpUyg38
+	 F/pW5F4vaYEkE5lS7H9ut7h/gTRz+x/VxVtZjhs4ZjzVuSfQUSLBCepMc5aqPWkHx1
+	 9qY2tfPQm/c5CXQCH7awwvkaVeRYqxA9SIC4jHZI4yn8w+tJmdxJTCSkkekFw+GYJF
+	 v8rQe8Uq4B+a6HK3OA+Z1FIeTNOEnqJTpXvIXNDZ01ZcUtWYWajMpRUiHzMa/GrX92
+	 fVSThq1X1VPTrKZoRhWQkaHYfNhPOm/7LsLko7elZuxd9L7UujqFfUA5D3NA2+MfXc
+	 Q3oOmZ90ERTNQ==
+Date: Fri, 8 Nov 2024 10:19:00 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 0/6] Avoid parsing tracepoint format just for id
+Message-ID: <Zy5WFHo5zvpbxSlH@google.com>
+References: <20241105212652.401943-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241108174505.1214230-2-axboe@kernel.dk>
+In-Reply-To: <20241105212652.401943-1-irogers@google.com>
 
-On Fri, Nov 08, 2024 at 10:43:24AM -0700, Jens Axboe wrote:
-> Rather than pass in both the file and position directly from the kiocb,
-> just take a struct kiocb instead. In preparation for actually needing
-> the kiocb in the function.
+Hi Ian,
 
-If you're undoing this part of f253e1854ce8, it's probably worth moving
-the IOCB flag checks back to where they were too.
+On Tue, Nov 05, 2024 at 01:26:46PM -0800, Ian Rogers wrote:
+> The tracepoint format isn't needed to open an event, just the id for
+> the config value. Refactor the use of evsel->tp_format to use an
+> accessor that will lazily construct its value. In evsel__newtp_idx
+> read the id so the config value can be set up/used.
+> 
+> This allows tracepoints to be used without libtraceevent in a number
+> of tests. Other functionality is enabled without libtracevent, such as
+> mapping a tracepoint id back to its name. There may be some
+> performance benefit to code using tracepoints but not using the format
+> information.
+> 
+> v3. Whitespace changes, Arnaldo.
+> v2. Add additional error checking/handling in evsel__tp_format.
+> 
+> Ian Rogers (6):
+>   tool api fs: Correctly encode errno for read/write open failures
+>   perf trace-event: Constify print arguments
+>   perf trace-event: Always build trace-event-info.c
+>   perf evsel: Add/use accessor for tp_format
+>   perf evsel: Allow evsel__newtp without libtraceevent
+>   perf tests: Enable tests disabled due to tracepoint parsing
 
+Looks good now.  But it doesn't apply to perf-tools-next cleanly.
+Could you please rebase?
+
+Thanks,
+Namhyung
+
+> 
+>  tools/lib/api/fs/fs.c                         |   6 +-
+>  tools/perf/builtin-kmem.c                     |  12 +-
+>  tools/perf/builtin-kwork.c                    |   3 +-
+>  tools/perf/builtin-record.c                   |   2 -
+>  tools/perf/builtin-script.c                   |   9 +-
+>  tools/perf/builtin-trace.c                    |  79 +++++++++----
+>  tools/perf/tests/Build                        |   6 +-
+>  tools/perf/tests/builtin-test.c               |   2 -
+>  tools/perf/tests/parse-events.c               |  25 +---
+>  tools/perf/util/Build                         |   2 +-
+>  tools/perf/util/data-convert-bt.c             |  10 +-
+>  tools/perf/util/data-convert-json.c           |   8 +-
+>  tools/perf/util/evsel.c                       | 110 +++++++++++++-----
+>  tools/perf/util/evsel.h                       |   9 +-
+>  tools/perf/util/evsel_fprintf.c               |   4 +-
+>  tools/perf/util/parse-events.c                |  16 +--
+>  tools/perf/util/perf_event_attr_fprintf.c     |   4 -
+>  .../util/scripting-engines/trace-event-perl.c |   3 +-
+>  .../scripting-engines/trace-event-python.c    |   3 +-
+>  tools/perf/util/sort.c                        |  33 ++++--
+>  tools/perf/util/trace-event-parse.c           |   4 +-
+>  tools/perf/util/trace-event-scripting.c       |  10 +-
+>  tools/perf/util/trace-event.h                 |   4 +-
+>  23 files changed, 216 insertions(+), 148 deletions(-)
+> 
+> -- 
+> 2.47.0.199.ga7371fff76-goog
+> 
 
