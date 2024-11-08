@@ -1,135 +1,225 @@
-Return-Path: <linux-kernel+bounces-401815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118669C1F8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE409C1F8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE30B23701
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07CD1F21E35
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B975A1F471E;
-	Fri,  8 Nov 2024 14:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B972F1F428F;
+	Fri,  8 Nov 2024 14:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="lMUQverF"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="MvMdEwof"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A0A1F4282;
-	Fri,  8 Nov 2024 14:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731077107; cv=pass; b=TaLoneon5+V1RaYk5h86cTY1MIcvi0RWEIaEMzMG2sW6F5sf7jYe1V6ti5WM1N6hEq7vaUDlL3+s9o7VMQp32IRZpqwnP/LK5Z+tLG5riXHeGYYWv3RWTBz3Hps//xitJA3Ga7vWNqUt3ZhQ4650kFG4b0hqvpgvZvCLfIH32pw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731077107; c=relaxed/simple;
-	bh=lka3oxz9Nlj3/TqIW4WVf83DK1G9I6z7Tp1uXduOtVE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eJmTHB/BJFJr/n9XM2Luue270FMMjnkIV8JWTqpE223REY2xu0KW4+lLwWsEwkVQfSX9GzPavs7GWWWhqZqnhXnusZki2MqTJ+JzGI1GKp6/UHeeTCxbFjtkKbC/x/iBfcdC7p2Id4AhEvmT24zA8HUudQYH8WF9MYapfhJgiQ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=lMUQverF; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731077071; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NviDWdui4ee3ult97bgAnFRhQgfYYEeuYBWUt7EElQnmJoBXH/e1+lokWPx/VRtkXJ75SFyawq3NhcSmvCUJIDX5lmMfZhy8WsHFMkoqRKbYQJdoZLUTxdhaCmB0KB1T7jcRYHTNQpVeh6jREmagAy0XCgSLbjeTiD3UbJCVSQE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731077071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XCnH6deLfboQrpW3gEnHz4iRKn5o2NnBckl5up00v2c=; 
-	b=Y7iPUbPYXDW2xSR3wx6U4khTF7t2K8wEFy0XTA1bTW4H77a8KmLRGraxclBUWpcMLLjYX17KsMdmcGslJXL2vWBdiHweXvMziA5Tm5lyyYXWAsGVk+vQqGzpR9XUpYw8p91UqJTC+synIOwrHqEbrNc5betsHLndSlxZSIbei2o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731077071;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=XCnH6deLfboQrpW3gEnHz4iRKn5o2NnBckl5up00v2c=;
-	b=lMUQverF+if3l3Xpu5JPTP5T3QmCLe3eQ0uy6XwfTZBWjn9p3jY3Ri4RkHvoXuhd
-	JiHp6/1dv5ga5pqudOTmCIGjqKLLtGACWslc2Q7zkgz3iVrPvGgFuvQpleANSbVzM0C
-	WvNccnEoPOlXRvVa+fF+ejONQH7EqmhO+kYDRWmQ=
-Received: by mx.zohomail.com with SMTPS id 1731077070236399.41461573256777;
-	Fri, 8 Nov 2024 06:44:30 -0800 (PST)
-Message-ID: <5f13a752-e553-49ad-81ab-ca1dac56cf43@collabora.com>
-Date: Fri, 8 Nov 2024 19:44:18 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B931EABC3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731077094; cv=none; b=TcCJa4UroQVlDq3wiQAGvdjUDP7b+45jNPzk/1QzkMcpv29XtLFHJcfQEJ8ZeX80Y0UY2Ok7+c2TNwj1EsLh4KRFMficN2QLQKa8MJiy+rROKqSnCuMI0cvxvJJtLueOLx4iLT05q+hLyq4NTSQJCXo++UkZV4KTA0WeDiEKthI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731077094; c=relaxed/simple;
+	bh=NLFsUDQHHIJthk3yE3ViXPuGXrak49j5c5doVsfu1Vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOsuxCRU7xU3vS68b2v2M7xnaZH5Wxf5jpOYesj+CaaZjoZ2cJl2v1+P2XRo/pUiv1n99m/tuklTUJk3ArqlCs0qgJjY+3t+D09vUkoVK45Opq68sedg+j/nCz8WSyumNmVjt8muO+vImpoQmIKEjPh2m5Xry3Ysau3i3yvk13s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=MvMdEwof; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Sq1qOtFF69mFoOsytrqshcI4Hj0x/QP2wi6DnImQLW0=; b=MvMdEwofqR70BiYpz8W5OuxiTU
+	IZl4ZZvbUwoKHNlHHa01BLTEi6HQuNVZwVPgq38ZoafCnWhP5u8tTLPH0EQHhf2+TRH6UmL/rqjRr
+	lvUR+tCJOMb509mHndLjI248FXt1NJkbWR73JLHcQPz1EhKogwCHbShLoqp+1YFQRI6yd351rbVyA
+	hjLeTGgLuEjxHPP4GbC46MQVD6x+zW6sL17Ez9NVOo0K/27bKgu4v5QbV6P4hBrWVhjmu9MBWh2qa
+	+yoypA7Fi65U1Ph7jvNG+G4t1AReyjTxozhbT00vhuw6UFIbGA5ejm5fqQgn3VkKig3/OEurwKnCy
+	DxRJOdHw==;
+Received: from i53875b28.versanet.de ([83.135.91.40] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t9QE1-0006ov-Mk; Fri, 08 Nov 2024 15:44:37 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Cc: dsimic@manjaro.org,
+	andy.yan@rock-chips.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: [PATCH] drm/rockchip: dsi: convert to dev_err_probe in probe function
+Date: Fri,  8 Nov 2024 15:44:24 +0100
+Message-ID: <20241108144425.1009916-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com,
- broonie@kernel.org
-Subject: Re: [PATCH 4.19 000/349] 4.19.323-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241107063342.964868073@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241107063342.964868073@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-On 11/7/24 11:46 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.323 release.
-> There are 349 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 09 Nov 2024 06:33:12 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.323-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Please find the KernelCI report below :-
+DRM_DEV_ERROR is deprecated and using dev_err_probe saves quite a number
+of lines too, so convert the error prints for the dsi-driver.
 
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+ .../gpu/drm/rockchip/dw-mipi-dsi-rockchip.c   | 80 ++++++-------------
+ 1 file changed, 26 insertions(+), 54 deletions(-)
 
-OVERVIEW
+diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+index 58a44af0e9ad..3224ab749352 100644
+--- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+@@ -1356,17 +1356,15 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	const struct rockchip_dw_dsi_chip_data *cdata =
+ 				of_device_get_match_data(dev);
+-	int ret, i;
++	int i;
+ 
+ 	dsi = devm_kzalloc(dev, sizeof(*dsi), GFP_KERNEL);
+ 	if (!dsi)
+ 		return -ENOMEM;
+ 
+ 	dsi->base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+-	if (IS_ERR(dsi->base)) {
+-		DRM_DEV_ERROR(dev, "Unable to get dsi registers\n");
+-		return PTR_ERR(dsi->base);
+-	}
++	if (IS_ERR(dsi->base))
++		return dev_err_probe(dev, PTR_ERR(dsi->base), "Unable to get dsi registers\n");
+ 
+ 	i = 0;
+ 	while (cdata[i].reg) {
+@@ -1378,67 +1376,47 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
+ 		i++;
+ 	}
+ 
+-	if (!dsi->cdata) {
+-		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+-		return -EINVAL;
+-	}
++	if (!dsi->cdata)
++		return dev_err_probe(dev, -EINVAL, "No dsi-config for %s node\n", np->name);
+ 
+ 	/* try to get a possible external dphy */
+ 	dsi->phy = devm_phy_optional_get(dev, "dphy");
+-	if (IS_ERR(dsi->phy)) {
+-		ret = PTR_ERR(dsi->phy);
+-		DRM_DEV_ERROR(dev, "failed to get mipi dphy: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(dsi->phy))
++		return dev_err_probe(dev, PTR_ERR(dsi->phy), "Failed to get mipi dphy\n");
+ 
+ 	dsi->pclk = devm_clk_get(dev, "pclk");
+-	if (IS_ERR(dsi->pclk)) {
+-		ret = PTR_ERR(dsi->pclk);
+-		DRM_DEV_ERROR(dev, "Unable to get pclk: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(dsi->pclk))
++		return dev_err_probe(dev, PTR_ERR(dsi->pclk), "Unable to get pclk\n");
+ 
+ 	dsi->pllref_clk = devm_clk_get(dev, "ref");
+ 	if (IS_ERR(dsi->pllref_clk)) {
+-		if (dsi->phy) {
++		if (dsi->phy)
+ 			/*
+ 			 * if external phy is present, pll will be
+ 			 * generated there.
+ 			 */
+ 			dsi->pllref_clk = NULL;
+-		} else {
+-			ret = PTR_ERR(dsi->pllref_clk);
+-			DRM_DEV_ERROR(dev,
+-				      "Unable to get pll reference clock: %d\n",
+-				      ret);
+-			return ret;
+-		}
++		else
++			return dev_err_probe(dev, PTR_ERR(dsi->pllref_clk),
++					     "Unable to get pll reference clock\n");
+ 	}
+ 
+ 	if (dsi->cdata->flags & DW_MIPI_NEEDS_PHY_CFG_CLK) {
+ 		dsi->phy_cfg_clk = devm_clk_get(dev, "phy_cfg");
+-		if (IS_ERR(dsi->phy_cfg_clk)) {
+-			ret = PTR_ERR(dsi->phy_cfg_clk);
+-			DRM_DEV_ERROR(dev,
+-				      "Unable to get phy_cfg_clk: %d\n", ret);
+-			return ret;
+-		}
++		if (IS_ERR(dsi->phy_cfg_clk))
++			return dev_err_probe(dev, PTR_ERR(dsi->phy_cfg_clk),
++					     "Unable to get phy_cfg_clk\n");
+ 	}
+ 
+ 	if (dsi->cdata->flags & DW_MIPI_NEEDS_GRF_CLK) {
+ 		dsi->grf_clk = devm_clk_get(dev, "grf");
+-		if (IS_ERR(dsi->grf_clk)) {
+-			ret = PTR_ERR(dsi->grf_clk);
+-			DRM_DEV_ERROR(dev, "Unable to get grf_clk: %d\n", ret);
+-			return ret;
+-		}
++		if (IS_ERR(dsi->grf_clk))
++			return dev_err_probe(dev, PTR_ERR(dsi->grf_clk), "Unable to get grf_clk\n");
+ 	}
+ 
+ 	dsi->grf_regmap = syscon_regmap_lookup_by_phandle(np, "rockchip,grf");
+-	if (IS_ERR(dsi->grf_regmap)) {
+-		DRM_DEV_ERROR(dev, "Unable to get rockchip,grf\n");
+-		return PTR_ERR(dsi->grf_regmap);
+-	}
++	if (IS_ERR(dsi->grf_regmap))
++		return dev_err_probe(dev, PTR_ERR(dsi->grf_regmap), "Unable to get rockchip,grf\n");
+ 
+ 	dsi->dev = dev;
+ 	dsi->pdata.base = dsi->base;
+@@ -1451,24 +1429,18 @@ static int dw_mipi_dsi_rockchip_probe(struct platform_device *pdev)
+ 	mutex_init(&dsi->usage_mutex);
+ 
+ 	dsi->dphy = devm_phy_create(dev, NULL, &dw_mipi_dsi_dphy_ops);
+-	if (IS_ERR(dsi->dphy)) {
+-		DRM_DEV_ERROR(&pdev->dev, "failed to create PHY\n");
+-		return PTR_ERR(dsi->dphy);
+-	}
++	if (IS_ERR(dsi->dphy))
++		return dev_err_probe(dev, PTR_ERR(dsi->dphy), "Failed to create PHY\n");
+ 
+ 	phy_set_drvdata(dsi->dphy, dsi);
+ 	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+ 	if (IS_ERR(phy_provider))
+-		return PTR_ERR(phy_provider);
++		return dev_err_probe(dev, PTR_ERR(phy_provider),
++				     "Failed to register phy-provider\n");
+ 
+ 	dsi->dmd = dw_mipi_dsi_probe(pdev, &dsi->pdata);
+-	if (IS_ERR(dsi->dmd)) {
+-		ret = PTR_ERR(dsi->dmd);
+-		if (ret != -EPROBE_DEFER)
+-			DRM_DEV_ERROR(dev,
+-				      "Failed to probe dw_mipi_dsi: %d\n", ret);
+-		return ret;
+-	}
++	if (IS_ERR(dsi->dmd))
++		return dev_err_probe(dev, PTR_ERR(dsi->dmd), "Failed to probe dw_mipi_dsi\n");
+ 
+ 	return 0;
+ }
+-- 
+2.45.2
 
-    Builds: 22 passed, 0 failed
-
-    Boot tests: 34 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: 9e8e2cfe2de91cde6ce1f79021b5115f44355ce8
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
-https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=9e8e2cfe2de91cde6ce1f79021b5115f44355ce8&var-patchset_hash=&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-test_path=boot&from=now-100y&to=now&timezone=browser
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
