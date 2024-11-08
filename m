@@ -1,312 +1,225 @@
-Return-Path: <linux-kernel+bounces-401148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC7F9C167A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:31:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E8E9C167D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:32:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B06C282D31
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:31:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625E2B239AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7351CCB49;
-	Fri,  8 Nov 2024 06:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850171D07A3;
+	Fri,  8 Nov 2024 06:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="H36shx4T"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XdeUC+b/"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5780916415
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A83F13BAE3
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731047479; cv=none; b=VtjtiaPdWaHd/yFhs9d4O7gnAgBZDTRkwBnaV3YBp7P+pQAYYqppxL0VXi9Hp/0ImC8/I9J5SmR/74zdO1i5XWYW7nDOOuG1T3JhU8BWjqxX8VIrHZd9YDR0vvkNjRkm8xEAzqWSSNIQMgvwXncgCthl7SS9em+ygtx1VvmpIqg=
+	t=1731047570; cv=none; b=nHIyNeuGO+HjkifANmnaK4Y5xsVETlTYILaCjcN8VapPPQsQA7o7fQ9aaIt427q5S7DZTVB7XtJU69NWUrgdc8hMFWY6inHAQubVBYQpjNZ+QBxVLwdZQYsIDkA6yxu0XO+AoARaQXf+KlrVWyy4WVYVvYacMjDOJwyhSg/HLAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731047479; c=relaxed/simple;
-	bh=2TyBfjUa4TM3JIammkr6/wX8J22AyP4t9yHHJpKwdNc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TNjdhdMA/Y+YgB8FJsGrZT250eX0zsyO9yiXCLXyCVki3ZIQWF/pY8PBCadgYTGWUc53Jsx2Jo5n9wwslNrVGnOEjcIZxg9AKqEJAyc9VNDtgKYZWkkN82p2fEMI4pRBwhSl6og3rB6JwlsdIGOm3aPj9zeDnXP/3JPkFJGvm6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=H36shx4T; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71815313303so1123273a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 22:31:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1731047476; x=1731652276; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5NZnfOJdCuNj5ZxPmV6I8/TJGXL/OmAPnFXG21goLgc=;
-        b=H36shx4TH9R8tisiI+Q0YneZdRYyEhmxhV8Fx2iN+jF+8KILrNnP/kOych2bGCi3rc
-         zxXCpQZdlxbHgE4OuBMPGmGK3i7CZQ0yOG+mKCT13Ew6hCLc4NgZ+p4CILu4KPZ3Nal2
-         /neCQy0g1sHGiJfzDGQn4F7eG9DBjjGOSoYTs72+sC+eg+13/n9p96cBRm7WfEzIP28f
-         LztFedlneCR64AWay1W/D50OmiDKl9+3uH6j2bhQ0ZmU3HO31VTOwa7thw1FU5zNovTv
-         xC0xP1yVZd8fKlzX8Qhq28M4s+jbWyUvYuyPxd+qjmbaXWBqFOuNU3HbLpad0QOFkmKh
-         ECXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731047476; x=1731652276;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5NZnfOJdCuNj5ZxPmV6I8/TJGXL/OmAPnFXG21goLgc=;
-        b=HwyMe5SQGkshk/RSjwIlvkiP9xMbCR1BDxGFrl+k9m/HC0gvQ3Dz/7PPfMwYBSAliU
-         /x77lyR0FfaWo8CXAUH1nJZ0YPImUQM37oxBHkSlxk5lwgTfSzilWxL6gmvM4x2fSfK+
-         6W/8yx5mgMOOM9+a8Kbz4nNGQzC+4U9/jP60o1fK3ALYz2ayVav+paVMhiw0YAdhbFOZ
-         EZW1qsUBCnctyKm7ZHRadSljRU29e/XEAPBgBVRCIpuMgNfEJ9Faq2sgDBfR0wQ9VWmG
-         x9SNZl9L/nlplfSeZeLMttrqPz3zy8ejuin4n/tqnFt/4ADPse7h3JEtXgKEzqpjloa2
-         aV+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXC2a1AIEA/TUBmDlCzGdtWhEiJQHho4TNyr+Ll/nISv+YRUGZ22hlvmLJeCeNqd+wRbB46fM0L6K7/6I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGYUYz+X50Pk15yonmFoxYX6/tZR/Qx8yp6vclgygZTWsMqB+N
-	9Y+Rxk+Od2LIeuooKPD322WiV963XyDsgWVttBvhATqyHa8dRrTvXqwgbai3E3o=
-X-Google-Smtp-Source: AGHT+IEOtfVNZTPaBYRzQJ8jNgoTz/wfxjh37S+VgS99ei7oTAWhoWcU1xRhhPgslL5F9oKZGvftaw==
-X-Received: by 2002:a05:6830:3708:b0:718:15a9:505f with SMTP id 46e09a7af769-71a1c1db215mr2575926a34.14.1731047476255;
-        Thu, 07 Nov 2024 22:31:16 -0800 (PST)
-Received: from [10.84.149.95] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65ba92sm2605417a12.80.2024.11.07.22.31.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Nov 2024 22:31:15 -0800 (PST)
-Message-ID: <6afea68a-4a44-4647-9125-fc5bfd38cd4b@bytedance.com>
-Date: Fri, 8 Nov 2024 14:31:07 +0800
+	s=arc-20240116; t=1731047570; c=relaxed/simple;
+	bh=glCvAj1wcmZlfuLGIavms5IdCXD7UIBEhGCsE6OsPSA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UxH1ShK5KE+DrBud1ZQ/owEsbrbGDFYAxJhTfFa5Z4wuxrOz8EXZCm8gwyd3zc5cfTDtImMfB5GAqme5PZd/qZFxrl2ui+tKU2jC2gOTQZQSOpJ5jJhf81M9ZtSUG0S0eRbdawAx98+kqDxJ1I6NCtb6VGX2GrYvHWi6ijhf2Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XdeUC+b/; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731047565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Y5zsbgVR21nLaT8o8D3suARsPPte/XErGgbHlgcN2T4=;
+	b=XdeUC+b/PsEPKYhSUhCXEeSZDo2ATbBi6IW3AfDM0HrbRigcyzHwZrU1mf49fM3VGU2Cun
+	K3ZkjFbEzrMxREW0DnZZdxpTsoLhBwccy77GCxaFgBoPNX1opmKTTs7BYgMS3YEF7UjJkT
+	TasIclJ+z+B4mgTWJ8IX3Hb6VH0rTyM=
+From: Kunwu Chan <kunwu.chan@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	rostedt@goodmis.org,
+	tglx@linutronix.de
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Kunwu Chan <chentao@kylinos.cn>,
+	syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+Subject: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+Date: Fri,  8 Nov 2024 14:32:14 +0800
+Message-Id: <20241108063214.578120-1-kunwu.chan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] mm: khugepaged: retract_page_tables() use
- pte_offset_map_rw_nolock()
-Content-Language: en-US
-To: Jann Horn <jannh@google.com>
-Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
- catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- x86@kernel.org
-References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
- <4c3f4aa29f38c013c4529a43bce846a3edd31523.1730360798.git.zhengqi.arch@bytedance.com>
- <CAG48ez1S3nU0qzf6zZYAOTGO=RmK_2z+ZvHLzrpfamQ4uGK4hg@mail.gmail.com>
- <8c27c1f8-9573-4777-8397-929a15e67f60@bytedance.com>
- <CAG48ez18QoQdJqBXo0FW9qw5CkTUFqKD8iZ195sFud0GPCRywQ@mail.gmail.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <CAG48ez18QoQdJqBXo0FW9qw5CkTUFqKD8iZ195sFud0GPCRywQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+From: Kunwu Chan <chentao@kylinos.cn>
 
+When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
+and bpf program has owned a raw_spinlock under a interrupt handler,
+which results in invalid lock acquire context.
 
-On 2024/11/8 01:57, Jann Horn wrote:
-> On Thu, Nov 7, 2024 at 8:54 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->> On 2024/11/7 05:48, Jann Horn wrote:
->>> On Thu, Oct 31, 2024 at 9:14 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->>>> In retract_page_tables(), we may modify the pmd entry after acquiring the
->>>> pml and ptl, so we should also check whether the pmd entry is stable.
->>>
->>> Why does taking the PMD lock not guarantee that the PMD entry is stable?
->>
->> Because the pmd entry may have changed before taking the pmd lock, so we
->> need to recheck it after taking the pmd or pte lock.
-> 
-> You mean it could have changed from the value we obtained from
-> find_pmd_or_thp_or_none(mm, addr, &pmd)? I don't think that matters
-> though.
-> 
->>>> Using pte_offset_map_rw_nolock() + pmd_same() to do it, and then we can
->>>> also remove the calling of the pte_lockptr().
->>>>
->>>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->>>> ---
->>>>    mm/khugepaged.c | 17 ++++++++++++++++-
->>>>    1 file changed, 16 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->>>> index 6f8d46d107b4b..6d76dde64f5fb 100644
->>>> --- a/mm/khugepaged.c
->>>> +++ b/mm/khugepaged.c
->>>> @@ -1721,6 +1721,7 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->>>>                   spinlock_t *pml;
->>>>                   spinlock_t *ptl;
->>>>                   bool skipped_uffd = false;
->>>> +               pte_t *pte;
->>>>
->>>>                   /*
->>>>                    * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
->>>> @@ -1756,11 +1757,25 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
->>>>                                           addr, addr + HPAGE_PMD_SIZE);
->>>>                   mmu_notifier_invalidate_range_start(&range);
->>>>
->>>> +               pte = pte_offset_map_rw_nolock(mm, pmd, addr, &pgt_pmd, &ptl);
->>>> +               if (!pte) {
->>>> +                       mmu_notifier_invalidate_range_end(&range);
->>>> +                       continue;
->>>> +               }
->>>> +
->>>>                   pml = pmd_lock(mm, pmd);
->>>
->>> I don't understand why you're mapping the page table before locking
->>> the PMD. Doesn't that just mean we need more error checking
->>> afterwards?
->>
->> The main purpose is to obtain the pmdval. If we don't use
->> pte_offset_map_rw_nolock, we should pay attention to recheck pmd entry
->> before pte_lockptr(), like this:
->>
->> pmdval = pmdp_get_lockless(pmd);
->> pmd_lock
->> recheck pmdval
->> pte_lockptr(mm, pmd)
->>
->> Otherwise, it may cause the system to crash. Consider the following
->> situation:
->>
->>       CPU 0              CPU 1
->>
->> zap_pte_range
->> --> clear pmd entry
->>       free pte page (by RCU)
->>
->>                         retract_page_tables
->>                         --> pmd_lock
->>                             pte_lockptr(mm, pmd)  <-- BOOM!!
->>
->> So maybe calling pte_offset_map_rw_nolock() is more convenient.
-> 
-> How about refactoring find_pmd_or_thp_or_none() like this, by moving
-> the checks of the PMD entry value into a separate helper:
-> 
-> 
-> 
-> -static int find_pmd_or_thp_or_none(struct mm_struct *mm,
-> -                                  unsigned long address,
-> -                                  pmd_t **pmd)
-> +static int check_pmd_state(pmd_t *pmd)
->   {
-> -       pmd_t pmde;
-> +       pmd_t pmde = pmdp_get_lockless(*pmd);
-> 
-> -       *pmd = mm_find_pmd(mm, address);
-> -       if (!*pmd)
-> -               return SCAN_PMD_NULL;
-> -
-> -       pmde = pmdp_get_lockless(*pmd);
->          if (pmd_none(pmde))
->                  return SCAN_PMD_NONE;
->          if (!pmd_present(pmde))
->                  return SCAN_PMD_NULL;
->          if (pmd_trans_huge(pmde))
->                  return SCAN_PMD_MAPPED;
->          if (pmd_devmap(pmde))
->                  return SCAN_PMD_NULL;
->          if (pmd_bad(pmde))
->                  return SCAN_PMD_NULL;
->          return SCAN_SUCCEED;
->   }
-> 
-> +static int find_pmd_or_thp_or_none(struct mm_struct *mm,
-> +                                  unsigned long address,
-> +                                  pmd_t **pmd)
-> +{
-> +
-> +       *pmd = mm_find_pmd(mm, address);
-> +       if (!*pmd)
-> +               return SCAN_PMD_NULL;
-> +       return check_pmd_state(*pmd);
-> +}
-> +
-> 
-> 
-> And simplifying retract_page_tables() a little bit like this:
-> 
-> 
->          i_mmap_lock_read(mapping);
->          vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
->                  struct mmu_notifier_range range;
->                  struct mm_struct *mm;
->                  unsigned long addr;
->                  pmd_t *pmd, pgt_pmd;
->                  spinlock_t *pml;
->                  spinlock_t *ptl;
-> -               bool skipped_uffd = false;
-> +               bool success = false;
-> 
->                  /*
->                   * Check vma->anon_vma to exclude MAP_PRIVATE mappings that
->                   * got written to. These VMAs are likely not worth removing
->                   * page tables from, as PMD-mapping is likely to be split later.
->                   */
->                  if (READ_ONCE(vma->anon_vma))
->                          continue;
-> 
->                  addr = vma->vm_start + ((pgoff - vma->vm_pgoff) << PAGE_SHIFT);
-> @@ -1763,34 +1767,34 @@ static void retract_page_tables(struct
-> address_space *mapping, pgoff_t pgoff)
-> 
->                  /*
->                   * Huge page lock is still held, so normally the page table
->                   * must remain empty; and we have already skipped anon_vma
->                   * and userfaultfd_wp() vmas.  But since the mmap_lock is not
->                   * held, it is still possible for a racing userfaultfd_ioctl()
->                   * to have inserted ptes or markers.  Now that we hold ptlock,
->                   * repeating the anon_vma check protects from one category,
->                   * and repeating the userfaultfd_wp() check from another.
->                   */
-> -               if (unlikely(vma->anon_vma || userfaultfd_wp(vma))) {
-> -                       skipped_uffd = true;
-> -               } else {
-> +               if (likely(!vma->anon_vma && !userfaultfd_wp(vma))) {
->                          pgt_pmd = pmdp_collapse_flush(vma, addr, pmd);
->                          pmdp_get_lockless_sync();
-> +                       success = true;
->                  }
-> 
->                  if (ptl != pml)
->                          spin_unlock(ptl);
-> +drop_pml:
->                  spin_unlock(pml);
-> 
->                  mmu_notifier_invalidate_range_end(&range);
-> 
-> -               if (!skipped_uffd) {
-> +               if (success) {
->                          mm_dec_nr_ptes(mm);
->                          page_table_check_pte_clear_range(mm, addr, pgt_pmd);
->                          pte_free_defer(mm, pmd_pgtable(pgt_pmd));
->                  }
->          }
->          i_mmap_unlock_read(mapping);
-> 
-> 
-> And then instead of your patch, I think you can just do this?
+[ BUG: Invalid wait context ]
+6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+-----------------------------
+swapper/0/0 is trying to lock:
+ffff8880261e7a00 (&trie->lock){....}-{3:3},
+at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+other info that might help us debug this:
+context-{3:3}
+5 locks held by swapper/0/0:
+ #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
+ #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
+ #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+at: spin_lock include/linux/spinlock.h:351 [inline]
+ #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
+ #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2},
+at: __queue_work+0x759/0xf50
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
+ #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
+stack backtrace:
+CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
+6.12.0-rc5-next-20241031-syzkaller #0
+Hardware name: Google Compute Engine/Google Compute Engine,
+BIOS Google 09/13/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+ check_wait_context kernel/locking/lockdep.c:4898 [inline]
+ __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+ bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+ bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
+ bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
+ trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
+ __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
+ queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:662 [inline]
+ stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
+ vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
+ vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
+ vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
+ __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+ handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+ common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
+ </IRQ>
 
-Ah, this does look much better! Will change to this in the next version.
+Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/bpf/6723db4a.050a0220.35b515.0168.GAE@google.com/
+Fixes: 66150d0dde03 ("bpf, lpm: Make locking RT friendly")
+Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+---
+ kernel/bpf/lpm_trie.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks!
+diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+index 9b60eda0f727..373cdcfa0505 100644
+--- a/kernel/bpf/lpm_trie.c
++++ b/kernel/bpf/lpm_trie.c
+@@ -35,7 +35,7 @@ struct lpm_trie {
+ 	size_t				n_entries;
+ 	size_t				max_prefixlen;
+ 	size_t				data_size;
+-	spinlock_t			lock;
++	raw_spinlock_t			lock;
+ };
+ 
+ /* This trie implements a longest prefix match algorithm that can be used to
+@@ -330,7 +330,7 @@ static long trie_update_elem(struct bpf_map *map,
+ 	if (key->prefixlen > trie->max_prefixlen)
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&trie->lock, irq_flags);
++	raw_spin_lock_irqsave(&trie->lock, irq_flags);
+ 
+ 	/* Allocate and fill a new node */
+ 
+@@ -437,7 +437,7 @@ static long trie_update_elem(struct bpf_map *map,
+ 		kfree(im_node);
+ 	}
+ 
+-	spin_unlock_irqrestore(&trie->lock, irq_flags);
++	raw_spin_unlock_irqrestore(&trie->lock, irq_flags);
+ 	kfree_rcu(free_node, rcu);
+ 
+ 	return ret;
+@@ -459,7 +459,7 @@ static long trie_delete_elem(struct bpf_map *map, void *_key)
+ 	if (key->prefixlen > trie->max_prefixlen)
+ 		return -EINVAL;
+ 
+-	spin_lock_irqsave(&trie->lock, irq_flags);
++	raw_spin_lock_irqsave(&trie->lock, irq_flags);
+ 
+ 	/* Walk the tree looking for an exact key/length match and keeping
+ 	 * track of the path we traverse.  We will need to know the node
+@@ -535,7 +535,7 @@ static long trie_delete_elem(struct bpf_map *map, void *_key)
+ 	free_node = node;
+ 
+ out:
+-	spin_unlock_irqrestore(&trie->lock, irq_flags);
++	raw_spin_unlock_irqrestore(&trie->lock, irq_flags);
+ 	kfree_rcu(free_parent, rcu);
+ 	kfree_rcu(free_node, rcu);
+ 
+@@ -581,7 +581,7 @@ static struct bpf_map *trie_alloc(union bpf_attr *attr)
+ 			  offsetof(struct bpf_lpm_trie_key_u8, data);
+ 	trie->max_prefixlen = trie->data_size * 8;
+ 
+-	spin_lock_init(&trie->lock);
++	raw_spin_lock_init(&trie->lock);
+ 
+ 	return &trie->map;
+ }
+-- 
+2.34.1
 
-> 
-> 
-> @@ -1754,20 +1754,22 @@ static void retract_page_tables(struct
-> address_space *mapping, pgoff_t pgoff)
->                   */
->                  if (userfaultfd_wp(vma))
->                          continue;
-> 
->                  /* PTEs were notified when unmapped; but now for the PMD? */
->                  mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, mm,
->                                          addr, addr + HPAGE_PMD_SIZE);
->                  mmu_notifier_invalidate_range_start(&range);
-> 
->                  pml = pmd_lock(mm, pmd);
-> +               if (check_pmd_state(mm, addr, pmd) != SCAN_SUCCEED)
-> +                       goto drop_pml;
->                  ptl = pte_lockptr(mm, pmd);
->                  if (ptl != pml)
->                          spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
-> 
->                  /*
->                   * Huge page lock is still held, so normally the page table
->                   * must remain empty; and we have already skipped anon_vma
->                   * and userfaultfd_wp() vmas.  But since the mmap_lock is not
->                   * held, it is still possible for a racing userfaultfd_ioctl()
->                   * to have inserted ptes or markers.  Now that we hold ptlock,
 
