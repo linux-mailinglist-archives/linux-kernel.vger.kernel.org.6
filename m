@@ -1,54 +1,79 @@
-Return-Path: <linux-kernel+bounces-401017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81559C1506
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:59:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B119C14C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA88C1C2430C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:59:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0AD8B21E35
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB7C1D0F51;
-	Fri,  8 Nov 2024 03:57:32 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1580D1CF7D6;
-	Fri,  8 Nov 2024 03:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D390188706;
+	Fri,  8 Nov 2024 03:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PiLGer9J"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD2B1BD9FF;
+	Fri,  8 Nov 2024 03:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731038251; cv=none; b=ClISKgmsrTEL2LlZMEDtZQuSTKWR9KhV6Y3MbsRSTc15YMjGGMImccW7yFmSXqUj4nXBAYSXRXPQ+IhkygPwq6jPdAVY3f/qI01c4yPqPNK1JuzSc/k0zIcpKZ/x9znbrplVWVHxDkMHnBqbXVOLQKHWqUDp6T2l/9YYJ0mbGFU=
+	t=1731037232; cv=none; b=ZKmsMvWnMCxGyr9ciEr40nPzDXBw4YsjKpIRrL+HV9DLr/UQUFXw0KKawGvPJnscHJ3DFjgL15RD3MjSuGlBcnUpZKmHzWJqpNk8rOxVgJ+FjOXSCQMLMcV5JTxcyVwuvduV1DmQ9FvjNfGDIOZLtu9/mk8MUnAJVz34dPEJ/3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731038251; c=relaxed/simple;
-	bh=UqiTbETEd8jSp0gEVlsF2xAXR7rCYXT3xzLu5CiovHc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pMwu6ekBD1F49NBai+txWxG0JYGEnVkfYl29/I/4FZNORvt0T2FQwIZHP5pNtpk6L0ueJT6juVDJSXoPYJzcDnqjF6jYeYAXF536AlOdLu6NiWrBlQnyHML+X7bLbyJO94UoywlJZv66kFvZJbOHRqS7qLxTnP86Wm4A86uJMYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.185])
-	by gateway (Coremail) with SMTP id _____8BxIK8mjC1nY9o4AA--.23205S3;
-	Fri, 08 Nov 2024 11:57:26 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.185])
-	by front1 (Coremail) with SMTP id qMiowMBxbcIajC1n0jVMAA--.31622S6;
-	Fri, 08 Nov 2024 11:57:24 +0800 (CST)
-From: Xianglai Li <lixianglai@loongson.cn>
-To: linux-kernel@vger.kernel.org
-Cc: Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Xianglai li <lixianglai@loongson.cn>
-Subject: [PATCH V4 11/11] LoongArch: KVM: Add irqfd support
-Date: Fri,  8 Nov 2024 11:38:52 +0800
-Message-Id: <20241108033852.2727684-5-lixianglai@loongson.cn>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20241108033852.2727684-1-lixianglai@loongson.cn>
-References: <20241108033437.2727574-1-lixianglai@loongson.cn>
- <20241108033852.2727684-1-lixianglai@loongson.cn>
+	s=arc-20240116; t=1731037232; c=relaxed/simple;
+	bh=s60fPGEH8R0V05l/DCziW5MsVlLy6qqAM5FhxjaJk3k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yg/lM/scRs1qakZsDKoJMWWxjYg7S7owoq0UVUGfn+7mORCY0MSMm0T8bEm71nweX29SUungpKqafbzI+0CclmCKvP7qPriGgIkBLei+5lB6BnlfRO6RYmGUhD3zXrPAyy/i9t4a0WWvrt7Rd9eHUZsPx9mM+lC0srfQ1GrCVEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PiLGer9J; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2f4884a69d8311efb88477ffae1fc7a5-20241108
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=JWM/VuPToagKQqIrsc4gjKEm7ZO4IRmjdG17CoQzVcc=;
+	b=PiLGer9JN+hO3Tj7jS/ZHOXzquxN+mkR/+4qityKeZ4XOXDqeCrtzny7H0549s9uL0iKpKu2yDQ43Rn84W3UmwiTLeNp3aavUxAv5EjMN52ne8s9v9iMN6G/WOH9Pz1it8GY2b44PGbVlFQSwyrzixebkhE1fn1NTc1U85s0ses=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:e44d5991-73fe-4b5d-98ae-ee85cbfd2ceb,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:1c7db6ca-91e6-4060-9516-6ba489b4e2dc,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 2f4884a69d8311efb88477ffae1fc7a5-20241108
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <yunfei.dong@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 38878053; Fri, 08 Nov 2024 11:40:23 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 8 Nov 2024 11:40:21 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 8 Nov 2024 11:40:20 +0800
+From: Yunfei Dong <yunfei.dong@mediatek.com>
+To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
+	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>
+CC: Hsin-Yi Wang <hsinyi@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>,
+	Fritz Koenig <frkoenig@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, "Steve
+ Cho" <stevecho@chromium.org>, Yunfei Dong <yunfei.dong@mediatek.com>,
+	<linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 0/3] media: mediatek: vcodec: support h264 extend vsi
+Date: Fri, 8 Nov 2024 11:40:09 +0800
+Message-ID: <20241108034019.20064-1-yunfei.dong@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,263 +81,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMBxbcIajC1n0jVMAA--.31622S6
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--5.143600-8.000000
+X-TMASE-MatchedRID: xDToTJ4Kd/kEQqIqKFLtTpqrexa4CbEQ6Jlwb2gbuk7b6Y+fnTZUL/FN
+	etD9U62Q3f0e/BgwI9DivP2ec7HEZY+eiI05y0fpe8FaKRfM2oOy4iyjvVWTohjQD3m2MCf7xsr
+	6m7RljBGdwzfIRAoivBG7cCJtaI6lUQBcvRRvU70D2WXLXdz+AUo8jH4wkX2jmyiLZetSf8mfop
+	0ytGwvXiq2rl3dzGQ1l3+bAt/YFVR4rnT/tRlwHGh2SN6BF642d5tCcBP/SFSTjsioQY2Q2RyFd
+	Nnda6Rv
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--5.143600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 8EE77812E6CE2747C7DAEFC7C09440856B97035CB0053C935682390589EB11722000:8
+X-MTK: N
 
-Enable the KVM_IRQ_ROUTING/KVM_IRQCHIP/KVM_MSI configuration items,
-add the KVM_CAP_IRQCHIP capability, and implement the query interface
-of the in-kernel irqchip.
+The working buffer address start and end are calculated in kernel
+side currently, the address end can't be calculated if the driver
+only getting the address file handle, not the real physical address.
+Need to send the extended vsi to firmware to calculate the address
+end.
 
-Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+Re-construct some interface and add configuration to support extend
+and non extend driver at the same time. Needn't to parse nal info for
+extended architecture.
 ---
-Cc: Bibo Mao <maobibo@loongson.cn> 
-Cc: Huacai Chen <chenhuacai@kernel.org> 
-Cc: kvm@vger.kernel.org 
-Cc: loongarch@lists.linux.dev 
-Cc: Paolo Bonzini <pbonzini@redhat.com> 
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn> 
-Cc: WANG Xuerui <kernel@xen0n.name> 
-Cc: Xianglai li <lixianglai@loongson.cn> 
+This patch series depends on:
+[1] https://patchwork.kernel.org/project/linux-mediatek/cover/20240018033219.19804-1-yunfei.dong@mediatek.com
 
- arch/loongarch/include/asm/kvm_host.h |  2 +
- arch/loongarch/kvm/Kconfig            |  5 +-
- arch/loongarch/kvm/Makefile           |  1 +
- arch/loongarch/kvm/intc/pch_pic.c     | 27 ++++++++
- arch/loongarch/kvm/irqfd.c            | 97 +++++++++++++++++++++++++++
- arch/loongarch/kvm/vm.c               |  8 +++
- 6 files changed, 139 insertions(+), 1 deletion(-)
- create mode 100644 arch/loongarch/kvm/irqfd.c
+---
+compared with v3:
+- change code logic with callback to decode for patch 2
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index d1f75b854107..7b8367c39da8 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -23,6 +23,8 @@
- #include <asm/kvm_pch_pic.h>
- #include <asm/loongarch.h>
- 
-+#define __KVM_HAVE_ARCH_INTC_INITIALIZED
-+
- /* Loongarch KVM register ids */
- #define KVM_GET_IOC_CSR_IDX(id)		((id & KVM_CSR_IDX_MASK) >> LOONGARCH_REG_SHIFT)
- #define KVM_GET_IOC_CPUCFG_IDX(id)	((id & KVM_CPUCFG_IDX_MASK) >> LOONGARCH_REG_SHIFT)
-diff --git a/arch/loongarch/kvm/Kconfig b/arch/loongarch/kvm/Kconfig
-index 248744b4d086..97a811077ac3 100644
---- a/arch/loongarch/kvm/Kconfig
-+++ b/arch/loongarch/kvm/Kconfig
-@@ -21,13 +21,16 @@ config KVM
- 	tristate "Kernel-based Virtual Machine (KVM) support"
- 	depends on AS_HAS_LVZ_EXTENSION
- 	select HAVE_KVM_DIRTY_RING_ACQ_REL
-+	select HAVE_KVM_IRQ_ROUTING
-+	select HAVE_KVM_IRQCHIP
-+	select HAVE_KVM_MSI
-+	select HAVE_KVM_READONLY_MEM
- 	select HAVE_KVM_VCPU_ASYNC_IOCTL
- 	select KVM_COMMON
- 	select KVM_GENERIC_DIRTYLOG_READ_PROTECT
- 	select KVM_GENERIC_HARDWARE_ENABLING
- 	select KVM_GENERIC_MMU_NOTIFIER
- 	select KVM_MMIO
--	select HAVE_KVM_READONLY_MEM
- 	select KVM_XFER_TO_GUEST_WORK
- 	select SCHED_INFO
- 	help
-diff --git a/arch/loongarch/kvm/Makefile b/arch/loongarch/kvm/Makefile
-index 97b2adf08206..3a01292f71cc 100644
---- a/arch/loongarch/kvm/Makefile
-+++ b/arch/loongarch/kvm/Makefile
-@@ -21,5 +21,6 @@ kvm-y += vm.o
- kvm-y += intc/ipi.o
- kvm-y += intc/eiointc.o
- kvm-y += intc/pch_pic.o
-+kvm-y += irqfd.o
- 
- CFLAGS_exit.o	+= $(call cc-option,-Wno-override-init,)
-diff --git a/arch/loongarch/kvm/intc/pch_pic.c b/arch/loongarch/kvm/intc/pch_pic.c
-index e7b5c23a7d56..8dca23fc589a 100644
---- a/arch/loongarch/kvm/intc/pch_pic.c
-+++ b/arch/loongarch/kvm/intc/pch_pic.c
-@@ -447,8 +447,31 @@ static int kvm_pch_pic_set_attr(struct kvm_device *dev,
- 	return ret;
- }
- 
-+static int kvm_setup_default_irq_routing(struct kvm *kvm)
-+{
-+	int i, ret;
-+	u32 nr = KVM_IRQCHIP_NUM_PINS;
-+	struct kvm_irq_routing_entry *entries;
-+
-+	entries = kcalloc(nr, sizeof(*entries), GFP_KERNEL);
-+	if (!entries)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < nr; i++) {
-+		entries[i].gsi = i;
-+		entries[i].type = KVM_IRQ_ROUTING_IRQCHIP;
-+		entries[i].u.irqchip.irqchip = 0;
-+		entries[i].u.irqchip.pin = i;
-+	}
-+	ret = kvm_set_irq_routing(kvm, entries, nr, 0);
-+	kfree(entries);
-+
-+	return ret;
-+}
-+
- static int kvm_pch_pic_create(struct kvm_device *dev, u32 type)
- {
-+	int ret;
- 	struct loongarch_pch_pic *s;
- 	struct kvm *kvm = dev->kvm;
- 
-@@ -456,6 +479,10 @@ static int kvm_pch_pic_create(struct kvm_device *dev, u32 type)
- 	if (kvm->arch.pch_pic)
- 		return -EINVAL;
- 
-+	ret = kvm_setup_default_irq_routing(kvm);
-+	if (ret)
-+		return -ENOMEM;
-+
- 	s = kzalloc(sizeof(struct loongarch_pch_pic), GFP_KERNEL);
- 	if (!s)
- 		return -ENOMEM;
-diff --git a/arch/loongarch/kvm/irqfd.c b/arch/loongarch/kvm/irqfd.c
-new file mode 100644
-index 000000000000..01efeda22107
---- /dev/null
-+++ b/arch/loongarch/kvm/irqfd.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited
-+ */
-+
-+#include <linux/kvm_host.h>
-+#include <trace/events/kvm.h>
-+#include <asm/kvm_pch_pic.h>
-+
-+static int kvm_set_pic_irq(struct kvm_kernel_irq_routing_entry *e,
-+		struct kvm *kvm, int irq_source_id, int level, bool line_status)
-+{
-+	/* PCH-PIC pin (0 ~ 64) <---> GSI (0 ~ 64) */
-+	pch_pic_set_irq(kvm->arch.pch_pic, e->irqchip.pin, level);
-+
-+	return 0;
-+}
-+
-+/*
-+ * kvm_set_msi: inject the MSI corresponding to the
-+ * MSI routing entry
-+ *
-+ * This is the entry point for irqfd MSI injection
-+ * and userspace MSI injection.
-+ */
-+int kvm_set_msi(struct kvm_kernel_irq_routing_entry *e,
-+		struct kvm *kvm, int irq_source_id, int level, bool line_status)
-+{
-+	if (!level)
-+		return -1;
-+
-+	pch_msi_set_irq(kvm, e->msi.data, level);
-+
-+	return 0;
-+}
-+
-+/*
-+ * kvm_set_routing_entry: populate a kvm routing entry
-+ * from a user routing entry
-+ *
-+ * @kvm: the VM this entry is applied to
-+ * @e: kvm kernel routing entry handle
-+ * @ue: user api routing entry handle
-+ * return 0 on success, -EINVAL on errors.
-+ */
-+int kvm_set_routing_entry(struct kvm *kvm,
-+			struct kvm_kernel_irq_routing_entry *e,
-+			const struct kvm_irq_routing_entry *ue)
-+{
-+	int r = -EINVAL;
-+
-+	switch (ue->type) {
-+	case KVM_IRQ_ROUTING_IRQCHIP:
-+		e->set = kvm_set_pic_irq;
-+		e->irqchip.irqchip = ue->u.irqchip.irqchip;
-+		e->irqchip.pin = ue->u.irqchip.pin;
-+
-+		if (e->irqchip.pin >= KVM_IRQCHIP_NUM_PINS)
-+			goto out;
-+		break;
-+	case KVM_IRQ_ROUTING_MSI:
-+		e->set = kvm_set_msi;
-+		e->msi.address_lo = ue->u.msi.address_lo;
-+		e->msi.address_hi = ue->u.msi.address_hi;
-+		e->msi.data = ue->u.msi.data;
-+		break;
-+	default:
-+		goto out;
-+	}
-+	r = 0;
-+out:
-+	return r;
-+}
-+
-+int kvm_arch_set_irq_inatomic(struct kvm_kernel_irq_routing_entry *e,
-+		struct kvm *kvm, int irq_source_id, int level, bool line_status)
-+{
-+	if (e->type == KVM_IRQ_ROUTING_IRQCHIP) {
-+		kvm_set_pic_irq(e, kvm, irq_source_id, level, line_status);
-+		return 0;
-+	}
-+
-+	if (e->type == KVM_IRQ_ROUTING_MSI) {
-+		pch_msi_set_irq(kvm, e->msi.data, level);
-+		return 0;
-+	}
-+
-+	return -EWOULDBLOCK;
-+}
-+
-+bool kvm_arch_intc_initialized(struct kvm *kvm)
-+{
-+	if (kvm->arch.eiointc && kvm->arch.ipi && kvm->arch.pch_pic)
-+		return true;
-+
-+	return false;
-+}
-diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-index d93d098246ed..e0968f132a2c 100644
---- a/arch/loongarch/kvm/vm.c
-+++ b/arch/loongarch/kvm/vm.c
-@@ -78,6 +78,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	int r;
- 
- 	switch (ext) {
-+	case KVM_CAP_IRQCHIP:
- 	case KVM_CAP_ONE_REG:
- 	case KVM_CAP_ENABLE_CAP:
- 	case KVM_CAP_READONLY_MEM:
-@@ -163,6 +164,8 @@ int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
- 	struct kvm_device_attr attr;
- 
- 	switch (ioctl) {
-+	case KVM_CREATE_IRQCHIP:
-+		return 0;
- 	case KVM_HAS_DEVICE_ATTR:
- 		if (copy_from_user(&attr, argp, sizeof(attr)))
- 			return -EFAULT;
-@@ -184,3 +187,8 @@ int kvm_vm_ioctl_irq_line(struct kvm *kvm, struct kvm_irq_level *irq_event,
- 					line_status);
- 	return 0;
- }
-+
-+bool kvm_arch_irqchip_in_kernel(struct kvm *kvm)
-+{
-+	return (bool)((!!kvm->arch.eiointc) && (!!kvm->arch.pch_pic));
-+}
+compared with v2:
+- squash patch 2/3/4 together
+- re-write commit message for patch 1
+
+compared with v1:
+- combine some pathes together for patch 2
+- re-write patch 4
+---
+Yunfei Dong (3):
+  media: mediatek: vcodec: remove vsi operation in common interface
+  media: mediatek: vcodec: support extended h264 decode
+  media: mediatek: vcodec: add description for vsi struct
+
+ .../vcodec/decoder/mtk_vcodec_dec_drv.h       |   2 +
+ .../decoder/vdec/vdec_h264_req_multi_if.c     | 589 ++++++++++++++++--
+ 2 files changed, 524 insertions(+), 67 deletions(-)
+
 -- 
-2.39.1
+2.46.0
 
 
