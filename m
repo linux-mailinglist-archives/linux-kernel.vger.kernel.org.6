@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-400881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602DB9C1397
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:26:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC629C139B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:26:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0481C22792
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAC591C23380
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95ECF1BC3F;
-	Fri,  8 Nov 2024 01:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5A43D96A;
+	Fri,  8 Nov 2024 01:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otscWSYf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYYuiUPy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F3C17BBF
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270D136126;
+	Fri,  8 Nov 2024 01:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731029168; cv=none; b=G5sKSBwev2zS9SUegehDkfBlslxpyuOC6MV89ft8siM872mj9n0xTvYCX3stvZZoD+xaCytj3ccfHLY6RCMC7ettVzVKT3Tb2uRJky1QiiSW8Y4a66Sb5PrA8aazP8q50blwztdt35QIgzHtdftO3if7EpLT3BQhbvzz9XPAbbI=
+	t=1731029170; cv=none; b=uXz9XKKrzFE0zfMGSuRxbT2DF1yaZMfjdaiznzi8YhYeDsUYiqQ+idgm85CRWrNVqQ4jQ3fgayyWhkj6bxF9gjdvyj0Z9FNbeXXzpEKGj9GW/UxmjUPNqE5KWDFZqcY27rDTlKGW2QEWYmBQsVqfzhD2ejInHQdUqsBBzOgAuaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731029168; c=relaxed/simple;
-	bh=Xc48J3j8pFGdmACryyspUFhTaTgH3SnsHmTKA1qPrKI=;
+	s=arc-20240116; t=1731029170; c=relaxed/simple;
+	bh=gPIkxehSKAI0ucltkZ1fut7ZW6Iq4yCbo00XEqZNTOA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MtfQB/inPa7qXz9jjiM1zUXJYu9wsQsfGT584cH4q8gWdwT+enMvTRwYkbTUD25jEzi3jLAav6K4/aGZW/N58qpTaK/Jy6l2f6obJhcXgtWrzVAlicJOgFp2rNftCdiuVdNrrqyz6f9rubabWPGuWkXDSM2xwvKDALSOv/j9Hi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otscWSYf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D6DC4CECC;
-	Fri,  8 Nov 2024 01:26:06 +0000 (UTC)
+	 MIME-Version; b=hGiazbfdwH4mt3CZGNFvTjMjjJGP5ZyfmRgm37dhNY12JWDuzk8F4NmRVpkUxlqpWf1XancB99Xm1+Op+BHi1cqEnG89w9Gysw0WKrs7T5UXPfxGNZxHxPFEHXSbLGzCNGsuHrRyX+j+/6Cs5CGkRcPtkFSzKmZb/bwcNEpshpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYYuiUPy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 562B1C4CECC;
+	Fri,  8 Nov 2024 01:26:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731029167;
-	bh=Xc48J3j8pFGdmACryyspUFhTaTgH3SnsHmTKA1qPrKI=;
+	s=k20201202; t=1731029170;
+	bh=gPIkxehSKAI0ucltkZ1fut7ZW6Iq4yCbo00XEqZNTOA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=otscWSYftslmbZj1FnDbIZDhsQ6dNd7/oQ++yHRWDXVzW7v+xJpgSd0uuC6tDgoLb
-	 IQgjQAr17xXj2A25Z+DSWgeDQslE51A3D6AsqyRkV2F3KyuZ4RmiX5fFDMbgUi/XXd
-	 H79a/qsrcgFoUHeNgSKhfGkDpNWOcbXNQ3V8G0zfWdbdQFZrmYqAqnB4sHWTdNqg8w
-	 mmvEncIEQw8HysLmfZA7E2XaovX+b7EHy1Hfexrko97uyjD0gfFSJcvrNesRM4yEno
-	 NJUJ2HzoGUWX97eu0Hiu5FE7AkCIvI7gQH27xWjc4h84Fq80P3AfgQIJyBAgr9Nc7Q
-	 xtP6FbL+PEUIQ==
+	b=qYYuiUPyH2Mz0ezkEkyom8E7Qbs7K7xqKi2IvL1VTAx2L734ePruCTPrW7ThfMImg
+	 /W4qtabEK7FGQmQTK9UPjmAdP3QGvnYuY24zgSL/zSu4WZGdoUqIygrKUeFW141Zst
+	 mlNI+MchNG2a9DiCri44oi1jDnuKa8fUsTPBr44d/a8ZaxnFAwdanhG0eQxu5c3Hqv
+	 L7Iz/po0ubzM4m9PBbKj5jaDQ+vgTJGkyLsPqBQ06LK5qF4OngOCSeX2Jb2fVLPHE3
+	 Ys4b1voheyLFTfOzkw74JdCJalsk8Wefy+47L7AEjtickLM5BCC8JMgodZSTG1fNqy
+	 TG2JnHsGOWi8Q==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	stable@vger.kernel.org,
 	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Subject: [PATCH 3/4] f2fs: fix to adjust appropriate length for fiemap
-Date: Fri,  8 Nov 2024 09:25:56 +0800
-Message-Id: <20241108012557.572782-3-chao@kernel.org>
+Subject: [PATCH 4/4] f2fs: fix to requery extent which cross boundary of inquiry
+Date: Fri,  8 Nov 2024 09:25:57 +0800
+Message-Id: <20241108012557.572782-4-chao@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20241108012557.572782-1-chao@kernel.org>
 References: <20241108012557.572782-1-chao@kernel.org>
@@ -59,63 +61,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+dd if=/dev/zero of=file bs=4k count=5
+xfs_io file -c "fiemap -v 2 16384"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..31]:         139272..139303      32 0x1000
+     1: [32..39]:        139304..139311       8 0x1001
+xfs_io file -c "fiemap -v 0 16384"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..31]:         139272..139303      32 0x1000
+xfs_io file -c "fiemap -v 0 16385"
+file:
+   EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+     0: [0..39]:         139272..139311      40 0x1001
 
-If user give a file size as "length" parameter for fiemap
-operations, but if this size is non-block size aligned,
-it will show 2 segments fiemap results even this whole file
-is contiguous on disk, such as the following results:
+There are two problems:
+- continuous extent is split to two
+- FIEMAP_EXTENT_LAST is missing in last extent
 
- ./f2fs_io fiemap 0 19034 ylog/analyzer.py
-Fiemap: offset = 0 len = 19034
-        logical addr.    physical addr.   length           flags
-0       0000000000000000 0000000020baa000 0000000000004000 00001000
-1       0000000000004000 0000000020bae000 0000000000001000 00001001
+The root cause is: if upper boundary of inquiry crosses extent,
+f2fs_map_blocks() will truncate length of returned extent to
+F2FS_BYTES_TO_BLK(len), and also, it will stop to query latter
+extent or hole to make sure current extent is last or not.
 
-after this patch:
-./f2fs_io fiemap 0 19034 ylog/analyzer.py
-Fiemap: offset = 0 len = 19034
-    logical addr.    physical addr.   length           flags
-0    0000000000000000 00000000315f3000 0000000000005000 00001001
+In order to fix this issue, once we found an extent locates
+in the end of inquiry range by f2fs_map_blocks(), we need to
+expand inquiry range to requiry.
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Cc: stable@vger.kernel.org
+Fixes: 7f63eb77af7b ("f2fs: report unwritten area in f2fs_fiemap")
+Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/data.c          | 6 +++---
- include/linux/f2fs_fs.h | 1 +
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/data.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 0e8390cbdb5b..69f1cb0490ee 100644
+index 69f1cb0490ee..ee5614324df0 100644
 --- a/fs/f2fs/data.c
 +++ b/fs/f2fs/data.c
-@@ -1938,12 +1938,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			goto out;
- 	}
+@@ -1896,7 +1896,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		u64 start, u64 len)
+ {
+ 	struct f2fs_map_blocks map;
+-	sector_t start_blk, last_blk;
++	sector_t start_blk, last_blk, blk_len, max_len;
+ 	pgoff_t next_pgofs;
+ 	u64 logical = 0, phys = 0, size = 0;
+ 	u32 flags = 0;
+@@ -1940,14 +1940,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
  
--	if (F2FS_BYTES_TO_BLK(len) == 0)
--		len = F2FS_BLKSIZE;
--
  	start_blk = F2FS_BYTES_TO_BLK(start);
  	last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
+-
+-	if (len & F2FS_BLKSIZE_MASK)
+-		len = round_up(len, F2FS_BLKSIZE);
++	blk_len = last_blk - start_blk + 1;
++	max_len = F2FS_BYTES_TO_BLK(maxbytes) - start_blk;
  
-+	if (len & F2FS_BLKSIZE_MASK)
-+		len = round_up(len, F2FS_BLKSIZE);
-+
  next:
  	memset(&map, 0, sizeof(map));
  	map.m_lblk = start_blk;
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 3b2ad444c002..c24f8bc01045 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -24,6 +24,7 @@
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
- #define COMPRESS_ADDR		((block_t)-2)	/* used as compressed data flag */
+-	map.m_len = F2FS_BYTES_TO_BLK(len);
++	map.m_len = blk_len;
+ 	map.m_next_pgofs = &next_pgofs;
+ 	map.m_seg_type = NO_CHECK_TYPE;
  
-+#define F2FS_BLKSIZE_MASK		(F2FS_BLKSIZE - 1)
- #define F2FS_BYTES_TO_BLK(bytes)	((unsigned long long)(bytes) >> F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_TO_BYTES(blk)		((unsigned long long)(blk) << F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
+@@ -1970,6 +1969,17 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		flags |= FIEMAP_EXTENT_LAST;
+ 	}
+ 
++	/*
++	 * current extent may cross boundary of inquiry, increase len to
++	 * requery.
++	 */
++	if (!compr_cluster && (map.m_flags & F2FS_MAP_MAPPED) &&
++				map.m_lblk + map.m_len - 1 == last_blk &&
++				blk_len != max_len) {
++		blk_len = max_len;
++		goto next;
++	}
++
+ 	compr_appended = false;
+ 	/* In a case of compressed cluster, append this to the last extent */
+ 	if (compr_cluster && ((map.m_flags & F2FS_MAP_DELALLOC) ||
 -- 
 2.40.1
 
