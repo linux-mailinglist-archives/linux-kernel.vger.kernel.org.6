@@ -1,169 +1,149 @@
-Return-Path: <linux-kernel+bounces-401219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A469C1752
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:51:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261989C174E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0EC41F23555
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E862830F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80BC1DD861;
-	Fri,  8 Nov 2024 07:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC841D1735;
+	Fri,  8 Nov 2024 07:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZXbg/zx9"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Gidv643O"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E841DC753
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC0C1D89EF;
+	Fri,  8 Nov 2024 07:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731052251; cv=none; b=WWYAAlooQ33f4ZSTb/t6Ioj/ADOj1sn8h1HdvPRkHVxKz5YC7JscgtLbIgIF0t0x9L0UGonioeDJ6HINW6iVzbvnu9NUHN3LN5nn/GyG2rpTJfQH9K35PF3Z1Z2VI26sLeqdNueS4g7Dhb+RDEyqBt1mGNUibme/3Qs9nQ4jNSI=
+	t=1731052245; cv=none; b=S0XNAW41BE9gzoz4jPjxn5mNcPGgBkNUiIZQfGrframb/P/ztBPU6buvmLu6CTMxIiG4uREsbmcjlmCK6rchKATYp5w9PbCPXzx/PF0/c50fZxEHJACS35AOqzcBIC1D2lokuqNUbMT7JdXchBHTwstda9cGwBNCfqhqb0cwHqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731052251; c=relaxed/simple;
-	bh=NSv9HKYTfpKEAj81UE+nz5xJvLKjprqFaGJ4xlyv76c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oGwt5HBt0N0ID2jHNxRXIvbwCOOme44MWCPh/kM6jk+bFFrode27qZ5JkSzQWRqPIf/k2q5YsyvRHzolPn7QbH5I266heND0rt35LJRUnpI1/aRRfrtPBacu46CPxs+i35ZoYbH698KYFS6AnS/5rWGl+ZEdx2aAopsMr0P7ea8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZXbg/zx9; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731052246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lUvCn2yrrfm8AzUVnUrwIJ/DyEBVwLRQoeLNZi8hUx4=;
-	b=ZXbg/zx9eILoNJVRb9TG5+ghUGg+6oeeRnwEQ0QKIMY2gQNY2dirJcVskavAYA1RQMWYiL
-	qsOUIHJZp/XBkWgJkWlLlA7RQSvD37oZT/JIFWFiE6PxsiZcgkVxOTa/R7V4WFM4H2sTW8
-	0aPxJn0SN1tH6hAt5yyc1M0ALVQ2yCY=
-From: Hao Ge <hao.ge@linux.dev>
-To: akpm@linux-foundation.org,
-	surenb@google.com,
-	kent.overstreet@linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hao.ge@linux.dev,
-	Hao Ge <gehao@kylinos.cn>
-Subject: [PATCH] lib/alloc_tag: Remove the sysctl configuration to prevent users from disabling it at runtime
-Date: Fri,  8 Nov 2024 15:50:04 +0800
-Message-Id: <20241108075004.131911-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1731052245; c=relaxed/simple;
+	bh=n5edx28hASoLed754TtbyekLHxQf7teMnccHrRubeyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rabIkI94RCSXD4IOM+n5HsONjCW5MQr0hqTAZIDHYpG6avK5KTNXSHKO2bjep20OfOvrQKkAMqZg2WHw0GUEpLJkpX1RbN5ptLSZGIyv/60EIiAp1apDQ9W3s+Cbt98KmaMHgnsWg8lJnwxyxmf5VA153yRhqb6ea8rofcPrNE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Gidv643O; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731052237;
+	bh=0/r25AA/H6+H6jUlgI0pfryas969CBHleQFKUsA0MWM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Gidv643OsczyEm7kWahn9RNKXPgYoLyNfDmVQNuaCCZgf45A10qVZmp2pise8gD1p
+	 Hqe75anZjpoPGCiZH21llvO4/eGwxy0vWRj68H6RtdbBf40AAwSFQfNSm+3XlB9qLS
+	 MU7q7OcrefcU5RQw/OrzYnv+aFh1Jbz8jFwpvitArFKKjeofKqtiqIkG2SnjNizNy7
+	 vT0EmzUMZEdO17JwVaIdmpQwGHt1mUc3YvGAqLbDQ+Y7rNRuS0BdDkUovTQZT9t/Up
+	 2f6V3xqaX06Dw4Fsgsc6XG1j7kz7jD1ND/9Mwv87WBVZaeuWb3X0SCkZvsknQW7siZ
+	 zdlowE+st/8OQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XlB2435vmz4wbr;
+	Fri,  8 Nov 2024 18:50:36 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 18:50:37 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Bard Liao <yung-chuan.liao@linux.intel.com>, Pierre-Louis Bossart
+ <pierre-louis.bossart@linux.dev>, Pierre-Louis Bossart
+ <pierre-louis.bossart@linux.intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Message-ID: <20241108185037.59cded26@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; boundary="Sig_/1Eyak/NWKPCKj3G=WwmGlPD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Hao Ge <gehao@kylinos.cn>
+--Sig_/1Eyak/NWKPCKj3G=WwmGlPD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-After much consideration,I have decided to remove
-the "mem_profiling" sysctl interface to prevent
-users from dynamically enabling or disabling the
-MEMORY ALLOCATION PROFILING feature at runtime.
+Hi all,
 
-I have taken the following actions: I set
-CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y to
-enable memory allocation profiling by default,
-and then made adjustments to mem_profiling dynamically
-during runtime.
+After merging the sound-asoc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-When I ran the OOM test program, I obtained useful
-information that was indeed very helpful for debugging.
+ld: sound/soc/intel/common/soc-acpi-intel-mtl-match.o:(.data.rel+0x6a0): un=
+defined reference to `snd_soc_acpi_intel_sdca_is_device_rt712_vb'
 
-[ 1023.065402] Memory allocations:
-[ 1023.065407]     12.8 GiB     6546 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
-[ 1023.065412]      873 MiB   229985 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
-[ 1023.065415]      187 MiB    29732 mm/slub.c:2412 func:alloc_slab_page
-[ 1023.065418]     99.8 MiB    25560 mm/memory.c:1065 func:folio_prealloc
-[ 1023.065421]     47.2 MiB     3189 mm/readahead.c:434 func:ra_alloc_folio
-[ 1023.065424]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
-[ 1023.065428]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
-[ 1023.065430]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
-[ 1023.065433]     25.6 MiB     6546 mm/huge_memory.c:1161 func:__do_huge_pmd_anonymous_page
-[ 1023.065436]     23.5 MiB     6017 mm/shmem.c:1771 func:shmem_alloc_folio
+Caused by commit
 
-After running echo 0 > /proc/sys/vm/mem_profiling
-and then executing the same test program,
-I obtained the following results
+  5703ab86ff7b ("ASoC: Intel: soc-acpi: add is_device_rt712_vb() helper")
 
-[ 1156.509699] Memory allocations:
-[ 1156.509703]      187 MiB    29645 mm/slub.c:2412 func:alloc_slab_page
-[ 1156.509707]      142 MiB     9357 mm/readahead.c:434 func:ra_alloc_folio
-[ 1156.509710]      136 MiB    41325 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
-[ 1156.509713]     99.7 MiB    25531 mm/memory.c:1065 func:folio_prealloc
-[ 1156.509716]     56.0 MiB       28 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
-[ 1156.509719]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
-[ 1156.509723]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
-[ 1156.509725]     26.3 MiB     7460 mm/readahead.c:264 func:page_cache_ra_unbounded
-[ 1156.509728]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
-[ 1156.509730]     23.5 MiB     6016 mm/shmem.c:1771 func:shmem_alloc_folio
+CONFIG_SND_SOC_ACPI_INTEL_MATCH is enabled even though CONFIG_ACPI is not.
+Presumably as a result of the previous warning I reported.
 
-Because mem_profiling was disabled by executing
-echo 0 > /proc/sys/vm/mem_profiling,we are unable to
-record memory allocation information after the disablement.
-These output logs can mislead users. And similarly, the same
-applies to alloc_info.
+I have applied the following patch for today (a revert of the above
+commit did not easily work).
 
-We already have boot parameters that allow users to
-choose whether to enable or disable.
-In order to maintain the accuracy of memory allocation
-information,I have decided to remove the runtime switch.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 8 Nov 2024 18:18:39 +1100
+Subject: [PATCH] remove COMPILE_TEST from SND_SOC_INTEL_SST_TOPLEVEL for now
 
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- lib/alloc_tag.c | 26 --------------------------
- 1 file changed, 26 deletions(-)
+ sound/soc/intel/Kconfig     | 2 +-
+ sound/soc/sof/intel/Kconfig | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index 81e5f9a70f22..47fa969c23f3 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -227,31 +227,6 @@ struct page_ext_operations page_alloc_tagging_ops = {
- };
- EXPORT_SYMBOL(page_alloc_tagging_ops);
- 
--#ifdef CONFIG_SYSCTL
--static struct ctl_table memory_allocation_profiling_sysctls[] = {
--	{
--		.procname	= "mem_profiling",
--		.data		= &mem_alloc_profiling_key,
--#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
--		.mode		= 0444,
--#else
--		.mode		= 0644,
--#endif
--		.proc_handler	= proc_do_static_key,
--	},
--};
--
--static void __init sysctl_init(void)
--{
--	if (!mem_profiling_support)
--		memory_allocation_profiling_sysctls[0].mode = 0444;
--
--	register_sysctl_init("vm", memory_allocation_profiling_sysctls);
--}
--#else /* CONFIG_SYSCTL */
--static inline void sysctl_init(void) {}
--#endif /* CONFIG_SYSCTL */
--
- static int __init alloc_tag_init(void)
- {
- 	const struct codetag_type_desc desc = {
-@@ -264,7 +239,6 @@ static int __init alloc_tag_init(void)
- 	if (IS_ERR(alloc_tag_cttype))
- 		return PTR_ERR(alloc_tag_cttype);
- 
--	sysctl_init();
- 	procfs_init();
- 
- 	return 0;
--- 
-2.25.1
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index 46b45f390ae9..0a368df2874e 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -2,7 +2,7 @@
+ config SND_SOC_INTEL_SST_TOPLEVEL
+ 	bool "Intel ASoC SST drivers"
+ 	default y
+-	depends on X86 || COMPILE_TEST
++	depends on X86
+ 	select SND_SOC_INTEL_MACH
+ 	help
+ 	  Intel ASoC SST Platform Drivers. If you have a Intel machine that
+diff --git a/sound/soc/sof/intel/Kconfig b/sound/soc/sof/intel/Kconfig
+index 2c43558d96b9..3ef861187e6c 100644
+--- a/sound/soc/sof/intel/Kconfig
++++ b/sound/soc/sof/intel/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config SND_SOC_SOF_INTEL_TOPLEVEL
+ 	bool "SOF support for Intel audio DSPs"
+-	depends on X86 || COMPILE_TEST
++	depends on X86
+ 	help
+ 	  This adds support for Sound Open Firmware for Intel(R) platforms.
+ 	  Say Y if you have such a device.
+--=20
+2.45.2
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1Eyak/NWKPCKj3G=WwmGlPD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctws0ACgkQAVBC80lX
+0Gx75gf+IjlWSIpkZSPS5s8wh8GCGLf5IJY677At7gKey7b66Ibve8hdM2ENIaal
+wDfBFxnW+e6boH3GwRGJCpMRppBkz8O8aHUj0HsKQzXmruR59frSOXmXhJL9feJF
+KvY+ObpfHS3huf0f0s1Tz/+PJvcryevYWWsZDueRl+9Dbbu8wG4CrF0/X/uvjH3v
+tqOyoifanDxDnok8+wp59XxLWZp8aJe3fA3BmpKpMPrQjsxmJ6DcrBBP8gKgFjEw
+UZ0tZdxpV2RYR6Xjh/CHyLv1uwnsqlkusMZy771u2kv77AXgizT4hBhxbm3Kjqps
+UjY3rFpKZzVe0TGFMOiGnwJeyJZZPw==
+=IC5O
+-----END PGP SIGNATURE-----
+
+--Sig_/1Eyak/NWKPCKj3G=WwmGlPD--
 
