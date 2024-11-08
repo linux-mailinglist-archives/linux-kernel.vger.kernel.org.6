@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-402248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C579C256B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:13:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249259C256A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4B2B237DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:13:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1546286054
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DE720B7E9;
-	Fri,  8 Nov 2024 19:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B561F26EE;
+	Fri,  8 Nov 2024 19:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2gZpXBUz"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bnhapw5f"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318AE1F26FA
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885D51F26CB
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731093087; cv=none; b=I3Gkzgv6W3hx+WOiayLe7tV37LHffMV1gc4+5T61jZtb0ZYTirnslKDfEUW57iU11oNH/e+pvyQ38C9ZU99cxM12MsDFVBpqGEZATb/mfW14p9FHraW7LjY0WwlryceuhhRPLg6nosEbFHY3FwW6ZNaBEDUwcFeWAscLA8ZVifc=
+	t=1731093085; cv=none; b=l9g5GuDtJNUDL+GuKvK9OkTlMRcwbwrzWHJKYKeAQ9wzG0xx+9pk6LIh1cJ9uXd2NV/0dQGL10xc1TkyUv17mUPUBTHsGB0dWRbri4xZr5tFGtJKSTLwjKOI9q5MpmFeXcDCHR291/mcdTQjAa3VQeiS5y8l6hcBBPTFvQ7UW5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731093087; c=relaxed/simple;
-	bh=oXmo3s4uftDvdjY703eY53QegBRUavVqxslFvZe6qZE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DPjnHkZxtrAm0wXlW8b4Z0sqwRcZg1FiTKy+SixSv5F29ooUR1pysiXv98ibiy5Sj7YLieC1Yk2tXVXJr5OZ30EfCAYXYZEDwBe/XtZ6RrmxlTRLCbZ6qne07XDMQTmlzvPaLgaW4s1YlfOpKCbkk+N9axz6ZKaDSMFoeW/x9To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2gZpXBUz; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35199eb2bso49755317b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:11:25 -0800 (PST)
+	s=arc-20240116; t=1731093085; c=relaxed/simple;
+	bh=VIRkx+efX/6GJFRSs+ScK+sQvOdc8uMwqc3bnd22j8Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fl0rdC8tf0dzmg5aZdimpRHp8T1qC3wIZxTtXMzf/2jlYML3u98EJGpr/rlOCcKBzTGy+MJ7RPeHQ2WTSWL65dV4C2/fHqgwcXGc2LTt3tf0KZi87vKta6Gz+3aaLsHpYRaIdn89dWS3WZmGF5Y1FzVevNjt/Hv9gn+oJCxFL2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bnhapw5f; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so16587531fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:11:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731093085; x=1731697885; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDB9tBERWBcfIXqT9RtU/9i5IUOaPQLG2Xfsj/iAwwg=;
-        b=2gZpXBUz4lOLgSLFEtH2dMB/Xnka8bkM0okpQjOMyH7zZmAAUN2Iq/gktcOvtBgAl2
-         DSE/odAWi8j+HykRuTy/UEIu9xJqnNdTwxZ3Js89s8TOn5+CAa3uZD+64MES5lTMwaUD
-         jqtbfteaT2OF54ur9Niyh+LXzjDrLBStMkaXkucuLz5v3g4Wcn51U2nh5zgU6My6Y25h
-         HxqaJYknqb3QpwaKsPA1OhcaKWJ493214yBF/dVq5U1aluQKngFw3goReJcl8Nq6Tw7i
-         FoHOKNZUsQEY9PwWqLIZES2Vp2yhN6B/cw8N3WioDT9Y/+grzdFAsfafJu0jsG815ag5
-         ZCKA==
+        d=linaro.org; s=google; t=1731093081; x=1731697881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VIRkx+efX/6GJFRSs+ScK+sQvOdc8uMwqc3bnd22j8Q=;
+        b=Bnhapw5foka1Ig1WeR6wObMuvHk+Lkrn7kqmlqF+/eF0YfntamtnA6RoJgRnXGf8Jv
+         YY8KT/AFztF1GTtnF2u0ZfaFB4SENE1oc2ohWEwM+3YJ6l3x/q8xm+gMvfb4Tpurs9x+
+         G3YrI9rB0ERKoVnfLENfxxzYRGlFQAnWdT8O1Tm9EvhVk7W1RieTNDgGPABuE0KxIdMZ
+         WUGfSyzxXFKUEHiUVSJ+REFhwODHSMZGwOa8jDg+WbsWtfVlAboZivA5VPaEXC3Crva0
+         S6sPm1NUgCBrLKt8FTfWYA/NddiT8ORoS+FPzyqc8A7RQlBcWwCmySP12MrPwhC6gq9m
+         qUFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731093085; x=1731697885;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDB9tBERWBcfIXqT9RtU/9i5IUOaPQLG2Xfsj/iAwwg=;
-        b=H9Dovi/PKtdLBUuDbr+IYh7ofjMdZDVESX8mtMOkZIOsd3OtBt7ZD9uwso6+zgBTQE
-         7s452CM9NpJOsrvgJVWjUYANQk1Jg5O98qw/ibhLwkRbrX02/Ob7wcjufYFrVR2K8pER
-         zYffT3ztudLHc/JgwqHdpn+vOXo/ioUmtNdRcA/5q/q/+bWolzZLItxdYFERVw1fH3Hh
-         09lI7ShVR6Yiqc/RSuM1UFZobDu23AdTQYcmQ9RLw+VeX26xP9l4wX0q1wVQ1x0YDOPE
-         R8RM3fVidXBuYzOBGLsz34xivKIGhkVJZjuQrUNiJz2z0L4Yn2jirZ8m5zs+CcIDf4J9
-         1lHA==
-X-Gm-Message-State: AOJu0Yzdhsw30yiRtk6COFLDnkNUnikx7CFLsvi2VfwkbL4AjVfdmoMc
-	OBMf9QRCOgspPmmFY7F9VWJFeIbgqCSG2qtkXTQAxud1sSIYp+0612eFKQKi4iR2lmvFAg1RfKW
-	5G7mqseuUHw==
-X-Google-Smtp-Source: AGHT+IGKQWTQrVOeGxJLhY6zsmXRHGk6UTdU0M7oaBS0NM4mJiA+JBFfZWaH36l8/W+fVD5IIc5QjZ01KGKgEg==
-X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a0d:cf43:0:b0:6e3:1f46:77a6 with SMTP id
- 00721157ae682-6eaddd8b07emr400287b3.2.1731093085200; Fri, 08 Nov 2024
- 11:11:25 -0800 (PST)
-Date: Fri,  8 Nov 2024 19:10:50 +0000
-In-Reply-To: <20241108191057.3288442-1-cmllamas@google.com>
+        d=1e100.net; s=20230601; t=1731093081; x=1731697881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VIRkx+efX/6GJFRSs+ScK+sQvOdc8uMwqc3bnd22j8Q=;
+        b=IWWRXijJFIkpHcFkYIEOit/RKyZQGXx4ksCkw8voi8g6OPZWh1+yncjhNkf3YfclzI
+         3qSTFRsdwwOKJb274Z48PCojTniJ42L8qM4FvKBo4yDWe6YMkgA0PSlXglcpv6M9D25P
+         DTNPLODxvtdhzgTZrXvWSqCkqoP0WttIVV3iYPsj4E3293MVtupQY6aAkxsA+L4eI0k6
+         bd7a6IlhtBZulhbJDFZAna1W627B9ernOejtP2qIh6VCJ1+tHcw64s9C0XgAXhPQCS1U
+         vjgpIq9jItBDQc9YWRiuK/2CW6kxzsHPya7AmS/UaL4YZ7uqFOC3BOkLYj+jjRPPFwLk
+         JCWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxZhK5zaVkZJyNkWYYRHAYlTR0Hq/v4kJpz1DjyQlmgKmYhl33Gc+a00iq92x5RIs84PzW04wzqIXwmNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1hht632BLSWwoQ1WssZtbxRQkn9yWLhmHeDTAh0UdTcCcraqv
+	eaxiPEZs9gTwLCA/TEfhyNaXUYp8luXRPHv6Zx+1zPc/MED9sD2ZeC8C5nMFPr98grhHsSFqIf+
+	2B5aDLJ+hAKQKUD/9HY/iozME+KMACzoVktMefKRbn+yZTgtP
+X-Google-Smtp-Source: AGHT+IEyu3ErGRSaoQFi38Acb6XQ4BU2dWUjhmoCrPXW6aChPPUQ0fFsyrxlijdB2I2MeCnQFX6bAQ4S/Z/CIgMGk7U=
+X-Received: by 2002:a2e:be24:0:b0:2fb:591d:3db8 with SMTP id
+ 38308e7fff4ca-2ff2028a90bmr22074941fa.35.1731093081457; Fri, 08 Nov 2024
+ 11:11:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241108191057.3288442-1-cmllamas@google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241108191057.3288442-9-cmllamas@google.com>
-Subject: [PATCH v3 8/8] binder: propagate vm_insert_page() errors
-From: Carlos Llamas <cmllamas@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com
+MIME-Version: 1.0
+References: <20220616013747.126051-1-frank@zago.net> <cf32d676-831c-4c3f-8965-c9be3abd5300@gmail.com>
+In-Reply-To: <cf32d676-831c-4c3f-8965-c9be3abd5300@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 8 Nov 2024 20:11:10 +0100
+Message-ID: <CACRpkdb-VWnOcHBcHOfMMxKicDGvGt3vB-dSo2nhz_M7oxq35A@mail.gmail.com>
+Subject: Re: [PATCH v6 0/4] add driver for the WCH CH341 in I2C/GPIO mode
+To: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>, Howard Harte <hharte@magicandroidapps.com>
+Cc: frank zago <frank@zago.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>, 
+	Wolfram Sang <wsa@kernel.org>, Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, 
+	Lee Jones <lee.jones@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Instead of always overriding errors with -ENOMEM, propagate the specific
-error code returned by vm_insert_page(). This allows for more accurate
-error logs and handling.
+On Fri, Nov 8, 2024 at 4:58=E2=80=AFPM Matwey V. Kornilov
+<matwey.kornilov@gmail.com> wrote:
 
-Cc: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Carlos Llamas <cmllamas@google.com>
----
- drivers/android/binder_alloc.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 7d2cad9beebb..dd15519e321f 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -334,7 +334,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
- 		__free_page(page);
- 		pr_err("%d: %s failed to insert page at offset %lx with %d\n",
- 		       alloc->pid, __func__, addr - alloc->vm_start, ret);
--		ret = -ENOMEM;
- 		break;
- 	}
- out:
--- 
-2.47.0.277.g8800431eea-goog
+> Hi Frank,
+>
+> Are you going to further proceed with this patch set? As far as I can
+> see, there were no updates since 2022.
 
+I suggest you take it over if there is no reply in a week or so.
+
+IIRC Howard Harte also has this very device inside the USR8200 router,
+but I don't know if it uses the I2C/GPIO portions in that device.
+
+Yours,
+Linus Walleij
 
