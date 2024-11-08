@@ -1,218 +1,222 @@
-Return-Path: <linux-kernel+bounces-402282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D169C25D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:45:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3769C25D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446941F215B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E131C235DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03D41AA1FC;
-	Fri,  8 Nov 2024 19:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769241C1F00;
+	Fri,  8 Nov 2024 19:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="pfLquFoY"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaMFKTnW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA17233D72;
-	Fri,  8 Nov 2024 19:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369F233D72;
+	Fri,  8 Nov 2024 19:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731095149; cv=none; b=gUb4VZwhAwxZCXEoipUTzJTFgfmL6vfuxafhymdmmTWQU9tFfSfW8hkPfVIHzVcOZ+sSy2iHShQ3Ql/N5RyL1y8k9oYT5Z/4SvHwddkxrxqUy9cpsucoRwGWHnZEZpRrkzcml1wf/cN1wPHZ3GYNBUdEKQYGSNVUUuSYlHb6VKE=
+	t=1731095168; cv=none; b=fT7Lkk84rZWKR3oR/vjs3zjGa3VRiWrwW8kmzk60CULC9r9whr8s6jeEv63SuV5wOWjdw5yQcQd9bTCJ/aB2Z5Reon8awfr9gQT/jJSl112hAHA3nkqHadkQ4FXdZ2cpYKRtyQ8qQpks+qYvN4u7adymcgv6eg7GABX2m8OaiQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731095149; c=relaxed/simple;
-	bh=3VAAVHOXBGjYM2CZOnUc49zsY3SSDo4fE0VLAaSkItA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n03CELErtuw3XJ1AvAuk9J/J4cMHHv1sQcHypf4zSdad7jFhSFu8v2KAu8gNq2sVYVSd8Vbh+5wueR8a/NWoUgwQSY83hYFSmtyAz1OFx0IXwZ6Y5z6YuYoqYkZVAgjcaNYaemgsqoSYYJtRgHoF97Df7uEh1GpRNIkh2K1/62o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=pfLquFoY; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731095075; x=1731699875; i=w_armin@gmx.de;
-	bh=3VAAVHOXBGjYM2CZOnUc49zsY3SSDo4fE0VLAaSkItA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pfLquFoYvCW6mbqJJriNEPGooSXUVCxcEDbwaogBtWPpJTde1n/DqNBY8fNFeD4z
-	 hCKe5NNFkkbrj5uABeEJQ49+pdO1t3i8+CkHPtZn63pJX9wZ/4xgLi9yfNX3jI+ry
-	 z6w/YE98LbCZhLm249RhoqxdrCyVrcTnCxucNnl1W4K0ugG2c6Ok8wXbmG7TWuLKp
-	 WusM2wfkL1aEAW1P+vzqf/JQsTjRkhWAnhz7bJV5YcA/4fIhrQGl1Vwr9xYdo0ms6
-	 2hbWGLq6rbG1IItfEEtCZVi/EBVROGM8KOoX8JIZMamh3kb2E7GdK6tKM2dk4UPg1
-	 FVxdiqI8GUQI2Jjwxg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MCKBc-1t06yG3Les-007if1; Fri, 08
- Nov 2024 20:44:34 +0100
-Message-ID: <ba57628a-91d1-4e7c-8ebc-c5dc9db3d195@gmx.de>
-Date: Fri, 8 Nov 2024 20:44:30 +0100
+	s=arc-20240116; t=1731095168; c=relaxed/simple;
+	bh=dfsPNKwbdKF5+uHMQ4I81EKY+YT6HSKId4ACsK4I1uU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cerXBYk61Ly9nxfVzgDVlL8WwLccV+5czPuLv61PU6zcv40M4TessSnbZTxkCdme5zG1Tvb1383oG12WYqIDZQ5j9iV1X73g9n80PypTsWs4t26qQgFISogZAyRSYs2waVRndZkLpdRvfkd53TJX9msg+N4ieXsGtvwnHPXNrm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaMFKTnW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D582C4CECD;
+	Fri,  8 Nov 2024 19:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731095168;
+	bh=dfsPNKwbdKF5+uHMQ4I81EKY+YT6HSKId4ACsK4I1uU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VaMFKTnW6Lq4PKdIcJycKE80yn2hWH/e6W2mfLWs7afvihph5RcXAgEh7wg+b85Z8
+	 HpZJxaFAJYWwJJKBHIsrAqcGQeSLfZfD54rFO0I29XReAvBx3IC0t0V+xYw8X2o4B1
+	 GERRD3iLDX192jmAGtMPFei7o0UO8LcdPWWhtpTrHrPaJXxmiK5RNFnowdqDHF94KB
+	 danFlPzorFnW9YZOuEHt+VInqDmuDSjziJfaND3MBZL8pJS9Rur2JzJaFslQU58w6A
+	 BeP6TzrjM0v0ATU6vaLZHsYFf6+dEfru0qAcvDaUYGVhcVkNWBdWzSmAdpcFBNHfcM
+	 KSLbRYseXwwlQ==
+Date: Fri, 8 Nov 2024 11:46:06 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: da.gomez@samsung.com
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, Jens Axboe <axboe@kernel.dk>,
+	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 4/4] module: refactor ro_after_init failure path
+Message-ID: <Zy5qfqC_NjQHUF_u@bombadil.infradead.org>
+References: <20241108-modules-ro_after_init-v3-0-6dd041b588a5@samsung.com>
+ <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/20] ACPI: platform_profile: Add choices attribute
- for class interface
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-12-mario.limonciello@amd.com>
- <7e302f04-cb4d-4ecd-b1a1-4b89f09e692b@gmx.de>
- <9dd1709c-de87-4aa3-aa33-8a520a305545@amd.com>
- <0ffe9b8b-814e-4b5a-a960-22797e327b4a@gmx.de>
- <22fdc5d1-c082-4e60-a6c9-c67bad295fed@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <22fdc5d1-c082-4e60-a6c9-c67bad295fed@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lIEYHbNB4R/fgBEMz2UOAJgojN3PwXPzWR1uK9ND5PpBYPMpgVB
- bkcLlPHTp9AfohwuOAAiIGuaUnjOjHLDeGaAkkB5iZVm8zKkeo3FjJe3aCR9jkWm81nQx/3
- i6T4WDZ+xYTrMWgriQnri6hlIH9cuEc9jICgOUNfz+AKbkkzP7av7rwxLKrWdMhvKxc1p4/
- 2o6d8GaDQaUoM7Ykbwa4w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qeoBuJIKW5U=;y9E5JNl2n8TCyxG8Z6FgzAbpMRL
- u/9u4ABbGDwqaG0lgSYvNpqd3AnbEbELElX5cfh7o7YDBucQgCazfsRjbOLcfi335/pcuQHvs
- lPDCFkdb1z8MU+rJ4hkpj8U+aD4rpoKLPermXbIwp0e9RNpzBZWtrBAunhqZ5OxiD0tu3LMSY
- hzBUCKg61r3GJnjpJgia4lVyeIXDD93VO67DyTTQpUATEGeGhwN3Ol5yOyQFetdJJd5KpbE+z
- E+L1kwT55JWIIM6LBAA88GEBFsnUGMYP9WIGy+jzq/cF3CifaRNMYucnhcUcOyW00Q8nV0VP5
- yChXo1NZ6bh0hDHvcZb7QW5kssRJ9IbwtI3AHfCNSPi62/yrcPRcvIWMpY+xgWf6XizJ/MbJ9
- KhAxsGqpyV2IvIkSGq0xEIcteljQv4W9uMBw1sWSaRfXvEyM/trRb00gFWnLEEc4ZSxcSLcZC
- Yx+3Fl4hi/NcfXWbXjrUoSW7QYBsAGCrlMpPK7Z9qbK66ughCa3L/TMn7+w8Ij4jPxPoxcEiO
- YfYjZLRFvgwghE1CctQ6pKN9bDxABrRu6rTGfq7eim2pWzJ0wawQ0RGgzdBqDb4hMjiRlwPuN
- RS1LbUgI94gohuNznIqNiL2/Kzrc8dq7+ovYS1bJNZ3gKJF0iIsX2GcIYrvCkiI4zr5mhmhmK
- WwJ4AytNEmWygL53+jfHs6jX+BhaKVed9t9B0++9MnoRMszjaHhJ7Lqo6jj80no+hMOctxgKC
- JAS6RiTHV0oTS1IRHI1vfKCNFU6nZi6Cv7dFgbfYsdCsTd28K1QlaQtbXVyIiFgiCB+hp01dF
- bG8hCw9Kad554td10YnEFLsWhkFuliXTzhcvhGe6OaJPzBJrwOC1vQwxTXMh/TexYDr19fExj
- jC29CJdbKrpkGSLmvI9U3hPGOSoNcanJxg1x+m6gzt5pFvrxv7wovaNmR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
 
-Am 08.11.24 um 20:25 schrieb Mario Limonciello:
+On Fri, Nov 08, 2024 at 05:12:16PM +0100, Daniel Gomez via B4 Relay wrote:
+> From: Daniel Gomez <da.gomez@samsung.com>
+> 
+> When ro_after_init fails, we need to unload the module.
+> 
+> Rename the goto tag to fail_ro_after_init to make it more clear and try
+> to check for dependencies, stop the module and call the exit function.
+> This allows to unload the module if ro_after_init fails.
+> 
+> This fixes the following error in block loop device driver when forcing
+> ro_after_init error path:
+> 
+> Nov 06 11:36:25 debian kernel: loop: module loaded
+> Nov 06 11:36:25 debian kernel: BUG: unable to handle page fault for
+> address: ffffffffa0006320
+> Nov 06 11:36:25 debian kernel: #PF: supervisor read access in kernel mode
+> Nov 06 11:36:25 debian kernel: #PF: error_code(0x0000) - not-present page
+> Nov 06 11:36:25 debian kernel: PGD 1e3f067 P4D 1e3f067 PUD 1e40063 PMD
+> 10e7d4067 PTE 0
+> Nov 06 11:36:25 debian kernel: Oops: Oops: 0000 [#1]
+> Nov 06 11:36:25 debian kernel: CPU: 0 UID: 0 PID: 428 Comm:
+> (udev-worker) Not tainted 6.12.0-rc6-g4ade030a2d1b #155
+> Nov 06 11:36:25 debian kernel: Hardware name: QEMU Standard PC (Q35 +
+> ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> Nov 06 11:36:25 debian kernel: RIP: 0010:bdev_open+0x83/0x290
+> Nov 06 11:36:25 debian kernel: Code: bb 48 01 00 00 48 89 3c 24 e8 79 24
+> 38 00 48 8b 43 40 41 bd fa ff ff ff 48 83 b8 40 03 00 00 00 0f 84 b3 01
+> 00 00 48 8b 43 48 <48> 8b 78 78 e8 d4 c9 c8 ff 84 c0 0f 84 9e 01 00 00
+> 80 3d 45 ad ad
+> Nov 06 11:36:25 debian kernel: RSP: 0018:ffff8881054dbc58 EFLAGS:
+> 00010286
+> Nov 06 11:36:25 debian kernel: RAX: ffffffffa00062a8 RBX:
+> ffff8881054a6800 RCX: ffff8881075becc0
+> Nov 06 11:36:25 debian kernel: RDX: 0000000000000000 RSI:
+> 0000000000000009 RDI: ffff8881054a6948
+> Nov 06 11:36:25 debian kernel: RBP: 0000000000000009 R08:
+> ffff88810e7aa9c0 R09: 0000000000000000
+> Nov 06 11:36:25 debian kernel: R10: ffff88810e5ab0c0 R11:
+> ffff88810e796190 R12: ffff88810094e980
+> Nov 06 11:36:25 debian kernel: R13: 00000000fffffffa R14:
+> 0000000000000000 R15: 0000000000000000
+> Nov 06 11:36:25 debian kernel: FS:  00007fd2ff110900(0000)
+> GS:ffffffff81e47000(0000) knlGS:0000000000000000
+> Nov 06 11:36:25 debian kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
+> 0000000080050033
+> Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320 CR3:
+> 000000010e7ed004 CR4: 00000000003706b0
+> Nov 06 11:36:25 debian kernel: Call Trace:
+> Nov 06 11:36:25 debian kernel:  <TASK>
+> Nov 06 11:36:25 debian kernel:  ? __die_body+0x16/0x60
+> Nov 06 11:36:25 debian kernel:  ? page_fault_oops+0x22a/0x310
+> Nov 06 11:36:25 debian kernel:  ? exc_page_fault+0x99/0xa0
+> Nov 06 11:36:25 debian kernel:  ? asm_exc_page_fault+0x22/0x30
+> Nov 06 11:36:25 debian kernel:  ? bdev_open+0x83/0x290
+> Nov 06 11:36:25 debian kernel:  ? bdev_open+0x67/0x290
+> Nov 06 11:36:25 debian kernel:  ? iput+0x37/0x150
+> Nov 06 11:36:25 debian kernel:  ? blkdev_open+0xab/0xd0
+> Nov 06 11:36:25 debian kernel:  ? blkdev_mmap+0x60/0x60
+> Nov 06 11:36:25 debian kernel:  ? do_dentry_open+0x25d/0x3b0
+> Nov 06 11:36:25 debian kernel:  ? vfs_open+0x1e/0xc0
+> Nov 06 11:36:25 debian kernel:  ? path_openat+0x9cf/0xbb0
+> Nov 06 11:36:25 debian kernel:  ? do_filp_open+0x7f/0xd0
+> Nov 06 11:36:25 debian kernel:  ? do_sys_openat2+0x67/0xb0
+> Nov 06 11:36:25 debian kernel:  ? do_sys_open+0x4b/0x50
+> Nov 06 11:36:25 debian kernel:  ? do_syscall_64+0x3d/0xb0
+> Nov 06 11:36:25 debian kernel:  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> Nov 06 11:36:25 debian kernel:  </TASK>
+> Nov 06 11:36:25 debian kernel: Modules linked in:
+> Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320
+> Nov 06 11:36:25 debian kernel: ---[ end trace 0000000000000000 ]---
+> 
+> ./scripts/faddr2line --list vmlinux bdev_open+0x83/0x290
+> bdev_open+0x83/0x290:
+> 
+> bdev_open at block/bdev.c:908
+>  903
+>  904            mutex_lock(&disk->open_mutex);
+>  905            ret = -ENXIO;
+>  906            if (!disk_live(disk))
+>  907                    goto abort_claiming;
+> >908<           if (!try_module_get(disk->fops->owner))
+>  909                    goto abort_claiming;
+>  910            ret = -EBUSY;
+>  911            if (!bdev_may_open(bdev, mode))
+>  912                    goto put_module;
+>  913            if (bdev_is_partition(bdev))
+> 
+> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+> Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com/
+> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()").
+> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+> ---
+>  kernel/module/main.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 2b45a6efa0a9..c23521ae8bda 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2880,7 +2880,7 @@ module_param(async_probe, bool, 0644);
+>   */
+>  static noinline int do_init_module(struct module *mod)
+>  {
+> -	int ret = 0;
+> +	int ret = 0, forced = 0;
+>  	struct mod_initfree *freeinit;
+>  #if defined(CONFIG_MODULE_STATS)
+>  	unsigned int text_size = 0, total_size = 0;
+> @@ -2948,7 +2948,7 @@ static noinline int do_init_module(struct module *mod)
+>  #endif
 
-> On 11/8/2024 12:06, Armin Wolf wrote:
->> Am 07.11.24 um 23:09 schrieb Mario Limonciello:
->>
->>> On 11/7/2024 02:28, Armin Wolf wrote:
->>>> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
->>>>
->>>>> The `choices` file will show all possible choices that a given
->>>>> platform
->>>>> profile handler can support.
->>>>>
->>>>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>>> ---
->>>>> v5:
->>>>> =C2=A0 * Fix kdoc
->>>>> =C2=A0 * Add tag
->>>>> =C2=A0 * Fix whitespace
->>>>> =C2=A0 * Adjust mutex use
->>>>> ---
->>>>> =C2=A0 drivers/acpi/platform_profile.c | 65
->>>>> +++++++++++++++++++++++++++++++++
->>>>> =C2=A0 1 file changed, 65 insertions(+)
->>>>>
->>>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
->>>>> platform_profile.c
->>>>> index f605c2bd35c68..5e0bb91c5f451 100644
->>>>> --- a/drivers/acpi/platform_profile.c
->>>>> +++ b/drivers/acpi/platform_profile.c
->>>>> @@ -25,6 +25,46 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D
->>>>> PLATFORM_PROFILE_LAST);
->>>>>
->>>>> =C2=A0 static DEFINE_IDA(platform_profile_ida);
->>>>>
->>>>> +/**
->>>>> + * _commmon_choices_show - Show the available profile choices
->>>>> + * @choices: The available profile choices
->>>>> + * @buf: The buffer to write to
->>>>> + * Return: The number of bytes written
->>>>> + */
->>>>> +static ssize_t _commmon_choices_show(unsigned long choices, char
->>>>> *buf)
->>>>> +{
->>>>> +=C2=A0=C2=A0=C2=A0 int i, len =3D 0;
->>>>> +
->>>>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, &choices, PLATFORM_PROFILE_L=
-AST) {
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (len =3D=3D 0)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
-len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
->>>>> +=C2=A0=C2=A0=C2=A0 }
->>>>> +=C2=A0=C2=A0=C2=A0 len +=3D sysfs_emit_at(buf, len, "\n");
->>>>> +
->>>>> +=C2=A0=C2=A0=C2=A0 return len;
->>>>> +}
->>>>> +
->>>>> +/**
->>>>> + * _get_class_choices - Get the available profile choices for a
->>>>> class device
->>>>> + * @dev: The class device
->>>>> + * @choices: Pointer to return the available profile choices
->>>>> + * Return: The available profile choices
->>>>> + */
->>>>> +static int _get_class_choices(struct device *dev, unsigned long
->>>>> *choices)
->>>>> +{
->>>>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
->>>>> +=C2=A0=C2=A0=C2=A0 int i;
->>>>> +
->>>>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
->>>>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
->>>>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, handler->choices, PLATFORM_P=
-ROFILE_LAST)
->>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *choices |=3D BIT(i);
->>>>
->>>> Maybe just copying the bitmask would be enough here? In this case we
->>>> could also drop
->>>> this function as well.
->>>
->>> Right now this could work, but choices and the use of it has gone
->>> through great lengths to ensure that once there are too many profiles
->>> it automatically becomes a bigger variable.
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0unsigned long choices[BITS_TO_LONGS(PLATFORM_P=
-ROFILE_LAST)];
->>>
->>> So I would rather keep this as is.
->>>
->> I think users of this function can do the locking themself and
->> instead use the functions from bitmap.h. Because _get_class_choices()
->> will break once "choices" becomes bigger.
->>
->
-> I am thinking it's better to just switch explicitly to an 'unsigned
-> long' and add a static check that all profiles fit.=C2=A0 If ever they
-> don't fit, the code can be overhauled at that point.
->
-> And yes _get_class_choices can go away then, and this is a lot simpler.
+It is not clear here but note that do_init_module() happens
+before the module is live and so any try_module_get() in the
+do_init_module() path should fail.
 
-Ok.
+>  	ret = module_enable_rodata_ro(mod, true);
 
+But here do_init_module() should be have completed and the module is live.
+So a open() on a block device *can* race after init, at which point
+if open uses do_init_module() then it snatches a ref.
+
+>  	if (ret)
+> -		goto fail_mutex_unlock;
+> +		goto fail_ro_after_init;
+>  	/* Drop initial reference. */
+>  	module_put(mod);
+>  	mod_tree_remove_init(mod);
+> @@ -2989,8 +2989,12 @@ static noinline int do_init_module(struct module *mod)
+>  
+>  	return 0;
+>  
+> -fail_mutex_unlock:
+> +fail_ro_after_init:
+> +	list_empty(&mod->source_list);
+> +	try_stop_module(mod, 0, &forced);
+
+Which is why try_stop_module() can fail here. But we don't want to fail.
+
+This is a chicken and egg, since we are already live we can't stop
+the world created from undernath us from not using try_module_get(),
+as its the right thing to do.
+
+The above sledge hammer can fail then and we don't want that.
+
+>  	mutex_unlock(&module_mutex);
+> +	if (mod->exit != NULL)
+> +		mod->exit();
+>  fail_free_freeinit:
+>  	kfree(freeinit);
+>  fail:
+
+So I'd prefer a soolution which is clearer, and doesn't have to deal
+with all these complexities somehow.
+
+ Luis
 
