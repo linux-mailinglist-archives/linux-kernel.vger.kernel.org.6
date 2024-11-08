@@ -1,193 +1,126 @@
-Return-Path: <linux-kernel+bounces-401591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED839C1CAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254969C1CAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C40B20E3B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:09:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A0C1F21808
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED991E631B;
-	Fri,  8 Nov 2024 12:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739F31E6DC1;
+	Fri,  8 Nov 2024 12:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="uKvu1lsd"
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.248.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEWRkHD3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5C1946CD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.100.248.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6EB1E47CE;
+	Fri,  8 Nov 2024 12:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731067749; cv=none; b=PqjBcDbTpjUVEmrdTCcAoVNQdMaB2tnEmmXu8HIRaAlY47kBseOJB2i+TkN6yIQRTlfODINpXh8b0S+sP+SNsBRdcAzFdnYDpXxikHqqfS5awmWNogwN44rJP1MWbqGLnMx2v1QzZlckgD8cLwkjpXeBVaGIGwvuDOvLdxqaje4=
+	t=1731067758; cv=none; b=r9l0FC9yd5Y8kfT1IT9DhLS5VcojjuwcwTq3dtBCRQq598HWLaOZNcjNF9XOtS8JWZZyaavHq5CUqLs2UWlRkNFzUkHQuos/2SPiXxeHhDPgJHg0DvDpd+eoTFRTl27+So4PklVsRxh+wVWcsls/HeovsvaWKeQzjlmHvHn12Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731067749; c=relaxed/simple;
-	bh=EYV1tnRpjTsIOU6yPXGuIMkh+G91GY/ziHqLtllBcWw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oN25bSDQqdoQw+0Kkr5Xd1QC7tErmdyW5NufPaOFMT5D07ZqSfbZZQmH6xjZJZiWf/+rAbBJu9eGdvw8kafWKlpr3eESCkNoSovEdTEX/iDqVAv9UcW8OVvNPVysd4ILVqoZjBMPn1kZvHumpNs9s5MlfS2LwTv9pgmrNDEYSHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=uKvu1lsd; arc=none smtp.client-ip=159.100.248.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [149.56.97.132])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id BA7F126761
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:08:59 +0000 (UTC)
-Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id 600DF3E955;
-	Fri,  8 Nov 2024 12:08:51 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 32E2440078;
-	Fri,  8 Nov 2024 12:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1731067730; bh=EYV1tnRpjTsIOU6yPXGuIMkh+G91GY/ziHqLtllBcWw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uKvu1lsd/WuBSUXjl/93iSz57GA0lqMS4NHmZgIhIVbRRGBAEhdkKTwBWkMvrLNyT
-	 E95wfzlJfO8YVlr0muXSXfjP4O83JATmAITmGynJ3xpS2fjErW8C0OFh9/HjHRi3gP
-	 xBEt5wFExCQ4aKRWY4qV1AC8DsO+3DleLur17cTU=
-Received: from JellyNote.localdomain (unknown [38.179.66.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 6451A40493;
-	Fri,  8 Nov 2024 12:08:46 +0000 (UTC)
-From: Mingcong Bai <jeffbai@aosc.io>
-To: baolu.lu@linux.intel.com
-Cc: kexybiscuit@aosc.io,
-	weiguangtwk@outlook.com,
-	Mingcong Bai <jeffbai@aosc.io>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] iommu: intel: apply quirk_iommu_igfx for 8086:0044 (QM57/QS57)
-Date: Fri,  8 Nov 2024 20:08:21 +0800
-Message-ID: <20241108120838.495931-1-jeffbai@aosc.io>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731067758; c=relaxed/simple;
+	bh=ip2W+uSWSs4HJ0Umwf51InDV1CWXoXICkPZL470Ag7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jPrfcwiaxV8vcBi0p22euE9iIj0L8zbda56CUiQRFy5M1sx61ff+RD6YpJlLApcGlXBqDUwpQ0ncaynYHaFWruk4oQN7T9uKe93TP4K+b7I9HQgN/SSS04Nux/Ughb/GbNBiPBWPFIIly1KK1HSdwPKfNReKVxcya+Wj6hfC6Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEWRkHD3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2933C4CED4;
+	Fri,  8 Nov 2024 12:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731067757;
+	bh=ip2W+uSWSs4HJ0Umwf51InDV1CWXoXICkPZL470Ag7U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NEWRkHD32gZixICbkYYys60GMY7MVh8plRXb6awULMsovwf/85qGVuF7i7EHA3H1t
+	 G/FXGknPRSxdOEbehz3BDJfApZYLZt4EbVdJ273XqjxdTh6mmsauynKjGmj+zWwePB
+	 tmRggUtu6TbLE/ivrJsarxa2MEqzIXjzA6z/IzsXlIOoc8i/lvF92wAoGwC+T7vbJn
+	 h8r+Uyy/frOIHtJcl97plymUnMsWxlXVXhE8I6i5YtvLoWyFJzxawr52V0mEvyysrg
+	 bSEBQ0uz57/my+Uwv6Pvf7tazlFcipyBdSc0SSiWzZLx/vXdpxv1vr0YAvFcxi4wTe
+	 SkhGZF/IkhIiQ==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-28896d9d9deso1032519fac.2;
+        Fri, 08 Nov 2024 04:09:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXeyk+UCqi4Q880LCJYa27zXh9n47jbuef+TCHdvnnuMf0OgpZnas6AUTkNypqgRBvQNBIjRpnCsBk=@vger.kernel.org, AJvYcCXsl+cE9C+H36IpQT3AnzS7iUT8VsZyuL2/rr50H3/fD59fx/jDVQDDm8YQI3zDH7qnEhuLCMLj+oGbuHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeQSLpBdNuU2V8pYBoS8XgVAxfv9kB+ggOv8cSsuqVTQ9ODw2B
+	PWwbyEPf0BkKgUgraBSWp/OaZWZVsP471klK8oMs+0OlHqRJU6otO3ubDSwRC1BTN1j2FGxLnwy
+	IfVazqPQwF6Orpkz10ZPPepouNtI=
+X-Google-Smtp-Source: AGHT+IF1/C5xlG7mIlZDVHks8V3bCbIdBNfrptAsUbwtk/KWGJ3JrSVwnwRAT0tFD+opYQnEMeyVSjO8Y/ckH0QWgtY=
+X-Received: by 2002:a05:6870:e38c:b0:277:f5d8:b77b with SMTP id
+ 586e51a60fabf-295602a56e3mr2797000fac.32.1731067757095; Fri, 08 Nov 2024
+ 04:09:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [1.40 / 10.00];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	SPFBL_URIBL_EMAIL_FAIL(0.00)[weiguangtwk.outlook.com:server fail,jeffbai.aosc.io:server fail];
-	FREEMAIL_CC(0.00)[aosc.io,outlook.com,infradead.org,8bytes.org,kernel.org,arm.com,lists.linux.dev,vger.kernel.org];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[outlook.com];
-	RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Server: nf1.mymailcheap.com
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 32E2440078
+References: <20241108044700.37633-1-zhangjiao2@cmss.chinamobile.com>
+In-Reply-To: <20241108044700.37633-1-zhangjiao2@cmss.chinamobile.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 8 Nov 2024 13:09:05 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gHGrRn0cLvsSTaX=tX8mVhxudoJ4aSh5jWNxh171oKgg@mail.gmail.com>
+Message-ID: <CAJZ5v0gHGrRn0cLvsSTaX=tX8mVhxudoJ4aSh5jWNxh171oKgg@mail.gmail.com>
+Subject: Re: [PATCH] tools/thermal: Fix common realloc mistake
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(I'm not very confident about the approach of this patch but I failed to
-find a better way to address the issue I have on hand, so please consider
-this patch as an RFC...)
+On Fri, Nov 8, 2024 at 7:39=E2=80=AFAM zhangjiao2
+<zhangjiao2@cmss.chinamobile.com> wrote:
+>
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>
+> Do not set thermometer->tz NULL when realloc failed.
 
-On the Lenovo ThinkPad X201, when Intel VT-d is enabled in the BIOS, the
-kernel boots with errors related to DMAR, the graphical interface appeared
-quite choppy, and the system resets erratically within a minute after it
-booted:
+Presumably, this fixes a problem.
 
-DMAR: DRHD: handling fault status reg 3
-DMAR: [DMA Write NO_PASID] Request device [00:02.0] fault addr 0xb97ff000
-[fault reason 0x05] PTE Write access is not set
+What problem does it fix?
 
-Upon comparing boot logs with VT-d on/off, I found that the Intel Calpella
-quirk (`quirk_calpella_no_shadow_gtt()') correctly applied the igfx IOMMU
-disable/quirk correctly:
-
-pci 0000:00:00.0: DMAR: BIOS has allocated no shadow GTT; disabling IOMMU
-for graphics
-
-Whereas with VT-d on, it went into the "else" branch, which then
-triggered the DMAR handling fault above:
-
-... else if (!disable_igfx_iommu) {
-	/* we have to ensure the gfx device is idle before we flush */
-	pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
-	iommu_set_dma_strict();
-}
-
-Now, this is not exactly scientific, but moving 0x0044 to quirk_iommu_igfx
-seems to have fixed the aforementioned issue. Running a few `git blame'
-runs on the function, I have found that the quirk was originally
-introduced as a fix specific to ThinkPad X201:
-
-commit 9eecabcb9a92 ("intel-iommu: Abort IOMMU setup for igfx if BIOS gave
-no shadow GTT space")
-
-Which was later revised twice to the "else" branch we saw above:
-
-- 2011: commit 6fbcfb3e467a ("intel-iommu: Workaround IOTLB hang on
-  Ironlake GPU")
-- 2024: commit ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic
-  identity mapping")
-
-I'm uncertain whether further testings on this particular laptops were
-done in 2011 and (honestly I'm not sure) 2024, but I would be happy to do
-some distro-specific testing if that's what would be required to verify
-this patch.
-
-P.S., I also see IDs 0x0040, 0x0062, and 0x006a listed under the same
-`quirk_calpella_no_shadow_gtt()' quirk, but I'm not sure how similar these
-chipsets are (if they share the same issue with VT-d or even, indeed, if
-this issue is specific to a bug in the Lenovo BIOS). With regards to
-0x0062, it seems to be a Centrino wireless card, but not a chipset?
-
-I have also listed a couple (distro and kernel) bug reports below as
-references (some of them are from 7-8 years ago!), as they seem to be
-similar issue found on different Westmere/Ironlake, Haswell, and Broadwell
-hardware setups.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197029
-Link: https://groups.google.com/g/qubes-users/c/4NP4goUds2c?pli=1
-Link: https://bugs.archlinux.org/task/65362
-Link: https://bbs.archlinux.org/viewtopic.php?id=230323
-Reported-by: Wenhao Sun <weiguangtwk@outlook.com>
-Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
----
- drivers/iommu/intel/iommu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index e860bc9439a2..1ccea83c2c95 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -4646,6 +4646,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e30, quirk_iommu_igfx);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e40, quirk_iommu_igfx);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e90, quirk_iommu_igfx);
- 
-+/* QM57/QS57 integrated gfx malfunctions with dmar */
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_iommu_igfx);
-+
- /* Broadwell igfx malfunctions with dmar */
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x1606, quirk_iommu_igfx);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x160B, quirk_iommu_igfx);
-@@ -4723,7 +4726,6 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
- 	}
- }
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0040, quirk_calpella_no_shadow_gtt);
--DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_calpella_no_shadow_gtt);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0062, quirk_calpella_no_shadow_gtt);
- DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x006a, quirk_calpella_no_shadow_gtt);
- 
--- 
-2.47.0
-
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
+>  tools/thermal/thermometer/thermometer.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/thermal/thermometer/thermometer.c b/tools/thermal/ther=
+mometer/thermometer.c
+> index 1a87a0a77f9f..e08291a97fd8 100644
+> --- a/tools/thermal/thermometer/thermometer.c
+> +++ b/tools/thermal/thermometer/thermometer.c
+> @@ -259,6 +259,7 @@ static int thermometer_add_tz(const char *path, const=
+ char *name, int polling,
+>  {
+>         int fd;
+>         char tz_path[PATH_MAX];
+> +       void *tmp;
+>
+>         sprintf(tz_path, CLASS_THERMAL"/%s/temp", path);
+>
+> @@ -268,12 +269,13 @@ static int thermometer_add_tz(const char *path, con=
+st char *name, int polling,
+>                 return -1;
+>         }
+>
+> -       thermometer->tz =3D realloc(thermometer->tz,
+> +       tmp =3D realloc(thermometer->tz,
+>                                   sizeof(*thermometer->tz) * (thermometer=
+->nr_tz + 1));
+> -       if (!thermometer->tz) {
+> +       if (!tmp) {
+>                 ERROR("Failed to allocate thermometer->tz\n");
+>                 return -1;
+>         }
+> +       thermometer->tz =3D tmp;
+>
+>         thermometer->tz[thermometer->nr_tz].fd_temp =3D fd;
+>         thermometer->tz[thermometer->nr_tz].name =3D strdup(name);
+> --
+> 2.33.0
+>
+>
+>
+>
 
