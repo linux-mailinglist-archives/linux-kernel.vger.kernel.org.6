@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-401712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2EC9C1E4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:46:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0256C9C1E60
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C3D1B23A45
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9F71C216AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95A21E0B66;
-	Fri,  8 Nov 2024 13:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D03F1F4FBA;
+	Fri,  8 Nov 2024 13:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I73NRg5x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccwiiFHh"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9F31401C;
-	Fri,  8 Nov 2024 13:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CB91EF084;
+	Fri,  8 Nov 2024 13:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073579; cv=none; b=Gs7MeXVoFqQeqbS+8l03/ayuItOosrz9lUgexNOLVV3Z4/v6BpEVsBaCBvPdoy2ELzg8O25KmmEmJuDNkhtTb5GBRPOCTSMEuwGYP8H4ZvusE5h1518kbWfluU1eKsu7pFxWE4ffEi2o7xaIudIjaiqexb7/3DRgsQmMW/Ya+GY=
+	t=1731073663; cv=none; b=JvKb6tA4mysWuJCHU3/I62mN08AdaFxC/bCkD0au5J1KGvGrasOyszhFzPVPolifoYHPE1i3qnXsnisAVe6y99grwJSGYWS6NkpoWiqNolX8ZNVOGarOJDuX7Yvtyj8Yetdd1WBWjsoqgQgGe3Hy+7LJaj5ob67yTBmquZuAAXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073579; c=relaxed/simple;
-	bh=/p3pTCkhZFWoezcX0Ua12rwpQhBOpEwQJXd9Sy5MQD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Li8CFGAhWcTaZHO51ngNXwbnyYTk6abdTYIT83+7xvzkvV5KE/r2tEEvPfKbnw6QOuEfEkfhuRhn7Xt7EPpu19GZPsRrFR6B7A8roWxLh0WzBgVXG8wtfeJBCGOMYQP5OtWomu4CQ7ZLP56dE2/zyaJanKL9DessM3EfpDdjpRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I73NRg5x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD01C4CECE;
-	Fri,  8 Nov 2024 13:46:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731073578;
-	bh=/p3pTCkhZFWoezcX0Ua12rwpQhBOpEwQJXd9Sy5MQD4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I73NRg5xJxCQDui4+79Kx0W1YRR9ULcFX7hPC/44EfErKMnLN+FWu+ggJLTiDmyfp
-	 ZbQcBpJ6vZnO1eKL7NObar/xdKAfdfWSZNyqrP7wuQTfhmhu7MoP/eHhxus0Mhaltp
-	 yQGm/az4NMzNC1CSrnGdNDLxZC6trcYE+qG95Oz5CnmJVBR1CAyqWyhP/yLmlmf16s
-	 pZ8Qe9f2mDZiduVpK24G4aoes8ejEqxoJQhPNI4vQT3HxpxQqsYoTwB3cB/Vpki32p
-	 GmU5e46NwLeoS/w99V5ONluWVHfIYc5KlWTdLGWu1UoDlG+BNm4QCE/KRZWbMi52SB
-	 /ndXGX4sdRGrA==
-Date: Fri, 8 Nov 2024 14:46:16 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Mingcong Bai <jeffbai@aosc.io>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
-	sakiiily@aosc.io, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
- warnings
-Message-ID: <Zy4WKKq18GunXa6S@localhost.localdomain>
-References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
- <ZxjLQzHKuR-w16hF@pavilion.home>
- <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
- <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
- <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
- <ZyyQuTfMMSLwStf_@pavilion.home>
- <a7fc57a1a49b5f710c4354ca21c91dba@aosc.io>
+	s=arc-20240116; t=1731073663; c=relaxed/simple;
+	bh=5tuQIhLYLrmdFUF7osaQlsBi++fNez6g63FsiyDgnHU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BhMDRmjRoYYP1bIogBiPqtgO8JFrOkn7f5FukAzXOlVyP7mJXdvEK8pI1sYk/uD+52TphIW0KCrB5jilAPSzer1hl+PvtT6ZxCi1w24pnuSBgrJX5aS5hrbXjF01pXzsQGW2gxmc9HV4pFNIXddx7LvoB150FbgAek/E+wdYa4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccwiiFHh; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso25549825e9.0;
+        Fri, 08 Nov 2024 05:47:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731073660; x=1731678460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KsIe4tKwDw18rlGzCIKWB3zmvgLSJBWJguSHhwKJcXA=;
+        b=ccwiiFHh1WsPadWzVvvOgJ2CENoXheE6fGzfFGks1X+qkgNGSrTmVFssE8hPZtIOMa
+         y/xKyBXqFumQgDmzWYNO8nyPzqOHYt/A5jw5Ws3Du19w2fpLx+itMuNgxgSyxwLtILgz
+         UwcOt/IZ7wboz6gWqx4utWIIjG0bDXDPSzdwJKsqgsFwM1ibAmaA+VXUAgo6s6bGmfV2
+         K3GICt2VyNh5iotWakOa5pqECnm1ygnrBL7NDhpZDjSmrJGU45Nigjx47d/ZoS9K4RXH
+         TA3iqaQ4qpiWZs9yWICUe07U6jAwOBpLKk4bv829vPZOOGaa/LchS9FpbRSdG6WPvpCG
+         5ljg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731073660; x=1731678460;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KsIe4tKwDw18rlGzCIKWB3zmvgLSJBWJguSHhwKJcXA=;
+        b=mdNRumAjS+MPw1YfXpojIKb0nsrpCrBnWviRRUoLXW4eLZawTuZJxoclRuIp7tRWv9
+         rCNxurAdXYUGAYUci/xFm4bxp9vFZyudYjmE3/15Tk+1cPMaNRBOxtwsZ9McR0jny3xY
+         MwuOYtP9v0UozFehfthuqEBEugEuqXLzX99ajhC3SREGmlaR12t9SN6IDmgk+ZQMOObr
+         25YPjZtZYPEp2jKmd+wtoPUuafzfCFvylLWUTf24hwVZ1erZvbf/N/rdxxdcy10upUHd
+         Y622ejk5X/Wdx0ogAxuo+TRry2GAvaeIsSZTyH2YR4OAudqh0fZCLNYk8jtMo+2zdsjJ
+         2dow==
+X-Forwarded-Encrypted: i=1; AJvYcCXBnmwpGZ0QJEnhmWJteoz3Si3Onx5wKtVqqPOAKc+IVEOAngLF76xcjcjh54oiW3c1/xHoHbzjuzIflNGYOUs=@vger.kernel.org, AJvYcCXKx1g0x4AWV5ghysX2NajEmoY3hW37mXdI1H6w01GHcQ94MBbZlDuKEeH54Tqy3g3L1NUB5XBdE9bP9slS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgQNbIAH0CRO0rI57L8VxBpbpW0yKgtySr0xu5457FdVonjbWa
+	dKOQoP6nPfqgk1vFeQpzQn3FRKovK6Bcqyq9QNi5fhvWtfTQs0+7
+X-Google-Smtp-Source: AGHT+IGBV/K9g17UrlomSZXt3CV0Ro5BSBwbqEK26k34DyKiySC7XGPzuPWIzwPsTKf4naXH4fjnaw==
+X-Received: by 2002:a05:600c:3b12:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-432b74fec83mr26576155e9.5.1731073659819;
+        Fri, 08 Nov 2024 05:47:39 -0800 (PST)
+Received: from void.void ([31.210.177.224])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed997320sm4974190f8f.47.2024.11.08.05.47.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 05:47:39 -0800 (PST)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>
+Subject: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
+Date: Fri,  8 Nov 2024 15:47:15 +0200
+Message-ID: <20241108134728.25515-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.47.0.245.gfacbe4f633
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a7fc57a1a49b5f710c4354ca21c91dba@aosc.io>
 
-Le Fri, Nov 08, 2024 at 12:29:40AM +0800, Mingcong Bai a écrit :
-> Hi Frederic,
-> 
-> <snip>
-> 
-> > Sorry for the lag, I still don't understand how this specific commit
-> > can produce this issue. Can you please retry with and without this
-> > commit
-> > reverted?
-> 
-> Just tested v6.12-rc6 with and without the revert. Without the revert, the
-> touchpad and the wireless adapter both stopped working, whereas with the
-> revert, both devices functions as normal.
-> 
-> I have attached the dmesg for both kernels below. Unlike the log we got last
-> time, there is no direct reference to tg3 any more, but the NMI backtrace
-> still pointed to NetworkManager and net/netlink-related functions (perhaps a
-> debug kernel would be more helpful?). Here's a snippet:
-> 
-> [   10.337720] rcu: INFO: rcu_preempt detected expedited stalls on
-> CPUs/tasks: { P683 } 21 jiffies s: 781 root: 0x0/T
-> [   10.339168] rcu: blocking rcu_node structures (internal RCU debug):
-> [   10.591480] loop0: detected capacity change from 0 to 8
-> [   11.777733] rcu: INFO: rcu_preempt detected expedited stalls on
-> CPUs/tasks: { 3-.... } 21 jiffies s: 1077 root: 0x8/.
-> [   11.779210] rcu: blocking rcu_node structures (internal RCU debug):
-> [   11.780630] Sending NMI from CPU 1 to CPUs 3:
-> [   11.780659] NMI backtrace for cpu 3
-> [   11.780663] CPU: 3 UID: 0 PID: 1027 Comm: NetworkManager Not tainted
-> 6.12.0-aosc-main #1
+There are some typos in fprintf messages.
+Fix them via codespell.
 
-Funny, this happens on bootup and no CPU has ever gone offline, so the path
-modified by this patch shouldn't have been taken. And yet this commit has
-an influence to the point of reliably triggering that stall.
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ tools/perf/util/intel-bts.c | 2 +-
+ tools/perf/util/intel-pt.c  | 2 +-
+ tools/perf/util/tsc.c       | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-I'm running off of ideas, Paul any clue?
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 3ea82d5e8d2e..a7c589fecb98 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -808,7 +808,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
+ static const char * const intel_bts_info_fmts[] = {
+ 	[INTEL_BTS_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
+ 	[INTEL_BTS_TIME_SHIFT]		= "  Time Shift         %"PRIu64"\n",
+-	[INTEL_BTS_TIME_MULT]		= "  Time Muliplier     %"PRIu64"\n",
++	[INTEL_BTS_TIME_MULT]		= "  Time Multiplier    %"PRIu64"\n",
+ 	[INTEL_BTS_TIME_ZERO]		= "  Time Zero          %"PRIu64"\n",
+ 	[INTEL_BTS_CAP_USER_TIME_ZERO]	= "  Cap Time Zero      %"PRId64"\n",
+ 	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index 3fe67bf652b6..30be6dfe09eb 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -4110,7 +4110,7 @@ static int intel_pt_parse_vm_tm_corr_args(struct intel_pt *pt)
+ static const char * const intel_pt_info_fmts[] = {
+ 	[INTEL_PT_PMU_TYPE]		= "  PMU Type            %"PRId64"\n",
+ 	[INTEL_PT_TIME_SHIFT]		= "  Time Shift          %"PRIu64"\n",
+-	[INTEL_PT_TIME_MULT]		= "  Time Muliplier      %"PRIu64"\n",
++	[INTEL_PT_TIME_MULT]		= "  Time Multiplier     %"PRIu64"\n",
+ 	[INTEL_PT_TIME_ZERO]		= "  Time Zero           %"PRIu64"\n",
+ 	[INTEL_PT_CAP_USER_TIME_ZERO]	= "  Cap Time Zero       %"PRId64"\n",
+ 	[INTEL_PT_TSC_BIT]		= "  TSC bit             %#"PRIx64"\n",
+diff --git a/tools/perf/util/tsc.c b/tools/perf/util/tsc.c
+index 2e33a20e1e1b..511a517ce613 100644
+--- a/tools/perf/util/tsc.c
++++ b/tools/perf/util/tsc.c
+@@ -119,7 +119,7 @@ size_t perf_event__fprintf_time_conv(union perf_event *event, FILE *fp)
+ 	size_t ret;
+ 
+ 	ret  = fprintf(fp, "\n... Time Shift      %" PRI_lu64 "\n", tc->time_shift);
+-	ret += fprintf(fp, "... Time Muliplier  %" PRI_lu64 "\n", tc->time_mult);
++	ret += fprintf(fp, "... Time Multiplier %" PRI_lu64 "\n", tc->time_mult);
+ 	ret += fprintf(fp, "... Time Zero       %" PRI_lu64 "\n", tc->time_zero);
+ 
+ 	/*
+-- 
+2.47.0.245.gfacbe4f633
 
-Thanks.
 
