@@ -1,211 +1,150 @@
-Return-Path: <linux-kernel+bounces-401984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3DE9C21F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:22:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E929C21F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C544E1C23CBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F93E1F22185
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64429192B79;
-	Fri,  8 Nov 2024 16:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6553F192D98;
+	Fri,  8 Nov 2024 16:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H+5hJ0KK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dcyzdvlK"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25A31917F4;
-	Fri,  8 Nov 2024 16:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391B13C69E;
+	Fri,  8 Nov 2024 16:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082889; cv=none; b=SI7BtwOOekGKTISkdQQJlh2HnKKAwPxmjCUJJXiTuDFvmedG8l88kuGTbWBRLhh2UsgEQ/dzo97kK6fBH2dOc4y//BQcg8qp+SOQaB/jm1iV02UJmkhCQ1CfeYv7P5+HAEjbnXzTNgkE3MCH60iGPtn4ApiumHI9JiKbCg1kerk=
+	t=1731082903; cv=none; b=ELUu1Q1+iFhONsdoqqR1jHZTmYQRTZ9EByu2pzBViq1hDerCRQLbYvC2x8lMJep1rhana1rPcXrTfPBfczppEgj939x3KkQEQqO/dsnrUv71pqL19/R6XujPfm0WFPtLBTz7D3FhzX6Bu5Kab9SiIli4ZdFPIycPNyTgEGQsGAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082889; c=relaxed/simple;
-	bh=SIFUI2KPYBeRlWqno9FC1kLW+WIHiqFVJ6q4hBonfvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sTuQKXMRz4KL348t8fogXQ+WkSXYnKx59gJGucbOkEG6PCAEIB2Dr7hLN+VzXClsiyIt5/Kfjue2KEOgtZF0pbCb1Y7X4IlV/DrIu07BkF/pb3We0kUD0nm6JrYWm49PnmHJemBLbCchZ8wUADCFQ7zZbtApTHCWqJKAW+/HP7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H+5hJ0KK; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731082887; x=1762618887;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SIFUI2KPYBeRlWqno9FC1kLW+WIHiqFVJ6q4hBonfvs=;
-  b=H+5hJ0KKWmYuW6t6wUD7LIDSuRAgc4DU1/HnnN9jDC/rdjdzMvCRGIH1
-   8FZ3QMvuVibDGXWoq6ppmCGicCas0FNSLNT3IuIlB1pwy8zFJX6OWn6AC
-   0jIovrVuafEXGIf919gEFmoqjxfZNFpuqSeLExf51nsBV6nn5bhCP6sDs
-   AAWHaS2spDh6Xat2+ZaKPTkysmY8ylQOhzJO78ezEhajlfc7ZxX5+Fgqb
-   xwK8Y6vqWkR7F6i75yOuLmS0Mr7HbL5klE2YJ9eYC/5F6q03PtAeu/I+7
-   wg5P3Hb/00M3kaq/y7iRPOjWkyJOqRZoHENtn7ghp4fe44LYTbdaORc4l
-   A==;
-X-CSE-ConnectionGUID: 7gz1xMR4QPapvoDG9cuJCA==
-X-CSE-MsgGUID: wyZzz6b0TM62KfjWv764zQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30370459"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="30370459"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:21:25 -0800
-X-CSE-ConnectionGUID: QlA99iofTtewEy5KcFmZVg==
-X-CSE-MsgGUID: Z+tzhDwYSo+qdURlrNj8Yw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="116492488"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:21:24 -0800
-Message-ID: <b6ab357c-1562-4035-ad3a-2159d2c8c1fa@intel.com>
-Date: Fri, 8 Nov 2024 08:21:24 -0800
+	s=arc-20240116; t=1731082903; c=relaxed/simple;
+	bh=gA+KisiweHZcsVfVaf2In9pQ6V20Ay2o6O9TgQkzIoU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lnvhlvdChftNW90VYki4/r8iDHHRrs+jDv7945y0Z4qmZ0NVAvuilOrbE+CDljerkoT0DafuVtSdMzV50rIY5jCDVHVwtULZ4hkGdSyJrJ/l9m/aABZod5V3BJly6X3DygX9kioP1c2tWzptvig6MnPBaVRWRYBR9qGpWzhJ3a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dcyzdvlK; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ea0b25695dso19855057b3.2;
+        Fri, 08 Nov 2024 08:21:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731082901; x=1731687701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O8mizFjjFDshSal/ZVKlqm4wJJC1d6SLtN/SOKwKRps=;
+        b=dcyzdvlK7fvzdYAUYrjQWEOeVijzA15lXFhbQoAX5cbAyNLGUVCvfBxJQ3NWOi7Gqf
+         M0of9xrT2y8srLer2G9fSxBf5apKh2g9DzUEvFxsKNrJ7y8gYYDzpIdd1CqZYGoiXxE5
+         feVisgs1m/Bax3opBNa0bMhzhoXV23UycE82O6n8/UvHgXshTZyq/pUfjfca1tDCo5l4
+         7UPoAikhKSot4HhAYTEQbIhQwDe0i/Hc0z3aCPGVhyLmPao8GyMb32YGmwFerzn38oBK
+         MpPIHIMPYWmXoRC5cDRtW13WcHClHfRqnIJk6Kmuk4h3yWz9yY9wsljA+KbOk/WxTFL8
+         bf5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731082901; x=1731687701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O8mizFjjFDshSal/ZVKlqm4wJJC1d6SLtN/SOKwKRps=;
+        b=K1wOv7/ZFQV0JHck+ymMISNfiLVl3qziqkXD7yrJmOpsh7EVroWYfi67/PpaaEd6sG
+         5L3CUHFU7V7FG9RJaz3VeCoF7itb8heG6SF//8AG3blsNChFgABvyhQvtDBabbeCz8gu
+         dFrC7SYB06riQFOcLSIxSTpC9X/Qfe2VL+ZoVcTvyyLESFYP4NZ9aV2yiaiqG51PfsHw
+         al5XUsEO7BtU3uXqHAcdTumAQNboouQNK3lrPDb4MKalnpOl2ia1g+Irq1C8Cf3r3LQD
+         q10If2dPxMqEDK6ZUvIdBM/G+gc6wyiMJ8gUO7GZ3DB/jluHatsdOq8NTgbU32Wj7E/g
+         T2ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDrOi0b7xSTW7eW9qYrVGqIoEyDz2uJGRbO3BtcjyxibLF/API7R4SlrSz8vNaaP/lpg/5G2vUOJrLjRXXQ8lIJg==@vger.kernel.org, AJvYcCXyljdROjES15AQDns9F4QmgCTDlR0cB0R2Sd+bOxUoXg1vHdlqELKaa8xmWKntHdyuikhsLlfJE+wT+Yc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0DEeHnhJhFU6cPOe/JTf8xca7fVKJZMPGgVw0Y2tgVjZ9TS/2
+	rA4YlGBsbX1u4ocfLrKLTcLpf1QSmdkMzCsAtkUrhZvhmGcV+8XJGvM00t3HW/UQpoQXkgAtBFz
+	rQOwEZiMj8B2uQm6ddluAjgWccHI=
+X-Google-Smtp-Source: AGHT+IF5Qv/CWRBNVEiNL8p8Q/bKbW4idf5F9u0sg7/BQZn4Cui9AESQ2wmf/dlzWbtmlIWd1V+tm9TGwQFdtH8MePk=
+X-Received: by 2002:a05:690c:9a88:b0:6ea:85ee:b5e3 with SMTP id
+ 00721157ae682-6eaddd73a0cmr38795637b3.5.1731082901181; Fri, 08 Nov 2024
+ 08:21:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] intel_idle: Provide enter_dead() handler for SRF
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
- <20241108122909.763663-4-patryk.wlazlyn@linux.intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241108122909.763663-4-patryk.wlazlyn@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241107232128.108981-1-benjamin@engflow.com> <20241107232128.108981-2-benjamin@engflow.com>
+In-Reply-To: <20241107232128.108981-2-benjamin@engflow.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Fri, 8 Nov 2024 08:21:30 -0800
+Message-ID: <CAH0uvojHH-wmbieqgtVyc7pGWQ0gyrzkWdtUkLpSyreub1uk_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] perf trace: avoid garbage when not printing a
+ syscall's arguments
+To: Benjamin Peterson <benjamin@engflow.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	"Liang, Kan" <kan.liang@linux.intel.com>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/8/24 04:29, Patryk Wlazlyn wrote:
-> Intel's Sierra Forest report two C6 substates in cpuid leaf 5:
->     C6S  (hint 0x22)
->     C6SP (hint 0x23)
-> 
-> Hints 0x20 and 0x21 are skipped entirely, causing the generic
-> implementation in mwait_play_dead() to compute the wrong hint, when
-> looking for the deepest cstate. As a result, package with an offlined
-> CPU can never reach PC6.
+Hello,
 
-This series has said multiple times how the old algorithm is wrong.  But
-it never actually _fixed_ the bad algorithm, only worked around it.
+This patch solves the garbage output problem I got, and your test can be ru=
+n.
 
-Does mwait_play_dead() itself need to get fixed?
+Thanks,
+Howard
 
-> Define the enter_dead() handler for SRF.
-
-This effectively gets the mwait hints from ______ instead of using the
-calculation in mwait_play_dead().
-
-> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
-> index 9aab7abc2ae9..bd67959e5e8b 100644
-> --- a/drivers/idle/intel_idle.c
-> +++ b/drivers/idle/intel_idle.c
-> @@ -56,6 +56,7 @@
->  #include <asm/mwait.h>
->  #include <asm/spec-ctrl.h>
->  #include <asm/fpu/api.h>
-> +#include <asm/smp.h>
->  
->  #define INTEL_IDLE_VERSION "0.5.1"
->  
-> @@ -221,6 +222,17 @@ static __cpuidle int intel_idle_s2idle(struct cpuidle_device *dev,
->  	return 0;
->  }
->  
-> +static __cpuidle int intel_idle_enter_dead(struct cpuidle_device *dev,
-> +					   int index)
-> +{
-> +	struct cpuidle_driver *drv = cpuidle_get_cpu_driver(dev);
-> +	struct cpuidle_state *state = &drv->states[index];
-> +	unsigned long eax = flg2MWAIT(state->flags);
-> +
-> +	/* Retruns only in case of an error. */
-
-		^ returns?
-
-> +	return mwait_play_dead_with_hint(eax);
-> +}
-> +
->  /*
->   * States are indexed by the cstate number,
->   * which is also the index into the MWAIT hint array.
-> @@ -1303,6 +1315,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
->  		.exit_latency = 1,
->  		.target_residency = 1,
->  		.enter = &intel_idle,
-> +		.enter_dead = &intel_idle_enter_dead,
->  		.enter_s2idle = intel_idle_s2idle, },
->  	{
->  		.name = "C1E",
-> @@ -1311,6 +1324,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
->  		.exit_latency = 2,
->  		.target_residency = 10,
->  		.enter = &intel_idle,
-> +		.enter_dead = &intel_idle_enter_dead,
->  		.enter_s2idle = intel_idle_s2idle, },
->  	{
->  		.name = "C6S",
-> @@ -1319,6 +1333,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
->  		.exit_latency = 270,
->  		.target_residency = 700,
->  		.enter = &intel_idle,
-> +		.enter_dead = &intel_idle_enter_dead,
->  		.enter_s2idle = intel_idle_s2idle, },
->  	{
->  		.name = "C6SP",
-> @@ -1327,6 +1342,7 @@ static struct cpuidle_state srf_cstates[] __initdata = {
->  		.exit_latency = 310,
->  		.target_residency = 900,
->  		.enter = &intel_idle,
-> +		.enter_dead = &intel_idle_enter_dead,
->  		.enter_s2idle = intel_idle_s2idle, },
->  	{
->  		.enter = NULL }
-
+On Thu, Nov 7, 2024 at 3:21=E2=80=AFPM Benjamin Peterson <benjamin@engflow.=
+com> wrote:
+>
+> syscall__scnprintf_args may not place anything in the output buffer
+> (e.g., because the arguments are all zero). If that happened in
+> trace__fprintf_sys_enter, its fprintf would receive an unitialized
+> buffer leading to garbage output.
+>
+> Fix the problem by passing the (possibly zero) bounds of the argument
+> buffer to the output fprintf.
+>
+> Fixes: a98392bb1e169 ("perf trace: Use beautifiers on syscalls:sys_enter_=
+ handlers")
+> Signed-off-by: Benjamin Peterson <benjamin@engflow.com>
+> ---
+>  tools/perf/builtin-trace.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index f6179b13b8b4..28f61d10a2f8 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2702,6 +2702,7 @@ static int trace__fprintf_sys_enter(struct trace *t=
+race, struct evsel *evsel,
+>         char msg[1024];
+>         void *args, *augmented_args =3D NULL;
+>         int augmented_args_size;
+> +       size_t printed =3D 0;
+>
+>         if (sc =3D=3D NULL)
+>                 return -1;
+> @@ -2717,8 +2718,8 @@ static int trace__fprintf_sys_enter(struct trace *t=
+race, struct evsel *evsel,
+>
+>         args =3D perf_evsel__sc_tp_ptr(evsel, args, sample);
+>         augmented_args =3D syscall__augmented_args(sc, sample, &augmented=
+_args_size, trace->raw_augmented_syscalls_args_size);
+> -       syscall__scnprintf_args(sc, msg, sizeof(msg), args, augmented_arg=
+s, augmented_args_size, trace, thread);
+> -       fprintf(trace->output, "%s", msg);
+> +       printed +=3D syscall__scnprintf_args(sc, msg, sizeof(msg), args, =
+augmented_args, augmented_args_size, trace, thread);
+> +       fprintf(trace->output, "%.*s", (int)printed, msg);
+>         err =3D 0;
+>  out_put:
+>         thread__put(thread);
+> --
+> 2.39.5
+>
+>
 
