@@ -1,117 +1,125 @@
-Return-Path: <linux-kernel+bounces-401413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7751C9C1A02
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:10:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD2B9C1A05
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A933A1C22E3E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 525542849D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C481E2303;
-	Fri,  8 Nov 2024 10:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B481E2834;
+	Fri,  8 Nov 2024 10:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o7pO4ipd"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEusAy3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEAB13A27D;
-	Fri,  8 Nov 2024 10:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4902E13A27D;
+	Fri,  8 Nov 2024 10:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731060594; cv=none; b=ngWUhAMnjYpMD7txMmM813eotcSjbloX96BRgLcKxGbhNTm9ITArgjvalbw1UTx8uFBA9+mPv+YZyMxWYzWZOpGneteeWQXUuLZM7r7ee5nNsPwMoKLygX8pHgfmCAB5IS5OHQUtkYKW84w1FqFqb2Ys3WQVzSMZE3z0wj65zN0=
+	t=1731060601; cv=none; b=BhMQa+Xr2P5kPWXLCrUWW01IiXbPMsiePDoRPz2CjIlcnOxom2ZjXyJrJ2lq/ilei4gdPFXx3D+ImwP7/SlmSnrUiOhbgvK9kfnCi08kWfPRZGk3h3flf2etT0fV+njkQgWPX2tK3iM8O92VXo0RFuTlCLzr3Boq2Cm+oXrVDaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731060594; c=relaxed/simple;
-	bh=/Owre8X2bmyFdWdh5IzgAEzR4u/DVf5RnbdecLrI8gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=glWOhjDKA0webCd4ysQSF+paDdRT35EPeYGFTpVVwBqx7RnRioObthglULoDvTubDOmtGdqfVrNnf1NL1qQE5bI3QYlDK6wUC3cc0R40UKREx8TgBttXLG/xy46jjyksRbox6xZ2jX2Dq0SbMMuGoM+SoB4icF7JWZa6FfNR3rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o7pO4ipd; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A32631C0004;
-	Fri,  8 Nov 2024 10:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731060583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zo9a3WX+AKY7z29IK1TOw93r3Q+54c84vMyZ0f7WcbU=;
-	b=o7pO4ipdihEntoMdvZqFEKJjTRZ7/CeS3sgg7kh+laZ9rFh+g4vs5Sps91RvX9Vvuy0DVU
-	+Fu3Am+YaWELSYw33/fpYLgb/sFnkcQF3P0w7jllmxDrVQ5bA/0b2g5TFhKrygAOPEFi5P
-	WD3Lwb4z6eVmrjDHe8uYBFLQyZ0hXBeC+CUDP0ErV6zCzvvTSYDDyUq1c61/HEjPHydjzY
-	cNEkSE+2xQ00+zc2gUacgr93r35achp3BRsCupJlsrBkrJAfVWpF49gK/8zBO4npsf9QCH
-	54tRNmFjjkDcnBPe668b5XKqzVMMcu6Pec56U8mD2mUzXMQ8NZQu0a2VpkEX1Q==
-Date: Fri, 8 Nov 2024 11:09:38 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, Dragan
- Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan
- <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, Masahiro Yamada
- <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, Luca Ceresoli
- <luca.ceresoli@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] PCI: of_property: Assign PCI instead of CPU bus address
- to dynamic PCI nodes
-Message-ID: <20241108110938.622014f5@bootlin.com>
-In-Reply-To: <20241108094256.28933-1-andrea.porta@suse.com>
-References: <20241108094256.28933-1-andrea.porta@suse.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731060601; c=relaxed/simple;
+	bh=GcaTVnuhZPHI8Rduj8Qe+ffknyFZam6gp7wslPFdY2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZiK5AFunfMQkrvuE2yJHdr/cTXkQnXHQzPCiI4R5r40Un1GgeIgyczuKRCfHk4wIwguRYB+zTY5CEzsYrH/NuwhetkZKD8K8bjQJ5vY5U1n0pdQzX4NHuV8zlkrK57EBGS2d0fQPGYbmTm7wDMp2VQRvMhc3IaboArI6KiAKIE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEusAy3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5132C4CECD;
+	Fri,  8 Nov 2024 10:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731060600;
+	bh=GcaTVnuhZPHI8Rduj8Qe+ffknyFZam6gp7wslPFdY2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IEusAy3PJK3H/26X6rm4R9BqsxpVKaCxmuXEpycNAeCqAS+9ELigYuuAQSwt3ZImt
+	 O6jdqBMbbZIgj/IRuETaARd2OP/bBkgRsswTIJm0GtGyc5TKLvRSHuHJmEM2gNTs3O
+	 RMuzmFRbmoyROUHrYN7PmFbgcKSZVCM4pDoBq7JcqCyPUWUi2qkEzK9YrYHbFmfqyL
+	 yNlOMaSl1se3fpiCtE4x1/ONpNveXcsHwnUfebc6Cb7/qjxOSeHf++PyOfX011C9ZA
+	 d/cnUIv8NmCCPrfuJpYW7aMX9T+N4190GhfKybvq56LDWA9U4zeLAj1e19XMhyEZDH
+	 I1yBKQn5P2DzQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t9LwI-000000007VS-0qHO;
+	Fri, 08 Nov 2024 11:10:02 +0100
+Date: Fri, 8 Nov 2024 11:10:02 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Chris Lew <quic_clew@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Qiang Yu <quic_qianyu@quicinc.com>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>, mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: qrtr/mhi: NULL-deref with in-kernel pd-mapper
+Message-ID: <Zy3jeixo2uTooRGo@hovoldconsulting.com>
+References: <ZyTtVdkCCES0lkl4@hovoldconsulting.com>
+ <da2bc665-5010-4d92-b9ac-7c442859cd10@quicinc.com>
+ <ZymoMlSCQQScpRIZ@hovoldconsulting.com>
+ <730a6e17-04f5-41b5-a0d8-7220b8c59b58@quicinc.com>
+ <Zyzoh0zv1Z7LDfjW@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zyzoh0zv1Z7LDfjW@hovoldconsulting.com>
 
-Hi Andrea,
+On Thu, Nov 07, 2024 at 05:19:19PM +0100, Johan Hovold wrote:
+> On Tue, Nov 05, 2024 at 10:26:40AM -0800, Chris Lew wrote:
+> > On 11/4/2024 9:08 PM, Johan Hovold wrote:
 
-On Fri,  8 Nov 2024 10:42:56 +0100
-Andrea della Porta <andrea.porta@suse.com> wrote:
+> > > I naively tried adding a sleep after registering the endpoint, but that
+> > > is at least not sufficient to trigger the NULL-deref.
 
-> When populating "ranges" property for a PCI bridge or endpoint,
-> of_pci_prop_ranges() incorrectly use the CPU bus address of the resource.
-> In such PCI nodes, the window should instead be in PCI address space. Call
-> pci_bus_address() on the resource in order to obtain the PCI bus
-> address.
+> No, neither tqftpserv or diag-router are used here, but after digging
+> through the code it seems my hunch about this being related to the
+> in-kernel pd-mapper was correct.
 > 
-> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> Tested-by: Herve Codina <herve.codina@bootlin.com>
-> ---
-> This patch, originally preparatory for a bigger patchset (see [1]), has
-> been splitted in a standalone one for better management and because it
-> contains a bugfix which is probably of interest to stable branch.
+> The qrtr worker, qrtr_ns_worker(), is called when the in-kernel
+> pd-mapper adds the server, and processing the QRTR_TYPE_NEW_SERVER
+> command eventually ends up in mhi_gen_tre() for the modem:
+> 
+> [    9.026694] qcom_pdm_start - adding server
+> [    9.034684] ctrl_cmd_new_server - service = 0x40, instance = 0x101, node_id = 1, port = 0
+> [    9.042155] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = ffff800080d4d038, offset_of(buf_info->used) = 34
 
-Nothing to say for the patch itself.
+> And I can indeed imagine that leading to the NULL deref in case the
+> endpoint is registered before being fully set up.
 
-Just here, you mentioned "see [1]" but you didn't provide the link.
+I've been able to reproduce the issue twice now by instrumenting the
+code to increase the race window. Specifically, I added a sleep in
+mhi_init_chan_ctxt() after allocating the ring buffers but before
+initialising the wp pointers. And when the in-kernel pd-mapper is
+started in that window, we hit the NULL-deref:
 
-IMHO, this is not blocking for applying the patch but, just for other people
-looking at this email in the mailing list, can you reply providing the link?
+        [    8.593582] mhi-pci-generic 0005:01:00.0: mhi_init_chan_ctxt - ring allocated (IPCR:20), buf_ring->base = ffff800080d55000
+        [    8.598902] mhi_net mhi0_IP_SW0: mhi_prepare_channel - channel started (46), dir = 1
+        [    8.612888] mhi_net mhi0_IP_SW0: mhi_prepare_channel - channel started (47), dir = 2
+        [    8.614767] qcom_pdm_start - adding server
+        [    8.615302] ctrl_cmd_new_server - service = 0x40, instance = 0x101, node_id = 1, port = 0
+        [    8.615388] mhi-pci-generic 0005:01:00.0: mhi_gen_tre - buf_info = 0000000000000000 (IPCR:20)
+        [    8.615402] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000034
+        ...
+        [    8.615541] Call trace:
+        [    8.615542]  mhi_gen_tre+0x68/0x248 [mhi]
+        [    8.615544]  mhi_queue+0x74/0x194 [mhi]
+        [    8.615546]  mhi_queue_skb+0x5c/0x8c [mhi]
+        [    8.615549]  qcom_mhi_qrtr_send+0x6c/0x160 [qrtr_mhi]
+        [    8.615551]  qrtr_node_enqueue+0xd0/0x4a0 [qrtr]
+        [    8.615553]  qrtr_bcast_enqueue+0x78/0xe8 [qrtr]
+        [    8.615554]  qrtr_sendmsg+0x15c/0x33c [qrtr]
+        [    8.615555]  sock_sendmsg+0xc0/0xec
+        [    8.615560]  kernel_sendmsg+0x30/0x40
+        [    8.615561]  service_announce_new+0xbc/0x1c4 [qrtr]
+        [    8.615563]  qrtr_ns_worker+0x754/0x7d4 [qrtr]
 
-Best regards,
-Hervé
+Johan
 
