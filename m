@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-401987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0633B9C21FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:22:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 400809C2201
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15D11F21760
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D05CDB21CD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33E199EB2;
-	Fri,  8 Nov 2024 16:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCF6192B74;
+	Fri,  8 Nov 2024 16:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fECEV4Pb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040841993B7;
-	Fri,  8 Nov 2024 16:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oMjnYx5X"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B219918FC8F;
+	Fri,  8 Nov 2024 16:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082938; cv=none; b=QH5/bK2/y+Bu9TnMrefSfnBiYaBZELv4Gr2Yxfvtcl1lU8/0abjo533QVw4umUZW6L24t97pMkDT4wTNjKle9JuK4Prj45Pf/YSTZjuyZMNLkvMI3t7yHhVcacKj+2HKPUuxPseiqrgG3jOmMtedEs/rVLzwjUOMIZU/eVbqcdw=
+	t=1731082978; cv=none; b=UGXZzHBmGN1hAglKjq5yHC9JMHATLsM+6JwaVgS9fCtFJMSzNmv4NcydnUnN25idFDEMSH6wC994NArHFKk5uyaXHrm6m8uyfgzN+XYZ48SYGNpuzf3960XW/rco2JidwATMh2NjgqhIi9opXJAbJRXMXRaKY8pmHcwHZbbaBmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082938; c=relaxed/simple;
-	bh=MvN04QM9skDe5fLRe4zUoBz6kMsWxDmnbsXGz359yRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nSreRi3DUbwFdGkzk3o8SBRJ7V2Me/J1XxK4H6klpziZR5Vj8npWdXWvd6Lo70DaHz4ZoyvHMSi60DhGz6nFK1cahzJsKuUsm3TgoFDzTAW0kwx2Qx9seqwfoxUMuIDIJE7ZE+mvl7lyY53MG1Rr4YuS+x9sf1wdmeCX3I0btIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fECEV4Pb; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731082937; x=1762618937;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MvN04QM9skDe5fLRe4zUoBz6kMsWxDmnbsXGz359yRU=;
-  b=fECEV4PbydJYIjsjpCe0/W7eCBR4OhLItHknk5YUOUAnysPH/LeWPCh1
-   vc7og9Lxy4IyLbS21Pon0cLhsPbEyFICoWclH49aIjY9WZU6/wdE457Fi
-   Q4C1n2d6zh75DVUrdyuRcHzwXkcapHsCQGs1uvTCuIgS3Y8xBH2LiqOvd
-   rU4sTp7IEvF1qny59UrFqlmRTVrI+VgKnq04vdTO2WCE8bwpgM5nUSUBj
-   KOYYbNpHJMeMAvztKqh/IDjVKzYVdm1ZKuSH8PaSg3cUOzdZ5PikwVCWR
-   hxJlAaZZaXxSCDp3xMA8IqI38JdQV0ZdIRddsd4NFiFe3dOCwQay9OWDE
-   Q==;
-X-CSE-ConnectionGUID: Bqe/9HIuRG6iKOtB7M3PPg==
-X-CSE-MsgGUID: O2VEJNtQQeGGcFWAqWL6MQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30370521"
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="30370521"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:22:09 -0800
-X-CSE-ConnectionGUID: 4T8HmKCiS3C27KH2kLY9iA==
-X-CSE-MsgGUID: Bd5G0RdaSxGfVViTmuwFHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="116492760"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:22:09 -0800
-Message-ID: <548b2012-925a-4b06-9970-f10a59fbbba1@intel.com>
-Date: Fri, 8 Nov 2024 08:22:08 -0800
+	s=arc-20240116; t=1731082978; c=relaxed/simple;
+	bh=Iev3IASF6jXs9vLj+2w+9QdXRkWMP80eM6ZO8Ho25tI=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ZfBve3gUAAJkIS69HGkdkaF4kfV8cMg/F3/skH/R9cTlWRjBf88npHs0CDlAQzW053r3heZkZVnE/h7RvWEvKSiQVI/2JdLybGC8GOdOnVQwKLJRl8YANTCvGNSx+5TfUXadJ0JSwfEBMIfS3/EhnHwvUr1SRFr/5K54QxF2Ztg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oMjnYx5X; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=eZrpT
+	xlepteoc3aJs0xBvP2dTguuevOY8C1Vgzg+8cY=; b=oMjnYx5XQQdks+F+bLkEu
+	w4bASjEeSefb4HLJKK9k6rw0+Lc5P1TcDcbmB7S1mVJB1u84FXEm9vDgpXjiiPTv
+	ClkyArRHptwuWVyaGTDrB87Q1ceerZq74pxiDLGyOzyppSAi6uiP1bzaZmGbz2Un
+	pRu07OQhCXfU+srNYDKNFI=
+Received: from rlk.localdomain (unknown [111.30.253.150])
+	by gzsmtp2 (Coremail) with SMTP id PSgvCgCnfvHDOi5nZwfpAw--.25591S2;
+	Sat, 09 Nov 2024 00:22:28 +0800 (CST)
+From: "enlin.mu" <18001123162@163.com>
+To: 18001123162@web.codeaurora.org, enlin.mu@unisoc.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	akpm@linux-foundation.org, hch@lst.de, tglx@linutronix.de
+Subject: [PATCH] proc/softirqs: change softirqs info from possile_cpu to online_cpu
+Date: Sat,  9 Nov 2024 00:22:25 +0800
+Message-Id: <20241108162225.19401-1-18001123162@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
-To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- rafael.j.wysocki@intel.com, len.brown@intel.com,
- artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
-References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PSgvCgCnfvHDOi5nZwfpAw--.25591S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7GF1kZr4fWr4rWrWfZr1xGrg_yoWfWrc_Za
+	s7A3WayF1Sqr98Aryjyw13t395A3ykAr92g3W8KFyUZw1UGw15tFZ8Jr98Wrs7CFW0grZ3
+	CryxWFnYqw1fKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU1CzutUUUUU==
+X-CM-SenderInfo: bpryiiyrrsjiewsbjqqrwthudrp/1tbiqRiRDmcuNe9OywAAs4
 
-On 11/8/24 04:29, Patryk Wlazlyn wrote:
-> Applied suggestions from Dave and Rafael.
+From: Enlin Mu <enlin.mu@unisoc.com>
 
-The basic approach here is looking pretty sound, so thanks for that
-Patryk.  I mostly have mechanical nits left.
+like /proc/interrupts,/proc/softirqs which shows
+the number of softirq for each online CPU
+
+Signed-off-by: Enlin Mu <enlin.mu@unisoc.com>
+---
+ fs/proc/softirqs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/softirqs.c b/fs/proc/softirqs.c
+index 04bb29721419..01698b8f3898 100644
+--- a/fs/proc/softirqs.c
++++ b/fs/proc/softirqs.c
+@@ -13,13 +13,13 @@ static int show_softirqs(struct seq_file *p, void *v)
+ 	int i, j;
+ 
+ 	seq_puts(p, "                    ");
+-	for_each_possible_cpu(i)
++	for_each_online_cpu(i)
+ 		seq_printf(p, "CPU%-8d", i);
+ 	seq_putc(p, '\n');
+ 
+ 	for (i = 0; i < NR_SOFTIRQS; i++) {
+ 		seq_printf(p, "%12s:", softirq_to_name[i]);
+-		for_each_possible_cpu(j)
++		for_each_online_cpu(j)
+ 			seq_put_decimal_ull_width(p, " ", kstat_softirqs_cpu(i, j), 10);
+ 		seq_putc(p, '\n');
+ 	}
+-- 
+2.25.1
+
 
