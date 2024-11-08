@@ -1,210 +1,207 @@
-Return-Path: <linux-kernel+bounces-402325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54669C2669
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:23:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481B79C2670
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 665382842C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB321F23FAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECB1C3316;
-	Fri,  8 Nov 2024 20:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC691AA1C1;
+	Fri,  8 Nov 2024 20:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0Y2guDw"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZLHQNkZb"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF6E1AA1C1;
-	Fri,  8 Nov 2024 20:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DDE192B6F
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731097376; cv=none; b=L30bu3Lfv6KTcRg1buP9nP1olaBd6HrFuSlLNiJhaqxZh1OisFg9HOOHCGZQkAr4/hGm8nkv26cYNK0byNaoL/gFtU3RroCMreMvACLx2s3B8g7Pff/zsl7MsKnIbztdBWIS2PMUI/CqMZd6uENGKdU/RR6Zn6J0cDKfqWtXNz4=
+	t=1731097449; cv=none; b=kMe+TZ8NQywmtrZHeaNeyJvwXY5semsDoWrAcuakli13fiKuMAgrYn1dJ3VI2kgCqw7lj32JvvmPgGEoEdp48fYC4aHUVvMVJOmAA0yibQQXEfX5ty7WL8CtZcg4Qd45jVwaP+x/Xqkz/7hP8xwZlI52o2d69/mRnnL2Bpp+xy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731097376; c=relaxed/simple;
-	bh=XJU61EN1IqZaoeR1rSzm9dj0fle8xMBiTlgB72uJXus=;
+	s=arc-20240116; t=1731097449; c=relaxed/simple;
+	bh=OZAeXMox/KlEDAsB/4eMgXmLZQfDG5q4/Gt0jdrhshM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tte/cCm0yVul0du51uRBRV6+Ze1nr5BVJ1nDcCe/pbTVNykKG0tJHAVgsSDG2YHmaky9FmpbDK7E72T0AxyprCo85lUBOtMC7cy3Tqz6I3IQlRDsIx/qJwKW+htq/5FMV3YQtmqZNvSEqha09Cu3TqVdKNMqbfVwqTwO1wniTFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0Y2guDw; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4314c452180so21177125e9.0;
-        Fri, 08 Nov 2024 12:22:54 -0800 (PST)
+	 To:Cc:Content-Type; b=XVO5lIbLcD4N1/4GjtlYIDk/1v8nr3nJaGuvWWS0EKb8WSdhKgA2QEntUN6UjvCfypdFncTQX2PkJgNUEzcpkWeb/NBkkHFbeZrZsqHTp41zt8NmG67d0xt9LuJ2np0uX3RQoWYz0QFkIJP2n6pBF0i9u5Cb4HuVlbvcrOv2E10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZLHQNkZb; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b14077ec5aso343346285a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 12:24:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731097373; x=1731702173; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731097446; x=1731702246; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=U/xUMGKi2SD6hf3c1UEJz+hJwgmvF3CxZFQ3ymqr9uE=;
-        b=h0Y2guDwQa+zIHHx9V9M5qx0NkK6t3VbhW7ISIiGEXNXDiC21UqiPCeB119EPsTn0e
-         NeWEZJhzCwGAoPM6WzBOX1UhGNfliwlFJuiFhyd9hj6yegjuGtlWx2g5jes18SG2NMTV
-         2P3IIVWHuKhWdIFsvAQnCbFi2boUQsIH15mvJurcPuiUai/zsJSi6rrBoYSuDVZQ9Fow
-         As0f3sZvBOAjZoshcyECebsJLmZpuoWyqqiq0PMAg93/Icrt1V5vm1bWajIlzMMtQ3Sv
-         kwYbHVvR9/GKoUYZas648o8Zx/vLJC8AbelW/kKpwGTYcJk7LCI+lYfuwoBrPllnp2f+
-         NNTg==
+        bh=WXILrBeBuixnjykDOnFBzIWDX7dpjLHEipvuPBeIMt4=;
+        b=ZLHQNkZbEd5D6cVJJnVkOk0n1+UvaW4u5GUusegRODxjwDxZdj0zY2jLtAxQ/2Yi2/
+         O8mZgkF53p20gIky71UnTGHkVe09TFr+xzhjEQuqcfe/2U/WiUt577bUGGBOXk29XBui
+         sgzdpr1AXgDPVkjY7+ELZylovwg13YKZdjy/3K87eY51OEZzFMAbTt0hRpb+tn3WWI7C
+         A5PvmZ2o0nnbiMt00N38ZHLGFuWuIsZSh4Tvr9jy/Z3slP7a4w9Gmrt4jaZggzm0JicP
+         ZtKwK2ZdG1oonjElar42i848l/h4ass/XRdKZR+pdX33soaW/l+ooQrFzrHbstgGuKXO
+         tZew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731097373; x=1731702173;
+        d=1e100.net; s=20230601; t=1731097446; x=1731702246;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=U/xUMGKi2SD6hf3c1UEJz+hJwgmvF3CxZFQ3ymqr9uE=;
-        b=nNBv6LaWsZCovJp10JhnWICWtB/W9IrDGzJMAy59GSamETx6yIRemKQinUWzUaS7h5
-         /Mr0AJ3EP6R25Eu22uiltIMXUMlF0AOg6NHI3Q/0lGkmoxwSMUE41Icw2gLv0u+922MV
-         EgtUT7/+Yabs28Q3XTcfMVgbOYLOXgZdkVHDYnjpat3s96oYwYDahG/KbKt7vtIeG6/N
-         MITcn3Wo8+bouxYjbv4r4T3xsT7Lo0+qxejZ0CopEHi00H2hmOkdM21GbSjhhvGOt8WT
-         oVHJookP0g41cPwu3RN3LYfaOhEY0A8wI0a0BP1ta+Lk+ZBAb4gGy+e5JROUZKK4U8U9
-         uJoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL7imeKpef3FYLY3k9fArNXyEDOMALpL/N5PVb+5Qobg8YScENE9lU07nSmTrkz0YTC6w=@vger.kernel.org, AJvYcCXiArkjKMFkBaPE1fdtJrQXR3VSmqCjyh8NEm4ab6myRe43b+90b4NLefmGMelKiKCxGEVpMaMT69xT78SR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzux6cqt5f294gu1sJeUw2nuU9GbUp5SqEbB/0OpB6CKs69u5+M
-	AK88756CnZWZf3Gh896OAgm8pWqXfe2pcySvyQj90jUVrUJ7bVjGShVjE/5OGvtJ6hhmAAX2Zwo
-	KHReM3EthRon+nC/C/SSuWg5nrt8=
-X-Google-Smtp-Source: AGHT+IGUHee0ozy2XcI20tavIZRFKwh+dhcBCCR60pmA9ssCOt/7grB0zNc6bidarNowdjUxSilPi6pqfzPAsuINZCQ=
-X-Received: by 2002:a5d:64c7:0:b0:37c:fdc8:77ab with SMTP id
- ffacd0b85a97d-381f0f57f22mr4424747f8f.7.1731097372614; Fri, 08 Nov 2024
- 12:22:52 -0800 (PST)
+        bh=WXILrBeBuixnjykDOnFBzIWDX7dpjLHEipvuPBeIMt4=;
+        b=LZ38SGzcTJhS6zU/HAvP5K/fd1QGZafi0AY+7L1dhONYSNugTjGk9uLonGi2W73hAJ
+         caoSNTPE7TznecDfi1O13YqLiBXtMM/5hmoeRMF6HdFftFW9RJaGN4a5ytNjW0wqiDS+
+         NMGGKWJlUA22yO94Cwz1fz/+Meb5Iqi97x4J2V3xVlgJIYeZ45KuHs1Z5PPgntH6BjoB
+         Bn49it6RkH1v8NjApjUyPaBZ4e2+hKxkWCVtdYGl5iMxla6OS/G7ZOg/lGlJch6r9NQD
+         wYfgYahuQUlhzu/520sAGT6x3Y7pmmNqu3RMiLfQlgamTjrqgUeekYW9h//1Yt472W0a
+         pfqQ==
+X-Gm-Message-State: AOJu0YyNH/L8EkZ3chGFR1Y5khUPYRHE4VTLGB6JDzpSqTiQN/le67U3
+	Gm25Qi2QDOW0Thy5auVMAwgvRQ5nOnIZ1NZ7Dtt0NCyOsiX3iSkvOI2KAQZ8ScVb1S4fcs2bFQB
+	rqENc84Ha56xfbSS5R91csAwEnjM1s5MfRabK
+X-Google-Smtp-Source: AGHT+IFtVP27mLjrCefU+cBNzDFOK75ljBCTtQMT80A+RFCEJ1lgmg9hWpxu5Kj7hCQvkfsXVxtq5sko7EhVIYtxm6o=
+X-Received: by 2002:a05:6214:44a1:b0:6d3:4453:6a48 with SMTP id
+ 6a1803df08f44-6d39e507f62mr70771516d6.13.1731097446291; Fri, 08 Nov 2024
+ 12:24:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108063214.578120-1-kunwu.chan@linux.dev>
-In-Reply-To: <20241108063214.578120-1-kunwu.chan@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 8 Nov 2024 12:22:41 -0800
-Message-ID: <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
-Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
-To: Kunwu Chan <kunwu.chan@linux.dev>, Hou Tao <houtao@huaweicloud.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Sebastian Sewior <bigeasy@linutronix.de>, clrkwllms@kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
-	Kunwu Chan <chentao@kylinos.cn>, syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+References: <20241106192105.6731-1-kanchana.p.sridhar@intel.com> <20241106192105.6731-11-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20241106192105.6731-11-kanchana.p.sridhar@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 8 Nov 2024 12:23:29 -0800
+Message-ID: <CAJD7tkaWixgwXHKLar9_EFa-ooeU0zx5Q=gQW7utyokm3ARkqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/13] mm: zswap: Add a per-cpu "acomp_batch_ctx" to
+ struct zswap_pool.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, clabbe@baylibre.com, 
+	ardb@kernel.org, ebiggers@google.com, surenb@google.com, 
+	kristen.c.accardi@intel.com, zanussi@kernel.org, wajdi.k.feghali@intel.com, 
+	vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 10:32=E2=80=AFPM Kunwu Chan <kunwu.chan@linux.dev> w=
-rote:
+On Wed, Nov 6, 2024 at 11:21=E2=80=AFAM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
 >
-> From: Kunwu Chan <chentao@kylinos.cn>
+> This patch adds a separate per-cpu batching acomp context "acomp_batch_ct=
+x"
+> to the zswap_pool. The per-cpu acomp_batch_ctx pointer is allocated at po=
+ol
+> creation time, but no per-cpu resources are allocated for it.
 >
-> When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
-> and bpf program has owned a raw_spinlock under a interrupt handler,
-> which results in invalid lock acquire context.
+> The idea is to not incur the memory footprint cost of multiple acomp_reqs
+> and buffers in the existing "acomp_ctx" for cases where compress batching
+> is not possible; for instance, with software compressor algorithms, on
+> systems without IAA, on systems with IAA that want to run the existing
+> non-batching implementation of zswap_store() of large folios.
 >
-> [ BUG: Invalid wait context ]
-> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
-> -----------------------------
-> swapper/0/0 is trying to lock:
-> ffff8880261e7a00 (&trie->lock){....}-{3:3},
-> at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
-> other info that might help us debug this:
-> context-{3:3}
-> 5 locks held by swapper/0/0:
->  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
-> at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
->  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
-> at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
->  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
-> at: spin_lock include/linux/spinlock.h:351 [inline]
->  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
-> at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
->  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
->  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
->  #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2},
-> at: __queue_work+0x759/0xf50
->  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
->  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
->  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
-> at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
-> 6.12.0-rc5-next-20241031-syzkaller #0
-> Hardware name: Google Compute Engine/Google Compute Engine,
-> BIOS Google 09/13/2024
-> Call Trace:
->  <IRQ>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
->  check_wait_context kernel/locking/lockdep.c:4898 [inline]
->  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
->  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
->  trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
-
-This trace is from non-RT kernel where spin_lock =3D=3D raw_spin_lock.
-
-I don't think Hou's explanation earlier is correct.
-https://lore.kernel.org/bpf/e14d8882-4760-7c9c-0cfc-db04eda494ee@huaweiclou=
-d.com/
-
->  bpf_prog_2c29ac5cdc6b1842+0x43/0x47
->  bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
->  __bpf_prog_run include/linux/filter.h:701 [inline]
->  bpf_prog_run include/linux/filter.h:708 [inline]
->  __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
->  bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
->  trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue=
-.h:59
->  __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
->  queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
-
-here irqs are disabled, but raw_spin_lock in lpm should be fine.
-
->  queue_work include/linux/workqueue.h:662 [inline]
->  stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
->  vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
->  vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
->  vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
->  __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
->  handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
->  handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
->  handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
->  generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
->  handle_irq arch/x86/kernel/irq.c:247 [inline]
->  call_irq_handler arch/x86/kernel/irq.c:259 [inline]
->  __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
->  common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
->  </IRQ>
+> By creating a separate acomp_batch_ctx, we have the ability to allocate
+> additional memory per-cpu only if the zswap compressor supports batching,
+> and if the user wants to enable the use of compress batching in
+> zswap_store() to improve swapout performance of large folios.
 >
-> Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/bpf/6723db4a.050a0220.35b515.0168.GAE@goo=
-gle.com/
-> Fixes: 66150d0dde03 ("bpf, lpm: Make locking RT friendly")
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+> Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+
+This isn't needed if the sysctl is removed and we just allocate the
+number of buffers during pool initialization, right? Same for the next
+patch.
+
+
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 > ---
->  kernel/bpf/lpm_trie.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  mm/zswap.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
 >
-> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-> index 9b60eda0f727..373cdcfa0505 100644
-> --- a/kernel/bpf/lpm_trie.c
-> +++ b/kernel/bpf/lpm_trie.c
-> @@ -35,7 +35,7 @@ struct lpm_trie {
->         size_t                          n_entries;
->         size_t                          max_prefixlen;
->         size_t                          data_size;
-> -       spinlock_t                      lock;
-> +       raw_spinlock_t                  lock;
->  };
-
-We're certainly not going back.
-
-pw-bot: cr
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 02e031122fdf..80a928cf0f7e 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -160,6 +160,7 @@ struct crypto_acomp_ctx {
+>  struct zswap_pool {
+>         struct zpool *zpool;
+>         struct crypto_acomp_ctx __percpu *acomp_ctx;
+> +       struct crypto_acomp_ctx __percpu *acomp_batch_ctx;
+>         struct percpu_ref ref;
+>         struct list_head list;
+>         struct work_struct release_work;
+> @@ -287,10 +288,14 @@ static struct zswap_pool *zswap_pool_create(char *t=
+ype, char *compressor)
+>
+>         pool->acomp_ctx =3D alloc_percpu(*pool->acomp_ctx);
+>         if (!pool->acomp_ctx) {
+> -               pr_err("percpu alloc failed\n");
+> +               pr_err("percpu acomp_ctx alloc failed\n");
+>                 goto error;
+>         }
+>
+> +       pool->acomp_batch_ctx =3D alloc_percpu(*pool->acomp_batch_ctx);
+> +       if (!pool->acomp_batch_ctx)
+> +               pr_err("percpu acomp_batch_ctx alloc failed\n");
+> +
+>         ret =3D cpuhp_state_add_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
+>                                        &pool->node);
+>         if (ret)
+> @@ -312,6 +317,8 @@ static struct zswap_pool *zswap_pool_create(char *typ=
+e, char *compressor)
+>  ref_fail:
+>         cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->no=
+de);
+>  error:
+> +       if (pool->acomp_batch_ctx)
+> +               free_percpu(pool->acomp_batch_ctx);
+>         if (pool->acomp_ctx)
+>                 free_percpu(pool->acomp_ctx);
+>         if (pool->zpool)
+> @@ -368,6 +375,8 @@ static void zswap_pool_destroy(struct zswap_pool *poo=
+l)
+>
+>         cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE, &pool->no=
+de);
+>         free_percpu(pool->acomp_ctx);
+> +       if (pool->acomp_batch_ctx)
+> +               free_percpu(pool->acomp_batch_ctx);
+>
+>         zpool_destroy_pool(pool->zpool);
+>         kfree(pool);
+> @@ -930,6 +939,11 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, =
+struct hlist_node *node)
+>         struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
+node);
+>         struct crypto_acomp_ctx *acomp_ctx;
+>
+> +       if (pool->acomp_batch_ctx) {
+> +               acomp_ctx =3D per_cpu_ptr(pool->acomp_batch_ctx, cpu);
+> +               acomp_ctx->nr_reqs =3D 0;
+> +       }
+> +
+>         acomp_ctx =3D per_cpu_ptr(pool->acomp_ctx, cpu);
+>         return zswap_create_acomp_ctx(cpu, acomp_ctx, pool->tfm_name, 1);
+>  }
+> @@ -939,6 +953,12 @@ static int zswap_cpu_comp_dead(unsigned int cpu, str=
+uct hlist_node *node)
+>         struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
+node);
+>         struct crypto_acomp_ctx *acomp_ctx;
+>
+> +       if (pool->acomp_batch_ctx) {
+> +               acomp_ctx =3D per_cpu_ptr(pool->acomp_batch_ctx, cpu);
+> +               if (!IS_ERR_OR_NULL(acomp_ctx) && (acomp_ctx->nr_reqs > 0=
+))
+> +                       zswap_delete_acomp_ctx(acomp_ctx);
+> +       }
+> +
+>         acomp_ctx =3D per_cpu_ptr(pool->acomp_ctx, cpu);
+>         zswap_delete_acomp_ctx(acomp_ctx);
+>
+> --
+> 2.27.0
+>
 
