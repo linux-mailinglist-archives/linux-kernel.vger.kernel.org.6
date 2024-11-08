@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-401517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739809C1BA8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:57:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 654389C1BAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3357D283A14
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6169B25FEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78DE1E3DD7;
-	Fri,  8 Nov 2024 10:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549B11E47D6;
+	Fri,  8 Nov 2024 10:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jzVoa0z+"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L7VVt8BD"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5531E2603
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB9C1E47C7
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731063297; cv=none; b=gBvH6fFMEd2OrUFcwGv9VUTb9p5EDuLESzewAjNOm+gYXKP0A37xTvibvZQ8/MuXQxQhrw+0dYm56qlu9RH21Ym89Fe8V06ncrzIm7q70wErz2/D0S8FtuWD73nVkbA8v8yKaVvr2PrtzIiwTiRkBkwCyb0YiheI2AGNC3UqaKM=
+	t=1731063370; cv=none; b=QHXesgQjM9cDPiIRBrTTF216pSTQtDeosRaxUyK3WlmAkAidBlLW5Q3waddIpUDUFkO5w36H9gk7L1Ot1KEpl9qDgYJAF69ObzSUwrJXUuD2qn13UD0npp2ZCPvYtXbtUlyL0iiluwTF2K2uuYGKqNtEjf3Tf49saoSRNsJHWj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731063297; c=relaxed/simple;
-	bh=SKWrITZPm/0/56GItxsCNC8xYJac/vQfO+CvGTRapjA=;
+	s=arc-20240116; t=1731063370; c=relaxed/simple;
+	bh=YXdcjkX8etbfDLHodsoek8iKDQY4+jwgGGzH3KAtw7g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M3r9EOqyySt24XVg1akgu/5pQa713Ketlm52LMg4CH4UnNxe1tTQRZAE84eEMsoYAvMqp5gyIOorANIG2TTN6r9271iGAnp+ay49SC88lvvYDTZrMy9k44JP0Gapayw1m4tvS5a/FX2TSIdF2LEtzzqmzumx3PiawP5M049jbME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jzVoa0z+; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=oCg8nL/hsykOGDD62RfDgxsqU9FBAeL/dRQ5wvoW/iJpnkEYiRSK4ZXV10C2iAXvcqmQQU82DlIfmEewLRapxvkMH1RIw0ZO28cNu8ixHqysVFLkgKTF1KMviZJ+3vI6YIiCZV6N8IuYaREzujoT+nG+XJtMlLmyKF6wFzH9pb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L7VVt8BD; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43155a6c3a6so1570365e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:54:55 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43155a6c3a6so1571815e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:56:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731063293; x=1731668093; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731063367; x=1731668167; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XjVeFwi1EIRPyqdLiEADlWx+Hx+0i6wDpKY9SiWg078=;
-        b=jzVoa0z+klBf6ED0zP7XSGUKDyv0iNGbZIJqIOtATz1EQQuTWgdeah7X8TSo9q1HP/
-         +x48bLA7mWdlWoRGutyMJUCqcbA2/u0Hf80ryrzR9PF+UNkTk1ZPEIXeJYDCqvnjIR2i
-         aoWKog5D5yerJlfMKLiCn42k1A7UT658PL8QHdsmTOUMKRutd/pO4+V5MeBldfoB7L9m
-         BNebifpMdoem94+sDMnoPhXLGSGfst5uAr2itZcMQ3xissm+ybnNrXu4Ex+YbnkaHYFo
-         1+Sy/MKdxrkGTj0lwx3qD2Vfx2e6QiuTbYRnLFokZdTfxqaEzByKvIGJ/GeBOk9vk0NU
-         ONWA==
+        bh=Ho2R1g6t6+abP7priMth4WROzEDx+gxsMyYEy2a1tfU=;
+        b=L7VVt8BDRWgss9QEnDT2Xk5YnPvaxmH7one/IN0wmcfY8PoHguNp+KiIWhgyx10Et1
+         nqSi7PPumAJTfX8nNv0HCDI65q+VQndc9FppIjGjo6StHCZlM61bAen8kRksdvKxKBD0
+         i/pDT3U28p7jq9NdYDBLjtJzO3PIwFIAA4kTNLZe6RnCUbaa4jP5jMFj1s88rLbLGjxp
+         utjL2mMuYI2IGJ+z2kLWtbPPhbHMQwhsMguhPMOwtSptNdYMxKLswTmx1eGI9gNFQ9Eb
+         CZsEWruHyUQakeSbtHERAmu/Hz16IcDbc3HL94CCzwIHoLau+KFniqPD/ihrAz+vJ2Po
+         3lkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731063293; x=1731668093;
+        d=1e100.net; s=20230601; t=1731063367; x=1731668167;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XjVeFwi1EIRPyqdLiEADlWx+Hx+0i6wDpKY9SiWg078=;
-        b=qdT2eh38gVbH38lpA5Nd5tNESq5duHsahyhFJEWxbgbRnbXo70SMpQWXS3PxbtxrUp
-         bAVnJZ0g4JZ43iYC7Hi+oCcy0P8W35yaO70Di+REzGcPqkkkJ4Fv6ngdrAOg1hCndY4I
-         GpYM9bX6X2aE2iK/IVDye+5OwVsqyr6R8XrEP6gUiY1LV2Jp40UE6gOZi1aa6ZYNWq9/
-         ZnF6X/bzxofgznRnmAN/oCovm7SBnVUJXXePqtrrHkacR5ugdzyVUEaBsWfhbWfNi4R8
-         86caozKxkCHZvLr9CmEAkUf5YLwBQCu7cOYtxYKmIFF7C5x6LQhJtggfxsUvTai9fRSS
-         VN6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVL7i1I3SlMe4Wp3fOeRKRoMpH9aPRazzMFc8AXK9iQ7fd/oCywWN2S3f7KtY38bK4kJNkdgHhjaB1yK28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgmVFgw2uWL6t17AnzyfCd/v+Z7KuQ09heYH38+0tOoP8Y6rD9
-	6kkgksLPqFBW0dGytVc9Ot80SJNnMXL1wqdpRc66y5h6o5bM9tBYHTmZjyYheo0=
-X-Google-Smtp-Source: AGHT+IGs++XXaZ5BDvNOdjMCMdvBW7OqgMuAxV2n46KIvq5Vmf38B7qOL+f0FIa0y42m2bKiJvXH0w==
-X-Received: by 2002:a05:600c:3b9d:b0:42c:c0d8:bf34 with SMTP id 5b1f17b1804b1-432b74a0238mr8192675e9.0.1731063293289;
-        Fri, 08 Nov 2024 02:54:53 -0800 (PST)
-Received: from [172.16.24.83] ([89.101.241.141])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e56sm98449395e9.2.2024.11.08.02.54.51
+        bh=Ho2R1g6t6+abP7priMth4WROzEDx+gxsMyYEy2a1tfU=;
+        b=SYb8r2bmFaFxh40zbpj9+AVO0cdArGP09JECQVjC9z9iMr1ehuSrR8hdgmtagm+GWR
+         cBgXkqIaedvWuNJXGf2tLMmZqC5YbSV//iUPEpYFRwY1MqzEyQHU/B+O/q6Kt52DODyz
+         SND8GmR8MYCs0spp/mgWHHpmhXEWCZJ2pHdDkFvv/XamZr88DnO43uvigORDKQJ4llrR
+         KjDPhAe/cjOl9o90/bmjOm8Lyjxt4b2mBXTZrmb0pYoCSQh6usZbMlgTEo2FgXIX0+L8
+         kYn35sx1vmmL5IrobPXLXtexIJM8acyjzA4HpjBQpXn1+1s09X7+5lPTknzHuv407ARE
+         HvuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdZ0JT5fIOJrOkrv1Gf811jD4vEY3PoyTsXo+s4hri2HdesfNRLtHC5VmcXj1SkqxyovWLNP7aKq8NzIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe9zQ/19llkmJcfYDKiOqqRYP3mSF8aShAQCBRqQ+96Rm6ONT4
+	nQyYrrzuwWkTShEYL8aS6xCyRYTrGTbm6hUKWliJI8hGMhyetiBqzFPXAakUwqQ=
+X-Google-Smtp-Source: AGHT+IF175RcChMaKgxG7DzpAG6Dq0Qo693dlECBFgQjlvN2DFQGIRPF4OG+ZBoQAVda73yTzoOZKw==
+X-Received: by 2002:a05:600c:2248:b0:431:4983:e8fe with SMTP id 5b1f17b1804b1-432ba269242mr3280465e9.9.1731063367070;
+        Fri, 08 Nov 2024 02:56:07 -0800 (PST)
+Received: from [172.16.24.83] ([154.14.63.34])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c0d33sm59878035e9.27.2024.11.08.02.56.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 02:54:52 -0800 (PST)
-Message-ID: <c2438649-eddd-4a35-b50f-3faa065615c3@linaro.org>
-Date: Fri, 8 Nov 2024 11:54:50 +0100
+        Fri, 08 Nov 2024 02:56:06 -0800 (PST)
+Message-ID: <b8389b06-4ad8-4ddf-94c3-cc36bacc8466@linaro.org>
+Date: Fri, 8 Nov 2024 11:56:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,7 +76,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] dt-bindings: Add Blaize vendor prefix
+Subject: Re: [PATCH v4 2/6] dt-bindings: arm: blaize: Add Blaize BLZP1600 SoC
 To: Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>,
  James Cowgill <james.cowgill@blaize.com>,
  Matt Redfearn <matthew.redfearn@blaize.com>,
@@ -102,7 +102,7 @@ Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
  "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 References: <20241108103120.9955-1-nikolaos.pasaloukos@blaize.com>
- <20241108103120.9955-2-nikolaos.pasaloukos@blaize.com>
+ <20241108103120.9955-3-nikolaos.pasaloukos@blaize.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -149,36 +149,29 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20241108103120.9955-2-nikolaos.pasaloukos@blaize.com>
+In-Reply-To: <20241108103120.9955-3-nikolaos.pasaloukos@blaize.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 08/11/2024 11:31, Niko Pasaloukos wrote:
-> Blaize, Inc. (www.blaize.com) is a SoC manufacturer with integrated
-> programmable Graph-Streaming-Processors for AI and ML.
+> Add device tree bindings for the Blaize BLZP1600 CB2
+> development board (carrier board), which uses the
+> BLZP1600 SoM.
 > 
 > Resolves: PESW-2604
+> Checkpatch: ignore
 
-What is this? The tag and the meaning? How does it matter for the upstream?
+NAK, Solve your "resolve" errors and fix your checkpatch issues. All of
+them.
 
-I do not see you using b4 so I do no understand why you Cc stale
-addresses. Standard reply - please fix your process:
+> Reviewed-by: James Cowgill <james.cowgill@blaize.com>
+> Reviewed-by: Matt Redfearn <matt.redfearn@blaize.com>
+> Reviewed-by: Neil Jones <neil.jones@blaize.com>
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+Three people reviewed this YAML? And no one told to remove incorrect
+tags? Where is any trail of such review?
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
+
 
 Best regards,
 Krzysztof
