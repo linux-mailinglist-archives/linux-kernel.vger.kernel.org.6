@@ -1,160 +1,195 @@
-Return-Path: <linux-kernel+bounces-402466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D37F9C2802
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:16:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880409C2806
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:18:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9B9284831
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:16:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D27AFB21F00
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2091E22EC;
-	Fri,  8 Nov 2024 23:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C731E22EC;
+	Fri,  8 Nov 2024 23:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GCDkp4PA"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m+DEZ4uD"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57B129CF4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF28F29CF4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731107785; cv=none; b=H/MWG0CgYYXrcoWmf1Es+wwGho4oUBMx9GSVvxXO+GB2FvFJsA7BcjhKGCEl4N/8DcueUnHouTKGkveAX8dXKsGiWPPXS10+P7ay4FUYbIht4ihGh5La/CWkm+5R6uxwMOAdYyhdVm2PhLIuvGpwZt0Ye9fbN06Eic5o6PzFgpU=
+	t=1731107889; cv=none; b=j7NN6rn60qJ25g9ayQsTOWJeB+ET3C842sDQRYa+XjGez8jiI+jP40QXvPqTXcPlbDHmC3soE2CltisAq6SKSAaDBFJPD4pPJ5J6ODmRsK/E8ojFjCaaebTR1ic22Zw2E7A6DZY4dFLi/vZctuBVpZf4/geqBQbUvWisQ/MnDEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731107785; c=relaxed/simple;
-	bh=2nTj6JnOKAQpi9+avRpsHJ9IAPB0ru/zHkNR+iuamAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhD7R01NYCe9t4noy4u6OaSTsklVBT4TPaYF0B8sUOLE629sp4I7/zrRuCEyFHcNbnVocwhr+4pLhWH2UXKKRPLL0Z8eN0I3d+aPpn2tbDzfPqPWkGqzhH5niQnRKMV2BKS6TeA/jfp1qFuUFmKjZiMleqaMTo+fb9y77LRvpGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GCDkp4PA; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so2159009a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:16:23 -0800 (PST)
+	s=arc-20240116; t=1731107889; c=relaxed/simple;
+	bh=nsipveHOm+v7XoAV7srg8nEJGZcMhkiU7dP62aQVhP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ObRzVHyeRvTxIK7MhlF9IJyocT8lr3fLCwT4X12HLxYI5+0bqcN3Gly9mslEA5sqfd5bmTZmUl55O2JP15vCelvv2QGvm772yp77hXeDZnKkLwyMLTXC7YAfFNh+hqO8UnsmrHBvJiq1F1c9/0zSnTMW7gcQb3fifeZmfAZHrW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m+DEZ4uD; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso2030726a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:18:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731107783; x=1731712583; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3s19kqrmyY22Y7qqFzMaAHjUFofrm4HNgSWYVbsk21c=;
-        b=GCDkp4PAarPkJYF3zFCOJHiBlz3khxykxqrpNDyNFy5ZRmW+53AFnwWl+Qz4xbAfE1
-         a4fdlxP6qA03mhAq/g0kVwhoEFyBarBcvw0+8VK8NUg5bqQp2YxFpxvgQoPgMVdJdWdy
-         MJefyHXUp9FL4OZmihaIRPcjx1x4ecRcVNAD5XkbO5eKWGG/SuGVbLt2HNvg+Jzcln5q
-         0Du466D5XYMpSlLo2kNFXtSUvYwihFZohyNzaGLPeppHT/C665XQjYdsT6rV4lUX2KMK
-         1WdDHQGvGx/7JILGbHkDpt7lER0k4/gUW1AStgalY18vdASnGtK64+CZ+C/6vnjavsAM
-         ISIg==
+        d=google.com; s=20230601; t=1731107887; x=1731712687; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yaYZ3J+sAQ2g1x6XojZyNv59A7o7T/wBN6MJlsjSLqs=;
+        b=m+DEZ4uD5M7885gxtuFz6Pg6iAoRMnJA9BjRip2RMHuBoc0ML6f7LJws8f8hcRbZpQ
+         l76kVywjXtlHLGqOjrXTZNAi/Uf/2f1Y6jLRFURWWv6RZjHqseKbezJ22i3wKNlgB6Jg
+         Hk5RfRSoHzuOgEFIBIILEd7V5f00w3IMEX6+WbhPhlvexkHn+JA6dysZT979iFcadBvR
+         1KYAuBcM8j4bbdDkx+xtK2JncnYyBc2prR7N9f6GBGgai4gVblDWOy68ILor0hLpS/Gx
+         FQfpKv8Ts65DsvIUORxkLLd5hj4hjcBUmvlA3IAQvw6tIRYfw6YjhWsl//cHKwgVWJWk
+         Etiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731107783; x=1731712583;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3s19kqrmyY22Y7qqFzMaAHjUFofrm4HNgSWYVbsk21c=;
-        b=hWC4XtVfKyD9QXPS66jS5GUIrqn73GX4yADW+Yde0TAvLIerynhaDCT0R73k4OkbNx
-         QNmffS0j+GKHG8a8HIdqY6bAGQKSPUlBlbLoK+Vj769Mfa/Qk1ZhzfXq/zF6fwGre90O
-         rpYeZTjeh/PSyFRXIimQf/i3tzgwJ3aXyk7mDuJqfOJZE1kURi53kjkEDPDeGQWRr1Uf
-         o75ROQTUJROzsE3FHJk/hIMgkCKauWiwIdBl/P6EOmW2xUVxjJZPEB/8O4dAGeSZXgas
-         C4NKNQtD3zsqBnm/7/eEe1jxL168lulOCS+YAPfGWD1o9wwCTAJKRx2QE7MZSM0AIuxy
-         JGFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhGljHREgIOkQq6/uAch5UmY8TbNWiCL0FJZjqAGj+TKEVIkJ3/BbuAQCqZjmwgYCEWWC5lbFJWwoiAMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUT2uOqn1NYgOy6DYrB8ELebNwRw9ERFj8a4CvMs3zwUq5WrCM
-	piX6+6fjLC+5WRCM2QqcOoiup+1M9BEpzDddRzOMnGNC8S6PxtZXuTNHwF+Uj7g=
-X-Google-Smtp-Source: AGHT+IHWS2zI7KGQTmBA7oV9V+N8SCN4SRWJ3iSOSny0p4gLDXp0McEBB/xZ6NoObJZivwctCIwgIQ==
-X-Received: by 2002:a17:90b:5447:b0:2d8:a672:1869 with SMTP id 98e67ed59e1d1-2e9b174807emr6165396a91.32.1731107782960;
-        Fri, 08 Nov 2024 15:16:22 -0800 (PST)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc82a8sm36221385ad.28.2024.11.08.15.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 15:16:22 -0800 (PST)
-Date: Fri, 8 Nov 2024 15:16:19 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Jesse T <mr.bossman075@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-next] riscv: Fix default misaligned access trap
-Message-ID: <Zy6bw8Fnkxl2Q78K@ghost>
-References: <20241107-fix_handle_misaligned_load-v1-1-07d7852c9991@rivosinc.com>
- <CAJFTR8RBcoqYmWNmNe_ZixO3bv2aP-wGCbX7ieorXYxxMAa7BA@mail.gmail.com>
- <CAJFTR8Sas83NkRPSuSdbb3qtDNra=cbinPoBmpyt4_ic8R5LQg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1731107887; x=1731712687;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yaYZ3J+sAQ2g1x6XojZyNv59A7o7T/wBN6MJlsjSLqs=;
+        b=ohcXo/RKVV2dikd641kTFBqmcKvmmKc8YGefgNQEl34qThbaoBulKfPgS0dUMZdMCV
+         8fYQZAaha/AKTJxGmO3PqSUSbRAIcshvkH8Nzj17C7sa2gXib0wYIfEDCKRq79IMAGBi
+         PcBeH74zRMa5Z53moKPb6xhfNUcfOLtOR1hP6dG748z1NXKocKNp7OhsxNzM89mzCdTi
+         2QXY/feIhqFJnGvOyxRGLpA4hM/Cgu0PEYYi6KArcGrvt3Boz7i/032u4I0DvwP14SDL
+         0K0snZ7nU8znrcIMZwjJpJ7qSQTOM9A+cY48zJ9v6HOlaDIRBEDbw/XgCLtYYheASul1
+         lZ7A==
+X-Forwarded-Encrypted: i=1; AJvYcCX0rOHJ8K2wq1kOcXdh7xekjURn8SILtG10XcxRMWciuc4W3IAD6E+wIWxN03uz2/mMgE+lDfG/dnXcgqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+1bFpbd2YhLVKYAOuz7qJxGDtvwAYwLTd6yMpYvWu92gmvHCK
+	YOL1GkL/BlvsgSgdHr+7fzyWTGGdCdvaqO8fqgBMHMkvbcrwg8v0BrgfuhAu0HnjWsgXZkLf+S4
+	CDsxUWcOMyHNH+xPtvKn+e0hSIn76TJfuYxC8
+X-Google-Smtp-Source: AGHT+IH0kM6cwANRYMub0MHaGmkZN/dddnLjoFWvwES6A99JWdtv5aOZ561qFJXqz0p3DO9OEDVIHdYgkTFE9n1eYl8=
+X-Received: by 2002:a17:90b:53c6:b0:2e2:cf5c:8edf with SMTP id
+ 98e67ed59e1d1-2e9b170eaf9mr6116506a91.9.1731107885910; Fri, 08 Nov 2024
+ 15:18:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJFTR8Sas83NkRPSuSdbb3qtDNra=cbinPoBmpyt4_ic8R5LQg@mail.gmail.com>
+References: <20240727102732.960974693@infradead.org> <CAGETcx97SEHP5MspzBHsMkmSExnY870DQ-F5L077vzOGnPx0UA@mail.gmail.com>
+ <4a3dac53-69e5-d3cd-8bc0-3549af4932b3@amd.com> <20241106110925.GK24862@noisy.programming.kicks-ass.net>
+ <345dfc04-753b-4411-be2d-e4f604c1c4b1@arm.com> <CAGETcx_ZkvCgG0F41-cW9NLXn8s__6zZF8=yjEqR05ykhZAtiw@mail.gmail.com>
+In-Reply-To: <CAGETcx_ZkvCgG0F41-cW9NLXn8s__6zZF8=yjEqR05ykhZAtiw@mail.gmail.com>
+From: Samuel Wu <wusamuel@google.com>
+Date: Fri, 8 Nov 2024 15:17:54 -0800
+Message-ID: <CAG2Kctp9LpVybdhNURSVe0Xgk65AiJ55qDg+GL2+NiTXAfWYKA@mail.gmail.com>
+Subject: Re: [PATCH 00/24] Complete EEVDF
+To: Saravana Kannan <saravanak@google.com>
+Cc: Luis Machado <luis.machado@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	K Prateek Nayak <kprateek.nayak@amd.com>, David Dai <davidai@google.com>, mingo@redhat.com, 
+	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, wuyun.abel@bytedance.com, 
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de, 
+	Android Kernel Team <kernel-team@android.com>, Qais Yousef <qyousef@google.com>, 
+	Vincent Palomares <paillon@google.com>, John Stultz <jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 05:12:04PM -0500, Jesse T wrote:
-> On Fri, Nov 8, 2024 at 5:09 PM Jesse T <mr.bossman075@gmail.com> wrote:
+On Thu, Nov 7, 2024 at 11:08=E2=80=AFPM Saravana Kannan <saravanak@google.c=
+om> wrote:
+>
+> On Wed, Nov 6, 2024 at 4:07=E2=80=AFAM Luis Machado <luis.machado@arm.com=
+> wrote:
 > >
-> > On Thu, Nov 7, 2024 at 5:38 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > >
-> > > Commit d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses
-> > > supported") removed the default handlers for handle_misaligned_load()
-> > > and handle_misaligned_store(). When the kernel is compiled without
-> > > RISCV_SCALAR_MISALIGNED
-> > Technically CONFIG_RISCV_MISALIGNED.
-> > I apparently changed `+obj-y += traps_misaligned.o` to
-> > `+obj-$(CONFIG_RISCV_MISALIGNED) += traps_misaligned.o`
-> > in V2 and didn't change that check back oops sorry.
+> > Hi,
 > >
-> > > , these handlers are never defined, causing
-> > > compilation errors.
+> > On 11/6/24 11:09, Peter Zijlstra wrote:
+> > > On Wed, Nov 06, 2024 at 11:49:00AM +0530, K Prateek Nayak wrote:
 > > >
-> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Signed-off-by: Jesse Taube <mr.bossman075@gmail.com>
+> > >> Since delayed entities are still on the runqueue, they can affect PE=
+LT
+> > >> calculation. Vincent and Dietmar have both noted this and Peter post=
+ed
+> > >> https://lore.kernel.org/lkml/172595576232.2215.18027704125134691219.=
+tip-bot2@tip-bot2/
+> > >> in response but it was pulled out since Luis reported observing -ve
+> > >> values for h_nr_delayed on his setup. A lot has been fixed around
+> > >> delayed dequeue since and I wonder if now would be the right time to
+> > >> re-attempt h_nr_delayed tracking.
+> > >
+> > > Yeah, it's something I meant to get back to. I think the patch as pos=
+ted
+> > > was actually right and it didn't work for Luis because of some other,
+> > > since fixed issue.
+> > >
+> > > But I might be misremembering things. I'll get to it eventually :/
 > >
-> > > Fixes: d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses supported")
-> > > ---
-> > >  arch/riscv/include/asm/entry-common.h | 12 ++++++++++++
-> > >  1 file changed, 12 insertions(+)
-> > >
-> > > diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/asm/entry-common.h
-> > > index 7b32d2b08bb6..c2808561df81 100644
-> > > --- a/arch/riscv/include/asm/entry-common.h
-> > > +++ b/arch/riscv/include/asm/entry-common.h
-> > > @@ -25,7 +25,19 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
-> > >  void handle_page_fault(struct pt_regs *regs);
-> > >  void handle_break(struct pt_regs *regs);
-> > >
-> > > +#ifdef CONFIG_RISCV_SCALAR_MISALIGNED
-> 
-> Meant to say to change this to CONFIG_RISCV_MISALIGNED.
-> As they are defined when CONFIG_RISCV_SCALAR_MISALIGNED is false
-> and CONFIG_RISCV_VECTOE_MISALIGNED is true. they are only not defined when
-> CONFIG_RISCV_SCALAR_MISALIGNED is false.
+> > Sorry for the late reply, I got sidetracked on something else.
+> >
+> > There have been a few power regressions (based on our Pixel6-based test=
+ing) due
+> > to the delayed-dequeue series.
+> >
+> > The main one drove the frequencies up due to an imbalance in the uclamp=
+ inc/dec
+> > handling. That has since been fixed by "[PATCH 10/24] sched/uclamg: Han=
+dle delayed dequeue". [1]
+> >
+> > The bug also made it so disabling DELAY_DEQUEUE at runtime didn't fix t=
+hings, because the
+> > imbalance/stale state would be perpetuated. Disabling DELAY_DEQUEUE bef=
+ore boot did fix things.
+> >
+> > So power use was brought down by the above fix, but some issues still r=
+emained, like the
+> > accounting issues with h_nr_running and not taking sched_delayed tasks =
+into account.
+> >
+> > Dietmar addressed some of it with "kernel/sched: Fix util_est accountin=
+g for DELAY_DEQUEUE". [2]
+> >
+> > Peter sent another patch to add accounting for sched_delayed tasks [3].=
+ Though the patch was
+> > mostly correct, under some circumstances [4] we spotted imbalances in t=
+he sched_delayed
+> > accounting that slowly drove frequencies up again.
+> >
+> > If I recall correctly, Peter has pulled that particular patch from the =
+tree, but we should
+> > definitely revisit it with a proper fix for the imbalance. Suggestion i=
+n [5].
+> >
+> > [1] https://lore.kernel.org/lkml/20240727105029.315205425@infradead.org=
+/
+> > [2] https://lore.kernel.org/lkml/c49ef5fe-a909-43f1-b02f-a765ab9cedbf@a=
+rm.com/
+> > [3] https://lore.kernel.org/lkml/172595576232.2215.18027704125134691219=
+.tip-bot2@tip-bot2/
+> > [4] https://lore.kernel.org/lkml/6df12fde-1e0d-445f-8f8a-736d11f9ee41@a=
+rm.com/
+> > [5] https://lore.kernel.org/lkml/6df12fde-1e0d-445f-8f8a-736d11f9ee41@a=
+rm.com/
+>
+> Thanks for the replies. We are trying to disable DELAY_DEQUEUE and
+> recollect the data to see if that's the cause. We'll get back to this
+> thread once we have some data.
+>
+> -Saravana
 
-Oh yes, thank you!
+The test data is back to pre-EEVDF state with DELAY_DEQUEUE disabled.
 
-- Charlie
+Same test example from before, when thread is affined to the big cluster:
++----------------------------------+
+| Data            | Enabled | Disabled |
+|-----------------------+----------|
+| 5th percentile  | 96     | 143    |
+|-----------------------+----------|
+| Median          | 144    | 147   |
+|-----------------------+----------|
+| Mean            | 134    | 147   |
+|-----------------------+----------|
+| 95th percentile | 150    | 150   |
++----------------------------------+
 
-> 
-> > >  int handle_misaligned_load(struct pt_regs *regs);
-> > >  int handle_misaligned_store(struct pt_regs *regs);
-> > > +#else
-> > > +static inline int handle_misaligned_load(struct pt_regs *regs)
-> > > +{
-> > > +       return -1;
-> > > +}
-> > > +
-> > > +static inline int handle_misaligned_store(struct pt_regs *regs)
-> > > +{
-> > > +       return -1;
-> > > +}
-> > > +#endif
-> > >
-> > >  #endif /* _ASM_RISCV_ENTRY_COMMON_H */
-> > >
-> > > ---
-> > > base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
-> > > change-id: 20241107-fix_handle_misaligned_load-8be86cb0806e
-> > > --
-> > > - Charlie
-> > >
+What are the next steps to bring this behavior back? Will DELAY_DEQUEUE alw=
+ays
+be enabled by default and/or is there a fix coming for 6.12?
+
+Thanks,
+Sam
 
