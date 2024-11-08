@@ -1,72 +1,70 @@
-Return-Path: <linux-kernel+bounces-402476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0119C2823
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DA99C283C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43B8E1C21AC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:36:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1221C21E9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD85C1E25F2;
-	Fri,  8 Nov 2024 23:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A212C1F426F;
+	Fri,  8 Nov 2024 23:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="hXYUvvOI"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b="UQlvs9zx"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBF31A9B53
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89852610D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731109011; cv=none; b=B7kLa8R0ztG0FC3IHZ/i1E/IqI0WuvIER/otLnHLZ8owX4MQdD7E0r+Avwbexc6wg1jFfLfZTFyDnrPDlIo8mfOSe0RMbhuFZt9dTP7+qVcs9orfsVxTnCD5JzaQujvK7K/iaK/eiyjo1Y3C7q0AtKOB6NNz8PE8ZUdCMXuafTo=
+	t=1731109490; cv=none; b=t/WZT1cHdhk1ZBxbi/Z7kHZ1NViNZhiD+vD0l+mjOhKb1RKOMVYdjzmC6ukDtL/yFLul7uP/OqCelhzY4tpFoik5mobqCr5x45M8O/xpiWVGwy6ImQVnNOptElzH5jcP5sUi2j1vDsx5PsSBS3u+/Qq0lEfDI4PFBaT9rSOuq6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731109011; c=relaxed/simple;
-	bh=3d/jIwsZ/ZicnzlNsDbS7eR5QoweLJIhaU1VXxILJs0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=lIeMnDr06+KM8VhuPyvplS2JCTjOXKMBqnpc0SkELb1gO7aSYUD+l9W2dTyloQfXdj9Bgcfz5vBQgXl1rB33/namXjHx3jo7zhLoI9NDgZx2XEBpsGOTVfKAuGwQrveE8CWoUf9ZUTkcSLlosJMNgNa1/9BoRwY41MXWRpj6Usc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=hXYUvvOI; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e8522445dso452677466b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:36:49 -0800 (PST)
+	s=arc-20240116; t=1731109490; c=relaxed/simple;
+	bh=ExUMXG6FhgrKWAiklD9tM+a73nAXl3Qf+VUQQugGkzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k2EZSsGpvPTLw/PdazvKcC40MbggT4BtzcW9YzCmi74ajy0Ay5jvdWqnPZ46qGMX0FVTsH5AtqRbziy9EqBzaSSKgu7J1bCfDzLg9XgY1s0GP+kgoZAEQGdUq/6dwPGKOgn9pl7oYasRv0ezX5V/uUskwoq/mNd+5nBc7J4pN2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com; spf=pass smtp.mailfrom=digitalocean.com; dkim=pass (1024-bit key) header.d=digitalocean.com header.i=@digitalocean.com header.b=UQlvs9zx; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=digitalocean.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digitalocean.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e5f9712991so1518353b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:44:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1731109007; x=1731713807; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6MsMrVv0bMMfI4mJu/kmqFfOPAOIvey0wCxyuyIfCo=;
-        b=hXYUvvOIfN+nsIkQSI2j3WvlDxTtopcJoKHa0ecPOKq+4Hn9It5+MuBx9d5aqncOKr
-         WBwfQD6E6bIhOTX+FXPqhYB4qEamc7Cc4Y41xp7jOWFFx1vS4SJT1KDPYYvRo6uRVo2S
-         T3dWD0QcJ7jt1q07pgT2ol/nm2f4BxV8YH5vg=
+        d=digitalocean.com; s=google; t=1731109486; x=1731714286; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXbMh2FWVPnoribRVM7nCxASoiz/7gphLz9Rpu66roc=;
+        b=UQlvs9zxkSgEEfPV5uME/ewEM0pS1gS8LRIPbWgUbvaHsxhjui4CKrtK1B0QvqMCnR
+         +dWTofUVkWa0IuUS9Na5Enl3ZWHun9O2Iiz8yOwV1vSrycIbGl5IxGKOwH7TybD2qm+V
+         zYJjllOcPqjykION7wAIYLy+e3Jm5bL0yW6sw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731109007; x=1731713807;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d6MsMrVv0bMMfI4mJu/kmqFfOPAOIvey0wCxyuyIfCo=;
-        b=qXmXp2zXxKqgscPJRCMtmenXRlkXBSi1+1U3SrnPWb3QYMwHUme9/zPFefKw/Krh59
-         NU1U1QofIOfSy8oMuFUMdzxp2mruzS8t+WoYWSMYX/DylFm9LxZCNKxVzMpcd0N8H4aU
-         TTD6xChuNzf/8UPqFz3NvvZou2spJnd5wGGdFyY9tCk6lBBE38CmKzMrQeglvkA2lf7f
-         QuDqcXlNbLdPv8rRRmB8z2Ws6WzeqLc1suldSiRFeNU23JKdAneLXaCtNsjtDz7ZsYKE
-         oux04UOrtmT8Dv8pDrdC70rCGw6iSeRklkibwsV++uNYh/iJHsTZmipzWifCYGGaOo3x
-         YLRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPSiCTLgEp+W085YS2PavfISGTiGSmKKtpuE6rS9O0L+8955R9wGW0BCEQdhIbQz5MerqA0LXS5UgKuOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxmLjFcLHLHGCQHyDgpTDj/KDY3Z31bpyfqy9cZBmm2/nd7ycv
-	UyvmLr8qerGts1avqw9eHHd9SLLmT9nDztphz/Q1lexspp8wJgv0VY4ZpVm40nAJDEtN9PWZvph
-	b
-X-Google-Smtp-Source: AGHT+IHNgZENGKuE8P52GzlblDf6gYHM4dUvqhU99lT3qRj/LRIIOlJ2PjZPS/VnX9LHl/EVLxCNJA==
-X-Received: by 2002:a17:907:3fa5:b0:a9e:b287:2808 with SMTP id a640c23a62f3a-a9eefeafae0mr446252166b.6.1731109007640;
-        Fri, 08 Nov 2024 15:36:47 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4a7d3sm291015366b.70.2024.11.08.15.36.46
+        d=1e100.net; s=20230601; t=1731109486; x=1731714286;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZXbMh2FWVPnoribRVM7nCxASoiz/7gphLz9Rpu66roc=;
+        b=FbDQCoSaDVaeJcg6EwmGOHunGmvJPMZHm+iPVs3YgnI1gK29bWLQfxv9a6akEtTVU9
+         1T3vQpuyKR5dKR//QRXpBToftJ/0agoUbd+T/tcMNsbT74dv85Rr8l7+AGu5JaaJYVxJ
+         kYYkcPc5+XsYYcKKrf8l8lOuxKCxm7NfdNlCHqZAuqipl5HsEVqcJERJjnISX3Juu/7d
+         +jxHaWuc9W7itvanQJd3OGmHwaC7MtevTt4qyHSrwTTifb3A6R0MRrnOhZYmsqU7Yoi7
+         waN0wLLr+q/nc2X2adfQySwyyorDc4c5Yl8eypIWFhkv7KCCUfS4oo1Bd2k/o9wXyX5x
+         Je6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0yzZwAMiThs0c0QcCshdlP2YfrguJGU+9aak96FwLAYXW8AeU0e8t+p7stHzr0KZ0/q9nWymZQMVHjBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPnF0aLnUgRT+w2eYxgPgeQYgc+NB8XHPvb/i8AVsRbONQIgLo
+	f0Z7zCyUNCmbY6eUqtSTF/9/NJT+k5ZLY2sqg5uqN54k6yfi4P5L2oOvhO0yxME=
+X-Google-Smtp-Source: AGHT+IG+H1FYbgbfbVNVGwbagbKbs0uGKWVICE1ilxxQpWr7EmkKOvo2KKLljNXMkuaHIGL4cbLpWg==
+X-Received: by 2002:a05:6808:13c8:b0:3e6:5580:6667 with SMTP id 5614622812f47-3e79475cf8cmr5606582b6e.40.1731109486620;
+        Fri, 08 Nov 2024 15:44:46 -0800 (PST)
+Received: from ?IPV6:2603:8080:7400:36da:c10e:e419:c908:c818? ([2603:8080:7400:36da:c10e:e419:c908:c818])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cc6748fsm943945b6e.2.2024.11.08.15.44.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 15:36:47 -0800 (PST)
-Message-ID: <59718ea7-efab-4975-a4e8-89c1d114a2e5@citrix.com>
-Date: Fri, 8 Nov 2024 23:36:46 +0000
+        Fri, 08 Nov 2024 15:44:45 -0800 (PST)
+Message-ID: <bb010d16-a083-44da-8a72-3ada4c6f8056@digitalocean.com>
+Date: Fri, 8 Nov 2024 17:44:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,88 +72,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: dave.hansen@linux.intel.com
-Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
- x86@kernel.org
-References: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
-Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode to
- be a vulnerability
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
+Subject: Re: [PATCH v3 1/2] vdpa/mlx5: Set speed and duplex of vDPA devices to
+ UNKNOWN
+To: "Michael S. Tsirkin" <mst@redhat.com>,
+ Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, jasowang@redhat.com,
+ shannon.nelson@amd.com, sashal@kernel.org, alvaro.karsz@solid-run.com,
+ christophe.jaillet@wanadoo.fr, steven.sistare@oracle.com, bilbao@vt.edu,
+ xuanzhuo@linux.alibaba.com, johnah.palmer@oracle.com, eperezma@redhat.com,
+ cratiu@nvidia.com, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+References: <20240904151115.205622-1-carlos.bilbao.osdev@gmail.com>
+ <20240904151115.205622-2-carlos.bilbao.osdev@gmail.com>
+ <20241107164932-mutt-send-email-mst@kernel.org>
+ <f1d671ff-0429-4cb5-a6e8-309a8567924c@nvidia.com>
+ <20241108065046-mutt-send-email-mst@kernel.org>
+Content-Language: en-US
+From: Carlos Bilbao <cbilbao@digitalocean.com>
+In-Reply-To: <20241108065046-mutt-send-email-mst@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-> You can't practically run old microcode and consider a system secure
-> these days.  So, let's call old microcode what it is: a vulnerability.
+Hello,
 
-The list becomes stale 4 times a year, so you need to identify when it's
-out of date, and whatever that something is has to be strong enough to
-cause distros to backport too.  Perhaps a date in the header, so you can
-at least report "status vulnerable, metadata out of date".
+On 11/8/24 5:51 AM, Michael S. Tsirkin wrote:
+> On Fri, Nov 08, 2024 at 10:31:58AM +0100, Dragos Tatulea wrote:
+>>
+>> On 07.11.24 22:50, Michael S. Tsirkin wrote:
+>>> On Wed, Sep 04, 2024 at 10:11:14AM -0500, Carlos Bilbao wrote:
+>>>> From: Carlos Bilbao <cbilbao@digitalocean.com>
+>>>>
+>>>> Initialize the speed and duplex fields in virtio_net_config to UNKNOWN.
+>>>> This is needed because mlx5_vdpa vDPA devices currently do not support the
+>>>> VIRTIO_NET_F_SPEED_DUPLEX feature which reports speed and duplex.
+>>> I see no logic here. Without this feature bit, guests will not read
+>>> this field, why do we suddenly need to initialize it?
+>>>
+>> IIRC, Carlos was reading data via ioctl VHOST_VDPA_GET_CONFIG which calls
+>> .get_config() directly, always exposing the speed and duplex config fields [0].
+>> Carlos, was this the case?
+>>
+>> [0] https://lore.kernel.org/lkml/afcbf041-7613-48e6-8088-9d52edd907ff@nvidia.com/T/
+>>
+>> Thanks,
+>> Dragos
+> Basically, driver should ignore these if feature is not set.
 
-Also, you want to identify EOL CPUs.  Just because they're on the most
-recent published ucode doesn't mean they're not vulnerable.
 
-Under some hypervisors, you get fed the revision 0x7fffffff.  Others
-might tell you the truth, or it may be the truth from when you booted. 
-For this, probably best to say "consult your hypervisor".
+There _is_ a chance the guest could read this field; As Dragos mentioned, I
+was using the VHOST_VDPA_GET_CONFIG ioctl from userspace, and the incorrect
+field initialization led me to believe I was in half-duplex mode --
+something people told me they hadn't seen since the 80s. But as Andrew
+(CCed) mentioned, "If the speed is 0, does duplex even matter?".
 
-Failure to publish information, or not publishing fixes for in-support
-parts should be considered a vulnerability.  (*ahem*, AMD)
+I also tried to remove the pointless ioctl call altogether to avoid further
+confusion [0] but that wasn't viable due to spec compliance.
 
-Or you could just simplify the whole path to "yes".  It's true, even if
-people don't know.
+Initializing the fields seems the simple solution here (and, IMHO, more
+generally, it's as a good programming practice)
 
-I really want to like this, but it's a giant can of worms, with as many
-political challenges as technical.
+Thanks for looking into this!
 
-~Andrew
+Best,
+Carlos
 
-P.S. I do like that you've labelled debug microcode as vulnerable.  It's
-just software in a different form factor, and we know how buggy software
-generally is.
+[0] https://lore.kernel.org/lkml/CACGkMEvfdUYLjx-Z+oB11XW-54ErJsQMKcnu2p=dsj5N_BiEKw@mail.gmail.com/
+
+
+>
+>
+>>>> Add
+>>>> needed helper cpu_to_mlx5vdpa32() to convert endianness of speed.
+>>>>
+>>>> Signed-off-by: Carlos Bilbao <cbilbao@digitalocean.com>
+>>>> Reviewed-by: Dragos Tatulea <dtatulea@nvidia.com>
+>>>> ---
+>>>>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 12 ++++++++++++
+>>>>  1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>> index b56aae3f7be3..41ca268d43ff 100644
+>>>> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+>>>> @@ -173,6 +173,11 @@ static __virtio16 cpu_to_mlx5vdpa16(struct mlx5_vdpa_dev *mvdev, u16 val)
+>>>>  	return __cpu_to_virtio16(mlx5_vdpa_is_little_endian(mvdev), val);
+>>>>  }
+>>>>  
+>>>> +static __virtio32 cpu_to_mlx5vdpa32(struct mlx5_vdpa_dev *mvdev, u32 val)
+>>>> +{
+>>>> +	return __cpu_to_virtio32(mlx5_vdpa_is_little_endian(mvdev), val);
+>>>> +}
+>>>> +
+>>>>  static u16 ctrl_vq_idx(struct mlx5_vdpa_dev *mvdev)
+>>>>  {
+>>>>  	if (!(mvdev->actual_features & BIT_ULL(VIRTIO_NET_F_MQ)))
+>>>> @@ -3433,6 +3438,13 @@ static int mlx5_vdpa_dev_add(struct vdpa_mgmt_dev *v_mdev, const char *name,
+>>>>  	init_rwsem(&ndev->reslock);
+>>>>  	config = &ndev->config;
+>>>>  
+>>>> +	/*
+>>>> +	 * mlx5_vdpa vDPA devices currently don't support reporting or
+>>>> +	 * setting the speed or duplex.
+>>>> +	 */
+>>>> +	config->speed  = cpu_to_mlx5vdpa32(mvdev, SPEED_UNKNOWN);
+>>>> +	config->duplex = DUPLEX_UNKNOWN;
+>>>> +
+>>>>  	if (add_config->mask & BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)) {
+>>>>  		err = config_func_mtu(mdev, add_config->net.mtu);
+>>>>  		if (err)
+>>>> -- 
+>>>> 2.34.1
 
