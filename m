@@ -1,138 +1,372 @@
-Return-Path: <linux-kernel+bounces-401587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC579C1C96
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:04:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AFF9C1C99
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7896BB23E9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB0E92841A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DDF1E7C22;
-	Fri,  8 Nov 2024 12:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36EA1E573F;
+	Fri,  8 Nov 2024 12:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gHLYVjV4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NeyisAj/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7AA1E570A;
-	Fri,  8 Nov 2024 12:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85EA1E5019;
+	Fri,  8 Nov 2024 12:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731067416; cv=none; b=nDZfLoxgXVBvfvErt4XPJ/a5p0Th1jOIHLM+Qfw9soolfrrvieqjrQIsvELPlj3iFQbDqvG2MES2VLX0Ghr6QKa1WYCfBhANkNK5Gr+JnKFHmu7PMPpZ6WgWYibzgPZy/Uwl99ygXyf5QoSqw0x5tkekyWloGHyydAe8TXaQjqE=
+	t=1731067439; cv=none; b=etUilAH81XxevSYcCZaYKY2zfZGG4/6lrPyvvFJioooQWayKxK+XRKMFX6BOXzJvfJUX5zSzY8F9vnskcXLRq7FVdE0Eg3gXSbLk79DuhNmuvtXR5IgMVUiPMithgByOCoxDuQwXINLoJs6y6Nvh43DLOcsRCAdzxZTNg3U33Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731067416; c=relaxed/simple;
-	bh=ChBYcsymTV1V2mzS78DD/EMvOHeZnX/SWf2LKR2jUG0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tc6lhsrKXkcV8lUxyf4CeJ8GdOlY/GKO4qA8/Ooh2/cTRONilrfRoHig2N1ePE/5ikFLWZTmqVVh0NRlD2qGozxQeHHlYPk+AI/1nh4BQTQGHAz26gow9ooPssyVfGmktt6kktIHTbA7m86wVxweqMQPUetIlUJQrE/WYdwAFC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gHLYVjV4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so1715434b3a.3;
-        Fri, 08 Nov 2024 04:03:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731067414; x=1731672214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ikksqLJ4EA+Xck83QqUeUsYVlDqNhdNWvuB3gGEYssM=;
-        b=gHLYVjV4cxFVubE7HNRQZg3JiW11dLTGUvONZfQU3xDliAC+lqnoIeZNGOkoOHsJ4B
-         YwOv+jwHc/x+xdT61g9+7kJg4mkQ/ClejSFseHMGbSeyrRAdQC376Ix9fwwaIOApU7fk
-         FZJuTmzxHH8nhpUsnwsAIQEmfhnEg/GhPXZ6gjsA4wtAuqVG3f6GrV3Wdye90JfvIo1J
-         WDGih1q/QDSZw1NG/liI8c5kSvgRjdEZd2I8SXy3xKVMgubyCAlXdfw9Gzlz2unoCioT
-         eadAoveQWVwMYJOe3/lbqT0Tu7YozHVAuETQieEsIhx6rYhY/yLTXJ4zFPMUBwfScekE
-         xMOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731067414; x=1731672214;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ikksqLJ4EA+Xck83QqUeUsYVlDqNhdNWvuB3gGEYssM=;
-        b=LXIfEtG0L8v+SVTy8uLA4DZVAV6vGKUIx4hJUmkvNDNH2nfNwZFzcQW8bV0QExeRoK
-         dFH/1de47kqXgliR2XUeOirW0mVcRETH9Dg2P45m+uB7VoXWky9BajY58mwomHp2NqMg
-         Y+JWCd4/X7SzpMl58fTtxUd9YaNj8o2fI4WnzpAvMXGMqc+gOT35OqJ27Idq7wzJFb8+
-         alzKAYgSzfE4OqAzDgprtJqvG2CZ4O+ljFCYRdyFLddIGamXJ9dysTid+oqHCn1HyBCV
-         +4TMHvSFGLyCC9qXWOzOqjXtnvgzb5cuHzSN1UcTV4DOdgLVzB6CIHqRp6bwQwleUVgi
-         SmxA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Ruo33bz41v4zdp2T/rHKwKnGCULea3BmCMOaVRHQNyKQK2F6HNvwGmAKyyIGv1JHrh6vQD8OoXg7@vger.kernel.org, AJvYcCUrsYAzDG6YP/xw99jU32+U8drR7aEBEzbvzS47Zl+dWuexcSQyHLOv/SUqYe7lp4lL5SmPPUpIOaYARQ4=@vger.kernel.org, AJvYcCW9jWvP1zi5gqJzZq9W9dgwfeUk3IpTyRseruw1vVaYVAK1RqRnHnAHQ+SJuKkJ6/Dy5YQHpbYLPL7qcj6F@vger.kernel.org
-X-Gm-Message-State: AOJu0YykPj3oIxRuWbPRdCgHw2ye+RaEt9Ci8jkGnDXdDezPt8mWes7m
-	3octuCiJ3ZksFkVhLHzg4vMblTH3y1Y/HaRsjkXfP4+JGkujL6lO
-X-Google-Smtp-Source: AGHT+IEg8uT2/01qFIz2nHpe00coD7q2mrHMZHOIwgHUHZoLVfNAQyBU+biUvKI+sNcFRxnq3EEfIw==
-X-Received: by 2002:a05:6a21:7891:b0:1db:dc58:8058 with SMTP id adf61e73a8af0-1dc22b5363cmr3197155637.31.1731067414362;
-        Fri, 08 Nov 2024 04:03:34 -0800 (PST)
-Received: from ux-UP-WHL01.. (mailgw01.goodix.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a403fsm3579656b3a.105.2024.11.08.04.03.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 04:03:33 -0800 (PST)
-From: Charles Wang <charles.goodix@gmail.com>
-To: krzk@kernel.org,
-	hbarnor@chromium.org,
-	dianders@chromium.org,
-	conor.dooley@microchip.com
-Cc: dmitry.torokhov@gmail.com,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Wang <charles.goodix@gmail.com>
-Subject: [PATCH v3 2/2] dt-bindings: input: gt7986u-spifw: Remove hid-report-addr property
-Date: Fri,  8 Nov 2024 20:03:11 +0800
-Message-ID: <20241108120311.87795-3-charles.goodix@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241108120311.87795-1-charles.goodix@gmail.com>
-References: <20241108120311.87795-1-charles.goodix@gmail.com>
+	s=arc-20240116; t=1731067439; c=relaxed/simple;
+	bh=tiaUwiSpLewwzyaEdaJSH0g+viV751wrD37CgQ1+dcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Rc8rw9U18BpnaqlF1LUX9W8wLU1Zx0s2gLqORL+o5LFQCxf9ldzscjQnOTsqxA0/qyZZw+u4V1AyKDAVJLT6ohGZ9AwUyP8oOmNRgJmdy7Wxog03gy+U6jAthXJUn5oJRKqHeINs3Rmjg+RVlZMjyYeoLsWiYB3lOAFFWP8MZcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NeyisAj/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Mc4UC013176;
+	Fri, 8 Nov 2024 12:03:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gq+63DII0Ca7njV2SkcMUWfdVH7ZSZ9awxHZ0v14pjM=; b=NeyisAj/7dFKbC8j
+	3HtdfLK+j35BNf2d3/v01/ouPwF/qO/4EUKlzkHnoBaUbg7K0bSj/Ex6McQM0mLL
+	MxdyK7gSAx8RrxS6YXZnLuqEZaigonx4L5T8RnU868pH4KEHuANhXov11DELZBhE
+	KCOqeMNTCpZv8e35Xag63LperoQdZQowzRwu51hMaG7+YF5GlD2EdYZa9j0taO93
+	nrHO1aZvTHXjHkmArf59VC8I6ozD6FflBCFDC1+3hBb+7rncThpUfGVmrUNStEAU
+	+UyqaYOcUqXD3IVC6SgszXeKZ7YId2GPcWAbpHRWKKdlg+7TkA2QOpSDMiV+ZMXX
+	H8I1Gg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gm1hfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 12:03:29 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4A8C3SW5008066
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 8 Nov 2024 12:03:28 GMT
+Received: from [10.253.8.252] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 8 Nov 2024
+ 04:03:23 -0800
+Message-ID: <57e60cb1-7f57-48ff-9884-458831e19810@quicinc.com>
+Date: Fri, 8 Nov 2024 20:03:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/5] net: pcs: qcom-ipq: Add PCS create and
+ phylink operations for IPQ9574
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_luoj@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <bartosz.golaszewski@linaro.org>, <vsmuthu@qti.qualcomm.com>,
+        <john@phrozen.org>
+References: <20241101-ipq_pcs_rc1-v1-0-fdef575620cf@quicinc.com>
+ <20241101-ipq_pcs_rc1-v1-3-fdef575620cf@quicinc.com>
+ <Zy0OuPMbUaZtIosj@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Lei Wei <quic_leiwei@quicinc.com>
+In-Reply-To: <Zy0OuPMbUaZtIosj@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1KHfz1SJZftgfw1InVs_u6CN_2Vyq57T
+X-Proofpoint-GUID: 1KHfz1SJZftgfw1InVs_u6CN_2Vyq57T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
+ suspectscore=0 adultscore=0 bulkscore=0 impostorscore=0 mlxscore=0
+ phishscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080100
 
-Since all boards use the same address, drop the goodix,hid-report-addr
-property and hardcode it in the driver as a default value.
 
-Signed-off-by: Charles Wang <charles.goodix@gmail.com>
----
- .../devicetree/bindings/input/goodix,gt7986u-spifw.yaml    | 7 -------
- 1 file changed, 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-index 8105b9ce2..c9e346a60 100644
---- a/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-+++ b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-@@ -36,11 +36,6 @@ properties:
-   reset-gpios:
-     maxItems: 1
- 
--  goodix,hid-report-addr:
--    $ref: /schemas/types.yaml#/definitions/uint32
--    description:
--      The register address for retrieving HID report data.
--
-   spi-max-frequency: true
- 
- required:
-@@ -48,7 +43,6 @@ required:
-   - reg
-   - interrupts
-   - reset-gpios
--  - goodix,hid-report-addr
- 
- unevaluatedProperties: false
- 
-@@ -68,7 +62,6 @@ examples:
-         interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
-         reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-         spi-max-frequency = <10000000>;
--        goodix,hid-report-addr = <0x22c8c>;
-       };
-     };
- 
--- 
-2.43.0
+On 11/8/2024 3:02 AM, Russell King (Oracle) wrote:
+> Hi,
+> 
+> On Fri, Nov 01, 2024 at 06:32:51PM +0800, Lei Wei wrote:
+>> +static int ipq_pcs_config_mode(struct ipq_pcs *qpcs,
+>> +			       phy_interface_t interface)
+>> +{
+>> +	unsigned int val;
+>> +	int ret;
+>> +
+>> +	/* Configure PCS interface mode */
+>> +	switch (interface) {
+>> +	case PHY_INTERFACE_MODE_SGMII:
+>> +		/* Select Qualcomm SGMII AN mode */
+>> +		ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
+>> +					 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE,
+>> +					 PCS_MODE_SGMII);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case PHY_INTERFACE_MODE_QSGMII:
+>> +		ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
+>> +					 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE,
+>> +					 PCS_MODE_QSGMII);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	default:
+>> +		dev_err(qpcs->dev,
+>> +			"Unsupported interface %s\n", phy_modes(interface));
+>> +		return -EOPNOTSUPP;
+>> +	}
+> 
+> I think:
+> 
+> 	unsigned int mode;
+> 
+> 	switch (interface) {
+> 	case PHY_INTERFACE_MODE_SGMII:
+> 		/* Select Qualcomm SGMII AN mode */
+> 		mode = PCS_MODE_SGMII;
+> 		break;
+> 
+> 	case PHY_INTERFACE_MODE_QSGMII:
+> 		mode = PCS_MODE_QSGMII;
+> 		break;
+> 
+> 	default:
+> 		...
+> 	}
+> 
+> 	ret = regmap_update_bits(qpcs->regmap, PCS_MODE_CTRL,
+> 				 PCS_MODE_SEL_MASK | PCS_MODE_AN_MODE, mode);
+> 	if (ret)
+> 		return ret;
+> 
+> might be easier to read? 
+
+Thanks for the suggestion, I will make this change.
+
+I notice that in patch 4, the USXGMII case
+> drops PCS_MODE_AN_MODE from the mask, leaving this bit set to whatever
+> value it previously was. Is that intentional?
+> 
+
+Yes, this bit is used for configuring the SGMII AN mode - Cisco AN or 
+Qualcomm AN. The default setting is Cisco SGMII AN mode.
+
+Please note that as per our discussion with Andrew on his comment 
+regarding the default mode to use, we would like to change the default 
+setting for SGMII/QSGMII to Cisco AN Mode in the next patch update.
+
+>> +static int ipq_pcs_link_up_config_sgmii(struct ipq_pcs *qpcs,
+>> +					int index,
+>> +					unsigned int neg_mode,
+>> +					int speed)
+>> +{
+>> +	int ret;
+>> +
+>> +	/* PCS speed need not be configured if in-band autoneg is enabled */
+>> +	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED)
+>> +		goto pcs_adapter_reset;
+>> +
+>> +	/* PCS speed set for force mode */
+>> +	switch (speed) {
+>> +	case SPEED_1000:
+>> +		ret = regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+>> +					 PCS_MII_SPEED_MASK,
+>> +					 PCS_MII_SPEED_1000);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case SPEED_100:
+>> +		ret = regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+>> +					 PCS_MII_SPEED_MASK, PCS_MII_SPEED_100);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	case SPEED_10:
+>> +		ret = regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+>> +					 PCS_MII_SPEED_MASK, PCS_MII_SPEED_10);
+>> +		if (ret)
+>> +			return ret;
+>> +		break;
+>> +	default:
+>> +		dev_err(qpcs->dev, "Invalid SGMII speed %d\n", speed);
+>> +		return -EINVAL;
+>> +	}
+> 
+> I think it's worth having the same structure here, and with fewer lines
+> (and fewer long lines) maybe:
+> 
+> 	if (neg_mode != PHYLINK_PCS_NEG_INBAND_ENABLED) {
+> 		switch (speed) {
+> 		...
+> 		}
+> 
+> 		ret = regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+> 					 PCS_MII_SPEED_MASK, ctrl);
+> 		if (ret)
+> 			return ret;
+> 	}
+> 
+> means you don't need the pcs_adapter_reset label.
+> 
+
+Sure, thanks for the suggestion. I will make this change.
+
+>> +
+>> +pcs_adapter_reset:
+>> +	/* PCS adapter reset */
+>> +	ret = regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+>> +				 PCS_MII_ADPT_RESET, 0);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return regmap_update_bits(qpcs->regmap, PCS_MII_CTRL(index),
+>> +				  PCS_MII_ADPT_RESET, PCS_MII_ADPT_RESET);
+>> +}
+>> +
+>> +static void ipq_pcs_get_state(struct phylink_pcs *pcs,
+>> +			      struct phylink_link_state *state)
+>> +{
+>> +	struct ipq_pcs_mii *qpcs_mii = phylink_pcs_to_qpcs_mii(pcs);
+>> +	struct ipq_pcs *qpcs = qpcs_mii->qpcs;
+>> +	int index = qpcs_mii->index;
+>> +
+>> +	switch (state->interface) {
+>> +	case PHY_INTERFACE_MODE_SGMII:
+>> +	case PHY_INTERFACE_MODE_QSGMII:
+>> +		ipq_pcs_get_state_sgmii(qpcs, index, state);
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +
+>> +	dev_dbg(qpcs->dev,
+>> +		"mode=%s/%s/%s link=%u\n",
+>> +		phy_modes(state->interface),
+>> +		phy_speed_to_str(state->speed),
+>> +		phy_duplex_to_str(state->duplex),
+>> +		state->link);
+> 
+> This will get very noisy given that in polling mode, phylink will call
+> this once a second - and I see you are using polling mode.
+> 
+
+Sure, I will use dev_dbg_ratelimited() API instead.
+
+>> +/**
+>> + * ipq_pcs_create() - Create an IPQ PCS MII instance
+>> + * @np: Device tree node to the PCS MII
+>> + *
+>> + * Description: Create a phylink PCS instance for the given PCS MII node @np
+>> + * and enable the MII clocks. This instance is associated with the specific
+>> + * MII of the PCS and the corresponding Ethernet netdevice.
+>> + *
+>> + * Return: A pointer to the phylink PCS instance or an error-pointer value.
+>> + */
+>> +struct phylink_pcs *ipq_pcs_create(struct device_node *np)
+>> +{
+>> +	struct platform_device *pdev;
+>> +	struct ipq_pcs_mii *qpcs_mii;
+>> +	struct device_node *pcs_np;
+>> +	struct ipq_pcs *qpcs;
+>> +	int i, ret;
+>> +	u32 index;
+>> +
+>> +	if (!of_device_is_available(np))
+>> +		return ERR_PTR(-ENODEV);
+>> +
+>> +	if (of_property_read_u32(np, "reg", &index))
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if (index >= PCS_MAX_MII_NRS)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	pcs_np = of_get_parent(np);
+>> +	if (!pcs_np)
+>> +		return ERR_PTR(-ENODEV);
+>> +
+>> +	if (!of_device_is_available(pcs_np)) {
+>> +		of_node_put(pcs_np);
+>> +		return ERR_PTR(-ENODEV);
+>> +	}
+>> +
+>> +	pdev = of_find_device_by_node(pcs_np);
+>> +	of_node_put(pcs_np);
+>> +	if (!pdev)
+>> +		return ERR_PTR(-ENODEV);
+>> +
+>> +	qpcs = platform_get_drvdata(pdev);
+>> +	put_device(&pdev->dev);
+>> +
+>> +	/* If probe is not yet completed, return DEFER to
+>> +	 * the dependent driver.
+>> +	 */
+>> +	if (!qpcs)
+>> +		return ERR_PTR(-EPROBE_DEFER);
+>> +
+>> +	qpcs_mii = kzalloc(sizeof(*qpcs_mii), GFP_KERNEL);
+>> +	if (!qpcs_mii)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	qpcs_mii->qpcs = qpcs;
+>> +	qpcs_mii->index = index;
+>> +	qpcs_mii->pcs.ops = &ipq_pcs_phylink_ops;
+>> +	qpcs_mii->pcs.neg_mode = true;
+>> +	qpcs_mii->pcs.poll = true;
+>> +
+>> +	for (i = 0; i < PCS_MII_CLK_MAX; i++) {
+>> +		qpcs_mii->clk[i] = of_clk_get_by_name(np, pcs_mii_clk_name[i]);
+>> +		if (IS_ERR(qpcs_mii->clk[i])) {
+>> +			dev_err(qpcs->dev,
+>> +				"Failed to get MII %d interface clock %s\n",
+>> +				index, pcs_mii_clk_name[i]);
+>> +			goto err_clk_get;
+>> +		}
+>> +
+>> +		ret = clk_prepare_enable(qpcs_mii->clk[i]);
+>> +		if (ret) {
+>> +			dev_err(qpcs->dev,
+>> +				"Failed to enable MII %d interface clock %s\n",
+>> +				index, pcs_mii_clk_name[i]);
+>> +			goto err_clk_en;
+>> +		}
+> 
+> Do you always need the clock prepared and enabled? If not, you could
+> do this in the pcs_enable() method, and turn it off in pcs_disable().
+> 
+
+Yes, it can be moved to pcs_enable/pcs_disable method. I will make this 
+change.
+
+> I think phylink may need a tweak to "unuse" the current PCS when
+> phylink_stop() is called to make that more effective at disabling the
+> PCS, which is something that should be done - that's a subject for a
+> separate patch which I may send.
+> 
+
 
 
