@@ -1,103 +1,207 @@
-Return-Path: <linux-kernel+bounces-402448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A169F9C27A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:38:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929439C27AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AE11C21565
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDCF1F2309A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551901F4712;
-	Fri,  8 Nov 2024 22:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9555B1F26ED;
+	Fri,  8 Nov 2024 22:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YC8fqG/R"
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TEQtUttB"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572851E0B67;
-	Fri,  8 Nov 2024 22:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2301A9B5C
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731105485; cv=none; b=kyynE7mpT6M5hxMutcex9zXyAHsA3vhIaRFYqUbfvRBsHEBt9lLJcEyE6YRYi7XOexo5g8bl+x6in77g01J52NmzbdBWqdwKq6VXqWayGJ31oRXeUcfz2Zyvt3qQbQFbByMoal4AFdt/OwL8FIR1r/6xq4/kWgeUf3reSmxezp8=
+	t=1731105783; cv=none; b=SUV1z+W1gth1PnaT82Cd54K9APskzPa4JHpEnDoRhZ3gBsfiV3HkwPIskKs3bUJvfUjDXqVUTFEifZ6q5VdoHTeWNePci+cGFHwPJQ1hct/NFHf2PzTKsXTYzRQbsGlkeWUwGQ2Mjv5G0qPhvwsBjNumVC+XsjYEFX2IFSwloVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731105485; c=relaxed/simple;
-	bh=HG/Z4aeyO39LhZI4pi8ETl903UTWXgOSj7cXHjFbK7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FKlPlAbHF15VSwlZZotbI/adOwnvv+Ml2MWkiewGhmqIIwzQk90yjkZRzmC0j0Gcx4rnhNiCGKuIgr6kTPLZBhLaNPA2PGMsYJFYQOJl0cgpfY7TBGJ3AGJCmsI0RjejqFhR/r37AfG+Hg542l1e/52SjHSegjtmZSlfd6SVz6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YC8fqG/R; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5ee53b30470so974026eaf.3;
-        Fri, 08 Nov 2024 14:38:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731105482; x=1731710282; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ef+nuKAweoLnQLtJWrC9nc5IytkziH8wSsoYPVks8Jo=;
-        b=YC8fqG/RtWfMD81sz7B6jIlUv81M+5V9zaW4Ch+/3tL3DGvjNIrtVDq+hx+A0FdwhW
-         uFfJU6LfUWRfQofDBH6IzEwX78q/vy6h06eLQ+J/l6ZrulDWCAOYqPY5iWcz4A0hQxfV
-         39ku1V6moK1WJPdu0AqpxcVPC46UYeaPzkYDYrppuTgv3KLfeTh/9a2jN8J05sqMnCA+
-         EyrV5eAEvR9F/oU8ymEhn/a4/Hc7kDcKorttYGxRXkM00mv+Pf84Vg+vkzXit/moWUE/
-         EusId5y+IY8NQ4UZ/t9HrYRQZJ5RxGED+5MSb32TftQO+82CQHL3DAqg/zPEMI3BwrJJ
-         cY0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731105482; x=1731710282;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ef+nuKAweoLnQLtJWrC9nc5IytkziH8wSsoYPVks8Jo=;
-        b=p4g5bkZOM+t7bGi71374dNpQ176RbgJMO5YSyf/3FYXthk0dLDeJVuiJbLjlvn58WI
-         PUhzCVfTuzc8hslwjxQ/aDfNLSPaxIJx50UnFNYZm1k/xa2cVVDTmfK3pMFPVKSd6TQx
-         b1mWRw/btDNwnJAiq1rqnx01avqZNeIXgLiEWaJOJKDu8Jr9Vh3cdmyUPhLwXBSUDWu2
-         uIsYh2DtcU3Jn+mM4CbLDb0qoD1AfBmN4NfKx2cYv06gbuQYZAqlD7wQQXUz1sSjNEbA
-         Ebtz1x5cVUZDWyjQ1nNmxB5PlJsl0aYx3Gj+aVsiZdu018dfIW2W7DM9I5k9Y6n60po/
-         ZcqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7B+XNfuRd3Y1Ae7Mz4O3smf9TRpz2wM2Zg5IOdTIMf8EB02iWtPmG0y+k9Jkky8uQSr9NcEnA8HHz2y7G@vger.kernel.org, AJvYcCX8zjL7og2RKMpZtXNuOdkIT2ylPPX5gMYlORMe5F++WZKB/X9YTE+HNqhNuPjXjG4eOwpN1eiaAok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI7oEeM/I8pm5l39XJTNKopn3YVnWkDhmc6rWjoBsGHMa6VXJj
-	+lFv74s2OhX1kzq1hMcCW3xwaSVOgvHpo6HdJsQ3GrFT+223sCDyS1+DlEk6t9baoOhdefdsk5d
-	C9/NCWhy8nvaVLTxXz35zhKgJRA8=
-X-Google-Smtp-Source: AGHT+IFw6L6MwIPVpm5m/vqu5nv3hx0uQ5SgPG1RClTH3XyEoMn2m2/XX0pYOfOXJO+8xyxYfL3hQETyezKTEt3DEME=
-X-Received: by 2002:a05:6820:1e85:b0:5e1:d741:6f04 with SMTP id
- 006d021491bc7-5ee57cbee48mr4056662eaf.3.1731105482352; Fri, 08 Nov 2024
- 14:38:02 -0800 (PST)
+	s=arc-20240116; t=1731105783; c=relaxed/simple;
+	bh=UA1j0lGdwXPAfAD9de0XdydIWE64+hqZJBeYPdvRVGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zet1GYXE8Yas+vR0Iyrdb3oUBpu6xo0Zzsm+cwXj8R/0L33ZTHStZBacNnxPVpSE0ZBFCZ1y1dT+VR9L304tOoN0qPyrFiOW8e8FzWPJBo5KJFFzbXNi5/tJZIZVo/1/gQJUjjepAe6tzyaxfCLxTb0KysEsmhn5lMvwSmsw89I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TEQtUttB; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 8 Nov 2024 14:42:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731105779;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EaU4/A6qN+s4NwESrU06mXqhjeqkwS2os0mJlrPgmQI=;
+	b=TEQtUttB7t3S6AALgjFubWKeTXnbmbztwdNlefzVXB8eWM0fLE+0abM2Yz35F5K4BoRd+i
+	93IOMjCmdltbyLl4a1yWt+Ir0jrzU/2ISpeLaqyk96dp30k/1OesU+nqJZIS7o+7JP4IMj
+	b869/3ZD3/+6UzLWdqGjnrRwg9ql8yw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	muchun.song@linux.dev, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
+Message-ID: <kpxl646zwhqcyrq23kfnslqdjgqy5s72vlq2uoc6vhfvwza2ld@yjyj3j6rnlag>
+References: <20241108212946.2642085-1-joshua.hahnjy@gmail.com>
+ <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107020555.321245-1-sanman.p211993@gmail.com> <20241107102044.4e5ba38f@kernel.org>
-In-Reply-To: <20241107102044.4e5ba38f@kernel.org>
-From: Sanman Pradhan <sanman.p211993@gmail.com>
-Date: Fri, 8 Nov 2024 14:37:26 -0800
-Message-ID: <CAG4C-OmPAqNe2RHwgBZ9+1MBq48bOOLgDdFnPiRyPz6Duy15nQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] eth: fbnic: Add PCIe hardware statistics
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kernel-team@meta.com, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, horms@kernel.org, 
-	corbet@lwn.net, mohsin.bashr@gmail.com, sanmanpradhan@meta.com, 
-	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev, jdamato@fastly.com, 
-	sdf@fomichev.me, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 7 Nov 2024 at 10:20, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Wed,  6 Nov 2024 18:05:55 -0800 Sanman Pradhan wrote:
-> > +     FBNIC_HW_STAT("pcie_ob_rd_tlp", pcie.ob_rd_tlp),
-> > +     FBNIC_HW_STAT("pcie_ob_rd_dword", pcie.ob_rd_dword),
-> > +     FBNIC_HW_STAT("pcie_ob_wr_tlp", pcie.ob_wr_tlp),
-> > +     FBNIC_HW_STAT("pcie_ob_wr_dword", pcie.ob_wr_dword),
-> > +     FBNIC_HW_STAT("pcie_ob_cpl_tlp", pcie.ob_cpl_tlp),
-> > +     FBNIC_HW_STAT("pcie_ob_cpl_dword", pcie.ob_cpl_dword),
-> > +     FBNIC_HW_STAT("pcie_ob_rd_no_tag", pcie.ob_rd_no_tag),
-> > +     FBNIC_HW_STAT("pcie_ob_rd_no_cpl_cred", pcie.ob_rd_no_cpl_cred),
-> > +     FBNIC_HW_STAT("pcie_ob_rd_no_np_cred", pcie.ob_rd_no_np_cred),
->
-> Having thought about this a bit longer I think Andrew's point is valid.
-> Let's move these to a debugfs file. Sorry for the flip flop.
+On Fri, Nov 08, 2024 at 01:29:45PM -0800, Joshua Hahn wrote:
+> This patch introduces mem_cgroup_charge_hugetlb, which combines the
+> logic of mem_cgroup{try,commit}_hugetlb. This reduces the footprint of
+> memcg in hugetlb code, and also consolidates the error path that memcg
+> can take into just one point.
+> 
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> 
+> ---
+>  include/linux/memcontrol.h |  2 ++
+>  mm/hugetlb.c               | 34 ++++++++++++----------------------
+>  mm/memcontrol.c            | 19 +++++++++++++++++++
+>  3 files changed, 33 insertions(+), 22 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index bb49e0d4b377..d90c1ac791f1 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -678,6 +678,8 @@ static inline int mem_cgroup_charge(struct folio *folio, struct mm_struct *mm,
+>  int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+>  		long nr_pages);
+>  
+> +int mem_cgroup_charge_hugetlb(struct folio* folio, gfp_t gfp);
+> +
+>  int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
+>  				  gfp_t gfp, swp_entry_t entry);
+>  
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index fbb10e52d7ea..6f6841483039 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2967,21 +2967,13 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>  	struct hugepage_subpool *spool = subpool_vma(vma);
+>  	struct hstate *h = hstate_vma(vma);
+>  	struct folio *folio;
+> -	long map_chg, map_commit, nr_pages = pages_per_huge_page(h);
+> +	long map_chg, map_commit;
+>  	long gbl_chg;
+> -	int memcg_charge_ret, ret, idx;
+> +	int ret, idx;
+>  	struct hugetlb_cgroup *h_cg = NULL;
+> -	struct mem_cgroup *memcg;
+>  	bool deferred_reserve;
+>  	gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
+>  
+> -	memcg = get_mem_cgroup_from_current();
+> -	memcg_charge_ret = mem_cgroup_hugetlb_try_charge(memcg, gfp, nr_pages);
+> -	if (memcg_charge_ret == -ENOMEM) {
+> -		mem_cgroup_put(memcg);
+> -		return ERR_PTR(-ENOMEM);
+> -	}
+> -
+>  	idx = hstate_index(h);
+>  	/*
+>  	 * Examine the region/reserve map to determine if the process
+> @@ -2989,12 +2981,8 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>  	 * code of zero indicates a reservation exists (no change).
+>  	 */
+>  	map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
+> -	if (map_chg < 0) {
+> -		if (!memcg_charge_ret)
+> -			mem_cgroup_cancel_charge(memcg, nr_pages);
+> -		mem_cgroup_put(memcg);
+> +	if (map_chg < 0)
+>  		return ERR_PTR(-ENOMEM);
+> -	}
+>  
+>  	/*
+>  	 * Processes that did not create the mapping will have no
+> @@ -3092,10 +3080,15 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>  		}
+>  	}
+>  
+> -	if (!memcg_charge_ret)
+> -		mem_cgroup_commit_charge(folio, memcg);
+> -	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
+> -	mem_cgroup_put(memcg);
+> +	ret = mem_cgroup_charge_hugetlb(folio, gfp);
+> +	if (ret == -ENOMEM) {
+> +		spin_unlock_irq(&hugetlb_lock);
 
-Thanks for the review, I have submitted v3 with the necessary changes.
+spin_unlock_irq??
+
+> +		free_huge_folio(folio);
+
+free_huge_folio() will call lruvec_stat_mod_folio() unconditionally but
+you are only calling it on success. This may underflow the metric.
+
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +	else if (!ret)
+> +		lruvec_stat_mod_folio(folio, NR_HUGETLB,
+> +		      pages_per_huge_page(h));
+>  
+>  	return folio;
+>  
+> @@ -3110,9 +3103,6 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>  		hugepage_subpool_put_pages(spool, 1);
+>  out_end_reservation:
+>  	vma_end_reservation(h, vma, addr);
+> -	if (!memcg_charge_ret)
+> -		mem_cgroup_cancel_charge(memcg, nr_pages);
+> -	mem_cgroup_put(memcg);
+>  	return ERR_PTR(-ENOSPC);
+>  }
+>  
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 97f63ec9c9fb..95ee77fe27af 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -4529,6 +4529,25 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
+>  	return 0;
+>  }
+>  
+> +int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp)
+> +{
+> +	struct mem_cgroup *memcg = get_mem_cgroup_from_current();
+> +	int ret = 0;
+> +
+> +	if (mem_cgroup_disabled() || !memcg_accounts_hugetlb() ||
+> +		!memcg || !cgroup_subsys_on_dfl(memory_cgrp_subsys)) {
+> +		ret = -EOPNOTSUPP;
+
+why EOPNOTSUPP? You need to return 0 here. We do want
+lruvec_stat_mod_folio() to be called.
+
+> +		goto out;
+> +	}
+> +
+> +	if (charge_memcg(folio, memcg, gfp))
+> +		ret = -ENOMEM;
+> +
+> +out:
+> +	mem_cgroup_put(memcg);
+> +	return ret;
+> +}
+> +
+>  /**
+>   * mem_cgroup_swapin_charge_folio - Charge a newly allocated folio for swapin.
+>   * @folio: folio to charge.
+> -- 
+> 2.43.5
+> 
 
