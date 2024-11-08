@@ -1,183 +1,408 @@
-Return-Path: <linux-kernel+bounces-401659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27489C1D9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:07:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05F39C1D9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966CC1F21B06
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:07:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC845B232A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FC91E907F;
-	Fri,  8 Nov 2024 13:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48D11E9079;
+	Fri,  8 Nov 2024 13:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="HfE64W5u"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KfyU0/+b"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6568A1E0E1A;
-	Fri,  8 Nov 2024 13:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EB81E0E1A
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071229; cv=none; b=iS4gmSy37owjSMD+paEIfGVNcUGt9j1Y0sdIcbY5zYbA1Tfl06ZZ/dqyExvT+YhWAjb+vrnLEcxUxZO32vaoKgZYaBo01QvxLcQySJucXHE1sS9GqswRw6FnGQYDmlh4aRBCnwkPypHVqHfTnIBQ3mPRK0LDM1aGJtX1UydFOVo=
+	t=1731071272; cv=none; b=Zr/Zd62PAwgTJNlUltaerY5zK4amfYfVE9Sh3Q8MYU9ikbXn0ptcOsJMaqrhhXs/UAYHbpP3CGibA3gQfOSgU/z3AeRu0O4oI5M2Th08644lC/1WQvP6vX8dZFTMajIhJSN9EirQAyRTVEV2HsQ5v8IIW3LyGeJtfaYd8Tz/pks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071229; c=relaxed/simple;
-	bh=z2Mtdk7vsxKCcZLHpLJawXgyEfIX75i0FxnVD2WIfuY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qi3yhfmNkIFilCiqmgllM0h6h0bGWtHJF19re/DtwPWXFDk94wR2JIIeBJ8ESNLu3r3Gu+TJWMOJovGPnqOzE5F2Mv8WM6JXJSyfhONoe9qC3xyzgHgvU+nu4VejXgMOt1MSJ1PAM2ksp7KCYMXf5Yz864GHmRHqoHb/c8m46DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=HfE64W5u; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1731071212; x=1731676012; i=wahrenst@gmx.net;
-	bh=1p77c5f46fGoPaVLzCPx/GSglvzQAh4d6x8dFwGg/y8=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HfE64W5urkFxX4SCcp8HQXVGTR1zZkCyMFklSNKtICLvfOu5YTeLhJ5xLrFpogIX
-	 ZnAT/5dMV5fAI9lBJiA76slejh60mdaK9SuSEGC8X7VSk0G3V0rJbv0uZzpAkFEIU
-	 O/wxsdezOExa+aajoCf9AFoNQ+Cimt3Cran844SBUvSBpXlzhgHE5cku4i9EVjYMV
-	 wjDcswBkEOofrcNlpcxuQadtF+BSJsADpUv/PuSWnuQ5EFt+Dwx3Py4+ChKSsWbWy
-	 oddEdmrBvm5fZhB767aXYffKp2/3eJ4rUpuF3YrQQGmKguOKEOhnhn+owv5exINuB
-	 KYaU48JNO518sBK2Dg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N5GE1-1tqo2L0f5B-0138g2; Fri, 08
- Nov 2024 14:06:52 +0100
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH V2] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
-Date: Fri,  8 Nov 2024 14:06:47 +0100
-Message-Id: <20241108130647.8281-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731071272; c=relaxed/simple;
+	bh=CYH0PXwxfG8TxAVh3+79MgWgHVWV3jjOl4trZuJEiNQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DP66WlI91GL+0FAZb0/6idr7Sigp4yI8YI2sTH/Q/MKLunKfZnsXiAATrqoEezn+qGWxDaer1cSRhMS1fKZOmwtCqn3p/ioHCt1hlsYjjhBc75B9qTz87sfJCHold3JzYtUKcnsS96FWrKWRg168WN42o+jMOGL5VR4ixBgBj0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KfyU0/+b; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731071269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UBKmK8tEl4j/lViVvAFgYObQhSYvDrj2ltyuK7C2hYo=;
+	b=KfyU0/+bAGYRBxmPn6nqg/s/6RApBUEwxitJUp1zrVhlxaeOPyCTtNtICQCjkG7ihK/l3I
+	jkhq53FBdv2tPUTYagGIQcJjo3viNI82uvMlS4O88b0kKQu+0PQYmF0tUCsl6HHSAbY+tC
+	XY7tcKUsz7RcBiW+hh9ojOgHKQWnVT4=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-605-XCmSUF_aOQuC86HEG8PGIA-1; Fri,
+ 08 Nov 2024 08:07:45 -0500
+X-MC-Unique: XCmSUF_aOQuC86HEG8PGIA-1
+X-Mimecast-MFC-AGG-ID: XCmSUF_aOQuC86HEG8PGIA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D15919540EF;
+	Fri,  8 Nov 2024 13:07:44 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A5757300019E;
+	Fri,  8 Nov 2024 13:07:43 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: michael.christie@oracle.com,
+	Tejun Heo <tj@kernel.org>,
+	Luca Boccassi <bluca@debian.org>
+Subject: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
+Date: Fri,  8 Nov 2024 08:07:37 -0500
+Message-ID: <20241108130737.126567-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:CzNb5FcPCkmFO2MkOQP2r9VgtLh5nVVcu0PLyDmwl2n2DXTR+S0
- Iy+HY8QIyh9L11L6whQivHPt+eXPpMJLChqWvCPbAZSdkbhXntTROQFkOFt9uTgp1T20kne
- EB1Pvx3htSxUxjlrDm0QH+OyYEBJHuZwDPq1QfiNWPvEhDRaOMRTy7UYVdcBe6CRCqtZOlz
- VRlVEDrQo6Iz+8pOqbOjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gyABekB2yNM=;RmfHHNj/19FzHkpHw5x4UlPlRBE
- brzDjfQ57McqGPHjgDXwKHAd0M760e8vSRklNkAZHhRq/RPglph50Pg9WSUJSPsu2HWts5fNw
- tuU/qnI0nTDkCskokGahbdyjzJaCO+ESMwxwPoEqcBeRZmjOBdvswtITBV3kxxL7mS3FVlXVV
- PV1KmO4Irv0Q6hUZNSG10h89CXy/eIavVU7Sef252TkG8acklOHA3lTksTEXajmWYfYC7CRhx
- UvH60/SkX/YExWkj9W5yfn4FPWlnl1dlwQ+ECYU73zQwAoz2Ox00NEHrQ6ZaJSfvPJm8+yz+R
- VXzzfUeHrsW0uBu6c+RxsEaV74nOfly8H9uAn3FWkgewPsKQsHvredBuAJTVgBSkVkttI3Z5V
- 9FtpxzeSVBCKlDceXS+a88GlyH/aI7TCFmIM5AKqLXl8xOsYgPynVUbs4g19Ur6abw/7OzNQ/
- rzGhkakRyElQU7lVqhR7+58t+ukpOf6aBfbu1Mkgkg4spPryDzDugwIFwqWC13AfFBf+U3lya
- L7+xIMUJE3ZHuSz5Y/WUHcgl3/aCm3Dn+63G/ytwtNCyQR+x80l71+1QckE11Nk8fsraGW773
- yyeNRt0BehJ55oOc+KAe8WrV3ETdBqEjEEbOjxsAXRhaMIhFwJx+mKMLA53anaQovc90EThgc
- sLNdn0v+aj4Gz8HGc46RpHet/a2fUEoGu9xEIxNZGyMkd9YvnceEng17cft/b4drS3fXg1cZd
- mn+9kritsgGFvsMKHGdLcY6Y9gKJX84hji7IhiWhPuO2XyDAK3nQ9S6iyK4+9yitFEI/AHC6C
- KFybgvsHpieRyKXkqV90M9ouSRi+bJn2rjGvuuSQT+ZNXSFwUVXOwMepBbTFYLC4Y6l6/M8Vh
- SuywGD4pF+u241xTuCU0YIx8xLlhzbCH22MCKK8CRtlgY3Tr2mlZbh2J6
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The recent introduction of reset control in pwrseq_simple introduced
-a regression for platforms without RESET_CONTROLLER support, because
-devm_reset_control_get_optional_shared() would return NULL and make all
-resets no-ops. Instead of enforcing this dependency, rely on this behavior
-to determine reset support. As a benefit we can get the rid of the
-use_reset flag.
+kvm_vm_create_worker_thread() is meant to be used for kthreads that
+can consume significant amounts of CPU time on behalf of a VM or in
+response to how the VM behaves (for example how it accesses its memory).
+Therefore it wants to charge the CPU time consumed by that work to
+the VM's container.
 
-Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset contro=
-l")
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/mmc/core/pwrseq_simple.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+However, because of these threads, cgroups which have kvm instances inside
+never complete freezing.  This can be trivially reproduced:
 
-Changes in V2:
-- add explaining comment as suggested by Marco Felsch
+  root@test ~# mkdir /sys/fs/cgroup/test
+  root@test ~# echo $fish_pid > /sys/fs/cgroup/test/cgroup.procs
+  root@test ~# qemu-system-x86_64 --nographic -enable-kvm
 
-diff --git a/drivers/mmc/core/pwrseq_simple.c b/drivers/mmc/core/pwrseq_si=
-mple.c
-index 24e4e63a5dc8..37cd858df0f4 100644
-=2D-- a/drivers/mmc/core/pwrseq_simple.c
-+++ b/drivers/mmc/core/pwrseq_simple.c
-@@ -32,7 +32,6 @@ struct mmc_pwrseq_simple {
- 	struct clk *ext_clk;
- 	struct gpio_descs *reset_gpios;
- 	struct reset_control *reset_ctrl;
--	bool use_reset;
- };
+and in another terminal:
 
- #define to_pwrseq_simple(p) container_of(p, struct mmc_pwrseq_simple, pwr=
-seq)
-@@ -71,7 +70,7 @@ static void mmc_pwrseq_simple_pre_power_on(struct mmc_ho=
-st *host)
- 		pwrseq->clk_enabled =3D true;
+  root@test ~# echo 1 > /sys/fs/cgroup/test/cgroup.freeze
+  root@test ~# cat /sys/fs/cgroup/test/cgroup.events
+  populated 1
+  frozen 0
+
+The cgroup freezing happens in the signal delivery path but
+kvm_vm_worker_thread() thread never call into the signal delivery path while
+joining non-root cgroups, so they never get frozen. Because the cgroup
+freezer determines whether a given cgroup is frozen by comparing the number
+of frozen threads to the total number of threads in the cgroup, the cgroup
+never becomes frozen and users waiting for the state transition may hang
+indefinitely.
+
+Since the worker kthread is tied to a user process, it's better if
+it behaves similarly to user tasks as much as possible, including
+being able to send SIGSTOP and SIGCONT.  In fact, vhost_task is all
+that kvm_vm_create_worker_thread() wanted to be and more: not only it
+inherits the userspace process's cgroups, it has other niceties like
+being parented properly in the process tree.  Use it instead of the
+homegrown alternative.
+
+(Commit message based on emails from Tejun).
+
+Reported-by: Tejun Heo <tj@kernel.org>
+Reported-by: Luca Boccassi <bluca@debian.org>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+---
+ arch/x86/include/asm/kvm_host.h |   4 +-
+ arch/x86/kvm/Kconfig            |   1 +
+ arch/x86/kvm/mmu/mmu.c          |  67 +++++++++++----------
+ include/linux/kvm_host.h        |   6 --
+ virt/kvm/kvm_main.c             | 103 --------------------------------
+ 5 files changed, 39 insertions(+), 142 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 6d9f763a7bb9..d6657cc0fe6b 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -26,6 +26,7 @@
+ #include <linux/irqbypass.h>
+ #include <linux/hyperv.h>
+ #include <linux/kfifo.h>
++#include <linux/sched/vhost_task.h>
+ 
+ #include <asm/apic.h>
+ #include <asm/pvclock-abi.h>
+@@ -1443,7 +1444,8 @@ struct kvm_arch {
+ 	bool sgx_provisioning_allowed;
+ 
+ 	struct kvm_x86_pmu_event_filter __rcu *pmu_event_filter;
+-	struct task_struct *nx_huge_page_recovery_thread;
++	struct vhost_task *nx_huge_page_recovery_thread;
++	u64 nx_huge_page_next;
+ 
+ #ifdef CONFIG_X86_64
+ 	/* The number of TDP MMU pages across all roots. */
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index f09f13c01c6b..b387d61af44f 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -29,6 +29,7 @@ config KVM_X86
+ 	select HAVE_KVM_IRQ_BYPASS
+ 	select HAVE_KVM_IRQ_ROUTING
+ 	select HAVE_KVM_READONLY_MEM
++	select VHOST_TASK
+ 	select KVM_ASYNC_PF
+ 	select USER_RETURN_NOTIFIER
+ 	select KVM_MMIO
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 8e853a5fc867..d5af4f8c5a6a 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -7281,7 +7281,7 @@ static int set_nx_huge_pages(const char *val, const struct kernel_param *kp)
+ 			kvm_mmu_zap_all_fast(kvm);
+ 			mutex_unlock(&kvm->slots_lock);
+ 
+-			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
++			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
+ 		}
+ 		mutex_unlock(&kvm_lock);
  	}
-
--	if (pwrseq->use_reset) {
-+	if (pwrseq->reset_ctrl) {
- 		reset_control_deassert(pwrseq->reset_ctrl);
- 		reset_control_assert(pwrseq->reset_ctrl);
- 	} else
-@@ -82,7 +81,7 @@ static void mmc_pwrseq_simple_post_power_on(struct mmc_h=
-ost *host)
- {
- 	struct mmc_pwrseq_simple *pwrseq =3D to_pwrseq_simple(host->pwrseq);
-
--	if (pwrseq->use_reset)
-+	if (pwrseq->reset_ctrl)
- 		reset_control_deassert(pwrseq->reset_ctrl);
- 	else
- 		mmc_pwrseq_simple_set_gpios_value(pwrseq, 0);
-@@ -95,7 +94,7 @@ static void mmc_pwrseq_simple_power_off(struct mmc_host =
-*host)
- {
- 	struct mmc_pwrseq_simple *pwrseq =3D to_pwrseq_simple(host->pwrseq);
-
--	if (pwrseq->use_reset)
-+	if (pwrseq->reset_ctrl)
- 		reset_control_assert(pwrseq->reset_ctrl);
- 	else
- 		mmc_pwrseq_simple_set_gpios_value(pwrseq, 1);
-@@ -137,15 +136,18 @@ static int mmc_pwrseq_simple_probe(struct platform_d=
-evice *pdev)
- 		return dev_err_probe(dev, PTR_ERR(pwrseq->ext_clk), "external clock not=
- ready\n");
-
- 	ngpio =3D of_count_phandle_with_args(dev->of_node, "reset-gpios", "#gpio=
--cells");
--	if (ngpio =3D=3D 1)
--		pwrseq->use_reset =3D true;
--
--	if (pwrseq->use_reset) {
-+	if (ngpio =3D=3D 1) {
- 		pwrseq->reset_ctrl =3D devm_reset_control_get_optional_shared(dev, NULL=
-);
- 		if (IS_ERR(pwrseq->reset_ctrl))
- 			return dev_err_probe(dev, PTR_ERR(pwrseq->reset_ctrl),
- 					     "reset control not ready\n");
--	} else {
-+	}
+@@ -7427,7 +7427,7 @@ static int set_nx_huge_pages_recovery_param(const char *val, const struct kernel
+ 		mutex_lock(&kvm_lock);
+ 
+ 		list_for_each_entry(kvm, &vm_list, vm_list)
+-			wake_up_process(kvm->arch.nx_huge_page_recovery_thread);
++			vhost_task_wake(kvm->arch.nx_huge_page_recovery_thread);
+ 
+ 		mutex_unlock(&kvm_lock);
+ 	}
+@@ -7530,62 +7530,65 @@ static void kvm_recover_nx_huge_pages(struct kvm *kvm)
+ 	srcu_read_unlock(&kvm->srcu, rcu_idx);
+ }
+ 
+-static long get_nx_huge_page_recovery_timeout(u64 start_time)
++#define NX_HUGE_PAGE_DISABLED (-1)
 +
-+	/*
-+	 * Fallback to GPIO based reset control in case of multiple reset lines
-+	 * are specified or the platform doesn't have support for RESET at all.
-+	 */
-+	if (!pwrseq->reset_ctrl) {
- 		pwrseq->reset_gpios =3D devm_gpiod_get_array(dev, "reset", GPIOD_OUT_HI=
-GH);
- 		if (IS_ERR(pwrseq->reset_gpios) &&
- 		    PTR_ERR(pwrseq->reset_gpios) !=3D -ENOENT &&
-=2D-
-2.34.1
++static u64 get_nx_huge_page_recovery_next(void)
+ {
+ 	bool enabled;
+ 	uint period;
+ 
+ 	enabled = calc_nx_huge_pages_recovery_period(&period);
+ 
+-	return enabled ? start_time + msecs_to_jiffies(period) - get_jiffies_64()
+-		       : MAX_SCHEDULE_TIMEOUT;
++	return enabled ? get_jiffies_64() + msecs_to_jiffies(period)
++		: NX_HUGE_PAGE_DISABLED;
+ }
+ 
+-static int kvm_nx_huge_page_recovery_worker(struct kvm *kvm, uintptr_t data)
++static void kvm_nx_huge_page_recovery_worker_kill(void *data)
+ {
+-	u64 start_time;
++}
++
++static bool kvm_nx_huge_page_recovery_worker(void *data)
++{
++	struct kvm *kvm = data;
+ 	long remaining_time;
+ 
+-	while (true) {
+-		start_time = get_jiffies_64();
+-		remaining_time = get_nx_huge_page_recovery_timeout(start_time);
++	if (kvm->arch.nx_huge_page_next == NX_HUGE_PAGE_DISABLED)
++		return false;
+ 
+-		set_current_state(TASK_INTERRUPTIBLE);
+-		while (!kthread_should_stop() && remaining_time > 0) {
+-			schedule_timeout(remaining_time);
+-			remaining_time = get_nx_huge_page_recovery_timeout(start_time);
+-			set_current_state(TASK_INTERRUPTIBLE);
+-		}
+-
+-		set_current_state(TASK_RUNNING);
+-
+-		if (kthread_should_stop())
+-			return 0;
+-
+-		kvm_recover_nx_huge_pages(kvm);
++	remaining_time = kvm->arch.nx_huge_page_next - get_jiffies_64();
++	if (remaining_time > 0) {
++		schedule_timeout(remaining_time);
++		/* check for signals and come back */
++		return true;
+ 	}
++
++	__set_current_state(TASK_RUNNING);
++	kvm_recover_nx_huge_pages(kvm);
++	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
++	return true;
+ }
+ 
+ int kvm_mmu_post_init_vm(struct kvm *kvm)
+ {
+-	int err;
+-
+ 	if (nx_hugepage_mitigation_hard_disabled)
+ 		return 0;
+ 
+-	err = kvm_vm_create_worker_thread(kvm, kvm_nx_huge_page_recovery_worker, 0,
+-					  "kvm-nx-lpage-recovery",
+-					  &kvm->arch.nx_huge_page_recovery_thread);
+-	if (!err)
+-		kthread_unpark(kvm->arch.nx_huge_page_recovery_thread);
++	kvm->arch.nx_huge_page_next = get_nx_huge_page_recovery_next();
++	kvm->arch.nx_huge_page_recovery_thread = vhost_task_create(
++		kvm_nx_huge_page_recovery_worker, kvm_nx_huge_page_recovery_worker_kill,
++		kvm, "kvm-nx-lpage-recovery");
++	
++	if (!kvm->arch.nx_huge_page_recovery_thread)
++		return -ENOMEM;
+ 
+-	return err;
++	vhost_task_start(kvm->arch.nx_huge_page_recovery_thread);
++	return 0;
+ }
+ 
+ void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
+ {
+ 	if (kvm->arch.nx_huge_page_recovery_thread)
+-		kthread_stop(kvm->arch.nx_huge_page_recovery_thread);
++		vhost_task_stop(kvm->arch.nx_huge_page_recovery_thread);
+ }
+ 
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 45be36e5285f..85fe9d0ebb91 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -2382,12 +2382,6 @@ static inline int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+ }
+ #endif /* CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE */
+ 
+-typedef int (*kvm_vm_thread_fn_t)(struct kvm *kvm, uintptr_t data);
+-
+-int kvm_vm_create_worker_thread(struct kvm *kvm, kvm_vm_thread_fn_t thread_fn,
+-				uintptr_t data, const char *name,
+-				struct task_struct **thread_ptr);
+-
+ #ifdef CONFIG_KVM_XFER_TO_GUEST_WORK
+ static inline void kvm_handle_signal_exit(struct kvm_vcpu *vcpu)
+ {
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6ca7a1045bbb..279e03029ce1 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -6561,106 +6561,3 @@ void kvm_exit(void)
+ 	kvm_irqfd_exit();
+ }
+ EXPORT_SYMBOL_GPL(kvm_exit);
+-
+-struct kvm_vm_worker_thread_context {
+-	struct kvm *kvm;
+-	struct task_struct *parent;
+-	struct completion init_done;
+-	kvm_vm_thread_fn_t thread_fn;
+-	uintptr_t data;
+-	int err;
+-};
+-
+-static int kvm_vm_worker_thread(void *context)
+-{
+-	/*
+-	 * The init_context is allocated on the stack of the parent thread, so
+-	 * we have to locally copy anything that is needed beyond initialization
+-	 */
+-	struct kvm_vm_worker_thread_context *init_context = context;
+-	struct task_struct *parent;
+-	struct kvm *kvm = init_context->kvm;
+-	kvm_vm_thread_fn_t thread_fn = init_context->thread_fn;
+-	uintptr_t data = init_context->data;
+-	int err;
+-
+-	err = kthread_park(current);
+-	/* kthread_park(current) is never supposed to return an error */
+-	WARN_ON(err != 0);
+-	if (err)
+-		goto init_complete;
+-
+-	err = cgroup_attach_task_all(init_context->parent, current);
+-	if (err) {
+-		kvm_err("%s: cgroup_attach_task_all failed with err %d\n",
+-			__func__, err);
+-		goto init_complete;
+-	}
+-
+-	set_user_nice(current, task_nice(init_context->parent));
+-
+-init_complete:
+-	init_context->err = err;
+-	complete(&init_context->init_done);
+-	init_context = NULL;
+-
+-	if (err)
+-		goto out;
+-
+-	/* Wait to be woken up by the spawner before proceeding. */
+-	kthread_parkme();
+-
+-	if (!kthread_should_stop())
+-		err = thread_fn(kvm, data);
+-
+-out:
+-	/*
+-	 * Move kthread back to its original cgroup to prevent it lingering in
+-	 * the cgroup of the VM process, after the latter finishes its
+-	 * execution.
+-	 *
+-	 * kthread_stop() waits on the 'exited' completion condition which is
+-	 * set in exit_mm(), via mm_release(), in do_exit(). However, the
+-	 * kthread is removed from the cgroup in the cgroup_exit() which is
+-	 * called after the exit_mm(). This causes the kthread_stop() to return
+-	 * before the kthread actually quits the cgroup.
+-	 */
+-	rcu_read_lock();
+-	parent = rcu_dereference(current->real_parent);
+-	get_task_struct(parent);
+-	rcu_read_unlock();
+-	cgroup_attach_task_all(parent, current);
+-	put_task_struct(parent);
+-
+-	return err;
+-}
+-
+-int kvm_vm_create_worker_thread(struct kvm *kvm, kvm_vm_thread_fn_t thread_fn,
+-				uintptr_t data, const char *name,
+-				struct task_struct **thread_ptr)
+-{
+-	struct kvm_vm_worker_thread_context init_context = {};
+-	struct task_struct *thread;
+-
+-	*thread_ptr = NULL;
+-	init_context.kvm = kvm;
+-	init_context.parent = current;
+-	init_context.thread_fn = thread_fn;
+-	init_context.data = data;
+-	init_completion(&init_context.init_done);
+-
+-	thread = kthread_run(kvm_vm_worker_thread, &init_context,
+-			     "%s-%d", name, task_pid_nr(current));
+-	if (IS_ERR(thread))
+-		return PTR_ERR(thread);
+-
+-	/* kthread_run is never supposed to return NULL */
+-	WARN_ON(thread == NULL);
+-
+-	wait_for_completion(&init_context.init_done);
+-
+-	if (!init_context.err)
+-		*thread_ptr = thread;
+-
+-	return init_context.err;
+-}
+-- 
+2.43.5
 
 
