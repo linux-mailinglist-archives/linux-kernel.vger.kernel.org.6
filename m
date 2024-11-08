@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-401856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2AB9C202A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA419C2030
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 888421F22A34
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6992848A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA421F5857;
-	Fri,  8 Nov 2024 15:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628AF1F5839;
+	Fri,  8 Nov 2024 15:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCztN+Nb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJ4CSb0L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45841F4FC8;
-	Fri,  8 Nov 2024 15:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20A83BBF2;
+	Fri,  8 Nov 2024 15:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078881; cv=none; b=Y2KIGxDqWts8wKb1lX9lXCwA5UpIJ81aVD9gHV2fZVQTHxGeCbNVS1Cj1YfHDZmk+C2+zUmJlVtzonSmcQ3YdQK4ktlCeNEunSdsXsOTEpsPFcdHhR7BKCC/GHr3MFGFXX0jLlnatVTTczW6eaF4bshwcatxeBC6zLEIvk++sFw=
+	t=1731078941; cv=none; b=irhUXILQsbmmtQnonGbcbTMeCvgaBE1PD/qMeE/dYOwGMQMBHA+46YTVXJsEjPiPoP3HqgD+azICMwPJUzMQVHh27z20g6lRObJ7EgXMYqF6Yt29lUydbSob+nxKV1IxgUXYl9Pi22wXeLH8y/CEizSWReoXzxtLlbRbpm8xYA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078881; c=relaxed/simple;
-	bh=e/WBFn6CRKQ9dYFlggr5YIMbLvpXIGE7lX/v2YwnbZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzWbYmzhxODLLCI9CPm2NtGYNwPrmKvQmVIoHrzj7eGJ03XS2ajuaG/86JBmE2F5oY+2a+f0FzhaLVrfBCLxU077hpTfng9paet2+1oDkmwLUMlR23cqKlUp/5hNqXWvPuf4OQ0vIA3sNFA9SnRtIJ1XeixpP5F/285RqwIV4lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCztN+Nb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609C6C4CECD;
-	Fri,  8 Nov 2024 15:14:41 +0000 (UTC)
+	s=arc-20240116; t=1731078941; c=relaxed/simple;
+	bh=5FwFOuDuitCiZ+Sajot442PnEZOqqnhPuv/3cpuWwUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uClmTvhQWW7LGZE0lyZjIUF1jdLGEJmApyOdErZtmL6TKYzJNvnlroUINpewLTaJuuFIcikmiVKviucFmjRGq1uB351VXC3sE8TAT+SVl5WGLATdaJ7pGfjllGzB1IQk461o6XKSaEzsd/S3iKj0VGCgyvum6odKcsqsjVLEZVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJ4CSb0L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36821C4CED3;
+	Fri,  8 Nov 2024 15:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731078881;
-	bh=e/WBFn6CRKQ9dYFlggr5YIMbLvpXIGE7lX/v2YwnbZw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=hCztN+NbNG+V9Tv5AiEI7iS4cmMdVd16lEJGf0vYvfIGWvZg6LgYYccBq7i4J10Kq
-	 6zZ/j69lX9zde009X5QFYFJPy8h+tU4xNbkyhQHIm/xwWy0QZ41YlGfks6Dplw5vWd
-	 NeGNceDZ8JikH6SLEu3eLXD7nx09lI7WIldmjmzll4Zqq9eTYHBQOsG2P/znmcDYqc
-	 aeO/OEfTAgUOpueRIMZTWbjcLh2zZgd+uUqpr/Nn29+kloIzqXpg4gEwBGKI5PyKTk
-	 ohg94/oO43gQNZ3hjEBpC/M6b9c7XLD+C4FggwfSrVbifiIh4Ythgjq2bDI24e7252
-	 QglEw3NbXsEQA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0CD8CCE09E4; Fri,  8 Nov 2024 07:14:41 -0800 (PST)
-Date: Fri, 8 Nov 2024 07:14:41 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Mingcong Bai <jeffbai@aosc.io>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	LKML <linux-kernel@vger.kernel.org>, rcu <rcu@vger.kernel.org>,
-	sakiiily@aosc.io, Kexy Biscuit <kexybiscuit@aosc.io>
-Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
- warnings
-Message-ID: <814ca9e3-df3b-45ce-ad36-9659b445c499@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
- <ZxjLQzHKuR-w16hF@pavilion.home>
- <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
- <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
- <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
- <ZyyQuTfMMSLwStf_@pavilion.home>
- <a7fc57a1a49b5f710c4354ca21c91dba@aosc.io>
- <Zy4WKKq18GunXa6S@localhost.localdomain>
+	s=k20201202; t=1731078941;
+	bh=5FwFOuDuitCiZ+Sajot442PnEZOqqnhPuv/3cpuWwUc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cJ4CSb0L7zq8awyxq09fAD+b3UgKtbxcjmjNvvpz1H7cnB49rxu8MtBTJAZKhlA8B
+	 WZyAIDHZFABopF2om9Ba4qoah6LJYbiSsbix9yKzWuX6CclP1DpVeKt9ZPkU6sKhsr
+	 zJMcrxD8wmOXlCy+UnHbYRX9oOqviU98gIwkAnHKzeKeKSqVVGJ8gruPGmVjqOzbvF
+	 Zi0HWfl5a4pcDKlec1BMp5piok8ztiCt6jVpVSNyQafBgheu7eS/040S+jBP3ls53p
+	 ull160O+4R+nhx4vpWq95Mx1K7Jj2as+GXPn2TPOLP/TJ8Ph72rANmCRnWu6MPNqhI
+	 7Ts/CmE9SesJA==
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ea85f7f445so25118077b3.0;
+        Fri, 08 Nov 2024 07:15:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZplWIAiuTqwZpMpzkgOiM17p5nZIgS38wmqqTI5wbn7ZqgR9rWYIYI7i5hGW9an59EGsDBBvnV1POTw==@vger.kernel.org, AJvYcCVFdBQo2KM8gHu8ujXYcaXaU/O2voqr1oWKTggyBaK+rIxmRcnCz3bqC2d0qlJB5bkqbIUZx9die6fdsATo@vger.kernel.org, AJvYcCWQSCA8AjaT6NnXyEwPyzt+UlTAjCW9N8EiTAhr2UEk+st3pjevVrwW9Z1f74afdiqlBgcqk4/MAE0x@vger.kernel.org, AJvYcCXWUdILelB7/Les0yxmGL0vwlzbf9F0bi/vCeuLteScILGPdQyfDvAlBsxTrV0/jHWWPKU9sEY0PXRA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ7NQdbyaDy0KzFuj997OzDkQ72qXIlfsskndUqRzruSGOx2OD
+	6tF0piLsAxSck464jvYEKVaWmo+J2fT+YidZXuCSaRFgoSW3XIjdwv/+tw2RTGww0mbXtrLJ32Y
+	VC3B0GWncwnyeSUce8hJXn07hig==
+X-Google-Smtp-Source: AGHT+IFWPLItkR0CKo9t9eccKdqmCcV3sKAlatVSed4q4C7UdVb2RSSJ2aCLgyZJu3A0U66K8eNYh+Y1MMUdnkFd3z4=
+X-Received: by 2002:a05:690c:6413:b0:6e3:14b0:ff86 with SMTP id
+ 00721157ae682-6eadde5b02fmr36416977b3.27.1731078940333; Fri, 08 Nov 2024
+ 07:15:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zy4WKKq18GunXa6S@localhost.localdomain>
+References: <20241104135549.38486-1-andreas@kemnade.info> <20241105135234.GA3100411-robh@kernel.org>
+ <20241107075803.2cf33ab4@akair> <36b61684-fede-4422-bd54-0421e6a0fc23@kernel.org>
+ <20241108144800.ks7owznyt4fpcdap@thrive>
+In-Reply-To: <20241108144800.ks7owznyt4fpcdap@thrive>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 8 Nov 2024 09:15:28 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJx+4372DmG0TLAneL3=C6+bUTq-vJ_OkJh4md8zOaMOA@mail.gmail.com>
+Message-ID: <CAL_JsqJx+4372DmG0TLAneL3=C6+bUTq-vJ_OkJh4md8zOaMOA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert mux.txt to json-schema
+To: Nishanth Menon <nm@ti.com>
+Cc: Roger Quadros <rogerq@kernel.org>, Andreas Kemnade <andreas@kemnade.info>, 
+	Tero Kristo <kristo@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+	Tony Lindgren <tony@atomide.com>, Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 02:46:16PM +0100, Frederic Weisbecker wrote:
-> Le Fri, Nov 08, 2024 at 12:29:40AM +0800, Mingcong Bai a écrit :
-> > Hi Frederic,
-> > 
-> > <snip>
-> > 
-> > > Sorry for the lag, I still don't understand how this specific commit
-> > > can produce this issue. Can you please retry with and without this
-> > > commit
-> > > reverted?
-> > 
-> > Just tested v6.12-rc6 with and without the revert. Without the revert, the
-> > touchpad and the wireless adapter both stopped working, whereas with the
-> > revert, both devices functions as normal.
-> > 
-> > I have attached the dmesg for both kernels below. Unlike the log we got last
-> > time, there is no direct reference to tg3 any more, but the NMI backtrace
-> > still pointed to NetworkManager and net/netlink-related functions (perhaps a
-> > debug kernel would be more helpful?). Here's a snippet:
-> > 
-> > [   10.337720] rcu: INFO: rcu_preempt detected expedited stalls on
-> > CPUs/tasks: { P683 } 21 jiffies s: 781 root: 0x0/T
-> > [   10.339168] rcu: blocking rcu_node structures (internal RCU debug):
-> > [   10.591480] loop0: detected capacity change from 0 to 8
-> > [   11.777733] rcu: INFO: rcu_preempt detected expedited stalls on
-> > CPUs/tasks: { 3-.... } 21 jiffies s: 1077 root: 0x8/.
-> > [   11.779210] rcu: blocking rcu_node structures (internal RCU debug):
-> > [   11.780630] Sending NMI from CPU 1 to CPUs 3:
-> > [   11.780659] NMI backtrace for cpu 3
-> > [   11.780663] CPU: 3 UID: 0 PID: 1027 Comm: NetworkManager Not tainted
-> > 6.12.0-aosc-main #1
-> 
-> Funny, this happens on bootup and no CPU has ever gone offline, so the path
-> modified by this patch shouldn't have been taken. And yet this commit has
-> an influence to the point of reliably triggering that stall.
-> 
-> I'm running off of ideas, Paul any clue?
+On Fri, Nov 8, 2024 at 8:48=E2=80=AFAM Nishanth Menon <nm@ti.com> wrote:
+>
+> On 15:03-20241108, Roger Quadros wrote:
+> > >>> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-cloc=
+k.yaml b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> > >>> new file mode 100644
+> > >>> index 000000000000..b271ab86dde1
+> > >>> --- /dev/null
+> > >>> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> > >>> @@ -0,0 +1,123 @@
+> > >>> +# SPDX-License-Identifier: GPL-2.0-only
+> > >>
+> > >> Surely TI as the only author of the original binding would agree to
+> > >> dual-license this?
+> > >>
+> > > So there is a question mark. So you are waiting for some confirmation
+> > > form TI?
+> >
+> > TI code uses below license clause. So better to stick to that.
+> >
+> > # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>
+> Just my 2 cents:
+>
+> Just to be clear, as a corporate, as TI contributor we have approval for =
+the
+> following two:
+>
+> For new stuff:  GPL-2.0-only OR MIT
+> for legacy stuff, we had GPL-2.0-only.
 
-Here is one straw to grasp at...
+New kernel drivers would be GPL-2.0-only...
 
-Is it possible that one of the CPUs had a problem coming online at boot,
-and therefore backed out of the online process, thus appearing to at
-least some of the CPU-hotplug notifiers to have gone offline?
+And based on this, TI can't contribute any new bindings.
 
-							Thanx, Paul
+>
+> There are indeed instances of community contributions with
+> GPL-2.0-only OR BSD-2-Clause, but that is definitely something community
+> is free to do. Looking at history of
+> Documentation/devicetree/bindings/clock/ti/mux.txt, I believe, at least
+> from TI perspective, we are fine with GPL-2.0-only OR MIT and I think it
+> will let other s/w ecosystems consume the same as well.
+
+The choice for bindings are:
+
+GPL-2.0-only
+GPL-2.0-only OR BSD-2-Clause
+
+MIT would be fine, but I just don't want proliferation of different
+variations. See the .dts licenses for an example of that.
+
+For this case, I would suggest going with GPL-2.0-only. It would be
+nice to have blanket permission from TI to dual license any DT
+bindings. I have this from several companies. It really only matters
+for common bindings that we want to move out of the kernel though.
+
+Rob
 
