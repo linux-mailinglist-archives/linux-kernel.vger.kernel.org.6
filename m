@@ -1,231 +1,279 @@
-Return-Path: <linux-kernel+bounces-401486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6669C1B12
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:49:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB499C1B15
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A2402834A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39EDA1F234A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2055D1E3DD8;
-	Fri,  8 Nov 2024 10:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDFE1E2837;
+	Fri,  8 Nov 2024 10:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sFpc/35e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RdZ2ymFj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sFpc/35e";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RdZ2ymFj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MYS4ExCf"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B2447F69;
-	Fri,  8 Nov 2024 10:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100847F69;
+	Fri,  8 Nov 2024 10:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731062977; cv=none; b=q5rFd3TwMnpowekR7jgKMPKgNlZ1spYYRNmQyFlvg46N1LoiqhOGqCtsQ61+yFPRUhuf0ESMICHfa5tbZzCV3vKZ8W+jZBjVXLFQRmny3lJJEJRBJixQqRWsANtANNtmi3XIk2F/YGiDOQPv7c7pamzcW7ursuQ5lvuRuXJXYFs=
+	t=1731062991; cv=none; b=X99O/COvP6Agd6ppERTrr3lNSFlHiUU5sLW7hEryPPE3nGcORLzJZ0SDAe5A4BeQnj7AFeKkNrguw/TOsSmJ7tnB26nCMJ7oPmeVRRetHlj53wqkfI34SPYlrbQyHbwhLnmYSkuPeRn2GTg4NXF/FcTlOSYWMe3mkzimViRxYBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731062977; c=relaxed/simple;
-	bh=I2TcoAr6ba9SmBD1hiOkoEeZk5oREThPwPUftOKlD3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZohkcVQ0GUS2rGaWHKOWuLprq3/xqwlUWJO6FTVMIlnORzMRPaTcH0kdJsErVTvsKGIUPbqyhuy2me2FXxfHovBBfhQfZxPsDUZ4dRbqwh+vZFfR2A8JGU87EyMpm4b05jiuaixq2zsq+jzAQwV7PRaI6mkWOZyzPxZBHfUoJZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sFpc/35e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RdZ2ymFj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sFpc/35e; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RdZ2ymFj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BC5FC1F456;
-	Fri,  8 Nov 2024 10:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731062966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=09YtlxHh/SlXtH0ER2V5eom4KI60eIvbinVvbwoqYy8=;
-	b=sFpc/35eCO54m2JAT8X3xd/CuZPy2GNorPaGRzR84vUo+VbQZQBfQ2yja9ABRP1TXpbhLR
-	70gHBYPidAgYqHZSAfh+MrenWd92su3zyjeeyGceG0s5ZZYcEt4dMblMgwVJLQWDc3mz9m
-	/hXZiBnOqXFGClSLy4e+gVqOcIWTk14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731062966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=09YtlxHh/SlXtH0ER2V5eom4KI60eIvbinVvbwoqYy8=;
-	b=RdZ2ymFjZoq5A+HdlxnPtaSnlk/nH+o5DItkRTT2nNX1Y9SVIBRoN2npE8/VSACXRimC2+
-	nxSdKg7EdXxR2HCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731062966; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=09YtlxHh/SlXtH0ER2V5eom4KI60eIvbinVvbwoqYy8=;
-	b=sFpc/35eCO54m2JAT8X3xd/CuZPy2GNorPaGRzR84vUo+VbQZQBfQ2yja9ABRP1TXpbhLR
-	70gHBYPidAgYqHZSAfh+MrenWd92su3zyjeeyGceG0s5ZZYcEt4dMblMgwVJLQWDc3mz9m
-	/hXZiBnOqXFGClSLy4e+gVqOcIWTk14=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731062966;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=09YtlxHh/SlXtH0ER2V5eom4KI60eIvbinVvbwoqYy8=;
-	b=RdZ2ymFjZoq5A+HdlxnPtaSnlk/nH+o5DItkRTT2nNX1Y9SVIBRoN2npE8/VSACXRimC2+
-	nxSdKg7EdXxR2HCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B03AE1394A;
-	Fri,  8 Nov 2024 10:49:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FKsGK7bsLWenPAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 08 Nov 2024 10:49:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5FECAA0AF4; Fri,  8 Nov 2024 11:49:26 +0100 (CET)
-Date: Fri, 8 Nov 2024 11:49:26 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mathieu Othacehe <othacehe@gnu.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lukas.skupinski@landisgyr.com, anton.reding@landisgyr.com
-Subject: Re: [PATCH 1/1] ext4: Prevent an infinite loop in the lazyinit
- thread.
-Message-ID: <20241108104926.3khlr3csbculamub@quack3>
-References: <20241106134741.26948-1-othacehe@gnu.org>
- <20241106134741.26948-2-othacehe@gnu.org>
+	s=arc-20240116; t=1731062991; c=relaxed/simple;
+	bh=lYKOawxz1Q7nlDLuMR7vnOgcfTC8R84N0Ew8t0dU7Js=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=buKK+o9wSInbS8ODKrGdb4TN362BZgpuTgu4kpjlarOqfj9Gs0GsPPt9yyUfQQDXFHn9sBSO0bBj/L6+E47bbRIeWr2bfQYWS6I/iKDrqo5UxqJ7xvj9U4uGFAd77NcG3YkmwbulD98IpmxJZXOg09a145JjMHCDjxnAX8vtPDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MYS4ExCf; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8AeXJR031436;
+	Fri, 8 Nov 2024 10:49:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=xHgmF6
+	UU6hfAi+WJL2nBRYQKhfD8a/G2aximWS/8Ces=; b=MYS4ExCf9qDYVg254pakAw
+	sUVZ6X+4/X3D0n7Zs26EFcWI3w9jTf7UOuNCZkckKKgMFQfBWxybxObArv41Ov8w
+	HxPygx2ITzMo0Ze18p4PSTNf2saMRz8iUeDj2CFtiLM3e/RBqRFQVJBl5U6OgQi3
+	M+QK5T/JNtRCRFOSDZu1HclERf1aO+lY0rTiYY1z2uCd31Jwozi9xNQKuxEazRcE
+	tUHsv7DLhfEihPh0HeX3e3cKqq9ZO3UBKCoIIIT2K1A7VtipSpew5tSCTe5cEXNX
+	JD1laYV1sRSK31d6i7XYdCwJ6f5Jumv6Y5gH2/r8sIo8/IJ7yglXwNiGpmy2yuJA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sh3br157-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 10:49:38 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7NjCXn013158;
+	Fri, 8 Nov 2024 10:49:37 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p14120hw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 08 Nov 2024 10:49:37 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A8Anaxs49742418
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 8 Nov 2024 10:49:36 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 83C0258063;
+	Fri,  8 Nov 2024 10:49:36 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 041E258052;
+	Fri,  8 Nov 2024 10:49:34 +0000 (GMT)
+Received: from [9.179.28.136] (unknown [9.179.28.136])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  8 Nov 2024 10:49:33 +0000 (GMT)
+Message-ID: <13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
+Date: Fri, 8 Nov 2024 16:19:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241106134741.26948-2-othacehe@gnu.org>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[gnu.org:email,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: hugetlb_dio: Check for initial conditions to
+ skip in the start
+From: Donet Tom <donettom@linux.ibm.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241101141557.3159432-1-usama.anjum@collabora.com>
+ <5883b1c0-13c6-4593-9dd5-17f34c1319fe@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <5883b1c0-13c6-4593-9dd5-17f34c1319fe@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Xo7lmAb9_QkAWEe77q2eSQoteq00qaQ_
+X-Proofpoint-ORIG-GUID: Xo7lmAb9_QkAWEe77q2eSQoteq00qaQ_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ suspectscore=0 priorityscore=1501 bulkscore=0 malwarescore=0 phishscore=0
+ mlxscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411080086
 
-On Wed 06-11-24 14:47:41, Mathieu Othacehe wrote:
-> Use ktime_get_ns instead of ktime_get_real_ns when computing the lr_timeout
-> not to be affected by system time jumps.
-> 
-> Use a boolean instead of the MAX_JIFFY_OFFSET value to determine whether
-> the next_wakeup value has been set. Comparing elr->lr_next_sched to
-> MAX_JIFFY_OFFSET can cause the lazyinit thread to loop indefinitely.
-> 
-> Co-developed-by: Lukas Skupinski <lukas.skupinski@landisgyr.com>
-> Signed-off-by: Lukas Skupinski <lukas.skupinski@landisgyr.com>
-> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
 
-Nice catch! The patch looks good so feel free to add:
+On 11/8/24 16:05, Donet Tom wrote:
+>
+> On 11/1/24 19:45, Muhammad Usama Anjum wrote:
+>> The test should be skipped if initial conditions aren't fulfilled in
+>> the start instead of failing and outputting non-compliant TAP logs. This
+>> kind of failure pollutes the results. The initial conditions are:
+>> - The test should only execute if /tmp file can be allocated.
+>> - The test should only execute if huge pages are free.
+>>
+>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>> ---
+>> Before:
+>> TAP version 13
+>> 1..4
+>> Bail out! Error opening file
+>> : Read-only file system (30)
+>>   # Planned tests != run tests (4 != 0)
+>>   # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>
+>> After:
+>> TAP version 13
+>> 1..0 # SKIP Unable to allocate file: Read-only file system
+>> ---
+>>   tools/testing/selftests/mm/hugetlb_dio.c | 19 ++++++++++++-------
+>>   1 file changed, 12 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/mm/hugetlb_dio.c 
+>> b/tools/testing/selftests/mm/hugetlb_dio.c
+>> index f9ac20c657ec6..60001c142ce99 100644
+>> --- a/tools/testing/selftests/mm/hugetlb_dio.c
+>> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
+>> @@ -44,13 +44,6 @@ void run_dio_using_hugetlb(unsigned int start_off, 
+>> unsigned int end_off)
+>>       if (fd < 0)
+>>           ksft_exit_fail_perror("Error opening file\n");
+>>   -    /* Get the free huge pages before allocation */
+>> -    free_hpage_b = get_free_hugepages();
+>
+> Hi Muhammed Usman Anjum
+>
+> Reading the free pages is required before starting the test. This 
+> value will be compared to the free pages after the test. If they are 
+> not the same, the test will be considered a failure.
+>
+> Since reading the free pages before the test was 
+> removed,|free_hpage_b|  is always 0, causing the test to fail.
+>
+> ./tools/testing/selftests/mm/hugetlb_dio TAP version 13 1..4 # No. 
+> Free pages before allocation : 0 # No. Free pages after munmap : 100 
+> not ok 1 : Huge pages not freed! # No. Free pages before allocation : 
+> 0 # No. Free pages after munmap : 100 not ok 2 : Huge pages not freed! 
+> # No. Free pages before allocation : 0 # No. Free pages after munmap : 
+> 100 not ok 3 : Huge pages not freed! # No. Free pages before 
+> allocation : 0 # No. Free pages after munmap : 100 not ok 4 : Huge 
+> pages not freed! # Totals: pass:0 fail:4 xfail:0 xpass:0 skip:0 
+> error:0 I think below changes are required. --- 
+> a/tools/testing/selftests/mm/hugetlb_dio.c +++ 
+> b/tools/testing/selftests/mm/hugetlb_dio.c @@ -44,6 +44,9 @@ void 
+> run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off) if 
+> (fd < 0) ksft_exit_fail_perror("Error opening file\n"); + /* Get the 
+> free huge pages before allocation */ + free_hpage_b = 
+> get_free_hugepages(); + /* Allocate a hugetlb page */ orig_buffer = 
+> mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0); if (orig_buffer 
+> == MAP_FAILED) { With this change the tests are passing. 
+> ./tools/testing/selftests/mm/hugetlb_dio TAP version 13 1..4 # No. 
+> Free pages before allocation : 100 # No. Free pages after munmap : 100 
+> ok 1 : Huge pages freed successfully ! # No. Free pages before 
+> allocation : 100 # No. Free pages after munmap : 100 ok 2 : Huge pages 
+> freed successfully ! # No. Free pages before allocation : 100 # No. 
+> Free pages after munmap : 100 ok 3 : Huge pages freed successfully ! # 
+> No. Free pages before allocation : 100 # No. Free pages after munmap : 
+> 100 ok 4 : Huge pages freed successfully ! # Totals: pass:4 fail:0 
+> xfail:0 xpass:0 skip:0 error:0 Thank
+>
+> Donet
+>
+>
+Sorry. Please ignore above mail.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reading the free pages is required before starting the test. This
+value will be compared to the free pages after the test. If they are not the same, the test will be considered a failure.
 
-But the analysis you've done in patch 0/1 would ideally be in the changelog
-of this patch so that we can easily get back to it in the future in git logs.
-Maybe Ted can handle that on commit?
+Since reading the free pages before the test was removed,free_hpage_b is always 0, causing the test to fail.
 
-								Honza
+./tools/testing/selftests/mm/hugetlb_dio
+TAP version 13
+1..4
+# No. Free pages before allocation : 0
+# No. Free pages after munmap : 100
+not ok 1 : Huge pages not freed!
+# No. Free pages before allocation : 0
+# No. Free pages after munmap : 100
+not ok 2 : Huge pages not freed!
+# No. Free pages before allocation : 0
+# No. Free pages after munmap : 100
+not ok 3 : Huge pages not freed!
+# No. Free pages before allocation : 0
+# No. Free pages after munmap : 100
+not ok 4 : Huge pages not freed!
+# Totals: pass:0 fail:4 xfail:0 xpass:0 skip:0 error:0
 
-> ---
->  fs/ext4/super.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 9fcf44064c6a6..b4839ccd83ad5 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -3712,12 +3712,12 @@ static int ext4_run_li_request(struct ext4_li_request *elr)
->  		ret = 1;
->  
->  	if (!ret) {
-> -		start_time = ktime_get_real_ns();
-> +		start_time = ktime_get_ns();
->  		ret = ext4_init_inode_table(sb, group,
->  					    elr->lr_timeout ? 0 : 1);
->  		trace_ext4_lazy_itable_init(sb, group);
->  		if (elr->lr_timeout == 0) {
-> -			elr->lr_timeout = nsecs_to_jiffies((ktime_get_real_ns() - start_time) *
-> +			elr->lr_timeout = nsecs_to_jiffies((ktime_get_ns() - start_time) *
->  				EXT4_SB(elr->lr_super)->s_li_wait_mult);
->  		}
->  		elr->lr_next_sched = jiffies + elr->lr_timeout;
-> @@ -3777,8 +3777,9 @@ static int ext4_lazyinit_thread(void *arg)
->  
->  cont_thread:
->  	while (true) {
-> -		next_wakeup = MAX_JIFFY_OFFSET;
-> +		bool next_wakeup_initialized = false;
->  
-> +		next_wakeup = 0;
->  		mutex_lock(&eli->li_list_mtx);
->  		if (list_empty(&eli->li_request_list)) {
->  			mutex_unlock(&eli->li_list_mtx);
-> @@ -3791,8 +3792,11 @@ static int ext4_lazyinit_thread(void *arg)
->  					 lr_request);
->  
->  			if (time_before(jiffies, elr->lr_next_sched)) {
-> -				if (time_before(elr->lr_next_sched, next_wakeup))
-> +				if (!next_wakeup_initialized ||
-> +				    time_before(elr->lr_next_sched, next_wakeup)) {
->  					next_wakeup = elr->lr_next_sched;
-> +					next_wakeup_initialized = true;
-> +				}
->  				continue;
->  			}
->  			if (down_read_trylock(&elr->lr_super->s_umount)) {
-> @@ -3820,16 +3824,18 @@ static int ext4_lazyinit_thread(void *arg)
->  				elr->lr_next_sched = jiffies +
->  					get_random_u32_below(EXT4_DEF_LI_MAX_START_DELAY * HZ);
->  			}
-> -			if (time_before(elr->lr_next_sched, next_wakeup))
-> +			if (!next_wakeup_initialized ||
-> +			    time_before(elr->lr_next_sched, next_wakeup)) {
->  				next_wakeup = elr->lr_next_sched;
-> +				next_wakeup_initialized = true;
-> +			}
->  		}
->  		mutex_unlock(&eli->li_list_mtx);
->  
->  		try_to_freeze();
->  
->  		cur = jiffies;
-> -		if ((time_after_eq(cur, next_wakeup)) ||
-> -		    (MAX_JIFFY_OFFSET == next_wakeup)) {
-> +		if (!next_wakeup_initialized || time_after_eq(cur, next_wakeup)) {
->  			cond_resched();
->  			continue;
->  		}
-> -- 
-> 2.46.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I think below changes are required.
+
+iff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
+index 60001c142ce9..4b52106b8124 100644
+--- a/tools/testing/selftests/mm/hugetlb_dio.c
++++ b/tools/testing/selftests/mm/hugetlb_dio.c
+@@ -44,6 +44,9 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
+         if (fd < 0)
+                 ksft_exit_fail_perror("Error opening file\n");
+  
++       /* Get the free huge pages before allocation */
++       free_hpage_b = get_free_hugepages();
++
+         /* Allocate a hugetlb page */
+
+         orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
+
+         if (orig_buffer == MAP_FAILED) {
+
+  With this change the tests are passing.
+
+./tools/testing/selftests/mm/hugetlb_dio
+
+TAP version 131..4
+# No. Free pages before allocation : 100
+# No. Free pages after munmap : 100
+ok 1 : Huge pages freed successfully !
+# No. Free pages before allocation : 100
+# No. Free pages after munmap : 100
+ok 2 : Huge pages freed successfully !
+# No. Free pages before allocation : 100
+# No. Free pages after munmap : 100
+ok 3 : Huge pages freed successfully !
+# No. Free pages before allocation : 100
+# No. Free pages after munmap : 100
+ok 4 : Huge pages freed successfully !
+# Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+Thanks
+Donet
+
+
+>> -    if (free_hpage_b == 0) {
+>> -        close(fd);
+>> -        ksft_exit_skip("No free hugepage, exiting!\n");
+>> -    }
+>> -
+>>       /* Allocate a hugetlb page */
+>>       orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 
+>> 0);
+>>       if (orig_buffer == MAP_FAILED) {
+>> @@ -94,8 +87,20 @@ void run_dio_using_hugetlb(unsigned int start_off, 
+>> unsigned int end_off)
+>>   int main(void)
+>>   {
+>>       size_t pagesize = 0;
+>> +    int fd;
+>>         ksft_print_header();
+>> +
+>> +    /* Open the file to DIO */
+>> +    fd = open("/tmp", O_TMPFILE | O_RDWR | O_DIRECT, 0664);
+>> +    if (fd < 0)
+>> +        ksft_exit_skip("Unable to allocate file: %s\n", 
+>> strerror(errno));
+>> +    close(fd);
+>> +
+>> +    /* Check if huge pages are free */
+>> +    if (!get_free_hugepages())
+>> +        ksft_exit_skip("No free hugepage, exiting\n");
+>> +
+>>       ksft_set_plan(4);
+>>         /* Get base page size */
 
