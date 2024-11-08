@@ -1,160 +1,108 @@
-Return-Path: <linux-kernel+bounces-402106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3579C23F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:47:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A089C23F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8624B20E7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB5301C22D9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A1C22C73E;
-	Fri,  8 Nov 2024 17:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h4kA4DBU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B66221CFA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58FD21CFB7;
 	Fri,  8 Nov 2024 17:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IT942eBZ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA07227BB5
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087378; cv=none; b=OxT1kEwXDJFdIHC8bQHQ0urzAB3EJStVsFGKJoMI+uTohfx8+VKuhOxZoMwe4/OC8jfPeD8NGyCL7Db+GAM7ESQ8iIVWX8ySMs28O4L5OjuVGIEzDlhxbAGl+qxm6lyqJSv86DF0/BgQvcMFb16dWwupdLh0+7ppqEkrwrMhbV4=
+	t=1731087376; cv=none; b=QLyz8oA8JcEiJACpCXv9HPUDNK4JNCYcQ68LMLDNoegIJ5oFS/RS/EmTl8v06V/n3DjwbgoVUy/Lc/yqMSdV6cAA9eC7CdHHDtPbS972uWmHLlAHBj2zTyO+Fb/MbE9+M5XEt9d/w4qjzxcb9fUtSc8uG0neijjqAb1jXwwTpy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087378; c=relaxed/simple;
-	bh=dnorJaPLf/nRbjesNrjVGRH985hdx7YMTFrtQ40VD+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDPSAEFW3MZGfdU0CGXZvidaotRddUOH5A/F0iMfR4G2NWIegif5Jd2aF+9WPkJsQlnUb6iDC9gC+9gt+ItFxl9R01b/JCSnanKGYS3BpTR+wzR+al7jRBDRe6uNS1TbozoIgC9ajoN1Ost+PJWTdk9FvOeIGsX9Cm30OmV8ixY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h4kA4DBU; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731087376; x=1762623376;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dnorJaPLf/nRbjesNrjVGRH985hdx7YMTFrtQ40VD+8=;
-  b=h4kA4DBUcYbhGtWX/nKq3/Dk6rUGxdCErnskNvo2MH0y3+zIVN9Z+7XF
-   d66OZ8DTPTzx2mCWEV4guDKi83xl/1C+oeKLPOLfu6BmG2xrsm28AfsBI
-   GfWrvomWkvIFIxaOakBXj0KSBONoboNk8HyxKeMSHqYMpXRgXNUpjCWd5
-   qwR0YzjxH42ljyrmJzx0etK1o8vlzoHJF3hQfqQkg2RgQxPpxyeivvoQu
-   TDo12hxIyvTskRMHPoBAJXWvbzRrwOyVOoWMEOuF3asEXdrK1MqZ9Qt7Y
-   XXUAfCcveZ9ZrMrr5Gad0j5/pHmbMqtYtsbtGi8io0pccALpbr6Ehr3Zb
-   w==;
-X-CSE-ConnectionGUID: lhRv+mi4Tjm0VHbHt2NyaQ==
-X-CSE-MsgGUID: 737gxq15TzOYx1pmnfmXTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30834828"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30834828"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 09:36:16 -0800
-X-CSE-ConnectionGUID: msmfwkvlSdmuri2AC6/J2Q==
-X-CSE-MsgGUID: JOUhS8lKROiAxWX4U998Pg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
-   d="scan'208";a="116480357"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 08 Nov 2024 09:36:13 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9Su3-000rek-0l;
-	Fri, 08 Nov 2024 17:36:11 +0000
-Date: Sat, 9 Nov 2024 01:36:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jai Luthra <jai.luthra@ideasonboard.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH v2 13/15] media: i2c: ds90ub913: Add error handling to
- ub913_hw_init()
-Message-ID: <202411090141.ZzfAF7jL-lkp@intel.com>
-References: <20241108-ub9xx-fixes-v2-13-c7db3b2ad89f@ideasonboard.com>
+	s=arc-20240116; t=1731087376; c=relaxed/simple;
+	bh=UBSwk2uyPAnNAEqDMvDOCQ3Cpd7emo8eshhstWEooXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gFKf5CHheniZzVP5aFu7TR1haUOo8KTy1CTVYivoY4I+zrI/E74H2U3YH0tOYa7HTFolFBOMxnDRgmOju9umestkquaRm2aTKozbeV3UNEW59WsCKtLClSs2YunhXi7nIYpW7LAmu/vyChRQaDSMUSuK7YE8fArBtBjKY3d5u4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IT942eBZ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-431ac30d379so20334595e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:36:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731087373; x=1731692173; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
+        b=IT942eBZUyAp9jQJTzBlfn6GqNP4Y97xDyHuWe7L5T2oEqM4U2ZIo274CEGZ+aagkf
+         oyrSrnJ7b9ehFsPtGvPpP4Fzm7P6At/B6XUTHZba80JFT8ITOKXMTaHq4KpgZwhGdGWy
+         TcYF52pKH4ds19C6GX7JRJz5uTJUDavXKPxgWHX3v5K1Et230oAG8t3YvVOIOCSmjKXR
+         KBRfgy97ybgdu2yFx2XoO+7NKNdT8kKl4sT5NFA7m/lCBMeBSJuxdVUarptPcjYpjDfI
+         u6WXFk72YbAT1odpHrnwPl2kY5Y4pef2WX5RolGcXCPD9zVEhtjmTKW8AFJ5qPvRvS9q
+         yxVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731087373; x=1731692173;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=24rUIfwiGyBziK1kSY2+b5Nvpi1meTWCMZaQMdMFtck=;
+        b=RQ4vAYag1EJUKztbgGT51Lp6u40ixkutvs5Azh1D7ud3wuknac/ooxwwy8QHuvdwRJ
+         4leDmciFRiumrv+jp9Tw/0GOqC78YRLNoeDwflyCNhnADZ4nkfNltKkgyBGyQWOOui63
+         VUY8y7NtUEKQnBr6zQbtWKaVdVTLuIDc3tSJgvuFIock6qHipFzc0NDPm9d1pEiHMd1B
+         JbzFpcFT3WBmWxbTmgjgd8MlCSGgjsDEKLaC2nZs/AeVh/gKDFctpg4/MBS2bruIBqkg
+         ZoN+30W+KuUqViQUPQuhqArjEGTtELQ+duvjDswcnuCtzaOCTsGMQrLvp6mq6smP2rvF
+         iG7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVct6cMdkAFm9ZLMUGVp0SWgVjVNpbvijPWxvhjaoJZhkVDUdFpfuBh4kjQXn5irfTimfJdNleEmySDk40=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpfptYtZnZhrft8+3pZSOkGEY1IY1z02AB2YCnBMbtgjgPepyg
+	/qV1EOetiFwCKwwVR+7jxEhp3FCGZEJnXW1QpGCU/1jaWhDVi8/UYzJFwhwq51c=
+X-Google-Smtp-Source: AGHT+IFB4cQNv5E0di1VK1U5QifG33FuDYlnKtO6ciqXhye/GnzodGjwkiWo7tPy7OZ37dGOU9CmJQ==
+X-Received: by 2002:a5d:59a6:0:b0:37d:4d3f:51e6 with SMTP id ffacd0b85a97d-381f186bf72mr3099046f8f.14.1731087372779;
+        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97cfaesm5482406f8f.38.2024.11.08.09.36.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 09:36:12 -0800 (PST)
+Message-ID: <f6c2aea7-3363-4c29-bdd8-ee3f6dd1a642@linaro.org>
+Date: Fri, 8 Nov 2024 17:36:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-ub9xx-fixes-v2-13-c7db3b2ad89f@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] clk: qcom: camcc-qcs615: Add QCS615 camera clock
+ controller driver
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241108-qcs615-mm-clockcontroller-v3-0-7d3b2d235fdf@quicinc.com>
+ <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241108-qcs615-mm-clockcontroller-v3-4-7d3b2d235fdf@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tomi,
+On 08/11/2024 04:09, Taniya Das wrote:
+> +	.alpha_en_mask = BIT(24),
+> +	.vco_val = BIT(21),
+> +	.vco_mask = GENMASK(21, 20),
 
-kernel test robot noticed the following build errors:
+Thanks for following up on this.
 
-[auto build test ERROR on 98f7e32f20d28ec452afb208f9cffc08448a2652]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tomi-Valkeinen/media-i2c-ds90ub9x3-Fix-extra-fwnode_handle_put/20241108-173952
-base:   98f7e32f20d28ec452afb208f9cffc08448a2652
-patch link:    https://lore.kernel.org/r/20241108-ub9xx-fixes-v2-13-c7db3b2ad89f%40ideasonboard.com
-patch subject: [PATCH v2 13/15] media: i2c: ds90ub913: Add error handling to ub913_hw_init()
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241109/202411090141.ZzfAF7jL-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411090141.ZzfAF7jL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411090141.ZzfAF7jL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/media/i2c/ds90ub913.c: In function 'ub913_hw_init':
->> drivers/media/i2c/ds90ub913.c:751:33: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-     751 |                                 FIELD_PREP(UB913_REG_GENERAL_CFG_PCLK_RISING,
-         |                                 ^~~~~~~~~~
-
-
-vim +/FIELD_PREP +751 drivers/media/i2c/ds90ub913.c
-
-   722	
-   723	static int ub913_hw_init(struct ub913_data *priv)
-   724	{
-   725		struct device *dev = &priv->client->dev;
-   726		bool mode_override;
-   727		u8 mode;
-   728		int ret;
-   729		u8 v;
-   730	
-   731		ret = ub913_read(priv, UB913_REG_MODE_SEL, &v);
-   732		if (ret)
-   733			return ret;
-   734	
-   735		if (!(v & UB913_REG_MODE_SEL_MODE_UP_TO_DATE))
-   736			return dev_err_probe(dev, -ENODEV,
-   737					     "Mode value not stabilized\n");
-   738	
-   739		mode_override = v & UB913_REG_MODE_SEL_MODE_OVERRIDE;
-   740		mode = v & UB913_REG_MODE_SEL_MODE_MASK;
-   741	
-   742		dev_dbg(dev, "mode from %s: %#x\n",
-   743			mode_override ? "reg" : "deserializer", mode);
-   744	
-   745		ret = ub913_i2c_master_init(priv);
-   746		if (ret)
-   747			return dev_err_probe(dev, ret, "i2c master init failed\n");
-   748	
-   749		ret = ub913_update_bits(priv, UB913_REG_GENERAL_CFG,
-   750					UB913_REG_GENERAL_CFG_PCLK_RISING,
- > 751					FIELD_PREP(UB913_REG_GENERAL_CFG_PCLK_RISING,
-   752						   priv->pclk_polarity_rising));
-   753	
-   754		if (ret)
-   755			return ret;
-   756	
-   757		return 0;
-   758	}
-   759	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+---
+bod
 
