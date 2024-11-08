@@ -1,257 +1,135 @@
-Return-Path: <linux-kernel+bounces-402067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D59C22F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:30:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409E99C22F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B872829DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A6A282777
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20743191F8E;
-	Fri,  8 Nov 2024 17:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6EE8199949;
+	Fri,  8 Nov 2024 17:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8hLLCBf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGPlTwLS"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7881DFD1;
-	Fri,  8 Nov 2024 17:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED62191F8E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087007; cv=none; b=fT0p5zCDkJkCnnrQgRsjsLOS0UTD/anOmyv1ayqMYx+x70U8UE0gnUo/zo4afbMlVUS4G6gfnUo+hfoOxOH4y46Ra6ws7fi37veB6MT2EYqpin4BZg5GQuAkZRohQhD2Jh21LyQK3KXkM3yOlymYtVZO3b8awtM9Aeuvdo588s8=
+	t=1731087057; cv=none; b=SAzF0a42Nasg6vblq63Wi7NUq1SXIEyzh0Qqd6EGisY/DFAdUrit1xBH1wSZeUu7jkAZAJbwFP9uYR4jGyV9J+AKgBaOKQRWL9tPnVdRlACLWV+K7axqbHhsyz1l+wKZNlZZtHaHr+ZqXD0xTa/8E5ePAMiqndAjpSMmbyHrMR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087007; c=relaxed/simple;
-	bh=29DVLAh2HCtcArmnuxwpYrI5cfTUdqXRDhp9CcKrP+w=;
+	s=arc-20240116; t=1731087057; c=relaxed/simple;
+	bh=CXGOR8dp2cvOBQjL2frknhXNbqPTi2sDD8uCs4QUQdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ts7tEV4zBZSJP+j8wHshdXH/+RhJHxM0iYLvOYcf42Go95hsorPre7QAUr0/XNj+Si3UJ/oxMBKfIKYi5wxKFOsOq6zv+G6dcoswwvSNU3X3t/+mpPbfIT1eiv8biiEFjl24A/mVhWxM73Y7TXaEtVCFGVmaXQtQ5kuqxYAk3KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8hLLCBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1FDC4CECD;
-	Fri,  8 Nov 2024 17:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731087006;
-	bh=29DVLAh2HCtcArmnuxwpYrI5cfTUdqXRDhp9CcKrP+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j8hLLCBf8x6iuGLD5Z8eLntiO0L9tkSM8Ek1amA+tY/UUWKy7gYVe+u1bWnMCvUrz
-	 w3k6cKEWgGMvWJO9lFeEfbxYYn5p8aP1VupU/aBRy5zu8yU4k4UKzNELMa7HvkIVMs
-	 gvb/toW4F0aaAVeeP+vUX7v4urTAlTLLoglHttOz0tGy1mrsRN8kOLBBK0hvLqvgFS
-	 NpeMmsqptwsPbmCwswzuB61M0KDfVC1j8d+vHFx24nHInBcYgbd3UbHRnYT9d5ljEV
-	 Anl0oyQcQaNSSm0WhDAL+XjTuhFxdP0solLdkmAaivWOzWwEQMW/F3Fyt0ycL/8hBT
-	 1VTjwKIOWcGYg==
-Date: Fri, 8 Nov 2024 09:30:06 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: chandan.babu@oracle.com, dchinner@redhat.com, osandov@fb.com,
-	john.g.garry@oracle.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH 1/2] xfs: Fix missing block calculations in xfs datadev
- fsmap
-Message-ID: <20241108173006.GA168069@frogsfrogsfrogs>
-References: <20240826031005.2493150-1-wozizhi@huawei.com>
- <20240826031005.2493150-2-wozizhi@huawei.com>
- <20241107234352.GU2386201@frogsfrogsfrogs>
- <1549f04a-8431-405d-adfc-23e5988abe51@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aNf8NSIJZNn1wNchCKFS/9hZGaFaH2bOSRwPCLFXcoihDHbd6zY0e4bS+bg9NUmhwxRzK7txcUUCyA9cEO2J6aYmre9GDo5sSowVyVDYqC9amBPRUG7YbgslE9pHF3SkwV8QglV+92oXzVMHslvv2oa/23+02/kViZCmXp8bchA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NGPlTwLS; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f1292a9bso3139402e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:30:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731087053; x=1731691853; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HR2TxMgpZ8/rc/m1AMgMu7w77GdSFVU9VMdbXA9s9WI=;
+        b=NGPlTwLS8okEIFlVUK2RKYpy5gwQUyaDigvCu07ARTHcWFXtA9+8hUXhseNGDK887x
+         Jj+FkE435BOR9MIGKHGCnDN/vsDAS+dvMTf8SYoM5yMqu8G+gHDRJLCsV639Hp/fvfAJ
+         sNtL8cBRF/W+x+grR7gT4PTMTVvbSblZ32WM9GUWOsp6bte2tEbk3Rng9PAlwy75tEai
+         uHpox1R1nScPxpy7XDt2EE+VEwaF2ehKbdM2RcldlGm6LDTb6p9dsccbz/+/TfKjBEg4
+         XYAiTpiENZeMXzXedt+1TltXCPT9bJygAimH7yvr5dRII3BKsgMSBoOQvIL2WOqlIgnp
+         v3Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731087053; x=1731691853;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HR2TxMgpZ8/rc/m1AMgMu7w77GdSFVU9VMdbXA9s9WI=;
+        b=kUto0pMO1nW42GJt2UPeyF7TavR43aQsI4nr7qqbwREYVPy5I1HXUZmirchocbSqyt
+         2Z95zrOlEm+laqFVtqFW1GFNKStanuWoP8blEoWDMry8UgTW+4UowBt4WElGrf30t50c
+         oWPiNFt6m5tqqUdb5vqnvW3DUTJe8GluyZ5rDwYgHiAXjyS9XK4w4Wnxv/AoxnIiu/tG
+         RzEHuilo/JWu5Sk9WWj5pwh8r4MQJDA4Fb1f7+9djpVzt6CyHtNWSXNL8n7MRrxIH3mm
+         6vJDKiyFJZJyD02k29fRM2yKDxR1lTcePMdrGpWeg3vU3SjYHMgB80bdy3Rp8RX6bAuK
+         hTEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF7QQG6iqdxmHWKWh9XiAuyAm9iYok5gRLOOFNSeXJ1zmXqzu0XYxFgDsuakETsSokxWqYmYXDoPc0lP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzpahi1ko7U5dXP3q6XrmddNKbrWzK+PU+fm5cm45OW1BLlxGrh
+	SdtR2TiN1LI4bfJUQbGJyuaJ6wzWB7j4x1I4PbJf8bdSn5tHZfZGkuSJ0y/Tc8tuh6ch35sPRTc
+	AZx4=
+X-Google-Smtp-Source: AGHT+IEmbAp1aw5z0/qXYi1N2m9p7W/TyNvIQC6pE89E1FbB47EbyRo3HzALuncBJye8XgeVFDi31Q==
+X-Received: by 2002:a05:6512:318c:b0:539:e333:1822 with SMTP id 2adb3069b0e04-53d862b4664mr2119678e87.4.1731087053381;
+        Fri, 08 Nov 2024 09:30:53 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82685ea4sm680867e87.78.2024.11.08.09.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 09:30:52 -0800 (PST)
+Date: Fri, 8 Nov 2024 19:30:49 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: Use valid node names for GPI
+ DMAs
+Message-ID: <lbulzegpd5xachy6v7qgqwwmsy7h6pj5ykf4ni6fz7idpjdbr5@3nhx32yrz6gj>
+References: <20241107-topic-sa8775_dma-v1-1-eb633e07b007@oss.qualcomm.com>
+ <b22836bb-4fa2-4605-86ca-c3cb83560292@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1549f04a-8431-405d-adfc-23e5988abe51@huawei.com>
+In-Reply-To: <b22836bb-4fa2-4605-86ca-c3cb83560292@oss.qualcomm.com>
 
-On Fri, Nov 08, 2024 at 10:29:08AM +0800, Zizhi Wo wrote:
+On Thu, Nov 07, 2024 at 10:15:32PM +0100, Konrad Dybcio wrote:
+> On 7.11.2024 10:14 PM, Konrad Dybcio wrote:
+> > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > 
+> > As pointed out by Intel's robot, the node name doesn't adhere to
+> > dt-bindings.
+> > 
+> > Fix errors like this one:
+> > 
+> > qcs9100-ride.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+> > 
+> > Fixes: 34d17ccb5db8 ("arm64: dts: qcom: sa8775p: Add GPI configuration")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202411080206.vFLRjIBZ-lkp@intel.com/
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > index 9f315a51a7c14cd4116ec5a66a60285361d343f1..ebfa049515c63a0f1a333315dd370e6f78501129 100644
+> > --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> > @@ -854,7 +854,7 @@ ipcc: mailbox@408000 {
+> >  			#mbox-cells = <2>;
+> >  		};
+> >  
+> > -		gpi_dma2: qcom,gpi-dma@800000  {
+> > +		gpi_dma2: dma-controller@800000  {
+> >  			compatible = "qcom,sm6350-gpi-dma";
 > 
-> 
-> 在 2024/11/8 7:43, Darrick J. Wong 写道:
-> > On Mon, Aug 26, 2024 at 11:10:04AM +0800, Zizhi Wo wrote:
-> > > In xfs datadev fsmap query, I noticed a missing block calculation problem:
-> > > [root@fedora ~]# xfs_db -r -c "sb 0" -c "p" /dev/vdb
-> > > magicnum = 0x58465342
-> > > blocksize = 4096
-> > > dblocks = 5242880
-> > > ......
-> > > [root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
-> > > ...
-> > > 30: 253:16 [31457384..41943031]: free space            3  (104..10485751)    10485648
-> > > 
-> > > (41943031 + 1) / 8 = 5242879 != 5242880
-> > > We missed one block in our fsmap calculation!
-> > 
-> > Eek.
-> > 
-> > > The root cause of the problem lies in __xfs_getfsmap_datadev(), where the
-> > > calculation of "end_fsb" requires a classification discussion. If "end_fsb"
-> > > is calculated based on "eofs", we need to add an extra sentinel node for
-> > > subsequent length calculations. Otherwise, one block will be missed. If
-> > > "end_fsb" is calculated based on "keys[1]", then there is no need to add an
-> > > extra node. Because "keys[1]" itself is unreachable, it cancels out one of
-> > > the additions. The diagram below illustrates this:
-> > > 
-> > > |0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|-----eofs
-> > > |---------------|---------------------|
-> > > a       n       b         n+1         c
-> > > 
-> > > Assume that eofs is 16, the start address of the previous query is block n,
-> > > sector 0, and the length is 1, so the "info->next" is at point b, sector 8.
-> > > In the last query, suppose the "rm_startblock" calculated based on
-> > > "eofs - 1" is the last block n+1 at point b. All we get is the starting
-> > > address of the block, not the end. Therefore, an additional sentinel node
-> > > needs to be added to move it to point c. After that, subtracting one from
-> > > the other will yield the remaining 1.
-> > > 
-> > > Although we can now calculate the exact last query using "info->end_daddr",
-> > > we will still get an incorrect value if the device at this point is not the
-> > > boundary device specified by "keys[1]", as "end_daddr" is still the initial
-> > > value. Therefore, the eofs situation here needs to be corrected. The issue
-> > > is resolved by adding a sentinel node.
-> > 
-> > Why don't we set end_daddr unconditionally, then?
-> > 
-> > Hmm, looking at the end_daddr usage in fsmap.c, I think it's wrong.  If
-> > end_daddr is set at all, it's set either to the last sector for which
-> > the user wants a mapping; or it's set to the last sector for the device.
-> > But then look at how we use it:
-> > 
-> > 	if (info->last...)
-> > 		frec->start_daddr = info->end_daddr;
-> > 
-> > 	...
-> > 
-> > 	/* "report the gap..."
-> > 	if (frec->start_daddr > info->next_daddr) {
-> > 		fmr.fmr_length = frec->start_daddr - info->next_daddr;
-> > 	}
-> > 
-> > This is wrong -- we're using start_daddr to compute the distance from
-> > the last mapping that we output up to the end of the range that we want.
-> > The "end of the range" is modeled with a phony rmap record that starts
-> > at the first fsblock after that range.
-> > 
-> 
-> In the current code, we set "rec_daddr = end_daddr" only when
-> (info->last && info->end_daddr != NULL), which should ensure that this
-> is the last query?
+> Now that I sent it, this also doesn't look right..
 
-Right.
+For the node renames:
 
-> Because end_daddr is set to the last device, and
-> info->last is set to the last query. Therefore, assigning it to
-> start_daddr should not cause issues in the next query?
 
-Right, the code currently sets end_daddr only for the last device, so
-there won't be any issues with the next query.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-That said, we reset the xfs_getfsmap_info state between each device, so
-it's safe to set end_daddr for every device, not just the last time
-through that loop.
 
-> Did I misunderstand something? Or is it because the latest code
-> constantly updates end_daddr, which is why this issue arises?
-
-The 6.13 metadir/rtgroups patches didn't change when end_daddr gets set,
-but my fixpatch *does* make it set end_daddr for all devices.  Will send
-a patch + fstests update shortly to demonstrate. :)
-
-> > IOWs, that assignment should have been
-> > frec->start_daddr = info->end_daddr + 1.
-> > 
-> > Granted in August the codebase was less clear about the difference
-> > between rec_daddr and rmap->rm_startblock.  For 6.13, hch cleaned all
-> > that up -- rec_daddr is now called start_daddr and the fsmap code passes
-> > rmap records with space numbers in units of daddrs via a new struct
-> > xfs_fsmap_rec.  Unfortunately, that's all buried in the giant pile of
-> > pull requests I sent a couple of days ago which hasn't shown up on
-> > for-next yet.
-> > 
-> > https://lore.kernel.org/linux-xfs/173084396955.1871025.18156568347365549855.stgit@frogsfrogsfrogs/
-> > 
-> > So I think I know how to fix this against the 6.13 codebase, but I'm
-> > going to take a slightly different approach than yours...
-> > 
-> > > Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
-> > > Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
-> > > ---
-> > >   fs/xfs/xfs_fsmap.c | 19 +++++++++++++++++--
-> > >   1 file changed, 17 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-> > > index 85dbb46452ca..8a2dfe96dae7 100644
-> > > --- a/fs/xfs/xfs_fsmap.c
-> > > +++ b/fs/xfs/xfs_fsmap.c
-> > > @@ -596,12 +596,27 @@ __xfs_getfsmap_datadev(
-> > >   	xfs_agnumber_t			end_ag;
-> > >   	uint64_t			eofs;
-> > >   	int				error = 0;
-> > > +	int				sentinel = 0;
-> > >   	eofs = XFS_FSB_TO_BB(mp, mp->m_sb.sb_dblocks);
-> > >   	if (keys[0].fmr_physical >= eofs)
-> > >   		return 0;
-> > >   	start_fsb = XFS_DADDR_TO_FSB(mp, keys[0].fmr_physical);
-> > > -	end_fsb = XFS_DADDR_TO_FSB(mp, min(eofs - 1, keys[1].fmr_physical));
-> > > +	/*
-> > > +	 * For the case of eofs, we need to add a sentinel node;
-> > > +	 * otherwise, one block will be missed when calculating the length
-> > > +	 * in the last query.
-> > > +	 * For the case of key[1], there is no need to add a sentinel node
-> > > +	 * because it already represents a value that cannot be reached.
-> > > +	 * For the case where key[1] after shifting is within the same
-> > > +	 * block as the starting address, it is resolved using end_daddr.
-> > > +	 */
-> > > +	if (keys[1].fmr_physical > eofs - 1) {
-> > > +		sentinel = 1;
-> > > +		end_fsb = XFS_DADDR_TO_FSB(mp, eofs - 1);
-> > > +	} else {
-> > > +		end_fsb = XFS_DADDR_TO_FSB(mp, keys[1].fmr_physical);
-> > > +	}
-> > 
-> > ...because running against djwong-wtf, I actually see the same symptoms
-> > for the realtime device.  So I think a better solution is to change
-> > xfs_getfsmap to set end_daddr always, and then fix the off by one error.
-> > 
-> 
-> Yes, my second patch looks at this rt problem...
-> Thank you for your reply
-
-<nod>
-
---D
-
-> Thanks,
-> Zizhi Wo
-> 
-> 
-> > I also don't really like "sentinel" values because they're not
-> > intuitive.
-> > 
-> > I will also go update xfs/273 to check that there are no gaps in the
-> > mappings returned, and that they go to where the filesystem thinks is
-> > the end of the device.  Thanks for reporting this, sorry I was too busy
-> > trying to get metadir/rtgroups done to look at this until now. :(
-> > 
-> > --D
-> > 
-> 
-> 
-> 
-> > >   	/*
-> > >   	 * Convert the fsmap low/high keys to AG based keys.  Initialize
-> > > @@ -649,7 +664,7 @@ __xfs_getfsmap_datadev(
-> > >   		info->pag = pag;
-> > >   		if (pag->pag_agno == end_ag) {
-> > >   			info->high.rm_startblock = XFS_FSB_TO_AGBNO(mp,
-> > > -					end_fsb);
-> > > +					end_fsb) + sentinel;
-> > >   			info->high.rm_offset = XFS_BB_TO_FSBT(mp,
-> > >   					keys[1].fmr_offset);
-> > >   			error = xfs_fsmap_owner_to_rmap(&info->high, &keys[1]);
-> > > -- 
-> > > 2.39.2
-> > > 
-> > > 
-> 
+-- 
+With best wishes
+Dmitry
 
