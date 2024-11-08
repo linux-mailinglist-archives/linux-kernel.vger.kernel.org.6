@@ -1,305 +1,246 @@
-Return-Path: <linux-kernel+bounces-402461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0559D9C27F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:08:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF04C9C27F6
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40A10B22273
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606FC1F231E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681921E32B0;
-	Fri,  8 Nov 2024 23:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D791F7549;
+	Fri,  8 Nov 2024 23:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pLxVOXjj"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rkpve48N"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DAD1C1F2B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEF41C1F2B
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 23:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731107294; cv=none; b=GMAP3hDtFSqlZQCM+vu4CjkoZW6mVUD6WGa0p2Tw7ad0g8rcx8Ti7+FMYUxoVGh2V3uOzxSJJXCqRgYTuk6m6jIb66JyIjDcLaAdU964YKXYKOR5S4J4kGo30AQj8byK6wGu1t/PF5e0nZQmesCtBEjEXeZOK7mcZsQ2kZmcOvI=
+	t=1731107301; cv=none; b=NfC4YDaPGht/C60P/vDk9ohEn8OMmd6L0PVE4LJ/OY99WJ7KmdTAxxOkNHWaoIk8RKT3lyeP2VSq5+NASOGYGFhRwPHV64p4fbUCmhxIypxESe4txSzydUK4ca5hh4O7f2WeAaR7XyI7h1X25QS9/09hhjnfZ4SYOEebGjKDfag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731107294; c=relaxed/simple;
-	bh=GWZ1jKcIHFlF8XHVXxsn3quaGYguDIHzjkom+mEDeRI=;
+	s=arc-20240116; t=1731107301; c=relaxed/simple;
+	bh=irsXnTZZxmygNupu1NXScKGAnNXMWo9lfsCc5kdbx9Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tpXaGkj2viSVE4uoIZ5oX7do+TyFzMox/h+T1CmDf1a9a0tZUAgskcqzF1JDVdGTHH7Rxh+uAUnbiw6kLarcC6CgdeRp+oceiddiRRJatbBnLxekWy7N3XpoDLOmsd9ptsFuzUzAxM3+sGirvSC4D/WffEiD47cD+zLnjPogDiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pLxVOXjj; arc=none smtp.client-ip=209.85.222.182
+	 To:Cc:Content-Type; b=Vm8Mpj47xmwv+JZrgCVxjCKGkzI+vQCHi6ZvUxzSnSonxXFyhm7moV2+a+9TZm6AUREdB4CIuVW12FnctGiPUdJPtAXqthSxdgWC9DBwuQzomfk5qnQL1V/a+JnYNYUmM02dPMnbKHVjIofSN4ncUR1dj5Cd6oFmlMuCwdegbO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rkpve48N; arc=none smtp.client-ip=209.85.166.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7b158542592so162324185a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:08:12 -0800 (PST)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso35745ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 15:08:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731107292; x=1731712092; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731107299; x=1731712099; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E77NEMjYMvq3s2ZmJeds5qCuD207qrql0cMNnIpXYy4=;
-        b=pLxVOXjjiFqc2CcBRMt/8O2+2jI8QPXO5LCUgvOyeGOONnyP42ce4adXouEEvnN731
-         7FJ0JUKhQPA8z67Q1DuJEd2YI+jK2VAoP8Ixdysb4pkdXSr286pAgrf7NajJA0G0B+oj
-         EKtS64+1ZQB8jSHhMM0Q1ZIvSVZoNV7yrX7sb/jb47TtWA7IpITmYW7SRBVD783vlVcx
-         RWTmhzKTMmcNBimklKx4nFsKgqeGvC8lCxCd/gmpc6YfDOfO18HFFhBoQQNOr/Eh9VMd
-         8YA2sYFyoTYU/54cG6BYz9nZGhByY+WITvTmF6fmB+vqmhkhcF61fzAmzV02G5bVBbpP
-         y5UA==
+        bh=IiCqEW55XHvVf8qTba07pGSpYKmfdNiKgbJzhLD73iM=;
+        b=Rkpve48NY0Rgd+nl2vXkSk9J3Te9p2r5JEaZRBEsr9/L1b35TTazoEKv6olDDk4/QM
+         W4BKfqa4TqqyTSNM+qz5zA8aUJXrzIXGyYut1vtMK/vWICR8XHun4ao8cnxxn4EZgc5i
+         4dzF0WFMjQEyryh20/87zIP7cDDR+sk8HFpBqWH1elOFnERynnM62SxHZ/NFYO7ga7vy
+         3tRbop0awyKCx875UGYdf4UhgfV2xt2rAYTEbGyqAj3116G9vNUYXExQMJivhIdHFRXm
+         KCw0aX77mjhJKdSxqJbGJw+dZhSrSeTINGml1Jj8A2pmrKHwejpFNY0Fk8nv7o5UQ9jx
+         3t7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731107292; x=1731712092;
+        d=1e100.net; s=20230601; t=1731107299; x=1731712099;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E77NEMjYMvq3s2ZmJeds5qCuD207qrql0cMNnIpXYy4=;
-        b=m2Q6ECLlBlvZuBfokhN/tVObWGVYhMuOEI9Pkhmr+4dl7qF88ocLPPTG8/fWQqEwmk
-         ZcMQHOkSGsVP/Q+z3qP4aLoxS/VENNamqn1k272rDrxZc9nsBruvQMwG61oQLIWHPG0J
-         cowPfZWaF+TSw5+ylvhmq6S6Keu5vwoPlvdujJhI31a92gAKwWqMJKUqHaRq0X5e0rN9
-         0NRW27Ed5NKj9t3Htc/lQT05yX57Frn7AdxWGuVeie6RCFOmgJwqSLKJKEnfBl/iNO0+
-         h16ZGw2pkWkm2HzY6/WNsB/pjtmr+mRulZkavR39PuKHifNgi3NK489f3L5OBtizncfK
-         qCMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXwPjUIq0UR63+VhKbykrJ9XOpWDaRd8lN3MbHcZg6WvcAhP/kdiwduNyEf4VaQzD3Ye2KOPXbt55Gg1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLJEyJ6wVHrm716tSpTPkaQU490CvJKYxVtcfVJvFfYDybpn0o
-	wOT4WIF/DyMfSibJMNJuI0jglGABkpMYBxf2ovSbSJJRD0+QLSbr62p3g4CWvrRa6LBhWd2hRnK
-	ygkFxdhfQOAQefm/Unsr/Y5R14p1DA3jfx1Xu
-X-Google-Smtp-Source: AGHT+IEroN+1eNRmVul2IXF/Tn/9/3+CPo9UMgNFT5rcDOgryag/DFm7d5N/lf6Swe+UH76UpJxPXRHYfgwyOIOKJso=
-X-Received: by 2002:a05:620a:4543:b0:79d:536f:7b3a with SMTP id
- af79cd13be357-7b331f1978emr520700885a.56.1731107291514; Fri, 08 Nov 2024
- 15:08:11 -0800 (PST)
+        bh=IiCqEW55XHvVf8qTba07pGSpYKmfdNiKgbJzhLD73iM=;
+        b=wjgKi4WTIzv2N7Ko+82Mgl6mb2/1HVIudF1uPLmnxQBYwc3/fgJsoAIK4FtdjtgYxn
+         0MRNkbStd7pkSRCkPMOeJlmCBy7jHjRd7QyK7+pvJGuGM/+d9YDeuove9clAUF7gKk5X
+         rnpFUZUZSZUMy43SDG2CtSDxD5XtgNT6zC1N2YemEaotWIRfzRmEk0z+Cos5WFWTqodi
+         XpLXlCMl/j/obMKQp+LHgd+NPdaw8HrWLkkRGdlMJ0QH8V+y11YVHmiqVVi1rUgbAhXk
+         aG5kAfb/FXOx8y46i+6qhNzgobdkfVGz+OjX2Yi46cGPwsBtYA3Bx+iSN2pXP7tjQMJo
+         gL4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJfXKdSUYIlHivMug2RiOMuM/D+z5lmd4zJJ7zZzChL+zNTcl3m+9HqgZW0eWmEZONu9BVWnf9ve5st2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMgbbU9d8eMoNV+E8zzXWYa1P2Nst1g3sXhJeho5Oa8ePg21lf
+	sVljXKJI9O49HD6c26bsJ23pv3J3nSCZJ29dCs3GT5ZIf8/hjRhxOpJaqsdNZ7KGDeyJfvaWLtS
+	O92tyRD9nXeUfsUptn1U2jn8DjcXgplglM5T5
+X-Gm-Gg: ASbGncvFR0DPWzmvhpEKKchPA7BEDJ8PIWAWIP+Bv4S3Yx1IUtMALuovf2npNx3YDx8
+	R7m9wmhGsmGZCOF3op1NFcIwZBL5i2EIr
+X-Google-Smtp-Source: AGHT+IEukeGFoyo6dh0VbQTAZvTWfrcspZTzt0yr9OYJp6P2e9ETJS0TnoGpuVFVzJTNq6FY+rr4thPlSIkzzSRgbw0=
+X-Received: by 2002:a05:6e02:1946:b0:3a0:a224:eb2c with SMTP id
+ e9e14a558f8ab-3a6f9564132mr264765ab.25.1731107299142; Fri, 08 Nov 2024
+ 15:08:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108212946.2642085-1-joshua.hahnjy@gmail.com> <20241108212946.2642085-4-joshua.hahnjy@gmail.com>
-In-Reply-To: <20241108212946.2642085-4-joshua.hahnjy@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 8 Nov 2024 15:07:34 -0800
-Message-ID: <CAJD7tkaKzLu0DfMynvPg+-78YAZNMCcEoM3wXPx9qfcAxZzUgg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] memcg/hugetlb: Deprecate memcg hugetlb
- try-commit-cancel protocol
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: shakeel.butt@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
+References: <20241017002520.59124-1-irogers@google.com> <20241017002520.59124-11-irogers@google.com>
+ <Zy5udmX6gZAg0wkS@google.com>
+In-Reply-To: <Zy5udmX6gZAg0wkS@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 8 Nov 2024 15:08:07 -0800
+Message-ID: <CAP-5=fWhiLJ97smNySGk+TmmQ=ELOdztqdb7h3hrxT+18wG_HA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/20] perf dwarf-regs: Move csky dwarf-regs out of arch
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Guilherme Amadio <amadio@gentoo.org>, Yang Jihong <yangjihong@bytedance.com>, 
+	Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Bibo Mao <maobibo@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, Kajol Jain <kjain@linux.ibm.com>, 
+	Atish Patra <atishp@rivosinc.com>, Shenlin Liang <liangshenlin@eswincomputing.com>, 
+	Anup Patel <anup@brainfault.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	"Steinar H. Gunderson" <sesse@google.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Chen Pei <cp0613@linux.alibaba.com>, Dima Kogan <dima@secretsauce.net>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 1:30=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.com=
-> wrote:
+On Fri, Nov 8, 2024 at 12:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
-> This patch fully deprecates the mem_cgroup_{try, commit, cancel} charge
-> functions, as well as their hugetlb variants. Please note that this
-> patch relies on [1], which removes the last references (from memcg-v1)
-> to some of these functions.
+> On Wed, Oct 16, 2024 at 05:25:10PM -0700, Ian Rogers wrote:
+> > Move arch/csky/util/dwarf-regs.c to util/dwarf-regs-csky.c and compile
+> > in unconditionally. To avoid get_arch_regstr being duplicated, rename
+> > to get_csky_regstr and add to get_dwarf_regstr switch.
+> >
+> > Update #ifdefs to allow ABI V1 and V2 tables at the same
+> > time. Determine the table from the ELF flags.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/arch/csky/util/Build               |  1 -
+> >  tools/perf/util/Build                         |  1 +
+> >  .../dwarf-regs.c =3D> util/dwarf-regs-csky.c}   | 19 ++++++++++-------=
+--
+> >  tools/perf/util/dwarf-regs.c                  | 11 +++++++----
+> >  tools/perf/util/include/dwarf-regs.h          |  2 ++
+> >  5 files changed, 20 insertions(+), 14 deletions(-)
+> >  rename tools/perf/{arch/csky/util/dwarf-regs.c =3D> util/dwarf-regs-cs=
+ky.c} (74%)
+> >
+> > diff --git a/tools/perf/arch/csky/util/Build b/tools/perf/arch/csky/uti=
+l/Build
+> > index 1325310cab6a..5e6ea82c4202 100644
+> > --- a/tools/perf/arch/csky/util/Build
+> > +++ b/tools/perf/arch/csky/util/Build
+> > @@ -1,4 +1,3 @@
+> >  perf-util-y +=3D perf_regs.o
+> >
+> > -perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs.o
+> >  perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) +=3D unwind-libdw.o
+> > diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> > index 4c615611b9d7..99ae4e2802b8 100644
+> > --- a/tools/perf/util/Build
+> > +++ b/tools/perf/util/Build
+> > @@ -203,6 +203,7 @@ endif
+> >  perf-util-$(CONFIG_LIBDW) +=3D probe-finder.o
+> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-aux.o
+> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs.o
+> > +perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs-csky.o
+> >  perf-util-$(CONFIG_LIBDW) +=3D dwarf-regs-x86.o
+> >  perf-util-$(CONFIG_LIBDW) +=3D debuginfo.o
+> >  perf-util-$(CONFIG_LIBDW) +=3D annotate-data.o
+> > diff --git a/tools/perf/arch/csky/util/dwarf-regs.c b/tools/perf/util/d=
+warf-regs-csky.c
+> > similarity index 74%
+> > rename from tools/perf/arch/csky/util/dwarf-regs.c
+> > rename to tools/perf/util/dwarf-regs-csky.c
+> > index ca86ecaeacbb..d38ef1f07f3e 100644
+> > --- a/tools/perf/arch/csky/util/dwarf-regs.c
+> > +++ b/tools/perf/util/dwarf-regs-csky.c
+> > @@ -5,9 +5,8 @@
+> >  #include <stddef.h>
+> >  #include <dwarf-regs.h>
+> >
+> > -#if defined(__CSKYABIV2__)
+> > -#define CSKY_MAX_REGS 73
+> > -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D {
+> > +#define CSKY_ABIV2_MAX_REGS 73
+> > +const char *csky_dwarf_regs_table_abiv2[CSKY_ABIV2_MAX_REGS] =3D {
+> >       /* r0 ~ r8 */
+> >       "%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1", "%regs2", "%regs3=
+",
+> >       /* r9 ~ r15 */
+> > @@ -26,9 +25,9 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D =
+{
+> >       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+> >       "%epc",
+> >  };
+> > -#else
+> > -#define CSKY_MAX_REGS 57
+> > -const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D {
+> > +
+> > +#define CSKY_ABIV1_MAX_REGS 57
 
-Nit: We are not really "deprecating" them, we are removing them.
-Deprecation is usually tied to user-visible APIs that we cannot just
-remove, at least not right away. Please rephrase the subject and
-commit log accordingly.
+Definition of CSKY_ABIV1_MAX_REGS.
 
+> > +const char *csky_dwarf_regs_table_abiv1[CSKY_ABIV1_MAX_REGS] =3D {
+> >       /* r0 ~ r8 */
+> >       "%sp", "%regs9", "%a0", "%a1", "%a2", "%a3", "%regs0", "%regs1",
+> >       /* r9 ~ r15 */
+> > @@ -41,9 +40,11 @@ const char *csky_dwarf_regs_table[CSKY_MAX_REGS] =3D=
+ {
+> >       NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+> >       "%epc",
+> >  };
+> > -#endif
+> >
+> > -const char *get_arch_regstr(unsigned int n)
+> > +const char *get_csky_regstr(unsigned int n, unsigned int flags)
+> >  {
+> > -     return (n < CSKY_MAX_REGS) ? csky_dwarf_regs_table[n] : NULL;
+> > +     if (flags & EF_CSKY_ABIV2)
 >
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Hmm.. you need it here as well.
+
+These constants are part of the dwarf-regs-csky.c file and not elf.h.
+
+> > +             return (n < CSKY_ABIV2_MAX_REGS) ? csky_dwarf_regs_table_=
+abiv2[n] : NULL;
+> > +
+> > +     return (n < CSKY_ABIV1_MAX_REGS) ? csky_dwarf_regs_table_abiv1[n]=
+ : NULL;
+> >  }
+> > diff --git a/tools/perf/util/dwarf-regs.c b/tools/perf/util/dwarf-regs.=
+c
+> > index fd21f9e90e40..9a76f83af62c 100644
+> > --- a/tools/perf/util/dwarf-regs.c
+> > +++ b/tools/perf/util/dwarf-regs.c
+> > @@ -29,17 +29,18 @@
+> >  #define __get_dwarf_regstr(tbl, n) (((n) < ARRAY_SIZE(tbl)) ? (tbl)[(n=
+)] : NULL)
+> >
+> >  /* Return architecture dependent register string (for kprobe-tracer) *=
+/
+> > -const char *get_dwarf_regstr(unsigned int n, unsigned int machine,
+> > -                          unsigned int flags __maybe_unused)
+> > +const char *get_dwarf_regstr(unsigned int n, unsigned int machine, uns=
+igned int flags)
+> >  {
+> > -#if EM_HOST =3D=3D EM_X86_64 || EM_HOST =3D=3D EM_386 || EM_HOST =3D=
+=3D EM_AARCH64 || EM_HOST =3D=3D EM_ARM
+> > +#if EM_HOST =3D=3D EM_X86_64 || EM_HOST =3D=3D EM_386 || EM_HOST =3D=
+=3D EM_AARCH64 || EM_HOST =3D=3D EM_ARM \
+> > +    || EM_HOST =3D=3D EM_CSKY
 >
-> [1] https://lore.kernel.org/linux-mm/20241025012304.2473312-1-shakeel.but=
-t@linux.dev/
+> And here too.  It seems you also need a rebase.
 >
-> ---
->  include/linux/memcontrol.h | 22 -------------
->  mm/memcontrol.c            | 65 ++------------------------------------
->  2 files changed, 3 insertions(+), 84 deletions(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index d90c1ac791f1..75f15c4efe73 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -649,8 +649,6 @@ static inline bool mem_cgroup_below_min(struct mem_cg=
-roup *target,
->                 page_counter_read(&memcg->memory);
->  }
->
-> -void mem_cgroup_commit_charge(struct folio *folio, struct mem_cgroup *me=
-mcg);
-> -
->  int __mem_cgroup_charge(struct folio *folio, struct mm_struct *mm, gfp_t=
- gfp);
->
->  /**
-> @@ -675,9 +673,6 @@ static inline int mem_cgroup_charge(struct folio *fol=
-io, struct mm_struct *mm,
->         return __mem_cgroup_charge(folio, mm, gfp);
->  }
->
-> -int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
-> -               long nr_pages);
-> -
->  int mem_cgroup_charge_hugetlb(struct folio* folio, gfp_t gfp);
->
->  int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct=
- *mm,
-> @@ -708,7 +703,6 @@ static inline void mem_cgroup_uncharge_folios(struct =
-folio_batch *folios)
->         __mem_cgroup_uncharge_folios(folios);
->  }
->
-> -void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_=
-pages);
->  void mem_cgroup_replace_folio(struct folio *old, struct folio *new);
->  void mem_cgroup_migrate(struct folio *old, struct folio *new);
->
-> @@ -1167,23 +1161,12 @@ static inline bool mem_cgroup_below_min(struct me=
-m_cgroup *target,
->         return false;
->  }
->
-> -static inline void mem_cgroup_commit_charge(struct folio *folio,
-> -               struct mem_cgroup *memcg)
-> -{
-> -}
-> -
->  static inline int mem_cgroup_charge(struct folio *folio,
->                 struct mm_struct *mm, gfp_t gfp)
->  {
->         return 0;
->  }
->
-> -static inline int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg=
-,
-> -               gfp_t gfp, long nr_pages)
-> -{
-> -       return 0;
-> -}
-> -
->  static inline int mem_cgroup_swapin_charge_folio(struct folio *folio,
->                         struct mm_struct *mm, gfp_t gfp, swp_entry_t entr=
-y)
->  {
-> @@ -1202,11 +1185,6 @@ static inline void mem_cgroup_uncharge_folios(stru=
-ct folio_batch *folios)
->  {
->  }
->
-> -static inline void mem_cgroup_cancel_charge(struct mem_cgroup *memcg,
-> -               unsigned int nr_pages)
-> -{
-> -}
-> -
->  static inline void mem_cgroup_replace_folio(struct folio *old,
->                 struct folio *new)
->  {
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 95ee77fe27af..17126d8d263d 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2351,21 +2351,6 @@ int try_charge_memcg(struct mem_cgroup *memcg, gfp=
-_t gfp_mask,
->         return 0;
->  }
->
-> -/**
-> - * mem_cgroup_cancel_charge() - cancel an uncommitted try_charge() call.
-> - * @memcg: memcg previously charged.
-> - * @nr_pages: number of pages previously charged.
-> - */
-> -void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_=
-pages)
-> -{
-> -       if (mem_cgroup_is_root(memcg))
-> -               return;
-> -
-> -       page_counter_uncharge(&memcg->memory, nr_pages);
-> -       if (do_memsw_account())
-> -               page_counter_uncharge(&memcg->memsw, nr_pages);
-> -}
-> -
->  static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
->  {
->         VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
-> @@ -2379,18 +2364,6 @@ static void commit_charge(struct folio *folio, str=
-uct mem_cgroup *memcg)
->         folio->memcg_data =3D (unsigned long)memcg;
->  }
->
-> -/**
-> - * mem_cgroup_commit_charge - commit a previously successful try_charge(=
-).
-> - * @folio: folio to commit the charge to.
-> - * @memcg: memcg previously charged.
-> - */
-> -void mem_cgroup_commit_charge(struct folio *folio, struct mem_cgroup *me=
-mcg)
-> -{
-> -       css_get(&memcg->css);
-> -       commit_charge(folio, memcg);
-> -       memcg1_commit_charge(folio, memcg);
-> -}
-> -
->  static inline void __mod_objcg_mlstate(struct obj_cgroup *objcg,
->                                        struct pglist_data *pgdat,
->                                        enum node_stat_item idx, int nr)
-> @@ -4469,7 +4442,9 @@ static int charge_memcg(struct folio *folio, struct=
- mem_cgroup *memcg,
->         if (ret)
->                 goto out;
->
-> -       mem_cgroup_commit_charge(folio, memcg);
-> +       css_get(&memcg->css);
-> +       commit_charge(folio, memcg);
-> +       memcg1_commit_charge(folio, memcg);
->  out:
->         return ret;
->  }
-> @@ -4495,40 +4470,6 @@ bool memcg_accounts_hugetlb(void)
->  #endif
->  }
->
-> -/**
-> - * mem_cgroup_hugetlb_try_charge - try to charge the memcg for a hugetlb=
- folio
-> - * @memcg: memcg to charge.
-> - * @gfp: reclaim mode.
-> - * @nr_pages: number of pages to charge.
-> - *
-> - * This function is called when allocating a huge page folio to determin=
-e if
-> - * the memcg has the capacity for it. It does not commit the charge yet,
-> - * as the hugetlb folio itself has not been obtained from the hugetlb po=
-ol.
-> - *
-> - * Once we have obtained the hugetlb folio, we can call
-> - * mem_cgroup_commit_charge() to commit the charge. If we fail to obtain=
- the
-> - * folio, we should instead call mem_cgroup_cancel_charge() to undo the =
-effect
-> - * of try_charge().
-> - *
-> - * Returns 0 on success. Otherwise, an error code is returned.
-> - */
-> -int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *memcg, gfp_t gfp,
-> -                       long nr_pages)
-> -{
-> -       /*
-> -        * If hugetlb memcg charging is not enabled, do not fail hugetlb =
-allocation,
-> -        * but do not attempt to commit charge later (or cancel on error)=
- either.
-> -        */
-> -       if (mem_cgroup_disabled() || !memcg ||
-> -               !cgroup_subsys_on_dfl(memory_cgrp_subsys) || !memcg_accou=
-nts_hugetlb())
-> -               return -EOPNOTSUPP;
-> -
-> -       if (try_charge(memcg, gfp, nr_pages))
-> -               return -ENOMEM;
-> -
-> -       return 0;
-> -}
-> -
->  int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp)
->  {
->         struct mem_cgroup *memcg =3D get_mem_cgroup_from_current();
-> --
-> 2.43.5
->
->
+> At this point, I'm giving up.  Can you please refresh the series with
+> a fix?
+
+Sure I'll rebase and add ifndef+defines to dwarf-regs.h, I see we have
+these currently for EM_AARCH64 and EM_LOONGARCH there.
+
+Thanks,
+Ian
 
