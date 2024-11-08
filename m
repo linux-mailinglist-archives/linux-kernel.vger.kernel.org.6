@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-402246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FB39C2569
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:12:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C579C256B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0611D28603E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:12:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C4B2B237DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86391F26F1;
-	Fri,  8 Nov 2024 19:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DE720B7E9;
+	Fri,  8 Nov 2024 19:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xJcc1fsG"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2gZpXBUz"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE371F26CD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318AE1F26FA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731093085; cv=none; b=geAwBIn4CbHxQjahVjY08Xsz7PTz1VcKV1PzyOrhSldJsPMJfTUUtDZI/51HLn004uMZ4txidEZnaG1y0C5dGGcG31QTM/lv1995NtC8Omp6nvKkOjtlNaenyjsh/zzXIjkcydy0X8O+ZkPz4qmL8k+RfukwU9clLh4HxcDDNGs=
+	t=1731093087; cv=none; b=I3Gkzgv6W3hx+WOiayLe7tV37LHffMV1gc4+5T61jZtb0ZYTirnslKDfEUW57iU11oNH/e+pvyQ38C9ZU99cxM12MsDFVBpqGEZATb/mfW14p9FHraW7LjY0WwlryceuhhRPLg6nosEbFHY3FwW6ZNaBEDUwcFeWAscLA8ZVifc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731093085; c=relaxed/simple;
-	bh=Zf14GsUaaV/Hd+n5Eqit8C7fwMts9LP+7onXrbB1zbo=;
+	s=arc-20240116; t=1731093087; c=relaxed/simple;
+	bh=oXmo3s4uftDvdjY703eY53QegBRUavVqxslFvZe6qZE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VoPanZ1egdUctTOQhm+Y2789AG4AuZHfHn+pd9CxSMHL210okWy6G8/mCGOy6TkcfGJX8XXdXnhu6HBK2WXFiDM+bQ9xh42lMqigD97zmpGipeSCgBOxVjga/9Ua54jJl68Pf7VgaChMecHXba+snhqxDK5W1mF8yHS/SaUMtUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xJcc1fsG; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=DPjnHkZxtrAm0wXlW8b4Z0sqwRcZg1FiTKy+SixSv5F29ooUR1pysiXv98ibiy5Sj7YLieC1Yk2tXVXJr5OZ30EfCAYXYZEDwBe/XtZ6RrmxlTRLCbZ6qne07XDMQTmlzvPaLgaW4s1YlfOpKCbkk+N9axz6ZKaDSMFoeW/x9To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2gZpXBUz; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e58e838d5so2530355b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:11:23 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35199eb2bso49755317b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:11:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731093083; x=1731697883; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731093085; x=1731697885; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bihSAmRaHDXTnS0e+3LMpgHo5grgLUy7mkmndxXDooA=;
-        b=xJcc1fsGlRhYVqYC7ul6OgNIleIgmV1WM7UKpwjv9RIqgoWGmSfIg6+2cKc2/x/Pto
-         AzCpBLV/5DsuYA/Ubg9TaWtsO+aBxSX3Sbbpn8OurDpC9qEDfyXqLsOS87keJjoQabtE
-         ZA4tVe3+c8AcRsHs9j5k8vieoPCYJBBQvWQ/9MwX74aQpV3OYs+/At2weLAUDHlJUgWA
-         qQn/emwfFEjExuBxDV129ZTRYzrYGKkCeODqO69sdB7xZ9bLy795u1QzjFHTeCcUXSMy
-         Qtpv5aRMdOl1y3A+LTYP1VnJ6aTQXl5oWxtvhlik3pni1bMC0U077h4/XBfmy5b1SPk7
-         0jog==
+        bh=BDB9tBERWBcfIXqT9RtU/9i5IUOaPQLG2Xfsj/iAwwg=;
+        b=2gZpXBUz4lOLgSLFEtH2dMB/Xnka8bkM0okpQjOMyH7zZmAAUN2Iq/gktcOvtBgAl2
+         DSE/odAWi8j+HykRuTy/UEIu9xJqnNdTwxZ3Js89s8TOn5+CAa3uZD+64MES5lTMwaUD
+         jqtbfteaT2OF54ur9Niyh+LXzjDrLBStMkaXkucuLz5v3g4Wcn51U2nh5zgU6My6Y25h
+         HxqaJYknqb3QpwaKsPA1OhcaKWJ493214yBF/dVq5U1aluQKngFw3goReJcl8Nq6Tw7i
+         FoHOKNZUsQEY9PwWqLIZES2Vp2yhN6B/cw8N3WioDT9Y/+grzdFAsfafJu0jsG815ag5
+         ZCKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731093083; x=1731697883;
+        d=1e100.net; s=20230601; t=1731093085; x=1731697885;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bihSAmRaHDXTnS0e+3LMpgHo5grgLUy7mkmndxXDooA=;
-        b=ehJ2iYc9a+QBgyeePM3obEAIhLrbh/+tu79hR3HdULo5f2xYyPbqaoSIK3IEJ4Eq89
-         +S7AB3QQXV/m4QL4F9u0OoZiWaR2+EsPxd18IhTGfeXdA3sEjxiF/kGS2fXgBHUjwSBP
-         XmJJm/k9DvJg97jnLZjX2uXFdMb8m1FrKum87SFroUKdpQuthLAczTrOgc086kDTupNK
-         UfjELMLkcdlt145xrm75H30RKyVcbsp7lzvCfcGLHQvi024lLVq6P5E1/CrFNQhhC43s
-         fAcC9UWelxh0/+WujM/DupbXj3I/0sFH6LFcoP/T9D+5+sNtgHGUSYphd/On6xNjD/ci
-         0Oeg==
-X-Gm-Message-State: AOJu0YzLofysfYoesvEK2Cilbai3Rk1BmFvVZfyzDVtolV1V0SrrdeYy
-	O/kozmKu8Y36p46yhCtsAuvneFgCLCYnc2X+Wge1eeculIC4PsrigoslsYXGfcWTiKX/NcLZjCo
-	pzNPDeoGdTA==
-X-Google-Smtp-Source: AGHT+IFIkRKPr2Ao3obMPDZOnF/7hv7AraUE5ymQZDdJ7T8jv+4v4wWT8CDAJleJwFtW94pytjTbOy2oMM4Bkg==
+        bh=BDB9tBERWBcfIXqT9RtU/9i5IUOaPQLG2Xfsj/iAwwg=;
+        b=H9Dovi/PKtdLBUuDbr+IYh7ofjMdZDVESX8mtMOkZIOsd3OtBt7ZD9uwso6+zgBTQE
+         7s452CM9NpJOsrvgJVWjUYANQk1Jg5O98qw/ibhLwkRbrX02/Ob7wcjufYFrVR2K8pER
+         zYffT3ztudLHc/JgwqHdpn+vOXo/ioUmtNdRcA/5q/q/+bWolzZLItxdYFERVw1fH3Hh
+         09lI7ShVR6Yiqc/RSuM1UFZobDu23AdTQYcmQ9RLw+VeX26xP9l4wX0q1wVQ1x0YDOPE
+         R8RM3fVidXBuYzOBGLsz34xivKIGhkVJZjuQrUNiJz2z0L4Yn2jirZ8m5zs+CcIDf4J9
+         1lHA==
+X-Gm-Message-State: AOJu0Yzdhsw30yiRtk6COFLDnkNUnikx7CFLsvi2VfwkbL4AjVfdmoMc
+	OBMf9QRCOgspPmmFY7F9VWJFeIbgqCSG2qtkXTQAxud1sSIYp+0612eFKQKi4iR2lmvFAg1RfKW
+	5G7mqseuUHw==
+X-Google-Smtp-Source: AGHT+IGKQWTQrVOeGxJLhY6zsmXRHGk6UTdU0M7oaBS0NM4mJiA+JBFfZWaH36l8/W+fVD5IIc5QjZ01KGKgEg==
 X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
- (user=cmllamas job=sendgmr) by 2002:a05:6a00:2e9e:b0:71e:5dff:32dd with SMTP
- id d2e1a72fcca58-72413297368mr282628b3a.2.1731093083057; Fri, 08 Nov 2024
- 11:11:23 -0800 (PST)
-Date: Fri,  8 Nov 2024 19:10:49 +0000
+ (user=cmllamas job=sendgmr) by 2002:a0d:cf43:0:b0:6e3:1f46:77a6 with SMTP id
+ 00721157ae682-6eaddd8b07emr400287b3.2.1731093085200; Fri, 08 Nov 2024
+ 11:11:25 -0800 (PST)
+Date: Fri,  8 Nov 2024 19:10:50 +0000
 In-Reply-To: <20241108191057.3288442-1-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,139 +72,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241108191057.3288442-1-cmllamas@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241108191057.3288442-8-cmllamas@google.com>
-Subject: [PATCH v3 7/8] binder: use per-vma lock in page installation
+Message-ID: <20241108191057.3288442-9-cmllamas@google.com>
+Subject: [PATCH v3 8/8] binder: propagate vm_insert_page() errors
 From: Carlos Llamas <cmllamas@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
 	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
 	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
 	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Barry Song <v-songbaohua@oppo.com>, Hillf Danton <hdanton@sina.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 
-Use per-vma locking for concurrent page installations, this minimizes
-contention with unrelated vmas improving performance. The mmap_lock is
-still acquired when needed though, e.g. before get_user_pages_remote().
+Instead of always overriding errors with -ENOMEM, propagate the specific
+error code returned by vm_insert_page(). This allows for more accurate
+error logs and handling.
 
-Many thanks to Barry Song who posted a similar approach [1].
-
-Link: https://lore.kernel.org/all/20240902225009.34576-1-21cnbao@gmail.com/ [1]
-Cc: Nhat Pham <nphamcs@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Barry Song <v-songbaohua@oppo.com>
 Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Carlos Llamas <cmllamas@google.com>
 ---
- drivers/android/binder_alloc.c | 61 +++++++++++++++++++++++++---------
- 1 file changed, 45 insertions(+), 16 deletions(-)
+ drivers/android/binder_alloc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 3716ffd00baf..7d2cad9beebb 100644
+index 7d2cad9beebb..dd15519e321f 100644
 --- a/drivers/android/binder_alloc.c
 +++ b/drivers/android/binder_alloc.c
-@@ -233,6 +233,48 @@ static inline bool binder_alloc_is_mapped(struct binder_alloc *alloc)
- 	return smp_load_acquire(&alloc->mapped);
- }
- 
-+static struct page *binder_page_lookup(struct binder_alloc *alloc,
-+				       unsigned long addr)
-+{
-+	struct mm_struct *mm = alloc->mm;
-+	struct page *page;
-+	long ret = 0;
-+
-+	mmap_read_lock(mm);
-+	if (binder_alloc_is_mapped(alloc))
-+		ret = get_user_pages_remote(mm, addr, 1, 0, &page, NULL);
-+	mmap_read_unlock(mm);
-+
-+	return ret > 0 ? page : NULL;
-+}
-+
-+static int binder_page_insert(struct binder_alloc *alloc,
-+			      unsigned long addr,
-+			      struct page *page)
-+{
-+	struct mm_struct *mm = alloc->mm;
-+	struct vm_area_struct *vma;
-+	int ret = -ESRCH;
-+
-+	/* attempt per-vma lock first */
-+	vma = lock_vma_under_rcu(mm, addr);
-+	if (vma) {
-+		if (binder_alloc_is_mapped(alloc))
-+			ret = vm_insert_page(vma, addr, page);
-+		vma_end_read(vma);
-+		return ret;
-+	}
-+
-+	/* fall back to mmap_lock */
-+	mmap_read_lock(mm);
-+	vma = vma_lookup(mm, addr);
-+	if (vma && binder_alloc_is_mapped(alloc))
-+		ret = vm_insert_page(vma, addr, page);
-+	mmap_read_unlock(mm);
-+
-+	return ret;
-+}
-+
- static struct page *binder_page_alloc(struct binder_alloc *alloc,
- 				      unsigned long index,
- 				      unsigned long addr)
-@@ -254,9 +296,7 @@ static int binder_install_single_page(struct binder_alloc *alloc,
- 				      unsigned long index,
- 				      unsigned long addr)
- {
--	struct vm_area_struct *vma;
- 	struct page *page;
--	long npages;
- 	int ret;
- 
- 	if (!mmget_not_zero(alloc->mm))
-@@ -268,16 +308,7 @@ static int binder_install_single_page(struct binder_alloc *alloc,
- 		goto out;
- 	}
- 
--	mmap_read_lock(alloc->mm);
--	vma = vma_lookup(alloc->mm, addr);
--	if (!vma || !binder_alloc_is_mapped(alloc)) {
--		__free_page(page);
--		pr_err("%d: %s failed, no vma\n", alloc->pid, __func__);
--		ret = -ESRCH;
--		goto unlock;
--	}
--
--	ret = vm_insert_page(vma, addr, page);
-+	ret = binder_page_insert(alloc, addr, page);
- 	switch (ret) {
- 	case -EBUSY:
- 		/*
-@@ -287,8 +318,8 @@ static int binder_install_single_page(struct binder_alloc *alloc,
- 		 */
- 		ret = 0;
+@@ -334,7 +334,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
  		__free_page(page);
--		npages = get_user_pages_remote(alloc->mm, addr, 1, 0, &page, NULL);
--		if (npages <= 0) {
-+		page = binder_page_lookup(alloc, addr);
-+		if (!page) {
- 			pr_err("%d: failed to find page at offset %lx\n",
- 			       alloc->pid, addr - alloc->vm_start);
- 			ret = -ESRCH;
-@@ -306,8 +337,6 @@ static int binder_install_single_page(struct binder_alloc *alloc,
- 		ret = -ENOMEM;
+ 		pr_err("%d: %s failed to insert page at offset %lx with %d\n",
+ 		       alloc->pid, __func__, addr - alloc->vm_start, ret);
+-		ret = -ENOMEM;
  		break;
  	}
--unlock:
--	mmap_read_unlock(alloc->mm);
  out:
- 	mmput_async(alloc->mm);
- 	return ret;
 -- 
 2.47.0.277.g8800431eea-goog
 
