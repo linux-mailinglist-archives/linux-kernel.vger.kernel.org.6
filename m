@@ -1,180 +1,166 @@
-Return-Path: <linux-kernel+bounces-401394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738529C19B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:59:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FCF9C19B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983161C22EB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:59:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79ADF287A39
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E261E2858;
-	Fri,  8 Nov 2024 09:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6821E22FB;
+	Fri,  8 Nov 2024 09:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4g+M9JO"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DX1HwiBR"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D95B1E25F3
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0613B1E1C04
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731059905; cv=none; b=jKLSNOmiMyUWTNA7e327HTPFyUNC9zqa5+RtKkjZgK7AtH3Cb4UR62lXcnqv0JTTd0XdxOBTld6djHRK9IPJ6Va4beJL2bvYOXkJG8Tiv3di2YuYXdOVIVDAoQpJQ7nlE4cvZqu9ltyPxglyzgneyPDjqPg61KiQ8hZE0YuM6sc=
+	t=1731059957; cv=none; b=dNmDgZDrHtubLHqJrh0gV5p2GL113isNkGcCOXEhB0SwRP2LhmsIPVLvegZs8WXPpIyl/BoHvHKyPxDsuYLFPdlR807L5nevLOxaDXe35FlKSVGfyjQ9E9Uz3fyBrQirnpcuPTm0Iu/g4vrESwP4bw0g+YW/PNA0inm9mGM1YXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731059905; c=relaxed/simple;
-	bh=yyYnt0zeYcifOtxkWb1a/lLSCIHVxKRnsZk+5f+PJTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPvCxKvU3sOv3HV5mKZ2kLznY8Bid5WIcwuiFQasF6BpRnraNsQFQqZtT455j2p4xiVu4Ifmh3iYoo7FF/gy+Hs+FLyxpgcuMay7cjYT5DW1rGHu9TMsy29otG0kkcbW+VtXNuuhxPdi5OC3gHmiZdyYs7bZ6QxroYbYg9iXp0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4g+M9JO; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539fe76e802so2030634e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:58:23 -0800 (PST)
+	s=arc-20240116; t=1731059957; c=relaxed/simple;
+	bh=favIJ0RU0Z1kVo0+cj+p8TtzOVJuzqN1053K+zk2H3E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QXJEYqwqqEed/ZwO9O+LAQXCFeEJFmTCRzQitTPjnS6w1OdexCluBd7lyLAZPiaGj2iPOkF2bvDv9+sEMSxdLOQil/DwZryokrrqRqZj6mqxf8aVRi3O/2vLeKmroL4O/2yhQ/Scdj8csqmBsp80Y3AXG5mi//1jHTlpKX0qDkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DX1HwiBR; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4316f3d3c21so15881115e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:59:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731059901; x=1731664701; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5H92Szh7zfoJ1X3k0f3O/M8Kef9HnGfDZM9F62PdTF8=;
-        b=I4g+M9JOrF1xRMDWUEXb+hV0tfimai65+InH3ry2IPlAT0QkdpzJ1/j6ZAuyk3/M7g
-         QQYVl1HUQXROfyYmkP8WOLaDd+2pnly52JWiF2NaKuX44xxPmSl8hyV6R/XVDtNG3wGU
-         i4WQCbln+zJEnXwqEl5Zqmq/YlrHeu0bQy0po6hV3Pqs4TZ7vfsVW+8O0sDyugKhZ09D
-         oVx3yGexBkLcsSrYd6Flzzte0UZnaLQ7cHw0YECP2GanbEASaCVSLJuYjUrhlGMAfZwX
-         6YdfI4KsC1NRPptpbimRBoRu1DmQ1iVmkr0/cAciRhm0Oow4HpF0O1KihQSdeqoeAwE5
-         lGCA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731059953; x=1731664753; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
+        b=DX1HwiBRwhGXitdHvqQR2GUb0yuMG/hW9E7sDsDJVkq3IAvNfBcNnBSonDnMckfvp9
+         iQLsC5m0tzIgXMKscNxxSL5AJ1yFVz9k1wllbwVMg0yRzYPvh801Xv/f7OIGVJEltItM
+         fUj7cOCqZ+q/X7wp1ansYdELaBTjzNMFmL41fbIZR5dPbgo9rJKZn+qSBS7En1ozX/WV
+         avczIqxECniiFbpCuFgBJrXURyEu7HB/lpQIJLPoW6p4WqaaMHvQOoWVR0+M/UGwOrxA
+         zRk8mGkhHr0e/HXZ3fxU0R6UxTPMLcHcrmTlCFqwvDGnkVqwpxqLArI9nt7NJyvCs4fO
+         n9EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731059901; x=1731664701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5H92Szh7zfoJ1X3k0f3O/M8Kef9HnGfDZM9F62PdTF8=;
-        b=lpBvcZ//CRJg+YuXUKP2Jt8J3bbqktax5BRMn0F23zRHPS7O5GwfvmPhHsiljRsMyc
-         TFiyRzq+AU5VN3wvQt8RQCYGjWsYIIWkZeJS56vet2L9M/bULaYPVhob0mPFSih0TfdL
-         ePbF1VlDSJRLaU7pun6qisAVJqy5yqaOPOJD3WYxyGC+Ul5IBBY8xANMlu7ZuKZ+tRQd
-         fZPMh2ov+MfggmblU8I8MQtx/Hn5F/MbCV6vC5Ptaa34gaBd5OQoqpMPG+9x8gD16NYJ
-         Z3GGupPcBxNV2WJUUuhoP7CBWZuvFOsX0nE8xMxiJK13vJBajBdjsqc9Ot8hHbjBebqR
-         N4sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdWqsE1DsiSzHjGjLK5wzj0d/UBXvxm8KXDREuxmUfEIjYIsHYFb7uFZp/2heTBOlBK+Z9CZbjAEfkdW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6RhAGvxGvy0LHZ4qvlPcavyueK11To/w0kOsxlO+P6IVlplrG
-	4ZsozF9GJZ0GNXVNlD5uNhZNcBdT2QgUxqxW9AS8w7gnBE3oRP9togONyOK/9Tc=
-X-Google-Smtp-Source: AGHT+IFRdqMG06HtkdzkHICdIIWrY7d6GXyCPZ8Qa2uAHGCAECQ9+blFxeuQwDqlNWgVG3erwh8s3g==
-X-Received: by 2002:a05:6512:2256:b0:539:905c:15ab with SMTP id 2adb3069b0e04-53d862e3e86mr1089619e87.32.1731059901467;
-        Fri, 08 Nov 2024 01:58:21 -0800 (PST)
-Received: from [172.20.143.194] ([154.14.63.34])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432b05e6042sm57204805e9.44.2024.11.08.01.58.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 01:58:21 -0800 (PST)
-Message-ID: <fe2f0356-ef90-4fc4-85c1-6a42da209b88@linaro.org>
-Date: Fri, 8 Nov 2024 09:58:16 +0000
+        d=1e100.net; s=20230601; t=1731059953; x=1731664753;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTIHfF+UH1Xa7DK8o/xh7XL9H7nZTNldWgZ8nJ8rQE0=;
+        b=aWG8vRCbnv7vtAA5MrLB770dFJc2bdyxjCpmGXE76QaYhJjj3Ko6WTHDNI+sQ0Ymsn
+         IffE8MFG2UMjPFQ+kvSp/NUovgb3DWvMXICBvfDHkyLVRIUyoyOBQBz4WzCQ8GWeV7Mw
+         KbSa91VDngmzNVsNwKeCsvLAM+hZNUtgr1WEcSOHW/qRGNeFZTB36xHaaumoprkaje/t
+         Vp5FqmXgR5uC+j+HHTHCO50qE3k23LMUHCaJiLzE6xICrMMQFzt+czUFIVcMjhrRqMq7
+         6aUuCSMZDDo0hdaOYABB5vMM4zcFsgEmZ9E3B9+mqZog8eDr39uZTXkkHf6mvxk5vKvN
+         BPXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxi57SKRlAHKg3gIXIMOKvBCccBhagBvOXvdD8J1Jo50cN92MoOo3o2TCfOjUc8ORo+rPKUlJXTmt7L5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4O3IyYip/PeHkdEvgET9T1G929YQYFvUFmtwfZRGUQ96YxOvK
+	Ig8r5EOmm60O3A4qBlHiU91NONFBinqgRD1r0f6rLZevzJFuhqL5MN8g1Crv5Tg=
+X-Google-Smtp-Source: AGHT+IE52uNEd1M4kmQsGgrrxZ5e+HBgRbQ6hYCN5h70Y/Y7u6ZLc+ouQ9mgPck15oFzZ/AUamay2Q==
+X-Received: by 2002:a05:600c:4f87:b0:431:5ed4:7e7d with SMTP id 5b1f17b1804b1-432b7508053mr18099615e9.18.1731059953350;
+        Fri, 08 Nov 2024 01:59:13 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ecfd:9f8d:62a3:6ba8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0530599sm58205685e9.1.2024.11.08.01.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 01:59:12 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
+In-Reply-To: <85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com> (Chuan Liu's
+	message of "Fri, 8 Nov 2024 17:23:53 +0800")
+References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+	<20241004133953.494445-1-jbrunet@baylibre.com>
+	<07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
+	<1jttci2k8k.fsf@starbuckisacylon.baylibre.com>
+	<85aae140-5c9b-4ff9-a522-549009f62601@amlogic.com>
+Date: Fri, 08 Nov 2024 10:59:12 +0100
+Message-ID: <1jcyj62gi7.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/10] nvmem: core: calculate bin_attribute size
- through bin_size()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- "David E. Box" <david.e.box@linux.intel.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- Matt Turner <mattst88@gmail.com>, Frederic Barrat <fbarrat@linux.ibm.com>,
- Andrew Donnellan <ajd@linux.ibm.com>, Arnd Bergmann <arnd@arndb.de>,
- Logan Gunthorpe <logang@deltatee.com>, "K. Y. Srinivasan"
- <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-alpha@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-hyperv@vger.kernel.org
-References: <20241103-sysfs-const-bin_attr-v2-0-71110628844c@weissschuh.net>
- <20241103-sysfs-const-bin_attr-v2-4-71110628844c@weissschuh.net>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20241103-sysfs-const-bin_attr-v2-4-71110628844c@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+On Fri 08 Nov 2024 at 17:23, Chuan Liu <chuan.liu@amlogic.com> wrote:
 
+>>>> -       if (core->flags & CLK_IGNORE_UNUSED)
+>>>> +       /*
+>>>> +        * If the parent is disabled but the gate is open, we should sanitize
+>>>> +        * the situation. This will avoid an unexpected enable of the clock as
+>>>> +        * soon as the parent is enabled, without control of CCF.
+>>>> +        *
+>>>> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
+>>>> +        * forcefully enabling a whole part of the subtree.  Just let the
+>>>> +        * situation resolve it self on the first enable of the clock
+>>>> +        */
+>>>> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
+>
+> At first, I couldn't grasp the logic behind the 'return' here. Now it's
+> clear. This approach is equivalent to completely giving up on
+> handling clocks with CLK_OPS_PARENT_ENABLE feature in
+> clk_disable_unused_subtree().
+>
 
-On 03/11/2024 17:03, Thomas Weißschuh wrote:
-> Stop abusing the is_bin_visible() callback to calculate the attribute
-> size. Instead use the new, dedicated bin_size() one.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-Thanks for the patch,
+No. It's handled correctly as long as the tree is in coherent state.
 
-LGTM.
+What is not done anymore is fixing up an inconsistent tree, by this I
+mean: A clock with CLK_OPS_PARENT_ENABLE, which report enabled from its
+own registers but has its parent disabled.
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In that particular case, clk_disable_unused_subtree() won't be turning on
+everything to properly disable that one clock. That is the root cause of
+the problem you reported initially. The clock is disabled anyway.
 
---srini
+Every other case are properly handled (at least I think).
 
->   drivers/nvmem/core.c | 13 +++++++++++--
->   1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index 33ffa2aa4c1152398ec66b8dd7b30384c5346a6e..63370c76394ee9b8d514da074779617cef67c311 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -303,11 +303,19 @@ static umode_t nvmem_bin_attr_is_visible(struct kobject *kobj,
->   	struct device *dev = kobj_to_dev(kobj);
->   	struct nvmem_device *nvmem = to_nvmem_device(dev);
->   
-> -	attr->size = nvmem->size;
-> -
->   	return nvmem_bin_attr_get_umode(nvmem);
->   }
->   
-> +static size_t nvmem_bin_attr_size(struct kobject *kobj,
-> +				  const struct bin_attribute *attr,
-> +				  int i)
-> +{
-> +	struct device *dev = kobj_to_dev(kobj);
-> +	struct nvmem_device *nvmem = to_nvmem_device(dev);
-> +
-> +	return nvmem->size;
-> +}
-> +
->   static umode_t nvmem_attr_is_visible(struct kobject *kobj,
->   				     struct attribute *attr, int i)
->   {
-> @@ -383,6 +391,7 @@ static const struct attribute_group nvmem_bin_group = {
->   	.bin_attrs	= nvmem_bin_attributes,
->   	.attrs		= nvmem_attrs,
->   	.is_bin_visible = nvmem_bin_attr_is_visible,
-> +	.bin_size	= nvmem_bin_attr_size,
->   	.is_visible	= nvmem_attr_is_visible,
->   };
->   
-> 
+>>>>                   goto unlock_out;
+>>>>
+>>>>           /*
+>>>> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>>>>
+>>>>    unlock_out:
+>>>>           clk_enable_unlock(flags);
+>>>> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+>>>> -               clk_core_disable_unprepare(core->parent);
+>>>> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
+>>>>    }
+>>>>
+>>>>    static bool clk_ignore_unused __initdata;
+>>>> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
+>>>>           clk_prepare_lock();
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>> -               clk_disable_unused_subtree(core);
+>>>> +               clk_disable_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>> -               clk_disable_unused_subtree(core);
+>>>> +               clk_disable_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_root_list, child_node)
+>>>> -               clk_unprepare_unused_subtree(core);
+>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>
+>>>>           hlist_for_each_entry(core, &clk_orphan_list, child_node)
+>>>> -               clk_unprepare_unused_subtree(core);
+>>>> +               clk_unprepare_unused_subtree(core, true);
+>>>>
+>>>>           clk_prepare_unlock();
+>>>>
+>>>> --
+>>>> 2.45.2
+>>>>
+>> --
+>> Jerome
+
+-- 
+Jerome
 
