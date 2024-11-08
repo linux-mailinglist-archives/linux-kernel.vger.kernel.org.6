@@ -1,135 +1,161 @@
-Return-Path: <linux-kernel+bounces-401757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45EAA9C1EC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:05:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130F99C1ECB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC761F233BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45AF5283BD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA0A1F1317;
-	Fri,  8 Nov 2024 14:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50E41EF937;
+	Fri,  8 Nov 2024 14:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dimzUVuG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="X6+JIDD8"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A801D1EBFEB;
-	Fri,  8 Nov 2024 14:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0471EF0B9
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731074694; cv=none; b=JtPs0mSuFNul1jql+cfHAzs4JAQl6h+At2r7N3/zlRicQZzmEU68LBZBFq1eURMUQ0Nk36cGmaU+RG7Z5CRhJIzyOME14/kDlFyKwYu62RBu27aH9BucPSOgnZDj0cSMb9xfWS3pUDcz9acu8fnNfHXwGVAgj4XgzI1xLfsper4=
+	t=1731074707; cv=none; b=sr4EVYIjxp4FaWcAzX5TTAsjTtlQIOdHTYkkXgh4nWp9jaLCVwT2rflQf/82jfwMz7sQFy6prmp70dQVxMh+MArgJrP7DSr5ADsPeTk9fTRY7TX5eX2Sdmis/xW2BVdD0cO4rzutzP6/p/8/7oRvwkVbkXBQMJ/o5EqgiBlcHo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731074694; c=relaxed/simple;
-	bh=6ZnSU+m0Cd0UtNFM0il2aDZjDK4c/onwYc77e0mh9xw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sW9vxU78So8qzDxo3gz62YDepjKZo2s/h9pyXUjlr8XkmQPVOCkadER6p95rj7W2EDjgga48eqL3xeadKpvR45egzLDjKhYS6s9xfRQanKUtua1yb1ifRIcL8bZFHkCtIHT2FzfTP4akMotK9FXPwW+Y63d2TAwf5sZkyameXFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dimzUVuG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A45C4CED5;
-	Fri,  8 Nov 2024 14:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731074694;
-	bh=6ZnSU+m0Cd0UtNFM0il2aDZjDK4c/onwYc77e0mh9xw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dimzUVuG1q9swhaHEIi5yxspVRGJwMt/wUtahvSop3+a8cN4xZnuGbeot+ndbZeQ4
-	 +pi/ulZXE1JIEq/7r6cLNtfhr91Nm8gW/L5jtl3jx083D1HkxsDmYi+CNHHjrNEmBZ
-	 9J4DqRCaMOlvlM8vT2YsSesqUy9UjcS9UW0NDMHy1D2kzX+DCc17JRzWWEo/9BXnQJ
-	 fYBB+MRdFnhiiW8iAwc1iW1aygW/GkBxxn1SX508Z9JgO8F0wJVEJaKBcwyfSk2LDo
-	 hSorHxprR3AW3GBStISOJQ4D8bmVmuxf9ZxByaAGANnynRkveH5sr4cfiGhNy7ww28
-	 P6Btq15GovTZw==
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ea5003deccso24409247b3.0;
-        Fri, 08 Nov 2024 06:04:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWIKmrC31jjrWTHdf8dfEPhkwO3zJ9o8Fajnn3aZCH6BJzYLHUUwwuU18WdphCx7oCasJQuusZmUIAKXGzWw32po0o=@vger.kernel.org, AJvYcCX8EaOCjSsFByQJ/177Vxo4A1KqJkRR6u+9quKvyQwGHDQsaRdvJFs8nJMmSR/SYQjbqT6bWrxelamu+WwD@vger.kernel.org, AJvYcCXXwG6ACd89SnBHulvDtpB1d91NpzIj+uxrxJwpBxgxOmIpIKSnE3uZPydMgXbwhlpIWfdhG/irX2TJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLKwsqz/ioop0GX3gSF+daGFJGBZP8u6dcXPq0EDbvJgUXXZcK
-	CsbwHu9FssYEaRyf6qO6zZeO1/U9FgyuqmG+zrosM335WHJS2gtPoyRlj51/PS3rl66rpcLGuPc
-	PaHuo8V2+N6yTar6gvIxooNTfgw==
-X-Google-Smtp-Source: AGHT+IGSkDHv6GeugPAoixz1l5GZ3GqOy9QxCCNnwGqAo4ktmPEwMouS80JH5JREEEPqz8kcp8lVTmeuRcZuTcd/9IU=
-X-Received: by 2002:a05:690c:fd4:b0:6e5:e6e8:d6b7 with SMTP id
- 00721157ae682-6eaddd7958cmr35629217b3.1.1731074693415; Fri, 08 Nov 2024
- 06:04:53 -0800 (PST)
+	s=arc-20240116; t=1731074707; c=relaxed/simple;
+	bh=QD95Mdo/pF18uTuQcmzeIbvMtZglMpY22zMEVQzkxgE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Ggiqsx1Bh4DXNlFuM+PxvRQATV1f88Xzv0hdO22Hw8VbSCI25UxC2lEEj2K2INpb2tYq2XkTilgPPhB4mYBQtEKtmxc/CgB3RTuJKegWrbq/QFzq50F6QkfZfsRj7AseJP6Je7Px3CfF2xyOcqm/zRCQIa47htLtOwJFHkpA7OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=X6+JIDD8; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106171028.3830266-1-robh@kernel.org> <CGME20241108110444eucas1p20cbed7533af31573dac30dbb435c3d9d@eucas1p2.samsung.com>
- <3706d174-fadd-485f-be7b-f7ef4b11cf84@samsung.com> <73eacca6-b6cd-4689-8ccd-f7e2e8b716f3@arm.com>
-In-Reply-To: <73eacca6-b6cd-4689-8ccd-f7e2e8b716f3@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 8 Nov 2024 08:04:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLyFV85w1kf397AcvZ7+Oewpe3vYeZdz_uvQrYwb1B8ag@mail.gmail.com>
-Message-ID: <CAL_JsqLyFV85w1kf397AcvZ7+Oewpe3vYeZdz_uvQrYwb1B8ag@mail.gmail.com>
-Subject: Re: [PATCH v2] of: WARN on deprecated #address-cells/#size-cells handling
-To: Steven Price <steven.price@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Saravana Kannan <saravanak@google.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	Conor Dooley <conor@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731074703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPQvHE3q81KEG1KWpRY76/YYpzUKNWMXavpJD8Jdyj8=;
+	b=X6+JIDD8w/pV1TnT7U0Owy43XKZNWlYyZGxAGEXciKVjqCG2FkpMvi+HP+IlhfTOnTzZk9
+	8r56/KZNaLMB4D+VcUVPKibgBLC9G5ZY61C9/Liy15awpYRC3/r9kwyThxSlZMZazdqlHI
+	nDRU/88tU4JCAfavUYsWg3LUKl4IgBsmIemzeiFpd+CL99C/2cDZfxDK+I2SEy2mManDod
+	LHmWYccNCv+ek5zuXrZZUDtwiJdqKbOZZQzMlslS9UxsqkLdYRoOXl+K6L0qhscfIfXMDg
+	bCN7wzNvAnM3mJKpAIsZMvwCS+MaoRuM5W/uxj4EqpsjOuVjeNZ9Hy6KRXDOQA==
+Date: Fri, 08 Nov 2024 15:05:02 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/rockchip: dsi: Perform trivial code cleanups
+In-Reply-To: <13633881.uLZWGnKmhe@diego>
+References: <cover.1731073565.git.dsimic@manjaro.org>
+ <35555b58a7284450fb16281514e4e6a3eb9c7b82.1731073565.git.dsimic@manjaro.org>
+ <13633881.uLZWGnKmhe@diego>
+Message-ID: <3734f6a5424e3537d717c587a058fc85@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Fri, Nov 8, 2024 at 7:26=E2=80=AFAM Steven Price <steven.price@arm.com> =
-wrote:
->
-> On 08/11/2024 11:04, Marek Szyprowski wrote:
-> > Hi Rob,
-> >
-> > On 06.11.2024 18:10, Rob Herring (Arm) wrote:
-> >> While OpenFirmware originally allowed walking parent nodes and default
-> >> root values for #address-cells and #size-cells, FDT has long required
-> >> explicit values. It's been a warning in dtc for the root node since th=
-e
-> >> beginning (2005) and for any parent node since 2007. Of course, not al=
-l
-> >> FDT uses dtc, but that should be the majority by far. The various
-> >> extracted OF devicetrees I have dating back to the 1990s (various
-> >> PowerMac, OLPC, PASemi Nemo) all have explicit root node properties. T=
-he
-> >> warning is disabled for Sparc as there are known systems relying on
-> >> default root node values.
-> >>
-> >> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> >> ---
-> >> v2:
-> >>   - Add a define for excluded platforms to help clarify the intent
-> >>     is to have an exclude list and make adding platforms easier.
-> >>   - Also warn when walking parent nodes.
-> >> ---
-> >>   drivers/of/base.c | 28 ++++++++++++++++++++++------
-> >>   drivers/of/fdt.c  |  4 ++--
-> >>   2 files changed, 24 insertions(+), 8 deletions(-)
-> >
-> > This patch landed in today's linux-next as commit 4b28a0dec185 ("of:
-> > WARN on deprecated #address-cells/#size-cells handling"). In my tests I
-> > found that it introduces warnings on almost all of my test systems. I
-> > took a look at the first one I got in my logs (Samsung Exynos Rinato
-> > board: arch/arm/boot/dts/samsung/exynos3250-rinato.dts):
->
-> Just a "me too" for rk3288-firefly.dtb:
->
-> [    0.138735] WARNING: CPU: 0 PID: 1 at drivers/of/base.c:106 of_bus_n_a=
-ddr_cells+0x9c/0xd8
-> [    0.138776] Missing '#address-cells' in /power-management@ff730000
->
-> I'm sure it's easy to fix up the DTB, but we shouldn't be breaking long e=
-xisting DTBs.
+Hello Heiko,
 
-What broke?
+On 2024-11-08 14:56, Heiko Stübner wrote:
+> Am Freitag, 8. November 2024, 14:53:57 CET schrieb Dragan Simic:
+>> Perform a few trivial code cleanups, to make one logged message a bit 
+>> more
+>> consistent with the other logged messages by capitalizing its first 
+>> word, and
+>> to avoid line wrapping by using the 100-column width better.
+>> 
+>> No intended functional changes are introduced by these code cleanups.
+>> 
+>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> ---
+>>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 12 ++++--------
+>>  1 file changed, 4 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c 
+>> b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> index 58a44af0e9ad..f451e70efbdd 100644
+>> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> @@ -1379,7 +1379,7 @@ static int dw_mipi_dsi_rockchip_probe(struct 
+>> platform_device *pdev)
+>>  	}
+>> 
+>>  	if (!dsi->cdata) {
+>> -		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+>> +		DRM_DEV_ERROR(dev, "No dsi-config for %s node\n", np->name);
+> 
+> this is all probe-related, why not convert to dev_err_probe?
+> 
+> As the doc states [0], DRM_DEV_ERROR is deprecated in favor of dev_err.
+> So dev_err_probe would be the correct way to go?
 
-The intent here is to exclude any platforms/arch which actually need
-the deprecated behavior, not change DTBs. That's spelled out at the
-WARN which I assume people would read before fixing "Missing
-'#address-cells' in /power-management@ff730000". I tried to make the
-warn message indicate that on v1 with:
+Thanks for your quick response!  Seeing that DRM_DEV_ERROR() is now
+deprecated (which I originally missed, in all honesty) makes me very
+happy. :)  I've never been a huge fan of the format of the messages
+that DRM_DEV_ERROR() produces.
 
-WARN_ONCE(!IS_ENABLED(CONFIG_SPARC), "Only listed platforms should
-rely on default '#address-cells'\n");
+However, perhaps it would be better to keep these patches as-is, as
+some kind of an intermediate, limited-scope cleanup + bugfix combo,
+and leave the complete DRM_DEV_ERROR() --> dev_err()/dev_err_probe()
+conversion to separate patches.  I think it would be better to avoid
+a partial conversion, and I'll be more than happy to put the complete
+conversion on my TODO list. :)
 
-But Conor thought that wasn't clear. So I'm open to suggestions...
-
-Rob
+> [0] 
+> https://elixir.bootlin.com/linux/v6.11.6/source/include/drm/drm_print.h#L431
+> 
+>>  		return -EINVAL;
+>>  	}
+>> 
+>> @@ -1408,19 +1408,16 @@ static int dw_mipi_dsi_rockchip_probe(struct 
+>> platform_device *pdev)
+>>  			dsi->pllref_clk = NULL;
+>>  		} else {
+>>  			ret = PTR_ERR(dsi->pllref_clk);
+>> -			DRM_DEV_ERROR(dev,
+>> -				      "Unable to get pll reference clock: %d\n",
+>> -				      ret);
+>> +			DRM_DEV_ERROR(dev, "Unable to get pll reference clock: %d\n", 
+>> ret);
+>>  			return ret;
+>>  		}
+>>  	}
+>> 
+>>  	if (dsi->cdata->flags & DW_MIPI_NEEDS_PHY_CFG_CLK) {
+>>  		dsi->phy_cfg_clk = devm_clk_get(dev, "phy_cfg");
+>>  		if (IS_ERR(dsi->phy_cfg_clk)) {
+>>  			ret = PTR_ERR(dsi->phy_cfg_clk);
+>> -			DRM_DEV_ERROR(dev,
+>> -				      "Unable to get phy_cfg_clk: %d\n", ret);
+>> +			DRM_DEV_ERROR(dev, "Unable to get phy_cfg_clk: %d\n", ret);
+>>  			return ret;
+>>  		}
+>>  	}
+>> @@ -1465,8 +1462,7 @@ static int dw_mipi_dsi_rockchip_probe(struct 
+>> platform_device *pdev)
+>>  	if (IS_ERR(dsi->dmd)) {
+>>  		ret = PTR_ERR(dsi->dmd);
+>>  		if (ret != -EPROBE_DEFER)
+>> -			DRM_DEV_ERROR(dev,
+>> -				      "Failed to probe dw_mipi_dsi: %d\n", ret);
+>> +			DRM_DEV_ERROR(dev, "Failed to probe dw_mipi_dsi: %d\n", ret);
+>>  		return ret;
+>>  	}
+>> 
+>> 
 
