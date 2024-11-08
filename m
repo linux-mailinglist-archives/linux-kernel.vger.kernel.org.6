@@ -1,93 +1,163 @@
-Return-Path: <linux-kernel+bounces-402349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CD79C26AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:38:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219649C26AF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9871F2192D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45D421C22227
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00AA1CF5F6;
-	Fri,  8 Nov 2024 20:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099131F26ED;
+	Fri,  8 Nov 2024 20:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lnZMrYTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="OJzQk97V"
+Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [178.154.239.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A3617A5BE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 20:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3247B1C1F39;
+	Fri,  8 Nov 2024 20:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731098285; cv=none; b=IwDhyluTbPnoGR8WQZXNLzO1CNpFSShh11hOMbGNZdcWRPnQKtFZm7hx2lr5kRQyaXEqYNHRDFWjLOrpnhQgtt5aTbIgR4cNQh9r8tFulFvPf+Go3KiOLnTCOG+kvrMjZc25yk8mPGGUEyU3fh3VR6G+QWI9DwGU4GaYfnROPLo=
+	t=1731098478; cv=none; b=X1HIKQ0PX1SKIFFJCZKM4xVqlSROSJpJFydbXZAjoopDD+cFUOhgTvrjx9+Q2ejF1dyo1BceoVL4sKACbMb3Udo+dKOOrRjtpeoBoK6JXLuLPrEzrZbI4mPbceVE/zB9jCoFYoNkH2QHeEGwtnGOq68i6kNwXOllpMmcd13NVgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731098285; c=relaxed/simple;
-	bh=mYZu31TFoHeC1EQYi1DFFEWNPmkRwzl46rSAuB7oQ+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzRo/OqwmUzrmFuZ7PcTlSfmwGPU0VNDSla/bHzseydAcYfdy5a0SZPYK2/0og6gSICaHS0SdYyUrItzHIpKorn1jvh14JUgnkLGF0YJmXrS4QGR0mJzcdapMPwbHNYIBynN6dcDs206Hr16N0Hb+qIgllsfolZiGj11Kd+7NsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lnZMrYTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C833FC4CECD;
-	Fri,  8 Nov 2024 20:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731098284;
-	bh=mYZu31TFoHeC1EQYi1DFFEWNPmkRwzl46rSAuB7oQ+U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lnZMrYTcgM7ssrWsuK6AVXITepjqFbDs4f7Tziz1JkFkwhZZ6BIhmVb7noIR/vuSO
-	 Uk18OphD/OgUavn111RlGa6Pjy+qG1NBLbpjsuTKNXjIzRfn+fYZ90KMLdAIbQr0mQ
-	 VdCXUnVx9IHBuhu5eHvizTZzw16gNYDGVCG2yHXZ/eqg6RYeWfrKFwxSlV1ewlAn28
-	 7m8GOMZ9la86S0hIXHZKyNCWdhRRYBdl2tfduy7HaKg4H7BooTIe8WXseYe3k81xEb
-	 WiVKAxkbjzHNd6xcoBIvggol0dmRsmzmGJ7zd+5OD1+c+V3TrdrtVEqMfGKdA88SJJ
-	 8wA7XT7n17Mzw==
-Date: Fri, 8 Nov 2024 10:38:03 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <multics69@gmail.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH sched_ext/for-6.13 2/2] sched_ext: Enable the ops
- breather and eject BPF scheduler on softlockup
-Message-ID: <Zy52q5U8p55DtdJw@slm.duckdns.org>
-References: <ZyqSm4B4NuzuHEbp@slm.duckdns.org>
- <ZyqS0GP9h2hG2lvC@slm.duckdns.org>
+	s=arc-20240116; t=1731098478; c=relaxed/simple;
+	bh=f/pYYg3ktwZwJK9oynqfKm6WiedXx1F8YKvBYJac23Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rsbzAeFOsZokTxb3DWPWUcsCln4dNEk8grpPZ2/QsM9ytQ/Pafhz/gpCN03S9w+TlqkY6WUn+WwA3MT8grBVBE4xm8iaEreaEod71nYag/kFPhoBWlF8G3J1Gj8eWxjmeqOXix5THtBO+/llwIugZvhd4pn4aK+a77HUHtHDWsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=OJzQk97V; arc=none smtp.client-ip=178.154.239.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:694e:0:640:b187:0])
+	by forward101d.mail.yandex.net (Yandex) with ESMTPS id E70F5609B9;
+	Fri,  8 Nov 2024 23:41:06 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 3fq42PTi7Gk0-IXQIp3bx;
+	Fri, 08 Nov 2024 23:41:05 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731098465; bh=S4IVmV5ZbMyqz4PwuioPGK5dCJG1EXmSe/shi3r+XtY=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=OJzQk97Vgo/JUS0YCg+KinnCgtPsNKDUnUIhjR9xQysBwjbIIgRZX/FX9eFGYiDSt
+	 M23zoR+PMSTHnAlOOtC6wlweCQ81yk/UWW9XFBQZH0osbWAP9lWZIFw8SZWHlWvGBa
+	 VaxkadO1kzDvWmBxbpxSAkwxWBqXpblVQ8vNs3do=
+Authentication-Results: mail-nwsmtp-smtp-production-main-84.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Stas Sergeev <stsp2@yandex.ru>
+To: linux-kernel@vger.kernel.org
+Cc: Stas Sergeev <stsp2@yandex.ru>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Jeff Layton <jlayton@kernel.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Felix Moessbauer <felix.moessbauer@siemens.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Oleg Nesterov <oleg@redhat.com>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 0/2] implement PROCFS_SET_GROUPS ioctl
+Date: Fri,  8 Nov 2024 23:41:00 +0300
+Message-ID: <20241108204102.1752206-1-stsp2@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyqS0GP9h2hG2lvC@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 05, 2024 at 11:49:04AM -1000, Tejun Heo wrote:
-> On 2 x Intel Sapphire Rapids machines with 224 logical CPUs, a poorly
-> behaving BPF scheduler can live-lock the system by making multiple CPUs bang
-> on the same DSQ to the point where soft-lockup detection triggers before
-> SCX's own watchdog can take action. It also seems possible that the machine
-> can be live-locked enough to prevent scx_ops_helper, which is an RT task,
-> from running in a timely manner.
-> 
-> Implement scx_softlockup() which is called when three quarters of
-> soft-lockup threshold has passed. The function immediately enables the ops
-> breather and triggers an ops error to initiate ejection of the BPF
-> scheduler.
-> 
-> The previous and this patch combined enable the kernel to reliably recover
-> the system from live-lock conditions that can be triggered by a poorly
-> behaving BPF scheduler on Intel dual socket systems.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+Changes in v3: NULLify private data arg of single_open() calls
+  as suggested by Kees Cook <kees@kernel.org>
+Changes in v2: define set_current_groups() for !CONFIG_MULTIUSER
+  addressing a test robot-reported failure.
 
-Applying 1-2 to sched_ext/for-6.13.
+This patch set implements the PROCFS_SET_GROUPS ioctl that allows
+to set the group list from the fd referring to /proc/<pid>/status.
+It consists of 2 patches: a small preparatory patch and an implementation
+itself. The very detailed explanation of usage, security considerations
+and implementation details are documented in the commit log of the
+second patch. Brief summary below.
 
-Thanks.
+The problem:
+If you use suid/sgid bits to switch to a less-privileged (home-less)
+user, then the group list can't be changed, effectively nullifying
+any supposed restrictions. As such, suid/sgid to non-root creds is
+currently practically useless.
+
+Previous solutions:
+https://www.spinics.net/lists/kernel/msg5383847.html
+This solution allows to restrict the groups from group list.
+It failed to get any attention for probably being too ad-hoc.
+https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@xxxxxxxxxxxxxxxx/
+This solution from Josh Tripplett was considered insecure.
+
+New proposal:
+Given that /proc/<pid>/status file carries the cred info including the
+group list, it seems natural to use that file to transfer and apply the
+group list within. The trusted entity should permit such operation and
+send the needed group info to client via SCM_RIGHTS. Client can check
+the received info by reading from fd. If he is satisfied, he can use
+the new ioctl to try to set the group list from the received status file.
+Kernel does all the needed security and sanity checks, and either returns
+an error or applies the group list. For more details and security
+considerations please refer to the commit message of the second patch.
+As the result, given that the process did the suid/sgid-assisted switch,
+it can obtain the correct group info that matches his new credentials.
+None of the previous proposals allowed to get the right group info:
+it was either cleared or "restricted" but never correct. This proposal
+aims to amend all of the previous short-comings with the hope to make
+the suid/sgid-assisted switches useful for dropping access rights.
+
+Usage example:
+I put the user-space usage example here:
+https://github.com/stsp/cred_test
+`tst.sh` script sets the needed permissions and runs server and client.
+Client does the suid/sgid-assisted identity switch and asks the server
+for the new group info. Server grants the needed group info based on
+client's credentials (using SO_PEERCRED) and client executes `id`
+command to show the result.
+
+Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+
+CC: Eric Biederman <ebiederm@xmission.com>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Aleksa Sarai <cyphar@cyphar.com>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>
+CC: Christian Brauner <brauner@kernel.org>
+CC: Jan Kara <jack@suse.cz>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Jeff Layton <jlayton@kernel.org>
+CC: John Johansen <john.johansen@canonical.com>
+CC: Chengming Zhou <chengming.zhou@linux.dev>
+CC: Casey Schaufler <casey@schaufler-ca.com>
+CC: Adrian Ratiu <adrian.ratiu@collabora.com>
+CC: Felix Moessbauer <felix.moessbauer@siemens.com>
+CC: Jens Axboe <axboe@kernel.dk>
+CC: Oleg Nesterov <oleg@redhat.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+CC: Kees Cook <kees@kernel.org>
+CC: linux-kernel@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+
+Stas Sergeev (2):
+  procfs: avoid some usages of seq_file private data
+  procfs: implement PROCFS_SET_GROUPS ioctl
+
+ fs/proc/base.c          | 148 +++++++++++++++++++++++++++++++++++++---
+ include/linux/cred.h    |   4 ++
+ include/uapi/linux/fs.h |   2 +
+ 3 files changed, 146 insertions(+), 8 deletions(-)
 
 -- 
-tejun
+2.47.0
+
 
