@@ -1,127 +1,179 @@
-Return-Path: <linux-kernel+bounces-400888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882119C13AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:34:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16B69C13B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:34:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA9461C22557
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:34:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88C21F238A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B301401C;
-	Fri,  8 Nov 2024 01:34:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B94516415;
+	Fri,  8 Nov 2024 01:34:24 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C435BA4A;
-	Fri,  8 Nov 2024 01:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5A012E5D;
+	Fri,  8 Nov 2024 01:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731029643; cv=none; b=h0MtfP5v6mdfSWuowclbNZ+rZEe516sbmOHxz9asCX/yLn8GnhJ8UNXTOhABHENWI5tAaGOeuXhqfJLTC9jFz5q1fuOs7pehSbWATxGrxWEmYeI3LaAfEq3jjBOP/ZWVASHk9bsMMlkQ+B4N55dfqsbVn2HDJdhP9fWa4+lJ5VA=
+	t=1731029663; cv=none; b=H7PwR30fXuqGeN6g68obuBNX/a1+MuexI1Ca0cT5eqwYSUKGDdnK9SzFcDSaY0KT1hK4Eq7QLdMCzKDJvtn6k1awurjA0RarUkGxa4WXCQ9kV7/f5omM5Gy4q2nIJtAkJpw0SNJ4tMAmrN7MqnYpVCQkrCkWHoR41kd06Zd6LAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731029643; c=relaxed/simple;
-	bh=EOMoTjos2QgYC5x9uENXTzdipYycq/wVOprJtWGoC6k=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=anbketN+5h0dxvqacxcWiSqnd1siiSUIFq5gzvE5W6GSIAOcY/OO5vpKKNhsnOULu0nw7VPVMpGqKMy3CQAUXapUaIvPJHzf98iGzamy9DP/cB7a74Y15jQQUwIlDoy2wzq3c1dduXygbyk7pj5Jl867CwO6bWYeITQHEdSsqdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xl1g53YdJz4f3m76;
-	Fri,  8 Nov 2024 09:33:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6751E1A018D;
-	Fri,  8 Nov 2024 09:33:56 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoKCai1nrjelBA--.12695S3;
-	Fri, 08 Nov 2024 09:33:56 +0800 (CST)
-Subject: Re: [PATCH md-6.13] md: remove bitmap file support
-To: Song Liu <song@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
- <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
- <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
- <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <6540c8b7-5413-489c-a985-98a23155a82d@huaweicloud.com>
-Date: Fri, 8 Nov 2024 09:33:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1731029663; c=relaxed/simple;
+	bh=j/2zML9BZrRy1UuFY03j0zwAxJdnb6FVG7SmyxpyxCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i8+HQzudwm6KzEFQQHREv3ffsdi5D+8XjxsYq0xuBTgJL4sFeDU9hjgb9p0+eKSe6m0dShINgZe6u6M0ss7bYP8qsXDfDa+81+2AMsujYTYbnzDABvg2P6xK5eBoWau8tx8QpQ79iUmtYRRTA59sQMkz6s7TnLeYCS/HdMngizY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xl1d15nx9z1T9mp;
+	Fri,  8 Nov 2024 09:31:49 +0800 (CST)
+Received: from kwepemg200005.china.huawei.com (unknown [7.202.181.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id D96E11402E1;
+	Fri,  8 Nov 2024 09:34:11 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ kwepemg200005.china.huawei.com (7.202.181.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 Nov 2024 09:34:10 +0800
+Message-ID: <c21660c3-a8ac-4a8b-a312-f52ac781a353@huawei.com>
+Date: Fri, 8 Nov 2024 09:34:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net v2] net: fix data-races around
+ sk->sk_forward_alloc
+To: Simon Horman <horms@kernel.org>, Eric Dumazet <edumazet@google.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<dsahern@kernel.org>, <kuniyu@amazon.com>, <luoxuanqiang@kylinos.cn>,
+	<kernelxing@tencent.com>, <kirjanov@gmail.com>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241105080305.717508-1-wangliang74@huawei.com>
+ <CANn89iJ8mOqtOkMvrn6c892XrA_m3uf5FabmDWzA_pk-tTMCzw@mail.gmail.com>
+ <20241106151401.GA120192@kernel.org>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <20241106151401.GA120192@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnzoKCai1nrjelBA--.12695S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF1UJrWDAw4fWFW3ur13CFg_yoWkGFbEvF
-	9Ykrn3uw47Grn7tFs8Xr9Yvr4DGw45GFs8uayDJFyFqw1kXas5KF48CwsaqrsxGFZFqr93
-	GFy0vF48JrZxXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VU18sqtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200005.china.huawei.com (7.202.181.32)
 
-Hi,
 
-在 2024/11/08 9:28, Song Liu 写道:
-> On Thu, Nov 7, 2024 at 5:03 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/11/08 7:41, Song Liu 写道:
->>> On Thu, Nov 7, 2024 at 5:02 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>>
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> The bitmap file has been marked as deprecated for more than a year now,
->>>> let's remove it, and we don't need to care about this case in the new
->>>> bitmap.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+在 2024/11/6 23:14, Simon Horman 写道:
+> On Tue, Nov 05, 2024 at 10:52:34AM +0100, Eric Dumazet wrote:
+>> On Tue, Nov 5, 2024 at 8:46 AM Wang Liang <wangliang74@huawei.com> wrote:
+>>> Syzkaller reported this warning:
+>>>   ------------[ cut here ]------------
+>>>   WARNING: CPU: 0 PID: 16 at net/ipv4/af_inet.c:156 inet_sock_destruct+0x1c5/0x1e0
+>>>   Modules linked in:
+>>>   CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.12.0-rc5 #26
+>>>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+>>>   RIP: 0010:inet_sock_destruct+0x1c5/0x1e0
+>>>   Code: 24 12 4c 89 e2 5b 48 c7 c7 98 ec bb 82 41 5c e9 d1 18 17 ff 4c 89 e6 5b 48 c7 c7 d0 ec bb 82 41 5c e9 bf 18 17 ff 0f 0b eb 83 <0f> 0b eb 97 0f 0b eb 87 0f 0b e9 68 ff ff ff 66 66 2e 0f 1f 84 00
+>>>   RSP: 0018:ffffc9000008bd90 EFLAGS: 00010206
+>>>   RAX: 0000000000000300 RBX: ffff88810b172a90 RCX: 0000000000000007
+>>>   RDX: 0000000000000002 RSI: 0000000000000300 RDI: ffff88810b172a00
+>>>   RBP: ffff88810b172a00 R08: ffff888104273c00 R09: 0000000000100007
+>>>   R10: 0000000000020000 R11: 0000000000000006 R12: ffff88810b172a00
+>>>   R13: 0000000000000004 R14: 0000000000000000 R15: ffff888237c31f78
+>>>   FS:  0000000000000000(0000) GS:ffff888237c00000(0000) knlGS:0000000000000000
+>>>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>   CR2: 00007ffc63fecac8 CR3: 000000000342e000 CR4: 00000000000006f0
+>>>   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>   Call Trace:
+>>>    <TASK>
+>>>    ? __warn+0x88/0x130
+>>>    ? inet_sock_destruct+0x1c5/0x1e0
+>>>    ? report_bug+0x18e/0x1a0
+>>>    ? handle_bug+0x53/0x90
+>>>    ? exc_invalid_op+0x18/0x70
+>>>    ? asm_exc_invalid_op+0x1a/0x20
+>>>    ? inet_sock_destruct+0x1c5/0x1e0
+>>>    __sk_destruct+0x2a/0x200
+>>>    rcu_do_batch+0x1aa/0x530
+>>>    ? rcu_do_batch+0x13b/0x530
+>>>    rcu_core+0x159/0x2f0
+>>>    handle_softirqs+0xd3/0x2b0
+>>>    ? __pfx_smpboot_thread_fn+0x10/0x10
+>>>    run_ksoftirqd+0x25/0x30
+>>>    smpboot_thread_fn+0xdd/0x1d0
+>>>    kthread+0xd3/0x100
+>>>    ? __pfx_kthread+0x10/0x10
+>>>    ret_from_fork+0x34/0x50
+>>>    ? __pfx_kthread+0x10/0x10
+>>>    ret_from_fork_asm+0x1a/0x30
+>>>    </TASK>
+>>>   ---[ end trace 0000000000000000 ]---
 >>>
->>> What happens when an old array with bitmap file boots into a kernel
->>> without bitmap file support?
->>
->> If mdadm is used with bitmap file support, then kenel will just ignore
->> the bitmap, the same as none bitmap. Perhaps it's better to leave a
->> error message?
-> 
-> Yes, we should print some error message before assembling the array.
+>>> Its possible that two threads call tcp_v6_do_rcv()/sk_forward_alloc_add()
+>>> concurrently when sk->sk_state == TCP_LISTEN with sk->sk_lock unlocked,
+>>> which triggers a data-race around sk->sk_forward_alloc:
+>>> tcp_v6_rcv
+>>>      tcp_v6_do_rcv
+>>>          skb_clone_and_charge_r
+>>>              sk_rmem_schedule
+>>>                  __sk_mem_schedule
+>>>                      sk_forward_alloc_add()
+>>>              skb_set_owner_r
+>>>                  sk_mem_charge
+>>>                      sk_forward_alloc_add()
+>>>          __kfree_skb
+>>>              skb_release_all
+>>>                  skb_release_head_state
+>>>                      sock_rfree
+>>>                          sk_mem_uncharge
+>>>                              sk_forward_alloc_add()
+>>>                              sk_mem_reclaim
+>>>                                  // set local var reclaimable
+>>>                                  __sk_mem_reclaim
+>>>                                      sk_forward_alloc_add()
+>>>
+>>> In this syzkaller testcase, two threads call
+>>> tcp_v6_do_rcv() with skb->truesize=768, the sk_forward_alloc changes like
+>>> this:
+>>>   (cpu 1)             | (cpu 2)             | sk_forward_alloc
+>>>   ...                 | ...                 | 0
+>>>   __sk_mem_schedule() |                     | +4096 = 4096
+>>>                       | __sk_mem_schedule() | +4096 = 8192
+>>>   sk_mem_charge()     |                     | -768  = 7424
+>>>                       | sk_mem_charge()     | -768  = 6656
+>>>   ...                 |    ...              |
+>>>   sk_mem_uncharge()   |                     | +768  = 7424
+>>>   reclaimable=7424    |                     |
+>>>                       | sk_mem_uncharge()   | +768  = 8192
+>>>                       | reclaimable=8192    |
+>>>   __sk_mem_reclaim()  |                     | -4096 = 4096
+>>>                       | __sk_mem_reclaim()  | -8192 = -4096 != 0
+>>>
+>>> The skb_clone_and_charge_r() should not be called in tcp_v6_do_rcv() when
+>>> sk->sk_state is TCP_LISTEN, it happens later in tcp_v6_syn_recv_sock().
+>>> Fix the same issue in dccp_v6_do_rcv().
+>>>
+>>> Suggested-by: Eric Dumazet <edumazet@google.com>
+>>> Fixes: e994b2f0fb92 ("tcp: do not lock listener to process SYN packets")
+>>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> Reviewed-by: Eric Dumazet <edumazet@google.com>
+> Hi Wang Liang,
+>
+> Please post a non-RFC variant of this patch so it can be considered for
+> inclusion in net. And please include Eric's Reviewed-by tag.
+>
+> Thanks!
 
-OK
-> 
->> And if mdadm is updated, reassemble will fail.
-> 
-> I think we should ship this with 6.14 (not 6.13), so that we have
-> more time testing different combinations of old/new mdadm
-> and kernel. WDYT?
 
-Agreed!
+Thanks very much for your suggestion!
 
-Thanks,
-Kuai
+I have send the patch("[PATCH net] net: fix data-races around 
+sk->sk_forward_alloc") with Reviewed-by tag, and remove the RFC.
 
-> 
-> Thanks,
-> Song
-> .
-> 
+Please check it.
 
 
