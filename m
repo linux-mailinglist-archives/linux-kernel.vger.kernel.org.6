@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-401664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAA49C1DAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:11:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8273A9C1DAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86D61F2224C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753E71F22296
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEE51EABB6;
-	Fri,  8 Nov 2024 13:11:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3A81EABA7;
-	Fri,  8 Nov 2024 13:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A07A1EABC0;
+	Fri,  8 Nov 2024 13:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyLcjKLL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F93C1EABA9;
+	Fri,  8 Nov 2024 13:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731071485; cv=none; b=F/IhNhsZNS5Enhwaa/vDkoqKf78+qKfi9RJLfvyAZHWl0y022N9+/CRtEbKUrR5uIItLHucQfU2xVGCPf+fJiRs11KF1IHl/RVGBFuN04hrBQAZBPLFo7cwy2VNa7OGRhqSi4qFNGKi2LdMpaYwA3nKxJIaH3WXGAIXYuxQKXag=
+	t=1731071509; cv=none; b=DRFcuwxfTeOjmguFNJ68oQO1kZeey6yxGgLfMhExS9o8jejJxjkGQNvcPhyEoCRvxpFYpxPhhaXn1l0gy/V434iO9NlCdoyj5U3HbSrafihfccr1l2+PnyzXwGpJgdjvV/Z95oCm8MOJ3jxILjClJdRSAmeI/5sIt/7KNj2K+As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731071485; c=relaxed/simple;
-	bh=QjA5EMYFJ6xfhGH9fzDGKSBNyr2o8zURlscSe7enCB4=;
+	s=arc-20240116; t=1731071509; c=relaxed/simple;
+	bh=zK0GRqp/V3HoI4yu30aVffYgP16alBb/iJp52nxyaXc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IaUYXT3/E3vSZlliJ7y36AFJ/DMgmyu6gxrGunvv5iOui4nqWDzqiResHsE+HBPRJ55oZXKMSmaFdDrqdfY/08dA6uJ+ZRyELJrgpwEXWvmhiJ/Ln59cRjYGeaTzBaYcNpLKrra6ZWYz/+cqCDKMZ8Phge3GNDKmghvPzyyY5Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C173A497;
-	Fri,  8 Nov 2024 05:11:51 -0800 (PST)
-Received: from [10.57.90.136] (unknown [10.57.90.136])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C940B3F528;
-	Fri,  8 Nov 2024 05:11:20 -0800 (PST)
-Message-ID: <74e82b40-ecf9-4f20-9a33-c5369e04ea85@arm.com>
-Date: Fri, 8 Nov 2024 13:11:19 +0000
+	 In-Reply-To:Content-Type; b=HFa1NR4nWxBlcG2qcKa6hbIa3Zjhi9au2yvOZHxeXBeLs2UmEyJror8jzoARtxcoV+FbPfsY/FK1irP52V5tpWOtOVf5arfvNz3dmQPPHysgP37+nLaZ1aw6vzKyUWax4YvAh3nA+IBfDGtjMJPjwTOHA55OsdMavMBFmHH7F0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyLcjKLL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0CAC4CECD;
+	Fri,  8 Nov 2024 13:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731071509;
+	bh=zK0GRqp/V3HoI4yu30aVffYgP16alBb/iJp52nxyaXc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DyLcjKLLq/dqNJkHXkzMFBK0EoQQqXkZypILttHc3BZu+/UrHNom00DprSYwwoNO9
+	 6D6ZesOOA4nN+dCP77wMpJ9cg8TgtIw7fiUcJ4KPQkXfbFA96okJEf0sSEVnqIMLcS
+	 DgMSnLpeyBLKsltzYLJriHP1lLxXyRfhK6m6+gChBTZVWQEhCqsGqk8Z0c7/aM6+d4
+	 ffzgG5FUSj48K5dBr7gbRqDvNkA41oNcVAWhooL7b5Gq/51mu/OoQSh+tmJ1CQNcWZ
+	 pnU/A3FP8JgGxsn1BWUU9nxvgyiSBiu/QfKCmnaYEGQwEoHKtGhvgd4Xe2JZgLucG4
+	 Zy8dIyBQW7m4Q==
+Message-ID: <c26abf19-782b-400c-9c06-c26edcb4c00b@kernel.org>
+Date: Fri, 8 Nov 2024 07:11:47 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,88 +49,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/dma: Reserve iova ranges for reserved regions of
- all devices
-To: Jerry Snitselaar <jsnitsel@redhat.com>, iommu@lists.linux.dev
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241024153412.141765-1-jsnitsel@redhat.com>
- <vup5ms2p5o4ao3t57kfgqtnnna7e4jcvkvup2vmyf6o4qrb3qu@3aanawjzggyh>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <vup5ms2p5o4ao3t57kfgqtnnna7e4jcvkvup2vmyf6o4qrb3qu@3aanawjzggyh>
+Subject: Re: [PATCH net v2] arm: dts: socfpga: use reset-name "stmmaceth-ocp"
+ instead of "ahb"
+To: Mamta Shukla <mamta.shukla@leica-geosystems.com>,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, a.fatoum@pengutronix.de
+Cc: bsp-development.geo@leica-geosystems.com
+References: <20241028145907.1698960-1-mamta.shukla@leica-geosystems.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20241028145907.1698960-1-mamta.shukla@leica-geosystems.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024-11-06 7:13 pm, Jerry Snitselaar wrote:
-> On Thu, Oct 24, 2024 at 08:34:12AM -0700, Jerry Snitselaar wrote:
->> Only the first device that is passed when the domain is set up will
->> have its reserved regions reserved in the iova address space.  So if
->> there are other devices in the group with unique reserved regions,
->> those regions will not get reserved in the iova address space.  All of
->> the ranges do get set up in the iopagetables via calls to
->> iommu_create_device_direct_mappings for all devices in a group.
->>
->> In the case of vt-d system this resulted in messages like the following:
->>
->> [ 1632.693264] DMAR: ERROR: DMA PTE for vPFN 0xf1f7e already set (to f1f7e003 not 173025001)
->>
->> To make sure iova ranges are reserved for the reserved regions all of
->> the devices, call iova_reserve_iommu_regions in iommu_dma_init_domain
->> prior to exiting in the case where the domain is already initialized.
->>
->> Cc: Robin Murphy <robin.murphy@arm.com>
->> Cc: Joerg Roedel <joro@8bytes.org>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: stable@vger.kernel.org
->> Fixes: 7c1b058c8b5a ("iommu/dma: Handle IOMMU API reserved regions")
->> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
->> ---
->> Robin: I wasn't positive if this is the correct solution, or if it should be
->>         done for the entire group at once.
->>
->>   drivers/iommu/dma-iommu.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
->> index 2a9fa0c8cc00..5fd3cccbb233 100644
->> --- a/drivers/iommu/dma-iommu.c
->> +++ b/drivers/iommu/dma-iommu.c
->> @@ -707,7 +707,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
->>   			goto done_unlock;
->>   		}
->>   
->> -		ret = 0;
->> +		ret = iova_reserve_iommu_regions(dev, domain);
->>   		goto done_unlock;
->>   	}
->>   
->> -- 
->> 2.44.0
->>
-> 
-> Robin,
-> 
-> Any thoughts on this patch? In the case where this originally popped
-> up it was likely a crap DMAR table in an HPE system with an ilo, as
-> the RMRR in question had a device in the list that as far as I could
-> tell didn't actually exist. The 2nd function of the sata controller
-> was in the list, but not the first, and the first function was the
-> device where the group/domain was initialized. With some debugging
-> code I could see it set up the ioptes for the 2nd function, but it
-> wasn't reserving the range of iovas.
 
-Yeah, this one's tricky - the current behaviour is not entirely 
-unintentional since there's not really a right answer. It's also 
-possible for the second device to get here after the first device has 
-already started using the domain, so at that point it's no longer safe 
-to use reserve_iova() due to how it merges overlapping and adjacent 
-rbtree nodes, which could really screw things up once there are normal 
-allocations in the tree as well. So in truth it was rather a case of 
-crossing my fingers and quietly hoping this particular set of 
-circumstances was unlikely enough to never come up... :/
 
-Thanks,
-Robin.
+On 10/28/24 09:59, Mamta Shukla wrote:
+> The ahb reset is deasserted in probe before first register access, while the
+> stmmacheth-ocp reset needs to be asserted every time before changing the phy
+> mode in Arria10[1].
+> 
+> Changed in Upstream to "ahb"(331085a423b  arm64: dts: socfpga: change the
+> reset-name of "stmmaceth-ocp" to "ahb" ).This change was intended for arm64
+> socfpga and it is not applicable to Arria10.
+> 
+> Further with STMMAC-SELFTEST Driver enabled, ethtool test also FAILS.
+> $ ethtool -t eth0
+> [  322.946709] socfpga-dwmac ff800000.ethernet eth0: entered promiscuous mode
+> [  323.374558] socfpga-dwmac ff800000.ethernet eth0: left promiscuous mode
+> The test result is FAIL
+> The test extra info:
+>   1. MAC Loopback                 0
+>   2. PHY Loopback                 -110
+>   3. MMC Counters                 -110
+>   4. EEE                          -95
+>   5. Hash Filter MC               0
+>   6. Perfect Filter UC            -110
+>   7. MC Filter                    -110
+>   8. UC Filter                    0
+>   9. Flow Control                 -110
+> 10. RSS                          -95
+> 11. VLAN Filtering               -95
+> 12. VLAN Filtering (perf)        -95
+> 13. Double VLAN Filter           -95
+> 14. Double VLAN Filter (perf)    -95
+> 15. Flexible RX Parser           -95
+> 16. SA Insertion (desc)          -95
+> 17. SA Replacement (desc)        -95
+> 18. SA Insertion (reg)           -95
+> 19. SA Replacement (reg)         -95
+> 20. VLAN TX Insertion            -95
+> 21. SVLAN TX Insertion           -95
+> 22. L3 DA Filtering              -95
+> 23. L3 SA Filtering              -95
+> 24. L4 DA TCP Filtering          -95
+> 25. L4 SA TCP Filtering          -95
+> 26. L4 DA UDP Filtering          -95
+> 27. L4 SA UDP Filtering          -95
+> 28. ARP Offload                  -95
+> 29. Jumbo Frame                  -110
+> 30. Multichannel Jumbo           -95
+> 31. Split Header                 -95
+> 32. TBS (ETF Scheduler)          -95
+> 
+> [  324.881327] socfpga-dwmac ff800000.ethernet eth0: Link is Down
+> [  327.995360] socfpga-dwmac ff800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+> 
+> Link:[1] https://www.intel.com/content/www/us/en/docs/programmable/683711/21-2/functional-description-of-the-emac.html
+> Fixes: 331085a423b ("arm64: dts: socfpga: change the reset-name of "stmmaceth-ocp" to "ahb")
+> Signed-off-by: Mamta Shukla <mamta.shukla@leica-geosystems.com>
+> Tested-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>
+
+Applied, thanks!
+
+Dinh
 
