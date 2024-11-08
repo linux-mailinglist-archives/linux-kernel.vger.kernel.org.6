@@ -1,106 +1,156 @@
-Return-Path: <linux-kernel+bounces-401915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A93439C20FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:49:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C0209C2106
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:49:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D2EC1F25301
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA131C23272
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D216C21A71E;
-	Fri,  8 Nov 2024 15:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A30D21A71E;
+	Fri,  8 Nov 2024 15:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="q3iA9Ead"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCyBO3vz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DB321A71B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61661E8843;
+	Fri,  8 Nov 2024 15:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731080942; cv=none; b=rASct0orR+Rg2CHehALEdr4giYHL95p9nnm0SxoabysF8QTYYVKTalBmx6VLaJptkocha3tJOCN+DChP8NOd9XnlLg1xitco6ecrDF8L6hm7MS8fztYFCS37wD4TiPsgPM11yRDCcUbyABu9CC2ECr+0wxc7a20VHTHrBMT5GG0=
+	t=1731080989; cv=none; b=SpFPpsw11Jkb4jyH826lk//ZcetQtb20HGsZ8tvaK6KcgidVuhjwWmftbz+VI8wD4tJN1gC71vMB+5tu8DrU5c3fGHaqeFAHEhCaTiRvs9DdDkieuQPsE9OptN3AvIf+EsLqIi1K34wyoaJHZxOMfVhNlV31+kzXWsCYSLCUT+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731080942; c=relaxed/simple;
-	bh=MLMZ4Qbm132WMpNRKYFC+f34b+Ke2+QAK8M6qn5aECE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=rmeMS3K8M4PDPZnzMh5cL3bhvjOnJDf2+Ucqgbe+1riOlU4gaN3QPQ5p4wPQKc8gSt8VzE2N12RgCyyifj+p9kAr3qIf73mMHqFptzdypfT/3Xgkyhx75/ciwlSWL55VA+IN4coLW3KTr3lLyOJJhzslieLRvdofEkld0IEuueQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=q3iA9Ead; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([90.224.241.145])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4A8FmOh41657183
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 8 Nov 2024 07:48:27 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4A8FmOh41657183
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1731080909;
-	bh=MLMZ4Qbm132WMpNRKYFC+f34b+Ke2+QAK8M6qn5aECE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=q3iA9EadZdyh/oFOsm2zhku4TPLecF7JXFhTBYy9ulJdJwr//RO1WCaKQoLfVV9q4
-	 rB4P8xujWHSoJrufYU2ExMOYWVT1JfI2rUaPJdBPVDPYmhJ9dFWCFHpuDFyzltMk3a
-	 V+qppx/bNaV6XW5Qsjye1ygboyD5bHKqgoDDKC9UQqTZq3ieLl3HwSnIXNYweNloY6
-	 wWosFqRYVY9q6iH6VjkxR15CV7Q8w8bO4U7eno8Mt0fDClDcTHlQzNA8K3Rsmymrbv
-	 7pyy8LRS0lL8JixzZvKTZPI4YKgaZirQr3RjMEaTkdT0hv8JUYG4MTvzyAS3ud4EgZ
-	 dhKXTb8Ps8pYQ==
-Date: Fri, 08 Nov 2024 16:48:16 +0100
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_1/1=5D_x86/cpu=3A_Make_sure_fl?=
- =?US-ASCII?Q?ag=5Fis=5Fchangeable=5Fp=28=29_is_always_being_used?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <Zy4xHC3MCtAqlSxy@smile.fi.intel.com>
-References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com> <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com> <Zy4xHC3MCtAqlSxy@smile.fi.intel.com>
-Message-ID: <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
+	s=arc-20240116; t=1731080989; c=relaxed/simple;
+	bh=bNWyHlQLaS8jAp8LNi4V7sTSeKnqBJqlVvZv8dA8ivY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRE3U18eDSz8B4z4r5PeXUYskJqPu1uYuBBT1PwHmZo/O3A8/a1eNZAF+fwH1W1yPJHCzLzLdHuWNkUb3afYm6wyuf/5Zvk3DwRH+squzl9qStrxdV2cxrt91XDLINCChqadM4raI1qDQLy/ivns5mVBUMz7vdcp+xaAGrIWUNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCyBO3vz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30482C4CECD;
+	Fri,  8 Nov 2024 15:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731080989;
+	bh=bNWyHlQLaS8jAp8LNi4V7sTSeKnqBJqlVvZv8dA8ivY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aCyBO3vzPfTH8zliCXHDrREiMkW76T5M8zbOv4TgLRq8SichqyTUmzA87zdassNmm
+	 Y4SLCKA8jITOk1hQzhDyCIWde86UOJJOCEoSOZiI3plMohh+LGZd4jxIKfD+1wsBL1
+	 q2Yj8K7X5lnAuiO0OOgMNwSaXD0WLdD3qTmCrmMvCAZeZFapm8uFefUuB7iMPubVDe
+	 z3Ti9R4hVF5HHQwShI6Y3ORES0KkC9bveSCvFIqYgbH8hakCe6M90F1k4teysRXned
+	 aAY+M6pvzar7eBlp6SidJbyK2FTBv+yNlD/NgGevEtEyUGxRK4SSVr8E6Ob0jvBfgW
+	 Ag4Jd6ykQ1FbA==
+Date: Fri, 8 Nov 2024 07:49:47 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-modules@vger.kernel.org
+Cc: Mike Rapoport <rppt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Liu Shixin <liushixin2@huawei.com>
+Subject: Re: [PATCH] static_call: Handle module init failure correctly in
+ static_call_del_module()
+Message-ID: <Zy4zGy9aoQ1-Qokg@bombadil.infradead.org>
+References: <87cylj7v6x.ffs@tglx>
+ <3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com>
+ <877cbr7qed.ffs@tglx>
+ <50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com>
+ <87a5gm5tb3.ffs@tglx>
+ <ZtuPSIFsV8C3UZW8@bombadil.infradead.org>
+ <Zuv0nmFblHUwuT8v@bombadil.infradead.org>
+ <ZvJomuNWjtHYDcsW@kernel.org>
+ <8bd5e396-7583-435e-bafc-7d092a31f4ff@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8bd5e396-7583-435e-bafc-7d092a31f4ff@csgroup.eu>
 
-On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy=2Eshevche=
-nko@linux=2Eintel=2Ecom> wrote:
->On Fri, Nov 08, 2024 at 04:35:17PM +0100, H=2E Peter Anvin wrote:
->> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy=2Eshe=
-vchenko@linux=2Eintel=2Ecom> wrote:
->
->> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused stat=
-ic
->> >inline functions for W=3D1 build")=2E
->
->^^^ (1)
->
->> Looks good to me:
->>=20
->> Reviewed-by: H=2E Peter Anvin (Intel) <hpa@zytor=2Ecom>
->
->Thank you!
->
->> But another question: why the hell does clang complain about an unused =
-static inline function?!
->
->Does (1) shed a bit of light to this?
->
++ Other new module maintainers
 
-How on earth is that supposed to work?! We have static inline functions in=
- headers all over the place that are only used in certain circumstances=2E=
-=20
+On Fri, Nov 08, 2024 at 09:12:03AM +0100, Christophe Leroy wrote:
+> Hi Luis,
+> 
+> Le 24/09/2024 à 09:22, Mike Rapoport a écrit :
+> > On Thu, Sep 19, 2024 at 02:53:34AM -0700, Luis Chamberlain wrote:
+> > > On Fri, Sep 06, 2024 at 04:24:56PM -0700, Luis Chamberlain wrote:
+> > > > On Thu, Sep 05, 2024 at 11:44:00AM +0200, Thomas Gleixner wrote:
+> > > > > Now you at least provided the information that the missing cleanup in
+> > > > > the init() function is not the problem. So the obvious place to look is
+> > > > > in the module core code whether there is a failure path _after_
+> > > > > module->init() returned success.
+> > > > > 
+> > > > > do_init_module()
+> > > > >          ret = do_one_initcall(mod->init);
+> > > > >          ...
+> > > > > 	ret = module_enable_rodata_ro(mod, true);
+> > > > > 	if (ret)
+> > > > > 		goto fail_mutex_unlock;
+> > > > > 
+> > > > > and that error path does _not_ invoke module->exit(), which is obviously
+> > > > > not correct. Luis?
+> > > > 
+> > > > You're spot on this needs fixing.
+> > > 
+> > > Christophe, this is a regression caused by the second hunk of your commit
+> > > d1909c0221739 ("module: Don't ignore errors from set_memory_XX()") on v6.9.
+> > > Sadly there are a few issues with trying to get to call mod->exit():
+> > > 
+> > > - We should try try_stop_module()  and that can fail
+> > > - source_list may not be empty and that would block removal
+> > > - mod->exit may not exist
+> > > 
+> > > I'm wondering if instead we should try to do the module_enable_rodata_ro()
+> > > before the init, but that requires a bit more careful evaluation...
+> > 
+> > There is ro_after_init section, we can't really make it RO before ->init()
+> 
+> Surprisingly I never received Luis's email
 
-Is this a good thing, really? Or is it noise?
+So odd..
+
+> allthough I got this answer from Mike that I overlooked.
+> 
+> So coming back here from
+> https://lore.kernel.org/all/ZyQhbHxDTRXTJgIx@bombadil.infradead.org/
+> 
+> As far as I understand, indeed once init is called it is too late to fail,
+
+Partly yes, party no. Party yes in that its a can of worms we have not
+had to deal with before, and also I worry about deadlocks, and the code
+to address this seems complex. right ?
+
+
+> Especially when the module has no exit() path or when
+> CONFIG_MODULE_UNLOAD is not built in.
+
+That's exactly the other extreme case I fear for.
+
+> So the only thing we can do then is a big fat warning telling
+> set_memory_ro() on ro_after_init memory has failed ?
+
+I suspect this is more sensible to do.
+
+> Maybe we should try and change it to RO then back to RW before calling init,
+> to be on a safer side hopping that if change to RO works once it will work
+> twice ?
+
+That's another approach wich could work, if we proove that this does
+work, it's a nice best effort and I think less or a mess to the codebase
+then special-casing the error handling of trying to deal with the
+driver's exit.
+
+Daniel Gomez has been looking at this, so his feedback here would be
+valuable.
+
+  Luis
 
