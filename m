@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-401092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E0C9C15DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:06:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCEF9C1681
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:39:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759F01F23C78
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C577DB239E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF911C3F01;
-	Fri,  8 Nov 2024 05:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rn2hkYvF"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF159CA6F;
-	Fri,  8 Nov 2024 05:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02921D07A7;
+	Fri,  8 Nov 2024 06:39:35 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243BBEBE;
+	Fri,  8 Nov 2024 06:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731042383; cv=none; b=BI+JiNMspGOSNs/N+LQhswP0M6IgpZPGJ1yGMfM4E+uA8ZtNB9n+ELHebFcNbRB1R7HANW2XZ+5UWzGu1Eh9g6iO/ODrji3NZDxa7FPY31Voz+r0quGbwjxIMEAvc7YmKhv+VXoYRuXOPjXYUG2/gpSga7HigB3fGzZDvLezQZ4=
+	t=1731047975; cv=none; b=CB40j5S0JD1H2d0MvR00NCTbVhmD1hwH133JBb+XSh3DVm370ZChJ8L7B8Dz0zghS3ydV8dGtn0BWKVUX/flUBU+ODBJN3XpviOGc9cHNog/a1cs6Nu/Ie2RO4/mM8WPfOU7l2fZkuKMrP+xq5YGA68dmi4cUcfgha/M56+JCAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731042383; c=relaxed/simple;
-	bh=OJArgu0xE2/lQeE0J0xckqURWJohssppDrv7PNXDZNY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLU8eQ+MD5IcZKvHPmXl2UrOLUQAeuEmi3gVM4YV4IgptODmZVZ9RL2pLpi2MkCvB4VwLX3bYJkzVcUQYwh8sGTI01H6UNIKZvCilcK0612DlhYC8Aaw60IT52vyUsKiaD1HszgvlH+6qWmd5eJMI8q5C4EzkGj0C+0z5gI1sLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Rn2hkYvF; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A855S67060913;
-	Thu, 7 Nov 2024 23:05:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731042328;
-	bh=exMs8dRJNb40qSDWYqjC7kbZHKIwFJKbmdXtVqWShjw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Rn2hkYvF7K7KgeuKuGTVmUpRIHCIamFuw5xKvt4LWWRSeXQPxN1Oz2aGwd7C1PYUB
-	 j5+CR7S2ATyiTGqzjtR/hrgHTTxIftKTpaAkKbxSvue9y3tqtJ1PNDmDLaiLnShGHi
-	 jEYIMzpC8sjKXM2vVmqYab3T2kk4imjwmucXCsGs=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A855SUd030448
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 7 Nov 2024 23:05:28 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 7
- Nov 2024 23:05:28 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 7 Nov 2024 23:05:28 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A855R5C011753;
-	Thu, 7 Nov 2024 23:05:27 -0600
-Date: Fri, 8 Nov 2024 10:35:26 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Bjorn Helgaas
-	<helgaas@kernel.org>, <lpieralisi@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>,
-        <manivannan.sadhasivam@linaro.org>, <kishon@kernel.org>,
-        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
-        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v2 1/2] PCI: keystone: Set mode as RootComplex for
- "ti,keystone-pcie" compatible
-Message-ID: <97561a54-8d80-4786-9171-5208128c3a2f@ti.com>
-References: <5983ad5e-729d-4cdc-bdb4-d60333410675@ti.com>
- <20241106154945.GA1526156@bhelgaas>
- <20241106160520.GD2745640@rocinante>
- <4fc87e39-ae2f-4ac9-ace3-26b2b79e2297@ti.com>
- <20241107155144.GB1297107@rocinante>
+	s=arc-20240116; t=1731047975; c=relaxed/simple;
+	bh=Y267l0BUqqgJmxGvfXbT0PmHmIKaH+mSx4D3GnoS1zk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rX1L8DPV7AgYI1ZQTW4+JbASfCG7PSZRTslxU530bEGpYB5crcmN2onjupBVxEunwNLRPG1AaLETS+f9b+MvsPiUyuVnkGgokzdn9VPLE9CV5/8H8yvSAH4pL4l+UiveNyxbt15Q9FHQSV/HqJwfLUwO7DWzDS/R+z3r8c5lkTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1672db21d641-bff53;
+	Fri, 08 Nov 2024 14:39:27 +0800 (CST)
+X-RM-TRANSID:2ee1672db21d641-bff53
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5672db21ec48-8c35a;
+	Fri, 08 Nov 2024 14:39:26 +0800 (CST)
+X-RM-TRANSID:2ee5672db21ec48-8c35a
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: rafael@kernel.org
+Cc: daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] tools/thermal: Fix common realloc mistake
+Date: Fri,  8 Nov 2024 12:47:00 +0800
+Message-Id: <20241108044700.37633-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107155144.GB1297107@rocinante>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Nov 08, 2024 at 12:51:44AM +0900, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> > > Added Cc for stable releases.  Siddharth, let me know how to update the
-> > > commit log per Bjorn feedback, so I can do it directly on the branch.
-> > 
-> > The existing commit message could be replaced by the following:
-> > 
-> > ------------------------------------------------------------------------
-> > commit 23284ad677a9 ("PCI: keystone: Add support for PCIe EP in AM654x
-> > Platforms") introduced configuring "enum dw_pcie_device_mode" as part of
-> > device data ("struct ks_pcie_of_data"). However it failed to set the mode
-> > for "ti,keystone-pcie" compatible.
-> > 
-> > Since the mode defaults to "DW_PCIE_UNKNOWN_TYPE", the following error
-> > message is displayed:
-> > 	"INVALID device type 0"
-> > for the v3.65a controller. Despite the driver probing successfully, the
-> > controller may not be functional in the Root Complex mode of operation.
-> > 
-> > So, set the mode as Root Complex for "ti,keystone-pcie" compatible to fix
-> > this.
-> > ------------------------------------------------------------------------
-> 
-> Done.  See the following:
-> 
->   - https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/keystone&id=5a938ed9481b0c06cb97aec45e722a80568256fd
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-LGTM. Thank you for updating the commit message :)
+Do not set thermometer->tz NULL when realloc failed.
 
-Regards,
-Siddharth.
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ tools/thermal/thermometer/thermometer.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/tools/thermal/thermometer/thermometer.c b/tools/thermal/thermometer/thermometer.c
+index 1a87a0a77f9f..e08291a97fd8 100644
+--- a/tools/thermal/thermometer/thermometer.c
++++ b/tools/thermal/thermometer/thermometer.c
+@@ -259,6 +259,7 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
+ {
+ 	int fd;
+ 	char tz_path[PATH_MAX];
++	void *tmp;
+ 
+ 	sprintf(tz_path, CLASS_THERMAL"/%s/temp", path);
+ 
+@@ -268,12 +269,13 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
+ 		return -1;
+ 	}
+ 
+-	thermometer->tz = realloc(thermometer->tz,
++	tmp = realloc(thermometer->tz,
+ 				  sizeof(*thermometer->tz) * (thermometer->nr_tz + 1));
+-	if (!thermometer->tz) {
++	if (!tmp) {
+ 		ERROR("Failed to allocate thermometer->tz\n");
+ 		return -1;
+ 	}
++	thermometer->tz = tmp;
+ 
+ 	thermometer->tz[thermometer->nr_tz].fd_temp = fd;
+ 	thermometer->tz[thermometer->nr_tz].name = strdup(name);
+-- 
+2.33.0
+
+
+
 
