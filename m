@@ -1,65 +1,86 @@
-Return-Path: <linux-kernel+bounces-400828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8E59C12E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:07:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DD79C12EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B015B21FA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B03F1F2308C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5945B1FDD;
-	Fri,  8 Nov 2024 00:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7AF1FB4;
+	Fri,  8 Nov 2024 00:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFmd+SSv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gwIHnxL2"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C1118D;
-	Fri,  8 Nov 2024 00:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4464518D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731024452; cv=none; b=cSvmwLtq904NWE8lyWmqgI3ZQE8WWDrcu/MYZ67WeaJf4aDIuc29he8T4aQ9hYuvwGGvWNzGgQzUwqWOi5q+F10d76doEJhQPbihnLPSdZPk8K0RLcNqkYaMwb2xbvGZarq4GEvHgucQh8I8uO29d2HV7OB/aAqWvkIbH78Msts=
+	t=1731024836; cv=none; b=RwH3U5IG5eIVbXn3RaYsH5mWb488bXhzlziq7A+i2DAMjVoek9BjLTJ4g7oIzx3zgYeq7x3OFETGq082Mv1YKbtCXlwVyyfhyo1tbUmzN7KEuyJGWN9UZ9Q7YqabhoPn7w9OPdkyOgPVVm1oL39TZ8yKjv5crEFmmrpFY5HT1zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731024452; c=relaxed/simple;
-	bh=E8wrGDQZfr/KqviCWotyEkZrNSzpIQ82LrZTy3eVBtw=;
+	s=arc-20240116; t=1731024836; c=relaxed/simple;
+	bh=NOMCMry9fM7muBAW3IdfEmyNmvqPVzwg+MGT8mPmCek=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBMeZgIQEd3qIi45tfqCPXZoAAEwyH3yWQL6vWw+ue9p2LBAbv3JiklnyNJ5+9jkOOUg8tdgnmypOkfmIT7tMnC7e17FcqvazVswv8mDft+R0+0z1XHtI9HLvB6/72ecwE416hlBt49efMvH5ZU6PRjJveyaiYKx9ByiepogqCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oFmd+SSv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679C3C4CECC;
-	Fri,  8 Nov 2024 00:07:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731024452;
-	bh=E8wrGDQZfr/KqviCWotyEkZrNSzpIQ82LrZTy3eVBtw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oFmd+SSva8DTBKOo4BeYPtCk7o04LmO7pDTtI/fqG52qn6wZmrxdJtkPZC7Y/B4JR
-	 /gnDL8Pbl6D5wwwBltdym09x5Pw4fLQIIZReMUNu436NkGGbDKWSdwnJ/rKMFr90CB
-	 DKDM1CvxiJ0WcAU5TXzS0pVzCp2SJe7HFXwjLYXo7/G9pGsg7Ytp75ccYRSG3DK9QZ
-	 DznodR+yjp6050DH0kDI5/HWAoGYJgcsz+bKYHSJ8P8OCK+SAFu/p3BGRPGczevZGI
-	 TbPBun3gfEkcH6jV/6t2z5ADJ7W3HjHKPlgxsgZcVb2bninuwk2Zpn8GVcJUN0/DJB
-	 +fARxQDe3Rbpw==
-Date: Fri, 8 Nov 2024 01:07:26 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v4 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
- controller
-Message-ID: <Zy1WPo-W6l0ZcSoa@ryzen>
-References: <20241031-ep-msi-v4-0-717da2d99b28@nxp.com>
- <Zyszr3Cqg8UXlbqw@ryzen>
- <Zys4qs-uHvISaaPB@ryzen>
- <ZyujpT+4bd7TwbcM@lizhi-Precision-Tower-5810>
- <ZywCXOjuTTiayIxd@ryzen>
- <ZywMxnij3wZ9PGmj@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L6oT28Czz1RD76P//pNPp3CPiH8JmHoCts9qleRs1yP5lfLMk+2u7fYRpNU0DUiSubYkc2XdChtOqnw6FJb2ctYIoM8NhphnWmt3W7VwrCC4fDVUlLMwnwqs4MKtx/xzb7PDncGeGKoh9xmXVQHL1/EQT1vNPd3BOQF94FHD9Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gwIHnxL2; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso61125ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:13:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731024834; x=1731629634; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WArJZsg1N6vAqQam1Ti66Bn4ToK/NY0ZHWyQAcoQtDM=;
+        b=gwIHnxL2e8wtRfo3a/fp+83Ix0jNvz88tfq2SObkEnYfxLJ3D3bxezTli4HYvw9mH5
+         1F/uXzM4BAD7asY61+5B+etD+UJa98QMzMatwtBQLrH/UmThber6BhxO/IK3qxrkcV/Q
+         RKs+TgC5L8eOK+7K2k2tJIk/d0ZtnZGNv23F/F9FNOQGob4VdbTb575BIDJRFBf2q7HZ
+         ca9kOikYTZH7VizVQ2myydvgHwTYcDa+JbkhlBHXq6aWD/rMRkJmG6+DCwUl0gzqUC98
+         vJuQRaR6BcQupTEGEvWNg0LJdYN2fUvQ2C7+FpTqyx5tglXX/w9uGIE864yGe/vuLZvD
+         Pjig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731024834; x=1731629634;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WArJZsg1N6vAqQam1Ti66Bn4ToK/NY0ZHWyQAcoQtDM=;
+        b=alDesJlliOqRbFQ/tj638aDCqVFCEOkxaT/fqgNJEczkSABQiV8AmXH1MwzN8y3eJx
+         ZFS2lE979rrdap1L5DLhi+Qfl/uJbciw8Fy3UvqHUjVGVK1D0tbM93vBbVbDBqWassn/
+         vfuJf20VHPMHNBkfsbmFMoI/iUEThZHgyBu64RPJzW1ikEeSZ+3XSUgnkam+X1iZTaVJ
+         b172AbxXmufNxLNAa3l8vpyIuoc0GDcplBzfI4RstEmeqqCPlrKHzngdEOndpCsjXMx3
+         w/Vc59rFwmmTHtPE0YLOADL67UGpll3OMI6I+QMQz35Dq7G+7Ddn14BSGi/aW3E6wuBG
+         qrtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg4kAGXWS35bx80xc2bypsiV3AxrqAVM4j4dj5VzYnFyvhipgAjJgbAnSsTQsSmhRUuEWKuCXD9L5dqjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEabO4mFThWoJVYAYjR6wxQLOLHmjz1oYsDLOilL2g/wS/VlB9
+	ykPE7HwQHdqtIsykP8XfgQVQnALtvjBjd/SHjre4EoxyNmDnerq5BCLDa7r4uA==
+X-Gm-Gg: ASbGnctUDRDw2dJscjuRiCaz3m/yB5AkQ4JIrWSDI2fy3KQa8fs7YJzYHD8h9B3nLix
+	NtbSNLGnTkvIZ839JoD5bg2Brp00kXYNcbwUwoUqJoB7SIE6Wa1n8pjJpSlR59gDe01FvMENDdx
+	vNDrZrENlxNwlo+t+N14oUTXRYodj5l680S3qvzYnpa3SL257fALnnKwVgnEEgWTu+d4epNuMTb
+	+IA3u/L/EaapTXBy+mFJHGXCZwIZZv3HaoFT09e2NMh6+mLQJ+PgTvsDf2mSWIfjuo+gKhM1U48
+	cF8XOgR5N+qL
+X-Google-Smtp-Source: AGHT+IFli50z58Q8piVHDbT4N8joEA65iTon5BhGcKUq3FKRg2ka27CwgBMtgshOVs+Nbm7aTn91gg==
+X-Received: by 2002:a05:6e02:12ea:b0:3a0:8cb6:3ad1 with SMTP id e9e14a558f8ab-3a6e7a62020mr8287555ab.20.1731024834208;
+        Thu, 07 Nov 2024 16:13:54 -0800 (PST)
+Received: from google.com (98.144.168.34.bc.googleusercontent.com. [34.168.144.98])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f935dsm4664987a91.35.2024.11.07.16.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 16:13:53 -0800 (PST)
+Date: Fri, 8 Nov 2024 00:13:50 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Jean Delvare <jdelvare@suse.de>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: dev: Fix memory leak when underlying adapter does
+ not support I2C
+Message-ID: <Zy1Xvk9YKrjqc4S7@google.com>
+References: <20241107014827.3962940-1-ipylypiv@google.com>
+ <jc76qean5mqxba4nh5qdocxhl5aa7r4epryyviqkyktbu6grog@u43wzsaki23k>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,146 +89,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZywMxnij3wZ9PGmj@lizhi-Precision-Tower-5810>
+In-Reply-To: <jc76qean5mqxba4nh5qdocxhl5aa7r4epryyviqkyktbu6grog@u43wzsaki23k>
 
-On Wed, Nov 06, 2024 at 07:41:42PM -0500, Frank Li wrote:
-> >
-> > So there does seem to be something wrong with the inbound translation,
-> > at least when testing on rk3588 which only uses 1MB fixed size BARs:
-> > https://github.com/torvalds/linux/blob/v6.12-rc6/drivers/pci/controller/dwc/pcie-dw-rockchip.c#L276-L281
-> >
+On Thu, Nov 07, 2024 at 06:14:29PM +0100, Andi Shyti wrote:
+> Hi Igor,
 > 
-> It should be fine.  Some hardware many append some stream id bits before
-> send to ITS.
+> that's a good catch, but...
+> 
+> On Thu, Nov 07, 2024 at 01:48:27AM +0000, Igor Pylypiv wrote:
+> > i2cdev_ioctl_rdwr() receives a buffer which is allocated by the caller.
+> 
+> This needs to be a bit re-written. In the commit log you should
+> describe what the patch does. You are telling where the buffer is
+> allocated.
 
-Some more debugging with the IOMMU on.
+I thought subject line covered what the patch does. Ack. I'll update
+the commit message in v2.
 
-EP side start:
-[   14.601081] pci_epc_alloc_doorbell: num_db: 1
-[   14.601588] pci_epf_test_bind: doorbell_addr: 0xf040 (align: 0x10000)
-[   14.602162] pci_epf_test_bind: doorbell_data: 0x0
-[   14.602573] pci_epf_test_bind: doorbell_bar: 0x1
+> 
+> > Fixes: 97ca843f6ad3 ("i2c: dev: Check for I2C_FUNC_I2C before calling i2c_transfer")
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > ---
+> >  drivers/i2c/i2c-dev.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+> > index 61f7c4003d2f..5d15519ef737 100644
+> > --- a/drivers/i2c/i2c-dev.c
+> > +++ b/drivers/i2c/i2c-dev.c
+> > @@ -247,8 +247,10 @@ static noinline int i2cdev_ioctl_rdwr(struct i2c_client *client,
+> >  	int i, res;
+> >  
+> >  	/* Adapter must support I2C transfers */
+> > -	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
+> > +	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+> > +		kfree(msgs);
+> >  		return -EOPNOTSUPP;
+> 
+> Please, don't free it here, free it where it has been allocated,
+> i.e. in compat_i2cdev_ioctl().
+>
 
+Sounds good. I'll move kfree() in v2.
 
-When RC side does:
-pcitest -B
-[  109.252900] COMMAND_ENABLE_DOORBELL complete - status: 0x440
-[  109.253406] db_bar: 1 addr: 0xf040 data: 0x0
-[  109.254094] writing: 0x0 to offset: 0xf040 in BAR: 1
-[  119.268887] we wrote to the BAR, status is now: 0x0
-
-EP side results in:
-[  117.894997] pci_epf_enable_doorbell db_bar: 1
-[  117.895399] pci_epf_enable_doorbell: using doorbell_addr: 0xffffff9ff040
-[  117.896517] pci_epf_enable_doorbell: phys_addr: 0xffffff9f0000
-[  117.897037] dw_pcie_ep_set_bar: set_bar: bar: 1 phys_addr: ffffff9f0000 flags: 0x0 size: 0x100000
-[  117.898504] pci_epf_enable_doorbell: success
-[  118.912433] arm-smmu-v3 fc900000.iommu: event 0x10 received:
-[  118.912965] arm-smmu-v3 fc900000.iommu:      0x0000000000000010
-[  118.913508] arm-smmu-v3 fc900000.iommu:      0x0000020000000000
-[  118.914018] arm-smmu-v3 fc900000.iommu:      0x0000ffffff90f040
-[  118.914534] arm-smmu-v3 fc900000.iommu:      0x0000000000000000
-
-Looking at the doorbell_addr, it seems to be a IOMMU address already.
-
-If we look at the ARM SMMU-v3 specification, event 0x10 is:
-Translation fault: The address provided to a stage of translation failed the
-range check defined by TxSZ/SLx, the address was within a disabled TTBx, or a
-valid translation table descriptor was not found for the address.
-
-for event F_TRANSLATION:
-0x0000ffffff90f040
-is input address.
-
-StreamID is: 0x0, so that looks as expected for rk3588.
-(And if the SteamID was incorrect, I would have expected a C_BAD_STREAMID
-event instead.)
-
-
-Comparing the address of the IOMMU error:
-0xffffff90f040
-with the doorbell addr:
-0xffffff9ff040
-XOR value:
-0x0000000f0000
-
-We can see that they are not identical.
-
-
-When RC side does:
-devmem $((0xf0400000+0xf040)) 32 0
-it results in the exact same IOMMU error on the EP side as the one above.
-
-However, if I manually append the XOR value:
-devmem $((0xf0400000+0xf040+0xf0000)) 32 0
-
-I can see on the EP side:
-[  631.399530] pci_epf_doorbell_handler
-[  631.399850] pci_epf_test_doorbell
-
-
-
-So why is the inbound translation incorrect?
-
-Like I told you earlier, rk3588 has fixed size 1MB BARs,
-so the BAR_MASK will be:
-~(SZ_1M-1)
-0xfff00000
-
-So the physical address that you write in the iATU:
-0xffffff9f0000
-will actually be:
-0xfffffff00000
-after reading back the same register from the iATU,
-since the lower bits will be masked away.
-
-I'm guessing that you would need to do something like:
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index e5b6a65e3e16f..0ab5d61bf0493 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -675,6 +675,9 @@ static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_ep
-                return;
-        }
+Thanks,
+Igor
  
-+       if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
-+               align = max(epf_test->epc_features->bar[bar].fixed_size, align);
-+
-        msg = &epf->db_msg[0].msg;
-        doorbell_addr = msg->address_hi;
-        doorbell_addr <<= 32;
-@@ -1016,15 +1021,22 @@ static int pci_epf_test_bind(struct pci_epf *epf)
-                struct msi_msg *msg = &epf->db_msg[0].msg;
-                u32 align = epc_features->align;
-                u64 doorbell_addr;
-+               enum pci_barno bar;
-+
-+               bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
- 
-                align = align ? align : 128;
-+               if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
-+                       align = max(epf_test->epc_features->bar[bar].fixed_size,
-+                                   align);
-+
-                doorbell_addr = msg->address_hi;
-                doorbell_addr <<= 32;
-                doorbell_addr |= msg->address_lo;
- 
-                reg->doorbell_addr = doorbell_addr & (align - 1);
-                reg->doorbell_data = msg->data;
--               reg->doorbell_bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
-+               reg->doorbell_bar = bar;
-        }
- 
-        return 0;
-
-
-
-I tested the above on top of your series, and now
-pcitest -B
-works as expected :) yay!
-
-
-Kind regards,
-Niklas
+> Andi
+> 
+> > +	}
+> >  
+> >  	data_ptrs = kmalloc_array(nmsgs, sizeof(u8 __user *), GFP_KERNEL);
+> >  	if (data_ptrs == NULL) {
+> > -- 
+> > 2.47.0.277.g8800431eea-goog
+> > 
 
