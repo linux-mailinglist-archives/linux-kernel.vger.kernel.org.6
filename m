@@ -1,257 +1,129 @@
-Return-Path: <linux-kernel+bounces-401986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A9E39C21FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:22:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0633B9C21FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D194B23D2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15D11F21760
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D484118FC8F;
-	Fri,  8 Nov 2024 16:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33E199EB2;
+	Fri,  8 Nov 2024 16:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SwjYiAEI"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fECEV4Pb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0082187FE4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040841993B7;
+	Fri,  8 Nov 2024 16:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082933; cv=none; b=HxNaeIZkXTOHCQSvFETqgrbkytlFmpVew5utCDYnt9yH5nhVsBbTwNT7HZlNIuE3mHYY7swAcZviF1ymSXaguqICIbh77dPdg1bpjm6kOnTpQgymWy4imRn81ONEiXdromzeO4Ez7pY+Z4ETbXPUj5PaSRZRPhe6iy5zMQ9Et0I=
+	t=1731082938; cv=none; b=QH5/bK2/y+Bu9TnMrefSfnBiYaBZELv4Gr2Yxfvtcl1lU8/0abjo533QVw4umUZW6L24t97pMkDT4wTNjKle9JuK4Prj45Pf/YSTZjuyZMNLkvMI3t7yHhVcacKj+2HKPUuxPseiqrgG3jOmMtedEs/rVLzwjUOMIZU/eVbqcdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082933; c=relaxed/simple;
-	bh=X3Bu14m0mjtybmOg+NXfDHnfykk0Geg6qmB1khN/pR8=;
-	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
-	 In-Reply-To:References; b=DzXj14/HbXBIsH68g6huJX+2lc0HJnvqNN05DoaD/EV9FfuXgBwogDyJ9fFq+30uA/RmOUFwuLqzauSwKAausAzavQr5AljD49cZ07DvlHECjH4FIu23Oxezoxxh2OchgWGYKwPXRYDMTkOF8icHObgX0tQataGp2zSTd49A8uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SwjYiAEI; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241108162209euoutp02dec85be06e80b9c11fd3844428fed382~GCsCVOVXk2522525225euoutp02a
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:22:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241108162209euoutp02dec85be06e80b9c11fd3844428fed382~GCsCVOVXk2522525225euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731082929;
-	bh=3Lperh0AwiJdCdZ057laB85yTaUwLOwIDG6MZrtqKRA=;
-	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
-	b=SwjYiAEI9SkDWA3A5a1CIOCfYXIVeVDRFktEnCWx1hpSxvfsbUbffYe0/6UwCTIsS
-	 u1Q128MECh5D4dsT0mRY0B+mEqr3DXpdNDx3JrrRRJvmBfjP01EthI+mrX3drEEuOk
-	 cxws6l5WBIDp5oLDxPe6v2UgAVPXOlGVnx/9jflc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241108162208eucas1p19b20b3aaebaff2a70a38224be4d73a7d~GCsBuntD51943319433eucas1p1L;
-	Fri,  8 Nov 2024 16:22:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 5B.1A.20397.0BA3E276; Fri,  8
-	Nov 2024 16:22:08 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241108162208eucas1p2eb9cc8b76b0797ba1c5d720d7e7fcf05~GCsBZFOqM2819828198eucas1p2k;
-	Fri,  8 Nov 2024 16:22:08 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241108162208eusmtrp2dafddf99f306ac5b70d657742347206e~GCsBYbhww2644626446eusmtrp2P;
-	Fri,  8 Nov 2024 16:22:08 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-20-672e3ab03b7f
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id C2.29.19920.FAA3E276; Fri,  8
-	Nov 2024 16:22:07 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241108162207eusmtip2c559ef632ae055ca4692837b9b562487~GCsBOO4Cr2587525875eusmtip2r;
-	Fri,  8 Nov 2024 16:22:07 +0000 (GMT)
-Received: from localhost (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 8 Nov 2024 16:22:06 +0000
+	s=arc-20240116; t=1731082938; c=relaxed/simple;
+	bh=MvN04QM9skDe5fLRe4zUoBz6kMsWxDmnbsXGz359yRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nSreRi3DUbwFdGkzk3o8SBRJ7V2Me/J1XxK4H6klpziZR5Vj8npWdXWvd6Lo70DaHz4ZoyvHMSi60DhGz6nFK1cahzJsKuUsm3TgoFDzTAW0kwx2Qx9seqwfoxUMuIDIJE7ZE+mvl7lyY53MG1Rr4YuS+x9sf1wdmeCX3I0btIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fECEV4Pb; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731082937; x=1762618937;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MvN04QM9skDe5fLRe4zUoBz6kMsWxDmnbsXGz359yRU=;
+  b=fECEV4PbydJYIjsjpCe0/W7eCBR4OhLItHknk5YUOUAnysPH/LeWPCh1
+   vc7og9Lxy4IyLbS21Pon0cLhsPbEyFICoWclH49aIjY9WZU6/wdE457Fi
+   Q4C1n2d6zh75DVUrdyuRcHzwXkcapHsCQGs1uvTCuIgS3Y8xBH2LiqOvd
+   rU4sTp7IEvF1qny59UrFqlmRTVrI+VgKnq04vdTO2WCE8bwpgM5nUSUBj
+   KOYYbNpHJMeMAvztKqh/IDjVKzYVdm1ZKuSH8PaSg3cUOzdZ5PikwVCWR
+   hxJlAaZZaXxSCDp3xMA8IqI38JdQV0ZdIRddsd4NFiFe3dOCwQay9OWDE
+   Q==;
+X-CSE-ConnectionGUID: Bqe/9HIuRG6iKOtB7M3PPg==
+X-CSE-MsgGUID: O2VEJNtQQeGGcFWAqWL6MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30370521"
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="30370521"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:22:09 -0800
+X-CSE-ConnectionGUID: 4T8HmKCiS3C27KH2kLY9iA==
+X-CSE-MsgGUID: Bd5G0RdaSxGfVViTmuwFHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="116492760"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.66]) ([10.124.223.66])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:22:09 -0800
+Message-ID: <548b2012-925a-4b06-9970-f10a59fbbba1@intel.com>
+Date: Fri, 8 Nov 2024 08:22:08 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 8 Nov 2024 17:22:06 +0100
-Message-ID: <D5GXOLX14TL7.3QXEU9ZLHBFKR@samsung.com>
-Subject: Re: [PATCH] static_call: Handle module init failure correctly in
- static_call_del_module()
-CC: Mike Rapoport <rppt@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, <linux-kernel@vger.kernel.org>, "Peter
- Zijlstra (Intel)" <peterz@infradead.org>, Josh Poimboeuf
-	<jpoimboe@kernel.org>, "Liu Shixin" <liushixin2@huawei.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, Petr Pavlu <petr.pavlu@suse.com>, "Sami
- Tolvanen" <samitolvanen@google.com>, <linux-modules@vger.kernel.org>
-From: Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
-In-Reply-To: <D5GXESPXRVH3.1M4T003I1F7BU@samsung.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBKsWRmVeSWpSXmKPExsWy7djPc7obrPTSDbatELK4M+k5u8Wx1UDi
-	8q45bBYNs7+zWsxcWWhxY8JTRovjvQeYLJZ+ecdscWT9diaLa7OAxNIVb1ktNm+ayuzA4/H1
-	5jkmjwWbSj1ajrxl9di8Qstj06pONo93586xe6zfcpXF4/MmuQCOKC6blNSczLLUIn27BK6M
-	O/PPsBb8la94eO8FUwPjZ4kuRg4OCQETiflTlLoYuTiEBFYwShxoXsrSxcgJ5HxhlNi4JgIi
-	8ZlRomfbJWaQBEjDtllnWCASyxkl3vxZwgJXdfLjCTYIZxOjxL0925lAWngFBCVOznwCNpdZ
-	QFti2cLXzBC2pkTr9t/sIDaLgIrE9r/NUPUmEvvXrwSrERZIkTi+5wQjyFBmgYlMElfu/WcF
-	cUQETjFKfNi8AqybDWjSvpOb2CEOVJP43z8RbBungKnElG0fmSDiihIzJq5kgbBrJU5tucUE
-	MkhCYDGnxKq9s6CaXSQubn/DBmELS7w6vgUqLiPxf+d8qEHpEkvWzYIaVCCx5/YsVkhQWkv0
-	ncmBCDtKbOw5DBXmk7jxVhDiYT6JSdumM0OEeSU62oQmMKrMQgqiWUhBNAspiBYwMq9iFE8t
-	Lc5NTy02zkst1ytOzC0uzUvXS87P3cQITFyn/x3/uoNxxauPeocYmTgYDzFKcDArifD6R2mn
-	C/GmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTC5Bm9o9OY9
-	vzw6+t0NL2kB7fMaEYHnvbTU2K4kMgbva38tWXdzK3vfRqX87AXutg0r1jzQXMjjb+/2al7i
-	lKeOZUfiDgStMQzIFgpYdOdSwOV7hy+nRvz/+vjoBrkl1tnvO5b931A+4xW/6Ra2GFPz+4+y
-	vscKr9uSk+408eO542bVdidK5FUvXNu4eu2azofKGZpcpWt3vf/XI5id8O3aPotaMVblnKPC
-	J1/8uK70V/GD+A3/qEk16lt/sAetDDWIY3+w14clUttb/uj6mhqjOaGr3Q47ll0///Mzo578
-	nLPl2i4O9x8vYU/kPLPwyN6fnRaviwNFqxgvFTQLS02XCppgx9K4b13WyVsxTMFKLMUZiYZa
-	zEXFiQB93JjpywMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRmVeSWpSXmKPExsVy+t/xe7rrrfTSDWa9srS4M+k5u8Wx1UDi
-	8q45bBYNs7+zWsxcWWhxY8JTRovjvQeYLJZ+ecdscWT9diaLa7OAxNIVb1ktNm+ayuzA4/H1
-	5jkmjwWbSj1ajrxl9di8Qstj06pONo93586xe6zfcpXF4/MmuQCOKD2bovzSklSFjPziElul
-	aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MO/PPsBb8la94eO8FUwPjZ4ku
-	Rk4OCQETiW2zzrB0MXJxCAksZZS4NGkDI0RCRmLjl6usELawxJ9rXWwQRR8ZJZ49fgnlbGKU
-	uH7tCRNIFa+AoMTJmU9YQGxmAW2JZQtfM0PYmhKt23+zg9gsAioS2/82Q9WbSOxfvxKsRlgg
-	ReL4nhOMIEOZBSYySVy5958VxBEROMUo8WHzCrBuNqBJ+05uYoe4SU3if/9EqMPbWCS2LLwL
-	luAUMJWYsu0jE0SRosSMiStZIOxaic9/nzFOYBSZheTaWUiunYXk2gWMzKsYRVJLi3PTc4sN
-	9YoTc4tL89L1kvNzNzEC43vbsZ+bdzDOe/VR7xAjEwfjIUYJDmYlEV7/KO10Id6UxMqq1KL8
-	+KLSnNTiQ4ymQG9PZJYSTc4HJpi8knhDMwNTQxMzSwNTSzNjJXFet8vn04QE0hNLUrNTUwtS
-	i2D6mDg4pRqYNMu1J4Xz76jSK+sv5Vc6dGrial+BVdnrty031rtcIxU+pX4K1wYho8p9tZMf
-	nvJr6Z7dv/vRRfX27uKV08/MswrfxXs6M2ofp0edwHyxdJH6BcefLfdiDs68e11zzuNN/ut9
-	zxiFhdS9NFF6sOgA8yT2q4yLLTa/2Ozz7tfRsBkyXRO2L/r13iZK/UfhzXaXNPWUkkIWx0Oe
-	e5s4A7L4U8OndQSfa5myON0+TKOgPvp1x43gmS4qVSZXH6bKbjoyoazk5WGzhR5abx+6rTy7
-	QbBGSFp3vrxbRdBiic0T0mJmv+grdxLvM/j1z4H/+62Xq6Qn9ifun/csS9/nrEThCumNFx8m
-	iG10n11uXRGqxFKckWioxVxUnAgAM2V6LXgDAAA=
-X-CMS-MailID: 20241108162208eucas1p2eb9cc8b76b0797ba1c5d720d7e7fcf05
-X-Msg-Generator: CA
-X-RootMTR: 20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f
-References: <87cylj7v6x.ffs@tglx>
-	<3e158999-c93a-a4e3-85a9-2d6bfc1ccee7@huawei.com> <877cbr7qed.ffs@tglx>
-	<50551f21-6e90-3556-7a3d-8b81a042f99c@huawei.com> <87a5gm5tb3.ffs@tglx>
-	<ZtuPSIFsV8C3UZW8@bombadil.infradead.org>
-	<Zuv0nmFblHUwuT8v@bombadil.infradead.org> <ZvJomuNWjtHYDcsW@kernel.org>
-	<8bd5e396-7583-435e-bafc-7d092a31f4ff@csgroup.eu>
-	<CGME20241108154954eucas1p1225526ff7f7d97ae7078f112300f080f@eucas1p1.samsung.com>
-	<Zy4zGy9aoQ1-Qokg@bombadil.infradead.org>
-	<D5GXESPXRVH3.1M4T003I1F7BU@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] SRF: Fix offline CPU preventing pc6 entry
+To: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com, dave.hansen@linux.intel.com
+References: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20241108122909.763663-1-patryk.wlazlyn@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri Nov 8, 2024 at 5:09 PM CET, Daniel Gomez wrote:
-> On Fri Nov 8, 2024 at 4:49 PM CET, Luis Chamberlain wrote:
->> + Other new module maintainers
->>
->> On Fri, Nov 08, 2024 at 09:12:03AM +0100, Christophe Leroy wrote:
->>> Hi Luis,
->>>=20
->>> Le 24/09/2024 =C3=A0 09:22, Mike Rapoport a =C3=A9crit=C2=A0:
->>> > On Thu, Sep 19, 2024 at 02:53:34AM -0700, Luis Chamberlain wrote:
->>> > > On Fri, Sep 06, 2024 at 04:24:56PM -0700, Luis Chamberlain wrote:
->>> > > > On Thu, Sep 05, 2024 at 11:44:00AM +0200, Thomas Gleixner wrote:
->>> > > > > Now you at least provided the information that the missing clea=
-nup in
->>> > > > > the init() function is not the problem. So the obvious place to=
- look is
->>> > > > > in the module core code whether there is a failure path _after_
->>> > > > > module->init() returned success.
->>> > > > >=20
->>> > > > > do_init_module()
->>> > > > >          ret =3D do_one_initcall(mod->init);
->>> > > > >          ...
->>> > > > > 	ret =3D module_enable_rodata_ro(mod, true);
->>> > > > > 	if (ret)
->>> > > > > 		goto fail_mutex_unlock;
->>> > > > >=20
->>> > > > > and that error path does _not_ invoke module->exit(), which is =
-obviously
->>> > > > > not correct. Luis?
->>> > > >=20
->>> > > > You're spot on this needs fixing.
->>> > >=20
->>> > > Christophe, this is a regression caused by the second hunk of your =
-commit
->>> > > d1909c0221739 ("module: Don't ignore errors from set_memory_XX()") =
-on v6.9.
->>> > > Sadly there are a few issues with trying to get to call mod->exit()=
-:
->>> > >=20
->>> > > - We should try try_stop_module()  and that can fail
->>> > > - source_list may not be empty and that would block removal
->>> > > - mod->exit may not exist
->>> > >=20
->>> > > I'm wondering if instead we should try to do the module_enable_roda=
-ta_ro()
->>> > > before the init, but that requires a bit more careful evaluation...
->>> >=20
->>> > There is ro_after_init section, we can't really make it RO before ->i=
-nit()
->>>=20
->>> Surprisingly I never received Luis's email
->>
->> So odd..
->>
->>> allthough I got this answer from Mike that I overlooked.
->>>=20
->>> So coming back here from
->>> https://lore.kernel.org/all/ZyQhbHxDTRXTJgIx@bombadil.infradead.org/
->>>=20
->>> As far as I understand, indeed once init is called it is too late to fa=
-il,
->>
->> Partly yes, party no. Party yes in that its a can of worms we have not
->> had to deal with before, and also I worry about deadlocks, and the code
->> to address this seems complex. right ?
->
-> I have a RFC ready with this, I'll send this now so we can discuss on
-> with a proposal.
->
->>
->>
->>> Especially when the module has no exit() path or when
->>> CONFIG_MODULE_UNLOAD is not built in.
->>
->> That's exactly the other extreme case I fear for.
->>
->>> So the only thing we can do then is a big fat warning telling
->>> set_memory_ro() on ro_after_init memory has failed ?
->>
->> I suspect this is more sensible to do.
->
-> I came to the same conclusion while trying to fix this path. + I added
-> an alternative for discussion.
->
->>
->>> Maybe we should try and change it to RO then back to RW before calling =
-init,
->>> to be on a safer side hopping that if change to RO works once it will w=
-ork
->>> twice ?
->>
->> That's another approach wich could work, if we proove that this does
->> work, it's a nice best effort and I think less or a mess to the codebase
->> then special-casing the error handling of trying to deal with the
->> driver's exit.
->>
->> Daniel Gomez has been looking at this, so his feedback here would be
->> valuable.
->
-> What if we detect ro_after_init first, and block any module
-> initialization depending on this ro_after_init to actually start loading
-> it? That way we can stop and unload the module successfully.
+On 11/8/24 04:29, Patryk Wlazlyn wrote:
+> Applied suggestions from Dave and Rafael.
 
-In case I'm missing someone, I've just sent the RFC here:
-
-https://lore.kernel.org/linux-modules/20241108-modules-ro_after_init-v3-0-6=
-dd041b588a5@samsung.com/T/#t
-
-Please ignore "v3" prefix. That was a mistake. Not sure why b4 added
-that.
-
->
->>
->>   Luis
-
+The basic approach here is looking pretty sound, so thanks for that
+Patryk.  I mostly have mechanical nits left.
 
