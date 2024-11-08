@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-401472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A3D9C1AE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:42:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3327A9C1AED
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B672838A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5D5C283836
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EE11E2831;
-	Fri,  8 Nov 2024 10:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DAC1E2833;
+	Fri,  8 Nov 2024 10:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="vD/A1lcA"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="rkZu10gd"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D8C197A82;
-	Fri,  8 Nov 2024 10:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A46E1E284D;
+	Fri,  8 Nov 2024 10:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731062521; cv=none; b=PaePzozCz5aBaFXiuDrAzjLPxQF5+RZELnnw+Vogr+2yETTsbSn2anJtu8n4ARPYVJfPDpekqF0iUPlGj4XDzxo+kOzYr43OTlUNpWFbYgTut34cglQb7HwXvqu1jZ3Jel8Dm6NWHDp5oX48rokYWusjgasMucbVNEYRkxvVmjc=
+	t=1731062557; cv=none; b=AeWkXcKegsvI2wmMjl2fW3L2FoG4Xbv4dqySPTLw6uUckcZkaOHlOnAow/wtjsGmjaup49SSn1FeTU94aFpEIOYR+uAADH32Q9G4+f7snvLys5XBdsyOdlRxS7s9EfM9/DWJ+6KJ8tKWpLoTEqapwGRyAObGkCORUYb51GxP1ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731062521; c=relaxed/simple;
-	bh=q1cN9YZqHMURLaSaiDQcupqG7++w1x/76Ek5kU5qj1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SjDoWxvVgWxdsljAPRNCBnUgyXQOMNny6h5715xkHhD0vDkUPH4v6O/iMuRCiGjzz6VCuVFUjRY8OYDSaws2iFY0E9FKbu8bLgACSb90B0GAqGdml+vgJTICm4KTBwg3R30rI8JwHtc0P8dVCu4kaMTv2VISw1OYbEYOmuC7j/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=vD/A1lcA; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=kcp6TGubow1Y3Bunjwto3FtIZsRMBDGowBaLzmkshpM=; b=vD/A1lcA7ZTArsJHFDiAm+IJXi
-	7+Mh4zpxLOM3gLfOedjREgiAr3H30Kxn+KEWeFTG4D73onVAw/0xesrlQR9Vn40t5aYoeULxP7TWN
-	7SUx1eDYlCgHjiW0C3m480I+8jAoLC+F8ky8bDVhYkDMyPkKPWwkdD9EK79/Np4A4BsHJtJ0OFlQ4
-	SXpxn1nu1ew0O89bOgaf/ZbtkdRE9zZSXJmbWwOe1HQKRotXSTKHMjuSpFip6vUITdYVHOg2ix0b8
-	hdK3zgDcdXp+VpNPNgLqDF11pSGCjvxWfKIm1OZmVq20SaY8SyTUvltpsQX6jEA6vVyKiGZNeetdg
-	HNxRMHdg==;
-Date: Fri, 8 Nov 2024 11:41:46 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Mithil Bavishi <bavishimithil@gmail.com>
-Cc: aaro.koskinen@iki.fi, conor+dt@kernel.org, devicetree@vger.kernel.org,
- khilman@baylibre.com, krzk+dt@kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, robh@kernel.org,
- rogerq@kernel.org, tony@atomide.com
-Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung
- Galaxy Tab 2 series
-Message-ID: <20241108114146.6bfed6bd@akair>
-In-Reply-To: <20241108095107.5338-1-bavishimithil@gmail.com>
-References: <20241103183636.40cc37fc@akair>
-	<20241108095107.5338-1-bavishimithil@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731062557; c=relaxed/simple;
+	bh=giq0Hsawlky3Ew4bC1V/a7551kCNbW5EcWaq2soaqHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SVJYPDboZyv7LOKRxId5scuvGHHbLa5/xlMCuFKpDDdayjXHue0gLabd48ufyN9uvJQU+Kl4UihqEwmgnG/u6+mv6Rarqq5UgG6qCPIYvY8QhSzsDClRa+05ttsUOILyUQJvnHKO4g4fEjsgoa1uXwh6kOUF4yAb72QKmXGSPuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=rkZu10gd; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc.intra.ispras.ru (unknown [10.10.165.14])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 8517C40777C7;
+	Fri,  8 Nov 2024 10:42:31 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 8517C40777C7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1731062551;
+	bh=K7peh/qccz/koCm9bosthYUMrdTm0HUmjIy0yZegWZA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rkZu10gdhum3UxfKRfq18BkpYxNYkjCWDbu49eQ+R+2PR3pFq4ycgHbZO1ZBk18yd
+	 Cgr0OUoLBKTeUSyLuYApqs/or7O3QA/8ylHbjBDaoiVbT7KZ6FqaKkUSMcbsHvREUL
+	 y9Wa8ufZmr5RXnOGdFRAAZXGzF4+xs3yd/1I7w6Y=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Sasha Levin <sashal@kernel.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Jonathan Gray <jsg@jsg.id.au>
+Subject: [PATCH 6.1 resend] Revert "drm/amd/display: Skip Recompute DSC Params if no Stream on Link"
+Date: Fri,  8 Nov 2024 13:42:24 +0300
+Message-Id: <20241108104224.504424-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Am Fri,  8 Nov 2024 09:51:07 +0000
-schrieb Mithil Bavishi <bavishimithil@gmail.com>:
+This reverts commit 7c887efda1201110211fed8921a92a713e0b6bcd which is
+commit 8151a6c13111b465dbabe07c19f572f7cbd16fef upstream.
 
-> > probably you did not notice an error in make dtbs and the old
-> > devicetree on the device was still there and was used.  
-> 
-> I messed up my PowerVR tree with mainline, hence the problems. I've fixed
-> it now locally.
-> 
-> > are not the ones you need to fix, so just the diff between old and new.  
-> 
-> Yeah, I ran the command for espresso and then panda for a comparision.
-> The diff is what i worked on, but I have some doubts which I'd like to ask
-> 
-> dts/ti/omap/omap4-samsung-espresso7.dtb: /: irled@0: 'anyOf' conditional 
-> 	failed, one must be fixed:
->         'reg' is a required property
->         'ranges' is a required property
->         from schema $id: http://devicetree.org/schemas/root-node.yaml# 
-> 
-> Documentation/devicetree/bindings/leds/irled/gpio-ir-tx.yaml does not say
-> those properties to be required, is the node placed incorrectly?
-> 
-Well, anything with @ in the node nade needs reg as a property. So
-probably best is led-ir since having reg does not make any sense here
-since we are not on a bus with devices having addresses on that bus. 
+It is a duplicate of the change made in 6.1.105 by commit 282f0a482ee6
+("drm/amd/display: Skip Recompute DSC Params if no Stream on Link").
 
-> /home/mighty/linux/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb:
->  /: pwm@10: 'anyOf' conditional failed, one must be fixed:
->         'reg' is a required property
->         'ranges' is a required property
->         from schema $id: http://devicetree.org/schemas/root-node.yaml#
-> 
-> Similarly here as well.
-> 
-Same issue here, too.
+This is a consequence of two different upstream commits performing the
+exact same change and one of which has been cherry-picked. No point to
+keep it in the stable branch.
 
-> /home/mighty/linux/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb:
-> current-sense-shunt: 'io-channel-ranges' does not match any of the 
-> regexes: 'pinctrl-[0-9]+'
->         from schema $id: 
-> 	http://devicetree.org/schemas/iio/afe/current-sense-shunt.yaml#
-> 
-> I tried searching the tree for "io-channel-ranges" which has only one
-> example - ste-ux500-samsung-janice.dts. In that dts the node is same as
-> in espresso.
-> 
-Not documented, so not allowed. There is code using it in kernel, but
-that might only come into effect if current-sense-shunt has children
-nodes. So drop it and check functionality.
+Found by Linux Verification Center (linuxtesting.org) with Svace static
+analysis tool.
 
-Regards,
-Andreas
+Reported-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+Dropped from other stables by Jonathan Gray
+https://lore.kernel.org/stable/20241007035711.46624-1-jsg@jsg.id.au/T/#u
+
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 1acef5f3838f..855cd71f636f 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -1255,9 +1255,6 @@ static bool is_dsc_need_re_compute(
+ 		}
+ 	}
+ 
+-	if (new_stream_on_link_num == 0)
+-		return false;
+-
+ 	if (new_stream_on_link_num == 0)
+ 		return false;
+ 
+-- 
+2.39.5
+
 
