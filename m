@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-401779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518069C1F11
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F34719C1F14
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:20:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C92AA1F237BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F00B1F234A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDEEA1F1309;
-	Fri,  8 Nov 2024 14:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B631EF93A;
+	Fri,  8 Nov 2024 14:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmgpKDmz"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+fguDqU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A861DEFC2;
-	Fri,  8 Nov 2024 14:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40EB51401C;
+	Fri,  8 Nov 2024 14:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731075621; cv=none; b=EEfJ3kuSsXjhK+SenX9smTPzKAR2NwRJbjo3MZSpc1H+CadaMwj2vI/4L6nxoV/i8T+e0px+qVNr9nMDg8fc5bI7F8IBD1T1vmnhjNS02DOUfYX70IurA7Dmm7V2b5faqCc8PE/xNdfga9o3Sbqs7V5mzKCC4gdzGgDTyQw10eM=
+	t=1731075652; cv=none; b=Sd29iAF6gyFzEdS1NHf6NuErt4Wn+LVXkX069ssgtva8uxW8PrwF5hUI9et+krFE8bV/ynl/38U+hmUqzeMr93t9JzqDW32gXOJJH/0J8m3b097jfq+oIFfTd2AGxTGMkS+sgxakS8BT60NDHCZHalml9fC7p9gSys99+mFF+Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731075621; c=relaxed/simple;
-	bh=7cU6FTf4uth8haKejplX+oBIGSa96hD3kH7bhJAPInk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDPZwpvHZJTVS2fYpQlvm5XlsNmNwxdOwNqJKJyE/DB+4rOZZwHZuNySspXAP7qIxezhW+ij8VrqundHoVFQThcu3JwqcvtAFNQw2+AqYJh2pg/BGckE3y2W3fK7HhTGwy02ECyME2aNw1cPGIreJFbLkd6WQ65VG7bklDFzZuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmgpKDmz; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso1554986a12.1;
-        Fri, 08 Nov 2024 06:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731075619; x=1731680419; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=kFFRuEIZy6+m4wC3vxxh+TmjRhFw3X2+Mua/YITcwWc=;
-        b=bmgpKDmzjh+4GOW+XKMRGk9LG2/6m+TN3cmDa83DfsYkLQstUb7Lv140yCAw7JgbwV
-         /mDbDpeax96mL5boVqIh1F2qLl8H31dd08aqBr39Ted+6Jd6swxG6DdiafTayc6udnK+
-         A1ni2+01HJ2s5UEbxCIvain93IMy1WZ6yvprJVyuCtvXtJB6E+kzLv68jSBJBL3T0+Yx
-         gp5WtGL6f5re5Srz2ees+2dWqzjzH1npy3tXjEj9QBjZ6gGqs683Rb2BT8R4zgHLCbi/
-         1aaiIiIN+ZCUxYKt4SbLQhUnPPde3pBZj+zM3moTbBH23O26tOJAM7kIdSa+7U8KU70a
-         5rOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731075619; x=1731680419;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kFFRuEIZy6+m4wC3vxxh+TmjRhFw3X2+Mua/YITcwWc=;
-        b=q2BUgr6ya1hKQY4cK5qprSaLB8CsrsB31AJk9Wi3r2HjQPaohGBUuYZHSryBI7SOYz
-         DMXT/qxuE1zlx1oT9MMx7dvg5A9U88x81Zj7iWhzHxdjz1RNAdCz9z+g8+Alr69g709O
-         zlN1ZvyPvWsiWk9mvlsulirLOcvZamCuTS6n8ThPRwgwl44Z3/KDvUNlWFm7ZjxYCUNZ
-         jeHmwkwaR7fLqb7CE0viKDwJ3PjLmU4ZfthA02vPioJWi9qhpSnx36whrdD+drUFOZsF
-         JzBklUTHU3p8MOkPquIeRTCFk762PTzLzCn5CbyPQx5wVrZ2GZlz9XN/qBemt0FVHdxU
-         ZziA==
-X-Forwarded-Encrypted: i=1; AJvYcCUexRdVBbL580pUTWuSx8mInBvrLHZ04MmjJJZ01M6Ydq88oXPKYUu+f9CCzMZQXlbvu5RrW9b2ZxGh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwTmREqdtymZQjLzEB7Rjz95xUiFfkMsFQ7fD4EnRY7T8I5DBm
-	0JudhEAR+N0kg9vmJ+t8ux6sIwpSfbyOm/egXgy+kwmsx43jgrq9/XNMmw==
-X-Google-Smtp-Source: AGHT+IGAW1F2OCsO4dtbUByFEmxMeFo0e79nQ7uhUiZ0Qwh9JqBND9u/5isXBTffwH60IShdzZgtNw==
-X-Received: by 2002:a17:90b:2b4d:b0:2e2:af05:71b9 with SMTP id 98e67ed59e1d1-2e9b1713cf4mr4035278a91.9.1731075618925;
-        Fri, 08 Nov 2024 06:20:18 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a62d686sm5542209a91.52.2024.11.08.06.20.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 06:20:18 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <117b63a0-5e08-4c1b-9965-5fc0cfdc0118@roeck-us.net>
-Date: Fri, 8 Nov 2024 06:20:16 -0800
+	s=arc-20240116; t=1731075652; c=relaxed/simple;
+	bh=+q0qEsBDCiPhMWR7oV4gj4QZkmFaEibfjsdafrLmT4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gB14x9KM9//EtprXei9B9tbO5x6COQ+EYV+V4AUmMcBdKkJCFZg5FVqVYBQLnJQ+ycvEBCbIg7l5KrWleAL1VHjbH2Eb384Tmiu5vaMYFJYYwwhm1I9cHai0KIZvSqnfP5dXIrqxmBuBds+oTytFA7M5HuQoNfIXc2+OL+S1G40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+fguDqU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40B64C4CECD;
+	Fri,  8 Nov 2024 14:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731075651;
+	bh=+q0qEsBDCiPhMWR7oV4gj4QZkmFaEibfjsdafrLmT4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E+fguDqUZzds/s62J2FRJKXpIHF9SiBdeqDRHOFj1puHeT9Rfs8Gz0pBAJJMm6Ntm
+	 PwoNHPqpD1ZelyBArc3eWms30jlbXdkxuY/FzHiaAF2ZN2EmIJG1HOnCGsGXXGqm8B
+	 0c+PEPB5d/pXomyA1Qk8cWldofbfPuJ3tBZwduZq5+TJGPakKgM6U1ZjGRd70hVnVk
+	 0ef1ogB5MN9+QNPkpamIs8/v/Zf4yoU7aZOSVrtuuTijau6rpkwSem2axYahfoqrtJ
+	 UFzhbBGJnnVJDd8Hkmwv+mqgFu8LdsqduJ6tFRrZjA2uGiya/XeYokhh8tanp+f45p
+	 cM9NzRpuYPclw==
+Date: Fri, 8 Nov 2024 15:20:48 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v2 2/6] drm/sun4i: use drm_hdmi_connector_mode_valid()
+Message-ID: <20241108-gainful-lionfish-of-progress-758dcb@houat>
+References: <20241101-hdmi-mode-valid-v2-0-a6478fd20fa6@linaro.org>
+ <20241101-hdmi-mode-valid-v2-2-a6478fd20fa6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Signed-off-by missing for commit in the hwmon-staging
- tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241108192839.51a8f29d@canb.auug.org.au>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241108192839.51a8f29d@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="gvl6jdeilsq4eowj"
+Content-Disposition: inline
+In-Reply-To: <20241101-hdmi-mode-valid-v2-2-a6478fd20fa6@linaro.org>
 
-On 11/8/24 00:28, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->    317e5709fced ("dt-bindings: Add SY24655 to ina2xx devicetree bindings")
-> 
-> is missing a Signed-off-by from its committer.
-> 
-Hmm, must have been early or late. Sorry for that. Fixed.
 
-Guenter
+--gvl6jdeilsq4eowj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/6] drm/sun4i: use drm_hdmi_connector_mode_valid()
+MIME-Version: 1.0
 
+On Fri, Nov 01, 2024 at 02:25:05AM +0200, Dmitry Baryshkov wrote:
+> Use new drm_hdmi_connector_mode_valid() helper instead of a
+> module-specific copy.
+>=20
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun=
+4i/sun4i_hdmi_enc.c
+> index b3649449de3026784ae2f3466906403a0b6e3b47..54b72fe220afacc208b3fd48d=
+5160031127ea14a 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -205,16 +205,6 @@ static int sun4i_hdmi_connector_atomic_check(struct =
+drm_connector *connector,
+>  	return 0;
+>  }
+> =20
+> -static enum drm_mode_status
+> -sun4i_hdmi_connector_mode_valid(struct drm_connector *connector,
+> -				struct drm_display_mode *mode)
+> -{
+> -	unsigned long long rate =3D drm_hdmi_compute_mode_clock(mode, 8,
+> -							      HDMI_COLORSPACE_RGB);
+> -
+> -	return sun4i_hdmi_connector_clock_valid(connector, mode, rate);
+> -}
+> -
+>  static int sun4i_hdmi_get_modes(struct drm_connector *connector)
+>  {
+>  	struct sun4i_hdmi *hdmi =3D drm_connector_to_sun4i_hdmi(connector);
+> @@ -269,7 +259,7 @@ static const struct drm_connector_hdmi_funcs sun4i_hd=
+mi_hdmi_connector_funcs =3D {
+> =20
+>  static const struct drm_connector_helper_funcs sun4i_hdmi_connector_help=
+er_funcs =3D {
+>  	.atomic_check	=3D sun4i_hdmi_connector_atomic_check,
+> -	.mode_valid	=3D sun4i_hdmi_connector_mode_valid,
+> +	.mode_valid	=3D drm_hdmi_connector_mode_valid,
+>  	.get_modes	=3D sun4i_hdmi_get_modes,
+>  };
+
+It's only slightly related, but the atomic_check implementation that
+will be the last (direct) user of sun4i_hdmi_clock_valid is wrong and
+doesn't call drm_atomic_helper_connector_hdmi_check
+
+Maxime
+
+--gvl6jdeilsq4eowj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZy4eQAAKCRAnX84Zoj2+
+dtxCAXwL8U3Kdj+wVwDFf28N7fDsoRIKg9nowztcUuKe2dbb1TyT4t581CFQhhgH
+4fyRrqQBfRWeXpD5+rE7haWwmaaAYN/WyuoOSkc7MRtD8MkiWahxYbD77ClE2BO2
+hfikHA1jXg==
+=SsWk
+-----END PGP SIGNATURE-----
+
+--gvl6jdeilsq4eowj--
 
