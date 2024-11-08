@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-401568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A949C1C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:44:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7189C1C6B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:45:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3469E2869FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4D18287948
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816B11E47A1;
-	Fri,  8 Nov 2024 11:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257401E906D;
+	Fri,  8 Nov 2024 11:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3lAuRG6"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hVSCtydw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D2C1E492D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CA91E47CD
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731066235; cv=none; b=g2QKxPm3+yCBdPnnZU1GKTM3UFsTW73n25IktLfATYfDg5xwqFxfyZCuTNOCLlBy/4V5DoWctPPjC+q0ZrHmrbe0Fv4NIIs2PzYGYG7hNXUTBn4eVH+OU4yxkdUJs89DbjaJZ9eZfS2VAM1eqCpuCkDYQvScWVFJQbXVnYxHdsA=
+	t=1731066277; cv=none; b=kDIUEGm19LdhtIDR+ToN9tgNfPBfLvl7QJjj5N/4c7dpO0stXaZiajtQdyeKBOGoeKuKAcPtHSo4bvkX2LN/DFQf9irnsN9mf+0xuJJgD/hXEfAR6uNd0biEBU1QtfXe77viYT4w3MOJvtaUzn0nyorTmf+Sz7/P9BKZMkRUDNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731066235; c=relaxed/simple;
-	bh=qjv8Nskk+avwjBuYyWopHdeHY0bXMOaLNpB/xYD+XcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nqZvG+04Kp5oKQyzmBqh4B6roiQI3MiTOfmhG577Mj7vrn1UAlgVhxJs/mA8Ge8T3FJhLEBqEJ5qSvupY8MzqrlSa+EZjaaGeFM6SYd/lHJByjJJhxyiqHKy7HzLd+O09y5iRwJ5I4wexK4GYQT04sIeSppY25scr9yue4uUjwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3lAuRG6; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d495d217bso1677101f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:43:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731066232; x=1731671032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ouVSbkAT3+S3WMSHYg6HVwCj00MU4w8dzA4pzxSauU=;
-        b=d3lAuRG6hA9xd+PYJBznZkyI1cz/xYM1tqJkqaJdCHlr8K39DYX0opc9h+xQQ373nH
-         qLotlvCaW2g2YuAUHs5sB8eeP2kk0Xqy9hAA91vII5yTn+/wHM52tr0Gm2xd+Hb51YhL
-         b8Yo1U+ChMlJh3aHOW3zV3LPsWbWdb55F/vpVlyGtAJn16evmRd63aKDw1JWFoUJsRoG
-         tQVK/p7qJyrUzcaDIcT/6teccvBFW6tUTxBEQpxzKn6S2veyjmaagP+/SuDQ0QsQ/zai
-         QIWdV8znnMWQF6wKtV/NXtOSUGg0wLhBA3hq7RA4k+glwkKvEJrEAuTHaHeQoPXOE6SL
-         0lgg==
+	s=arc-20240116; t=1731066277; c=relaxed/simple;
+	bh=+lU6GBkmCPFmCNwxSrgrgIkwiITyF6fl4wchytIL1fU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HrXkVlkRjAfzcYo3hkLEhsR11Cz8a12++App6VuR+xAs74aimMG0IQwt2alA9fTmfxwo4ZMcuhtrgXxV+hgtzOEttl+/SjvIdj0vbFCvA7gHZe17y4AZHroNn52M3tM4ZRD47Bttm2uSt7H/y+8XU/JgU9AfAg5D4ywl5sjGZwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hVSCtydw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731066274;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+lU6GBkmCPFmCNwxSrgrgIkwiITyF6fl4wchytIL1fU=;
+	b=hVSCtydwz50YxxfowPm7sHvuEl1gDU0HJpIJ/OmxOSVN5AA02m02JA9g/xdYSzWAfmzubl
+	/pgvHRMG6njOy9eUE0SIFcrYuFLaatUgXpzuusN7G/mfuZ3uEFRldynarQx9RoYsYPXSTT
+	BcFw4Mty8MqhbWh2aFEhLZcdRsu98WE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-0K9Q5sKpMiaJg2tdafKgig-1; Fri, 08 Nov 2024 06:44:32 -0500
+X-MC-Unique: 0K9Q5sKpMiaJg2tdafKgig-1
+X-Mimecast-MFC-AGG-ID: 0K9Q5sKpMiaJg2tdafKgig
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2e3b9fc918fso2191605a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 03:44:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731066232; x=1731671032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ouVSbkAT3+S3WMSHYg6HVwCj00MU4w8dzA4pzxSauU=;
-        b=TpYGABRzga03w1jEAUHGPNv1bfmptQb39nkdZhoWGQSrHFfx2K8uCNFzrV7QpdA4Ue
-         0PvVklVl+Ihv6xu9Fx5nt/dCVVSL09PAN52uFn3LGezz1VMe8UGqB0mKvJDWH3xT0QDD
-         3kn+1uiKFjMnqUGZadDFgHp91mJmhKhI/B7cwkJ9sksjW2wegzWt5mLG1VHMKYBjXxUO
-         BRYgRvd53lH+SOPSGelgdJcy8+CC/G9x1bPrRxKPwbSg3+7f/zmX9+sD94O/dLdGH5LZ
-         N50GtpaXBc6pmGgWG3WRDWp6YmklJFLBlvODBIq1eJ+mSRnk9fK0WJYtfL24MBImA626
-         qSbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGzmF0v2Xsp28ssCk7xt7sVZoqd1p2U8Mnm/NY9N1zSJbo7uCCJu1tIrzT+dIZN0fEcBUXzndnmmx2u4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZO3n3S1Km6B0+RAxrTT0Ri5I2Ds/a9zFmtXu7NgEEcl31HuQ1
-	9wuSUN784Wzg0BRxYBMmIp0TIdEHLcUvQHOP1n249DPAHHYSj/SkGkCmVV8OcuI=
-X-Google-Smtp-Source: AGHT+IHenYE2IrQEIw1RwXn2xALrnPWJbFU0VRWzYGh03YSwh3hgPhVUGtDNitZVrXDo/IEmoPy9YA==
-X-Received: by 2002:a05:6000:1541:b0:37d:2ea4:bfcc with SMTP id ffacd0b85a97d-381f186bc9bmr2308261f8f.13.1731066232510;
-        Fri, 08 Nov 2024 03:43:52 -0800 (PST)
-Received: from [172.16.24.72] ([89.101.134.25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05e5871sm60742135e9.37.2024.11.08.03.43.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 03:43:52 -0800 (PST)
-Message-ID: <37982a05-2057-45f4-923e-7562c683706d@linaro.org>
-Date: Fri, 8 Nov 2024 11:43:56 +0000
+        d=1e100.net; s=20230601; t=1731066272; x=1731671072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+lU6GBkmCPFmCNwxSrgrgIkwiITyF6fl4wchytIL1fU=;
+        b=TeoQH00WkgfUZyAUr1/KVhiw7fUrXzIoXi0NeoZ5t6PJxLk2F0HApnS+ZZHbELkFeW
+         zcGuIvsXkfgJN9gxpsPZg/Z3QbhZ3bkmRcnlWme3N8ylcgLAteU7mTV5UdOtwkQ6lem0
+         IEWdjHEKUNz2ez8TAq7drT8WPwm5gp7wLBENpRZiaCH2kuOuZwU3Dm/vCOASI15Nsss+
+         b4Q6TLBen7H3lr6U8lRno/8YRTMpgphf108M2JtdhRmgiFgA0vBoH1PpoqAVGudDje+Z
+         YG/Ko5Opfi6QSqr/GfzAgubTuy/DjqKSaR23xPULPUynzsNDngqwOfv49y10PYhk6QTX
+         vPOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1G3D4w7HKPjFj16rjDpGpE4WuYm3/JY0FJMwONmCGsooOiNP0+otVY4h2LwOZMVCG+59F+zOLg6yrFco=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy6deLyfQNvJkU4Q99pTnWAhicOiCxhqiZTk91SpwFTgY/d5Sa
+	zp91OlABYyrGOuLoU6efdQEXYFrnX4h8Tyd4mquTeXdfN2hO9zNcmuTjiCV2m5SMBMjMPfHlzjn
+	3JIFD02UOM2s9V3py4Rx60hobnzmwwRyAYRnMRa4OXdQeKvTKn6ZHAk5DMXAS66DlweMisUjX9R
+	sPOWv1X/eH3Uxnnlid0G6u4b4JyY/dsMil9yyh
+X-Received: by 2002:a17:90b:1f8f:b0:2e2:b02a:1229 with SMTP id 98e67ed59e1d1-2e9b178fe37mr2922950a91.35.1731066271839;
+        Fri, 08 Nov 2024 03:44:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHxIMFhFEJaXhMKyQro+WyOM48KyqyrmXQzVcAxRO+eiRvB7RVIYRHANvMBBHAupPuqRNnBIAp5H2+HfwwyoV0=
+X-Received: by 2002:a17:90b:1f8f:b0:2e2:b02a:1229 with SMTP id
+ 98e67ed59e1d1-2e9b178fe37mr2922923a91.35.1731066271591; Fri, 08 Nov 2024
+ 03:44:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
- <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
- <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
- <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
- <57544d01-a7c6-1ea6-d408-ffe1678e0b5e@quicinc.com>
- <ql6hftuo7udkqachofws6lcpwx7sbjakonoehm7zsh43kqndsf@rwmiwqngldn2>
- <781ea2fd-637f-b896-aad4-d70f43ad245c@quicinc.com>
- <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241106111427.7272-1-wander@redhat.com> <20241108072003.jJDpdq9u@linutronix.de>
+In-Reply-To: <20241108072003.jJDpdq9u@linutronix.de>
+From: Wander Lairson Costa <wander@redhat.com>
+Date: Fri, 8 Nov 2024 08:44:20 -0300
+Message-ID: <CAAq0SUnrtYadVZb=2G5PW0dBJxovzS2F2841-gCHqSp_5VgsPg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] Revert "igb: Disable threaded IRQ for igb_msix_other"
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, 
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/11/2024 13:54, Dmitry Baryshkov wrote:
->>> I'd say, don't overwrite the array. Instead the driver should extend it
->>> with the new information.
->> That is exactly the existing patch is currently doing.
-> _new_ information, not a copy of the existing information.
+On Fri, Nov 8, 2024 at 4:20=E2=80=AFAM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2024-11-06 08:14:26 [-0300], Wander Lairson Costa wrote:
+> > This reverts commit 338c4d3902feb5be49bfda530a72c7ab860e2c9f.
+> >
+> > Sebastian noticed the ISR indirectly acquires spin_locks, which are
+> > sleeping locks under PREEMPT_RT, which leads to kernel splats.
+> >
+> > Fixes: 338c4d3902feb ("igb: Disable threaded IRQ for igb_msix_other")
+> > Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> > Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+>
+> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>
+> This is the only patch.
 
-But is this _really_ new information or is it guarding from "malicious" 
-additional messages ?
+Hrm, I had other unrelated .patch files in my directory,
+git-send-email might have gotten confused because of that.
 
-@Vikash is it even a valid use-case for firmware to send one set of 
-capabilities and then send a new set ?
+>
+> Sebastian
+>
 
-It seems to me this should only happen once when the firmware starts up 
-- the firmware won't acquire any new abilities once it has enumerated 
-its set to APSS.
-
-So why is it valid to process an additional message at all ?
-
-Shouldn't we instead be throwing away redundant updates either silently 
-or with some kind of complaint ?
-
-If there's no new data - then this is data we shouldn't bother processing.
-
-If it is new data then surely it should be the _current_ and _only_ 
-valid set of data.
-
-And if the update is considered "invalid" then why _would_ we accept the 
-update ?
-
-I get we're fixing the OOB but I think we should be clear on the 
-validity of the content of the packet.
-
----
-bod
 
