@@ -1,103 +1,128 @@
-Return-Path: <linux-kernel+bounces-402315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C279C263E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:08:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584369C2641
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 21:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41457B23717
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A2C284C0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1DE1D0B81;
-	Fri,  8 Nov 2024 20:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDB61D0F4F;
+	Fri,  8 Nov 2024 20:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="stc3xRhy"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WPii5cto"
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3C1C1F3A;
-	Fri,  8 Nov 2024 20:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47E81C1F08;
+	Fri,  8 Nov 2024 20:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731096464; cv=none; b=iciRJfpaLuR1ycedJCjGJSqKH95hpWRooRFwlPLNtG+01Qhl/WRL6MPqyTj/4G8qD+BclUQj2SogvlBNdh5rY5fWQ6UoL+asScbUMFhemPicOqQ1f7ywxdKcKVWkWvGwR6uHxhX9jJuLczq3W/HMFTq/Px4XC+sTVNjv4eg+q9k=
+	t=1731096518; cv=none; b=PJZA/w2oNNSc6eBtM7QgcJRNHcUWJol3MtdFFncn8BtgIN2sWE4OtHpUmgj4UQ/v5Q/55CDOKHJzvHeAK3azyTVUeaOxVISwpAQ/c9WiJY/u9WUgSXMzm0Y9qw4JXHv08Mon4U02kHleYBu1aO9HcUep6vnttGHLRQlsOFS2heY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731096464; c=relaxed/simple;
-	bh=1g76rPSHhw49jhg8w9vWpOWVtMb+UwWrzottr4RHgMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4mWtvPrk5b2LUQgLPIgV0+z6CbdYutOdwpjZtlkAVN7To+g7TkVP1C8HOoJ7rJa/RfFKUyb54Gm/AMloWHrQW/Eu+iIaz5qTJ6dzPGaU30O49OunFZkLq8VybHTrhQKhjiyVFN7JAqImIN8PeLoLKYFp3OaanCHR1KiuVECTpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=stc3xRhy; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1731096518; c=relaxed/simple;
+	bh=BAtIgroBAlsvoKNehcDGJXbrxqEbn0HAAWSSvFkJwWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V74unjROtoJe/S0j+hNA5g9aQ6g6ixq8h3UzC5oRqv3ntaqKmbj9cdu2pgQrSRn9Dq0xE2Huyh4B24frqy9iGqcFwsoOXZyFiNtk3aaCWITBhdEBjubOGQtYdP/2zGQEzZxjexTlBQzP+WNv9/3at8bF7XIBDwCTELhDmd7CWX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WPii5cto; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8EOlj3DHLk9ACbQvSOs+ZQpxrIbjKWEhntEJ6z86Fj0=; b=stc3xRhyQhi1TpmnLA+jqBh38V
-	pDyrpuFXoPhaJdggDuwE+XqldhFLq9Tic2JHw2PcaJUcPTieRLPCEPS0i4Is2Pib6OrmA3JIze3Nr
-	s/ONYx+Z2NgZA9upkXhJf7fElxf8+QGR/PILe9oiK+s9nxU49UHlDfchxvV0iC8d4dUT5MSZwHKr8
-	iI3mGYrAypWHvzIoGcgTs2q2oD/CXXEEkD9+Wcjj1KYXRCI+sJEbHPczCHJqZ2bI1doU0J61F28jq
-	Is4gzfb1Roh52LnxsTEnVFz5ncmwcyalRXZP+Yo9R4P7O8/zwFuymynhSs+DqanvqbuYsvTkJJcWu
-	FKxp232g==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9VGe-00000009GQk-02b6;
-	Fri, 08 Nov 2024 20:07:40 +0000
-Date: Fri, 8 Nov 2024 20:07:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/13] iomap: make buffered writes work with RWF_UNCACHED
-Message-ID: <Zy5vi-L6Vsn-seRZ@casper.infradead.org>
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-12-axboe@kernel.dk>
- <Zy5cmQyCE8AgjPbQ@casper.infradead.org>
- <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
- <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=/ek8CdD57enc0HssxhsqMq6TsdAatE+3OGsK8sqC6bc=; b=WPii5ctojURmzr6uwYdS8rCYAk
+	JluRwP6YHU8SDiadXuPFkUCVIaRspsijUapWPDn5uUivOv4CYU3Lkz8gDicjbYH4mVCH796zx8ijh
+	FbVj8hIJtGIeWzqhcr56QHCMDVCrSroJ5JuEf/cXgzf6ardsjBuZpe9pI9T0Ce8gFbPcmcP3c+m1D
+	clWz5Y3Zqm0INiYHewIRBvm9j3UWlVBF19Bx+xwqQUc8b+hGctj12m1C91SvX6VL25+9n1iq+wJzL
+	v4g4jv1z7uu5Mmva6/bk45xHqzBNPD654WP00nhqynISpzAK39RyMNvkZxTfddX7XV16t25dWqBeU
+	XEQjancw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9VHL-00000009GU9-0wga;
+	Fri, 08 Nov 2024 20:08:24 +0000
+Message-ID: <2b1f6b86-0d56-445e-bed0-1e33b9882d48@infradead.org>
+Date: Fri, 8 Nov 2024 12:08:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for unacceptable
+ behaviors
+To: Shuah Khan <skhan@linuxfoundation.org>, gregkh@linuxfoundation.org,
+ corbet@lwn.net
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Dan Williams <dan.j.williams@intel.com>
+References: <20241108161853.12325-1-skhan@linuxfoundation.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241108161853.12325-1-skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 12:49:58PM -0700, Jens Axboe wrote:
-> On 11/8/24 12:26 PM, Jens Axboe wrote:
-> > On 11/8/24 11:46 AM, Matthew Wilcox wrote:
-> >> On Fri, Nov 08, 2024 at 10:43:34AM -0700, Jens Axboe wrote:
-> >>> +++ b/fs/iomap/buffered-io.c
-> >>> @@ -959,6 +959,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-> >>>  		}
-> >>>  		if (iter->iomap.flags & IOMAP_F_STALE)
-> >>>  			break;
-> >>> +		if (iter->flags & IOMAP_UNCACHED)
-> >>> +			folio_set_uncached(folio);
-> >>
-> >> This seems like it'd convert an existing page cache folio into being
-> >> uncached?  Is this just leftover from a previous version or is that a
-> >> design decision you made?
-> > 
-> > I'll see if we can improve that. Currently both the read and write side
-> > do drop whatever it touches. We could feasibly just have it drop
-> > newly instantiated pages - iow, uncached just won't create new persistent
-> > folios, but it'll happily use the ones that are there already.
+Hi--
+
+On 11/8/24 8:18 AM, Shuah Khan wrote:
+> The Code of Conduct committee's goal first and foremost is to bring about
+> change to ensure our community continues to foster respectful discussions.
 > 
-> Well that was nonsense on the read side, it deliberately only prunes
-> entries that has uncached set. For the write side, this is a bit
-> trickier. We'd essentially need to know if the folio populated by
-> write_begin was found in the page cache, or create from new. Any way we
-> can do that? One way is to change ->write_begin() so it takes a kiocb
-> rather than a file, but that's an amount of churn I'd rather avoid!
-> Maybe there's a way I'm just not seeing?
+> In the interest of transparency, the CoC enforcement policy is formalized
+> for unacceptable behaviors.
+> 
+> Update the Code of Conduct Interpretation document with the enforcement
+> information.
+> 
+> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Acked-by: Jonathan Corbet <corbet@lwn.net>
+> Acked-by: Steven Rostedt <rostedt@goodmis.org>
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+>  .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
+> index 66b07f14714c..21dd1cd871d2 100644
+> --- a/Documentation/process/code-of-conduct-interpretation.rst
+> +++ b/Documentation/process/code-of-conduct-interpretation.rst
+> @@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
+>  Because how we interpret and enforce the Code of Conduct will evolve over
+>  time, this document will be updated when necessary to reflect any
+>  changes.
+> +
+> +Enforcement for Unacceptable Behavior Code of Conduct Violations
+> +----------------------------------------------------------------
+> +
+> +The Code of Conduct committee works to ensure that our community continues
+> +to be inclusive and fosters diverse discussions and viewpoints, and works
+> +to improve those characteristics over time. The Code of Conduct committee
+> +takes measures to restore productive and respectful collaboration when an
+> +unacceptable behavior has negatively impacted that relationship.
+> +
+> +Seek public apology for the violation
+> +*************************************
+> +
 
-Umm.  We can solve it for iomap with a new FGP_UNCACHED flag and
-checking IOMAP_UNCACHED in iomap_get_folio().  Not sure how we solve it
-for other filesystems though.  Any filesystem which uses FGP_NOWAIT has
-_a_ solution, but eg btrfs will need to plumb through a third boolean
-flag (or, more efficiently, just start passing FGP flags to
-prepare_one_folio()).
+According to Documentation/doc-guide/sphinx.rst, kernel documentation tries to
+use "~~~~~~~~~~~~~~~~~~~" for subsections (not "******************").
+
+This is not enforced -- it's more of a guideline.
+
+Thanks.
+
+-- 
+~Randy
+
 
