@@ -1,268 +1,175 @@
-Return-Path: <linux-kernel+bounces-402169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B545A9C24A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:08:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAF09C24A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D7528AF5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:08:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC784B2253D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CCD9233D9A;
-	Fri,  8 Nov 2024 18:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5BD233D89;
+	Fri,  8 Nov 2024 18:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="V04qsCof"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V569nbY8"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29165233D80;
-	Fri,  8 Nov 2024 18:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBE7233D64;
+	Fri,  8 Nov 2024 18:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731089280; cv=none; b=r2VM6MeskUgEngxacCxkQcc6+UYW3GGzqUxi9Du0McEVCWoN2CrCHuGuOlCTYXxpafBy/JcTYflJhND6MljTMdbZM/KsKVlzmQZiZxJxc2MIWmv5whdz+ewPhGnj1hIyF8MQ5IhYTmquX8Zay36LLPTI++G4uDzSg97rxtwL6jE=
+	t=1731089263; cv=none; b=Oh3Qr/MPIs9KBir/vKBGBib4FZUiar6UpiYREfkwk14pkFyPdHX7skkU3gMDngSLsysNAvtcEotqMfe/gTvUTURtdXWbjJ3OQln6UkteMyrE6UrRIwH4qTEZdmR/w9QfIWQwmvYTP6m9UxA7qMFZTxHvD7D4o7KkgQ3Xp4uC5dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731089280; c=relaxed/simple;
-	bh=9Fy8f6wTEancl/b7oGAdJU6XSqQhdH/xQ/IEUwsnIoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BCj8WvkoJlAkNJGK4VKPEBuQzj4MeeBCJFLxYhfDfRhhNAQvC+jvlJNPSrnqmDcUrIFvjOLY9zLxM01FZ4PTKY2l7HRlWl/LK2dGT0XRK1d59cYyR3SJMKO5aL+DzIKdM0FWM5r1csVc4dOMy18p4Bd9H/WM93kUBWA0gk8g8Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=V04qsCof; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731089212; x=1731694012; i=w_armin@gmx.de;
-	bh=9Fy8f6wTEancl/b7oGAdJU6XSqQhdH/xQ/IEUwsnIoM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=V04qsCofJfMI/JEhWoQNoPqw9IE7mQFmHaF7b7c49b7yiRMRwHdqDgfasTLNO8eh
-	 xJjfsw0VAR4CTFj3kCFk72OYkuwzyNHyOTWSqCDYQEfojhHnRq7+ockjVD4cCjlSz
-	 BE1iaLzv3VTw6mUyx3KOdOUwmzmFXDLi/eoahpNTnYnhMTBwZvOS8wlRMrQOlPirz
-	 BAaPrEbhV94K58NjBI80Qs68LcYD2vnMA0qAMEjR7KI76qoOAOt+m3nbi7t18zpWw
-	 Cl1zAgQOuee67HJ58PfnTkXBy9EYIHpfHCzamXwmduZWtIHyMadZDkbn6cy8frqpQ
-	 MjLGqNzDYOY2wjyRTg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVeI8-1tH8tb3iJo-00U5PY; Fri, 08
- Nov 2024 19:06:52 +0100
-Message-ID: <0ffe9b8b-814e-4b5a-a960-22797e327b4a@gmx.de>
-Date: Fri, 8 Nov 2024 19:06:50 +0100
+	s=arc-20240116; t=1731089263; c=relaxed/simple;
+	bh=XdUEhrjiBr8GA3ZORbMFZtmKhtOKS6QBlaBZ1x6dEas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XifB42aaAtrm6j/W/InaDCRi9dPsFpfharYvd/5pBan4A2DgUuvplHlg4SCiws+VprAi4kmaDQPkyIIaDqvjEw75vjZuMMg5dXu0TowZe+frmZxX8BqxREtH1AzMYWsdoMp4G7p0Gue9f2PxwzwX9BNlV4bVNmW+qUDFZtscMxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V569nbY8; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2b549799eso2060714a91.3;
+        Fri, 08 Nov 2024 10:07:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731089261; x=1731694061; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iWG253LXGIdckUNp7GPNkeMy7DZwES9JtBx+EINqA7g=;
+        b=V569nbY8EBxvMxbptzSfzHOBoFQgYnV+fhz4b25K01KRLaC+n7MyyWAbq5OzISP6GL
+         vfQb3hZ9EsmaxmSsLHF+CoD1/1b3dyvAdQmV5jnDqxgpbiyqsZCnX6LPv4hbQDOV+eAl
+         oI0aMeMRz91jBdOn6HOIOINaTOpd9cWwJmc3yqcxr1rGWSanwldGWtCEcwJVBbGhulDr
+         JQRr2IRrplZrTrlRXWW6vHa9cAmEMxbb2inmu3zA9E2l3Fnl1C55evbouglDK7zQFEJG
+         AIqbqt2BGp3y6bJX30ltBnyihQIsb/BeMVpmP8JjXC0sYy/BtYxy1klHXBUEjyJ0HbNs
+         JHCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731089261; x=1731694061;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iWG253LXGIdckUNp7GPNkeMy7DZwES9JtBx+EINqA7g=;
+        b=kb1Ft7PGvHo1HyVilyOnDNBKBJ2qT2Hsbuj1HSxD1Ad98Re9PvoGnn1F7badfO9hNv
+         dSkfsIs0gajkGvCoXs7VlPN/hbxwceJ539sgnbZyp9mHLbOnvodCSJrLkiO1tonrP2SG
+         SlDzsWvYm76+t+8r+yDoYYJfFWlpfwZFLQqzlZzrlBlaEYdjOCVyI/EqVQXJzq7grqi8
+         1p1jAzj4m9xO3gPPrqd6oLQ908sQXcy/a52Hr26i9bDbND+UE7tdJnGJGiB2dIwKfVfh
+         4OlinpQYlwmxBMlPwQWJxNp9X8+EULc2X32o4JXAgEpPZV+fCJRqFGjAx4EcOFHjEd/q
+         M5Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNADDD/jBe4PcGBKPQYk4wnSggTIIvtIVvX1JX/Ud+dE/LwxtR812PfCLst6hjuwfXtPFZSNFO23AvLxVJ@vger.kernel.org, AJvYcCXuC6Gu/oF+xb1MDsvAOyIeIGm/VASEDjHhkyqLou+f4OW3YkyJ5FUWavrSPYkFNPQXVJ4fjXV3KaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYmv4ZD9lq/ChRUjR8nIrba9J/hcnG9Gn7qs1bzn2+04DjaQI1
+	l9R6SCcx1RFhb8dnHiSnkeHqSbcxSDF82nP0rgEJUd4XThxeieo=
+X-Google-Smtp-Source: AGHT+IGciwzK4siVd7UDmayJfNQ+szleBk1cUJkTGmipLn0sYGF96zPfDNcIcZst4NK7X7km5tCHvw==
+X-Received: by 2002:a17:90b:180d:b0:2e2:effb:618b with SMTP id 98e67ed59e1d1-2e9b1709a5emr5061658a91.13.1731089261140;
+        Fri, 08 Nov 2024 10:07:41 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a55bf2asm5877152a91.31.2024.11.08.10.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 10:07:40 -0800 (PST)
+Date: Fri, 8 Nov 2024 10:07:39 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Yi Lai <yi1.lai@linux.intel.com>,
+	Stanislav Fomichev <sdf@fomichev.me>
+Subject: Re: [PATCH net v2 2/2] net: clarify SO_DEVMEM_DONTNEED behavior in
+ documentation
+Message-ID: <Zy5Ta-M868VvBme2@mini-arch>
+References: <20241107210331.3044434-1-almasrymina@google.com>
+ <20241107210331.3044434-2-almasrymina@google.com>
+ <Zy1priZk_LjbJwVV@mini-arch>
+ <CAHS8izOJSd2-hkOBkL0Cy40xt-=1k8YdvkKS98rp2yeys_eGzg@mail.gmail.com>
+ <Zy1_IG9v1KK8u2X4@mini-arch>
+ <CAHS8izP8UoGZXoFCEshYrL=o2+T6o4g-PDdgDG=Cfc0X=EXyVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/20] ACPI: platform_profile: Add choices attribute
- for class interface
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241107060254.17615-1-mario.limonciello@amd.com>
- <20241107060254.17615-12-mario.limonciello@amd.com>
- <7e302f04-cb4d-4ecd-b1a1-4b89f09e692b@gmx.de>
- <9dd1709c-de87-4aa3-aa33-8a520a305545@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <9dd1709c-de87-4aa3-aa33-8a520a305545@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i6KkzGhtCShDZYq1bTXadJhCYusk/tewsN/WYepNcmbXkHhtFj2
- Pdst82mAqSHgDvhJAjTV+Mya6nXqEek8GqQk8c7P/jFSQXmkTo9YSwETLx1oFLPt82k/C+g
- Mu7XtPdvPb8zA0QOaDaJRGgQBt6By2s2SKA8acGWC0g0QU9JfFLvSkG/eFz3v1XpBpJ5XhS
- yYdUeJzYwLh8AR2SkJ1Uw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7F1LpOvsouI=;Wo/jQ98kjZ3U1U8zk8Ce57H/Sva
- iyFWl/mQO+j/jlHZzPwMx/i5j0+P8qWWK7U6a7pbTomIGNKcgBsIJEZhzvSNjD2bl8zrh+ukV
- iruavtwEV6KmR+w3tvee41Opdk7m/xZdqihb15hqmKrd5Rll+GrkBA57mWo8JjiKABLOT8J47
- EV9K1iVuGXeKjVVZQsnbCwQs0p2X+a0IZ2xWxycpRo0M8MKB7rSN1d+qlT8zjOG+Tmr53TVr0
- 1cVr48X0oJD8Iy0c7c62NIojCKKanwaWjBKBlBESyhwToTvIpPnu1mUogD+Y71N/y1FZhNNqu
- IWcQSZFHulYKd/69UBCSD9HffZBRa49IpLe2g0n+mqGXdW+sa3CIchkKxZU5AFtfodzjmP0IU
- FW84X/fvXwcLQiFpPvBTSWf09xLjq9nhltpwtUcWn81GN345GrLH+14TrQGhmWkBRFNDD6LgK
- GRRJd908BF3m4oncsQXNsXw9Mm4Sw41V5fr9UaCSUR4CSnaCkF9y7PGYQEk5MIfP32h/GYcuC
- vIe83h5obhtecRHlCaWIgx337OBdw+XBENQH945zzPZ6pwmt9vr+5Xr5hr1KSxAUoOhcelL+6
- NkeS/jwagLhMopEvmp/ZOrAASrizEy6ial4mdS8ErppYo3bplQX7LolPcc5/2cd2o5O5y7bM1
- +tCL9BpGy6zvTEeE5TdkpDmQ8yw6s0Ka6syNKg9N8o+21Wc/e7a6bqLoG17i550+/m04j9Jz1
- UfkrzplgQCQ24gAWDZ1PFboaurLUL3ugfhPEgB+NAXRp0CJ7fg9CkFWsMS0NqP/iBmMXWjRnM
- BxDjj/RvDdZPSKNebxMpw+iryTqKHIHh68ql/k9qsaaifY34jiLhmJAgNZs5EgyxZ74L8ydIy
- RrIP+KTnyiYP94n5Wq0WZ6W2ptTqC5t9YQrnKVlYVL5YlDLE7nB2v90B/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHS8izP8UoGZXoFCEshYrL=o2+T6o4g-PDdgDG=Cfc0X=EXyVQ@mail.gmail.com>
 
-Am 07.11.24 um 23:09 schrieb Mario Limonciello:
+On 11/08, Mina Almasry wrote:
+> On Thu, Nov 7, 2024 at 7:01 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> >
+> > On 11/07, Mina Almasry wrote:
+> > > On Thu, Nov 7, 2024 at 5:30 PM Stanislav Fomichev <stfomichev@gmail.com> wrote:
+> > > >
+> > > > On 11/07, Mina Almasry wrote:
+> > > > > Document new behavior when the number of frags passed is too big.
+> > > > >
+> > > > > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> > > > > ---
+> > > > >  Documentation/networking/devmem.rst | 9 +++++++++
+> > > > >  1 file changed, 9 insertions(+)
+> > > > >
+> > > > > diff --git a/Documentation/networking/devmem.rst b/Documentation/networking/devmem.rst
+> > > > > index a55bf21f671c..d95363645331 100644
+> > > > > --- a/Documentation/networking/devmem.rst
+> > > > > +++ b/Documentation/networking/devmem.rst
+> > > > > @@ -225,6 +225,15 @@ The user must ensure the tokens are returned to the kernel in a timely manner.
+> > > > >  Failure to do so will exhaust the limited dmabuf that is bound to the RX queue
+> > > > >  and will lead to packet drops.
+> > > > >
+> > > > > +The user must pass no more than 128 tokens, with no more than 1024 total frags
+> > > > > +among the token->token_count across all the tokens. If the user provides more
+> > > > > +than 1024 frags, the kernel will free up to 1024 frags and return early.
+> > > > > +
+> > > > > +The kernel returns the number of actual frags freed. The number of frags freed
+> > > > > +can be less than the tokens provided by the user in case of:
+> > > > > +
+> > > >
+> > > > [..]
+> > > >
+> > > > > +(a) an internal kernel leak bug.
+> > > >
+> > > > If you're gonna respin, might be worth mentioning that the dmesg
+> > > > will contain a warning in case of a leak?
+> > >
+> > > We will not actually warn in the likely cases of leak.
+> > >
+> > > We warn when we find an entry in the xarray that is not a net_iov, or
+> > > if napi_pp_put_page fails on that net_iov. Both are very unlikely to
+> > > happen honestly.
+> > >
+> > > The likely 'leaks' are when we don't find the frag_id in the xarray.
+> > > We do not warn on that because the user can intentionally trigger the
+> > > warning with invalid input. If the user is actually giving valid input
+> > > and the warn still happens, likely a kernel bug like I mentioned in
+> > > another thread, but we still don't warn.
+> >
+> > In this case, maybe don't mention the leaks at all? If it's not
+> > actionable, not sure how it helps?
+> 
+> It's good to explain what the return code of the setsockopt means, and
+> when it would be less than the number of passed in tokens.
+> 
+> Also it's not really 'not actionable'. I expect serious users of
+> devmem tcp to log such leaks in metrics and try to root cause the
+> userspace or kernel bug causing them if they happen.
 
-> On 11/7/2024 02:28, Armin Wolf wrote:
->> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
->>
->>> The `choices` file will show all possible choices that a given platfor=
-m
->>> profile handler can support.
->>>
->>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>> v5:
->>> =C2=A0 * Fix kdoc
->>> =C2=A0 * Add tag
->>> =C2=A0 * Fix whitespace
->>> =C2=A0 * Adjust mutex use
->>> ---
->>> =C2=A0 drivers/acpi/platform_profile.c | 65
->>> +++++++++++++++++++++++++++++++++
->>> =C2=A0 1 file changed, 65 insertions(+)
->>>
->>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
->>> platform_profile.c
->>> index f605c2bd35c68..5e0bb91c5f451 100644
->>> --- a/drivers/acpi/platform_profile.c
->>> +++ b/drivers/acpi/platform_profile.c
->>> @@ -25,6 +25,46 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D
->>> PLATFORM_PROFILE_LAST);
->>>
->>> =C2=A0 static DEFINE_IDA(platform_profile_ida);
->>>
->>> +/**
->>> + * _commmon_choices_show - Show the available profile choices
->>> + * @choices: The available profile choices
->>> + * @buf: The buffer to write to
->>> + * Return: The number of bytes written
->>> + */
->>> +static ssize_t _commmon_choices_show(unsigned long choices, char *buf=
-)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 int i, len =3D 0;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, &choices, PLATFORM_PROFILE_LAS=
-T) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (len =3D=3D 0)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le=
-n +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le=
-n +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
->>> +=C2=A0=C2=A0=C2=A0 }
->>> +=C2=A0=C2=A0=C2=A0 len +=3D sysfs_emit_at(buf, len, "\n");
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return len;
->>> +}
->>> +
->>> +/**
->>> + * _get_class_choices - Get the available profile choices for a
->>> class device
->>> + * @dev: The class device
->>> + * @choices: Pointer to return the available profile choices
->>> + * Return: The available profile choices
->>> + */
->>> +static int _get_class_choices(struct device *dev, unsigned long
->>> *choices)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
->>> +=C2=A0=C2=A0=C2=A0 int i;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
->>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
->>> +=C2=A0=C2=A0=C2=A0 for_each_set_bit(i, handler->choices, PLATFORM_PRO=
-FILE_LAST)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *choices |=3D BIT(i);
->>
->> Maybe just copying the bitmask would be enough here? In this case we
->> could also drop
->> this function as well.
->
-> Right now this could work, but choices and the use of it has gone
-> through great lengths to ensure that once there are too many profiles
-> it automatically becomes a bigger variable.
->
-> =C2=A0=C2=A0=C2=A0=C2=A0unsigned long choices[BITS_TO_LONGS(PLATFORM_PRO=
-FILE_LAST)];
->
-> So I would rather keep this as is.
->
-I think users of this function can do the locking themself and instead use=
- the functions from bitmap.h. Because _get_class_choices() will break once=
- "choices" becomes bigger.
+Right now it reads like both (a) and (b) have a similar probability. Maybe
+even (a) is more probable because you mention it first? In theory, any syscall
+can have a bug in it where it returns something bogus, so maybe at least
+downplay the 'leak' part a bit? "In the extremely rare cases, kernel
+might free less frags than requested .... "
 
-Thanks,
-Armin Wolf
+Imagine a situation where the user inadvertently tries to free the same token
+twice or something and gets the unexpected return value. Why? Might be
+the kernel leak, right?
 
->>
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return 0;
->>> +}
->>> +
->>> =C2=A0 /**
->>> =C2=A0=C2=A0 * name_show - Show the name of the profile handler
->>> =C2=A0=C2=A0 * @dev: The device
->>> @@ -44,9 +84,34 @@ static ssize_t name_show(struct device *dev,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ERESTARTSYS;
->>> =C2=A0 }
->>>
->>> +/**
->>> + * choices_show - Show the available profile choices
->>> + * @dev: The device
->>> + * @attr: The attribute
->>> + * @buf: The buffer to write to
->>> + */
->>> +static ssize_t choices_show(struct device *dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 char *buf)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0 unsigned long choices =3D 0;
->>> +=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
->>> &profile_lock) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D _get_class_choices=
-(dev, &choices);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-turn err;
->>> +=C2=A0=C2=A0=C2=A0 }
->>
->> Please directly use the choices field here, no need for a mutex since
->> the choices are static
->> across the lifetime of the platform profile.
->
-> But similarly to my other message, the class could be unregistered and
-> this needs to be protected.
->
->>
->> Thanks,
->> Armin Wolf
->>
->>> +
->>> +=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(choices, buf);
->>> +}
->>> +
->>> =C2=A0 static DEVICE_ATTR_RO(name);
->>> +static DEVICE_ATTR_RO(choices);
->>> +
->>> =C2=A0 static struct attribute *profile_attrs[] =3D {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
->>> +=C2=A0=C2=A0=C2=A0 &dev_attr_choices.attr,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL
->>> =C2=A0 };
->>> =C2=A0 ATTRIBUTE_GROUPS(profile);
->
+From the POW of the kernel, the most probable cases where we return
+less tokens are:
+1. user gave us more than 1024
+2. user gave us incorrect tokens
+...
+99. kernel is full of bugs and we lost the frag
 
