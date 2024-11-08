@@ -1,131 +1,175 @@
-Return-Path: <linux-kernel+bounces-401593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70EE9C1CB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:11:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C83D9C1CB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9984E1F23C60
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710F71C21D46
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B081E5713;
-	Fri,  8 Nov 2024 12:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942541E6DC1;
+	Fri,  8 Nov 2024 12:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWdp1h5Z"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex/rNDSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0741E1031
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79A1D2B05;
+	Fri,  8 Nov 2024 12:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731067913; cv=none; b=TpF+RNq4z0D8UGSuPZBQOkJ+4kV4w9IuVts/9I0Raif78KBxp6fguKLbg8JZyuaXJuFXLQpyivYBzixxTAAkU4ATSF5fBf54QNHUIGILa/rMCYar75dqyGqW4EoOEyUT1J2+dJq8lQb6xvXmBjmjASb5vdFtjnCye96r3vK5l3Y=
+	t=1731067962; cv=none; b=Cca814VVTzfQJ8Qb7T7b+/R/MiWzLLqlQm5TW4CCsXCa6v7epMgRAUmKwhbBupEwntgIDCcWRfUibZ0PskPm+KOD3QLCxIT8S++weDIo2TsSadu9rL8Y9cdo4psuHwW5yOD4KzaBSGmRVTKT3I0t6M60Zk6M0b3E7D+os0BGrMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731067913; c=relaxed/simple;
-	bh=kWJ0DEepdEDLXNiXRnM7h04QQ4YIrM5zxBCdJrqoyME=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rpxH3tb9lh1oJ6haiWdd26V6sb2GBOecs5PNPomAxVLg7Io/wT9ig5sYWCfSF+Jc7RrmKBI3AD7UiGzAEPA2pWJqm3KXHGIoXKDaENoqqGI4EPIopgGtU5mJWACgXU6Ho23iav4I31bUNo+ZJQMjxPzxIGaz04nCCHNqM9SimQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ciprietti.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PWdp1h5Z; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ciprietti.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4316e350d6aso14651395e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 04:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731067910; x=1731672710; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZCCuctOksN+g0ACutW+mHqSe3tKykXSGfpMAlVsHOvw=;
-        b=PWdp1h5Z1Z3iy4rG5aAs9ivb2RNbl0pgRzJI21/jWRb8B87BnfZ7GmfGmxgTyAh4ff
-         g6NHHUiePnnTlHppPoeDVK6z/eQ3EkICENFMpevJYgo14ikdSp6JdU3JYSv2PStZN8h4
-         dHKmEGkdZ85Bvnk3Zfrq43F42QLC/h/au4IORY+ArLzpF0+JCC960ThppDe+UtQudtQw
-         muWmfVOFQ3ihKrWML7SXrz58/WOl8nHcUXs0qf4KwUdaQjF3XFkhTRFh+Ma7C1S53IBw
-         SXVLqK/IJIeq0RabwbnkO8n9O+aN2S8rZJc3M8WaQSgvprb5KfUt5ca7MxNnToDJ0Kwc
-         to5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731067910; x=1731672710;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCCuctOksN+g0ACutW+mHqSe3tKykXSGfpMAlVsHOvw=;
-        b=j9bOoxUP6gLOuGrOYq18sg3qhMxfjgfAR+eVxiNbzLbcc7Oq0WBhc6Dl+fHq/FiHx0
-         WntYoEkGmFRcYozNTi1XcRp40L4NapkyFYmuWgZ1B5vVyV3CrU1pvFA2DBwZIO5t5i02
-         pPjmMhYuSuW4Tsq3mAAsabdZ5Se4WAilBmN6VM6C9AvNp1Nz7N7KJSElYs0y4hue7CBL
-         0r0q2gnTHeMh7kirNzeqH1JIh0ue16mrMTJLO9MyIsYXO83hYFct2r6NUNq8stLFZCiy
-         R6S8Da/X/Jis9nci0lvlL7nFvAVdxFjDuQS4UjWLzvS4CeVZ65gCKxY74BwkjIJZdKqN
-         QpRA==
-X-Gm-Message-State: AOJu0YwUm1z6QMiK++RMQ4nliHaefyhH2r5VG5tkIieg4nXX5PO0xmRR
-	RXip3ra0ukB1kAPmjgqY19KhAhyxl9clU83yGvuG6CqcL+e/u4mkTB9Akt98fxLHg58R4ezRkn8
-	A0zrJxCRsjUuJKcRkTsdbKbvZ+mFWNlCjgzzbN7DyRcWX9Km2Gyd73wDfEUS3Z5d5V2ek7CEqOl
-	ubx9bwlBcVmOrBHsX1RSpNZREgKkpuiwcndE4WuRK1r9qdGKAH913x/w0T
-X-Google-Smtp-Source: AGHT+IGYoutF8zZp5qp+BDEkaAp1zoCMP3TID3nPDMK6WM1N6Af1gNVPcyXlyt0bZqLKXb8sqzIi2AzSQi9YlaI=
-X-Received: from ciprietti.c.googlers.com ([fda3:e722:ac3:cc00:ee:a3ee:ac1c:78f4])
- (user=ciprietti job=sendgmr) by 2002:a5d:4f84:0:b0:37d:31a7:6610 with SMTP id
- ffacd0b85a97d-381f182787amr1753f8f.0.1731067910109; Fri, 08 Nov 2024 04:11:50
- -0800 (PST)
-Date: Fri,  8 Nov 2024 12:11:20 +0000
+	s=arc-20240116; t=1731067962; c=relaxed/simple;
+	bh=cK8xFRnGlMnoguSnAHELwh/X2hSfv4FZcBJxGPPrDx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z8d31t0eSxCqMpnKAKpj3vR5jQMLKU3vCc6RzQh2SCunl/4dZxJKpas+0YZ9uvrxgWORLud33oIdN8N/+19sSQQqZMD+V0LTUtWeV9kJvYoqeNgWHvKjV7XsaIlmAngcR7rzEDH3qkCo/ie7W92XYanI8CvK2YX/digSotSycZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex/rNDSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90B2C4CECD;
+	Fri,  8 Nov 2024 12:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731067961;
+	bh=cK8xFRnGlMnoguSnAHELwh/X2hSfv4FZcBJxGPPrDx4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ex/rNDSQeT20fYIkjQJpsLYv4tjEA9YSllOzlvGS/NCqKc9aJUYQHAhskeTKRLiYO
+	 F6DQT0WXwIShtI/V5UEV7CTbJd9mnHyK+7JbOjpKrRGd3qaTzktbwkGKhCr+DwePF9
+	 MniLuA8wRGKJIh2Ad39g8vR5yYEedE6dd/ciavrtOSM1KI6W0KkJfogh3m2qHXpE1L
+	 CP0L6jQ10gBi4RMJgZtgpEwpusmD0k2BaDWuq7qAvIYLWwex+hEl6KxaiEgGCKN2pQ
+	 thsMvWUANmnvvBucIMnajW99pVOgnJrucKAWeAxhx6acVuF1pDH5ZqSnkBuQN4scmu
+	 9+TJN9a5Kh60A==
+Message-ID: <54dd6ae6-b992-451e-b1c6-8a1968955f4a@kernel.org>
+Date: Fri, 8 Nov 2024 13:12:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241108121120.3912918-1-ciprietti@google.com>
-Subject: [PATCH] sched/smt: Call sched_core_cpu_deactivate() after error is handled
-From: Andrea Ciprietti <ciprietti@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Andrea Ciprietti <ciprietti@google.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Josh Don <joshdon@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
+ <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org>
+ <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In sched_cpu_deactivate(), the error path restores most of the initial
-state before returning, but, if CONFIG_SCHED_SMT is defined, it does not
-undo the previous call to sched_core_cpu_deactivate().
+On 07/11/2024 15:57, Dario Binacchi wrote:
+>     clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+>                   <&clk_ext3>, <&clk_ext4>;
+>     clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+>                              "clk_ext3", "clk_ext4";
+>     assigned-clocks = <&clk IMX8MN_CLK_A53_SRC>,
+>                                   <&clk IMX8MN_CLK_A53_CORE>,
+>                                   <&clk IMX8MN_CLK_NOC>,
+>                                   <&clk IMX8MN_CLK_AUDIO_AHB>,
+>                                   <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
+>                                   <&clk IMX8MN_SYS_PLL3>,
+>                                   <&clk IMX8MN_AUDIO_PLL1>,
+>                                   <&clk IMX8MN_AUDIO_PLL2>;
+>     assigned-clock-parents = <&clk IMX8MN_SYS_PLL1_800M>,
+>                                              <&clk IMX8MN_ARM_PLL_OUT>,
+>                                              <&clk IMX8MN_SYS_PLL3_OUT>,
+>                                              <&clk IMX8MN_SYS_PLL1_800M>;
+>     assigned-clock-rates = <0>, <0>, <0>,
+>                                          <400000000>,
+>                                          <400000000>,
+>                                          <600000000>,
+>                                          <393216000>,
+>                                          <361267200>;
+> };
+> 
+> The spread spectrum is not configurable on these clocks or, more
+> generally, may not be
+> configurable (only 4 PLLs have this capability). Therefore, I need the
+> "fsl,ssc-clocks"
 
-There is no easy way to invert such function since it overrides some shared
-state of the leader CPU. Instead, simply move the call past the error
-handling code. This is fine since cpuset_cpu_inactive() performs unrelated
-operations.
+No. That's not true. You do not need it.
 
-Note that there's no need for #ifdef since cpuset_core_* have empty
-definitions when CONFIG_SCHED_SMT is not set (in which case this patch is a
-no-op).
+First, the clock inputs for this device are listed in clocks *only*.
+What is no there, is not an input to the device. Including also Linux
+aspect (missing devlinks etc). Therefore how can you configure spread
+spectrum on clocks which are not connected to this device?
 
-Fixes: 3c474b3239f1 ("sched: Fix Core-wide rq->lock for uninitialized CPUs")
-Cc: stable@kernel.org
-Suggested-by: Josh Don <joshdon@google.com>
-Signed-off-by: Andrea Ciprietti <ciprietti@google.com>
----
- kernel/sched/core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Second, I do no ask you to configure spread spectrum on other clocks,
+only on the ones you intent to. List is fixed and ordered, so no problem
+with that.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 719e0ed1e976..4d55bc243ae5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8187,10 +8187,6 @@ int sched_cpu_deactivate(unsigned int cpu)
- 	 */
- 	sched_smt_present_dec(cpu);
- 
--#ifdef CONFIG_SCHED_SMT
--	sched_core_cpu_deactivate(cpu);
--#endif
--
- 	if (!sched_smp_initialized)
- 		return 0;
- 
-@@ -8204,6 +8200,7 @@ int sched_cpu_deactivate(unsigned int cpu)
- 		sched_update_numa(cpu, true);
- 		return ret;
- 	}
-+	sched_core_cpu_deactivate(cpu);
- 	sched_domains_numa_masks_clear(cpu);
- 	return 0;
- }
--- 
-2.47.0.277.g8800431eea-goog
+> property to list the PLLs on which I want to enable and configure
+> spread spectrum.
+> 
+> Furthermore, spread spectrum cannot be considered a new device but
+> rather a property
+> available only for some of the clocks managed by the clock controller
+> manager (CCM).
+> 
+
+My comment stands and that's a disagreement from me. Feel free to get
+second DT maintainer opinion, though.
+
+Best regards,
+Krzysztof
 
 
