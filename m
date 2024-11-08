@@ -1,213 +1,121 @@
-Return-Path: <linux-kernel+bounces-401319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B4D9C18C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:08:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B08F9C18CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469FD1F25F06
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5430128432B
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F861E0DDC;
-	Fri,  8 Nov 2024 09:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311881D356C;
+	Fri,  8 Nov 2024 09:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UoLLy5yS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gly8UZth"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4C11E0DAA
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9595F1E0DB8
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056929; cv=none; b=PDOc6Hqe5HO5oXVxPEvyS3aCKZSLvkNOHkzBgQcxODVfoNkTZUnb8S61DIHLeJR8cnp+UNGpTM5z6IJoq3tyQ5NERh7N3vK36sYvxC5f+ziBd0j5pqYaXWmlKyLMPCusYoqqSHRV7pLK4/8tQlFMWCpKpEKbGC93FTp3NnV3KbQ=
+	t=1731056941; cv=none; b=Cx8VahnPEuqNP9zsj0ex6WCYlgkne3mjhfhGgO/3ynDbE+sQbWtRpZcOTEsw/h7mdz/1ebxPAFrZN3zfN6Fj51mXAn8cSxNNBDgS3bp2A0p3G+vL/Sz6C96arihKnPOdNM4x5sKUTn2EMWZHbqZOdCtRr3F8A71ckdh8xffkYr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056929; c=relaxed/simple;
-	bh=WFc3Q9Mb4YnWrd+oQcX8uE9XxGi7mkMSsY7Q/8EXo/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tyNvPKlJt8P8+tQSgNQveMWJNZYPETjdAH4OFr3YZ80VTCIozSugoM4rKfgn7fx5mPgjhL2fPZH1zcZtHAmusGS/Cv5qwcztc3t41Dz4HLwnS5zY8jdrEU0Sk7Jua8ufI1nVG5bzfvlhcYnPuXlOUl62mX+K8Lej58Paxr8GKIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UoLLy5yS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731056926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=4zjoLu3X9DAY4JQpfTcJl0/52UxwxHvuqwd6q7efGUc=;
-	b=UoLLy5yS8Et0w4I4Ddj0Qrpcx1qsx7v0JTLZRsrGuNm7r+IjF35VwtwExoau7+5NkQ6e5T
-	Wzq/LdjV6J1pOgvnRbscKu+RixP+1FtcTrF8qRoVDTT7VPNGLv5rVE2HETmucF/nTXmphK
-	/Ni2G97lrEWp5oyWgXUfD+CS1AoreQc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-231-BMKUo_tTNEKzmaWYkVyUfg-1; Fri, 08 Nov 2024 04:08:44 -0500
-X-MC-Unique: BMKUo_tTNEKzmaWYkVyUfg-1
-X-Mimecast-MFC-AGG-ID: BMKUo_tTNEKzmaWYkVyUfg
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso16872195e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:08:43 -0800 (PST)
+	s=arc-20240116; t=1731056941; c=relaxed/simple;
+	bh=laY4jmILB60Wr/uxaLiRZB/pYgNerksyLegXeZz4yUg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nRFnyiJbnjtgx5PoY+athyWT4BG1S2R6N52nl1YatNCw26HUW/izbiMAwp241CnI52LvV7JysSX+hL2gYdHbfkendaoqcZHVuH6nR5SEYdYT3kK4QcAyzqEQ7zW5gAExqIvIRyFtsSFvjgn7bSFEzb+TsWCDDVy/XeV1OQyEKIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gly8UZth; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43169902057so15731075e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:08:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731056938; x=1731661738; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Xb1ICVWGXTFGmatTZgXGllwwlFmHy4GJOLy05oi7CQ=;
+        b=gly8UZthrjvE0RdHBWv6/nfZVoopNmV3XQOe7RKQnajzaeWtGpfVgwtcZU8b/lN+ho
+         SpxnhwsPp+v3mOsAcoE101qrng9zAZL+RFolqP9B8Bh/d3B6bDqh6uXvkondcpWNZg/I
+         gkhy8J5L3EMxqphXGYOSvd72Fb0LtPAXIM3hzNXGV++Scdf/Vodu3iaX4KBNNlOvF6Ma
+         h28NW87vNOZZGu60x0mURqshMRepj53xZy0SB/QHznU7PliPywH4jP+9usWHC2M9Y3Bq
+         MayC0I+BZ9mgqWj7X9+6jsmikxJoahllti0uUWTUfLKjxweY6EeUPYgp2Mqtp/NWhGrx
+         23kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731056923; x=1731661723;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4zjoLu3X9DAY4JQpfTcJl0/52UxwxHvuqwd6q7efGUc=;
-        b=j9pVgjxRZ2ZRJGX9uYX3pC4qUw3RnL4WSIcXL+s5RB8w/Nkz9e1xPGfnJdWW/DDWhM
-         9LfGDIq5x4mtEe4J6Ju4nLfF8Xbm0Q8vaMWwVQIpkUB/85f2Ti2mMUXpjvv7EVa41x8H
-         rBz+KbDx6LzJLcaqGmOorHWVmQnikqx0TCZN9Lkxt3r4j73mWOvXLcG/4aO7ATRiXhhi
-         QSpa27E0TOrbWyR0b9VkDb0CwVrb2k70tG+TsRrsxgRuaQtdTBOXYOrqRHw1pmXtNxNA
-         8rnvBOEeqH7b9hsiOyPsZOlgADMeRZsDNg+Jyf/H8Mfyo+FFL3gn3K4L8q8uEMkQZgUs
-         a5Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHnNzebpkzScxWQ0IzeXwG8JHyV6b1Af3aaQBn524OE0gM0J6Mhvs4TU5SZCItqoUdwsd+rPrmootTDpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7YIG+8j5xZM2Eb0IQo2vZP7mWL6iyZ++UxE3qpkNqXplDe4Iq
-	Kg53+94r0GphqGuReF4VXN40P7+/uy3FoPWBNj92KlUScxHgy8iQmRPkfHXPoALzt63lCBA0z9u
-	uxYXkW4nflIGGgCAiJGr9alMTpFqGOQ9uaoV933x1mHBcxLeX7W3tCeJEx48mKg==
-X-Received: by 2002:a05:600c:1d20:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-432b751ee6bmr16519285e9.28.1731056922850;
-        Fri, 08 Nov 2024 01:08:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFXS+cqyTfle4rH6KhTwr187aMVV3GDgGEJWyKzmdTnx+Rn7WxfiZ/RnrVdoicvqr2Lr55snA==
-X-Received: by 2002:a05:600c:1d20:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-432b751ee6bmr16518905e9.28.1731056922486;
-        Fri, 08 Nov 2024 01:08:42 -0800 (PST)
-Received: from [192.168.10.47] ([151.49.84.243])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e56sm95082935e9.2.2024.11.08.01.08.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 01:08:41 -0800 (PST)
-Message-ID: <68770651-f7cc-4032-aabc-90c72ee648a6@redhat.com>
-Date: Fri, 8 Nov 2024 10:08:32 +0100
+        d=1e100.net; s=20230601; t=1731056938; x=1731661738;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Xb1ICVWGXTFGmatTZgXGllwwlFmHy4GJOLy05oi7CQ=;
+        b=DqT0xzVeaQOO/89JOolob/mbXhn2Q3ApJAHamHl+48l0fVFmr68p7KaXo0Y9xR4GRe
+         kz///nD5xY1ObUt/5FK41u8sBrbsZFLG++IByHk2PX4xnq89HZW6JXbKujZE6H/A/DJK
+         nXd6AaZBNhr4jDNuyjPXw/5Fi02ujSNCXamhB59GrYswsdHhg0QdXm3xiSmAKEcoe0mG
+         zbRnOvyXV3NNUOaOeWET7eeejzDHaNL1JVPu0AvkDxHtq2jx7zuUnhoyUOqWfeIOGAhB
+         k/5LQM8nbFrweiFeNOyzr6AkZLGgLrlkheka+icr+aVGXuqWHmvh73gUPREwDczMwufS
+         e60Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOzoRN2m7O72CZ4y4+fOP3nELPJ4xWhFb50Ro7to5v4YAM4dWGiJfVy1pyr3MrfO0s2/HjJM7X0FeXTVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCEHn9p5VNs9fFVOLa8yS73Xjt5A281T+xfKGQbV/t8WEFfm6Z
+	0dNU18OCDP2cNKQylFrzlPeFMRiAEe5eA3JLhsIarHPhZwjTR3YdPHnMFHZGDy8rkKVmsBQzkuA
+	a
+X-Google-Smtp-Source: AGHT+IGc7WSbgcJgemjnmfyYnFD0FFxFhnTDoVt/WUlBEoBVWkIM08bwENgbaktsObOHDzFoXT7w6Q==
+X-Received: by 2002:a5d:598b:0:b0:374:c84d:1cfe with SMTP id ffacd0b85a97d-381f182e898mr1747898f8f.21.1731056937952;
+        Fri, 08 Nov 2024 01:08:57 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:ecfd:9f8d:62a3:6ba8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda04049sm3948176f8f.93.2024.11.08.01.08.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 01:08:57 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Stephen Boyd <sboyd@kernel.org>
+Cc: Mike Turquette <mturquette@baylibre.com>,  Chuan Liu
+ <chuan.liu@amlogic.com>,  Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the clk tree
+In-Reply-To: <20241108080914.65a7a03a@canb.auug.org.au> (Stephen Rothwell's
+	message of "Fri, 8 Nov 2024 08:09:14 +1100")
+References: <20241108080914.65a7a03a@canb.auug.org.au>
+Date: Fri, 08 Nov 2024 10:08:56 +0100
+Message-ID: <1jh68i2itz.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/6] kvm: svm: Fix gctx page leak on invalid inputs
-To: Tom Lendacky <thomas.lendacky@amd.com>,
- Dionna Glaze <dionnaglaze@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Michael Roth <michael.roth@amd.com>,
- Brijesh Singh <brijesh.singh@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-Cc: John Allen <john.allen@amd.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
- Danilo Krummrich <dakr@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- kvm@vger.kernel.org
-References: <20241105010558.1266699-1-dionnaglaze@google.com>
- <20241105010558.1266699-2-dionnaglaze@google.com>
- <867da10c-352b-317e-6ba8-7e4369000773@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <867da10c-352b-317e-6ba8-7e4369000773@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 11/6/24 15:29, Tom Lendacky wrote:
-> On 11/4/24 19:05, Dionna Glaze wrote:
->> Ensure that snp gctx page allocation is adequately deallocated on
->> failure during snp_launch_start.
->>
->> Fixes: 136d8bc931c8 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command")
->>
->> CC: Sean Christopherson <seanjc@google.com>
->> CC: Paolo Bonzini <pbonzini@redhat.com>
->> CC: Thomas Gleixner <tglx@linutronix.de>
->> CC: Ingo Molnar <mingo@redhat.com>
->> CC: Borislav Petkov <bp@alien8.de>
->> CC: Dave Hansen <dave.hansen@linux.intel.com>
->> CC: Ashish Kalra <ashish.kalra@amd.com>
->> CC: Tom Lendacky <thomas.lendacky@amd.com>
->> CC: John Allen <john.allen@amd.com>
->> CC: Herbert Xu <herbert@gondor.apana.org.au>
->> CC: "David S. Miller" <davem@davemloft.net>
->> CC: Michael Roth <michael.roth@amd.com>
->> CC: Luis Chamberlain <mcgrof@kernel.org>
->> CC: Russ Weight <russ.weight@linux.dev>
->> CC: Danilo Krummrich <dakr@redhat.com>
->> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> CC: "Rafael J. Wysocki" <rafael@kernel.org>
->> CC: Tianfei zhang <tianfei.zhang@intel.com>
->> CC: Alexey Kardashevskiy <aik@amd.com>
->>
->> Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
-> 
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> 
->> ---
->>   arch/x86/kvm/svm/sev.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
->> index 714c517dd4b72..f6e96ec0a5caa 100644
->> --- a/arch/x86/kvm/svm/sev.c
->> +++ b/arch/x86/kvm/svm/sev.c
->> @@ -2212,10 +2212,6 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
->>   	if (sev->snp_context)
->>   		return -EINVAL;
->>   
->> -	sev->snp_context = snp_context_create(kvm, argp);
->> -	if (!sev->snp_context)
->> -		return -ENOTTY;
->> -
->>   	if (params.flags)
->>   		return -EINVAL;
->>   
->> @@ -2230,6 +2226,10 @@ static int snp_launch_start(struct kvm *kvm, struct kvm_sev_cmd *argp)
->>   	if (params.policy & SNP_POLICY_MASK_SINGLE_SOCKET)
->>   		return -EINVAL;
->>   
->> +	sev->snp_context = snp_context_create(kvm, argp);
->> +	if (!sev->snp_context)
->> +		return -ENOTTY;
->> +
->>   	start.gctx_paddr = __psp_pa(sev->snp_context);
->>   	start.policy = params.policy;
->>   	memcpy(start.gosvw, params.gosvw, sizeof(params.gosvw));
-> 
+On Fri 08 Nov 2024 at 08:09, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Applied, thanks.
+> Hi all,
+>
+> In commit
+>
+>   5e052ef3c400 ("clk: meson: s4: pll: fix frac maximum value for hifi_pll")
+>
+> Fixes tag
+>
+>   Fixes: 80344f4c1a1e ("clk: meson: s4: pll: hifi_pll support fractional multiplier")
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Maybe you meant
+>
+> Fixes: eb61a1264990 ("clk: meson: s4: pll: hifi_pll support fractional multiplier")
 
-Paolo
+Indeed, I missed this. Thanks for pointing it out Stephen.
 
+Stephen (Boyd), how do you want to handle this ? The commit will need
+amending and it's something you've already pulled unfortunately. I'm
+happy to redo amlogic clock update tag, if that's easier for you.
+
+Stephen (Rothwell), I suppose (and hope) you are not checking all those
+commit tags manually. Is there something available somewhere I should have
+added to my routine checks for this type mistake ? A checkpatch.pl flag
+I missed maybe ?
+
+-- 
+Jerome
 
