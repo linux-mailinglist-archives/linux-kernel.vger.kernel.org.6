@@ -1,173 +1,111 @@
-Return-Path: <linux-kernel+bounces-401132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B0C9C1649
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:02:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471FB9C1654
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375601C229D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:02:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD8DCB23022
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B491CFEC9;
-	Fri,  8 Nov 2024 06:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="drZOZ94C"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10E41CEEA3;
+	Fri,  8 Nov 2024 06:07:28 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC51418FDD0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E3C8F54;
+	Fri,  8 Nov 2024 06:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731045742; cv=none; b=g4Lh6B5kDToKcW+8g9/ZXbXxyH2kRd79pF/2lXgVzsQ9mnyR53GQhId8eg97CxLPHyT+WI1kkskKgw9m2/+imxO4Dy1xa/tIxpmUNorBkEB3BuDhRztxHreYaGQSxvNrG0oLg1oKPhuFmAE9lpNG+lCcqx6NX5Iy6qrZD06GpNs=
+	t=1731046048; cv=none; b=iBCc1SIMF7u4sWKmvJCb1l7Qq2n8AuZ5CtI+T2i03JdzAOWT1UuZ52ZIbXNRL3FWpgh7lJjdc0z/bl/8QLeWNRt8OVe44r/jO604JcHnQ0nJetxUUppLAOrTObIYVOUyz9fzAylhWNijx3hzgIhD7u7RggREnlItDcwADbEYeR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731045742; c=relaxed/simple;
-	bh=lTBf0TWRouF8XeWxn5vsDzkhjI0EGmccbF27ADrrizA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cr0F8YSSXqx0N7y3Ta5y7RP3yx4XU4D9NdS+pTZNepZchQVx+01RJ1UnmEk+5wELiE6E6gRddYWKVvI2+1Urcgr37dze4MBys2koy3CYB2lsovG4Ro3YWxtQrMNnCv0kmEHwpT5BkZA3uv2zOU2hDdGvuLvMMMAOHg+99f9RKaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=drZOZ94C; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53c779ef19cso1969922e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 22:02:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731045738; x=1731650538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xkvxW0TELGak9TGChpUjLN8WW2TtIQcHiwQEYFYHFLY=;
-        b=drZOZ94C1Ur5PVKIXw66Cunqk8gjuvrVGl5RK3avwQvJgmh6C1qjdT+5Q/OWBI+Nh2
-         cjZZDZtFT0VPY4hIMxkH/+/+zggQ4NTg5D1f6oSq6BWbw9HvU+FZdliMNDWyukiUuVHm
-         T6ATD/tq0fp5U3i8WAYaGmZEGJkJUzMnOf17U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731045738; x=1731650538;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xkvxW0TELGak9TGChpUjLN8WW2TtIQcHiwQEYFYHFLY=;
-        b=d7pZPMYYLlHjaBVypEio7oUfcS5ISA5S9qDGtAPwcARphfH4m9xCIhb3rP0k8TYu53
-         H21BsbfeCVNLQGLp3Iv8htp+8k6EvzURcTMJRsFYt37UZucOTtdP2EwNtyGCjIfYI7iM
-         +mxooGsZhZGAzRdtBw5DWDABCrQIZ/8MKH3+N9sUNpuzsDae4ASzMOr0QIWqpXT3n5Il
-         QnOXEC8zVV2CIoATJ6UUf6qGLEVL32e9DVyWQ82pTGywbkP5MjuTZy58YG6zoJziJZTP
-         y20V563xOwR9p14Ti7Xg+IG7MLR1P9i8dw55lSMuaN+cxr/HDO7Pxbn21YqDsSuAwrLl
-         0qSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9uXxRnkK6PWbZ7eSGnXoWaFUzOG5tjF/4NIs2i8zzFUW1qeKg7TvWbLbLPmuq3KExtTNCSsepXQefHa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNUqFdAKPGpWmMIm7Ac7mfEB1KCAyP8/MpyDTqqH0n4X/F8HAD
-	9GMQlHd17UHr3HDqTR3Ct1XXwAJbUKsl7VfFb/jWvaUAS3POmdzeWjGzDh4bJ/MLEOw2l+Mfxdc
-	Z4QJJKb8VRho2ZBTrx7iy6gTHc/tGaT4cM8S6
-X-Google-Smtp-Source: AGHT+IHrAma7a//3ZnIS1iS1Lm0CwM4nLy0ndtu8X8cJY5OZ/WS7iyuPy8axxsNkbLgivCMUhnj0GhMp35Zvr3+0+ik=
-X-Received: by 2002:a05:6512:3b8d:b0:539:e8b5:f296 with SMTP id
- 2adb3069b0e04-53d8629d2d5mr722983e87.33.1731045737701; Thu, 07 Nov 2024
- 22:02:17 -0800 (PST)
+	s=arc-20240116; t=1731046048; c=relaxed/simple;
+	bh=nbhbqXWbS5drLYz+th6wmfd3iaPgrJv2NgPZK6FH9m8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pNAzGItPK8vfgRb55gAGWQBE+IR9x8fsa7Tneac6wM2EkRVJwu9VAAcw3h5D/9RSZc/xCwZ56AvxFvIvSkcFosRgUSg/ftAUIvURVKlMONJdBYBCugLbs59gDoaiL/x4MZ5DEiTACkw84IHv85i1+iwoFv2Z2XiEuw6VYsg4kzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xl7kb0LWYz4f3jsX;
+	Fri,  8 Nov 2024 14:07:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1A4491A018D;
+	Fri,  8 Nov 2024 14:07:21 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgB3U4eXqi1nbFy3BA--.31515S3;
+	Fri, 08 Nov 2024 14:07:20 +0800 (CST)
+Subject: Re: [PATCH md-6.13] md: remove bitmap file support
+To: =?UTF-8?Q?Dragan_Milivojevi=c4=87?= <galileo@pkm-inc.com>,
+ Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
+ <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
+ <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
+ <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+ <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <8ae77126-3e26-2c6a-edb6-83d2f1090ebe@huaweicloud.com>
+Date: Fri, 8 Nov 2024 14:07:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108033219.19804-1-yunfei.dong@mediatek.com> <20241108033219.19804-6-yunfei.dong@mediatek.com>
-In-Reply-To: <20241108033219.19804-6-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 8 Nov 2024 14:02:06 +0800
-Message-ID: <CAGXv+5EfZUXEh6r0GaMKwTgWo8gQHsXFSF2bQzFuw=J4Gj0OGw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] media: mediatek: vcodec: remove media request checking
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3U4eXqi1nbFy3BA--.31515S3
+X-Coremail-Antispam: 1UD129KBjvdXoWruFWUArWDGr48Gw4UXF43ZFb_yoWfXrc_W3
+	WxA3y8J34UGrs5tr1agr15Ars3t3y7Xa4rJ3yrJayIqa45Xas8Jr48C34F9393Ww1ktrnr
+	Kryavr9rXw43WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
+	r21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Fri, Nov 8, 2024 at 11:32=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.c=
-om> wrote:
->
-> Setting the buffer status to error if the media request of
-> each source buffer is NULL, then schedule the work to process
-> again in case of access NULL pointer.
->
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> ---
->  .../vcodec/decoder/mtk_vcodec_dec_stateless.c      | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_d=
-ec_stateless.c
-> index 3f94654ebc73..251111678fd8 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> @@ -363,10 +363,14 @@ static void mtk_vdec_worker(struct work_struct *wor=
-k)
->                           ctx->id, bs_src->va, &bs_src->dma_addr, bs_src-=
->size, vb2_src);
->         /* Apply request controls. */
->         src_buf_req =3D vb2_src->req_obj.req;
-> -       if (src_buf_req)
-> +       if (src_buf_req) {
->                 v4l2_ctrl_request_setup(src_buf_req, &ctx->ctrl_hdl);
-> -       else
-> +       } else {
->                 mtk_v4l2_vdec_err(ctx, "vb2 buffer media request is NULL"=
-);
-> +               v4l2_m2m_buf_done(vb2_v4l2_src, VB2_BUF_STATE_ERROR);
-> +               v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> +               return;
+Hi,
 
-Is this something that actually happens? I would assume that having
-the `requires_requests` flag set on the queue would block any QBUF
-call that doesn't have a request attached.
+在 2024/11/08 13:15, Dragan Milivojević 写道:
+> On Fri, 8 Nov 2024 at 02:29, Song Liu <song@kernel.org> wrote:
+> 
+>> I think we should ship this with 6.14 (not 6.13), so that we have
+>> more time testing different combinations of old/new mdadm
+>> and kernel. WDYT?
+> 
+> I'm not sure if bitmap performance fixes are already included
+> but if not please include those too. Internal bitmap kills performance
+> and external bitmap was a workaround for that issue.
 
-> +       }
->
->         ret =3D vdec_if_decode(ctx, bs_src, NULL, &res_chg);
->         if (ret && ret !=3D -EAGAIN) {
-> @@ -384,8 +388,7 @@ static void mtk_vdec_worker(struct work_struct *work)
->         state =3D ret ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE;
->         if (!IS_VDEC_LAT_ARCH(dev->vdec_pdata->hw_arch) ||
->             ctx->current_codec =3D=3D V4L2_PIX_FMT_VP8_FRAME) {
-> -               if (src_buf_req)
-> -                       v4l2_ctrl_request_complete(src_buf_req, &ctx->ctr=
-l_hdl);
-> +               v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
+I don't think external bitmap can workaround the performance degradation
+problem, because the global lock for the bitmap are the one to blame for
+this, it's the same for external or internal bitmap.
 
-Unrelated change. Please do the cleanup in a separate patch.
+Do you know that is there anyone using external bitmap in the real
+world? And is there numbers for performance? We'll have to consider
+to keep it untill the new lockless bitmap is ready if so.
 
-v4l2_ctrl_request_setup() and v4l2_ctrl_request_complete() are both
-no-ops if either argument is NULL, so you can do one patch going over
-the whole driver to clean it up.
+Thanks,
+Kuai
 
->                 vb2_v4l2_dst =3D v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
->                 v4l2_m2m_buf_done(vb2_v4l2_dst, state);
->                 v4l2_m2m_buf_done(vb2_v4l2_src, state);
-> @@ -403,8 +406,7 @@ static void mtk_vdec_worker(struct work_struct *work)
->          */
->         ctx->cur_src_buffer =3D (ret !=3D -EAGAIN) ? NULL : vb2_v4l2_src;
->         if (ret && ret !=3D -EAGAIN) {
-> -               if (src_buf_req)
-> -                       v4l2_ctrl_request_complete(src_buf_req, &ctx->ctr=
-l_hdl);
-> +               v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
+> .
+> 
 
-Unrelated change. Same as above.
-
-
-ChenYu
-
->                 v4l2_m2m_buf_done(vb2_v4l2_src, state);
->         }
->
-> --
-> 2.46.0
->
 
