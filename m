@@ -1,84 +1,121 @@
-Return-Path: <linux-kernel+bounces-400862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382429C1360
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:59:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA469C1361
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125A71C21D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7413D1F235FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FD27464;
-	Fri,  8 Nov 2024 00:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79893B672;
+	Fri,  8 Nov 2024 00:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evBSVb7T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="shyvSabv"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEB21C36
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8502D8F54
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731027539; cv=none; b=X1qhgqoTftEqr7IlwvjdR5o/Qv5sCJsfBDsqO3AY6a8xo6WEL0tFbMtnXYsazmRpiBMcn2NKXnclxxP+V3Wj2E4iGevEZy11trgkV4apxsPiVKl/BdU3Y3ucc2iaOj1KpDbXYEw+xrj5Q65EEAVYfo3n3REDahTG7ES66iK6PIM=
+	t=1731027580; cv=none; b=IvEhg6IrwrEobnaPItbHZDHM1eXd8UNwy+Ou+iFkNT4v5MbgPqSYf7fjyIo458rEtdvhiX23TYBV5eNsI+HTyg8RsNYPRCgbshtQyN5c564LXhJei5k3hyzb1zHKx08Jwuz1d4PpxGjahFH2XpnBUg+CYgNTJV8Jqruo4+hBnus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731027539; c=relaxed/simple;
-	bh=sAOPRgtSvUtPf0Vd9bBaKPLSEYUCIvcRu9bVqU1rQsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2Rw7duycDnHThBu1CyTacURcJaxlhAObUWMg3znC2jGCZuKsC+1nrHtj2sKciF2x+e8mThRGXOUQXoBxzSJN9GymDB2MvUY3iZ0yu5bbEBUs1VWJOtOUj2l2VMum5ay+VGYmkEYV9KNtu/lLkp4kBTTT+WhD/GgopTvzQCQN1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evBSVb7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BD5AC4CECC;
-	Fri,  8 Nov 2024 00:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731027538;
-	bh=sAOPRgtSvUtPf0Vd9bBaKPLSEYUCIvcRu9bVqU1rQsg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evBSVb7T+hSXvZRjaFb8yIY8viNU2ngTAILeUVY4zSLm1nZ0FcFUTFkap9yeue2Qz
-	 agEgVIVmk5tVev2vkUXm0cVGfz5mk4senGJrumF4S2nj3Iow+8v3l0h+wl6ZTydbqR
-	 t2cX/9bD/amopMg461kmiRStJa7LwYl9MydKMa3jHfyCO3oRfWFlDJAmI+VxrL2XnQ
-	 LzfB9vl4S9uwPkfee2f+nAj7k4O3ll5l08spiyT92UWgT5HaveSu3ZNFpbcHEvHTsV
-	 Qc0o7CWtCwcbkXd9iKQlIpzV2fgFfL9SOdPMtP6pZ1e7mP9kYcSM9QaFtHEwiL/KH3
-	 LnpM0DUGXZtgA==
-Date: Thu, 7 Nov 2024 14:58:57 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 sched_ext/for-6.13] sched_ext: Do not enable LLC/NUMA
- optimizations when domains overlap
-Message-ID: <Zy1iUXxJE1qQLIsz@slm.duckdns.org>
-References: <20241108000136.184909-1-arighi@nvidia.com>
+	s=arc-20240116; t=1731027580; c=relaxed/simple;
+	bh=2Z3wd+ZMCDhE1fNOKNlz1k68JKwoJd0TG12r6GQ5CMw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mnOtr03ESD9LQI7Rq1SVoK8salBmDImciD/4ZXsT/VY4cInr7uAyX49xZF6jGG/AbLLJpnctcYbSWUsX4WKodGl60PiDR8LjgdjzCXYCgFbiKosafThXxpzCOAadXr12FzH3oZ7JksSrjYP/I0N0gJbvGLMtkqoroASd+yYU/88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=shyvSabv; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731027545; x=1731632345; i=efault@gmx.de;
+	bh=59sI9IkggmHHN5RmxLtDn719RMyw9UmIvqwVtChNITc=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=shyvSabvnXUtTJ9L9s0qtFngaUBPoGkxIp014ezt+c9Zt5vGt7oFxnJVmJGy0RIU
+	 eN5rJ0D6Lv5qKrxOMQKhlO0/JnvHxC2VzB7z/pkHDAIPyYDsWbg3WpgnFJ6ovmKC2
+	 gk9mIMLLZMo1DRRkAqEJJw8rZHrmT7ff2llOaLZj/TLcOuj/XUNnMpbHtwLV9P/v/
+	 eGofssyoZM9DwRv+JkStTJ0/PaSIW9KkpYphCSkw2ABOxN64k0lkARzkolmwh08Gh
+	 VMjni5pgh8G8J1XNAWvvVKZ4wZwqryCuZOm3m4RpHpn0D0Oh+IXrs0u+DsjqDxM+I
+	 ky2ys8qbXSKFbGs6xA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from homer.fritz.box ([91.212.106.195]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MhlKs-1tmy092EtM-00ccPo; Fri, 08
+ Nov 2024 01:59:05 +0100
+Message-ID: <d9eb12bf0c7423368db2ac03ee3171925de15bfc.camel@gmx.de>
+Subject: Re: [PATCH 0/5] sched: Lazy preemption muck
+From: Mike Galbraith <efault@gmx.de>
+To: Thomas Meyer <thomas@m3y3r.de>
+Cc: peterz@infradead.org, bigeasy@linutronix.de, tglx@linutronix.de, 
+ mingo@kernel.org, linux-kernel@vger.kernel.org, juri.lelli@redhat.com, 
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+ ankur.a.arora@oracle.com
+Date: Fri, 08 Nov 2024 01:59:03 +0100
+In-Reply-To: <87v7wzklib.fsf@DESKTOP-DQBDJ0U.localdomain>
+References: <87v7wzklib.fsf@DESKTOP-DQBDJ0U.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108000136.184909-1-arighi@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4i83uMEKb8IApSKe/7UEBXiWMJ3zggWUPwQEgdBtEBnwA4r5Dfu
+ cB9L6cmQxIJDAyaWG59EGgahp8hxenjzvmIPyPMqAll0r2fyr5cnr55USaiO3sOV3ZGj9tb
+ PyAhtp1TFwO0kzm+uvLjxe0rHN6mhg2K6TNerrHjhwjKqaFFYjcNVQOjY5IJmRI98/UYE2r
+ 0VkauNHG0dcUj/CN2MZjA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2qT3LAKmAc0=;0tiGVB/ouUDfWX+cyj8KZ1n51N3
+ jblbKWky/yWjjhm9ewvcOqNzghyFA9lMlWBH6GnsZ7Vu+6J5o4IKi35L5tYs4kCUSxhzpfL6o
+ m+v02CEDmxyYY9DboVIUlUCUk3EjDZCjepHmGsAryX65MO5dQNDovnPoq89VpFkY0eZuvQJdW
+ 7+zW3l63HtbmzQQ3qIlX6L3kd7vFtBPmnSnaPV9yNH9ea3mTv/VAJbBrI3opw9QgQn/It971m
+ I3ai7zGtIj5Xta6IJYfzERe3KSIqfLF0960kbCKmKKEBpjWZlWPegTJwNby7zVjZuwGfez0Rl
+ hjrS8yqtagJ01kUMs3Ql6hEqZbDf+kWxoSBCWqpEb2vt1BeEqFzF54llYP7a/+rb0IHHUirIs
+ bbOPiZY3ke3vct+oqbaFl6bSGslpC9r0QbJJfHDqELDh+90YfEC0NE2+/nKD57RB6ToGanToQ
+ na5c7TBETMcf/ivluBOnJ51bbcDGv8Jy3/rxAqEwrGnOtnyPTe65TDIQSlroJhrBGVVmgmqj/
+ u38aBbXS8/8PkY/9c697XPQyuuBecCbDzdvEPp5Oj+XbEyR7lWIvW015Rv4G8oPBBRzjTAoHp
+ lqjV/Ue70Zhwt1hfwG6xJqEA551WeY42lcE7NWVf7PIKPWNY0fbJYLNuKncxaeGQDGIbakCXv
+ JShEJGjJKo6RseQbdDtwtHm9zNutcan0ytKSN23zVU3XxQFhWVgX1QZvvTOBkaXoxdw5dLjcD
+ V5tFi6zotc4CrUk7zOWfEv+VrlCyZH8ABD3YVWP4V0WXNDDyJeMAgEieCs8KhMUvcpp2wfOf3
+ +3UZOWptHT3QH0+vo5+oWHAA==
 
-On Fri, Nov 08, 2024 at 01:01:36AM +0100, Andrea Righi wrote:
-> When the LLC and NUMA domains fully overlap, enabling both optimizations
-> in the built-in idle CPU selection policy is redundant, as it leads to
-> searching for an idle CPU within the same domain twice.
-> 
-> Likewise, if all online CPUs are within a single LLC domain, LLC
-> optimization is unnecessary.
-> 
-> Therefore, detect overlapping domains and enable topology optimizations
-> only when necessary.
-> 
-> Moreover, rely on the online CPUs for this detection logic, instead of
-> using the possible CPUs.
-> 
-> Fixes: 860a45219bce ("sched_ext: Introduce NUMA awareness to the default idle selection policy")
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+On Thu, 2024-11-07 at 18:21 +0100, Thomas Meyer wrote:
+>
+> Mike Galbraith <efault@gmx.de> writes:
+> > Full per run summaries attached, high speed scroll version below.
+> >
+> > desktop util 18.1% static voluntary - virgin source
+> > desktop util 18.3% static voluntary - +lazy patches
+> > desktop util 17.5% lazy=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 - ditto...
+> > desktop util 17.0% lazy
+> > desktop util 16.8% lazy
+> > desktop util 17.8% full
+> > desktop util 17.8% full
+> > desktop util 17.8% full
+>
+> Can you please elaborate a bit more were those values, e.g. 18,1%, come =
+from?
+> How to get those? I couldn't find a connection to your raw data.
 
-Applied to sched_ext/for-6.13.
+I use a slightly twiddled perf to profile, ala perf sched record
+<whatever load>, perf sched lat to emit the profile, then do the total
+runtime accumulation vs competitor runtime arithmetic. Both competitor
+and desktop load are selected for maximal hands off consistency, poke
+start, watch yet another 5 minutes of BigBuckBunny to make sure the
+internet doesn't hiccup during recording.. and done.
 
-Thanks.
+> Sorry for asking this probably stupid question,
 
--- 
-tejun
+Nah, the only silly question is one not pondered first.
+
+	-Mike
 
