@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-401635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855439C1D2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:41:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEF29C1D33
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33BB1C22E10
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:41:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10611285E4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6D61E882B;
-	Fri,  8 Nov 2024 12:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE1A1E8838;
+	Fri,  8 Nov 2024 12:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klzGkgE6"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQw1THIB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE6D194A48;
-	Fri,  8 Nov 2024 12:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD66B194A48;
+	Fri,  8 Nov 2024 12:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731069674; cv=none; b=kc/tNuj23ztYAG/O9crdURf/ZsdufOdHjb3EfB+gNWMwpjNKEwt/uQLs/h6G2dMvGsrrcCFifdwPdiWajos6E1pr5gHKD2Oho8dVRGeP0ti0b4Q+rHDK7fmb9LgX4SWA1q4uTyrsnni07oMaH3G7isfbH04IntWmKcADK4Q8kgw=
+	t=1731069741; cv=none; b=Ht6lwmP4Kwjr+/ogzGEozB12V4cxczJj6S2qSrg7CBRGpLH3Ts3HwNDnHRrgMhhtz/gT+0Oe2DmpvLPEdP07glME6LOybq9qfm3Y3NPn81P/Tq3gyHjJpJRFD8IW/uimbI5LOPLvrEcy1++aQbpX8W4p1hE3wzMHAYmWCT88gVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731069674; c=relaxed/simple;
-	bh=+Yg2wtM9L10+yYwPZvCTOi+WQqDYohy18cvtdDm8ZyI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oC8/2nqyXiwP2ycYYvkEdGJZq3963J+h3rHpcp5Nu53QM9JNYNkb/dHet/NtwGP4F/1OSiEh++ZNK3Lcgf6ov+gw+iggBIRfLHxOfJPbHovESM5xlEkIGfSQJZJhbVYQ3AJ0SyXxIAmt6KnwZFsDy9OEf/hmnfJwIyZ4D202lTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klzGkgE6; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb599aac99so21568241fa.1;
-        Fri, 08 Nov 2024 04:41:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731069671; x=1731674471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+Yg2wtM9L10+yYwPZvCTOi+WQqDYohy18cvtdDm8ZyI=;
-        b=klzGkgE6KS5WHiLpJy9aTgtVU2yZlNmbVE3QrRkO5GGW+nbwJgA9HLoUKA7ks2DNZZ
-         sJl6fPm7iVAKMnidHyMHPiImxFnsb/lAdV7wijD4KXYdRfnH95Y3LyidkfMLHnIY/wbR
-         AO/UGMzvLJ48bgsp9VFQL1mofkCYJscrVxA0xdnUBdgTApuDEwCcSMN+URno15XQTdhs
-         jh4+yD+1aKjb09jfLIcqhavI/E0P+DKKampESmdLeJJxw3ruK8Rnt77jK40fMdI+vbq9
-         lTw0k4uTZRqezlpmpuM/U7Cx4ETVLZZoRUu6GAo0E9l4e15bwZmFx/TaFJsDSptX711W
-         VHSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731069671; x=1731674471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+Yg2wtM9L10+yYwPZvCTOi+WQqDYohy18cvtdDm8ZyI=;
-        b=NIsqc4ycYXe3Nx6BDQtAnpMM+8OpcmARsq5WqvizQ+jnwTLFuI0wPidcHm5S/HLNqa
-         D+kENpPoCB1FMBorRH+EG8ruBnZoSY3oT+w6y4NXeSlSeCmhkfRu7/8S/OQoxMOfAsUp
-         WSiotO5fTEwUne9E31ISL0Bbl8Usr+Exq7tUY2SkVWeCHQdIg2rpmV7yiui34ggPtULz
-         dw8nptpZ/ABVCw5C67AInh91ewpfZ8EV4p0F/54/l8zId1EPQUdw5QchFDPJnmXSInAY
-         6o1Jqa2vguEkGqWHUaPQll0cEGZ6xVGDpbNxG4IWP4c4UMuS5i7TFpTviXsoubMzerg4
-         BeUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvCvhZyQRrgfmAtJ8tksA2U1OOzP2jlcNWFIIaBIkOEamcuGlsoN6Oz6VafxAvkCl4m1kJU963rS/yzf5zMZU=@vger.kernel.org, AJvYcCXQuQuYj6w77XbRp5E29GsGzcLqmxDP/nPLqAlj1+0ew+dPYPO4YPQc7b3OgSKLzmKcSkq/ZFoI126sHtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmD2F0X+ACst4AH3PO7sZdg6Wcc2h9wpWgDXMD6qH+YK/Egd1r
-	iyb0e0R4ReigB0rC0JOQN6Hquq6XD/l/1BtIFbZCYYbIPmwcfEcdzUea3ddc5RKEjiYsWgsM/C9
-	yE/1UaefJooUPnWe7M93o3EFjENE=
-X-Google-Smtp-Source: AGHT+IFQhdpWXqutbk9OnQ4mSIZnZBIA8hcf0of9Mz6JzGKoTjkNcyfFN2lRGK7hgRMVSXLxpeHqWZUA7pA5MxX6uFI=
-X-Received: by 2002:a2e:bc84:0:b0:2fb:5138:a615 with SMTP id
- 38308e7fff4ca-2ff2005c69cmr16650621fa.0.1731069671409; Fri, 08 Nov 2024
- 04:41:11 -0800 (PST)
+	s=arc-20240116; t=1731069741; c=relaxed/simple;
+	bh=eUIn/lZFpU7IAeaMyDMGZ68p74XPBMr5khCYGxumA0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=REWTR93N0Ufalf3HWveINEZ41iWOnRi+4GTll5tuDTxUWVhEqEyHKH/NpnomM2JHXlvkhRSA/IAwTydjnoyJEReAGkZnTNCcD8NhWu/c7ZDqj9oCDYI1JivauQLgp8laxiwqYVQhZHe/7Oki9bglUCCjKcNnMKXY4esd/7w9W+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQw1THIB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB1CFC4CECD;
+	Fri,  8 Nov 2024 12:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731069739;
+	bh=eUIn/lZFpU7IAeaMyDMGZ68p74XPBMr5khCYGxumA0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eQw1THIBywfB3Dm8aDzRnkzQcvtU+IaZbInqacKdBgK1if0G7qMp9aVHcYSV36eUE
+	 nFlZbbSF9ksBdfSKU57TZ69TrnUlEUMoql3c2SyaiFg1ZlmeR5Z2/HDqYCzwQHmcWI
+	 B2mGbvN+5DQWhLxDFVAmtFgROZaTRb4CT/vADQJYVG6btc8OjBHhn9Bd+p6s33cAW3
+	 r64BgHZ3LzgLlKt/SE9SFWQ4jKVy7FuXhnOTgFpXn2ydNjVm/8zUVi93jxDXzRJ6sy
+	 sHn5Qok/0CTTW94MIDmHs/PtObOLNKtn4wa1mGTfwMZ5LokbGBQ1XstBNC8/h6aUbo
+	 qjThQ1Avew8Bg==
+Message-ID: <b26c1fa8-b3b7-4aa9-bc78-793ddfa3bc6b@kernel.org>
+Date: Fri, 8 Nov 2024 14:42:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
- <20241104-borrow-mut-v2-3-de650678648d@gmail.com> <CAH5fLgiMHE5GXQv8pSR_KYWsa44zr1o_FNrg1mj8QuTvNQmXhQ@mail.gmail.com>
- <CAJ-ks9=Ej0St7XnmvTysdnjPHh6O+4XdYFC6LouwEJR9GpUPNQ@mail.gmail.com> <CAH5fLgi=n-v5C4hH-+uozbiwwWCU_QGzhxfdTXfTyyy2ejJR+w@mail.gmail.com>
-In-Reply-To: <CAH5fLgi=n-v5C4hH-+uozbiwwWCU_QGzhxfdTXfTyyy2ejJR+w@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 8 Nov 2024 07:40:35 -0500
-Message-ID: <CAJ-ks9n8eSPsb7_RqWk-3OgtsrZquA=94uBopkdwtHuTPUisaA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] rust: arc: split unsafe block, add missing comment
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: ti/omap: gta04: fix pm issues caused by spi
+ module
+To: Andreas Kemnade <andreas@kemnade.info>, tony@atomide.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, hns@goldelico.com,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aaro.koskinen@iki.fi, khilman@baylibre.com
+Cc: stable@vger.kernel.org
+References: <20241107225100.1803943-1-andreas@kemnade.info>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241107225100.1803943-1-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 8, 2024 at 7:37=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
-> You could write `unsafe { (*self.ptr.as_ptr()).refcount.get() }` to
-> avoid the as_ref call.
+Hi,
 
-Doesn't `(*self.ptr.as_ptr())` have the same problem?
+On 08/11/2024 00:51, Andreas Kemnade wrote:
+> Despite CM_IDLEST1_CORE and CM_FCLKEN1_CORE behaving normal,
+> disabling SPI leads to messages like:
+> Powerdomain (core_pwrdm) didn't enter target state 0
+> and according to /sys/kernel/debug/pm_debug/count off state is not
+> entered. That was not connected to SPI during the discussion
+> of disabling SPI. See:
+> https://lore.kernel.org/linux-omap/20230122100852.32ae082c@aktux/
+> 
+> Fix excess DMA channel usage by disabling DMA only instead of disabling
+> the SPI modules, so powermanagement can da all its work.
+
+s/powermanagement/power management
+s/da/do
+
+> 
+> Fixes: a622310f7f01 ("ARM: dts: gta04: fix excess dma channel usage")
+> CC: stable@vger.kernel.org
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> index 3661340009e7a..11f8af34498b1 100644
+> --- a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> @@ -612,19 +612,23 @@ &i2c3 {
+>  };
+>  
+>  &mcspi1 {
+> -	status = "disabled";
+
+But according to commit a622310f7f01 ("ARM: dts: gta04: fix excess dma channel usage"),
+these mcspi modules are not used. So it doesn't make sense to enable them even if it
+seems to solve the power management issue?
+
+Does bootloader leave the mcspi modules in a unwanted state?
+Would it make sense for the bus driver to explicitly turn off all modules?
+
+> +	/delete-property/ dmas;
+> +	/delete-property/ dma-names;
+>  };
+>  
+>  &mcspi2 {
+> -	status = "disabled";
+> +	/delete-property/ dmas;
+> +	/delete-property/ dma-names;
+>  };
+>  
+>  &mcspi3 {
+> -	status = "disabled";
+> +	/delete-property/ dmas;
+> +	/delete-property/ dma-names;
+>  };
+>  
+>  &mcspi4 {
+> -	status = "disabled";
+> +	/delete-property/ dmas;
+> +	/delete-property/ dma-names;
+>  };
+>  
+>  &usb_otg_hs {
+
+-- 
+cheers,
+-roger
 
