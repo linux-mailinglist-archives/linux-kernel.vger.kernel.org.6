@@ -1,187 +1,311 @@
-Return-Path: <linux-kernel+bounces-402159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691249C247F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:02:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F75F9C2493
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D033C28909D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5AFC1F23A4A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039FB1AA1D5;
-	Fri,  8 Nov 2024 17:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DAB6233D84;
+	Fri,  8 Nov 2024 18:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="jnRzSjqs"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Qhg2afYl"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653E41AA1DE
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F87B233D6A;
+	Fri,  8 Nov 2024 18:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731088544; cv=none; b=T4+PyOvHJghVMGynm/HRBzEBvpBIyHQ5rfM7UPrjV8RXuTIUNTI8jl8feQ9NqmNtC8AzX4z573ffjd++apYmAfCmaYzOUPTs5v9hKPJ+QXW2fjI1FHxk1quZ8/cLJ163gk7EGfp2KB+ZvLBlXSQ4Mz+zUTaWn22TEwEe7jOAK8o=
+	t=1731088948; cv=none; b=uSIE804ZGdpaP94OU6Tme5FeL1FcH4ClIcBTbFsqF1RooXra72J4IFlOtOyG/Pbu/wTUGZG4jLaNNbBLeuPCMdaKQS+yNJ6CRhCJ3FeuuEGUcdjNOxNBcHGUxZlHIpd57YJXHnXNSlJxqLs2X7IvtIw+8jsAhgprAVnTXNYWMCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731088544; c=relaxed/simple;
-	bh=3XEEjpzoyVVjrFa8qZSsaTMnvXE7mOW7qLd0g684tUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dur8kaWsnqrDYujHBdHuu7anQZ69bCvxbIj74nSJ3oUv0qFXxBRpFY06X2sC9VfNLPzSp31YYDqzU06V4XdnuWwNYDAkpPMtvlTy2HlwUdwLKpaigiV2DlQPGpqf+fLab1HKXgltQdT+G397n+QEkssZzA+H9Ve4cxE33fkv9f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=jnRzSjqs; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-723f37dd76cso2586742b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:55:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731088541; x=1731693341; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FiPDLfL5JTBKeeqjpJ5u/XBxPNvTKsH7Pcb34HC2tGE=;
-        b=jnRzSjqsfNVaVUDH5de4Ef18Vt94xLUiXdS/G53lVmdsJS4cWE6uBbVzkeU57hav/N
-         z+bKKDi4SIKhuj5geSc9ApUMRjgwGvbuy78q8fFfP2nFDk8LX+zOpddLExhxu+uMVEV6
-         1RwNdRfVWrgVhZ7e1VW8EKsVQgqdiwZ1Mk59g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731088541; x=1731693341;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiPDLfL5JTBKeeqjpJ5u/XBxPNvTKsH7Pcb34HC2tGE=;
-        b=O/t6O8XEg3/O31pMtRGyozjxUoKI2vHiOMfmGqv3ETx7P5s/xckDfIAAsxHYGhYZDF
-         l/G9Yv4LLCwGI4FFL5eeXVgFoPQryg8MfmGN3m9p/U8SSqFgd9fgzBdVomEj2fVUR+i4
-         9Y6gcehpS9X6D70cbtCHReV+kOC7HHpfK+pRPQvVA4Cr8vO+y1SWgDxEcaCVxZ3pffbM
-         CiNYb63HMI0tHfSyQecRcIDr1x7hnGrJDguyvmsB3q7K+q0RF08IxF4sVIfv/HTVKmwE
-         dKuTJBDBLN5qurFFHD+HdTw+rhMUQDmFM/ihBaPRCovkswhY5V1TG+vcuA4wq+QVg+UH
-         I4EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn9pEIJaESh8Ykv/Is0rPb98Ejtn76hOPWCFY2xBJuCDNUukoY8DiZskUugauw3qSH4DywsLUZFkYQHI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7vw8FDfvczKoeS5zczhzoQhVy8jIYrwC2iaeQPdmvwhoV7DHO
-	V4vDMfsu05m7iLj9thpppSsJLdzdgCw5BaF9FAShwVayr9EaJ2CzpA3VoLLcHjk=
-X-Google-Smtp-Source: AGHT+IERbFI+o+2LyayD4punr25StjJoWA4Jj2wzw5p0JjcDTHDRzT1/x7uQhWNXVNPsCLPYIGwlKQ==
-X-Received: by 2002:a05:6a20:158c:b0:1db:da5e:361f with SMTP id adf61e73a8af0-1dc22a1b4d3mr5454374637.25.1731088540720;
-        Fri, 08 Nov 2024 09:55:40 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ef5sm4141017b3a.63.2024.11.08.09.55.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 09:55:40 -0800 (PST)
-Date: Fri, 8 Nov 2024 09:55:36 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, corbet@lwn.net, hdanton@sina.com,
-	bagasdotme@gmail.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH net-next v8 5/6] selftests: net: Add busy_poll_test
-Message-ID: <Zy5QmNT5XqZUJ3f8@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	netdev@vger.kernel.org, corbet@lwn.net, hdanton@sina.com,
-	bagasdotme@gmail.com, pabeni@redhat.com, namangulati@google.com,
-	edumazet@google.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, sdf@fomichev.me, peter@typeblog.net,
-	m2shafiei@uwaterloo.ca, bjorn@rivosinc.com, hch@infradead.org,
-	willy@infradead.org, skhawaja@google.com, kuba@kernel.org,
-	Martin Karsten <mkarsten@uwaterloo.ca>,
-	"David S. Miller" <davem@davemloft.net>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <20241108045337.292905-1-jdamato@fastly.com>
- <20241108045337.292905-6-jdamato@fastly.com>
- <672e26ec429be_2a4cd22944c@willemb.c.googlers.com.notmuch>
+	s=arc-20240116; t=1731088948; c=relaxed/simple;
+	bh=SVqZ1X8HVCMzQQKZjQtXJX2fjS2vCniOVfAXvWwjdCM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pllrqqn2S00BhFy/esX0VUpeTq/gtVMxNn2r8ZfiyJSVqlZbwlkz453vpHgMO0LS5Y1gi9VcCgCHZsbOX2rVF9ZqNTGsg0Zzbwpnpnapqx4qQZIxi7yDbVvk+xbcmTn3g/HfZLQTWC1QpShuWglSnSKB9sKi3+iM2D79wYFnKfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Qhg2afYl; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731088825; x=1731693625; i=w_armin@gmx.de;
+	bh=SVqZ1X8HVCMzQQKZjQtXJX2fjS2vCniOVfAXvWwjdCM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Qhg2afYlJNFS2COGc1xYYsj1S7cc8BNnoARqs7pEY6ynvEvNhirbrP7MD8uCuvel
+	 UZ7EWlMUiqCBvdV2XxEgvV1G0+cK9goijMTDUknzZxFmuI3PVI9ToO/qY9K8haIDP
+	 VnFMtasRKJcvLA8C/PfCWrxUX3ucybAOY7Z0dtd/1Ccp4zQsaaXyXTEgn3Cb/vfNJ
+	 OTJ9Vc67D9L97gA7/vN8X7RXh/yOQL9QAuisd0EGP+/pDTQMhcMg9/p0tL1xVri2e
+	 IlIZKnkxUxFHmRbAgc6kWtADjZpPpKX2Oz7054+myEp4ru6D3uDJHXSxlBOFsLQot
+	 VIXXkIqy/ptzUGO4Mg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N95eJ-1tuaHH41bT-00scQ0; Fri, 08
+ Nov 2024 19:00:25 +0100
+Message-ID: <7a08bb90-84b3-4536-81f1-8542a11dbff3@gmx.de>
+Date: Fri, 8 Nov 2024 19:00:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <672e26ec429be_2a4cd22944c@willemb.c.googlers.com.notmuch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 12/20] ACPI: platform_profile: Add profile attribute
+ for class interface
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241107060254.17615-1-mario.limonciello@amd.com>
+ <20241107060254.17615-13-mario.limonciello@amd.com>
+ <f5967c2f-1a33-4f5d-bae7-1864d931301c@gmx.de>
+ <3618b0df-460e-4647-ac12-8063542f40e5@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <3618b0df-460e-4647-ac12-8063542f40e5@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:T9h5p1rcMH+bda/iPdtZAZBe97AF/VGoybaei0D6LquWC5zP1b+
+ yUxFqCQXVkJg/E59SCCVhOQIVkSXnoa6YtUUHaHSn+YSY/OePvbm6ANEFn49TEWcQsjn0PK
+ LeqvmHr6+IDLZl5MBJXQiBj2H42iRi1qL9OcKUL7immgFJSou0D9A37kVPCYr9TACPzXPAZ
+ a/x5Opm4Nprk7SpXsSaKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ROV88I4esuw=;CYzyHR8rCgiqH5w7YkmdOrC0bSj
+ drrclBv+gY0I1IO3PYnYFDDm2pDPkoXzjgHTUyKqahkopsa/+dTAV9fDqA8FNqrj3mGW03WC5
+ ZwtkhZLjyxmGzFt97rC97j3ctNG9RZE/NZhMnE4sZQT152/Irk5niR5jTCsS1q/fHBCY/q7pp
+ 2MsQS8fDp/aNaNEM9DB9CuoovIXogzsMFuaLqC4UQG1oRoSIX388ATDhWcVkMs4sBcQRnUzUX
+ j9hbFYijcbrScStPjoexPXuRS48EgpRe2Dn8AeSl8uUVdw3KRxlMQV+dObZrGRzKxpWVUGDTY
+ uxLsRkZJTAS985vc39KK0mgkBDycNi41+EeIFr4/5JxpnHvnoWuVMdXa+g/Ky5uLRlXCdBkUg
+ kdU/ohJKw/Wg5RmQA8GdF40dF/mYn4ITr7HRdd3MvCeC+RUvlhTz/XJJegernuF9SccN/a8E5
+ lk+BY4raM7AHPOD+V7NkDCRASmp1AkM9WDHQcz0NDWRGbpk6KQSLWg4a2e6x1iVuQp+9iKP6C
+ L5R3Bkcm3CaAflcommUigfV/Y+dbxFke+aI95qjVt+VTBng+wYqqdLuLaw/vIUBNzeMNF98zh
+ O2bZlDQVw9zuHs0EA+pssWCbHSmWmORhAicgroDdBJQ01Oi6sP0xy9NNwKdvLpacgs7862HVY
+ +pPb04nBJO7XTmhlyMT0T8zsvqN5vnHz/vyRZ0tsMooyTTWMkQ55whpD8Dio8fF+bYbZ4c6Pg
+ WJkM9nmpe9Wl/h4eG03H9SriKoONcHRY3EExvwVDwkgqsmfgdrhwa4UAGuJDp+ZTRy+tSZHC7
+ BTqmhcTDsuSS2/NhktweKzKGc7GCN8EWuPCXh5F62gDj8=
 
-On Fri, Nov 08, 2024 at 09:57:48AM -0500, Willem de Bruijn wrote:
-> Joe Damato wrote:
+Am 07.11.24 um 22:41 schrieb Mario Limonciello:
 
-[...]
+> On 11/7/2024 02:34, Armin Wolf wrote:
+>> Am 07.11.24 um 07:02 schrieb Mario Limonciello:
+>>
+>>> Reading and writing the `profile` sysfs file will use the callbacks fo=
+r
+>>> the platform profile handler to read or set the given profile.
+>>>
+>>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> v5:
+>>> =C2=A0 * Drop recovery flow
+>>> =C2=A0 * Don't get profile before setting (not needed)
+>>> =C2=A0 * Simplify casting for call to _store_class_profile()
+>>> =C2=A0 * Only notify legacy interface of changes
+>>> =C2=A0 * Adjust mutex use
+>>> ---
+>>> =C2=A0 drivers/acpi/platform_profile.c | 110
+>>> ++++++++++++++++++++++++++++++++
+>>> =C2=A0 1 file changed, 110 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/
+>>> platform_profile.c
+>>> index 5e0bb91c5f451..35e0e8f666072 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -65,6 +65,62 @@ static int _get_class_choices(struct device *dev,
+>>> unsigned long *choices)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>>> =C2=A0 }
+>>>
+>>> +/**
+>>> + * _store_class_profile - Set the profile for a class device
+>>> + * @dev: The class device
+>>> + * @data: The profile to set
+>>> + */
+>>> +static int _store_class_profile(struct device *dev, void *data)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
+>>> +=C2=A0=C2=A0=C2=A0 unsigned long choices;
+>>> +=C2=A0=C2=A0=C2=A0 int *i =3D (int *)data;
+>>> +=C2=A0=C2=A0=C2=A0 int err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 err =3D _get_class_choices(dev, &choices);
+>>> +=C2=A0=C2=A0=C2=A0 if (err)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
+>>> +=C2=A0=C2=A0=C2=A0 if (!test_bit(*i, &choices))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EOPNOTSUPP;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
+>>> +=C2=A0=C2=A0=C2=A0 err =3D handler->profile_set(handler, *i);
+>>> +=C2=A0=C2=A0=C2=A0 if (err)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return err ? err : 0;
+>>
+>> Please just return 0 here.
+>>
+>>> +}
+>>> +
+>>> +/**
+>>> + * get_class_profile - Show the current profile for a class device
+>>> + * @dev: The class device
+>>> + * @profile: The profile to return
+>>> + * Return: 0 on success, -errno on failure
+>>> + */
+>>> +static int get_class_profile(struct device *dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum platform_profile_option *profile)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler;
+>>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option val;
+>>> +=C2=A0=C2=A0=C2=A0 int err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 lockdep_assert_held(&profile_lock);
+>>> +=C2=A0=C2=A0=C2=A0 handler =3D dev_get_drvdata(dev);
+>>> +=C2=A0=C2=A0=C2=A0 err =3D handler->profile_get(handler, &val);
+>>> +=C2=A0=C2=A0=C2=A0 if (err) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_err("Failed to get prof=
+ile for handler %s\n",
+>>> handler->name);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 if (WARN_ON(val >=3D PLATFORM_PROFILE_LAST))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> +=C2=A0=C2=A0=C2=A0 *profile =3D val;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return 0;
+>>> +}
+>>> +
+>>> =C2=A0 /**
+>>> =C2=A0=C2=A0 * name_show - Show the name of the profile handler
+>>> =C2=A0=C2=A0 * @dev: The device
+>>> @@ -106,12 +162,66 @@ static ssize_t choices_show(struct device *dev,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return _commmon_choices_show(choices, b=
+uf);
+>>> =C2=A0 }
+>>>
+>>> +/**
+>>> + * profile_show - Show the current profile for a class device
+>>> + * @dev: The device
+>>> + * @attr: The attribute
+>>> + * @buf: The buffer to write to
+>>> + * Return: The number of bytes written
+>>> + */
+>>> +static ssize_t profile_show(struct device *dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 char *buf)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 enum platform_profile_option profile =3D PLATFORM_=
+PROFILE_LAST;
+>>> +=C2=A0=C2=A0=C2=A0 int err;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
+>>> &profile_lock) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D get_class_profile(=
+dev, &profile);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn err;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\n", profile_names[profi=
+le]);
+>>
+>> AFAIK we do not need to take the mutex here, since querying the
+>> current platform profile
+>> should not change any state.
+>
+> I think it's still needed, in case someone attempts to unload the driver
+> at the same time as it's being read.=C2=A0 It's not static information
+> because it needs to use the function pointer into the driver to get it.
+>
+> This will protect from that occurring.
+>
+> That's the same reason I was thinking name needed protection too.
+>
+I see, good point.
 
-> > diff --git a/tools/testing/selftests/net/busy_poller.c b/tools/testing/selftests/net/busy_poller.c
-> > new file mode 100644
-> > index 000000000000..8d8aa9e5939a
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/net/busy_poller.c
-> > @@ -0,0 +1,328 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include <assert.h>
-> > +#include <errno.h>
-> > +#include <error.h>
-> > +#include <fcntl.h>
-> > +#include <inttypes.h>
-> > +#include <limits.h>
-> > +#include <stdlib.h>
-> > +#include <stdio.h>
-> > +#include <string.h>
-> > +#include <unistd.h>
-> > +
-> > +#include <arpa/inet.h>
-> > +#include <netinet/in.h>
-> > +
-> > +#include <sys/ioctl.h>
-> > +#include <sys/epoll.h>
-> > +#include <sys/socket.h>
-> > +#include <sys/types.h>
-> > +
-> > +#include <linux/netlink.h>
-> > +#include <linux/genetlink.h>
-> > +#include "netdev-user.h"
-> > +#include <ynl.h>
-> > +
-> > +/* if the headers haven't been updated, we need to define some things */
-> 
-> This should not be needed, as headers are taken from $KERNELSRC/usr after
-> make headers_install.
-> 
-> Generally discouraged for tests (else every new feature test for a new
-> features is forced to adds such checks).
+Thanks,
+Armin Wolf
 
-I get that, but the reason this is required is complex:
-
-- sys/epoll.h defines epoll_data, which is needed by the program to
-  access stuff like epoll_event.data.fd and linux/eventpoll.h does
-  not. At the same time, older glibcs do not have the ioctl yet
-  (I've sent a change to glibc to add it; I don't know which release
-  it'll be in or when CI will be updated to a distro with that
-  glibc).
-
-- linux/eventpoll.h does not define epoll_event's data field, it's
-  simply an opaque "__u64 data", but does include the ioctl
-  definitions.
-
-So, it'd seem I'd need parts of both headers... but of course you
-can't include both, because they redefine types found in the other.
-
-Maybe there's a solution I'm missing (please let me know), but it
-seems that the only workable solution is to include the #ifdef blob
-below, but perhaps with a comment explaining the above.
-
-> > +#if !defined(EPOLL_IOC_TYPE)
-> > +struct epoll_params {
-> > +	uint32_t busy_poll_usecs;
-> > +	uint16_t busy_poll_budget;
-> > +	uint8_t prefer_busy_poll;
-> > +
-> > +	/* pad the struct to a multiple of 64bits */
-> > +	uint8_t __pad;
-> > +};
-> > +
-> > +#define EPOLL_IOC_TYPE 0x8A
-> > +#define EPIOCSPARAMS _IOW(EPOLL_IOC_TYPE, 0x01, struct epoll_params)
-> > +#define EPIOCGPARAMS _IOR(EPOLL_IOC_TYPE, 0x02, struct epoll_params)
-> > +#endif
-
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>>> +}
+>>> +
+>>> +/**
+>>> + * profile_store - Set the profile for a class device
+>>> + * @dev: The device
+>>> + * @attr: The attribute
+>>> + * @buf: The buffer to read from
+>>> + * @count: The number of bytes to read
+>>> + * Return: The number of bytes read
+>>> + */
+>>> +static ssize_t profile_store(struct device *dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_attribute *attr,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t count)
+>>> +{
+>>> +=C2=A0=C2=A0=C2=A0 int i, ret;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 i =3D sysfs_match_string(profile_names, buf);
+>>> +=C2=A0=C2=A0=C2=A0 if (i < 0)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS,
+>>> &profile_lock) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D _store_class_profi=
+le(dev, &i);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
+turn ret;
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return count;
+>>> +}
+>>> +
+>>> =C2=A0 static DEVICE_ATTR_RO(name);
+>>> =C2=A0 static DEVICE_ATTR_RO(choices);
+>>> +static DEVICE_ATTR_RW(profile);
+>>>
+>>> =C2=A0 static struct attribute *profile_attrs[] =3D {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &dev_attr_choices.attr,
+>>> +=C2=A0=C2=A0=C2=A0 &dev_attr_profile.attr,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 NULL
+>>> =C2=A0 };
+>>> =C2=A0 ATTRIBUTE_GROUPS(profile);
+>
 
