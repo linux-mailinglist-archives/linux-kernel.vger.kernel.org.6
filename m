@@ -1,197 +1,127 @@
-Return-Path: <linux-kernel+bounces-401997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C3399C2218
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:30:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5352F9C2219
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C6D8B208A3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:30:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F8B1C21608
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AD4192D97;
-	Fri,  8 Nov 2024 16:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61044192D6A;
+	Fri,  8 Nov 2024 16:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZHNQ5and"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JiLx2LkU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2207F187FE4;
-	Fri,  8 Nov 2024 16:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1DE187FE4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083393; cv=none; b=rXjdTIYs1m8K8FjLzTv583SJms3Nt09WC9zMLPx0wmhSsYZVJDL3qT76Re+ZZyxGjkFHcls0Rdh+dpcNHhJm0CtdVRDdryiUAS3XoOrHxeNWCXn8U0tUpQbvEJLCfgUT1iw/+wvI3JZ4wqWcucWotrjFwu0X0jZfsKeOog42MFE=
+	t=1731083400; cv=none; b=gOWv7fz2e4uMJP6tW/ZaOl7RyVB3ZK2moEvls7pjlulPOqtLy7pFm13Rl16vI9KF8+A3rZF146R3wnjhFqqzesz3ZypDVPQx+3eFo16cATRk61YmzMwC62Z6L/Auh5Geipl/lB98gswXR/K2jwCm67MEtldRzK5jMarJyumrizs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083393; c=relaxed/simple;
-	bh=DNG0fhk9qlX9wvnac6CmQX+5HHoCd1PixPcukAAxAbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FqiL0epFq2Uu9eukWiBlLEcpmygAiqNcHqxFsmu6ZKBW/jYxzuwOVt+VrVN5M1RIyNvMCJH/0/3Cyv09Q/cKDxc4Nq0uHyzp1IZ56HEU6rOeT4/irNUhJWfM8GWu2g08gg7fCYc9+9YZyNYvxjI9ZEH341VuLNVMh56WM2CQ4z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZHNQ5and; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C1771C0003;
-	Fri,  8 Nov 2024 16:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731083388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SNv0XZ9+/yD94EzPzcVjyKNuEO41gbMIYl9M0TKDnlY=;
-	b=ZHNQ5andb//fQ6/+jxYn/+OPoSdSGOeFUiiZNi6z26S/XjrKcFCTYfH8z0sDGohKEpdDNF
-	XnsKSi0776p2f/hOyHZtURKABa7emm8YbXZ8I4gEo03qZiV5TKQG+eSoguH/gn6MhfFO+R
-	kbo4W/uhXmETgZgmaHOIDU12xGRg0e6v7OXTBFl/IEV6pECCnLp7HnjtIfAYw+Us7cF40d
-	XEeuCyEbOXnIYggWSAQHpihdQhqMl/fxXX9RF5o+C5lLbZYywL8KD8LY5sbGE+JfWhe+DM
-	Yy4CC1NpdwEosL/1GPGaAx8V2MdX6NJsBTvw6c/ZJ7M6n7fwT3CHYWbTa856Pg==
-Date: Fri, 8 Nov 2024 17:29:46 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Bjorn Helgaas
- <bhelgaas@google.com>, Lizhi Hou <lizhi.hou@amd.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>,
- Horatiu Vultur <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 5/6] of: Add #address-cells/#size-cells in the
- device-tree root empty node
-Message-ID: <20241108172946.7233825e@bootlin.com>
-In-Reply-To: <CAL_JsqJ-05tB7QSjmGvFLbKFGmzezJhukDGS3fP9GFtp2=BWOA@mail.gmail.com>
-References: <20241108143600.756224-1-herve.codina@bootlin.com>
-	<20241108143600.756224-6-herve.codina@bootlin.com>
-	<CAL_JsqJ-05tB7QSjmGvFLbKFGmzezJhukDGS3fP9GFtp2=BWOA@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731083400; c=relaxed/simple;
+	bh=SaOr4hp+maWcyvllSAtTmYFhvLifPTPx6E7yvEC4rVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNUPfauRcYCRMIFtN40QI6fqKo2f8fM9FK193GR+HbPFQIlOpni62a1Tw8XfMjiijyvIF8ZrdHMhtdlCeIYKbwzFT+NJlOhiZ2MLSK5uOP6M7WPRu7hNwo6TWSZcBQaW8PpJGdNvYaSMyWhGW0JoAg1qaQlKotsKpeO+vfofS7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JiLx2LkU; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731083399; x=1762619399;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SaOr4hp+maWcyvllSAtTmYFhvLifPTPx6E7yvEC4rVM=;
+  b=JiLx2LkUyLNn41o7NdWjlH0xj2mqjF01ygMFF03YAwK2L9LWb7r1s6rN
+   CnqYTHENHdAde/yA0j1m5AmXYlV8WmeGAiYX4a0s/YhxAlP8Ugu2rI1rs
+   cIpelAvqa3NmqVzFyQYSxp5hjRTaxnwBMGmQTkHCspo5NxQAPuBuWiUJ3
+   JDiEmZPB1e1NQldbFz3WOokYQ4HYjZV40mtMES1/1hPUSDnCTMrtuaxO4
+   r46RA7LgusvZVUn/WIagP32DJ7o8mwVipN19t0AL3br4w3DTzx0xGCavE
+   7B37iHXi6M50M7haanmrKvTldyrupVd87THkNtMajU/NCQmcitjS2X32N
+   g==;
+X-CSE-ConnectionGUID: utmU6VzHSbO866xAZa91Aw==
+X-CSE-MsgGUID: 49FNtmtCRAq/VTgSAcPy3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="41588253"
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="41588253"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:29:59 -0800
+X-CSE-ConnectionGUID: VfJai/4+TcSPohGf+9zlDw==
+X-CSE-MsgGUID: 1PYI/YoJSAyUh01C3dEPsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="89590072"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:29:55 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t9Rrs-0000000Cfw2-3JZZ;
+	Fri, 08 Nov 2024 18:29:52 +0200
+Date: Fri, 8 Nov 2024 18:29:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v5 1/1] x86/cpu: Make sure flag_is_changeable_p() is
+ always being used
+Message-ID: <Zy48gBu81i9bY0Qp@smile.fi.intel.com>
+References: <20241108153105.1578186-1-andriy.shevchenko@linux.intel.com>
+ <732CB428-EE83-455F-A5AF-C008B7541401@zytor.com>
+ <Zy4xHC3MCtAqlSxy@smile.fi.intel.com>
+ <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4A528893-A428-4A6F-8672-1D14CC57F696@zytor.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Rob,
+On Fri, Nov 08, 2024 at 04:48:16PM +0100, H. Peter Anvin wrote:
+> On November 8, 2024 4:41:16 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >On Fri, Nov 08, 2024 at 04:35:17PM +0100, H. Peter Anvin wrote:
+> >> On November 8, 2024 4:30:10 PM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On Fri, 8 Nov 2024 10:03:31 -0600
-Rob Herring <robh@kernel.org> wrote:
+...
 
-> On Fri, Nov 8, 2024 at 8:36 AM Herve Codina <herve.codina@bootlin.com> wrote:
+> >> >See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> >> >inline functions for W=1 build").
+
+^^^ (1)
+
+...
+
+> >> But another question: why the hell does clang complain about an unused static inline function?!
 > >
-> > On systems where ACPI is enabled or when a device-tree is not passed to
-> > the kernel by the bootloader, a device-tree root empty node is created.
-> > This device-tree root empty node doesn't have the #address-cells and the  
+> >Does (1) shed a bit of light to this?
 > 
-> and the?
-
-#size-cells properties.
-
-Will be updated.
-
+> How on earth is that supposed to work?! We have static inline functions in
+> headers all over the place that are only used in certain circumstances.
 > 
-> > This leads to the use of the default address cells and size cells values
-> > which are defined in the code to 1 for address cells and 1 for size cells  
-> 
-> Missing period.
+> Is this a good thing, really? Or is it noise?
 
-Will be updated.
+This is a good question and IIRC somebody else already asked something similar.
 
-> 
-> >
-> > According to the devicetree specification and the OpenFirmware standard
-> > (IEEE 1275-1994) the default value for #address-cells should be 2.
-> >
-> > Also, according to the devicetree specification, the #address-cells and
-> > the #size-cells are required properties in the root node.
-> >
-> > Modern implementation should have the #address-cells and the #size-cells
-> > properties set and should not rely on default values.
-> >
-> > On x86, this root empty node is used and the code default values are
-> > used.
-> >
-> > In preparation of the support for device-tree overlay on PCI devices
-> > feature on x86 (i.e. the creation of the PCI root bus device-tree node),
-> > the default value for #address-cells needs to be updated. Indeed, on
-> > x86_64, addresses are on 64bits and the upper part of an address is
-> > needed for correct address translations. On x86_32 having the default
-> > value updated does not lead to issues while the uppert part of a 64bits  
-> 
-> upper
+Clang people are Cc'ed here, I leave this to them to comment on,
+I am not an expert here.
 
-Will be updated.
-
-> 
-> > address is zero.
-> >
-> > Changing the default value for all architectures may break device-tree
-> > compatibility. Indeed, existing dts file without the #address-cells
-> > property set in the root node will not be compatible with this
-> > modification.
-> >
-> > Instead of updating default values, add required #address-cells and  
-> 
-> and?
-
-#size-cells properties in the device-tree empty root node.
-
-Will be updated.
-
-> 
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  drivers/of/empty_root.dts | 8 +++++++-
-> >  1 file changed, 7 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/of/empty_root.dts b/drivers/of/empty_root.dts
-> > index cf9e97a60f48..5017579f34dc 100644
-> > --- a/drivers/of/empty_root.dts
-> > +++ b/drivers/of/empty_root.dts
-> > @@ -2,5 +2,11 @@
-> >  /dts-v1/;
-> >
-> >  / {
-> > -
-> > +       /*
-> > +        * #address-cells/#size-cells are required properties at root node
-> > +        * according to the devicetree specification. Use same values as default
-> > +        * values mentioned for #address-cells/#size-cells properties.  
-> 
-> Which default? We have multiple...
-
-I will reword:
-  Use values mentioned in the devicetree specification as default values
-  for #address-cells and #size-cells properties
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> 
-> There's also dtc's idea of default which IIRC is 2 and 1 like OpenFirmware.
-
-I can re-add this part in the commit log:
-  The device tree compiler already uses 2 as default value for address cells
-  and 1 for size cells. The powerpc PROM code also use 2 as default value
-  for #address-cells and 1 for #size-cells. Modern implementation should
-  have the #address-cells and the #size-cells properties set and should
-  not rely on default values.
-
-In your opinion, does it make sense?
-
-> 
-> > +        */
-> > +       #address-cells = <0x02>;
-> > +       #size-cells = <0x01>;  
-> 
-> I think we should just do 2 cells for size.
-
-Why using 2 for #size-cells?
-
-I understand that allows to have size defined on 64bits but is that needed?
-How to justify this value here?
-
-Best regards,
-Hervé
 
