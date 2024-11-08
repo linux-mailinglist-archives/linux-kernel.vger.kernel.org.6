@@ -1,135 +1,139 @@
-Return-Path: <linux-kernel+bounces-401971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B699C21BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:13:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AE39C21C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90A251F22AB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:13:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E0428272A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D6E192D6A;
-	Fri,  8 Nov 2024 16:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C43614D717;
+	Fri,  8 Nov 2024 16:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IRfce1ks";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="IRfce1ks"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fuUv9td+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AE11922F8;
-	Fri,  8 Nov 2024 16:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A8C13A27D;
+	Fri,  8 Nov 2024 16:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731082400; cv=none; b=ViqaeDJy7CghNs1wWWM0ppjZd8yT7sptX8Q32qojuLQUGuRBtXi05BXCrSWZoZVgcFuA2OuSob9Edhi/7UNvIOGKajEwj8FdX5/rrWYSG2F8V36UDKHcnjWP8V2LCjlY22hJxEcJGgrTbGD9CrPU8nXO4zhJfK+5mYA4YxaoB3A=
+	t=1731082454; cv=none; b=ZI99oIkGQUHzV+gQDoDit2Hhh11W/4Mxuxo7eI2o1y2UguvxZzjao/RTs9OtuOtpXLnOxWDaY9n5d/jaxfrnUNUwtDqCERGdYhljFkQ6eaYli9bKLAwWCiFjYER2LzRN//jKGngaJserReuObkXMXOc1URGy1fRcxNOpW23TGCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731082400; c=relaxed/simple;
-	bh=P16zUvmp9FuP5lZG+UzUVJKJxo1ckRtfTsTaqKlreXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eMJ1pbv/eZ8h42l9/HgwS9xbGJCQ8mKM1AjoMveziU5IjOv1AZyXNhXrX/g31oFK/Pf3XZobFV9Fo/R5J0pZGPEW0tdLAiVb3X6OCuTt2mprkh5gXyaFVCSAjCfwl/48kX2hOPFEerkPo6UioQBHK6FFFf7MaUVoXbUmf3uSQ2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IRfce1ks; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=IRfce1ks; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7781821F9F;
-	Fri,  8 Nov 2024 16:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731082395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=GRTQxAK0mpVhV/3iqi+7fyL9H1Xt6gQVJ4v2YxgK/8U=;
-	b=IRfce1ksKVadgpYNw8+DFJCDgVm+iiRhOxCfwuAJ7qIynZSsUB5ft2WeVLfv3jDbDQ1xkv
-	lfKt/Y/n8TN6gkNrckU4OueF1zIalryF7Q0qA28z6ZdtNC2/3nbazP9Lkse3Dm5bpKMuVP
-	YAsUcuJR8opz1ZjT004wYZVVTKxoFzA=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1731082395; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=GRTQxAK0mpVhV/3iqi+7fyL9H1Xt6gQVJ4v2YxgK/8U=;
-	b=IRfce1ksKVadgpYNw8+DFJCDgVm+iiRhOxCfwuAJ7qIynZSsUB5ft2WeVLfv3jDbDQ1xkv
-	lfKt/Y/n8TN6gkNrckU4OueF1zIalryF7Q0qA28z6ZdtNC2/3nbazP9Lkse3Dm5bpKMuVP
-	YAsUcuJR8opz1ZjT004wYZVVTKxoFzA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 14E9213967;
-	Fri,  8 Nov 2024 16:13:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ec6UA5s4LmelJwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Fri, 08 Nov 2024 16:13:15 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	kvm@vger.kernel.org
-Cc: Juergen Gross <jgross@suse.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
-Date: Fri,  8 Nov 2024 17:13:12 +0100
-Message-ID: <20241108161312.28365-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731082454; c=relaxed/simple;
+	bh=FbEGx8arpbKFFseCr5MCa0A0WxSpNAQcAbyiq0ld9KE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aND7nMU9vf1qIK41HjXA0UyBaLFxMone9Zy7/skWexDKNcRQt/WtZdl8ndWEZgH4bknPeZRM70DNZij3EDH1TLsTNsd5XIUjwrNHu6+p19zW1io2ul364CjLvowpq5UgLgZStOtQ7a6Sgyhssn61anoySY51rrHoHajE1K9pBh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fuUv9td+; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731082452; x=1762618452;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FbEGx8arpbKFFseCr5MCa0A0WxSpNAQcAbyiq0ld9KE=;
+  b=fuUv9td+8DZy1vjhCn2MTbcZlTLX7QLlOKUxEgTsT+3K+efQODBJjr/3
+   +YrnQLL1C4nzxdnI4QoZcFDBbUXSlxJPP10coKPUm8CaOPtCSHWkesy7s
+   S2NpKjMD5M7CNPQ1TKYfG388Qo9+Vi0nNF70LjhTUHPvzPW6Cpzrh6hHE
+   WbSo7VvB0LOuE8BLt9AHk9U3yjzn1AyeT1yeuX+JOKK7wWsfez3/VceBh
+   gJHOJJ8cACoLYnac3bNIPEc14QNIBra2bQisy/nN5mOh6KumUELeH3BjM
+   J8V58Y8st8kdtjls0wQfsLbpZwUim9i8wVdTjWbv4DA3eDclZxqqbum64
+   g==;
+X-CSE-ConnectionGUID: n8m7lFHHSM6ovaiR/gDKCA==
+X-CSE-MsgGUID: 4BQN1yJTQn22mCnJlUG6tA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="33829961"
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="33829961"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 08:14:11 -0800
+X-CSE-ConnectionGUID: FAzRweEWRV618dJiUSmOtw==
+X-CSE-MsgGUID: TvKEs9kOSHa7yUe5SoJVKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,138,1728975600"; 
+   d="scan'208";a="116491093"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 08 Nov 2024 08:14:10 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9Rcd-000raM-3C;
+	Fri, 08 Nov 2024 16:14:07 +0000
+Date: Sat, 9 Nov 2024 00:13:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Ramon Cristopher M. Calam" <ramoncristopher.calam@analog.com>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cristopher Calam <ramoncristopher.calam@analog.com>
+Subject: Re: [PATCH 1/2] regulator: lt8722: Add driver for LT8722
+Message-ID: <202411082316.hXgR3Bv2-lkp@intel.com>
+References: <20241108093544.9492-2-ramoncristopher.calam@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.992];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108093544.9492-2-ramoncristopher.calam@analog.com>
 
-Using a literal 1 instead of RET_PF_RETRY is not nice, fix that.
+Hi Ramon,
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/kvm/mmu/mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 8e853a5fc867..d4a9f845b373 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -6157,7 +6157,7 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
- 		vcpu->stat.pf_spurious++;
- 
- 	if (r != RET_PF_EMULATE)
--		return 1;
-+		return RET_PF_RETRY;
- 
- emulate:
- 	return x86_emulate_instruction(vcpu, cr2_or_gpa, emulation_type, insn,
+[auto build test ERROR on e18da71634d12a94a15138947538ef2f0ac22746]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ramon-Cristopher-M-Calam/regulator-lt8722-Add-driver-for-LT8722/20241108-174141
+base:   e18da71634d12a94a15138947538ef2f0ac22746
+patch link:    https://lore.kernel.org/r/20241108093544.9492-2-ramoncristopher.calam%40analog.com
+patch subject: [PATCH 1/2] regulator: lt8722: Add driver for LT8722
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241108/202411082316.hXgR3Bv2-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411082316.hXgR3Bv2-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411082316.hXgR3Bv2-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/regulator/lt8722-regulator.c:8:10: fatal error: asm/unaligned.h: No such file or directory
+       8 | #include <asm/unaligned.h>
+         |          ^~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +8 drivers/regulator/lt8722-regulator.c
+
+   > 8	#include <asm/unaligned.h>
+     9	#include <linux/bitfield.h>
+    10	#include <linux/bits.h>
+    11	#include <linux/crc8.h>
+    12	#include <linux/delay.h>
+    13	#include <linux/gpio.h>
+    14	#include <linux/math.h>
+    15	#include <linux/module.h>
+    16	#include <linux/regulator/driver.h>
+    17	#include <linux/regulator/machine.h>
+    18	#include <linux/regulator/of_regulator.h>
+    19	#include <linux/spi/spi.h>
+    20	#include <linux/util_macros.h>
+    21	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
