@@ -1,222 +1,123 @@
-Return-Path: <linux-kernel+bounces-402283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3769C25D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:46:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61509C25DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E131C235DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12140282D90
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769241C1F00;
-	Fri,  8 Nov 2024 19:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10E1C1F21;
+	Fri,  8 Nov 2024 19:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaMFKTnW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="EHT8H23V"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B369F233D72;
-	Fri,  8 Nov 2024 19:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CCA233D72
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731095168; cv=none; b=fT7Lkk84rZWKR3oR/vjs3zjGa3VRiWrwW8kmzk60CULC9r9whr8s6jeEv63SuV5wOWjdw5yQcQd9bTCJ/aB2Z5Reon8awfr9gQT/jJSl112hAHA3nkqHadkQ4FXdZ2cpYKRtyQ8qQpks+qYvN4u7adymcgv6eg7GABX2m8OaiQs=
+	t=1731095402; cv=none; b=gPlj7URV3gFndn9hknTpNyXvVwGwkW+O5rh5Re0wWfBs59Jg3VWMIFdeTBah/gT6DMB+FxdutZ4b2PC+R45B0or+uvimexora2OSTG9A2YIKur0IReNj0GIWBJxLLOp2Dwa+1NboU5F7o0/QKbMOupc67j/3pEd+QMWOYPO4BXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731095168; c=relaxed/simple;
-	bh=dfsPNKwbdKF5+uHMQ4I81EKY+YT6HSKId4ACsK4I1uU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cerXBYk61Ly9nxfVzgDVlL8WwLccV+5czPuLv61PU6zcv40M4TessSnbZTxkCdme5zG1Tvb1383oG12WYqIDZQ5j9iV1X73g9n80PypTsWs4t26qQgFISogZAyRSYs2waVRndZkLpdRvfkd53TJX9msg+N4ieXsGtvwnHPXNrm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaMFKTnW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D582C4CECD;
-	Fri,  8 Nov 2024 19:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731095168;
-	bh=dfsPNKwbdKF5+uHMQ4I81EKY+YT6HSKId4ACsK4I1uU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VaMFKTnW6Lq4PKdIcJycKE80yn2hWH/e6W2mfLWs7afvihph5RcXAgEh7wg+b85Z8
-	 HpZJxaFAJYWwJJKBHIsrAqcGQeSLfZfD54rFO0I29XReAvBx3IC0t0V+xYw8X2o4B1
-	 GERRD3iLDX192jmAGtMPFei7o0UO8LcdPWWhtpTrHrPaJXxmiK5RNFnowdqDHF94KB
-	 danFlPzorFnW9YZOuEHt+VInqDmuDSjziJfaND3MBZL8pJS9Rur2JzJaFslQU58w6A
-	 BeP6TzrjM0v0ATU6vaLZHsYFf6+dEfru0qAcvDaUYGVhcVkNWBdWzSmAdpcFBNHfcM
-	 KSLbRYseXwwlQ==
-Date: Fri, 8 Nov 2024 11:46:06 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: da.gomez@samsung.com
-Cc: Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, Jens Axboe <axboe@kernel.dk>,
-	"Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 4/4] module: refactor ro_after_init failure path
-Message-ID: <Zy5qfqC_NjQHUF_u@bombadil.infradead.org>
-References: <20241108-modules-ro_after_init-v3-0-6dd041b588a5@samsung.com>
- <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
+	s=arc-20240116; t=1731095402; c=relaxed/simple;
+	bh=r1OWKhI+875hOXCySuxwA5TLJR9P4JO4X+mzkpOcjDg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=medoxGPo0mN1scN0vXo+IKIF2TLYjO8G4AKbeOI0NFAJlnpH/MnKunq3bKe7bosW2YCn7OXMN31t6V1xyRWKV3FtiVhhFDonwCm1LL4uo8pbNnEFoXgg1kLlvl1yOHvlbgVf8OWtleNM4anDpmdaTe5Q2jlNLDax5sA93rzu4Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=EHT8H23V; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720e94d36c8so3320474b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 11:50:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731095400; x=1731700200; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JzN6QznSC5tjEMn3nyfoxiO1pM3DGtlvzOusZhTDEN4=;
+        b=EHT8H23VME0lfFgxPhD5EwIjvCAZpiSQx3vlfCpGwb9qEH2jn176fCV5SCdZKrkXGN
+         Jrdd4lECiB9MO6uSOUAGMPNP9dNS5OZug/hswmTXTxvFJti1dE9Ayr9xloESNleaY/4M
+         yNo6Lp5tT6Ijh09iKTZMy5Jo848/D7bHqIDisONMLpSwS42zYxgUIYKiqtwZh6+qZ2C1
+         hmq6+ekpdpLC91tobJUHyFSwvLEd3UVfN97BHuul1627dDRImnPk0njzeUDgAOawQMZH
+         48AQ4B3Ko4nozg1pLNRX8TYHOCl2L1PBuCkpUHIjVmnXvmU82IP2bde3Vq09kBd/N0Zi
+         WSUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731095400; x=1731700200;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzN6QznSC5tjEMn3nyfoxiO1pM3DGtlvzOusZhTDEN4=;
+        b=nGWMVmta77J7jI5oEbFOSnrA2Xje+MHoruth4DLcFH6vGHQxFATcI2gGv4fzJEI1BA
+         v6ijpgniSaojjZD1p19+RADtuKgF4j5aY+UEgN+Mft8Th+TJ2EFYIdx5A//Wg3sB8vK6
+         rGnJlFxrQBY96U1uaUwjJiWfPV+rrOszSt/sNImUgVwMqOZ6zpizVrEOTKCCuUsHiBWk
+         kwQgIKMhRekgOBodYoR3bDQ58mEypy+a29CPX5h+xWFOufcgnp/rFLSEZsGHa6HHdznl
+         /VuqHxyk6cYrMQCZR1KireG0N2rJifqVaaGV3qguNU8m83a3Z8rDbHhm6zBY9Qzcy9ez
+         yb1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkeu+gtw3dEddfwAyISfIIz/DejaRkMLe+1ZtyoFkLPmhKqdCWzXSQ8bDgF7fZiS5xw4he/Z5cfRXsIcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWP3EgnHSV7QlgyTgjGHRr4AvP22W4QyJytJegPaiA9aNwplvG
+	4gQGdlyPipZYocZIvIJRJJ3T9TpsQfIS6TVmx3yBM226ts/VgXUHI6EKSS3aVdnyDpX3WRsNbKb
+	+6MQ=
+X-Google-Smtp-Source: AGHT+IFv4bj6W+XkBI824Sbw/3QyvrD3xc41IYnjTjX09nvgLIZA50qCFpVFQcp91Viwtq+ys917Sg==
+X-Received: by 2002:a05:6a20:3944:b0:1d9:19bc:9085 with SMTP id adf61e73a8af0-1dc234afb33mr6480715637.14.1731095399786;
+        Fri, 08 Nov 2024 11:49:59 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1af26sm4156958b3a.162.2024.11.08.11.49.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 11:49:59 -0800 (PST)
+Message-ID: <30f5066a-0d3a-425f-a336-16a2af330473@kernel.dk>
+Date: Fri, 8 Nov 2024 12:49:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/13] iomap: make buffered writes work with RWF_UNCACHED
+From: Jens Axboe <axboe@kernel.dk>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-12-axboe@kernel.dk>
+ <Zy5cmQyCE8AgjPbQ@casper.infradead.org>
+ <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <45ac1a3c-7198-4f5b-b6e3-c980c425f944@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 05:12:16PM +0100, Daniel Gomez via B4 Relay wrote:
-> From: Daniel Gomez <da.gomez@samsung.com>
+On 11/8/24 12:26 PM, Jens Axboe wrote:
+> On 11/8/24 11:46 AM, Matthew Wilcox wrote:
+>> On Fri, Nov 08, 2024 at 10:43:34AM -0700, Jens Axboe wrote:
+>>> +++ b/fs/iomap/buffered-io.c
+>>> @@ -959,6 +959,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+>>>  		}
+>>>  		if (iter->iomap.flags & IOMAP_F_STALE)
+>>>  			break;
+>>> +		if (iter->flags & IOMAP_UNCACHED)
+>>> +			folio_set_uncached(folio);
+>>
+>> This seems like it'd convert an existing page cache folio into being
+>> uncached?  Is this just leftover from a previous version or is that a
+>> design decision you made?
 > 
-> When ro_after_init fails, we need to unload the module.
-> 
-> Rename the goto tag to fail_ro_after_init to make it more clear and try
-> to check for dependencies, stop the module and call the exit function.
-> This allows to unload the module if ro_after_init fails.
-> 
-> This fixes the following error in block loop device driver when forcing
-> ro_after_init error path:
-> 
-> Nov 06 11:36:25 debian kernel: loop: module loaded
-> Nov 06 11:36:25 debian kernel: BUG: unable to handle page fault for
-> address: ffffffffa0006320
-> Nov 06 11:36:25 debian kernel: #PF: supervisor read access in kernel mode
-> Nov 06 11:36:25 debian kernel: #PF: error_code(0x0000) - not-present page
-> Nov 06 11:36:25 debian kernel: PGD 1e3f067 P4D 1e3f067 PUD 1e40063 PMD
-> 10e7d4067 PTE 0
-> Nov 06 11:36:25 debian kernel: Oops: Oops: 0000 [#1]
-> Nov 06 11:36:25 debian kernel: CPU: 0 UID: 0 PID: 428 Comm:
-> (udev-worker) Not tainted 6.12.0-rc6-g4ade030a2d1b #155
-> Nov 06 11:36:25 debian kernel: Hardware name: QEMU Standard PC (Q35 +
-> ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> Nov 06 11:36:25 debian kernel: RIP: 0010:bdev_open+0x83/0x290
-> Nov 06 11:36:25 debian kernel: Code: bb 48 01 00 00 48 89 3c 24 e8 79 24
-> 38 00 48 8b 43 40 41 bd fa ff ff ff 48 83 b8 40 03 00 00 00 0f 84 b3 01
-> 00 00 48 8b 43 48 <48> 8b 78 78 e8 d4 c9 c8 ff 84 c0 0f 84 9e 01 00 00
-> 80 3d 45 ad ad
-> Nov 06 11:36:25 debian kernel: RSP: 0018:ffff8881054dbc58 EFLAGS:
-> 00010286
-> Nov 06 11:36:25 debian kernel: RAX: ffffffffa00062a8 RBX:
-> ffff8881054a6800 RCX: ffff8881075becc0
-> Nov 06 11:36:25 debian kernel: RDX: 0000000000000000 RSI:
-> 0000000000000009 RDI: ffff8881054a6948
-> Nov 06 11:36:25 debian kernel: RBP: 0000000000000009 R08:
-> ffff88810e7aa9c0 R09: 0000000000000000
-> Nov 06 11:36:25 debian kernel: R10: ffff88810e5ab0c0 R11:
-> ffff88810e796190 R12: ffff88810094e980
-> Nov 06 11:36:25 debian kernel: R13: 00000000fffffffa R14:
-> 0000000000000000 R15: 0000000000000000
-> Nov 06 11:36:25 debian kernel: FS:  00007fd2ff110900(0000)
-> GS:ffffffff81e47000(0000) knlGS:0000000000000000
-> Nov 06 11:36:25 debian kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
-> 0000000080050033
-> Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320 CR3:
-> 000000010e7ed004 CR4: 00000000003706b0
-> Nov 06 11:36:25 debian kernel: Call Trace:
-> Nov 06 11:36:25 debian kernel:  <TASK>
-> Nov 06 11:36:25 debian kernel:  ? __die_body+0x16/0x60
-> Nov 06 11:36:25 debian kernel:  ? page_fault_oops+0x22a/0x310
-> Nov 06 11:36:25 debian kernel:  ? exc_page_fault+0x99/0xa0
-> Nov 06 11:36:25 debian kernel:  ? asm_exc_page_fault+0x22/0x30
-> Nov 06 11:36:25 debian kernel:  ? bdev_open+0x83/0x290
-> Nov 06 11:36:25 debian kernel:  ? bdev_open+0x67/0x290
-> Nov 06 11:36:25 debian kernel:  ? iput+0x37/0x150
-> Nov 06 11:36:25 debian kernel:  ? blkdev_open+0xab/0xd0
-> Nov 06 11:36:25 debian kernel:  ? blkdev_mmap+0x60/0x60
-> Nov 06 11:36:25 debian kernel:  ? do_dentry_open+0x25d/0x3b0
-> Nov 06 11:36:25 debian kernel:  ? vfs_open+0x1e/0xc0
-> Nov 06 11:36:25 debian kernel:  ? path_openat+0x9cf/0xbb0
-> Nov 06 11:36:25 debian kernel:  ? do_filp_open+0x7f/0xd0
-> Nov 06 11:36:25 debian kernel:  ? do_sys_openat2+0x67/0xb0
-> Nov 06 11:36:25 debian kernel:  ? do_sys_open+0x4b/0x50
-> Nov 06 11:36:25 debian kernel:  ? do_syscall_64+0x3d/0xb0
-> Nov 06 11:36:25 debian kernel:  ? entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> Nov 06 11:36:25 debian kernel:  </TASK>
-> Nov 06 11:36:25 debian kernel: Modules linked in:
-> Nov 06 11:36:25 debian kernel: CR2: ffffffffa0006320
-> Nov 06 11:36:25 debian kernel: ---[ end trace 0000000000000000 ]---
-> 
-> ./scripts/faddr2line --list vmlinux bdev_open+0x83/0x290
-> bdev_open+0x83/0x290:
-> 
-> bdev_open at block/bdev.c:908
->  903
->  904            mutex_lock(&disk->open_mutex);
->  905            ret = -ENXIO;
->  906            if (!disk_live(disk))
->  907                    goto abort_claiming;
-> >908<           if (!try_module_get(disk->fops->owner))
->  909                    goto abort_claiming;
->  910            ret = -EBUSY;
->  911            if (!bdev_may_open(bdev, mode))
->  912                    goto put_module;
->  913            if (bdev_is_partition(bdev))
-> 
-> Reported-by: Thomas Gleixner <tglx@linutronix.de>
-> Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com/
-> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()").
-> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> ---
->  kernel/module/main.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 2b45a6efa0a9..c23521ae8bda 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2880,7 +2880,7 @@ module_param(async_probe, bool, 0644);
->   */
->  static noinline int do_init_module(struct module *mod)
->  {
-> -	int ret = 0;
-> +	int ret = 0, forced = 0;
->  	struct mod_initfree *freeinit;
->  #if defined(CONFIG_MODULE_STATS)
->  	unsigned int text_size = 0, total_size = 0;
-> @@ -2948,7 +2948,7 @@ static noinline int do_init_module(struct module *mod)
->  #endif
+> I'll see if we can improve that. Currently both the read and write side
+> do drop whatever it touches. We could feasibly just have it drop
+> newly instantiated pages - iow, uncached just won't create new persistent
+> folios, but it'll happily use the ones that are there already.
 
-It is not clear here but note that do_init_module() happens
-before the module is live and so any try_module_get() in the
-do_init_module() path should fail.
+Well that was nonsense on the read side, it deliberately only prunes
+entries that has uncached set. For the write side, this is a bit
+trickier. We'd essentially need to know if the folio populated by
+write_begin was found in the page cache, or create from new. Any way we
+can do that? One way is to change ->write_begin() so it takes a kiocb
+rather than a file, but that's an amount of churn I'd rather avoid!
+Maybe there's a way I'm just not seeing?
 
->  	ret = module_enable_rodata_ro(mod, true);
-
-But here do_init_module() should be have completed and the module is live.
-So a open() on a block device *can* race after init, at which point
-if open uses do_init_module() then it snatches a ref.
-
->  	if (ret)
-> -		goto fail_mutex_unlock;
-> +		goto fail_ro_after_init;
->  	/* Drop initial reference. */
->  	module_put(mod);
->  	mod_tree_remove_init(mod);
-> @@ -2989,8 +2989,12 @@ static noinline int do_init_module(struct module *mod)
->  
->  	return 0;
->  
-> -fail_mutex_unlock:
-> +fail_ro_after_init:
-> +	list_empty(&mod->source_list);
-> +	try_stop_module(mod, 0, &forced);
-
-Which is why try_stop_module() can fail here. But we don't want to fail.
-
-This is a chicken and egg, since we are already live we can't stop
-the world created from undernath us from not using try_module_get(),
-as its the right thing to do.
-
-The above sledge hammer can fail then and we don't want that.
-
->  	mutex_unlock(&module_mutex);
-> +	if (mod->exit != NULL)
-> +		mod->exit();
->  fail_free_freeinit:
->  	kfree(freeinit);
->  fail:
-
-So I'd prefer a soolution which is clearer, and doesn't have to deal
-with all these complexities somehow.
-
- Luis
+-- 
+Jens Axboe
 
