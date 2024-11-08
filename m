@@ -1,86 +1,91 @@
-Return-Path: <linux-kernel+bounces-401381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D84679C1981
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:49:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB7279C1985
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5A01C21E98
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:49:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590C4B224BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BB41E0B76;
-	Fri,  8 Nov 2024 09:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCCF1E1C02;
+	Fri,  8 Nov 2024 09:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CHSGivyi"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z6v1iiJF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD94A1CC152
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80481171C;
+	Fri,  8 Nov 2024 09:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731059362; cv=none; b=NnW0pqEIrMviThmD4Ozmid9jgCK/rAKpGp+l0JJ8bT9J4JU5VYL6pocR0gUNZLPti5v0Mpc+8oaUEiREK62zQzzJDDwIFZb666ifryrKgVsK93N5aEcVw3yE6r6AZo0qpo/SJ1gRYeLMIU11QjdpHK1fzdd+cZWLja1/WIjYYls=
+	t=1731059477; cv=none; b=BdVn07Ivz41ycNLDJdR/9Q75YrFGlV9oIHSro1POG7JvneewnppcOlPihhBsVWyef0D5XC/RTGwvUcXvaXb7VsF+nPBLEAEFeAUmFKIUhDMpPrsh4h9sTEBN6WifG0GPO7jzWgetnI52icdl1hVOfixh+H+uZuIceSehk1BRRNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731059362; c=relaxed/simple;
-	bh=PXvut3Vo+m5s6hjZebEMEvM3H0niTeOoVZ5iaSEkSOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PQ6QLySkg/DDL6XJVb5E2u3Qknpp7ViTTYrAro+AzKV3uKh8B4OiLtBisvzx8bS0CCmaRyR1eqWwjrz+kLBOd9oW4RWTkrMWCyt5iyAnBDs+cp42LYMWoChzVTKPBQqbE+jBxNa3U4fBQgFnPFWvnv4k5JDmNve67dP6rnD7X4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CHSGivyi; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A89e7A7001975;
-	Fri, 8 Nov 2024 09:48:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=y/p3P3mwMqo3YL4RmYx19kAvOKcnUNWKfwWqWgLH9
-	gg=; b=CHSGivyiSbXf0+3jn7j3b/u8JmezvUYfuJrprnuO70k9XFcjA58IDOr7e
-	uH1vFr1fGWIMNaMB2m4n18230T7dyqvB3Nhu4QMxU/yBtBPs871DIp+MHE16P2+2
-	2DEUOv5IYsG9uc7UlyWr0qMfV0GdKEiIH9kNIfSEy5jjeWygrDIN4In2bJBMyFw1
-	kceIDA94wGCEdxy/JxkVAPhy7p5z8ipYsGfsi09cG705CNG9v7gnZKoKhQ4NcgZN
-	tVq8TuOXy8yEpbfP0EjVrISUQ6fLmI7QhyPp7Pc/ili0w+CpN8YOPMxwUaZL4miG
-	c9VwDxkMbZ/SfmiOh47R+Zt73q/HQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sg75819q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 09:48:49 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4A89mn3A020305;
-	Fri, 8 Nov 2024 09:48:49 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sg75819j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 09:48:49 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A7Nm7hp012243;
-	Fri, 8 Nov 2024 09:48:48 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42p1411wpp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 09:48:48 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A89miwC23003758
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Nov 2024 09:48:44 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 743FE20043;
-	Fri,  8 Nov 2024 09:48:44 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 735F320040;
-	Fri,  8 Nov 2024 09:48:42 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.ibm.com.com (unknown [9.124.214.45])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  8 Nov 2024 09:48:42 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        naveen@kernel.org, maddy@linux.ibm.com, vaibhav@linux.ibm.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] arch/powerpc/pseries: Fix KVM guest detection for disabling hardlockup detector
-Date: Fri,  8 Nov 2024 15:18:37 +0530
-Message-ID: <20241108094839.33084-1-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731059477; c=relaxed/simple;
+	bh=o569N3IUorRe0DerXVU26Xh5tuvQG108cbhE3IbkRzs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hMYIzs/hUlvSmQmu76CEu9jEO6sjH0ghzPzSQjDqOwoGLBqSgbnM4EuXUsBmcJ+z79pL1dzQX9L1Ozu0y4hXziyqH9OD0I3DKq1Z2s/CygJv53qvBFsrhCUaVe2iEaY/watwo8yiAn6utov4sXWU+LrRnDs56C5cuJUh6h7F6P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z6v1iiJF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720c286bcd6so1677592b3a.3;
+        Fri, 08 Nov 2024 01:51:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731059475; x=1731664275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GSOwvZMj6U/xwMuLmLq/h/sl5M7VCiHdcXvuWsv1msg=;
+        b=Z6v1iiJFXn2FfrCBD4AYFk64rkodoPeSJkMjkcJeJ0WD9+rG5a+6i5KY+KDj1RaI6N
+         InPElE+wZlArifs9epGUThUY2sWmnr9/FSuAKBJ+SiayiqgLchaYomx5SSunPuOw0s7T
+         8duOQXll2t5VzlzMS9DB4nX3fjQO52rYVSiDWaN3Y5XY6fICXp/xaX+3xrBjeYXaD0m5
+         F1UnisHnFZdVtHqGiryuCNVq5Ns/n9EIdKqcl/jp9mRA03JHogBVys9YEcY5eVwZq3I1
+         JPJgKh7MLW0/VQKCt0joBsV4OjrOtaeEqKU6egvHG6Snz3/665CN2lBXS8oVWZCPsgPm
+         axfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731059475; x=1731664275;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GSOwvZMj6U/xwMuLmLq/h/sl5M7VCiHdcXvuWsv1msg=;
+        b=mQ1g3aJg2VlCLxOFSJ1+I6qhRY5v/O2psmoSVVdwc0KKHjSrF35ujr09mMI/M1ynYb
+         pasTq1qmPpTG0gAlz2m3Tzk3wf861dNZdi8patF2FbFGJeuhr1lHbVHzWbI6AUKvrfKC
+         MrTUqDJFiaCvpNqxYfQuIgSz0CPZUe7DFJKxcqW6q7wAT8dw11nHBBUwZIVMLlDYeN7/
+         XWXUFHYHSAt1crXntyEPpk/8rfoFtub9C2SrcMyTVovwHbDXFCEhodclG/2xIkMI3OlS
+         jsuyRLHK1PaIHLcwAgtSoG9h3cOOl/CTGOdexc/pzzt5xypswYLd82gBVLeaoY89kmIG
+         OVkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7BGQzKeXnNWR64mCNaSkL/IlJLAeN6V4j4sEZzIsKxrYKV0NLdOOwV51m6+49a9m4Z2Lc3986qHMCgQ==@vger.kernel.org, AJvYcCVFopsiKkBA1l3VbMW0ExfY48bNor1thr5xw09AwToVlArRGwnLV7m7bo3q86eKfhDCEFiwnOe53H1A@vger.kernel.org, AJvYcCXkzcWrlQbcd44wfHYGqhTR7PwTdiGUCVBAUkCdGVZpY8twDES/COif2QZSiFIY7OEcZXUmxS6EFK2aNJ/S@vger.kernel.org, AJvYcCXttuYXPOUmuoQIsMYemsUINAJp6M7dWD3NhhmZouRoFLMTEG1VE5ebAKKnIe7RwxVMl+FnFD3yfU/xBVXfjA8a@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZwrhwXEc8sOdY57/QQPJy86Zmk7DvLRm/ONvhYIbOqfvAD1YW
+	BVxMQ5ieQE7/nysHC4lKTnfDGHOdF1XUYb0VmBnLugZ2Xr+aRFxw
+X-Google-Smtp-Source: AGHT+IHIwkihJnN8+/xwaudphadUYxaqH9MQtvinDDBDvxIYcKHSWPfNtT4/idGdG5lEnQV38bTFRA==
+X-Received: by 2002:a05:6a00:124c:b0:71e:722b:ae1d with SMTP id d2e1a72fcca58-724133b687emr2662348b3a.25.1731059475013;
+        Fri, 08 Nov 2024 01:51:15 -0800 (PST)
+Received: from mighty.kangaroo-insen.ts.net ([120.88.183.182])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078c0b13sm3231426b3a.83.2024.11.08.01.51.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 01:51:14 -0800 (PST)
+From: Mithil Bavishi <bavishimithil@gmail.com>
+To: andreas@kemnade.info
+Cc: aaro.koskinen@iki.fi,
+	bavishimithil@gmail.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	khilman@baylibre.com,
+	krzk+dt@kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	robh@kernel.org,
+	rogerq@kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH v2 2/6] arm/dts: Add common device tree for Samsung Galaxy Tab 2 series
+Date: Fri,  8 Nov 2024 09:51:07 +0000
+Message-ID: <20241108095107.5338-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241103183636.40cc37fc@akair>
+References: <20241103183636.40cc37fc@akair>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,60 +93,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TqaLWbICowCfrMa8p4l-NLqSb7OTJbhA
-X-Proofpoint-GUID: 3heSwDM0UHwUDkhfVkZZM3-R6wXFLhnV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- bulkscore=0 priorityscore=1501 adultscore=0 impostorscore=0 mlxscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411080077
 
-As per the kernel documentation[1], hardlockup detector should be
-disabled in KVM guests as it may give false positives. On PPC, hardlockup
-detector is enabled inside KVM guests because disable_hardlockup_detector()
-is marked as early_initcall and it relies on kvm_guest static key 
-(is_kvm_guest()) which is initialized later during boot by 
-check_kvm_guest(), which is a core_initcall. check_kvm_guest() is also 
-called in pSeries_smp_probe(), which is called before initcalls, but it is
-skipped if KVM guest does not have doorbell support or if the guest is 
-launched with SMT=1.
+> probably you did not notice an error in make dtbs and the old
+> devicetree on the device was still there and was used.
 
-Call check_kvm_guest() in disable_hardlockup_detector() so that
-is_kvm_guest() check goes through fine and hardlockup detector can be
-disabled inside the KVM guest.
+I messed up my PowerVR tree with mainline, hence the problems. I've fixed
+it now locally.
 
-[1]: Documentation/admin-guide/sysctl/kernel.rst
+> are not the ones you need to fix, so just the diff between old and new.
 
-Fixes: 633c8e9800f3 ("powerpc/pseries: Enable hardlockup watchdog for PowerVM partitions")
-Cc: stable@vger.kernel.org # v5.14+
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
----
-v1 -> v2:
-1. Call check_kvm_guest() call in disable_hardlockup_detector() instead
-of relying on pSeries_smp_probe()
-2. Add the fixes and stable tags
-3. Some changes in patch description
+Yeah, I ran the command for espresso and then panda for a comparision.
+The diff is what i worked on, but I have some doubts which I'd like to ask
 
- arch/powerpc/kernel/setup_64.c | 1 +
- 1 file changed, 1 insertion(+)
+dts/ti/omap/omap4-samsung-espresso7.dtb: /: irled@0: 'anyOf' conditional 
+	failed, one must be fixed:
+        'reg' is a required property
+        'ranges' is a required property
+        from schema $id: http://devicetree.org/schemas/root-node.yaml# 
 
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 22f83fbbc762..1edc7cd68c10 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -920,6 +920,7 @@ static int __init disable_hardlockup_detector(void)
- 	hardlockup_detector_disable();
- #else
- 	if (firmware_has_feature(FW_FEATURE_LPAR)) {
-+		check_kvm_guest();
- 		if (is_kvm_guest())
- 			hardlockup_detector_disable();
- 	}
--- 
-2.47.0
+Documentation/devicetree/bindings/leds/irled/gpio-ir-tx.yaml does not say
+those properties to be required, is the node placed incorrectly?
 
+/home/mighty/linux/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb:
+ /: pwm@10: 'anyOf' conditional failed, one must be fixed:
+        'reg' is a required property
+        'ranges' is a required property
+        from schema $id: http://devicetree.org/schemas/root-node.yaml#
+
+Similarly here as well.
+
+/home/mighty/linux/arch/arm/boot/dts/ti/omap/omap4-samsung-espresso7.dtb:
+current-sense-shunt: 'io-channel-ranges' does not match any of the 
+regexes: 'pinctrl-[0-9]+'
+        from schema $id: 
+	http://devicetree.org/schemas/iio/afe/current-sense-shunt.yaml#
+
+I tried searching the tree for "io-channel-ranges" which has only one
+example - ste-ux500-samsung-janice.dts. In that dts the node is same as
+in espresso.
+
+Best Regards,
+Mithil
 
