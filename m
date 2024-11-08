@@ -1,197 +1,155 @@
-Return-Path: <linux-kernel+bounces-402506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C609C2876
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:56:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E07E9C2879
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25ED51F226CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2206AB222FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1171FB897;
-	Fri,  8 Nov 2024 23:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B612B1F756F;
+	Fri,  8 Nov 2024 23:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rja7OR7d"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZkvKrRtG"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907241F427F;
-	Fri,  8 Nov 2024 23:56:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA01E231C;
+	Fri,  8 Nov 2024 23:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731110178; cv=none; b=g+dyJkgNhZ+B5NS0YYq3cLEJ0u2v4FaVTukufZT7fqG0v6gb0MVwGlOcP/rD57N8RxNUAEPyKOopMgLUa2V+qWOctAG2dr4qVNuc6vAsebJtzrDi4xeRCQvHZd4hM8pIxiplhCQvmyB7PPxj2qtNKmtPM/rsI8zwBUPi8zdsM7Q=
+	t=1731110270; cv=none; b=ZBTVSLP4nispGVLhg1omJcUObKaIgseb7o2EqiEwqA3nLkzw/NqxhmWmVFMa1Y7AFt81ujcLG5+//Fr5QZgSBrQbkSOe0N9gprpGZHesMDqaUuQ41JIxGefW5wWPinldTplEgvCfqrbM/Ps08zmYehqyU0jD3Yswb4CDotY1DQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731110178; c=relaxed/simple;
-	bh=jidXx8xjMfUUKMzb1OMMVrlp9v9xArbausR3H7CwDD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fto5PRO17DzIO1/vpbiVuLEgCmY1vk/HJ5YMxxPEsbCsclbVOvWHvQKiQCXIVI7K9tO/IK072obKuDn8A1/BIuR92Du8J5SRE6rU9mHTVEBiqHgPRdZKyzOJlrZbGjy5XeCu3GOIdke7Lfxh2ozHruBjkEdsHx7SWISOOMXGWW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rja7OR7d; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1731110270; c=relaxed/simple;
+	bh=5MygCCliXOQIPYExnAgpq36Qgh4XXuyOqtJQoNoZ5Eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2qZiFqPatsEMmD2UM+fIr+dj75KJN6sgZgXaSWkyTphNgAhOpzvHx1AdI/2rTXEPRG80vWrwhZz90Eq2q0RL0ksWm9YxokRnKU45d4ZXDcyfeDXFW+9Eoz3Q5JY2dpHtjBTsrrmZmL4FwJ9Iu08cp2wicRZ8oJ6RE67Af4cqSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZkvKrRtG; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so2037830a91.1;
-        Fri, 08 Nov 2024 15:56:16 -0800 (PST)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20caccadbeeso29927055ad.2;
+        Fri, 08 Nov 2024 15:57:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731110176; x=1731714976; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ko5ntTtP2w+Sz2PCh54+SIltSsYjcVHYUqvHuhsGxIM=;
-        b=Rja7OR7dVShz4g5fXLzvuws+YpU6IgB41DWU+E2YAuIbYhCojc2Brz3/beyKPMx/sq
-         nNq3ZYZV/4nM4yE5Y6KVPX7ex68l54nIx9VK7bi3kj1hE2yEtpcgotWhj3rFLX1WgMfZ
-         NgKbEoO1Zz8hmJtNYazdG5nJ5qpUnhW27umefnbr3Ay94yWy2MBwk+PW1RK7PFNHRArw
-         Uda5V07B4zpRKAZUiwBlyJ6yFUtNJjepAxBiuUhJd4HrAgO9MkMCrCoTgSpkLC62Qxmo
-         K/5BAM80Pk8ROjerYkuBWBlo4VxCZ5DtAvZZNQv9Om4Hgz+IsR8FHFH7/1ZVyWEU7QgC
-         W/EQ==
+        d=gmail.com; s=20230601; t=1731110268; x=1731715068; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uq/HleutbBsgjDYtAH2w9gnQgvSfXJu8kVx54tjEWPs=;
+        b=ZkvKrRtGkyy7CdSlZYZTZd6D5xvfiRvAJp2hHIgoGNVSGXT+DX9shbMqJej8FG7cEs
+         0QcCPv5Y+JznhwLt89zZGiLRVvrNiw0jo9BbyuWwbd9kcfyFaorUjEIPtu7cSpCX5B0s
+         l4VSBDsJDwGYFHbiXRbxZs2NxaRLapjfn3eaHQOi/9ZAGNtRGBw/pzYbf0JxM9dYIbWq
+         24w6xJcLUetFJTo/a4MlZRfu7wyMf/ion/ceLZU4c0wIxC95uXNcOo7TtKErGbKcPMGk
+         dYjhkRfPeI/4YkOR8cjX5dxQIjLwe4okRlWbftJT9xO3yvuyXKMDVx8oiugk62vWr/cv
+         +big==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731110176; x=1731714976;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1731110268; x=1731715068;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ko5ntTtP2w+Sz2PCh54+SIltSsYjcVHYUqvHuhsGxIM=;
-        b=IyOrrkSNb0jyJwe2ME4VbgMidw46yH58iXlNqjGcPiASPDZw4B3UDSvmC9ohv1TqZY
-         XFcf8I9PGX8KT87YAhOHy2ONdPLukjWfbSCHdghdHgt2VSD0DDx/CNHeT1Vp1Wq0BeUM
-         uBUiyrl+UKZQ8ravnSATtDeQ6RslfnI3ZAh34cSq1VZKl90gZYLfLhbtN47nvZXYTeYR
-         adN8uwQViFrNFyt6RQ+bTpZOX+gTEmMFipX3yJPwbK0BwpXMGbDJmT+Xz4e1HdfdnlEN
-         dq3RF7Hg0+0PS6RJ2yX7nzgvjXM6KkL5/G2RXHgt2Ah3fNTLRzsMuesp2tPdqsdranSc
-         SjnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU35zboMz2+XJAOwdi3oThPkxjC8EMDTE0rjjCpg533i6DcUxRKsUEa9XgFtF6Ot12rwL7xFR8WiFq2spM5@vger.kernel.org, AJvYcCVwl2bWTAygiRnF7AtUGeAQmHzaM744JZD8n/1GAEw0EUMKPd5hkF39leQOR8S6nwlXXwbMSMw1epwU@vger.kernel.org, AJvYcCWNtvZogeqhVoeE9UC4372CMxjJtphjVfgqRk6CshoNPIJf3Qw3wdE4rLVg+rPCkaHIBI4AGa/BAgrPmw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvDl6NboqVyHw8vaKNOkCYDWf0hLgWTBwc1lI6U0B0pUKSNFqN
-	1CB+6V4iBO2KM3KQi7s8V5tArQjlc1lJsDxzGVJZmKXZaKzbVybZ
-X-Google-Smtp-Source: AGHT+IHEarQoWl4dFgmCs28SBfigzcnSWnoyL4xgpkZl9Jj3lgLAj0yFFM0e/MUEUbjsP+pQ2Qtcog==
-X-Received: by 2002:a17:90b:1f8b:b0:2e5:5ff9:bee1 with SMTP id 98e67ed59e1d1-2e9b177bd4fmr6176123a91.29.1731110175789;
-        Fri, 08 Nov 2024 15:56:15 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e59f1dsm36081805ad.182.2024.11.08.15.56.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 15:56:15 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <94871adf-c2d7-496b-bf05-c3a773f9c919@roeck-us.net>
-Date: Fri, 8 Nov 2024 15:56:13 -0800
+        bh=uq/HleutbBsgjDYtAH2w9gnQgvSfXJu8kVx54tjEWPs=;
+        b=C+Aobu2+2sc1/52Zx9wFsUnVEI9t5QsnTW6Xp9BpfKQYKK0qPaMcVjS+Sw9Fk/G7ZU
+         VZd+AsdlRUA+82J7ITIds7fGu3h7NrRH/Lo0vlaS2qmj5eRFvvqril4Ak+b70xBy38uO
+         jV8dO7GgYBVnNj8n5p2b9FzhLJaVPqk6ICeO+3qbqxe9S18WAbkLk1MfiTbtmMOZFpba
+         9CIjLaSLOPXTv4xR/rND5lG2KBLtrIAKrgGmckp71wjCnekrg+qYkL6T8vJHjuDdUvyC
+         heF26s/QQuE8TNQ048iqQnvFjFmAIqkx/2pN/ts6vXUVEhpOu7WVeOyLrbrjjeweHF0I
+         lnDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrCp9dwydWG63H4Nypob98x2aOF7HhX4fqc7JIqTfnoB4QLh7MUitcBK2XFp5i7VSSIy3oao44Cm4=@vger.kernel.org, AJvYcCWaWBbz9OTIJ3WEgbNKl7kBfQ0WvogcaFuMypgxw48MEHEVVJRSMFDMvP9/ZGuENQA7Le2RoBnpVZa8ltc=@vger.kernel.org, AJvYcCWpvFGAMPa8hqdStKTY8NFQ27gSnoYMsDiWO7XLgBogZwUCkuhvMosAddfex/ym8pJZUNEKVDBZMd6kFDcH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZHH+UL6BWDFvBIvKhmDHFXFLB+xkuMo7XYKO9YycQkR17FADz
+	voM5YI4yG6l9/Ani/2RCYmzmfmXtiZ5GxcoazQYItPIx9nT71M0y
+X-Google-Smtp-Source: AGHT+IHsqYMoJaZR7DEU7+RH7csowchtdMKT8eN0fEPfCSshXzgwgvSMaWsCEdbws5SrloYWRHxKNA==
+X-Received: by 2002:a17:902:db0a:b0:20b:70b4:69d8 with SMTP id d9443c01a7336-2118359ae3cmr54561975ad.37.1731110267757;
+        Fri, 08 Nov 2024 15:57:47 -0800 (PST)
+Received: from archie.me ([103.124.138.82])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6938csm36445735ad.229.2024.11.08.15.57.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 15:57:45 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id CDD1541F52F8; Sat, 09 Nov 2024 06:57:40 +0700 (WIB)
+Date: Sat, 9 Nov 2024 06:57:40 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Abhinav Saxena <xandfury@gmail.com>,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] docs: hwmon: Fix typos in sch5627 and max31827
+Message-ID: <Zy6ldOPnnl5ocf6V@archie.me>
+References: <20241108212201.144482-1-xandfury@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4] iio: temperature: Add support for P3T1085
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jean Delvare <jdelvare@suse.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-hwmon@vger.kernel.org
-References: <20241108-p3t1085-v2-0-6a8990a59efd@nxp.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
- RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
- nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
- 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
- gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
- IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
- kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
- VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
- jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
- BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
- ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
- CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
- nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
- hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
- c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
- 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
- GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
- sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
- Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
- HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
- BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
- l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
- 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
- pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
- J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
- pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
- 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
- ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
- I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
- nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
- HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
- JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
- J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
- cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
- wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
- hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
- nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
- QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
- trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
- WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
- HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241108-p3t1085-v2-0-6a8990a59efd@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8KwVmF4c1EsaXBVK"
+Content-Disposition: inline
+In-Reply-To: <20241108212201.144482-1-xandfury@gmail.com>
 
-On 11/8/24 14:26, Frank Li wrote:
-> Add basic function support for P3T1085 temperature sensor.
-> - reuse tmp108 driver
-> - Update imx93-9x9-qsb.dts
-> 
 
-Subject 'iio' is now misleading.
+--8KwVmF4c1EsaXBVK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Guenter
+On Fri, Nov 08, 2024 at 02:22:01PM -0700, Abhinav Saxena wrote:
+> diff --git a/Documentation/hwmon/max31827.rst b/Documentation/hwmon/max31=
+827.rst
+> index 9c11a9518c67..6cc5088b26b7 100644
+> --- a/Documentation/hwmon/max31827.rst
+> +++ b/Documentation/hwmon/max31827.rst
+> @@ -136,7 +136,7 @@ PEC Support
+> =20
+>  When reading a register value, the PEC byte is computed and sent by the =
+chip.
+> =20
+> -PEC on word data transaction respresents a signifcant increase in bandwi=
+tdh
+> +PEC on word data transaction represents a significant increase in bandwi=
+dth
+>  usage (+33% for both write and reads) in normal conditions.
+> =20
+>  Since this operation implies there will be an extra delay to each
+> diff --git a/Documentation/hwmon/sch5627.rst b/Documentation/hwmon/sch562=
+7.rst
+> index 8639dff234fc..5f521c6e90ab 100644
+> --- a/Documentation/hwmon/sch5627.rst
+> +++ b/Documentation/hwmon/sch5627.rst
+> @@ -39,7 +39,7 @@ Controlling fan speed
+>  ---------------------
+> =20
+>  The SCH5627 allows for partially controlling the fan speed. If a tempera=
+ture
+> -channel excedes tempX_max, all fans are forced to maximum speed. The sam=
+e is not
+> +channel exceeds tempX_max, all fans are forced to maximum speed. The sam=
+e is not
+>  true for tempX_crit, presumably some other measures to cool down the sys=
+tem are
+>  take in this case.
+>  In which way the value of fanX_min affects the fan speed is currently un=
+known.
 
-> To: Rob Herring <robh@kernel.org>
-> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> To: Conor Dooley <conor+dt@kernel.org>
-> To: Jonathan Cameron <jic23@kernel.org>
-> To: Lars-Peter Clausen <lars@metafoo.de>
-> To: Shawn Guo <shawnguo@kernel.org>
-> To: Sascha Hauer <s.hauer@pengutronix.de>
-> To: Pengutronix Kernel Team <kernel@pengutronix.de>
-> To: Fabio Estevam <festevam@gmail.com>
-> To: Jean Delvare <jdelvare@suse.com>
-> To: Guenter Roeck <linux@roeck-us.net>
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: imx@lists.linux.dev
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: linux-hwmon@vger.kernel.org
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> Changes in v2:
-> - Amost rewrite and reuse existed TMP108 driver
-> - Link to v1: https://lore.kernel.org/r/20241107-p3t1085-v1-0-9a76cb85673f@nxp.com
-> 
-> ---
-> Frank Li (4):
->        dt-bindings: hwmon: ti,tmp108: Add nxp,p3t1085 compatible string
->        hwmon: tmp108: Add help function tmp108_common_probe()
->        hwmon: tmp108: Add support for I3C device
->        arm64: dts: imx93-9x9-qsb: add temp-sensor nxp,p3t1085
-> 
->   .../devicetree/bindings/hwmon/ti,tmp108.yaml       |  8 ++-
->   arch/arm64/boot/dts/freescale/imx93-9x9-qsb.dts    |  5 ++
->   drivers/hwmon/tmp108.c                             | 71 ++++++++++++++++------
->   3 files changed, 64 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
-> change-id: 20241107-p3t1085-fbd8726cbc0e
-> 
-> Best regards,
-> ---
-> Frank Li <Frank.Li@nxp.com>
-> 
+Looks OK, thanks!
 
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--8KwVmF4c1EsaXBVK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZy6lcAAKCRD2uYlJVVFO
+oyqwAQDDPN2bC6IWGqOVlsjF9FqVbpegaenlIOkDCdTywIVMVAD/aLzSDrWOH9PV
+Mnp0H17MyQPDx5DN+4UDoroJMn27LQE=
+=i2CI
+-----END PGP SIGNATURE-----
+
+--8KwVmF4c1EsaXBVK--
 
