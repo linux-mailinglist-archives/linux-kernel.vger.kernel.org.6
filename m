@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1F99C2450
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:56:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D2E9C2453
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06D81F27D0A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBDF1C26EAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003D821FD8B;
-	Fri,  8 Nov 2024 17:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F6D21FDB9;
+	Fri,  8 Nov 2024 17:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vARexW2p"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VZU/qT8j"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDAA21C185
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2D421F4D4
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087928; cv=none; b=VmnNc8lwgw99lu9DT65WioxBXQFMDDXlzrveh7BAZcXrnpOc1JIfGH+KgK/muOd0M97JG24POLcE+qcH1FnKZsv19mccGhjaJuu9jiiv7Pk39zsmm8xort1SYbGX+fruGzyg9b2LpITZLo6vCHqE/8H/yL/AKFvZ8i8RVf6YQqw=
+	t=1731087930; cv=none; b=Bladegb7DKJmD4t2w4w/cu+3ULFrbsaWTEanENsvSQDuuAShaeFeKdbJhSlI3gVpscyP0ToWgmrRGBXhDl7qMbGR7oqWoIfgfhUj6qXhXTmbLRSFesFitle/Vqtq1DP5eEKvq5KW23Pb3PxleeP5jKUzGXDRH5lBMg21MMC78Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087928; c=relaxed/simple;
-	bh=rnoMCl/wzF1Rdw/7LWpkKe6sGAyHqTjLz9AhJ+JYxUE=;
+	s=arc-20240116; t=1731087930; c=relaxed/simple;
+	bh=h/dX79Ug9Oi3tujE3kBQvUZhpb3YBGEldYjvJeJj7aQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dEESsZwQty+RC90//k6+uuJFxn9zuTtj+nh7z76RABVnCz/maBQ6ze8+NXJg50HWZRAUG4lqg0LOEQMx9/gWGY9YljwViPzAAOwNweQF9prRKfs3erHJYfDG/STHy74SEiW7n3rUjaTtWqhgd4BOmM4qLOIxS2OG27PNosNJa18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vARexW2p; arc=none smtp.client-ip=209.85.167.171
+	 MIME-Version; b=d5s7ZTkgIjQIgEXgdW7a+62drEJs22wm/5vyERjn8B23pnynl4XGMQCd+QHduzJEiEjSuojMuAF0xVyH+6HwDbdEnv4YXLD+rXjcbJba7HmzcpYkE2d0kj3xe67eAObYOz240/XCb6bNzE92U+YYi0GgyZNDiXXuKfu8yJfxft8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VZU/qT8j; arc=none smtp.client-ip=209.85.167.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e60966297fso1316655b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:45:26 -0800 (PST)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e5f9712991so1354984b6e.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:45:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731087926; x=1731692726; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731087927; x=1731692727; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8Os07YYPQ7kZ+kUIdYmg3svY/CQbT8cCz0FxxTNIj/Y=;
-        b=vARexW2pfrv6PWUi1sYj02+pH5jThAbg0j8BBW0Rd5hZgmJIId6r5Z63/A1tVYSKk/
-         aEv60ttUDKkrJnunQZlglUyGpb9AhSiPuJXGuX/dCqnvRVXX2iM5lTgawdakRdkLuEbB
-         GlLy4yZsDI0txpI5qtrNjwNyQ38hsw7XPkOZ15waCh56JdUMV+BMeafJ6gjVRMGCsv19
-         WDoxouakQV7w6b1BbYxe8Vo5JijxNKj6PYHxK/oPriaKGcPyaIZjMcZ1t52N49smD0wU
-         TrzVyxZRGuGPPX+PMb6tr8JurVBmjsEEMkaFOz5yxWLrOY3XKyMRC+g7OZtKoUi+TJQ2
-         95qQ==
+        bh=UUX+L5JwxoRfm7kNG+SFpzZJbOBH//rHSLdNBno0i1Q=;
+        b=VZU/qT8jfM7UKd24qGemIn5WxcnpKaeCOMFNBN8OmayrRBIHFiIwd9+93PuaVMpQBu
+         XMnWCpFPKTbt9mq+1A7H1kijoTdfbL4+T9rII7mrxs6ZoUbE1gp3MuLVfJrlX1gezUC3
+         yGoUItauFIepN7uRqMKR2p/W90YUDDOpDMjM0aGZlqbsHos3FDCgcfnlBjek900Hl9nF
+         Z/1+IScrJ2TIKAAS/Evcva5gcA1/ANLNPnOUpzeSWt3AshRY54+Lc3WO+Qp4MYNSIS2z
+         gecTAK7aqM7uIoOuf+LzHQXWJVncodbGpeRllHTGBGCftP9vclTsF0TakK2ZeRb/V22T
+         k9BQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731087926; x=1731692726;
+        d=1e100.net; s=20230601; t=1731087927; x=1731692727;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8Os07YYPQ7kZ+kUIdYmg3svY/CQbT8cCz0FxxTNIj/Y=;
-        b=dYh3BFer8yPxoZGkT33zsmjTtZh1AuU1b5hl6RLK8YYMwX7/NfZQoxheB1oKPROGHF
-         rYqnT5xPWo2PRpHI3Fd0Kj8toPDSeYFgnHJUZqX6hA6L55cH4kKrOyrASschj85bybOP
-         Dl/exmWuB+5Q7cIp8D7VMjZ8s6uPNzlYlbPZ6iesdIDxHy81l4POXU3yroGVwxzyLMju
-         XXTjVbj10x1qgBb4VLdw0878TgSokBpDewNO6+9wfGkzmGhDeqvjFu7eWeY1BHOPOMxS
-         tsqzBb8RKI5X4iWEzFDEFdra0yiEKxKzxAyKHkUepf8rPt/evZv+Wch9nH9WyBEfJJ5f
-         /C/A==
-X-Forwarded-Encrypted: i=1; AJvYcCU3iMGLK+n71w//Et1pCn8lPkahLQD2Mj/9yZhqjvH9oW17kKIl9tGgvqmuEw+D7sKKGyfXtY7Sp+0zQsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCXm90mnO+3EZy93lbR/vl+Ut6sq3gSfImOvqZY1OS+SXZEy6A
-	rmkUqYjiOXSVOJ15zS6X5utNWXEHdA/cXte03p7kA9jvaK6f+SaKoL5b1IUV8/8=
-X-Google-Smtp-Source: AGHT+IEK3I8pTmLVAcP1tiUKABdaXPcTEUhdzcwYlEN/XSWu4cE0qIXfxmg72hsMc3+DTSEsR4vUEg==
-X-Received: by 2002:a05:6808:120e:b0:3e0:4db9:8c44 with SMTP id 5614622812f47-3e79470a35bmr4931161b6e.27.1731087926068;
-        Fri, 08 Nov 2024 09:45:26 -0800 (PST)
+        bh=UUX+L5JwxoRfm7kNG+SFpzZJbOBH//rHSLdNBno0i1Q=;
+        b=D3a+LiIACC3+D6OUcelh844Kp8neyaKvoYcLmb7kKC4o8B+7aNshht49phh4CQ9nkr
+         1S87p9Fc0ua5Ss4WrK+DcKZipaNgTe25EmSt5TpZdIKipxAXC3aQOUFhvTRLwq/dfIGl
+         6XzlrQRAq/CUoXjCHoWgzentNNU7EAYFuK99f8ZbjuXmWNqwQWarH+7LTrE+p122+pge
+         JG9XUDyw89CzDmXsMdYKiqXdpTYqjtyuTqwiWKrmHd91eLlpkHbMcZBK0p+FZjvEdymn
+         pACr1PxdlOE3T53imn3uVWLJFCfyBu/lv/4WVqXCtlQT6UagQHZZ0/9NYTN31Gow4X9y
+         7jqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU65sBn8B0E/infoSW3i7iSltAFMTkDMCF4k95GOgsO32Kvz8nlGINyguEXh9StUBilpTyqw+3e25R3dQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc6J4jzh+fn16mSYoDXCnYniVGW2fU5t1xPYhoEnxqN9KTZVCH
+	nOxbUklD7W8y7yOVEtNOSeQTqvMUCF27k8Wg7U7RMFiJwdEvq45XAjT4vba2x9M=
+X-Google-Smtp-Source: AGHT+IEeKABK38xxsKod0vZKixk/J7Qylyl5MmSX7mHW/jyfME5Ez4w2eu08IqUOJbkoLHt8qw1oZw==
+X-Received: by 2002:a05:6808:16a1:b0:3e7:63ce:1f26 with SMTP id 5614622812f47-3e7946a678fmr4543740b6e.24.1731087927472;
+        Fri, 08 Nov 2024 09:45:27 -0800 (PST)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cd28f80sm780969b6e.39.2024.11.08.09.45.24
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cd28f80sm780969b6e.39.2024.11.08.09.45.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 09:45:25 -0800 (PST)
+        Fri, 08 Nov 2024 09:45:26 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -73,9 +73,9 @@ Cc: hannes@cmpxchg.org,
 	clm@meta.com,
 	linux-kernel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 09/13] mm: drop uncached pages when writeback completes
-Date: Fri,  8 Nov 2024 10:43:32 -0700
-Message-ID: <20241108174505.1214230-10-axboe@kernel.dk>
+Subject: [PATCH 10/13] mm/filemap: make buffered writes work with RWF_UNCACHED
+Date: Fri,  8 Nov 2024 10:43:33 -0700
+Message-ID: <20241108174505.1214230-11-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241108174505.1214230-1-axboe@kernel.dk>
 References: <20241108174505.1214230-1-axboe@kernel.dk>
@@ -87,38 +87,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the folio is marked as uncached, drop pages when writeback completes.
-Intended to be used with RWF_UNCACHED, to avoid needing sync writes for
-uncached IO.
+If RWF_UNCACHED is set for a write, mark the folios being written with
+drop_writeback. Then writeback completion will drop the pages. The
+write_iter handler simply kicks off writeback for the pages, and
+writeback completion will take care of the rest.
+
+This provides similar benefits to using RWF_UNCACHED with reads. Testing
+buffered writes on 32 files:
+
+writing bs 65536, uncached 0
+  1s: 196035MB/sec, MB=196035
+  2s: 132308MB/sec, MB=328147
+  3s: 132438MB/sec, MB=460586
+  4s: 116528MB/sec, MB=577115
+  5s: 103898MB/sec, MB=681014
+  6s: 108893MB/sec, MB=789907
+  7s: 99678MB/sec, MB=889586
+  8s: 106545MB/sec, MB=996132
+  9s: 106826MB/sec, MB=1102958
+ 10s: 101544MB/sec, MB=1204503
+ 11s: 111044MB/sec, MB=1315548
+ 12s: 124257MB/sec, MB=1441121
+ 13s: 116031MB/sec, MB=1557153
+ 14s: 114540MB/sec, MB=1671694
+ 15s: 115011MB/sec, MB=1786705
+ 16s: 115260MB/sec, MB=1901966
+ 17s: 116068MB/sec, MB=2018034
+ 18s: 116096MB/sec, MB=2134131
+
+where it's quite obvious where the page cache filled, and performance
+dropped from to about half of where it started, settling in at around
+115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
+reclaim pages.
+
+Running the same test with uncached buffered writes:
+
+writing bs 65536, uncached 1
+  1s: 198974MB/sec
+  2s: 189618MB/sec
+  3s: 193601MB/sec
+  4s: 188582MB/sec
+  5s: 193487MB/sec
+  6s: 188341MB/sec
+  7s: 194325MB/sec
+  8s: 188114MB/sec
+  9s: 192740MB/sec
+ 10s: 189206MB/sec
+ 11s: 193442MB/sec
+ 12s: 189659MB/sec
+ 13s: 191732MB/sec
+ 14s: 190701MB/sec
+ 15s: 191789MB/sec
+ 16s: 191259MB/sec
+ 17s: 190613MB/sec
+ 18s: 191951MB/sec
+
+and the behavior is fully predictable, performing the same throughout
+even after the page cache would otherwise have fully filled with dirty
+data. It's also about 65% faster, and using half the CPU of the system
+compared to the normal buffered write.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- mm/filemap.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ mm/filemap.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 6f65025782bb..1e455ca872b5 100644
+index 1e455ca872b5..d4c5928c5e2a 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1634,6 +1634,18 @@ void folio_end_writeback(struct folio *folio)
+@@ -1610,6 +1610,8 @@ EXPORT_SYMBOL(folio_wait_private_2_killable);
+  */
+ void folio_end_writeback(struct folio *folio)
+ {
++	bool folio_uncached;
++
+ 	VM_BUG_ON_FOLIO(!folio_test_writeback(folio), folio);
+ 
+ 	/*
+@@ -1631,6 +1633,7 @@ void folio_end_writeback(struct folio *folio)
+ 	 * reused before the folio_wake_bit().
+ 	 */
+ 	folio_get(folio);
++	folio_uncached = folio_test_clear_uncached(folio);
  	if (__folio_end_writeback(folio))
  		folio_wake_bit(folio, PG_writeback);
  	acct_reclaim_writeback(folio);
-+
-+	/*
-+	 * If folio is marked as uncached, then pages should be dropped when
-+	 * writeback completes. Do that now.
-+	 */
-+	if (folio_test_uncached(folio)) {
-+		folio_lock(folio);
-+		if (invalidate_complete_folio2(folio->mapping, folio, 0))
-+			folio_clear_uncached(folio);
-+		folio_unlock(folio);
-+
-+	}
+@@ -1639,12 +1642,10 @@ void folio_end_writeback(struct folio *folio)
+ 	 * If folio is marked as uncached, then pages should be dropped when
+ 	 * writeback completes. Do that now.
+ 	 */
+-	if (folio_test_uncached(folio)) {
+-		folio_lock(folio);
+-		if (invalidate_complete_folio2(folio->mapping, folio, 0))
+-			folio_clear_uncached(folio);
++	if (folio_uncached && folio_trylock(folio)) {
++		if (folio->mapping)
++			invalidate_complete_folio2(folio->mapping, folio, 0);
+ 		folio_unlock(folio);
+-
+ 	}
  	folio_put(folio);
  }
- EXPORT_SYMBOL(folio_end_writeback);
+@@ -4082,6 +4083,9 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 		if (unlikely(status < 0))
+ 			break;
+ 
++		if (iocb->ki_flags & IOCB_UNCACHED)
++			folio_set_uncached(folio);
++
+ 		offset = offset_in_folio(folio, pos);
+ 		if (bytes > folio_size(folio) - offset)
+ 			bytes = folio_size(folio) - offset;
+@@ -4122,6 +4126,12 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 
+ 	if (!written)
+ 		return status;
++	if (iocb->ki_flags & IOCB_UNCACHED) {
++		/* kick off uncached writeback, completion will drop it */
++		__filemap_fdatawrite_range(mapping, iocb->ki_pos,
++						iocb->ki_pos + written,
++						WB_SYNC_NONE);
++	}
+ 	iocb->ki_pos += written;
+ 	return written;
+ }
 -- 
 2.45.2
 
