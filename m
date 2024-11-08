@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-400903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062DC9C13DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:09:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9507B9C13E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFD6C284036
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6231F21E64
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB07B17996;
-	Fri,  8 Nov 2024 02:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55EE224EA;
+	Fri,  8 Nov 2024 02:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="mMwR4Fgp"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c7LoaBmP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D824F23AD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 02:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AF31BD9D5
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 02:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731031764; cv=none; b=uWLmpWjWipY6/yTArK0TwZHhuQsp27Ncx//6WQ0Zw2UeHmF9oNtILeM9HR7G+TAtPrqZSUY++P3BJqYHJ1hvKeNQO3EPh7Un5q/p+cHlavrOSZq9z33ll7C6WeI9NoVYe5osZMr03ioENgvuA/690FYnYGlLYNQypX98wzOhozM=
+	t=1731032100; cv=none; b=EGipDF9zlr0idEjqMgihVDd2eYu+f9MX2sebvWZQKPHifzA21QkYcKr+sZ8c9rz3WeCDWJPtRGXJMxN1VoggUcZEx2L768lt+OW7jEReioWO3YHbV46QETHB5Xc7RKoLx4rc0qTy3swMJ+AWWRNPKE1w0qwCLTand4DTBFkU610=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731031764; c=relaxed/simple;
-	bh=I84i66Xxwf/IacDgC84XOWnMKCmic4iuwv4weUi9Hv4=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=EVOCu5T8DUXCCV4NjTnN+FHrdgMq+3lv3bFkfb80ktLvJdhFpQUHtOV2siJNYGuHYQKo2pW+rqvhfIcOI6m6VDDu5LJzidhBAD9fGmYmXrBM4r4XFnX9NVb7RfTRccRNnoCGzDUJD4QMNGhtNw3Qf2IMkrhdsJMDWy9Lk4ua+eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=mMwR4Fgp; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
-	by cmsmtp with ESMTPS
-	id 9B0ttBK5CrKrb9ER1tyIP8; Fri, 08 Nov 2024 02:09:15 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 9ER0ti4PL65gF9ER1tauf0; Fri, 08 Nov 2024 02:09:15 +0000
-X-Authority-Analysis: v=2.4 cv=Z58nH2RA c=1 sm=1 tr=0 ts=672d72cb
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=CvRpyJ_MCFv3iDE1wTgA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QP6ZiI+V8u+00WCFK2yKqoR4E4JF50VOfCgpa2dTl6s=; b=mMwR4FgpkEYWTApT5CI4lbiOwF
-	vZ6REyRVau4cAYydz1XcGeTZGnduQ4HLgPek49hBkLbs28vL+w8n+o19cFqYxeUySO1qTbec1T9SN
-	IblY3IHoBs0x1c0N9B4AIhBjnn+NpTgXXmDu6rDFq5A5uBGYL88bMRwPdzMU7PC8rQ7SIdYR113gO
-	gT5s8bpbZYWafAuyx+Cq6+/Y4Qc+q7Y4AYMGqAGcGRftqwSJPvcaxnXgTGmPZSRU3HryhCXMkh8vu
-	VHad42sZa0cDKQ12L/MxawRx/LgynLSM4mg5QANVehmm2YuRgbsEG6EtgCAvqzcEx/uZx3Sd/qhda
-	ANfmStMQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35490 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1t9EQy-001Pt3-1H;
-	Thu, 07 Nov 2024 19:09:12 -0700
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, broonie@kernel.org
-References: <20241107064547.006019150@linuxfoundation.org>
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <95db0e6f-b7db-269a-4f65-96c52a6a90b4@w6rz.net>
-Date: Thu, 7 Nov 2024 18:09:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1731032100; c=relaxed/simple;
+	bh=/RwNtUIK5qsH2x/pT+BCqwmWHh7ol3Wb5glueJeUYm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePxrKqEM3s/mpXMxHuSEEnfpcbbZ4QTqH3V/Sftm+y3qhQtbL6HBNEdW8svCq0npyR2U6TEmg8dhAD2bUAWAZF3qSEnZ3+CMA4y1RI6LyMr66ej4KEsORi5bdUMpFIeIjG22X3Q6YVF9wcilxDcoRlCO9knRpxvNJoJ4pqphru0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c7LoaBmP; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731032099; x=1762568099;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/RwNtUIK5qsH2x/pT+BCqwmWHh7ol3Wb5glueJeUYm0=;
+  b=c7LoaBmPPkAlUZGzGn1wNqhx1t0y7Rq3gksYzPUso19cK+HceLBsgovx
+   YG1lJvGzLJuvHuDGCktKhbk9gCFBBpYkl2WFcDiJOkmkqzYeqPzStwD8G
+   c4p/xAqyDd1qBrgE+gA/QvJubeQZaE9Gkq7KpyOE+0ezJRmZLZ5z9dx1K
+   rmy+nsdLC49nmK8HtHUj+S2ikbxZMOQJg8m87Ylkm8J1Gvi/kPpb0dL7L
+   5vFzuHw6ZFVtCj9Cmg1DvDv2undSg+jcNw3LFvi6WRO7vlV7MllmYpfR4
+   bKO5Jjnh83R0AAZU7xZ47pA7hNt5Ig9lZ8bz3pXoti+MhM/tF1daGPIoa
+   g==;
+X-CSE-ConnectionGUID: jqaThYr4RgO1+6Hexnej5w==
+X-CSE-MsgGUID: aPd8Ptj7R76sBcBPJ/xXQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="31007719"
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="31007719"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 18:14:58 -0800
+X-CSE-ConnectionGUID: 2by48bBrR+GilLxmiYHRhg==
+X-CSE-MsgGUID: r/RQRxgLTCeNkkIGyA9EKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
+   d="scan'208";a="116213709"
+Received: from allen-sbox.sh.intel.com ([10.239.159.30])
+  by fmviesa001.fm.intel.com with ESMTP; 07 Nov 2024 18:14:56 -0800
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Yi Liu <yi.l.liu@intel.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/13] [PULL REQUEST] Intel IOMMU updates for v6.13 (2nd
+Date: Fri,  8 Nov 2024 10:13:51 +0800
+Message-ID: <20241108021406.173972-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1t9EQy-001Pt3-1H
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:35490
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 4
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLwwzJccs8gW2cnVr7pCzmcU6fVBNedJC7j5ZT9SaXzyH293UFzcUd6RCs7jUIWrLY/NXF3+xwo4GJIX+6XXQ99pIfDaHfHJ++kBjQspkE+z8vcrnS40
- TagBVlLSl81fDWoWeg6HqMxiqgohjLOFPhtxBmhS/k9wZUu3H0xebHJidvQfmIxjBJPD+6eweM3cEsJ5mPCKqXF4fraToDvhPCk=
+Content-Transfer-Encoding: 8bit
 
-On 11/6/24 10:47 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Joerg,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+I apologize, I should have put all patches in a single pull request.
+However, the feature introduced in this pull request needed extra rounds
+of review and is now ready for merge.  I'm trying to merge this series
+in this merge window because it's self-contained and other series, for
+vfio and iommufd, depend on it. Merging this series in time will
+simplify the upstream process for those series.
 
-Tested-by: Ron Economos <re@w6rz.net>
+With above explained, the following changes have been queued for
+v6.13-rc1, including:
+
+ - Add domain replacement support for pasid
+
+These patches are based on the vtd branch of the iommu tree. The complete
+patches are also available at:
+
+https://github.com/LuBaolu/intel-iommu/commits/vtd-update-for-v6.13
+
+Please consider them for iommu next.
+
+Best regards,
+baolu
+
+Jason Gunthorpe (1):
+  iommu/arm-smmu-v3: Make set_dev_pasid() op support replace
+
+Yi Liu (12):
+  iommu: Pass old domain to set_dev_pasid op
+  iommu/vt-d: Add a helper to flush cache for updating present pasid
+    entry
+  iommu/vt-d: Refactor the pasid setup helpers
+  iommu/vt-d: Add pasid replace helpers
+  iommu/vt-d: Consolidate the struct dev_pasid_info add/remove
+  iommu/vt-d: Add iommu_domain_did() to get did
+  iommu/vt-d: Make intel_iommu_set_dev_pasid() to handle domain
+    replacement
+  iommu/vt-d: Limit intel_iommu_set_dev_pasid() for paging domain
+  iommu/vt-d: Make intel_svm_set_dev_pasid() support domain replacement
+  iommu/vt-d: Make identity_domain_set_dev_pasid() to handle domain
+    replacement
+  iommu/vt-d: Add set_dev_pasid callback for nested domain
+  iommu: Make set_dev_pasid op support domain replacement
+
+ drivers/iommu/amd/amd_iommu.h                 |   3 +-
+ drivers/iommu/amd/pasid.c                     |   6 +-
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c   |   5 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  12 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |   2 +-
+ drivers/iommu/intel/iommu.c                   | 176 ++++--
+ drivers/iommu/intel/iommu.h                   |  34 ++
+ drivers/iommu/intel/nested.c                  |  50 ++
+ drivers/iommu/intel/pasid.c                   | 553 +++++++++++++-----
+ drivers/iommu/intel/pasid.h                   |  22 +-
+ drivers/iommu/intel/svm.c                     |  36 +-
+ drivers/iommu/iommu.c                         |   3 +-
+ include/linux/iommu.h                         |   5 +-
+ 13 files changed, 657 insertions(+), 250 deletions(-)
+
+-- 
+2.43.0
 
 
