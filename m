@@ -1,173 +1,113 @@
-Return-Path: <linux-kernel+bounces-402224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DC69C252A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 853589C2528
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC1F284C0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:53:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46DA4284C49
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FC51C460A;
-	Fri,  8 Nov 2024 18:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925471AA1D0;
+	Fri,  8 Nov 2024 18:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gxZ8JrRO"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nzmO7JhZ"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D5B1C1F21;
-	Fri,  8 Nov 2024 18:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D58A1C1F18
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091960; cv=none; b=KySmEuJrmcGTKCjF/zXNB9Sxx5AZYyBE1cw28e1ovI8oMA7qwV6A6rQenJhKPVdHRaaj+TiNlrowwVdm1r/21ZMftyKUctBbnHk23nS0S5ryGkOCRFpAPMK1CRG6y157vQ8D0YtMUAVPpvS4s3cFGgRnZdtidvkxnM/g8Iq/ExM=
+	t=1731091960; cv=none; b=S9DWPUMiIL3ewqzhbJAIjj8TbMIvBV02mtfddXACpBd34pxUaQbNVhwB21/6aHf9WzziwGAN8g5rQvt/p3HjVqYXd5Z/CimgC9fhdVu0w4iUcFRvleCpxGTTMKlaq6Oea5wsA6jjXe1aMG1APdQpQZ/PhNQxCELSRTV57Sm3qqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731091960; c=relaxed/simple;
-	bh=69F+XwHGUM8j8Npu0CVV/bvnKz12bT/JSO/FqsNELcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k6BoXTh3vREmKh8k64c8NWVwr8o7lViCOJBL2szBFOjJ4doKEGNtQLSfTVXOAiQ77JwiNAWo4PrnEwp0kXxWoi6XFgft1SCDDor+QI0lrXneBKQr/FeQNLHNPXAn22uegay1nkplEdEX612txMRLe5PKlPy8Q67jHNC2zIpHE7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gxZ8JrRO; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731091957;
-	bh=69F+XwHGUM8j8Npu0CVV/bvnKz12bT/JSO/FqsNELcI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gxZ8JrRO6t3KYBAYrnFkHOPCL/5Yxe3jqsw9SPxYt2ta/JHJB6SkhPQBfiqMcr44y
-	 P4+zIAAi2twZ/QxYywjpghDPcuDArxlYYzT9MtPWwL86l9BQ6gorsdxHj8zqUo5ROL
-	 /w1ky90u+sQrBJcWsGKcBjPOj9npFAIAoxvQKAeBgquDfpu8RqBXsou5TaDQFopVcD
-	 ILQvaX8nUA/rLvjrjQn+5Rspwrex5SUdCdt6JHTcVNYiBD/FWFFPBZTjWDLFQaycc0
-	 GdWqS0J2qpDMJyO8l85plGqYlVCcKHuzOmrhpi4dx/FfEXbHTGxyMUgE+CQtF+xuX/
-	 fjYO3xBTMPFug==
-Received: from trenzalore.hitronhub.home (unknown [23.233.251.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4088D17E3770;
-	Fri,  8 Nov 2024 19:52:34 +0100 (CET)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sandy Huang <hjc@rock-chips.com>,
-	Heiko Stubner <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Alexey Charkov <alchark@gmail.com>,
-	Jianfeng Liu <liujianfeng1994@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v3 3/3] dt-bindings: display: vop2: Add VP clock resets
-Date: Fri,  8 Nov 2024 13:50:41 -0500
-Message-ID: <20241108185212.198603-4-detlev.casanova@collabora.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241108185212.198603-1-detlev.casanova@collabora.com>
-References: <20241108185212.198603-1-detlev.casanova@collabora.com>
+	bh=K41BlZGcmnvM4Q0mGkBK9NaLG31prveDrn3itXDZS+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kxT6Oxa57xJ+f3S4KY75mcW87Rxw/9NeXe1cJSEMsOoeeDNGpVxNilCin0rN+aqXIzvNNNV9M8GDNsXVO6NpS3S/92EBnCwksCvzPxlpZQ5shWN/YpJQ5S6iDqP1GoYcTCjQcvJFkL8b+0A0UkQGKlcXYX+1W0OiBREXi23OEgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nzmO7JhZ; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-718078c7f53so1187309a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:52:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731091956; x=1731696756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K41BlZGcmnvM4Q0mGkBK9NaLG31prveDrn3itXDZS+M=;
+        b=nzmO7JhZLe/HW2EfIK3nEq3ImKTVysINMGbo4SPEKSXNwDM/NdBPd3rT1W3qvtZObO
+         RbiI3UEIyWjj53yPdomCffFjDHRIGYb2Aoc0nIkzTM/hnGm/aROGnBI0zv0ZSx1dDYYN
+         6InSEXDlGxeyRctLcSxT2+1S03g1HeWN17urbmM0yCuFAJ3DN+kGroe9etiefJgCA/gS
+         hGO6U+9UNSDhXyVyg5xPdDW+M/yfGCp4E4mQvd+IGgtxtzK5/hyVMDYBajLUo07Nf20I
+         wt/Nhtx7JM15DPCeSm0OP6qICKMv7jrGx4+ARhJfFj3tapofvpFKjB+nut+siAMOnVja
+         1L6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731091956; x=1731696756;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K41BlZGcmnvM4Q0mGkBK9NaLG31prveDrn3itXDZS+M=;
+        b=pxaGl3c0gvNVV9KjlKsYlyIZ8yR10XAUEuz0VYE+oUmWLMf1RWIQdEWeQdknl6ZyqF
+         HJ3zysag7cFtmnKMBmzAf+KfeXpyvgob+2P4msqAA3jsUA6ud7OMhOCibwW0ogaJ/g8T
+         1HdSid2CDDGPvV74eIclp87OkHQhFlcYWraMEWrNegfj/CutOcqUA6f4hv4XZ+rLLSyB
+         rzZ47AFSCOhVNMelWTxdt7PpvsMhLEz8HdwyYLIfH+brp1pF6hlsOEBFVICUJhgerkA9
+         l+BwhSdPMS8sBzQsxBy3jrgg+leSFvwSbiYjLCsQ99EuCiw/beIlOdjAp/tFwIkLL5sb
+         0acg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa/V3ovqUMzFrfylGEEWAb1qAZrS0I0lx1MJ41qkxOMZd1Q1qHLpzYuiklWBehMyjtdwqdWsT9BZI1wtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgH+08qLtJJ5FhHrIFOVcg2qXI4QCvKgMYn/zvcDCmoqpA0qWZ
+	rFaJYowv+g0q3e9SMsNQ2FNZF/ipkE407K22mwNK/x63kHZD5y+pUAWWGlb6cuE=
+X-Google-Smtp-Source: AGHT+IF0DH5w0O8qGmV7ItcTdtk3yqOpvqlRHr5o7hKhhog17Xm0CS/LMT+4ejr7iNhY4pRAQep4iw==
+X-Received: by 2002:a05:6830:65c7:b0:710:f22b:c825 with SMTP id 46e09a7af769-71a1c9929eemr2746247a34.1.1731091956557;
+        Fri, 08 Nov 2024 10:52:36 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a1080ecccsm855297a34.18.2024.11.08.10.52.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 10:52:36 -0800 (PST)
+Message-ID: <c94271b1-924b-4de6-b3bb-77e16265bb0d@baylibre.com>
+Date: Fri, 8 Nov 2024 12:52:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than the
+ hardware is capable of
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Mircea Caprioru <mircea.caprioru@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
+ <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add the documentation for VOP2 video ports reset clocks.
-One reset can be set per video port.
+On 11/8/24 12:18 PM, Uwe Kleine-König wrote:
+> The ad7124-4 and ad7124-8 both support 16 channel registers. Don't
+> accept more (logical) channels from dt than that.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
----
- .../display/rockchip/rockchip-vop2.yaml       | 40 +++++++++++++++++++
- 1 file changed, 40 insertions(+)
+Why should the devicetree be limited by the number of channel
+registers? Channel registers are a resource than can be
+dynamically assigned, so it doesn't seem like the devicetree
+should be specifying that assignment.
 
-diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-index 2531726af306..5b59d91de47b 100644
---- a/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-+++ b/Documentation/devicetree/bindings/display/rockchip/rockchip-vop2.yaml
-@@ -65,6 +65,26 @@ properties:
-       - const: dclk_vp3
-       - const: pclk_vop
- 
-+  resets:
-+    minItems: 5
-+    items:
-+      - description: AXI clock reset.
-+      - description: AHB clock reset.
-+      - description: Pixel clock reset for video port 0.
-+      - description: Pixel clock reset for video port 1.
-+      - description: Pixel clock reset for video port 2.
-+      - description: Pixel clock reset for video port 3.
-+
-+  reset-names:
-+    minItems: 5
-+    items:
-+      - const: aclk
-+      - const: hclk
-+      - const: dclk_vp0
-+      - const: dclk_vp1
-+      - const: dclk_vp2
-+      - const: dclk_vp3
-+
-   rockchip,grf:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
-@@ -128,6 +148,11 @@ allOf:
-         clock-names:
-           minItems: 7
- 
-+        resets:
-+          minItems: 6
-+        reset-names:
-+          minItems: 6
-+
-         ports:
-           required:
-             - port@0
-@@ -152,6 +177,11 @@ allOf:
-         clock-names:
-           maxItems: 5
- 
-+        resets:
-+          maxItems: 5
-+        reset-names:
-+          maxItems: 5
-+
-         ports:
-           required:
-             - port@0
-@@ -183,6 +213,16 @@ examples:
-                               "dclk_vp0",
-                               "dclk_vp1",
-                               "dclk_vp2";
-+                resets = <&cru SRST_A_VOP>,
-+                         <&cru SRST_H_VOP>,
-+                         <&cru SRST_VOP0>,
-+                         <&cru SRST_VOP1>,
-+                         <&cru SRST_VOP2>;
-+                reset-names = "aclk",
-+                              "hclk",
-+                              "dclk_vp0",
-+                              "dclk_vp1",
-+                              "dclk_vp2";
-                 power-domains = <&power RK3568_PD_VO>;
-                 iommus = <&vop_mmu>;
-                 vop_out: ports {
--- 
-2.47.0
+It's true we can't do a buffered read of more than 8 or 16
+channels at the same time because it is limited by the number
+of channel registers available on the chip.
+
+But it seems reasonable that if there are more logical channels
+than that, we could read 8 logical channels, then disable those
+and enable a different 8 logical channels and read those by
+reconfiguring the channel registers.
+
 
 
