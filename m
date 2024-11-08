@@ -1,165 +1,179 @@
-Return-Path: <linux-kernel+bounces-401622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920409C1D00
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:30:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58FE9C1D08
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:31:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52114285CD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:30:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B11DB255DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59D21E7C06;
-	Fri,  8 Nov 2024 12:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04BF1E8848;
+	Fri,  8 Nov 2024 12:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="lWYdzHFR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aShVMfxN"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Go7R970h"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1F41E8840
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B5E1E7C06;
+	Fri,  8 Nov 2024 12:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731068991; cv=none; b=g3j3WKQ7A6romMUm6b+wD0uoY4Rh8HApl0bX/ljrGZvBDBtx0oCJ8TzezdYHiLH6SfIe6a+2FZg0bQ1afaBE7EYjYNTJT/VLiBQwjaNfPiWnmdzjtV4lqhUoXiyskdH2BBLKcF+FF2lKlzTUWSUXeAAv1zdPA3nUnrF6sB4tlYk=
+	t=1731069049; cv=none; b=r/Auh+Fv/OjqiVRndwaoHV89DckrBWDRRQHPw0Jw0oF/ucZEDAe5WL0EMsitGkCADJce1HK3pW4Xzs85YDJE8CQMmowg2sdCUoIWGyzsSBC7t6sG15ru+wmKFNHaBiit36+HuB4I2C5xLilqyl59l7AJ905im644E+SkBw9nbcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731068991; c=relaxed/simple;
-	bh=CSMu/9DpbSa0yfPZMXbHx2O/ex35iBdNqUeSMObjfwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEXYsrBaX+1KDCpUkjjS1390W0I6dy3MWyZSFlfqqfYM/qsF5MlvpNPYoQB8DppYAncj4czPtCIPh9Gs1fsqjyJNYBeRvpK/A3XMj59JbM3eJtNqXenR42TCS154Pulp344lX8bISuycSocB54i3q//E9pIkJve/JJkH3gNYQJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=lWYdzHFR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aShVMfxN; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfout.stl.internal (Postfix) with ESMTP id C3DFB114018F;
-	Fri,  8 Nov 2024 07:29:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Fri, 08 Nov 2024 07:29:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1731068988; x=
-	1731155388; bh=lswsVrGpp09FHiwhKyiPQ9xrqp9u/7/U34DSTnM8j8c=; b=l
-	WYdzHFRUNkOnEdL7BrNc6ZYF/SWB5RPZVN3nBWB6JH+U/OyuErKYv2aTwGJoy5K9
-	5q8DKc+NfyEHlay+Aa0xyzRIfIf/Spn2PiYEHeQDX68HXlnARunbj6xJMSrIppuM
-	tHXI+x5ST1SgOhBf4kCfBBpnrZdD2pjkZ4a20HJwFZKDPDDJ22jeosTHsvX8hm4x
-	BS58K3UaaoRZiR5eOGw50fYqQVy75S/q/Cn9Cd7ORqdSEm6gCMXJEz5rmkXkmeh8
-	mqLlt+XtLHDhoWF/eX1XhnELYO10IBj4fM9ceLzzW+RzP6tngRiicBnMe/ZkXXkV
-	pyOts2ykq0pCwZlF4xDUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731068988; x=1731155388; bh=lswsVrGpp09FHiwhKyiPQ9xrqp9u/7/U34D
-	STnM8j8c=; b=aShVMfxNQMyORWY2aVc5G6jMN1xR1Qeja+/EiRYMbiKeBS8Wsbk
-	8N267Y4tAcUo7emrEUMmToMcyC50xwjjECr318MZqrQglH54G/PhlJLEkcdXVUnH
-	cw80mgSP5LHu6ZzeoUnzYbtek2lL+O9zp5DyffSJzc1XwdHi+vEgrh7dw0jgFfsS
-	0Nq/essHXeRpGznCCq3ASKN20f3VP+VlK/cGlHlc3CM4vpNlGgaMMXYdDmzB5Uaj
-	+uouRPKKP81TPnhy+8InXDaO1zT+OfvoXC8qnXLtcl9ryT/WqVquoLFzb/F8/8B1
-	nGjaStpqK3rBQhgpj7q8YidNIWfmVw/WKSg==
-X-ME-Sender: <xms:PAQuZ9SJ3EFN-dM369OEyB8df5YCs_Of6W7lbJIElTHzuXOrR4lf5A>
-    <xme:PAQuZ2xDIV5kxXMd16eSw93M-Yrq8pJpy0iWd06UXHooVaFgPucCt8o7HK7b3AFp2
-    xMGZbOOiHmS-zu9SNA>
-X-ME-Received: <xmr:PAQuZy0Vrb26583A7WxTkx1CGLaaS3pYD_yPU5tQAEvuXhw0gICnNS0P_bSbeN-vvbnkEA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrtdeigdefjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
-    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegvsghivgguvghrmhesgihmihhsshhiohhnrdgtohhmpdhrtghpthhtohepkhhirhhi
-    lhhlrdhshhhuthgvmhhovheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhope
-    ihrghnrdihrdiihhgrohesihhnthgvlhdrtghomhdprhgtphhtthhopehkvgigvggtsehl
-    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtgho
-    tghosehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepgiekieeskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghl
-    rdgtohhm
-X-ME-Proxy: <xmx:PAQuZ1DeFxSowGphQsDsnbdh-mW-uWxdGD1DW73-LKeaJqkTlSJtyw>
-    <xmx:PAQuZ2hM6Y3kVJq5AsSIVArK1X75Zw32D2iiX52TPIwsD_5czR6kRw>
-    <xmx:PAQuZ5qUwSd5u8ENfxYLBwSawnns1pbVOlr8RP_lfoWXQ4qz1kJ6IA>
-    <xmx:PAQuZxgzhNUWFzc9UvdeXtuNexKMgbytGapWJ1bNmix6C-F1eCL-9w>
-    <xmx:PAQuZ_WiLzPmTwK5YCnLSusEadyAFfOGE9Q7uMBvSR9Gk6ALJ3X1Isbo>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 8 Nov 2024 07:29:45 -0500 (EST)
-Date: Fri, 8 Nov 2024 14:29:42 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-coco@lists.linux.dev, x86@kernel.org, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
-Message-ID: <ozlssxlgc7a7hkwbq3tndam65l6l4ttfri6x3dmzye5qr5ehtn@qflzhgnipuxa>
-References: <20241021034553.18824-1-yan.y.zhao@intel.com>
- <87frop8r0y.fsf@email.froward.int.ebiederm.org>
- <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
- <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
- <ihzvi5pwn5hrn4ky2ehjqztjxoixaiaby4igmeihqfehy2vrii@tsg6j5qvmyrm>
- <ktwgnbsni5pt2cznxj2g6qyb3xwkhjrciym6lpk3uvsxgi4324@tllciap26vb5>
+	s=arc-20240116; t=1731069049; c=relaxed/simple;
+	bh=Ldm4gOTIksb3nGyt0Pl1ll27PtjAelWbJrhBkyzYrrk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZGPOzXR6iig9xiBZt5Lj66PAmUeM5ran3bVuIswNNoBVK6iYiCg4I/rFuGe2u8+KSSkenN1zJVVHkGvSQ5azRquvZYhTBVIui0YsjOg2d4HaY4uoxrj8LBRB8jY2/Cu6qNDGji1C2l0zFXvmioOpTDhYnUCcmsQUNnZDzxlIJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Go7R970h; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4A8CUUUS067685;
+	Fri, 8 Nov 2024 06:30:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731069030;
+	bh=mLJWNoZktoBO6v4MYX1aptzzDn/jCQdbA65IirP2CYs=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Go7R970hAZD8Dp0jhW+EXrGCw4u+TkKtu5SGWVhtOEFhcv/tZF0RY4alZanxMPVeP
+	 0X6bB/KR3pO48ikHRNatEbZU3QOCKGpBUw2mh22WpkkeCqt0VSAvfqnWTslVxkq9Lz
+	 +EQQ/p3pzVKxBVXetES6f7Lb40bar0fT+57qKNgk=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4A8CUUBC005948
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 8 Nov 2024 06:30:30 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 8
+ Nov 2024 06:30:29 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 8 Nov 2024 06:30:30 -0600
+Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4A8CUSlk004575;
+	Fri, 8 Nov 2024 06:30:29 -0600
+Date: Fri, 8 Nov 2024 18:00:28 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Roger Quadros <rogerq@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Pekka Varis <p-varis@ti.com>
+Subject: Re: [PATCH net-next 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
+ to priority map for RX
+Message-ID: <8e6053ca-77fc-4f03-ae54-3f6af0addb88@ti.com>
+References: <20241105-am65-cpsw-multi-rx-dscp-v1-0-38db85333c88@kernel.org>
+ <20241105-am65-cpsw-multi-rx-dscp-v1-2-38db85333c88@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <ktwgnbsni5pt2cznxj2g6qyb3xwkhjrciym6lpk3uvsxgi4324@tllciap26vb5>
+In-Reply-To: <20241105-am65-cpsw-multi-rx-dscp-v1-2-38db85333c88@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Nov 04, 2024 at 10:35:53AM +0200, Kirill A. Shutemov wrote:
-> On Fri, Oct 25, 2024 at 04:56:41PM +0300, Kirill A. Shutemov wrote:
-> > On Wed, Oct 23, 2024 at 10:44:11AM -0500, Eric W. Biederman wrote:
-> > > "Kirill A. Shutemov" <kirill@shutemov.name> writes:
-> > > 
-> > > > Waiting minutes to get VM booted to shell is not feasible for most
-> > > > deployments. Lazy is sane default to me.
-> > > 
-> > > Huh?
-> > > 
-> > > Unless my guesses about what is happening are wrong lazy is hiding
-> > > a serious implementation deficiency.  From all hardware I have seen
-> > > taking minutes is absolutely ridiculous.
-> > > 
-> > > Does writing to all of memory at full speed take minutes?  How can such
-> > > a system be functional?
-> > 
-> > It is not only memory write (to encrypt the memory), but also TDCALL which
-> > is TD-exit on every page. That is costly in TDX case.
-> > 
-> > On single vCPU it takes about a minute to accept 90GiB of memory.
-> > 
-> > It improves a bit with number of vCPUs. It is 40 seconds with 4 vCPU, but
-> > it doesn't scale past that in my setup.
-> > 
-> > But it is all rather pathological: VMM doesn't support huge pages yet and
-> > all memory is accepted in 4K chunks. Bringing 2M support would cut number
-> > of TDCALLs by 512.
-> > 
-> > Once memory accepted, memory access cost is comparable to bare metal minus
-> > usual virtualisation tax on page walk.
-> > 
-> > I don't know what the picture looks like in AMD case.
-> > j
-> > > If you don't actually have to write to the pages and it is just some
-> > > accounting function it is even more ridiculous.
-> > > 
-> > > 
-> > > I had previously thought that accept_memory was the firmware call.
-> > > Now that I see that it is just a wrapper for some hardware specific
-> > > calls I am even more perplexed.
-> > 
-> > It is hypercall basically. The feature is only used in guests so far.
+On Tue, Nov 05, 2024 at 04:18:11PM +0200, Roger Quadros wrote:
+
+Hello Roger,
+
+> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
+> appropriate priority queue via DSCP to Priority mapping registers
+> (CPSW_PN_RX_PRI_MAP_REG).
 > 
-> Eric, can we get the patch applied? It fixes a crash.
+> We use the upper 3 bits of the DSCP field that indicate IP Precedence
+> to map traffic to 8 priority queues.
+> 
+> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> ---
+>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 50 ++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index 0520e9f4bea7..65fbf6727e02 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -71,6 +71,8 @@
+>  #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
+>  #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
+>  
+> +#define AM65_CPSW_PORTN_REG_CTL			0x004
 
-Ping?
+nitpick: indentation needs to be fixed here to align with the macros
+below.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> +#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
+>  #define AM65_CPSW_PORTN_REG_SA_L		0x308
+>  #define AM65_CPSW_PORTN_REG_SA_H		0x30c
+>  #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
+> @@ -94,6 +96,10 @@
+>  /* AM65_CPSW_PORT_REG_PRI_CTL */
+>  #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
+>  
+> +/* AM65_CPSW_PN_REG_CTL */
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
+> +#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
+> +
+>  /* AM65_CPSW_PN_TS_CTL register fields */
+>  #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
+>  #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
+> @@ -176,6 +182,49 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
+>  	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
+>  }
+>  
+> +#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
+> +#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
+> +static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
+> +{
+> +	int reg_ofs;
+> +	int bit_ofs;
+> +	u32 val;
+> +
+> +	if (dscp > AM65_CPSW_DSCP_MAX)
+> +		return -EINVAL;
+
+am65_cpsw_port_set_dscp_map() seems to be invoked by
+am65_cpsw_port_enable_dscp_map() below, where the above check is guaranteed
+to be satisfied. Is the check added for future-proofing this function?
+
+> +
+> +	if (pri > AM65_CPSW_PRI_MAX)
+> +		return -EINVAL;
+> +
+> +	reg_ofs = (dscp / 8) * 4;	/* reg offset to this dscp */
+> +	bit_ofs = 4 * (dscp % 8);	/* bit offset to this dscp */
+
+Maybe a macro can be used for the "4" since it is not clear what it
+corresponds to. Or maybe two macros can be used for "reg_ofs" and
+"bit_ofs".
+
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> +	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
+> +	val |= pri << bit_ofs;			/* set */
+> +	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+> +	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
+
+The above readback seems to be just to flush the writel(). A comment of
+the form:
+/* flush */
+might help, considering that other drivers do the same. Also, assigning
+the returned value to "val" might not be required unless it is intended to
+be checked.
+
+[...]
+
+Regards,
+Siddharth.
 
