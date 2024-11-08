@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-401854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4586E9C2026
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2AB9C202A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9341F24C8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 888421F22A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B51B1F6680;
-	Fri,  8 Nov 2024 15:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA421F5857;
+	Fri,  8 Nov 2024 15:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MPU8BB2h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCztN+Nb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68121F5831;
-	Fri,  8 Nov 2024 15:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45841F4FC8;
+	Fri,  8 Nov 2024 15:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078843; cv=none; b=hXyXLnF1oySuE3iJQmKSgnLNIWMQ6laOPfGuD9eJmjShQnTwQDJabNjDWoOdc002tDlayHDcv/2oNDYwE+6PGO5TnpBBAvIMda0h/lN2TXGmeUcWR2HQPfTPEHqvtkGwEXe33iNguVduBOihkPEIzJ6j/hTQi6DhawFg2i8RoUU=
+	t=1731078881; cv=none; b=Y2KIGxDqWts8wKb1lX9lXCwA5UpIJ81aVD9gHV2fZVQTHxGeCbNVS1Cj1YfHDZmk+C2+zUmJlVtzonSmcQ3YdQK4ktlCeNEunSdsXsOTEpsPFcdHhR7BKCC/GHr3MFGFXX0jLlnatVTTczW6eaF4bshwcatxeBC6zLEIvk++sFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078843; c=relaxed/simple;
-	bh=D1KdnZEqwOBAkW2gdT2OYagXEMiuHefSlBOJ+Jlh4Ng=;
+	s=arc-20240116; t=1731078881; c=relaxed/simple;
+	bh=e/WBFn6CRKQ9dYFlggr5YIMbLvpXIGE7lX/v2YwnbZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5yMgbhFvNWNUOCGCaYeSL5+fBLeTMDJF6esoefPICvgYYCdVdKbg6u81R1A8TDuAjXJtDgifBFSRKW0MsfL2iBkbQsJlR3+8rvNwZqdg1Tg1Hcg9lNQGUtSz1+dC3KwmvJSoDW9UQqMkPj5KHcni/kyeA3BdcOB+WAI6yr+4vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MPU8BB2h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40592C4CECD;
-	Fri,  8 Nov 2024 15:14:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XzWbYmzhxODLLCI9CPm2NtGYNwPrmKvQmVIoHrzj7eGJ03XS2ajuaG/86JBmE2F5oY+2a+f0FzhaLVrfBCLxU077hpTfng9paet2+1oDkmwLUMlR23cqKlUp/5hNqXWvPuf4OQ0vIA3sNFA9SnRtIJ1XeixpP5F/285RqwIV4lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCztN+Nb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609C6C4CECD;
+	Fri,  8 Nov 2024 15:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731078843;
-	bh=D1KdnZEqwOBAkW2gdT2OYagXEMiuHefSlBOJ+Jlh4Ng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MPU8BB2hxklea4mlCBAKGkUL1VXNzNev8Gf9OaXw4U4XGqGcnoDJCLJ1RAq+pOQcF
-	 osWdPeKLF3P4DCtV+h+eH4tWiDBKObPNj7OHVMgACVScEwKOO4SFjKVCXp1JYCYukr
-	 sVx89JzBiAyqB/PODaA6dInFqMi0a03hdPBj8/4ns1ajaDltqGbsSAU8frDpbRps8H
-	 BeT7Jn/rFmDn7OQLQDMHkrVjJNEtU0+7bCU2mFY1ycXfSwpjpDIxTUWrQ62JrrQJFW
-	 UCL5yvHklEPA9Mnf5ac3fTh/r5tMZ8oGYjY2XgK/0PyB+FZcPmu72bBYpIdX7qp5ij
-	 MkxqdymErTbWw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t9QgX-000000005v6-0BX0;
-	Fri, 08 Nov 2024 16:14:05 +0100
-Date: Fri, 8 Nov 2024 16:14:05 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Cristian Marussi <cristian.marussi@arm.com>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
-	andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
-	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
-	arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
- Extensions
-Message-ID: <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <ZytnRc94iKUfMYH0@hovoldconsulting.com>
- <ZyvLktLUZOGP-LH5@pluto>
+	s=k20201202; t=1731078881;
+	bh=e/WBFn6CRKQ9dYFlggr5YIMbLvpXIGE7lX/v2YwnbZw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=hCztN+NbNG+V9Tv5AiEI7iS4cmMdVd16lEJGf0vYvfIGWvZg6LgYYccBq7i4J10Kq
+	 6zZ/j69lX9zde009X5QFYFJPy8h+tU4xNbkyhQHIm/xwWy0QZ41YlGfks6Dplw5vWd
+	 NeGNceDZ8JikH6SLEu3eLXD7nx09lI7WIldmjmzll4Zqq9eTYHBQOsG2P/znmcDYqc
+	 aeO/OEfTAgUOpueRIMZTWbjcLh2zZgd+uUqpr/Nn29+kloIzqXpg4gEwBGKI5PyKTk
+	 ohg94/oO43gQNZ3hjEBpC/M6b9c7XLD+C4FggwfSrVbifiIh4Ythgjq2bDI24e7252
+	 QglEw3NbXsEQA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0CD8CCE09E4; Fri,  8 Nov 2024 07:14:41 -0800 (PST)
+Date: Fri, 8 Nov 2024 07:14:41 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Mingcong Bai <jeffbai@aosc.io>,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	LKML <linux-kernel@vger.kernel.org>, rcu <rcu@vger.kernel.org>,
+	sakiiily@aosc.io, Kexy Biscuit <kexybiscuit@aosc.io>
+Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
+ warnings
+Message-ID: <814ca9e3-df3b-45ce-ad36-9659b445c499@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
+ <ZxjLQzHKuR-w16hF@pavilion.home>
+ <2b25a988-6965-48e4-a788-58dd8a776e06@leemhuis.info>
+ <e2ffd3d06fad236ea900d4fb439b2240@aosc.io>
+ <937c258b-f34c-4f63-949d-a5e7c8db714d@leemhuis.info>
+ <ZyyQuTfMMSLwStf_@pavilion.home>
+ <a7fc57a1a49b5f710c4354ca21c91dba@aosc.io>
+ <Zy4WKKq18GunXa6S@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZyvLktLUZOGP-LH5@pluto>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zy4WKKq18GunXa6S@localhost.localdomain>
 
-On Wed, Nov 06, 2024 at 08:03:30PM +0000, Cristian Marussi wrote:
-> On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
-
-> > First, I expected the drivers to be loaded automatically when built as
-> > modules, but that did not happen so something appears to be missing.
-
-> Even though, module usage is tracked by the core AND when an SCMI Vendor
-> driver tries to use protocol_X, it causes protocol_X to be initialized
-> (calling its protocol_init), there is NO auto-loading for SCMI Vendor
-> Protocols when bult as LKM...because there were really no ask till now
-> and this stuff is in general needed so very early dburing boot...so the
-> usecase of all these LKM modules is just debug/test as in your case
-> (or in mine frequently)....
-> 
-> ...and I am NOT saying with this that is necessarily right or must be
-> stay like this...just explaining how it is now....
-
-Ok, thanks for clarifying.
-
-> ....anyway...it is mostly trivial to add vendor/protocols autoloading
-> transparently...today I was experimenting with a patch that triggers
-> autoloading based on a generic common alias pattern in the form
-> 'scmi-protocol-0x<NN>' (with NN the specific protocol ID of course)
-> that triggers the loading as soon as the SCMI Vendor driver tries to
-> access the protocol during its probe...
-> 
-> ....I will post it for the next cycle once it is clean.
-> (unless I am missing something else that you want to add...)
-
-Sounds like that would solve the issue. I was just expecting the memlat
-client driver and its protocol dependency to be loaded automatically
-when built as modules on machines that can use them (e.g. as we don't
-want to have every vendor protocol driver built into distro kernels,
-etc).
-
-> > Second, after loading the protocol and client drivers manually (in that
-> > order, shouldn't the client driver pull in the protocol?), I got:
+On Fri, Nov 08, 2024 at 02:46:16PM +0100, Frederic Weisbecker wrote:
+> Le Fri, Nov 08, 2024 at 12:29:40AM +0800, Mingcong Bai a écrit :
+> > Hi Frederic,
 > > 
-> > 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
-> > 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
-> > 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
-> > 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
+> > <snip>
 > > 
-> > which seems to suggest that the firmware on my CRD does not support this
-> > feature. Is that the way this should be interpreted? And does that mean
-> > that non of the commercial laptops supports this either?
+> > > Sorry for the lag, I still don't understand how this specific commit
+> > > can produce this issue. Can you please retry with and without this
+> > > commit
+> > > reverted?
+> > 
+> > Just tested v6.12-rc6 with and without the revert. Without the revert, the
+> > touchpad and the wireless adapter both stopped working, whereas with the
+> > revert, both devices functions as normal.
+> > 
+> > I have attached the dmesg for both kernels below. Unlike the log we got last
+> > time, there is no direct reference to tg3 any more, but the NMI backtrace
+> > still pointed to NetworkManager and net/netlink-related functions (perhaps a
+> > debug kernel would be more helpful?). Here's a snippet:
+> > 
+> > [   10.337720] rcu: INFO: rcu_preempt detected expedited stalls on
+> > CPUs/tasks: { P683 } 21 jiffies s: 781 root: 0x0/T
+> > [   10.339168] rcu: blocking rcu_node structures (internal RCU debug):
+> > [   10.591480] loop0: detected capacity change from 0 to 8
+> > [   11.777733] rcu: INFO: rcu_preempt detected expedited stalls on
+> > CPUs/tasks: { 3-.... } 21 jiffies s: 1077 root: 0x8/.
+> > [   11.779210] rcu: blocking rcu_node structures (internal RCU debug):
+> > [   11.780630] Sending NMI from CPU 1 to CPUs 3:
+> > [   11.780659] NMI backtrace for cpu 3
+> > [   11.780663] CPU: 3 UID: 0 PID: 1027 Comm: NetworkManager Not tainted
+> > 6.12.0-aosc-main #1
 > 
-> This seems like FW rejecting the command, maybe just only for the specific
-> Linux OSPM agent since it is not allowed to ask for that specific setup,
-> and only Sibi can shed a light here :D
+> Funny, this happens on bootup and no CPU has ever gone offline, so the path
+> modified by this patch shouldn't have been taken. And yet this commit has
+> an influence to the point of reliably triggering that stall.
 > 
-> ...but this Vendor protocol, if I am not mistaken, AFAIU, uses a bunch
-> of "algo strings" coming from tokens it picks from DT and use thsoe as
-> params for the set_param() VendorProtocol ops...cannot be that a bad/missing
-> DT value could cause the FW to reject the command due to the params ?
-> (even if the command is supported)...
-> 
-> ...just a guess ah... I have no real knowledge of this venndor proto...
+> I'm running off of ideas, Paul any clue?
 
-Yeah, hopefully Sibi can shed some light on this. I'm using the DT
-patch (5/5) from this series, which according to the commit message is
-supposed to enable bus scaling on the x1e80100 platform. So I guess
-something is missing in my firmware.
+Here is one straw to grasp at...
 
-Johan
+Is it possible that one of the CPUs had a problem coming online at boot,
+and therefore backed out of the online process, thus appearing to at
+least some of the CPU-hotplug notifiers to have gone offline?
+
+							Thanx, Paul
 
