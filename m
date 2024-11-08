@@ -1,179 +1,186 @@
-Return-Path: <linux-kernel+bounces-401315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E099C18BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 289C09C18BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3038D282DF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:04:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9BE282CA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C5C1E0DDB;
-	Fri,  8 Nov 2024 09:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6A61E0DE0;
+	Fri,  8 Nov 2024 09:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/vhihQB"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dyTmE3Ni"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27FE28EB;
-	Fri,  8 Nov 2024 09:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585871E0B70
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056673; cv=none; b=uywnirMG85sZnsmb5Jtyqp60mt6S0qvxa3XWw2qpx8twkFoNtdvCs3MjmrhpJNoxi1dagrrWjGYCxTKFRcbjMzvNpUQEcyh9+8aGY88RExMRPkzMLfpOByhAIt0aMM/Yi1SnXjhrAMitc7xtjBn0m+LzKEVVsDrw+odcX6WXbG4=
+	t=1731056729; cv=none; b=QBATgCcFRNAzMXrK+dg9l9PD3FjRnheRriaWV1mwIaFzX7+HprT0TJzl1K6Y6J5BuEKPME9xCLcVaI2b3drTESi0mh1oa/3p2w2yyLwrSfEVFnWtHtMz4w5qMT75q5ZDM8XCuYgNd4QCTlr9Cv4DxvJRguaq5LSilqSaGhv5lXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056673; c=relaxed/simple;
-	bh=AyeEwDBun6w6uaXopmqvpdcKmSZAcU23Z7sFvkx30EA=;
-	h=Date:Message-ID:From:Subject:To:Cc:In-Reply-To:References; b=IoaRMjgbARno/1KuiebqJSkfB7uuqikguVb+DMhfnZ3AoH7GpwyndU0llWiiBqFUNU+kWBWUYXngl/DAqFWQUz64R5fwFxOCKPBnmA6e7e/Uig8kr1SeijAlOejXMeyHBNIr45uvP9JRQ1ytIW5N2fx5RRjMhRW57zZcGYfxMtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/vhihQB; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53c779ef19cso2140177e87.3;
-        Fri, 08 Nov 2024 01:04:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731056670; x=1731661470; darn=vger.kernel.org;
-        h=references:in-reply-to:cc:to:subject:from:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ukb0WhkCUjRfInWYD6LunpJsHMp747p0BjeFB9MCAbc=;
-        b=D/vhihQB32XPBevEm4yzG/vmqW8CkoH8hs5+7bEhgZuvYdwBGTcUVKESya5iy7zYb1
-         yv/zAkQuQB0UqIo/f8RXFqGXZG3hWn7kIiDUufIfDK9vOJP7VETXVdQxzRRCVXUkozol
-         uPXVlhrwPCef0xb5iwvFFRTj+UuP36++8TF8goQZePPQpJAKBt+Qb5NIEPPk5UjGxinA
-         m/rePocDz3l3Dyk1OrGhJj7uQJeeRm7Ka242G7McQBlADe1aGBcw+DI1BAjwwNNxCPEQ
-         wsFGdfprMK9ZPHiUVs0HiEr/vKeGoSrwWDalSAGr6kITwsVdzardZdNS0COC+p/spkJ+
-         XRTQ==
+	s=arc-20240116; t=1731056729; c=relaxed/simple;
+	bh=/9i+bLZW6te/f0iYhWbjrbhg4l3hVSSUfE4orLqvC38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J4z4056wK7Hh8paJpgdh4FD+kh6CFylatEthTlq7ek9/3UlnIYRfV+BtunC31I6nG89IksRxSz1r5WFDCDa89vOISj1W8eSMrePsBknScg2hfPVhfDq7Q7jBugE27p3N/zS+Crbn6Dn0BeOgsTZX8Wz5G8106YF2pUkewiYqYJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dyTmE3Ni; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731056725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrElxwqnJR5DH5QdMVYz2iwh68nuYwJL/C3mT8YyNoM=;
+	b=dyTmE3NiWWWdTF6966940Og/Lqo2a5eG4Q6hKWqPmOA2XSZ10isjs3A1OgmTlJ1vefr402
+	vFcrFkRabKTp9AvmIomdhP84i7vXUY2YWm2W1lyJAkQgbTqFbA0/kO7QVy1mnCX4KSDwkL
+	R79a/H3A9nLaVDJEBX+UWomeGN9C0r8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-623-fnbyoRwBPae0cY3j1p8FIw-1; Fri, 08 Nov 2024 04:05:23 -0500
+X-MC-Unique: fnbyoRwBPae0cY3j1p8FIw-1
+X-Mimecast-MFC-AGG-ID: fnbyoRwBPae0cY3j1p8FIw
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso1045969f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:05:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731056670; x=1731661470;
-        h=references:in-reply-to:cc:to:subject:from:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ukb0WhkCUjRfInWYD6LunpJsHMp747p0BjeFB9MCAbc=;
-        b=LqW1m13dzOEp4RXeXP2fvmKMGIRX2FpAU0euCYPxWkitwIuDztl50Sm3XDXLgZhbWP
-         Nr8RF/oKtSw1ja4ZoD5yVO6uKnEVubeYj7+6AwiRlQRv9i5tPMBpwR8f9PBbsjAzAPa1
-         3fOTkBTA06DSWT7HcQn5OG/1xkLalbNuJ620c9d94YVSZwimVzT7GmUQzx5H8uqUU67R
-         CD4bb+x+5m6rLz1PiP1gfzHtNXf4+tiJnH6z8kDoTBR8sd+mqo8Ng+yytcAKfnzc1hxl
-         3Hnod/35+k3IOzjQhKpbBz5WUR2/BEuLUnuZyLvLfIuO+qobA4QHd4P/pV/Uy/wehkJp
-         BGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfzMGRKIhRle9zTX+0TqDpBlsXlS6/FwcMrjBZd/7u89hnli7GnI7B73RFURX22iwC9Y5POIMHawV2dA==@vger.kernel.org, AJvYcCWlNB2rFK/HUUSUZC+0/gyEWpHmQAsMJ+odg4Cli0UIFdf1T351piyqMNgNB43SZts4+q3Xv0BvI2In@vger.kernel.org, AJvYcCX67hWynzqhlhh+hqeup54dhfbPMS/n0GyFSxd9DVdTMFnn5fiPOXSGSnNN3OGcvq9B9zHqDjA92iHGKvqh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweh9HluLb2U/TMaK1h+R1NpTpuxT8Om6cLP6A7MnJ5a4SFs0mk
-	yn5T1dXiWLyBqJZxtbN9Z34lEvXUziN8I7jeTWidt+BtqGR3DTKl3d6gbz2k
-X-Google-Smtp-Source: AGHT+IFOpAxizeoWAsAf1Ig+nqrd38luvrclBvzCYJOG2h7JJE69AHUF22najhZFnz4M6jEFU735Hg==
-X-Received: by 2002:a05:6512:1288:b0:539:fa3d:a73 with SMTP id 2adb3069b0e04-53d862be309mr1001057e87.39.1731056669460;
-        Fri, 08 Nov 2024 01:04:29 -0800 (PST)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed987d33sm4037872f8f.43.2024.11.08.01.04.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 01:04:28 -0800 (PST)
-Date: Fri, 08 Nov 2024 10:04:27 +0100
-Message-ID: <c6d634d088f77abd956dbd125c26d43d@gmail.com>
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Subject: Re: iio, syfs, devres: devm_kmalloc not aligned to pow2 size argument
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Cameron <jic23@kernel.org>, Joe Perches <joe@perches.com>, Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>
-Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>, Peter Rosin <peda@axentia.se>, "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, linux-block@vger.kernel.org
-In-Reply-To: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
-References: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
+        d=1e100.net; s=20230601; t=1731056722; x=1731661522;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LrElxwqnJR5DH5QdMVYz2iwh68nuYwJL/C3mT8YyNoM=;
+        b=j1Efay7VYcyB6yePQ6sKnkdj7LgQZvFzaBR6Sq5jZmcVExAzh0z5UVT/ubEMA+byW3
+         gX0muWuWE1LCIPqfkzzHeVAE92iJdHC8CM730uvxJbzp4IKJUUwtOzhtL8N97gVOHW5j
+         wA1sMaRv0hczlXVr22YYn1Gv4olfhd49hO5vhDE/ntsDDAdo9paLvBVpfc4OAUchPDfX
+         XfN35vE6ba8g6F9L5kVN5UFDoo/BXzdZ8UpkDJNyklgn9wzlNs0Td/4EBmIks+5+9EX/
+         3/F9KXRRQ+yBJCD60QlEZ8mCgMCGEgZuMqFjsvz4pftlwN6MUCTGyPSh5a9w1wZ4/n9I
+         PBeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVynDLS7j/eXxydzl5otl/1859e3JlSoY6kcWo7k9zr9uYpOmoLRirvavPrEGGHvCwHtFrXSG7S4c/+xPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5E4o8+JggDzVkJBAWR+Z/Sz9Q5Utu8hrOJ6ptlGkCb8SEZiBr
+	UKHzZEqmLsB95IQ6qNMpvOVLIvA5qiYRpyuxYri9gHRiSBEyr4vZgUGSgCTIfTRfv8W+ZCCx23Z
+	hs+6vFTyyrWr3WMQIpcp1aNm4r909mmr1HN9SMo1O+nJkgn9k/VAJjuWsJk+VDfbJ3ojxfTRkgr
+	yg4ANvp1CYa/SdBCFpv1NpcWXDhooK2PrzbIMe
+X-Received: by 2002:a05:6000:480b:b0:37d:45f0:dd08 with SMTP id ffacd0b85a97d-381f186731amr1816416f8f.11.1731056722540;
+        Fri, 08 Nov 2024 01:05:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEAUqJcQr+bA/27fCCgGUP2nub60cseB08K8/4GgQUbkE5m0tGGw43rxa/0FGBd1Ft3SGpNzTEYfwcvTxp7t40=
+X-Received: by 2002:a05:6000:480b:b0:37d:45f0:dd08 with SMTP id
+ ffacd0b85a97d-381f186731amr1816400f8f.11.1731056722162; Fri, 08 Nov 2024
+ 01:05:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241106160425.2622481-1-seanjc@google.com>
+In-Reply-To: <20241106160425.2622481-1-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 8 Nov 2024 10:05:10 +0100
+Message-ID: <CABgObfb5E2WTt50eCx8R6TWD+o+CnOhx3zHGmeB9Xd3EA+sgUw@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: x86 and selftests fixes for 6.12-rcN
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 13:04:10 +0100, matteomartelli3@gmail.com wrote:
-> Hi everyone,
-> 
-> I found an issue that might interest iio, sysfs and devres, about a
-> particular usage of devm_kmalloc() for buffers that later pass through
-> sysfs_emit() or sysfs_emit_at(). These sysfs helpers require the output
-> buffer to be PAGE_SIZE aligned since commit 2efc459d06f1 ("sysfs: Add
-> sysfs_emit and sysfs_emit_at to format sysfs output"). Such requirement
-> is satisfied when kmalloc(PAGE_SIZE, ...) is used but not when
-> devm_kmalloc(PAGE_SIZE,...) is used as it actually returns a pointer to
-> a buffer located after the devres metadata and thus aligned to
-> PAGE_SIZE+sizeof(struct devres).
-> 
-> Specifically, I came across this issue during some testing of the
-> pac1921 iio driver together with the iio-mux iio consumer driver, which
-> allocates a page sized buffer to copy the ext_info of the producer
-> pac1921 iio producer driver. To fill the buffer, the latter calls
-> iio_format_value(), and so sysfs_emit_at() which fails due to the buffer
-> not being page aligned. This pattern seems common for many iio drivers
-> which fill the ext_info attributes through sysfs_emit*() helpers, likely
-> necessary as they are exposed on sysfs.
-> 
-> I could reproduce the same error behavior with a minimal dummy char
-> device driver completely unrelated to iio. I will share the entire dummy
-> driver code if needed but essentially this is the only interesting part:
-> 
-> 	data->info_buf = devm_kzalloc(data->dev, PAGE_SIZE, GFP_KERNEL);
-> 	if (!data->info_buf)
-> 		return -ENOMEM;
-> 
-> 	if (offset_in_page(data->info_buf))
-> 		pr_err("dummy_test: buf not page algined\n");
-> 
-> When running this, the error message is printed out for the reason above.
-> 
-> I am not sure whether this should be addressed in the users of
-> devm_kmalloc() or in the devres implementation itself. I would say that
-> it would be more clear if devm_kmalloc() would return the pointer to the
-> size aligned buffer, as it would also comply to the following kmalloc
-> requirement (introduced in [1]):
-> 
-> The address of a chunk allocated with `kmalloc` is aligned to at least
-> ARCH_KMALLOC_MINALIGN bytes. For sizes of power of two bytes, the
-> alignment is also guaranteed to be at least to the respective size.
-> 
-> To do so I was thinking to try to move the devres metadata after the
-> data buffer, so that the latter would directly correspond to pointer
-> returned by kmalloc. I then found out that it had been already suggested
-> previously to address a memory optimization [2]. Thus I am reporting the
-> issue before submitting any patch as some discussions might be helpful
-> first.
-> 
-> I am sending this to who I think might be interested based on previous
-> related activity. Feel free to extend the cc list if needed.
+On Wed, Nov 6, 2024 at 5:12=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> Please pull several fixes for 6.12, and to save us both effort, please al=
+so
+> apply several fixes that should probably go into 6.12 (the selftest fix
+> definitely needs to land in 6.12).
+>
+>   https://lore.kernel.org/all/20241106034031.503291-1-jsperbeck@google.co=
+m
+>   https://lore.kernel.org/all/20241105010558.1266699-2-dionnaglaze@google=
+.com
+>   https://lore.kernel.org/all/20241106015135.2462147-1-seanjc@google.com
 
-Adding some more context to better understand the impact of this.
+Done.
 
-With a trivial grep it looks like there are only few instances where
-devm_k*alloc() is used to allocate a PAGE_SIZE buffer:
+> And while I have your attention, I'd also like your input on a proposed "=
+fix"
+> for Intel PT virtualization, which is probably belongs in 6.12 too, if yo=
+u
+> agree with the direction.
+>
+>   https://lore.kernel.org/all/20241101185031.1799556-2-seanjc@google.com
 
-$ git grep -n 'devm_.*alloc.*(.*PAGE_SIZE'
-block/badblocks.c:1584:         bb->page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-drivers/iio/multiplexer/iio-mux.c:287:          page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-drivers/mtd/nand/raw/mxc_nand.c:1702:   host->data_buf = devm_kzalloc(&pdev->dev, PAGE_SIZE, GFP_KERNEL);
-drivers/usb/gadget/udc/gr_udc.c:1987:           buf = devm_kzalloc(dev->dev, PAGE_SIZE, GFP_DMA | GFP_ATOMIC);
-sound/soc/sof/debug.c:277:              dfse->buf = devm_kmalloc(sdev->dev, PAGE_SIZE, GFP_KERNEL);
+Yep, pulled it as well.
 
-What takes my attention is the bb->page in blocks/badblocks.c, being the
-buffer named "page" maybe it is supposed to be page aligned?
+Paolo
 
-Also in [3] it was suggested to add the page alignment check for
-sysfs_emit() and sysfs_emit_at(), but I haven't found why that's
-necessary. My guess is for optimizations to avoid the buffer to spread
-in more than one page. Is this correct? Are there other reasons? Can
-anyone add more details? I think it would help to understand whether
-page alignment is necessary in the other instances of devm_k*alloc().
+> Note, this is based on v6.12-rc5 in order to pull in the necessary base f=
+or
+> the -march=3Dx86-64-v2 fix.
+>
+> The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e=
+7e:
+>
+>   Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-fixes-6.12-rcN
+>
+> for you to fetch changes up to e5d253c60e9627a22940e00a05a6115d722f07ed:
+>
+>   KVM: SVM: Propagate error from snp_guest_req_init() to userspace (2024-=
+11-04 22:03:04 -0800)
+>
+> ----------------------------------------------------------------
+> KVM x86 and selftests fixes for 6.12:
+>
+>  - Increase the timeout for the memslot performance selftest to avoid fal=
+se
+>    failures on arm64 and nested x86 platforms.
+>
+>  - Fix a goof in the guest_memfd selftest where a for-loop initialized a
+>    bit mask to zero instead of BIT(0).
+>
+>  - Disable strict aliasing when building KVM selftests to prevent the
+>    compiler from treating things like "u64 *" to "uint64_t *" cases as
+>    undefined behavior, which can lead to nasty, hard to debug failures.
+>
+>  - Force -march=3Dx86-64-v2 for KVM x86 selftests if and only if the uarc=
+h
+>    is supported by the compiler.
+>
+>  - When emulating a guest TLB flush for a nested guest, flush vpid01, not
+>    vpid02, if L2 is active but VPID is disabled in vmcs12, i.e. if L2 and
+>    L1 are sharing VPID '0' (from L1's perspective).
+>
+>  - Fix a bug in the SNP initialization flow where KVM would return '0' to
+>    userspace instead of -errno on failure.
+>
+> ----------------------------------------------------------------
+> Maxim Levitsky (1):
+>       KVM: selftests: memslot_perf_test: increase guest sync timeout
+>
+> Patrick Roy (1):
+>       KVM: selftests: fix unintentional noop test in guest_memfd_test.c
+>
+> Sean Christopherson (4):
+>       KVM: selftests: Disable strict aliasing
+>       KVM: selftests: Don't force -march=3Dx86-64-v2 if it's unsupported
+>       KVM: nVMX: Treat vpid01 as current if L2 is active, but with VPID d=
+isabled
+>       KVM: SVM: Propagate error from snp_guest_req_init() to userspace
+>
+>  arch/x86/kvm/svm/sev.c                          |  7 ++++--
+>  arch/x86/kvm/vmx/nested.c                       | 30 +++++++++++++++++++=
++-----
+>  arch/x86/kvm/vmx/vmx.c                          |  2 +-
+>  tools/testing/selftests/kvm/Makefile            | 10 +++++----
+>  tools/testing/selftests/kvm/guest_memfd_test.c  |  2 +-
+>  tools/testing/selftests/kvm/memslot_perf_test.c |  2 +-
+>  6 files changed, 39 insertions(+), 14 deletions(-)
+>
 
-Beside page alignment, there are plenty of devm_k*alloc() around the
-code base, is there any way to spot whether any of those instances
-expect the allocated buffer to be aligned to the provided size?
-
-If this is a limited use-case it can be worked around with just regular
-k*alloc() + devm_add_action_or_reset() as Jonathan suggested. However, I
-still think it can be easy to introduce some alignment related bug,
-especially when transitioning from k*alloc() to devm_k*alloc() in an old
-implementation since it can be assumed that they have the same alignment
-guarantees. Maybe some comment in the devres APIs or documentation would
-help in this case?
-
-Any thoughts?
-
-> 
-> [1]: https://lore.kernel.org/all/20190826111627.7505-3-vbabka@suse.cz/
-> [2]: https://lore.kernel.org/all/20191220140655.GN2827@hirez.programming.kicks-ass.net/
-
-[3]: https://lore.kernel.org/all/743a648dc817cddd2e7046283c868f1c08742f29.camel@perches.com/
-
-Best regards,
-Matteo Martelli
 
