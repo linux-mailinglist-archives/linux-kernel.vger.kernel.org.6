@@ -1,395 +1,397 @@
-Return-Path: <linux-kernel+bounces-401224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C589C175D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:59:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F08D9C1760
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5373283122
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:59:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEE71C2234A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9951F19413C;
-	Fri,  8 Nov 2024 07:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885761D07BE;
+	Fri,  8 Nov 2024 08:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxQqzu6c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="VtL4tYLn"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020080.outbound.protection.outlook.com [52.101.128.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB91CF7CE;
-	Fri,  8 Nov 2024 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731052782; cv=none; b=Lswsq8eBe65qD0cyRo5C5eM0x16mmrzYmZ8fRVVbbzI++RzCtVnr5CyRrgoio+TZGJmdAjQJhj2ESnUnKQme7SI1JXZL3MCi6y9MCUJyJuXG5a9t9NZXn58g1XDojBJuQIB9AnulaZgw9Bl7IFeLyQsWzKdJmVoqquqWW/n7VCo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731052782; c=relaxed/simple;
-	bh=EO7Z4zvCk/UsSG14xv8TEfSSfqqJKLfDfoNZA0RtGkI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I4NqUTtpcddAwHcKP902/HtfGTzN72+rpWFj4tfH/G59lzWd2A3MeIpScjYRaSEtNRTZF/ZsKnGdF0WxmPdghQlGpdOXoy9DORgEJuGNwyQLjfA8vQJZ4QB57uBJ4kEHFhm4AzpJiwcEs6VqPxGX4vdVGodJPgHhKe9lMLq5gL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxQqzu6c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43C6AC4CECE;
-	Fri,  8 Nov 2024 07:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731052782;
-	bh=EO7Z4zvCk/UsSG14xv8TEfSSfqqJKLfDfoNZA0RtGkI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=bxQqzu6cUkfia6eaRqGS1gWAo0hY3k7lqFuouonM8f7aPCLIboaPkh/Ie4n/a405c
-	 cYynFFL3ou8C/GDnXLw3EY3JzQuLACMOF0GEqFNDuw80yaCgCInH8vdz0bJmKZO8rU
-	 kTLo2ZoKbYDfQYIQrxG8eI7DRUD+IRJxvAdY95ovYVMBAIUVZRi2SqzC5Qp7QEQ54E
-	 eooY/Bgj29zNV/Yl0QU8XUuC0klgl2A56QpSmj+q3rveyy8NGbdyUooVstW72F/wvL
-	 fXF481geV1tjFEPWDVnSqfo1iwes3+6IbwZG3sDn/Fl+vPreDWrhvGJoxUzChq2aJ7
-	 Tf/O4m+zrGJYw==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory
- attribute if supported
-In-Reply-To: <87jzdst6os.wl-maz@kernel.org>
-References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
- <20241028094014.2596619-5-aneesh.kumar@kernel.org>
- <87o734ts4m.wl-maz@kernel.org> <yq5ar080cq5x.fsf@kernel.org>
- <87jzdst6os.wl-maz@kernel.org>
-Date: Fri, 08 Nov 2024 13:29:31 +0530
-Message-ID: <yq5a34k2rw9o.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E8F19408C;
+	Fri,  8 Nov 2024 08:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731052830; cv=fail; b=tSDiutlWIOaxpVkvcVKQfMVsMlNhQuLs3kbYTN+KhrdxjaoVtwHcBHyYzfShTh5z/yhUNs+0ePH03hJaS2nm1WxL/sOR1vTgiUaqtIj9p7meozztaBZFIawFRXajpTxnZoqKAw18IRd5+5G+ucGRLA3IBGno7FLx4k4yGfSxn0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731052830; c=relaxed/simple;
+	bh=PpPrBdWob7jCH/clccWKCqBVrPtDjRIS9WMhoDDap4E=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=OAFLo7K+Ei8lxYtTBEygie5THmclm/HeU+mIFEAqGw4o8g5gPjMdkln7unTWY/iYuGsfhKKGsCf+nYjr3B9bAACzwScb15jigRF3/1Nf9Hm5PHqAbrGh+LNsSC7YSdfm+hojf8lS4bWGcHVv2YmS58kBX2subSXUmEBbZIz+sEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=VtL4tYLn; arc=fail smtp.client-ip=52.101.128.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nkMlVwuJV4FeuCd8HY8Fh15+sh1ZX69jGPcDhgHraON4R8AobSM46mRwzNM6jeq5ErJNGAEqeFa1SUkl2U/ZoKIvb2mnrRQ5R6Laa9b2V54wxZtp94Yldx+qqUfjVZuiuOn98pRMqFOAf/sch/qCGEDDITgcfFOg1Ev4iui7lrr2gLSzJrnfXB+OTa/8rdS1xxzz3BB+oEUYzg2v77+n7doARnneZcci+AEgfU17UrmA5llzZp/MDc6iAL3so+0KpsA1hKhyg/6p0Vz/A0x9sGc/pdupTLefVAdJ6dGuTpglk7Fl8mkCuHMy173XIYVswzET+5yFsTR6jsIIhQCAZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I2ziH+83X5lW9wR0l2rVWZptXU5vWNoli71Kv+R3b1c=;
+ b=OY3jvEM+IqmDFzyNxA8W4GGzK2uutXi6IwjTocVETb7Um8QFpdL24TOt/NVszuc8IesWhHDCr6anWdWQ69pIcKkl6HM7mwawVbyi6ABnMTLXC6etRoYY9SpdyhMsROTyz1oM8ufTpKHuCzewthZxvJU8vYI0kkoJgwb9xOLmXO1cDNKB2I2H7kxBGc2gDkNun55chj/DffDUmHpy1y63pWuI9gZnI0VNGf+2iQfR83i/oAbZNbGWYekT1QWXl3xrLLvuHaC3ge/uIOv/vum4E1fu1UtzPZcHcm+2WkqeXwWxghiuzVcQzGoyJ6NWXxWOSwPlBiBACjUpd6UvAyYAQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I2ziH+83X5lW9wR0l2rVWZptXU5vWNoli71Kv+R3b1c=;
+ b=VtL4tYLncZoDR3mUAL4PmmiHkBfLiatv2f0TyJyyy1Pr5OZkJwdb6fVciegzFsxgMHPMHvebmkCA1G9mNIcDm3ap4+psnrTo0FU0XFqOYpMdUjo/c2nBVtvbLMm5ZsCor4OkH6GdbaFTxdnCvwMLTCEw1I2fYczq/Vu06WDEZFRFM6hi6X3YAUJrAT+HdJXcpmZkLt9Cbwm+dNdRQn7qaa0juQWvCGTogO7P+6gRmTJt8RhZ7guD6toVKvViTDHNXtiMfD0wXQnu4Q6nVU6sJWz5tJ0hn/Td4AZ+AoazjNaIYiRBLGe/0vY3Acm110LM+Hv1IU1EKhW58iR8ub7IYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
+ by TY0PR03MB8278.apcprd03.prod.outlook.com (2603:1096:405:15::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
+ 2024 08:00:22 +0000
+Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
+ ([fe80::9d11:d1f6:1097:22ca%7]) with mapi id 15.20.8137.019; Fri, 8 Nov 2024
+ 08:00:22 +0000
+Message-ID: <07594a59-c999-4592-84b8-4e163d3edba4@amlogic.com>
+Date: Fri, 8 Nov 2024 15:59:44 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] clk: core: refine disable unused clocks
+To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <1jcykltj7g.fsf@starbuckisacylon.baylibre.com>
+ <20241004133953.494445-1-jbrunet@baylibre.com>
+From: Chuan Liu <chuan.liu@amlogic.com>
+In-Reply-To: <20241004133953.494445-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0092.apcprd02.prod.outlook.com
+ (2603:1096:4:90::32) To KL1PR03MB5778.apcprd03.prod.outlook.com
+ (2603:1096:820:6d::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|TY0PR03MB8278:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7b9e5792-3b26-4659-657a-08dcffcb6529
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OE9Lc285QWpkeVZvb2p2VEZlMXQvdTAxeEwzSVdIQkNNV2ZpTE5YcWdmQktV?=
+ =?utf-8?B?b1FLVVRaRFRpQ2VZQnNCMUNNOUx3SkRsbEE0bkpoSm5EcDh4aVdtUWtZdUJU?=
+ =?utf-8?B?UjRBV3l4K3FoNGhIdFR6MjBacXRKWEkrdk5KdG54Qmo4RDhkTGxFZWhHR0N6?=
+ =?utf-8?B?dkg3eWR1QmxCUGQyT3lyL2tqQjJkaTZhUHlTMFQ1U0xGeWxsSXRQbnAzRlhq?=
+ =?utf-8?B?aWFPU1JNVEpSVmtKYUtSR01TajZzMDZudkxEdTRhTTZUaEMrVEtjZUJ5c21j?=
+ =?utf-8?B?Y0dKZmduNFpoTXhEQk45SVRMNTBGMmRkSG9xQ01NdzBzTUEwSEl5bmtxRFlU?=
+ =?utf-8?B?VEZGZTBhUVB6cG8zTDFsaDc4d2c1aW52RmlFejYxNUY1WGNiQnZOODRXMnE3?=
+ =?utf-8?B?VzlCWDUrZWxFaUVZM2hxekNGOEV3QXYvRVQyYXJpQjdkNWpvT2RBeU5DdmFQ?=
+ =?utf-8?B?OTdZTG92MDFDNXV6MnRTblN1OEgvSGhRR0MwclR5c0UydVl6TWFWbjdWb09N?=
+ =?utf-8?B?WWh0YTVRcjk2bDZyRmFURmlqdEMwM3gxOHlQQklOUHl5UzluaCsyU0RsY0dw?=
+ =?utf-8?B?dWpPYi9QRnBYd3hITjFvT3VJRyswR0lFclUxMjN5aU5uVFIwcFdXTlZmOGIx?=
+ =?utf-8?B?OWFLT2txNXhaN2VwNG1ETWpXZ3RwVGZaYXVrcGM2WnV3bys5bHZnNTY4cFNl?=
+ =?utf-8?B?VGh0amtsOFFGVlBjeXg0cVV3OXlkbGwvR2YyNGVDanJPdHBkcWU0U0l5NXJj?=
+ =?utf-8?B?NWY3b3BNN2JOcVV1MEhTdTZWV044TlFYd1U0ZXZHTjl0WHFGR1g0c25kWmJW?=
+ =?utf-8?B?ay8wTVEweXgzQWxSbDVheHErMGpmQ2o1ZE8zYlhkYnBlZXJWRG8vOEEraWZS?=
+ =?utf-8?B?M3ZqSjlXZUZXK3RFNmZybFZ4M2ZiRXFaVStRdnM1WWxQU0Z4d1FxN0NaTFBQ?=
+ =?utf-8?B?SDhUcFBYTHhVQmdxVUdiOFBxZmNMZ1FZSnpFbldabWhDakdtc0prTWY2SUNL?=
+ =?utf-8?B?TitkejhjRjRLcWhOM3BYMzE4dWZVSjFScXJZSVJBYWVoQWc0RTNxaFIrbEhY?=
+ =?utf-8?B?ejRqVmFpb1lUbUxPR2s2dDdlajYzdS91aFFycHA2SnZaYWdOSzRlSG02RkY5?=
+ =?utf-8?B?N3BmR05MQkRrK2hSY3N4Tnk1Z3JZT2NaMkROUUJFajJleHViNHphUzZ1bU4x?=
+ =?utf-8?B?RDFjYzBmT1lleDB3UFozV3VMUmxXWG4zeHVwSUFDRXZwajlhSlJxRVBQeWFj?=
+ =?utf-8?B?Z1Y1V3BOMGl1WkYwemo1QmxtRE1LYWh0RkZ1MC9DT0o4UTdtYlg2OGkyRG5R?=
+ =?utf-8?B?Z3VESTRhQ2Z5RmhxMlk1cWE0MWthMWY3YXNUVjJUZmpEUHB3Z1VYTVN3NkRZ?=
+ =?utf-8?B?ZzZUTk9PeHk2dEtwSGR0Q1N3dm5nMjNMQ2VnME1yMkJyRC9Qa0lRTXBXK0Ni?=
+ =?utf-8?B?b1A3OE9IWG1sSXpjanFic2Fkb3Z3TFNKYzhON0ZEQ3d2VC9yRU9TN0szQmxj?=
+ =?utf-8?B?a0w4YlJKbklTWkNhb0VUVjh6OFhDanl3KzZxTGIvWUN2Y0dUa1o4SzBiUFA1?=
+ =?utf-8?B?M3pKT2xYRGVBbCs3SFRyZWJQUGdqUzMvaTFpVkM3blY3Rjh3a0pBZzZDcGov?=
+ =?utf-8?B?L2dOWnNTQWpnWVFYbzBqZkk1bHBObHBWY3A1V0tnSFhseE82RTRSdTFIMmps?=
+ =?utf-8?B?YzM4OVorMkZLRWhuelZ4NzRBN2ovNUZiQm5tMzkwakFwdDF4MmRJUDVHWFI3?=
+ =?utf-8?Q?TRRwLn56znMtJyfL2tkk6pabq0FrENgzonR0GA9?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SG8rd0VDRUJBYXd2SitldGNBNGkzcFVuZk9LVGlYZTV6MTVqaEUwSDQ3Z2FE?=
+ =?utf-8?B?WmlXRml5SzhXQW16ME1SU3RLU3BEZnpoRGdISExwcDlFZ20zVHU4MmRUbnlZ?=
+ =?utf-8?B?TWw5TUxhVmg4N0ZXdm8xcFJFZjlFdUNzWTBaQ1ZabDYySEhDUXR2bld6R0dX?=
+ =?utf-8?B?bTNncnl1SjV0a1htOG5qa1hvQnB3MmdueXl3RnR0OUJOZG0wSmZEUElNazYx?=
+ =?utf-8?B?NSswS1NKSlNYNEZHRm56NnovRldBSzdPU08xUnh2UnExM2RMQm5hc1BSM082?=
+ =?utf-8?B?T09Tc0c2M0NmTEd0QWsvY2dOSWxRbVU4cG44MFlNYWVTRzhLcTgxVGxudGE1?=
+ =?utf-8?B?REhXQ0Zuc2RoY0NjYkhaNnVHUUdJVk9POTc4UVRzWDl5UFU4ZDVIMXIvZy9u?=
+ =?utf-8?B?TUhwVHU5V09YRE1iUVhkMjFvVk1vYlhFYUJ4QUtlMjcvRGJJQTJ6SFhkTUha?=
+ =?utf-8?B?ZVNRdUhVa3BmUXFUN0FXUFlYS2tyaG1TakI4UWxyOWlwUG1vd1lxTGtxb0k5?=
+ =?utf-8?B?UytGc3FyeTVvVGh1c2pKb1NISGluUlM3akdkei9rNXlBOEVQa1F4NU4xYWp6?=
+ =?utf-8?B?R1oxdXJYZnJNUUVBdDFYeU84MHlBMTVOWVBzQUkvemFvZmxCME9CUldOYllP?=
+ =?utf-8?B?cUs4OXpCOStoTHlYbDR6Zy8yM25oV3haMmxHcmIyVEZhZCt4VGNmSEtidlhC?=
+ =?utf-8?B?dnVvdVlMRUxmQ0hheGlEU2JqdXhCTDBWM21tajBkbGRGVHdSZTVnOXlOM3ox?=
+ =?utf-8?B?VzBXNzZlZkNUeTQvTWZqQnNuWVJUQzduTE5PSmVhTG9NMUx2U3lEbS83cGFv?=
+ =?utf-8?B?dlhDNTh6VW9SZW1kNW5vVGVZcVpWb1BIMS8vSWt1Vmpzb25SZXJ0NHF0TTlv?=
+ =?utf-8?B?bWx6cnEyU3paT1Q4bG9JWERQcWhSMWZSeGtHalN5by8wQ1NFVU95K0xTMkJm?=
+ =?utf-8?B?dVdtTWxQcUI0NlYxSi84NG04eEdQY2pFam95eVVqckRNTUllbUpGUnRSZlJy?=
+ =?utf-8?B?c25nNFV1QkdPM0V4cjNxeHZwb05aUjM1VHd5TGpOY1JvQkF1cGh0a09oU1ls?=
+ =?utf-8?B?UjZIbzZTZlByZ1htU2t2OWxRQnZ4REJrellYTU9oTTNMcDdtdVp2SUNQY0N3?=
+ =?utf-8?B?L0ZvTG00Z0V3SDJ6M2YzNUdqNGl0M05lakNKc1lpdFJhaUdaejdmMGVaZXF0?=
+ =?utf-8?B?Z3BUY3hSaHE0dlljeXhBb2pES0VUS3VMSkpGMjN0Z0tFK1BMVXdwbmQ5bjc4?=
+ =?utf-8?B?dlYwaElCMzVYbXdvS0NRNGtaSUprZVZYSVp1dytiU2FvMWpvMmFKT05hZmVD?=
+ =?utf-8?B?VjZCTFhaL0MyNWNIY01JWjJvaW1EbWtFRi85RzNOTXFOamhLbDUvZVVGdGFC?=
+ =?utf-8?B?NlQ3SllxcUFZalEwc3RsSGEvU2lKY0Evanc5Tmk1aDRTcVYrdStFQmlMVUtN?=
+ =?utf-8?B?eDRKbHFPUXBVT1BlUWJld1VlK1h5Skk3YzhGYW8rYlZyTVhkZmRvdEp6NWpn?=
+ =?utf-8?B?T0V3Vzh5bWYvRE40WjE3dlJDbm5UNjBJU3J0M0Fxc1ZaeTFJcC9jQnRTVjNY?=
+ =?utf-8?B?bkdnRXZkWTdLWTJXK1F5Zklyb2dVN1RsZUtvNGRjVm9KMWZuQS9YNy8vNDlj?=
+ =?utf-8?B?SjRwVVMxclVFUUR1djAzK3hxeWt2enJndUlIMlpyUWZRMHc2YkpkVUdjYklI?=
+ =?utf-8?B?OHIxZUdVZ3VkNk5haEg1YTIwdjFIUUxGOVdldS9nZjM0TktiWlRpMkhSTUJm?=
+ =?utf-8?B?MUpuR0FtMkdYSUp3Vnl3ZytPbzh0aVYxcU9iaTAwZlVhVWJNUENqUm5DY1R6?=
+ =?utf-8?B?R3dUc3VnTnYxSjliWHlaandCeWsveGtaU05uZkRyZ3FUMkxCbEtScWl3d05u?=
+ =?utf-8?B?bjJNUDZlT3JzbHlBRFZodFpFYW9MZEYzdXloajRLSHVmekNFN1JTTEhXY0dC?=
+ =?utf-8?B?ZDh1WDRZZ2ZOSHhwN2lKWmYyNkIyV0hBZFV1VzlROFBGWktDZzE3WXN4R2xa?=
+ =?utf-8?B?L1U3M2Foc0dyS0pUcTdTWWhhMXNwUnVOQ0lTYXpURUdBVXY4OGVBbnJNcStr?=
+ =?utf-8?B?WWcvc2U4Z2J4S3Y3eDhVandtR25ZMUwxVk5qaDNiS2FZQ0ZwYm1xSTVsWVBQ?=
+ =?utf-8?Q?z5uN8yArwd+d3TtvAoyESTjI6?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b9e5792-3b26-4659-657a-08dcffcb6529
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2024 08:00:22.2192
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: s1oiwG3Z5yjhrP7s6/pHOa/7YvBHOjUCuPWtQqJ+jFVlN6sDJDt8ovNCVUFsun43qsSvVGSPkhlVpnOxonQigw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR03MB8278
 
+hi Jerome:
 
-Hi Marc,
+     Tranks for your REF. I looked at your patch and there are some 
+parts that I don't quite understand: The original intention of 
+CLK_OPS_PARENT_ENABLE was to solve the issue of "parents need enable 
+_during _gate/ungate, set rate and re-parent" when setting a clock. After setting 
+the clock, it can still be disabled. However, from what I see in your 
+patch, the handling logic seems more like "parents need _always _ gate 
+during clock gate period"?
 
-Sorry for the delay in response, I was looking at nested virt and
-migration changes so that I can get your feedback on those.
-
-Marc Zyngier <maz@kernel.org> writes:
-
-> On Mon, 28 Oct 2024 13:28:42 +0000,
-> Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
->>
->> Marc Zyngier <maz@kernel.org> writes:
->>
->> > On Mon, 28 Oct 2024 09:40:14 +0000,
->> > "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
->> >>
->> >> Currently, the kernel won't start a guest if the MTE feature is enabled
->> >> and the guest RAM is backed by memory which doesn't support access tags.
->> >> Update this such that the kernel uses the NoTagAccess memory attribute
->> >> while mapping pages from VMAs for which MTE is not allowed. The fault
->> >> from accessing the access tags with such pages is forwarded to VMM so
->> >> that VMM can decide to kill the guest or remap the pages so that
->> >> access tag storage is allowed.
->> >
->> > I only have questions here:
->> >
->> > - what is the benefit of such approach? why shouldn't that be the
->> >   kernel's job to fix it?
->>
->>
->> IMHO leaving that policy decision to VMM makes the kernel changes
->> simpler. In most cases, VMM will kill the guest, because these
->> restrictions of MTE_ALLOWED are applied at the memslot/vma.
+On 10/4/2024 9:39 PM, Jerome Brunet wrote:
+> [ EXTERNAL EMAIL ]
 >
-> Where is that captured? The whole idea behind FEAT_MTE_PERM was that
-> it would be the hypervisor's task to lazily allocate MTE-capable
-> memory as tagged-access would occur.
+> As it as been pointed out numerous times, flagging a clock with
+> CLK_IGNORE_UNUSED does _not_ guarantee that clock left enabled will stay
+> on. The clock will get disabled if any enable/disable cycle happens on it
+> or its parent clocks.
 >
-
-Lazily allocating MTE-capable memory requires changes to different
-kernel subsystems and previous attempts got dropped [1] because it
-was not clear whether the benefit of saving 3% memory overhead was worth
-the complexity we add to the kernel.
-
-This patchset is not looking at that feature. Instead, it can be used to
-enable MTE in configurations that currently won't allow MTE. One such
-example is libkrun which includes linux kernel as firmware in a
-dynamically linked library (libkrunfw). libkrun can insert the kernel
-region which got mmaped as part of the library load, directly into the
-guest memory map instead of copying the kernel. Such a guest config
-can't enable MTE currently even though we will never use the newly
-inserted memory regions as tag access memory.
-
-Similarly, virtiofs dax support can use a page cache region as
-virtio-shm region. We can use MTE_PERM to enable MTE in this config.
-
-[1] https://lore.kernel.org/all/20240125164256.4147-1-alexandru.elisei@arm.com/
-
->>
->> >
->> > - where is the documentation for this new userspace ABI?
->> >
->>
->> I will add the details if we agree that this should be a separate EXIT
->> as outlined in this patch.
+> Because enable/disable cycles will disable unused clocks,
+> clk_disable_unused() should not trigger such cycle. Doing so disregard
+> the flag if set for any parent clocks. This is problematic with
+> CLK_OPS_PARENT_ENABLE handling.
 >
-> Woooot??? This isn't a *DETAIL*. This is the very first thing you
-> should write. Everything *else* is an implementation detail.
+> To solve this, and a couple other issues, pass the parent status to the
+> child while walking the subtree, and return whether child ignored disable,
+> or not.
 >
->>
->> >
->> > - are you expecting the VMM to create a new memslot for this?
->> >
->>
->> I guess there are examples of configs where some memory regions are
->> backed by page cache where we don't directly use those memory regions as
->> allocatable memory in the guest. This change allows us to enable MTE in such
->> configs.
+> * Knowing the parent status allows to safely disable clocks with
+>    CLK_OPS_PARENT_ENABLE when the parent is enabled. Otherwise it means
+>    that, while the clock is not gated it is effectively disabled. Turning on
+>    the parents to sanitize the sitation would bring back our initial
+>    problem, so just let it sanitize itself when the clock gets used.
 >
-> This doesn't answer my question. What is expected sequence a VMM
-> should apply to provide tagged memory to the guest?
+> * If a clock is not actively used (enabled_count == 0), does not have
+>    CLK_IGNORE_UNUSED but the hw enabled all the way to the root clock, and a
+>    child ignored the disable, it should ignore the disable too. Doing so
+>    avoids disabling what is feading the children. Let the flag trickle down
+>    the tree. This has the added benefit to transfer the information to the
+>    unprepare path, so we don't unprepare the parent of a clock that ignored
+>    a disable.
 >
->>
->> > - where is the example of a VMM using this?
->> >
->>
->> I do have changes to kvmtool which won't do any fixup on receiving that
->> VM exit. I expect other VMM to do the same by default when they get a
->> VM exit with an unknown exit_reason. So unless VMM wants to do any
->> special handling, we don't need any change in the VMM.
+> * An enabled clock must be prepared in CCF but we can't rely solely on
+>    counts at clk_disable_unused() stage. Make sure an enabled clock is
+>    considered prepared too, even if does not implement the related callback.
+>    Also make sure only disabled clocks get unprepared.
 >
-> OK, so this has never been tested. I'm sorry, but for something of
-> this magnitude, with expected userspace interactions, and requiring
-> VMM handling, I want to see the full end-to-end thing.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
 >
->>
->>
->> diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
->> index 3b95750ecec7..4760bad07476 100644
->> --- a/arm/kvm-cpu.c
->> +++ b/arm/kvm-cpu.c
->> @@ -239,6 +239,17 @@ static bool handle_memoryfault(struct kvm_cpu *vcpu)
->>  	return true;
->>  }
->>
->> +static bool handle_notag_access(struct kvm_cpu *vcpu)
->> +{
->> +	u64 gpa = vcpu->kvm_run->memory_fault.gpa;
->> +	u64 size = vcpu->kvm_run->memory_fault.size;
->> +
->> +	/* For now VMM just panic */
->> +	pr_err("Tag Access to a wrong memory region 0x%lx size 0x%lx\n",
->> +	       (unsigned long)gpa, (unsigned long)size);
->> +	return false;
->> +}
->> +
->>  bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
->>  {
->>  	switch (vcpu->kvm_run->exit_reason) {
->> @@ -246,6 +257,8 @@ bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
->>  		return handle_hypercall(vcpu);
->>  	case KVM_EXIT_MEMORY_FAULT:
->>  		return handle_memoryfault(vcpu);
->> +	case KVM_EXIT_ARM_NOTAG_ACCESS:
->> +		return handle_notag_access(vcpu);
->>  	}
->>
->>  	return false;
->> diff --git a/include/linux/kvm.h b/include/linux/kvm.h
->> index 32cff22f0e4d..deef6614f577 100644
->> --- a/include/linux/kvm.h
->> +++ b/include/linux/kvm.h
->> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
->>  #define KVM_EXIT_NOTIFY           37
->>  #define KVM_EXIT_LOONGARCH_IOCSR  38
->>  #define KVM_EXIT_MEMORY_FAULT     39
->> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
->>
->>  /* For KVM_EXIT_INTERNAL_ERROR */
->>  /* Emulate instruction failed. */
->> @@ -429,10 +430,17 @@ struct kvm_run {
->>  		/* KVM_EXIT_MEMORY_FAULT */
->>  		struct {
->>  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
->> +#define KVM_MEMORY_EXIT_FLAG_NOTAGACCESS (1ULL << 4)
->>  			__u64 flags;
->>  			__u64 gpa;
->>  			__u64 size;
->>  		} memory_fault;
->> +  		/* KVM_EXIT_ARM_NOTAG_ACCESS */
->> +		struct {
->> +			__u64 flags;
->> +			__u64 gpa;
->> +			__u64 size;
->> +		} notag_access;
->>  		/* Fix the size of the union. */
->>  		char padding[256];
->>  	};
->>
->> >>
->> >> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
->> >> add a new EXIT type because this is arm64 specific exit type.
->> >>
->> >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
->> >> ---
->> >>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
->> >>  arch/arm64/include/asm/kvm_pgtable.h |  1 +
->> >>  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
->> >>  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
->> >>  include/uapi/linux/kvm.h             |  7 +++++++
->> >>  5 files changed, 48 insertions(+), 9 deletions(-)
->> >>
->> >> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
->> >> index a601a9305b10..fa0149a0606a 100644
->> >> --- a/arch/arm64/include/asm/kvm_emulate.h
->> >> +++ b/arch/arm64/include/asm/kvm_emulate.h
->> >> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
->> >>  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
->> >>  }
->> >>
->> >> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
->> >> +{
->> >> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
->> >> +}
->> >> +
->> >>  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
->> >>  {
->> >>  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
->> >> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
->> >> index 03f4c3d7839c..5657ac1998ad 100644
->> >> --- a/arch/arm64/include/asm/kvm_pgtable.h
->> >> +++ b/arch/arm64/include/asm/kvm_pgtable.h
->> >> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
->> >>
->> >>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
->> >>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
->> >> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
->> >
->> > This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
->> >
->>
->> Are you suggesting the name is wrong? The memory attribute value I
->> wanted to use is
->>
->> MemAttr[3:0] = 0b0100 which is Normal, NoTagAccess, writeback cacheable.
->>
->> I am following the changes similar to KVM_PGTABLE_PROT_NORMAL_NC.
+>   This is sent as an RFC to continue the discussion started by Chuan.
+>   It is not meant to be applied as it is.
 >
-> But that's entirely different. This really isn't a memory type. Quite
-> the opposite, actually. This is a stage-2 permission setting, which
-> you are conflating with the actual memory type.
 >
-> Also, I don't see why that should be incompatible with something other
-> than Normal memory.
+>   drivers/clk/clk.c | 92 ++++++++++++++++++++++++++++++-----------------
+>   1 file changed, 60 insertions(+), 32 deletions(-)
 >
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index d02451f951cf..41c4504a41f1 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -332,17 +332,6 @@ static bool clk_core_is_enabled(struct clk_core *core)
+>                  }
+>          }
+>
+> -       /*
+> -        * This could be called with the enable lock held, or from atomic
+> -        * context. If the parent isn't enabled already, we can't do
+> -        * anything here. We can also assume this clock isn't enabled.
+> -        */
+> -       if ((core->flags & CLK_OPS_PARENT_ENABLE) && core->parent)
 
-I am sorry that i am not able to follow you here. I am confused whether
-your feedback is related to the use of MemAttr[3:0] values or w.r.t
-the usage of KVM_PGTABLE_PROT_NORMAL_NOTAG_ACCESS. If you can explain
-more on how you would like to see the changes I can incorporate them in
-the next update.
+This judgment of CLK_OPS_PARENT_ENABLE seems redundant. According to
+normal logic, if the parent is disabled, its children will also be
+forced to disable. This seems unrelated to whether CLK_OPS_PARENT_ENABLE
+is configured.😳
 
->>
->> >
->> >>
->> >>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
->> >>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
->> >> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
->> >> index b11bcebac908..bc0d9f08c49a 100644
->> >> --- a/arch/arm64/kvm/hyp/pgtable.c
->> >> +++ b/arch/arm64/kvm/hyp/pgtable.c
->> >> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
->> >>  {
->> >>  	kvm_pte_t attr;
->> >>  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
->> >> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
->> >> +				  KVM_PGTABLE_PROT_NORMAL_NC |
->> >> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
->> >>
->> >> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
->> >> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
->> >> +	switch (prot & prot_mask) {
->> >>  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
->> >>  		return -EINVAL;
->> >>  	case KVM_PGTABLE_PROT_DEVICE:
->> >> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
->> >>  			return -EINVAL;
->> >>  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
->> >>  		break;
->> >> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
->> >> +		if (system_supports_notagaccess())
->> >> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
->> >> +		else
->> >> +			return -EINVAL;
->> >> +		break;
->> >
->> > How do you see this working when migrating a VM from one host to
->> > another, one that supports FEAT_MTE_PERM and one that doesn't? The
->> > current assumptions are that the VMM will replay the *exact same*
->> > setup on the target host, and this obviously doesn't work.
->> >
->>
->> I missed looking at kvm migration. I guess I will have to expose this as
->> a capability and only allow migration if the target also supports the
->> same capability?
+> -               if (!clk_core_is_enabled(core->parent)) {
+> -                       ret = false;
+> -                       goto done;
+> -               }
+> -
+>          ret = core->ops->is_enabled(core->hw);
+>   done:
+>          if (core->rpm_enabled)
+> @@ -1454,22 +1443,39 @@ static void clk_core_disable_unprepare(struct clk_core *core)
+>          clk_core_unprepare_lock(core);
+>   }
 >
-> I don't think so. This doesn't affect the guest at all, as the guest
-> doesn't know anything about S2, unless you decide to expose
-> FEAT_MTE_PERM to NV.
+> -static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+> +static bool __init clk_unprepare_unused_subtree(struct clk_core *core,
+> +                                               bool parent_prepared)
+>   {
+>          struct clk_core *child;
+> +       bool prepared;
 >
-> It affects the VMM though, and that's because you are making a
-> difference in handling between having FEAT_MTE_PERM or not. Given that
-> this is invisible to userspace, that's not a great design.
+>          lockdep_assert_held(&prepare_lock);
 >
-
-With migration, I guess i can prevent migration to a target that doesn't
-support FEAT_MTE_PERM by updating set_one_reg to check for the feature
-support. Something like this 
-
-modified   arch/arm64/kvm/sys_regs.c
-@@ -1514,7 +1514,7 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
- 				       const struct sys_reg_desc *r)
- {
- 	u32 id = reg_to_encoding(r);
--	u64 val;
-+	u64 val, mask;
-
- 	if (sysreg_visible_as_raz(vcpu, r))
- 		return 0;
-@@ -1529,8 +1529,10 @@ static u64 __kvm_read_sanitised_id_reg(const struct kvm_vcpu *vcpu,
- 		val &= ~ARM64_FEATURE_MASK(ID_AA64PFR1_EL1_SME);
- 		break;
- 	case SYS_ID_AA64PFR2_EL1:
--		/* We only expose FPMR */
--		val &= ID_AA64PFR2_EL1_FPMR;
-+		mask = ID_AA64PFR2_EL1_FPMR;
-+		if (system_supports_notagaccess())
-+			mask |= ID_AA64PFR2_EL1_MTEPERM;
-+		val &= mask;
- 		break;
- 	case SYS_ID_AA64ISAR1_EL1:
- 		if (!vcpu_has_ptrauth(vcpu))
-@@ -2382,7 +2384,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 		   ID_AA64PFR0_EL1_AdvSIMD |
- 		   ID_AA64PFR0_EL1_FP), },
- 	ID_SANITISED(ID_AA64PFR1_EL1),
--	ID_WRITABLE(ID_AA64PFR2_EL1, ID_AA64PFR2_EL1_FPMR),
-+	ID_WRITABLE(ID_AA64PFR2_EL1, ID_AA64PFR2_EL1_FPMR |
-+					ID_AA64PFR2_EL1_MTEPERM),
- 	ID_UNALLOCATED(4,3),
- 	ID_WRITABLE(ID_AA64ZFR0_EL1, ~ID_AA64ZFR0_EL1_RES0),
- 	ID_HIDDEN(ID_AA64SMFR0_EL1),
-
-
-For nested virtualization, I guess it is useful to support this for
-nested guest. This implies L2 stage2 in L1 will have to support
-Normal,NoTagAccess attribute. ie,
-
-in L0 kvm, if the guest abort is on a nested smmu, then we walk the L2
-stage2 in L1 and see if the memory attribute is NoTagAccess. If yes
-we inject a s2 fault to L1. Do you agree this is a good design?
-
--aneesh
+> +       /*
+> +        * Relying on count is not possible at this stage, so consider
+> +        * prepared an enabled clock, in case only .is_enabled() is
+> +        * implemented
+> +        */
+> +       if (parent_prepared)
+> +               prepared = (clk_core_is_prepared(core) ||
+> +                           clk_core_is_enabled(core));
+> +       else
+> +               prepared = false;
+> +
+>          hlist_for_each_entry(child, &core->children, child_node)
+> -               clk_unprepare_unused_subtree(child);
+> +               if (clk_unprepare_unused_subtree(child, prepared) &&
+> +                   prepared && !core->prepare_count)
+> +                       core->flags |= CLK_IGNORE_UNUSED;
+>
+> -       if (core->prepare_count)
+> -               return;
+> +       if (core->flags & CLK_IGNORE_UNUSED || core->prepare_count)
+> +               goto out;
+>
+> -       if (core->flags & CLK_IGNORE_UNUSED)
+> -               return;
+> +       if (!parent_prepared && (core->flags & CLK_OPS_PARENT_ENABLE))
+> +               goto out;
+>
+> -       if (clk_core_is_prepared(core)) {
+> +       /* Do not unprepare an enabled clock */
+> +       if (clk_core_is_prepared(core) &&
+> +           !clk_core_is_enabled(core)) {
+>                  trace_clk_unprepare(core);
+>                  if (core->ops->unprepare_unused)
+>                          core->ops->unprepare_unused(core->hw);
+> @@ -1477,27 +1483,50 @@ static void __init clk_unprepare_unused_subtree(struct clk_core *core)
+>                          core->ops->unprepare(core->hw);
+>                  trace_clk_unprepare_complete(core);
+>          }
+> +
+> +out:
+> +       return (core->flags & CLK_IGNORE_UNUSED) && prepared;
+>   }
+>
+> -static void __init clk_disable_unused_subtree(struct clk_core *core)
+> +static bool __init clk_disable_unused_subtree(struct clk_core *core,
+> +                                             bool parent_enabled)
+>   {
+>          struct clk_core *child;
+>          unsigned long flags;
+> +       bool enabled;
+>
+>          lockdep_assert_held(&prepare_lock);
+>
+> -       hlist_for_each_entry(child, &core->children, child_node)
+> -               clk_disable_unused_subtree(child);
+> +       flags = clk_enable_lock();
+>
+> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> -               clk_core_prepare_enable(core->parent);
+> +       /* Check if the clock is enabled from root to this clock */
+> +       if (parent_enabled)
+> +               enabled = clk_core_is_enabled(core);
+> +       else
+> +               enabled = false;
+>
+> -       flags = clk_enable_lock();
+> +       hlist_for_each_entry(child, &core->children, child_node)
+> +               /*
+> +                * If any child ignored disable, this clock should too,
+> +                * unless there is, valid reason for the clock to be enabled
+> +                */
+> +               if (clk_disable_unused_subtree(child, enabled) &&
+> +                   enabled && !core->enable_count)
+> +                       core->flags |= CLK_IGNORE_UNUSED;
+>
+> -       if (core->enable_count)
+> +       if (core->flags & CLK_IGNORE_UNUSED || core->enable_count)
+>                  goto unlock_out;
+>
+> -       if (core->flags & CLK_IGNORE_UNUSED)
+> +       /*
+> +        * If the parent is disabled but the gate is open, we should sanitize
+> +        * the situation. This will avoid an unexpected enable of the clock as
+> +        * soon as the parent is enabled, without control of CCF.
+> +        *
+> +        * Doing so is not possible with a CLK_OPS_PARENT_ENABLE clock without
+> +        * forcefully enabling a whole part of the subtree.  Just let the
+> +        * situation resolve it self on the first enable of the clock
+> +        */
+> +       if (!parent_enabled && (core->flags & CLK_OPS_PARENT_ENABLE))
+>                  goto unlock_out;
+>
+>          /*
+> @@ -1516,8 +1545,7 @@ static void __init clk_disable_unused_subtree(struct clk_core *core)
+>
+>   unlock_out:
+>          clk_enable_unlock(flags);
+> -       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> -               clk_core_disable_unprepare(core->parent);
+> +       return (core->flags & CLK_IGNORE_UNUSED) && enabled;
+>   }
+>
+>   static bool clk_ignore_unused __initdata;
+> @@ -1550,16 +1578,16 @@ static int __init clk_disable_unused(void)
+>          clk_prepare_lock();
+>
+>          hlist_for_each_entry(core, &clk_root_list, child_node)
+> -               clk_disable_unused_subtree(core);
+> +               clk_disable_unused_subtree(core, true);
+>
+>          hlist_for_each_entry(core, &clk_orphan_list, child_node)
+> -               clk_disable_unused_subtree(core);
+> +               clk_disable_unused_subtree(core, true);
+>
+>          hlist_for_each_entry(core, &clk_root_list, child_node)
+> -               clk_unprepare_unused_subtree(core);
+> +               clk_unprepare_unused_subtree(core, true);
+>
+>          hlist_for_each_entry(core, &clk_orphan_list, child_node)
+> -               clk_unprepare_unused_subtree(core);
+> +               clk_unprepare_unused_subtree(core, true);
+>
+>          clk_prepare_unlock();
+>
+> --
+> 2.45.2
+>
 
