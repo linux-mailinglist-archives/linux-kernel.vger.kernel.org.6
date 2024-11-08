@@ -1,327 +1,227 @@
-Return-Path: <linux-kernel+bounces-402217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199CE9C2513
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:49:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7B59C2515
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CCB71F23FA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A07C1F21E06
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FB01EBA03;
-	Fri,  8 Nov 2024 18:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF18C1A9B46;
+	Fri,  8 Nov 2024 18:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nKXYqXBc"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJy0teTG"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2F41C1F2B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA4A233D80
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 18:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731091690; cv=none; b=gs8CNFmUSlTGOlKiEg4GcHavTAjmPBUpVoTKx7AVd4xHuFNegoON9SpHeX170GV1eZzWKKuEHs5L3HBPGEh3wdi/a6aVrVoshLxARDhSuaS5DH3bPtTRm8QmbeNh7KFr57osTexgdX8n0EWXmoTpY02dDAstcgiVw4T/jx6iBOg=
+	t=1731091812; cv=none; b=qKI9jilLjT8iHJF2yTiLwHJr/a6LhVjAKqkPKFFdogHJ3+Y3TugvgDbKIdY9aTwMU4oYV7eQkgjMGIOwe9gNFs+vtU4ZvM7fpMu0vQxMPB2nDAOtlXGdpDM3hGbxteslb8U3/555Sbnodq77VKGFuUkhc7oWV/HeTfChUjtcZ9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731091690; c=relaxed/simple;
-	bh=QRhwRrSJyI/kOaWmz0vfruc+Nvc3XqPg7f05ygNW5iY=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=mKGippOXLZxeB7d+L6W2n/k70xDqgOCLicvD/FCjN5IqbIuXvWUwwh6CWpgomh+vegSwLDmg/vgHhGSGSoUfyBmatVqIjVl6Sk3AtsOLD+xsO+y3wcekGtBIqAZT1Yrgby2iHRGje4EMf0qLg0ZF5MtOF+GcEGDQ5zD3KkAv4AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nKXYqXBc; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1731091812; c=relaxed/simple;
+	bh=pdMqJFn4xYar/ogW6iZpxVVKTHsKKJNMZLA6/IYtp+o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U1SHjqQX6X0SuAVVZ+pUbmPrrfTTgbH0xQz2wQ6WZUaE3/ou46Ht02PXeuKauQlBx6EXliNjFeOGwH6Q41Z2fB6GhcEHqQ28yVPsukldW5pF4PWPdvt0GlZB/n8u9U2j5Yp+vRJXK4ws9jHG0GOsurOYoY5z7DiDWHFGZQDbODo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJy0teTG; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35199eb2bso49361327b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:48:08 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460969c49f2so19541cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 10:50:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731091688; x=1731696488; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Flqrjh5XHYvCPHOJ71U9pEXddkJk6YSG/Cy+AhkddDE=;
-        b=nKXYqXBcFgB7aib/K6ru6tUx8oLc/FS5kjqYwXrzL3G4AtYRE3ytBpPVtuOPQnMLqT
-         qW/yh7SSLxmCHC2yti5xoaKSBRSZton9X64ZO7Riyq7ZfNbYCb0XmK/Rbr0OR1rQX81g
-         2F7tGAUFD6udBOx9NxVOKe87XmlDyk8GC39mRBBqwHL/YLGPu1BC0jQtDrcqIIE39MiZ
-         OUBczzvOHcRXUe7p7PV1hAEY1fptERAWz3IJJPrpjMt3ELiR/U8sy/jhHvTayjoJ1hyO
-         DMs+IPFZqSioG7e0GE2F1SuiB0yGzP6tVMtWOg54x7pqfA2BAggaGGaQs7eHJZsfGeG8
-         SmeQ==
+        d=google.com; s=20230601; t=1731091809; x=1731696609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UcZtVBPmVQL+MAycw/KU0YJN3A6fi37snUPr/mVBUXk=;
+        b=iJy0teTGAHSJdpaVsIi1LV7AMD+gF/dhg5lkZhBE8Som+ikTIx/Tr3KBPSCWAqd0eV
+         79DsIyfumMPJrIDgtMGZYTXJkdiSY6+QoMXXnJ8QSO43JGHY6y/Gnjj/JWq9vWR34457
+         6b6gsTl38ElOY/nMv6MeBWqHwdI5pYAgnOmA7MWoB7NQxmi/EWK/sAs+ddFIPZXNZ62Z
+         UFYtdywpMCDRTnEEjfH0uqk6TyZgf9f70jFNYXbtXdZjSRXggvAFDYERxjs0rJvbV4zw
+         LhImrlIcvsBc0hopwcO29IRO95OEIWrrtx8DpOMmiVzmtRT2SEZt+LsLC8vvNSWQeCUg
+         8uUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731091688; x=1731696488;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Flqrjh5XHYvCPHOJ71U9pEXddkJk6YSG/Cy+AhkddDE=;
-        b=mmbjIdFaoW0NzkjhOha2JSESW6LBJ2btFhJ6+occTaGNQk65TpQIS1i2h2/E6niClp
-         sVfxCo+QzqW4cvoyHNx9mqxXAHLgcTB0oYjIgY4uD8o74/nu2hX5Ti1AO0+tx2veLG32
-         X4pDxUEO0mdaE9v3l1/6Es9R7/hVwZark6YUzPTnl9+lKhuQLXeKZT5XpZvCRfOwlroo
-         hhWOfzbazwpmu5BSDRE4JUIVTVpndVEKDMxP4WxCrd2acqTkS9GwFSvawkavOWPdQXRd
-         4TJHASlVzR+mD74B7rFPESCX6dZTqsXsxYBVXk64wIcbiSet6CZAKzIXthZypOm2HbX+
-         xwvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsE/fgt47CqvyeidxgkfmxBwlAI/ZXRm7LTAkFf+6O/pbGn9bhJjDWQuNiZzSc/F75hTdtwsALfd2IfIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR+PGLzdlphB4hgaYkoOKvkbAyhudSrAOPG5e7TG6NABA17v1W
-	sytODKGHw+mNVds/WGGd6eXUHLVAjrBC62eVX/f6kLSQCBrcedtMxlHL2v/rY6p9s7qlplGcoRa
-	HN0+XaA==
-X-Google-Smtp-Source: AGHT+IHZ1qTghdshfBPUmOFWiF8IM69C3hlHfjzypkVnBZ+XYbcanOCv0+vmPJghWffJ1iwSP5YYk+J+P4Sb
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:6fd2:1e36:6d8c:7c49])
- (user=irogers job=sendgmr) by 2002:a5b:80a:0:b0:e30:dccd:9aaa with SMTP id
- 3f1490d57ef6-e337f8c6c74mr11389276.6.1731091688081; Fri, 08 Nov 2024 10:48:08
+        d=1e100.net; s=20230601; t=1731091809; x=1731696609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UcZtVBPmVQL+MAycw/KU0YJN3A6fi37snUPr/mVBUXk=;
+        b=TNE3E29GGUEdWEpmAbHXDwH2QQpEg2i32tgnuja41KY7+kQ5sTj42t1deRvsrwalAm
+         xiiwo8rcgTXuI99sZ/qNb3cWrfgNg4eVYqsp0ImIYHUTJ6jLEjBMwCfgX8EimVHhDwQN
+         BRrR3zofl0yjT2oFa3OvfZlbBMWAbI0Iu7yDlWZ5LB4/9N5nASoUWJTH/RveOXEbujyd
+         EIv1aY9k84zVFZ/ikUDvx9jKlcN1cTcJAGU6PI1/RHEdrv0J1eNL6tg4Pe59YMTTEph3
+         Nz7dZX7cVo3O+uWo3/3AKTN+MzXSjcy4iZGuNd9loqzg6MnbAlervUztzpvLJ6bv2z7L
+         CqCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvTftMPdFwz+TSJc4/XK30/lN1neJfoVDnDqqAr3P4JjNgiEbJbP15n3n9BgcBDBvLPvIO+BGMklwLw6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz23eRpNq5gkB/A2Nt1uWmTFYVbVyhC64To/dY1QV2w6S4UJfbZ
+	XrZWPRmfdulBKe9VHjLARH1PH7IBEUBEuwVaLN883zDSeIdD+thcpxhCjpWeF7zLa8+Xtv2ShXw
+	rJzStlLIyVPVed5EUfHG4zQiKdOcfG3sO4lKJdwQZi0/oGBqireGB
+X-Gm-Gg: ASbGnctdtQFkx5fGSeaolLNIzSTvJ0o0YmT2glkTkpoFi29SdYuy60CkV3CTdp3mXdw
+	bPLJqqNxaFelfIZtJpZl5gSL5pOdGXPLXo05ZBi6/1EPDs5s0tTA5r4NiR3jV9A==
+X-Google-Smtp-Source: AGHT+IHayooXKesO/jmhc3MISQUMRHTU7foDBtuIeVmlZz6ij29U3/xla28tsA7vLuZJNNWCnO4txRPiTygml+GwUa4=
+X-Received: by 2002:ac8:588f:0:b0:461:32e9:c5ee with SMTP id
+ d75a77b69052e-4631685e147mr96211cf.0.1731091808671; Fri, 08 Nov 2024 10:50:08
  -0800 (PST)
-Date: Fri,  8 Nov 2024 10:47:51 -0800
-In-Reply-To: <20241108184751.359237-1-irogers@google.com>
-Message-Id: <20241108184751.359237-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241108184751.359237-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v4 6/6] perf tests: Enable tests disabled due to tracepoint parsing
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	James Clark <james.clark@linaro.org>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Yang Li <yang.lee@linux.alibaba.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Yang Jihong <yangjihong@bytedance.com>, "Steinar H. Gunderson" <sesse@google.com>, 
-	Oliver Upton <oliver.upton@linux.dev>, Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Ben Gainey <ben.gainey@arm.com>, zhaimingbing <zhaimingbing@cmss.chinamobile.com>, 
-	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>, Paran Lee <p4ranlee@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+MIME-Version: 1.0
+References: <20241108051030.2918950-1-xur@google.com> <20241108174638.GC2564051@thelio-3990X>
+In-Reply-To: <20241108174638.GC2564051@thelio-3990X>
+From: Rong Xu <xur@google.com>
+Date: Fri, 8 Nov 2024 10:49:56 -0800
+Message-ID: <CAF1bQ=Rh51kUaNk3zQbPAe6H_buNv3jU9kcyMmJ8csXbZYQqWQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Fix Propeller build option
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Han Shen <shenhan@google.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tracepoint parsing required libtraceevent but no longer does. Remove
-the Build logic and #ifdefs that caused the tests not to be run. Test
-code that directly uses libtraceevent is still guarded.
+Nathan, thank you a lot for helping with the patch!
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/Build          |  6 +++---
- tools/perf/tests/builtin-test.c |  2 --
- tools/perf/tests/parse-events.c | 25 +------------------------
- 3 files changed, 4 insertions(+), 29 deletions(-)
+I will send an updated patch that integrates your suggestion shortly.
 
-diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
-index 01ed9335db4d..f26a668a96df 100644
---- a/tools/perf/tests/Build
-+++ b/tools/perf/tests/Build
-@@ -5,10 +5,10 @@ perf-test-y += tests-scripts.o
- perf-test-y += parse-events.o
- perf-test-y += dso-data.o
- perf-test-y += vmlinux-kallsyms.o
--perf-test-$(CONFIG_LIBTRACEEVENT) += openat-syscall.o
--perf-test-$(CONFIG_LIBTRACEEVENT) += openat-syscall-all-cpus.o
-+perf-test-y += openat-syscall.o
-+perf-test-y += openat-syscall-all-cpus.o
- perf-test-$(CONFIG_LIBTRACEEVENT) += openat-syscall-tp-fields.o
--perf-test-$(CONFIG_LIBTRACEEVENT) += mmap-basic.o
-+perf-test-y += mmap-basic.o
- perf-test-y += perf-record.o
- perf-test-y += evsel-roundtrip-name.o
- perf-test-$(CONFIG_LIBTRACEEVENT) += evsel-tp-sched.o
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index d2cabaa8ad92..4c3b622130a9 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -60,11 +60,9 @@ static struct test_suite *arch_tests[] = {
- 
- static struct test_suite *generic_tests[] = {
- 	&suite__vmlinux_matches_kallsyms,
--#ifdef HAVE_LIBTRACEEVENT
- 	&suite__openat_syscall_event,
- 	&suite__openat_syscall_event_on_all_cpus,
- 	&suite__basic_mmap,
--#endif
- 	&suite__mem,
- 	&suite__parse_events,
- 	&suite__expr,
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 82a19674a38f..5ec2e5607987 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -54,8 +54,6 @@ static bool test_perf_config(const struct perf_evsel *evsel, __u64 expected_conf
- 	return (evsel->attr.config & PERF_HW_EVENT_MASK) == expected_config;
- }
- 
--#ifdef HAVE_LIBTRACEEVENT
--
- #if defined(__s390x__)
- /* Return true if kvm module is available and loaded. Test this
-  * and return success when trace point kvm_s390_create_vm
-@@ -112,7 +110,6 @@ static int test__checkevent_tracepoint_multi(struct evlist *evlist)
- 	}
- 	return TEST_OK;
- }
--#endif /* HAVE_LIBTRACEEVENT */
- 
- static int test__checkevent_raw(struct evlist *evlist)
- {
-@@ -311,7 +308,6 @@ static int test__checkevent_breakpoint_rw(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
--#ifdef HAVE_LIBTRACEEVENT
- static int test__checkevent_tracepoint_modifier(struct evlist *evlist)
- {
- 	struct evsel *evsel = evlist__first(evlist);
-@@ -340,7 +336,6 @@ test__checkevent_tracepoint_multi_modifier(struct evlist *evlist)
- 
- 	return test__checkevent_tracepoint_multi(evlist);
- }
--#endif /* HAVE_LIBTRACEEVENT */
- 
- static int test__checkevent_raw_modifier(struct evlist *evlist)
- {
-@@ -629,7 +624,6 @@ static int test__checkevent_pmu(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
--#ifdef HAVE_LIBTRACEEVENT
- static int test__checkevent_list(struct evlist *evlist)
- {
- 	struct evsel *evsel = evlist__first(evlist);
-@@ -671,7 +665,6 @@ static int test__checkevent_list(struct evlist *evlist)
- 
- 	return TEST_OK;
- }
--#endif
- 
- static int test__checkevent_pmu_name(struct evlist *evlist)
- {
-@@ -971,7 +964,6 @@ static int test__group2(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
--#ifdef HAVE_LIBTRACEEVENT
- static int test__group3(struct evlist *evlist __maybe_unused)
- {
- 	struct evsel *evsel, *group1_leader = NULL, *group2_leader = NULL;
-@@ -1078,7 +1070,6 @@ static int test__group3(struct evlist *evlist __maybe_unused)
- 	}
- 	return TEST_OK;
- }
--#endif
- 
- static int test__group4(struct evlist *evlist __maybe_unused)
- {
-@@ -1813,7 +1804,6 @@ static int test__term_equal_legacy(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
--#ifdef HAVE_LIBTRACEEVENT
- static int count_tracepoints(void)
- {
- 	struct dirent *events_ent;
-@@ -1867,7 +1857,6 @@ static int test__all_tracepoints(struct evlist *evlist)
- 
- 	return test__checkevent_tracepoint_multi(evlist);
- }
--#endif /* HAVE_LIBTRACEVENT */
- 
- struct evlist_test {
- 	const char *name;
-@@ -1876,7 +1865,6 @@ struct evlist_test {
- };
- 
- static const struct evlist_test test__events[] = {
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name  = "syscalls:sys_enter_openat",
- 		.check = test__checkevent_tracepoint,
-@@ -1887,7 +1875,6 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_tracepoint_multi,
- 		/* 1 */
- 	},
--#endif
- 	{
- 		.name  = "r1a",
- 		.check = test__checkevent_raw,
-@@ -1938,7 +1925,6 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_breakpoint_w,
- 		/* 1 */
- 	},
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name  = "syscalls:sys_enter_openat:k",
- 		.check = test__checkevent_tracepoint_modifier,
-@@ -1949,7 +1935,6 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_tracepoint_multi_modifier,
- 		/* 3 */
- 	},
--#endif
- 	{
- 		.name  = "r1a:kp",
- 		.check = test__checkevent_raw_modifier,
-@@ -1995,13 +1980,11 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_breakpoint_w_modifier,
- 		/* 2 */
- 	},
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name  = "r1,syscalls:sys_enter_openat:k,1:1:hp",
- 		.check = test__checkevent_list,
- 		/* 3 */
- 	},
--#endif
- 	{
- 		.name  = "instructions:G",
- 		.check = test__checkevent_exclude_host_modifier,
-@@ -2032,13 +2015,11 @@ static const struct evlist_test test__events[] = {
- 		.check = test__group2,
- 		/* 9 */
- 	},
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name  = "group1{syscalls:sys_enter_openat:H,cycles:kppp},group2{cycles,1:3}:G,instructions:u",
- 		.check = test__group3,
- 		/* 0 */
- 	},
--#endif
- 	{
- 		.name  = "{cycles:u,instructions:kp}:p",
- 		.check = test__group4,
-@@ -2049,13 +2030,11 @@ static const struct evlist_test test__events[] = {
- 		.check = test__group5,
- 		/* 2 */
- 	},
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name  = "*:*",
- 		.check = test__all_tracepoints,
- 		/* 3 */
- 	},
--#endif
- 	{
- 		.name  = "{cycles,cache-misses:G}:H",
- 		.check = test__group_gh1,
-@@ -2111,7 +2090,7 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_breakpoint_len_rw_modifier,
- 		/* 4 */
- 	},
--#if defined(__s390x__) && defined(HAVE_LIBTRACEEVENT)
-+#if defined(__s390x__)
- 	{
- 		.name  = "kvm-s390:kvm_s390_create_vm",
- 		.check = test__checkevent_tracepoint,
-@@ -2265,13 +2244,11 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_breakpoint_2_events,
- 		/* 3 */
- 	},
--#ifdef HAVE_LIBTRACEEVENT
- 	{
- 		.name = "9p:9p_client_req",
- 		.check = test__checkevent_tracepoint,
- 		/* 4 */
- 	},
--#endif
- };
- 
- static const struct evlist_test test__events_pmu[] = {
--- 
-2.47.0.277.g8800431eea-goog
+-Rong
 
+On Fri, Nov 8, 2024 at 9:46=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
+> wrote:
+>
+> Hi Rong,
+>
+> Thanks for the quick patch!
+>
+> On Thu, Nov 07, 2024 at 09:10:30PM -0800, Rong Xu wrote:
+> > The '-fbasic-block-sections=3Dlabels' option has been deprecated with
+> > the following llvm patch:
+> > https://github.com/llvm/llvm-project/pull/110039
+> >
+> > The old option still works, but with a warning like
+> >   clang: warning: argument '-fbasic-block-sections=3Dlabels' \
+> >   is deprecated, use '-fbasic-block-address-map' instead [-Wdeprecated]
+> >
+> > Currently, the option change is only in the ToT clang (v20) and not yet
+> > released in v19.
+>
+> I think this whole block could be a little easier to read and understand
+> with some more standard kernel commit message practices. I would combine
+> the first and third block into one sentence and I would unwrap the
+> warning text (it is okay to be long for a little clarity). Perhaps
+> something like this?
+>
+>   | The '-fbasic-block-sections=3Dlabels' option has been deprecated in t=
+ip of
+>   | tree clang (20.0.0) [1]. While the option still works, a warning is
+>   | emitted:
+>   |
+>   |   clang: warning: argument '-fbasic-block-sections=3Dlabels' is depre=
+cated, use '-fbasic-block-address-map' instead [-Wdeprecated]
+>
+> then putting:
+>
+>   | Link: https://github.com/llvm/llvm-project/pull/110039 [1]
+>
+> right above your Signoff.
+>
+> > This patch adds a check to the Makefile to set the proper option.
+>
+> Try to avoid saying "this patch" in kernel commit messages, it is
+> implicit. It would be cleaner to say something like:
+>
+>   | Add a version check to set the proper option.
+>
+> You can see some more commit message tips in sections 4.2.3 to 4.2.6 in
+> the tip documentation:
+>
+> https://docs.kernel.org/process/maintainer-tip.html#changelog
+>
+> > If the option change is later integrated in v19.x, we need to update th=
+e
+> > check accordingly.
+>
+> I think it is worth dropping this sentence entirely, as I would argue
+> that it is pretty unlikely that this option gets backported to
+> release/19.x, since it would basically accelerate the deprecation
+> timeline, which seems unreasonable to do in a stable release.
+>
+
+These are excellent suggestions that make the message more clear.
+I'll update the patch description.
+
+> > Signed-off-by: Rong Xu <xur@google.com>
+> > Reported-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> >  scripts/Makefile.propeller | 14 ++++++++++++--
+> >  1 file changed, 12 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/scripts/Makefile.propeller b/scripts/Makefile.propeller
+> > index 344190717e47..1a68ea0d1fe4 100644
+> > --- a/scripts/Makefile.propeller
+> > +++ b/scripts/Makefile.propeller
+> > @@ -5,7 +5,13 @@ ifdef CLANG_PROPELLER_PROFILE_PREFIX
+> >    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlist=3D$(CLANG_=
+PROPELLER_PROFILE_PREFIX)_cc_profile.txt -ffunction-sections
+> >    KBUILD_LDFLAGS +=3D --symbol-ordering-file=3D$(CLANG_PROPELLER_PROFI=
+LE_PREFIX)_ld_profile.txt --no-warn-symbol-ordering
+> >  else
+> > -  CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlabels
+> > +  # Staring with clang v20, the '-fbasic-block-sections=3Dlabels' opti=
+on is
+> > +  # deprecated. Use the recommended '-fbasic-block-address-map' option=
+.
+>
+> Might be worth linking the specific change here for archeology sake.
+>
+
+I will add the link in the comments.
+
+> > +  ifeq ($(call clang-min-version, 200000),y)
+> > +    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-address-map
+> > +  else
+> > +    CFLAGS_PROPELLER_CLANG :=3D -fbasic-block-sections=3Dlabels
+> > +  endif
+> >  endif
+> >
+> >  # Propeller requires debug information to embed module names in the pr=
+ofiles.
+> > @@ -21,7 +27,11 @@ ifdef CONFIG_LTO_CLANG_THIN
+> >    ifdef CLANG_PROPELLER_PROFILE_PREFIX
+> >      KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3D$(CLANG_PROPELLER=
+_PROFILE_PREFIX)_cc_profile.txt
+> >    else
+> > -    KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3Dlabels
+> > +    ifeq ($(call clang-min-version, 200000),y)
+>
+> Would it be better/more accurate to check the LLD version here? I doubt
+> it would really happen but it is possible for someone to have LLVM=3D1
+> (using their system wide ld.lld and LLVM tools) and CC=3Dclang-20 to just
+> use an updated clang. Perhaps:
+>
+>   ifeq ($(call test-ge, $(CONFIG_LLD_VERSION), 200000),y)
+>
+> here?
+
+I agree: checking the LLD version makes more sense here.
+
+>
+> > +       KBUILD_LDFLAGS +=3D --lto-basic-block-address-map
+> > +    else
+> > +       KBUILD_LDFLAGS +=3D --lto-basic-block-sections=3Dlabels
+> > +    endif
+> >    endif
+> >  endif
+> >
+> >
+> > base-commit: 0dcc2d1066150787017a71f035145c566597dec7
+> > --
+> > 2.47.0.277.g8800431eea-goog
+> >
 
