@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-401146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EF89C1677
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:28:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6489C1678
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:28:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E29282119
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:28:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346821F218BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 06:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDDA1CDFA6;
-	Fri,  8 Nov 2024 06:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60A4194A5A;
+	Fri,  8 Nov 2024 06:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HnSyj1YW"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pCCrpOco"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53391D52B;
-	Fri,  8 Nov 2024 06:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713511C3F00
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 06:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731047311; cv=none; b=HlbL04FJ9n9dIcgMmVsBHcl7W5QoBPwr5F2N+tp6tKUkOQkjNN1XbUxFg6wiR9RMaQeDec5h17EIbTZfF/rS7Afc0wyeeTwsA7kTn4qT0DWrS2Oz23ysrjqsR3iFVDFuBZQbcuwlj86/geKpthy2MFZyYSmNkdf5LATy679lGQ4=
+	t=1731047332; cv=none; b=AFQZj5gNA3EyTp8vdx5H7fAYmliw7ti3y9p9SHdAodg17OTpXxhZQb+tEDGLTg9xrlXz6W8IN4LANtr7KNYYUy48c3vliyauni4/a/vLYOaTLf9H6LXipqcsdwLTOA4Kj0I1lYQ1kDm8mtH167Chud+I2TsguY12Mdon9QpZBOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731047311; c=relaxed/simple;
-	bh=vGpm9c8Go+hIdvjd+ws4rirXLAyvQkMLKioK1vvCGDs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qk25ZM0g90vBOCMMaXedYiNDvIaXwkMuGXtV03vHWuAuhb3Uj4vpAFEb2JCCx54sq1LNZy3QdPdVx0U82M7xFHTCt2EcvCEOvU/d5hLOdFx6DN4qfDvNIYRFrTKUqFA7yf1yqtpWJJnQqLSWVgPldezVVYVS5BmurFvyi6ZQhdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HnSyj1YW; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A869ml9017648;
-	Fri, 8 Nov 2024 06:28:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=5tXKZIc9DzhALNJU+G9X2Cwncncnk8
-	seDhujvMJvhi0=; b=HnSyj1YWGgSlYCHZnnp4jSQBEzp4moliJbfg0QfWpSCFKm
-	KBcE7MTZSvhoLKA+oT9x8w5cD8hZ0PMTuiYjWScFSahV6Hznw2bNcgK0WVdAJZ3F
-	GNLuB9tCn3AbJvWWplhAsIAhc0CuGaqXxsuRUObF7Oz8OUXLHiIf1q3nNEA+WLY+
-	2FYWONCXWgKWSAij7dJAm5PD+oaPR6Y4x25WNQDBEoBV54MTlRqo1OF32s5y+oO6
-	cWUTdpoBjJ2BpWoPAq2NZM7VNUFJ0capqHTYBsxL2VGBZWTGwXsBR2PuIYcIisut
-	pK0EKF5h7varXIlob+WwcL0XAb5oM2IqKaOwAl/g==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42sd4q023m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 06:28:27 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4A86Eera008450;
-	Fri, 8 Nov 2024 06:28:26 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42nywmek8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 06:28:25 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4A86SMFZ51577128
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 8 Nov 2024 06:28:22 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3608020043;
-	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 152F020040;
-	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  8 Nov 2024 06:28:22 +0000 (GMT)
-From: Sven Schnelle <svens@linux.ibm.com>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org,
-        sumanthk@linux.ibm.com, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        hca@linux.ibm.com
-Subject: Re: [PATCH] perf/test: fix perf ftrace test on s390
-In-Reply-To: <Zy0X9kz_tmjNue5D@google.com> (Namhyung Kim's message of "Thu, 7
-	Nov 2024 11:41:42 -0800")
-References: <20241107123343.1580616-1-tmricht@linux.ibm.com>
-	<Zy0X9kz_tmjNue5D@google.com>
-Date: Fri, 08 Nov 2024 07:28:21 +0100
-Message-ID: <yt9diksyqlx6.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731047332; c=relaxed/simple;
+	bh=nhKZViwIojy1jznqH+DVmUP0BD/k7Oy5tX4x7kzV0XQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GXpURl94Df2nBjlDVZeazyQDsjWRlx03hgAS4ZnqUNrBh686/EGrXJMzTe4DSJQVUaz6ymlgjgIEEKfMLrnD4tj5uddRWuwx5mtHmOPSpU5Nzo0rFSIk/LcsKMTHBQVdokOpU6HipNfnLY1FZCEWHpS0KTITI8uUtXSUMWnM6hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pCCrpOco; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso4964604a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 22:28:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731047329; x=1731652129; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nhKZViwIojy1jznqH+DVmUP0BD/k7Oy5tX4x7kzV0XQ=;
+        b=pCCrpOcowvH5Z26iBqh9K9mnw/8ySSn1eU7g7QPabfNVZr2QRg2kREXvJehfRewpCn
+         lywD4z2CAPAMwtQ/rxcMX8HFQzHZG1rODdeStMePtEiB/jtdezvlXbgHuNaROgYPBabl
+         fJGjPWXbjerNJgH+U+gPsGxt9lfBRE/SSM3RR6b8eqyM4k6gvKXBuq9xArGNGCKIXs2V
+         cNDCxseoSsoehhUrJrUQdgcmxgBZa/vM0TPFHw5dVzC+otVLmr9s1i7omzZtBhdntv3A
+         gkQ/1gQEJ6+M/1CLNaEQ2SSWLTj9xkmrgkZfsviDYA83FtAE0Lfd8StiUW46MHZhuYpK
+         QaJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731047329; x=1731652129;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nhKZViwIojy1jznqH+DVmUP0BD/k7Oy5tX4x7kzV0XQ=;
+        b=wMkXd04F0EGjImdAg3f+UWWT+EAGk+o+sYfIfgqdrMUlo97PQQ68daWea7ezoix7Tg
+         kjWnugxCzSoWexnDzxJBOkoV0hQtoa5wPrRz9bc4r1Z9D0JYYvgd/+26ZWvAL7pHffx8
+         bgnoR3y2+Pfnc1HxmJkhjs5esQsfgrn7wMWCP6Tfdm52qN6N00ZTMg2DWSRNsdha8i29
+         Z1+JF8FnuOin3PUA2NV1uE3Jpi21ehsXQF7QDbktJS1K553W5TILQ4Ro64PoMjNbrcIV
+         CWaHAE6q7tvGbfAQL3EW4L31TngV9FKbmha5mtEntccHjQfx7bbV5xSEUYegJR4MWRsk
+         XT3A==
+X-Gm-Message-State: AOJu0YyZdNYcLlqZFlkWdwnPwZ018lvBK9FKOdl39HtEa6vTUSHbcc94
+	2PxOoERIjSc0AgyzaobLNppUK6iYEW+Cl8B7ibm16NZfkMxRAUpcAlaA4+a+8jfAruIqWnOHhAC
+	kdBvjlr6S+VCPi+1PHJ7EDy6+lrMLz17uiWlG0g==
+X-Google-Smtp-Source: AGHT+IF4QpvMl47Anct7uB8oNOeB/KNHWgHKnvD8Y/Uan+WAiJAKM17lcJrxkRIlrQw6Wda6VuR3wUPC5X6N3HpZEeQ=
+X-Received: by 2002:a17:907:96a2:b0:a9a:7b3d:705 with SMTP id
+ a640c23a62f3a-a9eecabd4e7mr172472666b.30.1731047328457; Thu, 07 Nov 2024
+ 22:28:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: S1e0I9GiKZ-_mHN-UeEXEbmae30PounX
-X-Proofpoint-GUID: S1e0I9GiKZ-_mHN-UeEXEbmae30PounX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- clxscore=1011 mlxlogscore=629 phishscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411080051
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-2-beata.michalska@arm.com> <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+ <Zyh_ACbOkSsjcPX3@arm.com>
+In-Reply-To: <Zyh_ACbOkSsjcPX3@arm.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 8 Nov 2024 11:58:37 +0530
+Message-ID: <CAKohpokFUpQyHYO017kOn-Jbt0CFZ1GuxoG3N-fenWJ_poW=4Q@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, ionela.voinescu@arm.com, sudeep.holla@arm.com, 
+	will@kernel.org, catalin.marinas@arm.com, rafael@kernel.org, 
+	sumitg@nvidia.com, yang@os.amperecomputing.com, 
+	vanshikonda@os.amperecomputing.com, lihuisong@huawei.com, 
+	zhanjie9@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
 
-Namhyung Kim <namhyung@kernel.org> writes:
+On Mon, 4 Nov 2024 at 13:30, Beata Michalska <beata.michalska@arm.com> wrote:
 
-> On Thu, Nov 07, 2024 at 01:33:43PM +0100, Thomas Richter wrote:
->> On s390 the perf test case ftrace sometimes fails as follows:
->> 
->>   # ./perf test ftrace
->>   79: perf ftrace tests    : FAILED!
->>   #
->> 
->> The failure depends on the kernel .config file. Some configurarions
->> always work fine, some do not.
->
-> Which test do you fail?  ftrace trace or profile?  I don't think it's
-> gonna be a problem for ftrace latency.
+> We need a way to discover whether the new sysfs attrib is to be enabled or not.
 
+Ahh, this is too much trouble to make it optional then :)
 
-The ftrace profile test failed, because the ring buffer was not large
-enough, and some lines (especially the interesting ones with nanosleep
-in it) where dropped.
+> I guess I could change the signature for arch_freq_get_on_cpu to return an error
+> if that functionality is not supported for given policy ?
 
->
->> To achieve success for all our tested kernel configurations, enlarge
->> the buffer to store the traces complete without wrapping.
->> The default buffer size is too small  for all kernel configurations.
->> Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
->
-> Actually you can use -m 16M option for perf ftrace trace and perf ftrace
-> profile.  Then you don't need to care about restoring the original size.
+That would be more controversial I guess as we may want an unsigned int return
+type for frequency.
 
-Ok, thanks. I leave it to Thomas to decide whether he wants to add this
-option to the CI run.
+I think we can do two things here:
+- Just enable the sysfs attribute all the time ?
+- Make it optional based on some static cpufreq driver flag ?
 
-Thanks!
+I would just enable it for everyone I guess.
+
+--
+Viresh
 
