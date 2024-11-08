@@ -1,67 +1,64 @@
-Return-Path: <linux-kernel+bounces-401773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65949C1EF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:16:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942749C1EF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:16:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F3E9B22041
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3968F1F23EC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C097E1E5000;
-	Fri,  8 Nov 2024 14:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7E11F131E;
+	Fri,  8 Nov 2024 14:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="dyRNsVDT"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BS/oIG0L"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8151401C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36DF1DEFC2;
+	Fri,  8 Nov 2024 14:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731075353; cv=none; b=V8BjqkdxqxO2yP0WhZzvl1SKLLgKoSTDhUnwFX/Bg20itxsB7EkP9PfABSPBqg3sGOQZTi7wO0BNhLz/jZB+Ju3W3oNAqOW9gp69c/AEWrcis38AdNtayrcu11Tk0P31bZt8rpEYyX6OO99QXZcYE5NWszZA1wBsDTnev/XzR6s=
+	t=1731075368; cv=none; b=o/MiTv8LAyfK5jXouWsOmx9cHLsO61g0ZVKgr47vx2FI72otvEQl9NujAfyvzfIIjZtCLw6jkllE+cyHD4mCkTMm3rc1Swd9l7gUbcr3srY4L/YrI8mMygdlMnxoYeFuDo6yrUMVPRqpvJExmZRrH7YONwsj/kCyYRmebSUuFVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731075353; c=relaxed/simple;
-	bh=ws+GTUComh8X1PZWMHIhgeWfmtmHHuB5QBXpYb87epw=;
+	s=arc-20240116; t=1731075368; c=relaxed/simple;
+	bh=ZnOt/QBmN1/tJrQ/3Ih9wNC/mk8h0EJmGW6KeJIZjfM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JBnt+ozMaYdP6xu//4UEhRVYdME7N3HJIhhuBfpFuPRcY1bfm+rpR62YZeL4eDutoyBJt7eixmIY3mOlR748TTn2uJ7VPbjti+44JCcncYfxHn2dmI6n9i+3F2ILpNrDLkSbLnI5//h0Uc4cTwsZI5+HVdqh2bl+bO8jKxFcarA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=dyRNsVDT; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-Date: Sat, 9 Nov 2024 01:15:16 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1731075347;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LsPCVms6hNNfLUkJTitnYnu1jKozUMg34GhP2YbGR/Y=;
-	b=dyRNsVDTwaKej4kfRQld0HktPA9K31WMR+7RMV7BkZyFHohDGsgh1Ni/SdHK1cF+2R1gR3
-	E44AMjR6bxQC7HScfiopeaR5sHe7tc5H73ez0wWQdpHXWy+DDSSuypMNYDuvBXu91X5OYX
-	/zTcFle6IGlpjTeWpb1qWnbZ4sdt3OTUUJzLFXD85jv/Inx7Ng4nrf7Oa/tgwPYKYOHXfq
-	q6Qyy6x94JDR5O6fGBJaN8B9vzCA5hihKqFw26GUNovZ5TwZAmuEy2myt3SLTCR/6xVmhU
-	05FqmKXjfPLpUsWxlc8ivY1X3kFTZyT6Tj9eDu6viVNU/iM4CR6BdagzgqLxEw==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: Parthiban <parthiban@linumiz.com>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Samuel Holland <samuel@sholland.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/sun4i: Workaround TCON TOP conflict between DE0 and
- DE1
-Message-ID: <Zy4c9BFcrz2JVU6k@titan>
-References: <20241108-tcon_fix-v1-1-616218cc0d5f@jookia.org>
- <20241108115357.691b77b0@donnerap.manchester.arm.com>
- <Zy4SKCBwce3q0yj5@titan>
- <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nlzMwRq0hBA6Z43fH8AqSgFd5r1QtB1THwdMU2zbQn6gzsIJpCX5U5WUjIOCixBQwFkWDvijlQcZ1PilPlugi1aQrcfmoFI3+2uY3ObE23auzPOTtXorsjVPluLEiKDl4ojnMPaXKk4Q2kQYWLrYnJzSAo1OSjg8oIGX5p+wpw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BS/oIG0L; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bf0kE6+Ar36RvohAg6YRzI2xJ5Dk2ufrDqR36SfdFtk=; b=BS/oIG0L6u2qu4IT+nvicJo3bl
+	EzKKkF7xuJ9NoUQbwGS0NpDdMsIW24TsJ+ioexmMsMstnryDo2rdBWqpUXAzMb7A/2Oo9goftSSKz
+	pp0ZQpuU77sxHoT86vG4UIhCWVReIvwd+ucA+0KZ0t6QoklysJrY1T6JiAYcSOzblu+g/jgok4uLB
+	EMFYzwYpzcPfm/ku8fgA/u/+VcsRTLegs8+TVj3kz2Ae4GG4ytZeQW50uLodUf1gLX04oFf0RVWY2
+	3T0QfiW3vh0oFgN/mG4RIIgMkcqH9i6KWL1o9j0yVBLTIZkoXQsE9Xc7/Ovy08/c3G4CD6zvDzvlH
+	46gGWkXg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9PmK-0000000CJzi-44m2;
+	Fri, 08 Nov 2024 14:16:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4496730049D; Fri,  8 Nov 2024 15:16:00 +0100 (CET)
+Date: Fri, 8 Nov 2024 15:16:00 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+	nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+	justinstitt@google.com, llvm@lists.linux.dev
+Subject: Re: [PATCH 01/11] objtool: Generic annotation infrastructure
+Message-ID: <20241108141600.GB6497@noisy.programming.kicks-ass.net>
+References: <20231204093702.989848513@infradead.org>
+ <20231204093731.356358182@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,34 +67,109 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b26b9d86-4ff9-4543-85ce-176dccfbfa05@linumiz.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20231204093731.356358182@infradead.org>
 
-On Fri, Nov 08, 2024 at 07:36:16PM +0530, Parthiban wrote:
-> To add, 0x20 will be DE0 <--> LCD0 and DE1 <--> TV0. Below note (copied from
-> R40) states the priority of the DE selection, which fails to work? Not sure,
-> may be disabling CORE1_SCLK_GATE and CORE1_HCLK_GATE in de2-clk helps.
+On Mon, Dec 04, 2023 at 10:37:03AM +0100, Peter Zijlstra wrote:
+> Avoid endless .discard.foo sections for each annotation, create a
+> single .discard.annotate section that takes an annotation type along
+> with the instruction.
 > 
-> With A133 following the same as T113 with single mixer without TV, still
-> sets 0x20 in vendor kernel.
-> 
-> copied from R40:
-> Note: The priority of DE0 is higher than DE1.
-> If TCON_LCD0 selects DE0 and DE1 as source at the same time, then
-> DE0 will be used for the source of TCON_LCD0.
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+> --- a/include/linux/objtool.h
+> +++ b/include/linux/objtool.h
+> @@ -57,6 +57,13 @@
+>  	".long 998b\n\t"						\
+>  	".popsection\n\t"
+>  
+> +#define ASM_ANNOTATE(x)						\
+> +	"911:\n\t"						\
+> +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
+> +	".long 911b - .\n\t"					\
+> +	".long " __stringify(x) "\n\t"				\
+> +	".popsection\n\t"
+> +
+>  #else /* __ASSEMBLY__ */
+>  
+>  /*
+> @@ -146,6 +153,14 @@
+>  	.popsection
+>  .endm
+>  
+> +.macro ANNOTATE type:req
+> +.Lhere_\@:
+> +	.pushsection .discard.annotate,"M",@progbits,8
+> +	.long	.Lhere_\@ - .
+> +	.long	\type
+> +	.popsection
+> +.endm
+> +
+>  #endif /* __ASSEMBLY__ */
+>  
+>  #else /* !CONFIG_OBJTOOL */
+> @@ -167,6 +182,8 @@
+>  .endm
+>  .macro REACHABLE
+>  .endm
+> +.macro ANNOTATE
+> +.endm
+>  #endif
+>  
+>  #endif /* CONFIG_OBJTOOL */
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2308,6 +2308,41 @@ static int read_unwind_hints(struct objt
+>  	return 0;
+>  }
+>  
+> +static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
+> +{
+> +	struct section *rsec, *sec;
+> +	struct instruction *insn;
+> +	struct reloc *reloc;
+> +	int type;
+> +
+> +	rsec = find_section_by_name(file->elf, ".rela.discard.annotate");
+> +	if (!rsec)
+> +		return 0;
+> +
+> +	sec = find_section_by_name(file->elf, ".discard.annotate");
+> +	if (!sec)
+> +		return 0;
+> +
+> +	for_each_reloc(rsec, reloc) {
+> +		insn = find_insn(file, reloc->sym->sec,
+> +				 reloc->sym->offset + reloc_addend(reloc));
+> +		if (!insn) {
+> +			WARN("bad .discard.annotate entry: %d", reloc_idx(reloc));
+> +			return -1;
+> +		}
+> +
+> +		type = *(u32 *)(sec->data->d_buf + (reloc_idx(reloc) * sec->sh.sh_entsize) + 4);
+> +
+> +		func(type, insn);
+> +	}
+> +
+> +	return 0;
+> +}
 
-Hi there,
+So... ld.lld hates this :-(
 
-Yes that was a pretty bad typo, I meant to say DE1 to TV0
-The prioritization seems broken in the T113 at least, it's racy from
-what I see in testing. I should note this in the patch too.
+From an LLVM=-19 build we can see that:
 
-I looked at the datasheets and kernel code briefly: I can't seem to
-figure out what SCLK/HCLK gating does and I don't think the kernel
-touches these registers which are gated by default.
+$ readelf -WS tmp-build/arch/x86/kvm/vmx/vmenter.o | grep annotate
+  [13] .discard.annotate PROGBITS        0000000000000000 00028c 000018 08   M  0   0  1
 
-> Thanks,
-> Parthiban
+$ readelf -WS tmp-build/arch/x86/kvm/kvm-intel.o | grep annotate
+  [ 3] .discard.annotate PROGBITS        0000000000000000 069fe0 0089d0 00   M  0   0  1
 
-John Watts
+Which tells us that the translation unit itself has a sh_entsize of 8,
+while the linked object has sh_entsize of 0.
+
+This then completely messes up the indexing objtool does, which relies
+on it being a sane number.
+
+GCC/binutils very much does not do this, it retains the 8.
+
+Dear clang folks, help?
 
