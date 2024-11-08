@@ -1,176 +1,145 @@
-Return-Path: <linux-kernel+bounces-401642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862929C1D48
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E32289C1D77
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A23C286937
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:45:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9C10283031
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6281EBFFB;
-	Fri,  8 Nov 2024 12:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B820F1E908A;
+	Fri,  8 Nov 2024 13:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="1i6/6+SC"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H3KoZdsB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E6E1EBA07;
-	Fri,  8 Nov 2024 12:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206AC1DF739;
+	Fri,  8 Nov 2024 13:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731069897; cv=none; b=XCL0Lo/4QVuLZ5NFy5FoDCTDjvIyiwhOZpTvcQEWxpy+esHa2ZRLYxVGx/scDbEe7CENy3ScRlU3eDaV+fK3ar9ZgUrFq4+wBWAsu5uo9lv0svI9V0lEJwSoEobVx6JHTVKb8TGPuNa+Bap6iXrT2B4LGjeUiDw+fxuTgjKBAYw=
+	t=1731070815; cv=none; b=pdMG/i+Wl0mM4yWWVe07gn3k+sAmmulghw18ggZRKnT5sluXSWuxN1mkblS4/BxzuGx30AQp3+wQwAibhEtj06QdAhzz5wk+Lr5uOVKgOQjKIHHjhXt2hUvX5tPRo7/xrJC9R+6sb0Qhg/jLR34NBFEfuSluBcAYkhec4E7R68A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731069897; c=relaxed/simple;
-	bh=U+67OIQ2c58e/Bd+/4wKWvkI8Xjg4EknaZc7K+ctL9o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pl5WwDPoUZ7ylkkBq1GbTwEZKbXvnMv5jMrp6DIVzbaeXzVqbKS9+QTIqLBLn4AEmTZSrnFUA0ksox3NES6qqGfFR+mUQTfSER2JgYOACyVbvWjeRUOjkNrXKu3tcqsSvig/U1mhnmT5dA/3X3Tvj1O4nmjqtfKxcU4kMApXd9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=1i6/6+SC; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A89FfYq020246;
-	Fri, 8 Nov 2024 07:44:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=fsJar
-	vn0b7hrkfTpjJlOMKMmr/huC1+WZ/1frECXZbk=; b=1i6/6+SCE9uNElllODuCu
-	MXyEtx653+iLvoORjU2SbI6mDy/gfCEgrOPY7DpMW7cOPj6sZ1JBDix33omY852j
-	wVwnnwvlRFFzBxfNbkR6xxI7pFxlZvA/aVtXtFn1lTrVBDl/6k0fieGMlfwCqgMr
-	anvEzGeyLRIbdtl7ZQLHc2gQP+8+lzKfN/qDBiLf6rYj/sftCsUXe0pRiRfbNnhu
-	swDIurGBMOBuakWw8CCWBdDYIyvPN5QqWaelEXnhSzfVgQEF//8ZZhzFdfzY5box
-	sKha6gxDzphRDe4nhI4L/dpoFP9WrZaTBN+HbQ7oYUj6vMm0LcE4MSK29ID0F7W7
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42s6g7k74h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 08 Nov 2024 07:44:42 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4A8CifxS040865
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 8 Nov 2024 07:44:41 -0500
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Fri, 8 Nov 2024 07:44:41 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Fri, 8 Nov 2024 07:44:41 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 8 Nov 2024 07:44:41 -0500
-Received: from localhost.localdomain ([10.48.65.12])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4A8CiNca003412;
-	Fri, 8 Nov 2024 07:44:35 -0500
-From: Darius Berghe <darius.berghe@analog.com>
-To: <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <alexandru.tachici@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <darius.berghe@analog.com>
-Subject: [PATCH v3 3/3] dt-bindings: iio: adis16480: add devices to adis16480
-Date: Fri, 8 Nov 2024 14:58:14 +0200
-Message-ID: <20241108125814.3097213-4-darius.berghe@analog.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241108125814.3097213-1-darius.berghe@analog.com>
-References: <20241108125814.3097213-1-darius.berghe@analog.com>
+	s=arc-20240116; t=1731070815; c=relaxed/simple;
+	bh=y/Kf87eKmLNLY/Pl6BexjMOvlzrToTbYbyL/whC7b6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPjujfgFlpql1n4tW05aswckF6vz5Cl2/2zhjA5Fna/ZXIuBFKTixmFZvFW1X+40f2+8yqN2PbJuDXVa0PMIlnGbexY2k6DfU73CyxtxInCg0N87wPbrTt820/uBD1KgFY0lx2ovZN042+T4v1gXew2P/zKt5JDermtNHsmXHsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H3KoZdsB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0552C4CECD;
+	Fri,  8 Nov 2024 13:00:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731070814;
+	bh=y/Kf87eKmLNLY/Pl6BexjMOvlzrToTbYbyL/whC7b6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H3KoZdsBulurFEoez6qaLgXQZwlCTTNMNzpje46ub1SfZtp1AfXl0dL9fus5yBbke
+	 2vjPA20pJ26+2rO1zo1OW70fly3KkvvJ9GXwUKmdIeOaGvEsLIAcPgiHIYSiDTru9u
+	 ierzBNhRX1yvLaR45cWPDAEkubsNFRswvVs9DicztzXHaDZJxgox6uBb0jdfgTrJZZ
+	 q9cl5g+VnV4PdOfyHFPSLAWNBneX0IoIx4ocni3bxsOrFpyObXNRWms6Q1cnRoxDLH
+	 ywYItaMQklSPLPsdUMxybIzq3oixZ2URgsgovNCWIo/c6UrqwxSrHb/AOYLj/IrDVH
+	 eTRfLN1bHCY8A==
+Date: Fri, 8 Nov 2024 13:00:10 +0000
+From: Mark Brown <broonie@kernel.org>
+To: John Watts <contact@jookia.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: Re: [PATCH] ASoC: audio-graph-card2: Purge absent supplies for
+ device tree nodes
+Message-ID: <ffeeb9cd-7593-47b2-8fef-ec80cdfcb809@sirena.org.uk>
+References: <20241108-graph_dt_fix-v1-1-173e2f9603d6@jookia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 7C7DqUvmR-9oPHbgalodOxI-Rl5ibh_k
-X-Proofpoint-GUID: 7C7DqUvmR-9oPHbgalodOxI-Rl5ibh_k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
- mlxlogscore=999 suspectscore=0 clxscore=1015 spamscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411080106
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nHnIxcBMEGVirgC2"
+Content-Disposition: inline
+In-Reply-To: <20241108-graph_dt_fix-v1-1-173e2f9603d6@jookia.org>
+X-Cookie: Do not overtax your powers.
 
-Add the adis16486, adis16487 and adis16489 Six Degrees
-of Freedom Inertial Sensors to the list of compatible devices
-of the adis16480 iio subsystem driver.
 
-adis16486 is similar to adis16485, has the exact same channels
-but acceleration and delta velocity scales are different.
+--nHnIxcBMEGVirgC2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-adis16487 is fallback compatible with adis16485 and as a
-consequence, dt-bindings list was updated to use oneOf.
+On Fri, Nov 08, 2024 at 12:37:15PM +1100, John Watts wrote:
+> The audio graph card doesn't mark its subnodes such as multi {}, dpcm {}
+> and c2c {} as not requiring any suppliers. This causes a hang as Linux
+> waits for these phantom suppliers to show up on boot.
+> Make it clear these nodes have no suppliers.
 
-adis16489 is similar to adis16488 but lacks the magnetometer
-and has a different accelerometer scale.
+Copying in Morimoto-san.
 
-Signed-off-by: Darius Berghe <darius.berghe@analog.com>
----
- .../bindings/iio/imu/adi,adis16480.yaml       | 42 +++++++++++--------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+>=20
+> Example error message:
+> [   15.208558] platform 2034000.i2s: deferred probe pending: platform: wa=
+it for supplier /sound/multi
+> [   15.208584] platform sound: deferred probe pending: asoc-audio-graph-c=
+ard2: parse error
+>=20
+> Signed-off-by: John Watts <contact@jookia.org>
+> ---
+>  sound/soc/generic/audio-graph-card2.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/sound/soc/generic/audio-graph-card2.c b/sound/soc/generic/au=
+dio-graph-card2.c
+> index 56f7f946882e831cc4474c86b31f69e15de1549a..68f1da6931af2161dc8815b8c=
+04d10cd614cc182 100644
+> --- a/sound/soc/generic/audio-graph-card2.c
+> +++ b/sound/soc/generic/audio-graph-card2.c
+> @@ -270,16 +270,19 @@ static enum graph_type __graph_get_type(struct devi=
+ce_node *lnk)
+> =20
+>  	if (of_node_name_eq(np, GRAPH_NODENAME_MULTI)) {
+>  		ret =3D GRAPH_MULTI;
+> +		fw_devlink_purge_absent_suppliers(&np->fwnode);
+>  		goto out_put;
+>  	}
+> =20
+>  	if (of_node_name_eq(np, GRAPH_NODENAME_DPCM)) {
+>  		ret =3D GRAPH_DPCM;
+> +		fw_devlink_purge_absent_suppliers(&np->fwnode);
+>  		goto out_put;
+>  	}
+> =20
+>  	if (of_node_name_eq(np, GRAPH_NODENAME_C2C)) {
+>  		ret =3D GRAPH_C2C;
+> +		fw_devlink_purge_absent_suppliers(&np->fwnode);
+>  		goto out_put;
+>  	}
+> =20
+>=20
+> ---
+> base-commit: 98f7e32f20d28ec452afb208f9cffc08448a2652
+> change-id: 20241108-graph_dt_fix-d1f0db88a696
+>=20
+> Best regards,
+> --=20
+> John Watts <contact@jookia.org>
+>=20
 
-diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-index e3eec38897bf..7a1a74fec281 100644
---- a/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-+++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16480.yaml
-@@ -11,24 +11,30 @@ maintainers:
- 
- properties:
-   compatible:
--    enum:
--      - adi,adis16375
--      - adi,adis16480
--      - adi,adis16485
--      - adi,adis16488
--      - adi,adis16490
--      - adi,adis16495-1
--      - adi,adis16495-2
--      - adi,adis16495-3
--      - adi,adis16497-1
--      - adi,adis16497-2
--      - adi,adis16497-3
--      - adi,adis16545-1
--      - adi,adis16545-2
--      - adi,adis16545-3
--      - adi,adis16547-1
--      - adi,adis16547-2
--      - adi,adis16547-3
-+    oneOf:
-+      - enum:
-+          - adi,adis16375
-+          - adi,adis16480
-+          - adi,adis16485
-+          - adi,adis16486
-+          - adi,adis16488
-+          - adi,adis16489
-+          - adi,adis16490
-+          - adi,adis16495-1
-+          - adi,adis16495-2
-+          - adi,adis16495-3
-+          - adi,adis16497-1
-+          - adi,adis16497-2
-+          - adi,adis16497-3
-+          - adi,adis16545-1
-+          - adi,adis16545-2
-+          - adi,adis16545-3
-+          - adi,adis16547-1
-+          - adi,adis16547-2
-+          - adi,adis16547-3
-+      - items:
-+          - const: adi,adis16487
-+          - const: adi,adis16485
- 
-   reg:
-     maxItems: 1
--- 
-2.46.1
+--nHnIxcBMEGVirgC2
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcuC1kACgkQJNaLcl1U
+h9DcKwf9EY5TwHTmMcHD+uk+/GHN5AgWcnmwg6lonWAYNVX4R0W8AnXRVS3uYOEv
+DoleuIXezl92+1HiKUsroKj72LeG0GwLO+MBoyVQ25n2q4lUmLz1crtAmeeSkscb
+qTaZJr1JwvtrGfOpecatE3fgxxq/3uPcC5PdxlRn8ZogYea5j98uSvyqHr3G4dbV
+wVXKWXavZ96W06V7w/MjAm9/R465xt8CItLd53eYnT0IUGtE8bMZNIewm/xVVnEm
+Io5ZtCSNdgKtEb0JqUY9dksX6gzhObZMSSQ6xIBSiFHtTkj0lLy7IIFfoJRON7i5
+XyQQO7M6YAGpj/r9izQSAQ0do4B+fA==
+=1KJj
+-----END PGP SIGNATURE-----
+
+--nHnIxcBMEGVirgC2--
 
