@@ -1,161 +1,79 @@
-Return-Path: <linux-kernel+bounces-402191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831009C24E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:32:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930429C24E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390591F23864
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA50B1C22241
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4301A9B34;
-	Fri,  8 Nov 2024 18:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310671A9B36;
+	Fri,  8 Nov 2024 18:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1xyEJlq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q0i+zgV5"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5769233D80;
-	Fri,  8 Nov 2024 18:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD52233D6E;
+	Fri,  8 Nov 2024 18:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731090719; cv=none; b=BXwoWHUdyb5ENEdE/oGvtVqeGkxkVcIpoq0YwHlRR5A+Ec5fQUijIw2Zy6v+ADeWu+NU+WwJiPNbW+B6/OOM7O011yoglEZRO0JVCjyz7P91BNOfgQIAQf3uTVhU8DCrPqCiv8Iv1atafBYf9S93wWaDjyEiX5QQ3ZedGx99AT4=
+	t=1731090803; cv=none; b=pKXB1yrbHqpt1UZjDAyG4QtUcREsgia5azP6pHinLys2Id0yhaT9A881/JVToFBXvc0jYKwAJHxRudgZPWVF6ZK7NHUj4VbJNnsJ3/zWMU/JF78Dy9U8I/53XbRv6s2PEh/2ux/kDLCANlM88mH1dUq0DnqObpXeIbarhZCL9N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731090719; c=relaxed/simple;
-	bh=OGGv9Ad1QjLyRUu0I2TAYu2k20sOVJkLksSuDtRoGmw=;
+	s=arc-20240116; t=1731090803; c=relaxed/simple;
+	bh=BUrUKcrOBLuOYRhDXsyK+/CBvZBzVAsJ75G04lAWNeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyu0RuRta9xBeqtfR0h4nuIrukCDGI7UJQIdHZimWsjWwoy5CfAU9sKZeuapORi3yzYWElb1bKR06DZCiIJe4zzJKbx+g/F3wq3fdAU55zcLJAd9F9hyS7Ykd5J1SqODsP7Ndl9arp4P0sQ1rm2e89kaCgF/WU1gqyHO5fkS6m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1xyEJlq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80218C4CECD;
-	Fri,  8 Nov 2024 18:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731090718;
-	bh=OGGv9Ad1QjLyRUu0I2TAYu2k20sOVJkLksSuDtRoGmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T1xyEJlqGTfBQL2g3ifsQSoNwPeldh0m7nm1tAuub0onRz0BsZgsLp4JlU5do1IxB
-	 ds0meydDzkiROZV5LpYyuHZt3QayowteMTcKPuBEpezlXG6n7qdRpiBjLcyuQjqbvq
-	 VgilTzN0jdR7oRFG9ufPwIFHjj3/jKj5B6iVdFfeHnL2jQPflFjEHe1gB0CRlNXoed
-	 oBFNf4yPhEUDmhzjqfjmgZGhRRopROip02NI1IcynbQqVSsHW407mMTBTQFsiSCM/B
-	 1KOXKtUPy4Pz9247eojn3ZSy+PifxmcHhnfJ9K4lnOUuJHWcEJVvybSPOfZ8pM5ofe
-	 FHXLORT6pZ1mQ==
-Date: Fri, 8 Nov 2024 10:31:56 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Hendrik Brueckner <brueckner@linux.ibm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	H Peter Anvin <hpa@zytor.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH V14 08/11] perf tools: Add missing_features for
- aux_start_paused, aux_pause, aux_resume
-Message-ID: <Zy5ZHHgO69gQwZRo@google.com>
-References: <20241022155920.17511-1-adrian.hunter@intel.com>
- <20241022155920.17511-9-adrian.hunter@intel.com>
- <20241108154152.GA197781@e132581.arm.com>
- <Zy5M1WJ97GprNniq@google.com>
- <b97a8aa8-37b1-4d8f-9de0-f294fcd07adb@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AckDVjoLEwV8sNMx7CGaL8+ajkyyRhUkXIhgH5vgirk6W46qu9zYsc3sV5RWXViznmHidlIH3EZELfWeASwikenqyTrhMo594+uJWXNFiKOAt9qyavfv1KkqHXdqcMhAskjsdqHuJEXV549LV39mf+s7HAA3owfd8GmynMWtito=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q0i+zgV5; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BPleluZ0wE/8aNLphmAdE2uJITOE+HSyY7uzrnMww8M=; b=q0i+zgV5EGWxt2QNrgNCzIHcaw
+	SP8QoN+i7fs2yOVbyuIGhhu7MGRJb7qJzH5jQVhklWOIVEYwMCjsw6vUaIVuCPjDmn4SKaJTKbNUP
+	IO83P4bZEVBMFtVe1dxqeNjq3YOFSaOS3mMyAXTzryMcNm6ZFJB2nCG37IcILnkzGzu1IQgfQeRe7
+	BjrkRdB9fCBNfVpcEr/2dCmHoG7bj4o8Elug+NGxDI9FO/BlVs+RBZuEgqG3XIGra0Rtov6H5A0ZF
+	GngwTb/al4rIUSZ6MBbCQ6vvevelvnwQw+LhzHtLf82iNyknEfvDW0Z0Sg/O+hdcEB/TkHg5G5k3w
+	9q3BFAXA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t9TnL-00000009B9r-1HO5;
+	Fri, 08 Nov 2024 18:33:19 +0000
+Date: Fri, 8 Nov 2024 18:33:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+	clm@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/13] fs: add read support for RWF_UNCACHED
+Message-ID: <Zy5Zb8Twe7QBkHMh@casper.infradead.org>
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+ <20241108174505.1214230-9-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b97a8aa8-37b1-4d8f-9de0-f294fcd07adb@intel.com>
+In-Reply-To: <20241108174505.1214230-9-axboe@kernel.dk>
 
-On Fri, Nov 08, 2024 at 08:01:02PM +0200, Adrian Hunter wrote:
-> On 8/11/24 19:39, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Fri, Nov 08, 2024 at 03:41:52PM +0000, Leo Yan wrote:
-> >> Hi Adrian,
-> >>
-> >> On Tue, Oct 22, 2024 at 06:59:14PM +0300, Adrian Hunter wrote:
-> >>>
-> >>> Display "feature is not supported" error message if aux_start_paused,
-> >>> aux_pause or aux_resume result in a perf_event_open() error.
-> >>>
-> >>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> >>> Acked-by: Ian Rogers <irogers@google.com>
-> >>> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> >>> ---
-> >>>
-> >>>
-> >>> Changes in V13:
-> >>>         Add error message also in EOPNOTSUPP case (Leo)
-> >>>
-> >>>
-> >>>  tools/perf/util/evsel.c | 12 ++++++++++++
-> >>>  tools/perf/util/evsel.h |  1 +
-> >>>  2 files changed, 13 insertions(+)
-> >>>
-> >>> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> >>> index 95593b55d9a7..88b31a005ac6 100644
-> >>> --- a/tools/perf/util/evsel.c
-> >>> +++ b/tools/perf/util/evsel.c
-> >>> @@ -2102,6 +2102,12 @@ bool evsel__detect_missing_features(struct evsel *evsel)
-> >>>                 perf_missing_features.inherit_sample_read = true;
-> >>>                 pr_debug2("Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, falling back to no-inherit.\n");
-> >>>                 return true;
-> >>> +       } else if (!perf_missing_features.aux_pause_resume &&
-> >>> +           (evsel->core.attr.aux_pause || evsel->core.attr.aux_resume ||
-> >>> +            evsel->core.attr.aux_start_paused)) {
-> >>> +               perf_missing_features.aux_pause_resume = true;
-> >>> +               pr_debug2_peo("Kernel has no aux_pause/aux_resume support, bailing out\n");
-> >>> +               return false;
-> >>
-> >> This patch fails to apply on the latest perf-tools-next branch due to
-> >> conflict:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
-> >>   branch: perf-tools-next
-> >>
-> >> You might need to rebase it on the latest code base.
-> > 
-> > Yep, please do for the tooling patches.
-> 
-> I'd noticed that, but there is more work to sort it out.
-> The probing simply won't work when there are dependencies
-> on other events, or other attr members.  But there is no
-> point in trying to "fallback" in that case either.  It is
-> just a failure, but what *is* still needed is a sensible
-> error message.
+On Fri, Nov 08, 2024 at 10:43:31AM -0700, Jens Axboe wrote:
+> +++ b/mm/swap.c
+> @@ -472,6 +472,8 @@ static void folio_inc_refs(struct folio *folio)
+>   */
+>  void folio_mark_accessed(struct folio *folio)
+>  {
+> +	if (folio_test_uncached(folio))
+> +		return;
+>  	if (lru_gen_enabled()) {
 
-Do you need to probe with two or more events?  I guess we can extend
-evsel__detect_missing_pmu_features to check more complicated setups.
-For now, it only checks exclude_guest attribute.
-
-> 
-> The other patches, including the ones that come after,
-> still apply by the way, or they did the other day, so
-> they could be applied anyway.
-
-Do you want me to process the series without this patch?  I think
-this is needed to support old kernels and I'd like to have it together.
-Would be hard for you to update this change in the current form and work
-on improving it later?
-
-Thanks,
-Namhyung
-
+This feels like it might be a problem.  If, eg, process A is doing
+uncached IO and process B comes along and, say, mmap()s it, I think
+we'll need to clear the uncached flag in order to have things work
+correctly.  It's a performance problem, not a correctness problem.
 
