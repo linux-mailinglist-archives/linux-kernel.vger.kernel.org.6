@@ -1,206 +1,146 @@
-Return-Path: <linux-kernel+bounces-401341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611989C190B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:22:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A4A9C1910
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D301C219C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFBB281DB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A631E0E0F;
-	Fri,  8 Nov 2024 09:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933FF1E0E11;
+	Fri,  8 Nov 2024 09:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FgYh+mWB"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2Uc1ILo"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0327D1E0DE0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F1E16C850;
+	Fri,  8 Nov 2024 09:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731057744; cv=none; b=WiqmoHIuL3BO7gObJzS/wv1tQfwljDEvsaR/bP1F4viCF+4s5YQGHjcw9RcMnE3PxtgyBRBTGe/LjystJy7mJpGWPFDBBOXKCEXbWPMW614qXVMkRpJTNS6t5BlofUR2avSI6MBpyv98qSnH/X9LrCariK++YUbmtZmHg089C4I=
+	t=1731057839; cv=none; b=cUE5YJVsAN1mXJbrBBKAxG+9IsMXUlnWn6UUY8YTCqzaY89dxlCDtwFPXLdqpG1uHl2m9PcnV6p5x21qBGB8kZdU1X+Pb9gY8AW7J+jc+ynsjVU7aUp3KxuLkEfD45jmwSslcMSzO8q3Odxv+9zmSq+FoCNU2zPO7UjGWFLBd5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731057744; c=relaxed/simple;
-	bh=mToIfgerRVyMr4NQEYxCA3VbBeobwYg494v9mWCYPwY=;
+	s=arc-20240116; t=1731057839; c=relaxed/simple;
+	bh=5tiFYnYNjiF9DxyuqMpwBgTABYBWW9WLbjtJmblyCqE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IoVcIIX0zm5A/0T5RxapyeWBDrjakVIJOcjzWxyBp2jowNQ8R6WmtU+DO/QJUD1ioiOO23nHm1qgYUYoyCOUGZXv28QbfjMXyy833flG2FVl/AsQjPt/bsyYFq1cxBxkiAWeOwZqb0UMKjMhoaM+OcHuZVPq17uqXZvXSg4zX/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FgYh+mWB; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-84fcb49691fso807855241.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:22:22 -0800 (PST)
+	 To:Cc:Content-Type; b=pel9K78f3cgmzm4JW3ZiTQkdvQizToFi3FJ18h3u4HmBU3nCSpGfyfCQfiT1js27GXQ7tAb7GwjK5qAyknvK3vUXQQADCvnDR/FA13KeWc7ORebhrH5c4ySPcyePRA9wLX1XhT9EZiTftrZxWFWzo430Ptae221w9daj3a+b4nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2Uc1ILo; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a628b68a7so317345166b.2;
+        Fri, 08 Nov 2024 01:23:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731057742; x=1731662542; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731057836; x=1731662636; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tC21RYuyoliwxkob9Q53u4Vn3W7koImw4VYvvt4XkW0=;
-        b=FgYh+mWByVHbJY48icieCCd5KZfhMjdLF8Qzn3Hs/akWwNJtvyEihYnTGzkK3ZzOda
-         KKEThVIKB7qk1yBhjArAmyXcEVFcDuecfhnS2/7SUvNPw4a6x2taBDMpCYdj+8kHWChf
-         g/V/9zy4fJcbTJtuTJfoFxtl1K/Cl/FdkCP1Hue+0WWWdtXOtreR1EaZpNsxyfdStBUx
-         scVDEuUuCtH1fmYz3vgJ4PPmiO75yhhZxzi79AumfLt8HTdaZX+x2RUY6/OZQzTj6Fb5
-         8KfPXcAOJ98dRSACJ+HbAr8S3C3mI+kqcRIlfe+pfeUPrrmljvqXMdMPvDmrxHaSkjY7
-         u78Q==
+        bh=PqNbdR4tY83FWQ35k8iH8IJFZj1/6xMoHklTonqN55Y=;
+        b=l2Uc1ILoE1Zb3b2aIKksT35Z8a5iBiMI/PDc1SdV5Hd9/l/+cjPK82N9C8734BeyFw
+         D8lz84KkHBHJnBiU4JnKvwOJQYaDBEVzjVdYDi//+Pevn7S39C54w9nAdVAJhHIObHlj
+         L/pdyVcIlPDtfACSAntLFSQdP17jJUdIxMWb6EnTI2gdbaCKcx1OroiHSQ+0iegYJeHF
+         nD8DRS1yISJo5KKVNwE4hhmXsiRvhtd6t6hogRKzD82zTlngeX9OtRJpahjTT+M0GwVH
+         LLY0TzyB678xhM4RHZ/I9VlE2lRx0+NhYkuM2rBOAEEh2hOZ+hEg6oOQvaSMyGBOW3mN
+         k4zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731057742; x=1731662542;
+        d=1e100.net; s=20230601; t=1731057836; x=1731662636;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tC21RYuyoliwxkob9Q53u4Vn3W7koImw4VYvvt4XkW0=;
-        b=QRcJNPVZ3tA58xMrKQb2iFc0p3S/YIDUEZ4KsxCHdk9dPiJ4D3mG5e+BKGUMulzYrr
-         s7o/82aH7H2ZfsuoB1cSCMQAgoc5Opk9rucY24S3r76G9FcYzN289mBNe6VOuZ3+pbqB
-         BiiqofXmHT8iYCP2F5wDyV341ufaEYcZ8Zb7sMxLkW56llqKRCvAqhq1zHdKVKoKhmzf
-         6vwi2foHDxkoAHYtzApsr3Q4dzRNNr/dJdFGtbSjPURm7zHs65j095mOjm/EdjiJ6std
-         6yVN1gn8ZeU/ecypsO9fA86EMtUss+aGi9QpfvzLKqbepzJ64E9NvnhkYA69xbv/Jy6z
-         uJ5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXyxPX06sYL/gZ5wQ5qvGFyS17bQ0iiKduhKGM1A1aeKsymvep9i3bExp2ZRMupT4WI8xhyRVbrHRnRXNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGZgSNrDfXT8sTQry2pW2WRId6WFez7cUbPh9I2PJhaKPOiW5C
-	GXdMYo2paLIYHoAXC9s41mB9NIUwncDEj6v8uDAFh+xfHAQVARh526QWVmFvcV5RddhYgCGaECB
-	ty7WSqQqQyb0j1c6uEDlgu1abhZ1iRECasa1+FAOevjtXZNmN5yQ0ag==
-X-Google-Smtp-Source: AGHT+IESWzjH3DKo0FBP1C+K3PcYQOQo9jEzNKav6p3scDXxymE33J8RVLPJwgXLoK94kbQxLatI16b3kt5EXgeRGNo=
-X-Received: by 2002:a05:6102:945:b0:4a5:b5db:ec5e with SMTP id
- ada2fe7eead31-4aae16714b4mr2278576137.27.1731057741902; Fri, 08 Nov 2024
- 01:22:21 -0800 (PST)
+        bh=PqNbdR4tY83FWQ35k8iH8IJFZj1/6xMoHklTonqN55Y=;
+        b=ay7cNQ+v4iJuz5iw9HSseeBi/ygDNA7bhX6nmMVungd/2ukDbS42VwPL6J0lER9a8D
+         E3gglrRT5VmrYZB665VJBADgZvdQlCg8nykVldgp221+43pM79t3mjYsmWWYJf9Appva
+         uoQu70CnjPcRkzVd8eilL55XHANKqZI5Tbu0aHlHqployOCojoctZiL0fihF3grA5wsY
+         sbplEqG7HwLTcF9wApV95qTGgz2Yumh3/nfzj5hlvmBBntj4oWlZrj1TMorTi4j6EG3Y
+         kC4xo1fzxMjzixmKmvjUcwQh4j2kJU4ZnJOycdf3Q6eXuV1okd0UmY+PSLGAxrKJcjXD
+         HGiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/F3PfRp6fm/+yrBjx8MaUo30czopmE5vaVLUsa/Z0gBqmJNmDKs+ERwmMJ1m+7Uj6jO83fvWvUsM=@vger.kernel.org, AJvYcCXnKxNiOuSKxbwDa5MbgLbp4mOEf4SgM2ehRJG2l5QJW5aCRroIz/TV6Jn5DfjSUGWEdiVXwgbKBF9RKVqg@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq2t0Y7U2aC2kIllBoVLzB3cE0+Mlx3OZMOQHDACx9lzA+oNdb
+	Q9JE34nhoy36hn2+2fDHrIEi+d8F8/VGAk/r3PByTPF9TL2moRAjeTKUpLrUIMOazyMuKYnZcCU
+	BaoHrVZGWFNGr+r4/Pr39LtwrkbI=
+X-Google-Smtp-Source: AGHT+IG/Z+Hs72+O/gyRmONrbBho9cUb4V4qH0/NznwgrLYtp4iajd44NTJKZnpJeDPH6jsJKglhDzDW+eKYnnNJlnA=
+X-Received: by 2002:a17:907:7b89:b0:a9e:38ac:9fa0 with SMTP id
+ a640c23a62f3a-a9eefeb302fmr155241366b.6.1731057835255; Fri, 08 Nov 2024
+ 01:23:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107063342.964868073@linuxfoundation.org>
-In-Reply-To: <20241107063342.964868073@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 8 Nov 2024 09:22:09 +0000
-Message-ID: <CA+G9fYs8jLY9t=u+rBJ8e18LbpB10ortb6q8j0r8yRPw6-J=JA@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/349] 4.19.323-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, 
-	broonie@kernel.org
+References: <20241108085012.13147-1-victor.duicu@microchip.com>
+In-Reply-To: <20241108085012.13147-1-victor.duicu@microchip.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 8 Nov 2024 11:23:18 +0200
+Message-ID: <CAHp75Vd924pNBKkoWNse5Bjazrp9+HuqBJ5nj2tdk6vngaOiJg@mail.gmail.com>
+Subject: Re: [PATCH v8] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+To: victor.duicu@microchip.com
+Cc: matteomartelli3@gmail.com, jic23@kernel.org, lars@metafoo.de, 
+	marius.cristea@microchip.com, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 7 Nov 2024 at 06:47, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Nov 8, 2024 at 10:52=E2=80=AFAM <victor.duicu@microchip.com> wrote:
 >
-> This is the start of the stable review cycle for the 4.19.323 release.
-> There are 349 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> From: Victor Duicu <victor.duicu@microchip.com>
 >
-> Responses should be made by Sat, 09 Nov 2024 06:33:12 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.323-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> This patch implements ACPI support to Microchip pac1921.
+> The driver can read shunt resistor value and label from ACPI table.
 
+read the shunt
+from the ACPI
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+...
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>  #include <linux/iio/triggered_buffer.h>
+>  #include <linux/regmap.h>
+>  #include <linux/units.h>
+> +#include <linux/limits.h>
 
-NOTE:
------
-As other reported the following build warnings were noticed.
+Please, keep them sorted.
 
-fs/udf/inode.c:2175:7: warning: comparison of distinct pointer types
-('typeof (sizeof(struct allocExtDesc)) *' (aka 'unsigned int *') and
-'typeof (&alen)' (aka 'int *')) [-Wcompare-distinct-pointer-types]
- 2175 |                 if (check_add_overflow(sizeof(struct allocExtDesc),
-      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 2176 |
-le32_to_cpu(header->lengthAllocDescs), &alen))
-      |
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/overflow.h:61:15: note: expanded from macro 'check_add_overfl=
-ow'
-   61 |         (void) (&__a =3D=3D __d);                   \
-      |                 ~~~~ ^  ~~~
-1 warning generated.
+...
 
-Links:
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2oVnF1lNXvgGOE2tM=
-mzH9cSJwwP/
+> +#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236=
+-7a7a742e55cb"
 
-## Build
-* kernel: 4.19.323-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 9e8e2cfe2de91cde6ce1f79021b5115f44355ce8
-* git describe: v4.19.322-350-g9e8e2cfe2de9
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19=
-.322-350-g9e8e2cfe2de9
+Besides the need to include uuid.h and call guid_parse(), just put
+this to the comment and use
+GUID_INIT() instead. It will save a few CPU cycles each time we want
+to read that information from the ACPI.
 
-## Test Regressions (compared to v4.19.321-96-g00a71bfa9b89)
+...
 
-## Metric Regressions (compared to v4.19.321-96-g00a71bfa9b89)
+> +static inline bool pac1921_shunt_is_valid(u32 shunt_val)
+> +{
+> +       return shunt_val > 0 && shunt_val <=3D INT_MAX;
+> +}
 
-## Test Fixes (compared to v4.19.321-96-g00a71bfa9b89)
+This basically is the (shunt_val - 1) & BIT(31) which can be used
+inline in the caller. Hence, drop this function and use the check
+inline. See also below.
 
-## Metric Fixes (compared to v4.19.321-96-g00a71bfa9b89)
+...
 
-## Test result summary
-total: 24015, pass: 18823, fail: 189, skip: 4969, xfail: 34
+> +       /* This check is to ensure rshunt_uohm is non-zero positive */
 
-## Build Summary
-* arc: 10 total, 10 passed, 0 failed
-* arm: 102 total, 96 passed, 6 failed
-* arm64: 27 total, 22 passed, 5 failed
-* i386: 15 total, 12 passed, 3 failed
-* mips: 20 total, 20 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 24 total, 24 passed, 0 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 23 total, 17 passed, 6 failed
+Please, describe better the range of the values, because currently
+it's quite confusing, taking into account the unsigned type of the
+variable.
 
-## Test suites summary
-* boot
-* kunit
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* rcutorture
+> +       if (!pac1921_shunt_is_valid(rshunt_uohm))
+>                 return -EINVAL;
 
---
-Linaro LKFT
-https://lkft.linaro.org
+...
+
+> +       guid_parse(PAC1921_DSM_UUID, &guid);
+
+No need after use of GUID_INIT().
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
