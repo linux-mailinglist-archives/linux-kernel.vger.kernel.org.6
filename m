@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-400944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06DB9C1451
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:54:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9FB9C1454
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 03:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86E35B230D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:54:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D438B226C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:55:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCFE12CDA5;
-	Fri,  8 Nov 2024 02:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9CA47A73;
+	Fri,  8 Nov 2024 02:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FceFVNPq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ZTQSOgOl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0BD38DE0
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 02:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02F526296;
+	Fri,  8 Nov 2024 02:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731034446; cv=none; b=n8IPpst7AHMfs3cO4aB6b40xPE1RpuzTPhdWhSmEGfrx9qUIB1KjozmSFU7DJBxIWVoWmWvdcqE18K4/TlMbSfzqjiPniN3lxstweZUsV/ROKO8ZLyWiCtL3Yul9Cd4mmpN0rHmcIf8MO4NBKHFS4cor5yBGqDJ9/Lr2wi/r0aw=
+	t=1731034513; cv=none; b=QAcRQFPP7JiYbZV0GuE4jUoLX/kDyDN8TtP+iXn38Tml+rfExtFuf6sU9eky8mT5TGrZzShg+bwP9NB7x70U7hBz91ohCKXdcObMT30PZRmtESuv5zMh5PaBxY0XtUMDoWknPhoXLZT2DFJk+DAWAKyGZFdQjycCPjweJJWpz7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731034446; c=relaxed/simple;
-	bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jx40KfGi1Jz9I/2Ahf8rvM+ZVOE4GxPNmZ5ec6neKIPawQGKOZ+tuPxKtMgzh+wn1j6qgfeYOOy0Jr0OlRBS82AQTq7zxTreV0gwFFgo3lNMtxbysgk00z64cuf9kWiIaQg07oAA7OGuogl1Xw/1kmDM1FdviXlDGi01RnOQAzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FceFVNPq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731034443;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
-	b=FceFVNPq5l8l8Sdw4km5N5zUPFVPGe1D8/Z2oOrdlpoDmQ0bZiUbbNIpdymQ4+3F4i2cIA
-	4HQ5dxTU0TGp1gswhsHz0yZ76phoX/VnR8EkdIlIbRWWegVWLMY7GdxudKt6dpdY33lYnd
-	UdVrE+YvHccYkWWNv2OV0yY3RtgdJv8=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-ro52Kk8yMKqImcneUqky3A-1; Thu, 07 Nov 2024 21:54:02 -0500
-X-MC-Unique: ro52Kk8yMKqImcneUqky3A-1
-X-Mimecast-MFC-AGG-ID: ro52Kk8yMKqImcneUqky3A
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e76eabc7ddso1886064a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 18:54:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731034441; x=1731639241;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cwEqbnHj/TJxnIy+3o2VhKgoUs8GcxvB6wBbbqhMWAU=;
-        b=qq4RdF3kmHKIqW3l/cog86hYcZt9KStBPKm9Fu6KAM51Q7KswGubhaDRTfhmcIGEnG
-         7GilI7o9z3aBtvAViCP9YaoGbuKV8lLkj1HrPbmEA7sPPyVpOfUKxekiIZxK3jLdnHlG
-         IWSp3NmWVB+VkMfuQHRC3iw4HjfxOAGdtZUWH8E7dZBIgLBUYZSfF0K6JQxaA8kjs5ZD
-         uFoYjBeZdx3ZXP/5rJc3BCo78eRiaHkDbg61Fc/cqRdO6gUoOOHzbwf6UOb3+WXV9dsl
-         ZrviMgfG1N74qFcwcJPFyOTjBP3m46otmW3YioxGwXPpbchAT0BUKNJRwvFk1zpOaMY0
-         IRrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw2pmJ40mNc9GpzPRQSuqy7/PkNu52A/TPf0Cp2DcbtfKP7QaioYpb1HRZ+nePNtAUKz9i3PLpqjM7cMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1/DzLogaTsfQvuIniTVwb9NWeYJ7q0tsmFm/4J9ubG6swa/Po
-	scwsRZ5dwuDwF7ZqZ6UmMf1vCZ8VFR3gTZkXy26n9qqtoHokbi9wBByHxaZYAUS8ZEOZELv5nH8
-	EHW7Gm7bu665jZ2Sih7DqkkhCW6V2QXwbM3nhSvinQzJSSOP5VaqIdkDicp2kE28yjCKLRdeV/z
-	I1JeefpQKqBqwpdk2197nNPpY/2iMnOIkP5/54
-X-Received: by 2002:a17:90b:3d91:b0:2e2:a029:3b4b with SMTP id 98e67ed59e1d1-2e9b177632bmr1984108a91.28.1731034440899;
-        Thu, 07 Nov 2024 18:54:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHeAKu6FXOO8aouj3/WFxZQgxhtW8ocCUmDNXhuRcpuePvBO35pclspRsjXFn6dE+pdWYMrEjjMCT0rnXoNyZM=
-X-Received: by 2002:a17:90b:3d91:b0:2e2:a029:3b4b with SMTP id
- 98e67ed59e1d1-2e9b177632bmr1984080a91.28.1731034440508; Thu, 07 Nov 2024
- 18:54:00 -0800 (PST)
+	s=arc-20240116; t=1731034513; c=relaxed/simple;
+	bh=KGZhlz+5hEHHO6I6j4KPW5c6MWRn1aVLXCtKaL7nWU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=t4qS/G2Ou8Q0VOu2MUCp5DbPFlx03xxSUaWv/OaOpEpuBuMhTpXhUn/qNIXwbjuFfplZJas56NnXmxufqtgNkGLTKlIP2GuRQnGSAS86F7pnAL0hnn0xhH2JEhwo1x+72IekLjORDEJxPermmQqVTqAOp5apadTjP8kZoD6SSTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ZTQSOgOl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731034505;
+	bh=wpyZi4n8u1qxo1IyXjJG/yWYovnDnC8tisFNsEYBVeg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZTQSOgOlnmXlcnsbjg6EhgQMjD82TEPipF3vWe4CwSC6NlJsJc2Fy3cW+u5mJKJas
+	 e7SQykBZeABfkidbiRxu6l+9JMKHs8M8ypyyR64C7dn/8JLct1XSmAG7qO5xkBnne/
+	 TOcBz++nEquqby9fMZG1OOj0b9h84vMQp6r3srkYqXuT3VqeGotMAsmz2YqhZe97yv
+	 z/Lp81Uls0X3oNIu9GUmAnGD4tMoha8DVZRm5vsp4ThMQjJfAphrekQi+IBQOr3vER
+	 9uzwYHQCRhCRDX17cNZnhWYBhC44aAYs00CWktTIvROQxS6kkZdykwm15YDiHvrvSA
+	 oPt0KqtKXWwlA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xl3T45TmQz4x6k;
+	Fri,  8 Nov 2024 13:55:04 +1100 (AEDT)
+Date: Fri, 8 Nov 2024 13:55:04 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Daniel Xu <dxu@dxuuu.xyz>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: linux-next: manual merge of the ftrace tree with the vfs-brauner
+ tree
+Message-ID: <20241108135504.519ce71e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031030847.3253873-1-qiang4.zhang@linux.intel.com>
- <20241101015101.98111-1-qiang4.zhang@linux.intel.com> <CACGkMEtvrBRd8BaeUiR6bm1xVX4KUGa83s03tPWPHB2U0mYfLA@mail.gmail.com>
- <20241106042828-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20241106042828-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 8 Nov 2024 10:53:49 +0800
-Message-ID: <CACGkMEv4eq9Ej2d2vKp0S8UdTgf4tjXJ_SAtfZmKxQ3iPxfEOg@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio: only reset device and restore status if needed
- in device resume
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: qiang4.zhang@linux.intel.com, Paolo Bonzini <pbonzini@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Jens Axboe <axboe@kernel.dk>, 
-	Olivia Mackall <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Gonglei <arei.gonglei@huawei.com>, 
-	"David S. Miller" <davem@davemloft.net>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	"Chen, Jian Jun" <jian.jun.chen@intel.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, David Hildenbrand <david@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, Anton Yakovlev <anton.yakovlev@opensynergy.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Qiang Zhang <qiang4.zhang@intel.com>, 
-	virtualization@lists.linux.dev, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/Bd9X/rYIvsvai3=/+RLfTo9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/Bd9X/rYIvsvai3=/+RLfTo9
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 6, 2024 at 5:29=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
->
-> On Fri, Nov 01, 2024 at 10:11:11AM +0800, Jason Wang wrote:
-> > On Fri, Nov 1, 2024 at 9:54=E2=80=AFAM <qiang4.zhang@linux.intel.com> w=
-rote:
-> > >
-> > > From: Qiang Zhang <qiang4.zhang@intel.com>
-> > >
-> > > Virtio core unconditionally reset and restore status for all virtio
-> > > devices before calling restore method. This breaks some virtio driver=
-s
-> > > which don't need to do anything in suspend and resume because they
-> > > just want to keep device state retained.
-> >
-> > The challenge is how can driver know device doesn't need rest.
->
-> I actually don't remember why do we do reset on restore. Do you?
->
+Hi all,
 
-Because the driver doesn't know if the device can keep its state, so
-it chooses to start from that.
+Today's linux-next merge of the ftrace tree got a conflict in:
 
-Thanks
+  rust/helpers/helpers.c
 
+between commit:
+
+  851849824bb5 ("rust: file: add Rust abstraction for `struct file`")
+
+from the vfs-brauner tree and commit:
+
+  6e59bcc9c8ad ("rust: add static_branch_unlikely for static_key_false")
+
+from the ftrace tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/helpers/helpers.c
+index d553ad9361ce,17e1b60d178f..000000000000
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@@ -11,9 -11,8 +11,10 @@@
+  #include "bug.c"
+  #include "build_assert.c"
+  #include "build_bug.c"
+ +#include "cred.c"
+  #include "err.c"
+ +#include "fs.c"
++ #include "jump_label.c"
+  #include "kunit.c"
+  #include "mutex.c"
+  #include "page.c"
+
+--Sig_/Bd9X/rYIvsvai3=/+RLfTo9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmctfYgACgkQAVBC80lX
+0GwBOgf/R3INbJC5aYoje6m6uV6lk6033AResz7S0sQJP7ioOyBKR37mbhiKgBvW
+2txVzRBm8ap3rWJviNIf60hSfCIHGrt8DrWn4Nz/zc0uyk19V74FNv6dTIeMKprt
+h8p30VLiFSvFY4LcRC89U0BTlx36xHh/3FPGY4VbVb56fynYNkE+HwD/RO/2fQ2x
+wqeE/cuck3ZH8Upgf81KW4S00oodGijYi2Aqc0bUvpTcKrGeDbiwXAJm1dQDoJpy
+A0x6W3Uo5ziaz8rahY5tPXE64FovvBLLYeCLXfm38rlckp42IG+NRO1wtwOeFMfK
+Xeu2v1HTyU8X2UCbVvPS/Ue0co8yjA==
+=ghGZ
+-----END PGP SIGNATURE-----
+
+--Sig_/Bd9X/rYIvsvai3=/+RLfTo9--
 
