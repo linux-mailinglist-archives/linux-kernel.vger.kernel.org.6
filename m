@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-401703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763D89C1E35
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:39:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EEF9C1E37
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4209D281FA7
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3B51F22EFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7D91EB9F2;
-	Fri,  8 Nov 2024 13:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919F21EBA00;
+	Fri,  8 Nov 2024 13:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ET7oyFTw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="XV4zSLaV"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95FF1E885B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939AC1E885B
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 13:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731073161; cv=none; b=qIiziX64J8eGCx/6JglB0Z/t40Ao2GTLPDzhQdaq8oVWHElmmIcNfLOs1PD+2SzNdW6NUJDxYYalr6GKsm2ZccRSZjjKacAndGwJYyQzacFeDCEJd2+mZXn8HxiHHnoNxtH1E9x0QVIH3Xlndib1cpjiMd5a4sc0XW3ad2P/f5c=
+	t=1731073218; cv=none; b=NA+m5efZw2o0Wk6RVtc5eUyj/HroG2e+OXYhYuAbN3+5Lxl+EZJHMBiJNStnhVl2yafF88PqyKUw5wfYc9wYn1wV49jGZPDNU/iNMhw2snw2Lb0dGjy7BTjYGNBAGQmZuGxM7cQQdnkIWTIWaRC10sCnX0bqjIKgN2cUtsWeo7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731073161; c=relaxed/simple;
-	bh=Th+6aYVsO/JVj/6MkWgQddDZHqpcqRK+Th5MitpRU2k=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pLwEo+XJQFtAOaPGcbZ8VdDZkS/VS4/CFzHocdI0JeRQLiz7XSAmm5uJMV2q8Y7GlZ85sk4wY+AeBjpJ/UJgowATAR4IBFid86i6OKgNEcB4rD4pXHLfO4X8UrUwOYldqm4nV19omvQi00UEt5HsgnIohJ4hHjEp5wU3z0gAQOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ET7oyFTw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731073158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k7AkiWtd21jJpLfGOXDePP61e50AvdxBgODeE0rxnRo=;
-	b=ET7oyFTwkDKsyS+9v3HhrQlngqByukIq3Ru5HpG+wcYLpHAyJvyul83Mfz6G7ZZT/jnWpl
-	T8VtG7ctx30rJHygHR3cxf6VPNKmmIksAvyOBrmRvtueoKjgPRXbf3jO8hky8eTA4yn6Dp
-	OFJBDm7M70Oe8Ba1jhyGNfVoZXqyNgw=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-gf1KhLgzMlmm0sOeyUcLiQ-1; Fri, 08 Nov 2024 08:39:17 -0500
-X-MC-Unique: gf1KhLgzMlmm0sOeyUcLiQ-1
-X-Mimecast-MFC-AGG-ID: gf1KhLgzMlmm0sOeyUcLiQ
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-6eaa08a6fdbso38391537b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:39:17 -0800 (PST)
+	s=arc-20240116; t=1731073218; c=relaxed/simple;
+	bh=lmh0z8bq/zzGYs+/6YkGeLdY+DCKygDX5CUuwOJL7Es=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nGokNkND1aBkDL6XrpaoniLJEdXzUKucdz7YkRpzvuaC4suKTqfnOzhcbNoY2q7vFjzPgtB8H6UN8MBNDwx2ZnxA2RzhB8xjeLo76kCEzaugn+0z+LrSkXN85yZHo9oUI/jDUokILMLadim1EkbpMh/Am2AgPxMeqrO6HhSuz68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=XV4zSLaV; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7f4325168c8so400264a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 05:40:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sartura.hr; s=sartura; t=1731073216; x=1731678016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L8ZJwvOeV6Ng8VTt9n6SG5cFjyqB7gKUP8OuA6z3DVg=;
+        b=XV4zSLaVX4syObbS9WbCp4I3umSYoCGxQNrr0vue2VxPeMl5rpqPys7fgWYBfUvRdB
+         7e945IqgRXWPDRdwIHYVvA97uEPayvsC8VAgDjcE5y44QE274r9FCdhLh9F4U5Yc+/fa
+         HhnGcHnTz+hkl7cDkyQGeIAaYX3brzoPqcjfBbfgKAKl/d480Q0n8WbDi/r576S6UqXP
+         kfUe5rH9fj/8jJM1f32h6qjK9LPTMuFthwAOsqxjJJavRGy4Frw6FnWPUfmBkyB56SLy
+         sj3atY7dMOapipSoAcdHhLZx6sO5DlVJKDHwdIGFeGjQ9pZ23sJnZJvgS6Nlbt0nfPsO
+         2gdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731073156; x=1731677956;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7AkiWtd21jJpLfGOXDePP61e50AvdxBgODeE0rxnRo=;
-        b=bXeDtEstjpBtTAVoqJrrnYn4Bp++hBnhbblngFYVUU2g2PJvgjvdlM6R72e3AVIWoB
-         k5xvigQy2RnVDV9UYfttELjzfErDr+S/6jtGt/9i2IEqUcVM0SJDygeami5kv7wGDUHO
-         IB/RbhKSUFMPIF3/VdaVv3gF65I/4omA7nmkunwXJ7EoAt2QoYnflpMkcTBBIHiJ9Zrv
-         iDmMT8mTTs2c986hISJAWOVHg79RbHYcwgVN4FyLw593hmdQnU7ChVhD1jU4A+UNnQyI
-         adM8xd1/pECPWo2bKprI4N/9feP3s4X5psVnEIX3X8mOwGr3j+UT9djmLTZqdRhAUIiw
-         ddXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUJSo8ljgwJW/n3dm5tcE6tnvK+oF/nPH77cZNDLTMiFaOeEs4XLIyojeCjaHWrS44yFWf1zw5vBi2RFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGUjNFrzay6cIZqeGIFMJazBztgLGOLFe118CWoI/Tre3BDsnE
-	wsRpOs/Ffoq7gw5yP/POetTWp0TFT0rnOLqbrTuMhBmHZ9irAzelJShtqdtrLhJT1BFjnsGous7
-	Rnk06LkFmmajyCQWU5Cw3Nwma2QRQi2vIbYNEZvkXzcgJjrFak2ZF8XEArJkWMS8uA3deZw==
-X-Received: by 2002:a05:690c:7485:b0:6e3:fb4:9333 with SMTP id 00721157ae682-6eaddf6f3dcmr33789097b3.28.1731073156347;
-        Fri, 08 Nov 2024 05:39:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGC3LnD2Ma9hnbqvMJDYhEEYZKe9ZIOFRhjPAZ94ZyiBVJhrGaZ3E2FsrLBSl4y2DVQ7uQmBg==
-X-Received: by 2002:a05:690c:7485:b0:6e3:fb4:9333 with SMTP id 00721157ae682-6eaddf6f3dcmr33788757b3.28.1731073155974;
-        Fri, 08 Nov 2024 05:39:15 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dc1esm160203885a.18.2024.11.08.05.39.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 05:39:15 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <735344cd-1c32-451f-904e-235578e1a360@redhat.com>
-Date: Fri, 8 Nov 2024 08:39:14 -0500
+        d=1e100.net; s=20230601; t=1731073216; x=1731678016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L8ZJwvOeV6Ng8VTt9n6SG5cFjyqB7gKUP8OuA6z3DVg=;
+        b=Deop/RD8amW99jMRrGQkTRyEOnj5nt0knl6Z3piHEIe8KZPodfAmi7iYlNa3tCjdpi
+         1K+F8PUw/pPaqCxnXdMB4Io8RDoQq45ZkLn2Y3PR5G9jgxCBkFUgn56lJybTvd790vFd
+         xANVL6uSl2vCDxil8mHYA5FjR9e3P1TsrF9bqcc/c4m+XsBC4l9/CMuNAUJGv5nMyKiW
+         hfKBPPoqTVT21+RgKL/1DnYcI+ctLEbE3fqFxyIqVt0yn5MoUNXuDLiDCDU4ChjZz2cy
+         13FbMF/3oaKnji2ChMwJ7cG8pECGM2UvqZfP9a89sxjFDx2ptupAt5WfOq793OalVKX2
+         LOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYeqxfIyoxvPUZ8T6qtGVstY7CX7DrE/SMhuOzXzPcCCt4+w74F9kvbAIF7yCRBwYnN5qlCz7z8yT4wwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyensWw583DAPj16/wbNvFP/hNtvXyD/40Va94y4ldJthb+yxrA
+	qZhQKLTebc1WQ9KQpiz27XTHdKi0wL4oeOqpDjl5QbBrqfpp5Mbf2NAaAS+E1iY2QJtjuYNTdx7
+	5aB9xZFQNjLHdq2YcJGxNShn34u9yb+2JiMtkWA==
+X-Google-Smtp-Source: AGHT+IG6OWkcSu6zPwaHqEtkBnsm7V//38o9bsGqJYwF50bdWilViY347QwXIH+QFKTXlm4Y8ftOczB4h+DcYu9T4dg=
+X-Received: by 2002:a17:90b:1f86:b0:2e2:cba1:67c9 with SMTP id
+ 98e67ed59e1d1-2e9b1754e25mr3320320a91.35.1731073215604; Fri, 08 Nov 2024
+ 05:40:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/deadline: Skip overflow check if 0 capacity
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- linux-kernel@vger.kernel.org, Phil Auld <pauld@redhat.com>,
- Joel Fernandes <joel@joelfernandes.org>
-References: <20241108042924.520458-1-longman@redhat.com>
- <Zy4RWJPH9jxew_7G@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-In-Reply-To: <Zy4RWJPH9jxew_7G@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241108112355.20251-1-robert.marko@sartura.hr>
+ <20241108112355.20251-3-robert.marko@sartura.hr> <609ef9c4-18cd-4a80-9821-5df27727772e@microchip.com>
+In-Reply-To: <609ef9c4-18cd-4a80-9821-5df27727772e@microchip.com>
+From: Robert Marko <robert.marko@sartura.hr>
+Date: Fri, 8 Nov 2024 14:40:04 +0100
+Message-ID: <CA+HBbNFomosu+5_C0+6cqKcc3B9DFiXXPxexFYjY4ud2LmWqmg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] tty: serial: atmel: make it selectable for ARCH_LAN969X
+To: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, lee@kernel.org, 
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, luka.perkov@sartura.hr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/8/24 8:25 AM, Juri Lelli wrote:
-> On 07/11/24 23:29, Waiman Long wrote:
->> By properly setting up a 1-cpu sched domain (partition) with no
->> task, it was found that offlining that particular CPU failed because
->> dl_bw_check_overflow() in cpuset_cpu_inactive() returned -EBUSY. This
->> is due to the fact that dl_bw_capacity() return 0 as the sched domain
->> has no active CPU causing a false positive in the overflow check.
->>
->> Fix this corner case by skipping the __dl_overflow() check in
->> dl_bw_manage() when the returned capacity is 0.
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>   kernel/sched/deadline.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
->> index be1b917dc8ce..0195f350d6d3 100644
->> --- a/kernel/sched/deadline.c
->> +++ b/kernel/sched/deadline.c
->> @@ -3479,7 +3479,13 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->>   	} else {
->>   		unsigned long cap = dl_bw_capacity(cpu);
->>   
->> -		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
->> +		/*
->> +		 * In the unlikely case of 0 capacity (e.g. a sched domain
->> +		 * with no active CPUs), skip the overflow check as it will
->> +		 * always return a false positive.
->> +		 */
->> +		if (likely(cap))
->> +			overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
-> The remaining total_bw that make this check fail should be the one
-> relative to the dl_server on the cpu that is going offline. Wonder if we
-> shouldn't rather clean that up (remove dl_server contribution) before we
-> get to this point during an hotplug operation. Need to think about it a
-> little more.
-static inline bool
-__dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
-{
-         return dl_b->bw != -1 &&
-                cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
-}
+On Fri, Nov 8, 2024 at 2:25=E2=80=AFPM Nicolas Ferre
+<nicolas.ferre@microchip.com> wrote:
+>
+> On 08/11/2024 at 12:22, Robert Marko wrote:
+>
+> A little commit message would be better.
 
-With a 0 cap, cap_scale(dl_b->bw, cap) will always be 0. As long as 
-total_bw isn't 0 and bw isn't -1, the condition will be true.
+Hi Nicolas, I basically reused the same commit description as for MFD
+and else as all of the changes are
+basically the same.
 
-Cheers,
-Longman
 
+>
+> > Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> > ---
+> >   drivers/tty/serial/Kconfig | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> > index 45f0f779fbf9..e6cf20b845f1 100644
+> > --- a/drivers/tty/serial/Kconfig
+> > +++ b/drivers/tty/serial/Kconfig
+> > @@ -128,7 +128,7 @@ config SERIAL_SB1250_DUART_CONSOLE
+> >   config SERIAL_ATMEL
+> >          bool "AT91 on-chip serial port support"
+> >          depends on COMMON_CLK
+> > -       depends on ARCH_AT91 || COMPILE_TEST
+> > +       depends on ARCH_AT91 || ARCH_LAN969X ||COMPILE_TEST
+>
+> Checkpatch.pl reports some "DOS line endings", you might need to fix this=
+.
+
+Hm, I ran checkpatch before sending in verbose mode and I dont see
+such a warning,
+my Sublime text is also set to Unix endings, I also just checked with
+cat -e and I dont see
+any DOS endings.
+
+Regards,
+Robert
+>
+> >          select SERIAL_CORE
+> >          select SERIAL_MCTRL_GPIO if GPIOLIB
+> >          select MFD_AT91_USART
+> > --
+> > 2.47.0
+>
+>
+> Once fixed, you can add my:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>
+> Thanks, best regards,
+>    Nicolas
+
+
+
+--=20
+Robert Marko
+Staff Embedded Linux Engineer
+Sartura d.d.
+Lendavska ulica 16a
+10000 Zagreb, Croatia
+Email: robert.marko@sartura.hr
+Web: www.sartura.hr
 
