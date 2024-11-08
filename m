@@ -1,110 +1,133 @@
-Return-Path: <linux-kernel+bounces-402050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46AEE9C22BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:13:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1036B9C22B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 782841C23BEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:13:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31A4D1C2355C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABF31EBA0C;
-	Fri,  8 Nov 2024 17:13:04 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF8E199953;
+	Fri,  8 Nov 2024 17:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bZ8hbI/d";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5IxHBaFH"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E65F192D89
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B2E1DFD1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731085984; cv=none; b=s+5f/mLN4ZSAP30SEqGg6hN3JVsAmLl9qd+crHfctseDIgwZd3eEviyz5lIBr4cvLRobayc5vq362GcnQ8EJfuHJ6oUzPJoe7emvelDe1i0wza/mruBnX3DPz/bi06ghQVi0vnij+YUyKINb1TITqV9AyNXXa6poJjgcFAr3Da0=
+	t=1731085982; cv=none; b=oVot3mfl79QqXSqLHbD4JwkAg478bHSIOZcypzZ9QC/VSTORuo4BVXTPH78ltO3a24laevdtU7pDBioLwSWl3H8CXff56FHVNOxL/TQ6cfalAtusJ2Co7uJLuD2uwXrIonqsH2d+xbvagME774hlWpQwJPedYRmEpZ/9UUbj4kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731085984; c=relaxed/simple;
-	bh=RO3czDvu1nri5fQkZQg3VXkpBVm+X4ozSSPv7SC0XAA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=nI75TjUOuux3Y5t0nuw06LKIHmF81Ebhc6oBWF0yNBmPLliHG0QWMAhOfzqJrRGWPBJlyRP400Ym4E9L1i60qAFpcl8blBUJyAF3b7FfmRnF5NGcymGtpEPzEAamdx2Ub0HpajouYkfK4xisxwtvVxnWEWzScF+qysfJPaGGY9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-134-MLpserxzNgiutJrUqBQt6w-1; Fri, 08 Nov 2024 17:12:54 +0000
-X-MC-Unique: MLpserxzNgiutJrUqBQt6w-1
-X-Mimecast-MFC-AGG-ID: MLpserxzNgiutJrUqBQt6w
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 8 Nov
- 2024 17:12:53 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 8 Nov 2024 17:12:53 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Josh Poimboeuf' <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Thomas
- Gleixner" <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter
- Zijlstra <peterz@infradead.org>, Pawan Gupta
-	<pawan.kumar.gupta@linux.intel.com>, Waiman Long <longman@redhat.com>, Dave
- Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, Linus
- Torvalds <torvalds@linux-foundation.org>, Michael Ellerman
-	<mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org"
-	<linuxppc-dev@lists.ozlabs.org>, "Andrew Cooper" <andrew.cooper3@citrix.com>,
-	Mark Rutland <mark.rutland@arm.com>, "Kirill A . Shutemov"
-	<kirill@shutemov.name>
-Subject: RE: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit
- __get_user()
-Thread-Topic: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit
- __get_user()
-Thread-Index: AQHbKc6je06svG7vU0mpJNDFnNBsh7Ktq5PQ
-Date: Fri, 8 Nov 2024 17:12:53 +0000
-Message-ID: <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
-References: <cover.1730166635.git.jpoimboe@kernel.org>
- <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
- <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net>
-In-Reply-To: <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731085982; c=relaxed/simple;
+	bh=TDaopfkZGxk8I35kcvWYXyTCi+ARQGaq18I06kPfKb0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPkG2MjomUU2+0kJwS9EYPvSUs7AsiE0V+IvQKisRePR8hCh4hr3rGhNsFj7wQjBW9OERuqYCrlJ1AS86bp5xwWQ23Uf55+TxOBedPbGCM0heXIDzw+C+yrHmyySvcOHSn/WnOyI9JmoVZ4h7j/UDMnM2FrHJT0YPSdH1uzmCWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bZ8hbI/d; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5IxHBaFH; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 8 Nov 2024 18:12:57 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731085979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b/xfJbI02fPPq5be4DTi43PTz0QyQy04viOATK8PVQY=;
+	b=bZ8hbI/dKxfEnnQoKKImjEAzkpecVCLW60IlrUv9njvukJryRvEnMkcEzvNB7ydi/4abdm
+	vX19NnAGfYH6JDA4FWHGB+qOWG3Ij56j36XnZF7yZT8GkBRl7/ZIg2EwXnXBccxwG290z0
+	DUQH7NOVhpNtjwAW+1gannB27Ybkz5smvvMJxv/myrbdyBE8NkuPcSHlIunPZ6Pf/6KnA1
+	APXaj2XyY5PFt+zAcAP0Zg5vu26w+ahZN+99Far1iYOwXVJqLRUurOxqDuWyfuebmOwbjG
+	ZMof0b0Vl9sCaqEj6Vpy5M+pPlTQNdAp1o8m1sc63spH1cf1ydwA+vyoFpAbtA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731085979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b/xfJbI02fPPq5be4DTi43PTz0QyQy04viOATK8PVQY=;
+	b=5IxHBaFH7vDvVRGf6gQ7jAae7HdG43FZqSAWKAwgpgv0IStF/Nsfb3Lt4ESSDVvSYx2YPZ
+	rJnlks5vRPYVv0CQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de,
+	syzbot <syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com>
+Subject: Re: [BUG] -next lockdep invalid wait context
+Message-ID: <20241108171257.i0EpS9m3@linutronix.de>
+References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
+ <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
+ <ZyK0YPgtWExT4deh@elver.google.com>
+ <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
+ <20241102001224.2789-1-hdanton@sina.com>
+ <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
+ <ZykNhbMOrlgCXFYJ@slm.duckdns.org>
+ <20241108100503.H-__545n@linutronix.de>
+ <Zy5EIHUwoXjK1sAJ@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6EzCnmUf2xL8WnHlINObZ2s3wcN5h3Np277CcPRrvDs_1731085973
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zy5EIHUwoXjK1sAJ@slm.duckdns.org>
 
-RnJvbTogSm9zaCBQb2ltYm9ldWYNCj4gU2VudDogMjkgT2N0b2JlciAyMDI0IDAzOjI4DQo+IA0K
-PiBPbiBNb24sIE9jdCAyOCwgMjAyNCBhdCAwNjo1NjoxNVBNIC0wNzAwLCBKb3NoIFBvaW1ib2V1
-ZiB3cm90ZToNCj4gPiBUaGUgYmFycmllcl9ub3NwZWMoKSBpbiA2NC1iaXQgX19nZXRfdXNlcigp
-IGlzIHNsb3cuICBJbnN0ZWFkIHVzZQ0KPiA+IHBvaW50ZXIgbWFza2luZyB0byBmb3JjZSB0aGUg
-dXNlciBwb2ludGVyIHRvIGFsbCAxJ3MgaWYgYSBwcmV2aW91cw0KPiA+IGFjY2Vzc19vaygpIG1p
-c3ByZWRpY3RlZCB0cnVlIGZvciBhbiBpbnZhbGlkIGFkZHJlc3MuDQo+IA0KPiBMaW51cyBwb2lu
-dGVkIG91dCB0aGF0IF9fZ2V0X3VzZXIoKSBtYXkgYmUgdXNlZCBieSBzb21lIGNvZGUgdG8gYWNj
-ZXNzDQo+IGJvdGgga2VybmVsIGFuZCB1c2VyIHNwYWNlIGFuZCBpbiBmYWN0IEkgZm91bmQgb25l
-IHN1Y2ggdXNhZ2UgaW4NCj4gdmNfcmVhZF9tZW0oKS4uLi4NCj4gDQo+IFNvIEkgc2VsZi1OQUsg
-dGhpcyBwYXRjaCBmb3Igbm93Lg0KPiANCj4gU3RpbGwsIGl0IHdvdWxkIGJlIGdyZWF0IGlmIHBh
-dGNoIDEgY291bGQgZ2V0IG1lcmdlZCBhcyB0aGF0IGdpdmVzIGENCj4gc2lnbmlmaWNhbnQgcGVy
-Zm9ybWFuY2UgYm9vc3QuDQoNCkknbSBhIGJpdCBsYXRlIHRvIHRoZSBwYXJ0eSBhbmQgc3RpbGwg
-YSB3ZWVrIGJlaGluZCA6LSgNCg0KQnV0IEkndmUgd29uZGVyZWQgaWYgYWNjZXNzX29rKCkgb3Vn
-aHQgdG8gYmUgaW1wbGVtZW50ZWQgdXNpbmcgYW4NCidhc20gZ290byB3aXRoIG91dHB1dCcgLSBt
-dWNoIGxpa2UgZ2V0X3VzZXIoKS4NCg0KVGhlbiB0aGUgdXNlIHdvdWxkIGJlOg0KCW1hc2tlZF9h
-ZGRyZXNzID0gYWNjZXNzX29rKG1heWJlX2JhZF9hZGRyZXNzLCBzaXplLCBqdW1wX2xhYmVsKTsN
-CndpdGggbGF0ZXIgdXNlciBhY2Nlc3NlcyB1c2luZyB0aGUgbWFza2VkX2FkZHJlc3MuDQoNCk9u
-Y2UgeW91J3ZlIGRvbmUgdGhhdCBfX2dldF91c2VyKCkgZG9lc24ndCBuZWVkIHRvIGNvbnRhaW4g
-YWRkcmVzcyBtYXNraW5nLg0KDQpHaXZlbiB0aGF0IGNsYWMvc3RhYyBpYXJlIHNvIHNsb3cgc2hv
-dWxkIHRoZXJlIGFyZSBiZSBzb21ldGhpbmcgdGhhdA0KY29tYmluZXMgc3RhYyB3aXRoIGFjY2Vz
-c19vaygpIGJyYWNrZXRlZCB3aXRoIGEgJ3VzZXJfYWNjZXNzX2VuZCcNCm9yIGFuIGFjdHVhbCBm
-YXVsdC4NCg0KSSd2ZSBzdXJlIHRoZXJlIGlzIGNvZGUgKG1heWJlIHJlYWRpbmcgaW92ZWNbXSBv
-ciBpbiBzeXNfcG9sbCgpKQ0KdGhhdCB3YW50cyB0byBkbyBtdWx0aXBsZSBnZXQvcHV0X3VzZXIg
-aW4gYSBzaG9ydCBsb29wIHJhdGhlciB0aGF0DQpjYWxsaW5nIGNvcHlfdG8vZnJvbV91c2VyKCku
-DQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9h
-ZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBO
-bzogMTM5NzM4NiAoV2FsZXMpDQo=
+On 2024-11-08 07:02:24 [-1000], Tejun Heo wrote:
+> Hello,
+Hi,
 
+> > @@ -223,12 +226,11 @@ int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
+> >  int kernfs_path_from_node(struct kernfs_node *to, struct kernfs_node *from,
+> >  			  char *buf, size_t buflen)
+> >  {
+> > -	unsigned long flags;
+> >  	int ret;
+> >  
+> > -	read_lock_irqsave(&kernfs_rename_lock, flags);
+> > +	rcu_read_lock();
+> >  	ret = kernfs_path_from_node_locked(to, from, buf, buflen);
+> > -	read_unlock_irqrestore(&kernfs_rename_lock, flags);
+> > +	rcu_read_unlock();
+> >  	return ret;
+> >  }
+> 
+> The _locked suffix looks awkward afterwards. Given that there's no
+> restriction on how the function is called anymore, maybe we can just
+> collapse _locked bodies into the callers?
+
+Sure.
+
+> ...
+> > diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+> > index 87c79d076d6d7..733d89de40542 100644
+> > --- a/include/linux/kernfs.h
+> > +++ b/include/linux/kernfs.h
+> > @@ -199,8 +199,8 @@ struct kernfs_node {
+> >  	 * never moved to a different parent, it is safe to access the
+> >  	 * parent directly.
+> >  	 */
+> > -	struct kernfs_node	*parent;
+> > -	const char		*name;
+> > +	struct kernfs_node	__rcu *parent;
+> > +	const char		__rcu *name;
+> 
+> ->parent doesn't have to be converted to RCU. As long as the node is
+> accessible, the parent is guaranteed to be pinned and unchanged. We only
+> need to RCUfy ->name.
+
+I was uncertain about parent. But in that case, let me keep parent as-is
+and just do name.
+Thanks.
+
+> Thanks.
+> 
+
+Sebastian
 
