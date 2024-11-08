@@ -1,137 +1,88 @@
-Return-Path: <linux-kernel+bounces-401419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB3CC9C1A3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:13:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B569C1A61
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:28:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76DA5B23F95
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A241C2291A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF86A1E284D;
-	Fri,  8 Nov 2024 10:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="BPQwY5Gw"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167C01E25E1;
-	Fri,  8 Nov 2024 10:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731060789; cv=pass; b=Bts/TZMI+cs9nNI7p8jLzmJnX4VumECdpcMK6xAOgQGWa5u9k7FIU+uM01rGtAkVbV+r7fSD7X/1mkEpoCGecjUjuTnRK48UKL2O2SApdDjb9en1/oZsW+FKTC1Pv83PZKTikeQt0b9OshWzb1R1qwh0dy3oqfNRxzSZtxCS9NA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731060789; c=relaxed/simple;
-	bh=URH1dV2Y67ZlZ25QwrpXrKUcR2Au3hsHHxbNoHitl5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rw+DH+KXKbKWUBxeGEWpsqOCktWw8ZDeeTM9JQYOnpv4szP0ijRw0LfhL9dj275Ga+V2lA4dj8uWbQs6D89S3yefNb/Pm3QLPQ+I1enjUZgG41Ag37KWD8RCFwSzsWClNalHjJY1FgxrCtA1On9GiBeVwnrAAB6HPf+ncW8MNOo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=BPQwY5Gw; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731060769; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bsTNZJF2lyVfM6jm/zNhBscpTcTbxERiukwEibUzKBAlLk6AWP5EltOu87KOLnhFb6bHOBdnH67Bo/PNOFD6LZs8R8W0ADeMNYjmtQoJaP8VOA4UFqNnl+Q6sxPZ4+QKHT6tlaOypC9GuT1+JHMnECu/WO7pKMQyiNXY2kp0VwI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731060769; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AQ8tMbexbiQsHm/pOBHSP+wB02qPYz2EI2G2y4054mc=; 
-	b=KkTYWDOLSe6g4fhHeszj3/B1q4N44NibjkEWr9/ti4atKoVMBO6MlXlCcjeTWe5yLOGEZ7IGWAy0Grdu/tl9jcDooJbp5cEWoe+r5agSCLSNclVI/izwAqGFL4iS/5Kx0PLrkhvTKD0+8sn/+CjDcyfxU7c7CoOoEF32uPRF8vg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731060769;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=AQ8tMbexbiQsHm/pOBHSP+wB02qPYz2EI2G2y4054mc=;
-	b=BPQwY5GwF52fDh9KKJmhMao0LMnWAgeEDqohE7vP/5n9fJlZiTvusiM3vKVhf6M1
-	qjqX6z6aM6j34d3xZ0vRMLzySBYobzxL/G3DFM3ieVRPc+FD108sATzfBSyYjQ1VYbV
-	BOXTPJzHU1WSByAJ2DkQn40PPBB2eAfVCkQeE9ms=
-Received: by mx.zohomail.com with SMTPS id 1731060767699104.95062302155475;
-	Fri, 8 Nov 2024 02:12:47 -0800 (PST)
-Date: Fri, 8 Nov 2024 11:12:43 +0100
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
-	mauro.chehab@linux.intel.com, kernel@collabora.com,
-	bob.beckett@collabora.com, nicolas.dufresne@collabora.com
-Subject: Re: [PATCH 2/2] docs: media: Debugging guide for the media subsystem
-Message-ID: <20241108101243.a6rxed2lx55hwcmj@basti-XPS-13-9310>
-References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
- <20241028-media_docs_improve_v3-v1-2-2b1b486c223e@collabora.com>
- <87h68i22ww.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C727E1E2833;
+	Fri,  8 Nov 2024 10:28:47 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C97B1DED55;
+	Fri,  8 Nov 2024 10:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731061727; cv=none; b=HJOG/6Y3aZrolreA4GB1Q170wNcU0qa2OzQ2kwLVkAeRnP7Oz9VkIE/4mAxqsm59hR1H5p9OJlCgtrP7CIEgkmLvSj7uNh39NVHocUOy3hhlQY5iRaPaFSZWP6PbXgjw6JH2Xx5aR4O6+mjVto4ERSIjBxFjixPcYcseLM8+yS4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731061727; c=relaxed/simple;
+	bh=5A7Sf9whBIfDtwZj3N53gko2SBUFHYbah3jhq6lH02g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IgK9uX//Sdlu9Pvi+qdp4IZYTcTWumc9UlZGnG8fOrmOBEgPhnVSNB5fwH0Wb9wachsXO8EyGHk/KxXsEpWZuyqN14aQWuU9RwL6IbbaxF8pmyKhH9nwYLDff8pFxEPDN4Pwbj6fKt7ph7uc9BXh8EhxOsXBTeFqpwVCJbWZFXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5672de7d35df-f25f1;
+	Fri, 08 Nov 2024 18:28:37 +0800 (CST)
+X-RM-TRANSID:2ee5672de7d35df-f25f1
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee3672de7d068e-98254;
+	Fri, 08 Nov 2024 18:28:37 +0800 (CST)
+X-RM-TRANSID:2ee3672de7d068e-98254
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] perf tools: Add "source" symbolic link to .gitignore
+Date: Fri,  8 Nov 2024 18:13:09 +0800
+Message-Id: <20241108101309.260550-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87h68i22ww.fsf@trenco.lwn.net>
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hey Jon,
+This patch adds the "source" symbolic link to the .gitignore file,
+ensuring that it will not affect the source tree.
 
-On 07.11.2024 13:40, Jonathan Corbet wrote:
->Sebastian Fricke <sebastian.fricke@collabora.com> writes:
->
->> Provide a guide for developers on how to debug code with a focus on the
->> media subsystem. This document aims to provide a rough overview over the
->> possibilities and a rational to help choosing the right tool for the
->> given circumstances.
->>
->> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
->> ---
->>  Documentation/process/debugging/index.rst          |   1 +
->>  .../debugging/media_specific_debugging_guide.rst   | 178 +++++++++++++++++++++
->>  2 files changed, 179 insertions(+)
->
->Mostly overall comments here
->
->- much of what's here seems redundant with your other new documents; you
->  seem to be going over the same list of tools?  Why not just talk about
->  the ones that are unique to the media subsystem?
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/perf/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-I choosed the minimum duplication path because of the perspective that I
-envisioned of the reader.
-The reader reads that there is a debugging guide for the media
-subsystem, which to my ears sounds like:
-"Everything you need to know to get started debugging in this subsystem,
-with recommendations for useful tools"
-and not
-"Some specific media bits that expect you to have read every other
-debugging documentation and judge yourself which of these tools might be
-useful for your debugging".
+diff --git a/tools/perf/.gitignore b/tools/perf/.gitignore
+index f5b81d439..c23d54bb9 100644
+--- a/tools/perf/.gitignore
++++ b/tools/perf/.gitignore
+@@ -53,3 +53,4 @@ libtraceevent_plugins/
+ fixdep
+ Documentation/doc.dep
+ python_ext_build/
++source
+-- 
+2.27.0
 
-I look at that specifically from a perspective that the general
-debugging guides are probably going to be extended in the future with
-more general debugging tools which might not be as useful for the media
-subsystem.
 
->
->- Please use the function() convention throughout.
 
-Ack. I assume you also mean the titles as well.
-
->
->- Back in the ancient past when I was writing V4L2 drivers, one of my
->  biggest problems was figuring out why applications weren't getting
->  what they expected.  The vivi driver was most useful for finding
->  subtle differences...  One would use vivid now, but I suspect the
->  utility remains.
-
-Okay I'll look into that.
-
->
->Thanks,
->
->jon
->
-Regards,
-
-Sebastian Fricke
 
