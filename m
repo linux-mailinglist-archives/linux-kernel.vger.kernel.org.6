@@ -1,134 +1,138 @@
-Return-Path: <linux-kernel+bounces-401855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0667E9C2027
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4586E9C2026
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32DA91C23AD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9341F24C8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55B1F4FC8;
-	Fri,  8 Nov 2024 15:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B51B1F6680;
+	Fri,  8 Nov 2024 15:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fOcN++J+"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MPU8BB2h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B256D1F584B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68121F5831;
+	Fri,  8 Nov 2024 15:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731078856; cv=none; b=u1YJpb6k8PBg8LZfFg8wFAMMU792Z5Rp9ScC5EK9eyTzh8S4ECMHRdPMKKBNt988XiN3hWDp0W7QbR0sP0Z+hHBC+IShqbZqd6aTql6RowpE7+V2xzz1iDHnHavHY6/Bo60l7Etfj8SqKki7i3E4h2ArQsHsglNboVbYghs+TX8=
+	t=1731078843; cv=none; b=hXyXLnF1oySuE3iJQmKSgnLNIWMQ6laOPfGuD9eJmjShQnTwQDJabNjDWoOdc002tDlayHDcv/2oNDYwE+6PGO5TnpBBAvIMda0h/lN2TXGmeUcWR2HQPfTPEHqvtkGwEXe33iNguVduBOihkPEIzJ6j/hTQi6DhawFg2i8RoUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731078856; c=relaxed/simple;
-	bh=smY4h117cYR692sX/32C1fiEi9e/UhXm2F3tRfVz2OE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PYeLaEOCLglNR7YrS4QUdBQ03N7xnUVStwHKAcaW22p96QMZjR5RjvTx/t9oiApw7bogvgWsGqSI6JDG4rkzvb0Q4olhAyQiW7UdcWGe5j1Znva8/aJG2/iwm+smuxiX0XTmu1RmkcGh2UVezlq6J9eXSQ/8vlLRnrb4K3xFi8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fOcN++J+; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so3384604e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731078852; x=1731683652; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EbptqwjZLNdVS9qjZW7J9pwzy8My758ZGi0V06mo61U=;
-        b=fOcN++J+O7rjb3qWqdUYU1GVX1fvlvvH/RwQoiwYjTctSUUmMh2B9E6vvYXaSyemZv
-         3TrE1UYjWuLziIkJT7VUKhulnGTV1BoONOKh4PNtqbMb40nq/fXSbBK6xQ9olxwdG/no
-         c4v13hYm0MTzbajmZYaL+20Tk7z0/YXKve4EQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731078852; x=1731683652;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EbptqwjZLNdVS9qjZW7J9pwzy8My758ZGi0V06mo61U=;
-        b=VyRS8R7C0xJmin8QWfx8g55IL327v0apkxRbycRYGgQY+pQfVgV6JC5+D10dFnoKMf
-         PVMEb23VI+2vSUzmUeUU/HuEWJz8gZ7aLbJ4B6mx+pb/yZQm1OllzvDx6p0NVcQUEaob
-         yBhuDk+cQdEJo6kmA7/NWDLa/ktiXksCBuZvK0Yk0VUNnRN2HJGkX0wtbOhwaSrNkOte
-         XZ8PhO15n2yCfZTbg6V663++6ROcJHjPzZL8Tlfyl4wQHXVJjKrZkfbCvb3zupaf/7LB
-         2vCBkSDFbLal7JpXIsITCO0mmlPLf1f+ddJXD8dmM4E+HEQqkQKTFz4/jBs1QBkFU1IA
-         kt/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUsKG/CGVn9DCQVXZsHBKAoK8KGIqbBVxB0oMg1rkmUSTPDjs9KBdb2gurY7ltgMUrmgBVoVvpHDklUxYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6pdGeIN1HL4DxRkSBbOTWPl7TcoxinuXZVGq0nmZVlvve71RL
-	Y//vvAwveBtSOeP2mtm+tPaKPIOeUuSH+ibWt4o4CWDRoB7Zav2CyTqZwua4S7yKupLXyQv+XWj
-	weA==
-X-Google-Smtp-Source: AGHT+IFC42wMfsem9KHUFygrRMvQg3nSz4RAy6DuuucLsuScUkGNlhvxqWxCcWk+9glxmKZBPLhK2w==
-X-Received: by 2002:a05:6512:318c:b0:539:e23a:9eaa with SMTP id 2adb3069b0e04-53d862f34d5mr1796053e87.50.1731078851956;
-        Fri, 08 Nov 2024 07:14:11 -0800 (PST)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aefb1sm646777e87.237.2024.11.08.07.14.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 07:14:11 -0800 (PST)
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f84907caso2403214e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:14:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXdyNAz5Gs0CvICimSEAkGgpXjTdn2F795WVywdvPDHRug1djuD16Lj0/cHoOpkqugmBxnaHX1dLdReP+I=@vger.kernel.org
-X-Received: by 2002:ac2:4c4a:0:b0:539:e97c:cb10 with SMTP id
- 2adb3069b0e04-53d862ebfc3mr1963420e87.40.1731078850184; Fri, 08 Nov 2024
- 07:14:10 -0800 (PST)
+	s=arc-20240116; t=1731078843; c=relaxed/simple;
+	bh=D1KdnZEqwOBAkW2gdT2OYagXEMiuHefSlBOJ+Jlh4Ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5yMgbhFvNWNUOCGCaYeSL5+fBLeTMDJF6esoefPICvgYYCdVdKbg6u81R1A8TDuAjXJtDgifBFSRKW0MsfL2iBkbQsJlR3+8rvNwZqdg1Tg1Hcg9lNQGUtSz1+dC3KwmvJSoDW9UQqMkPj5KHcni/kyeA3BdcOB+WAI6yr+4vY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MPU8BB2h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40592C4CECD;
+	Fri,  8 Nov 2024 15:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731078843;
+	bh=D1KdnZEqwOBAkW2gdT2OYagXEMiuHefSlBOJ+Jlh4Ng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MPU8BB2hxklea4mlCBAKGkUL1VXNzNev8Gf9OaXw4U4XGqGcnoDJCLJ1RAq+pOQcF
+	 osWdPeKLF3P4DCtV+h+eH4tWiDBKObPNj7OHVMgACVScEwKOO4SFjKVCXp1JYCYukr
+	 sVx89JzBiAyqB/PODaA6dInFqMi0a03hdPBj8/4ns1ajaDltqGbsSAU8frDpbRps8H
+	 BeT7Jn/rFmDn7OQLQDMHkrVjJNEtU0+7bCU2mFY1ycXfSwpjpDIxTUWrQ62JrrQJFW
+	 UCL5yvHklEPA9Mnf5ac3fTh/r5tMZ8oGYjY2XgK/0PyB+FZcPmu72bBYpIdX7qp5ij
+	 MkxqdymErTbWw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t9QgX-000000005v6-0BX0;
+	Fri, 08 Nov 2024 16:14:05 +0100
+Date: Fri, 8 Nov 2024 16:14:05 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
+	andersson@kernel.org, konrad.dybcio@linaro.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org,
+	arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V4 0/5] arm_scmi: vendors: Qualcomm Generic Vendor
+ Extensions
+Message-ID: <Zy4qvedrmkRdPR3x@hovoldconsulting.com>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <ZytnRc94iKUfMYH0@hovoldconsulting.com>
+ <ZyvLktLUZOGP-LH5@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108120311.87795-1-charles.goodix@gmail.com>
- <20241108120311.87795-2-charles.goodix@gmail.com> <173107281349.1752060.15353696141928017835.robh@kernel.org>
-In-Reply-To: <173107281349.1752060.15353696141928017835.robh@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 8 Nov 2024 07:13:53 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Uc0PZZp-rupazy9tGfZMssGET=904cdUJXbhS=fMCUvg@mail.gmail.com>
-Message-ID: <CAD=FV=Uc0PZZp-rupazy9tGfZMssGET=904cdUJXbhS=fMCUvg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: input: Goodix GT7986U SPI HID Touchscreen
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Charles Wang <charles.goodix@gmail.com>, conor.dooley@microchip.com, 
-	linux-input@vger.kernel.org, bentiss@kernel.org, linux-kernel@vger.kernel.org, 
-	dmitry.torokhov@gmail.com, hbarnor@chromium.org, devicetree@vger.kernel.org, 
-	jikos@kernel.org, krzk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyvLktLUZOGP-LH5@pluto>
 
-Hi,
+On Wed, Nov 06, 2024 at 08:03:30PM +0000, Cristian Marussi wrote:
+> On Wed, Nov 06, 2024 at 01:55:33PM +0100, Johan Hovold wrote:
 
-On Fri, Nov 8, 2024 at 5:33=E2=80=AFAM Rob Herring (Arm) <robh@kernel.org> =
-wrote:
->
->
-> On Fri, 08 Nov 2024 20:03:10 +0800, Charles Wang wrote:
-> > The Goodix GT7986U touch controller report touch data according to the
-> > HID protocol through the SPI bus. However, it is incompatible with
-> > Microsoft's HID-over-SPI protocol.
-> >
-> > NOTE: these bindings are distinct from the bindings used with the
-> > GT7986U when the chip is running I2C firmware. For some background,
-> > see discussion on the mailing lists in the thread:
-> >
-> > https://lore.kernel.org/r/20241018020815.3098263-2-charles.goodix@gmail=
-.com
-> >
-> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > ---
-> >  .../bindings/input/goodix,gt7986u-spifw.yaml  | 75 +++++++++++++++++++
-> >  1 file changed, 75 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt79=
-86u-spifw.yaml
-> >
->
-> My bot found errors running 'make dt_binding_check' on your patch:
->
-> yamllint warnings/errors:
-> ./Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml:16:7:=
- [error] syntax error: mapping values are not allowed here (syntax)
+> > First, I expected the drivers to be loaded automatically when built as
+> > modules, but that did not happen so something appears to be missing.
 
-FWIW, I think it's objecting to the "NOTE: " in the description
-looking like yaml. Maybe just change it to "Note that". It's also a
-good idea to get yourself setup to validate your bindings _before_
-posting them to the list.
+> Even though, module usage is tracked by the core AND when an SCMI Vendor
+> driver tries to use protocol_X, it causes protocol_X to be initialized
+> (calling its protocol_init), there is NO auto-loading for SCMI Vendor
+> Protocols when bult as LKM...because there were really no ask till now
+> and this stuff is in general needed so very early dburing boot...so the
+> usecase of all these LKM modules is just debug/test as in your case
+> (or in mine frequently)....
+> 
+> ...and I am NOT saying with this that is necessarily right or must be
+> stay like this...just explaining how it is now....
 
--Doug
+Ok, thanks for clarifying.
+
+> ....anyway...it is mostly trivial to add vendor/protocols autoloading
+> transparently...today I was experimenting with a patch that triggers
+> autoloading based on a generic common alias pattern in the form
+> 'scmi-protocol-0x<NN>' (with NN the specific protocol ID of course)
+> that triggers the loading as soon as the SCMI Vendor driver tries to
+> access the protocol during its probe...
+> 
+> ....I will post it for the next cycle once it is clean.
+> (unless I am missing something else that you want to add...)
+
+Sounds like that would solve the issue. I was just expecting the memlat
+client driver and its protocol dependency to be loaded automatically
+when built as modules on machines that can use them (e.g. as we don't
+want to have every vendor protocol driver built into distro kernels,
+etc).
+
+> > Second, after loading the protocol and client drivers manually (in that
+> > order, shouldn't the client driver pull in the protocol?), I got:
+> > 
+> > 	scmi_module: Loaded SCMI Vendor Protocol 0x80 - Qualcomm  20000
+> > 	arm-scmi arm-scmi.0.auto: QCOM Generic Vendor Version 1.0
+> > 	scmi-qcom-generic-ext-memlat scmi_dev.5: error -EOPNOTSUPP: failed to configure common events
+> > 	scmi-qcom-generic-ext-memlat scmi_dev.5: probe with driver scmi-qcom-generic-ext-memlat failed with error -95
+> > 
+> > which seems to suggest that the firmware on my CRD does not support this
+> > feature. Is that the way this should be interpreted? And does that mean
+> > that non of the commercial laptops supports this either?
+> 
+> This seems like FW rejecting the command, maybe just only for the specific
+> Linux OSPM agent since it is not allowed to ask for that specific setup,
+> and only Sibi can shed a light here :D
+> 
+> ...but this Vendor protocol, if I am not mistaken, AFAIU, uses a bunch
+> of "algo strings" coming from tokens it picks from DT and use thsoe as
+> params for the set_param() VendorProtocol ops...cannot be that a bad/missing
+> DT value could cause the FW to reject the command due to the params ?
+> (even if the command is supported)...
+> 
+> ...just a guess ah... I have no real knowledge of this venndor proto...
+
+Yeah, hopefully Sibi can shed some light on this. I'm using the DT
+patch (5/5) from this series, which according to the commit message is
+supposed to enable bus scaling on the x1e80100 platform. So I guess
+something is missing in my firmware.
+
+Johan
 
