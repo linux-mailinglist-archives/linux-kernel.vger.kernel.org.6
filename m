@@ -1,88 +1,128 @@
-Return-Path: <linux-kernel+bounces-401991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06079C2203
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:25:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447089C2209
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A75282E8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13301F22D59
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042C71885A4;
-	Fri,  8 Nov 2024 16:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3DA192D82;
+	Fri,  8 Nov 2024 16:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="oOmFTAhf"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A5218B09
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 16:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CP8IuocG"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794AA18B09;
+	Fri,  8 Nov 2024 16:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731083131; cv=none; b=iJREUjN9oweTWxinyDlM6o+jnM3ES2SVPSNBlCRAbfzEVnguBfecwx7C7NGzJlug39CyJEbpL4TCQIdi/HrMk+6YJbFvZR8qXKNZXN9MU9B8MhBj1gIvW7BOcv/u+kMuFk2yO7Sd+7pfhIZxI41gHFWzPCB3nVwZWNG4W1QguUo=
+	t=1731083190; cv=none; b=prsL2q/EzxHG2ptznzPrypnMSBF1N24wP0XIkm7dfXc40eBm5sOg+NzU9XQ7wuXX63fLPdUeVeCH3J17W2gX6xzo3Rru+QTjxGEBiweaDHMaqUiV9CXDjGxxuhDUZs+uM4rq5bLH/n0Uk5J+FM9ySPXxwtIuUUt4pL3donk/m+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731083131; c=relaxed/simple;
-	bh=LoBnILTjP+c7I772XhFxSQLCNE328jcEj4sx6hyzSMk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJKLDrMfe6FvG/ckSj5IV1Q7QRlONlomZnXF+mmsOo/DBIt17jgatAQ+UJqs/JnO5d+WVBgz8Nh3/vxvMgavgeUL+9muvzrfpBh5Id0AoDL0WNyIN/w0EYC+wyWWoCd95hLa94MqGRxD+Wmw3uaxscP+iUi7Ilk/26lPpO/ZYb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=oOmFTAhf; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=dUGTF
-	+Sr/jmIL6b2aWpcEFyrM7xIuftjowU0OHO/q/s=; b=oOmFTAhf576eIsDEKrKm+
-	GpG4sA0QHJY2e5qL05U4im1P7F+f4pY/0xzsSu5CnC/qy2Und2byEl6IbPD6l98x
-	56Yg7/u3V43LyPu95+qSo0i9gTumDIB4r8aVly3NzKG/lc9L5ARbM1XVS/biWql2
-	2kDoX29fRHJHSn8irvCwHI=
-Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAX7U9hOy5nFlO5BQ--.37910S4;
-	Sat, 09 Nov 2024 00:25:11 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH 12/13] riscv/irq: use seq_put_decimal_ull_width() for decimal values
-Date: Sat,  9 Nov 2024 00:25:03 +0800
-Message-Id: <20241108162503.9914-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1731083190; c=relaxed/simple;
+	bh=3mqsLDsEJoqwjI9HvUfDwlPxiJr4yDQLDVMDWRt1DVI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LvrRUvfpG6mOZxrLjI23tcHaOrv4sDvum52BbhLeqrgFG+FXTe1c6+yjXGeO0a0uWufbFDY112vtYWcCNRwc4aJtNeDwvreUSE0/W5b3sevsc4jPU3SE9CWtUXyBFFsJqUQNhl2dYluF+Ipn4mzIjItzKQhTt+LZRHDqOdz93FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CP8IuocG; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731083160; x=1731687960; i=markus.elfring@web.de;
+	bh=VUWzv8LrvIWA8ImsvyiR/6cd2EOKf5wJRkCX4vH4NoA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=CP8IuocGGHD5URq/63LeC/3fmDzoljQJO5d0AqkwBfNyM7jiu8PaqBeCZ2SdMJSy
+	 xZGjvMLCkdLO+M+fDP2mR21WMp1yQ8+NX4NO/N1ymAd2HfQLZmAthUMtrstcSQscE
+	 rVTu2i/ZinZOVHp8rNuuUvkVbJfn2bYLh3Sucl5+C3oQpOQtAJdoAWYqvNV+vxkFh
+	 Rgsa682UbDS9ykrjGSbSt5yiTcdLssDMLQzLitqgcWcMuopJLH95RoMXD6objVGNu
+	 0PGHmy0yrN2TIAen0hwkEbOnOBH+uKYvGQstSN+Z+abVDr/hBtYUPdUc3JGQyYAx5
+	 T2RKBN+bGWkhRhJnMg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.80.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MVaYi-1tHBbI0wMe-00Nvtn; Fri, 08
+ Nov 2024 17:26:00 +0100
+Message-ID: <5a707eb5-8695-4f0d-bb08-6de95017d2b1@web.de>
+Date: Fri, 8 Nov 2024 17:25:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAX7U9hOy5nFlO5BQ--.37910S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKr1DKr15tryUKF1UAr4rAFb_yoW3WFg_Kr
-	Z2ya45Way3tFW2vFyDuw1SqryDA34FqF93G3Z29rW2yr1YgrsIyas0yF45J395XrnIqrZ7
-	Jryftrs2vr1xKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_ZqXDUUUUU==
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMw+RqmcuOswJMQAAsA
+User-Agent: Mozilla Thunderbird
+To: Michael Nemanov <michael.nemanov@ti.com>, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+ Kalle Valo <kvalo@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Sabeeh Khan <sabeeh-khan@ti.com>,
+ Simon Horman <horms@kernel.org>
+References: <20241107125209.1736277-6-michael.nemanov@ti.com>
+Subject: Re: [PATCH v5 05/17] wifi: cc33xx: Add cmd.c, cmd.h
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241107125209.1736277-6-michael.nemanov@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kCejPMohxqmb4402vvVYhccZ9wh2wv6TVh1jzzZXVxjdncvL2ET
+ 53vZwdWPFjuyS0q8f0oDfTe+LtQUk00Mv+sqUdvH+EjtzuSiAAidCgVhZQ5tqnvBITkjtsP
+ +aJcmAzFYk8n312MiU/eAxRfJaagHa23iqjTjt+zunmJCVgCyOuEf8p4l0yvBxSYNJz2VIx
+ CZMCPWzsfQoLQ0ZUUoeHA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:S6CwSfd+LOc=;P9Wg40faTP/Ttw0CrWOuNvN+G3O
+ rhLHdGT5u7OzXQelvdwgcrI1PUA/Huuyei/Nz4oNptn/AE8UpDeG8qc1D5klR+U+uU1SmuG0j
+ 0kB7lFau2y18CbZ+NAzYvGuYURA0ky1BTqwHsPBaogO38Hh2llhbLXblIjI8DXzYQHsHVWz1+
+ X6xbZVam9+2BYZ+EXv3VWXHFhH7BaMJm/I+XY+5ostG8fyZneehcZIB+I3tQbv7Mg4h1ymrWf
+ 6aU11MSBDUKs+5KFsq7UjjxJeCfeE0fJokUdnBhb7VDJBYkmD9y1h32Y/GvnVL8xQkU8ncHBN
+ zFFEzO+z2OsNiO3dhvCVCaaikVnlh/Yj8NG7rT1myAmOPB3fwvv12XsHKDZyfeP1LGP+T/XYK
+ iQjMaKrKx77JwsC27eAqvp146wIOntJl/SXNnBym3DcOHI+OcTO0VDuN0vj1pH8crglboiJ4Q
+ ktVissq+ZITbeVUKOlOXVf6tKLr4pC2BQnr3Vb59jJA7Rb0oBomZh1w15xzJ3w4OVIub+mFua
+ f5i31UDV9e+Bsd3qduNJQ4urgFZIFKqkLK0BQTPbMaVDnbLpcwPlZIpW5pjLEGQu1KPUOhUpH
+ mIEzozOM+SRGAG0gjatyi5a7JHz45jf9HRX2r2lLvvog2ixR7NcRqFchIMBqWE1WJbmBae9C7
+ nVWKrf5ZiSt3Du7M4fRXzwYcQFgFxx3lJk0JQGMFaY7uZ+T0AqIXfV2r8fopmO8n4T+Wnw3qs
+ xaz9/UARNiLOH8+5nPwej9l982t/lhQo7bTFWEi4rALqqvpcG8BVtCg8V8S9/ELpfdTgcOpmw
+ QAYKupqVKXr3F01tC2Arh7ZatclUivECKKMqNQvui2P7zyJQ0ffTC2ly1XlLqCCL2CX90u+CT
+ jjwKAyZNGisp3DWu5qXN3JxNHr8QxT51Mjgz1fPUcdkJrAvTFQKUKsNAQ
 
-Performance improvement for reading /proc/interrupts on arch riscv
+=E2=80=A6
+> Similar to wlcore, all commands eventually reach
+> __cc33xx_cmd_send which fills a generic command
+> header and send the buffer via the IO abstraction layer.
+=E2=80=A6
 
-Signed-off-by: David Wang <00107082@163.com>
----
- arch/riscv/kernel/smp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You may occasionally put more than 56 characters into text lines
+for an improved change description.
 
-diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-index c180a647a30e..f1e9c3db094c 100644
---- a/arch/riscv/kernel/smp.c
-+++ b/arch/riscv/kernel/smp.c
-@@ -226,7 +226,8 @@ void show_ipi_stats(struct seq_file *p, int prec)
- 		seq_printf(p, "%*s%u:%s", prec - 1, "IPI", i,
- 			   prec >= 4 ? " " : "");
- 		for_each_online_cpu(cpu)
--			seq_printf(p, "%10u ", irq_desc_kstat_cpu(ipi_desc[i], cpu));
-+			seq_put_decimal_ull_width(p, " ",
-+						  irq_desc_kstat_cpu(ipi_desc[i], cpu), 10);
- 		seq_printf(p, " %s\n", ipi_names[i]);
- 	}
- }
--- 
-2.39.2
 
+=E2=80=A6
+> +++ b/drivers/net/wireless/ti/cc33xx/cmd.c
+> @@ -0,0 +1,1920 @@
+=E2=80=A6
+> +int cc33xx_set_link(struct cc33xx *cc, struct cc33xx_vif *wlvif, u8 lin=
+k)
+> +{
+> +	unsigned long flags;
+> +
+> +	/* these bits are used by op_tx */
+> +	spin_lock_irqsave(&cc->cc_lock, flags);
+> +	__set_bit(link, cc->links_map);
+> +	__set_bit(link, wlvif->links_map);
+> +	spin_unlock_irqrestore(&cc->cc_lock, flags);
+=E2=80=A6
+
+Under which circumstances would you become interested to apply a macro cal=
+l
+like =E2=80=9Cscoped_guard(spinlock_irqsave, &cc->cc_lock)=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.12-rc6/source/include/linux/spinlock.h=
+#L572
+
+Regards,
+Markus
 
