@@ -1,117 +1,77 @@
-Return-Path: <linux-kernel+bounces-402291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445119C25F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:57:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48779C25F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 20:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3FB7B21D97
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB75F1C235AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 19:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F049E1C1F15;
-	Fri,  8 Nov 2024 19:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825291C1F10;
+	Fri,  8 Nov 2024 19:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DuFILfB/"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4TYQTOF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD4C1990B3;
-	Fri,  8 Nov 2024 19:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DAB1A9B52
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 19:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731095818; cv=none; b=QwlHFgbwQo1jWZuoGzgoUY8l5DR+tthzush02DrPY2lxXf3BuChf3iMUQ+EPJGjUptsE17sb6UgapesNxEz6O7Obk9M2Kcs5pgOEI0kylHAENTRvWs0hzs8BNIMBxLt1MJrirDQmgWeXJIztKtxOvJQpC5zvncnxeDNPl+dwF3g=
+	t=1731095836; cv=none; b=fKxOyTEt16rbnyVF9uklS7Fr3PTw5J9Kvm7qdqtRouX++aUlH/d4aDK+Rhtwes5jCAoMbsd05NzrHhWK4PfWNH1QqyhA/aNAcgEj9NOUadcyV1WbVkawGvgPiwiuT3PvOBiswOfRAsMOBepGL6M6Z+oPWy3+9TlW0TruoxqPzDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731095818; c=relaxed/simple;
-	bh=RnRYMG0r5Tb8CA/prh1T62sDpdMwAAltux+0MaQuw+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=knRr3xi5zSDtm5wZ7W2iWqDC2GvYhKwUmFdpdxp7EJWOo8t9XqPsCLLfHrJu7GH9HMefPTlA2JATqw8sSAZypN1nO6zW/tohCAx2jR6Z9G4TOdlhoEWiriAWNSJDGx5HEo8XJfvXNzhanlPsxZ9xZhxOFT9Eur51kJA7Zb7KKWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DuFILfB/; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d01caa66so2455171b3a.2;
-        Fri, 08 Nov 2024 11:56:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731095816; x=1731700616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UmHi0kdn3wN+ndrULDIunuwFGgPO4PZyVJQogrQ8fKo=;
-        b=DuFILfB/9v6SvX6UrmIfnHzIGG4uKczjvSncOGVJQMkp/dkVB41gZ7lKIZ3SZMqouF
-         7xxmlzKJetKra0LLwbqE+4VrlYWODBxMUrWwk2JEWqPoEqiarHdd95NEOoAaZURTg1Mt
-         WabIwJChIBOR1iyqKjPcvUhPV9WPw2it94X3Y7nDBe1CXbSvFsC7BvOH/B8TfSJ3xs/l
-         SWDHwIIMaFi41JJTG9edbKDHayKOeJgpDG4Uun3pIb4yteiYDBQk72OZmO1BkRrJsFl8
-         c4JObFQ5MW1H47prh8PUbm0HMUd491Qlg+r2/Oe3bkAVOqa27Dtgeda7yiy8FOkbZf5N
-         81bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731095816; x=1731700616;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UmHi0kdn3wN+ndrULDIunuwFGgPO4PZyVJQogrQ8fKo=;
-        b=wHQRb+k2MAC48Jrv7y/vRRQVlecZVtDpbMsckgxyN03C9Ojtq8l9fqORJoB7VnxCJW
-         wH9OhzfLk/9wR+ZTiGmAMTBXpczWcHpqrNfiGiv8IqaAK7WgiNGXQzTYRRDqggigDTdJ
-         vl/dBqSz6WgTNP8e+4lJ333whgMsjMfibFoQQsLjGQpIEFdtmSeqwUWOom4j0UdTo6N6
-         O73+lg0aXDjxIw0hRh6yfgf6WQDp4gGqrWUcDM0SFNcUAvIvFNUtnDvNI/XsvYiwJUli
-         c+RdhPgW3Zo1Yhb40rAL9d9wVJmbqJRzsAWtsm/CjYPoamocvMXWZu6qQ4a2/JPeVZsD
-         JrLw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Ha5zF9pXHT+aI8cxl5zrZINNvEMuuWN3kq6IyEQe8RMVVEjq4NCNQcA0rgF5z/uDdEIPasiX@vger.kernel.org, AJvYcCVb20nb3Pr2SYInYqbvdd8x2MdTTmV7wwpkz9WpXnCJl8BsC5bljjWvPhpcJz8PkXBqKPGdwf02d63dvmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXVNtve3g5Ewb/Xjvwtzdq9vS49pzhOVSMs/49ljDcSIRYVvc2
-	UF7+TyHXWdK8/PyK4seXtYncKQELQ6Zg+jF1vDiXM1/tRpsgxPkP
-X-Google-Smtp-Source: AGHT+IFTohcBku2wu4peqwuNZQdYZKLKlPBcz4eTW8IXVdP1pnayn0FCaHcbMUYyxQ2C0uZaXwzxSw==
-X-Received: by 2002:a05:6a00:17a7:b0:71e:6c3f:2fb6 with SMTP id d2e1a72fcca58-724132a111amr5586111b3a.8.1731095816377;
-        Fri, 08 Nov 2024 11:56:56 -0800 (PST)
-Received: from 1337.tail8aa098.ts.net (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078c0b13sm4190964b3a.83.2024.11.08.11.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 11:56:55 -0800 (PST)
-From: Abhinav Saxena <xandfury@gmail.com>
-To: linux-kernel-mentees@lists.linuxfoundation.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	=?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Hangbin Liu <liuhangbin@gmail.com>,
-	Alessandro Marcolini <alessandromarcolini99@gmail.com>,
-	Abhinav Saxena <xandfury@gmail.com>
-Subject: [PATCH] tc: fix typo probabilty in tc.yaml doc
-Date: Fri,  8 Nov 2024 12:56:42 -0700
-Message-Id: <20241108195642.139315-1-xandfury@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731095836; c=relaxed/simple;
+	bh=C1oBhr4X4sSzoQYsQThdqCB6TX9PXM5rv6IJXijNuec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/7q4AD4VXq7kCxSks7TL7rUizuZbTaxTGB0jJLQ4cXVr8F/Sym98lbeN/hEyV6Ob6NbUFj3aiv7xuRHwVMAJbKVIw0pjVvIILnAH1+8C/3gEFTT+b9Y4/L9UI2amG+UdnZhjvFByaeszOZHV5y8/5zuGaVNa+36b3J98sWE5P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4TYQTOF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C73C4CECD;
+	Fri,  8 Nov 2024 19:57:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731095835;
+	bh=C1oBhr4X4sSzoQYsQThdqCB6TX9PXM5rv6IJXijNuec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D4TYQTOFDWsx+3PU+s6SmftGr2Fo8defaW+FD25/Eb+zCd/JPuwbpzTdoBXrF5elQ
+	 HSP0cca+FW1SkVXKCl2iecyisjzhpT4/s7wq091o3b82qCoJno7sk2KzW7HXzDXkac
+	 ymbEH9dX/v2L8hVHwYHgbni32T9wwQObeSvPGVwvNEBwX9XPqstoUncPEueSlFqo4h
+	 Jmg1bUNRCVMYa2ojA2zmT5Za9lNfuvUYzSwiPhN0D8AbOalhVINMsU+RopqA+AFpbq
+	 /qox6jlUaplRZZiRTOGzbGJx5uJWJZDYfyqHaB0hflDnxAcSt/6IrR9yYCD434lnjg
+	 m6PId8hKNcZZw==
+Date: Fri, 8 Nov 2024 09:57:14 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Fix incorrect use of bitwise AND
+Message-ID: <Zy5tGk1IILMVyAzG@slm.duckdns.org>
+References: <20241108195144.55747-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108195144.55747-1-arighi@nvidia.com>
 
-Fix spelling of "probability" in tc.yaml documentation. This corrects
-the max-P field description in struct tc_sfq_qopt_v1.
+On Fri, Nov 08, 2024 at 08:51:44PM +0100, Andrea Righi wrote:
+> There is no reason to use a bitwise AND when checking the conditions to
+> enable NUMA optimization for the built-in CPU idle selection policy, so
+> use a logical AND instead.
+> 
+> Fixes: f6ce6b949304 ("sched_ext: Do not enable LLC/NUMA optimizations when domains overlap")
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes: https://lore.kernel.org/lkml/20241108181753.GA2681424@thelio-3990X/
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
----
- Documentation/netlink/specs/tc.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to sched_ext/for-6.13.
 
-diff --git a/Documentation/netlink/specs/tc.yaml b/Documentation/netlink/specs/tc.yaml
-index b02d59a0349c..aacccea5dfe4 100644
---- a/Documentation/netlink/specs/tc.yaml
-+++ b/Documentation/netlink/specs/tc.yaml
-@@ -622,7 +622,7 @@ definitions:
-       -
-         name: max-P
-         type: u32
--        doc: probabilty, high resolution
-+        doc: probability, high resolution
-       -
-         name: stats
-         type: binary
+Thanks.
+
 -- 
-2.34.1
-
+tejun
 
