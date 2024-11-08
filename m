@@ -1,149 +1,112 @@
-Return-Path: <linux-kernel+bounces-401647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E5C9C1D59
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:51:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2559D9C1D62
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6B61F258A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:51:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30AE72870B8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AD81E883E;
-	Fri,  8 Nov 2024 12:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C0C1E8848;
+	Fri,  8 Nov 2024 12:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+co3kpu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jc0DikdS"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B571E7C2E;
-	Fri,  8 Nov 2024 12:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D0E1E00A6;
+	Fri,  8 Nov 2024 12:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731070274; cv=none; b=ODLTPsmSI1kfRXxt29Zf9ZYgk57bw7aQqt28EyMp5iQJwxgPXdXXqkILw64rs22xcGv3I2hc15hPfNJ4BIV3ZUN/fI3lk4RpVFa8hUJGUVMbfIm/j4oFCMMGeV+933kO9NYI3CMH+QG6QhTJ25NlP0IMLXZWFlgaQbKD9UVka7Y=
+	t=1731070448; cv=none; b=bXUO7OM4sVieGeddRNTfTMp5pJBti4ZFcGUwsx+SuzV8PwwFZMVkqasusoyXXOKMeZqOdT6TC/fuLVuamyhcyFxJZ57vOQO1JyMoFdF9mhXMoaNloEKk6RYVCJPNzbePAQwUnqGk8d5qaqX33lLt0ranBQVgQpVoueeMYh7BmEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731070274; c=relaxed/simple;
-	bh=9a3QZrzaYMtnDbILPbZ0qAy+WIpCJcwEcFNIQSsw3js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UD7i/x1mT2cdjCDK8rLCLD6k5+AByXswxp2IbZcwd0DOZc0oazpPfXmgaZaziEGlJRLhXvh42rC7CimbUbu+6w5/6y0nzKZqFlIT8f6b/IytS6LG/Cnpi5VZytaPUA60RtSdYx7cDwl7L5f8/hzRNWZdq0rxyNf1ioTPUaL8Nmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+co3kpu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50732C4CECD;
-	Fri,  8 Nov 2024 12:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731070273;
-	bh=9a3QZrzaYMtnDbILPbZ0qAy+WIpCJcwEcFNIQSsw3js=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+co3kpuN5yJJbb5w3dxeLoPhFeO5wKcx1aVJZ2TulD+VA5hLSuNhfh97ldfIbN5u
-	 KwZJZflkxQARss6dyhWQgKjeUWw91itUQ1eg2XPCHFUeUevUWyH3SMaaVyJLiSLCva
-	 3whqKdwbv51o50J8b3PxPKXskAeIAePev2SlIqqSHWmYSj7xSmIrhk8Sxzp3+ztEAf
-	 r7T2VYC9vjxudHUHLcf1Hz/I5HPWJIx93VkY5xZOCZ4LYG9G2igRvOLyaq+5r+iBOK
-	 AJkDrCKxLutFslb9LU+COZO/x4Ppv0Z10xwRoB+JhpABBfeJwMEwczEuJ8gtCRniZw
-	 Ay+BJcKP0AZ4Q==
-Date: Fri, 8 Nov 2024 12:51:07 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Ramon Cristopher M. Calam" <ramoncristopher.calam@analog.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/2] regulator: lt8722: Add driver for LT8722
-Message-ID: <2cce3ad8-7a3a-47db-a18c-33c32e96c009@sirena.org.uk>
-References: <20241108093544.9492-1-ramoncristopher.calam@analog.com>
- <20241108093544.9492-2-ramoncristopher.calam@analog.com>
+	s=arc-20240116; t=1731070448; c=relaxed/simple;
+	bh=Yvz0H/Y8zZiFugbvh32Aq7wBcwI/7h0sDm5Ksw3k5jA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sSHQqRfwzWi30GJj8oqvd+2hJ0UJfNpCppgcPsRLbecoZBU909i77ftPBHynZVM6X0LEnl1ZXXMB7I307MVAGaI4oXP/wt2dbzdfhqboQ2c+XJn29xUQz9S3s02ugiHj3N+1k+GC1lZ6ncpmqkyXoS9JUU0PE6/iCggB9GE0XSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jc0DikdS; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so2542721e87.0;
+        Fri, 08 Nov 2024 04:54:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731070445; x=1731675245; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yvz0H/Y8zZiFugbvh32Aq7wBcwI/7h0sDm5Ksw3k5jA=;
+        b=Jc0DikdS9ymfyhV+vt/cye7jKFh/HSOW8UfFuFMd7n+6T2kgYVSMXgLbPw9/SEAVNR
+         clucb4cAwlh/Wh6JsEuCBfpVzG7KAwzjoTIFdY0PzZ1/h504Kr8IHRSiBpxvFeQ9T/rZ
+         DmnzsCTKO8MjQtj4+Z8J/Azuak5NbQCRTfJ2GTERi3Hv7fTqm4jSOJMOtA9Gk9v7gi57
+         lQVjoGWGNmREtDz+dylj9VxZs3LRxNZAeuTjRbxPX78/DqkJ8KtFPGcRvZJKwlwz8ELO
+         inL2s/K4cMFU49fDTo/n1djR+4e73VGgeRX2c+5Uv1pzfUPfdp6gOmmojOhmeLyXFKgy
+         qhLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731070445; x=1731675245;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yvz0H/Y8zZiFugbvh32Aq7wBcwI/7h0sDm5Ksw3k5jA=;
+        b=fXpEvOoQdbKwVjwQVUk2SdSsxoGEX4QcNyUsG+cMY4I1cP9M14j8iH1jSeZmrrQaW6
+         dyZlPb2QMF74OSZneDIxNB7OwkXrVdeuAe0nojA1T0Lx1MFmPuehWrAdMI1LnCKf2fpU
+         c+fAnb2y0SMtBbWml7qQVj9OwPKvpdST1E4SKa/47lCjzPd8jVv79vDtv37NLAg2F+wV
+         hQT+DVdppzAU1IJ+6CzMlF0/MuGO58+YlP/ygNRZBsmMqGnbbmDLTuJ+QVOSYZLgL5tz
+         eOITBKkJf/zCrTYinh/gDilslVgckBE1coEmf4a8fB9dE9OIuuCsqFM6CRaR1AKljnAM
+         iQEA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4FvLc7rLqVEYSk6++fhozXmkA7c/jhprCFfYmhlEhvabDEU3VKOjT+tBi8WIfoM7da3krwlMa0wqjRzBwimw=@vger.kernel.org, AJvYcCXsu/SZCJMc4BNUZFSgbx9sA7Ci2QVaxtbORZXQ/YHDkTfTL19MvrzTAXgjKc9+q87HjqdznUaHciSK0Zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR5CaVzU43bUYp4KtNZVuTqzBQIHguXslSTkDMdBLcPUVKloIq
+	s1ymPLkSOxqnCMsQwtbweMzLOhYJQ9ml4CnLiOQsOJFtVfQBD5lws0FwFHn+gusrTVyxMn68LmG
+	s+zRaZrmSkpmuyhCi84yZE2qulhI=
+X-Google-Smtp-Source: AGHT+IHb1MRDNO0gqw9M4M/zgZqsXTO3f0QlKo7gx2naqOwIh5UCA7LEv2cl+FmyAKUFLrp77x6vQZEhv9DGKdsUt60=
+X-Received: by 2002:a05:651c:1602:b0:2f8:c0bd:d65f with SMTP id
+ 38308e7fff4ca-2ff2016dff3mr14921521fa.20.1731070444628; Fri, 08 Nov 2024
+ 04:54:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eHxyWZJTCIL+iSkB"
-Content-Disposition: inline
-In-Reply-To: <20241108093544.9492-2-ramoncristopher.calam@analog.com>
-X-Cookie: Do not overtax your powers.
+References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
+ <20241104-borrow-mut-v2-3-de650678648d@gmail.com> <CAH5fLgiMHE5GXQv8pSR_KYWsa44zr1o_FNrg1mj8QuTvNQmXhQ@mail.gmail.com>
+ <CAJ-ks9=Ej0St7XnmvTysdnjPHh6O+4XdYFC6LouwEJR9GpUPNQ@mail.gmail.com>
+ <CAH5fLgi=n-v5C4hH-+uozbiwwWCU_QGzhxfdTXfTyyy2ejJR+w@mail.gmail.com>
+ <CAJ-ks9n8eSPsb7_RqWk-3OgtsrZquA=94uBopkdwtHuTPUisaA@mail.gmail.com> <CAH5fLgjukqj49UHw33uJewc5Z5q=_f4uXzv2jyQ2=2eFCyWa=A@mail.gmail.com>
+In-Reply-To: <CAH5fLgjukqj49UHw33uJewc5Z5q=_f4uXzv2jyQ2=2eFCyWa=A@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 8 Nov 2024 07:53:28 -0500
+Message-ID: <CAJ-ks9m33v4WddztHWOgCkBWuO0RdfbE8iZKj+1EJ+YBLaGyZQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] rust: arc: split unsafe block, add missing comment
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 8, 2024 at 7:47=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> On Fri, Nov 8, 2024 at 1:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
+> >
+> > On Fri, Nov 8, 2024 at 7:37=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> > > You could write `unsafe { (*self.ptr.as_ptr()).refcount.get() }` to
+> > > avoid the as_ref call.
+> >
+> > Doesn't `(*self.ptr.as_ptr())` have the same problem?
+>
+> It's not quite the same. Both `*ptr` and `(*ptr).field` are place
+> expressions which do not inherently involve the creation of a
+> reference in the way that `NonNull::as_ref` does.
 
---eHxyWZJTCIL+iSkB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Nov 08, 2024 at 05:35:43PM +0800, Ramon Cristopher M. Calam wrote:
-> Add ADI LT8722 full bridge DC/DC converter driver.
-
-> +++ b/drivers/regulator/lt8722-regulator.c
-> @@ -0,0 +1,701 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Analog Devices LT8722 Ultracompact Full Bridge Driver with SPI driver
-> + *
-
-Please make the entire comment a C++ one so things look more intentional.
-
-> +static int lt8722_reg_read(struct spi_device *spi, u8 reg, u32 *val)
-> +{
-
-> +static int lt8722_reg_write(struct spi_device *spi, u8 reg, u32 val)
-> +{
-
-You can use these as reg_read() and reg_write() operations in regmap
-which will allow the driver to use all the standard helpers and vastly
-reduce the size of the driver.
-
-> +static int lt8722_parse_fw(struct lt8722_chip_info *chip,
-> +			   struct regulator_init_data *init_data)
-> +{
-> +	int ret;
-> +
-> +	/* Override the min_uV constraint with the minimum output voltage */
-> +	init_data->constraints.min_uV = LT8722_MIN_VOUT;
-
-Any modification of the constraints by the driver is a bug.  Adjust the
-information the driver provides about the voltages it supports if you
-need to do this.
-
-> +static int lt8722_is_enabled(struct regulator_dev *rdev)
-> +{
-> +	struct lt8722_chip_info *chip = rdev_get_drvdata(rdev);
-> +	int ret;
-> +	u32 reg_val;
-> +	bool en_req, en_pin;
-> +
-> +	ret = lt8722_reg_read(chip->spi, LT8722_SPIS_COMMAND, &reg_val);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	en_req = FIELD_GET(LT8722_EN_REQ_MASK, reg_val);
-> +	en_pin = gpiod_get_value(chip->en_gpio);
-> +
-> +	return en_req && en_pin;
-> +}
-
-Always adjusting both the GPIO and register all the time like this is
-pointless, it turns the GPIO into just pure overhead.  Just use the
-standard support for setting enables via registrers and GPIOs.  When
-there's a GPIO leave the register permanently enabld.
-
-> +	chip->en_gpio = devm_gpiod_get(&spi->dev, "enable", GPIOD_OUT_LOW);
-> +	if (IS_ERR(chip->en_gpio))
-> +		return PTR_ERR(chip->en_gpio);
-
-Presumably this is optional, it could just be tied off.
-
---eHxyWZJTCIL+iSkB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcuCTsACgkQJNaLcl1U
-h9Cftgf/ZTZxCRv40vL8Cljm3uFRe5gz803VmW8ca1bO3d6mepvvo8smNZWtA1pG
-Es1LbSDwa5HCH07wAW2Gw42Fb06JJJ0ZROT0KEwWydC3VPfcOeq80Hdt1mbZOEsj
-ThqBegTd6SAaIHw6B2q66Huf2rbcOD3GpKsOU6/dIaPyCQ5bj9drHEiDpNMTbkAm
-R6sPoWmaZFN205JIKGej0+qEBrN14IkS5bqPsUA8MP8DsZlc1c3qPfTlO/PaHH8F
-dRWU11L2XuPPfMkgtcXfr+BnprL/ZAxTmpZOVfXxxp61ihqu9PGsLRiYlgoYIlla
-126Da0zFh+JmgfDc4m1q3Cjnr8NJYA==
-=bsjE
------END PGP SIGNATURE-----
-
---eHxyWZJTCIL+iSkB--
+Thanks for explaining!
+Tamir
 
