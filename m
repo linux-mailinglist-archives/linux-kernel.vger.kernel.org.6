@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-401301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3FC9C187E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:54:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1699C1887
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2055287194
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39E8D1F231EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3AD1DFE3F;
-	Fri,  8 Nov 2024 08:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDE01E009A;
+	Fri,  8 Nov 2024 08:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fNyUQPoR"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE30lCVo"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83AD47F69
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E07547F69;
+	Fri,  8 Nov 2024 08:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731056070; cv=none; b=H1GN7NP8HmXTZfCOVxnIK0fgFNFoeuwMxXcoQNs4J7edlm7qP/G8XAs3wtPm6VldVyIaAwp8K3zCU9r9JnWdgQ1Qi02HYDwrKchxIJRDCkTznECk5Rb1niGUSnGf+m9OuAlDoPqq8K2TCu9gWaibMLP7hPT2n/D+7/Q4Xnw3yZE=
+	t=1731056145; cv=none; b=dLlY9YLDC4z4yyldfmF+7Zjo7sSTOKlGLsZsTZsVwmY2QvdIfJOCjqJ9+GiZj2gdiJn+EzAjhnl8g5NGxM5xcEW5AC/RWHyXhpcO0Cw8RJxw0hZozRnY/qmcyPRvfpmSgtn167LmhpFitVNKLU/OcLQdO99dS3432c+JkZ3JIUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731056070; c=relaxed/simple;
-	bh=VjgEl5vpmDA3y62ssYmWmMIvrNTkWWqVk4IascRENPQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DaIwXgkI8jTckQLhwmIfO5DQyG1Du+KomyPgdca7UCRXGe0ma8jfmLQb4xac1vwpJ6bg022uHFSaITe/g7cFt+nPjjtd8fyRFIJwK0ybgYp3Du3v/uPJTXhwo3DtQ8F0ZUrcQksCp4NANhNLWyVyOQyq4fbtLk8oVfLe81zQO8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fNyUQPoR; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Yf79FXHfTGJLW0g+hLI9OmeHJl+edRD1p43y6vF5eX8=; b=fNyUQPoRE67PhTOM5dhcVHZTaU
-	sLDp1NstM8NGXLTSj9HO1hcqsu4rqGCdFJXTmFfTXErdtRCj0eFAKL/l1vasW3JWu4aAtwKwSBPec
-	YmVPyM7u0W4GMdoWFjv9AUSf8BJTe0z5sD15eClhTnaLmXqgTWMWfHxOYmCifYUlx143Tn7y0/RH6
-	1Q4wUUxcOyETTUFyuI+W4V9kxDQMg5DvroytgBS/4Avi5oqEzAFaJNyFaE0iIRpo12m2tPtLP6I06
-	gqzn4sh2ozSpPB21UEaDABtbnQTksqNBSt/jGR32KDtsGVcmNhzo9l11MSjOo1tsolsMYMsS0YcIM
-	bk9nkxcg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t9Kl2-0000000CH3e-07gY;
-	Fri, 08 Nov 2024 08:54:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4E13D30049D; Fri,  8 Nov 2024 09:54:19 +0100 (CET)
-Date: Fri, 8 Nov 2024 09:54:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-	John Garry <john.g.garry@oracle.com>, tj@kernel.org,
-	jiangshanlai@gmail.com, mingo@redhat.com, juri.lelli@redhat.com,
-	jack@suse.cz, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: workqueue lockup debug
-Message-ID: <20241108085419.GA6497@noisy.programming.kicks-ass.net>
-References: <70cb224f-a468-40a0-82c7-735c590bdb43@oracle.com>
- <4e58d34a-ce45-437a-95a2-3ba21f35bbb5@leemhuis.info>
- <Zy1F4n9KoNybBmoD@dread.disaster.area>
+	s=arc-20240116; t=1731056145; c=relaxed/simple;
+	bh=qCdYnwE3cN8KioY3mqOShKqKuq+xMII8nhVVemimPvU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OPWc35poweeIVbF1i6GcNlzbqWJEl5ejxJ3nwr3i3gldF9m9NLJ8ccgOCNp9RDd1oAaKSKnnz49gW2Wp+7HZqShzWBvCAkye1uPH6yW6y+v38o1uYPoWIrsIYGXyYw0MXfVY0/UNjZuPRQ+62OwOwOrFJCev6YfKXozdR/vofPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XE30lCVo; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315baec69eso17071735e9.2;
+        Fri, 08 Nov 2024 00:55:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731056142; x=1731660942; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7ll/geJQMHA5kDfwuhq+ww/JLtvi2AN1VmrZmHWyaU=;
+        b=XE30lCVoFkV5SHYwryIOx8vvmF2pMcqCY5wismNuL17zBoDutr7hFTU8DztcaVfUnc
+         C9QtESTGuiPnqZesr4K2X2j3keIvcVc2Ak/QbtKUiV42Fup3w0SoBFcPpp++w1JTqYVw
+         4JTxIKidHHzqB485vmQ04PhFCmFZQLw2XJlVviSA0DTmvDrEZynoDFe5tgIvWgo8xClv
+         ueNczn2rtNXjsguCNCqkxidhVfyc01AXGCEHNBf2IXUQkbJQFAagEwP3d8z9vdPIkPAX
+         3Xszw28oCbjdDa8I2VRkZQtZ09/dw4uHCZAc1SZDhO0So9xXu6GMvJsNQCj5EHaPsmcQ
+         2GaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731056142; x=1731660942;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g7ll/geJQMHA5kDfwuhq+ww/JLtvi2AN1VmrZmHWyaU=;
+        b=LUxjUtUmmzDDUq0sntq9qnHw3E5oGcRMvjSq4m26yM5sKDHmY2lPLsBL0y/ndretn1
+         vFtzVx7wJxgefLuhqacRnChmCEoAnQuEhtB+AClosXSsuzrSrO8YdfmqhojEU8I8r2ZX
+         +bLpvy7gGNtFmbFTBBe0/ZkPbJWX2WkV35/nTlTH0BRK1IlC1pnXoayToJwvQBaPDrfU
+         tBozFUM8gv+mhwerSiRSp2YwIxJEZ2ACrxL8Mjq+MlOKL+8ZkfzgdFd5xdSANWR2KKKK
+         4OfKvOzaWRoj5KS2XvpeW3GXfKKFKB2Dz2Rpy9TbBHAURGyIIgftj4YqrfW3zP03xkpv
+         S5kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNK/cnyr+zUei0IbBEuPouUjapvN8MiHNURtsBxwZzgwi7OTivqGF8hl/gODL9MVi0O75LnHLv/n9zYO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmkrcGkjonTh7tMsXDqNqnprC1QdGj0CKAL7nyz9zjyXwao1eG
+	RkmRDO3rwdmz7YFiZFbsq3QgfSR4wSVic1zSK1ZU0g/bmb+xSEQhN2YWpQ==
+X-Google-Smtp-Source: AGHT+IFvNSd5+lsw2IQjc2x1Dfx1YVV08ve34jrI6PxB5s9dK6sMoMDv3QepmG4qr4+CLgcwHFq9DA==
+X-Received: by 2002:a05:600c:1c98:b0:426:6edf:6597 with SMTP id 5b1f17b1804b1-432b750a358mr15188485e9.19.1731056142333;
+        Fri, 08 Nov 2024 00:55:42 -0800 (PST)
+Received: from [192.168.1.161] ([2a01:e34:ec0c:62c0:43a8:cbf6:d53f:a443])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97071esm3911206f8f.12.2024.11.08.00.55.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 00:55:41 -0800 (PST)
+From: Gabriel de Perthuis <g2p.code@gmail.com>
+Date: Fri, 08 Nov 2024 08:55:15 +0000
+Subject: [PATCH] bcachefs: Remove an unused label
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zy1F4n9KoNybBmoD@dread.disaster.area>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241108-build-fix-v1-1-ce159b306875@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAPPRLWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwML3aTSzJwU3bTMCt1kI0tjw2QjI2NTM3MloPqColSgMNis6NjaWgC
+ q0VAAWwAAAA==
+X-Change-ID: 20241108-build-fix-c2931c223567
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabriel de Perthuis <g2p.code@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731056141; l=1174;
+ i=g2p.code@gmail.com; s=20240226; h=from:subject:message-id;
+ bh=qCdYnwE3cN8KioY3mqOShKqKuq+xMII8nhVVemimPvU=;
+ b=D0Jin2JwMfE5+HmtXDqcBS9DraxqyvKmo0K6a75A09jDmE8FUcyrp5HTxhBHVErCuuRlT305g
+ rC8ClH/L8GXB9fJ0mw3PmkheSSsrcLwdtyqPlYlHuUYn52QiM5n54AJ
+X-Developer-Key: i=g2p.code@gmail.com; a=ed25519;
+ pk=iNCUUSsYvx8i030j8RjSUXbvD9xNTnyXfNZ/i7Y+cQk=
 
-On Fri, Nov 08, 2024 at 09:57:38AM +1100, Dave Chinner wrote:
-> On Thu, Nov 07, 2024 at 01:39:39PM +0100, Thorsten Leemhuis wrote:
-> > On 24.10.24 17:49, John Garry wrote:
-> > > Hi workqueue and scheduler maintainers,
-> > > 
-> > > As reported in https://lore.kernel.org/linux-fsdevel/df9db1ce-17d9-49f1-
-> > > ab6d-7ed9a4f1f9c0@oracle.com/T/
-> > > #m506b9edb1340cdddd87c6d14d20222ca8d7e8796, I am experiencing a
-> > > workqueue lockup for v6.12-rcX.
-> > 
-> > John, what this resolved in between? This and the other thread[1] look
-> > stalled, but I might be missing something. Asking, because I have this
-> > on my list of tracked regressions and wonder if this is something that
-> > better should be solved one way or another before 6.12.
-> > 
-> > [1]
-> > https://lore.kernel.org/lkml/63d6ceeb-a22f-4dee-bc9d-8687ce4c7355@oracle.com/
-> 
-> I'm still seeing the scheduler bug in -rc6.
+Trivial fix for an issue that triggered -Werror.
 
-But that WARN you reported earlier isn't there anymore. So what exactly
-are you seeing now?
+fs/bcachefs/btree_io.c: In function ‘validate_bset’:
+fs/bcachefs/btree_io.c:828:1: error: label ‘out’ defined but not used [-Werror=unused-label]
+  828 | out:
+      | ^~~
+cc1: all warnings being treated as errors
+
+Fixes: a78c8274ea0c7ebccf2474a9c2e4a15cead79295 ("bcachefs: Fix validate_bset() repair path")
+
+Signed-off-by: Gabriel de Perthuis <g2p.code@gmail.com>
+---
+ fs/bcachefs/btree_io.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+index b8c723d61283891bc789dc39056a44c7dc8d0d67..839d68802e4268ff500af0ee6b0029dcf77d3313 100644
+--- a/fs/bcachefs/btree_io.c
++++ b/fs/bcachefs/btree_io.c
+@@ -824,11 +824,10 @@ static int validate_bset(struct bch_fs *c, struct bch_dev *ca,
+ 
+ 		compat_bformat(b->c.level, b->c.btree_id, version,
+ 			       BSET_BIG_ENDIAN(i), write,
+ 			       &bn->format);
+ 	}
+-out:
+ fsck_err:
+ 	printbuf_exit(&buf2);
+ 	printbuf_exit(&buf1);
+ 	return ret;
+ }
+
+---
+base-commit: a78c8274ea0c7ebccf2474a9c2e4a15cead79295
+change-id: 20241108-build-fix-c2931c223567
+
+Best regards,
+-- 
+Gabriel de Perthuis
+
 
