@@ -1,180 +1,135 @@
-Return-Path: <linux-kernel+bounces-401418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4B569C1A17
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:13:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D329C1A0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 570C21C21221
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:13:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADB61F26192
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5D41E2319;
-	Fri,  8 Nov 2024 10:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3489D1E22FD;
+	Fri,  8 Nov 2024 10:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jRt8yXNt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfR8BcyF"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C621D3625;
-	Fri,  8 Nov 2024 10:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413C81D3625
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 10:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731060785; cv=none; b=RfbQH+PqgqxBU4fPR1y84AKPwPVM3oF14o8JFYF7izIK9yeB0kc/3V1V0xiPQBiX8kxbIVYlvr2/n8BAM9KZea8bRH1LsFDYRrLhONcBuwDcV4qOZHm6er2AeKDu9297YOlY+37FTAQ3VTCoYIlcjvr5QujRaQ0cQYCrOUhgwT0=
+	t=1731060764; cv=none; b=m3CxNexbm/C5UMS92nwE70YbXBOsJuAgabdfJLABg3iNpTYGU5ZEG4AU3eUIHtmp0vKC+pgiWi4UfN8NrNFZwI8sDDnbSfiVU+ObuAJM8cRTjkC2GqHeIfKSueEAm/iJ0VC6McxX+J2UF9BvTLkjali2Ab3lWnACv0RndnJV39w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731060785; c=relaxed/simple;
-	bh=Er/tiXvYNotlGr/mneGDlszAar7ahjAVj3NcCM7/bH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceQcpyp49RACRM9iJ8fU9qQSCwmZF5ZOzvtwdUMVhR1WzLE8g+k6Hz4lezKPvuJVvosdXmXE5zj8QSoRYB0H37MbKNrHdfe1P2otvcC+RSY9PfYKmfpw8uoJny3Up3l/uMx5MHzQp4XEZ0TrQAw2gGB2s67rbRwtvVV7PlCye/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jRt8yXNt; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731060784; x=1762596784;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Er/tiXvYNotlGr/mneGDlszAar7ahjAVj3NcCM7/bH0=;
-  b=jRt8yXNtvWL1zFBoUr2JnOw3u5/uWMGs8yHgGo3/XDDuvr/pa4RWEFDH
-   befAvK6HqEMqXJcO3tiyuA6ZhRhNrOOPN+pTJfuXHeq8xWawdXWETH1ew
-   MdwDCEXzksLQUrcE5pbd8hGX5IcJ8fwiaRNtLVWohV14gHk/UdYkgUoSz
-   5BBlWCGnYJ/oTAbaAEVL9VHFB/iYw1Tum0u0EDmMX23eT1uB9lj6chlYt
-   J8BH+X4OAHqaJDYNZG2cc/W3wGo5duvqEqAHoi+q6Pbb9JZR++7uAeJZd
-   nj1oVnnJGN1pLvWrngcHuhIeVPOKS3u5Fuw6A/41H9IWi8V3xu91YdLGz
-   g==;
-X-CSE-ConnectionGUID: 3FgmCCXcQwGbYAximJwcNw==
-X-CSE-MsgGUID: evb36DKpRXmH0+fTiuixhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31107460"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31107460"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 02:13:03 -0800
-X-CSE-ConnectionGUID: jUkMLQ6oRBObxq1OX6AHXA==
-X-CSE-MsgGUID: G7grHtHIRay2/KDuPft3zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="85629448"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 08 Nov 2024 02:12:58 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9Lz6-000rIQ-1U;
-	Fri, 08 Nov 2024 10:12:56 +0000
-Date: Fri, 8 Nov 2024 18:12:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Paloma Arellano <quic_parellan@quicinc.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Douglas Anderson <dianders@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 11/14] drm/msm/dp: move/inline audio related functions
-Message-ID: <202411081748.0PPL9MIj-lkp@intel.com>
-References: <20241108-fd-dp-audio-fixup-v1-11-40c8eeb60cf5@linaro.org>
+	s=arc-20240116; t=1731060764; c=relaxed/simple;
+	bh=SeEZ3FiTtve+//uUNTtAHmQb9BBMARmB8mLGRp0N+6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ADobdGdYyhRrLuLXbi4KdnMNIsDdVZURvJIQxsQTZIsimS3+l/CcnY04n12IgVPjQ17uF27UIEaUVQv7Oxp0LlrKxgrMYpUaKqqTMxTVhCAPGrIPW7Gy+CWNw3Kc6DXPp9ww6HVBWMWcBbK4K7BsjcinuydNKUsr6WTwiQn1oZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfR8BcyF; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-720e94d36c8so2740966b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 02:12:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731060762; x=1731665562; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tCeFBhi53dTGSGPWiOQdp9+xDJ2cZ8mlrfTnzvDIhuM=;
+        b=dfR8BcyFCNn1r+f2ggJM5/4DsjE6JcJS4RYz1bfWHzX0VymZMDjI0mGMisVKXk233l
+         n5x/lHlSgN76eNMSR0rFlBYkraGxTW3s/st5XE46ll+ZiyXRKmSxfCyYO8ACUYucXbHb
+         zQdjUP78OaV2fTiAtRbK/wy85aqh+77JnxmXhz6D3URo9U/jtWKHFYCAi7OH7fUw3+h4
+         F34tlVP5D0yE37bzWnoh/dQ5JtUNYyYLb1sf7n8HboCDYqrxAZ1790oSR5mRtPb6RpWH
+         WH1TnlCmEAuSoA7/V2O7IZGmtLF2VnwI1jN55wdaFjWcLMDOEPBSdu//YAFIgnBk63/E
+         n58w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731060762; x=1731665562;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tCeFBhi53dTGSGPWiOQdp9+xDJ2cZ8mlrfTnzvDIhuM=;
+        b=vr83ThCtlMJWWtTSOW2fu4raANl/4XL3b2E5CoaUvcd2YyTFGqsdz02mmrAOqkBzxx
+         3yA9f56qm5Ri2T82GpOksRRHFX1AdKk1GVgTgYMmhcSJZbu6xFtfbRzQGZDAJbztNMWV
+         L2JeqqdZe0rJP9gNN9nJSNQ1oQ/GZFGojYUBbLR9A1zoaWJWXciQzKubFyWpW/wh35r6
+         dpi7Z+x02OOESHv7ZnP/cD9JDT9IvxFB3FhNdXupF2vll4SNuzKF4nC3I0kHGMIzN2qI
+         Ix7URAjgY4TBpAj/XiEMM30/XFsAxb0v3hyjWez7soG+Ag3EP7lZcTqpqhC6EPLligmG
+         W75w==
+X-Forwarded-Encrypted: i=1; AJvYcCWbMszq6AWK3mhMrH+7zGlcExRZ28kMr+Gnc5LxuByljHIcfp5dwz7K/fDdnQMPgZ20Il6yh2fwg9+fFNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym3CzvqzzLa7kyoyx5fl9yft9IV+xqX4JxcHiUKEj1KMbqAoDh
+	hI/G5V/ymEVr53r6+eZTMlwniCMGjnzuk8xvK3EsCtKciyWVu6G6
+X-Google-Smtp-Source: AGHT+IED/7Ma5XQVyEfvEzCla5zLTZctQKHQbYg3d/yVdLqHQKmY3qhfc/N0TxEiAF3EhZikIVSSUw==
+X-Received: by 2002:a05:6a20:7349:b0:1d6:f6a1:786 with SMTP id adf61e73a8af0-1dc204cd758mr5129256637.3.1731060762429;
+        Fri, 08 Nov 2024 02:12:42 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f48b508sm3032426a12.1.2024.11.08.02.12.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 02:12:42 -0800 (PST)
+Message-ID: <a278c4a9-eae2-491e-8f13-5a87a25dad26@gmail.com>
+Date: Fri, 8 Nov 2024 19:12:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-fd-dp-audio-fixup-v1-11-40c8eeb60cf5@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/5] tools/memory-model: Distinguish between syntactic
+ and semantic tags
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+Cc: boqun.feng@gmail.com, dhowells@redhat.com, dlustig@nvidia.com,
+ frederic@kernel.org, hernan.poncedeleon@huaweicloud.com,
+ j.alglave@ucl.ac.uk, joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ lkmm@lists.linux.dev, luc.maranget@inria.fr, npiggin@gmail.com,
+ parri.andrea@gmail.com, paulmck@kernel.org, peterz@infradead.org,
+ quic_neeraju@quicinc.com, stern@rowland.harvard.edu, urezki@gmail.com,
+ will@kernel.org, Akira Yokosawa <akiyks@gmail.com>
+References: <3d72b92a-4935-425c-abd5-ec4631baef2c@huaweicloud.com>
+ <46d291da-ddb9-43b9-bd93-b81aacd5e29c@gmail.com>
+ <7542399d-87c5-4f1c-9d09-6a6f96d148da@huaweicloud.com>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <7542399d-87c5-4f1c-9d09-6a6f96d148da@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
+On Fri, 8 Nov 2024 10:10:48 +0100, Jonas Oberhauser wrote:
+> Am 11/7/2024 um 11:51 AM schrieb Akira Yokosawa:
+>> Jonas, despite the CC, your message has not made my gmail mbox, not even
+>> the spam folder.
+>> I'm replying using lore's reply link. >
+>> As Paul mentioned elsewhere, the [v5] patch misses tags from Boqun at the moment.
+>>
+> 
+> So if I supply a new revision of a patch, should I include in all the reviewed-by
+> of the previous patch?
+> 
 
-kernel test robot noticed the following build warnings:
+It depends.
 
-[auto build test WARNING on 74741a050b79d31d8d2eeee12c77736596d0a6b2]
+> I hadn't done that before (because I thought I should not add other people's tags
+> especially if they hadn't reviewed that specific revision), so we may be missing
+> *a lot* of reviewed-by...
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-msm-dp-fix-msm_dp_utils_pack_sdp_header-interface/20241108-082302
-base:   74741a050b79d31d8d2eeee12c77736596d0a6b2
-patch link:    https://lore.kernel.org/r/20241108-fd-dp-audio-fixup-v1-11-40c8eeb60cf5%40linaro.org
-patch subject: [PATCH 11/14] drm/msm/dp: move/inline audio related functions
-config: x86_64-buildonly-randconfig-002-20241108 (https://download.01.org/0day-ci/archive/20241108/202411081748.0PPL9MIj-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241108/202411081748.0PPL9MIj-lkp@intel.com/reproduce)
+Section "Using Reported-by:, Tested-by:, Reviewed-by:, Suggested-by: and Fixes:"
+of Documentation/process/submitting-patches.rst has this paragraph:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411081748.0PPL9MIj-lkp@intel.com/
+  Both Tested-by and Reviewed-by tags, once received on mailing list from tester
+  or reviewer, should be added by author to the applicable patches when sending
+  next versions.  However if the patch has changed substantially in following
+  version, these tags might not be applicable anymore and thus should be removed.
+  Usually removal of someone's Tested-by or Reviewed-by tags should be mentioned
+  in the patch changelog (after the '---' separator).
 
-All warnings (new ones prefixed by >>):
+Does this help you?
 
-   In file included from drivers/gpu/drm/msm/dp/dp_audio.c:11:
-   In file included from include/drm/display/drm_dp_helper.h:27:
-   In file included from include/linux/i2c.h:19:
-   In file included from include/linux/regulator/consumer.h:35:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/gpu/drm/msm/dp/dp_audio.c:213:5: warning: variable 'safe_to_exit_level' is uninitialized when used here [-Wuninitialized]
-     213 |                                 safe_to_exit_level);
-         |                                 ^~~~~~~~~~~~~~~~~~
-   include/drm/drm_print.h:636:59: note: expanded from macro 'drm_dbg_dp'
-     636 |         drm_dev_dbg((drm) ? (drm)->dev : NULL, DRM_UT_DP, fmt, ##__VA_ARGS__)
-         |                                                                  ^~~~~~~~~~~
-   include/drm/drm_print.h:540:39: note: expanded from macro 'drm_dev_dbg'
-     540 |         __drm_dev_dbg(NULL, dev, cat, fmt, ##__VA_ARGS__)
-         |                                              ^~~~~~~~~~~
-   drivers/gpu/drm/msm/dp/dp_audio.c:198:24: note: initialize the variable 'safe_to_exit_level' to silence this warning
-     198 |         u32 safe_to_exit_level, mainlink_levels;
-         |                               ^
-         |                                = 0
-   2 warnings generated.
+> If this is the case, I'll try to scour through the previous e-mails and add
+> all the missing reviewed-by.
 
+Only if Paul asks you to do so ;-)
 
-vim +/safe_to_exit_level +213 drivers/gpu/drm/msm/dp/dp_audio.c
+HTH, Akira
 
-d13e36d7d2227e Abhinav Kumar    2020-09-12  195  
-fb7d509b1710d1 Dmitry Baryshkov 2024-10-29  196  static void msm_dp_audio_safe_to_exit_level(struct msm_dp_audio_private *audio)
-d13e36d7d2227e Abhinav Kumar    2020-09-12  197  {
-568837beeb38ef Dmitry Baryshkov 2024-11-08  198  	u32 safe_to_exit_level, mainlink_levels;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  199  
-fb7d509b1710d1 Dmitry Baryshkov 2024-10-29  200  	switch (audio->msm_dp_audio.lane_count) {
-d13e36d7d2227e Abhinav Kumar    2020-09-12  201  	case 1:
-d13e36d7d2227e Abhinav Kumar    2020-09-12  202  		safe_to_exit_level = 14;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  203  		break;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  204  	case 2:
-d13e36d7d2227e Abhinav Kumar    2020-09-12  205  		safe_to_exit_level = 8;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  206  		break;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  207  	case 4:
-d13e36d7d2227e Abhinav Kumar    2020-09-12  208  		safe_to_exit_level = 5;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  209  		break;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  210  	default:
-202aceac8bb3ae Kuogee Hsieh     2022-02-17  211  		drm_dbg_dp(audio->drm_dev,
-202aceac8bb3ae Kuogee Hsieh     2022-02-17  212  				"setting the default safe_to_exit_level = %u\n",
-d13e36d7d2227e Abhinav Kumar    2020-09-12 @213  				safe_to_exit_level);
-d13e36d7d2227e Abhinav Kumar    2020-09-12  214  		safe_to_exit_level = 14;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  215  		break;
-d13e36d7d2227e Abhinav Kumar    2020-09-12  216  	}
-d13e36d7d2227e Abhinav Kumar    2020-09-12  217  
-568837beeb38ef Dmitry Baryshkov 2024-11-08  218  	mainlink_levels = msm_dp_read_link(audio->catalog, REG_DP_MAINLINK_LEVELS);
-568837beeb38ef Dmitry Baryshkov 2024-11-08  219  	mainlink_levels &= 0xFE0;
-568837beeb38ef Dmitry Baryshkov 2024-11-08  220  	mainlink_levels |= safe_to_exit_level;
-568837beeb38ef Dmitry Baryshkov 2024-11-08  221  
-568837beeb38ef Dmitry Baryshkov 2024-11-08  222  	drm_dbg_dp(audio->drm_dev,
-568837beeb38ef Dmitry Baryshkov 2024-11-08  223  		   "mainlink_level = 0x%x, safe_to_exit_level = 0x%x\n",
-568837beeb38ef Dmitry Baryshkov 2024-11-08  224  		   mainlink_levels, safe_to_exit_level);
-568837beeb38ef Dmitry Baryshkov 2024-11-08  225  
-568837beeb38ef Dmitry Baryshkov 2024-11-08  226  	msm_dp_write_link(audio->catalog, REG_DP_MAINLINK_LEVELS, mainlink_levels);
-d13e36d7d2227e Abhinav Kumar    2020-09-12  227  }
-d13e36d7d2227e Abhinav Kumar    2020-09-12  228  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
