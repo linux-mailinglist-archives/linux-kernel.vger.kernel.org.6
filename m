@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-401581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468589C1C81
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:57:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B312D9C1C86
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6D31F243E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF123B23A40
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 11:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52D01E47D6;
-	Fri,  8 Nov 2024 11:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E4A1E47A8;
+	Fri,  8 Nov 2024 11:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODcsFpXc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TiYOH3B1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EBA7462
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB501BD9D1
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 11:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731067036; cv=none; b=nfODuvnuArx1YV8XJODhUKQjruON3dl+lCeB8dqEY20aClv754weMJVpUmwhTjo8uTm6NzESc3+cHULOk8bh9KmeUfhnF++PqGELn9hzj82ZEg6RczkWm3B65GhQQHBA5mxrQgoiQ9TaidTeE4OKrQM6iVh9Pbjt9leLaylImjQ=
+	t=1731067138; cv=none; b=i+vu2NVdZm97Lo0lS8UVqwN9Rl97zbOTWlpLnkgkcVIPq3OZhJYljn1q80Ux57R3iBc8WcSELGzsAIt9dj4v5Ub3j1woNJriUKmGJMx80E/ctTERz/KdKJ3MxVmhJdZU4IlfuXVbfEcQJbCXkq/YluvFU8wrDqhcz7nkGd9Q940=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731067036; c=relaxed/simple;
-	bh=fTsuTudBfDdFxkn1fwKanJcNb/J6/WmqUXH2vacHmtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cJFDd1DaF3LPUKdyf2uLspRmyzYWUYFS3v5UXj8BNGd0qGd2CQibyIFqcY+0g1HQUTu+S3C1nkMtxUOzYWOqHafjOTdzAOMevkW5cF6iskC3RnALcvrv3wYLQNMByhgsprYXpfIxfK2IiH41Rk02Rpprgalh4kO9CIftoWFsLFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODcsFpXc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFB6C4CECD;
-	Fri,  8 Nov 2024 11:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731067035;
-	bh=fTsuTudBfDdFxkn1fwKanJcNb/J6/WmqUXH2vacHmtI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ODcsFpXcL3NMgWgdY5z6YAb97UoEeL2HpXT3eg8kEtISjP2y8HiVWoRSf4MhKy9dG
-	 d+U27SeRqt42fiJzfZYb5M+chBBZoQ47YzlTb5ZkpRow4h0vhYX2/7DcZ9Beal8/kw
-	 iMS7uFpCKIaAnz0eBv8PemL/LS2e27ZIUMu+G8SIELvngOtYpeAD57XMU6GHeplMBr
-	 aL7vzaEd2lqlx+sRINXpJ5at3H2vGClYzFp6LrZZwK0txb7JuvnVUh15957z5jC+TV
-	 ocQCyB8oHqOWrAfj27pmChlBxyoZq/TvNEckDxIio4WLuLaY5iFhxEY1ptmgDbsl04
-	 MvGDe1klZOIWQ==
-Date: Fri, 8 Nov 2024 11:57:11 +0000
-From: Will Deacon <will@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: [GIT PULL] arm64 fixes for -rc7
-Message-ID: <20241108115709.GA17107@willie-the-truck>
+	s=arc-20240116; t=1731067138; c=relaxed/simple;
+	bh=cwgsaJajxt5+m6tI7PtMCX0EK0Em5P4cxRyEI8HX3do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YB+TdbIsN5GwQuiQPRqdPdt4PZ/IwajG8jmEfghMMDbcaS9zsm3yyb1netjGaJBCZgDHa4OORZiJNS6xlCivf7Uh7vhRA8db7pUoyMq3QzBin/UqEFbaLusdUGLTS09PnI8lNYpNi7raErMme8mNdoDVqWUhPliva+dV6dNrQ3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TiYOH3B1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6B4BC40E0220;
+	Fri,  8 Nov 2024 11:58:53 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id XTQPbOCGZXeh; Fri,  8 Nov 2024 11:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731067129; bh=T8mwdP4fg3UOt17jMQ568IPqHu6VUYZ3Jw3fpUICMR8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TiYOH3B1yMqtYWlsErslizpPCH+eWauVDBszUhIzKcspF/lB4Gtgo+RcVL+D+Beos
+	 enKvxy/bVU6BCqYkbuHxPreDzJSXTV2Bd6sye/OqJMHPEIF1QKSg07gaTzhiyq45Cy
+	 0Gqg6gaHwXEby8uYTu407Fy/qAzHpdPVkjwX/z/2sU95Z9iLdGtTY96fDvsAYzpgFL
+	 eVEyGb9YA9NicPBvp8N9gRo8tOqpjJR3ohRr+pZwqSoJ/St33F0hALY0Fd43LDnYQO
+	 6M3CB8nrg0W/Yi+xC8sXRfP8Yc9X2YcuWh+qsyipifzsWnb38/6H3m48gKZdQaBfdB
+	 v1CJzN8Ft9PVz+KcuyuxtGZ7i/l1AKFnMBkgiU+rkOpHig0j7hW2F2imDNvByKBX7U
+	 MmVdOxmdtSTCh8+z7uY+jpNLExypNtZtHTpry6XogC4k6hjKKDuBMaPUYmRkzESBDA
+	 l8l/6+p2HHGLjX2BoGRlZ2mNCUBHEOuv/laS2TyQKw/efK89RJAoGy9kNKxUPChCRM
+	 f3g/9MvGTPzsuTzxaYOH0x3OmDGQ3UEf674ftKbRTfYUOwpAcVE0Z8Wx3/TrXpq76F
+	 JL843q2Nkv0FE2Pw+L6xPq7Op0W5liXwW0LT8/SJVriJNLTr2se+14KdJZWA2fdUqQ
+	 bY5Y1LNBNIUxhCYTnB7L7yBo=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E1A3F40E0191;
+	Fri,  8 Nov 2024 11:58:30 +0000 (UTC)
+Date: Fri, 8 Nov 2024 12:58:25 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
+	Radu Rendec <rrendec@redhat.com>,
+	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Huang Ying <ying.huang@intel.com>,
+	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] x86/cacheinfo: Delete global num_cache_leaves
+Message-ID: <20241108115825.GAZy384e9IEr7DWvaJ@fat_crate.local>
+References: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
+ <20240913083155.9783-3-ricardo.neri-calderon@linux.intel.com>
+ <20241022132050.GHZxemsmJSLg8Q_7U7@fat_crate.local>
+ <20241023035022.GA2484@ranerica-svr.sc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20241023035022.GA2484@ranerica-svr.sc.intel.com>
 
-Hi Linus,
+On Tue, Oct 22, 2024 at 08:50:22PM -0700, Ricardo Neri wrote:
+> I agree. Another wrapper is not needed. I did not use cache_leaves() because
+> it was internal to drivers/base/cacheinfo.c I can convert it to a function
+> and expose it in include/linux/cacheinfo.h. I can rename it as
+> get_cacheinfo_leaves(unsigned int cpu).
+> 
+> Would that make sense?
 
-As promised, here is a (hopefully) final round of arm64 fixes for 6.12
-that address some user-visible floating point register corruption. Both
-of the Marks have been working on this for a couple of weeks and we've
-ended up in a position where SVE is solid but SME still has enough
-pending issues that the most pragmatic solution for the release and
-stable backports is to disable the feature. Yes, it's a shame, but the
-hardware is rare as hen's teeth at the moment and we're better off
-getting back to a known good state before fixing it all properly. We're
-also improving the selftests for 6.13 to help avoid merging broken code
-in the future.
+I think you should use get_cpu_cacheinfo() everywhere and simply access the
+struct members like ->num_leaves where you need it. No need for a bunch of
+other silly one-liners.
 
-Anyway, the good news is that we're removing a lot more code than we're
-adding.
+> The only caller of init_cache_level() also checks for !cache_leaves(cpu). I
+> saw no need to repeat the check here.
+> 
+> Also, I understand that the purpose of the function is to initialize
+> cpu_cacheinfo::num_levels, which is not used on x86. Moreover,
+> cpu_cacheinfo::num_levels do not depend on num_leaves.
+> 
+> Having said that, I see other architectures initializing both num_levels
+> and num_leaves in this function.
+> 
+> Adding this check probably makes the x86 implementation more future-proof
+> in case callers change their behavior.
 
-Cheers,
+But you're practically zapping its body in the next patch. So why does patch
+3 even exist as a separate patch instead of being part of patch 2?
 
-Will
+-- 
+Regards/Gruss,
+    Boris.
 
---->8
-
-The following changes since commit 2e8a1acea8597ff42189ea94f0a63fa58640223d:
-
-  arm64: signal: Improve POR_EL0 handling to avoid uaccess failures (2024-10-29 17:59:12 +0000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
-
-for you to fetch changes up to 81235ae0c846e1fb46a2c6fe9283fe2b2b24f7dc:
-
-  arm64: Kconfig: Make SME depend on BROKEN for now (2024-11-07 11:20:35 +0000)
-
-----------------------------------------------------------------
-arm64 fixes for -rc7
-
-- Fix handling of SVE traps from userspace on preemptible kernels when
-  converting the saved floating point state into SVE state.
-
-- Remove broken support for the SMCCCv1.3 "SVE discard hint"
-  optimisation.
-
-- Disable SME support, as the current support code suffers from numerous
-  issues around signal delivery, ptrace access and context-switch which
-  can lead to user-visible corruption of the register state.
-
-----------------------------------------------------------------
-Mark Brown (1):
-      arm64/sve: Discard stale CPU state when handling SVE traps
-
-Mark Rutland (2):
-      arm64: smccc: Remove broken support for SMCCCv1.3 SVE discard hint
-      arm64: Kconfig: Make SME depend on BROKEN for now
-
- arch/arm64/Kconfig             |  1 +
- arch/arm64/kernel/fpsimd.c     |  1 +
- arch/arm64/kernel/smccc-call.S | 35 +++--------------------------------
- drivers/firmware/smccc/smccc.c |  4 ----
- include/linux/arm-smccc.h      | 32 +++-----------------------------
- 5 files changed, 8 insertions(+), 65 deletions(-)
+https://people.kernel.org/tglx/notes-about-netiquette
 
