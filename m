@@ -1,219 +1,133 @@
-Return-Path: <linux-kernel+bounces-401242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FAB99C179E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:16:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6792D9C17A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:18:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F1928403E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204DD1F24039
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA421DB346;
-	Fri,  8 Nov 2024 08:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06841DF987;
+	Fri,  8 Nov 2024 08:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eS5M69/O"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="tg6SVgTl"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ACB1D0F6C
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B171DF271;
+	Fri,  8 Nov 2024 08:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731053802; cv=none; b=RNaRpq04c6VT2h2xS5r/+bzIZ7/jW4lc6l3gPlgqTxykocbwbWS/gzqH6SKSzb00C72EXnF3xQOYEWHZ6ZY/UXKOPGzDPLh6PZNNTf20hScnRImMSy6xsK4ycgapSW4m0XJsAee4acHNgmvFCx4mnFt1jqMJLSAiLRY1WndPez0=
+	t=1731053856; cv=none; b=DmvgpABzZwL6VwCOMYx2K0zmeKsUiBtS7cxZUtmgY1o+/hWP9j1W6ejJfiCeASKKnVUBrx9b6RWnx6gQFyaPdP0yzjPUvr0sg96jXxTER7MlzHFG0JVWho1rkTWuDCxnCd4dk+jscQUg5yibjdbtSTo0yEofKdTYR/eOrcTr3Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731053802; c=relaxed/simple;
-	bh=PFAKwqwLIczROeiwPF7cW+HeLUHWk6reaV/d4oydAxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o5nd4Y9tR8uvlkqd/LPf+zBnpOa6mPitTUirCVey2QAXxSRO0TicMKcHIu967tVIfAoC8Pb9yDP16TsscqghFmocEOr3+ivpNcCLL6QfpacLoyB7dtnnX1IdUq4slC6G7OD8zo32v9qcE2xmw/YeJ9nLVaOCj1Ou2GMgC77Det0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eS5M69/O; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so2934275e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:16:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731053799; x=1731658599; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wm2Y4gXXAMdR5I9os8tjH0wvEMOcdz9ivS4XBoJPLS8=;
-        b=eS5M69/OafGZvCKww2Zg71+QvIHrUsJ8u3Bbmcnq+0AlDN80lZAhEfeVIXU8H6ewcb
-         pzcPUXt7IfiP8cNfcoxZa+g8NIAuG7h533ikCXQtWY2VQKbR8ir244ewurmuah4B/wU6
-         M6See6dHSktPwurMjs8pljxOjoWq3i/JbnprE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731053799; x=1731658599;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wm2Y4gXXAMdR5I9os8tjH0wvEMOcdz9ivS4XBoJPLS8=;
-        b=bwAS9eJEMmbo3EW/GHmg6LoqSNBG/WAafxf57RdRnSbPXaW5L6kelpS9gRaZw0kItY
-         yfCu8zrXH2k/CBhcqMv+4uvkb9kYGFkNWHrrLPyzM45RNp4MRfoPI737qWK64aXyxg2t
-         DqdayeftLvwzb+1yJE1Vwnq5QuLg4JObqNDJDP2g0N/6HXSIXXR1To/WChUc6jtwINkw
-         ZBbMYiwOkNs7cQmxC1ctuWWhCmJm3E803kgE/m7vRNKMJGxuUoPnUgWFIrs2/InZ1ml6
-         PE+7+xcmLx8IHt7CVzYKrXYg7odoymFfEkpxyEz4EZr7AQ3JdyxrqGe/paGauG4bKtZA
-         SJYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tPxgjjPXj5yN3/b14vmPSYYpS9/WJwJz6OqvRExndLnrdDbse7yyfLRvWQi38U+exNtLGV+ZE7HtbOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb2sdOIHob17Mo5o8WeH6STmxMln4p3ZDjwgiU6V0PWOSFBikI
-	asZxsJCrDiNfI+b8yRHeY5P0CH7awb302L6hPw9HSAIV+cXYW7OrGBBwLclNa42q+rWw31La3qF
-	RGxlYo9ZEW9N7RDl9Je/te3unhA/pRGxVP7J1
-X-Google-Smtp-Source: AGHT+IGrL9T+phlyofKTQtc+wVgicHGgJaCgMma9xu0xBRBGkrlCxE85vZhIThB8wyxuucQ+eBNzdzsPuB0UjfvBHz8=
-X-Received: by 2002:a05:6512:ac8:b0:539:eb82:d453 with SMTP id
- 2adb3069b0e04-53d8626c3a8mr904495e87.39.1731053798804; Fri, 08 Nov 2024
- 00:16:38 -0800 (PST)
+	s=arc-20240116; t=1731053856; c=relaxed/simple;
+	bh=k7rp7Sn2oZXoMSx7ATZhxKVX+kcwRgo6utwNRF/ps7g=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hMNJbO7Cu/D5T8zbzltHp76qSAFdhBpCAnrFctwDHQF2fXsiycyj3BJQFVgAwj2eRh1imS2e2rWt6ytVErkStSZ2LjNqdskZf7Sgmj+rU7OX5+vCqm4hBSKuhPQePSUv7z2wZStaHD5vG2Nv0FpieMCg3Lti08aFIoZZf8bytio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=tg6SVgTl; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Reply-To:Cc:To:From:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=QM7a8cxNyGbOO7tE6cCOCOnSvxuRSLu/JiAuMhBFQvk=;
+	t=1731053854; x=1731485854; b=tg6SVgTlKSbWRVLxpBA8wqzO2RLMnV5IVQhYUaTryYOae84
+	qHPgko2wi41SOEma3sXrvS5vrJjmHiOtaEQDt7Fcj6Ux3sw8DlX+K8uuZViCHrJ/5KZEBNsg2/MVf
+	YUnEkxMgsrRDVtaHEhH2JZ1xre2HzNPi6m+HYqppAuLJN2Sh2xy7Oc01b4cBChZzLe9t0h9lGkIiN
+	nqdC71ps4zknIc/oyfPBL+SbFJEvClmgMnPfYZ1ZL3Tf7xkLoRnA09L6R542qlq91z0XRhEmivpsY
+	c+fX53D2N3xK/jgLqOKhyneI6rkgJnfPkmNACAfcgbV52cpxZJrGhAe1/NZ9NnqA==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t9KBP-0004Zk-Ef; Fri, 08 Nov 2024 09:17:31 +0100
+Message-ID: <5373bbfb-5242-4a95-9075-412547a73675@leemhuis.info>
+Date: Fri, 8 Nov 2024 09:17:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108033219.19804-1-yunfei.dong@mediatek.com> <20241108033219.19804-5-yunfei.dong@mediatek.com>
-In-Reply-To: <20241108033219.19804-5-yunfei.dong@mediatek.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 8 Nov 2024 16:16:27 +0800
-Message-ID: <CAGXv+5H_=A_of7LZSeiB8xWMLwOz59L7rOw4Hibh6Vp5MZswGw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] media: mediatek: vcodec: store current vb2 buffer
- to decode again
-To: Yunfei Dong <yunfei.dong@mediatek.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, 
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regression] Bug 219440: Touchscreen stops working after
+ Suspendi: i2c_designware.1: controller timed out
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+To: Kenny Levinsen <kl@kl.wtf>
+Cc: Michael <auslands-kv@gmx.de>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>, Jiri Kosina <jkosina@suse.com>,
+ "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <d5acb485-7377-4139-826d-4df04d21b5ed@leemhuis.info>
+Content-Language: en-MW
+In-Reply-To: <d5acb485-7377-4139-826d-4df04d21b5ed@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1731053854;8e260e88;
+X-HE-SMSGID: 1t9KBP-0004Zk-Ef
 
-On Fri, Nov 8, 2024 at 11:32=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.c=
-om> wrote:
->
-> All the src vb2 buffer are removed from ready list when STREAMOFF
-> capture queue, may remove a non exist vb2 buffer if lat is working
+On 05.11.24 17:06, Linux regression tracking (Thorsten Leemhuis) wrote:
+> Hi, Thorsten here, the Linux kernel's regression tracker.
+> 
+> Jarkko, I noticed a report about a regression in bugzilla.kernel.org
+> that appears to be related to i2c_designware [...]
 
-Can you explain how that happens? STREAMOFF supposedly waits for the
-current job to finish [1] before touching the queue.
+After a bisection it turns out the regression is caused by a HID change
+from Kenny, thus dropping Jarkko from the list of recipients and adding
+Kenny and a few other appropriate folks and lists.
 
-[1] https://elixir.bootlin.com/linux/v6.11.6/source/drivers/media/v4l2-core=
-/v4l2-mem2mem.c#L881
+The culprit appears to be 7d6f065de37c31 ("HID: i2c-hid: Use address
+probe to wake on resume") [v6.10-rc1].
 
-> currently. The driver also need to use current vb2 buffer to decode
-> again to wait for enough resource when lat decode error.
+For the rest, see the quote below or the linked ticket:
 
-This also won't work, since if you remove the only source buffer on
-the queue, the core will think that there are no more jobs to do [2],
-and won't reschedule anything.
+> To quote from
+> https://bugzilla.kernel.org/show_bug.cgi?id=219440 :
+> 
+>>  Michael 2024-10-29 08:43:55 UTC
+>>
+>> Just noticed that the touchscreen on my ASUS vivobook S14 stops
+>> working after a suspend-to-idle. As this is something, I clearly
+>> didn't have before, I tested every kernel version released in the
+>> last six months and found the kernel, where the bug was introduced:
+>> 6.10. The last 6.9.12 is still working correctly. Since 6.10 all
+>> kernel versions have the problem.
+>>
+>> Some more info:
+>>
+>> Hardware: ASUS Vivobook S14 (TP3402VA) Kernel working: up to 6.9.12 
+>> Kernel defect: from 6.10 OS: nixos
+>>
+>> I do not have much knowledge about the input devices. I tested that
+>> i2c_hid_acpi seems to be relevant for the touchscreen (and also the
+>> touchpad), as, when I remove it, both stop working. Reloading the
+>> kernel module restores functionality (but NOT after a suspend-to-
+>> idle!!!). Otherwise, I do not see any error messages or so. (Or do
+>> not recognize them...)
+>>
+>> Any help I can offer to identify the regression bug?
+> 
+> [...]
+> 
+>> 6.12-rc4 does not work either. The regression started with 6.10.
+> 
+> [...]
+> 
+>> i2c_designware i2c_designware.1: controller timed out
+>> i2c_designware i2c_designware.1: timeout in disabling adapter
+>> i2c_hid_acpi i2c-WDHT1F01:00: failed to change power setting.
+>> i2c_hid_acpi i2c-WDHT1F01:00: PM: dpm_run_callback(): acpi_subsys_resume returns -110
+>> i2c_hid_acpi i2c-WDHT1F01:00: PM: failed to resume async: error -110
+> [...]
+> 
+> See the ticket for more details. The reporter (Michael) is CCed.
 
-You can work around this by setting the `buffered` flag on the source
-queue when you do the retry, and clear it when it succeeds. Set the
-flag with v4l2_m2m_set_src_buffered().
-
-[2] https://elixir.bootlin.com/linux/v6.11.6/source/drivers/media/v4l2-core=
-/v4l2-mem2mem.c#L328
-
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> ---
->  .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  2 ++
->  .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 30 +++++++++++++++----
->  2 files changed, 26 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_drv.h b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv=
-.h
-> index 1fabe8c5b7a4..886fa385e2e6 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-> @@ -155,6 +155,7 @@ struct mtk_vcodec_dec_pdata {
->   * @last_decoded_picinfo: pic information get from latest decode
->   * @empty_flush_buf: a fake size-0 capture buffer that indicates flush. =
-Used
->   *                  for stateful decoder.
-> + * @cur_src_buffer: current vb2 buffer for the latest decode.
->   * @is_flushing: set to true if flushing is in progress.
->   *
->   * @current_codec: current set input codec, in V4L2 pixel format
-> @@ -201,6 +202,7 @@ struct mtk_vcodec_dec_ctx {
->         struct work_struct decode_work;
->         struct vdec_pic_info last_decoded_picinfo;
->         struct v4l2_m2m_buffer empty_flush_buf;
-> +       struct vb2_v4l2_buffer *cur_src_buffer;
->         bool is_flushing;
->
->         u32 current_codec;
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_de=
-c_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_d=
-ec_stateless.c
-> index 750f98c1226d..3f94654ebc73 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_state=
-less.c
-> @@ -324,7 +324,8 @@ static void mtk_vdec_worker(struct work_struct *work)
->         struct mtk_vcodec_dec_ctx *ctx =3D
->                 container_of(work, struct mtk_vcodec_dec_ctx, decode_work=
-);
->         struct mtk_vcodec_dec_dev *dev =3D ctx->dev;
-> -       struct vb2_v4l2_buffer *vb2_v4l2_src;
-> +       struct vb2_v4l2_buffer *vb2_v4l2_src =3D ctx->cur_src_buffer;
-> +       struct vb2_v4l2_buffer *vb2_v4l2_dst;
->         struct vb2_buffer *vb2_src;
->         struct mtk_vcodec_mem *bs_src;
->         struct mtk_video_dec_buf *dec_buf_src;
-> @@ -333,7 +334,7 @@ static void mtk_vdec_worker(struct work_struct *work)
->         bool res_chg =3D false;
->         int ret;
->
-> -       vb2_v4l2_src =3D v4l2_m2m_next_src_buf(ctx->m2m_ctx);
-> +       vb2_v4l2_src =3D vb2_v4l2_src ? vb2_v4l2_src : v4l2_m2m_src_buf_r=
-emove(ctx->m2m_ctx);
->         if (!vb2_v4l2_src) {
->                 v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
->                 mtk_v4l2_vdec_dbg(1, ctx, "[%d] no available source buffe=
-r", ctx->id);
-> @@ -385,12 +386,29 @@ static void mtk_vdec_worker(struct work_struct *wor=
-k)
->             ctx->current_codec =3D=3D V4L2_PIX_FMT_VP8_FRAME) {
->                 if (src_buf_req)
->                         v4l2_ctrl_request_complete(src_buf_req, &ctx->ctr=
-l_hdl);
-> -               v4l2_m2m_buf_done_and_job_finish(dev->m2m_dev_dec, ctx->m=
-2m_ctx, state);
-> -       } else {
-> -               if (ret !=3D -EAGAIN)
-> -                       v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-> +               vb2_v4l2_dst =3D v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
-> +               v4l2_m2m_buf_done(vb2_v4l2_dst, state);
-> +               v4l2_m2m_buf_done(vb2_v4l2_src, state);
-> +
->                 v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-> +               return;
->         }
-> +
-> +       /*
-> +        * If each codec return -EAGAIN to decode again, need to backup c=
-urrent source
-> +        * buffer, then the driver will get this buffer next time.
-> +        *
-> +        * If each codec decode error, must to set buffer done with error=
- status for
-> +        * this buffer have been removed from ready list.
-> +        */
-> +       ctx->cur_src_buffer =3D (ret !=3D -EAGAIN) ? NULL : vb2_v4l2_src;
-> +       if (ret && ret !=3D -EAGAIN) {
-> +               if (src_buf_req)
-> +                       v4l2_ctrl_request_complete(src_buf_req, &ctx->ctr=
-l_hdl);
-> +               v4l2_m2m_buf_done(vb2_v4l2_src, state);
-> +       }
-> +
-> +       v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
->  }
->
->  static void vb2ops_vdec_stateless_buf_queue(struct vb2_buffer *vb)
-> --
-> 2.46.0
->
+Ciao, Thorsten
 
