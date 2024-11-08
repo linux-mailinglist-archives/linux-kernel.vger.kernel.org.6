@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-401238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC25F9C178A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:09:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A739C17BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:21:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629AE1F23E74
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479DC2840D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4481DD55B;
-	Fri,  8 Nov 2024 08:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008C71DD534;
+	Fri,  8 Nov 2024 08:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gDfDMZsc"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dLVzHcly"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4C41D221D
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7FC1F5FA
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731053349; cv=none; b=Xd/BfShb9pNMOeENdzYdjo8riUWLqxh1T0Ik4AtUBB9tPGiklsymgUYyvJEo+WHG322M7Jvki675HSAs24LE4f1PgAZRR8CjLjiJQZ8rDzRFAQu/OqLAaRdS/AapYvo3/gL/LiDbwitq/CqV0aybvOGCquz8XbycvkkVA3PauwQ=
+	t=1731054054; cv=none; b=j/cA4ortcgm7wPvEE7kY2jWGDsq2uYFIGXVHUKCSohFMFhCLTXXPgAd++BHeBUKuWlEMBk9CkGR1YhXCDz2N3iD/mO0VIbft6JMJNQPX6HzvNwZ2gpIEc7S22IYFe84vKyaOejLlVmMyWoGfB60mI1ITnReK7Xc3bPo1ZIYQwRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731053349; c=relaxed/simple;
-	bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jWq9raeVNx9XzX31rOoMesQvRzJV09lELrRbnOA6Gicq2+l08eaypx5oiQ//yTKi1sU296DW7HXNVESfR6b8Jp3lScogppAYCislduAIFBXiw0lIlO1Mx8xuvaZmSDm0X9SMblTigdDv+FKBLh4s5c3SNPwUI98UVmzoFB4mFGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gDfDMZsc; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb443746b8so15876331fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:09:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731053345; x=1731658145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
-        b=gDfDMZsc/rmQTR8GkAm2GQjLPVA76RZd56HY1vbpuTZMFuKi0nPDy+5+rtTH7D6c4G
-         XclK8OpyFqfQ635pBPD1VA2y+w8PtyaPYe4kwXX8/LvlFdb+sgY0kMSX1JQzNhlDSX5O
-         AroVCYJKswjBwsztSgSF5yi7ERQeUMztNU89BM2YWcx/n7RJFKjG5v9nBEGSpVpMVG3L
-         FH85ljAM+UxhrNr4J3vh55MI99dqzaXWqIEanj0Mselsc//CjDkxAdbnP2ODus/5loCT
-         oXQUxZ1QGdyFb5sQkAAXia0SgYM4YCMN9ihtgzGfR8XqHkYe+p0tVlVJPC1PLNlghDAM
-         c+jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731053345; x=1731658145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G9Z7xx9wUle37htzOFI0joTWlzfhv2aXAeez5YH7IZg=;
-        b=gh9QJPecnALXSNA0QvaKIHQA5MWK/zONzpTRrfP/w2VfxnZYbGnoap+4t5I4SiNH6E
-         JMmP1iR981rnVj9486/wlCdjfpLbM06vqZ6/Sw94UniXBRY0G4tBdruxgOhL62gJLyYC
-         osDA+nr5vQh4aPyeHUtY1rONV0HgbYeDzkBXnKqGyJkVmn7vqKFIEzTAlok3dwh38Xqf
-         wWsIVZK+OC0jV4dZKR0VempSSu0/9/qUGmijwrrj+E7ZY2MUnNHDuhkiYXC7YEpNfsUa
-         q4jPFCVTXNpbKDLVr67lhbCu1IW1DLVvFmuxkPrVvKUCw1UmWG2+PuM03eNQdpVeIXRZ
-         bfag==
-X-Forwarded-Encrypted: i=1; AJvYcCVZaN5UnhfckIQUTShqNHwPJxQiWsgvOmmKYxijfSoSRt1tt2GSLO7iGQkv7i/Lcv30tnBx4a7i7bXfdpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkWASowf7NyxtGiljM+E9WE3avcYpzoEf7TetzUIGamBbiPj5Y
-	02A+yEIcBorqOGJkKuTATSsXutgAJEWVD6ulXsdAKjcjNtO0p0gGAfYRrnHMgk/xmkC7VeK1TCb
-	N9NI9UKydp1qA0g1qSwpImOM8J7voJcoW65Puow==
-X-Google-Smtp-Source: AGHT+IF0UB7o0vuS6Bty4AeOnjqYdCjSMRlYLH8+QDSVbXDnav7cLaan9vUhNYyE5wm0llxN2dvFNKermU2/At8KL/Y=
-X-Received: by 2002:a05:651c:b06:b0:2fa:cc86:f217 with SMTP id
- 38308e7fff4ca-2ff20307f42mr8533711fa.35.1731053345351; Fri, 08 Nov 2024
- 00:09:05 -0800 (PST)
+	s=arc-20240116; t=1731054054; c=relaxed/simple;
+	bh=m9lM0w6P9a7uSkyG/8gM1J0rO9rtbEUKMBJpEOFd5M8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ClGXnZW/qiJtdKkBemTS8HvJx/ZMlc2USZiY2C1iU/RICuU8b5TdEW3vZ+eORK44ankunVV9j2B8VqyiycBPPHmXLdQH1EoSTtY8E/s5wEsH0Pd5GW5wW7fT4YfydIG8O8N4NVaOR/ng/3Q+CgGStZSPLwYvslVfCVn2rVh0Y/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dLVzHcly; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731054051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8A3ThVrC7cTil9Qo1AWQe62YpyZnM2l43IjuztPMCjc=;
+	b=dLVzHclyTalIqATByNs6xz3gTvBBcIq9G127oOD57LRGYKYOZ9WT3N8bHj3DuoTzmwZB64
+	c9TnqDUNtd6KIjvgjeilDDdK+dDjwWYo8Ml1zmA5zUPRopfYVzsQ2x5xaq8rxvciFe6JwD
+	K5aE9FilMmO7s75jggDfhBm5EcZ2RSw=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-4b9tNNR4MfWSbMIQM27DwQ-1; Fri,
+ 08 Nov 2024 03:20:47 -0500
+X-MC-Unique: 4b9tNNR4MfWSbMIQM27DwQ-1
+X-Mimecast-MFC-AGG-ID: 4b9tNNR4MfWSbMIQM27DwQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C1B941955D75;
+	Fri,  8 Nov 2024 08:20:38 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.51])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A03111955F3D;
+	Fri,  8 Nov 2024 08:20:33 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	John Ogness <john.ogness@linutronix.de>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	bluescreen_avenger@verizon.net,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	Petr Mladek <pmladek@suse.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v7 0/7] drm/log: Introduce a new boot logger to draw the kmsg on the screen
+Date: Fri,  8 Nov 2024 09:10:18 +0100
+Message-ID: <20241108082025.1004653-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org> <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
-In-Reply-To: <20241031-msm8917-v2-4-8a075faa89b1@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 8 Nov 2024 09:08:54 +0100
-Message-ID: <CACRpkdZ8YFfpqmgoahXBk9b88CGKm6Ny0Am4vvUf1ekUz0bEng@mail.gmail.com>
-Subject: Re: [PATCH v2 04/15] pinctrl: qcom: spmi-mpp: Add PM8937 compatible
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Oct 31, 2024 at 2:19=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
+drm_log is a simple logger that uses the drm_client API to print the kmsg boot log on the screen.
+This is not a full replacement to fbcon, as it will only print the kmsg.
+It will never handle user input, or a terminal because this is better done in userspace.
 
-> The PM8937 provides 4 MPPs.
-> Add a compatible to support them.
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
+If you're curious on how it looks like, I've put a small demo here:
+https://people.redhat.com/jfalempe/drm_log/drm_log_draft_boot_v2.mp4
 
-Patch applied for v6.13.
+Design decisions:
+  * It uses the drm_client API, so it should work on all drm drivers from the start.
+  * It doesn't scroll the message, that way it doesn't need to redraw the whole screen for each new message.
+    It also means it doesn't have to keep drawn messages in memory, to redraw them when scrolling.
+  * It uses the new non-blocking console API, so it should work well with PREEMPT_RT
+ 
+v2:
+ * Use vmap_local() api, with that change, I've tested it successfully on simpledrm, virtio-gpu, amdgpu, and nouveau.
+ * Stop drawing when the drm_master is taken. This avoid wasting CPU cycle if the buffer is not visible.
+ * Use deferred probe. Only do the probe the first time there is a log to draw. With this, if you boot with quiet, drm_log won't do any modeset.
+ * Add color support for the timestamp prefix, like what dmesg does.
+ * Add build dependency on  disabling the fbdev emulation, as they are both drm_client, and there is no way to choose which one gets the focus.
 
-Yours,
-Linus Walleij
+v3:
+ * Remove the work thread and circular buffer, and use the new write_thread() console API.
+ * Register a console for each drm driver.
+
+v4:
+ * Can be built as a module, even if that's not really useful.
+ * Rebased on top of "drm: Introduce DRM client library" series from Thomas Zimmermann.
+ * Add a Kconfig menu to choose between drm client.
+ * Add suspend/resume callbacks.
+ * Add integer scaling support.
+ 
+v5:
+ * Build drm_log in drm_client_lib module, to avoid circular dependency.
+ * Export drm_draw symbols, so they can be used if drm_client_lib is built as module.
+ * Change scale parameter to unsigned int (Jani Nikula)
+
+v6:
+ * Use console_stop() and console_start() in the suspend/resume callback (Petr Mladek).
+ * rebase and solve conflict with "drm/panic: Add ABGR2101010 support"
+
+v7:
+ * Add a patch fix a build issue due to missing DRM_CLIENT_LIB, reported by kernel test bot.
+
+Jocelyn Falempe (7):
+  drm/panic: Move drawing functions to drm_draw
+  drm/client: Always select DRM_CLIENT_LIB
+  drm/log: Introduce a new boot logger to draw the kmsg on the screen
+  drm/log: Do not draw if drm_master is taken
+  drm/log: Color the timestamp, to improve readability
+  drm/log: Implement suspend/resume
+  drm/log: Add integer scaling support
+
+ drivers/gpu/drm/Kconfig            |  53 +++-
+ drivers/gpu/drm/Makefile           |   2 +
+ drivers/gpu/drm/drm_client_setup.c |  18 +-
+ drivers/gpu/drm/drm_draw.c         | 233 ++++++++++++++++
+ drivers/gpu/drm/drm_draw.h         |  56 ++++
+ drivers/gpu/drm/drm_log.c          | 420 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/drm_log.h          |  11 +
+ drivers/gpu/drm/drm_panic.c        | 257 ++----------------
+ 8 files changed, 812 insertions(+), 238 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_draw.c
+ create mode 100644 drivers/gpu/drm/drm_draw.h
+ create mode 100644 drivers/gpu/drm/drm_log.c
+ create mode 100644 drivers/gpu/drm/drm_log.h
+
+
+base-commit: baf4afc5831438b35de4b0e951b9cd58435a6d99
+-- 
+2.47.0
+
 
