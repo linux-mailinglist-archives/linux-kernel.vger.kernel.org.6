@@ -1,93 +1,100 @@
-Return-Path: <linux-kernel+bounces-401180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4309C16F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A64679C16FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20362284176
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:18:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BD662841F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 07:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C7F1D12E5;
-	Fri,  8 Nov 2024 07:18:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47121D1506;
+	Fri,  8 Nov 2024 07:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AnhH4xgz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7vyL7oQg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517D91D097F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 07:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D511D0E20;
+	Fri,  8 Nov 2024 07:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731050306; cv=none; b=CqqKPR7o5yfdFk7DrGqSe1x3N7q6WQNGSyZ4c/rz6ciQs1yMaoL9httOaJN0T5uNvHurMmkyUhLSjAC7HmLgY1kGKJa33xPV2zxonElVu8W6HAt2Kf1gRnwaQZwVBBoNTc8U1OMkEy5EIbOgyf3LpFMMKX6fJm9BZgLj0YW7yB8=
+	t=1731050410; cv=none; b=mnyjow0zPhLgS94NvWQ4A3J14e9J5PmIhtDnbpaqWDte8CRZ8H7o40fLvsa2b/i4Iye9oyLI+PCd5A+XLWrbxVnSEo9crZxRHh4IRoKkFrBjF+KNddsfwbh6HTF0VgGKteHav5LPdQLsgWmSI3NZZlJ3ScTUcyXdxWGFb5hU84I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731050306; c=relaxed/simple;
-	bh=KuSYVvsJ0Wdnzwu1NGHTjSCAbjHfcUTVw3jLDVUqhq8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pSKwrk3zB5uPjBVbFUFLofVdAm24swXOU5FODPRLrJ/YTdEZ7i2C/0woUHiJmfJBv2BmcnpehREM0YzYPePhovLJok2yuvqIpJCEcyAwWw6DGeFLWwL8gS1GVEbTpbSZfZ89vONjqQCQk2sAAu6QfS6RZYSKEqYXkbbzzdwKIyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so21490415ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 23:18:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731050304; x=1731655104;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hr2QECPoX1IHZifV8F+tUClmS/4lI+mfHpzlghuaylU=;
-        b=Gwgf99TLr+Tn5QO9PxkseCRT0Ndo/6FulASYTJ/Cv63xY2ivQFa6I/omCtPpdOP6GW
-         ttNTC5TqK31a2oI/V/DO9M/JXzJ76bfNWdte0kLSiqCeqGfwE/rawXV+9xvR1slK6p/4
-         tGK1bxCB6/lJw60mSvzF9MhK0aI8aSEn3sJY9MD4G++eJV693+3ucnJq4jAepM+xMIJ4
-         SgK6Xab0ya2Q7JZnvLwnut9lbXGPgZ9plt2gBVjb+D3mfsjhM6MUzQSG6QCwNZszNyqG
-         KnDVqi9s6lymC5MaxqI0tjrSnsbzUD7WIEkgzAhGsmBjqR13pn8ShqOhoF1SQWq+mvzw
-         1EJg==
-X-Gm-Message-State: AOJu0Yx31w7rQ46fy2g3HyvA/LIsp/PAJUNuxZiQV0eAf8aETDhky2NN
-	QCx5xy2Ac4+RC0pArXXLDFw/RVOW1acnxcePdZSBsXViG/xqrPC41DdPJHehcvhkvb6UVfpal4Z
-	M6UlP/JiIar3rvdaB9VZN9x4ne0DUt8qcTrQkjLNXPyvfg+8GRedqH9o=
-X-Google-Smtp-Source: AGHT+IEILUv3+1KFzG+u4iU7so4kOD6KrABKvsZ4hvQPNd55qR89sR80pQR4NKfHY5/9MfsYcxNHWewM3yP53G4Pk+JkvNMkxBTT
+	s=arc-20240116; t=1731050410; c=relaxed/simple;
+	bh=gJCl7S0bqZVvnT9SEcnwOQgBUZX+WHAwroqDTxnJL+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ck8QAkHxrDTflj9ooRVsuGKuOuzGJQLrx5sXb7tFPU4XkxxZ+sxT4AA9NrvZrkHfZr8OgOsuYXY0n3We19/FyPeE0Ffy8mIEasE3mbaGMDFENQpvQ6b+6Vxs3/Xzm9QGGRXeLfpPIESxtuJzG/j4o3slkYv+Abgk+5bsVmVmcAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AnhH4xgz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7vyL7oQg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 8 Nov 2024 08:20:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731050405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1XdvSNOuZouYbPrso1Npt+Pw3m9uE9gj44xGyrYmPaU=;
+	b=AnhH4xgzd7yEF5ZPSICzS90838h37rRz4QvNEoDVonGelJrNlW/RX0p/tso6Ybyy8ZK6QC
+	IKF14CkaWFbgOfceFNhxhb2QhxU+leLMGlXWdwDF/0kyPEtfQuvK0HJ8SP8pDeRiLN7i0O
+	6NuiWXP4gK480xVWEyFSwIoUb8z0dDZn24TyC13CyacDujoIGOCXZ8UcODpau7Cm+cEyPA
+	jQXSHbvAC2TaKddjxmK92ulR2sbpMF6CbgVmDlQbExPBeOzRtrnOU9jEC/Xk4FaRmCxoJz
+	bDY14JRtHUwtW0FUSfBtOlSeSOJTp1eLkovJ+ePNZrxJ6tyyCistLfdYhIyvaA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731050405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1XdvSNOuZouYbPrso1Npt+Pw3m9uE9gj44xGyrYmPaU=;
+	b=7vyL7oQgNV/EO92EBKAOkT+kUaIUcdDXypNUcpA/+SK2vhVxhAiIFnO5XGPi/PJFsdtepA
+	iw7VOGjOOY1FzNCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Wander Lairson Costa <wander@redhat.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Simon Horman <horms@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>,
+	tglx@linutronix.de
+Subject: Re: [PATCH v2 1/4] Revert "igb: Disable threaded IRQ for
+ igb_msix_other"
+Message-ID: <20241108072003.jJDpdq9u@linutronix.de>
+References: <20241106111427.7272-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1789:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a6f1a59322mr21439955ab.23.1731050304445; Thu, 07 Nov 2024
- 23:18:24 -0800 (PST)
-Date: Thu, 07 Nov 2024 23:18:24 -0800
-In-Reply-To: <672b9f03.050a0220.350062.0276.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672dbb40.050a0220.15a23d.01ad.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
-From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241106111427.7272-1-wander@redhat.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 2024-11-06 08:14:26 [-0300], Wander Lairson Costa wrote:
+> This reverts commit 338c4d3902feb5be49bfda530a72c7ab860e2c9f.
+> 
+> Sebastian noticed the ISR indirectly acquires spin_locks, which are
+> sleeping locks under PREEMPT_RT, which leads to kernel splats.
+> 
+> Fixes: 338c4d3902feb ("igb: Disable threaded IRQ for igb_msix_other")
+> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
 
-***
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
-Author: lizhi.xu@windriver.com
+This is the only patch.
 
-net device has been unregistered ?
-
-#syz test
-
-diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
-index c0e2da5072be..7a033e0f82d8 100644
---- a/net/mac802154/iface.c
-+++ b/net/mac802154/iface.c
-@@ -683,6 +683,9 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
- {
- 	ASSERT_RTNL();
- 
-+	if (sdata->dev->reg_state == NETREG_UNREGISTERING)
-+		return;
-+
- 	mutex_lock(&sdata->local->iflist_mtx);
- 	list_del_rcu(&sdata->list);
- 	mutex_unlock(&sdata->local->iflist_mtx);
+Sebastian
 
