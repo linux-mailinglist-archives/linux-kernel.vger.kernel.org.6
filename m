@@ -1,87 +1,105 @@
-Return-Path: <linux-kernel+bounces-401866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABDF9C2052
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:28:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69CA69C2073
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:30:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79AF41C222BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19EB41F21DEE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EB4206E85;
-	Fri,  8 Nov 2024 15:27:58 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857D21F4726;
-	Fri,  8 Nov 2024 15:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994832071ED;
+	Fri,  8 Nov 2024 15:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HaUjtcWH"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FCC1F4295;
+	Fri,  8 Nov 2024 15:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079678; cv=none; b=eRjqeTrNJUEp6wY0rnQR6Xt5R/sZbOtLOlRYRUgOAcr+d6x+uxg3GvvtXTuhe4dPywsNWVUQC6J2DSipnBNacvQfejeebdGTvLzuNCikaD+5JZ9VyuXWAxzLGiIU8lH55Z6JU5ASAuLoG0dfpurqx31nnRNtOe4uxpfKgku8fFM=
+	t=1731079834; cv=none; b=DCWsry9uIw6l0+CRGwm0c41CRBfSaCdpNa+dRgCWHbjHoQ2RGrxVuomZmg10OrY0zyQWoMKTLIYLxBRDetv6ZRXcahTj57QsPJ5ebG7P/T0HR92j1sZg3XGONHp10W8ne1IdDXWNMiTk9k88ojH8NlL3OzzwUCbRwlv2I4iHs0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079678; c=relaxed/simple;
-	bh=av2vUG9524SNjdWGCpxblDFbqyWMk2o1z0s5ZKbvG/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ltgvj+QqTOECukSdJLhszm3git88PrQemStSsjyE60i4HpJ/E9e1efTXmWE2DDpJq8nY7IHaokoE5PNyPWPnMEMyQ2YPfdZ4PQEDSa4dqdqQgHj0lQjVpQj263MgeWLehYoI9NyNkHZcNsK8FzyCEyEJf3l3I9wrH1eIYfEn66U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D8FC4CECD;
-	Fri,  8 Nov 2024 15:27:56 +0000 (UTC)
-Date: Fri, 8 Nov 2024 15:27:54 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kselftest/arm64: Fix build with stricter assemblers
-Message-ID: <Zy4t-tHV18D6BrXJ@arm.com>
-References: <20241108-arm64-selftest-asm-error-v1-1-7ce27b42a677@kernel.org>
+	s=arc-20240116; t=1731079834; c=relaxed/simple;
+	bh=YBes01HIGxCY9uAMUwOSqshjVdaMRIIeY82NB1cajGY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=vFjeymaqXBr2CrJAXe6rIeWUV5BOq6QzUh0BRlH4MNZWrrOo0f7DUV4weQA/Rb1Iavsq2265VslXxBES7yO7oX73z3nwpdwUN/86gG5HV4JP6NMXWilg5EZUGC+cEwOfru+DzLeeQD8yuzJEpElZ3f9t8ScxNN1IldXan7ZJ4Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HaUjtcWH reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=iQMcJa4BmFPVqKmXobn4cIhRx4UhLAzJDxklpcxlLI8=; b=H
+	aUjtcWHDFt1bKqSXkqJGs1dRc5kfURcXD/snEVL02VfzHVmJDJvgfdNFSH25sFJS
+	e/QmXTeDXcuNeFVAyRIvkZptmIV0qg/a2iU0Q4ogCM+qEHNRN03W89MpCkKtr4sE
+	EYlKvW6V2O6HdedRW0CAf+PWbdmw0x1Jl4G7mFEXQs=
+Received: from 00107082$163.com ( [111.35.191.191] ) by
+ ajax-webmail-wmsvr-40-148 (Coremail) ; Fri, 8 Nov 2024 23:28:00 +0800 (CST)
+Date: Fri, 8 Nov 2024 23:28:00 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>
+Cc: richard.henderson@linaro.org, linux@armlinux.org.uk, catalin.marinas@arm.com, 
+	will@kernel.org, guoren@kernel.org, chenhuacai@kernel.org, 
+	kernel@xen0n.name, James.Bottomley@HansenPartnership.com, 
+	deller@gmx.de, mpe@ellerman.id.au, paul.walmsley@sifive.com, 
+	ysato@users.sourceforge.jp, dalias@libc.org, 
+	glaubitz@physik.fu-berlin.de, davem@davemloft.net, 
+	andreas@gaisler.com, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, chris@zankel.net, 
+	jcmvbkbc@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org
+Subject: Re: [PATCH] kernel/irq/proc: performance: replace seq_printf with
+ seq_put_decimal_ull_width
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <87r07lol9y.ffs@tglx>
+References: <20241103080552.4787-1-00107082@163.com> <87r07lol9y.ffs@tglx>
+X-NTES-SC: AL_Qu2YA/yctk4j5iSfbOkZnEYQheY4XMKyuPkg1YJXOp80uSbP/wc5cnBJEkHY4sOvLTmSvxeqUTR3+8t1RrNYQqbBTxgILkv4stMHL//JBWTB
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-arm64-selftest-asm-error-v1-1-7ce27b42a677@kernel.org>
+Message-ID: <3319cd6e.b980.1930c63b1e5.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:lCgvCgD3fwoBLi5nnLAiAA--.7283W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQKRqmcuF0eQdwACss
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Fri, Nov 08, 2024 at 03:20:46PM +0000, Mark Brown wrote:
-> While some assemblers (including the LLVM assembler I mostly use) will
-> happily accept SMSTART as an instruction by default others, specifically
-> gas, require that any architecture extensions be explicitly enabled.
-> The assembler SME test programs use manually encoded helpers for the new
-> instructions but no SMSTART helper is defined, only SM and ZA specific
-> variants.  Unfortunately the irritators that were just added use plain
-> SMSTART so on stricter assemblers these fail to build:
-> 
-> za-test.S:160: Error: selected processor does not support `smstart'
-> 
-> Switch to using SMSTART ZA via the manually encoded smstart_za macro we
-> already have defined.
-> 
-> Fixes: d65f27d240bb ("kselftest/arm64: Implement irritators for ZA and ZT")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  tools/testing/selftests/arm64/fp/za-test.S | 2 +-
->  tools/testing/selftests/arm64/fp/zt-test.S | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/arm64/fp/za-test.S b/tools/testing/selftests/arm64/fp/za-test.S
-> index 95fdc1c1f228221bc812087a528e4b7c99767bba..9c33e13e9dc4a6f084649fe7d0fb838d9171e3aa 100644
-> --- a/tools/testing/selftests/arm64/fp/za-test.S
-> +++ b/tools/testing/selftests/arm64/fp/za-test.S
-> @@ -157,7 +157,7 @@ function irritator_handler
->  
->  	// This will reset ZA to all bits 0
->  	smstop
-> -	smstart
-> +	smstart_za
-
-And is smstop ok for assemblers? I think I got the error first on
-smstop with my toolchain.
-
--- 
-Catalin
+SGksICAKCkF0IDIwMjQtMTEtMDggMjI6MjU6MTMsICJUaG9tYXMgR2xlaXhuZXIiIDx0Z2x4QGxp
+bnV0cm9uaXguZGU+IHdyb3RlOgo+RGF2aWQhCj4KPk9uIFN1biwgTm92IDAzIDIwMjQgYXQgMTY6
+MDUsIERhdmlkIFdhbmcgd3JvdGU6Cj4KPiRTdWJqZWN0OiBbUEFUQ0hdIGtlcm5lbC9pcnEvcHJv
+YzogcGVyZm9ybWFuY2U6IC4uLgo+Cj5UaGF0J3Mgbm90IGEgdmFsaWQgc3Vic3lzdGVtIHByZWZp
+eC4KCmNvcHkgdGhhdH4KCj4KPj4gc2VxX3ByaW50ZiBpcyBjb3N0eSwgd2hlbiBzdHJlc3MgcmVh
+ZGluZyAvcHJvYy9pbnRlcnJ1cHRzLCBwcm9maWxpbmcgaW5kaWNhdGVzCj4+IHNlcV9wcmludGYg
+dGFrZXMgYWJvdXQgfjQ3JSBvZiBzaG93X2ludGVycnVwdHMgc2FtcGxlczoKPgo+QWxzbyBwbGVh
+c2UgZm9sbG93IHRoZSBkb2N1bWVudGF0aW9uIGZvciBkZW5vdGluZyBmdW5jdGlvbnMgaW4gY2hh
+bmdlCj5sb2dzOgo+Cj5odHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9odG1sL2xhdGVzdC9wcm9j
+ZXNzL21haW50YWluZXItdGlwLmh0bWwjZnVuY3Rpb24tcmVmZXJlbmNlcy1pbi1jaGFuZ2Vsb2dz
+Cj4KCmNvcHkgdGhhdH4KCj4+ICBhcmNoL2FscGhhL2tlcm5lbC9pcnEuYyAgICAgfCAgIDggKy0t
+Cj4+ICBhcmNoL2FybS9rZXJuZWwvc21wLmMgICAgICAgfCAgIDQgKy0KPj4gIGFyY2gvYXJtNjQv
+a2VybmVsL3NtcC5jICAgICB8ICAgMyArLQo+PiAgYXJjaC9jc2t5L2tlcm5lbC9zbXAuYyAgICAg
+IHwgICA0ICstCj4+ICBhcmNoL2xvb25nYXJjaC9rZXJuZWwvc21wLmMgfCAgIDIgKy0KPj4gIGFy
+Y2gvcGFyaXNjL2tlcm5lbC9pcnEuYyAgICB8ICAzNCArKysrKystLS0tLS0KPj4gIGFyY2gvcG93
+ZXJwYy9rZXJuZWwvaXJxLmMgICB8ICA0NCArKysrKysrKy0tLS0tLS0tCj4+ICBhcmNoL3Jpc2N2
+L2tlcm5lbC9zbXAuYyAgICAgfCAgIDMgKy0KPj4gIGFyY2gvc2gva2VybmVsL2lycS5jICAgICAg
+ICB8ICAgNCArLQo+PiAgYXJjaC9zcGFyYy9rZXJuZWwvaXJxXzMyLmMgIHwgIDEyICsrLS0tCj4+
+ICBhcmNoL3NwYXJjL2tlcm5lbC9pcnFfNjQuYyAgfCAgIDQgKy0KPj4gIGFyY2gveDg2L2tlcm5l
+bC9pcnEuYyAgICAgICB8IDEwMCArKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0K
+Pj4gIGFyY2gveHRlbnNhL2tlcm5lbC9pcnEuYyAgICB8ICAgMiArLQo+PiAgYXJjaC94dGVuc2Ev
+a2VybmVsL3NtcC5jICAgIHwgICA0ICstCj4+ICBrZXJuZWwvaXJxL3Byb2MuYyAgICAgICAgICAg
+fCAgIDYgKystCj4KPlRoZXJlIGlzIG5vIGRlcGVuZGVuY3kgb24gdGhlc2UgY2hhbmdlcy4gU28g
+cGxlYXNlIHNwbGl0IHRoZW0gdXAgaW50bwo+c2VwZXJhdGUgcGF0Y2hlcyBmb3IgY29yZSBhbmQg
+dGhlIGluZGl2aWR1YWwgYXJjaGl0ZWN0dXJlcy5hbgoKVGhhbmtzIGZvciBhbGwgdGhlIHJldmll
+dywgSSB3aWxsIG1ha2UgYSBwYXRjaHNldCBmb3IgdGhpcy4KPgo+VGhhbmtzLAo+Cj4gICAgICAg
+IHRnbHgKCgpEYXZpZA==
 
