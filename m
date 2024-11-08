@@ -1,136 +1,158 @@
-Return-Path: <linux-kernel+bounces-402063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA299C22EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:28:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9979C22EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:28:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC4481C22F3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFDA5282A87
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFE61E9091;
-	Fri,  8 Nov 2024 17:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE471F4268;
+	Fri,  8 Nov 2024 17:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJsQRKW/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3JvSxQc"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C098198A17
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F946199E88;
+	Fri,  8 Nov 2024 17:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731086899; cv=none; b=XUuRQCo3GFDsqkAc+TL8s1Vlm2UgR4nJeusBjLLMM23jldQ6EfEqAn/DcuvlKwe/jK5yRzxWQO+zmjwqg9rQPWDPrm7ZaC2Ki9g72FCva3G7KtiRpWNWj/ZC89HOf4U1wVq7/pxnOYl2L97qNn7Unx+MHpi+XpPbbOK4V1u6yXs=
+	t=1731086911; cv=none; b=spR6caXRJlhiR8mMfg+DoYBGFVs60LeXttUUm+qvTSEwpO05d3rD/cjpVCi3SBduNZi2N3Vtqn96WiUaCVbhymWICEWbjc0UdVGgwHH9FOI1jtFbrWGwXl6nIw7nwrWKW9c3nC/RS8jFW1pvZajhseryCMVR3ys0C1etLoaIkKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731086899; c=relaxed/simple;
-	bh=rBNw1GNzfA6z75fhIAP/gwSk1f0U2vf886V9DeeMwJo=;
+	s=arc-20240116; t=1731086911; c=relaxed/simple;
+	bh=8ea8ddTNBag42apcWveTNKLD6A1GuEKcQTOPIWuuwWY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qr4p7RHEpOFj0j42BAUPnFwH6CS6JAecD1pYVQu7jLHFeo3LJwqSdHsSqCWxt56E5cHz545sp80PS8bVIltAveRCWTpibKLX4hAcaOZnKIUkeeDKiO+0nElGWUr/3izBja9xKt4YNtKofWblcqA42kmO3iHjqYGJ8T0keeSJ0/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJsQRKW/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F62C4CECD
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731086898;
-	bh=rBNw1GNzfA6z75fhIAP/gwSk1f0U2vf886V9DeeMwJo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sJsQRKW/1nYuKf/mfYrpMQnyXkZjeis9ktdRF9ApCTOr69bZMKyR/YV5AamISeWH5
-	 tv7b/sgU/5uhQkNHnoanaxLdSIS/U3kaznD2is6SEXerw/iu9/dY/0FV/LvVBNXvuP
-	 NcbB4xtpEseP47Y/1YMNl58oLyWwdj8WLX63IZgwexSmDayVKbk4EfIcWSxQOdDjgQ
-	 J9UWQDTEq8jxHbKv6a8EeqJscfdTkFH/FfPDYtYFonxACq33h2plOvv01ln0UqW6/B
-	 yOVtnztUdSPEAG26jvtLXDe9WRp6VAyQ6wyAv6yZ3uOwFvE0k7lyp/XYsPL63WmXqw
-	 B9LFUMfBkOxbQ==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c913aso4352459e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:28:17 -0800 (PST)
-X-Gm-Message-State: AOJu0YyeQuEfDv11kyeG99yDaqofsYlH8j/17gxrToRIC9ccm4T+TG0A
-	YTXDOCx4YBet5Aq8k0GgDJd3W6ikdAOh2pFhHqSVyLkd/3DzWovxRdrsuGmHMqKIBFhTebQjGCc
-	RcXpPdvfjuTCOXC7cGHEwRs/pj1Q=
-X-Google-Smtp-Source: AGHT+IGu97hLQdM+TDMBUSa2y0Ly3o6vGpFnIgz3xz3MvJxhNbicxhfcfws1SsK7h2XKfbCLLN57P2l6Urc8xSQ2CaE=
-X-Received: by 2002:a05:651c:881:b0:2f4:3de7:ac4c with SMTP id
- 38308e7fff4ca-2ff201e84bbmr20645501fa.8.1731086896634; Fri, 08 Nov 2024
- 09:28:16 -0800 (PST)
+	 To:Cc:Content-Type; b=HCSsQS3vcHLcBarxOMlAR9Vo2PzS/drZrFIMy4K0oXizO3nZQcaEeMiM27RkouNsbioRz1D1enFvnsKcjUFsHnbPfCebI6xPk9II2UfOxi0UmMBUosLoz3NdAnFeDJN0Q1qGhroGpkie3P0jjpwLi/XnAs43xyMjvxr6jTWfg4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3JvSxQc; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso1993102a91.0;
+        Fri, 08 Nov 2024 09:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731086909; x=1731691709; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qNHa/iC/trYWdqJBk7pL0FJKOpGxQZoeAEHdfBDty8I=;
+        b=O3JvSxQcAhAHsU1lZknlJFOi83qpFKqzt9V24GhtKjha3jFKR2VsvJBINjmY2qe7UL
+         zA2gsj674+uoNCeE98aJIq3GkG+/lBpqBFW/5yLPh74H1PacMFvgFlmqcomMQfjyfXqh
+         HUPVokGI9/n7QL7XWekp7xgGmQs8M0mMZSINNFZFWIg9kcakT/bCHHgiWEnuljsshf8n
+         HhyV2QQkSSnYjMKieYNWIDEU8Lh7pasyzhHBeDIe9ibQ2AalNdGKv3BvfqosyUWzbsRK
+         1dwZGBi5jCb3zLcXulFbsb3T1dgsosyIqIP1yrEyZ0XZxQ1tI5gkn+FtwH4TW0gv7Wy2
+         HoXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731086909; x=1731691709;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qNHa/iC/trYWdqJBk7pL0FJKOpGxQZoeAEHdfBDty8I=;
+        b=fABIPvNFvki0kiaooCjn6hr0uuHVyUZnqdqF83OEDu6CdawDwk0hhH3uzeyiAMm3bW
+         eBDqt1oBMkE9abmfl1JpqTDX3jR6x5kiMrSzpyeeQAzDK3t8Qs8ykyCY7UlQNvC3pl8C
+         21zkPxSMebHyAlCBMu8Q4rNoYsuTSlzkDjq2Q2n+gjGNSo4SeOGi6oHhk9k8OIXtVyLl
+         DcSbXAqlBR4vpU8BkUU6v4O5i4vkLy964SvNeUOjIFeqdCI+XuANRBiWL0+U4joaZ60h
+         feZftbap0djEeMBOWpWXigeEUowrrn7tDBYLJc0QbP15q4v1qi8PJ03sKJ+6GkYth0SV
+         etnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ6lIeZF4LMUPLyUqtr67qZYWneHTIu1PSRU7qoBFERQDTMmlUkxVgwWZa9tLdgb2e2SMjuS2Tl2hKYPU=@vger.kernel.org, AJvYcCWPo5qVyWBO3CRakXwC03uzsC9sllDTQgEXrcVmG1c1kWW/O5WQR+oFsE4OCbcpT2+1AhoJGA4KKS/BhtdSgUCfuKw0@vger.kernel.org, AJvYcCX41Qxz2Qkrx24g50LbHRUEpbXjnlOllOnKsynMhGX45rXBGWiZxG4Gap8MjHQqRW1j341TrSJXwOvvXeReXVHbJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxodzWgF5kXv1USeHwutPWrz6+ciTX8TasypaN3R204R2HSvdmL
+	MVZQQJoN+YCZMxL54LGjTQlF8nRgcs2ppts9SBHzRzh2SsSnJeh7lClUSagBtMiAhWOgHjYG8Vg
+	OQTj0LI0kkrKx3yInAqu5lAlyiwA=
+X-Google-Smtp-Source: AGHT+IFBM4Xs5aZ6NWdYVIFvrU0Z7K1T3OlTGPD9+u/fGgL8VCEvk9RSLkFHN3NkOcTz+Kkpl0KVNdQlfRPOAaOFivY=
+X-Received: by 2002:a17:90b:4c0f:b0:2e2:c9c1:aacf with SMTP id
+ 98e67ed59e1d1-2e9b177bc3emr4589093a91.29.1731086908772; Fri, 08 Nov 2024
+ 09:28:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240918045431.607826-1-masahiroy@kernel.org> <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
-In-Reply-To: <0c4dc285-f218-4c88-87f3-b7c7c786cdba@monstr.eu>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 9 Nov 2024 02:27:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASKooM0_LuPhB0c6AfUsEB0b1Q_mo0TQvuCO2BZqYJBsQ@mail.gmail.com>
-Message-ID: <CAK7LNASKooM0_LuPhB0c6AfUsEB0b1Q_mo0TQvuCO2BZqYJBsQ@mail.gmail.com>
-Subject: Re: [PATCH] microblaze: use the common infrastructure to support
- built-in DTB
-To: Michal Simek <monstr@monstr.eu>
-Cc: linux-kernel@vger.kernel.org
+References: <20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org> <20241108090023.GE38786@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241108090023.GE38786@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 8 Nov 2024 09:28:17 -0800
+Message-ID: <CAEf4BzabO7NuSTZ5fKSb2UBZAxA9EnrXVtO2=J38B1UN5ExBrg@mail.gmail.com>
+Subject: Re: [PATCH] uprobes: get RCU trace lock before list iteration
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Breno Leitao <leitao@debian.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 8:54=E2=80=AFPM Michal Simek <monstr@monstr.eu> wrot=
-e:
+On Fri, Nov 8, 2024 at 1:00=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
 >
->
->
-> On 9/18/24 06:52, Masahiro Yamada wrote:
-> > MicroBlaze is the only architecture that supports a built-in DTB in
-> > its own way.
+> On Thu, Nov 07, 2024 at 09:14:45AM -0800, Breno Leitao wrote:
+> > Acquire RCU trace lock in filter_chain() to protect
+> > list_for_each_entry_rcu() iteration, protecting the list iteration in a
+> > RCU read section.
 > >
-> > Other architectures (e.g., ARC, NIOS2, RISC-V, etc.) use the common
-> > infrastructure introduced by commit aab94339cd85 ("of: Add support for
-> > linking device tree blobs into vmlinux").
+> > Prior to this fix, list_for_each_entry_srcu() was called without holdin=
+g
+> > the required lock, triggering warnings when RCU_PROVING is enabled:
 > >
-> > This commit migrates MicroBlaze to this common infrastructure.
+> >       kernel/events/uprobes.c:937 RCU-list traversed without holding th=
+e required lock!!
 > >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > Signed-off-by: Breno Leitao <leitao@debian.org>
+> > Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessl=
+y under SRCU protection")
 > > ---
+> >  kernel/events/uprobes.c | 2 ++
+> >  1 file changed, 2 insertions(+)
 > >
-> > I do not know why MicroBlaze still adopts its own way.
-> > Perhaps, because MicroBlaze supports the built-in DTB
-> > before aab94339cd85 and nobody attempted migration.
-> > Anyway, I only compile-tested this patch.
-> > I hope the maintainer can do boot-testing.
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index fa04b14a7d72353adc440742016b813da6c812d2..afdaa45a43ac3948f798317=
+5eda808c989e8738a 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -1103,11 +1103,13 @@ static bool filter_chain(struct uprobe *uprobe,=
+ struct mm_struct *mm)
+> >       bool ret =3D false;
+> >
+> >       down_read(&uprobe->consumer_rwsem);
+> > +     rcu_read_lock_trace();
+> >       list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_re=
+ad_lock_trace_held()) {
 >
-> I took a look at it and it is changing current behavior.
-> If you look at linux.bin and there is no DT inside. But when you patch is
-> applied linux.bin contains system.dtb inside which is regression.
-> Or is it intention of this patch?
+> Maybe I'm confused, but isn't uprobe->consumer list protected by
+> uprobe->consumer_rwsem, which we hold for reading?
+>
+> That is, AFAICT this is a false positive and we should be doing this
+> instead, no?
 
+Yep, you are absolutely right. RCU-protected traversal is important
+only for handler_chain() and handle_uretprobe_chain(). Here it's all
+under lock, so no need for RCU protection.
 
-I do not understand your comment.
+>
+>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index a76ddc5fc982..a5405e9ef9f5 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1104,7 +1104,7 @@ static bool filter_chain(struct uprobe *uprobe, str=
+uct mm_struct *mm)
+>         bool ret =3D false;
+>
+>         down_read(&uprobe->consumer_rwsem);
+> -       list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_re=
+ad_lock_trace_held()) {
+> +       list_for_each_entry(uc, &uprobe->consumers, cons_node) {
 
-If you look at the code in arch/microblaze/Makefile,
-DTB is empty unless you build simpleImage.%
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-
-My patch still keeps obj-y within the
-ifneq ($(DTB),) ... endif  block.
-
-
-ifneq ($(DTB),)
-obj-y +=3D system.dtb.o
-  [ snip ]
-endif
-
-
-So, when you build linux.bin, system.dtb is not embedded in vmlinux,
-is it?
-
-
-
-> I think there was any documentation about it's usage in past but never re=
-ally
-> described in upstream kernel.
-> But idea was that linux.bin requires DT to be passed from bootloader via =
-R7 reg
-> but simpleImage.X is linux.bin+DTB inside and can be used without bootloa=
-der.
-
-With my patch applied, it should still work like this.
-
-
---=20
-Best Regards
-Masahiro Yamada
+>                 ret =3D consumer_filter(uc, mm);
+>                 if (ret)
+>                         break;
 
