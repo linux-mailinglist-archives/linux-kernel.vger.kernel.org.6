@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-401771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD559C1EEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:13:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF319C1EF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5AA1F24005
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:13:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2F8B22584
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 14:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4351F1317;
-	Fri,  8 Nov 2024 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE171F12FA;
+	Fri,  8 Nov 2024 14:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="O6f5Gh3+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="H057aWJe"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF521E1C18;
-	Fri,  8 Nov 2024 14:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731075211; cv=pass; b=QUpy2szw1MpuAkKT6kPT97lRhXGAWK2nAlkWRca0kW/kF4OkeWLvzZippjOWzw0UqnJWlSx1J04iwVFXeugy/p0RB06mSmOPkRfnhwLx5usTCJSBv+lfGFl3x0Vccc6yoOiqbnMdHG4S7eGN8MPJwvIh776llkyARi9ZnCQFF70=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731075211; c=relaxed/simple;
-	bh=IL6KIe28Rsk9XabwVUFnAnU2YLfm4d9kA3+3NWhGzR8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XdvxRoWpsIp/4NQd/r4IEI/X8FZwrS9viuyKXbMDNqWKE3uJMEnIYocHzIkne9/vaqD1Q83ZI5lnYYQMzD0DOpojGbp9Z69HAcFnK3hwuTDih5NFt9RAkO120DhPnwZea8QKw26BqB7gRded1RnztZ55dSYOAfrqp5VTaiyI40s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=O6f5Gh3+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731075193; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NwmT7/Pdl21xBFxBOyhq4+cLzeyqeFWIofzBjMhMGWF9ZqSdsINnOSpEQLnsXDeLyeQDmfAl3FuwamS7/OKdB/G1d/xJM97v9OQMgOuCM2t+yYsCti/2WoQ01g6cnUJg5wIBvR9PtRXAWS3PF9igpTll2ANHnq7CYQmLSgtQ9Xo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731075193; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wLsbq45VP+QQQn7ywL3Aaz1egL8UHgg6/j8C4aCGAxc=; 
-	b=ZO4LXMirHUpbJBSmZ+gkJY4vtQyJf7WDNRsslI4WDGgln9/9LUK1gmOUv9ABfLEqmmnp9d4/14W/ZI2vdW7zv7Zs3othbJPzald+cNRezWnvHxPXnWEAKdoQhC9lx2XQBy/BW0V2742EUM1UUSFCrY9ZP6biTGs844VQTbFXdcY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731075193;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=wLsbq45VP+QQQn7ywL3Aaz1egL8UHgg6/j8C4aCGAxc=;
-	b=O6f5Gh3+9c+jVXqcKij73CEmPAyiYI4qjNuuhLdi1srnVxOquVpE2AHekhKa11o3
-	f4Vn55H0yeBO6LLUCloatvJQUMLtT2ciEX37NDQpyJvLOoDkOVDQc3V52kcNJRapcGL
-	EH3+AvSdZKAKVzVH9w3QVe3JU7H8VCAdnQtxnfu8=
-Received: by mx.zohomail.com with SMTPS id 1731075192437247.0495706688124;
-	Fri, 8 Nov 2024 06:13:12 -0800 (PST)
-Message-ID: <ddabd00d-7bd8-40f1-9a1b-22a31b07fd8c@collabora.com>
-Date: Fri, 8 Nov 2024 19:13:04 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED681E1C18
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 14:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731075224; cv=none; b=An/T8WPxJFK16WoNVdsIrym6AHoGwHDHtYi1f5rv4U2j4u8SxnYGYu0wpmK0aYA/di/CqwZ4X5+QxUIrTzyDtTVTS5b+lDtOdsycGVSryEv7BYfxPBFLKC7vjz9g0oXBQ8iJK0FJXAjnmmbNr1SFz8bsj+y3iYc8yGbsKZLvFkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731075224; c=relaxed/simple;
+	bh=LKwCwHJVuvI2REeEaPMnnKmW3TCK2uXO8DcgkZaOORo=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=FXM8J1m7NBbWZHivsRg8lJaRY/JpoLwNOCpAWvAJiqVig76Bo73qlp10Spsy8f2z+yJBN+wk3UdRCpnuo9Tpleufx+A6HhbBUqVQbefLX9Cbag8LSj0zArRGrSgI/dCVlYaE4W97JTUFKyRj5B2QC+k+0/3PFXNhcxi7dxHS69I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=H057aWJe; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: hugetlb_dio: Check for initial conditions to
- skip in the start
-To: Donet Tom <donettom@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-References: <20241101141557.3159432-1-usama.anjum@collabora.com>
- <5883b1c0-13c6-4593-9dd5-17f34c1319fe@linux.ibm.com>
- <13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731075214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A1XhJx+fIAJODu/uxCWon9+hPz79kYKO9bkmFz44OSI=;
+	b=H057aWJezfIgKTUjmJGTSgdB2Pr0tldAJmTO3ztuFXCrA1ZciBYv6xlqAa/OQt0lTkYLAm
+	OsuOvCy30s0gFQ9HiucRPIolWx1h2m5NsAi/QohLy1PgkZJ5yCVVtJbPQd3GVEo6TIgJwa
+	JLyQtlPZzlana/KT82xUOgEJnmzvmcJDmPgZxLCdjyZQqG6fczk6IL5mY6u55kOia9Ckmf
+	/wZUKHMjd5DCIIyvBzQ/9kPGWs/iZ83F2iWUphjLdKeUY7+3EMXOW1xuYKisIqVNFBm8cV
+	6CASTLXiJBO4eJhj6JW7NB/tP1Ev+UXzX6hrkD46a6Njga+s/jHyIqUmay/rPw==
+Date: Fri, 08 Nov 2024 15:13:33 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/rockchip: dsi: Perform trivial code cleanups
+In-Reply-To: <10558711.nUPlyArG6x@diego>
+References: <cover.1731073565.git.dsimic@manjaro.org>
+ <13633881.uLZWGnKmhe@diego> <3734f6a5424e3537d717c587a058fc85@manjaro.org>
+ <10558711.nUPlyArG6x@diego>
+Message-ID: <047164cc6e88dcbc7701cb0e28d564db@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 11/8/24 3:49 PM, Donet Tom wrote:
+On 2024-11-08 15:09, Heiko Stübner wrote:
+> Am Freitag, 8. November 2024, 15:05:02 CET schrieb Dragan Simic:
+>> On 2024-11-08 14:56, Heiko Stübner wrote:
+>> > Am Freitag, 8. November 2024, 14:53:57 CET schrieb Dragan Simic:
+>> >> Perform a few trivial code cleanups, to make one logged message a bit
+>> >> more
+>> >> consistent with the other logged messages by capitalizing its first
+>> >> word, and
+>> >> to avoid line wrapping by using the 100-column width better.
+>> >>
+>> >> No intended functional changes are introduced by these code cleanups.
+>> >>
+>> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> >> ---
+>> >>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c | 12 ++++--------
+>> >>  1 file changed, 4 insertions(+), 8 deletions(-)
+>> >>
+>> >> diff --git a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> index 58a44af0e9ad..f451e70efbdd 100644
+>> >> --- a/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> +++ b/drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c
+>> >> @@ -1379,7 +1379,7 @@ static int dw_mipi_dsi_rockchip_probe(struct
+>> >> platform_device *pdev)
+>> >>  	}
+>> >>
+>> >>  	if (!dsi->cdata) {
+>> >> -		DRM_DEV_ERROR(dev, "no dsi-config for %s node\n", np->name);
+>> >> +		DRM_DEV_ERROR(dev, "No dsi-config for %s node\n", np->name);
+>> >
+>> > this is all probe-related, why not convert to dev_err_probe?
+>> >
+>> > As the doc states [0], DRM_DEV_ERROR is deprecated in favor of dev_err.
+>> > So dev_err_probe would be the correct way to go?
+>> 
+>> Thanks for your quick response!  Seeing that DRM_DEV_ERROR() is now
+>> deprecated (which I originally missed, in all honesty) makes me very
+>> happy. :)  I've never been a huge fan of the format of the messages
+>> that DRM_DEV_ERROR() produces.
+>> 
+>> However, perhaps it would be better to keep these patches as-is, as
+>> some kind of an intermediate, limited-scope cleanup + bugfix combo,
+>> and leave the complete DRM_DEV_ERROR() --> dev_err()/dev_err_probe()
+>> conversion to separate patches.  I think it would be better to avoid
+>> a partial conversion, and I'll be more than happy to put the complete
+>> conversion on my TODO list. :)
+> 
+> But your patch-2 really just open-codes, what dev_err_probe is meant
+> to fix. So with going this way, you're sort of making things worse 
+> first,
+> until that second step happens.
+> 
+> Similarly, reflowing lines for things that get removed in a week do not
+> serve a purpose - those line-breaks have been that way for years
+> already.
 
-> I think below changes are required.
-> 
-> iff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/selftests/mm/hugetlb_dio.c
-> index 60001c142ce9..4b52106b8124 100644
-> --- a/tools/testing/selftests/mm/hugetlb_dio.c
-> +++ b/tools/testing/selftests/mm/hugetlb_dio.c
-> @@ -44,6 +44,9 @@ void run_dio_using_hugetlb(unsigned int start_off, unsigned int end_off)
->         if (fd < 0)
->                 ksft_exit_fail_perror("Error opening file\n");
->  
-> +       /* Get the free huge pages before allocation */
-> +       free_hpage_b = get_free_hugepages();
-> +
->         /* Allocate a hugetlb page */
-> 
->         orig_buffer = mmap(NULL, h_pagesize, mmap_prot, mmap_flags, -1, 0);
-> 
->         if (orig_buffer == MAP_FAILED) {
-Please can you send a fixup patch as you have working test setup?
-Otherwise I'll take it up and try to test on working setup before
-posting the fixup patch. Please let me know.
-
-> 
->  With this change the tests are passing.
-> 
-> ./tools/testing/selftests/mm/hugetlb_dio
-> 
-> TAP version 131..4
-> # No. Free pages before allocation : 100
-> # No. Free pages after munmap : 100
-> ok 1 : Huge pages freed successfully !
-> # No. Free pages before allocation : 100
-> # No. Free pages after munmap : 100
-> ok 2 : Huge pages freed successfully !
-> # No. Free pages before allocation : 100
-> # No. Free pages after munmap : 100
-> ok 3 : Huge pages freed successfully !
-> # No. Free pages before allocation : 100
-> # No. Free pages after munmap : 100
-> ok 4 : Huge pages freed successfully !
-> # Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
-> 
-> Thanks
-> Donet
-> 
-> 
-
--- 
-BR,
-Muhammad Usama Anjum
-
+Hmm, it makes sense when described that way.  I'll see to perform the
+complete conversion in the next few days.
 
