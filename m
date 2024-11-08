@@ -1,107 +1,121 @@
-Return-Path: <linux-kernel+bounces-401643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49049C1D4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:47:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5839C1D4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 13:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7D1286D19
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:47:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F3FB24355
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 12:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4109C1E882B;
-	Fri,  8 Nov 2024 12:47:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E2C1E7C2E;
+	Fri,  8 Nov 2024 12:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fJ5nvB13"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WhkIDTxa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA581E00A6
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8631E2312
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 12:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731070050; cv=none; b=YnagSkOxMxdkS3xlFTXUQ4ktmzMqg9EgLQLmArc1vTUoDlJxFtvWTT25MsV3z1/oicpYV6l++QU5z3Ef/ts/SnmgD3E2vW1H3BRLWJxQOmKydbsnqBzlajhegs01WLaTf8AvSvkJ5M4LbQaR5RtoUGYyxpAp7I4zdaaSa2fc9rU=
+	t=1731070096; cv=none; b=kSXhUXcjB9OzS5iyJsaVigYtyrchOFDZ9KTA2yeRk3cCfgZM+DogyOxV4SY6BPecjhWo5ZbwUplOOzq3r7F4YLmlfrIBgXNYJYqOtxemPrzSM5nP/YLgOifczi+BhYajCv7SiT1kOteFj6gLV8slBXCklKomucD5coef/jTmtnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731070050; c=relaxed/simple;
-	bh=CEZa+qQzOPZLsTrs3JwvPgcvIgeFmTEXgAfXPGjswmY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPmB9VxVfdnJxlcbBhX1mxLXQg7FhV/NMwWfRW0L3AjAHkYfz5DPRFrapgTq0OTb39ACUlgBw2j9D2JVRbea51c8QadRFqLEzaxrGHFypywkL3NNP6J0miB17jDim09bBgBVM5+u+T6NHwcNvfSuDb31K9edNiE1kOB4qWEO8t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fJ5nvB13; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43193678216so19524755e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 04:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731070047; x=1731674847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CEZa+qQzOPZLsTrs3JwvPgcvIgeFmTEXgAfXPGjswmY=;
-        b=fJ5nvB13uuNeRjGx5CZeMNTwV3ZWhVZcHkXeEyOxkxJpKLRwEV/ak99cGbc94qdL9v
-         6vFkCsbxV4ITpMgBtRweF/zA/JCCgE6prVEYKNZBSaexwmJFLzLQNMR7TNcY8wC5hTTa
-         CMfCXwMoNUWB5H30kPliKvr67HU0KwIailLsG+Cc+ocoNqASFpEWX14LADQsU20pL05k
-         raeIjNBd5lBBJ9wVEzdnwfqtHbJsz5WIGePOELSQhd1w1FvkFfG04rqXg5Rhui1Rc2PO
-         6fjRUHH5xr6ehR9Vk9Bb/B7+jQyvIq3eUB9VJ7j0yg/xeT6mbLy93VyxviC8Fct8mHlx
-         niGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731070047; x=1731674847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CEZa+qQzOPZLsTrs3JwvPgcvIgeFmTEXgAfXPGjswmY=;
-        b=IVj7ONJDK5Hj7xU2+uMMRh8XLLn+5pKCWGaxH5T9Ho2B5Bkwx6yx77PEM+8YvQPpuI
-         J2Ai/nqOmin5KbOVpw4ujpRtZ2xnKqX+UJbFq8WnAFoJQNfYw9tJxH3HKx37I2epz3GW
-         XWJ8P5A3tvR2X1n2XMkn0FE2ZEqaMaAlL7A21hYbWS3gkHFvR1l09hoLrx7B6xkf8zaf
-         iPF1jRncwZq7ZvdsEAFcyTTqgRIJbwj8ToTjiWBli4JoNSR8RYQG65123k5JRsC7OMmM
-         qN8YbdKjRplRYCJX3sv9eT3IQgsBx+PKzaY3V315/qlOE4e+dI1+SVn+eTurqdz9TBjn
-         Kn+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX1qJIA0BcMcjNlUPsE3zR+CQRZIJsvKtMjpqG1EkvlA34qRrAoS40mEDeT5hspV9RErliGS7RZ9/hookc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAkyL2u12ib4fIjHJI/Bwf7LTRxRfIwjJc19hCVT3JQyFKM2Mz
-	Bmn3F1C2LnzZhjs7BFekFtwQ5m3B7LGXcm6onNnB2YxRklXx1k4LtzPIO/u41IEj3wNhZUag8KP
-	klqrIgP2vm68Kw4CPTfQEOzIWOhpvUAH0692h
-X-Google-Smtp-Source: AGHT+IECWSC29NjpRVyfbEqFo681Bx2KDaiI3DjX2JaZRc429vaQ4ogNVuwydf2RC+StSAf7pGRwTWbqEWExU16uXaY=
-X-Received: by 2002:a5d:6c61:0:b0:37d:5084:b667 with SMTP id
- ffacd0b85a97d-381f1873091mr2196958f8f.33.1731070047176; Fri, 08 Nov 2024
- 04:47:27 -0800 (PST)
+	s=arc-20240116; t=1731070096; c=relaxed/simple;
+	bh=AD8jJcdDP/sbSzXuaWn942hLnQm9QFhXa3EwbSQ26e0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DrD/nH/VrqpscZ08Fc9O6QwqND81b6a6qUldICxUwTGhL9raL4VSo2yuRu9i7T/q+N2rUKwSNJpaNlO5ZRDtshgf/wU6lVJ8ggp1Y8yJRORo9yGTEruLiTvkWh9/DTcY4oRuBbrb4wdUXgfOsI/CUJW/HhzUENWzIaF3S0m2uDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WhkIDTxa; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731070095; x=1762606095;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AD8jJcdDP/sbSzXuaWn942hLnQm9QFhXa3EwbSQ26e0=;
+  b=WhkIDTxaF8LffXCDXbR+dUMxFBM7tn15dkYJboYi6dSTLp1Hb7bVMOpp
+   GGPU6u9w3Bkr2ox8EVWbQZB+D/JrF/Ueb4SKhx8psNG1Qo7HTxI2TVES5
+   yJw09BvX0mkMB1Hv3sUuEVcUY/XWrNVo3k4FY+hEzJPjBN1Mf2zRZx8xq
+   bzwj9KAD+Hsy2kpzn7A+8Ld0rEykFXGwUySdxk6KDZvt/UOcbiX6D42Z7
+   lLRP+sbRuaPR1HGM4MC/QLgKBePIFQ4FCqvfFYqW88NaQ2/CwUpX+tcrK
+   rOyB6Qd3b+auUL3FW5RZuX2lxczgzBiOkJkxOZ20WYVRpq1HPDs47+q5J
+   w==;
+X-CSE-ConnectionGUID: mxSEO1LPQU+5c5sHYr1bqQ==
+X-CSE-MsgGUID: YpDZBu/2ReWgH51jxzWeww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="30367770"
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="30367770"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 04:48:14 -0800
+X-CSE-ConnectionGUID: FRYjcacnQ0iFl1HKhPgHXQ==
+X-CSE-MsgGUID: 1izRAXw7Sa2ZyNaOnFfqKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
+   d="scan'208";a="90411249"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 04:48:11 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t9OPH-0000000Cc4T-3siz;
+	Fri, 08 Nov 2024 14:48:07 +0200
+Date: Fri, 8 Nov 2024 14:48:07 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 1/1] x86/cpu: Make sure flag_is_changeable_p() is
+ always being used
+Message-ID: <Zy4Ih3rW7eiyFAsJ@smile.fi.intel.com>
+References: <20240910084356.1518209-1-andriy.shevchenko@linux.intel.com>
+ <Zy3Z3kYOOV3PzG8M@smile.fi.intel.com>
+ <52362D81-CE7E-4F06-AA1E-B8C55933B4B4@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104-borrow-mut-v2-0-de650678648d@gmail.com>
- <20241104-borrow-mut-v2-3-de650678648d@gmail.com> <CAH5fLgiMHE5GXQv8pSR_KYWsa44zr1o_FNrg1mj8QuTvNQmXhQ@mail.gmail.com>
- <CAJ-ks9=Ej0St7XnmvTysdnjPHh6O+4XdYFC6LouwEJR9GpUPNQ@mail.gmail.com>
- <CAH5fLgi=n-v5C4hH-+uozbiwwWCU_QGzhxfdTXfTyyy2ejJR+w@mail.gmail.com> <CAJ-ks9n8eSPsb7_RqWk-3OgtsrZquA=94uBopkdwtHuTPUisaA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9n8eSPsb7_RqWk-3OgtsrZquA=94uBopkdwtHuTPUisaA@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 8 Nov 2024 13:47:15 +0100
-Message-ID: <CAH5fLgjukqj49UHw33uJewc5Z5q=_f4uXzv2jyQ2=2eFCyWa=A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] rust: arc: split unsafe block, add missing comment
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52362D81-CE7E-4F06-AA1E-B8C55933B4B4@zytor.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Nov 8, 2024 at 1:41=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> On Fri, Nov 8, 2024 at 7:37=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
-> > You could write `unsafe { (*self.ptr.as_ptr()).refcount.get() }` to
-> > avoid the as_ref call.
->
-> Doesn't `(*self.ptr.as_ptr())` have the same problem?
+On Fri, Nov 08, 2024 at 12:50:49PM +0100, H. Peter Anvin wrote:
+> On November 8, 2024 10:29:02 AM GMT+01:00, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> >On Tue, Sep 10, 2024 at 11:42:42AM +0300, Andy Shevchenko wrote:
+> >> When flag_is_changeable_p() is unused, it prevents kernel builds
+> >> with clang, `make W=1` and CONFIG_WERROR=y:
+> >> 
+> >> arch/x86/kernel/cpu/common.c:351:19: error: unused function 'flag_is_changeable_p' [-Werror,-Wunused-function]
+> >>   351 | static inline int flag_is_changeable_p(u32 flag)
+> >>       |                   ^~~~~~~~~~~~~~~~~~~~
+> >> 
+> >> Fix this by moving core around to make sure flag_is_changeable_p() is
+> >> always being used.
+> >> 
+> >> See also commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
+> >> inline functions for W=1 build").
+> >
+> >Any comments on this? Can it be applied?
+> 
+> Incidentally, this really should be "unsigned long" rather than u32, although
+> I believe it is only used on 32 bits.
 
-It's not quite the same. Both `*ptr` and `(*ptr).field` are place
-expressions which do not inherently involve the creation of a
-reference in the way that `NonNull::as_ref` does.
+I can fix this in v4, does it warrant your Rb / Ack?
 
-Alice
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
