@@ -1,116 +1,169 @@
-Return-Path: <linux-kernel+bounces-402453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6159C27B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:45:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CE29C27B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 23:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12B10284564
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:45:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5751EB227C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 22:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033681F756F;
-	Fri,  8 Nov 2024 22:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFC41E883E;
+	Fri,  8 Nov 2024 22:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUaSoy5y"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LNGX66GS"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A66233D8B
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EF21D3625
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 22:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731105920; cv=none; b=Q0wcR437BMKwx2nIg3VntuJ6GgwwbIKZkdmsZ60AQ6qpZMCyk8L4I3i3tKDKO2FJ4pM6fBK25ERqNaJR6uI0hsUC5WIjxTATutLC6DUh4NtA+Ebj2bBdqTf/cTdD/hadQzAE68cLS2nUJsTqFUSS1Jt5f0e5rLI/mBiNTP0X/XQ=
+	t=1731105918; cv=none; b=Gr+YN0lF3dwb28/uU0NvhH1HVhosWHDAG2Ow/Y5O/ZCtzqLkwo/YcxNIm6z0cL+8SMLeVIDqpsZv5ugrqgldSGPG4eSvb06l2mg6vjgNKIk7BugfI6xj0g2jWrsdGx00k7TUfptbhwPVrIx1jc8lA3mngWRXlYHAl8QfXGu+Q7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731105920; c=relaxed/simple;
-	bh=BavrQDFzzrlWgiT5B+/qX43by6uGDYlkSI/1UzJVLrs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uoviEcxa5b8lBudsiHwzSIzW0B6G2pQ3NAIUhRhQAz56jE3ZyC86KpvcCy7KCssH75OjHw+9XiylD3xFLhJc/+3z7nEWIZV9V/DUlaboNLS6NePYuD6xF3M9/cgg4WvxkaXlyCIi6HA012+h1Kxq2XIB+YOhClYPCGutBOCBYc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hUaSoy5y; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2974743675so2545242276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 14:45:17 -0800 (PST)
+	s=arc-20240116; t=1731105918; c=relaxed/simple;
+	bh=VJOHr6pLH52nLdtup1E2zosFidmBhr4gFI+cehtqUZo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KokaevBpkl37wDwo4jqXPrcSPkaIBLMamD3k17lLT4ebWJPq/GBQ9KAC4xFgFTMzg8bHQakII82flJbbWZg2uVZB/69dherdGVNr9Zc7SeOr6HexP4gwLf68B6O4q0LujHwb6MY4r2tiM04wKctb4MBLk96mz1QZvlY5vtEikpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LNGX66GS; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30daaf5928so5170771276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 14:45:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731105916; x=1731710716; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ufwDKW4XcMz+Ec+d5o/acjOdG+Dxgj/1/6CBL/TRtWA=;
-        b=hUaSoy5yKV85TISUxaGNo5VrQXqn7i+KjH41VVIRlmgW1urUWNDWE5M+rYlMRHMEgK
-         kJdzB7n3f0AA4wn4vrig0Yo5Nb/gFSyg0dmuwAAsf8lDzsOhUlElQba4iIJFQ+JwuR3J
-         W/betgFDoJ9RbjZNm3UY1ct4Er5zx07FeuUM+y9ul00xdY5WQhD0XeoVnTD1CUVu8jch
-         dUwuerfL90G85IuKDcmKc4xDuAIsSWk6AdmJU8BM1w2F4xTpOocHnfBvv5w3oFm0mnqG
-         48q81Oj5m1PPUI91TuSa20jdmtsZERSO9QX7O7s0teA+aY6kBRY9MaAtiKcx+7vtF0Cn
-         NMNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731105916; x=1731710716;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1731105915; x=1731710715; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ufwDKW4XcMz+Ec+d5o/acjOdG+Dxgj/1/6CBL/TRtWA=;
-        b=CrdNFuuleSDAEA/VpsHI/v4rlaWC15vQDcVcrjQAMX0s9ZBFqwea8XJ1G6lhxwsnZL
-         5RYqAMl4cw5sCpvoA9Ev5gF3ZFWwwx34C068B/lSGorBnLKHwypKLQPI1qVRY9T5bk9H
-         fYVABjbK9+IKj+9JnJh9QF9wM+XgekT3Ee6VcQuHytZRU/27MgYnG9edWNGFZMVRf7RI
-         2DgfK1BBCwQWCXQKW6Xq2aviwAYzSW2P/Dhv3teIvR3HlxiDr1XW6JRD8GxKsmpPyI94
-         2u9py50IwPfQqhgFGETbyEZ5dolfiEm57yGzmQCa/zcH7WFld+qRpyop6z2vPqwFB1Rd
-         H18g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpSkkcT0A3UKxxvsBLcc8HwfwI7LuIgM1s83RcWoWPjx9TTu6jwTOYBcT8a3wnI0370JOH4RdR+e5dYV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrMu3kkbS93faLLrqYg1CUxr4v+GZvloq0DDIuPNerrHk8iPTt
-	cNPh14Sn50JJ/uRM0ykF0l3Cuex5KpwuWfzBrmATwX4hLfztgC+ShpusFBt6jGlt9mQ+kFGbLdZ
-	gJ875JyZM3yBVCjPFg2G/BD4iQ50bGXOOr7vGXQ==
-X-Google-Smtp-Source: AGHT+IGVMMFgpkuR2thRDPZH1iZPEmk+lLe5r7P6Ak8vvtQs8OAmlyimK84GVoy6TsHBmPtnknQukf+VH133Ykjo9oM=
-X-Received: by 2002:a05:6902:18ca:b0:e30:dbda:de2e with SMTP id
- 3f1490d57ef6-e337f843d3amr4784672276.2.1731105916544; Fri, 08 Nov 2024
- 14:45:16 -0800 (PST)
+        bh=k3xf4ICT1HLEEjjHW7v8PG1MES5H37LOIRN6Xle54KA=;
+        b=LNGX66GStyinrepnCe9GJnZbAGz8SLAfua6zCeq8wRvYNX1Azbb/Sj6vWvnrBwBjWA
+         HsXSk468lC0SkY3pliP7ZTVpHTo1LpBK7QVhRMxLjBifAZFji1keEsgophGKJ/M2uUSx
+         tHmTzu0j9AVBllzff66rpoG3VJwCbbRrG5ReTmu5U8tufaIFCUReawR53cRYvtnoM4P9
+         ssl1WPBSp+fIzKp0a+e+BPzqwhbnQ0FAEAbMF1TZel3dp56Pnspd8aEVfEe8LvEbAJM1
+         IaSkPSM0SOI3hUv5Ztu1rTRds4959b7QtNOdERwrtf/kOgFMgyVUeC0OK0fKAolqZhgQ
+         iQmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731105915; x=1731710715;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k3xf4ICT1HLEEjjHW7v8PG1MES5H37LOIRN6Xle54KA=;
+        b=ZYkCa/W7t8fhgZFNCpGb1bFWLp5tb+uE+fYAfxN2E97jtBIX80hGbnBap20C487OlD
+         CXr66riarI6xDqgmJNBW42ZRwiupot7rSOVxaV4/Qn/vWyWel96b596Cvh0b2+yM1SjM
+         b9MET1oTfvYYIgGg/8I0aPw+3NhF99a9mC17XqpJ0s7OU9qUoXUMRDMvZiVSORVyjIob
+         NgV69QjOnxroLK/3VdeUKsoKtDe18HeEusvFoUATuixwPOGnCTwAXq9LLFzVtZmWvqiR
+         4BwdxZbgvwU6235mgL+vRVO6afFRxwM/pV7Kf08PBR5jz/QO+uf7LZnftm7C0v5AA+Ri
+         0J9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWu8Tir9Z8G2Iu/f4KZ+VSVEYvR3AXl1Fq11sxF2kALXE4geDx/cW3sTpcovRdc9T4brnoYm0iSjPrSetk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9B6Lv789L5kagoIDe4ILL5E9pMrIiywbxpVGnrAwPGugDsiAb
+	VFzQu6xUj5UMwEGdGN42CkRax7TbqO0EsB7D8mzDkE7yQ3Yu9cZ5EjTAEYGPowFTQfeC5PXg2PQ
+	aRQ==
+X-Google-Smtp-Source: AGHT+IGCSVtE+1R9XBNFFNqX8pkttvkmLYFQyPVUgZrgW3CVTQDdGkU6v+To7f5XBAZcgJYJuQNBftfUplQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:bc84:0:b0:e2b:d0e9:1cdc with SMTP id
+ 3f1490d57ef6-e337f908f8dmr5594276.10.1731105915426; Fri, 08 Nov 2024 14:45:15
+ -0800 (PST)
+Date: Fri, 8 Nov 2024 14:45:13 -0800
+In-Reply-To: <CADrL8HU3KzDxrLsxD1+578zG6E__AjK3TMCfs-nQAnqFTZM2vQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241017-sar2130p-pdc-v1-1-cf9ccd9c37da@linaro.org>
- <t2trcojqskryzbuh6cbuqev35eioduarneskwtcm5aeeqlvbkv@3kj4x36ebkqk> <20241108211322.GA2849214-robh@kernel.org>
-In-Reply-To: <20241108211322.GA2849214-robh@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 9 Nov 2024 00:45:05 +0200
-Message-ID: <CAA8EJpp9Q7ZH3fdMsVgznp-xwUVN7EyrVPoPVRJ0Pd9Po7Anew@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: interrupt-controller: qcom,pdc: Add SAR2130P compatible
-To: Rob Herring <robh@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20241105184333.2305744-5-jthoughton@google.com>
+ <202411061526.RAuCXKJh-lkp@intel.com> <CADrL8HU3KzDxrLsxD1+578zG6E__AjK3TMCfs-nQAnqFTZM2vQ@mail.gmail.com>
+Message-ID: <Zy6UefSlo8vwHxew@google.com>
+Subject: Re: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for kvm_test_age_gfn
+ and kvm_age_gfn
+From: Sean Christopherson <seanjc@google.com>
+To: James Houghton <jthoughton@google.com>
+Cc: kernel test robot <lkp@intel.com>, Paolo Bonzini <pbonzini@redhat.com>, oe-kbuild-all@lists.linux.dev, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Wei Xu <weixugc@google.com>, Yu Zhao <yuzhao@google.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 8 Nov 2024 at 23:13, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Oct 31, 2024 at 07:34:41PM +0200, Dmitry Baryshkov wrote:
-> > On Thu, Oct 17, 2024 at 09:13:01PM +0300, Dmitry Baryshkov wrote:
-> > > Document compatible for PDC interrupt controller on SAR2130P platform.
-> > >
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/interrupt-controller/qcom,pdc.yaml | 1 +
-> > >  1 file changed, 1 insertion(+)
+On Thu, Nov 07, 2024, James Houghton wrote:
+> On Wed, Nov 6, 2024 at 3:22=E2=80=AFAM kernel test robot <lkp@intel.com> =
+wrote:
 > >
-> > Gracious ping, the patch has been acked by DT maintainers, but is still
-> > not present in linux-next and got no other reviews.
->
-> Applied.
->
-> > Krzysztof mentioned that the patch should be picked up by Bjorn, but all
-> > previous patches for PDC schema were picked up by Rob Herring or by Marc
-> > Zyngier (and one stray patch was picked up by Linus Walleij).
->
-> My preference is for it to be applied with the driver or dts changes.
-> For standalone patches, I only pick them up if the $subsystem maintainer
-> does not.
+> > Hi James,
+> >
+> > kernel test robot noticed the following build warnings:
+> >
+> > [auto build test WARNING on a27e0515592ec9ca28e0d027f42568c47b314784]
+> >
+> > url:    https://github.com/intel-lab-lkp/linux/commits/James-Houghton/K=
+VM-Remove-kvm_handle_hva_range-helper-functions/20241106-025133
+> > base:   a27e0515592ec9ca28e0d027f42568c47b314784
+> > patch link:    https://lore.kernel.org/r/20241105184333.2305744-5-jthou=
+ghton%40google.com
+> > patch subject: [PATCH v8 04/11] KVM: x86/mmu: Relax locking for kvm_tes=
+t_age_gfn and kvm_age_gfn
+> > config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/202411=
+06/202411061526.RAuCXKJh-lkp@intel.com/config)
+> > compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
+hive/20241106/202411061526.RAuCXKJh-lkp@intel.com/reproduce)
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202411061526.RAuCXKJh-l=
+kp@intel.com/
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> >    arch/x86/kvm/mmu/tdp_mmu.c: In function 'kvm_tdp_mmu_age_spte':
+> > >> arch/x86/kvm/mmu/tdp_mmu.c:1189:23: warning: ignoring return value o=
+f '__tdp_mmu_set_spte_atomic' declared with attribute 'warn_unused_result' =
+[-Wunused-result]
+> >     1189 |                 (void)__tdp_mmu_set_spte_atomic(iter, new_sp=
+te);
+> >          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~
+> >
+>=20
+> Well, I saw this compiler warning in my latest rebase and thought the
+> `(void)` would fix it. I guess the next best way to fix it would be to
+> assign to an `int __maybe_unused`. I'll do for a v9, or Sean if you're
+> going to take the series (maybe? :)), go ahead and apply whatever fix
+> you like.
 
-Understood, thank you!
+Heh, actually, the compiler is correct.  Ignoring the return value is a bug=
+.
+KVM should instead return immediately, as falling through to the tracepoint=
+ will
+log bogus information.  E.g. will show a !PRESENT SPTE, instead of whatever=
+ the
+current SPTE actually is (iter->old_spte will have been updating to the cur=
+rent
+value of the SPTE).
 
+	trace_kvm_tdp_mmu_spte_changed(iter->as_id, iter->gfn, iter->level,
+				       iter->old_spte, new_spte);
 
--- 
-With best wishes
-Dmitry
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index f5b4f1060fff..cc8ae998b7c8 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -1186,7 +1186,8 @@ static void kvm_tdp_mmu_age_spte(struct tdp_iter *ite=
+r)
+                 * It is safe for the following cmpxchg to fail. Leave the
+                 * Accessed bit set, as the spte is most likely young anywa=
+y.
+                 */
+-               (void)__tdp_mmu_set_spte_atomic(iter, new_spte);
++               if (__tdp_mmu_set_spte_atomic(iter, new_spte))
++                       return;
+        }
+=20
+        trace_kvm_tdp_mmu_spte_changed(iter->as_id, iter->gfn, iter->level,
+
 
