@@ -1,253 +1,414 @@
-Return-Path: <linux-kernel+bounces-401344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F3F9C1914
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:25:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854159C1919
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C76BB223BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E59283D59
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4731E1029;
-	Fri,  8 Nov 2024 09:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DE11E1044;
+	Fri,  8 Nov 2024 09:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="l/i8o2PQ";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="JNgide9S"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="euDqdvNw"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843644369A;
-	Fri,  8 Nov 2024 09:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731057933; cv=fail; b=IjG/wRERHXS5RshpWZp77qLzzrZbyRPnadsCCGDCxyZAENTzGpXa7VSA/iEfOqLBZQKkNksoaIv+BYbpJn9QhYKh6KrfWtubibX8nFqeTWDBkdpfVF0pWQUmgpBXxjPqP1SaDXGY5zMWFrJ7lKEN/++7saW9k5rF7m9yX069OIA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731057933; c=relaxed/simple;
-	bh=prAPN8q7MZEfGm3P5Uz+HQ2GfvEr1G2+4DkJznCqP5I=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=teOSf8izQlRcTj+/PONVPbR5iel3mlvFxwQldYdS0TKqsSxWe22Ys/atEMz+F6l51wMy3V64PUWqTUAVJzwE3bzUt2zpR6Md1D752R1vj00Hnfyuu9/ymvTPhJJ5t7RqWV7cAI+NrsZiAf5HtgD9oInpvO782jxaiSc/UDbTH0s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=l/i8o2PQ; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=JNgide9S; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 63d4c3b29db311efbd192953cf12861f-20241108
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=prAPN8q7MZEfGm3P5Uz+HQ2GfvEr1G2+4DkJznCqP5I=;
-	b=l/i8o2PQek+DbCxBmomv9xv7cJIKvj1anY+XzK5b0aBElsBNdDNuQutCMuEvASl9jyIAFBcZ/knhK3FO4nxeWrzC03QZrE7CYFM+IT4lnwcMIjBFJnzNBGH+3WeyFlIzqpwOS3miBRU6EInF9p/Iqp1CV2WBNUGt6x24272yez0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:87b54d40-e50b-4899-8090-0e662c968312,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:f827c406-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: 63d4c3b29db311efbd192953cf12861f-20241108
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1121048500; Fri, 08 Nov 2024 17:25:27 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 8 Nov 2024 17:25:25 +0800
-Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 8 Nov 2024 17:25:25 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H1IcQxv4FSGNPdRQYXB5/p0X2urmHh+wKkY/pxCK7I1hVuC7XHbKQ4L06ZsguGuJ6zP0scbmdYoJvJGsBFPMFXcnfNZ4mFGrEpZSF4g0G1dB3hqLWXgSL1rQPyoR0UNCKIRFMIU1jMeRJAu/HNAyCwA+TYrlhEr+CK5xbpSPWwBHrI72M6ZKRip46I/iFeV8WHHtVpBtMM7S3mzP9fqXs1tcRQfN3MXO7N6qbTdW5g9cMQmPsHQLW8fQ3JZ5KCBOKYdwgaBNvgh+C7ErJes3cOfswNZsRQNYsv0/FHu6m6J7QNwec2WR43+gbOOruIoGqFjCWFKAGHcYbD2o3vpU4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=prAPN8q7MZEfGm3P5Uz+HQ2GfvEr1G2+4DkJznCqP5I=;
- b=c9w5tNgGHZwcopNcWeybWspEyC97MeQDQtzjsr9y/FKH6ZPyp7vGsF0Wyf7W8VKjHEb9TPqzzLTVN74dzcN4wW8MO3Gbtb09bNBtfVamdkMqBSFlaAKz0YrBrWbDuMPTi8Eoi2C20IjJ+0G0L2MJzpEBeBv27vD0i1lH4WQwPQOExVjjkKXp82mRougu7zYOrgcOfQnoSximqesdrbz5sqsph5csXm8hBioZUpsvQ8sWKPB7vySwSJ4oWlEV5FeoDm4E4z2OYJLlRUoxgvZ6idlMQOEMrGbqQpWE3xbL0WDNLNqtBNCBhp9urt7+maNS+HFaFomRHzkfvCVMzGgbeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83E11DED5A
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731058034; cv=none; b=IFqC5ydRBznyBQCurykapfT/uWkxaL6Nrpzjxx/uwrruJsEU+mwk4cfQVdofZpCDnw7tS0vdpnRu0hTsn2HE3R0vpgNKlUPAudye1eQjaXVg6JX0lajjxDUhE0NREb0a7BCB5Gdmd55leZjdzsPKm80RWeliCba0tAe/7T0wvCw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731058034; c=relaxed/simple;
+	bh=0JfPuSR//Ox3IDk/p8jXxAWyQbIYFIyAInI4kvpg7F0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NOal1pbmR+fu6BpBkU95JI2lHfF1QQPgFJ7N2j18In8J50QO3kD0sWMD8UxcksUoEUS5iJ4zgKunukmo3PZUsJ3hlIr50LYrfHVUpseSl90sH/k1YI6vHF71PqUYkOaRlyGitCdRMXXDNuE1gi9yS/xb8ZXGtdo/9j/0FfUdAug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=euDqdvNw; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-72410cc7be9so1024029b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 01:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=prAPN8q7MZEfGm3P5Uz+HQ2GfvEr1G2+4DkJznCqP5I=;
- b=JNgide9S8YlJuKEG/1SFtZghW3g7SMKaGgF4nS8wa8VSUaKeRep0YGc4lv2loZ4J1THJ8eMjGe9K04Z+/1Gk8FLYZsmOhw5I1c+uY3VLeNGfthxNtgLoQL/qRoBnYHcflRtI5umQg1d7Ahk2wPNJNPa26DNEjmcGawoRsWRV3WQ=
-Received: from TYZPR03MB5741.apcprd03.prod.outlook.com (2603:1096:400:72::8)
- by SEZPR03MB7753.apcprd03.prod.outlook.com (2603:1096:101:128::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19; Fri, 8 Nov
- 2024 09:25:23 +0000
-Received: from TYZPR03MB5741.apcprd03.prod.outlook.com
- ([fe80::110c:1c24:758d:5daf]) by TYZPR03MB5741.apcprd03.prod.outlook.com
- ([fe80::110c:1c24:758d:5daf%6]) with mapi id 15.20.8137.018; Fri, 8 Nov 2024
- 09:25:23 +0000
-From: =?utf-8?B?Q2hyaXMgTHUgKOmZuOeomuazkyk=?= <Chris.Lu@mediatek.com>
-To: "pmenzel@molgen.mpg.de" <pmenzel@molgen.mpg.de>
-CC: "marcel@holtmann.org" <marcel@holtmann.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	=?utf-8?B?QWxsYW4gV2FuZyAo546L5a625YGJKQ==?= <Allan.Wang@mediatek.com>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"ben@decadent.org.uk" <ben@decadent.org.uk>, "linux-firmware@kernel.org"
-	<linux-firmware@kernel.org>, "johan.hedberg@gmail.com"
-	<johan.hedberg@gmail.com>, =?utf-8?B?U3RldmUgTGVlICjmnY7oppboqqAp?=
-	<steve.lee@mediatek.com>, Sean Wang <Sean.Wang@mediatek.com>,
-	=?utf-8?B?QWFyb24gSG91ICjkvq/kv4rku7Ap?= <Aaron.Hou@mediatek.com>,
-	"jwboyer@kernel.org" <jwboyer@kernel.org>, "dwmw2@infradead.org"
-	<dwmw2@infradead.org>
-Subject: Re: [PATCH v1] linux-firmware: update firmware for mediatek bluetooth
- chip (MT7920)
-Thread-Topic: [PATCH v1] linux-firmware: update firmware for mediatek
- bluetooth chip (MT7920)
-Thread-Index: AQHbMbfME8qQii/dQEKGjHAWbX5M0rKtD4YAgAANUIA=
-Date: Fri, 8 Nov 2024 09:25:23 +0000
-Message-ID: <024285d0deb37c1444b1aaa4cba64542fe4ac844.camel@mediatek.com>
-References: <20241108082515.19817-1-chris.lu@mediatek.com>
-	 <46444b60-2d1a-45c2-9a96-8352d1879516@molgen.mpg.de>
-In-Reply-To: <46444b60-2d1a-45c2-9a96-8352d1879516@molgen.mpg.de>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB5741:EE_|SEZPR03MB7753:EE_
-x-ms-office365-filtering-correlation-id: 77246f2d-34bf-49d8-e3b2-08dcffd745f2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?cFc2aElySnhYRWYzczR0Qk9sU1V5R1FzbkNDbkZ0ano5a0lSd3o2UzlyeTB3?=
- =?utf-8?B?cGNsczUvY0JJU3NBWS83VGxtS0ZzRE5VV2ltMTE0dkZRRzE2RnpGMnV1Y3gy?=
- =?utf-8?B?QkRUcmllRnE1dHVtWHhhTUF1TTJOTTU5dFdaTEZ2WnA1MnVmbENvNkhaYUZ2?=
- =?utf-8?B?ZlhyRkJlWXViUHA2eTFwZW1Xems1czQ5VzhMeEZLMzBFVyt0VlI2ZVl4ejdI?=
- =?utf-8?B?RE1KbE4vUCs4WDFhbU0vRUVQUXFKMXMyb2dKdDhTVHJCd2ZCZUhmbG5VZ3M1?=
- =?utf-8?B?K0R6MUQ3SllTdTRIdnRvQnoxS24yS3k3UGxwSy9sNFlzamdFYjRhQVdIQTdE?=
- =?utf-8?B?YmdoNElLYy9CdmFOSGYrUkNzYVRUNTFjQ2lldUtvUXhUb2ZzY3h0RDdmUVFU?=
- =?utf-8?B?Rm42Sm51S1laT2toZ3U3TmtvMkFZR2RJTlBtZUJoZ0dXbkVPRlM3SnUrekFl?=
- =?utf-8?B?Tjg4RytzeU1zM2V2Slc1UmxERmRFODRMMXJpNXpvWTI1QW5JZE40aGgxSytN?=
- =?utf-8?B?cDBXNHdUL2J5SFE4RC9pS2daL2ZhbFFFME54N1JKRHJkRFlOTm9FaGQ2elhF?=
- =?utf-8?B?MzhpcFpmN09GdmxQeFlCTG9RSHZSb3J5TldtWlBHMVNkU2FwbVFTS0h4QXpH?=
- =?utf-8?B?NnJ6VVlVK3ZUZDJkd2cxeTJta0NaQVZIVWRSVFc2OVhDQnBOMldueTcvem4z?=
- =?utf-8?B?RnArb2NvOFVyQmxOZWI5NXYzS2tMbGN0UzREcWhtRVduUGoxMGE0WXJ3Z3d2?=
- =?utf-8?B?VTcxQlRHUmFGMmt4UXNhVWlpYTZZVkVYTHgzdmdXMjJoTEJ2Y1U2Vit0S3Zo?=
- =?utf-8?B?bVcydU5qaVZMZnIzelR3UXRYWWwzMWhxTUVwREZwc29VcXBDV3RESGp4ZGhO?=
- =?utf-8?B?NkpjWE43bUJqdjlPQjNiYTVzU2lQajZ0emdJLzdscHRFejdXVng5Z0IyTHhQ?=
- =?utf-8?B?K3Y2a2FwUmk0bzcwYUtrbURFRmVrU0pDcEhWNUhrSll2OTFRSC8zUFlOZGVC?=
- =?utf-8?B?RlFoNDUySHVJMDV3R1JhYndoM1Z0dVNEdUdDeERYRXBZSHZwR1pTUzFMb25h?=
- =?utf-8?B?SXE3aVJrQ21TaXZjQ25LQ0lhcE9tT1hmVjRUeFpxbHJWSmtPenE4eXBTOGhP?=
- =?utf-8?B?ZHRTODBSRXF4a1UxTm5WQngzVG1OdTVhN2xlNVRzVm5ZNFM3eDE5TThSQVlN?=
- =?utf-8?B?S1dPY0lndGY1ZC92TjFuU3ZldFZ6aHF1eU5HNWFtV1ZEMUNVK3R5ZTV0MVVh?=
- =?utf-8?B?UkFINmF1SlBtYmhMUFkwN283TWxNVmh6Q1RDMC9XWDVrdjFObG5EL0tZRk1L?=
- =?utf-8?B?c1hMOG1YcThOMW5xUDRHZmdBelJib0ZkTVRaMXVuR1hQZFVWbldPak0yNnRv?=
- =?utf-8?B?cm5ONUdJcUNPVk01YmVob3lYQUw1TXlRWTNTOTVnb2xNQ1Yra05JRVcxa1JC?=
- =?utf-8?B?WTU2d1cyWHlCZ1ZBbEhjTG1aL2Fkak1vMWZ2ZWFoeGYwZnVhdTVoanEreSto?=
- =?utf-8?B?V2pyVlZLdno2NFpyL1d6aHZnbDFpcHhVS01wT1RveTVvUlA3aWFoNHZESHlW?=
- =?utf-8?B?WlV0alVHTHNSU1BsaUNUVFp6UXV1Y1FIVzRQTVdIY3dGR1E1MzhCbUcxQXZs?=
- =?utf-8?B?T25RYTgvUXhPa1F0N09VUVIxbUxxZm9RQ0hRbWZwUCtzY2xGN1lSS1ZEVFBD?=
- =?utf-8?B?SjdiOExZWXlEVDJYOUlUNjNqWTZOdmpSbHJsU1I0YmV0Q0JGM2pRTkFkWFZB?=
- =?utf-8?B?MGxSZ1ZacVNoWXN5dDJzdFAzZjBocmRIaXcyVDhUUEdITkx0ZmVKV3NkNkRP?=
- =?utf-8?Q?SAIxITK6gJIiclXHJaTvJjNz2q9fXCkkuoQI0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB5741.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MHNrM3dFODVhTExyNnJ6U21SaUo2L2svUmVsNkFmRllTZXJMT0pxanJPWmxk?=
- =?utf-8?B?ODZGaE5QdC9PTWtkKzlRL2ZNcjZ5Tk45bFF5Z0VWVGIvK0xpblJ1NDV3TmVL?=
- =?utf-8?B?R3M0Tzh4TDBFcWRQZkRCNzRGMmNNbHBnMHMwVVRCbTgxWE1oWC8xTmJyamN3?=
- =?utf-8?B?R2hsd2ZlSVFMVFdMd0E4VWhmRUtCdVdNN1dHQmZhSlQrUUd6bXJ4aXFGWVlZ?=
- =?utf-8?B?dFlJZWRzMmoyUjMrMWZEWklMblpuc012YWtJVmMydTFZUUphR3AyRDdyZmpE?=
- =?utf-8?B?a1JVVy9NV1A4VEtjbm5lUU5UVzdvUGdRWjJDVWhEWmhqZGdZWmNUK1pTS1hE?=
- =?utf-8?B?N3E4MlIrdlcvbi9zUnBLNTFnd2JFTkJoZGdicTVIS0JtK3VnaXlzSFpybi9K?=
- =?utf-8?B?NjFKMkc1aldPbzR3ZXZyejZRdkdFYTRGTWh2alc4RU5yQTZVNmloU0VYWDVE?=
- =?utf-8?B?V2k4QlJIRFpYd09UWmpoM2JNNFA2eXh1OHk1aXdGRkF1Z3hIeEFxd0hGbENl?=
- =?utf-8?B?dUFyMnUvM3BXREJVcVNNTlBydjRXdkFFeUQ4blRLZ2lBU3ljVFJhakFxbjJU?=
- =?utf-8?B?Qi9YeHVoazhnWHcxK0dqZUF5UmxzcitPNTN0VmxUTC9BUGV4cUk2dzE0TDJK?=
- =?utf-8?B?S25yaDZMZ3VzK09mdDIvb0c4VllnTkFwa1dJR05hYlZCRE5jL1RISFo2M0oz?=
- =?utf-8?B?ZTlUdVRTMGtrMlI2cVJkK29qRXR2TC9EYkJaK0RPWUtFWnRFL0JLTGFXd2JJ?=
- =?utf-8?B?ZzJkOGYvQjNvYmRISHUvMldJYXliNmJhTWlnM3ZQZ0haRVhUYnpXZEVLNHdR?=
- =?utf-8?B?dmxSQmNyZGhLbFdvTDVGYkJkeHBzejZhZTJFQy9UNDZ4ZjloMlduRlZOV1po?=
- =?utf-8?B?bHMwOUFiRzBYbWpVWktpRnB2cnJoUVN3c2E4OXhYYTIya3l2QXlqMTlTeTM0?=
- =?utf-8?B?VlpJOWlGS2x1RGNZYlJDaHZIQSttYmRvbVJHL1FEWitsU1RXRUY4RlZzemRI?=
- =?utf-8?B?a2ZmT3c1cXIreEZkR2dlZ3AxTkxIbHkwT1BzQ0dPT1hlRmVuRVVEZWFuZHdy?=
- =?utf-8?B?Tk56TmFHVWtJNzlWVzRDYmtCc1VScDhwQjBYd0thRGs4SkJIdEI4R3NRcyt5?=
- =?utf-8?B?TFRuck9YL0hXRDFDV1c1VFZrYXVURXUzSmxjRjMrdlo2RXIwZUxoZlJ6VkZW?=
- =?utf-8?B?NndQVEtDVUI4LzNzeUVRUUgvZndsRTloVytmalVGMUlEUHZVY2tuendzQkl3?=
- =?utf-8?B?c2VDaTdEZlBrZEJvcXFkdCtLVTZzNTB2dmNxd0Ntb0xFdUd2QkJvcmRxeTNq?=
- =?utf-8?B?R0luYlZTN0ljWmhDQ2EyTS9xMnE5dVUreG8xcC9HaGpPK3RidDlDeEV3Z1hL?=
- =?utf-8?B?M1pXYVBRVGJaVk45OGljSXB4d0VHY2tKMFBjY3BWTEtaNXo3RWsxVWd1MGt4?=
- =?utf-8?B?SmYreG9MTkpGYVQybUNhWFE3RGNDaWYxbVc5TlFUdnhIcHhCbWx6UU9HYXdP?=
- =?utf-8?B?M3FEY3RzSWRwN2ltTzZkRDZ0VEs5WVNTVk1IemhTUzAzWHd5RUoxRkE5MlFt?=
- =?utf-8?B?QjFid3pTZGxEUnVlWjRjR1p2QSt5WEx3dk1aaEpESHBDbUcxMmNJc05hbFVz?=
- =?utf-8?B?T3h6Wm5KVktOYTFlRG5BY3Y1NERGQk9VM2lyZHF6eG5aMU5qTWEwOW01b0ky?=
- =?utf-8?B?T3BSS29pbEhBVHR2TzZ2R0RZRStpVHZ6VHhCaXZPOWRKN1JTNzB6cUZuS3BX?=
- =?utf-8?B?V0o3NDFvQ29nYXJwNXNWVFFyUnVuNFVDSHJwTVZ4THNXYVk3VlNXNkNOR1F2?=
- =?utf-8?B?dDVlek5iajlxbjZGV3p3SlRDbmorcG9mc2lpZXpoV3YwbERkMkV6MHFqMVZv?=
- =?utf-8?B?TERWVXB6ZFZia1pJMi9ZSFpRU0pXdEVreFVrMHVGbDZUSVlTN2dpRUs0dERt?=
- =?utf-8?B?K1pZSG96dmhWakxvL0pGRy9qeTl3ZEc2Wmw4U0h6cVR2SHprYXZrTzdlWVVL?=
- =?utf-8?B?QlpTVDllZkY0MExjSDVVWlVkOFY0bkg5SmVuM3M5bTQ4Z09CUGppaHQyUjNO?=
- =?utf-8?B?OWt4SnJrWWw3c29oclJDZnVzY1dRSjlxN1IrZFpqN3dBNit5UUFJTFdmTnVJ?=
- =?utf-8?B?YjNkZDFPSzllOHFEWlFUV2hwcUdPWllHdDBjRm1FbWpHbVF4SEFPSk9od0ZP?=
- =?utf-8?B?ekE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D4EA684D77B4064D83D84D0B0467C46D@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1731058032; x=1731662832; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9q1imap2x5dicfp8QZRZQjF44iFkHbLDQwfee6G2R1U=;
+        b=euDqdvNw3JWafSzM0kYrtMUJx58UJyeP4JHWc9P2PUNS8U/jDVHR52TY4RwTbydVOj
+         1OfhMFfHAzVpAF3Ekn61o9161eYxfAaBAp6pAPtTVtvBzcvoQMpXbSt+B+yL5sSDXhvc
+         BbadSdXpQ3Qxf58+j6PcGdmBO/v4YwZ7zSLFE6CUDrbEtVI2It/G3tCjiXJNmafXQEtJ
+         9xtfTILdvvhstAR45z20JVUTNz5zDastEh3G3cKTMWRhRfS3+jSfCE1Vvpv0C5BaohFr
+         WLyHTZWgmN5ii/mgPEgDyfYZu9DPnKixQZYV2G7/G//VuIeMzXukjsrhQ6bzWMWMnEV5
+         ijYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731058032; x=1731662832;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9q1imap2x5dicfp8QZRZQjF44iFkHbLDQwfee6G2R1U=;
+        b=mpieo/1jH8LoTGk6daO1wl4Yysfb+Hjw29sdatSuXqziqsDEuejIjA3Wko/Sl56Py1
+         pLa/UIDd8d46wJRBaJt3aECq52xu1PX+p40CP+8kkuDq3n0Z88WbGr3aXZFwB9Vh/m8U
+         Jo0FfoE/VKBBwX7GzaAUB3z4QO2foqdl+vHH0RwEDtzKrPQIpAqvaml0uem0HHBo0l5n
+         fTh45DxN3rrIVz7ZLfa9R0xS8N0vgcL8cupSoWaVFBfIoUrHeUY6yr0fzANAFtQxnqlV
+         g9cP0639KGBHqqu+MeZh46TFqzz4wzEKxf1qCxTtJGEmodKp/lFQRbrVXF1TC7LLEAcv
+         dIOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJMWUcnrQ6op/aEyS11hCmostZPZfRGXI4dqB8Hxq8qkUDfy94QnmO7biFNvQ3wR/M7T5FzY2iikHRWKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWaAWndDOb8KBYaNEm5SWul3pCb46yDzrLDvI9FP0Tx+IXHHYN
+	AYSN5YdhH78n+xVhCoLVAiPAe0ddPAD1ouHUldJCaP6fA3cND9uJbYJCpl/QgY29nYXwcvMhaOk
+	F5b2fhkodGulB13eH2UYn+dc+emP4yCWK8uxO8w==
+X-Google-Smtp-Source: AGHT+IHlqEjg3vAb6i6NtODYcVoi8ABou2tkEIcV4wZAxYse2Saa04JszeFNiq06piHhncOCWDA6Vbu//Gx264ZWGl8=
+X-Received: by 2002:a05:6a20:7faa:b0:1d0:2531:b2b9 with SMTP id
+ adf61e73a8af0-1dc22b00bd8mr3041468637.36.1731058032049; Fri, 08 Nov 2024
+ 01:27:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB5741.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77246f2d-34bf-49d8-e3b2-08dcffd745f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2024 09:25:23.6333
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: blFwqXmIZ7JB2+V2/84xh2OTY9H4fHu50JMRssPQR/MiIXuuXyAOGJ5KqI8HGBeS6ngLsATnIHTmLLX35jA90A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7753
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--30.080800-8.000000
-X-TMASE-MatchedRID: eVEkOcJu0F6nykMun0J1wpmug812qIbzju+GX08gELD7I1hjCeCvFh4u
-	a24ul9odYS4zoKmh97jlPWOZdnoFfID/Mgy7K7lHvHKClHGjjr2cyCGZko2aplVqIv0mjuMGgx0
-	sFCXnAdqiwVDL24OU/lVh7jl/wmldE6qoNXpB3JxgP1dNF1ow7XN3sLsG0mhunAsoIr/AIn1vKp
-	xZPgVlFys4ktrMjxBCUxh2ckoDQVl0V8DAplF7wbCvlllU7Dl1/duHe/ZmXJnJyYU2J054PVKTe
-	W+F3fxdtKmFsO4nVm4XRUhFNMQDTqe6BbWZGzO0j2FGM19l45e+1Vx7rDn4r8ANrY4Rqb7GRRZI
-	1R6hQzbQGlxIVvV/XpGTpe1iiCJq0u+wqOGzSV1WdFebWIc3VsRB0bsfrpPI6T/LTDsmJmg=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--30.080800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	CD23A28C14A774CF2110F303E6C598256FFE50F3F729F244C59E90CEC62198762000:8
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org> <22c7f8cb-41a1-4004-9017-fb9a313f80ae@arm.com>
+In-Reply-To: <22c7f8cb-41a1-4004-9017-fb9a313f80ae@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 8 Nov 2024 10:27:00 +0100
+Message-ID: <CAKfTPtBjc+x0_8uGEp=f8nJxP0t2Z86kpjSEBY8HdDfa44ZF3g@mail.gmail.com>
+Subject: Re: [PATCH 0/5] sched/fair: Rework EAS to handle more cases
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
+	hongyan.xia2@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgUGF1bCwNCg0KVGhhbmtzIGZvciB5b3VyIHJlc3BvbnNlLg0KSSdsbCBzZW5kIGEgdjIgdG8g
-dXBkYXRlIGNvbW1pdCBtZXNzYWdlIGJhc2VkIG9uIHlvdXIgc3VnZ2VzdGlvbnMuDQoNCk9uIEZy
-aSwgMjAyNC0xMS0wOCBhdCAwOTozNyArMDEwMCwgUGF1bCBNZW56ZWwgd3JvdGU6DQo+IEV4dGVy
-bmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRz
-IHVudGlsDQo+IHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBzZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+
-IA0KPiANCj4gRGVhciBDaHJpcywNCj4gDQo+IFRoYW5rIHlvdSBmb3IgeW91ciBwYXRjaC4gTWF5
-YmUgaW5jbHVkZSB0aGUgdmVyc2lvbiBpbiB0aGUNCj4gc3VtbWFyeS90aXRsZT8gYGxpbnV4LWZp
-cm13YXJlYCBhbHNvIHNlZW1zIHJlZHVuZGFudC4gTWF5YmU6DQo+IA0KPiBtZWRpYXRlayBNVDc5
-MjA6IFVwZGF0ZSBCVF9SQU1fQ09ERV9NVDc5NjFfMWFfMl9oZHIgdG8gMjAyNDExMDQwOTEyNDYN
-Cj4gDQo+IG1lZGlhdGVrIE1UNzkyMDogVXBkYXRlIEJUX1JBTV9DT0RFX01UNzk2MV8xYV8yX2hk
-ciBmcm9tDQo+IDIwMjQwOTMwMTExNDU3DQo+IHRvIDIwMjQxMTA0MDkxMjQ2DQo+IA0KU3VyZSwg
-J2xpbnV4LWZpcm13YXJlJyBpcyByZWR1bmRhbnQuIFdlJ2xsIHJlbW92ZSB0aGF0IGluIHRoZSBm
-dXR1cmUuDQoNCj4gQW0gMDguMTEuMjQgdW0gMDk6MjUgc2NocmllYiBDaHJpcyBMdToNCj4gPiBV
-cGRhdGUgYmluYXJ5IGZpcm13YXJlIGZvciBNVDc5MjAgQlQgZGV2aWNlcy4NCj4gPiANCj4gPiBG
-aWxlOiBtZWRpYXRlay9CVF9SQU1fQ09ERV9NVDc5NjFfMWFfMl9oZHIuYmluDQo+IA0KPiBUaGUg
-c3VtbWFyeSBzYXlzIE1UNzkyMCwgYnV0IHRoZSBmaWxlIG5hbWUgaGFzIE1UNzk2MS4gSXMgTVQ3
-OTYxIGENCj4gcGFydA0KPiBvZiBNVDc5MjA/DQo+IA0KDQpNVDc5MjAgaXMgdGhlIG1vZGVsIG5h
-bWUgb24gdGhlIG1hcmtldCB3aGljaCBpcyBNVDc5NjFfMWEuDQoNCj4gPiBWZXJzaW9uOiAyMDI0
-MTEwNDA5MTI0Ng0KPiANCj4gSXTigJlkIGJlIGdyZWF0IGlmIHlvdSBhZGRlZCBhIGNoYW5nZS1s
-b2cuDQo+IA0KV2UnbGwgdXBkYXRlcyB0aGUgZmlybXdhcmUgd2l0aCBXaS1GaSBtb2R1bGUgYXQg
-dGhlIHNhbWUgdGltZSBpZiBlaXRoZXINCm9mIG1vZHVsZXMgaGFzIGFueSBmaXggbmVlZCB0byBi
-ZSB1cHN0cmVhbS4NCg0KSXQncyBhIHJvdXRpbmUgdXBkYXRlIHRvIE1UNzkyMCBCbHVldG9vdGgg
-c2lkZS4NCg0KPiA+IFNpZ25lZC1vZmYtYnk6IENocmlzIEx1IDxjaHJpcy5sdUBtZWRpYXRlay5j
-b20+DQo+ID4gLS0tDQo+ID4gICBXSEVOQ0UgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHwgICAyICstDQo+ID4gICBtZWRpYXRlay9CVF9SQU1fQ09ERV9NVDc5NjFfMWFfMl9oZHIu
-YmluIHwgQmluIDQ5MzgwOSAtPiA0OTM4MDkNCj4gPiBieXRlcw0KPiA+ICAgMiBmaWxlcyBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gDQo+IEtpbmQgcmVnYXJk
-cywNCj4gDQo+IFBhdWwNCg==
+Hi Pierre,
+
+On Thu, 7 Nov 2024 at 11:14, Pierre Gondois <pierre.gondois@arm.com> wrote:
+>
+> Hello Vincent,
+> Related to feec(), but not to this patchset, I think there might be a
+> concurrency issue while running feec().
+
+yes, this is a know limitation
+
+>
+> Feec() doesn't have any locking mechanism. This means that multiple CPUs
+> might run the function at the same time.
+
+this is done on purpose as we don't want to lock and slow down the wakeup path
+
+> If:
+> - 2 tasks with approximately the same utilization wake up at the same time
+> - some space on an energy efficient CPU is available
+> feec() will likely select the same target for the 2 tasks.
+
+yes
+
+>
+> Once feec() determined a target for a task, util signals are updated in
+> enqueue_task_fair(). The delta between running feec() <-> enqueue_task_fair()
+> is ~20us (on a Pixel6). This is not much, but this still allows some other
+
+20us is quite long. this is the worst case on little core lowest freq ?
+
+> CPUs to run feec() util signals that will be wrong in no time.
+>
+> Note that it is also possible for one CPU to run feec() for 2 different tasks,
+> decide to migrate the 2 tasks to another target CPU, and then start enqueueing
+> the tasks. Meaning one single CPU will run feec() using util signals it knows
+> are wrong.
+
+isn't this case serialized because cpu selection for next task will
+happen after enqueuing the 1st one
+
+>
+> The issue is problematic as it creates some instability. Once a
+> 'parallel selection' is done, the following scenarios can happen:
+> - the system goes overutilized, and EAS is disabled
+> - a frequency spike happen to handle the unexpected load.
+>    Then the perf. domain becomes less energy efficient compared to other
+>    perf. domains, and tasks are migrated out of this perf. domain
+>
+> I made the following prototype to avoid 'parallel selections'. The goal here
+> is to tag CPUs that are under pending migration.
+> A target CPU is tagged as 'eas_pending_enqueue' at the end of feec(). Other
+> CPUs should therefore not consider this CPU as valid candidate.
+>
+> The implementation is a bit raw, but it gives some good results. Using rt-app
+> workloads, and trying not to have tasks waking up at the same timing during
+> the whole test:
+> Workload1:
+> N tasks with a period of 16ms and a util of 4/8. Each task starts with a
+> 4ms delay. Each workload lasts 20s and is run over 5 iterations.
+>
+> Workload2:
+> N tasks with a period of (8 +n)ms and a util of 4/8. I.e. the first task
+> has a period of 8ms, the second task a period of 9ms, etc. Each workload lasts
+> 20s and is run over 5 iterations.
+>
+> Are presented:
+> - the measured energy consumed, according to the Pixel6 energy meters
+> - the estimated energy consumed, lisa uses the util signals along with
+>    the CPU frequencies and the Energy Model to do an estimation.
+> - the amount of time spent in the overutilized state, in percentage.
+>
+> ------
+>
+> Workload1:
+>
+> Measured energy:
+> +------+-------+--------------+--------------+------------+
+> | util | count | without      | with         | ratio      |
+> +------+-------+--------------+--------------+------------+
+> | 4    | 8     | 3220.970324  | 3312.097508  | 2.829184   |
+> | 4    | 12    | 5942.486726  | 5016.106047  | -15.589108 |
+> | 4    | 16    | 10412.26692  | 10017.633658 | -3.79008   |
+> | 8    | 8     | 7524.271751  | 7479.451427  | -0.595677  |
+> | 8    | 12    | 14782.214144 | 14567.282266 | -1.45399   |
+> | 8    | 16    | 21452.863497 | 19561.143385 | -8.818031  |
+> +------+-------+--------------+--------------+------------+
+> Std:
+> +------+-------+-------------+-------------+
+> | util | count | without     | with        |
+> +------+-------+-------------+-------------+
+> | 4    | 8     | 165.563394  | 48.903514   |
+> | 4    | 12    | 518.609612  | 81.170952   |
+> | 4    | 16    | 329.729882  | 192.739245  |
+> | 8    | 8     | 105.144497  | 336.796522  |
+> | 8    | 12    | 384.615323  | 339.86986   |
+> | 8    | 16    | 1252.735561 | 2563.268952 |
+> +------+-------+-------------+-------------+
+>
+> Estimated energy:
+> +------+-------+-----------+-----------+------------+
+> | util | count | without   | with      | ratio      |
+> +------+-------+-----------+-----------+------------+
+> | 4    | 8     | 1.4372e10 | 1.2791e10 | -11.000273 |
+> | 4    | 12    | 3.1881e10 | 2.3743e10 | -25.526193 |
+> | 4    | 16    | 5.7663e10 | 5.4079e10 | -6.215679  |
+> | 8    | 8     | 2.5622e10 | 2.5337e10 | -1.109823  |
+> | 8    | 12    | 6.4332e10 | 6.9335e10 | 7.776814   | [1]
+> | 8    | 16    | 9.5285e10 | 8.2331e10 | -13.594508 |
+> +------+-------+-----------+-----------+------------+
+> Std:
+> +------+-------+----------+-----------+
+> | util | count | without  | with      |
+> +------+-------+----------+-----------+
+> | 4    | 8     | 1.3896e9 | 5.4265e8  |
+> | 4    | 12    | 4.7511e9 | 5.1521e8  |
+> | 4    | 16    | 3.5486e9 | 1.2625e9  |
+> | 8    | 8     | 3.0033e8 | 2.3168e9  |
+> | 8    | 12    | 8.7739e9 | 3.0743e9  |
+> | 8    | 16    | 6.7982e9 | 2.2393e10 |
+> +------+-------+----------+-----------+
+>
+> Overutilized ratio (in % of the 20s test):
+> +------+-------+-----------+-----------+------------+
+> | util | count | without   | with      | ratio      |
+> +------+-------+-----------+-----------+------------+
+> | 4    | 8     | 0.187941  | 0.015834  | -91.575158 |
+> | 4    | 12    | 0.543073  | 0.045483  | -91.624815 |
+> | 4    | 16    | 8.510734  | 8.389077  | -1.429448  |
+> | 8    | 8     | 1.056678  | 0.876095  | -17.089643 |
+> | 8    | 12    | 36.457757 | 9.260862  | -74.598378 | [1]
+> | 8    | 16    | 72.327933 | 78.693558 | 8.801061   |
+> +------+-------+-----------+-----------+------------+
+> Std:
+> +------+-------+-----------+-----------+
+> | util | count | without   | with      |
+> +------+-------+-----------+-----------+
+> | 4    | 8     | 0.232077  | 0.016531  |
+> | 4    | 12    | 0.338637  | 0.040252  |
+> | 4    | 16    | 0.729743  | 6.368214  |
+> | 8    | 8     | 1.702964  | 1.722589  |
+> | 8    | 12    | 34.436278 | 17.314564 |
+> | 8    | 16    | 14.540217 | 33.77831  |
+> +------+-------+-----------+-----------+
+>
+> ------
+>
+> Workload2:
+>
+> Measured energy:
+> +------+-------+--------------+--------------+-----------+
+> | util | count | without      | with         | ratio     |
+> +------+-------+--------------+--------------+-----------+
+> | 4    | 8     | 3357.578785  | 3324.890715  | -0.973561 |
+> | 4    | 12    | 5024.573746  | 4903.394533  | -2.411731 |
+> | 4    | 16    | 10114.715431 | 9762.803821  | -3.479204 |
+> | 8    | 8     | 7485.230678  | 6961.782086  | -6.993086 |
+> | 8    | 12    | 13720.482516 | 13374.765825 | -2.519712 |
+> | 8    | 16    | 24846.806317 | 24444.012805 | -1.621108 |
+> +------+-------+--------------+--------------+-----------+
+> Std:
+> +------+-------+------------+------------+
+> | util | count | without    | with       |
+> +------+-------+------------+------------+
+> | 4    | 8     | 87.450628  | 76.955783  |
+> | 4    | 12    | 106.062839 | 116.882891 |
+> | 4    | 16    | 182.525881 | 172.819307 |
+> | 8    | 8     | 874.292359 | 162.790237 |
+> | 8    | 12    | 151.830636 | 339.286741 |
+> | 8    | 16    | 904.751446 | 154.419644 |
+> +------+-------+------------+------------+
+>
+> Estimated energy:
+> +------+-------+-----------+-----------+------------+
+> | util | count | without   | with      | ratio      |
+> +------+-------+-----------+-----------+------------+
+> | 4    | 8     | 1.4778e10 | 1.4805e10 | 0.184658   |
+> | 4    | 12    | 2.6105e10 | 2.5485e10 | -2.374486  |
+> | 4    | 16    | 5.8394e10 | 5.7177e10 | -2.083208  |
+> | 8    | 8     | 3.0275e10 | 2.5973e10 | -14.211178 |
+> | 8    | 12    | 7.0616e10 | 6.9085e10 | -2.168347  |
+> | 8    | 16    | 1.3133e11 | 1.2891e11 | -1.839725  |
+> +------+-------+-----------+-----------+------------+
+> Std:
+> +------+-------+----------+----------+
+> | util | count | without  | with     |
+> +------+-------+----------+----------+
+> | 4    | 8     | 3.5449e8 | 8.2454e8 |
+> | 4    | 12    | 9.4248e8 | 1.1364e9 |
+> | 4    | 16    | 8.3240e8 | 1.2084e9 |
+> | 8    | 8     | 9.0364e9 | 5.0381e8 |
+> | 8    | 12    | 9.9112e8 | 3.0836e9 |
+> | 8    | 16    | 4.9429e8 | 1.9533e9 |
+> +------+-------+----------+----------+
+>
+> Overutilized ratio (in % of the 20s test):
+> +------+-------+-----------+----------+------------+
+> | util | count | without   | with     | ratio      |
+> +------+-------+-----------+----------+------------+
+> | 4    | 8     | 0.154992  | 0.049429 | -68.108419 |
+> | 4    | 12    | 0.132593  | 0.061762 | -53.420202 |
+> | 4    | 16    | 6.798091  | 4.606102 | -32.244179 |
+> | 8    | 8     | 1.360703  | 0.174626 | -87.166465 |
+> | 8    | 12    | 0.519704  | 0.250469 | -51.805502 |
+> | 8    | 16    | 12.114269 | 8.969281 | -25.961019 |
+> +------+-------+-----------+----------+------------+
+> Std:
+> +------+-------+----------+----------+
+> | util | count | without  | with     |
+> +------+-------+----------+----------+
+> | 4    | 8     | 0.212919 | 0.036856 |
+> | 4    | 12    | 0.069696 | 0.060257 |
+> | 4    | 16    | 0.63995  | 0.542028 |
+> | 8    | 8     | 2.158079 | 0.211775 |
+> | 8    | 12    | 0.089159 | 0.187436 |
+> | 8    | 16    | 0.798565 | 1.669003 |
+> +------+-------+----------+----------+
+>
+> ------
+>
+> Analysis:
+>
+> - [1]
+> Without the patch, 2 tasks end up on one little CPU. This consumes
+> less energy than using the medium/big CPU according to the energy model,
+> but EAS should not be capable of doing such task placement as the little
+> CPU becomes overutilized.
+> Without the patch, the system is overutilized a lot more than with the patch.
+>
+> -
+> Looking at the overutilized ratio, being overutilized 0.5% of the time or
+> 0.05% of the time might seem close, but it means that EAS ended up
+> doing a bad task placement multiple, independent times.
+>
+> -
+> The overutilized ratio should be checked along the energy results as it
+> shows how much EAS was involved in the task placement.
+>
+> -
+> Overall, the energy consumed is less. The quantity of energy saved varies
+> with the workload.
+>
+> ------
+>
+> On another note, I wanted to ask if there would be a v2 of this present
+> patchset (sched/fair: Rework EAS to handle more cases),
+
+yes, I have been side tracked by other stuff since LPC and haven't
+been able to finalize test on v2 but it's ongoing
+
+>
+> Regards,
+> Pierre
+>
+> ------
+>
+>
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index bb343136ddd0..812d5bf88875 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -1592,6 +1592,12 @@ struct task_struct {
+>          struct user_event_mm            *user_event_mm;
+>   #endif
+>
+> +       /*
+> +        * Keep track of the CPU feec() migrated this task to.
+> +        * There is a per-cpu 'eas_pending_enqueue' value to reset.
+> +        */
+> +       int eas_target_cpu;
+> +
+>          /*
+>           * New fields for task_struct should be added above here, so that
+>           * they are included in the randomized portion of task_struct.
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index c157d4860a3b..34911eb059cf 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6945,6 +6945,8 @@ requeue_delayed_entity(struct sched_entity *se)
+>          se->sched_delayed = 0;
+>   }
+>
+> +DEFINE_PER_CPU(atomic_t, eas_pending_enqueue);
+> +
+>   /*
+>    * The enqueue_task method is called before nr_running is
+>    * increased. Here we update the fair scheduling stats and
+> @@ -7064,6 +7066,11 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>                  check_update_overutilized_status(rq);
+>
+>   enqueue_throttle:
+> +       if (p->eas_target_cpu != -1) {
+> +               atomic_set(&per_cpu(eas_pending_enqueue, p->eas_target_cpu), 0);
+> +               p->eas_target_cpu = -1;
+> +       }
+> +
+>          assert_list_leaf_cfs_rq(rq);
+>
+>          hrtick_update(rq);
+> @@ -8451,6 +8458,11 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+>                          if (!cpumask_test_cpu(cpu, p->cpus_ptr))
+>                                  continue;
+>
+> +                       /* Skip this CPU as its util signal will be invalid soon. */
+> +                       if (atomic_read(&per_cpu(eas_pending_enqueue, cpu)) &&
+> +                           cpu != prev_cpu)
+> +                               continue;
+> +
+>                          util = cpu_util(cpu, p, cpu, 0);
+>                          cpu_cap = capacity_of(cpu);
+>
+> @@ -8560,6 +8572,17 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
+>              ((best_fits < 0) && (best_actual_cap > prev_actual_cap)))
+>                  target = best_energy_cpu;
+>
+> +       /*
+> +        *'Lock' the target CPU if there is a migration. Prevent other feec()
+> +        * calls to use the same target CPU until util signals are not updated.
+> +        */
+> +       if (prev_cpu != target) {
+> +               if (!atomic_cmpxchg_acquire(&per_cpu(eas_pending_enqueue, target), 0, 1))
+> +                       p->eas_target_cpu = target;
+> +               else
+> +                       target = prev_cpu;
+> +       }
+> +
+>          return target;
+>
+>   unlock:
 
