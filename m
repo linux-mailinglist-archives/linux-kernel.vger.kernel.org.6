@@ -1,158 +1,234 @@
-Return-Path: <linux-kernel+bounces-401045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE0F9C1554
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:14:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DA49C155D
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7993B2231D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:14:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B810528400A
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4261D097F;
-	Fri,  8 Nov 2024 04:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF2E1C7B8F;
+	Fri,  8 Nov 2024 04:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QMJJ5uvD"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l7jvja/9"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51701D0143
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9F817996
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731039218; cv=none; b=hfhk2PZ5HrsIREBqOp2dWG9M68VELcT8r64uPHoqRHwErFUjpX6aCEqf36qGOp4s2ki1O8WK02WZqFAdhNhnu209g4QECpbwxCJgIEe7jU+7Rb2v4mNZbjjtWZtKX8jhnF38O0D9+WLDw/S7RiE/VafOcFoQ9h182YjWxIw8rns=
+	t=1731039643; cv=none; b=av61xocLP5jZkvziqFnVIiaVT8zq+MCBUFrxqMJS81I2FuaxfjpfNx7LygU1C04ST8cNcupObUNA/5kjt/Rg4wLIPO2vuEUofvztgLTze64/Jr5D4xaAthe+HR+inrEiVfLV8bjcTboqbpkDqbKSPenkkJOwplAEFeqzUn9+m5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731039218; c=relaxed/simple;
-	bh=TC8NDwoOUMeA/My5O/A8g5mi2sVobB8mozFqxOI+boY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bqLeI6KpDkx4pk2Nhv0BC3a4bq6KFN2/6g1Xx8b6+BK0KleI1I/HYwJ7XZNGmC8sSr5+wUpSTb/ga01qcM1413z/whw1gJ3qItFCwLNcV10G0WPIrO4xdVOYImzH7NC9xqabunWc75M9t07aiLh2pS/i/eW39psG8WUTaMz+BJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QMJJ5uvD; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731039208; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=ZMgQiGlmb/wE6nW4qxF+A3bZ7Id2I6Bajbakd8brhAI=;
-	b=QMJJ5uvDLvcQ59uDe4rhb6psDskUZfYEmx7Z5vYS+YDUxMjT0UWg9+BXpwReBewdT2bMYvGcbbzIVS2z3unIfoUf1Zs00s6/b+grz2Ayaq9l6A7VRg5w6Sqblnj9VCER1vSXzC6cE4rz0oVGsp8eyWmh34yjN+l0QhVjiwcv/N4=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WIxRHWz_1731039206 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 08 Nov 2024 12:13:26 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] docs: tmpfs: update the huge folios policy for tmpfs and shmem
-Date: Fri,  8 Nov 2024 12:12:58 +0800
-Message-Id: <f392b852007cc088d932f1ee326afb90f9c27a73.1731038280.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
-References: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1731039643; c=relaxed/simple;
+	bh=YodfxzMhXROdNig5kcqg4w3VAHmnkaIJsEpWcMyT8qQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O9w0ATd0haYaBfBB1oVkdDw2vcSRKdfGLd/4Jc37Aq4uvJuNxV7IqKVzbT1j5nUSQA1tsjbgvC0p27Ta74A0QmU78ratk9lx/jSdEJ3zT6y6Wom4ba0l6O5BJiAD0NshtXh8Toz+uL3VK+tVaMoE3398hikEdLr1RyVG6usjSqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l7jvja/9; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1785269e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 20:20:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731039639; x=1731644439; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zEWziAM5vGxUZErinOfDkgBc9AdFxegHOYFNZYJiUGk=;
+        b=l7jvja/9eRnrdw+ei+6Six2iE6R09VzzXR/56AzJbfRPbpjr4SSYhicgBsUK2XwYSO
+         pI/9hSRybbVFTNKEVNz2A+cEU0Wb/bURmDnzubxGHi9FK4wi8fc02mj2HSmLKCVkS+Hf
+         BohUWvCqkm1h88qPmU5NSJwqNQ6aRMxI/nPww=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731039639; x=1731644439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zEWziAM5vGxUZErinOfDkgBc9AdFxegHOYFNZYJiUGk=;
+        b=sRoRRke5Czrmex6ogGFqySUKvH7bi8OCWvgKHPBlgTlDYnXHORcbk0O4pw1Y1dfYi1
+         L/bd9QP4e87zALMrjPrHdFuOP6OOLRgJbWoDSBvzZUgVnlZvlWvDafcpTxcQEyMx/7Qd
+         goPyDqy06HKMTPbGjRTd4rb70M8npVXUUo3IwwtzCa0vm1LMzUL6jZSPWD7+89H1/qfI
+         f1MbCmVEize70lE7gptH9eTRrM9O32UrWm5y/qsQNVwHZaZ4qY++GeOVdLJ5ruAZTtLh
+         TZNpyfG7IoYH+jssAEOjfsSd2R18rxyv4/yNQhmrDl5goEVO4OUZB/17BTWkomclwWsy
+         T6bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUs1QZyzGgkhfkAUaUQQ0dGu/bcq1gPaw6//GqYgGRSCZXjZIpcWS0smi+I2ORkvow6TJiPkdey2VLdCsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmFhtqG+M1sAfWe9DpOJ05+IXCBpUZ/3lg4H2QNv77JJm1ha3k
+	kF7EUO+sSWPmXUuEJa7mCfuBK8lQYN+NLLC6B0ghNz4zA4N1iQnVWitxVqnxxmyuOjrnJq/LuLo
+	1+77N1lAOtlk1bj3Fgg4sUggDyduhRlD+6Zy2
+X-Google-Smtp-Source: AGHT+IE4XZ04YFjPUEEL0D8wcmr49KGT/Fc8Oa+piPRCpeewhZIE7Cc2kejtZ9Oe/D6WW+a2IwuOeZhBz5+WWTsy8s0=
+X-Received: by 2002:ac2:4e13:0:b0:539:ea0f:cc43 with SMTP id
+ 2adb3069b0e04-53d862c6f1amr560775e87.19.1731039639002; Thu, 07 Nov 2024
+ 20:20:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241108033219.19804-1-yunfei.dong@mediatek.com> <20241108033219.19804-4-yunfei.dong@mediatek.com>
+In-Reply-To: <20241108033219.19804-4-yunfei.dong@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 8 Nov 2024 12:20:28 +0800
+Message-ID: <CAGXv+5GgoSxGM9whwaL3jEUCEoxhTr6UsUdRH8BpBG3UUqDP1A@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] media: mediatek: vcodec: Get SRC buffer from
+ bitstream instead of M2M
+To: Yunfei Dong <yunfei.dong@mediatek.com>
+Cc: =?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Sebastian Fricke <sebastian.fricke@collabora.com>, 
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>, 
+	Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>, 
+	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: David Hildenbrand <david@redhat.com>
+On Fri, Nov 8, 2024 at 11:32=E2=80=AFAM Yunfei Dong <yunfei.dong@mediatek.c=
+om> wrote:
+>
+> Getting the SRC buffer from M2M will pick a different than the one
+> used for current decode operation when the SRC buffer is removed
+> from ready list.
+>
+> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
 
-Update the huge folios policy for tmpfs and shmem.
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 52 +++++++++++++++-------
- 1 file changed, 36 insertions(+), 16 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index 5034915f4e8e..2a7705bf622d 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -352,8 +352,21 @@ default to ``never``.
- Hugepages in tmpfs/shmem
- ========================
- 
--You can control hugepage allocation policy in tmpfs with mount option
--``huge=``. It can have following values:
-+Traditionally, tmpfs only supported a single huge page size ("PMD"). Today,
-+it also supports smaller sizes just like anonymous memory, often referred
-+to as "multi-size THP" (mTHP). Huge pages of any size are commonly
-+represented in the kernel as "large folios".
-+
-+While there is fine control over the huge page sizes to use for the internal
-+shmem mount (see below), ordinary tmpfs mounts will make use of all available
-+huge page sizes without any control over the exact sizes, behaving more like
-+other file systems.
-+
-+tmpfs mounts
-+------------
-+
-+The THP allocation policy for tmpfs mounts can be adjusted using the mount
-+option: ``huge=``. It can have following values:
- 
- always
-     Attempt to allocate huge pages every time we need a new page;
-@@ -374,13 +387,9 @@ The default policy is ``never``.
- ``huge=never`` will not attempt to break up huge pages at all, just stop more
- from being allocated.
- 
--There's also sysfs knob to control hugepage allocation policy for internal
--shmem mount: /sys/kernel/mm/transparent_hugepage/shmem_enabled. The mount
--is used for SysV SHM, memfds, shared anonymous mmaps (of /dev/zero or
--MAP_ANONYMOUS), GPU drivers' DRM objects, Ashmem.
--
--In addition to policies listed above, shmem_enabled allows two further
--values:
-+In addition to policies listed above, the sysfs knob
-+/sys/kernel/mm/transparent_hugepage/shmem_enabled will affect the
-+allocation policy of tmpfs mounts, when set to the following values:
- 
- deny
-     For use in emergencies, to force the huge option off from
-@@ -388,13 +397,24 @@ deny
- force
-     Force the huge option on for all - very useful for testing;
- 
--Shmem can also use "multi-size THP" (mTHP) by adding a new sysfs knob to
--control mTHP allocation:
--'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled',
--and its value for each mTHP is essentially consistent with the global
--setting.  An 'inherit' option is added to ensure compatibility with these
--global settings.  Conversely, the options 'force' and 'deny' are dropped,
--which are rather testing artifacts from the old ages.
-+shmem / internal tmpfs
-+----------------------
-+The mount internal tmpfs mount is used for SysV SHM, memfds, shared anonymous
-+mmaps (of /dev/zero or MAP_ANONYMOUS), GPU drivers' DRM  objects, Ashmem.
-+
-+To control the THP allocation policy for this internal tmpfs mount, the
-+sysfs knob /sys/kernel/mm/transparent_hugepage/shmem_enabled and the knobs
-+per THP size in
-+'/sys/kernel/mm/transparent_hugepage/hugepages-<size>kB/shmem_enabled'
-+can be used.
-+
-+The global knob has the same semantics as the ``huge=`` mount options
-+for tmpfs mounts, except that the different huge page sizes can be controlled
-+individually, and will only use the setting of the global knob when the
-+per-size knob is set to 'inherit'.
-+
-+The options 'force' and 'deny' are dropped for the individual sizes, which
-+are rather testing artifacts from the old ages.
- 
- always
-     Attempt to allocate <size> huge pages every time we need a new page;
--- 
-2.39.3
-
+> ---
+>  .../vcodec/decoder/vdec/vdec_av1_req_lat_if.c | 25 +++++++------------
+>  .../vcodec/decoder/vdec/vdec_vp9_req_lat_if.c | 24 ++++++------------
+>  2 files changed, 17 insertions(+), 32 deletions(-)
+>
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av=
+1_req_lat_if.c
+> index 90217cc8e242..0e1469effeb5 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_av1_req_la=
+t_if.c
+> @@ -1060,24 +1060,20 @@ static inline void vdec_av1_slice_vsi_to_remote(s=
+truct vdec_av1_slice_vsi *vsi,
+>         memcpy(remote_vsi, vsi, sizeof(*vsi));
+>  }
+>
+> -static int vdec_av1_slice_setup_lat_from_src_buf(struct vdec_av1_slice_i=
+nstance *instance,
+> -                                                struct vdec_av1_slice_vs=
+i *vsi,
+> -                                                struct vdec_lat_buf *lat=
+_buf)
+> +static void vdec_av1_slice_setup_lat_from_src_buf(struct vdec_av1_slice_=
+instance *instance,
+> +                                                 struct vdec_av1_slice_v=
+si *vsi,
+> +                                                 struct mtk_vcodec_mem *=
+bs,
+> +                                                 struct vdec_lat_buf *la=
+t_buf)
+>  {
+> -       struct vb2_v4l2_buffer *src;
+> +       struct mtk_video_dec_buf *src_buf_info;
+>         struct vb2_v4l2_buffer *dst;
+>
+> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
+> -       if (!src)
+> -               return -EINVAL;
+> -
+> -       lat_buf->vb2_v4l2_src =3D src;
+> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>
+>         dst =3D &lat_buf->ts_info;
+> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
+> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, dst, true);
+>         vsi->frame.cur_ts =3D dst->vb2_buf.timestamp;
+> -
+> -       return 0;
+>  }
+>
+>  static short vdec_av1_slice_resolve_divisor_32(u32 D, short *shift)
+> @@ -1724,10 +1720,7 @@ static int vdec_av1_slice_setup_lat(struct vdec_av=
+1_slice_instance *instance,
+>         struct vdec_av1_slice_vsi *vsi =3D &pfc->vsi;
+>         int ret;
+>
+> -       ret =3D vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, lat_=
+buf);
+> -       if (ret)
+> -               return ret;
+> -
+> +       vdec_av1_slice_setup_lat_from_src_buf(instance, vsi, bs, lat_buf)=
+;
+>         ret =3D vdec_av1_slice_setup_pfc(instance, pfc);
+>         if (ret)
+>                 return ret;
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9=
+_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp=
+9_req_lat_if.c
+> index 3dceb668ba1c..a56f6bb879a6 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_la=
+t_if.c
+> @@ -711,21 +711,16 @@ int vdec_vp9_slice_setup_single_from_src_to_dst(str=
+uct vdec_vp9_slice_instance *
+>         return 0;
+>  }
+>
+> -static int vdec_vp9_slice_setup_lat_from_src_buf(struct vdec_vp9_slice_i=
+nstance *instance,
+> -                                                struct vdec_lat_buf *lat=
+_buf)
+> +static void vdec_vp9_slice_setup_lat_from_src_buf(struct vdec_vp9_slice_=
+instance *instance,
+> +                                                 struct mtk_vcodec_mem *=
+bs,
+> +                                                 struct vdec_lat_buf *la=
+t_buf)
+>  {
+> -       struct vb2_v4l2_buffer *src;
+> -       struct vb2_v4l2_buffer *dst;
+> -
+> -       src =3D v4l2_m2m_next_src_buf(instance->ctx->m2m_ctx);
+> -       if (!src)
+> -               return -EINVAL;
+> +       struct mtk_video_dec_buf *src_buf_info;
+>
+> -       lat_buf->vb2_v4l2_src =3D src;
+> +       src_buf_info =3D container_of(bs, struct mtk_video_dec_buf, bs_bu=
+ffer);
+> +       lat_buf->vb2_v4l2_src =3D &src_buf_info->m2m_buf.vb;
+>
+> -       dst =3D &lat_buf->ts_info;
+> -       v4l2_m2m_buf_copy_metadata(src, dst, true);
+> -       return 0;
+> +       v4l2_m2m_buf_copy_metadata(lat_buf->vb2_v4l2_src, &lat_buf->ts_in=
+fo, true);
+>  }
+>
+>  static void vdec_vp9_slice_setup_hdr(struct vdec_vp9_slice_instance *ins=
+tance,
+> @@ -1154,10 +1149,7 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp=
+9_slice_instance *instance,
+>         struct vdec_vp9_slice_vsi *vsi =3D &pfc->vsi;
+>         int ret;
+>
+> -       ret =3D vdec_vp9_slice_setup_lat_from_src_buf(instance, lat_buf);
+> -       if (ret)
+> -               goto err;
+> -
+> +       vdec_vp9_slice_setup_lat_from_src_buf(instance, bs, lat_buf);
+>         ret =3D vdec_vp9_slice_setup_pfc(instance, pfc);
+>         if (ret)
+>                 goto err;
+> --
+> 2.46.0
+>
 
