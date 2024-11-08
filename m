@@ -1,144 +1,375 @@
-Return-Path: <linux-kernel+bounces-400851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385A59C1332
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:26:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8D99C1337
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0DF8B22918
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6974B22B30
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 00:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3855A1C36;
-	Fri,  8 Nov 2024 00:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C798F7D;
+	Fri,  8 Nov 2024 00:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZV1w1Ag+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VADj6bj/"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ACA1FB4
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8CE1BD9D0
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 00:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731025580; cv=none; b=cyg80D88TG/+DzjvVkMMYJNc6tmcuf3xevcJ/nIhYjie4Ug6q41Io5McjnOjfzcbrib8njEeFOLmU8um9/wibMYZm1yTGAcnK7gEYWnBGU+llNrnvTFbTCKJybBzBa2BrNiMBLSL6vu3iKZ+bilIxL21XwSjaaJqMR6IyG0Unck=
+	t=1731025707; cv=none; b=kByZ/me0v+BU1lyCGSlc+uO0f3EP+wK3SRTR3Xsl1ip7NNkFW7qk6+9lmWO5NwSZf6BHUF2SUYpfW1HeVmh+7mPNlnUtnyKAaCqQqDy7bGEmGDJworE/IU30PTFX05fa0fVz9BTKB8kVYm6Nsw9E8TxaHF0P8+apm/u34qjeWjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731025580; c=relaxed/simple;
-	bh=cb4qZcAbwUvg3x53LBR08GrXSJupYfyAqI6oGbSJbrE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NtkRcW1Ok69TgzSlC/SoONXbxlHqYN18yUZO8IY04SEDJnsdr9ByWU5SIfWNNdbY03sRGZeVivLs7DswMp89O93zM1cTML65SGtvCqdk5wZvd06ZIA8Gb4c0uR8dJC+NuYwVaxJ7SKhS675dT1ShOn5EnfjPNmlwC+y0cxqt6pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZV1w1Ag+; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731025578; x=1762561578;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cb4qZcAbwUvg3x53LBR08GrXSJupYfyAqI6oGbSJbrE=;
-  b=ZV1w1Ag+rQebCQU1aoCaMtmh2s0j7/gru2QJk/MEbKuQ6ZSHe7R6z2t3
-   3yo03RDui9tGPRfi92OdvDxdRxADfWXD1gb75AjmJ64qYbyeYEZ/DVjqG
-   5SAIjJCKX2++zoymVTmEG42qmzQnwv9Tk4N9sHKzNXNmTYV5mXjmxWq+W
-   +iMnimtH/Fq9/9MN2BAqQfquCV1DmXhQbwLK4BqLkAZZZ8xBgqwqt2jzf
-   cSZgQkbaU9dL2k9jBevRWhi6JMG+07ml2iChmJt0jLWbnwDADfff6DrQc
-   qoqnJjil2L3VzVQYXhKPC7TwBWwQnOUok6lQfc58Fs/x3M24j2pW7WxD4
-   w==;
-X-CSE-ConnectionGUID: FlTR1LhMRuOF2M7Knt+BCQ==
-X-CSE-MsgGUID: PfiZQfPyRXWggeg+25umLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11249"; a="41497385"
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="41497385"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:26:18 -0800
-X-CSE-ConnectionGUID: blgxRzbXRwmGkE87jHq0lQ==
-X-CSE-MsgGUID: ctM6Ih36Q5yh4idfgUXIYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,136,1728975600"; 
-   d="scan'208";a="122805587"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.222.202]) ([10.124.222.202])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2024 16:26:17 -0800
-Message-ID: <59464733-17d1-4b43-83f4-e85a8389638d@intel.com>
-Date: Thu, 7 Nov 2024 16:26:15 -0800
+	s=arc-20240116; t=1731025707; c=relaxed/simple;
+	bh=n8An29nnn51M5AMiy7TBDNp8xzWYeVdPLwZ8pvL70Q4=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OmuBIC4KhEPwLu8ZdBi2aBV0/hKktwBiW7J4UT6Ieg7vlhXEvdwncb6ZoA7ZoQD1r0rGk+ofHtfsCQTF3M4uyJREiQHHlgRRwykYmI2wPCy6mQyhddCgyt85v9sm6ybyymszJesM8wFNek/9rsf43qP6stfEC0kyOjunZsHZrzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VADj6bj/; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5eb70a779baso840743eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 16:28:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731025705; x=1731630505; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ykK/xTP5/T2FJy2fwIxlQJlzwn7+IvhQQ1cEFC5XytA=;
+        b=VADj6bj/cANjyZ96Why8sckQ667aco5+phcgmtcUP3N26YS/bMuUOAdLsv/DGC1j6b
+         kWs8ay0Y2/aSylv/pCiPa/2r48c+Di3pNenQ9EGA/u5/haodYsvMucUa0BONtI0ECURi
+         YSmIhu4MUhhJVLnjHtLXozeCgKJTo8ueClcFY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731025705; x=1731630505;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ykK/xTP5/T2FJy2fwIxlQJlzwn7+IvhQQ1cEFC5XytA=;
+        b=DU8d1FCtDi+23hHD4fpj3ScpFlWHcF7rfz2/qHUDuWdL0sUL/O7Te2hCAQagOCNQLo
+         KTL6F7vFjLYC+TG6i00Y5GIPmyMrCd6QU9BjuIxgmwkM68dtqR7mcD+68jxlV6w1UsKT
+         BvozfjgAE4m21FWaaEdx2G2Pf3rPTkXE3/huS9YoIqmltT++KSaMCtGVdLG4kkwJ9emS
+         jI74Ai0fg1yHaX7gcYgL7fISvVy8P86m1mN5NyTkHG/T7bkvnSYB8ot06+bqfvMdDTyN
+         5zxqWqd/onLPaV6Su58I74WYgZuEgDNZPKrhEWB7tH124LC7iJvudpvYAwOiQs6wLZ+O
+         aqPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXB4CX9IiYRy+/tQxxktzgoc/hLuvokVfm9zxC4z/UVqcbwh5K+Jme/2cvOPLjWtCojnds/mioAGIGJZjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySSokZ0rG0d8+ApsHjR+iBz1YiTiVSDzY+pRQveJPyAmCED9MU
+	ZcYaBcam7iWwIVxFgHBD4X6jOJj/YxNnJ9a77K1DYqXzFabtgV2VRXKOLOtd+MLzHx0HiTOpGL1
+	qoomfPGfGEzBQ0jEXFjf0IFhjEU/HQ8F/bOBW
+X-Google-Smtp-Source: AGHT+IHNejm+Dq8CxwZ9GRGsAr7ooJqtaB5Q4Wi1lrZmixd5aV283NtctcL4uDF0OVbLrpedqVYpuRLKa3C6xkilqlc=
+X-Received: by 2002:a05:6358:90cb:b0:1c3:7748:683d with SMTP id
+ e5c5f4694b2df-1c641ebd8e1mr143460755d.7.1731025704863; Thu, 07 Nov 2024
+ 16:28:24 -0800 (PST)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 7 Nov 2024 16:28:24 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Restore PKRU to user-defined value after signal handling
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Cc: Rudi Horn <rudi.horn@oracle.com>, Thomas Gleixner <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Joe Jin <joe.jin@oracle.com>, Jeff Xu <jeffxu@chromium.org>
-References: <4225E088-6D34-421A-91AA-E3C4A6517EB7@oracle.com>
- <4d484280-3bed-453f-b2f6-0619df4e9914@intel.com>
- <SJ0PR10MB47208C97D877C27053E546DC9C5C2@SJ0PR10MB4720.namprd10.prod.outlook.com>
- <7819c425-5792-4cc5-96aa-9c8b012f1a06@intel.com>
- <4111AC83-7A7C-4268-B294-3AB75C0EC451@oracle.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <4111AC83-7A7C-4268-B294-3AB75C0EC451@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
+References: <20240901040658.157425-1-swboyd@chromium.org> <20240901040658.157425-16-swboyd@chromium.org>
+ <phdcjgqqpjpruxp7v2mw446q73xr3eg4wfgfbjw5tasgr2pgg2@77swbk47b2tg>
+ <CAE-0n514QMaQC2yjKP8bZqyfbv6B3AQm=+NJ87vxo6NdYiL03A@mail.gmail.com>
+ <lf7y7wpuca6kzqcglgs5d443iusf7xjocum4adi7t3npfavccx@zgsp37oyztme>
+ <CAE-0n53-KmOS3zXmJPvOOZ7xxkek9-S=oBExgaY0PDnt_HjdNw@mail.gmail.com>
+ <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
+ <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com> <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Thu, 7 Nov 2024 16:28:24 -0800
+Message-ID: <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
+Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
+ google,cros-ec-typec for DP altmode
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev, devicetree@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	dri-devel@lists.freedesktop.org, Guenter Roeck <groeck@chromium.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
+	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
+	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
+	Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/7/24 15:56, Aruna Ramakrishna wrote:
-> If it is calcuated by the kernel, is there a chance that we could inadvertently
-> set XINUSE[i] to 1 for more components other than just PKRU? Since it is 
-> possible that some other component was set to its init state by XSAVE, 
+Quoting Dmitry Baryshkov (2024-10-31 15:54:49)
+> On Thu, Oct 31, 2024 at 02:45:29PM -0700, Stephen Boyd wrote:
+> > Quoting Dmitry Baryshkov (2024-10-31 11:42:36)
+> > > On Tue, Oct 29, 2024 at 01:15:51PM -0700, Stephen Boyd wrote:
+> >
+> > Or use a displayport property that goes to connector node itself so that
+> > we don't extend the graph binding of the usb-c-connector.
+> >
+> >   cros-ec-typec {
+> >     usb-c-connector@0 {
+> >       altmodes {
+> >         displayport {
+> >           connector = <&dp_ml0_ml1>;
+>
+> I think this has been frowned upon. Not exactly this, but adding the
+> displayport = <&foo>.
 
-XINUSE is exposed in the ISA via XGETBV(1). If it were _totally_ racy
-and the CPU could change it willy nilly at any time, it couldn't be
-sanely exposed.
+Do you have a pointer to that discussion? I'd like to understand the
+reasoning.
 
-I think it's safe to assume that if you use XGETBV(1) that the state is
-sticky at least until there's an explicit change to a state component.
 
-If you're really worried about this, we could go ask the hardware folks.
+>
+> Thus it can only go to the swnode that is generated in software by the
+> cros-ec driver.
+
+I recall swnode as a way to sidestep figuring out the DT bindings for
+usb typec. Where is this swnode being made? Somewhere inside the typec
+framework?
+
+>
+> >         };
+> >       };
+> >       port@1 {
+> >         endpoint@0 {
+> >           remote-endpoint = <&hub_ss0>;
+> >        };
+> >       };
+> >     };
+> >     usb-c-connector@1 {
+> >       altmodes {
+> >         displayport {
+> >           connector = <&dp_ml2_ml3>;
+> >         };
+> >       };
+> >       port@1 {
+> >         endpoint {
+[....]
+> >
+> > >
+> > > Maybe that's just it? Register DP_bridge (or QMP PHY) as
+> > > orientation-switch? Then you don't need any extra API for the lane
+> > > mapping? The cross-ec-typec can provide orientation information and the
+> > > USB-C-aware controller will follow the lane mapping.
+> >
+> > I'm not really following but I don't think the DT binding discussed here
+> > prevents that.
+>
+> I'm thinking about:
+>
+> it6505 {
+>   orientation-switch;
+>
+>   ports {
+>     port@1 {
+>       it6505_dp_out: remote-endpoint = <&cros_ec_dp>;
+>       data-lanes = <0 1>;
+>     };
+>   };
+> };
+>
+> cros-ec {
+>   port {
+>     cross_ec_dp: remote-endpoint = <&it6505_dp_out>;
+>   };
+>
+>   connector@0 {
+>     reg = <0>;
+>     cros,dp-orientation = "normal";
+>
+>     ports {
+>       // all USB HS and SS ports as usual;
+>     };
+>   };
+>
+>   connector@1 {
+>     reg = <1>;
+>     cros,dp-orientation = "reverse";
+>
+>     ports {
+>       // all USB HS and SS ports as usual;
+>     };
+>   };
+>
+>   connector@2 {
+>     reg = <2>;
+>     cros,dp-orientation = "reverse";
+>
+>     ports {
+>       // all USB HS and SS ports as usual;
+>     };
+>   };
+>
+>   connector@3 {
+>     reg = <3>;
+>     cros,dp-orientation = "normal";
+>
+>     ports {
+>       // all USB HS and SS ports as usual;
+>     };
+>   };
+> };
+>
+> The cros-ec registers single drm bridge which will generate HPD events
+> except on Trogdor, etc. At the same time, cros-ec requests the
+> typec_switch_get(). When the cros-ec detects that the connector@N it
+> being used for DP, it just generates corresponding typec_switch_set()
+> call, setting the orientation of the it6505 (or QMP PHY). The rest can
+> be handled either by EC's HPD code or by DP's HPD handler, the
+> orientation should already be a correct one.
+>
+> So, yes. It requires adding the typec_switch_desc implementation _in_
+> the it6505 (or in any other component which handles the 0-1 or 2-3
+> selection). On the other hand as I wrote previously, the 0-1 / 2-3 is
+> the USB-C functionality, not the DP one.
+>
+
+I don't think we should be adding typec code to pure display hardware
+drivers like IT6505. To keep the driver focused on display stuff I
+proposed implementing runtime lane assignment for drm_bridge chains
+because DP has lanes. My understanding is that not all display
+technologies have lanes, so implementing generic lane assignment
+functionality is overkill/incorrect. DP has physical lanes in hardware
+though, and those physical lanes are assigned to certain pins in the
+type-c DP altmode spec, so it's not overkill to think about lanes when
+the bridge is a DP bridge wired up to a type-c connector.
+
+Long story short, I don't see how we can avoid _any_ lane assignment
+logic in drm_bridge. The logic shouldn't walk the entire bridge chain,
+but it should at least act on the bridge that is a DP bridge. I think
+you're saying pretty much the same thing here, but you want the lane
+remapping to be done via the typec layer whereas I want it to be done in
+the drm_bridge layer. To me it looks out of place to add a
+typec_switch_desc inside each DP drm_bridge because we duplicate the
+logic about USB type-c DP altmode lane assignment to each DP bridge. A
+DP bridge should just think about DP and not know or care about USB
+type-c.
+
+This is what's leading me to think we need some sort of lane assignment
+capability at the DP connector. How that assignment flows from the DP
+connector created in drm_bridge_connector.c to the hardware is where it
+is less clear to me. Should that be implemented as a typec_switch_desc,
+essentially out of band with drm_bridge, or as some drm_bridge_funcs
+function similar to struct drm_bridge_funcs::hdmi_*()? If you look at
+IT6505 in it6505_get_extcon_property() it actually wants to pull the
+orientation of the type-c port with extcon_get_property(EXTCON_DISP_DP,
+EXTCON_PROP_USB_TYPEC_POLARITY). Maybe pushing the orientation to the DP
+bridge is backwards and we should be exposing this as some sort of
+connector API that the drm_bridge can query whenever it wants.
+
+What about ANX7625 where two DP lanes go to a cross-point switch before
+leaving the chip on one of two pairs of lanes? This hardware is a DP
+bridge smashed together with an orientation switch (typec_switch_desc)
+so that you can simply wire the output pins up to a USB type-c connector
+and support 2 lanes DP altmode. Qualcomm's QMP phy is quite similar.
+Presumably we'd want the ANX driver to implement both a drm_bridge and a
+typec_switch_desc if it was directly connected to a usb-c-connector
+node. It's also interesting to think of the DT binding here, likely we
+would have one output port in the ANX node's graph that represents the
+combined DP and USB data that's connected to the SuperSpeed endpoint in
+the usb-c-connector.
+
+In the case where two lanes are wired to one USB type-c connector and
+the other two lanes are wired to a different USB type-c connector it
+would be odd to keep the typec_switch_desc and figure out a way to
+mangle the lanes we want for a USB type-c connector by setting the
+orientation of the typec_switch_desc. The chip isn't really acting as a
+typec orientation control here because it isn't combining USB data and
+DP data for a single USB type-c port. In fact, the type-c port has an
+orientation and we actively don't want to tell the ANX7625 driver about
+that port orientation because the orientation control is implemented
+between the ANX part and the type-c connector by some redriver
+controlled by the EC.
+
+To satisfy all these cases it almost feels like we need to make the DP
+connector have an "orientation", per your earlier DT snippet it would be
+"reversed" or "normal", even though in hardware a DP connector has no
+such concept because it can only be plugged in one way. All cases look
+to be covered if we say that the drm_connector can have an orientation,
+"normal" or "reversed", and we allow the bridge drivers to query that
+whenever they want with some bridge/connector API. The typical case will
+be that the orientation is normal, but we can make
+drm_connector_oob_hotplug_event() change that to "reversed" when the
+port is different.
+
+This leaves us with the binding you propose above, and then some sort of
+property that indicates the orientation of the DP connector. Instead of
+being vendor specific I wonder if we can simply have a property like
+"dp-reverse-orientation" in the connector node that the displayport.c
+driver can look for to set the connector orientation to the reverse one
+when DP altmode is entered on the port.
+
+This is what I have:
+
+ it6505 {
+   ports {
+     port@1 {
+       it6505_dp_out: remote-endpoint = <&cros_ec_dp>;
+       data-lanes = <0 1>;
+     };
+   };
+ };
+
+ cros-ec {
+   port {
+     cross_ec_dp: remote-endpoint = <&it6505_dp_out>;
+   };
+
+   connector@0 {
+     reg = <0>;
+
+     ports {
+       // all USB HS and SS ports as usual;
+     };
+   };
+
+   connector@1 {
+     reg = <1>;
+     dp-reverse-orientation;
+
+     ports {
+       // all USB HS and SS ports as usual;
+     };
+   };
+
+or ANX, swap out for it6505 node:
+
+ anx7625 {
+   ports {
+     port@1 {
+       anx7625_dp_out: remote-endpoint = <&cros_ec_dp>;
+       data-lanes = <0 1>;
+     };
+   };
+ };
+
+and then a drm_bridge is created in cros-ec to terminate the bridge
+chain. The displayport altmode driver will find the drm_bridge and the
+drm_connector from the cros-ec node. When DP altmode is entered the
+displayport altmode driver will set the drm_connector orientation based
+on the presence of the dp-reverse-orientation property. We'll be able to
+hook the hpd_notify() path in cros-ec by adding code to the drm_bridge
+made there to do the HPD workaround. I'm not sure we need to use an
+auxiliary device in this case, because it's a one-off solution for
+cros-ec. And we don't even need to signal HPD from the cros-ec
+drm_bridge because the oob_hotplug event will do it for us. If anything,
+we need that displayport.c code to skip sending the hotplug event when
+"no-hpd" is present in the cros-ec node. Note, this works for any number
+of usb-c-connector nodes. And finally, DP bridges like IT6505 don't need
+to implement a typec_switch_desc, they can simply support flipping the
+orientation by querying the drm_connector for the bridge chain when they
+see fit. ANX7625 can support that as well when it doesn't see the
+'orientation-switch' property.
+
+Did I miss anything? I suspect a drm_connector having an orientation is
+the most controversial part of this proposal.
 
