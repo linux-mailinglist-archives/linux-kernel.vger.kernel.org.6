@@ -1,169 +1,106 @@
-Return-Path: <linux-kernel+bounces-401235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0F59C177C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 834DF9C1781
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78A82838BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:08:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E96283D59
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 08:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9495D1D2F55;
-	Fri,  8 Nov 2024 08:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7CD1DA314;
+	Fri,  8 Nov 2024 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="glH6f2Qv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Unj7k1IP"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9F91D0DC0;
-	Fri,  8 Nov 2024 08:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F4A1DA617
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 08:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731053296; cv=none; b=GFdXAOn1NBhtbgl6Mvg2AGbwiZC8fB3+FrpyeNetWoKfdqglqcnCYyCjdES1GsZLpPUiqeLSMXk+ebPSpldobnOR6OlY1StsDwbZ9lALsUdeVexZNPWY4d3UHtBnxItYaFq9OTZJMKnbdq0DvcE7qSClBysCOCT6sdgjuiIBzwE=
+	t=1731053315; cv=none; b=Cq7IaBK39WIIhdVp0Vw/ZiE+xpup0oUmU3nBtuhVM1qi6/11jDi17e0eqMgLfJBsmVFfEdwDaMFN6gQNC0HpQVvEn2/Jx8PX7D5J4BKC6aXu4tvaD65KDOdo72Vap6AUrYXc/d9TiuuI2ZIv0k37SGEPSoy1M/zl5LvaZJ4HYuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731053296; c=relaxed/simple;
-	bh=AI9EMBn63ekAdbC9s6kHeDhDDE5FG9Rh+suJiaL2z1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVu1+iZ5oBt/97mLDLSjxZ24cesg4ZHmX0JaSZntjJfbflPW8huHYkJBZOYPgdAVXrwcQXRkphQB7XeHcsDR2JUZeNUapSoGGsnyGCasA1Uq8HARlHbHlLiodGyzX1gz0WzuruDnCeHbRUh8lnG8fvQW91XZPJwe7O7lctyGBtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=glH6f2Qv; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731053295; x=1762589295;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AI9EMBn63ekAdbC9s6kHeDhDDE5FG9Rh+suJiaL2z1c=;
-  b=glH6f2QvpzO9SCyQanOI7Vc6VQTdYZus+wo5LA34NvV4tq1gxBZY/B/O
-   wRL90nh/zsOlDJ1gTW6SfM3avQG1vFHYxdlLjDj+x1NqOKg3q7wn2Dx24
-   W7MPzwatHor6iHeTMOYBM4yU/rcj5oj6By22nQPRHqKeqI/h/4OBfqvul
-   bvkpSPmFw0H/HY5LniyoItyE4bCMT6ju2euCarSxVKrpwbd619GVpt+28
-   XOpSJfg8ZVTzoehSrOBHq8wjgMJvsmdecZx4uFlTdL8MWUwKM2OPkhpj1
-   tkVDDYx5t2ItWjpv6hd0Rx/ATIPp1EpQ395YS2UtF9te8JwDvs7OqL0uv
-   w==;
-X-CSE-ConnectionGUID: cyAnpGeEQkykhGNIAz+yww==
-X-CSE-MsgGUID: eJnxCIQlSHSeGidoD1eiXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30699011"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30699011"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 00:08:14 -0800
-X-CSE-ConnectionGUID: n0FTouI8SBujM4LJD6h4oQ==
-X-CSE-MsgGUID: 7yvunYfCQS6prdhcsaXzrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,137,1728975600"; 
-   d="scan'208";a="116294718"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa002.jf.intel.com with SMTP; 08 Nov 2024 00:08:12 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 08 Nov 2024 10:08:09 +0200
-Date: Fri, 8 Nov 2024 10:08:09 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: =?iso-8859-1?Q?Facklam=2C_Oliv=E9r?= <oliver.facklam@zuehlke.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"von Heyl, Benedict" <benedict.vonheyl@zuehlke.com>,
-	=?iso-8859-1?B?RvZyc3Qs?= Mathis <mathis.foerst@zuehlke.com>,
-	"Glettig, Michael" <Michael.Glettig@zuehlke.com>
-Subject: Re: [PATCH 2/4] usb: typec: hd3ss3220: use typec_get_fw_cap() to
- fill typec_cap
-Message-ID: <Zy3G6dyvvpU4A6NO@kuha.fi.intel.com>
-References: <20241107-usb-typec-controller-enhancements-v1-0-3886c1acced2@zuehlke.com>
- <20241107-usb-typec-controller-enhancements-v1-2-3886c1acced2@zuehlke.com>
- <ZyzMzEHA9DPMc_z9@kuha.fi.intel.com>
- <ZR1P278MB102298AE3011962AEE1BC91E9F5C2@ZR1P278MB1022.CHEP278.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1731053315; c=relaxed/simple;
+	bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UeW+mdifw/HbTPwIxDO0tDHk4FsxVuF8nHMxbC3lxodh+JVjfTLdj6qY/LnrE6XuhjubFk3aaWPOwFJWApjhLCzQ5ud7y2MG+0Yttu2mIavsbA1YgAJgZ9wVJG0YAO0Am28pOB5UB0/RzfzgX7Uk+F7uHQ1uHKGJcP8RpTaZ0do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Unj7k1IP; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb5743074bso15851281fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 00:08:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731053311; x=1731658111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
+        b=Unj7k1IPA8USxudDC3cRW4Xobxipgr54vxfkjmjCO/kd7Z+TP2IW/K9qVD7kvMtchG
+         OKkloX6r1lS3mir5QonKdt2j0VwHqIikULg/3MzQph6VVeKBf0+Bvfb+VbEJ1SgZXluL
+         oE0mX2G+3fneKYH9aV9wLXSvdJ6JyPWDl2dj/JRudMOdszWXa1ol0m0+88LC/CsytsYg
+         A+a+kzWWGdIvKPtnMxi0P9SD8cUfbEavaPzYrERlLaKduEKicJz0nOtpQNM7EfYKH8Sd
+         3RAj0chKavOpve/jj8//3Hl89UYgmI4yyzs4HIGuCKHZDyH3QyFqMQzfoB4+DFGyiBUb
+         jeeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731053311; x=1731658111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X564kijAujdsjjH0ORI4+g4gIz95ERPYBq8cJzyP8DY=;
+        b=GE1IDOe4yZP1RdZPpG8jlXc/Q6TNUsXtDi4T/p1wc17rypUJEAwMu//HnxntW7N16v
+         7A33bYeRdAZBul/Cy0FCgqPTpAW+KdiapR5w8OBxfbhINlwWj/kMuB8+VFjl5EFXAW6Y
+         szplm//uayHJ03jLztwqvSeOe2W9SxrlBUAB3fMq2caOfaixeoBReeSZt5btCLd2pLNE
+         wjh5FEqcFDZY5i6BaI/gaMMRz+PDPkR7u9MCkv230+gTjEHHfSQST30eUFTMD+65RF+6
+         HRtnAcyZbhGlPhedfZTGi/xiAEzBvc+UmDLhPJXDMuO3HP0l1bGnTYblWk3b76UNCo65
+         uRDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgOUQvynlX6MdWvVgO13nplu4AlHTJSVYFiwhLcpPeyww5cAIzFmPeP1yxbgGrEDXuX4WVq/eZI2jLN7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwJj2WnmG6/rX3LeYxkvLrIlQiXCKR6OgIiUE9U6P8XXCNcAct
+	BSZRtjZt1cdEeEHHF3i0L6612sRr+MhivkrBNkjjl9wVE+xVoctNjIVtHBjRoSs3noo8GqQnDFA
+	xLvB5dF55HQFs9RtRLm9V/PQ7a+JAJCntR7RPdQ==
+X-Google-Smtp-Source: AGHT+IHDMtC5ejvi+6P/FwbMQP1yLzs4dvzuAfHzOLWut4QZAFsV0vqXGWBvtrbNy55PKvK+RsMl0V/8jbQgCQMUUQM=
+X-Received: by 2002:a2e:be22:0:b0:2f7:6062:a0a9 with SMTP id
+ 38308e7fff4ca-2ff20963c8dmr4983211fa.7.1731053310923; Fri, 08 Nov 2024
+ 00:08:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZR1P278MB102298AE3011962AEE1BC91E9F5C2@ZR1P278MB1022.CHEP278.PROD.OUTLOOK.COM>
+References: <20241031-msm8917-v2-0-8a075faa89b1@mainlining.org> <20241031-msm8917-v2-3-8a075faa89b1@mainlining.org>
+In-Reply-To: <20241031-msm8917-v2-3-8a075faa89b1@mainlining.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 8 Nov 2024 09:08:20 +0100
+Message-ID: <CACRpkdaWEc8=5CdBMuGdfcSzneR+ODrVvyw8pOFv-6++_JUzqQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/15] dt-bindings: pinctrl: qcom,pmic-mpp: Document
+ PM8937 compatible
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 03:24:44PM +0000, Facklam, Olivér wrote:
-> Hello Heikki,
-> 
-> > -----Original Message-----
-> > From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> > Sent: Thursday, November 7, 2024 3:21 PM
-> > To: Facklam, Olivér <oliver.facklam@zuehlke.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
-> > usb@vger.kernel.org; linux-kernel@vger.kernel.org; von Heyl, Benedict
-> > <benedict.vonheyl@zuehlke.com>; Först, Mathis
-> > <mathis.foerst@zuehlke.com>; Glettig, Michael
-> > <Michael.Glettig@zuehlke.com>
-> > Subject: Re: [PATCH 2/4] usb: typec: hd3ss3220: use typec_get_fw_cap() to fill
-> > typec_cap
-> > 
-> > Hi Oliver,
-> > 
-> > On Thu, Nov 07, 2024 at 12:43:28PM +0100, Oliver Facklam via B4 Relay
-> > wrote:
-> > > From: Oliver Facklam <oliver.facklam@zuehlke.com>
-> > >
-> > > The type, data, and prefer_role properties were previously hard-coded
-> > > when creating the struct typec_capability.
-> > >
-> > > Use typec_get_fw_cap() to populate these fields based on the
-> > > respective fwnode properties.
-> > >
-> > > Signed-off-by: Oliver Facklam <oliver.facklam@zuehlke.com>
-> > > ---
-> > >  drivers/usb/typec/hd3ss3220.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/usb/typec/hd3ss3220.c
-> > > b/drivers/usb/typec/hd3ss3220.c index
-> > >
-> > 56f74bf70895ca701083bde44a5bbe0b691551e1..e6e4b1871b5d805f8c3671
-> > 31509f
-> > > 4e6ec0d2b5f0 100644
-> > > --- a/drivers/usb/typec/hd3ss3220.c
-> > > +++ b/drivers/usb/typec/hd3ss3220.c
-> > > @@ -259,12 +259,12 @@ static int hd3ss3220_probe(struct i2c_client
-> > *client)
-> > >  		goto err_put_fwnode;
-> > >  	}
-> > >
-> > > -	typec_cap.prefer_role = TYPEC_NO_PREFERRED_ROLE;
-> > > +	ret = typec_get_fw_cap(&typec_cap, connector);
-> > > +	if (ret)
-> > > +		goto err_put_role;
-> > 
-> > You are not leaving any fallback here. Are you sure all the existing systems
-> > supply those properties?
-> > 
-> > There is another problem. At least "data-role" property is optional, but that
-> > will in practice make it a requirement.
-> 
-> I missed that typec_get_fw_cap() was not setting a default if the property is absent.
-> 
-> > 
-> > I think it would be safer to use the values from the device properties only if
-> > they are available. Otherwise simply use default values.
-> 
-> I'll add back the previous values as defaults before calling typec_get_fw_cap().
-> That will make data-role and try-power-role optional again, as intended.
-> 
-> However, "power-role" seems to be required by the function. Is this expected?
+On Thu, Oct 31, 2024 at 2:19=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
+<barnabas.czeman@mainlining.org> wrote:
 
-Yes.
+> Document the Device Tree binding for PM8937 MPPs.
+>
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+.org>
 
-> Or should I write my own fwnode parsing logic?
+Patch applied for v6.13.
 
-No, don't do that.
-
-You can check the return value. If it's -EINVAL or -ENXIO, the
-properties are not there, and you can safely use the defaults.
-Otherwise, consider the failure as critical.
-
-thanks,
-
--- 
-heikki
+Yours,
+Linus Walleij
 
