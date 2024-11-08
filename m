@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-401353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D471F9C192D
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:33:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F93A9C18F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 10:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C3A1F23C90
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 271971F228A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 09:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95031E0E0E;
-	Fri,  8 Nov 2024 09:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="fUI8sPw3"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CB91E0DDC;
+	Fri,  8 Nov 2024 09:18:55 +0000 (UTC)
+Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C661D04B9
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 09:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914E5473E;
+	Fri,  8 Nov 2024 09:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731058432; cv=none; b=qXYyXhZ3fwqQVsRdLVm3iFmCIQDUt/dcgYot0hT3mxxXmGEU4CAM7OkrGHCq34OF2n6xQS7Aw64is9w9hKmWJG9ItT5EVkZS3DXCtvd54Fl84frNnfWtjYKwz4EpPVWci50H7rArz0ZAhnDnN3k37vBk3K834tPlj/3yoy2kRNs=
+	t=1731057534; cv=none; b=cH3tpmir5FT/3wFo1buHh1QN4ixr4sO2Xq2lV1R0ZuWIpehVwRWrdpwoQ28MMSaC5o390143dqCbtxVsmF3SZ9YEPUWZZNn+OLI7j76mkoiELe4WzIScRIFBvDyhMwN1PWA9s4bWs1ocWVmG83KXuxB2kTiSk+Rlmhlo3vM+c+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731058432; c=relaxed/simple;
-	bh=jHGeaIeXbClXGW3OEnaUVDx57xoW1HF6tH5iHko0tNw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q7YpFeBh29EcqEDqzmKXSSibSDwX6iCEVYNuhB3L/1Maa2Eo3BSOb+dUvGOw9/P9CJIidNvByBECD7VUomAXea+ca4gEykppWikCy+ddxBrEAgTmLk1TGpULAJgg7nrMyMihAqYm5R64pJm8fVY77eacr2grjAkBoE6Nn6Wl+TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=fUI8sPw3; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=jHGeaIeXbClXGW3OEnaUVDx57xoW1HF6tH5iHko0tNw=;
-	t=1731058430; x=1732268030; b=fUI8sPw3A+ZlktWlgF4RWSh2B5sj12vALQ9qNgIzwEWxtSp
-	GNmK1elwggzbUoCRRxDvAgj7bsaRwTFPz1W8iDyjsr/gEs6F+h8JYxtYoyVStMWFZ03po8hjWDGkG
-	HyPKQGHiIIrIr7FvNwqHJWgeFLSPUx4fBeSeR5Ikr/k2gio/1NxjWhoHcIgw2dvnxZtm65mR6VSnD
-	WXodUzWAeG8+MzXvpg1mU+/Xvf+GC8M7PspO+GbVbacvAie1AeCyxXyhGwJ5fyT0rmWRpF69AZPVa
-	3soLgVDc9y28hcoRFtRpMs8Ag3sPTu1nomq648ttwb7JDXzVKKdChwHP2hsj5seQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1t9L7N-0000000HBo9-39zq;
-	Fri, 08 Nov 2024 10:17:25 +0100
-Message-ID: <065b0d76aeea7d3543d3eab302167af039e8f913.camel@sipsolutions.net>
-Subject: Re: [PATCH] hostfs: Fix the NULL vs IS_ERR() bug for
- __filemap_get_folio()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Peng Zhang <zhangpeng362@huawei.com>, linux-um@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: richard@nod.at, anton.ivanov@cambridgegreys.com, willy@infradead.org, 
-	josef@toxicpanda.com, brauner@kernel.org, zhangxiaoxu5@huawei.com, 
-	wanghai38@huawei.com
-Date: Fri, 08 Nov 2024 10:17:24 +0100
-In-Reply-To: <20241104123440.1347175-1-zhangpeng362@huawei.com>
-References: <20241104123440.1347175-1-zhangpeng362@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1731057534; c=relaxed/simple;
+	bh=9VjzPSmxTbRR9nN742Qok+POFXljNbPly0HWhmf3Tp0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhtKcALyU4fvv2JOlr2KrPTl6iXg6yDq+3Sqw+7XLixkc2NmidFuu1KutpOFpLydnQ23BQJ8agS/DqDRZ0HyIigSpYwCh3kuxzgocHVV78zA/oXXwdswVVjp4zyOjINuonMvoh/8RNrvNrV7GfejVMN1/URZB/AOXIlhlOqqksw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from droid10-sz.amlogic.com (10.28.11.69) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Fri, 8 Nov 2024
+ 17:18:50 +0800
+From: zelong dong <zelong.dong@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, Rob Herring
+	<robh@kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<kelvin.zhang@amlogic.com>, Zelong Dong <zelong.dong@amlogic.com>
+Subject: [PATCH v3 0/3 RESEND] reset: amlogic-a4/a5: add reset driver
+Date: Fri, 8 Nov 2024 17:18:39 +0800
+Message-ID: <20241108091842.36961-1-zelong.dong@amlogic.com>
+X-Mailer: git-send-email 2.35.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, 2024-11-04 at 20:34 +0800, Peng Zhang wrote:
-> From: ZhangPeng <zhangpeng362@huawei.com>
->=20
-> The __filemap_get_folio() function returns error pointers.
-> It never returns NULL. So use IS_ERR() to check it.
->=20
-> Fixes: 1da86618bdce ("fs: Convert aops->write_begin to take a folio")
-> Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+From: Zelong Dong <zelong.dong@amlogic.com>
 
-Not sure it's critical, but for um I wasn't planning to send a pull
-request for 6.12-rc (and I suspect Richard also wasn't, as there are no
-other fixes). Also, the original commit went through another tree.
+This patchset adds Reset controller driver support for
+Amlogic A4/A5 SoC. The RESET registers count and offset
+for A4/A5 Soc are same as S4 Soc.
 
-Christian what do you think? Do you want to pick it up? Or should we
-pick it up via um, but then likely only for 6.13?
+Changes since v2:
+- rebase on 'amlogic,t7-reset' patchset
 
-If you could pick it up:
-Acked-by: Johannes Berg <johannes@sipsolutions.net>
+Changes since v1:
+- remove 'amlogic,t7-reset'
+- move 'amlogic,c3-reset' to the other enum list
+- move reset node from amlogic-a4-common.dtsi to
+  amlogic-a4.dtsi/amlogic-a5.dtsi
 
-johannes
+---
+v1:https://lore.kernel.org/all/20240703061610.37217-1-zelong.dong@amlogic.com/
+v2:https://lore.kernel.org/all/20240715051217.5286-1-zelong.dong@amlogic.com/
+
+Zelong Dong (3):
+  dt-bindings: reset: Add compatible for Amlogic A4/A5 Reset Controller
+  arm64: dts: amlogic: Add Amlogic A4 reset controller
+  arm64: dts: amlogic: Add Amlogic A5 reset controller
+
+ .../bindings/reset/amlogic,meson-reset.yaml   | 23 +++--
+ .../arm64/boot/dts/amlogic/amlogic-a4-reset.h | 93 ++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi   | 10 ++
+ .../arm64/boot/dts/amlogic/amlogic-a5-reset.h | 95 +++++++++++++++++++
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi   | 10 ++
+ 5 files changed, 223 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/amlogic-a4-reset.h
+ create mode 100644 arch/arm64/boot/dts/amlogic/amlogic-a5-reset.h
+
+-- 
+2.35.1
 
 
