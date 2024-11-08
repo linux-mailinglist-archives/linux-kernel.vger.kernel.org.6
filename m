@@ -1,156 +1,239 @@
-Return-Path: <linux-kernel+bounces-402043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661B19C229B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:02:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBA19C229F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 18:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFC52870A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD602870A7
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 17:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33B0198A0D;
-	Fri,  8 Nov 2024 17:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA8D1946CC;
+	Fri,  8 Nov 2024 17:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hihv8IEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BYxgXR6n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E35313B29F
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EABD198A0D
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 17:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731085346; cv=none; b=j9cBB4j+gWLgOHwxDQEKz1Yce067u4/2k6FscV43Bir8fvzmfKoeTfnLKf784sLwUNyxivBtrKiC1/PxIB7kzGZzPfmrqUMKDC3E/PZ5zqbUu33dtnxOWJ4QrEahH3tPzkNqj8t46Jo8bGdsGUNlPGWOv586kE6jEfnRJWq7vX8=
+	t=1731085407; cv=none; b=h3252uZvTX9NphyvJkGTRB/am3JSy/bl7hj4EvDFQGA5ESF4AJXFiar7pj6y9Z+gwfDzsr+a5ex2EtqIfQ9UAJyjz3MWENPxwF+REbkjJvMQZFRyjh8K2yvwZpDn8LcdhmHCRaEmH2wuR663G2LwltNQ1/N7DDvs2ElChZmvq3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731085346; c=relaxed/simple;
-	bh=8DOvBAtlvbC7VPCRTflUwOEpS+pJUGXpatZhb9wB9xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIX7vYjVKccUfUNJd9ERWFSorCOIgd8LlaP5Rc8NRrfxsp/BhMCtPNbz3krz7/3HRN/m9uy/MuykO4PrHCF0H68S0WAW5fvqAhKD0kDQjLSlyIYQ9bR37Morwhv6sCiaCkyxZtN0oSEYudJDNVRs0G/yu49ugsdX+D46u/50570=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hihv8IEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C528AC4CECD;
-	Fri,  8 Nov 2024 17:02:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731085345;
-	bh=8DOvBAtlvbC7VPCRTflUwOEpS+pJUGXpatZhb9wB9xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hihv8IEi/ku72lqvHSYmwmjxSpn6wtHoEIN1kDRpV4ggWIjxpbXol6tlWdb9P9Thq
-	 IEa1e2qfJuZ9EHa9vMn5ppPLkuIGS1V06j72YwXgFqzVIJXdbq7jUh2FjBuTfEK6U9
-	 WMgHJcXl/aHrnlT2rPhfEdBPvYzPryIPDC04+QcfwW6n2gBylCpE0WdpROlWg0esSR
-	 l2fTruhXfUyQIdcQ9nfjhBTC6MKwXOObpss3KDrsrdNVPhEvT1tEwek+9nF6UhlnHh
-	 ZfXaqHR5L21tlHEmbBMrSQnmsn38sRwCcWsmo4lZGNF90xeSmu/ztoMV8/JTXJ+BaS
-	 q+KZXU6iw4MBQ==
-Date: Fri, 8 Nov 2024 07:02:24 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de,
-	syzbot <syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com>
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <Zy5EIHUwoXjK1sAJ@slm.duckdns.org>
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241102001224.2789-1-hdanton@sina.com>
- <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
- <ZykNhbMOrlgCXFYJ@slm.duckdns.org>
- <20241108100503.H-__545n@linutronix.de>
+	s=arc-20240116; t=1731085407; c=relaxed/simple;
+	bh=TVCxVOewQGfcTI2xFGmS6nhXBt2NWRKz5F/6lc6IRH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qBBqgHeeg/eX3frQURzh7If5VIacGdbf19lrTaPgZZW4VxnTdJ9zNH+JNSxF3kH6ug1wDWU5VC3okeosxSfpFIFK8NdweVc8F2IyvrwsxBgWq2tw7Ib25nM1KA5NHfq23Isl7XMvbCJ4N213x0bmKEXM/YsUL7iKQIE2eh4QHOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BYxgXR6n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A8FA9XP013759
+	for <linux-kernel@vger.kernel.org>; Fri, 8 Nov 2024 17:03:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bb81KFW5ByO/n6LEctO/uyB6P605Q4mKU+pEM8orH8s=; b=BYxgXR6np/FUaLYW
+	IB1ixBNc1mxabwHS1V5Hh/xHS5uj0nt4SQRTV1+F5Qc5+y2nbPDnY7SuF8apItSF
+	QgAOLYHbud0HcUTFceCNE7BZrCKrzM6LpInzU3RD4R8lCLJzMQyWlPfC5q9vftUG
+	SjHZsudecBSUlZOM5upUfcOHKh8dMz/LBai0YcEzoxqj3YwBGnt4NRmlU+eU2h/n
+	XkZHUP9zY8h3lwISljIXrDd3MpDnBv18aALFOwa0QPhvqdu8lhQsYwQH4E4V5qKM
+	EFyQE7YgeKvLBdWBAE5foTMpxIl5/zTfrQtsLa3/PyN7YcjMxx19QlRNOX0BOmJW
+	pCnYvg==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42s6gjj70e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:03:25 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b148bebf96so1136685a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 09:03:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731085404; x=1731690204;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bb81KFW5ByO/n6LEctO/uyB6P605Q4mKU+pEM8orH8s=;
+        b=nXigtEa3tvWGOCunSUPCPH0pQC+ULXFdyVrA9StkfLmWoZuK1Tet63YQIL8u9g0zJ6
+         fSpiwumZdL3MOxjEH7W/f5tXJSQ8F+plKovE+lUl+C2KyMdvlbQJF1MdAhPu0t9ptsVD
+         Tb7inOdcWdsKaa6NIEF/Na4ETiqA6AdkaYZzUMCUsauIa4ygRbrjz8aKMH724Vz2d4mA
+         HDBjt5Dud3hMGTbpdA4QHOCmJHUBGuEkUAQnDS6OJsuO+/AQI1HgJGzsxjKjtx69jSiU
+         miF/6i6Z4/UL/DWdpw6iNY2Wssvwzkjh7iMNatnFOCTMcybMH8WgQxD6C1Ja0X5VLn8W
+         jg8A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2GnnN3DTiKeKRsbL1PD+RTjp8jdJvkEDy/Z8jTdckygeYbG1gAoCePLgBVe9tVqRsfMxGiBoMOkcrBv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx64GSiSsLLXcQXuaV4IWeQ4bAynowq32Y6OFqynphDwbV2xGP+
+	VQyPMYpE4oH5JceArF2FvbfVSQeW4HRCQaYG+FxJS1G280FV/2lGxRclboVW606id+DshST7IA8
+	VeMxFbt/r5SpcsI2ar9IzBUyQJx/CiHUZ1niybzrxq5WZjcr3Ctt1T/HmDzGsbrM=
+X-Received: by 2002:a05:620a:4494:b0:7a9:ba9d:d24b with SMTP id af79cd13be357-7b331dbb71amr206865185a.1.1731085403883;
+        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG0BxkJl+NAQG7XpcFGSrrFoGs4BQBBNk64wljjo4cqxd+i2RMZOS7DlKrjFnQrg6d8jPbEuQ==
+X-Received: by 2002:a05:620a:4494:b0:7a9:ba9d:d24b with SMTP id af79cd13be357-7b331dbb71amr206862085a.1.1731085403453;
+        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dee9besm255728966b.149.2024.11.08.09.03.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 09:03:23 -0800 (PST)
+Message-ID: <0293b1c5-d405-4021-b9c1-205271107350@oss.qualcomm.com>
+Date: Fri, 8 Nov 2024 18:03:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108100503.H-__545n@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] arm64: dts: qcom: Add initial support for
+ MSM8917
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
+References: <20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org>
+ <20241107-msm8917-v3-12-6ddc5acd978b@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241107-msm8917-v3-12-6ddc5acd978b@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: _Rlv_5WCmshQAjuF1Y980ZbcqRibbU5d
+X-Proofpoint-ORIG-GUID: _Rlv_5WCmshQAjuF1Y980ZbcqRibbU5d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 suspectscore=0 adultscore=0 mlxscore=0 malwarescore=0
+ impostorscore=0 spamscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411080141
 
-Hello,
+On 7.11.2024 6:02 PM, Barnabás Czémán wrote:
+> From: Otto Pflüger <otto.pflueger@abscue.de>
+> 
+> Add initial support for MSM8917 SoC.
+> 
+> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> [reword commit, rebase, fix schema errors]
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
 
-On Fri, Nov 08, 2024 at 11:05:03AM +0100, Sebastian Andrzej Siewior wrote:
-...
->  static int kernfs_name_locked(struct kernfs_node *kn, char *buf, size_t buflen)
->  {
-> +	struct kernfs_node *kn_parent;
-> +	const char *kn_name;
+[...]
+
+> +		domain-idle-states {
+> +			cluster_pwrdn: cluster-gdhs {
+
+Please rename these to cluster-sleep-<n> and sort from shallowest to
+deepest sleep state, in this case: ret, pwrdn, pc
+
+[...]
+
 > +
->  	if (!kn)
->  		return strscpy(buf, "(null)", buflen);
->  
-> -	return strscpy(buf, kn->parent ? kn->name : "/", buflen);
-> +	kn_parent = rcu_dereference(kn->parent);
+> +		l2_0: l2-cache {
+> +			compatible = "cache";
+> +			cache-level = <2>;
+> +			cache-unified;
+> +		};
 
-kn->parent can never change. This can just be a regular deref.
+Please put this under the cpu0 node
 
-> +	kn_name = rcu_dereference(kn->name);
-> +	return strscpy(buf, kn_parent ? kn_name : "/", buflen);
->  }
->  
->  /* kernfs_node_depth - compute depth from @from to @to */
-> @@ -66,7 +70,7 @@ static size_t kernfs_depth(struct kernfs_node *from, struct kernfs_node *to)
->  
->  	while (to->parent && to != from) {
->  		depth++;
-> -		to = to->parent;
-> +		to = rcu_dereference(to->parent);
+[...]
 
-Ditto here and other places.
+> +		restart@4ab000 {
+> +			compatible = "qcom,pshold";
+> +			reg = <0x4ab000 0x4>;
 
->  int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
->  {
-> -	unsigned long flags;
->  	int ret;
->  
-> -	read_lock_irqsave(&kernfs_rename_lock, flags);
-> +	rcu_read_lock();
->  	ret = kernfs_name_locked(kn, buf, buflen);
-> -	read_unlock_irqrestore(&kernfs_rename_lock, flags);
-> +	rcu_read_unlock();
->  	return ret;
->  }
->  
-> @@ -223,12 +226,11 @@ int kernfs_name(struct kernfs_node *kn, char *buf, size_t buflen)
->  int kernfs_path_from_node(struct kernfs_node *to, struct kernfs_node *from,
->  			  char *buf, size_t buflen)
->  {
-> -	unsigned long flags;
->  	int ret;
->  
-> -	read_lock_irqsave(&kernfs_rename_lock, flags);
-> +	rcu_read_lock();
->  	ret = kernfs_path_from_node_locked(to, from, buf, buflen);
-> -	read_unlock_irqrestore(&kernfs_rename_lock, flags);
-> +	rcu_read_unlock();
->  	return ret;
->  }
+Please also pad all address parts to 8 hex digits with leading zeroes
 
-The _locked suffix looks awkward afterwards. Given that there's no
-restriction on how the function is called anymore, maybe we can just
-collapse _locked bodies into the callers?
+[...]
 
-...
-> diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-> index 87c79d076d6d7..733d89de40542 100644
-> --- a/include/linux/kernfs.h
-> +++ b/include/linux/kernfs.h
-> @@ -199,8 +199,8 @@ struct kernfs_node {
->  	 * never moved to a different parent, it is safe to access the
->  	 * parent directly.
->  	 */
-> -	struct kernfs_node	*parent;
-> -	const char		*name;
-> +	struct kernfs_node	__rcu *parent;
-> +	const char		__rcu *name;
+> +			gpu_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-598000000 {
+> +					opp-hz = /bits/ 64 <598000000>;
+> +				};
+> +
+> +				opp-523200000 {
+> +					opp-hz = /bits/ 64 <523200000>;
+> +				};
+> +
+> +				opp-484800000 {
+> +					opp-hz = /bits/ 64 <484800000>;
+> +				};
+> +
+> +				opp-400000000 {
+> +					opp-hz = /bits/ 64 <400000000>;
+> +				};
+> +
+> +				opp-270000000 {
+> +					opp-hz = /bits/ 64 <270000000>;
+> +				};
+> +
+> +				opp-19200000 {
+> +					opp-hz = /bits/ 64 <19200000>;
+> +				};
 
-->parent doesn't have to be converted to RCU. As long as the node is
-accessible, the parent is guaranteed to be pinned and unchanged. We only
-need to RCUfy ->name.
+Does the GPU actually function at 19.2 MHz? You can check this by removing
+all other entries and starting some gpu workload
 
-Thanks.
+[...]
 
--- 
-tejun
+> +		cpuss1-thermal {
+> +			polling-delay-passive = <250>;
+> +			polling-delay = <1000>;
+
+You can remove polling-delay (not -passive), as we have an interrupt
+that fires on threshold crossing
+
+> +
+> +			thermal-sensors = <&tsens 4>;
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpuss1_alert0>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+> +
+> +			trips {
+> +				cpuss1_crit: cpuss1-crit {
+> +					temperature = <100000>;
+> +					hysteresis = <2000>;
+> +					type = "critical";
+> +				};
+> +
+> +				cpuss1_alert0: trip-point0 {
+> +					temperature = <75000>;
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +
+> +				cpuss1_alert1: trip-point1 {
+> +					temperature = <85000>;
+> +					hysteresis = <2000>;
+> +					type = "hot";
+> +				};
+
+Sorting these by temperature, rising would be nice
+
+Konrad
 
