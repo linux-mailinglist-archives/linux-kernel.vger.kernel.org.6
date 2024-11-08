@@ -1,421 +1,209 @@
-Return-Path: <linux-kernel+bounces-401066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333D19C158E
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:38:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10AF19C158F
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 05:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575F31C21865
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2922832AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 04:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE01194A68;
-	Fri,  8 Nov 2024 04:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219BD13AA5D;
+	Fri,  8 Nov 2024 04:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1hJcQ8f"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SiknQ9kR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE20322E;
-	Fri,  8 Nov 2024 04:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3243D322E
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 04:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731040653; cv=none; b=MDnO2ryZ5cHB2DHY4PNR2NlvcR5vO8RpqZUCaVboMk8SOX65HKj6jnT0TxFvjQlNOEVEc/1CTiu6S/42fmc1SSn1/PtpVdu1dVbd++DQ2ZgwnnCQpBLy+R7+j+uqR56aflCAAeUbHG5Sq5l2CMH0po0Zv9ZHx/ndNu+/D2WUFHo=
+	t=1731040838; cv=none; b=rMYUTyxJ2XP9nzfZRrj3hccqpGvBrXe5BpI7y8agzFrZ1J0QGZ0Z0EzHInxQh0g1vvZ4GiDzbvwPwzXVmQizVVVOsiRKqGsD0Z8udD8aH9UV3/x/cyl5ctYZUBmwYl6uZO3wq7pF+3NxlaLqSmPavz7j0ZaYhxYrIdsBD6XnupA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731040653; c=relaxed/simple;
-	bh=po1qy1utAu+0nnVoWzfXbPIoHNcTde/hq4s8y1Zm1dY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nuTcI2lXiYSLwvKen158VI1Yjs7rNAtjzBw+teTWV1bmXMOe0xpBIlhvGC7RU2/PBxsALSy5aZCuPx4z8or9FNU9s2yYk/2MKBnhOqreKNX0ZTE1g0cDK8scjqNsNZu6AKm/NbtAGAg1LrYYTXrF/3vVi+CdAytP7OI4f/1fPRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1hJcQ8f; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5743074bso14642181fa.1;
-        Thu, 07 Nov 2024 20:37:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731040649; x=1731645449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qcKSOGfYZJL+StkfOdUbsXUXePDfExi+8RQpvO/dDiY=;
-        b=m1hJcQ8fOQKe2XbMR25u7+P7SHntL4fwS9nuQznVX0b5VpgBUx+stwvL3+B/dUUksj
-         da4BJfBC7LoboB5UhvQV2+yzCs9KorLQXKfHIVzuD58MsfqPI1B4gBqULQ0VfCHTIx6O
-         OixaZXIExoG5/tAu6oSFDNUUR9otO8fZc9wB3ySCap7FrdgOn4jf00xByluU+907awH8
-         +c4GwysKU56h6cDJKXt6G6V0VkSNsyXkEZSdRWF1mD4jzARpxXk7C1+EqwHBGABSMKT8
-         IbeMFnYTFs6l878I4Ypqboa0NXmleLNOhigqcMcSJ0hIENwWOjx/9vvs3VSgZZvDOLJy
-         qR6w==
+	s=arc-20240116; t=1731040838; c=relaxed/simple;
+	bh=ykXSli+P9UB1NMP7FhFJbpcQqM366M+Ncs33Bg6D7uk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eyfxGjt1c1Sf4I1u1C80p9a4NWrYjazmFx5dkVBVYI2gQPOcuDRulbdJraRoG3j1lty7MwAag4roPy/wgjIw0U43+uycqMiKjMxhHNeUKdjanXo/S9QrwUDYlmchF78oaUpGgoBSRgzrcrHCr3PQMeUgwhRif5WFCgq5yv5jELI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SiknQ9kR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731040835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UHk6TOORYsXHcLs4w+bspOOLb+VxriS86bXm+ofivo8=;
+	b=SiknQ9kR2WNkLSLhEjiqf1z0MKn4RnoATNxig4MNk8IZXs3aYJnwVMwGOpPFf74D42G7/y
+	4tNHD7Xw5iugd8frbwwDZzcBEoBr/fUc1heoQQx226YVr/TsTxtrt4xfdUYJyYrh2EoK8G
+	QM0f6Hy4xxoTZggxLBLt0E8DEXbVjfs=
+Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com
+ [209.85.160.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-jjwgP711MHiNzTYVZclQcg-1; Thu, 07 Nov 2024 23:40:33 -0500
+X-MC-Unique: jjwgP711MHiNzTYVZclQcg-1
+X-Mimecast-MFC-AGG-ID: jjwgP711MHiNzTYVZclQcg
+Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-28f4d9c29bfso1322073fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 07 Nov 2024 20:40:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731040649; x=1731645449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qcKSOGfYZJL+StkfOdUbsXUXePDfExi+8RQpvO/dDiY=;
-        b=Ud51No9z5MdWref3+KeT5HLZErp27n/A7WMVYq7pwI/r0DScadPLN5sYsqHIfO+eYW
-         lPyHtbr5nr/FlWf1bma27N7kKtht2aDGOsx+LLso/4WEyefqreKtTh4LacRkc6oOAlJA
-         fSVgFkHI92ezT/IlDoldZz1OAUOsdjsMeznZ/aKbpxXtmHu64y8UDSIMQBefPPKNYmOT
-         loSBS7U8uP1KERsXt7B+YEJqUfJns4WsHPJ8ZCsl8QmeTyfWOWP+GpaaaWtlF2mbMpxf
-         /udtg5HYL09QhvwkjnUc9GIlzb8JWluEgjuRQQ+WfAaFtiWyaSjDOYgJs6ZLJYmNRg9u
-         EKeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4n+/PiPvLsJMQJvRPDdFhfQR7oT0aEiLXCF+XKfgX6OFxqAQKKvP/MonwVLC1HvjFHMe4yd8whwo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbReEsokjgpTruSP08CRzuUSlpAO2DB/OHE9JgCHmgZXYD1Tjg
-	JtG3VsfjqMgNmoAf6wxrw8MzdhBNOwLq3AjGE7eBkqopqKjRsxmTNU0Zt+CABv8rR/mCKEJ3bjF
-	8Xu1+oy49F/74Clam7cF0Ejn8jaA=
-X-Google-Smtp-Source: AGHT+IHdWtZXE7g8JFOmVWyYlE+tt2UXzb1/L0Go8cued0BEV1AAC//p6AvA+JpBtVIcL2VzATgcrMaVUu6tEruscmQ=
-X-Received: by 2002:a2e:bc8b:0:b0:2fa:faed:e86b with SMTP id
- 38308e7fff4ca-2ff20981669mr3605541fa.13.1731040649112; Thu, 07 Nov 2024
- 20:37:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731040832; x=1731645632;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHk6TOORYsXHcLs4w+bspOOLb+VxriS86bXm+ofivo8=;
+        b=IRSUSiIHYw6k1Ny6pwTCyFtFDdhw3lPSDzllkvZyfZIzs4ts4JRTrh7bPYeOkLWeCa
+         1+78gF+JF8UZuv+w6pmPoTqo+/u9fFRu9gqKYMD/7Y+T5cbHiU2eS4T2E41QQnhVs8mG
+         KeGpQeeN7FDwDbxSfVOTQT6ux1nVs9kRz46vZMIewFIhGOSO0U7DiiscxB6euSKXDG31
+         QUFDMnABPL0unD4ZaMpQ0z4mxUMGMrPr/C8U5BgsQF+/yJ1SvunkGhS6a7Tp4gSym40h
+         9EaCaWJhiTv+i/I13jWZfGb62bi2dComNOag56JLhrDHHjAjw5k+DbuhmM/Ax/xa9kTC
+         a0Ew==
+X-Gm-Message-State: AOJu0YxuEhtTe8B/svpdHfcjH720fJmjlIvkK0qFQiO6EcLpPmD40eo2
+	6/1l1kf6geo0bj3QXrr+VW3YgncdPosk3nQNlnkQwYYPoV6FJuoy67FsSv/dzXaVRGzONr50Ctg
+	SXC5tVwJpdtSz01VWHpWslhtSIdEMZnigsKkKIC5fiTjSbE5Q8FfJ0lyGdMmivQ==
+X-Received: by 2002:a05:6870:3127:b0:278:65c:3c14 with SMTP id 586e51a60fabf-295600013ffmr1599881fac.5.1731040832307;
+        Thu, 07 Nov 2024 20:40:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHz0yn62s2LQrCpQUwFPvz0da1Ps74Gz7CdhSoJYJfgqxxo9FdzO4J53340jc7P7UfAbogHlQ==
+X-Received: by 2002:a05:6870:3127:b0:278:65c:3c14 with SMTP id 586e51a60fabf-295600013ffmr1599863fac.5.1731040831971;
+        Thu, 07 Nov 2024 20:40:31 -0800 (PST)
+Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546eddc9csm823156fac.36.2024.11.07.20.40.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 Nov 2024 20:40:31 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <3833509d-e0c1-4fc4-874f-5a10fe3f1633@redhat.com>
+Date: Thu, 7 Nov 2024 23:40:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241103025436.69196-1-yesanishhere@gmail.com>
-In-Reply-To: <20241103025436.69196-1-yesanishhere@gmail.com>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Thu, 7 Nov 2024 20:37:17 -0800
-Message-ID: <CABCoZhANKY5wjc=NqAd64Fhmdjx1k-x=zVkU+ySRDRvK0Gj2iw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: extcon: add documentation for Extcon subsystem
-To: myungjoo.ham@samsung.com, cw00.choi@samsung.com, corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+To: Juri Lelli <juri.lelli@redhat.com>,
+ Joel Fernandes <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
+ Shin Kawamura <kawasin@google.com>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
+ <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+ <20241030195017.GA4171541@google.com>
+ <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
+ <20241104174109.GA1044726@google.com>
+ <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+ <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
+Content-Language: en-US
+In-Reply-To: <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Myungjoo/Chanwoo,
+On 11/6/24 1:05 PM, Waiman Long wrote:
+> On 11/6/24 11:08 AM, Juri Lelli wrote:
+>> On 04/11/24 17:41, Joel Fernandes wrote:
+>>> On Mon, Nov 04, 2024 at 11:54:36AM +0100, Juri Lelli wrote:
+>> ...
+>>
+>>>> I added a printk in __dl_server_attach_root which is called after the
+>>>> dynamic rd is built to transfer bandwidth to it.
+>>>>
+>>>> __dl_server_attach_root came with d741f297bceaf ("sched/fair: Fair
+>>>> server interface"), do you have this change in your backport?
+>>> You nailed it! Our 5.15 backport appears to be slightly older and is 
+>>> missing
+>>> this from topology.c as you mentioned. Thanks for clarifying!
+>>>
+>>>
+>>>          /*
+>>>           * Because the rq is not a task, dl_add_task_root_domain() 
+>>> did not
+>>>           * move the fair server bw to the rd if it already started.
+>>>           * Add it now.
+>>>           */
+>>>          if (rq->fair_server.dl_server)
+>>> __dl_server_attach_root(&rq->fair_server, rq);
+>>>
+>>>>> So if rd changes during boot initialization, the correct dl_bw has 
+>>>>> to be
+>>>>> updated AFAICS. Also if cpusets are used, the rd for a CPU may 
+>>>>> change.
+>>>> cpusets changes are something that I still need to double check. Will
+>>>> do.
+>>>>
+>>> Sounds good, that would be good to verify.
+>> So, I played a little bit with it and came up with a simple set of ops
+>> that point out an issue (default fedora server install):
+>>
+>> echo Y >/sys/kernel/debug/sched/verbose
+>>
+>> echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
+>>
+>> echo 0-7 > /sys/fs/cgroup/user.slice/cpuset.cpus
+>> echo 6-7 > /sys/fs/cgroup/user.slice/cpuset.cpus.exclusive
+>> echo root >/sys/fs/cgroup/user.slice/cpuset.cpus.partition
+>>
+>> The domains are rebuilt correctly, but we end up with a null total_bw.
+>>
+>> The conditional call above takes care correctly of adding back dl_server
+>> per-rq bandwidth when we pass from the single domain to the 2 exclusive
+>> ones, but I noticed that we go through partition_sched_domains_locked()
+>> twice for a single write of 'root' and the second one, since it's not
+>> actually destroying/rebuilding anything, is resetting total_bw w/o
+>> addition dl_server contribution back.
+>>
+>> Now, not completely sure why we need to go through partition_sched_
+>> domains_locked() twice, as we have (it also looked like a pattern from
+>> other call paths)
+>>
+>> update_prstate()
+>> -> update_cpumasks_hier()
+>>     -> rebuild_sched_domains_locked() <- right at the end
+>> -> update_partition_sd_lb()
+>>     -> rebuild_sched_domains_locked() <- right after the above call
+>>
+>> Removing the first call does indeed fix the issue and domains look OK,
+>> but I'm pretty sure I'm missing all sort of details and corner cases.
+>>
+>> Waiman (now Cc-ed), maybe you can help here understanding why the two
+>> back to back calls are needed?
+>
+> Thanks for letting me know about this case.
+>
+> I am aware that rebuild_sched_domains_locked() can be called more than 
+> once. I have addressed the hotplug case, but it can happen in some 
+> other corner cases as well. The problem with multiple 
+> rebuild_sched_domains_locked() calls is the fact that intermediate 
+> ones may be called where the internal states may not be consistent. I 
+> am going to work on a fix to this issue by making sure that 
+> rebuild_sched_domains_locked() will only be called once.
 
-Wondering if you have any comments?
+I am working on a set of cpuset patches to eliminate redundant 
+rebuild_sched_domains_locked() calls. However, my cpuset test script 
+fails after the change due to the presence of test cases where the only 
+CPU in a 1-cpu partition is being offlined. So I sent out a 
+sched/deadline patch [1] to work around this particular corner case.
 
-On Sat, Nov 2, 2024 at 7:54=E2=80=AFPM anish kumar <yesanishhere@gmail.com>=
- wrote:
->
-> The Extcon (External Connector) subsystem driver lacked proper
-> documentation. This commit adds comprehensive documentation
-> explaining the purpose, key components, and usage of the Extcon
-> framework.
->
-> The new documentation includes:
-> - An overview of the Extcon subsystem
-> - Descriptions of key structures
-> - Explanations of core functions
-> - Information on the sysfs interface
-> - A usage example for driver developers
->
-> Signed-off-by: anish kumar <yesanishhere@gmail.com>
-> ---
->  Documentation/driver-api/extcon.rst | 255 ++++++++++++++++++++++++++++
->  Documentation/driver-api/index.rst  |   1 +
->  MAINTAINERS                         |   1 +
->  3 files changed, 257 insertions(+)
->  create mode 100644 Documentation/driver-api/extcon.rst
->
-> diff --git a/Documentation/driver-api/extcon.rst b/Documentation/driver-a=
-pi/extcon.rst
-> new file mode 100644
-> index 000000000000..d3217b9cdcd5
-> --- /dev/null
-> +++ b/Documentation/driver-api/extcon.rst
-> @@ -0,0 +1,255 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Extcon Device Subsystem
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Overview
-> +=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The Extcon (External Connector) subsystem provides a unified framework f=
-or
-> +managing external connectors in Linux systems. It allows drivers to repo=
-rt
-> +the state of external connectors and provides a standardized interface f=
-or
-> +userspace to query and monitor these states.
-> +
-> +Extcon is particularly useful in modern devices with multiple connectivi=
-ty
-> +options, such as smartphones, tablets, and laptops. It helps manage vari=
-ous
-> +types of connectors, including:
-> +
-> +1. USB connectors (e.g., USB-C, micro-USB)
-> +2. Charging ports (e.g., fast charging, wireless charging)
-> +3. Audio jacks (e.g., 3.5mm headphone jack)
-> +4. Video outputs (e.g., HDMI, DisplayPort)
-> +5. Docking stations
-> +
-> +Real-world examples:
-> +
-> +1. Smartphone USB-C port:
-> +   A single USB-C port on a smartphone can serve multiple functions. Ext=
-con
-> +   can manage the different states of this port, such as:
-> +   - USB data connection
-> +   - Charging (various types like fast charging, USB Power Delivery)
-> +   - Audio output (USB-C headphones)
-> +   - Video output (USB-C to HDMI adapter)
-> +
-> +2. Laptop docking station:
-> +   When a laptop is connected to a docking station, multiple connections=
- are
-> +   made simultaneously. Extcon can handle the state changes for:
-> +   - Power delivery
-> +   - External displays
-> +   - USB hub connections
-> +   - Ethernet connectivity
-> +
-> +3. Wireless charging pad:
-> +   Extcon can manage the state of a wireless charging connection, allowi=
-ng
-> +   the system to respond appropriately when a device is placed on or rem=
-oved
-> +   from the charging pad.
-> +
-> +4. Smart TV HDMI ports:
-> +   In a smart TV, Extcon can manage multiple HDMI ports, detecting when
-> +   devices are connected or disconnected, and potentially identifying th=
-e
-> +   type of device (e.g., gaming console, set-top box, Blu-ray player).
-> +
-> +The Extcon framework simplifies the development of drivers for these com=
-plex
-> +scenarios by providing a standardized way to report and query connector
-> +states, handle mutually exclusive connections, and manage connector
-> +properties. This allows for more robust and flexible handling of externa=
-l
-> +connections in modern devices.
-> +
-> +Key Components
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +extcon_dev
-> +----------
-> +
-> +The core structure representing an Extcon device::
-> +
-> +    struct extcon_dev {
-> +        const char *name;
-> +        const unsigned int *supported_cable;
-> +        const u32 *mutually_exclusive;
-> +
-> +        /* Internal data */
-> +        struct device dev;
-> +        unsigned int id;
-> +        struct raw_notifier_head nh_all;
-> +        struct raw_notifier_head *nh;
-> +        struct list_head entry;
-> +        int max_supported;
-> +        spinlock_t lock;
-> +        u32 state;
-> +
-> +        /* Sysfs related */
-> +        struct device_type extcon_dev_type;
-> +        struct extcon_cable *cables;
-> +        struct attribute_group attr_g_muex;
-> +        struct attribute **attrs_muex;
-> +        struct device_attribute *d_attrs_muex;
-> +    };
-> +
-> +Key fields:
-> +
-> +- ``name``: Name of the Extcon device
-> +- ``supported_cable``: Array of supported cable types
-> +- ``mutually_exclusive``: Array defining mutually exclusive cable types
-> +  This field is crucial for enforcing hardware constraints. It's an arra=
-y of
-> +  32-bit unsigned integers, where each element represents a set of mutua=
-lly
-> +  exclusive cable types. The array should be terminated with a 0.
-> +
-> +  For example:
-> +
-> +  ::
-> +
-> +      static const u32 mutually_exclusive[] =3D {
-> +          BIT(0) | BIT(1),  /* Cable 0 and 1 are mutually exclusive */
-> +          BIT(2) | BIT(3) | BIT(4),  /* Cables 2, 3, and 4 are mutually =
-exclusive */
-> +          0  /* Terminator */
-> +      };
-> +
-> +  In this example, cables 0 and 1 cannot be connected simultaneously, an=
-d
-> +  cables 2, 3, and 4 are also mutually exclusive. This is useful for
-> +  scenarios like a single port that can either be USB or HDMI, but not b=
-oth
-> +  at the same time.
-> +
-> +  The Extcon core uses this information to prevent invalid combinations =
-of
-> +  cable states, ensuring that the reported states are always consistent
-> +  with the hardware capabilities.
-> +
-> +- ``state``: Current state of the device (bitmap of connected cables)
-> +
-> +
-> +extcon_cable
-> +------------
-> +
-> +Represents an individual cable managed by an Extcon device::
-> +
-> +    struct extcon_cable {
-> +        struct extcon_dev *edev;
-> +        int cable_index;
-> +        struct attribute_group attr_g;
-> +        struct device_attribute attr_name;
-> +        struct device_attribute attr_state;
-> +        struct attribute *attrs[3];
-> +        union extcon_property_value usb_propval[EXTCON_PROP_USB_CNT];
-> +        union extcon_property_value chg_propval[EXTCON_PROP_CHG_CNT];
-> +        union extcon_property_value jack_propval[EXTCON_PROP_JACK_CNT];
-> +        union extcon_property_value disp_propval[EXTCON_PROP_DISP_CNT];
-> +        DECLARE_BITMAP(usb_bits, EXTCON_PROP_USB_CNT);
-> +        DECLARE_BITMAP(chg_bits, EXTCON_PROP_CHG_CNT);
-> +        DECLARE_BITMAP(jack_bits, EXTCON_PROP_JACK_CNT);
-> +        DECLARE_BITMAP(disp_bits, EXTCON_PROP_DISP_CNT);
-> +    };
-> +
-> +Core Functions
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +.. kernel-doc:: drivers/extcon/extcon.c
-> +   :identifiers: extcon_get_state
-> +
-> +.. kernel-doc:: drivers/extcon/extcon.c
-> +   :identifiers: extcon_set_state
-> +
-> +.. kernel-doc:: drivers/extcon/extcon.c
-> +   :identifiers: extcon_set_state_sync
-> +
-> +.. kernel-doc:: drivers/extcon/extcon.c
-> +   :identifiers: extcon_get_property
-> +
-> +
-> +Sysfs Interface
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Extcon devices expose the following sysfs attributes:
-> +
-> +- ``name``: Name of the Extcon device
-> +- ``state``: Current state of all supported cables
-> +- ``cable.N/name``: Name of the Nth supported cable
-> +- ``cable.N/state``: State of the Nth supported cable
-> +
-> +Usage Example
-> +-------------
-> +
-> +.. code-block:: c
-> +
-> +    #include <linux/module.h>
-> +    #include <linux/platform_device.h>
-> +    #include <linux/extcon.h>
-> +
-> +    struct my_extcon_data {
-> +        struct extcon_dev *edev;
-> +        struct device *dev;
-> +    };
-> +
-> +    static const unsigned int my_extcon_cable[] =3D {
-> +        EXTCON_USB,
-> +        EXTCON_USB_HOST,
-> +        EXTCON_NONE,
-> +    };
-> +
-> +    static int my_extcon_probe(struct platform_device *pdev)
-> +    {
-> +        struct my_extcon_data *data;
-> +        int ret;
-> +
-> +        data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +        if (!data)
-> +            return -ENOMEM;
-> +
-> +        data->dev =3D &pdev->dev;
-> +
-> +        /* Initialize extcon device */
-> +        data->edev =3D devm_extcon_dev_allocate(data->dev, my_extcon_cab=
-le);
-> +        if (IS_ERR(data->edev)) {
-> +            dev_err(data->dev, "Failed to allocate extcon device\n");
-> +            return PTR_ERR(data->edev);
-> +        }
-> +
-> +        /* Register extcon device */
-> +        ret =3D devm_extcon_dev_register(data->dev, data->edev);
-> +        if (ret < 0) {
-> +            dev_err(data->dev, "Failed to register extcon device\n");
-> +            return ret;
-> +        }
-> +
-> +        platform_set_drvdata(pdev, data);
-> +
-> +        /* Example: Set initial state */
-> +        extcon_set_state_sync(data->edev, EXTCON_USB, true);
-> +
-> +        dev_info(data->dev, "My extcon driver probed successfully\n");
-> +        return 0;
-> +    }
-> +
-> +    static int my_extcon_remove(struct platform_device *pdev)
-> +    {
-> +        struct my_extcon_data *data =3D platform_get_drvdata(pdev);
-> +
-> +        /* Example: Clear state before removal */
-> +        extcon_set_state_sync(data->edev, EXTCON_USB, false);
-> +
-> +        dev_info(data->dev, "My extcon driver removed\n");
-> +        return 0;
-> +    }
-> +
-> +    static const struct of_device_id my_extcon_of_match[] =3D {
-> +        { .compatible =3D "my,extcon-device", },
-> +        { },
-> +    };
-> +    MODULE_DEVICE_TABLE(of, my_extcon_of_match);
-> +
-> +    static struct platform_driver my_extcon_driver =3D {
-> +        .driver =3D {
-> +            .name =3D "my-extcon-driver",
-> +            .of_match_table =3D my_extcon_of_match,
-> +        },
-> +        .probe =3D my_extcon_probe,
-> +        .remove =3D my_extcon_remove,
-> +    };
-> +
-> +    module_platform_driver(my_extcon_driver);
-> +
-> +This example demonstrates:
-> +---------------------------
-> +
-> +- Defining supported cable types (USB and USB Host in this case).
-> +- Allocating and registering an extcon device.
-> +- Setting an initial state for a cable (USB connected in this example).
-> +- Clearing the state when the driver is removed.
-> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-ap=
-i/index.rst
-> index 7f83e05769b4..16e2c4ec3c01 100644
-> --- a/Documentation/driver-api/index.rst
-> +++ b/Documentation/driver-api/index.rst
-> @@ -86,6 +86,7 @@ Subsystem-specific APIs
->     dmaengine/index
->     dpll
->     edac
-> +   extcon
->     firmware/index
->     fpga/index
->     frame-buffer
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c27f3190737f..7a8739ed9d46 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -8572,6 +8572,7 @@ L:        linux-kernel@vger.kernel.org
->  S:     Maintained
->  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.=
-git
->  F:     Documentation/devicetree/bindings/extcon/
-> +F:     Documentation/driver-api/extcon.rst
->  F:     Documentation/firmware-guide/acpi/extcon-intel-int3496.rst
->  F:     drivers/extcon/
->  F:     include/linux/extcon.h
-> --
-> 2.39.3 (Apple Git-146)
->
+[1] 
+https://lore.kernel.org/lkml/20241108042924.520458-1-longman@redhat.com/T/#u
+
+Apparently, the null total_bw bug caused by multiple 
+rebuild_sched_domains_locked() calls masks this problem.
+
+Anyway, I should be able to post the cpuset patch series next week after 
+further testing. Please review my sched/deadline patch to see if you are 
+OK with this minor change.
+
+Cheers,
+Longman
+
+
 
