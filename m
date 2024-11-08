@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-401861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-401864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C6A9C203B
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:19:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860A89C2044
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 16:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50591F2406C
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:19:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49544286BB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 15:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A4920262D;
-	Fri,  8 Nov 2024 15:19:07 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B7B2038CC;
+	Fri,  8 Nov 2024 15:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="triUdN6v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5D62003D5
-	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 15:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7502038BD;
+	Fri,  8 Nov 2024 15:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731079147; cv=none; b=hIqhcQ8+0xAK4okakhUshRGOMRAFjfbedLZea93vi+m519pFmivCzon7+3K3yGGp5ru1KTGInYefT7znZDDrw5No8C7pRdIYc6KpDZhntF+yD7YpnxYJ6Gab/dKCPCWipKYZaw6omYARoRJxUSPChSGgZzz275IeZT6YzgVFFtY=
+	t=1731079347; cv=none; b=YNiUSaJ1r0aYT52CLxjsE44X7fUBcZeR2IfeSfAPWV/uSqdX+rPZCz5SEOVuF8lkMtFww3Z4dS6yy6lEp384bevoAWZdcVQ+FZQswdcOT1glrIERVmstDb192vg582IJudS86XhLI7xja5IH62J0bkyiwWuYLzt4Z0Y7ynyu5Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731079147; c=relaxed/simple;
-	bh=NTlSyeoD2+4EQKqu/2Gh4WGqdk3IDoK71aSW0ypZhJg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TSnsuJFybuVkhmNucrBC6Zq52NFK1dCRy7XOa2pheZ6FJeAIgCGo7TUte1nr8MBproxotBsV8QHcsvqDwnVyN6sgFbwhkBTMqmcpLqGk/2e74QKjfjrKGUVF+fSglsKIe5IUuk8eOlkiwt45tetfFLEvjxJOlWLIv9l/uSyukn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83ab3d46472so235625339f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 07:19:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731079145; x=1731683945;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bo+njan6p1yRRIokQZvopQsTfBYUHrG3Vr76u9l3srg=;
-        b=ine4JrxL06zM3LhAnRYEzwCWqbKKDaYD+KdWsoMM3ubey8a8d1rNeCXpcNltTb6bMi
-         0m38Wbm0H+nAtnTetdAa7aCa2laK70sg9Y0u3jG7VUBEyoF2lHZdRSP4hAkt7YPxPOYF
-         HNSAA9JDmIDb7bD/hj86LafN6+USxeW8IlrR/sAGpNMcoDQhHpf62hFe/aYkfYc+RkNS
-         wOsSQJ3bWGRb7TilSy5iQ7NSLV+1wu5MP06BcfdKLN/IISe3DdmlYIdESU/mAMlTtIl0
-         ylYUBxvEgdRKXUu6ikcqWOlLMoCFaLJDbes/LJQUUjIDX7bR4/iYZpW64aiHecpPhX5u
-         hjXA==
-X-Gm-Message-State: AOJu0YzZGJXcKZ0TQTxAK5s+lpTxHyWKmdD6rf1due+qfWgllfX8Q8r4
-	lshQxGFRsnWsH6z5DMgrSmJLqz0HbPu+vXA7a/wfQNFZpGDS1hfhm48IjdPH14AwavhXceTkgeR
-	mDstZf/Sy5WR78Du28GCb0qfbseyfzcM6bHZoTY6VMz+4szCjpzvM8BE=
-X-Google-Smtp-Source: AGHT+IEKoS9Wb3KaLv0vzUXaqlOb4GGG8H0Mu8s/1eGI3S+mj+V6VvDG1tEi+vMhY1j8ITI0IJohiJOFZXGlmtQAE/g2itJ4fdns
+	s=arc-20240116; t=1731079347; c=relaxed/simple;
+	bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p79N8MH+9hjrb3O765yQlJFK39R+kPk7BZEsP1LWdd9N7c0tJGiEgNcUpytQAeHJJnhjlZQIEatK2mZjp0NjSOgZnJ4y7otM8oiVYk07b8p/IHKQ68AaCSB+jx2EoI826GD3lRiHPMEGIoBoC6Xjyb3ApRjZBfU31UjJ8gLsngA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=triUdN6v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B975C4CECF;
+	Fri,  8 Nov 2024 15:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731079346;
+	bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=triUdN6vkvHdywvVxNXLrYvEeFlYEHBRIZ/tKEH47DJNYeBPeeOjixkBD4d36qyzH
+	 kEKvTDVmwdijOoMY13OV3xpSEABzm5vOfuHE42JrriSKBHBz1EOCcvyGas0p+68ZK7
+	 XvJx6hdUCLqr8hgRW2d+YGJ+nuX1XaGhwAniedxqxXtIxcnSgHGTgUkwjVGoJnjzJe
+	 dchB3JhCXprzY/bSRUXYa+gQtD6tiMXG57rkezV+DbDcHvfFox9Cu4XtPdWc2ESaIq
+	 6RIbMGASdT5gvbThPufafY85hOC1KF5RonfUF/z0ZgnArT9VcphBn/iQA5kMFoRqxW
+	 lkokMX5H42PCw==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 08 Nov 2024 15:20:46 +0000
+Subject: [PATCH] kselftest/arm64: Fix build with stricter assemblers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc9:b0:3a0:9fd8:f70b with SMTP id
- e9e14a558f8ab-3a6f19a221cmr37673755ab.6.1731079144825; Fri, 08 Nov 2024
- 07:19:04 -0800 (PST)
-Date: Fri, 08 Nov 2024 07:19:04 -0800
-In-Reply-To: <CAHiZj8innKODZYdJr0mV8CJrR_vk8VKw7Gf+wkoUYCp2Mq=v2g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672e2be8.050a0220.69fce.0019.GAE@google.com>
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241108-arm64-selftest-asm-error-v1-1-7ce27b42a677@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAE0sLmcC/x3MywqDMBBG4VeRWTuQqKniq4iLWP+0A/XCjJSC+
+ O6GLr/FOScZVGDUFycpvmKyrRm+LOj5jusLLHM2Va5qvHcdR10eDRs+6YAdHG1hqG7Kc9uF1iG
+ 4qZ4o57siye+/HsbrugE4X0FnagAAAA==
+X-Change-ID: 20241108-arm64-selftest-asm-error-d78570e50b3b
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2020; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=9MmFQC6J2fkpekXm5iWYwsyMilxxoBeL/WcxpybUov4=;
+ b=owGbwMvMwMWocq27KDak/QLjabUkhnQ9nQ1lLpar7slFR1WUXHNSeZ+0XW3V+quWdxckBHjKJpQ2
+ pxh2MhqzMDByMciKKbKsfZaxKj1cYuv8R/NfwQxiZQKZwsDFKQAT0f7J/lc4dOHBddzHebKc7P8cFf
+ KUn6KyoL7GlL1L5f0tkSpx3Rf/rFTXcjn8T3T4MKnih4Bs12c3hSWnpPoLnGxcuiIXt+4KsfbRVp3y
+ 4Wy9bdrlCOV/azqkpjxnXpn+18/lP1+rvPusa3HqQd+f371aqROiHpOv3Gq10eh6rvqr7GMnFFxzSn
+ fKua5X7j7AxRGZaHhqw2vtmcwX/nVo7UqsX6Gy6lmA+IFXd6UW2rz/u+Xfj1ML1237nBXB8YwjSGq7
+ d+62sy+Mrvil9y64X5eW5JMUt4qrmo0lnFF2ystTX6d27Z5r+4AjY5vunnkexskmOxRnW/SrWs8qz4
+ 0rXMt9Na2vaO7X+Ei3LoMPPkxHAQ==
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hello,
+While some assemblers (including the LLVM assembler I mostly use) will
+happily accept SMSTART as an instruction by default others, specifically
+gas, require that any architecture extensions be explicitly enabled.
+The assembler SME test programs use manually encoded helpers for the new
+instructions but no SMSTART helper is defined, only SM and ZA specific
+variants.  Unfortunately the irritators that were just added use plain
+SMSTART so on stricter assemblers these fail to build:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+za-test.S:160: Error: selected processor does not support `smstart'
 
-Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Switch to using SMSTART ZA via the manually encoded smstart_za macro we
+already have defined.
 
-Tested on:
+Fixes: d65f27d240bb ("kselftest/arm64: Implement irritators for ZA and ZT")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/arm64/fp/za-test.S | 2 +-
+ tools/testing/selftests/arm64/fp/zt-test.S | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-commit:         906bd684 Merge tag 'spi-fix-v6.12-rc6' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1207ee30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174220c0580000
+diff --git a/tools/testing/selftests/arm64/fp/za-test.S b/tools/testing/selftests/arm64/fp/za-test.S
+index 95fdc1c1f228221bc812087a528e4b7c99767bba..9c33e13e9dc4a6f084649fe7d0fb838d9171e3aa 100644
+--- a/tools/testing/selftests/arm64/fp/za-test.S
++++ b/tools/testing/selftests/arm64/fp/za-test.S
+@@ -157,7 +157,7 @@ function irritator_handler
+ 
+ 	// This will reset ZA to all bits 0
+ 	smstop
+-	smstart
++	smstart_za
+ 
+ 	ret
+ endfunction
+diff --git a/tools/testing/selftests/arm64/fp/zt-test.S b/tools/testing/selftests/arm64/fp/zt-test.S
+index a90712802801efb97dc6bf8027fb9ceac8f0a895..38080f3c328042af6b3e2d7c3300162ea6efa4ea 100644
+--- a/tools/testing/selftests/arm64/fp/zt-test.S
++++ b/tools/testing/selftests/arm64/fp/zt-test.S
+@@ -126,7 +126,7 @@ function irritator_handler
+ 
+ 	// This will reset ZT to all bits 0
+ 	smstop
+-	smstart
++	smstart_za
+ 
+ 	ret
+ endfunction
 
-Note: testing is done by a robot and is best-effort only.
+---
+base-commit: 95ad089d464da2a4cd4511fb077f25994104c8f1
+change-id: 20241108-arm64-selftest-asm-error-d78570e50b3b
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
