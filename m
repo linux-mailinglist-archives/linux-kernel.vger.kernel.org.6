@@ -1,174 +1,464 @@
-Return-Path: <linux-kernel+bounces-400876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-400877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A69A9C1389
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:20:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B4D9C138E
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 02:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D60EB21538
-	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F9C9283B2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  8 Nov 2024 01:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ADDDDCD;
-	Fri,  8 Nov 2024 01:19:54 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30060B67A;
+	Fri,  8 Nov 2024 01:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ba4wXUQu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53243D6D;
-	Fri,  8 Nov 2024 01:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BD03C14
+	for <linux-kernel@vger.kernel.org>; Fri,  8 Nov 2024 01:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731028793; cv=none; b=BGYpHZyih1Ifzz8/AtRxpq2W0c3iT4Cw8nhH+4cGvUiu5ZYPtVeHW1caOO2bxSn0U4sWIYs4+EUmOSJvkRare26mf7An+jvWKhtIEOo96i0cOkD3oSMuhXoM8fgp4+wlUqCaeotkPFnrYmhPaCXWUXQ/2JtMzGLAn+UCIh2oAx0=
+	t=1731028927; cv=none; b=rEk0UUoRUWNFJBouo7Ti2uLMP3fNubKX8NoLSDj2/vXMyx6Atc6wwORfsyYVKGRdNPKYIIY/Cdy/3vLO9+FbOKOnUvtM2Kqlxr7p+LiLNC1g3DQ5IMqgUKsYQjfyH/59VWOGM1SzyyUxG7Zd374q4/ok30mPtnT78Up+gfQ/8KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731028793; c=relaxed/simple;
-	bh=Rt8orAe9gRXZh7BDhVnfVOiGWoYztoEEpJjVMMGZ+Oc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=AwqMdwdGseZyqExuld+CUmxvdDl/mkf5qlBLtVvRHXUQmEX+YsyvhiSYv5M7lL84XaM9TO+yI0lkdcD4EaNLGrmWCHFDL2o3jOK3lJuoRuDZqtlxJArHsVwZaM4Ydm8kKWVbcVj+3jfDJ0uxWMD1ytBt8GdVVxn3evr+22ypzmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xl1Ln0lTjz4f3jY5;
-	Fri,  8 Nov 2024 09:19:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 1B3F11A0194;
-	Fri,  8 Nov 2024 09:19:47 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgDHo4ctZy1n00WkBA--.29471S3;
-	Fri, 08 Nov 2024 09:19:44 +0800 (CST)
-Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
-To: Chuck Lever <chuck.lever@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
- linux-stable <stable@vger.kernel.org>,
- "harry.wentland@amd.com" <harry.wentland@amd.com>,
- "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
- "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
- "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
- "christian.koenig@amd.com" <christian.koenig@amd.com>,
- "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
- "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Liam Howlett <liam.howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Sasha Levin <sashal@kernel.org>,
- "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
- "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
- "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
- linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
- <2024110625-earwig-deport-d050@gregkh>
- <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
- <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
- <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <4db0a28b-8587-e999-b7a1-1d54fac4e19c@huaweicloud.com>
-Date: Fri, 8 Nov 2024 09:19:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1731028927; c=relaxed/simple;
+	bh=5QtDR8iJCH9aQQFB2GLpbdMki7rkE3Rcs4N4c/N1okU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XBZyg+DoxSOKvPjB98plV0+GKIIfUKmtmJ9ZlAvslBuzuBaEZFYpIg6++9xCADR21I3/TG5YrakgMM4+2UPrIcghxBtzcmAID2U2lECMBFciGE8XEjgJHrQ++InfbKgY/5ctxpd6uWAEEVEYdUA1EBN2BCE+xrJltb71/c6rrio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ba4wXUQu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1D6C4CECC;
+	Fri,  8 Nov 2024 01:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731028926;
+	bh=5QtDR8iJCH9aQQFB2GLpbdMki7rkE3Rcs4N4c/N1okU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=ba4wXUQu3ufQ26v9y2UPV91MEtNuM3hgWFuj8FRpiLiqD9g1lqWGPc2ZNnGpctCe/
+	 9YI12Izop4cf50atUeSnYyZY99kVMHSfkfHvF/6HyQtBk8ljKCOmKo7XnTHxhS7FEE
+	 pl1wims1f9NR3spG1ReYvsBZNk5qv3bhApxJBAgkMqihvxSl8peU0vbp4GsUDF++Vd
+	 anXYauTVf9jqluLo89wZP1HHsy/3U2HYZGGgo6m/eSoDL3UP/sopHQSyJixNiV8vNw
+	 ncfSxz5Phtd7u2wVU8Titmk8iOjU1KRTBk76/P/zYgEby/9oG71fyvzoIlOiYCY2KS
+	 fkIGaipWuZsdg==
+Message-ID: <e2e61445-c1fd-4b88-8402-b9f83111e05e@kernel.org>
+Date: Fri, 8 Nov 2024 09:22:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Zhiguo Niu <zhiguo.niu@unisoc.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH V2] f2fs: fix to adjust appropriate length for fiemap
+To: Zhiguo Niu <niuzhiguo84@gmail.com>
+References: <1730685372-2995-1-git-send-email-zhiguo.niu@unisoc.com>
+ <ab9f63b2-8d02-411b-8d2f-bc1b5b748ffe@kernel.org>
+ <CAHJ8P3L9o2RJgV=TtUf_MPj36wasgPn7bn9FnGPXu=TgpE7ATQ@mail.gmail.com>
+ <22873055-370b-4240-83ff-96bcfa91413a@kernel.org>
+ <CAHJ8P3LddwapGLV5nKmw1ULTm7qp5OMk-kFBK3s_UptPPeph7w@mail.gmail.com>
+ <9199e9fc-7b5b-4069-b79b-65ba5ae1b0f6@kernel.org>
+ <CAHJ8P3L68mKAcSdrgk-5VZQh4cW+BBroh+50ymvuzO0f5x5kMw@mail.gmail.com>
+ <c070fd2d-6480-4833-b03c-ec032ee37a28@kernel.org>
+ <CAHJ8P3L4Q4Pia66o1RQGw5NnUOVxzNgFXUPO33jtqfQ-Oc=G_g@mail.gmail.com>
+ <0a8f96da-302d-4d6c-9ab6-0b66a05cbcfd@kernel.org>
+ <CAHJ8P3JTY=DFQRMd0zNGy6a3Hdq1y045ri9QKM8NGn8bNhHJfA@mail.gmail.com>
+ <d5ef36a3-1bcb-40a0-a963-c6d1887c4e4e@kernel.org>
+ <CAHJ8P3JARkFxkyz-FLWN2PSZb2AL3=dSqF1v-SR-oU9z6tm+Rg@mail.gmail.com>
+ <45cec698-2679-435b-b62a-ebe22d361955@kernel.org>
+ <CAHJ8P3LWwA=VzKcr3nXO1uZtkc1H9dmO+5dNy247A2fGn6JHDA@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAHJ8P3LWwA=VzKcr3nXO1uZtkc1H9dmO+5dNy247A2fGn6JHDA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHo4ctZy1n00WkBA--.29471S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ArW7CF45Jw13Cw4DtFWDurg_yoW8Kw48pF
-	ZFqas8KwsrJw17KrnFyw1jqFWFyws8Jr15Xrs8Wr1UAF90kr1SgFWxGr1Ykas7Wrs3uw4U
-	KF4ava4xJF1UGaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4U
-	JVW0owA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pR1lkxUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
-
-在 2024/11/07 22:41, Chuck Lever 写道:
-> On Thu, Nov 07, 2024 at 08:57:23AM +0800, Yu Kuai wrote:
->> Hi,
+On 2024/11/7 18:53, Zhiguo Niu wrote:
+> Chao Yu <chao@kernel.org> 于2024年11月7日周四 16:22写道：
 >>
->> 在 2024/11/06 23:19, Chuck Lever III 写道:
->>>
->>>
->>>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>> On 2024/11/7 14:54, Zhiguo Niu wrote:
+>>> Chao Yu <chao@kernel.org> 于2024年11月7日周四 14:18写道：
 >>>>
->>>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
->>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>> On 2024/11/6 16:41, Zhiguo Niu wrote:
+>>>>> Chao Yu <chao@kernel.org> 于2024年11月6日周三 15:40写道：
+>>>>>>
+>>>>>> On 2024/11/6 14:08, Zhiguo Niu wrote:
+>>>>>>> Chao Yu <chao@kernel.org> 于2024年11月6日周三 10:40写道：
+>>>>>>>>
+>>>>>>>> On 2024/11/6 10:26, Zhiguo Niu wrote:
+>>>>>>>>> Chao Yu <chao@kernel.org> 于2024年11月6日周三 10:16写道：
+>>>>>>>>>>
+>>>>>>>>>> On 2024/11/5 19:02, Zhiguo Niu wrote:
+>>>>>>>>>>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 18:39写道：
+>>>>>>>>>>>>
+>>>>>>>>>>>> On 2024/11/5 15:28, Zhiguo Niu wrote:
+>>>>>>>>>>>>> Chao Yu <chao@kernel.org> 于2024年11月5日周二 15:04写道：
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> On 2024/11/4 9:56, Zhiguo Niu wrote:
+>>>>>>>>>>>>>>> If user give a file size as "length" parameter for fiemap
+>>>>>>>>>>>>>>> operations, but if this size is non-block size aligned,
+>>>>>>>>>>>>>>> it will show 2 segments fiemap results even this whole file
+>>>>>>>>>>>>>>> is contiguous on disk, such as the following results:
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>          ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>>>>>>>>>>>>>> Fiemap: offset = 0 len = 19034
+>>>>>>>>>>>>>>>                 logical addr.    physical addr.   length           flags
+>>>>>>>>>>>>>>> 0       0000000000000000 0000000020baa000 0000000000004000 00001000
+>>>>>>>>>>>>>>> 1       0000000000004000 0000000020bae000 0000000000001000 00001001
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> after this patch:
+>>>>>>>>>>>>>>> ./f2fs_io fiemap 0 19034 ylog/analyzer.py
+>>>>>>>>>>>>>>> Fiemap: offset = 0 len = 19034
+>>>>>>>>>>>>>>>             logical addr.    physical addr.   length           flags
+>>>>>>>>>>>>>>> 0    0000000000000000 00000000315f3000 0000000000005000 00001001
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>> V2: correct commit msg according to Chao's questions
+>>>>>>>>>>>>>>> f2fs_io has been modified for testing, the length for fiemap is
+>>>>>>>>>>>>>>> real file size, not block number
+>>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>>>          fs/f2fs/data.c | 4 ++--
+>>>>>>>>>>>>>>>          1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>>>>>>>>>>>> index 306b86b0..9fc229d 100644
+>>>>>>>>>>>>>>> --- a/fs/f2fs/data.c
+>>>>>>>>>>>>>>> +++ b/fs/f2fs/data.c
+>>>>>>>>>>>>>>> @@ -1966,8 +1966,8 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>>>>>>>>>>>>>>                              goto out;
+>>>>>>>>>>>>>>>              }
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>> -     if (bytes_to_blks(inode, len) == 0)
+>>>>>>>>>>>>>>> -             len = blks_to_bytes(inode, 1);
+>>>>>>>>>>>>>>> +     if (len & (blks_to_bytes(inode, 1) - 1))
+>>>>>>>>>>>>>>> +             len = round_up(len, blks_to_bytes(inode, 1));
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> How do you think of getting rid of above alignment for len?
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>              start_blk = bytes_to_blks(inode, start);
+>>>>>>>>>>>>>>>              last_blk = bytes_to_blks(inode, start + len - 1);
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> And round up end position w/:
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> last_blk = bytes_to_blks(inode, round_up(start + len - 1, F2FS_BLKSIZE));
+>>>>>>>>>>>>> Hi Chao,
+>>>>>>>>>>>>> I think this will change the current code logic
+>>>>>>>>>>>>> -------------
+>>>>>>>>>>>>> if (start_blk > last_blk)
+>>>>>>>>>>>>>            goto out;
+>>>>>>>>>>>>> -------------
+>>>>>>>>>>>>> for example, a file with size 19006, but the length from the user is 16384.
+>>>>>>>>>>>>> before this modification,  last_blk =  bytes_to_blks(inode, start +
+>>>>>>>>>>>>> len - 1) = (inode, 16383) = 3
+>>>>>>>>>>>>> after the first f2fs_map_blocks(). start_blk change to be 4,
+>>>>>>>>>>>>> after the second f2fs_map_blocks(), fiemap_fill_nex_exten will be
+>>>>>>>>>>>>> called to fill user parameter and then
+>>>>>>>>>>>>> will goto out because start_blk > last_blk, then fiemap flow finishes.
+>>>>>>>>>>>>> but after this modification, last_blk will be 4
+>>>>>>>>>>>>> will do f2fs_map_blocks() until reach the max_file_blocks(inode)
+>>>>>>>>>>>>
+>>>>>>>>>>>> Yes, you're right, however, w/ this patch, it may change last_blk, e.g.
+>>>>>>>>>>>>
+>>>>>>>>>>>> xfs_io file -c "fiemap -v 0 19006" vs xfs_io file -c "fiemap -v 2 19006"
+>>>>>>>>>>>> start_blk and last_blk will be: 0, 4 and 0, 5.
+>>>>>>>>>>> Hi Chao,
+>>>>>>>>>>> yes, but w/o this patch , the original code still has the same situation??
+>>>>>>>>>>> for example
+>>>>>>>>>>> xfs_io file -c "fiemap -v 0 16384" vs xfs_io file -c "fiemap -v 2 16384"
+>>>>>>>>>>> start_blk and last_blk will be: 0, 3 and 0, 4.
+>>>>>>>>>>
+>>>>>>>>>> For the case "fiemap -v 2 19006", offset is 2, and length is 19006, so last_offset
+>>>>>>>>>> is 19008, and last_blk should be 4 rather than 5, right?
+>>>>>>>>> hi Chao,
+>>>>>>>>> it is right w/o my patch.
+>>>>>>>>>>
+>>>>>>>>>> And for you case, it calculates last_blk correctly.
+>>>>>>>>> So you suggest that "Should we round_up len after start_blk & last_blk
+>>>>>>>>> calculation?"
+>>>>>>>>
+>>>>>>>> Zhiguo,
+>>>>>>>>
+>>>>>>>> Yes, I think alignment of len should not affect calculation of last_blk.
+>>>>>>>>
+>>>>>>>> I mean this,
+>>>>>>>>
+>>>>>>>> ---
+>>>>>>>>       fs/f2fs/data.c          | 6 +++---
+>>>>>>>>       include/linux/f2fs_fs.h | 3 ++-
+>>>>>>>>       2 files changed, 5 insertions(+), 4 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>>>>> index 7d1bb9518a40..cbbb956f420d 100644
+>>>>>>>> --- a/fs/f2fs/data.c
+>>>>>>>> +++ b/fs/f2fs/data.c
+>>>>>>>> @@ -1967,12 +1967,12 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>>>>>>>                             goto out;
+>>>>>>>>             }
+>>>>>>>>
+>>>>>>>> -       if (bytes_to_blks(inode, len) == 0)
+>>>>>>>> -               len = blks_to_bytes(inode, 1);
+>>>>>>>> -
+>>>>>>>>             start_blk = bytes_to_blks(inode, start);
+>>>>>>>>             last_blk = bytes_to_blks(inode, start + len - 1);
+>>>>>>>>
+>>>>>>>> +       if (len & F2FS_BLKSIZE_MASK)
+>>>>>>>> +               len = round_up(len, F2FS_BLKSIZE);
+>>>>>>>> +
+>>>>>>> Hi Chao,
+>>>>>>> this verion verify pass with my test case.
+>>>>>>>
+>>>>>>> but there is still another issue in orginal code:
+>>>>>>> ylog/analyzer.py  size = 19034
+>>>>>>> if I input the following cmd(start/length are both real size, not block number)
+>>>>>>> /f2fs_io fiemap 2 16384 ylog/analyzer.py
+>>>>>>> and the results shows:
+>>>>>>> Fiemap: offset = 2 len = 16384
+>>>>>>>         logical addr.    physical addr.   length           flags
+>>>>>>> 0    0000000000000000 0000000e2ebca000 0000000000004000 00001000
+>>>>>>> 1    0000000000004000 0000000e2ebce000 0000000000001000 00001001
+>>>>>>> so start_blk/last_blk should be calculate it in the following way?
+>>>>>>
+>>>>>> IIUC, the root cause is f2fs_map_blocks() will truncate size of
+>>>>>> returned extent to F2FS_BYTES_TO_BLK(len), so whenever parameter
+>>>>>> @len doesn't cover last extent, it triggers this bug.
+>>>>>>
+>>>>>> next:
+>>>>>>            memset(&map, 0, sizeof(map));
+>>>>>>            map.m_lblk = start_blk;
+>>>>>>            map.m_len = F2FS_BYTES_TO_BLK(len);  --- limit max size of extent it founds
+>>>>> yes, I think so too.
+>>>>>>            map.m_next_pgofs = &next_pgofs;
+>>>>>>            map.m_seg_type = NO_CHECK_TYPE;
+>>>>>> ...
+>>>>>>            ret = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_FIEMAP);
+>>>>>>
+>>>>>> xfs_io file -c "fiemap -v 2 16384"
+>>>>>> file:
+>>>>>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>>>>>        0: [0..31]:         139272..139303      32 0x1000
+>>>>>>        1: [32..39]:        139304..139311       8 0x1001
+>>>>>> xfs_io file -c "fiemap -v 0 16384"
+>>>>>> file:
+>>>>>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>>>>>        0: [0..31]:         139272..139303      32 0x1000
+>>>>>> xfs_io file -c "fiemap -v 0 16385"
+>>>>>> file:
+>>>>>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>>>>>        0: [0..39]:         139272..139311      40 0x1001
 >>>>>
->>>>> Fix patch is patch 27, relied patches are from:
->>>
->>> I assume patch 27 is:
->>>
->>> libfs: fix infinite directory reads for offset dir
->>>
->>> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
->>>
->>> I don't think the Maple tree patches are a hard
->>> requirement for this fix. And note that libfs did
->>> not use Maple tree originally because I was told
->>> at that time that Maple tree was not yet mature.
->>>
->>> So, a better approach might be to fit the fix
->>> onto linux-6.6.y while sticking with xarray.
+>>>>> But  If the correct last_blk is calculated correctly, fiemap can be
+>>>>> ended as soon as possible?  so the results shown is also right?
+>>>>
+>>>> Zhiguo,
+>>>>
+>>>> IMO, it's not, due to 1) if the extent is last one, FIEMAP_EXTENT_LAST
+>>>> must be tagged to notice user that it doesn't need further fiemap on
+>>>> latter LBA, 2) one continuous extent should not be split to two.
+>>>>
+>>>> Let me figure out a fix for that.
+>>> Hi Chao,
+>>> OK, thanks for your explaination.
+>>> btw, Do I need to update a patch about the original issue we disscussed?
+>>> or you will modify it together?
 >>
->> The painful part is that using xarray is not acceptable, the offet
->> is just 32 bit and if it overflows, readdir will read nothing. That's
->> why maple_tree has to be used.
-> 
-> A 32-bit range should be entirely adequate for this usage.
-> 
->   - The offset allocator wraps when it reaches the maximum, it
->     doesn't overflow unless there are actually billions of extant
->     entries in the directory, which IMO is not likely.
+>> Zhiguo, let me send a patchset including your patch, now, I'm testing this:
+> Hi Chao,
+> It's ok ^^
+>>
+>>   From c67cb4782a3f1875865f9ae24cce80a59752d600 Mon Sep 17 00:00:00 2001
+>> From: Chao Yu <chao@kernel.org>
+>> Date: Thu, 7 Nov 2024 14:52:17 +0800
+>> Subject: [PATCH] f2fs: fix to requery extent which cross boundary of inquiry
+>>
+>> dd if=/dev/zero of=file bs=4k count=5
+>> xfs_io file -c "fiemap -v 2 16384"
+>> file:
+>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>        0: [0..31]:         139272..139303      32 0x1000
+>>        1: [32..39]:        139304..139311       8 0x1001
+>> xfs_io file -c "fiemap -v 0 16384"
+>> file:
+>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>        0: [0..31]:         139272..139303      32 0x1000
+>> xfs_io file -c "fiemap -v 0 16385"
+>> file:
+>>      EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
+>>        0: [0..39]:         139272..139311      40 0x1001
+>>
+>> There are two problems:
+>> - continuous extent is split to two
+>> - FIEMAP_EXTENT_LAST is missing in last extent
+>>
+>> The root cause is: if upper boundary of inquiry crosses extent,
+>> f2fs_map_blocks() will truncate length of returned extent to
+>> F2FS_BYTES_TO_BLK(len), and also, it will stop to query latter
+>> extent or hole to make sure current extent is last or not.
+>>
+>> In order to fix this issue, once we found an extent locates
+>> in the end of inquiry range by f2fs_map_blocks(), we need to
+>> expand inquiry range to requiry.
+>>
+>> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>    fs/f2fs/data.c | 20 +++++++++++++++-----
+>>    1 file changed, 15 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>> index 69f1cb0490ee..ee5614324df0 100644
+>> --- a/fs/f2fs/data.c
+>> +++ b/fs/f2fs/data.c
+>> @@ -1896,7 +1896,7 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>                  u64 start, u64 len)
+>>    {
+>>          struct f2fs_map_blocks map;
+>> -       sector_t start_blk, last_blk;
+>> +       sector_t start_blk, last_blk, blk_len, max_len;
+>>          pgoff_t next_pgofs;
+>>          u64 logical = 0, phys = 0, size = 0;
+>>          u32 flags = 0;
+>> @@ -1940,14 +1940,13 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>
+>>          start_blk = F2FS_BYTES_TO_BLK(start);
+>>          last_blk = F2FS_BYTES_TO_BLK(start + len - 1);
+>> -
+>> -       if (len & F2FS_BLKSIZE_MASK)
+>> -               len = round_up(len, F2FS_BLKSIZE);
+>> +       blk_len = last_blk - start_blk + 1;
+>> +       max_len = F2FS_BYTES_TO_BLK(maxbytes) - start_blk;
+>>
+>>    next:
+>>          memset(&map, 0, sizeof(map));
+>>          map.m_lblk = start_blk;
+>> -       map.m_len = F2FS_BYTES_TO_BLK(len);
+>> +       map.m_len = blk_len;
+>>          map.m_next_pgofs = &next_pgofs;
+>>          map.m_seg_type = NO_CHECK_TYPE;
+>>
+>> @@ -1970,6 +1969,17 @@ int f2fs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>>                  flags |= FIEMAP_EXTENT_LAST;
+>>          }
+>>
+>> +       /*
+>> +        * current extent may cross boundary of inquiry, increase len to
+>> +        * requery.
+>> +        */
+>> +       if (!compr_cluster && (map.m_flags & F2FS_MAP_MAPPED) &&
+>> +                               map.m_lblk + map.m_len - 1 == last_blk &&
+>> +                               blk_len != max_len) {
+>> +               blk_len = max_len;
+>> +               goto next;
+>> +       }
+>> +
+> it seems if user input the lenght which is less than the file size,
+> but return the whole fiemap?
+> such as:
+>   dd if=/dev/zero of=file bs=4k count=5
+>   xfs_io file -c "fiemap -v 0 16384"
+> will get extent with lenght = 0x5000? Is this expected?
+> Or did I understand it wrong?
 
-Yes, it's not likely, but it's possible, and not hard to trigger for
-test. And please notice that the offset will increase for each new file,
-and file can be removed, while offset stays the same.
-> 
->   - The offset values are dense, so the directory can use all 2- or
->     4- billion in the 32-bit integer range before wrapping.
+It's fine?
 
-A simple math, if user create and remove 1 file in each seconds, it will
-cost about 130 years to overflow. And if user create and remove 1000
-files in each second, it will cost about 1 month to overflow.
+Quoted from Documentation/filesystems/fiemap.rst
 
-maple tree use 64 bit value for the offset, which is impossible to
-overflow for the rest of our lifes.
-> 
->   - No-one complained about this limitation when offset_readdir() was
->     first merged. The xarray was replaced for performance reasons,
->     not because of the 32-bit range limit.
-> 
-> It is always possible that I have misunderstood your concern!
+"fm_start, and fm_length specify the logical range within the file
+which the process would like mappings for. Extents returned mirror
+those on disk - that is, the logical offset of the 1st returned extent
+may start before fm_start, and the range covered by the last returned
+extent may end after fm_length. All offsets and lengths are in bytes."
 
-The problem is that if the next_offset overflows to 0, then after patch
-27, offset_dir_open() will record the 0, and later offset_readdir will
-return directly, while there can be many files.
+Quoted from reply of Darrick:
+
+https://lore.kernel.org/fstests/20210224165057.GB7269@magnolia/
 
 Thanks,
-Kuai
+
+> thanks!
+>>          compr_appended = false;
+>>          /* In a case of compressed cluster, append this to the last extent */
+>>          if (compr_cluster && ((map.m_flags & F2FS_MAP_DELALLOC) ||
+>> --
+>> 2.40.1
+>>
+>>> thanks!
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> such as this special case "xfs_io file -c "fiemap -v 2 16384" we discussed.
+>>>>> but it is fine for me to keep the current codes.
+>>>>> thanks!
+>>>>>>
+>>>>>> Thoughts?
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>> before:
+>>>>>>> start_blk = bytes_to_blks(inode, start);
+>>>>>>> last_blk = bytes_to_blks(inode, start + len - 1);
+>>>>>>> after:
+>>>>>>>
+>>>>>>> start_blk = bytes_to_blks(inode, start);
+>>>>>>> last_blk = start_blk + bytes_to_blks(inode, len - 1);
+>>>>>>> thanks!
+>>>>>>>>       next:
+>>>>>>>>             memset(&map, 0, sizeof(map));
+>>>>>>>>             map.m_lblk = start_blk;
+>>>>>>>> diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+>>>>>>>> index b0b821edfd97..954e8e8344b7 100644
+>>>>>>>> --- a/include/linux/f2fs_fs.h
+>>>>>>>> +++ b/include/linux/f2fs_fs.h
+>>>>>>>> @@ -24,10 +24,11 @@
+>>>>>>>>       #define NEW_ADDR              ((block_t)-1)   /* used as block_t addresses */
+>>>>>>>>       #define COMPRESS_ADDR         ((block_t)-2)   /* used as compressed data flag */
+>>>>>>>>
+>>>>>>>> +#define F2FS_BLKSIZE_MASK              (F2FS_BLKSIZE - 1)
+>>>>>>>>       #define F2FS_BYTES_TO_BLK(bytes)      ((bytes) >> F2FS_BLKSIZE_BITS)
+>>>>>>>>       #define F2FS_BLK_TO_BYTES(blk)                ((blk) << F2FS_BLKSIZE_BITS)
+>>>>>>>>       #define F2FS_BLK_END_BYTES(blk)               (F2FS_BLK_TO_BYTES(blk + 1) - 1)
+>>>>>>>> -#define F2FS_BLK_ALIGN(x)                      (F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
+>>>>>>>> +#define F2FS_BLK_ALIGN(x)              (F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
+>>>>>>>>
+>>>>>>>>       /* 0, 1(node nid), 2(meta nid) are reserved node id */
+>>>>>>>>       #define F2FS_RESERVED_NODE_NUM                3
+>>>>>>>> --
+>>>>>>>> 2.40.1
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> Thanks
+>>>>>>>>>>
+>>>>>>>>>> Thanks,
+>>>>>>>>>>
+>>>>>>>>>>> but overall last_blk will change loop counts but has not affect on the results.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Should we round_up len after start_blk & last_blk calculation?
+>>>>>>>>>>> I thinks it is ok ,but just a little bit redundant with the following
+>>>>>>>>>>> handling about len.
+>>>>>>>>>>>
+>>>>>>>>>>> if (bytes_to_blks(inode, len) == 0)
+>>>>>>>>>>>          len = blks_to_bytes(inode, 1);
+>>>>>>>>>>>
+>>>>>>>>>>> Based on the above situation,
+>>>>>>>>>>> do you have any other good suggestions? ^^
+>>>>>>>>>>> thanks!
+>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>
+>>>>>>>>>>>>> thanks！
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Thanks,
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>
+>>>>>>
+>>>>
+>>
 
 
