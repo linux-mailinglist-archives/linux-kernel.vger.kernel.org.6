@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-402734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FAF9C2B4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:36:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862849C2B4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0271C20FAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:36:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9819E2829EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33620145A07;
-	Sat,  9 Nov 2024 08:36:52 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938C913B297;
+	Sat,  9 Nov 2024 09:14:39 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5446647;
-	Sat,  9 Nov 2024 08:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421D3233D67
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731141411; cv=none; b=ZyJ5b/gMvuto5M/oPHHMZ2Bev/ZhqJo/Egc9X2YPPKNfLXT94scSEByaDc7zUAW+XMG/4Jb3nqmR+QYmmvwPKwQDRdX0pKDEaLUCZ9R50r5u01uU8K5JE8guNhM5eZsdm9vvCATjUxFC/2TtiCXUYeVZMy6HNSZHAJTOj3EdnoE=
+	t=1731143679; cv=none; b=XH/oR4xVk0I0oJ+4SH6BFshnMxByC9PQhUfkhfI/+ZZW7ftrUXhG0qNx09Ccf1alQm1EknlkZHD38lBUsuNAeRfCLDjer8X5tN8PFpSp/FJp93VDQ/DldJ/Xo78yyzyGUsoPLkXL2n/U0lfMpfYqAQZ+xUwg7hYvq63fbLleuac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731141411; c=relaxed/simple;
-	bh=eGFnQi8ov8FaGWP9u1rV0kcwVoLUi1BQQadvmUjlQQ4=;
-	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=eZrEHpAdJcciBE79NwdS4LwHZ0fwkzFj37yLsWUw1ALZZmQ89dBiCMuW+Szj3PJBh/3vj11xiNS18/k/Gj50aS2HMd8jPTCtQz3tU6UDWu8KKjOqFx1YlYdArIGlySaE1OY7KQqXG35yobhdapI4vI/bllQIfXthVhgkJ77KNrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Xlq132SPbz1ypMb;
-	Sat,  9 Nov 2024 16:36:55 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F52314010C;
-	Sat,  9 Nov 2024 16:36:44 +0800 (CST)
-Received: from [10.174.178.247] (10.174.178.247) by
- dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 9 Nov 2024 16:36:44 +0800
-Subject: Re: [PATCH] acpi/arm64: remove unnecessary cast
-From: Hanjun Guo <guohanjun@huawei.com>
-To: Min-Hua Chen <minhuadotchen@gmail.com>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-References: <20240917233827.73167-1-minhuadotchen@gmail.com>
- <e7632dd4-6009-53f3-e61a-ccb15d9f88f3@huawei.com>
-Message-ID: <713ce05d-2d14-fe6b-c3f8-791fff4e50f2@huawei.com>
-Date: Sat, 9 Nov 2024 16:36:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+	s=arc-20240116; t=1731143679; c=relaxed/simple;
+	bh=2v5n8Q3Q7Vt8rGxdIYiFCkF6notCRu0dxY8+3Lqhk9Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=BdB8W9ySooGaTDTyh9bmBp08YlGKCh512SR18c8w85Iol15vDUPkwV5K2lxBlaJoN3Fpg1kI5btbUZUny5SO1oiY69B9Ud9LxcuTEYqTALPe9QaMeOkoOgsQ14XS950hid/SPYq4Dxh3/f62wwhyplqErJLY+Do5uKk9zhWZBH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-24-FDxcS7DIPNSX7BxhqKiFLA-1; Sat, 09 Nov 2024 09:14:33 +0000
+X-MC-Unique: FDxcS7DIPNSX7BxhqKiFLA-1
+X-Mimecast-MFC-AGG-ID: FDxcS7DIPNSX7BxhqKiFLA
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 9 Nov
+ 2024 09:14:32 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 9 Nov 2024 09:14:32 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Peter Zijlstra' <peterz@infradead.org>, Christoph Hellwig
+	<hch@infradead.org>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "alyssa.milburn@intel.com"
+	<alyssa.milburn@intel.com>, "scott.d.constable@intel.com"
+	<scott.d.constable@intel.com>, "joao@overdrivepizza.com"
+	<joao@overdrivepizza.com>, "andrew.cooper3@citrix.com"
+	<andrew.cooper3@citrix.com>, "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>,
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, "samitolvanen@google.com"
+	<samitolvanen@google.com>, "kees@kernel.org" <kees@kernel.org>
+Subject: RE: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+Thread-Topic: [PATCH 1/8] x86,kcfi: Fix EXPORT_SYMBOL vs kCFI
+Thread-Index: AQHbL5NB3iR6AEe14EiCtN5H8dkea7KurmRg
+Date: Sat, 9 Nov 2024 09:14:32 +0000
+Message-ID: <c8d6b89093bc4d82bda15aa9d9fe6f88@AcuMS.aculab.com>
+References: <20241105113901.348320374@infradead.org>
+ <20241105114521.852053765@infradead.org> <Zyoood0ooSbpultV@infradead.org>
+ <20241105142720.GG10375@noisy.programming.kicks-ass.net>
+ <ZyosbEMNzMU6fOe_@infradead.org>
+ <20241105145842.GH10375@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241105145842.GH10375@noisy.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e7632dd4-6009-53f3-e61a-ccb15d9f88f3@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8aNowxmjqoSTTUtuGeFcT2GWIE4sCoTH9Hp82focjbI_1731143673
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/19 14:47, Hanjun Guo wrote:
-> On 2024/9/18 7:38, Min-Hua Chen wrote:
->> DEFINE_RES_IRQ returns struct resource type, so it is
->> unnecessary to cast it to struct resource.
->>
->> Remove the unnecessary cast to fix the following sparse warnings:
->>
->> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast to non-scalar
->> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast from non-scalar
->>
->> No functional changes intended.
->>
->> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
->> ---
->>   drivers/acpi/arm64/gtdt.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
->> index c0e77c1c8e09..24bd479de91f 100644
->> --- a/drivers/acpi/arm64/gtdt.c
->> +++ b/drivers/acpi/arm64/gtdt.c
->> @@ -352,7 +352,7 @@ static int __init gtdt_import_sbsa_gwdt(struct 
->> acpi_gtdt_watchdog *wd,
->>       }
->>       irq = map_gt_gsi(wd->timer_interrupt, wd->timer_flags);
->> -    res[2] = (struct resource)DEFINE_RES_IRQ(irq);
->> +    res[2] = DEFINE_RES_IRQ(irq);
->>       if (irq <= 0) {
->>           pr_warn("failed to map the Watchdog interrupt.\n");
->>           nr_res--;
->>
-> 
-> It's a minor issue, but I think it deserves a patch to make
-> the code cleaner,
-> 
-> Acked-by: Hanjun Guo <guohanjun@huawei.com>
+From: Peter Zijlstra
+> Sent: 05 November 2024 14:59
+>=20
+> On Tue, Nov 05, 2024 at 06:32:12AM -0800, Christoph Hellwig wrote:
+> > On Tue, Nov 05, 2024 at 03:27:20PM +0100, Peter Zijlstra wrote:
+> > > > I don't think that is the case at all.  The is a relatively small n=
+umber
+> > > > of exported symbols that are called indirectly.  I'd much rather ma=
+rk
+> > > > those explicitly.
+> > >
+> > > I'm not claiming they have their address taken -- just saying that
+> > > traditionally this has always been a valid thing to do.
+> > >
+> > > Anyway, I raised this point last time, and I think back then the
+> > > consensus was to explicitly mark those you should not be able to call=
+.
+> >
+> > Who came to that consensus?  There really is just a relatively well
+>=20
+> The people who found that thread.
+>=20
+> > bounded number of functions that are used as either default methods
+> > or as ready made callbacks.  Everything else has no business being
+> > called indirectly.  While disallowing this might be a bit of work,
+> > I think it would be a great security improvement.
+>=20
+> Well, we don't disagree. But since most of the EXPORT'ed functions are
+> done in C, we need something that works there too.
+>=20
+> I think the idea was that we add EXPORT_SYMBOL{,_GPL}_SEALED() and go
+> convert everything over to that.
 
-Lorenzo, Sudeep, please take a look at this patch.
+Don't you really need a compiler attribute that makes a function
+indirectly callable?
+(Instead of the compiler trying to sort it out itself?)
+With the default being 'not indirectly callable' unless the function
+address is taken in the same compilation unit as its definition.
 
-Thanks
-Hanjun
+If added to the declaration (in the .h file) the compiler would be
+able to error code that takes the address of such functions.
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
