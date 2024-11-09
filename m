@@ -1,201 +1,243 @@
-Return-Path: <linux-kernel+bounces-402875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB2D9C2DEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:56:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1869C2DF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBBC61C20D4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A941F21A5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346301990B7;
-	Sat,  9 Nov 2024 14:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6E197A98;
+	Sat,  9 Nov 2024 14:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkECfv34"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X3Vps4/n"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2043.outbound.protection.outlook.com [40.107.96.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9613DB99;
-	Sat,  9 Nov 2024 14:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731164157; cv=none; b=AKZgl958wG7PtIpum93dlDKGtWv+mFr3fDv3gcJnzA6M2wRLkISRHUk2EEW5he0etThqp/KnpmoV7oquEy3ynS3s+SweOhtnkRbWpWktukvQO/NEWtN+d7K5nzW7rn3lsFbEISufM6OZgPHWgVYDGaTYXFYuHwps4f2DnosoATY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731164157; c=relaxed/simple;
-	bh=eUwvcN8zGzUKSnVGrOb7jRjjOHokBZqw7qBdYJmmLB8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=f+1Qif4cSRSkgS5+0g0OAQ7RWpEpu1FWATWsdd9bo2ZeP37Yo1JeuOIqme6yWxBbcbPCuEhceGnFUwmP2o3aImstXRoI39y3G6nU7GxAQNomXOH4i5Wcw8hGHJV4HhCx30EDOmGqoJD2Ng5d+E3MwUrucg6J+UQ5olrgEQEcfHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkECfv34; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43C5C4CECE;
-	Sat,  9 Nov 2024 14:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731164157;
-	bh=eUwvcN8zGzUKSnVGrOb7jRjjOHokBZqw7qBdYJmmLB8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NkECfv34cAC1JfcvfsKqsV/+G68HoaUfvbAWEE498nRm0Ly+YcByenX80hWlOWUe0
-	 R4Go9gA6mUsjSjja3jN3WRxbquwdwatwz0qujGya2BUYBfhO9B6OtpQmNx/JvSi57S
-	 ac3c6rrbpAtFzT3HQHWitWPp+4joGRsPnjlB1PThFmTEH2nbAm0Qx+ECY4xPWj76QM
-	 30DU6z3lSkB6scmBTIKWDA9qaD9xylxhvUAVueo55N6YEJH6SnH84visYQiWGkpgI7
-	 tzvEJDXkK077Wd/1ZfcEHpWSHlP4sSpJ1GOMEjEpj1LwSVI68638QTQLBpPsIuoWk8
-	 Z9KcelmJDH97A==
-Date: Sat, 9 Nov 2024 23:55:47 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v18 11/17] fprobe: Rewrite fprobe on function-graph
- tracer
-Message-Id: <20241109235547.238b54e4f13a4706532b39a4@kernel.org>
-In-Reply-To: <20241101152844.3a589594@gandalf.local.home>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991746318.443985.12713087979890519872.stgit@devnote2>
-	<20241101152844.3a589594@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6332C13DB99
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 14:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731164199; cv=fail; b=l1aajjLEcLbQNX2XQKMBY3yy/6TUQr5TSQQOMBeFDPEVxH/TEy3RwYVtmTlrnd8Bue+exeOGrJ7cIr6Ae6PMLBwYsrqvhJJjxduvS9hDqKLLgvDro8luUi5qE0yU4T6YXNzRU7ub9jxgc2yOgHEo8YwFnm9e3C4HFWxJD6D+9Ac=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731164199; c=relaxed/simple;
+	bh=gcdXDrO2HdUNKwyEudRV1gxa2dGQedKMg2zBUtpluVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lOLej1qzGwkJh38NXr7teK7zA+rrzJBAp5XdpuQiM3uyjIItgJxMfYkYlx0cVQn3y7bkPg9q9fYq1YfVVgYQJwdZHbBiJDlyfMRpv84lUQeKD/PIgXZ5v4nSS2iJpQ0L9AopXbynAMCXm6u1dpxFY+cCIv7z6SRvY7PiJHLLGmQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X3Vps4/n; arc=fail smtp.client-ip=40.107.96.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EHu4JUKLqfdoKHYNZp4JffV4jH5+xsP7BYYh82FwlOKUoZBiM1jU8jxTf2UOqK/v/2S+IhPegXHVRrghP91qBsENmGNBnQ+EaDt0vYJ/YznD9CWp7K3mOSXNm5vmpB/eDS1bebR5/b27AqquvCVDwt/Zq62JU194RtmX/qBNF7BT8h3LZyW5NPOKsI7x5G/rFUBxFIocq8Fc8wUoavuIrt9a3i/3uwF8MPOFEAweHA9w1xZeMx22UqjoBFfI+vimPWtc5kFzhwye82bK8ze8XGFIeC0U6q0vUVBAGFUowUQ+KBCJh24hpfDXXe7NJQhF7fTXwDk8foYUX2W6EH7qBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=I1ucSF+4Dvm31Hstv5KqYNKQzOBhsMgK4Nrmkykn5pQ=;
+ b=K4f10OK4jMMeqC23muIpL+uf073Zs/bLLt/4IAhEWWarcAcYEYZX9oCazIfBJkQFLyJACnbr6+4fgrFqrqn7WZvtdAQv5QuHomIhqxOL9eclVFEQYMrDkcIrfOvXaVJexup7cP7QUKLKMB+n/lbLPtycAlZI+8XB5PfA5M0L9Fc959KAJ3+o4S/PBzfiXwpy+30PN3jR7zJw2kNxPyTgaghnVc6G4sa9+6s/5BobbTqegqbNhY1j0HYFs7l5EdulCuXaEDUboPd7GlnIE6RTk28+Tz01s/J48Qc2VwgK53CuKc5nD6e8jagH+9/Hfgzp3gbgBvBe84yEVZJbpSu7iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=I1ucSF+4Dvm31Hstv5KqYNKQzOBhsMgK4Nrmkykn5pQ=;
+ b=X3Vps4/ntrMQX2jkgGGc0KnPM6nb/imB0lCQObnJTIz05AljguiGaxPg9S/rcu3SoWb9zX08Ok6xsUpPNMq70vLHOQEtavm0HIHmkyak6isnUGmIw/HZ/0TuB9XDD2jy+RMyiWtAabJDCx3u0FFIyglui7xmyNUvzS7guuRd7djVVqPOGIePu9ClLLqR/aI/TOJ6dvWrMwaTLzw3lQbbDaKSdDJV3dGf4rj6jlhGgfYjGR63lpbo+WIXPUNHkh8JkvClEUj+EV2L0YBSbS4Jmbab15Bkdzawm8YVow+BDWJVKkSml+GyDwjhjuOGYHt+6PXDtQCsc4BCONTJO+RwgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by SN7PR12MB7132.namprd12.prod.outlook.com (2603:10b6:806:2a4::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Sat, 9 Nov
+ 2024 14:56:33 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8137.021; Sat, 9 Nov 2024
+ 14:56:32 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/topology: Correctly propagate NUMA flag to scheduling domains
+Date: Sat,  9 Nov 2024 15:56:28 +0100
+Message-ID: <20241109145628.112617-1-arighi@nvidia.com>
+X-Mailer: git-send-email 2.47.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0236.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:b2::8) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SN7PR12MB7132:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf466d7a-a7f6-4475-9c4c-08dd00ceb320
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?tcFfuM815gw4WxXvnDe1ul/gtcxCcldphB3qdmryO7iZgfWADc6vre7Q0ulV?=
+ =?us-ascii?Q?QLyZoLMLF2Q7Qq7qaj93o4XaZzoP3i3rVnpwRY85bmt0mBM7B5CZPsAh0fCy?=
+ =?us-ascii?Q?Coj4ExoeK98+LkuwmY9y8pYTj12zWtyXEcWf73YC1IJQ0xSNB325xxvzyb9W?=
+ =?us-ascii?Q?trbVgijSrA/W3+NGlW6aItHMdLHsK1GjvT4Dj2k9q0Q2RjT4Dr/jvV38sazt?=
+ =?us-ascii?Q?MbW/4ZcXeZsXhX4AHNw1cjCZ8GfZoNy8VJoCCpCf73e0fO6KhQb57rJVnXPv?=
+ =?us-ascii?Q?wSz/l7ksqBy+3hFlJarHF6zq/Cvh/W8s0nVHHJPI0qCH/iEz5uPIDztS6vmD?=
+ =?us-ascii?Q?4Kq4FIffqXMWycgJFdpMlDXZ8vBXnmeD3cmwj8N7emCaOawzQ0HX+FNmqpAU?=
+ =?us-ascii?Q?fLnGPSaLIbZ6YXk6dQ7PhbUOpWszuj2eGOnYO6HyTGV9mkVIXdW2kcMemLF9?=
+ =?us-ascii?Q?ING/8ITjUktAgYKnE8JAbf0QEVCsGtFiD4x00xT7xBjzi1sBhjeWep1Qe0Zk?=
+ =?us-ascii?Q?KF5YM8AHMK9l9GHJYYqexvidMDfh7vgXsiFGJVFNSAf/+8WhiIpqLiU5ZpLk?=
+ =?us-ascii?Q?IHJX7QlubUkHo33ATHU8B77x+6PlUtqADN6V9ubwUVAtj6W78aICgMsuuikm?=
+ =?us-ascii?Q?TPhZXjT8Flt6UtOi6JZKDSzcBNEPpsVLTw2XTuB6GKMsAOUpSQab6xu5BFH0?=
+ =?us-ascii?Q?siocma9GN7TZ+NFj158kJZwxz9MQeT1Hrklb6NXAy8I69Chhr6i4M711NAFW?=
+ =?us-ascii?Q?Z4wzKrA3HNlhyHI0ImA/LE80W/+SSim3/kXfMBL9SO2S8kWO9ta6Lm/lUB21?=
+ =?us-ascii?Q?DfswIPdfMLhlzsAxHA3/dSbCwEfunDj+Orq9aLnYZ4c9y1+K5L24j6SjaQBB?=
+ =?us-ascii?Q?kuXhPcrJ2bSlUIRP9WIC2XbdHiOjk31E78HN1iKWnW17QojV6T10BFg+B23p?=
+ =?us-ascii?Q?5ryA8Ebn0t1mvc3IXLpsfObnZCvIt4v+pkfc3vn/zsypw4SuAXxuJT974CLA?=
+ =?us-ascii?Q?hvADBbk5e5YhZI32g+Y373LY7UETXhjsXRwnAsQhbIfKeq60J36gn5P6uZwF?=
+ =?us-ascii?Q?iUuQXp2orLXvxyWD4yWq1vymgWau4esXkbMgVs8rINavg8mDo2LRDh6qvoCO?=
+ =?us-ascii?Q?BzuE+EO/Ko8wrEH72X9sRbR8ZhHOspwrJTWJ2t0cGVbYz2MCtrp9t8zeuvGo?=
+ =?us-ascii?Q?wMTWAgcbMTnFSzpnrUOlTEwPIrNqh9nkPca1xmyQ/rBiJ2b9zTzAx+nQDkmY?=
+ =?us-ascii?Q?qGroH/It0s9rRYi91IpqQydR9MFjPOVWYvQBQxk9oPba5qrhdSD6PB+wOjHw?=
+ =?us-ascii?Q?w5yCCBmtlnSCHor7jKml4FlP?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?c8H+IwfgNZ4Vf4gP44U9iGzMXZF42/sjSbhqwCFnmabNJePsJvmH5Il91Qoe?=
+ =?us-ascii?Q?zfgOG/P0LQYfwRH2wo3SOcywuobdJisvAFz5UAG94cRqtOTo8gVJLg60oB8z?=
+ =?us-ascii?Q?5hoAnZOk0Ki/uOeDMnII5H/m3PCyFUBTBHIug6BEpjuXVFZvwxcbM5lTv1I/?=
+ =?us-ascii?Q?GgoTkxL2GcdSRB4mk5OeTMqpsb8et8txkGOY/QS/iTewkkZ1j4ov3NZJYZtE?=
+ =?us-ascii?Q?7RayI63y4jWIhdqLSP6pl5e2lpc5xO4STFeFK/z/+Lv4PwQfqW0TMyxOJvJB?=
+ =?us-ascii?Q?B/fXGRanoqWzRGB7XX8W1QT2Zs7wngGSRIKJ3Ij+r/EUcqo++sw2IZaAuwq9?=
+ =?us-ascii?Q?f7zGmgwRli2Vid4ak7uZV7s0AhMVnuGQ6D/1YrHceHzSwDNEHKsZQz1+hhrz?=
+ =?us-ascii?Q?r3ehJjHHv3ObCRgxLzrmFDZhQU6hV7ct65Y9ca850bsuvMJlQUoU5X6nPqTQ?=
+ =?us-ascii?Q?aS/Z12XI3lw6vvnwCayn8oEJbVWp1/F7s+q9cdCBjTxyY4f3iiTis0szpvA1?=
+ =?us-ascii?Q?gwBDfhweBkxBmHpfjyxAmhuCgW/aDN6RYVQFT84kegaVCGjRbLPXhHw0tmpE?=
+ =?us-ascii?Q?fzjppivBqm/Pa57VzsvhLjSmakTQHvlQmoumN4sw1udJsFleVj/Ni+K9Un5y?=
+ =?us-ascii?Q?4WQKeIORg0JUVFgesTB2vX//AAEyqMCsn9JNv7E30peOcFIih3eJ6VAX90i0?=
+ =?us-ascii?Q?/D/Qgf98LkR0rJa44q53Db7T4mJU7xYcOLIEh1Q8KqPFPYgK6uPQ9aH/nDsH?=
+ =?us-ascii?Q?QzGSouNTcbMW2giqQDMeWANnmXJ/+YCwkAAFp+WwhUDp2Zbn0Io23/wPm3oV?=
+ =?us-ascii?Q?rbiM5kIAsqPicKkNhbcDLfKyeSeyVfD4n5Qwvi5bCBBy/O2aKZTGwEDXXKtF?=
+ =?us-ascii?Q?yKkawVCf8d0pBoxWkLlhHp+uXe5Pcm6ECV5eymEJ8ap2zkgNnwDDTfNFPaaA?=
+ =?us-ascii?Q?RmXTB3qh9ZRW3tHMy+B3WZs03lZMF87WiXDlbXD/bI1fsAOEK3CANyEmLuYh?=
+ =?us-ascii?Q?uMFxL8YpgmpNr9gZjFg7N4i9XuYDN9U8Y20C7kQXuAXvIy3vFhDydhqLBXOd?=
+ =?us-ascii?Q?cxMlk/MaJlVqg1fMZfKshOniAFik5OQT+4WTyypvUONSsf00cmV3wbVZ2jkq?=
+ =?us-ascii?Q?LeujSN6TTHDFzfwiHOEi8RD5LSeC01SVsHyAgQ4cOh8eCte4UcVdTDvgPzTT?=
+ =?us-ascii?Q?knZFXAFhuYJlwDuOA93cZ2fELoFDfUIMXtlJMZ1H5MQx6nU/momvM3MdK+qO?=
+ =?us-ascii?Q?pcrQRaiX9+yKfUI0LzCOrjBeZNLsGWOZljP0OxK7y846up656eMyZZo12Syt?=
+ =?us-ascii?Q?8iq+OZnevQs/EQgW9ghzrirTojxW/nVgCCDvPQk03liHGvZEoWvJzAPoPN/h?=
+ =?us-ascii?Q?KjdnJnSM2eOAsH++HjV+8RGgb9RvhGAjofBwE6B5BbvCF1UMjMgeF8SZhJLd?=
+ =?us-ascii?Q?FlkWD3EuF5RW4JpiyUiLQbRbgw21QCbPBpdUBJfpobrdjdtlKygAw+gVGAdv?=
+ =?us-ascii?Q?9LrJnoKaa5sz8Ar4ELRqz2zf19hngeA2zsEoEzIwssSgggxyMqG+tyk5YIk6?=
+ =?us-ascii?Q?dN6iRxoyDLwUyJPlT3IdJFEzBaqDMi5RG7Z1XXPX?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf466d7a-a7f6-4475-9c4c-08dd00ceb320
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2024 14:56:32.7498
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uejNi/4IMU/ea4RbliJBebmcTle2JKL59zoFs+gGDSNaD+Gkih9D34126aDvPZmQ8igJiRp0W35+bO+xqp5cSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7132
 
-On Fri, 1 Nov 2024 15:28:44 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+A scheduling domain can degenerate a parent NUMA domain if the CPUs
+perfectly overlap, without inheriting the SD_NUMA flag.
 
-> On Sat, 26 Oct 2024 13:37:43 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
-> > index ef609bcca0f9..686b30ce48b4 100644
-> > --- a/include/linux/fprobe.h
-> > +++ b/include/linux/fprobe.h
-> > @@ -5,10 +5,11 @@
-> >  
-> >  #include <linux/compiler.h>
-> >  #include <linux/ftrace.h>
-> > -#include <linux/rethook.h>
-> > +#include <linux/rcupdate.h>
-> > +#include <linux/refcount.h>
-> > +#include <linux/slab.h>
-> >  
-> >  struct fprobe;
-> > -
-> >  typedef int (*fprobe_entry_cb)(struct fprobe *fp, unsigned long entry_ip,
-> >  			       unsigned long ret_ip, struct ftrace_regs *regs,
-> >  			       void *entry_data);
-> > @@ -17,35 +18,57 @@ typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
-> >  			       unsigned long ret_ip, struct ftrace_regs *regs,
-> >  			       void *entry_data);
-> >  
-> > +/**
-> > + * strcut fprobe_hlist_node - address based hash list node for fprobe.
-> 
->       struct
-> 
+This can result in the creation of a single NUMA domain that includes
+all CPUs, even when the CPUs are spread across multiple NUMA nodes,
+which may result in sub-optimal scheduling decisions.
 
-oops, thanks.
+Example:
 
-> > + *
-> > + * @hlist: The hlist node for address search hash table.
-> > + * @addr: The address represented by this.
-> 
->   What is "this" in the above?
+$ vng -v --cpu 16,sockets=4,cores=2,threads=2 \
+      -m 4G --numa 2G,cpus=0-7 --numa 2G,cpus=8-15
+ ...
+$ lscpu -e
+CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE
+  0    0      0    0 0:0:0:0          yes
+  1    0      0    0 0:0:0:0          yes
+  2    0      0    1 1:1:1:0          yes
+  3    0      0    1 1:1:1:0          yes
+  4    0      1    2 2:2:2:1          yes
+  5    0      1    2 2:2:2:1          yes
+  6    0      1    3 3:3:3:1          yes
+  7    0      1    3 3:3:3:1          yes
+  8    1      2    4 4:4:4:2          yes
+  9    1      2    4 4:4:4:2          yes
+ 10    1      2    5 5:5:5:2          yes
+ 11    1      2    5 5:5:5:2          yes
+ 12    1      3    6 6:6:6:3          yes
+ 13    1      3    6 6:6:6:3          yes
+ 14    1      3    7 7:7:7:3          yes
+ 15    1      3    7 7:7:7:3          yes
 
-it should be `by this node.`
+Without this change:
+  sd_llc[cpu0] spans cpus=0-3
+  sd_numa[cpu0] spans cpus=0-15
+  ...
+  sd_llc[cpu15] spans cpus=12-15
+  sd_numa[cpu15] spans cpus=0-15
 
-> 
-> > + * @fp: The fprobe which owns this.
-> > + */
-> > +struct fprobe_hlist_node {
-> > +	struct hlist_node	hlist;
-> > +	unsigned long		addr;
-> > +	struct fprobe		*fp;
-> > +};
-> > +
-> > +/**
-> > + * struct fprobe_hlist - hash list nodes for fprobe.
-> > + *
-> > + * @hlist: The hlist node for existence checking hash table.
-> > + * @rcu: rcu_head for RCU deferred release.
-> > + * @fp: The fprobe which owns this fprobe_hlist.
-> > + * @size: The size of @array.
-> > + * @array: The fprobe_hlist_node for each address to probe.
-> > + */
-> > +struct fprobe_hlist {
-> > +	struct hlist_node		hlist;
-> > +	struct rcu_head			rcu;
-> > +	struct fprobe			*fp;
-> > +	int				size;
-> > +	struct fprobe_hlist_node	array[];
-> 
-> Should the above have __counted_by(size) ?
+With this change:
+ - sd_llc[cpu0] spans cpus=0-3
+ - sd_numa[cpu0] spans cpus=0-7
+  ...
+  sd_llc[cpu15] spans cpus=12-15
+  sd_numa[cpu15] spans cpus=8-15
 
-Yes. Thanks!
+This also allows re-using sd_numa from the sched_ext built-in CPU idle
+selection policy, instead of relying on the NUMA cpumasks [1].
 
+[1] https://lore.kernel.org/lkml/20241108000136.184909-1-arighi@nvidia.com/
 
-> 
-> -- Steve
-> 
-> > +};
-> > +
-> >  /**
-> >   * struct fprobe - ftrace based probe.
-> > - * @ops: The ftrace_ops.
-> > + *
-> >   * @nmissed: The counter for missing events.
-> >   * @flags: The status flag.
-> > - * @rethook: The rethook data structure. (internal data)
-> >   * @entry_data_size: The private data storage size.
-> > - * @nr_maxactive: The max number of active functions.
-> > + * @nr_maxactive: The max number of active functions. (*deprecated)
-> >   * @entry_handler: The callback function for function entry.
-> >   * @exit_handler: The callback function for function exit.
-> > + * @hlist_array: The fprobe_hlist for fprobe search from IP hash table.
-> >   */
-> >  struct fprobe {
-> > -#ifdef CONFIG_FUNCTION_TRACER
-> > -	/*
-> > -	 * If CONFIG_FUNCTION_TRACER is not set, CONFIG_FPROBE is disabled too.
-> > -	 * But user of fprobe may keep embedding the struct fprobe on their own
-> > -	 * code. To avoid build error, this will keep the fprobe data structure
-> > -	 * defined here, but remove ftrace_ops data structure.
-> > -	 */
-> > -	struct ftrace_ops	ops;
-> > -#endif
-> >  	unsigned long		nmissed;
-> >  	unsigned int		flags;
-> > -	struct rethook		*rethook;
-> >  	size_t			entry_data_size;
-> >  	int			nr_maxactive;
-> >  
-> >  	fprobe_entry_cb entry_handler;
-> >  	fprobe_exit_cb  exit_handler;
-> > +
-> > +	struct fprobe_hlist	*hlist_array;
-> >  };
-> >  
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
+---
+ kernel/sched/topology.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 9748a4c8d668..e0fe493b7ae0 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -755,6 +755,13 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
+ 			 */
+ 			if (parent->flags & SD_PREFER_SIBLING)
+ 				tmp->flags |= SD_PREFER_SIBLING;
++			/*
++			 * Transfer SD_NUMA to the child in case of a
++			 * degenerate NUMA parent.
++			 */
++			if (parent->flags & SD_NUMA)
++				tmp->flags |= SD_NUMA;
++
+ 			destroy_sched_domain(parent);
+ 		} else
+ 			tmp = tmp->parent;
+@@ -1974,6 +1981,7 @@ void sched_init_numa(int offline_node)
+ 	 */
+ 	tl[i++] = (struct sched_domain_topology_level){
+ 		.mask = sd_numa_mask,
++		.sd_flags = cpu_numa_flags,
+ 		.numa_level = 0,
+ 		SD_INIT_NAME(NODE)
+ 	};
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.47.0
+
 
