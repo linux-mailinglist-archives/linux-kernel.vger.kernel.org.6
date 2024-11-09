@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-403029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3F49C2FC8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EA39C2FCC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D761F2181D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:21:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C8F1F21957
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDB71A0BC0;
-	Sat,  9 Nov 2024 22:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A81A0BE3;
+	Sat,  9 Nov 2024 22:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdZqsOo2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zpz0mNHF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B4C4437C;
-	Sat,  9 Nov 2024 22:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7F61A0BC3
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 22:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731190886; cv=none; b=fkUBezxq12tqJoE8yEyFo5MGy9N7uJN/QxzTKS/S7z93z7C2KvnV6wcm8tfYSfDUEzSxmmbyXZYbQCc16Smehq3Xi3hIf8yvpcaU9CDlpBEWGe+t98xWj2mH8fo9Kvrok3WQm7b0ZkCccgW6x26ZXbFGskoUDnMC2oll8xlfh0w=
+	t=1731192312; cv=none; b=fP9+aJU3Q6s7yl4ziOjnDyua4h+dccudTgW6MSYutxWuAm1JJ8/SQRVzd6nNdbwTj3EH0an884TMdZ9yU2DnSZhAZal68/yurdIBtR0dd19flqrmLMdyv4w+zYuhtYM883j9IbxXn9cj4ZsTP2eI74h3vpDLYym+C2eOAHeNnl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731190886; c=relaxed/simple;
-	bh=8hQIsWT8w2YiPM+AgWA2e3JBzVVePZzXMN166L0C1yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eb8MiTnVfIRYt4miGu2u2hW/JAjhuFpXSYYk0fH40BM4KIhedDhJvsw+NjK/w7vpntROPWt1NINGw46sb5prr4tz9A4E2rvetok+dVsmc5Apw//AlKct6NgtB3AEFfINCqSzl5StdKE9ZjnEFxl+wk0uXQNW8e0LQlT1PQ6KRkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdZqsOo2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9142DC4CED2;
-	Sat,  9 Nov 2024 22:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731190885;
-	bh=8hQIsWT8w2YiPM+AgWA2e3JBzVVePZzXMN166L0C1yU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RdZqsOo24pu/4mg2t6cyd+8tTXZUCcBukqFFdEJaIDBLWiYvImW4B/QcnNngxDn23
-	 Tqx7bptZOwvdxuiP7+gc5otJt3rXseMxwdBCIi16wLlZj8nPLlYiUn4LK7IxSNJjde
-	 sHtCc5cSpZ9IDejtcHWAXFZkLi63xECSNiSaFJMwBXmQnxi3vFJEn0xoA8pSXgmOoo
-	 zNGha119JO43BDrlNX8+6xU3rrkN2OLo86oIhp2sa+OmIZ+8Wn/MYimXzBx87VGYcr
-	 J1goIh1R55WOO0ycQqyUPL1EYXJIPK7h5fFfkJ1EmzD4kOH6I3MykQYe6CBFjS0dPk
-	 9iKSYvxwnwxUg==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb498a92f6so26158321fa.1;
-        Sat, 09 Nov 2024 14:21:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOAYIIoWcd8KkJWk8j7JMMW5ti5+aFwaO3govNrDue1ROac0IGDfvmws2L87F7iywEt/FMu2sQGPL03EY=@vger.kernel.org, AJvYcCXXYd1Oda9mIUrLNpNTTLm/hDC6Wa4bpHkFtxNUUPGDjeplS1mUoH6z5ZhWHO/NsLz6D2kKPTgnyQZ4SVJr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdFhLb8XXFNKVceQMvvLeK0VcqiNEuZZShoyiMOp0TmAGg8Iw+
-	kiPWHsBSLg3NVYIsXszRy71yq+Xzvlq86Is7XQo76NMTNV12+JTtDbZsJkiLMA/iET7Hj9SJh0G
-	qMvue7r1rkHaZOGexx41PZ+pHKzU=
-X-Google-Smtp-Source: AGHT+IFz2JBDoKriPrqZwho8VhGAsHBy+K2ddEcnTEDzs8JVe9Rppe6vMdNd8ZqbZASsQgblUyXq3OGJh7z+q0AugKw=
-X-Received: by 2002:a05:651c:1506:b0:2fb:7e65:cb27 with SMTP id
- 38308e7fff4ca-2ff201e73a4mr37414341fa.6.1731190884239; Sat, 09 Nov 2024
- 14:21:24 -0800 (PST)
+	s=arc-20240116; t=1731192312; c=relaxed/simple;
+	bh=7mZVdy4HvTPq5DFlYE3+ppI/UE45cLaflLdyjAdTgGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fjVJWml4PbNrjOzitoLX1BVGIZMaZ0FMEvrJJs/ISiDdGjZVH6X4D6gKMNJu49R63sypWYuCHlp+NxzaPzgMSE8yE6J4NlYfaBAumi1tKA27kuC2bOFrjkynMBYoC9croD0Ip3qleJz4pguUsFjeO02tpOP7/auyJdoxy82oaq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zpz0mNHF; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731192310; x=1762728310;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7mZVdy4HvTPq5DFlYE3+ppI/UE45cLaflLdyjAdTgGM=;
+  b=Zpz0mNHF8swXVcuYkcW2cPMVcaT5InpTXjP9AWhHTf6poUvEKep0tq8p
+   YUz6cn/R8rkdFxVxU2UeYmMML0KCyHqTvzr//5HLHyJ7hx+86ZOEuz5ip
+   t08kALlzIhwg+ofSe6nWwVhGzEYVwGo4DBwKnhsRijWoHPO6Q/46ajetx
+   iUydREArwlt66+UAWQ7IasZfCY7LtcIppS9nAoel37NE0qGTBvYo08LTr
+   iw7g8SCAP1SQE1KmpryktON1+kOYC5h9sWo9nL8dg0rDG75762Wfj0/cv
+   BW1+Uxq2M/hOHGgMBZ12t5vI/UQYQh6zDGOqEVmS55X/r5Iflu53QDOTf
+   g==;
+X-CSE-ConnectionGUID: fc0lMeysRPi1m3go0rQkCA==
+X-CSE-MsgGUID: MWXsJBVSRFGbNgcL3qoHVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11251"; a="30446918"
+X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
+   d="scan'208";a="30446918"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2024 14:45:09 -0800
+X-CSE-ConnectionGUID: 9EXFqZK0SOSAAMztvcJVtg==
+X-CSE-MsgGUID: jlVcUIPeQmG/SAB0UbUEUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
+   d="scan'208";a="91267949"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 09 Nov 2024 14:45:04 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9uCT-000sk6-2X;
+	Sat, 09 Nov 2024 22:45:01 +0000
+Date: Sun, 10 Nov 2024 06:44:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 3/7] drm/vc4: use drm_hdmi_connector_mode_valid()
+Message-ID: <202411100659.T6WKBFbI-lkp@intel.com>
+References: <20241109-hdmi-mode-valid-v3-3-5348c2368076@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031132630.24667-1-t.boehler@kunbus.com> <20241031132630.24667-3-t.boehler@kunbus.com>
-In-Reply-To: <20241031132630.24667-3-t.boehler@kunbus.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 10 Nov 2024 07:20:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATED9GeR_0DP_nrqahLOrz_4gwB0X9hm5gBVta4oyBrog@mail.gmail.com>
-Message-ID: <CAK7LNATED9GeR_0DP_nrqahLOrz_4gwB0X9hm5gBVta4oyBrog@mail.gmail.com>
-Subject: Re: [PATCH 2/3] package: debian: add missing Depends to linux-headers
-To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <t.boehler@kunbus.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Philipp Rosenberger <p.rosenberger@kunbus.com>, 
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241109-hdmi-mode-valid-v3-3-5348c2368076@linaro.org>
 
-Please use "kbuild: deb-pkg:" as the commit subject.
+Hi Dmitry,
 
-On Thu, Oct 31, 2024 at 10:26=E2=80=AFPM Thomas B=C3=B6hler <t.boehler@kunb=
-us.com> wrote:
->
-> The linux-headers package is missing a dependency to libc. Lintian
-> complains about this as well:
->
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: undeclared-elf-prerequisit=
-es (libc.so.6) [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/asn1=
-_compiler]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: undeclared-elf-prerequisit=
-es (libc.so.6) [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/basi=
-c/fixdep]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: undeclared-elf-prerequisit=
-es (libc.so.6) [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/kall=
-syms]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: undeclared-elf-prerequisit=
-es (libc.so.6) [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/mod/=
-modpost]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: undeclared-elf-prerequisit=
-es (libc.so.6) [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/sort=
-table]
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on 929beafbe7acce3267c06115e13e03ff6e50548a]
 
-Could you add log messages based on linux-headers-6.12.0-rc6 instead?
-Then, the line length will become shorter.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-display-hdmi-add-generic-mode_valid-helper/20241109-203557
+base:   929beafbe7acce3267c06115e13e03ff6e50548a
+patch link:    https://lore.kernel.org/r/20241109-hdmi-mode-valid-v3-3-5348c2368076%40linaro.org
+patch subject: [PATCH v3 3/7] drm/vc4: use drm_hdmi_connector_mode_valid()
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241110/202411100659.T6WKBFbI-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241110/202411100659.T6WKBFbI-lkp@intel.com/reproduce)
 
-Also, please rebase this on the mainline.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411100659.T6WKBFbI-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
 
-
-> Fix this by introducing "dh_shlibdeps" into the build process. It
-> calculates shared library dependencies for packages and creates a
-> substvar entry for them, making them usable in "debian/control" by
-> specifying "${shlibs:Depends}" in the "Depends" field.
->
-> "dh_shlibdeps" detects the dependency on libc for the linux-headers
-> package and by specifying the substvar for the linux-headers package in
-> "debian/control" this dependency is correctly declared and lintian won't
-> complain about it anymore.
->
-> Signed-off-by: Thomas B=C3=B6hler <t.boehler@kunbus.com>
-
-
-
-
-
-
+   In file included from drivers/gpu/drm/vc4/vc4_hdmi.c:37:
+   In file included from include/drm/drm_atomic_helper.h:31:
+   In file included from include/drm/drm_crtc.h:32:
+   In file included from include/drm/drm_modes.h:33:
+   In file included from include/drm/drm_connector.h:32:
+   In file included from include/drm/drm_util.h:36:
+   In file included from include/linux/kgdb.h:19:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/gpu/drm/vc4/vc4_hdmi.c:1762:61: error: passing 'const struct drm_display_mode *' to parameter of type 'struct drm_display_mode *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+    1762 |         return drm_hdmi_connector_mode_valid(&vc4_hdmi->connector, mode);
+         |                                                                    ^~~~
+   include/drm/display/drm_hdmi_state_helper.h:25:35: note: passing argument to parameter 'mode' here
+      25 |                               struct drm_display_mode *mode);
+         |                                                        ^
+   4 warnings and 1 error generated.
 
 
+vim +1762 drivers/gpu/drm/vc4/vc4_hdmi.c
 
---
-Best Regards
-Masahiro Yamada
+  1749	
+  1750	static enum drm_mode_status
+  1751	vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
+  1752				    const struct drm_display_mode *mode)
+  1753	{
+  1754		struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
+  1755	
+  1756		if (vc4_hdmi->variant->unsupported_odd_h_timings &&
+  1757		    !(mode->flags & DRM_MODE_FLAG_DBLCLK) &&
+  1758		    ((mode->hdisplay % 2) || (mode->hsync_start % 2) ||
+  1759		     (mode->hsync_end % 2) || (mode->htotal % 2)))
+  1760			return MODE_H_ILLEGAL;
+  1761	
+> 1762		return drm_hdmi_connector_mode_valid(&vc4_hdmi->connector, mode);
+  1763	}
+  1764	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
