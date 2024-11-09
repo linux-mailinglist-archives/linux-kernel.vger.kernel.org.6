@@ -1,95 +1,76 @@
-Return-Path: <linux-kernel+bounces-402627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E00B9C29C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:59:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3AE9C29CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:59:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072251C212B1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:59:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 974381C215C9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C50F54652;
-	Sat,  9 Nov 2024 03:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5309313B293;
+	Sat,  9 Nov 2024 03:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="VU0/KTrC"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTAFK3pk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA025288B5
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 03:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB8033DF;
+	Sat,  9 Nov 2024 03:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731124765; cv=none; b=gmq37LnAd59cs3hFF2WYWc8ykuwvY69XJsnJVOg19uEO2KRNgEe+8zw38MclcSvRBLTO622HLujR43+CjUxoWTJTCV4jWpJLYrFyvO+fts7IE+KFasa1BYW1aSHavdgmORoJpPoazU57MmiBeDK0Zb6b8SKHgF2flYEcncJc8Fg=
+	t=1731124783; cv=none; b=sk4NKprL84oGnp06zK939jX++MJ1VmNlRGlAnBTbLPfbP9RqdhaiGKr65J5wC/u62hnLqqbTYDnx9K4b57D34Jvx3wYhC2GMWBOz7LD5o2FBexSt+SGy3wCO60gUO05Vo7B5ot+Z1vTd/7iY6NoOpb2o6t4nYzzYq0p9IaUi8EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731124765; c=relaxed/simple;
-	bh=MuUHmXGr8JXXU11U0zA3AH5ebUBQtLudPHAX4pJOYAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FxHXQIjLp2U3kFbL1vm6wAEFPB6JeQSyMEnOHl3FctepiUYM25O6TUrRgkUjXlqOepqCxbmfUfWnrFYT5uouaeCoQ1QbCqjfeMZCOImBjRlrhHF5LFjjzugewh2XKxi2G26CVv43EtsfbICENuV83wivjsUOqwHx/fwVKwKCT0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=VU0/KTrC; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A93x4wg010849
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 8 Nov 2024 22:59:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1731124747; bh=816N1sk5E3DW7glLrjhiANpEjK5lmhpur2scZjvvw/I=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=VU0/KTrCBOp+nuWiJj1E9sqmkR0ZfOEGE6f6m6D58SBbLNewrwuRv2+1KwAeEn6Zq
-	 LLH9AhjSrtYS1GFaaWXCAESDw3pEmr9Af1qx3tAZZX9SPjuwoWWTfAQIBF/d7xNwHX
-	 X/0Kh73JTSOcwy7Bm2QzVESF5FLXGtKwAbGs94dnP9zrVb89kDWUyWwPwQrqCMxK8z
-	 iEsmiLgr/LxFvE2HySe2RLyi+snopc+CZcVhuHRHchtReMSkpg7lDIVp9g/GgWiahg
-	 2KZNh6XQlDnoCf0PqSRlTJWkyzMqPMKkH/sN8Wz2pUaJ5wcZLeoiES5Zr0b12aSD6U
-	 DaRs6EFti7r/Q==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 10E0315C02BF; Fri, 08 Nov 2024 22:59:04 -0500 (EST)
-Date: Fri, 8 Nov 2024 22:59:04 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for
- unacceptable behaviors
-Message-ID: <20241109035904.GA21941@mit.edu>
-References: <20241108161853.12325-1-skhan@linuxfoundation.org>
+	s=arc-20240116; t=1731124783; c=relaxed/simple;
+	bh=+PqEu08Z2e2qccxTHfOiTHCYReV9xzQyZLvFwtWeTzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dqSQUBtfL4QgZLer+56kSXCk/7BZ1jMIjaXs/rnRBI7F2apD+uQ5lL5WcokpsvLN9h9bz8ueaEXA7u/afuO8ofR6tQ6h9E2gwlUFF4icWw7F+slu9nV+xIy5+SF0zXsiOEz127LzeGnCSjOwgxK0MNnOb0aOaARDKvIwqDSdUhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTAFK3pk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4AF3C4CEC6;
+	Sat,  9 Nov 2024 03:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731124783;
+	bh=+PqEu08Z2e2qccxTHfOiTHCYReV9xzQyZLvFwtWeTzg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sTAFK3pkXKOor0M7rI+XMYqjwNzVpdmKO24LL/lXGQYZ/eMhnqqbKY/fXJ0lbk87O
+	 rNBXM0Ox6iT1imehKYic+kF7ZwoV4SPwDNCMCzhNqz6uYIjzlvBU28doJatFMt9Qon
+	 cbAOP2bOAIOObgQ9KyhduoniU52ijVVhRBPZi74ZBriBvx8Gi47B/1WGEjdE8Y458m
+	 hE75bxtb9aJrI2u0nLqZekaBg9Mu5h4h2CbuJht7ekTTuGxIA7uirDCg4Mo+ggflfF
+	 w4Gyc2Dgxi8jGLc+yhb2ESzum2FKJSIVhrkrToL6NuegAeb2FnrQ61EbBZiID39CTZ
+	 /wVy9vCSdqOLA==
+Date: Fri, 8 Nov 2024 19:59:41 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Louis Peens <louis.peens@corigine.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ oss-drivers@corigine.com (open list:NETRONOME ETHERNET DRIVERS),
+ linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH] net: netronome: use double ptr for gstrings
+Message-ID: <20241108195941.7d45c6e3@kernel.org>
+In-Reply-To: <20241108204154.305560-1-rosenp@gmail.com>
+References: <20241108204154.305560-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108161853.12325-1-skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 09:18:53AM -0700, Shuah Khan wrote:
-> The Code of Conduct committee's goal first and foremost is to bring about
-> change to ensure our community continues to foster respectful discussions.
+On Fri,  8 Nov 2024 12:41:54 -0800 Rosen Penev wrote:
+> Currently the code copies a pointer and propagates increments that way.
 > 
-> In the interest of transparency, the CoC enforcement policy is formalized
-> for unacceptable behaviors.
+> Instead of doing that, increment with a double pointer, which the
+> ethtool string helpers expect.
 > 
-> Update the Code of Conduct Interpretation document with the enforcement
-> information.
-> 
-> Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Acked-by: Jonathan Corbet <corbet@lwn.net>
-> Acked-by: Steven Rostedt <rostedt@goodmis.org>
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> Also converted some memcpy calls to ethtool_puts, as they should be.
 
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-
+Let's not "convert" a driver which already uses the ethtool_ print
+helpers. Replace the memcpy but leave the rest be, please.
+-- 
+pw-bot: cr
 
