@@ -1,403 +1,269 @@
-Return-Path: <linux-kernel+bounces-402731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3699C2B3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:18:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9054E9C2B42
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF095B21F2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111041F21FEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE39145A05;
-	Sat,  9 Nov 2024 08:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pqgeMy87"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561C813E043;
+	Sat,  9 Nov 2024 08:24:30 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E868013B58F
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EB6233D62
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731140327; cv=none; b=alDgXqHl2vYQBvuFD2G0VBocwfD0YaWp0MC0eCNVHxhzNZwhV3uHAmWetTMk+4gd1Gaj9f7IC8DyVK0Ttp4OHfZhovY3EQw3VGNyrAzt0CHLYVvRrwGXLEc5Ig2ETZE2wg4vmnIDLht3B+SoCj65beqUiHUbdn/G/7xVMrhzWus=
+	t=1731140669; cv=none; b=D1saSooU7/b0k7XY71qWy43jzYZg7I/eNrfOjnMtccjbadOuCpdoSAuQp8Koqi9+9EwD9T3p+pfGcQO49Xwf8QDamve27Xx2jRS8SZd2x8jcBwLqjaXXZVzJwckzRaoQuMzF9qOrcEjcOMRXySqMkttq9LDCM8I1AY8DPcI10hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731140327; c=relaxed/simple;
-	bh=j/F70TzKeBKyIt+T3j4UBishTMF2Mz4nfwN8GkI4328=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fIUX7W6NKzUkwyx/Mw9TDbhPDJunMOb0ZyxdPKu8uOkAUsmSI+j6YGJVhEwftGWD/Ywg9BMMRto9wx2cQgAgiQxhOcjN0t7IfiAWGzX9d69QrjPiYQB48xMPLWjGejuQ83E/1arQax4ZLqIhjwLe5Lv9eHQtfx6DuZjqcu8/PsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pqgeMy87; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b158542592so182795585a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 00:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731140323; x=1731745123; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gfmLn1P5YEd5P8IFrILpCaHNzRVW0Fz8qV3aYtfYsSg=;
-        b=pqgeMy87zsvCmRt7hE9eVJIWkegYOzqlDpKbRQNsphFgsAFwLV/4y7RT9woqa+Oo9Z
-         txZE3uVkxQ6CW3g6hW687WwzLGuE65bPCDPgzqlavTDn8CmSHzmelgSj+LyWLOimJXEZ
-         YsfApd3lrXmpxJZf57+cM0rcTcXw9cQnYcfxPGbje/W43KpY3W7LZliLutkb3sz22kBs
-         MR8ogeAHaZ5Br90oLbJl1ni8nQJFh0zVssdg0eKGmTG2Q9wXGtELm4VhVWdNc+tsxOVh
-         aMbgItfCZQ+ml5egPRRiFnbCfuooEuHWM3g/Cw65n9KftlF9tt+zOw/OjVBJjgXUKAMk
-         0OPA==
+	s=arc-20240116; t=1731140669; c=relaxed/simple;
+	bh=Jfe7igCuEjnCsxgsNMi33jYyC/yiVZwx+0UdW7PkbTs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nFiKrviTP6bfM0XS/FmjgCC5iiHJFUyy9e7VBsvx5vfRWSCVAO+cYyrsflP+nJpkp+NX9aWQx63pmd7E+twugI0JZL/0YWeet45E9NsbjPnun4HH6MvteiXzeTY+LpfG+LMpbAj0HgyphA2tGMmNhfUFrY1sdjvWpEFWbK6+PmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4e80ccd1bso30875085ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 00:24:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731140323; x=1731745123;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gfmLn1P5YEd5P8IFrILpCaHNzRVW0Fz8qV3aYtfYsSg=;
-        b=pnldjd+7NZksRrZ7jEQjlJvc01bOyXij4/J+PaGOmMp1zA3/822XtfkGw5GRDZCTLH
-         fDXnHChdRNtRb0YQM3ulPCfQixLwrZaBRkEGd9bmdaDo2ShJLKs3RBQTci2JG0NF0/HQ
-         yWR8YZuWkq6a2WoUxfaXet5shJxQPK1TOw4ZUFr+VtXLU2Y8SiT0Jwj4PrA4pKjQksre
-         xIMjoyQIDnQRzaGHl0n3oK6Gk/jcObDpzL60xG0Iy1K4ctw8iLDG5JHcryluKvyaSiDW
-         5AagOYD472iFsCRDwIihQwWQN1jp5KGd+o1cvFm6aOa5KNGn6+Qdt0wcCpuPWcB5In/C
-         qmWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZUhh+qI4nVxf6wmUrSr9h8pw+4tyF9i+Nr/p5xg0j7g2AVo474uq8/ehaujqVL67MhQYieZWeZu88aCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqWWoOpqiZh+cxhfOSd1kYgG5gCqChhzncc5u8xMj6dNbNdb0p
-	WWq2wZj1bryO3UkCjpBT4ST3r80+pFRw+pytNT1hZFO8uADk40ghYxcJTmmVjh28gT70h280LpO
-	33t/ragU4aPRgeOKSKyOROeBX3i0VRECz2xmd
-X-Google-Smtp-Source: AGHT+IGlekRWmioZ7Ds1670XPM49xspw72/W1vNO2dK8ZpyRZfp3fiEkDXIpYIY+1uKn/dJdYhYDQp6tVGCgGwsIHJ0=
-X-Received: by 2002:a05:6214:328d:b0:6cc:378f:f7fb with SMTP id
- 6a1803df08f44-6d39e1a5e82mr66951016d6.35.1731140322644; Sat, 09 Nov 2024
- 00:18:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731140666; x=1731745466;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EHOPMNZcESCp4nYIfh1RNU6R07PxARKJTp8wG2Trlwk=;
+        b=lF+2eV0I7E2z/r7bI+baOSR3bVJzVXBrpp4WIgbrLpK0rHrfzITA74ifEfM2dN+Cd8
+         pUifK9fzIq2YrYZi19QPE2FwYI3mk0UA5anh9tb4W83ACXpD2mz9qJFbr7hE0TxiXCnW
+         C/iE0lSxAqqMslJmgd7JFJ7R14vKGWxz5ewTSRXxf2UwX0K96EG6odBOJYls7gvxs8Es
+         vPMtraVYW9JK3imh2+emjtARKkSReyEPK35SblyS0XyAlMuWxQNahV0hEbnfPu7d0ADP
+         LSkkQdmWh0aPauWJpOmSwF/IuWjoXbUSHV1qyyjQp9YGEqm0jUqrIYf3or0XCA8Fb40t
+         IffA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHvwxKqMuJEMEMMUszNfAdDy6hSv7aZfbm5eJs2RIqe02R4gAWPw4RpvPb9gEU9gRv4Zhxt/mTixAOM3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhUXHEsEF9S/qciUK90bZsDmxOTPzNVBS5ElVoojh9jQCgcM//
+	z15pSCRnsjorqHwIFusMJfhiHqfLWxUGHvOht8LygfXnOiwlqqlNaodMe+AwiishIhgFhlnYvm2
+	its0TXSY0sxiHXx9Xq3iNNnPDX6obaQ7P3Z7QnN8EjA4r0AOXZZqsrDk=
+X-Google-Smtp-Source: AGHT+IH/hEVMouRRl7vsEzB+aQYkIaENPEhh5TSWhWiDe6m31Ao9wqtowWT3ZNC5Y6QkV6OEQravvcb9fTuS3w+MU7KyXiara/Qj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-2-davidgow@google.com>
- <ZyUUGNywoADngOwM@Boquns-Mac-mini.local>
-In-Reply-To: <ZyUUGNywoADngOwM@Boquns-Mac-mini.local>
-From: David Gow <davidgow@google.com>
-Date: Sat, 9 Nov 2024 16:18:28 +0800
-Message-ID: <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] rust: kunit: add KUnit case and suite macros
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000004997a062676845b"
-
---00000000000004997a062676845b
+X-Received: by 2002:a92:ca0a:0:b0:3a4:e62b:4e20 with SMTP id
+ e9e14a558f8ab-3a6f19b2cfemr66241625ab.9.1731140666327; Sat, 09 Nov 2024
+ 00:24:26 -0800 (PST)
+Date: Sat, 09 Nov 2024 00:24:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672f1c3a.050a0220.138bd5.003a.GAE@google.com>
+Subject: [syzbot] [kernel?] INFO: rcu detected stall in schedule_timeout (7)
+From: syzbot <syzbot+8926d1b522e7194a4b3e@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2 Nov 2024 at 01:47, Boqun Feng <boqun.feng@gmail.com> wrote:
->
-> On Fri, Nov 01, 2024 at 02:45:00PM +0800, David Gow wrote:
-> > From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> >
-> > Add a couple of Rust const functions and macros to allow to develop
-> > KUnit tests without relying on generated C code:
-> >
-> >  - The `kunit_unsafe_test_suite!` Rust macro is similar to the
-> >    `kunit_test_suite` C macro. It requires a NULL-terminated array of
-> >    test cases (see below).
-> >  - The `kunit_case` Rust function is similar to the `KUNIT_CASE` C macr=
-o.
-> >    It generates as case from the name and function.
-> >  - The `kunit_case_null` Rust function generates a NULL test case, whic=
-h
-> >    is to be used as delimiter in `kunit_test_suite!`.
-> >
-> > While these functions and macros can be used on their own, a future
-> > patch will introduce another macro to create KUnit tests using a
-> > user-space like syntax.
-> >
-> > Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-> > Co-developed-by: Matt Gilbride <mattgilbride@google.com>
-> > Signed-off-by: Matt Gilbride <mattgilbride@google.com>
-> > Co-developed-by: David Gow <davidgow@google.com>
-> > Signed-off-by: David Gow <davidgow@google.com>
-> > ---
-> >
-> > Changes since v3:
-> > https://lore.kernel.org/linux-kselftest/20241030045719.3085147-4-davidg=
-ow@google.com/
-> > - The kunit_unsafe_test_suite!() macro now panic!s if the suite name is
-> >   too long, triggering a compile error. (Thanks, Alice!)
-> >
-> > Changes since v2:
-> > https://lore.kernel.org/linux-kselftest/20241029092422.2884505-2-davidg=
-ow@google.com/
-> > - The kunit_unsafe_test_suite!() macro will truncate the name of the
-> >   suite if it is too long. (Thanks Alice!)
-> > - We no longer needlessly use UnsafeCell<> in
-> >   kunit_unsafe_test_suite!(). (Thanks Alice!)
-> >
-> > Changes since v1:
-> > https://lore.kernel.org/lkml/20230720-rustbind-v1-1-c80db349e3b5@google=
-.com/
-> > - Rebase on top of rust-next
-> > - As a result, KUnit attributes are new set. These are hardcoded to the
-> >   defaults of "normal" speed and no module name.
-> > - Split the kunit_case!() macro into two const functions, kunit_case()
-> >   and kunit_case_null() (for the NULL terminator).
-> >
-> > ---
-> >  rust/kernel/kunit.rs | 112 +++++++++++++++++++++++++++++++++++++++++++
-> >  rust/kernel/lib.rs   |   1 +
-> >  2 files changed, 113 insertions(+)
-> >
-> > diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> > index 824da0e9738a..85bc1faff0d5 100644
-> > --- a/rust/kernel/kunit.rs
-> > +++ b/rust/kernel/kunit.rs
-> > @@ -161,3 +161,115 @@ macro_rules! kunit_assert_eq {
-> >          $crate::kunit_assert!($name, $file, $diff, $left =3D=3D $right=
-);
-> >      }};
-> >  }
-> > +
-> > +/// Represents an individual test case.
-> > +///
-> > +/// The test case should have the signature
-> > +/// `unsafe extern "C" fn test_case(test: *mut crate::bindings::kunit)=
-`.
-> > +///
-> > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated lis=
-t of test cases.
-> > +/// Use `kunit_case_null` to generate such a delimeter.
-> > +const fn kunit_case(name: &'static kernel::str::CStr, run_case: unsafe=
- extern "C" fn(*mut kernel::bindings::kunit)) -> kernel::bindings::kunit_ca=
-se {
-> > +    kernel::bindings::kunit_case {
-> > +        run_case: Some(run_case),
-> > +        name: name.as_char_ptr(),
-> > +        attr: kernel::bindings::kunit_attributes {
-> > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
-> > +        },
-> > +        generate_params: None,
-> > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
-> > +        module_name: core::ptr::null_mut(),
-> > +        log: core::ptr::null_mut(),
-> > +    }
-> > +}
-> > +
-> > +/// Represents the NULL test case delimiter.
-> > +///
-> > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated lis=
-t of test cases. This
-> > +/// function retuns such a delimiter.
-> > +const fn kunit_case_null() -> kernel::bindings::kunit_case {
-> > +    kernel::bindings::kunit_case {
-> > +        run_case: None,
-> > +        name: core::ptr::null_mut(),
-> > +        generate_params: None,
-> > +        attr: kernel::bindings::kunit_attributes {
-> > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
-> > +        },
-> > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
-> > +        module_name: core::ptr::null_mut(),
-> > +        log: core::ptr::null_mut(),
-> > +    }
-> > +}
-> > +
-> > +
-> > +/// Registers a KUnit test suite.
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// `test_cases` must be a NULL terminated array of test cases.
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```ignore
-> > +/// unsafe extern "C" fn test_fn(_test: *mut crate::bindings::kunit) {
-> > +///     let actual =3D 1 + 1;
-> > +///     let expected =3D 2;
-> > +///     assert_eq!(actual, expected);
-> > +/// }
-> > +///
-> > +/// static mut KUNIT_TEST_CASE: crate::bindings::kunit_case =3D crate:=
-:kunit_case(name, test_fn);
-> > +/// static mut KUNIT_NULL_CASE: crate::bindings::kunit_case =3D crate:=
-:kunit_case_null();
-> > +/// static mut KUNIT_TEST_CASES: &mut[crate::bindings::kunit_case] =3D=
- unsafe {
-> > +///     &mut[KUNIT_TEST_CASE, KUNIT_NULL_CASE]
-> > +/// };
-> > +/// crate::kunit_unsafe_test_suite!(suite_name, KUNIT_TEST_CASES);
-> > +/// ```
-> > +#[macro_export]
-> > +macro_rules! kunit_unsafe_test_suite {
-> > +    ($name:ident, $test_cases:ident) =3D> {
-> > +        const _: () =3D {
-> > +            static KUNIT_TEST_SUITE_NAME: [i8; 256] =3D {
-> > +                let name_u8 =3D core::stringify!($name).as_bytes();
-> > +                let mut ret =3D [0; 256];
-> > +
-> > +                if name_u8.len() > 255 {
-> > +                    panic!(concat!("The test suite name `", core::stri=
-ngify!($name), "` exceeds the maximum length of 255 bytes."));
-> > +                }
-> > +
-> > +                let mut i =3D 0;
-> > +                while i < name_u8.len() {
-> > +                    ret[i] =3D name_u8[i] as i8;
-> > +                    i +=3D 1;
-> > +                }
-> > +
-> > +                ret
-> > +            };
-> > +
-> > +            static mut KUNIT_TEST_SUITE: $crate::bindings::kunit_suite=
- =3D
-> > +                $crate::bindings::kunit_suite {
-> > +                    name: KUNIT_TEST_SUITE_NAME,
-> > +                    // SAFETY: User is expected to pass a correct `tes=
-t_cases`, hence this macro
-> > +                    // named 'unsafe'.
-> > +                    test_cases: unsafe { $test_cases.as_mut_ptr() },
-> > +                    suite_init: None,
-> > +                    suite_exit: None,
-> > +                    init: None,
-> > +                    exit: None,
-> > +                    attr: $crate::bindings::kunit_attributes {
-> > +                        speed: $crate::bindings::kunit_speed_KUNIT_SPE=
-ED_NORMAL,
-> > +                    },
-> > +                    status_comment: [0; 256usize],
-> > +                    debugfs: core::ptr::null_mut(),
-> > +                    log: core::ptr::null_mut(),
-> > +                    suite_init_err: 0,
-> > +                    is_init: false,
-> > +                };
-> > +
-> > +            #[used]
-> > +            #[link_section =3D ".kunit_test_suites"]
-> > +            static mut KUNIT_TEST_SUITE_ENTRY: *const $crate::bindings=
-::kunit_suite =3D
-> > +                // SAFETY: `KUNIT_TEST_SUITE` is static.
-> > +                unsafe { core::ptr::addr_of_mut!(KUNIT_TEST_SUITE) };
->
-> FYI, `addr_of` and `addr_of_mut` is safe now on statics since 1.82:
->
->         https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-add=
-ressing-unsafe-statics
->
-> We need a `#[allow(unused_unsafe)]` here to avoid the unused unsafe
-> warning.
->
+Hello,
 
-I've not been able to work out how to fix this: adding
-"#![allow(unused_unsafe)]" to the unsafe block here triggers another
-error:
-ERROR:root:error[E0658]: attributes on expressions are experimental
+syzbot found the following issue on:
 
-Is there somewhere else we can put the attribute to support this
-without having to either disable the warning, or use the experimental
-feature globally?
+HEAD commit:    557329bcecc2 Merge tag 'mmc-v6.12-rc3' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16a296a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
+dashboard link: https://syzkaller.appspot.com/bug?extid=8926d1b522e7194a4b3e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=108ced5f980000
 
--- David
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47c1323cbaa7/disk-557329bc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/32b880369d29/vmlinux-557329bc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4799d7cbb82a/bzImage-557329bc.xz
 
---00000000000004997a062676845b
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8926d1b522e7194a4b3e@syzkaller.appspotmail.com
 
-MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
-cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
-nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
-hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
-XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
-h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
-ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
-hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
-BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
-0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
-hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
-AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgJ/zGCKhzhMvsp7s0g+mzxa/8ZPoi
-dyqGpmcBzCqZgl8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MTA5MDgxODQzWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBACv1802ZWqgMcV8lnVygkGVWr8y1l1u9CkJOAk8FO40rkEJl
-M/6wsGVZBxWYQWRnZm38ZK1c1sYoulq5+utSi+hNd9C/6iXJhyPLsASub8eN/82mIaYspnSrk1dk
-GIRJQi4Gq4nxn+oX7R5sJDFC4v0xbyILTuZIC0aCsTXQqFyPveXEHMKnSK1RTaexQuyg1GTPhYNa
-dAe/daBwTM+N3UXdrAGgw3euMQXCnIkMVaw7i49GaYRgZs3kaozc5n+uWPLePUAgpAK119Vw9JZ2
-S8oQU6FSFcQ+ui5HwiBpqCDQoDU4N5AT4MTX+i5UZmoQvfKK30D8rYyvPtcnjGulcfU=
---00000000000004997a062676845b--
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6107/1:b..l
+rcu: 	(detected by 1, t=10502 jiffies, g=10381, q=1041 ncpus=2)
+task:syz.5.20        state:R  running task     stack:25752 pid:6107  tgid:6107  ppid:5944   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x184f/0x4c30 kernel/sched/core.c:6690
+ preempt_schedule_common+0x84/0xd0 kernel/sched/core.c:6869
+ preempt_schedule+0xe1/0xf0 kernel/sched/core.c:6893
+ preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
+ unwind_next_frame+0x18f8/0x22d0 arch/x86/kernel/unwind_orc.c:672
+ arch_stack_walk+0x11c/0x150 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ save_stack+0xfb/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x76/0x430 mm/page_owner.c:297
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2677 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3145
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3220
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4449
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_kmalloc+0x23/0xb0 mm/kasan/common.c:385
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ kobject_uevent_env+0x28b/0x8e0 lib/kobject_uevent.c:540
+ device_remove drivers/base/dd.c:567 [inline]
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x4ab/0x7c0 drivers/base/dd.c:1296
+ driver_detach+0x1fb/0x2d0 drivers/base/dd.c:1359
+ bus_remove_driver+0x1f3/0x320 drivers/base/bus.c:744
+ usb_gadget_unregister_driver+0x4e/0x70 drivers/usb/gadget/udc/core.c:1732
+ raw_release+0xf6/0x1e0 drivers/usb/gadget/legacy/raw_gadget.c:462
+ __fput+0x241/0x880 fs/file_table.c:431
+ task_work_run+0x251/0x310 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff4b9d7e719
+RSP: 002b:00007ffdb979f378 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 000000000001e66c RCX: 00007ff4b9d7e719
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007ff4b9f37a80 R08: 0000000000000001 R09: 00007ffdb979f66f
+R10: 00007ff4b9c00000 R11: 0000000000000246 R12: 000000000001eb0d
+R13: 00007ffdb979f480 R14: 0000000000000032 R15: ffffffffffffffff
+ </TASK>
+rcu: rcu_preempt kthread starved for 10308 jiffies! g10381 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x402 ->cpu=0
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:I stack:26112 pid:17    tgid:17    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5328 [inline]
+ __schedule+0x184f/0x4c30 kernel/sched/core.c:6690
+ preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:7012
+ irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:19 [inline]
+RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:87 [inline]
+RIP: 0010:arch_local_irq_save arch/x86/include/asm/irqflags.h:123 [inline]
+RIP: 0010:lock_release+0x175/0xa30 kernel/locking/lockdep.c:5842
+Code: f7 e8 6f 30 8e 00 48 c7 c0 d0 d6 e3 93 49 39 06 0f 84 ee 04 00 00 4c 8d b4 24 b0 00 00 00 4c 89 f3 48 c1 eb 03 42 80 3c 3b 00 <74> 08 4c 89 f7 e8 31 31 8e 00 4c 89 6c 24 50 48 c7 84 24 b0 00 00
+RSP: 0018:ffffc90000167780 EFLAGS: 00000246
+RAX: ffffffff93e3d6d0 RBX: 1ffff9200002cf06 RCX: ffffffff81706f50
+RDX: 0000000000000000 RSI: ffffffff8c610840 RDI: ffffffff8c610800
+RBP: ffffc900001678b0 R08: ffffffff901d08ef R09: 1ffffffff203a11d
+R10: dffffc0000000000 R11: fffffbfff203a11e R12: 1ffff9200002cefc
+R13: ffffffff84c3b400 R14: ffffc90000167830 R15: dffffc0000000000
+ debug_objects_fill_pool+0xc1/0x9f0 lib/debugobjects.c:616
+ __debug_object_init+0xa4/0x400 lib/debugobjects.c:627
+ init_timer_on_stack_key kernel/time/timer.c:859 [inline]
+ schedule_timeout+0x121/0x310 kernel/time/timer.c:2613
+ rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
+ rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-rc6-syzkaller-00005-g557329bcecc2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: wg-crypt-wg1 wg_packet_encrypt_worker
+RIP: 0010:usb_hcd_map_urb_for_dma+0x133/0xf90 drivers/usb/core/hcd.c:1430
+Code: 00 85 ed 0f 85 b1 01 00 00 48 8b 44 24 10 48 8d 98 00 04 00 00 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 80 3c 08 00 <74> 08 48 89 df e8 a3 b8 c6 fa 48 83 3b 00 0f 84 4d 03 00 00 48 8b
+RSP: 0018:ffffc90000007650 EFLAGS: 00000046
+RAX: 1ffff11004f51680 RBX: ffff888027a8b400 RCX: dffffc0000000000
+RDX: ffff88801c290000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8737e781 R09: 1ffff11004d8d6d1
+R10: dffffc0000000000 R11: ffffed1004d8d6d2 R12: 1ffff11005e0d0a9
+R13: ffff888027a8b000 R14: 0000000000000040 R15: 0000000000000200
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000029b04000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ map_urb_for_dma drivers/usb/core/hcd.c:1381 [inline]
+ usb_hcd_submit_urb+0x314/0x1e80 drivers/usb/core/hcd.c:1531
+ ath9k_hif_usb_reg_in_cb+0x4ce/0x6e0 drivers/net/wireless/ath/ath9k/hif_usb.c:790
+ __usb_hcd_giveback_urb+0x42e/0x6e0 drivers/usb/core/hcd.c:1650
+ dummy_timer+0x856/0x4620 drivers/usb/gadget/udc/dummy_hcd.c:1993
+ __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
+ __hrtimer_run_queues+0x59d/0xd50 kernel/time/hrtimer.c:1755
+ hrtimer_run_softirq+0x19a/0x2c0 kernel/time/hrtimer.c:1772
+ handle_softirqs+0x2c7/0x980 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:profile_hit include/linux/profile.h:50 [inline]
+RIP: 0010:schedule_debug kernel/sched/core.c:5910 [inline]
+RIP: 0010:__schedule+0x2ae/0x4c30 kernel/sched/core.c:6564
+Code: 48 c7 c2 20 5e 0a 8c e8 e0 a4 a1 f5 0f 1f 44 00 00 48 c7 c0 70 0a 1d 90 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 <84> c0 0f 85 1b 18 00 00 83 3d d3 00 4e 04 02 0f 84 95 16 00 00 4c
+RSP: 0018:ffffc900000e72c0 EFLAGS: 00000216
+RAX: 0000000000000000 RBX: ffffc900000e0000 RCX: dffffc0000000000
+RDX: 0000000000000010 RSI: ffffffff8c0adc40 RDI: ffffffff8c610860
+RBP: ffffc900000e74d0 R08: ffffc900000e745f R09: ffffc900000e7450
+R10: dffffc0000000000 R11: fffff5200001ce8c R12: ffffc900000e7450
+R13: ffff8880b8600000 R14: dffffc0000000000 R15: dffffc0000000000
+ preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:7012
+ irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:wg_packet_encrypt_worker+0x30b/0x1610
+Code: 24 58 e8 18 d2 61 05 48 8b 84 24 88 00 00 00 48 8d 58 30 49 89 c5 48 89 9c 24 d8 00 00 00 4c 89 e8 48 c1 e8 03 42 80 3c 38 00 <74> 08 4c 89 ef e8 bb 7b 8f fb 49 8b 45 00 48 89 84 24 f8 00 00 00
+RSP: 0018:ffffc900000e7660 EFLAGS: 00000246
+RAX: 1ffff1100f39f4c8 RBX: ffff888079cfa670 RCX: ffffffff8170bffa
+RDX: dffffc0000000000 RSI: ffffffff8c0acac0 RDI: ffffffff8c610860
+RBP: ffffc900000e7bb0 R08: ffffffff942cd8ff R09: 1ffffffff2859b1f
+R10: dffffc0000000000 R11: fffffbfff2859b20 R12: 0000000000000005
+R13: ffff888079cfa640 R14: ffffc900000e7b40 R15: dffffc0000000000
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
