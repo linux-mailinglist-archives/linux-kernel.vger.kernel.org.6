@@ -1,101 +1,146 @@
-Return-Path: <linux-kernel+bounces-402898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48039C2E2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:26:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 295E69C2E36
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8729C28227D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:26:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58CBC1C20AA9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A254B19ABD1;
-	Sat,  9 Nov 2024 15:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE66419AD90;
+	Sat,  9 Nov 2024 15:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fNGukyW9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NTx/n/v6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E506E2BE;
-	Sat,  9 Nov 2024 15:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540A36E2BE;
+	Sat,  9 Nov 2024 15:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731165984; cv=none; b=hw4qW9BBJIumVSIqNPPbf5FIoJ1zg0c4AOyOjvB+8S3MNJI06ANkh3cL2GcLOW4hpWgzYKFU2DZgC6OyyN8hA8vgkNmhEJurPHX3bTYZBAEecpaT6qu6Fz5z2jXiheSOHS3IN0/iwLlIwMrYGrIJZyxRzn+1rn8R9GzQzVtW1uQ=
+	t=1731166093; cv=none; b=W8tAnS/9JwrF2kWdfWUrQ44WXZZN6ns4cBLe78xAAu34Ei3JlUZLMFni8ZsvPEI0RkKCqBdLYoNNH8yMnod3+RCQgIS1sUf7umo7tyl7IEpT3llgj/OQOd6YaRCaeVolBlakrorpCGDYMylUSCCa+2hTaNbXXWQV5+Hq8Vey1Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731165984; c=relaxed/simple;
-	bh=C2Fu967BHeELtFrqODTzmYpCvZ5v2z8G/kwBzGgDw+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSqggUUK0BcS1rXnNM8k7OjmkvUyNg7KYTeoTIc18ZOJ3JG0rsqK8h2wTgO2olbvjFnV3oLnk9gJyXBF8pkz2Br2UVPq/uK38JzF2VASA925ofjoLndX0EbosZ9JCDDWi5kEObrk4DpsNyCryl+/xcdRwz8VE6cUwTDjXKi1JRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fNGukyW9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731165980;
-	bh=C2Fu967BHeELtFrqODTzmYpCvZ5v2z8G/kwBzGgDw+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fNGukyW9cXlI5Me5NYcTub74uTNzYhzKxvGR92Pe0/y7V+RLnTESg08QeiXLF9esi
-	 vI5cC09w0mrhryCs7vuCsjJheM9NCHjMjRcdRL4fRduv2RzP6DeDNebvMyp1uTBAmu
-	 ZClu81a4fVOQy9t8LaOd7l9ptYQW1oEBexJaafHHC+LhjAjDnkoO0aolxdPXaWp4YI
-	 TJxkS7rCscphXs3c+/P8LiqWxZ2t0C8Yq/3giiFj1EIgIMPfotDMzth20mWzSMhBAP
-	 wGeXj2JvuWvJSy3wHvIESHMZ6iGRlclA5qO++vWcGiuA+7AeimDAzn6mggMe63PF/A
-	 ie3FZQcz9f2Vw==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1FFE817E35FA;
-	Sat,  9 Nov 2024 16:26:17 +0100 (CET)
-Date: Sat, 9 Nov 2024 10:26:15 -0500
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Switch to
- IMMEDIATE_MODE
-Message-ID: <a641e6b8-0078-4910-9826-a088e69b734d@notapiano>
-References: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
- <CAGXv+5EOcg0pQxj=iOn_ff8-t6pyGKwemA9mdn=VCpxg6Uzt+g@mail.gmail.com>
+	s=arc-20240116; t=1731166093; c=relaxed/simple;
+	bh=Uq6vY0dbCp9RgX1YA2IjE3NYO4XlxEGj+eUY/dGBndA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D3WkWUSElTKr+fl+FsfodRWzd6sOx49HghkhVIZJF8+g6eJ5CMlRxXjT66F9Y9O/bgfDSqAiWBWoDjlPxf7u/7YygRruZdO1kKC8itR23tMUMA2iFQbsqHX087ULvwFpbUYetbgUzq9YBTGnt9L4TLw/JsL/KHM2chG/4Gqih6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NTx/n/v6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E73FEC4CECE;
+	Sat,  9 Nov 2024 15:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731166092;
+	bh=Uq6vY0dbCp9RgX1YA2IjE3NYO4XlxEGj+eUY/dGBndA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NTx/n/v600QGU5Zm0yvpFBrFpFoZA+QOpC2vbom++Kb3tNiY6u2Ix/+6IExOdgGt6
+	 /xhenocAFAyNLyVrOvhwuj+8d/4Xh66XMws0DmKabYGseJRxTw1oIke8qerRB3J4/z
+	 bR63lmlttZ0zat3yiNMk7p0xrHzmsHGXt/w0B0hej6EJ+60X6h+TKEq0kJK6DkhJpe
+	 n056KsQtk1wMxvJd0OEHP3nV/NxRTm2umVYso4WIBf0r+qHf76EA9qtLwKDwhTDsix
+	 rkBHrl9UFS7gtTaowephydX5LfqaHsQcp3tZt6zKu1P9J29quqce9AF412h3Y5Tfnt
+	 GMWZTIqb5aDxg==
+Date: Sat, 9 Nov 2024 15:28:04 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, Anup
+ <anupnewsmail@gmail.com>
+Subject: Re: [PATCH] iio: invensense: fix integer overflow while
+ multiplication
+Message-ID: <20241109152804.22f20170@jic23-huawei>
+In-Reply-To: <clo3nj5fokr47vheikv7nozr2exzha3rwkyfqq7n3s6vqyglzr@g6eu2ycy6gzo>
+References: <20241103-coverity1586045integeroverflow-v1-1-43ea37a3f3cd@gmail.com>
+	<20241103111827.0894a40a@jic23-huawei>
+	<clo3nj5fokr47vheikv7nozr2exzha3rwkyfqq7n3s6vqyglzr@g6eu2ycy6gzo>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGXv+5EOcg0pQxj=iOn_ff8-t6pyGKwemA9mdn=VCpxg6Uzt+g@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 04:21:07PM +0800, Chen-Yu Tsai wrote:
-> On Fri, Nov 8, 2024 at 2:51 PM Hsin-Te Yuan <yuanhsinte@chromium.org> wrote:
-> >
-> > Currently, MT8192 cannot suspend with FILTERED_MODE. Switch to
-> > IMMEDIATE_MODE will fix this.
+On Mon, 4 Nov 2024 16:26:31 +0000
+Karan Sanghavi <karansanghvi98@gmail.com> wrote:
 
-Do you mean that the whole MT8192 SoC is not able to enter system suspend? I
-just tested that on a fairly recent linux-next and it was working without a
-problem. We need more context here.
-
-> >
+> On Sun, Nov 03, 2024 at 11:18:27AM +0000, Jonathan Cameron wrote:
+> > On Sun, 03 Nov 2024 08:43:14 +0000
+> > Karan Sanghavi <karansanghvi98@gmail.com> wrote:
+> > 
+> > Hi Karan,
+> >   
+> > > Typecast a variable to int64_t for 64-bit arithmetic multiplication  
+> > 
+> > The path to actually triggering this is non obvious as these
+> > inputs are the result of rather complex code paths and per chip
+> > constraints.  Have you identified a particular combination that overflows
+> > or is this just based on the type?  I have no problem with applying this
+> > as hardening against future uses but unless we have a path to trigger
+> > it today it isn't a fix.
+> > 
+> > If you do have a path, this description should state what it is.
+> >  
 > 
-> Probably should have a Fixes tag.
+> The above issue is discovered by Coverity with CID 1586045 and 1586044.
+> Link: https://scan7.scan.coverity.com/#/project-view/51946/11354?selectedIssue=1586045
 > 
-> Also, Nicolas previously reported that the threshold interrupts don't
-> work with the immediate mode [1], which is why filtered mode was used
-> in the final version.
+> Should I mention this path in the commit short message?
 
-Indeed. I suppose it would be possible to configure immediate mode only during
-suspend if this is really the problem.
+That wasn't what I meant.  I was after what combination of possible
+inputs actually trigger this rather than (I suspect) local analysis coverity has
+done.
 
-Thanks,
-Nícolas
+> 
+> > > 
+> > > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>  
+> > If it's a real bug, needs a Fixes tag so we know how far to backport it.
+> >   
+> 
+> What kind of Fixes tag should I provide here. 
+The patch that introduced the bug in the first place.  See submitting patches
+docs for the format.
+
+However, I suspect this is coverity firing a false positive be it a reasonable
+one that we should tidy up. As such I'll queue this patch up, but not
+as a fix that I'm rushing in, but just as general cleanup for next cycle.
+
+If you find a path to trigger the overflow via userspace inputs etc
+then I'm happy to move it over to being handled as an urgent fix.
+
+Jonathan
+
+> 
+> > > ---
+> > >  drivers/iio/common/inv_sensors/inv_sensors_timestamp.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > > index f44458c380d9..d1d11d0b2458 100644
+> > > --- a/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > > +++ b/drivers/iio/common/inv_sensors/inv_sensors_timestamp.c
+> > > @@ -105,8 +105,8 @@ static bool inv_update_chip_period(struct inv_sensors_timestamp *ts,
+> > >  
+> > >  static void inv_align_timestamp_it(struct inv_sensors_timestamp *ts)
+> > >  {
+> > > -	const int64_t period_min = ts->min_period * ts->mult;
+> > > -	const int64_t period_max = ts->max_period * ts->mult;
+> > > +	const int64_t period_min = (int64_t)ts->min_period * ts->mult;
+> > > +	const int64_t period_max = (int64_t)ts->max_period * ts->mult;
+> > >  	int64_t add_max, sub_max;
+> > >  	int64_t delta, jitter;
+> > >  	int64_t adjust;
+> > > 
+> > > ---
+> > > base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+> > > change-id: 20241102-coverity1586045integeroverflow-cbbf357475d9
+> > > 
+> > > Best regards,  
+> >  
+> 
+> Thank you,
+> Karan.
+
 
