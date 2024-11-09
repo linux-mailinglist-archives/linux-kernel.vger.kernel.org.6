@@ -1,94 +1,111 @@
-Return-Path: <linux-kernel+bounces-402839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD58B9C2D73
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:04:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296509C2D76
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1ACD28251E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:04:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A0C21C20DDE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E2197A81;
-	Sat,  9 Nov 2024 13:03:54 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F47A1922F1;
+	Sat,  9 Nov 2024 13:05:13 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BBA1953B9;
-	Sat,  9 Nov 2024 13:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27F21BC3F;
+	Sat,  9 Nov 2024 13:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731157434; cv=none; b=PYcnAPNLcZJbNYO4V3wr4I9fiEcsOOSs5i/5GIl6Cqfz753cwg126aUZbAcDjYsAyt8C5J0U8fnbSbu+A9QigZHlpA6yorrl2dyARG2jeyIr5++lajRpKJwgmutheWBReuKwX+oo6Cyg2d0napaAQX+CjdsttW5skct526kmTqY=
+	t=1731157513; cv=none; b=Q6YjJWkLdJMXm/rPlcpeWtG9PhgnQCakw4BKqSODz61HD432TVnGexV601D+s2ongO+nAGYD2slFLmZ+6mkvXFi1SSBOZ0DKRB5xsADCKkBnSvBhznFvvOnl4UrjAgMupRRRQkfEPr4Y9/K6HkBVsLpFO0LHTvEU2SLgJT0L4+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731157434; c=relaxed/simple;
-	bh=p21ZQk3STtW/QDeF+mZVHQPyJTR7lZ8r3bsVeoZagsQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=gZbuNXMZxATzi/TX659HobLOxT/rD2eZoj3/W6Lx8WQyZAdtK/pfts8rUdlIdhnNT0gOb1IBBCRUscbAHwfDj0xezEI8+Z9xin7v49zzshVFL8HJcVLhJI8TQH8lGjoT0tOat9sI6iZmwsbYyE6E0y9m4Q8vg9Btp6S0PtR+IbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 0AD901A123F;
-	Sat,  9 Nov 2024 13:03:44 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id AE36F20037;
-	Sat,  9 Nov 2024 13:03:37 +0000 (UTC)
-Date: Sat, 09 Nov 2024 08:03:38 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: Alice Ryhl <aliceryhl@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- rust-for-linux <rust-for-linux@vger.kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CANiq72kg2k6cn3J_x+DZVGgSKwVXF_bLHFYsuexPHHg6T7b7BQ@mail.gmail.com>
-References: <20241108152149.28459a72@canb.auug.org.au> <20241108095933.72400ee1@gandalf.local.home> <CAH5fLgj6zSDH6Oe3oqfE7F+NQSgSLxh8x7X3ewrrDAdOHOh0YA@mail.gmail.com> <20241108153503.1db26d04@gandalf.local.home> <CANiq72mP15rjfR3cMZH-z9hkTDQfqgEaM4M+71B1KWLmw=3cPA@mail.gmail.com> <CANiq72m9T7NM33SCw=7yssTXFy=7FvD9zS26ZnBT6RMJB6ze1w@mail.gmail.com> <7B5D1CF7-0DBD-4F19-8587-32516DCE233B@goodmis.org> <CANiq72kg2k6cn3J_x+DZVGgSKwVXF_bLHFYsuexPHHg6T7b7BQ@mail.gmail.com>
-Message-ID: <3DC15367-3B1B-4808-988D-8C8D1CB2F4BB@goodmis.org>
+	s=arc-20240116; t=1731157513; c=relaxed/simple;
+	bh=LKxGa3hdSJuN63xV7vt+/MAZaNUkVNGNJZk7eugYXAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oj9qqqwxM19w2p6NDWjR5YogVVEafz/ILuIMQRGX8mR/2JzHlct4IjgF2I6UCDqbB5E8JjWpQYi+jUZQ5N1LagKNwhVCiQn5xl0wiE8VLNZZS/WGF5Txr/wLrwZO6O5rp7Dr7XhvnPTCxzc5rnp5vnsA0onz/UmyafIAyJJs/cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.44.133] (unknown [185.238.219.89])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 25FBF600AA6A5;
+	Sat, 09 Nov 2024 14:04:28 +0100 (CET)
+Message-ID: <ce8cfe47-a442-4296-a317-2f4a04bf6b1e@molgen.mpg.de>
+Date: Sat, 9 Nov 2024 14:04:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: AE36F20037
-X-Rspamd-Server: rspamout05
-X-Stat-Signature: 7w9p4d9j6mat95sp6wsxma53umybdgh8
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19uJfctIkmZ147WBNgd15WfcASAQ+tU3KY=
-X-HE-Tag: 1731157417-677159
-X-HE-Meta: U2FsdGVkX1+Y5NrO2Nnvrqxvp5kAO6Wp4iLrsARADtihr0UhOde86s4b2od2qYdB8svvQR/msX9lcaXtEokoM7IQ1zVAXjGqynhcbgW8xn9N56X/xOITqPhOfA7VLG3cgySiJqzzXqhQJnWPykVT6Q2OsBEWsPrTnk5g19NudCC/64pzAO//99h2kVaXZl5r5ZgsNqWAsD1zXqS4q4hs/SzU7JyGPLqO+0EAnX58Y8a3ZLA4q0qXBfepLlUauaHnY8SAfEHkFWl5eA05VE3a/0K5BZTkB0Y0CNDPHJexovmzNSn4ey6Mao3jPZYH60JMD9kVtq4m483rZ0CTv7I8oL7OtUXDFuMJENG6f9VacTnUF0dG0btG0PuAp4XdrOaT5SeUE6riC3MwgFwZeO9Z5fnWXkjvkEVfagLRXEGbyMr1IplOiP9dNyoTrsvPY/OjUQamcd2XME0=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] tty: rfcomm: use sysfs_emit() instead of sprintf()
+To: zhangheng@kylinos.cn
+Cc: marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ erick.archer@outlook.com, kees@kernel.org, geert@linux-m68k.org,
+ jirislaby@kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241109091748.4037589-1-zhangheng@kylinos.cn>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20241109091748.4037589-1-zhangheng@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Dear zhangheng,
 
 
+Thank you for your patch.
 
-On November 9, 2024 6:55:25 AM EST, Miguel Ojeda <miguel=2Eojeda=2Esandoni=
-s@gmail=2Ecom> wrote:
->On Sat, Nov 9, 2024 at 12:09=E2=80=AFPM Steven Rostedt <rostedt@goodmis=
-=2Eorg> wrote:
->>
->> Are you going to take this or do you want me to?
->
->This requires the patch that it fixes, which you are carrying, so I
->can't take it, no? Or am I confused?
->
+Am 09.11.24 um 10:17 schrieb zhangheng:
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
+> 
+> Signed-off-by: zhangheng <zhangheng@kylinos.cn>
 
-No, I'm currently traveling and thought your change just touched what's up=
-stream=2E  I'll take it=2E
+Currently your username is used. Could it be Zhang Heng?
 
--- Steve=20
+     $ git config --global user.name "Zhang Heng"
+     $ git commit --amend --author="Zhang Heng <zhangheng@kylinos.cn>"
 
->> If you want me to take it, can you send it to linux-trace-kernel@vger=
-=2Ekernel=2Eorg?
->
->Sure (assuming the above is correct)=2E
->
->Thanks!
->
->Cheers,
->Miguel
+> ---
+>   net/bluetooth/rfcomm/tty.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
+> index af80d599c337..21a5b5535ebc 100644
+> --- a/net/bluetooth/rfcomm/tty.c
+> +++ b/net/bluetooth/rfcomm/tty.c
+> @@ -201,14 +201,14 @@ static ssize_t address_show(struct device *tty_dev,
+>   			    struct device_attribute *attr, char *buf)
+>   {
+>   	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%pMR\n", &dev->dst);
+> +	return sysfs_emit(buf, "%pMR\n", &dev->dst);
+>   }
+>   
+>   static ssize_t channel_show(struct device *tty_dev,
+>   			    struct device_attribute *attr, char *buf)
+>   {
+>   	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%d\n", dev->channel);
+> +	return sysfs_emit(buf, "%d\n", dev->channel);
+>   }
+>   
+>   static DEVICE_ATTR_RO(address);
+
+With the nit above addressed:
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
