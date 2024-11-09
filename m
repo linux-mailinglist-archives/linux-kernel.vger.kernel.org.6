@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-402878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF069C2DF2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:58:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C5C49C2DFA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084AE2829FA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC7A1F21AAB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFE41991C2;
-	Sat,  9 Nov 2024 14:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7BF19994A;
+	Sat,  9 Nov 2024 15:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1aSIgGwP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F36B1990B7;
-	Sat,  9 Nov 2024 14:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JXWFXW02"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8B3149C52;
+	Sat,  9 Nov 2024 15:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731164284; cv=none; b=dSUhUREj7QcLkD/+vJnP+2MYLGPRzDIo+kbsq01DxYexXvaz2t3upVm3SC9Z0Z+lpfXtZdfd5d5dgu6+bXI2W24boRSIPTkRz1JdMljft15Mtape5vTIv4Bals08Rbx6AqvSL2faVO9GJYL/HA3TzvEHwmbI5dgzhW7vM+LLgxo=
+	t=1731164686; cv=none; b=OOExmvhiTTp4DwNECKofu5WXEDzqKLOEJz5cI8+NgU43wlXWRQDeXMC/vm7m4fzr3RFk6qGrKEqMwXQ+li8GfPHY7kXB/kiUSE0vU1dDv+uwsqkMP+x4o0FAW4H63/JNUGAonun4abKD7GtLmhd3lFYSKBGg3+4tqYMLkRgYC1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731164284; c=relaxed/simple;
-	bh=jrxlXYLbSuamZOrLkU/W2eD/y8bk3qDW3IvKIPqgfiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n5LGVrGBd+Bg3g4FicEr38CVqvwnZxk0sztaxQIzXaWqwYr0Orveza/PljHzjFWw7WCQC5ymh8s1pJxyxusL1/O2xVur9ORoPUyPdv4qLuYEWiv4ZkWPvJCAkVvzFHPEAwlPVhGdcFQko0FNLFkTkvmEkL7OR5Ag4IQpHTh2X4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1aSIgGwP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AC45C4CED5;
-	Sat,  9 Nov 2024 14:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731164283;
-	bh=jrxlXYLbSuamZOrLkU/W2eD/y8bk3qDW3IvKIPqgfiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1aSIgGwPkVQE3vsr3I9JL6uzs/MIuxyPYvPjWecjYwZQ5CRrtWy8M8HtlASMZjdb3
-	 TD2mDdi0uTfOkL5rydBIjsLD+1Ca45sYWBgA7cW+PoBPPkExoGhkdjZ8q8L/166vIW
-	 eI+7DM93z9A6jLV/UrGWrE9OBsDFlhvlW9+VHCKM=
-Date: Sat, 9 Nov 2024 15:58:00 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: stable@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Christoffer Sandberg <cs@tuxedo.de>,
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.1.y] ALSA: hda/realtek: Fix headset mic on TUXEDO
- Gemini 17 Gen3
-Message-ID: <2024110938-graffiti-equity-2c07@gregkh>
-References: <20241106021124.182205-1-sashal>
- <20241106094920.239972-1-wse@tuxedocomputers.com>
- <2024110606-expansion-probing-862b@gregkh>
- <b768433e-c146-46af-a077-3e2631a4c292@tuxedocomputers.com>
+	s=arc-20240116; t=1731164686; c=relaxed/simple;
+	bh=hmmAR7e5+647p7Fs/Jv1P24CAJ33zQACNo6+L2RZFs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f4cDULFBATMaiUZLKuzZ4KvQDtOuIImsqFxPUcp+1Zeo8EST3mCkymbNqZnTfe2HGVCBMC/iABmBe8ZkTEHJoF9OUE89LfVEc3InNAkNYRrSizZVVpQqmwBdsvT5+pJ3NfDcJX7fJiVjhcMFqCrwqRh+FsgqZljA1vE5SFoQ4is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JXWFXW02; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=0ajtu
+	/pCXIweYkbzhFHSyXPuS7DEQVG9KAt0GfVfTj4=; b=JXWFXW02wrxU3ycDK6np9
+	iAc0G0E30wcBk9cxHsNEHXuQfnztBKoOGdKVHSVTihIg/P+AFm3hpvenSnfPRd55
+	gFpvsI7O9J0LyP2+th+rIy4xehnHv681k4MMXxWjfc2LT8HMXxWDmuZW9125qaC2
+	fSNJcilRaDRQveAZGTD1LQ=
+Received: from localhost.localdomain (unknown [47.252.33.72])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBnT4exeS9n3Jk_GA--.36911S2;
+	Sat, 09 Nov 2024 23:03:19 +0800 (CST)
+From: Jiayuan Chen <mrpre@163.com>
+To: martin.lau@linux.dev,
+	edumazet@google.com,
+	jakub@cloudflare.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	horms@kernel.org,
+	daniel@iogearbox.net
+Cc: Jiayuan Chen <mrpre@163.com>
+Subject: [PATCH bpf v2 0/2] bpf: fix recursive lock and add test
+Date: Sat,  9 Nov 2024 23:03:03 +0800
+Message-ID: <20241109150305.141759-1-mrpre@163.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b768433e-c146-46af-a077-3e2631a4c292@tuxedocomputers.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBnT4exeS9n3Jk_GA--.36911S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruw4rWF1fKFyDXF1kAFWkZwb_yoW3urg_ur
+	Wav34kJ347GF4YyFyUXanY9Fy29ay8t348AFW7tr12vr47ZrW5XF4vgr90y34UXa1xA39I
+	q3W5urZ2vr43XjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRMhFxUUUUUU==
+X-CM-SenderInfo: xpus2vi6rwjhhfrp/xtbBDwKSp2cvb9J3owAAsZ
 
-On Wed, Nov 06, 2024 at 11:51:16AM +0100, Werner Sembach wrote:
-> Hi
-> 
-> Am 06.11.24 um 11:42 schrieb Greg KH:
-> > On Wed, Nov 06, 2024 at 10:49:04AM +0100, Werner Sembach wrote:
-> > > From: Christoffer Sandberg <cs@tuxedo.de>
-> > > 
-> > > Quirk is needed to enable headset microphone on missing pin 0x19.
-> > > 
-> > > Signed-off-by: Christoffer Sandberg <cs@tuxedo.de>
-> > > Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> > > Cc: <stable@vger.kernel.org>
-> > > Link: https://patch.msgid.link/20241029151653.80726-1-wse@tuxedocomputers.com
-> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > ---
-> > >   sound/pci/hda/patch_realtek.c | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > What is the git commit id of this in Linus's tree?
-> 
-> 0b04fbe886b4274c8e5855011233aaa69fec6e75
-> 
-> Is there a specific format/tag to add it to the commit? something like
-> "Mainline-commit: <hash>". Didn't find anything in the documentation.
+1. fix recursive lock when ebpf prog return SK_PASS.
+2. add selftest to reproduce recursive lock.
 
-anywhere a normal 'git cherry-pick -x' would put it is good.
+Note that if just the selftest merged without first
+patch, the test case will definitely fail, because the
+issue of deadlock is inevitable.
 
-thanks,
+---
+v1->v2: 1.inspired by martin.lau to add selftest to reproduce the issue.
+        2. follow the community rules for patch.
+        v1: https://lore.kernel.org/bpf/55fc6114-7e64-4b65-86d2-92cfd1e9e92f@linux.dev/T/#u
+---
 
-greg k-h
+Jiayuan Chen (2):
+  bpf: fix recursive lock when verdict program return SK_PASS
+  selftests/bpf: Add some tests with sockmap SK_PASS
+
+ net/core/skmsg.c                              |  4 +-
+ .../selftests/bpf/prog_tests/sockmap_basic.c  | 53 +++++++++++++++++++
+ .../bpf/progs/test_sockmap_pass_prog.c        |  2 +-
+ 3 files changed, 56 insertions(+), 3 deletions(-)
+
+-- 
+2.43.5
+
 
