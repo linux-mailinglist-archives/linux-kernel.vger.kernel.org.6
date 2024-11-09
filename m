@@ -1,187 +1,134 @@
-Return-Path: <linux-kernel+bounces-402605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0359C298F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:51:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D409C2999
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFC1E1F22883
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7337D1C218AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B7884A32;
-	Sat,  9 Nov 2024 02:51:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6CF132124;
+	Sat,  9 Nov 2024 02:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEywfmuJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10D581AD7
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BB512FB2E;
+	Sat,  9 Nov 2024 02:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731120685; cv=none; b=JFeCS1GwPb+PmC9+XAf7LEEmshBTFVULOzryfxn0MZlekQung/xjkV0X510ML5n5/nWzoUOI/2FPQwN23MzQg9OrxQVi66quzaSQXKupVoZYk/mI6oo9bNhbHnHuwJPIwmYdczddOsVAkBxRs5aKBNghbYUj7pgEWtaG2v3DuwA=
+	t=1731121010; cv=none; b=ZNFdvNHGnzNwyTUP+VI5nD0vJ2cbivkPzF37zOYapmBcKWmK/sOR1wYQnB22mDeoGHbPIzEk93ONVCAbBCjSA2RnzDEJTHrkHmcVClMNZjdywI/kFcx2y4vQe66ekY4qazORtiq7f6K2D+kH5lfa5ah6yxYIF9T2v/5Xw1LBUkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731120685; c=relaxed/simple;
-	bh=kmfgNFxFLKbOMb9PAPl1Scb/ewh6dcwdLQMeKYR14/k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TGtStOPDXD2NhxvMTIvzuTD73Fi6c4unKqecew2oz4gyH0dm/blMZEjw6shU5mJceJ0oi8ZA6JSkuIPhspcmCJb9osFgd+AATGshYCldg5Rrk+LVVXIJmAA4BhbVknqtbl56Ub6wU7cyJYf3N3PFs+1BBgxHSShIW/m73Lx02u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6bb827478so28287745ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 18:51:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731120683; x=1731725483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jCOQDIkfjVEGiHxmKmd1MfYQ3xkC+jKJF+qlDjClcyI=;
-        b=hu8dbuQti8n00zojrD7mgHBzezQwgHvp8gQ2tyW88a6MfpJ/TKWqrizssfh9A7usNg
-         2w9+TFPRvs2mQg61fUMyCn7jAgqy7H4SpIrU1jPgaau2RCIVBOYU8yDsK3BV0EMuZmT1
-         FuwqA0LHEKroOCFwdvt3O3M1p/HEytSeChExYvfEkEoy4IThzpJNv+8USZqIGBvhSJMB
-         ew8EEn2oF2pDtQ0Cdw7dz9JuF7BK5g5dn5VkAI3rgY5aZLm5XlCZcr1XztHfiJk6Ikvo
-         UAPbL3Sb0Bhnt/aSfJmNbWsBOsn3YItOOUDLMCEZwrOJyTAECV+im9gUv1y9AQjebxnJ
-         cHkQ==
-X-Gm-Message-State: AOJu0YxkLusMci/wjMziDwYrFwLjiKwdiZh+rDnuNZsH3KIshK2Mi0gL
-	mtE4aI2SRxVweBhjWS/5dIzTWG7yDevBO2Jwk6RUwdHpyXqnr35mrtr9I6TsgB7f+qRWNgyZ4OH
-	fgjngSy4SrLj23rXMoF2M2b8cFQV8I5LxRaUT4NrSpzbUUt0A3GOh1MU=
-X-Google-Smtp-Source: AGHT+IGvOyl5fWUVGJAK6RZmSZ2a2VuRU+zcr+NBTj4d+A7yXeeivN9LOC5gILsl6/xmKiG6FnXjaZKZb/oJkyrhuv0ko6IifjEz
+	s=arc-20240116; t=1731121010; c=relaxed/simple;
+	bh=VxMsrcVrxPI9pDjShIlfDOSgcJivK/TFRMcbvDVFT80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gV6kXTg7b3GiFGOs62ZuPrsSjW/jQYyVyDQYh1YHCXm8c4zKR8yfXowg/03f6fTxNfqhUUEOqbS6O3yXlj2L1MSYa3fGhnWu7xORrZOJQu6t4mvfeg1KTP0n8h2cof4WmaZI4VuKoKss24WlARbSNIsyMhmfFjSby0Go0mwPbfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEywfmuJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43407C4CECD;
+	Sat,  9 Nov 2024 02:56:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731121009;
+	bh=VxMsrcVrxPI9pDjShIlfDOSgcJivK/TFRMcbvDVFT80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AEywfmuJT3uj5MC1sVwPeSgXqv3W6yYrFH6CDuhwebGX3yaYcHnNh2wH69RaltFvZ
+	 Hli3b2c+ujAWGHx8cHjhDK42JkVGS2SszMfqkr8f0wdV3Tp+8grdJ9GOjQ7Hl1CKk6
+	 hYApX3AKdjr04XiSiqOHv0t/wsZteHJhBNyeOAkf4uLTt4hMeLfmBKLxpM532tQ9mK
+	 mt5csNWnI4x4aNDu/RIFN/qteuX9Sr2hK6L9s+OH96jncxu0H1yI7yAAxSZDQo3eSQ
+	 UGu96jkgucQTVPsFDLjcGtFgGhFaZoa3NYRwkEDFeQxRshp63t2WCi48xPmcUdedH8
+	 J6+jT0Cq5NJFg==
+Date: Fri, 8 Nov 2024 19:56:47 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Rong Xu <xur@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Han Shen <shenhan@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] kbuild: Fix Propeller build option
+Message-ID: <20241109025647.GA1182230@thelio-3990X>
+References: <20241108214953.1160765-1-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1485:b0:3a3:a307:6851 with SMTP id
- e9e14a558f8ab-3a6f1a504fcmr64266895ab.22.1731120683176; Fri, 08 Nov 2024
- 18:51:23 -0800 (PST)
-Date: Fri, 08 Nov 2024 18:51:23 -0800
-In-Reply-To: <672b9f03.050a0220.350062.0276.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ece2b.050a0220.320e73.030d.GAE@google.com>
-Subject: Re: [syzbot] Re: BUG: corrupted list in ieee802154_if_remove()
-From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108214953.1160765-1-xur@google.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Nov 08, 2024 at 01:49:53PM -0800, Rong Xu wrote:
+> The '-fbasic-block-sections=labels' option has been deprecated in tip
+> of tree clang (20.0.0) [1]. While the option still works, a warning is
+> emitted:
+> 
+>   clang: warning: argument '-fbasic-block-sections=labels' is deprecated, use '-fbasic-block-address-map' instead [-Wdeprecated]
+> 
+> Add a version check to set the proper option.
+> 
+> Link: https://github.com/llvm/llvm-project/pull/110039 [1]
+> 
+> Signed-off-by: Rong Xu <xur@google.com>
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
 
-***
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Subject: Re: BUG: corrupted list in ieee802154_if_remove()
-Author: dmantipov@yandex.ru
-
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git da4373fbcf006deda90e5e6a87c499e0ff747572
-
-diff --git a/net/mac802154/ieee802154_i.h b/net/mac802154/ieee802154_i.h
-index 08dd521a51a5..52c8ea7f1da0 100644
---- a/net/mac802154/ieee802154_i.h
-+++ b/net/mac802154/ieee802154_i.h
-@@ -41,13 +41,11 @@ struct ieee802154_local {
- 
- 	/* As in mac80211 slaves list is modified:
- 	 * 1) under the RTNL
--	 * 2) protected by slaves_mtx;
- 	 * 3) in an RCU manner
- 	 *
- 	 * So atomic readers can use any of this protection methods.
- 	 */
- 	struct list_head	interfaces;
--	struct mutex		iflist_mtx;
- 
- 	/* Data related workqueue */
- 	struct workqueue_struct	*workqueue;
-@@ -101,6 +99,7 @@ enum {
- 
- enum ieee802154_sdata_state_bits {
- 	SDATA_STATE_RUNNING,
-+	SDATA_STATE_REMOVING,
- };
- 
- /* Slave interface definition.
-diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
-index c0e2da5072be..f4cbd5a8bb4e 100644
---- a/net/mac802154/iface.c
-+++ b/net/mac802154/iface.c
-@@ -668,9 +668,7 @@ ieee802154_if_add(struct ieee802154_local *local, const char *name,
- 	if (ret < 0)
- 		goto err;
- 
--	mutex_lock(&local->iflist_mtx);
- 	list_add_tail_rcu(&sdata->list, &local->interfaces);
--	mutex_unlock(&local->iflist_mtx);
- 
- 	return ndev;
- 
-@@ -683,25 +681,37 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
- {
- 	ASSERT_RTNL();
- 
--	mutex_lock(&sdata->local->iflist_mtx);
--	list_del_rcu(&sdata->list);
--	mutex_unlock(&sdata->local->iflist_mtx);
--
--	synchronize_rcu();
--	unregister_netdevice(sdata->dev);
-+	if (!test_and_set_bit(SDATA_STATE_REMOVING, &sdata->state)) {
-+		list_del_rcu(&sdata->list);
-+		unregister_netdevice(sdata->dev);
-+	}
- }
- 
-+#define list_for_each_rcu_safe(pos, n, head) \
-+	for (pos = rcu_dereference((head)->next), n = pos->next; \
-+	     !list_is_head(pos, (head)); \
-+	     pos = n, n = rcu_dereference(pos->next))
-+
- void ieee802154_remove_interfaces(struct ieee802154_local *local)
- {
--	struct ieee802154_sub_if_data *sdata, *tmp;
-+	struct ieee802154_sub_if_data *sdata;
-+	struct list_head *entry, *tmp;
-+	LIST_HEAD(head);
-+
-+	rcu_read_lock();
-+
-+	list_for_each_rcu_safe(entry, tmp, &local->interfaces) {
-+		sdata = container_of(entry, struct ieee802154_sub_if_data, list);
-+		if (!test_and_set_bit(SDATA_STATE_REMOVING, &sdata->state))
-+			list_move(&sdata->list, &head);
-+	}
- 
--	mutex_lock(&local->iflist_mtx);
--	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
--		list_del(&sdata->list);
-+	rcu_read_unlock();
- 
-+	list_for_each_safe(entry, tmp, &head) {
-+		sdata = container_of(entry, struct ieee802154_sub_if_data, list);
- 		unregister_netdevice(sdata->dev);
- 	}
--	mutex_unlock(&local->iflist_mtx);
- }
- 
- static int netdev_notify(struct notifier_block *nb,
-diff --git a/net/mac802154/main.c b/net/mac802154/main.c
-index 21b7c3b280b4..61b6c5e06177 100644
---- a/net/mac802154/main.c
-+++ b/net/mac802154/main.c
-@@ -91,7 +91,6 @@ ieee802154_alloc_hw(size_t priv_data_len, const struct ieee802154_ops *ops)
- 	INIT_LIST_HEAD(&local->interfaces);
- 	INIT_LIST_HEAD(&local->rx_beacon_list);
- 	INIT_LIST_HEAD(&local->rx_mac_cmd_list);
--	mutex_init(&local->iflist_mtx);
- 
- 	tasklet_setup(&local->tasklet, ieee802154_tasklet_handler);
- 
-@@ -174,8 +173,6 @@ void ieee802154_free_hw(struct ieee802154_hw *hw)
- 
- 	BUG_ON(!list_empty(&local->interfaces));
- 
--	mutex_destroy(&local->iflist_mtx);
--
- 	wpan_phy_free(local->phy);
- }
- EXPORT_SYMBOL(ieee802154_free_hw);
+> ---
+> ChangeLog in V2
+> Integrated suggestions from Nathan Chancellor.
+> (1) improved commit message
+> (2) added links to the comments
+> (3) used ld.lld version in the version check for lld
+> ---
+> 
+> Signed-off-by: Rong Xu <xur@google.com>
+> ---
+>  scripts/Makefile.propeller | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/scripts/Makefile.propeller b/scripts/Makefile.propeller
+> index 344190717e47..48a660128e25 100644
+> --- a/scripts/Makefile.propeller
+> +++ b/scripts/Makefile.propeller
+> @@ -5,7 +5,14 @@ ifdef CLANG_PROPELLER_PROFILE_PREFIX
+>    CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=list=$(CLANG_PROPELLER_PROFILE_PREFIX)_cc_profile.txt -ffunction-sections
+>    KBUILD_LDFLAGS += --symbol-ordering-file=$(CLANG_PROPELLER_PROFILE_PREFIX)_ld_profile.txt --no-warn-symbol-ordering
+>  else
+> -  CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=labels
+> +  # Starting with Clang v20, the '-fbasic-block-sections=labels' option is
+> +  # deprecated. Use the recommended '-fbasic-block-address-map' option.
+> +  # Link: https://github.com/llvm/llvm-project/pull/110039
+> +  ifeq ($(call clang-min-version, 200000),y)
+> +    CFLAGS_PROPELLER_CLANG := -fbasic-block-address-map
+> +  else
+> +    CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=labels
+> +  endif
+>  endif
+>  
+>  # Propeller requires debug information to embed module names in the profiles.
+> @@ -21,7 +28,11 @@ ifdef CONFIG_LTO_CLANG_THIN
+>    ifdef CLANG_PROPELLER_PROFILE_PREFIX
+>      KBUILD_LDFLAGS += --lto-basic-block-sections=$(CLANG_PROPELLER_PROFILE_PREFIX)_cc_profile.txt
+>    else
+> -    KBUILD_LDFLAGS += --lto-basic-block-sections=labels
+> +    ifeq ($(call test-ge, $(CONFIG_LLD_VERSION), 200000),y)
+> +       KBUILD_LDFLAGS += --lto-basic-block-address-map
+> +    else
+> +       KBUILD_LDFLAGS += --lto-basic-block-sections=labels
+> +    endif
+>    endif
+>  endif
+>  
+> 
+> base-commit: 0dcc2d1066150787017a71f035145c566597dec7
+> -- 
+> 2.47.0.277.g8800431eea-goog
+> 
 
