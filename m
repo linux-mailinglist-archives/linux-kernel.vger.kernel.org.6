@@ -1,214 +1,239 @@
-Return-Path: <linux-kernel+bounces-402556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FD49C28FE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:49:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362C69C2901
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB7AC283832
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:49:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE3EB21EA0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313AA1802B;
-	Sat,  9 Nov 2024 00:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1E017C9B;
+	Sat,  9 Nov 2024 00:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="blch6gYF"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKZ3S9LO"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B694C62
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A921C27;
+	Sat,  9 Nov 2024 00:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731113387; cv=none; b=I+HX5xs0C3F5G+rUkEo3a+Af9u0+hqiVZA+eQHoCBZozgHC/NcTPZ7SVxH4GLQDjspEh3OMv/l3oZdJux9Em6mrh9E9gR/h+FDDfgslPiYWvSk9DswlRzNntSwrWr8lIQOIGWWZYcDjj09n/aRT7/atWbNvClBI4fZu0Fs9egfE=
+	t=1731113830; cv=none; b=TFeF8f+aval6pUhq0DIIqTKkQul9el6CcRQNLxSId3QOz2Ih7eHdcLjcSij9UU7WOfrU9hMLa5nWVqhbvfHvINee2rAt7dL+lORWLOvZEsGSkw952HBd1ZkFFEr6nVbWIl6Heolgrd89gITqg6O63woR2DRMdhS/t5r0N8ZUDeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731113387; c=relaxed/simple;
-	bh=S3RWWjUbpCvqsyNLRyyk05//kU+m11gnB9UA7++PSJ8=;
+	s=arc-20240116; t=1731113830; c=relaxed/simple;
+	bh=AAgh7H7XwsgjOcj3IfUCIIRu75IjtNvx9dP2aHyYSfE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LRBmFKHUJ2r0UkoB+NcGK/gs0GvPMz++2HCkgntq6afHXMQIVJzGw52ZoQTJaxEsbccLGEBg1B+DY0SBspTCL/VuP0/cmvxJNy5rCyGgImVjzszKDqmq2+7ArGX3/DCQNk+aH9DyUqS7Fxx3q6fPi8abTPEv+ZwKVl2/pNFMZZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=blch6gYF; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5ceccffadfdso3617531a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:49:45 -0800 (PST)
+	 To:Cc:Content-Type; b=mvALFZYzPgY3Pyt/QKoe31yL1yj9d919FI6IWGtm9aGqYY/CT7oa85cvGTJfuAEzkFkQYrU2iBwU+DwBrZOTuHOVOscrdG7Xl9MwiR2LL15OG7QjTDcYlsx+4xLsSipLuOzQtnCxUP2Rk5B6nGCL1p3Y82Fgpyppuwl1eMtC/yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKZ3S9LO; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-720d01caa66so2658853b3a.2;
+        Fri, 08 Nov 2024 16:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731113384; x=1731718184; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=okwmkZqh+Ret+7a439cnOUHijygMTTieTG/se4+mmiM=;
-        b=blch6gYFOus6ZUnQtO2+hEw+u5NG5YmM2J09kbTpwJ6Mu5a+TS6mTK057UFO7HZt2q
-         OmUBq16mjHOF0nIPbMZVLKFHJi7krXbPdHq148o69wzGkwucAm7h4eWJbVRWyzJtYZXV
-         cWHOz0ZGunHFKWuUucQA+QWa+rW+sE+M4o844=
+        d=gmail.com; s=20230601; t=1731113828; x=1731718628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=giiL/kmBTCVF3U8QV+/xjUjiPzMAGE0/2NFlz+o4GC8=;
+        b=WKZ3S9LOc2wns0cJEwRxuizFuuSv130zpRqDVmLBJbWIXmSiFWnxN85jVfXWzFAuH6
+         aaOUHuPqEzZ6ZXV31G03tX9/gP8wea8ABwX7XxqHgf4E8Et7pAoGXF+d60tzOCrZK4dJ
+         8FpiANtS/HKetKtAfIJbjX4ANoD1ryPsX7/S6mh5qpf0Pe4hNc4yZBvvpIkefCnhAR+m
+         CdNFP+L6hRoHTnMX/uFpd+Et/7AR64JOPAX74nK3wsIzk3xyjJ/nJTYJrT0c/K/TW9dh
+         ny6s9ccrdZfz8fNuM801gAueWN6ZYCj5IM7rGg7L9PAdi+YNEaC/qQuRUJfmtqy7ZlwA
+         IcCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731113384; x=1731718184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=okwmkZqh+Ret+7a439cnOUHijygMTTieTG/se4+mmiM=;
-        b=kKPxWGPa0JBXcNuIeGZWPHmDT0C4+L5182ehxd2QsZ616LAd3VaTn0YjQo7qYghIT/
-         rTMzKQg5EO9dJYodAnev8o9DYcS2ZKz3mpdtiK1CA8tN5bPznww+JVfua7lnZbfpzcgP
-         X9wSvG8Xh9L3P2ymVsPzoaGCfK8FBOqXRqYm2oATuPE/SKfSZKEDFlLc/5J+RXnRaZrR
-         /beiSJ6epHLtKQEGODfhglzmDMhBcSk/LV5ZkHq0DZsJpr1HMXmb3Xd5cnJOwhy2YBtO
-         kUenmNbYUdxLrVgQmQJzUoFvkXqc/E5K2sxqtj5CiheUMBIkpOO3cSBOEpl9AHvqnRHw
-         RPvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj2AntHgr26WLZGlKYChedHFCn4jJ8Xl2sYSm5rn+izDP7nrg/5e26hBpqvtfiJI7Z3MK4Ar4pCz/NTKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4pv1l3YmDhOEr0UuEpWaEI13Rx3w7Tzi0sJY22Cv4aauIrd+M
-	wHwW4fD2YZil7dMlXdF+uYILgCcN9DsTao1/4PoExkbCh5NswIJ7VlUuDJrmHcWp+UTQE7VCGep
-	VVjH3HTfuXbWgGUBK7dZtssZ/JQhNDuAWobcL
-X-Google-Smtp-Source: AGHT+IFWiX9T0IL17WPOrjqM9umRynyzmKKW8xayjCUGHCBHcEfPVS3fAtAVTtlJ0AEwsOJf5JyS/SZIVPuHwneOVP0=
-X-Received: by 2002:a05:6402:34cc:b0:5c9:7dd9:3eda with SMTP id
- 4fb4d7f45d1cf-5cf0a308759mr3027397a12.5.1731113383699; Fri, 08 Nov 2024
- 16:49:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731113828; x=1731718628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=giiL/kmBTCVF3U8QV+/xjUjiPzMAGE0/2NFlz+o4GC8=;
+        b=XOEpA7HdIAX8BbXjvsiWUgPiT1zl9uzDDeZfJdsOetl0hUjYij80WtMmFoJiBzpO+k
+         7WW0VfHpwTeJ1Swvuh2gFml11odeweitSaq390EHGIDA3TccTYWip+7HaF2yuhs8HdZt
+         du/KV7WcAlw5gY9CmaGIkI2/NGdvLLHLct7eQGok+7vJ1TbcI/mDr5LpKE83M0YcR0II
+         PNJes7apw6BMRB60h1bpoYkgr4QpAt7Rvp/F07NwFxYQcUWXHrR5F2MeahyCOAldmlSZ
+         uFht/OE3ITlr17EDUgyyUlEfDUVbAabTdF1zV6Qe/gYFp9h8Iph6rI60vAqVlWVbFSMG
+         iO6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU7R7RsFUwghqdUdSzuRWjtrK4Rup5Wcc5qiDNfdoeIzO1ZUdDXnDHZ0HLvpQaoccoS2Lg7HHo3rkqL@vger.kernel.org, AJvYcCVQELl7QqgowEL8L0neM4HY5Ct9lzyAVuenLjUxZ9CLXYajGZZ3m8MGxZ8JXylwwJUCgYNv+LLbgOuJ@vger.kernel.org, AJvYcCWp2Wp59rb/7MrZ32hinaDNaFncZ49ptJKgNPVLApAqrGpdVZrl3Tbe4XCc5wENPsTyfi9VfWPt/nTBFWmV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5pp2z7U54NdJQGGRFOHHSCMke+zZ1YGEwpwj50LFKOxVQTGuF
+	xFRhy0hFxDYodiFKqSwprsnFkXQ5vfqxzMyxVlrR2lxb+rffFydEe6y7732w1WiLRgLJSS5Qlvl
+	9q65w7p+PuRQQJfNdFIEF9LzFXxQ=
+X-Google-Smtp-Source: AGHT+IFCBsAPm88J58jQ3X5q6NhHTLb+ZI6Xoq5Upa8IQqpPBawMNUt3VLvT52CoHD2XFc2ek2esFaO+L1peVd03Wc8=
+X-Received: by 2002:aa7:888c:0:b0:71e:634e:fe0d with SMTP id
+ d2e1a72fcca58-724132c4b0dmr6649906b3a.12.1731113828160; Fri, 08 Nov 2024
+ 16:57:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <384c034c23d63dec14e0cc333b8b0b2a778edcf1.1731092818.git.dxu@dxuuu.xyz>
-In-Reply-To: <384c034c23d63dec14e0cc333b8b0b2a778edcf1.1731092818.git.dxu@dxuuu.xyz>
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Fri, 8 Nov 2024 16:49:32 -0800
-Message-ID: <CACKFLimKe8Kp5f=RzvoDFmmjPv1ZvUjOG-8woEJ9XXLNSGtSmw@mail.gmail.com>
-Subject: Re: [PATCH net-next] bnxt_en: ethtool: Supply ntuple rss context action
-To: Daniel Xu <dxu@dxuuu.xyz>, Pavan Chebbi <pavan.chebbi@broadcom.com>
-Cc: kuba@kernel.org, edumazet@google.com, davem@davemloft.net, 
-	andrew+netdev@lunn.ch, pabeni@redhat.com, martin.lau@linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005421a30626703e71"
-
---0000000000005421a30626703e71
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
+ <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org> <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+ <54dd6ae6-b992-451e-b1c6-8a1968955f4a@kernel.org> <PAXPR04MB8459BE3474EFD4FCC28E0E82885D2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <8c310eca-d695-418c-82cb-a89351d83887@kernel.org> <PAXPR04MB8459B6F8D5C623D19CCF6B39885E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB8459B6F8D5C623D19CCF6B39885E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 8 Nov 2024 18:56:56 -0600
+Message-ID: <CAHCN7xLSw7sBywVJ0ZcoOy4ao8x8GxpVwg8=4h-HoOxEsz565w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-amarula@amarulasolutions.com" <linux-amarula@amarulasolutions.com>, Abel Vesa <abelvesa@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 11:07=E2=80=AFAM Daniel Xu <dxu@dxuuu.xyz> wrote:
+On Fri, Nov 8, 2024 at 6:37=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
 >
-> Commit 2f4f9fe5bf5f ("bnxt_en: Support adding ntuple rules on RSS
-> contexts") added support for redirecting to an RSS context as an ntuple
-> rule action. However, it forgot to update the ETHTOOL_GRXCLSRULE
-> codepath. This caused `ethtool -n` to always report the action as
-> "Action: Direct to queue 0" which is wrong.
+> > Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support
+> > spread spectrum clocking
+> >
+> > On 08/11/2024 13:50, Peng Fan wrote:
+> > >> Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock:
+> > support
+> > >> spread spectrum clocking
+> > >>
+> > >> On 07/11/2024 15:57, Dario Binacchi wrote:
+> > >>>     clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+> > >>>                   <&clk_ext3>, <&clk_ext4>;
+> > >>>     clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+> > >>>                              "clk_ext3", "clk_ext4";
+> > >>>     assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
+> > >>>                                   <&clk IMX8MN_CLK_A53_CORE>,
+> > >>>                                   <&clk IMX8MN_CLK_NOC>,
+> > >>>                                   <&clk IMX8MN_CLK_AUDIO_AHB>,
+> > >>>                                   <&clk IMX8MN_CLK_IPG_AUDIO_ROOT>,
+> > >>>                                   <&clk IMX8MN_SYS_PLL3>,
+> > >>>                                   <&clk IMX8MN_AUDIO_PLL1>,
+> > >>>                                   <&clk IMX8MN_AUDIO_PLL2>;
+> > >>>     assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
+> > >>>                                              <&clk IMX8MN_ARM_PLL_O=
+UT>,
+> > >>>                                              <&clk IMX8MN_SYS_PLL3_=
+OUT>,
+> > >>>                                              <&clk IMX8MN_SYS_PLL1_=
+800M>;
+> > >>>     assigned-clock-rates =3D <0>, <0>, <0>,
+> > >>>                                          <400000000>,
+> > >>>                                          <400000000>,
+> > >>>                                          <600000000>,
+> > >>>                                          <393216000>,
+> > >>>                                          <361267200>; };
+> > >>>
+> > >>> The spread spectrum is not configurable on these clocks or, more
+> > >>> generally, may not be configurable (only 4 PLLs have this
+> > capability).
+> > >>> Therefore, I need the "fsl,ssc-clocks"
+> > >>
+> > >> No. That's not true. You do not need it.
+> > >>
+> > >
+> > > i.MX8M clock hardware is similar as:
+> > >
+> > > OSC->ANATOP->CCM
+> > >
+> > > ANATOP will produce PLLs.
+> > > CCM use PLLs as input source.
+> > >
+> > > Currently there is no dedicated ANATOP driver in linux.
+> > > The CCM linux driver will parse the ANATOP node and register clk_hw
+> > > for the PLLs.
+> >
+> > I do not know what is CCM and how does it fit here. What's more, I
+> > don't get driver context here. We talk about bindings.
 >
-> Fix by teaching bnxt driver to report the RSS context when applicable.
 >
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> ---
->  drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> CCM: Clock Control Module, it accepts PLL from anatop as inputs,
+> and outputs clocks to various modules, I2C, CAN, NET, SAI and ...
 >
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/=
-net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> index cfd2c65b1c90..a218802befa8 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> @@ -1187,10 +1187,14 @@ static int bnxt_grxclsrule(struct bnxt *bp, struc=
-t ethtool_rxnfc *cmd)
->                 }
->         }
+> >
+> >
+> > >
+> > >
+> > >> First, the clock inputs for this device are listed in clocks *only*.
+> > >> What is no there, is not an input to the device. Including also Linu=
+x
+> > >> aspect (missing devlinks etc). Therefore how can you configure
+> > spread
+> > >> spectrum on clocks which are not connected to this device?
+> > >
+> > > I not understand this well, you mean
+> > > add clocks =3D <xx CLK_IMX8MM_VIDEO_PLL> in the ccm dtb node?
+> >
+> > Yes. Let me re-iterate and please respond to this exactly comment
+> > instead of ignoring it.
+> >
+> > How a device can care about spread spectrum of a clock which is not
+> > supplied to this device?
 >
-> -       if (fltr->base.flags & BNXT_ACT_DROP)
-> +       if (fltr->base.flags & BNXT_ACT_DROP) {
->                 fs->ring_cookie =3D RX_CLS_FLOW_DISC;
-> -       else
-> +       } else if (fltr->base.flags & BNXT_ACT_RSS_CTX) {
-> +               fs->flow_type |=3D FLOW_RSS;
-> +               cmd->rss_context =3D fltr->base.fw_vnic_id;
+> I hope we are on same page of what spread spectrum means.
+> spread spectrum of a clock is the clock could produce freq in a range,
+> saying [500MHz - 100KHz, 500MHz + 100KHz]. software only need
+> to configure the middle frequency and choose the up/down border
+> range(100KHz here) and enable spread spectrum.
+>
+> device: I suppose you mean the Clock Control Module(CCM) here.
+> CCM does not care, it just accepts the PLL as input, and output
+> divided clock to various IPs(Video here). The video IPs care about
+> the spread spectrum of the clock.
+>
+> The clock hardware path is as below:
+>
+> OSC(24M) --> Anatop(produce PLL with spread spectrum) ->
+> Clock Control Module(output clock to modules) -> Video IP
+>
+> From hardware perspective, Clock Control Module does not
+> care spread spectrum. Video IP cares spread spectrum.
+>
+>
+> >
+> > Why would you care about spread spectrum of some clock which is not
+> > coming to this device?
+>
+> device, I suppose you mean clock control module(CCM).
+>
+> There is no 'clocks =3D <&ccm CLK_IMX8M_VIDEO_PLL>' under ccm node.
+> Because in current design, ccm is taken as producer of
+> CLK_IMX8M_VIDEO_PLL, not consumer.
+>
+> >
+> > Please address these precisely because we talk about this for weeks in
+> > multiple places.
+>
+> Sorry for coming into this feature in late stage.
+>
+> Dario, thanks for working on such feature, good to see. Spread Spectrum
+> is indeed good feature what makes clock quality high.
 
-I think the rss_context should be the index and not the VNIC ID.
+I am also excited to see the spread-spectum clocks enabled.  We've
+struggled with EMC testing in the past, and I want to reevaluate at
+least one board with the spread-spectrum enabled to see how it
+compares.
+Thank you for working on this.
 
-Pavan, please take a look.
-
-> +       } else {
->                 fs->ring_cookie =3D fltr->base.rxq;
-> +       }
->         rc =3D 0;
+adam
 >
->  fltr_err:
-> --
-> 2.46.0
+> Thanks,
+> Peng.
 >
-
---0000000000005421a30626703e71
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
-/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
-L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
-kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
-5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
-hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
-E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIPafMlHQEi8+u1ufr+4r+rmU2uIX68hM
-0yS/pUii4IegMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTEw
-OTAwNDk0NFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQCsf8ZM7GhH/wRDsLQx2BUeq+q7dxY0b1oART2USxNzuJQxLv0l
-LDwhKpKH+1hyIh58VHkRzwM17yMcdu4E4riyMksAyNyhjptS+Xeif3k3/6S41Mg/pcO2BhKeI4Pz
-wIgR1YjtsBkPFRjfnJTk5cAXg6cIpA5tJRcpxI4dkpBuDaeXStP9+CYTuX7OgRqRaCte4BdCF3cv
-gyK50yWYA1uJfRTe5dN1xzx+V3yndUV4HziHY98ztow/zdIMOJhmyQPmymrhhQpJgTnHCC6pWcTq
-UppeDesrBg+WI2HE9QMpcUSPeLvt+7IyhfW2ksdpvhribwak4CvMoRKGeqMnTJki
---0000000000005421a30626703e71--
+> I finish with this patchset if you do not provide such
+> > context.
+> >
+> > Best regards,
+> > Krzysztof
+>
 
