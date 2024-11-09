@@ -1,160 +1,99 @@
-Return-Path: <linux-kernel+bounces-402745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7902F9C2B66
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5569C2B6A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35CC92815AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F5D282B98
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C157E145B03;
-	Sat,  9 Nov 2024 09:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD6C146580;
+	Sat,  9 Nov 2024 09:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GzTe2teF"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KDzLCmeZ"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423C0225D6
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D2F14659B
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731144797; cv=none; b=SMb8lDAchgqEtTvF++KOaXXThXpWBOEOZvI4RrpGyaQfjYNrJjJ2M8kY/fTAZeVx7Z/M4u2DwW1z8KglNlL86TPQs6ng5D4MQA4Ce125qDySscw78Y8DkxLii7CRLyoCt8c3SU7THZjEd8Bv44DcLi3EwpauTFapq7mDpscCg9s=
+	t=1731144800; cv=none; b=OUJMBI5jkYbKgARkufaCtR9FMHBbZYOTQnCHJe6JBtaVnWj8EN9IDHmcnIqdUlU+ZubDT67tIYilpKyGB0Cj56LJZepbmr/UdYmT4/DEGONvAQ1L60qSkyDMr80g5suIU6b8htEitaGCzVdebEsisCaqycZRqUAanjys7SKt0u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731144797; c=relaxed/simple;
-	bh=hfITdYs4ZI2J+UfkaHoxMiIWkBtMaD5bi6aCq+FQORc=;
+	s=arc-20240116; t=1731144800; c=relaxed/simple;
+	bh=Vnkg6jJzDUQPLJOmX4TvzNhiC7Q6Xb/QnqgrgfMP+2U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WErpEpWUjWcKvtujPW5lmG+hSoEtsohRTYiVKJDrRbg6/GS3il8K0mU8FwxXeKDRi/9AtjqNKjXuOYKU/wR96peYV+EmRjOQO1j6CfIgyTapMkEnrS1UGLUy4dgq0U4Jw75K5yovgpiFU+XjCfPiFg2KTRPc+Mvvhd5W8MynhyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GzTe2teF; arc=none smtp.client-ip=209.85.222.180
+	 To:Cc:Content-Type; b=tYIJ7eWDDKUd4YFtBUuAUE9q5EieCSMh0TLB0LNFx8/ieGeWvr0WjI/segoWk1FuxBRU18envK/ZZ1nz0oRlv6n8VQtwe1QLEej7lrQ2uIBpxd6cxaf3yq2XSxgxiEWfZT9s0Cil20qaSZQKE/I9AJNC8ZuM5fOggfEH7pbECSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KDzLCmeZ; arc=none smtp.client-ip=209.85.219.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1474b1377so206613485a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 01:33:16 -0800 (PST)
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbcc2bd7fcso18997676d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 01:33:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731144795; x=1731749595; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731144798; x=1731749598; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mxD9GPg72wDx6jjCn31yBTwiB4FiNIKT6L9gRHplIg=;
-        b=GzTe2teFOkYGT6aW39iyXr/HRe63ccWnMw75DGP44fFDXByvfQ2zh4zGp3ODh4q4cR
-         vCdgM2WEOKXIBKVqaNknzDRMNGC/9c96DnxABSImz/zB7Vb03e3U/+Imf4CZ1W/e/98X
-         USftz/jOddXO2cicvbfvVKd1kZOau8udashNYDlaz/VswU1p3ab6m+H0lyZ4/AulrlBH
-         TLx1b9D/P/c6B7BGTgSqgLMKrtNncSFM26pcdNqAn53ZoQ28RjNyGuFLnxe1oJOtCUIM
-         dcmDQNV0o45ytLsZp4wW/WJ5ehFNHhcLfpBkHcn7gZUb/OQ0w7ugE0/BjArK6cZslOLf
-         n4fg==
+        bh=Hh4oZrz8jzwpwc0yMmo/Cxz3CudJ7WPv0BuInnlhE2k=;
+        b=KDzLCmeZ+nY5nAr3Rhyre4cZZuewi434Qf89A3/bs3oQLSGbWfRPHJyX6FAUaI9V01
+         bdGjj1YgmeToDGpsGqvmdUHv9sxBaP3qHumt1xHIuLeB5+3q2kd1ZhAtEj0nIZ4zpKjR
+         ec1SJj1G59imQNy2Ks/8R1yrqw0Z3KsgOMS/tGjCXorzTTBDPpKoG3yM+paIuJoQtTQZ
+         k3qUbo3aWyaRk9plv9WN9KzlBNo8Gk540fZL5sniML1Iut1Yo9oZ2F6cDjHq5HrFG0iO
+         Nnqen3WU7y+SBw4cjn+xCXQJ8VukYlD0Cu5k1ryj/6Ajmq2+VYwv98feTQUR7aglGUjv
+         a4dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731144795; x=1731749595;
+        d=1e100.net; s=20230601; t=1731144798; x=1731749598;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+mxD9GPg72wDx6jjCn31yBTwiB4FiNIKT6L9gRHplIg=;
-        b=FnSR8CqE3GuFjLxr3poL6HeZL4hOH2lha7bhNpH2yesKn2Qm6Sk5dRzSPEWxnnVo5J
-         L1RZrsDwbHl7UNRUgBTaC4CDTdNMnYL+xYDEi8CBKSK1ykhYtx4HxsH8a+j8cxgf9y2g
-         HEocYx1hYEA8Azq1kQwDcSIbH4SGfkvNpxvAV9IHYCd8JIN66AIMtLZpBbwV+3Ozj1Wp
-         2f7MzATS9TOza25XY5n7RrKu6zGZbMppoUhqiL6GrPXNR+6634haDRDwKukse14pGF6J
-         pIHp72Ihxu7CrljjYKHdxugX4ZkqkMhCQWU/5d3PyI9D6XwYF1UFRhzrkJgD4Qu8u3Ro
-         VAVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcM4Y4q7lEKs490IfYkvwEKCm3Q0PZ/KxAmE/bOHguB7ykylQ/2Lnfm/Sr+SC/moPrRU7E+f6K/nl1vIQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlYJ8QCiAcqjoJFJzReScehfCT/IL875/SW6JCPQja+L4EhKUN
-	lu83RitbguyTWjHGpnlQR3tYhZRRA90UlellubV3VwGtc9mjL7D9W3g02CvA5b5funSxFWGC2Cz
-	kB5wZm6hm+1tlCt0NcsAaNqMgKubOOup3tIxR
-X-Google-Smtp-Source: AGHT+IHUcEsDlJBv3itPrfi9+R0AfrPnmXgv8CaQq14fMVDkx/hJpZQMVDeCIrfueKHlWC4tuAk19egp9RRdAbImbVs=
-X-Received: by 2002:a05:620a:c41:b0:7b1:4276:ea4e with SMTP id
- af79cd13be357-7b331db7d5amr802597385a.13.1731144795086; Sat, 09 Nov 2024
- 01:33:15 -0800 (PST)
+        bh=Hh4oZrz8jzwpwc0yMmo/Cxz3CudJ7WPv0BuInnlhE2k=;
+        b=Jo8eUaQ+1GgFq3XZeoa3ZVakrcqmbhYPcrtzvSkvgVPZmMiwa2hyjp12rf/grK9fVS
+         Ufu5xMYEoo7RFAjOql7wXcIrfZBqko1YfNmXBcqpmzeoRhuS3CuIw+m8NgdL1HsrWULA
+         rgXxqtpR6uVCIWc5Ldj3iUXxRAEv+7nmlYE/6lOicNrNoOYCXc+ifEfKctR7OsLfiDW4
+         le0AqL9IZJhXDIc/XwPZqNJ4B+8zBL9eU/pnp2mnP4UM5bODcv2e4AaM6MFkn9PY8pAM
+         JHeNVRDV7uafxGdCl2FwWkFvAelgmWmyFOvSQuCbKywI+3rCd53IjwSnXUpsFMFS+dz+
+         2RLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0oWtybcygHle+dYGh5G3W8CVMFBVHEQb2totoP66gPfPjvoRR6OPJFjMhi1mYi57Q+E+ICUWgrimc5RU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHV3GpdmMEDlIKnTCcnb8VJ1FZhM6HidnYla4gFywaGXKh+DiM
+	lSFIoGDmQjqpQGG/1vwdukaNIE99P1KPFH3cdXJnUSd9CnrmC7QnVCAA2OeyggBEFBiSVmvkexP
+	PtTzbCY74nB1uNQSE4pwuiMACQAiNhrg+XOre
+X-Google-Smtp-Source: AGHT+IH8M2lwxkeWgw2XSWSzKhcN4tgzNjYCrNwV90jWASd0OZZfMoqeSHAIFroXKkWarhfNh+KBk/0qRRVvLJeeCwE=
+X-Received: by 2002:a05:6214:5c0a:b0:6d3:6863:e7d4 with SMTP id
+ 6a1803df08f44-6d39e1b3fcemr82704766d6.32.1731144797612; Sat, 09 Nov 2024
+ 01:33:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
-In-Reply-To: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+References: <57a8d38a-6299-4d2c-bb2e-c9d1e3bf1c99@stanley.mountain>
+In-Reply-To: <57a8d38a-6299-4d2c-bb2e-c9d1e3bf1c99@stanley.mountain>
 From: David Gow <davidgow@google.com>
-Date: Sat, 9 Nov 2024 17:33:01 +0800
-Message-ID: <CABVgOSkBnO2pfo_wWyUiek-XVEEahB9druaTv3BeqK-WiDjMZA@mail.gmail.com>
-Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: brendan.higgins@linux.dev, rmoar@google.com, skhan@linuxfoundation.org, 
-	rf@opensource.cirrus.com, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Date: Sat, 9 Nov 2024 17:33:06 +0800
+Message-ID: <CABVgOS=frTi_VDRrGsoGTg6+wA0A8aReM5OvX+TsCa+ZedCCDw@mail.gmail.com>
+Subject: Re: [PATCH] kunit: skb: use "gfp" variable instead of hardcoding GFP_KERNEL
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Benjamin Berg <benjamin.berg@intel.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000988c500626778e49"
+	boundary="000000000000bf7cb40626778e69"
 
---000000000000988c500626778e49
+--000000000000bf7cb40626778e69
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 24 Oct 2024 at 17:43, Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On Tue, 5 Nov 2024 at 01:16, Dan Carpenter <dan.carpenter@linaro.org> wrote:
 >
-> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
-> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
-> has assigned before, and the error path only free the suite->log's stream
-> memory but not set it to NULL in string_stream_destroy(), so the later
-> string_stream_clear() of suite->log in kunit_init_suite() will cause
-> below UAF bug.
+> The intent here was clearly to use the gfp variable flags instead of
+> hardcoding GFP_KERNEL.  All the callers pass GFP_KERNEL as the gfp
+> flags so this doesn't affect runtime.
 >
-> Set stream pointer to NULL after free in string_stream_destroy()
-> to fix it.
->
->         Unable to handle kernel paging request at virtual address 006440150000030d
->         Mem abort info:
->           ESR = 0x0000000096000004
->           EC = 0x25: DABT (current EL), IL = 32 bits
->           SET = 0, FnV = 0
->           EA = 0, S1PTW = 0
->           FSC = 0x04: level 0 translation fault
->         Data abort info:
->           ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->           CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->           GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->         [006440150000030d] address between user and kernel address ranges
->         Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->         Dumping ftrace buffer:
->            (ftrace buffer empty)
->         Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
->         CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
->         Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
->         Hardware name: linux,dummy-virt (DT)
->         pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->         pc : string_stream_clear+0x54/0x1ac
->         lr : string_stream_clear+0x1a8/0x1ac
->         sp : ffffffc080b47410
->         x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
->         x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
->         x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
->         x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
->         x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
->         x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
->         x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
->         x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
->         x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
->         x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
->         Call trace:
->          string_stream_clear+0x54/0x1ac
->          __kunit_test_suites_init+0x108/0x1d8
->          kunit_exec_run_tests+0xb8/0x100
->          kunit_module_notify+0x400/0x55c
->          notifier_call_chain+0xfc/0x3b4
->          blocking_notifier_call_chain+0x68/0x9c
->          do_init_module+0x24c/0x5c8
->          load_module+0x4acc/0x4e90
->          init_module_from_file+0xd4/0x128
->          idempotent_init_module+0x2d4/0x57c
->          __arm64_sys_finit_module+0xac/0x100
->          invoke_syscall+0x6c/0x258
->          el0_svc_common.constprop.0+0x160/0x22c
->          do_el0_svc+0x44/0x5c
->          el0_svc+0x48/0xb8
->          el0t_64_sync_handler+0x13c/0x158
->          el0t_64_sync+0x190/0x194
->         Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
->         ---[ end trace 0000000000000000 ]---
->         Kernel panic - not syncing: Oops: Fatal exception
->
-> Cc: stable@vger.kernel.org
-> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Fixes: b3231d353a51 ("kunit: add a convenience allocation wrapper for SKBs")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>\
 > ---
 
 Nice catch, thanks.
@@ -164,26 +103,28 @@ Reviewed-by: David Gow <davidgow@google.com>
 Cheers,
 -- David
 
->  lib/kunit/string-stream.c | 1 +
->  1 file changed, 1 insertion(+)
+
+>  include/kunit/skbuff.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
-> index 54f4fdcbfac8..00ad518b730b 100644
-> --- a/lib/kunit/string-stream.c
-> +++ b/lib/kunit/string-stream.c
-> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+> diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
+> index 44d12370939a..345e1e8f0312 100644
+> --- a/include/kunit/skbuff.h
+> +++ b/include/kunit/skbuff.h
+> @@ -29,7 +29,7 @@ static void kunit_action_kfree_skb(void *p)
+>  static inline struct sk_buff *kunit_zalloc_skb(struct kunit *test, int len,
+>                                                gfp_t gfp)
+>  {
+> -       struct sk_buff *res = alloc_skb(len, GFP_KERNEL);
+> +       struct sk_buff *res = alloc_skb(len, gfp);
 >
->         string_stream_clear(stream);
->         kfree(stream);
-> +       stream = NULL;
->  }
->
->  static void resource_free_string_stream(void *p)
+>         if (!res || skb_pad(res, len))
+>                 return NULL;
 > --
-> 2.34.1
+> 2.45.2
 >
 
---000000000000988c500626778e49
+--000000000000bf7cb40626778e69
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -273,14 +214,14 @@ BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
 hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
 AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
 BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
-eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgdtonxaq+kJCquO3ma3zEta119NtP
-7fiBwqC57cds1cwwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
-MTA5MDkzMzE1WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgjJVibb+SPelLFKLr4v14krKu+WyV
+3EAhlWSU1nqizJcwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MTA5MDkzMzE4WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
 YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
-BAIBMA0GCSqGSIb3DQEBAQUABIIBAJmJBqgl32sCucDkkhFuUI7N/EtiKIUhShN4IfkNemYESyTp
-OJpkpH+06q5zswGxk+k/G0VCe5JJRewDdUhdUQXj+IrLLnVjWZVmDKtw3kCmqmLidIVSi8MpNMyI
-Jisx3VzmYvY7GfPyWLzhWZ/pFIGakvDXa+6B48oWXHuPMaJTIBDI0GccZ8GE7hJlK6W7uM7BQP3/
-HGsPIywNr4+22ilO7pHY2lOFXasChwV16Azzwg3DIe1n8EqLyjnrgDZSE3ffq1i2ud0ZZtoHlbii
-vWCaRp3XF5QhlWk8R1ER9oeR9Tug/jV+AHv0u1wvCUe0OsmiquKzSKbhj/WP2EOAH9k=
---000000000000988c500626778e49--
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAJtOb89JW7l/3ZrulaQnyIbDgc/3sADD6dMFeze4StzN3TEi
+Msxc3k9GN4oOgRLE0I7KWo0utU7xp/m7JSbklUpitVOtjaL64akuSLJDfo0EYDsN/zdVOLxpnykQ
+icj0Vvlvnq3cyF8Q9wFDYzqQwm03Q1nO0pcB1hulhcSsl/lShfc6lmbOGeAuGloKKT1uUS3EB0u0
+qNHCGcTY5bBbaQOT1SU/gqyBuMPm+Rg0VNouKng0cDG1khYGcZR4AqXFsEocIJGhOi6Bm7+RiE4N
+RJ6oOfQOSw+UjuPSrcQ41VH8YMeXqBtedLysSqoc1cS84HM3aAlXC1PsJYfwV3o6JOI=
+--000000000000bf7cb40626778e69--
 
