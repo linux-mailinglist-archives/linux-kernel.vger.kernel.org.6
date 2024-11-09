@@ -1,113 +1,187 @@
-Return-Path: <linux-kernel+bounces-403012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80DE9C2F8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:52:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 813B99C2F92
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C7F281ECB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:52:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD18F282041
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F8A1A0732;
-	Sat,  9 Nov 2024 20:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F821A0BC1;
+	Sat,  9 Nov 2024 21:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FahV0Uy0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HCp8655v"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26C11E4BE;
-	Sat,  9 Nov 2024 20:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A112A2E628
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 21:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731185547; cv=none; b=GwcUrHCfqoV6dwxRH+8348bbahWYW5Z2vPNcxEbEusOhSMW29FzFW6SFLmoLq3uesU0ehIyeWKdg7cXSKQh7KomFw1Z3nAhxoF4ttOQYfpvGxTP9u592OS/4bY1XUSsOqIwtPQFBHpy6DGXM5l6Hm0eA7wt20Y40D/qN19JEeLY=
+	t=1731186199; cv=none; b=lUoiNV45XSZ0OjMMRM4rl/hOBJL3st3md7TBr96XDovRC/GQMhsd02vrQFY5xGYueIzPR/z1zrM3rYzQ5SwSH/m2kU6reyGAQTmqtpEJHizKWiclg3V6MCiRfohtA0xjjVaG8FnhR1Er0fHsEh+HoCH7NGUJTYne1p95BFFrmJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731185547; c=relaxed/simple;
-	bh=zdOeCmaMe34oEAA+P0JfFajw5QPzRbbfNWxey4/9g3M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qQ1S7YaBdyLvGymgmLnZfHTbwFxa9wRXQI7hqnaTIG2oewzq/nT59mmi73fX+avYCtRW+jlh3atTodlVWEiBnFjDwpVVWF0oYbFOStwFREYIfyWWJqrEp/g1BcTyHUVP4pBx302HjVFNQzO4Yzi4dsUWEI9GuZBIkRHzrGdG8+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FahV0Uy0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33A71C4CECE;
-	Sat,  9 Nov 2024 20:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731185545;
-	bh=zdOeCmaMe34oEAA+P0JfFajw5QPzRbbfNWxey4/9g3M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FahV0Uy09KaUAf7sz8RZAmtap8BL37OG8OSYKIzEz7begyzkm0PlyeGms+SpJ3JUe
-	 EgYdPUqyEi2ztoXO/gy+onZdha/WJgKPLj52xnxRr6Surj1lob4OX8LcAYKxGoDUoJ
-	 j1aJJteDjw4XeeEF56jRhRMI1hn7yioFIb/zhZDRfutEjYuC6M/U318+v4EEfInPOg
-	 9rlbnUL93GSpC0wqulyFW8gc5aJA0YsCRjGzJrgZEa014O18dFxDZ4E23jOXuEpUgT
-	 6vSCGVOzz077Lgek1MiVbNMp/hEX/KIAXSR3X64xxrdrZOcDmTZN27g+Um7LzxXRwx
-	 g5UACP4WnbksA==
-From: SeongJae Park <sj@kernel.org>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	shakeel.butt@linux.dev,
-	hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
-Date: Sat,  9 Nov 2024 12:52:22 -0800
-Message-Id: <20241109205222.88428-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAN+CAwPEMNN_0HH-XvzenK4+k1a0cHdwTksrGTtjaEc2mvCjhA@mail.gmail.com>
-References: 
+	s=arc-20240116; t=1731186199; c=relaxed/simple;
+	bh=YIiccCo0N3HbI9dbfe169oRbRI9AUz+ioc1px3+Fn1Y=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
+	 In-Reply-To:References; b=BO+//eDK0/c/Em+sXskaUruZVkdjpamT4EUJs5Z9Cr2B+zbTJ6U+d/vvZtq1p+ehiXPLSj9HYSFpJXuHOgbNbT5mULMVjTezZhC4XnrG/iNlv30jf2/aSsYpLiPwqcfN8Z5piwEq2EUDBBBRjdn0GGgHgV4rnJvOPYtKAqSZf9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HCp8655v; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20241109210309euoutp02e9776db3837133bd83f5f45e99d0d210~GaKq7k0LO2674526745euoutp02H
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 21:03:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20241109210309euoutp02e9776db3837133bd83f5f45e99d0d210~GaKq7k0LO2674526745euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731186189;
+	bh=+dOAA64/v3yKwjwjme/F2AoNbhFg/yCBBcsPWbBXvl8=;
+	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
+	b=HCp8655vFHBQa62bQ9HxzcyzEUms9KCKGOMUA/xVpfwD/8uFazvZ/ViWKUKv134om
+	 Lz97rnnpEjYK/iWh0mvBLje/1DCI2jEuSehEVegG2WBrLLTWaIYd2xW/Uq3hnDGmK5
+	 LqigZtIT0po9dl9DBAHeRGkv2zvO1Y3D76jqb6UM=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241109210308eucas1p2befa2cdeb3b48adfc9470d90ec96c3a3~GaKqRXzJR2615326153eucas1p2y;
+	Sat,  9 Nov 2024 21:03:08 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 44.33.20409.C0ECF276; Sat,  9
+	Nov 2024 21:03:08 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241109210307eucas1p2aea3ee9db6d8f6fa8e550421953d1c61~GaKpqGiqT2811028110eucas1p2s;
+	Sat,  9 Nov 2024 21:03:07 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241109210307eusmtrp11d33af6ee26c0813a9802c1dd031bcde~GaKppmqNU3101331013eusmtrp11;
+	Sat,  9 Nov 2024 21:03:07 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-74-672fce0c07e2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id EC.19.19654.B0ECF276; Sat,  9
+	Nov 2024 21:03:07 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241109210307eusmtip2205b2c81025f12eb9d754706d06e9664~GaKpcjxVM0316403164eusmtip2_;
+	Sat,  9 Nov 2024 21:03:07 +0000 (GMT)
+Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Sat, 9 Nov 2024 21:03:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Sat, 9 Nov 2024 22:03:06 +0100
+Message-ID: <D5HYAAW77P1A.6KLS8F6CVKGS@samsung.com>
+Subject: Re: [RFC PATCH 3/3] module: pre-test setting ro_after_init data
+ read-only
+CC: <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, Luis Chamberlain
+	<mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen
+	<samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
+	<linux-modules@vger.kernel.org>
+From: Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
+In-Reply-To: <a32f2390caf6e0d157ffea6e04f5e5d8629620c2.1731148254.git.christophe.leroy@csgroup.eu>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLKsWRmVeSWpSXmKPExsWy7djP87o85/TTDQ5OlbK4M+k5u8W6t+dZ
+	LS7vmsNm0TD7O6vFjQlPGS2WfnnHbLF0xVtWi82bpjI7cHh8vXmOyWPBplKPTas62TzenTvH
+	7rF+y1UWj8+b5ALYorhsUlJzMstSi/TtErgynq1ZyVpwj79i2dZWtgbGhzxdjJwcEgImEhvb
+	brJ2MXJxCAmsYJRYM+UyE4TzhVFi24H57BDOZ0aJz2+uMsO0PNu4mg0isZxR4ufWVWxwVU+X
+	7INq2cEo8eLyGkaQFl4BQYmTM5+wgNjMAtoSyxa+ZoawNSVat/9mB7FZBFQktj86yAxRbyxx
+	vvk/E4gtLBAi8ax7DiNEvYfEogOPWEAWiAg8Z5RYvbeLDSTBBjRo38lN7BD3qUn8758ItoxT
+	IEli0qmJjBBxRYkZE1eyQNi1Eqe23AL7VELgB4fElacPoJpdJLb9eQX1qLDEq+NboOIyEqcn
+	90A1p0ssWTcLyi6Q2HN7FjD8OIBsa4m+MzkQYUeJFQc3s0OE+SRuvBWEuJ9PYtK26cwQYV6J
+	jjahCYwqs5BCaBZSCM1CCqEFjMyrGMVTS4tz01OLjfJSy/WKE3OLS/PS9ZLzczcxAlPQ6X/H
+	v+xgXP7qo94hRiYOxkOMEhzMSiK8Gv766UK8KYmVValF+fFFpTmpxYcYpTlYlMR5VVPkU4UE
+	0hNLUrNTUwtSi2CyTBycUg1MG/OueD3bqN7vGJ5X/NPwuJkwS6GursrW1/nv38m9tD4cKr/+
+	xqprXjeyXLdxPtrXOLVr37FSzZ3PjO4UnV36muvAYUcd7emu93cEKeQLvzqTOGeVwNGph14a
+	Hj9+pyXVa2WWxtu1T69Un56y4KmT/+FvzF/53nTJGsfxXZhdtKXRSJjV+N7e2Hz/cyHfdczP
+	/1E6k+87PemEjFWcuUhzbWPQTWU9/b3RL3e0/gk4Yr3h7uZTLDeD2zIuTmAx0+jWvPCq8kne
+	fj9Ptp2bl9cppIpySG3SYQ4s9e/ur5Q0vZCgX7D28rGM6mMulw0WbrZqX3xKMN/2yZUD6QsD
+	F0j2JWV1fTx/62f+t1vzz9SrK7EUZyQaajEXFScCAO9X+e2wAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrBIsWRmVeSWpSXmKPExsVy+t/xe7rc5/TTDT43GljcmfSc3WLd2/Os
+	Fpd3zWGzaJj9ndXixoSnjBZLv7xjtli64i2rxeZNU5kdODy+3jzH5LFgU6nHplWdbB7vzp1j
+	91i/5SqLx+dNcgFsUXo2RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5
+	mWWpRfp2CXoZz9asZC24x1+xbGsrWwPjQ54uRk4OCQETiWcbV7N1MXJxCAksZZSY+bSJDSIh
+	I7Hxy1VWCFtY4s+1Lqiij4wS0/r2skA4Oxglus/1sIBU8QoISpyc+QTMZhbQlli28DUzhK0p
+	0br9NzuIzSKgIrH90UFmiHpjifPN/5lAbGGBEIln3XMYIeo9JBYdeAS2QETgOaPE6r1dYCex
+	AQ3ad3ITO8RJahL/+ydCXdHJJNGw9iFYN6dAksSkUxMZIYoUJWZMXMkCYddKfP77jHECo8gs
+	JMfOQnLsLCTHLmBkXsUoklpanJueW2ykV5yYW1yal66XnJ+7iREYpduO/dyyg3Hlq496hxiZ
+	OBgPMUpwMCuJ8Gr466cL8aYkVlalFuXHF5XmpBYfYjQF+nois5Rocj4wTeSVxBuaGZgamphZ
+	GphamhkrifOyXTmfJiSQnliSmp2aWpBaBNPHxMEp1cDU579p+6vpZnL9rR0N+UFXWBfkFR6f
+	vS5b74fhluN2lnr2h/zefb837ZKrvM/u+1H9hk2C0zk3HUraZyEk/bL621WGJXpJ59MncGw9
+	NGXL5UkHwhxfM6RwfV/G/jjAcvNkmzSLD+3hN6xli+y3Kv5d+H5Hxirr6+4cIReen6+8uEj7
+	u2Lx1QsJyypsGKZdyvkcIKbOkzPFsYf9+PJJa26mzVTf9NyCUWF1n3DuytJ1UornLRJuRac8
+	mbOueP7MjRLMlmUuk+ve2W/VU019uMDEyubMMyXNDCuVcG42ifu3hCyU+W6czS7XucXBq+x7
+	z0OywGnJ90r78OgdWzZY8Hk0c/ImtEq63/M7ZTA78qsSS3FGoqEWc1FxIgDwBiXqWwMAAA==
+X-CMS-MailID: 20241109210307eucas1p2aea3ee9db6d8f6fa8e550421953d1c61
+X-Msg-Generator: CA
+X-RootMTR: 20241109105007eucas1p10a64348dbd220dd145735eaca3541d38
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241109105007eucas1p10a64348dbd220dd145735eaca3541d38
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+	<CGME20241109105007eucas1p10a64348dbd220dd145735eaca3541d38@eucas1p1.samsung.com>
+	<a32f2390caf6e0d157ffea6e04f5e5d8629620c2.1731148254.git.christophe.leroy@csgroup.eu>
 
-On Sat, 9 Nov 2024 13:41:31 -0500 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
+> To be on the safe side, try to set ro_after_init data section readonly
+> at the same time as rodata. If it fails it will likely fail again
+> later so let's cancel module loading while we still can do it.
+> If it doesn't fail, put it back to read-only, continue module loading
 
-> Hello SJ, thank you for reviewing my patch!
-> 
-> On Fri, Nov 8, 2024 at 8:03 PM SeongJae Park <sj@kernel.org> wrote:
-> >
-> > Hi Joshua,
-> >
-> > On Fri, 8 Nov 2024 13:29:45 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
-> >
-> > > This patch introduces mem_cgroup_charge_hugetlb, which combines the
-> > > logic of mem_cgroup{try,commit}_hugetlb. This reduces the footprint of
-> >
-> > Nit.  Seems the regular expression is not technically correct?
-> 
-> I see, I will change it expand it out to include both. What I meant to
-> say is that it combines the functionality of both the functions, but
-> I think there was a typo there. I will just expand it out so that it is
-> more clear to readers!
+I think you mean put it back to rw?
 
-Thank you :)
+> and cross fingers so that it still works after module init. Then it
+> should in principle never fail so add a WARN_ON_ONCE() to get a big
+> fat warning in case it happens anyway.
 
-> 
-> > > +int mem_cgroup_charge_hugetlb(struct folio *folio, gfp_t gfp)
-> >
-> > Can we add a kernel-doc comment for this function?  Maybe that for
-> > mem_cgroup_hugetlb_try_charge() can be stolen with only small updates?
-> 
-> Yes, I can definitely add a kernel-doc for this function. Would
-> you mind expanding on the "stolen only with small updates" part?
-> Do you mean that instead of writing a completely new section
-> in the kernel-doc, I can just change the name of the section
-> and modify small parts of the description?
+I agree this is the best we can do. But I don't think there's any
+guarantee that we won't fail on the second try?
 
-You're right.  I just thought that might save some of your time if that makes
-sense.  I don't really mind about this, so do whatever as you prefer :)
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  kernel/module/main.c       | 2 +-
+>  kernel/module/strict_rwx.c | 5 ++++-
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 1bf4b0db291b..b603c9647e73 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2582,7 +2582,7 @@ static noinline int do_init_module(struct module *m=
+od)
+>  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+>  #endif
+>  	ret =3D module_enable_rodata_ro_after_init(mod);
+> -	if (ret)
+> +	if (WARN_ON_ONCE(ret))
+>  		pr_warn("%s: %s() returned %d, ro_after_init data might still be writa=
+ble\n",
+>  			mod->name, __func__, ret);
+> =20
+> diff --git a/kernel/module/strict_rwx.c b/kernel/module/strict_rwx.c
+> index f68c59974ae2..329afd43f06b 100644
+> --- a/kernel/module/strict_rwx.c
+> +++ b/kernel/module/strict_rwx.c
+> @@ -58,7 +58,10 @@ int module_enable_rodata_ro(const struct module *mod)
+>  	if (ret)
+>  		return ret;
+> =20
+> -	return 0;
+> +	ret =3D module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_ro);
+> +	if (ret)
+> +		return ret;
+> +	return module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_rw);
+>  }
+> =20
+>  int module_enable_rodata_ro_after_init(const struct module *mod)
 
-
-Thanks,
-SJ
-
-[...]
 
