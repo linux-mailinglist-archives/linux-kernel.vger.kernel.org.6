@@ -1,137 +1,91 @@
-Return-Path: <linux-kernel+bounces-402887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7499C2E0F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:11:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 097819C2E12
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8727928276F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:11:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 392081C20D47
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8D2199941;
-	Sat,  9 Nov 2024 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F9C19ABD1;
+	Sat,  9 Nov 2024 15:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBVGDin9"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xRraR0Xg"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082A155C94
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2EA155C94;
+	Sat,  9 Nov 2024 15:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731165094; cv=none; b=EE1u71sVki3+pAte1xtPgwsihg0tytn8XSdDRgjKT/SlU41gd8rPzxqNLgQQs7PBSmfLmofCoVY7IlpI6/YsN6u56RAQKQuWoo/nTj6+DP8zKYygzMYGDmtxsn+a3WE0O4imha83wJhd4+RATaLA6JsdtY/R3d//alqtFBCohD4=
+	t=1731165226; cv=none; b=oMtCDg1cj54budFptAuYnYCn3pa8u84Noix0f26pASy6NdMzf4hwsX2lIr4YtydAhLMiDE62f0tH497odErapxOYNlkUARjtvWK7ApRyZeZA4K2lcuLWsG+c8jukNU3asgjObUfxmRwLS2SNBAh26b0sb5sAKjlpVzhniEq+bek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731165094; c=relaxed/simple;
-	bh=L0I1JptouAky5IHlFmAMdPRPB4zs5Fga3f00ssotOpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AcsZ9u1iiTQ2KgfTuEg5ww/sv2e6cS/DZZDWBmj9zGrLprApZacFKg8f+iYQN7GHVnQExhpXUiI5B6qVRwRyqPbvLhw0GjcMaLJDBmMSr+VeqKwoO6QZhRmgS3EECPBR74TaiDEQ0js1qCX5MIVmMb7tqefDxrx4WZZ+l9UXgIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBVGDin9; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e7e73740so2927790e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 07:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731165091; x=1731769891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9V9hRTWks3Eh0qfSQPZ+ICXvvEjOQTekt51MUUCJnj0=;
-        b=TBVGDin9A+m3g6gVlUOI6YPgALi7Pk/B4XlBcUFUgYGSm2h7+F4uhrbCebp3Ki+8Zj
-         WPNId3JmJixMXs+TExK/eewuLi+Mr3J3Vo+VDSyuxo0Cw16mNFpjvrM2GdEAdDKeinGC
-         pEnu9ppvuTjEHKu2tpFfDpprXE0j2yA4aYcL5hOoifHNCJHgEHjLpREEpgXKwdc/76sp
-         faMln3Fs7nlMks3VY61+NJ1vijtZeCH2pQfoIlyuyRcMYsr8kf/oL3XQoZC8YaJouTyK
-         30pGXrSN35Td1WEhe2nEENJGy08SszmBPGNmwIQxxh0TYGvTWtC+3+kKBXxjnijQYUdT
-         OJgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731165091; x=1731769891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9V9hRTWks3Eh0qfSQPZ+ICXvvEjOQTekt51MUUCJnj0=;
-        b=IljCFSOguIcp7YfxSsJgls2lT+/qZ5mj299NyyccnY1DYnczf//tvGbB04ugHvFqic
-         P0USHR2LxMn5BM42L40A9VYEugi7ouJeotSrzivFAB9ur9YEqu9pYHACOiG6jTl6DImR
-         W2uq7XeDf28a+vTPrxtfqAbH2N6Eo607qbQ98Uwc18b9DY85rLkRmagLGj4SCSvLfWeH
-         jNy4hbLVI5nNwkGMtF72YD7YXJHVWthK+nGFb9jGQ+iBRK7aB2H+5cJQQKlvQDqp8F0I
-         iQgU8yQZpV0oDEDrI2p7udcOTfL1rtMRLVjOh2b4ENHB3b+IrHm+6e+i62yo4pOQVQpA
-         fQwg==
-X-Gm-Message-State: AOJu0Yw7UQLjlBcJXzCf3faHm9cvBM/jrk/XO+4MbO+/vtlGcNjW5Ya5
-	JIhUDJ635Wa8qaYHgjbQePYHoLzjzpNSPynHQEx6+arN+JByX+8+J1yQEl31Nu1pD0oL+m/Kt9C
-	qBLbSBOCBm3GPVC9DJrjrbC2Chw==
-X-Google-Smtp-Source: AGHT+IG51tVgYwLITpfmjxFbxUxLBfZIAq/M5j7fc7acnngomegcPxiHo5YAWvqy+c1iID+XgVB9hSIZLrZYF6srCxA=
-X-Received: by 2002:a05:6512:3985:b0:539:ee0a:4f8f with SMTP id
- 2adb3069b0e04-53d8626c670mr3197917e87.44.1731165090323; Sat, 09 Nov 2024
- 07:11:30 -0800 (PST)
+	s=arc-20240116; t=1731165226; c=relaxed/simple;
+	bh=JPuYZYFQoSS3IfqKdEvXWAGb671M99LKqnTQkNA0cDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JuHTS28Pn3tAYZVFOz81U77IKQRPR3vXoZLcQ1iBe/N/y3hQNkw4yByeeQOobY1x4I59C0jVaxmHi8hC7sXKS6lZR01NtJJcckcgIf4wGRFhMt65kSOwLhaSzDuPd/qFYaoqIt/Y4BYOxrXb0o3W7yFeQixD/HVVTFNjZAggMGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xRraR0Xg; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=xyZTJo9f8gsK10SkI8qjNVOpiFFkSOls53vDKWxDbVo=; b=xRraR0XgPrKBa604t1HRU1Yt64
+	yWeuU7ynYoJQ7iq2OrJI4nFN+M5RIHArwlj8j8F6tMVa+NfV1IBEUaBMzy/KKyuSNC8h+yW2/+5kw
+	H8XdZloyyH1V+DN0mWh2lqEFaqviH8IMWAf+3dDFH4aYsicGCgXZKXM4hSiqvJI0l+lk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t9n9Q-00CiQC-16; Sat, 09 Nov 2024 16:13:24 +0100
+Date: Sat, 9 Nov 2024 16:13:24 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tristram.Ha@microchip.com
+Cc: Woojung Huh <woojung.huh@microchip.com>,
+	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: Add SGMII port support
+ to KSZ9477 switch
+Message-ID: <784a33e2-c877-4d0e-b3a5-7fe1a04c9217@lunn.ch>
+References: <20241109015633.82638-1-Tristram.Ha@microchip.com>
+ <20241109015633.82638-3-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105155801.1779119-1-brgerst@gmail.com> <5b42962e05754c15977a102ccd5cc7aa@AcuMS.aculab.com>
-In-Reply-To: <5b42962e05754c15977a102ccd5cc7aa@AcuMS.aculab.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Sat, 9 Nov 2024 10:11:18 -0500
-Message-ID: <CAMzpN2h_4cKa7oxPQ0M169xQMKCtZCj9bTggBd4Cyk8j18tf=g@mail.gmail.com>
-Subject: Re: [PATCH v5 00/16] x86-64: Stack protector and percpu improvements
-To: David Laight <David.Laight@aculab.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241109015633.82638-3-Tristram.Ha@microchip.com>
 
-On Sat, Nov 9, 2024 at 4:31=E2=80=AFAM David Laight <David.Laight@aculab.co=
-m> wrote:
->
-> From: Brian Gerst
-> > Sent: 05 November 2024 15:58
-> >
-> > Currently, x86-64 uses an unusual percpu layout, where the percpu secti=
-on
-> > is linked at absolute address 0.  The reason behind this is that older =
-GCC
-> > versions placed the stack protector (if enabled) at a fixed offset from=
- the
-> > GS segment base.  Since the GS segement is also used for percpu variabl=
-es,
-> > this forced the current layout.
-> >
-> > GCC since version 8.1 supports a configurable location for the stack
-> > protector value, which allows removal of the restriction on how the per=
-cpu
-> > section is linked.  This allows the percpu section to be linked normall=
-y,
-> > like other architectures.  In turn, this allows removal of code that wa=
-s
-> > needed to support the zero-based percpu section.
-> >
-> > v5:
-> > - Added two patches from Ard Biesheuvel to make stack protector work
-> >   properly when compiling with clang.
-> > - Raise minimum GCC version to 8.1 for x86.
-> > - Drop objtool conversion code.
->
-> Is there any actual need to raise the GCC level?
-> Isn't it enough just to disable stack protection with older compilers?
-> The percpu layout can then always be the new (sane) one.
+On Fri, Nov 08, 2024 at 05:56:33PM -0800, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> The SGMII module of KSZ9477 switch can be setup in 3 ways: 0 for direct
+> connect, 1 for 1000BaseT/1000BaseX SFP, and 2 for 10/100/1000BaseT SFP.
 
-Earlier versions of this series did make stack protector support
-conditional on newer compilers.  That got rejected.  I then added
-objtool support to convert the code old compilers produced.  That also
-got rejected.  I guess I can't please everyone.
+This naming is rather odd. First off, i would drop 'SFP'. It does not
+have to be an SFP on the other end, it could be another switch for
+example. 1 is PHY_INTERFACE_MODE_1000BASEX and 2 is
+PHY_INTERFACE_MODE_SGMII.
 
-> Is there even a selectable CONFIG_STACK_PROTECTOR?
-> Can than depend on gcc >=3D 8.1 for x86-64?
+> SFP is typically used so the default is 1.  The driver can detect
+> 10/100/1000BaseT SFP and change the mode to 2.
 
-Yes, stack protector support is optional, but practically all distro
-kernels enable it.
+phylink will tell you want mode to use. I would ignore what the
+hardware detects, so this driver is just the same as every other
+driver, making it easier to maintain.
 
-> I've a slight vested interest in that the system I test kernels on
-> has gcc 7.5.0 installed :-)
-
-What distro is on that system?  Is it still actively supported?
-
-Brian Gerst
+	Andrew
 
