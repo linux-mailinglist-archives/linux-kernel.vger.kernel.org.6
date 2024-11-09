@@ -1,438 +1,212 @@
-Return-Path: <linux-kernel+bounces-402608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63549C299D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:59:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD84A9C29A3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3356A1F22CF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:59:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03B471C219C1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6318513AD26;
-	Sat,  9 Nov 2024 02:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61D14086A;
+	Sat,  9 Nov 2024 03:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6XJlF8H"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="D8EalKeC"
 Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E7A3FB8B;
-	Sat,  9 Nov 2024 02:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059D417FE
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 03:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731121149; cv=none; b=c1Ju059Lm3Q7pD3FwZmtUUR+Ren/ddVB0fXf8y+T4OyDkzuGRxAY1undEuk0RfvNBT126RosSnZYNIB8tTO6BzCYRp81gjv838QNiJacWRqe7FvR/HISkotfSxDrjxiVf6LoYuIly80dvjxtC2jTvXVhTgIXqB0lr06Zce8leI0=
+	t=1731121760; cv=none; b=dZfRcw/A080SOjmLHfXbQP3VqeQ2RQnDJRiBcD0sGeMqD83HGZbp8x8sDGh67ZQypny3zDkYTH7O3tPb8kthcVug/cY4SKHti7yiASVBx7ophnrM2d/wWxH+IidIPBXpQ2C/YaiJhzzYeMa6YKrF7O35ls8AKGC8Bz4EG6M5cgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731121149; c=relaxed/simple;
-	bh=kDQDpWAlwqhenDk+2KnXtbzpfIV1sZA1Qv7cylFp7d8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q5xfl85OwHLDM0Ytdg4CqTwU2A+AIdvsevIpWuBBGdIWJQJ/r1Ub2HInK0Bcd4Hq606Jk4ZvYRK5PU4HmkYP3haDh4AmcYqpOSwbvIS+s2v9bC/krU1hZH79VmOrkZeC2ZMOvWI5ecSn4c5Pge5es3+5dXLaX8HIzpiNh9Lk+aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6XJlF8H; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso2517808b3a.3;
-        Fri, 08 Nov 2024 18:59:07 -0800 (PST)
+	s=arc-20240116; t=1731121760; c=relaxed/simple;
+	bh=wtsz5kJS1TnFHPa37iq/iVFAJk5wPpvVhlxVnOkmF8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tU45KGhBfb+AEyLQbcOb6omHfEWbzwK7Du6PxmMc0anEBFWJFQgeTqeHsKvfzjpnTxUp/7PvEv5tuGSKauy3512iMKCqMdXSpHYx4DXCVPsajZGhD2eq3dAPKyuEl47Y1UBgKhXxbG9aUA5BPR6OISHj9gOXSB+Q4RqUaWNGws8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=D8EalKeC; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720be27db74so2232331b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 19:09:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731121147; x=1731725947; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jgzjvu2KFAIoDqaousuCkzou9PgVU9Gj9P4/pqvAl70=;
-        b=S6XJlF8H47OQ+NeOCvZQtOFKgQHyxRCUHigFD1sh5bpUQzrX9E9l7TYZvOs6B4lzqp
-         cQUmHlUevgRz2nsjIzlqOso2pE8I/UW/vrhKR/lNe9ivo4iWcg3kJ7mX86d7VJgGeAZO
-         WljPyFhiTQmgBy1Fkfo6U/UDGVg4N9ybHzNbKdVb21j1dZkBx4KcwD9iyo4bU8VYyO13
-         rAwh98rvc1pJXG15H5ufYYAFgxGxtZdncBi1Bk7Uqm6c2B+Ug682FokTrrKXib04zDDq
-         jYCzEHXYzc8iXdYw/g8LklUTfzwWgNGFGYkDWOJpgnO34DyUJmO5b0FOSx7mAbmr+IH5
-         Xxkg==
+        d=bytedance.com; s=google; t=1731121758; x=1731726558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gox0zaors/Usl9NjGMbl7yQXcq9+RVKH7P6QUdPGdOk=;
+        b=D8EalKeC911MS4W6Mje47/PwgaRv8T2AsB6kBohLOXUZ09FZM6BVvEirQKKhzCAi1O
+         z+5Ul03eBN983ONagMDBqvXMypCBu+UmmrWbguF8qBmRAG1CB7kPPrfUMHEbE/K8QqEL
+         z16LrSDGBp+RATwjc+lv+u3D7eOXzfiUdTcaJG4b9oVLIjyE/EYzNWd9oRqbJZlPC+j/
+         2DmrgCOJXr22bHW7cOgfjy4yY6w10aK4pYt7IA/9TIjwwyBFQHnc/tfJj+D1U2QbJ75I
+         6qXhpF2ghzjkGf5uXo4liwnWffohc/wz6BENvak12c9PdZxnPsP/AxVDCFd51hZHOnjz
+         FmAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731121147; x=1731725947;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jgzjvu2KFAIoDqaousuCkzou9PgVU9Gj9P4/pqvAl70=;
-        b=eaRlsqN/Bh7kCWst6rrzHdM4xbv8qa2vN+2XGNHOsm4sCC5i2o6ysEkTSZWzVMHBEP
-         X61h1r1KSmp4Ndz2W++LCPV0pMK8FbzFb03wvZPqF8ybu5yOWG1/Yf0caqNfyfM136NT
-         yZjv8OnqeiiG/1XMZsX5q4RmmVWYkqgRZ/gbosymsw5Lk5dVfLMyI8xSInObl7wymqiw
-         AyZRb6hHpRqs2c/NkTi0Mn/yUlp72DHL9ovFufl2JvBjz4Bh6rLOm0OuClvwIjQbsUcL
-         vqSL93Z6t1ohaepAcS/MMlsXZLK9ZxMwd6fjByVM/7IU2rjNM7RpRKNE4CS6NHc8dCME
-         GmQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/gx8U9wyPOHyLav0E9K8dR9Cz7z5wd5XFzRgEoHMj2ftsWhcDTvTd5Qy88Ys5ofi7qb5J+7Z0LSQ=@vger.kernel.org, AJvYcCXsMn0jdmHJgo/Ajr3IunlRGkq0sa0ZfFErFOB2RBEczgKXk5Z1X0UEynA7F0cYNOOB/sAM3cXJLQNYxq1Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP9I7i7WONdcY79FQhQpYi9RGTes0S5qd+dMkDO0/BTzhOi1r4
-	tilvbP3nDBCn4WIZ7U2VOaY06/jPjn2YYTzZueOUcxyQR63+U5dCkO4F5h94
-X-Google-Smtp-Source: AGHT+IHvK3BLv1YH2YOmDBjcDpFxUSxglJM5l0441IzKnxx83Kl8a+R2UFAnIhoY3Q0BcRI0jH7RDw==
-X-Received: by 2002:a05:6a00:218d:b0:71e:5033:c5 with SMTP id d2e1a72fcca58-724132c211amr7009580b3a.14.1731121146727;
-        Fri, 08 Nov 2024 18:59:06 -0800 (PST)
-Received: from localhost (fwdproxy-prn-031.fbsv.net. [2a03:2880:ff:1f::face:b00c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a134f0sm4572878b3a.131.2024.11.08.18.59.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 18:59:06 -0800 (PST)
-From: Sanman Pradhan <sanman.p211993@gmail.com>
-To: netdev@vger.kernel.org
-Cc: alexanderduyck@fb.com,
-	kuba@kernel.org,
-	kernel-team@meta.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net,
-	mohsin.bashr@gmail.com,
-	sanmanpradhan@meta.com,
-	andrew+netdev@lunn.ch,
-	vadim.fedorenko@linux.dev,
-	jdamato@fastly.com,
-	sdf@fomichev.me,
-	sanman.p211993@gmail.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4] eth: fbnic: Add PCIe hardware statistics
-Date: Fri,  8 Nov 2024 18:59:05 -0800
-Message-ID: <20241109025905.1531196-1-sanman.p211993@gmail.com>
-X-Mailer: git-send-email 2.43.5
+        d=1e100.net; s=20230601; t=1731121758; x=1731726558;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gox0zaors/Usl9NjGMbl7yQXcq9+RVKH7P6QUdPGdOk=;
+        b=uMVTLFjaX9/H1qBDxtu2rjH7NhLRq846fEWCivusYnp6jhOe6ixrjxKJnEpaOj0Jx9
+         tZ0iU1euzRgT7u4zmxr8IGKVDLsl3R6UhHtIVANOvoLhKuZMcZoybN7zZdnMyhldEnj8
+         Uadyg0l2AfUPLkK4+qIFBTu9ds7ZffgfIp3axztMuNMJSvHE2EyiqagtE5MiaxAwTppE
+         +4Gidwnr9FCOxXozv2nfBw/xpETMqqhdd6WlvuU2dD+/8Se/WBFdi9nH/o5EAKmc/pzt
+         YwOWueERxkMOZQbwrqwyY5nvRh5l+lnX4NsMb9PCx++4FQ8ddyUQItozFfo4wqyddWkm
+         OlCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxiUXzWo8vGri0QGE8hMW92aJbfkxEwfKe+sRLEQlSnUn/8F1ZLNDQdYRh3LR/2pI7xEg/H6qrSBbjUxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE1oiL5qnNtcE+YIW9VvONOEDbrTxEnWCzIkcm1JHqvnqbT/Uf
+	hDAEA+pQWEgCnI1tXIm8biCdntuyUfFx1PQX8Ib1f/WAuEGZPAIap/xbbXxrDXE=
+X-Google-Smtp-Source: AGHT+IHdWXqVIIaaZW1uhG5g6QJs/KSB3EfnuHdAfZjDvz3rUX095jDt/0SkT/bqCMEnbRcuDuZNsg==
+X-Received: by 2002:a05:6a00:3a18:b0:71e:5573:8dcd with SMTP id d2e1a72fcca58-72413f4c4eamr7905372b3a.2.1731121758351;
+        Fri, 08 Nov 2024 19:09:18 -0800 (PST)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5b3f8fsm4256894a12.19.2024.11.08.19.09.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 19:09:17 -0800 (PST)
+Message-ID: <cb59ffb5-b7ce-4ed8-a241-70917166be42@bytedance.com>
+Date: Sat, 9 Nov 2024 11:07:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] mm: pgtable: try to reclaim empty PTE page in
+ madvise(MADV_DONTNEED)
+Content-Language: en-US
+To: Jann Horn <jannh@google.com>
+Cc: david@redhat.com, hughd@google.com, willy@infradead.org, mgorman@suse.de,
+ muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+ zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
+ catalin.marinas@arm.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org
+References: <cover.1730360798.git.zhengqi.arch@bytedance.com>
+ <c0199a7d7097521bbc183739b1fa6793081d726b.1730360798.git.zhengqi.arch@bytedance.com>
+ <CAG48ez0bv_y1k3cqMCsj0sJGPR4iK9zmHTa6124+N6i+s4+bTA@mail.gmail.com>
+ <5d371247-853d-49ca-a28c-689a709905d4@bytedance.com>
+ <CAG48ez3sG_=G6gttsEZnvUE4J-yHEUqyaNQfsdXR-LT-EqY2Yw@mail.gmail.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CAG48ez3sG_=G6gttsEZnvUE4J-yHEUqyaNQfsdXR-LT-EqY2Yw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add PCIe hardware statistics support to the fbnic driver. These stats
-provide insight into PCIe transaction performance and error conditions.
 
-Which includes, read/write and completion TLP counts and DWORD counts and
-debug counters for tag, completion credit and NP credit exhaustion
 
-The stats are exposed via ethtool and can be used to monitor PCIe
-performance and debug PCIe issues.
+On 2024/11/9 02:04, Jann Horn wrote:
+> On Fri, Nov 8, 2024 at 8:13 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>> On 2024/11/8 07:35, Jann Horn wrote:
+>>> On Thu, Oct 31, 2024 at 9:14 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+>>>> As a first step, this commit aims to synchronously free the empty PTE
+>>>> pages in madvise(MADV_DONTNEED) case. We will detect and free empty PTE
+>>>> pages in zap_pte_range(), and will add zap_details.reclaim_pt to exclude
+>>>> cases other than madvise(MADV_DONTNEED).
+>>>>
+>>>> Once an empty PTE is detected, we first try to hold the pmd lock within
+>>>> the pte lock. If successful, we clear the pmd entry directly (fast path).
+>>>> Otherwise, we wait until the pte lock is released, then re-hold the pmd
+>>>> and pte locks and loop PTRS_PER_PTE times to check pte_none() to re-detect
+>>>> whether the PTE page is empty and free it (slow path).
+>>>
+>>> How does this interact with move_pages_pte()? I am looking at your
+>>> series applied on top of next-20241106, and it looks to me like
+>>> move_pages_pte() uses pte_offset_map_rw_nolock() and assumes that the
+>>> PMD entry can't change. You can clearly see this assumption at the
+>>> WARN_ON_ONCE(pmd_none(*dst_pmd)). And if we race the wrong way, I
+>>
+>> In move_pages_pte(), the following conditions may indeed be triggered:
+>>
+>>          /* Sanity checks before the operation */
+>>          if (WARN_ON_ONCE(pmd_none(*dst_pmd)) || WARN_ON_ONCE(pmd_none(*src_pmd)) ||
+>>              WARN_ON_ONCE(pmd_trans_huge(*dst_pmd)) ||
+>> WARN_ON_ONCE(pmd_trans_huge(*src_pmd))) {
+>>                  err = -EINVAL;
+>>                  goto out;
+>>          }
+>>
+>> But maybe we can just remove the WARN_ON_ONCE(), because...
+>>
+>>> think for example move_present_pte() can end up moving a present PTE
+>>> into a page table that has already been scheduled for RCU freeing.
+>>
+>> ...this situation is impossible to happen. Before performing move
+>> operation, the pte_same() check will be performed after holding the
+>> pte lock, which can ensure that the PTE page is stable:
+>>
+>> CPU 0                    CPU 1
+>>
+>> zap_pte_range
+>>
+>>                          orig_src_pte = ptep_get(src_pte);
+>>
+>> pmd_lock
+>> pte_lock
+>> check if all PTEs are pte_none()
+>> --> clear pmd entry
+>> unlock pte
+>> unlock pmd
+>>
+>>                          src_pte_lock
+>>                          pte_same(orig_src_pte, ptep_get(src_pte))
+>>                          --> return false and will skip the move op
+> 
+> Yes, that works for the source PTE. But what about the destination?
+> 
+> Operations on the destination PTE in move_pages_pte() are, when moving
+> a normal present source PTE pointing to an order-0 page, and assuming
+> that the optimistic folio_trylock(src_folio) and
+> anon_vma_trylock_write(src_anon_vma) succeed:
+> 
+> dst_pte = pte_offset_map_rw_nolock(mm, dst_pmd, dst_addr,
+> &dummy_pmdval, &dst_ptl)
+> [check that dst_pte is non-NULL]
+> some racy WARN_ON_ONCE() checks
+> spin_lock(dst_ptl);
+> orig_dst_pte = ptep_get(dst_pte);
+> spin_unlock(dst_ptl);
+> [bail if orig_dst_pte isn't none]
+> double_pt_lock(dst_ptl, src_ptl)
+> [check pte_same(ptep_get(dst_pte), orig_dst_pte)]
+> 
+> and then we're past the point of no return. Note that there is a
+> pte_same() check against orig_dst_pte, but pte_none(orig_dst_pte) is
+> intentionally pte_none(), so the pte_same() check does not guarantee
+> that the destination page table is still linked in.
 
-Signed-off-by: Sanman Pradhan <sanman.p211993@gmail.com>
----
-v4:
-	- Fix indentations
-	- Adding missing updates for previous versions
-v3:
-	- https://patchwork.kernel.org/project/netdevbpf/patch/20241108204640.3165724-1-sanman.p211993@gmail.com/
-	- Moved PCIe stats to debugfs
-v2:
-	- https://patchwork.kernel.org/project/netdevbpf/patch/20241107020555.321245-1-sanman.p211993@gmail.com/
-	- Removed unnecessary code blocks
-	- Rephrased the commit message
-v1:
-	- https://patchwork.kernel.org/project/netdevbpf/patch/20241106002625.1857904-1-sanman.p211993@gmail.com/
----
- .../device_drivers/ethernet/meta/fbnic.rst    |  26 ++++
- drivers/net/ethernet/meta/fbnic/fbnic_csr.h   |  37 ++++++
- .../net/ethernet/meta/fbnic/fbnic_debugfs.c   |  54 +++++++++
- .../net/ethernet/meta/fbnic/fbnic_hw_stats.c  | 114 ++++++++++++++++++
- .../net/ethernet/meta/fbnic/fbnic_hw_stats.h  |  12 ++
- .../net/ethernet/meta/fbnic/fbnic_netdev.c    |   3 +
- 6 files changed, 246 insertions(+)
- create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_debugfs.c
+OK, now I got what you mean. This is indeed a problem. In this case,
+it is still necessary to recheck pmd_same() to ensure the stability
+of dst_pte page. Will fix it.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-index 32ff114f5c26..13ebcdbb5f22 100644
---- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -27,3 +27,29 @@ driver takes over.
- devlink dev info provides version information for all three components. In
- addition to the version the hg commit hash of the build is included as a
- separate entry.
-+
-+PCIe Statistics
-+---------------
-+
-+The fbnic driver exposes PCIe hardware performance statistics through debugfs
-+(``pcie_stats``). These statistics provide insights into PCIe transaction
-+behavior and potential performance bottlenecks.
-+
-+Statistics Categories
-+
-+1. PCIe Transaction Counters:
-+
-+   These counters track PCIe transaction activity:
-+        - pcie_ob_rd_tlp: Outbound read Transaction Layer Packets count
-+        - pcie_ob_rd_dword: DWORDs transferred in outbound read transactions
-+        - pcie_ob_wr_tlp: Outbound write Transaction Layer Packets count
-+        - pcie_ob_wr_dword: DWORDs transferred in outbound write transactions
-+        - pcie_ob_cpl_tlp: Outbound completion TLP count
-+        - pcie_ob_cpl_dword: DWORDs transferred in outbound completion TLPs
-+
-+2. PCIe Resource Monitoring:
-+
-+   These counters indicate PCIe resource exhaustion events:
-+        - pcie_ob_rd_no_tag: Read requests dropped due to tag unavailability
-+        - pcie_ob_rd_no_cpl_cred: Read requests dropped due to completion credit exhaustion
-+        - pcie_ob_rd_no_np_cred: Read requests dropped due to non-posted credit exhaustion
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_csr.h b/drivers/net/ethernet/meta/fbnic/fbnic_csr.h
-index e78745332d82..463fd5d54d35 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_csr.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_csr.h
-@@ -917,6 +917,43 @@ enum {
- #define FBNIC_MAX_QUEUES		128
- #define FBNIC_CSR_END_QUEUE	(0x40000 + 0x400 * FBNIC_MAX_QUEUES - 1)
+> 
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 002aa4f454fa0..c4a8c18fbcfd7 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -1436,7 +1436,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
+>>>>    static inline bool should_zap_cows(struct zap_details *details)
+>>>>    {
+>>>>           /* By default, zap all pages */
+>>>> -       if (!details)
+>>>> +       if (!details || details->reclaim_pt)
+>>>>                   return true;
+>>>>
+>>>>           /* Or, we zap COWed pages only if the caller wants to */
+>>>
+>>> This looks hacky - when we have a "details" object, its ->even_cows
+>>> member is supposed to indicate whether COW pages should be zapped. So
+>>> please instead set .even_cows=true in madvise_dontneed_single_vma().
+>>
+>> But the details->reclaim_pt should continue to be set, right? Because
+>> we need to use .reclaim_pt to indicate whether the empty PTE page
+>> should be reclaimed.
+> 
+> Yeah, you should set both.
 
-+/* PUL User Registers*/
-+#define FBNIC_PUL_USER_OB_RD_TLP_CNT_31_0 \
-+					0x3106e		/* 0xc41b8 */
-+#define FBNIC_PUL_USER_OB_RD_DWORD_CNT_31_0 \
-+					0x31070		/* 0xc41c0 */
-+#define FBNIC_PUL_USER_OB_RD_DWORD_CNT_63_32 \
-+					0x31071		/* 0xc41c4 */
-+#define FBNIC_PUL_USER_OB_WR_TLP_CNT_31_0 \
-+					0x31072		/* 0xc41c8 */
-+#define FBNIC_PUL_USER_OB_WR_TLP_CNT_63_32 \
-+					0x31073		/* 0xc41cc */
-+#define FBNIC_PUL_USER_OB_WR_DWORD_CNT_31_0 \
-+					0x31074		/* 0xc41d0 */
-+#define FBNIC_PUL_USER_OB_WR_DWORD_CNT_63_32 \
-+					0x31075		/* 0xc41d4 */
-+#define FBNIC_PUL_USER_OB_CPL_TLP_CNT_31_0 \
-+					0x31076		/* 0xc41d8 */
-+#define FBNIC_PUL_USER_OB_CPL_TLP_CNT_63_32 \
-+					0x31077		/* 0xc41dc */
-+#define FBNIC_PUL_USER_OB_CPL_DWORD_CNT_31_0 \
-+					0x31078		/* 0xc41e0 */
-+#define FBNIC_PUL_USER_OB_CPL_DWORD_CNT_63_32 \
-+					0x31079		/* 0xc41e4 */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_CPL_CRED_31_0 \
-+					0x3107a		/* 0xc41e8 */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_CPL_CRED_63_32 \
-+					0x3107b		/* 0xc41ec */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_TAG_31_0 \
-+					0x3107c		/* 0xc41f0 */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_TAG_63_32 \
-+					0x3107d		/* 0xc41f4 */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_NP_CRED_31_0 \
-+					0x3107e		/* 0xc41f8 */
-+#define FBNIC_PUL_USER_OB_RD_DBG_CNT_NP_CRED_63_32 \
-+					0x3107f		/* 0xc41fc */
-+#define FBNIC_CSR_END_PUL_USER	0x31080	/* CSR section delimiter */
-+
- /* BAR 4 CSRs */
+OK.
 
- /* The IPC mailbox consists of 32 mailboxes, with each mailbox consisting
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_debugfs.c b/drivers/net/ethernet/meta/fbnic/fbnic_debugfs.c
-new file mode 100644
-index 000000000000..1c865d5b7320
---- /dev/null
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_debugfs.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) Meta Platforms, Inc. and affiliates. */
-+
-+#include <linux/debugfs.h>
-+#include <linux/pci.h>
-+#include <linux/rtnetlink.h>
-+#include <linux/seq_file.h>
-+#include "fbnic.h"
-+
-+static struct dentry *fbnic_dbg_root;
-+
-+static int fbnic_dbg_pcie_stats_show(struct seq_file *s, void *v)
-+{
-+	struct fbnic_dev *fbd = s->private;
-+
-+	rtnl_lock();
-+
-+	fbnic_get_hw_stats(fbd);
-+
-+	seq_printf(s, "ob_rd_tlp: %llu\n", fbd->hw_stats.pcie.ob_rd_tlp.value);
-+	seq_printf(s, "ob_rd_dword: %llu\n",
-+		   fbd->hw_stats.pcie.ob_rd_dword.value);
-+	seq_printf(s, "ob_wr_tlp: %llu\n", fbd->hw_stats.pcie.ob_wr_tlp.value);
-+	seq_printf(s, "ob_wr_dword: %llu\n",
-+		   fbd->hw_stats.pcie.ob_wr_dword.value);
-+	seq_printf(s, "ob_cpl_tlp: %llu\n",
-+		   fbd->hw_stats.pcie.ob_cpl_tlp.value);
-+	seq_printf(s, "ob_cpl_dword: %llu\n",
-+		   fbd->hw_stats.pcie.ob_cpl_dword.value);
-+	seq_printf(s, "ob_rd_no_tag: %llu\n",
-+		   fbd->hw_stats.pcie.ob_rd_no_tag.value);
-+	seq_printf(s, "ob_rd_no_cpl_cred: %llu\n",
-+		   fbd->hw_stats.pcie.ob_rd_no_cpl_cred.value);
-+	seq_printf(s, "ob_rd_no_np_cred: %llu\n",
-+		   fbd->hw_stats.pcie.ob_rd_no_np_cred.value);
-+
-+	rtnl_unlock();
-+	return 0;
-+}
-+
-+DEFINE_SHOW_ATTRIBUTE(fbnic_dbg_pcie_stats);
-+
-+void fbnic_dbg_init(void)
-+{
-+	fbnic_dbg_root = debugfs_create_dir(fbnic_driver_name, NULL);
-+	debugfs_create_file("pcie_stats", 0400, fbnic_dbg_root, NULL,
-+			    &fbnic_dbg_pcie_stats_fops);
-+}
-+
-+void fbnic_dbg_exit(void)
-+{
-+	debugfs_remove_recursive(fbnic_dbg_root);
-+	fbnic_dbg_root = NULL;
-+}
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.c b/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.c
-index a0acc7606aa1..eb19b49fe306 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.c
-@@ -25,3 +25,117 @@ u64 fbnic_stat_rd64(struct fbnic_dev *fbd, u32 reg, u32 offset)
- 	 */
- 	return ((u64)upper << 32);
- }
-+
-+static void fbnic_hw_stat_rst64(struct fbnic_dev *fbd, u32 reg, s32 offset,
-+				struct fbnic_stat_counter *stat)
-+{
-+	/* Record initial counter values and compute deltas from there to ensure
-+	 * stats start at 0 after reboot/reset. This avoids exposing absolute
-+	 * hardware counter values to userspace.
-+	 */
-+	stat->u.old_reg_value_64 = fbnic_stat_rd64(fbd, reg, offset);
-+}
-+
-+static void fbnic_hw_stat_rd64(struct fbnic_dev *fbd, u32 reg, s32 offset,
-+			       struct fbnic_stat_counter *stat)
-+{
-+	u64 new_reg_value;
-+
-+	new_reg_value = fbnic_stat_rd64(fbd, reg, offset);
-+	stat->value += new_reg_value - stat->u.old_reg_value_64;
-+	stat->u.old_reg_value_64 = new_reg_value;
-+}
-+
-+static void fbnic_reset_pcie_stats_asic(struct fbnic_dev *fbd,
-+					struct fbnic_pcie_stats *pcie)
-+{
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_RD_TLP_CNT_31_0,
-+			    1,
-+			    &pcie->ob_rd_tlp);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_RD_DWORD_CNT_31_0,
-+			    1,
-+			    &pcie->ob_rd_dword);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_CPL_TLP_CNT_31_0,
-+			    1,
-+			    &pcie->ob_cpl_tlp);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_CPL_DWORD_CNT_31_0,
-+			    1,
-+			    &pcie->ob_cpl_dword);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_WR_TLP_CNT_31_0,
-+			    1,
-+			    &pcie->ob_wr_tlp);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_WR_DWORD_CNT_31_0,
-+			    1,
-+			    &pcie->ob_wr_dword);
-+
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_RD_DBG_CNT_TAG_31_0,
-+			    1,
-+			    &pcie->ob_rd_no_tag);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_RD_DBG_CNT_CPL_CRED_31_0,
-+			    1,
-+			    &pcie->ob_rd_no_cpl_cred);
-+	fbnic_hw_stat_rst64(fbd,
-+			    FBNIC_PUL_USER_OB_RD_DBG_CNT_NP_CRED_31_0,
-+			    1,
-+			    &pcie->ob_rd_no_np_cred);
-+}
-+
-+static void fbnic_get_pcie_stats_asic64(struct fbnic_dev *fbd,
-+					struct fbnic_pcie_stats *pcie)
-+{
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_RD_TLP_CNT_31_0,
-+			   1,
-+			   &pcie->ob_rd_tlp);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_RD_DWORD_CNT_31_0,
-+			   1,
-+			   &pcie->ob_rd_dword);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_WR_TLP_CNT_31_0,
-+			   1,
-+			   &pcie->ob_wr_tlp);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_WR_DWORD_CNT_31_0,
-+			   1,
-+			   &pcie->ob_wr_dword);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_CPL_TLP_CNT_31_0,
-+			   1,
-+			   &pcie->ob_cpl_tlp);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_CPL_DWORD_CNT_31_0,
-+			   1,
-+			   &pcie->ob_cpl_dword);
-+
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_RD_DBG_CNT_TAG_31_0,
-+			   1,
-+			   &pcie->ob_rd_no_tag);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_RD_DBG_CNT_CPL_CRED_31_0,
-+			   1,
-+			   &pcie->ob_rd_no_cpl_cred);
-+	fbnic_hw_stat_rd64(fbd,
-+			   FBNIC_PUL_USER_OB_RD_DBG_CNT_NP_CRED_31_0,
-+			   1,
-+			   &pcie->ob_rd_no_np_cred);
-+}
-+
-+void fbnic_reset_hw_stats(struct fbnic_dev *fbd)
-+{
-+	fbnic_reset_pcie_stats_asic(fbd, &fbd->hw_stats.pcie);
-+}
-+
-+void fbnic_get_hw_stats(struct fbnic_dev *fbd)
-+{
-+	fbnic_get_pcie_stats_asic64(fbd, &fbd->hw_stats.pcie);
-+}
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.h b/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.h
-index 30348904b510..036cc065a857 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.h
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_hw_stats.h
-@@ -31,10 +31,22 @@ struct fbnic_mac_stats {
- 	struct fbnic_eth_mac_stats eth_mac;
- };
+Thanks!
 
-+struct fbnic_pcie_stats {
-+	struct fbnic_stat_counter ob_rd_tlp, ob_rd_dword;
-+	struct fbnic_stat_counter ob_wr_tlp, ob_wr_dword;
-+	struct fbnic_stat_counter ob_cpl_tlp, ob_cpl_dword;
-+
-+	struct fbnic_stat_counter ob_rd_no_tag;
-+	struct fbnic_stat_counter ob_rd_no_cpl_cred;
-+	struct fbnic_stat_counter ob_rd_no_np_cred;
-+};
-+
- struct fbnic_hw_stats {
- 	struct fbnic_mac_stats mac;
-+	struct fbnic_pcie_stats pcie;
- };
-
- u64 fbnic_stat_rd64(struct fbnic_dev *fbd, u32 reg, u32 offset);
-
-+void fbnic_reset_hw_stats(struct fbnic_dev *fbd);
- void fbnic_get_hw_stats(struct fbnic_dev *fbd);
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-index fc7d80db5fa6..04077649161b 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_netdev.c
-@@ -628,6 +628,9 @@ struct net_device *fbnic_netdev_alloc(struct fbnic_dev *fbd)
-
- 	fbnic_reset_queues(fbn, default_queues, default_queues);
-
-+	/* Capture snapshot of hardware stats so netdev can calculate delta */
-+	fbnic_reset_hw_stats(fbd);
-+
- 	fbnic_reset_indir_tbl(fbn);
- 	fbnic_rss_key_fill(fbn->rss_key);
- 	fbnic_rss_init_en_mask(fbn);
---
-2.43.5
 
