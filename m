@@ -1,124 +1,228 @@
-Return-Path: <linux-kernel+bounces-402747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5029C2B6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:36:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA119C2B6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DA3F1F21F60
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:36:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F4A31F22006
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC1A146580;
-	Sat,  9 Nov 2024 09:36:40 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE31487C0;
+	Sat,  9 Nov 2024 09:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBEujbZr"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA49288D1
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47ED9288D1;
+	Sat,  9 Nov 2024 09:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731145000; cv=none; b=gLohSncZLNEQh22bglnbe8Qt19bMM1vu4b2qIDnjkUjQW4yaSiz0gmGD60A2dvffnPiUbvDkFRk2JqTpD5BLUkg26e8qGJI4Blo741/XFmR77KqzfZO0vivocgaFZBJ2YlXpW9hbiVEn1ku41LXLIJjYLQRV3JWn45f0A41dCi4=
+	t=1731145104; cv=none; b=uZPVMrbbEXDD/GaM7mgBaLw2tyBmHq9HO7uzFVeFa8uVOCMDp0YT3FAPc/8a0GM9I0hRbJ95v+II/bbtVcYhUNHsVxaztuYeruHNRoLBZlxEWXPIsSXkuwxkCnHCZIUPYrF42ZACdHR4GEQxI86VpxHlpkKrL2DvG1RKXId94is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731145000; c=relaxed/simple;
-	bh=HNdvGZj+fBydYr0bzIM/gBC2pmUEUEe4oUVOIkavGAM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=pjMvuX/SJSkja+C2nmoNpBFqAesG8b++nwr6OBiWptoA503k1D9GAMFnM5u4E/DP0ie2iAa1+RxMAY3ox3S7iO6msejkzEVw70PrusPzE/tIWIwWHA3QGAb6eOYEXyg3u2LCFtr89iE/tOc+VZT4wCSgEHhUikKh8tadjfGYLX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-272-7NK4yx_rN4yQrrQ5gWFeOw-1; Sat, 09 Nov 2024 09:36:34 +0000
-X-MC-Unique: 7NK4yx_rN4yQrrQ5gWFeOw-1
-X-Mimecast-MFC-AGG-ID: 7NK4yx_rN4yQrrQ5gWFeOw
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 9 Nov
- 2024 09:36:33 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 9 Nov 2024 09:36:33 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Brian Gerst' <brgerst@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
-CC: Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Ard
- Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
-Subject: RE: [PATCH v5 07/16] x86/module: Deal with GOT based stack cookie
- load on Clang < 17
-Thread-Topic: [PATCH v5 07/16] x86/module: Deal with GOT based stack cookie
- load on Clang < 17
-Thread-Index: AQHbL5u+1+kE21smwUqJwnP284QU6bKutXlA
-Date: Sat, 9 Nov 2024 09:36:33 +0000
-Message-ID: <9b4d09cd65804714815698b14c77df9e@AcuMS.aculab.com>
-References: <20241105155801.1779119-1-brgerst@gmail.com>
- <20241105155801.1779119-8-brgerst@gmail.com>
-In-Reply-To: <20241105155801.1779119-8-brgerst@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731145104; c=relaxed/simple;
+	bh=NzLYZgHOP2wvSoqFT7gXCPc7qie0SoqvKtxmE5X/Gh0=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UowJ+OrRro3YqnD5ydmQylS2qIFt0t/Meg/ljkOcFngp3zj/NQVVP0wMFHWQe86YqgEVxzyAJPQKL6a4m2a6tIRj+Q/WqJdrz1lU3lIMCv5ysFF+Rd1lrougmyxeThJNoz2g26uO68eQc3tSIqnZFYMH2dj0D17c6aRWylvgnoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBEujbZr; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c805a0753so30731615ad.0;
+        Sat, 09 Nov 2024 01:38:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731145103; x=1731749903; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fZB1H1cH3EcvDDGyOT3paa5uE/WHAGoFKm0TvWQ2nMs=;
+        b=LBEujbZrpRbS4sKLaEU4GkWhKmiFujf7DOMAOHLlfyedEGzrA4d1VWcLhk2y2fqcVI
+         pONtQQ7NPdYhabaSEKNgaqhkFzcokMQHuZf3m8DgGQnnLZiLV++isFPBvinTkvJXuQe3
+         w/saVefmYLgzfRvZuadbUtF5an8vBx1dLhO/pGbscgqWaX7W/EMllPEBees4YGhpv+aW
+         9fQU+ydbU0/hPTmE+6gvyQm0g+UeeN68v+WASSCC+EQQ1/ADZIxtmBOyKitdUeMEZ+T3
+         hF5WVVGx7CxJqX4HePUsnrsexvNigSxlcL/KfNniNTpMZyEs5T/Us7OGqV/3STMtEPbt
+         eU4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731145103; x=1731749903;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fZB1H1cH3EcvDDGyOT3paa5uE/WHAGoFKm0TvWQ2nMs=;
+        b=jWUNUR0V7KrVacVeKbfPx58WfBnaXNoxsI88NKVv6h9wXiJni9JG4G6H38lIMy6Id7
+         xG6KQ7kLMw5aKyDB6QPgR1c3mECG12mmj3+NetcoTZMxQJoqeAJ88fEceU0JbG42O4Kg
+         2TFv8oAfGBMWfMKCyYcMm/uXA4w4LNt7uRpX222bHHoAMoRtFQstg/8Z8E+iAJf5R6OS
+         q2LGz3QkzwyPBffKej2sedPOpwDJJkglpiVsjHAOWrQU0abYrGqy7+EREHitU/I7Fijp
+         WiZiECatLXHqknyYn0yJnmsSvEjgGAFUhoW7bzQrAHKSOZxthbcv9VjSW3fXvy34L6Sf
+         1Xjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkRB8QELWJjecxbtwV2Crufh//bkQY0SnNGYdajx3dkkrgmuCNLCzB4qHNNzc9zBWNG7UsTg1X@vger.kernel.org, AJvYcCX3/kxWThQyOPWVlx+4qIhKnTgdzP7OCf0nedLHmtHbBbEuIVzhLfqbqeJuXvVg7W699fbjROuOm00Q5WQ=@vger.kernel.org, AJvYcCXTfVg+yOoRM9+x0Vnu9p4OXx+7Xw2HJ/mthlGWLet0ti1FalGd9el6nLa2E922oZhdzAYsklQXBPlpdHheH+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoh3dTEgjP9SWQVFZsRifA6q4ks8F5HhsgsX/L8TyuCKkYCntE
+	DyDeryXIHFOGkEj1HnIo1qxa60OicfyyvljPisP9dodHy9nVF0WI
+X-Google-Smtp-Source: AGHT+IGyu0wK/UVWfHZUgP6+I416M2F1Dfaw3qijtJse7yfF4DWnr1CdFwG155TvFYjg79oO0OUVvQ==
+X-Received: by 2002:a17:902:c411:b0:20c:9d79:cf85 with SMTP id d9443c01a7336-21183e5ee46mr66346325ad.54.1731145102562;
+        Sat, 09 Nov 2024 01:38:22 -0800 (PST)
+Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f642bedsm4822452a12.67.2024.11.09.01.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 01:38:22 -0800 (PST)
+Date: Sat, 09 Nov 2024 18:38:04 +0900 (JST)
+Message-Id: <20241109.183804.1515599584405139212.fujita.tomonori@gmail.com>
+To: boqun.feng@gmail.com
+Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de,
+ pmladek@suse.com, rostedt@goodmis.org, andriy.shevchenko@linux.intel.com,
+ linux@rasmusvillemoes.dk, senozhatsky@chromium.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com
+Subject: Re: [PATCH v5 6/7] rust: Add read_poll_timeout functions
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <ZyvhDbNAhPTqIoVi@boqun-archlinux>
+References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
+	<20241101010121.69221-7-fujita.tomonori@gmail.com>
+	<ZyvhDbNAhPTqIoVi@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3UjL6I5ko6VhW1QAqhFCsdSze2WYrmXzLNO8QJgPIBc_1731144993
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-From: Brian Gerst
-> Sent: 05 November 2024 15:58
->=20
-> From: Ard Biesheuvel <ardb@kernel.org>
->=20
-> Clang versions before 17 will not honour -fdirect-access-external-data
-> for the load of the stack cookie emitted into each function's prologue
-> and epilogue.
->=20
-> This is not an issue for the core kernel, as the linker will relax these
-> loads into LEA instructions that take the address of __stack_chk_guard
-> directly. For modules, however, we need to work around this, by dealing
-> with R_X86_64_REX_GOTPCRELX relocations that refer to __stack_chk_guard.
->=20
-> In this case, given that this is a GOT load, the reference should not
-> refer to __stack_chk_guard directly, but to a memory location that holds
-> its address. So take the address of __stack_chk_guard into a static
-> variable, and fix up the relocations to refer to that.
->=20
-...
-> +#if defined(CONFIG_STACKPROTECTOR) && \
-> +    defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
-> +=09=09case R_X86_64_REX_GOTPCRELX: {
-> +=09=09=09static unsigned long __percpu *const addr =3D &__stack_chk_guar=
-d;
+On Wed, 6 Nov 2024 13:35:09 -0800
+Boqun Feng <boqun.feng@gmail.com> wrote:
+
+> On Fri, Nov 01, 2024 at 10:01:20AM +0900, FUJITA Tomonori wrote:
+>> Add read_poll_timeout functions which poll periodically until a
+>> condition is met or a timeout is reached.
+>> 
+>> C's read_poll_timeout (include/linux/iopoll.h) is a complicated macro
+>> and a simple wrapper for Rust doesn't work. So this implements the
+>> same functionality in Rust.
+>> 
+>> The C version uses usleep_range() while the Rust version uses
+>> fsleep(), which uses the best sleep method so it works with spans that
+>> usleep_range() doesn't work nicely with.
+>> 
+>> Unlike the C version, __might_sleep() is used instead of might_sleep()
+>> to show proper debug info; the file name and line
+>> number. might_resched() could be added to match what the C version
+>> does but this function works without it.
+>> 
+>> The sleep_before_read argument isn't supported since there is no user
+>> for now. It's rarely used in the C version.
+>> 
+>> For the proper debug info, readx_poll_timeout() and __might_sleep()
+>> are implemented as a macro. We could implement them as a normal
+>> function if there is a clean way to get a null-terminated string
+>> without allocation from core::panic::Location::file().
+>> 
+> 
+> So printk() actually support printing a string with a precison value,
+> that is: a format string "%.*s" would take two inputs, one for the length
+> and the other for the pointer to the string, for example you can do:
+> 
+> 	char *msg = "hello";
+> 
+> 	printk("%.*s\n", 5, msg);
+> 
+> This is similar to printf() in glibc [1].
+> 
+> If we add another __might_sleep_precision() which accepts a file name
+> length:
+> 
+> 	void __might_sleep_precision(const char *file, int len, int line)
+> 
+> then we don't need to use macro here, I've attached a diff based
+> on your whole patchset, and it seems working.
+
+Ah, I didn't know this.
+
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> index be2e8c0a187e..b405b0d19bac 100644
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -87,6 +87,8 @@ extern int dynamic_might_resched(void);
+>  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+>  extern void __might_resched(const char *file, int line, unsigned int offsets);
+>  extern void __might_sleep(const char *file, int line);
+> +extern void __might_resched_precision(const char *file, int len, int line, unsigned int offsets);
+> +extern void __might_sleep_precision(const char *file, int len, int line);
+>  extern void __cant_sleep(const char *file, int line, int preempt_offset);
+>  extern void __cant_migrate(const char *file, int line);
+>  
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 43e453ab7e20..f872aa18eaf0 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8543,7 +8543,7 @@ void __init sched_init(void)
+>  
+>  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+>  
+> -void __might_sleep(const char *file, int line)
+> +void __might_sleep_precision(const char *file, int len, int line)
+>  {
+>  	unsigned int state = get_current_state();
+>  	/*
+> @@ -8557,7 +8557,14 @@ void __might_sleep(const char *file, int line)
+>  			(void *)current->task_state_change,
+>  			(void *)current->task_state_change);
+>  
+> -	__might_resched(file, line, 0);
+> +	__might_resched_precision(file, len, line, 0);
+> +}
 > +
-> +=09=09=09if (sym->st_value !=3D (u64)addr) {
-> +=09=09=09=09pr_err("%s: Unsupported GOTPCREL relocation\n", me->name);
-> +=09=09=09=09return -ENOEXEC;
-> +=09=09=09}
+> +void __might_sleep(const char *file, int line)
+> +{
+> +	long len = strlen(file);
 > +
-> +=09=09=09val =3D (u64)&addr + rel[i].r_addend;
-> +=09=09=09fallthrough;
-> +=09=09}
-> +#endif
+> +	__might_sleep_precision(file, len, line);
+>  }
+>  EXPORT_SYMBOL(__might_sleep);
+>  
+> @@ -8582,7 +8589,7 @@ static inline bool resched_offsets_ok(unsigned int offsets)
+>  	return nested == offsets;
+>  }
+>  
+> -void __might_resched(const char *file, int line, unsigned int offsets)
+> +void __might_resched_precision(const char *file, int len, int line, unsigned int offsets)
+>  {
+>  	/* Ratelimiting timestamp: */
+>  	static unsigned long prev_jiffy;
+> @@ -8605,8 +8612,8 @@ void __might_resched(const char *file, int line, unsigned int offsets)
+>  	/* Save this before calling printk(), since that will clobber it: */
+>  	preempt_disable_ip = get_preempt_disable_ip(current);
+>  
+> -	pr_err("BUG: sleeping function called from invalid context at %s:%d\n",
+> -	       file, line);
+> +	pr_err("BUG: sleeping function called from invalid context at %.*s:%d\n",
+> +	       len, file, line);
+>  	pr_err("in_atomic(): %d, irqs_disabled(): %d, non_block: %d, pid: %d, name: %s\n",
+>  	       in_atomic(), irqs_disabled(), current->non_block_count,
+>  	       current->pid, current->comm);
+> @@ -8631,6 +8638,13 @@ void __might_resched(const char *file, int line, unsigned int offsets)
+>  	dump_stack();
+>  	add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
+>  }
+> +
+> +void __might_resched(const char *file, int line, unsigned int offsets)
+> +{
+> +	long len = strlen(file);
+> +
+> +	__might_resched_precision(file, len, line, offsets);
+> +}
+>  EXPORT_SYMBOL(__might_resched);
+>  
+>  void __cant_sleep(const char *file, int line, int preempt_offset)
 
-Doesn't this depend on the compiler used to compile the module not that
-used to compile this code?
-(In principle external modules should be able to use a different compiler.)
-
-So the CLANG tests should be replaced by a comment.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Cc scheduler people to ask if they would accept the above change for
+Rust or prefer that Rust itself handles the null-terminated string
+issue.
 
