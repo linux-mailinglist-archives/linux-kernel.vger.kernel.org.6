@@ -1,126 +1,285 @@
-Return-Path: <linux-kernel+bounces-402668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E2D9C2A49
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:15:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32E909C2A4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:25:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368FA1F2276A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:15:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F5A1F21BF3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BAF13D503;
-	Sat,  9 Nov 2024 05:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1C713D516;
+	Sat,  9 Nov 2024 05:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtDf7yUp"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j2NZaIko"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707198836;
-	Sat,  9 Nov 2024 05:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4F613B2A2;
+	Sat,  9 Nov 2024 05:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731129340; cv=none; b=EhsZMLymRgcPkHp1jVQg34GOJ64B2TpkXTsc6tdcqUJ6M5iAY2hgR8nyIUe5foESLi1Ww+FCJzsm1vYOfnkiWd7plu3m2afDFQ/TXMr5yIzAQMHgILTl1l/lBwhBZVrQZa31Nm1L0mrdK03TY3TQjJxou4ELUdKJUBSDJHcDSDE=
+	t=1731129938; cv=none; b=BTv0BAi5wKundKNQ65fG8ZCxDJSIzWUDjvZqWcIKLWfbMjDYyaY9UXwwwK3DIjU1TYdMuoXP4uRkVp3xsJblFwpgsupBkkxomEHcw573I/DJjnE8RLWd+gk3jmPMKlox0IQK+SwWIyHH2oyL3hYcwwdo055kZqqsFT64LKVt8Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731129340; c=relaxed/simple;
-	bh=srDFTsNAwuMLwHBgKmjyNApD14mJpB3efD2+Gkm8Cis=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=RY0PN0eP3WMCGqUr4fZwHDkxnAYxjZyJASUblm/RWWVwdfMYJD5o9eAA2sT3i5BuAwJ81MJAaV5xnMlNeutKN+y6arjdDwr3xqfGCXMOOE2csV7jgoFDB7ZwHi7z9FjunqrFE1o6XPn2nVGY7haLMiNnKgl7bpVTaSlG6lT4lcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtDf7yUp; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb47387ceso31758305ad.1;
-        Fri, 08 Nov 2024 21:15:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731129337; x=1731734137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5jfnBisue6Ja6w9UlHzoj6XV7CgJYJ+QYjUAoUurtcw=;
-        b=HtDf7yUp8O1eWJCbdiMr2S0D/3PXmvdevQvyKTWW+c6bZwUV/iB5F9PNP9zHkrACYL
-         GMQYF5Q4ySQlNF5ct1kWnSOCDTnONPq7pw7U9h78LZ+xaR7AYw5tXFClD+5S7HLnizrQ
-         FYoA069XpoNM0Hh2m5KC2ab5zzUv/T3nqLvDLm8E5IpsgMCEYxNuJQCbCxKH12VEXQwx
-         Yr4MiJCNWE0gLuxVUsALLlinGQ9iuCo6o6TVZLxZS4+zZTeDEUmxoPQMVjPN6VXh/sSq
-         jYvkke5uVEeFCDlWVZAJCIc2QHXJlSTbzVhT764C3gvsHzNL7m+Hrp3MMPLg1sN7Ftxn
-         Vc6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731129337; x=1731734137;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5jfnBisue6Ja6w9UlHzoj6XV7CgJYJ+QYjUAoUurtcw=;
-        b=rbsB8lKlaHOU3nqI4UdfOIWo6eG1J9e+awwqL6CfMRR1VeJcmWAT4haYGdR0Ty+dzI
-         tH/T1ZGSLOrspvcxt/MBoesG5joisV2Zu0YQS7Gx872R4eMGfHYgPdwjyrE2sponDZ59
-         llAet6W/MB1qjyKNCsrbkptzeC/t4Rd2yB2GNebX9KmMDwyb7t5ChngpQ4P9KPeAOy5E
-         SO1lgi8tqUdQbcTp0pfUviYT0cZ8lUV6DFXjQuZ/vP5cU4RpI1tPvzUXUsQDlV+i0MUe
-         kupMlY8cGWvcK5+OheXErEFWyMtYDyLYAzUcvcTkjGmGh5jBWq0Kne6aAytIWJ9bcThZ
-         BHbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjBkclh75HEmdf2JKvAcQrcSLAdAXIus8YYNXNUMMt0CyBBXIZQA1+0MgTtbou4iGIi92IjcyoLxxIrDhaAAI=@vger.kernel.org, AJvYcCWF5RcAtTNNTvxwv8dRGtO0hBnpM/jy5FHcQ4JwyTUMwXvM/6vNZ4hOJmK2egNCrzZ/W66kjj+v@vger.kernel.org, AJvYcCWwO34uiXo934uwyHqiHTuyHqSD9AveIqH7Mm9+exAjj96GnJqbkOFpsYSLGGcld1mrPRkLCP8fZdoobvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwb9R+jCBCamKkOlA9DCnN4FyXx1lvouItxAms9UbPL9ikd/DJ
-	WvCSrYIkxAqgVZFYjz5WcxwCR+npMGCs9KAD4hBdB8YgGJj2e+1N
-X-Google-Smtp-Source: AGHT+IG6vNIHXnZhYkkO0JMdGpVleHKOAwiCz9Uit7eCDcaw1dQ2hz6+QHxw3bblemdwa6m/gqOhkA==
-X-Received: by 2002:a17:902:d4cb:b0:20c:8f98:5dbe with SMTP id d9443c01a7336-2118354bfe9mr75976185ad.33.1731129336685;
-        Fri, 08 Nov 2024 21:15:36 -0800 (PST)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41985sm39264925ad.168.2024.11.08.21.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 21:15:36 -0800 (PST)
-Date: Sat, 09 Nov 2024 14:15:20 +0900 (JST)
-Message-Id: <20241109.141520.1319530714927998446.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
- sboyd@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
-Subject: Re: [PATCH v5 6/7] rust: Add read_poll_timeout functions
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Zyuy25viG51DDRk7@Boquns-Mac-mini.local>
-References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
-	<20241101010121.69221-7-fujita.tomonori@gmail.com>
-	<Zyuy25viG51DDRk7@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1731129938; c=relaxed/simple;
+	bh=V7Rias5c3jg1UeLsuYAuYQvGfeJT4hPJeYrmiPdzrs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaiWafMB8gTVv38X0frLCWMDtSVBhq53ev/1ztogoM1/MPY93IEwvMC2/xdfMuossRWqTldKsFd95IbWNBf2uDgxzAh7hrYzemgrTnBlp5POFZlY7emVXGspx7A/wi5A13JtBanQopXoI3rGK97AwV/AsbwJ6RFUF82pXS3/Y6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j2NZaIko; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731129936; x=1762665936;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=V7Rias5c3jg1UeLsuYAuYQvGfeJT4hPJeYrmiPdzrs0=;
+  b=j2NZaIkoxFeG3x3X0cZUZ9CZ5PDp6U24NXKLuQDeIVCGeBKMfKRaW7Pj
+   j2aj2KoF6LmSKsCvf0KW0j7rGM3dirVDJykblFEC967mM6qWaAIO6JxkV
+   S8se4QymOu+woD5ymLIY4SQDpDjtrVSBId0BAJ5ErIPXTfNww9e8/r7sX
+   M40Mte0YQRh2mrY3S8BCsszSx5GaT+8b+x6Ge06BT58uhv0QMFHpUYtpf
+   gOWHHSM1UvS+hDhCIUojM7zO1BLZD4Ye2yyxZv7rZB1uLTHt1fNti3qyi
+   yPmCakAQn3Rwz/dk+Ha/cHQr6hJAX2p95cTK93z+GECDcmxS3GgjI5rLd
+   g==;
+X-CSE-ConnectionGUID: L1KHj/mPSyidEGSDA+1Cmw==
+X-CSE-MsgGUID: QwsjFY0JSQCEdkliqvcOUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="31244370"
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="31244370"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 21:25:35 -0800
+X-CSE-ConnectionGUID: u1xmh9p1SpC3dBpK8TB6yA==
+X-CSE-MsgGUID: s4hlyDFJQem3BV+GLbwc2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="109196451"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Nov 2024 21:25:32 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9dyU-000s6K-1e;
+	Sat, 09 Nov 2024 05:25:30 +0000
+Date: Sat, 9 Nov 2024 13:24:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>, shakeel.butt@linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, hannes@cmpxchg.org,
+	mhocko@kernel.org, roman.gushchin@linux.dev, muchun.song@linux.dev,
+	akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
+Message-ID: <202411091344.51lAbqmY-lkp@intel.com>
+References: <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
 
-On Wed, 6 Nov 2024 10:18:03 -0800
-Boqun Feng <boqun.feng@gmail.com> wrote:
+Hi Joshua,
 
-> On Fri, Nov 01, 2024 at 10:01:20AM +0900, FUJITA Tomonori wrote:
-> [...]
->> @@ -44,6 +45,7 @@
->>  pub mod page;
->>  pub mod prelude;
->>  pub mod print;
->> +pub mod processor;
->>  pub mod sizes;
->>  pub mod rbtree;
->>  mod static_assert;
->> diff --git a/rust/kernel/processor.rs b/rust/kernel/processor.rs
->> new file mode 100644
->> index 000000000000..eeeff4be84fa
->> --- /dev/null
->> +++ b/rust/kernel/processor.rs
-> 
-> What else would we put into this file? `smp_processor_id()` and IPI
-> functionality?
+kernel test robot noticed the following build errors:
 
-Yeah, we would need smp_processor_id() but not sure about the other
-functions. There aren't many processor-related functions that Rust
-drivers directly need to call, I guess.
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on next-20241108]
+[cannot apply to linus/master v6.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> If so, I would probably want to rename this to cpu.rs.
+url:    https://github.com/intel-lab-lkp/linux/commits/Joshua-Hahn/memcg-hugetlb-Introduce-memcg_accounts_hugetlb/20241109-053045
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20241108212946.2642085-3-joshua.hahnjy%40gmail.com
+patch subject: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
+config: x86_64-buildonly-randconfig-002-20241109 (https://download.01.org/0day-ci/archive/20241109/202411091344.51lAbqmY-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411091344.51lAbqmY-lkp@intel.com/reproduce)
 
-Fine by me, I'll go with cpu.rs in the next version.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411091344.51lAbqmY-lkp@intel.com/
 
-I chose processor.rs just because the C side uses processor.h for
-cpu_relax() but cpu.rs also looks good.
+All errors (new ones prefixed by >>):
+
+   In file included from mm/hugetlb.c:8:
+   In file included from include/linux/mm.h:2211:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/hugetlb.c:37:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/hugetlb.c:3083:8: error: call to undeclared function 'mem_cgroup_charge_hugetlb'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    3083 |         ret = mem_cgroup_charge_hugetlb(folio, gfp);
+         |               ^
+   mm/hugetlb.c:3083:8: note: did you mean 'mem_cgroup_charge_skmem'?
+   include/linux/memcontrol.h:1613:6: note: 'mem_cgroup_charge_skmem' declared here
+    1613 | bool mem_cgroup_charge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages,
+         |      ^
+   3 warnings and 1 error generated.
+
+
+vim +/mem_cgroup_charge_hugetlb +3083 mm/hugetlb.c
+
+  2963	
+  2964	struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+  2965					    unsigned long addr, int avoid_reserve)
+  2966	{
+  2967		struct hugepage_subpool *spool = subpool_vma(vma);
+  2968		struct hstate *h = hstate_vma(vma);
+  2969		struct folio *folio;
+  2970		long map_chg, map_commit;
+  2971		long gbl_chg;
+  2972		int ret, idx;
+  2973		struct hugetlb_cgroup *h_cg = NULL;
+  2974		bool deferred_reserve;
+  2975		gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
+  2976	
+  2977		idx = hstate_index(h);
+  2978		/*
+  2979		 * Examine the region/reserve map to determine if the process
+  2980		 * has a reservation for the page to be allocated.  A return
+  2981		 * code of zero indicates a reservation exists (no change).
+  2982		 */
+  2983		map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
+  2984		if (map_chg < 0)
+  2985			return ERR_PTR(-ENOMEM);
+  2986	
+  2987		/*
+  2988		 * Processes that did not create the mapping will have no
+  2989		 * reserves as indicated by the region/reserve map. Check
+  2990		 * that the allocation will not exceed the subpool limit.
+  2991		 * Allocations for MAP_NORESERVE mappings also need to be
+  2992		 * checked against any subpool limit.
+  2993		 */
+  2994		if (map_chg || avoid_reserve) {
+  2995			gbl_chg = hugepage_subpool_get_pages(spool, 1);
+  2996			if (gbl_chg < 0)
+  2997				goto out_end_reservation;
+  2998	
+  2999			/*
+  3000			 * Even though there was no reservation in the region/reserve
+  3001			 * map, there could be reservations associated with the
+  3002			 * subpool that can be used.  This would be indicated if the
+  3003			 * return value of hugepage_subpool_get_pages() is zero.
+  3004			 * However, if avoid_reserve is specified we still avoid even
+  3005			 * the subpool reservations.
+  3006			 */
+  3007			if (avoid_reserve)
+  3008				gbl_chg = 1;
+  3009		}
+  3010	
+  3011		/* If this allocation is not consuming a reservation, charge it now.
+  3012		 */
+  3013		deferred_reserve = map_chg || avoid_reserve;
+  3014		if (deferred_reserve) {
+  3015			ret = hugetlb_cgroup_charge_cgroup_rsvd(
+  3016				idx, pages_per_huge_page(h), &h_cg);
+  3017			if (ret)
+  3018				goto out_subpool_put;
+  3019		}
+  3020	
+  3021		ret = hugetlb_cgroup_charge_cgroup(idx, pages_per_huge_page(h), &h_cg);
+  3022		if (ret)
+  3023			goto out_uncharge_cgroup_reservation;
+  3024	
+  3025		spin_lock_irq(&hugetlb_lock);
+  3026		/*
+  3027		 * glb_chg is passed to indicate whether or not a page must be taken
+  3028		 * from the global free pool (global change).  gbl_chg == 0 indicates
+  3029		 * a reservation exists for the allocation.
+  3030		 */
+  3031		folio = dequeue_hugetlb_folio_vma(h, vma, addr, avoid_reserve, gbl_chg);
+  3032		if (!folio) {
+  3033			spin_unlock_irq(&hugetlb_lock);
+  3034			folio = alloc_buddy_hugetlb_folio_with_mpol(h, vma, addr);
+  3035			if (!folio)
+  3036				goto out_uncharge_cgroup;
+  3037			spin_lock_irq(&hugetlb_lock);
+  3038			if (!avoid_reserve && vma_has_reserves(vma, gbl_chg)) {
+  3039				folio_set_hugetlb_restore_reserve(folio);
+  3040				h->resv_huge_pages--;
+  3041			}
+  3042			list_add(&folio->lru, &h->hugepage_activelist);
+  3043			folio_ref_unfreeze(folio, 1);
+  3044			/* Fall through */
+  3045		}
+  3046	
+  3047		hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, folio);
+  3048		/* If allocation is not consuming a reservation, also store the
+  3049		 * hugetlb_cgroup pointer on the page.
+  3050		 */
+  3051		if (deferred_reserve) {
+  3052			hugetlb_cgroup_commit_charge_rsvd(idx, pages_per_huge_page(h),
+  3053							  h_cg, folio);
+  3054		}
+  3055	
+  3056		spin_unlock_irq(&hugetlb_lock);
+  3057	
+  3058		hugetlb_set_folio_subpool(folio, spool);
+  3059	
+  3060		map_commit = vma_commit_reservation(h, vma, addr);
+  3061		if (unlikely(map_chg > map_commit)) {
+  3062			/*
+  3063			 * The page was added to the reservation map between
+  3064			 * vma_needs_reservation and vma_commit_reservation.
+  3065			 * This indicates a race with hugetlb_reserve_pages.
+  3066			 * Adjust for the subpool count incremented above AND
+  3067			 * in hugetlb_reserve_pages for the same page.  Also,
+  3068			 * the reservation count added in hugetlb_reserve_pages
+  3069			 * no longer applies.
+  3070			 */
+  3071			long rsv_adjust;
+  3072	
+  3073			rsv_adjust = hugepage_subpool_put_pages(spool, 1);
+  3074			hugetlb_acct_memory(h, -rsv_adjust);
+  3075			if (deferred_reserve) {
+  3076				spin_lock_irq(&hugetlb_lock);
+  3077				hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
+  3078						pages_per_huge_page(h), folio);
+  3079				spin_unlock_irq(&hugetlb_lock);
+  3080			}
+  3081		}
+  3082	
+> 3083		ret = mem_cgroup_charge_hugetlb(folio, gfp);
+  3084		if (ret == -ENOMEM) {
+  3085			spin_unlock_irq(&hugetlb_lock);
+  3086			free_huge_folio(folio);
+  3087			return ERR_PTR(-ENOMEM);
+  3088		}
+  3089		else if (!ret)
+  3090			lruvec_stat_mod_folio(folio, NR_HUGETLB,
+  3091			      pages_per_huge_page(h));
+  3092	
+  3093		return folio;
+  3094	
+  3095	out_uncharge_cgroup:
+  3096		hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h), h_cg);
+  3097	out_uncharge_cgroup_reservation:
+  3098		if (deferred_reserve)
+  3099			hugetlb_cgroup_uncharge_cgroup_rsvd(idx, pages_per_huge_page(h),
+  3100							    h_cg);
+  3101	out_subpool_put:
+  3102		if (map_chg || avoid_reserve)
+  3103			hugepage_subpool_put_pages(spool, 1);
+  3104	out_end_reservation:
+  3105		vma_end_reservation(h, vma, addr);
+  3106		return ERR_PTR(-ENOSPC);
+  3107	}
+  3108	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
