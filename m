@@ -1,223 +1,112 @@
-Return-Path: <linux-kernel+bounces-402611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3829C29A7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:10:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 856659C29A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F205B1C21B11
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CFBC1C219FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7195313AD2F;
-	Sat,  9 Nov 2024 03:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBE113AD26;
+	Sat,  9 Nov 2024 03:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OS7wiuAU"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b97qmbzx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068FA3B2BB
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 03:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4D2364A9;
+	Sat,  9 Nov 2024 03:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731121835; cv=none; b=EByoJGbEfCLeAfU/N1x3kPlLYZktawb6GyNa07DT5YMvRKseDCtQNpxocLRzn0BRNGMVBsaIxhM/31gyWhfaZ6IazwrvrW4Z5eAFRl3nJeTrldXPfm/Q0lCDyckUNtV7hutxaGUHMmfoy9aZv4lJxN1pr6AAZp8ULkfIIhFyu2M=
+	t=1731122039; cv=none; b=t3G9J0XpykKYBhaK5tkaaS8Xxcqp3GjDENItLKpk/mm32Z7Ogm8r0kACqbYMyW5qMnJmmF6BpxQeS+ff0hj1DPDat75gHyDKVUNiZhCnFXfrO3ct5Doh+MrArWr3Ej0r+yrCm931CAKz4lfsKlf6qzRqWZYvYIgtdDM/B7wmtOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731121835; c=relaxed/simple;
-	bh=4UgThLrDZZY59eJfYvRgppw6/Thyl4wP8FGOTuKUcc4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bUuIMn1W5ikrOg6W4xzjrnlmLa3CoaEGb6n6u4P32/oPWODggwKMRiE1WrQHNUJQ4v0HkQitOFE9OdkhF8Ad1WYCDlq4sMohf/QX4K62+f1Utek7kl5oyAyp9i9KTYNcdCruBpFt4mF1CvlUidU2zxF7Ch5jWDV+DoiksVsUSZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OS7wiuAU; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7eae96e6624so2009417a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 19:10:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1731121833; x=1731726633; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFSZuYn/g10oVqG6E7YepGOGxnDsKleYWQWC34Wp1Yk=;
-        b=OS7wiuAUOGemdt1uPnyNX6YIxwRj2eb8UcEIfJeiddGP/jwpDJc9nWTSK+tJXXY3SA
-         xwdYJOFHmhgemkLn987SFR3n7GbR6sq7G0egKKsfaJ/wsrgUTuHsJilGCu0hKCmTfSPv
-         zJJUtbZWhgZjCCBk7w5gf2szbSZAIanyuoB5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731121833; x=1731726633;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oFSZuYn/g10oVqG6E7YepGOGxnDsKleYWQWC34Wp1Yk=;
-        b=dHc1UpSfMS6Sgw0VEydf043MErNq3MFOLIhx4UdGrVDwnN3+LDH0DKU/8BBijB4YG/
-         Eb4AZg68sqrq8/IUUdnjT0nLYJ1+h0BTX2ptMcx+/zpTJgcouLIqf+75NvO2gBHJPB7/
-         8rQP80Hzk3F1A6GbVNzMLs/FX+6og4s2CHRHmSxExPbCZ6bsklvMYnAJhQfWrJyz/ZPy
-         o2Kx1By7E9oVOxzeNOoNs0j0iw9o1ArtsUNBkX74ail7jOfndVum/zl9eOfbaTmn8fay
-         g4rbcTrk68nTIws3RRWNVRt0tB/AhhbQNaFmwrxquAzkYVRGhK/skV0iWNtw8ESYYHWv
-         4qYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJEK261kpa3SCgjhhfhrKH1Usq0eTuqBBlkAvnI/TXuiEC3utR12S0XWiEWqrsZ1EbHg4OuQHQBoGAAHY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsfGEFATJeibC9GzS2rCsYH9fdcuBn13fqfO62DThzNWPYA+6B
-	W1sS6gp6z7xuUOZF6VQ1DKCs5Hmc/wYONWmShiAwWDqUgE2EkRSjos+4T5uSMxPysg1O1tZVW6O
-	NYoa2ZiJp4aNZFJVvY01iM5I7GyojlPAULNRS
-X-Google-Smtp-Source: AGHT+IEig191RL5Op4N3zNHddI06wyCis8+MhHZDJVeYsHlRxCy9FILeIDozc81OaHnED7TCdHvR/bImrZ+7USTkOfk=
-X-Received: by 2002:a17:90b:224f:b0:2db:89f0:99a3 with SMTP id
- 98e67ed59e1d1-2e9b1780b4amr7120147a91.26.1731121832926; Fri, 08 Nov 2024
- 19:10:32 -0800 (PST)
+	s=arc-20240116; t=1731122039; c=relaxed/simple;
+	bh=3iuSVudXSVZ71knUjkoNCSsIOWru8sa9e6szXIqlfzc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lDycEIQihqVCZsAQQ7JhzRkfzzruJV6HGf8/L82RrHj+yAN/vmQntQo+2PFc8I+pcyE8DvSy7ta73KnJ8wrBX6KoPxqI9pPMWRkYJYppkhIMYu0pdSbX9cb0f85Ok3opJzqTSMXPBd4nDGLMIIww2SNGnL4OS6LUGjYdCwv2qxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b97qmbzx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A38A4C4CECD;
+	Sat,  9 Nov 2024 03:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731122038;
+	bh=3iuSVudXSVZ71knUjkoNCSsIOWru8sa9e6szXIqlfzc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=b97qmbzxHSMDPTebIajbloR6t/MitYhUl5O/LUAQbMy+TsgopB10WpUI/9piWjhES
+	 V1gnbjuYspRzOZipR3l2z2IW3A1oEfqPsHD3TA2AUyem0X5uRIrkPxVcpdeBH8ryDl
+	 HEm9L0QOeZC4/7PBHQH2qi87weYV74syaBNRqV9nutFYnq2xcwVPLB0Yd8NUOY600N
+	 Iae6osyixnV+3cici8b6Ykjuc4JGPYmOuFFvymAzlMzVVAtxxQuXBHwaIXxylf2WaF
+	 FZ/7QdV9bk6NODxQ4FOPhUh3ydjxvvM2+LABxhYipTZuf+6fj9UcPIrK/6pLIpRXIe
+	 vMo2mPAowliyQ==
+From: Mark Brown <broonie@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241107144712.1305638-1-olivier.moysan@foss.st.com>
+References: <20241107144712.1305638-1-olivier.moysan@foss.st.com>
+Subject: Re: [PATCH v2 0/2] ASoC: stm32: i2s: add stm32mp25 support
+Message-Id: <173112203540.168194.9961366675088520447.b4-ty@kernel.org>
+Date: Sat, 09 Nov 2024 03:13:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <384c034c23d63dec14e0cc333b8b0b2a778edcf1.1731092818.git.dxu@dxuuu.xyz>
- <CACKFLimKe8Kp5f=RzvoDFmmjPv1ZvUjOG-8woEJ9XXLNSGtSmw@mail.gmail.com>
-In-Reply-To: <CACKFLimKe8Kp5f=RzvoDFmmjPv1ZvUjOG-8woEJ9XXLNSGtSmw@mail.gmail.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Sat, 9 Nov 2024 08:40:20 +0530
-Message-ID: <CALs4sv0gt7stf+ADcsi7Yt-X8SZ=gYZuYfk9sQCLzPOjaabFvQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] bnxt_en: ethtool: Supply ntuple rss context action
-To: Michael Chan <michael.chan@broadcom.com>
-Cc: Daniel Xu <dxu@dxuuu.xyz>, kuba@kernel.org, edumazet@google.com, 
-	davem@davemloft.net, andrew+netdev@lunn.ch, pabeni@redhat.com, 
-	martin.lau@linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000f0ea3f06267235a0"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
---000000000000f0ea3f06267235a0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, 07 Nov 2024 15:47:10 +0100, Olivier Moysan wrote:
+> Update STM32 I2S driver and binding to support STM32MP25 SoCs.
+> 
+> Changes in v2:
+> - Rearrange clocks and clock-names ranges depending on compatible.
+> 
+> Olivier Moysan (2):
+>   ASoC: dt-bindings: add stm32mp25 support for i2s
+>   ASoC: stm32: i2s: add stm32mp25 support
+> 
+> [...]
 
-On Sat, Nov 9, 2024 at 6:19=E2=80=AFAM Michael Chan <michael.chan@broadcom.=
-com> wrote:
->
-> On Fri, Nov 8, 2024 at 11:07=E2=80=AFAM Daniel Xu <dxu@dxuuu.xyz> wrote:
-> >
-> > Commit 2f4f9fe5bf5f ("bnxt_en: Support adding ntuple rules on RSS
-> > contexts") added support for redirecting to an RSS context as an ntuple
-> > rule action. However, it forgot to update the ETHTOOL_GRXCLSRULE
-> > codepath. This caused `ethtool -n` to always report the action as
-> > "Action: Direct to queue 0" which is wrong.
-> >
-> > Fix by teaching bnxt driver to report the RSS context when applicable.
-> >
-> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
-> > ---
-> >  drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/driver=
-s/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> > index cfd2c65b1c90..a218802befa8 100644
-> > --- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> > +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-> > @@ -1187,10 +1187,14 @@ static int bnxt_grxclsrule(struct bnxt *bp, str=
-uct ethtool_rxnfc *cmd)
-> >                 }
-> >         }
-> >
-> > -       if (fltr->base.flags & BNXT_ACT_DROP)
-> > +       if (fltr->base.flags & BNXT_ACT_DROP) {
-> >                 fs->ring_cookie =3D RX_CLS_FLOW_DISC;
-> > -       else
-> > +       } else if (fltr->base.flags & BNXT_ACT_RSS_CTX) {
-> > +               fs->flow_type |=3D FLOW_RSS;
-> > +               cmd->rss_context =3D fltr->base.fw_vnic_id;
->
-> I think the rss_context should be the index and not the VNIC ID.
+Applied to
 
-No, for RSS contexts, we save their index in the fw_vnic_id of the
-filters. Hence what Daniel has done is correct.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
->
-> Pavan, please take a look.
->
-> > +       } else {
-> >                 fs->ring_cookie =3D fltr->base.rxq;
-> > +       }
-> >         rc =3D 0;
-> >
-> >  fltr_err:
-> > --
-> > 2.46.0
-> >
+Thanks!
 
---000000000000f0ea3f06267235a0
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+[1/2] ASoC: dt-bindings: add stm32mp25 support for i2s
+      commit: c69b7edc10d2fff4bcb3dd464ee26cbf22818fec
+[2/2] ASoC: stm32: i2s: add stm32mp25 support
+      commit: 125d0f698ad500b0092812e52a6c342ba055ae68
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEILXuouG4GDcX44jghMeFRN+9t/lIXUvC
-nhUkjDTRn1QBMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTEw
-OTAzMTAzM1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQAC1idk03EypRVVZ+KQys6j6jeh3arpBMUTe5Uwou6uL9rPCffG
-FR5iMKbICiHNgfPc99kBd90h3ZHJuq6VMbdei1gAqN6EIV6/sI3Wp2V5HHWT3Vkkrnv4J862V9/j
-Gw5UNKQl7fykoZjnBoqMOBKDYzpQ8qP+VtTR+hjNKxwutJzWLUYIRaLVPHp+FP1gQaqQ280JaqNq
-hWPScyBR5CfIWs3yHJLOHYw8NXG2dZmjbF5TS3XatK31vbRwQiPIuaXcCeCyxK5W3k+/6XCBnUKt
-uZ0VTUL+0uTWwHnaCVQiP5LvE5syqgn6t7trZUNSYTdZw9H9ipy3qEJEcAIXQB2x
---000000000000f0ea3f06267235a0--
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
