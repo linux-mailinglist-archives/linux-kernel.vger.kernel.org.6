@@ -1,186 +1,101 @@
-Return-Path: <linux-kernel+bounces-402779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EAA9C2C13
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:01:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0606D9C2C16
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6898F1F21F82
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:01:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CD0AB21EBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBA817B41B;
-	Sat,  9 Nov 2024 11:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7371547C0;
+	Sat,  9 Nov 2024 11:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNbBIdwA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1Qayx0t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C461714A1;
-	Sat,  9 Nov 2024 11:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFD913D886;
+	Sat,  9 Nov 2024 11:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731150026; cv=none; b=tIaMJsumOGa/9ntxp0Q9TG2lY3YEU4LjQq+fOSj+KovbMsmAzItOux88sGfE+mZrUt92jy0b6V8Yk1LuFOZj4uH4dYqvoKx8Lrf83yxNypdU3Wln4UDXQmtOP3rhDvXsgTvRxFLYWnZvVN0iUdlqWWbvlpbOI1CTvvhU9Gh5FY4=
+	t=1731150301; cv=none; b=m5zcBEfIvaBFSQc2YmCr8T29r/5YT0zdO5xa+286iCOpItPulUWbj8C01YUfAMMml7xa+FJ1KTl9PcwVcsNs10TLwhJ8pO1zsON3bq+UaOrsAZ7opLsSboogctHMW3ZIXSdoCHs9yIqv1YQHN/y1AMIa2UPE8MhuCdem9KtXwCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731150026; c=relaxed/simple;
-	bh=C2Ggr7/lBmMYcsEocbkbo4QN88kd46oS6nv6gv/iEgA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tdk/dATG25qZsglyCT58Eah/YnxsKARFmIPTJjIJ7bcjxWSt+heubNXQegR7RfBFXrym2p8Cgqt9rbePWhd/dMoFCDea+8diu5XmimP5/uizJpvVfQq1tIbRTQEkzQHqQkt8fPxwFAmTILMe7zoSgmLzD1bS63oRBbiOq4dcjdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNbBIdwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAA51C4CECE;
-	Sat,  9 Nov 2024 11:00:22 +0000 (UTC)
+	s=arc-20240116; t=1731150301; c=relaxed/simple;
+	bh=euqJK0ntVjQw+QOGivI7fOl8DgX26ZTRRMEWEMAcpIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgNoXT1NrarfilqHYp10XI7M9+9gbcx3mnmn7A1684mMtWFf8RjyzhOOQlJuxlPd4sa+6Gi1VtqCCeVdBsGOy6SFS/9kgwM2iI5UxphZNTLVDvFzau0bo3xQ9uH6Ii0uxIpigbA64FtcUz03QT9j/V9InNwGFteQq3fCUAvyl3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1Qayx0t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E826C4CECE;
+	Sat,  9 Nov 2024 11:05:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731150025;
-	bh=C2Ggr7/lBmMYcsEocbkbo4QN88kd46oS6nv6gv/iEgA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CNbBIdwAm3xS6s+wZ3pr+GNj3QD0NVrazS5bSRsfAn+kui58+vt57tSGgYlTJtj3p
-	 vxwpUW65Hu6ebxD/Gq5RA1ja2++m7Qz6dUgNWtByqvIHCrdlbkY3nm0Zj5u6az5JcS
-	 T4VAuRyZIaQ+WW8Ap2UDf3aiY7pDHOUV+aH6qb4ZxUbjeX5xoLeQFi2N91APv/y7Ot
-	 v2ZgVYMQ87KaBDAelMcPqHK30BqWFXJ6Vx6IjC0Tspm1wPfxKpzxQU1/EHLVTwgoTl
-	 9VzGA7WQ4b6W1tsdgRBDUGl6VDfK0YjNUP7pVr0l/CeiFcYpAllI+H50sPEU4JLGXH
-	 xI3XfRRrG+a4g==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Sat, 09 Nov 2024 13:00:08 +0200
-Subject: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable DSCP
- to priority map for RX
+	s=k20201202; t=1731150300;
+	bh=euqJK0ntVjQw+QOGivI7fOl8DgX26ZTRRMEWEMAcpIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h1Qayx0tdzHz3ogJQWZ7gcb117WFpIxOt92gsgRdNiHUDLqlF9kC6OvZAKris6b4B
+	 S2QCoDB6S/xtxpdH/yGV3Rhl/8FTdAAxjD+4ccDxbb1IkHgJlHrPYKf+nq1Vgnyvto
+	 mciowh+BpR9k0CIbcemuKV7Wc7/lGJQC0+tD8GRE2ENH9NoIDLUmJ7oh1riWjw9Mvl
+	 Nt8wwVfeS9o0m+RV7P9pNyRy6oKCQFiwpZ7LghKycDEcyem8IAdR2TWmE2Nv8htPSe
+	 Zo8QrDDcoPlT82RjCa69oVHB9iZ9xbS+8EYUCe/wMBLj8D1t6G2fpKHErt1HJUoAXB
+	 Ix3HLRQgokqHw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t9jH5-000000001KK-1JVj;
+	Sat, 09 Nov 2024 12:05:03 +0100
+Date: Sat, 9 Nov 2024 12:05:03 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH 0/3] arm64: dts: qcom: x1e80100: Fix missing address/size
+ cells warnings
+Message-ID: <Zy9B3wjv_ODlKBxW@hovoldconsulting.com>
+References: <20241109-x1e80100-fix-address-size-cells-missing-warnings-v1-0-c1e173369657@linaro.org>
+ <CAA8EJprX=2i335rm5JovkBYAYd=ku=yaNgFJVXh03BYEantGAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
-References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
-In-Reply-To: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-omap@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, srk@ti.com, Pekka Varis <p-varis@ti.com>, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3478; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=C2Ggr7/lBmMYcsEocbkbo4QN88kd46oS6nv6gv/iEgA=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnL0C/p93EJarGcx0+FJBWemE0yLPM2z20HXQIa
- aYHJxbEwvSJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZy9AvwAKCRDSWmvTvnYw
- k29bEADKJNXfzn+YvxF+JuefXvuYT2LJBi7Qms8XonKOcs3hnOQsdAwJoFZV3fLHrIWN9PLvJel
- tMc58bXPRsgZ8nRGAKCV8zReWoVIx97bXBqpiPlMpW4KbiiqqjvL+2f4zkkXP8mer2NWN8m2Vvv
- UqSzHonhYSLvf17laJQLzbo8T6B22v9hS4GMZip63e42+AfkbWM0ORyuScnOhZh/Ec7JZQttq2I
- aQb97TRzCgeOIZ1g3sRllJfxTlbxhpeZ+pi/70BhoqVg0vf55sZEg58HBkfp10OG8jnETAFc+y8
- hH8ijX8Voeyu/Eifakh+sDdOWmX+Jr6VlE9kYugmr3VMWfASRzdI4+6A5NWhSz6RhKkC1sweZpn
- fq7kiEePmyavQBXJzy69mlurNdcLikgM29Z25OipCk31Izk46dl9OmB6Of9f2dHmOXD13LJZX5A
- 52fpub8Z8ri3oZGOX4uZ/GDH3bYrs+BchP4wAaWlKQfg0nrMdCH4FcgPObgfIMD+lj07mzrdBaZ
- +M5QuG5oKKeNBR1qI/GDUzOgSifXvRlzxQup0y9tMzrypVmmDC4eWMY9L7bZJFjc8U/QYqX5lvX
- vAEoQaAu0OJVlDYr2JkJVi+u4jmCQjwyF5R2uN5jgZ3Rrkr+o3ghDnH8aM7jls2lshKETSQ5+iE
- SKsV2xB6qP+9x0Q==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA8EJprX=2i335rm5JovkBYAYd=ku=yaNgFJVXh03BYEantGAw@mail.gmail.com>
 
-AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
-appropriate priority queue via DSCP to Priority mapping registers
-(CPSW_PN_RX_PRI_MAP_REG).
+On Sat, Nov 09, 2024 at 12:49:16AM +0200, Dmitry Baryshkov wrote:
+> On Sat, 9 Nov 2024 at 00:05, Abel Vesa <abel.vesa@linaro.org> wrote:
+> >
+> > The commit 4b28a0dec185 ("of: WARN on deprecated #address-cells/#size-cells
+> > handling") now forces all parent nodes to describe the #adress-cells
+> > and #size-cells, otherwise it will throw a warning.
+> >
+> > Note that this patch is currently only in -next.
+> >
+> > Fix all warnings on the X Elite by adding these two properties to all
+> > parent nodes that don't have them.
+> 
+> The individual patches are incorrect per my understanding. None of
+> those child nodes use addressing, so adding #address-cells = <1> is
+> incorrect. Maybe it should be #address-cells = <0>, but that looks a
+> bit ridiculous to me.
 
-We use the upper 3 bits of the DSCP field that indicate IP Precedence
-to map traffic to 8 priority queues.
+Yeah, the warnings are bogus. Rob merged a fix last night:
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
- drivers/net/ethernet/ti/am65-cpsw-nuss.c | 54 ++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+	https://lore.kernel.org/lkml/20241108193547.2647986-2-robh@kernel.org/
 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 0520e9f4bea7..fab35e6aac7f 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -71,6 +71,8 @@
- #define AM65_CPSW_PORT_REG_RX_PRI_MAP		0x020
- #define AM65_CPSW_PORT_REG_RX_MAXLEN		0x024
- 
-+#define AM65_CPSW_PORTN_REG_CTL			0x004
-+#define AM65_CPSW_PORTN_REG_DSCP_MAP		0x120
- #define AM65_CPSW_PORTN_REG_SA_L		0x308
- #define AM65_CPSW_PORTN_REG_SA_H		0x30c
- #define AM65_CPSW_PORTN_REG_TS_CTL              0x310
-@@ -94,6 +96,10 @@
- /* AM65_CPSW_PORT_REG_PRI_CTL */
- #define AM65_CPSW_PORT_REG_PRI_CTL_RX_PTYPE_RROBIN	BIT(8)
- 
-+/* AM65_CPSW_PN_REG_CTL */
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN	BIT(1)
-+#define AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN	BIT(2)
-+
- /* AM65_CPSW_PN_TS_CTL register fields */
- #define AM65_CPSW_PN_TS_CTL_TX_ANX_F_EN		BIT(4)
- #define AM65_CPSW_PN_TS_CTL_TX_VLAN_LT1_EN	BIT(5)
-@@ -176,6 +182,53 @@ static void am65_cpsw_port_set_sl_mac(struct am65_cpsw_port *slave,
- 	writel(mac_lo, slave->port_base + AM65_CPSW_PORTN_REG_SA_L);
- }
- 
-+#define AM65_CPSW_DSCP_MAX	GENMASK(5, 0)
-+#define AM65_CPSW_PRI_MAX	GENMASK(2, 0)
-+#define AM65_CPSW_DSCP_PRI_PER_REG	8
-+#define AM65_CPSW_DSCP_PRI_SIZE		4	/* in bits */
-+static int am65_cpsw_port_set_dscp_map(struct am65_cpsw_port *slave, u8 dscp, u8 pri)
-+{
-+	int reg_ofs;
-+	int bit_ofs;
-+	u32 val;
-+
-+	if (dscp > AM65_CPSW_DSCP_MAX)
-+		return -EINVAL;
-+
-+	if (pri > AM65_CPSW_PRI_MAX)
-+		return -EINVAL;
-+
-+	/* 32-bit register offset to this dscp */
-+	reg_ofs = (dscp / AM65_CPSW_DSCP_PRI_PER_REG) * 4;
-+	/* bit field offset to this dscp */
-+	bit_ofs = AM65_CPSW_DSCP_PRI_SIZE * (dscp % AM65_CPSW_DSCP_PRI_PER_REG);
-+
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+	val &= ~(AM65_CPSW_PRI_MAX << bit_ofs);	/* clear */
-+	val |= pri << bit_ofs;			/* set */
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_DSCP_MAP + reg_ofs);
-+
-+	return 0;
-+}
-+
-+static void am65_cpsw_port_enable_dscp_map(struct am65_cpsw_port *slave)
-+{
-+	int dscp, pri;
-+	u32 val;
-+
-+	/* Map IP Precedence field to Priority */
-+	for (dscp = 0; dscp <= AM65_CPSW_DSCP_MAX; dscp++) {
-+		pri = dscp >> 3; /* Extract IP Precedence */
-+		am65_cpsw_port_set_dscp_map(slave, dscp, pri);
-+	}
-+
-+	/* enable port IPV4 and IPV6 DSCP for this port */
-+	val = readl(slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+	val |= AM65_CPSW_PN_REG_CTL_DSCP_IPV4_EN |
-+		AM65_CPSW_PN_REG_CTL_DSCP_IPV6_EN;
-+	writel(val, slave->port_base + AM65_CPSW_PORTN_REG_CTL);
-+}
-+
- static void am65_cpsw_sl_ctl_reset(struct am65_cpsw_port *port)
- {
- 	cpsw_sl_reset(port->slave.mac_sl, 100);
-@@ -921,6 +974,7 @@ static int am65_cpsw_nuss_ndo_slave_open(struct net_device *ndev)
- 	common->usage_count++;
- 
- 	am65_cpsw_port_set_sl_mac(port, ndev->dev_addr);
-+	am65_cpsw_port_enable_dscp_map(port);
- 
- 	if (common->is_emac_mode)
- 		am65_cpsw_init_port_emac_ale(port);
+so this should be resolved in linux-next on Monday or so.
 
--- 
-2.34.1
-
+Johan
 
