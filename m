@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8364B9C2A8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:19:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25219C2A8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A61041C20ED8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 023EA1C20FB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73152149C41;
-	Sat,  9 Nov 2024 06:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3E814A4F0;
+	Sat,  9 Nov 2024 06:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dnXeT+VR"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E3Pjp+lt"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19141149005
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9411494CE
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731133116; cv=none; b=BNhuF1VHdgpOO1Z4SNydQXn6CCdy12VeuA0O2XQQ0lS0PGqOWVpokGpPZwAsKdilMhMVV0L+erJgSFNvGeHEvRBRIW1XqMNPNMo/OpCPv3t79hWzVfFqcpS5n4v3nTmSo9LlDuo+Qu5t0zv79V72yYoYyTEwQ0tXgCa6lOZbLkk=
+	t=1731133118; cv=none; b=Y3ky9BPHO1K8Jw2uCi2YKyWgfBKBvoFyN78GUWFmcw1OCUPkLPMWmuHkgG6FPoG7HyABz8xrGyySPJrJ5P6kB8bNLoYnrjO80klv+Xz0TPjUsBGT9nN8BGpwl//z5fUeAsaAK4/PlrN2v/R6W6PUyNrTtGi3yKBYqHmxwDZSucE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731133116; c=relaxed/simple;
-	bh=ME2AZmwamAaxLUxl/n4fQb9W7X1LdXUNBLV0PhT15RU=;
+	s=arc-20240116; t=1731133118; c=relaxed/simple;
+	bh=YYtvRxCX/8ofSsiGiywJUusvMbgIjREiaLL6Eyo+6Dc=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=CA+jmBNC6UnVOZ8HvByU8+a9j8ymyOXBL+C8gU4JizCtF8FWQkEqRGde3PJeC8dnyLnrEtk/+tOY6iIw1hGjrvIrvyYq47eSCCggbMX2BLQm7v26Rv67RyjY1kHmYa3+6uUVGgCLYuD0+PK4OvuNjyjrXpFhyNT3OViGA2bU4XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dnXeT+VR; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=VhfIQ3VgL/QAfiy/U+leJgV2qi64vXJNiiNpaQNKCJFDIdtM7KEAf8IX+n9Vsn6Cl7OOeOaChIk76zfIWqPjv/3xSF/ANDS3ZKYPQHEmTi46wMatkfBCvkmnT1w5Vk+OtGWreWQzoUCKZNsNuOY2CXXYuYDe5lLP5YVfsHmPck0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E3Pjp+lt; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea527764c3so53533477b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:18:33 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eaae8b12bfso51022437b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:18:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731133113; x=1731737913; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vxvGl5vYfQ4Qd5F6bBw1bO/cdktsUuMIT15kf42GtQ=;
-        b=dnXeT+VRbC6RHvaW9eDa2sDhYBaYT5q7DK7ICpuof/Obqwn14xS6mzq2Crn+gkLp+9
-         29EgwgsMjlIdJnnpKn5lenP9C4nP7UfIJCY3UKUdAPF7yU4BBtqQ9LQar+3RwPZXlOCM
-         wGjGpZBOkn+1eI/2wipaV6iGibD77eSeyE4tvMLOn/Bp10ewVkPDA5ck+AYwfLjYOlz+
-         3e6eYBqm8T5eTR78StVtG6Prjw1k4lnuHfaVs33SLRd9h1Ws7BJN4BLht+VwW0A3SJvV
-         BjxSV1gz2lpbUsNLTapkFYIdyI34uk/YALYHQ+CUc6ciDIUFOcvV9qgVXl7+zNFWGSis
-         93gA==
+        d=google.com; s=20230601; t=1731133115; x=1731737915; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9GoQivGoNWmT9gaE1TJbS6tMzpRjpjMvcsKtvvg35Zs=;
+        b=E3Pjp+ltrE5x84U+RUsgy0dsj1eoeko2Q0vb53JUUlAW+9JyOjUyNeCuJTmZDGEqKB
+         yTBiwKEYtyUA90mULmzoq2NZumy51YsF6Nbe/SuEFnk1g1QcIMPYfDbenbfG4NsS1q3F
+         IUQeS2bdrpJXbFzk16uQJh5rGjS+YDzQUCKE0nJGGYs5y4qCcTdrD1yPb+p7HC589YWL
+         aN25C38fTq9pGOnAuWqFW6ElWbidCQicYp/ywZn5+eFWbIVf0QDLIHzggttdBOD58+bQ
+         D/p4N7dpH76sbo+C/lDuI4w68ESg+0W8CMuyaSCZsQyRRpPvtFdpj7LQPgwfHCoQ+cYH
+         Ouyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731133113; x=1731737913;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vxvGl5vYfQ4Qd5F6bBw1bO/cdktsUuMIT15kf42GtQ=;
-        b=j9RHMjOJIsndrpEUIFss2mF59FNsQJS+mu1CmhL0hqNJH9Q8e3II+BIublC30jHFLx
-         OZBAeRg7tQTGt4muiq4QkEkF1pxMFBg2yJ10SaX7xnDWjkV52jL0zEDm8fiNBMJU5uAe
-         M05uTcuIhDepGdLyBlJr75Oajcp2A4sX+FnO28zVZggLIHxqc7fkVSqs4An3sBzwEPa7
-         RSzwFaArCDkrCkcZBQgk4K0D814Qsu6k5z19bDVbGAen0+4my3SwUngTZM0LppZtuOje
-         Z/Aa4vVyqrjy1La7kMW1APwiYSIAfbMIc/rsaiRObDHiqtBDNaUaO2nHqfKMr3129T95
-         x6Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCWkV2K4Heh1j/a95fj0g3bc6lKCtvb9r+4pnCCtyXrp48G+1CbkjL33eJmq/Zh3cl8I3towVltpgs7yPNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPd17M58K65IbjhGgHxBcyYpZcP74EnCny9b6OVXyEPcDFHfuk
-	Q+3T3xeLy7b1SinJ3rC3wAVje6tmcnDlKbdUpeoLSo8vuDcJC0lUDHpkythL3yteGFRX4LfOszH
-	pRE5w3g==
-X-Google-Smtp-Source: AGHT+IEfG4TB30bVTiocdZ7kQXgcw5C6ysvWB7xUMUoxLuqo3Co0e5PtXrMrwI+6ndfy0XGF1pxJGm+cp/bF
+        d=1e100.net; s=20230601; t=1731133115; x=1731737915;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9GoQivGoNWmT9gaE1TJbS6tMzpRjpjMvcsKtvvg35Zs=;
+        b=wR3DnvcOFyUaKYnHJroffBs+xAay1LuB/YsEEMztLi0LIJ76Ud/Wkhz7BM63nOcRnW
+         AtthQwb2tBbt17PN7l7piYe3v0euHDA+1A5que8ntgOGyR+a+q1d5Rp1xQQv9Byhspqg
+         KHXNQzQfKeovxJq7l/m6t4Sc0+OLSSbRGKnudO4QUZw8SpbcrUEb6TrpAgOkwnpyX9YW
+         /4kKp+kB/IKOXtiOYMbBZFcuIQEEqHONeSRcQYcT6LLERvdAsebrFY7OIRpcj3ej6KRS
+         A7fP++Ntrapv4if7LKb7lQ+ZVntsElHAT6u40Elk3tyyzyhDh96QmEAOkzxiESt9wZ9d
+         ko5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXBJZNQMcz8RaQBsJOh74DIIW+zf0hGLXAtpCKfGPrj3+5MqitGyPUagX3CmbfCniTUp90/dvq4hSMUczw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/wY+oTxz97dHxbXSGcy1yT43jd7g0oSvKYWHpoNjVO08mHlpG
+	ZpHf/1WHXK2k+YkPEwoXHxoDoJ+3aEQ/CGEuwbeeDOAFKW+QNKmEXAT76vGD+pP5uV3akJSIRZU
+	/TnwJOQ==
+X-Google-Smtp-Source: AGHT+IHN8AifqxPtJuLxZYkfsnYSnHbvgQJ2hKIeIjxdRVDK9jcOgpIpfRgTpb20QsgGDAYn7wzspuDMBXO7
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc2:d48f:a998:5915])
- (user=irogers job=sendgmr) by 2002:a0d:ed43:0:b0:6ea:7c90:41f2 with SMTP id
- 00721157ae682-6eaddfbb341mr214977b3.6.1731133113036; Fri, 08 Nov 2024
- 22:18:33 -0800 (PST)
-Date: Fri,  8 Nov 2024 22:17:52 -0800
+ (user=irogers job=sendgmr) by 2002:a25:d8cb:0:b0:e30:d717:36ed with SMTP id
+ 3f1490d57ef6-e337f8ead19mr3757276.10.1731133115271; Fri, 08 Nov 2024 22:18:35
+ -0800 (PST)
+Date: Fri,  8 Nov 2024 22:17:53 -0800
 In-Reply-To: <20241109061809.811922-1-irogers@google.com>
-Message-Id: <20241109061809.811922-6-irogers@google.com>
+Message-Id: <20241109061809.811922-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241109061809.811922-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v6 05/22] perf kvm: Move functions used in util out of builtin
+Subject: [PATCH v6 06/22] perf script: Use openat for directory iteration
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,249 +89,204 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
 	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
 	linux-perf-users@vger.kernel.org
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The util library code is used by the python module but doesn't have
-access to the builtin files. Make a util/kvm-stat.c to match the
-kvm-stat.h file that declares the functions and move the functions
-there.
+Rewrite the directory iteration to use openat so that large character
+arrays aren't needed. The arrays are warned about potential buffer
+overflows by GCC when the code exists in a single C file.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
-Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-kvm.c   | 61 ---------------------------------
- tools/perf/util/Build      |  1 +
- tools/perf/util/kvm-stat.c | 70 ++++++++++++++++++++++++++++++++++++++
- tools/perf/util/kvm-stat.h |  3 ++
- tools/perf/util/python.c   | 32 -----------------
- 5 files changed, 74 insertions(+), 93 deletions(-)
- create mode 100644 tools/perf/util/kvm-stat.c
+ tools/perf/builtin-script.c | 87 +++++++++++++++++++++++++------------
+ tools/perf/util/path.c      | 10 +++++
+ tools/perf/util/path.h      |  1 +
+ 3 files changed, 71 insertions(+), 27 deletions(-)
 
-diff --git a/tools/perf/builtin-kvm.c b/tools/perf/builtin-kvm.c
-index 099ce3ebf67c..e50cd04e3725 100644
---- a/tools/perf/builtin-kvm.c
-+++ b/tools/perf/builtin-kvm.c
-@@ -615,67 +615,6 @@ static const char *get_filename_for_perf_kvm(void)
- 
- #if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
- 
--void exit_event_get_key(struct evsel *evsel,
--			struct perf_sample *sample,
--			struct event_key *key)
--{
--	key->info = 0;
--	key->key  = evsel__intval(evsel, sample, kvm_exit_reason);
--}
--
--bool kvm_exit_event(struct evsel *evsel)
--{
--	return evsel__name_is(evsel, kvm_exit_trace);
--}
--
--bool exit_event_begin(struct evsel *evsel,
--		      struct perf_sample *sample, struct event_key *key)
--{
--	if (kvm_exit_event(evsel)) {
--		exit_event_get_key(evsel, sample, key);
--		return true;
--	}
--
--	return false;
--}
--
--bool kvm_entry_event(struct evsel *evsel)
--{
--	return evsel__name_is(evsel, kvm_entry_trace);
--}
--
--bool exit_event_end(struct evsel *evsel,
--		    struct perf_sample *sample __maybe_unused,
--		    struct event_key *key __maybe_unused)
--{
--	return kvm_entry_event(evsel);
--}
--
--static const char *get_exit_reason(struct perf_kvm_stat *kvm,
--				   struct exit_reasons_table *tbl,
--				   u64 exit_code)
--{
--	while (tbl->reason != NULL) {
--		if (tbl->exit_code == exit_code)
--			return tbl->reason;
--		tbl++;
--	}
--
--	pr_err("unknown kvm exit code:%lld on %s\n",
--		(unsigned long long)exit_code, kvm->exit_reasons_isa);
--	return "UNKNOWN";
--}
--
--void exit_event_decode_key(struct perf_kvm_stat *kvm,
--			   struct event_key *key,
--			   char *decode)
--{
--	const char *exit_reason = get_exit_reason(kvm, key->exit_reasons,
--						  key->key);
--
--	scnprintf(decode, KVM_EVENT_NAME_LEN, "%s", exit_reason);
--}
--
- static bool register_kvm_events_ops(struct perf_kvm_stat *kvm)
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 5d5a1a06d8c6..e20d55b8a741 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -3530,27 +3530,35 @@ static void free_dlarg(void)
+  * which is covered well now. And new parsing code should be added to
+  * cover the future complex formats like event groups etc.
+  */
+-static int check_ev_match(char *dir_name, char *scriptname,
+-			struct perf_session *session)
++static int check_ev_match(int dir_fd, const char *scriptname, struct perf_session *session)
  {
- 	struct kvm_reg_events_ops *events_ops = kvm_reg_events_ops;
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 1eedead5f2f2..650974413849 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -120,6 +120,7 @@ perf-util-y += spark.o
- perf-util-y += topdown.o
- perf-util-y += iostat.o
- perf-util-y += stream.o
-+perf-util-y += kvm-stat.o
- perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
- perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
- perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
-diff --git a/tools/perf/util/kvm-stat.c b/tools/perf/util/kvm-stat.c
-new file mode 100644
-index 000000000000..38ace736db5c
---- /dev/null
-+++ b/tools/perf/util/kvm-stat.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include "debug.h"
-+#include "evsel.h"
-+#include "kvm-stat.h"
-+
-+#if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
-+
-+bool kvm_exit_event(struct evsel *evsel)
-+{
-+	return evsel__name_is(evsel, kvm_exit_trace);
-+}
-+
-+void exit_event_get_key(struct evsel *evsel,
-+			struct perf_sample *sample,
-+			struct event_key *key)
-+{
-+	key->info = 0;
-+	key->key  = evsel__intval(evsel, sample, kvm_exit_reason);
-+}
-+
-+
-+bool exit_event_begin(struct evsel *evsel,
-+		      struct perf_sample *sample, struct event_key *key)
-+{
-+	if (kvm_exit_event(evsel)) {
-+		exit_event_get_key(evsel, sample, key);
-+		return true;
+-	char filename[MAXPATHLEN], evname[128];
+-	char line[BUFSIZ], *p;
+-	struct evsel *pos;
+-	int match, len;
++	char line[BUFSIZ];
+ 	FILE *fp;
+ 
+-	scnprintf(filename, MAXPATHLEN, "%s/bin/%s-record", dir_name, scriptname);
++	{
++		char filename[FILENAME_MAX + 5];
++		int fd;
+ 
+-	fp = fopen(filename, "r");
+-	if (!fp)
+-		return -1;
++		scnprintf(filename, sizeof(filename), "bin/%s-record", scriptname);
++		fd = openat(dir_fd, filename, O_RDONLY);
++		if (fd == -1)
++			return -1;
++		fp = fdopen(fd, "r");
++		if (!fp)
++			return -1;
 +	}
-+
-+	return false;
-+}
-+
-+bool kvm_entry_event(struct evsel *evsel)
-+{
-+	return evsel__name_is(evsel, kvm_entry_trace);
-+}
-+
-+bool exit_event_end(struct evsel *evsel,
-+		    struct perf_sample *sample __maybe_unused,
-+		    struct event_key *key __maybe_unused)
-+{
-+	return kvm_entry_event(evsel);
-+}
-+
-+static const char *get_exit_reason(struct perf_kvm_stat *kvm,
-+				   struct exit_reasons_table *tbl,
-+				   u64 exit_code)
-+{
-+	while (tbl->reason != NULL) {
-+		if (tbl->exit_code == exit_code)
-+			return tbl->reason;
-+		tbl++;
-+	}
-+
-+	pr_err("unknown kvm exit code:%lld on %s\n",
-+		(unsigned long long)exit_code, kvm->exit_reasons_isa);
-+	return "UNKNOWN";
-+}
-+
-+void exit_event_decode_key(struct perf_kvm_stat *kvm,
-+			   struct event_key *key,
-+			   char *decode)
-+{
-+	const char *exit_reason = get_exit_reason(kvm, key->exit_reasons,
-+						  key->key);
-+
-+	scnprintf(decode, KVM_EVENT_NAME_LEN, "%s", exit_reason);
-+}
-+
-+#endif
-diff --git a/tools/perf/util/kvm-stat.h b/tools/perf/util/kvm-stat.h
-index 3e9ac754c3d1..4249542544bb 100644
---- a/tools/perf/util/kvm-stat.h
-+++ b/tools/perf/util/kvm-stat.h
-@@ -115,6 +115,8 @@ struct kvm_reg_events_ops {
- 	struct kvm_events_ops *ops;
- };
  
-+#if defined(HAVE_KVM_STAT_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+ 	while (fgets(line, sizeof(line), fp)) {
+-		p = skip_spaces(line);
++		char *p = skip_spaces(line);
 +
- void exit_event_get_key(struct evsel *evsel,
- 			struct perf_sample *sample,
- 			struct event_key *key);
-@@ -127,6 +129,7 @@ bool exit_event_end(struct evsel *evsel,
- void exit_event_decode_key(struct perf_kvm_stat *kvm,
- 			   struct event_key *key,
- 			   char *decode);
-+#endif
+ 		if (*p == '#')
+ 			continue;
  
- bool kvm_exit_event(struct evsel *evsel);
- bool kvm_entry_event(struct evsel *evsel);
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index f82e8a968e24..94902652e371 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1307,38 +1307,6 @@ PyMODINIT_FUNC PyInit_perf(void)
- /* The following are stubs to avoid dragging in builtin-* objects. */
- /* TODO: move the code out of the builtin-* file into util. */
- 
--#ifdef HAVE_KVM_STAT_SUPPORT
--bool kvm_entry_event(struct evsel *evsel __maybe_unused)
--{
--	return false;
--}
--
--bool kvm_exit_event(struct evsel *evsel __maybe_unused)
--{
--	return false;
--}
--
--bool exit_event_begin(struct evsel *evsel __maybe_unused,
--		      struct perf_sample *sample  __maybe_unused,
--		      struct event_key *key  __maybe_unused)
--{
--	return false;
--}
--
--bool exit_event_end(struct evsel *evsel __maybe_unused,
--		    struct perf_sample *sample __maybe_unused,
--		    struct event_key *key __maybe_unused)
--{
--	return false;
--}
--
--void exit_event_decode_key(struct perf_kvm_stat *kvm __maybe_unused,
--			   struct event_key *key __maybe_unused,
--			   char *decode __maybe_unused)
--{
--}
--#endif // HAVE_KVM_STAT_SUPPORT
--
- int find_scripts(char **scripts_array  __maybe_unused, char **scripts_path_array  __maybe_unused,
- 		int num  __maybe_unused, int pathlen __maybe_unused)
+ 		while (strlen(p)) {
++			int match, len;
++			struct evsel *pos;
++			char evname[128];
++
+ 			p = strstr(p, "-e");
+ 			if (!p)
+ 				break;
+@@ -3593,7 +3601,7 @@ int find_scripts(char **scripts_array, char **scripts_path_array, int num,
+ 		 int pathlen)
  {
+ 	struct dirent *script_dirent, *lang_dirent;
+-	char scripts_path[MAXPATHLEN], lang_path[MAXPATHLEN];
++	int scripts_dir_fd, lang_dir_fd;
+ 	DIR *scripts_dir, *lang_dir;
+ 	struct perf_session *session;
+ 	struct perf_data data = {
+@@ -3602,51 +3610,76 @@ int find_scripts(char **scripts_array, char **scripts_path_array, int num,
+ 	};
+ 	char *temp;
+ 	int i = 0;
++	const char *exec_path = get_argv_exec_path();
+ 
+ 	session = perf_session__new(&data, NULL);
+ 	if (IS_ERR(session))
+ 		return PTR_ERR(session);
+ 
+-	snprintf(scripts_path, MAXPATHLEN, "%s/scripts", get_argv_exec_path());
++	{
++		char scripts_path[PATH_MAX];
+ 
+-	scripts_dir = opendir(scripts_path);
++		snprintf(scripts_path, sizeof(scripts_path), "%s/scripts", exec_path);
++		scripts_dir_fd = open(scripts_path, O_DIRECTORY);
++		pr_err("Failed to open directory '%s'", scripts_path);
++		if (scripts_dir_fd == -1) {
++			perf_session__delete(session);
++			return -1;
++		}
++	}
++	scripts_dir = fdopendir(scripts_dir_fd);
+ 	if (!scripts_dir) {
++		close(scripts_dir_fd);
+ 		perf_session__delete(session);
+ 		return -1;
+ 	}
+ 
+-	for_each_lang(scripts_path, scripts_dir, lang_dirent) {
+-		scnprintf(lang_path, MAXPATHLEN, "%s/%s", scripts_path,
+-			  lang_dirent->d_name);
++	while ((lang_dirent = readdir(scripts_dir)) != NULL) {
++		if (lang_dirent->d_type != DT_DIR &&
++		    (lang_dirent->d_type == DT_UNKNOWN &&
++		     !is_directory_at(scripts_dir_fd, lang_dirent->d_name)))
++			continue;
++		if (!strcmp(lang_dirent->d_name, ".") || !strcmp(lang_dirent->d_name, ".."))
++			continue;
++
+ #ifndef HAVE_LIBPERL_SUPPORT
+-		if (strstr(lang_path, "perl"))
++		if (strstr(lang_dirent->d_name, "perl"))
+ 			continue;
+ #endif
+ #ifndef HAVE_LIBPYTHON_SUPPORT
+-		if (strstr(lang_path, "python"))
++		if (strstr(lang_dirent->d_name, "python"))
+ 			continue;
+ #endif
+ 
+-		lang_dir = opendir(lang_path);
+-		if (!lang_dir)
++		lang_dir_fd = openat(scripts_dir_fd, lang_dirent->d_name, O_DIRECTORY);
++		if (lang_dir_fd == -1)
+ 			continue;
+-
+-		for_each_script(lang_path, lang_dir, script_dirent) {
++		lang_dir = fdopendir(lang_dir_fd);
++		if (!lang_dir) {
++			close(lang_dir_fd);
++			continue;
++		}
++		while ((script_dirent = readdir(lang_dir)) != NULL) {
++			if (script_dirent->d_type == DT_DIR)
++				continue;
++			if (script_dirent->d_type == DT_UNKNOWN &&
++			    is_directory_at(lang_dir_fd, script_dirent->d_name))
++				continue;
+ 			/* Skip those real time scripts: xxxtop.p[yl] */
+ 			if (strstr(script_dirent->d_name, "top."))
+ 				continue;
+ 			if (i >= num)
+ 				break;
+-			snprintf(scripts_path_array[i], pathlen, "%s/%s",
+-				lang_path,
++			scnprintf(scripts_path_array[i], pathlen, "%s/scripts/%s/%s",
++				exec_path,
++				lang_dirent->d_name,
+ 				script_dirent->d_name);
+ 			temp = strchr(script_dirent->d_name, '.');
+ 			snprintf(scripts_array[i],
+ 				(temp - script_dirent->d_name) + 1,
+ 				"%s", script_dirent->d_name);
+ 
+-			if (check_ev_match(lang_path,
+-					scripts_array[i], session))
++			if (check_ev_match(lang_dir_fd, scripts_array[i], session))
+ 				continue;
+ 
+ 			i++;
+diff --git a/tools/perf/util/path.c b/tools/perf/util/path.c
+index 00adf872bf00..9712466c51e2 100644
+--- a/tools/perf/util/path.c
++++ b/tools/perf/util/path.c
+@@ -68,6 +68,16 @@ bool is_directory(const char *base_path, const struct dirent *dent)
+ 	return S_ISDIR(st.st_mode);
+ }
+ 
++bool is_directory_at(int dir_fd, const char *path)
++{
++	struct stat st;
++
++	if (fstatat(dir_fd, path, &st, /*flags=*/0))
++		return false;
++
++	return S_ISDIR(st.st_mode);
++}
++
+ bool is_executable_file(const char *base_path, const struct dirent *dent)
+ {
+ 	char path[PATH_MAX];
+diff --git a/tools/perf/util/path.h b/tools/perf/util/path.h
+index d94902c22222..fbafbe7015dd 100644
+--- a/tools/perf/util/path.h
++++ b/tools/perf/util/path.h
+@@ -12,6 +12,7 @@ int path__join3(char *bf, size_t size, const char *path1, const char *path2, con
+ 
+ bool is_regular_file(const char *file);
+ bool is_directory(const char *base_path, const struct dirent *dent);
++bool is_directory_at(int dir_fd, const char *path);
+ bool is_executable_file(const char *base_path, const struct dirent *dent);
+ 
+ #endif /* _PERF_PATH_H */
 -- 
 2.47.0.277.g8800431eea-goog
 
