@@ -1,171 +1,130 @@
-Return-Path: <linux-kernel+bounces-403034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06909C2FDA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:53:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7319C2FFF
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87ED41F216FB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:53:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3AAC1C20C5D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16E11A08BC;
-	Sat,  9 Nov 2024 22:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1AD1A2C04;
+	Sat,  9 Nov 2024 23:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPX4xBFJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLAPuVpA"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0648E42069;
-	Sat,  9 Nov 2024 22:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6598C07;
+	Sat,  9 Nov 2024 23:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731192814; cv=none; b=U8o9ivDiJ7RkhcBb3dOv/7qAC/b3EPDERL8oypelIvl9p3dohjOWBzREkWBZ8P15YJhdjdKR0UFc6AlFpzNGeGVGfrsCgIxkjqh7Yjli7/6x8eM92uqiPNVPSEEe/IiuEtX9NaR62QdFI/grYwPZTW67x8a3Eio3T2EL2fiVCk4=
+	t=1731193461; cv=none; b=eskOsWaH9WvBDGVYuN2zSh1z7/nVFsyn9d/+FXB4zfuL5H2ppvqtEJV77U99lb/dYvfxaoWJhf1ar7lOkoESdk9Y3+JESmeMEm6/F1rZC1SMSxgoriVI1AZD6ki4YBkGOruQBknNkgfVX+R41ydFnMyVohPYo9F2WcpO2uiogh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731192814; c=relaxed/simple;
-	bh=xtcrRBtDp1sQT0+olLfHpFoUN9DRG4asrIehpwN2shU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mRx7SyuIbEFMjD47e7PCQJdZTESxwPQCW7TkMVWG5S0FbWDKpGUwXFL3QcI2LdvOYcO+BAUSagxvZXhyZ3fKlA3rwo61wkbmkbAePtxpEaoIlfpG+K7nI80em/5cSidDu2Lms1cVnS4PYS4plL6Tax12Ot0u94F4nLkqZ5+PCTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPX4xBFJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B82DC4CECE;
-	Sat,  9 Nov 2024 22:53:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731192813;
-	bh=xtcrRBtDp1sQT0+olLfHpFoUN9DRG4asrIehpwN2shU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=iPX4xBFJO+DLDLWfGnZwDzJz+350Jl+p/Wjd1mXWjXvvLePBnvbRqSUpkA3vmag/I
-	 a+5gbmDwYC/F2i9T9WCbDawKptanoPpoLskgED7+2h/AVZX9ETah6xO8kUY3se2B/g
-	 WBZuE7d0Lg6FCwluIR9dOvfjh43ScCO8FXbWOcC/6YliZLoH1nNB2+H2RjUAsqmluv
-	 r1zWqcEwE3EfpS2DF8XnLaF3pd9cglAd/WdQFa8Z5ULeufpn8HKSsKq65uubxU+dgt
-	 OVg1NtFgDtBUJ9bHhuCd19thrhPYL7Dql6tAAdNMmTrjffLWr7pmFDEbnYMvuAkJ7K
-	 cwwT+NpBfjD5Q==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so39208801fa.0;
-        Sat, 09 Nov 2024 14:53:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUwFiuloN1/GDZuo6Kdbs7KS3NvDjcA374ztyk8W7oDCFOFS0/SLfqZZafEqvMqf23ye9S0jvi7n7mx5HJJ@vger.kernel.org, AJvYcCVL5kp4uQEATtQYTe0+KxpeDar4O3o/KxiILzxQR6gGu85iLPIB/KuGhvrvFz2PUD456SYm5NZ/inNyaSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJCLEjyJSqds2uXFHgzK2zSQ/YEcFjgL/bvaDMcP2TsKSlIhFu
-	d3b0q7Q7Hk8BU1YENFCh+ynpacXE/q2QmS7iz1j0Wg4SzJkW3E8lvazbcPcDxXLrmlwnWHbhk3G
-	AAi9YaM4OsJC9ZQg3ixHXTaYzFk4=
-X-Google-Smtp-Source: AGHT+IHjvn36AnbQLmAWrdPLIf0XSNJ4Dxd6AnhuLakBkJhSf8xKtWBp8YWLdr4o6gqYTIovPRGtUTSjRuk/Ho4NbdY=
-X-Received: by 2002:a05:651c:221e:b0:2fa:ce0d:ec34 with SMTP id
- 38308e7fff4ca-2ff209437a4mr22012941fa.2.1731192812236; Sat, 09 Nov 2024
- 14:53:32 -0800 (PST)
+	s=arc-20240116; t=1731193461; c=relaxed/simple;
+	bh=YDc64g70KXmRUfUMR9OpmEHuYok64UWyLD7xaEiRKTQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pJdhJq5XshBT+sMbbVoETLsKuP/SdGOIzcYXeHnrUGmGaaMJm1kL3sjRwmMX1SHisBTVCE0rDvt5aVywRNJYAITul1vjHthGDqVoXl7rNvkWVCZG8FsFLf8i6W1JgtEhkRs7jJqElersFE0Id4Xx6EYjmSirtG/JTi7Tc18tWwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLAPuVpA; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-210e5369b7dso35697885ad.3;
+        Sat, 09 Nov 2024 15:04:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731193458; x=1731798258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tDnEol/sO6VqVywxS7JlKi6+yDV4PyqK7/lKBRL3LN4=;
+        b=JLAPuVpADS01H4asYf/GKI6+DURAZ1u0xJjvQOOdHCfz2n1X2w3vAVBBDfZh7uHCof
+         pkIUY00JVqlWQzNDh8wDZbZuJcqzewq1OdUkhxuVYcLxAvOD0KVkRFePtqmaU0iB0zLH
+         JBxqr8pR91w5NHjdNhGPIWj0meu660kOFcXubfvy6aDSSxeA2DMobYTH41Ph9rFLI3Ef
+         6pT2MaI9n6ukVOMd+HHkmu0fJKOpWHZlIbph/EFOO/0fDvwz6TCUowrMzKaeXBm5mgz/
+         IOUVDIl9648Qa5f6WPx/kfTQlXEHCe1IXJP/8L+BBd3YK4766BHTOR3/y3R9M8dBFyBh
+         EcKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731193458; x=1731798258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tDnEol/sO6VqVywxS7JlKi6+yDV4PyqK7/lKBRL3LN4=;
+        b=KN57s9kVZArL6yue2+35USFKx9TMd2/MFNDMU9QA3PhyUYv/X94ULc7AJf/Z2cy5Sm
+         nvuAbeDqTnF0951l0UNJl78hG7cFC5ZVJ/0VMH1MwmOEGzhLDR0127H2KClVk99YKyRx
+         AoYR23L5HS/xAVmrSWqcqGbf2q1afalsdf2SXzNkoSraLk0mHGYZViKR5tzIzfiXKGsk
+         hoWmAPr311L6U7B9+YWiomIYZMtMD1Tp6hnGoOj+lnbvfMNtre3HpY/rfcGq91XyJkYF
+         o2gaO7ByM226MU1GhODNfrPYhStxBETRPyS7/DwLbie+kxppfqFLW+FULrcd6di2awaS
+         deOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbtoYLAgSnYBVRXzzxKkN91biFsKi3imYOLFi+/5XNFuF4vCcgy8myEjV8xLPQsnFl8yoYvhMPG7CklUOG@vger.kernel.org, AJvYcCWKZYQDKUYMZZ08sd/wg3VGfdotBoTEEP9iKg5HKrOdEWWv7gTxtrRBuLo3zx2rwgfCt2AKkYfaNIt3@vger.kernel.org, AJvYcCXtE9k5D/ecLpby6x/yoQnwa206kPx50qpDdpoPQaMaO68jiZ9N/aV3LO1K7nYCK087kGu8nsOFW92Z6x4BWkzSPZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzch3jwd5lVs6x0GptsLXQVKEMcC8fW4BRfgiXN9HnieBmdm1I5
+	ANvOKSb/OvlArH/EKv5nyPxbAkNNtufA83nK0GyTIi1qMo3amXTo
+X-Google-Smtp-Source: AGHT+IFe/igCtkT6IZ/6bhwjaaHJHxUvojfaLWGRCzpaPWVdfzmPczFY2/Rfp8J8r5utBgsFvW60Lg==
+X-Received: by 2002:a17:902:ea12:b0:20c:c086:4998 with SMTP id d9443c01a7336-21183d7cd04mr86046655ad.55.1731193458233;
+        Sat, 09 Nov 2024 15:04:18 -0800 (PST)
+Received: from localhost.localdomain ([38.44.237.182])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5feb50bsm5847991a91.53.2024.11.09.15.04.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 15:04:17 -0800 (PST)
+From: Sota4Ever <wachiturroxd150@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Add support for Samsung Galaxy S20 FE (SM-G780F/r8s) [SoC Exynos990]
+Date: Sat,  9 Nov 2024 23:04:00 +0000
+Message-Id: <20241109230402.831-1-wachiturroxd150@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241031132630.24667-1-t.boehler@kunbus.com> <20241031132630.24667-4-t.boehler@kunbus.com>
-In-Reply-To: <20241031132630.24667-4-t.boehler@kunbus.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 10 Nov 2024 07:52:56 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQSJJy27=jc3qQVsLd0kYmUJBOa7c=b6pHeonx81TwKFQ@mail.gmail.com>
-Message-ID: <CAK7LNAQSJJy27=jc3qQVsLd0kYmUJBOa7c=b6pHeonx81TwKFQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] package: debian: don't include .gitignore under scripts/
-To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <t.boehler@kunbus.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Philipp Rosenberger <p.rosenberger@kunbus.com>, 
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Please use "kbuild: deb-pkg:" as the commit subject.
+Hello :),
 
+I'm a newbie and I started getting interested 1 year ago.
+Well, that's the beginning,
+until I learn more about kernels and the C language,
+which is important in that.
 
+Well, bluntly, here it is:
 
-On Thu, Oct 31, 2024 at 10:26=E2=80=AFPM Thomas B=C3=B6hler <t.boehler@kunb=
-us.com> wrote:
->
-> Files to copy into the header package from the scripts/ directory are
-> listed by a call to find which also includes .gitignore files. These
-> don't belong in the package, and lintian also complains with a
-> "package-contains-vcs-control-file":
->
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/.gitignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/basic/.giti=
-gnore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/gcc-plugins=
-/.gitignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/gdb/linux/.=
-gitignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/genksyms/.g=
-itignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/ipe/polgen/=
-.gitignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/mod/.gitign=
-ore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/selinux/gen=
-headers/.gitignore]
->     W: linux-headers-6.12.0-rc4-g7e04fcfc6195: package-contains-vcs-contr=
-ol-file [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/selinux/mdp=
-/.gitignore]
+That Samsung Galaxy S20 FE device is part of the Exynos990 SoC family,
+I saw that Igor supported that processor,
+I took advantage of it.
 
+It has the same functions of:
 
-Could you add log messages based on linux-headers-6.12.0-rc6 instead?
-Then, the line length will become shorter.
+* CPU
+* pintrl
+* gpio-keys
+* simple-framebuffer
 
+Just enough to reach a shell in an initramfs.
 
+The preferred way to boot the upstream kernel is by using a
+shim bootloader, called uniLoader.
+Changes: - Simply add dts from S20 FE device
 
-> Filter the .gitignore files so they're not copied into the resulting
-> package.
->
-> Signed-off-by: Thomas B=C3=B6hler <t.boehler@kunbus.com>
-> ---
->  scripts/package/install-extmod-build | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/insta=
-ll-extmod-build
-> index d2c9cacecc0c..5c735e176b53 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -12,7 +12,8 @@ is_enabled() {
->  find_in_scripts() {
->         find scripts \
->                 \( -name atomic -o -name dtc -o -name kconfig -o -name pa=
-ckage \) -prune -o \
-> -               ! -name unifdef -a ! -name mk_elfconfig -a \( -type f -o =
--type l \) -print
-> +               ! -name unifdef -a ! -name mk_elfconfig -a \( -type f -o =
--type l \) \
-> +               ! -name .gitignore -print
+Special thanks to Igor for helping me with that :)
 
-For consistency, please move the new pattern before -a \( -type f -o -type =
-l \)
+Sota4Ever (2):
+  dt-bindings: arm: samsung: Add compatible for Samsung Galaxy S20 FE
+    (SM-G780F)
+  arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
 
+ .../bindings/arm/samsung/samsung-boards.yaml  |   1 +
+ arch/arm64/boot/dts/exynos/Makefile           |   1 +
+ arch/arm64/boot/dts/exynos/exynos990-r8s.dts  | 115 ++++++++++++++++++
+ 3 files changed, 117 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
 
+-- 
+2.34.1
 
->  }
->
->  mkdir -p "${destdir}"
-> @@ -23,7 +24,8 @@ mkdir -p "${destdir}"
->         find "arch/${SRCARCH}" -maxdepth 1 -name 'Makefile*'
->         find "arch/${SRCARCH}" -name generated -prune -o -name include -t=
-ype d -print
->         find "arch/${SRCARCH}" -name Kbuild.platforms -o -name Platform
-> -       find include \( -name config -o -name generated \) -prune -o \( -=
-type f -o -type l \) -print
-> +       find include \( -name config -o -name generated \) -prune -o \( -=
-type f -o -type l \) \
-> +               ! -name .gitignore -print
->         find_in_scripts
->  ) | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${destdir}"
->
-> --
-> 2.39.2
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
