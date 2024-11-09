@@ -1,123 +1,134 @@
-Return-Path: <linux-kernel+bounces-402768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834E39C2BEB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:36:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CF59C2BE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48AB62814FD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAAC1C21128
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AA815A84A;
-	Sat,  9 Nov 2024 10:35:59 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6569D154BEB;
+	Sat,  9 Nov 2024 10:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DO/ZCDai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CD04EB38;
-	Sat,  9 Nov 2024 10:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB49E1537D4;
+	Sat,  9 Nov 2024 10:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731148559; cv=none; b=NdsEGVSK2C5U5GO45Az8dWNtX+YnYakDBfZFDSbjJjFK3Crs/IEeAiKTJ3i/xrmRcrnNipwMC3gW1RuIggXqLPvv+KteURjUdm9SZaRs5CkyOMwy3L8gvSmwsECpbaNVACeFbJglBu7CiBS7M9rOAIh/oQbxZ/mB2DJ8n2uwQR4=
+	t=1731148551; cv=none; b=Fs43z12HHTRzpr6blLdeIEygXOQ2tmbpHVeVX2immb+zwaKLhrklmWaScYKc6FB/f8SLsAsAfK1YVgmVzqzNqKrEiNmXZNccJ7pPmX5oza5pq7PrM4DLeLf9/Qt4TglEBKzqPnpWl7c0Y6ZhY+L/XrWkzqPp/2uCZbDVb4sIIeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731148559; c=relaxed/simple;
-	bh=+0JA3VREL+CP75q52bwUhSocLz0H9J80XdmFDi/uuF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FHqYF3oGzHHPfB2hraWqes/FU6bGjkPrYFXWhUias+7JyEMyddZcuEIagq+PETkZQaOOXjywP4NDSG57z281Qo+CYANB10C0Dr6BHjHKuzSln+LXyK+FCQWgLeoLpSmp8IEma1Eno8T0w1IJlGNUrGds+M84KhmpCoyXpBzc1LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XlsfG4FvVz9sSK;
-	Sat,  9 Nov 2024 11:35:50 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id lmPlaWsk7gR4; Sat,  9 Nov 2024 11:35:50 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XlsfC5CByz9sSN;
-	Sat,  9 Nov 2024 11:35:47 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A0E958B764;
-	Sat,  9 Nov 2024 11:35:47 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id qn5FBAAisxfx; Sat,  9 Nov 2024 11:35:47 +0100 (CET)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.57])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3202A8B766;
-	Sat,  9 Nov 2024 11:35:47 +0100 (CET)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Kees Cook <kees@kernel.org>,
-	linux-modules@vger.kernel.org
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [RFC PATCH 3/3] module: pre-test setting ro_after_init data read-only
-Date: Sat,  9 Nov 2024 11:35:37 +0100
-Message-ID: <a32f2390caf6e0d157ffea6e04f5e5d8629620c2.1731148254.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
-References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+	s=arc-20240116; t=1731148551; c=relaxed/simple;
+	bh=jIhhqs6M2vvkxbfLN6sNUL24IiqGNpQgqOkwJlhnBIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdQr+8t2nAzxMLn2nCrkfBdDyhbjluwquxH5GCgXbvhyGK3qb7KEiM3uMFBo7SMEv7w13J2hGiVe7G3jUF+O+Nec/ZcYAMXHvOLQ51PfjFDH5oc9CXQcqQH2zVN/b17tygeC+84hAphgtUJSOLp1bdCKHaFVIgrTARORBANnmqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DO/ZCDai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBEC8C4CECE;
+	Sat,  9 Nov 2024 10:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731148551;
+	bh=jIhhqs6M2vvkxbfLN6sNUL24IiqGNpQgqOkwJlhnBIQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DO/ZCDai/slql9L4n2S5U0xfY7uG1mtFdk8AKkige9lN7O/iFyhBSzFrgGpyKomhY
+	 xZn3h5FWHCgAikgI8UYlajZDO8kn5ZQakmFtdTRbulHScaO6k5OjIEsHk7w8W7Y4T8
+	 SoTGqGH14+Gtp8p5cxWgCJr53O6AfiZye+0lXOaiMqAixi2lILNJestuErjgO4AWOr
+	 axS2zK1TdJ5rO/cbDsPj9eQVx4+8Hs3ZyeJ90iBlSDX3ALrU2hoeNnDvUk6xBi21dl
+	 xUrpqOmCPqJVqa8O/6lltE3AH8BcxLTPiLyuls2B1QatSw+heNlfKBCqATJH9j1JW2
+	 vj5CBQLtZkCGg==
+Message-ID: <f0c9cffe-e58f-4c1d-af64-cad04e0c5510@kernel.org>
+Date: Sat, 9 Nov 2024 11:35:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731148536; l=1703; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=+0JA3VREL+CP75q52bwUhSocLz0H9J80XdmFDi/uuF8=; b=rA59hj9bUGX0f12Cvp96RyTYI3g4ko1UQG50/59qdgEAWjDifJH3wf0QdI6jQrbbEt45+GTk9 IuVbBTm+60CCw29mxZviRiHVSWDKw0IwTiLlOywwwfVZGFP+TbW0wLe
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/10] dt-bindings: omap: Add Samsung Galaxy Tab 2 10.1
+To: Mithil Bavishi <bavishimithil@gmail.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>, Andreas Kemnade
+ <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-hardening@vger.kernel.org
+References: <20241108200440.7562-1-bavishimithil@gmail.com>
+ <20241108200440.7562-10-bavishimithil@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241108200440.7562-10-bavishimithil@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-To be on the safe side, try to set ro_after_init data section readonly
-at the same time as rodata. If it fails it will likely fail again
-later so let's cancel module loading while we still can do it.
-If it doesn't fail, put it back to read-only, continue module loading
-and cross fingers so that it still works after module init. Then it
-should in principle never fail so add a WARN_ON_ONCE() to get a big
-fat warning in case it happens anyway.
+On 08/11/2024 21:04, Mithil Bavishi wrote:
+> Add samsung-espresso10 codename for the 10 inch variant
+> 
+> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- kernel/module/main.c       | 2 +-
- kernel/module/strict_rwx.c | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+Squash it. Really, these are just one liners for similar devices.
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 1bf4b0db291b..b603c9647e73 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -2582,7 +2582,7 @@ static noinline int do_init_module(struct module *mod)
- 	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
- #endif
- 	ret = module_enable_rodata_ro_after_init(mod);
--	if (ret)
-+	if (WARN_ON_ONCE(ret))
- 		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
- 			mod->name, __func__, ret);
- 
-diff --git a/kernel/module/strict_rwx.c b/kernel/module/strict_rwx.c
-index f68c59974ae2..329afd43f06b 100644
---- a/kernel/module/strict_rwx.c
-+++ b/kernel/module/strict_rwx.c
-@@ -58,7 +58,10 @@ int module_enable_rodata_ro(const struct module *mod)
- 	if (ret)
- 		return ret;
- 
--	return 0;
-+	ret = module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_ro);
-+	if (ret)
-+		return ret;
-+	return module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_rw);
- }
- 
- int module_enable_rodata_ro_after_init(const struct module *mod)
--- 
-2.44.0
+Best regards,
+Krzysztof
 
 
