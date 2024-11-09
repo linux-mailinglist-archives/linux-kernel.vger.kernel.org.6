@@ -1,261 +1,172 @@
-Return-Path: <linux-kernel+bounces-402741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036B39C2B60
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3C39C2B63
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B687A282B2A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E47C282B72
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8C514830C;
-	Sat,  9 Nov 2024 09:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6EB148316;
+	Sat,  9 Nov 2024 09:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G8tV9fV7"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UCuKevtA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756AE146017
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B29145B27;
+	Sat,  9 Nov 2024 09:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731144582; cv=none; b=E977P57ijjeNFEJu7pZRu1opsYASDuN0CvaF1mEHVnJ38QXCVjgtXRZVJcKvKnGa/l8hYz5DP4QyPWk259y8PzoGKS2kTrXwOtqo3lRLtlCItOxQF6KeJbAyqXqOkCMrXK2eNI8jsv4IWeW7vDF3nOl0tQxYNa9VT5Y92R4+LnU=
+	t=1731144599; cv=none; b=mlMsIwrD+0HQUE5Cpadi5GR79tjqvexRhVeRhiK4pR0NYBIZ1fHF/VSxj6776qQswNgoscoZXdme5f9ay2yx9ArXLx2IMW3xiSV432LcopURtbM4ZKzOQYvqoeI8G0CKAWo8ZTtT1DIGIaOHabPUsep1Bv6Cs+3HspNa3/jflQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731144582; c=relaxed/simple;
-	bh=UqeJqRGsZ91rpkvtpak1cJ6dnroW0iyh6rQsJH7dty0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N25QfC4fyaepshGfOO0sUl2xOhZTRYqcO0A/eh3ookwmpIIMtX+Y9rHY2HQucGO8d11mD2cLBoYy+bnlp0V+ZcG6cW6wsB+iE3CsutaoJZq5zk70KXVspq0d71nAhaCwvti8iejlFMK3dyHWG7eR6xculXL26aMrfocUYY4Nm74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G8tV9fV7; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a628b68a7so505046966b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 01:29:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731144578; x=1731749378; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UqeJqRGsZ91rpkvtpak1cJ6dnroW0iyh6rQsJH7dty0=;
-        b=G8tV9fV78GDtmiFnu3F4d8SGz5O9QmMH48MbPUWeaJi0QK+/brvOA0PARlqWXTfbQy
-         +rXx5T0LuBqmvX4bHvnrPOUL+UZ9hb5GCCOd/K8MbyFZddKnGViXVHRELEp/a35I6/Ko
-         w/ajZlDboWdAxBuMyH+OIZWzjdg52cMH58Y9PgRnIP3Yz7G172Rr37m/2f96qYYpulE6
-         kl0Pt+JXCo4ZqGfScie1wRkzhO7FhX+Jg5QaG4FPB3VCan9BwN8nB80MWGWzIuXka9CS
-         YEgbA8ptnLXbpOk4xzoD849l3G2t+xAOLTcVuSCSEt24DU7gfOnVDfXyaWzBRv+3NVio
-         gGBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731144578; x=1731749378;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqeJqRGsZ91rpkvtpak1cJ6dnroW0iyh6rQsJH7dty0=;
-        b=mPTgECA642fxNTAb60FsZXW4suDlr8MLp4JWR6xRwBGi4I4bIkdar7eYwYdT2kWHTS
-         aSKXf1O8/ojz9UbhdVA5hpZs/9LoB3YAcu931LK76aMtXzviF46YdfQETx2xGTQDjDmw
-         h+MHn9l0dgtuiQ6dZda6QtTLkjLv/jj2shYBzQhKgWgT0FGmIlMAJy2ojRm/RWnd04g4
-         ZjNOl+1mgXA7RxovoqYWfVHZuQENYNqLMQIlRskHjrtWxtYO/S8IAZ42gtd0u27lkHs3
-         GEd2wZcIcms5fNDbDIIZWZhlLTB2eUIlibfuo+gehaseqNGy6Yb6AUtZaQxDB1KQr+Qi
-         zPVQ==
-X-Gm-Message-State: AOJu0Yx6yA6jhGqKBuUUtGKM6e4UfeHS9C3dV4KXqQn+g3rwPwRDAXDt
-	2BgKlq3zIig5rCB+yvNt09k5jzkh+TQ/95jWrJrjIR0aYf/gmUXKANzFTLH5GJE=
-X-Google-Smtp-Source: AGHT+IFZ8xMxEspwFRZ5KmMHgYMuGxIG5mdHExaVuIJCOp6nOGZ8RzBp8LlFB/nkBE4xDv5O2MJlyw==
-X-Received: by 2002:a17:907:9816:b0:a99:5773:3612 with SMTP id a640c23a62f3a-a9eeff3a9b5mr518659566b.36.1731144577584;
-        Sat, 09 Nov 2024 01:29:37 -0800 (PST)
-Received: from ?IPV6:2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c? (p200300e5872eb100d3c7e0c05e3baa1c.dip0.t-ipconnect.de. [2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a188d0sm338628166b.37.2024.11.09.01.29.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 01:29:37 -0800 (PST)
-Message-ID: <c6f47bcf-d75d-4e00-b693-7df97599973c@suse.com>
-Date: Sat, 9 Nov 2024 10:29:36 +0100
+	s=arc-20240116; t=1731144599; c=relaxed/simple;
+	bh=pmtM4/sq/dmYQBG/iqOWupx/KZw+DRpOQcqqel365xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgIHBNPPgBLZllVkn5hizWBFpOukkvXQdeBacQeHEBe3qaSqMaV2Lou9b0z9usl8EFJuWm3GF6XAtDPtkwJg877tBHobYGtvOMkQqhJTmsWWvBlDVZMzDjPTC4glWQeRSshrJn2pEn9YbTiQbsN+BN3CAqehVroWloV7t7hOK0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UCuKevtA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBD2C4CECE;
+	Sat,  9 Nov 2024 09:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731144599;
+	bh=pmtM4/sq/dmYQBG/iqOWupx/KZw+DRpOQcqqel365xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UCuKevtA9HgMRWqCpMEoMFftN270EQg7bkvyF18oBfNnpA5ioVwPIuXx5D7aAETaj
+	 oC+GHRB6wG0dtyI61zMswQQCPOfyhH+RBe3u5P7c52CTVSid8TlLa+l05G96WodpXq
+	 76Q2bZb5SKf2/l6PjPw1PAfIV51nchWPzHRKpTfM=
+Date: Sat, 9 Nov 2024 10:29:55 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Joe Perches <joe@perches.com>,
+	Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>,
+	Marc Gonzalez <marc.w.gonzalez@free.fr>,
+	Peter Rosin <peda@axentia.se>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: iio, syfs, devres: devm_kmalloc not aligned to pow2 size argument
+Message-ID: <2024110903-litmus-stir-0956@gregkh>
+References: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
+ <c6d634d088f77abd956dbd125c26d43d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>
-References: <20241108161312.28365-1-jgross@suse.com>
- <20241108171304.377047-1-pbonzini@redhat.com> <Zy5b06JNYZFi871K@google.com>
- <54f44f6a-f504-4b56-a70f-cf96720ff1b8@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <54f44f6a-f504-4b56-a70f-cf96720ff1b8@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------08XkMQYCJ2Y2PZ7eWeab4P4j"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c6d634d088f77abd956dbd125c26d43d@gmail.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------08XkMQYCJ2Y2PZ7eWeab4P4j
-Content-Type: multipart/mixed; boundary="------------xlshWiW9ZsqYMq3QT8PmTcyF";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Paolo Bonzini <pbonzini@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>
-Message-ID: <c6f47bcf-d75d-4e00-b693-7df97599973c@suse.com>
-Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
-References: <20241108161312.28365-1-jgross@suse.com>
- <20241108171304.377047-1-pbonzini@redhat.com> <Zy5b06JNYZFi871K@google.com>
- <54f44f6a-f504-4b56-a70f-cf96720ff1b8@redhat.com>
-In-Reply-To: <54f44f6a-f504-4b56-a70f-cf96720ff1b8@redhat.com>
+On Fri, Nov 08, 2024 at 10:04:27AM +0100, Matteo Martelli wrote:
+> On Mon, 28 Oct 2024 13:04:10 +0100, matteomartelli3@gmail.com wrote:
+> > Hi everyone,
+> > 
+> > I found an issue that might interest iio, sysfs and devres, about a
+> > particular usage of devm_kmalloc() for buffers that later pass through
+> > sysfs_emit() or sysfs_emit_at(). These sysfs helpers require the output
+> > buffer to be PAGE_SIZE aligned since commit 2efc459d06f1 ("sysfs: Add
+> > sysfs_emit and sysfs_emit_at to format sysfs output"). Such requirement
+> > is satisfied when kmalloc(PAGE_SIZE, ...) is used but not when
+> > devm_kmalloc(PAGE_SIZE,...) is used as it actually returns a pointer to
+> > a buffer located after the devres metadata and thus aligned to
+> > PAGE_SIZE+sizeof(struct devres).
+> > 
+> > Specifically, I came across this issue during some testing of the
+> > pac1921 iio driver together with the iio-mux iio consumer driver, which
+> > allocates a page sized buffer to copy the ext_info of the producer
+> > pac1921 iio producer driver. To fill the buffer, the latter calls
+> > iio_format_value(), and so sysfs_emit_at() which fails due to the buffer
+> > not being page aligned. This pattern seems common for many iio drivers
+> > which fill the ext_info attributes through sysfs_emit*() helpers, likely
+> > necessary as they are exposed on sysfs.
+> > 
+> > I could reproduce the same error behavior with a minimal dummy char
+> > device driver completely unrelated to iio. I will share the entire dummy
+> > driver code if needed but essentially this is the only interesting part:
+> > 
+> > 	data->info_buf = devm_kzalloc(data->dev, PAGE_SIZE, GFP_KERNEL);
+> > 	if (!data->info_buf)
+> > 		return -ENOMEM;
+> > 
+> > 	if (offset_in_page(data->info_buf))
+> > 		pr_err("dummy_test: buf not page algined\n");
+> > 
+> > When running this, the error message is printed out for the reason above.
+> > 
+> > I am not sure whether this should be addressed in the users of
+> > devm_kmalloc() or in the devres implementation itself. I would say that
+> > it would be more clear if devm_kmalloc() would return the pointer to the
+> > size aligned buffer, as it would also comply to the following kmalloc
+> > requirement (introduced in [1]):
+> > 
+> > The address of a chunk allocated with `kmalloc` is aligned to at least
+> > ARCH_KMALLOC_MINALIGN bytes. For sizes of power of two bytes, the
+> > alignment is also guaranteed to be at least to the respective size.
+> > 
+> > To do so I was thinking to try to move the devres metadata after the
+> > data buffer, so that the latter would directly correspond to pointer
+> > returned by kmalloc. I then found out that it had been already suggested
+> > previously to address a memory optimization [2]. Thus I am reporting the
+> > issue before submitting any patch as some discussions might be helpful
+> > first.
+> > 
+> > I am sending this to who I think might be interested based on previous
+> > related activity. Feel free to extend the cc list if needed.
+> 
+> Adding some more context to better understand the impact of this.
+> 
+> With a trivial grep it looks like there are only few instances where
+> devm_k*alloc() is used to allocate a PAGE_SIZE buffer:
+> 
+> $ git grep -n 'devm_.*alloc.*(.*PAGE_SIZE'
+> block/badblocks.c:1584:         bb->page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
+> drivers/iio/multiplexer/iio-mux.c:287:          page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
+> drivers/mtd/nand/raw/mxc_nand.c:1702:   host->data_buf = devm_kzalloc(&pdev->dev, PAGE_SIZE, GFP_KERNEL);
+> drivers/usb/gadget/udc/gr_udc.c:1987:           buf = devm_kzalloc(dev->dev, PAGE_SIZE, GFP_DMA | GFP_ATOMIC);
+> sound/soc/sof/debug.c:277:              dfse->buf = devm_kmalloc(sdev->dev, PAGE_SIZE, GFP_KERNEL);
+> 
+> What takes my attention is the bb->page in blocks/badblocks.c, being the
+> buffer named "page" maybe it is supposed to be page aligned?
+> 
+> Also in [3] it was suggested to add the page alignment check for
+> sysfs_emit() and sysfs_emit_at(), but I haven't found why that's
+> necessary. My guess is for optimizations to avoid the buffer to spread
+> in more than one page. Is this correct? Are there other reasons? Can
+> anyone add more details? I think it would help to understand whether
+> page alignment is necessary in the other instances of devm_k*alloc().
 
---------------xlshWiW9ZsqYMq3QT8PmTcyF
-Content-Type: multipart/mixed; boundary="------------qf407JsnCtBHNsROutPMFClW"
+sysfs_emit* functions should only be operating on the buffer that was
+passed to the show function callback, which is allocated by the sysfs
+core, so should not have any of these issues.  So why would it need to
+be checked?
 
---------------qf407JsnCtBHNsROutPMFClW
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> Beside page alignment, there are plenty of devm_k*alloc() around the
+> code base, is there any way to spot whether any of those instances
+> expect the allocated buffer to be aligned to the provided size?
 
-T24gMDkuMTEuMjQgMDk6MDMsIFBhb2xvIEJvbnppbmkgd3JvdGU6DQo+IE9uIDExLzgvMjQg
-MTk6NDQsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+PiBPbiBGcmksIE5vdiAwOCwg
-MjAyNCwgUGFvbG8gQm9uemluaSB3cm90ZToNCj4+PiBRdWV1ZWQsIHRoYW5rcy4NCj4+DQo+
-PiBOb29vbyHCoCBDYW4geW91IHVuLXF1ZXVlPw0KPiANCj4gWWVzLCBJIGhhZG4ndCBldmVu
-IHB1c2hlZCBpdCB0byBrdm0vcXVldWUuwqAgSSBhcHBsaWVkIGl0IG91dCBvZiBhIHdoaW0g
-YnV0IHRoZW4gDQo+IHJlYWxpemVkIHRoYXQgaXQgd2Fzbid0IHJlYWxseSAtcmM3IG1hdGVy
-aWFsLg0KPiANCj4+IFRoZSByZXR1cm4gZnJvbSBrdm1fbW11X3BhZ2VfZmF1bHQoKSBpcyBO
-T1QgUkVUX1BGX3h4eCwgaXQncyBLVk0gb3V0ZXIgMC8xLy0gDQo+PiBlcnJuby4NCj4+IEku
-ZS4gJzEnIGlzIHNheWluZyAicmVzdW1lIHRoZSBndWVzdCIsIGl0IGhhcyAqbm90aGluZyog
-dG8gZG8gd2l0aCBSRVRfUEZfUkVUUlkuDQo+PiBFLmcuIHRoYXQgcGF0aCBhbHNvIGhhbmRs
-ZXMgUkVUX1BGX0ZJWEVELCBSRVRfUEZfU1BVUklPVVMsIGV0Yy4NCj4gDQo+IEdhaCwgSSBl
-dmVuIGNoZWNrZWQgdGhlIGZ1bmN0aW9uIGFuZCB3YXMgbWVzc2VkIHVwIGJ5IHRoZSBvdGhl
-ciAicmV0dXJuIA0KPiBSRVRfUEZfUkVUUlkiLg0KPiANCj4gSWYgeW91IGFkZCBYODZFTVVM
-XyogdG8gdGhlIG1peCwgaXQncyBldmVuIHdvcnNlLsKgIEkgaGFkIHRvIHJlYWQgdGhpcyB0
-aHJlZSANCj4gdGltZXMgdG8gdW5kZXJzdGFuZCB0aGF0IGl0IHdhcyAqbm90KiByZXR1cm5p
-bmcgWDg2RU1VTF9DT05USU5VRSBieSBtaXN0YWtlLiAgDQo+IENhbiBJIGhheiBzdHJvbmds
-eS10eXBlZCBlbnVtcyBsaWtlIGluIEMrKz8uLi4NCj4gDQo+ICDCoMKgwqDCoMKgwqDCoCBy
-ID0ga3ZtX2NoZWNrX2VtdWxhdGVfaW5zbih2Y3B1LCBlbXVsYXRpb25fdHlwZSwgaW5zbiwg
-aW5zbl9sZW4pOw0KPiAgwqDCoMKgwqDCoMKgwqAgaWYgKHIgIT0gWDg2RU1VTF9DT05USU5V
-RSkgew0KPiAgwqDCoMKgwqDCoMKgwqAgLi4uDQo+ICDCoMKgwqDCoMKgwqDCoCB9DQo+IA0K
-PiAgwqDCoMKgwqDCoMKgwqAgaWYgKCEoZW11bGF0aW9uX3R5cGUgJiBFTVVMVFlQRV9OT19E
-RUNPREUpKSB7DQo+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAga3ZtX2NsZWFy
-X2V4Y2VwdGlvbl9xdWV1ZSh2Y3B1KTsNCj4gIMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBpZiAoa3ZtX3ZjcHVfY2hlY2tfY29kZV9icmVha3BvaW50KHZjcHUsIGVtdWxhdGlv
-bl90eXBlLCAmcikpDQo+ICDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgIHJldHVybiByOw0KPiAgwqDCoMKgwqDCoMKgwqAgLi4uDQo+ICDCoMKgwqDC
-oH0NCj4gDQo+IFNvIHllYWggdGhpcyByZWFsbHkgaGFzIHRvIGJlIGZpeGVkIHRoZSByaWdo
-dCB3YXksIGFmdGVyIGFsbCBldmVuIFJFVF9QRl8qIA0KPiBzdGFydGVkIG91dCBhcyBhIGNv
-bnZlcnNpb24gZnJvbSAwLzEuDQo+IA0KPiBPYmxpZ2F0b3J5IGJpa2VzaGVkZGluZywgaG93
-IGRvIEtWTV9SRVRfVVNFUiBhbmQgS1ZNX1JFVF9HVUVTVCBzb3VuZCBsaWtlPw0KDQorMQ0K
-DQoNCkp1ZXJnZW4NCg==
---------------qf407JsnCtBHNsROutPMFClW
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+That's a good question, and a worry about the devm_* calls.  I know many
+busses (i.e. USB) require that the data passed to them are allocated
+from kmalloc buffers, but I don't know about the alignment issues
+required, as that is usually very hardware-specific.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+> If this is a limited use-case it can be worked around with just regular
+> k*alloc() + devm_add_action_or_reset() as Jonathan suggested. However, I
+> still think it can be easy to introduce some alignment related bug,
+> especially when transitioning from k*alloc() to devm_k*alloc() in an old
+> implementation since it can be assumed that they have the same alignment
+> guarantees. Maybe some comment in the devres APIs or documentation would
+> help in this case?
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+I think the general statement of "don't migrate drivers to devm_* calls
+unless you have the hardware and can test the changes" is good to follow
+here.  That should resolve the problem going forward as new drivers are
+expected to be at least tested by the submitter :)
 
---------------qf407JsnCtBHNsROutPMFClW--
+thanks,
 
---------------xlshWiW9ZsqYMq3QT8PmTcyF--
-
---------------08XkMQYCJ2Y2PZ7eWeab4P4j
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmcvK4AFAwAAAAAACgkQsN6d1ii/Ey+I
-9Af/bKKCXjTcKUUSe9vrghhhoc7xIwFwOWLG436yhORDK1t6YYqGvK6GxuFk1puZABFgzNReNaNJ
-hOzLVfKWa5pNKH3NF7BVlTga/BXhsL0tXPSj7HPFdRn84H/s30Jcp9GARJlN3Q+B2cuABWEWFyTa
-dtW3W/sc2D8YPR/f/DsA9Sswe+Sk4M7K5dxRVhfF1JHmt8//jwF5LAbkFxWseHHtkcmz0GixYDHl
-nYsS/eFgiODxE3aK3y5Wrw3MLSEt48pxHMAcQu6TyKn3cM4xYtLavGZkV6ew2hNXzhFSWeyhexox
-N6U1QIfatJX1Cv06FpJwLiXU1Uo3ho4c0Ex8BqQRWg==
-=MwIV
------END PGP SIGNATURE-----
-
---------------08XkMQYCJ2Y2PZ7eWeab4P4j--
+greg k-h
 
