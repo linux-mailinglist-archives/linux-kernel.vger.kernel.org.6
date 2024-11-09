@@ -1,64 +1,54 @@
-Return-Path: <linux-kernel+bounces-402907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34159C2E51
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:43:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907BF9C2E52
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:48:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556A71F21BC0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:43:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD9DD2823BD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CF819D064;
-	Sat,  9 Nov 2024 15:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B23A1991D8;
+	Sat,  9 Nov 2024 15:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="HOz4E6lS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBTG9ZpV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F1D19CC21;
-	Sat,  9 Nov 2024 15:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0BE233D7D
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731167029; cv=none; b=ldlWoOUgI/txQ6TqibMoTLNWmTMR/7t+d/C98IO/Q7d4oqL1Vra6KieV+OCYrW87GYAlsYFVH5wthkXQf2Va43d8wFBytKKRCSjFw1kMFHbmk9UYq/c029OUssJLvsOobblIyWSd10+/pY4oThNOeuYB/gRKWHFcv+oQ/8N9RNs=
+	t=1731167284; cv=none; b=PBbBgqDIYTRdt9JHPuHSoO5kHnZz1oeNNx83FmL/t9umTiBJrbOc0UQ7eCiyvX/9A4pazRyhBNzMEJVaLSL4bgbE/w8s4jH9tylSDuCvDeroFKGyY0P92qtc6KP2LDKU2ux2rKLu/Q+IKY0fN8VtJHzbo5qXSModHhzq0k/EnT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731167029; c=relaxed/simple;
-	bh=jDNZB1A/J/zq5gt2PGFW4eLWP2EuMycAA3yVEocaOhQ=;
+	s=arc-20240116; t=1731167284; c=relaxed/simple;
+	bh=g1hrW8Uqu7CGSDB2Ds6Z6ZC82mP8I2WbhBZfW8c0jrI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKI0wcKg5dg+Ez079HUOV5vFXHfkndzI1epZne09TBC64ZKjx5bsFA9o/7cmk0wA/CfmAGyV3V323DKkHLgpClXDMw2iLl4/WVSdowdxyEtYZP9IWf0yK7WcoQSy3m4o2Hm3xEo+U8C7gumaWp2HMVnw0hPUz9KV+XZsTdzszvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=HOz4E6lS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=J57s815SwhMV8jjaOfiNANO5vn4nCJpafqqppdC8Pmg=; b=HOz4E6lSW7KvhQYxEEDlHapBil
-	06iVa4Ql5eIpJK3KaG6xlCHM4FATGEtGbGz6MLI3M8DHdg/vbp2HunYyTqVrcAwGRjmNwVpARqneL
-	3eGN9WqggzBm0puxFjjBL/SnzDGfVSiSoXfTNFUO0JrAl2ycMlaqlDtyoISD4tihzCC4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t9nch-00CiYi-EH; Sat, 09 Nov 2024 16:43:39 +0100
-Date: Sat, 9 Nov 2024 16:43:39 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek Vasut <marex@denx.de>, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmLECsucrNWCEUZz5/xGYScnfNdu+auFAKEnYIW4vCrFcruIeDO5iEmWoIGbzxkjh4UJCD9foUayOwM4Uas1RxLerQLJW4rOR2wk+DhRRAKy+p8otkPT5YyFB9zj78xAdOmGYsJMbkondGi+vha//9XaZtu6RqLN7lnToMTP8LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBTG9ZpV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE9D2C4CECE;
+	Sat,  9 Nov 2024 15:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731167284;
+	bh=g1hrW8Uqu7CGSDB2Ds6Z6ZC82mP8I2WbhBZfW8c0jrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IBTG9ZpVPshwZlSCii4lnIaP6NEqwYpb78G+OoSeAkqyz2NVDWfkn4ACTHevnE4eN
+	 SKmqV42km6Z1lqNHJPXm6R8xTmWAQ8C9o/q/v7fytpF7neP0BLqc1c/CImrjvd4xtf
+	 jTKuIrDxZzX0XSw+7px0EYhXVtuS43wukIJ+SrQHOpr9oqLq2gfrSCl2h2U8Sq76rO
+	 N/VYWF7Wlh33QUUpMLUOl35HT7UpIK/sTKdzh/4RG651wX6oMqBWXbn9FGWdj+kYpA
+	 4zZLWCfYl2YE3PgKGWI/NLrc0cbUYYHKKzRuHHYMZsh0cWmVA5XxEnTdz5LbWNiE9q
+	 eIAQdnCPI0o/A==
+Date: Sat, 9 Nov 2024 05:48:02 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <multics69@gmail.com>
+Cc: void@manifault.com, changwoo@igalia.com, kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: Add SGMII port support
- to KSZ9477 switch
-Message-ID: <d912d397-38b4-4bdb-ac38-ac45206b4af8@lunn.ch>
-References: <20241109015633.82638-1-Tristram.Ha@microchip.com>
- <20241109015633.82638-3-Tristram.Ha@microchip.com>
+Subject: Re: [PATCH v2] sched_ext: add a missing rcu_read_lock/unlock pair at
+ scx_select_cpu_dfl()
+Message-ID: <Zy-EMnJzWpS1K83R@slm.duckdns.org>
+References: <20241109062905.204434-1-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,71 +57,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109015633.82638-3-Tristram.Ha@microchip.com>
+In-Reply-To: <20241109062905.204434-1-changwoo@igalia.com>
 
-> +static void port_sgmii_r(struct ksz_device *dev, uint port, u16 devid, u16 reg,
-> +			 u16 *buf, u16 len)
-> +{
-> +	u32 data;
-> +
-> +	port_sgmii_s(dev, port, devid, reg, len);
-> +	while (len) {
-> +		ksz_pread32(dev, port, REG_PORT_SGMII_DATA__4, &data);
-> +		*buf++ = (u16)data;
-> +		len--;
-> +	}
-> +}
-> +
-> +static void port_sgmii_w(struct ksz_device *dev, uint port, u16 devid, u16 reg,
-> +			 u16 *buf, u16 len)
-> +{
-> +	u32 data;
-> +
-> +	port_sgmii_s(dev, port, devid, reg, len);
-> +	while (len) {
-> +		data = *buf++;
-> +		ksz_pwrite32(dev, port, REG_PORT_SGMII_DATA__4, data);
-> +		len--;
-> +	}
-> +}
+On Sat, Nov 09, 2024 at 03:29:05PM +0900, Changwoo Min wrote:
+> When getting an LLC CPU mask in the default CPU selection policy,
+> scx_select_cpu_dfl(), a pointer to the sched_domain is dereferenced
+> using rcu_read_lock() without holding rcu_read_lock(). Such an unprotected
+> dereference often causes the following warning and can cause an invalid
+> memory access in the worst case.
+> 
+> Therefore, protect dereference of a sched_domain pointer using a pair
+> of rcu_read_lock() and unlock().
+...
+> Signed-off-by: Changwoo Min <changwoo@igalia.com>
 
-This kind of looks like a C45 only MDIO bus.
+Applied to sched_ext/for-6.13.
 
-#define MMD_DEVICE_ID_VENDOR_MII	0x1F
+Thanks.
 
-#define SR_MII				MMD_DEVICE_ID_VENDOR_MII
-
-This is identical to MDIO_MMD_VEND2.
-
-#define SR_MII_RESET			BIT(15)
-#define SR_MII_LOOPBACK			BIT(14)
-#define SR_MII_SPEED_100MBIT		BIT(13)
-#define SR_MII_AUTO_NEG_ENABLE		BIT(12)
-#define SR_MII_POWER_DOWN		BIT(11)
-#define SR_MII_AUTO_NEG_RESTART		BIT(9)
-#define SR_MII_FULL_DUPLEX		BIT(8)
-#define SR_MII_SPEED_1000MBIT		BIT(6)
-
-A standard BMCR.
-
-#define MMD_SR_MII_STATUS		0x0001
-#define MMD_SR_MII_ID_1			0x0002
-#define MMD_SR_MII_ID_2			0x0003
-#define MMD_SR_MII_AUTO_NEGOTIATION	0x0004
-
-Same as:
-
-#define MII_BMSR                0x01    /* Basic mode status register  */
-#define MII_PHYSID1             0x02    /* PHYS ID 1                   */
-#define MII_PHYSID2             0x03    /* PHYS ID 2                   */
-#define MII_ADVERTISE           0x04    /* Advertisement control reg   */
-
-So i think your first patch should be to replace all these with the
-standard macros.
-
-That will then help make it clearer how much is generic, could the
-existing helpers be used, probably with a wrapper to make your C22
-device mapped to C45 MDIO_MMD_VEND2 look like a C22 device?
-
-	Andrew
+-- 
+tejun
 
