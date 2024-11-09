@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-402728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7ED9C2B0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:35:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1987A9C2B14
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE47BB21FED
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:35:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47E21F2194F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389413DDDF;
-	Sat,  9 Nov 2024 07:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9984713B2B6;
+	Sat,  9 Nov 2024 08:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="JJEnPS0N"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KOMmmyqv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D87A55
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 07:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F0E8836
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731137713; cv=none; b=dyXiFbb9YydYXNqROAoPhnid3AAElcosWm9p7sipb138Ap7SVT2Ywq99HAFUX1PewnpcrRCZ65oEee6IEN3smCMtoqeG72AdpegqDphHa1SrzRBLIfEFIyYUanfGKFHux45F+fD8mZDRe7mF7Fd641DZ3eWlnHEz8Gk18rGyGjs=
+	t=1731139243; cv=none; b=GW/Q09ExnL/LAMuScumh/V9Mhp7HY1hLyLWsrY65WoT0wCFw4MKbQEQUEbuBZfh0WOCz5j5gAxSG6ums/8lHA8P9f5QoLqKyK0MpvhwMhvQse09YBIRo4J93a/RyN8ioaBvyHPM8AFZGS6s7uVuLlliH7RNLgkixWJ6P/CZlH4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731137713; c=relaxed/simple;
-	bh=zNhMYak1rnVDMapsu0tk3BwDJu8yuPW5Cr4i8jS6QXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvJa4J5QU1XiTHIUWhCNb0rsxUsfK11PGo/0yc31beTUL7jSOUGq7ZyviIyDhgvUW8rqBZVsDFKuKkzFwklkVQwgf9xSkl0kQ95Qn7tcCfE9X/hnL4Rzwh6jtIpdtBdzfZGwBlkTrwdp2+xEnJO86hZ1NGsHbc8mPq9QjpCv/h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=JJEnPS0N; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 0C3D61770C1; Sat,  9 Nov 2024 07:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1731137711; bh=zNhMYak1rnVDMapsu0tk3BwDJu8yuPW5Cr4i8jS6QXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JJEnPS0NBfqhAOkZp+9oFqhMXwA8k9XaMAwBDC7ZVlSpFJ+fT6kErGnfB6OVZoC8I
-	 rnze6w1+8CtPWhGQG2x4zdm2ywjD6o3M/HXQrno3upRBd5F7OukI+6fZsZirQ0QTuK
-	 gsmL9Q7qPUugcaKsSRvOfzyOsvm72OOapCD1ddMIzoY66tWczlzRJTBkY2mmSGFaM0
-	 /coIiEaZ4Nj6QWQFxA05HzUJ3l4+GeQEO4TRSIqZ0ciPr6WwelD5HSTo5OesapbJlk
-	 Q8NyPk/VEj53ugJKZwHk5nalswcergu6Q9pK3//uWNnjGsSCEcnmZiQJKKHL5iEdpD
-	 h+FAwbz8y7rzQ==
-Date: Sat, 9 Nov 2024 07:35:11 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: fix ctrl+e/a/f/b/d/p/n broken in keyboard mode
-Message-ID: <20241109073511.GA128495@lichtman.org>
-References: <20241108221116.GA123748@lichtman.org>
- <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
+	s=arc-20240116; t=1731139243; c=relaxed/simple;
+	bh=Hg18jHenln1AxJEu/4fRwyzk7EQid7Ptx0+xOvDyjrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pTxly+YOaGCrMClTmq/OjPPuRVHuxvSkAcw+0T8MnEmMEjqAx4fCCxjPF3lvxpXIGsuap/yVqGoUCtQ7l9BfoYvU8wsdZa5E8M7RBbhyS+KrhJFEuY1aAbcIXp2hIf9ZvomP7HL9Spc3QaaCZXpxDC3YzVWci4ONsfByRgnsIC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KOMmmyqv; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731139241; x=1762675241;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Hg18jHenln1AxJEu/4fRwyzk7EQid7Ptx0+xOvDyjrM=;
+  b=KOMmmyqv76VPn5PXkDfiw7tugCbr4OkkTalb1SesI60G8HZ8BW591nt5
+   uYPSvmSel6qHcZmKtemt1BxMQsnHYZL++c4cZVkjH38pI3Mx5zl1x1yRO
+   mibI7zxNeq3YHm+8wynT2bPpYMg/JaiCLgi/NYjbIHGnhp+TsWkCqETdY
+   y6wHdqVqzOQGVeAN2fmpztjHBT9VuwjUMUBsNppe0EL755H07vYzrrEpO
+   9rrzQKKhgotcMHBrF0ZTG9ObJ0V6GrB5lUTTv6Cs7+qxfSr/hbdKlc4qO
+   RXiuTHrBhzEGVNXTkIktZzrrI8Qjp9/0ygnfT2O/L8+LGjdhck9xU3dHh
+   w==;
+X-CSE-ConnectionGUID: tFNH4LaGRz2eYwJbNOVWEQ==
+X-CSE-MsgGUID: jKriN1zTQuGAtVgPDjTxMA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="56421395"
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="56421395"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2024 00:00:40 -0800
+X-CSE-ConnectionGUID: WZmeLo8VQmKHnEym4E9xcw==
+X-CSE-MsgGUID: AmJeUSpcQwayyHeZia5reA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="109231056"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 09 Nov 2024 00:00:39 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9gOa-000sDO-24;
+	Sat, 09 Nov 2024 08:00:36 +0000
+Date: Sat, 9 Nov 2024 16:00:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Guillaume Nault <gnault@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Willem de Bruijn <willemb@google.com>
+Subject: net/ipv4/inet_diag.c:1511:17: sparse: sparse: Using plain integer as
+ NULL pointer
+Message-ID: <202411091538.PGSTqUBi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
 
-On Fri, Nov 08, 2024 at 04:31:12PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Nov 8, 2024 at 2:11 PM Nir Lichtman <nir@lichtman.org> wrote:
-> >
-> > Problem: When using KDB via keyboard it does not react to control
-> > characters which are supported in serial mode.
-> >
-> > I have took them all besides the TAB control character translation (I am
-> > not sure what that maps to on the keyboard)
-> 
-> Tab translates to 9, so the 9th character. Ctrl-I.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   da4373fbcf006deda90e5e6a87c499e0ff747572
+commit: 223f55196bbdb182a9b8de6108a0834b5e5e832e inet_diag: allow concurrent operations
+date:   10 months ago
+config: hexagon-randconfig-r112-20241109 (https://download.01.org/0day-ci/archive/20241109/202411091538.PGSTqUBi-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce: (https://download.01.org/0day-ci/archive/20241109/202411091538.PGSTqUBi-lkp@intel.com/reproduce)
 
-Noted, thanks
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411091538.PGSTqUBi-lkp@intel.com/
 
-> 
-> 
-> >  kernel/debug/kdb/kdb_keyboard.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
-> > index 3c2987f46f6e..2c004abd5375 100644
-> > --- a/kernel/debug/kdb/kdb_keyboard.c
-> > +++ b/kernel/debug/kdb/kdb_keyboard.c
-> > @@ -172,6 +172,9 @@ int kdb_get_kbd_char(void)
-> >         switch (KTYP(keychar)) {
-> >         case KT_LETTER:
-> >         case KT_LATIN:
-> > +               if (keychar == 4 || keychar == 1 || keychar == 5 || keychar == 2 ||
-> > +                   keychar == 16 || keychar == 14 || keychar == 6)
-> > +                       return keychar;         /* non-printable supported control characters (e.g. CTRL+A) */
-> 
-> This is probably OK, but IMO readability here (and above) could be
-> improved. Untested, but I think:
-> 
-> #define CTRL(c) (c - 64)
+sparse warnings: (new ones prefixed by >>)
+>> net/ipv4/inet_diag.c:1511:17: sparse: sparse: Using plain integer as NULL pointer
 
-That's a good point, I will work on a v2 with this fix.
+vim +1511 net/ipv4/inet_diag.c
 
-> 
-> Then:
-> 
-> /* Allowlist supported control characters */
-> switch(keychar) {
-> case CTRL('A'): /* Home */
-[...]
+  1503	
+  1504	int inet_diag_register(const struct inet_diag_handler *h)
+  1505	{
+  1506		const __u16 type = h->idiag_type;
+  1507	
+  1508		if (type >= IPPROTO_MAX)
+  1509			return -EINVAL;
+  1510	
+> 1511		return !cmpxchg((const struct inet_diag_handler **)&inet_diag_table[type],
+  1512				NULL, h) ? 0 : -EEXIST;
+  1513	}
+  1514	EXPORT_SYMBOL_GPL(inet_diag_register);
+  1515	
 
-Thanks,
-Nir
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
