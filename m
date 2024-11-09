@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3F79C2A97
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:23:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A409C2A98
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFD71C21A7D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:23:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80CB3B23649
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C101465BE;
-	Sat,  9 Nov 2024 06:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01DD198846;
+	Sat,  9 Nov 2024 06:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pe0PyR/b"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wV2wEInt"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638AC194A54
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80783195FD5
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731133144; cv=none; b=kzo0ZuBQOAPjXyOiEbUpMPEJ2L0MsR+sT7i9UwXmHTHsPrJvJSJ1nD2ACrV8xqS6WsWhUF+OrlW56mibeYy6dZHztRZnzCDCToIz8xcqyhyYkAu3vNYzk8Qz9zr0rU+N0tR15p/CSldz18BKXG0bd/5iLc6jfxZniOA6aYKirOc=
+	t=1731133147; cv=none; b=nL1A0hs0flKhuPxTdCE7BxNlfEBEtLKxQEKj+43FcGQNiWI6Zhgf7MOa2czOkFCGcUMlyxcOM1zpmvtQY9vM9VK2dCCBOTRFyI4Fhgbgt/j5c8jRe5HnMWS8RPpJCB7mq7tgOjQenv8wKvqX2uQtsfyNWGt50nxf7qB5CAVjdZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731133144; c=relaxed/simple;
-	bh=0iUYu8ZIw3nC+tEYsru/9b2KOk5bw5n11avghkE86XA=;
+	s=arc-20240116; t=1731133147; c=relaxed/simple;
+	bh=lsCvQUmYtGoOUuABRkiGOOa4iuLoBIgGZXe26jet8vc=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=V4pGDDvPqfrTgyZYGN/2Cf5/mUQSLNWuhMNTsWiGMw4GZijfmMjJ0n3dnDRG2uF3pt+OlZvmAuDpgK12RsUWbd4PMkUxUuDS0LZEhSrAv9BDZVG4oLnp2CWPSta/Bn4VxxPycS9sH00W5g2SH9lhgDGd6m1XTr3vADYN4LBQk1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pe0PyR/b; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=BtGWvKSXVOlR/atNkvb/uU/VhjUtRNyv61raE9euphQkvMeGTV3Rvhz8eNU0VegT+365JE8F2DF7C1VKnlZfavifku1Zd2Opn37IheuRD6k6Y4/wXtqOvY6AMzcmBIFL3aA1FKc3tAJ4Rb+jzdVkCiotrd4LGynvpWlw3aOp8gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wV2wEInt; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2b9f2c6559so4455925276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:19:03 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30df208cadso4907554276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:19:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731133142; x=1731737942; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5SFBUvJ8uwJxM/+aez6JFuBLxdqirz/XmWsuAyloP0=;
-        b=pe0PyR/brtyINSUrq2YTH4JmbZYi3hReROvO0OEF6Ey8JmnRYdQRaZIkIob624UDNt
-         c0dflv/Yc88+fTaoh0mPokfV1pDlHh+Z8U+H5yzHsSE0XxcVrvHstRekv22XGREvqGn4
-         6IwAyT8TxQrOLgVW/CiKM50T+zK5rEKoJYcR1lA6AFM3ZxAfJVUAMaeRrwf6jS/t51zf
-         EpnHhx0vcxuCVYnkp8ablv6enA3tuvLNbsTQ01ta68TKMWQFTKEj9P4YNKBgf8pX6fXY
-         ORI/KuAzmSa0pQ49B4PhfTd3WAK85i/OpXigEHwJqDSYZFlVhM6ukkFsHJaJuItrdyf4
-         9D4Q==
+        d=google.com; s=20230601; t=1731133144; x=1731737944; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=idekZ5mqOfUQ8Rvlee93oJIg5nGKfz7rEzSROqbRTzY=;
+        b=wV2wEInt4kSlduo9QPAd0HBYDCvjZWSdBUWyN4/5qrXYZGhmwJVK0nsY6jY5UGlqFe
+         KSxY7WlPY4WS+EODXIChsoXe70/u0Kcw4jZf1EymInnf60J0kZAen0Lta2/Pv3KQ1al/
+         HlNrLr+5pf3nj5lg3/813es27ypdUCcnUuGCOGfCbhqybQsCFtOLelkouqQ2faYy72hF
+         AVMGn0CP8RQXExMOz1JiKVo2Zu/T19aEDSYM2iMeaArB9MHlQZKMjerzBJ05OGQdMyXU
+         F9Y/tD/7RM5FoPIkUhRiJNNUx8/oE08Nx5cT/qFUUveUqeZ3h0FkH6UkeRk2SBbXTMZI
+         1g5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731133142; x=1731737942;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5SFBUvJ8uwJxM/+aez6JFuBLxdqirz/XmWsuAyloP0=;
-        b=RJwUfrD6auAtLWYIraKKJhvCu0oHxFzoM/ZZItrUcm/Zc6a9BcpryX0/XhdNUfUhgF
-         BnezkBcojwJgDmqLUmCywezykgZ3sla3VVz7dex63+dksUXY/DcY2LtoiZaqsgL9TS6S
-         8XLs5khIqNe83wNp9taG9Z1d0WmIgWm589Sxj2Nulin7KwSAeDB4iX0kOf1G5ywynC6Z
-         LHpRuaAycfHofKP2WT0//057nHK9fU9G4T7TGJUZPPo7JMbIqLHfI9q5+33sZTdTWh4D
-         P4PZCydzhO2W/aYWrTrPhcni0R5k+qjSrOEHnJbc04OjggN+zp2OeTIUz6to5jM0MsbI
-         0l9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNS19ljEk/yECOJcyhZoeSZHx/VUN7JpqWBMXnMWXu08zDOfCbjYTfsRP1Xgl5JUTzKj+GHnUT6gHtpCw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYR/L+CbWiSIOn6jYTlTU7TNwyXqrdCmwX5eLrbQs8ir4zhaPx
-	J7xeiyfPyP9nJCS/3o7k87sJx0F/UiXRHNBu5N2KETK9azvbQZTtf7nO87Rv3Pw+yRGzSZbS3su
-	1t8aeqg==
-X-Google-Smtp-Source: AGHT+IH9AHh43wZI95SDyksqtxouXEyTkhOjimgLo4B9ZLCzen6gdneqeJ2en9MS4bz5JA8JbbcbHNuqPciu
+        d=1e100.net; s=20230601; t=1731133144; x=1731737944;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=idekZ5mqOfUQ8Rvlee93oJIg5nGKfz7rEzSROqbRTzY=;
+        b=eBu4Q9wr/+jXx80djvEWqjGtYxGPPz6MBzMweJkxd9qg/ZIaWl/uHU16zIsFd9suEB
+         XibtPwAOIJzdu6yFrLQKlJXUzxAaPAbciIttmSEmze74ccb1jGdEZAHvgEee4qOXnmTI
+         /NTgYnt2XeVUqEC/cDGS493RoCro8hocIE3975rEVbTvYWQL20nEpDGvZYoZ+nMev1eA
+         mP6yv7TwFmNOiWjqDN8tGjjDlo2fihM9LsE474zHVQXMGAcxJjg7mcyJUhrAwoIUzq2x
+         eNAxEWP2C0L8OmKRtmFWuRNPC/5w7bCYKW0G82F4yATITC2UbSFZOWmLHtokZZDJaXo9
+         Q/Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlF4GejYofyCWvQe7FZP7gnmEVAzhqHD5dF0JFxI6oayoIQYnBDe5M0Q7+2Yv6UdveXX4kP6GPv8rZnoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPbV2VVJkx3dcG+JITQiX0+CG5dXFs056gxDNFt7wg8SFa+zXt
+	TMFvW49eHBD9lcruhHDLRYPNeUdA31qxLu2HfuLvwW60jtJwwSoTRYkwn59b6N+YUoTV5DKUq2Z
+	dTJ1N/g==
+X-Google-Smtp-Source: AGHT+IGyOAbd6LiSlb+ikd+ZVqoL5bSigFnDGrfGby57ISP6b83CZyVUuKPP6kDcoDs0PsD9QvYPcMUj0gmZ
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc2:d48f:a998:5915])
- (user=irogers job=sendgmr) by 2002:a25:3355:0:b0:e2b:cd96:67a6 with SMTP id
- 3f1490d57ef6-e337f8c133dmr3844276.5.1731133142342; Fri, 08 Nov 2024 22:19:02
+ (user=irogers job=sendgmr) by 2002:a25:d843:0:b0:e29:7454:e773 with SMTP id
+ 3f1490d57ef6-e337e1d738cmr23283276.5.1731133144532; Fri, 08 Nov 2024 22:19:04
  -0800 (PST)
-Date: Fri,  8 Nov 2024 22:18:05 -0800
+Date: Fri,  8 Nov 2024 22:18:06 -0800
 In-Reply-To: <20241109061809.811922-1-irogers@google.com>
-Message-Id: <20241109061809.811922-19-irogers@google.com>
+Message-Id: <20241109061809.811922-20-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241109061809.811922-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v6 18/22] perf build: Remove test library from python shared object
+Subject: [PATCH v6 19/22] perf python: Add parse_events function
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,36 +89,177 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
 	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
 	linux-perf-users@vger.kernel.org
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-With the attr.c code moved to a shell test, there is no need to link
-the test code into the python dso to avoid a missing reference to
-test_attr__open. Drop the test code from the python library.
-
-With the bench and test code removed from the python library on my x86
-debian derived laptop the python library is reduced in size by 508,712
-bytes or nearly 5%.
+Add basic parse_events function that takes a string and returns an
+evlist. As the python evlist is embedded in a pyrf_evlist, and the
+evsels are embedded in pyrf_evsels, copy the parsed data into those
+structs and update evsel__clone to enable this.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
-Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/cgroup.c |  2 +-
+ tools/perf/util/evsel.c  | 19 ++++++++-----
+ tools/perf/util/evsel.h  |  2 +-
+ tools/perf/util/python.c | 61 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 75 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index cbcb698cea38..adbc7ab325c7 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -487,7 +487,7 @@ endif
- EXTLIBS := $(call filter-out,$(EXCLUDE_EXTLIBS),$(EXTLIBS))
- LIBS = -Wl,--whole-archive $(PERFLIBS) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+index 0f759dd96db7..fbcc0626f9ce 100644
+--- a/tools/perf/util/cgroup.c
++++ b/tools/perf/util/cgroup.c
+@@ -473,7 +473,7 @@ int evlist__expand_cgroup(struct evlist *evlist, const char *str,
  
--PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH),$(PERFLIBS))
-+PERFLIBS_PY := $(call filter-out,$(LIBPERF_BENCH) $(LIBPERF_TEST),$(PERFLIBS))
- LIBS_PY = -Wl,--whole-archive $(PERFLIBS_PY) $(EXTRA_PERFLIBS) -Wl,--no-whole-archive -Wl,--start-group $(EXTLIBS) -Wl,--end-group
+ 		leader = NULL;
+ 		evlist__for_each_entry(orig_list, pos) {
+-			evsel = evsel__clone(pos);
++			evsel = evsel__clone(/*dest=*/NULL, pos);
+ 			if (evsel == NULL)
+ 				goto out_err;
  
- export INSTALL SHELL_PATH
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index f780e30aa259..4213ffacdc3c 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -453,7 +453,7 @@ static int evsel__copy_config_terms(struct evsel *dst, struct evsel *src)
+  * The assumption is that @orig is not configured nor opened yet.
+  * So we only care about the attributes that can be set while it's parsed.
+  */
+-struct evsel *evsel__clone(struct evsel *orig)
++struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig)
+ {
+ 	struct evsel *evsel;
+ 
+@@ -466,7 +466,11 @@ struct evsel *evsel__clone(struct evsel *orig)
+ 	if (orig->bpf_obj)
+ 		return NULL;
+ 
+-	evsel = evsel__new(&orig->core.attr);
++	if (dest)
++		evsel = dest;
++	else
++		evsel = evsel__new(&orig->core.attr);
++
+ 	if (evsel == NULL)
+ 		return NULL;
+ 
+@@ -511,11 +515,12 @@ struct evsel *evsel__clone(struct evsel *orig)
+ 	evsel->core.leader = orig->core.leader;
+ 
+ 	evsel->max_events = orig->max_events;
+-	free((char *)evsel->unit);
+-	evsel->unit = strdup(orig->unit);
+-	if (evsel->unit == NULL)
+-		goto out_err;
+-
++	zfree(&evsel->unit);
++	if (orig->unit) {
++		evsel->unit = strdup(orig->unit);
++		if (evsel->unit == NULL)
++			goto out_err;
++	}
+ 	evsel->scale = orig->scale;
+ 	evsel->snapshot = orig->snapshot;
+ 	evsel->per_pkg = orig->per_pkg;
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 04934a7af174..7f41d6f8cf6f 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -241,7 +241,7 @@ static inline struct evsel *evsel__new(struct perf_event_attr *attr)
+ 	return evsel__new_idx(attr, 0);
+ }
+ 
+-struct evsel *evsel__clone(struct evsel *orig);
++struct evsel *evsel__clone(struct evsel *dest, struct evsel *orig);
+ 
+ int copy_config_terms(struct list_head *dst, struct list_head *src);
+ void free_config_terms(struct list_head *config_terms);
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 6e2ff0076daa..1a53a97c513d 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -13,6 +13,7 @@
+ #include "evsel.h"
+ #include "event.h"
+ #include "print_binary.h"
++#include "strbuf.h"
+ #include "thread_map.h"
+ #include "trace-event.h"
+ #include "mmap.h"
+@@ -1201,6 +1202,60 @@ static PyObject *pyrf__tracepoint(struct pyrf_evsel *pevsel,
+ #endif // HAVE_LIBTRACEEVENT
+ }
+ 
++static PyObject *pyrf_evsel__from_evsel(struct evsel *evsel)
++{
++	struct pyrf_evsel *pevsel = PyObject_New(struct pyrf_evsel, &pyrf_evsel__type);
++
++	if (!pevsel)
++		return NULL;
++
++	memset(&pevsel->evsel, 0, sizeof(pevsel->evsel));
++	evsel__init(&pevsel->evsel, &evsel->core.attr, evsel->core.idx);
++
++	evsel__clone(&pevsel->evsel, evsel);
++	return (PyObject *)pevsel;
++}
++
++static PyObject *pyrf_evlist__from_evlist(struct evlist *evlist)
++{
++	struct pyrf_evlist *pevlist = PyObject_New(struct pyrf_evlist, &pyrf_evlist__type);
++	struct evsel *pos;
++
++	if (!pevlist)
++		return NULL;
++
++	memset(&pevlist->evlist, 0, sizeof(pevlist->evlist));
++	evlist__init(&pevlist->evlist, evlist->core.all_cpus, evlist->core.threads);
++	evlist__for_each_entry(evlist, pos) {
++		struct pyrf_evsel *pevsel = (void *)pyrf_evsel__from_evsel(pos);
++
++		evlist__add(&pevlist->evlist, &pevsel->evsel);
++	}
++	return (PyObject *)pevlist;
++}
++
++static PyObject *pyrf__parse_events(PyObject *self, PyObject *args)
++{
++	const char *input;
++	struct evlist evlist = {};
++	struct parse_events_error err;
++	PyObject *result;
++
++	if (!PyArg_ParseTuple(args, "s", &input))
++		return NULL;
++
++	parse_events_error__init(&err);
++	evlist__init(&evlist, NULL, NULL);
++	if (parse_events(&evlist, input, &err)) {
++		parse_events_error__print(&err, input);
++		PyErr_SetFromErrno(PyExc_OSError);
++		return NULL;
++	}
++	result = pyrf_evlist__from_evlist(&evlist);
++	evlist__exit(&evlist);
++	return result;
++}
++
+ static PyMethodDef perf__methods[] = {
+ 	{
+ 		.ml_name  = "tracepoint",
+@@ -1208,6 +1263,12 @@ static PyMethodDef perf__methods[] = {
+ 		.ml_flags = METH_VARARGS | METH_KEYWORDS,
+ 		.ml_doc	  = PyDoc_STR("Get tracepoint config.")
+ 	},
++	{
++		.ml_name  = "parse_events",
++		.ml_meth  = (PyCFunction) pyrf__parse_events,
++		.ml_flags = METH_VARARGS,
++		.ml_doc	  = PyDoc_STR("Parse a string of events and return an evlist.")
++	},
+ 	{ .ml_name = NULL, }
+ };
+ 
 -- 
 2.47.0.277.g8800431eea-goog
 
