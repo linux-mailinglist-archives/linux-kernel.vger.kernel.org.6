@@ -1,250 +1,191 @@
-Return-Path: <linux-kernel+bounces-402836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2479C2D69
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:50:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384E29C2D6F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34F91F21542
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4502824B3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C848199FCC;
-	Sat,  9 Nov 2024 12:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A0F178395;
+	Sat,  9 Nov 2024 13:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECYh3ZWp"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kx+5Kt7Q"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576151993AF
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 12:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A654C1BC3F;
+	Sat,  9 Nov 2024 13:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731156532; cv=none; b=o91PXD4hd99mhkABKlo0sYzMC2DB8ERTuahw36GBhEUevAfHwN1y0bNajGatkh+K+78lElhj14Q6MSFojQ2szSVidCzLiF1Zf8zJALStKBcQDA9ZzZ5eluTgm1wQvlmQOVlFc/F9ZweK7imBQKxeLCi/zPhbFESrTrR4IlrB5nY=
+	t=1731157375; cv=none; b=XH6d6DwBGXLf0f2S1PNo+qrBwMITre04l167ZpmgqQKT73xgnWTpRz/VD95u7swnvsjhmxUwh8wq0MAf5AnsvlxOsbvmYR9hVAr2B9fzmJ/05ccd5OGCamhLGcQVSDRTRHuYko+jgwace3s6Gy/TV0TBEu17aqC2T7bmpekbYOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731156532; c=relaxed/simple;
-	bh=yRmYAaGG5FuJnzbiAwK+r8Wa4ofx1aRyHEGe3Ks/gxw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ct2gh/HA/17XAaDmxvChSsgfNJctyekhR/k9JD7V5gmCv6dezEogBcG+BBUJVTm6tmHxPWwVBBlNHGFTn2uGDFAnVIjdb7MYzR114+Dk1u3AB2XUAPqdu7Rt2GOAY1PDeaah48+RFDxEMHm/yeQNTcpH2berzThUOYEi8YJsgXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ECYh3ZWp; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539d9fffea1so3099851e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 04:48:50 -0800 (PST)
+	s=arc-20240116; t=1731157375; c=relaxed/simple;
+	bh=a6JHhad8Uq0nFgPJzJDUsZHui48ziYKA8Y4AF3asVdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PinHQttfdTCgpMZi4NPt0oGTgw5gNb9vQcZxdAm+H6Dv42RGN0GFdXN7M3vEmVabxU+Kya964wXX7dG/cu2aYvi/xYWn3wbAVedoNC+t7K8i7PQ1UIdCEZidmkOLNv1ZPBrVTOUYIvBEpYbSt9lkN2RBRzwpDzK1npr75ZA9Oao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kx+5Kt7Q; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c8c50fdd9so28843015ad.0;
+        Sat, 09 Nov 2024 05:02:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731156528; x=1731761328; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0+2GniAkdmp4BwJcsCVeiFyEwNMIk2x1tb1O8W07KrE=;
-        b=ECYh3ZWpKCqa0b9ffTRhQslWBWRaWnBVWv4wBwsW2pE62mFz11OXPeNIC3p4KHiBS9
-         dbpgOzep6RP2XmKBe9Nr1NdR83fRLYKazgZDVnuzFVz4Gd40zvBsOfEPLQhWdf8TRfrl
-         WUMepLxQZxLp0yHVg2+PcQcTAxkpkKO6XDos0hod9vnGz9nwiQ9ahX9WXwI2Xn4MQmrW
-         KlqIwtJ5CWMkl2x5mVvVv4A06WFxVEYLSXr47MyRHMIi0I1t2MeJJRWYgj5xfrDCDRi1
-         VKwXlvMo4ShqjO+KjhtTdqzpihod/vrC1zl3K/8r1dUjt4OAok1L4GqD6af555ruiEdv
-         m+8Q==
+        d=gmail.com; s=20230601; t=1731157373; x=1731762173; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DlmhTfTUG1CY8BJqLA3dNzmUX81qWaoK1uznnl+92tg=;
+        b=kx+5Kt7QjeauDV75a+hZWBtKDXRJztH1qxWawIysZHwZc3VaV2qgmY1ajXJ3aOy/Zv
+         /UJNl7HPCI8NChlua7fud9qO6mEkjsSv6I9wAmSKVh62tUuFVsw1ezb34+CTMfGsuUZU
+         VibsSjGyl22xCAtLEiKVZ8ORaznbqf+Octp+FThCe1bmG4pSMfjzyip/nQZQGrZBlYv4
+         zFJm+6OULsmMk2NvM+i3VFU7JG7LW73w01Ain6nO5Be0FyFohDNDWsSOgImMQMiE0UOg
+         wKgW/IJ9eYKLAVazIRx/Nsa+bwcYp1yIVRBOECqXD5Ys6uBQSlx157HHp8L50+BzCFky
+         q+rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731156528; x=1731761328;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0+2GniAkdmp4BwJcsCVeiFyEwNMIk2x1tb1O8W07KrE=;
-        b=E+NShXrXCx45DCZRdi2tMHKbBv1NguCjEoxc0g/uT2atgWRR1Xxy8EUOdPSpsIIgIf
-         K2vQ4Ck8yX4/XZt4HAWRKPGJZinjjLntGLs/MHho1bbqk3SyCHv7760e9NVJZE6SsT45
-         dHb0MuF6oK7vB5SS9hfKxJ2ftkPXdzFmfLLfTA7D9U5batJE3/JcoOOblqBVyxdYo5LZ
-         4Ol/enEn+ilvy9A655TxuSrsNoNU6H+LubKmQ8H5/NFBLxSXmINrLx4tV2sVmi305lWr
-         3RXL6/SRVPTQHpY9Uhus8Mh5WfvFmOj10KCjMQJYeE/UdyPO3OTldmmfvhfpCViiuyz5
-         Zc6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWAE14roHzhKp4f9OqbwYiC/maOVdUuJucBC8Vsi4YHFQOUmqGdTfQUritz3kfq9qqRwcF2EuF3sccxK+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymrl1u63wPxfy0JHp0zljF9eKwOfod32E+QZOfWL+6OkRL6TuW
-	BQjEmixJu4r1t9in6fxBCCZMm1Dmvtf04RgNQ4NidNybwhaBgwWbA0APdVbf8Oc=
-X-Google-Smtp-Source: AGHT+IHTXV5Cz5pjd5Ce3JQaNt839BiITtgrMF3UnvNUaVEgnkA8D0ncy/dtINK9kj+DtzeoWo9CeA==
-X-Received: by 2002:a05:6512:2254:b0:539:e776:71f7 with SMTP id 2adb3069b0e04-53d862ebe11mr3204121e87.37.1731156528375;
-        Sat, 09 Nov 2024 04:48:48 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a9b76sm929967e87.172.2024.11.09.04.48.45
+        d=1e100.net; s=20230601; t=1731157373; x=1731762173;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DlmhTfTUG1CY8BJqLA3dNzmUX81qWaoK1uznnl+92tg=;
+        b=jBethXMJmQ8dq+essue72a50K3+k6XuWRdDjVNSQnCt0q1BOQ9romr/vqm70zal50H
+         L53lsGrT0fF8bx6aNNrjj35n/7w9GNeHU/oYrzgKpPCPw14nL9CVXc6u5IcA7ohuqLfQ
+         CQ4cyvOFO6ySNVOQ1XrvM6cFiJrT0TDgaviOyIese6csW/nOlsaSm3pB99GwMrRYe8ow
+         68qpRmv/R/PvOlEMhriGIfAv9glrUU8fMt5swkaVs/i3Gz3m2Dvr+2YknLetHcZxRrzQ
+         km1jAG4kGfkqisHZ9Aw5g1LjRQWNerdhD96/BvjMyLmP14/KbogW8H0+a557OZydDnNg
+         vsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwz3SYXxTFSU4CbzYCd5i7feLYk4RupVcWOmnAlgkqGVnXVQJbiWegiwNUd1iJGWEZrocsfwkWeogthjX0IcWj@vger.kernel.org, AJvYcCVP0b42n6+M32gqh7r6oGgZJmlWROa30DnD9mi5QnDibLtmGg+O4ng1+UvD+uQ1LgfGhUrhL2rnq8c5VOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4fWGiVTJbM1GQCKBxOSIUXWlHmHQFmI0Kb7G4gq5fU9OR96dK
+	5Bvs7/un+X2trSBa72CrT20OTQY8H6tsFO6+WRLUJghlfEQIYuhU
+X-Google-Smtp-Source: AGHT+IGmRwKKTPH4RquYUsQRA226sRU2HlZ2jVK6h1XdfV1ip2i/B0Xhdtr1FWploXFMJIyZXWEivw==
+X-Received: by 2002:a17:902:ce01:b0:20c:68af:a4e3 with SMTP id d9443c01a7336-211837a151bmr100319145ad.22.1731157372950;
+        Sat, 09 Nov 2024 05:02:52 -0800 (PST)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e418bfsm46220985ad.169.2024.11.09.05.02.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 04:48:47 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 09 Nov 2024 14:48:33 +0200
-Subject: [PATCH v3 7/7] drm/bridge_connector: hook
- drm_atomic_helper_connector_hdmi_update_edid()
+        Sat, 09 Nov 2024 05:02:52 -0800 (PST)
+Date: Sat, 9 Nov 2024 21:02:49 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com,
+	skhan@linuxfoundation.org, rf@opensource.cirrus.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Message-ID: <Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name>
+References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+ <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241109-drm-bridge-hdmi-connector-v3-7-c15afdca5884@linaro.org>
-References: <20241109-drm-bridge-hdmi-connector-v3-0-c15afdca5884@linaro.org>
-In-Reply-To: <20241109-drm-bridge-hdmi-connector-v3-0-c15afdca5884@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Phong LE <ple@baylibre.com>, Inki Dae <inki.dae@samsung.com>, 
- Seung-Woo Kim <sw0312.kim@samsung.com>, 
- Kyungmin Park <kyungmin.park@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sandy Huang <hjc@rock-chips.com>, 
- =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
- Andy Yan <andy.yan@rock-chips.com>, Alain Volmat <alain.volmat@foss.st.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4107;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=yRmYAaGG5FuJnzbiAwK+r8Wa4ofx1aRyHEGe3Ks/gxw=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ7p+lFxRuV8WF0di+7PrL76Ihi3eyqsmfkm3TtdLbPHfu
- Kv8e1o6GY1ZGBi5GGTFFFl8ClqmxmxKDvuwY2o9zCBWJpApDFycAjCR5AIOhoaNT+94f9VgurjW
- 63et8pWUF1u7C14yvWF1yLnWKWVrq5RnYdFxJvjIztNnN+cGJ5ZUF3E+WFWh8tP/xY+tPcoVGWs
- kdS+e688Szr0xvfpM6ob/a6791d7Z37ef8dXtPTG/hL9GbG6oftp7X/Omcre2U7DNu1tTz+yb/e
- ZnNafE9mo2Tr/wzjfaIWqvF5oELDBtWn/7/cxjNZJ1S5dJ62SacfxzlKmynMBtITLV1PnEcgkxl
- 2q3/TNdA9cIb3gkm9X8yCfJgvPclJ83tYq2LXreWfTycrXvDaXIZyer3WO6HteXZlycK5KVnTH7
- kbZP2QY92btBCVe5rItu/uB/IV9UJGS8bUqp2suFBlpiAA==
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
 
-Extend drm_bridge_connector code to read the EDID and use it to update
-connector status if the bridge chain implements HDMI bridge. Performing
-it from the generic location minimizes individual bridge's code and
-enforces standard behaviour from all corresponding drivers.
+On Sat, Nov 09, 2024 at 08:40:30PM +0800, Kuan-Wei Chiu wrote:
+> Hi Jinjie,
+> 
+> On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
+> > In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+> > kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+> > has assigned before, and the error path only free the suite->log's stream
+> > memory but not set it to NULL in string_stream_destroy(), so the later
+> > string_stream_clear() of suite->log in kunit_init_suite() will cause
+> > below UAF bug.
+> > 
+> > Set stream pointer to NULL after free in string_stream_destroy()
+> > to fix it.
+> > 
+> > 	Unable to handle kernel paging request at virtual address 006440150000030d
+> > 	Mem abort info:
+> > 	  ESR = 0x0000000096000004
+> > 	  EC = 0x25: DABT (current EL), IL = 32 bits
+> > 	  SET = 0, FnV = 0
+> > 	  EA = 0, S1PTW = 0
+> > 	  FSC = 0x04: level 0 translation fault
+> > 	Data abort info:
+> > 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> > 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> > 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> > 	[006440150000030d] address between user and kernel address ranges
+> > 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> > 	Dumping ftrace buffer:
+> > 	   (ftrace buffer empty)
+> > 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+> > 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+> > 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+> > 	Hardware name: linux,dummy-virt (DT)
+> > 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > 	pc : string_stream_clear+0x54/0x1ac
+> > 	lr : string_stream_clear+0x1a8/0x1ac
+> > 	sp : ffffffc080b47410
+> > 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+> > 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+> > 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+> > 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+> > 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+> > 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+> > 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+> > 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+> > 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+> > 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+> > 	Call trace:
+> > 	 string_stream_clear+0x54/0x1ac
+> > 	 __kunit_test_suites_init+0x108/0x1d8
+> > 	 kunit_exec_run_tests+0xb8/0x100
+> > 	 kunit_module_notify+0x400/0x55c
+> > 	 notifier_call_chain+0xfc/0x3b4
+> > 	 blocking_notifier_call_chain+0x68/0x9c
+> > 	 do_init_module+0x24c/0x5c8
+> > 	 load_module+0x4acc/0x4e90
+> > 	 init_module_from_file+0xd4/0x128
+> > 	 idempotent_init_module+0x2d4/0x57c
+> > 	 __arm64_sys_finit_module+0xac/0x100
+> > 	 invoke_syscall+0x6c/0x258
+> > 	 el0_svc_common.constprop.0+0x160/0x22c
+> > 	 do_el0_svc+0x44/0x5c
+> > 	 el0_svc+0x48/0xb8
+> > 	 el0t_64_sync_handler+0x13c/0x158
+> > 	 el0t_64_sync+0x190/0x194
+> > 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+> > 	---[ end trace 0000000000000000 ]---
+> > 	Kernel panic - not syncing: Oops: Fatal exception
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > ---
+> >  lib/kunit/string-stream.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+> > index 54f4fdcbfac8..00ad518b730b 100644
+> > --- a/lib/kunit/string-stream.c
+> > +++ b/lib/kunit/string-stream.c
+> > @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+> >  
+> >  	string_stream_clear(stream);
+> >  	kfree(stream);
+> > +	stream = NULL;
+> 
+> Thanks for proposing the fix. However, I don't believe it fully
+> resolves the UAF issue. Changing the stream pointer value within
+> string_stream_destroy() doesn't update the caller's stream pointer, so
+> the issue remains.
+> 
+> I think the correct approach would be to set the log pointer to NULL in
+> the error path of kunit_debugfs_create_suite() to address the issue.
+> Let me know if I've missed something or overlooked an obvious detail.
+>
+BTW, since alloc_string_stream() returns -ENOMEM on error rather than
+NULL, it's best for the caller to check it with IS_ERR() instead of
+IS_ERR_OR_NULL(). It's not a big issue, but I can send a cleanup patch
+later to address this.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/display/drm_bridge_connector.c | 67 ++++++++++++++++++++------
- 1 file changed, 53 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 12ab9f14cc8a8672478ae2804c9a68d766d88ea5..71ae3b2c9049016d1cc0d39a787f6461633efd53 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -17,6 +17,7 @@
- #include <drm/drm_edid.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_modeset_helper_vtables.h>
-+#include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/display/drm_hdmi_state_helper.h>
- 
-@@ -175,17 +176,55 @@ static void drm_bridge_connector_disable_hpd(struct drm_connector *connector)
-  * Bridge Connector Functions
-  */
- 
-+static const struct drm_edid *
-+drm_bridge_connector_read_edid(struct drm_connector *connector,
-+			       enum drm_connector_status status)
-+{
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	const struct drm_edid *drm_edid;
-+	struct drm_bridge *bridge;
-+
-+	bridge = bridge_connector->bridge_edid;
-+	if (!bridge)
-+		return NULL;
-+
-+	if (status != connector_status_connected)
-+		return NULL;
-+
-+	drm_edid = drm_bridge_edid_read(bridge, connector);
-+	if (!drm_edid_valid(drm_edid)) {
-+		drm_edid_free(drm_edid);
-+		return NULL;
-+	}
-+
-+	return drm_edid;
-+}
-+
- static enum drm_connector_status
- drm_bridge_connector_detect(struct drm_connector *connector, bool force)
- {
- 	struct drm_bridge_connector *bridge_connector =
- 		to_drm_bridge_connector(connector);
- 	struct drm_bridge *detect = bridge_connector->bridge_detect;
-+	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
- 	enum drm_connector_status status;
- 
- 	if (detect) {
- 		status = detect->funcs->detect(detect);
- 
-+		if (hdmi) {
-+			const struct drm_edid *drm_edid;
-+			int ret;
-+
-+			drm_edid = drm_bridge_connector_read_edid(connector, status);
-+			ret = drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-+			if (ret)
-+				drm_warn(connector->dev, "updating EDID failed with %d\n", ret);
-+
-+			drm_edid_free(drm_edid);
-+		}
-+
- 		drm_bridge_connector_hpd_notify(connector, status);
- 	} else {
- 		switch (connector->connector_type) {
-@@ -246,29 +285,29 @@ static const struct drm_connector_funcs drm_bridge_connector_funcs = {
- static int drm_bridge_connector_get_modes_edid(struct drm_connector *connector,
- 					       struct drm_bridge *bridge)
- {
-+	struct drm_bridge_connector *bridge_connector =
-+		to_drm_bridge_connector(connector);
-+	struct drm_bridge *hdmi = bridge_connector->bridge_hdmi;
- 	enum drm_connector_status status;
- 	const struct drm_edid *drm_edid;
--	int n;
- 
- 	status = drm_bridge_connector_detect(connector, false);
- 	if (status != connector_status_connected)
--		goto no_edid;
-+		return 0;
- 
--	drm_edid = drm_bridge_edid_read(bridge, connector);
--	if (!drm_edid_valid(drm_edid)) {
-+	/* In HDMI setup the EDID has been read and handled as a part of .detect() */
-+	if (!hdmi) {
-+		drm_edid = drm_bridge_connector_read_edid(connector, status);
-+		if (!drm_edid) {
-+			drm_edid_connector_update(connector, NULL);
-+			return 0;
-+		}
-+
-+		drm_edid_connector_update(connector, drm_edid);
- 		drm_edid_free(drm_edid);
--		goto no_edid;
- 	}
- 
--	drm_edid_connector_update(connector, drm_edid);
--	n = drm_edid_connector_add_modes(connector);
--
--	drm_edid_free(drm_edid);
--	return n;
--
--no_edid:
--	drm_edid_connector_update(connector, NULL);
--	return 0;
-+	return drm_edid_connector_add_modes(connector);
- }
- 
- static int drm_bridge_connector_get_modes(struct drm_connector *connector)
-
--- 
-2.39.5
-
+Regards,
+Kuan-Wei
 
