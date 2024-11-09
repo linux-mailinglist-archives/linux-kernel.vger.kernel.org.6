@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-403037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14229C3005
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:04:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46AB39C300C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CA311C20C38
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AD7282368
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A802B1A2550;
-	Sat,  9 Nov 2024 23:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC78D1A0BC0;
+	Sat,  9 Nov 2024 23:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLMI4aop"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b="SUFe1c1t"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBE81A9B32;
-	Sat,  9 Nov 2024 23:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF338DF9
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 23:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731193467; cv=none; b=dtTEQVso6cEELBkmJjSDfKYdegihdeF+e8ruanTysMKXB+4KOHs4B+t2N/Mb1dcS0aFwHN9W8dr3qu1TLBW4BrmNmGj6zkbijzhv8GiGtPOI7A+94tGjPxj+QzeJ6mlJgcEmiyl1B40rnnRm1dINtobkKaOavRxRsHMgF/VSRos=
+	t=1731194815; cv=none; b=VdUreSthbqfuEXYIRqVbFLzPfcvkOrjJlijwjnZAkzvnbsadoMpvM4YTIgnvRY5rv86jX9yN0EZLAXTLkEGAHNw8eLDgALfOXGI+q+0CBK45PuX3euz8Tnk8w8H9WO9xXtrLfB7ywYoxNfHrp+9Gb/OPzRyJxEkB9pp/f959EVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731193467; c=relaxed/simple;
-	bh=uPUkKT4dEr0T4gau4e/j6X7JAM+LdOF6JWUXj2ptDs0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GpsnevGGaC8oVmkc1SiYSHeFJeBlD4BELAvnpZTVDixrDmSpJ0VEhUu/qCPWlqYao2tMHiZd7DdjQwOKzj2SGOroyf+ELFVIXmKfuo4toyU63y5LQ4BbuxXmtevrwZ/Vxh52kwuEzlc3QkXcKuU5Jx2TV+YAqsnSpzr46EWIgME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLMI4aop; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso33774705ad.2;
-        Sat, 09 Nov 2024 15:04:25 -0800 (PST)
+	s=arc-20240116; t=1731194815; c=relaxed/simple;
+	bh=Cpk5ZBU9/k8RYhqX6ZYvMJrLN1gNQ/ahlhBBu9GJFjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uso7/G+MjrPYjdCu2XxpbwSRZxFRiq92i8V08C6Z4R+cKMv3SkqyJDimhApgiBXm5zV7odWcXnF2wpXvY0C0MT3vIJXtpMWHNhMSLgDV1mNzthelKCSo0RhV8mxrURtZh7RXeo1NJFH4g3SZuHhhnFR4iCghX/t7E6k0VfosShc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org; spf=pass smtp.mailfrom=amundsen.org; dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b=SUFe1c1t; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amundsen.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f53973fdso3267762e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 15:26:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731193465; x=1731798265; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h0TAscultBWfpxXBV9mGtO8Oc58VDQvYlCayV4b4ArM=;
-        b=lLMI4aop0FQzOoczji0AJ/sagOwIKAJBZKtq34CJK6RHGvf8t6mBOS3VZn5NWLP1dp
-         AVa89xLxoTcJ38VsiSTbA13NnrNBwE0jXg/JEjj9CBcbv2JmEwJVAwTGqCYVVG51ohmY
-         b8R6vt2bqnpjJ4u5AeHHuxQLoZpeumoER75LsWCJmz87y3TFZ1RV/uDoo/sznGwAql/R
-         g+wMvWh6+Rs9cQRsy0H06SHLkd9fpurCHItmy8q+C5GZ4iv2ANij4nIViU3vDYf34pVt
-         TRFb43JD4MGYcomeCnwgF3m0gwvjl73H7lsMeTFW3KEAZyj3srXHVL9TplvZf3q9VEn6
-         zz6g==
+        d=amundsen.org; s=google; t=1731194811; x=1731799611; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yKYtXxX3PpnBma4nIdw63BnV/Ds5TXBbvJ0ct3MPA5Y=;
+        b=SUFe1c1t9D6PUcua7oE3VK9CXxzUbZlJzS4dk9dLwqomo2N70Mfg8ZjX1PxqVKseBV
+         44s/MvK52DWW52YYSzho98VrGByHk4QxtReanl34h1EznVnI/9WMcfRlH0l5iVAKsbzB
+         0+KsciW38uFA95xEv+ClIh0Rgjra9Qamizwac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731193465; x=1731798265;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h0TAscultBWfpxXBV9mGtO8Oc58VDQvYlCayV4b4ArM=;
-        b=h1k/6v7FzkmgTHHTAtPFRQWE9k2Xh5TtHVgEOCO4Bp+dK3GHbGotzPrsvJAnnn8vLz
-         FRVpot+erpRXuKKMN/TS6jaiu3oRf31SEj3MEsveBoS0CBcywP9HzzNxjtzGZitib5k/
-         sMG7ETIS7VkuZ4EVq8uaK2fGdtcWz1xDtZmki3se9RQALMllAzSiAdxz5nHm4rSu2olM
-         bN2fcRLwx+rbf97/ZQbNMudANPp9ZmzIIpvnaiigM8RwLrVN6PtIwgPTupnrP6WiS9zB
-         QMDtRx9/Auog39YkWT+G6KMgD7KICIh1lhVbtOIRvpzc+jNNbMA1GlsW0/RDIPpGVAOI
-         Xuhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJOOMTOQaOKR08k6eSVco7cKCGi3oWC7TUM6dsCN0doou5WH3N/AMJ1W2PrHGQBvrUamoI8fOJxfLmGhxq@vger.kernel.org, AJvYcCWmsRO9KolsOOl16TxQBXhtqsso7I64648ogfcSUQemXe0PkAe70uLjmj7KEsghdN/2ayB7oLz5sBWE@vger.kernel.org, AJvYcCXH4UkYwPGYGau3Su/Bu6cY1i+RXOXOs2a5f3j3fQkZe2o9556atGFj6lpIxNDq1pqZqalS81fc/g7iFeAbC/JLg6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKHAyhZa9HliM2PKSuxvaZTRUso8PShjeEYppLULTqNqFOcejM
-	bCcok8mURlpr+TBIrqoKcFhGelXR4+P7fi82M2Rifps0jctRfWXk
-X-Google-Smtp-Source: AGHT+IEEwko2sZK8zp7cWYH3ediZKHQGh64tWJ48vZuXxcd/8ql8CRgM/uW3JOJAL4MckDlVfhYSxg==
-X-Received: by 2002:a17:903:1cd:b0:205:8bad:171c with SMTP id d9443c01a7336-21183cd15bfmr90934925ad.12.1731193464741;
-        Sat, 09 Nov 2024 15:04:24 -0800 (PST)
-Received: from localhost.localdomain ([38.44.237.182])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5feb50bsm5847991a91.53.2024.11.09.15.04.21
+        d=1e100.net; s=20230601; t=1731194811; x=1731799611;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yKYtXxX3PpnBma4nIdw63BnV/Ds5TXBbvJ0ct3MPA5Y=;
+        b=cE0mWoa87V6B/x300ozAyCAL2QSkQQmEi7VFOZ3gFRMKiDWGFtRl08wl2N/sI6fK0V
+         dUUplTqxI/RFyUrxGJpIQnlLNOOlLu74f67bq0zgiL2qibksWTFP8vJajYA/7Ph1/AlL
+         lnzAu9uPNfotxwFU7SSfjkRFpTpdZwUJkbFV6DPt0XgpTNT/Br/AmdrE6x24tDdqUjnN
+         UN0vxwZnEXK9AV/NJlc/LDxTVouFBj/MB2xdY4r303Kz6dQSfmQcRGk/7cLW6ws2VtXa
+         ANy1V6ppcLK7RRUbMrlAoK3aLUy+P6OI4oM1A4BYlEtYP6ZSH0P/aQmoo/Ho+Hz/pBvt
+         E7Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCZ65ove1wShx9u/k8ZaGb46r4Xnc3y5X/vH3GZVGsVm85msuvFzXtB8S4VOGo9Z7Foie7PF8cG1GYM5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOnuI0rZoCvMI/PvgH5kUTV9UpqSyeB5mqE3eUwaKUpIEGKLEu
+	agJUQ+tCLu7gsYVzffU1r0xpYIlmHumTtwy9G50nD/8/3PBuYFve6l23gnOBCOI=
+X-Google-Smtp-Source: AGHT+IE+4osdFH9b1wj1O8ionrC7MCM9mzuduMTfaES7SFRNmeiLoeGcSrqhKnSBDH+izun5KD+urA==
+X-Received: by 2002:a05:6512:485a:b0:539:fe02:c1fe with SMTP id 2adb3069b0e04-53d85ef6c4amr1982226e87.16.1731194811244;
+        Sat, 09 Nov 2024 15:26:51 -0800 (PST)
+Received: from localhost.localdomain (77-95-74-246.bb.cust.hknett.no. [77.95.74.246])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aeb8fsm1057142e87.239.2024.11.09.15.26.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 15:04:24 -0800 (PST)
-From: Sota4Ever <wachiturroxd150@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] arm64: dts: Add initial support for Samsung Galaxy S20 FE (r8s)
-Date: Sat,  9 Nov 2024 23:04:02 +0000
-Message-Id: <20241109230402.831-3-wachiturroxd150@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241109230402.831-1-wachiturroxd150@gmail.com>
-References: <20241109230402.831-1-wachiturroxd150@gmail.com>
+        Sat, 09 Nov 2024 15:26:50 -0800 (PST)
+From: Tore Amundsen <tore@amundsen.org>
+To: netdev@vger.kernel.org
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	intel-wired-lan@lists.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	Tore Amundsen <tore@amundsen.org>
+Subject: [PATCH 0/1] ixgbe: Correct BASE-BX10 compliance code
+Date: Sat,  9 Nov 2024 23:25:56 +0000
+Message-ID: <20241109232557.189035-1-tore@amundsen.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,156 +85,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add initial support for the Samsung Galaxy S20 FE (r8s/SM-G780F) device.
-Its launch was in 2020 and also based on the Exynos 990 SoC.
-It is only configured with 6GB of RAM, although storage options may differ.
+The current code in ixgbe_82599 checks the SFP Ethernet compliance code
+against IXGBE_SFF_BASEBX10_CAPABLE to determine if an SFP module supports
+1GB BASE-BX. According to SFF-8472 (section 5.4 Transceiver Compliance
+Codes), the BASE-BX10 bit is defined as bit 6, which corresponds to a
+value of 0x40 (binary 01000000).
 
-This device tree adds support for the following:
+However, the current value of IXGBE_SFF_BASEBX10_CAPABLE is 0x64 (binary
+01100100), which incorrectly sets bits for 1000BASE-CX (bit 2) and
+100BASE-FX (bit 5) in addition to BASE-BX10 (bit 6). This mix-up causes
+the driver to incorrectly configure for BASE-BX when encountering
+1000BASE-CX modules. Although 100BASE-FX does not pass the nominal
+signaling rate check, this error could lead to future bugs if other
+codes start to depend on the incorrect value of
+IXGBE_SFF_BASEBX10_CAPABLE.
 
-- SimpleFB
-- 6GB RAM
-- Buttons
+This patch corrects the value of IXGBE_SFF_BASEBX10_CAPABLE to 0x40.
 
-Signed-off-by: Sota4Ever <wachiturroxd150@gmail.com>
----
- arch/arm64/boot/dts/exynos/Makefile          |   1 +
- arch/arm64/boot/dts/exynos/exynos990-r8s.dts | 115 +++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-r8s.dts
+Tore Amundsen (1):
+  ixgbe: Correct BASE-BX10 compliance code
 
-diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
-index 7a934499b..948a2c6cb 100644
---- a/arch/arm64/boot/dts/exynos/Makefile
-+++ b/arch/arm64/boot/dts/exynos/Makefile
-@@ -9,5 +9,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
- 	exynos850-e850-96.dtb		\
- 	exynos8895-dreamlte.dtb		\
- 	exynos990-c1s.dtb		\
-+	exynos990-r8s.dtb               \
- 	exynosautov9-sadk.dtb		\
- 	exynosautov920-sadk.dtb
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-r8s.dts b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-new file mode 100644
-index 000000000..6d0b5f715
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-r8s.dts
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+/*
-+ * Samsung Galaxy S20 FE (r8s/SM-G780F) device tree source
-+ *
-+ * Copyright (c) 2024, Sota4Ever <wachiturroxd150@gmail.com>
-+ */
-+
-+/dts-v1/;
-+#include "exynos990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "Samsung Galaxy S20 FE";
-+	compatible = "samsung,r8s", "samsung,exynos990";
-+
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer0: framebuffer@f1000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0 0xf1000000 0 (1080 * 2400 * 4)>;
-+			width = <1080>;
-+			height = <2400>;
-+			stride = <(1080 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0x3ab00000>,
-+		      /* Memory hole */
-+		      <0x0 0xc1200000 0x0 0x1ee00000>,
-+		      /* Memory hole */
-+		      <0x0 0xe1900000 0x0 0x1e700000>,
-+		      /* Memory hole - last block */
-+		      <0x08 0x80000000 0x0 0xc0000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cont_splash_mem: framebuffer@f1000000 {
-+			reg = <0 0xf1000000 0 0x13c6800>;
-+			no-map;
-+		};
-+
-+		abox_reserved: audio@f7fb0000 {
-+			reg = <0 0xf7fb0000 0 0x2a50000>;
-+			no-map;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&key_power &key_voldown &key_volup>;
-+		pinctrl-names = "default";
-+
-+		power-key {
-+			label = "Power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
-+			wakeup-source;
-+		};
-+
-+		voldown-key {
-+			label = "Volume Down";
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		volup-key {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&oscclk {
-+	clock-frequency = <26000000>;
-+};
-+
-+&pinctrl_alive {
-+	key_power: key-power-pins {
-+		samsung,pins = "gpa2-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_voldown: key-voldown-pins {
-+		samsung,pins = "gpa0-4";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+
-+	key_volup: key-volup-pins {
-+		samsung,pins = "gpa0-3";
-+		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
-+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
-+		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
-+	};
-+};
+ drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 -- 
-2.34.1
+2.43.0
 
 
