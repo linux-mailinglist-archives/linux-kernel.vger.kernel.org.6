@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-402694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90ECB9C2A90
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:21:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDD69C2A91
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CB1281DE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8B62823E4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A28C156F34;
-	Sat,  9 Nov 2024 06:18:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7406D16C453;
+	Sat,  9 Nov 2024 06:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jTLmBXKv"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XSVDcXKJ"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49CF14D2BD
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18667156F24
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731133129; cv=none; b=HkG5CYdS/cl80sFvkJtoV0kID0TjbFPCH43VISvwYkvieuWrUoxSSAxl9kTYIMjffYFNZ5hBI66J0R0TQO3vb3q4AYFJo0n/J1SnaLA1Ntckl6oEazZxvIHHFA7hJIRL8rWFfVap/ecBnUrjgjx2bAmD1pSSScgT5NUWDMavkec=
+	t=1731133131; cv=none; b=nZwtiYTUVUi9eZg/Ixg+ZxV9KrCgKDaFZI6BVdBOFnr02wMvH+mdvgvl4EunOYjKBIteCYMJNNGLuBecUE07sxry8nLIADptk5ngtpp/FA2yqfBlpjcLl7GFVVUejCZL+um0qnQioNRArlzFh4UmzIgDyfXfITZ7uv5tIxQqS9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731133129; c=relaxed/simple;
-	bh=Augzyo1sYVN9zYVhVZ4NaRoQNcTkw/sM8pJhd9s/eM4=;
+	s=arc-20240116; t=1731133131; c=relaxed/simple;
+	bh=pAXQqpIWa0LYLnnCiagfBMCxcQEkPLFbkh484k/DoZU=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=hvc3eOlbUlE5YuKSNrRxhp6/Gapij1DfJ5VDIAbR3DxLi5SR9IM54U6UxV/GdFyTjF9mUVAt2n+NVp7qlYs8UqutPrgbyTBu4/iv79s1MEvSB26E5JN116skuMyvJ2pJY5W7bBm5QngbEYEmrGCPpXKTZ82lsg/QcVrj9Zp3k/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jTLmBXKv; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=uQPKCUsluAlmm/hvDh61i/z570s1DJiE0IpXMorxSuGrFDx62cg+okfPJ+EGUkkllmq5DOA8svXBD+KIswU4aW+nAEyzLpdKcxw3U3ZM3vANL2VjlZs9PQ+fTkUgIBfrrsUx9YmVc4VEv1CN0gZtFboblkY9EBtNwfzh9TVymDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XSVDcXKJ; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ea8a5e862eso35712077b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:18:47 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea863ecfe9so58924427b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:18:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731133126; x=1731737926; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731133129; x=1731737929; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=f4MoZVp4dieOlqSAjdWWI2h3A4ytuGiHKSKJVgig114=;
-        b=jTLmBXKvuI6suxEbRBqjCN+S4bb6Ep/nRP8aiSwJxoH0GZsUEaScHAPMVT37DojoHi
-         /a5eH8z4nt1oeGuk7bpHi5oXZy95URKIXPPz8QwXdK0HMuNaR0KIK05h6q3oQVgKPIyo
-         qJzmDYi3avPFImXgwOp5FD1yL+4BpNfXz1tJZ0ZzSmWo7iBazIUEeCfpHEV7RmqqdhSN
-         HWDi+6LTA6grEBFfCZjF3C5kJLA6Csdv6F13Vd/WT5Sfj/ZDSz9ocoMcxAjMZX3EzLhh
-         WhvMIJ6BiyCGqq1dsJg4OYv3Gs09rkEjPWV7tOm4QAY6cr2jfVfr2upo3tskBA053uIF
-         HzpQ==
+        bh=NNpFEdljNjn4YHB86JN+vwHrvAgwAz/em65+hZvbLSA=;
+        b=XSVDcXKJ6PomFdiLZrehVMi1e2bC3bHBBECtjUmj93/lgufuaGc+Yz3Nf9sO2dPWF3
+         gMdcogGJmdTS5qM7tzAts4PTBq0HiK8xf9LmGzq1EbIVAA0SIKTt2i6WIfYZM1j8Y5zj
+         Pnjdsa0M2WTxNoeJ8A17QLLu1WMHbeqLz3Sw1o5nRrdaDIHmZZw7RtBKdsvl1vvXs9lY
+         xZ390crG8G/PjPV9Rsz3R8cX4rWdUIxYIliu4Ws7ovS8PTiTdGacYdkgpSKVG9GY/rMK
+         QRper8wjW9Ho6sG9Q4TMl+y5nsdjQUxZsNVDlov9PC8gDfvB8uf+RM3W4jg+Ase2nABf
+         XTAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731133126; x=1731737926;
+        d=1e100.net; s=20230601; t=1731133129; x=1731737929;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f4MoZVp4dieOlqSAjdWWI2h3A4ytuGiHKSKJVgig114=;
-        b=oLVoZVfrKBTfvQha/J/W8bPVeLPXocWLVqMoPLEkv4UWzYoSc3ALXR0m5yAec2w3gx
-         JzZ1s1OMxMLBwC5kxVAiSYNaWKmmaWMowZUDRIdWYnQ6Cb7Ud3y3TBdbc7vUsTqr8e7K
-         BN9CM/g4/MgdyHDv+ezdVOpb3/v25sQpjww2BEgpl8SaVzr7qOCewWtHFvko5zrVqIUk
-         SUb6gZkmhbck/I/iVWi7HxR2iYqX7Hi/IGmYGZpMKcyqGGlIi5Ds6ku8Y4DvhzyRva4R
-         tvwfoOedCmEA2CVqNrzf0Rr+Drl8GGKEKjZmAK0jntBhCZBDTSXnJOMtjsPKZrqOVU0t
-         b50w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwWZLWYGmBUBM3vUbXazqstIqryjuaxcFLms+FR34TpKxqa/y8nGL2pQQKTi+582pjWeeAeutpXsIqs9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUEuQw9S6Zp12qzkKtcDZioPVI4OT0bKRmFe3m2IgAN71WEYtq
-	/J1UfedGL9apFa3O3lxyFKZfxWsN66U6Sa8/gKfgeUKIK0vPzRLX9YP1B946Gz4GlyKZO8Yn4DU
-	Oh79REg==
-X-Google-Smtp-Source: AGHT+IFLb4XAQByOO4JIkgmoGuImEbxVT2BiME7WaRVcEAmSkc6DCftAzVLY1+6duaclE1eArEYgqXodgsLg
+        bh=NNpFEdljNjn4YHB86JN+vwHrvAgwAz/em65+hZvbLSA=;
+        b=mKPy4O8TPUj8DpuOmivqtFiNbhcKvu3mWOr72RMhHDuUjkzD/j/61DNUHcPzRJVZ4G
+         2Laul7zG6U96qwg9TDtIi8ea4UaaJvaygp7g+PVchlZKLRG/ofHRWGk56iGH3cq1/rvI
+         gO9avhfyL0bQI3lKn0Yrtgr1fQOFT6vzr3lAOjf5Gc4PccED+9UhANp9l8ZqNX0s4BDa
+         W+7u8qaD2UwVY6UKh25tdn0TlHP+emsm9JLEozrU912rTUOAFrMKFCcMEV2fNOnswdfq
+         sAnLMS2V/MvsNHUO44gxQARNkhDwcgvJZjAI4Sno4c2hsDFk5w8NxNQ2iqb8gjKX7V9Y
+         qXww==
+X-Forwarded-Encrypted: i=1; AJvYcCVn+YlbJKwN4V+x/axq3hYIxPGpswzOxueP14FzRgnudBtCFBUWi8Ru2vykmWwUL/0/oxVXMfpjB/H7DFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyEaWN54e3Vl7xFF83IqsPtGCkmPwuvpEZTNKh3IlHOdlCbHcX
+	35ldvhgz7qFry6/FjV5FmqtIYv2/tCuCGRydLFF8pG5FL/I1KooJlMVhRn1atzB2gTlwkxmRCln
+	oEhKKRw==
+X-Google-Smtp-Source: AGHT+IHBz1DzCs25wFnpS+hrkIGaGnqfLGqytn4OYFpA0dqiuyktNOQMHkXGZaEFY5qq9xiWZkSKzUyPu9uD
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc2:d48f:a998:5915])
- (user=irogers job=sendgmr) by 2002:a0d:e545:0:b0:6dd:bb6e:ec89 with SMTP id
- 00721157ae682-6eade40bbf7mr880687b3.2.1731133126645; Fri, 08 Nov 2024
- 22:18:46 -0800 (PST)
-Date: Fri,  8 Nov 2024 22:17:58 -0800
+ (user=irogers job=sendgmr) by 2002:a25:949:0:b0:e1d:912e:9350 with SMTP id
+ 3f1490d57ef6-e337f8beb2amr11248276.6.1731133128821; Fri, 08 Nov 2024 22:18:48
+ -0800 (PST)
+Date: Fri,  8 Nov 2024 22:17:59 -0800
 In-Reply-To: <20241109061809.811922-1-irogers@google.com>
-Message-Id: <20241109061809.811922-12-irogers@google.com>
+Message-Id: <20241109061809.811922-13-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241109061809.811922-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Subject: [PATCH v6 11/22] perf script: Move perf_sample__sprintf_flags to trace-event-scripting.c
+Subject: [PATCH v6 12/22] perf x86: Define arch_fetch_insn in NO_AUXTRACE builds
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -91,223 +91,125 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-perf_sample__sprintf_flags is used in the python C code and so needs
-to be in the util library rather than a builtin.
+archinsn.c containing arch_fetch_insn was only enabled with
+CONFIG_AUXTRACE, but this meant that a NO_AUXTRACE build on x86 would
+use the empty weak version of arch_fetch_insn - weak symbols are a
+frequent source of errors like this and are outside of the C
+specification. Change it so that archinsn.c is always built on x86 and
+make the weak symbol empty version of arch_fetch_insn a strong one
+guarded by ifdefs.
+
+arch_fetch_insn on x86 depends on insn_decode which is a function
+included then built into
+intel-pt-insn-decoder.c. intel-pt-insn-decoder.c isn't built in a
+NO_AUXTRACE=1 build. Separate the insn_decode function from
+intel-pt-insn-decoder.c by just directly compiling the relevant
+file. Guard this compilation to be for either always on x86 (because
+of the use in arch_fetch_insn) or when auxtrace is enabled. Apply the
+CFLAGS overrides as necessary, reducing the amount of code where
+warnings are disabled.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
+Tested-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/builtin-script.c             | 81 ------------------------
- tools/perf/util/python.c                |  6 --
- tools/perf/util/trace-event-scripting.c | 83 +++++++++++++++++++++++++
- 3 files changed, 83 insertions(+), 87 deletions(-)
+ tools/perf/arch/x86/util/Build                 |  2 +-
+ tools/perf/util/Build                          |  2 +-
+ tools/perf/util/intel-pt-decoder/Build         | 18 ++++++++++++++----
+ .../intel-pt-decoder/intel-pt-insn-decoder.c   |  3 ---
+ tools/perf/util/trace-event-scripting.c        |  4 +++-
+ 5 files changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 22d78a9d8f27..1eda065dcb2b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1693,87 +1693,6 @@ static int perf_sample__fprintf_bts(struct perf_sample *sample,
- 	return printed;
- }
+diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
+index bc56a8e70f34..c5df4a2cf180 100644
+--- a/tools/perf/arch/x86/util/Build
++++ b/tools/perf/arch/x86/util/Build
+@@ -18,6 +18,6 @@ perf-util-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
+ perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
  
--static struct {
--	u32 flags;
--	const char *name;
--} sample_flags[] = {
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL, "call"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN, "return"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CONDITIONAL, "jcc"},
--	{PERF_IP_FLAG_BRANCH, "jmp"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_INTERRUPT, "int"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN | PERF_IP_FLAG_INTERRUPT, "iret"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_SYSCALLRET, "syscall"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN | PERF_IP_FLAG_SYSCALLRET, "sysret"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_ASYNC, "async"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_ASYNC |	PERF_IP_FLAG_INTERRUPT, "hw int"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TX_ABORT, "tx abrt"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TRACE_BEGIN, "tr strt"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TRACE_END, "tr end"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_VMENTRY, "vmentry"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_VMEXIT, "vmexit"},
--	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_BRANCH_MISS, "br miss"},
--	{0, NULL}
--};
--
--static const char *sample_flags_to_name(u32 flags)
--{
--	int i;
--
--	for (i = 0; sample_flags[i].name ; i++) {
--		if (sample_flags[i].flags == flags)
--			return sample_flags[i].name;
--	}
--
--	return NULL;
--}
--
--int perf_sample__sprintf_flags(u32 flags, char *str, size_t sz)
--{
--	u32 xf = PERF_IP_FLAG_IN_TX | PERF_IP_FLAG_INTR_DISABLE |
--		 PERF_IP_FLAG_INTR_TOGGLE;
--	const char *chars = PERF_IP_FLAG_CHARS;
--	const size_t n = strlen(PERF_IP_FLAG_CHARS);
--	const char *name = NULL;
--	size_t i, pos = 0;
--	char xs[16] = {0};
--
--	if (flags & xf)
--		snprintf(xs, sizeof(xs), "(%s%s%s)",
--			 flags & PERF_IP_FLAG_IN_TX ? "x" : "",
--			 flags & PERF_IP_FLAG_INTR_DISABLE ? "D" : "",
--			 flags & PERF_IP_FLAG_INTR_TOGGLE ? "t" : "");
--
--	name = sample_flags_to_name(flags & ~xf);
--	if (name)
--		return snprintf(str, sz, "%-15s%6s", name, xs);
--
--	if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
--		name = sample_flags_to_name(flags & ~(xf | PERF_IP_FLAG_TRACE_BEGIN));
--		if (name)
--			return snprintf(str, sz, "tr strt %-7s%6s", name, xs);
--	}
--
--	if (flags & PERF_IP_FLAG_TRACE_END) {
--		name = sample_flags_to_name(flags & ~(xf | PERF_IP_FLAG_TRACE_END));
--		if (name)
--			return snprintf(str, sz, "tr end  %-7s%6s", name, xs);
--	}
--
--	for (i = 0; i < n; i++, flags >>= 1) {
--		if ((flags & 1) && pos < sz)
--			str[pos++] = chars[i];
--	}
--	for (; i < 32; i++, flags >>= 1) {
--		if ((flags & 1) && pos < sz)
--			str[pos++] = '?';
--	}
--	if (pos < sz)
--		str[pos] = 0;
--
--	return pos;
--}
--
- static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
- {
- 	char str[SAMPLE_FLAGS_BUF_SIZE];
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 22edadd64e5f..77e02fcc51dd 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1317,12 +1317,6 @@ struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
- 	return NULL;
- }
+ perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+-perf-util-$(CONFIG_AUXTRACE) += archinsn.o
++perf-util-y += archinsn.o
+ perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+ perf-util-$(CONFIG_AUXTRACE) += intel-bts.o
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 650974413849..340544a6f5ec 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -122,7 +122,7 @@ perf-util-y += iostat.o
+ perf-util-y += stream.o
+ perf-util-y += kvm-stat.o
+ perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+-perf-util-$(CONFIG_AUXTRACE) += intel-pt-decoder/
++perf-util-y += intel-pt-decoder/
+ perf-util-$(CONFIG_AUXTRACE) += intel-pt.o
+ perf-util-$(CONFIG_AUXTRACE) += intel-bts.o
+ perf-util-$(CONFIG_AUXTRACE) += arm-spe.o
+diff --git a/tools/perf/util/intel-pt-decoder/Build b/tools/perf/util/intel-pt-decoder/Build
+index 30793d08c6d4..f99d150059b9 100644
+--- a/tools/perf/util/intel-pt-decoder/Build
++++ b/tools/perf/util/intel-pt-decoder/Build
+@@ -9,14 +9,24 @@ $(OUTPUT)util/intel-pt-decoder/inat-tables.c: $(inat_tables_script) $(inat_table
  
--int perf_sample__sprintf_flags(u32 flags __maybe_unused, char *str __maybe_unused,
--			size_t sz __maybe_unused)
--{
--	return -1;
--}
+ # Busybox's diff doesn't have -I, avoid warning in the case
+ 
+-$(OUTPUT)util/intel-pt-decoder/intel-pt-insn-decoder.o: util/intel-pt-decoder/intel-pt-insn-decoder.c $(OUTPUT)util/intel-pt-decoder/inat-tables.c
++ifeq ($(SRCARCH),x86)
++  perf-util-y += inat.o insn.o
++else
++  perf-util-$(CONFIG_AUXTRACE) += inat.o insn.o
++endif
++
++$(OUTPUT)util/intel-pt-decoder/inat.o: $(srctree)/tools/arch/x86/lib/inat.c $(OUTPUT)util/intel-pt-decoder/inat-tables.c
+ 	$(call rule_mkdir)
+ 	$(call if_changed_dep,cc_o_c)
+ 
+-CFLAGS_intel-pt-insn-decoder.o += -I$(OUTPUT)util/intel-pt-decoder
++CFLAGS_inat.o += -I$(OUTPUT)util/intel-pt-decoder
++
++$(OUTPUT)util/intel-pt-decoder/insn.o: $(srctree)/tools/arch/x86/lib/insn.c
++	$(call rule_mkdir)
++	$(call if_changed_dep,cc_o_c)
+ 
+ ifeq ($(CC_NO_CLANG), 1)
+-  CFLAGS_intel-pt-insn-decoder.o += -Wno-override-init
++  CFLAGS_insn.o += -Wno-override-init
+ endif
+ 
+-CFLAGS_intel-pt-insn-decoder.o += -Wno-packed
++CFLAGS_insn.o += -Wno-packed
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+index 47cf35799a4d..8fabddc1c0da 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
+@@ -11,9 +11,6 @@
+ #include <byteswap.h>
+ #include "../../../arch/x86/include/asm/insn.h"
+ 
+-#include "../../../arch/x86/lib/inat.c"
+-#include "../../../arch/x86/lib/insn.c"
 -
- bool match_callstack_filter(struct machine *machine __maybe_unused, u64 *callstack __maybe_unused)
- {
- 	return false;
+ #include "event.h"
+ 
+ #include "intel-pt-insn-decoder.h"
 diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
-index beac456260ae..2e9da0b089ef 100644
+index 2e9da0b089ef..8d71998a9ecd 100644
 --- a/tools/perf/util/trace-event-scripting.c
 +++ b/tools/perf/util/trace-event-scripting.c
-@@ -15,6 +15,7 @@
+@@ -272,11 +272,13 @@ void setup_perl_scripting(void)
+ #endif
+ #endif
  
- #include "archinsn.h"
- #include "debug.h"
-+#include "event.h"
- #include "trace-event.h"
- #include "evsel.h"
- #include <linux/perf_event.h>
-@@ -283,3 +284,85 @@ void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
- 	if (sample->insn_len == 0 && native_arch)
- 		arch_fetch_insn(sample, thread, machine);
+-__weak void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
++#if !defined(__i386__) && !defined(__x86_64__)
++void arch_fetch_insn(struct perf_sample *sample __maybe_unused,
+ 		     struct thread *thread __maybe_unused,
+ 		     struct machine *machine __maybe_unused)
+ {
  }
-+
-+static const struct {
-+	u32 flags;
-+	const char *name;
-+} sample_flags[] = {
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL, "call"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN, "return"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CONDITIONAL, "jcc"},
-+	{PERF_IP_FLAG_BRANCH, "jmp"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_INTERRUPT, "int"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN | PERF_IP_FLAG_INTERRUPT, "iret"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_SYSCALLRET, "syscall"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_RETURN | PERF_IP_FLAG_SYSCALLRET, "sysret"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_ASYNC, "async"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_ASYNC |	PERF_IP_FLAG_INTERRUPT,
-+	 "hw int"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TX_ABORT, "tx abrt"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TRACE_BEGIN, "tr strt"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_TRACE_END, "tr end"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_VMENTRY, "vmentry"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_CALL | PERF_IP_FLAG_VMEXIT, "vmexit"},
-+	{PERF_IP_FLAG_BRANCH | PERF_IP_FLAG_BRANCH_MISS, "br miss"},
-+	{0, NULL}
-+};
-+
-+static const char *sample_flags_to_name(u32 flags)
-+{
-+	int i;
-+
-+	for (i = 0; sample_flags[i].name ; i++) {
-+		if (sample_flags[i].flags == flags)
-+			return sample_flags[i].name;
-+	}
-+
-+	return NULL;
-+}
-+
-+int perf_sample__sprintf_flags(u32 flags, char *str, size_t sz)
-+{
-+	u32 xf = PERF_IP_FLAG_IN_TX | PERF_IP_FLAG_INTR_DISABLE |
-+		 PERF_IP_FLAG_INTR_TOGGLE;
-+	const char *chars = PERF_IP_FLAG_CHARS;
-+	const size_t n = strlen(PERF_IP_FLAG_CHARS);
-+	const char *name = NULL;
-+	size_t i, pos = 0;
-+	char xs[16] = {0};
-+
-+	if (flags & xf)
-+		snprintf(xs, sizeof(xs), "(%s%s%s)",
-+			 flags & PERF_IP_FLAG_IN_TX ? "x" : "",
-+			 flags & PERF_IP_FLAG_INTR_DISABLE ? "D" : "",
-+			 flags & PERF_IP_FLAG_INTR_TOGGLE ? "t" : "");
-+
-+	name = sample_flags_to_name(flags & ~xf);
-+	if (name)
-+		return snprintf(str, sz, "%-15s%6s", name, xs);
-+
-+	if (flags & PERF_IP_FLAG_TRACE_BEGIN) {
-+		name = sample_flags_to_name(flags & ~(xf | PERF_IP_FLAG_TRACE_BEGIN));
-+		if (name)
-+			return snprintf(str, sz, "tr strt %-7s%6s", name, xs);
-+	}
-+
-+	if (flags & PERF_IP_FLAG_TRACE_END) {
-+		name = sample_flags_to_name(flags & ~(xf | PERF_IP_FLAG_TRACE_END));
-+		if (name)
-+			return snprintf(str, sz, "tr end  %-7s%6s", name, xs);
-+	}
-+
-+	for (i = 0; i < n; i++, flags >>= 1) {
-+		if ((flags & 1) && pos < sz)
-+			str[pos++] = chars[i];
-+	}
-+	for (; i < 32; i++, flags >>= 1) {
-+		if ((flags & 1) && pos < sz)
-+			str[pos++] = '?';
-+	}
-+	if (pos < sz)
-+		str[pos] = 0;
-+
-+	return pos;
-+}
++#endif
+ 
+ void script_fetch_insn(struct perf_sample *sample, struct thread *thread,
+ 		       struct machine *machine, bool native_arch)
 -- 
 2.47.0.277.g8800431eea-goog
 
