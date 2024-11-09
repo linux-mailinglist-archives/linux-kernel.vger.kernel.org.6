@@ -1,82 +1,106 @@
-Return-Path: <linux-kernel+bounces-402597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747669C2983
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:33:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE8999C2984
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE0E6B22CEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB381C2109F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9A3C463;
-	Sat,  9 Nov 2024 02:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="CKndKwaz"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA83C488;
+	Sat,  9 Nov 2024 02:34:40 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B902036124
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D384827735
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731119593; cv=none; b=mwuLheO33uyVoDSuwV5lrvsA1+L9SOJm5fphIZeiNwNlgIgdWNHFlWYZ7TLrD/1+vI+9CiWZpuQUwUAvoKUN1RY+XFDOXFOzzvrfHrMLtydOH7EWkvozRIxjj2h6dF8hj8jb0oJLWVxp0v3xxPZVqB++0yeWPgHPDLNR/Le4EMM=
+	t=1731119680; cv=none; b=nArHnjaQkHf9s5im5mJnjq9QRDq/tvjnzqVIPNsO5u7VaRT0xIcfUt3Qj7dUIOay1a3zXkclnpwpXd6wzrt8KejRIA/LAv2A6ZGxVPbx88t7/hz9srEqI30nBYjZp+aj15K5fq4z6oHY03+/gcO4ii9eONyDJp1zlMuwsyL1SwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731119593; c=relaxed/simple;
-	bh=MuTjgw/tFrwSzh2UN9OLE9YWVGaUnzxAosS0124d5KA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N20LSs5BcXqEFGATAhIqVQpF2gZztimxMCkNwyQoFgRpAJvxfC+8zoGO4UWkixRRtApiTSIqfr/oBGgvecptOIaQwLVvYvrqXfc0/hobS6NqqE7a8ejbNDPVoH6SwTHg52pZLpLxXBPUKpmohGPfkWLPBVE3WAbKqAK4LYi491Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=CKndKwaz; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=MuTjgw/tFrwSzh2UN9OLE9YWVGaUnzxAosS0124d5KA=; b=CKndKwazAssKA9Hg7AnOWiiBED
-	xbzkzSG5ERNYZJHR2IFpXEDzTlPArXrkBlvlm0y1HQh2Us4bQ+BmOAasKZz59oo/A2iCGM/dg7Z1P
-	RJHQmBigtyiPCW16RZH5u17BtOQKaDch0ttVTy4uck1o57ymRoizLmXyut6QzIZNnA6WeK3avfKVC
-	ekNEHrYUqzP3nlvGwTk/Y7V30phE2vkYS41qOzB7VL8VlHJJ7w7zpJ1Jg9xRiXz0NgZH3UQpfN8z/
-	rYAkJeUkU8thHGR937XEpSVKX9beAxYUdkSihGYQEz4SGkpTgHCmw0F8dptDfnv1RGwiz3ZPpCUwa
-	XcMpbwYg==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t9bHS-004HUC-4N; Sat, 09 Nov 2024 03:32:54 +0100
-Message-ID: <224d4751-469f-4fec-89b4-dff57a419eab@igalia.com>
-Date: Sat, 9 Nov 2024 11:32:47 +0900
+	s=arc-20240116; t=1731119680; c=relaxed/simple;
+	bh=GHDPmfjb7lQ2FetosnyA9hhyjUkLqIH93Ye5QamASJY=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Wkanakf1uWdAqaUp1Y5rRa0PnmoJvNW3swlk3mVLUcFhoHk2sW8EDN2/ObnBEYXIH6m3sbHz/ZpnSfhndSfhwk0JAxVkP/9s9eizkkECc0wEdU/HScICG2gUAo01DQ78iaDPuGMSwqPrTr268tBdIHrikjAcp4jl5srBxTQladg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xlfvn0klgzkWnS;
+	Sat,  9 Nov 2024 10:31:49 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 32A40180064;
+	Sat,  9 Nov 2024 10:34:27 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 9 Nov 2024 10:34:26 +0800
+Subject: Re: [PATCH v2] ubifs: Fix use-after-free in ubifs_tnc_end_commit
+To: Waqar Hameed <waqar.hameed@axis.com>, Richard Weinberger <richard@nod.at>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+CC: <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <e7b5151bb1186e2342ed677cce0ef77592923084.1731088341.git.waqar.hameed@axis.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <3c46013e-809e-cdcf-8648-2ffe2ab6c32b@huawei.com>
+Date: Sat, 9 Nov 2024 10:34:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched_ext: add a missing rcu_read_lock/unlock pair at
- scx_select_cpu_dfl()
-To: tj@kernel.org
-Cc: arighi@nvidia.com, void@manifault.com, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, changwoo@vt.edu
-References: <20241109015420.170729-1-changwoo@igalia.com>
- <Zy7DWssEuFN6Zehi@slm.duckdns.org>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <Zy7DWssEuFN6Zehi@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <e7b5151bb1186e2342ed677cce0ef77592923084.1731088341.git.waqar.hameed@axis.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-Hello,
+ÔÚ 2024/10/9 22:46, Waqar Hameed Ð´µÀ:
+3 nits below.
 
-On 24. 11. 9. 11:05, Tejun Heo wrote:
-> Shouldn't RCU critical section cover the places where llc_cpus is deref'd?
+1. Make the title as 'ubifs: authentication: Fix use-after-free in 
+ubifs_tnc_end_commit'
 
-You're right. The RCU critical section should be extended to
-cover the almost entire scx_select_cpu_dfl() function. I will
-prepare the 2nd version.
+2. At the begining of the commit msg, describe the problem:
+After TNC tree inserting(which may trigger a znode split and change the 
+znode->parent) and deleting(which may trigger znode freeing), the 
+znode->cparent(which still points to a freed znode) may not be updated 
+at the begining of commit, which could trigger an UAF problem while 
+accessing znode->cparent in write_index().
 
-Thanks!
-Changwoo
+> Running
+> 
+>    rm -f /etc/test-file.bin
+>    dd if=/dev/urandom of=/etc/test-file.bin bs=1M count=60 conv=fsync
+> 
+> in a loop, with `CONFIG_UBIFS_FS_AUTHENTICATION`, KASAN reports:
+> 
+>    BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
+>    Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
+> 
+>    Call trace:
+
+[...]
+> diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
+> index a55e04822d16..a464eb557585 100644
+> --- a/fs/ubifs/tnc_commit.c
+> +++ b/fs/ubifs/tnc_commit.c
+> @@ -657,6 +657,7 @@ static int get_znodes_to_commit(struct ubifs_info *c)
+>   		znode->alt = 0;
+>   		cnext = find_next_dirty(znode);
+>   		if (!cnext) {
+
+3. I'd like to add the the assertion 'ubifs_assert(c, !znode->parent);'
+> +			znode->cparent = NULL;
+>   			znode->cnext = c->cnext;
+>   			break;
+>   		}
+> 
+
 
