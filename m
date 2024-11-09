@@ -1,92 +1,190 @@
-Return-Path: <linux-kernel+bounces-402974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0F69C2F25
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:29:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2694D9C2F27
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 412D7B21954
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:29:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D15B21A25
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7D61A00F8;
-	Sat,  9 Nov 2024 18:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244E319D074;
+	Sat,  9 Nov 2024 18:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="IjqO2O87"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FXFfSSzx"
+Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5C519E96B;
-	Sat,  9 Nov 2024 18:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFA04086A
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 18:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731176975; cv=none; b=EnQfW2LSoyXBJSY72hhyoO9PdawzEBdu32j88coLMdr8SLM/WaYmW8p4mhh2Og2VIEzLNJlWBWtBF31m/i0LfjSwW8pozTgPhiKLbOt8nn0YnQvgLMpc4Fi4YOlGM0iyk2rar81gI22ws+2eDSYCYqSjD5NcxN6UxWxTTibjUm8=
+	t=1731177033; cv=none; b=dhSydPRHQ5Dfo6GOiQoI0d4rb8cLsFFvqYGaeL4//us4gfaXUunZEI0Od11LfwzoTbObDS/xbmEWyYvxe8qed4hlZZV628UAgSvuAevBL+PCVdKNJlURNGRIxlcejI5Xhj0xdVuMGUOexJ6U8sLeSAFoGr4hEmbIf7lHCDx9awg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731176975; c=relaxed/simple;
-	bh=msJJEkd7o3dp4be5DSGQK2rwe1g3p+MgmZvlvfGZuI4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WdSuIiorkynFcnySO7lqsfRei6ZFTnAQq0AQSs96o03hvTBDo46z1N76zs/C7RIUISUjLhp8tbtEEp/GFP/NFEx1/AmT3WaD0LucKTA1wDxU9Pr6pxDJR+s4uOp2yOtFKa4MLAJPkmKoyucOEe42GvMoJclpEIKwb3XpL1QAMwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=IjqO2O87; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4G1FjBzeSEZRf8IgX5k3R4WKY6Al61s+kAOhnejUrYg=; b=IjqO2O87kJ7ViWtF/ZP+EajbGN
-	lNpusQ15opEQcU+RKo7Z0OFSsB04XwN7kN/tw83vyefBtxeMkLGfMsWT+PKGaPw7/vk/d9Ttki3BW
-	ylGuSp5OaOGbh2YR0DnKGpLvR3qdbYKNol3h98rdsGBN0EU2mHdOYpgQ9CP8zh8wThEAwnrvdTvxK
-	apjuElOJiiZUZszMZ0EEffvsG5HhSPDukEd+QGV5gQDiEAV4PVdVwDwMqZDrTman5PvZaqpZWntpK
-	sAEZ9pcxMC6KRgpeBC5IwIDNivy8taoWGnvBdbNNb7jwNCrW0Oxle39ncy9AoEprPqb49Uh5agG23
-	LYxXjaNg==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t9qBK-0007Km-K9; Sat, 09 Nov 2024 19:27:34 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Hugh Cole-Baker <sigmaris@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-	John Clark <inindev@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-rockchip@lists.infradead.org,
-	rick.wertenbroek@heig-vd.ch
-Subject: Re: [PATCH] arm64: dts: rockchip: enable USB3 on NanoPC-T6
-Date: Sat,  9 Nov 2024 19:27:19 +0100
-Message-ID: <173117675955.1131306.3275734524301023495.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241106130314.1289055-1-rick.wertenbroek@gmail.com>
-References: <20241106130314.1289055-1-rick.wertenbroek@gmail.com>
+	s=arc-20240116; t=1731177033; c=relaxed/simple;
+	bh=KCVB8kSdHUut1Z9+Ll7oW9hPbxlbyOhRBNGy8mo2a6k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=PMHTGfOCIx8H/NnMKXy772BPG1G+dp15cPA1ALlh89A1DQNg2CUDeCUqS0HkULqLczh0mpEAWBz4JVNA9WyAy5FJW3renfljXF3qkQe9nxnfgv8kTiQ9MbNtG4c3t+WvGz9YW5gpSGMYgbhr46QdmyS6ZjgqrICopitJ90WL+9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FXFfSSzx; arc=none smtp.client-ip=209.85.218.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a9a1828916fso73015566b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 10:30:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731177030; x=1731781830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MLufq+X/yG9C9kLGe2tLygXN2l6dm6u4UYRcmXiA5h4=;
+        b=FXFfSSzxfHFtAw4bPthrLFaQ9UMwmSEodxglx0kTTyianUfkTLYdV7sKiXx1BupyC9
+         uSA7B7ULO23CFNCnrUbOnOdjPo8ZI0KHu5rqBuCZNNvp4/mLfYt0U7HRBxj7fuBRA++V
+         V9hOmcf3wPpy/p5ZGWg18YAhIY7HTYCXT6x+pOS1B2JTqvxegIV7TbP76RSKbGBKwGfG
+         QAydh53MzA0+g/MvsR6CozQMajxzQiGCNtNNnTeBAnPMx7X5xX3omou2junWQu51R2ig
+         LBXLa56f7d5iYVs9EmSGPM4HpRYI+ufIq8ZWh2LU1nard4GrX4WarAE/DDLULs/ly5Ly
+         aRug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731177030; x=1731781830;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MLufq+X/yG9C9kLGe2tLygXN2l6dm6u4UYRcmXiA5h4=;
+        b=lb8ogeaPWy66WkLjOd0f/i7UPPPzR09GOaYZfaoPxMxSDZRq78CLBbJ+/m77PtXaon
+         rfSWuPrpBemvFJZf4L/C1If08/fpzhGgAXL6pZM974sJAryIvcJCtnpAQH1N6YqtRPJS
+         kj4+UhBQlLN93e5kV0a8jhpEIp7v2NJz0MsKWV3C7WLOhI4Inbfg7dvyLZmK1NTf7Fz2
+         5CGQE1o9H7K9SAVcct6ViJXY4c5lZuEd7yWIXTK4DERSt/Wd92YtrAlyz3bEao3UEE3o
+         kjzfydcXSoeSlsPjDXyCYnkJiSdHSYbMxCf3ev0rOcEZyB91OzpHD34JXCj4ZCB6rZbL
+         USXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhou7MxxkfSCToILi7p2qEYvQypmsVO2FOAYqxwzpCvuzJs8T1udmUU6lLyru5O5ScOuyACpXHXXDzEjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZMC3k0ZRVjUxUphgtIEBKTe3RaLTF9fEzQRN+SDCK2iD6i2oX
+	ChUrABeb004RMAuqh+wykhfDiirNWVluE5TVN05o3QzP+uyDpqD4YxXPBkOSsBYZ+8Q5sR4ynT7
+	xhQ==
+X-Google-Smtp-Source: AGHT+IE7LbqfVTOkNsjoWw7EyG5NChQgRbBMHJ5PTDRwT9sRYpmCvNRUgx5yJbwxA97XgSr4PBu/2Cd0OVg=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a17:906:b818:b0:a9a:940:5432 with SMTP id
+ a640c23a62f3a-a9eefff12fdmr208266b.6.1731177030058; Sat, 09 Nov 2024 10:30:30
+ -0800 (PST)
+Date: Sat, 9 Nov 2024 19:30:28 +0100
+In-Reply-To: <20241109110856.222842-4-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20241109110856.222842-1-mic@digikod.net> <20241109110856.222842-4-mic@digikod.net>
+Message-ID: <Zy-qROSRm1rb_pww@google.com>
+Subject: Re: [PATCH v4 3/3] landlock: Optimize scope enforcement
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 6 Nov 2024 14:03:13 +0100, Rick Wertenbroek wrote:
-> Enable the USB3 port on FriendlyELEC NanoPC-T6.
-> 
-> 
+On Sat, Nov 09, 2024 at 12:08:56PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> Do not walk through the domain hierarchy when the required scope is not
+> supported by this domain.  This is the same approach as for filesystem
+> and network restrictions.
+>=20
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241109110856.222842-4-mic@digikod.net
+> ---
+>=20
+> Changes since v2:
+> * Make the unix_scope variable global to the file and remove
+>   previous get_current_unix_scope_domain().
+> ---
+>  security/landlock/task.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 4acbd7c40eee..dc7dab78392e 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -204,12 +204,17 @@ static bool is_abstract_socket(struct sock *const s=
+ock)
+>  	return false;
+>  }
+> =20
+> +static const struct access_masks unix_scope =3D {
+> +	.scope =3D LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
+> +};
 
-Applied, thanks!
+Optional nit: You could probably inline these two struct access_masks value=
+s
+into the respective functions where they are used.  (But it's just a minor =
+code
+style matter IMHO; both ways are fine.)
 
-[1/1] arm64: dts: rockchip: enable USB3 on NanoPC-T6
-      commit: 2b47332134e4cd29078b3fb7d30b0a0555af01f3
+> +
+>  static int hook_unix_stream_connect(struct sock *const sock,
+>  				    struct sock *const other,
+>  				    struct sock *const newsk)
+>  {
+>  	const struct landlock_ruleset *const dom =3D
+> -		landlock_get_current_domain();
+> +		landlock_get_applicable_domain(landlock_get_current_domain(),
+> +					       unix_scope);
+> =20
+>  	/* Quick return for non-landlocked tasks. */
+>  	if (!dom)
+> @@ -225,7 +230,8 @@ static int hook_unix_may_send(struct socket *const so=
+ck,
+>  			      struct socket *const other)
+>  {
+>  	const struct landlock_ruleset *const dom =3D
+> -		landlock_get_current_domain();
+> +		landlock_get_applicable_domain(landlock_get_current_domain(),
+> +					       unix_scope);
+> =20
+>  	if (!dom)
+>  		return 0;
+> @@ -243,6 +249,10 @@ static int hook_unix_may_send(struct socket *const s=
+ock,
+>  	return 0;
+>  }
+> =20
+> +static const struct access_masks signal_scope =3D {
+> +	.scope =3D LANDLOCK_SCOPE_SIGNAL,
+> +};
+> +
+>  static int hook_task_kill(struct task_struct *const p,
+>  			  struct kernel_siginfo *const info, const int sig,
+>  			  const struct cred *const cred)
+> @@ -256,6 +266,7 @@ static int hook_task_kill(struct task_struct *const p=
+,
+>  	} else {
+>  		dom =3D landlock_get_current_domain();
+>  	}
+> +	dom =3D landlock_get_applicable_domain(dom, signal_scope);
+> =20
+>  	/* Quick return for non-landlocked tasks. */
+>  	if (!dom)
+> @@ -279,7 +290,8 @@ static int hook_file_send_sigiotask(struct task_struc=
+t *tsk,
+> =20
+>  	/* Lock already held by send_sigio() and send_sigurg(). */
+>  	lockdep_assert_held(&fown->lock);
+> -	dom =3D landlock_file(fown->file)->fown_domain;
+> +	dom =3D landlock_get_applicable_domain(
+> +		landlock_file(fown->file)->fown_domain, signal_scope);
+> =20
+>  	/* Quick return for unowned socket. */
+>  	if (!dom)
+> --=20
+> 2.47.0
+>=20
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+
+Looks good!
+
+=E2=80=94G=C3=BCnther
 
