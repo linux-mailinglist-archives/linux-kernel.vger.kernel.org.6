@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-402601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9B19C2988
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DA19C298A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:42:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA321F2297E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E731F22AE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6F145025;
-	Sat,  9 Nov 2024 02:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="vFl+eHLX"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF487581F;
+	Sat,  9 Nov 2024 02:42:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6353C488
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95914438B
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731120147; cv=none; b=a3oAEXeDkWkevu4+10yk919SmlSgoIGtbiqNNMvOsAs3IAYdemeagAT7980VYF+1oI3IXYIwSCAgLGRfeMVULPAkb5+xOGOWTk/fGabwLGRJzOEIY+rurbRcYQVx4TkF1EP047dsZIckAeE2Kxz+HTk2dAe7bhg/6HZhIBOYI5s=
+	t=1731120149; cv=none; b=PFZ34s8RHTsq4UjdxWtxLi4kuSnl7Cx63CkAFJtFhfwZm+3FEb2LkAcqcRo7m0+kxG4yyNdcFAI+EZgaiJH1D/UoHXLOqH5isWtC73+B3Ucl8WeVr4KNlyeJloWlckEn7qy6E7xsqiVReYYGQ6qgrSLZtSVgyXC2pHP40PsR0+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731120147; c=relaxed/simple;
-	bh=LjsF1zz6XeiMc++G/iNkdGaH6gH8mm4kG1ByozwHDaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sAkuRtojAfRRGpYrxlVKi1SLVRsMMkDKxHrfYRHnr4LnTIENYpWV33Gh5+Rbtln8k+/RNN7Fp0YHGDTXQFyHrMzFIF70huXi1wU54a4WFmJbYtP3oWmMytGtXzmozo+W1Q+nL2d7qlrpcAbUG8jBGIozvjAZiH2pO8c49hDkeW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=vFl+eHLX; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so24821105ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 18:42:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1731120145; x=1731724945; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l/kq/jig55oiRh/bx6L5lLBF6mfYKjE94DkUXbQGw1U=;
-        b=vFl+eHLXmtuwIcFIBfgemKqP6GQppoJ/kNgsRKWVc63ep+Dtr4FEhACj6vOcI3ACQy
-         lVY2pCVmyn8mG/C/h33DgNErCc/UH4fO5cCr4QEfBeMrW2XpHlCdLpfNnL95u80zI5bR
-         NtqsNzJ8cn6+n/r8VItWx8ooD0m36Fptks8TEavi+67z1MvASZsFbT+4QXnkD3uUzIhX
-         i7ZrCXecZCdYjs9VGFAiemEw0iiQsN55B5j7twPChGZtVmpdU5SwdXO5TT5eAc49G05B
-         JmT005zMuTX7qaxQh8eBGGmk1F6dyUZmjmuhxroMYZ+LRQPVGFgEH41HjJEiK2zXpryU
-         6mpw==
+	s=arc-20240116; t=1731120149; c=relaxed/simple;
+	bh=wA1VYEI8BNpgiaIqBy/M4RJmP5Q2tpsjN1f9DK3bVGQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JY5lvWqilTc//SgzUdcKAN/8WAVWhL5SZvWxmlumWtBmVXZWnZMAl+dMTm6x0ELUypcOxVU0psBGLt4KYon0aMoEW3R7gArwxp/lvfs+rrWesAfB6ji8p8VGQ0oAWaYKnNtmUtOJErabO2be3EpOFcpWofZPPmR1OPkcQKSMjis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6c355b3f5so30329525ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 18:42:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731120145; x=1731724945;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l/kq/jig55oiRh/bx6L5lLBF6mfYKjE94DkUXbQGw1U=;
-        b=i1VUeVyJOKDq+lQH7WjbGDMJ8tHtOBVJn+enkHWXmquRBrSw9b+CQHufbYKXFip40B
-         2nHEqkNtJRiIrM5wZo9BUCbVEu93oS4HoertOYv059QBnLeNmSlafAuDHht3vuQ6fccu
-         eC3126fbomd3MQYL3NlNWvLcTF5O+kCUfzQIECIPNSaUlFie8ff84JKP+otqkaBGhrq5
-         x9k2TbR9iL4IY3cK+88VBNNO2I8r7yXtaGMAHawz6rdIlAyyaacq+65jIDw91pr29OO1
-         CjzILf5lk1NGkCy+c96gCRdN8pu+JJLRaFKwHx4s1SD3BFNX6c9jEKMxCCVCN4JkXbgq
-         7r8A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYS28+oMebvL2yPb77fyjapluWJhb4S2jlA/VNK6jBaGxoJqTsKvtSEHsP52UzUJpVk8lTUXRpKAHCAU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4GPE2dRdvhuQ01AGipb4nyGQeSbw234LBxQNX+SbosBF6MMq0
-	Da++DrMuib/7UXGxJQmyipSRlCDB1HY4naT5yegutaYrjo8LVzdRqSVa2S53xag=
-X-Google-Smtp-Source: AGHT+IEaqnxKIzWBmEEzYyvufch5G8Tuk0X5vXmjpFy2gAQctA1w0BMtU34C3aumXJGf7VQyRyPOsg==
-X-Received: by 2002:a17:902:ecc2:b0:20c:aa41:997a with SMTP id d9443c01a7336-2118354d664mr70046865ad.34.1731120145214;
-        Fri, 08 Nov 2024 18:42:25 -0800 (PST)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6e0acsm38035835ad.257.2024.11.08.18.42.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 18:42:24 -0800 (PST)
-Date: Fri, 8 Nov 2024 18:42:22 -0800
-From: Drew Fustini <drew@pdp7.com>
-To: soc@kernel.org
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Conor Dooley <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: RISC-V T-HEAD Devicetrees for v6.13, part 2
-Message-ID: <Zy7MDgtCtPkxLbjm@x1>
+        d=1e100.net; s=20230601; t=1731120147; x=1731724947;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5NapeQfZdEOZA23KK4MZzlHL9K2BnlokyMdzzqWPJ3U=;
+        b=PR131j4liu604SPd9ni0E3rLCJ4P2WpB3aGw1HOGauQxapWcKb0hKBOSSjLhk+JgCv
+         YYkr735AL6bZ/avQO25bqMU9GBr/vt+deh4RpaRKqFoZuk8Os9pTZTvfkQr0ULicndZS
+         dJ7JNBESOMi7K3pQ7kGYrhmHoN6En6Cc94VswBrcUcnOFwsfmBNkYG/qlxsnqfKaWPDZ
+         5ipEafJC22SAQdW3Yb/9x7H6D097CxPyt55mP6IhmVrJmcCAPHVZNUltf0LEs1ZDmOpZ
+         KVUMlEhmlN2BHMiP2EUt3lv8pqv9tnbBF1aC0k2kZEXjeoQwgYxyhNXPkCNyhu422HYN
+         vuuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNweIzWUdR2T4pQgesKtNLqMDbf5XwOyakL9xAgeUW62F3zaNAdk/yKec26XYkVVDwXOI77qRIldY/qMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHA7B+XpGcSc+9oSo64F5Vrbhhw8xxQurVF71k5szcsr7p0whH
+	/EcQuphrZyvLnWI1bNHzbquek4YXssHor2vUE2hhAC6V5gGtbD084UMxYLlUZgEU2bqt6NxjvVu
+	NA0UsKvVheH2ynA7gBHF6+NoPeyIyCtVSWTAongaipGcA9lyrQiFbQi8=
+X-Google-Smtp-Source: AGHT+IGFHqo45XHLTXzittKnZ0Fe5W55Rug4VSxnLKO/SQeXsalZm1TWCTLkRSl5tE2ohSFTjkkSGiLyZ2+L4CW6rKc6lFSGqdT0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a92:c54a:0:b0:3a6:b445:dc9e with SMTP id
+ e9e14a558f8ab-3a6f198f219mr64887625ab.4.1731120147041; Fri, 08 Nov 2024
+ 18:42:27 -0800 (PST)
+Date: Fri, 08 Nov 2024 18:42:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
+From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Arnd,
+Hello,
 
-Please pull these thead dts changes. I've run W=1 dtbs_check and the
-new ethernet support has been tested in linux-next.
+syzbot found the following issue on:
 
-Thanks,
-Drew
+HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11361d5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fdf74cce377223b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12348f40580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e7b587980000
 
-The following changes since commit 2a3bf75a9408c40403aab39336274c8010b4c815:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz
 
-  riscv: dts: thead: remove enabled property for spi0 (2024-10-15 10:01:18 -0700)
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
 
-are available in the Git repository at:
+=====================================================
+BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
+BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
+BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:646 [inline]
+BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
+BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
+BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
+ rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
+ __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
+ rhashtable_lookup include/linux/rhashtable.h:646 [inline]
+ rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
+ bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
+ bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+ bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
+ bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-  git@github.com:pdp7/linux.git tags/thead-dt-for-v6.13-p2
+Local variable b205.i created at:
+ bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+ bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221
+ bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
 
-for you to fetch changes up to 7e756671a664b73b2a3c0cc37fd25abf6bcd851e:
+CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+Kernel panic - not syncing: kmsan.panic set ...
+CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G    B              6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
+ dump_stack+0x1e/0x30 lib/dump_stack.c:129
+ panic+0x4e2/0xcf0 kernel/panic.c:354
+ kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
+ __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
+ rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
+ __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
+ rhashtable_lookup include/linux/rhashtable.h:646 [inline]
+ rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
+ bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
+ bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+ bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
+ bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-  riscv: dts: thead: Add TH1520 ethernet nodes (2024-11-06 17:03:42 -0800)
 
-----------------------------------------------------------------
-T-HEAD Devicetrees for v6.13, part 2
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Add gmac, mdio, and phy nodes to enable the gigabit Ethernet ports on
-the TH1520 SoC-based BeagleV Ahead and Sipeed Lichee Pi 4a boards.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The dwmac-thead driver and dt binding have been accepted by netdev and
-are in linux-next as well as the dts patch in this pull request. I have
-tested next-20241108 on the Ahead and LPi4a boards, and Ethernet works
-correctly.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Signed-off-by: Drew Fustini <drew@pdp7.com>
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-----------------------------------------------------------------
-Emil Renner Berthing (1):
-      riscv: dts: thead: Add TH1520 ethernet nodes
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  91 ++++++++++++++++
- .../boot/dts/thead/th1520-lichee-module-4a.dtsi    | 119 +++++++++++++++++++++
- arch/riscv/boot/dts/thead/th1520.dtsi              |  50 +++++++++
- 3 files changed, 260 insertions(+)
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
