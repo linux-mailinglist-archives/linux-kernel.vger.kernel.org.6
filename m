@@ -1,128 +1,203 @@
-Return-Path: <linux-kernel+bounces-403019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A59B9C2FA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:27:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1FF9C2FA2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:34:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A727C1F216F4
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F82282463
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79455154445;
-	Sat,  9 Nov 2024 21:27:20 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8520D19FA92;
+	Sat,  9 Nov 2024 21:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/lrQryE"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D765F38DF9
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 21:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A559233D6B;
+	Sat,  9 Nov 2024 21:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731187640; cv=none; b=ZXX2O9IV6bawBXJ8InmNQmvQh9bfJhreOv106nGGfLHul/M4Tp1D5+rtXGA6VHBnyldHHYODQnu9iQgB+T2gEiee8OAlLJ56zycH9u43VsPEkeKt5k4vWQXNZck/1teM8ABeUZY7JFJ9uFCeIR97FyfhouFXHrR4H+d/v029Ka4=
+	t=1731188049; cv=none; b=vBEaaQeeJDwx7/3gpEO3+3o+OUlTbtRhOz/QqfcX9k+HzpaigHGuxfQkImMUA+jYK/+HB5cTWqmnRxTGNDS0VGP/eS3TV+pfMxOllkB80u+IisQ2e9Or81U93PY5dlMgLyOj9IIWlx3rDbIkPEXIpSgdPG1JPVQNUHYnnkN7+Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731187640; c=relaxed/simple;
-	bh=sb9WdPrkipJCC6bIB9p5Ct0hlHweXkD7LkwxqCfQt2o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ha+uQhTPDilpY4X9Y9Vjmlzj3+eKXFBcCalMztJKa/uj5b3koOm4pO1lh+Aat7CvZbzGkuegMLhWbdBiRmM/4A84CJatJ1Oul/NIdRlTZW4gsXl2LLLkeXDHonpEXBWDBIE8KXlmwyIfPyd+A0bR39jaGafl24M7WJxAJ5C+Ns8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-85-O_KLVAw2NHWNGw_I7e2Lwg-1; Sat, 09 Nov 2024 21:27:07 +0000
-X-MC-Unique: O_KLVAw2NHWNGw_I7e2Lwg-1
-X-Mimecast-MFC-AGG-ID: O_KLVAw2NHWNGw_I7e2Lwg
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 9 Nov
- 2024 21:27:06 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 9 Nov 2024 21:27:06 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Brian Gerst' <brgerst@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>, "H . Peter
- Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov
-	<bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak
-	<ubizjak@gmail.com>
-Subject: RE: [PATCH v5 00/16] x86-64: Stack protector and percpu improvements
-Thread-Topic: [PATCH v5 00/16] x86-64: Stack protector and percpu improvements
-Thread-Index: AQHbL5uNGPLMH1qOlUeFNPNYyx1uvLKusr0ggABhTACAAGabkA==
-Date: Sat, 9 Nov 2024 21:27:06 +0000
-Message-ID: <dee56ade8f2841c0b276a0b9af221981@AcuMS.aculab.com>
-References: <20241105155801.1779119-1-brgerst@gmail.com>
- <5b42962e05754c15977a102ccd5cc7aa@AcuMS.aculab.com>
- <CAMzpN2h_4cKa7oxPQ0M169xQMKCtZCj9bTggBd4Cyk8j18tf=g@mail.gmail.com>
-In-Reply-To: <CAMzpN2h_4cKa7oxPQ0M169xQMKCtZCj9bTggBd4Cyk8j18tf=g@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731188049; c=relaxed/simple;
+	bh=lY2jEnVpw3BZrXFgwFiVRVGI8wBnYT8YNEaDAGosAT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JY3IacZ1JQ57XwGKs4b5MqsRmbbEG3cTnwvCk9z2982ENNEHCKHy/xoyvaKkz+/zv+npY/3SJVc+X2HmAqiDq7cOOfV/OHQUCY9+OMoK7/DnPWJwFCzAU1VWStifje3m1/4TEFGBb0lgY+BA2T/unIvihmZ6M6znERX4v+kTWO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/lrQryE; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2a96b242cso483942a91.3;
+        Sat, 09 Nov 2024 13:34:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731188047; x=1731792847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lokj0MMRbis0DPUCTnD75vgXf42ybMc8L84P/XJjnhU=;
+        b=I/lrQryEjzhNCvowlpXk6DLBhzOQucTMEfLaWmZwllSnarGwg2hCaVyTk6MhJvM5PI
+         TxIRC1j2hfeJXiX2ZOqUTzSwJ8UeLGys91yBDkJ6WwSvynpVJo/h7vHmZX4TbOqCP1Kb
+         LPlY+X2W6I0ZHn/LKs8u+TLRxQY0jNwh7O1wMZ0HtJhCHYtUK5OOvvK8g+xWfT3Rvuc9
+         ZAoMXpna6V67XrEG3TUOxTeBsZLNW84fh2ufgi9vlJraFSfq8jMwnKH5xiMXRubdG9d/
+         Kqt2ChWRuElAT6ETsgnqgwSekEqCTlCufqM2icFSrbojohyzMDnwl4BrLPztZmzKGfy+
+         L3wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731188047; x=1731792847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lokj0MMRbis0DPUCTnD75vgXf42ybMc8L84P/XJjnhU=;
+        b=FOYaqNCWSqJtEphaA1/AaOTBjd773aqhz1f5gsLqO57Efrp5KhyxSgjCtIkLEVb41+
+         iU4lvDBDG4As7WKC092J99vAr6fqWymtSS69kQLUa/XhiZYcl5lYaVqOWi4eOtOAjeqd
+         atyfxipU/HOUcTk4TDdFp6npV4yyPW9lpa15Bxtv4tOgh+nUylGmK/S8QgS9cgVq+O+8
+         XR1k1nLhF0X0C9KoF8F1X3yljpoNiZbfVz63JW2iwORqNpsJYYaaewILvWxbpEUt9ymY
+         r6W4kpjayFlKfRAHYXBHsjr4lLrEFBQuWCAk6/DLhU92ECPrUfwxqNp0yVq1SLLnvFXw
+         HCJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ZLH/dcgJJXPV1A8MuMSC4sc8bzSDhwIdAo2JgNIQE+SZNtDi/MSJXiTWMyueoRn5Xz7pZnG/mCU3W7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMw7Az0bkWGbxVFPPQeOXLrSTnE+iVkIinPTEHn39WiH1oCPVt
+	TjjqTWLooXMX9x6ZdQKl1xu3I56XTqrQ1y3Ch0MPi3z7bn/yHJqrywJPG6kUgId+XWwu7yHjo0K
+	Z0+3ttKkmP5pVHMxa/tPKsTPS6d8=
+X-Google-Smtp-Source: AGHT+IHhyPITlstlNsviNfUw+SiyH4FYFcCTVP42liLZCYHvt0fw03aghXl20OqcafsLi4ObolNuD6FHdTcKH+lrsWY=
+X-Received: by 2002:a17:90b:33c9:b0:2e2:b20b:59de with SMTP id
+ 98e67ed59e1d1-2e9b16aa2cdmr4389812a91.3.1731188047438; Sat, 09 Nov 2024
+ 13:34:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: w-0GuevKL-pkBVt5di1mKxEo_zqbyJFGJs_HdymJ0N8_1731187627
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20241109055442.85190-1-christiansantoslima21@gmail.com>
+In-Reply-To: <20241109055442.85190-1-christiansantoslima21@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 9 Nov 2024 22:33:54 +0100
+Message-ID: <CANiq72mhgL-eidEBhxkzMKFztAjRjAFEdeO5Oe6Uv1mVMtEdoA@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: transmute: Add implementation for FromBytes trait
+To: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, ~lkcamp/patches@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogQnJpYW4gR2Vyc3QNCj4gU2VudDogMDkgTm92ZW1iZXIgMjAyNCAxNToxMQ0KPiANCj4g
-T24gU2F0LCBOb3YgOSwgMjAyNCBhdCA0OjMx4oCvQU0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
-aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBCcmlhbiBHZXJzdA0KPiA+ID4g
-U2VudDogMDUgTm92ZW1iZXIgMjAyNCAxNTo1OA0KPiA+ID4NCj4gPiA+IEN1cnJlbnRseSwgeDg2
-LTY0IHVzZXMgYW4gdW51c3VhbCBwZXJjcHUgbGF5b3V0LCB3aGVyZSB0aGUgcGVyY3B1IHNlY3Rp
-b24NCj4gPiA+IGlzIGxpbmtlZCBhdCBhYnNvbHV0ZSBhZGRyZXNzIDAuICBUaGUgcmVhc29uIGJl
-aGluZCB0aGlzIGlzIHRoYXQgb2xkZXIgR0NDDQo+ID4gPiB2ZXJzaW9ucyBwbGFjZWQgdGhlIHN0
-YWNrIHByb3RlY3RvciAoaWYgZW5hYmxlZCkgYXQgYSBmaXhlZCBvZmZzZXQgZnJvbSB0aGUNCj4g
-PiA+IEdTIHNlZ21lbnQgYmFzZS4gIFNpbmNlIHRoZSBHUyBzZWdlbWVudCBpcyBhbHNvIHVzZWQg
-Zm9yIHBlcmNwdSB2YXJpYWJsZXMsDQo+ID4gPiB0aGlzIGZvcmNlZCB0aGUgY3VycmVudCBsYXlv
-dXQuDQo+ID4gPg0KPiA+ID4gR0NDIHNpbmNlIHZlcnNpb24gOC4xIHN1cHBvcnRzIGEgY29uZmln
-dXJhYmxlIGxvY2F0aW9uIGZvciB0aGUgc3RhY2sNCj4gPiA+IHByb3RlY3RvciB2YWx1ZSwgd2hp
-Y2ggYWxsb3dzIHJlbW92YWwgb2YgdGhlIHJlc3RyaWN0aW9uIG9uIGhvdyB0aGUgcGVyY3B1DQo+
-ID4gPiBzZWN0aW9uIGlzIGxpbmtlZC4gIFRoaXMgYWxsb3dzIHRoZSBwZXJjcHUgc2VjdGlvbiB0
-byBiZSBsaW5rZWQgbm9ybWFsbHksDQo+ID4gPiBsaWtlIG90aGVyIGFyY2hpdGVjdHVyZXMuICBJ
-biB0dXJuLCB0aGlzIGFsbG93cyByZW1vdmFsIG9mIGNvZGUgdGhhdCB3YXMNCj4gPiA+IG5lZWRl
-ZCB0byBzdXBwb3J0IHRoZSB6ZXJvLWJhc2VkIHBlcmNwdSBzZWN0aW9uLg0KPiA+ID4NCj4gPiA+
-IHY1Og0KPiA+ID4gLSBBZGRlZCB0d28gcGF0Y2hlcyBmcm9tIEFyZCBCaWVzaGV1dmVsIHRvIG1h
-a2Ugc3RhY2sgcHJvdGVjdG9yIHdvcmsNCj4gPiA+ICAgcHJvcGVybHkgd2hlbiBjb21waWxpbmcg
-d2l0aCBjbGFuZy4NCj4gPiA+IC0gUmFpc2UgbWluaW11bSBHQ0MgdmVyc2lvbiB0byA4LjEgZm9y
-IHg4Ni4NCj4gPiA+IC0gRHJvcCBvYmp0b29sIGNvbnZlcnNpb24gY29kZS4NCj4gPg0KPiA+IElz
-IHRoZXJlIGFueSBhY3R1YWwgbmVlZCB0byByYWlzZSB0aGUgR0NDIGxldmVsPw0KPiA+IElzbid0
-IGl0IGVub3VnaCBqdXN0IHRvIGRpc2FibGUgc3RhY2sgcHJvdGVjdGlvbiB3aXRoIG9sZGVyIGNv
-bXBpbGVycz8NCj4gPiBUaGUgcGVyY3B1IGxheW91dCBjYW4gdGhlbiBhbHdheXMgYmUgdGhlIG5l
-dyAoc2FuZSkgb25lLg0KPiANCj4gRWFybGllciB2ZXJzaW9ucyBvZiB0aGlzIHNlcmllcyBkaWQg
-bWFrZSBzdGFjayBwcm90ZWN0b3Igc3VwcG9ydA0KPiBjb25kaXRpb25hbCBvbiBuZXdlciBjb21w
-aWxlcnMuICBUaGF0IGdvdCByZWplY3RlZC4gIEkgdGhlbiBhZGRlZA0KPiBvYmp0b29sIHN1cHBv
-cnQgdG8gY29udmVydCB0aGUgY29kZSBvbGQgY29tcGlsZXJzIHByb2R1Y2VkLiAgVGhhdCBhbHNv
-DQo+IGdvdCByZWplY3RlZC4gIEkgZ3Vlc3MgSSBjYW4ndCBwbGVhc2UgZXZlcnlvbmUuDQoNCkkg
-Y2VydGFpbmx5IHdvdWxkbid0IGhhdmUgYm90aGVyZWQgaGFja2luZyBvYmp0b29sLg0KDQo+ID4g
-SXMgdGhlcmUgZXZlbiBhIHNlbGVjdGFibGUgQ09ORklHX1NUQUNLX1BST1RFQ1RPUj8NCj4gPiBD
-YW4gdGhhbiBkZXBlbmQgb24gZ2NjID49IDguMSBmb3IgeDg2LTY0Pw0KPiANCj4gWWVzLCBzdGFj
-ayBwcm90ZWN0b3Igc3VwcG9ydCBpcyBvcHRpb25hbCwgYnV0IHByYWN0aWNhbGx5IGFsbCBkaXN0
-cm8NCj4ga2VybmVscyBlbmFibGUgaXQuDQoNClRoZXkgaW5jbHVkZSBhbGwgc29ydHMgb2Ygc3R1
-ZmYgdGhhdCBzbG93cyB0aGluZ3MgZG93biA6LSkNCkJ1dCBJJ2QgcmF0aGVyIGJlIGFibGUgdG8g
-YnVpbGQgYW5kIHRlc3Qga2VybmVscyB0aGFuIGhhdmUgdGhlIHN0YWNrIHByb3RlY3Rvci4NCg0K
-PiA+IEkndmUgYSBzbGlnaHQgdmVzdGVkIGludGVyZXN0IGluIHRoYXQgdGhlIHN5c3RlbSBJIHRl
-c3Qga2VybmVscyBvbg0KPiA+IGhhcyBnY2MgNy41LjAgaW5zdGFsbGVkIDotKQ0KPiANCj4gV2hh
-dCBkaXN0cm8gaXMgb24gdGhhdCBzeXN0ZW0/ICBJcyBpdCBzdGlsbCBhY3RpdmVseSBzdXBwb3J0
-ZWQ/DQoNClRoZSBzeXN0ZW0gaW4gcnVubmluZyBVYnVudHUgMTguMDQgTFRTIC0gYW5kIHN0aWxs
-IHJlY2VpdmVzIHVwZGF0ZXMuDQpJIGRvIHJ1biBsb2NhbGx5IGJ1aWxkIGtlcm5lbHMgb24gaXQs
-IGJ1dCBJIGNvdWxkIGp1c3QgYmUgYnVpbGRpbmcga2VybmVscy4NClNlZW1zIGEgc2hhbWUgdG8g
-Zm9yY2UgYW4gdXBkYXRlIGZvciBzb21ldGhpbmcgSSBjYW4ganVzdCBkZXNlbGVjdC4NCg0KRm9y
-IHJlZmVyZW5jZSBSSEVMNyBpcyBzdGlsbCBzdXBwb3J0ZWQgYnV0IGhhcyBhIDQuOC41IGNvbXBp
-bGVyLg0KU28gaXQgaXMgYSBsb25nIHRpbWUgc2luY2UgdGhhdCBoYXMgc2VsZi1ob3N0ZWQga2Vy
-bmVscy4NCldlIGJ1aWxkIHNvZnR3YXJlIGZvciByZWxlYXNlIG9uIENlbnRvcy03IGFzIGFuIGVh
-c3kgd2F5IHRvIGdldCBhbiBvbGQgZ2xpYmMgKGV0YyksDQphbHRob3VnaCBidWlsZHJvb3QvYnVz
-eWJveCAoeDg2LTY0KSAnZGlzdHJpYnV0aW9uJyBoYXMgdG8gdXNlIGEgbmV3ZXINCmNvbXBpbGVy
-IC0gdGhlIGdydWIgYnVpbGQgZmFpbHMgd2VsbCBiZWZvcmUgeW91IGdldCB0byBhIGtlcm5lbCEN
-Cg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2Fk
-LCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5v
-OiAxMzk3Mzg2IChXYWxlcykNCg==
+On Sat, Nov 9, 2024 at 6:54=E2=80=AFAM Christian dos Santos de Lima
+<christiansantoslima21@gmail.com> wrote:
+>
+> Add implementation and documentation for FromBytes trait.
 
+Thanks for the patch! Some comments below...
+
+The title does not need to be duplicated in the message.
+
+More importantly, the commit message should explain what you are
+changing and why.
+
+In particular, "Add implementation and documentation for FromBytes
+trait." seems wrong, because we already have the implementation and
+the documentation for the `FromBytes` trait.
+
+> Add new feature block in order to allow using ToBytes
+> and bound to from_bytes_mut function. I'm adding this feature
+> because is possible create a value with disallowed bit pattern
+> and as_byte_mut could create such value by mutating the array and
+> accessing the original value. So adding ToBytes this can be avoided.
+
+I understand that you want to add those two features, but you need to
+justify more precisely why they are needed, e.g. is there a way to do
+it without them? If yes, why cannot use that alternative way? e.g. is
+it too complicated? Or is it that it cannot be achieved without the
+feature at all? Please try to be explicit and mention both features by
+name.
+
+Also, you should mention their status if you know about it, since we
+should avoid adding new features, given that we are trying to get
+Linux into stable Rust:
+
+    https://rust-for-linux.com/unstable-features#usage-in-the-kernel
+
+>  //! Traits for transmuting types.
+>
+> +use core::simd::ToBytes;
+>  /// Types for which any bit pattern is valid.
+
+Please try to be consistent with the rest of the code in its style,
+e.g. newline here, whitespace elsewhere, safety comments, use
+Markdown, etc. (but we can discuss that in a later version).
+
+> +pub unsafe trait FromBytes {
+> +    /// Get an imutable slice of bytes and converts to a reference to Se=
+lf
+
+Typo (`scripts/checkpatch.pl` has spell checking capabilities).
+
+More importantly, this `unsafe fn` does not have a `# Safety` section.
+
+> +    /// # Safety
+> +    ///
+> +    /// Bound ToBytes in order to avoid use with disallowed bit patterns
+
+This `# Safety` section does not explain the safety preconditions; and
+the bound is anyway in the signature already, i.e. this section is not
+about explaining how you implemented something, but for users to learn
+how to use it properly.
+
+> +// Get a reference of slice of bytes and converts into a reference of in=
+teger or a slice with a defined size
+
+This seems misplaced?
+
+> +/// Get a reference of slice of bytes and converts into a reference of a=
+n array of integers
+> +///
+> +/// Types for which any bit pattern is valid.
+> +///
+> +/// Not all types are valid for all values. For example, a `bool` must b=
+e either zero or one, so
+> +/// reading arbitrary bytes into something that contains a `bool` is not=
+ okay.
+> +///
+> +/// It's okay for the type to have padding, as initializing those bytes =
+has no effect.
+> +///
+
+This also seems misplaced, and apparently is a mixture of the
+`FromBytes` docs (?).
+
+> +unsafe impl<T: FromBytes> FromBytes for [T] {
+> +    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
+> +        // Safety: Guarantee that all values are initialized
+
+Please see how other safety comments are written: we need to justify
+the preconditions of the unsafe operations within the block. So, for
+instance, indeed, the values need to be initialized to call
+`from_raw_parts_mut`, but why they are so?
+
+Some operations here do not need to be in the block -- we try to minimize t=
+hem.
+
+>  pub unsafe trait AsBytes {}
+> -
+>  macro_rules! impl_asbytes {
+>      ($($({$($generics:tt)*})? $t:ty, )*) =3D> {
+>          // SAFETY: Safety comments written in the macro invocation.
+> @@ -63,7 +141,6 @@ macro_rules! impl_asbytes {
+>      bool,
+>      char,
+>      str,
+> -
+>      // SAFETY: If individual values in an array have no uninitialized po=
+rtions, then the array
+
+Please avoid spurious/unrelated changes -- these should not be in the patch=
+.
+
+Thanks!
+
+Cheers,
+Miguel
 
