@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-402575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486B29C2948
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:39:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F049C2949
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09AC7284C17
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02DCE1C22C30
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D8C2BB09;
-	Sat,  9 Nov 2024 01:39:05 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0C21E505;
+	Sat,  9 Nov 2024 01:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bmon7ya9"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F311E505;
-	Sat,  9 Nov 2024 01:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A2917C7C
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 01:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731116345; cv=none; b=YlL3w2kTe+s3uUMQBvVZkDu/nwN2d3HYusBKlFW8hMiC6jyCZkS3lkJ0CRlwhKSKNESY1rVkWOyJe8VpAKcie7+eG+A71xL82RcaHokpsO+BzrETihM5HsK66ChCxSN9sj1+FdoqLMmJn84fEWYIRCI47HbWWO4uCxMiE5GpaCY=
+	t=1731116457; cv=none; b=Tvo0A7gY3eifXL8oYjk8NAR3+6MykMFf6yk/RdLhPapRCVEhnyJdWQVGUi+x5bmhbyZ0sNPJJHnupYPkaLy4h5QdA4tutOPKuYdgw7nXgoTruaEbkVrEtvCk6bN7Qxv6colIrZfntAIxCOquxD4+UY53lOk2Ha9m1mDzlxcNK2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731116345; c=relaxed/simple;
-	bh=zyS+uCv/hcbGowmIOFH5+zGLFPEbRpiNQkzPMuXtWDY=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Zmp/hp4o7/L8DDJW7rFgf4H8o3z7zc22i1FPogXgo25xw8Lv7cQsWr5e99v2lZiqoRilu2SHCnrp2A59Azx+lBfrP2dnQnMMOTnit+V3prbwzBJ30atH/L9WjN5/VYvIKcKBBneCgfIfWVIObih68iwjrBL6MolkFJIABMIz9jA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XldkR4BZ8z4f3lDc;
-	Sat,  9 Nov 2024 09:38:39 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 823A61A0359;
-	Sat,  9 Nov 2024 09:38:58 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4cwvS5n0C0FBQ--.61013S3;
-	Sat, 09 Nov 2024 09:38:57 +0800 (CST)
-Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Chuck Lever III <chuck.lever@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- Greg KH <gregkh@linuxfoundation.org>, linux-stable <stable@vger.kernel.org>,
- "harry.wentland@amd.com" <harry.wentland@amd.com>,
- "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
- "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
- "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
- "christian.koenig@amd.com" <christian.koenig@amd.com>,
- "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
- "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Sasha Levin <sashal@kernel.org>,
- "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
- "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
- "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
- linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
- <2024110625-earwig-deport-d050@gregkh>
- <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
- <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
- <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
- <4db0a28b-8587-e999-b7a1-1d54fac4e19c@huaweicloud.com>
- <D2A4C13B-3B50-4BA7-A5CC-C16E98944D55@oracle.com>
- <tlzw3ktm7xlspfnvkexhmzvzsuhz5zsd2rw2pjjakmvefup5w2@32ufrnferdw6>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a2cc72e9-a39d-d1a1-8fd3-502035460e21@huaweicloud.com>
-Date: Sat, 9 Nov 2024 09:38:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1731116457; c=relaxed/simple;
+	bh=4v3b9DveW4J0U78ScHdmiW1Kb1kwqoXa9t5jN97rw0o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=faLi7MVtlnwGqsJ9hM2pgv4BeAM6Rz8zXa9dVl4W8qLvx/L/29msEbh7O0VwYod3uG0MtoezY0l5J2gdCivpD+msjR2y9mbgBpjon442mBNqfxks6DyxDUyBNz+8bUr+BsWlkELIe1LiIRd6u5/PV1DFKHRqzDcg8xoQJG19y0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bmon7ya9; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e3cdbc25a0so29702067b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:40:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731116455; x=1731721255; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=alYAJozbBoFMlkHoZsLDELchn1HKPRNFJXfllAHwhsk=;
+        b=Bmon7ya91K6hgeW9O3WS/TJCU9DNY9SnmGQ7i10vBXA3i4XGczxvBwG8pDuEYNySxO
+         aQJf62IIr39QwiDDSNR43ICIYKbT0hM8p1hDCUH/Ey1EFWs7vt9Xeu8AsXea6qfWySxF
+         lm6IfVyV0WXYQ3X0ypFjNbHEG4dJ02UMIbpkKPRbCFZnjE64tM4F5L69bA8QdK7NtMiN
+         BnBeSoPJqoglcnip6xgYIKwm4tYRwT2MOlZjAXgxw3J5ZZSmEDuXKWLG4Fthg2x6mbak
+         8xyKVTuILG5k6KmmvJix5O52BfLm41z6gu7Pt0nvulKXts2KDUUjZvvBJrOZVbSzsE1s
+         rulA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731116455; x=1731721255;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=alYAJozbBoFMlkHoZsLDELchn1HKPRNFJXfllAHwhsk=;
+        b=sxGHVlbO9U8n5fqU3TzTsrzs+f9DvmVvNyF4nF29KRt7juwfAC9zr4z1CLKbCrI6UP
+         iK5LEhNI1EMXVXx8RW0LeDXRg0lBY1uRW0PsdY+Tepz25dfGyhaql2cKZ8wQIs9AG5GT
+         QpWi2j9QpS6Tc3zbuNYi7YEHmIOPMQNaeGY56GvndhT9L0xIN9if5jnmRG3F6x97iivL
+         JyKvYFKQqtjlqXyEu0n96wuzleLbpRjk267yJaskWsf/N898oXzT06h9ikRMSctuRdv8
+         mGpfRToNmpdYqDy6A+OqkTarTG/AOnZy9H9dBk56Qczd+LR+KFKUWwIzyTpimzt7gE8w
+         VPaw==
+X-Forwarded-Encrypted: i=1; AJvYcCV5+zY7QycvIe3l1EdbKb9bKvx4OR8JKF6fQ8iR7eLFKzLEvw/azcLTxOnH/6b4pzPSAc5fTBa14RP32f0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq9CEEO/wBkyOjqpmpSwE6uzV0+3acKtuZUHu+SjLb7zSe1NM5
+	m1JEcEXmrmwABpsgeln/E34bsg++ijxwomL+j8ffWRG9L0dWSYBImQAHcUnENZ7x5069SMXlssj
+	/HbDQUSEma7tpY/k85sTcfV2GE2c=
+X-Google-Smtp-Source: AGHT+IE65QQH5vxKcHYJFh7ya9QxQWKveCsogo/+blQwMlt/NfBp7O7Kxfqq2lNd+lRWWCZftGnWtdIxU1VU5gS6mRU=
+X-Received: by 2002:a05:690c:3346:b0:6e3:2608:d5af with SMTP id
+ 00721157ae682-6eaddf7e5fbmr59882317b3.26.1731116455164; Fri, 08 Nov 2024
+ 17:40:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <tlzw3ktm7xlspfnvkexhmzvzsuhz5zsd2rw2pjjakmvefup5w2@32ufrnferdw6>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4cwvS5n0C0FBQ--.61013S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw1xCFyfWrW8Kw18Xr4ktFb_yoWrAF48pF
-	W0qa4jkr4DXr17twn2vw1UZFW0y3yfJry5Xrn8Gr17Cr909r1ftF4xGr1YkF9rWws3Cr1j
-	qF4Yqa47XF1UJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sREfHUDUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20241106025858.495458-1-danielyangkang@gmail.com> <a1471ca1-e119-4106-8965-cd954c373a62@kernel.org>
+In-Reply-To: <a1471ca1-e119-4106-8965-cd954c373a62@kernel.org>
+From: Daniel Yang <danielyangkang@gmail.com>
+Date: Fri, 8 Nov 2024 17:40:19 -0800
+Message-ID: <CAGiJo8Qd_Xd=u-Q84dpR6krU-svVjgA1hHdPHBr9kHkMwpX8qA@mail.gmail.com>
+Subject: Re: [PATCH] parse_options(): replace deprecated strcpy with strscpy
+To: Chao Yu <chao@kernel.org>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>, 
+	"open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-在 2024/11/09 1:03, Liam R. Howlett 写道:
-> * Chuck Lever III <chuck.lever@oracle.com> [241108 08:23]:
->>
->>
->>> On Nov 7, 2024, at 8:19 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>
->>> Hi,
->>>
->>> 在 2024/11/07 22:41, Chuck Lever 写道:
->>>> On Thu, Nov 07, 2024 at 08:57:23AM +0800, Yu Kuai wrote:
->>>>> Hi,
->>>>>
->>>>> 在 2024/11/06 23:19, Chuck Lever III 写道:
->>>>>>
->>>>>>
->>>>>>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
->>>>>>>
->>>>>>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
->>>>>>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>>>>>
->>>>>>>> Fix patch is patch 27, relied patches are from:
->>>>>>
->>>>>> I assume patch 27 is:
->>>>>>
->>>>>> libfs: fix infinite directory reads for offset dir
->>>>>>
->>>>>> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
->>>>>>
->>>>>> I don't think the Maple tree patches are a hard
->>>>>> requirement for this fix. And note that libfs did
->>>>>> not use Maple tree originally because I was told
->>>>>> at that time that Maple tree was not yet mature.
->>>>>>
->>>>>> So, a better approach might be to fit the fix
->>>>>> onto linux-6.6.y while sticking with xarray.
->>>>>
->>>>> The painful part is that using xarray is not acceptable, the offet
->>>>> is just 32 bit and if it overflows, readdir will read nothing. That's
->>>>> why maple_tree has to be used.
->>>> A 32-bit range should be entirely adequate for this usage.
->>>>   - The offset allocator wraps when it reaches the maximum, it
->>>>     doesn't overflow unless there are actually billions of extant
->>>>     entries in the directory, which IMO is not likely.
->>>
->>> Yes, it's not likely, but it's possible, and not hard to trigger for
->>> test.
->>
->> I question whether such a test reflects any real-world
->> workload.
->>
->> Besides, there are a number of other limits that will impact
->> the ability to create that many entries in one directory.
->> The number of inodes in one tmpfs instance is limited, for
->> instance.
->>
->>
->>> And please notice that the offset will increase for each new file,
->>> and file can be removed, while offset stays the same.
->>>>   - The offset values are dense, so the directory can use all 2- or
->>>>     4- billion in the 32-bit integer range before wrapping.
->>>
->>> A simple math, if user create and remove 1 file in each seconds, it will
->>> cost about 130 years to overflow. And if user create and remove 1000
->>> files in each second, it will cost about 1 month to overflow.
->>
->> The question is what happens when there are no more offset
->> values available. xa_alloc_cyclic should fail, and file
->> creation is supposed to fail at that point. If it doesn't,
->> that's a bug that is outside of the use of xarray or Maple.
->>
->>
->>> maple tree use 64 bit value for the offset, which is impossible to
->>> overflow for the rest of our lifes.
->>>>   - No-one complained about this limitation when offset_readdir() was
->>>>     first merged. The xarray was replaced for performance reasons,
->>>>     not because of the 32-bit range limit.
->>>> It is always possible that I have misunderstood your concern!
->>>
->>> The problem is that if the next_offset overflows to 0, then after patch
->>> 27, offset_dir_open() will record the 0, and later offset_readdir will
->>> return directly, while there can be many files.
->>
->> That's a separate bug that has nothing to do with the maximum
->> number of entries one directory can have. Again, you don't
->> need Maple tree to address that.
->>
->> My understanding from Liam is that backporting Maple into
->> v6.6 is just not practical to do. We must explore alternate
->> ways to address these concerns.
->>
-> 
-> The tree itself is in v6.6, but the evolution of the tree to fit the
-> needs of this and other subsystems isn't something that would be well
-> tested.  This is really backporting features and that's not the point of
-> stable.
-
-Of course.
-> 
-> I think this is what Lorenzo was saying about changing your approach, we
-> can't backport 28 patches to fix this when it isn't needed.
-
-I don't have other approach now, so I'll not follow on fixing this cve.
-I'll be great if someone has a beeter apporch. :)
-
-Thanks,
-Kuai
-
-> 
+On Fri, Nov 8, 2024 at 1:47=E2=80=AFAM Chao Yu <chao@kernel.org> wrote:
+>
+> On 2024/11/6 10:58, Daniel Yang wrote:
+> > strcpy is deprecated. Kernel docs recommend replacing strcpy with
+> > strscpy. The function strcpy() return value isn't used so there
+> > shouldn't be an issue replacing with the safer alternative strscpy.
+>
+> It's better to add "f2fs: " prefix for commit title.
+>
+> >
+> > Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> > ---
+> >   fs/f2fs/super.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 87ab5696b..ee8861b95 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1158,7 +1158,7 @@ static int parse_options(struct super_block *sb, =
+char *options, bool is_remount)
+> >                               break;
+> >                       }
+> >
+> > -                     strcpy(ext[ext_cnt], name);
+> > +                     strscpy(ext[ext_cnt], name);
+>
+> Needs to handle return value of strscpy()?
+>
+> >                       F2FS_OPTION(sbi).compress_ext_cnt++;
+> >                       kfree(name);
+> >                       break;
+> > @@ -1187,7 +1187,7 @@ static int parse_options(struct super_block *sb, =
+char *options, bool is_remount)
+> >                               break;
+> >                       }
+> >
+> > -                     strcpy(noext[noext_cnt], name);
+> > +                     strscpy(noext[noext_cnt], name);
+>
+> Ditto,
+>
 > Thanks,
-> Liam
-> 
-> .
-> 
+>
+> >                       F2FS_OPTION(sbi).nocompress_ext_cnt++;
+> >                       kfree(name);
+> >                       break;
+>
 
+Ok, I've added the changes and sent a v2 of the patch. Lmk if there's
+any other issues.
+
+- Daniel
 
