@@ -1,158 +1,204 @@
-Return-Path: <linux-kernel+bounces-402707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96C2E9C2AA0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:28:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A1B9C2AA1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40C191F221DD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7595E1F22246
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9D113D886;
-	Sat,  9 Nov 2024 06:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F7E2E628;
+	Sat,  9 Nov 2024 06:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avGdlif0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjlzSABq"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A948F647;
-	Sat,  9 Nov 2024 06:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424328E8
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731133726; cv=none; b=K51bvuEEohsnOvCIXHbdcUPsohB430I1RVgqJCySgIebOGzDiofUjJ4qml//b4ImlvwTIDATV8FUm0cn7RCJeZdRDQx4uf6kE4Rv8n/ytdUk4mEfbzJvJWRX/qMD2Z0+6PGMpV0ebaaaDbSTKbvJpYtq63y17P7xJd4Z8tosjWg=
+	t=1731133751; cv=none; b=bukgl5UlBsj7VBFOe3Cyo5I//mtHTE7g5ulLRorvFaHuXl4T7AbiESZ1ESp/drN7S83j2WNvNNWZr/7o5jv3qDWG5/lGEdLxJ2iSPHgaGwieyXJob0Z8IKKlyp8EoHy/644jnx0LhYlwC8ln5q9umNyLcQuGuRBSgtxVl12LTAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731133726; c=relaxed/simple;
-	bh=BbW/oL25Xft/VAwDwDmWDCWb0CV85/g+avDhCUs7c0s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qeqouNsFqEOLHfFPHEbgi3tw7bKyE3a10hP3I+kEtGIVzH1jl84pwrRWr6aszxK5zWrktMjWGr+GjSImMysIM020MM+BY861JC6uy+u8QIUNuviBNu8YJnFBtICYHCFo/q3tFoGG6H+TsIsktUiDeZBMngP0sIukbKJeIX0Z0ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avGdlif0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3588DC4CEC6;
-	Sat,  9 Nov 2024 06:28:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731133726;
-	bh=BbW/oL25Xft/VAwDwDmWDCWb0CV85/g+avDhCUs7c0s=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=avGdlif0zUfb8u8Yjk1Y8YvaQHGlnVHY0Cyx1XqMjBpCekM8lFm0OYkRUfLJPGDno
-	 3T1Ck1T4Ri0jR3FbC2H9TV6xkjdHZV11/cgGNImXJ9ImU8Y1Q/kufaxeoS4XJEahk9
-	 UUHZ92ogDdsXRm39gFxtL4o42ZrAEHF/yYltA+qf/Oj7AbCyvhKssuYgplSrJW/Gn5
-	 UD1MG2PgR0YEPgde1XroI0qdfLNjTQx2GBJaHBqur4FoT+2NJ569YvTeM1SiNKNQZt
-	 AgMjq2EBjYPyfn7s4K9u/114BEuGdLwESRoR9JoTez/3PiOU6nCIseie1mdRUByrdP
-	 DinqlZ2voW4gw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B94D5C0FC;
-	Sat,  9 Nov 2024 06:28:46 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Sat, 09 Nov 2024 11:58:34 +0530
-Subject: [PATCH] Remove unused function parameter in __smc_diag_dump
+	s=arc-20240116; t=1731133751; c=relaxed/simple;
+	bh=1rzZiIUcLW6xBOzJywoX33J87RLpIJApIFv2nHCH+fc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P1TS62Apn2J71dLk4PClSiGZbqNP8jGNBVVClyJug3Z6CWwh11Yu04joBhm54JhcSr1a6n556ntXfRzg5y/NRnCiaYMovKLU4kbc84D0JR9QDO5Z5htNC0AWBihHz9lKDe72ng7vfzT+ZDlTLRigpkhST1pPQWjr5oee0kEXNyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjlzSABq; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c6f492d2dso32011975ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:29:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731133749; x=1731738549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M8RT0nuc0fYONeNqL5hdX3RZ0JJOsejx8XGNjeCURk0=;
+        b=fjlzSABqJqrzOT93OGyAEm9Q3nKHEUGXmqYKatsoLRmT4rX5m+1Aqh8A21TKQGRq+e
+         /DHjH9lnc3CGDsmKzG1GGN+8Y8E1EWz8yKRUZZP3EU23o++YWONzu/Gi2wh7IQxx5kHC
+         byEiekGmOeMoXqy/JjNhj7MQ6IEunzaydiwS5wlbJ6In9elCAGeMZ78mFhnSyhwVE1on
+         Aesr3WaxpTRNWj3jzYNWR6+FRxxLaFJrF+NvavoFt06PXmoh60DktUXObmPKjvpqcdQE
+         jqtDU0XsGaALQVGbdAzAV22xu7FPELVNxI2X1EyBKZUsYfINM24ArTcO5z1rYhsNbxx4
+         Nb3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731133749; x=1731738549;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M8RT0nuc0fYONeNqL5hdX3RZ0JJOsejx8XGNjeCURk0=;
+        b=v6ULz4d3V5e+Uk1J/ORWsM30Gec0ZKtYYt36AatFFizN/M+BAlHTvyhDqFbipGuyOV
+         qC1RKGmmMZqu4pkOxAOFCbapACYBH2tI6SzQMeDP/iZeqZxml3eUsobHeb2t1yvVg+OL
+         Fqsqz0/sjGHEqqMPif1TibMR1MB/1TXQzmRZfBgJqS+sIoSCSgowNCa9VBEDtZ9T5/1K
+         5JX8SdOwQeQGTsOGz/V0gAP9Xs69VowCeuy/6aeNi/P6z79jjtbZ3CcrqImzzQdHp36m
+         rPlqR2i38iJQGoE0T1Jmg/GOduT6qlZRXai7sSxormOTTZFpmiXD24clFtcu+k+6cT+n
+         GKpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZeg/fipoyRq+q2Ld40KqCnXKYb8Ync75qYA9IE7pzjEh1Vl7tVUaiwL5GNW1ebKbOcZsWf0MWBuVht4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Xm1sXQpBXtPUTodowW/EkRGyAaOvKdHwyon6m82LMs+QLzN+
+	V6G8hEBe2gtQvhVIke2H/QoMDuP4+rGhhCCRLKw28n/cJ4F9XvsH
+X-Google-Smtp-Source: AGHT+IHzOZfdRSM2Cy1enSg7T07ZbtkoqDiFU+6x8+uEMYm60i0rmc+E/LrJMdVYMkOCa47Gc2pmnw==
+X-Received: by 2002:a17:903:2344:b0:20b:5aff:dd50 with SMTP id d9443c01a7336-2118354c06fmr70502345ad.31.1731133748821;
+        Fri, 08 Nov 2024 22:29:08 -0800 (PST)
+Received: from localhost ([58.29.143.236])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6c368sm40711765ad.240.2024.11.08.22.29.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 22:29:08 -0800 (PST)
+From: Changwoo Min <multics69@gmail.com>
+X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
+To: tj@kernel.org,
+	void@manifault.com
+Cc: changwoo@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] sched_ext: add a missing rcu_read_lock/unlock pair at scx_select_cpu_dfl()
+Date: Sat,  9 Nov 2024 15:29:05 +0900
+Message-ID: <20241109062905.204434-1-changwoo@igalia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIABEBL2cC/x2MQQqAIBAAvxJ7bkErAvtKhFhutYdSXIog/HvSc
- WBmXhBKTAJD9UKim4XDWUDXFSy7OzdC9oWhUU2ntTK48oMhREFr5VisZ7dZfx0RVe/mloxvzdp
- ByWOi4v7rccr5A9z2hXNqAAAA
-X-Change-ID: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
- "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
- Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>, 
- linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731133722; l=2754;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=uj59/apt0R4vc2BSfem7J5/pEkXFApMSXA+V90Ln/PY=;
- b=DBoFQEraDrMRc9cmU2gZR0vrq1jy1s3x5PYP93B5LyVZszthzhOfKkZvePz8D4qjnDZDjFrRP
- M+n7bDZGW5wCCa/3dAG6xrV6Fyr2pVM96n6kO+YAoWBsc1ZI4oKxGlv
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Transfer-Encoding: 8bit
 
-From: Manas <manas18244@iiitd.ac.in>
+When getting an LLC CPU mask in the default CPU selection policy,
+scx_select_cpu_dfl(), a pointer to the sched_domain is dereferenced
+using rcu_read_lock() without holding rcu_read_lock(). Such an unprotected
+dereference often causes the following warning and can cause an invalid
+memory access in the worst case.
 
-The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
-There is only one instance of this function being called and its passed
-with a NULL value in place of bc.
+Therefore, protect dereference of a sched_domain pointer using a pair
+of rcu_read_lock() and unlock().
 
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
+[   20.996135] =============================
+[   20.996345] WARNING: suspicious RCU usage
+[   20.996563] 6.11.0-virtme #17 Tainted: G        W
+[   20.996576] -----------------------------
+[   20.996576] kernel/sched/ext.c:3323 suspicious rcu_dereference_check() usage!
+[   20.996576]
+[   20.996576] other info that might help us debug this:
+[   20.996576]
+[   20.996576]
+[   20.996576] rcu_scheduler_active = 2, debug_locks = 1
+[   20.996576] 4 locks held by kworker/8:1/140:
+[   20.996576]  #0: ffff8b18c00dd348 ((wq_completion)pm){+.+.}-{0:0}, at: process_one_work+0x4a0/0x590
+[   20.996576]  #1: ffffb3da01f67e58 ((work_completion)(&dev->power.work)){+.+.}-{0:0}, at: process_one_work+0x1ba/0x590
+[   20.996576]  #2: ffffffffa316f9f0 (&rcu_state.gp_wq){..-.}-{2:2}, at: swake_up_one+0x15/0x60
+[   20.996576]  #3: ffff8b1880398a60 (&p->pi_lock){-.-.}-{2:2}, at: try_to_wake_up+0x59/0x7d0
+[   20.996576]
+[   20.996576] stack backtrace:
+[   20.996576] CPU: 8 UID: 0 PID: 140 Comm: kworker/8:1 Tainted: G        W          6.11.0-virtme #17
+[   20.996576] Tainted: [W]=WARN
+[   20.996576] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
+[   20.996576] Workqueue: pm pm_runtime_work
+[   20.996576] Sched_ext: simple (disabling+all), task: runnable_at=-6ms
+[   20.996576] Call Trace:
+[   20.996576]  <IRQ>
+[   20.996576]  dump_stack_lvl+0x6f/0xb0
+[   20.996576]  lockdep_rcu_suspicious.cold+0x4e/0x96
+[   20.996576]  scx_select_cpu_dfl+0x234/0x260
+[   20.996576]  select_task_rq_scx+0xfb/0x190
+[   20.996576]  select_task_rq+0x47/0x110
+[   20.996576]  try_to_wake_up+0x110/0x7d0
+[   20.996576]  swake_up_one+0x39/0x60
+[   20.996576]  rcu_core+0xb08/0xe50
+[   20.996576]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   20.996576]  ? mark_held_locks+0x40/0x70
+[   20.996576]  handle_softirqs+0xd3/0x410
+[   20.996576]  irq_exit_rcu+0x78/0xa0
+[   20.996576]  sysvec_apic_timer_interrupt+0x73/0x80
+[   20.996576]  </IRQ>
+[   20.996576]  <TASK>
+[   20.996576]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[   20.996576] RIP: 0010:_raw_spin_unlock_irqrestore+0x36/0x70
+[   20.996576] Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 11 b4 36 ff 48 89 df e8 99 0d 37 ff f7 c5 00 02 00 00 75 17 9c 58 f6 c4 02 75 2b <65> ff 0d 5b 55 3c 5e 74 16 5b 5d e9 95 8e 28 00 e8 a5 ee 44 ff 9c
+[   20.996576] RSP: 0018:ffffb3da01f67d20 EFLAGS: 00000246
+[   20.996576] RAX: 0000000000000002 RBX: ffffffffa4640220 RCX: 0000000000000040
+[   20.996576] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffa1c7b27b
+[   20.996576] RBP: 0000000000000246 R08: 0000000000000001 R09: 0000000000000000
+[   20.996576] R10: 0000000000000001 R11: 000000000000021c R12: 0000000000000246
+[   20.996576] R13: ffff8b1881363958 R14: 0000000000000000 R15: ffff8b1881363800
+[   20.996576]  ? _raw_spin_unlock_irqrestore+0x4b/0x70
+[   20.996576]  serial_port_runtime_resume+0xd4/0x1a0
+[   20.996576]  ? __pfx_serial_port_runtime_resume+0x10/0x10
+[   20.996576]  __rpm_callback+0x44/0x170
+[   20.996576]  ? __pfx_serial_port_runtime_resume+0x10/0x10
+[   20.996576]  rpm_callback+0x55/0x60
+[   20.996576]  ? __pfx_serial_port_runtime_resume+0x10/0x10
+[   20.996576]  rpm_resume+0x582/0x7b0
+[   20.996576]  pm_runtime_work+0x7c/0xb0
+[   20.996576]  process_one_work+0x1fb/0x590
+[   20.996576]  worker_thread+0x18e/0x350
+[   20.996576]  ? __pfx_worker_thread+0x10/0x10
+[   20.996576]  kthread+0xe2/0x110
+[   20.996576]  ? __pfx_kthread+0x10/0x10
+[   20.996576]  ret_from_fork+0x34/0x50
+[   20.996576]  ? __pfx_kthread+0x10/0x10
+[   20.996576]  ret_from_fork_asm+0x1a/0x30
+[   20.996576]  </TASK>
+[   21.056592] sched_ext: BPF scheduler "simple" disabled (unregistered from user space)
+
+Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
-The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
-There is only one instance of this function being called and its passed
-with a NULL value in place of bc.
+ kernel/sched/ext.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Though, the compiler (gcc) optimizes it. Looking at the object dump of
-vmlinux (via `objdump -D vmlinux`), a new function clone
-(__smc_diag_dump.constprop.0) is added which removes this parameter from
-calling convention altogether.
+ChangeLog v1 -> v2:
+  - Extend the RCU critical section to cover the use of llc_cpus.
 
-ffffffff8a701770 <__smc_diag_dump.constprop.0>:
-ffffffff8a701770:       41 57                   push   %r15
-ffffffff8a701772:       41 56                   push   %r14
-ffffffff8a701774:       41 55                   push   %r13
-ffffffff8a701776:       41 54                   push   %r12
-
-There are 5 parameters in original function, but in the cloned function
-only 4.
-
-I believe this patch also fixes this oops bug[1], which arises in the
-same function __smc_diag_dump. But I couldn't verify it further. Can
-someone please test this?
-
-[1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
----
- net/smc/smc_diag.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
-index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
---- a/net/smc/smc_diag.c
-+++ b/net/smc/smc_diag.c
-@@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 6ff501a18b88..f0e9c77eb33b 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -3302,6 +3302,12 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
  
- static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
- 			   struct netlink_callback *cb,
--			   const struct smc_diag_req *req,
--			   struct nlattr *bc)
-+			   const struct smc_diag_req *req)
- {
- 	struct smc_sock *smc = smc_sk(sk);
- 	struct smc_diag_fallback fallback;
-@@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
- 	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
- 	struct net *net = sock_net(skb->sk);
- 	int snum = cb_ctx->pos[p_type];
--	struct nlattr *bc = NULL;
- 	struct hlist_head *head;
- 	int rc = 0, num = 0;
- 	struct sock *sk;
-@@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
- 			continue;
- 		if (num < snum)
- 			goto next;
--		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
-+		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
- 		if (rc < 0)
- 			goto out;
- next:
-
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
-
-Best regards,
+ 	*found = false;
+ 
++
++	/*
++	 * This is necessary to protect llc_cpus.
++	 */
++	rcu_read_lock();
++
+ 	/*
+ 	 * Determine the scheduling domain only if the task is allowed to run
+ 	 * on all CPUs.
+@@ -3436,9 +3442,12 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+ 	if (cpu >= 0)
+ 		goto cpu_found;
+ 
++	rcu_read_unlock();
+ 	return prev_cpu;
+ 
+ cpu_found:
++	rcu_read_unlock();
++
+ 	*found = true;
+ 	return cpu;
+ }
 -- 
-Manas <manas18244@iiitd.ac.in>
-
+2.47.0
 
 
