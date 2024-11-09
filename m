@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-402954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F62D9C2EEC
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:50:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CEE9C2EF1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D84C1C20DAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25C9F1F21832
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B5919FA93;
-	Sat,  9 Nov 2024 17:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BC11A254C;
+	Sat,  9 Nov 2024 17:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gr/e6UYr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN92y7FL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0BC19F115;
-	Sat,  9 Nov 2024 17:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3D61A0B05;
+	Sat,  9 Nov 2024 17:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731174625; cv=none; b=bS+G5L0Z0pyOLpf3cFLVcagY8CvDfKK7Hlra2OQx/WXIaj/mMglGQE7J+ZivVa/N4J9gN3DH5Un3zWe/WK8rVz/2X5cC+lMxnoH40H0Si/xxBMPMUuQDbgV7F9JctjkM43MO2NOpLVVMYCLWmAdBfUEYWVgdY8aLcpgCLtksiTE=
+	t=1731174628; cv=none; b=uKAYJTgqEf/Tl2geqcTxXtlkodnHTeg9eiqaZ61bCbDn0+YjTgh4NNRMvxFAxCzmOutMKV+r+JDmTKchxq5RqjqsMRSnDO7eYhqoI0h+tSOrJ2fw8outN2wd7gXDWHxqNma2VGhmgdXcszOIvS3+fwnB25UIgbdB2NYBN42vyPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731174625; c=relaxed/simple;
-	bh=pYtKEpzSG42YcWjJM2DOhi/N3tNUOuOOPYpXtUBWNRs=;
+	s=arc-20240116; t=1731174628; c=relaxed/simple;
+	bh=BqSDgx3rRRPUullizx1fW1wgjhzqtFXnN02Sl9o9nfo=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=tlPEoPFp6ax8qnCm5WgazAfseJbJg1Rt+8x/KmMOe8Bhb7pp2p2LWCGISbMwjcVMssq3ePHhXgKP1cbFcxanaWiQKgkgG15x6rUoMN4AEgEIXAfvcoQ8AdQcPMFxNBZ/snxtYaD9qPncMNM0yffIG6pfu/6I2tXlU052SNl2hFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gr/e6UYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99FDDC4CED3;
-	Sat,  9 Nov 2024 17:50:25 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=dPOf6E/p/pjBbmzcFmG/go7Lgfq9IuiGyUeGEGOCMBia3Bc6bhtX4QdbJ/hJ+whdtfmysE9WWiNAEpKfw6CN67yufea10/6mwRgtGI4L4JvmqqTL9OcdPQ61BtNYCXElUL7GVsUbl1HUBl2gKFq8vdU//yjDBPsumQlkQE4GoFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN92y7FL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E1E2C4CED3;
+	Sat,  9 Nov 2024 17:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731174625;
-	bh=pYtKEpzSG42YcWjJM2DOhi/N3tNUOuOOPYpXtUBWNRs=;
+	s=k20201202; t=1731174628;
+	bh=BqSDgx3rRRPUullizx1fW1wgjhzqtFXnN02Sl9o9nfo=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Gr/e6UYrdFuiygnQlCBM3Co3bX1ofKCfB7TQ9D0xO/EalevEh/7Usnfeav2UYeB7H
-	 x5KFlWu8/7r50cokloD6/Cy56ZPpunrA1bR+aMLqna92jOphl2dz720Ydzcy2A6ebR
-	 +IOCBj/jbuanmiGDDuAJ4o4QN43XFB9wN913gZ6pP1+MJ35wQNe9nNcZVTj6PlxC3j
-	 wBtM9B6k34C11tO2sRGyh04RBIA76LuG8bj4KY34Gr6eh3VDhN3mI/rg/7a27dp6t2
-	 xQdVirwpM0u2n8rtG5h9yjsFI0fTloINIg087xdnZL/0CiW9DcEcVPlpDpPu2VClyH
-	 GzZR0BfG7P6Sw==
+	b=LN92y7FLw+9jg8BzPq2rNV/yMqyXsgyD1YqadLVeq2Ow99mNm9GV0lpJir4Ce74oQ
+	 dPrKxfbLYLLFByBoa45rq9wqlDAwWI5ut2dJgN7Zz9SNRlyctYQa2wGg5XaCAca48P
+	 pBe1uFkO72e6RxH+qo4JIRNkzkESkeh2aWwXT1FwK3dY9tHqOgU8InRjG5PU0zkqSb
+	 +JgTUQYNZK7BKCPOrYpmPsJiN272MxLHNuQxk7eIf0flDkXr54MvQr2tQn/pn63EuR
+	 wrGcuJ8IJZySf+hsMFf9HwNbCZvDiVG41N7SFtGUCsFZkt56x4tNJAaoUntrc+f7BZ
+	 0mqCVD9MNZksA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710343809A80;
-	Sat,  9 Nov 2024 17:50:36 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0353809A80;
+	Sat,  9 Nov 2024 17:50:38 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] tc: fix typo probabilty in tc.yaml doc
+Subject: Re: [PATCH] mptcp: remove the redundant assignment of 'new_ctx->tcp_sock'
+ in subflow_ulp_clone()
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <173117463524.2982634.11425896086661081930.git-patchwork-notify@kernel.org>
-Date: Sat, 09 Nov 2024 17:50:35 +0000
-References: <20241108195642.139315-1-xandfury@gmail.com>
-In-Reply-To: <20241108195642.139315-1-xandfury@gmail.com>
-To: Abhinav Saxena <xandfury@gmail.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, donald.hunter@gmail.com, kuba@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- horms@kernel.org, ast@fiberby.net, liuhangbin@gmail.com,
- alessandromarcolini99@gmail.com
+ <173117463774.2982634.14877671745218810649.git-patchwork-notify@kernel.org>
+Date: Sat, 09 Nov 2024 17:50:37 +0000
+References: <20241106071035.2591-1-moyuanhao3676@163.com>
+In-Reply-To: <20241106071035.2591-1-moyuanhao3676@163.com>
+To: MoYuanhao <moyuanhao3676@163.com>
+Cc: matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, mptcp@lists.linux.dev,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri,  8 Nov 2024 12:56:42 -0700 you wrote:
-> Fix spelling of "probability" in tc.yaml documentation. This corrects
-> the max-P field description in struct tc_sfq_qopt_v1.
+On Wed,  6 Nov 2024 15:10:35 +0800 you wrote:
+> The variable has already been assigned in the subflow_create_ctx(),
+> So we don't need to reassign this variable in the subflow_ulp_clone().
 > 
-> Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
+> Signed-off-by: MoYuanhao <moyuanhao3676@163.com>
 > ---
->  Documentation/netlink/specs/tc.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  net/mptcp/subflow.c | 1 -
+>  1 file changed, 1 deletion(-)
 
 Here is the summary with links:
-  - tc: fix typo probabilty in tc.yaml doc
-    https://git.kernel.org/netdev/net-next/c/cf6d9fe09185
+  - mptcp: remove the redundant assignment of 'new_ctx->tcp_sock' in subflow_ulp_clone()
+    https://git.kernel.org/netdev/net-next/c/7d28f4fc868c
 
 You are awesome, thank you!
 -- 
