@@ -1,512 +1,141 @@
-Return-Path: <linux-kernel+bounces-402999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A4C9C2F64
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:49:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 289599C2F66
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:52:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 674751C213C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6401F21A10
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5FC1A2C15;
-	Sat,  9 Nov 2024 19:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A7F1A00F2;
+	Sat,  9 Nov 2024 19:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIhdRelh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="FzkFqWnb"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3241A2567
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 19:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD09719D897
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 19:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731181740; cv=none; b=ZU2iIgGWxF5QdkSQLGu4RgGKau0xGdnsbq1OXJniducDyMDwb2psGVJakRJva8xXn2O25hpV/T9WsJq/Ww9u6j1eXz6JA2Z3mB5J6pRJLlf7WHW7i6YXwmLSNco3RP5cAvdw55tkru2zwS1BPEIrOWwySt+ALkhBWIer2nkbC/w=
+	t=1731181927; cv=none; b=Cjw3NCPIvKnrODoQMZBF7kp9zZ+36SLc0OhL1TnGAdhtCXvuZizC17JPzLTbnMg3pORwZl0NbO1t7Snkz37uemVaAuTqOEf//KB08Ps27VChlX33oU+WzJAmPidcVB0Ncg39i335TfQfGpE7p41nvYclFGllUYDAWznLZIb027s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731181740; c=relaxed/simple;
-	bh=X7G1dujU88U50yIUR0zd1jv9UDQf/BGAlYHowvkcmnM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G5zGo1WCEIvhK0nUAhOLMlRA2Pd1gJzCEPkdbzZTcJYqaVaClyHkBlw0p8huNpt4LjO24SFxtKLJI/Nj2bNgoyu05OoCKNA0+bMmsz4VnEq9wPnzdHEP4clWsjCaT9vOSflsgKnEPjDLZqygJnOV1+3sEDVCorZgRetrT4T1DKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIhdRelh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B95FDC4CECE;
-	Sat,  9 Nov 2024 19:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731181739;
-	bh=X7G1dujU88U50yIUR0zd1jv9UDQf/BGAlYHowvkcmnM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kIhdRelhWaPZVIqxWWxj+lJtjgZUNO42JMmOzgcnXNZ3edS1ns3nkMLHTenU9bvVm
-	 53e7nzo64SpKiQD7FK6fnODPT7a56vId7YLPNB3+Hqnm5sEdP+4FBC37CJb1LPZmH+
-	 JLNxt5z0YAoZwgl1jnl5fudVX33dWtWRwjLsuSqmbY7VpY0W0Rj8aOuJ0ZADC9YtLN
-	 wu2K/tjF7Z2XTttJApn4KVEulCfHRLTGZX8gsam710Xck5wEXolS5pweE+pOsRxYCL
-	 jtIp6vywKCBQGpoLrrLlWFb/g0IgwN7VapthOFpyhjb+l1rC8wjRayDCFBrFanFLyL
-	 GaK6xVo46Z9Qw==
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	sched-ext@meta.com,
-	arighi@nvidia.com,
-	multics69@gmail.com,
-	me@mostlynerdless.de,
-	ggherdovich@suse.com,
-	dschatzberg@meta.com,
-	yougmark94@gmail.com,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 3/3] sched_ext: Rename scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()
-Date: Sat,  9 Nov 2024 09:48:32 -1000
-Message-ID: <20241109194853.580310-4-tj@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241109194853.580310-1-tj@kernel.org>
-References: <20241109194853.580310-1-tj@kernel.org>
+	s=arc-20240116; t=1731181927; c=relaxed/simple;
+	bh=vkgqa1XDhQho/ObtNpHjG7xX0oIX7eHBG0SGh4kUpok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=msu0PA/lInHEMxdNpzxKQDxD4PxsxaBr56igD4mBSzlP2c79bwxAFvkZJFyI8ttqX2xq2rU7LK1odKZOT6y3GcEIrll9Ltwg+Ni9ZnJGoY83IlVhL+DImFzFc+TeTyGRpM80vB18gpz9bEn3T8Y4hCU79gCYHF5Hc1Gd6SQNlbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=FzkFqWnb; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72410cc7be9so2402167b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 11:52:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1731181924; x=1731786724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w4Ndn+TqgzvCUIFwQEQmUxGWYk+hOIvU2GZ46oGzAqM=;
+        b=FzkFqWnbSo0eil9AotKdSacg3hiruGu0mFPI22iEQpnbSSDfLtDgVw2OmvLrwvZeTT
+         /nJhLzFbEpqezx/uVKmKyeHZ+sBNj0lJx1avMXp++PZVO2vazJA14pK8ognAL5h5DUGW
+         RVYFEojAxKqjjWG9bQcLVdbWikdU0WRep/TtfyJ5hr4WMNMm4f2WZpQb9iyBKG4pWacw
+         1CbGfPWLG2vCSt5AXrdPKWBGV3Xq/Q9AOCIr1lmhHP8TFYefHADu3yNG3ACbDRjLjkhW
+         WPZLjckH7MDHX7oRRJZdSbVKA0iMAUW8WuoveY8yRCK9bxb7yVIVlZzlajC1t2YlaUpd
+         4MFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731181924; x=1731786724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w4Ndn+TqgzvCUIFwQEQmUxGWYk+hOIvU2GZ46oGzAqM=;
+        b=HjFesDJ7kVXagphndJRZL8AzVMpjZXr9+jt1/4orFli6IjUZCjOFVuP2gL0isKKpOO
+         U4RKETfz4xQxZUJ16xBRnIYxGgg/MchXmU+lSzngyKUxP3Ev+fwmEvEcxVGyNIWd9AFA
+         HHM15XomZfzjXGdRQsbw09dqOVM3rpnQXm5grQPoIYJtTuN3Tx6TYk4P12xMYLbPL6X+
+         bWW8DY6sbSGADAQuAyvTehSMpH7e7b3mreS/Tnf8pFZK/6yvrVHvvWJiezJGZ1NPHoMw
+         ys/AgGS4wB+aXewDWgGLo/f1iSND2ZNYYWaUa2FSoS1Xc+9zGp5N1k27cg4rkBaMS/Zk
+         JW0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUdNrxe9XQuf6LhX29bNSgXEWTR8R8AvDYvdQdzOhwFCRwuru4sy2oSety7O2DRP4k2j4SFt3S8xMhFhHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0FychBibXufxEHu/JjJid/yN3Rk0m+UBmoxpbKeoY/xD2atuT
+	wBsbxsC8ZzVzIJe1/Z3B5xyZxvDZ5lG7dCAZ2O617p00GlXBEfK96LV23qhF+Q==
+X-Google-Smtp-Source: AGHT+IEe5Dgr1Ip5UqWlaIu843liXX9EvkYLeRVWY5DucuJKxfmp4Yx5LeTR4Q2bmJZU5YYcyJggGQ==
+X-Received: by 2002:a05:6a20:6a26:b0:1dc:19d4:3754 with SMTP id adf61e73a8af0-1dc22b00b32mr8729356637.35.1731181924116;
+        Sat, 09 Nov 2024 11:52:04 -0800 (PST)
+Received: from [172.22.58.163] ([117.250.76.240])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a4177sm5972288b3a.99.2024.11.09.11.51.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 11:52:03 -0800 (PST)
+From: Ayush Singh <ayush@beagleboard.org>
+Subject: [PATCH v2 0/3] Update aliases when added or removed
+Date: Sun, 10 Nov 2024 01:21:32 +0530
+Message-Id: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAES9L2cC/x3MQQqDMBBA0avIbNspJlFTu+o9ShfRTOKAxjKRU
+ hDv3uDywefvkEmYMjyqHYS+nHlNBfpawTi5FAnZF4OudaNq1eEa0M3sMg5jE4wxfrTWQMk/QoF
+ /5+r1Lg6yLrhNQu4cqMa0nW3vtkOt2h4VRt4wU/JIi+MZI5FsF6FE2eVnnNmT3AaC4/gDdgwb0
+ KUAAAA=
+X-Change-ID: 20241016-of-alias-bc4f333dc773
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+ d-gole@ti.com, jkridner@beagleboard.org, lorforlinux@beagleboard.org, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Davis <afd@ti.com>, 
+ robertcnelson@beagleboard.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ayush Singh <ayush@beagleboard.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1250; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=vkgqa1XDhQho/ObtNpHjG7xX0oIX7eHBG0SGh4kUpok=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBnL71eHANUYQdUXNqrQ9sRd1OaPSJWrYrVlgewm
+ lSF5M7l6N2JAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZy+9XgAKCRAFzvXHieVa
+ dEFvD/9vUGWXtPZF/yPslaijKceOQAHpUcHI4hX72F552gLn+mOU/O4CL3lwlgI6jWMYxGEytAA
+ lFQ5aF5LYF4mrVG3XAcVyRGVk0uiadaEJLOP+IUWEkutRPkhv02tWYsBimZb/CR0ppm+30MFhaL
+ Ef+9uXBL14yezIF941ecrfvwU/3lbsw0UAx6pzP6ce4KgyO80wbScgdfEgZq5Q1TRQXjO5p+HaD
+ xhjEKZM+Y+6Bn2VLE5lHeh0Jej1GjVnystXHTmSm9yTqvbSZp2NW4xBw9aAjXGpZKNGDCl1jFID
+ M/xzw15QNiEbjJJioFbFhmgoVmlLPkvURrrnxKTSQEyRmpP1SPUydC88YlFz2wDGi09MqRB0SlW
+ v3ZcJ5W8ZZ2AOox33M9nN709WPj80bMMjY2MH/uUmCr43Oac4ElMcUDXOPqG2jQGGdV6/7aYGG5
+ lKlD3f00dLLVx9d8oI3eETiqbxY+nZudQw86HHVi/GjIc7i8RZrUItzQIphte1E7B6quKriOFS2
+ T0cJ+KDlVD4oHDjKxWH0/1JcvjulW4/ZJuNkRu266mDdtbWpvN65dlTo9FU8nWd8MLNVXf2gtP5
+ jYp9dkfOoRMtDkLweLaMFB956SE7kyZ2cJ9EgRLVJcVYjXjN5AsJWl2NT8PSo+R9hNVrD4gVoRr
+ GEtlL9BikrV8qiw==
+X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
+ fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-In sched_ext API, a repeatedly reported pain point is the overuse of the
-verb "dispatch" and confusion around "consume":
+Currently the list of aliases is not updated when a DT overlay that adds
+an alias is loaded or unloaded. This break drivers (e.g. serial) that
+rely on of_alias_get_id().
 
-- ops.dispatch()
-- scx_bpf_dispatch[_vtime]()
-- scx_bpf_consume()
-- scx_bpf_dispatch[_vtime]_from_dsq*()
+This picks up the original patch series from Geert Uytterhoeven.
 
-This overloading of the term is historical. Originally, there were only
-built-in DSQs and moving a task into a DSQ always dispatched it for
-execution. Using the verb "dispatch" for the kfuncs to move tasks into these
-DSQs made sense.
+I have not added unittests in this version since I am not sure if kunit
+tests should be added, or if the runtime unittests (CONFIG_OF_UNITTEST)
+need to be added. Additionally, it would be great if someone can inform
+me how to run the runtime unittests since the unittests seem to fail in
+my current setup (tried running on qemu x86_64 and beagleplay).
 
-Later, user DSQs were added and scx_bpf_dispatch[_vtime]() updated to be
-able to insert tasks into any DSQ. The only allowed DSQ to DSQ transfer was
-from a non-local DSQ to a local DSQ and this operation was named "consume".
-This was already confusing as a task could be dispatched to a user DSQ from
-ops.enqueue() and then the DSQ would have to be consumed in ops.dispatch().
-Later addition of scx_bpf_dispatch_from_dsq*() made the confusion even worse
-as "dispatch" in this context meant moving a task to an arbitrary DSQ from a
-user DSQ.
+Changes in v2:
+- Use `of_reconfig_notifier_register`
+- Leak memory when freeing alias entry
+- Link to v1: https://lore.kernel.org/all/1435675876-2159-1-git-send-email-geert+renesas@glider.be/
 
-Clean up the API with the following renames:
-
-1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
-2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
-3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
-
-This patch performs the third set of renames. Compatibility is maintained
-by:
-
-- The previous kfunc names are still provided by the kernel so that old
-  binaries can run. Kernel generates a warning when the old names are used.
-
-- compat.bpf.h provides wrappers for the new names which automatically fall
-  back to the old names when running on older kernels. They also trigger
-  build error if old names are used for new builds.
-
-- scx_bpf_dispatch[_vtime]_from_dsq*() were already wrapped in __COMPAT
-  macros as they were introduced during v6.12 cycle. Wrap new API in
-  __COMPAT macros too and trigger build errors on both __COMPAT prefixed and
-  naked usages of the old names.
-
-The compat features will be dropped after v6.15.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>
-Cc: Changwoo Min <multics69@gmail.com>
-Cc: Johannes Bechberger <me@mostlynerdless.de>
-Cc: Giovanni Gherdovich <ggherdovich@suse.com>
-Cc: Dan Schatzberg <dschatzberg@meta.com>
-Cc: Ming Yang <yougmark94@gmail.com>
 ---
- kernel/sched/ext.c                       | 97 +++++++++++++++++-------
- tools/sched_ext/include/scx/common.bpf.h | 12 +--
- tools/sched_ext/include/scx/compat.bpf.h | 82 ++++++++++++++++----
- tools/sched_ext/scx_qmap.bpf.c           | 20 ++---
- 4 files changed, 152 insertions(+), 59 deletions(-)
+Ayush Singh (3):
+      of: Extract of_alias_create()
+      of: Add of_alias_destroy()
+      of: Add notifier in of_reconfig_notifier_register()
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index f39cb1344751..3ee2dbdefc1f 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -6417,9 +6417,8 @@ static const struct btf_kfunc_id_set scx_kfunc_set_enqueue_dispatch = {
- 	.set			= &scx_kfunc_ids_enqueue_dispatch,
- };
- 
--static bool scx_dispatch_from_dsq(struct bpf_iter_scx_dsq_kern *kit,
--				  struct task_struct *p, u64 dsq_id,
--				  u64 enq_flags)
-+static bool scx_dsq_move(struct bpf_iter_scx_dsq_kern *kit,
-+			 struct task_struct *p, u64 dsq_id, u64 enq_flags)
- {
- 	struct scx_dispatch_q *src_dsq = kit->dsq, *dst_dsq;
- 	struct rq *this_rq, *src_rq, *locked_rq;
-@@ -6589,16 +6588,16 @@ __bpf_kfunc bool scx_bpf_consume(u64 dsq_id)
- }
- 
- /**
-- * scx_bpf_dispatch_from_dsq_set_slice - Override slice when dispatching from DSQ
-+ * scx_bpf_dsq_move_set_slice - Override slice when moving between DSQs
-  * @it__iter: DSQ iterator in progress
-- * @slice: duration the dispatched task can run for in nsecs
-+ * @slice: duration the moved task can run for in nsecs
-  *
-- * Override the slice of the next task that will be dispatched from @it__iter
-- * using scx_bpf_dispatch_from_dsq[_vtime](). If this function is not called,
-- * the previous slice duration is kept.
-+ * Override the slice of the next task that will be moved from @it__iter using
-+ * scx_bpf_dsq_move[_vtime](). If this function is not called, the previous
-+ * slice duration is kept.
-  */
--__bpf_kfunc void scx_bpf_dispatch_from_dsq_set_slice(
--				struct bpf_iter_scx_dsq *it__iter, u64 slice)
-+__bpf_kfunc void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter,
-+					    u64 slice)
- {
- 	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
- 
-@@ -6606,18 +6605,26 @@ __bpf_kfunc void scx_bpf_dispatch_from_dsq_set_slice(
- 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_SLICE;
- }
- 
-+/* for backward compatibility, will be removed in v6.15 */
-+__bpf_kfunc void scx_bpf_dispatch_from_dsq_set_slice(
-+			struct bpf_iter_scx_dsq *it__iter, u64 slice)
-+{
-+	printk_deferred_once(KERN_WARNING "sched_ext: scx_bpf_dispatch_from_dsq_set_slice() renamed to scx_bpf_dsq_move_set_slice()");
-+	scx_bpf_dsq_move_set_slice(it__iter, slice);
-+}
-+
- /**
-- * scx_bpf_dispatch_from_dsq_set_vtime - Override vtime when dispatching from DSQ
-+ * scx_bpf_dsq_move_set_vtime - Override vtime when moving between DSQs
-  * @it__iter: DSQ iterator in progress
-  * @vtime: task's ordering inside the vtime-sorted queue of the target DSQ
-  *
-- * Override the vtime of the next task that will be dispatched from @it__iter
-- * using scx_bpf_dispatch_from_dsq_vtime(). If this function is not called, the
-- * previous slice vtime is kept. If scx_bpf_dispatch_from_dsq() is used to
-- * dispatch the next task, the override is ignored and cleared.
-+ * Override the vtime of the next task that will be moved from @it__iter using
-+ * scx_bpf_dsq_move_vtime(). If this function is not called, the previous slice
-+ * vtime is kept. If scx_bpf_dsq_move() is used to dispatch the next task, the
-+ * override is ignored and cleared.
-  */
--__bpf_kfunc void scx_bpf_dispatch_from_dsq_set_vtime(
--				struct bpf_iter_scx_dsq *it__iter, u64 vtime)
-+__bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter,
-+					    u64 vtime)
- {
- 	struct bpf_iter_scx_dsq_kern *kit = (void *)it__iter;
- 
-@@ -6625,8 +6632,16 @@ __bpf_kfunc void scx_bpf_dispatch_from_dsq_set_vtime(
- 	kit->cursor.flags |= __SCX_DSQ_ITER_HAS_VTIME;
- }
- 
-+/* for backward compatibility, will be removed in v6.15 */
-+__bpf_kfunc void scx_bpf_dispatch_from_dsq_set_vtime(
-+			struct bpf_iter_scx_dsq *it__iter, u64 vtime)
-+{
-+	printk_deferred_once(KERN_WARNING "sched_ext: scx_bpf_dispatch_from_dsq_set_vtime() renamed to scx_bpf_dsq_move_set_vtime()");
-+	scx_bpf_dsq_move_set_vtime(it__iter, vtime);
-+}
-+
- /**
-- * scx_bpf_dispatch_from_dsq - Move a task from DSQ iteration to a DSQ
-+ * scx_bpf_dsq_move - Move a task from DSQ iteration to a DSQ
-  * @it__iter: DSQ iterator in progress
-  * @p: task to transfer
-  * @dsq_id: DSQ to move @p to
-@@ -6641,8 +6656,7 @@ __bpf_kfunc void scx_bpf_dispatch_from_dsq_set_vtime(
-  * @p was obtained from the DSQ iteration. @p just has to be on the DSQ and have
-  * been queued before the iteration started.
-  *
-- * @p's slice is kept by default. Use scx_bpf_dispatch_from_dsq_set_slice() to
-- * update.
-+ * @p's slice is kept by default. Use scx_bpf_dsq_move_set_slice() to update.
-  *
-  * Can be called from ops.dispatch() or any BPF context which doesn't hold a rq
-  * lock (e.g. BPF timers or SYSCALL programs).
-@@ -6650,16 +6664,25 @@ __bpf_kfunc void scx_bpf_dispatch_from_dsq_set_vtime(
-  * Returns %true if @p has been consumed, %false if @p had already been consumed
-  * or dequeued.
-  */
-+__bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
-+				  struct task_struct *p, u64 dsq_id,
-+				  u64 enq_flags)
-+{
-+	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
-+			    p, dsq_id, enq_flags);
-+}
-+
-+/* for backward compatibility, will be removed in v6.15 */
- __bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
- 					   struct task_struct *p, u64 dsq_id,
- 					   u64 enq_flags)
- {
--	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
--				     p, dsq_id, enq_flags);
-+	printk_deferred_once(KERN_WARNING "sched_ext: scx_bpf_dispatch_from_dsq() renamed to scx_bpf_dsq_move()");
-+	return scx_bpf_dsq_move(it__iter, p, dsq_id, enq_flags);
- }
- 
- /**
-- * scx_bpf_dispatch_vtime_from_dsq - Move a task from DSQ iteration to a PRIQ DSQ
-+ * scx_bpf_dsq_move_vtime - Move a task from DSQ iteration to a PRIQ DSQ
-  * @it__iter: DSQ iterator in progress
-  * @p: task to transfer
-  * @dsq_id: DSQ to move @p to
-@@ -6669,19 +6692,27 @@ __bpf_kfunc bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter,
-  * priority queue of the DSQ specified by @dsq_id. The destination must be a
-  * user DSQ as only user DSQs support priority queue.
-  *
-- * @p's slice and vtime are kept by default. Use
-- * scx_bpf_dispatch_from_dsq_set_slice() and
-- * scx_bpf_dispatch_from_dsq_set_vtime() to update.
-+ * @p's slice and vtime are kept by default. Use scx_bpf_dsq_move_set_slice()
-+ * and scx_bpf_dsq_move_set_vtime() to update.
-  *
-- * All other aspects are identical to scx_bpf_dispatch_from_dsq(). See
-+ * All other aspects are identical to scx_bpf_dsq_move(). See
-  * scx_bpf_dsq_insert_vtime() for more information on @vtime.
-  */
-+__bpf_kfunc bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter,
-+					struct task_struct *p, u64 dsq_id,
-+					u64 enq_flags)
-+{
-+	return scx_dsq_move((struct bpf_iter_scx_dsq_kern *)it__iter,
-+			    p, dsq_id, enq_flags | SCX_ENQ_DSQ_PRIQ);
-+}
-+
-+/* for backward compatibility, will be removed in v6.15 */
- __bpf_kfunc bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter,
- 						 struct task_struct *p, u64 dsq_id,
- 						 u64 enq_flags)
- {
--	return scx_dispatch_from_dsq((struct bpf_iter_scx_dsq_kern *)it__iter,
--				     p, dsq_id, enq_flags | SCX_ENQ_DSQ_PRIQ);
-+	printk_deferred_once(KERN_WARNING "sched_ext: scx_bpf_dispatch_from_dsq_vtime() renamed to scx_bpf_dsq_move_vtime()");
-+	return scx_bpf_dsq_move_vtime(it__iter, p, dsq_id, enq_flags);
- }
- 
- __bpf_kfunc_end_defs();
-@@ -6691,6 +6722,10 @@ BTF_ID_FLAGS(func, scx_bpf_dispatch_nr_slots)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_cancel)
- BTF_ID_FLAGS(func, scx_bpf_dsq_move_to_local)
- BTF_ID_FLAGS(func, scx_bpf_consume)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq_set_slice)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq_set_vtime)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
-@@ -6791,6 +6826,10 @@ __bpf_kfunc_end_defs();
- 
- BTF_KFUNCS_START(scx_kfunc_ids_unlocked)
- BTF_ID_FLAGS(func, scx_bpf_create_dsq, KF_SLEEPABLE)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_slice)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_set_vtime)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move, KF_RCU)
-+BTF_ID_FLAGS(func, scx_bpf_dsq_move_vtime, KF_RCU)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq_set_slice)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq_set_vtime)
- BTF_ID_FLAGS(func, scx_bpf_dispatch_from_dsq, KF_RCU)
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 535377649a22..2f36b7b6418d 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -41,10 +41,10 @@ void scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u64
- u32 scx_bpf_dispatch_nr_slots(void) __ksym;
- void scx_bpf_dispatch_cancel(void) __ksym;
- bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym;
--void scx_bpf_dispatch_from_dsq_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
--void scx_bpf_dispatch_from_dsq_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
--bool scx_bpf_dispatch_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
--bool scx_bpf_dispatch_vtime_from_dsq(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
-+void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym;
-+void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym;
-+bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
-+bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
- u32 scx_bpf_reenqueue_local(void) __ksym;
- void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
- s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
-@@ -74,8 +74,8 @@ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
- struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
- 
- /*
-- * Use the following as @it__iter when calling
-- * scx_bpf_dispatch[_vtime]_from_dsq() from within bpf_for_each() loops.
-+ * Use the following as @it__iter when calling scx_bpf_dsq_move[_vtime]() from
-+ * within bpf_for_each() loops.
-  */
- #define BPF_FOR_EACH_ITER	(&___it)
- 
-diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-index c00ed24a8721..d56520100a26 100644
---- a/tools/sched_ext/include/scx/compat.bpf.h
-+++ b/tools/sched_ext/include/scx/compat.bpf.h
-@@ -20,30 +20,24 @@
- 	(bpf_ksym_exists(scx_bpf_task_cgroup) ?					\
- 	 scx_bpf_task_cgroup((p)) : NULL)
- 
--/* v6.12: 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()") */
--#define __COMPAT_scx_bpf_dispatch_from_dsq_set_slice(it, slice)			\
--	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice) ?			\
--	 scx_bpf_dispatch_from_dsq_set_slice((it), (slice)) : (void)0)
--#define __COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(it, vtime)			\
--	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime) ?			\
--	 scx_bpf_dispatch_from_dsq_set_vtime((it), (vtime)) : (void)0)
--#define __COMPAT_scx_bpf_dispatch_from_dsq(it, p, dsq_id, enq_flags)		\
--	(bpf_ksym_exists(scx_bpf_dispatch_from_dsq) ?				\
--	 scx_bpf_dispatch_from_dsq((it), (p), (dsq_id), (enq_flags)) : false)
--#define __COMPAT_scx_bpf_dispatch_vtime_from_dsq(it, p, dsq_id, enq_flags)	\
--	(bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq) ?			\
--	 scx_bpf_dispatch_vtime_from_dsq((it), (p), (dsq_id), (enq_flags)) : false)
--
- /*
-  * v6.13: The verb `dispatch` was too overloaded and confusing. kfuncs are
-  * renamed to unload the verb.
-  *
-  * Build error is triggered if old names are used. New binaries work with both
-  * new and old names. The compat macros will be removed on v6.15 release.
-+ *
-+ * scx_bpf_dispatch_from_dsq() and friends were added during v6.12 by
-+ * 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()").
-+ * Preserve __COMPAT macros until v6.15.
-  */
- void scx_bpf_dispatch___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
- void scx_bpf_dispatch_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
- bool scx_bpf_consume___compat(u64 dsq_id) __ksym __weak;
-+void scx_bpf_dispatch_from_dsq_set_slice___compat(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
-+void scx_bpf_dispatch_from_dsq_set_vtime___compat(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
-+bool scx_bpf_dispatch_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
-+bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
- 
- #define scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags)				\
- 	(bpf_ksym_exists(scx_bpf_dsq_insert) ?					\
-@@ -60,6 +54,34 @@ bool scx_bpf_consume___compat(u64 dsq_id) __ksym __weak;
- 	 scx_bpf_dsq_move_to_local((dsq_id)) :					\
- 	 scx_bpf_consume___compat((dsq_id)))
- 
-+#define __COMPAT_scx_bpf_dsq_move_set_slice(it__iter, slice)			\
-+	(bpf_ksym_exists(scx_bpf_dsq_move_set_slice) ?				\
-+	 scx_bpf_dsq_move_set_slice((it__iter), (slice)) :			\
-+	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice___compat) ?	\
-+	  scx_bpf_dispatch_from_dsq_set_slice___compat((it__iter), (slice)) :	\
-+	  (void)0))
-+
-+#define __COMPAT_scx_bpf_dsq_move_set_vtime(it__iter, vtime)			\
-+	(bpf_ksym_exists(scx_bpf_dsq_move_set_vtime) ?				\
-+	 scx_bpf_dsq_move_set_vtime((it__iter), (vtime)) :			\
-+	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime___compat) ?	\
-+	  scx_bpf_dispatch_from_dsq_set_vtime___compat((it__iter), (vtime)) :	\
-+	  (void) 0))
-+
-+#define __COMPAT_scx_bpf_dsq_move(it__iter, p, dsq_id, enq_flags)		\
-+	(bpf_ksym_exists(scx_bpf_dsq_move) ?					\
-+	 scx_bpf_dsq_move((it__iter), (p), (dsq_id), (enq_flags)) :		\
-+	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq___compat) ?			\
-+	  scx_bpf_dispatch_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
-+	  false))
-+
-+#define __COMPAT_scx_bpf_dsq_move_vtime(it__iter, p, dsq_id, enq_flags)		\
-+	(bpf_ksym_exists(scx_bpf_dsq_move_vtime) ?				\
-+	 scx_bpf_dsq_move_vtime((it__iter), (p), (dsq_id), (enq_flags)) :	\
-+	 (bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq___compat) ?		\
-+	  scx_bpf_dispatch_vtime_from_dsq___compat((it__iter), (p), (dsq_id), (enq_flags)) : \
-+	  false))
-+
- #define scx_bpf_dispatch(p, dsq_id, slice, enq_flags)				\
- 	_Static_assert(false, "scx_bpf_dispatch() renamed to scx_bpf_dsq_insert()")
- 
-@@ -71,6 +93,38 @@ bool scx_bpf_consume___compat(u64 dsq_id) __ksym __weak;
- 	false;									\
- })
- 
-+#define scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
-+	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_slice() renamed to scx_bpf_dsq_move_set_slice()")
-+
-+#define scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
-+	_Static_assert(false, "scx_bpf_dispatch_from_dsq_set_vtime() renamed to scx_bpf_dsq_move_set_vtime()")
-+
-+#define scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
-+	_Static_assert(false, "scx_bpf_dispatch_from_dsq() renamed to scx_bpf_dsq_move()"); \
-+	false;									\
-+})
-+
-+#define scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
-+	_Static_assert(false, "scx_bpf_dispatch_vtime_from_dsq() renamed to scx_bpf_dsq_move_vtime()"); \
-+	false;									\
-+})
-+
-+#define __COMPAT_scx_bpf_dispatch_from_dsq_set_slice(it__iter, slice)		\
-+	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_slice() renamed to __COMPAT_scx_bpf_dsq_move_set_slice()")
-+
-+#define __COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(it__iter, vtime)		\
-+	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq_set_vtime() renamed to __COMPAT_scx_bpf_dsq_move_set_vtime()")
-+
-+#define __COMPAT_scx_bpf_dispatch_from_dsq(it__iter, p, dsq_id, enq_flags) ({	\
-+	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move()"); \
-+	false;									\
-+})
-+
-+#define __COMPAT_scx_bpf_dispatch_vtime_from_dsq(it__iter, p, dsq_id, enq_flags) ({  \
-+	_Static_assert(false, "__COMPAT_scx_bpf_dispatch_vtime_from_dsq() renamed to __COMPAT_scx_bpf_dsq_move_vtime()"); \
-+	false;									\
-+})
-+
- /*
-  * Define sched_ext_ops. This may be expanded to define multiple variants for
-  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
-diff --git a/tools/sched_ext/scx_qmap.bpf.c b/tools/sched_ext/scx_qmap.bpf.c
-index 08f121252c56..ee264947e0c3 100644
---- a/tools/sched_ext/scx_qmap.bpf.c
-+++ b/tools/sched_ext/scx_qmap.bpf.c
-@@ -294,10 +294,10 @@ static void update_core_sched_head_seq(struct task_struct *p)
- }
- 
- /*
-- * To demonstrate the use of scx_bpf_dispatch_from_dsq(), implement silly
-- * selective priority boosting mechanism by scanning SHARED_DSQ looking for
-- * highpri tasks, moving them to HIGHPRI_DSQ and then consuming them first. This
-- * makes minor difference only when dsp_batch is larger than 1.
-+ * To demonstrate the use of scx_bpf_dsq_move(), implement silly selective
-+ * priority boosting mechanism by scanning SHARED_DSQ looking for highpri tasks,
-+ * moving them to HIGHPRI_DSQ and then consuming them first. This makes minor
-+ * difference only when dsp_batch is larger than 1.
-  *
-  * scx_bpf_dispatch[_vtime]_from_dsq() are allowed both from ops.dispatch() and
-  * non-rq-lock holding BPF programs. As demonstration, this function is called
-@@ -318,11 +318,11 @@ static bool dispatch_highpri(bool from_timer)
- 
- 		if (tctx->highpri) {
- 			/* exercise the set_*() and vtime interface too */
--			__COMPAT_scx_bpf_dispatch_from_dsq_set_slice(
-+			__COMPAT_scx_bpf_dsq_move_set_slice(
- 				BPF_FOR_EACH_ITER, slice_ns * 2);
--			__COMPAT_scx_bpf_dispatch_from_dsq_set_vtime(
-+			__COMPAT_scx_bpf_dsq_move_set_vtime(
- 				BPF_FOR_EACH_ITER, highpri_seq++);
--			__COMPAT_scx_bpf_dispatch_vtime_from_dsq(
-+			__COMPAT_scx_bpf_dsq_move_vtime(
- 				BPF_FOR_EACH_ITER, p, HIGHPRI_DSQ, 0);
- 		}
- 	}
-@@ -340,9 +340,9 @@ static bool dispatch_highpri(bool from_timer)
- 		else
- 			cpu = scx_bpf_pick_any_cpu(p->cpus_ptr, 0);
- 
--		if (__COMPAT_scx_bpf_dispatch_from_dsq(BPF_FOR_EACH_ITER, p,
--						       SCX_DSQ_LOCAL_ON | cpu,
--						       SCX_ENQ_PREEMPT)) {
-+		if (__COMPAT_scx_bpf_dsq_move(BPF_FOR_EACH_ITER, p,
-+					      SCX_DSQ_LOCAL_ON | cpu,
-+					      SCX_ENQ_PREEMPT)) {
- 			if (cpu == this_cpu) {
- 				dispatched = true;
- 				__sync_fetch_and_add(&nr_expedited_local, 1);
+ drivers/of/base.c | 132 +++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 95 insertions(+), 37 deletions(-)
+---
+base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
+change-id: 20241016-of-alias-bc4f333dc773
+
+Best regards,
 -- 
-2.47.0
+Ayush Singh <ayush@beagleboard.org>
 
 
