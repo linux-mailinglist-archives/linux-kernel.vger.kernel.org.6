@@ -1,117 +1,108 @@
-Return-Path: <linux-kernel+bounces-402868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EFA9C2DD0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:41:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EAA9C2DD5
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7E41F214D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:41:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B4D0281E69
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40B61974F4;
-	Sat,  9 Nov 2024 14:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F1198A22;
+	Sat,  9 Nov 2024 14:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2Xt6bWt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz9uWSgB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1667914E2CC;
-	Sat,  9 Nov 2024 14:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD895155322;
+	Sat,  9 Nov 2024 14:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731163297; cv=none; b=om5FYsbYHBOuhQVxzE9TJ0sQ5RtxNXrcyTSlSVqfzmqe4KhRN9qKA9BOXP40P5ApGP3YmXfeeRnImZ+nqN1tAZ9yezV+K11APt+iVtqPHcl7jmjBoxWFwFnyhUrFKatfhth+xfLBm4l8pIdWh9lbhbyFlkfEFbEC5xe90CfbQts=
+	t=1731163351; cv=none; b=Rw0AfsTm8sWaxyUE0p3MjfIixOVwVEaY0Xu/mRmawRqMacHtSSUZ3/2a6Bv4ZzDqBiEFQi6B/+GdxPOnaDt7jNkK7rHl3Iu9NV6COUuJNlpSzkBVS/l1KNK0dMY2C+zJ3vwNEqG3mc1UnL/GX96cl+6NDTaGfSVMpaVx0H+BUe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731163297; c=relaxed/simple;
-	bh=8xA45PajLIDr7rfRu1J8gvJ0H+nJU1IizyLP9wfSjAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UpZiflEM68xuKA4g44OjS+NpJlrGJX3KBqU13ANRZN6++xNLyKIOX/g/rmWA83eJRolGwngeRxbirS68vHcvT8H1uu7fen6Gfy99KntL8SSMmN6NPLZZn/6nszgtTQbDR0EzmjerWGv0G8EUSSBlWnZZmNRPdSho45TF5VW1UQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2Xt6bWt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9E1AC4CECE;
-	Sat,  9 Nov 2024 14:41:31 +0000 (UTC)
+	s=arc-20240116; t=1731163351; c=relaxed/simple;
+	bh=T4NsAzzbrxsGN654m3HITV9plHMlIDtNUng5/+1hPwk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=Is/1sAKjLoYVNpKpmCfjjzxxuIXYkRBLeXUUmc9gpuOpj14/nkkCe7dWq9P70ViECWWFBZA4/XQ3W7ayynve7TH/rBiUpKuoFnij6zz6OOEpcM4mVXaeXmgWv8hPiCBfXgWzpYde4pJ5eXJcRuf99fitQcfA9wMWJ7RVWQrCnU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz9uWSgB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E261C4CECE;
+	Sat,  9 Nov 2024 14:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731163296;
-	bh=8xA45PajLIDr7rfRu1J8gvJ0H+nJU1IizyLP9wfSjAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E2Xt6bWtY46etBkbT8x5xd2IrCU39XsjNvEASRIn14lIERp/DiNc6kF/9mDSyPt/B
-	 WvIe5cQg3PefaNDhxnfY/9+vABfWzU8QQ9Rom0CWLEhnGlhzIWjnatt6o7sf9Z6k01
-	 S2AN2EVS9YRwnTD3UXulqajlhqAfyLLNdDxQhD3zY3qNackvcvYjNmdC7kr5LGWyjH
-	 SXEm+0a5nS05po9nknqFqvC58yCnoVO0cSh5bBCAdUCCsf2WQrh4e5Zvroza52pmXv
-	 f43wEugDXOxzFPgJyUwiUCRSPCUsIkQd7nEvRTIdD6U0gtYvOg67UhB7pnGJVwHUcP
-	 JWO+N6/wL1eTw==
-Date: Sat, 9 Nov 2024 14:41:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Zicheng Qu <quzicheng@huawei.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
- daniel.baluta@intel.com, shubhrajyoti@ti.com, linux-iio@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
- tanghui20@huawei.com, zhangqiao22@huawei.com, judy.chenhui@huawei.com
-Subject: Re: [PATCH v2 1/2] staging: iio: ad9834: Correct phase range check
-Message-ID: <20241109144126.5efb84b6@jic23-huawei>
-In-Reply-To: <333c54f3-3d4b-4038-94a9-ce8396b452ce@suswa.mountain>
-References: <20241105140359.2465656-1-quzicheng@huawei.com>
-	<20241107011015.2472600-1-quzicheng@huawei.com>
-	<20241107011015.2472600-2-quzicheng@huawei.com>
-	<333c54f3-3d4b-4038-94a9-ce8396b452ce@suswa.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1731163351;
+	bh=T4NsAzzbrxsGN654m3HITV9plHMlIDtNUng5/+1hPwk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=uz9uWSgBfXnx0ngUIW6rGUhDMz6o4EtZKpNd9RDvNDRoCEaMuotCAkm2d4Chy5Zy1
+	 a7pdXeazJuzvDabfD8GLXkXQcQ4Eq4Mzi0VsItmyCiZwdYddAWNNZFt7gYe8W/u8Gx
+	 PJ1dENMsxPXCtFXUt6K11XSgsji2lV3Ju840+tPSR5tHexV8bdkxdDUcx9k4qSsQqD
+	 ntBdtIQAIW030BQRqrOymC7GLrzp+SNpO4VbuXnqwZjqHm96m+M7JVcqiog6yfzEdw
+	 0dzP3DtDV56huciH2OoHZT+KSmsnwsEOCuS400TsQHwYAzLGM+qD7qWaJgrY+K7dd9
+	 DV49c3RRSJOig==
+Date: Sat, 09 Nov 2024 08:42:29 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>, 
+ Shawn Guo <shawnguo@kernel.org>, linux-pm@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Bjorn Andersson <andersson@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ imx@lists.linux.dev, Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+In-Reply-To: <20241109-b4-max17042-v1-1-9e2b07e54e76@gmail.com>
+References: <20241109-b4-max17042-v1-0-9e2b07e54e76@gmail.com>
+ <20241109-b4-max17042-v1-1-9e2b07e54e76@gmail.com>
+Message-Id: <173116334945.561244.8973169174943598746.robh@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: power: supply: max17042: add
+ share-irq node
 
-On Thu, 7 Nov 2024 13:32:42 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-> On Thu, Nov 07, 2024 at 01:10:14AM +0000, Zicheng Qu wrote:
-> > User Perspective:
-> > When a user sets the phase value, the ad9834_write_phase() is called.
-> > The phase register has a 12-bit resolution, so the valid range is 0 to
-> > 4095. If the phase offset value of 4096 is input, it effectively exactly
-> > equals 0 in the lower 12 bits, meaning no offset.
-> > 
-> > Reasons for the Change:
-> > 1) Original Condition (phase > BIT(AD9834_PHASE_BITS)):
-> > This condition allows a phase value equal to 2^12, which is 4096.
-> > However, this value exceeds the valid 12-bit range, as the maximum valid
-> > phase value should be 4095.
-> > 2) Modified Condition (phase >= BIT(AD9834_PHASE_BITS)):
-> > Ensures that the phase value is within the valid range, preventing
-> > invalid datafrom being written.
-> > 
-> > Impact on Subsequent Logic: st->data = cpu_to_be16(addr | phase):
-> > If the phase value is 2^12, i.e., 4096 (0001 0000 0000 0000), and addr
-> > is AD9834_REG_PHASE0 (1100 0000 0000 0000), then addr | phase results in
-> > 1101 0000 0000 0000, occupying DB12. According to the section of WRITING
-> > TO A PHASE REGISTER in the datasheet, the MSB 12 PHASE0 bits should be
-> > DB11. The original condition leads to incorrect DB12 usage, which
-> > contradicts the datasheet and could pose potential issues for future
-> > updates if DB12 is used in such related cases.
-> > 
-> > Fixes: 12b9d5bf76bf ("Staging: IIO: DDS: AD9833 / AD9834 driver")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> > ---  
+On Sat, 09 Nov 2024 15:44:33 +0300, Dzmitry Sankouski wrote:
+> If specified, driver should request irq as shared.
 > 
-> Fair enough.  Thanks.
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-Applied both patches to the fixes-togreg branch of iio.git.
 
-Note they probably won't go upstream now until after rc1.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
+yamllint warnings/errors:
 
-Jonathan
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml: shared-irq: missing type definition
 
-> 
-> regards,
-> dan carpenter
-> 
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241109-b4-max17042-v1-1-9e2b07e54e76@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
