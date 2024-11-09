@@ -1,258 +1,271 @@
-Return-Path: <linux-kernel+bounces-402621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56B969C29BD
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:35:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BBB9C29C2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145D9284A50
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60022B22103
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88416A8D2;
-	Sat,  9 Nov 2024 03:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CCF13B297;
+	Sat,  9 Nov 2024 03:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RiMwWZdq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J84mkEXf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D6028F3
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 03:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D16D1EEE9;
+	Sat,  9 Nov 2024 03:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731123334; cv=none; b=O2r9O47tJgojfh+PAbzkoorwx7Kt+ZCEbEOWdzCihhbw+tRKkhTOlB1ePUMcwfv84N0khiTlSBX1Qi9ay0WDx9yJEl6ZgLHT4Q0nJ+9GbscW0IhB3pjzouZ0XKHLCRqq9EX/5r7Ntle7Lq0bNiWLWTweohMdW+iybTr+U3yhodk=
+	t=1731123816; cv=none; b=UFZkFvRBzEM9MrfIAKRe/83tECVgw0DpkYxBrCdQsyrJkRdEi1Czx3rlGGUuzybohusGJna97EaJ7SVZSmNzYltT6om+IGC5nqNBkh3Ev7BWxXN9rjsUuwPSlBWxjPWSrNzomWo911c2HOwCJHjPsfkAIdagMRq1utVuJCVgjsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731123334; c=relaxed/simple;
-	bh=znUKHD5M3WoCp+ud3i7bVOBhYG4ZP9xpbTo3KsHZOq8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=biSVKIm1ReR0ZHwxOdOa7vpNuf7I8ZZnhAzKLQxRCeMSJhp5m7ahOA+cHLNcO6I2YphtD1NbpWSwZkMO2xmwTCeOujYdi5e3JwaaHGDvlFzcpDVNHxzgpzeUg+3DSdjeKTzi/MT2rnxKdDjgbs456D61BRUcGzMG9St9W9lIano=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RiMwWZdq; arc=none smtp.client-ip=198.175.65.13
+	s=arc-20240116; t=1731123816; c=relaxed/simple;
+	bh=Y8gRkvKe4SZgufdVa38PVa6F32tIaLfPt8fCTz17p8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzOoygDpzphBnd/Dsi9vBrCKiF7YBxKZUBunQUrQ0AcUzAk803Dz79bm4S6Oa35qQTdabiYQGVol8U6hMq+it0ZylV/Bw9M/M/kknRpeqZ/cL6RxVy5SEHnLI4ZwtcMhozhNoJcNvfKf6rDC3A6dyRRDXvJfcCT5eIGD/Hl9DXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J84mkEXf; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731123332; x=1762659332;
-  h=date:from:to:cc:subject:message-id;
-  bh=znUKHD5M3WoCp+ud3i7bVOBhYG4ZP9xpbTo3KsHZOq8=;
-  b=RiMwWZdqzQTD9C234+DQzI42EvILqpujS6lBQyXXlBv44f0KLtlshPPR
-   GektU78e48jdrJgj89XxWp2o65rX60suWWkDcT2nouqFT6FDofd9hwK1t
-   R5ovCYN5HZEQqxQD9VpyDWeFjqYuz1W6hswzzsABbvj42YyutzQB+7k2N
-   91qlVnxOlY5Z/owfZkJm8TGMG1kDbZrO3h6hKJ9nBDEdp7Bli7/0NoiN2
-   gefGecXNxKfES8VqOSBcqLl5zl5zW3395Yu1sdTCkYHtfuaj9BcHJ2d6t
-   ru+rAo8AHiCQ24jxl8hbLF9QoSYCp5Eu1bSeNu7kfDawg/jI8A0gDKpU2
-   g==;
-X-CSE-ConnectionGUID: l3OKxd7ITMWngfeIGM98+A==
-X-CSE-MsgGUID: LcG7n8AJTV2ABSnhMzN1jQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="42115258"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="42115258"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 19:35:32 -0800
-X-CSE-ConnectionGUID: atJv8oANTcSgj7UR+AaVaw==
-X-CSE-MsgGUID: KUd3WZgXQzWpvgx4YvUJlw==
+  t=1731123814; x=1762659814;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Y8gRkvKe4SZgufdVa38PVa6F32tIaLfPt8fCTz17p8c=;
+  b=J84mkEXfHJBRTs6IcrMmgigJClIAf2ZxcBCmvkzvqKwEiKhm7QPYH0k2
+   v2N0p7Ew5/Efxq6QymW4qDOK7uMrSqCAyT9rulx500CHkLmd7xovPfCC6
+   FP/HYu6KNbaarllpQ3Pu8BOrkIMPX8fzfh6lD5TnR6s64PqttbwCEpDKn
+   3HrNwxAcCdpFsuv1sPFYzUO8Cn3YX1yoP3kCVAF4jJL9/iHtgeUNUT3Ty
+   Xnl/49CILIVwyibCHQ+OtO4anPauaC5bXbEmNw3mbPsmOZF8RZsHSlf7s
+   5kblxKgOgiMzcdQUBGtCXB1xCQUy8B3ureEGJRg3kX6qX4EaDHt6Pk9Rf
+   A==;
+X-CSE-ConnectionGUID: Wmdnyq1qQGODQxM0DsayTA==
+X-CSE-MsgGUID: JxFQc5dXRsiucm+fsw50Aw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="31119795"
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="31119795"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 19:43:34 -0800
+X-CSE-ConnectionGUID: DQEC6TZSTMOTmE2o2Y8U8w==
+X-CSE-MsgGUID: ncml/TeXT0KH3hsYQspbEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
-   d="scan'208";a="89821754"
+   d="scan'208";a="90956920"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 08 Nov 2024 19:35:30 -0800
+  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2024 19:43:30 -0800
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1t9cG0-000s2U-0F;
-	Sat, 09 Nov 2024 03:35:28 +0000
-Date: Sat, 09 Nov 2024 11:35:13 +0800
+	id 1t9cNk-000s2w-0i;
+	Sat, 09 Nov 2024 03:43:28 +0000
+Date: Sat, 9 Nov 2024 11:42:43 +0800
 From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 577c134d311b9b94598d7a0c86be1f431f823003
-Message-ID: <202411091107.74WgSmNN-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+To: Joshua Hahn <joshua.hahnjy@gmail.com>, shakeel.butt@linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, muchun.song@linux.dev,
+	akpm@linux-foundation.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
+Message-ID: <202411091159.y6yDCkdf-lkp@intel.com>
+References: <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108212946.2642085-3-joshua.hahnjy@gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 577c134d311b9b94598d7a0c86be1f431f823003  x86/stackprotector: Work around strict Clang TLS symbol requirements
+Hi Joshua,
 
-elapsed time: 727m
+kernel test robot noticed the following build errors:
 
-configs tested: 166
-configs skipped: 131
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on next-20241108]
+[cannot apply to linus/master v6.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+url:    https://github.com/intel-lab-lkp/linux/commits/Joshua-Hahn/memcg-hugetlb-Introduce-memcg_accounts_hugetlb/20241109-053045
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20241108212946.2642085-3-joshua.hahnjy%40gmail.com
+patch subject: [PATCH 2/3] memcg/hugetlb: Introduce mem_cgroup_charge_hugetlb
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20241109/202411091159.y6yDCkdf-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411091159.y6yDCkdf-lkp@intel.com/reproduce)
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                          axs101_defconfig    clang-20
-arc                                 defconfig    gcc-14.2.0
-arc                         haps_hs_defconfig    clang-14
-arc                        nsimosci_defconfig    gcc-14.2.0
-arc                        vdk_hs38_defconfig    clang-20
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                                 defconfig    gcc-14.2.0
-arm                         lpc18xx_defconfig    gcc-14.2.0
-arm                         lpc32xx_defconfig    clang-20
-arm                            mps2_defconfig    gcc-14.2.0
-arm                        neponset_defconfig    clang-14
-arm                            qcom_defconfig    gcc-14.2.0
-arm                        realview_defconfig    clang-20
-arm                         s3c6400_defconfig    gcc-14.2.0
-arm                           stm32_defconfig    clang-20
-arm                           u8500_defconfig    clang-14
-arm                           u8500_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.2.0
-i386                             allmodconfig    clang-19
-i386                              allnoconfig    clang-19
-i386                             allyesconfig    clang-19
-i386        buildonly-randconfig-001-20241109    clang-19
-i386        buildonly-randconfig-002-20241109    clang-19
-i386        buildonly-randconfig-003-20241109    clang-19
-i386        buildonly-randconfig-004-20241109    clang-19
-i386        buildonly-randconfig-005-20241109    clang-19
-i386        buildonly-randconfig-006-20241109    clang-19
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241109    clang-19
-i386                  randconfig-002-20241109    clang-19
-i386                  randconfig-003-20241109    clang-19
-i386                  randconfig-004-20241109    clang-19
-i386                  randconfig-005-20241109    clang-19
-i386                  randconfig-006-20241109    clang-19
-i386                  randconfig-011-20241109    clang-19
-i386                  randconfig-012-20241109    clang-19
-i386                  randconfig-013-20241109    clang-19
-i386                  randconfig-014-20241109    clang-19
-i386                  randconfig-015-20241109    clang-19
-i386                  randconfig-016-20241109    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                           defconfig    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                                defconfig    gcc-14.2.0
-m68k                       m5249evb_defconfig    clang-14
-m68k                        stmark2_defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                          ath79_defconfig    clang-20
-mips                          eyeq5_defconfig    clang-20
-mips                      maltaaprp_defconfig    clang-14
-mips                        omega2p_defconfig    clang-20
-mips                        qi_lb60_defconfig    gcc-14.2.0
-mips                          rb532_defconfig    clang-14
-mips                           xway_defconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-parisc                           alldefconfig    clang-14
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                      arches_defconfig    clang-14
-powerpc                     ep8248e_defconfig    clang-14
-powerpc                        fsp2_defconfig    clang-14
-powerpc                  iss476-smp_defconfig    clang-14
-powerpc                  iss476-smp_defconfig    clang-20
-powerpc                     ksi8560_defconfig    gcc-14.2.0
-powerpc                     mpc512x_defconfig    gcc-14.2.0
-powerpc                 mpc8313_rdb_defconfig    clang-14
-powerpc                 mpc8313_rdb_defconfig    clang-20
-powerpc                 mpc8313_rdb_defconfig    gcc-14.2.0
-powerpc                 mpc834x_itx_defconfig    clang-20
-powerpc                 mpc836x_rdk_defconfig    clang-14
-powerpc                  mpc866_ads_defconfig    clang-20
-powerpc                  mpc885_ads_defconfig    clang-14
-powerpc                     redwood_defconfig    clang-14
-powerpc                 xes_mpc85xx_defconfig    clang-20
-riscv                            alldefconfig    clang-20
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                        edosk7705_defconfig    gcc-14.2.0
-sh                            hp6xx_defconfig    clang-20
-sh                     magicpanelr2_defconfig    gcc-14.2.0
-sh                           se7619_defconfig    gcc-14.2.0
-sh                           se7721_defconfig    gcc-14.2.0
-sh                              ul2_defconfig    clang-20
-sh                          urquell_defconfig    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241109    gcc-12
-x86_64      buildonly-randconfig-002-20241109    gcc-12
-x86_64      buildonly-randconfig-003-20241109    gcc-12
-x86_64      buildonly-randconfig-004-20241109    gcc-12
-x86_64      buildonly-randconfig-005-20241109    gcc-12
-x86_64      buildonly-randconfig-006-20241109    gcc-12
-x86_64                              defconfig    clang-19
-x86_64                                  kexec    clang-19
-x86_64                                  kexec    gcc-12
-x86_64                randconfig-001-20241109    gcc-12
-x86_64                randconfig-002-20241109    gcc-12
-x86_64                randconfig-003-20241109    gcc-12
-x86_64                randconfig-004-20241109    gcc-12
-x86_64                randconfig-005-20241109    gcc-12
-x86_64                randconfig-006-20241109    gcc-12
-x86_64                randconfig-011-20241109    gcc-12
-x86_64                randconfig-012-20241109    gcc-12
-x86_64                randconfig-013-20241109    gcc-12
-x86_64                randconfig-014-20241109    gcc-12
-x86_64                randconfig-015-20241109    gcc-12
-x86_64                randconfig-016-20241109    gcc-12
-x86_64                randconfig-071-20241109    gcc-12
-x86_64                randconfig-072-20241109    gcc-12
-x86_64                randconfig-073-20241109    gcc-12
-x86_64                randconfig-074-20241109    gcc-12
-x86_64                randconfig-075-20241109    gcc-12
-x86_64                randconfig-076-20241109    gcc-12
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411091159.y6yDCkdf-lkp@intel.com/
 
---
+All errors (new ones prefixed by >>):
+
+   mm/hugetlb.c: In function 'alloc_hugetlb_folio':
+>> mm/hugetlb.c:3083:15: error: implicit declaration of function 'mem_cgroup_charge_hugetlb'; did you mean 'mem_cgroup_charge_skmem'? [-Werror=implicit-function-declaration]
+    3083 |         ret = mem_cgroup_charge_hugetlb(folio, gfp);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |               mem_cgroup_charge_skmem
+   cc1: some warnings being treated as errors
+
+
+vim +3083 mm/hugetlb.c
+
+  2963	
+  2964	struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+  2965					    unsigned long addr, int avoid_reserve)
+  2966	{
+  2967		struct hugepage_subpool *spool = subpool_vma(vma);
+  2968		struct hstate *h = hstate_vma(vma);
+  2969		struct folio *folio;
+  2970		long map_chg, map_commit;
+  2971		long gbl_chg;
+  2972		int ret, idx;
+  2973		struct hugetlb_cgroup *h_cg = NULL;
+  2974		bool deferred_reserve;
+  2975		gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
+  2976	
+  2977		idx = hstate_index(h);
+  2978		/*
+  2979		 * Examine the region/reserve map to determine if the process
+  2980		 * has a reservation for the page to be allocated.  A return
+  2981		 * code of zero indicates a reservation exists (no change).
+  2982		 */
+  2983		map_chg = gbl_chg = vma_needs_reservation(h, vma, addr);
+  2984		if (map_chg < 0)
+  2985			return ERR_PTR(-ENOMEM);
+  2986	
+  2987		/*
+  2988		 * Processes that did not create the mapping will have no
+  2989		 * reserves as indicated by the region/reserve map. Check
+  2990		 * that the allocation will not exceed the subpool limit.
+  2991		 * Allocations for MAP_NORESERVE mappings also need to be
+  2992		 * checked against any subpool limit.
+  2993		 */
+  2994		if (map_chg || avoid_reserve) {
+  2995			gbl_chg = hugepage_subpool_get_pages(spool, 1);
+  2996			if (gbl_chg < 0)
+  2997				goto out_end_reservation;
+  2998	
+  2999			/*
+  3000			 * Even though there was no reservation in the region/reserve
+  3001			 * map, there could be reservations associated with the
+  3002			 * subpool that can be used.  This would be indicated if the
+  3003			 * return value of hugepage_subpool_get_pages() is zero.
+  3004			 * However, if avoid_reserve is specified we still avoid even
+  3005			 * the subpool reservations.
+  3006			 */
+  3007			if (avoid_reserve)
+  3008				gbl_chg = 1;
+  3009		}
+  3010	
+  3011		/* If this allocation is not consuming a reservation, charge it now.
+  3012		 */
+  3013		deferred_reserve = map_chg || avoid_reserve;
+  3014		if (deferred_reserve) {
+  3015			ret = hugetlb_cgroup_charge_cgroup_rsvd(
+  3016				idx, pages_per_huge_page(h), &h_cg);
+  3017			if (ret)
+  3018				goto out_subpool_put;
+  3019		}
+  3020	
+  3021		ret = hugetlb_cgroup_charge_cgroup(idx, pages_per_huge_page(h), &h_cg);
+  3022		if (ret)
+  3023			goto out_uncharge_cgroup_reservation;
+  3024	
+  3025		spin_lock_irq(&hugetlb_lock);
+  3026		/*
+  3027		 * glb_chg is passed to indicate whether or not a page must be taken
+  3028		 * from the global free pool (global change).  gbl_chg == 0 indicates
+  3029		 * a reservation exists for the allocation.
+  3030		 */
+  3031		folio = dequeue_hugetlb_folio_vma(h, vma, addr, avoid_reserve, gbl_chg);
+  3032		if (!folio) {
+  3033			spin_unlock_irq(&hugetlb_lock);
+  3034			folio = alloc_buddy_hugetlb_folio_with_mpol(h, vma, addr);
+  3035			if (!folio)
+  3036				goto out_uncharge_cgroup;
+  3037			spin_lock_irq(&hugetlb_lock);
+  3038			if (!avoid_reserve && vma_has_reserves(vma, gbl_chg)) {
+  3039				folio_set_hugetlb_restore_reserve(folio);
+  3040				h->resv_huge_pages--;
+  3041			}
+  3042			list_add(&folio->lru, &h->hugepage_activelist);
+  3043			folio_ref_unfreeze(folio, 1);
+  3044			/* Fall through */
+  3045		}
+  3046	
+  3047		hugetlb_cgroup_commit_charge(idx, pages_per_huge_page(h), h_cg, folio);
+  3048		/* If allocation is not consuming a reservation, also store the
+  3049		 * hugetlb_cgroup pointer on the page.
+  3050		 */
+  3051		if (deferred_reserve) {
+  3052			hugetlb_cgroup_commit_charge_rsvd(idx, pages_per_huge_page(h),
+  3053							  h_cg, folio);
+  3054		}
+  3055	
+  3056		spin_unlock_irq(&hugetlb_lock);
+  3057	
+  3058		hugetlb_set_folio_subpool(folio, spool);
+  3059	
+  3060		map_commit = vma_commit_reservation(h, vma, addr);
+  3061		if (unlikely(map_chg > map_commit)) {
+  3062			/*
+  3063			 * The page was added to the reservation map between
+  3064			 * vma_needs_reservation and vma_commit_reservation.
+  3065			 * This indicates a race with hugetlb_reserve_pages.
+  3066			 * Adjust for the subpool count incremented above AND
+  3067			 * in hugetlb_reserve_pages for the same page.  Also,
+  3068			 * the reservation count added in hugetlb_reserve_pages
+  3069			 * no longer applies.
+  3070			 */
+  3071			long rsv_adjust;
+  3072	
+  3073			rsv_adjust = hugepage_subpool_put_pages(spool, 1);
+  3074			hugetlb_acct_memory(h, -rsv_adjust);
+  3075			if (deferred_reserve) {
+  3076				spin_lock_irq(&hugetlb_lock);
+  3077				hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
+  3078						pages_per_huge_page(h), folio);
+  3079				spin_unlock_irq(&hugetlb_lock);
+  3080			}
+  3081		}
+  3082	
+> 3083		ret = mem_cgroup_charge_hugetlb(folio, gfp);
+  3084		if (ret == -ENOMEM) {
+  3085			spin_unlock_irq(&hugetlb_lock);
+  3086			free_huge_folio(folio);
+  3087			return ERR_PTR(-ENOMEM);
+  3088		}
+  3089		else if (!ret)
+  3090			lruvec_stat_mod_folio(folio, NR_HUGETLB,
+  3091			      pages_per_huge_page(h));
+  3092	
+  3093		return folio;
+  3094	
+  3095	out_uncharge_cgroup:
+  3096		hugetlb_cgroup_uncharge_cgroup(idx, pages_per_huge_page(h), h_cg);
+  3097	out_uncharge_cgroup_reservation:
+  3098		if (deferred_reserve)
+  3099			hugetlb_cgroup_uncharge_cgroup_rsvd(idx, pages_per_huge_page(h),
+  3100							    h_cg);
+  3101	out_subpool_put:
+  3102		if (map_chg || avoid_reserve)
+  3103			hugepage_subpool_put_pages(spool, 1);
+  3104	out_end_reservation:
+  3105		vma_end_reservation(h, vma, addr);
+  3106		return ERR_PTR(-ENOSPC);
+  3107	}
+  3108	
+
+-- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
