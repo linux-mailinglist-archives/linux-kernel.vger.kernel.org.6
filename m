@@ -1,222 +1,214 @@
-Return-Path: <linux-kernel+bounces-402603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237EF9C298C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:46:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEB19C298E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC101C21794
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84DC91F22630
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B32F51C45;
-	Sat,  9 Nov 2024 02:46:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30786824BB;
+	Sat,  9 Nov 2024 02:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVqG6aze"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5C117C7C;
-	Sat,  9 Nov 2024 02:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D24770FD;
+	Sat,  9 Nov 2024 02:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731120382; cv=none; b=G1MgsB+r9RPuEuoDuV1DNDWBCg5HVdVsvlW5fp+qLuSH4BRLOvt+WAE6r5etkBnZ69FRWytAtOQc7AXzcgznIInTY4MeyQr7iaP3bza2pAif06SB7PDOf5VoBPKT9polmJ7J/Dm3AVhgm6aM1L6GUrBhzxBfkaKEnmtuO+M05eg=
+	t=1731120635; cv=none; b=R1Fed4IxZlK3jpqUvxs9ASki8k0b3m0vuJE2jyynVHf2MWH6Q5aSaWpZ0EbkVdRG7L6+7smUptG/Oh7mAs9DwYcubmKDDb+9PpXMd8zmtnL87/27fDc0xHqy4ejMqwdT63BOpGv3NSTc4FX01p/iGTUi8Qf482R8ZGDiAiO2ic8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731120382; c=relaxed/simple;
-	bh=BTrxe8BRxQB6xm1Tx6vzyZJeFDO8zSbZX5OzaGTvjto=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=bv7YTqqMe//lm/HFJXJL2v4iTYzRznHv77TqcfYhzilk9MLQK4S4dB7cUc3UUxbFDjGZ0VV50/ZggjGO86PCZwI5JSmovJhz1s17V5+IWiJ5kpZiLuNu6o4FKk5r0zhY4h+vysXEX9rMZKwAIwOsF0lADTZAHSCusAeSjLqXeXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XlgD50VFnz4f3lVL;
-	Sat,  9 Nov 2024 10:45:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 05B6A1A018D;
-	Sat,  9 Nov 2024 10:46:16 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP1 (Coremail) with SMTP id cCh0CgAXDK7xzC5nE0PpBA--.19966S2;
-	Sat, 09 Nov 2024 10:46:13 +0800 (CST)
-Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Kunwu Chan <kunwu.chan@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Sebastian Sewior <bigeasy@linutronix.de>,
- clrkwllms@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Thomas Gleixner <tglx@linutronix.de>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
- Kunwu Chan <chentao@kylinos.cn>,
- syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
-References: <20241108063214.578120-1-kunwu.chan@linux.dev>
- <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <78012426-80d2-4d77-23c4-ae000148fadd@huaweicloud.com>
-Date: Sat, 9 Nov 2024 10:46:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1731120635; c=relaxed/simple;
+	bh=3weHMBmjR79ubky4BUixkDhmQ8AxVUiUmZip+KuDSds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6g1XcVDpJe9PwzuiGNsSj42K2VwifcOWLkBvDn7BIaZJvPjtCNBn96RPYP1zdKvh90rUdjmVRVARDk44wL8NZpH8XfWcH4sofrzGub4HbLOJHKJrAF0HAc30vIl/7VPbzyty04Ey8Plcy7I14NsvEFBP6d9UESSAK/r2vIgJWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVqG6aze; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731120633; x=1762656633;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3weHMBmjR79ubky4BUixkDhmQ8AxVUiUmZip+KuDSds=;
+  b=JVqG6azencj4PBNALK6wfRA3F899exIf9FEu5RFSh0DqajeZ1w3mgvjD
+   zTUuX0d/Yz316zK4my2Du31eolw1/84k0BaPoPfsOdVEh1fVWzDvHOfES
+   r58DDh0C0xcSjIP08I2W4twdGP5fRrKQTm3o5eQD9uZo6N8GbQqi+RLTn
+   tCE8Wa0DCjgZ9OgzJ0+1n8aoqZUTepTlUJsyF9EB9DPxLCOxOjgKHIGoW
+   78n9zshReBMKufIicEQoL/qSlbTM+3iHtjOOQkegjV1pSZFhLu9h0sal6
+   zBHsFFWEnS53JA45m/wxpEDwqtKdALHYutm6LhvDrt3FBpX6/QsteDH2y
+   A==;
+X-CSE-ConnectionGUID: iba4DVMQR/uuEoalPxFSMQ==
+X-CSE-MsgGUID: OYpJLgC0TkiHOhl2zVk2GQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="34952516"
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="34952516"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 18:50:33 -0800
+X-CSE-ConnectionGUID: HZz/4uUuT/eN8Td5QDAABA==
+X-CSE-MsgGUID: PG6Izi8tTWqs54X8eQqdcg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,139,1728975600"; 
+   d="scan'208";a="90945060"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 08 Nov 2024 18:50:29 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9bYR-000s0w-0N;
+	Sat, 09 Nov 2024 02:50:27 +0000
+Date: Sat, 9 Nov 2024 10:50:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, Christian Marangi <ansuelsmth@gmail.com>,
+	Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
+Message-ID: <202411091011.vIDu9Nhl-lkp@intel.com>
+References: <20241108200217.2761-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:cCh0CgAXDK7xzC5nE0PpBA--.19966S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3Gry7CF4kur4DKw43Awb_yoWxAF1UpF
-	WfCFZrAr4UXa4j9ay0vw4jvay5Xws8Kw43GrWfWryxZF1agrn2qrs2yr1fXr90yryvyFZI
-	yF1qqFWkKw18ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108200217.2761-1-ansuelsmth@gmail.com>
 
-Hi Alexei,
+Hi Christian,
 
-On 11/9/2024 4:22 AM, Alexei Starovoitov wrote:
-> On Thu, Nov 7, 2024 at 10:32 PM Kunwu Chan <kunwu.chan@linux.dev> wrote:
->> From: Kunwu Chan <chentao@kylinos.cn>
->>
->> When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
->> and bpf program has owned a raw_spinlock under a interrupt handler,
->> which results in invalid lock acquire context.
->>
->> [ BUG: Invalid wait context ]
->> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
->> -----------------------------
->> swapper/0/0 is trying to lock:
->> ffff8880261e7a00 (&trie->lock){....}-{3:3},
->> at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
->> other info that might help us debug this:
->> context-{3:3}
->> 5 locks held by swapper/0/0:
->>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
->> at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
->>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
->> at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
->>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
->> at: spin_lock include/linux/spinlock.h:351 [inline]
->>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
->> at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
->>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
->>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
->>  #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2},
->> at: __queue_work+0x759/0xf50
->>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
->>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
->>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
->> at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
->> stack backtrace:
->> CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
->> 6.12.0-rc5-next-20241031-syzkaller #0
->> Hardware name: Google Compute Engine/Google Compute Engine,
->> BIOS Google 09/13/2024
->> Call Trace:
->>  <IRQ>
->>  __dump_stack lib/dump_stack.c:94 [inline]
->>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->>  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
->>  check_wait_context kernel/locking/lockdep.c:4898 [inline]
->>  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
->>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
->>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
->>  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
->>  trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
-> This trace is from non-RT kernel where spin_lock == raw_spin_lock.
+kernel test robot noticed the following build errors:
 
-Yes. However, I think the reason for the warning is that lockdep
-considers the case is possible under PREEMPT_RT and it violates the rule
-of lock [1].
+[auto build test ERROR on net-next/main]
 
-[1]:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=560af5dc839eef08a273908f390cfefefb82aa04
->
-> I don't think Hou's explanation earlier is correct.
-> https://lore.kernel.org/bpf/e14d8882-4760-7c9c-0cfc-db04eda494ee@huaweicloud.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/net-dsa-add-devm_dsa_register_switch/20241109-040405
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241108200217.2761-1-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH] net: dsa: add devm_dsa_register_switch()
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241109/202411091011.vIDu9Nhl-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241109/202411091011.vIDu9Nhl-lkp@intel.com/reproduce)
 
-OK. Is the bpf mem allocator part OK for you ?
->
->>  bpf_prog_2c29ac5cdc6b1842+0x43/0x47
->>  bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
->>  __bpf_prog_run include/linux/filter.h:701 [inline]
->>  bpf_prog_run include/linux/filter.h:708 [inline]
->>  __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
->>  bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
->>  trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
->>  __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
->>  queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
-> here irqs are disabled, but raw_spin_lock in lpm should be fine.
->
->>  queue_work include/linux/workqueue.h:662 [inline]
->>  stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
->>  vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
->>  vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
->>  vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
->>  __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
->>  handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
->>  handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
->>  handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
->>  generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
->>  handle_irq arch/x86/kernel/irq.c:247 [inline]
->>  call_irq_handler arch/x86/kernel/irq.c:259 [inline]
->>  __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
->>  common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
->>  </IRQ>
->>
->> Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
->> Closes: https://lore.kernel.org/bpf/6723db4a.050a0220.35b515.0168.GAE@google.com/
->> Fixes: 66150d0dde03 ("bpf, lpm: Make locking RT friendly")
->> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
->> ---
->>  kernel/bpf/lpm_trie.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
->> index 9b60eda0f727..373cdcfa0505 100644
->> --- a/kernel/bpf/lpm_trie.c
->> +++ b/kernel/bpf/lpm_trie.c
->> @@ -35,7 +35,7 @@ struct lpm_trie {
->>         size_t                          n_entries;
->>         size_t                          max_prefixlen;
->>         size_t                          data_size;
->> -       spinlock_t                      lock;
->> +       raw_spinlock_t                  lock;
->>  };
-> We're certainly not going back.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411091011.vIDu9Nhl-lkp@intel.com/
 
-Only switching from spinlock_t to raw_spinlock_t is not enough, running
-it under PREEMPT_RT after the change will still trigger the similar
-lockdep warning. That is because kmalloc() may acquire a spinlock_t as
-well. However, after changing the kmalloc and its variants to bpf memory
-allocator, I think the switch to raw_spinlock_t will be safe. I have
-already written a draft patch set. Will post after after polishing and
-testing it. WDYT ?
->
-> pw-bot: cr
+All errors (new ones prefixed by >>):
 
+   In file included from net/dsa/dsa.c:10:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from net/dsa/dsa.c:14:
+   In file included from include/linux/netdevice.h:38:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:95:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from net/dsa/dsa.c:14:
+   In file included from include/linux/netdevice.h:38:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:95:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from net/dsa/dsa.c:14:
+   In file included from include/linux/netdevice.h:38:
+   In file included from include/net/net_namespace.h:43:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:95:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> <inline asm>:4:33: error: symbol '__export_symbol_dsa_register_switch' is already defined
+       4 | .section ".export_symbol","a" ; __export_symbol_dsa_register_switch: ; .asciz "GPL" ; .asciz "" ; .balign 8 ; .quad dsa_register_switch ; .previous
+         |                                 ^
+   16 warnings and 1 error generated.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
