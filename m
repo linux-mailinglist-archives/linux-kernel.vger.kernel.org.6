@@ -1,189 +1,210 @@
-Return-Path: <linux-kernel+bounces-402945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7A59C2ECE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:33:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC5C9C2ED2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:35:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5504EB217CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11552B21711
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBEC19F103;
-	Sat,  9 Nov 2024 17:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFBE19DF44;
+	Sat,  9 Nov 2024 17:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cQeV18nC"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c9hT8TNe";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="UhAVneTz"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59C9153BE4
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 17:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731173559; cv=none; b=s64lqn7i61Jbd2W3QmJeY1Mu+wkrKWR3VjujFXiCL0bRfnuYIeA7yccEg+SYciiMwmWmrkMZaRIXWRGm5irOPzNIlA99uEChMrUzulxePkvH7k3ZFxVLj1wPxL7QgeMHIk2moQqoQCnPQgBkMM1jIbSLFkMDZ4M0BV26lynsKOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731173559; c=relaxed/simple;
-	bh=oZjEXKpbPtj7ttMs05EhUXZ+US9I3Z5OX+ylmkahyFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kx5KxCmk7Wt87P8vxJCw+SI4TAb1zVa5QQEyPlpICR/GYPVhiOp43CPdbknoBRWaG1HKFtQnn10VzkLe4ndaorBuEQjNQHdcVDu7y/CWY71r8ExGWL3dj82k5RKVI8bEI9FjrhZnsUfzBV4Cl7iwLofEzEbEbgZ/Itw0MvgjUmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cQeV18nC; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so29968375e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 09:32:36 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3792556E;
+	Sat,  9 Nov 2024 17:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731173719; cv=fail; b=SsxWdoXKF0lTB1MIBqjonQao2iKyinTZkzBRWU4cINxxlrAhhXyWTWs9G1iL4b2gsAA69tdtFRgFsGTuxsXT9YnXhUYF0IZ3QwbHvfvHZ3avvoaZc4ftoptzBPIokMpGDIlSLEzwTiNxHuPSauNED/Srmi8zAA9E2Eq8rCpCfLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731173719; c=relaxed/simple;
+	bh=mL7H0exwZnz/4PztSLRQIiIJbKNqKIL1o5hRIOEH6CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=EpK4nIHYQKkh6p8RnKKrWHGrHpRFCsKY4nib3qG4gvQ9z0KswUe/X08EX98/Byk9B8ljGT24ClwswlHxM2X4iAyQ2YvDZ36Zuicb5XzH1GbGPZ6pNuuhCZdCHVfVSOh/Zu5SkdZqApqxgzN6o49pXRZMlB3JvyBjB2DLdR+UO9U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=c9hT8TNe; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=UhAVneTz; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4A98bOPk005685;
+	Sat, 9 Nov 2024 17:35:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:message-id:mime-version:subject:to; s=
+	corp-2023-11-20; bh=fkFjc19nM1KRtwBzsaPn/niHUATA6VzznEv0dM+fqVc=; b=
+	c9hT8TNewipPIxugs9j+vuyl007SGaJc47GnLWN3yIz6joTvAw5gDIMMJUgxDF3/
+	ONfgwIntRJt0BLEARsR5Uu2nOiVc1DfkqfgQJGpoFYNuvx9LF+bvrgNvaTfsWLrt
+	QnPQCXl4f+tWQ5BSirksl3n2V6PwdXVfJoDuspJxb46f1oFD3KGJ6MpguT031LES
+	j4CKcajuLykhqT5Lw5ClKNi6KNe2OnY9mGpRoVdM1wpILQfJC2RA2OcmuCAaEupo
+	ZYxGo5fRqp+gQsSRKIsrcSeekZScMVmyQ5OIQ8q2+NL0sKArTWR2UFUJE9BuNT6I
+	dMwpFceFHabeu+DRoiZZ+g==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42t0nwgdnx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 09 Nov 2024 17:35:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4A9F9sTr021504;
+	Sat, 9 Nov 2024 17:35:11 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2046.outbound.protection.outlook.com [104.47.70.46])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42sx65dux1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 09 Nov 2024 17:35:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HCsLd+JwwEpdqj1vgMiOoCS+wkJ6liIH7N5jddar7W33y7+3NiiqPXsZXy+U6gJzOU0BpINmZwiRtkH30v4QqNRLZn9Q5vcTgVmeJnAFROgDhGPb/bWyMQmWDEVSS449GAsJV+Yp9qRT4oAGHVA9IQg/gQ10HntcOxYEihzQoc7Fg1Ks+X8LtCmk1OaGsgQlEjkDXc3OfI4kyzcIUkAg2pMA5TjQEGJBn4K9p9ty5o8bokkYnHWEmV0Cdz9wGyZ4nl5DFjWESbff0zcb7UljUXS1gq1BCrVJEIgW//fG/BSwjr4XcEW506OvcVO2SxnyHnSpYG4DzOCxtADsfJWwKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fkFjc19nM1KRtwBzsaPn/niHUATA6VzznEv0dM+fqVc=;
+ b=aujsz8WGEth2Ak5RLL9HeD35HqwUEas3CUjNbAbmSHIPLg5oFhpIJaBw3uD5k1uBfIcCaH4NM3SW33Ka59M4NNdWxUGGIV2NxYYutrtcFc7/+fSEpskH3FY3AiUwIul/7kWaYNoHxQMABgdRvJPuDQ3IGw3p3OWPLrFLwomyELOZ0xJRYOOgDZXYhz8AfQ4eT7Cu3P++z4Cg/kWGl8eEN7nee4wmSURKtV0Jh5zojSLw4Q/eb4VWISaOwls7o3xxquU9Fvr2bwojj3Ya63WEyMdmC6biZB9Ele1RPxgDFDGd+NnjeSMdm8mtocXPw9UHw3OJEpOCTDBw4mUcrq3l5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731173555; x=1731778355; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qrd7Q+hT4RWLlTYkRiopljgomDNa2/49Dcp33gRQK8U=;
-        b=cQeV18nC7uVSAi+wt2y2rgNNLVrKRwnhu0Zy8xXi/YHMbhXPvA33Dkkmfcfxj1EXKa
-         WIeOYwN4YiaqaNaSmPiqW8ihUJUnBd9cZ9VgFryxOo3GyLMJ7stOb2KNixkUpA4yL/BA
-         QeEve/5jjUAvJV1nuHzcZnoayoBizYPWtDsYqrJT+47lzCL8aLRCvDk30CCgs96SRYW+
-         CxIxRdEQKh4NZLkxcbgkWr1JYfKLqBXOQFZpPC0ne3DuVA8ykzU4+JQPgtAtMNAwCmso
-         j4XyMfdbJkbXmfbKEG+o4jy4pOHXb2ZqehZ00yVsViEZzn1RODt0d51S2hXi0o9a9WYn
-         GDcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731173555; x=1731778355;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qrd7Q+hT4RWLlTYkRiopljgomDNa2/49Dcp33gRQK8U=;
-        b=VyCT0lMMgcqWe5Psk4F9oXXSXMiwGpLg9SpYvvgpnhyT2Jv5B4m3b/9fvE6VlTFq8/
-         aDtPZg0nJrhm6ca9nUxcNp+9+nZaQp7wZXeN9bs9vK4Tj7B0pDnhcMd8DW/1H2pkvoGO
-         pcGw+WqZaX5dZhUgqTklUmoDeKH6NX0P73d7/96PfoS6eX9Bocz9h+G1rN+/oLzLSJON
-         OlN4B6M9Jti5dk6+th/K3kzDJQRZN80RNwYrmE51G6AW5ZQnktzCaBk1RKD07zBlVXTH
-         rtRqod5gKSUvDWeSIYDB5dYFeQWlVn6kA7gRQkcmPE4nkX/aJkpBjbFhkJVd3dUkAUpm
-         soFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQt8/2ritcfwcvdj1vV0/5Q6CGirbuN1ziJeHejjAo6RRmOgAdN//b66KgmVmikra2mfMUKKfbrGWs9cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt2MBTYYvnU+zhrMo8d1/XUsXXOEK+TN30pj9/JhrOf6a3aSkA
-	WH27DYWdhZuCXV5igr0deYehZIX4mQpcOGO5kYbpuXYeHjFCG9RaMAqdk+jZtvo=
-X-Google-Smtp-Source: AGHT+IE1q8fwdQ3BkqSY4LENvnUv/wVEuo+qnF+jrEdQYc+Aa1DTDS756o74ILXyq3lGqKpHh72kRA==
-X-Received: by 2002:a05:6000:78a:b0:37d:4ebe:164b with SMTP id ffacd0b85a97d-381f1885557mr5901995f8f.44.1731173555210;
-        Sat, 09 Nov 2024 09:32:35 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9707d3sm8132812f8f.19.2024.11.09.09.32.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 09:32:34 -0800 (PST)
-Message-ID: <ab4b80fa-6321-462a-ba1d-151424d1c94f@linaro.org>
-Date: Sat, 9 Nov 2024 17:32:32 +0000
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fkFjc19nM1KRtwBzsaPn/niHUATA6VzznEv0dM+fqVc=;
+ b=UhAVneTz77MuLIblD4qwTApfFuSCm1bBH4wz04HQT+DfZsfX/0ZiiG/YlQ8kWH76JPNDvDIQLqIYDePRSa8PZhxyk+4M09pzk9OqnyxEd9wZK8o7mTjt8nvmSTNcMgpZBsd1Jog1VGFHsSLSwm8O5kC8xTlztmsgS65mu9AkKJo=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by SJ1PR10MB5908.namprd10.prod.outlook.com (2603:10b6:a03:489::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.22; Sat, 9 Nov
+ 2024 17:35:08 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8137.022; Sat, 9 Nov 2024
+ 17:35:08 +0000
+Date: Sat, 9 Nov 2024 12:35:05 -0500
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [GIT PULL] one more NFSD fix for v6.12-rc
+Message-ID: <Zy+dSVteJF/PSpL/@tissot.1015granger.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-ClientProxiedBy: CH2PR14CA0008.namprd14.prod.outlook.com
+ (2603:10b6:610:60::18) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/28] media: iris: add platform driver for iris video
- device
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nicolas Dufresne <nicolas@ndufresne.ca>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
- <20241105-qcom-video-iris-v5-2-a88e7c220f78@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241105-qcom-video-iris-v5-2-a88e7c220f78@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SJ1PR10MB5908:EE_
+X-MS-Office365-Filtering-Correlation-Id: f3fc3b87-ca8c-4a72-3b94-08dd00e4db15
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2AwDbYaCNr3WxWjCNyIgMYYS5KxZpObosm4kICsXnEJn9sZW7Z3hZdkrTnEp?=
+ =?us-ascii?Q?vs9sQDNqcbBM4jPYEKPq9IsmvlISYh5LpBIydV/s+SkgzdYoqnMudwNtMp9D?=
+ =?us-ascii?Q?rYlpUXqNdODCrnmtH78m9s6xzvXcU+ZRgjVRzlOf44coZBEBr5yeaVKy67qV?=
+ =?us-ascii?Q?bWUPtD8VzV8H+vSA9gJ7TKSz504rZOipUJww3vBa5DzIb815Hf0sEmS8EzHc?=
+ =?us-ascii?Q?Tyt1aTvkp+mt1y+uqWfPVTXmbC+gydJCeGY2qSX+YD6iBByn63GcMvI6venV?=
+ =?us-ascii?Q?xLLlxuhrQu0cNO2qyBRqJvSp5L0wEYDHHim5XEFDpxwFS2zkSusDWg5Ibpjn?=
+ =?us-ascii?Q?JRSezhwDO10wQLurAceDefPuVjEr5wevehpNwt7h+TMD3y0bujJxCTvAtOWj?=
+ =?us-ascii?Q?DSYFRV2ZTM6JMri+L5AHVDWg24zw2Bpn+ket88+yZXYG9WoRKc2qbz8F5fHN?=
+ =?us-ascii?Q?9gOFWx1BFMafcQzZeZLfW9nWmAwfV4/bM4WDGVwsOX4kE6S2I96SrVTu2EnJ?=
+ =?us-ascii?Q?DODTcDw8QG8ROgxkJCBSqw1eTKFa8UNgQ2EguJ/csMETWegx1+IVZFWGLu+n?=
+ =?us-ascii?Q?ZTt8KMn2NWyI34qpQwWDe7+Gb47IbOhP4XAYWv1xB/4DzB7fs4RI2YtTJYsA?=
+ =?us-ascii?Q?iZxyIBavw9ByhWkT59ZXG9vuhIYFwGURY9NeX1vttuTSikaicPaXgkhDk3QY?=
+ =?us-ascii?Q?ALVz36hw+kkEUFsrW8jBFFIBAfOhW7eWkL9+oerbkLvGVgYseqHHqAuFYXHi?=
+ =?us-ascii?Q?MNZv/QO1fyBaW5h/gzpuCBVH7KF3vErJlFPhdha+sJxvxi1KwbhoL8uFq4TN?=
+ =?us-ascii?Q?IVft08d9/QUK3CCz0A3AxHdHXCgeXmrsEtb9I31sAxjzhmYoFyWTX+j1J84O?=
+ =?us-ascii?Q?+wXvwwy06nZGIGfRDD1QkqAgbANtTqVFQxR83EbheqRt85dLogE/cURRxZcm?=
+ =?us-ascii?Q?PVILgP0Ve26eOweduSZRyAmSjU315DZ6JmcDyRkLgeFH3k1f8RVGEkNqQoBz?=
+ =?us-ascii?Q?y+UrhvyU+KgqpWTLmYg62YXDGuCbAbfYSsZnNi6et+2NY63h5LfJbj4sqUF7?=
+ =?us-ascii?Q?UXsmIhThjkgQ11wmqP2mDccfZlgNjw4Bl0CNab3GSfP8/3sbpXhYtTg9fv+U?=
+ =?us-ascii?Q?HmP9nHdmspGWL965U/WE3U4BiD7V8OpQPfKiQip81LBic2yF1dkGScr7vz61?=
+ =?us-ascii?Q?RNOQ3cTH/8StYoRj3gxJb5YiaQge2DQWS/470gduRGVCGxzZfSVHT/g3D6f/?=
+ =?us-ascii?Q?j2U8Z5YpmQ7GAwJebfcp5iszQJ0GSrmB66H/UaJUHvZq+lzCCXSgaTXlweeI?=
+ =?us-ascii?Q?s18GvRFOCdZk3RnaaW1oYq6H?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hY3NdoprJ2zVP3MgScnAbX1PqGyfVAHjQ9FAO+nlwTqH6ygfk39IvHBEhp5M?=
+ =?us-ascii?Q?dVcKwGFInz32D3Gaujod8Zw518iJPk1q33TjscHbJpm5ZC84+m5jnKaEp6HI?=
+ =?us-ascii?Q?WJSWUF9t1qcuXXroaUCLiwLiRaJ+D1W3NeHRdfz+jGJrCmQaxIQmXlc6fbFN?=
+ =?us-ascii?Q?Bs7HnLT4hd4dn01U7MIm42J5M/L60C28faFQUnWnW1FKwr+7H6gPlST08SQI?=
+ =?us-ascii?Q?s1Qcc3V1nQXt1jQTuTrzz/8qQiL035l5LPyrvvWlk7DADgPneEdONHu6LXVE?=
+ =?us-ascii?Q?09Vb52ZO77qMogwbEqWs7KRnd4UkECyDJEhQywdeZhfx06abgIVCu9Gj+BSH?=
+ =?us-ascii?Q?3gpYytqE84uvZktDr+6AN8DHmYqM/YNiu7eY4+FrYl/D5bHuA2YPP5uABmW8?=
+ =?us-ascii?Q?7dhzg0w0WS8P6QWcfEr3zCsLn2HAjkumQmontsXXmmb9e/ogy1QugF9n+fJX?=
+ =?us-ascii?Q?0lnXLEpmrWPMwwZ/Kn5qIgbh6UVTcI2JhHI15PAw0HFsBy5+lIlO+Ggawc4Y?=
+ =?us-ascii?Q?rvuu8dcIi0+iHyJnSkNVwVMPyWlb2HC1mm5KgtyZbIUSkctRatpumHNsN3m+?=
+ =?us-ascii?Q?txTHyXivVp7EscvXLBUwOUT6zHeMYxIp0H6BuQKrf5PxfWo7zQFL9APmDfmA?=
+ =?us-ascii?Q?DMNIumONyGf8iJUJGL+b9V49D+gkoH2SIIOicpq7gmrc+6IgNOSpHDSuvIKG?=
+ =?us-ascii?Q?Zn8QpJ6NzK6qtWwf2RNX14txHD2BSDm3HNPeuN/bDMRsfIQ82vcA8TkXp1ou?=
+ =?us-ascii?Q?lvr+Iuaw0hQeIZHiz4HURSZFMaXFcJkEqPmTLMpkq9mtAvjQCd64F9Mn2mAk?=
+ =?us-ascii?Q?ZyWnerDOCnGLYqE17iWsaznIQf/ghw5jKgSSksBIBlKe25JeL6HkgLB4re4Z?=
+ =?us-ascii?Q?etxZlfVIP8cug/A6NImQ2kixxoGAXllrLSz7C9+39emSz4/QjRyUCXZ2F+FD?=
+ =?us-ascii?Q?J5yifGLPn1Np06C0VSivMxTMZ14DjRggcTH5pNltIetHWMU5UXa3VJssTm7m?=
+ =?us-ascii?Q?hzFvAoDhBxaoQCnvCFGxXRUSvFDZ8gmkPJFA1Lb15MwHdeJ/NFKeLosNt/Qg?=
+ =?us-ascii?Q?XAZ4D6fI013H18JEsaiEFrYvC6eMACK/cd+h/9PzobYrCsRlgd50IPSWA1Lf?=
+ =?us-ascii?Q?itz2QX2KCo33OjCvRuUKglPYlDHpZV+pfF/wlAJSFwPs3XTooC3SO0CNmbNU?=
+ =?us-ascii?Q?BQfKwlPvRLxKR8kAus9t/OLDHx+D4NkSUvAK4bMreR8VNBwHwjwctzKFNzCo?=
+ =?us-ascii?Q?aBsz9ITMwE+OkTSdmN0dxsJnSSDHadarXiMMMVIm3dU3aROo5kXfh+VgwFtI?=
+ =?us-ascii?Q?z13j8w3sVeHgyTsXAFX2ZPPCJBjOMW1Rwh9WmbWRWxRgtGRIiZ0HoF3/RUXa?=
+ =?us-ascii?Q?Ro2s8H/CM4hDjxYMzwI71eAPwRFo/P+WtpKU2c7QnL3bU9E+c/hxttbUhwYM?=
+ =?us-ascii?Q?etrgoMxY5fAIs3PsQn6/yfPFDhp62DvBOnBELHgkjhdTtR0rdbT5xx8lddlH?=
+ =?us-ascii?Q?vQLCjXe7WZKquobVP5N6h3pfnBZACjT8qa5BwT5DzF9sN17YoA2Zyb5qnee1?=
+ =?us-ascii?Q?czd3QapftHSszanoUubKDcwRCwMBjIGkTR5ifEPh?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	mu68Tjsa1JUax3aIFweKYEYaZCJvbhppnJ1uhWIloZmPXuyCi8xiJ0hvAAK4tXNWpNEF5N3LvNr60g5MG2Z0z0T2zI6haLaxXAU1WkTJsRkYBi3qEoA0SLF1xan7NDeuQ5yJ+2YLFHrKlM0tGDc6mKLSyo18StdIxQCowDah/Bp6tTGBtAt6FmSEMV7J5Quh9OE0oFptJ0HY37+dAq07h7GtRRs3zEIsUVXBY/T5Y/LCD+vn0y9YK1zs16c6zgFQgGyrF3mLJVU9c69mJ1F3Qk+41EF4I3OzQ19GBbS9BBTfaEx2y6PuPPovD2xrsO4itqmHPadERZCAQ97h/mFO41cKVp61YXISBKn9WrI1WEJjtcVhF415wtLkY3fAxiAPJir+YNprVkHhJWi0zUL3c5DIH1RWMZI2SQ5vwK4/bJQOe1ONVwXKYLNQVc5WAWgvp2OcWYgGgLfIuneUuKC5TLy0HWod/kpx3R9x+GGQyP+0k4x0nVTY4f7PD0jHvNXyBsPRw9fSM/OVzS5KCPWWMCuGWdh+tsIzUTTgWWbQsg+Y87y8O+7CZQ4iuuTNopxzybhdP+A36rSwPXdzNKgJ8krvgK7t4Em1DPbVneipwQ8=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f3fc3b87-ca8c-4a72-3b94-08dd00e4db15
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2024 17:35:08.5758
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HY9tESJ2pmXwn4/5ZOJHTjtNc4P0oBC6CtaqygF4ewkxZgi0hzh5Vj+bCcVSRbKLORIBeOHVFRM7Rgm9nVjnXQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR10MB5908
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-09_17,2024-11-08_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=720 adultscore=0
+ spamscore=0 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2411090151
+X-Proofpoint-GUID: dA5Zl_EodXmIyvMb49PJa2cu561G6YqG
+X-Proofpoint-ORIG-GUID: dA5Zl_EodXmIyvMb49PJa2cu561G6YqG
 
-On 05/11/2024 06:55, Dikshita Agarwal wrote:
-> In preparation of adding H264 decode functionality, add probe and remove
-> functions and platform data to initialize iris resources, which are
-> clocks, interconnects, power domains, reset clocks, and clock
-> frequencies used for iris hardware.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/Kconfig                |   1 +
->   drivers/media/platform/qcom/Makefile               |   1 +
->   drivers/media/platform/qcom/iris/Kconfig           |   9 +
->   drivers/media/platform/qcom/iris/Makefile          |   4 +
->   drivers/media/platform/qcom/iris/iris_core.h       |  54 +++++
->   .../platform/qcom/iris/iris_platform_common.h      |  35 +++
->   .../platform/qcom/iris/iris_platform_sm8550.c      |  37 ++++
->   drivers/media/platform/qcom/iris/iris_probe.c      | 237 +++++++++++++++++++++
->   8 files changed, 378 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/Kconfig b/drivers/media/platform/qcom/Kconfig
-> index cc5799b9ea00..4f4d3a68e6e5 100644
-> --- a/drivers/media/platform/qcom/Kconfig
-> +++ b/drivers/media/platform/qcom/Kconfig
-> @@ -3,4 +3,5 @@
->   comment "Qualcomm media platform drivers"
->   
->   source "drivers/media/platform/qcom/camss/Kconfig"
-> +source "drivers/media/platform/qcom/iris/Kconfig"
->   source "drivers/media/platform/qcom/venus/Kconfig"
-> diff --git a/drivers/media/platform/qcom/Makefile b/drivers/media/platform/qcom/Makefile
-> index 4f055c396e04..ea2221a202c0 100644
-> --- a/drivers/media/platform/qcom/Makefile
-> +++ b/drivers/media/platform/qcom/Makefile
-> @@ -1,3 +1,4 @@
->   # SPDX-License-Identifier: GPL-2.0-only
->   obj-y += camss/
-> +obj-y += iris/
->   obj-y += venus/
-> diff --git a/drivers/media/platform/qcom/iris/Kconfig b/drivers/media/platform/qcom/iris/Kconfig
-> new file mode 100644
-> index 000000000000..34a2f81c5db3
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/Kconfig
-> @@ -0,0 +1,9 @@
-> +config VIDEO_QCOM_IRIS
-> +        tristate "Qualcomm iris V4L2 decoder driver"
-> +        depends on VIDEO_DEV
-> +        depends on ARCH_QCOM || COMPILE_TEST
-> +        help
-> +          This is a V4L2 driver for Qualcomm iris video accelerator
-> +          hardware. It accelerates decoding operations on various
-> +          Qualcomm SoCs.
-> +          To compile this driver as a module choose m here.
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> new file mode 100644
-> index 000000000000..7e701361492e
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -0,0 +1,4 @@
-> +iris-objs += iris_platform_sm8550.o \
-> +             iris_probe.o \
-> +
-> +obj-$(CONFIG_VIDEO_QCOM_IRIS) += iris.o
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.h b/drivers/media/platform/qcom/iris/iris_core.h
-> new file mode 100644
-> index 000000000000..dd0e2650641a
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_core.h
-> @@ -0,0 +1,54 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _IRIS_CORE_H_
-> +#define _IRIS_CORE_H_
+The following changes since commit 63a81588cd2025e75fbaf30b65930b76825c456f:
 
-Its more usual to do two underscores __LIKE_SO__
+  rpcrdma: Always release the rpcrdma_device's xa_array (2024-10-30 16:14:00 -0400)
 
-Once amended.
+are available in the Git repository at:
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+  https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.12-4
 
-Please remember to similarly update other headers in your series.
+for you to fetch changes up to bb1fb40f8beb45a3733118780a3da24fb071a2e9:
 
----
-bod
+  NFSD: Fix READDIR on NFSv3 mounts of ext4 exports (2024-11-07 09:11:37 -0500)
+
+----------------------------------------------------------------
+nfsd-6.12 fixes:
+
+- Fix a v6.12-rc regression when exporting ext4 filesystems with NFSD
+
+----------------------------------------------------------------
+Chuck Lever (1):
+      NFSD: Fix READDIR on NFSv3 mounts of ext4 exports
+
+ fs/nfsd/vfs.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
+
+-- 
+Chuck Lever
 
