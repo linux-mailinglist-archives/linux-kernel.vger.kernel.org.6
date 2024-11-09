@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-402905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C5A9C2E4C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:40:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E054D9C2E4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E5AB282440
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12C9BB216BF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A274C19C579;
-	Sat,  9 Nov 2024 15:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOdrh8UI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650F919CCEA;
+	Sat,  9 Nov 2024 15:43:33 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D1C19B3D8;
-	Sat,  9 Nov 2024 15:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467D419CC11
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731166795; cv=none; b=LPuj+w3iIcKmPEiGZGLrUscwoHhQEFqyjT6RSEfr05+oFyj4XiZFIZ+/zWoWUMdVNeOOIdnn3MRNvCqveBkg5CzDQNcfSdBxgb3GLSkW53z9+oa7xS39edftRV01nUp+w1a9oHmEk/DaEaEnimm1lMPlX1Ub1AM0Os1n4N8QjsE=
+	t=1731167012; cv=none; b=jh60bMG3jgHfI/uMb1d0BF9p7g9jsTrMQ+Ai84KPwLBn6FQAY27DsVA+dcXyRmIgYfVrGcnWfd4QDVg6QO2qdkpceV7Gco5K2xIlBoDIjdoz1lbJqtC8OcUY1xTFuOOfydoMPIrpfRcznGWXFJ0eFyIRlyRXXVV6G49rstMX2tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731166795; c=relaxed/simple;
-	bh=tXfocABwPBFTxx/MOXWvovhlbtkWeZ2PINylPXQqA3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EJWuMZwOUbQnOHbkldma6FKCKXO2fg1QqdSvfTHAiwzcJ5fmkPa4KcVCMq5dZjPC8IPJzD81+gJOPVNaGNIKW7oSMfYjOfQRWLxTtpHSleLuUx7hPiHJaOKO2iIzqfRkgzUMfv6GdAQQpBRo5sx7lQf+PaFIUm8WJquiVAdmAeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOdrh8UI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30028C4CECE;
-	Sat,  9 Nov 2024 15:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731166794;
-	bh=tXfocABwPBFTxx/MOXWvovhlbtkWeZ2PINylPXQqA3o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bOdrh8UIoov3JPWAru6BaEk9TPiON1p456mTnNf6HMXan0tm2FSSP389HzEgkg5Qr
-	 +SdFKQu0gze9veDUGcar2LggftfuEb1jnO0KnWRrt36/SwoEua9A1m8Mhts84rtK/2
-	 SJ5Y4u/rds2CUqw4pCArxqVqv4JlUxoIL5zU1Aucuedhr/wnK9sVNdo9rt8m7KGWZ/
-	 L8U3HFHG0LdKrv+dKZd68MndMrE+ewSx8mrDIf0Oi4w+W3r+kXt4RyiwQEFjWXB/Ti
-	 LS2hDRxKLJlowNEi7DGdYmDbSEgmGCpV0ROHMBEGoZ9TGqzs05EkD4z2RZAWHGQC/t
-	 SaKsbYE+AxEDA==
-Date: Sat, 9 Nov 2024 15:39:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>, "conor+dt@kernel.org"
- <conor+dt@kernel.org>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org"
- <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH v5 6/6] iio: adc: ad4851: add ad485x driver
-Message-ID: <20241109153946.4f4df9d2@jic23-huawei>
-In-Reply-To: <146a24a7-d7a1-4969-98c0-f621a1709dd7@baylibre.com>
-References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
-	<20241101112358.22996-7-antoniu.miclaus@analog.com>
-	<de120709-b60b-4e85-912e-b60ca18a8001@baylibre.com>
-	<CY4PR03MB339993CDE9BA8DD3976CF2F29B5C2@CY4PR03MB3399.namprd03.prod.outlook.com>
-	<1f2b8d91-19be-46b7-9202-824aa177dff6@baylibre.com>
-	<146a24a7-d7a1-4969-98c0-f621a1709dd7@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731167012; c=relaxed/simple;
+	bh=1tf54VEjItzPAjtELjSSi5kTvx1ne2UDY16WbcOufM8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T38dHpOUGbTEQGLUzWTs0AZzZZH9tte2Msn0+RDMPO7qDL6/Qf1X4NtfktjlzO0s/lRjDxTyp+KM30+7o4mZWc1NzAVputRw6sAFgRusV1VRTOon4oz/eXQMSXh/+A9jpdVBFdwpF0TmyLGXk+9K+oaONIoKwBpGZ3F7M1mMQRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab369a523so347692339f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 07:43:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731167010; x=1731771810;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GseIcgIr6X/8m67ZFLgAx9zFE4QGPHGtQSWIAD46AMY=;
+        b=g2RfMlD7KNw3EV2Z48+D5S5qD6FDM4LWrUWpxJCwB6sA2NC7uBkJ7IDGxjF+WI2C8s
+         /hb7ynmOLZnH4f+JR96L1x7TunJw7PMKkRKbL4bUMAfQQW4kaHPojNxWjIMy1fYY9PBq
+         aiJPEGKgvcvUa0306NWX2jiKM4DxDJue6gXErnxNmkyuRZkYjybiOKIWUmPz1rPEkoeN
+         GkJS5iNEHc8IY3K2QJe6JnWtNSHEmNt6jYoO64BxF4s7h1yJET2n/B8c46MvvM9gaF0u
+         xmKNDFGhvtNqQPIsyzqfeQhay8cAaDZKvpc1CGn74GFeoUqt87bsmeN7obK3QedAwh1d
+         497g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjl4P+5EAnGOnxtgRx3DU5tKBbetg3cev/f3rLhmV0GBKKTccalwNwOp3ioD+pbQBHwSAKBSxva6gBBSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXCoUoFVo9POlCEsRfvCd/jkrmQjdJX8C5qnlBzZn1q4MUpLQN
+	y8N3nrxNY01ISFgeHS5kid/UmFAokckPTLj4wasad9U+anYMitIbuN3Ydc/R3UNOzt5WQna6YzE
+	PMJ55KyaDM0nNfaVHxoZwi0jftvtujrASDY8NYFyrGT0OGIC49rAAaP4=
+X-Google-Smtp-Source: AGHT+IHQx13L5JlX4aNY1LnhMf25cy0+Zv2fe1fZJ3rOjqe9fIzLX+jsYaXgUwLOZB/arcRZl47pCI8sCzq0EPVC8kK2GW59dXOQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1745:b0:3a0:480c:6ac4 with SMTP id
+ e9e14a558f8ab-3a6f1a481b3mr65185515ab.22.1731167010493; Sat, 09 Nov 2024
+ 07:43:30 -0800 (PST)
+Date: Sat, 09 Nov 2024 07:43:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672f8322.050a0220.320e73.0316.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in __bch2_btree_node_hash_insert
+From: syzbot <syzbot+19c1a30221401d741bc2@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	terrelln@fb.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 7 Nov 2024 10:47:52 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+Hello,
 
-> On 11/7/24 10:13 AM, David Lechner wrote:
-> > On 11/7/24 4:51 AM, Miclaus, Antoniu wrote:  
-> 
-> 
-> >>> I'm pretty sure that calibscale and calibbias also need to take into
-> >>> account if resolution boost is enabled or not.  
-> >>
-> >> Can you please detail a bit on this topic? I am not sure what I should do.
-> >>  
-> > 
-> > We haven't implemented oversampling yet in ad4695 yet, so I don't know
-> > exactly what we need to do either. ;-)
-> > 
-> > But this is how I would test it to see if it is working correctly or
-> > not. We will need to test this with a 20-bit chip since that is the
-> > only one that will change the _scale attribute when oversampling is
-> > enabled.
-> > 
-> > First, with oversampling disabled (_oversampling_ratio = 1), generate
-> > a constant voltage of 1V for the input. Read the _raw attribute. Let's
-> > call this value raw0. Read the _scale attribute, call it scale0 and
-> > the _offset attribute, call it offset0.
-> > 
-> > Then we should have (raw0 + offset0) * scale0 = 1000 mV (+/- some
-> > noise).
-> > 
-> > Then change the offset calibrate to 100 mV. To do this, we reverse
-> > the calculation 100 mV / scale0 = calibbias (raw units). Write the
-> > raw value to the _calibbias attribute. Then read the _raw
-> > attribute again, call it raw0_with_calibbias.
-> > 
-> > This time, we should have (raw0_with_calibbias + offset0) * scale0
-> > = 1100 mV (+/- some noise).
-> > 
-> > Then set _calibbias back to 0 and repeat the above by setting the
-> > _calibscale attribute to 0.90909 (this is 1 / 1.1, which should  
-> 
-> Now that I have written this, this has me second-guessing if I
-> implemented calibscale correctly on ad4695. It would seem more
-> logical that if we have an actual input voltage of 1 V and a
-> calibscale of 1.1, then the resulting processed value we read
-> should be 1100 mV.
-> 
-> Jonathan, can you set me straight? The sysfs ABI docs aren't
-> clear on this point.
+syzbot found the following issue on:
 
-Deliberately vague in this case.  calibbias is kind of the wild west
-of ABI. Often we have no meaningful information on what the tweak
-register settings actually do beyond 'up vs down'.  In some cases
-the datasheets even refer to them as taps up or taps down.
+HEAD commit:    850f22c42f4b Add linux-next specific files for 20241105
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16d656a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=20c0926a86d94a8
+dashboard link: https://syzkaller.appspot.com/bug?extid=19c1a30221401d741bc2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10198e30580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12fdb587980000
 
-I don't think we've ever said if it should be consistent as you
-change other parameters.  If you care about calibration you probably
-need to redo it for your new settings anyway and tweak the calibbias
-/calibscale till it gives the right values.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2f4977b60e81/disk-850f22c4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5574d3bf40f3/vmlinux-850f22c4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/013dbea598ca/bzImage-850f22c4.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/442d7ae00d08/mount_0.gz
 
-Obviously that is easier to do if you have a consistent scheme for
-a given device and if possible allow calibrating at just one setting
-but I don't think we can apply general rules.
+The issue was bisected to:
 
-Jonathan
+commit bf4baaa087e2be0279991f1dbf9acaa7a4c9148c
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Oct 5 21:37:02 2024 +0000
 
-> 
-> > add 10% to the measured raw value). Read, the _raw attribute again,
-> > call it raw0_with_caliscale.
-> > 
-> > This time, we should have (raw0_with_caliscale + offset0) * scale0
-> > = 1100 mV (+/- some noise).
-> > 
-> > Set _calibscale back to 0. Then set _oversampling_ratio to 2. Read
-> > _scale and _offset again, call these scale1 and offset1.
-> > 
-> > Then repeat the steps above using scale1 and offset1 in the
-> > calculations. The raw values will be different but the resulting
-> > processed values (mV) should all be the same if the attributes
-> > are implemented correctly.
-> >   
+    bcachefs: Fix lockdep splat in bch2_accounting_read
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122c36a7980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=112c36a7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=162c36a7980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+19c1a30221401d741bc2@syzkaller.appspotmail.com
+Fixes: bf4baaa087e2 ("bcachefs: Fix lockdep splat in bch2_accounting_read")
+
+  parent: u64s 5 type btree_ptr SPOS_MAX len 0 ver 0
+  child: u64s 11 type btree_ptr_v2 U64_MAX:18374686479671623680:50331647 len 0 ver 0: seq 2285c34bed0abe32 written 16 min_key POS_MIN durability: 1 ptr: 0:31:0 gen 0, fixing
+bcachefs (loop0): bch2_get_scanned_nodes(): recovery btree=xattrs level=0 U64_MAX:18374686479671623680:50331648 - SPOS_MAX
+bcachefs (loop0): set_node_max(): u64s 11 type btree_ptr_v2 U64_MAX:18374686479671623680:50331647 len 0 ver 0: seq 2285c34bed0abe32 written 16 min_key POS_MIN durability: 1 ptr: 0:31:0 gen 0 -> SPOS_MAX
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_cache.c:280!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5854 Comm: syz-executor700 Not tainted 6.12.0-rc6-next-20241105-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__bch2_btree_node_hash_insert+0x12ed/0x1310 fs/bcachefs/btree_cache.c:280
+Code: f6 fd e9 9d f5 ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c f2 f7 ff ff 48 89 df e8 2e d5 f6 fd e9 e5 f7 ff ff e8 04 74 8c fd 90 <0f> 0b e8 fc 73 8c fd 90 0f 0b e8 f4 73 8c fd 90 0f 0b e8 1c 6c bc
+RSP: 0018:ffffc90003d36640 EFLAGS: 00010293
+RAX: ffffffff840963bc RBX: ffff8880282a0228 RCX: ffff888034390000
+RDX: 0000000000000000 RSI: ffff8880282a0000 RDI: ffff888075b81a90
+RBP: ffffc90003d36770 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000000001f001 R12: 1ffff11005054045
+R13: dffffc0000000000 R14: ffff888075b81a90 R15: ffff8880282a0000
+FS:  0000555559c71380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055792096e558 CR3: 00000000758cc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ set_node_max+0x542/0x710 fs/bcachefs/btree_gc.c:188
+ btree_repair_node_end fs/bcachefs/btree_gc.c:301 [inline]
+ bch2_btree_repair_topology_recurse+0x5a7c/0x6c10 fs/bcachefs/btree_gc.c:427
+ bch2_check_topology+0x6d4/0xba0 fs/bcachefs/btree_gc.c:554
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:216
+ bch2_run_recovery_passes+0x290/0x9f0 fs/bcachefs/recovery_passes.c:286
+ bch2_fs_recovery+0x25cc/0x39b0 fs/bcachefs/recovery.c:893
+ bch2_fs_start+0x37c/0x610 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2186
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa63b34497a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff4e112dd8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fff4e112df0 RCX: 00007fa63b34497a
+RDX: 0000000020000180 RSI: 0000000020000000 RDI: 00007fff4e112df0
+RBP: 0000000000000004 R08: 00007fff4e112e30 R09: 00000000000059b6
+R10: 0000000000800008 R11: 0000000000000282 R12: 0000000000800008
+R13: 00007fff4e112e30 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__bch2_btree_node_hash_insert+0x12ed/0x1310 fs/bcachefs/btree_cache.c:280
+Code: f6 fd e9 9d f5 ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c f2 f7 ff ff 48 89 df e8 2e d5 f6 fd e9 e5 f7 ff ff e8 04 74 8c fd 90 <0f> 0b e8 fc 73 8c fd 90 0f 0b e8 f4 73 8c fd 90 0f 0b e8 1c 6c bc
+RSP: 0018:ffffc90003d36640 EFLAGS: 00010293
+RAX: ffffffff840963bc RBX: ffff8880282a0228 RCX: ffff888034390000
+RDX: 0000000000000000 RSI: ffff8880282a0000 RDI: ffff888075b81a90
+RBP: ffffc90003d36770 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000000001f001 R12: 1ffff11005054045
+R13: dffffc0000000000 R14: ffff888075b81a90 R15: ffff8880282a0000
+FS:  0000555559c71380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055792096e558 CR3: 00000000758cc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
