@@ -1,192 +1,292 @@
-Return-Path: <linux-kernel+bounces-403016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196059C2F98
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:11:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0109C2F9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 22:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC491C20F55
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:11:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BC241F21917
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D8B1A2625;
-	Sat,  9 Nov 2024 21:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4121A1A262A;
+	Sat,  9 Nov 2024 21:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ReTnYzKA"
-Received: from pv50p00im-ztdg10012001.me.com (pv50p00im-ztdg10012001.me.com [17.58.6.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Epr4fNIs"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732C319D064
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 21:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5260D2E628
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 21:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731186664; cv=none; b=IKlRY/dxSgnWexo9CtUsrUcoWSbY+fm0+yIbu3ovJ8Eo7HhA2jPkzRVO95Y/xkYxCb1qhOURDi3WvRroGEP251MafrBxkDWOrVH/hh46JYZIGez+gcIDdNM87jfP6g1rvTlWOBwkvxNxIbl70Qfp0SctseqDhRgcwUSS0+7O4h0=
+	t=1731186711; cv=none; b=FCbrAAY5d6NEDeOh/i3ViQQQq/w1819Ad4I273ZGrTjfuzqdofFY2TnDr6okBcdKqJsW91LyiNZ1rErm0IOhVGjvliEY5LpGu5SJG1q43urUCjSAnfJGK88A3kIsAn03BRo8j+cb0WlBlB4Jo9tUSIfaiJ3S/pywVps3RFMnr9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731186664; c=relaxed/simple;
-	bh=OSGp+o9sm4rA8egovf6qzFSLKDbiMjs7j3NS2oNGMNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orbvtg3pCNw573rFBcZ5XRtyRtUO5w5lT3hqGobffv7aj3KC/1//7pmrZVnE5eZJ3rb9J9qizXLwkahKnOcas+aYtu1xjistuHdKsKTFR81gBU8AFTgyKUoyFrAyyD0Q9ijvXk4KsFmEdxvhjgE17d+5HwWFVEccLLBNDREXN9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ReTnYzKA; arc=none smtp.client-ip=17.58.6.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1731186663;
-	bh=vlcvqP3g3jhVveFyLoQp5nyZcFaxJKwBE3uaOe3Pk+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=ReTnYzKApneWE3k8wOYswbJzIHZVCAzIAnpzy/Wy+P1R3XUBXO+e8K8nBiYFImHvX
-	 Y32yOCnyMI5g76mnrWhT6YwrLdkBDMnMDoCnjaZfS2l7zkDecu9URHCViRQcG+0l2v
-	 r07/THzdpWACOykh0t84lfFL6DJVl+r0a91TxQ92Hil8AOXWAfgUhGh5u+zNrkyw0z
-	 RBHlRw7OJcaqUHgRhjrC5YPjTCfU8d2x7t9uHlVbk3OtQN/24PCwFSdya8+wLTBUPV
-	 HCrfvr8VQVzf7PE8XsZtarJ4n3IAKqfcFf6tJopIefmDY7l9LMW3FoqJlLzwLR6nFg
-	 9SCQ/A2Ivebxw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10012001.me.com (Postfix) with ESMTPSA id D8FB7A0164;
-	Sat,  9 Nov 2024 21:10:57 +0000 (UTC)
-Message-ID: <58d77d45-d052-4431-91de-3912a9c675b5@icloud.com>
-Date: Sun, 10 Nov 2024 05:10:53 +0800
+	s=arc-20240116; t=1731186711; c=relaxed/simple;
+	bh=ABgMM+icK5ddNiMD+2j3K13rmHK3dfBaOBo3S2H0nVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZKFCD7LsMv6Plrew2WqJKNUaKU1dOhJKnK6UzILG3zStBwLfpvA5QJ1sP37IAN2M/2RvQMa9nWN/whazt6wIUAjBQI+4hO2OPXJSTZp0aJIDJtO7+8/S0BUk2QhJ6YOLoW9xr/ziJQvrycsL0o6rnFpMp/de8DNXfTs/QV/9RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Epr4fNIs; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99f646ff1bso496134566b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 13:11:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731186708; x=1731791508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dzaEFRktAkP/klNBiZ+4cVbDvhXpkICC/aLo7wIIblk=;
+        b=Epr4fNIsLr/Q9A6X3OKNfK8yFo+m/Y7wl0fw6/tY2f01yP2pkpodl1OcCHHueGTN5B
+         xPt69W1enLtqw+iTDE0v4F9zk7AY8RteyJnfQX2Ux0nOYqWIa5cc97YDBwGZK5wncQvE
+         phZOz+iR1X5Z9GrS6ITFoSy44N2Jb6vroIGSQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731186708; x=1731791508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dzaEFRktAkP/klNBiZ+4cVbDvhXpkICC/aLo7wIIblk=;
+        b=OyOZBskLpEMQV65qikzOkVaRQKh9jEVAdGxpUNUpsPUDTJ069CwxehuGQV/lBylm62
+         JG/0z6rZaBgmn+AP/BR6iVYkrM/mKLk7S4Gg2s6ipfIo3kbX91UPEpBM++7VPdVrL6A/
+         pq0RMkmRp4Q/ggUqLjESEu5xaz5OKFQYGnmQcLon9nF2fsudVBQwXReXnLLiCY2XzVgr
+         4+BEh3xlT8pg32b6kjKBuzkhyx96md0n839FBLse1i+cNK9jdKQlLThHRUyEw7KsHLCE
+         96/9fjNY+joenJkQ06CjHZI6qsMenTkvGGEJAJg0AsmXm8gnt15gwltrU2bfvUwSbWVj
+         ytvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWidsGr+kR9TDhDltXSGOcqdlnOqzvG6jQZQBBL/yHpqpy5DmL/fDbBrUYoePaVwGV5zU2TWN80AqtNBWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycW5cy80Vl7v5Mf0aYR4isDu7nEI92dMSlSaV4V7pv25hsjzh5
+	++71Qu7dztSGrwzqwI9VrXjAJPKtADDlVtBpCWtrP+Du6kciwbWuYPB1zFRQTDOExLM0zKrcOsw
+	IJFMmghsTQsp9wX3BvLv0XWWgf03P1X2us/YlQ+fXhmm0xQl36K4y6ANpkJhtyy0uJ7FP9o27LH
+	23W4Unh9/USKYoxCAxrfCaxibAlw==
+X-Google-Smtp-Source: AGHT+IFPcoJr8nElnRzhiZR4oQp1IJiFbpTh6X8yXbkRXn/08dHID1yw3BffYyZCmclFQvK6f6wwrWN6dDpKgJ1VYG8=
+X-Received: by 2002:a17:907:8693:b0:a9a:1b32:5aa8 with SMTP id
+ a640c23a62f3a-a9eefebd42dmr758229066b.4.1731186707577; Sat, 09 Nov 2024
+ 13:11:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: iio, syfs, devres: devm_kmalloc not aligned to pow2 size argument
-To: Matteo Martelli <matteomartelli3@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jonathan Cameron <jic23@kernel.org>, Joe Perches <joe@perches.com>,
- Jens Axboe <axboe@kernel.dk>, Peter Zijlstra <peterz@infradead.org>
-Cc: Marc Gonzalez <marc.w.gonzalez@free.fr>, Peter Rosin <peda@axentia.se>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-block@vger.kernel.org
-References: <c486a1cf98a8b9ad093270543e8d2007@gmail.com>
- <c6d634d088f77abd956dbd125c26d43d@gmail.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <c6d634d088f77abd956dbd125c26d43d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: GYISZ6Ywl379103HIRfHooemgYBYVHDV
-X-Proofpoint-GUID: GYISZ6Ywl379103HIRfHooemgYBYVHDV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-09_21,2024-11-08_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 bulkscore=0 clxscore=1011 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2411090184
+References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
+ <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
+ <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
+ <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
+ <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com>
+In-Reply-To: <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com>
+From: Doug Covelli <doug.covelli@broadcom.com>
+Date: Sat, 9 Nov 2024 16:11:36 -0500
+Message-ID: <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Joel Stanley <joel@jms.id.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/11/8 17:04, Matteo Martelli wrote:
-> On Mon, 28 Oct 2024 13:04:10 +0100, matteomartelli3@gmail.com wrote:
->> Hi everyone,
->>
->> I found an issue that might interest iio, sysfs and devres, about a
->> particular usage of devm_kmalloc() for buffers that later pass through
->> sysfs_emit() or sysfs_emit_at(). These sysfs helpers require the output
->> buffer to be PAGE_SIZE aligned since commit 2efc459d06f1 ("sysfs: Add
->> sysfs_emit and sysfs_emit_at to format sysfs output"). Such requirement
->> is satisfied when kmalloc(PAGE_SIZE, ...) is used but not when
->> devm_kmalloc(PAGE_SIZE,...) is used as it actually returns a pointer to
->> a buffer located after the devres metadata and thus aligned to
->> PAGE_SIZE+sizeof(struct devres).
->>
->> Specifically, I came across this issue during some testing of the
->> pac1921 iio driver together with the iio-mux iio consumer driver, which
->> allocates a page sized buffer to copy the ext_info of the producer
->> pac1921 iio producer driver. To fill the buffer, the latter calls
->> iio_format_value(), and so sysfs_emit_at() which fails due to the buffer
->> not being page aligned. This pattern seems common for many iio drivers
->> which fill the ext_info attributes through sysfs_emit*() helpers, likely
->> necessary as they are exposed on sysfs.
->>
->> I could reproduce the same error behavior with a minimal dummy char
->> device driver completely unrelated to iio. I will share the entire dummy
->> driver code if needed but essentially this is the only interesting part:
->>
->> 	data->info_buf = devm_kzalloc(data->dev, PAGE_SIZE, GFP_KERNEL);
->> 	if (!data->info_buf)
->> 		return -ENOMEM;
->>
->> 	if (offset_in_page(data->info_buf))
->> 		pr_err("dummy_test: buf not page algined\n");
->>
->> When running this, the error message is printed out for the reason above.
->>
->> I am not sure whether this should be addressed in the users of
->> devm_kmalloc() or in the devres implementation itself. I would say that
->> it would be more clear if devm_kmalloc() would return the pointer to the
->> size aligned buffer, as it would also comply to the following kmalloc
->> requirement (introduced in [1]):
->>
->> The address of a chunk allocated with `kmalloc` is aligned to at least
->> ARCH_KMALLOC_MINALIGN bytes. For sizes of power of two bytes, the
->> alignment is also guaranteed to be at least to the respective size.
->>
->> To do so I was thinking to try to move the devres metadata after the
->> data buffer, so that the latter would directly correspond to pointer
->> returned by kmalloc. I then found out that it had been already suggested
->> previously to address a memory optimization [2]. Thus I am reporting the
->> issue before submitting any patch as some discussions might be helpful
->> first.
->>
+On Sat, Nov 9, 2024 at 1:20=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com> =
+wrote:
+>
+> On 11/8/24 06:03, Zack Rusin wrote:
+> >>> There's no spec but we have open headers listing the hypercalls.
+> >>> There's about a 100 of them (a few were deprecated), the full
+> >>> list starts here:
+> >>> https://github.com/vmware/open-vm-tools/blob/739c5a2f4bfd4cdda491e6a6=
+f6869d88c0bd6972/open-vm-tools/lib/include/backdoor_def.h#L97
+> >>> They're not well documented, but the names are pretty self-explenator=
+y.
+> >>
+> >> At a quick glance, this one needs to be handled in KVM:
+> >>
+> >>    BDOOR_CMD_VCPU_MMIO_HONORS_PAT
+> >>
+> >> and these probably should be in KVM:
+> >>
+> >>    BDOOR_CMD_GETTIME
+> >>    BDOOR_CMD_SIDT
+> >>    BDOOR_CMD_SGDT
+> >>    BDOOR_CMD_SLDT_STR
+> >>    BDOOR_CMD_GETTIMEFULL
+> >>    BDOOR_CMD_VCPU_LEGACY_X2APIC_OK
+> >>    BDOOR_CMD_STEALCLOCK
+> >
+> > I'm not sure if there's any value in implementing a few of them.
+>
+> The value is that some of these depend on what the hypervisor does, not
+> on what userspace does.  For Hypervisor.framework you have a lot of
+> leeway, for KVM and Hyper-V less so.
+>
+> Please understand that adding support for a closed spec is already a bit
+> of a tall ask.  We can meet in the middle and make up for the
+> closedness, but the way to do it is not technical; it's essentially
+> trust.  You are the guys that know the spec and the userspace code best,
+> so we trust you to make choices that make technical sense for both KVM
+> and VMware.  But without a spec we even have to trust you on what makes
+> sense or not to have in the kernel, so we ask you to be... honest about
+> that.
+>
+> One important point is that from the KVM maintainers' point of view, the
+> feature you're adding might be used by others and not just VMware
+> Workstation.  Microsoft and Apple might see things differently (Apple in
+> particular has a much thinner wrapper around the processor's
+> virtualization capbilities).
+>
+> > iirc
+> > there's 101 of them (as I mentioned a lot have been deprecated but
+> > that's for userspace, on the host we still have to do something for
+> > old guests using them) and, if out of those 101 we implement 100 in
+> > the kernel then, as far as this patch is concerned, it's no different
+> > than if we had 0 out of 101 because we're still going to have to exit
+> > to userspace to handle that 1 remaining.
+> >
+> > Unless you're saying that those would be useful to you. In which case
+> > I'd be glad to implement them for you, but I'd put them behind some
+> > kind of a cap or a kernel config because we wouldn't be using them -
+>
+> Actually we'd ask you to _not_ put them behind a cap, and live with the
+> kernel implementation.  Obviously that's not a requirement for all the
+> 100+ hypercalls, only for those where it makes sense.
+>
+> > besides what Doug mentioned - we already maintain the shared code for
+> > them that's used on Windows, MacOS, ESX and Linux so even if we had
+> > them in the Linux kernel it would still make more sense to use the
+> > code that's shared with the other OSes to lessen the maintenance
+> > burden (so that changing anything within that code consistently
+> > changes across all the OSes).
+>
+> If some of them can have shared code across all OSes, then that's a good
+> sign that they do not belong in the kernel.  On the other hand, if the
+> code is specific to Windows/macOS/ESX/Linux, and maybe it even calls
+> into low-level Hypervisor.framework APIs on macOS, then it's possible or
+> even likely that the best implementation for Linux is "just assume that
+> KVM will do it" and assert(0).
+>
+> In yet other cases (maybe those SGDT/SLDT/STR/SIDT ones??), if the code
+> that you have for Linux is "just do this KVM ioctl to do it", it may
+> provide better performance if you save the roundtrip to userspace and
+> back.  If KVM is the best performing hypervisor for VMware Workstation,
+> then we're happy, :) and if you have some performance issue we want to
+> help you too.
 
-no, IMO, that is not good idea absolutely.
+Appreciate the concern about performance however I don't think it is
+something we should worry about.  Even with our existing VMM, which
+runs at CPL0, all of these backdoor calls are handled by userspace
+which means they are very slow (~28K cycles overhead on my Zen2) and
+are not used in any perf critical code (if they were we would have
+handled them at CPL0). Running on KVM the overhead is significantly
+less.
 
->> I am sending this to who I think might be interested based on previous
->> related activity. Feel free to extend the cc list if needed.
-> 
-> Adding some more context to better understand the impact of this.
-> 
-> With a trivial grep it looks like there are only few instances where
-> devm_k*alloc() is used to allocate a PAGE_SIZE buffer:
-> 
-> $ git grep -n 'devm_.*alloc.*(.*PAGE_SIZE'
-> block/badblocks.c:1584:         bb->page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-> drivers/iio/multiplexer/iio-mux.c:287:          page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
-> drivers/mtd/nand/raw/mxc_nand.c:1702:   host->data_buf = devm_kzalloc(&pdev->dev, PAGE_SIZE, GFP_KERNEL);
-> drivers/usb/gadget/udc/gr_udc.c:1987:           buf = devm_kzalloc(dev->dev, PAGE_SIZE, GFP_DMA | GFP_ATOMIC);
-> sound/soc/sof/debug.c:277:              dfse->buf = devm_kmalloc(sdev->dev, PAGE_SIZE, GFP_KERNEL);
-> 
-> What takes my attention is the bb->page in blocks/badblocks.c, being the
-> buffer named "page" maybe it is supposed to be page aligned?
-> 
-> Also in [3] it was suggested to add the page alignment check for
-> sysfs_emit() and sysfs_emit_at(), but I haven't found why that's
-> necessary. My guess is for optimizations to avoid the buffer to spread
-> in more than one page. Is this correct? Are there other reasons? Can
-> anyone add more details? I think it would help to understand whether
-> page alignment is necessary in the other instances of devm_k*alloc().
-> 
-> Beside page alignment, there are plenty of devm_k*alloc() around the
-> code base, is there any way to spot whether any of those instances
-> expect the allocated buffer to be aligned to the provided size?
-> 
-> If this is a limited use-case it can be worked around with just regular
-> k*alloc() + devm_add_action_or_reset() as Jonathan suggested. However, I
-> still think it can be easy to introduce some alignment related bug,
-> especially when transitioning from k*alloc() to devm_k*alloc() in an old
-> implementation since it can be assumed that they have the same alignment
-> guarantees. Maybe some comment in the devres APIs or documentation would
-> help in this case?
-> 
-> Any thoughts?
+As for the SGDT/SLDT/STR/SIDT backdoor calls these were added > 20
+years ago for SW that used these instructions from CPL3 which did not
+work well before VT/SVM were introduced.  These are really of no use
+on modern CPUs and will be blocked if the guest OS has enabled UMIP.
+Adding support for these to the KVM code would be a bit of a waste
+IMHO  I have no objection to adding support for handling some backdoor
+calls in the kernel if we find ones where it would be advantageous to
+do so I'm just not aware of any where this would be the caase..
+
+> A related topic is that a good implementation, equivalent to what the
+> proprietary hypervisor implemented, might require adding a ioctl to
+> query something that KVM currently does not provide (maybe the current
+> steal clock? IIRC it's only available via a Xen ioctl, not a generic
+> one).  In that case you'd need to contribute that extra API.  Doing that
+> now is easier for both you guys and the KVM maintainers, so that's
+> another reason to go through the list and share your findings.
+
+For stolen time the backdoor call is used to enable the functionality
+not to get/set the stolen time.  I agree that we would probably want
+to do something KVM specific for this one however this is currently
+really only supported by ESX (and only currently used by Photon OS) so
+I don't think adding that support to KVM is critical.
+
+> Anyway, one question apart from this: is the API the same for the I/O
+> port and hypercall backdoors?
+
+Yeah the calls and arguments are the same.  The hypercall based
+interface is an attempt to modernize the backdoor since as you pointed
+out the I/O based interface is kind of hacky as it bypasses the normal
+checks for an I/O port access at CPL3.  It would be nice to get rid of
+it but unfortunately I don't think that will happen in the foreseeable
+future as there are a lot of existing VMs out there with older SW that
+still uses this interface.
+
+> >> I don't think it addresses Paolo's concern (if I understood Paolo's co=
+ncern
+> >> correctly), but it would help from the perspective of allowing KVM to =
+support
+> >> VMware hypercalls and Xen/Hyper-V/KVM hypercalls in the same VM.
+> >
+> > Yea, I just don't think there's any realistic way we could handle all
+> > of those hypercalls in the kernel so I'm trying to offer some ideas on
+> > how to lessen the scope to make it as painless as possible. Unless you
+> > think we could somehow parlay my piercing blue eyes into getting those
+> > patches in as is, in which case let's do that ;)
+>
+> Unlikely :) but it's not in bad shape at all!  The main remaining
+> discussion point is the subset of hypercalls that need support in the
+> kernel (either as a kernel implementation, or as a new ioctl).
+> Hopefully the above guidelines will help you.
+>
+> >> I also think we should add CONFIG_KVM_VMWARE from the get-go, and if w=
+e're feeling
+> >> lucky, maybe even retroactively bury KVM_CAP_X86_VMWARE_BACKDOOR behin=
+d that
+> >> Kconfig.  That would allow limiting the exposure to VMware specific co=
+de, e.g. if
+> >> KVM does end up handling hypercalls in-kernel.  And it might deter abu=
+se to some
+> >> extent.
+> >
+> > I thought about that too. I was worried that even if we make it on by
+> > default it will require quite a bit of handholding to make sure all
+> > the distros include it, or otherwise on desktops Workstation still
+> > wouldn't work with KVM by default, I also felt a little silly trying
+> > to add a kernel config for those few lines that would be on pretty
+> > much everywhere and since we didn't implement the vmware backdoor
+> > functionality I didn't want to presume and try to shield a feature
+> > that might be in production by others with a new kernel config.
+> We don't have a huge number of such knobs but based on experience I
+> expect that it will be turned off only by cloud providers or appliance
+> manufacturers that want to reduce the attack surface.  If it's enabled
+> by default, distros will generally leave it on.  You can also add "If
+> unsure, say Y" to the help message as we already do in several cases.(*)
+>
+> In fact, if someone wants to turn it off, they will send the patch
+> themselves to add CONFIG_KVM_VMWARE and it will be accepted.  So we
+> might as well ask for it from the start. :)
+>
+> Thanks,
+>
+> Paolo
+>
+> (*) In fact I am wondering if we should flip the default for Xen, in the
+> beginning it was just an Amazon thing but since then David has
+> contributed support in QEMU and CI.  To be clear, I am *not* asking
+> VMware for anything but selftests to make CONFIG_KVM_VMWARE default to
+> enabled.
 >
 
-why not to use existing APIs?
-
-addr = devm_get_free_pages(dev, GFP_KERNEL|__GFP_ZERO, 0);
-devm_free_pages(dev,addr);
-
->>
->> [1]: https://lore.kernel.org/all/20190826111627.7505-3-vbabka@suse.cz/
->> [2]: https://lore.kernel.org/all/20191220140655.GN2827@hirez.programming.kicks-ass.net/
-> 
-> [3]: https://lore.kernel.org/all/743a648dc817cddd2e7046283c868f1c08742f29.camel@perches.com/
-> 
-> Best regards,
-> Matteo Martelli
-> 
-
+--=20
+This electronic communication and the information and any files transmitted=
+=20
+with it, or attached to it, are confidential and are intended solely for=20
+the use of the individual or entity to whom it is addressed and may contain=
+=20
+information that is confidential, legally privileged, protected by privacy=
+=20
+laws, or otherwise restricted from disclosure to anyone else. If you are=20
+not the intended recipient or the person responsible for delivering the=20
+e-mail to the intended recipient, you are hereby notified that any use,=20
+copying, distributing, dissemination, forwarding, printing, or copying of=
+=20
+this e-mail is strictly prohibited. If you received this e-mail in error,=
+=20
+please return the e-mail to the sender, delete it from your computer, and=
+=20
+destroy any printed copy of it.
 
