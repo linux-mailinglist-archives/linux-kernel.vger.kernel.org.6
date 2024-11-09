@@ -1,97 +1,158 @@
-Return-Path: <linux-kernel+bounces-402801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5450C9C2C6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:02:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5212C9C2C71
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8521F21B12
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C6A282EE4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490E918593C;
-	Sat,  9 Nov 2024 12:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBAD1917C2;
+	Sat,  9 Nov 2024 12:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="mi83kdju"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="RYlsWQ5e"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D002215573B
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 12:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C5233D95;
+	Sat,  9 Nov 2024 12:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731153753; cv=none; b=tOnYXQNPzw7CkgM9bA8B65xmkrxQY894q4Vx5Ts5WmmYSKv7uMU0vUlAj8ZfV3XAX/7SlcvHTpYAPvdCG9qbFB5Uqd6OpEdHVMpqKSNrpxeSfosJERWxcuAqpdc0oQyChPOYarRgGwBTymolByxJSkUmkgYCAI8G1zUx/IETbCM=
+	t=1731154094; cv=none; b=RRhRN21E7FqHa+vZL7aB06LlQNyOVfRJDBGGHAewXKDQ6rl6TIpU0Exri94LlS2T1Ok1RNAVR44K7LtM3ie/HO+3nirU24F5kQOB+OKYGcRQwnd1urQWKvRFD856mM4cN2ocDyKLoGXtMemkEkGjcFiTP9WF4PpBWvUNkd3FnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731153753; c=relaxed/simple;
-	bh=+08JvFNeEsK5PmW58qIM7105T4UsvFE17eF7xR1RALw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Su12HJi/5ddJO36L5IuMJ4SpGthBeck33ockqkQsmfIiagkuIhUrBlOttx1gvAoz1U06/QwuMAUKl9q+cOcjDVL2MU+xQrp6yqyZp3I7h6LNtNt4LWCjIXX+e+EmgS/AueGnNvr9OJH353c3b0FuBBhf8z0nldbQl0S+cMV4Gjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=mi83kdju; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org (pool-173-48-82-224.bstnma.fios.verizon.net [173.48.82.224])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4A9C2QTQ021141
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 9 Nov 2024 07:02:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1731153748; bh=JvM0XHBkVVM/umaSi0Ow4veRrWWW9z1pzmC6b2z3ZTM=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=mi83kdjuChn2EFhOJYsz5QmthqwqR2enQ2St8ukR53APiUt/seyfISfTZleeeXRY3
-	 8/oNNFQJ6kGoBh8TpGt7snQF55fAhYZ/awa/WfQ9qeFs7DbOFW2arUkd+MduBKkBEa
-	 jvh4bUO5u1Ds48z4KWtHQMFyJksf8YmHU0pA9qrn1jajsW2qpkw2NngvZoDjuSx2ab
-	 YXYZbiUA5IliBbFfooI5RfIzPnd6tpbxuS7oeRCgWegT5R5O1S2onZRDH/Tjuq2rig
-	 G8dIWK5ZxpBAzP4Xe3X/JcahpjWvAT0AMtn1ImDY2aW73139SG1tl1BCOSMMnEKUCY
-	 aQeFk67rbddcQ==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id C534B340242; Sat, 09 Nov 2024 07:01:18 -0500 (EST)
-Date: Sat, 9 Nov 2024 07:01:18 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Sebastian Feld <sebastian.n.feld@gmail.com>
-Cc: open list <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: Kernel strscpy() should be renamed to kstrscpy() Re: [PATCH]
- nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
-Message-ID: <20241109120118.GA1805018@mit.edu>
-References: <20241106024952.494718-1-danielyangkang@gmail.com>
- <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
- <283409A8-6FD1-461C-8490-0E81B266EF9D@redhat.com>
- <CAHnbEGKRKrw-9_wnrASVHniZ1RggP+b-YzvwPYM7ScsMvmpCGA@mail.gmail.com>
+	s=arc-20240116; t=1731154094; c=relaxed/simple;
+	bh=1BgLXWAmX3G7znUFGLxBN+mI14pIHmJN0CK3Mxdvj/I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IVmofH5zj4EIHiXzzTGlOFkRc0zsN/soilEWxmr6gsZaphyqPksyms5+dhzJjQupllmelhBOERGZSJyYiwzVu14UMVpDSpo3FVVEGxdgilR+xQw5555J7aFPT5wbg2ju2Z8m65E3yplHXyJZelfQ0vYH+uop4z5/Tznoj+V/lXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=RYlsWQ5e; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.118.162] (254C229A.nat.pool.telekom.hu [37.76.34.154])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 908C6E45BA;
+	Sat,  9 Nov 2024 12:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1731154090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ALn3Z6S5KweSjpqd/ggrf98xa9odAbF4IbVQaYpxzsM=;
+	b=RYlsWQ5efct9YiCvRwNtLtljS7JOS+jFzoYlkcIC3mQH4RUSQEsv4QlOBN+GuvgYDyePsj
+	R1F/bG2AhH8IOhoH/FABiuPiXEeKPRMV3Qe714GL5HxI9ml3CMvx03o+YK6WAui+BMdmY8
+	QoreMUoFwBkAOiXJT7i+6vpXBl/Cv7BCTHV9hNjUn6KAK6TH1k7W3hfAjoCHhpIDMMXHgY
+	j92byct8HjS75L5cWio8t+7E+4lE86C2ZZN1JKQKQhhA9mB9VtJ27HyhP5E0MVKUibT4vJ
+	WeIGYyhb56lERv0Mzwl8HK+l48/TME2rLaR5jyjyMNk4fpiH3/caCbi1+tx+xA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v4 00/10] Add MSM8917/PM8937/Redmi 5A
+Date: Sat, 09 Nov 2024 13:08:02 +0100
+Message-Id: <20241109-msm8917-v4-0-8be9904792ab@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHnbEGKRKrw-9_wnrASVHniZ1RggP+b-YzvwPYM7ScsMvmpCGA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKJQL2cC/23MTQ7CIBCG4asY1mIYKEJdeQ/jgvLTTmKpAdNom
+ t5d2k1N6vKbzPNOJPuEPpPLYSLJj5hxiGVUxwOxnYmtp+jKJpzxChjUtM+9rkFRUFY4FkJlJCf
+ l+5l8wPdaut3L7jC/hvRZwyMs131jBMpogCCsAae1l9feYHxgxNiehtSSJTTyHyxgw7xgbZiSw
+ RhdN/AXiw0DUxsWBZ+ds9JYVyvd7PA8z19gt3eIHQEAAA==
+X-Change-ID: 20241019-msm8917-17c3d0ff4a52
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731154089; l=2917;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=1BgLXWAmX3G7znUFGLxBN+mI14pIHmJN0CK3Mxdvj/I=;
+ b=Zyd/xEIQ2in3xhrUCvbShhWTFEmjjUu32jv88TkIBnFHNhmb3e0gMXDCkUiMOd/kzu0MHTKwg
+ 9EDuvZX0ddTBWK1aeUqI2FALwuywpUEq6/Cb7GqPjiHr3RCMHl9B/cr
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Sat, Nov 09, 2024 at 12:11:02PM +0100, Sebastian Feld wrote:
-> > > How should the "bounds checking" work in this case if you only pass
-> > > two arguments ?
-> >
-> > The linux kernel strscpy() checks the sizeof the destination.
-> 
-> Then the kernel strscpy() should be renamed accordingly, and not
-> confuse people. Suggested name would be kstrscpy().
-> Otherwise this would disqualify strscpy() ever from being adopted as a
-> POSIX standard, as there are two - kernel and glibc - conflicting
-> implementations
+This patch series add support for MSM8917 soc with PM8937 and
+Xiaomi Redmi 5A (riva).
 
-If POSIX decided that this meant they couldn't adopt strscpy(), that
-is ANSI / ISO's problem, not ours.  Note that strscpy() supports the 3
-argument version of glibc, and POSIX has always been willing to
-standardize a subset of a particullar interface.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v4:
+- msm8917 pinctrl: Fix gpio regexp in the schema.
+- msm8937 tsens: Rename ops_msm8976 to ops_common and use it for msm8937.
+- msm8917: fix address padding, naming and ordering, remove polling-delays.
+- Remove applied patches from the series.
+- Link to v3: https://lore.kernel.org/r/20241107-msm8917-v3-0-6ddc5acd978b@mainlining.org
 
-Otherwise, any Legacy Unix system which added some one or more flags
-to some particular interface could potentially disqualify anything
-with the same name of that interface from ever being standardized,
-which is (a) stupid, and (b) not what has been done in historical
-practice.
+Changes in v3:
+- msm8917-xiaomi-riva: Fix issues addressed by Konrad.
+- msm8917: Fix node addresses, orders of some properties.
+- pm8937: simplify vadc channels.
+- msm8917 pinctrl: Fix schema issues addressed by Krzysztof. 
+- Remove applied tcsr patch from this series.
+- Reword some commit title.
+- Link to v2: https://lore.kernel.org/r/20241031-msm8917-v2-0-8a075faa89b1@mainlining.org
 
-					- Ted
+Changes in v2:
+- Add msm8937 tsens support.
+- Fix issues addressed by reviews.
+- Link to v1: https://lore.kernel.org/r/20241019-msm8917-v1-0-f1f3ca1d88e5@mainlining.org
+
+---
+Barnabás Czémán (7):
+      dt-bindings: pinctrl: qcom: Add MSM8917 pinctrl
+      dt-bindings: thermal: tsens: Add MSM8937
+      thermal/drivers/qcom/tsens-v1: Add support for MSM8937 tsens
+      dt-bindings: iommu: qcom,iommu: Add MSM8917 IOMMU to SMMUv1 compatibles
+      dt-bindings: nvmem: Add compatible for MS8917
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 5A
+      arm64: dts: qcom: Add Xiaomi Redmi 5A
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add PM8937 PMIC
+
+Otto Pflüger (2):
+      pinctrl: qcom: Add MSM8917 tlmm pinctrl driver
+      arm64: dts: qcom: Add initial support for MSM8917
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
+ .../bindings/pinctrl/qcom,msm8917-pinctrl.yaml     |  160 ++
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dts   |  297 +++
+ arch/arm64/boot/dts/qcom/msm8917.dtsi              | 1997 ++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/pm8937.dtsi               |  152 ++
+ drivers/pinctrl/qcom/Kconfig.msm                   |    6 +
+ drivers/pinctrl/qcom/Makefile                      |    1 +
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             | 1620 ++++++++++++++++
+ drivers/thermal/qcom/tsens-v1.c                    |   21 +-
+ drivers/thermal/qcom/tsens.c                       |    3 +
+ drivers/thermal/qcom/tsens.h                       |    2 +-
+ 15 files changed, 4262 insertions(+), 8 deletions(-)
+---
+base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
+change-id: 20241019-msm8917-17c3d0ff4a52
+
+Best regards,
+-- 
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
 
