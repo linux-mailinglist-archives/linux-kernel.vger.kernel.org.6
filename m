@@ -1,406 +1,271 @@
-Return-Path: <linux-kernel+bounces-402718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC07A9C2AF1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:05:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D70F9C2AF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFE0282AE5
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF9E282965
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5394145335;
-	Sat,  9 Nov 2024 07:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DBE1422C7;
+	Sat,  9 Nov 2024 07:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x2rNUr3m"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FkwCvb/h"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BA013B2A2
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 07:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B64A1E
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 07:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731135926; cv=none; b=BeRVztKTAV40Wx8y06YafXYNEmxqPRulf4RVIW4IIHATjPpmjpn9nbKUFV3F3n7PlEvs/J/OohWzP/u3Bjg29RTdkYtYQIqaAj49gcuS6UemmLd1IUV3DWa31FylcWSp9KE4UgwWAmIEl/nP98YK/gDet7ADtaHVvEORfVYWlU4=
+	t=1731135989; cv=none; b=S+b9DYNh+keQsEAMXisoyZyzVY3CFf2xsaqbJSoCypb+C8JKuqmhfUyfRJW/1oKEUaCwHBml6Zo6ugVerhKdgejF2Sf0K8pPdL8h3uot0aFyo+1wRFn53m95fO4vbBb2aLY22XnOscH/IIT/e/seBl7dWq7mAYXIQrIIyfMH6ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731135926; c=relaxed/simple;
-	bh=QBWrQAZe4RkfnNpuxREn7Ccetz0FPBegWZvSqiF28qk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEQbeaUFKie8B5RdrCxeeQw1cAMLTbrbQFc9gcCSyOReHOYe+846Zg7eVJESiRGSEi4WnqAU7R/tQI9pjyZECM3vSSkHCM3cCJVxCk2OxX1n8KU/mIleWYQ682kdgWT5RpjxXHSD10z23jSuXFauPJFE3HWEUDQSWGF5v5X1/48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x2rNUr3m; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f58c68c5so5362254e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 23:05:24 -0800 (PST)
+	s=arc-20240116; t=1731135989; c=relaxed/simple;
+	bh=8jNoAViCWI8vsA2Xo4+nKPQxFMzY/yJKP1J4b0jFQnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kb0Aw8GM0cxSKmU4xDoWWMpwyOdWbcUuYeqeM/G5IyYhQwqAh9750wOzW6bdr7uNTw/Y9wGIukz90ZRNJ7ebY1lej8J4XoDrO3ANLxhotlyAehOUWo9CMD9Y3jE3rLm2pAdY8ydNUsM950IFvV8VTAz69IeU+gk/p99hW5srApg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FkwCvb/h; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a628b68a7so490358066b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 23:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731135923; x=1731740723; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qK89Gn/2BNMULqn/Te3QgPk+7HsFVw5alc1hlF/PKtw=;
-        b=x2rNUr3mkU3IdiSRGkJ2TqBwskqv0Mrv0p4SDlaffYWlhUsNTi9XUkesmoYIJ1TbfC
-         MniWZ8X1QPdv/F6DJL5hyFPrOYSmD3/H/ri7HpBcpv09NlZlUOvhEbn57rtrViUlydBL
-         eFaATcm1YJIghWVv6jXW/hTgStoh7FKp9MYU+g5oJ6IaF1lXtRNlypv1Wm1wLDkci4RQ
-         wMDznQmhJeWFqmrDaByT3PvWDnjvIo+XDXAAsGev5jVsG5h/BwXkLKtkRKcZIAJ+LWN8
-         xrF0Kmae/kZFndb2RBxh9gpijkERIdUIj/qLsbJXByJoBuVaQDhKYiyo59n/tUok8Tkw
-         KAMg==
+        d=suse.com; s=google; t=1731135985; x=1731740785; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8jNoAViCWI8vsA2Xo4+nKPQxFMzY/yJKP1J4b0jFQnY=;
+        b=FkwCvb/h2XlOT98Hl9Cy2E6v4yGiNl5cFbxNNizw/wfxsjaUr8u5YxGIIuRXX36yxd
+         tEx6WkaaezKTxzHlw50uubtFSUk5UPgcDeoMwXgWvRA6SFP+y5PZ3XqoJzXiYE5O3r+U
+         JiDjrbThMlKZ79uspnV0/Rw+ld9YVibYXQIcrqawL5fWlTditSdeYDzoNQwQYMC+1q6f
+         IAJmsstJEVWar9OPyw3b+tmwS79xM3D+K94gz9sBnsrXJ7FFkAOb783e/S7kyeqtNC/y
+         A2DxPvey94mrOS1F1+Ft1h/jYd5lj9enay6jHd7nF67ePmp3pNOBGAHUu8YvjgjxnNBe
+         mkNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731135923; x=1731740723;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qK89Gn/2BNMULqn/Te3QgPk+7HsFVw5alc1hlF/PKtw=;
-        b=iRe0IgbeHXx7CZMsYMgVi8/2j8endbEFPIy/MpoC1mlG1xnGdRptTnQ1EZ5vAr7E+m
-         qTRxP64ndGAAsiOFAn9OwGFT3X3OXHz5sp7l7yzpAGh3W5jxViE00M6lQ5drHuMEemLw
-         ovLFPxdkgO1n01ZcCSF8g5wPoo32JgXPPG6n8uogs1S6kvylTExZA5QPyDETmgNAHuN7
-         0HGW0wRy/KvDJq8fwQzBmQw/nBaHtRFasfGSNH3pscv6k/8d+wdEhIoxl7EfU0RPDrOq
-         n/pw22on+bMo/bHz27degXQr8Euj4kjTVRVG3JfOw81nQE4MlirbuL1O/Iqli+yZYGEW
-         Akwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNXA+tOViv23yb9H6Je07RxFhs69A8zpDh51MhPsF8xZk+H3qf8zW5pJuQSPoFNbj1Er5Le4rUV8wh5w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR3HPjUqFsHbUkJS2PHmXLDRhNMbmO04rwftuwRf3hDfuwhVjG
-	kUM9Dzq0TJr4nzeoqncmQvYru2Uc1S7oNt7rqFEtJ0MZyxO1nNR3rHljHuB+Ndo=
-X-Google-Smtp-Source: AGHT+IFDj1LLmHbRZOO+/S6hnT+C0wYhtqnCl28IZmhVg58DIluM8aGKuUuRjj41zc6/5ThGI4Rqiw==
-X-Received: by 2002:a05:6512:b83:b0:536:53e3:feae with SMTP id 2adb3069b0e04-53d862bebd9mr4269153e87.11.1731135922597;
-        Fri, 08 Nov 2024 23:05:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82678641sm852333e87.10.2024.11.08.23.05.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 23:05:21 -0800 (PST)
-Date: Sat, 9 Nov 2024 09:05:18 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org, 
-	Guenter Roeck <groeck@chromium.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
- google,cros-ec-typec for DP altmode
-Message-ID: <hqmx7jtkvrwvb27n56hw7rpefhp37lhr3a5fawz7gsl76uuj5s@h7m6wpdhibkk>
-References: <20240901040658.157425-1-swboyd@chromium.org>
- <20240901040658.157425-16-swboyd@chromium.org>
- <phdcjgqqpjpruxp7v2mw446q73xr3eg4wfgfbjw5tasgr2pgg2@77swbk47b2tg>
- <CAE-0n514QMaQC2yjKP8bZqyfbv6B3AQm=+NJ87vxo6NdYiL03A@mail.gmail.com>
- <lf7y7wpuca6kzqcglgs5d443iusf7xjocum4adi7t3npfavccx@zgsp37oyztme>
- <CAE-0n53-KmOS3zXmJPvOOZ7xxkek9-S=oBExgaY0PDnt_HjdNw@mail.gmail.com>
- <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
- <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com>
- <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
- <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1731135985; x=1731740785;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8jNoAViCWI8vsA2Xo4+nKPQxFMzY/yJKP1J4b0jFQnY=;
+        b=vCJEkMXUWXB9qiaYjtYPp1iW0uQ47byFOQxW2shZAmf4J0CmFIh4/QmBPeQJ/0ZlTJ
+         fJtWLWFN+M8iEr9HFTTLrLJFJ5LP5qE4Xk78BeQn3w+reMvuTcZiXHxehhfSurVrjgwA
+         n57oeXGjIZa6ZCHESvKqf1TrglTeKSg19QLbOZP1sHKqt/YE7KHwZEdsBbxOheCXh4Ye
+         XKQkbic+YYzkih+WDXQkkeHS6uXwqNYjYGi1dfH++Xf4D68P4R1UPEtR3BQPuHd+I1iC
+         MRhDV4a30JOTX4DStwvPXWU8caMUIT/+GHKReH/vQTcKiDdI05mes/J/PdGhnQ0/vy6a
+         j4sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzJkpAqKN6IF9PGhRHx97xokT4WQ0LeOgxD1KOgEgE8f+oM7pVlcD27+IvJ+b51pl4WXWc9nbLbYvTKH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn6ZXGadMvSGv5ylLfACenz72kNctbpBKC56E52tECB9fPmdaW
+	trz6W2KpBly30ViMhARDKTOAhNs7/efR0ggmkSjlu8HAv1c7Wx+ZBWmV/GSMUvs=
+X-Google-Smtp-Source: AGHT+IGFGhexjxUAJJzNUCTXskIxVv6KD0CJ0vU8VpO07hG16ak5r1dn4qJ48nc5syMae94OVsex6g==
+X-Received: by 2002:a17:907:7ea7:b0:a9a:4aa3:728b with SMTP id a640c23a62f3a-a9ef00190a6mr506349366b.53.1731135985230;
+        Fri, 08 Nov 2024 23:06:25 -0800 (PST)
+Received: from ?IPV6:2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c? (p200300e5872eb100d3c7e0c05e3baa1c.dip0.t-ipconnect.de. [2003:e5:872e:b100:d3c7:e0c0:5e3b:aa1c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc52bbsm325675366b.97.2024.11.08.23.06.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 08 Nov 2024 23:06:24 -0800 (PST)
+Message-ID: <a934013f-1f13-40a6-b665-67d62f9df4bc@suse.com>
+Date: Sat, 9 Nov 2024 08:06:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
+References: <20241108161312.28365-1-jgross@suse.com>
+ <20241108171304.377047-1-pbonzini@redhat.com> <Zy5b06JNYZFi871K@google.com>
+ <854e43f7-0eed-4a1b-8ede-37c538791396@suse.com> <Zy6M57VglxCSaZky@google.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <Zy6M57VglxCSaZky@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------Rhz207CexZ2tAPLDbpmz1jQ5"
 
-On Thu, Nov 07, 2024 at 04:28:24PM -0800, Stephen Boyd wrote:
-> Quoting Dmitry Baryshkov (2024-10-31 15:54:49)
-> > On Thu, Oct 31, 2024 at 02:45:29PM -0700, Stephen Boyd wrote:
-> > > Quoting Dmitry Baryshkov (2024-10-31 11:42:36)
-> > > > On Tue, Oct 29, 2024 at 01:15:51PM -0700, Stephen Boyd wrote:
-> > >
-> > > Or use a displayport property that goes to connector node itself so that
-> > > we don't extend the graph binding of the usb-c-connector.
-> > >
-> > >   cros-ec-typec {
-> > >     usb-c-connector@0 {
-> > >       altmodes {
-> > >         displayport {
-> > >           connector = <&dp_ml0_ml1>;
-> >
-> > I think this has been frowned upon. Not exactly this, but adding the
-> > displayport = <&foo>.
-> 
-> Do you have a pointer to that discussion? I'd like to understand the
-> reasoning.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------Rhz207CexZ2tAPLDbpmz1jQ5
+Content-Type: multipart/mixed; boundary="------------dEEAdA9PknnRkOt0z6GjVSyU";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
+Message-ID: <a934013f-1f13-40a6-b665-67d62f9df4bc@suse.com>
+Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
+References: <20241108161312.28365-1-jgross@suse.com>
+ <20241108171304.377047-1-pbonzini@redhat.com> <Zy5b06JNYZFi871K@google.com>
+ <854e43f7-0eed-4a1b-8ede-37c538791396@suse.com> <Zy6M57VglxCSaZky@google.com>
+In-Reply-To: <Zy6M57VglxCSaZky@google.com>
 
-No, unfortunately I couldn't find it.
+--------------dEEAdA9PknnRkOt0z6GjVSyU
+Content-Type: multipart/mixed; boundary="------------ykxUJrFbPhW4kzwagp9zJdec"
 
-> 
-> 
-> >
-> > Thus it can only go to the swnode that is generated in software by the
-> > cros-ec driver.
-> 
-> I recall swnode as a way to sidestep figuring out the DT bindings for
-> usb typec. Where is this swnode being made? Somewhere inside the typec
-> framework?
+--------------ykxUJrFbPhW4kzwagp9zJdec
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-In the cros-ec driver?
+T24gMDguMTEuMjQgMjM6MTIsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+IE9uIEZy
+aSwgTm92IDA4LCAyMDI0LCBKw7xyZ2VuIEdyb8OfIHdyb3RlOg0KPj4gT24gMDguMTEuMjQg
+MTk6NDQsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+Pj4gT24gRnJpLCBOb3YgMDgs
+IDIwMjQsIFBhb2xvIEJvbnppbmkgd3JvdGU6DQo+Pj4+IFF1ZXVlZCwgdGhhbmtzLg0KPj4+
+DQo+Pj4gTm9vb28hICBDYW4geW91IHVuLXF1ZXVlPw0KPj4+DQo+Pj4gVGhlIHJldHVybiBm
+cm9tIGt2bV9tbXVfcGFnZV9mYXVsdCgpIGlzIE5PVCBSRVRfUEZfeHh4LCBpdCdzIEtWTSBv
+dXRlciAwLzEvLWVycm5vLg0KPj4+IEkuZS4gJzEnIGlzIHNheWluZyAicmVzdW1lIHRoZSBn
+dWVzdCIsIGl0IGhhcyAqbm90aGluZyogdG8gZG8gd2l0aCBSRVRfUEZfUkVUUlkuDQo+Pj4g
+RS5nLiB0aGF0IHBhdGggYWxzbyBoYW5kbGVzIFJFVF9QRl9GSVhFRCwgUkVUX1BGX1NQVVJJ
+T1VTLCBldGMuDQo+Pg0KPj4gQW5kIHdoYXQgYWJvdXQgdGhlIGV4aXN0aW5nICJyZXR1cm4g
+UkVUX1BGX1JFVFJZIiBmdXJ0aGVyIHVwPw0KPiANCj4gT29mLiAgV29ya3MgYnkgY29pbmNp
+ZGVuY2UuICBUaGUgaW50ZW50IGluIHRoYXQgY2FzZSBpcyB0byByZXRyeSB0aGUgZmF1bHQs
+IGJ1dA0KPiB0aGUgZmFjdCB0aGF0IFJFVF9QRl9SRVRSWSBoYXBwZW5zIHRvIGJlICcxJyBp
+cyBtb3N0bHkgbHVjay4gIFJldHVybmluZyBhIHBvc3RpdmUNCj4gdmFsdWUgb3RoZXIgdGhh
+biAnMScgc2hvdWxkIHdvcmssIGJ1dCBhcyBjYWxsZWQgb3V0IGJ5IHRoZSBjb21tZW50cyBm
+b3IgdGhlIGVudW0sDQo+IHVzaW5nICcwJyBmb3IgQ09OVElOVUUgaXNuJ3QgYSBoYXJkIHJl
+cXVpcmVtZW50LiAgRS5nLiBpZiBmb3Igc29tZSByZWFzb24gd2UgdXNlZA0KPiAnMCcgZm9y
+IFJFVF9QRl9SRVRSWSwgdGhpcyBjb2RlIHdvdWxkIGJyZWFrLg0KDQpJIHRoaW5rIHRoaXMg
+ZnVuY3Rpb24gaXMgYW4gZXNwZWNpYWxseSBhd2Z1bCBjYXNlLCBhcyBpdCBzZWVtcyB0byBi
+ZSBuYXR1cmFsDQp0byByZXR1cm4gYSBSRVRfUEZfIHZhbHVlIGZyb20gYSBmdW5jdGlvbiBu
+YW1lZCBrdm1fbW11X3BhZ2VfZmF1bHQoKS4NCg0KPiANCj4gICAqIE5vdGUsIGFsbCB2YWx1
+ZXMgbXVzdCBiZSBncmVhdGVyIHRoYW4gb3IgZXF1YWwgdG8gemVybyBzbyBhcyBub3QgdG8g
+ZW5jcm9hY2gNCj4gICAqIG9uIC1lcnJubyByZXR1cm4gdmFsdWVzLiAgU29tZXdoYXQgYXJi
+aXRyYXJpbHkgdXNlICcwJyBmb3IgQ09OVElOVUUsIHdoaWNoDQo+ICAgKiB3aWxsIGFsbG93
+IGZvciBlZmZpY2llbnQgbWFjaGluZSBjb2RlIHdoZW4gY2hlY2tpbmcgZm9yIENPTlRJTlVF
+LCBlLmcuDQo+ICAgKiAiVEVTVCAlcmF4LCAlcmF4LCBKTloiLCBhcyBhbGwgInN0b3AhIiB2
+YWx1ZXMgYXJlIG5vbi16ZXJvLg0KPiANCj4gRldJVywgeW91IGFyZSBmYXIgZnJvbSB0aGUg
+Zmlyc3QgcGVyc29uIHRvIGNvbXBsYWluIGFib3V0IEtWTSdzIG1vc3RseS11bmRvY3VtZW50
+ZWQNCj4gMC8xLy1lcnJubyByZXR1cm4gZW5jb2Rpbmcgc2NoZW1lLiAgVGhlIHByb2JsZW1z
+IGlzIHRoYXQgaXQncyBzbyBwZXJ2YXNpdmUNCj4gdGhyb3VnaG91dCBLVk0sIHRoYXQgaW4g
+c29tZSBjYXNlcyBpdCdzIG5vdCBlYXN5IHRvIHVuZGVyc3RhbmQgaWYgYSBmdW5jdGlvbiBp
+cw0KPiBhY3R1YWxseSB1c2luZyB0aGF0IHNjaGVtZSwgb3IganVzdCBoYXBwZW5zIHRvIHJl
+dHVybiBzaW1pbGFyIHZhbHVlcy4gIEkuZS4NCj4gY29udmVydGluZyB0byBlbnVtcyAob3Ig
+I2RlZmluZXMpIHdvdWxkIHJlcXVpcmUgYSBsb3Qgb2Ygd29yayBhbmQgY2h1cm4uDQoNCkkg
+dGhpbmsgaXQgd291bGQgYmUgaGVscGZ1bCB0byBhdCBsZWFzdCBhZGQgY29tbWVudHMgdG8g
+dGhlIGZ1bmN0aW9ucw0KcmV0dXJuaW5nIHRoZSAwLzEvLWVycm5vIHZhbHVlLg0KDQpBbmQg
+aXQgd291bGQgYmUgZXZlbiBiZXR0ZXIgdG8gaGF2ZSAjZGVmaW5lcyBmb3IgdGhlIDAgYW5k
+IDEuIE5ldyB1c2UgY2FzZXMNCnNob3VsZCB1c2UgdGhlICNkZWZpbmVzLCBhbmQgd2hldGhl
+ciB3ZSBjb252ZXJ0IGN1cnJlbnQgdXNlcnMgaXMgYW5vdGhlcg0KcXVlc3Rpb24gKEknZCBn
+byBmb3IgaXQsIGFzIGl0IGlzIG9ubHkgYSBtaW5vciBhZGRpdGlvbmFsIHdvcmsgd2hlbiBh
+ZGRpbmcNCnRoZSBjb21tZW50cyBhbnl3YXkpLg0KDQpJZiB5b3UgYXJlIGZpbmUgd2l0aCB0
+aGF0LCBJIGNhbiBzdGFydCB0aGUgZWZmb3J0Lg0KDQoNCkp1ZXJnZW4NCg==
+--------------ykxUJrFbPhW4kzwagp9zJdec
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> >
-> > >         };
-> > >       };
-> > >       port@1 {
-> > >         endpoint@0 {
-> > >           remote-endpoint = <&hub_ss0>;
-> > >        };
-> > >       };
-> > >     };
-> > >     usb-c-connector@1 {
-> > >       altmodes {
-> > >         displayport {
-> > >           connector = <&dp_ml2_ml3>;
-> > >         };
-> > >       };
-> > >       port@1 {
-> > >         endpoint {
-> [....]
-> > >
-> > > >
-> > > > Maybe that's just it? Register DP_bridge (or QMP PHY) as
-> > > > orientation-switch? Then you don't need any extra API for the lane
-> > > > mapping? The cross-ec-typec can provide orientation information and the
-> > > > USB-C-aware controller will follow the lane mapping.
-> > >
-> > > I'm not really following but I don't think the DT binding discussed here
-> > > prevents that.
-> >
-> > I'm thinking about:
-> >
-> > it6505 {
-> >   orientation-switch;
-> >
-> >   ports {
-> >     port@1 {
-> >       it6505_dp_out: remote-endpoint = <&cros_ec_dp>;
-> >       data-lanes = <0 1>;
-> >     };
-> >   };
-> > };
-> >
-> > cros-ec {
-> >   port {
-> >     cross_ec_dp: remote-endpoint = <&it6505_dp_out>;
-> >   };
-> >
-> >   connector@0 {
-> >     reg = <0>;
-> >     cros,dp-orientation = "normal";
-> >
-> >     ports {
-> >       // all USB HS and SS ports as usual;
-> >     };
-> >   };
-> >
-> >   connector@1 {
-> >     reg = <1>;
-> >     cros,dp-orientation = "reverse";
-> >
-> >     ports {
-> >       // all USB HS and SS ports as usual;
-> >     };
-> >   };
-> >
-> >   connector@2 {
-> >     reg = <2>;
-> >     cros,dp-orientation = "reverse";
-> >
-> >     ports {
-> >       // all USB HS and SS ports as usual;
-> >     };
-> >   };
-> >
-> >   connector@3 {
-> >     reg = <3>;
-> >     cros,dp-orientation = "normal";
-> >
-> >     ports {
-> >       // all USB HS and SS ports as usual;
-> >     };
-> >   };
-> > };
-> >
-> > The cros-ec registers single drm bridge which will generate HPD events
-> > except on Trogdor, etc. At the same time, cros-ec requests the
-> > typec_switch_get(). When the cros-ec detects that the connector@N it
-> > being used for DP, it just generates corresponding typec_switch_set()
-> > call, setting the orientation of the it6505 (or QMP PHY). The rest can
-> > be handled either by EC's HPD code or by DP's HPD handler, the
-> > orientation should already be a correct one.
-> >
-> > So, yes. It requires adding the typec_switch_desc implementation _in_
-> > the it6505 (or in any other component which handles the 0-1 or 2-3
-> > selection). On the other hand as I wrote previously, the 0-1 / 2-3 is
-> > the USB-C functionality, not the DP one.
-> >
-> 
-> I don't think we should be adding typec code to pure display hardware
-> drivers like IT6505. To keep the driver focused on display stuff I
-> proposed implementing runtime lane assignment for drm_bridge chains
-> because DP has lanes. My understanding is that not all display
-> technologies have lanes, so implementing generic lane assignment
-> functionality is overkill/incorrect. DP has physical lanes in hardware
-> though, and those physical lanes are assigned to certain pins in the
-> type-c DP altmode spec, so it's not overkill to think about lanes when
-> the bridge is a DP bridge wired up to a type-c connector.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-DisplayPort has fixed lanes assignment in the standard. So any driver
-that reassigns / reallocates DisplayPort lanes dynamically implements
-Type-C functionality.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-> Long story short, I don't see how we can avoid _any_ lane assignment
-> logic in drm_bridge. The logic shouldn't walk the entire bridge chain,
-> but it should at least act on the bridge that is a DP bridge. I think
-> you're saying pretty much the same thing here, but you want the lane
-> remapping to be done via the typec layer whereas I want it to be done in
-> the drm_bridge layer. To me it looks out of place to add a
-> typec_switch_desc inside each DP drm_bridge because we duplicate the
-> logic about USB type-c DP altmode lane assignment to each DP bridge. A
-> DP bridge should just think about DP and not know or care about USB
-> type-c.
-> 
-> This is what's leading me to think we need some sort of lane assignment
-> capability at the DP connector. How that assignment flows from the DP
-> connector created in drm_bridge_connector.c to the hardware is where it
-> is less clear to me. Should that be implemented as a typec_switch_desc,
-> essentially out of band with drm_bridge, or as some drm_bridge_funcs
-> function similar to struct drm_bridge_funcs::hdmi_*()? If you look at
-> IT6505 in it6505_get_extcon_property() it actually wants to pull the
-> orientation of the type-c port with extcon_get_property(EXTCON_DISP_DP,
-> EXTCON_PROP_USB_TYPEC_POLARITY). Maybe pushing the orientation to the DP
-> bridge is backwards and we should be exposing this as some sort of
-> connector API that the drm_bridge can query whenever it wants.
+--------------ykxUJrFbPhW4kzwagp9zJdec--
 
-And it6505_get_extcon_property() / EXTCON_PROP_USB_TYPEC_POLARITY is a
-Type-C code, isn't it?
+--------------dEEAdA9PknnRkOt0z6GjVSyU--
 
-> What about ANX7625 where two DP lanes go to a cross-point switch before
-> leaving the chip on one of two pairs of lanes? This hardware is a DP
-> bridge smashed together with an orientation switch (typec_switch_desc)
-> so that you can simply wire the output pins up to a USB type-c connector
-> and support 2 lanes DP altmode. Qualcomm's QMP phy is quite similar.
-> Presumably we'd want the ANX driver to implement both a drm_bridge and a
-> typec_switch_desc if it was directly connected to a usb-c-connector
-> node. It's also interesting to think of the DT binding here, likely we
-> would have one output port in the ANX node's graph that represents the
-> combined DP and USB data that's connected to the SuperSpeed endpoint in
-> the usb-c-connector.
-> 
-> In the case where two lanes are wired to one USB type-c connector and
-> the other two lanes are wired to a different USB type-c connector it
-> would be odd to keep the typec_switch_desc and figure out a way to
-> mangle the lanes we want for a USB type-c connector by setting the
-> orientation of the typec_switch_desc. The chip isn't really acting as a
-> typec orientation control here because it isn't combining USB data and
-> DP data for a single USB type-c port. In fact, the type-c port has an
-> orientation and we actively don't want to tell the ANX7625 driver about
-> that port orientation because the orientation control is implemented
-> between the ANX part and the type-c connector by some redriver
-> controlled by the EC.
-> 
-> To satisfy all these cases it almost feels like we need to make the DP
-> connector have an "orientation", per your earlier DT snippet it would be
-> "reversed" or "normal", even though in hardware a DP connector has no
-> such concept because it can only be plugged in one way. All cases look
-> to be covered if we say that the drm_connector can have an orientation,
-> "normal" or "reversed", and we allow the bridge drivers to query that
-> whenever they want with some bridge/connector API. The typical case will
-> be that the orientation is normal, but we can make
-> drm_connector_oob_hotplug_event() change that to "reversed" when the
-> port is different.
+--------------Rhz207CexZ2tAPLDbpmz1jQ5
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-The DP connector doesn't have the orientation, as you pointed out. Only
-Type-C does.
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> This leaves us with the binding you propose above, and then some sort of
-> property that indicates the orientation of the DP connector. Instead of
-> being vendor specific I wonder if we can simply have a property like
-> "dp-reverse-orientation" in the connector node that the displayport.c
-> driver can look for to set the connector orientation to the reverse one
-> when DP altmode is entered on the port.
-> 
-> This is what I have:
-> 
->  it6505 {
->    ports {
->      port@1 {
->        it6505_dp_out: remote-endpoint = <&cros_ec_dp>;
->        data-lanes = <0 1>;
->      };
->    };
->  };
-> 
->  cros-ec {
->    port {
->      cross_ec_dp: remote-endpoint = <&it6505_dp_out>;
->    };
-> 
->    connector@0 {
->      reg = <0>;
-> 
->      ports {
->        // all USB HS and SS ports as usual;
->      };
->    };
-> 
->    connector@1 {
->      reg = <1>;
->      dp-reverse-orientation;
-> 
->      ports {
->        // all USB HS and SS ports as usual;
->      };
->    };
-> 
-> or ANX, swap out for it6505 node:
-> 
->  anx7625 {
->    ports {
->      port@1 {
->        anx7625_dp_out: remote-endpoint = <&cros_ec_dp>;
->        data-lanes = <0 1>;
->      };
->    };
->  };
-> 
-> and then a drm_bridge is created in cros-ec to terminate the bridge
-> chain. The displayport altmode driver will find the drm_bridge and the
-> drm_connector from the cros-ec node. When DP altmode is entered the
-> displayport altmode driver will set the drm_connector orientation based
-> on the presence of the dp-reverse-orientation property. We'll be able to
-> hook the hpd_notify() path in cros-ec by adding code to the drm_bridge
-> made there to do the HPD workaround. I'm not sure we need to use an
-> auxiliary device in this case, because it's a one-off solution for
-> cros-ec. And we don't even need to signal HPD from the cros-ec
-> drm_bridge because the oob_hotplug event will do it for us. If anything,
-> we need that displayport.c code to skip sending the hotplug event when
-> "no-hpd" is present in the cros-ec node. Note, this works for any number
-> of usb-c-connector nodes. And finally, DP bridges like IT6505 don't need
-> to implement a typec_switch_desc, they can simply support flipping the
-> orientation by querying the drm_connector for the bridge chain when they
-> see fit. ANX7625 can support that as well when it doesn't see the
-> 'orientation-switch' property.
-> 
-> Did I miss anything? I suspect a drm_connector having an orientation is
-> the most controversial part of this proposal.
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmcvCfAFAwAAAAAACgkQsN6d1ii/Ey/H
+HAf/Xp1efSVQh9iulSx+vTCV4HdTTaQK3QYQCSIaJ7o8JONxc/rWXx1gKNnI10g/sLCCDydTtZ86
+N7+Y6FuRv2icw829cahcObaUZlrTh6qv1N66Sl+QnDB78ZcKMPmkydGjSNs3Zs+qTXIi0/lmOqZh
+fZ/02EUVX9qnjLwjEia4uq+6zN7upex3de/hkFN4gMHU0aP1efG7i2Dsz7LhjiX6NwHMbNajs+OH
+cbeVyMhfoQ9Ka6ca1Efphrf9WRygXRUnKs1lnPPtajWXThlUi5hUfFUlFL/3I/7L0N9MNb4xBbqB
+lpIls8U9RLFWlp7GS3oTzDHap+br4iROtkxoIYCAvg==
+=997E
+-----END PGP SIGNATURE-----
 
-Yes... I understand that having orientation-switch handling in the DRM
-driver sounds strange, but this is what we do in the QMP PHY driver. It
-makes the code easier, as it keeps lane remapping local to the place
-where it belongs - to the Type-C handlers.
-
-
--- 
-With best wishes
-Dmitry
+--------------Rhz207CexZ2tAPLDbpmz1jQ5--
 
