@@ -1,82 +1,92 @@
-Return-Path: <linux-kernel+bounces-402791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7773E9C2C30
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:30:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303839C2C22
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:22:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E56E4B21D90
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D608282B98
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8BC13B586;
-	Sat,  9 Nov 2024 11:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6815574C;
+	Sat,  9 Nov 2024 11:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FaUXsK1a"
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kbDND7ON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41450148FF2
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 11:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC6E1547E2;
+	Sat,  9 Nov 2024 11:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731151814; cv=none; b=AR/i1jyVSa0eIsgi5H1UJrhhhvkl4qMizHEFGVan7sb4jXx34Ak6Y+3N0NXdwU13asnwarem9AqaEFXeuR0SHWrzfXB22cIDFlojnN6DrwHw/rg4rN0/5TIdZj586EgSrg7Rog72gcdEHM2QiF2+4Z8IQBXoFfRukvRk4HsHln0=
+	t=1731151342; cv=none; b=kEEFMye+1JOWXw/x7672JT9HKutegu4TfY0stP46R/e94/dHgGcbaWnf3sw65FIBt2W7t6t+6TRsyX3ArbrR314ZQivWU+P9DIoRnb3GUwwhV6WaAK8fJVrq32WPLk9JkroDb+umwdARmNVCrvOwCoXs/D8F6ywve2qedA0AjS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731151814; c=relaxed/simple;
-	bh=c9Vww4CT0SN/2jGjFWdoneL43s1239/xTGQn1r7f53o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jByYskfZIXFnaQxJ5+6ASj8YqQ0RBnHbMYgcxhT5ccj3YgkHoxcaMuFxTt7it+obHDpeD68pQOvQHPWFM8aHELQjGxvyDsOAKqxz5nlJlQ5TfLcwa7wSQDcNBJifi8b/XxRZmzgjiXSM/bnv5WPf0ircTh/nFsnkvt/i890iZxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FaUXsK1a; arc=none smtp.client-ip=45.157.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XltWM67jkz93h;
-	Sat,  9 Nov 2024 12:14:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731150895;
-	bh=M8sVqSHb9q1m4LHO4Ex5Vu4KLnEMo7PjEHIwnhi+B0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FaUXsK1aoEIN933EGMYl01Vq02XZFF01bYedsFZN65Bz6zMGszPpttHqffjA67mEJ
-	 8lSRuoKNdAFxVwiuUgbK2tcO7ASTZWNM8nZUze9Qnk+OLbbt8KmaceHaaSiNAgz1Co
-	 o2kygWLzhaOUApBkOFu/5qLRELKng8WLMkjse/Rk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XltWM23tHzksM;
-	Sat,  9 Nov 2024 12:14:55 +0100 (CET)
-Date: Sat, 9 Nov 2024 12:14:49 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Paul Moore <paul@paul-moore.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] landlock: Refactor filesystem access mask
- management
-Message-ID: <20241109.xie6Quae9chi@digikod.net>
-References: <20241109110856.222842-1-mic@digikod.net>
- <20241109110856.222842-2-mic@digikod.net>
+	s=arc-20240116; t=1731151342; c=relaxed/simple;
+	bh=On7OLyIbvHvdcY/4ueFsMOMwkor9DkHgs48QxTfn8oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PKpvzZkjLwpGhdTDIgM68VGK39s6rGl6BQW+Yq/1cnZUbVWJx+Ud82iw/5Tr9MBScZGUqDnn7K0bPM4uU+huM6NGTE908d9V5eFVRsIlQNthcg36YXfZM1YGcY2ynkNn+d2pRm7nyM1VWnB3gFXa4JPFlEXLLgPtQarElpPJFNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kbDND7ON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF36BC4CECE;
+	Sat,  9 Nov 2024 11:22:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731151342;
+	bh=On7OLyIbvHvdcY/4ueFsMOMwkor9DkHgs48QxTfn8oI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kbDND7ONngLyyE/aBO6g+6F1pzNe0ik9jXNDu4WdDYEsqYhIr9o8L3F1ymkBaRffF
+	 t+EioGaU9G7YLZBbosNnf5yToiinNDgBbXJjAC8vW36lkJ4k8rCkDe9AAVzAbxtzxH
+	 A1B+Nx1agq/yqaYhwFLaDwgH4UrP5O8svNIS1aHgpWFiLSU0nbKOyxFGEobSbVfo2q
+	 XaQF096genfWS5g2y34zwImd+qxwRfGkUZVeoLbczeC/gsmaMCGr37qFD+6VAS/ena
+	 ggKM/A5houZLYQ5z1a7bGQMWSNeQPBBB7JeflYA8ECZO7tAuXKootlsWiqpMbGwJMW
+	 oW33QvK4rexOw==
+Date: Sat, 9 Nov 2024 11:22:12 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Darius Berghe <darius.berghe@analog.com>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <corbet@lwn.net>, <alexandru.tachici@analog.com>, <lars@metafoo.de>,
+ <Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] iio: imu: add devices to adis16480 driver
+Message-ID: <20241109112212.437a4a96@jic23-huawei>
+In-Reply-To: <20241108125814.3097213-1-darius.berghe@analog.com>
+References: <20241108125814.3097213-1-darius.berghe@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241109110856.222842-2-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 09, 2024 at 12:08:54PM +0100, Mickaël Salaün wrote:
-> Replace get_raw_handled_fs_accesses() with a generic
-> landlock_merge_access_masks(), and replace get_fs_domain() with a
-> generic landlock_match_ruleset().  These helpers will also be useful for
-> other types of access.
+On Fri, 8 Nov 2024 14:58:11 +0200
+Darius Berghe <darius.berghe@analog.com> wrote:
 
-Of course I need to update the commit messages with the new names...
-
+> Changes in v3:
+>  - resend v2 using get_maintainers.pl script, hopefully everyone is in
+>    the email list now
+>  - edited the dt-bindings patch to use oneOf
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241109110856.222842-2-mic@digikod.net
+> Darius Berghe (3):
+>   iio: imu: adis16480: add devices to adis16480 driver
+>   iio: imu: adis16480: add devices to adis16480 - docs
+>   dt-bindings: iio: adis16480: add devices to adis16480
+> 
+>  .../bindings/iio/imu/adi,adis16480.yaml       | 42 ++++++-----
+>  Documentation/iio/adis16480.rst               |  3 +
+>  drivers/iio/imu/adis16480.c                   | 75 +++++++++++++++++++
+>  3 files changed, 102 insertions(+), 18 deletions(-)
+> 
+
+Applied to the testing branch of iio.git
+Note that I'll be rebasing this on 6.13-rc1 once available so
+it won't be picked up by linux-next until after that (when I'll
+push it out as togreg).
+
+In the meantime, 0-day can have a first look at this.
+
+Jonathan
 
