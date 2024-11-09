@@ -1,137 +1,143 @@
-Return-Path: <linux-kernel+bounces-402564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045409C2916
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:11:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CC69C2918
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:13:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 341471C2228B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3ED1F22CE5
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D9D1DFE3;
-	Sat,  9 Nov 2024 01:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648131CABF;
+	Sat,  9 Nov 2024 01:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSAcBk/w"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kj2UwPhz"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE9B23A9;
-	Sat,  9 Nov 2024 01:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD66AC8FE
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 01:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731114683; cv=none; b=cpiggY10YSBjSY06GaeS0aXerTeEdaDUUUGTbPvtk3KfFXGSra8zv9xxDeFf9zurX6eVMH6qC/upJwUyjqrYEP3Yl8bBsEpphA2zyLfv6f05Ofhie0GYEcClAHKesJDSyYaAdxNiDSn7eQ57nQ/QskzOzu68LqQaQ+xBa9ldUGg=
+	t=1731114777; cv=none; b=W+GCtrv4QzKfo47GYXXk3XomKlSvIg0K0TSNzB4Z7tIHpknVPRWP9kPpf6rRjI8bDCKCLTaZu2uXi9TiuqWPIhxyjaTTh5xMJHgd/CbFCVN8C1X3qwq2Ah2VIuX0yQ/VnKAObWIuCtpGRF2Se4Vz/Vd6zuBWZxZ+z/bwO5gMgBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731114683; c=relaxed/simple;
-	bh=P72/2q/dAIDA7p72zatGRkbSLYJtNzkS+VemDMtvzbM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lZbS3LWJlSjSaQroiDMns0HeC5JhXXAwiLTzYk5AMY9mAxuGnonuEKWL39h9NZRZCmmvtpCuztA5b4DvaTwH8Lerj7ns604oZpUnIKKdCG/VTyg0/vV7orZ0t2FdmckzvxWHIfuv5jpSMzRPYSEDiI6N6Sy9pCeC7kJsjCWFtWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSAcBk/w; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso35748381fa.2;
-        Fri, 08 Nov 2024 17:11:21 -0800 (PST)
+	s=arc-20240116; t=1731114777; c=relaxed/simple;
+	bh=1LIOUNfKTXWim4PdquFX/WgW9IMIdu285vhaA/dxY1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2f56/ZKLAbFilacJ8sqLFLbrPaMXrrTgSiEyGZKxOpJ0dZiEZUYf1iqkffJj0IAwlM2uCNJFYyrOUFgxFc8xP8TWZxOOEou+t2eZo+NLP8lfdSvyj8qFHC1r/0ZUtrnKu2j+/85Djte6AxXoPPEVXdVsHRTVHu24snKp4TCO1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kj2UwPhz; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7eda47b7343so1935952a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:12:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731114680; x=1731719480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LsDkNEMMUHDzh0wyiOj+aaVhFGlxd5q3FjPCb/5gWQc=;
-        b=XSAcBk/wQ5T9C443OchIqGTDZxZz5jBnib+U1PcmqellbPEAhN1jU1gfmhP0nTs+RY
-         eydyWXYHO9dqx4ki+G23XUL5M4KlqSswuziQ7ku2qiEbFIwBx75sqz0Ef9/qeW6VKE+B
-         Ic5keaWgBzOo6liq+eywE2t6AOxza7yIkMm7F5te9HYKd/IvtQud9YEGq9j96fzV/2sb
-         Q7N8uYu2WZUiLsHmKXUS4mxrvXydEeFfmFS1aiiU+X53++mdGg2Zb5K0SX2HrFPOpiMP
-         CfsJm8I01FX2Ne0PWsssYC4r9Ejdq1cKPFi6bJXMxHKjbqYGacGCwR57H9+fTE/yWHDF
-         R7Jg==
+        d=chromium.org; s=google; t=1731114774; x=1731719574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjjnvoPu26k+itkog+DckqTMvkk1gvltNz8j1gQtxg4=;
+        b=kj2UwPhzDes1o1q74Sfz9HErOvCP6LUcT32YTmCis7ePsQ9dBBOTQsMf6O4tXiJG0F
+         /kWpmKJLy82IS136PN5V0F3F11dqOV0Jp6BT3Y56F4ySnMH5YtF84RjFrOK9pAfNFoc+
+         grXBpcFBbpkVCyZjzo5DJFfuHphycjoGOPEJE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731114680; x=1731719480;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LsDkNEMMUHDzh0wyiOj+aaVhFGlxd5q3FjPCb/5gWQc=;
-        b=wGdEttVcEV/uLyImF90nlmyMw0YkLy2s3rc5DDDT8kMLEQqejuA4qfZzUOmKslonoD
-         zSjSJM99blctY8a7cxa5YjiqBF7phShHHT7yt1yF9bw2Ub6OsJG97tREC+C2TdD+C5EZ
-         2ZRgsV1XpvMIilL+WwR3BYNFZy0aTy3QgD6KaYgYV0znQ/o6fyhB5iBgAzmN58FmhoQg
-         kbASduKLGcCF+rHIHpT5gtlSuPmqqmVPeTU3XeNJd8byYLRu3rrUuTEfuoCjin9EeTnp
-         zeByFwAWjgxX/38wIfOQ41TRH1K3BywnqZOdKMj5EKls2pEg1rvrF8ScTiqtyuWApY3H
-         jk2g==
-X-Forwarded-Encrypted: i=1; AJvYcCU/IvX/WYmly/S4ihvYV33oMXbPKk21Nhal0JVLU+OiOfbJvI4FkbNktceKRNmUzmJXyrmS3JJW@vger.kernel.org, AJvYcCUQn09VluHcweV2pSmUHdFSjnsR9DTFjyvkq1Xdrf/aud/7opDHgYMni1UPlwFt+MY6oPE62rkBe3M8wkA=@vger.kernel.org, AJvYcCVp+qlMjKmaouYysvjYabd8JLjoUXxQuuVH70ImaBrU5+w1ODdk3xMmeTj2deAVhjtcFuM30qXSYd9R4QYlvHfs@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY1ZDvwzl2iSkaaUJ0Ew38VuM7i4PljGK4NTF4oNe4S3+dLIGb
-	XoGncv3/shGa19/q+MQqrXH87kN7nwF8s+T41I+TkjJcUGz4ZaxFb15TqPYc
-X-Google-Smtp-Source: AGHT+IE3AWnOF9wLKOe12uvUKDaeC/oSizRy2C6TppR9FCqhnvgBFvKg5mk096Tc0Wc1GoGep/zNNQ==
-X-Received: by 2002:a2e:b896:0:b0:2fa:fdd1:be23 with SMTP id 38308e7fff4ca-2ff2028aadamr40540091fa.28.1731114679304;
-        Fri, 08 Nov 2024 17:11:19 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a188besm297969666b.8.2024.11.08.17.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 17:11:18 -0800 (PST)
-Message-ID: <6a171cc9-a052-452e-8b3d-273e5b46dae5@gmail.com>
-Date: Sat, 9 Nov 2024 03:11:48 +0200
+        d=1e100.net; s=20230601; t=1731114774; x=1731719574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjjnvoPu26k+itkog+DckqTMvkk1gvltNz8j1gQtxg4=;
+        b=GJeYQOTQUdUIQJ1CLLN9JV6rJL4agxVKjRdQg1FHhiceDprM9JjtneY4B4OL8XYfTu
+         L0JYHmdxqcbY+LFa208D227pXZPtmkqZbh/sCKcbWWPRwYGpNG3q7kBW0DQ17Tbe/uqT
+         JPchbxMgMJ3MYNXLiQDtA628OFEPiekrpAWRrZevhmLIuiUB5sEV5WPlA/2mDDoQSOVU
+         f1UBr7hEjZ+B3Vd0ylmG7JU9FsiRQKVMeMQSueBXwCd7d9R3L3SfWQTkAhPO1SrKMFKb
+         O0gj2sg13Ewp+3cYxoPdH9XKt/O7NSZzcbs0bRXC4Bg+BClBh62lJ26Y5W7wrheIzTJ6
+         S5dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGxDo48Slf9mE7opz5E+vRAf9BLGFdf6a0LBuUXW2QZv0Rv4Oc/o91gETLTwoRvJaojYuIS1BKxBaCslA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz2p8uvHfSvPKpaJxHX3jrqsCO+mQPMhBKtbDIgsLqPBo2Q7E9
+	lzoqWp48Q72gJFMIu+dg3mgtSGz+oQ65/ebcYGlP7o22+AigrSfb7CP6ORnGsw==
+X-Google-Smtp-Source: AGHT+IF56VUPmJuf5awejR+JuIWM33kJ0nQDhTu1z/918O+Vhmwaenovb5z259WTupYgKmJeNvkdvQ==
+X-Received: by 2002:a17:90b:5307:b0:2e2:d7db:41fc with SMTP id 98e67ed59e1d1-2e9b1720246mr7217860a91.10.1731114774218;
+        Fri, 08 Nov 2024 17:12:54 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:eeab:613e:a460:41fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9bd621ae7sm524877a91.0.2024.11.08.17.12.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 17:12:53 -0800 (PST)
+Date: Sat, 9 Nov 2024 10:12:49 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Liu Shixin <liushixin2@huawei.com>
+Cc: Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH] zram: fix NULL pointer in comp_algorithm_show()
+Message-ID: <20241109011249.GA549125@google.com>
+References: <20241108100147.3776123-1-liushixin2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 05/23] ovpn: keep carrier always on
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-5-de4698c73a25@openvpn.net>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241029-b4-ovpn-v11-5-de4698c73a25@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108100147.3776123-1-liushixin2@huawei.com>
 
-On 29.10.2024 12:47, Antonio Quartulli wrote:
-> An ovpn interface will keep carrier always on and let the user
-> decide when an interface should be considered disconnected.
+On (24/11/08 18:01), Liu Shixin wrote:
+> LTP reported a NULL pointer dereference as followed:
 > 
-> This way, even if an ovpn interface is not connected to any peer,
-> it can still retain all IPs and routes and thus prevent any data
-> leak.
+>  CPU: 7 UID: 0 PID: 5995 Comm: cat Kdump: loaded Not tainted 6.12.0-rc6+ #3
+>  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+>  pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : __pi_strcmp+0x24/0x140
+>  lr : zcomp_available_show+0x60/0x100 [zram]
+>  sp : ffff800088b93b90
+>  x29: ffff800088b93b90 x28: 0000000000000001 x27: 0000000000400cc0
+>  x26: 0000000000000ffe x25: ffff80007b3e2388 x24: 0000000000000000
+>  x23: ffff80007b3e2390 x22: ffff0004041a9000 x21: ffff80007b3e2900
+>  x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
+>  x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+>  x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>  x11: 0000000000000000 x10: ffff80007b3e2900 x9 : ffff80007b3cb280
+>  x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
+>  x5 : 0000000000000040 x4 : 0000000000000000 x3 : 00656c722d6f7a6c
+>  x2 : 0000000000000000 x1 : ffff80007b3e2900 x0 : 0000000000000000
+>  Call trace:
+>   __pi_strcmp+0x24/0x140
+>   comp_algorithm_show+0x40/0x70 [zram]
+>   dev_attr_show+0x28/0x80
+>   sysfs_kf_seq_show+0x90/0x140
+>   kernfs_seq_show+0x34/0x48
+>   seq_read_iter+0x1d4/0x4e8
+>   kernfs_fop_read_iter+0x40/0x58
+>   new_sync_read+0x9c/0x168
+>   vfs_read+0x1a8/0x1f8
+>   ksys_read+0x74/0x108
+>   __arm64_sys_read+0x24/0x38
+>   invoke_syscall+0x50/0x120
+>   el0_svc_common.constprop.0+0xc8/0xf0
+>   do_el0_svc+0x24/0x38
+>   el0_svc+0x38/0x138
+>   el0t_64_sync_handler+0xc0/0xc8
+>   el0t_64_sync+0x188/0x190
+
+The explanation below is more than enough, I think this stack trace
+doesn't really show anything new or interesting.
+
+> The zram->comp_algs[ZRAM_PRIMARY_COMP] can be NULL in zram_add() if
+> comp_algorithm_set() has not been called. User can access the zram device
+> by sysfs after device_add_disk(), so there is a time window to trigger
+> the NULL pointer dereference. Move it ahead device_add_disk() to make sure
+> when user can access the zram device, it is ready. comp_algorithm_set() is
+> protected by zram->init_lock in other places and no such problem.
 > 
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Fixes: 7ac07a26dea7 ("zram: preparation for multi-zcomp support")
+
+So I think this fixes something much older, probably around e46b8a030d76d
+time (2014).
+
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
 > ---
->   drivers/net/ovpn/main.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
-> index eead7677b8239eb3c48bb26ca95492d88512b8d4..eaa83a8662e4ac2c758201008268f9633643c0b6 100644
-> --- a/drivers/net/ovpn/main.c
-> +++ b/drivers/net/ovpn/main.c
-> @@ -31,6 +31,13 @@ static void ovpn_struct_free(struct net_device *net)
->   
->   static int ovpn_net_open(struct net_device *dev)
->   {
-> +	/* ovpn keeps the carrier always on to avoid losing IP or route
-> +	 * configuration upon disconnection. This way it can prevent leaks
-> +	 * of traffic outside of the VPN tunnel.
-> +	 * The user may override this behaviour by tearing down the interface
-> +	 * manually.
-> +	 */
-> +	netif_carrier_on(dev);
 
-If a user cares about the traffic leaking, then he can create a 
-blackhole route with huge metric:
-
-# ip route add blackhole default metric 10000
-
-Why the network interface should implicitly provide this functionality? 
-And on another hand, how a routing daemon can learn a topology change 
-without indication from the interface?
-
->   	netif_tx_start_all_queues(dev);
->   	return 0;
->   }
-> 
-
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
