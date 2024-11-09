@@ -1,275 +1,183 @@
-Return-Path: <linux-kernel+bounces-402532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D719C28D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BA749C28DB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A89D1C2170D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C27281519
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82455442C;
-	Sat,  9 Nov 2024 00:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6985BD517;
+	Sat,  9 Nov 2024 00:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og6J93pz"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kX1AoFgo"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCD74689
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A1B8F5C
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731112312; cv=none; b=B3W6dtB9dQ8KxXhGXShuEwp2FcPnG+jHpUI5cKIpc6f9GuKzO3PFf0lkOGITMO9rvTOyA3X/v5muRyyo38yZeqk8z2AlZqF2GTOopF3P6ovmTEiPYj/sCbFWn5PmQBk0l1k4HgE9HZwNFPhVu3tPdpTFB1PK/MEmKSsjE3iE5vQ=
+	t=1731112444; cv=none; b=FIfpxsqjudkaPB/SGX1lyR0VPK+tLAy65zvB5aoefmuZql2PSdPxl+ezcvY7+X1BDKDUDb6x0oxNaxZHLiOzSa2WJ9UJlG2SF28oWh2x7wpBGU3X0/rOE5mC33pQA42XfqHe3c97v+RoUdafpHvvVCEPhcPHa3Ud7HAknriAkB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731112312; c=relaxed/simple;
-	bh=hVVjQGaMk42kxACl9iiDgyEjZfh4FOjrVSHr0dR5jRM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHxydC9IM7h0+bcplrWoZZhRZIxVlv/kK8g3Sp+WcdIQ05fJWX3FUCUrriYm00EklDd1S6UrnL/yzp4VpzPzBy7XnYeZyjWZFyr9yVnjaLbeRZ0d6GlybAkRuTuO+6PSZUIhK46xnKJDc6kKJCtk2LbpxPZduBhlcF5XcndnnzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Og6J93pz; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20ce5e3b116so27094005ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:31:50 -0800 (PST)
+	s=arc-20240116; t=1731112444; c=relaxed/simple;
+	bh=V47dQdQkQL22+HC7w9YeCiv6RI21vZ8y6uGJAjPcFqE=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=WOCZGVIBhBiPYt8YgRYhH3bLpApAa6IZcViwEte6VvhlEOBcrgeWdxHnhnPzplDHAbKXFeb7qOF/R0hIYP3NsPgv8dPnir61H7vgq1d9OgBO6s/Md+tCqIPL/sFw/FhCncaBbI/wVC/ai6L8+FYCbOCRKQLtNSVwmeXpg+MjMus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kX1AoFgo; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b8fa94718so4943749276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:34:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731112310; x=1731717110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1E26MnGizRapo2n2N6bqp5svQaI3HCt3C2eCsi3AIQ=;
-        b=Og6J93pzPlqZJShO2f6KacJOJMotfRsTO6axcQkSG2G1sUNLXC6jrZxZ05/RB1t640
-         p5biNzzfzK6/ZDMvqHfp1MXOsarIQEparqbyT7O+lUDvoKnh6IM1d5jW7YNLAiLqj53r
-         VHI/DiNzSFi99iRY03XNm6mDfgDgRamOXmT16vV+Dh4zA8Hxyd48f1czwM++CYc2AEO9
-         HifXE4WyHIbaC3fwrL//dTQ7XCbzCaSkxM2HSWcRwiKJx7mQNVwjsIAPVCREmfmtmBJF
-         tnDW4k5DiY4T88T+0PkaRX+Q4aZqv9w3raH56gq8MJbdKfTwdSkwH9Ouv0pXsp50p4JF
-         Wk2w==
+        d=google.com; s=20230601; t=1731112442; x=1731717242; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2ZEDYkxzsG0qUhyE9JYNgXfUbc0ZpS2I+xfFPhpZ/t0=;
+        b=kX1AoFgo7L1T40YeDmg428jpA0R0DJlMUBBGOLF5yWCw6eG7caYDPL7m5mzC6u+x1b
+         x8gTidsn1lPIdw626uNs/iPwWjC8hZS+bsEUtMfQcPmcCvIFx+Jd5DqmCCWDEvwy2/BV
+         EF0zXH0Tjb9+5Wo5Y5j70SRrNkEap9N3nNKADMWu4G6/3W/1jG++9erqgswiT94nWK/T
+         8k4aXKWL0eeewwnL4U/6Czg06Uhh9qECHbo5aVCzA1bfrC4xDroYFkY7R6UohUzMktWO
+         MaG6nO6T2ODObYpl56M2tvQSNqfWVUidGy6/q+qpu92UQG7Rfj+7eDyKKuIVLAl9Kann
+         zSyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731112310; x=1731717110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y1E26MnGizRapo2n2N6bqp5svQaI3HCt3C2eCsi3AIQ=;
-        b=ZtX+fL93DlxwGQE4AcjbzNMI9C9NQ6ADRDpLwov0EY/xvmKdgtOGrdR3uR2Ja0QbLi
-         uuxQIYH/GC7mBuTcBxmO5g2aAtmfQnotaFb4utJTdOxgL8+zGxRFnXMuxQbJ2JNy5TTk
-         zRZjFSmYwu36wr0Tms01GWxMocncQk7Pz4ZCxTSRKIrhijbziaMrS6wjLbTjZjGrw+OT
-         2eZTvwHgCqw2D6PYgSF0RHQcYeVbT0fkW47WtxrmcVBy8+x35ab7asnl3m1XgoQ0s8aa
-         1n+qAgfu2stUu6HCS+kQegdYMIL9Q3aVWEBLL3AAHlLc7Smta3nHOQQuxuesVPurgIke
-         0rgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/WUM/xN92BLzXqttlIr+8An1E9D+/ASjxy2vFb1W2wyg4VBhU05s2qNsLYeqvN8ZNZf5RLfrsjzYmfd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymWVT50b3+K/2nvvRF6IBQjcEq9+kSDDoIKyWxtQfmjZK4fVqd
-	RHfbQpEKNKgFfwfYyJfdl/KmBov7VVwgWj4JuGO6rd83TQxw+0azv4eyjWxuXDr6NxrgIxGyo2s
-	ljYF1kx69hazHjxFUq4qybmWi9m4+1LctAR60cA==
-X-Google-Smtp-Source: AGHT+IHCHLh39cxBw5ufNm7dZo+CDQzWBDFzWuOIxiVp3gnbTUBNURR8pxRRy/13hfp6Af72Rhtnz9aRlZ+COJrcvI4=
-X-Received: by 2002:a17:902:e747:b0:20c:e262:2560 with SMTP id
- d9443c01a7336-21183e4c8a3mr62876625ad.50.1731112310250; Fri, 08 Nov 2024
- 16:31:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731112442; x=1731717242;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2ZEDYkxzsG0qUhyE9JYNgXfUbc0ZpS2I+xfFPhpZ/t0=;
+        b=prx2EDYbp4l8i27vV8QsrswSRFHPIEJcecQMSNwY+ADUQ8yQAp8uBPGTiYg+LMv4Rp
+         B3s46ZM5RE2VuczN7U09HWhDKtm+FAobziSwoPqDksDDcU4GIIhlDxfLd1eAOrt7oNnX
+         EDWAIPwAPxD3aO8FQwDPoRqgzN84CkPZHaPkh/qn6VVDBZEpU2j8vpA3qi8hN8YUdmL9
+         J9cq9eLMZYAq1QIDz2Bh3iC9jkVvYCPJyAf0oUOupVsj/KVi8GdThawYLC/MkHeAhxoQ
+         hCi2BNxpu9OeRQQhiDhHGlxKgOVSndMujT2FhOc0sH4pjyB4pUAaKatluhKGMy629utQ
+         aHhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV74BjVYlGRYmbiynlgtPzG5fij6nlYbnczy3oHkBBHjRCj/asOqAOtp6MiKUN1vo65dXuQW7g87Lgn46o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLaBsiyiZKW4lVPGYktYJHZCOeLaxxdjzeT7bylL/O7rSF0Bf7
+	SWcpUTNzO1FCsk7sslXaxTEIre2b49xQsMIod8TSpt6IbpnAzrVRHiHakuL7/6R5c2Tk+SyuMgz
+	pUvEICg==
+X-Google-Smtp-Source: AGHT+IGqdbWcUfasjGel99/viEVPGvhC8W4vacrG9Ai+t4388gVHqj3i/Sz9pa2KAfoWC9PzJ/JUopGKrcH5
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:6fd2:1e36:6d8c:7c49])
+ (user=irogers job=sendgmr) by 2002:a25:d8d1:0:b0:e29:1893:f461 with SMTP id
+ 3f1490d57ef6-e337f78051fmr12617276.0.1731112442088; Fri, 08 Nov 2024 16:34:02
+ -0800 (PST)
+Date: Fri,  8 Nov 2024 16:33:51 -0800
+Message-Id: <20241109003358.461437-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
- <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com> <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
-In-Reply-To: <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Sat, 9 Nov 2024 00:31:14 +0000
-Message-ID: <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
-Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
-To: Enric Balletbo i Serra <eballetb@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
-	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
-	Masahisa Kojima <kojima.masahisa@socionext.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Subject: [PATCH v8 0/7] Hwmon PMUs
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Ravi Bangoria <ravi.bangoria@amd.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Yoshihiro Furudera <fj5100bi@fujitsu.com>, 
+	James Clark <james.clark@linaro.org>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Howard Chu <howardchu95@gmail.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>, 
+	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@redhat.com> w=
-rote:
->
-> Hi Ilias,
->
-> Thanks for your quick answer.
->
-> On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
-> <ilias.apalodimas@linaro.org> wrote:
-> >
-> > Hi Enric,
-> >
-> > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@redhat.co=
-m> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > I'm looking for any advice/clue to help me to progress on enabling
-> > > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
-> > >
-> > > I basically followed the steps described in u-boot documentation [1],
-> > > I enabled some debugging messages but I think I'm at the point that
-> > > the problem might be in the StandaloneMM application, and I'm not sur=
-e
-> > > how to debug it.
-> > >
-> > > What I see is that when I run the tee-supplicant daemon, it looks lik=
-e
-> > > the tee_client_open_session() call loops forever and the tee_stmm_efi
-> > > driver never ends to probe.
-> > >
-> > > With debug enabled I got the following messages.
-> >
-> > I assume reading and storing variables already works in U-Boot right?
-> >
->
-> Reading and storing variables to the RPMB partition in U-Boot works,
-> that's using the mmc rpmb command from u-boot,
+Following the convention of the tool PMU, create a hwmon PMU that
+exposes hwmon data for reading. For example, the following shows
+reading the CPU temperature and 2 fan speeds alongside the uncore
+frequency:
+```
+$ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
+     1.001153138              52.00 'C   temp_cpu
+     1.001153138              2,588 rpm  fan1
+     1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
+     1.001153138                  8      tool/num_cpus_online/
+     1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
+     1.001153138      1,012,773,595      duration_time
+...
+```
 
-Are you talking about env variables? Perhaps you store them in the mmc
-and not the RPMB partition?
-There's some information here [0]
+Additional data on the hwmon events is in perf list:
+```
+$ perf list
+...
+hwmon:
+...
+  temp_core_0 OR temp2
+       [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
+        hwmon_coretemp]
+...
+```
 
-> But setting
-> CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
-> (although I'm not able to debug at u-boot level) What I see is that
-> u-boot gets stuck
-> when bootefi bootmgr is invoqued. I can also reproduce the issue with
-> bootefi hello.
->
-> =3D> run bootcmd
->   Scanning for bootflows in all bootdevs
->   Seq  Method       State   Uclass    Part  Name                      Fil=
-ename
->   ---  -----------  ------  --------  ----  ------------------------
-> ----------------
->   Scanning global bootmeth 'efi_mgr':
-> ( gets stuck here)
->
-> or
->
-> =3D> bootefi hello
-> (gets stuck)
->
-> To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and bypass
-> the error and go to Linux. My understanding is that
-> CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables at
-> u-boot level but OPTEE is running the StandaloneMM service. Am I
-> right?
+v8: Fix formatting issues and reduce scope of 2 strings reported by
+    Namhyung.
+v7: Try to address feedback from Namhyung wrt size/comprehensibility
+    of the hwmon PMU patch. To better explain the config encoding put
+    the parser into a patch ahead of the PMU patch and add a unit
+    test. This shows how a hwmon filename can be moved back-and-forth
+    with a config value as a single patch (two with the test). The
+    hwmon PMU patch is then putting the wrapping around that for the
+    pmus', parse_event's and evsel reading's benefit.
+    
+    The alternate approach of not caring about the mapping, name to
+    config value, and using the evsel->name wasn't followed. In the
+    tool PMU it was made so we can go back-and-forth between event
+    names and a type+config, this removed the tool enum value from the
+    evsel as now tool events were more 1st class and evsel should
+    really just be a wrapper on a perf_event_attr. Using the
+    evsel->name wasn't doing that and so the approach of mapping
+    filenames and configs, as better highlighted in this series was
+    pursued.
 
-U-Boot has two ways of storing EFI variables [0] . You can either
-store them in a file or the RPMB partition. The correct thing to do,
-since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TEE. I am
-not sure why the hand happens, but one thing we can improve is figure
-out why it hangs and print a useful message.
-There are a number of reasons that might lead to a failure. Is the
-RPMB key programmed on your board? Have a look at this [1] in case it
-helps
+    It is expected future PMUs won't be able to cleanly map fixed
+    strings to config values, in those cases tables would be
+    necessary. Making a hwmon PMU do this and then removing it to
+    follow the parsing/mapping done in patch 2 here, would have been a
+    lot of additional work which then would be removed.
 
->
-> > >
-> > > # tee-supplicant
-> > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted service
-> > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
-> > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-> > > D/TC:? 0 spm_handle_scall:859 Received FFA version
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+v6: Add string.h #include for issue reported by kernel test robot.
+v5: Fix asan issue in parse_hwmon_filename caught by a TMA metric.
+v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu from
+    the update to perf_pmu to use it. Try to make source of literal
+    strings clearer via named #defines. Fix a number of GCC warnings.
+v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
+v2: Address Namhyung's review feedback. Rebase dropping 4 patches
+    applied by Arnaldo, fix build breakage reported by Arnaldo.
 
-If I had to guess, OP-TEE doesn't store the variables in the RPMB, can
-you compile it with a bit more debugging enabled?
+Ian Rogers (7):
+  tools api io: Ensure line_len_out is always initialized
+  perf hwmon_pmu: Add hwmon filename parser
+  perf test: Add hwmon filename parser test
+  perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
+  perf pmu: Add calls enabling the hwmon_pmu
+  perf test: Add hwmon "PMU" test
+  perf docs: Document tool and hwmon events
 
-> > >
-> > > And tracing the function calls gives me that:
-> > >
-> > >       tee_stmm_efi_probe() {
-> > >              tee_client_open_context() {
-> > >                optee_get_version() {
-> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                } (ret=3D0xd)
-> > >                tee_ctx_match(); (ret=3D0x1)
-> > >                optee_smc_open() {
-> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                  optee_open() {
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                  } (ret=3D0x0)
-> > >                } (ret=3D0x0)
-> > >              } (ret=3D0xffff000004e71c80)
-> > >              tee_client_open_session() {
-> > >                optee_open_session() {
-> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                  optee_get_msg_arg() {
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > >                  } (ret=3D0xffff000002909000)
-> > >                  tee_session_calc_client_uuid(); (ret=3D0x0)
-> > >                  optee_to_msg_param(); (ret=3D0x0)
-> > >                  optee_smc_do_call_with_arg() {
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
-> > >                    optee_cq_wait_init(); (ret=3D0xffff000002e55910)
-> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > >      ... continues sending this forever ...
-> > >      ... Hit ^C to stop recording ...
-> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > >                    optee_smccc_smc() {
-> > >
-> > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#using-op=
--tee-for-efi-variables
-> > >
-> > > Thanks in advance,
-> >
-> > The most common problem with this is miscompiling the tee_supplicant
-> > application.
-> > Since we don't know if the system has an RPMB, we emulate it in the
-> > tee_supplicant. How did you get the supplicant and can you check if it
-> > was compiled with RPMB_EMU=3D0 or 1?
-> >
->
-> I'm using the tee-supplicant provided by the fedora package which is
-> built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
->
+ tools/lib/api/io.h                     |   1 +
+ tools/perf/Documentation/perf-list.txt |  15 +
+ tools/perf/tests/Build                 |   1 +
+ tools/perf/tests/builtin-test.c        |   1 +
+ tools/perf/tests/hwmon_pmu.c           | 340 ++++++++++
+ tools/perf/tests/tests.h               |   1 +
+ tools/perf/util/Build                  |   1 +
+ tools/perf/util/evsel.c                |   9 +
+ tools/perf/util/hwmon_pmu.c            | 826 +++++++++++++++++++++++++
+ tools/perf/util/hwmon_pmu.h            | 156 +++++
+ tools/perf/util/pmu.c                  |  20 +
+ tools/perf/util/pmu.h                  |   2 +
+ tools/perf/util/pmus.c                 |   9 +
+ tools/perf/util/pmus.h                 |   3 +
+ 14 files changed, 1385 insertions(+)
+ create mode 100644 tools/perf/tests/hwmon_pmu.c
+ create mode 100644 tools/perf/util/hwmon_pmu.c
+ create mode 100644 tools/perf/util/hwmon_pmu.h
 
-Yes, this is correct. We fixed the Fedora package to compile the
-supplicant correctly a while back.
+-- 
+2.47.0.277.g8800431eea-goog
 
-[0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
-[1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-Boot.h=
-tml#Protected%20UEFI%20variables%20with%20U-Boot
-
-
-Regards
-/Ilias
-> Thanks,
->    Enric
->
-> > Thanks
-> > /Ilias
-> >
-> > >    Enric
-> > >
-> >
->
 
