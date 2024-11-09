@@ -1,151 +1,110 @@
-Return-Path: <linux-kernel+bounces-403008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25CA9C2F81
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:31:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD62A9C2F84
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF8428211B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CFC1F21740
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226111A0739;
-	Sat,  9 Nov 2024 20:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC5F1A0BF2;
+	Sat,  9 Nov 2024 20:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m9oYKpxD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZPSddN6"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5414513BC12
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 20:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E37D13BC12;
+	Sat,  9 Nov 2024 20:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731184267; cv=none; b=XxrTMqAFKCnPyVfvm7zn9o1vW2o6TT+o1ucihpVU654JIoumSQuVZvGjf65ddcIyOqQwj/NDyHeMw6TQLZ/FmqDM01e5PIDLhw8HHBYZgMupmUYpcjv75INicN0PJpT72EW6Haip0MrOTfxx2INE5Vi1HZTWGpQzRqvEjBsc5H4=
+	t=1731184366; cv=none; b=HbecqsgoYnFIluvzRD6mr3myALRKlLkAOhgiOrBLXWejeBip0uSbJBq4+i5wdwVK5aLushk41BCSJrlbyxKb12JvLLkmqvM4T0AAH3bnPFvArJ6YhQiEyVAvCkz+72YtsyAnjArxD+6CjWM/jYGmpL7wCwZv/OSQUszD+3roAAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731184267; c=relaxed/simple;
-	bh=lwc+6sp3mcJ5Ad0yQLyDMLqBIcNpYLMMzahip6ZIWmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdJO4wkhUI52h+2Z767pylrAc+yIsxQQOBkzIvYlcvEw9+XjcWyZzei5oFjniLVh4TZNXjoA1bS0mZt2zBezHvLjm5FtdDyOvGR8hGZr/JD0lv6sV/FPliBYdCkkIVpfHfhSYCkI0VzXuvz0WY/sJIZyCd900uh2ANqX/vEn0HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m9oYKpxD; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731184264; x=1762720264;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lwc+6sp3mcJ5Ad0yQLyDMLqBIcNpYLMMzahip6ZIWmI=;
-  b=m9oYKpxDl36q0mQ2H5UPuGv9IX/5g5hizmK7EulooXW1oMFEqO5Ymc4b
-   t7FSXPY/NCMtNVvlx3jYDMhaLepsVifPbYnFgGRDQKnqy2i4jr/kC6baE
-   FIxgajU+Gui6T/dVadPEu8v6RRQA5ExvJ/F/r9e0Jl2rCovTDmWdCm/fi
-   uZVPe22RrinOjWpNBeZq6C09iQx3N+A9Sj32HDJkJqeCqkrCxo00HR6Pc
-   M92ibTbKNTvFKJJotMKiQDFnP+q2f+81qaEwJbknf9wRHu4KFBzvIXdiC
-   Mc++WGLfKzma04lWMqs0F5BCJ2s+n0uQ2umx4hTgW/Mky3VhixnhCHXY7
-   Q==;
-X-CSE-ConnectionGUID: w8iMUUrES663m/Bbti9NYQ==
-X-CSE-MsgGUID: AMt9YctTSpuxqKkuMawqqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11251"; a="31146956"
-X-IronPort-AV: E=Sophos;i="6.12,141,1728975600"; 
-   d="scan'208";a="31146956"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2024 12:31:03 -0800
-X-CSE-ConnectionGUID: SqYXoFcpRpS+1UQ6kzFulw==
-X-CSE-MsgGUID: gbPkTUaOTr+b6WNW2HVVlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="91027501"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 09 Nov 2024 12:30:58 -0800
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t9s6i-000sby-0c;
-	Sat, 09 Nov 2024 20:30:56 +0000
-Date: Sun, 10 Nov 2024 04:29:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 3/7] drm/vc4: use drm_hdmi_connector_mode_valid()
-Message-ID: <202411100456.0JcsAx2b-lkp@intel.com>
-References: <20241109-hdmi-mode-valid-v3-3-5348c2368076@linaro.org>
+	s=arc-20240116; t=1731184366; c=relaxed/simple;
+	bh=8xpxyEfI555geThWq9tsO1QjLFbEyBXqujrrvnAdajY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kH0zPWTZ02xSfnS2WLqeldojHByGCfS3NaIEH2xjpHX2C9z2SAkLLYQzIHSnVetcD/6UJqzVx9Mr46M9WK+LtSOAmDiknxO97tljDq3rI0RPGehi07CE50rnJ9UsJ4hpuPICiVeStjumn0vyavIIZWsPx52ugVXfrAkAGf8NZ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZPSddN6; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cb8954ec9so4170265ad.3;
+        Sat, 09 Nov 2024 12:32:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731184364; x=1731789164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=txlj4/on3Ga9QXI0Vgih7uY95lnyqtcv0s2L9FFiS/0=;
+        b=lZPSddN63YLgCwLexGZBCHb4BQ/9RlXTbl2tCxU9LLiMcMjz0MsEgLOIVFl0WZIPEQ
+         1qCJLrtsVEJzreR2Fvlw1XOnPvQ+jAWm+moqtEHZHoqSFkhfm45HV+G5d3oWJLB/3qwj
+         vpKKzFZLEBHVwjC+bN/iyAsekfBPsVGStrkasLhm8CMO6pmmOAX3y26VJHCumDAUGFcv
+         lwoOxJnP4Vp2jhQSALDFDJnpkwxZWD+mLvT+ltlq7Cyk5XtyAHELkahGm7Gkk1skGOcC
+         xYIwRUGu8o6o87Pim/F2zVqPJPc5IaPpkIom8ur2BWok13JDoYyxQbtdawY7PXMfy4Gp
+         b7lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731184364; x=1731789164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=txlj4/on3Ga9QXI0Vgih7uY95lnyqtcv0s2L9FFiS/0=;
+        b=aOfKuSi7rIbYmMAM+Rrt9U1wWMSU3UlwrrM81HOywiX2luoPfR7gzeAImcV60McnVg
+         N3Y+xmJoK+82sfg+0z3w3Sc1MD9p22xx3mVZlJP4GDBce+cyjGBEqZouSDVGAh1ZIJbU
+         7Fvghxx9Kampm4cvVjzDBVW46B9uCfO85PsXhZ/qORg+G3EkgLFezzhj4xjul8V3DZ5+
+         vyfq3u9O3JRWt/tqSnNZpS7B+USMP1q40g3Tyx7m1rIi2r7ZdSCSYP8OvnX++x+1HSAU
+         r0Zy+aGeWdTpqYAQS+sa1HoONaC9CL1q4gb8MrGxMdnBhUcU4ikaSJw67qSRP3O7A3EP
+         lRIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBwIXn86J0iT7GIyhi6A1FN8L0GotDxBQvIfCbpqOfq/flcvmSnx9liXxz6AJsydPzodFkB21bfaCRM1k=@vger.kernel.org, AJvYcCVbOYmwe3NVT9LrsmDmEhWaqJXrGA21rBrWJICUGaFQqXdR/iKo2CPPHu7IXpOdGu4hk6HwXBEKM92GtR3hwGSJ@vger.kernel.org, AJvYcCW21S/vF7kwgvqcH7JNEQWLin9j66WEeaXk25eTnsqB2aYNWwiRMtwusOg0e0cH0cWlBgAh3F4LWZC9S9LGTRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVQysvEL+XOQXCzPwBsL9RpZbrVZ3Sgt41GYApLzHw05PiJxoJ
+	1ztlylN+ZSe3r2bVIj/O3QXRF3eiZXrn7F3kzfRwf2Cv5OsGqYsDvq0gQVa/najm8qZytrlqUBe
+	leTREeR1PhmJIJh40rZQCz7ghL6E=
+X-Google-Smtp-Source: AGHT+IHBcFg3hYK28O/uquSXklX+ZaazN5F5oi/XKmnhVr71as4eEqMd8emvbhC6Y0ZBhIgfi3Ojg1DgmNOZehrFfaA=
+X-Received: by 2002:a17:90b:4b43:b0:2e2:cd5e:b25 with SMTP id
+ 98e67ed59e1d1-2e9b1680927mr4264455a91.6.1731184364243; Sat, 09 Nov 2024
+ 12:32:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241109-hdmi-mode-valid-v3-3-5348c2368076@linaro.org>
+References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-2-davidgow@google.com>
+ <ZyUUGNywoADngOwM@Boquns-Mac-mini.local> <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
+In-Reply-To: <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 9 Nov 2024 21:32:31 +0100
+Message-ID: <CANiq72=-8mq0ke-_K_a1syX6QRyQXRKNka6GLKWuMHAOn236JA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] rust: kunit: add KUnit case and suite macros
+To: David Gow <davidgow@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	=?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
+On Sat, Nov 9, 2024 at 9:18=E2=80=AFAM David Gow <davidgow@google.com> wrot=
+e:
+>
+> Is there somewhere else we can put the attribute to support this
+> without having to either disable the warning, or use the experimental
+> feature globally?
 
-kernel test robot noticed the following build warnings:
+Yeah, on the item, e.g. https://godbolt.org/z/oo8osadn4:
 
-[auto build test WARNING on 929beafbe7acce3267c06115e13e03ff6e50548a]
+    const _: () =3D {
+        static mut X: i32 =3D 42;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dmitry-Baryshkov/drm-display-hdmi-add-generic-mode_valid-helper/20241109-203557
-base:   929beafbe7acce3267c06115e13e03ff6e50548a
-patch link:    https://lore.kernel.org/r/20241109-hdmi-mode-valid-v3-3-5348c2368076%40linaro.org
-patch subject: [PATCH v3 3/7] drm/vc4: use drm_hdmi_connector_mode_valid()
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241110/202411100456.0JcsAx2b-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241110/202411100456.0JcsAx2b-lkp@intel.com/reproduce)
+        #[allow(unused_unsafe)]
+        static mut S: *const i32 =3D unsafe { core::ptr::addr_of_mut!(X) };
+    };
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411100456.0JcsAx2b-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/vc4/vc4_hdmi.c: In function 'vc4_hdmi_encoder_mode_valid':
->> drivers/gpu/drm/vc4/vc4_hdmi.c:1762:68: warning: passing argument 2 of 'drm_hdmi_connector_mode_valid' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-    1762 |         return drm_hdmi_connector_mode_valid(&vc4_hdmi->connector, mode);
-         |                                                                    ^~~~
-   In file included from drivers/gpu/drm/vc4/vc4_hdmi.c:35:
-   include/drm/display/drm_hdmi_state_helper.h:25:56: note: expected 'struct drm_display_mode *' but argument is of type 'const struct drm_display_mode *'
-      25 |                               struct drm_display_mode *mode);
-         |                               ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-
-
-vim +1762 drivers/gpu/drm/vc4/vc4_hdmi.c
-
-  1749	
-  1750	static enum drm_mode_status
-  1751	vc4_hdmi_encoder_mode_valid(struct drm_encoder *encoder,
-  1752				    const struct drm_display_mode *mode)
-  1753	{
-  1754		struct vc4_hdmi *vc4_hdmi = encoder_to_vc4_hdmi(encoder);
-  1755	
-  1756		if (vc4_hdmi->variant->unsupported_odd_h_timings &&
-  1757		    !(mode->flags & DRM_MODE_FLAG_DBLCLK) &&
-  1758		    ((mode->hdisplay % 2) || (mode->hsync_start % 2) ||
-  1759		     (mode->hsync_end % 2) || (mode->htotal % 2)))
-  1760			return MODE_H_ILLEGAL;
-  1761	
-> 1762		return drm_hdmi_connector_mode_valid(&vc4_hdmi->connector, mode);
-  1763	}
-  1764	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Miguel
 
