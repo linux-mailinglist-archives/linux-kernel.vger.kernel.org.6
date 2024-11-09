@@ -1,110 +1,195 @@
-Return-Path: <linux-kernel+bounces-403009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD62A9C2F84
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:32:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FC369C2F8B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CFC1F21740
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA091F21791
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC5F1A0BF2;
-	Sat,  9 Nov 2024 20:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1561A08B8;
+	Sat,  9 Nov 2024 20:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZPSddN6"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLa7TvZm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E37D13BC12;
-	Sat,  9 Nov 2024 20:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C626141987;
+	Sat,  9 Nov 2024 20:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731184366; cv=none; b=HbecqsgoYnFIluvzRD6mr3myALRKlLkAOhgiOrBLXWejeBip0uSbJBq4+i5wdwVK5aLushk41BCSJrlbyxKb12JvLLkmqvM4T0AAH3bnPFvArJ6YhQiEyVAvCkz+72YtsyAnjArxD+6CjWM/jYGmpL7wCwZv/OSQUszD+3roAAU=
+	t=1731184973; cv=none; b=BJt6Rh7zlKAEq/5fdQJGW1X06mrFbCr2RICRR99XwwQohsP45DWQOiJpeWZDmLP7LCSlAqd8QRtXR3C5mofSPtnIGQHwJBIoyvg1wk5YSC0YYmpWAdvEy7XsCM1o5mxcpGCteCCidvXjCQ6M1AW1CxL1lXXoREsrlnvuoHwIJbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731184366; c=relaxed/simple;
-	bh=8xpxyEfI555geThWq9tsO1QjLFbEyBXqujrrvnAdajY=;
+	s=arc-20240116; t=1731184973; c=relaxed/simple;
+	bh=BFhgPPgad6REJXOdQ2aLdthpgZaIIX1wlW/yV1yhNeM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kH0zPWTZ02xSfnS2WLqeldojHByGCfS3NaIEH2xjpHX2C9z2SAkLLYQzIHSnVetcD/6UJqzVx9Mr46M9WK+LtSOAmDiknxO97tljDq3rI0RPGehi07CE50rnJ9UsJ4hpuPICiVeStjumn0vyavIIZWsPx52ugVXfrAkAGf8NZ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZPSddN6; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cb8954ec9so4170265ad.3;
-        Sat, 09 Nov 2024 12:32:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731184364; x=1731789164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=txlj4/on3Ga9QXI0Vgih7uY95lnyqtcv0s2L9FFiS/0=;
-        b=lZPSddN63YLgCwLexGZBCHb4BQ/9RlXTbl2tCxU9LLiMcMjz0MsEgLOIVFl0WZIPEQ
-         1qCJLrtsVEJzreR2Fvlw1XOnPvQ+jAWm+moqtEHZHoqSFkhfm45HV+G5d3oWJLB/3qwj
-         vpKKzFZLEBHVwjC+bN/iyAsekfBPsVGStrkasLhm8CMO6pmmOAX3y26VJHCumDAUGFcv
-         lwoOxJnP4Vp2jhQSALDFDJnpkwxZWD+mLvT+ltlq7Cyk5XtyAHELkahGm7Gkk1skGOcC
-         xYIwRUGu8o6o87Pim/F2zVqPJPc5IaPpkIom8ur2BWok13JDoYyxQbtdawY7PXMfy4Gp
-         b7lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731184364; x=1731789164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=txlj4/on3Ga9QXI0Vgih7uY95lnyqtcv0s2L9FFiS/0=;
-        b=aOfKuSi7rIbYmMAM+Rrt9U1wWMSU3UlwrrM81HOywiX2luoPfR7gzeAImcV60McnVg
-         N3Y+xmJoK+82sfg+0z3w3Sc1MD9p22xx3mVZlJP4GDBce+cyjGBEqZouSDVGAh1ZIJbU
-         7Fvghxx9Kampm4cvVjzDBVW46B9uCfO85PsXhZ/qORg+G3EkgLFezzhj4xjul8V3DZ5+
-         vyfq3u9O3JRWt/tqSnNZpS7B+USMP1q40g3Tyx7m1rIi2r7ZdSCSYP8OvnX++x+1HSAU
-         r0Zy+aGeWdTpqYAQS+sa1HoONaC9CL1q4gb8MrGxMdnBhUcU4ikaSJw67qSRP3O7A3EP
-         lRIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBwIXn86J0iT7GIyhi6A1FN8L0GotDxBQvIfCbpqOfq/flcvmSnx9liXxz6AJsydPzodFkB21bfaCRM1k=@vger.kernel.org, AJvYcCVbOYmwe3NVT9LrsmDmEhWaqJXrGA21rBrWJICUGaFQqXdR/iKo2CPPHu7IXpOdGu4hk6HwXBEKM92GtR3hwGSJ@vger.kernel.org, AJvYcCW21S/vF7kwgvqcH7JNEQWLin9j66WEeaXk25eTnsqB2aYNWwiRMtwusOg0e0cH0cWlBgAh3F4LWZC9S9LGTRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVQysvEL+XOQXCzPwBsL9RpZbrVZ3Sgt41GYApLzHw05PiJxoJ
-	1ztlylN+ZSe3r2bVIj/O3QXRF3eiZXrn7F3kzfRwf2Cv5OsGqYsDvq0gQVa/najm8qZytrlqUBe
-	leTREeR1PhmJIJh40rZQCz7ghL6E=
-X-Google-Smtp-Source: AGHT+IHBcFg3hYK28O/uquSXklX+ZaazN5F5oi/XKmnhVr71as4eEqMd8emvbhC6Y0ZBhIgfi3Ojg1DgmNOZehrFfaA=
-X-Received: by 2002:a17:90b:4b43:b0:2e2:cd5e:b25 with SMTP id
- 98e67ed59e1d1-2e9b1680927mr4264455a91.6.1731184364243; Sat, 09 Nov 2024
- 12:32:44 -0800 (PST)
+	 To:Cc:Content-Type; b=jsewkz03wXw6FMVo+MmtdQXFFBUU29OBIcapX2nLGVDGdfVs5l33JtbuZaCUzTOjLdjxvTm5rAqu0xlf4g54Z4eO9Z95fYw6Ze9U2eqtGM2R0naPoMZYGPVF3uoCbcoSpk/W1B8U7EmN29dJ8X88wqY8H3HeboNN0G9agHzY6XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLa7TvZm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0108EC4CECE;
+	Sat,  9 Nov 2024 20:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731184973;
+	bh=BFhgPPgad6REJXOdQ2aLdthpgZaIIX1wlW/yV1yhNeM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fLa7TvZmg0MGBkP7O9j1l5viOm4+1C/KCCoz4nREYhHA4L3jpI99nlj3jXWatcPNb
+	 eR3WXSivGmist8YjYAKnw9yN5WA4a7mHOf8fUa08oCxgePP2VMR/AYRW5yRPt1IHOy
+	 cUuCZlhDoDEJI/1vMXeVPS9C5wV8gm8tGVMhnHWB2vU+nQHowtTrVm0lY0MC/RcNg3
+	 1Z1qVOY8SUHHO6KAQp3uNUl4i9FIJolgejpn8IlchV0a0AxAm/8D6pinyIXzoFFxwv
+	 geLx7hVzm67BgSyrnYrU7HLManvDVP5wO4kw9qGXeFJ/xPr3NabVZZSwqC08P/6tSO
+	 udXcB9t4l1+ow==
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so32122811fa.3;
+        Sat, 09 Nov 2024 12:42:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUoh1yIkdm6TYHXQNSAkEQ3IMYoZh6RwBXeFOyB3yJdtKc7Cduc/+JV7HiRk5hm1sYRIVxHHYKLsDQH1xU=@vger.kernel.org, AJvYcCVeQf/yTMS7g72xFUnQJS+s3QAnjQhYMPeFF3l836TaqrsyyR+7AeT01RTBEfXXWFgaSoDvgAAqJy7tlg6K@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT+jqqgLwI3YovK08rNRIjeUUctNJqyILWspKqVQLYB/ChcFcR
+	bWgnuUUjpHoWdWcrKqU3TAqS6JX6aKj4fHrXCt44df+5jzzDjUENthuj96c13681BDPq8+ACrK2
+	qYU4UX26iz9zDBIv3U3pnDLiPnpA=
+X-Google-Smtp-Source: AGHT+IE2S9grDzqoTtysRKHtscKPUIepmw5PxlCowp+EZ6gFKhjPgVj82eyZUl2qAN2kqcy6geg0UanTGVyB0m6dMxE=
+X-Received: by 2002:a2e:be9f:0:b0:2fb:6057:e67e with SMTP id
+ 38308e7fff4ca-2ff2028a877mr33511061fa.32.1731184971659; Sat, 09 Nov 2024
+ 12:42:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-2-davidgow@google.com>
- <ZyUUGNywoADngOwM@Boquns-Mac-mini.local> <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
-In-Reply-To: <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 9 Nov 2024 21:32:31 +0100
-Message-ID: <CANiq72=-8mq0ke-_K_a1syX6QRyQXRKNka6GLKWuMHAOn236JA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] rust: kunit: add KUnit case and suite macros
-To: David Gow <davidgow@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	=?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241031132630.24667-1-t.boehler@kunbus.com> <20241031132630.24667-2-t.boehler@kunbus.com>
+In-Reply-To: <20241031132630.24667-2-t.boehler@kunbus.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 10 Nov 2024 05:42:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATe6Ch7T4Vqkiq=b0cyjEGPTTtJiz-m_FuY2mdfO1JYHg@mail.gmail.com>
+Message-ID: <CAK7LNATe6Ch7T4Vqkiq=b0cyjEGPTTtJiz-m_FuY2mdfO1JYHg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] package: debian: strip headers package
+To: =?UTF-8?Q?Thomas_B=C3=B6hler?= <t.boehler@kunbus.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Philipp Rosenberger <p.rosenberger@kunbus.com>, 
+	Lino Sanfilippo <l.sanfilippo@kunbus.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 9, 2024 at 9:18=E2=80=AFAM David Gow <davidgow@google.com> wrot=
-e:
+On Thu, Oct 31, 2024 at 10:26=E2=80=AFPM Thomas B=C3=B6hler <t.boehler@kunb=
+us.com> wrote:
 >
-> Is there somewhere else we can put the attribute to support this
-> without having to either disable the warning, or use the experimental
-> feature globally?
+> The linux-headers package contains unstripped binaries. Lintian
+> complains about this:
+>
+>     E: linux-headers-6.12.0-rc4-g7e04fcfc6195: unstripped-binary-or-objec=
+t [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/asn1_compiler]
+>     E: linux-headers-6.12.0-rc4-g7e04fcfc6195: unstripped-binary-or-objec=
+t [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/basic/fixdep]
+>     E: linux-headers-6.12.0-rc4-g7e04fcfc6195: unstripped-binary-or-objec=
+t [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/kallsyms]
+>     E: linux-headers-6.12.0-rc4-g7e04fcfc6195: unstripped-binary-or-objec=
+t [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/mod/modpost]
+>     E: linux-headers-6.12.0-rc4-g7e04fcfc6195: unstripped-binary-or-objec=
+t [usr/src/linux-headers-6.12.0-rc4-g7e04fcfc6195/scripts/sorttable]
+>
+> It's not possible to outright strip every package built with
+> "debian/rules" as, for instance, the "binary-image" target shouldn't be
+> stripped because it contains debug information that the
+> "binary-image-dbg" target will make use of.
+>
+> Thus conditionally use "dh_strip" on the "binary-headers" target after
+> using "dh_builddeb" to strip only the contents of the package lintian
+> complains about. Also pass the "--no-automatic-dbgsym" option to make
+> sure no headers-dbgsym package is created.
+>
+> Signed-off-by: Thomas B=C3=B6hler <t.boehler@kunbus.com>
+> ---
+>  scripts/package/debian/rules | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
+> index ca07243bd5cd..0c75319acae1 100755
+> --- a/scripts/package/debian/rules
+> +++ b/scripts/package/debian/rules
+> @@ -46,6 +46,8 @@ define binary
+>         $(Q)dh_testroot $(DH_OPTIONS)
+>         $(Q)dh_prep $(DH_OPTIONS)
+>         $(Q)+$(MAKE) $(make-opts) run-command KBUILD_RUN_COMMAND=3D'+$$(s=
+rctree)/scripts/package/builddeb $(package)'
+> +       $(if $(filter $(headers-package),$(package)),\
+> +               $(Q)dh_strip $(DH_OPTIONS) --no-automatic-dbgsym)
+>         $(Q)dh_installdocs $(DH_OPTIONS)
+>         $(Q)dh_installchangelogs $(DH_OPTIONS)
+>         $(Q)dh_compress $(DH_OPTIONS)
+> --
+> 2.39.2
+>
 
-Yeah, on the item, e.g. https://godbolt.org/z/oo8osadn4:
 
-    const _: () =3D {
-        static mut X: i32 =3D 42;
+Probably, I want to postpone this until I figure out
+how to sort out issues.
 
-        #[allow(unused_unsafe)]
-        static mut S: *const i32 =3D unsafe { core::ptr::addr_of_mut!(X) };
-    };
+If this patch is applied to the mainline, the following build error will ha=
+ppen
+because Kbuild works incrementally.
 
-Cheers,
-Miguel
+[How to reproduce]
+
+$ make defconfig all
+$ make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- defconfig bindeb-pkg
+
+aarch64-linux-gnu-strip fails because x86 binaries are remaining.
+
+
+
+Rebuilding host programs with aarch64-linux-gnu-gcc...
+dpkg-deb: building package
+'linux-image-6.12.0-rc6-00041-g2808938103be' in
+'../linux-image-6.12.0-rc6-00041-g2808938103be_6.12.0-rc6-00041-g2808938103=
+be-4_arm64.deb'.
+  INSTALL debian/linux-libc-dev/usr/include
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/kallsyms
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/sorttable
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/asn1_compiler
+dpkg-deb: building package 'linux-libc-dev' in
+'../linux-libc-dev_6.12.0-rc6-00041-g2808938103be-4_arm64.deb'.
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/mod/modpost.o
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/mod/file2alias.o
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/mod/sumversion.o
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/mod/symsearch.o
+  HOSTCC  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/basic/fixdep
+  HOSTLD  debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux=
+-headers-6.12.0-rc6-00041-g2808938103be/scripts/mod/modpost
+aarch64-linux-gnu-strip: Unable to recognise the format of the input
+file `debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux-hea=
+ders-6.12.0-rc6-00041-g2808938103be/scripts/selinux/genheaders/genheaders'
+dh_strip: error: aarch64-linux-gnu-strip --remove-section=3D.comment
+--remove-section=3D.note -o /tmp/Kv0I0EefcE/stripYJQMDW
+debian/linux-headers-6.12.0-rc6-00041-g2808938103be/usr/src/linux-headers-6=
+.12.0-rc6-00041-g2808938103be/scripts/selinux/genheaders/genheaders
+returned exit code 1
+dh_strip: error: Aborting due to earlier error
+make[4]: *** [debian/rules:63: binary-headers] Error 2
+make[4]: *** Waiting for unfinished jobs....
+dpkg-deb: building package
+'linux-image-6.12.0-rc6-00041-g2808938103be-dbg' in
+'../linux-image-6.12.0-rc6-00041-g2808938103be-dbg_6.12.0-rc6-00041-g280893=
+8103be-4_arm64.deb'.
+dpkg-buildpackage: error: make -f debian/rules binary subprocess
+returned exit status 2
+make[3]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
+make[2]: *** [Makefile:1570: bindeb-pkg] Error 2
+make[1]: *** [/home/masahiro/workspace/linux-kbuild/Makefile:347:
+__build_one_by_one] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
