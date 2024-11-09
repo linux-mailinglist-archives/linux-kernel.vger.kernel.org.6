@@ -1,165 +1,86 @@
-Return-Path: <linux-kernel+bounces-402590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BB99C296E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:01:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D609C296F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A16FEB21804
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30FF1282801
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027C53B2BB;
-	Sat,  9 Nov 2024 02:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713D2282FE;
+	Sat,  9 Nov 2024 02:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C76xhFO4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPDcb0P+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE721C27;
-	Sat,  9 Nov 2024 02:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D235C1C27
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731117682; cv=none; b=ZpCir9pacsX79Z4iED2lG5LW9tgdg7SIvIA2zLbJdS3imeuOArGgzWAuanFJALMxDDyBoLORVsFRjUGLNr3aYZnSSIsrXGfYQm1ypiOUsi33432NAqoxnYRMGJ0s9O6+7xzaj4mukpUW/oOdzeGFbayrieVHqoxLiheg9feKK+Y=
+	t=1731117915; cv=none; b=oXHxqXWh+hZXC1FDCL0i2xot1e94cXRP0BhXM1vp6ooWtXRL1shF3t0n483kk9ZzYRtKZ3gqY5SmcuSsLfw0lvuDDaQgLX9qt0IIyXhQwXYUcxyTPu+D/a0EDZGzwPOhEuf8S+4+BBfK9dhp94tpfDAqzftsRqsHyLBqNhhM1xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731117682; c=relaxed/simple;
-	bh=s3QMBa/ZBDXWVisRK+cBDAz6JxSt3Vvp543ZdW/7hh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KNwIZu61iy6yk2Ej5yYn2/MeKVCMAGYrnCAlOswlbnJ9sAfhQhePSVZZClzGss8edoS9OM4pUsE+hYFw3cPryFzYFTkt6BRd4+Klm04y2+lSs5GpnVkhh8O+GcuWkhVCXc8UjkdgjqpYR1ygnfVwvNjusUZfESc2HSKDDpH2BKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C76xhFO4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544E7C4CECD;
-	Sat,  9 Nov 2024 02:01:21 +0000 (UTC)
+	s=arc-20240116; t=1731117915; c=relaxed/simple;
+	bh=oHDnLhe79l2GGcoFm13Qr6MszLy/IqdJy1F39Si0m0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WymJaPzfoDfdeoLXYGX+bjDspbtREQVZNNPcmKuXBiUtEx8l0oBCmDpUiROt9XVIX0q4Og+Dx2IbSJO+maUyla48ueWsRrRZe3jmQiUjPLJbwRJtpLsCGnzYW0k6oLAt68WaSwuFhgSnpHyaXTQpj7X7etAihyUD1BKog8VHQcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPDcb0P+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F80C4CECF;
+	Sat,  9 Nov 2024 02:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731117682;
-	bh=s3QMBa/ZBDXWVisRK+cBDAz6JxSt3Vvp543ZdW/7hh4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=C76xhFO45ciYI4z/478GGmUEdbsJUwu3lS9nRBxD9BeyaL7/p1jXz7Wq30/4BXbMJ
-	 /Z6gTejfO2eIt7J2tdkVCWqYdYHkjvklCTzF8lBB10NJyuqM/PG8RWyjGypIIpXFa3
-	 aBMgpcN9Jhhzi+axSs4sxGpdkxsxD/aMTxYYEuOJrlT59fbgginghYqPmrczfx6HkX
-	 92wlXnmgejKCSmGX9vWPYj+4dkrPfum7F+P4JxqHnOKk8Qq1B5zg5hctZQFMaIosvz
-	 twryWzJAAJ2JQWzvcYRdqXRVWxVcThf+M22pE6/EFkzCypuEHqdDzsunVWZNzRy/gl
-	 npTmtr7EPBdxA==
-From: Mario Limonciello <superm1@kernel.org>
-To: Tom Lendacky <thomas.lendacky@amd.com>,
-	John Allen <john.allen@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH] crypto: ccp: Use scoped guard for mutex
-Date: Fri,  8 Nov 2024 20:00:54 -0600
-Message-ID: <20241109020054.3877377-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1731117915;
+	bh=oHDnLhe79l2GGcoFm13Qr6MszLy/IqdJy1F39Si0m0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RPDcb0P+HICuQdMVfIz9NpkU9SdL2m+8KYvyqDXqf+SonFhPbjMjH9CO/KS2hKFvp
+	 k2MFn7LBRcA4IGyahZ/XEg1i0CRnvzMnAkCYz3s2nnrDxu13xFImTCurbNZs39LF7Y
+	 2XLuX82FyvtsY1EcmoOCYKBUgE0+VHWnE7mOC/X6OJUG74ewAePKNWVfmvOKIpbNj2
+	 mtdaEJmiIP50OW9feY5Mq37OaDyHBuz7k6RFGgUavcreWUIo2n8DiiPNDPO7ff5l7r
+	 hdZEAtQ56ZcIYrmuJF77vN1mkjXLDqfBKWc0K5IxG0dElHd2ZDcWZVWGMp4kklobCA
+	 +WGYREON3aUaQ==
+Date: Fri, 8 Nov 2024 16:05:14 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Changwoo Min <multics69@gmail.com>
+Cc: arighi@nvidia.com, void@manifault.com, changwoo@igalia.com,
+	kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: add a missing rcu_read_lock/unlock pair at
+ scx_select_cpu_dfl()
+Message-ID: <Zy7DWssEuFN6Zehi@slm.duckdns.org>
+References: <20241109015420.170729-1-changwoo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241109015420.170729-1-changwoo@igalia.com>
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+Hello,
 
-Using a scoped guard simplifies the cleanup handling.
+On Sat, Nov 09, 2024 at 10:54:20AM +0900, Changwoo Min wrote:
+...
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 6ff501a18b88..830a21d666e9 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -3320,9 +3320,11 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>  		if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
+>  			struct sched_domain *sd;
+>  
+> +			rcu_read_lock();
+>  			sd = rcu_dereference(per_cpu(sd_llc, prev_cpu));
+>  			if (sd)
+>  				llc_cpus = sched_domain_span(sd);
+> +			rcu_read_unlock();
 
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/crypto/ccp/dbc.c | 48 +++++++++++++++-------------------------
- 1 file changed, 18 insertions(+), 30 deletions(-)
+Shouldn't RCU critical section cover the places where llc_cpus is deref'd?
 
-diff --git a/drivers/crypto/ccp/dbc.c b/drivers/crypto/ccp/dbc.c
-index 5b105a23f6997..3617e6eabab14 100644
---- a/drivers/crypto/ccp/dbc.c
-+++ b/drivers/crypto/ccp/dbc.c
-@@ -7,6 +7,8 @@
-  * Author: Mario Limonciello <mario.limonciello@amd.com>
-  */
- 
-+#include <linux/mutex.h>
-+
- #include "dbc.h"
- 
- #define DBC_DEFAULT_TIMEOUT		(10 * MSEC_PER_SEC)
-@@ -137,62 +139,48 @@ static long dbc_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		return -ENODEV;
- 	dbc_dev = psp_master->dbc_data;
- 
--	mutex_lock(&dbc_dev->ioctl_mutex);
-+	guard(mutex)(&dbc_dev->ioctl_mutex);
- 
- 	switch (cmd) {
- 	case DBCIOCNONCE:
--		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce))) {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_nonce)))
-+			return -EFAULT;
- 
- 		ret = send_dbc_nonce(dbc_dev);
- 		if (ret)
--			goto unlock;
-+			return ret;
- 
--		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce))) {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_nonce)))
-+			return -EFAULT;
- 		break;
- 	case DBCIOCUID:
--		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid))) {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_setuid)))
-+			return -EFAULT;
- 
- 		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_setuid);
- 		ret = send_dbc_cmd(dbc_dev, PSP_DYNAMIC_BOOST_SET_UID);
- 		if (ret)
--			goto unlock;
-+			return ret;
- 
--		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid))) {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_setuid)))
-+			return -EFAULT;
- 		break;
- 	case DBCIOCPARAM:
--		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param))) {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_from_user(dbc_dev->payload, argp, sizeof(struct dbc_user_param)))
-+			return -EFAULT;
- 
- 		*dbc_dev->payload_size = dbc_dev->header_size + sizeof(struct dbc_user_param);
- 		ret = send_dbc_parameter(dbc_dev);
- 		if (ret)
--			goto unlock;
-+			return ret;
- 
--		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))  {
--			ret = -EFAULT;
--			goto unlock;
--		}
-+		if (copy_to_user(argp, dbc_dev->payload, sizeof(struct dbc_user_param)))
-+			return -EFAULT;
- 		break;
- 	default:
- 		ret = -EINVAL;
- 
- 	}
--unlock:
--	mutex_unlock(&dbc_dev->ioctl_mutex);
- 
- 	return ret;
- }
+Thanks.
+
 -- 
-2.43.0
-
+tejun
 
