@@ -1,143 +1,219 @@
-Return-Path: <linux-kernel+bounces-402565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CC69C2918
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:13:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 788B29C291B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:28:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3ED1F22CE5
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D361C21D4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648131CABF;
-	Sat,  9 Nov 2024 01:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E401DFED;
+	Sat,  9 Nov 2024 01:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kj2UwPhz"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oW6lrI7T"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD66AC8FE
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 01:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C380B53A7
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 01:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731114777; cv=none; b=W+GCtrv4QzKfo47GYXXk3XomKlSvIg0K0TSNzB4Z7tIHpknVPRWP9kPpf6rRjI8bDCKCLTaZu2uXi9TiuqWPIhxyjaTTh5xMJHgd/CbFCVN8C1X3qwq2Ah2VIuX0yQ/VnKAObWIuCtpGRF2Se4Vz/Vd6zuBWZxZ+z/bwO5gMgBE=
+	t=1731115691; cv=none; b=eiu5OL+3kNzsLGYjIC6hnB03ChX29RHNRzWaX/km6/rBet/Nj92tPXFTVSSHBcy5BrkQgyf4GjeSO1VHeJhgCCpAKSIQk6zTVoot4um32LlglEzRbg8OzqziKUe68GbrC2+Yta5kQjmN8Cere0LlYF+kfAja1NPO4CYIyHmBdac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731114777; c=relaxed/simple;
-	bh=1LIOUNfKTXWim4PdquFX/WgW9IMIdu285vhaA/dxY1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2f56/ZKLAbFilacJ8sqLFLbrPaMXrrTgSiEyGZKxOpJ0dZiEZUYf1iqkffJj0IAwlM2uCNJFYyrOUFgxFc8xP8TWZxOOEou+t2eZo+NLP8lfdSvyj8qFHC1r/0ZUtrnKu2j+/85Djte6AxXoPPEVXdVsHRTVHu24snKp4TCO1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kj2UwPhz; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7eda47b7343so1935952a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:12:54 -0800 (PST)
+	s=arc-20240116; t=1731115691; c=relaxed/simple;
+	bh=0qOBjDBFQ7/bVy1TcDES0h9C1kh7nE15LzRGiQXWB0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GpW+LlBjsjSDISWzdGLhZOkyTkyybKEkG9ZpiIG1E7cKZT2sNaJ0OYQMwcKY9hYsngrhV6/farc8NrPRmkn3SZK42ph7Bqv70+a52plm1DP3ItxhCw5POROdCf1O0HtK7baWkxtAtxh22SNVWDfavksFqVcV71AtDh3zm8BobXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oW6lrI7T; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5101c527611so1093685e0c.3
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 17:28:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731114774; x=1731719574; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CjjnvoPu26k+itkog+DckqTMvkk1gvltNz8j1gQtxg4=;
-        b=kj2UwPhzDes1o1q74Sfz9HErOvCP6LUcT32YTmCis7ePsQ9dBBOTQsMf6O4tXiJG0F
-         /kWpmKJLy82IS136PN5V0F3F11dqOV0Jp6BT3Y56F4ySnMH5YtF84RjFrOK9pAfNFoc+
-         grXBpcFBbpkVCyZjzo5DJFfuHphycjoGOPEJE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731114774; x=1731719574;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1731115688; x=1731720488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CjjnvoPu26k+itkog+DckqTMvkk1gvltNz8j1gQtxg4=;
-        b=GJeYQOTQUdUIQJ1CLLN9JV6rJL4agxVKjRdQg1FHhiceDprM9JjtneY4B4OL8XYfTu
-         L0JYHmdxqcbY+LFa208D227pXZPtmkqZbh/sCKcbWWPRwYGpNG3q7kBW0DQ17Tbe/uqT
-         JPchbxMgMJ3MYNXLiQDtA628OFEPiekrpAWRrZevhmLIuiUB5sEV5WPlA/2mDDoQSOVU
-         f1UBr7hEjZ+B3Vd0ylmG7JU9FsiRQKVMeMQSueBXwCd7d9R3L3SfWQTkAhPO1SrKMFKb
-         O0gj2sg13Ewp+3cYxoPdH9XKt/O7NSZzcbs0bRXC4Bg+BClBh62lJ26Y5W7wrheIzTJ6
-         S5dw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGxDo48Slf9mE7opz5E+vRAf9BLGFdf6a0LBuUXW2QZv0Rv4Oc/o91gETLTwoRvJaojYuIS1BKxBaCslA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz2p8uvHfSvPKpaJxHX3jrqsCO+mQPMhBKtbDIgsLqPBo2Q7E9
-	lzoqWp48Q72gJFMIu+dg3mgtSGz+oQ65/ebcYGlP7o22+AigrSfb7CP6ORnGsw==
-X-Google-Smtp-Source: AGHT+IF56VUPmJuf5awejR+JuIWM33kJ0nQDhTu1z/918O+Vhmwaenovb5z259WTupYgKmJeNvkdvQ==
-X-Received: by 2002:a17:90b:5307:b0:2e2:d7db:41fc with SMTP id 98e67ed59e1d1-2e9b1720246mr7217860a91.10.1731114774218;
-        Fri, 08 Nov 2024 17:12:54 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:eeab:613e:a460:41fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9bd621ae7sm524877a91.0.2024.11.08.17.12.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 17:12:53 -0800 (PST)
-Date: Sat, 9 Nov 2024 10:12:49 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Liu Shixin <liushixin2@huawei.com>
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH] zram: fix NULL pointer in comp_algorithm_show()
-Message-ID: <20241109011249.GA549125@google.com>
-References: <20241108100147.3776123-1-liushixin2@huawei.com>
+        bh=X/PJTkVlX31ldHixqsdMfMAxssLgGROHTxQckOiGCTc=;
+        b=oW6lrI7T0zs5APXS324dzZ0H7K5L+6oH11KsduJtpKMS3kz9mq82vIKm7732XS9HBg
+         HqtZ0jOZrClrmppGGSPl7skVHIdAlA+BGUr98PJin8oLihTeqH5Sdm2RLd9OsWYfQsby
+         rtDEFuGNvX9dSJv709c23OXOGOxCXbFfB2OiSkcKOjw7y45JOvuF80KECLSDmtRG2Xal
+         ovNj1spXlfBxJxC0azqP12EnBd/Q9csnIDHu/hsOYeAJ5HaXkN2zFgHqk2aCtPLcDsom
+         OfkN/T6g6b3VOafrt0EQol429Zqqfe+C3qq2SuK3dONGErPNrNX6jUMtTqUj3Ni3fbIP
+         ntZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731115688; x=1731720488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X/PJTkVlX31ldHixqsdMfMAxssLgGROHTxQckOiGCTc=;
+        b=abmC82q2mrpI3862MjKwhywxZdFNM0C8Fm6ZQ/RKktq+Nbfillz/Xc/SEa6MbeQK+P
+         a/OxF+xBLrhINXEQLHzNQQF89gmIUXUD0WHV134LPxg8Pwdmru5Ul9yfOwTftVbBwBiB
+         DUjYqheEcgfvK2QEP33Pn7F3fJEfi3qAO4SL+NT9NKv1OrjUYSMlMYsgVDJQFtgPXtq1
+         c+pq1KQoDop8bWlxGeOoQSkhwv9/mLPzYHrhzu0nsg21aGLjoRn1l+RQLTVSv+1BAXnY
+         FfH8D7SDwCFO4YAGZGTHwdP9bXfTXfO5bbq3InMdxgwgmndE0l457OXEmpV3OOU3EsIi
+         C3eg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmz8Wj0F8kDqlu/xSNY+2OfoW5t5ESaBAUNAdvDFf5ck4lFfT91bgwWSO3Engv9ldf5zEAGPAmVN7sI5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya9fqZluy+A+P6IRjiLFSJnSYTobcgId99qhV8/oS2gBFKsh1S
+	bQiKMG5SHPKknqWY2Tflscwjae8GYvzrERXNIh9+rOL8i2euyfsy5qxnbGg2f9avbrDMMcTA5/6
+	iAntm9uRe9YPJefbhoRI0WwPzhNDNOWsEEStS2w==
+X-Google-Smtp-Source: AGHT+IH4A0WlCjq74/Wfa1EzS4MKy9Vj7qJ45SzcSoIl1Y3odqZNyIYgD5QY/H+Ea2D7ncIbYc0XPx9spPHgk0g4z2M=
+X-Received: by 2002:a05:6122:2a02:b0:50c:99da:4f70 with SMTP id
+ 71dfb90a1353d-51401ba15c3mr5317685e0c.2.1731115687671; Fri, 08 Nov 2024
+ 17:28:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108100147.3776123-1-liushixin2@huawei.com>
+References: <20241107063341.146657755@linuxfoundation.org>
+In-Reply-To: <20241107063341.146657755@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 9 Nov 2024 01:27:53 +0000
+Message-ID: <CA+G9fYuXK1LYzu++g6LUBOEhbOMQSO9Zz6AhM7100NMMEZLuAg@mail.gmail.com>
+Subject: Re: [PATCH 5.4 000/461] 5.4.285-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/11/08 18:01), Liu Shixin wrote:
-> LTP reported a NULL pointer dereference as followed:
-> 
->  CPU: 7 UID: 0 PID: 5995 Comm: cat Kdump: loaded Not tainted 6.12.0-rc6+ #3
->  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
->  pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->  pc : __pi_strcmp+0x24/0x140
->  lr : zcomp_available_show+0x60/0x100 [zram]
->  sp : ffff800088b93b90
->  x29: ffff800088b93b90 x28: 0000000000000001 x27: 0000000000400cc0
->  x26: 0000000000000ffe x25: ffff80007b3e2388 x24: 0000000000000000
->  x23: ffff80007b3e2390 x22: ffff0004041a9000 x21: ffff80007b3e2900
->  x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
->  x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
->  x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
->  x11: 0000000000000000 x10: ffff80007b3e2900 x9 : ffff80007b3cb280
->  x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
->  x5 : 0000000000000040 x4 : 0000000000000000 x3 : 00656c722d6f7a6c
->  x2 : 0000000000000000 x1 : ffff80007b3e2900 x0 : 0000000000000000
->  Call trace:
->   __pi_strcmp+0x24/0x140
->   comp_algorithm_show+0x40/0x70 [zram]
->   dev_attr_show+0x28/0x80
->   sysfs_kf_seq_show+0x90/0x140
->   kernfs_seq_show+0x34/0x48
->   seq_read_iter+0x1d4/0x4e8
->   kernfs_fop_read_iter+0x40/0x58
->   new_sync_read+0x9c/0x168
->   vfs_read+0x1a8/0x1f8
->   ksys_read+0x74/0x108
->   __arm64_sys_read+0x24/0x38
->   invoke_syscall+0x50/0x120
->   el0_svc_common.constprop.0+0xc8/0xf0
->   do_el0_svc+0x24/0x38
->   el0_svc+0x38/0x138
->   el0t_64_sync_handler+0xc0/0xc8
->   el0t_64_sync+0x188/0x190
+On Thu, 7 Nov 2024 at 06:47, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.4.285 release.
+> There are 461 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 09 Nov 2024 06:32:59 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.4.285-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-The explanation below is more than enough, I think this stack trace
-doesn't really show anything new or interesting.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-> The zram->comp_algs[ZRAM_PRIMARY_COMP] can be NULL in zram_add() if
-> comp_algorithm_set() has not been called. User can access the zram device
-> by sysfs after device_add_disk(), so there is a time window to trigger
-> the NULL pointer dereference. Move it ahead device_add_disk() to make sure
-> when user can access the zram device, it is ready. comp_algorithm_set() is
-> protected by zram->init_lock in other places and no such problem.
-> 
-> Fixes: 7ac07a26dea7 ("zram: preparation for multi-zcomp support")
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-So I think this fixes something much older, probably around e46b8a030d76d
-time (2014).
+## Build
+* kernel: 5.4.285-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 5dfaabbf946a8554cfc17ba8c289fe5eda8a3e1c
+* git describe: v5.4.284-462-g5dfaabbf946a
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.4.y/build/v5.4.2=
+84-462-g5dfaabbf946a
 
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
+## Test Regressions (compared to v5.4.283-122-g10d97a96b444)
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+## Metric Regressions (compared to v5.4.283-122-g10d97a96b444)
+
+## Test Fixes (compared to v5.4.283-122-g10d97a96b444)
+
+## Metric Fixes (compared to v5.4.283-122-g10d97a96b444)
+
+## Test result summary
+total: 52133, pass: 32970, fail: 2420, skip: 16682, xfail: 61
+
+## Build Summary
+* arc: 15 total, 15 passed, 0 failed
+* arm: 399 total, 398 passed, 1 failed
+* arm64: 99 total, 93 passed, 6 failed
+* i386: 63 total, 45 passed, 18 failed
+* mips: 75 total, 75 passed, 0 failed
+* parisc: 9 total, 0 passed, 9 failed
+* powerpc: 90 total, 90 passed, 0 failed
+* riscv: 27 total, 27 passed, 0 failed
+* s390: 18 total, 18 passed, 0 failed
+* sh: 30 total, 30 passed, 0 failed
+* sparc: 18 total, 18 passed, 0 failed
+* x86_64: 87 total, 81 passed, 6 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
