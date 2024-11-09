@@ -1,117 +1,117 @@
-Return-Path: <linux-kernel+bounces-402751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8FF9C2B78
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:49:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD75F9C2B7C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFC5B1C20D7C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:49:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4B21C20F69
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32FA13D600;
-	Sat,  9 Nov 2024 09:49:10 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCF41487F6;
+	Sat,  9 Nov 2024 09:49:39 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DD4335C7
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 09:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8D313C9A9;
+	Sat,  9 Nov 2024 09:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731145750; cv=none; b=RBVm1/ttGsgOkHoO8KDgTbzKSg+b90JwS9VEox0z21fkQk9GjpEvZmlmpQvB6F4r8WdGtURL2XAX8cVCmFvLNe7FJWhLtvuFumbdfzs2O0OUElpZD9frT0NQXYlpLmGH2yU6APWqmpRA1Kn2SqMdm0JHUmT3Vpg+IEV/BPYMZ9c=
+	t=1731145779; cv=none; b=hZvWNmW8WWAqE4IG8TWY2DaLqdg2XIL28rANUWbnVXTIt+bajTHUZTjnShpVX2ratoPLl4eP5JmqPti9nmdbp52d/dmvkxx9QK4TIWInXuuaqWdDguEq2YNkoF1cZ+/8L6vD3ZcwMVUQDKo1lAcdiBCTecFst1NjJfZwa3KSqDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731145750; c=relaxed/simple;
-	bh=envogq3++8LebNDrbmjeOhu6ssKCirUoCREvmKhTbuU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=nKp8MuN2XpN9f9HmkN8wMs8r36S+0UL7t0hEaEi1787x7zEIr0CJnVUH0s8+9svNSkGcWqMp04U9YSi+tGQpJo+0vcRi2BlCNFO6VwdSFUFDO32XcNzA2CwPY215n0++clspksZNIB1oSc3mOIzbMATiKs7Uji/209NjysGcM14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-94-S7JoMMDMMHS9cQ8RB_P-nQ-1; Sat, 09 Nov 2024 09:49:05 +0000
-X-MC-Unique: S7JoMMDMMHS9cQ8RB_P-nQ-1
-X-Mimecast-MFC-AGG-ID: S7JoMMDMMHS9cQ8RB_P-nQ
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 9 Nov
- 2024 09:49:04 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 9 Nov 2024 09:49:04 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Haris Okanovic' <harisokn@amazon.com>, "ankur.a.arora@oracle.com"
-	<ankur.a.arora@oracle.com>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>
-CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "will@kernel.org" <will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "wanpengli@tencent.com" <wanpengli@tencent.com>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "rafael@kernel.org"
-	<rafael@kernel.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "arnd@arndb.de"
-	<arnd@arndb.de>, "lenb@kernel.org" <lenb@kernel.org>, "mark.rutland@arm.com"
-	<mark.rutland@arm.com>, "mtosatti@redhat.com" <mtosatti@redhat.com>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>, "cl@gentwo.org"
-	<cl@gentwo.org>, "misono.tomohiro@fujitsu.com" <misono.tomohiro@fujitsu.com>,
-	"maobibo@loongson.cn" <maobibo@loongson.cn>, "joao.m.martins@oracle.com"
-	<joao.m.martins@oracle.com>, "boris.ostrovsky@oracle.com"
-	<boris.ostrovsky@oracle.com>, "konrad.wilk@oracle.com"
-	<konrad.wilk@oracle.com>
-Subject: RE: [PATCH 2/5] arm64: add __READ_ONCE_EX()
-Thread-Topic: [PATCH 2/5] arm64: add __READ_ONCE_EX()
-Thread-Index: AQHbL7EN8akEXkbcIke1iZkICXXDerKutxnw
-Date: Sat, 9 Nov 2024 09:49:03 +0000
-Message-ID: <c2bee816a4a44d55951ca839fea0a6dd@AcuMS.aculab.com>
-References: <20240925232425.2763385-1-ankur.a.arora@oracle.com>
- <20241105183041.1531976-1-harisokn@amazon.com>
- <20241105183041.1531976-3-harisokn@amazon.com>
-In-Reply-To: <20241105183041.1531976-3-harisokn@amazon.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731145779; c=relaxed/simple;
+	bh=lOaQxBEKnDjy7FDiRZAHiq0rS0aT9QBsiWpkqGcwv+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KNsmJwai6t/0XZyw+q2FGV5C2PiO7QdhWnQTTDsHTlLZ66whPncSg3bCAT52dtt5njAzglwxKSwfIGoMpIM2wev62DLPCRvPApL1Qt2ft+Tjjq0zNbqVJEAPb7A0hdFY+jnUnfpnJmGnRnAB7ce6aQy/7aeeYAtRh1qm5kJKZjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Xlrcn4sQjz9sSL;
+	Sat,  9 Nov 2024 10:49:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LEz9XIkvJ3se; Sat,  9 Nov 2024 10:49:29 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xlrcn42JDz9sSK;
+	Sat,  9 Nov 2024 10:49:29 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 79A868B765;
+	Sat,  9 Nov 2024 10:49:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id YzJaUQvUSxpB; Sat,  9 Nov 2024 10:49:29 +0100 (CET)
+Received: from [192.168.233.57] (unknown [192.168.233.57])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 05DEB8B764;
+	Sat,  9 Nov 2024 10:49:28 +0100 (CET)
+Message-ID: <5f1cdf77-b6fc-4a1d-9b6f-a578e1c50dd9@csgroup.eu>
+Date: Sat, 9 Nov 2024 10:49:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: f3M4O2Sj3sRhQwAxK1jGC8MQg3vNnWy9WbW6x17nc1s_1731145744
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 4/4] module: refactor ro_after_init failure path
+To: da.gomez@samsung.com, Luis Chamberlain <mcgrof@kernel.org>,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: "Daniel Gomez (Samsung)" <d+samsung@kruces.com>,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241108-modules-ro_after_init-v3-0-6dd041b588a5@samsung.com>
+ <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241108-modules-ro_after_init-v3-4-6dd041b588a5@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Haris Okanovic
-> Sent: 05 November 2024 18:31
->=20
-> Perform an exclusive load, which atomically loads a word and arms the
-> exclusive monitor to enable wfet()/wfe() accelerated polling.
->=20
-...
-> +=09atomic ? (typeof(*__x))__u.__val : (*(volatile typeof(__x))__x);\
 
-That doesn't do what you want it to do.
-(It is wrong in READ_ONCE() as well.)
 
-?: is treated like an arithmetic operator and the result will get
-promoted to 'int'.
-Moving the first cast outside the ?: probably works:
-=09(typeof(*__x))(atomic ? __u.__val : (*(volatile typeof(__x))__x));
+Le 08/11/2024 à 17:12, Daniel Gomez via B4 Relay a écrit :
+> [Vous ne recevez pas souvent de courriers de devnull+da.gomez.samsung.com@kernel.org. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> From: Daniel Gomez <da.gomez@samsung.com>
+> 
+> When ro_after_init fails, we need to unload the module.
+> 
+> Rename the goto tag to fail_ro_after_init to make it more clear and try
+> to check for dependencies, stop the module and call the exit function.
+> This allows to unload the module if ro_after_init fails.
 
-   David
+Doesn't build:
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+   CC      kernel/module/main.o
+kernel/module/main.c: In function 'do_init_module':
+kernel/module/main.c:2626:19: error: 'struct module' has no member named 
+'source_list'; did you mean 'bug_list'?
+   list_empty(&mod->source_list);
+                    ^~~~~~~~~~~
+                    bug_list
+kernel/module/main.c:2627:2: error: implicit declaration of function 
+'try_stop_module'; did you mean 'do_init_module'? 
+[-Werror=implicit-function-declaration]
+   try_stop_module(mod, 0, &forced);
+   ^~~~~~~~~~~~~~~
+   do_init_module
+kernel/module/main.c:2629:11: error: 'struct module' has no member named 
+'exit'; did you mean 'init'?
+   if (mod->exit != NULL)
+            ^~~~
+            init
+kernel/module/main.c:2630:8: error: 'struct module' has no member named 
+'exit'; did you mean 'init'?
+    mod->exit();
+         ^~~~
+         init
 
+
+
+Christophe
 
