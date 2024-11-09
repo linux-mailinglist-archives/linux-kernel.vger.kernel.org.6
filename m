@@ -1,319 +1,201 @@
-Return-Path: <linux-kernel+bounces-402714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C02E9C2AC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:41:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D139C2ADA
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5EB1F22BE9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2E8282494
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF73613AA2E;
-	Sat,  9 Nov 2024 06:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D00313D245;
+	Sat,  9 Nov 2024 06:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CoVi5wjd"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXBye0DG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFE8233D73
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 06:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B53D233D7D;
+	Sat,  9 Nov 2024 06:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731134479; cv=none; b=CAKcGz4GSLD/aG6+93Y9YabicuYntosdjuqoim+c4AUvLz0JhoVy8ytjenlA0t/nJUl9aqHDCnBZ6cZsdO118W5mcLm+lNePWFvmMdEIAzpTNT69/pXLSswIkLwVApQC2pnck37KGvFqYpfn4Q/SHWekwdaJAqufDPmZijCFh4g=
+	t=1731134758; cv=none; b=DcO9EhQyLbFrdlKZz3hlbVtfg9b9TWDcnByDOYxuo48vU+278rqb3m0I66vcp8HWki+2Mx1AK3x5LjiijwONRO0ihQww/og5DYlOemVSmWn5gdTijvQMW8oEN9/1EH6nHYIue5SobxIE/sznf7FSZSCvTfnmBNqXOfYkbVVUlO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731134479; c=relaxed/simple;
-	bh=b/pYJB7ff1VOHxnQqKgR1eAwihT9fLrrs3wRLF85ocg=;
+	s=arc-20240116; t=1731134758; c=relaxed/simple;
+	bh=/2j+lWnKPGb0XCEcsiubcIvwP7dtYhvVDtA61Lbj/aQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZNRe6ZWvsmBDMNXJBZRbX1K3ikMIr6nimcpJalYJFgft50FD9bJVWJsuwYhyKdli03IaV9z8naCKC7adoSDeSZrKAcsNAJa8glc7RlgJNcdCg2XpFsF+7gBiIPlL0hFq1eqfKI7eL1pG8vyuoqg0qgHtRAYC9XIHVlxGaWoepI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CoVi5wjd; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb561f273eso22406481fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 22:41:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731134475; x=1731739275; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CWQ5mBVFWFsy+kB+NSDCfBo5RSCH1U3/SXkD0DVPa5w=;
-        b=CoVi5wjdz1pfs8GpizItBQNDQApU/YcV15rGVRw/jijukPm8ERXuFcV1KIFDUEdUud
-         n2h2GDYdF1S3QulYVf3DgtLEbQM4kHhN7i/aXhU0auvhAapaELdCf8UcRmAe6kIbECt7
-         brpVZhO0Bo6bJcda8tbpNm4SlT5VBRrK9cVWuoI2n9seW5rUk3ez0JY4aUtBwycNHmbb
-         UprOkLcelCsteUtrqqRIMdQdPnPoQSklq1Q0NIKAKt84wu5P0FsmI3Nau2PNQwMTUZyl
-         ztxZkohKKVIXVBeH5N/7Gh0klLdIuNUN0mgHapcdGVgvf7XrfzsZLEea6aCUDRHpmE3m
-         h8/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731134475; x=1731739275;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWQ5mBVFWFsy+kB+NSDCfBo5RSCH1U3/SXkD0DVPa5w=;
-        b=v0m7yulO+LK+e56bMQtjpOxJNq8cz2GxneW+gjxpzkjZtNk7WEFRWljXOsV0VOewUY
-         cycw8RFyjwDa6WzlTqdxOpIAsNxMH7n/EhaodmwMZsnApBF+48HGTmh+GcspA2Tu8/O0
-         m34ohV2/1xPExBDRuak2iMqjQJKvfQskp1f7lx7c9FWpQe/a4rGgxFY2VXBmI9GoaVyF
-         V/VxERb92NwkVHbiJpEpg+/meioVHfcyQTUGzmlKmezVz9M8cg1UHhg6TXTsDH4H406S
-         OkyMlr3UpwE1fQTxIeujK9qqeOy6P/K9VsFwthhb6nAafyIydxO2MuF+PXDi6XL4h4ME
-         bIMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzI9xN5pjKenIvZK29eTaH4ICvJxY4LC+0EuTjPScoeJrB3mssDMEE5SVMX6FPoXA4iuw1huEL0/Hs5w0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww2jQdhIQwzIaH4Cf1YJL3EIDn2vzakEDzNs8vnNQZVb4mmeh0
-	m3lbavnPpciXKSUJmOEdFvLS7STH8PBFKkBAi6w2LDHlzbxObokNE9ClhhAtM6w=
-X-Google-Smtp-Source: AGHT+IFpqQudCAMbUbKCGbMohOnVCQLlVCh7IkfcMv+rur4EeV0Icisq02nGodSZId4auTEzLub3qQ==
-X-Received: by 2002:a2e:9fc9:0:b0:2fb:5c20:43e0 with SMTP id 38308e7fff4ca-2ff2024449fmr28510501fa.15.1731134475209;
-        Fri, 08 Nov 2024 22:41:15 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff179a5f72sm9426311fa.93.2024.11.08.22.41.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 22:41:14 -0800 (PST)
-Date: Sat, 9 Nov 2024 08:41:12 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, 
-	linux-usb@vger.kernel.org, chrome-platform@lists.linux.dev, jthies@google.com, 
-	akuchynski@google.com, pmalani@chromium.org, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] platform/chrome: cros_ec_typec: Thunderbolt
- support
-Message-ID: <zbtwtfywopvuh5b6skzxf53if7s7lxf53x6uxqnenpe3mipsdg@zdk7wfp7mqbg>
-References: <20241107193021.2690050-1-abhishekpandit@chromium.org>
- <20241107112955.v3.6.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdTP0Kr6AHuv8XikRbrbd3hgefvy7vn5i5LfDUWcBotZ9kv07HJoxiSrf1E7dT2xBMjsHuG/4OkWgFi9xWx4WeDtF++NrZMdRHkQzG2wj3ljaJ3yPLjQvzsHoPpOdvMcz1ylfOB2stfeEMf711xTbvkfucJmrNwaeonm/iCPeMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXBye0DG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6F7C4CEC6;
+	Sat,  9 Nov 2024 06:45:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731134758;
+	bh=/2j+lWnKPGb0XCEcsiubcIvwP7dtYhvVDtA61Lbj/aQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kXBye0DGZXYNZVfOxxd1ukijAp5CmK7ZEWSfahHPf5CLTD0zYM8k4hO8In04w5F0s
+	 V52mIRGBbVJO+dVhBjCg/GNL5KbS6GpZxIESIYYnn2ZMORejJBvAt3MtTgLaNk5olN
+	 ZZvoEnX8CM4B1oZW6kyg3ibBdoeKhb3GV8FQ04EPzRNXFocBcxaGathoIMPhovAWzV
+	 LPYa7ka+p+FuJyQ6BgdHmzjfw2/g3eNd6QpLroJmWM7LsxlUZoK3ghsDMlnG//cSV1
+	 dJSW8M8BhwHwKIVfre0ZMElUJs5JS1JlRExEId0FDa49BFNr1k3z4dDK8Z6gDpV3+1
+	 LQVKwCmlm7uKQ==
+Date: Fri, 8 Nov 2024 22:45:54 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+Subject: Re: [PATCH v4 0/6] Avoid parsing tracepoint format just for id
+Message-ID: <Zy8FIt2OMa5-GymZ@google.com>
+References: <20241108184751.359237-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241107112955.v3.6.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
+In-Reply-To: <20241108184751.359237-1-irogers@google.com>
 
-On Thu, Nov 07, 2024 at 11:29:59AM -0800, Abhishek Pandit-Subedi wrote:
-> Add support for entering and exiting Thunderbolt alt-mode using AP
-> driven alt-mode.
+On Fri, Nov 08, 2024 at 10:47:45AM -0800, Ian Rogers wrote:
+> The tracepoint format isn't needed to open an event, just the id for
+> the config value. Refactor the use of evsel->tp_format to use an
+> accessor that will lazily construct its value. In evsel__newtp_idx
+> read the id so the config value can be set up/used.
 > 
-> Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> ---
+> This allows tracepoints to be used without libtraceevent in a number
+> of tests. Other functionality is enabled without libtracevent, such as
+> mapping a tracepoint id back to its name. There may be some
+> performance benefit to code using tracepoints but not using the format
+> information.
 > 
-> Changes in v3:
-> - Fix usage of TBT sid and mode.
-> - Removed unused vdm operations during altmode registration
+> v4. Rebase due to conflict with 9ac98662dbd3 ("perf: event: Remove deadcode")
+> v3. Whitespace changes, Arnaldo.
+> v2. Add additional error checking/handling in evsel__tp_format.
 > 
-> Changes in v2:
-> - Refactored thunderbolt support into cros_typec_altmode.c
-> 
->  drivers/platform/chrome/Makefile             |  3 +
->  drivers/platform/chrome/cros_ec_typec.c      | 23 +++---
->  drivers/platform/chrome/cros_typec_altmode.c | 85 ++++++++++++++++++++
->  drivers/platform/chrome/cros_typec_altmode.h | 14 ++++
->  4 files changed, 114 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> index 2f90d4db8099..b9b1281de063 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -21,6 +21,9 @@ cros-ec-typec-objs			:= cros_ec_typec.o cros_typec_vdm.o
->  ifneq ($(CONFIG_TYPEC_DP_ALTMODE),)
->  	cros-ec-typec-objs		+= cros_typec_altmode.o
->  endif
-> +ifneq ($(CONFIG_TYPEC_TBT_ALTMODE),)
-> +	cros-ec-typec-objs		+= cros_typec_altmode.o
-> +endif
+> Ian Rogers (6):
+>   tool api fs: Correctly encode errno for read/write open failures
+>   perf trace-event: Constify print arguments
+>   perf trace-event: Always build trace-event-info.c
+>   perf evsel: Add/use accessor for tp_format
+>   perf evsel: Allow evsel__newtp without libtraceevent
+>   perf tests: Enable tests disabled due to tracepoint parsing
 
-Doesn't this also result in the object file being included twice and
-thus in a duplicate symbols declaration?
+After applying this series, I'm seeing some test failures.  But I don't
+understand why it affects non-tracepoint events though.
 
->  obj-$(CONFIG_CROS_EC_TYPEC)		+= cros-ec-typec.o
->  
->  obj-$(CONFIG_CROS_EC_LPC)		+= cros_ec_lpcs.o
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> index 3a6f5f2717b9..558b618df63c 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -302,18 +302,19 @@ static int cros_typec_register_port_altmodes(struct cros_typec_data *typec,
->  
->  	/*
->  	 * Register TBT compatibility alt mode. The EC will not enter the mode
-> -	 * if it doesn't support it, so it's safe to register it unconditionally
-> -	 * here for now.
-> +	 * if it doesn't support it and it will not enter automatically by
-> +	 * design so we can use the |ap_driven_altmode| feature to check if we
-> +	 * should register it.
->  	 */
-> -	memset(&desc, 0, sizeof(desc));
-> -	desc.svid = USB_TYPEC_TBT_SID;
-> -	desc.mode = TYPEC_ANY_MODE;
-> -	amode = typec_port_register_altmode(port->port, &desc);
-> -	if (IS_ERR(amode))
-> -		return PTR_ERR(amode);
-> -	port->port_altmode[CROS_EC_ALTMODE_TBT] = amode;
-> -	typec_altmode_set_drvdata(amode, port);
-> -	amode->ops = &port_amode_ops;
-> +	if (typec->ap_driven_altmode) {
-> +		memset(&desc, 0, sizeof(desc));
-> +		desc.svid = USB_TYPEC_TBT_SID;
-> +		desc.mode = TBT_MODE;
-> +		amode = cros_typec_register_thunderbolt(port, &desc);
-> +		if (IS_ERR(amode))
-> +			return PTR_ERR(amode);
-> +		port->port_altmode[CROS_EC_ALTMODE_TBT] = amode;
-> +	}
->  
->  	port->state.alt = NULL;
->  	port->state.mode = TYPEC_STATE_USB;
-> diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers/platform/chrome/cros_typec_altmode.c
-> index 3598b8a6ceee..9cf2cef6c277 100644
-> --- a/drivers/platform/chrome/cros_typec_altmode.c
-> +++ b/drivers/platform/chrome/cros_typec_altmode.c
-> @@ -8,6 +8,7 @@
->  #include "cros_ec_typec.h"
->  
->  #include <linux/usb/typec_dp.h>
-> +#include <linux/usb/typec_tbt.h>
->  #include <linux/usb/pd_vdo.h>
->  
->  #include "cros_typec_altmode.h"
-> @@ -67,6 +68,8 @@ static int cros_typec_altmode_enter(struct typec_altmode *alt, u32 *vdo)
->  
->  	if (data->sid == USB_TYPEC_DP_SID)
->  		req.mode_to_enter = CROS_EC_ALTMODE_DP;
-> +	else if (data->sid == USB_TYPEC_TBT_SID)
-> +		req.mode_to_enter = CROS_EC_ALTMODE_TBT;
->  	else
->  		return -EOPNOTSUPP;
->  
-> @@ -196,6 +199,53 @@ static int cros_typec_displayport_vdm(struct typec_altmode *alt, u32 header,
->  	return 0;
->  }
->  
-> +static int cros_typec_thunderbolt_vdm(struct typec_altmode *alt, u32 header,
-> +				      const u32 *data, int count)
-> +{
-> +	struct cros_typec_altmode_data *adata = typec_altmode_get_drvdata(alt);
-> +
-> +	int cmd_type = PD_VDO_CMDT(header);
-> +	int cmd = PD_VDO_CMD(header);
-> +	int svdm_version;
+  $ sudo ./perf test -v pipe
+  --- start ---
+  test child forked, pid 3036123
+   1bde35-1bdecc l noploop
+  perf does have symbol 'noploop'
+  
+  Record+report pipe test
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.210 MB - ]
+  [ perf record: Woken up 2 times to write data ]
+  [ perf record: Captured and wrote 0.517 MB - ]
+  [ perf record: Woken up 2 times to write data ]
+  [ perf record: Captured and wrote 0.516 MB - ]
+  Record+report pipe test [Success]
+  
+  Inject -B build-ids test
+  0xa5c [0x17a4]: failed to process type: 80
+  Error:
+  failed to process sample
+  Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+  
+  Inject -b build-ids test
+  0xa5c [0x17a4]: failed to process type: 80
+  Error:
+  failed to process sample
+  Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+  
+  Inject --buildid-all build-ids test
+  0xa5c [0x17a4]: failed to process type: 80
+  Error:
+  failed to process sample
+  Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+  
+  Inject --mmap2-buildid-all build-ids test
+  0xa5c [0x17a4]: failed to process type: 80
+  Error:
+  failed to process sample
+  Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+  ---- end(-1) ----
+   84: perf pipe recording and injection test                          : FAILED!
+  
+  $ sudo ./perf test -v Zstd
+  --- start ---
+  test child forked, pid 3036097
+  Collecting compressed record file:
+  500+0 records in
+  500+0 records out
+  256000 bytes (256 kB, 250 KiB) copied, 0.00169127 s, 151 MB/s
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.032 MB /tmp/perf.data.KBo, compressed (original 0.004 MB, ratio is 3.324) ]
+  Checking compressed events stats:
+  Couldn't decompress data
+  0x7ca8 [0x4f2]: failed to process type: 81 [Operation not permitted]
+  Error:
+  failed to process sample
+  ---- end(-1) ----
+   86: Zstd perf.data compression/decompression                        : FAILED!
 
-I suppose that with the current approach this misses the ap_mode_entry
-check. If it gets moved to cros_typec_altmode_vdm(), then it should be
-okay.
+Thanks,
+Namhyung
 
-> +
-> +	svdm_version = typec_altmode_get_svdm_version(alt);
-> +	if (svdm_version < 0)
-> +		return svdm_version;
-> +
-> +	switch (cmd_type) {
-> +	case CMDT_INIT:
-> +		if (PD_VDO_SVDM_VER(header) < svdm_version) {
-> +			typec_partner_set_svdm_version(adata->port->partner,
-> +						       PD_VDO_SVDM_VER(header));
-> +			svdm_version = PD_VDO_SVDM_VER(header);
-> +		}
-> +
-> +		adata->header = VDO(adata->sid, 1, svdm_version, cmd);
-> +		adata->header |= VDO_OPOS(adata->mode);
-> +
-> +		switch (cmd) {
-> +		case CMD_ENTER_MODE:
-> +			/* Don't respond to the enter mode vdm because it
-> +			 * triggers mux configuration. This is handled directly
-> +			 * by the cros_ec_typec driver so the Thunderbolt driver
-> +			 * doesn't need to be involved.
-> +			 */
-> +			break;
-> +		default:
-> +			adata->header |= VDO_CMDT(CMDT_RSP_ACK);
-> +			schedule_work(&adata->work);
-> +			break;
-> +		}
-> +
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +
->  static int cros_typec_altmode_vdm(struct typec_altmode *alt, u32 header,
->  				      const u32 *data, int count)
->  {
-> @@ -204,6 +254,9 @@ static int cros_typec_altmode_vdm(struct typec_altmode *alt, u32 header,
->  	if (adata->sid == USB_TYPEC_DP_SID)
->  		return cros_typec_displayport_vdm(alt, header, data, count);
->  
-> +	if (adata->sid == USB_TYPEC_TBT_SID)
-> +		return cros_typec_thunderbolt_vdm(alt, header, data, count);
-> +
->  	return -EINVAL;
->  }
->  
-> @@ -273,3 +326,35 @@ cros_typec_register_displayport(struct cros_typec_port *port,
->  	return alt;
->  }
->  #endif
-> +
-> +#if IS_ENABLED(CONFIG_TYPEC_TBT_ALTMODE)
-> +struct typec_altmode *
-> +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> +				struct typec_altmode_desc *desc)
-> +{
-> +	struct typec_altmode *alt;
-> +	struct cros_typec_altmode_data *data;
-> +
-> +	alt = typec_port_register_altmode(port->port, desc);
-> +	if (IS_ERR(alt))
-> +		return alt;
-> +
-> +	data = devm_kzalloc(&alt->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data) {
-> +		typec_unregister_altmode(alt);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	INIT_WORK(&data->work, cros_typec_altmode_work);
-> +	data->alt = alt;
-> +	data->port = port;
-> +	data->ap_mode_entry = true;
-> +	data->sid = desc->svid;
-> +	data->mode = desc->mode;
-> +
-> +	typec_altmode_set_ops(alt, &cros_typec_altmode_ops);
-> +	typec_altmode_set_drvdata(alt, data);
-> +
-> +	return alt;
-> +}
-> +#endif
-> diff --git a/drivers/platform/chrome/cros_typec_altmode.h b/drivers/platform/chrome/cros_typec_altmode.h
-> index c6f8fb02c99c..810b553ddcd8 100644
-> --- a/drivers/platform/chrome/cros_typec_altmode.h
-> +++ b/drivers/platform/chrome/cros_typec_altmode.h
-> @@ -31,4 +31,18 @@ static inline int cros_typec_displayport_status_update(struct typec_altmode *alt
->  	return 0;
->  }
->  #endif
-> +
-> +#if IS_ENABLED(CONFIG_TYPEC_TBT_ALTMODE)
-> +struct typec_altmode *
-> +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> +				struct typec_altmode_desc *desc);
-> +#else
-> +static inline struct typec_altmode *
-> +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> +				struct typec_altmode_desc *desc)
-> +{
-> +	return typec_port_register_altmode(port->port, desc);
-> +}
-> +#endif
-> +
->  #endif /* __CROS_TYPEC_ALTMODE_H__ */
+
+> 
+>  tools/lib/api/fs/fs.c                         |   6 +-
+>  tools/perf/builtin-kmem.c                     |  12 +-
+>  tools/perf/builtin-kwork.c                    |   3 +-
+>  tools/perf/builtin-record.c                   |   2 -
+>  tools/perf/builtin-script.c                   |   9 +-
+>  tools/perf/builtin-trace.c                    |  79 +++++++++----
+>  tools/perf/tests/Build                        |   6 +-
+>  tools/perf/tests/builtin-test.c               |   2 -
+>  tools/perf/tests/parse-events.c               |  25 +---
+>  tools/perf/util/Build                         |   2 +-
+>  tools/perf/util/data-convert-bt.c             |  10 +-
+>  tools/perf/util/data-convert-json.c           |   8 +-
+>  tools/perf/util/evsel.c                       | 110 +++++++++++++-----
+>  tools/perf/util/evsel.h                       |   9 +-
+>  tools/perf/util/evsel_fprintf.c               |   4 +-
+>  tools/perf/util/parse-events.c                |  16 +--
+>  tools/perf/util/perf_event_attr_fprintf.c     |   4 -
+>  .../util/scripting-engines/trace-event-perl.c |   3 +-
+>  .../scripting-engines/trace-event-python.c    |   3 +-
+>  tools/perf/util/sort.c                        |  33 ++++--
+>  tools/perf/util/trace-event-parse.c           |   2 +-
+>  tools/perf/util/trace-event-scripting.c       |  10 +-
+>  tools/perf/util/trace-event.h                 |   2 +-
+>  23 files changed, 214 insertions(+), 146 deletions(-)
+> 
 > -- 
 > 2.47.0.277.g8800431eea-goog
 > 
-
--- 
-With best wishes
-Dmitry
 
