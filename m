@@ -1,245 +1,137 @@
-Return-Path: <linux-kernel+bounces-402886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEA2F9C2E0C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:11:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7499C2E0F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 289DFB217D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:11:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8727928276F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A17C19C552;
-	Sat,  9 Nov 2024 15:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8D2199941;
+	Sat,  9 Nov 2024 15:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJiqpOOt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBVGDin9"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D30F19ABD5;
-	Sat,  9 Nov 2024 15:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9082A155C94
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731165063; cv=none; b=R/G0ZSIvOhrRESsGWqjYmLA8djUF3KLOntMmXTl+QcUUY9977YfEJQf+/qVtPyP3t7r1zwdG3EE/wr8AUORM2UElPAUSWgw6uwXozqP3KzVYq5YhIsPVfGvZLqeuONzpDCR5dVG1EjUXiCDcY8MsjxPW7eXLUBxcgJWc07UGEBA=
+	t=1731165094; cv=none; b=EE1u71sVki3+pAte1xtPgwsihg0tytn8XSdDRgjKT/SlU41gd8rPzxqNLgQQs7PBSmfLmofCoVY7IlpI6/YsN6u56RAQKQuWoo/nTj6+DP8zKYygzMYGDmtxsn+a3WE0O4imha83wJhd4+RATaLA6JsdtY/R3d//alqtFBCohD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731165063; c=relaxed/simple;
-	bh=TPwfAmDjNRlKpMlwR68ymGtPsQXE+Pd6kBFBv3CzJHA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=pxPVxocBXuhskinBmS2nVA/t3pQ6CQlO0v5TqEjMTUeXhUucqqEaljfq3Wr9DyKvgvvDyH1puH+HlnJHLQP09WTlKCAB8rTqNDkF8t8eKb9suqoTbS/vP2HVlCxyzl9/lP0xx0b5UXmtJWdPYLM5n4gG/DD6H5+OyjsluP22fb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJiqpOOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4581EC4CECE;
-	Sat,  9 Nov 2024 15:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731165063;
-	bh=TPwfAmDjNRlKpMlwR68ymGtPsQXE+Pd6kBFBv3CzJHA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UJiqpOOt+j7i5PkxwN9LXvisxD5u3R5gQrHTaFbGO2MtaJn5yyxKcjpTd97YQTJWn
-	 hKvVc3DriUspWM4U3BuHIFwbsBoYKq0OTgiNluqZzBQEx3EbHXrfAyJVm64WEORgu8
-	 rutrWgzhMRmlBWhQ5Avo/M0m46AKmWM4ZjrgYB2tFjiIz8kxZsGQCqCmL3WHG1cah+
-	 4qinqK+JQKyWY5pbwEAab++Hgz+DdCVx0RWQnKlI48EPDfIaF71y37grcvRRAYFenP
-	 kzgaJY8aJ/pngbV1byl93jlWJU4RoxpJwnHPecclNHrBmKFc4vSNIiGR++s9rZwlO+
-	 Ymi7/UHiHV9Ow==
-Date: Sun, 10 Nov 2024 00:10:54 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v18 12/17] fprobe: Add fprobe_header encoding feature
-Message-Id: <20241110001054.b0a5afb2d7bb1c09b4bd6b0b@kernel.org>
-In-Reply-To: <20241101102212.5e9d74d9@gandalf.local.home>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991747946.443985.11014834036464028393.stgit@devnote2>
-	<20241101102212.5e9d74d9@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731165094; c=relaxed/simple;
+	bh=L0I1JptouAky5IHlFmAMdPRPB4zs5Fga3f00ssotOpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AcsZ9u1iiTQ2KgfTuEg5ww/sv2e6cS/DZZDWBmj9zGrLprApZacFKg8f+iYQN7GHVnQExhpXUiI5B6qVRwRyqPbvLhw0GjcMaLJDBmMSr+VeqKwoO6QZhRmgS3EECPBR74TaiDEQ0js1qCX5MIVmMb7tqefDxrx4WZZ+l9UXgIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBVGDin9; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e7e73740so2927790e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 07:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731165091; x=1731769891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9V9hRTWks3Eh0qfSQPZ+ICXvvEjOQTekt51MUUCJnj0=;
+        b=TBVGDin9A+m3g6gVlUOI6YPgALi7Pk/B4XlBcUFUgYGSm2h7+F4uhrbCebp3Ki+8Zj
+         WPNId3JmJixMXs+TExK/eewuLi+Mr3J3Vo+VDSyuxo0Cw16mNFpjvrM2GdEAdDKeinGC
+         pEnu9ppvuTjEHKu2tpFfDpprXE0j2yA4aYcL5hOoifHNCJHgEHjLpREEpgXKwdc/76sp
+         faMln3Fs7nlMks3VY61+NJ1vijtZeCH2pQfoIlyuyRcMYsr8kf/oL3XQoZC8YaJouTyK
+         30pGXrSN35Td1WEhe2nEENJGy08SszmBPGNmwIQxxh0TYGvTWtC+3+kKBXxjnijQYUdT
+         OJgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731165091; x=1731769891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9V9hRTWks3Eh0qfSQPZ+ICXvvEjOQTekt51MUUCJnj0=;
+        b=IljCFSOguIcp7YfxSsJgls2lT+/qZ5mj299NyyccnY1DYnczf//tvGbB04ugHvFqic
+         P0USHR2LxMn5BM42L40A9VYEugi7ouJeotSrzivFAB9ur9YEqu9pYHACOiG6jTl6DImR
+         W2uq7XeDf28a+vTPrxtfqAbH2N6Eo607qbQ98Uwc18b9DY85rLkRmagLGj4SCSvLfWeH
+         jNy4hbLVI5nNwkGMtF72YD7YXJHVWthK+nGFb9jGQ+iBRK7aB2H+5cJQQKlvQDqp8F0I
+         iQgU8yQZpV0oDEDrI2p7udcOTfL1rtMRLVjOh2b4ENHB3b+IrHm+6e+i62yo4pOQVQpA
+         fQwg==
+X-Gm-Message-State: AOJu0Yw7UQLjlBcJXzCf3faHm9cvBM/jrk/XO+4MbO+/vtlGcNjW5Ya5
+	JIhUDJ635Wa8qaYHgjbQePYHoLzjzpNSPynHQEx6+arN+JByX+8+J1yQEl31Nu1pD0oL+m/Kt9C
+	qBLbSBOCBm3GPVC9DJrjrbC2Chw==
+X-Google-Smtp-Source: AGHT+IG51tVgYwLITpfmjxFbxUxLBfZIAq/M5j7fc7acnngomegcPxiHo5YAWvqy+c1iID+XgVB9hSIZLrZYF6srCxA=
+X-Received: by 2002:a05:6512:3985:b0:539:ee0a:4f8f with SMTP id
+ 2adb3069b0e04-53d8626c670mr3197917e87.44.1731165090323; Sat, 09 Nov 2024
+ 07:11:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20241105155801.1779119-1-brgerst@gmail.com> <5b42962e05754c15977a102ccd5cc7aa@AcuMS.aculab.com>
+In-Reply-To: <5b42962e05754c15977a102ccd5cc7aa@AcuMS.aculab.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Sat, 9 Nov 2024 10:11:18 -0500
+Message-ID: <CAMzpN2h_4cKa7oxPQ0M169xQMKCtZCj9bTggBd4Cyk8j18tf=g@mail.gmail.com>
+Subject: Re: [PATCH v5 00/16] x86-64: Stack protector and percpu improvements
+To: David Laight <David.Laight@aculab.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 1 Nov 2024 10:22:12 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sat, Nov 9, 2024 at 4:31=E2=80=AFAM David Laight <David.Laight@aculab.co=
+m> wrote:
+>
+> From: Brian Gerst
+> > Sent: 05 November 2024 15:58
+> >
+> > Currently, x86-64 uses an unusual percpu layout, where the percpu secti=
+on
+> > is linked at absolute address 0.  The reason behind this is that older =
+GCC
+> > versions placed the stack protector (if enabled) at a fixed offset from=
+ the
+> > GS segment base.  Since the GS segement is also used for percpu variabl=
+es,
+> > this forced the current layout.
+> >
+> > GCC since version 8.1 supports a configurable location for the stack
+> > protector value, which allows removal of the restriction on how the per=
+cpu
+> > section is linked.  This allows the percpu section to be linked normall=
+y,
+> > like other architectures.  In turn, this allows removal of code that wa=
+s
+> > needed to support the zero-based percpu section.
+> >
+> > v5:
+> > - Added two patches from Ard Biesheuvel to make stack protector work
+> >   properly when compiling with clang.
+> > - Raise minimum GCC version to 8.1 for x86.
+> > - Drop objtool conversion code.
+>
+> Is there any actual need to raise the GCC level?
+> Isn't it enough just to disable stack protection with older compilers?
+> The percpu layout can then always be the new (sane) one.
 
-> On Sat, 26 Oct 2024 13:37:59 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Fprobe store its data structure address and size on the fgraph return stack
-> > by __fprobe_header. But most 64bit architecture can combine those to
-> > one unsigned long value because 4 MSB in the kernel address are the same.
-> > With this encoding, fprobe can consume less space on ret_stack.
-> > 
-> > This introduces asm/fprobe.h to define arch dependent encode/decode
-> > macros. Note that since fprobe depends on CONFIG_HAVE_FUNCTION_GRAPH_FREGS,
-> > currently only arm64, loongarch, riscv, s390 and x86 are supported.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Huacai Chen <chenhuacai@kernel.org>
-> > Cc: WANG Xuerui <kernel@xen0n.name>
-> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: x86@kernel.org
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > ---
-> >  arch/arm64/include/asm/fprobe.h     |    7 +++++++
-> >  arch/loongarch/include/asm/fprobe.h |    5 +++++
-> >  arch/riscv/include/asm/fprobe.h     |    9 +++++++++
-> >  arch/s390/include/asm/fprobe.h      |   10 ++++++++++
-> >  arch/x86/include/asm/fprobe.h       |    9 +++++++++
-> >  include/asm-generic/fprobe.h        |   33 +++++++++++++++++++++++++++++++++
-> >  kernel/trace/fprobe.c               |   29 +++++++++++++++++++++++++++++
-> >  7 files changed, 102 insertions(+)
-> >  create mode 100644 arch/arm64/include/asm/fprobe.h
-> >  create mode 100644 arch/loongarch/include/asm/fprobe.h
-> >  create mode 100644 arch/riscv/include/asm/fprobe.h
-> >  create mode 100644 arch/s390/include/asm/fprobe.h
-> >  create mode 100644 arch/x86/include/asm/fprobe.h
-> >  create mode 100644 include/asm-generic/fprobe.h
-> > 
-> > diff --git a/arch/arm64/include/asm/fprobe.h b/arch/arm64/include/asm/fprobe.h
-> > new file mode 100644
-> > index 000000000000..bbf254db878d
-> > --- /dev/null
-> > +++ b/arch/arm64/include/asm/fprobe.h
-> > @@ -0,0 +1,7 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_ARM64_FPROBE_H
-> > +#define _ASM_ARM64_FPROBE_H
-> > +
-> > +#include <asm-generic/fprobe.h>
-> > +
-> > +#endif /* _ASM_ARM64_FPROBE_H */
-> > \ No newline at end of file
-> 
-> This isn't the way to add asm-generic code to architectures. It needs to be
-> in the Kbuild file. Like this:
-> 
-> diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
-> index 4e350df9a02d..0d0a638d41a8 100644
-> --- a/arch/arm64/include/asm/Kbuild
-> +++ b/arch/arm64/include/asm/Kbuild
-> @@ -14,6 +14,7 @@ generic-y += qrwlock.h
->  generic-y += qspinlock.h
->  generic-y += parport.h
->  generic-y += user.h
-> +generic-y += fprobe.h
->  
->  generated-y += cpucap-defs.h
->  generated-y += sysreg-defs.h
+Earlier versions of this series did make stack protector support
+conditional on newer compilers.  That got rejected.  I then added
+objtool support to convert the code old compilers produced.  That also
+got rejected.  I guess I can't please everyone.
 
-OK.
+> Is there even a selectable CONFIG_STACK_PROTECTOR?
+> Can than depend on gcc >=3D 8.1 for x86-64?
 
-> 
-> 
-> > diff --git a/arch/loongarch/include/asm/fprobe.h b/arch/loongarch/include/asm/fprobe.h
-> > new file mode 100644
-> > index 000000000000..68156a66873c
-> > --- /dev/null
-> > +++ b/arch/loongarch/include/asm/fprobe.h
-> > @@ -0,0 +1,5 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_LOONGARCH_FPROBE_H
-> > +#define _ASM_LOONGARCH_FPROBE_H
-> > +
-> > +#endif /* _ASM_LOONGARCH_FPROBE_H */
-> > \ No newline at end of file
-> > diff --git a/arch/riscv/include/asm/fprobe.h b/arch/riscv/include/asm/fprobe.h
-> > new file mode 100644
-> > index 000000000000..51fc2ef3eda1
-> > --- /dev/null
-> > +++ b/arch/riscv/include/asm/fprobe.h
-> > @@ -0,0 +1,9 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_RISCV_FPROBE_H
-> > +#define _ASM_RISCV_FPROBE_H
-> > +
-> > +#ifdef CONFIG_64BIT
-> > +#include <asm-generic/fprobe.h>
-> > +#endif
-> > +
-> > +#endif /* _ASM_RISCV_FPROBE_H */
-> > \ No newline at end of file
-> > diff --git a/arch/s390/include/asm/fprobe.h b/arch/s390/include/asm/fprobe.h
-> > new file mode 100644
-> > index 000000000000..84b94ba6e3a4
-> > --- /dev/null
-> > +++ b/arch/s390/include/asm/fprobe.h
-> > @@ -0,0 +1,10 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_S390_FPROBE_H
-> > +#define _ASM_S390_FPROBE_H
-> > +
-> > +#include <asm-generic/fprobe.h>
-> > +
-> > +#undef FPROBE_HEADER_MSB_PATTERN
-> > +#define FPROBE_HEADER_MSB_PATTERN 0
-> > +
-> > +#endif /* _ASM_S390_FPROBE_H */
-> > \ No newline at end of file
-> > diff --git a/arch/x86/include/asm/fprobe.h b/arch/x86/include/asm/fprobe.h
-> > new file mode 100644
-> > index 000000000000..c863518bef90
-> > --- /dev/null
-> > +++ b/arch/x86/include/asm/fprobe.h
-> > @@ -0,0 +1,9 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_X86_FPROBE_H
-> > +#define _ASM_X86_FPROBE_H
-> > +
-> > +#ifdef CONFIG_64BIT
-> > +#include <asm-generic/fprobe.h>
-> > +#endif
-> > +
-> > +#endif /* _ASM_X86_FPROBE_H */
-> > \ No newline at end of file
-> 
-> Same for the above.
+Yes, stack protector support is optional, but practically all distro
+kernels enable it.
 
-OK, but x86 and riscv, we need this default template on 64bit only.
-So those may keep it, right?
+> I've a slight vested interest in that the system I test kernels on
+> has gcc 7.5.0 installed :-)
 
-Thank you,
+What distro is on that system?  Is it still actively supported?
 
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Brian Gerst
 
