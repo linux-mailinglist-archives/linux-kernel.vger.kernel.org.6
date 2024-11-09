@@ -1,296 +1,221 @@
-Return-Path: <linux-kernel+bounces-402850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661879C2D95
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:41:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2709C2D98
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5461C20FEA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6435282DDF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BA9192B95;
-	Sat,  9 Nov 2024 13:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5731957F8;
+	Sat,  9 Nov 2024 13:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="zeQkhBax"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sgfdn+OL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9AD319308A
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 13:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748D6170A26;
+	Sat,  9 Nov 2024 13:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731159651; cv=none; b=feGGz79hhXnEwSGqsHEHXIdEvaxUB4uEIKQJ+9HMhpVP/sDuT2c2eKMyRpWO4EKZwiQ7b/Jfrz3w0oFTzhvHxxgV5TSLg0OGSs8mAjxCb9i0HWrIhxDD+RQOMva4peRMubDE0nVAs5Zt4Wm4xRLKweH1y5Fmd1uDKWALbzGVW04=
+	t=1731159761; cv=none; b=uUOj9tySshyeHv1Skd8zTE9XWn9flltG7dgt9IBdC7H/iSeKtPolI9YmeP0cIfIFjrU91LpWkYIgO5vj2PRWlR5GXaKTX2JA8RAYkIalXpuTiz/LCmC17dojyv9dXFFAjkScGF6t7nQ0UkdLk/sMjvcaDCBtO2roDGMSSWS7Gz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731159651; c=relaxed/simple;
-	bh=DpuvVt7caLTKXKo/ZpTpfxwmYD5a5qfV0OjlFjgHRkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEJb7HE3eGu3JhSwTtVe9SkOaZmAKm79h57891zMrc5TGWyiFo2i75xZJTr7okT6yqzM/Aq//V8TajC/IzCkDArG9CjxFx5vbnntsQYy6H39X+llapW8ZPKjdE/PsR5iuV6JU61mZhcBgYPUF08gYqhVVtEJxwa2V6TM4zm+GrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=zeQkhBax; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3099220e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 05:40:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1731159647; x=1731764447; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nxB5gPoc3zzAhuEQiHf7da4pTtcAC3DNJzHv50OU/m4=;
-        b=zeQkhBaxgRaNjfPlN36AymfuUjNsxsPD6ibGlIMH2vK93+wglIykN/oWy7u9dUAddH
-         jUUJh88oo8Oha1DrOs4bi1AIVB48oagj2GgD0z8R4vul0BwG/ItXcMPNmjBQYMLvvbyT
-         6ojXCA+dAbf5ORKdP2rGkJPZ2MY95dGEOrHhktHJ+UxDx92z9r7RuMe+b+OL3JM8iP04
-         +JHO2tYS8kz2/4TOYLMecJJ5BD3sF7Clr747ROQtwLTP95ZD0+J8jYdg2S/8MCq3ADpP
-         92YdW7lIIn6Y0L2MzJdSwN+sVJySc7ddBdAJ4jEQD4jxTm6uX+OJEglIXuYduR35BTZV
-         Mb0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731159647; x=1731764447;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nxB5gPoc3zzAhuEQiHf7da4pTtcAC3DNJzHv50OU/m4=;
-        b=huC6qLVJkIucNBBXrtKhiBV8QiNWNV7P6/7qwNKIiUXV9eLBgDmM6VfcMIOiRzQrLf
-         9EbCel7Roji4tq7oBJ/x8TXvNNmBTE5yhE9k8sdyMVTtqv8KUV0vFqAHPDRPbE4EgSGf
-         ga+p8cTiDoQBXBNkJG9JBb6Z11kkIdrVrspjmB0+vHLDBdfjbn3ci8MigTCMYAfC9oh3
-         Ncu+lPPHInR8Yw6POxlH+pEev5DqkwvmiR8UhFMe1ycKTDGYTTeWatpIWMidQmp9pVVt
-         3QpGAI008j6PAxVeMt9cLFdz8hqYPPKy9Q9EuHXpfy1uUpUtFHHh7aSepisZzgJS7g84
-         LhVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPKfe4watfq3oadbFPLv7iqw/kl31LULNs7WZWzxl/IUwYiyi/rye9nRnQHrMF713LITtImDwjKBGx6Ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyvJDg9O3At16cjkYyZSlzt5ApqZIAR+J/rNmLskaOfqfoVYBh
-	l386ilCfhB0W3HOqg5IHByl1H2nCBgQ43r8QAT1IPCuwJQlZ7Qg5BB7IyYoJIyg=
-X-Google-Smtp-Source: AGHT+IE0JAECEIE2ksLs8Y2aggg+blpxzPCgZBIS2K0qt/fU9tDMt9/9JtHZZK89+t7cjZNI3BmPvA==
-X-Received: by 2002:a05:6512:b83:b0:53c:7652:6c7a with SMTP id 2adb3069b0e04-53d862b45c8mr2870834e87.8.1731159646629;
-        Sat, 09 Nov 2024 05:40:46 -0800 (PST)
-Received: from localhost ([62.205.150.185])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a7248sm919292e87.127.2024.11.09.05.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 05:40:46 -0800 (PST)
-Date: Sat, 9 Nov 2024 15:40:45 +0200
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
-Cc: davem@davemloft.net, Roopa Prabhu <roopa@nvidia.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	bridge@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [RFC net-next 2/4] net: bridge: send notification for roaming
- hosts
-Message-ID: <Zy9mXda9diHR_Eh5@penguin>
-References: <20241108032422.2011802-1-elliot.ayrey@alliedtelesis.co.nz>
- <20241108032422.2011802-3-elliot.ayrey@alliedtelesis.co.nz>
+	s=arc-20240116; t=1731159761; c=relaxed/simple;
+	bh=t3t+ysfKKtXS17fLmXkD4LYR/AhPzUkC7huhFUxrLeY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VWOFNkJPId+Yl+KuSDPLiuVwdv5JjyNKyIUE0lQRwohpwdL88CyBBEQ8P8vHbGDj6m1+ZOsVuvLQXFrsvcb9dsIXnizNihyCQToIbczSZZHa1S7hNMte7z9dIdEi88g/tv4svVE4tzYOgVN/QtS/+jokLbi1wChcIb5WnPcJPl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sgfdn+OL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26118C4CECE;
+	Sat,  9 Nov 2024 13:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731159761;
+	bh=t3t+ysfKKtXS17fLmXkD4LYR/AhPzUkC7huhFUxrLeY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sgfdn+OLEx56qBN0CAsq6HQH0f+cpAppZT7lpAXOQ77nFEvYjVOMXXM4mLx0oAjG7
+	 TNsIT/VFr5+hCUAuSunaNFD7cllDJS+a0uSWnQWd5I99A+FmruUaZfnql834zNpLGR
+	 +awEbbDHSqWlLFHp/N6O3JQvV+4RcZ7wtKt7XATwSXC74jbWAFV8d3ksfStgGmId55
+	 xLNxLw5luJurTUpk3u145dqgqF02K5UYM/D2J3ifHeD3Y2uY+mJtOOab/4R7ZHKbfi
+	 f1FOCie9XDCypmAkzm7Z8xiCTsmCRgt+tEX4F121qp2rg47S9dsfhCKRZXWU6hneK7
+	 AP2LJM0o9DGbw==
+Date: Sat, 9 Nov 2024 13:42:28 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yu-Hsian Yang <j2anfernee@gmail.com>
+Cc: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andy@kernel.org, marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
+ mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com,
+ joao.goncalves@toradex.com, marius.cristea@microchip.com,
+ mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
+ NCT720x ADCs
+Message-ID: <20241109134228.4359d803@jic23-huawei>
+In-Reply-To: <CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
+References: <20241106023916.440767-1-j2anfernee@gmail.com>
+	<20241106023916.440767-2-j2anfernee@gmail.com>
+	<6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
+	<CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108032422.2011802-3-elliot.ayrey@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 08, 2024 at 04:24:19PM +1300, Elliot Ayrey wrote:
-> When an fdb entry is configured as static and sticky it should never
-> roam. However there are times where it would be useful to know when
-> this happens so a user application can act on it. For this reason,
-> extend the fdb notification mechanism to send a notification when the
-> bridge detects a host that is attempting to roam when it has been
-> configured not to.
-> 
-> This is achieved by temporarily updating the fdb entry with the new
-> port, setting a new notify roaming bit, firing off a notification, and
-> restoring the original port immediately afterwards. The port remains
-> unchanged, respecting the sticky flag, but userspace is now notified
-> of the new port the host was seen on.
-> 
-> The roaming bit is cleared if the entry becomes inactive or if it is
-> replaced by a user entry.
-> 
-> Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
-> ---
->  include/uapi/linux/neighbour.h |  4 ++-
->  net/bridge/br_fdb.c            | 64 +++++++++++++++++++++++-----------
->  net/bridge/br_input.c          | 10 ++++--
->  net/bridge/br_private.h        |  3 ++
->  4 files changed, 58 insertions(+), 23 deletions(-)
-> 
+On Wed, 6 Nov 2024 17:22:35 +0800
+Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
 
-No way, this is ridiculous. Changing the port like that for a notification is not
-ok at all. It is also not the bridge's job to notify user-space for sticky fdbs
-that are trying to roam, you already have some user-space app and you can catch
-such fdbs by other means (sniffing, ebpf hooks, netfilter matching etc). Such
-change can also lead to DDoS attacks with many notifications.
+> Dear Chanh Nguyen,
+>=20
+> Thank you for your response.
+>=20
+> Chanh Nguyen <chanh@amperemail.onmicrosoft.com> =E6=96=BC 2024=E5=B9=B411=
+=E6=9C=886=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8812:58=E5=AF=AB=E9=
+=81=93=EF=BC=9A
+> >
+> >
+> >
+> > On 06/11/2024 09:39, Eason Yang wrote: =20
+> > > This adds a binding specification for the Nuvoton NCT7201/NCT7202
+> > > family of ADCs.
+> > >
+> > > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> > > ---
+> > >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 ++++++++++++++++=
++++
+> > >   MAINTAINERS                                   |  1 +
+> > >   2 files changed, 48 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvoto=
+n,nct720x.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720=
+x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > > new file mode 100644
+> > > index 000000000000..3052039af10e
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > > @@ -0,0 +1,47 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Nuvoton nct7202 and similar ADCs
+> > > +
+> > > +maintainers:
+> > > +  - Eason Yang <yhyang2@nuvoton.com>
+> > > +
+> > > +description: |
+> > > +   Family of ADCs with i2c interface.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nuvoton,nct7201
+> > > +      - nuvoton,nct7202
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  read-vin-data-size: =20
+> >
+> > Is it generic property or vendor property? I tried to find in the
+> > https://github.com/torvalds/linux/tree/master/Documentation/devicetree/=
+bindings
+> > , but it seems this property hasn't been used on other devices.
+> >
+> > If it is vendor property, then I think it should include a vendor
+> > prefix. For examples:
+> >
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/adi%2Cad7780.yaml#L50
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/fsl%2Cvf610-adc.yaml#L42
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/st%2Cstmpe-adc.yaml#L22
+> >
+> > =20
+>=20
+> I would add a vendor prefix for it.
 
-Nacked-by: Nikolay Aleksandrov <razor@blackwall.org>
+Why do we want this at all?  Is this device sufficiently high
+performance that Linux will ever want to trade of resolution against
+sampling speed?
 
-> diff --git a/include/uapi/linux/neighbour.h b/include/uapi/linux/neighbour.h
-> index 5e67a7eaf4a7..e1c686268808 100644
-> --- a/include/uapi/linux/neighbour.h
-> +++ b/include/uapi/linux/neighbour.h
-> @@ -201,10 +201,12 @@ enum {
->   /* FDB activity notification bits used in NFEA_ACTIVITY_NOTIFY:
->    * - FDB_NOTIFY_BIT - notify on activity/expire for any entry
->    * - FDB_NOTIFY_INACTIVE_BIT - mark as inactive to avoid multiple notifications
-> +  * - FDB_NOTIFY_ROAMING_BIT - mark as attempting to roam
->    */
->  enum {
->  	FDB_NOTIFY_BIT		= (1 << 0),
-> -	FDB_NOTIFY_INACTIVE_BIT	= (1 << 1)
-> +	FDB_NOTIFY_INACTIVE_BIT	= (1 << 1),
-> +	FDB_NOTIFY_ROAMING_BIT	= (1 << 2)
->  };
->  
->  /* embedded into NDA_FDB_EXT_ATTRS:
-> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> index d0eeedc03390..a8b841e74e15 100644
-> --- a/net/bridge/br_fdb.c
-> +++ b/net/bridge/br_fdb.c
-> @@ -145,6 +145,8 @@ static int fdb_fill_info(struct sk_buff *skb, const struct net_bridge *br,
->  			goto nla_put_failure;
->  		if (test_bit(BR_FDB_NOTIFY_INACTIVE, &fdb->flags))
->  			notify_bits |= FDB_NOTIFY_INACTIVE_BIT;
-> +		if (test_bit(BR_FDB_NOTIFY_ROAMING, &fdb->flags))
-> +			notify_bits |= FDB_NOTIFY_ROAMING_BIT;
->  
->  		if (nla_put_u8(skb, NFEA_ACTIVITY_NOTIFY, notify_bits)) {
->  			nla_nest_cancel(skb, nest);
-> @@ -554,8 +556,10 @@ void br_fdb_cleanup(struct work_struct *work)
->  					work_delay = min(work_delay,
->  							 this_timer - now);
->  				else if (!test_and_set_bit(BR_FDB_NOTIFY_INACTIVE,
-> -							   &f->flags))
-> +							   &f->flags)) {
-> +					clear_bit(BR_FDB_NOTIFY_ROAMING, &f->flags);
->  					fdb_notify(br, f, RTM_NEWNEIGH, false);
-> +				}
->  			}
->  			continue;
->  		}
-> @@ -880,6 +884,19 @@ static bool __fdb_mark_active(struct net_bridge_fdb_entry *fdb)
->  		  test_and_clear_bit(BR_FDB_NOTIFY_INACTIVE, &fdb->flags));
->  }
->  
-> +void br_fdb_notify_roaming(struct net_bridge *br, struct net_bridge_port *p,
-> +			   struct net_bridge_fdb_entry *fdb)
-> +{
-> +	struct net_bridge_port *old_p = READ_ONCE(fdb->dst);
-> +
-> +	if (test_bit(BR_FDB_NOTIFY, &fdb->flags) &&
-> +	    !test_and_set_bit(BR_FDB_NOTIFY_ROAMING, &fdb->flags)) {
-> +		WRITE_ONCE(fdb->dst, p);
-> +		fdb_notify(br, fdb, RTM_NEWNEIGH, false);
-> +		WRITE_ONCE(fdb->dst, old_p);
-> +	}
-> +}
-> +
->  void br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
->  		   const unsigned char *addr, u16 vid, unsigned long flags)
->  {
-> @@ -906,21 +923,24 @@ void br_fdb_update(struct net_bridge *br, struct net_bridge_port *source,
->  			}
->  
->  			/* fastpath: update of existing entry */
-> -			if (unlikely(source != READ_ONCE(fdb->dst) &&
-> -				     !test_bit(BR_FDB_STICKY, &fdb->flags))) {
-> -				br_switchdev_fdb_notify(br, fdb, RTM_DELNEIGH);
-> -				WRITE_ONCE(fdb->dst, source);
-> -				fdb_modified = true;
-> -				/* Take over HW learned entry */
-> -				if (unlikely(test_bit(BR_FDB_ADDED_BY_EXT_LEARN,
-> -						      &fdb->flags)))
-> -					clear_bit(BR_FDB_ADDED_BY_EXT_LEARN,
-> -						  &fdb->flags);
-> -				/* Clear locked flag when roaming to an
-> -				 * unlocked port.
-> -				 */
-> -				if (unlikely(test_bit(BR_FDB_LOCKED, &fdb->flags)))
-> -					clear_bit(BR_FDB_LOCKED, &fdb->flags);
-> +			if (unlikely(source != READ_ONCE(fdb->dst))) {
-> +				if (unlikely(test_bit(BR_FDB_STICKY, &fdb->flags))) {
-> +					br_fdb_notify_roaming(br, source, fdb);
-> +				} else {
-> +					br_switchdev_fdb_notify(br, fdb, RTM_DELNEIGH);
-> +					WRITE_ONCE(fdb->dst, source);
-> +					fdb_modified = true;
-> +					/* Take over HW learned entry */
-> +					if (unlikely(test_bit(BR_FDB_ADDED_BY_EXT_LEARN,
-> +							      &fdb->flags)))
-> +						clear_bit(BR_FDB_ADDED_BY_EXT_LEARN,
-> +							  &fdb->flags);
-> +					/* Clear locked flag when roaming to an
-> +					 * unlocked port.
-> +					 */
-> +					if (unlikely(test_bit(BR_FDB_LOCKED, &fdb->flags)))
-> +						clear_bit(BR_FDB_LOCKED, &fdb->flags);
-> +				}
->  			}
->  
->  			if (unlikely(test_bit(BR_FDB_ADDED_BY_USER, &flags))) {
-> @@ -1045,6 +1065,7 @@ static bool fdb_handle_notify(struct net_bridge_fdb_entry *fdb, u8 notify)
->  		   test_and_clear_bit(BR_FDB_NOTIFY, &fdb->flags)) {
->  		/* disabled activity tracking, clear notify state */
->  		clear_bit(BR_FDB_NOTIFY_INACTIVE, &fdb->flags);
-> +		clear_bit(BR_FDB_NOTIFY_ROAMING, &fdb->flags);
->  		modified = true;
->  	}
->  
-> @@ -1457,10 +1478,13 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
->  
->  		fdb->updated = jiffies;
->  
-> -		if (READ_ONCE(fdb->dst) != p &&
-> -		    !test_bit(BR_FDB_STICK, &fdb->flags)) {
-> -			WRITE_ONCE(fdb->dst, p);
-> -			modified = true;
-> +		if (READ_ONCE(fdb->dst) != p) {
-> +			if (test_bit(BR_FDB_STICKY, &fdb->flags)) {
-> +				br_fdb_notify_roaming(br, p, fdb);
-> +			} else {
-> +				WRITE_ONCE(fdb->dst, p);
-> +				modified = true;
-> +			}
->  		}
->  
->  		if (test_and_set_bit(BR_FDB_ADDED_BY_EXT_LEARN, &fdb->flags)) {
-> diff --git a/net/bridge/br_input.c b/net/bridge/br_input.c
-> index ceaa5a89b947..512ffab16f5d 100644
-> --- a/net/bridge/br_input.c
-> +++ b/net/bridge/br_input.c
-> @@ -120,8 +120,14 @@ int br_handle_frame_finish(struct net *net, struct sock *sk, struct sk_buff *skb
->  				br_fdb_update(br, p, eth_hdr(skb)->h_source,
->  					      vid, BIT(BR_FDB_LOCKED));
->  			goto drop;
-> -		} else if (READ_ONCE(fdb_src->dst) != p ||
-> -			   test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
-> +		} else if (READ_ONCE(fdb_src->dst) != p) {
-> +			/* FDB is trying to roam. Notify userspace and drop
-> +			 * the packet
-> +			 */
-> +			if (test_bit(BR_FDB_STICKY, &fdb_src->flags))
-> +				br_fdb_notify_roaming(br, p, fdb_src);
-> +			goto drop;
-> +		} else if (test_bit(BR_FDB_LOCAL, &fdb_src->flags)) {
->  			/* FDB mismatch. Drop the packet without roaming. */
->  			goto drop;
->  		} else if (test_bit(BR_FDB_LOCKED, &fdb_src->flags)) {
-> diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-> index 041f6e571a20..18d3cb5fec0e 100644
-> --- a/net/bridge/br_private.h
-> +++ b/net/bridge/br_private.h
-> @@ -277,6 +277,7 @@ enum {
->  	BR_FDB_NOTIFY_INACTIVE,
->  	BR_FDB_LOCKED,
->  	BR_FDB_DYNAMIC_LEARNED,
-> +	BR_FDB_NOTIFY_ROAMING,
->  };
->  
->  struct net_bridge_fdb_key {
-> @@ -874,6 +875,8 @@ int br_fdb_external_learn_del(struct net_bridge *br, struct net_bridge_port *p,
->  			      bool swdev_notify);
->  void br_fdb_offloaded_set(struct net_bridge *br, struct net_bridge_port *p,
->  			  const unsigned char *addr, u16 vid, bool offloaded);
-> +void br_fdb_notify_roaming(struct net_bridge *br, struct net_bridge_port *p,
-> +			   struct net_bridge_fdb_entry *fdb);
->  
->  /* br_forward.c */
->  enum br_pkt_type {
+If so that seems like a policy control that belongs in userspace. Note
+that to support that in IIO I would want a strong justification for why we =
+dno't
+just set it to 16 always. We just go for maximum resolution in the vast maj=
+ority
+of drivers that support control of this.
+
+
+>=20
+> > > +    description: number of data bits per read vin
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    enum: [8, 16]
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - read-vin-data-size
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    i2c {
+> > > +        #address-cells =3D <1>;
+> > > +        #size-cells =3D <0>;
+> > > +
+> > > +        nct7202@1d { =20
+> >
+> > I think the Node name should follow
+> > https://devicetree-specification.readthedocs.io/en/latest/chapter2-devi=
+cetree-basics.html#generic-names-recommendation
+> >
+> >
+> > For some examples that were merged before
+> >
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/adi%2Cad7091r5.yaml#L102
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/maxim%2Cmax1238.yaml#L73
+> > https://github.com/torvalds/linux/blob/master/Documentation/devicetree/=
+bindings/iio/adc/ti%2Cadc081c.yaml#L49
+> > =20
+>=20
+> I would change it for the node naming.
+>=20
+> > > +            compatible =3D "nuvoton,nct7202";
+> > > +            reg =3D <0x1d>;
+> > > +            read-vin-data-size =3D <8>;
+> > > +        };
+> > > +    };
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 91d0609db61b..68570c58e7aa 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -2746,6 +2746,7 @@ L:      openbmc@lists.ozlabs.org (moderated for=
+ non-subscribers)
+> > >   S:  Supported
+> > >   F:  Documentation/devicetree/bindings/*/*/*npcm*
+> > >   F:  Documentation/devicetree/bindings/*/*npcm*
+> > > +F:   Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > >   F:  Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
+> > >   F:  arch/arm/boot/dts/nuvoton/nuvoton-npcm*
+> > >   F:  arch/arm/mach-npcm/ =20
+> > =20
+
 
