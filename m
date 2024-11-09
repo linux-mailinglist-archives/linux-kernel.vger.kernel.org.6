@@ -1,169 +1,222 @@
-Return-Path: <linux-kernel+bounces-402602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85DA19C298A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:42:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237EF9C298C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E731F22AE1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:42:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC101C21794
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF487581F;
-	Sat,  9 Nov 2024 02:42:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B32F51C45;
+	Sat,  9 Nov 2024 02:46:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95914438B
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5C117C7C;
+	Sat,  9 Nov 2024 02:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731120149; cv=none; b=PFZ34s8RHTsq4UjdxWtxLi4kuSnl7Cx63CkAFJtFhfwZm+3FEb2LkAcqcRo7m0+kxG4yyNdcFAI+EZgaiJH1D/UoHXLOqH5isWtC73+B3Ucl8WeVr4KNlyeJloWlckEn7qy6E7xsqiVReYYGQ6qgrSLZtSVgyXC2pHP40PsR0+w=
+	t=1731120382; cv=none; b=G1MgsB+r9RPuEuoDuV1DNDWBCg5HVdVsvlW5fp+qLuSH4BRLOvt+WAE6r5etkBnZ69FRWytAtOQc7AXzcgznIInTY4MeyQr7iaP3bza2pAif06SB7PDOf5VoBPKT9polmJ7J/Dm3AVhgm6aM1L6GUrBhzxBfkaKEnmtuO+M05eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731120149; c=relaxed/simple;
-	bh=wA1VYEI8BNpgiaIqBy/M4RJmP5Q2tpsjN1f9DK3bVGQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JY5lvWqilTc//SgzUdcKAN/8WAVWhL5SZvWxmlumWtBmVXZWnZMAl+dMTm6x0ELUypcOxVU0psBGLt4KYon0aMoEW3R7gArwxp/lvfs+rrWesAfB6ji8p8VGQ0oAWaYKnNtmUtOJErabO2be3EpOFcpWofZPPmR1OPkcQKSMjis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6c355b3f5so30329525ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 18:42:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731120147; x=1731724947;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5NapeQfZdEOZA23KK4MZzlHL9K2BnlokyMdzzqWPJ3U=;
-        b=PR131j4liu604SPd9ni0E3rLCJ4P2WpB3aGw1HOGauQxapWcKb0hKBOSSjLhk+JgCv
-         YYkr735AL6bZ/avQO25bqMU9GBr/vt+deh4RpaRKqFoZuk8Os9pTZTvfkQr0ULicndZS
-         dJ7JNBESOMi7K3pQ7kGYrhmHoN6En6Cc94VswBrcUcnOFwsfmBNkYG/qlxsnqfKaWPDZ
-         5ipEafJC22SAQdW3Yb/9x7H6D097CxPyt55mP6IhmVrJmcCAPHVZNUltf0LEs1ZDmOpZ
-         KVUMlEhmlN2BHMiP2EUt3lv8pqv9tnbBF1aC0k2kZEXjeoQwgYxyhNXPkCNyhu422HYN
-         vuuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNweIzWUdR2T4pQgesKtNLqMDbf5XwOyakL9xAgeUW62F3zaNAdk/yKec26XYkVVDwXOI77qRIldY/qMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHA7B+XpGcSc+9oSo64F5Vrbhhw8xxQurVF71k5szcsr7p0whH
-	/EcQuphrZyvLnWI1bNHzbquek4YXssHor2vUE2hhAC6V5gGtbD084UMxYLlUZgEU2bqt6NxjvVu
-	NA0UsKvVheH2ynA7gBHF6+NoPeyIyCtVSWTAongaipGcA9lyrQiFbQi8=
-X-Google-Smtp-Source: AGHT+IGFHqo45XHLTXzittKnZ0Fe5W55Rug4VSxnLKO/SQeXsalZm1TWCTLkRSl5tE2ohSFTjkkSGiLyZ2+L4CW6rKc6lFSGqdT0
+	s=arc-20240116; t=1731120382; c=relaxed/simple;
+	bh=BTrxe8BRxQB6xm1Tx6vzyZJeFDO8zSbZX5OzaGTvjto=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=bv7YTqqMe//lm/HFJXJL2v4iTYzRznHv77TqcfYhzilk9MLQK4S4dB7cUc3UUxbFDjGZ0VV50/ZggjGO86PCZwI5JSmovJhz1s17V5+IWiJ5kpZiLuNu6o4FKk5r0zhY4h+vysXEX9rMZKwAIwOsF0lADTZAHSCusAeSjLqXeXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XlgD50VFnz4f3lVL;
+	Sat,  9 Nov 2024 10:45:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 05B6A1A018D;
+	Sat,  9 Nov 2024 10:46:16 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP1 (Coremail) with SMTP id cCh0CgAXDK7xzC5nE0PpBA--.19966S2;
+	Sat, 09 Nov 2024 10:46:13 +0800 (CST)
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Kunwu Chan <kunwu.chan@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Sebastian Sewior <bigeasy@linutronix.de>,
+ clrkwllms@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Gleixner <tglx@linutronix.de>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
+ Kunwu Chan <chentao@kylinos.cn>,
+ syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+References: <20241108063214.578120-1-kunwu.chan@linux.dev>
+ <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <78012426-80d2-4d77-23c4-ae000148fadd@huaweicloud.com>
+Date: Sat, 9 Nov 2024 10:46:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54a:0:b0:3a6:b445:dc9e with SMTP id
- e9e14a558f8ab-3a6f198f219mr64887625ab.4.1731120147041; Fri, 08 Nov 2024
- 18:42:27 -0800 (PST)
-Date: Fri, 08 Nov 2024 18:42:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgAXDK7xzC5nE0PpBA--.19966S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3Gry7CF4kur4DKw43Awb_yoWxAF1UpF
+	WfCFZrAr4UXa4j9ay0vw4jvay5Xws8Kw43GrWfWryxZF1agrn2qrs2yr1fXr90yryvyFZI
+	yF1qqFWkKw18ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hello,
+Hi Alexei,
 
-syzbot found the following issue on:
+On 11/9/2024 4:22 AM, Alexei Starovoitov wrote:
+> On Thu, Nov 7, 2024 at 10:32 PM Kunwu Chan <kunwu.chan@linux.dev> wrote:
+>> From: Kunwu Chan <chentao@kylinos.cn>
+>>
+>> When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
+>> and bpf program has owned a raw_spinlock under a interrupt handler,
+>> which results in invalid lock acquire context.
+>>
+>> [ BUG: Invalid wait context ]
+>> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+>> -----------------------------
+>> swapper/0/0 is trying to lock:
+>> ffff8880261e7a00 (&trie->lock){....}-{3:3},
+>> at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+>> other info that might help us debug this:
+>> context-{3:3}
+>> 5 locks held by swapper/0/0:
+>>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+>> at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
+>>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+>> at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
+>>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+>> at: spin_lock include/linux/spinlock.h:351 [inline]
+>>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+>> at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
+>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
+>>  #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2},
+>> at: __queue_work+0x759/0xf50
+>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
+>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>> at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
+>> stack backtrace:
+>> CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
+>> 6.12.0-rc5-next-20241031-syzkaller #0
+>> Hardware name: Google Compute Engine/Google Compute Engine,
+>> BIOS Google 09/13/2024
+>> Call Trace:
+>>  <IRQ>
+>>  __dump_stack lib/dump_stack.c:94 [inline]
+>>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>>  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+>>  check_wait_context kernel/locking/lockdep.c:4898 [inline]
+>>  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+>>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>>  trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+> This trace is from non-RT kernel where spin_lock == raw_spin_lock.
 
-HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11361d5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6fdf74cce377223b
-dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12348f40580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e7b587980000
+Yes. However, I think the reason for the warning is that lockdep
+considers the case is possible under PREEMPT_RT and it violates the rule
+of lock [1].
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz
+[1]:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=560af5dc839eef08a273908f390cfefefb82aa04
+>
+> I don't think Hou's explanation earlier is correct.
+> https://lore.kernel.org/bpf/e14d8882-4760-7c9c-0cfc-db04eda494ee@huaweicloud.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+OK. Is the bpf mem allocator part OK for you ?
+>
+>>  bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+>>  bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+>>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>>  bpf_prog_run include/linux/filter.h:708 [inline]
+>>  __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
+>>  bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
+>>  trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
+>>  __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
+>>  queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
+> here irqs are disabled, but raw_spin_lock in lpm should be fine.
+>
+>>  queue_work include/linux/workqueue.h:662 [inline]
+>>  stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
+>>  vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
+>>  vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
+>>  vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
+>>  __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+>>  handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+>>  handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+>>  handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
+>>  generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+>>  handle_irq arch/x86/kernel/irq.c:247 [inline]
+>>  call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+>>  __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+>>  common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
+>>  </IRQ>
+>>
+>> Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+>> Closes: https://lore.kernel.org/bpf/6723db4a.050a0220.35b515.0168.GAE@google.com/
+>> Fixes: 66150d0dde03 ("bpf, lpm: Make locking RT friendly")
+>> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+>> ---
+>>  kernel/bpf/lpm_trie.c | 12 ++++++------
+>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+>> index 9b60eda0f727..373cdcfa0505 100644
+>> --- a/kernel/bpf/lpm_trie.c
+>> +++ b/kernel/bpf/lpm_trie.c
+>> @@ -35,7 +35,7 @@ struct lpm_trie {
+>>         size_t                          n_entries;
+>>         size_t                          max_prefixlen;
+>>         size_t                          data_size;
+>> -       spinlock_t                      lock;
+>> +       raw_spinlock_t                  lock;
+>>  };
+> We're certainly not going back.
 
-=====================================================
-BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
-BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:646 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
-BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Only switching from spinlock_t to raw_spinlock_t is not enough, running
+it under PREEMPT_RT after the change will still trigger the similar
+lockdep warning. That is because kmalloc() may acquire a spinlock_t as
+well. However, after changing the kmalloc and its variants to bpf memory
+allocator, I think the switch to raw_spinlock_t will be safe. I have
+already written a draft patch set. Will post after after polishing and
+testing it. WDYT ?
+>
+> pw-bot: cr
 
-Local variable b205.i created at:
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
-
-CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
-Kernel panic - not syncing: kmsan.panic set ...
-CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G    B              6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
- dump_stack+0x1e/0x30 lib/dump_stack.c:129
- panic+0x4e2/0xcf0 kernel/panic.c:354
- kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
- __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
