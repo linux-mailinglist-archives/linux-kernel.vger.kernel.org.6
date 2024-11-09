@@ -1,167 +1,247 @@
-Return-Path: <linux-kernel+bounces-402633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8839C29D7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:39:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03619C29DF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E76F2B228C4
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:38:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E67B22664
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 04:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D97713B586;
-	Sat,  9 Nov 2024 04:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11F813D251;
+	Sat,  9 Nov 2024 04:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hV6X6ACo"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YYy1+n6J"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD45A55;
-	Sat,  9 Nov 2024 04:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731127127; cv=none; b=DK/dhGiKj95FLeS3q7xooHRF0SJEL+TiZESqEyKXqMxiORLbf3YpF3CFt1ttFnlVG/gFxo93nLJ573Tkzr67SHh8u6iPjzb7JxHq7S1UIRfeeAC0kkfhMFAdOwNa1i8QdFNi6CbOhMit41eQple6p7n+vmjcS35yV9hUJpAz1pA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731127127; c=relaxed/simple;
-	bh=KqclHp6ArxX0BZFmIZrwmiFdi8bA+sADZ4vgofgVCdk=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LmLf1h9DdZ60yjPzMcS7eoFuJuw3QB7F9tX9cbjfAQqXp/2JK+DsK2FbSdmi6fAXEQcW463MW2AjkOx8rctyFoOrEFlY7TtKP14UaOpeRkWqWfBagVhq2rD0eRb89tALlQYOv21uvrEnpcpkaRKTrjxvkgnF4tmzGZ2u7+dxyOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hV6X6ACo; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e4e481692so2768212b3a.1;
-        Fri, 08 Nov 2024 20:38:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731127126; x=1731731926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DA3hw8R6XL4AOWydyQZHwCswIEuadIAoTh+magCGfx0=;
-        b=hV6X6ACoqEnHVbygs6U4cEhsN2J3O7LQsNIWTa7rKrhSbr5whhFCcE5iTfr4rgfpCq
-         7A8JJA0jjnSiqgiC+1mGlgPPtDJUv4enLhTp9pKtIH+Pc+CMjRajDIEdKd+NAPmwFyqH
-         hoK24LWkyh+YuzkJGAKvcSMK96pQRb6JFzJbKfUTXZv/AZ3hMAKNpa7szgrjz/tBIHww
-         RzcE+K2aSS0jhtHpv1d9FBmfIq9vn9jhnEi1Cc8Hxcckt2gmHZuhKEfE8F5YDips7wUa
-         ERz8QfQHZlaW5htRl3wlKZ0kMjGvEsKKBdAHyeJXTXhXi3ml0dMH98Zj7QvSwtxf/Kmo
-         io9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731127126; x=1731731926;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DA3hw8R6XL4AOWydyQZHwCswIEuadIAoTh+magCGfx0=;
-        b=aLv48dHvFgZuPwdcknI/ob+JPQd7I4sh/7MAn/q3xtxKdBLIagL8LNkTbCd3sdsHzF
-         9+7ckES5x4ro0nagfoWxUKjQ4fuPSyYq3e6ZieGQ/6WH/VRDaDsV3Q1AqJMXbwCvaL36
-         53SDDiDpMvDHNYj5+NSCyDC4xs/CU7Vb6EI3fauBBeeUBbpOqnECAeAdUAkI+3OzdL9v
-         5/aDfvsBzkFC/PFab4y/vnletEMCXbLXX6Drff7ZLQLiCnsCzswJQGFlkNzRgi85oXWh
-         MPTmRC/G+iZJo22hKz4sUTpEBhadmT/3Za63cTv+9w+Cbh4Pj+PRIGY0zZ88rOy4/1eU
-         r1jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUPjzgxx5fxBF0xMR6hMRTgqBZ0ZHCuHnmRL8IsBoJGCRPHQHDTkVeHMbXlQJBzTtbo5xG0BKo@vger.kernel.org, AJvYcCUfqV9pnoayv6vWFaKm3dN10wMIdBiMj9PeQSt7EQyB827m4F9xAvF5roLSise2l3ezKc6I0j/wLbZuOcb3w/0=@vger.kernel.org, AJvYcCVrrI+sKtiNRykkMCNAPxUhNdPH72ESimVZE5UVqtExAHFjtOEYY7lXpOdPA9tXYaYJBAtiyzndEyt/8cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/oEfpVIlT8cJqLYBYiAOv1JuuCUFd5sbNvTQ5BilExGfvf6wW
-	xI0YLx2p+Wr0kAXXQSUmBBRibUcCjs6zyJPhuU7WGnpLG17FP+uFSbsayIZC
-X-Google-Smtp-Source: AGHT+IE0Kr9CUmz3El+k3JIITWmsTInqwUzEweCi1wf/HtTKz3DG3dyudW9DQYXt+GAqQh9CmRwTiw==
-X-Received: by 2002:a05:6a00:23c4:b0:71d:fb29:9f07 with SMTP id d2e1a72fcca58-724132cd842mr7181605b3a.15.1731127125542;
-        Fri, 08 Nov 2024 20:38:45 -0800 (PST)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65aa9csm4340079a12.74.2024.11.08.20.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 20:38:45 -0800 (PST)
-Date: Sat, 09 Nov 2024 13:38:39 +0900 (JST)
-Message-Id: <20241109.133839.322803434056714560.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
- sboyd@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
-Subject: Re: [PATCH v5 4/7] rust: time: Add wrapper for fsleep function
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Zyux5d33Kt6qFdaH@Boquns-Mac-mini.local>
-References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
-	<20241101010121.69221-5-fujita.tomonori@gmail.com>
-	<Zyux5d33Kt6qFdaH@Boquns-Mac-mini.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4363BBF2;
+	Sat,  9 Nov 2024 04:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731127346; cv=fail; b=pIfDga7EfDJd2IWPIQBOWhGsEYaDUJmEmMR4jyam+qDHko9WmzcawnhXg8bTf6keAD0/Qnm++xOTeMu4JkK1vJR+AR+K+BeWNkaMd5ENp9UsWENg2z1Snu8CgGL9a7i8tg6UzKnNoCX5lasdJROwnfxu7QkIRWM9FcdgkPHgZd8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731127346; c=relaxed/simple;
+	bh=NIVfQJDudamk4kAdjZ1pFWmr6mnKOKQnOf7asbqfHts=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MbW7+UbLBn4lZWkr3P5MIXNHcgudpWAVQz0YDgb1O0U5/6HZCvBn67CROLenwgSx8eJ5gAZIe6fqy/NpjtMvmWM0xIMKuRicpzpd+btYfono7+l4VLq544MY6xAoSYRt1Kpf8w02ahMDHCe9yjdDqnKT1uIVXQ84IF0ctEwSAvw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YYy1+n6J; arc=fail smtp.client-ip=40.107.220.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o5Y6Dqxc6AXJ5N3c1HtIylJ22+BrbdehOD0sXFfrnPRCaTadrG3MfAy8VpVMoRb2mg14dtpY8POxpQwCF9PQYmzlCKYpjmCz1cElZvSRGv51XyutNDgQCU8BdeFzDQS3jx1SZ72LNrE2IptNwOpyvvdso/+zISavzEEPAnHF5R9gF0RsPUBFfG0rbiZ85z4+ElPKQS4X8UAfTrRKYH/khv3UIPZanOfMfcVHxrhMg0KJdh2zNiSuD8ZEyY8Sv3xqFqozWutpw4OHCFHigOS2Cy/ygxH/rtgOo/6tvfo0k0wri6pdmshHDnAzP1tBSOCh4x6m9UTQtPAuT2ZBQ89o9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PTlb+nhgKaUeVff1RjkbqoKhPCcz+Ro2cOyIq8tRrUk=;
+ b=FhlwbqbRJcUNEs30CPNM/BAho8FK8M545a6fIenShf7+NbSkYjmCm7gnU8vrw3XucCt5B++vPTcXJ5RQCAm/yVixJqMh2qUpId3bgO9DnARXJlH9HpCJWHgSuTPjB+5trSBsfmcO1Ez55mzZLbPakgrOjKStqjfhmpOpy6U6GKtgnOMMUJ7GOmTC/V7ZfT7CZqeWRdmSdjtMoB4lWhg1SJgiGouFhgoFyjXrLlHnuCtUx3AZkZ40rx3egkQzTgi2M2okYbhGJIGUm+FPOAgOnwECOM8QlC3daSIwqiQqPwZJCEyxJ/ThPQB/OFcTb5KijjUq+suSFj/zEeHpq/wDzg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PTlb+nhgKaUeVff1RjkbqoKhPCcz+Ro2cOyIq8tRrUk=;
+ b=YYy1+n6JPhc/OBvEsDxrsTMLD50R3k8xahT8JV+iS5P9sE0pK4wZEnMhynbE2O7SwTN+7Br928Ho9aETRzS65FHfusvXU2s4uFOfHH9wGUsOT55/aNoF2zEasaduWQZPkOxq+2k8YDbTBuQgR9m1GnRtR63I9z8D4K3J3l/gin8=
+Received: from SN6PR04CA0080.namprd04.prod.outlook.com (2603:10b6:805:f2::21)
+ by BY5PR12MB4321.namprd12.prod.outlook.com (2603:10b6:a03:204::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.21; Sat, 9 Nov
+ 2024 04:42:18 +0000
+Received: from SN1PEPF0002636B.namprd02.prod.outlook.com
+ (2603:10b6:805:f2:cafe::54) by SN6PR04CA0080.outlook.office365.com
+ (2603:10b6:805:f2::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.21 via Frontend
+ Transport; Sat, 9 Nov 2024 04:42:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF0002636B.mail.protection.outlook.com (10.167.241.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8137.17 via Frontend Transport; Sat, 9 Nov 2024 04:42:18 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 8 Nov
+ 2024 22:42:06 -0600
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>
+CC: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, "Shyam
+ Sundar S K" <Shyam-sundar.S-k@amd.com>, Corentin Chary
+	<corentin.chary@gmail.com>, "Luke D . Jones" <luke@ljones.dev>, Ike Panhc
+	<ike.pan@canonical.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	"Alexis Belmonte" <alexbelm48@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>, Ai Chao <aichao@kylinos.cn>, Gergo Koteles
+	<soyer@irl.hu>, open list <linux-kernel@vger.kernel.org>, "open list:ACPI"
+	<linux-acpi@vger.kernel.org>, "open list:MICROSOFT SURFACE PLATFORM PROFILE
+ DRIVER" <platform-driver-x86@vger.kernel.org>, "open list:THINKPAD ACPI
+ EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, Mark Pearson
+	<mpearson-lenovo@squebb.ca>, Matthew Schwartz <matthew.schwartz@linux.dev>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v6 00/22] Add support for binding ACPI platform profile to multiple drivers
+Date: Fri, 8 Nov 2024 22:41:29 -0600
+Message-ID: <20241109044151.29804-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636B:EE_|BY5PR12MB4321:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3739ea1b-c6bb-444b-5387-08dd0078e444
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aVBsSkFMZXNZRUx0TGRDenY1ZElCWEw1S1hrR0hESjR6dDVLN0xnMWx3aCth?=
+ =?utf-8?B?QUVTaUtwdFhUUWlHWVpHcG5FMytrMHVlTWE1VjZoVTJldzAxODFxcjRvQXBU?=
+ =?utf-8?B?N29meUdIc2g4VEJraDM5VFk0WGNrVFNkWVhxVWFpMGNYRTZBNGNlWmtvaGVZ?=
+ =?utf-8?B?ME55V0JEQjdsWkRyL2hLM1k3NzRUZmJKaENsZ2UrUmFTdnp5cXhIQm95MUti?=
+ =?utf-8?B?U0s4RnN1VVRZV0tMS041dHBRWEY4YlN5N2xhTVJzNmFMekkwRG82V3ZGN0RL?=
+ =?utf-8?B?QUppT3JzZUhWMnB6OGo3N2FxUnlzYmd2dEgzcDBldFo2cDNWYUFQR1NFaVJo?=
+ =?utf-8?B?aFp4c3ZMaUMrTUV1TCtMajFvUHhPVzlzaTZHWDcycFpueUVETzYzM0pqemNV?=
+ =?utf-8?B?R1F6RzhDaUZLOEFrNVJKSzJmS1lpbjQ2YnNBNWZ5dXhLOWZ5bTZ1eHBxOXdw?=
+ =?utf-8?B?WVpYUGxsRktOUkNRRTVMenNLNzlGTlB5M3VQc1d0WWpKbGF3dXpTNFNWdWF6?=
+ =?utf-8?B?cjR6SStYenhCSDI5aU0wVElCZzkxK2VpQ1JXT0J6eDNkcStxMGxuMEtnWjZT?=
+ =?utf-8?B?ZHBJK0k1MGY0QlJNVWw4bit6ZHEwblpmOE9ldlZYQlM1N0VZT0FWczh2QStp?=
+ =?utf-8?B?UzU1bHlmSkRPczZ3OHQvMnluL3kzdmJSTGI4SmJuaHdEWXZ1UWJwL28yRzhZ?=
+ =?utf-8?B?RHRoL0g4ZFdvd2g1aEdybjdUTk1RN2hZNm9kTXNMS3NabjFXQnNiV0RBUFMv?=
+ =?utf-8?B?QjkrbElKaVhMZzFPYjFaQjFueXBxQjhIU1A3QXFMOHlHSTM5OTlsYWpQbzd3?=
+ =?utf-8?B?SFAyaVU5Y1hDY3NjQUxabkpmQVhWdTFYRHJPUGNSSXBKTkgxQnRjeUZDSktM?=
+ =?utf-8?B?ckFIOXpiWnNvU01LekY0YzBQNlV1d3p6NjN3VjlYM0V0dUpUQ1c0ck0zWnpJ?=
+ =?utf-8?B?RTdFSW5XcGl0WVFaZjFoa2x6aHB2ZTlrWWJwOGRkc0haMk50MnZIcmdtK3hV?=
+ =?utf-8?B?YXlYNCthb2dEaWZvWUdmaDZVZk5POVUyY1VJL1VCNHdQT0l6UVROWUZGTklQ?=
+ =?utf-8?B?ZUU3N0d1T01uTlJlbUZxN0FFek40RzhpUmlCUENuVzB4dDlnZVNaTXJjVUJv?=
+ =?utf-8?B?N2NIejZsYjNuSG1YV3kxMlBlci9lNmM2b2RQMW13UHkvT0ZoU1pSaTRObFBW?=
+ =?utf-8?B?RFlVendiMElxc0E2ck0wT1cweG9JdDZwb0E0TngzVWl4ZXpwOHlmbUtqODFN?=
+ =?utf-8?B?Y2Yyc0l2K0hXSU50QXg5YnlreXR6QTJrNm1QTUZTSUNGWWxabE4yZzQrcCtO?=
+ =?utf-8?B?YUU0clVFd1BFOEY3QjFNc3JNRHAwamE3R1VoNUN6MkljTUZ6MG1xc3BBSW1r?=
+ =?utf-8?B?T21DUjdVTFVEekpmVGhFNUVwOGlLUzM5LyswZUg2N0FuaWEvby8rY09ZdUVT?=
+ =?utf-8?B?Y0pxOVhHenU2eHY5R3pTWnNpU1MzUExHZVRReHA4NTVnU0xXSzJPNWZ6YWxD?=
+ =?utf-8?B?UEM3UkRLVzI2MWZRSnVtOU9yL05mY2dwclR6WVJwU21KcnpKM0doenMvV2gw?=
+ =?utf-8?B?b29kcTBMNTJyZ3VRZmtGQXQzNUNJWnBGa3JZT0lxbTYvbTRmd01hK3c1bUx4?=
+ =?utf-8?B?VktSdUxaOWlWK1ZBNnhzazRtcmhBYkh2czFmWGt4VGxHWXFoNTVDU2RyOW5n?=
+ =?utf-8?B?UkFuZGNnbmpNSTlKL3EwNkljejBEakF3Mi9hNzFSNXZEK2VBUVd6ZXg4MzVy?=
+ =?utf-8?B?OFhuR2tSVTZ1d1VzQzNvK2J0a3dzN2JxczdMOWxVYVA5aHNwZDZIQ1l4ZDgz?=
+ =?utf-8?B?MHVUdzJSNFAzbDZIVGdVbjNvaGdRamdJSFB5ZVRvOVZhNGZIRVdhanhodTlE?=
+ =?utf-8?B?SCsyM2N5NU5adFpHQXlmRlVLMVk5RE8zZVhJWFEweE4vUEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2024 04:42:18.1455
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3739ea1b-c6bb-444b-5387-08dd0078e444
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002636B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4321
 
-On Wed, 6 Nov 2024 10:13:57 -0800
-Boqun Feng <boqun.feng@gmail.com> wrote:
+Currently there are a number of ASUS products on the market that happen to
+have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+profile provided by asus-wmi.
 
->> diff --git a/rust/kernel/time/delay.rs b/rust/kernel/time/delay.rs
->> new file mode 100644
->> index 000000000000..c3c908b72a56
->> --- /dev/null
->> +++ b/rust/kernel/time/delay.rs
->> @@ -0,0 +1,43 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Delay and sleep primitives.
->> +//!
->> +//! This module contains the kernel APIs related to delay and sleep that
->> +//! have been ported or wrapped for usage by Rust code in the kernel.
->> +//!
->> +//! C header: [`include/linux/delay.h`](srctree/include/linux/delay.h).
->> +
->> +use crate::time::Delta;
-> 
-> Nit: I think it's better to use:
-> 
-> use super::Delta;
-> 
-> here to refer a definition in the super mod.
+The ACPI platform profile support created by amd-pmf on these ASUS
+products is "Function 9" which is specifically for "BIOS or EC
+notification" of power slider position. This feature is actively used
+by some designs such as Framework 13 and Framework 16.
 
-Fixed.
+On these ASUS designs we keep on quirking more and more of them to turn
+off this notification so that asus-wmi can bind.
 
->> +use core::ffi::c_ulong;
->> +
->> +/// Sleeps for a given duration at least.
->> +///
->> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
->> +/// which automatically chooses the best sleep method based on a duration.
->> +///
->> +/// `delta` must be 0 or greater and no more than u32::MAX / 2 microseconds.
-> 
-> Adding backquotes on "u32::MAX / 2" would make it easier to read and
-> generates better documentation. For example.
-> 
-> /// `delta` must be 0 or greater and no more than `u32::MAX / 2` microseconds.
->
->
->> +/// If a value outside the range is given, the function will sleep
->> +/// for u32::MAX / 2 microseconds at least.
-> 
-> Same here.
+This however isn't how Windows works.  "Multiple" things are notified for
+the power slider position. This series adjusts Linux to behave similarly.
 
-Updated both.
+Multiple drivers can now register an ACPI platform profile and will react
+to set requests.
 
-> I would also add the converted result in seconds of `u32::MAX / 2`
-> microseconds to give doc readers some intuitions, like:
-> 
-> the function will sleep for `u32::MAX / 2` (= ~2147 seconds or ~36
-> minutes) at least.
+To avoid chaos, only positions that are common to both drivers are
+accepted when the legacy /sys/firmware/acpi/platform_profile interface
+is used.
 
-Yeah, looks good. Added.
+This series also adds a new concept of a "custom" profile.  This allows
+userspace to discover that there are multiple driver handlers that are
+configured differently.
 
->> +///
->> +/// This function can only be used in a nonatomic context.
->> +pub fn fsleep(delta: Delta) {
->> +    // The argument of fsleep is an unsigned long, 32-bit on 32-bit architectures.
->> +    // Considering that fsleep rounds up the duration to the nearest millisecond,
->> +    // set the maximum value to u32::MAX / 2 microseconds.
->> +    const MAX_DURATION: Delta = Delta::from_micros(u32::MAX as i64 >> 1);
->> +
->> +    let duration = if delta > MAX_DURATION || delta.as_nanos() < 0 {
-> 
-> I think it would be helpful if `Delta` has a `is_negative()` function.
+This series also allows dropping all of the PMF quirks from amd-pmf.
 
-Added.
+---
+v6:
+ * Add patch dev patch but don't make mandatory
+ * See other patches changelogs for individualized changes
 
-Thanks a lot!
+Mario Limonciello (22):
+  ACPI: platform-profile: Add a name member to handlers
+  platform/x86/dell: dell-pc: Create platform device
+  ACPI: platform_profile: Add device pointer into platform profile
+    handler
+  ACPI: platform_profile: Add platform handler argument to
+    platform_profile_remove()
+  ACPI: platform_profile: Pass the profile handler into
+    platform_profile_notify()
+  ACPI: platform_profile: Move sanity check out of the mutex
+  ACPI: platform_profile: Move matching string for new profile out of
+    mutex
+  ACPI: platform_profile: Use guard(mutex) for register/unregister
+  ACPI: platform_profile: Use `scoped_cond_guard`
+  ACPI: platform_profile: Create class for ACPI platform profile
+  ACPI: platform_profile: Add name attribute to class interface
+  ACPI: platform_profile: Add choices attribute for class interface
+  ACPI: platform_profile: Add profile attribute for class interface
+  ACPI: platform_profile: Notify change events on register and
+    unregister
+  ACPI: platform_profile: Only show profiles common for all handlers
+  ACPI: platform_profile: Add concept of a "custom" profile
+  ACPI: platform_profile: Make sure all profile handlers agree on
+    profile
+  ACPI: platform_profile: Check all profile handler to calculate next
+  ACPI: platform_profile: Notify class device from
+    platform_profile_notify()
+  ACPI: platform_profile: Allow multiple handlers
+  platform/x86/amd: pmf: Drop all quirks
+  Documentation: Add documentation about class interface for platform
+    profiles
+
+ .../ABI/testing/sysfs-platform_profile        |   5 +
+ .../userspace-api/sysfs-platform_profile.rst  |  28 +
+ drivers/acpi/platform_profile.c               | 537 ++++++++++++++----
+ .../surface/surface_platform_profile.c        |   8 +-
+ drivers/platform/x86/acer-wmi.c               |  12 +-
+ drivers/platform/x86/amd/pmf/Makefile         |   2 +-
+ drivers/platform/x86/amd/pmf/core.c           |   1 -
+ drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
+ drivers/platform/x86/amd/pmf/pmf.h            |   3 -
+ drivers/platform/x86/amd/pmf/sps.c            |   4 +-
+ drivers/platform/x86/asus-wmi.c               |  10 +-
+ drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
+ drivers/platform/x86/dell/dell-pc.c           |  36 +-
+ drivers/platform/x86/hp/hp-wmi.c              |   8 +-
+ drivers/platform/x86/ideapad-laptop.c         |   6 +-
+ .../platform/x86/inspur_platform_profile.c    |   7 +-
+ drivers/platform/x86/thinkpad_acpi.c          |  16 +-
+ include/linux/platform_profile.h              |   9 +-
+ 18 files changed, 553 insertions(+), 213 deletions(-)
+ delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+
+
+base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
+-- 
+2.43.0
+
 
