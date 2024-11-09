@@ -1,130 +1,113 @@
-Return-Path: <linux-kernel+bounces-402727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39FA9C2B09
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:32:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7ED9C2B0A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:35:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B28282C3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:32:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE47BB21FED
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 07:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3A514430E;
-	Sat,  9 Nov 2024 07:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7389413DDDF;
+	Sat,  9 Nov 2024 07:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9vIkVg2"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="JJEnPS0N"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760792B9BF;
-	Sat,  9 Nov 2024 07:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D87A55
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 07:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731137544; cv=none; b=CgR0aCiF3TzX6zdw43vSqZ3s+kLxRda0qBMkt2+xaYqXOMhzMHTlssl3sBPD5nxtVrZS5qB/UD5VBq2ML+F2HLpt5ZI6SFUXDx/RjLhxiNvxG447kMI8+VtpCQukbPEqMykjXQI+TTgDOwSY1uhc2xvt6vt451iQJOiLmtYpa3I=
+	t=1731137713; cv=none; b=dyXiFbb9YydYXNqROAoPhnid3AAElcosWm9p7sipb138Ap7SVT2Ywq99HAFUX1PewnpcrRCZ65oEee6IEN3smCMtoqeG72AdpegqDphHa1SrzRBLIfEFIyYUanfGKFHux45F+fD8mZDRe7mF7Fd641DZ3eWlnHEz8Gk18rGyGjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731137544; c=relaxed/simple;
-	bh=BubkefP/PLSG5oJ+CoIyGUHXx6Ojnw8ELiAMMXhAtLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uvz4ckykctfVoTgr1F45EkvsTI6gaNvNsibkcfx9+uO1fALbJAkPvJUf6wlrFgNb56Anh8FJY1PnwCC7c2t1gVVQew2ow1YTOVa8xnp3n2zOtudSXSh0tYFYe+K7LFPAMKkBz9xojDIwsY3Mm8gRQQEor39wIDYVKtcN62U8LOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M9vIkVg2; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so2298236a12.0;
-        Fri, 08 Nov 2024 23:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731137543; x=1731742343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Yvsf1/Rp4Kad1l94AE2rAK6dROTiwkU3pll3PPeTNk=;
-        b=M9vIkVg2tIxILdYxbBd6e4U1gQFiExjskQj1RwmuavbRaanmcUUrBYwlGKBgEWi/t/
-         PGlpHXC3DaNekc9iGqYuqbRTEeHRu+qRxPsNiL9DZJXfDrxV6BP5L+ieS2Zrnb2GaJKD
-         EuuKqRyBpimZ1hq82xYHum5J1niPmSgYNeuMUAvI9kbIytTj72bI8QZrUTt3upQk5qE4
-         7ymYEeXqDBcC2GJoh2bbs3iZE58tuy/R8z/zoVBs9fkmOK/FuPxnc12nPjqtFr1yLSHX
-         fp+vuVWuAJ2iqATeem8MmnuyzChF0RaUqkP/lOntoMSvfOlLL9gQedchSnkFawWdj44w
-         El5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731137543; x=1731742343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2Yvsf1/Rp4Kad1l94AE2rAK6dROTiwkU3pll3PPeTNk=;
-        b=Lhs+m6NCG5WvQbPEG57UcMzHouNld19WDZL2XpuQ9LOsEIAGVjV37IXyIzAXs4dukP
-         hk9EguHF9gBf4a6YoQNdPtNRdpaByTBvap3nyBYPeKLVKWi8Xg9cut8zrHsgjnK4NHYW
-         6pwBx+bE4NT8lMDqKmdlixR9n/5JX+xL6ivlniqbKLAO0eAWZtw8K52RWseMUjTaR0a+
-         34j/oXX0rCw5qz2JDw95/k++PEKveluJxsADrA2OOagYT0Zqsnp1+n+1UpmdsZTvvpLN
-         p+xIO3DvLd/0XYqPqeNphunRDxmoJdVzEbU/mBkiltG+Oe4P1rdavkUZeDQiQ8zcO4uA
-         FCSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEBh0vfMuMXmBOL8qCnnWknJ1wg8gjLfucw3HQUnpFFUekyeF9/u1eL22DrNV0TKdJt97/BPF+mVv1yOMc@vger.kernel.org, AJvYcCUX0hIW6Seg3OjRQUkijSTLDdtW2WflLIsFp/wb+opuuP+ycR5AD+lQWoLSKoD4EiMuFT00wWVIs5/+@vger.kernel.org, AJvYcCVcfD5XbbfsWus2TKy8wCwie3Yy6d8ggcWOAfgA00gvtDZaBIELngPckzPYnxnAiVNg6W8URjo6Qryk@vger.kernel.org, AJvYcCW79TrxPIrPd20+/dlB6m6q/I8HcPFVjT+naX7qg+pvIXJIPWA9Gy7vJcK4eIr/ujYGu5dHmRIbgd1K@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq4ihzx2llnDkVoRZtAABF0SBHzMutTHsI/URWlKqplMZaix0q
-	2R6McMutpouxe/jLOBNzzCMXbeRFNUxW5ij0MWqVhTxuvlod0tFBTyEuAeMEDOF3kyvS44CsgDj
-	RH0Fi8QlRngu2aIqyzKoEJBPLSenZ4fuV4Eo=
-X-Google-Smtp-Source: AGHT+IEYopClguJXTaEDehLf9kd7YspCn3tBVhwDCjIQ2Pt+JKFeb/vCnVJsJCli/BBVPJ1e1wtS0BmE7R2n3ueVnhg=
-X-Received: by 2002:a17:902:e803:b0:20c:9936:f0ab with SMTP id
- d9443c01a7336-21183d9d20bmr70911695ad.47.1731137542635; Fri, 08 Nov 2024
- 23:32:22 -0800 (PST)
+	s=arc-20240116; t=1731137713; c=relaxed/simple;
+	bh=zNhMYak1rnVDMapsu0tk3BwDJu8yuPW5Cr4i8jS6QXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvJa4J5QU1XiTHIUWhCNb0rsxUsfK11PGo/0yc31beTUL7jSOUGq7ZyviIyDhgvUW8rqBZVsDFKuKkzFwklkVQwgf9xSkl0kQ95Qn7tcCfE9X/hnL4Rzwh6jtIpdtBdzfZGwBlkTrwdp2+xEnJO86hZ1NGsHbc8mPq9QjpCv/h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=JJEnPS0N; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 0C3D61770C1; Sat,  9 Nov 2024 07:35:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1731137711; bh=zNhMYak1rnVDMapsu0tk3BwDJu8yuPW5Cr4i8jS6QXA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JJEnPS0NBfqhAOkZp+9oFqhMXwA8k9XaMAwBDC7ZVlSpFJ+fT6kErGnfB6OVZoC8I
+	 rnze6w1+8CtPWhGQG2x4zdm2ywjD6o3M/HXQrno3upRBd5F7OukI+6fZsZirQ0QTuK
+	 gsmL9Q7qPUugcaKsSRvOfzyOsvm72OOapCD1ddMIzoY66tWczlzRJTBkY2mmSGFaM0
+	 /coIiEaZ4Nj6QWQFxA05HzUJ3l4+GeQEO4TRSIqZ0ciPr6WwelD5HSTo5OesapbJlk
+	 Q8NyPk/VEj53ugJKZwHk5nalswcergu6Q9pK3//uWNnjGsSCEcnmZiQJKKHL5iEdpD
+	 h+FAwbz8y7rzQ==
+Date: Sat, 9 Nov 2024 07:35:11 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kdb: fix ctrl+e/a/f/b/d/p/n broken in keyboard mode
+Message-ID: <20241109073511.GA128495@lichtman.org>
+References: <20241108221116.GA123748@lichtman.org>
+ <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20220616013747.126051-1-frank@zago.net> <cf32d676-831c-4c3f-8965-c9be3abd5300@gmail.com>
- <e052d872-6de2-42f4-8b36-d1e2f8359624@zago.net>
-In-Reply-To: <e052d872-6de2-42f4-8b36-d1e2f8359624@zago.net>
-From: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Date: Sat, 9 Nov 2024 10:32:11 +0300
-Message-ID: <CAJs94EYpxxpOvxEtuL0Vcv9XYunw=+SnHyHcKeYqdVhYiEyr2Q@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] add driver for the WCH CH341 in I2C/GPIO mode
-To: Frank Zago <frank@zago.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>, Wolfram Sang <wsa@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org, 
-	Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
 
-=D1=81=D0=B1, 9 =D0=BD=D0=BE=D1=8F=D0=B1. 2024=E2=80=AF=D0=B3. =D0=B2 02:15=
-, Frank Zago <frank@zago.net>:
->
-> On 11/8/24 9:58 AM, Matwey V. Kornilov wrote:
+On Fri, Nov 08, 2024 at 04:31:12PM -0800, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, Nov 8, 2024 at 2:11 PM Nir Lichtman <nir@lichtman.org> wrote:
 > >
-> > Hi Frank,
+> > Problem: When using KDB via keyboard it does not react to control
+> > characters which are supported in serial mode.
 > >
+> > I have took them all besides the TAB control character translation (I am
+> > not sure what that maps to on the keyboard)
+> 
+> Tab translates to 9, so the 9th character. Ctrl-I.
+
+Noted, thanks
+
+> 
+> 
+> >  kernel/debug/kdb/kdb_keyboard.c | 3 +++
+> >  1 file changed, 3 insertions(+)
 > >
-> > Are you going to further proceed with this patch set? As far as I can s=
-ee, there were no updates since 2022.
-> >
->
-> Hi Matwey,
+> > diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
+> > index 3c2987f46f6e..2c004abd5375 100644
+> > --- a/kernel/debug/kdb/kdb_keyboard.c
+> > +++ b/kernel/debug/kdb/kdb_keyboard.c
+> > @@ -172,6 +172,9 @@ int kdb_get_kbd_char(void)
+> >         switch (KTYP(keychar)) {
+> >         case KT_LETTER:
+> >         case KT_LATIN:
+> > +               if (keychar == 4 || keychar == 1 || keychar == 5 || keychar == 2 ||
+> > +                   keychar == 16 || keychar == 14 || keychar == 6)
+> > +                       return keychar;         /* non-printable supported control characters (e.g. CTRL+A) */
+> 
+> This is probably OK, but IMO readability here (and above) could be
+> improved. Untested, but I think:
+> 
+> #define CTRL(c) (c - 64)
 
-Hi Frank,
+That's a good point, I will work on a v2 with this fix.
 
->
-> I've been maintaining it at https://github.com/frank-zago/ch341-i2c-spi-g=
-pio, but I have had no desire to try again to upstream it.
+> 
+> Then:
+> 
+> /* Allowlist supported control characters */
+> switch(keychar) {
+> case CTRL('A'): /* Home */
+[...]
 
-Thank you for the response and for the code.
-
-> Feel free to do it if you'd like.
-
-Just to make it clear for other people who will find this discussion
-while looking for a CH341 I2C driver: currently I don't have
-motivation to make this kind of contribution.
-
->
-> Also there's been an SPI only driver that was upstreamed a couple revisio=
-ns ago, which is incompatible with this driver.
->
-> Regards,
->   Frank.
->
->
-
-
---=20
-With best regards,
-Matwey V. Kornilov
+Thanks,
+Nir
 
