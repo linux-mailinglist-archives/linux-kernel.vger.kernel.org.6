@@ -1,243 +1,283 @@
-Return-Path: <linux-kernel+bounces-402876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1869C2DF0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:56:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056CC9C2DF3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A941F21A5D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:56:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA0E9B20EDB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6E197A98;
-	Sat,  9 Nov 2024 14:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7861991B9;
+	Sat,  9 Nov 2024 14:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X3Vps4/n"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2043.outbound.protection.outlook.com [40.107.96.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ANVYYxH8"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6332C13DB99
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 14:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731164199; cv=fail; b=l1aajjLEcLbQNX2XQKMBY3yy/6TUQr5TSQQOMBeFDPEVxH/TEy3RwYVtmTlrnd8Bue+exeOGrJ7cIr6Ae6PMLBwYsrqvhJJjxduvS9hDqKLLgvDro8luUi5qE0yU4T6YXNzRU7ub9jxgc2yOgHEo8YwFnm9e3C4HFWxJD6D+9Ac=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731164199; c=relaxed/simple;
-	bh=gcdXDrO2HdUNKwyEudRV1gxa2dGQedKMg2zBUtpluVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=lOLej1qzGwkJh38NXr7teK7zA+rrzJBAp5XdpuQiM3uyjIItgJxMfYkYlx0cVQn3y7bkPg9q9fYq1YfVVgYQJwdZHbBiJDlyfMRpv84lUQeKD/PIgXZ5v4nSS2iJpQ0L9AopXbynAMCXm6u1dpxFY+cCIv7z6SRvY7PiJHLLGmQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X3Vps4/n; arc=fail smtp.client-ip=40.107.96.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EHu4JUKLqfdoKHYNZp4JffV4jH5+xsP7BYYh82FwlOKUoZBiM1jU8jxTf2UOqK/v/2S+IhPegXHVRrghP91qBsENmGNBnQ+EaDt0vYJ/YznD9CWp7K3mOSXNm5vmpB/eDS1bebR5/b27AqquvCVDwt/Zq62JU194RtmX/qBNF7BT8h3LZyW5NPOKsI7x5G/rFUBxFIocq8Fc8wUoavuIrt9a3i/3uwF8MPOFEAweHA9w1xZeMx22UqjoBFfI+vimPWtc5kFzhwye82bK8ze8XGFIeC0U6q0vUVBAGFUowUQ+KBCJh24hpfDXXe7NJQhF7fTXwDk8foYUX2W6EH7qBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I1ucSF+4Dvm31Hstv5KqYNKQzOBhsMgK4Nrmkykn5pQ=;
- b=K4f10OK4jMMeqC23muIpL+uf073Zs/bLLt/4IAhEWWarcAcYEYZX9oCazIfBJkQFLyJACnbr6+4fgrFqrqn7WZvtdAQv5QuHomIhqxOL9eclVFEQYMrDkcIrfOvXaVJexup7cP7QUKLKMB+n/lbLPtycAlZI+8XB5PfA5M0L9Fc959KAJ3+o4S/PBzfiXwpy+30PN3jR7zJw2kNxPyTgaghnVc6G4sa9+6s/5BobbTqegqbNhY1j0HYFs7l5EdulCuXaEDUboPd7GlnIE6RTk28+Tz01s/J48Qc2VwgK53CuKc5nD6e8jagH+9/Hfgzp3gbgBvBe84yEVZJbpSu7iQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I1ucSF+4Dvm31Hstv5KqYNKQzOBhsMgK4Nrmkykn5pQ=;
- b=X3Vps4/ntrMQX2jkgGGc0KnPM6nb/imB0lCQObnJTIz05AljguiGaxPg9S/rcu3SoWb9zX08Ok6xsUpPNMq70vLHOQEtavm0HIHmkyak6isnUGmIw/HZ/0TuB9XDD2jy+RMyiWtAabJDCx3u0FFIyglui7xmyNUvzS7guuRd7djVVqPOGIePu9ClLLqR/aI/TOJ6dvWrMwaTLzw3lQbbDaKSdDJV3dGf4rj6jlhGgfYjGR63lpbo+WIXPUNHkh8JkvClEUj+EV2L0YBSbS4Jmbab15Bkdzawm8YVow+BDWJVKkSml+GyDwjhjuOGYHt+6PXDtQCsc4BCONTJO+RwgA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by SN7PR12MB7132.namprd12.prod.outlook.com (2603:10b6:806:2a4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Sat, 9 Nov
- 2024 14:56:33 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8137.021; Sat, 9 Nov 2024
- 14:56:32 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/topology: Correctly propagate NUMA flag to scheduling domains
-Date: Sat,  9 Nov 2024 15:56:28 +0100
-Message-ID: <20241109145628.112617-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.47.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR0P281CA0236.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b2::8) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FB814E2CC
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 14:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731164283; cv=none; b=E5NB/+4tfU3XKYLTP8v5++pFe/O6klcJihudu9lSQOLkF0bgUsx0bZuvMIsLJuCRxSqei36An4bgvmAuQdkdn4tif9m/hbGUxx0XkrcmmAajVLpT4Z9wbF1tTJ047Dau36RXrEu0ZqEL/paKmXIpNKnnfhvuFr3i52G6oq7tuGI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731164283; c=relaxed/simple;
+	bh=oSnduhoBR156YusuARF8GO3Jne+e+yprCQZ54qkw2lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XY4ZVJAHzXZZ2ys2zMEjjazWuyFdLVNqPiovSyfpEiVtTTkZFuEo9LvoxDut2rGO9LkXIBbDfAgudcexTIcI7DbszFHxKvmxUYw1wPXvBKQ0ZFnBj1L4nzQ322wiPyN5jDHBdyk5Rqk/gQyuJ//QRf7KhVsxnWD0ogeAHubYYBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ANVYYxH8; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7240fa50694so2108054b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 06:58:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731164281; x=1731769081; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KfYz33uuEhgqRZQnurXoAB+cUCCPukFSgwJh3oWY/Og=;
+        b=ANVYYxH8aJPnis0NlyLDoT8nRIA+uzdBrlG89/yyJtpCDR0TgAopVu5usIczvXRmAC
+         3gyVET7A7mjbYASYPp94rQzH0YGJ94fP5G5tZCbq+xLtK67uE1gmJ7AOcPhSc0uX5CnB
+         LJFZizucp7qJyyz4jm+l1g6ZjsTphBPQZEDWs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731164281; x=1731769081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KfYz33uuEhgqRZQnurXoAB+cUCCPukFSgwJh3oWY/Og=;
+        b=c899+7nuop1i2ikVi9YIg4lHgJOWz0RPHOA2+ddPkhaXAnW98U8ctCkI87Ac2EaTZF
+         vbXCEBFHuQO4CsV94tBzpOQcsmAFwVz759G9dH/R1rApMSS2VV9GfHl+Q1UBOuzBtLv+
+         +WCINQ4YKJvCiYpAXbgSsoGpJUOBMzVwWoV/nMd/E0zGwEUsSiIM8f8LtVwFaSPJOgsQ
+         xGPm+Ony3NS4M41RPqJEckpgoFf7Aloy77nCEYBu8wVw/e1VIFZ9qsL+W90VHvL1H7YM
+         s7p8rog2QkXQDNSwPf46pviYSawaMd3cwdiV+iuB+Ag6jih7ukWj7EDSsW27FCN522Fx
+         Sbqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgIcTPx3e+TTW7BkyreMSqH1WBMmnBpIZxdYA4wVn7OxoNAV+cBwA3PMalNTi5erCPUh2wyeQaTJIb0jA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpMdSPGAs316riEdngfjUGA7LmwZWZsIE7DaiADN2doGUtOLyw
+	RLNB0vA+TZ+G36Z7T8+JLu49k5oWfYK7ZLE5KyBN+CslxnfnbnVwrFEzA9U4fo81iGnT7Ynpk+4
+	=
+X-Google-Smtp-Source: AGHT+IFQWHYOgNGuZ/xQ661fLQpWLeqh4Yjx7h2S2FmCDbZMJ+0hYmwHDF9FJ+K4QZKHTRtAgnf9Ng==
+X-Received: by 2002:a05:6a00:228e:b0:71e:795f:92f0 with SMTP id d2e1a72fcca58-72413276638mr8480290b3a.3.1731164280789;
+        Sat, 09 Nov 2024 06:58:00 -0800 (PST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com. [209.85.214.179])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f643e9asm5298263a12.59.2024.11.09.06.58.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Nov 2024 06:58:00 -0800 (PST)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cf3e36a76so33454365ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 06:58:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3XUSVcG8GDcmc0WZAhdeYHlZrQlr+EaC8tMSfZ5VobEPIs7WPZoh+xiZbnzMkTAqSZj4CArbOQQgBK3Y=@vger.kernel.org
+X-Received: by 2002:a17:902:d482:b0:207:4c7c:743b with SMTP id
+ d9443c01a7336-21183328fdcmr78600905ad.0.1731164279294; Sat, 09 Nov 2024
+ 06:57:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SN7PR12MB7132:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf466d7a-a7f6-4475-9c4c-08dd00ceb320
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?tcFfuM815gw4WxXvnDe1ul/gtcxCcldphB3qdmryO7iZgfWADc6vre7Q0ulV?=
- =?us-ascii?Q?QLyZoLMLF2Q7Qq7qaj93o4XaZzoP3i3rVnpwRY85bmt0mBM7B5CZPsAh0fCy?=
- =?us-ascii?Q?Coj4ExoeK98+LkuwmY9y8pYTj12zWtyXEcWf73YC1IJQ0xSNB325xxvzyb9W?=
- =?us-ascii?Q?trbVgijSrA/W3+NGlW6aItHMdLHsK1GjvT4Dj2k9q0Q2RjT4Dr/jvV38sazt?=
- =?us-ascii?Q?MbW/4ZcXeZsXhX4AHNw1cjCZ8GfZoNy8VJoCCpCf73e0fO6KhQb57rJVnXPv?=
- =?us-ascii?Q?wSz/l7ksqBy+3hFlJarHF6zq/Cvh/W8s0nVHHJPI0qCH/iEz5uPIDztS6vmD?=
- =?us-ascii?Q?4Kq4FIffqXMWycgJFdpMlDXZ8vBXnmeD3cmwj8N7emCaOawzQ0HX+FNmqpAU?=
- =?us-ascii?Q?fLnGPSaLIbZ6YXk6dQ7PhbUOpWszuj2eGOnYO6HyTGV9mkVIXdW2kcMemLF9?=
- =?us-ascii?Q?ING/8ITjUktAgYKnE8JAbf0QEVCsGtFiD4x00xT7xBjzi1sBhjeWep1Qe0Zk?=
- =?us-ascii?Q?KF5YM8AHMK9l9GHJYYqexvidMDfh7vgXsiFGJVFNSAf/+8WhiIpqLiU5ZpLk?=
- =?us-ascii?Q?IHJX7QlubUkHo33ATHU8B77x+6PlUtqADN6V9ubwUVAtj6W78aICgMsuuikm?=
- =?us-ascii?Q?TPhZXjT8Flt6UtOi6JZKDSzcBNEPpsVLTw2XTuB6GKMsAOUpSQab6xu5BFH0?=
- =?us-ascii?Q?siocma9GN7TZ+NFj158kJZwxz9MQeT1Hrklb6NXAy8I69Chhr6i4M711NAFW?=
- =?us-ascii?Q?Z4wzKrA3HNlhyHI0ImA/LE80W/+SSim3/kXfMBL9SO2S8kWO9ta6Lm/lUB21?=
- =?us-ascii?Q?DfswIPdfMLhlzsAxHA3/dSbCwEfunDj+Orq9aLnYZ4c9y1+K5L24j6SjaQBB?=
- =?us-ascii?Q?kuXhPcrJ2bSlUIRP9WIC2XbdHiOjk31E78HN1iKWnW17QojV6T10BFg+B23p?=
- =?us-ascii?Q?5ryA8Ebn0t1mvc3IXLpsfObnZCvIt4v+pkfc3vn/zsypw4SuAXxuJT974CLA?=
- =?us-ascii?Q?hvADBbk5e5YhZI32g+Y373LY7UETXhjsXRwnAsQhbIfKeq60J36gn5P6uZwF?=
- =?us-ascii?Q?iUuQXp2orLXvxyWD4yWq1vymgWau4esXkbMgVs8rINavg8mDo2LRDh6qvoCO?=
- =?us-ascii?Q?BzuE+EO/Ko8wrEH72X9sRbR8ZhHOspwrJTWJ2t0cGVbYz2MCtrp9t8zeuvGo?=
- =?us-ascii?Q?wMTWAgcbMTnFSzpnrUOlTEwPIrNqh9nkPca1xmyQ/rBiJ2b9zTzAx+nQDkmY?=
- =?us-ascii?Q?qGroH/It0s9rRYi91IpqQydR9MFjPOVWYvQBQxk9oPba5qrhdSD6PB+wOjHw?=
- =?us-ascii?Q?w5yCCBmtlnSCHor7jKml4FlP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?c8H+IwfgNZ4Vf4gP44U9iGzMXZF42/sjSbhqwCFnmabNJePsJvmH5Il91Qoe?=
- =?us-ascii?Q?zfgOG/P0LQYfwRH2wo3SOcywuobdJisvAFz5UAG94cRqtOTo8gVJLg60oB8z?=
- =?us-ascii?Q?5hoAnZOk0Ki/uOeDMnII5H/m3PCyFUBTBHIug6BEpjuXVFZvwxcbM5lTv1I/?=
- =?us-ascii?Q?GgoTkxL2GcdSRB4mk5OeTMqpsb8et8txkGOY/QS/iTewkkZ1j4ov3NZJYZtE?=
- =?us-ascii?Q?7RayI63y4jWIhdqLSP6pl5e2lpc5xO4STFeFK/z/+Lv4PwQfqW0TMyxOJvJB?=
- =?us-ascii?Q?B/fXGRanoqWzRGB7XX8W1QT2Zs7wngGSRIKJ3Ij+r/EUcqo++sw2IZaAuwq9?=
- =?us-ascii?Q?f7zGmgwRli2Vid4ak7uZV7s0AhMVnuGQ6D/1YrHceHzSwDNEHKsZQz1+hhrz?=
- =?us-ascii?Q?r3ehJjHHv3ObCRgxLzrmFDZhQU6hV7ct65Y9ca850bsuvMJlQUoU5X6nPqTQ?=
- =?us-ascii?Q?aS/Z12XI3lw6vvnwCayn8oEJbVWp1/F7s+q9cdCBjTxyY4f3iiTis0szpvA1?=
- =?us-ascii?Q?gwBDfhweBkxBmHpfjyxAmhuCgW/aDN6RYVQFT84kegaVCGjRbLPXhHw0tmpE?=
- =?us-ascii?Q?fzjppivBqm/Pa57VzsvhLjSmakTQHvlQmoumN4sw1udJsFleVj/Ni+K9Un5y?=
- =?us-ascii?Q?4WQKeIORg0JUVFgesTB2vX//AAEyqMCsn9JNv7E30peOcFIih3eJ6VAX90i0?=
- =?us-ascii?Q?/D/Qgf98LkR0rJa44q53Db7T4mJU7xYcOLIEh1Q8KqPFPYgK6uPQ9aH/nDsH?=
- =?us-ascii?Q?QzGSouNTcbMW2giqQDMeWANnmXJ/+YCwkAAFp+WwhUDp2Zbn0Io23/wPm3oV?=
- =?us-ascii?Q?rbiM5kIAsqPicKkNhbcDLfKyeSeyVfD4n5Qwvi5bCBBy/O2aKZTGwEDXXKtF?=
- =?us-ascii?Q?yKkawVCf8d0pBoxWkLlhHp+uXe5Pcm6ECV5eymEJ8ap2zkgNnwDDTfNFPaaA?=
- =?us-ascii?Q?RmXTB3qh9ZRW3tHMy+B3WZs03lZMF87WiXDlbXD/bI1fsAOEK3CANyEmLuYh?=
- =?us-ascii?Q?uMFxL8YpgmpNr9gZjFg7N4i9XuYDN9U8Y20C7kQXuAXvIy3vFhDydhqLBXOd?=
- =?us-ascii?Q?cxMlk/MaJlVqg1fMZfKshOniAFik5OQT+4WTyypvUONSsf00cmV3wbVZ2jkq?=
- =?us-ascii?Q?LeujSN6TTHDFzfwiHOEi8RD5LSeC01SVsHyAgQ4cOh8eCte4UcVdTDvgPzTT?=
- =?us-ascii?Q?knZFXAFhuYJlwDuOA93cZ2fELoFDfUIMXtlJMZ1H5MQx6nU/momvM3MdK+qO?=
- =?us-ascii?Q?pcrQRaiX9+yKfUI0LzCOrjBeZNLsGWOZljP0OxK7y846up656eMyZZo12Syt?=
- =?us-ascii?Q?8iq+OZnevQs/EQgW9ghzrirTojxW/nVgCCDvPQk03liHGvZEoWvJzAPoPN/h?=
- =?us-ascii?Q?KjdnJnSM2eOAsH++HjV+8RGgb9RvhGAjofBwE6B5BbvCF1UMjMgeF8SZhJLd?=
- =?us-ascii?Q?FlkWD3EuF5RW4JpiyUiLQbRbgw21QCbPBpdUBJfpobrdjdtlKygAw+gVGAdv?=
- =?us-ascii?Q?9LrJnoKaa5sz8Ar4ELRqz2zf19hngeA2zsEoEzIwssSgggxyMqG+tyk5YIk6?=
- =?us-ascii?Q?dN6iRxoyDLwUyJPlT3IdJFEzBaqDMi5RG7Z1XXPX?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf466d7a-a7f6-4475-9c4c-08dd00ceb320
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2024 14:56:32.7498
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uejNi/4IMU/ea4RbliJBebmcTle2JKL59zoFs+gGDSNaD+Gkih9D34126aDvPZmQ8igJiRp0W35+bO+xqp5cSA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7132
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org> <20241109150420.359bd50f@foz.lan>
+In-Reply-To: <20241109150420.359bd50f@foz.lan>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Sat, 9 Nov 2024 15:57:45 +0100
+X-Gmail-Original-Message-ID: <CANiDSCtVqLp49OHHrTsd3+m+5TB0Z0McghkNR=paKvmDKh6pDw@mail.gmail.com>
+Message-ID: <CANiDSCtVqLp49OHHrTsd3+m+5TB0Z0McghkNR=paKvmDKh6pDw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-A scheduling domain can degenerate a parent NUMA domain if the CPUs
-perfectly overlap, without inheriting the SD_NUMA flag.
+Hi Mauro
 
-This can result in the creation of a single NUMA domain that includes
-all CPUs, even when the CPUs are spread across multiple NUMA nodes,
-which may result in sub-optimal scheduling decisions.
+On Sat, 9 Nov 2024 at 15:05, Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> Em Fri, 08 Nov 2024 20:25:44 +0000
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
+>
+> > Some notebooks have a button to disable the camera (not to be mistaken
+> > with the mechanical cover). This is a standard GPIO linked to the
+> > camera via the ACPI table.
+> >
+> > 4 years ago we added support for this button in UVC via the Privacy control.
+> > This has two issues:
+> > - If the camera has its own privacy control, it will be masked
+> > - We need to power-up the camera to read the privacy control gpio.
+> >
+> > We tried to fix the power-up issues implementing "granular power
+> > saving" but it has been more complicated than anticipated....
+> >
+> > Last year, we proposed a patchset to implement the privacy gpio as a
+> > subdevice https://lore.kernel.org/linux-media/20230111-uvc_privacy_subdev-v1-0-f859ac9a01e3@chromium.org/
+> >
+> > I think it is a pretty clean solution and makes sense to use a
+> > subdevice for something that is a sub device of the camera :).
+> >
+> > This is an attempt to continue with that approach.
+> >
+> > Tested on gimble:
+> > gimble-rev3 ~ # v4l2-ctl --all -d /dev/v4l-subdev0
+>
+> No matter if internally implemented as a subdevice or not,
+> UVC is not a MC-centric device[1].
+>
+> It means that UVC can be compiled without media controller support,
+> and that its functionality shall be visible via /dev/video* nodes.
+>
+> So, whatever internal implementation it is used, it shall not require
+> config MEDIA_CONTROLLER and the control shall be visible via
+> /dev/video*.
+>
+> Moving privacy control out of /dev/video would mean that this will break
+> support for it on existing applications, which is a big nack. Now, it would
+> be acceptable to have this visible via V4L2 and subdev APIs.
 
-Example:
+I have googled a bit, and it seems that the only users of this feature
+is ChromeOS, so I do not expect any existing applications to be
+impacted.
 
-$ vng -v --cpu 16,sockets=4,cores=2,threads=2 \
-      -m 4G --numa 2G,cpus=0-7 --numa 2G,cpus=8-15
- ...
-$ lscpu -e
-CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE
-  0    0      0    0 0:0:0:0          yes
-  1    0      0    0 0:0:0:0          yes
-  2    0      0    1 1:1:1:0          yes
-  3    0      0    1 1:1:1:0          yes
-  4    0      1    2 2:2:2:1          yes
-  5    0      1    2 2:2:2:1          yes
-  6    0      1    3 3:3:3:1          yes
-  7    0      1    3 3:3:3:1          yes
-  8    1      2    4 4:4:4:2          yes
-  9    1      2    4 4:4:4:2          yes
- 10    1      2    5 5:5:5:2          yes
- 11    1      2    5 5:5:5:2          yes
- 12    1      3    6 6:6:6:3          yes
- 13    1      3    6 6:6:6:3          yes
- 14    1      3    7 7:7:7:3          yes
- 15    1      3    7 7:7:7:3          yes
+I can keep the old API, but that does not solve the issue when the
+camera supports the privacy control and it is also attached to a GPIO.
 
-Without this change:
-  sd_llc[cpu0] spans cpus=0-3
-  sd_numa[cpu0] spans cpus=0-15
-  ...
-  sd_llc[cpu15] spans cpus=12-15
-  sd_numa[cpu15] spans cpus=0-15
+I do not see a big requirement to depend on the MEDIA_CONTROLLER to
+use the privacy GPIO. Remember that this feature is not part of the
+camera itself, it is an external GPIO.
 
-With this change:
- - sd_llc[cpu0] spans cpus=0-3
- - sd_numa[cpu0] spans cpus=0-7
-  ...
-  sd_llc[cpu15] spans cpus=12-15
-  sd_numa[cpu15] spans cpus=8-15
+What about trying the subdevice approach, and if we break any app,
+implement both APIs (legacy and subdevice)?
 
-This also allows re-using sd_numa from the sched_ext built-in CPU idle
-selection policy, instead of relying on the NUMA cpumasks [1].
+Please note that If a device has an internal Privacy control it will
+still work via /dev/videoX.
+>
+> [1] https://www.kernel.org/doc/html/latest/userspace-api/media/glossary.html#term-MC-centric
+>
+> Regards,
+> Mauro
+>
+> > Driver Info:
+> >         Driver version   : 6.6.56
+> >         Capabilities     : 0x00000000
+> > Media Driver Info:
+> >         Driver name      : uvcvideo
+> >         Model            : HP 5M Camera: HP 5M Camera
+> >         Serial           : 0001
+> >         Bus info         : usb-0000:00:14.0-6
+> >         Media version    : 6.6.56
+> >         Hardware revision: 0x00009601 (38401)
+> >         Driver version   : 6.6.56
+> > Interface Info:
+> >         ID               : 0x0300001d
+> >         Type             : V4L Sub-Device
+> > Entity Info:
+> >         ID               : 0x00000013 (19)
+> >         Name             : GPIO
+> >         Function         : Unknown sub-device (00020006)
+> >
+> > Camera Controls
+> >
+> >                         privacy 0x009a0910 (bool)   : default=0 value=0 flags=read-only, volatile
+> >
+> > gimble-rev3 ~ # media-ctl  -p
+> > Media controller API version 6.6.56
+> >
+> > Media device information
+> > ------------------------
+> > driver          uvcvideo
+> > model           HP 5M Camera: HP 5M Camera
+> > serial          0001
+> > bus info        usb-0000:00:14.0-6
+> > hw revision     0x9601
+> > driver version  6.6.56
+> >
+> > Device topology
+> > - entity 1: HP 5M Camera: HP 5M Camera (1 pad, 1 link)
+> >             type Node subtype V4L flags 1
+> >             device node name /dev/video0
+> >         pad0: Sink
+> >                 <- "Extension 8":1 [ENABLED,IMMUTABLE]
+> >
+> > - entity 4: HP 5M Camera: HP 5M Camera (0 pad, 0 link)
+> >             type Node subtype V4L flags 0
+> >             device node name /dev/video1
+> >
+> > - entity 8: Extension 8 (2 pads, 2 links, 0 routes)
+> >             type V4L2 subdev subtype Unknown flags 0
+> >         pad0: Sink
+> >                 <- "Extension 4":1 [ENABLED,IMMUTABLE]
+> >         pad1: Source
+> >                 -> "HP 5M Camera: HP 5M Camera":0 [ENABLED,IMMUTABLE]
+> >
+> > - entity 11: Extension 4 (2 pads, 2 links, 0 routes)
+> >              type V4L2 subdev subtype Unknown flags 0
+> >         pad0: Sink
+> >                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
+> >         pad1: Source
+> >                 -> "Extension 8":0 [ENABLED,IMMUTABLE]
+> >
+> > - entity 14: Processing 2 (2 pads, 2 links, 0 routes)
+> >              type V4L2 subdev subtype Unknown flags 0
+> >         pad0: Sink
+> >                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
+> >         pad1: Source
+> >                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
+> >
+> > - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
+> >              type V4L2 subdev subtype Sensor flags 0
+> >         pad0: Source
+> >                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
+> >
+> > - entity 19: GPIO (0 pad, 0 link, 0 routes)
+> >              type V4L2 subdev subtype Decoder flags 0
+> >              device node name /dev/v4l-subdev0
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> > Changes in v2:
+> > - Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
+> > - Create uvc_gpio_cleanup and uvc_gpio_deinit
+> > - Refactor quirk: do not disable irq
+> > - Change define number for MEDIA_ENT_F_GPIO
+> > - Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
+> >
+> > ---
+> > Ricardo Ribalda (5):
+> >       media: uvcvideo: Factor out gpio functions to its own file
+> >       Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
+> >       media: uvcvideo: Create ancillary link for GPIO subdevice
+> >       media: v4l2-core: Add new MEDIA_ENT_F_GPIO
+> >       media: uvcvideo: Use MEDIA_ENT_F_GPIO for the GPIO entity
+> >
+> > Yunke Cao (1):
+> >       media: uvcvideo: Re-implement privacy GPIO as a separate subdevice
+> >
+> >  .../userspace-api/media/mediactl/media-types.rst   |   4 +
+> >  drivers/media/usb/uvc/Makefile                     |   3 +-
+> >  drivers/media/usb/uvc/uvc_ctrl.c                   |  40 +----
+> >  drivers/media/usb/uvc/uvc_driver.c                 | 123 +-------------
+> >  drivers/media/usb/uvc/uvc_entity.c                 |  20 ++-
+> >  drivers/media/usb/uvc/uvc_gpio.c                   | 187 +++++++++++++++++++++
+> >  drivers/media/usb/uvc/uvc_video.c                  |   4 +
+> >  drivers/media/usb/uvc/uvcvideo.h                   |  34 ++--
+> >  drivers/media/v4l2-core/v4l2-async.c               |   3 +-
+> >  include/uapi/linux/media.h                         |   1 +
+> >  10 files changed, 252 insertions(+), 167 deletions(-)
+> > ---
+> > base-commit: 4353256f5487e0c5c47e8ff764bf4f9e679fb525
+> > change-id: 20241030-uvc-subdev-89f4467a00b5
+> >
+> > Best regards,
+>
+>
+>
+> Thanks,
+> Mauro
 
-[1] https://lore.kernel.org/lkml/20241108000136.184909-1-arighi@nvidia.com/
 
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- kernel/sched/topology.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..e0fe493b7ae0 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -755,6 +755,13 @@ cpu_attach_domain(struct sched_domain *sd, struct root_domain *rd, int cpu)
- 			 */
- 			if (parent->flags & SD_PREFER_SIBLING)
- 				tmp->flags |= SD_PREFER_SIBLING;
-+			/*
-+			 * Transfer SD_NUMA to the child in case of a
-+			 * degenerate NUMA parent.
-+			 */
-+			if (parent->flags & SD_NUMA)
-+				tmp->flags |= SD_NUMA;
-+
- 			destroy_sched_domain(parent);
- 		} else
- 			tmp = tmp->parent;
-@@ -1974,6 +1981,7 @@ void sched_init_numa(int offline_node)
- 	 */
- 	tl[i++] = (struct sched_domain_topology_level){
- 		.mask = sd_numa_mask,
-+		.sd_flags = cpu_numa_flags,
- 		.numa_level = 0,
- 		SD_INIT_NAME(NODE)
- 	};
 -- 
-2.47.0
-
+Ricardo Ribalda
 
