@@ -1,102 +1,82 @@
-Return-Path: <linux-kernel+bounces-402938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7834F9C2EB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:17:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2359A9C2EB4
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:17:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89E81F21723
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBAB91F21834
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1B119DF7D;
-	Sat,  9 Nov 2024 17:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B14C19E7F9;
+	Sat,  9 Nov 2024 17:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AyMhxls+"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="bTOFOFM+"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9550ECF;
-	Sat,  9 Nov 2024 17:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88E919D082;
+	Sat,  9 Nov 2024 17:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731172633; cv=none; b=Wyyd8iU2wc0ZyjYlUaixoygEbsnMLUzKj5g3xFh8o7SNAwTCItkJtSsAzUNIuOxRf4yvLvJQSEc061NoZxTGz5GmEjXTpiTmxyxM3kNr0Gq5eDx4GTKYp+MVnrOBE1acmyNC1AOi4pkeVS4AxDf+tQPqSE1Q7s38lCrH36aj2dI=
+	t=1731172657; cv=none; b=B0LjnIZ6a4YCpubQmiXbv4To6vIz2z2xPfdozlt4BK4jDwdg/LXGad5MRkJwXfsOGaWUyL1CadqiDL7XOL+403ZgM8QVlnavpIVN8GSmHtHWbZ/XTUeTUQY+ar7Obx1AnZhMl4+0U5zLu8zD4p4lu6f9sKQSqBrl9NYQQ/lFsvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731172633; c=relaxed/simple;
-	bh=SyRsz+IN+JIyKtRilD+KAlzF5tOeIVUgi83ngtRw7Ls=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hjFr8NM7rqDoCWOTlDVh2uwXpLdKrJh8q8EER377dQfufHbbm+oQkh+fhVbh909x+Epe+vrPe9yzhsQ+gNgov2RHxef/YYJIEct6FQUHaw/oM4X17NRXQEojzmgMqjspbubEgeEjAwn7IolVMONm7zQhBLX2IZ+iG1/ETN1Wc1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AyMhxls+; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731172569; x=1731777369; i=markus.elfring@web.de;
-	bh=8VOJJCUgIPJZr0/8bZKF4nwTPa8HNuLOG+oBkdz8Vig=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AyMhxls+40ez0BuBcBmL2KVRfy+09CssNDjxPTwhmMWbkScKOKrRH5oa4roMTK2o
-	 Y0qoHcHPFzF4bmT2e8P5yCIGMxSuIFsh1RXun9KQQStAm5DhAPcpDJJxBybb91TV7
-	 iEVSdZXEdx6B2jCjtSQ7NOY9IhR0SN1R3JBzxQ4zyWpoDfs0wrKQi51dZUfyG3Kod
-	 hcJKL9w20/XFzUZj6ZWy/CMuMutKU78TykayNb9ZjBdgwGCj3mT7VV+Q8cYofGNJt
-	 bR9lVdqOcPKRwKbyOX6uETWc+4PodxA0r4mSlcD3+HHAQ8eOPqbVKb7JQE2MobTy/
-	 POFlpke035NsVjkgTQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk0W-1tFy7v3U8Q-00Hyra; Sat, 09
- Nov 2024 18:16:09 +0100
-Message-ID: <5d8ac86b-4c80-4fbc-808f-7581403d061a@web.de>
-Date: Sat, 9 Nov 2024 18:15:57 +0100
+	s=arc-20240116; t=1731172657; c=relaxed/simple;
+	bh=TMDsyqDQ0pHvp2k1/uQnLMixLG+oX5cPjrDKtufuaPE=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=XomFbIPV/QUVlTqy6tb2Xm9JubTWLjnA0/RsCUNWXCIzjrzahqIOBR1s84Niq4Ilq0Ys465iX9YtlHczfgIUMdW4OqgvKMd+pOo1cM0/RI7WUvj3JoNlPiwIDfF9huJ3N2z3ibGhF7o227QqjpInU/SOxwCLykJiVrZICGGDKkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=bTOFOFM+; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1731172654;
+	bh=TMDsyqDQ0pHvp2k1/uQnLMixLG+oX5cPjrDKtufuaPE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bTOFOFM+V+Vjnfh6JFW/4AI7emhyGc9yKxXwgL9v2C0SAPbobCZRpCWvbK8jAh0CG
+	 JgnaQDy0f7JnKDvq6owZa9n5GlgsmwAzliEyWdIdYyLSjf3gO4WNWq8F+Fcckpr7Em
+	 i58rutDcD6To0pOmyWxVyOwb2wb7E7QyziVBOUlYhV6OG2z7JBoAscQV/0Br2bJTRt
+	 +ajvY6ebHAU1/Ir+cl1zFhAhBI1JRdcTTPiSPBI+gXyYQc15Eu5+t4/+jW0E/M4/C6
+	 ZitB/n6phl+HjeGfBtUB/9O7nAWF4r+3KDVB0rOxfXtnM0KaQE++9+ZMh2qevj8A01
+	 vYouC3PadruzQ==
+X-Virus-Scanned: by epochal.quest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>, linux-iio@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Ond=C5=99ej_Jirman?=
- <megi@xff.cz>
-Cc: LKML <linux-kernel@vger.kernel.org>, lkp@intel.com,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
-Content-Language: en-GB
-In-Reply-To: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7N88y06+RI7gnn708r06bGYbGOOA0SW9Hx3lK6de6QP8iQZKj3T
- 7lMsbJH6HkEVH33WND9BQdj0NiCg6IDVS86PUkytzqZzC92KzzLOrVzPJVRgVbgurPA0r/9
- IH/JSQshDI5flhhOvqZm7geehcAJrJSEQXRpnypssDrVSjPyam6zdASXAIq0cGpR7Rq/s2q
- 758O13vqCQzAdrNeaQBrg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:3E7DhJOrLGc=;xPGSzyNh9qiHR0Ss9a+jhZQ6PyG
- wvM8n/gv5Jayjh+gzScEITAEydbSimOEYown7piD1kQBeHMWZJkp7sJ/8vKNT3RilVu4nnCOL
- zTdVHDTTQUzcDNwit4TE4GaE1NpEshnjd9T5x9xRvTZJ760GqrDoytBB9rsOSy0rTG+6ye8RU
- RN8m3OVNHDe7iBPVVDBJFxbWU0lHl5GBiDoPMAovrMqZ3JQ9y/zgcrN5oKZFFpKv0cOQ1R4Wd
- 8Y31HwgMhyeygtfGVZU+V2tS1+Fz45AtrIf8LoWeN0VwT2Y3ha6K9LjwSucSHdf3GA/8rLLJi
- 30fn3wc8x/7EzFvS9Iz6SKaXs+Ild+GDJ4UJhDUGxYnrQpmNs1gEGg3cxjEXu7SNLLdiLDhEW
- 0BvjT+h0GVERhzNkRWFCMPpUjuxvQhlL+emwz4PgCmjLoRiweUNuSLfP6+nb6AFm1bwAOEjWI
- hJjsg4kDFTJzZGj1QLTCN6FEjcLRolvLswmnMCHvhk8P6Ag4+sgN11bwwSSVINDm1xlLxtj4j
- btKZzkhtGvttyiQGlCoCI1STy8/Z8+QMlnIm8vC9nHKhs+NpdU2uB26Pn5C2hZnh8AczVJ7nH
- 5WLqce+HniumMtnZZtS9KlUNtjkn6CNEFyzKKl5lvGxUmNi+v30arpVd7wM8tpzSXx5GnBcrV
- CybOCAGRGe344yFtxRhCmV5bpIhdPoGU+ICx8U9elUVuckdl6ciXlQJq1gfFhFLYGL04U+e2J
- k1cuTHJnUJn+65gQUqjW+dcVdE7nESmZixw3Mb6MmYX8B80OR/y6ef1dIinJotHfqqx19nvu5
- cKpdLphqViRMLVkg3ktn/Z0khc4O3F5xiCVvKwBvkKVRucHNa2zpIoVNBZcjIvT+dL5I0JSbe
- cxFwgZ75zGfcXDdyRgwOTGEhVA0rCZKDH5xjPjefiXXTRNVZTIf1kc5Cw
+Date: Sat, 09 Nov 2024 13:17:32 -0400
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+To: wens@csie.org
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, Rob
+ Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Parthiban <parthiban@linumiz.com>, Andre
+ Przywara <andre.przywara@arm.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: a100: enable MMC clock reparenting
+In-Reply-To: <CAGb2v663xMyiEx4BpPkuRew9t8fAgbz6EENEj--8Y57E87Lgcg@mail.gmail.com>
+References: <20241109003739.3440904-1-masterr3c0rd@epochal.quest>
+ <CAGb2v663xMyiEx4BpPkuRew9t8fAgbz6EENEj--8Y57E87Lgcg@mail.gmail.com>
+Message-ID: <ad31f44044d56dda935698012c0dd595@epochal.quest>
+X-Sender: masterr3c0rd@epochal.quest
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Add mising braces after an if condition that contains scoped_guard().
-=E2=80=A6
+On 2024/11/09 12:02 pm, Chen-Yu Tsai wrote:
+> You should still keep the version number from the original series if
+> resending or increment it if changes were made.
+Noted, sorry; still getting used to LKML norms. Since I was resubmitting just
+this patch for stable, I wasn't sure what the norms were.
 
-      missing?
+The contents of the patch are unchanged from my series; the only modifications
+made were modifying the commit message and adding stable tags.
 
-
-Regards,
-Markus
+Thanks!
+- Cody
+>
+> ChenYu
 
