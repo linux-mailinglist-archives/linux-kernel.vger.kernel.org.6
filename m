@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-402772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E50C9C2BFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:44:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BE29C2BFE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:45:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A311F21F33
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA67B1C211DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4585015443D;
-	Sat,  9 Nov 2024 10:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DF31547C0;
+	Sat,  9 Nov 2024 10:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqU4m1Vl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqb/RuJQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FF44EB38;
-	Sat,  9 Nov 2024 10:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB0C647;
+	Sat,  9 Nov 2024 10:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731149034; cv=none; b=hVQSJDbHWIp6ojV26kYDqBkbVJwHlFizHMi1pwcEcQfevqALueYlMez6kplseTFzoO3FNP53bOC0eEXsYPozmKUnsLICQO4RnAi0HK/RtZrKLKm8SJ207RvngXsdOzw6vkaVaSBbwrWTe0mOtPItoFjXnKlRzMHLFqcs4rqq7hk=
+	t=1731149122; cv=none; b=ZxSg9T+/p0hho6sbleCFAw8hg1cjwTWdZKSFVNk+hgKRmUmwCETf3/lN9j2U841h1L2Jf2GACPQEbEIqNr6PZB/NppNh7G5sTr6fbaloNBa5hvjO4sCk33tSR0Ncv9KG1aW+OTuAhytfc/bQkdgXA4WKGPemv0k/xO2a8B4rZO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731149034; c=relaxed/simple;
-	bh=eCtZ/IwzV7vbhYPvNXehejQggYYWN8xCL6Ypf6ij5n0=;
+	s=arc-20240116; t=1731149122; c=relaxed/simple;
+	bh=7J03tNFPT0gXl4Xx88tNqczqfJNq3l1OsrQieesV8K4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKXi9F+gKq2+ap3j2R95p0KA8t9oUUT3JWqL9OHmWHh1jb9tDVfFeS+kuTqB0AoJ8olOUP++7gCmKgJmcTONi5iBi92E8/RofIUn7hQet2f86bPJLu9uRqcoqE0HeLXIMmhM9E8F/NtTTLJsxmvFUnPjGJhwAQt0yoUQiiY+mTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqU4m1Vl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67564C4CECE;
-	Sat,  9 Nov 2024 10:43:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXe2BnoLNtXSW9C+vT0Ep7J3zadsHkhDEG0ANBkWqcks8AxC1hu9OX7AT2SbXv1tGYD1d+BR9t6BfKxld9mD4B457fVpQd3oZbgLjR6Ca+s1AFqDfGeXSYhqxFS1f/OGVZgbvlrgA/0zLrFSt7VHfqkXsKIJgp8wSkyE7hJTntc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqb/RuJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CB24C4CECF;
+	Sat,  9 Nov 2024 10:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731149034;
-	bh=eCtZ/IwzV7vbhYPvNXehejQggYYWN8xCL6Ypf6ij5n0=;
+	s=k20201202; t=1731149121;
+	bh=7J03tNFPT0gXl4Xx88tNqczqfJNq3l1OsrQieesV8K4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqU4m1Vl/4wIEI3DgPkMQhoP/jZb7N4K3gsre9simwOB9gbJH6RHLn2Mb8/ANKZde
-	 hmH6ry0kdwthEYeiSUiY9hkwsDa7wOvPFMvs0YEM0li6vB1cnS+J6NSys7kpfgeA0/
-	 D3f7VDvhd6CDAIyRfi9ugDRqgI16AJRtXeM//EXzzr6GsskBNXVTYGpBuV6LdJzxL7
-	 LObbzqHGoSMx+RPpo3hasyfd9N8V70ePfr0gOvoVURSPvBpzzdgmllsI+W31AkWjes
-	 JrgHsycNT1GtwpBuEkVx76LAwl82dO5DFkxlvon7lCZgwkJavoQ7dReH1IDUFH1n/W
-	 OQtJBmD2zLVIQ==
-Date: Sat, 9 Nov 2024 11:43:51 +0100
+	b=pqb/RuJQVjovi0LGMybcqyPQ03Hg7PPyTogWoperUiqpeOyARBAdFHvAfQ/+vP2Rz
+	 Ovff30/L7O1Pk5cDhW+lmOlbvUfxn4xJ3hVL2mH8fVF+prQRXt8Uhun95ElRB8CFNO
+	 NfH7bXpnUdDXrvEDwfZRCXTvXy5i6KZYnZ4sC9KYNVUQmAw2zD0IPz931a0PveOT5F
+	 IeueLeu/dYzgrp97PGVuJqYPtHw/mt9GAufY7LL24umdU0QIpCFnO5ZNr30suGlwa6
+	 DVbJf0FpZvoeTzqBKT7Be+xBn/C7lIvWNk9Yu25656c9ksIy1/tIzWCB34x/3jp03C
+	 woO1z4iNlc4HQ==
+Date: Sat, 9 Nov 2024 11:45:18 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Tristram.Ha@microchip.com
 Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
@@ -50,11 +50,11 @@ Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Marek Vasut <marex@denx.de>, 
 	UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org, netdev@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: dsa: microchip: Add SGMII
- port support to KSZ9477 switch
-Message-ID: <vy2bqhyyfvi5kum3sfefva7lquw2ixqmstx355egkqbplmte4y@5hovbiuwmqqk>
-References: <20241109015633.82638-1-Tristram.Ha@microchip.com>
- <20241109015633.82638-2-Tristram.Ha@microchip.com>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: net: dsa: microchip: Add
+ LAN9646 switch support
+Message-ID: <lsnnb6nghbi67xx54ggk5chhqxt4e2qkiuanypramiqcky6cgw@bdd4vr2t6pph>
+References: <20241109015705.82685-1-Tristram.Ha@microchip.com>
+ <20241109015705.82685-2-Tristram.Ha@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +63,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241109015633.82638-2-Tristram.Ha@microchip.com>
+In-Reply-To: <20241109015705.82685-2-Tristram.Ha@microchip.com>
 
-On Fri, Nov 08, 2024 at 05:56:32PM -0800, Tristram.Ha@microchip.com wrote:
+On Fri, Nov 08, 2024 at 05:57:04PM -0800, Tristram.Ha@microchip.com wrote:
 > From: Tristram Ha <tristram.ha@microchip.com>
 > 
-> Update the KSZ9477 switch example to use SFP cage for SGMII support.
+> LAN9646 switch is a 6-port switch with functions like KSZ9897.  It has
+> 4 internal PHYs and 1 SGMII port.
+> 
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-Why? That's just an example. Why do we want it? Why no changes to
-bindings? Your commit msg must answer to all these.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
