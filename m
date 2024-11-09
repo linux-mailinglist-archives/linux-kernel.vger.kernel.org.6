@@ -1,134 +1,239 @@
-Return-Path: <linux-kernel+bounces-402606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D409C2999
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:56:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 476779C299A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 03:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7337D1C218AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:56:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B91B22903
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 02:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6CF132124;
-	Sat,  9 Nov 2024 02:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A558137905;
+	Sat,  9 Nov 2024 02:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEywfmuJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qhTyiGM3"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BB512FB2E;
-	Sat,  9 Nov 2024 02:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483AC13210D
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 02:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731121010; cv=none; b=ZNFdvNHGnzNwyTUP+VI5nD0vJ2cbivkPzF37zOYapmBcKWmK/sOR1wYQnB22mDeoGHbPIzEk93ONVCAbBCjSA2RnzDEJTHrkHmcVClMNZjdywI/kFcx2y4vQe66ekY4qazORtiq7f6K2D+kH5lfa5ah6yxYIF9T2v/5Xw1LBUkA=
+	t=1731121086; cv=none; b=QKMVx9QAXMMBFksmrDia8xwuSU2e4cl5m9Gwmilrn3a0MY8DR6dAg0kKc8K0vKKRLdDrLb/mApd2IPnW2zPDoEoSnhZG9cON5KosOLKIDxyx6dhQGSJy5u1qABc59cy7qAkN1OvjtY66GsdmVamwMT1lFkmi78Vy6bj9wItcT58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731121010; c=relaxed/simple;
-	bh=VxMsrcVrxPI9pDjShIlfDOSgcJivK/TFRMcbvDVFT80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV6kXTg7b3GiFGOs62ZuPrsSjW/jQYyVyDQYh1YHCXm8c4zKR8yfXowg/03f6fTxNfqhUUEOqbS6O3yXlj2L1MSYa3fGhnWu7xORrZOJQu6t4mvfeg1KTP0n8h2cof4WmaZI4VuKoKss24WlARbSNIsyMhmfFjSby0Go0mwPbfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEywfmuJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43407C4CECD;
-	Sat,  9 Nov 2024 02:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731121009;
-	bh=VxMsrcVrxPI9pDjShIlfDOSgcJivK/TFRMcbvDVFT80=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AEywfmuJT3uj5MC1sVwPeSgXqv3W6yYrFH6CDuhwebGX3yaYcHnNh2wH69RaltFvZ
-	 Hli3b2c+ujAWGHx8cHjhDK42JkVGS2SszMfqkr8f0wdV3Tp+8grdJ9GOjQ7Hl1CKk6
-	 hYApX3AKdjr04XiSiqOHv0t/wsZteHJhBNyeOAkf4uLTt4hMeLfmBKLxpM532tQ9mK
-	 mt5csNWnI4x4aNDu/RIFN/qteuX9Sr2hK6L9s+OH96jncxu0H1yI7yAAxSZDQo3eSQ
-	 UGu96jkgucQTVPsFDLjcGtFgGhFaZoa3NYRwkEDFeQxRshp63t2WCi48xPmcUdedH8
-	 J6+jT0Cq5NJFg==
-Date: Fri, 8 Nov 2024 19:56:47 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Han Shen <shenhan@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] kbuild: Fix Propeller build option
-Message-ID: <20241109025647.GA1182230@thelio-3990X>
-References: <20241108214953.1160765-1-xur@google.com>
+	s=arc-20240116; t=1731121086; c=relaxed/simple;
+	bh=okD8PZlyuduO7Pj+Y0baUDgknvMMd1GbbUlD73IOEAs=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=O7BOLbxD5HMAC6kNyNEfJAqoduLKWDZC+r6KeKleomKbebQzxgEgRjpbUMRg8OHCx7WakSZsS8Vgkh1TtpTx64XFCuAvMyK6xDBTJMGIunrNbeiDK0aDTL3Naxjspa4y06nj1uuuSpCeKORKpy5P2x4AzH5cknR0ZGJnAw/VC4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qhTyiGM3; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30d7b4205eso4509963276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 18:58:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731121084; x=1731725884; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xeepDSMekLWdN9dw+iAAPG9h5iMUwhHzvrTsRjDcopM=;
+        b=qhTyiGM3YP72OkvhbSh1SzP7WR/phQbKSCRD26bflYFb2LF436xv+Kn7H8/aVhRxsP
+         N+rFg827+zrPyHqtDvkCMN1y3IolTTSxnR/i8ZsQnOULiZprXZ4HLeyFcM5hl4dgm9nh
+         DbHsbev4/qu7B9CLAwYC4k7BBH1f39QfVoLHjV9t+6uqO7osm3M1PNQ3BDTeStrlRB2W
+         RRWumz7WfaHVKuBUb26e677jP00DJ21R1/1AZgLbh0CLxpvNi+Qg80qIZmHearhOw9C2
+         EezYGjfQ2PC7LnTNoEanUbn6F3aSsWK2Zon5Q71fT+1rtLxRN9iLw0a4t8i8KtPiCynn
+         iPRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731121084; x=1731725884;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xeepDSMekLWdN9dw+iAAPG9h5iMUwhHzvrTsRjDcopM=;
+        b=bY7yBlz80tmIj1q2/GcQWvrj8gqmduUn94qszLwVjzYFkH7hC/1Tw8SZPAEzOT9JpY
+         gXnvmF4fHEH2zNdXqiSLr5EpzWAD5HlJzG41rF12C8IQgw/fMg1wbUYD+rItfbvq+cGW
+         EjGDfZ0+AlVc4+1c/Hxf08WKsGlv9HpNsbwbW7SK7N/Khu2U9X8TZVbKfKydWScUQnWA
+         O12LkGcQDV2ewUHU5+jEWVBI9MDDPtnqY3p1m4yYPMwqS3vOSF4misauQ2wHxnWv3rTU
+         9L34DCFMUTNyRTYch3rXqsuga1zK1BMUIRvggxFjDLb3c1fvYR8e7vs1vJlCl37Kr85A
+         vohA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcQGKuqGs+qQWzNLbU/hjUxVJvZku+xRNodiehwzZmdPp2PchfLZJvBaewgvC1gDL1pIzrkjs+dJNKKHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww5DRhI3IVVMagWVoXTowI/nK7XZSRwvVOlPyumJYxdavhy+um
+	57hG+HId/DMrBhtD+crn4DFYw/HQAlhS1C7HlMF2BbmfHS2YxYNJcexgZ1UK8f40nP+qbLtGH5G
+	45kFgFg==
+X-Google-Smtp-Source: AGHT+IFyKQHcp6GwqhTuAtmFz55t1ESJhipFBhyeMD9PmkvvGJQ689MBuqnef3qOPc8jI+vcC4J712fGpHZ4
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:acc2:d48f:a998:5915])
+ (user=irogers job=sendgmr) by 2002:a5b:c09:0:b0:e30:cdd0:fc14 with SMTP id
+ 3f1490d57ef6-e337f8ed79emr4049276.9.1731121084313; Fri, 08 Nov 2024 18:58:04
+ -0800 (PST)
+Date: Fri,  8 Nov 2024 18:58:01 -0800
+Message-Id: <20241109025801.560378-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108214953.1160765-1-xur@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Subject: [PATCH v1] perf list: Fix topic and pmu_name argument order
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08, 2024 at 01:49:53PM -0800, Rong Xu wrote:
-> The '-fbasic-block-sections=labels' option has been deprecated in tip
-> of tree clang (20.0.0) [1]. While the option still works, a warning is
-> emitted:
-> 
->   clang: warning: argument '-fbasic-block-sections=labels' is deprecated, use '-fbasic-block-address-map' instead [-Wdeprecated]
-> 
-> Add a version check to set the proper option.
-> 
-> Link: https://github.com/llvm/llvm-project/pull/110039 [1]
-> 
-> Signed-off-by: Rong Xu <xur@google.com>
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+From: Jean-Philippe Romain <jean-philippe.romain@foss.st.com>
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+Fix function definitions to match header file declaration. Fix two
+callers to pass the arguments in the right order.
 
-> ---
-> ChangeLog in V2
-> Integrated suggestions from Nathan Chancellor.
-> (1) improved commit message
-> (2) added links to the comments
-> (3) used ld.lld version in the version check for lld
-> ---
-> 
-> Signed-off-by: Rong Xu <xur@google.com>
-> ---
->  scripts/Makefile.propeller | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/Makefile.propeller b/scripts/Makefile.propeller
-> index 344190717e47..48a660128e25 100644
-> --- a/scripts/Makefile.propeller
-> +++ b/scripts/Makefile.propeller
-> @@ -5,7 +5,14 @@ ifdef CLANG_PROPELLER_PROFILE_PREFIX
->    CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=list=$(CLANG_PROPELLER_PROFILE_PREFIX)_cc_profile.txt -ffunction-sections
->    KBUILD_LDFLAGS += --symbol-ordering-file=$(CLANG_PROPELLER_PROFILE_PREFIX)_ld_profile.txt --no-warn-symbol-ordering
->  else
-> -  CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=labels
-> +  # Starting with Clang v20, the '-fbasic-block-sections=labels' option is
-> +  # deprecated. Use the recommended '-fbasic-block-address-map' option.
-> +  # Link: https://github.com/llvm/llvm-project/pull/110039
-> +  ifeq ($(call clang-min-version, 200000),y)
-> +    CFLAGS_PROPELLER_CLANG := -fbasic-block-address-map
-> +  else
-> +    CFLAGS_PROPELLER_CLANG := -fbasic-block-sections=labels
-> +  endif
->  endif
->  
->  # Propeller requires debug information to embed module names in the profiles.
-> @@ -21,7 +28,11 @@ ifdef CONFIG_LTO_CLANG_THIN
->    ifdef CLANG_PROPELLER_PROFILE_PREFIX
->      KBUILD_LDFLAGS += --lto-basic-block-sections=$(CLANG_PROPELLER_PROFILE_PREFIX)_cc_profile.txt
->    else
-> -    KBUILD_LDFLAGS += --lto-basic-block-sections=labels
-> +    ifeq ($(call test-ge, $(CONFIG_LLD_VERSION), 200000),y)
-> +       KBUILD_LDFLAGS += --lto-basic-block-address-map
-> +    else
-> +       KBUILD_LDFLAGS += --lto-basic-block-sections=labels
-> +    endif
->    endif
->  endif
->  
-> 
-> base-commit: 0dcc2d1066150787017a71f035145c566597dec7
-> -- 
-> 2.47.0.277.g8800431eea-goog
-> 
+On Intel Tigerlake, before:
+```
+$ perf list -j|grep "\"Topic\""|sort|uniq
+        "Topic": "cache",
+        "Topic": "cpu",
+        "Topic": "floating point",
+        "Topic": "frontend",
+        "Topic": "memory",
+        "Topic": "other",
+        "Topic": "pfm icl",
+        "Topic": "pfm ix86arch",
+        "Topic": "pfm perf_raw",
+        "Topic": "pipeline",
+        "Topic": "tool",
+        "Topic": "uncore interconnect",
+        "Topic": "uncore memory",
+        "Topic": "uncore other",
+        "Topic": "virtual memory",
+$ perf list -j|grep "\"Unit\""|sort|uniq
+        "Unit": "cache",
+        "Unit": "cpu",
+        "Unit": "cstate_core",
+        "Unit": "cstate_pkg",
+        "Unit": "i915",
+        "Unit": "icl",
+        "Unit": "intel_bts",
+        "Unit": "intel_pt",
+        "Unit": "ix86arch",
+        "Unit": "msr",
+        "Unit": "perf_raw",
+        "Unit": "power",
+        "Unit": "tool",
+        "Unit": "uncore_arb",
+        "Unit": "uncore_clock",
+        "Unit": "uncore_imc_free_running_0",
+        "Unit": "uncore_imc_free_running_1",
+```
+
+After:
+```
+$ perf list -j|grep "\"Topic\""|sort|uniq
+        "Topic": "cache",
+        "Topic": "floating point",
+        "Topic": "frontend",
+        "Topic": "memory",
+        "Topic": "other",
+        "Topic": "pfm icl",
+        "Topic": "pfm ix86arch",
+        "Topic": "pfm perf_raw",
+        "Topic": "pipeline",
+        "Topic": "tool",
+        "Topic": "uncore interconnect",
+        "Topic": "uncore memory",
+        "Topic": "uncore other",
+        "Topic": "virtual memory",
+$ perf list -j|grep "\"Unit\""|sort|uniq
+        "Unit": "cpu",
+        "Unit": "cstate_core",
+        "Unit": "cstate_pkg",
+        "Unit": "i915",
+        "Unit": "icl",
+        "Unit": "intel_bts",
+        "Unit": "intel_pt",
+        "Unit": "ix86arch",
+        "Unit": "msr",
+        "Unit": "perf_raw",
+        "Unit": "power",
+        "Unit": "tool",
+        "Unit": "uncore_arb",
+        "Unit": "uncore_clock",
+        "Unit": "uncore_imc_free_running_0",
+        "Unit": "uncore_imc_free_running_1",
+```
+
+Fixes: e5c6109f4813 ("perf list: Reorganize to use callbacks to allow honouring command line options")
+Signed-off-by: Jean-Philippe Romain <jean-philippe.romain@foss.st.com>
+Tested-by: Ian Rogers <irogers@google.com>
+---
+Note from Ian, I fixed the two callers and added it to
+Jean-Phillippe's original change.
+---
+ tools/perf/builtin-list.c | 4 ++--
+ tools/perf/util/pfm.c     | 4 ++--
+ tools/perf/util/pmus.c    | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+index b8378ba18c28..9e7fdfcdd7ff 100644
+--- a/tools/perf/builtin-list.c
++++ b/tools/perf/builtin-list.c
+@@ -113,7 +113,7 @@ static void wordwrap(FILE *fp, const char *s, int start, int max, int corr)
+ 	}
+ }
+ 
+-static void default_print_event(void *ps, const char *pmu_name, const char *topic,
++static void default_print_event(void *ps, const char *topic, const char *pmu_name,
+ 				const char *event_name, const char *event_alias,
+ 				const char *scale_unit __maybe_unused,
+ 				bool deprecated, const char *event_type_desc,
+@@ -354,7 +354,7 @@ static void fix_escape_fprintf(FILE *fp, struct strbuf *buf, const char *fmt, ..
+ 	fputs(buf->buf, fp);
+ }
+ 
+-static void json_print_event(void *ps, const char *pmu_name, const char *topic,
++static void json_print_event(void *ps, const char *topic, const char *pmu_name,
+ 			     const char *event_name, const char *event_alias,
+ 			     const char *scale_unit,
+ 			     bool deprecated, const char *event_type_desc,
+diff --git a/tools/perf/util/pfm.c b/tools/perf/util/pfm.c
+index 5ccfe4b64cdf..0dacc133ed39 100644
+--- a/tools/perf/util/pfm.c
++++ b/tools/perf/util/pfm.c
+@@ -233,7 +233,7 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
+ 	}
+ 
+ 	if (is_libpfm_event_supported(name, cpus, threads)) {
+-		print_cb->print_event(print_state, pinfo->name, topic,
++		print_cb->print_event(print_state, topic, pinfo->name,
+ 				      name, info->equiv,
+ 				      /*scale_unit=*/NULL,
+ 				      /*deprecated=*/NULL, "PFM event",
+@@ -267,8 +267,8 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
+ 				continue;
+ 
+ 			print_cb->print_event(print_state,
+-					pinfo->name,
+ 					topic,
++					pinfo->name,
+ 					name, /*alias=*/NULL,
+ 					/*scale_unit=*/NULL,
+ 					/*deprecated=*/NULL, "PFM event",
+diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+index 107de86c2637..6d4c7c9ecf3a 100644
+--- a/tools/perf/util/pmus.c
++++ b/tools/perf/util/pmus.c
+@@ -501,8 +501,8 @@ void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *p
+ 			goto free;
+ 
+ 		print_cb->print_event(print_state,
+-				aliases[j].pmu_name,
+ 				aliases[j].topic,
++				aliases[j].pmu_name,
+ 				aliases[j].name,
+ 				aliases[j].alias,
+ 				aliases[j].scale_unit,
+-- 
+2.47.0.277.g8800431eea-goog
+
 
