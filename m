@@ -1,307 +1,432 @@
-Return-Path: <linux-kernel+bounces-402902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026499C2E41
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:37:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291BC9C2E42
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 571B5B21533
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78462822FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E4A19C56F;
-	Sat,  9 Nov 2024 15:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2MuX/hq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5099F19C560;
+	Sat,  9 Nov 2024 15:38:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619F8233D6B
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8433219B3D8
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 15:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731166639; cv=none; b=HxH/lcaLfkadtZjaByVcoGfWRLBCd2XwMDgNCPDphrlcEQuiwRNMjvdadjH1Dv6sqHjzBCMkZY4HlyMM/n9VvZIhtcSC1btGiHEIoMTr5fKdUJUEebEH6YkKKceC1FmqmG9FZQJtJBFAmDvVxs2dFBch4SYFUjCWP4rYhAeUGOA=
+	t=1731166685; cv=none; b=MJkTFLVt+avyHJoK0QKIOZl05PLSdOjbGu8X92CCfewD+W+HCr3U74S4qcY2Kp/Jt0vji5YnUegcAKbVSeLJ6YF0qWG5qrrvCYdRLXs8nBvtUiaNO0gJFoTK6wCom091VQHI2n6i/JlWt0walZShJ+lCY8T2gU98WgrY8Jqk7mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731166639; c=relaxed/simple;
-	bh=CMhgmPa/7GY5jY/1jI5kork1XPLfwQIpAg+Qm01pifY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLPIz2XWDc+Jy8sUD3zvxqJRErg0WYfimOghC2Neh3xISBZ0TZeDgiZ1OUFu0B71D6W9RVAigNI5RFbWPUypRkj7PhNR2uSvyYM67ZhJsVnQaLJXiJugXXsNf/KdDsL1aJmruDd79mvA3D5S1oKP1GraDFTSeIWaCQ8HH0XPz7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2MuX/hq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731166635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nTbYIYpi07qaYiHPrfSS1ML2U/iwniiMpToNMNJxlZA=;
-	b=C2MuX/hqJYHwiX0D369GRz6jXXCTTinFtuSciZd0wO3nHVtc/7PjhRW6l48wZuEzYAj7vr
-	HHKC4g+USh6RJZoDDHyLmr3tbcONhGAVw0/hgVoq0Mp4nfJELxqPFJeQL4rRffZCgwo3vH
-	nLZOPILa7xM/zmiNGLYuPJNJOnl8Pos=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-xanWiN3aNbuvNit3qQTS4w-1; Sat, 09 Nov 2024 10:37:13 -0500
-X-MC-Unique: xanWiN3aNbuvNit3qQTS4w-1
-X-Mimecast-MFC-AGG-ID: xanWiN3aNbuvNit3qQTS4w
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a99f084683fso279958266b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 07:37:13 -0800 (PST)
+	s=arc-20240116; t=1731166685; c=relaxed/simple;
+	bh=NUlG33GeGsq8W704Sy+P4Xlfjr9SRPlkmef62pjUBeA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RhSyBTiyWlW0HpSaBcQ0lEPvhMbzbQeZj/dPCFL26nsek+O+DgocdTfK4n996PsdCeE2/dnrRGzz45EOfG9XBVTJfUCLrCyIWxXOqomoOOiKAIT4i6Hko4YcnlCApC8/dbRg4dI7J/SqOl1VD5wcbwZKBxGB4inAdpax53cWSG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so40036225ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 07:38:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731166632; x=1731771432;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nTbYIYpi07qaYiHPrfSS1ML2U/iwniiMpToNMNJxlZA=;
-        b=i52Iv4gcUowAnE2p7NsD+5mVJA1bhRZXkHMGaY7+R8hPRy+5TzO95SEdscQW11sdqW
-         Zv3ynPZF+b2hIAQKH4/33D8onCcsjbSqlU81VjDxVDQurgZjlzr8iXX0R6kC/egp8e3G
-         4+26XTGV3l/jyB/z1xBMCDQndxtFy1l+w0+3i1b/gOMzOd9KPLceQAsPs4XozVYwLQU4
-         fI+fz5wvNrDimPF18I8Mdh9Dy7sLmcB7yvX5/cCYV4orq0wb1cbusRWlRAzICXCtUkym
-         p0EPmAo3GattvK6PAhi+YyfZskQtBD1i+gwrNCKfDMdCevFRX/jxxW+1AVViYfqS8Dy7
-         Gdhg==
-X-Gm-Message-State: AOJu0Yz0BY1GmkWVu+MV/2G4tWj+QpgwRgbxiLRaa7dcW0VcvvC2YBgQ
-	hfqM19so1MMGFqcufm9SmbqPXh8cG6ADDGezlvBteUQBQuwftCrEf9jB9kMVf3OtIfH6ea1ItHL
-	Tjwz7Ddh4cmeKxwT2Kx0Gh0Bb8uirO/auDc18yRMuEJI0veyZysxiZVQfJspEgg==
-X-Received: by 2002:a17:907:2d0c:b0:a9a:154e:dd86 with SMTP id a640c23a62f3a-a9eeff43e6emr705693166b.28.1731166632341;
-        Sat, 09 Nov 2024 07:37:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGrOh7Jh0sTG4WbDk95Xyy5PpWsN6x46Bhm3llxBbdpXsDX5h83aXperpcSkWuSHdHDt3a7XA==
-X-Received: by 2002:a17:907:2d0c:b0:a9a:154e:dd86 with SMTP id a640c23a62f3a-a9eeff43e6emr705688766b.28.1731166631819;
-        Sat, 09 Nov 2024 07:37:11 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a18521sm377753266b.20.2024.11.09.07.37.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 07:37:11 -0800 (PST)
-Message-ID: <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
-Date: Sat, 9 Nov 2024 16:37:10 +0100
+        d=1e100.net; s=20230601; t=1731166682; x=1731771482;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ifLbF7tba7dV9fo+j6bMpoi+nS3nzD2LspYJkXnoP4g=;
+        b=c8LnECg7rn2pfN9GfXIw49rlvPag7s+1vMttC84GS0QcfBkGZ4plwGE1HEr27gPR12
+         Uftw1cRqY0YOObaaUpy9V2YVS66bStF65jCZA18gK/STZpP1qHaxFbt4xY/3CoY5hMyi
+         UgMLW5kpGj7ZqBQO09Y4hB0u6+31upsjosxzQlNT4c6oihCZ4lQm8CH/CF1tOBdUq1RD
+         wgDczzn6oqfqGvxFLd837PPdw4o3rdKNOB14M4qmVfhCxRpwigDoAQqpGb1f8iZbC21E
+         1WZzNdLtzywFGBakzSF1cUl1suKe4wGKBBMOsppfR6QonsX1qfbcnkxzXe+4ra9sBdfl
+         7Q1g==
+X-Forwarded-Encrypted: i=1; AJvYcCW/HIa7Ac60+rFEjbNwV9fGULVSTclvNADbZZT7RxMPcs3RN6YbSrB4MeVI1Lr4Lh+DHhsLZE0+I/yyqck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdWk74mMOtPImhkkxlVHTDgTNGs0lk3Nag0JBx1CEuv1OUJBC+
+	5qqX5Jv9nwoOEodfs0FrFoKcl9OR2xMpKdbLwbRyMs9IE6ZOvgR5ZKbvkcQOn+GNYxsfCjt2tnQ
+	6VkO7NAjiFPjg25NZrVb2TzBYSmLucZ4Bgqv8xtcH2InddSGr8p4ivoo=
+X-Google-Smtp-Source: AGHT+IHVpGJg8dwgI05qQUbeEvlSoSb3Afb7zGouadR/j39K13hCjjwNb3ONOUgP0ME32GwPjvG8hPDPNxr7jm2IvVGoxvGdP4Wx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
- subdevice
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1e0e:b0:3a5:e250:bba1 with SMTP id
+ e9e14a558f8ab-3a6f1a48f15mr68673585ab.18.1731166682623; Sat, 09 Nov 2024
+ 07:38:02 -0800 (PST)
+Date: Sat, 09 Nov 2024 07:38:02 -0800
+In-Reply-To: <CAHiZj8hLZ3es4arB89eVfspki+Un9PXBedjo_vMix81F7OdMiw@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672f81da.050a0220.138bd5.0042.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
+From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+Hello,
 
-FYI / some background: I have been asked to start helping /
-co-maintaining UVC with Laurent. I'll send out a patch adding
-myself as UVC maintainer soon.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-On 8-Nov-24 9:25 PM, Ricardo Ribalda wrote:
-> Some notebooks have a button to disable the camera (not to be mistaken
-> with the mechanical cover). This is a standard GPIO linked to the
-> camera via the ACPI table.
-> 
-> 4 years ago we added support for this button in UVC via the Privacy control.
-> This has two issues:
-> - If the camera has its own privacy control, it will be masked
-> - We need to power-up the camera to read the privacy control gpio.
-> 
-> We tried to fix the power-up issues implementing "granular power
-> saving" but it has been more complicated than anticipated....
+ 50.774453][    T1] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
+[   50.781444][    T1] Bluetooth: HIDP socket layer initialized
+[   50.797785][    T1] NET: Registered PF_RXRPC protocol family
+[   50.804021][    T1] Key type rxrpc registered
+[   50.819166][    T1] Key type rxrpc_s registered
+[   50.826057][    T1] NET: Registered PF_KCM protocol family
+[   50.846625][    T1] lec:lane_module_init: lec.c: initialized
+[   50.853444][    T1] mpoa:atm_mpoa_init: mpc.c: initialized
+[   50.859905][    T1] l2tp_core: L2TP core driver, V2.0
+[   50.865318][    T1] l2tp_ppp: PPPoL2TP kernel driver, V2.0
+[   50.871283][    T1] l2tp_ip: L2TP IP encapsulation support (L2TPv3)
+[   50.878166][    T1] l2tp_netlink: L2TP netlink interface
+[   50.885393][    T1] l2tp_eth: L2TP ethernet pseudowire support (L2TPv3)
+[   50.892494][    T1] l2tp_ip6: L2TP IP encapsulation support for IPv6 (L2=
+TPv3)
+[   50.900671][    T1] NET: Registered PF_PHONET protocol family
+[   50.907360][    T1] 8021q: 802.1Q VLAN Support v1.8
+[   51.102849][    T1] DCCP: Activated CCID 2 (TCP-like)
+[   51.108517][    T1] DCCP: Activated CCID 3 (TCP-Friendly Rate Control)
+[   51.116104][    T1] DCCP is deprecated and scheduled to be removed in 20=
+25, please contact the netdev mailing list
+[   51.128488][    T1] sctp: Hash tables configured (bind 256/256)
+[   51.138259][    T1] NET: Registered PF_RDS protocol family
+[   51.145646][    T1] Registered RDS/infiniband transport
+[   51.152112][    T1] Registered RDS/tcp transport
+[   51.157009][    T1] tipc: Activated (version 2.0.0)
+[   51.162932][    T1] NET: Registered PF_TIPC protocol family
+[   51.172284][    T1] tipc: Started in single node mode
+[   51.181079][    T1] NET: Registered PF_SMC protocol family
+[   51.188572][    T1] 9pnet: Installing 9P2000 support
+[   51.194814][    T1] NET: Registered PF_CAIF protocol family
+[   51.210492][    T1] NET: Registered PF_IEEE802154 protocol family
+[   51.217577][    T1] Key type dns_resolver registered
+[   51.223062][    T1] Key type ceph registered
+[   51.229158][    T1] libceph: loaded (mon/osd proto 15/24)
+[   51.239598][    T1] batman_adv: B.A.T.M.A.N. advanced 2024.2 (compatibil=
+ity version 15) loaded
+[   51.250892][    T1] openvswitch: Open vSwitch switching datapath
+[   51.264974][    T1] NET: Registered PF_VSOCK protocol family
+[   51.272186][    T1] mpls_gso: MPLS GSO support
+[   51.450427][    T1] IPI shorthand broadcast: enabled
+[   52.943974][    T1] sched_clock: Marking stable (52920073484, 17910237)-=
+>(52943420691, -5436970)
+[   53.846634][    T1] registered taskstats version 1
+[   54.206864][    T1] Loading compiled-in X.509 certificates
+[   54.419109][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 3afbfeee723402980abb37b86a2db814127d2bc0'
+[   54.616601][    T1] zswap: loaded using pool 842/z3fold
+[   54.626356][    T1] Demotion targets for Node 0: null
+[   54.631798][    T1] Demotion targets for Node 1: null
+[   54.638926][    T1] Key type .fscrypt registered
+[   54.643798][    T1] Key type fscrypt-provisioning registered
+[   54.650935][    T1] kAFS: Red Hat AFS client v0.1 registering.
+[   54.681984][    T1] Btrfs loaded, assert=3Don, ref-verify=3Don, zoned=3D=
+yes, fsverity=3Dyes
+[   54.709423][    T1] Key type encrypted registered
+[   54.714433][    T1] AppArmor: AppArmor sha256 policy hashing enabled
+[   54.721401][    T1] ima: No TPM chip found, activating TPM-bypass!
+[   54.728680][    T1] Loading compiled-in module X.509 certificates
+[   54.941142][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 3afbfeee723402980abb37b86a2db814127d2bc0'
+[   54.952371][    T1] ima: Allocated hash algorithm: sha256
+[   54.958585][    T1] ima: No architecture policies found
+[   54.964951][    T1] evm: Initialising EVM extended attributes:
+[   54.971215][    T1] evm: security.selinux (disabled)
+[   54.976617][    T1] evm: security.SMACK64 (disabled)
+[   54.981894][    T1] evm: security.SMACK64EXEC (disabled)
+[   54.987418][    T1] evm: security.SMACK64TRANSMUTE (disabled)
+[   54.993607][    T1] evm: security.SMACK64MMAP (disabled)
+[   54.999295][    T1] evm: security.apparmor
+[   55.003593][    T1] evm: security.ima
+[   55.007621][    T1] evm: security.capability
+[   55.012225][    T1] evm: HMAC attrs: 0x1
+[   55.021328][    T1] PM:   Magic number: 0:225:487
+[   55.029686][    T1] printk: legacy console [netcon0] enabled
+[   55.035666][    T1] netconsole: network logging started
+[   55.042737][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
+[   55.058912][    T1] rdma_rxe: loaded
+[   55.064750][    T1] cfg80211: Loading compiled-in X.509 certificates for=
+ regulatory database
+[   55.085688][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   55.106043][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
+c7248db18c600'
+[   55.114756][    T1] clk: Disabling unused clocks
+[   55.120039][    T1] ALSA device list:
+[   55.123967][    T1]   #0: Dummy 1
+[   55.127679][    T1]   #1: Loopback 1
+[   55.131629][    T1]   #2: Virtual MIDI Card 1
+[   55.142147][   T10] platform regulatory.0: Direct firmware load for regu=
+latory.db failed with error -2
+[   55.152179][   T10] platform regulatory.0: Falling back to sysfs fallbac=
+k for: regulatory.db
+[   55.162763][    T1] md: Waiting for all devices to be available before a=
+utodetect
+[   55.170980][    T1] md: If you don't use raid, use raid=3Dnoautodetect
+[   55.177606][    T1] md: Autodetecting RAID arrays.
+[   55.182740][    T1] md: autorun ...
+[   55.186465][    T1] md: ... autorun DONE.
+[   55.280324][    T1] EXT4-fs (sda1): mounted filesystem b4773fba-1738-4da=
+0-8a90-0fe043d0a496 ro with ordered data mode. Quota mode: none.
+[   55.293956][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce 8:1.
+[   55.306041][    T1] devtmpfs: mounted
+[   55.569063][    T1] Freeing unused kernel image (initmem) memory: 37960K
+[   55.582373][    T1] Write protecting the kernel read-only data: 268288k
+[   55.618434][    T1] Freeing unused kernel image (rodata/data gap) memory=
+: 880K
+[   57.283297][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   57.293937][    T1] x86/mm: Checking user space page tables
+[   58.776653][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   58.785687][    T1] Failed to set sysctl parameter 'kernel.hung_task_all=
+_cpu_backtrace=3D1': parameter not found
+[   58.806387][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
+ic=3D1': parameter not found
+[   58.817807][    T1] Run /sbin/init as init process
+[   60.404661][ T5117] mount (5117) used greatest stack depth: 8200 bytes l=
+eft
+[   60.474634][ T5118] EXT4-fs (sda1): re-mounted b4773fba-1738-4da0-8a90-0=
+fe043d0a496 r/w. Quota mode: none.
+mount: mounting devtmpfs on /dev failed: Device or resource busy
+mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
+y
+mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
+ory
+[   60.878171][ T5122] mount (5122) used greatest stack depth: 5464 bytes l=
+eft
+Starting syslogd: OK
+Starting acpid: OK
+[   62.117568][ T5138] BUG: unable to handle page fault for address: ffffff=
+fffffffee8
+[   62.126177][ T5138] #PF: supervisor read access in kernel mode
+[   62.132457][ T5138] #PF: error_code(0x0000) - not-present page
+[   62.139539][ T5138] PGD 11676067 P4D 11676067 PUD 11678067 PMD 0=20
+[   62.147018][ T5138] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+[   62.155203][ T5138] CPU: 0 UID: 0 PID: 5138 Comm: acpid Not tainted 6.12=
+.0-rc6-syzkaller-00272-gda4373fbcf00-dirty #0
+[   62.168682][ T5138] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 10/30/2024
+[   62.181817][ T5138] RIP: 0010:__netlink_lookup+0x45f/0x7f0
+[   62.189763][ T5138] Code: 45 7d 94 4c 89 6d c8 49 09 c5 4c 89 ad 78 ff f=
+f ff 0f 85 e9 00 00 00 44 89 7d 9c 4d 89 f4 48 8b 45 c0 49 8d bc 06 18 03 0=
+0 00 <8b> 1f e8 1a 0e 1d f5 44 8b 38 44 8b 32 48 8b 45 a8 44 89 38 44 89
+[   62.212248][ T5138] RSP: 0018:ffff8881177e3b68 EFLAGS: 00010246
+[   62.219552][ T5138] RAX: fffffffffffffbd0 RBX: 0000000000000000 RCX: 000=
+00001173e3bf0
+[   62.228167][ T5138] RDX: ffff8881173e3bf0 RSI: ffff88813ffface0 RDI: fff=
+ffffffffffee8
+[   62.237084][ T5138] RBP: ffff8881177e3c38 R08: ffffea000000000f R09: 000=
+0000000000000
+[   62.246984][ T5138] R10: ffff888116fe3bf0 R11: ffffffff8d30e8f8 R12: 000=
+0000000000000
+[   62.258393][ T5138] R13: 0000000000000000 R14: 0000000000000000 R15: 000=
+0000000000000
+[   62.267127][ T5138] FS:  00007f4626133740(0000) GS:ffff88813fc00000(0000=
+) knlGS:0000000000000000
+[   62.277002][ T5138] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   62.284814][ T5138] CR2: fffffffffffffee8 CR3: 000000011b32c000 CR4: 000=
+00000003526f0
+[   62.294468][ T5138] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
+0000000000000
+[   62.303762][ T5138] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
+0000000000400
+[   62.314028][ T5138] Call Trace:
+[   62.318350][ T5138]  <TASK>
+[   62.321703][ T5138]  ? show_trace_log_lvl+0x268/0x3d0
+[   62.327988][ T5138]  ? netlink_autobind+0x168/0x460
+[   62.333412][ T5138]  ? __die_body+0xce/0x1a0
+[   62.338610][ T5138]  ? __die+0x22a/0x290
+[   62.343875][ T5138]  ? page_fault_oops+0xe58/0xfb0
+[   62.350270][ T5138]  ? kernelmode_fixup_or_oops+0x1b5/0x1d0
+[   62.356542][ T5138]  ? __bad_area_nosemaphore+0x17b/0x960
+[   62.362639][ T5138]  ? kmsan_internal_poison_memory+0x7d/0x90
+[   62.368997][ T5138]  ? kmsan_get_metadata+0x13e/0x1c0
+[   62.375189][ T5138]  ? kmsan_internal_poison_memory+0x49/0x90
+[   62.381820][ T5138]  ? kmem_cache_alloc_lru_noprof+0x641/0xb30
+[   62.389135][ T5138]  ? __d_alloc+0x69/0x9c0
+[   62.394040][ T5138]  ? spurious_kernel_fault+0xef/0xbe0
+[   62.400816][ T5138]  ? bad_area_nosemaphore+0x32/0x40
+[   62.406710][ T5138]  ? do_kern_addr_fault+0xe0/0x110
+[   62.412293][ T5138]  ? exc_page_fault+0x549/0x700
+[   62.417483][ T5138]  ? _raw_spin_unlock_irqrestore+0x3f/0x60
+[   62.423634][ T5138]  ? asm_exc_page_fault+0x2b/0x30
+[   62.429062][ T5138]  ? netlink_autobind+0x168/0x460
+[   62.434374][ T5138]  ? __netlink_lookup+0x45f/0x7f0
+[   62.439692][ T5138]  ? __netlink_lookup+0x413/0x7f0
+[   62.445057][ T5138]  netlink_autobind+0x168/0x460
+[   62.450229][ T5138]  netlink_bind+0x1085/0x1a60
+[   62.455315][ T5138]  ? __pfx_netlink_bind+0x10/0x10
+[   62.460698][ T5138]  __sys_bind+0x4de/0x690
+[   62.465334][ T5138]  ? __sys_setsockopt+0x388/0x4c0
+[   62.470687][ T5138]  ? kmsan_get_metadata+0x13e/0x1c0
+[   62.476710][ T5138]  __x64_sys_bind+0x91/0xe0
+[   62.481631][ T5138]  x64_sys_call+0x252d/0x3ba0
+[   62.487065][ T5138]  do_syscall_64+0xcd/0x1e0
+[   62.492096][ T5138]  ? clear_bhb_loop+0x25/0x80
+[   62.497910][ T5138]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   62.506339][ T5138] RIP: 0033:0x7f462620b677
+[   62.511199][ T5138] Code: 48 89 44 24 08 e8 f8 59 f9 ff 48 8b 44 24 08 4=
+8 83 c4 28 c3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 b8 31 00 00 00 0=
+f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 81 c7 0c 00 f7 d8 64 89 01 48
+[   62.531331][ T5138] RSP: 002b:00007ffe1da730b8 EFLAGS: 00000246 ORIG_RAX=
+: 0000000000000031
+[   62.540116][ T5138] RAX: ffffffffffffffda RBX: 00007ffe1da7310c RCX: 000=
+07f462620b677
+[   62.548639][ T5138] RDX: 000000000000000c RSI: 00007ffe1da73110 RDI: 000=
+0000000000008
+[   62.557293][ T5138] RBP: 0000000000000000 R08: 0000000000000004 R09: 000=
+07ffe1da73990
+[   62.565706][ T5138] R10: 00007ffe1da730d4 R11: 0000000000000246 R12: 000=
+07ffe1da73110
+[   62.574240][ T5138] R13: 00007ffe1da74a58 R14: 0000000000000003 R15: 000=
+07f462631da80
+[   62.582590][ T5138]  </TASK>
+[   62.585834][ T5138] Modules linked in:
+[   62.590235][ T5138] CR2: fffffffffffffee8
+[   62.594613][ T5138] ---[ end trace 0000000000000000 ]---
+[   62.600280][ T5138] RIP: 0010:__netlink_lookup+0x45f/0x7f0
+[   62.606314][ T5138] Code: 45 7d 94 4c 89 6d c8 49 09 c5 4c 89 ad 78 ff f=
+f ff 0f 85 e9 00 00 00 44 89 7d 9c 4d 89 f4 48 8b 45 c0 49 8d bc 06 18 03 0=
+0 00 <8b> 1f e8 1a 0e 1d f5 44 8b 38 44 8b 32 48 8b 45 a8 44 89 38 44 89
+[   62.626677][ T5138] RSP: 0018:ffff8881177e3b68 EFLAGS: 00010246
+[   62.633183][ T5138] RAX: fffffffffffffbd0 RBX: 0000000000000000 RCX: 000=
+00001173e3bf0
+[   62.641683][ T5138] RDX: ffff8881173e3bf0 RSI: ffff88813ffface0 RDI: fff=
+ffffffffffee8
+[   62.649931][ T5138] RBP: ffff8881177e3c38 R08: ffffea000000000f R09: 000=
+0000000000000
+[   62.658181][ T5138] R10: ffff888116fe3bf0 R11: ffffffff8d30e8f8 R12: 000=
+0000000000000
+[   62.666416][ T5138] R13: 0000000000000000 R14: 0000000000000000 R15: 000=
+0000000000000
+[   62.674647][ T5138] FS:  00007f4626133740(0000) GS:ffff88813fc00000(0000=
+) knlGS:0000000000000000
+[   62.684043][ T5138] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   62.690922][ T5138] CR2: fffffffffffffee8 CR3: 000000011b32c000 CR4: 000=
+00000003526f0
+[   62.699183][ T5138] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
+0000000000000
+[   62.707402][ T5138] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
+0000000000400
+[   62.715718][ T5138] Kernel panic - not syncing: Fatal exception
+[   62.722556][ T5138] Kernel Offset: disabled
+[   62.727049][ T5138] Rebooting in 86400 seconds..
 
-I have been discussing UVC power-management with Laurent, also
-related to power-consumption issues caused by libcamera's pipeline
-handler holding open the /dev/video# node as long as the camera
-manager object exists.
 
-For now we have fixed this with some relatively small changes to
-libcamera's uvcvideo pipeline handler, but that is really meant
-as an interim solution and as this privacy control series shows
-the power-management issues are real.
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.22.7'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build3559642725=3D/tmp/go-build -gno-record-gc=
+c-switches'
 
-Combined with Mauro's remarks about how this is an userspace ABI break (1)
-I think we should maybe first take another look at the powermanagement
-issues in general rather then moving forward with this series.
-
-My apologies for this, I realize how annoying it can be when you are
-working on a patch series to fix a specific issue and a reviewer
-moves the goal-posts like this. But I do really think that just fixing
-the generic power-management issues would be better and I also think
-that this should be feasible / not too hard.
-
-Here is what I have in mind for this:
-
-1. Assume that the results of trying a specific fmt do not change over time.
-
-2. Only allow userspace to request fmts which match one of the enum-fmts ->
-   enum-frame-sizes -> enum-frame-rates tripplet results
-   (constrain what userspace requests to these)
-
-3. Run the equivalent of tryfmt on all possible combinations (so the usaul
-   3 levels nested loop for this) on probe() and cache the results
-
-4. Make try_fmt / set_fmt not poweron the device but instead constrain
-   the requested fmt to one from our cached fmts
-
-5. On stream-on do the actual power-on + set-fmt + verify that we get
-   what we expect based on the cache, and otherwise return -EIO.
-
-I think that should sort the issue, assuming that 1. above holds true.
-
-One downside is that this stops UVC button presses from working when
-not streaming. But userspace will typically only open the /dev/video#
-node if it plans to stream anyways so there should not be much of
-a difference wrt button press behavior.
-
-This should also make camera enumeration faster for apps, since
-most apps / frameworks do the whole 3 levels nested loop for this
-on startup, for which atm we go out to the hw, which now instead
-will come from the fmts cache and thus will be much much faster,
-so this should lead to a noticeable speedup for apps accessing UVC
-cameras which would be another nice win.
-
-Downside is that the initial probe will take longer see we do
-all the tryfmt-s there now. But I think that taking a bit longer
-to probe while the machine is booting should not be an issue.
-
-Regards,
-
-Hans
+git status (err=3D<nil>)
+HEAD detached at 509da42949
+nothing to commit, working tree clean
 
 
-1) Which is technically correct, but FWIW I agree with you that I think
-most userspace consumers will not care
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+go fmt ./sys/... >/dev/null
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D509da42949c4013fb236ebf6e25d3562d110198c -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20241104-133744'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
+x=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"509da42949c4013fb236ebf6e25d3562d1=
+10198c\"
+/usr/bin/ld: /tmp/ccDyOSX3.o: in function `test_cover_filter()':
+executor.cc:(.text+0x1426b): warning: the use of `tempnam' is dangerous, be=
+tter use `mkstemp'
+/usr/bin/ld: /tmp/ccDyOSX3.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
 
 
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D1342235f980000
 
 
-> Last year, we proposed a patchset to implement the privacy gpio as a
-> subdevice https://lore.kernel.org/linux-media/20230111-uvc_privacy_subdev-v1-0-f859ac9a01e3@chromium.org/
-> 
-> I think it is a pretty clean solution and makes sense to use a
-> subdevice for something that is a sub device of the camera :).
-> 
-> This is an attempt to continue with that approach.
-> 
-> Tested on gimble:
-> gimble-rev3 ~ # v4l2-ctl --all -d /dev/v4l-subdev0
-> Driver Info:
->         Driver version   : 6.6.56
->         Capabilities     : 0x00000000
-> Media Driver Info:
->         Driver name      : uvcvideo
->         Model            : HP 5M Camera: HP 5M Camera
->         Serial           : 0001
->         Bus info         : usb-0000:00:14.0-6
->         Media version    : 6.6.56
->         Hardware revision: 0x00009601 (38401)
->         Driver version   : 6.6.56
-> Interface Info:
->         ID               : 0x0300001d
->         Type             : V4L Sub-Device
-> Entity Info:
->         ID               : 0x00000013 (19)
->         Name             : GPIO
->         Function         : Unknown sub-device (00020006)
-> 
-> Camera Controls
-> 
->                         privacy 0x009a0910 (bool)   : default=0 value=0 flags=read-only, volatile
-> 
-> gimble-rev3 ~ # media-ctl  -p
-> Media controller API version 6.6.56
-> 
-> Media device information
-> ------------------------
-> driver          uvcvideo
-> model           HP 5M Camera: HP 5M Camera
-> serial          0001
-> bus info        usb-0000:00:14.0-6
-> hw revision     0x9601
-> driver version  6.6.56
-> 
-> Device topology
-> - entity 1: HP 5M Camera: HP 5M Camera (1 pad, 1 link)
->             type Node subtype V4L flags 1
->             device node name /dev/video0
->         pad0: Sink
->                 <- "Extension 8":1 [ENABLED,IMMUTABLE]
-> 
-> - entity 4: HP 5M Camera: HP 5M Camera (0 pad, 0 link)
->             type Node subtype V4L flags 0
->             device node name /dev/video1
-> 
-> - entity 8: Extension 8 (2 pads, 2 links, 0 routes)
->             type V4L2 subdev subtype Unknown flags 0
->         pad0: Sink
->                 <- "Extension 4":1 [ENABLED,IMMUTABLE]
->         pad1: Source
->                 -> "HP 5M Camera: HP 5M Camera":0 [ENABLED,IMMUTABLE]
-> 
-> - entity 11: Extension 4 (2 pads, 2 links, 0 routes)
->              type V4L2 subdev subtype Unknown flags 0
->         pad0: Sink
->                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
->         pad1: Source
->                 -> "Extension 8":0 [ENABLED,IMMUTABLE]
-> 
-> - entity 14: Processing 2 (2 pads, 2 links, 0 routes)
->              type V4L2 subdev subtype Unknown flags 0
->         pad0: Sink
->                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
->         pad1: Source
->                 -> "Extension 4":0 [ENABLED,IMMUTABLE]
-> 
-> - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
->              type V4L2 subdev subtype Sensor flags 0
->         pad0: Source
->                 -> "Processing 2":0 [ENABLED,IMMUTABLE]
-> 
-> - entity 19: GPIO (0 pad, 0 link, 0 routes)
->              type V4L2 subdev subtype Decoder flags 0
->              device node name /dev/v4l-subdev0
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
-> Changes in v2:
-> - Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
-> - Create uvc_gpio_cleanup and uvc_gpio_deinit
-> - Refactor quirk: do not disable irq
-> - Change define number for MEDIA_ENT_F_GPIO
-> - Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
-> 
-> ---
-> Ricardo Ribalda (5):
->       media: uvcvideo: Factor out gpio functions to its own file
->       Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
->       media: uvcvideo: Create ancillary link for GPIO subdevice
->       media: v4l2-core: Add new MEDIA_ENT_F_GPIO
->       media: uvcvideo: Use MEDIA_ENT_F_GPIO for the GPIO entity
-> 
-> Yunke Cao (1):
->       media: uvcvideo: Re-implement privacy GPIO as a separate subdevice
-> 
->  .../userspace-api/media/mediactl/media-types.rst   |   4 +
->  drivers/media/usb/uvc/Makefile                     |   3 +-
->  drivers/media/usb/uvc/uvc_ctrl.c                   |  40 +----
->  drivers/media/usb/uvc/uvc_driver.c                 | 123 +-------------
->  drivers/media/usb/uvc/uvc_entity.c                 |  20 ++-
->  drivers/media/usb/uvc/uvc_gpio.c                   | 187 +++++++++++++++++++++
->  drivers/media/usb/uvc/uvc_video.c                  |   4 +
->  drivers/media/usb/uvc/uvcvideo.h                   |  34 ++--
->  drivers/media/v4l2-core/v4l2-async.c               |   3 +-
->  include/uapi/linux/media.h                         |   1 +
->  10 files changed, 252 insertions(+), 167 deletions(-)
-> ---
-> base-commit: 4353256f5487e0c5c47e8ff764bf4f9e679fb525
-> change-id: 20241030-uvc-subdev-89f4467a00b5
-> 
-> Best regards,
+Tested on:
+
+commit:         da4373fb Merge tag 'thermal-6.12-rc7' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3De4580d62ee1893a=
+5
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D8689d10f1894eedf7=
+74d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debia=
+n) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1160fd879800=
+00
 
 
