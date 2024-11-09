@@ -1,131 +1,201 @@
-Return-Path: <linux-kernel+bounces-402874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A54F9C2DE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:54:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB2D9C2DEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DD5BB21A52
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBBC61C20D4C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB4C1487DC;
-	Sat,  9 Nov 2024 14:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346301990B7;
+	Sat,  9 Nov 2024 14:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/Gvg5bU"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkECfv34"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2020813DB99;
-	Sat,  9 Nov 2024 14:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B9613DB99;
+	Sat,  9 Nov 2024 14:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731164075; cv=none; b=ZfcHD/ek9t/BTzfqccDjrVu0x3HBVXhlU9j8oxU1wi6yaBImojlahkZzMW4h16CHuw6UQufJ2FzghOT0r8Bz06ub4LCTNMwjmtLo9WDjFBUh3qvhe+2xZdu5aMtJO6c8ny9051qaKnQtXEZVp6fHPSOzhnwq8XGO7l5qQgOdiMs=
+	t=1731164157; cv=none; b=AKZgl958wG7PtIpum93dlDKGtWv+mFr3fDv3gcJnzA6M2wRLkISRHUk2EEW5he0etThqp/KnpmoV7oquEy3ynS3s+SweOhtnkRbWpWktukvQO/NEWtN+d7K5nzW7rn3lsFbEISufM6OZgPHWgVYDGaTYXFYuHwps4f2DnosoATY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731164075; c=relaxed/simple;
-	bh=QtapQUuip7PB+oTuLA0bxtTki5RnTFJc9Ko4lVL5LfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=APbFuY7YzFGSBZd/mGWPJD1vWWco1K8JL1RJwP49A0XBP+F/w45OeTS9NnM3WQF7GTyxFjLxVkRf4q1CP7vz0Tjeo+5vVOH1Stv2TB0udMSUmUY1tL3vxmFs9iQcylEdTlld2oNAhcKh4zJ10OKSqezym35HwpDdDedeDy+Jrt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/Gvg5bU; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-720d01caa66so3022322b3a.2;
-        Sat, 09 Nov 2024 06:54:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731164073; x=1731768873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=is1/mgq9c4Z9LOcMYjNs4z5dNQ5YsJhO5dlvStbNqAc=;
-        b=C/Gvg5bU5lhwDeaiMlGdl/zXyRj3xzWLBH7Z1UFpTWAwuLuc5sLuzezsB3MBBnpKHc
-         F+xfsJm9+T3KY9enB+f6bJ/70JXsyMPscGLsz4ipqUFOBmopJdiXD7JESyq3g9A7rHSa
-         YfpoUMlAuHeGoxR+OZN0wkahX0sfhr/feo2DhrhTg56CU7n7uL9d25xIjupKuVmwL1Yk
-         1gNisx7sDbPV8DdorjKDdMT8LLNh1EA1TrG5cO1Gg/SAHpLtjpIPJB53AiXG+AsOVXSv
-         S8EmKcFf2GaS4fvNBnYcviCBpugLcCfclr4hgbelNOPlRzIITAJW4u20dRXmC5HCk+A6
-         J4lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731164073; x=1731768873;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=is1/mgq9c4Z9LOcMYjNs4z5dNQ5YsJhO5dlvStbNqAc=;
-        b=Er7aEtVB81Hf1R+fciVJjgiOgFBQHIgRiN8AM+ysDvQd/1kpd830jRbTAtVpqD53gM
-         351wFl/R5CespiT4jckfl9eQNvlxv92eYjRttX/D/inGYy1ElmFhME66rqCKPGnbWxr+
-         y475HexCM56cpaEvXDmzBdq8fB2j3BGqedq5SIXpeg72f4tr1zru4eqgkJAxHcMw6jGQ
-         ZVRNa6cNi6bnM/84RmXwTeNoVmKzDDe4jDQELrWv+GGNu1qti86XiNhNbSrMxlnEjDhh
-         4zpgah6XxI4pEZjpGEIPlZ1CQj88E/uTBXhhJEOipIRnph5/ApHKiU0sixFcXChAD4m+
-         JmTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCXwdWo9UqTnnY+hx6lixPNHiwk5ng+eMT3lU+PSOfVgZ1nkVxKTPdn0gfqUHkoUa0pkBXx63160uw8Q1d@vger.kernel.org, AJvYcCUodj5C0z7AIGfOBER++Aev6EoIsS2ZHWBHvo0hK1I/5+lt4f/wU0zRprbnwDy4OzcI4qzsYnAhVHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC7oU8W3resv4Pn9HDOm/csv8xPuj2re22QPZKAxJNFEZA49s1
-	GCYdW91/RxBu1y+nzklJcVVUqeb+uPVNQmyA/iq0Nq+pV22lv4vk
-X-Google-Smtp-Source: AGHT+IF7VlS3GuAUbU/2h9QERJwHw0ZR6DVNqan+aYi1R45giHq8T25magVRywrkPSBXUDulaT/GLA==
-X-Received: by 2002:a05:6a00:b4b:b0:71e:77e7:d60 with SMTP id d2e1a72fcca58-7241338acbcmr9004377b3a.23.1731164073332;
-        Sat, 09 Nov 2024 06:54:33 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a187e9sm5628223b3a.132.2024.11.09.06.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 06:54:32 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] iio: imu: lsm6dsx: Use i3cdev_to_dev to get device pointer
-Date: Sat,  9 Nov 2024 06:54:30 -0800
-Message-ID: <20241109145430.3702482-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731164157; c=relaxed/simple;
+	bh=eUwvcN8zGzUKSnVGrOb7jRjjOHokBZqw7qBdYJmmLB8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=f+1Qif4cSRSkgS5+0g0OAQ7RWpEpu1FWATWsdd9bo2ZeP37Yo1JeuOIqme6yWxBbcbPCuEhceGnFUwmP2o3aImstXRoI39y3G6nU7GxAQNomXOH4i5Wcw8hGHJV4HhCx30EDOmGqoJD2Ng5d+E3MwUrucg6J+UQ5olrgEQEcfHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NkECfv34; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43C5C4CECE;
+	Sat,  9 Nov 2024 14:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731164157;
+	bh=eUwvcN8zGzUKSnVGrOb7jRjjOHokBZqw7qBdYJmmLB8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NkECfv34cAC1JfcvfsKqsV/+G68HoaUfvbAWEE498nRm0Ly+YcByenX80hWlOWUe0
+	 R4Go9gA6mUsjSjja3jN3WRxbquwdwatwz0qujGya2BUYBfhO9B6OtpQmNx/JvSi57S
+	 ac3c6rrbpAtFzT3HQHWitWPp+4joGRsPnjlB1PThFmTEH2nbAm0Qx+ECY4xPWj76QM
+	 30DU6z3lSkB6scmBTIKWDA9qaD9xylxhvUAVueo55N6YEJH6SnH84visYQiWGkpgI7
+	 tzvEJDXkK077Wd/1ZfcEHpWSHlP4sSpJ1GOMEjEpj1LwSVI68638QTQLBpPsIuoWk8
+	 Z9KcelmJDH97A==
+Date: Sat, 9 Nov 2024 23:55:47 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
+ Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v18 11/17] fprobe: Rewrite fprobe on function-graph
+ tracer
+Message-Id: <20241109235547.238b54e4f13a4706532b39a4@kernel.org>
+In-Reply-To: <20241101152844.3a589594@gandalf.local.home>
+References: <172991731968.443985.4558065903004844780.stgit@devnote2>
+	<172991746318.443985.12713087979890519872.stgit@devnote2>
+	<20241101152844.3a589594@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-I3C client drivers should not include linux/i3c/master.h. Use
-i3cdev_to_dev() to get the device pointer from struct i3c_device
-to be able to avoid that include.
+On Fri, 1 Nov 2024 15:28:44 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Suggested-by: Jonathan Cameron <jic23@kernel.org>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> On Sat, 26 Oct 2024 13:37:43 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> 
+> > diff --git a/include/linux/fprobe.h b/include/linux/fprobe.h
+> > index ef609bcca0f9..686b30ce48b4 100644
+> > --- a/include/linux/fprobe.h
+> > +++ b/include/linux/fprobe.h
+> > @@ -5,10 +5,11 @@
+> >  
+> >  #include <linux/compiler.h>
+> >  #include <linux/ftrace.h>
+> > -#include <linux/rethook.h>
+> > +#include <linux/rcupdate.h>
+> > +#include <linux/refcount.h>
+> > +#include <linux/slab.h>
+> >  
+> >  struct fprobe;
+> > -
+> >  typedef int (*fprobe_entry_cb)(struct fprobe *fp, unsigned long entry_ip,
+> >  			       unsigned long ret_ip, struct ftrace_regs *regs,
+> >  			       void *entry_data);
+> > @@ -17,35 +18,57 @@ typedef void (*fprobe_exit_cb)(struct fprobe *fp, unsigned long entry_ip,
+> >  			       unsigned long ret_ip, struct ftrace_regs *regs,
+> >  			       void *entry_data);
+> >  
+> > +/**
+> > + * strcut fprobe_hlist_node - address based hash list node for fprobe.
+> 
+>       struct
+> 
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-index 3b0c8b19c448..207dcc0ad988 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_i3c.c
-@@ -9,7 +9,6 @@
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/i3c/device.h>
--#include <linux/i3c/master.h>
- #include <linux/slab.h>
- #include <linux/regmap.h>
- 
-@@ -30,15 +29,16 @@ static int st_lsm6dsx_i3c_probe(struct i3c_device *i3cdev)
- 	};
- 	const struct i3c_device_id *id = i3c_device_match_id(i3cdev,
- 							    st_lsm6dsx_i3c_ids);
-+	struct device *dev = i3cdev_to_dev(i3cdev);
- 	struct regmap *regmap;
- 
- 	regmap = devm_regmap_init_i3c(i3cdev, &st_lsm6dsx_i3c_regmap_config);
- 	if (IS_ERR(regmap)) {
--		dev_err(&i3cdev->dev, "Failed to register i3c regmap %ld\n", PTR_ERR(regmap));
-+		dev_err(dev, "Failed to register i3c regmap %ld\n", PTR_ERR(regmap));
- 		return PTR_ERR(regmap);
- 	}
- 
--	return st_lsm6dsx_probe(&i3cdev->dev, 0, (uintptr_t)id->data, regmap);
-+	return st_lsm6dsx_probe(dev, 0, (uintptr_t)id->data, regmap);
- }
- 
- static struct i3c_driver st_lsm6dsx_driver = {
+oops, thanks.
+
+> > + *
+> > + * @hlist: The hlist node for address search hash table.
+> > + * @addr: The address represented by this.
+> 
+>   What is "this" in the above?
+
+it should be `by this node.`
+
+> 
+> > + * @fp: The fprobe which owns this.
+> > + */
+> > +struct fprobe_hlist_node {
+> > +	struct hlist_node	hlist;
+> > +	unsigned long		addr;
+> > +	struct fprobe		*fp;
+> > +};
+> > +
+> > +/**
+> > + * struct fprobe_hlist - hash list nodes for fprobe.
+> > + *
+> > + * @hlist: The hlist node for existence checking hash table.
+> > + * @rcu: rcu_head for RCU deferred release.
+> > + * @fp: The fprobe which owns this fprobe_hlist.
+> > + * @size: The size of @array.
+> > + * @array: The fprobe_hlist_node for each address to probe.
+> > + */
+> > +struct fprobe_hlist {
+> > +	struct hlist_node		hlist;
+> > +	struct rcu_head			rcu;
+> > +	struct fprobe			*fp;
+> > +	int				size;
+> > +	struct fprobe_hlist_node	array[];
+> 
+> Should the above have __counted_by(size) ?
+
+Yes. Thanks!
+
+
+> 
+> -- Steve
+> 
+> > +};
+> > +
+> >  /**
+> >   * struct fprobe - ftrace based probe.
+> > - * @ops: The ftrace_ops.
+> > + *
+> >   * @nmissed: The counter for missing events.
+> >   * @flags: The status flag.
+> > - * @rethook: The rethook data structure. (internal data)
+> >   * @entry_data_size: The private data storage size.
+> > - * @nr_maxactive: The max number of active functions.
+> > + * @nr_maxactive: The max number of active functions. (*deprecated)
+> >   * @entry_handler: The callback function for function entry.
+> >   * @exit_handler: The callback function for function exit.
+> > + * @hlist_array: The fprobe_hlist for fprobe search from IP hash table.
+> >   */
+> >  struct fprobe {
+> > -#ifdef CONFIG_FUNCTION_TRACER
+> > -	/*
+> > -	 * If CONFIG_FUNCTION_TRACER is not set, CONFIG_FPROBE is disabled too.
+> > -	 * But user of fprobe may keep embedding the struct fprobe on their own
+> > -	 * code. To avoid build error, this will keep the fprobe data structure
+> > -	 * defined here, but remove ftrace_ops data structure.
+> > -	 */
+> > -	struct ftrace_ops	ops;
+> > -#endif
+> >  	unsigned long		nmissed;
+> >  	unsigned int		flags;
+> > -	struct rethook		*rethook;
+> >  	size_t			entry_data_size;
+> >  	int			nr_maxactive;
+> >  
+> >  	fprobe_entry_cb entry_handler;
+> >  	fprobe_exit_cb  exit_handler;
+> > +
+> > +	struct fprobe_hlist	*hlist_array;
+> >  };
+> >  
+
+
 -- 
-2.45.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
