@@ -1,52 +1,59 @@
-Return-Path: <linux-kernel+bounces-402958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC89C2EFA
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:53:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A378B9C2EFD
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:55:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04814282237
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F441C20B69
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0B119F110;
-	Sat,  9 Nov 2024 17:53:01 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E35E19F127;
+	Sat,  9 Nov 2024 17:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qayYb0yW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542C8145A16;
-	Sat,  9 Nov 2024 17:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8471E145A16;
+	Sat,  9 Nov 2024 17:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731174780; cv=none; b=fOCCshMeGhZAPqJmusEWXll5D9Lr9AddpgRlaOXaJeMLzIlJuRBd2H32bdSEwx2zPR/X5B5o6jAJXSbZhsfAcuPuhJWZs1aavqvMOOG6IgHjy4OIcQ1d1cp6fFdlJO20Z2Du8TnNzA4W9U+7sLaWWWLS3r4g/5LfHyvD7ZWIeH0=
+	t=1731174927; cv=none; b=bQdqLI4wU+bUJplSSlb+nMVrHeEQDv30mm8DENMxrksLc7W1kmbBtUwbAnHESN/lwyjcNc/ErNR4bzsrC+FSQIcNjaoEuFets8jNi8VU57fbe/nEUFHDiQSzAw72NS3QH3UIUD6Q+fGF+4r2Uam3xIjfxwWqUBQLmgxgjgzH9sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731174780; c=relaxed/simple;
-	bh=8XAejHONwBv8Djr5AYLz5T89/opOHAwxD+hHigv5kIQ=;
+	s=arc-20240116; t=1731174927; c=relaxed/simple;
+	bh=LuDagnwcF8ruqHKajr1QrxaWxF10mYA5s/koSh5vnGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtyLHHigV3Q66dDK8WIkKl1Tmwrkep29Tl3PwK29vqD2klLf0ik3UH+6LoZ9UfLcDr6gRvm21IeV1Qf4uIM+xbjTVRo3HWmREsoYaXzxSQ8zatpMd75G2BnryVYA7T6sbOiNmNWbDwEsKF2ScKTfhCdsu67OtI3J0r5vzeTwRCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A8DF8300000A1;
-	Sat,  9 Nov 2024 18:52:47 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 8234018F614; Sat,  9 Nov 2024 18:52:47 +0100 (CET)
-Date: Sat, 9 Nov 2024 18:52:47 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, bhelgaas@google.com,
-	tony.luck@intel.com, bp@alien8.de
-Subject: Re: [RFC PATCH] PCI: pciehp: Generate a RAS tracepoint for hotplug
- event
-Message-ID: <Zy-hbwLohwf-_hCN@wunner.de>
-References: <20241108030939.75354-1-xueshuai@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aY4z9mzwm10N39srDLWZ7SIOV2FBsSOYo+fPeBglFzzWT27KnuNXgiix15wjobkelEU4MZgqqWH+dUxsqIbo61OMPHiVtlixbGyz8CVgnoHRCsLdp/Un15BVr84jKMGxl+0/wlzJMJAF+R2vFqB+b0RiB7OQg3tYoaVbiXteH44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qayYb0yW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dg/Y91hWQ/01NudkE6mrKHpZpP+lmx16+sK++8d2Ag8=; b=qayYb0yWAetRsmPPBGarjADAbd
+	hbmIFeqG7kAxZ7vGwgJOMzgLHn6C6HJV7d9aZJROxeLQs0R0YTPoST6IR8leHhE+2R3NAa2cnGSt1
+	uJMr2kh9Fv8oERkUMiTX7QnTOwCKLGOvFP1k198QQuF+bxj8IObu+MxnJDvzS4gBX7TI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t9pfv-00Civ9-PD; Sat, 09 Nov 2024 18:55:07 +0100
+Date: Sat, 9 Nov 2024 18:55:07 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sanman Pradhan <sanman.p211993@gmail.com>
+Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kuba@kernel.org,
+	kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+	mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
+	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev,
+	jdamato@fastly.com, sdf@fomichev.me, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] eth: fbnic: Add PCIe hardware statistics
+Message-ID: <addc1303-c485-41dd-b31c-531b334b1d82@lunn.ch>
+References: <20241108204640.3165724-1-sanman.p211993@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,50 +62,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108030939.75354-1-xueshuai@linux.alibaba.com>
+In-Reply-To: <20241108204640.3165724-1-sanman.p211993@gmail.com>
 
-On Fri, Nov 08, 2024 at 11:09:39AM +0800, Shuai Xue wrote:
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -19,6 +19,7 @@
->  #include <linux/types.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/pci.h>
-> +#include <ras/ras_event.h>
->  #include "pciehp.h"
+> +static void fbnic_hw_stat_rst64(struct fbnic_dev *fbd, u32 reg, s32 offset,
+> +				struct fbnic_stat_counter *stat)
+> +{
+> +	/* Record initial counter values and compute deltas from there to ensure
+> +	 * stats start at 0 after reboot/reset. This avoids exposing absolute
+> +	 * hardware counter values to userspace.
 
-Hm, why does the TRACE_EVENT() definition have to live in ras_event.h?
-Why not, say, in pciehp.h?
+Now you are in debugfs, this convention from ethtool -S no longer
+applies. You could simply this code a lot by exposing the absolute
+values.
 
-
-> @@ -245,6 +246,8 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
->  		if (events & PCI_EXP_SLTSTA_PDC)
->  			ctrl_info(ctrl, "Slot(%s): Card not present\n",
->  				  slot_name(ctrl));
-> +		trace_pciehp_event(dev_name(&ctrl->pcie->port->dev),
-> +				   slot_name(ctrl), ON_STATE, events);
->  		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
->  		break;
->  	default:
-
-I'd suggest using pci_name() instead of dev_name() as it's a little shorter.
-
-Passing ON_STATE here isn't always accurate because there's
-"case BLINKINGOFF_STATE" with a fallthrough preceding the
-above code block.
-
-Wouldn't it be more readable to just log the event that occured
-as a string, e.g. "Surprise Removal" (and "Insertion" or "Hot Add"
-for the other trace event you're introducing) instead of the state?
-
-Otherwise you see "ON_STATE" in the log but that's actually the
-*old* value so you have to mentally convert this to "previously ON,
-so now must be transitioning to OFF".
-
-I'm fine with adding trace points to pciehp, I just want to make sure
-we do it in a way that's easy to parse for admins.
-
-Thanks,
-
-Lukas
+	Andrew
 
