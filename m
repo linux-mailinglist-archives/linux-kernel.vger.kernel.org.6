@@ -1,92 +1,109 @@
-Return-Path: <linux-kernel+bounces-402733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491E39C2B47
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:31:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85FAF9C2B4A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 717811C20F87
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0271C20FAB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F8B145A19;
-	Sat,  9 Nov 2024 08:31:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33620145A07;
+	Sat,  9 Nov 2024 08:36:52 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77810647
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5446647;
+	Sat,  9 Nov 2024 08:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731141064; cv=none; b=FlzgNliVKGHuwDaqNVIF2fNQcJHAM6XZEop/6dpAcTVjZyDmYw0blm0417iXXhEj/Y59vR5nCN+Rgx5FVoKkL5GQi9o+PM00agTDKt3XKacUjCZ15IJEfzgTGKiFpTzSpZjZxhJS+DCa2dZCVdGfHqgT0npSLU5FW0pZ2TTZPpY=
+	t=1731141411; cv=none; b=ZyJ5b/gMvuto5M/oPHHMZ2Bev/ZhqJo/Egc9X2YPPKNfLXT94scSEByaDc7zUAW+XMG/4Jb3nqmR+QYmmvwPKwQDRdX0pKDEaLUCZ9R50r5u01uU8K5JE8guNhM5eZsdm9vvCATjUxFC/2TtiCXUYeVZMy6HNSZHAJTOj3EdnoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731141064; c=relaxed/simple;
-	bh=1D1xovnM0EMAFcuSF0pmt+0U7XeGSOPxADpUIgdsIQg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HAQe85jFWUhbWRNHPfwGIMRqrwzCDZsb7Opehh6uGIjQumfF6Qk+bznMdQfC03mgx066wiC5NVd3KMGDwXkK2ScCWQ999oUh71WaDR2VBnN4QINXYI4ykfhtJZrwf54A5R5QyE+P6jZTZ7kmNrN05wwG3Fb+Ced0CBH8HCDqQSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so36631055ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 00:31:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731141062; x=1731745862;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OYVFRLpr35Jnu0CNYH9eEEbObvwHw3Y0l7EYQ4KbDpQ=;
-        b=GGn1p+dUBxwF+5j3X7ipQSPZzXxTUhAk197QBS9NV6EhyBzRSMmiIpgRcl1a/ogkZW
-         kvBzpQeiWTz/4WuKGvOqrwMrOw25OEASIOFOKBIghnXD99rOU9DO2fRZm+C7gA7koXdG
-         Knc4VNKy2XFpZv/LAhpu1TtiJJtPbTZ7og4diMo8kxYGcEjqqrBBAmR7CwSMwGNCn1bE
-         5oghBH2jblpgv9UqRiFopi7k7u9IrbKDfbrzr0qG9ZgNGF8BFbIwwVCi/MH/2nW4aNbC
-         0cEoRAS9f17E6bIsF9ZqUN8FEtmL/gmyYwjbS+4HPSPGJ9ekR1XePprzwYi19/4VffZR
-         vkmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKdH7o3Jns/JTd4nwCedg6Bg016byNrQoJgsp1xoY6kEtSgInx0xYvFMnP7R/mHBFtxErygAs24+xHrG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuIhv54jXSAQjQH6WyJzdsq3CMeAabfz/SCJlIhSKIxsAWHcbE
-	YVR/nCoYJyzjnB8vSEAQfYzA/kLaxtvSoLgpzzkWvZaYY0nI7UwsIyO37demilaH41pVkLnEgil
-	3i1YXxTRU1QyOkFoZ+B6QhdbND0rE+OQN2TOiaCer4Maah0C6OMzJPBs=
-X-Google-Smtp-Source: AGHT+IGumaAxr12HSrk3WMZeIvTdg85QNwAfY38l9VuHuXPLH3cBOYaCgbCt/TfwXfpZvNPy4DGVNbYZjn1IQ9TcG/OTI+wS0IlM
+	s=arc-20240116; t=1731141411; c=relaxed/simple;
+	bh=eGFnQi8ov8FaGWP9u1rV0kcwVoLUi1BQQadvmUjlQQ4=;
+	h=Subject:From:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=eZrEHpAdJcciBE79NwdS4LwHZ0fwkzFj37yLsWUw1ALZZmQ89dBiCMuW+Szj3PJBh/3vj11xiNS18/k/Gj50aS2HMd8jPTCtQz3tU6UDWu8KKjOqFx1YlYdArIGlySaE1OY7KQqXG35yobhdapI4vI/bllQIfXthVhgkJ77KNrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Xlq132SPbz1ypMb;
+	Sat,  9 Nov 2024 16:36:55 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9F52314010C;
+	Sat,  9 Nov 2024 16:36:44 +0800 (CST)
+Received: from [10.174.178.247] (10.174.178.247) by
+ dggpemf500002.china.huawei.com (7.185.36.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 9 Nov 2024 16:36:44 +0800
+Subject: Re: [PATCH] acpi/arm64: remove unnecessary cast
+From: Hanjun Guo <guohanjun@huawei.com>
+To: Min-Hua Chen <minhuadotchen@gmail.com>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+References: <20240917233827.73167-1-minhuadotchen@gmail.com>
+ <e7632dd4-6009-53f3-e61a-ccb15d9f88f3@huawei.com>
+Message-ID: <713ce05d-2d14-fe6b-c3f8-791fff4e50f2@huawei.com>
+Date: Sat, 9 Nov 2024 16:36:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1706:b0:3a3:b4ec:b400 with SMTP id
- e9e14a558f8ab-3a6f1a48d05mr63137605ab.17.1731141062618; Sat, 09 Nov 2024
- 00:31:02 -0800 (PST)
-Date: Sat, 09 Nov 2024 00:31:02 -0800
-In-Reply-To: <0000000000001a94c3061747fabd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <672f1dc6.050a0220.138bd5.003b.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_mark_rec_free (2)
-From: syzbot <syzbot+016b09736213e65d106e@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, nathan@kernel.org, 
-	ndesaulniers@google.com, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com, trix@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e7632dd4-6009-53f3-e61a-ccb15d9f88f3@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-syzbot suspects this issue was fixed by commit:
+On 2024/10/19 14:47, Hanjun Guo wrote:
+> On 2024/9/18 7:38, Min-Hua Chen wrote:
+>> DEFINE_RES_IRQ returns struct resource type, so it is
+>> unnecessary to cast it to struct resource.
+>>
+>> Remove the unnecessary cast to fix the following sparse warnings:
+>>
+>> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast to non-scalar
+>> drivers/acpi/arm64/gtdt.c:355:19: sparse: warning: cast from non-scalar
+>>
+>> No functional changes intended.
+>>
+>> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+>> ---
+>>   drivers/acpi/arm64/gtdt.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+>> index c0e77c1c8e09..24bd479de91f 100644
+>> --- a/drivers/acpi/arm64/gtdt.c
+>> +++ b/drivers/acpi/arm64/gtdt.c
+>> @@ -352,7 +352,7 @@ static int __init gtdt_import_sbsa_gwdt(struct 
+>> acpi_gtdt_watchdog *wd,
+>>       }
+>>       irq = map_gt_gsi(wd->timer_interrupt, wd->timer_flags);
+>> -    res[2] = (struct resource)DEFINE_RES_IRQ(irq);
+>> +    res[2] = DEFINE_RES_IRQ(irq);
+>>       if (irq <= 0) {
+>>           pr_warn("failed to map the Watchdog interrupt.\n");
+>>           nr_res--;
+>>
+> 
+> It's a minor issue, but I think it deserves a patch to make
+> the code cleaner,
+> 
+> Acked-by: Hanjun Guo <guohanjun@huawei.com>
 
-commit 5b2db723455a89dc96743d34d8bdaa23a402db2f
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Mon Aug 19 13:26:22 2024 +0000
+Lorenzo, Sudeep, please take a look at this patch.
 
-    fs/ntfs3: Fix warning possible deadlock in ntfs_set_state
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15a67d87980000
-start commit:   ea5f6ad9ad96 Merge tag 'platform-drivers-x86-v6.10-1' of g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f59c50304274d557
-dashboard link: https://syzkaller.appspot.com/bug?extid=016b09736213e65d106e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133fa268980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142cb182980000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs/ntfs3: Fix warning possible deadlock in ntfs_set_state
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks
+Hanjun
 
