@@ -1,175 +1,403 @@
-Return-Path: <linux-kernel+bounces-402730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7C69C2B15
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:03:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B3699C2B3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 09:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B8F1C2104A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:03:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF095B21F2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 08:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841A4141987;
-	Sat,  9 Nov 2024 08:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE39145A05;
+	Sat,  9 Nov 2024 08:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZoAwuPib"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pqgeMy87"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0AE1A55
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E868013B58F
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 08:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731139425; cv=none; b=KZ7l7/bCzas8EkOYhedG4zgFqfrKBjvZ795a4S+uTRSMiLSAtlj6olMZQt/JvmjL5kLknIEVpquyZGgFnTz52oU4YBXa7Dvui8XOwMZYp8+rkFy+oYT0Ac+lpZq04C+Ok/+zzStxHNcAv7lkqnuV/ZkQnM71x0N4J89I75dduKY=
+	t=1731140327; cv=none; b=alDgXqHl2vYQBvuFD2G0VBocwfD0YaWp0MC0eCNVHxhzNZwhV3uHAmWetTMk+4gd1Gaj9f7IC8DyVK0Ttp4OHfZhovY3EQw3VGNyrAzt0CHLYVvRrwGXLEc5Ig2ETZE2wg4vmnIDLht3B+SoCj65beqUiHUbdn/G/7xVMrhzWus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731139425; c=relaxed/simple;
-	bh=GeI0fLaLpvtlK4dSf2XgYceyeXUb/s5dtmXKiEb35vw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QejovhT9AF6egCxNUyCPjFunPoc+lGWE6JbIGI3CruT11lK9wXMhhCoIfbfSTNyhiOQEg8U8g8hvJU+hosDRr8DaiipLQ5KkZk2ESgUNT1Lm2L2S9ICYKASV1g/sGSbLSuxpasU2DO5QA0T2ZXOEvNu1nB8nRMjWJqgAKR/NaIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZoAwuPib; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731139422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=81ghy7S7dc5f/N+uypQLKpiw/fytQsX5RCCqjwiTGGk=;
-	b=ZoAwuPib8xyg3MuTeit5VKreX4xYDB86Ztr0BJ0X27iRSe4CWhj5uhbbulTtr7LqCiRmuj
-	ADptI6W7eH5hnbpPXqcZNuB3DaBmej6Pt8LLfCA9DAaPbwnaiAUsHs5z9cqVzIKeYUzy4k
-	8vCCVRIfrbKuzhz/c2gBJSxSjrPxbqU=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-179-PxA0EePHO6m6U3YDgQHTTw-1; Sat, 09 Nov 2024 03:03:41 -0500
-X-MC-Unique: PxA0EePHO6m6U3YDgQHTTw-1
-X-Mimecast-MFC-AGG-ID: PxA0EePHO6m6U3YDgQHTTw
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d662dd3c8so1739235f8f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 00:03:40 -0800 (PST)
+	s=arc-20240116; t=1731140327; c=relaxed/simple;
+	bh=j/F70TzKeBKyIt+T3j4UBishTMF2Mz4nfwN8GkI4328=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fIUX7W6NKzUkwyx/Mw9TDbhPDJunMOb0ZyxdPKu8uOkAUsmSI+j6YGJVhEwftGWD/Ywg9BMMRto9wx2cQgAgiQxhOcjN0t7IfiAWGzX9d69QrjPiYQB48xMPLWjGejuQ83E/1arQax4ZLqIhjwLe5Lv9eHQtfx6DuZjqcu8/PsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pqgeMy87; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b158542592so182795585a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 00:18:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731140323; x=1731745123; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfmLn1P5YEd5P8IFrILpCaHNzRVW0Fz8qV3aYtfYsSg=;
+        b=pqgeMy87zsvCmRt7hE9eVJIWkegYOzqlDpKbRQNsphFgsAFwLV/4y7RT9woqa+Oo9Z
+         txZE3uVkxQ6CW3g6hW687WwzLGuE65bPCDPgzqlavTDn8CmSHzmelgSj+LyWLOimJXEZ
+         YsfApd3lrXmpxJZf57+cM0rcTcXw9cQnYcfxPGbje/W43KpY3W7LZliLutkb3sz22kBs
+         MR8ogeAHaZ5Br90oLbJl1ni8nQJFh0zVssdg0eKGmTG2Q9wXGtELm4VhVWdNc+tsxOVh
+         aMbgItfCZQ+ml5egPRRiFnbCfuooEuHWM3g/Cw65n9KftlF9tt+zOw/OjVBJjgXUKAMk
+         0OPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731139420; x=1731744220;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731140323; x=1731745123;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=81ghy7S7dc5f/N+uypQLKpiw/fytQsX5RCCqjwiTGGk=;
-        b=BRsCHpS8MI5W9AEN+llOZf6a50dr1FZOaSPU8Ist6IgEjJC++sXuYCrwliCLtRs9Ms
-         ZrPZTrlGUHlx5PJsS1Ii9UxV9DHDT+TXn9XiTBNHu9xVMG+Fa+Oi11+Oz4tb0dzhgBBF
-         kmhQzeT7lVUC+C9bGIt+8LlqtqOvLRl4MSrJlQkRZRlyEZ5COgqojbjbRiSuvEa+wuXz
-         kVPu0zBZljzGiHyawfPBHyYMIfqbSWXXvkCc5QKpyLyg9bsVxiMcyrZb+vD25GLpZmxj
-         sGr9Zed3VJ267zkei4j59gKBzgtDuPcMEAz1jGHLjeT7TTHW0+w5HneqqfJBEC4UkNdR
-         xw+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZvg/PSfTV4R+XILr1tzCPv7iflPmGi1T8K6e9pPdOuL5Zz4GFe8fI007wj8NSy1u6o4kBsqnG/928Y3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGpyA8bkKd3qBprXuLknc1+xnvscgN1WDcmmGh7y+qjwRmZpNc
-	s5/RESTlErd8+vEt3whN9xwUhF0TL82mnKOZpFGNlN4wgV2dBM5kAXjmUpB1mPfltPk5mim+8hL
-	TgGsekBvoQHTtr+f9iaA3bF0wtjoAkLzGIrlVzUQnrkk4zD9S8vCorZl2o60q+Q==
-X-Received: by 2002:a5d:64e5:0:b0:37d:41cd:ba4e with SMTP id ffacd0b85a97d-381f1852777mr4965968f8f.48.1731139419856;
-        Sat, 09 Nov 2024 00:03:39 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH8S7g8siMD06Jm9yyDKzjNGFVN6mNFTW8PqUM3PNN28/3uaOERCrz4N5w754+99qs60tKorg==
-X-Received: by 2002:a5d:64e5:0:b0:37d:41cd:ba4e with SMTP id ffacd0b85a97d-381f1852777mr4965934f8f.48.1731139419457;
-        Sat, 09 Nov 2024 00:03:39 -0800 (PST)
-Received: from [192.168.10.47] ([151.49.84.243])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432b05673d0sm95925885e9.25.2024.11.09.00.03.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 00:03:38 -0800 (PST)
-Message-ID: <54f44f6a-f504-4b56-a70f-cf96720ff1b8@redhat.com>
-Date: Sat, 9 Nov 2024 09:03:36 +0100
+        bh=gfmLn1P5YEd5P8IFrILpCaHNzRVW0Fz8qV3aYtfYsSg=;
+        b=pnldjd+7NZksRrZ7jEQjlJvc01bOyXij4/J+PaGOmMp1zA3/822XtfkGw5GRDZCTLH
+         fDXnHChdRNtRb0YQM3ulPCfQixLwrZaBRkEGd9bmdaDo2ShJLKs3RBQTci2JG0NF0/HQ
+         yWR8YZuWkq6a2WoUxfaXet5shJxQPK1TOw4ZUFr+VtXLU2Y8SiT0Jwj4PrA4pKjQksre
+         xIMjoyQIDnQRzaGHl0n3oK6Gk/jcObDpzL60xG0Iy1K4ctw8iLDG5JHcryluKvyaSiDW
+         5AagOYD472iFsCRDwIihQwWQN1jp5KGd+o1cvFm6aOa5KNGn6+Qdt0wcCpuPWcB5In/C
+         qmWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZUhh+qI4nVxf6wmUrSr9h8pw+4tyF9i+Nr/p5xg0j7g2AVo474uq8/ehaujqVL67MhQYieZWeZu88aCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqWWoOpqiZh+cxhfOSd1kYgG5gCqChhzncc5u8xMj6dNbNdb0p
+	WWq2wZj1bryO3UkCjpBT4ST3r80+pFRw+pytNT1hZFO8uADk40ghYxcJTmmVjh28gT70h280LpO
+	33t/ragU4aPRgeOKSKyOROeBX3i0VRECz2xmd
+X-Google-Smtp-Source: AGHT+IGlekRWmioZ7Ds1670XPM49xspw72/W1vNO2dK8ZpyRZfp3fiEkDXIpYIY+1uKn/dJdYhYDQp6tVGCgGwsIHJ0=
+X-Received: by 2002:a05:6214:328d:b0:6cc:378f:f7fb with SMTP id
+ 6a1803df08f44-6d39e1a5e82mr66951016d6.35.1731140322644; Sat, 09 Nov 2024
+ 00:18:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM/x86: don't use a literal 1 instead of RET_PF_RETRY
-To: Sean Christopherson <seanjc@google.com>
-Cc: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
- x86@kernel.org, kvm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>
-References: <20241108161312.28365-1-jgross@suse.com>
- <20241108171304.377047-1-pbonzini@redhat.com> <Zy5b06JNYZFi871K@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <Zy5b06JNYZFi871K@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241101064505.3820737-1-davidgow@google.com> <20241101064505.3820737-2-davidgow@google.com>
+ <ZyUUGNywoADngOwM@Boquns-Mac-mini.local>
+In-Reply-To: <ZyUUGNywoADngOwM@Boquns-Mac-mini.local>
+From: David Gow <davidgow@google.com>
+Date: Sat, 9 Nov 2024 16:18:28 +0800
+Message-ID: <CABVgOSmAj0hwVF0cKmzK_wS96Q4hgbe0t5L2dHFpcZpqrHev4Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] rust: kunit: add KUnit case and suite macros
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Benno Lossin <benno.lossin@proton.me>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Matt Gilbride <mattgilbride@google.com>, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000004997a062676845b"
 
-On 11/8/24 19:44, Sean Christopherson wrote:
-> On Fri, Nov 08, 2024, Paolo Bonzini wrote:
->> Queued, thanks.
-> 
-> Noooo!  Can you un-queue?
+--00000000000004997a062676845b
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I hadn't even pushed it to kvm/queue.  I applied it out of a whim 
-but then realized that it wasn't really -rc7 material.
+On Sat, 2 Nov 2024 at 01:47, Boqun Feng <boqun.feng@gmail.com> wrote:
+>
+> On Fri, Nov 01, 2024 at 02:45:00PM +0800, David Gow wrote:
+> > From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> >
+> > Add a couple of Rust const functions and macros to allow to develop
+> > KUnit tests without relying on generated C code:
+> >
+> >  - The `kunit_unsafe_test_suite!` Rust macro is similar to the
+> >    `kunit_test_suite` C macro. It requires a NULL-terminated array of
+> >    test cases (see below).
+> >  - The `kunit_case` Rust function is similar to the `KUNIT_CASE` C macr=
+o.
+> >    It generates as case from the name and function.
+> >  - The `kunit_case_null` Rust function generates a NULL test case, whic=
+h
+> >    is to be used as delimiter in `kunit_test_suite!`.
+> >
+> > While these functions and macros can be used on their own, a future
+> > patch will introduce another macro to create KUnit tests using a
+> > user-space like syntax.
+> >
+> > Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+> > Co-developed-by: Matt Gilbride <mattgilbride@google.com>
+> > Signed-off-by: Matt Gilbride <mattgilbride@google.com>
+> > Co-developed-by: David Gow <davidgow@google.com>
+> > Signed-off-by: David Gow <davidgow@google.com>
+> > ---
+> >
+> > Changes since v3:
+> > https://lore.kernel.org/linux-kselftest/20241030045719.3085147-4-davidg=
+ow@google.com/
+> > - The kunit_unsafe_test_suite!() macro now panic!s if the suite name is
+> >   too long, triggering a compile error. (Thanks, Alice!)
+> >
+> > Changes since v2:
+> > https://lore.kernel.org/linux-kselftest/20241029092422.2884505-2-davidg=
+ow@google.com/
+> > - The kunit_unsafe_test_suite!() macro will truncate the name of the
+> >   suite if it is too long. (Thanks Alice!)
+> > - We no longer needlessly use UnsafeCell<> in
+> >   kunit_unsafe_test_suite!(). (Thanks Alice!)
+> >
+> > Changes since v1:
+> > https://lore.kernel.org/lkml/20230720-rustbind-v1-1-c80db349e3b5@google=
+.com/
+> > - Rebase on top of rust-next
+> > - As a result, KUnit attributes are new set. These are hardcoded to the
+> >   defaults of "normal" speed and no module name.
+> > - Split the kunit_case!() macro into two const functions, kunit_case()
+> >   and kunit_case_null() (for the NULL terminator).
+> >
+> > ---
+> >  rust/kernel/kunit.rs | 112 +++++++++++++++++++++++++++++++++++++++++++
+> >  rust/kernel/lib.rs   |   1 +
+> >  2 files changed, 113 insertions(+)
+> >
+> > diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> > index 824da0e9738a..85bc1faff0d5 100644
+> > --- a/rust/kernel/kunit.rs
+> > +++ b/rust/kernel/kunit.rs
+> > @@ -161,3 +161,115 @@ macro_rules! kunit_assert_eq {
+> >          $crate::kunit_assert!($name, $file, $diff, $left =3D=3D $right=
+);
+> >      }};
+> >  }
+> > +
+> > +/// Represents an individual test case.
+> > +///
+> > +/// The test case should have the signature
+> > +/// `unsafe extern "C" fn test_case(test: *mut crate::bindings::kunit)=
+`.
+> > +///
+> > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated lis=
+t of test cases.
+> > +/// Use `kunit_case_null` to generate such a delimeter.
+> > +const fn kunit_case(name: &'static kernel::str::CStr, run_case: unsafe=
+ extern "C" fn(*mut kernel::bindings::kunit)) -> kernel::bindings::kunit_ca=
+se {
+> > +    kernel::bindings::kunit_case {
+> > +        run_case: Some(run_case),
+> > +        name: name.as_char_ptr(),
+> > +        attr: kernel::bindings::kunit_attributes {
+> > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
+> > +        },
+> > +        generate_params: None,
+> > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+> > +        module_name: core::ptr::null_mut(),
+> > +        log: core::ptr::null_mut(),
+> > +    }
+> > +}
+> > +
+> > +/// Represents the NULL test case delimiter.
+> > +///
+> > +/// The `kunit_unsafe_test_suite!` macro expects a NULL-terminated lis=
+t of test cases. This
+> > +/// function retuns such a delimiter.
+> > +const fn kunit_case_null() -> kernel::bindings::kunit_case {
+> > +    kernel::bindings::kunit_case {
+> > +        run_case: None,
+> > +        name: core::ptr::null_mut(),
+> > +        generate_params: None,
+> > +        attr: kernel::bindings::kunit_attributes {
+> > +            speed: kernel::bindings::kunit_speed_KUNIT_SPEED_NORMAL,
+> > +        },
+> > +        status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+> > +        module_name: core::ptr::null_mut(),
+> > +        log: core::ptr::null_mut(),
+> > +    }
+> > +}
+> > +
+> > +
+> > +/// Registers a KUnit test suite.
+> > +///
+> > +/// # Safety
+> > +///
+> > +/// `test_cases` must be a NULL terminated array of test cases.
+> > +///
+> > +/// # Examples
+> > +///
+> > +/// ```ignore
+> > +/// unsafe extern "C" fn test_fn(_test: *mut crate::bindings::kunit) {
+> > +///     let actual =3D 1 + 1;
+> > +///     let expected =3D 2;
+> > +///     assert_eq!(actual, expected);
+> > +/// }
+> > +///
+> > +/// static mut KUNIT_TEST_CASE: crate::bindings::kunit_case =3D crate:=
+:kunit_case(name, test_fn);
+> > +/// static mut KUNIT_NULL_CASE: crate::bindings::kunit_case =3D crate:=
+:kunit_case_null();
+> > +/// static mut KUNIT_TEST_CASES: &mut[crate::bindings::kunit_case] =3D=
+ unsafe {
+> > +///     &mut[KUNIT_TEST_CASE, KUNIT_NULL_CASE]
+> > +/// };
+> > +/// crate::kunit_unsafe_test_suite!(suite_name, KUNIT_TEST_CASES);
+> > +/// ```
+> > +#[macro_export]
+> > +macro_rules! kunit_unsafe_test_suite {
+> > +    ($name:ident, $test_cases:ident) =3D> {
+> > +        const _: () =3D {
+> > +            static KUNIT_TEST_SUITE_NAME: [i8; 256] =3D {
+> > +                let name_u8 =3D core::stringify!($name).as_bytes();
+> > +                let mut ret =3D [0; 256];
+> > +
+> > +                if name_u8.len() > 255 {
+> > +                    panic!(concat!("The test suite name `", core::stri=
+ngify!($name), "` exceeds the maximum length of 255 bytes."));
+> > +                }
+> > +
+> > +                let mut i =3D 0;
+> > +                while i < name_u8.len() {
+> > +                    ret[i] =3D name_u8[i] as i8;
+> > +                    i +=3D 1;
+> > +                }
+> > +
+> > +                ret
+> > +            };
+> > +
+> > +            static mut KUNIT_TEST_SUITE: $crate::bindings::kunit_suite=
+ =3D
+> > +                $crate::bindings::kunit_suite {
+> > +                    name: KUNIT_TEST_SUITE_NAME,
+> > +                    // SAFETY: User is expected to pass a correct `tes=
+t_cases`, hence this macro
+> > +                    // named 'unsafe'.
+> > +                    test_cases: unsafe { $test_cases.as_mut_ptr() },
+> > +                    suite_init: None,
+> > +                    suite_exit: None,
+> > +                    init: None,
+> > +                    exit: None,
+> > +                    attr: $crate::bindings::kunit_attributes {
+> > +                        speed: $crate::bindings::kunit_speed_KUNIT_SPE=
+ED_NORMAL,
+> > +                    },
+> > +                    status_comment: [0; 256usize],
+> > +                    debugfs: core::ptr::null_mut(),
+> > +                    log: core::ptr::null_mut(),
+> > +                    suite_init_err: 0,
+> > +                    is_init: false,
+> > +                };
+> > +
+> > +            #[used]
+> > +            #[link_section =3D ".kunit_test_suites"]
+> > +            static mut KUNIT_TEST_SUITE_ENTRY: *const $crate::bindings=
+::kunit_suite =3D
+> > +                // SAFETY: `KUNIT_TEST_SUITE` is static.
+> > +                unsafe { core::ptr::addr_of_mut!(KUNIT_TEST_SUITE) };
+>
+> FYI, `addr_of` and `addr_of_mut` is safe now on statics since 1.82:
+>
+>         https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-add=
+ressing-unsafe-statics
+>
+> We need a `#[allow(unused_unsafe)]` here to avoid the unused unsafe
+> warning.
+>
 
-> The return from kvm_mmu_page_fault() is NOT RET_PF_xxx, it's KVM outer 0/1/-errno.
-> I.e. '1' is saying "resume the guest", it has *nothing* to do with RET_PF_RETRY.
-> E.g. that path also handles RET_PF_FIXED, RET_PF_SPURIOUS, etc.
+I've not been able to work out how to fix this: adding
+"#![allow(unused_unsafe)]" to the unsafe block here triggers another
+error:
+ERROR:root:error[E0658]: attributes on expressions are experimental
 
-Gah, I even checked the function and was messed up by the other "return 
-RET_PF_RETRY".
+Is there somewhere else we can put the attribute to support this
+without having to either disable the warning, or use the experimental
+feature globally?
 
-If you add X86EMUL_* to the mix, it's even worse.  I had to read this 
-three times to understand that it was *not* returning X86EMUL_CONTINUE 
-by mistake.  Can I haz strongly-typed enums like in C++?...
+-- David
 
-         r = kvm_check_emulate_insn(vcpu, emulation_type, insn, insn_len);
-         if (r != X86EMUL_CONTINUE) {
-		...
-         }
+--00000000000004997a062676845b
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-         if (!(emulation_type & EMULTYPE_NO_DECODE)) {
-                 kvm_clear_exception_queue(vcpu);
-                 if (kvm_vcpu_check_code_breakpoint(vcpu, 
-emulation_type, &r))
-                         return r;
-		...
-	}
-
-So yeah this really has to be fixed the right way, after all even 
-RET_PF_* started out as a conversion from 0/1.
-
-Obligatory bikeshedding, how do KVM_RET_USER and KVM_RET_GUEST sound like?
-
-Paolo
-
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+NjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjAeFw0xNDEyMTAwMDAw
+MDBaFw0zNDEyMTAwMDAwMDBaMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMw
+EQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMIICIjANBgkqhkiG9w0BAQEF
+AAOCAg8AMIICCgKCAgEAlQfoc8pm+ewUyns89w0I8bRFCyyCtEjG61s8roO4QZIzFKRvf+kqzMaw
+iGvFtonRxrL/FM5RFCHsSt0bWsbWh+5NOhUG7WRmC5KAykTec5RO86eJf094YwjIElBtQmYvTbl5
+KE1SGooagLcZgQ5+xIq8ZEwhHENo1z08isWyZtWQmrcxBsW+4m0yBqYe+bnrqqO4v76CY1DQ8BiJ
+3+QPefXqoh8q0nAue+e8k7ttU+JIfIwQBzj/ZrJ3YX7g6ow8qrSk9vOVShIHbf2MsonP0KBhd8hY
+dLDUIzr3XTrKotudCd5dRC2Q8YHNV5L6frxQBGM032uTGL5rNrI55KwkNrfw77YcE1eTtt6y+OKF
+t3OiuDWqRfLgnTahb1SK8XJWbi6IxVFCRBWU7qPFOJabTk5aC0fzBjZJdzC8cTflpuwhCHX85mEW
+P3fV2ZGXhAps1AJNdMAU7f05+4PyXhShBLAL6f7uj+FuC7IIs2FmCWqxBjplllnA8DX9ydoojRoR
+h3CBCqiadR2eOoYFAJ7bgNYl+dwFnidZTHY5W+r5paHYgw/R/98wEfmFzzNI9cptZBQselhP00sI
+ScWVZBpjDnk99bOMylitnEJFeW4OhxlcVLFltr+Mm9wT6Q1vuC7cZ27JixG1hBSKABlwg3mRl5HU
+Gie/Nx4yB9gUYzwoTK8CAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8w
+HQYDVR0OBBYEFK5sBaOTE+Ki5+LXHNbH8H/IZ1OgMB8GA1UdIwQYMBaAFK5sBaOTE+Ki5+LXHNbH
+8H/IZ1OgMA0GCSqGSIb3DQEBDAUAA4ICAQCDJe3o0f2VUs2ewASgkWnmXNCE3tytok/oR3jWZZip
+W6g8h3wCitFutxZz5l/AVJjVdL7BzeIRka0jGD3d4XJElrSVXsB7jpl4FkMTVlezorM7tXfcQHKs
+o+ubNT6xCCGh58RDN3kyvrXnnCxMvEMpmY4w06wh4OMd+tgHM3ZUACIquU0gLnBo2uVT/INc053y
+/0QMRGby0uO9RgAabQK6JV2NoTFR3VRGHE3bmZbvGhwEXKYV73jgef5d2z6qTFX9mhWpb+Gm+99w
+MOnD7kJG7cKTBYn6fWN7P9BxgXwA6JiuDng0wyX7rwqfIGvdOxOPEoziQRpIenOgd2nHtlx/gsge
+/lgbKCuobK1ebcAF0nu364D+JTf+AptorEJdw+71zNzwUHXSNmmc5nsE324GabbeCglIWYfrexRg
+emSqaUPvkcdM7BjdbO9TLYyZ4V7ycj7PVMi9Z+ykD0xF/9O5MCMHTI8Qv4aW2ZlatJlXHKTMuxWJ
+U7osBQ/kxJ4ZsRg01Uyduu33H68klQR4qAO77oHl2l98i0qhkHQlp7M+S8gsVr3HyO844lyS8Hn3
+nIS6dC1hASB+ftHyTwdZX4stQ1LrRgyU4fVmR3l31VRbH60kN8tFWk6gREjI2LCZxRWECfbWSUnA
+ZbjmGnFuoKjxguhFPmzWAtcKZ4MFWsmkEDCCBeQwggPMoAMCAQICEAGelarM5qf94BhVtLAhbngw
+DQYJKoZIhvcNAQELBQAwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2Ex
+KjAoBgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMzAeFw0yNDA4MTYxNzE0
+MzRaFw0yNTAyMTIxNzE0MzRaMCQxIjAgBgkqhkiG9w0BCQEWE2RhdmlkZ293QGdvb2dsZS5jb20w
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDmB/GGXDiVzbKWbgA5SjyZ6CD50vgxMo0F
+hAx19m1M+rPwWXHnBeQM46pDxVnXoW2wXs1ZeN/FNzGVa5kaKl3TE42JJtKqv5Cg4LoHUUan/7OY
+TZmFbxtRO6T4OQwJDN7aFiRRbv0DYFMvGBuWtGMBZTn5RQb+Wu8WtqJZUTIFCk0GwEQ5R8N6oI2v
+2AEf3JWNnWr6OcgiivOGbbRdTL7WOS+i6k/I2PDdni1BRgUg6yCqmaSsh8D/RIwkoZU5T06sYGbs
+dh/mueJA9CCHfBc/oGVa+fQ6ngNdkrs3uTXvtiMBA0Fmfc64kIy0hOEOOMY6CBOLbpSyxIMAXdet
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQgJ/zGCKhzhMvsp7s0g+mzxa/8ZPoi
+dyqGpmcBzCqZgl8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MTA5MDgxODQzWjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBACv1802ZWqgMcV8lnVygkGVWr8y1l1u9CkJOAk8FO40rkEJl
+M/6wsGVZBxWYQWRnZm38ZK1c1sYoulq5+utSi+hNd9C/6iXJhyPLsASub8eN/82mIaYspnSrk1dk
+GIRJQi4Gq4nxn+oX7R5sJDFC4v0xbyILTuZIC0aCsTXQqFyPveXEHMKnSK1RTaexQuyg1GTPhYNa
+dAe/daBwTM+N3UXdrAGgw3euMQXCnIkMVaw7i49GaYRgZs3kaozc5n+uWPLePUAgpAK119Vw9JZ2
+S8oQU6FSFcQ+ui5HwiBpqCDQoDU4N5AT4MTX+i5UZmoQvfKK30D8rYyvPtcnjGulcfU=
+--00000000000004997a062676845b--
 
