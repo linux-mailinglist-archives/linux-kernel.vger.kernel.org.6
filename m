@@ -1,104 +1,89 @@
-Return-Path: <linux-kernel+bounces-402523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBD99C28C9
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:24:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBA89C28CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADB41B21950
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F4228322C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FF28F66;
-	Sat,  9 Nov 2024 00:24:12 +0000 (UTC)
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33E9C4C80;
-	Sat,  9 Nov 2024 00:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41CC8F49;
+	Sat,  9 Nov 2024 00:24:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786068F5C;
+	Sat,  9 Nov 2024 00:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731111851; cv=none; b=VphfaLtywBwfzYNYcMU/mVbV4ga5lR9a1ODsYdbwcPm3dvZPXw+00cs83Kb9RjJMondtOYyKshmseLwQVJAzu2PnCLr7QyKfwtS8KCi9OpBqrazw6ekh96ujeAb7CpqTPcDN9sC7MivvMF1GLRpHcfp8LN76hqIKUEo5BYEwVGI=
+	t=1731111862; cv=none; b=s70rhgDisc0WF4Majmk7szjIvqcZmAWASfbrHxCBAkIC5aKfwM4JFRZPkFa3TdT1h6ixYYSMLO89Cis2tNS2/tlEIeYG1/8wgjast0zhWO3CPpWZ92FmrHMmNNY7dcFS+G21MjAem7x5rSnTV3qF+oz/qWduzbo3n5PeATO1MdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731111851; c=relaxed/simple;
-	bh=YPFrtXH+9NieqIbNZwyhsWrxoB3+ak259oIV7C/dsrk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZVi8JAKyVo88Pt+5XoHfol/DH3SVHQ4eSmvU3PvvO6aF3HMypwA2PnigzIf29va/NUG0RZ1I1zkp/Qk7HMJWQSWyHzl0u0Yn20c94mrYLRxRPzFDmpBTLdf5GL+qQyFMj6+Uj9vFKoI9uuznHM8So2AZtVJtAvI5SN+FNLZDuuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e290e857d56so2770604276.1;
-        Fri, 08 Nov 2024 16:24:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731111849; x=1731716649;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ijlMfgwKMgrnOmGLp1OVZB5zzXuB40nosRd/AylziMQ=;
-        b=laFDBhV1djvUtAZdzIb/B1QG9kEmmXFd7nIsjelP7g4rHCVm6Ltf/Bq2bTdFWROY1w
-         7lfkN4nSjfLKZJ7nSBHkl9obwdFCxeBgox4nVLpQscorAEnDupKtMPq3NU8VysFcZPS0
-         zJ4PM3kwEuJ79rhJkc6fAUuFqt91S0Mrva+V1LN96q6wWGCKtrHVa1QNw+OpGC2x+IbL
-         C9f9twY0/AO7DIOaEmuGTjI08iSdPIBv0+L2OUuz/F95pTWV4o80HfKsFoy3j7FPLIu6
-         GxI0FFv0zKDeswapNS4YD4vKcTB989ggMq0IQzvKj/jy1IMAOIAycX5+Rhqf4uVnESo+
-         RL6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUQFtb0qM9yt4dchhLkiH0l723opEY2KnxGWyOhuJLWs+uordqIqGqt0TNce4iP9/f0hcs72Rswkw4T4rT@vger.kernel.org, AJvYcCViW7K0P+Uvn1E1dClOl2xatPTOwU7XfZcnkzjwv8LI4stjRKFPX2mjnR0ZNqaBOEECXxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvIY7Sg3lllVIiQKMBc/pdx3bXwPYoZypjhu8llc2ESjFnEkAB
-	H6tIGjz0wW2wnEaBPu1AxEOdlJJZwkjGzKUPBLLOGc/s1vcyjLqyp0g32n16
-X-Google-Smtp-Source: AGHT+IHb4KRXcvo+XgWnBAdoYiT3BqiirnytI5YjQfEbJbCdDB0XlQXc64zMKg/eoFusyO+mzF2DDQ==
-X-Received: by 2002:a05:6902:2b8c:b0:e30:bf62:c3da with SMTP id 3f1490d57ef6-e337f82c7bfmr5707020276.4.1731111849032;
-        Fri, 08 Nov 2024 16:24:09 -0800 (PST)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336f1ba68dsm950021276.48.2024.11.08.16.24.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 16:24:08 -0800 (PST)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e30eca40c44so2822000276.2;
-        Fri, 08 Nov 2024 16:24:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUymQ7Nb3RYBaFmWTytEzaM9kDMXPawImwzdmrrvm8Qsm+MJKkbbk76Y2gIfJVWG1XfI6nV8YbatdWA1WH4@vger.kernel.org, AJvYcCXwkcwB0NVqVWqDb9qPfWwh8x6Kc+lbAAZbPme9lA2au3AgdvpgeB0JY6oM9escTUZ2AaE=@vger.kernel.org
-X-Received: by 2002:a05:690c:6710:b0:6e3:1e5d:fe2 with SMTP id
- 00721157ae682-6eadde3b221mr57714937b3.31.1731111848470; Fri, 08 Nov 2024
- 16:24:08 -0800 (PST)
+	s=arc-20240116; t=1731111862; c=relaxed/simple;
+	bh=mXfTxwr4zocV9lzNyylbEkCLnFBOwyQbvQrLJBGfqJQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=hKS9QbkfMY761sKp73Wmx5Tou6gtP6n1necZrc8G+Ljj9aeXrX8J1hPl709XXIJMZHW6P3fuaQGUC8JbyWpOT1ivZ2NfoOR0y4cu3obTaDuSgDw3250W1olE2iEFIsbbR0UXhq4eKFkrprlvp/JhydWM6nVtfztre4PMFucqcJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AAE3497;
+	Fri,  8 Nov 2024 16:24:48 -0800 (PST)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6013C3F66E;
+	Fri,  8 Nov 2024 16:24:16 -0800 (PST)
+Message-ID: <35e572d9-1152-406a-9e34-2525f7548af9@arm.com>
+Date: Sat, 9 Nov 2024 00:24:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108130737.126567-1-pbonzini@redhat.com> <Zy5CGpgRu8q7nrsx@slm.duckdns.org>
-In-Reply-To: <Zy5CGpgRu8q7nrsx@slm.duckdns.org>
-From: Luca Boccassi <bluca@debian.org>
-Date: Sat, 9 Nov 2024 00:23:57 +0000
-X-Gmail-Original-Message-ID: <CAMw=ZnSVAFMOs3dh5GpyQXJ9KVVmtd7zAT9B8RkZCCtF+M6J8g@mail.gmail.com>
-Message-ID: <CAMw=ZnSVAFMOs3dh5GpyQXJ9KVVmtd7zAT9B8RkZCCtF+M6J8g@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
-To: Tejun Heo <tj@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	michael.christie@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pierre Gondois <pierre.gondois@arm.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-pm <linux-pm@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>
+From: Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH] sched/cpufreq: Ensure sd is rebuilt for EAS check
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 8 Nov 2024 at 16:53, Tejun Heo <tj@kernel.org> wrote:
->
-> On Fri, Nov 08, 2024 at 08:07:37AM -0500, Paolo Bonzini wrote:
-> ...
-> > Since the worker kthread is tied to a user process, it's better if
-> > it behaves similarly to user tasks as much as possible, including
-> > being able to send SIGSTOP and SIGCONT.  In fact, vhost_task is all
-> > that kvm_vm_create_worker_thread() wanted to be and more: not only it
-> > inherits the userspace process's cgroups, it has other niceties like
-> > being parented properly in the process tree.  Use it instead of the
-> > homegrown alternative.
->
-> Didn't about vhost_task. That looks perfect. From cgroup POV:
->
->   Acked-by: Tejun Heo <tj@kernel.org>
->
-> Thanks.
+Ensure sugov_eas_rebuild_sd() is always called when sugov_init()
+succeeds. The out goto initialized sugov without forcing the rebuild.
 
-Thanks, tested on my machine by applying it to kernel 6.11.5 and can
-confirm the issues are gone, freezing the cgroup works and everything
-else too.
+Previously the missing call to sugov_eas_rebuild_sd() could lead to EAS
+not being enabled on boot when it should have been, because it requires
+all policies to be controlled by schedutil while they might not have
+been initialized yet.
 
-Could you please CC stable so that it can get backported?
+Fixes: e7a1b32e43b1 ("cpufreq: Rebuild sched-domains when removing cpufreq driver")
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
+ kernel/sched/cpufreq_schedutil.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Tested-by: Luca Boccassi <bluca@debian.org>
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index c6ba15388ea7..28c77904ea74 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -783,9 +783,8 @@ static int sugov_init(struct cpufreq_policy *policy)
+ 	if (ret)
+ 		goto fail;
+ 
+-	sugov_eas_rebuild_sd();
+-
+ out:
++	sugov_eas_rebuild_sd();
+ 	mutex_unlock(&global_tunables_lock);
+ 	return 0;
+ 
+-- 
+2.34.1
 
