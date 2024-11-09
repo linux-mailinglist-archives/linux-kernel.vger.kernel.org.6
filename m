@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-402977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767C59C2F2C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:35:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D68D9C2F2E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 091AEB2194E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA6BD1F214C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0B819E967;
-	Sat,  9 Nov 2024 18:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3593E4086A;
+	Sat,  9 Nov 2024 18:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dV6taRWo"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uKngsZY3"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C7E13BACB;
-	Sat,  9 Nov 2024 18:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D9113D502
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 18:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731177294; cv=none; b=VT0Xytokg6Rd378N1HfvnBAPbqVwj1BBn2z0QI4/ZBhR0Fr6RwukpmVVuteE9v/Gd2NUT7vvBS6kkETPT5b0+ez07XHOpNPfAV+z6icPoxBomOnsXEvd0AtATdJSqYS/f26o7oRlv4oLC3bSHmXhpNuuyDCARS+1skbsNQqk4F4=
+	t=1731177387; cv=none; b=qilYx6Hz2sO/YWlHc0BikyYyeUmtRSn0Isho7yCq9YbPVetoivz/Kennkyv4AXSjps7wW1qD61OnEP7qwY0KkrNKAgqZYp+D0ue9q51lbl4MRIozyudGnU5qTW0FsHvVGom9Tq52Rlx/e7DrmvP+dkdUDFDTCxoxn4j9xCbrBX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731177294; c=relaxed/simple;
-	bh=Y9UwVErHmVJvfwqmBtKpEzqsP0sdSI7VmMWVCV0njN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BClInbQb7wj+WUtZV9Xx5/QNCVOayOd2WmLchMeUrgtFENFPPeGbMnU7r79Qs9SjaAihvLUBzQXkZ5pJ7t9BWfmLpGST2ZfUYT54YDXqi209//qFa0zBt2RsSzMPwQPc57b8JR9ElJGEIyxNy9yoUlOuQeGSFxM9YhUnXCM84xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dV6taRWo; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso546026566b.1;
-        Sat, 09 Nov 2024 10:34:52 -0800 (PST)
+	s=arc-20240116; t=1731177387; c=relaxed/simple;
+	bh=UeuRoLIoFZl+e2wEIDEgVc4qMkCvGPRDAibgJq60uZw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kAUlgQOlKX8D1ptQjH3gLxp1txhYPulynKsvBI3+ZWuHXNUYonILCFhii3ZB0e/kNnSpEUvsRzrbY6TKOLv+V/qtyS04rCfjy4CQ8WiTPumGojIXxuM6QwS9A/TU290NCsIgcRpl9cJIp0C6WGJWtP6c2sDjQJpo/0JjdpB+vJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uKngsZY3; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e32b43e053so43509857b3.1
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 10:36:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731177291; x=1731782091; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y9UwVErHmVJvfwqmBtKpEzqsP0sdSI7VmMWVCV0njN8=;
-        b=dV6taRWosDW1LmN7IJVFDgb6EAFSizbN9/mu+AOj6YRZUZiMYC2wH9BoNaQ9yB3ZZO
-         a2m0epIZ7tmyQ/k6tq/Xf5pI2q/QG48L0z40BjnQ3KWi7U4QYqm5nkj1be9vKZsPtf4c
-         XwR3ai4clKFXJlTQDT/L+BiChdHTLjzSAcfm+NuU3/iftSrFGV+Y/UfOwxBezSY2+Gcy
-         3ZBFwYI/vwDpJNiEBr6N6ZV+6/+0uye8IUN/YCWSzZLCVZgf6mxPf4RtiKnBCxTNR6CI
-         ghXtwYw2eCe9kbIN07PgHW6o9c6gj2iA8II5Loato+/lIUy182HU+L0bDL6KxWc2YFg1
-         U4oQ==
+        d=google.com; s=20230601; t=1731177385; x=1731782185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IC0td1EB33f7rDp53a5h8SQVwqUp/0C6lqTv8T24vkU=;
+        b=uKngsZY3/j3zfZEintXnRY2BhUbY7cXqBiFOB1Dx0g1ROAkrEG4pI2e+1O946dToyt
+         DV4pKLJT3KzcDagmP3zELxVIilZOnftLR806VVjQYWv6btAcgmFBKMmJgOTYZffYhV8M
+         r3BJHwUwEbtjL/dfrmWSC6pOBRUJd1PFZWVaFU2CYJQZj9+mRuO4IrYff4YcITm48C2/
+         WAfnlI7zFJFOFw8dxhW067wmO9YARcxAViwVBlQSENh3LyIp7v1LEJRvViqvsMh3uOs6
+         ER8dMVnm1VdO9//FFfznHUShkm33fmmyvCVYPb+WQbQS3NE6Rpf3L79Spl01MP2tWKY6
+         JXQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731177291; x=1731782091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y9UwVErHmVJvfwqmBtKpEzqsP0sdSI7VmMWVCV0njN8=;
-        b=T4BbRM1RmNnRQm1fRdfjHdLqJYMJzwqkBuQCHsd+vn8QYoHY84HAaoSwHRURVa4Muu
-         AhB185lf9b0hfZgddTwHSnqfb83coO5wULL1rBayK67662x9i6/TmEkmynGW2Iikl/3B
-         sd52n3oqsYoqGPm53/zpss1DY1eK1QSqphSvZpr+xvLmJQ9Gf0TDsaY81tBkXzHoNXVU
-         wwbmhgHA+tXs39vYvdO9vSQ9B4E5+k/dYl2IJ0PYmNxXxIcejLQ15wgLAzTgAewBRUnd
-         kj9STInUaRIdTR13TU7SaWHiH57GOU80y3ylMxC2o7j7IBINHNo8DPRRbeFOhLHy9ety
-         rwXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUStZFn+y4xpbvdUuPfpJedRFlx07UQdzMgqptxdo5AChOk5VU1HYnlw8Ugj+BlOzAaG0W7AArpb2b5vExW@vger.kernel.org, AJvYcCXJBFkkguHpXtwoeqquUJ1vHflhX+HVCqXL/uTyh0k/JoDvhQo358jH0KxQGjnFD/Bgmmycbu3H@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeB8QYoXpvG50LodVwrRkUxhfWgwMSBHSqrV41wpHx/seFkTnM
-	5+0gkFs9LzyB71/sNwL5xePhqLWg+3sUB7qsbsWl2s8xuAcsgn/Rtora295zc5h6l/gSOh7K2RQ
-	d3e714W3KFcvS0hFZ/pMDVYsc7lc=
-X-Google-Smtp-Source: AGHT+IHXb1Fi848c0NJ3KrNiUrX9EnIwnwvCobZKUoqzJV31JvxaGAsQV9fqaCb5MlSzG/o/oz2VVcvFt5pYuFzZvnU=
-X-Received: by 2002:a17:907:26c2:b0:a9e:c442:2c15 with SMTP id
- a640c23a62f3a-a9eefff1869mr760216366b.38.1731177290630; Sat, 09 Nov 2024
- 10:34:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731177385; x=1731782185;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IC0td1EB33f7rDp53a5h8SQVwqUp/0C6lqTv8T24vkU=;
+        b=CeD3FQ56jcuGockz4BJilQnPlbZcqhUPP0bK/3kfJYO9TOriVPOCwWYikhnjk06yOe
+         omum1ktbzTy+HZEqvPy6Nuyz9qrq5cNVvEKMBl1zILCaEVrctDg1c2k4QNX4se7ZYoUV
+         hXfr2PBbFjgNGtTAZnLvZ+X8eyA2c+ZtzbJyBkVfC1bZjHUwtKPYAkmQUT/n0uqnqyPV
+         vFLspeLHoi/mYrkzHhFNxe1YhVgptWyr34KNYvjymm2hJJMxODaelyRiD0Zcn0PAnxZt
+         4OQhJT7RnT5WsDPojdy0XIICyzQvJtpn5RoAEvxKNvTEqvZhfwSVwPlMzskY0qTtJykg
+         D48g==
+X-Forwarded-Encrypted: i=1; AJvYcCU2L/y5EUjNnoZqRZgILYFYPS9HJ8V1/gcVVJSa3d6raLvfFTu9OqIQh2MuY3soewDwry6wggvbFn0YQTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jVQSIRj9MLK8G3lcPNqp2KC5y0mDO5wgJEGP6TCxbNNyJ0sv
+	3KMzkZ6fun5iWe09dKwxPq69PGx84aEsD3xerWKsYhRzdCUs4sG4KhTqE9VAvh3zMUfpcTk5zE0
+	hDA==
+X-Google-Smtp-Source: AGHT+IEb4fEPLeJ7n98PcRJUUQ/Ryt+KSVEtHCIMAt5JF3ABfkoP4DvEHRPRh2r9ehSppb5iSvQtA/w7EaU=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:3409:b0:6e3:19d7:382a with SMTP id
+ 00721157ae682-6eaddd71c24mr310157b3.1.1731177385230; Sat, 09 Nov 2024
+ 10:36:25 -0800 (PST)
+Date: Sat, 9 Nov 2024 19:36:23 +0100
+In-Reply-To: <20241109.xie6Quae9chi@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241108212946.2642085-1-joshua.hahnjy@gmail.com>
- <20241108212946.2642085-4-joshua.hahnjy@gmail.com> <CAJD7tkaKzLu0DfMynvPg+-78YAZNMCcEoM3wXPx9qfcAxZzUgg@mail.gmail.com>
-In-Reply-To: <CAJD7tkaKzLu0DfMynvPg+-78YAZNMCcEoM3wXPx9qfcAxZzUgg@mail.gmail.com>
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-Date: Sat, 9 Nov 2024 13:34:39 -0500
-Message-ID: <CAN+CAwOKUP7QAfzRAY53VT=qCHoVPT_RG4FMyxvha3XTg1xX6g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] memcg/hugetlb: Deprecate memcg hugetlb
- try-commit-cancel protocol
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: shakeel.butt@linux.dev, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20241109110856.222842-1-mic@digikod.net> <20241109110856.222842-2-mic@digikod.net>
+ <20241109.xie6Quae9chi@digikod.net>
+Message-ID: <Zy-rpxay3VmM7QuG@google.com>
+Subject: Re: [PATCH v4 1/3] landlock: Refactor filesystem access mask management
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 8, 2024 at 6:08=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com> =
-wrote:
->
-> On Fri, Nov 8, 2024 at 1:30=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.c=
-om> wrote:
-> >
-> > This patch fully deprecates the mem_cgroup_{try, commit, cancel} charge
-> > functions, as well as their hugetlb variants. Please note that this
-> > patch relies on [1], which removes the last references (from memcg-v1)
-> > to some of these functions.
->
-> Nit: We are not really "deprecating" them, we are removing them.
-> Deprecation is usually tied to user-visible APIs that we cannot just
-> remove, at least not right away. Please rephrase the subject and
-> commit log accordingly.
->
-> >
-> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> >
-> > [1] https://lore.kernel.org/linux-mm/20241025012304.2473312-1-shakeel.b=
-utt@linux.dev/
+On Sat, Nov 09, 2024 at 12:14:49PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> On Sat, Nov 09, 2024 at 12:08:54PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > Replace get_raw_handled_fs_accesses() with a generic
+> > landlock_merge_access_masks(), and replace get_fs_domain() with a
+> > generic landlock_match_ruleset().  These helpers will also be useful fo=
+r
+> > other types of access.
+>=20
+> Of course I need to update the commit messages with the new names...
 
-Hi Yosry,
+Yes, those are still using the old function names.
 
-Thank you for letting me know. To be completely honest, I think
-I have been misusing the word in that case. You are correct,
-the goal was to try and not change any functionality from the
-user perspective, so I think removing is a better word, as you
-suggested. I will make this change in the v3!
+At this point my other two remaining remarks are so minor,
+I think we can skip another version of this patch set. =F0=9F=91=8D
 
-Have a great day,
-Joshua
+Thanks for simplifying the code!
+
+=E2=80=94G=C3=BCnther
+
 
