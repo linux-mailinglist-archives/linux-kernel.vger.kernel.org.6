@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-402784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297279C2C24
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:22:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B8039C2C2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:27:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4D31F21D54
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:22:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A0B282A8A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFE9155389;
-	Sat,  9 Nov 2024 11:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAF315574C;
+	Sat,  9 Nov 2024 11:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPx9DSw2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egz8hSQO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8640154BF5;
-	Sat,  9 Nov 2024 11:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3F13DDA7;
+	Sat,  9 Nov 2024 11:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731151371; cv=none; b=O6Aqd6cGThxLqB2CKuVP+4ihfG88yWwL6mPYPY6+IXjzpgGLnSNfpCp6qyRzXTpQ7ZXv2+AMov1sFhEuke0RbapC8dU4FQrxtYUgHx0RT9W44iRfIL+hGISplcqzNYDBTSHzLbotPJxIpA1ZVue6+19S0dpS2xAjdaMCoiJi4Ww=
+	t=1731151670; cv=none; b=F+8ngNLq38ZhUUDXZeiuKBF8i2y0dMvA3VWeBSQXmgkR4QQ+UdjCBLqTkGe/hCym/LZ2irtt67EZpdrrPdN4fkj4I3p9zMUQfyA8DwBfX5KM4CGh0eBdkSkqZTiDTVctx//xHS7eMQHzaIBp9JT7WzJwobmMI93r4Cq7UWIKm+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731151371; c=relaxed/simple;
-	bh=0vQvO3Tqj0HJ08XaZcwUPJplKk1OoO1ba0L7JKxXApk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=krB0qBbW9TbUjaz6XrWyXHjWmh16pDgfNjz8WhF/H4cExT+UGRrs3ubEh7BlmzQGSlAJ743I3GTTza+AL8Ckc4bBoUpnW7Eh/wK1XMLNwQCtqoSbO3jzv7KGT1+dqtLrgVy+sXUAJuw1sR+UTduwWf63umCph4fpoXU6rvy4CQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPx9DSw2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332C9C4CECF;
-	Sat,  9 Nov 2024 11:22:51 +0000 (UTC)
+	s=arc-20240116; t=1731151670; c=relaxed/simple;
+	bh=8bOTzZiVf55W83Wg3LaFw+ZXGUO/wNOGdn5iQGfS5q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RrD36u7RoBSyj/wlGmlOo5wrg0pnpG6dfdBQ6EKYF1HKvbaxQX6aTI2MATFOLsJ3l4PLcU6Use+eIqR6IZQgqjBAI79vFC5z9o59rBeH7UflpLYpcK3efxmI2uW2ZE34ucGA64jKD00ax3nVCunVnotVUXsDWI8KLUOGMHn4qVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egz8hSQO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFA4C4CECE;
+	Sat,  9 Nov 2024 11:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731151371;
-	bh=0vQvO3Tqj0HJ08XaZcwUPJplKk1OoO1ba0L7JKxXApk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XPx9DSw2jPQ9zKWD4uxI5ypyG6JBbAf2FH9QO1gkUXgIK2FwgEKPjGEV36HkKf/2V
-	 /RTs0wES378/yaYFA/7S0AcXiqPZQKCAzWPVMANs2WuiJEnlP0t+3uc52Spb8F5uOo
-	 Clm42FoUKvolBIwVp38rHI2eMUw67SWDr4BcOGlRj+tpn17sD2YoAsPgy/G8qkszPJ
-	 eam/nZ41MIfjrV+KzHUHlB8AQ8a/t6Mtw0O7hQDzBFstDRktAULAsAIw0N1DxGSBKz
-	 xOUJ8rnipoz+QTwcvQ5prZ7YDrSZs4UNemwEKFdbJf7t2gDjT+IHKzLGyhPggXy99U
-	 ahqbD/ji5/xzA==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5111747cso25421891fa.2;
-        Sat, 09 Nov 2024 03:22:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVmxKFytii2U6l9GUz4oNWhvyCZfhOJ9WGzCdFb6KpDYWJbgfVDO0d+joU7zgzZEAWJzs7iqY11YHS+NOHX@vger.kernel.org, AJvYcCWFKp+aAS49ON0GZSe33o6Vqh6Hhg4rcZuNqIVWArcmX+O/l0/wKDPlRGA3RKF/UzgguwdQ3pF+AWRzTv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/JkXDPd589Uysjd9pit/RhMzQjzjwLGvzuZul9Z0rBpAkqYnz
-	3dNEmW0z0IP6/jyuDQen8fiep5rLXLqZPpo1eaaJNPW7mU9z8EgGhu59syQIOrwu9R5+hGLbofW
-	s4dZ0laHv8aqLqNE6MfM1hBZKljk=
-X-Google-Smtp-Source: AGHT+IEmUEtfAVJUkSa5cIuswQlLezIgH5Buph6/rMA613evThU6avs7umAO7qoTvRNrXX0varRiaJiCT64sHeY7jLM=
-X-Received: by 2002:a2e:bc1d:0:b0:2fb:5da7:47a1 with SMTP id
- 38308e7fff4ca-2ff20244ebcmr36913121fa.16.1731151369716; Sat, 09 Nov 2024
- 03:22:49 -0800 (PST)
+	s=k20201202; t=1731151669;
+	bh=8bOTzZiVf55W83Wg3LaFw+ZXGUO/wNOGdn5iQGfS5q4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=egz8hSQOr1y2+Ill2AOR1YHaJvZPy2jIKMckm/iTO1MWJq/yCxOJ120ZIiLLRC9og
+	 vlNlmzuzILdSpsbbANukpCVxlBDYdqR+7ZLBWOw1wLNmoEef6WTU8mYY4qEjBq9NP9
+	 70oET4lZ8ycXgY+912rcfvsVNV4wc3kpVqwrDxyc47V5gAJ0bVv3lxb6n1n1kUAT1Z
+	 Vh+Jm2OAVDRNYSb+xX1NJZTvw85UwJRYc1NRnb3bwbfKnxpqMYj/YckLVehSmg65NN
+	 wdd3txCifj+UtIUqxdt4H94Qu5jjran3nQEL56thUFMFMRWzBrc3RaiWCHKrWZ1s/z
+	 Zm33hpTnsy9PQ==
+Date: Sat, 9 Nov 2024 11:27:41 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, <megi@xff.cz>,
+ Lars-Peter Clausen <lars@metafoo.de>, <linux-iio@vger.kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ <hpa@zytor.com>, "Peter Zijlstra" <peterz@infradead.org>,
+ <linux-kernel@vger.kernel.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
+Message-ID: <20241109112741.456ce2f9@jic23-huawei>
+In-Reply-To: <20241108180243.00000c27@huawei.com>
+References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+	<20241108180243.00000c27@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107150508.2835706-1-matt@readmodwrite.com>
-In-Reply-To: <20241107150508.2835706-1-matt@readmodwrite.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 9 Nov 2024 20:22:13 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS06CGh-nN7Q-4=mWeuRhC2ug+Nc9oLME9D+TYe_WBTGg@mail.gmail.com>
-Message-ID: <CAK7LNAS06CGh-nN7Q-4=mWeuRhC2ug+Nc9oLME9D+TYe_WBTGg@mail.gmail.com>
-Subject: Re: [PATCH v3] kbuild: deb-pkg: Don't fail if modules.order is missing
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com, Matt Fleming <mfleming@cloudflare.com>, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 8, 2024 at 12:05=E2=80=AFAM Matt Fleming <matt@readmodwrite.com=
-> wrote:
->
-> From: Matt Fleming <mfleming@cloudflare.com>
->
-> Kernels built without CONFIG_MODULES might still want to create -dbg deb
-> packages but install_linux_image_dbg() assumes modules.order always
-> exists. This obviously isn't true if no modules were built, so we should
-> skip reading modules.order in that case.
->
-> Fixes: 16c36f8864e3 ("kbuild: deb-pkg: use build ID instead of debug link=
- for dbg package")
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: linux-kbuild@vger.kernel.org
-> Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+On Fri, 8 Nov 2024 18:02:43 +0000
+Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
 
+> On Fri,  8 Nov 2024 16:41:27 +0100
+> Przemek Kitszel <przemyslaw.kitszel@intel.com> wrote:
+> 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > 
+> > Add mising braces after an if condition that contains scoped_guard().
+> > 
+> > This style is both preferred and necessary here, to fix warning after
+> > scoped_guard() change in commit fcc22ac5baf0 ("cleanup: Adjust
+> > scoped_guard() macros to avoid potential warning") to have if-else inside
+> > of the macro. Current (no braces) use in af8133j_set_scale() yields
+> > the following warnings:
+> > af8133j.c:315:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
+> > af8133j.c:316:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+> > 
+> > Fixes: fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202409270848.tTpyEAR7-lkp@intel.com/
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> > ---
+> > I have forgot to add this patch prior to the cited Fixes: commit,
+> > so Stephen Rothwell had to reinvent it, in order to fix linux-next.
+> > original posting by Stephen Rothwell:
+> > https://lore.kernel.org/lkml/20241028165336.7b46ce25@canb.auug.org.au/
+> > ---
+> >  drivers/iio/magnetometer/af8133j.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
+> > index d81d89af6283..acd291f3e792 100644
+> > --- a/drivers/iio/magnetometer/af8133j.c
+> > +++ b/drivers/iio/magnetometer/af8133j.c
+> > @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
+> >  	 * When suspended, just store the new range to data->range to be
+> >  	 * applied later during power up.
+> >  	 */
+> > -	if (!pm_runtime_status_suspended(dev))
+> > +	if (!pm_runtime_status_suspended(dev)) {  
+> 
+> I thought I replied to say don't do it this way. Ah well probably went astray
+> as I was having some email issues yesterday.
+> 
+Also, for the fixes tag to make sense this will need got through the same tree as
+that rather than IIO which doesn't have that commit yet.
 
-Applied to linux-kbuild.
-Thanks!
+Given timing I'm fine with this version getting picked up and if I care enough
+I can chase it with a tidy up to the guard() form next cycle.  
 
-> ---
->
-> Changes in v3:
->  - Wrap modules.order logic in 'if is_enabled CONFIG_MODULES'
->
->  scripts/package/builddeb | 22 ++++++++++++----------
->  1 file changed, 12 insertions(+), 10 deletions(-)
->
-> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-> index 441b0bb66e0d..fb686fd3266f 100755
-> --- a/scripts/package/builddeb
-> +++ b/scripts/package/builddeb
-> @@ -96,16 +96,18 @@ install_linux_image_dbg () {
->
->         # Parse modules.order directly because 'make modules_install' may=
- sign,
->         # compress modules, and then run unneeded depmod.
-> -       while read -r mod; do
-> -               mod=3D"${mod%.o}.ko"
-> -               dbg=3D"${pdir}/usr/lib/debug/lib/modules/${KERNELRELEASE}=
-/kernel/${mod}"
-> -               buildid=3D$("${READELF}" -n "${mod}" | sed -n 's@^.*Build=
- ID: \(..\)\(.*\)@\1/\2@p')
-> -               link=3D"${pdir}/usr/lib/debug/.build-id/${buildid}.debug"
-> -
-> -               mkdir -p "${dbg%/*}" "${link%/*}"
-> -               "${OBJCOPY}" --only-keep-debug "${mod}" "${dbg}"
-> -               ln -sf --relative "${dbg}" "${link}"
-> -       done < modules.order
-> +       if is_enabled CONFIG_MODULES; then
-> +               while read -r mod; do
-> +                       mod=3D"${mod%.o}.ko"
-> +                       dbg=3D"${pdir}/usr/lib/debug/lib/modules/${KERNEL=
-RELEASE}/kernel/${mod}"
-> +                       buildid=3D$("${READELF}" -n "${mod}" | sed -n 's@=
-^.*Build ID: \(..\)\(.*\)@\1/\2@p')
-> +                       link=3D"${pdir}/usr/lib/debug/.build-id/${buildid=
-}.debug"
-> +
-> +                       mkdir -p "${dbg%/*}" "${link%/*}"
-> +                       "${OBJCOPY}" --only-keep-debug "${mod}" "${dbg}"
-> +                       ln -sf --relative "${dbg}" "${link}"
-> +               done < modules.order
-> +       fi
->
->         # Build debug package
->         # Different tools want the image in different locations
-> --
-> 2.34.1
->
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
 
---=20
-Best Regards
-Masahiro Yamada
+Jonathan
+
+> 		guard(mutex)(&data->mutex);
+> 		ret = regmap_write...
+> 
+> >  		scoped_guard(mutex, &data->mutex)
+> >  			ret = regmap_write(data->regmap,
+> >  					   AF8133J_REG_RANGE, range);
+> > +	}
+> >  
+> >  	pm_runtime_enable(dev);
+> >    
+> 
+
 
