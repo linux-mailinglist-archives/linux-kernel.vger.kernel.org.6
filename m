@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-402925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8311E9C2E86
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:31:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AEA9C2E88
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D44D1F21955
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:31:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FAA28237A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9488719DF52;
-	Sat,  9 Nov 2024 16:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B075A198833;
+	Sat,  9 Nov 2024 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/IYTpzA"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QTBkzIuk"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9422BB09;
-	Sat,  9 Nov 2024 16:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AE31537C9
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 16:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731169847; cv=none; b=SxYC/ogeox4HyzFg+rePlBLTmtww7lr1vKtoHwigYQwUAh9xFxHvDNpKMzk8ppR8GT7JJmY0xKf9u9Gdnz0TXQ51sekXb7fxtKoVaBtbfW+jf+QPjDlw18Ps31IirCYjpOP8X1kuJDKU0PpU2GV+Q6gSxS0ashjHg90PoUTk09c=
+	t=1731170173; cv=none; b=Tu1cuSTiX4FSg3BmhM5Mn4ym1tMTmKNpYR+rE9YEYIO54/UywtSOM4ccIktHFAqnRzjAe58mJSRDzWi8vXA0oOykV7eTXJ211cne6iz8sKUugv/3DXrBZewdQc8cnJyxONtS32oIUnYmDDcXv8BygYcaFo44z3K6C8bzlU6ezG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731169847; c=relaxed/simple;
-	bh=4nzEV01HerKl13JwtsONKUbgCEH5uMrLa3opUgMD+sU=;
+	s=arc-20240116; t=1731170173; c=relaxed/simple;
+	bh=1zw4x5pQ+s0kBi09AAI4rx8p8hKJYjtPeE1I8rzMFvM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cmordxizhg4ehAW0Mv5Zn9ICqvZ62br26BUTLI9+zlZScZTGHQwMZmnS9lnCEnHxrhnL1VOyXv7fPqByenlpLsVek2vJRl7Hhe0e1yVM4qBdMos7hwUJq4NWjb9derhbhVnukv/ij1y45j45882ie9G8ykFhwIz12V9Wz1tA4bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/IYTpzA; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caea61132so28139905ad.2;
-        Sat, 09 Nov 2024 08:30:45 -0800 (PST)
+	 In-Reply-To:Content-Type; b=JUFNX6cGo/I5UsIY8NEscRb18K/CljRlOTYEEipmYfPnO311aRkFEFT7avxhhM/4CCUt0habxDIpvmhTh/7g4O1O7P1pTcN0SHqEGmTfMxDLLQ49AqNrxLKw0OGqIzs2GeVcetBeBWITM71U7di7ZAEqS2Bu5b6exV6J2RzvSWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QTBkzIuk; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b15eadee87so217372985a.2
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 08:36:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731169845; x=1731774645; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1731170170; x=1731774970; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+HFu6d4lO7rqvd9CtGtNgYr/2KPNT3OuXCo4vOZrFRY=;
-        b=W/IYTpzAnK/sPvb52bME+7m/QPh9xrSGB4J4kikOvCTutjLs7/OTgPyi1oXiM+Nz4v
-         ldDm6T+Fm2ZB1QJ5L1oQofqaigeJhllEVcU8R+ldtDvQ91xYST7JHrbfx2HB68Co6CSl
-         qxqvhTPwfemjQDwZjJT8yozelN789Q+eHlPBed0jbUlGlo1KOUDyBGRuJjAF54BRtQLQ
-         4HYqRkerD1fTV+bWh2BKLjdc5+zcyxotjvPxEFlVcqTQie02NRlPEouHYSMRaaSWRDev
-         Mu0NM/LHlXKrgSaBSJYhPJRNe2/8M8fv/0vpwhNt3x9kkVidev57svOG66T5LxKG4zVB
-         GNvw==
+        bh=LiyXTt78v6KIZQ1Ji+ZoKsI5Ur+Se/pukGeJe0h1QHs=;
+        b=QTBkzIukXO/v+Oq7d1nDN7ZAVuCYSprCwhsPH2i5zCp1nfOCD2/eHG689p43iarI9j
+         ZZt1vZoPyqeobWR9z9WELOFMpkYR7Pr2Af5eJvSHWJ0IjrJVaufnZvDA+Zurr7ZC2UFD
+         y1DnArp+Jn10dEvA0YaFct3RvrPAXjM5UKlnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731169845; x=1731774645;
+        d=1e100.net; s=20230601; t=1731170170; x=1731774970;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+HFu6d4lO7rqvd9CtGtNgYr/2KPNT3OuXCo4vOZrFRY=;
-        b=Xp8jhpsDEVMBxO6tFL6YVKresPgXrTQ7MBTVRvdpuwlM/y4awUUOM/OUyKxQkchYZp
-         VOYW0JYJLIjFpJzLem84e+c9d2kKCHojawf9cACaXrYcLecEdzzzvqn3xFoEW7f1R04S
-         YhYm4H9NA1O+KkpT14umpQYwKZeHYz45GeqK62UbVrbBjDHbnEeGLJUZ+HyOuiEpxzI3
-         roVJZzBm2LM25HND8unB+DPDFYWtazfYSLCwogm06i3SxOljVhWNiEixBvj1KhoE0b5p
-         N4fA61nNQM+1lnLcXR1nRAZv33bWXhiU48wJzJVIacBwcNBz1ngW3PVHKPplxvjlhX7F
-         dJIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKzNWohtN+/N7BfO/RXetLddzHLPGFUypOgo1N51/VkZVRT7+b8b8Aaos1Bt0drJZF0pVj4DG5yTTdB2k=@vger.kernel.org, AJvYcCUYb78ItN1vhvcGS/CFEbWXzfDNxY+OEGJ6wOvMXqp3UXPVu7TsshA16VLtqAtphqbj43sp9ln/yCdNRQ==@vger.kernel.org, AJvYcCUq5teus+MW11U6Pr63rQNLslWrmtXvbJm56syMgxHDuh15gIAKYxlNpbkq+ynsTWzCe5ZKvN03GGYpmw==@vger.kernel.org, AJvYcCV6WTwy/kMsTl4cR3SY1l+GSTRB14/ArsuWs2ueURzgBXLBwldhQ3Mdbj5gAtvl6qwQUCR6O5HNNRc=@vger.kernel.org, AJvYcCWBgv+eMtn5hSTiMJlBCT+kzthf0UeusLzYGwcaXka3YIqxJqM+oPhLNXPPu0IpM/dwzclFtMCf3KIU/sw=@vger.kernel.org, AJvYcCWPdstUmWRWJgYQKIo21l5cWyHvuoXlhgJ+T5iXz0JwITLY5ii4gF3MUGLmzIsXMFfBcIXb6sNVIhX9cMf/OGss9Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLltKm/zeLk+pBondPtNaQTcN0wcaevBBX+HMoCU1IniDDdY4z
-	JOA1VcP5ECYKWRMWUns0Gfn4RGUGp4mIusmzMhTvrgzE4Go4kTjY
-X-Google-Smtp-Source: AGHT+IGGs2S0yCDvHRz6lhphL26+ZgfU8grAgZs942pwHOPtldd6rtgtD1s1xn3JASfB0aCkY4pxLg==
-X-Received: by 2002:a17:902:ea10:b0:210:fce4:11db with SMTP id d9443c01a7336-21183517ca8mr100546255ad.22.1731169844727;
-        Sat, 09 Nov 2024 08:30:44 -0800 (PST)
+        bh=LiyXTt78v6KIZQ1Ji+ZoKsI5Ur+Se/pukGeJe0h1QHs=;
+        b=YBUrdHJwV+RBuJePijxsmcx/SMiHCKAh9E3ivoVvOiblVdpcYuVzfXmFMJMINVwFTN
+         rd/13/QvovBPpJJySKzvWLXz93TG48knzvV5mOaUSNztodMlwetJ2mCPfKZ8R0UkG89m
+         rf29Eb3cKtnqF6ObaomELRDBebsR8ACN0ciprw6WjzVLZSD6qZ1nQT3+2fq2wdXZjM8E
+         y46/IYIIx3ezhsbyRM60lvfXWxKInjEPoeh3z2bJKvv9TlTA5/29J5cKyU5gIupZZPn1
+         n780clst/3/teaZZMrQRn8Va6zuPFjR5MmGx13lpbG5Hb3I9Y+OycCOKJuYUKGBBGJrT
+         USzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlQ5dk5ubtIMjGfEoMLnSgC2N8dD+FGdwmUGEr0VE39T6NYGJ0ASPBtLap48rBbdpOJLsnUfmobQgifwU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydfit7REd8ES78LvxesJ65lEsYs1Kg/ZAmWiVuyIe6Y3zV+tUv
+	Z2hlqKrNGNDWrdCg/28MiFGgM84xQc0yFdPztx/qRbSSJ8G4K5EDBwKFYi/1Cw==
+X-Google-Smtp-Source: AGHT+IHR7LHF6bAJTfqfdMdT6vSoZ1qZIMt2KdNyCPNQiI/13HtKv9OHU9ir/QulbNCGPSOqD5aPSg==
+X-Received: by 2002:a05:620a:24d3:b0:7b1:547d:9ba8 with SMTP id af79cd13be357-7b331d8c12fmr867466785a.21.1731170170256;
+        Sat, 09 Nov 2024 08:36:10 -0800 (PST)
 Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a3f4sm47858475ad.234.2024.11.09.08.30.42
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac63da6sm272249685a.58.2024.11.09.08.36.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 08:30:43 -0800 (PST)
-Message-ID: <3be2547e-d987-4987-9d75-30bf81cfe6cd@gmail.com>
-Date: Sat, 9 Nov 2024 08:30:40 -0800
+        Sat, 09 Nov 2024 08:36:08 -0800 (PST)
+Message-ID: <f89f2fee-35d9-4292-b2eb-b4bceda78030@broadcom.com>
+Date: Sat, 9 Nov 2024 08:36:06 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,53 +72,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Markus Mayer <mmayer@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, Paul Cercueil
- <paul@crapouillou.net>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Konrad Dybcio <konradybcio@kernel.org>, Georgi Djakov <djakov@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-tegra@vger.kernel.org
-References: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+Subject: Re: [PATCH V2] mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
+To: Stefan Wahren <wahrenst@gmx.net>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Marco Felsch
+ <m.felsch@pengutronix.de>,
+ Catalin Popescu <catalin.popescu@leica-geosystems.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241108130647.8281-1-wahrenst@gmx.net>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+In-Reply-To: <20241108130647.8281-1-wahrenst@gmx.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 11/7/2024 6:57 AM, Uwe Kleine-König wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
+On 11/8/2024 5:06 AM, Stefan Wahren wrote:
+> The recent introduction of reset control in pwrseq_simple introduced
+> a regression for platforms without RESET_CONTROLLER support, because
+> devm_reset_control_get_optional_shared() would return NULL and make all
+> resets no-ops. Instead of enforcing this dependency, rely on this behavior
+> to determine reset support. As a benefit we can get the rid of the
+> use_reset flag.
 > 
-> Convert all platform drivers below drivers/memory to use .remove(), with
-> the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
-> 
-> A few white space changes are included to make indention consistent.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
-
-For the brcmstb driver:
+> Fixes: 73bf4b7381f7 ("mmc: pwrseq_simple: add support for one reset control")
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 
 Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
