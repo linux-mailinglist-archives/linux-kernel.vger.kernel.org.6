@@ -1,120 +1,128 @@
-Return-Path: <linux-kernel+bounces-403039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B92CA9C300E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:27:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321689C3010
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27AF0B218C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:27:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629D71C20959
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 23:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AA61A7066;
-	Sat,  9 Nov 2024 23:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C748A1A2860;
+	Sat,  9 Nov 2024 23:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b="IMcak1cS"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="mo6OhtIK"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B12A38DF9
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 23:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C4F1E4BE;
+	Sat,  9 Nov 2024 23:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731194822; cv=none; b=ttXcdIynQSc+C1/Q9oMyMlabi3qvRfXUA4CyakZrAcYcx815BXDG40JQKWVXTw0l/YujvBFTKTFJjZ/+wndQ/3N1FLK3Z9ZaPGYVts5QnHmwpAp67l/0pe+ZRXMRCH9jLL1JndEjyFVOKlpaXgyqrfOUbuD/5e95hgo+FAXxxew=
+	t=1731195017; cv=none; b=WBKRVRhUWxnjpj9NoiFOc71zYbv8byekwNbWmBcSvVE5ix3DQLhsllYlm05NzfOcohMGwDpad1YAnuoh1041coQDzW8qTvAhygmBvd5bIzHPSWhdzOyiQPDydaOeo6r4LcueSD//vFHoXi6l59z+tPF1a3eZ4OqNBjWr0y0A8hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731194822; c=relaxed/simple;
-	bh=bhfa8QVpzhJLNvVH2SZ6BH73Wyn+suzbcFJ9AvwI4qw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=an+sF/E95yBazXBHLBUHo/3o8OGKc3beEu6OBnNa/kHvzQ2N9amZkHIArFtAGtC9f4n9YQnyixiKkRwHInqjIaTY+bvmRKJ2mpgtTIwRX/X4ckh/DtEi+jUiW5dnJJMMrIT8hUs7klp+OiTBK9zX2rcJsUM4YpuJ5RLWVTat2CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org; spf=pass smtp.mailfrom=amundsen.org; dkim=pass (1024-bit key) header.d=amundsen.org header.i=@amundsen.org header.b=IMcak1cS; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amundsen.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amundsen.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e4b7409fso3940405e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 15:27:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amundsen.org; s=google; t=1731194819; x=1731799619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RUk+2MyJ3Nk7p96EL5x2+4zXYUEBWNJcqoIkZyN24sI=;
-        b=IMcak1cSnlYk+2kyeu9r8Y/2HczW7gQZICMH98pzQgy+Hz3gw5afSoFNGo9yV92H+7
-         kEn38frXJ1y3HC3T5MmdJYd9wmCpW34Bn4GkWCnd3LgA3tkfx7qW6fLYRVIm1pSh1aIM
-         Hxw88+ibYk2pHC15Zo3TO4iUzAn5/BXD43h+Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731194819; x=1731799619;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RUk+2MyJ3Nk7p96EL5x2+4zXYUEBWNJcqoIkZyN24sI=;
-        b=XbU7dkTvTocw9gQlWxV2IuVWeGFkSQ6MBqCc9BoVslSzwzc2jkQn8QLO+qXWPFxjKZ
-         7eJPfJH9O8UIBDFZeM3EJPDEwHTA+pGdIauBm69SQPr+juIDFZZKfsvbvSYngdveih1d
-         EO27810CX6FRjR+CZYfoMEHlgZDzYy5WPK/OUD2yJ5lVKD7HrxspuKW5TlccxDF6iVkF
-         TISrATO6DEhYQzblpliMoFkcR+3N0/ydRMmikmJTG6CYrT2xwjNGQV1vGd1oXAnvGyg3
-         B1NKZXw37E8Ac1r+3IHnMxI/i+mmSgUo9Q7T7ZS9EILbsrWUNfUYEqXYF4jL45T+WvJr
-         gMEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwWPrtKcgDvn1BiJ53udsYXtV9yKFftjartwvFV1aYrGWR8T010bk4/5vqxX00dCyd4SrPWkZnH+iiBXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7xETHaSgSwLrYZC0oU2rJe7xjf6kfTt6s8XrwrmRYCCsgdJ9s
-	iOAh1pgAM//pb4C53wwgHj7LIDCFyVexatXs27xYBDBgIuFPG/0uNidR+eIRaaE=
-X-Google-Smtp-Source: AGHT+IHu/CrOy1O8GUG/8a81IKfSyDxkXkDYyogMsyOSYajC01dxEovmO1L/UlKct/mw+O2nvMWy1g==
-X-Received: by 2002:a05:6512:3d14:b0:539:edc9:7400 with SMTP id 2adb3069b0e04-53d85f13a72mr2843906e87.20.1731194818581;
-        Sat, 09 Nov 2024 15:26:58 -0800 (PST)
-Received: from localhost.localdomain (77-95-74-246.bb.cust.hknett.no. [77.95.74.246])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826aeb8fsm1057142e87.239.2024.11.09.15.26.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 15:26:58 -0800 (PST)
-From: Tore Amundsen <tore@amundsen.org>
-To: netdev@vger.kernel.org
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org,
-	linux-kernel@vger.kernel.org,
-	Tore Amundsen <tore@amundsen.org>
-Subject: [PATCH 1/1] ixgbe: Correct BASE-BX10 compliance code
-Date: Sat,  9 Nov 2024 23:25:57 +0000
-Message-ID: <20241109232557.189035-2-tore@amundsen.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241109232557.189035-1-tore@amundsen.org>
-References: <20241109232557.189035-1-tore@amundsen.org>
+	s=arc-20240116; t=1731195017; c=relaxed/simple;
+	bh=uFNBYnwd1ia1RoOgCQ/MjHn/GJ65pILhrHkUFUBF1Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DR0iQEL55yeplZcndDuQYTt9RTUFtiZQi/wx46ibJC+nRejV5f5kN05Fw1j3kgG5Yh/LhwB5WdCHW7DI3TqjhQjju4d2iDkTHPry/N2eWxtpNeMf79oZ6h9T/UW2L6nHP1Wyn7BiHDFgYdNTVWZCqgiUjDzIsHYo/HAfDRuiKOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=mo6OhtIK; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ktlnpyzsZf9FCUvE5aBD8IabGy9VTcpXU6wv6DgGIBI=; b=mo6OhtIKngXJ2w/AnfAcvyE6te
+	Zg3yiePmUb7kwpQAbGxNklTS6vTBdmWM337hxiLTi8RHrVsumexa6P75JHVnQ7VVOJuRqyzaooCkN
+	svl6jfZrOsLHd9z7AerqLL6nQw4lGseBXJ+jv7kVP92Bqx/eByENmUJPGiTMY1z/ZK0kQdnhzIsH+
+	Yb7KgHPUmq+X6z0YpFc5jGe8Tgzu1NXaIXsoKSxFOLBKixgbbY1Lca+I4ivfrLGYPRecPDbgHwY+E
+	a+8R4Xm5uQ+h2h3TYTb0hWQ8rnCHaH7I0uwZBYnKnVIVAcipyOJ1TkH2gfz3wuqIYmNE6QiyhowDH
+	dYXHrr9A==;
+Date: Sun, 10 Nov 2024 00:29:54 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Karol P <karprzy7@gmail.com>
+Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, rogerq@kernel.org,
+ tony@atomide.com, lee@kernel.org, linux-omap@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] mfd: omap-usb-tll: handle clk_prepare return code in
+ usbtll_omap_probe
+Message-ID: <20241110002954.1134398a@akair>
+In-Reply-To: <CAKwoAfp6iPN0F_kfNbF8xbpX7+Qh+BS55KgmZ5nis0u00vOFhw@mail.gmail.com>
+References: <20241106223324.479341-1-karprzy7@gmail.com>
+	<20241107001507.5a304718@akair>
+	<CAKwoAfp6iPN0F_kfNbF8xbpX7+Qh+BS55KgmZ5nis0u00vOFhw@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-SFF-8472 (section 5.4 Transceiver Compliance Codes) defines bit 6 as
-BASE-BX10. Bit 6 means a value of 0x40 (decimal 64).
+Am Thu, 7 Nov 2024 12:12:52 +0100
+schrieb Karol P <karprzy7@gmail.com>:
 
-The current value in the source code is 0x64, which appears to be a
-mix-up of hex and decimal values. A value of 0x64 (binary 01100100)
-incorrectly sets bit 2 (1000BASE-CX) and bit 5 (100BASE-FX) as well.
+> On Thu, 7 Nov 2024 at 00:15, Andreas Kemnade <andreas@kemnade.info> wrote:
+> >
+> > Am Wed,  6 Nov 2024 23:33:24 +0100
+> > schrieb Karol Przybylski <karprzy7@gmail.com>:
+> >  
+> > > clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> > > Return code is not checked, leaving possible error condition unhandled.
+> > >
+> > > Added variable to hold return value from clk_prepare() and return statement
+> > > when it's not successful.
+> > >
+> > > Found in coverity scan, CID 1594680
+> > >
+> > > Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> > > ---
+> > >  drivers/mfd/omap-usb-tll.c | 8 ++++++--
+> > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> > > index 0f7fdb99c809..28446b082c85 100644
+> > > --- a/drivers/mfd/omap-usb-tll.c
+> > > +++ b/drivers/mfd/omap-usb-tll.c
+> > > @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > >       struct device                           *dev =  &pdev->dev;
+> > >       struct usbtll_omap                      *tll;
+> > >       void __iomem                            *base;
+> > > -     int                                     i, nch, ver;
+> > > +     int                                     i, nch, ver, err;
+> > >
+> > >       dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+> > >
+> > > @@ -251,7 +251,11 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> > >               if (IS_ERR(tll->ch_clk[i]))
+> > >                       dev_dbg(dev, "can't get clock : %s\n", clkname);  
+> >
+> > if you add more intensive error checking, then why is this error
+> > ignored and not returned?  
+> 
+> Thank you for the feedback. It does seem that elevated error checking
+> is not the way
+> to go in this case. 
 
-Signed-off-by: Tore Amundsen <tore@amundsen.org>
----
- drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+As far as I can see everything checks ch_clk[i] for validity before
+usage. Also clk_enable() called later is checked which would catch
+clk_prepare() failures, if there were even possible here.
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-index 14aa2ca51f70..81179c60af4e 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_phy.h
-@@ -40,7 +40,7 @@
- #define IXGBE_SFF_1GBASESX_CAPABLE		0x1
- #define IXGBE_SFF_1GBASELX_CAPABLE		0x2
- #define IXGBE_SFF_1GBASET_CAPABLE		0x8
--#define IXGBE_SFF_BASEBX10_CAPABLE		0x64
-+#define IXGBE_SFF_BASEBX10_CAPABLE		0x40
- #define IXGBE_SFF_10GBASESR_CAPABLE		0x10
- #define IXGBE_SFF_10GBASELR_CAPABLE		0x20
- #define IXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
--- 
-2.43.0
+So the only question which I am not 100% sure about is whether having
+ch_clk sparsly populated is normal operation. If that is the case, then
+more error checking is not useful. If not, then it might let us better
+sleep. As said as far as I can see errors are catched later.
 
+@Roger: what is your opintion towards this?
+
+BTW: If you do this kind of work, you could also use W=1 or
+CONFIG_WERROR during compiling to catch easy things. At least I see new
+compile warnings with your patch. 
+
+Regards,
+Andreas
 
