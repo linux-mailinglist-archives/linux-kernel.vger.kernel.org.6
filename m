@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-402962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A631E9C2F05
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:18:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7799C2F09
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:21:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56D2428241C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2688728242A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102CF19DF99;
-	Sat,  9 Nov 2024 18:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1AA19F41C;
+	Sat,  9 Nov 2024 18:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T5Uz1WiF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EwrGPzN4"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A1B29CF4
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 18:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81992155726
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 18:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731176305; cv=none; b=mCIgJXvoZj9TyMio6DgRgEacaH1QLyAyylQN0hIZIy74nBMjYHZQG2CX8so/T6HMS3GeEID+DQEVG/j5koa6pBF7iZmzUd+wKNGydHif3NGZtkMblB+PuBBQ57X2rODCj6F/vQshLB1EsRgoE4RJvnUI8hE72+lRz063+QY37mY=
+	t=1731176455; cv=none; b=nlfZvLyufUz8zFqkvojxSeDNKlmwkBYrLGrleQ1bMa5hMq8lD+DOFi4pCPRtFSecOJpovl+riQ2GNYlmNMzUb1nfSMIGdAijzRE0ABeKkdjj+PfOwVSqguFTmoyafsC8naSRghEcAVC7N+lTFSmxs9xu2IQewGKq4rc8EpSSkjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731176305; c=relaxed/simple;
-	bh=AdBVtku9OHGYHPMRtzIcKYmQn1RHh/7QKvXpJqM6jY4=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LdEBYXD14cmD+WqIRjRyPPxXkhmwsWJBYKRwH01bKyq5oIjrGJHB51ZsKYoWt3rszx4tF9To4o0xuI2+VqlmiRgyaYXKPA1wMkhXDsTP8DfjAD4K2rtmpaEhS0EHacP5aE94MEXlNcemhoPe5fepSDlzYQRxizCWtdy/ty+08XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T5Uz1WiF; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1731176455; c=relaxed/simple;
+	bh=YCMwbpsFyRLAdV/bw10MildrjIRT4dIrC9ujwxX7bXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o10h4P5e+RFGrRxRbBlGWXCGd/nxy4LSjmQxYezLTxkIN7zinovCo8YldqzHOnJUBXJknNWZb3i5adTsaGxdupmH23wmIWm0/62oTkHG4WTii+jm2au3ct3l42QzHq/wUrmqCB8qa9jxCbaSV55E3I4mCdCpLXfGhPOs3SDM0no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EwrGPzN4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731176302;
+	s=mimecast20190719; t=1731176452;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZceLSWwaG3m1lst/hPVRtV9JqwN+LCux/GOk3HRfSqM=;
-	b=T5Uz1WiFyB4NzyEyT60M8cP07nuUYAcGIoRlqHwuUAPUUXxjZakKFiYdpPS7pZCoF6dfEu
-	mUyPpx4xG/o8v9xs9HYsTjo17oy0EtttDs7+7UDkXpVX7LvUuj+XmMC+9rEZFVVBEiw5IJ
-	t+IsLGawJ0zQHElVroRvvLa+Le94xTE=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/cEcWgbcH3Td+fgTFflN55jyWC3FiR+ZVdjGy0yqdFI=;
+	b=EwrGPzN44LKCRk2J7zEE6tcgw8XpZQjdKVpSjYcWBWw01J7NDxnespRBeyQatj+UKc+rwY
+	boFjwpdmmYY9wWwAhJ88DHQB8dQi1VKPWMNntrz3vra3XYWsVlrJfcbUGBEjATIrx+Yfmn
+	ALBpg1SeGJrS98ZjscPiWIG0IWBTnVo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-624-h_jku7pSPHy1Mm22upj86A-1; Sat, 09 Nov 2024 13:18:20 -0500
-X-MC-Unique: h_jku7pSPHy1Mm22upj86A-1
-X-Mimecast-MFC-AGG-ID: h_jku7pSPHy1Mm22upj86A
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b14f4f66a4so726653285a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 10:18:19 -0800 (PST)
+ us-mta-582-3gyzDxY6P3OD7c83IUpoaQ-1; Sat, 09 Nov 2024 13:20:51 -0500
+X-MC-Unique: 3gyzDxY6P3OD7c83IUpoaQ-1
+X-Mimecast-MFC-AGG-ID: 3gyzDxY6P3OD7c83IUpoaQ
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315cefda02so24269015e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 10:20:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731176299; x=1731781099;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZceLSWwaG3m1lst/hPVRtV9JqwN+LCux/GOk3HRfSqM=;
-        b=bLJESRfOGxVMvv3vRJ7EOifu3Kla+VG+YhnFV94ymupFFiZiwPkS0Pzqq0eFfcVkrJ
-         hiYTPj4Rt6rINXRSJyEvz+pV2BAa3lk0yPYXMdq0XsUO4An6qoz9yJjw9rEFXjbFwEMf
-         Hhr/ZhBWQhALIqzOzaazb0FWhqYFXwqQqBwnPSkClGbcarXLj/rEshYTa248SfnvyfAg
-         I8R3toe6sIuDItJxtbQIx6PfK2bad5UWxdZoNdaiGay/Pmq2QFRuhCSvi8vX6gaHWrl6
-         4Mi9JVSnNHB4T81/SoC2EiVwA6nFXVUM7wR4yWCd4/Oov5sk+YxksK0sRKb4yqg0erM+
-         s2tA==
-X-Gm-Message-State: AOJu0YyAgJxaWoIp3MMFMO1mfeXHuwjnXXQAyKgx1+OJAeInrFPygSA4
-	uL8Tx9iZefpxpkqDOvtLkZDCjxkhfBjxn7YaBD4LZuUWESnuIs7eTm7OSurZoEVLHBhtRVY6CtD
-	++N7RZoh5/3xa+aHCcF0T/nePNUcBGcEJPL0JrJLDzbEdlX2gdLecS91pmjONZg==
-X-Received: by 2002:a05:620a:4513:b0:7b1:8cfa:91fa with SMTP id af79cd13be357-7b331867b43mr1205035785a.0.1731176299489;
-        Sat, 09 Nov 2024 10:18:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH38aWAjeQ/3efX0ujSqkdonYUqTNRWekycFxm1ukWXe1kggHxsS0tqHJelXIMdupg0qFeXQA==
-X-Received: by 2002:a05:620a:4513:b0:7b1:8cfa:91fa with SMTP id af79cd13be357-7b331867b43mr1205032985a.0.1731176299132;
-        Sat, 09 Nov 2024 10:18:19 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d3961df2d2sm33953266d6.25.2024.11.09.10.18.17
+        d=1e100.net; s=20230601; t=1731176450; x=1731781250;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/cEcWgbcH3Td+fgTFflN55jyWC3FiR+ZVdjGy0yqdFI=;
+        b=rfmoAiFyGK5Crqp8ehxC0GypVFAQPpqfKkcnQEXSS3Btec7DsU4Flx5DXbVhf606Tp
+         widdeSQ6cS0o+k3M1sai2oQrH0BqgVHoztTJelCIy3MVUCgZ75xJtOzfCSa4M9rP2Kce
+         3yOMLo7h/PvJjDt8ExNqys0VcdIwNPC70oeV+83QZK/M/mTWaxm+yy8ni+xncg191BSo
+         QFO5xgs5ts56xEX7ZqWWq4lIVKm8gtfvlwCCFPeGoq4iYZcfIfsaBHQt3whw1m0lUiV7
+         gUm7JNZH6VUoy+QiO5pzixt0ALwqQ72SUxXBOpKGtryMt/2b4XgZbmx0B5VLi8yc3Df0
+         eoIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWh8zfV/6vEKxxWp+ZgxeLLrZqbgrY6yTeE3qskuSOOJ96WTGwvY36kN02TLj4cCbYxF48I0hykMRicCpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTupSpBtnBSBjO+K2J6evwVIAtIMEUT1nYDw9spLQvRUGo8bxU
+	HN49oRe8+G5fBb5NyVEF8TTav56DCooGapDahPaKwPXEi4AOgjOVnu5aIjkuF+vExhPdHLoCwsR
+	udpw5/Au9KhFkEG5ETkp4fIM8nju6MNBRZxW9/Rr1E7Vlc+ZMYEHnse3xBn1BSQ==
+X-Received: by 2002:a05:600c:40c4:b0:42f:4f6:f8bc with SMTP id 5b1f17b1804b1-432bb9b0f81mr43198145e9.9.1731176449751;
+        Sat, 09 Nov 2024 10:20:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFubGlLMdjd2I3mx7KYYfgMPITOIb/JRV/spZbe/6nKuqaW2CVUVRFUH6zUq4al1k6l/DrkZQ==
+X-Received: by 2002:a05:600c:40c4:b0:42f:4f6:f8bc with SMTP id 5b1f17b1804b1-432bb9b0f81mr43197985e9.9.1731176449292;
+        Sat, 09 Nov 2024 10:20:49 -0800 (PST)
+Received: from [192.168.10.3] ([151.49.84.243])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-381ed97e4d2sm8398626f8f.32.2024.11.09.10.20.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 10:18:18 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <a8e3dfbd-0efa-4b4e-bc18-d00abaa79f14@redhat.com>
-Date: Sat, 9 Nov 2024 13:18:17 -0500
+        Sat, 09 Nov 2024 10:20:48 -0800 (PST)
+Message-ID: <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com>
+Date: Sat, 9 Nov 2024 19:20:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,97 +83,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
-To: Juri Lelli <juri.lelli@redhat.com>,
- Joel Fernandes <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>
-References: <20241029225116.3998487-1-joel@joelfernandes.org>
- <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
- <20241030195017.GA4171541@google.com>
- <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
- <20241104174109.GA1044726@google.com>
- <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
- <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
- <3833509d-e0c1-4fc4-874f-5a10fe3f1633@redhat.com>
- <5259772c-527b-4ab2-9606-2d1f0d93862a@redhat.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific
+ hypercalls
+To: Zack Rusin <zack.rusin@broadcom.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, Doug Covelli <doug.covelli@broadcom.com>,
+ Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, Joel Stanley <joel@jms.id.au>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
+ <20241030033514.1728937-3-zack.rusin@broadcom.com>
+ <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
+ <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
+ <Zy0__5YB9F5d0eZn@google.com>
+ <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 Content-Language: en-US
-In-Reply-To: <5259772c-527b-4ab2-9606-2d1f0d93862a@redhat.com>
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/8/24 10:30 PM, Waiman Long wrote:
-> I have the patchset to enforce that rebuild_sched_domains_locked() 
-> will only be called at most once per cpuset operation.
+On 11/8/24 06:03, Zack Rusin wrote:
+>>> There's no spec but we have open headers listing the hypercalls.
+>>> There's about a 100 of them (a few were deprecated), the full
+>>> list starts here:
+>>> https://github.com/vmware/open-vm-tools/blob/739c5a2f4bfd4cdda491e6a6f6869d88c0bd6972/open-vm-tools/lib/include/backdoor_def.h#L97
+>>> They're not well documented, but the names are pretty self-explenatory.
+>>
+>> At a quick glance, this one needs to be handled in KVM:
+>>
+>>    BDOOR_CMD_VCPU_MMIO_HONORS_PAT
+>>
+>> and these probably should be in KVM:
+>>
+>>    BDOOR_CMD_GETTIME
+>>    BDOOR_CMD_SIDT
+>>    BDOOR_CMD_SGDT
+>>    BDOOR_CMD_SLDT_STR
+>>    BDOOR_CMD_GETTIMEFULL
+>>    BDOOR_CMD_VCPU_LEGACY_X2APIC_OK
+>>    BDOOR_CMD_STEALCLOCK
 >
-> By adding some debug code to further study the null total_bw issue 
-> when cpuset.cpus.partition is being changed, I found that eliminating 
-> the redundant rebuild_sched_domains_locked() reduced the chance of 
-> hitting null total_bw, it did not eliminate it. By running my cpuset 
-> test script, I hit 250 cases of null total_bw with the v6.12-rc6 
-> kernel. With my new cpuset patch applied, it reduces it to 120 cases 
-> of null total_bw.
->
-> I will try to look further for the exact condition that triggers null 
-> total_bw generation.
+> I'm not sure if there's any value in implementing a few of them.
 
-After further testing, the 120 cases of null total_bw can be classified 
-into the following 3 categories.
+The value is that some of these depend on what the hypervisor does, not 
+on what userspace does.  For Hypervisor.framework you have a lot of 
+leeway, for KVM and Hyper-V less so.
 
-1) 51 cases when an isolated partition with isolated CPUs is created. 
-Isolated CPU is not subjected to scheduling and so a total_bw of 0 is 
-fine and not really a problem.
+Please understand that adding support for a closed spec is already a bit 
+of a tall ask.  We can meet in the middle and make up for the 
+closedness, but the way to do it is not technical; it's essentially 
+trust.  You are the guys that know the spec and the userspace code best, 
+so we trust you to make choices that make technical sense for both KVM 
+and VMware.  But without a spec we even have to trust you on what makes 
+sense or not to have in the kernel, so we ask you to be... honest about 
+that.
 
-2) 67 cases when a nested partitions are being removed (A1 - A2). There 
-is probably caused by some kind of race condtion. If I insert an 
-artifical delay between the removal of A2 and A1, total_bw is fine. If 
-there is no delay, I can see a null total_bw. That shouldn't really a 
-problem in practice, though we may still need to figure out why.
+One important point is that from the KVM maintainers' point of view, the 
+feature you're adding might be used by others and not just VMware 
+Workstation.  Microsoft and Apple might see things differently (Apple in 
+particular has a much thinner wrapper around the processor's 
+virtualization capbilities).
 
-2) Two cases where null total_bw is seen when a new partition is created 
-by moving all the CPUs in the parent cgroup into its partition and the 
-parent becomes a null partition with no CPU. The following example 
-illustrates the steps.
+> iirc
+> there's 101 of them (as I mentioned a lot have been deprecated but
+> that's for userspace, on the host we still have to do something for
+> old guests using them) and, if out of those 101 we implement 100 in
+> the kernel then, as far as this patch is concerned, it's no different
+> than if we had 0 out of 101 because we're still going to have to exit
+> to userspace to handle that 1 remaining.
+> 
+> Unless you're saying that those would be useful to you. In which case
+> I'd be glad to implement them for you, but I'd put them behind some
+> kind of a cap or a kernel config because we wouldn't be using them -
 
-#!/bin/bash
-CGRP=/sys/fs/cgroup
-cd $CGRP
-echo +cpuset > cgroup.subtree_control
-mkdir A1
-cd A1
-echo 0-1 > cpuset.cpus
-echo root > cpuset.cpus.partition
-echo "A1 partition"
-echo +cpuset > cgroup.subtree_control
-mkdir A2
-cd A2
-echo 0-1 > cpuset.cpus
-echo root > cpuset.cpus.partition
-echo "A2 partition"
-cd ..
-echo "Remove A2"
-rmdir A2
-cd ..
-echo "Remove A1"
-rmdir A1
+Actually we'd ask you to _not_ put them behind a cap, and live with the 
+kernel implementation.  Obviously that's not a requirement for all the 
+100+ hypercalls, only for those where it makes sense.
 
-In this corner case, there is actually no change in the set of sched 
-domains. In this case, the sched domain set of CPUs 0-1 is being moved 
-from partition A1 to A2 and vice versa in the removal of A2. This is 
-similar to calling rebuild_sched_domains_locked() twice with the same 
-input. I believe that is the condition that causes null total_bw.
+> besides what Doug mentioned - we already maintain the shared code for
+> them that's used on Windows, MacOS, ESX and Linux so even if we had
+> them in the Linux kernel it would still make more sense to use the
+> code that's shared with the other OSes to lessen the maintenance
+> burden (so that changing anything within that code consistently
+> changes across all the OSes).
 
-Now the question is why the deadline code behaves this way. It is 
-probably a bug that needs to be addressed.
+If some of them can have shared code across all OSes, then that's a good 
+sign that they do not belong in the kernel.  On the other hand, if the 
+code is specific to Windows/macOS/ESX/Linux, and maybe it even calls 
+into low-level Hypervisor.framework APIs on macOS, then it's possible or 
+even likely that the best implementation for Linux is "just assume that 
+KVM will do it" and assert(0).
 
-Cheers,
-Longman
+In yet other cases (maybe those SGDT/SLDT/STR/SIDT ones??), if the code 
+that you have for Linux is "just do this KVM ioctl to do it", it may 
+provide better performance if you save the roundtrip to userspace and 
+back.  If KVM is the best performing hypervisor for VMware Workstation, 
+then we're happy, :) and if you have some performance issue we want to 
+help you too.
+
+A related topic is that a good implementation, equivalent to what the 
+proprietary hypervisor implemented, might require adding a ioctl to 
+query something that KVM currently does not provide (maybe the current 
+steal clock? IIRC it's only available via a Xen ioctl, not a generic 
+one).  In that case you'd need to contribute that extra API.  Doing that 
+now is easier for both you guys and the KVM maintainers, so that's 
+another reason to go through the list and share your findings.
+
+Anyway, one question apart from this: is the API the same for the I/O 
+port and hypercall backdoors?
+
+>> I don't think it addresses Paolo's concern (if I understood Paolo's concern
+>> correctly), but it would help from the perspective of allowing KVM to support
+>> VMware hypercalls and Xen/Hyper-V/KVM hypercalls in the same VM.
+> 
+> Yea, I just don't think there's any realistic way we could handle all
+> of those hypercalls in the kernel so I'm trying to offer some ideas on
+> how to lessen the scope to make it as painless as possible. Unless you
+> think we could somehow parlay my piercing blue eyes into getting those
+> patches in as is, in which case let's do that ;)
+
+Unlikely :) but it's not in bad shape at all!  The main remaining 
+discussion point is the subset of hypercalls that need support in the 
+kernel (either as a kernel implementation, or as a new ioctl). 
+Hopefully the above guidelines will help you.
+
+>> I also think we should add CONFIG_KVM_VMWARE from the get-go, and if we're feeling
+>> lucky, maybe even retroactively bury KVM_CAP_X86_VMWARE_BACKDOOR behind that
+>> Kconfig.  That would allow limiting the exposure to VMware specific code, e.g. if
+>> KVM does end up handling hypercalls in-kernel.  And it might deter abuse to some
+>> extent.
+> 
+> I thought about that too. I was worried that even if we make it on by
+> default it will require quite a bit of handholding to make sure all
+> the distros include it, or otherwise on desktops Workstation still
+> wouldn't work with KVM by default, I also felt a little silly trying
+> to add a kernel config for those few lines that would be on pretty
+> much everywhere and since we didn't implement the vmware backdoor
+> functionality I didn't want to presume and try to shield a feature
+> that might be in production by others with a new kernel config.
+We don't have a huge number of such knobs but based on experience I 
+expect that it will be turned off only by cloud providers or appliance 
+manufacturers that want to reduce the attack surface.  If it's enabled 
+by default, distros will generally leave it on.  You can also add "If 
+unsure, say Y" to the help message as we already do in several cases.(*)
+
+In fact, if someone wants to turn it off, they will send the patch 
+themselves to add CONFIG_KVM_VMWARE and it will be accepted.  So we 
+might as well ask for it from the start. :)
+
+Thanks,
+
+Paolo
+
+(*) In fact I am wondering if we should flip the default for Xen, in the 
+beginning it was just an Amazon thing but since then David has 
+contributed support in QEMU and CI.  To be clear, I am *not* asking 
+VMware for anything but selftests to make CONFIG_KVM_VMWARE default to 
+enabled.
 
 
