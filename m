@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-402555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B149C28F8
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:41:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785EF9C28CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E451F22A38
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:41:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99C181C211F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C458C0B;
-	Sat,  9 Nov 2024 00:41:16 +0000 (UTC)
-Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACEED2FB;
+	Sat,  9 Nov 2024 00:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDyNYGce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E023D2FB
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:41:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE308F49;
+	Sat,  9 Nov 2024 00:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731112875; cv=none; b=sdBZSOg8rFkx91Mn+Y40PeYDvPYTjmGm8DH4Xi7UL6VfIF+C7XY4yl6yCvnqxRa1sLQbFHn/KASvaDAtMSvTMMPHSRR2ZiCh5rXAAoVyKDaXtpq9ZEcwtu4vPN4g31is0x8ofHQVmvJv8ozzDzruj4s8rxkssvGnfdhv3OvB000=
+	t=1731112111; cv=none; b=LtS2UITQw5UkYeFB269FQ8Z8LOjvQbIzxiaMtrB5+sCQ1loh2MJfQA3HaDWTdlkzViLFLSqtvvOZsFTm3xnb7h4372pMeWqPI5dgDE520RH6Wlpedr7ClkfpCyCnUmBz15tQJGQNMquOw2vQCVgctYS1dyF7+3aLbWX7MXhtJhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731112875; c=relaxed/simple;
-	bh=JtIHa05H+TvMS6BNLUEQp1cr0sM/AOO7OMAcZ2ebl20=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=irHiQPFX+QekCiHeY+ViCra/eotQyIv5jx4XYUiKFvcrtjldJDioncpuDleVK+uvUN3SVlAf/D75Nn4Lf8C8U+awce20ZcexE7U+/gTCITrJ+FGOp5tikjp9rosE6/gcFerJQ4tNmc+v0yKk5JDZmAWEnEdJkRoUslmZvIFGph4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
-Received: from [2601:18c:9101:a8b6:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <riel@shelob.surriel.com>)
-	id 1t9ZTn-000000004fJ-3hQW;
-	Fri, 08 Nov 2024 19:37:31 -0500
-From: Rik van Riel <riel@surriel.com>
-To: linux-kernel@vger.kernel.org
-Cc: dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	x86@kernel.org,
-	kernel-team@meta.com,
-	hpa@zytor.com,
-	Rik van Riel <riel@surriel.com>
-Subject: [PATCH 3/3] x86,tlb: put cpumask_test_cpu in prev == next under CONFIG_DEBUG_VM
-Date: Fri,  8 Nov 2024 19:27:50 -0500
-Message-ID: <20241109003727.3958374-4-riel@surriel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241109003727.3958374-1-riel@surriel.com>
-References: <20241109003727.3958374-1-riel@surriel.com>
+	s=arc-20240116; t=1731112111; c=relaxed/simple;
+	bh=EWIW2i2N7eAAxcCgqkKrlpW0rLZ1if4K4lcBruXdEwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GYdMys4dRPFAQPhEuJ034L+qBbMY0bZ+m2IzUZyVx02LzfRgrma/jnFVNmvSMcjvzDnL/xzm6DBqA5obtR8T6Izhw0xTuIueu/GkSoGzZ9PV18uL/8TLHutWh8SnoFbad2oq/NTxC9rs1QcOQPxmHEzD61QrBVBamNRno/F4E1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDyNYGce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8800DC4CECD;
+	Sat,  9 Nov 2024 00:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731112110;
+	bh=EWIW2i2N7eAAxcCgqkKrlpW0rLZ1if4K4lcBruXdEwQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eDyNYGceRPr0uF5gGYTsLy6tTSAgODed4ZMOHlGux8BTmFYcDJLR7/3KXpiECFdK1
+	 uY6WJRc5Uuj2LRfawidKCxONp5c0YWt0s6E7hRRsSoZEvcRuhjYhAh82PbKma6CRyW
+	 btLfb3vMqXT7RbJ9cNAVXGkNwSvs8wV85KKtNFxPbXN+V/n3yJdgMHNMhqbrL9ZtxZ
+	 PLxS1uvuNo97YrM7TzkyISHZ0QFG2SHszsR3KjIs32SP2gLVpfZgU+ctZ3tBQto52Y
+	 bhiGjO0NqJNEmtmitadQC2sNHpY6QJsOwgzbSOcfCDXXbFTFRIeNCszXHO44Zw4dej
+	 uXqJgpmRFVgag==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH 0/3] SPMI patches for the next merge window
+Date: Fri,  8 Nov 2024 16:28:25 -0800
+Message-ID: <20241109002829.160973-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,37 +54,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: riel@surriel.com
 
-On a web server workload, the cpumask_test_cpu inside the
-WARN_ON_ONCE in the prev == next branch takes about 17% of
-all the CPU time of switch_mm_irqs_off.
+Hi Greg,
 
-On a large fleet, this WARN_ON_ONCE has not fired in at least
-a month, possibly never.
+Please apply these SPMI patches for the next merge window.
 
-Move this test under CONFIG_DEBUG_VM so it does not get compiled
-in production kernels.
+ - Compatible string updates for SPMI bindings
+ - Use scoped version of for_each_available_child_of_node() to avoid
+   leaks
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
----
- arch/x86/mm/tlb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dmitry Baryshkov (1):
+  dt-bindings: spmi: qcom,x1e80100-spmi-pmic-arb: Add SAR2130P
+    compatible
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 9d0d34576928..1aac4fa90d3d 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -568,7 +568,7 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
- 		 * mm_cpumask. The TLB shootdown code can figure out from
- 		 * cpu_tlbstate_shared.is_lazy whether or not to send an IPI.
- 		 */
--		if (WARN_ON_ONCE(prev != &init_mm &&
-+		if (IS_ENABLED(CONFIG_DEBUG_VM) && WARN_ON_ONCE(prev != &init_mm &&
- 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
- 			cpumask_set_cpu(cpu, mm_cpumask(next));
- 
+Fei Shao (1):
+  dt-bindings: spmi: spmi-mtk-pmif: Add compatible for MT8188
+
+Javier Carrasco (1):
+  spmi: pmic-arb: fix return path in for_each_available_child_of_node()
+
+ .../devicetree/bindings/spmi/mtk,spmi-mtk-pmif.yaml         | 1 +
+ .../bindings/spmi/qcom,x1e80100-spmi-pmic-arb.yaml          | 6 +++++-
+ drivers/spmi/spmi-pmic-arb.c                                | 3 +--
+ 3 files changed, 7 insertions(+), 3 deletions(-)
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
 -- 
-2.45.2
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
 
 
