@@ -1,142 +1,228 @@
-Return-Path: <linux-kernel+bounces-402858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071C49C2DB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:56:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797829C2DB5
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AED5B1F21C98
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9372E1C20D35
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89A919882B;
-	Sat,  9 Nov 2024 13:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762721946A1;
+	Sat,  9 Nov 2024 14:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i8RgDA+R"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rp9qD1VF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9483F194AEF
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 13:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDC91E4B2;
+	Sat,  9 Nov 2024 14:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731160572; cv=none; b=hFvQ9+qGP+WhhFqwQ6kCN7sFsMKco3woopQIShuOMSoM/mdot+8aM2unooJ0UBQD/Oql+9u9lrBCk4e1f6RbykUk8KuuAKLAI6pyddAfAsb085JJVPG6foXuYFrkZpxKPhSnxQg9BhI5Z1EfZHkLk/YYSxhAEsaHlYz3hv7V7w0=
+	t=1731161100; cv=none; b=utGfPojmmx3JB3rkVZd+FiwGnlsuoWK4EXrdghv54EBT2MG/P13a6QJEzoRE94DNgGCGRmJVMb9u/Mivp20SPvHWdMJmsUqkdO1ubUmFFiSoUFrwi3DcDuW3/h+/HcUJuW0fXfAokVtTOqvCaZyLnqNTxihbxo1lD56x9mr9GiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731160572; c=relaxed/simple;
-	bh=6tMOEZ4hYeIaERsoiWpF63YtRH/4HelSxe57Ej6i2fs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phjkXm6+Lb8JCADPxzFcNCXhb/DVV1dti/J1so8tfG+qtjnweSE9NiAVsfnQGgRzIGnFZV8updgoDfy2jVZcdrAHIxcoWMd0/cjBYn92r++KlzfaBJo/OBKhEPL9wc2qPyfCn4Z9voA/PQ4XYuE9MhXBLUsJZuI05fQ+Rk/cohY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i8RgDA+R; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d63a79bb6so1965330f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 05:56:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731160569; x=1731765369; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m+Kc0rzleBniDws42taDJiRijBO7TNIofluEdMhVLBw=;
-        b=i8RgDA+RwNTUcYFVoXTTBi5tKRLJdcQYHhkF2m4E6IsH3rvwLc/IqT3Uu7KT1A5EsB
-         Z5sTBiXFWkXrliwc2JWgk0vPtvzdf7KW4qjUiwh9lpdnboLjSDzjN08ZnPxePDuaQ+Xi
-         jIu+Gj9BBtyWwFHEiooN9pnN/F9WmaUqu3qAnT1iJ1c7lFL4h5gMlo5sroxmq+ql4PD9
-         lYQc6kefHnldblWrz3FdtuuPQqnYx4e+SElm5xCVyASrt5OgJe87kXjgeEnV4zDJQ0Gt
-         8tSfnRdJMi8UKc+94Cl69/kZx62QbU8xWRmZlDRmQ8cpYFNAXnd2mfptNEBQNxge+5th
-         yf8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731160569; x=1731765369;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m+Kc0rzleBniDws42taDJiRijBO7TNIofluEdMhVLBw=;
-        b=OCJ0cv8SbH8Jz8BFfhtj8DI9unTxjQG/cEaUAD0zWrqo/Mn926hi/mFDJNYDNF45ii
-         p3cM+N0CWOUdFcF4sZI3ixZlw0hihpbSkGbIalS1A0Yuhes2THtsPOE/Jz0DtWU57Wrl
-         UddA2wFHJkIkdQkxeleFy6we+x/9g7/q7p0zN6Pql66p1ByyQASgkO5I+z+p9RXNEfht
-         0PAmZXELYGQtEdODqAF2w9GBlpREfya5FLFgGw1PnewwItd/etbCrA7Klu9xsX9hxim9
-         LuGyh73kvM6APEv6hiXwk4XtWw7ZX40xKlozKZ4bDut2QMvw7fqfCzImxzfnuCfTVncn
-         HLKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSBxzm53ubOz2ykM4HhvDyiUy2YCqAIALDUD4tPWNSiwglo/Bnr2285Ftt4EGzUw2fZBbljhZuo71tvbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3yKrKrOSR8/hPFz954aHVxokNN/e4yDM9MRsVMrNBaOcqPu5Y
-	Nb64FoySG8jBan1E/pfewUUTq+BK53QItgCyLdrVMz+RveeswmmrVnJcYF6Ktsc=
-X-Google-Smtp-Source: AGHT+IFsS2LMq6BH18aGRCC9suSXqIwBnIqgdOjirnJVxP9+m+h71xqEBknv7upPJ7jntZEG8ZeeBg==
-X-Received: by 2002:a05:6000:385:b0:381:e702:af15 with SMTP id ffacd0b85a97d-381f182fc64mr5833268f8f.37.1731160568840;
-        Sat, 09 Nov 2024 05:56:08 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3194:2330:43bb:8a9b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c18e0sm109576935e9.28.2024.11.09.05.56.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 05:56:08 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Lee Jones <lee@kernel.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-usb@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Pavel Machek <pavel@ucw.cz>,
-	Dominik Brodowski <linux@dominikbrodowski.net>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v1 0/6] gpio: Get rid of deprecated GPIOF_ACTIVE_LOW
-Date: Sat,  9 Nov 2024 14:56:06 +0100
-Message-ID: <173116056404.6855.877058419163067768.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
-References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1731161100; c=relaxed/simple;
+	bh=4yOu+TnIpLA5EfRXQwATgH1ejXLnej8bgp6pgBiYAGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H+lsK0ubFIc9ZJkjxkShLhLFfGbHa5ysPGfmBatlqH+xZeRUWj98tGAcaaXlJ55VxGvya7XYxzSCkQRsyHuk+XJBNOGyl27hX+lSp0gEXl9a0aIRjNZdvnJ1K557fypYP6EfkzR7MrX8yaHn7G5XZ+KeZNxrkXbGVmW1GXEENiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rp9qD1VF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52DE4C4CECE;
+	Sat,  9 Nov 2024 14:04:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731161100;
+	bh=4yOu+TnIpLA5EfRXQwATgH1ejXLnej8bgp6pgBiYAGc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rp9qD1VFBjBLnS4/tk4g6kh75geVmsOIeVrCT7mxTSjParc09hOh0+BItRC4cZv/L
+	 zkhO3IrBO0CzjPSe3n9WUITd1gLPiEKtokQRITPfh1PaHq42mN6bDS0GhbTynvHjc6
+	 bgoTbm3TnnDVO6XSMYGRTkx6xinrh/5zLd6PpWaLQI9p3vG2aag7HMAveYzW9Lk9Qf
+	 6HRTyAQ4C22pUxe3nK0hg7+KW9p6Wst6yZCmv6cxLeqrNgO2rR/0JrMFAq9LoO5OQT
+	 hhfqk9PGR+J0iA1CoDEHhRLegQv7tYr9FQdbCdz4NFpNCpT8pW1o1apogyMtPjbGXm
+	 gobdYrkGQI8MQ==
+Date: Sat, 9 Nov 2024 15:04:20 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Yunke Cao
+ <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede
+ <hdegoede@redhat.com>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241109150420.359bd50f@foz.lan>
+In-Reply-To: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Em Fri, 08 Nov 2024 20:25:44 +0000
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-
-On Mon, 04 Nov 2024 11:34:18 +0200, Andy Shevchenko wrote:
-> This series targets the deprecated GPIOF_ACTIVE_LOW as only a few users
-> left. Convert those users to call modern APIs and drop this legacy piece
-> from the source tree.
+> Some notebooks have a button to disable the camera (not to be mistaken
+> with the mechanical cover). This is a standard GPIO linked to the
+> camera via the ACPI table.
 > 
-> The idea is to route this via GPIO tree, please Ack.
+> 4 years ago we added support for this button in UVC via the Privacy control.
+> This has two issues:
+> - If the camera has its own privacy control, it will be masked
+> - We need to power-up the camera to read the privacy control gpio.
 > 
-> Andy Shevchenko (6):
->   Input: gpio_keys - avoid using GPIOF_ACTIVE_LOW
->   Input: gpio_keys_polled - avoid using GPIOF_ACTIVE_LOW
->   leds: gpio: Avoid using GPIOF_ACTIVE_LOW
->   pcmcia: soc_common: Avoid using GPIOF_ACTIVE_LOW
->   USB: gadget: pxa27x_udc: Avoid using GPIOF_ACTIVE_LOW
->   gpio: Get rid of GPIOF_ACTIVE_LOW
+> We tried to fix the power-up issues implementing "granular power
+> saving" but it has been more complicated than anticipated....
 > 
-> [...]
+> Last year, we proposed a patchset to implement the privacy gpio as a
+> subdevice https://lore.kernel.org/linux-media/20230111-uvc_privacy_subdev-v1-0-f859ac9a01e3@chromium.org/
+> 
+> I think it is a pretty clean solution and makes sense to use a
+> subdevice for something that is a sub device of the camera :).
+> 
+> This is an attempt to continue with that approach.
+> 
+> Tested on gimble:
+> gimble-rev3 ~ # v4l2-ctl --all -d /dev/v4l-subdev0
 
-Applied, thanks!
+No matter if internally implemented as a subdevice or not,
+UVC is not a MC-centric device[1]. 
 
-[1/6] Input: gpio_keys - avoid using GPIOF_ACTIVE_LOW
-      commit: a04abf25fb1ac47dd2bf1e1b7ca24ca78688b175
-[2/6] Input: gpio_keys_polled - avoid using GPIOF_ACTIVE_LOW
-      commit: 081aaf2dfcfa10fa5cb5444b77b154cce4355708
-[3/6] leds: gpio: Avoid using GPIOF_ACTIVE_LOW
-      commit: e6a2f0ea519fd2478920d02ce3de07a14fe36b2f
-[4/6] pcmcia: soc_common: Avoid using GPIOF_ACTIVE_LOW
-      commit: 15998583b19749e63c5cd0431a2517f524352762
-[5/6] USB: gadget: pxa27x_udc: Avoid using GPIOF_ACTIVE_LOW
-      commit: 62d2a940f29e6aa5a1d844a90820ca6240a99b34
-[6/6] gpio: Get rid of GPIOF_ACTIVE_LOW
-      commit: fffb9fff12250018a6f4d3e411f9d289210da329
+It means that UVC can be compiled without media controller support,
+and that its functionality shall be visible via /dev/video* nodes.
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+So, whatever internal implementation it is used, it shall not require
+config MEDIA_CONTROLLER and the control shall be visible via
+/dev/video*.
+
+Moving privacy control out of /dev/video would mean that this will break 
+support for it on existing applications, which is a big nack. Now, it would
+be acceptable to have this visible via V4L2 and subdev APIs.
+
+[1] https://www.kernel.org/doc/html/latest/userspace-api/media/glossary.html#term-MC-centric
+
+Regards,
+Mauro
+
+> Driver Info:
+>         Driver version   : 6.6.56
+>         Capabilities     : 0x00000000
+> Media Driver Info:
+>         Driver name      : uvcvideo
+>         Model            : HP 5M Camera: HP 5M Camera
+>         Serial           : 0001
+>         Bus info         : usb-0000:00:14.0-6
+>         Media version    : 6.6.56
+>         Hardware revision: 0x00009601 (38401)
+>         Driver version   : 6.6.56
+> Interface Info:
+>         ID               : 0x0300001d
+>         Type             : V4L Sub-Device
+> Entity Info:
+>         ID               : 0x00000013 (19)
+>         Name             : GPIO
+>         Function         : Unknown sub-device (00020006)
+> 
+> Camera Controls
+> 
+>                         privacy 0x009a0910 (bool)   : default=0 value=0 flags=read-only, volatile
+> 
+> gimble-rev3 ~ # media-ctl  -p
+> Media controller API version 6.6.56
+> 
+> Media device information
+> ------------------------
+> driver          uvcvideo
+> model           HP 5M Camera: HP 5M Camera
+> serial          0001
+> bus info        usb-0000:00:14.0-6
+> hw revision     0x9601
+> driver version  6.6.56
+> 
+> Device topology
+> - entity 1: HP 5M Camera: HP 5M Camera (1 pad, 1 link)
+>             type Node subtype V4L flags 1
+>             device node name /dev/video0
+>         pad0: Sink
+>                 <- "Extension 8":1 [ENABLED,IMMUTABLE]
+> 
+> - entity 4: HP 5M Camera: HP 5M Camera (0 pad, 0 link)
+>             type Node subtype V4L flags 0
+>             device node name /dev/video1
+> 
+> - entity 8: Extension 8 (2 pads, 2 links, 0 routes)
+>             type V4L2 subdev subtype Unknown flags 0
+>         pad0: Sink
+>                 <- "Extension 4":1 [ENABLED,IMMUTABLE]
+>         pad1: Source
+>                 -> "HP 5M Camera: HP 5M Camera":0 [ENABLED,IMMUTABLE]  
+> 
+> - entity 11: Extension 4 (2 pads, 2 links, 0 routes)
+>              type V4L2 subdev subtype Unknown flags 0
+>         pad0: Sink
+>                 <- "Processing 2":1 [ENABLED,IMMUTABLE]
+>         pad1: Source
+>                 -> "Extension 8":0 [ENABLED,IMMUTABLE]  
+> 
+> - entity 14: Processing 2 (2 pads, 2 links, 0 routes)
+>              type V4L2 subdev subtype Unknown flags 0
+>         pad0: Sink
+>                 <- "Camera 1":0 [ENABLED,IMMUTABLE]
+>         pad1: Source
+>                 -> "Extension 4":0 [ENABLED,IMMUTABLE]  
+> 
+> - entity 17: Camera 1 (1 pad, 1 link, 0 routes)
+>              type V4L2 subdev subtype Sensor flags 0
+>         pad0: Source
+>                 -> "Processing 2":0 [ENABLED,IMMUTABLE]  
+> 
+> - entity 19: GPIO (0 pad, 0 link, 0 routes)
+>              type V4L2 subdev subtype Decoder flags 0
+>              device node name /dev/v4l-subdev0
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Changes in v2:
+> - Rebase on top of https://patchwork.linuxtv.org/project/linux-media/patch/20241106-uvc-crashrmmod-v6-1-fbf9781c6e83@chromium.org/
+> - Create uvc_gpio_cleanup and uvc_gpio_deinit
+> - Refactor quirk: do not disable irq
+> - Change define number for MEDIA_ENT_F_GPIO
+> - Link to v1: https://lore.kernel.org/r/20241031-uvc-subdev-v1-0-a68331cedd72@chromium.org
+> 
+> ---
+> Ricardo Ribalda (5):
+>       media: uvcvideo: Factor out gpio functions to its own file
+>       Revert "media: uvcvideo: Allow entity-defined get_info and get_cur"
+>       media: uvcvideo: Create ancillary link for GPIO subdevice
+>       media: v4l2-core: Add new MEDIA_ENT_F_GPIO
+>       media: uvcvideo: Use MEDIA_ENT_F_GPIO for the GPIO entity
+> 
+> Yunke Cao (1):
+>       media: uvcvideo: Re-implement privacy GPIO as a separate subdevice
+> 
+>  .../userspace-api/media/mediactl/media-types.rst   |   4 +
+>  drivers/media/usb/uvc/Makefile                     |   3 +-
+>  drivers/media/usb/uvc/uvc_ctrl.c                   |  40 +----
+>  drivers/media/usb/uvc/uvc_driver.c                 | 123 +-------------
+>  drivers/media/usb/uvc/uvc_entity.c                 |  20 ++-
+>  drivers/media/usb/uvc/uvc_gpio.c                   | 187 +++++++++++++++++++++
+>  drivers/media/usb/uvc/uvc_video.c                  |   4 +
+>  drivers/media/usb/uvc/uvcvideo.h                   |  34 ++--
+>  drivers/media/v4l2-core/v4l2-async.c               |   3 +-
+>  include/uapi/linux/media.h                         |   1 +
+>  10 files changed, 252 insertions(+), 167 deletions(-)
+> ---
+> base-commit: 4353256f5487e0c5c47e8ff764bf4f9e679fb525
+> change-id: 20241030-uvc-subdev-89f4467a00b5
+> 
+> Best regards,
+
+
+
+Thanks,
+Mauro
 
