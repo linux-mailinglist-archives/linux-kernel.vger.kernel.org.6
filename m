@@ -1,125 +1,233 @@
-Return-Path: <linux-kernel+bounces-402861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8189C2DBE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:25:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882829C2DC3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7181F2111E
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91451C20CD3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1998C197A8F;
-	Sat,  9 Nov 2024 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED03197A98;
+	Sat,  9 Nov 2024 14:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D4sl1PyA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P327o1vV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699231E4BE;
-	Sat,  9 Nov 2024 14:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3931E4BE;
+	Sat,  9 Nov 2024 14:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731162298; cv=none; b=MkBA3T4Juv4KfbnhvZadE5MjTN1i6nXqlnJWUgOy/gHxwBJH/vU8ChhjacK+pOdHboSsAzD3UGMUY/BGDOMaVYaZGjQBH4Fh2ygr9HYvDz2aBjqeocfn3KCnCvq2fArFhHRm9UrxCMeqg4Gj6wQinVOpn5jKGwZWAKm4/8yteVQ=
+	t=1731162599; cv=none; b=CliaGFcJltFyU28apzh3JeDamHCrT5GvAN/RYkOumLcyLG036TsUOhL2hBhDWdAvPn+wRxzIZ6IqITBV36inNxCw7LtwAnNrDtG69a3BE3s3TYy5ZiphYA3zCH222XQ8+IlRnsxNc04llq+j2I8MYqasZHL8DswQOv+32DZwkoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731162298; c=relaxed/simple;
-	bh=v9l5l8b91vxON4bj2aWHj1KqPysotO/V5/B7MgXRpkg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iYXQ6WGNmYDceWLk7kLjkdaAQvIQudmvxnbNC9JauF3YfpN/JP3sBxcLX19+9xH8O6hA1F3/Rw36IzYENvmFZARqo5QV+dnxKWxQ8QKyHQSTgXmWQFs9177iHzZaaOFOYqhiNv95B/x4/GQOx4OP8wdalRA2rIK2mNYEJj3USWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D4sl1PyA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA46C4CECE;
-	Sat,  9 Nov 2024 14:24:50 +0000 (UTC)
+	s=arc-20240116; t=1731162599; c=relaxed/simple;
+	bh=RoqKl4IUlQvaJJ5jS1KjO5Bd2hv0pSZNTdzuiw/RQxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JpG60gm2yL/tpa3I06LPLjPGC7jdiqu4vYufsOk3+qschj08IlXLViWf22lTpWjwPhVLZR2sR5lcd4bmKLFKvn6c0q6tj7v7jM5dPXpV01AIzWORVfbLMHMVrg4Fj7jqVsQ8y18sgCzi66q0kryuylthnQZpbcn/2qz/aq5Fm5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P327o1vV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60832C4CECE;
+	Sat,  9 Nov 2024 14:29:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731162297;
-	bh=v9l5l8b91vxON4bj2aWHj1KqPysotO/V5/B7MgXRpkg=;
+	s=k20201202; t=1731162598;
+	bh=RoqKl4IUlQvaJJ5jS1KjO5Bd2hv0pSZNTdzuiw/RQxA=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D4sl1PyAPw5ZC6cLLsXQDv+MOSOamLLaxOVvt4VrYfx6IgcRlbMJhnffk1A1Pc20a
-	 O8uza36K7i0TtCaepvX7gNMwLQq8912Mm+kYzzsSkR0CrGIU5oOz8hIoIoie3y2KZP
-	 zCtsTjGeS45sgKjYfL4lvE2hKvmAa/UnCqpceyJEMJkGbk5fxDkX8qMO4MMs6pot0U
-	 JEsjainnAeAmplxEbKIcCfECjocBbCPFEyD2fCw2Nxw1gOQSPpcq+cSW5Qbz15qkG5
-	 9jM4rh29L96GccbknSIsJw9MFFa33KBPf0S7hKPhzkB6yMHWJTH2Dzsu0JRJ1nmIms
-	 z48dPXNONT+/Q==
-Date: Sat, 9 Nov 2024 23:24:48 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
- <mark.rutland@arm.com>, linux-arch@vger.kernel.org, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan
- Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v18 01/17] fgraph: Pass ftrace_regs to entryfunc
-Message-Id: <20241109232448.f1c3e174da2b1c4276530894@kernel.org>
-In-Reply-To: <20241101065023.72933d1b@gandalf.local.home>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
-	<172991733069.443985.15154246733356205391.stgit@devnote2>
-	<20241031155324.108ed8ef@gandalf.local.home>
-	<20241101105102.eb308ab85b2b13d03444d4bf@kernel.org>
-	<20241101065023.72933d1b@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=P327o1vVCQMUxMQ6sNVB9+tKGtPDoP2M3uIzvR5GWbumiGL+Gs3DUaamb/U3gz+bM
+	 2bLrQHaCfSWeNQoaARCIl03hEJ3VBDhJr2ZbL3IGuQbzAANSa8A+7Q2T7FToDWD4rk
+	 Zw3PscbdamOjpjzjvG0TRqV432Gbi2yRoGB0NPJpFNIalz7O0qHDWdF4jF6jPzabtN
+	 Fkw1v5SDpTYUwVt90bOnZlzzQlYYMFHtq6jhoh7LrK4Uw6nHMshzGLi9ceWWyqjqjv
+	 QqbkL4K6uf2xz7NqdQx5btPMJ+B1OvKL6BJGM/LZGhMituDW3cj6dcoyaJc1U9z74G
+	 mrSkAJ6tRgSbg==
+Date: Sat, 9 Nov 2024 14:29:43 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Yu-Hsian Yang <j2anfernee@gmail.com>
+Cc: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andy@kernel.org, marcelo.schmitt@analog.com, olivier.moysan@foss.st.com,
+ mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com,
+ joao.goncalves@toradex.com, marius.cristea@microchip.com,
+ mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
+ NCT720x ADCs
+Message-ID: <20241109142943.3d960742@jic23-huawei>
+In-Reply-To: <20241109134228.4359d803@jic23-huawei>
+References: <20241106023916.440767-1-j2anfernee@gmail.com>
+	<20241106023916.440767-2-j2anfernee@gmail.com>
+	<6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
+	<CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
+	<20241109134228.4359d803@jic23-huawei>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 1 Nov 2024 06:50:23 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Sat, 9 Nov 2024 13:42:28 +0000
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-> On Fri, 1 Nov 2024 10:51:02 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
-> > Ah, good catch! It should put the flag only when HAVE_DYNAMIC_FTRACE_WITH_ARGS
-> > is enabled.
-> > 
-> > static struct ftrace_ops graph_ops = {
-> > 	.func			= ftrace_graph_func,
-> > #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> > 	.flags			= FTRACE_OPS_GRAPH_STUB | FTRACE_OPS_FL_SAVE_ARGS,
-> > #elif defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS)
-> > 	.flags			= FTRACE_OPS_GRAPH_STUB | FTRACE_OPS_FL_SAVE_REGS,
-> > #else
-> > 	.flags			= FTRACE_OPS_GRAPH_STUB,
-> > #endif
-> > 
-> > This will save fregs or regs or NULL according to the configuration.
-> > 
-> 
-> Please do not add that to the C code. It's really ugly. Just correct the
-> comment. Note, FTRACE_OPS_FL_SAVE_ARGS is already dynamic by configuration:
-> 
-> #ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> #define FTRACE_OPS_FL_SAVE_ARGS                        FTRACE_OPS_FL_SAVE_REGS
-> #else
-> #define FTRACE_OPS_FL_SAVE_ARGS                        0
-> #endif
-> 
-> I'm a bit confused at what you are trying to achieve here.
+> On Wed, 6 Nov 2024 17:22:35 +0800
+> Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
+>=20
+> > Dear Chanh Nguyen,
+> >=20
+> > Thank you for your response.
+> >=20
+> > Chanh Nguyen <chanh@amperemail.onmicrosoft.com> =E6=96=BC 2024=E5=B9=B4=
+11=E6=9C=886=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8812:58=E5=AF=AB=
+=E9=81=93=EF=BC=9A =20
+> > >
+> > >
+> > >
+> > > On 06/11/2024 09:39, Eason Yang wrote:   =20
+> > > > This adds a binding specification for the Nuvoton NCT7201/NCT7202
+> > > > family of ADCs.
+> > > >
+> > > > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+> > > > ---
+> > > >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 ++++++++++++++=
++++++
+> > > >   MAINTAINERS                                   |  1 +
+> > > >   2 files changed, 48 insertions(+)
+> > > >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nuvo=
+ton,nct720x.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nct7=
+20x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..3052039af10e
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > > > @@ -0,0 +1,47 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Nuvoton nct7202 and similar ADCs
+> > > > +
+> > > > +maintainers:
+> > > > +  - Eason Yang <yhyang2@nuvoton.com>
+> > > > +
+> > > > +description: |
+> > > > +   Family of ADCs with i2c interface.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - nuvoton,nct7201
+> > > > +      - nuvoton,nct7202
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  read-vin-data-size:   =20
+> > >
+> > > Is it generic property or vendor property? I tried to find in the
+> > > https://github.com/torvalds/linux/tree/master/Documentation/devicetre=
+e/bindings
+> > > , but it seems this property hasn't been used on other devices.
+> > >
+> > > If it is vendor property, then I think it should include a vendor
+> > > prefix. For examples:
+> > >
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/adi%2Cad7780.yaml#L50
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/fsl%2Cvf610-adc.yaml#L42
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/st%2Cstmpe-adc.yaml#L22
+> > >
+> > >   =20
+> >=20
+> > I would add a vendor prefix for it. =20
+>=20
+> Why do we want this at all?  Is this device sufficiently high
+> performance that Linux will ever want to trade of resolution against
+> sampling speed?
+>=20
+> If so that seems like a policy control that belongs in userspace. Note
+> that to support that in IIO I would want a strong justification for why w=
+e dno't
+> just set it to 16 always. We just go for maximum resolution in the vast m=
+ajority
+> of drivers that support control of this.
+I'd misunderstood what this is. It's a control no what the i2c word size is.
+Do we actually care about supporting rubbish i2c controllers?  How many
+can't do a word access?
 
-So it may need FTRACE_OPS_FL_SAVE_REGS instead of FTRACE_OPS_FL_SAVE_ARGS,
-right?
-OK, I'll do that.
+If you do it should be detected from the controller rather than in DT.
 
-Thank you,
+>=20
+>=20
+> >  =20
+> > > > +    description: number of data bits per read vin
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    enum: [8, 16]
+> > > > +
+> > > > +required:
+> > > > +  - compatible
+> > > > +  - reg
+> > > > +  - read-vin-data-size
+> > > > +
+> > > > +additionalProperties: false
+> > > > +
+> > > > +examples:
+> > > > +  - |
+> > > > +    i2c {
+> > > > +        #address-cells =3D <1>;
+> > > > +        #size-cells =3D <0>;
+> > > > +
+> > > > +        nct7202@1d {   =20
+> > >
+> > > I think the Node name should follow
+> > > https://devicetree-specification.readthedocs.io/en/latest/chapter2-de=
+vicetree-basics.html#generic-names-recommendation
+> > >
+> > >
+> > > For some examples that were merged before
+> > >
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/adi%2Cad7091r5.yaml#L102
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/maxim%2Cmax1238.yaml#L73
+> > > https://github.com/torvalds/linux/blob/master/Documentation/devicetre=
+e/bindings/iio/adc/ti%2Cadc081c.yaml#L49
+> > >   =20
+> >=20
+> > I would change it for the node naming.
+> >  =20
+> > > > +            compatible =3D "nuvoton,nct7202";
+> > > > +            reg =3D <0x1d>;
+> > > > +            read-vin-data-size =3D <8>;
+> > > > +        };
+> > > > +    };
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index 91d0609db61b..68570c58e7aa 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -2746,6 +2746,7 @@ L:      openbmc@lists.ozlabs.org (moderated f=
+or non-subscribers)
+> > > >   S:  Supported
+> > > >   F:  Documentation/devicetree/bindings/*/*/*npcm*
+> > > >   F:  Documentation/devicetree/bindings/*/*npcm*
+> > > > +F:   Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
+> > > >   F:  Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
+> > > >   F:  arch/arm/boot/dts/nuvoton/nuvoton-npcm*
+> > > >   F:  arch/arm/mach-npcm/   =20
+> > >   =20
+>=20
+>=20
 
-> 
-> -- Steve
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
