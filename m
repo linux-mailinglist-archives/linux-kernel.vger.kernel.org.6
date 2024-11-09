@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-402847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF4C9C2D8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2C79C2D8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56ED11C20F39
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26341C20F86
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C113B297;
-	Sat,  9 Nov 2024 13:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5FD1946A0;
+	Sat,  9 Nov 2024 13:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="ZTRatWNs"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h992DfQX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8508315534E
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 13:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C28613B297;
+	Sat,  9 Nov 2024 13:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731159132; cv=none; b=KmUHbVL8sglz/93VzSAgSjHLc782/zUBtSWk6KUWPHmDQe2lviE9iuNJr3/z0XCR8BrLealRsNxdawI5GknHLimd+3vAzwEsNaOFSiHbsyot0rbMsx/vYglywR064WAck+Z6NgNgudYA0opJPKTzSwjPJ9EStVAKbQXF7MmcLzk=
+	t=1731159206; cv=none; b=jiS2TbYiCDUNBlp/ATovnwfRcmT+0aFNSKkUOvLt1d4Fgl98IX+SodLiyEwEfjJpxRwrh/H1o05rwU1N+fQGqywTwn9/9WImPEU8QX9bAt+n1uu6fOXDjC9fxDAeBa/8KSnW5DVu0XHlo1j8BPmRGfm3WpWMvJgtB0+j0GZwues=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731159132; c=relaxed/simple;
-	bh=32gf9hT995PQq1aAYXY53/SFI2peqGmru9vlcv9S7mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rcnbp+/5iPzThu2cfFUqkkHpCAglLHTwphtpguGou3Obe8Nj8vyCjd1a2zH6735ozvyfaXRIRQDZgsDxTi//xTiicvuFBcY1WMFDtMsEyhVmtB2NYPFleMdrnZebmFJNQdTBCyoBRh0d49ZMAPDi0MSl+S6cqSiydlzFIB9pbGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=ZTRatWNs; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3094588e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 05:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1731159128; x=1731763928; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPkYK2jE6W+k/K+5sgYeu+6Wgp1BX3wJYLP9Zc4crPI=;
-        b=ZTRatWNsgbgDfLBJ/Ki/WjrfKdMwB3WeltQZ0beSKSgoKQloLnKHeJAB4N62AU94B0
-         iBYsNuSDRrmrR8YgMWWJJKfCZrp+wUlTSIeoBRuIsf3qYyd58fXu7MjkQbn/otYoFOf+
-         nbpiW4K1YznAUnptiqYPpv/JMmmDVksgLVtrpN08Z9oJhaodjjJv4w9GHo6Cs2FRFHGp
-         hbY7ed1zCpUnmw6UVt8rQ/CXM+IT6pNmPwmM7ex6XceZ7i5TKPWModuFxQIpjfhoYCIE
-         ZJErRgdCQxF2eHargGZKi6qs5Lns6qtHchJQ5OVZxuvU10LLLHXmgnHaUShKeYmsQHAL
-         l7jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731159128; x=1731763928;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aPkYK2jE6W+k/K+5sgYeu+6Wgp1BX3wJYLP9Zc4crPI=;
-        b=pvnNj+UwQNAufmNXeoyfTIEYfdRYbt2PL9LQZcGmS4YYswKo249g2s9THnS9wqs/u/
-         fGaySsLEljcqwiTViBAIIxEFlrZXZAO4jxBs4uNW/WlqC+A6zkZx6+L4Kf787sf4TMGD
-         KCKhprunMHfB5Ds8y9k2bc/HMetdI24KoS59i42fpDJ0KMT4SzDro3SJt48wZ5ID45BD
-         YyykgfjIqALBvsGFMgdcZHhxBEHi5pGf5wEZfgDI/VZl6MMvoxK14fh6MRe0Gk89U8qU
-         Os4D2SSeStMeCYHnFRwykq0Q7EGaQoOvbJeL5CU0c202alOQOLPX8o+peQJmTush5bKb
-         fwHg==
-X-Forwarded-Encrypted: i=1; AJvYcCU95IEpht7CaCZAJlf7rmXQAPc4jmazbrTSnw5pjN/e247ZT9YNMjlp3wcWzTvmRjkfpJnnIelDP2Q6ndQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygKGaa5yYhxItiEi2B+/5PBEZPx2dYcnvQTXA2DH3ZyygCGPMN
-	qzeOSCMYkCQcfgoaXhaZUfxHrfWa5NO03oh/5/StvSPM69UXietJkI1C7iL2j0Q=
-X-Google-Smtp-Source: AGHT+IGj0D/6yjP10y7ie3xxsGiYheBK1EFju+ttcIftGp5WJQJIP4vfOq3SOeC0NwuE0PHhvjMsvg==
-X-Received: by 2002:a05:6512:3f05:b0:539:fd1b:baf5 with SMTP id 2adb3069b0e04-53d862bd445mr2637845e87.16.1731159127417;
-        Sat, 09 Nov 2024 05:32:07 -0800 (PST)
-Received: from localhost ([62.205.150.185])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a7355sm916769e87.129.2024.11.09.05.32.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 05:32:06 -0800 (PST)
-Date: Sat, 9 Nov 2024 15:32:05 +0200
-From: Nikolay Aleksandrov <razor@blackwall.org>
-To: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
-Cc: davem@davemloft.net, Roopa Prabhu <roopa@nvidia.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, bridge@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC net-next 1/4] net: bridge: respect sticky flag on external
- learn
-Message-ID: <Zy9kVceo3w-YRA8S@penguin>
-References: <20241108032422.2011802-1-elliot.ayrey@alliedtelesis.co.nz>
- <20241108032422.2011802-2-elliot.ayrey@alliedtelesis.co.nz>
+	s=arc-20240116; t=1731159206; c=relaxed/simple;
+	bh=Nxkc10fbSrQ53EfsDaKKNPb1mzlkOX8gplEMSQFbHm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rQsvC6MFbMjmS3MaXesbsPsFktFoTgou1vtp9R0pdBw+iVTg7aLI/xRm6GwVUxeyTFwpcGyimSrGkfqPMvUU3LjK+tJluGqwVyxLTT3R/c0wqhGngzGIgIlkn5omL+rrenDM0WRNUNFUC1Y4i0hkG3//RT+gN5crY+aLqEV6Bco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h992DfQX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEBEEC4CECE;
+	Sat,  9 Nov 2024 13:33:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731159205;
+	bh=Nxkc10fbSrQ53EfsDaKKNPb1mzlkOX8gplEMSQFbHm4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h992DfQXcWXxcAb3eX0928/bBjPl/XOEbQ2UlThV3xDRBcEmxUOdI6E2NoXF8NbUG
+	 8zG9/iK/UpjdmU7ah4UlxVKPqg5HZ+chGG1o+28AjHIl9WFhsVsQNPivvaDQ1/FtMK
+	 CRbMAgumiQr2VgQ8Xj6FwN+4eHs5t/+Essv8G3diva8ZCya+tqHscoJJ4/wauIutJf
+	 m0Jjxz9Xfjk3hIu0oMVf4AldEv4tDRs0bdRZDNzEOeI5h6gWq3/OAUdT2S13xQkni8
+	 /dSTVSDPYu/lkSdx/5jDfDcazkKPJfgoXoNoghzgb+pPWDF0J7rMDdHU5XJFq3X0cQ
+	 diH+8FrURpFNw==
+Date: Sat, 9 Nov 2024 13:33:17 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jean-Baptiste Maneyrol via B4 Relay
+ <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org>
+Cc: jean-baptiste.maneyrol@tdk.com, Lars-Peter Clausen <lars@metafoo.de>,
+ Jean-Baptiste Maneyrol <jmaneyrol@invensense.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: inv_icm42600: fix spi burst write not
+ supported
+Message-ID: <20241109133317.0616252d@jic23-huawei>
+In-Reply-To: <20241107-inv-icm42600-fix-spi-burst-write-not-supported-v1-1-800b22574d01@tdk.com>
+References: <20241107-inv-icm42600-fix-spi-burst-write-not-supported-v1-1-800b22574d01@tdk.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108032422.2011802-2-elliot.ayrey@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 08, 2024 at 04:24:18PM +1300, Elliot Ayrey wrote:
-> The fdb sticky flag is used to stop a host from roaming to another
-> port. However upon receiving a switchdev notification to update an fdb
-> entry the sticky flag is not respected and as long as the new entry is
-> not locked the host will be allowed to roam to the new port.
+On Thu, 07 Nov 2024 22:20:06 +0100
+Jean-Baptiste Maneyrol via B4 Relay <devnull+jean-baptiste.maneyrol.tdk.com@kernel.org> wrote:
+
+> From: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
 > 
-> Fix this by considering the sticky flag before allowing an externally
-> learned host to roam.
+> Burst write with SPI is not working for all icm42600 chips. It was
+> only used for setting user offsets with regmap_bulk_write.
 > 
-> Signed-off-by: Elliot Ayrey <elliot.ayrey@alliedtelesis.co.nz>
+> Allow tweak of common regmap_config for using only single write for
+> spi.
+> 
+> Fixes: 9f9ff91b775b ("iio: imu: inv_icm42600: add SPI driver for inv_icm42600 driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
+Hi Jean-Baptiste,
+
+You need to copy the regmap before modifying.
+Otherwise the case were someone has two IMUs only one of which needs this
+will set it for both.
+
+Probably better to just have two regmap_config const structures and pick between
+them based on the compatible.
+
+Jonathan
+
 > ---
->  net/bridge/br_fdb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/iio/imu/inv_icm42600/inv_icm42600.h      | 2 +-
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_core.c | 2 +-
+>  drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c  | 3 +++
+>  3 files changed, 5 insertions(+), 2 deletions(-)
 > 
-
-So you have a sticky fdb entry added, but it is still allowed to roam in HW?
-
-> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-> index 1cd7bade9b3b..d0eeedc03390 100644
-> --- a/net/bridge/br_fdb.c
-> +++ b/net/bridge/br_fdb.c
-> @@ -1457,7 +1457,8 @@ int br_fdb_external_learn_add(struct net_bridge *br, struct net_bridge_port *p,
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600.h b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> index 3a07e43e4cf154f3107c015c30248330d8e677f8..36a3b0795fb7d6cb0c178fadd93896fbc346ba0d 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600.h
+> @@ -402,7 +402,7 @@ struct inv_icm42600_sensor_state {
 >  
->  		fdb->updated = jiffies;
+>  typedef int (*inv_icm42600_bus_setup)(struct inv_icm42600_state *);
 >  
-> -		if (READ_ONCE(fdb->dst) != p) {
-> +		if (READ_ONCE(fdb->dst) != p &&
-> +		    !test_bit(BR_FDB_STICK, &fdb->flags)) {
->  			WRITE_ONCE(fdb->dst, p);
->  			modified = true;
->  		}
+> -extern const struct regmap_config inv_icm42600_regmap_config;
+> +extern struct regmap_config inv_icm42600_regmap_config;
+>  extern const struct dev_pm_ops inv_icm42600_pm_ops;
+>  
+>  const struct iio_mount_matrix *
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> index 93b5d7a3339ccff16b21bf6c40ed7b2311317cf4..680373f6267b37d386e4e7bda543ba4efe97e66b 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
+> @@ -74,7 +74,7 @@ static const struct regmap_access_table inv_icm42600_regmap_rd_noinc_accesses[]
+>  	},
+>  };
+>  
+> -const struct regmap_config inv_icm42600_regmap_config = {
+> +struct regmap_config inv_icm42600_regmap_config = {
+>  	.name = "inv_icm42600",
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> index 3b6d05fce65d544524b25299c6d342af92cfd1e0..73cacfd157a4538ae8c9d1c8d97157afa28aa672 100644
+> --- a/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> +++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_spi.c
+> @@ -59,6 +59,9 @@ static int inv_icm42600_probe(struct spi_device *spi)
+>  		return -EINVAL;
+>  	chip = (uintptr_t)match;
+>  
+> +	/* spi doesn't support burst write */
+> +	inv_icm42600_regmap_config.use_single_write = true;
+> +
+>  	regmap = devm_regmap_init_spi(spi, &inv_icm42600_regmap_config);
+>  	if (IS_ERR(regmap))
+>  		return PTR_ERR(regmap);
+> 
+> ---
+> base-commit: c9f8285ec18c08fae0de08835eb8e5953339e664
+> change-id: 20241107-inv-icm42600-fix-spi-burst-write-not-supported-efe78d7379a5
+> 
+> Best regards,
+
 
