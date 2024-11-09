@@ -1,95 +1,163 @@
-Return-Path: <linux-kernel+bounces-402764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B879C2BE0
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:35:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4776A9C2BE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31731C2100B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:35:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CEB1F21501
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 10:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E5C1537B9;
-	Sat,  9 Nov 2024 10:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uk3lXw5J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111AB15098A;
+	Sat,  9 Nov 2024 10:35:51 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1D4233D73;
-	Sat,  9 Nov 2024 10:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12E7233D73;
+	Sat,  9 Nov 2024 10:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731148501; cv=none; b=OnqJe6fm7tJJ6/QLdVu21shLrl98xVMxmo/S+/cyRZfQDZUPcPO7S2XKjbKnECnPix0I4Kb43eQa6lSwXEo5LoQmKtLiyYcUq23zQni/c1+Qq/LqPRz7RfCyqwXMq1fQDfq0o0K27xSLlrlFCh4a2dAEB/lbWeFCGE9e2LkbMuU=
+	t=1731148550; cv=none; b=J1YmbheClnNePbDTDrHaKyR8k7cL3U2RobXqM69qjHvghJaoAyNWEbSag8fMhwWJIeVXshZCuVdeCqTdtRXLI16kdWyrAc7F+dsS/LGNopIqP6ZmN7SpS6YxDvRvRfxmO1svsFLXfBz651lYIhJQzXca5vSa1Ck8xFY2eZz0/XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731148501; c=relaxed/simple;
-	bh=nq6mooPKeU7DUSC5ySOB0ohGQFdAzM2NupJ0qrZLsH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDJl6+9ObsG6FODtKAsyKfiH+X33PLpEg4THWUFsI+LLtC65xz2drWnv7KoghyNNxaIEVF14Iv9+bwcxhN+JxrOMXsodNxN0S11ydmDU1B/snP7Y90+NJ5vRU6WPWxjNFt1DnrsSrff5hbPxfXTvW1v6uc05y746oKAI16tLCmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uk3lXw5J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6FCC4CECE;
-	Sat,  9 Nov 2024 10:35:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731148501;
-	bh=nq6mooPKeU7DUSC5ySOB0ohGQFdAzM2NupJ0qrZLsH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uk3lXw5JdeGdvzCD3+P5FvUxcuPrLiFLYYYYTUN/3zTpA/u0QOSj86KWb5RoQYwAv
-	 +ytIP31Fzr+I7dRuh4uy8tEGkLWj59n+xj9zpsLfAotuNfW9daWQDb5/PmA1tKgbPe
-	 Gpoh7+2d7u+rgKVPB9UgrDDMpIF9JICohaECDtNjgnFzA1pf7xtQ0CIfEhErJLXVhs
-	 TMOdufcOBaxOXLTWjm5Q2bhO1Jtf0XHJnnuTPwD0TtzQlz7pflY2fSDSSZ1s8Td70l
-	 B1WUtWunm1O1DvK4+J3zMveL5M3INqcyugnkJSWYYgu+Z5zkdYQoR9Tez4MIVPKxfV
-	 qA/gzyWBTwiCg==
-Date: Sat, 9 Nov 2024 11:34:57 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mithil Bavishi <bavishimithil@gmail.com>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
-	Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3 07/10] dt-bindings: omap: Add Samsung Galaxy Tab 2 7.0
-Message-ID: <duiiumt2ma3g5qbdwedyehtfm45lovjhslmy6idf3xkqroipmv@qpimirp4aptd>
-References: <20241108200440.7562-1-bavishimithil@gmail.com>
- <20241108200440.7562-8-bavishimithil@gmail.com>
+	s=arc-20240116; t=1731148550; c=relaxed/simple;
+	bh=gXKRqLxxXBjIVDR5cFoLFoTIx1e73ApAKBiFehUXKEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iLimqsHZgmvW2qkA4Qd+j79sKdeoch247JK3US3Lc8ULlCgT00t1YywkNwzK8M4dnmjCdvvEDVFXo5m8uHI6zzzYKfy92g/oSYWF32J7VgWjWzlKTrBhcpeylrF1sLMYqvbvgfKu3DbTHX18Q+UOBJqdVWCsEnHDrL2IKk7UAsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XlsfB72XKz9sSL;
+	Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id P7nDHsmj9Vh6; Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XlsfB5zkXz9sSK;
+	Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B68828B766;
+	Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id IdWHeTbrwF2J; Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.57])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3A7228B764;
+	Sat,  9 Nov 2024 11:35:46 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Kees Cook <kees@kernel.org>,
+	linux-modules@vger.kernel.org
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [RFC PATCH 1/3] module: Split module_enable_rodata_ro()
+Date: Sat,  9 Nov 2024 11:35:35 +0100
+Message-ID: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241108200440.7562-8-bavishimithil@gmail.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731148536; l=3205; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=gXKRqLxxXBjIVDR5cFoLFoTIx1e73ApAKBiFehUXKEY=; b=uC3i/uZ9IPjgOa/m6rtFw0nMPbk6QyKHcwM5C6gHY/Q4NS8hSeUheJ4GO+ATsqX+qqO0bv3no 6y/eq2Xl1neD7jHbFzWLuTw8qWQa3yyvn+A+WtL9dL4FIvx6tTH3bjg
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 08, 2024 at 08:04:36PM +0000, Mithil Bavishi wrote:
-> Add samsung-espresso7 codename for the 7 inch variant
-> 
-> Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/ti/omap.yaml b/Documentation/devicetree/bindings/arm/ti/omap.yaml
-> index 93e04a109..32978dd9e 100644
-> --- a/Documentation/devicetree/bindings/arm/ti/omap.yaml
-> +++ b/Documentation/devicetree/bindings/arm/ti/omap.yaml
-> @@ -138,6 +138,7 @@ properties:
->                - motorola,xyboard-mz617
->                - ti,omap4-panda
->                - ti,omap4-sdp
-> +              - samsung,espresso7
+module_enable_rodata_ro() is called twice, once before module init
+to set rodata sections readonly and once after module init to set
+rodata_after_init section readonly.
 
-Keep alphabetical order
+The second time, only the rodata_after_init section needs to be
+set to read-only, no need to re-apply it to already set rodata.
 
-Best regards,
-Krzysztof
+Split module_enable_rodata_ro() in two.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ kernel/module/internal.h   |  3 ++-
+ kernel/module/main.c       |  4 ++--
+ kernel/module/strict_rwx.c | 13 +++++++++----
+ 3 files changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index 2ebece8a789f..994f35a779dc 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -322,7 +322,8 @@ static inline struct module *mod_find(unsigned long addr, struct mod_tree_root *
+ }
+ #endif /* CONFIG_MODULES_TREE_LOOKUP */
+ 
+-int module_enable_rodata_ro(const struct module *mod, bool after_init);
++int module_enable_rodata_ro(const struct module *mod);
++int module_enable_rodata_ro_after_init(const struct module *mod);
+ int module_enable_data_nx(const struct module *mod);
+ int module_enable_text_rox(const struct module *mod);
+ int module_enforce_rwx_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index 49b9bca9de12..2de4ad7af335 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -2581,7 +2581,7 @@ static noinline int do_init_module(struct module *mod)
+ 	/* Switch to core kallsyms now init is done: kallsyms may be walking! */
+ 	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+ #endif
+-	ret = module_enable_rodata_ro(mod, true);
++	ret = module_enable_rodata_ro_after_init(mod);
+ 	if (ret)
+ 		goto fail_mutex_unlock;
+ 	mod_tree_remove_init(mod);
+@@ -2751,7 +2751,7 @@ static int complete_formation(struct module *mod, struct load_info *info)
+ 	module_bug_finalize(info->hdr, info->sechdrs, mod);
+ 	module_cfi_finalize(info->hdr, info->sechdrs, mod);
+ 
+-	err = module_enable_rodata_ro(mod, false);
++	err = module_enable_rodata_ro(mod);
+ 	if (err)
+ 		goto out_strict_rwx;
+ 	err = module_enable_data_nx(mod);
+diff --git a/kernel/module/strict_rwx.c b/kernel/module/strict_rwx.c
+index c45caa4690e5..f68c59974ae2 100644
+--- a/kernel/module/strict_rwx.c
++++ b/kernel/module/strict_rwx.c
+@@ -44,7 +44,7 @@ int module_enable_text_rox(const struct module *mod)
+ 	return 0;
+ }
+ 
+-int module_enable_rodata_ro(const struct module *mod, bool after_init)
++int module_enable_rodata_ro(const struct module *mod)
+ {
+ 	int ret;
+ 
+@@ -58,12 +58,17 @@ int module_enable_rodata_ro(const struct module *mod, bool after_init)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (after_init)
+-		return module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_ro);
+-
+ 	return 0;
+ }
+ 
++int module_enable_rodata_ro_after_init(const struct module *mod)
++{
++	if (!IS_ENABLED(CONFIG_STRICT_MODULE_RWX) || !rodata_enabled)
++		return 0;
++
++	return module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_ro);
++}
++
+ int module_enable_data_nx(const struct module *mod)
+ {
+ 	if (!IS_ENABLED(CONFIG_STRICT_MODULE_RWX))
+-- 
+2.44.0
 
 
