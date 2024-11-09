@@ -1,91 +1,128 @@
-Return-Path: <linux-kernel+bounces-402838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B3B9C2D71
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 14:04:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54499C2C1A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063041C20DE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E3CAB21DE8
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187BC192B9E;
-	Sat,  9 Nov 2024 13:03:50 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924291547C4;
+	Sat,  9 Nov 2024 11:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mclR8RRz"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754C41BC3F;
-	Sat,  9 Nov 2024 13:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C762233B;
+	Sat,  9 Nov 2024 11:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731157429; cv=none; b=SqBauxpL+KbicMLI0tv1w2z7LV/iDVlHDFLKy+Y6OCPdnRJIVZhSRg+euAOKkqxP4ejU6WoNVgaVV7SRVWL+fR7G8O61y+WacrrSPvw/2KzOoxdnQId+nhEuC+GvpoGpxvKFHJ7VWtV6oooc0ieN4dG1W14lUYDK+/kNSEHcJ/0=
+	t=1731150703; cv=none; b=akBVYuHEtJuuGSWwmB7VRBLAP6bw0ReZB6rWu1a8iIbSDLso8HhK69DpuL10cINqA9lLOEEDSnMIxlHcjncsvssDoMQlDpv0l+L8TSS2t9IaLXCmNEA2R9V9OzDnBkzt2PDbRsD1lqdEa9wkA4b6W4uzigZYcbxKzmcK3wiC0Zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731157429; c=relaxed/simple;
-	bh=jO5N3i3CG9hEie1MsjolgadaWnH+qgWUWzXZ1HjOsd4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=aM6ib8iGzEKMdlUltlfitrYIMy52OATTm2PgBwRaesJLpmfmm1aLyPI5ARQmfspbo9d7LdfbjGnUhQsQGYQx8UJFIbGDP1iydv7q5+Is6gFqTXVEDY6UwdA3j/PI6x/SdWsj+xyLmVwbLfSncbnrrjS7ukePv5JURJpFtHHbW9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id B257E1A0BA6;
-	Sat,  9 Nov 2024 11:09:06 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 2D4962002A;
-	Sat,  9 Nov 2024 11:09:00 +0000 (UTC)
-Date: Sat, 09 Nov 2024 06:09:03 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: Alice Ryhl <aliceryhl@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- rust-for-linux <rust-for-linux@vger.kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: linux-next: build failure after merge of the ftrace tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CANiq72m9T7NM33SCw=7yssTXFy=7FvD9zS26ZnBT6RMJB6ze1w@mail.gmail.com>
-References: <20241108152149.28459a72@canb.auug.org.au> <20241108095933.72400ee1@gandalf.local.home> <CAH5fLgj6zSDH6Oe3oqfE7F+NQSgSLxh8x7X3ewrrDAdOHOh0YA@mail.gmail.com> <20241108153503.1db26d04@gandalf.local.home> <CANiq72mP15rjfR3cMZH-z9hkTDQfqgEaM4M+71B1KWLmw=3cPA@mail.gmail.com> <CANiq72m9T7NM33SCw=7yssTXFy=7FvD9zS26ZnBT6RMJB6ze1w@mail.gmail.com>
-Message-ID: <7B5D1CF7-0DBD-4F19-8587-32516DCE233B@goodmis.org>
+	s=arc-20240116; t=1731150703; c=relaxed/simple;
+	bh=qJR4BkgTYUMICzBgXIHWsAfujVON0TcOp/cy+PBEgkk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=VJVV338HBwF8L33Jr3GbBurlZCHIGgbQKF3QNbnLTiCYPD/LMecxdjqFjOtehNRw9bzBKH1GWLAIv8jFErZC/y1PWXnPESrXYksQm6t/ruYHKydDmdcFd6DR+b3BFnF1/vKWyXanExvYeRmn2oayAkgDQX/dP8fYM/JFTczN3VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mclR8RRz; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cece886771so94706a12.0;
+        Sat, 09 Nov 2024 03:11:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731150699; x=1731755499; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vls6mdQsvCeYnodfLpSaptYMkef0HyrpngwDxywbaBE=;
+        b=mclR8RRzRM7V/xABe5jV+HcJEItFNUml0KQ2W+4QAtYrDeAMeONAiiRBZQiyavK2JJ
+         mhQTVdZuVVO9QarhFumxdQ4cFnydlAaGVCtI3MUJqc6IGI981zRIgFHdJgYhCWvvF1KV
+         34smesz5xl5lMQ9qQ8NpmBBWjBjEj+6EjDp9j5W9eVTXzI/TwkfzgkMpBRFpnMUhFp0N
+         rUhCx2kajFbColybmAbEgTSoBqxAKqIkPEyBxjwTONVdPnP28TMQW5tbC0Sl1Tm+odTY
+         Blk9FKzZYc3a12ZqxCsyAXbGgWG5LU0BSkSQuZKDsn+UZYTWc2wMXwDrKZZBSP5YdrH8
+         cvOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731150699; x=1731755499;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vls6mdQsvCeYnodfLpSaptYMkef0HyrpngwDxywbaBE=;
+        b=AyugzQruznzVNIYCVH5me+mjg4jj5eKAJhj8dvNE8sMJmGr8Zd0FGEKFxnf8K43Qlp
+         Ks8h5U+wchE3NAZKUue4ZgsPSpt3b81HTTTzmq3XEfQYsxtvp+fKLhZZcfcNd3rXHsfZ
+         5TY7rx4WPNMuvhSSvbameg6Lfk5VPHePvCykFz8pnpcJQzo3E62YwqvnvhdEwOZnCo0h
+         zTx1nBfmVdgjgOIcOoYfHt6YAXBc4NHjpQK8gG7mV1QFnnAu8TaXZXNPwqxHnDvzL+F8
+         peZGAfxD1mY9qkSblDP1l1Y/5dnaX05MEhLYdpZViiOHHAdAsDwD0AvzX+YRMzWiYrFr
+         v4MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIPkXYXWb46R6IHV3pOHx3S50YlfUlVig5sRLXTC/YtzEDSJfx63Gylitr/phCVrkKdiu0kg0yIsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlKL1PJta/vmdhTd9BGBplti6ksFrly9p58HvoRjyhevuhQd79
+	QAc1iNe6J36NDdH0OoIhTiJOpDbcdNGmBNll1jk/+w4QluHwztDDrOOL3O3QYwHefMr3qkM0NTe
+	N6wWcnkyQkMkbIm2HAyzpNYZI64NNqw==
+X-Google-Smtp-Source: AGHT+IHGCOOY29aXJRz4apnKoXsBqZRx+QXHcL4IGOMX5scHX5gwwNe3oxAjMbTxXP+6SKzKpqkaBaglJkobwJ75Cas=
+X-Received: by 2002:a05:6402:510a:b0:5cb:77d1:fd7f with SMTP id
+ 4fb4d7f45d1cf-5cf096f5b40mr6173316a12.7.1731150698494; Sat, 09 Nov 2024
+ 03:11:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <20241106024952.494718-1-danielyangkang@gmail.com>
+ <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com> <283409A8-6FD1-461C-8490-0E81B266EF9D@redhat.com>
+In-Reply-To: <283409A8-6FD1-461C-8490-0E81B266EF9D@redhat.com>
+From: Sebastian Feld <sebastian.n.feld@gmail.com>
+Date: Sat, 9 Nov 2024 12:11:02 +0100
+Message-ID: <CAHnbEGKRKrw-9_wnrASVHniZ1RggP+b-YzvwPYM7ScsMvmpCGA@mail.gmail.com>
+Subject: Kernel strscpy() should be renamed to kstrscpy() Re: [PATCH]
+ nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
+To: open list <linux-kernel@vger.kernel.org>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 2D4962002A
-X-Rspamd-Server: rspamout01
-X-Stat-Signature: 8r8wjb1scmn64yts5697g3bd77mqdy4f
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/rD5JNfnckoZCbtkThoNjASTI9EyZm2FY=
-X-HE-Tag: 1731150540-523950
-X-HE-Meta: U2FsdGVkX18ATPc0FaJrsH2xtWAJ5EcY3fAza4NgsHPRZkCjR7dfLm1ZXq2oRLlyMp0etPZBKwF/55Wf9OrKX1VCHtyFKmvjEEpEzz9U2A0D3QxRNlpPxEaVXkrJmX+hoKIsxkzaqdDkyWn9oICvKyujOoRD7kNPD8PrnRd3ancjTBtPb2P22EtH0+pxyHbDoicg4F9nJQU0buSrmH9cKzvjpXgaM8ep6Y/s4O3hH7QV7OE7SraLnzqS4LoX1zDmuQwBp2YEIxjBbD5w9+XmGy9/APeRD7wXFHSaNpD6z6AMnbaGbxBHmrGe4NmdwbNhQjb5tSi2KDsstqlz8eNqH/9Eek17Im2I72Iak7YRn9sOjETWK6DQFg==
 
-
-
-On November 8, 2024 4:53:56 PM EST, Miguel Ojeda <miguel=2Eojeda=2Esandoni=
-s@gmail=2Ecom> wrote:
->On Fri, Nov 8, 2024 at 10:05=E2=80=AFPM Miguel Ojeda
-><miguel=2Eojeda=2Esandonis@gmail=2Ecom> wrote:
->>
->> Something like this should work I think:
+On Wed, Nov 6, 2024 at 9:40=E2=80=AFPM Benjamin Coddington <bcodding@redhat=
+.com> wrote:
 >
->https://lore=2Ekernel=2Eorg/rust-for-linux/20241108215115=2E1398033-1-oje=
-da@kernel=2Eorg/
-
-Are you going to take this or do you want me to?
-
-If you want me to take it, can you send it to linux-trace-kernel@vger=2Eke=
-rnel=2Eorg?
-
-Thanks,
-
--- Steve=20
-
+> On 6 Nov 2024, at 15:20, Roland Mainz wrote:
 >
->Cheers,
->Miguel
+> > On Wed, Nov 6, 2024 at 3:49=E2=80=AFAM Daniel Yang <danielyangkang@gmai=
+l.com> wrote:
+> >>
+> >> The function strcpy is deprecated due to lack of bounds checking. The
+> >> recommended replacement is strscpy.
+> >>
+> >> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+> >> ---
+> >>  fs/nfs/sysfs.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/fs/nfs/sysfs.c b/fs/nfs/sysfs.c
+> >> index bf378ecd5..f3d0b2ef9 100644
+> >> --- a/fs/nfs/sysfs.c
+> >> +++ b/fs/nfs/sysfs.c
+> >> @@ -280,7 +280,7 @@ void nfs_sysfs_link_rpc_client(struct nfs_server *=
+server,
+> >>         char name[RPC_CLIENT_NAME_SIZE];
+> >>         int ret;
+> >>
+> >> -       strcpy(name, clnt->cl_program->name);
+> >> +       strscpy(name, clnt->cl_program->name);
+> >
+> > How should the "bounds checking" work in this case if you only pass
+> > two arguments ?
+>
+> The linux kernel strscpy() checks the sizeof the destination.
+
+Then the kernel strscpy() should be renamed accordingly, and not
+confuse people. Suggested name would be kstrscpy().
+Otherwise this would disqualify strscpy() ever from being adopted as a
+POSIX standard, as there are two - kernel and glibc - conflicting
+implementations
+
+Sebi
+--=20
+Sebastian Feld - IT secruity expert
 
