@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-402789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8039C2C2C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:27:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 230A19C2C2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:29:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A0B282A8A
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:27:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA65DB21D06
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 11:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAF315574C;
-	Sat,  9 Nov 2024 11:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264C215573B;
+	Sat,  9 Nov 2024 11:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="egz8hSQO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ED6OC0bE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE3F13DDA7;
-	Sat,  9 Nov 2024 11:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D01213DDA7
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 11:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731151670; cv=none; b=F+8ngNLq38ZhUUDXZeiuKBF8i2y0dMvA3VWeBSQXmgkR4QQ+UdjCBLqTkGe/hCym/LZ2irtt67EZpdrrPdN4fkj4I3p9zMUQfyA8DwBfX5KM4CGh0eBdkSkqZTiDTVctx//xHS7eMQHzaIBp9JT7WzJwobmMI93r4Cq7UWIKm+4=
+	t=1731151737; cv=none; b=EjHKNy81bLws/r4567+t00DEJ3RQHxUQmqy8XPKXlG9a2ahvEjJ9bUWH0b/+eKelPTq7zkEnMpgzaaD8bPA11MAUc8flxQ7TpQMmDAMDuPLW+DxRQFNhJ0B+eAfVHK+s16JSOMIPljkKq1dkL/N1mrt1GFQijKQFCQZZ8nWB10A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731151670; c=relaxed/simple;
-	bh=8bOTzZiVf55W83Wg3LaFw+ZXGUO/wNOGdn5iQGfS5q4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RrD36u7RoBSyj/wlGmlOo5wrg0pnpG6dfdBQ6EKYF1HKvbaxQX6aTI2MATFOLsJ3l4PLcU6Use+eIqR6IZQgqjBAI79vFC5z9o59rBeH7UflpLYpcK3efxmI2uW2ZE34ucGA64jKD00ax3nVCunVnotVUXsDWI8KLUOGMHn4qVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=egz8hSQO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FFA4C4CECE;
-	Sat,  9 Nov 2024 11:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731151669;
-	bh=8bOTzZiVf55W83Wg3LaFw+ZXGUO/wNOGdn5iQGfS5q4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=egz8hSQOr1y2+Ill2AOR1YHaJvZPy2jIKMckm/iTO1MWJq/yCxOJ120ZIiLLRC9og
-	 vlNlmzuzILdSpsbbANukpCVxlBDYdqR+7ZLBWOw1wLNmoEef6WTU8mYY4qEjBq9NP9
-	 70oET4lZ8ycXgY+912rcfvsVNV4wc3kpVqwrDxyc47V5gAJ0bVv3lxb6n1n1kUAT1Z
-	 Vh+Jm2OAVDRNYSb+xX1NJZTvw85UwJRYc1NRnb3bwbfKnxpqMYj/YckLVehSmg65NN
-	 wdd3txCifj+UtIUqxdt4H94Qu5jjran3nQEL56thUFMFMRWzBrc3RaiWCHKrWZ1s/z
-	 Zm33hpTnsy9PQ==
-Date: Sat, 9 Nov 2024 11:27:41 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, <megi@xff.cz>,
- Lars-Peter Clausen <lars@metafoo.de>, <linux-iio@vger.kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- <hpa@zytor.com>, "Peter Zijlstra" <peterz@infradead.org>,
- <linux-kernel@vger.kernel.org>, "Stephen Rothwell" <sfr@canb.auug.org.au>,
- kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
-Message-ID: <20241109112741.456ce2f9@jic23-huawei>
-In-Reply-To: <20241108180243.00000c27@huawei.com>
-References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
-	<20241108180243.00000c27@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731151737; c=relaxed/simple;
+	bh=zBQUkF3mr5u6Z/v/AXOYl5E26nW21vRGwX/grdg05bY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PclPwbxeI4voWYk59OPWBSoOC5PGD7RkuGtPgqamRXyHhR6hvoiyXHOppGH7hzUTd1R37EMcdR0dKLIRm4vx3VDiMUKZ+hwnG71jSDPnfqskXBJ1CZ/yX1oBArQS96+EWM0Jf6lzLtCyty0lpsWHKQ6Y9btx7wxUFaXMDDiP2Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ED6OC0bE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731151734;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CRuuRov2tfd3XM0hFi42t8RoGExTUNXwhCOPImNSph8=;
+	b=ED6OC0bEO761MuidP88quTi8bFHJ5FVfZ7CjMk3Y2wr302NUeaxHeN//ZR+xJhIz5aL1Qs
+	w/IcKCQOUaQjdUZOO4uIfOukpNyIaZR5yjaxvBboiiKLjRhUt4UiLOGrpbWdhPhTwqnMkA
+	WyAHZbJJS0EMRpCq3hf58bZL+EPRPJ4=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-wmCrGq76PRaVpGJAOT11RQ-1; Sat,
+ 09 Nov 2024 06:28:52 -0500
+X-MC-Unique: wmCrGq76PRaVpGJAOT11RQ-1
+X-Mimecast-MFC-AGG-ID: wmCrGq76PRaVpGJAOT11RQ
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E11819560AD;
+	Sat,  9 Nov 2024 11:28:51 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.58.17])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B4F8F300019E;
+	Sat,  9 Nov 2024 11:28:50 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Sebastian Feld <sebastian.n.feld@gmail.com>
+Cc: open list <linux-kernel@vger.kernel.org>,
+ Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: Kernel strscpy() should be renamed to kstrscpy() Re: [PATCH]
+ nfs_sysfs_link_rpc_client(): Replace strcpy with strscpy
+Date: Sat, 09 Nov 2024 06:28:48 -0500
+Message-ID: <91B9DC8F-6C6C-4F47-922A-D01DF1079959@redhat.com>
+In-Reply-To: <CAHnbEGKRKrw-9_wnrASVHniZ1RggP+b-YzvwPYM7ScsMvmpCGA@mail.gmail.com>
+References: <20241106024952.494718-1-danielyangkang@gmail.com>
+ <CAKAoaQnOfAU2LgLRwNNHion=-iHB1fSfPnfSFUQMmUyyEzu6LQ@mail.gmail.com>
+ <283409A8-6FD1-461C-8490-0E81B266EF9D@redhat.com>
+ <CAHnbEGKRKrw-9_wnrASVHniZ1RggP+b-YzvwPYM7ScsMvmpCGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Fri, 8 Nov 2024 18:02:43 +0000
-Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+On 9 Nov 2024, at 6:11, Sebastian Feld wrote:
 
-> On Fri,  8 Nov 2024 16:41:27 +0100
-> Przemek Kitszel <przemyslaw.kitszel@intel.com> wrote:
-> 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > 
-> > Add mising braces after an if condition that contains scoped_guard().
-> > 
-> > This style is both preferred and necessary here, to fix warning after
-> > scoped_guard() change in commit fcc22ac5baf0 ("cleanup: Adjust
-> > scoped_guard() macros to avoid potential warning") to have if-else inside
-> > of the macro. Current (no braces) use in af8133j_set_scale() yields
-> > the following warnings:
-> > af8133j.c:315:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
-> > af8133j.c:316:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
-> > 
-> > Fixes: fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202409270848.tTpyEAR7-lkp@intel.com/
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> > ---
-> > I have forgot to add this patch prior to the cited Fixes: commit,
-> > so Stephen Rothwell had to reinvent it, in order to fix linux-next.
-> > original posting by Stephen Rothwell:
-> > https://lore.kernel.org/lkml/20241028165336.7b46ce25@canb.auug.org.au/
-> > ---
-> >  drivers/iio/magnetometer/af8133j.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
-> > index d81d89af6283..acd291f3e792 100644
-> > --- a/drivers/iio/magnetometer/af8133j.c
-> > +++ b/drivers/iio/magnetometer/af8133j.c
-> > @@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
-> >  	 * When suspended, just store the new range to data->range to be
-> >  	 * applied later during power up.
-> >  	 */
-> > -	if (!pm_runtime_status_suspended(dev))
-> > +	if (!pm_runtime_status_suspended(dev)) {  
-> 
-> I thought I replied to say don't do it this way. Ah well probably went astray
-> as I was having some email issues yesterday.
-> 
-Also, for the fixes tag to make sense this will need got through the same tree as
-that rather than IIO which doesn't have that commit yet.
+> On Wed, Nov 6, 2024 at 9:40 PM Benjamin Coddington <bcodding@redhat.com> wrote:
+>>
+>> On 6 Nov 2024, at 15:20, Roland Mainz wrote:
+>>
+>>> On Wed, Nov 6, 2024 at 3:49 AM Daniel Yang <danielyangkang@gmail.com> wrote:
+>>>>
+>>>> The function strcpy is deprecated due to lack of bounds checking. The
+>>>> recommended replacement is strscpy.
+>>>>
+>>>> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+>>>> ---
+>>>>  fs/nfs/sysfs.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/nfs/sysfs.c b/fs/nfs/sysfs.c
+>>>> index bf378ecd5..f3d0b2ef9 100644
+>>>> --- a/fs/nfs/sysfs.c
+>>>> +++ b/fs/nfs/sysfs.c
+>>>> @@ -280,7 +280,7 @@ void nfs_sysfs_link_rpc_client(struct nfs_server *server,
+>>>>         char name[RPC_CLIENT_NAME_SIZE];
+>>>>         int ret;
+>>>>
+>>>> -       strcpy(name, clnt->cl_program->name);
+>>>> +       strscpy(name, clnt->cl_program->name);
+>>>
+>>> How should the "bounds checking" work in this case if you only pass
+>>> two arguments ?
+>>
+>> The linux kernel strscpy() checks the sizeof the destination.
+>
+> Then the kernel strscpy() should be renamed accordingly, and not
+> confuse people. Suggested name would be kstrscpy().
+> Otherwise this would disqualify strscpy() ever from being adopted as a
+> POSIX standard, as there are two - kernel and glibc - conflicting
+> implementations
 
-Given timing I'm fine with this version getting picked up and if I care enough
-I can chase it with a tidy up to the guard() form next cycle.  
+I should have said the linux kernel strscpy() can accept only two args if
+the destination is a statically-defined array.  Most uses are the three arg
+version.
 
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-
-Jonathan
-
-> 		guard(mutex)(&data->mutex);
-> 		ret = regmap_write...
-> 
-> >  		scoped_guard(mutex, &data->mutex)
-> >  			ret = regmap_write(data->regmap,
-> >  					   AF8133J_REG_RANGE, range);
-> > +	}
-> >  
-> >  	pm_runtime_enable(dev);
-> >    
-> 
+Ben
 
 
