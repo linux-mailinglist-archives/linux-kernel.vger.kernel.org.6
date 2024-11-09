@@ -1,140 +1,101 @@
-Return-Path: <linux-kernel+bounces-402897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3C79C2E2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:24:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48039C2E2F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 16:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FB328210B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:24:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8729C28227D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 15:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269B619AA6B;
-	Sat,  9 Nov 2024 15:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A254B19ABD1;
+	Sat,  9 Nov 2024 15:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGYBB6o8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fNGukyW9"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820576E2BE;
-	Sat,  9 Nov 2024 15:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E506E2BE;
+	Sat,  9 Nov 2024 15:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731165885; cv=none; b=uqZ8oDByfl5Ep4DmkBxQosesHvGn+9ciF+SWnY9s3tIUKWnAfepJejznBcgA5ua3PWdyXdSsOSOgj6qZMe0XVWcMYPyej3gVt37/gqzRMm1PCiazcLI+sdq5gcsQmcgwu3nTm7nQQLW855sTuaYG1hFZUXWZNc4bWsP3ElKPqxA=
+	t=1731165984; cv=none; b=hw4qW9BBJIumVSIqNPPbf5FIoJ1zg0c4AOyOjvB+8S3MNJI06ANkh3cL2GcLOW4hpWgzYKFU2DZgC6OyyN8hA8vgkNmhEJurPHX3bTYZBAEecpaT6qu6Fz5z2jXiheSOHS3IN0/iwLlIwMrYGrIJZyxRzn+1rn8R9GzQzVtW1uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731165885; c=relaxed/simple;
-	bh=L+h15+A5fyghSoJgKxEEP8ui0ELpN/bVPJgv1ITqXqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e1HtBrufx8tigPug5pNieYs9C3XjhwdJSbstfRQFFRKE8Aqwm1TIeLPCeRfV9IT4rI6JkYr1y8aiCvab0iVnB5FM0n0CSzbA0b6CGQ0zjwjuFBthhGVheCjFXoqeNnCjOO//O8Af+P4WrmlGjsgJYNwD03EC0Q1XydKQYaTx3/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGYBB6o8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A836C4CECE;
-	Sat,  9 Nov 2024 15:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731165885;
-	bh=L+h15+A5fyghSoJgKxEEP8ui0ELpN/bVPJgv1ITqXqM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tGYBB6o8qMeN8R22+aZYFW9bTEvfBn9GMAFrwQcdk0TI49tLTv96nWqq8LUdCWs0b
-	 K0mzkfxOrAw5pxSYQk2deHW5av5yiHqsSfUzg6JrNeEytigLFFGkrLc+GaUM+fO1iR
-	 vnSu24onnfWjNzsLWDJpcae6b7Dtw2+ovYJAxdmPa2uJZADS6UC6P0GuEKK1WlbTvc
-	 NkHHUZ1CnjePGN45W3EobZWDgFOoozleyk2BYn9jj8etx0cuhU7wLDHeC5weaFaf+V
-	 utHVPOolmG6jc51ShZDw2wvhEgHREBiieYY2klhsc+9TkrwbdXXuA5Gdq4rhsg27lh
-	 Xn20r7TY0VK/g==
-Date: Sat, 9 Nov 2024 15:24:38 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Dumitru Ceclan <dumitru.ceclan@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Guillaume Ranquet <granquet@baylibre.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ad7124: Disable all channels at probe time
-Message-ID: <20241109152438.0135f0c2@jic23-huawei>
-In-Reply-To: <20241104101905.845737-2-u.kleine-koenig@baylibre.com>
-References: <20241104101905.845737-2-u.kleine-koenig@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731165984; c=relaxed/simple;
+	bh=C2Fu967BHeELtFrqODTzmYpCvZ5v2z8G/kwBzGgDw+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSqggUUK0BcS1rXnNM8k7OjmkvUyNg7KYTeoTIc18ZOJ3JG0rsqK8h2wTgO2olbvjFnV3oLnk9gJyXBF8pkz2Br2UVPq/uK38JzF2VASA925ofjoLndX0EbosZ9JCDDWi5kEObrk4DpsNyCryl+/xcdRwz8VE6cUwTDjXKi1JRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fNGukyW9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731165980;
+	bh=C2Fu967BHeELtFrqODTzmYpCvZ5v2z8G/kwBzGgDw+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fNGukyW9cXlI5Me5NYcTub74uTNzYhzKxvGR92Pe0/y7V+RLnTESg08QeiXLF9esi
+	 vI5cC09w0mrhryCs7vuCsjJheM9NCHjMjRcdRL4fRduv2RzP6DeDNebvMyp1uTBAmu
+	 ZClu81a4fVOQy9t8LaOd7l9ptYQW1oEBexJaafHHC+LhjAjDnkoO0aolxdPXaWp4YI
+	 TJxkS7rCscphXs3c+/P8LiqWxZ2t0C8Yq/3giiFj1EIgIMPfotDMzth20mWzSMhBAP
+	 wGeXj2JvuWvJSy3wHvIESHMZ6iGRlclA5qO++vWcGiuA+7AeimDAzn6mggMe63PF/A
+	 ie3FZQcz9f2Vw==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1FFE817E35FA;
+	Sat,  9 Nov 2024 16:26:17 +0100 (CET)
+Date: Sat, 9 Nov 2024 10:26:15 -0500
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] thermal/drivers/mediatek/lvts_thermal: Switch to
+ IMMEDIATE_MODE
+Message-ID: <a641e6b8-0078-4910-9826-a088e69b734d@notapiano>
+References: <20241108-lvts-v1-1-eee339c6ca20@chromium.org>
+ <CAGXv+5EOcg0pQxj=iOn_ff8-t6pyGKwemA9mdn=VCpxg6Uzt+g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5EOcg0pQxj=iOn_ff8-t6pyGKwemA9mdn=VCpxg6Uzt+g@mail.gmail.com>
 
-On Mon,  4 Nov 2024 11:19:04 +0100
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
+On Fri, Nov 08, 2024 at 04:21:07PM +0800, Chen-Yu Tsai wrote:
+> On Fri, Nov 8, 2024 at 2:51 PM Hsin-Te Yuan <yuanhsinte@chromium.org> wrote:
+> >
+> > Currently, MT8192 cannot suspend with FILTERED_MODE. Switch to
+> > IMMEDIATE_MODE will fix this.
 
-> When during a measurement two channels are enabled, two measurements are
-> done that are reported sequencially in the DATA register. As the code
-> triggered by reading one of the sysfs properties expects that only one
-> channel is enabled it only reads the first data set which might or might
-> not belong to the intended channel.
->=20
-> To prevent this situation disable all channels during probe. This fixes
-> a problem in practise because the reset default for channel 0 is
-> enabled. So all measurements before the first measurement on channel 0
-> (which disables channel 0 at the end) might report wrong values.
->=20
-> Fixes: 7b8d045e497a ("iio: adc: ad7124: allow more than 8 channels")
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
-> Hello,
->=20
-> this patch was part of a series before. The remaining patches are still
-> under discussion. As this is a fix orthogonal to the other patches of
-> the series (apart from the other relevant change there also being
-> necessary to make the ad7124 work for me) it IMHO makes sense to apply
-> this one already now. There are machines that don't suffer from the
-> other issue (i.e. the device irq becoming pending by spi traffic), so
-> this fix is also valuable stand alone. It's IMHO good enough to go in
-> before v6.12.
->=20
-> The previous submission is available at
-> https://lore.kernel.org/linux-iio/20241028160748.489596-10-u.kleine-koeni=
-g@baylibre.com/
->=20
-> b4 ignored Nuno's Reviewed-by tag with
->=20
-> 	NOTE: some trailers ignored due to from/email mismatches:
-> 	    ! Trailer: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> 	     Msg From: Nuno S=C3=A1 <noname.nuno@gmail.com>
->=20
-> I wonder if other maintainers use b4 apply's -S by default, because I
-> often run into this issue but don't see others mentioning that.
-I only use -S when Nuno has given a tag.  It tends to be a bit too generous
-on applying tags in general.
+Do you mean that the whole MT8192 SoC is not able to enter system suspend? I
+just tested that on a fairly recent linux-next and it was working without a
+problem. We need more context here.
 
-Thanks for picking it up here.
+> >
+> 
+> Probably should have a Fixes tag.
+> 
+> Also, Nicolas previously reported that the threshold interrupts don't
+> work with the immediate mode [1], which is why filtered mode was used
+> in the final version.
 
-Sadly this has probably missed 6.12, but I have queued it up as a fix
-for early next cycle and marked it for stable.
+Indeed. I suppose it would be possible to configure immediate mode only during
+suspend if this is really the problem.
 
 Thanks,
-
-Jonathan
-
-> I added the tag here anyhow.
->=20
->  drivers/iio/adc/ad7124.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index a5d91933f505..749304d38415 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -917,6 +917,9 @@ static int ad7124_setup(struct ad7124_state *st)
->  		 * set all channels to this default value.
->  		 */
->  		ad7124_set_channel_odr(st, i, 10);
-> +
-> +		/* Disable all channels to prevent unintended conversions. */
-> +		ad_sd_write_reg(&st->sd, AD7124_CHANNEL(i), 2, 0);
->  	}
-> =20
->  	ret =3D ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control=
-);
->=20
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-
+Nícolas
 
