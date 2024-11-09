@@ -1,180 +1,206 @@
-Return-Path: <linux-kernel+bounces-403003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E2B9C2F6C
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B6F9C2F70
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 21:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2132E28231B
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7359B1F21AF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173D31A3AAD;
-	Sat,  9 Nov 2024 19:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718BA1A00F2;
+	Sat,  9 Nov 2024 20:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="buo8KZZS"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JUE4WqYS"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A44F1A0BC5
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 19:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731181942; cv=none; b=bIY0AzvbPaa0RxB68SS/Jj8QSlYJvNf4Wdv8B+a7GlkIwv2edsQH4lsLsm2TlILa1pW4YtXIJcMQ4mesWUQcH0riSFUD5lo3P8OG1pDmDySCcsanNSDkH0nhHHrRad0OcGtUPQsXuCBbESEag8Osxk2TYHH+8MW4y09shhTT71U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731181942; c=relaxed/simple;
-	bh=LV7SPvJw7vBMe8rg9yhfbRbdXTu1kfyfhM7Z0nqZXcU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eWSTTCu6tLK8SOHngQm0E/SZHd9slIQxJkfomoXgqIm/mln0uWlhRfIcvGEVgK5p1WoWW0b+NBuiyBICpiQQpdY4k5/+bMHSXq9KqpLWb9Pu8dJtBnjhVUqa3HCGYtwgEw63AxOiD/38U1dDDjoCcSafQavaCMjNcCySxyRMQBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=buo8KZZS; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-720e94d36c8so3810591b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 11:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1731181940; x=1731786740; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uC/Aqfht74BfKqo7buArS8NTdFz27K7/sj2Os++ZHYU=;
-        b=buo8KZZSG7Q3aIZDKnPwKbY8nzYfS7fFuB1ONKKV9vAIlbKwLwbaw8B7uhsqoC6pp4
-         6hOlX7CwOGYYRpw/jFV50+jakVl+hhkxOLD0wsg3Rq1tZ6OpmDMvZoeodsp3gAr+YLYz
-         EXUdBE/1hSm3+/Lerx2GH9TcASQPgV88LB2MIJDqY8k/HfmoUwFdrfeyfld/PXSAUhJV
-         LANtkwr7xTbDdD94WH++KD+4zV2rZPlC+3Y0azwujm8b8y3mOIQqyNMZqcwUbZFdYBAd
-         ggUaKVsBNSLSriE8nd43uExYP5DgqNMlGh3LARCmDCByR+l+jPISq9Hxw/d48OeIvoPV
-         JX3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731181940; x=1731786740;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uC/Aqfht74BfKqo7buArS8NTdFz27K7/sj2Os++ZHYU=;
-        b=SJCTJnAr8ncVT4e/gGZwVfXB/GjfTaX9MGb/7rIgZ1qixfKYXMvO60XryZmfImsrud
-         ONOYMO2hIajHtTfFnj+D2hiMHdB+iB6qw1qytq3pG3msX5IHHWBc/WntwUEm476sUUx/
-         WtD9HyBVKyVllB/hk7q43cNFfVYHwEEeFaF2Iu1dkJGs39z6N0HtKBqFlENgGLrVwTIS
-         s9A5YxB1FsDU9XPXd5ohTx8l6mwJ7y1vpChfy8kvitjNIJXLVHxx3XtTLfU1UoTMK1FH
-         RD23kBfEAaiyWiJo47aBcWmnOlLf7A5RYfzhz818FWvhhfo8LZ9IUwl8COxc70+Wzpuk
-         Dc5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUb/BbTk6/l6fWg2yGCJqImWJSEDyNkYVcWxUjVYjwsKZSMcFJPDDwyJPqTGxG7Awt5ZhiTh6W3lwA2m9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3aUafs/kOGS63vAWNK6w7y3E8M+1CPUhXX35Z0NpFSY2P/EeR
-	WOi93RP+hLjfioEVG4rAHeTNDB51TqFNgqYg060skR8KPbDYeD2aLSU0QtI31Q==
-X-Google-Smtp-Source: AGHT+IHQxgNVWJFp45lVcQFqlSiJyuXRJLd2I1ZpT5fDTPHng9gSOcweCkStWBA7PTyur3DSUkNghw==
-X-Received: by 2002:aa7:9f4f:0:b0:71e:40cd:b607 with SMTP id d2e1a72fcca58-7241230ed29mr10408575b3a.11.1731181940345;
-        Sat, 09 Nov 2024 11:52:20 -0800 (PST)
-Received: from [172.22.58.163] ([117.250.76.240])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a4177sm5972288b3a.99.2024.11.09.11.52.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 11:52:19 -0800 (PST)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Sun, 10 Nov 2024 01:21:35 +0530
-Subject: [PATCH v2 3/3] of: Add notifier in of_reconfig_notifier_register()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB491990C9;
+	Sat,  9 Nov 2024 20:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731183225; cv=fail; b=YN/danPnjZnCbyXRoE596IR1o0FPK9woiFY9JVb+G7OyEQMQXPAXZB3i9tns0ZOG55jPGMessrxHOw+HCXi7JOzwnHVYnM7ewmf3eVP/Y3Mq7bL5WBRrw2q2cQDMpWq80iZQxGNPlMwBN7W4r3XBTt7rCjrO2iQ5t1a3LEres1U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731183225; c=relaxed/simple;
+	bh=UvcbFPYtPW1m6yKHsKFGGNZlKZkTb1/Htfd9/nxfzX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n2rvGCdiy513O+dKR74GDaISVMQ2HF4Rk5LDPcJyuVZPou+DzVFQOAmvgg6uVX8LGlGE6UcUP9T4vkXbFpk/ekKbm55/qxUHS/ih+PUZbc2tXM20Ep3012ka32DoxA4eVTwz0c8VDeaXPMt8sW4VLS53bwa5Z/jvb432C6rgJH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JUE4WqYS; arc=fail smtp.client-ip=40.107.94.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=scEa/nCY8Q7txJ1FFXbTlc7ehnN9yzK8Vsl9nSU1cPBaPp8n8tMNposTXOK/xJK0JqiC4z1THvAmxmbZxtGsavKlj/tJ+553f1aHTlSGFEW7+/QBf18ZHcIa5RMVcHBSkaayVKoFUZz4yVgMcXLPnKpQ+mbq5+81gD4UR0A0L8OEhp2zxXGaM816AqizlhSUL0W85pcRUlGd0IOtTvgx0xWY4ElGe2OixKPnJAX+ZmITN+n7RVXyKDppy6W7uLsa+8AhWvkEYGA/42E0+diMb+WyXcOG0bcm1oTC1J/KLWhsE9ctJV82x3xrOBPpAgAvalrAo+wfttGO+lw5YvPyjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OMMyW98D5dxEAIrT5sP8FTa24VUTlUfXGeTt7kh4ztQ=;
+ b=NYDDJaBTVPz9zn//MOAr+kWgbY1bkgzTcf4NX9b/s5HYcMYGOAInFPyCe4rJiBVxgRUxkh+AajplCxWDgSa/KlSYI8kBXKpZkxLXCTwPTlEDnzB1v8VlxMxlE3wMbdtvdP8UKyiva3k6W0yb58G0h31NVHFcM4IZa89K1IQoPwmQqRUy6IXMAazKjGCqVMFVVnC7GLWIy7US1pLgxmBCjtiWr4aXFz6uUXBj0O+cJMCOgrBUSnMkRUcJMtcOYwKlkK5tM42kJHt/ITjGNnnjulz+wMZO5dFo8yKFh0ddPVKZ2SP/uKt7uUhiYyYJI7CTBrL4yz2TCqpSpetIeGIcqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OMMyW98D5dxEAIrT5sP8FTa24VUTlUfXGeTt7kh4ztQ=;
+ b=JUE4WqYSr2JhkhH4RWsCoCQcCAYbvlMMSOO+06v5sRBR3DgDwAX+jRK+r59FxhzNlkV93BlA3Q+qCxbq2HadtsDxzuliyWylN7BUFBy2gjxyPTAvn3iHK1BHnaxCMfKSJV4BsjfMZxh9tk1v0A574KTsSX34Ei/SJRiTTLb4udw=
+Received: from MN2PR02CA0015.namprd02.prod.outlook.com (2603:10b6:208:fc::28)
+ by IA1PR12MB7736.namprd12.prod.outlook.com (2603:10b6:208:420::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.22; Sat, 9 Nov
+ 2024 20:13:40 +0000
+Received: from BN2PEPF00004FBB.namprd04.prod.outlook.com
+ (2603:10b6:208:fc:cafe::89) by MN2PR02CA0015.outlook.office365.com
+ (2603:10b6:208:fc::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18 via Frontend
+ Transport; Sat, 9 Nov 2024 20:13:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF00004FBB.mail.protection.outlook.com (10.167.243.181) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Sat, 9 Nov 2024 20:13:40 +0000
+Received: from [10.23.197.56] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 9 Nov
+ 2024 14:13:37 -0600
+Message-ID: <f4ce3668-28e7-4974-bfe9-2f81da41d19e@amd.com>
+Date: Sat, 9 Nov 2024 12:13:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [sos-linux-ext-patches] [RFC 05/14] x86/apic: Initialize APIC ID
+ for Secure AVIC
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, <linux-kernel@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+	<Thomas.Lendacky@amd.com>, <nikunj@amd.com>, <Santosh.Shukla@amd.com>,
+	<Vasant.Hegde@amd.com>, <Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>,
+	<David.Kaplan@amd.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<peterz@infradead.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<kvm@vger.kernel.org>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-6-Neeraj.Upadhyay@amd.com>
+Content-Language: en-US
+From: "Melody (Huibo) Wang" <huibo.wang@amd.com>
+In-Reply-To: <20240913113705.419146-6-Neeraj.Upadhyay@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241110-of-alias-v2-3-16da9844a93e@beagleboard.org>
-References: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
-In-Reply-To: <20241110-of-alias-v2-0-16da9844a93e@beagleboard.org>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- d-gole@ti.com, jkridner@beagleboard.org, lorforlinux@beagleboard.org, 
- Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Davis <afd@ti.com>, 
- robertcnelson@beagleboard.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2046; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=LV7SPvJw7vBMe8rg9yhfbRbdXTu1kfyfhM7Z0nqZXcU=;
- b=kA0DAAgBBc71x4nlWnQByyZiAGcvvV+iIvLUBoBURgIH4sC0ZtcRYPLBYkh69TrlgTYVgZSLt
- okCMwQAAQgAHRYhBN/MEx7yTy1lb6UE1gXO9ceJ5Vp0BQJnL71fAAoJEAXO9ceJ5Vp0Wx8QANro
- 3HQOQ3kwIL9CMjIJ7g2/g4+DpLezqa98+8ZU6Zu4dhyp0VilIK2DMSpECJ2qFiHRePLPtphcfOl
- ZUbnS4nWBZ/T7OEFMV/kEw8Kk+pLWYn9GAVimVhavx9pVyX7ddwJbHE3SpyZ81p2M0K5nzi7OWb
- qt+p0W/RxEO1UHm4MFvKPRtRZjecVtpgnCqZ8ATy/Q7uCD3I7OnwqRwAtjT6FXUWuH0wg2BaqSM
- LI4aRQ0k84w7GqqhNk2zAjfIdWHT+BNH9Baikmixw3T0yG//3LV1PrJF6Ii7HWF4XbYyOxUePqY
- tZYhqw0FzDUMwfsj2N5WAnysFUVFs1UlRAffOORXHlGr3dknxItJUJ2JZmKimK5YQAd9V/mddmX
- l1W6+RRdGO6AOUDdVeiY1Bj7FHXD4WrN+MjUVmgFd2k9/p0G/xpJ+vMAarXRYJ4IivZL5G5cpC2
- Gf10lKf4tiRjmzCMot237977rZqOELD/de1KU9l3MZA3+h2q1EK9IB2MDjhieIKQHBH2le/Hp5q
- x/IlcL5W1oui5CsL9FUEkaCUCwu8FMG9nycsgeMNCv3tq1LvcVgFKIX310EYDrpLp0m5qU+qRUc
- f75JNx4Y7Hf9LCOwt3G6XkBhxNvKkXi3zP8GaPZ59O9rYBc36XMbNDmv+sGsaHg1BeZsdcS0swV
- bE23I
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBB:EE_|IA1PR12MB7736:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f92a072-03a7-41e7-ed17-08dd00fb00b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NnFpTGJPbW52em5KZHcvR09XakI3bytVYWUrV2ltOHppVWVxSGdKUWxVbkFa?=
+ =?utf-8?B?Wkg1OHduMVNkVFVLNXdFNFlWa0F0MmVkbXhRYW42ZG1TVHdxNmVGN0FjOC9p?=
+ =?utf-8?B?UzJXckR6RXFpMHllRG5DWlpIM2ZYRk43K0FMaWJFVG1ra3JnM0JZTlNYdGdy?=
+ =?utf-8?B?cGNJRjErTjRpSFJPRzM2SndpNEZmSXNydFZVelZKTXhONmtVT214dHBHVHA4?=
+ =?utf-8?B?R1ZvVGNVNTU1ekNVdGx6SUJ1WnZqcFA4QTgrc2h6OTFXeGNwTVp5V0FxaFg4?=
+ =?utf-8?B?Nk9ycGV3azJQblVhY1AraVl6QmFrVDlxWGlTbVFUY1dFcUY5R3Q4NGMxVi85?=
+ =?utf-8?B?SUh5Z094QUdWeVBKWlppSFhWR29XSkYyZlVHcDJVOE1VeWlhSmlpMS9DVWln?=
+ =?utf-8?B?MURXSDJEa3ZZay9rb1VOUGVMYjdzTGpoL1NldzFsNThMcXNLdmNZY1BMMjVY?=
+ =?utf-8?B?QTNDb01SK3JXbnJDRWlMMnlXUXl1ak9lZlNRMGpLNE1meVQ3cTVvUExxUG1V?=
+ =?utf-8?B?Y0NUNU4zamg4WVV4eE82NHF2OXdwWG1DMzB4dHA3L0VtRjU0aE1kUVBFcTAz?=
+ =?utf-8?B?N0JwbUhMS1lHbmh2THlhY01iZTliU01ydFVDK0htMVBsMmdlTlhvd3lJdVdE?=
+ =?utf-8?B?RHViVktheFBuOTB4eUYrVlVuYzFpVjZjQnNBSVkrTUNGRE0va1poSHhRakZY?=
+ =?utf-8?B?dFZROEIvcmJwZmx1TFRUQ2JrbXZVajhvRS9TbmtnLzVZSjMyNWlRS1JxVmdN?=
+ =?utf-8?B?WElXUFo1a3g3aExJTC9LRlZFOGlobGFjcUFGWXVxWldRdjJLcDNzYkxnT1FR?=
+ =?utf-8?B?TEFEN2x2OXkvckdlam5PbXdqc1RYTFlZUkUyT1NYNVFnMFJoa2d5OTIrY3U5?=
+ =?utf-8?B?M3lPYmRGdWhMUC9mbi9UTEdZdnorUjgwNzIvUXdPNXRMcTFNV0FJYnhVM21t?=
+ =?utf-8?B?TXBHQkIvbm1qdTVITVNxTU1yRjdSRjVvVGVNbVIxM2w2QktyRmZMd1N0RENK?=
+ =?utf-8?B?ekM3eEZqZ1NxSW9FTTVBR0VYZUVSd2NCeVFJcVhwaU1NTTJNY0MzM01QYWJv?=
+ =?utf-8?B?c0J3WG1WekI0K1pEZlpiWjRabHlCdHpNTnRNcUQyM29qNktuOEJURkpoVVBq?=
+ =?utf-8?B?Si9kVmlVS0RGREpEMHNmVWpLb2FtNzJCMm5WY28zb3IralZHK01wekJtZU54?=
+ =?utf-8?B?WmNGeGRoMXlmbVRJLytYcldzMldWR0xSbUw3K2N2UkVDVmN1YmNFdWRVUDZu?=
+ =?utf-8?B?d3E0U3dlWlQ2U0p0K0F6b3lxMEdQQkpPVlJJajhnSmgyMElBa2FBSC9IUTVh?=
+ =?utf-8?B?dEY3TXVQOGxMcnlFMi9nai8rVlFkMWpEWXdyTXQ5QWVjK0xpeDc0R2lkV2hL?=
+ =?utf-8?B?dHlhNG43djZ5K3BLRzJrQ0lvaEE4WTQwdkd4Mno0Y0J6SncxYm5PR0RnWkJO?=
+ =?utf-8?B?TngyekdFYlVNVnRkcndpVkJXeStLWG1MRm02M01kbEdtRWJpS3Vnb1gwN2JD?=
+ =?utf-8?B?bkV6OHFFY1U2dnp0cTFlaG4rNjRJSXRCOXoyMjRmV3UvUHVZK3JFdHhjU0I2?=
+ =?utf-8?B?MkwwZUVPT21IWVpmQzkvbngxYnVZMUEzU0V0em5FNnZmckVvMjlQV2tJVnZp?=
+ =?utf-8?B?aUdrTktBSGx0L3RnVmMvVkU4SWV3d2MybXYwSFRocXNnajh3SzYyT1RROGZP?=
+ =?utf-8?B?UTR0d1NKMmtJQjkzajdwRkpXRWNmUkZlNUFIMVVUMk9XMzU4ck96eFZWUDNW?=
+ =?utf-8?B?Y0lNS2R0dDFSOTQvOFBPTHIyN3lwRFlJY0U3QVZiQ3VrUExOVDRQWjVDeTlQ?=
+ =?utf-8?B?OHBPVk5JdFBBTkZHMXRkbUEySUNtbEJpMXVYRDErd2E5NXdSdzdTN0swalpW?=
+ =?utf-8?B?NTh3VmlZZjVaVk9nakUyOWxLcFd6eUlqUGJpaFBtcWNxOHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Nov 2024 20:13:40.4239
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f92a072-03a7-41e7-ed17-08dd00fb00b0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7736
 
-Currently the list of aliases is not updated when an overlay that
-modifies /aliases is added or removed. This breaks drivers (e.g. serial)
-that rely on of_alias_get_id().
+Hi Neeraj,
 
-Update the list of aliases when a property of the /aliases node is
-added, removed, or updated by registering a notifier.
+On 9/13/2024 4:36 AM, Neeraj Upadhyay wrote:
+> Initialize the APIC ID in the APIC backing page with the
+> CPUID function 0000_000bh_EDX (Extended Topology Enumeration),
+> and ensure that APIC ID msr read from hypervisor is consistent
+> with the value read from CPUID.
+> 
+> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> ---
+>  arch/x86/kernel/apic/x2apic_savic.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+> index 99151be4e173..09fbc1857bf3 100644
+> --- a/arch/x86/kernel/apic/x2apic_savic.c
+> +++ b/arch/x86/kernel/apic/x2apic_savic.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/sizes.h>
+>  
+>  #include <asm/apic.h>
+> +#include <asm/cpuid.h>
+>  #include <asm/sev.h>
+>  
+>  #include "local.h"
+> @@ -200,6 +201,8 @@ static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, in
+>  
+>  static void init_backing_page(void *backing_page)
+>  {
+> +	u32 hv_apic_id;
+> +	u32 apic_id;
+>  	u32 val;
+>  	int i;
+>  
+> @@ -220,6 +223,13 @@ static void init_backing_page(void *backing_page)
+>  
+>  	val = read_msr_from_hv(APIC_LDR);
+>  	set_reg(backing_page, APIC_LDR, val);
+> +
+> +	/* Read APIC ID from Extended Topology Enumeration CPUID */
+> +	apic_id = cpuid_edx(0x0000000b);
+> +	hv_apic_id = read_msr_from_hv(APIC_ID);
+> +	WARN_ONCE(hv_apic_id != apic_id, "Inconsistent APIC_ID values: %d (cpuid), %d (msr)",
+> +			apic_id, hv_apic_id);
+> +	set_reg(backing_page, APIC_ID, apic_id);
+>  }
+>  
+With this warning that hv_apic_id and apic_id  is different, do you still want to set_reg after that? If so, wonder why we have this warning?
 
-Co-developed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
- drivers/of/base.c | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 1cfb3cd4493e17d16868981288115798c6a6a151..5c061fdca885973d4389c0f6afe459a751d850b8 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -235,11 +235,50 @@ static void of_alias_destroy(const char *name, void (*dt_free)(void *))
- 	}
- }
- 
-+static void *alias_alloc(u64 size, u64 align)
-+{
-+	return kzalloc(size, GFP_KERNEL);
-+}
-+
-+static void alias_free(void *p)
-+{
-+	/* Leak memory */
-+}
-+
-+static int alias_OF_notifier(struct notifier_block *np, unsigned long action,
-+			     void *data)
-+{
-+	struct of_reconfig_data *reconf_data = data;
-+
-+	if (reconf_data->dn != of_aliases)
-+		return NOTIFY_DONE;
-+
-+	switch (action) {
-+	case OF_RECONFIG_ADD_PROPERTY:
-+		of_alias_create(reconf_data->prop, alias_alloc);
-+		break;
-+	case OF_RECONFIG_REMOVE_PROPERTY:
-+		of_alias_destroy(reconf_data->prop->name, alias_free);
-+		break;
-+	case OF_RECONFIG_UPDATE_PROPERTY:
-+		of_alias_destroy(reconf_data->old_prop->name, alias_free);
-+		of_alias_create(reconf_data->prop, alias_alloc);
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block alias_of_nb = {
-+	.notifier_call = alias_OF_notifier,
-+};
-+
- void __init of_core_init(void)
- {
- 	struct device_node *np;
- 
- 	of_platform_register_reconfig_notifier();
-+	of_reconfig_notifier_register(&alias_of_nb);
- 
- 	/* Create the kset, and register existing nodes */
- 	mutex_lock(&of_mutex);
-
--- 
-2.47.0
-
+Thanks,
+Melody
+>  static void x2apic_savic_setup(void)
 
