@@ -1,210 +1,142 @@
-Return-Path: <linux-kernel+bounces-402823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341F39C2D2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:40:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D16E9C2D3B
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 13:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542651C20D85
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:40:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF1328285F
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 12:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C86317838C;
-	Sat,  9 Nov 2024 12:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5C9194085;
+	Sat,  9 Nov 2024 12:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjQUrJy/"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDu38UYm"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4847F1DDF5;
-	Sat,  9 Nov 2024 12:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B836C145B03;
+	Sat,  9 Nov 2024 12:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731156033; cv=none; b=fW9tPGUTtkRDBukQqBKPKojXWNORZWEN33297GIBl0TBamMUt5jTJbsJLe+oQ/mKTRQia9kH6jizcuJqFyuUhxzWUdTNuzA1OFnfkSV7cL4IpD0zGjcaG3L0DOK9ZGmNu/ifQgrHLnheYIu3kn3uC7+WrjV+pLKplySbKDA6pvc=
+	t=1731156284; cv=none; b=Gg3aZSXOgBPFRhHfYP/pB+2G465t0O2FDnprsBascgAaUh+l6DDVyVqHXgXF5mZsFkfkvOr4qsPZrt+qryDdGjUxtHP5ieueDeAQ/UzE4fP7dagqEjYeLPWzv3a2O48hAGH2CBdXU1BtBb8n5D6XwhuSata9i0rAKKzS1BILeYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731156033; c=relaxed/simple;
-	bh=37DkIbH6IVcc1mhsUx++8EY8SMDfD47GSHX+qaDYUNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=if/UpC8A2opUDz+Z+wj7eh4mrbrb4IWmCh84ERUB0m9kUNvtd4EcraCueghOC9fiSIU/yQ7YamuDZ1gVQ3P5hB2ouSkHulYE1RUZWhpa9oMvSKRK3P9kh0bCwtmlFPlCjAQm9RgScWT1Sb0xmJKefZtFGYZCaRBlmSuhTx3nBBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjQUrJy/; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1731156284; c=relaxed/simple;
+	bh=AViyC/+sdOhddIa9xjAO4k6SS339kVhh4BSc9RyXqEo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MGKtUjIQe545oe68W7L8ee5qtyyat6sD5M/9kHu2cm1U/9ycTu/h36AfEtWU56UbRmfCKgQtKPbTAekuaAQk8Le4u7jFa0I5RvfgjsesSIEXjHG8AyAvVs6MyyQuYD7tIev3viKjCb7limONfWO7ZqWjKwqcJBe/LbiRjd71ANc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WDu38UYm; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2558182b3a.2;
-        Sat, 09 Nov 2024 04:40:31 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so3730697a12.1;
+        Sat, 09 Nov 2024 04:44:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731156030; x=1731760830; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=20aNdHfPYeI5XxoI+unGx2aV6UeU9gRcxK8wbi74JOc=;
-        b=TjQUrJy/JG+GVubGfvv3eKe4/Awh/L5t6uC08pF5QLn6AtCiCgO9vDgaeVJyP+14UX
-         PyD2l2H1afXt8XHSf8uvqhKYVGQGuPROvlXpbM1Gb9vkbemkNH/PwvHN6XAf48wcvcBO
-         2We+X4Q01MWGs4bnovkGFHn1tzbQsHMFHKjGOXpQhDBaLkCK02TyD4YbTndy1FlVfRKv
-         HadtqubbEJfjcACWVj3vbBWM7jRRBKF2FLf0KT22JZpNgo0D1i63xHrFne5eWCoNKvFJ
-         VZp7/OKEDhwuINUC2Icj1o+HtOc8Dt7NQx0+P7z3qXvYQWJYsZlw2nXRWFkIV1jYWtV4
-         PT7g==
+        d=gmail.com; s=20230601; t=1731156281; x=1731761081; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnvmniB3LeK8KeMuMSmkjZysB0f8NngS3V/dJUbHuv8=;
+        b=WDu38UYmC0NRAKFTptp7zOBMsyA5ayJJgUL43UQiOJnt8r5HAQike/778DduoI7J7d
+         dtTlmHpi5pOeesFocKIPlLairuTSeqsdTlHyU26ACZiWRQfGFINiDJvCXdzsanSE3MiF
+         KACvDERJy6wqabjvleI2c52a5v/K6vYUYSzoLPsuwsOzOviOkgoeK47HN28Jiv14bVsM
+         eGzP3iiGyLU/6M/5MnEN4KyfQDCwPljCr1sl5qn575cWeUIWxgbtBxqAbye6iVn3Nma/
+         /J0VDr8VTS0Ko6RdsuStXW5D5rstuRXj++/h/hzsuxMiJJi0WCQdJueoQ7zmCcXhR7wa
+         +DLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731156030; x=1731760830;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=20aNdHfPYeI5XxoI+unGx2aV6UeU9gRcxK8wbi74JOc=;
-        b=OCnj1VUz9dNW5AGKJH8EY3ZI877H6egLmvKeDfpTU4Rn8N5KDg92Nr6Eq2fY4fdLQa
-         v4rPn++sJpTUJpmcUCYFX1tbksgqCGfx79DpeL4EMehuapJPy05VYQt2wEoZZaOEnqeu
-         Z651TUMGFL+EgG3WX4j0eX21dhPFWIQr4xGDdu3tBgJRuV0IYuGA6wqZ0My+WXwkhlOV
-         weaZqGgNKg+vBm/d6vvsnrAGj/SWU/46i5p3CRPRLp/cGm6mhuKV07SvKZ8gbh8GmYs0
-         MODlfchtzFxvx7HGcbRXz9OPkDoiEAKwL4iZLZglve8HOJfcdRIVqTeSwyvJpvMzWKKp
-         6Vkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN1dUVOopWcgp3jW8/Gviswr8//xQyNpo97yXHkgpdJ/EQLi9Ync2m87VnPLzy3bsm7Yx1mb1NazoINDM=@vger.kernel.org, AJvYcCWltiKcSakM5mOIu5ztHnanYMnJvo0iBRgojLe2SOkCcmx1D6wxgyGBiOMIMndvQcqpd8EW2ctzgW1Sg2JZymXV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw58U8/esWqu0P65BgJ/47iXPPgt2CYAA51KmFWs9D7j6KCYKg0
-	6EpkTLPTpTbZ5p5mPXZMmlziQM0GHx/HELvyWWtM8PhltoclAQ1V
-X-Google-Smtp-Source: AGHT+IEx9D940RfrHt68o7eKuots15KmpF4zQS5BmlqUzi0xlbjLwY0jXAovoNv9JeAZvLGHCDDekA==
-X-Received: by 2002:a17:90b:2dcc:b0:2e2:cd22:b083 with SMTP id 98e67ed59e1d1-2e9b14d83f1mr8536239a91.0.1731156030321;
-        Sat, 09 Nov 2024 04:40:30 -0800 (PST)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f8f1dasm5801461a91.25.2024.11.09.04.40.27
+        d=1e100.net; s=20230601; t=1731156281; x=1731761081;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZnvmniB3LeK8KeMuMSmkjZysB0f8NngS3V/dJUbHuv8=;
+        b=IfB4q+Tkb8LtcJMPgAL8T/6qA3ar0ch+HigzKMEwvOwUY22FEkRWZDb8YVqkiGNsIq
+         hqcHJaV1/MejI5G/P0Yv3xyYTRrp50rQ7EnhN7teoS/0DvJQYu6ji7LhHqlqet9G1hH9
+         4yG5fwaQt3WoDSd5AiWI92uIaiAm76THZ3awvt1QBnh7HJcEkdIqoRQkba9kYwZcv6X9
+         XLSP8qY1OUP424K3KrNQ4ANhnmjOvBkQ/+uePuGlAAxxA8BVrPKt2FrnHVRgB3aWZmFS
+         aIYP0I3Ebc+YFooiwxlAozn0GhyBtob8mC0WQLgbXLyY8pl0le0jtu62rK9e6Rd4wa3l
+         maag==
+X-Forwarded-Encrypted: i=1; AJvYcCUntGCwCq8a1j/G+QqwSi14nFt8APFcChCqH+YZZktnSRO4OtypeWlqnXL340NjuYE0ZNoFL0SiVxv3UhuW8OhLs3I=@vger.kernel.org, AJvYcCVTqs8ipIgNicwTBwfe+Pd26ADpN9iFfAx/StxVau00xbucuyMRcRJSB1zS1Mxun6zl0H6YcoLB1E69HFwq@vger.kernel.org, AJvYcCVgGyIqwnfXF2OpjboVH4kEQN6Yl0/QjRbP40TTOSce/HJO0uLeP31dATaRCg76rsLd6h4HJF3BXLqk@vger.kernel.org, AJvYcCWp4cuLDiUIsdWJ9/DX1zhOqFjmXSghaPUh+BMwpW1XaNR/hUW0nlwUhslkbQTUF6Die4xpjcu9sX+8gzi4Pw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3uxc3oKbNfNUJQQphVCESjEDUu4YoePuZT2RVHZY0Ia1QDsly
+	u+RHmhsjQFBJRProPGmeZA5yZgOC904SvkW7ycGvptq25/GHH+b2qNsCv+HR
+X-Google-Smtp-Source: AGHT+IEIGCuxXrmbH3JmjmIhypDxiqT7VZZMvZ/3txPu0Ud1UAxyBs1Rg9CLp2YCTFkbDWAYDWeRnw==
+X-Received: by 2002:a05:6402:40ce:b0:5cf:1122:88bc with SMTP id 4fb4d7f45d1cf-5cf11228de0mr4137881a12.20.1731156280475;
+        Sat, 09 Nov 2024 04:44:40 -0800 (PST)
+Received: from [127.0.1.1] (leased-line-46-53-189-50.telecom.by. [46.53.189.50])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b5d793sm2940166a12.17.2024.11.09.04.44.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 09 Nov 2024 04:40:28 -0800 (PST)
-Date: Sat, 9 Nov 2024 20:40:25 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com,
-	skhan@linuxfoundation.org, rf@opensource.cirrus.com,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
-Message-ID: <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
-References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+        Sat, 09 Nov 2024 04:44:39 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: [PATCH 0/4] power: supply: max17042: cleanup and more features
+Date: Sat, 09 Nov 2024 15:44:32 +0300
+Message-Id: <20241109-b4-max17042-v1-0-9e2b07e54e76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADBZL2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQwML3SQT3dzECkNzAxMjXUtjA7O0ZHPTxLTEVCWgjoKi1LTMCrBp0bG
+ 1tQDfK1uyXQAAAA==
+To: Hans de Goede <hdegoede@redhat.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731156277; l=1826;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=AViyC/+sdOhddIa9xjAO4k6SS339kVhh4BSc9RyXqEo=;
+ b=90pggLnOjDwy8XmUHTXmK3BpQlR4sHc6LVU9DiIpq7VL088R8yBC5A5aftKbu82FSxx1GYGTA
+ X/vuKAzVUFHAIDmfWW6YeaEl/dP8pdBpT3O5BkRrjvSkaf7a3lu1vLO
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hi Jinjie,
+Maxim max17042 driver cleanup, and shared-irq feature.
 
-On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
-> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
-> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
-> has assigned before, and the error path only free the suite->log's stream
-> memory but not set it to NULL in string_stream_destroy(), so the later
-> string_stream_clear() of suite->log in kunit_init_suite() will cause
-> below UAF bug.
-> 
-> Set stream pointer to NULL after free in string_stream_destroy()
-> to fix it.
-> 
-> 	Unable to handle kernel paging request at virtual address 006440150000030d
-> 	Mem abort info:
-> 	  ESR = 0x0000000096000004
-> 	  EC = 0x25: DABT (current EL), IL = 32 bits
-> 	  SET = 0, FnV = 0
-> 	  EA = 0, S1PTW = 0
-> 	  FSC = 0x04: level 0 translation fault
-> 	Data abort info:
-> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> 	[006440150000030d] address between user and kernel address ranges
-> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> 	Dumping ftrace buffer:
-> 	   (ftrace buffer empty)
-> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
-> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
-> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
-> 	Hardware name: linux,dummy-virt (DT)
-> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> 	pc : string_stream_clear+0x54/0x1ac
-> 	lr : string_stream_clear+0x1a8/0x1ac
-> 	sp : ffffffc080b47410
-> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
-> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
-> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
-> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
-> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
-> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
-> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
-> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
-> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
-> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
-> 	Call trace:
-> 	 string_stream_clear+0x54/0x1ac
-> 	 __kunit_test_suites_init+0x108/0x1d8
-> 	 kunit_exec_run_tests+0xb8/0x100
-> 	 kunit_module_notify+0x400/0x55c
-> 	 notifier_call_chain+0xfc/0x3b4
-> 	 blocking_notifier_call_chain+0x68/0x9c
-> 	 do_init_module+0x24c/0x5c8
-> 	 load_module+0x4acc/0x4e90
-> 	 init_module_from_file+0xd4/0x128
-> 	 idempotent_init_module+0x2d4/0x57c
-> 	 __arm64_sys_finit_module+0xac/0x100
-> 	 invoke_syscall+0x6c/0x258
-> 	 el0_svc_common.constprop.0+0x160/0x22c
-> 	 do_el0_svc+0x44/0x5c
-> 	 el0_svc+0x48/0xb8
-> 	 el0t_64_sync_handler+0x13c/0x158
-> 	 el0t_64_sync+0x190/0x194
-> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
-> 	---[ end trace 0000000000000000 ]---
-> 	Kernel panic - not syncing: Oops: Fatal exception
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  lib/kunit/string-stream.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
-> index 54f4fdcbfac8..00ad518b730b 100644
-> --- a/lib/kunit/string-stream.c
-> +++ b/lib/kunit/string-stream.c
-> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
->  
->  	string_stream_clear(stream);
->  	kfree(stream);
-> +	stream = NULL;
+Fuelgauge blocks often are incorporated in bigger chip,
+which may use only 1 line for interrupts. Shared-irq
+handles that case by requesting irq as shared.
 
-Thanks for proposing the fix. However, I don't believe it fully
-resolves the UAF issue. Changing the stream pointer value within
-string_stream_destroy() doesn't update the caller's stream pointer, so
-the issue remains.
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+Dzmitry Sankouski (4):
+      dt-bindings: power: supply: max17042: add share-irq node
+      power: supply: max17042: implement dts shared-irq
+      power: supply: max17042: use microvolts for voltage comparison
+      power: supply: max17042: rename maxim,rsns-microohm property
 
-I think the correct approach would be to set the log pointer to NULL in
-the error path of kunit_debugfs_create_suite() to address the issue.
-Let me know if I've missed something or overlooked an obvious detail.
+ Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml | 13 +++++++++----
+ arch/arm/boot/dts/samsung/exynos4210-i9100.dts                     |  2 +-
+ arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi                     |  2 +-
+ arch/arm/boot/dts/samsung/exynos4412-midas.dtsi                    |  2 +-
+ arch/arm/boot/dts/samsung/exynos4412-p4note.dtsi                   |  4 ++--
+ arch/arm64/boot/dts/freescale/imx8mq-librem5-r4.dts                |  2 +-
+ arch/arm64/boot/dts/freescale/imx8mq-librem5.dtsi                  |  4 ++--
+ arch/arm64/boot/dts/qcom/msm8916-motorola-harpia.dts               |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8916-motorola-osprey.dts               |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8916-motorola-surnia.dts               |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8916-samsung-gt5-common.dtsi           |  4 ++--
+ drivers/power/supply/max17042_battery.c                            |  9 +++------
+ include/linux/power/max17042_battery.h                             |  1 +
+ 13 files changed, 32 insertions(+), 29 deletions(-)
+---
+base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
+change-id: 20241108-b4-max17042-9306fc75afae
 
-Here's the proposed code:
+Best regards,
+-- 
+Dzmitry Sankouski <dsankouski@gmail.com>
 
-diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-index d548750a325a..b25d214b93e1 100644
---- a/lib/kunit/debugfs.c
-+++ b/lib/kunit/debugfs.c
-@@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
-
- err:
- 	string_stream_destroy(suite->log);
--	kunit_suite_for_each_test_case(suite, test_case)
-+	suite->log = NULL;
-+	kunit_suite_for_each_test_case(suite, test_case) {
- 		string_stream_destroy(test_case->log);
-+		test_case->log = NULL;
-+	}
- }
-
- void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
-
-
->  }
->  
->  static void resource_free_string_stream(void *p)
-> -- 
-> 2.34.1
-> 
-> 
 
