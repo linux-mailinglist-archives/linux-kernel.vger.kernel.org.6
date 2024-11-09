@@ -1,267 +1,258 @@
-Return-Path: <linux-kernel+bounces-402679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD3909C2A74
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:55:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDE29C2A75
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 677431F21118
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 604AB1C20E23
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7BE13C9A9;
-	Sat,  9 Nov 2024 05:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6F513B2A2;
+	Sat,  9 Nov 2024 05:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSIQF07w"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQ9Z6xfD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1F528E8;
-	Sat,  9 Nov 2024 05:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB0F28E8
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 05:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731131692; cv=none; b=cSLNco1DvO9NG6n8AEpYBVZv/6EGIhGBTDAtvYI4EWFvZtJN7w5Jp8+FZRaoyKEFwRPfMkDZhX+TOuij2zFr8ZhZmTyrYyrsfRGxfv0q/CEDVUYiIZnrmHuTsRpleGExtHE+Kw3h7s7jOwgAMxlzxp1TQ7X+i84kTdFiaf1HgAk=
+	t=1731131797; cv=none; b=GjJoL5wfHZanSwzt3dETkU8i0PO6HSaHqDcj8J6ndTepet7WJc6Azhup03AZB/sZpMOeeIZuDsgijpLZH53gn31iIQlsiudOpk/Oe0dxvLpFn5NuzeL0HOrxWII4fX2gqjI5Fv0c3B+Az7BLSsuHUjQnjeYpxM3DM7fQkQFzmHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731131692; c=relaxed/simple;
-	bh=tKGFk74qCGGzxkCJWKBU9hi9bpofaa60JMPzgXnRJwA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=n1D3c34QrbVG4bPeUVOBv4RF2eUOTSWMw2Zk56DEdeEh6cepOBmQUKMhq151ShoxyV2zk0afJ3puHsjPcFKy/FtAUdekV7ZlCO1BezIMGyv0wImVDuzgESQKXIuv/JGIqqv/gy1OpCHpc6c7j643h+968nVl9uyvgMCsjmvS1LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSIQF07w; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e9a5ee0384so323571a91.3;
-        Fri, 08 Nov 2024 21:54:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731131690; x=1731736490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qM/ZHyMpHDBqNDre7+VZNwQb40sxC85lTLNhhwasbsU=;
-        b=WSIQF07w3EXCKYvg2DQBUhc0tz08Vk4E9a2CsZxvTjPf+gRaYQTqnxClZj+GN1NBq1
-         uAxWIAx6pr1+7XalIzW5nqzYLnEk4L5VL8onjH7DRRwYTACY/xZZ8dCr5CkgP+lWIVCp
-         hNC2dchHbkuhphVpHtpXpZWCuQgIJgrQChXhID/gDmozI6BZi+kN3XCr8BsLGx115XUD
-         SukMiKCuSGlBUVamLulWbHXHP2DUtGJZJADuEqJF6rMTDyGbY9qFw38aZGMaKYKUrAY0
-         Nz3N6wmX9pFCpPQ7Imy0IcxsFPyrFihOSxhDu7dcy15Hb0XBWuAKYMTaQ7Ib0tKUbhFN
-         I9yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731131690; x=1731736490;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qM/ZHyMpHDBqNDre7+VZNwQb40sxC85lTLNhhwasbsU=;
-        b=kGqomEkh6xhKvdYOkeSFF9ol0LQISh2eW+vDIQXCNMR5FCh5LToZ0GEZqjJfjdL8HU
-         9JPIsvKtejVUUKqZmkf2IEt/rLr9WVF1jqs28OBLl/A90CdD6N533dEbPj50ipt2x5pG
-         rl3sPBnlwo0jQ1yD4xpKpNYBc2h/FT/R/G+N3CSeSjkJFGYxO3VUI/4oI8IaqhJxSu1z
-         dUQLYCPmn9kA+sc63nHam2Zj/fZVqL0/vaChkXxRfwKI9GwYH11EhnqfvvudB+0URROt
-         5nvUJzk8Qd1hWshPXcv2Q+bczgNz7MnisMoluNsnB60OyOmEEAkPK3Kw1zdR2Y3L2g9C
-         l5qA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7hgUR51LipJJMAKvDRCFLqxJbpJxqRpq7NapsBk0RbXYCXJ4CWUo1hEoDbT5jfJ2ib9xQOLKVCzn8XfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxErHUOeFGg+03Y+YMCTsnDtEpAq9+A7rcJYVHp2X34OSFzjnGg
-	d33yxr+outQXbjPnsXwyusrbL7rfZCpphSaw/dlHGKULXayLQ2Ucc84RjP5C/zc=
-X-Google-Smtp-Source: AGHT+IHxlpFPFNQLLcu/f3JbOZ4ZpV18P2xoKq76AW3m+ScDj7V26WapsEpk5l37B7+xYn9MV0Mi3A==
-X-Received: by 2002:a17:902:eccb:b0:20c:d04f:94ad with SMTP id d9443c01a7336-211834fccd8mr31788265ad.4.1731131689914;
-        Fri, 08 Nov 2024 21:54:49 -0800 (PST)
-Received: from archlinux.. ([138.94.103.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9bd5ffe03sm560548a91.0.2024.11.08.21.54.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Nov 2024 21:54:49 -0800 (PST)
-From: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	~lkcamp/patches@lists.sr.ht
-Subject: [PATCH v3] rust: transmute: Add implementation for FromBytes trait
-Date: Sat,  9 Nov 2024 02:54:42 -0300
-Message-ID: <20241109055442.85190-1-christiansantoslima21@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731131797; c=relaxed/simple;
+	bh=SWGpaYTgXFC0bBXwF+TrFvujseEvGQwvnGMRLldqfME=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=YJdo0RuIbf5IhTfl45AGrOl8pgtyQTRvXojFEv1UJ13OYcegmcIO/gioWSJe9zQySESs82hJEFyyAR6xK5GUxgooOw2+NEVIxWNzSePRGCdSZ0VZCfDLWPlRyWF0He3JDZ6/Dfk03yup47fzQtdhz5P1DDq7U+NGSXwXZTH2lzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQ9Z6xfD; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731131795; x=1762667795;
+  h=date:from:to:cc:subject:message-id;
+  bh=SWGpaYTgXFC0bBXwF+TrFvujseEvGQwvnGMRLldqfME=;
+  b=bQ9Z6xfDwKoyWnUT8E8b6+RSMrGPBHLF2dzpVuki5w6HfRoNXWgZ1Edq
+   oLHcKBba0w8spi1avrDLP7ng+J3cliTibV58kDZBqFemsMedfgPKNWzff
+   FaztMH/K636KO+z18imXoEoB0UBQmcYYsJ4+AljrJMRkeofThcG5jVPUn
+   jUvmEX+wJOJosfu0ZxVug9uAoCHXiwpVPpf4XxOYyCLIb2iBL2eEkvzSN
+   B1szzMJC46BlfjtppfxrLHCBzKa4JBPujvpUznFq4fJBVF5xReQ0LgKQt
+   iEkdxtEgWiHJa7Yel2g0psaXNGOcGBU77aqzitQsllfxQqWPnJLJL14KI
+   Q==;
+X-CSE-ConnectionGUID: usHS3JuaQjmI3hQbKKrlnA==
+X-CSE-MsgGUID: dEMAT4ZGQ1aDoWj4JIn4Jw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11250"; a="42422160"
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="42422160"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2024 21:56:35 -0800
+X-CSE-ConnectionGUID: FhB6VZTxRrWYin0q3n0OXw==
+X-CSE-MsgGUID: 8Ox58vIYQBi4krG9drK0ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,140,1728975600"; 
+   d="scan'208";a="109200255"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 08 Nov 2024 21:56:34 -0800
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t9eSV-000s7F-29;
+	Sat, 09 Nov 2024 05:56:31 +0000
+Date: Sat, 09 Nov 2024 13:56:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/misc] BUILD SUCCESS
+ 62e724494db7954c47b4417769f1225cf98f4d77
+Message-ID: <202411091311.y9A390ba-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add implementation and documentation for FromBytes trait.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/misc
+branch HEAD: 62e724494db7954c47b4417769f1225cf98f4d77  x86/cpu: Make sure flag_is_changeable_p() is always being used
 
-Add new feature block in order to allow using ToBytes
-and bound to from_bytes_mut function. I'm adding this feature
-because is possible create a value with disallowed bit pattern
-and as_byte_mut could create such value by mutating the array and
-accessing the original value. So adding ToBytes this can be avoided.
+elapsed time: 723m
 
-Link: https://github.com/Rust-for-Linux/linux/issues/1119
-Signed-off-by: Christian dos Santos de Lima <christiansantoslima21@gmail.com>
----
-Changes in v2:
-- Rollback the implementation for the macro in the repository and add implementation of functions in trait
+configs tested: 166
+configs skipped: 130
 
-Changes in v3:
-- Fix grammar errors
-- Remove repeated tests
-- Fix alignment errors errors
-- Fix tests not building
-- Link to v2: https://lore.kernel.org/rust-for-linux/20241012193657.290cc79c@eugeo/T/#t
----
- rust/kernel/lib.rs       |  2 +
- rust/kernel/transmute.rs | 87 +++++++++++++++++++++++++++++++++++++---
- 2 files changed, 84 insertions(+), 5 deletions(-)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index dc37aef6a008..5215f5744e12 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -18,6 +18,8 @@
- #![feature(lint_reasons)]
- #![feature(new_uninit)]
- #![feature(unsize)]
-+#![feature(portable_simd)]
-+#![feature(trivial_bounds)]
- 
- // Ensure conditional compilation based on the kernel configuration works;
- // otherwise we may silently break things like initcall handling.
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index 1c7d43771a37..a4b462e07639 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -2,6 +2,7 @@
- 
- //! Traits for transmuting types.
- 
-+use core::simd::ToBytes;
- /// Types for which any bit pattern is valid.
- ///
- /// Not all types are valid for all values. For example, a `bool` must be either zero or one, so
-@@ -9,15 +10,60 @@
- ///
- /// It's okay for the type to have padding, as initializing those bytes has no effect.
- ///
-+/// # Example
-+///
-+/// This example is how to use the FromBytes trait
-+/// ```
-+/// use kernel::transmute::FromBytes;
-+/// // Initialize a slice of bytes
-+/// let foo = &[1, 2, 3, 4];
-+///
-+/// //Use the function implemented by trait in integer type
-+/// unsafe {
-+///     let result = u32::from_bytes(foo);
-+///     assert_eq!(*result, 0x4030201);
-+/// }
-+/// ```
- /// # Safety
- ///
- /// All bit-patterns must be valid for this type. This type must not have interior mutability.
--pub unsafe trait FromBytes {}
-+pub unsafe trait FromBytes {
-+    /// Get an imutable slice of bytes and converts to a reference to Self
-+    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self;
-+    /// Get a mutable slice of bytes and converts to a reference to Self
-+    ///
-+    /// # Safety
-+    ///
-+    /// Bound ToBytes in order to avoid use with disallowed bit patterns
-+    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
-+    where
-+        Self: ToBytes;
-+}
- 
-+// Get a reference of slice of bytes and converts into a reference of integer or a slice with a defined size
- macro_rules! impl_frombytes {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-         // SAFETY: Safety comments written in the macro invocation.
--        $(unsafe impl$($($generics)*)? FromBytes for $t {})*
-+        $(unsafe impl$($($generics)*)? FromBytes for $t {
-+            unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self
-+            {
-+                unsafe {
-+                    let slice_ptr = slice_of_bytes.as_ptr() as *const Self;
-+                    &*slice_ptr
-+                }
-+            }
-+
-+            unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
-+            where
-+                Self: ToBytes,
-+            {
-+                unsafe {
-+                    let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut Self;
-+                    &mut *slice_ptr
-+                }
-+
-+            }
-+        })*
-     };
- }
- 
-@@ -28,10 +74,43 @@ macro_rules! impl_frombytes {
- 
-     // SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
-     // patterns are also acceptable for arrays of that type.
--    {<T: FromBytes>} [T],
-     {<T: FromBytes, const N: usize>} [T; N],
- }
- 
-+/// Get a reference of slice of bytes and converts into a reference of an array of integers
-+///
-+/// Types for which any bit pattern is valid.
-+///
-+/// Not all types are valid for all values. For example, a `bool` must be either zero or one, so
-+/// reading arbitrary bytes into something that contains a `bool` is not okay.
-+///
-+/// It's okay for the type to have padding, as initializing those bytes has no effect.
-+///
-+// SAFETY: If all bit patterns are acceptable for individual values in an array, then all bit
-+// patterns are also acceptable for arrays of that type.
-+unsafe impl<T: FromBytes> FromBytes for [T] {
-+    unsafe fn from_bytes(slice_of_bytes: &[u8]) -> &Self {
-+        // Safety: Guarantee that all values are initialized
-+        unsafe {
-+            let slice_ptr = slice_of_bytes.as_ptr() as *const T;
-+            let slice_len = slice_of_bytes.len() / core::mem::size_of::<T>();
-+            core::slice::from_raw_parts(slice_ptr, slice_len)
-+        }
-+    }
-+
-+    unsafe fn from_bytes_mut(slice_of_bytes: &mut [u8]) -> &mut Self
-+    where
-+        Self: ToBytes,
-+    {
-+        // Safety: Guarantee that all values are initialized
-+        unsafe {
-+            let slice_ptr = slice_of_bytes.as_mut_ptr() as *mut T;
-+            let slice_len = slice_of_bytes.len() / core::mem::size_of::<T>();
-+            core::slice::from_raw_parts_mut(slice_ptr, slice_len)
-+        }
-+    }
-+}
-+
- /// Types that can be viewed as an immutable slice of initialized bytes.
- ///
- /// If a struct implements this trait, then it is okay to copy it byte-for-byte to userspace. This
-@@ -48,7 +127,6 @@ macro_rules! impl_frombytes {
- /// Values of this type may not contain any uninitialized bytes. This type must not have interior
- /// mutability.
- pub unsafe trait AsBytes {}
--
- macro_rules! impl_asbytes {
-     ($($({$($generics:tt)*})? $t:ty, )*) => {
-         // SAFETY: Safety comments written in the macro invocation.
-@@ -63,7 +141,6 @@ macro_rules! impl_asbytes {
-     bool,
-     char,
-     str,
--
-     // SAFETY: If individual values in an array have no uninitialized portions, then the array
-     // itself does not have any uninitialized portions either.
-     {<T: AsBytes>} [T],
--- 
-2.47.0
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                          axs101_defconfig    clang-20
+arc                                 defconfig    gcc-14.2.0
+arc                         haps_hs_defconfig    clang-14
+arc                        nsimosci_defconfig    gcc-14.2.0
+arc                        vdk_hs38_defconfig    clang-20
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                                 defconfig    gcc-14.2.0
+arm                         lpc18xx_defconfig    gcc-14.2.0
+arm                         lpc32xx_defconfig    clang-20
+arm                            mps2_defconfig    gcc-14.2.0
+arm                        neponset_defconfig    clang-14
+arm                            qcom_defconfig    gcc-14.2.0
+arm                        realview_defconfig    clang-20
+arm                         s3c6400_defconfig    gcc-14.2.0
+arm                           stm32_defconfig    clang-20
+arm                           u8500_defconfig    clang-14
+arm                           u8500_defconfig    clang-20
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                               defconfig    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                                defconfig    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.2.0
+i386                             allmodconfig    clang-19
+i386                              allnoconfig    clang-19
+i386                             allyesconfig    clang-19
+i386        buildonly-randconfig-001-20241109    clang-19
+i386        buildonly-randconfig-002-20241109    clang-19
+i386        buildonly-randconfig-003-20241109    clang-19
+i386        buildonly-randconfig-004-20241109    clang-19
+i386        buildonly-randconfig-005-20241109    clang-19
+i386        buildonly-randconfig-006-20241109    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241109    clang-19
+i386                  randconfig-002-20241109    clang-19
+i386                  randconfig-003-20241109    clang-19
+i386                  randconfig-004-20241109    clang-19
+i386                  randconfig-005-20241109    clang-19
+i386                  randconfig-006-20241109    clang-19
+i386                  randconfig-011-20241109    clang-19
+i386                  randconfig-012-20241109    clang-19
+i386                  randconfig-013-20241109    clang-19
+i386                  randconfig-014-20241109    clang-19
+i386                  randconfig-015-20241109    clang-19
+i386                  randconfig-016-20241109    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                           defconfig    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                                defconfig    gcc-14.2.0
+m68k                       m5249evb_defconfig    clang-14
+m68k                        stmark2_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                          defconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                          ath79_defconfig    clang-20
+mips                          eyeq5_defconfig    clang-20
+mips                      maltaaprp_defconfig    clang-14
+mips                        omega2p_defconfig    clang-20
+mips                        qi_lb60_defconfig    gcc-14.2.0
+mips                          rb532_defconfig    clang-14
+mips                           xway_defconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-12
+parisc                           alldefconfig    clang-14
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-12
+parisc64                            defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                      arches_defconfig    clang-14
+powerpc                     ep8248e_defconfig    clang-14
+powerpc                        fsp2_defconfig    clang-14
+powerpc                  iss476-smp_defconfig    clang-14
+powerpc                  iss476-smp_defconfig    clang-20
+powerpc                     ksi8560_defconfig    gcc-14.2.0
+powerpc                     mpc512x_defconfig    gcc-14.2.0
+powerpc                 mpc8313_rdb_defconfig    clang-14
+powerpc                 mpc8313_rdb_defconfig    clang-20
+powerpc                 mpc8313_rdb_defconfig    gcc-14.2.0
+powerpc                 mpc834x_itx_defconfig    clang-20
+powerpc                 mpc836x_rdk_defconfig    clang-14
+powerpc                  mpc866_ads_defconfig    clang-20
+powerpc                  mpc885_ads_defconfig    clang-14
+powerpc                     redwood_defconfig    clang-14
+powerpc                 xes_mpc85xx_defconfig    clang-20
+riscv                            alldefconfig    clang-20
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                               defconfig    gcc-12
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                        edosk7705_defconfig    gcc-14.2.0
+sh                            hp6xx_defconfig    clang-20
+sh                     magicpanelr2_defconfig    gcc-14.2.0
+sh                           se7619_defconfig    gcc-14.2.0
+sh                           se7721_defconfig    gcc-14.2.0
+sh                              ul2_defconfig    clang-20
+sh                          urquell_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20241109    gcc-12
+x86_64      buildonly-randconfig-002-20241109    gcc-12
+x86_64      buildonly-randconfig-003-20241109    gcc-12
+x86_64      buildonly-randconfig-004-20241109    gcc-12
+x86_64      buildonly-randconfig-005-20241109    gcc-12
+x86_64      buildonly-randconfig-006-20241109    gcc-12
+x86_64                              defconfig    clang-19
+x86_64                                  kexec    clang-19
+x86_64                                  kexec    gcc-12
+x86_64                randconfig-001-20241109    gcc-12
+x86_64                randconfig-002-20241109    gcc-12
+x86_64                randconfig-003-20241109    gcc-12
+x86_64                randconfig-004-20241109    gcc-12
+x86_64                randconfig-005-20241109    gcc-12
+x86_64                randconfig-006-20241109    gcc-12
+x86_64                randconfig-011-20241109    gcc-12
+x86_64                randconfig-012-20241109    gcc-12
+x86_64                randconfig-013-20241109    gcc-12
+x86_64                randconfig-014-20241109    gcc-12
+x86_64                randconfig-015-20241109    gcc-12
+x86_64                randconfig-016-20241109    gcc-12
+x86_64                randconfig-071-20241109    gcc-12
+x86_64                randconfig-072-20241109    gcc-12
+x86_64                randconfig-073-20241109    gcc-12
+x86_64                randconfig-074-20241109    gcc-12
+x86_64                randconfig-075-20241109    gcc-12
+x86_64                randconfig-076-20241109    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
 
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
