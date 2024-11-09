@@ -1,240 +1,192 @@
-Return-Path: <linux-kernel+bounces-402992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59029C2F57
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:35:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B479C2F5A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 20:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51B901F21800
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B381C20C73
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 19:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCB01A08B1;
-	Sat,  9 Nov 2024 19:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161941A01D4;
+	Sat,  9 Nov 2024 19:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="bW+S6Maq"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.49])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="OiyUTL0N"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED011537C9;
-	Sat,  9 Nov 2024 19:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55ED1537C9;
+	Sat,  9 Nov 2024 19:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731180925; cv=none; b=aU5xZZ/vcaJyLgxifcurLJhbp3KwrAGMdC5hvGEv8dY2Enhy36FZS/yM949M7Wlqeyy6mGA/lb2HmAQkTd3kZ6whb6/mUoSmVUaH+4/KxIsNq2xFmMkWwt2zm1EjG6y5Cx5tsg/shlVykuMJki4GJy266hG7CYg/92bKcbCLjPY=
+	t=1731180971; cv=none; b=gj5iHAOqwSM0KgSKdWUwj7VxIdRMa6hqa3Dxc6NqiHqBRZ/Pa+vd/t6IrXniGO5R/zI6D0HYmv9uV8fy/Ls27Dnrzoa6RiP3ZvvhNdk+dnz2D+fnncadpFSXPKrIA2kxPEDRLahugEafC8Vtzv05BSWliP8SxQinotckAYZkeQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731180925; c=relaxed/simple;
-	bh=RzyOIa5uO/9Z4Esf27fE4VCb7817oqLZGv2jNjc3Il0=;
-	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
-	 Date:Cc:References:To; b=GVohpeRLFEgCMjmynvGDnqORb4cbRIsnofwMA+bVM3cKF1Lvsi3wdw6i0KYxK7GlqW3zCkpYWRR/sb+amVsaaravROEI4iXYoOD6EueoJOqLo98+yiapdd+fl2sCPTuBdXfRrQ+l554nk555yL1CApydcREofe0RLPuu+PZOwLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name; spf=pass smtp.mailfrom=cyyself.name; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=bW+S6Maq; arc=none smtp.client-ip=43.163.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cyyself.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyyself.name
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1731180910; bh=yqhfUJ3/dfhZv7c8wagZAZ6oyLkqp1Y0Z8WxK6uEpk4=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=bW+S6MaqZuZu1nZd80plcYkjMN/Y0z3mckqupY0YLK7V2iz7WOqB0XZqfXMWsx+g/
-	 DyCk1NI6U9R9ub9AWuSFcbxFSvV6JfUoC/lyXPSDBzsLaD4lm5Y3wBoHCUP4U5UGIN
-	 eIXrduYCWyqSUUUO+ozDWVlonHeUiuUyjWH41SlQ=
-Received: from smtpclient.apple ([2408:8207:18a1:fd20:75f7:4ab1:fc76:cbf3])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 8C4B3A57; Sun, 10 Nov 2024 03:35:04 +0800
-X-QQ-mid: xmsmtpt1731180904t8up4sgn3
-Message-ID: <tencent_2EF88DF37C4B82B2DA0B8E49B85C312E2108@qq.com>
-X-QQ-XMAILINFO: OGZxhFXqN7PJ92jmdY2jgaF/Dia5ccEFwUtzYNeNRNnWUT7g8BXEToBO+g7PMZ
-	 gd8SXFgRIOMDVib1kUgxYUnnidAMn4L3tWcmVJtGzSLSg7enLsAlE4j1LNQ2hRwQYOpjCmEz1ksJ
-	 Etd8HtBLG5V/YdYB2Q2rUw9yZRkd3fFgPChUyajz2fsT7BbSA94bN3GC+PqdN5WQ0FFrpehnMFSa
-	 gBIG+jxrUw01Ap/6qxy773WIJhPUXCMgoyrBgikwntuo+g/LpEHU0pGX/47gMeHJuFXxiFYbNe6P
-	 WrkSXCH/hFjF5y3VSkE8xjDpL+5zm/C3UeDbW3CoRMgrye+3Cr4ph7bJqv7mUBBnIddUPPuvR7fF
-	 wCpwBWbwwC3znj9Ko96Dy8aExJP/SpbYoBU0yPN83hJZTWPf9c3cp6TDwfPdlYha39N4m8yNiOhC
-	 skZJthlPZqX1KxCtr86iM+pVgpt55Kq96Od7qRMm8yOY4QkY3lWUsaVlRPffnCPL12fL4szpCdWO
-	 iJXlGx+anN6VQCP3sGiJpHJDpVHT5UrwwvUnxHWJYDwwtolr64JmxkWN6MNvb1ygYUIqvkfjW3St
-	 Sa3wsb/VWvUPW7+SqkmH3FOfmfcd2QVmltWgpPYAeQssruJuWphxR0nDwJkIHnCgMuckgryXubKo
-	 En9J8jPxlTxRfquPbVbuoWs82f2E3qtigBycGfBcf9tyiSzKSFUt/0kVOTlO5vc8YjsoLGLefBsd
-	 g7BiXPkqRN6bKFAf9mrYNYNlrs5Ep4wT9/TAZV0qfiWE3sLhu1N3TmzNn2f/tydnlwIg42dfs5UB
-	 ph8RoKxexZPVEmMSynMkEQlaShp6cXL8PwkG5XSxJ+TD1X7ctYDwzRt3wJRZME03ns6wsYiIO1GR
-	 LI2vD2HZq79T/WptKJ8WpW1lexQvjbdmvOKON7Z8aCJRS0AJMajwQnRD8bwvI70I6uHGwPPDrQlp
-	 FfLKUjcpbsAD6hLnxZW2jUKGcb89bNLdWn2cUqr//AAcPVFeQvUYoMWbaIWwmhnXmUWpUSpCfQjG
-	 qp/z64gQ==
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1731180971; c=relaxed/simple;
+	bh=tFRVNOjEhKYqT4YUsK94NttB+rml9lmmYxpieMCsAM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NdVdigscYtgI5p27jftwK84KEqFxoMlsThrxT2ehdVX6t2i8yqzodIPLqkswspL3oIchUoG6BGcYMFVjfygmJjlSILPRAbkWTAQfil4zfJP9iH7a6sQD9cqYrqTkE/yZFz/b3EnhGZ7ix3gbKO9kS8Mo1jnKGIO7CXwo8AxKEdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=OiyUTL0N; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.104.138])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 041933FB5B;
+	Sat,  9 Nov 2024 19:36:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1731180965;
+	bh=JzJNnoQrpU/iYPtVZfycqLIjcRlhJ2rMhkvmbw89daw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type;
+	b=OiyUTL0NytAUwvlwDdEjajzLaUcXoVrfGxr8dVRC7SO5le7AFypc2NR5sUR63SxKz
+	 9MOlLNb5UVVnBIaOmEutWYdU2e1sc3qHyOO8RuWNJbYVlLfujejua7ZUjrw8aZ8938
+	 GSO/c97KFaol7hQAJfe8Z/BeBU7U5+AllUM38hW7QvLE8JfAhY51qLJK5Rdd4Rk4UV
+	 +8TVbEZfKYMfVs8Ce98kXUX7c4gVGRjyZBi6wP/eBoYp5uLpDQjjXQO85YK0faSuRT
+	 nuAs/L3qrBcwxzYyBUZWyxhSwWxLsaONHANbKKdupvyOjkanLDLzZva7MyUEbVtbGz
+	 p/osSnW3JE1Sg==
+Message-ID: <4b7f9b0b-1a24-46fc-9046-069f06f3c965@canonical.com>
+Date: Sat, 9 Nov 2024 11:36:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v10 05/14] riscv: vector: Use vlenb from DT for thead
-From: Yangyu Chen <cyy@cyyself.name>
-In-Reply-To: <20240911-xtheadvector-v10-5-8d3930091246@rivosinc.com>
-Date: Sun, 10 Nov 2024 03:34:54 +0800
-Cc: linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-sunxi@lists.linux.dev,
- linux-doc@vger.kernel.org,
- linux-kselftest@vger.kernel.org,
- Conor Dooley <conor.dooley@microchip.com>
-Content-Transfer-Encoding: quoted-printable
-X-OQ-MSGID: <9F32D251-63F5-42DA-99FA-B02B1C8A4900@cyyself.name>
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
- <20240911-xtheadvector-v10-5-8d3930091246@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Conor Dooley <conor@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- Jisheng Zhang <jszhang@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Samuel Holland <samuel.holland@sifive.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Shuah Khan <shuah@kernel.org>,
- Guo Ren <guoren@kernel.org>,
- Evan Green <evan@rivosinc.com>,
- Andy Chiu <andy.chiu@sifive.com>,
- Jessica Clarke <jrtc27@jrtc27.com>,
- Andrew Jones <ajones@ventanamicro.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: test: Fix memory leak for aa_unpack_strdup()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, skhan@linuxfoundation.org,
+ mike.salvatore@canonical.com, kees@kernel.org, brendan.higgins@linux.dev,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241011012241.3251128-1-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20241011012241.3251128-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Charlie,
+On 10/10/24 18:22, Jinjie Ruan wrote:
+> The string allocated by kmemdup() in aa_unpack_strdup() is not
+> freed and cause following memory leaks, free them to fix it.
+> 
+> 	unreferenced object 0xffffff80c6af8a50 (size 8):
+> 	  comm "kunit_try_catch", pid 225, jiffies 4294894407
+> 	  hex dump (first 8 bytes):
+> 	    74 65 73 74 69 6e 67 00                          testing.
+> 	  backtrace (crc 5eab668b):
+> 	    [<0000000001e3714d>] kmemleak_alloc+0x34/0x40
+> 	    [<000000006e6c7776>] __kmalloc_node_track_caller_noprof+0x300/0x3e0
+> 	    [<000000006870467c>] kmemdup_noprof+0x34/0x60
+> 	    [<000000001176bb03>] aa_unpack_strdup+0xd0/0x18c
+> 	    [<000000008ecde918>] policy_unpack_test_unpack_strdup_with_null_name+0xf8/0x3ec
+> 	    [<0000000032ef8f77>] kunit_try_run_case+0x13c/0x3ac
+> 	    [<00000000f3edea23>] kunit_generic_run_threadfn_adapter+0x80/0xec
+> 	    [<00000000adf936cf>] kthread+0x2e8/0x374
+> 	    [<0000000041bb1628>] ret_from_fork+0x10/0x20
+> 	unreferenced object 0xffffff80c2a29090 (size 8):
+> 	  comm "kunit_try_catch", pid 227, jiffies 4294894409
+> 	  hex dump (first 8 bytes):
+> 	    74 65 73 74 69 6e 67 00                          testing.
+> 	  backtrace (crc 5eab668b):
+> 	    [<0000000001e3714d>] kmemleak_alloc+0x34/0x40
+> 	    [<000000006e6c7776>] __kmalloc_node_track_caller_noprof+0x300/0x3e0
+> 	    [<000000006870467c>] kmemdup_noprof+0x34/0x60
+> 	    [<000000001176bb03>] aa_unpack_strdup+0xd0/0x18c
+> 	    [<0000000046a45c1a>] policy_unpack_test_unpack_strdup_with_name+0xd0/0x3c4
+> 	    [<0000000032ef8f77>] kunit_try_run_case+0x13c/0x3ac
+> 	    [<00000000f3edea23>] kunit_generic_run_threadfn_adapter+0x80/0xec
+> 	    [<00000000adf936cf>] kthread+0x2e8/0x374
+> 	    [<0000000041bb1628>] ret_from_fork+0x10/0x20
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
-I have tested this patchset with ghostwrite rebased to linux commit =
-da4373fbcf ("Merge tag 'thermal-6.12-rc7' of =
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm") [1] on =
-my D1 Nezha board, with defconfig + CONFIG_ERRATA_THEAD_GHOSTWRITE=3Dn, =
-I got this message during boot:
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-[    0.027584] Kernel panic - not syncing: __kmem_cache_create_args: =
-Failed to create slab 'riscv_vector_ctx'. Error -22
-[    0.038057] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted =
-6.12.0-rc6-00310-gb276cf69df24-dirty #11
-[    0.047240] Hardware name: Allwinner D1 Nezha (DT)
-[    0.052007] Call Trace:
-[    0.054434] [<ffffffff80007172>] dump_backtrace+0x1c/0x24
-[    0.059806] [<ffffffff809f6834>] show_stack+0x2c/0x38
-[    0.064833] [<ffffffff80a040f0>] dump_stack_lvl+0x52/0x74
-[    0.070206] [<ffffffff80a04126>] dump_stack+0x14/0x1c
-[    0.075233] [<ffffffff809f6db6>] panic+0x10c/0x300
-[    0.080000] [<ffffffff8017b5a0>] __kmem_cache_create_args+0x24a/0x2b6
-[    0.086413] [<ffffffff80c04c68>] riscv_v_setup_ctx_cache+0x56/0x84
-[    0.092566] [<ffffffff80c04288>] arch_task_cache_init+0x10/0x1c
-[    0.098460] [<ffffffff80c07d02>] fork_init+0x68/0x1a8
-[    0.103486] [<ffffffff80c00ed2>] start_kernel+0x77e/0x822
-[    0.108870] ---[ end Kernel panic - not syncing: =
-__kmem_cache_create_args: Failed to create slab 'riscv_vector_ctx'. =
-Error -22 ]---
+I have pulled this into my tree
 
-[1] https://github.com/cyyself/linux/tree/xtheadvector_20241110
-
-On 9/12/24 13:55, Charlie Jenkins wrote:
->  diff --git a/arch/riscv/kernel/vector.c b/arch/riscv/kernel/vector.c
-> index 682b3feee451..9775d6a9c8ee 100644
-> --- a/arch/riscv/kernel/vector.c
-> +++ b/arch/riscv/kernel/vector.c
-> @@ -33,7 +33,17 @@ int riscv_v_setup_vsize(void)
->  {
->  	unsigned long this_vsize;
->  -	/* There are 32 vector registers with vlenb length. */
-> +	/*
-> +	 * There are 32 vector registers with vlenb length.
-> +	 *
-> +	 * If the thead,vlenb property was provided by the firmware, use =
-that
-> +	 * instead of probing the CSRs.
-> +	 */
-> +	if (thead_vlenb_of) {
-> +		this_vsize =3D thead_vlenb_of * 32;
-
-Then, I patched here which replaces "this_vsize" with "riscv_v_vsize". =
-The kernel boots normally and I can see =E2=80=9Cxtheadvector" in =
-/proc/cpuinfo.
-
-However, when I try to run the "v_exec_initval_nolibc" test, the kernel =
-panics with these outputs:
-
-[  978.788878] Oops - illegal instruction [#1]
-[  978.788897] Modules linked in:
-[  978.788908] CPU: 0 UID: 1000 PID: 461 Comm: v_exec_initval_ Not =
-tainted 6.12.0-rc6-00310-gb276cf69df24-dirty #12
-[  978.788924] Hardware name: Allwinner D1 Nezha (DT)
-[  978.788929] epc : do_trap_ecall_u+0x56/0x20a
-[  978.788956]  ra : _new_vmalloc_restore_context_a0+0xc2/0xce
-[  978.788974] epc : ffffffff80a04afe ra : ffffffff80a0e742 sp : =
-ffffffc6003fbeb0
-[  978.788983]  gp : ffffffff81717080 tp : ffffffd60723b300 t0 : =
-ffffffff81001268
-[  978.788991]  t1 : ffffffff80a04aa8 t2 : ffffffff810012a8 s0 : =
-ffffffc6003fbee0
-[  978.789000]  s1 : ffffffc6003fbee0 a0 : ffffffc6003fbee0 a1 : =
-000000000000005d
-[  978.789007]  a2 : 0000000000000000 a3 : ffffffffffffffda a4 : =
-0000000000000003
-[  978.789015]  a5 : 0000000000000000 a6 : 0000000002adb5fe a7 : =
-000000000000005d
-[  978.789022]  s2 : 00000000000108a8 s3 : 0000000000000000 s4 : =
-0000000000000008
-[  978.789030]  s5 : 0000003fb42ab780 s6 : 0000002adb5fe420 s7 : =
-0000002adb5fb9e0
-[  978.789038]  s8 : 0000002adb5fe440 s9 : 0000002adb5fe420 s10: =
-0000002adb572ad4
-[  978.789046]  s11: 0000002adb572ad0 t3 : 0000003fb43c5e3c t4 : =
-622f7273752f3d5f
-[  978.789053]  t5 : 0000002adb5fd5a1 t6 : 0000000002adb5ff
-[  978.789060] status: 8000000201800100 badaddr: 000000005e0fb057 cause: =
-0000000000000002
-[  978.789069] [<ffffffff80a04afe>] do_trap_ecall_u+0x56/0x20a
-[  978.789086] [<ffffffff80a0e742>] =
-_new_vmalloc_restore_context_a0+0xc2/0xce
-[  978.789113] Code: a073 1007 006f 1a60 7057 0c30 57fd 17fe 77d7 0c30 =
-(b057) 5e0f
-[  978.789123] ---[ end trace 0000000000000000 ]---
-[  978.789131] Kernel panic - not syncing: Fatal exception in interrupt
-[  978.937158] ---[ end Kernel panic - not syncing: Fatal exception in =
-interrupt ]---
-
-Is something wrong with my setup?
-
-Thanks,
-Yangyu Chen
-
-> +		return 0;
-> +	}
+> ---
+>   security/apparmor/policy_unpack_test.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> 
+> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+> index c64733d6c98f..f070902da8fc 100644
+> --- a/security/apparmor/policy_unpack_test.c
+> +++ b/security/apparmor/policy_unpack_test.c
+> @@ -281,6 +281,8 @@ static void policy_unpack_test_unpack_strdup_with_null_name(struct kunit *test)
+>   			   ((uintptr_t)puf->e->start <= (uintptr_t)string)
+>   			   && ((uintptr_t)string <= (uintptr_t)puf->e->end));
+>   	KUNIT_EXPECT_STREQ(test, string, TEST_STRING_DATA);
 > +
->  	riscv_v_enable();
->  	this_vsize =3D csr_read(CSR_VLENB) * 32;
->  	riscv_v_disable();
-> diff --git a/arch/riscv/kernel/vendor_extensions/thead.c =
-b/arch/riscv/kernel/vendor_extensions/thead.c
-> index 0f27baf8d245..519dbf70710a 100644
-> --- a/arch/riscv/kernel/vendor_extensions/thead.c
-> +++ b/arch/riscv/kernel/vendor_extensions/thead.c
-> @@ -5,6 +5,7 @@
->  #include <asm/vendor_extensions/thead.h>
->    #include <linux/array_size.h>
-> +#include <linux/cpumask.h>
->  #include <linux/types.h>
->    /* All T-Head vendor extensions supported in Linux */
-> @@ -16,3 +17,13 @@ struct riscv_isa_vendor_ext_data_list =
-riscv_isa_vendor_ext_list_thead =3D {
->  	.ext_data_count =3D ARRAY_SIZE(riscv_isa_vendor_ext_thead),
->  	.ext_data =3D riscv_isa_vendor_ext_thead,
->  };
+> +	kfree(string);
+>   }
+>   
+>   static void policy_unpack_test_unpack_strdup_with_name(struct kunit *test)
+> @@ -296,6 +298,8 @@ static void policy_unpack_test_unpack_strdup_with_name(struct kunit *test)
+>   			   ((uintptr_t)puf->e->start <= (uintptr_t)string)
+>   			   && ((uintptr_t)string <= (uintptr_t)puf->e->end));
+>   	KUNIT_EXPECT_STREQ(test, string, TEST_STRING_DATA);
 > +
-> +void disable_xtheadvector(void)
-> +{
-> +	int cpu;
+> +	kfree(string);
+>   }
+>   
+>   static void policy_unpack_test_unpack_strdup_out_of_bounds(struct kunit *test)
+> @@ -313,6 +317,8 @@ static void policy_unpack_test_unpack_strdup_out_of_bounds(struct kunit *test)
+>   	KUNIT_EXPECT_EQ(test, size, 0);
+>   	KUNIT_EXPECT_NULL(test, string);
+>   	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, start);
 > +
-> +	for_each_possible_cpu(cpu)
-> +		clear_bit(RISCV_ISA_VENDOR_EXT_XTHEADVECTOR, =
-riscv_isa_vendor_ext_list_thead.per_hart_isa_bitmap[cpu].isa);
-> +
-> +	clear_bit(RISCV_ISA_VENDOR_EXT_XTHEADVECTOR, =
-riscv_isa_vendor_ext_list_thead.all_harts_isa_bitmap.isa);
-> +}
+> +	kfree(string);
+>   }
+>   
+>   static void policy_unpack_test_unpack_nameX_with_null_name(struct kunit *test)
 
 
