@@ -1,173 +1,275 @@
-Return-Path: <linux-kernel+bounces-402531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2A89C28D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:31:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D719C28D7
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 01:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3841C21521
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:31:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A89D1C2170D
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 00:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC454A00;
-	Sat,  9 Nov 2024 00:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82455442C;
+	Sat,  9 Nov 2024 00:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WoxnMSw0"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og6J93pz"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE77810957
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCD74689
+	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 00:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731112296; cv=none; b=lOtnRm4R+elkanYY90WGcbygvVc0s/TFI9bh3E7iODXBIxA2mpGWQ0AZ5y+d2VgEp4rV4evU4hD4eOSXZjs30eV+I8gK8W8dus2mjqS22xjOa78KbsmPbQiKOFWUngsCwelaZlV+hILnCMPDHbyLndvk5z63FxVlurNDo4a+08I=
+	t=1731112312; cv=none; b=B3W6dtB9dQ8KxXhGXShuEwp2FcPnG+jHpUI5cKIpc6f9GuKzO3PFf0lkOGITMO9rvTOyA3X/v5muRyyo38yZeqk8z2AlZqF2GTOopF3P6ovmTEiPYj/sCbFWn5PmQBk0l1k4HgE9HZwNFPhVu3tPdpTFB1PK/MEmKSsjE3iE5vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731112296; c=relaxed/simple;
-	bh=gK1i4F8KA1Ylkt3Zs4hrB0Lf9ZhKC2B3jjYSUJlQmUA=;
+	s=arc-20240116; t=1731112312; c=relaxed/simple;
+	bh=hVVjQGaMk42kxACl9iiDgyEjZfh4FOjrVSHr0dR5jRM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lOguXYBo2Aq1E4iJO7ovfP4jxKIdmeGzEvylKMZo00x2ysnK10ohd+LWGJt56rNudgc4Xs9yLuB0V7jNmDq0QXOTfkdD6xuar1V1P7xuiDX/WjXQa5canWfcZTnt5bJBkCYSuYUUjNqrwfQsax4QvMml64JzM3dLFT3coVrxfKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WoxnMSw0; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53a007743e7so3496490e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:31:34 -0800 (PST)
+	 To:Cc:Content-Type; b=cHxydC9IM7h0+bcplrWoZZhRZIxVlv/kK8g3Sp+WcdIQ05fJWX3FUCUrriYm00EklDd1S6UrnL/yzp4VpzPzBy7XnYeZyjWZFyr9yVnjaLbeRZ0d6GlybAkRuTuO+6PSZUIhK46xnKJDc6kKJCtk2LbpxPZduBhlcF5XcndnnzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Og6J93pz; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20ce5e3b116so27094005ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:31:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731112292; x=1731717092; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731112310; x=1731717110; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CBoWTToLWCAWM+f+gP5+hcTnA/Xflcg4jnMOvi1eF9o=;
-        b=WoxnMSw0JOgJQ5C7n/T8+VICQrQiWHMh6npU9lm61+k0CxwYJT9vkyXCu2PbFPtp40
-         pFPVxila/bFjM8U8JHJRE1fW37H5akvVxeoGBrni8/daDzcB83DftxHWd76r/HPoKLuY
-         MHxRdTh7XFQRokv1i9TSlLk7/3FKO5ViO+W3Q=
+        bh=y1E26MnGizRapo2n2N6bqp5svQaI3HCt3C2eCsi3AIQ=;
+        b=Og6J93pzPlqZJShO2f6KacJOJMotfRsTO6axcQkSG2G1sUNLXC6jrZxZ05/RB1t640
+         p5biNzzfzK6/ZDMvqHfp1MXOsarIQEparqbyT7O+lUDvoKnh6IM1d5jW7YNLAiLqj53r
+         VHI/DiNzSFi99iRY03XNm6mDfgDgRamOXmT16vV+Dh4zA8Hxyd48f1czwM++CYc2AEO9
+         HifXE4WyHIbaC3fwrL//dTQ7XCbzCaSkxM2HSWcRwiKJx7mQNVwjsIAPVCREmfmtmBJF
+         tnDW4k5DiY4T88T+0PkaRX+Q4aZqv9w3raH56gq8MJbdKfTwdSkwH9Ouv0pXsp50p4JF
+         Wk2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731112292; x=1731717092;
+        d=1e100.net; s=20230601; t=1731112310; x=1731717110;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CBoWTToLWCAWM+f+gP5+hcTnA/Xflcg4jnMOvi1eF9o=;
-        b=hp6Ul4F95XhNoDjXEAmFSGdcUXp3W7TI6SrYbsvrEMU99K5e0QVA32XNqMPIM7xqsQ
-         ZbtS+VA1orV2lfxpSLLRa6VdOVg8v1efA2MrvmLlNu7rtjnApd2FMtM6YP7DOBtwEI07
-         kBk3tlYhtNyWLEaekpK7pteXHBqNHxBTu7Hc0gf419aar37fxT/EjxoDwDl9Sszt0Z7a
-         kFvyV0m1DpxxsWL/hgtIJEpG2r7TFQ7Es6TNluozvzIa+ODA38iW5NSvkDuuznwkKHuc
-         pgbavENxByLWPsuF1Eh/VUerEPtj2FPBR1Q94USi3WaddQrYxGRCvi1a694LefvLNHg1
-         E0Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXUx06oJT/+zgbmZqn4kv4+n4Uhkp1jeCt/tgQcyuc54OZDrpDl0wrO4FslQhQ83o2/wcNS29T9FDjqT0k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylnfMiHSIZYIjSVn3tI8ABYysfNdj35hFrLcKAzfIMeZbxlzcq
-	vAU0AQTeg5iy3KVGSQfp1Sw5BoUlNfGAHaxXz4ry4tfvj9YS8HPx8HU2yRLrCfzMU1SykT42Nly
-	uKQ==
-X-Google-Smtp-Source: AGHT+IE3A5x2sUJ+Cn1s5c56XZQB8WCAQ+Lf4fqwvcHV68yk6YbrhLGVnyRHgnwWyjD2MPdnSo4edQ==
-X-Received: by 2002:a05:6512:3b9b:b0:539:fbd4:9c9a with SMTP id 2adb3069b0e04-53d8626c823mr2854954e87.35.1731112291566;
-        Fri, 08 Nov 2024 16:31:31 -0800 (PST)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826af020sm782907e87.268.2024.11.08.16.31.30
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Nov 2024 16:31:30 -0800 (PST)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53a007743e7so3496465e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 08 Nov 2024 16:31:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXmrLey63ewlP8vVGh/lb8YZCExz9D0OVM06U407mtDBjyOwLktuiOkp6cUhCwsWP0RoBLWSywih8mMP4w=@vger.kernel.org
-X-Received: by 2002:a05:6512:32c9:b0:53c:74ca:91d9 with SMTP id
- 2adb3069b0e04-53d8623e16emr2259678e87.25.1731112289873; Fri, 08 Nov 2024
- 16:31:29 -0800 (PST)
+        bh=y1E26MnGizRapo2n2N6bqp5svQaI3HCt3C2eCsi3AIQ=;
+        b=ZtX+fL93DlxwGQE4AcjbzNMI9C9NQ6ADRDpLwov0EY/xvmKdgtOGrdR3uR2Ja0QbLi
+         uuxQIYH/GC7mBuTcBxmO5g2aAtmfQnotaFb4utJTdOxgL8+zGxRFnXMuxQbJ2JNy5TTk
+         zRZjFSmYwu36wr0Tms01GWxMocncQk7Pz4ZCxTSRKIrhijbziaMrS6wjLbTjZjGrw+OT
+         2eZTvwHgCqw2D6PYgSF0RHQcYeVbT0fkW47WtxrmcVBy8+x35ab7asnl3m1XgoQ0s8aa
+         1n+qAgfu2stUu6HCS+kQegdYMIL9Q3aVWEBLL3AAHlLc7Smta3nHOQQuxuesVPurgIke
+         0rgA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/WUM/xN92BLzXqttlIr+8An1E9D+/ASjxy2vFb1W2wyg4VBhU05s2qNsLYeqvN8ZNZf5RLfrsjzYmfd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymWVT50b3+K/2nvvRF6IBQjcEq9+kSDDoIKyWxtQfmjZK4fVqd
+	RHfbQpEKNKgFfwfYyJfdl/KmBov7VVwgWj4JuGO6rd83TQxw+0azv4eyjWxuXDr6NxrgIxGyo2s
+	ljYF1kx69hazHjxFUq4qybmWi9m4+1LctAR60cA==
+X-Google-Smtp-Source: AGHT+IHCHLh39cxBw5ufNm7dZo+CDQzWBDFzWuOIxiVp3gnbTUBNURR8pxRRy/13hfp6Af72Rhtnz9aRlZ+COJrcvI4=
+X-Received: by 2002:a17:902:e747:b0:20c:e262:2560 with SMTP id
+ d9443c01a7336-21183e4c8a3mr62876625ad.50.1731112310250; Fri, 08 Nov 2024
+ 16:31:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108221116.GA123748@lichtman.org>
-In-Reply-To: <20241108221116.GA123748@lichtman.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 8 Nov 2024 16:31:12 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
-Message-ID: <CAD=FV=X6oS+v-ZvJWsHYAnfVg0Lurt8z4aYaboDKkib=p4zyJw@mail.gmail.com>
-Subject: Re: [PATCH] kdb: fix ctrl+e/a/f/b/d/p/n broken in keyboard mode
-To: Nir Lichtman <nir@lichtman.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org, 
-	linux-kernel@vger.kernel.org
+References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
+ <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com> <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
+In-Reply-To: <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Sat, 9 Nov 2024 00:31:14 +0000
+Message-ID: <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
+Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
+To: Enric Balletbo i Serra <eballetb@redhat.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
+	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
+	Masahisa Kojima <kojima.masahisa@socionext.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Nov 8, 2024 at 2:11=E2=80=AFPM Nir Lichtman <nir@lichtman.org> wrot=
-e:
+On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@redhat.com> w=
+rote:
 >
-> Problem: When using KDB via keyboard it does not react to control
-> characters which are supported in serial mode.
+> Hi Ilias,
 >
-> Example: Chords such as CTRL+A/E/D/P do not work in keyboard mode
+> Thanks for your quick answer.
 >
-> Solution: Before disregarding a non-printable key character, check if it
-> is one of the supported control characters, I have took the control
-> characters from the switch case upwards in this function that translates
-> scan codes of arrow keys/backspace/home/.. to the control characters.
-> I have took them all besides the TAB control character translation (I am
-> not sure what that maps to on the keyboard)
-
-Tab translates to 9, so the 9th character. Ctrl-I.
-
-
->  kernel/debug/kdb/kdb_keyboard.c | 3 +++
->  1 file changed, 3 insertions(+)
+> On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
+> <ilias.apalodimas@linaro.org> wrote:
+> >
+> > Hi Enric,
+> >
+> > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@redhat.co=
+m> wrote:
+> > >
+> > > Hi all,
+> > >
+> > > I'm looking for any advice/clue to help me to progress on enabling
+> > > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
+> > >
+> > > I basically followed the steps described in u-boot documentation [1],
+> > > I enabled some debugging messages but I think I'm at the point that
+> > > the problem might be in the StandaloneMM application, and I'm not sur=
+e
+> > > how to debug it.
+> > >
+> > > What I see is that when I run the tee-supplicant daemon, it looks lik=
+e
+> > > the tee_client_open_session() call loops forever and the tee_stmm_efi
+> > > driver never ends to probe.
+> > >
+> > > With debug enabled I got the following messages.
+> >
+> > I assume reading and storing variables already works in U-Boot right?
+> >
 >
-> diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keybo=
-ard.c
-> index 3c2987f46f6e..2c004abd5375 100644
-> --- a/kernel/debug/kdb/kdb_keyboard.c
-> +++ b/kernel/debug/kdb/kdb_keyboard.c
-> @@ -172,6 +172,9 @@ int kdb_get_kbd_char(void)
->         switch (KTYP(keychar)) {
->         case KT_LETTER:
->         case KT_LATIN:
-> +               if (keychar =3D=3D 4 || keychar =3D=3D 1 || keychar =3D=
-=3D 5 || keychar =3D=3D 2 ||
-> +                   keychar =3D=3D 16 || keychar =3D=3D 14 || keychar =3D=
-=3D 6)
-> +                       return keychar;         /* non-printable supporte=
-d control characters (e.g. CTRL+A) */
+> Reading and storing variables to the RPMB partition in U-Boot works,
+> that's using the mmc rpmb command from u-boot,
 
-This is probably OK, but IMO readability here (and above) could be
-improved. Untested, but I think:
+Are you talking about env variables? Perhaps you store them in the mmc
+and not the RPMB partition?
+There's some information here [0]
 
-#define CTRL(c) (c - 64)
+> But setting
+> CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
+> (although I'm not able to debug at u-boot level) What I see is that
+> u-boot gets stuck
+> when bootefi bootmgr is invoqued. I can also reproduce the issue with
+> bootefi hello.
+>
+> =3D> run bootcmd
+>   Scanning for bootflows in all bootdevs
+>   Seq  Method       State   Uclass    Part  Name                      Fil=
+ename
+>   ---  -----------  ------  --------  ----  ------------------------
+> ----------------
+>   Scanning global bootmeth 'efi_mgr':
+> ( gets stuck here)
+>
+> or
+>
+> =3D> bootefi hello
+> (gets stuck)
+>
+> To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and bypass
+> the error and go to Linux. My understanding is that
+> CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables at
+> u-boot level but OPTEE is running the StandaloneMM service. Am I
+> right?
 
-Then:
+U-Boot has two ways of storing EFI variables [0] . You can either
+store them in a file or the RPMB partition. The correct thing to do,
+since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TEE. I am
+not sure why the hand happens, but one thing we can improve is figure
+out why it hangs and print a useful message.
+There are a number of reasons that might lead to a failure. Is the
+RPMB key programmed on your board? Have a look at this [1] in case it
+helps
 
-/* Allowlist supported control characters */
-switch(keychar) {
-case CTRL('A'): /* Home */
-case CTRL('B'): /* Left */
-case CTRL('D'): /* Del */
-case CTRL('E'): /* End */
-case CTRL('F'): /* Right */
-case CTRL('I'): /* Tab */
-case CTRL('N'): /* Down */
-case CTRL('P'): /* Up */
-    return keychar;
-}
+>
+> > >
+> > > # tee-supplicant
+> > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted service
+> > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
+> > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
+> > > D/TC:? 0 spm_handle_scall:859 Received FFA version
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
+> > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
 
-The code above could also use them, AKA (untested):
+If I had to guess, OP-TEE doesn't store the variables in the RPMB, can
+you compile it with a bit more debugging enabled?
 
-/* Translate special keys to equivalent Ctrl characters */
-switch (scancode) {
-case 0xF: /* Tab */
-  return CTRL('I');
-case 0x53: /* Del */
-  return CTRL('D');
-case 0x47: /* Home */
-  return CTRL('A');
-case 0x4F: /* End */
-  return CTRL('E');
-case 0x4B: /* Left */
-  return CTRL('B');
-case 0x48: /* Up */
-  return CTRL('P');
-case 0x50: /* Down */
-  return CTRL('N');
-case 0x4D: /* Right */
-  return CTRL('F');
-}
+> > >
+> > > And tracing the function calls gives me that:
+> > >
+> > >       tee_stmm_efi_probe() {
+> > >              tee_client_open_context() {
+> > >                optee_get_version() {
+> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                } (ret=3D0xd)
+> > >                tee_ctx_match(); (ret=3D0x1)
+> > >                optee_smc_open() {
+> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                  optee_open() {
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                  } (ret=3D0x0)
+> > >                } (ret=3D0x0)
+> > >              } (ret=3D0xffff000004e71c80)
+> > >              tee_client_open_session() {
+> > >                optee_open_session() {
+> > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                  optee_get_msg_arg() {
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
+> > >                  } (ret=3D0xffff000002909000)
+> > >                  tee_session_calc_client_uuid(); (ret=3D0x0)
+> > >                  optee_to_msg_param(); (ret=3D0x0)
+> > >                  optee_smc_do_call_with_arg() {
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
+> > >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
+> > >                    optee_cq_wait_init(); (ret=3D0xffff000002e55910)
+> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    optee_smccc_smc(); (ret=3D0xffff0004)
+> > >      ... continues sending this forever ...
+> > >      ... Hit ^C to stop recording ...
+> > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
+> > >                    optee_smccc_smc() {
+> > >
+> > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#using-op=
+-tee-for-efi-variables
+> > >
+> > > Thanks in advance,
+> >
+> > The most common problem with this is miscompiling the tee_supplicant
+> > application.
+> > Since we don't know if the system has an RPMB, we emulate it in the
+> > tee_supplicant. How did you get the supplicant and can you check if it
+> > was compiled with RPMB_EMU=3D0 or 1?
+> >
+>
+> I'm using the tee-supplicant provided by the fedora package which is
+> built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
+>
+
+Yes, this is correct. We fixed the Fedora package to compile the
+supplicant correctly a while back.
+
+[0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
+[1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-Boot.h=
+tml#Protected%20UEFI%20variables%20with%20U-Boot
+
+
+Regards
+/Ilias
+> Thanks,
+>    Enric
+>
+> > Thanks
+> > /Ilias
+> >
+> > >    Enric
+> > >
+> >
+>
 
