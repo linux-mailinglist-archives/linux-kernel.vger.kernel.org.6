@@ -1,174 +1,102 @@
-Return-Path: <linux-kernel+bounces-402937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3C89C2EAE
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:15:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7834F9C2EB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 18:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90AD528116D
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89E81F21723
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 17:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ED019E7FA;
-	Sat,  9 Nov 2024 17:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1B119DF7D;
+	Sat,  9 Nov 2024 17:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="lcesHJDj"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AyMhxls+"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C9119B5A9;
-	Sat,  9 Nov 2024 17:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9550ECF;
+	Sat,  9 Nov 2024 17:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731172526; cv=none; b=RtW6undWOnxDLh9HOwAKA5rI5QsuFQX5v81N+gICunha4+z3zkg1HFIWHfIGfjWcI4dXgFkmu4Qt6uCEZytfoBRo7hm7RkcIOPIqYINtN+halDTmUM7N7ehahvhDtrXWT4Q+Ufi9lpPzFYep8GNTcMeITX5dvM32BJOB/AephlM=
+	t=1731172633; cv=none; b=Wyyd8iU2wc0ZyjYlUaixoygEbsnMLUzKj5g3xFh8o7SNAwTCItkJtSsAzUNIuOxRf4yvLvJQSEc061NoZxTGz5GmEjXTpiTmxyxM3kNr0Gq5eDx4GTKYp+MVnrOBE1acmyNC1AOi4pkeVS4AxDf+tQPqSE1Q7s38lCrH36aj2dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731172526; c=relaxed/simple;
-	bh=6S0TuVkzqkc7ysyQHic+w6BGYlvdyTKD6XWIUkancIM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AJp4aDCps67TE39B5oVzLp5zMWDt6xXSO31jLedqq/EVDpDfmtw/OZ2j8lbjynPKdZsBLUbizi9I17wdVKSI/bRqryNfBh3lGrKNP0KIKfdbAw+tMYBHhzYUwZRAiL6GjmnERoxHERRUXmpvPfyTybbKJEJZIIORk96a5rcu5Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=lcesHJDj; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc.intra.ispras.ru (unknown [10.10.165.14])
-	by mail.ispras.ru (Postfix) with ESMTPSA id DEB9B40B228D;
-	Sat,  9 Nov 2024 17:15:21 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru DEB9B40B228D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1731172522;
-	bh=VW35dz2P8QIlcF2UimhEjmmVGp+q1vXGSeRLP7WbgQU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lcesHJDjCd/NBEIZHAewF98TPBmLV/HikclZ3rr73Mz/nzNEBuakraRG2mqN17njT
-	 avmBSoh5rE15+a0GC96cStURGiuAgmUUaFWuoKEWJqEYyiGDhoA14Y9YcO41MMaa+V
-	 tWXfzZ0wDAFx/laPYIYzRssnVLiNwkbEM5WNFG9g=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 6.1] Revert "wifi: mac80211: fix RCU list iterations"
-Date: Sat,  9 Nov 2024 20:15:13 +0300
-Message-Id: <20241109171513.1641079-1-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731172633; c=relaxed/simple;
+	bh=SyRsz+IN+JIyKtRilD+KAlzF5tOeIVUgi83ngtRw7Ls=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hjFr8NM7rqDoCWOTlDVh2uwXpLdKrJh8q8EER377dQfufHbbm+oQkh+fhVbh909x+Epe+vrPe9yzhsQ+gNgov2RHxef/YYJIEct6FQUHaw/oM4X17NRXQEojzmgMqjspbubEgeEjAwn7IolVMONm7zQhBLX2IZ+iG1/ETN1Wc1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AyMhxls+; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731172569; x=1731777369; i=markus.elfring@web.de;
+	bh=8VOJJCUgIPJZr0/8bZKF4nwTPa8HNuLOG+oBkdz8Vig=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=AyMhxls+40ez0BuBcBmL2KVRfy+09CssNDjxPTwhmMWbkScKOKrRH5oa4roMTK2o
+	 Y0qoHcHPFzF4bmT2e8P5yCIGMxSuIFsh1RXun9KQQStAm5DhAPcpDJJxBybb91TV7
+	 iEVSdZXEdx6B2jCjtSQ7NOY9IhR0SN1R3JBzxQ4zyWpoDfs0wrKQi51dZUfyG3Kod
+	 hcJKL9w20/XFzUZj6ZWy/CMuMutKU78TykayNb9ZjBdgwGCj3mT7VV+Q8cYofGNJt
+	 bR9lVdqOcPKRwKbyOX6uETWc+4PodxA0r4mSlcD3+HHAQ8eOPqbVKb7JQE2MobTy/
+	 POFlpke035NsVjkgTQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MRk0W-1tFy7v3U8Q-00Hyra; Sat, 09
+ Nov 2024 18:16:09 +0100
+Message-ID: <5d8ac86b-4c80-4fbc-808f-7581403d061a@web.de>
+Date: Sat, 9 Nov 2024 18:15:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: Re: [PATCH] iio: magnetometer: fix if () scoped_guard() formatting
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Ond=C5=99ej_Jirman?=
+ <megi@xff.cz>
+Cc: LKML <linux-kernel@vger.kernel.org>, lkp@intel.com,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+Content-Language: en-GB
+In-Reply-To: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7N88y06+RI7gnn708r06bGYbGOOA0SW9Hx3lK6de6QP8iQZKj3T
+ 7lMsbJH6HkEVH33WND9BQdj0NiCg6IDVS86PUkytzqZzC92KzzLOrVzPJVRgVbgurPA0r/9
+ IH/JSQshDI5flhhOvqZm7geehcAJrJSEQXRpnypssDrVSjPyam6zdASXAIq0cGpR7Rq/s2q
+ 758O13vqCQzAdrNeaQBrg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3E7DhJOrLGc=;xPGSzyNh9qiHR0Ss9a+jhZQ6PyG
+ wvM8n/gv5Jayjh+gzScEITAEydbSimOEYown7piD1kQBeHMWZJkp7sJ/8vKNT3RilVu4nnCOL
+ zTdVHDTTQUzcDNwit4TE4GaE1NpEshnjd9T5x9xRvTZJ760GqrDoytBB9rsOSy0rTG+6ye8RU
+ RN8m3OVNHDe7iBPVVDBJFxbWU0lHl5GBiDoPMAovrMqZ3JQ9y/zgcrN5oKZFFpKv0cOQ1R4Wd
+ 8Y31HwgMhyeygtfGVZU+V2tS1+Fz45AtrIf8LoWeN0VwT2Y3ha6K9LjwSucSHdf3GA/8rLLJi
+ 30fn3wc8x/7EzFvS9Iz6SKaXs+Ild+GDJ4UJhDUGxYnrQpmNs1gEGg3cxjEXu7SNLLdiLDhEW
+ 0BvjT+h0GVERhzNkRWFCMPpUjuxvQhlL+emwz4PgCmjLoRiweUNuSLfP6+nb6AFm1bwAOEjWI
+ hJjsg4kDFTJzZGj1QLTCN6FEjcLRolvLswmnMCHvhk8P6Ag4+sgN11bwwSSVINDm1xlLxtj4j
+ btKZzkhtGvttyiQGlCoCI1STy8/Z8+QMlnIm8vC9nHKhs+NpdU2uB26Pn5C2hZnh8AczVJ7nH
+ 5WLqce+HniumMtnZZtS9KlUNtjkn6CNEFyzKKl5lvGxUmNi+v30arpVd7wM8tpzSXx5GnBcrV
+ CybOCAGRGe344yFtxRhCmV5bpIhdPoGU+ICx8U9elUVuckdl6ciXlQJq1gfFhFLYGL04U+e2J
+ k1cuTHJnUJn+65gQUqjW+dcVdE7nESmZixw3Mb6MmYX8B80OR/y6ef1dIinJotHfqqx19nvu5
+ cKpdLphqViRMLVkg3ktn/Z0khc4O3F5xiCVvKwBvkKVRucHNa2zpIoVNBZcjIvT+dL5I0JSbe
+ cxFwgZ75zGfcXDdyRgwOTGEhVA0rCZKDH5xjPjefiXXTRNVZTIf1kc5Cw
 
-This reverts commit b0b2dc1eaa7ec509e07a78c9974097168ae565b7 which is
-commit ac35180032fbc5d80b29af00ba4881815ceefcb6 upstream.
+> Add mising braces after an if condition that contains scoped_guard().
+=E2=80=A6
 
-The reverted commit is based heavily on wiphy locking changes made by the
-"wifi: cfg80211/mac80211: locking cleanups" series [1] introduced since
-6.7 kernel and not supposed to be backported to old stable branches.
+      missing?
 
-It breaks locking rules in the context of old stables leading e.g. to the
-following lockdep splat there - ieee80211_get_max_required_bw() is
-actually called under RCU reader lock in 6.1/6.6, not the wiphy mutex.
 
-WARNING: CPU: 3 PID: 8711 at net/mac80211/chan.c:248 ieee80211_get_max_required_bw+0x423/0x4e0 net/mac80211/chan.c:248
-Modules linked in:
-CPU: 3 PID: 8711 Comm: kworker/u8:6 Not tainted 6.1.113-syzkaller-00105-g9859ec205cfa #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-Workqueue: phy155 ieee80211_iface_work
-RIP: 0010:ieee80211_get_max_required_bw+0x423/0x4e0 net/mac80211/chan.c:248
-Call Trace:
- <TASK>
- ieee80211_get_chanctx_vif_max_required_bw net/mac80211/chan.c:294 [inline]
- ieee80211_get_chanctx_max_required_bw net/mac80211/chan.c:336 [inline]
- _ieee80211_recalc_chanctx_min_def+0x5e6/0xf30 net/mac80211/chan.c:381
- ieee80211_recalc_chanctx_min_def+0x21/0x80 net/mac80211/chan.c:462
- ieee80211_recalc_min_chandef+0x17a/0x590 net/mac80211/util.c:2908
- sta_info_move_state+0x748/0x8c0 net/mac80211/sta_info.c:2301
- ieee80211_assoc_success net/mac80211/mlme.c:5001 [inline]
- ieee80211_rx_mgmt_assoc_resp.cold+0x1335/0x69ec net/mac80211/mlme.c:5201
- ieee80211_sta_rx_queued_mgmt+0x40f/0x2270 net/mac80211/mlme.c:5831
- ieee80211_iface_process_skb net/mac80211/iface.c:1665 [inline]
- ieee80211_iface_work+0xa31/0xd30 net/mac80211/iface.c:1722
- process_one_work+0xa72/0x1590 kernel/workqueue.c:2292
- worker_thread+0x632/0x1240 kernel/workqueue.c:2439
- kthread+0x2e1/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x22/0x30 arch/x86/entry/entry_64.S:295
-
-[1]: https://lore.kernel.org/linux-wireless/20230828115927.116700-41-johannes@sipsolutions.net/
-
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Miriam Rachel Korenblit <miriam.rachel.korenblit@intel.com>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- net/mac80211/chan.c | 4 +---
- net/mac80211/mlme.c | 2 +-
- net/mac80211/scan.c | 2 +-
- net/mac80211/util.c | 4 +---
- 4 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/net/mac80211/chan.c b/net/mac80211/chan.c
-index 807bea1a7d3c..f07e34bed8f3 100644
---- a/net/mac80211/chan.c
-+++ b/net/mac80211/chan.c
-@@ -245,9 +245,7 @@ ieee80211_get_max_required_bw(struct ieee80211_sub_if_data *sdata,
- 	enum nl80211_chan_width max_bw = NL80211_CHAN_WIDTH_20_NOHT;
- 	struct sta_info *sta;
- 
--	lockdep_assert_wiphy(sdata->local->hw.wiphy);
--
--	list_for_each_entry(sta, &sdata->local->sta_list, list) {
-+	list_for_each_entry_rcu(sta, &sdata->local->sta_list, list) {
- 		if (sdata != sta->sdata &&
- 		    !(sta->sdata->bss && sta->sdata->bss == sdata->bss))
- 			continue;
-diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
-index ee9ec74b9553..9a5530ca2f6b 100644
---- a/net/mac80211/mlme.c
-+++ b/net/mac80211/mlme.c
-@@ -660,7 +660,7 @@ static bool ieee80211_add_vht_ie(struct ieee80211_sub_if_data *sdata,
- 		bool disable_mu_mimo = false;
- 		struct ieee80211_sub_if_data *other;
- 
--		list_for_each_entry(other, &local->interfaces, list) {
-+		list_for_each_entry_rcu(other, &local->interfaces, list) {
- 			if (other->vif.bss_conf.mu_mimo_owner) {
- 				disable_mu_mimo = true;
- 				break;
-diff --git a/net/mac80211/scan.c b/net/mac80211/scan.c
-index edbf468e0bea..f1147d156c1f 100644
---- a/net/mac80211/scan.c
-+++ b/net/mac80211/scan.c
-@@ -501,7 +501,7 @@ static void __ieee80211_scan_completed(struct ieee80211_hw *hw, bool aborted)
- 	 * the scan was in progress; if there was none this will
- 	 * just be a no-op for the particular interface.
- 	 */
--	list_for_each_entry(sdata, &local->interfaces, list) {
-+	list_for_each_entry_rcu(sdata, &local->interfaces, list) {
- 		if (ieee80211_sdata_running(sdata))
- 			ieee80211_queue_work(&sdata->local->hw, &sdata->work);
- 	}
-diff --git a/net/mac80211/util.c b/net/mac80211/util.c
-index 3fe15089b24f..738f1f139a90 100644
---- a/net/mac80211/util.c
-+++ b/net/mac80211/util.c
-@@ -767,9 +767,7 @@ static void __iterate_interfaces(struct ieee80211_local *local,
- 	struct ieee80211_sub_if_data *sdata;
- 	bool active_only = iter_flags & IEEE80211_IFACE_ITER_ACTIVE;
- 
--	list_for_each_entry_rcu(sdata, &local->interfaces, list,
--				lockdep_is_held(&local->iflist_mtx) ||
--				lockdep_is_held(&local->hw.wiphy->mtx)) {
-+	list_for_each_entry_rcu(sdata, &local->interfaces, list) {
- 		switch (sdata->vif.type) {
- 		case NL80211_IFTYPE_MONITOR:
- 			if (!(sdata->u.mntr.flags & MONITOR_FLAG_ACTIVE))
--- 
-2.39.5
-
+Regards,
+Markus
 
