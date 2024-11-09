@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-402667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-402668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077559C2A45
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:07:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E2D9C2A49
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 06:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3841D1C21A64
-	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368FA1F2276A
+	for <lists+linux-kernel@lfdr.de>; Sat,  9 Nov 2024 05:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6559813D53A;
-	Sat,  9 Nov 2024 05:07:00 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4B44779F
-	for <linux-kernel@vger.kernel.org>; Sat,  9 Nov 2024 05:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BAF13D503;
+	Sat,  9 Nov 2024 05:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtDf7yUp"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707198836;
+	Sat,  9 Nov 2024 05:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731128820; cv=none; b=lBfFc30LcPwhA4Z8g6HlV6e8a0S9uLp0Zdclyp2C9vfCaxy0MHANmJbFI7YBFMK0ZdgpNo6v7nbTEZSglRp0vVk+kmW8beyaibqfXf8wyxcnjAIDGsshNHAHuK+E+TdR/ihwgRfWv5IasIBb9bLh51e3Xn4+0wc9m7+/cdrYXGo=
+	t=1731129340; cv=none; b=EhsZMLymRgcPkHp1jVQg34GOJ64B2TpkXTsc6tdcqUJ6M5iAY2hgR8nyIUe5foESLi1Ww+FCJzsm1vYOfnkiWd7plu3m2afDFQ/TXMr5yIzAQMHgILTl1l/lBwhBZVrQZa31Nm1L0mrdK03TY3TQjJxou4ELUdKJUBSDJHcDSDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731128820; c=relaxed/simple;
-	bh=w6PWNyGb4b6lDWRZYAd6zkmUJBFOEcW9OtH2cb6Ka6I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ha+dPqyq56wAjadiMWltPojMEfq12OiPrhOY66R40bS+lYvAiXirzqz5SHqCX5H2xNTKfb7yACk5yixE83YRrNRDtWqijnN+heyQ7XGsV3RfBJBxCGOTZYTMcGF6p7GHF9Bok8XI4dhgRUT0YdBevkmce/szYROw6eVeHwjhpEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6672eede6f5c-c5828;
-	Sat, 09 Nov 2024 13:06:53 +0800 (CST)
-X-RM-TRANSID:2ee6672eede6f5c-c5828
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from  (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5672eedddfec-b8919;
-	Sat, 09 Nov 2024 13:06:53 +0800 (CST)
-X-RM-TRANSID:2ee5672eedddfec-b8919
-From: guanjing <guanjing@cmss.chinamobile.com>
-To: rogerq@kernel.org,
-	s-anna@ti.com,
-	nm@ti.com,
-	horms@kernel.org,
-	p-mohan@ti.com
-Cc: linux-kernel@vger.kernel.org,
-	guanjing <guanjing@cmss.chinamobile.com>
-Subject: [PATCH v3 2/2] soc: ti: pruss: fix the return type of these functions in icssg_prueth_sr1.c
-Date: Sat,  9 Nov 2024 13:01:50 +0800
-Message-Id: <20241109050150.265374-2-guanjing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20241109050150.265374-1-guanjing@cmss.chinamobile.com>
-References: <20241109050150.265374-1-guanjing@cmss.chinamobile.com>
+	s=arc-20240116; t=1731129340; c=relaxed/simple;
+	bh=srDFTsNAwuMLwHBgKmjyNApD14mJpB3efD2+Gkm8Cis=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=RY0PN0eP3WMCGqUr4fZwHDkxnAYxjZyJASUblm/RWWVwdfMYJD5o9eAA2sT3i5BuAwJ81MJAaV5xnMlNeutKN+y6arjdDwr3xqfGCXMOOE2csV7jgoFDB7ZwHi7z9FjunqrFE1o6XPn2nVGY7haLMiNnKgl7bpVTaSlG6lT4lcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtDf7yUp; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb47387ceso31758305ad.1;
+        Fri, 08 Nov 2024 21:15:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731129337; x=1731734137; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5jfnBisue6Ja6w9UlHzoj6XV7CgJYJ+QYjUAoUurtcw=;
+        b=HtDf7yUp8O1eWJCbdiMr2S0D/3PXmvdevQvyKTWW+c6bZwUV/iB5F9PNP9zHkrACYL
+         GMQYF5Q4ySQlNF5ct1kWnSOCDTnONPq7pw7U9h78LZ+xaR7AYw5tXFClD+5S7HLnizrQ
+         FYoA069XpoNM0Hh2m5KC2ab5zzUv/T3nqLvDLm8E5IpsgMCEYxNuJQCbCxKH12VEXQwx
+         Yr4MiJCNWE0gLuxVUsALLlinGQ9iuCo6o6TVZLxZS4+zZTeDEUmxoPQMVjPN6VXh/sSq
+         jYvkke5uVEeFCDlWVZAJCIc2QHXJlSTbzVhT764C3gvsHzNL7m+Hrp3MMPLg1sN7Ftxn
+         Vc6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731129337; x=1731734137;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5jfnBisue6Ja6w9UlHzoj6XV7CgJYJ+QYjUAoUurtcw=;
+        b=rbsB8lKlaHOU3nqI4UdfOIWo6eG1J9e+awwqL6CfMRR1VeJcmWAT4haYGdR0Ty+dzI
+         tH/T1ZGSLOrspvcxt/MBoesG5joisV2Zu0YQS7Gx872R4eMGfHYgPdwjyrE2sponDZ59
+         llAet6W/MB1qjyKNCsrbkptzeC/t4Rd2yB2GNebX9KmMDwyb7t5ChngpQ4P9KPeAOy5E
+         SO1lgi8tqUdQbcTp0pfUviYT0cZ8lUV6DFXjQuZ/vP5cU4RpI1tPvzUXUsQDlV+i0MUe
+         kupMlY8cGWvcK5+OheXErEFWyMtYDyLYAzUcvcTkjGmGh5jBWq0Kne6aAytIWJ9bcThZ
+         BHbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjBkclh75HEmdf2JKvAcQrcSLAdAXIus8YYNXNUMMt0CyBBXIZQA1+0MgTtbou4iGIi92IjcyoLxxIrDhaAAI=@vger.kernel.org, AJvYcCWF5RcAtTNNTvxwv8dRGtO0hBnpM/jy5FHcQ4JwyTUMwXvM/6vNZ4hOJmK2egNCrzZ/W66kjj+v@vger.kernel.org, AJvYcCWwO34uiXo934uwyHqiHTuyHqSD9AveIqH7Mm9+exAjj96GnJqbkOFpsYSLGGcld1mrPRkLCP8fZdoobvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwb9R+jCBCamKkOlA9DCnN4FyXx1lvouItxAms9UbPL9ikd/DJ
+	WvCSrYIkxAqgVZFYjz5WcxwCR+npMGCs9KAD4hBdB8YgGJj2e+1N
+X-Google-Smtp-Source: AGHT+IG6vNIHXnZhYkkO0JMdGpVleHKOAwiCz9Uit7eCDcaw1dQ2hz6+QHxw3bblemdwa6m/gqOhkA==
+X-Received: by 2002:a17:902:d4cb:b0:20c:8f98:5dbe with SMTP id d9443c01a7336-2118354bfe9mr75976185ad.33.1731129336685;
+        Fri, 08 Nov 2024 21:15:36 -0800 (PST)
+Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41985sm39264925ad.168.2024.11.08.21.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Nov 2024 21:15:36 -0800 (PST)
+Date: Sat, 09 Nov 2024 14:15:20 +0900 (JST)
+Message-Id: <20241109.141520.1319530714927998446.fujita.tomonori@gmail.com>
+To: boqun.feng@gmail.com
+Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
+ sboyd@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+ tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
+Subject: Re: [PATCH v5 6/7] rust: Add read_poll_timeout functions
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <Zyuy25viG51DDRk7@Boquns-Mac-mini.local>
+References: <20241101010121.69221-1-fujita.tomonori@gmail.com>
+	<20241101010121.69221-7-fujita.tomonori@gmail.com>
+	<Zyuy25viG51DDRk7@Boquns-Mac-mini.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-There is a mismatch between the return type of these functions and
-the type of the values returned. This fix ensuers compilation (of
-drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.o) to work without
-CONFIG_TI_PRUSS.
+On Wed, 6 Nov 2024 10:18:03 -0800
+Boqun Feng <boqun.feng@gmail.com> wrote:
 
-Fixes: 0211cc1e4fbb ("soc: ti: pruss: Add helper functions to set GPI mode, MII_RT_event and XFR")
-Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
----
- include/linux/pruss_driver.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> On Fri, Nov 01, 2024 at 10:01:20AM +0900, FUJITA Tomonori wrote:
+> [...]
+>> @@ -44,6 +45,7 @@
+>>  pub mod page;
+>>  pub mod prelude;
+>>  pub mod print;
+>> +pub mod processor;
+>>  pub mod sizes;
+>>  pub mod rbtree;
+>>  mod static_assert;
+>> diff --git a/rust/kernel/processor.rs b/rust/kernel/processor.rs
+>> new file mode 100644
+>> index 000000000000..eeeff4be84fa
+>> --- /dev/null
+>> +++ b/rust/kernel/processor.rs
+> 
+> What else would we put into this file? `smp_processor_id()` and IPI
+> functionality?
 
-diff --git a/include/linux/pruss_driver.h b/include/linux/pruss_driver.h
-index 29a76a60869c..2e18fef1a2e1 100644
---- a/include/linux/pruss_driver.h
-+++ b/include/linux/pruss_driver.h
-@@ -144,32 +144,32 @@ static inline int pruss_release_mem_region(struct pruss *pruss,
- static inline int pruss_cfg_get_gpmux(struct pruss *pruss,
- 				      enum pruss_pru_id pru_id, u8 *mux)
- {
--	return ERR_PTR(-EOPNOTSUPP);
-+	return -EOPNOTSUPP;
- }
- 
- static inline int pruss_cfg_set_gpmux(struct pruss *pruss,
- 				      enum pruss_pru_id pru_id, u8 mux)
- {
--	return ERR_PTR(-EOPNOTSUPP);
-+	return -EOPNOTSUPP;
- }
- 
- static inline int pruss_cfg_gpimode(struct pruss *pruss,
- 				    enum pruss_pru_id pru_id,
- 				    enum pruss_gpi_mode mode)
- {
--	return ERR_PTR(-EOPNOTSUPP);
-+	return -EOPNOTSUPP;
- }
- 
- static inline int pruss_cfg_miirt_enable(struct pruss *pruss, bool enable)
- {
--	return ERR_PTR(-EOPNOTSUPP);
-+	return -EOPNOTSUPP;
- }
- 
- static inline int pruss_cfg_xfr_enable(struct pruss *pruss,
- 				       enum pru_type pru_type,
- 				       bool enable)
- {
--	return ERR_PTR(-EOPNOTSUPP);
-+	return -EOPNOTSUPP;
- }
- 
- #endif /* CONFIG_TI_PRUSS */
--- 
-2.33.0
+Yeah, we would need smp_processor_id() but not sure about the other
+functions. There aren't many processor-related functions that Rust
+drivers directly need to call, I guess.
 
+> If so, I would probably want to rename this to cpu.rs.
 
+Fine by me, I'll go with cpu.rs in the next version.
 
+I chose processor.rs just because the C side uses processor.h for
+cpu_relax() but cpu.rs also looks good.
 
