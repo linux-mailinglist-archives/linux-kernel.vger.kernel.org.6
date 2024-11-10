@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-403369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD089C34AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:02:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F939C34A7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D50581C218F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 685E01C2173B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A33C145B25;
-	Sun, 10 Nov 2024 21:01:12 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8D415853C;
+	Sun, 10 Nov 2024 21:01:04 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE8E155325
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9891531C0
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731272471; cv=none; b=gQGXmMcvpbn3hrGCwDVKv5aV/6J0SyVXlFNwLqwA+r7AbZhF0DWhY4P5W8A2+LxPr+A/YrYjcWSyHxXgI38KQfJy37mOSWutOfrDwIzZj4Eitz4cd3Qb5hxAoJrcqW0O5UnetFp9P5BRqojqq7P60Vh7Mjn+5dzFcYSkgJo0+5k=
+	t=1731272464; cv=none; b=mvAjsCNFbBr0Z1T2+bPQvQsDcwYwUFwAO33cgwZWHG7oc+XJPploJj011NtscyYREdnG7COx8qKnJACktEBXhIG4P9cZhvHJeNhGYneuwJrzS6BgBopCqurk3jJG3jexo6Pt4NvNSyMcz/vQv9bsAvMpkeYiIZQC1mXV8ipkpNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731272471; c=relaxed/simple;
-	bh=I1PF87o/v3duEmVol3hK5Hn3dWDF6plXuD4SahJVq1A=;
+	s=arc-20240116; t=1731272464; c=relaxed/simple;
+	bh=EQt3n3i1KyUDZRw+vpApQXPdDqecwrKAyC+BRjzPnP0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sBiyT5zZgXLC7tA2vHCYDLvcs/xyK6hvVjStvsmB5aW6BRWUcP7ZPNt7YdtI3Je0FIzq1YfbGfpboaF62i23Zl545XGLsoVEQXMQ31zpRoivNaXbgCbjXFuWthYuMnikly8JrWv1LauJM3dA8xO9+AkNixc8l1CIg87aOOKWtZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+	 MIME-Version; b=kY0CFNeFdxovin/6umhdXoqk4VRZoF98ZhIQvFxKGt7iK/awCyu6/+Bwe79TboiBA7J6ce+gcNPiZumibRfax5y6Q9zRW6H9s2VVI/ynGNFtloAbRUn/a2u1dmTt0E0VncAXRjSC1KDea5YWPXqvkCNtAoN5OWTqblt7HpGkwMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
 	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id df906ca3-9fa6-11ef-8874-005056bdd08f;
-	Sun, 10 Nov 2024 23:00:53 +0200 (EET)
+	id e093f038-9fa6-11ef-8874-005056bdd08f;
+	Sun, 10 Nov 2024 23:00:55 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 5/6] pinctrl: cy8c95x0: embed iterator to the for-loop
-Date: Sun, 10 Nov 2024 22:59:45 +0200
-Message-ID: <20241110210040.18918-6-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 6/6] pinctrl: cy8c95x0: remove unneeded goto labels
+Date: Sun, 10 Nov 2024 22:59:46 +0200
+Message-ID: <20241110210040.18918-7-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241110210040.18918-1-andy.shevchenko@gmail.com>
 References: <20241110210040.18918-1-andy.shevchenko@gmail.com>
@@ -52,114 +52,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When we iterate through nports the iterator variable is effectively
-being not used outside of the loop. Make it clear by moving its definition
-into the for-loop. This makes code cleaner as well.
+In some cases the code uses goto labels to just return an error code.
+Replace those with direct return:s and drop unneeded goto labels.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 36 +++++++++++++-----------------
- 1 file changed, 15 insertions(+), 21 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 26 ++++++++------------------
+ 1 file changed, 8 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 8b118fd09e9e..8c611abd4745 100644
+index 8c611abd4745..0d6c2027d4c1 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -159,7 +159,7 @@ struct cy8c95x0_pinctrl {
- 	DECLARE_BITMAP(irq_trig_high, MAX_LINE);
- 	DECLARE_BITMAP(push_pull, MAX_LINE);
- 	DECLARE_BITMAP(shiftmask, MAX_LINE);
--	int nport;
-+	unsigned int nport;
- 	struct gpio_chip gpio_chip;
- 	unsigned long driver_data;
- 	struct device *dev;
-@@ -610,9 +610,8 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	DECLARE_BITMAP(tmask, MAX_LINE);
- 	DECLARE_BITMAP(tval, MAX_LINE);
- 	int write_val;
--	int ret = 0;
--	int i;
- 	u8 bits;
-+	int ret;
+@@ -746,14 +746,12 @@ static int cy8c95x0_gpio_get_direction(struct gpio_chip *gc, unsigned int off)
  
- 	/* Add the 4 bit gap of Gport2 */
- 	bitmap_andnot(tmask, mask, chip->shiftmask, MAX_LINE);
-@@ -623,7 +622,7 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	bitmap_shift_left(tval, tval, 4, MAX_LINE);
- 	bitmap_replace(tval, tval, val, chip->shiftmask, BANK_SZ * 3);
+ 	ret = cy8c95x0_regmap_read(chip, CY8C95X0_DIRECTION, port, &reg_val);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
  
--	for (i = 0; i < chip->nport; i++) {
-+	for (unsigned int i = 0; i < chip->nport; i++) {
- 		/* Skip over unused banks */
- 		bits = bitmap_get_value8(tmask, i * BANK_SZ);
- 		if (!bits)
-@@ -632,15 +631,13 @@ static int cy8c95x0_write_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 		write_val = bitmap_get_value8(tval, i * BANK_SZ);
+ 	if (reg_val & bit)
+ 		return GPIO_LINE_DIRECTION_IN;
  
- 		ret = cy8c95x0_regmap_update_bits(chip, reg, i, bits, write_val);
--		if (ret < 0)
--			goto out;
-+		if (ret < 0) {
-+			dev_err(chip->dev, "failed writing register %d, port %u: err %d\n", reg, i, ret);
-+			return ret;
-+		}
+ 	return GPIO_LINE_DIRECTION_OUT;
+-out:
+-	return ret;
+ }
+ 
+ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
+@@ -815,8 +813,7 @@ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
+ 	case PIN_CONFIG_SLEEP_HARDWARE_STATE:
+ 	case PIN_CONFIG_SLEW_RATE:
+ 	default:
+-		ret = -ENOTSUPP;
+-		goto out;
++		return -ENOTSUPP;
  	}
--out:
+ 	/*
+ 	 * Writing 1 to one of the drive mode registers will automatically
+@@ -824,7 +821,7 @@ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
+ 	 */
+ 	ret = cy8c95x0_regmap_read(chip, reg, port, &reg_val);
+ 	if (ret < 0)
+-		goto out;
++		return ret;
  
--	if (ret < 0)
--		dev_err(chip->dev, "failed writing register %d, port %d: err %d\n", reg, i, ret);
--
+ 	if (reg_val & bit)
+ 		arg = 1;
+@@ -832,8 +829,7 @@ static int cy8c95x0_gpio_get_pincfg(struct cy8c95x0_pinctrl *chip,
+ 		arg = !arg;
+ 
+ 	*config = pinconf_to_config_packed(param, (u16)arg);
+-out:
 -	return ret;
 +	return 0;
  }
  
- static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
-@@ -650,9 +647,8 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	DECLARE_BITMAP(tval, MAX_LINE);
- 	DECLARE_BITMAP(tmp, MAX_LINE);
- 	int read_val;
--	int ret = 0;
--	int i;
- 	u8 bits;
-+	int ret;
+ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
+@@ -845,7 +841,6 @@ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
+ 	unsigned long param = pinconf_to_config_param(config);
+ 	unsigned long arg = pinconf_to_config_argument(config);
+ 	unsigned int reg;
+-	int ret;
  
- 	/* Add the 4 bit gap of Gport2 */
- 	bitmap_andnot(tmask, mask, chip->shiftmask, MAX_LINE);
-@@ -663,15 +659,17 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	bitmap_shift_left(tval, tval, 4, MAX_LINE);
- 	bitmap_replace(tval, tval, val, chip->shiftmask, BANK_SZ * 3);
- 
--	for (i = 0; i < chip->nport; i++) {
-+	for (unsigned int i = 0; i < chip->nport; i++) {
- 		/* Skip over unused banks */
- 		bits = bitmap_get_value8(tmask, i * BANK_SZ);
- 		if (!bits)
- 			continue;
- 
- 		ret = cy8c95x0_regmap_read(chip, reg, i, &read_val);
--		if (ret < 0)
--			goto out;
-+		if (ret < 0) {
-+			dev_err(chip->dev, "failed reading register %d, port %u: err %d\n", reg, i, ret);
-+			return ret;
-+		}
- 
- 		read_val &= bits;
- 		read_val |= bitmap_get_value8(tval, i * BANK_SZ) & ~bits;
-@@ -682,11 +680,7 @@ static int cy8c95x0_read_regs_mask(struct cy8c95x0_pinctrl *chip, int reg,
- 	bitmap_shift_right(tmp, tval, 4, MAX_LINE);
- 	bitmap_replace(val, tmp, tval, chip->shiftmask, MAX_LINE);
- 
+ 	switch (param) {
+ 	case PIN_CONFIG_BIAS_PULL_UP:
+@@ -876,22 +871,17 @@ static int cy8c95x0_gpio_set_pincfg(struct cy8c95x0_pinctrl *chip,
+ 		reg = CY8C95X0_PWMSEL;
+ 		break;
+ 	case PIN_CONFIG_OUTPUT_ENABLE:
+-		ret = cy8c95x0_pinmux_direction(chip, off, !arg);
+-		goto out;
++		return cy8c95x0_pinmux_direction(chip, off, !arg);
+ 	case PIN_CONFIG_INPUT_ENABLE:
+-		ret = cy8c95x0_pinmux_direction(chip, off, arg);
+-		goto out;
++		return cy8c95x0_pinmux_direction(chip, off, arg);
+ 	default:
+-		ret = -ENOTSUPP;
+-		goto out;
++		return -ENOTSUPP;
+ 	}
+ 	/*
+ 	 * Writing 1 to one of the drive mode registers will automatically
+ 	 * clear conflicting set bits in the other drive mode registers.
+ 	 */
+-	ret = cy8c95x0_regmap_write_bits(chip, reg, port, bit, bit);
 -out:
--	if (ret < 0)
--		dev_err(chip->dev, "failed reading register %d, port %d: err %d\n", reg, i, ret);
--
 -	return ret;
-+	return 0;
++	return cy8c95x0_regmap_write_bits(chip, reg, port, bit, bit);
  }
  
- static int cy8c95x0_gpio_direction_input(struct gpio_chip *gc, unsigned int off)
+ static int cy8c95x0_gpio_get_multiple(struct gpio_chip *gc,
 -- 
 2.47.0
 
