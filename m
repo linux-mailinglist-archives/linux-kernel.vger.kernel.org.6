@@ -1,161 +1,95 @@
-Return-Path: <linux-kernel+bounces-403397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97FA49C3518
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 23:33:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B779C351B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 23:34:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D94328170C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89A61F21804
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84854158DD1;
-	Sun, 10 Nov 2024 22:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0A215ADB4;
+	Sun, 10 Nov 2024 22:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rsoxUknS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DUR+0wlB"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4676315B0EE;
-	Sun, 10 Nov 2024 22:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F402B158A13
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 22:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731277981; cv=none; b=Fal/8NthpHicu6JnHt+BDvCnQXEwZ6AT5MeLmow5yLVULHzz1RYlcUl6HpkVIBRmGmagW9Jic1BH/r1ze0mjCIyiYaP9I5p29SxdYNJUMw2DT6TxNkwOUUm3B09IktrB8Ho2G7lurghfcD9hIv6gEcM3M2xiDZ0+g/MYLIIl4KM=
+	t=1731278073; cv=none; b=ujx1uVJUMF8qDtd0YXtaZc85YszdobdbzKf/Iann0ioSM+qWC+pih0skZxpjIn5LWHZBSqPyTO+YDqU0F8vWacVfFQmnofnxy6NiceOHUUk6tptzIoBHHbndVrAldAqV2DoyTwRcZVrz0nMK/4mNYh4xzV5QvNjuEHqmWpAs/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731277981; c=relaxed/simple;
-	bh=p63CByUEkUii+F9ONsrjcGlIAax3+XAfqw0UvVtxMB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oeiNP7Opp9QhBsoBif02rufqE0KDYAamRAPnfEYoDgeo3Jgvf3pHEb2Tx2lqo/y6vIL8Zx/NnFFtDGX0g37ky+oAm+VXT8LHrIVt+29MP7+RF0St9tczbURZkUmJnodF3d5Yv5i5wNBE4m43s+BTiVbibTsmaiMCembhlapOkRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rsoxUknS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731277970;
-	bh=w3zBLOdJ1LxBisw4wHOslp884tXmLgLW9TnQ02I6lwE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rsoxUknSqBvd2XUYESEwYfkQOIxWL8+eXxoITRFNTzYVPWAxIl8l5H+5mprg7n78D
-	 3hu+9KxogOt7mH5SwtGnWA3Zni4ylAZZ1yZnm3QjjnmfnYnzY/8idpzwocYEhm9Xsk
-	 SEXq+5WpxtUoSPDFPYIc0WabC94rCfqNvEW8q+PYK2H1bXvvfg5xIv5HEpksNagM6f
-	 6v2p4LAns2o98zX1RLMm3Xup3fi0DdefLnC2buaD+KGYD0ae+BVZu4zWZ9hFroKeNi
-	 1CXWjEIO6JRaOM+E/baSHmWITap7A3uBYKZSDLduDgpyBEIJgqm6IDm2Y20tFOTkRA
-	 CrScpCAw/eZkw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmnW601HMz4wb1;
-	Mon, 11 Nov 2024 09:32:49 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 09:32:51 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the bcachefs tree
-Message-ID: <20241111093251.12fe136c@canb.auug.org.au>
+	s=arc-20240116; t=1731278073; c=relaxed/simple;
+	bh=lMgvd/6Lb6Mv/sN/h/nJ3YyBm4498RljATrzTgtmsAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HquSDplV93rMPt4+tLb0cjANRjGXdTpFMCiGB6WNB3ZIcPuU5R8julzI3pvrJ1AFU0Gip3WZaVHArCfq2sbS14TruvJ5v7kGIsjxTxvU61yL4SdsaZ5tj0z3EtN1AlcVNmtn6jszNDKNpPiik+HuFY1mk48JYEKfRMK2VVb1ETU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DUR+0wlB; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731278070;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GwBh2zyz1I6gYEB9wKU7YYpCisQ6JYb2gFv5nfuGH+U=;
+	b=DUR+0wlB0yFBOjR+jEY9pG3cNye6e/AI/Na2o832EQQ8gNorf3MTn2zvaoMeYgR1+rb6XG
+	lVr7ChKDIYbJfQHQ561XZDbzbKbHQLuzSS5yso9nhh52k9AO94PUkG/tVO7AdakgckMRDf
+	/KmWy8x2THMQOZnXAEzb3AjKZPiQdp0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Lee Duncan <lduncan@suse.com>,
+	Chris Leech <cleech@redhat.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-hardening@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	open-iscsi@googlegroups.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] scsi: Replace zero-length array with flexible array member
+Date: Sun, 10 Nov 2024 23:33:24 +0100
+Message-ID: <20241110223323.42772-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.O2yq5BaFnG1R.PHC9Iwq9M";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/.O2yq5BaFnG1R.PHC9Iwq9M
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Replace the deprecated zero-length array with a modern flexible array
+member in the struct iscsi_bsg_host_vendor_reply.
 
-Hi all,
-
-After merging the bcachefs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-fs/bcachefs/btree_update_interior.c:1446:13: error: redefinition of 'key_de=
-leted_in_insert'
- 1446 | static bool key_deleted_in_insert(struct keylist *insert_keys, stru=
-ct bpos pos)
-      |             ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_update_interior.c:1437:13: note: previous definition of '=
-key_deleted_in_insert' with type 'bool(struct keylist *, struct bpos)' {aka=
- '_Bool(struct keylist *, struct bpos)'}
- 1437 | static bool key_deleted_in_insert(struct keylist *insert_keys, stru=
-ct bpos pos)
-      |             ^~~~~~~~~~~~~~~~~~~~~
-fs/bcachefs/btree_update_interior.c:1437:13: error: 'key_deleted_in_insert'=
- defined but not used [-Werror=3Dunused-function]
-cc1: all warnings being treated as errors
-
-Caused by commit
-
-  85a62009bd05 ("bcachefs: Fix topology errors on split after merge")
-
-badly merging with
-
-  cec136d348e0 ("bcachefs: Fix topology errors on split after merge")
-
-Just one of the problems with having duplicate patches :-(
-
-I applied the following merge fix patch or today.
-
-=46rom bc58e02f03f7f111092cbef0f7b2137edbb44372 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 Nov 2024 08:59:47 +1100
-Subject: [PATCH] fix up for "bcachefs: Fix topology errors on split after m=
-erge"
-
-being duplicated and causing a bad automatic merge.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Link: https://github.com/KSPP/linux/issues/78
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- fs/bcachefs/btree_update_interior.c | 9 ---------
- 1 file changed, 9 deletions(-)
+Changes in v2:
+- Use DECLARE_FLEX_ARRAY() as suggested by Gustavo A. R. Silva
+- Link to v1: https://lore.kernel.org/r/20241110151749.3311-2-thorsten.blum@linux.dev/
+---
+ include/scsi/scsi_bsg_iscsi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/bcachefs/btree_update_interior.c b/fs/bcachefs/btree_update=
-_interior.c
-index 5b7def78308a..55bd9e7816e2 100644
---- a/fs/bcachefs/btree_update_interior.c
-+++ b/fs/bcachefs/btree_update_interior.c
-@@ -1443,15 +1443,6 @@ static bool key_deleted_in_insert(struct keylist *in=
-sert_keys, struct bpos pos)
- 	return false;
- }
-=20
--static bool key_deleted_in_insert(struct keylist *insert_keys, struct bpos=
- pos)
--{
--	if (insert_keys)
--		for_each_keylist_key(insert_keys, k)
--			if (bkey_deleted(&k->k) && bpos_eq(k->k.p, pos))
--				return true;
--	return false;
--}
--
- /*
-  * Move keys from n1 (original replacement node, now lower node) to n2 (hi=
-gher
-  * node)
---=20
-2.45.2
+diff --git a/include/scsi/scsi_bsg_iscsi.h b/include/scsi/scsi_bsg_iscsi.h
+index 9b1f0f424a79..a569c35b258d 100644
+--- a/include/scsi/scsi_bsg_iscsi.h
++++ b/include/scsi/scsi_bsg_iscsi.h
+@@ -59,7 +59,7 @@ struct iscsi_bsg_host_vendor {
+  */
+ struct iscsi_bsg_host_vendor_reply {
+ 	/* start of vendor response area */
+-	uint32_t vendor_rsp[0];
++	DECLARE_FLEX_ARRAY(uint32_t, vendor_rsp);
+ };
+ 
+ 
+-- 
+2.47.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.O2yq5BaFnG1R.PHC9Iwq9M
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxNJMACgkQAVBC80lX
-0GyKKAgAo0lB5pNrG872GRSA5oZlJckz0wZkB3Bky9/yN1StwBUCRXXydM1fFin+
-43rqnm8jUS4BOxYsw2rM28PVq3GfNfR7qTEieq2QL+mGOHFk+iqz5gZOoizBYYc0
-L41gDgGkDf8LcpFuRzF0QoF+WBUQZLXQd2AVmw9cLf/F4UxIRwTa1vmtYE/J6lzt
-BzNBDS25dbiI3VJ+8VrztXl/YMJmzqMiO/Xoq8mk1ILSCxyP0TFQM1yZPbUviWT6
-24GmDss3qsjVHdbhcWP9HPwgyB7NXyWLhbVJ8n5pJlWq/XddnuZd9xd1guUj3lZX
-ctAITLO+GmtHZunm0NL8xVw42SNBsQ==
-=B8+2
------END PGP SIGNATURE-----
-
---Sig_/.O2yq5BaFnG1R.PHC9Iwq9M--
 
