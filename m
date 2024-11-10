@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-403328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3F539C3433
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:37:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9489C33E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CE9AB20EA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B7B1F21342
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBED13CFB6;
-	Sun, 10 Nov 2024 18:36:57 +0000 (UTC)
-Received: from mail-m25496.xmail.ntesmail.com (mail-m25496.xmail.ntesmail.com [103.129.254.96])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824B513C3D3;
+	Sun, 10 Nov 2024 17:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sCcq2szq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A21200A0;
-	Sun, 10 Nov 2024 18:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.254.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6961E12D758;
+	Sun, 10 Nov 2024 17:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731263817; cv=none; b=au9l5+w12ZKVroaFrRA8F5F2a0nDTskME3zrf0/oI7N57hML+s9EhCXopLwnpCUCEKGpHkrP6cK2LuIO6WNGtHkswW6uJLQAsFBySHPWLF41///TQpwCwM5ru8v1FPcnfNARUOmaV/A83QPLFwrDQKB9kEFppNxaAYakyS1FZvg=
+	t=1731258354; cv=none; b=sv6vhVfGad3OqXaDkd3snDD7MUGRtdoP52c80kmdOXVMMnPnFZHZGlNxa8J4J/GHjvydLYQitAn9gIL5iIvO7K0wL2bhJDNyoC/zymRCRxSFJCvhZ34ZwYtwdCyTc5bw5WRmrafag/Jz9rX0NCmrNKegwbYCpVjzkatfTBtL25M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731263817; c=relaxed/simple;
-	bh=VEiCcVBUQAXwHu1ffrHgeG5LsZdIgEmHmhV+woKGDz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nZrWIk2IAtA31+MLUd3mKunralWVOy309EttKH/rxtwSdgDYPtsAu7NTIuHFLs7zLUCXpzzXbdwkWPmxyIS7HYEhk8Ln4F8m3yEDMN75iNBAjfD/ZuIrh0y+kEpRvgDwDRTbY8yTDodyXYZUdjic9GnS1Urk156/nNg5P6v9hFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=103.129.254.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [113.116.6.44])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 24fe03a5;
-	Sun, 10 Nov 2024 22:00:41 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v4 3/4] arm64: dts: qcom: ipq6018: move mp5496 regulator out of soc dtsi
-Date: Sun, 10 Nov 2024 22:00:18 +0800
-Message-Id: <20241110140019.3426181-4-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241110140019.3426181-1-amadeus@jmu.edu.cn>
-References: <20241110140019.3426181-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1731258354; c=relaxed/simple;
+	bh=W8IBu8OYgKSWbGvUJPVuafrSAwC9pJZTPDqexPgiF44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqoUxeL5ckejZN90gbqO2tqs9vnZe60+fnJp8NHrhRB9pDu0A1qyjjozDVzO4SHDkozxXqtx+AAKbUoSXIWn132L8ztd+gPhABr846TEnG6tgBe+mEBQMm2lSmf5/B0YSRJB1wcZTNQ0Dwqu7NrBG8oiZQY/Bfr1xQ1VLwtf5Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sCcq2szq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAFQGiX031518;
+	Sun, 10 Nov 2024 17:05:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=w9UgQPRR37++TdBcs9cU8wlUS7kfeK
+	sLzG25KHuCYbk=; b=sCcq2szqvl7V388Evf81ubigfPzqtOJNzlcNBvsY99W98O
+	gOjAjQ29ZmdSGDI6S9qyQZ9bZqHgxtcI44Gep0IQAfrWTQKZ1l20GgScmV1xioDq
+	J97YpP+g0v+w1QEFcJv1ASn0FWoR+LjCYLHwKbp/ibrT1184HD0bEvHz17F1S77c
+	PRV6HKiBhswtOm1HCxb7bf+ibJgCo64e6uukqrOyKFMwfqjfZ2Xb5++jbrQQd8Ia
+	5h0Z/vR4Pfn1M+Nh/zCcXfu/bK8OoDbrfyhc+SeUWPUOA32EU0acocfOAWkxT0uU
+	HaNWufxPDin76lDfr0J+olmOOzAM4HNy9U4F9BRA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tpvmsd22-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:05:15 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AAH5EnY016863;
+	Sun, 10 Nov 2024 17:05:14 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tpvmsd1x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:05:14 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAFVWrx029688;
+	Sun, 10 Nov 2024 17:05:13 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tkjk5udm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:05:13 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AAH59Sc58851720
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 10 Nov 2024 17:05:09 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 780B020043;
+	Sun, 10 Nov 2024 17:05:09 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 30DAD20040;
+	Sun, 10 Nov 2024 17:05:08 +0000 (GMT)
+Received: from osiris (unknown [9.171.74.231])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 10 Nov 2024 17:05:08 +0000 (GMT)
+Date: Sun, 10 Nov 2024 18:05:04 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH v19 07/19] tracing: Add ftrace_fill_perf_regs() for perf
+ event
+Message-ID: <20241110170504.6661-B-hca@linux.ibm.com>
+References: <173125372214.172790.6929368952404083802.stgit@devnote2>
+ <173125380933.172790.13871919598133716103.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDGElIVkJPQxpKTUgfTkMeQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkhVSkpNVU1VT09ZV1kWGg8SFR0UWUFZT0tIVUpLSUJNSEtVSktLVUtZBg
-	++
-X-HM-Tid: 0a93166077ea03a2kunm24fe03a5
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OhQ6ARw6EzIsPC0BIz84Nygz
-	CgsKCTVVSlVKTEhKSU9MSU9KQ0JIVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	SFVKSk1VTVVPT1lXWQgBWUFIT0lNNwY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173125380933.172790.13871919598133716103.stgit@devnote2>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mDl8ANvFO62Yl3Du7gW-GA6W-IDMkZTL
+X-Proofpoint-GUID: VTiNSnrSFul-aTZQ_oPMYdMgRFJUlpu0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=681 phishscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1015 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 impostorscore=0 lowpriorityscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411100151
 
-Some IPQ60xx SoCs don't come with the mp5496 pmic chip. The mp5496
-pmic was never part of the IPQ60xx SoC, it's optional, so we moved
-it out of the soc dtsi.
+On Mon, Nov 11, 2024 at 12:50:09AM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Add ftrace_fill_perf_regs() which should be compatible with the
+> perf_fetch_caller_regs(). In other words, the pt_regs returned from the
+> ftrace_fill_perf_regs() must satisfy 'user_mode(regs) == false' and can be
+> used for stack tracing.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Acked-by: Will Deacon <will@kernel.org>
+> ---
+>  arch/arm64/include/asm/ftrace.h   |    7 +++++++
+>  arch/powerpc/include/asm/ftrace.h |    7 +++++++
+>  arch/s390/include/asm/ftrace.h    |    6 ++++++
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts |  2 +-
- arch/arm64/boot/dts/qcom/ipq6018-mp5496.dtsi | 35 ++++++++++++++++++++
- arch/arm64/boot/dts/qcom/ipq6018.dtsi        | 14 --------
- 3 files changed, 36 insertions(+), 15 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/ipq6018-mp5496.dtsi
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-index f5f4827c0e17..9c69d3027b43 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq6018-cp01-c1.dts
-@@ -7,7 +7,7 @@
- 
- /dts-v1/;
- 
--#include "ipq6018.dtsi"
-+#include "ipq6018-mp5496.dtsi"
- 
- / {
- 	model = "Qualcomm Technologies, Inc. IPQ6018/AP-CP01-C1";
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018-mp5496.dtsi b/arch/arm64/boot/dts/qcom/ipq6018-mp5496.dtsi
-new file mode 100644
-index 000000000000..fe2152df69f4
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/ipq6018-mp5496.dtsi
-@@ -0,0 +1,35 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/*
-+ * ipq6018-mp5496.dtsi describes common properties (e.g. regulators) that
-+ * apply to most devices that make use of the IPQ6018 SoC and MP5496 PMIC.
-+ */
-+
-+#include "ipq6018.dtsi"
-+
-+&cpu0 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&cpu2 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&cpu3 {
-+	cpu-supply = <&ipq6018_s2>;
-+};
-+
-+&rpm_requests {
-+	regulators {
-+		compatible = "qcom,rpm-mp5496-regulators";
-+
-+		ipq6018_s2: s2 {
-+			regulator-min-microvolt = <725000>;
-+			regulator-max-microvolt = <1062500>;
-+			regulator-always-on;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index 7514919132b6..a02aa641cb90 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -43,7 +43,6 @@ cpu0: cpu@0 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -56,7 +55,6 @@ cpu1: cpu@1 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -69,7 +67,6 @@ cpu2: cpu@2 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -82,7 +79,6 @@ cpu3: cpu@3 {
- 			clocks = <&apcs_glb APCS_ALIAS0_CORE_CLK>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu_opp_table>;
--			cpu-supply = <&ipq6018_s2>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -184,16 +180,6 @@ glink-edge {
- 			rpm_requests: rpm-requests {
- 				compatible = "qcom,rpm-ipq6018", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
--
--				regulators {
--					compatible = "qcom,rpm-mp5496-regulators";
--
--					ipq6018_s2: s2 {
--						regulator-min-microvolt = <725000>;
--						regulator-max-microvolt = <1062500>;
--						regulator-always-on;
--					};
--				};
- 			};
- 		};
- 	};
--- 
-2.25.1
-
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
 
