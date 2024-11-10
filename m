@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-403304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058439C33D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:52:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EF09C33D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346831C20A37
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:52:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14563281492
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9844136353;
-	Sun, 10 Nov 2024 16:52:08 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51EA12AAC6;
+	Sun, 10 Nov 2024 16:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrR+nUkJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13782B9A6;
-	Sun, 10 Nov 2024 16:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098364778E;
+	Sun, 10 Nov 2024 16:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731257528; cv=none; b=WTBBl5gOe56CczYqxYfjKfVh2NaDb+HlZsLbvZhgrdZTgRj6UhHBcxnFNK/Sey3HWSeujWHMJuIIOoF3V7o1W+DbRE7gQ3m+cL6FJlLPT94MUL1C1D4xV7Xt4ncaSFexFX1QE24tu/3U4C6IgxICymYKkZTMXjm1KOHpgLrrB8E=
+	t=1731257237; cv=none; b=SjIzJVN/z0GdXyJvDw7a3vxujfkBouRjFAL8jrAQZjsVI1MU89iHEs0/EA1t96nNBEtx3CCKvXnUnGBvbBcO4YajddLampWdCtASmF3jHbl/yFY2e+5PTXeu5MoIIbB3eIOmWBwofkNzSpTwwKcFCJq034Gh4/solRNNxdpZ+dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731257528; c=relaxed/simple;
-	bh=+y86gxO0Qzp7rWLMZ6NDFXF5z9IpPHPeGKuzAxRUdIA=;
+	s=arc-20240116; t=1731257237; c=relaxed/simple;
+	bh=VGC2pIhZ+IDQ2o0aJN8sRl69nsKEozNmQTG3IEvbxKU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ELOTg2A4qVYtJRYXPfWdIHu6dBwvQRMooWgvXtwcM4oRs6IvINMGSA/5bw7R6xXQmOo79Q3BvbI2xBh0SVBxgrzSYOrGesVT4Ap3Cxggl/0Hkw+ZGvUFWmXayXZDaTjJnj2bJYXuGR8lOyDRh9tjkVmWJc6BVUJyIJs3FTEVRc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 2828428017287;
-	Sun, 10 Nov 2024 17:44:53 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 0CDCB1AD7F2; Sun, 10 Nov 2024 17:44:53 +0100 (CET)
-Date: Sun, 10 Nov 2024 17:44:53 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, bhelgaas@google.com,
-	tony.luck@intel.com, bp@alien8.de
-Subject: Re: [RFC PATCH] PCI: pciehp: Generate a RAS tracepoint for hotplug
- event
-Message-ID: <ZzDjBQaO2YjUlsjz@wunner.de>
-References: <20241108030939.75354-1-xueshuai@linux.alibaba.com>
- <Zy-hbwLohwf-_hCN@wunner.de>
- <faccb715-8d9f-4761-855a-0fb8be2ebad4@linux.alibaba.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=unmGPHKi/ej4x5zTQtRI73o6V2vSVHy47QvzLY0+CGXTTx7EFeNrK/knqQpZXWYfXjfBshw90OJvdUysbE1TTxzlwoim009m4By7e7rYyY3fm/5U05itlSfcoUAD7/lZiz6SXbtXLgN8BFL0UQ06s4Dx6NwWMBeEluLUtCrgtyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrR+nUkJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3878C4CECD;
+	Sun, 10 Nov 2024 16:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731257236;
+	bh=VGC2pIhZ+IDQ2o0aJN8sRl69nsKEozNmQTG3IEvbxKU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OrR+nUkJ3bVOgtiK8F1MkijjiLACCSt+qLcmc6zPGxUQtm1LEJUun/AWRwTNsF8rW
+	 A5uzZkGA3DKEANdXaWyq1dDgh3xgTXY5f5KjOsER55oVzsawGw0GgYQIjFsALsrAxP
+	 HNTmUchhgJvz64QjzxxgKqW6xHOzE3EwOvzQthgLDWr1mBNsprio1NrrgkzL6hc8ZZ
+	 3934oyHXrgar6FUUbFWCzHLuyR+tosfhLaCIBl5cw8AZMQv7hmZbi3EfifiggpsqbR
+	 Zr57jui04VqejufQbkRuCRGC3+53hYViEtgQt7lvL7xtCHC7lgYdOWdIX/P9eTI392
+	 bJF+yjnRIkY1w==
+Date: Sun, 10 Nov 2024 10:47:13 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: Re: [PATCH v2] arm64: Allow packing uncompressed images into distro
+ packages
+Message-ID: <el65ezf4w2rj67afgvspn3ehyatvbc7jllkcpfc23mfeo6fsni@4t5vytmetz2p>
+References: <20240910-uncompressed-distro-packages-v2-1-51538434787f@quicinc.com>
+ <86wmi83sl5.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,86 +60,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <faccb715-8d9f-4761-855a-0fb8be2ebad4@linux.alibaba.com>
+In-Reply-To: <86wmi83sl5.wl-maz@kernel.org>
 
-On Sun, Nov 10, 2024 at 06:12:09PM +0800, Shuai Xue wrote:
-> 2024/11/10 01:52, Lukas Wunner:
-> > On Fri, Nov 08, 2024 at 11:09:39AM +0800, Shuai Xue wrote:
-> > > --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> > > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> > > @@ -19,6 +19,7 @@
-> > >   #include <linux/types.h>
-> > >   #include <linux/pm_runtime.h>
-> > >   #include <linux/pci.h>
-> > > +#include <ras/ras_event.h>
-> > >   #include "pciehp.h"
+On Wed, Oct 16, 2024 at 05:44:54PM +0100, Marc Zyngier wrote:
+> Hi Bjorn,
+> 
+> On Wed, 11 Sep 2024 03:53:16 +0100,
+> Bjorn Andersson <andersson@kernel.org> wrote:
 > > 
-> > Hm, why does the TRACE_EVENT() definition have to live in ras_event.h?
-> > Why not, say, in pciehp.h?
-> 
-> IMHO, it is a type of RAS related event, so I add it in ras_event.h,
-> similar to other events like aer_event and memory_failure_event.
-> 
-> I could move it to pciehp.h, if the maintainers prefer that location.
-
-IMO pciehp.h makes more sense than ras/ras_event.h.
-
-The addition of AER to ras/ras_event.h was over a decade ago with
-commit 0a2409aad38e ("trace, AER: Move trace into unified interface").
-That commit wasn't acked by Bjorn.  It wasn't even cc'ed to linux-pci:
-
-https://lore.kernel.org/all/1402475691-30045-3-git-send-email-gong.chen@linux.intel.com/
-
-I can see a connection between AER and RAS, but PCI hotplug tracepoints
-are not exclusively RAS, they might be useful for other purposes as well.
-Note that pciehp is not just used on servers but also e.g. for Thunderbolt
-on mobile devices and the tracepoints might come in handy to debug that.
-
-
-> > Wouldn't it be more readable to just log the event that occured
-> > as a string, e.g. "Surprise Removal" (and "Insertion" or "Hot Add"
-> > for the other trace event you're introducing) instead of the state?
+> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > > 
-> > Otherwise you see "ON_STATE" in the log but that's actually the
-> > *old* value so you have to mentally convert this to "previously ON,
-> > so now must be transitioning to OFF".
+> > The distro packages (deb-pkg, pacman-pkg, rpm-pkg) are generated using
+> > the compressed kernel image, which means that the kernel once installed
+> > can not be booted with systemd-boot.
 > 
-> I see your point. "Surprise Removal" or "Insertion" is indeed the exact
-> state transition. However, I am concerned that using a string might make
-> it difficult for user space tools like rasdaemon to parse.
-
-If this is parsed by a user space daemon, put the enum in a uapi header,
-e.g. include/uapi/linux/pci.h.
-
-
-> How about adding a new enum for state transition? For example:
+> Are you sure? I just installed a guest with systemd-boot
+> (252.30-1~deb12u, as shipped in Debian), and it is perfectly able to
+> boot a compressed kernel.
 > 
-> 	enum pciehp_trans_type {
-> 		PCIEHP_SAFE_REMOVAL,
-> 		PCIEHP_SURPRISE_REMOVAL,
-> 		PCIEHP_Hot_Add,
-> 	...
-> 	}
 
-In that case, I'd suggest adding an entry to the enum for all the
-ctrl_info() messages, i.e.
+Sorry for the late response, to verify I did "make defconfig bindeb-pkg"
+and crafted a disk image using mkosi. It contains:
 
-Link Up
-Link Down
-Card present
-Card not present
+# apt info systemd-boot
+Package: systemd-boot
+Version: 257~rc1-4
 
-Amend pciehp_handle_presence_or_link_change() with curly braces
-around all the affected if-blocks and put a trace event next to the
-ctrl_info() message.
+It fails to load my the compressed image:
+../src/boot/efi/boot.c:2557@image_start: Error loading \debian\6.12.0-rc6-next-20241108-00003-ga216563e3174-dirty\vmlinuz: Unsupported
 
-Also, since these events are not pciehp-specific, I'd call the enum
-something like pci_hotplug_event and the entries PCI_HOTPLUG_...
-(or PCI_HP_... if you prefer short names).  These trace events could
-in principle be raised by any of the other hotplug drivers in
-drivers/pci/hotplug/, not just pciehp.
+Which is expected per per this discussion:
+https://github.com/systemd/systemd/issues/23788
 
-Thanks,
+> > 
+> > This differs from the packages generated by the distros themselves,
+> > which uses the uncompressed image.
+> > 
+> > Use the newly introduced CONFIG_COMPRESSED_INSTALL option to allow
+> > selection of which version of the kernel image should be packaged into
+> > the distro packages.
+> 
+> I'm normally building kernels as Debian packages, without any of
+> CONFIG_EFI_ZBOOT or CONFIG_COMPRESSED_INSTALL.
+> 
 
-Lukas
+My goal is to make "make defconfig bindeb-pkg" (and the other -pkg
+targets) boot out of the box in a "standard system".
+
+> As a result, the installed kernel image of a Debian package shoots up
+> from ~8M to an impressive 25M, since we're not picking the compressed
+> image anymore. Storage may be cheap, but still.
+> 
+
+No argument about this.
+
+> I really don't think CONFIG_COMPRESSED_INSTALL should change the
+> existing behaviours, and a new option would be better suited to enable
+> this new setup if deemed necessary.
+> 
+
+My main concern is that the "make *-pkg" targets create packages with
+the compressed image, while at least Arch Linux Arm, Debian, and Fedora
+are packaging uncompressed images in their official packages.
+
+Regards,
+Bjorn
+
+> Thanks,
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
