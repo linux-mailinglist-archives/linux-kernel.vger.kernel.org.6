@@ -1,126 +1,227 @@
-Return-Path: <linux-kernel+bounces-403067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B449C3065
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 02:40:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFEE69C308C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 03:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8AB280D6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 01:40:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F955B214DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 02:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3FF8157469;
-	Sun, 10 Nov 2024 01:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiD6Kljb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998E514264A;
+	Sun, 10 Nov 2024 02:08:16 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381F5156F3B;
-	Sun, 10 Nov 2024 01:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809BA219FC;
+	Sun, 10 Nov 2024 02:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731202640; cv=none; b=bBZSY0qPi5PBdVWIwV/Kz3GwfLlDE76N5D6U0KUvROVvHwhHb30tz5pn0TDk0psynHV1CvFjn+8ymWvFM2O1+1rFlM2dOY+rUkXMv4hUn4D0DG3pm08jw/YDxtfVyMpMEZZKdGRqzM0payKMYYYX3QmZ41AXaYPu78WQgMfFfPA=
+	t=1731204496; cv=none; b=EDgZNp8hbAKFFGojRmpywAsBW0snZ0YplPtyHW3/Gyz5qWmeuhJlI7bdJ+UnhThzwtKugKnvNMEnSB59R89fSzE9SJuZM9ML8+EWWbM1Qy2DfMf+9ISBc3wfiMXcW4J1d+kntizQC94hM1df8XZMEBOBkPIREvRVkKEZIPNg9JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731202640; c=relaxed/simple;
-	bh=LnNEpa/HZX7mcyixSAXxOl1pf8RoJrB5+xssS5UsWYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=opvAoEeDwIiqx8y6xq4/wAS7F+Y294vSzkEpGnLH38cq+KKcaxFykRwrO4bAg3XHUgIm3Ypb6jQMWQblsxkx9hesvstCWqMUsGUtlPMyYaORduuGBUTh6KFUyV0mkPiZMJtdQpLNlf+2OAayNQ9njUbHxhlU7NfpoGa7icVP3HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SiD6Kljb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192C0C4CECE;
-	Sun, 10 Nov 2024 01:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731202640;
-	bh=LnNEpa/HZX7mcyixSAXxOl1pf8RoJrB5+xssS5UsWYg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SiD6KljbSfGpD/jdFVZF8hyNgZl0Kknrd8QbgBnjrovNyibD1hoXz2eHTX8XK6oAM
-	 Yl8r8x+J7HBKSsiobDFa3DUvfPOslMRxn0WHFrLLnBHT3SRv6YXfM7nvzeQq/8IrV9
-	 kLXilUE9AfRIvys+Hnht+CBPr5yltx2j/x0kRlk8sAuIBUVVCD9PtGOrA+DWlVPS6U
-	 XjKuFjo0SVJhwno89JX95R5TrQAxC5fWNVPJnHHP3Yg6nZ6fZ4Sz+GTOs7GTmqe3wy
-	 B5bXWB5i5EE07nBBIUAPRGLFk1ZVG/EKA2TECozP70l/4Gl88O2fsl48Zs2SPAOWmK
-	 LDcQnPgnZWVeQ==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so39346991fa.1;
-        Sat, 09 Nov 2024 17:37:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWwlxMhwnGgzoS9W7Pi9WNAZwDilrMi+tJKUxyRj4h4z4env1gWhjPIZ3H0j7hX0qop/obdV358v8g5MxCpHGM=@vger.kernel.org, AJvYcCXIpPWyrPBehrbdWtsSUZXFHFBzhS3lD6Yga/j6YfDGNl13bYQOOU8ouBIndK2OSAUV9FE+Jxht8+OUYiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZl+mB1zGhDibdPlIybeEKstqjduOWutj5VQkdNzUnwprkDDqu
-	4mg2DXDmqVWR5sweCeVzZqVLiblq3hao3Lzw2OKZjI7x34+gQLkzp+Ma5btkcCiX1MSd5IRb4su
-	+cV+R+hbwJGfHEw0egOycBSg49EU=
-X-Google-Smtp-Source: AGHT+IFGcfOP77GehGduhNUJLZd7rfR0VkcHzXTghglCpOx8L+pLMx/+vclH+5ddzS35blU1ZXVC62RlVwA0L8iBWbM=
-X-Received: by 2002:a2e:bc8b:0:b0:2fa:faed:e86b with SMTP id
- 38308e7fff4ca-2ff20981669mr27884461fa.13.1731202638733; Sat, 09 Nov 2024
- 17:37:18 -0800 (PST)
+	s=arc-20240116; t=1731204496; c=relaxed/simple;
+	bh=YdIpBfTTBHS7IIpnl12h36yko6in3p6dx5CX2aS3+mk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RpqAp8zNZ7fDjM5I6K0fXF1dflrF1BIpQKWhkz9zbY5DTaSkfHN84frPSGraR2zKPGb6kTRF6c1p7kZ1Iad6rMSLy5CupZ5ZtZeSPmw0mY8zYVDb2KfCQTImp6wUbDiLyJ8qV8TeKM1LEu5bywGM6bm3XRVnGyHIp8s7tPwR3OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XmGKl5gTFz4f3kk5;
+	Sun, 10 Nov 2024 10:07:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id C7F7D1A0194;
+	Sun, 10 Nov 2024 10:08:08 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP1 (Coremail) with SMTP id cCh0CgCXP7GAFTBn89lEBQ--.8077S2;
+	Sun, 10 Nov 2024 10:08:04 +0800 (CST)
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Kunwu Chan <kunwu.chan@linux.dev>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Sebastian Sewior <bigeasy@linutronix.de>,
+ clrkwllms@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Thomas Gleixner <tglx@linutronix.de>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
+ Kunwu Chan <chentao@kylinos.cn>,
+ syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+References: <20241108063214.578120-1-kunwu.chan@linux.dev>
+ <CAADnVQJ8KzVdScXM=qhdT4jMrZLBPpgd+pf1Fqyc-9TFnfabAg@mail.gmail.com>
+ <78012426-80d2-4d77-23c4-ae000148fadd@huaweicloud.com>
+ <CAADnVQK_FptUD17REjtT1wnRyxZ2dx6sZuePsJQES-q27NKKLA@mail.gmail.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <ab0abca0-57b3-b379-0070-4625395c6707@huaweicloud.com>
+Date: Sun, 10 Nov 2024 10:08:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-19-masahiroy@kernel.org>
- <20241003-petite-mamba-of-champagne-d9e0ac@lindesnes>
-In-Reply-To: <20241003-petite-mamba-of-champagne-d9e0ac@lindesnes>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 10 Nov 2024 10:36:42 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARYW6FtkbFm4V7hW49FoxoFa7rkCv0Hk4hnBwRxvLtYmA@mail.gmail.com>
-Message-ID: <CAK7LNARYW6FtkbFm4V7hW49FoxoFa7rkCv0Hk4hnBwRxvLtYmA@mail.gmail.com>
-Subject: Re: [PATCH 18/23] kbuild: remove extmod_prefix, MODORDER,
- MODULES_NSDEPS variables
-To: Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAADnVQK_FptUD17REjtT1wnRyxZ2dx6sZuePsJQES-q27NKKLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgCXP7GAFTBn89lEBQ--.8077S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF4fWw18Gw4rCF43uF4kJFb_yoW3Jr1kpF
+	WrAFZrAr4UXa4j9ay09w1ayayYqw45Kw43Gr93Wr1xZF12qrn7Xrs2yr1fZr9YgryvkF9x
+	tr1qqFZ2gw18ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUIa0PDUUUU
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-On Fri, Oct 4, 2024 at 3:47=E2=80=AFAM Nicolas Schier <nicolas@fjasle.eu> w=
-rote:
->
-> On Tue, Sep 17, 2024 at 11:16:46PM +0900, Masahiro Yamada wrote:
-> > With the previous changes, $(extmod_prefix), $(MODORDER), and
-> > $(MODULES_NSDEPS) are constant. (empty, modules.order, and
-> > modules.nsdeps, respectively).
-> >
-> > Remove these variables and hard-code their values.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  Makefile                  | 22 +++++++++-------------
-> >  scripts/Makefile.modfinal |  2 +-
-> >  scripts/Makefile.modinst  |  2 +-
-> >  scripts/Makefile.modpost  |  6 +++---
-> >  scripts/nsdeps            |  2 +-
-> >  5 files changed, 15 insertions(+), 19 deletions(-)
->
-> Do you want to remove these also?  I can't think of a reason to keep thes=
-e
-> around:
->
-> $ git grep -Hrnwe extmod_prefix -e MODORDER -e MODULES_NSDEP
-> Makefile:1912:  $(Q){ $(foreach m, $(single-ko), echo $(extmod_prefix)$(m=
-:%.ko=3D%.o);) } > modules.order
-> scripts/Makefile.modfinal:33:$(extmod_prefix).module-common.o: $(srctree)=
-/scripts/module-common.c FORCE
-> scripts/Makefile.modfinal:60:%.ko: %.o %.mod.o $(extmod_prefix).module-co=
-mmon.o $(objtree)/scripts/module.lds $(and $(CONFIG_DEBUG_INFO_BTF_MODULES)=
-,$(KBUILD_BUILTIN),$(objtree)/vmlinux) FORCE
-> scripts/Makefile.modfinal:66:targets +=3D $(modules:%.o=3D%.ko) $(modules=
-:%.o=3D%.mod.o) $(extmod_prefix).module-common.o
-> scripts/Makefile.modinst:60:modules :=3D $(patsubst $(extmod_prefix)%.o, =
-$(dst)/%.ko$(suffix-y), $(modules))
-> scripts/Makefile.modinst:120:$(dst)/%.ko: $(extmod_prefix)%.ko FORCE
+Hi,
 
-Right, I will clean up these.
+On 11/10/2024 8:04 AM, Alexei Starovoitov wrote:
+> On Fri, Nov 8, 2024 at 6:46 PM Hou Tao <houtao@huaweicloud.com> wrote:
+>> Hi Alexei,
+>>
+>> On 11/9/2024 4:22 AM, Alexei Starovoitov wrote:
+>>> On Thu, Nov 7, 2024 at 10:32 PM Kunwu Chan <kunwu.chan@linux.dev> wrote:
+>>>> From: Kunwu Chan <chentao@kylinos.cn>
+>>>>
+>>>> When PREEMPT_RT is enabled, 'spinlock_t' becomes preemptible
+>>>> and bpf program has owned a raw_spinlock under a interrupt handler,
+>>>> which results in invalid lock acquire context.
+>>>>
+>>>> [ BUG: Invalid wait context ]
+>>>> 6.12.0-rc5-next-20241031-syzkaller #0 Not tainted
+>>>> -----------------------------
+>>>> swapper/0/0 is trying to lock:
+>>>> ffff8880261e7a00 (&trie->lock){....}-{3:3},
+>>>> at: trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+>>>> other info that might help us debug this:
+>>>> context-{3:3}
+>>>> 5 locks held by swapper/0/0:
+>>>>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+>>>> at: vp_vring_interrupt drivers/virtio/virtio_pci_common.c:80 [inline]
+>>>>  #0: ffff888020bb75c8 (&vp_dev->lock){-...}-{3:3},
+>>>> at: vp_interrupt+0x142/0x200 drivers/virtio/virtio_pci_common.c:113
+>>>>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+>>>> at: spin_lock include/linux/spinlock.h:351 [inline]
+>>>>  #1: ffff88814174a120 (&vb->stop_update_lock){-...}-{3:3},
+>>>> at: stats_request+0x6f/0x230 drivers/virtio/virtio_balloon.c:438
+>>>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>>>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>>>>  #2: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: __queue_work+0x199/0xf50 kernel/workqueue.c:2259
+>>>>  #3: ffff8880b863dd18 (&pool->lock){-.-.}-{2:2},
+>>>> at: __queue_work+0x759/0xf50
+>>>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>>>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>>>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: __bpf_trace_run kernel/trace/bpf_trace.c:2339 [inline]
+>>>>  #4: ffffffff8e939f20 (rcu_read_lock){....}-{1:3},
+>>>> at: bpf_trace_run1+0x1d6/0x520 kernel/trace/bpf_trace.c:2380
+>>>> stack backtrace:
+>>>> CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Not tainted
+>>>> 6.12.0-rc5-next-20241031-syzkaller #0
+>>>> Hardware name: Google Compute Engine/Google Compute Engine,
+>>>> BIOS Google 09/13/2024
+>>>> Call Trace:
+>>>>  <IRQ>
+>>>>  __dump_stack lib/dump_stack.c:94 [inline]
+>>>>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>>>>  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+>>>>  check_wait_context kernel/locking/lockdep.c:4898 [inline]
+>>>>  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+>>>>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>>>>  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+>>>>  _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+>>>>  trie_delete_elem+0x96/0x6a0 kernel/bpf/lpm_trie.c:462
+>>> This trace is from non-RT kernel where spin_lock == raw_spin_lock.
+>> Yes. However, I think the reason for the warning is that lockdep
+>> considers the case is possible under PREEMPT_RT and it violates the rule
+>> of lock [1].
+>>
+>> [1]:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=560af5dc839eef08a273908f390cfefefb82aa04
+>>> I don't think Hou's explanation earlier is correct.
+>>> https://lore.kernel.org/bpf/e14d8882-4760-7c9c-0cfc-db04eda494ee@huaweicloud.com/
+>> OK. Is the bpf mem allocator part OK for you ?
+>>>>  bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+>>>>  bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+>>>>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>>>>  bpf_prog_run include/linux/filter.h:708 [inline]
+>>>>  __bpf_trace_run kernel/trace/bpf_trace.c:2340 [inline]
+>>>>  bpf_trace_run1+0x2ca/0x520 kernel/trace/bpf_trace.c:2380
+>>>>  trace_workqueue_activate_work+0x186/0x1f0 include/trace/events/workqueue.h:59
+>>>>  __queue_work+0xc7b/0xf50 kernel/workqueue.c:2338
+>>>>  queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
+>>> here irqs are disabled, but raw_spin_lock in lpm should be fine.
+>>>
+>>>>  queue_work include/linux/workqueue.h:662 [inline]
+>>>>  stats_request+0x1a3/0x230 drivers/virtio/virtio_balloon.c:441
+>>>>  vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
+>>>>  vp_vring_interrupt drivers/virtio/virtio_pci_common.c:82 [inline]
+>>>>  vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:113
+>>>>  __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+>>>>  handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+>>>>  handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+>>>>  handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
+>>>>  generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+>>>>  handle_irq arch/x86/kernel/irq.c:247 [inline]
+>>>>  call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+>>>>  __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+>>>>  common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
+>>>>  </IRQ>
+>>>>
+>>>> Reported-by: syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com
+>>>> Closes: https://lore.kernel.org/bpf/6723db4a.050a0220.35b515.0168.GAE@google.com/
+>>>> Fixes: 66150d0dde03 ("bpf, lpm: Make locking RT friendly")
+>>>> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+>>>> ---
+>>>>  kernel/bpf/lpm_trie.c | 12 ++++++------
+>>>>  1 file changed, 6 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
+>>>> index 9b60eda0f727..373cdcfa0505 100644
+>>>> --- a/kernel/bpf/lpm_trie.c
+>>>> +++ b/kernel/bpf/lpm_trie.c
+>>>> @@ -35,7 +35,7 @@ struct lpm_trie {
+>>>>         size_t                          n_entries;
+>>>>         size_t                          max_prefixlen;
+>>>>         size_t                          data_size;
+>>>> -       spinlock_t                      lock;
+>>>> +       raw_spinlock_t                  lock;
+>>>>  };
+>>> We're certainly not going back.
+>> Only switching from spinlock_t to raw_spinlock_t is not enough, running
+>> it under PREEMPT_RT after the change will still trigger the similar
+>> lockdep warning. That is because kmalloc() may acquire a spinlock_t as
+>> well. However, after changing the kmalloc and its variants to bpf memory
+>> allocator, I think the switch to raw_spinlock_t will be safe. I have
+>> already written a draft patch set. Will post after after polishing and
+>> testing it. WDYT ?
+> Switching lpm to bpf_mem_alloc would address the issue.
+> Why do you want a switch to raw_spin_lock as well?
+> kfree_rcu() is already done outside of the lock.
 
+After switching to raw_spinlock_t, the lpm trie could be used under
+interrupt context even under PREEMPT_RT.
+> .
 
-
-> W/ or w/o:
->
-> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
-
-
-
---
-Best Regards
-Masahiro Yamada
 
