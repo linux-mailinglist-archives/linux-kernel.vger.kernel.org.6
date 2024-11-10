@@ -1,208 +1,161 @@
-Return-Path: <linux-kernel+bounces-403357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4005A9C348C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:17:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6309C348E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F8F1F21206
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792602813C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871FE13C9C7;
-	Sun, 10 Nov 2024 20:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A2613C9C7;
+	Sun, 10 Nov 2024 20:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Oat0ZXEz"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2073.outbound.protection.outlook.com [40.107.95.73])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FEFT96Q5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0508818E1F
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 20:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731269867; cv=fail; b=nE9cKa/LscgsLIUxr1a2DikzjZyvpDKvhh1p8SCBGwilCqI0Hr+59tLa8jK+T+U90K0TqQ0Tslm6tqD+rV4bLWRTGhjgvFMhbMTgNOb3RAk67R0jhK+TxnmGJdyaG3bmsKwlTWLz/d10LWJZoq1mnATLHKQTg2Ke82TReFm7afA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731269867; c=relaxed/simple;
-	bh=vDZxM985RbBeeLVTvd1FWpoGrHUHPjwUR3OEX4bfgRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XGRwXiKq1v+8KSV2+Duf32qMh5JccqIPJP7Vxwog6QLpadaEdS/7xPLCcAl4V2vy77aUT2lMe2rTqg08DAGj7a1HXc2mBY/RxI2FTukrTuZ1pMv0r9Gau85FEUUbfmyTFRkOPUsKyeU98tQEeEI+OC8upCExVZb3tXMOnq69dyc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Oat0ZXEz; arc=fail smtp.client-ip=40.107.95.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SCStxqpteHqfOvuPfgq6grJ+POrCxIYxPcm0QzM8p3EaMOLKAy2MMSADWlBYUDkOIIIFBCtrE2QY1N1O5Z7mfXVlz8LU/I4gND1ALk0vp9ePpIvWiNdsJyCDSlgQzLa40EOU4qUKlj5lllF8oCECytqNKky0m76ZHrDjOZd1ICM57W26qjaKJPoXQeY7rSNGYhGjte4qz4hrQu0IO8VezJTqm/pFwqNyH1BCP1syrmBWXv82Aug+fEREAb4DjL2tzlJAzW0kf/Z1skhKV5UmSBWyXS4VSoD+qdXiIBys7YopvY9KkPM0T2VasTUBnkIr3ZCM8mS0U2AUe5hcbFCP9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WGWXmcad+68xg7PtP5aSWWTrXjlVBLHkSAjJt4FLjH0=;
- b=uNHh+yFwpgDKcwoffKyV2vgVVK74zQNOtBzm5p5s8RkknzSDduIFlaqDa6jWxvgDW60tis7Z4sE3R/TPWiq9cy5SSsmuE/9/YzS3IMS2phb2UTadtC6v81fO+OzJE8GfdmfvW3GW+NIADCO96KGd+jsO56XSEiGXHhoCgb/uuKAhJpWNaKSqSiuyxOOfO7vrHea2XNIdlBqpcQiSImb5QP6rSuMuFTpOLjn2uuKy4Qb2eoKzncmdHQLo8ZfIQUj9KxUIuwZtXFCq39BkQ/CzOQrhvSk+Kxp9BVtqXiy44t4nsYyYWBD0SzYWWkbO8SFjU7B9wClx8VP2wqhzj9cPyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WGWXmcad+68xg7PtP5aSWWTrXjlVBLHkSAjJt4FLjH0=;
- b=Oat0ZXEzTskFokd2btOG84Bos+56bPPjBupuiTAn/4S5g5Vvmiu0E7F7x7tvdqxDvlWsNqMWmTgBT21Qd6dGRv8x7q7N0qzj0gYu4MBK6sjchHyRi53fcLXzIqMmLApVsh+3vNNsBMYkId3YvGB+EjAxLUSNKSldyLwFXxP0dD4Kf6X/Ffhr9hHEJ2X441BWR2qASK7eHRt7Dl6NajQUrJuDeJyudk36BkriCb30K0gHLixYSrxIfrdWXQPBQwU1zLdfka8ibKSB7GV9YgVJfn3PoTFTWlHM55h0C3/z64lxrFDnzSn/oFW75rv0L+2B/3IvaFNyxkbhDjiBDiBcuA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by IA1PR12MB6556.namprd12.prod.outlook.com (2603:10b6:208:3a0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Sun, 10 Nov
- 2024 20:17:42 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%6]) with mapi id 15.20.8137.027; Sun, 10 Nov 2024
- 20:17:42 +0000
-Date: Sun, 10 Nov 2024 21:17:36 +0100
-From: Andrea Righi <arighi@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1599485956
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 20:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731270524; cv=none; b=b4bZucWoQu8mEfsDiuMOB90FSwxmMbBhDlAEnmVBOEm0LK40w3+khjJOXJc3bDgV/Lvy7CVT3PMIR6Y9lkCTpqSr0UmTRdqnsCu7YAy3aRG3hlX2mFA63aQyVeEKqDGzULs9RVX+dY5dXCSyHtw3qhm+u1mk0ifpSXq/WyA57DE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731270524; c=relaxed/simple;
+	bh=Vu6Wvi8Bl5qCK22fkhXVns86v6ZHhSFm5xGPqMVziT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=e1BhBeO8YSiwMVU321+KoK9o7yPFVbxw3GxC/K3zYv1NhR+V6IkF8vqBJ1+NXD6nLIfzs+Grai+8oyaHdZS3ABLJVw7DSAgYaNeIz9F/u/Wlf7lBTDTLHYWjiLTQIiVU1ZONOoTl9qAGtUnVimOgNWELIOJ83CkDzuTUo4dX43A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FEFT96Q5; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731270522; x=1762806522;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Vu6Wvi8Bl5qCK22fkhXVns86v6ZHhSFm5xGPqMVziT0=;
+  b=FEFT96Q55POsf5JkTPloqE5yHvNC5Z7b30wxuepmEJs+6tPrJxU3ckUE
+   y5GIoClaikSmjmkztZiIKkIz1X6kSenTbpO4mKcx5mip493A0M4ErCkrj
+   I6L+Uls4hjIM0pmNPQsd2SWJvBa7BIBKMms6yc7DIiiiaMFKhJ3ydccP3
+   9xTB7u1SNHnU1tLla5DjfTJrUJrRZBIu2tBjrcA1E7L6cFI4+Zu+Le4G+
+   1Xr1r+kjxKfRiZapigOTz7Q9R9uLo9ANUXZwlg+g4IVjbUaEl12g7o54G
+   5+nvS0GQ1AXChYbZwBSYENuT0LyzBZb1vYP86tg84ENLA0+NF+UdCH/Ff
+   w==;
+X-CSE-ConnectionGUID: nm955ustTEqEmDUYQrE0cA==
+X-CSE-MsgGUID: sTd4z7v6QYiqkyOYPRVr+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="30480861"
+X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
+   d="scan'208";a="30480861"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 12:28:41 -0800
+X-CSE-ConnectionGUID: 14NnQA2ATCyciL+iuDb+bg==
+X-CSE-MsgGUID: UWSp8lbZReOuqLwwgI3ikQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
+   d="scan'208";a="87012008"
+Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 10 Nov 2024 12:28:40 -0800
+Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAEY2-0000Nb-11;
+	Sun, 10 Nov 2024 20:28:38 +0000
+Date: Mon, 11 Nov 2024 04:27:59 +0800
+From: kernel test robot <lkp@intel.com>
 To: Tejun Heo <tj@kernel.org>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	sched-ext@meta.com, multics69@gmail.com, me@mostlynerdless.de,
-	ggherdovich@suse.com, dschatzberg@meta.com, yougmark94@gmail.com
-Subject: Re: [PATCHSET sched_ext/for-6.13] sched_ext: Rename dispatch and
- consume kfuncs
-Message-ID: <ZzEU4JaN3k89SVKA@gpd3>
-References: <20241110200308.103681-1-tj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110200308.103681-1-tj@kernel.org>
-X-ClientProxiedBy: MI0P293CA0013.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:44::18) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: kernel/sched/ext.c:3538:31: warning: bitwise operation between
+ different enumeration types ('enum scx_enq_flags' and 'enum scx_deq_flags')
+Message-ID: <202411110405.iwIkOMKq-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|IA1PR12MB6556:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2faf882e-0113-4371-374f-08dd01c4bb2a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/h7l4IW+mpgQ3G2kEuRO7q/4eSyLg1VbV+/cUVElNNmVFMc+2rzFeXP5JIB7?=
- =?us-ascii?Q?pD2Hm16KpnP8bXQrCwRyCAXvs6jTNo3H+r4fEeHR3R9g38eHo0vh/0Z3ZM0I?=
- =?us-ascii?Q?fJMJoPyELrtuXqfznxBxUG3ESUuLa0ZkyjfFdypbLuzuXK3hnmjPATjbS4G0?=
- =?us-ascii?Q?XvGp0MKvcynFDHxgGJWd4Lfp9NVmMPXa7HLcsEvR0gbZGWOjS3gftb/aHHX/?=
- =?us-ascii?Q?4WJZk85jCKTJ1hH8zv04n1ETS6lL4G448fWe2xjxadeadq6Au12PlwpHaOiH?=
- =?us-ascii?Q?sEbMzO2w8CX5SySQuT2+ez7K78g3wJkHxgLb4bk1WBQue5uhr33r3oOGH9m5?=
- =?us-ascii?Q?bbgre16knvBhljgdF4mIR4hhEZD+PcpeqrhcpyUsHUkAp9tsVrwRavEQW3pj?=
- =?us-ascii?Q?pviCUsSv0Mc/wDgoc1y9lw6qIMmJFjDcYJyANwCngTGQ7qxe9M279D/0kTif?=
- =?us-ascii?Q?m47Fcc8qghJCcaNg6HdcUMTwGSRx2KUXo43oSNZ/Wp6kx19RJv6/E4DbiM25?=
- =?us-ascii?Q?nbBgFjOyE2dz1bwrXvz08zu6piQk+CmD15sUpJgeBC2dLd/O5R2WtEjY5u/P?=
- =?us-ascii?Q?jR3v6tL2SkKM0bLrJaQIznjBmJgcHTvYmkxigwmy+bcDfkUif6veH8JYMO5I?=
- =?us-ascii?Q?zGvaqB+uzKU6bucVMx8HdZHXrE89nwKjzwGsQCzpvrXHNR28R6wSqgd3fOhl?=
- =?us-ascii?Q?LDoWbEfPc96UEb1pWGbcDlyRe476A3S8fkH1OOawy/NjAUY1ikJs6mC+mCkk?=
- =?us-ascii?Q?95aO1ck5r+FOg30xVJNdRu3hb/bNGL+yM6geIO+rGfOo6aQQM4jAVGMwqRKw?=
- =?us-ascii?Q?KzEIt08s06LOA9ozhdfVD+OIsshkvIh6jhO1qMyk2QQ8SozlLIrdMefgwFV9?=
- =?us-ascii?Q?xGRm8cttuvejgejatlSFKHwAu1pKWs+Vbap+mcd3zWN1GbdjB07yvUdHXuf+?=
- =?us-ascii?Q?bdnWnE1ZwQFWDY3rEqgL+CfrgtfZIwE2sqT6EbeTH8rHCL+9wrkkycvxjRfR?=
- =?us-ascii?Q?yE+VrgggVFmUYklHIoYdwrtsi24cOZ8HMQff3p5Ww/N58am0yHZ2CqwGdqt9?=
- =?us-ascii?Q?jnfz1Eo/Z2K7z3ZCrYBotXJQitgmN7b5F+emp7ILrCa3f61Fo+BqYFJZH0Rl?=
- =?us-ascii?Q?0MxH6gj59HkxsPOQ+BU4W4ZsFNqtbVN2QdEXeu7ko1+Mh40DKgoES6Mj/QJY?=
- =?us-ascii?Q?wfn6ACBQJuOFWg0cZTnOo7xkh4TH32kJLFwv6cl39bSEhI19Ls+MuuRGufat?=
- =?us-ascii?Q?fAXqJo6Nw+niCTOjVOD5ginHkpVbihBHDOU7Pgz1J9j3YY5T/2Jp0wDW8FhD?=
- =?us-ascii?Q?r9qArxoQ2NKgcuCmjiyF/6Cf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EfHFPaYFLL3UrvWOR55PsupZi/UAO5laO1lNPAltSY1m9wU8ZcQh6hW6170o?=
- =?us-ascii?Q?uhCPM9DSYtCHoUf9k7SjmL7NAK3xsZKr9E7rZnjtqoOlhVCXm/WftL2aB6vV?=
- =?us-ascii?Q?fw65FtLH4qEMAr4lhmsOR9F3bgyiDQryw8q9919z6a0dnD2+6J7hWVW1C6Eo?=
- =?us-ascii?Q?XpqKtIir9HmvlhneHXDwn71yJayH6Ty0uKnvjVLzp4dD8Zs9yquqZDx9vPlZ?=
- =?us-ascii?Q?y3C9UYM8dxJQMqCcQO4a3F1ILM4arq588w8YmPNqVhhV3O1ZrzGkebwE+34V?=
- =?us-ascii?Q?h10bLzP5a1rARL8BZtB6SYy4+8sPSei13COn73Zj5mImQ0sbpaPidFDK/qO2?=
- =?us-ascii?Q?4RgHcYTKM3EZc2OAsPG9PV17Pq6AyiCN8joe2PHEv5tSNDeXnO3vwoha9QwI?=
- =?us-ascii?Q?llGWWPRQSO64qKcWcLQa1K4Kia5X9RbFJ/dJD62muNSEVPkvXwWkTodmhCxC?=
- =?us-ascii?Q?0PpAdpJh+zcAVvcV5zDNFB0KlOKVMj2wb+wIH1vuCE13bXF9RZ/qyRwUFyqQ?=
- =?us-ascii?Q?gMhyHhdWnRL7KvN8hCe82Z0AVKXCnZehJ2PzD1j7DXEv4sHuLdTjM8kLfGmQ?=
- =?us-ascii?Q?5+gxvw+wJfZg2u7ZSfXVhnKpfX4k3kkHhhl3ae9eDvMp6YSe4TQNEUiaaB36?=
- =?us-ascii?Q?EMXOysu/vW3vP1GvOr4eW9kCU343S+5LPWDootiDBL8jt8GQn3BEJqzWvl5c?=
- =?us-ascii?Q?p4ZBoC1G8GD78xT20k/CDjaWRPea7w+7NSdXtc33NtRdO3bB2AWQCTxKFUcD?=
- =?us-ascii?Q?BhZ8CD9p3JO0eo/wAUJU2TXdJYQWwlLc2hbvjT4lNdvt7LOJRA3vT8E+WXUK?=
- =?us-ascii?Q?ZLi7t6TrbKAHsCRDRyh6PtdXYfej/0bsQ4cm4OkR/BKWfKvL+yLDf/ojwk6Y?=
- =?us-ascii?Q?0f4iWs2MBlTffgYNi0A2njUvPr2aE/+NaxLGJOOL54SJcAhDzx6O53OUJv9r?=
- =?us-ascii?Q?qbvYJAtMI0SCu9+Yjqw6e9lr+zAn5EMF9jYOqzzr4KmbLLAUmQL7OjTjcS/U?=
- =?us-ascii?Q?zBLWuGT8AZxgxbOqUeyYTWgoCvAJA4mxOBRTEWJ+mJbkmosupWITiQOfvIX5?=
- =?us-ascii?Q?LoOjvTiEklQwEtMEqQROi6WHmUhOt6R2rG1oxwjNvrQOqTbQ0PP6e3lGVxJL?=
- =?us-ascii?Q?5rs6hBf/P63J938znoVAo7J0xKnEvLv0g5TGWb/8So5qJ69C3G7G5RkDALa7?=
- =?us-ascii?Q?s2CFWzX7eh0H9hch+qOVsaZBRRLJI+IjwN26KA4OhfE5cvVhJDGEhDS8sHse?=
- =?us-ascii?Q?Mmv/YfGeNS1vnjsnsYPLCoWsCf8PBvYli9gV/dVZzkp+EBy8iGfwbwXU/oqo?=
- =?us-ascii?Q?w47aiF8aTrADJaegjjT0nvOfFYGijg8xIys93iS8FCqYrC3W/OvMmaKWYDn4?=
- =?us-ascii?Q?vf6vkTU8n9TLGWUNdj/oLi7u0S4Rq5kkOQ0W74XQn2YzFehuiCsTYQbPqnXr?=
- =?us-ascii?Q?RGQbouM1dG5igT8n6vS2WSYc6lI4BZkqje2vPmgD62dkNXxJ9lgWIuEo7ALL?=
- =?us-ascii?Q?c0Bnu5x0DZI7dbf6etFFOpR7VxeQLjWC3kosSutrenpztAyZKTRmFHspE+qn?=
- =?us-ascii?Q?aL+cnfE3NWwRzhEziVryp71d3i76zBFNOSN4H2rq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2faf882e-0113-4371-374f-08dd01c4bb2a
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2024 20:17:42.2980
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KScaH8+EBehr7BtD6WUvKz/bCeRKC0Z2Shi9Rg+9m+mWN1PmcJQwDhZXeknY1okB7j5f8FChHTxMRIcwEb4D8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6556
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Tejun,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   de2f378f2b771b39594c04695feee86476743a69
+commit: f0e1a0643a59bf1f922fa209cec86a170b784f3f sched_ext: Implement BPF extensible scheduler class
+date:   5 months ago
+config: powerpc-randconfig-r054-20241110 (https://download.01.org/0day-ci/archive/20241111/202411110405.iwIkOMKq-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241111/202411110405.iwIkOMKq-lkp@intel.com/reproduce)
 
-On Sun, Nov 10, 2024 at 10:02:50AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> [v1] -> v2: Comment and documentation updates.
-> 
-> In sched_ext API, a repeatedly reported pain point is the overuse of the
-> verb "dispatch" and confusion around "consume":
-> 
-> - ops.dispatch()
-> - scx_bpf_dispatch[_vtime]()
-> - scx_bpf_consume()
-> - scx_bpf_dispatch[_vtime]_from_dsq*()
-> 
-> This overloading of the term is historical. Originally, there were only
-> built-in DSQs and moving a task into a DSQ always dispatched it for
-> execution. Using the verb "dispatch" for the kfuncs to move tasks into these
-> DSQs made sense.
-> 
-> Later, user DSQs were added and scx_bpf_dispatch[_vtime]() updated to be
-> able to insert tasks into any DSQ. The only allowed DSQ to DSQ transfer was
-> from a non-local DSQ to a local DSQ and this operation was named "consume".
-> This was already confusing as a task could be dispatched to a user DSQ from
-> ops.enqueue() and then the DSQ would have to be consumed in ops.dispatch().
-> Later addition of scx_bpf_dispatch_from_dsq*() made the confusion even worse
-> as "dispatch" in this context meant moving a task to an arbitrary DSQ from a
-> user DSQ.
-> 
-> Clean up the API with the following renames:
-> 
-> 1. scx_bpf_dispatch[_vtime]()           -> scx_bpf_dsq_insert[_vtime]()
-> 2. scx_bpf_consume()                    -> scx_bpf_dsq_move_to_local()
-> 3. scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()
-> 
-> This patchset is on top of sched_ext/for-6.13 72b85bf6a7f6 ("sched_ext:
-> scx_bpf_dispatch_from_dsq_set_*() are allowed from unlocked context") and
-> contains the following patches:
-> 
->  0001-sched_ext-Rename-scx_bpf_dispatch-_vtime-to-scx_bpf_.patch
->  0002-sched_ext-Rename-scx_bpf_consume-to-scx_bpf_dsq_move.patch
->  0003-sched_ext-Rename-scx_bpf_dispatch-_vtime-_from_dsq-s.patch
-> 
-> and is always available in the following git branch:
-> 
->  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-api-rename-dispatch-v2
-> 
-> diffstat follows. Thanks.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411110405.iwIkOMKq-lkp@intel.com/
 
-Looks good to me, thanks!
+All warnings (new ones prefixed by >>):
 
-Acked-by: Andrea Righi <arighi@nvidia.com>
+   In file included from kernel/sched/build_policy.c:25:
+   In file included from include/linux/livepatch.h:13:
+   In file included from include/linux/ftrace.h:10:
+   In file included from include/linux/trace_recursion.h:5:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from arch/powerpc/include/asm/hardirq.h:6:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/powerpc/include/asm/io.h:24:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from kernel/sched/build_policy.c:61:
+   kernel/sched/ext.c:3322:35: warning: bitwise operation between different enumeration types ('enum bpf_type_flag' and 'enum bpf_reg_type') [-Wenum-enum-conversion]
+    3322 |                 info->reg_type = PTR_MAYBE_NULL | PTR_TO_BTF_ID | PTR_TRUSTED;
+         |                                  ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~
+>> kernel/sched/ext.c:3538:31: warning: bitwise operation between different enumeration types ('enum scx_enq_flags' and 'enum scx_deq_flags') [-Wenum-enum-conversion]
+    3538 |         WRITE_ONCE(v, SCX_ENQ_WAKEUP | SCX_DEQ_SLEEP);
+         |                       ~~~~~~~~~~~~~~ ^ ~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:61:18: note: expanded from macro 'WRITE_ONCE'
+      61 |         __WRITE_ONCE(x, val);                                           \
+         |                         ^~~
+   include/asm-generic/rwonce.h:55:33: note: expanded from macro '__WRITE_ONCE'
+      55 |         *(volatile typeof(x) *)&(x) = (val);                            \
+         |                                        ^~~
+   3 warnings generated.
 
--Andrea
+
+vim +3538 kernel/sched/ext.c
+
+  3523	
+  3524	
+  3525	/********************************************************************************
+  3526	 * System integration and init.
+  3527	 */
+  3528	
+  3529	void __init init_sched_ext_class(void)
+  3530	{
+  3531		s32 cpu, v;
+  3532	
+  3533		/*
+  3534		 * The following is to prevent the compiler from optimizing out the enum
+  3535		 * definitions so that BPF scheduler implementations can use them
+  3536		 * through the generated vmlinux.h.
+  3537		 */
+> 3538		WRITE_ONCE(v, SCX_ENQ_WAKEUP | SCX_DEQ_SLEEP);
+  3539	
+  3540		BUG_ON(rhashtable_init(&dsq_hash, &dsq_hash_params));
+  3541		init_dsq(&scx_dsq_global, SCX_DSQ_GLOBAL);
+  3542	#ifdef CONFIG_SMP
+  3543		BUG_ON(!alloc_cpumask_var(&idle_masks.cpu, GFP_KERNEL));
+  3544		BUG_ON(!alloc_cpumask_var(&idle_masks.smt, GFP_KERNEL));
+  3545	#endif
+  3546		for_each_possible_cpu(cpu) {
+  3547			struct rq *rq = cpu_rq(cpu);
+  3548	
+  3549			init_dsq(&rq->scx.local_dsq, SCX_DSQ_LOCAL);
+  3550			INIT_LIST_HEAD(&rq->scx.runnable_list);
+  3551		}
+  3552	}
+  3553	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
