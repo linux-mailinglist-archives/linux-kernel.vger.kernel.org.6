@@ -1,169 +1,171 @@
-Return-Path: <linux-kernel+bounces-403291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAC59C3399
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:54:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AEE9C339B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7448A1F213EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6588C1C20A05
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF6980BF8;
-	Sun, 10 Nov 2024 15:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BCC13A3F3;
+	Sun, 10 Nov 2024 15:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YEDqGYFC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MNjM+Zdp"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A7D762F7;
-	Sun, 10 Nov 2024 15:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3EE83CD2;
+	Sun, 10 Nov 2024 15:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731254001; cv=none; b=aKQ77hgwxGPmiQu3aBMr9kbo84WNhHZYHFYSofC6+f+4Xasun4AbaKPwgHLh9avzcC9deNI0gTW4qi/k5DGNIgN0nBoKckvJ/P3+/otjAkc01s1QpXd8fkyMJfhDPnbNcwmo99Als8DA0eNNAfocgNUGm1BvEmsELQZ7hgyaVpY=
+	t=1731254017; cv=none; b=cqDJwH8XuOt8SeFxkvs4EjOFVFJCymjRBl0xfO1r7JyEcrHOKlkS1d3amkQxIJi6jxpXVIBa+JeWmfisCofbBB40uzlj4YYI/e443dKD+5Iu57Cgx/0Ddh6rK6AtIXzTKt0Ghwzue8yK+vBnHR4f3rqQI7fW4WQHea0H3c62G2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731254001; c=relaxed/simple;
-	bh=jvD2CCTe+oFNrodgQj6jd2E9spr6i3/DFNz2P5FA7lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KheI1w7tu4rqVZRjqpR7KlVutv891J2j2AoK0u3MMINtHGfBqsDPquKBtojuEcLdyvb2CgEOBZQZ90bnvisDkDZsnI6N/mKWsMDs6C2y6iLkPNN+TClHtcam66S481PIPqvoySA3sES/OqyxeF20w6/HvOytO09allgZY68JBvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YEDqGYFC; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731253999; x=1762789999;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jvD2CCTe+oFNrodgQj6jd2E9spr6i3/DFNz2P5FA7lc=;
-  b=YEDqGYFCDUuYhSQbYRS+z/zZXYhpXiXlFMqID5wr6CO3SG7J24Hv58pv
-   RDAD5dTM3IofNqQOG9V18uhdq/nCU5qEX9d7nKXHte2xodQndQ2TYhfx2
-   qJUO5MyU2QKDUo89dgn19+K3yjlz8yzxpcQ5ON+6Iy29P6J9+3TwpcMSe
-   AuiN9oMFESDdKkINgBX4AD9E11/MBxgoOVKvoXZ57Iym7uF18HbeepkmJ
-   EmWHahWPoPJukTc7H04uGYEUVWRgjIORh/vGwHOFITjawZubPLJbuDDi6
-   JQY2tf66esvICa42HtwGQYt99FC1SfzznjOb/Ehm8JBcSEAeSbLngPF0F
-   g==;
-X-CSE-ConnectionGUID: XIEc5d66QEytCrjBRfjzUQ==
-X-CSE-MsgGUID: Tip5aJ2hT0yWpj2ajCwl5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="41697749"
-X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
-   d="scan'208";a="41697749"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 07:53:19 -0800
-X-CSE-ConnectionGUID: yGlTB8FqT9qEoPc4TbJENA==
-X-CSE-MsgGUID: LDhMPhzvTGeSkyRgbqxGtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
-   d="scan'208";a="117333324"
-Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 10 Nov 2024 07:53:17 -0800
-Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tAAFV-0000DV-2r;
-	Sun, 10 Nov 2024 15:53:13 +0000
-Date: Sun, 10 Nov 2024 23:52:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Karol Przybylski <karprzy7@gmail.com>, hverkuil@xs4all.nl,
-	mchehab@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Karol Przybylski <karprzy7@gmail.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH] media: cec: extron-da-hd-4k-plus: add return check for
- wait_for_completion*()
-Message-ID: <202411102341.VuOHMHGh-lkp@intel.com>
-References: <20241110125814.1899076-1-karprzy7@gmail.com>
+	s=arc-20240116; t=1731254017; c=relaxed/simple;
+	bh=/0XsHzXkCXc1NtLkMnoORaYMQgW4Udgyy5wBw+gf/D4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SCkMrERv9zU1ei48acrYUS3xUFskdbHggizeODdtOdundDqeX1iMKoP9M+h2J4a3IeQpCKZP16OXvAQRJNBY2O7MXTWIPwhSCNjgU1MjuXWVa92jgXuSB/dkmGGb1qTWMZ1BiaKJdKUDuO9UfQcXuTbaz1r1gMVcSr77Wqm80lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MNjM+Zdp; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7edb6879196so2534196a12.3;
+        Sun, 10 Nov 2024 07:53:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731254015; x=1731858815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6t4/WEwGhfU/qAlitxUy+xJJMJ0Hs4yP3buYEjH58Q=;
+        b=MNjM+ZdpwH50QJqlOH1MTOROokihcuLqV+Le26qIVPHkbrH0XYBzFgJkjIkTgU6Y7G
+         gsLNmIKvs45mRlWbJAVH8fRIkYZ89q803Gz8MkE+otl40KHSnGB5SzgOzI7K9spg19Iw
+         itR3O+QY7ItlmXz4lM6WqzF0pNM+6OjUDmsLxs8hWU5ciERoJluxk3qjm9QiDMeQUa+U
+         EpCjMWrGIPz4QsygUgRPtsQtgkzWhbH0JwfxeDMnkH4QLnaJQJ36H4PMnx2OmWVLfIf+
+         z2m93UQ1DYza0wRLcYD/trdVdj24mavTX1Rt4mYyfIxkK+zLWOVROcy7CnkWvSVf1YBG
+         +hVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731254015; x=1731858815;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X6t4/WEwGhfU/qAlitxUy+xJJMJ0Hs4yP3buYEjH58Q=;
+        b=tSsuui7zHb5orn8MzURXRI9x4z6J0zVcGkIbwQ4g9M3/+jGKveMkIGqYeOhGkuc8m+
+         5bzptwdgXHmfd48QOQ78l1yt658pZ5gWzPPXNeeXf3+BN4Od664/6ntsPVWff2ZVkelh
+         o6rQVdpRL5rqSS96k6haBhcuv7ASd+fjTRn0BZB3lDIG1CdTjOKI1mKq2i8rmWyBFt1F
+         /lydB7bOn9YeZM3/4vA1h24MDdpCmRk2+Ei3lgkZh6TiwFQoVQ9lHW3tpPX9hs6W4Y5t
+         LlddTs0yEQg2Pb7TyIFlwiqvqwyqonKuBvqkgSM41YZoZU7NPxVqq4OtWWzImaxZvdJO
+         m4mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIoD4l5lRE9rNuEDtcrvVPwHvdH4zRe++ZISe/9QneKe0Ycykk87Ruao/Dw76qDapb+k5Hecbi/5D8Uw=@vger.kernel.org, AJvYcCXBy5PmiBFZyFUQFz8Fd9BkrgW4mH3O+0Rh9mcLl4yOat9SNLX23z2kmvB81YV1lrRjNvQOwhIH@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHcFIzpVAof+wAiPaGdfl3YiTeYuUv4EDFgW4cMjL86d/y2V9h
+	TtnTByI4PFGCFFqlTGbZXjz7CUZ1Ck+oocsr53OqLFFEcrpBYalN
+X-Google-Smtp-Source: AGHT+IEpl0f0r1q6JJUA2Cwl1MIzDtE++DW+3p0pbUhI8QlOdmrVNYNGg2McxT/6Ec2l5dTi/JqobQ==
+X-Received: by 2002:a17:90b:48c9:b0:2e2:b204:90c5 with SMTP id 98e67ed59e1d1-2e9b1797cedmr13720138a91.33.1731254015486;
+        Sun, 10 Nov 2024 07:53:35 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a541da0sm10047755a91.13.2024.11.10.07.53.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Nov 2024 07:53:34 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d440b33c-8634-46c2-8fb6-8ee4e7b43534@roeck-us.net>
+Date: Sun, 10 Nov 2024 07:53:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110125814.1899076-1-karprzy7@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hagar@microsoft.com,
+ broonie@kernel.org
+References: <20241107064547.006019150@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Karol,
+On 11/6/24 22:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.7 release.
+> There are 249 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
+> Anything received after that time might be too late.
+> 
+[ ... ]
 
-kernel test robot noticed the following build errors:
+> Naohiro Aota <naohiro.aota@wdc.com>
+>      btrfs: fix error propagation of split bios
+> 
 
-[auto build test ERROR on linuxtv-media-stage/master]
-[also build test ERROR on linus/master v6.12-rc6 next-20241108]
-[cannot apply to media-tree/master sailus-media-tree/streams sailus-media-tree/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This patch triggers:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Karol-Przybylski/media-cec-extron-da-hd-4k-plus-add-return-check-for-wait_for_completion/20241110-210018
-base:   https://git.linuxtv.org/media_stage.git master
-patch link:    https://lore.kernel.org/r/20241110125814.1899076-1-karprzy7%40gmail.com
-patch subject: [PATCH] media: cec: extron-da-hd-4k-plus: add return check for wait_for_completion*()
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241110/202411102341.VuOHMHGh-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241110/202411102341.VuOHMHGh-lkp@intel.com/reproduce)
+ERROR: modpost: "__cmpxchg_called_with_bad_pointer" [fs/btrfs/btrfs.ko] undefined!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411102341.VuOHMHGh-lkp@intel.com/
+or:
 
-All errors (new ones prefixed by >>):
+fs/btrfs/bio.o: In function `btrfs_bio_alloc':
+fs/btrfs/bio.c:73: undefined reference to `__cmpxchg_called_with_bad_pointer'
+fs/btrfs/bio.o: In function `__cmpxchg':
+arch/xtensa/include/asm/cmpxchg.h:78: undefined reference to `__cmpxchg_called_with_bad_pointer'
 
-   drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c: In function 'extron_read_edid':
->> drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c:563:17: error: 'ret' undeclared (first use in this function); did you mean 'net'?
-     563 |                 ret = wait_for_completion_killable_timeout(&extron->edid_completion,
-         |                 ^~~
-         |                 net
-   drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c:563:17: note: each undeclared identifier is reported only once for each function it appears in
+on xtensa builds with btrfs enabled.
 
+Upstream commit e799bef0d9c8 ("xtensa: Emulate one-byte cmpxchg") is
+required to fix the problem.
 
-vim +563 drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
+Guenter
 
-   540	
-   541	static void extron_read_edid(struct extron_port *port)
-   542	{
-   543		struct extron *extron = port->extron;
-   544		char cmd[10], reply[10];
-   545		unsigned int idx;
-   546	
-   547		idx = port->port.port + (port->is_input ? 0 : extron->num_in_ports);
-   548		snprintf(cmd, sizeof(cmd), "WR%uEDID", idx);
-   549		snprintf(reply, sizeof(reply), "EdidR%u", idx);
-   550		if (mutex_lock_interruptible(&extron->edid_lock))
-   551			return;
-   552		if (port->read_edid)
-   553			goto unlock;
-   554		extron->edid_bytes_read = 0;
-   555		extron->edid_port = port;
-   556		port->edid_blocks = 0;
-   557		if (!port->has_edid)
-   558			goto no_edid;
-   559	
-   560		extron->edid_reading = true;
-   561	
-   562		if (!extron_send_and_wait(extron, port, cmd, reply)) {
- > 563			ret = wait_for_completion_killable_timeout(&extron->edid_completion,
-   564							     msecs_to_jiffies(1000));
-   565			if (ret < 0)
-   566				goto unlock;
-   567		}
-   568		if (port->edid_blocks) {
-   569			extron_parse_edid(port);
-   570			port->read_edid = true;
-   571			if (!port->is_input)
-   572				v4l2_ctrl_s_ctrl(port->ctrl_tx_edid_present, 1);
-   573		}
-   574	no_edid:
-   575		extron->edid_reading = false;
-   576	unlock:
-   577		mutex_unlock(&extron->edid_lock);
-   578		cancel_delayed_work_sync(&extron->work_update_edid);
-   579		if (manufacturer_name[0])
-   580			schedule_delayed_work(&extron->work_update_edid,
-   581					      msecs_to_jiffies(1000));
-   582	}
-   583	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
