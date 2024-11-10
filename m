@@ -1,113 +1,179 @@
-Return-Path: <linux-kernel+bounces-403076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9039C30B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 04:11:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E45D9C30C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 04:36:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAD58B2164C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 03:11:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BEAE1C20F32
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 03:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA8B14600F;
-	Sun, 10 Nov 2024 03:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD9E145324;
+	Sun, 10 Nov 2024 03:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dt1k2qJu"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="CIikVB1a"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FB913E028
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 03:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD292B9A6;
+	Sun, 10 Nov 2024 03:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731208277; cv=none; b=XVc3fZIQ0F8kEvLKu9QKvUrfB2k7lwv2c69iJFPJkPleOlLDRw/nRBr5c5SyvndlYEH5VNzDs1lvZ7Stek6aVjJ7U9mN1cn9iJR/Mp3/oeqiNqxUsf2fs7Noa7bKUDVi+ngF6RoPKD8JzaO1WA4GWjC8x9wurnQntvHeHimESnY=
+	t=1731209771; cv=none; b=KSOomT5c2+x3rqxcnDNhPvOSw06paxOomdw2JR+12hEQ6UOTtLAvskDsBQqROSVE4n1W05sEEjnxDOCdi2gejzhCiJSkgrzCewR/d19FapdluA8s7poaIRQ927HhwJFWTYQ1wi6jKkixEc+uv8QIxFFQfaEk02YJhj8OdN2cI9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731208277; c=relaxed/simple;
-	bh=g/KMlcMVXNTbNZFri33l43WlCq7/c4sXqfwmJIHrgjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UV0a8AllwG8DZfnwvYssXKxnNRIXGMVrsTxJoOw9WNZpMIxpJC5IgeSOU9MXSoTr46ixFexW6K4aN6aHyv2i9cc6G1MKd6vdaXSjq3T+FwtNc7QiDM3rPYpCTK5iYmc/UF0fCZfKsaBA6cjTm4Ss8ePSKsQfeXYBAcVwD3OvmZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dt1k2qJu; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314f38d274so43043265e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 19:11:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731208273; x=1731813073; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cko2Ugguk3Az/odluOUc+24GVofiG+QXX2HCknsFNAE=;
-        b=Dt1k2qJuuSTp7HMcRV3W5GiyHEbvFzRd2fRbGqsGsSEzyK2WEUJzbj9uNPcgg9sO2Y
-         RKNbiE6KtWxV0x3TurM8XcNmApEbN5IVSezJ0JQV1uymXZOiNN3fAF/8e81QnGBbwNh3
-         kLyGbUbtNM50qIGEyw4cOBZSgF0IhambRr6p2BZY0+jsKO/QpQfwqQs0vE0LsqlO4HIW
-         5AeTASqXme3edTLgcSsKfm88idioEhXrvniCN7ajVZGbhHChE2dbL/CnrzbDYitdWUKu
-         XQya9t6QEBd4TyVD/foHGZrXCktAAG8/xZWtj1lhvhrtY5xCNKrJNrIW7ugbMS7w7bU+
-         F4KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731208273; x=1731813073;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cko2Ugguk3Az/odluOUc+24GVofiG+QXX2HCknsFNAE=;
-        b=lnK64sHTgF1F1ngNCfWmlEjzoOJaEJyQl/FJHMs/pQtnYPXP5Mv133SpjtA9/OnveS
-         eMqZvykhfAJBBKGSfz3SuIRoATLEUNQvaRIJCoy6cGrxQsp+vlle26lJjQchW1b8lM2x
-         iqkcTXetzPrWuTPqmPLoSUiTUzGPFQOCob32NsSsDDlXXo5soVmra1/TfuNU8zYHS1nQ
-         FcmF1VObc139LLq4ZU9O72gBKRn4RQitN/wFkGk0bKziXLxmD8vp5cooBbWA+Y9hABbP
-         S9q2VqNsiInaKTqh/MSiU9Fdt7X5/dUscgLt7hR9oRiq39qBhnWGr51H5tsVYtevS+t7
-         fMTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSAOfd9QiN7o/GsB26vFaNAiudQk3OvEvqNCHR0A5UM4zK4clVCo9L6CugZ8mqpV7dDILT5C54d1ZSMxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+0djL06yAKKjjX/KWwVcmcvuvq0QU057Fj2V+M6rMbdYG9wkh
-	h86AWY6q75fQ966XeXeyb9S4VfRIo0BxnL9XULA7BuEmTbEJXnLf615KdXmZ98A=
-X-Google-Smtp-Source: AGHT+IFaIidm3QPf6bn0cWOlTbHdw3gWZCS4Ki1/N5fALPksgNqv20r6Ewl7HK2fNVn1X+eNagNWnA==
-X-Received: by 2002:a05:600c:1396:b0:431:5c3d:1700 with SMTP id 5b1f17b1804b1-432b7518e11mr80462395e9.21.1731208272963;
-        Sat, 09 Nov 2024 19:11:12 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c1f61sm130198805e9.35.2024.11.09.19.11.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 19:11:12 -0800 (PST)
-Message-ID: <05936fd6-862e-4727-be0a-22eaa8ab4448@linaro.org>
-Date: Sun, 10 Nov 2024 03:11:10 +0000
+	s=arc-20240116; t=1731209771; c=relaxed/simple;
+	bh=xeeEAsZ6hAs8YrfSU1hjWWu4hokLQBCXVnoDAzkV5Z0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ToaZlotxp3BpA+PMEBosyYMgYr1lb3/j4s8UeC8M1Eo6b5YPxk05ZscVE8NztpkyF+3aO1lmK18Oqm4O/045V4wICE/MiMghLxtU4VRsofAs7qnzdC9YKWCTSxKonbQgUGq8NGlaAaJo9NrDk8ZMXJeoCC9yyyGrzhDg1Hy4wQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=CIikVB1a; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 03/28] media: iris: implement iris v4l2 file ops
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nicolas Dufresne <nicolas@ndufresne.ca>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
- <20241105-qcom-video-iris-v5-3-a88e7c220f78@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241105-qcom-video-iris-v5-3-a88e7c220f78@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731209759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nwPrzkdLlKgirMtUGn9oOtxfg4Pp97eFE5XX75PE9vw=;
+	b=CIikVB1aMlZptZeWsg7YoKPCio/ukwu/H1V95yR9NJciE3Nu8zIjjfQlyB7OEKPygW5P6E
+	pQEnU9jXr0YNpZIwRdX4U61CQixlhjJl7Otfb5dpQeRrr+xb0Dr5vkretReyQ5/zvTD60T
+	gg/Yz9QwAsm9slFkbqnyf3k7IFqCLn2jvbtlbRCUbXU8lu/6nnWLL8uuTc43ct/hrt9OBm
+	lkyCsLlKpVB8rXs1iP9j+DxlJcwx/028/4eX9JUthEHl5aAadWFajjuXKCl9zleBKkiARB
+	TxaRQ5MC1WEku4S7WBIQ9eR79+5qw3ITGpWm5OAHGAR1iXOtIhwDssn6x8E7oA==
+Date: Sun, 10 Nov 2024 04:35:58 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: wens@csie.org
+Cc: linux-sunxi@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jernej.skrabec@gmail.com, samuel@sholland.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, Ondrej Jirman
+ <megi@xff.cz>, Andrey Skvortsov <andrej.skvortzov@gmail.com>
+Subject: Re: [PATCH] arm64: dts: allwinner: pinephone: Add mount matrix to
+ accelerometer
+In-Reply-To: <6f2c860c442838bd9892d5861b82e73e@manjaro.org>
+References: <129f0c754d071cca1db5d207d9d4a7bd9831dff7.1726773282.git.dsimic@manjaro.org>
+ <bef0570137358c6c4a55f59e7a4977c4@manjaro.org>
+ <CAGb2v66aody60h=Bpk49pxogq93FekmO48uThPET2RKxvx=OGw@mail.gmail.com>
+ <cfc090cb87a8b926116d1a436694d17d@manjaro.org>
+ <CAGb2v67fLPf-yKObuds3LC77gT_W_OmgSK5y2KotRC-Zn9aL7w@mail.gmail.com>
+ <6f2c860c442838bd9892d5861b82e73e@manjaro.org>
+Message-ID: <2c650672c86fd21d42503b218760384c@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 05/11/2024 06:55, Dikshita Agarwal wrote:
-> Implement open, close and poll ops.
+Hello Chen-Yu,
+
+On 2024-11-06 07:31, Dragan Simic wrote:
+> On 2024-11-06 03:19, Chen-Yu Tsai wrote:
+>> On Sat, Oct 26, 2024 at 12:11 AM Dragan Simic <dsimic@manjaro.org> 
+>> wrote:
+>>> On 2024-10-25 16:47, Chen-Yu Tsai wrote:
+>>> > On Wed, Oct 23, 2024 at 5:11 AM Dragan Simic <dsimic@manjaro.org>
+>>> > wrote:
+>>> >> On 2024-09-19 21:15, Dragan Simic wrote:
+>>> >> > The way InvenSense MPU-6050 accelerometer is mounted on the user-facing
+>>> >> > side
+>>> >> > of the Pine64 PinePhone mainboard, which makes it rotated 90 degrees
+>>> >> > counter-
+>>> >> > clockwise, [1] requires the accelerometer's x- and y-axis to be
+>>> >> > swapped, and
+>>> >> > the direction of the accelerometer's y-axis to be inverted.
+>>> >> >
+>>> >> > Rectify this by adding a mount-matrix to the accelerometer definition
+>>> >> > in the Pine64 PinePhone dtsi file.
+>>> >> >
+>>> >> > [1] https://files.pine64.org/doc/PinePhone/PinePhone%20mainboard%20bottom%20placement%20v1.1%2020191031.pdf
+>>> >> >
+>>> >> > Fixes: 91f480d40942 ("arm64: dts: allwinner: Add initial support for
+>>> >> > Pine64 PinePhone")
+>>> >> > Cc: stable@vger.kernel.org
+>>> >> > Helped-by: Ondrej Jirman <megi@xff.cz>
+>>> >> > Helped-by: Andrey Skvortsov <andrej.skvortzov@gmail.com>
+>>> >> > Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>>> >>
+>>> >> Just a brief reminder about this patch...  Please, let me know if some
+>>> >> further work is needed for it to become accepted.
+>>> >
+>>> > There's no "Helped-by" tag, and checkpatch would complain. The closest
+>>> > would be either Suggested-by or Co-developed-by, but with the latter
+>>> > you would also need their Signed-off-by.
+>>> 
+>>> Thanks for your response.  You're totally right about checkpatch.pl
+>>> not supporting Helped-by tags, but including neither Suggested-by
+>>> nor Co-developed-by would fit very well in this case, because the
+>>> associated level of credit falls right somewhere between what's
+>>> indicated by these two tags.
+>>> 
+>>> > I can change it to Suggested-by if that's OK with you.
+>>> 
+>>> I've created and submitted a patch [*] that adds support for 
+>>> Helped-by
+>>> tags to checkpatch.pl.  Let's see what kind of feedback that patch
+>>> will receive, and then we'll be able to move forward accordingly.
+>> 
+>> There doesn't seem to be any activity. Maybe also try adding it to the
+>> 
+>>     Documentation/process/submitting-patches.rst
+>> 
+>> document?
 > 
-> Open:
-> Configure the vb2 queue and v4l2 file handler. Allocate a video instance
-> and add the instance to core instance list.
+> Good idea, thanks!  I've created and submitted the v2 [**] of my
+> other patch, so it now also adds a description of the proposed
+> Helped-by tag to Documentation/process/submitting-patches.rst.
+> Let's see will that spark some interest.
+
+Please, let's move forward by "downgrading" the Helped-by tags
+in this patch to Suggested-by tags, as you already suggested, to
+avoid possible delays with having this mount-matrix fix merged.
+
+We'll see what will happen with the proposed acceptance of the
+Helped-by tag, I haven't given up on that yet. :)
+
+> [*] 
+> https://lore.kernel.org/linux-kernel/0e1ef28710e3e49222c966f07958a9879fa4e903.1729871544.git.dsimic@manjaro.org/T/#u
+> [**] 
+> https://lore.kernel.org/linux-kernel/cover.1730874296.git.dsimic@manjaro.org/T/#u
 > 
-> Close:
-> Free the instance and remove it from core instance list.
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> >> > ---
+>>> >> >
+>>> >> > Notes:
+>>> >> >     See also the linux-sunxi thread [2] that has led to this patch,
+>>> >> > which
+>>> >> >     provides a rather detailed analysis with additional details and
+>>> >> > pictures.
+>>> >> >     This patch effectively replaces the patch submitted in that thread.
+>>> >> >
+>>> >> >     [2]
+>>> >> > https://lore.kernel.org/linux-sunxi/20240916204521.2033218-1-andrej.skvortzov@gmail.com/T/#u
+>>> >> >
+>>> >> >  arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi | 3 +++
+>>> >> >  1 file changed, 3 insertions(+)
+>>> >> >
+>>> >> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> >> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> >> > index 6eab61a12cd8..b844759f52c0 100644
+>>> >> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> >> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinephone.dtsi
+>>> >> > @@ -212,6 +212,9 @@ accelerometer@68 {
+>>> >> >               interrupts = <7 5 IRQ_TYPE_EDGE_RISING>; /* PH5 */
+>>> >> >               vdd-supply = <&reg_dldo1>;
+>>> >> >               vddio-supply = <&reg_dldo1>;
+>>> >> > +             mount-matrix = "0", "1", "0",
+>>> >> > +                            "-1", "0", "0",
+>>> >> > +                            "0", "0", "1";
+>>> >> >       };
+>>> >> >  };
+>>> >>
 
