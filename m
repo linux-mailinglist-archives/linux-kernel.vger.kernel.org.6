@@ -1,121 +1,169 @@
-Return-Path: <linux-kernel+bounces-403290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A209C3397
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAC59C3399
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7771F20ACB
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7448A1F213EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCB015A84E;
-	Sun, 10 Nov 2024 15:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF6980BF8;
+	Sun, 10 Nov 2024 15:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBRu+jJa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YEDqGYFC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4BA13DDDD;
-	Sun, 10 Nov 2024 15:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A7D762F7;
+	Sun, 10 Nov 2024 15:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731253957; cv=none; b=mXwXDY10EEnWx0KVm12d7RIjXTOBvtc0EvNxOXRfHKzwUyHs1DUjA2CUYEGtl2W7HQw06umAn85ocDe4hLmlfVlYPJEjJDWMPi8aJXNGvp7bf7Xyi1wy/QPTJ58E5PKEeoEKBl/bbfSUCagAH9qLwwLNP3Kwslfp6G8IYSJYZCY=
+	t=1731254001; cv=none; b=aKQ77hgwxGPmiQu3aBMr9kbo84WNhHZYHFYSofC6+f+4Xasun4AbaKPwgHLh9avzcC9deNI0gTW4qi/k5DGNIgN0nBoKckvJ/P3+/otjAkc01s1QpXd8fkyMJfhDPnbNcwmo99Als8DA0eNNAfocgNUGm1BvEmsELQZ7hgyaVpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731253957; c=relaxed/simple;
-	bh=kzuMS+tyBQSahtSqkEji9Egz79KXjp5UmvcHMUaWrrg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gJvNcfERjNXr7W/RM5NdyR1zvZ6tj1d1meN4xNMb2HvV9In067SdGhDhyVTO3rFvCKJeC6nNhCaZFA2n+MRKa0zYYMXrQqf0F5sycgPRD7oo/PbTap5oZHp6OOkcExkzDM7SpzOpAK4Rh/a3DC7q5f4I6R9XGqMwaqr0/gATsHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBRu+jJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E562FC4CECF;
-	Sun, 10 Nov 2024 15:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731253956;
-	bh=kzuMS+tyBQSahtSqkEji9Egz79KXjp5UmvcHMUaWrrg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CBRu+jJaXPo18SnMpvvYDfvy7jg5vEN6mgf0tmmvOXqbh3FCr7CQM0FhL48yUGbmv
-	 jOj8CfVIE0cmu8+WsD2inq5k/um9mUmZDb6s19oWyJvyHWlQxKaE5Fh8tbVXqBynJf
-	 zIBgUZB0Dbvdqeslp83y77m0Qk4lXD7vovZr8NAJv0B6BN/HXGNRRZpeuL2akGGSFu
-	 +4r+F/r9RGDwokJt6VtZhv3VLzX1oUvYBbcOsuQEkmvDSzKF6ymgYzTFYSHWrsQbyP
-	 4ZLwY80bgMqcXqOC5yyJMi9JrVx+hcTKvW22KYR+kEG7eBoQkGiF/6eZ+fiGYCJbj/
-	 FCPdNfXSqeU6w==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v19 19/19] bpf: Use ftrace_get_symaddr() in get_entry_ip()
-Date: Mon, 11 Nov 2024 00:52:31 +0900
-Message-ID: <173125395146.172790.15945895464150788842.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <173125372214.172790.6929368952404083802.stgit@devnote2>
-References: <173125372214.172790.6929368952404083802.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1731254001; c=relaxed/simple;
+	bh=jvD2CCTe+oFNrodgQj6jd2E9spr6i3/DFNz2P5FA7lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KheI1w7tu4rqVZRjqpR7KlVutv891J2j2AoK0u3MMINtHGfBqsDPquKBtojuEcLdyvb2CgEOBZQZ90bnvisDkDZsnI6N/mKWsMDs6C2y6iLkPNN+TClHtcam66S481PIPqvoySA3sES/OqyxeF20w6/HvOytO09allgZY68JBvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YEDqGYFC; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731253999; x=1762789999;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jvD2CCTe+oFNrodgQj6jd2E9spr6i3/DFNz2P5FA7lc=;
+  b=YEDqGYFCDUuYhSQbYRS+z/zZXYhpXiXlFMqID5wr6CO3SG7J24Hv58pv
+   RDAD5dTM3IofNqQOG9V18uhdq/nCU5qEX9d7nKXHte2xodQndQ2TYhfx2
+   qJUO5MyU2QKDUo89dgn19+K3yjlz8yzxpcQ5ON+6Iy29P6J9+3TwpcMSe
+   AuiN9oMFESDdKkINgBX4AD9E11/MBxgoOVKvoXZ57Iym7uF18HbeepkmJ
+   EmWHahWPoPJukTc7H04uGYEUVWRgjIORh/vGwHOFITjawZubPLJbuDDi6
+   JQY2tf66esvICa42HtwGQYt99FC1SfzznjOb/Ehm8JBcSEAeSbLngPF0F
+   g==;
+X-CSE-ConnectionGUID: XIEc5d66QEytCrjBRfjzUQ==
+X-CSE-MsgGUID: Tip5aJ2hT0yWpj2ajCwl5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="41697749"
+X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
+   d="scan'208";a="41697749"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 07:53:19 -0800
+X-CSE-ConnectionGUID: yGlTB8FqT9qEoPc4TbJENA==
+X-CSE-MsgGUID: LDhMPhzvTGeSkyRgbqxGtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
+   d="scan'208";a="117333324"
+Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 10 Nov 2024 07:53:17 -0800
+Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAAFV-0000DV-2r;
+	Sun, 10 Nov 2024 15:53:13 +0000
+Date: Sun, 10 Nov 2024 23:52:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Karol Przybylski <karprzy7@gmail.com>, hverkuil@xs4all.nl,
+	mchehab@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Karol Przybylski <karprzy7@gmail.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] media: cec: extron-da-hd-4k-plus: add return check for
+ wait_for_completion*()
+Message-ID: <202411102341.VuOHMHGh-lkp@intel.com>
+References: <20241110125814.1899076-1-karprzy7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110125814.1899076-1-karprzy7@gmail.com>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi Karol,
 
-Rewrite get_entry_ip() to use ftrace_get_symaddr() macro.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v19:
-  - Use ftrace_get_symaddr() instead of introducing new arch dependent code.
-  - Also, replace x86 code with ftrace_get_symaddr(), which does the same
-   thing.
----
- kernel/trace/bpf_trace.c |   19 ++-----------------
- 1 file changed, 2 insertions(+), 17 deletions(-)
+[auto build test ERROR on linuxtv-media-stage/master]
+[also build test ERROR on linus/master v6.12-rc6 next-20241108]
+[cannot apply to media-tree/master sailus-media-tree/streams sailus-media-tree/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 1532e9172bf9..e848a782bc8d 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -1024,27 +1024,12 @@ static const struct bpf_func_proto bpf_get_func_ip_proto_tracing = {
- 	.arg1_type	= ARG_PTR_TO_CTX,
- };
- 
--#ifdef CONFIG_X86_KERNEL_IBT
- static unsigned long get_entry_ip(unsigned long fentry_ip)
- {
--	u32 instr;
-+	unsigned long ret = ftrace_get_symaddr(fentry_ip);
- 
--	/* We want to be extra safe in case entry ip is on the page edge,
--	 * but otherwise we need to avoid get_kernel_nofault()'s overhead.
--	 */
--	if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
--		if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE)))
--			return fentry_ip;
--	} else {
--		instr = *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
--	}
--	if (is_endbr(instr))
--		fentry_ip -= ENDBR_INSN_SIZE;
--	return fentry_ip;
-+	return ret ? : fentry_ip;
- }
--#else
--#define get_entry_ip(fentry_ip) fentry_ip
--#endif
- 
- BPF_CALL_1(bpf_get_func_ip_kprobe, struct pt_regs *, regs)
- {
+url:    https://github.com/intel-lab-lkp/linux/commits/Karol-Przybylski/media-cec-extron-da-hd-4k-plus-add-return-check-for-wait_for_completion/20241110-210018
+base:   https://git.linuxtv.org/media_stage.git master
+patch link:    https://lore.kernel.org/r/20241110125814.1899076-1-karprzy7%40gmail.com
+patch subject: [PATCH] media: cec: extron-da-hd-4k-plus: add return check for wait_for_completion*()
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20241110/202411102341.VuOHMHGh-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241110/202411102341.VuOHMHGh-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411102341.VuOHMHGh-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c: In function 'extron_read_edid':
+>> drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c:563:17: error: 'ret' undeclared (first use in this function); did you mean 'net'?
+     563 |                 ret = wait_for_completion_killable_timeout(&extron->edid_completion,
+         |                 ^~~
+         |                 net
+   drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c:563:17: note: each undeclared identifier is reported only once for each function it appears in
+
+
+vim +563 drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
+
+   540	
+   541	static void extron_read_edid(struct extron_port *port)
+   542	{
+   543		struct extron *extron = port->extron;
+   544		char cmd[10], reply[10];
+   545		unsigned int idx;
+   546	
+   547		idx = port->port.port + (port->is_input ? 0 : extron->num_in_ports);
+   548		snprintf(cmd, sizeof(cmd), "WR%uEDID", idx);
+   549		snprintf(reply, sizeof(reply), "EdidR%u", idx);
+   550		if (mutex_lock_interruptible(&extron->edid_lock))
+   551			return;
+   552		if (port->read_edid)
+   553			goto unlock;
+   554		extron->edid_bytes_read = 0;
+   555		extron->edid_port = port;
+   556		port->edid_blocks = 0;
+   557		if (!port->has_edid)
+   558			goto no_edid;
+   559	
+   560		extron->edid_reading = true;
+   561	
+   562		if (!extron_send_and_wait(extron, port, cmd, reply)) {
+ > 563			ret = wait_for_completion_killable_timeout(&extron->edid_completion,
+   564							     msecs_to_jiffies(1000));
+   565			if (ret < 0)
+   566				goto unlock;
+   567		}
+   568		if (port->edid_blocks) {
+   569			extron_parse_edid(port);
+   570			port->read_edid = true;
+   571			if (!port->is_input)
+   572				v4l2_ctrl_s_ctrl(port->ctrl_tx_edid_present, 1);
+   573		}
+   574	no_edid:
+   575		extron->edid_reading = false;
+   576	unlock:
+   577		mutex_unlock(&extron->edid_lock);
+   578		cancel_delayed_work_sync(&extron->work_update_edid);
+   579		if (manufacturer_name[0])
+   580			schedule_delayed_work(&extron->work_update_edid,
+   581					      msecs_to_jiffies(1000));
+   582	}
+   583	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
