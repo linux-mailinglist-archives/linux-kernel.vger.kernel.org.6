@@ -1,88 +1,148 @@
-Return-Path: <linux-kernel+bounces-403232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B119C32D3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:31:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985109C32D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD01F212D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:31:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0360BB20D72
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B03BBE5;
-	Sun, 10 Nov 2024 14:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D5A29422;
+	Sun, 10 Nov 2024 14:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYpINlEb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYzTumkP"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A303820323;
-	Sun, 10 Nov 2024 14:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37712914;
+	Sun, 10 Nov 2024 14:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731249082; cv=none; b=OzJ+jY0RZia1fIKjDhaJgvSwuDd2jMNr7MFufbYIEM1ewWLf/PZB3+E3VoJuAGiXglLIqi0IhS3zPpMCLwTTiaTmo1nDVedgNk+kLQN40q/7SEaGd/Avc5vR9B2HKy8uGm4/u50xdAuvtSHy346EC+0NUVCbK9rZRHBVlRBVU+A=
+	t=1731250085; cv=none; b=QDm+AbbgmjwOOvYm9vJEf6O1E3hAQ/+xVPpyg/c5wofGy8Xo6dvL4Gl3QYXMwkM0lZIiM/+QqyffjqXXnIZx2txFB7ZfeaN6Tv+3JYjC5P0Hq6mWSc/LWF9CEoP4Rmqlcd64m4SScdgTTuvc7xbli+FEVS4Nik1txNjopIbk+aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731249082; c=relaxed/simple;
-	bh=VytAkGGjhbJmg9TO5kYnJWf1rKiZjWPDZDxF7GPn6qs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uzUqVGb9qmHdbfg/of9SxvPHwnaAXwU7mVXpRlYMipnzAIBrIF7ZzHFMmH64k4pEE4HNZxHq+oKDeLVz8wOWRbI5L6Xo7zqumn9/YIqtQ9mFkzTgYCG05tdEgiojQ3ZxB5KvPWhiRmhZmt9Ah6W3dQWKxW2hmDqSKw1MEc4PSL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYpINlEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE32C4CECD;
-	Sun, 10 Nov 2024 14:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731249082;
-	bh=VytAkGGjhbJmg9TO5kYnJWf1rKiZjWPDZDxF7GPn6qs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PYpINlEbtPQnhQWyZEmciBDcJS+dKNfikO5butVVXGA0nhUTd52SnD8VfFCR47W/f
-	 +IRX0TxfOVje6W8Y2MEXz6g9oeN8W3l5EZ1PRTWDrp3XBe70HrrYbqKnXq4Q1k3/KU
-	 P3geebeq62749ZXcNfOvPPc/ed4ZKyeTshjpDciEFkOf1KHLAZMXzMJErUru8B9Mf8
-	 l9qBajDH92BKQjTi3PiVfOQljZ+bZoIhqhVjBE5yA7xErM1Z6hkhSSO3IyQJxDNy8K
-	 xcljfTPmvg9b3DGrXk0oGqTZfpoJq2Wcoqe+QuDM2rgHZR8s6FXVJ8sVcFBNRIYPzR
-	 LDeq3zcDPCDgQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: jgg@ziepe.ca, Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com, 
- linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-In-Reply-To: <20241108075743.2652258-1-huangjunxian6@hisilicon.com>
-References: <20241108075743.2652258-1-huangjunxian6@hisilicon.com>
-Subject: Re: [PATCH for-rc 0/2] RDMA/hns: Bugfixes
-Message-Id: <173124907897.105241.13173631230364645221.b4-ty@kernel.org>
-Date: Sun, 10 Nov 2024 09:31:18 -0500
+	s=arc-20240116; t=1731250085; c=relaxed/simple;
+	bh=W0S6wwtZyVHiWXYRDXodn0d3g+JCwdpafbT9/9GjK1s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fA2WrIN8fkXRi0aHz5whbhNsmc5tEcqbgwagXN6MVCKqXaLbIl+fFw82kDlKIh8SLLxxOlBe55+LRi+YGxMsUM8MlLfl3+kI9cit7GcJLEsPgSfHs7ziIOjCgHaAg403r4ckqfl4L+9b70QCRimrCNSd777ggfYt4/6wKydsOD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYzTumkP; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2bd347124so2848514a91.1;
+        Sun, 10 Nov 2024 06:48:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731250083; x=1731854883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mcOz8b4qr56exJz4+nKHKJ/wWB2NsOuN83y1ZKgWdA8=;
+        b=VYzTumkPBxA/12CSovo6mCKTiONizbwQYtRhzKeWXmb0k54vCaTz3Wa6seNnM2y7od
+         R98D0dKHUkq5elBeQx4BAhBg48EVFX4W+jwnVOcbe6Ttxgi5PePms8npzY9638PZALWG
+         e6CcCgPZAtq4VXIZ16q0gQ1zjx9fVClrKg8gQON51EK1hxFd393V9TNhUye91pC0xK64
+         VuSkIQ+Jzh3c5TbbpoShzprGTnivFiOy+EqfDZ6HNRs7wLkUJBwhvgI5OnUT6W4D92r0
+         CRmEt7NTG5FrYWsxc2H23xF2Ef1wxY0xah0CcHTvjs5eDKzPRBDCVQOUScDlqF7FWE5k
+         A5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731250083; x=1731854883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mcOz8b4qr56exJz4+nKHKJ/wWB2NsOuN83y1ZKgWdA8=;
+        b=enfZTVqQ4EKL/SV+1QFLmn0RgG/VxHrc2UD57f9VTk+R/dG8fbqVFcpH8vLpmzzL9l
+         ZotustdOrHKEi12fsT65AjxVYAW5nYJiqZBBlY2J+g32fV8f/XgOKv2CoslWJy3aaF/c
+         +2d8AyuFttSCTSdTiHz3LiocKWTeF7zj+4xmHZximGAEdr4e44WtpieNWXlVWb7OtgYt
+         gML0RHbbzuydYCvkqFYf6Jxyh3RLQRQbRjs+zmv5VnO+qdyKZZjntPSnxadJP15Y+yLh
+         voSuh7OtvCgaxnGFgm3AKREnpxttT77SyerhPG+Qf+JF6o/bBscY0JKXH0CCQOYnDlzV
+         FnBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMW7J5WJ0Rxu9EeYlQQ1e1Lijdo4ATIm5MPGpHX5O984IigTiSva1PyUWQwTRuHkL+UjJO@vger.kernel.org, AJvYcCXUBtDFw1pM/OnDkd0nOJm8z+MUp9xhzMuRInTJmM6226a7xRHE5IZ2cp0giWo19DbU3sz7T/jTtst0ppM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5KYVh1hqE7B2YrYEIqxsVXvwJU+RcocMDeJx+JVWbX4+CIfPj
+	ZN7/6H58JOXICVFQkUSdeJnXW7URvzf74s2nt+c8wE8/ir4ews6x
+X-Google-Smtp-Source: AGHT+IEvJVjRjf/FtB5gjRCjlESgTEQrUoU0Laehf5QBDSN/4txS5ZfSVfXOzLLHaq7nDFMqyDqXvQ==
+X-Received: by 2002:a17:90b:540b:b0:2e1:682b:361a with SMTP id 98e67ed59e1d1-2e9b177fce7mr13870268a91.28.1731250082930;
+        Sun, 10 Nov 2024 06:48:02 -0800 (PST)
+Received: from localhost.localdomain ([202.119.23.198])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc838esm60793285ad.32.2024.11.10.06.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 06:48:01 -0800 (PST)
+From: Zilin Guan <zilinguan811@gmail.com>
+To: paulmck@kernel.org
+Cc: boqun.feng@gmail.com,
+	frederic@kernel.org,
+	jiangshanlai@gmail.com,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	linux-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	neeraj.upadhyay@kernel.org,
+	qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org,
+	rostedt@goodmis.org,
+	urezki@gmail.com,
+	zilinguan811@gmail.com,
+	xujianhao01@gmail.com
+Subject: [PATCH v2] rcu: Remove READ_ONCE() for rdp->gpwrap access in __note_gp_changes()
+Date: Sun, 10 Nov 2024 14:47:47 +0000
+Message-Id: <20241110144747.21379-1-zilinguan811@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Transfer-Encoding: 8bit
 
+There is one access to rdp->gpwrap in the __note_gp_changes() function
+that does not use READ_ONCE() for protection, while other accesses to
+rdp->gpwrap do use READ_ONCE(). When using the 8*TREE03 and
+CONFIG_NR_CPUS=8 configuration, KCSAN found no data races at that point.
+This is because other functions should hold rnp->lock when calling
+__note_gp_changes(), which ensures proper exclusion of writes to the
+rdp->gpwrap fields for all CPUs associated with that leaf rcu_node
+structure.
 
-On Fri, 08 Nov 2024 15:57:41 +0800, Junxian Huang wrote:
-> Two hns bugfixes.
-> 
-> Junxian Huang (2):
->   RDMA/hns: Fix out-of-order issue of requester when setting FENCE
->   RDMA/hns: Fix NULL pointer derefernce in hns_roce_map_mr_sg()
-> 
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.c | 2 +-
->  drivers/infiniband/hw/hns/hns_roce_hw_v2.h | 1 +
->  drivers/infiniband/hw/hns/hns_roce_mr.c    | 7 ++++---
->  3 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> [...]
+Therefore, using READ_ONCE() to protect rdp->gpwrap within the
+__note_gp_changes() function is unnecessary.
 
-Applied, thanks!
+Signed-off-by: Zilin Guan <zilinguan811@gmail.com>
+---
+v1 -> v2: Remove READ_ONCE() from accesses to rdp->gpwrap.
 
-[1/2] RDMA/hns: Fix out-of-order issue of requester when setting FENCE
-      https://git.kernel.org/rdma/rdma/c/5dbcb1c1900f45
-[2/2] RDMA/hns: Fix NULL pointer derefernce in hns_roce_map_mr_sg()
-      https://git.kernel.org/rdma/rdma/c/6b526d17eed850
+ kernel/rcu/tree.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 77b5b39e19a8..68eb0f746575 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -1275,7 +1275,7 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ 
+ 	/* Handle the ends of any preceding grace periods first. */
+ 	if (rcu_seq_completed_gp(rdp->gp_seq, rnp->gp_seq) ||
+-	    unlikely(READ_ONCE(rdp->gpwrap))) {
++	    unlikely(rdp->gpwrap)) {
+ 		if (!offloaded)
+ 			ret = rcu_advance_cbs(rnp, rdp); /* Advance CBs. */
+ 		rdp->core_needs_qs = false;
+@@ -1289,7 +1289,7 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ 
+ 	/* Now handle the beginnings of any new-to-this-CPU grace periods. */
+ 	if (rcu_seq_new_gp(rdp->gp_seq, rnp->gp_seq) ||
+-	    unlikely(READ_ONCE(rdp->gpwrap))) {
++	    unlikely(rdp->gpwrap)) {
+ 		/*
+ 		 * If the current grace period is waiting for this CPU,
+ 		 * set up to detect a quiescent state, otherwise don't
+@@ -1304,7 +1304,7 @@ static bool __note_gp_changes(struct rcu_node *rnp, struct rcu_data *rdp)
+ 	rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
+ 	if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) || rdp->gpwrap)
+ 		WRITE_ONCE(rdp->gp_seq_needed, rnp->gp_seq_needed);
+-	if (IS_ENABLED(CONFIG_PROVE_RCU) && READ_ONCE(rdp->gpwrap))
++	if (IS_ENABLED(CONFIG_PROVE_RCU) && rdp->gpwrap)
+ 		WRITE_ONCE(rdp->last_sched_clock, jiffies);
+ 	WRITE_ONCE(rdp->gpwrap, false);
+ 	rcu_gpnum_ovf(rnp, rdp);
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.34.1
 
 
