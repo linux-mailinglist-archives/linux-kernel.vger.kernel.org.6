@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-403329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822D29C343A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:39:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DC79C343D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45FD1C208E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A956DB20CEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986C13DBA0;
-	Sun, 10 Nov 2024 18:38:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62CC13DBA0;
+	Sun, 10 Nov 2024 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="YaCXOLZ6"
-Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="CCJKo2cW"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2CC132132;
-	Sun, 10 Nov 2024 18:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648DF1C6A3;
+	Sun, 10 Nov 2024 18:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731263932; cv=none; b=c0tJ15maFD8i8dYZo9d9xhm9ea/1El8+A2re2Mo6ilb1eafNY4DO3XUj4qdAbwHL0jDPck4ebUDOoHkscyxjKvUjczXhzFYESairxFgWfOBUUclY3BskR6AKxJA9oz0d5DngALNopmpyoG3btq1qTF8bGKYghIuoOC6+5WuMKJY=
+	t=1731264280; cv=none; b=ufUEDI1qkdoqFqS4+QnjhVjG0ej09/4EOMjTT8+G5gI8es14ItInIov0FSzgbfl+8257V6NEmgupFi+sctXDbVH0fTPshgLMI9IlEDWqDahAxIAQgBkqEIcxep0nWEUW92/0JXb+n+2ESf0/uAimtSlaafc7zcRLL8NrL7F6dbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731263932; c=relaxed/simple;
-	bh=PsBg7Ce1DYJDfWfovTedXuQXSEUBe+bUODMBThwdmPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VaKkJ17zVXCQhJPIVcEtkKbk8dl9QWagLtM5CBZIT58rd8bbnHSdg2q5r+4mZLxgfKqF6YizBAHwlCvahb/vR5P1T7Ym3LcrlyGNoPNMmz8bmD72i6fRDW6qhZ+62yD2jgtlH9AeVtZNof2pz5ikkM5SykYyeUeKPUdxEKOraCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=YaCXOLZ6; arc=none smtp.client-ip=206.189.193.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-	by a.peacevolution.org (Postfix) with ESMTPA id 7ED404C930;
-	Sun, 10 Nov 2024 18:38:42 +0000 (UTC)
-Date: Sun, 10 Nov 2024 13:38:39 -0500
-From: Aren <aren@peacevolution.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, 
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
- devm callbacks
-Message-ID: <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-7-aren@peacevolution.org>
- <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
+	s=arc-20240116; t=1731264280; c=relaxed/simple;
+	bh=4DPPfyk5xcDCf169kuJcfoSFcqIk8wwFT07QI+IzsMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=faojolV1mEaZl+QT/7jUwLfC2ISp+Wb3V3RtjSi4PR1wcclw/4AVQlTrW7nQZqT4HpbN9Yu+e1etwJ1vJcNwC3pjBi6dhk/SUgMC1exE3xz/Ay/39C0y7b2IVVYYAtKIPM4NaFJGGhLP9e9uENCpRhZX1J3hEjT+mjJYWtgn83A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=CCJKo2cW; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1731264275;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=X6EGSkrXWrC2versQkLjecqlYEVZvqpe//AxlHQPJPQ=;
+	b=CCJKo2cWjI4Mxc4eGn3IUgNYzhD53NPu8INSky9AsCs5fEs+ftNK/ZXkAtInhwlVQ4VzW5
+	oomFijPvRBOuL0HLmU9WkXoGx7JqEMbKoXbYI4GszQ8ToisntDvgB0IAkt0QtJRIRmRO0K
+	xLLbDV2kctwiu7JV01v5pt9/e0s9Jy8gSnndcFIzLEbatVKmLozM4WE99KOdJnGcZxuCi8
+	ARQmYbuvWX0sDmcHlO04bs+Sz4SGJOmLY0aWjOVp5zG7Drvwb78JL1LwX3J8RSGcJvGHhR
+	5JBsoGFz1IuJrvOHJ3z4Sm7p2MAi8weGEGFPOlTkb38B0hLV9MJTt5lDx/q8qg==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on PinePhone Pro
+Date: Sun, 10 Nov 2024 19:44:31 +0100
+Message-Id: <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
-X-Spamd-Bar: /
-Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
-	s=dkim; t=1731263923;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
-	bh=Qy4vL7Aa/N0uJPCViG8PBJ+nuYrVrBC0UAvzWwrOHL0=;
-	b=YaCXOLZ6I9KETZJhjAINjNnyvKBf5znCzqyzCvW4Gt6yAj5JjKSUvVMbRxsmAL17MFKNpI
-	W+YoXyfVwq8Jnn5gFd/1msRzP8Ge43ZWspuzVa/ObWb/dmOzhX8EyBxwxa6YRKbM/cepxI
-	mLCuNzWmXaiUdXgUFFEzx6RHq990McU=
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Mon, Nov 04, 2024 at 10:32:08AM +0200, Andy Shevchenko wrote:
-> On Sat, Nov 02, 2024 at 03:50:37PM -0400, Aren Moynihan wrote:
-> > Using devm callbacks helps to make the ordering of probe / remove
-> > operations easier to reason about and removes some duplicate code
-> > between the probe error path and driver remove.
-> 
-> Where is SoB?
+The regulator-{min,max}-microvolt values for the vdd_gpu regulator in the
+PinePhone Pro device dts file are too restrictive, which prevents the highest
+GPU OPP from being used, slowing the GPU down unnecessarily.  Let's fix that
+by making the regulator-{min,max}-microvolt values less strict, using the
+voltage range that the Silergy SYR838 chip used for the vdd_gpu regulator is
+actually capable of producing. [1][2]
 
-Oops that got lost in a rebase
+This also eliminates the following error messages from the kernel log:
 
-> ...
-> 
-> > +	ret = devm_add_action_or_reset(&client->dev, stk3310_set_state_disable, data);
-> 
-> Why not simply 'dev' as in below call?
+  core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV: 1150000, not supported by regulator
+  panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators (800000000)
 
-I was trying to avoid refactoring the entire function to replace
-&client->dev with dev, I'll add a patch for that to the next revision.
+These changes to the regulator-{min,max}-microvolt values make the PinePhone
+Pro device dts consistent with the dts files for other Rockchip RK3399-based
+boards and devices.  It's possible to be more strict here, by specifying the
+regulator-{min,max}-microvolt values that don't go outside of what the GPU
+actually may use, as the consumer of the vdd_gpu regulator, but those changes
+are left for a later directory-wide regulator cleanup.
 
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to register cleanup function\n");
-> 
-> ...
-> 
-> > -	mutex_init(&data->lock);
-> > +	devm_mutex_init(&client->dev, &data->lock);
-> 
-> Missed error check, otherwise what's the point?
-> 
-> 
-> Also can add a temporary variable for 'dev'.
+[1] https://files.pine64.org/doc/PinePhonePro/PinephonePro-Schematic-V1.0-20211127.pdf
+[2] https://www.t-firefly.com/download/Firefly-RK3399/docs/Chip%20Specifications/DC-DC_SYR837_838.pdf
 
-Yup, fixing... I need to read the docs / function type more carefully
-sometimes.
+Fixes: 78a21c7d5952 ("arm64: dts: rockchip: Add initial support for Pine64 PinePhone Pro")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks
- - Aren
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+index 1a44582a49fb..956d64f5b271 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+@@ -410,8 +410,8 @@ vdd_gpu: regulator@41 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&vsel2_pin>;
+ 		regulator-name = "vdd_gpu";
+-		regulator-min-microvolt = <875000>;
+-		regulator-max-microvolt = <975000>;
++		regulator-min-microvolt = <712500>;
++		regulator-max-microvolt = <1500000>;
+ 		regulator-ramp-delay = <1000>;
+ 		regulator-always-on;
+ 		regulator-boot-on;
 
