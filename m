@@ -1,176 +1,277 @@
-Return-Path: <linux-kernel+bounces-403047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61ECD9C3025
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 01:16:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE939C3029
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 01:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B25C1C20B8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:16:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D9DB2820E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 00:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147DE9460;
-	Sun, 10 Nov 2024 00:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9FF6BE4F;
+	Sun, 10 Nov 2024 00:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pHjQfAnI"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J14O1Vhf"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C397D139B;
-	Sun, 10 Nov 2024 00:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6575672;
+	Sun, 10 Nov 2024 00:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731197757; cv=none; b=YDdNLwVj6a3O2lqOefQuYeUEtXPWeCWd2XKChNt0818mUZG9Pe8VazWqhYTBovNOnlop9I2uECVvFU3XNYFW3AzpEmyXryGJuhC8yznIAwdHsCJXfgIFRAazwCGFFXnxr3o17Aq9Edlnm6vRepIvUZ6UqbNmjVwCAlJA/dmsN/Q=
+	t=1731198618; cv=none; b=R0nwmAuNE693EXiSWu46hMPZpvHr7Xsu1DPcn6bIzcl6i3KNxi/Det3R4rir6cdNH1UZjn5yUPZvHzo/vYNDBXLu312VVgW2uuIsoeiEk3+42cfzY1gNDV9Z0bDdWZGeJ01j7mI6eqD98hCjhb67dN5/76OF98u1mqtMELt2z50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731197757; c=relaxed/simple;
-	bh=Rb8SiGYOX43++2/BqPnrgCCSzHRP+Qz05NJ1JzZ5Ukc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KpFFAlP/Q69TbqDxpQ6ZNlXxs8+FAJO68J2c40ue0yxephSkswYKNfPoBQI/9ux2MbZ4Tu93Ps/1g9hQNtA0YNk0pHibrYJmhyom4ZQTvDyzN0C5QExTfLEbXDrHQjqAwT03AqXBFN00XsB+7bHgfWyivpUzmQ8GCd0GRs35aDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pHjQfAnI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AA00vxk008738;
-	Sun, 10 Nov 2024 00:10:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0R1LwNN6Jg7sQ4eONRG8zvoQUl0N1Po3ICzKDF5OXQ0=; b=pHjQfAnISj7pMSDN
-	YRQulXbAkn0/XdFn2S/pg1QKQ7IY0MrH/0JEFqmfnZgziydnmec984q1ZRntkgFB
-	snGNzaVtHbXsEDrUemcMuX5tgQwLXtpYlYbODGcpIZctpTGShLpOsKd06Zuxhr8J
-	+Zj8jriiN/Y+e73wPhDNV9dLT3vB7T6GQ/jD0aDXkQxzR+3bXTeit1hFA7VEo4wM
-	0Akz/WMZcVgJa0wU/0F1L2uTrOz22q3bTMOlxNovWR/6dHfzksPyB2VoQq+KGATH
-	ItaZ9t5m5x/My7cZKM5lzGaifW7suVdQOItGhnT67UbYBNyl2EJ19FegTXrd+1IG
-	0Ai+uQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t118188v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Nov 2024 00:10:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AA0AHMr015043
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Nov 2024 00:10:17 GMT
-Received: from [10.216.56.133] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 9 Nov 2024
- 16:10:13 -0800
-Message-ID: <b5f56ec9-9b5f-5369-52ed-bcf0c8012dbb@quicinc.com>
-Date: Sun, 10 Nov 2024 05:40:08 +0530
+	s=arc-20240116; t=1731198618; c=relaxed/simple;
+	bh=wt2Zbxs1AwV7ieBynOFN7iZzoWYpsfCJCcOB8j0H0W4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EwkbJMetW42phPLjf9h/VA3oYIhkEY8B0Q21lkX6CqOXWOqa8YDKgnHpgmVPJmdtopmJ8MBPpyyCdt5/AOTRytT3VPjWmZFnX4C1NPVXrKLQd04RaGPWP5lmQudhBpcZvD+mubM0LmD7qD6rYgFdI3H0Vg4dPcpq29vqa2Hc/uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J14O1Vhf; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-718119fc061so1814468a34.2;
+        Sat, 09 Nov 2024 16:30:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731198615; x=1731803415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzH3Me0ot1rVvtxYdn0QkNURYo5VRNkKPRgTtnhHozE=;
+        b=J14O1VhfyTHy33hSWvA62ii4pd/CD237dptl958uufHuRLtEDB5U0WJoer9mIj2L/x
+         81s5RDtc4fX5+aE/MDwPESLmfG1K1G46ouO6eb7nOVd6Ju6aeEg5jUKtOOpiKzyxVsAx
+         FUglcBVnPSyj5+mAjDiZVcq2GuMmcJOiIbSmqj9/U0wusOcJ+Ey4xCd5mggs9Vw/u1dB
+         /TTabqSL4phlGLkdCnb4pOmlte1O9MSxLqi0ISW9tPFly4pATRrUvF0kVfcCE5E+odRB
+         EpDH1l9/iOAGR91lPTpGg7aAVO1z4EgOUhPp3vs/bAQKNF21Nxz4mmtiCrT/vM4E5X/w
+         Kf+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731198615; x=1731803415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BzH3Me0ot1rVvtxYdn0QkNURYo5VRNkKPRgTtnhHozE=;
+        b=jj2FI7Q5qmtAyF820R6uY99WAN/O3c609dsTPZi9DcDFI2TM4rnQUkBOInCFIlScbU
+         IrNgsupJ0vcToHJoOKwZWm3dhdF30uAkyLimUCSi0SpW+fjq7dZvyERjmnN2KHzrWlR1
+         aQSz2suQgvnO3bU5nPxhFY+7BR6jEXM3niMdQZaDT/eG29lIuTbUo6aLSoupDuc1lZNs
+         ORu/1g7NpdsSGu73MCwqbTUIJFnO4VoZCH4yQgrI7c78mw+du1V9Rb3Xcz1vPN1uIVUE
+         0QREboQsEhNgz1m6jGOMQFxjJrTFgWkjt/UrV2fc2Hr7HkNDChqzNChdcpVfHUttbUGa
+         jfDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGkox1jWkzGpEt7AyoERtYRf0pMh0jEYHkvHPgKHey2a9wTyx5S3lZj3XZXBH57KLQumBgAfhIVd98Rb+G@vger.kernel.org, AJvYcCX8xxAJnwh7ciCR5EowxX1eLaDAMLF7y9FkXp1qdb4tK+HXx1R+S4Sd/yfRl7euyxw9FdsGBDrdrKr1Fw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUCma2p472pObUkBosd4XtRJnaOwzRx+XhMx36dam6pS9v5Xh+
+	mu1GzLMn+2DpnTZFhF9gpJUZrrv5pqAR9O5jOGqLCI1CAjUsLdS5
+X-Google-Smtp-Source: AGHT+IHZl4Xw2EV9HknwhTsUXa+zPcgDeuvjVBxN0CZOGXLDHALFOKyk1aEswTVQ9yd9RepV0F7Iww==
+X-Received: by 2002:a05:6830:2803:b0:710:b19a:b999 with SMTP id 46e09a7af769-71a1c2275camr7734676a34.14.1731198615228;
+        Sat, 09 Nov 2024 16:30:15 -0800 (PST)
+Received: from dev-G5-5587.attlocal.net ([2600:1702:5d48:b900:f796:a09c:98fc:26de])
+        by smtp.googlemail.com with ESMTPSA id 46e09a7af769-71a107eb6f3sm1573497a34.4.2024.11.09.16.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 16:30:14 -0800 (PST)
+From: Callahan Kovacs <callahankovacs@gmail.com>
+To: callahankovacs@gmail.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jose.exposito89@gmail.com
+Subject: [PATCH] HID: magicmouse: Apple Magic Trackpad 2 USB-C driver support
+Date: Sat,  9 Nov 2024 18:25:56 -0600
+Message-ID: <20241110002816.6064-1-callahankovacs@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
- dw_pcie_suspend_noirq()
-Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: Richard Zhu <hongxing.zhu@nxp.com>, <jingoohan1@gmail.com>,
-        <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <frank.li@nxp.com>, <imx@lists.linux.dev>,
-        <kernel@pengutronix.de>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241108002425.GA1631063@bhelgaas>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241108002425.GA1631063@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: cv0K1P0V45jW6BqOaeNPerbxNVQSxtJ6
-X-Proofpoint-GUID: cv0K1P0V45jW6BqOaeNPerbxNVQSxtJ6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411090210
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Adds driver support for the USB-C model of Apple's Magic Trackpad 2.
 
+The 2024 USB-C model is compatible with the existing Magic Trackpad 2
+driver but has a different hardware ID.
 
-On 11/8/2024 5:54 AM, Bjorn Helgaas wrote:
-> On Thu, Nov 07, 2024 at 11:13:34AM +0000, Manivannan Sadhasivam wrote:
->> On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
->>> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's
->>> safe to send PME_TURN_OFF message regardless of whether the link
->>> is up or down. So, there would be no need to test the LTSSM stat
->>> before sending PME_TURN_OFF message.
->>
->> What is the incentive to send PME_Turn_Off when link is not up?
-> 
-> There's no need to send PME_Turn_Off when link is not up.
-> 
-> But a link-up check is inherently racy because the link may go down
-> between the check and the PME_Turn_Off.  Since it's impossible for
-> software to guarantee the link is up, the Root Port should be able to
-> tolerate attempts to send PME_Turn_Off when the link is down.
-> 
-> So IMO there's no need to check whether the link is up, and checking
-> gives the misleading impression that "we know the link is up and
-> therefore sending PME_Turn_Off is safe."
-> 
-Hi Bjorn,
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219470
+---
+ drivers/hid/hid-ids.h        |  1 +
+ drivers/hid/hid-magicmouse.c | 56 ++++++++++++++++++++++++++----------
+ 2 files changed, 42 insertions(+), 15 deletions(-)
 
-I agree that link-up check is racy but once link is up and link has
-gone down due to some reason the ltssm state will not move detect quiet
-or detect act, it will go to pre detect quiet (i.e value 0f 0x5).
-we can assume if the link is up LTSSM state will greater than detect act
-even if the link was down.
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 92cff3f2658c..0f23be98c56e 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -94,6 +94,7 @@
+ #define USB_DEVICE_ID_APPLE_MAGICMOUSE2	0x0269
+ #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD	0x030e
+ #define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2	0x0265
++#define USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC	0x0324
+ #define USB_DEVICE_ID_APPLE_FOUNTAIN_ANSI	0x020e
+ #define USB_DEVICE_ID_APPLE_FOUNTAIN_ISO	0x020f
+ #define USB_DEVICE_ID_APPLE_GEYSER_ANSI	0x0214
+diff --git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
+index 8a73b59e0827..ec110dea8772 100644
+--- a/drivers/hid/hid-magicmouse.c
++++ b/drivers/hid/hid-magicmouse.c
+@@ -227,7 +227,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+ 		touch_minor = tdata[4];
+ 		state = tdata[7] & TOUCH_STATE_MASK;
+ 		down = state != TOUCH_STATE_NONE;
+-	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		   input->id.product ==
++			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		id = tdata[8] & 0xf;
+ 		x = (tdata[1] << 27 | tdata[0] << 19) >> 19;
+ 		y = -((tdata[3] << 30 | tdata[2] << 22 | tdata[1] << 14) >> 19);
+@@ -259,8 +261,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+ 	/* If requested, emulate a scroll wheel by detecting small
+ 	 * vertical touch motions.
+ 	 */
+-	if (emulate_scroll_wheel && (input->id.product !=
+-			USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)) {
++	if (emulate_scroll_wheel &&
++	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
++	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		unsigned long now = jiffies;
+ 		int step_x = msc->touches[id].scroll_x - x;
+ 		int step_y = msc->touches[id].scroll_y - y;
+@@ -359,7 +362,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+ 		input_report_abs(input, ABS_MT_POSITION_X, x);
+ 		input_report_abs(input, ABS_MT_POSITION_Y, y);
+ 
+-		if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
++		if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		    input->id.product ==
++			    USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC)
+ 			input_report_abs(input, ABS_MT_PRESSURE, pressure);
+ 
+ 		if (report_undeciphered) {
+@@ -367,7 +372,9 @@ static void magicmouse_emit_touch(struct magicmouse_sc *msc, int raw_id, u8 *tda
+ 			    input->id.product == USB_DEVICE_ID_APPLE_MAGICMOUSE2)
+ 				input_event(input, EV_MSC, MSC_RAW, tdata[7]);
+ 			else if (input->id.product !=
+-					USB_DEVICE_ID_APPLE_MAGICTRACKPAD2)
++					 USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
++				 input->id.product !=
++					 USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC)
+ 				input_event(input, EV_MSC, MSC_RAW, tdata[8]);
+ 		}
+ 	}
+@@ -493,7 +500,9 @@ static int magicmouse_raw_event(struct hid_device *hdev,
+ 		magicmouse_emit_buttons(msc, clicks & 3);
+ 		input_report_rel(input, REL_X, x);
+ 		input_report_rel(input, REL_Y, y);
+-	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		   input->id.product ==
++			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		input_mt_sync_frame(input);
+ 		input_report_key(input, BTN_MOUSE, clicks & 1);
+ 	} else { /* USB_DEVICE_ID_APPLE_MAGICTRACKPAD */
+@@ -545,7 +554,9 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+ 			__set_bit(REL_WHEEL_HI_RES, input->relbit);
+ 			__set_bit(REL_HWHEEL_HI_RES, input->relbit);
+ 		}
+-	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		   input->id.product ==
++			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		/* If the trackpad has been connected to a Mac, the name is
+ 		 * automatically personalized, e.g., "José Expósito's Trackpad".
+ 		 * When connected through Bluetooth, the personalized name is
+@@ -621,7 +632,9 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+ 				  MOUSE_RES_X);
+ 		input_abs_set_res(input, ABS_MT_POSITION_Y,
+ 				  MOUSE_RES_Y);
+-	} else if (input->id.product ==  USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	} else if (input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		   input->id.product ==
++			   USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		input_set_abs_params(input, ABS_MT_PRESSURE, 0, 253, 0, 0);
+ 		input_set_abs_params(input, ABS_PRESSURE, 0, 253, 0, 0);
+ 		input_set_abs_params(input, ABS_MT_ORIENTATION, -3, 4, 0, 0);
+@@ -660,7 +673,8 @@ static int magicmouse_setup_input(struct input_dev *input, struct hid_device *hd
+ 	input_set_events_per_packet(input, 60);
+ 
+ 	if (report_undeciphered &&
+-	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
++	    input->id.product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		__set_bit(EV_MSC, input->evbit);
+ 		__set_bit(MSC_RAW, input->mscbit);
+ 	}
+@@ -685,7 +699,9 @@ static int magicmouse_input_mapping(struct hid_device *hdev,
+ 
+ 	/* Magic Trackpad does not give relative data after switching to MT */
+ 	if ((hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD ||
+-	     hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
++	     hi->input->id.product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++	     hi->input->id.product ==
++		     USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
+ 	    field->flags & HID_MAIN_ITEM_RELATIVE)
+ 		return -1;
+ 
+@@ -721,7 +737,8 @@ static int magicmouse_enable_multitouch(struct hid_device *hdev)
+ 	int ret;
+ 	int feature_size;
+ 
+-	if (hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	if (hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++	    hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		if (hdev->vendor == BT_VENDOR_ID_APPLE) {
+ 			feature_size = sizeof(feature_mt_trackpad2_bt);
+ 			feature = feature_mt_trackpad2_bt;
+@@ -766,7 +783,8 @@ static int magicmouse_fetch_battery(struct hid_device *hdev)
+ 
+ 	if (!hdev->battery || hdev->vendor != USB_VENDOR_ID_APPLE ||
+ 	    (hdev->product != USB_DEVICE_ID_APPLE_MAGICMOUSE2 &&
+-	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2))
++	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 &&
++	     hdev->product != USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC))
+ 		return -1;
+ 
+ 	report_enum = &hdev->report_enum[hdev->battery_report_type];
+@@ -835,7 +853,9 @@ static int magicmouse_probe(struct hid_device *hdev,
+ 
+ 	if (id->vendor == USB_VENDOR_ID_APPLE &&
+ 	    (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
+-	     (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 && hdev->type != HID_TYPE_USBMOUSE)))
++	     ((id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++	       id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
++	      hdev->type != HID_TYPE_USBMOUSE)))
+ 		return 0;
+ 
+ 	if (!msc->input) {
+@@ -850,7 +870,8 @@ static int magicmouse_probe(struct hid_device *hdev,
+ 	else if (id->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2)
+ 		report = hid_register_report(hdev, HID_INPUT_REPORT,
+ 			MOUSE2_REPORT_ID, 0);
+-	else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) {
++	else if (id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++		 id->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) {
+ 		if (id->vendor == BT_VENDOR_ID_APPLE)
+ 			report = hid_register_report(hdev, HID_INPUT_REPORT,
+ 				TRACKPAD2_BT_REPORT_ID, 0);
+@@ -920,7 +941,8 @@ static const __u8 *magicmouse_report_fixup(struct hid_device *hdev, __u8 *rdesc,
+ 	 */
+ 	if (hdev->vendor == USB_VENDOR_ID_APPLE &&
+ 	    (hdev->product == USB_DEVICE_ID_APPLE_MAGICMOUSE2 ||
+-	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2) &&
++	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2 ||
++	     hdev->product == USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC) &&
+ 	    *rsize == 83 && rdesc[46] == 0x84 && rdesc[58] == 0x85) {
+ 		hid_info(hdev,
+ 			 "fixing up magicmouse battery report descriptor\n");
+@@ -951,6 +973,10 @@ static const struct hid_device_id magic_mice[] = {
+ 		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
+ 		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2), .driver_data = 0 },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE,
++		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC), .driver_data = 0 },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE,
++		USB_DEVICE_ID_APPLE_MAGICTRACKPAD2_USBC), .driver_data = 0 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(hid, magic_mice);
+-- 
+2.45.2
 
-- Krishna Chaitanya.
->>> Remove the L2 poll too, after the PME_TURN_OFF message is sent
->>> out.  Because the re-initialization would be done in
->>> dw_pcie_resume_noirq().
->>
->> As Krishna explained, host needs to wait until the endpoint acks the
->> message (just to give it some time to do cleanups). Then only the
->> host can initiate D3Cold. It matters when the device supports L2.
-> 
-> The important thing here is to be clear about the *reason* to poll for
-> L2 and the *event* that must wait for L2.
-> 
-> I don't have any DesignWare specs, but when dw_pcie_suspend_noirq()
-> waits for DW_PCIE_LTSSM_L2_IDLE, I think what we're doing is waiting
-> for the link to be in the L2/L3 Ready pseudo-state (PCIe r6.0, sec
-> 5.2, fig 5-1).
-> 
-> L2 and L3 are states where main power to the downstream component is
-> off, i.e., the component is in D3cold (r6.0, sec 5.3.2), so there is
-> no link in those states.
-> 
-> The PME_Turn_Off handshake is part of the process to put the
-> downstream component in D3cold.  I think the reason for this handshake
-> is to allow an orderly shutdown of that component before main power is
-> removed.
-> 
-> When the downstream component receives PME_Turn_Off, it will stop
-> scheduling new TLPs, but it may already have TLPs scheduled but not
-> yet sent.  If power were removed immediately, they would be lost.  My
-> understanding is that the link will not enter L2/L3 Ready until the
-> components on both ends have completed whatever needs to be done with
-> those TLPs.  (This is based on the L2/L3 discussion in the Mindshare
-> PCIe book; I haven't found clear spec citations for all of it.)
-> 
-> I think waiting for L2/L3 Ready is to keep us from turning off main
-> power when the components are still trying to dispose of those TLPs.
-> 
-> So I think every controller that turns off main power needs to wait
-> for L2/L3 Ready.
-> 
-> There's also a requirement that software wait at least 100 ns after
-> L2/L3 Ready before turning off refclock and main power (sec
-> 5.3.3.2.1).
-> 
-> Bjorn
-> 
 
