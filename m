@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-403169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555749C31E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:11:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8719C31E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8F6B20F39
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:10:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD7F4B20F12
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFDB156641;
-	Sun, 10 Nov 2024 12:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7774156880;
+	Sun, 10 Nov 2024 12:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nAQdAjwg"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VfdD7tcf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D351537C6;
-	Sun, 10 Nov 2024 12:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211B7156641;
+	Sun, 10 Nov 2024 12:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731240652; cv=none; b=JeEOA7sefXPPKScKis1Ggln1IVwR4hGrj0JJPVZ1OPd/p4dBeQT+Fi5EZMRxHTAa92lbb1mgVfNLuR0/CH5O6ChbFKaV28u9l/xpeMJSNKmElrTCDA2uueWerWJkVQeoaLH8nBPvMAd+m/68RZq0FXYlAXyhnGMmQ9kad2muWS4=
+	t=1731240787; cv=none; b=qxO3RPtzmS95remoypJRk/BR2Id2ivul7WIfHuNg94VEIKr29T2h/edH2rwbegGjqWT/uxVB4y6RrmfqAY6aCa7M6NxzYxhxF5TFtf2FgnvDPWoxCvHbz44tNaFH0Xs6Bb7idk3gClBQhPMMzLctqmbk0yYcHpyiAwzm37fZDis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731240652; c=relaxed/simple;
-	bh=XTR/nhj5MrW+3ggTFQ749a6iLnniw2ba6f0H4nA+qfA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Me9MaHnvCnL0otiqtYfD1vj1Qp6JOnRrVMhlXoakgSFiuZGa46RzGFX3YPJffbMTpD0Z67zsK2cwtq7wIp91CwEp0kHni4zJ8lp3/GdOiSAdcNEvxV4bp5L60xO4cTZPzVZGdKIdEMz4qBzMPZ2PEOafESidDTTyUIHxrpRRUPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nAQdAjwg; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731240625; x=1731845425; i=markus.elfring@web.de;
-	bh=XTR/nhj5MrW+3ggTFQ749a6iLnniw2ba6f0H4nA+qfA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=nAQdAjwgADWFJo5qTN9mgG2FdrguVGoYj/xwvqAfcuQW9i4WHJDNFjcD78cHmVaC
-	 yIY3WmzjFZ41JAbXSHcXvEK7nJmSwG7TE9uhYOzbwVpdxMBpxlW4PLQjOQLRk+24m
-	 AtSf797iZok8gnigCT2lWL6O8MNO95hGejezOlgmUa4pxe+GJalqWPXGmLkdAz4fo
-	 YbI7xu4b1cMA56XnIzG3FNuNoI/iRDPIo1/P0Fl7xMX30JCfoL8kM/hcrRijT4Mkc
-	 JHJSL/WwgWcSpf7r6al7B5Kw5B5V7O1C1OEJlQGP92jMS6eX0M4JygEZTK4nPSQmz
-	 ChOvIvpy0LOUGOhiVA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2SKz-1tw8eE1Vtf-00w35Z; Sun, 10
- Nov 2024 13:10:25 +0100
-Message-ID: <28f2bba7-40f0-4015-af84-d3c08c9a14c1@web.de>
-Date: Sun, 10 Nov 2024 13:10:21 +0100
+	s=arc-20240116; t=1731240787; c=relaxed/simple;
+	bh=nOO1dgvobiM+f4GCJ6I9QkKZqASoAXsi9zs7D2PUhvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UeXsOmjlN/WHcP6Oag+HY7IrR/dkJJ0RasBnEdMIPUfZcnQo6F9oZgecYOHpU+iKWXOfiAFMEBXYco+VWu/8HfIxf20QqOiGgBqpM5XWzgc3wQ3k/4rwBcXGTCs5RLZjIc0PU3GGNpT3HzolIzNWy8VYEtkip+sBZ8N8+H9n7t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VfdD7tcf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 008ED40E0169;
+	Sun, 10 Nov 2024 12:12:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id p_LATjndv3US; Sun, 10 Nov 2024 12:12:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731240771; bh=J5rfGgOgZejdW5ZtDNskobOn6mfblcYV3LEka+BKC7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VfdD7tcfLbypMESwthzvbEXpuM6LFGMKqyZD+IO8Dso/VPZ3xg6i4lPbMLv3j8RXI
+	 C6HsrLei4x4XLnew70jPB0oGYJ9xilm5l5FOY/+6k0ZKCn4y0vaHvFDycRzcQ83DoZ
+	 xC1xhfBiTDxZc0WUIk7BV2NqH49wC6/pQAM9den/RvX2tjEqZgR3DaFsAld1HEmIyX
+	 bx/6vBTxo6rYvA/GCsvVUCbfe9uO2LNn2OhM84YvlACprw5RNKtdJY0qKnekmqyF0V
+	 o7FLFUjv5BL3R3VPGpopQH1lbfK/XxGhHjtLKX1/sciJVSmecnzwA/6ooyNy/A6cKz
+	 IP1u73XWFBiPPyvRSm3GPMpdOi/N4HIwxkqAwtbUBeTNmK5cLlw9wI5sfFbL7VoEw5
+	 iw8DPdQzGdoqwwUN1Xiv17revcUa754lzgCy3AyFzdtvJZuvsN8Nxp0PFyKnFR/GQl
+	 fM2Ns1VWADZ/esw5tZMHJs3VjTzGInRLAIFkh59+HtG4lnEWh3w1bDyd6yzAyHpyLn
+	 m7a7zfnstEidwSWFe+uAE3jp9SoihCOO8EVpDsV5VlzfG1E5op2yu98IInoFHMbLqL
+	 tSVXJso73qBpBtf1R0H2XW/8pYIOnrkrTEeuvf7bs/2HH877xEdjN1GHZaxp+U3jW/
+	 PdCbWfjXf/hysTpa6NRFySbM=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A6A9A40E015F;
+	Sun, 10 Nov 2024 12:12:30 +0000 (UTC)
+Date: Sun, 10 Nov 2024 13:12:21 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: "Melody (Huibo) Wang" <huibo.wang@amd.com>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [sos-linux-ext-patches] [RFC 05/14] x86/apic: Initialize APIC ID
+ for Secure AVIC
+Message-ID: <20241110121221.GAZzCjJU1AUfV8vR3Q@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-6-Neeraj.Upadhyay@amd.com>
+ <f4ce3668-28e7-4974-bfe9-2f81da41d19e@amd.com>
+ <29d161f1-e4b1-473b-a1f5-20c5868a631a@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Tang Bin <tangbin@cmss.chinamobile.com>,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-sound@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241025080026.2393-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: mediatek: mt8192-afe-pcm: Simplify probe() with
- local dev variable
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241025080026.2393-1-tangbin@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:cFryH+0NX5oq80c/QNEmOxjeC51hOP9U2wT+P96GpQKaFgokGkG
- 7Wf4Mn8YFwyLHHvCbMMy7JcZy5ok+8spkddeOF/7In/eQzmAe6ZLdtEX7AObfjUs7k48cJQ
- bOq79U5aJKSnzi3foN5ca5TGCXTnYYYP0k8wUbidQsVqnSc1M2E+ehKnocTiasfpdMF5C+6
- jGyK9d1+5Xa0gJAFHiGuA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ix+3Vngnm6w=;p5QE56Xzwca5K5BFHiuaLGJAO7e
- auLYxV4OV05Pw5RnzItnmtcO2ieqKwINlj2b7mgshnGe9v4h666f4G3PXQqhbfWO1gRZxzxXP
- G2o0xQEphxeYmpPNS9GcDQwG89SlGCCWZqeY15vwpzDg8aXkMD627qJt/pq78A/hFnvU8VbLJ
- uLnReYZtDslBjIcVTHC/d0h4H9DE81xMwOvl0HtOuIlM7KnabVQ2rabX/Z6CpQgprA2DoJDgm
- 6UTisdG/AABwXS2pUv999C+jRLRRNMrY5XlrSt4LHnTo0SuwZaSmSxwNkEt9DVHlTVKa0kEJG
- Qj8uADrUnMEzKQvx8In0aTIJ7U8DPhBiSTqOL9qrKKvLlK0LVzltBz72KQ0IjUID+jkMY5eKx
- zuyMRDOca7cWeWhU8KPn7wAESWXGMai7IJGoMjFk5ii848OglElYfNamS4xzybeqbQGGRUYu6
- vxqauGbXI6yxyqiRkjU2xJif5KsbeUep1V0hSHU/8CzKVsEV9SyzikeaRe5TYxLMqpSR8PRM2
- d/3drYn8kg+G65WOE159FhvXYEDBBR4Bz0mK4ATVwS3JNj4LM4vHyhqcnDBXF+9ATbe+pWli8
- /pIblUEdqbL06nKzC4h0Gv2BKrMtpFnpNP9i7qS0jD96nxHcLwSH57Xu0iP3QBfF7e173NrSo
- bRp/Z6SMpvHpi8s/qiTfJUIr2/GNT2k9KBrMIfIxrUVPcCKGEmXyd4FGFdT6A8Z8+h+CvkXvu
- RKIpvVM+P2aMza0wS1zeq+oA2N++LyuFapUbaXM9g5lcaSNOji7/DoB0PGTUUbK0oI9HXh2ti
- AY1/w/8YCyi+PHKY2Md0odpg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <29d161f1-e4b1-473b-a1f5-20c5868a631a@amd.com>
 
-> Simplify the function mt8192_afe_pcm_dev_probe() by
-> using local 'dev' instead of '&pdev->dev'.
+On Sun, Nov 10, 2024 at 09:25:34AM +0530, Neeraj Upadhyay wrote:
+> Given that in step 3, hv uses "apic_id" (provided by guest) to find the
+> corresponding vCPU information, "apic_id" and "hv_apic_id" need to match.
+> Mismatch is not considered as a fatal event for guest (snp_abort() is not
+> triggered) and a warning is raise,
 
-You may occasionally put more than 51 characters into text lines
-for an improved change description.
+What is it considered then and why does the warning even exist?
 
-Regards,
-Markus
+What can anyone do about it?
+
+If you don't kill the guest, what should the guest owner do if she sees that
+warning?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
