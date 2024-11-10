@@ -1,151 +1,98 @@
-Return-Path: <linux-kernel+bounces-403087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0799C30E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 05:53:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82DAF9C30EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8651F21723
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 04:53:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0BC1C20A85
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 05:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904D5148302;
-	Sun, 10 Nov 2024 04:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1AE149DFF;
+	Sun, 10 Nov 2024 05:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YtY6tIkQ"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7239D2FA;
-	Sun, 10 Nov 2024 04:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V3Iom15d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B54323D;
+	Sun, 10 Nov 2024 05:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731214412; cv=none; b=VBZpcRV+3tdqBSvIMcV5hSr6PYVWBpyTgEzDQD+tOr9r/rRQEFRdEbmaKy0jLq+BmeI0csXiPZk+aRyAV9yxhvMEFZdV9Qmm0nNlvGkh0G2t4OZXlYp9r8AYTsrz7zePraj1zMfGPFF/lo2+88CAtHeNBu1bKbC4vyihcwAlqCg=
+	t=1731215351; cv=none; b=r9fHOWUe/PM88QhEYGgkZwAuVKkln1QEwPrgZSP7uDcVv4z4cEs1QOgepBDbOUG5w7P4S37kPZxv7lStLmU/2/rP9vZ9TPhT1oy8MHqH0ofXqCTwrbC2vFdepQ4Gf87a9aC0wNn0gujVZYTx7cknWsMw5EZhQVt6Yoqm/sbZIAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731214412; c=relaxed/simple;
-	bh=Acy5eGAhWgxkyGU/f5UmK0PsdRN6Scg4QxeIp1wqEfs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CtEt1ERKfT6+8wl+bgwBXU8I2LQa1zlMt1FklZnysu4s5PTt4NawOy80EVROjN3lZ0rdY9/MzhQvaPIl75nruF6+VhtTm4x4PYmOLBkYKRU9IDA8zZHjp6wJVMRfpnZceAGlB8+AgxV1EFNGFBen9SijYycFUlOJHVPiWvyeiZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YtY6tIkQ; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=k0aNs
-	uiJeOW3JSrOJtiMNVEl/LdLoETA7BfyQ4D8UCo=; b=YtY6tIkQERLmtmQib+6G+
-	fkhqIqzQL3pBtH0KBTAAyfATvdvlZDiO2JnfJ5xKZZ6/63hCfNSzGEn1WqyqH/WT
-	Z+chtWP3HpYKBGYAMD5EaSIliqOdSnWgMLgEd999w3tyk+QggFgn6bc0qCoXKLXr
-	5mVaRwHLP+phSVeipvwXoY=
-Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgBnsJgGPDBnwu2xBg--.36552S4;
-	Sun, 10 Nov 2024 12:52:37 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH] net/core/net-procfs: use seq_put_decimal_ull_width() for decimal values in /proc/net/dev
-Date: Sun, 10 Nov 2024 12:52:21 +0800
-Message-Id: <20241110045221.4959-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1731215351; c=relaxed/simple;
+	bh=k5u10GCFt8NE83qY1EHHB7fYCBerlFuScuCvt7K9X30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKkor/hqjwHiLgDls+rtTETlRVkAUPYQu8Yu+fOirVfs3t/CqFkqVhdFC7foy49+uTiZIddpxzsgzlkam3MfdwPuj6D2KxrdZcxrGwJPF6vHuh3BTl9BrcipfKbvo10hM9qYCQ7rd9Ybj75RCy3anqq+o14Y31pay2zuS5cQX+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V3Iom15d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CF42C4CECD;
+	Sun, 10 Nov 2024 05:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731215350;
+	bh=k5u10GCFt8NE83qY1EHHB7fYCBerlFuScuCvt7K9X30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V3Iom15dejENVld0ztiul6iV0n17uTEtJPWr/Xvv0gIO42bsJT0H/+KbF4Z8Mpwsw
+	 uYwUcj0LM+oc3i02Yk7Hb/QVQrKWyo6inr5yX/ZhOUZ1+YlnDM0y6b+SX5t9xHyiZo
+	 xdif+pwP9Uo3emzAW4C1duv40gpYWY7bm3u7SO5g=
+Date: Sun, 10 Nov 2024 06:08:20 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christian Ebner <c.ebner@proxmox.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, stable@vger.kernel.org,
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH stable 6.11.y] netfs: reset subreq->iov_iter before
+ netfs_clear_unread() tail clean
+Message-ID: <2024111053-expectant-moodiness-6118@gregkh>
+References: <20241027114315.730407-1-c.ebner@proxmox.com>
+ <2024110644-audible-canine-30ca@gregkh>
+ <7e364258-e643-4656-9233-f89f1c4b1a66@proxmox.com>
+ <2024110625-blot-uncooked-48f9@gregkh>
+ <fac697e2-22aa-40e5-942a-a6e40efee0b2@proxmox.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgBnsJgGPDBnwu2xBg--.36552S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXr15Jr45Cry3Xr1Dtw4Utwb_yoWrXr1rpF
-	y3KasIqr48Xr98tF1DJrZ2q34FqFySvF47W3ZrG3yfG3W5Xr95Jr1FgrW2kF1UG3yDAw45
-	t3srWFyYy3yjgr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pE1vVZUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMweTqmcwLjy4QQAAsx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fac697e2-22aa-40e5-942a-a6e40efee0b2@proxmox.com>
 
-seq_printf() is costy, when reading /proc/net/dev, profiling indicates
-about 13% samples of seq_printf():
-	dev_seq_show(98.350% 428046/435229)
-	    dev_seq_printf_stats(99.777% 427092/428046)
-		dev_get_stats(86.121% 367814/427092)
-		    rtl8169_get_stats64(98.519% 362365/367814)
-		    dev_fetch_sw_netstats(0.554% 2038/367814)
-		    loopback_get_stats64(0.250% 919/367814)
-		    dev_get_tstats64(0.077% 284/367814)
-		    netdev_stats_to_stats64(0.051% 189/367814)
-		    _find_next_bit(0.029% 106/367814)
-		seq_printf(13.719% 58594/427092)
-And on a system with one wireless interface, timing for 1 million rounds of
-stress reading /proc/net/dev:
-	real	0m51.828s
-	user	0m0.225s
-	sys	0m51.671s
-On average, reading /proc/net/dev takes ~0.051ms
+On Thu, Nov 07, 2024 at 12:51:14PM +0100, Christian Ebner wrote:
+> On 11/6/24 09:35, Greg KH wrote:
+> > On Wed, Nov 06, 2024 at 09:26:46AM +0100, Christian Ebner wrote:
+> > 
+> > Please try testing the original fixes and providing them as a patch
+> > series and send them for us to review.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Hi Greg,
+> 
+> as mentioned, the original series does not apply on stable-6.11.y and
+> securely and correctly back-porting this is out of scope for us, given
+> resource and time constraints.
 
-With this patch, extra costs parsing format string by seq_printf() can be
-optimized out, and the timing for 1 million rounds of read is:
-	real	0m49.127s
-	user	0m0.295s
-	sys	0m48.552s
-On average, ~0.048ms reading /proc/net/dev, a ~6% improvement.
+Please note that taking one-off backports to stable trees, increases our
+workload over time and almost always is not the correct thing to do as
+it diverges code streams.  So while this seems simpler "up front", from
+a maintaince point of view, is almost always the wrong thing.
 
-Even though dev_get_stats() takes up the majority of the reading process,
-the improvement is still significant;
-And the improvement may vary with the physical interface on the system.
+> The main intend was to contribute back a patch which is also back-portable
+> to older kernels. This seems unfeasible with the huge original patch series.
+> The submitted patch has successfully been tested on our side and fixes the
+> issue for affected customers which were willing to test the patch.
 
-Signed-off-by: David Wang <00107082@163.com>
----
- net/core/net-procfs.c | 37 ++++++++++++++++++++-----------------
- 1 file changed, 20 insertions(+), 17 deletions(-)
+That's great, but we really would want the original commits here, OR
+approval from the relevant maintainers that "yes, this is really the
+only way this can be done for stable trees".
 
-diff --git a/net/core/net-procfs.c b/net/core/net-procfs.c
-index fa6d3969734a..a0d6c5b32b58 100644
---- a/net/core/net-procfs.c
-+++ b/net/core/net-procfs.c
-@@ -46,23 +46,26 @@ static void dev_seq_printf_stats(struct seq_file *seq, struct net_device *dev)
- 	struct rtnl_link_stats64 temp;
- 	const struct rtnl_link_stats64 *stats = dev_get_stats(dev, &temp);
- 
--	seq_printf(seq, "%6s: %7llu %7llu %4llu %4llu %4llu %5llu %10llu %9llu "
--		   "%8llu %7llu %4llu %4llu %4llu %5llu %7llu %10llu\n",
--		   dev->name, stats->rx_bytes, stats->rx_packets,
--		   stats->rx_errors,
--		   stats->rx_dropped + stats->rx_missed_errors,
--		   stats->rx_fifo_errors,
--		   stats->rx_length_errors + stats->rx_over_errors +
--		    stats->rx_crc_errors + stats->rx_frame_errors,
--		   stats->rx_compressed, stats->multicast,
--		   stats->tx_bytes, stats->tx_packets,
--		   stats->tx_errors, stats->tx_dropped,
--		   stats->tx_fifo_errors, stats->collisions,
--		   stats->tx_carrier_errors +
--		    stats->tx_aborted_errors +
--		    stats->tx_window_errors +
--		    stats->tx_heartbeat_errors,
--		   stats->tx_compressed);
-+	seq_printf(seq, "%6s:", dev->name);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_bytes, 7);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_packets, 7);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_errors, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_dropped + stats->rx_missed_errors, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_fifo_errors, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_length_errors + stats->rx_over_errors +
-+				  stats->rx_crc_errors + stats->rx_frame_errors, 5);
-+	seq_put_decimal_ull_width(seq, " ", stats->rx_compressed, 10);
-+	seq_put_decimal_ull_width(seq, " ", stats->multicast, 9);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_bytes, 8);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_packets, 7);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_errors, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_dropped, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_fifo_errors, 4);
-+	seq_put_decimal_ull_width(seq, " ", stats->collisions, 5);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_carrier_errors + stats->tx_aborted_errors +
-+				  stats->tx_window_errors + stats->tx_heartbeat_errors, 7);
-+	seq_put_decimal_ull_width(seq, " ", stats->tx_compressed, 10);
-+	seq_putc(seq, '\n');
- }
- 
- /*
--- 
-2.39.2
+thanks,
 
+greg k-h
 
