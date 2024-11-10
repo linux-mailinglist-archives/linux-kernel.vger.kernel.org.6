@@ -1,135 +1,93 @@
-Return-Path: <linux-kernel+bounces-403161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68FD9C31C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:22:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789929C31D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:39:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81F7D1F21141
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B9428143C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCEA155A34;
-	Sun, 10 Nov 2024 11:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B8C156646;
+	Sun, 10 Nov 2024 11:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K1UCTa46"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GM4HI/ev"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C161552FA
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 11:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04D1D2FA;
+	Sun, 10 Nov 2024 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731237721; cv=none; b=Q3jW043vHtgUEjyrBQoPKsNPY7Xd2vu+dgEVkmRAY8tHwp7BDSqoi/TS2sxeaIADBG5Q7HD0EvQHdMnloSdQ8Ad5tESZElzO2yLKGWnRvlv3wQslX5IGEtJFrg5WcgvZE5arph+qIYrWWAJLeqbf+zILX06oGD1nuML9O/Li0L8=
+	t=1731238772; cv=none; b=mXtTrIE0AvO9SY1E98ZVhAGb9C8JHiQG8pV7XXAOfYdsin9+NnJ/jRC+kq0AgMX2vStKmUkL6YSbIBxVDa7kW6NdS1mXXULNkvB9p3KwObTOnmwBnOR+ytHSIJkdEWUZxexLpoY0u7WEgOH/wmVgZ5nyZ4T0dMBoMCNaY6CXrfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731237721; c=relaxed/simple;
-	bh=JUqkrn9jPewf9BFWwFBdsAz3L3TMLh2vheUxwewIS5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EvlwyKKSkUaEIhTxeLxvtNGlBw41iw4GJfO9wCgLtU25KEADq6ES2BKZocmNTYz0Cw6ECcT5DgHsX3wDGfwkj+UZ7VoJsTD/AUFTlG9VjtGDR07/ukIMqk4JSyQXBTf8wPJiovGJ/TyBS0EoPgRPdX6TxUQ9B8zIO27+lM5dDaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K1UCTa46; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816B6C4AF0B
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 11:21:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731237719;
-	bh=JUqkrn9jPewf9BFWwFBdsAz3L3TMLh2vheUxwewIS5o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=K1UCTa46qjx98YPoqOY4wB9C/EEAn+oYsXOhw9hGJubioKaVTuGuBAdEX2ru7maG9
-	 p+sk3pDBgHf0zg/m5/HBGXDRrEnqq+kEpf8c3H5cO2bv5mV6T7dqzdiZEINFuT55K3
-	 OZ9/q5jbtL1PRwlcGefGX2UIx5iGoqWZ4h0XuXBFBn+iqJLCtbSH0lUd0UcWKTCC0m
-	 gx3vSxpO4kqiPp3/e2J0D8WxGl/aaIF8HcK4PLd8yDyyht1r8Tnk7iMezm7aZFUZj+
-	 LpAFdh2ZpyXJOWHoIGd4AjUfJrthhJbVyPwxb946FNCvyRhXTWIFbtVXg7Pp8GAZzt
-	 clmtRycpP4g8A==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso36336241fa.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 03:21:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWo3VsHB8DA4E5+pYc5lq23ulhBQkL0Q/WiGl3QuW90TbmU1PkH0LTTH5HsUzBYnqn9UwyBpfIl5KeJX+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKUUA01SFNouNpinHEByfG9WB/B4l74CUSVBPwrnx+NlOdXls6
-	p1mYBGdFs/N6wESOEwUixf3NSwVngNmbMdvIrZ5dKANmeYWy+Vr86uLbWel2qwtSKfNI7jkn3pe
-	q5KNg5zVZaidfu2xk01pVKSgKO4M=
-X-Google-Smtp-Source: AGHT+IF7cr2MzWW2j3ApwK6puLRorAKWJWJnleqhEg06/p0lDRgb1Ai/0+0+SeKWwx2+Hl7y94pMm+PoZq5aT+OTAXw=
-X-Received: by 2002:a05:651c:515:b0:2fb:3881:35be with SMTP id
- 38308e7fff4ca-2ff2096433bmr30664511fa.9.1731237718177; Sun, 10 Nov 2024
- 03:21:58 -0800 (PST)
+	s=arc-20240116; t=1731238772; c=relaxed/simple;
+	bh=PAfZ5x3kwzDZICepgecsaRc/3qCeIXCotdIySrkXH2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MOd4bC8gKcXlbtqoVQeJfCZ0YbWAsCQv89Lz75X5V1HehVqEY6yMXcKmukJDV+HXhlU4h6dSIc7Hx5KZJc9dukJ2XRMZwO3k5P64MkwP2npHVo61JMnpySlnNlfZws27De2ZBPoT3XGNrA0jcSaNen4Bza+n729hHycYJOtTKfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GM4HI/ev; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9e8522445dso646305166b.1;
+        Sun, 10 Nov 2024 03:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731238769; x=1731843569; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6xSoh2CyaozoeveWH6+AoChScbb/yq0OX020b2OrI8I=;
+        b=GM4HI/evJd9Oh3MjbUSI9dPWdU9ZyByI8jQG2Fcm0O+an1Xw1EsnCQSJ47GS5WRkmT
+         87GuvVXCXvHZ1Q7o6MEppU6Oda351qnQC5vWNKYW4M7/Ap6iu4rM9BurSPQW8a/8PDXb
+         L4EiVkOstNRuwX2TvG9zxNUxW/rtATno1WzNdzaM/Xj1kIxDxZxTFElUbmRDdmpazjNz
+         3GbcrFWydZMSWRdnTC4Djky/clg8CLyKh+gnbgbEtUQN9JPoXIihbtzXHF0cJmirLkR7
+         UIvKIeFsQvXPGAvG2XTnjsmtO/4D5lys8iPu++RvP5SGstp4FiL9AcAeOgRS7SOWW4NM
+         OfWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731238769; x=1731843569;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6xSoh2CyaozoeveWH6+AoChScbb/yq0OX020b2OrI8I=;
+        b=xN8Zk1ESwxgpUNFlcM/BrgMPsr+Npbzjo1UkB4LLAgM634uDQxMA6jiUeEh5VF93Lx
+         XfQ/25TllBIpwyjPoG8+SKc20UK1Lg6GNCMdD5qoxDXuNQxZh5xsjFSL2QtIjXkrrrnR
+         3WzNo1DdyJPWb32oriMVTCEuTQkfE/iIDrNvfUnuhzDkwgNVvwM8ZlvCFXyF9LFQ61K7
+         uf+jdUnJ8rRaCGH8LloIbCXLuJ23W3Nd5q5QI5kjcRuptm8JhAkuDng1cNkAsHNWqPSE
+         LFcnuAdvr78/x2GQHhllI0gqx8cG9XkVRlhrzpTyFuAKXUuSmMY8qPxs7XOnsgNH/6Gr
+         MvYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBi2ISKP0VjwWQZk5JrgefWvu745W+1catw1ZoeNfqmDat0NPLfWd59beKstyRp1WbnEKRxoQLF4wAi7gv@vger.kernel.org, AJvYcCWuTuWuy3KQgSjsJG7NjhksWvCAj8AqrNGOk9l3yV62Na5BHjvm9pxOks2bzE13N8E8ykuiBvuqHaZq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6OGU8xcqYNM6j74q2iHQ+Mr/AvYQvBHTcZWFqXGlIwD6X05rZ
+	zyX14SIY2WOf5eKz1dJODBUk1OintSMr2Y7ihhAlAHnObuWx0UsuLu2qN24I
+X-Google-Smtp-Source: AGHT+IEJVCC1iXI01Ej6wTgp7o0Yb3WBlTGbkbC1fcFMYR3/GJHUTPmIfkvoDeOfMY3pVMkIGwvPVQ==
+X-Received: by 2002:a17:906:f5a3:b0:a99:f833:ca32 with SMTP id a640c23a62f3a-a9eefee8d20mr890383566b.18.1731238768884;
+        Sun, 10 Nov 2024 03:39:28 -0800 (PST)
+Received: from Max.. ([176.12.185.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0deef3esm468629566b.141.2024.11.10.03.39.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 03:39:28 -0800 (PST)
+From: Max Brener <linmaxi@gmail.com>
+To: 
+Cc: adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Patch fix suggestion
+Date: Sun, 10 Nov 2024 13:37:57 +0200
+Message-ID: <20241110113800.17665-1-linmaxi@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: 20241107050307.GA287288@mit.edu
+References: 20241016111624.5229-1-linmaxi@gmail.com 20241107050307.GA287288@mit.edu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107005831.15434-1-elsk@google.com> <CAK7LNAQFk1UNARu4HMcAfpykpw6u3ex_PHOLzfnAo2CoOzBT8w@mail.gmail.com>
-In-Reply-To: <CAK7LNAQFk1UNARu4HMcAfpykpw6u3ex_PHOLzfnAo2CoOzBT8w@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 10 Nov 2024 20:21:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATm3n3FVqmbRA-U3GWeCW_X0L8Twy6zgVYC3Tdz3xwTcA@mail.gmail.com>
-Message-ID: <CAK7LNATm3n3FVqmbRA-U3GWeCW_X0L8Twy6zgVYC3Tdz3xwTcA@mail.gmail.com>
-Subject: Re: [PATCH v1] kheaders: prevent `find` from seeing perl temp files
-To: HONG Yifan <elsk@google.com>
-Cc: enh@google.com, ccross@google.com, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthias Maennich <maennich@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 10, 2024 at 8:18=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> On Thu, Nov 7, 2024 at 9:58=E2=80=AFAM HONG Yifan <elsk@google.com> wrote=
-:
-> >
-> > Symptom:
-> >
-> > The command
-> >
-> >     find ... | xargs ... perl -i
-> >
-> > occasionally triggers error messages like the following, with the build
-> > still succeeding:
-> >
-> >     Can't open <redacted>/kernel/.tmp_cpio_dir/include/dt-bindings/cloc=
-k/XXNX4nW9: No such file or directory.
->
->
-> I tested this patch on Alpine Linux
-> with "for i in $(seq 100); do" loop.
+Oh okay, I initially thought any preallocation is necessarily done 
+through a VFS interface. Now that I see preallocations are done at mballoc,
+what I can offer is to clear the TRUNCATED flag at ext4_mb_new_blocks().
+Would that be ok in your opinion?
 
-FWIW, I used Docker for testing.
-
-
-This is the Dockerfile for my setup.
-
----------->8------------
-ARG FROM=3Dalpine
-
-FROM ${FROM}
-
-RUN \
-apk add \
-bash \
-bison \
-diffutils \
-elfutils-dev \
-emacs \
-flex \
-gcc \
-git \
-linux-headers \
-make \
-# c library
-musl-dev \
-nano \
-openssl-dev \
-perl \
-python3 \
-# useradd
-shadow \
-sudo \
-tar
----------->8------------
-
-
-I used linux-next-20241108 for the test kernel.
-
-
---=20
-Best Regards
-Masahiro Yamada
 
