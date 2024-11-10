@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-403295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351C59C33C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:05:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7049C33C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58BEA1C2029F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC9B1F21366
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A9A84D34;
-	Sun, 10 Nov 2024 16:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C28C80BF8;
+	Sun, 10 Nov 2024 16:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NLbX2CfQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HcTQ1TS0"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B6B1BC2A
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F93219ED
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731254704; cv=none; b=MgQEMyzFkFyv88Xqp2/IMwrKZxmNuUypao7eMNoDmaHWh3+GOMj5k2t/44OfQE7HiktM/07GYpGl2NTlzgRq9orDLsdxkVF3sDw3IL5Uw3KDaGZpHt/I+esqg/gsZ6tfoWZwZxde7pv6DjYGEpPDNdeuHIIXNZyZyQCoeXATniI=
+	t=1731254868; cv=none; b=d4Sb4mZKkCd1nGhDf0jEl5j1pO+dqM4eA89Exvd1Qm+zE//8u7Eu/HhMOPgW3vfd6bkR9b/V8+OFMLrQPuFeeYf++d1c4N9IYXFIusn0zDc0spiGq+nHFhWUwK76WZiX7kQhFGSM08Dss6t5nu4mSG18GDcODsoJylvzKMsHWv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731254704; c=relaxed/simple;
-	bh=sEsdEe0W6P3WfpxnXO07UpqLJ+Yl+utnriTV8++N8Z0=;
+	s=arc-20240116; t=1731254868; c=relaxed/simple;
+	bh=v8/Qriah7mMMd1g36X1Of61K4/3lFAL5Q/NV2+4Ihg0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qf60+61k19/ngsCcx0hI0bBgaI6+4p14DSfkxP+pDaPU9agrVQiAWahTdlaOJ3tARNqNbhnapVHgO+DxY4O2DByTN6GhLh3vHfZFD6zxGIFmPWTxTooepbd6cEFy5LU4izkZ7/CGedywDNaIfjLUM5sdC2Zze3efkklaHgw5qLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NLbX2CfQ; arc=none smtp.client-ip=209.85.210.175
+	 To:Cc:Content-Type; b=okn717KZXCHsEzthg0DwJyhcGOcU57EOFm2TNZofF6dzpuOYm0/gKUn1wlVcrBKLYfaA1RIXeOnZI4LWbjtNk5RZtbisoF4ZQIvyUIIFWKMuE++cDtAXTKxJET48bzB5ndHhN4eVRn48yvnbWiv7oFb6GaZVPVCsinrvxXRGh/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HcTQ1TS0; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e52582cf8so2975249b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 08:05:02 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c693b68f5so38061855ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 08:07:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731254701; x=1731859501; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731254865; x=1731859665; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=t5kL4NNF/CX9ynD/7kZJ+040uV97/VNYGj/yNKaj4VQ=;
-        b=NLbX2CfQNEW6ZKsoYtxeWCzMnRLTSMrHLd9R8YCc6fYLk5VvjJDo0ZiHyJCfqlcCBC
-         CDrev7vWrodzn2pop8sFofVkOK9yItbzlUZO4sJX5RuYp+0taVzXQ9EbWDecyJLEdnGq
-         bsL7VZMifcREBmTm3IFSnMd1QD7ce4/oL12PQ=
+        bh=0skt12aKXCRD6lMwCqaBvTwg2pvnfA4CAmfeu+/462s=;
+        b=HcTQ1TS09v1TY40ItXRLWMYcjTSk8nxk9u+86khDz6zCjp2hPgxcewPqSEMivc0wUR
+         bF75w99DTO9Mq1RJvISwa3kxGyP09uoWUkH2iGdXDYksm4AwZhg551/n3VXpWVAwoDrT
+         T4RdqZZeXfFv+LruMN4mr1ZP+8rzolQrWu0Y0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731254701; x=1731859501;
+        d=1e100.net; s=20230601; t=1731254865; x=1731859665;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=t5kL4NNF/CX9ynD/7kZJ+040uV97/VNYGj/yNKaj4VQ=;
-        b=vT4HTdr4NbryeUHZNyfWah8torCteMO+k8lx8wRjfulsBcoJJE/KoVw+DG1ZVnQ8H6
-         8k3Kpo2QJv7FuGClBYm5QW2jgh+mEndMLyp/I4wI3kmur2rmvPV0LQOHwAp+TzWBPDAW
-         C3cFrqP2S/+sN4d0yrao4+ErMl8x7KUx++huH91Q+DybLYHTY9YoFVg0Tk+rzRxoLmab
-         ru+wtF+1hO9vu1fPe4xcDtRN9fKS/6JzZPyvrgo0efgluePVsAcPIq5JHf2nBIhHad4X
-         v5VGVySe0uH9fi2mB4WmI69PLZbcoRtv+9KQkCKVLvhebv+et3+d/UOxrcg23Dl9r5Iq
-         DQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZv+GBcjKF8OSzq0xBgUTHVV979C1FysEYY6/qh4FnMfY75XZVhAFRZ+/Ndmc2a+UE2q73moyf9hem08w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfQcjONmbmG9StDnb8MRapARD3sHsI69yoZFUpyBVUxeM2o3Wf
-	wlIJoBQXgz3yAPzUTbaUJ0UDp1ry67KAfPWWI+XpmYJFfK0Is8kjak0ISHtIJvhbPYkfFNsReLI
+        bh=0skt12aKXCRD6lMwCqaBvTwg2pvnfA4CAmfeu+/462s=;
+        b=whqcQ6Y75UfOvoSXjW4nsLmP2NCz7FuOvWbJp1N3pNi3aNmKIRFrPKJPFU8NvNnRoH
+         pz/fzJRJwGRG2Sc2psJdTC7x1d4us5Bj9q7zAZlZVw2/K+sZEJ1ddfwqtQdhmmPqiwtt
+         O4qFO+bJQZaH2mKhwyGUzaLWZUHMoJtP6ZjibdeQj4Ms4pOQUeVqROWBiBFoyZ17jMrF
+         L6flJzdUvEOYDb08Wc/AQ8TUkgls1zrMyNsGwnxG2rMa7ekAAC8wH1oMRbC0YZu0ae87
+         TKJ0k3JAMMD2feGzTdNaVQa/z9N+52cgiAy/+ylKHKAgZOf3MwZlpFj+FIm4GI/6QHp0
+         CTSA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Nw7/uSIuekiULgOT6MBHgI6JbMLYtegQHscYxf05KQACGGWX3zHXBcoRJ2g+ECbsMXtvJRJVU4SSQu0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzm7Co8/q1eDrgBTi+mbiGUcDMu/NQqh2SZjbmz9w1IMIadgz4U
+	KjQQ1k511fG7XfeUF/bJCTJmwloM7cbU7QmscxRQHgO8E9ECAz+kssISDMbmGUnbSBG/+eWbZ1I
 	=
-X-Google-Smtp-Source: AGHT+IE/7f8I4L9kil07DIUf2sA1cVcSBsUs2HHWD+c6lLl+OapNu33QylaPI8JKqfJRfjKWnlrhqQ==
-X-Received: by 2002:a05:6a00:1a89:b0:71e:2a0:b0b8 with SMTP id d2e1a72fcca58-7241327d630mr12203266b3a.1.1731254701143;
-        Sun, 10 Nov 2024 08:05:01 -0800 (PST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com. [209.85.216.51])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078aaa21sm7271449b3a.51.2024.11.10.08.05.00
+X-Google-Smtp-Source: AGHT+IFK7QGNh1W4jpYDyE965ohIg16QN1yHxE/8jkrzk3y+cEBhylubrrky3e8U8k3PkGQscWuRkA==
+X-Received: by 2002:a17:902:ce03:b0:20c:693b:6578 with SMTP id d9443c01a7336-2118354efe3mr143598385ad.25.1731254865289;
+        Sun, 10 Nov 2024 08:07:45 -0800 (PST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc838esm61550765ad.32.2024.11.10.08.07.43
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2024 08:05:00 -0800 (PST)
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso2722775a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 08:05:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVgxkguJbleuHH9zEOU0T1rbf2HKLzZfuEMngYwc6jHKy1sRoAMGACZVn0EgKkFHlG6LdbiYnYG9w8h3UI=@vger.kernel.org
-X-Received: by 2002:a17:90b:1c8d:b0:2e0:8719:5f00 with SMTP id
- 98e67ed59e1d1-2e9b173c3admr15706394a91.22.1731254699442; Sun, 10 Nov 2024
- 08:04:59 -0800 (PST)
+        Sun, 10 Nov 2024 08:07:44 -0800 (PST)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e3fca72a41so3003237a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 08:07:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW4mi6I2yLwfWnNRjDtLJ+kDwnyRCAn6mMmTzpKmVlgMGd0guvZ9U8/eYPFzSpbp3cEt3iibhSPXdiy+Pk=@vger.kernel.org
+X-Received: by 2002:a17:90b:2251:b0:2e2:b64e:f501 with SMTP id
+ 98e67ed59e1d1-2e9b1740f12mr13805943a91.30.1731254863163; Sun, 10 Nov 2024
+ 08:07:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,9 +81,9 @@ References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
  <20241110151426.GD6002@pendragon.ideasonboard.com>
 In-Reply-To: <20241110151426.GD6002@pendragon.ideasonboard.com>
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Sun, 10 Nov 2024 17:04:46 +0100
-X-Gmail-Original-Message-ID: <CANiDSCuRbOEhWi8WtJpJSm5SOjzTRzpk=OTOV_jwbhUQMoXszw@mail.gmail.com>
-Message-ID: <CANiDSCuRbOEhWi8WtJpJSm5SOjzTRzpk=OTOV_jwbhUQMoXszw@mail.gmail.com>
+Date: Sun, 10 Nov 2024 17:07:30 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
+Message-ID: <CANiDSCsTNuQRXwMqA_YmX4MJ-A8eTi_rEpkd+Qv=Qwbbrj18Yg@mail.gmail.com>
 Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -171,12 +171,11 @@ On Sun, 10 Nov 2024 at 16:14, Laurent Pinchart
 > This sounds worth trying. We'll need to test it on a wide range of
 > devices though, both internal and external.
 
-We still need a plan for asynchronous controls.
+For what is worth, we have been running something similar to
+https://lore.kernel.org/linux-media/20220920-resend-powersave-v5-2-692e6df6c1e2@chromium.org/
+in ChromeOS and it has worked fine....
 
-And we have to decide if we stop supporting the uvc button (maybe we
-can start by moving USB_VIDEO_CLASS_INPUT_EVDEV to staging and see
-what happens?)
-
+But I am pretty sure that it has issues with async controls :S
 
 >
 > > Laurent mentioned that some cameras missbehave if a lot of controls
