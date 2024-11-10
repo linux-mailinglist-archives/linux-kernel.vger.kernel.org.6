@@ -1,187 +1,121 @@
-Return-Path: <linux-kernel+bounces-403182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C97BE9C320C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:46:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C129C320F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44B01C2098B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDE728135B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9D5156F28;
-	Sun, 10 Nov 2024 12:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9079155CBA;
+	Sun, 10 Nov 2024 12:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWHTKrBG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1fUOyOs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB33142E7C;
-	Sun, 10 Nov 2024 12:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2512F142E7C;
+	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731242774; cv=none; b=ah05ZRFxcq/IqTMMQmFWB/S+SuFD4K8tPan5ptG0ExyBdkouAlNV9q+dEaqazlbXYDv3DVJXE7htdzU1bqP8d4a8ImOZs9rPmW3Ctosc4RmoIXEU6mr8ActhrNNiz29TAQH0Ea6WpWtITZZL+wI0WLcb7F0VUSDoRHOF7qSWG0E=
+	t=1731242783; cv=none; b=a4BgKC4G/S9+G59UQEkYgFNd923c4R1c3q/QYBz+sPeu2xHIACiy6x8+LX2qeTmQ+0ip7TXvo0RGEx33g42knysFSOP02iRIa3bFwsy4a884n8QaWyGu9Q1HcvAflqZlxlgayzLFXh807RNzgN94Y7bXGrs3BIk8IJFul4ksD/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731242774; c=relaxed/simple;
-	bh=23ZDJFeaXS6jGuLvJ2heQGhSwoinBl6a8qsHR7bzOck=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NT9ReYRikzywkbyZtIkKi10wxa5sOF/gY5yqFTxxY3euElciitDVt7XdoQiIzhnp/M24ZyNpbqnorBe/mL3XM8svrq0lAlalRYNIQ4h+exZ4dZI6/iAIv9ZdBD9xjggWcKZCcXoFjzeR+/CEFRvQYIywSPoGXTmvyKHEUCAb1Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWHTKrBG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E80EC4CECD;
-	Sun, 10 Nov 2024 12:46:12 +0000 (UTC)
+	s=arc-20240116; t=1731242783; c=relaxed/simple;
+	bh=ElkLMRZRMv9XJWjsopnKZFC+Gem4zHcyAOxbtRxcg8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kux9ZA2iKtSopVmrYThm19OMUA639Q50WsIti+JHDs7GUeXpJON0Ukk9aeOU2U1sxr4VnxpOEQNn0cAt0iwFy2l5tBduNf11JFGdddsZO6hJJY4T24PrD1z5ohg5qEa5H0u+/Y5xngubZAWo/VV0Sr2QDbuErXdYARD52MiIhDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1fUOyOs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B156DC4CECD;
+	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731242774;
-	bh=23ZDJFeaXS6jGuLvJ2heQGhSwoinBl6a8qsHR7bzOck=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fWHTKrBGXczC0nyl3oo20hwlbCnZH+iyIkXmMOj0L4kurplh6aQTWWIxmsz1cKS3R
-	 jr6H0ulFD1Xo0dRpxSo87c1xk+oF3Y/XcN/2a3rgwkoLzdxaCF1D3QE5Q+3JraYOK7
-	 girDOmImSvE6KrqyhltjluZrojbfIpkinoJANTUjPKIR0z3dDXeg32gs7IK9XorrXi
-	 h5PzX6OLz4Z3RX1sqsf+DcrhcKd0J6cfh7n2fYftPZyugb2rDxbJFrT3cvZ50Llhd/
-	 52qDqFPKlpC88GODcH6UI1V8ujynVOoEf7YKVIt92acevh/7N+1rEafHFre4YHhuXF
-	 H07DPvXOqVXYA==
-Date: Sun, 10 Nov 2024 13:46:08 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Yunke Cao
- <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
- subdevice
-Message-ID: <20241110134608.6e82f851@foz.lan>
-In-Reply-To: <CANiDSCvYo8=x_QAeg0_S=_H=R1EgM9xLUy4DXURcuEadYcQjQQ@mail.gmail.com>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
-	<5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
-	<CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
-	<20241110110257.5160a7d1@foz.lan>
-	<CANiDSCvYo8=x_QAeg0_S=_H=R1EgM9xLUy4DXURcuEadYcQjQQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=k20201202; t=1731242782;
+	bh=ElkLMRZRMv9XJWjsopnKZFC+Gem4zHcyAOxbtRxcg8g=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=u1fUOyOsGG1MHxtnIOBClBP5NVPdIeCrg7M+h2jl3w0joJVwtfW0rx1FlNuKi0eGG
+	 X1kIVwiNZ3v73cCO4HZeQU/viIYkR4S4jZDoyW2y5QFxoT5sq+8u4PANJd/O8B1bjW
+	 rch0ShXmIbB0EgxSTT6C06wn54jmWQR/JkIvOHTt6CvcVxU6wwY/LKpJyAtwep8Aq+
+	 vs+Pje3+km+zjXabYDCAOB7b+maZsRBUKKyWBiUN3Ia3ESeIvX5lEpbAtzaMaI401d
+	 9iUWemkLTCR5qkUe9g6lR7eV1qs1JSdahfaq+/kJuirlZXbxccJ+ihDp4dORhCFIO6
+	 0MkNwl8ap6a8A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8270D5E382;
+	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
+From: maud spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Date: Sun, 10 Nov 2024 13:46:12 +0100
+Subject: [PATCH] enable the gpu node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241110-qcom-asus-gpu-v1-1-13d7b05784b8@hotmail.com>
+X-B4-Tracking: v=1; b=H4sIABOrMGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQ0MD3cLk/FzdxOLSYt30glJdC3ODZPNkIyNLY9NkJaCegqLUtMwKsHn
+ RsbW1AMtWuORfAAAA
+X-Change-ID: 20241110-qcom-asus-gpu-870c7c22935c
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, maud spierings <maud_spierings@hotmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731242781; l=1072;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=r3QqlTk6/PdijpA+1hzU7uSYno80RzxewgsClzl2Gxo=;
+ b=uz7Ftt5vnXmdUh012LFdLEbFGUKoaVnsAceQDCjeb1yYRh2yL3NhijBx8qekuLKRIKLTrHVSj
+ lohsU+0kM6CAzhd0g59n/a23dmGmQ5y+UirXSPhHAymGi1ZLnnu+LY0
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: maud spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
 
-Em Sun, 10 Nov 2024 11:32:16 +0100
-Ricardo Ribalda <ribalda@chromium.org> escreveu:
+From: maud spierings <maud_spierings@hotmail.com>
 
-> Hi Mauro
-> 
-> On Sun, 10 Nov 2024 at 11:03, Mauro Carvalho Chehab
-> <mchehab+huawei@kernel.org> wrote:
-> >
-> > Em Sat, 9 Nov 2024 17:29:54 +0100
-> > Ricardo Ribalda <ribalda@chromium.org> escreveu:
-> >  
-> > > >
-> > > > I think that should sort the issue, assuming that 1. above holds true.
-> > > >
-> > > > One downside is that this stops UVC button presses from working when
-> > > > not streaming. But userspace will typically only open the /dev/video#
-> > > > node if it plans to stream anyways so there should not be much of
-> > > > a difference wrt button press behavior.  
-> > >
-> > > I do not personally use the button, but it is currently implemented as
-> > > a standard HID device.  
-> >
-> > IMO, controlling the privacy via evdev is the best approach then. There's
-> > no need for a RW control neither at subdev or at device level. It could
-> > make sense a Read only to allow apps to read, but still it shall be up to
-> > the Kernel to protect the stream if the button is pressed.
-> >  
-> > > Making it only work during streamon() might be
-> > > a bit weird.
-> > > I am afraid that if there is a button we should keep the current behaviour.  
-> >
-> > Privacy matters only when streaming. IMO the Kernel check for it needs to
-> > be done at DQBUF time and at read() calls, as one can enable/disable the
-> > camera while doing videoconf calls. I do that a lot with app "soft" buttons,
-> > and on devices that physically support cutting the video.
-> >
-> > I don't trust myself privacy soft buttons, specially when handled in userspace,
-> > so what I have are webcam covers (and a small stick glued at a laptop camera
-> > that has a too small sensor for a webcam cover). I only remove the cover/stick
-> > when I want to participate on videoconf with video enabled with the builtin
-> > camera.
-> >
-> > Regards  
-> 
-> I think we are mixing up concepts here.
-> 
-> On one side we have the uvc button. You can see one here
-> https://www.sellpy.dk/item/2Yk1ZULbki?utm_source=google&utm_medium=cpc&utm_campaign=17610409619&gad_source=1&gclid=Cj0KCQiA0MG5BhD1ARIsAEcZtwR9-09ZtTIVNbVknrZCtCd7ezVM8YFw1yQXfs81FWhofg9eW-iBrsIaAopVEALw_wcB
-> That button is not represented as a hid device. We do not know how the
-> user will use this button. They could even use it to start an app when
-> pressed.
+enable the gpu node on the snapdragon powered asus vivobook s15
 
-Old cameras have a <snapshot> button. Maybe that's the case of the device
-you're pointing, as it looks some non-uvc Logitech cameras I have myself.
+---
+enables the gpu on the asus vivobook s15
 
-> On the other side we have  the privacy gpio. The chassis has a switch
-> that is connected to the camera and to the SOC. You can see one here:
-> https://support.hp.com/ie-en/document/ish_3960099-3335046-16 .We link
-> the camera with a gpio via the acpi table. When the user flips the
-> button, the camera produces black frames and the SOC gets an IRQ. 
+Signed-off-by: maud spierings <maud_spierings@hotmail.com>
+---
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-OK, so the hardware warrants black frames. Sounds a more secure
-implementation.
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+index 8515c254e15868a5d7f378b0dc0bf8f339fc7b19..f25991b887de3fca0092c5f81c881c5d8bd71aac 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+@@ -328,6 +328,14 @@ vreg_l3j_0p8: ldo3 {
+ 	};
+ };
+ 
++&gpu {
++	status = "okay";
++
++	zap-shader {
++		firmware-name = "qcom/x1e80100/ASUSTeK/vivobook-s15/qcdxkmsuc8380.mbn";
++	};
++};
++
+ &i2c0 {
+ 	clock-frequency = <400000>;
+ 	status = "okay";
 
-> The IRQ is used to display a message like "Camera off" and the value of
-> the GPIO can be checked when an app is running to tell the user:
-> "Camera not available, flip the privacy button if you want to use it."
+---
+base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
+change-id: 20241110-qcom-asus-gpu-870c7c22935c
 
-So, it is not really a privacy gpio/control. It is instead a privacy
-notification control.
+Best regards,
+-- 
+maud spierings <maud_spierings@hotmail.com>
 
-I would better name it to clearly indicate what it is about.
 
-> Userspace cannot change the value of the gpio. It is read-only,
-> userspace cannot override the privacy switch. The privacy gpio is
-> represented with a control in /dev/videoX This patchset wants to move
-> it to /dev/v4l2-subdevX
-
-Well, if it is really a gpio pin, kernel (and eventually userspace) can force
-it to pullup (or pulldown) state, forcing one of the states. If, instead is 
-an output-only pin, kernel/userspace can't control it at all.
-
-> To make things more complicated. Recently some cameras are starting to
-> have their own privacy control without the need of an external gpio.
-> This is also represented as a control in /dev/videoX.
-
-IMO, both privacy notification events shall be reported the same way,
-no matter if they use GPIO, an input pin or something else.
-
-> Now that we have these 3 concepts in place:
-> 
-> Today a uvc camera is powered up when /dev/videoX is open(), not when
-> it is streaming.
-
-Ideally, the part of the hardware responsible for streaming shall be
-powered on only while streaming. I agree with Hans de Goede: better
-have this fixed before the privacy notification patches.
-
-> This means that if we want to get an event for the
-> privacy gpio we have to powerup the camera, which results in power
-> consumption. This can be fixed by moving the control to a subdevice
-> (technically the gpio is not part of the camera, so it makes sense).
-
-Ok, but as you said, not all cameras implement it as a separate gpio.
-
-> If we only powerup the camera during streamon we will break the uvc
-> button, and the async controls.
-
-Why? IMO, it shall use regmap in a way that the register settings
-will be sent to the device only when the camera control hardware is
-powered up. On a complex device, there are likely at least two power
-up hardware: the camera control logic and the streaming logic.
-
-Not sure if both are visible via UVC spec, though.
-
-Thanks,
-Mauro
 
