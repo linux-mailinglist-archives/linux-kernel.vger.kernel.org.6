@@ -1,174 +1,98 @@
-Return-Path: <linux-kernel+bounces-403130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8D29C3174
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:25:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87AAF9C317B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FD82819E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5D85B21119
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91AE153598;
-	Sun, 10 Nov 2024 09:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D77091537CB;
+	Sun, 10 Nov 2024 09:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="jSoSj08a"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GTv2pa0m"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D60214264A;
-	Sun, 10 Nov 2024 09:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB734F9DA;
+	Sun, 10 Nov 2024 09:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731230739; cv=none; b=WbCLVrgc3RETNnD9nkBAVOJ828bej+EbFk1UTEYRhOVBpwhGQd9HsDsPFKpnCD7eLbgTQcSJUjNy3kJY8I+VGIvYDd87QcE/eP7n0wLbcC+m8bsU5i/Ekp5TPFYhC60OsjtYLDD3euHUVzIhfeP9TtopbLj1/LHkf2t4v2NGuZ8=
+	t=1731231120; cv=none; b=IKqhxEFUgEvgW8kyYyMm3jNsk/DMjp+47nToKiFx2Ri9MU0zihlWYdKdOoVZA1WUHSZw7WjHrUf/1sbU83Jwah4alYvghBIb5cToOlYA45Yo+3CIK1gM98XV7mB59Sbl//hZ5GbfGbshePa8pxXY1HSE5pm31uTqg0athqy3AJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731230739; c=relaxed/simple;
-	bh=Qaqre+jsEhO0tkFSo2F1PLyonrfGswTYb/oXllxHJMk=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ZAX9L49tBcnE8fbC795HISk180ZRnvFXvLT6X6nRXJw50+64Ut87sDs0HlDqs9FhGAkx5GvmEGtc4wYf4QCwEBK719cah18pGXAivBNs6LUzNh5aCBmul6Zf/9uEC/JFBV8uXDshLl4dbh2Iqnz13GQU7+/duNy9DvFw6uxEtmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=jSoSj08a; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1731230715; x=1731835515; i=frank-w@public-files.de;
-	bh=ODiLHG2Ffc5cmNLj+uQw6bBYYjn+EFVvea+2eMhlgco=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jSoSj08aH6c/G2nMMCpmA4VNk9L6/tGDjjuv1K/+evYySUMrcK95HHIMifrgsdDl
-	 7oLbJx7klxRd0wj8sCe/WLg90rOPI1p89/By69OmMP8RceklGb/eGTxDcD1Oqhba8
-	 WZwF7eYxn2EIIEZhRChmlnCCYT/ztsI/yNnKsKDwXhTBrZJ6CvWmVFMammSpjJePk
-	 pS+1DFS/LwLyPdJDtJ6mhYCFO3tuK5uj4f/qs+fimR9Thea6ovxsEIE/uiHk92f4/
-	 8Sg3oTh3uheil5EcUu6uqEUDgANFaJVAIWTR7cOylm42+5GjjdiEswpyjk7L2sGCa
-	 5RtrBlS3RRpAeYNTzA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([217.61.152.71]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M1Hdq-1tCo0v2Sdu-00GIb9; Sun, 10
- Nov 2024 10:25:15 +0100
-Date: Sun, 10 Nov 2024 10:25:13 +0100
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Andrew Lunn <andrew@lunn.ch>, Frank Wunderlich <linux@fw-web.de>
-CC: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/3] arm64: dts: marvell: Fix anyOf conditional failed
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
-References: <20241109094623.37518-1-linux@fw-web.de> <20241109094623.37518-2-linux@fw-web.de> <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
-Message-ID: <9B1A5D20-3DE5-40C1-8B2D-B1C4F53FA5F4@public-files.de>
+	s=arc-20240116; t=1731231120; c=relaxed/simple;
+	bh=rjrpZKboCeJvPg4Wde4QaFMKzZ2Rtol8hxYHZ62ymZk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nVmRT+O6Se51h3Fw2FENum6OSaYxjPdq5c15ktEbo1jofaoaurPOOTQ05izn1euciRepY6tVuGkR8hBkdueWLCKZzj5B7qb+BGrbAAaMCcfTD1hbPPYuOg9kKxwp4eMixIz4bTNycQhQg1vLP34L32/xbKg1rR9jxclnOOfarPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GTv2pa0m; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731231115; x=1731835915; i=markus.elfring@web.de;
+	bh=rjrpZKboCeJvPg4Wde4QaFMKzZ2Rtol8hxYHZ62ymZk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GTv2pa0m2emi6P+jT6hBQXUavBs8izuHEqZk+QMqPbqdREE0IsTu8MjUON2ak6qV
+	 GrCo4H8ttl0TM1o4ZVmUEGbWrpvbXKCOpgw5dlRkByJwrt+n+vfp4LBmr/DFFpT3X
+	 3ImI6JXuFzz2unldCGVh9JZP2PNAA3AV6KKBbbo0EQYEFUIS//UMhCecHhfrlQrZh
+	 3lXgm0RvTXtQdOt+24PDUb+5xLzcREhfHEIoueIXwomvOA6FG0cYqIC0jGG0B/LCZ
+	 Gpq2xhBqyechitBAFJqzzcw89aWGGS4NjQ0+9MP4arNVZxbIObycimLLm3aKM51CR
+	 OviINEhC4hVfoqhzgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MSIEs-1tKxFJ2Gc4-00IX1q; Sun, 10
+ Nov 2024 10:26:17 +0100
+Message-ID: <2d828178-c972-461e-973a-6983f3bf095e@web.de>
+Date: Sun, 10 Nov 2024 10:25:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:maTSukvmMra9qVKvHkk79WQlRTYa0IZQRVTxBhre9SYrZ/pYGoA
- r16LNgxS3BAgLczXLgdXcJZ5CueuvVkMLMUl3RrTNuT9G3Pq9APO5LNt/oiW31lCHPgyqvf
- vX1FO7mYRP6ILBNbwSNKRYMnxVSNBpV4mjcD+SqyWDmocMGWPFnZ3do4wgVus8xHCF3878t
- L2w1h8sFZeTMzaWwkVRcQ==
+User-Agent: Mozilla Thunderbird
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ John Allen <john.allen@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Mario Limonciello <superm1@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20241109020054.3877377-1-superm1@kernel.org>
+Subject: Re: [PATCH] crypto: ccp: Use scoped guard for mutex
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241109020054.3877377-1-superm1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:BIEVjxNh9skkM6JNPD1UFgRwJGm8RgBhG5GT2E5cVsWlYGgnumb
+ jMsnKQQ5ZDWvYdoC6agkOEt8pCOl/HZU6VlvVBgY4K9D+5pU8OXAzqFaGGKPx0L1Mm0Zov+
+ iqC2177uKd0wZvsmtw/Z9spe7iV8sYxUXvX2G/2r1FJ4o3Z2sXyjWp/IgAc/d1iHfQdYxWn
+ fdqn2uAMEysJqsIv8pmrg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iV2Z3Z0ITEs=;c7adgpma3OaHJNJrenNxn9fHEun
- EmVbBaVYsLHkLqwLL/mhit20Vy0Fego5GuDZmMXuY1980qL5C1+aTBC5pHPXCzHvkNDfiqLxi
- UQCUkVlGpfbLxFhBLnO2ii8+OCacYRrIMyB4rB085cZiLnnUrc/WE8Y+IZXL+RFbMlr8c57rE
- gObYmEBtKIbnf/3gDUQb3hAExsDN0asnZ8qZUs/4UD+oNtpFlTKPs4SjCUQhnPeRTMo35wYrn
- cqy/k89qcGAMbeb/JsU76T+lNKQUYgI3HlEjWChbmHYPyWHmovmQ4qXyNQineqGy3WLbRazAl
- kzKvktjRhhFrGx+R+3olIC8k8OrK9sKIv4iQCFZfmWlWz/6Oig+hMW+/TAYxpcTAkxwnSu3xE
- NFr+G+xYNiMVyacURCCttgXogQblKigQ/DDz24Im6lCPmxYBNN40oSxDUCJL/lbNMUCOSQVhF
- n+AJ1xhdVQ+2j3EATfmULHPryDQeyVXCxTrSo1DqXBbtE+fRWPqkaiaVnj0DP77tZegpHijJw
- 7040z/5tYHMsGUcbV8+cib1P9y2k3Z+WxVG0KubuMdZWV8cCitDT+mxQ2Ss99TTbixlufYyyc
- v9AWtO2lUn358IaZJHRlkUXan0xiWDOnhIJIpUg5lTg2hJE9goIxZnPavd4CX+8L+kgJ1egZZ
- bZnG1GF9xgdjtxitfaPeoD8WhLHCJ5fhjZ2aIhMMAonfRM1nDBeFEHG/+WLsuTbS4IjYTMjYC
- Cp1RgKTwLe7oNmpHIEoDvgGpP+3pjMBebwSZigU48enkeRETf/oQChhCjDOHhern3AexjqLmQ
- 0qGJ7/UAeSoWDxII3E1T/IXg==
+UI-OutboundReport: notjunk:1;M01:P0:x957D6me1mA=;rEB3KkzsNIKk6E6jFAmiLDxCyN6
+ HoeoQoz6Hgoat8LUH7phoApEI97vYhE2PRQGC2ns7n0PfIrMzdfnKJfTh3ITmPswYesDdrb1k
+ n1OE/mJ3rqvAJurjgMMclO6IuVX9TcCII0oTCPgBzowBgzpVUq8Zgb/EYZOoKLR/mhqOSPkKS
+ DIbaLCZNIRSeDzc5NqK94Ims8rV3JYMQGpx2b9PGRmJWTo8iCzjC931exjt7004ELYc7PzTix
+ TWaZK4ab36q4fQbZRbIex1AjlDUmJPnrgDkC95o8tBGYotv0fZGk0xtli8cCWI4BWpz7xZ6d3
+ ACQWefVRHBm0f9QtWt5DfFM8KzHjMpmU0WS6VKfwyM9gOhAucsQMKEHhY3QO2znRKHfVr3HBd
+ XRiucYcg9kHC0MPCxRb4C2qkIHeLxTR7RpD7wgqpVhMfun3cCaVLIfujHl8l3oE6WSUZ7FfID
+ cgm/+6pQoMpPqSlxAZU9M7QnTux5er+WEv5iiEe19sH1pt+a+2zOakx55QW2LAGfuDkr3xq9x
+ sXVnFE6DpMknb2X8uEtI/tIH05FpyhJXpXKewAipTI7XRf8lu5nT6vfwoVNykCgCvPb1zUXGB
+ xK/J2xOwjHuJ7TqElIJjCBqbOEdgY4qvRSWYkj1J07l1IVorPM3J5iPqbiNzTwXZmag5PPPX3
+ iS4/BUzZiGwCxhUfic5g8X+GCtVdWKiI/J/MCMIgC5igGjMZw1NR0MiEGrhPtUg6t+AGgPIqs
+ T6Tc5YDZaUIafwSTysTR2LW9Fbu+JlvakXJ0savmOOt3/QHH8SwlZt+vT0+mXSyPt89tt5sXv
+ 1Zm8af8EKumeuLVGkagdeRaUVDptQ6LkJIrJzazpTeDcO24BzaKVg5httclwVGyeUOwFuPzLf
+ 1+c1ct9zV+q7LOCTfega6p25fM5pSCcL4IneQCOB8+UTF6A4T0UBNcTAz
 
-Am 9=2E November 2024 18:29:44 MEZ schrieb Andrew Lunn <andrew@lunn=2Ech>:
->On Sat, Nov 09, 2024 at 10:46:19AM +0100, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->>=20
->> after converting the ahci-platform binding to yaml the following files
->> reporting "'anyOf' conditional failed" on
->>=20
->> sata@540000: sata-port@0
->> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts b/arch/ar=
-m64/boot/dts/marvell/armada-7040-db=2Edts
->> index 1e0ab35cc686=2E=2E2b5e45d2c5a6 100644
->> --- a/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts
->> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts
->> @@ -214,6 +214,7 @@ &cp0_sata0 {
->> =20
->>  	sata-port@1 {
->>  		phys =3D <&cp0_comphy3 1>;
->> +		status =3D "okay";
->>  	};
->>  };
->
->> =20
->> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts b/a=
-rch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
->> index 7af949092b91=2E=2E6bdc4f1e6939 100644
->> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
->> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
->> @@ -433,11 +433,13 @@ &cp0_sata0 {
->>  	/* 7 + 12 SATA connector (J24) */
->>  	sata-port@0 {
->>  		phys =3D <&cp0_comphy2 0>;
->> +		status =3D "okay";
->>  	};
->> =20
->>  	/* M=2E2-2250 B-key (J39) */
->>  	sata-port@1 {
->>  		phys =3D <&cp0_comphy3 1>;
->> +		status =3D "okay";
->>  	};
->>  };
->> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi b/arch/arm=
-64/boot/dts/marvell/armada-cp11x=2Edtsi
->> index 7e595ac80043=2E=2E161beec0b6b0 100644
->> --- a/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi
->> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi
->> @@ -347,10 +347,12 @@ CP11X_LABEL(sata0): sata@540000 {
->> =20
->>  			sata-port@0 {
->>  				reg =3D <0>;
->> +				status =3D "disabled";
->>  			};
->
->I don't know the yaml too well, but it is not obvious how adding a few=20
->status =3D "disabled"; status =3D "okay"; fixes a "'anyOf' conditional fa=
-iled"=2E
->
->Maybe you can expand the explanation a bit?
->
->	Andrew
+> Using a scoped guard simplifies the cleanup handling.
 
-Hi angelo,
+Will another imperative wording become helpful for an improved change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc6#n94
 
-I guess the dtbs_check only checks required properties from yaml if the no=
-de is enabled=2E
-
-As you know, phys that can supply different types (sata,usb,pcie,*gmii,=2E=
-=2E=2E),but only one mode can be used per phy=2E So only one controller can=
- be used with it,the other(s) can not=2E I do not know marvell,but there ar=
-e similar in mediatek (xsphy) and rockchip (combphy)=2E
-
-From=20my PoV it makes sense to check only enabled nodes for required proper=
-ties,but i do not know internals of dtbs_check=2E This patch is 2 years old=
- and i only rebased it and run dtbs check with the others to have a clean r=
-esult=2E=2E=2Ei can test again without this one to check if anyOf is shown =
-again=2E
-
-regards Frank
+Regards,
+Markus
 
