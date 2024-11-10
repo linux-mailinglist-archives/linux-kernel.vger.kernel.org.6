@@ -1,286 +1,174 @@
-Return-Path: <linux-kernel+bounces-403141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA2D9C3188
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:10:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4DD9C318B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A781C20A1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C672817E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64443153824;
-	Sun, 10 Nov 2024 10:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071241547C8;
+	Sun, 10 Nov 2024 10:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hT/dRTBX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ax4X/MJW"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C17E14264A
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 10:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7875914264A;
+	Sun, 10 Nov 2024 10:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731233451; cv=none; b=kAgVeT7YqptSM2Nd8QBnCTXn+iEKX0mBJ3BXUzFJnrqe2YS5o21swkSze8tOAWjRrpMPCseokbpsn8oJN1T+okeXk2Apd4BxvPrMv/PzQDDKaVFeIxDJc/9PBGEvd/TH81bskw5sK4DRIPrgaQjSPXH42SyfCP1GQ5Xf4XzXWUw=
+	t=1731233544; cv=none; b=pGrVQFawn7qevGgr785qMm/KFqCBpZ8sttCx7qYI1NyJ19qokaCmEyfzLtCk0YObrWqKa+b7YNvthS/B8KsJ1iN/d0CyoSp19xtkV/sdqyxdjRVtpc0ZgHFzPg4yT3UJ+N6W/qjLo0VN0ODNj7/OeEQvrZZeU/1ebs1ckvghF+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731233451; c=relaxed/simple;
-	bh=Yhn1AP7NQZhLq8VxYbg3lpNfcEUKLAsuMZ8XFqmeleA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RJSW4HXZFUFtRaUXH4JQXUNuMw1cJhBdurtJ/0ZS2s9Ab3S2EdQs0EBXq9uqrtLQPZDZIRs2GSX5Uf0ayKo9KkA6FQ+bMWPoYIQpFSLt1JPwSSr2qIgDrpr+pd1iLzJWOAPcpLJwDnM60qERp7Z9Mv6IUiZJuPTmIElmygD4P+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hT/dRTBX; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731233449; x=1762769449;
-  h=date:from:to:cc:subject:message-id;
-  bh=Yhn1AP7NQZhLq8VxYbg3lpNfcEUKLAsuMZ8XFqmeleA=;
-  b=hT/dRTBXQFJLMyF+S6EKs8liLU0y+rzHKRD0WHeia9Triyx0mrT6RxeM
-   wAKlUfwOz/qys4JJfNkOwisXQUro/fjR3Gyo93OntxfHQf9j83qAn4Gep
-   MXqvcRehhUnhMnROW0omleqODf+a/zFcyAnhtWhnVUcz/qOYwo86wBHXQ
-   jVX5CezOCBlJ+cuXV8e3SJR9m+gMU9elpEJM6CyNada7eQYoC0Q8cCPeD
-   aOCWXb2HjA06Prasrja1SP2or5TXP/2eHRJ9wjze1zM7xV98aggp98Hqv
-   6i08EFg+AkjGS1qUn76HayPpLAnd6rpBPnFm3iT745tiC3JdPwyi0Jpgn
-   g==;
-X-CSE-ConnectionGUID: cnsbwIewTYm+cZWHbHj7tw==
-X-CSE-MsgGUID: d6M6NqTXSeuiHyGI03KHqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11251"; a="41685781"
-X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
-   d="scan'208";a="41685781"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 02:10:49 -0800
-X-CSE-ConnectionGUID: XCXuiUPRSo65ywQ0DOq+oA==
-X-CSE-MsgGUID: HipLW6tDQNahmh8LD+8HZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
-   d="scan'208";a="90897004"
-Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Nov 2024 02:10:48 -0800
-Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tA4u5-00004x-2a;
-	Sun, 10 Nov 2024 10:10:45 +0000
-Date: Sun, 10 Nov 2024 18:10:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20241104-inet-sock] BUILD
- REGRESSION 12b3f0eabce902acc13e01d76d9fd848474d4654
-Message-ID: <202411101800.RWcjKBGj-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1731233544; c=relaxed/simple;
+	bh=QMjMp7BR5MB0OOm8XJfoI23UUhzdB6Mcvc+azu+SEH4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IHLWviH5RpmsiZUpn7yLiNmyTFn2QftrfQaops6SAbmc/T4lkK23tA5aE3tKH64ab1JWew2S2MM5rzymWNl/GlgziiQteuGauo3Qp0sUszRSMtQ6+VotAtDzL5bUvz7lpBzxHrZEmeaHj4ZsIAGYCUDWuBeEMEw9RxQFnRqSMq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ax4X/MJW; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731233531; h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type;
+	bh=o5Y8PKrty30UjY9+NIazgy7rrfgHtN8kD0lwJP9nY+U=;
+	b=ax4X/MJW8JLtAPKAIR6Va04fseTOEhx58Ei1N3C/pP/aDxNsQmYY487141Fv5dZTaeV1Ga3kNQZLiCt2jo44Vt/jWB+8alTaGUgsFQvCZSEJ/S80i9CDk4q/5amYfEdDpP5rmjfvDjS9P+5DvdwnXPWgwvW4AvcruDAaaf/M6dQ=
+Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WJ2WLGS_1731233530 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sun, 10 Nov 2024 18:12:11 +0800
+Message-ID: <faccb715-8d9f-4761-855a-0fb8be2ebad4@linux.alibaba.com>
+Date: Sun, 10 Nov 2024 18:12:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+Subject: Re: [RFC PATCH] PCI: pciehp: Generate a RAS tracepoint for hotplug
+ event
+To: Lukas Wunner <lukas@wunner.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-edac@vger.kernel.org, bhelgaas@google.com, tony.luck@intel.com,
+ bp@alien8.de
+References: <20241108030939.75354-1-xueshuai@linux.alibaba.com>
+ <Zy-hbwLohwf-_hCN@wunner.de>
+In-Reply-To: <Zy-hbwLohwf-_hCN@wunner.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20241104-inet-sock
-branch HEAD: 12b3f0eabce902acc13e01d76d9fd848474d4654  net: inet_sock.h: Avoid thousands of -Wflex-array-member-not-at-end warnings
 
-Error/Warning ids grouped by kconfigs:
 
-recent_errors
-|-- arm-allmodconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|-- arm-allyesconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|-- mips-allmodconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|-- mips-allyesconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|-- parisc-allmodconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-|-- parisc-allyesconfig
-|   `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
-`-- xtensa-allyesconfig
-    `-- include-linux-build_bug.h:error:static-assertion-failed:struct-member-likely-outside-of-struct_group_tagged()
+在 2024/11/10 01:52, Lukas Wunner 写道:
+> On Fri, Nov 08, 2024 at 11:09:39AM +0800, Shuai Xue wrote:
+>> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+>> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+>> @@ -19,6 +19,7 @@
+>>   #include <linux/types.h>
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/pci.h>
+>> +#include <ras/ras_event.h>
+>>   #include "pciehp.h"
+> 
+> Hm, why does the TRACE_EVENT() definition have to live in ras_event.h?
+> Why not, say, in pciehp.h?
 
-elapsed time: 810m
+IMHO, it is a type of RAS related event, so I add it in ras_event.h, similar to
+other events like aer_event and memory_failure_event.
 
-configs tested: 179
-configs skipped: 4
+I could move it to pciehp.h, if the maintainers prefer that location.
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    clang-20
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                              allyesconfig    gcc-13.2.0
-arc                                 defconfig    gcc-14.2.0
-arm                              allmodconfig    clang-20
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                              allyesconfig    gcc-14.2.0
-arm                                 defconfig    gcc-14.2.0
-arm                           h3600_defconfig    clang-15
-arm                            hisi_defconfig    clang-15
-arm                           sama7_defconfig    clang-15
-arm                           spitz_defconfig    clang-15
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.2.0
-i386                             allmodconfig    clang-19
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-19
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-19
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20241110    gcc-11
-i386        buildonly-randconfig-002-20241110    gcc-11
-i386        buildonly-randconfig-002-20241110    gcc-12
-i386        buildonly-randconfig-003-20241110    clang-19
-i386        buildonly-randconfig-003-20241110    gcc-11
-i386        buildonly-randconfig-004-20241110    gcc-11
-i386        buildonly-randconfig-005-20241110    gcc-11
-i386        buildonly-randconfig-005-20241110    gcc-12
-i386        buildonly-randconfig-006-20241110    gcc-11
-i386        buildonly-randconfig-006-20241110    gcc-12
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241110    gcc-11
-i386                  randconfig-001-20241110    gcc-12
-i386                  randconfig-002-20241110    clang-19
-i386                  randconfig-002-20241110    gcc-11
-i386                  randconfig-003-20241110    gcc-11
-i386                  randconfig-003-20241110    gcc-12
-i386                  randconfig-004-20241110    clang-19
-i386                  randconfig-004-20241110    gcc-11
-i386                  randconfig-005-20241110    gcc-11
-i386                  randconfig-005-20241110    gcc-12
-i386                  randconfig-006-20241110    gcc-11
-i386                  randconfig-006-20241110    gcc-12
-i386                  randconfig-011-20241110    clang-19
-i386                  randconfig-011-20241110    gcc-11
-i386                  randconfig-012-20241110    gcc-11
-i386                  randconfig-012-20241110    gcc-12
-i386                  randconfig-013-20241110    gcc-11
-i386                  randconfig-013-20241110    gcc-12
-i386                  randconfig-014-20241110    gcc-11
-i386                  randconfig-014-20241110    gcc-12
-i386                  randconfig-015-20241110    gcc-11
-i386                  randconfig-015-20241110    gcc-12
-i386                  randconfig-016-20241110    clang-19
-i386                  randconfig-016-20241110    gcc-11
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                           defconfig    gcc-14.2.0
-loongarch                 loongson3_defconfig    clang-15
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                                defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                        bcm47xx_defconfig    clang-15
-mips                         db1xxx_defconfig    clang-15
-mips                        vocore2_defconfig    clang-15
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc64                            defconfig    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-20
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                       ebony_defconfig    clang-15
-powerpc                       eiger_defconfig    clang-15
-powerpc                        fsp2_defconfig    clang-15
-powerpc                   lite5200b_defconfig    clang-15
-powerpc                    mvme5100_defconfig    clang-15
-powerpc                     tqm8555_defconfig    clang-15
-riscv                            allmodconfig    clang-20
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    gcc-12
-s390                             allmodconfig    clang-20
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                        edosk7760_defconfig    clang-15
-sh                          rsk7201_defconfig    clang-15
-sh                              ul2_defconfig    clang-15
-sparc                            allmodconfig    gcc-14.2.0
-sparc64                             defconfig    gcc-12
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-17
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                               allyesconfig    gcc-12
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241110    clang-19
-x86_64      buildonly-randconfig-001-20241110    gcc-12
-x86_64      buildonly-randconfig-002-20241110    gcc-12
-x86_64      buildonly-randconfig-003-20241110    clang-19
-x86_64      buildonly-randconfig-003-20241110    gcc-12
-x86_64      buildonly-randconfig-004-20241110    gcc-12
-x86_64      buildonly-randconfig-005-20241110    gcc-12
-x86_64      buildonly-randconfig-006-20241110    clang-19
-x86_64      buildonly-randconfig-006-20241110    gcc-12
-x86_64                              defconfig    clang-19
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-19
-x86_64                randconfig-001-20241110    gcc-12
-x86_64                randconfig-002-20241110    clang-19
-x86_64                randconfig-002-20241110    gcc-12
-x86_64                randconfig-003-20241110    gcc-12
-x86_64                randconfig-004-20241110    gcc-12
-x86_64                randconfig-005-20241110    clang-19
-x86_64                randconfig-005-20241110    gcc-12
-x86_64                randconfig-006-20241110    clang-19
-x86_64                randconfig-006-20241110    gcc-12
-x86_64                randconfig-011-20241110    gcc-12
-x86_64                randconfig-012-20241110    gcc-12
-x86_64                randconfig-013-20241110    gcc-12
-x86_64                randconfig-014-20241110    clang-19
-x86_64                randconfig-014-20241110    gcc-12
-x86_64                randconfig-015-20241110    gcc-12
-x86_64                randconfig-016-20241110    gcc-12
-x86_64                randconfig-071-20241110    clang-19
-x86_64                randconfig-071-20241110    gcc-12
-x86_64                randconfig-072-20241110    gcc-12
-x86_64                randconfig-073-20241110    gcc-12
-x86_64                randconfig-074-20241110    gcc-12
-x86_64                randconfig-075-20241110    gcc-11
-x86_64                randconfig-075-20241110    gcc-12
-x86_64                randconfig-076-20241110    clang-19
-x86_64                randconfig-076-20241110    gcc-12
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
+> 
+>> @@ -245,6 +246,8 @@ void pciehp_handle_presence_or_link_change(struct controller *ctrl, u32 events)
+>>   		if (events & PCI_EXP_SLTSTA_PDC)
+>>   			ctrl_info(ctrl, "Slot(%s): Card not present\n",
+>>   				  slot_name(ctrl));
+>> +		trace_pciehp_event(dev_name(&ctrl->pcie->port->dev),
+>> +				   slot_name(ctrl), ON_STATE, events);
+>>   		pciehp_disable_slot(ctrl, SURPRISE_REMOVAL);
+>>   		break;
+>>   	default:
+> 
+> I'd suggest using pci_name() instead of dev_name() as it's a little shorter.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Will use pci_name() instead.
+
+> 
+> Passing ON_STATE here isn't always accurate because there's
+> "case BLINKINGOFF_STATE" with a fallthrough preceding the
+> above code block.
+
+Yes, you are right, I missed the above fallthrough case.
+
+> 
+> Wouldn't it be more readable to just log the event that occured
+> as a string, e.g. "Surprise Removal" (and "Insertion" or "Hot Add"
+> for the other trace event you're introducing) instead of the state?
+> 
+> Otherwise you see "ON_STATE" in the log but that's actually the
+> *old* value so you have to mentally convert this to "previously ON,
+> so now must be transitioning to OFF".
+
+I see your point. "Surprise Removal" or "Insertion" is indeed the exact state
+transition. However, I am concerned that using a string might make it difficult
+for user space tools like rasdaemon to parse.
+
+How about adding a new enum for state transition? For example:
+
+	enum pciehp_trans_type {
+		PCIEHP_SAFE_REMOVAL,
+		PCIEHP_SURPRISE_REMOVAL,
+		PCIEHP_Hot_Add,
+	...
+	}
+
+And define the state transition as a int type for tracepoint, then rasdaemon
+can parse the value easily.
+
+	trace_pciehp_event(pci_name(&ctrl->pcie->port->dev),
+		slot_name(ctrl), PCIEHP_SAFE_REMOVAL, events);
+
+And TP_printk with symbolic name of the state transition.
+
+	TRACE_EVENT(pciehp_event,
+		TP_PROTO(const char *port_name,
+			 const char *slot,
+			 const int trans_state),
+	
+		TP_ARGS(port_name, slot, trans_state),
+	
+		TP_STRUCT__entry(
+			__string(	port_name,	port_name	)
+			__string(	slot,		slot		)
+			__field(	int,		trans_state	)
+		),
+	
+		TP_fast_assign(
+			__assign_str(port_name, port_name);
+			__assign_str(slot, slot);
+			__entry->trans_state	= trans_state;
+		),
+	
+		TP_printk("%s slot:%s, state:%d, events:%d\n",
+			__get_str(port_name),
+			__get_str(slot),
+			__print_symbolic(__entry->trans_state, PCIEHP_SURPRISE_REMOVAL),
+	);
+
+> 
+> I'm fine with adding trace points to pciehp, I just want to make sure
+> we do it in a way that's easy to parse for admins.
+
+Thank you for the positive feedback :)
+
+> 
+> Thanks,
+> 
+> Lukas
+
+Best Regards,
+Shuai
 
