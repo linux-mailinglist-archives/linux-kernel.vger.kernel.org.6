@@ -1,507 +1,171 @@
-Return-Path: <linux-kernel+bounces-403148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6039C31A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:35:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AB49C31A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282B4B20CF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:35:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FBAE2817D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE1115443C;
-	Sun, 10 Nov 2024 10:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3314015443F;
+	Sun, 10 Nov 2024 10:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zap9Kb7f"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iiIZo3JE"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3EC142E7C;
-	Sun, 10 Nov 2024 10:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206AA142E7C
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 10:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731234939; cv=none; b=FIHS4wz7JZvF+2B5ArKPNLjqktHAQ179Scux0NjjePX6PcjBFb5t4fpziKcGwcD5ncKR9T8R2ze88zhNaGqbekDtGAIBBfJymkn5B3j0TGKzfe3Azg4gSgNJSCuQLCT24hlpC0nrqYl+E/coA594X3n3MUq6rGkZC8csg6hFTik=
+	t=1731235083; cv=none; b=WxnVXbjNVO93/FJbg5w3+c6Sl96LBk+fJDMIWpPZBviZLjpA0WWci26O1UouXdFf2RPLIjGMCVN9AccMzy0ERV3Fawwx8w7ggL7o1c5A2mgpxSs3itQULmpUg3MZ7mvVOQU+ZJpz9h8gFW6xJ4Xg72jbVpATgugP7jdRjTGK8sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731234939; c=relaxed/simple;
-	bh=5RvKLYrbKsZe2EL8I/yb+t8s4aX0EBY95WoLCYD8jzo=;
+	s=arc-20240116; t=1731235083; c=relaxed/simple;
+	bh=O5mVQaKDvwOJc7a5XxnU2xSnmQ+whwxsl1yxUHgnFWE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=az5lml/VpgwhQ2itj03+txVBsCw+uZX8UUPVUwF3J4dWQXB6w2i5FMTrFhP6z82BQYqNOO4GIDhfpGIgW7j+Leg8TN5B/q3sx0OHhIf5CoZ8GCUow7hWkgplw3Q+qx6R4mO4V8+XF28jIy6M16Kj8ejCwG8B2cSCXPdZARz4GVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zap9Kb7f; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ceb75f9631so4427412a12.0;
-        Sun, 10 Nov 2024 02:35:36 -0800 (PST)
+	 To:Cc:Content-Type; b=Iy0J1Ah9YJG42Q9qVioi8xcVDthuJcB1N4ktByxY29DM0tgN1SvnlUxUlp6agqnAA0Fufzw/Agvv3IGduKsrObVd04ffNECc04IXfpvEW2EWjqSWc8TOdJ0EHawnANSr18/7gxGcxlUlVCUoBVEenPUDlPFkQGxD8YKQHNM9qOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iiIZo3JE; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso2596912b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:38:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731234935; x=1731839735; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731235081; x=1731839881; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Av7jnK0Ej2OmTh/tA+7uPgduwhLiXyzD8zCnjvzcN1U=;
-        b=Zap9Kb7fRXujTtlcIqL08kMl1CLLDTGTHq3zdeTktYgnJw1bGwpF6CIlzwkUPyFHO4
-         ++5fHXv01vXhV1kLgfirWZcQVK9+2gB3M5uq1TEHvL+TdNw0+u6eqwCc0R0qGOQmS69C
-         EUNJ6R/ZiPmOWjXIFYq+bzEfpoKGZ5bk/LDx0twBMls5vZN+vMmSAF9FxF6MnchxC1ee
-         wqlyQAXlbKZK3LYbs9S2bJJGJ0EQ+IwY+oZyYD+ZG8XMS7Fjk8GiGxIAvWo1D5NjVYyd
-         QZpHQMgzRO0p0hHznV6kxIllbyI0gS50O2NIQCN/pDdlG7Jzq9VOvZXatmAdp3MwcpTL
-         z8TA==
+        bh=OavQNoExwrB2RaimjnilBITwbfjdSP2yPFFHgkfcTBk=;
+        b=iiIZo3JEF61585gibFFae1p5TZ6Te20EWD1Bg8xLOeVw2DTnwvRPX674hg1B3KE8z8
+         HtJOQyabLtT+ukQbLd+6pwiNYOaD5In5xKeENlEUUl99nGGdFu86ckIWGuMbT2MHWH+n
+         cteIX3GQuy2pHjIcsyVaRNEED9Ieoj3svJ3d4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731234935; x=1731839735;
+        d=1e100.net; s=20230601; t=1731235081; x=1731839881;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Av7jnK0Ej2OmTh/tA+7uPgduwhLiXyzD8zCnjvzcN1U=;
-        b=DxM+JX5XTmIv29Wy/OBuW7n8PuCPeNtL4rUdNFZ9q90hFB3ETB/K8zOAMcszlZgk0u
-         FNQvPK83iNut4HyQmQUns19GU/2EfN949rzbgnmWgzmynMcMIlQDafDJsBp/z/xtKfs9
-         4Er9vwX8kt0buF4529taEEKoOju94TjhGowma/OVpK6VQ2tz6JBpokjDr88wDIEb8Fol
-         k2f98DikJi7QYqgKFUzNMiPZZxJ8giVt5yglpM3Fc+27JEuNWNNeYvLlNONKRFAStN5Y
-         ZfE0Rz0yIFfZD5kqPxjeUOXYhkwx6zQ9Jm4/bUH9JJl1VqqpI967won5KGtqZ7HFCktT
-         H/ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU6mODpdP3E/KJv9W59HYJaba1279rkarbBeurRUXT2GoO8eICAu+fK9QtwdBp6YCXReGankKRArwN0tM8z@vger.kernel.org, AJvYcCVbJZfrpPsOo01dqGugUd5IYtBcUoG3uJEDD0gJerQfpfB6KUg6i0TlUVjHLQdPG32uCrk2HmeY3Dvm@vger.kernel.org
-X-Gm-Message-State: AOJu0YynEJ04ql6BCpaiBlJ3ue8iHjRC3akrMlIAVPVrdn89vLhQBtSo
-	/dcj4koBEXeGKnti58aczKF83FNRfsJGfhqpc8DcZv5FpnjEJVEi3Bb5H0pI1avLdlrpL63NUlg
-	4X3/ewlHWttSI3h5IOc5uNrJxGwo=
-X-Google-Smtp-Source: AGHT+IEWVuCLtyK8A/FwP0CuMKwPWyntbKyq9v9Ya3ifeaTgsYSwZquQxvHMXLhqNsiuBICkI3MA7xLEx8IkvpRUOn4=
-X-Received: by 2002:a17:907:3d90:b0:a86:8e3d:86e2 with SMTP id
- a640c23a62f3a-a9eefebd4b5mr898725966b.11.1731234934133; Sun, 10 Nov 2024
- 02:35:34 -0800 (PST)
+        bh=OavQNoExwrB2RaimjnilBITwbfjdSP2yPFFHgkfcTBk=;
+        b=nvJj0y8wxoX35L8XhB0f2yvKcA+8gIemFgfhJ/i8XEpKbaEtOAFQrK4NkYc+kFHIb4
+         xP/Q2thBY6L9vI7AIdyCLPGkDCJMpmG5UHbB3WO53OxTtSEdQGuTMC9ru0+2egiASDAG
+         5V0F3JGDym/kRbWBh44bvrZFEhqbNq2s0uGDk4wuVedytJcGD3Ij0QpigyqIZJujuqMp
+         salU6RiwAq7N+Iscdle+LAarcsie/xm4ZIF0vhJmEWWRCQQMxiPO/WhLY9Z5uyW9iHTh
+         osrsd6FfG3KBZhbVI/OfMuTw5ii/zFKVl0J5wxFgBgDIPt5pZUk7/SI8iZ78NGQjXZcs
+         +dwA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/I9BxbS5iJA6rBdXjIb7IyIxp5sKNkLIXZ8lGhZFiij5Fs/tQiMFgar8stHjqDFgyhhWs2qvvq7cC4bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt2SPBmFgUd/Iz1YGuh6iuAhmkBTdvvQSNahCjvbCmEKPABW7q
+	4++gGDjyySIk2LAL4AOppoP0v+/t73rQ4wX9qrq12lIBBCnG2sHthbcWnLsRegTRv0LpUU2GJeM
+	=
+X-Google-Smtp-Source: AGHT+IFYOBWuSxEEH6vsHh7dsWjVcHSRmaPcxmPK4nr+XHOp2qj/IaNoZbYcEpTi2RuxPdFckcJJvg==
+X-Received: by 2002:a05:6a21:7886:b0:1dc:5e5:ea65 with SMTP id adf61e73a8af0-1dc22b60950mr13543121637.34.1731235081101;
+        Sun, 10 Nov 2024 02:38:01 -0800 (PST)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com. [209.85.215.171])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65d358sm6478711a12.84.2024.11.10.02.37.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Nov 2024 02:37:59 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7f3f184985bso2507637a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:37:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWfZ2Xmd8F2Ap2TRue7/OGlBQUVu7AG3k0qEWPBXnwXB272YvU4JDG5pS7+CUrV4LwbXvl14LSEPskYA/w=@vger.kernel.org
+X-Received: by 2002:a17:90b:5307:b0:2e2:d7db:41fc with SMTP id
+ 98e67ed59e1d1-2e9b1720246mr13676256a91.10.1731235079120; Sun, 10 Nov 2024
+ 02:37:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <672a3997.050a0220.2a847.11f7.GAE@google.com>
-In-Reply-To: <672a3997.050a0220.2a847.11f7.GAE@google.com>
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-Date: Sun, 10 Nov 2024 16:04:56 +0530
-Message-ID: <CAHiZj8ieKPXqLKx4oO6Vhb0QPU+8hF9B-gaQ=Xinawrqv86==w@mail.gmail.com>
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl (2)
-To: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-Cc: dan.j.williams@intel.com, dave.jiang@intel.com, ira.weiny@intel.com, 
-	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	nvdimm@lists.linux.dev, rafael@kernel.org, syzkaller-bugs@googlegroups.com, 
-	vishal.l.verma@intel.com
-Content-Type: multipart/mixed; boundary="00000000000045d9cc06268c8ba3"
-
---00000000000045d9cc06268c8ba3
-Content-Type: multipart/alternative; boundary="00000000000045d9ca06268c8ba1"
-
---00000000000045d9ca06268c8ba1
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com> <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110110257.5160a7d1@foz.lan> <2fd9053f-34b6-4e97-a898-98fd71a485e8@xs4all.nl>
+In-Reply-To: <2fd9053f-34b6-4e97-a898-98fd71a485e8@xs4all.nl>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Sun, 10 Nov 2024 11:37:46 +0100
+X-Gmail-Original-Message-ID: <CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
+Message-ID: <CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	Yunke Cao <yunkec@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On Sun, 10 Nov 2024 at 11:29, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>
+> On 10/11/2024 11:02, Mauro Carvalho Chehab wrote:
+> > Em Sat, 9 Nov 2024 17:29:54 +0100
+> > Ricardo Ribalda <ribalda@chromium.org> escreveu:
+> >
+> >>>
+> >>> I think that should sort the issue, assuming that 1. above holds true.
+> >>>
+> >>> One downside is that this stops UVC button presses from working when
+> >>> not streaming. But userspace will typically only open the /dev/video#
+> >>> node if it plans to stream anyways so there should not be much of
+> >>> a difference wrt button press behavior.
+> >>
+> >> I do not personally use the button, but it is currently implemented as
+> >> a standard HID device.
+> >
+> > IMO, controlling the privacy via evdev is the best approach then. There's
+> > no need for a RW control neither at subdev or at device level. It could
+> > make sense a Read only to allow apps to read, but still it shall be up to
+> > the Kernel to protect the stream if the button is pressed.
+> >
+> >> Making it only work during streamon() might be
+> >> a bit weird.
+> >> I am afraid that if there is a button we should keep the current behaviour.
+> >
+> > Privacy matters only when streaming. IMO the Kernel check for it needs to
+> > be done at DQBUF time and at read() calls, as one can enable/disable the
+> > camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+> > and on devices that physically support cutting the video.
+>
+> We could add a vb2_s_privacy(bool privacy) function to vb2 to tell vb2 if the privacy
+> mode is on. And if so, take action. E.g. calling QBUF/DQBUF would return a -EACCES error.
+>
+> That will ensure consistent behavior for all drivers that have a privacy function.
 
-On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot <
-syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com> wrote:
+I am not against adding a feature like this, but we still need a way
+to notify userspace about a change of the privacy state when the user
+presses it.
+Controls are great for this.
 
-> Hello,
 >
-> syzbot found the following issue on:
+> Note that there are two types of privacy GPIO: one that triggers when a physical
+> cover is moved, blocking the sensor, and one that is a button relying on software
+> to stop streaming video. In the first case it is informative, but you can keep
+> streaming.
+
+I am curious who implements a software privacy switch. I would
+definitely use a physical cover in those devices.
+
+Chromebooks only support physical cover and hardware privacy switch. I
+have not seen software privacy switches.
+
 >
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
-> git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12418e3058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D11254d3590b16=
-717
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D7534f060ebda6b8b51b3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12170f40580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16418e3058000=
-0
+> Regards,
 >
-> Downloadable assets:
-> disk image (non-bootable):
-> https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_di=
-sk-2e1b3cc9.raw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc=
-9.xz
+>         Hans
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func
-> drivers/acpi/nfit/core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316
->
-> CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  cmd_to_func drivers/acpi/nfit/core.c:416 [inline]
->  acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459
->  __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
->  nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb399ccda79
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
-7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79
-> RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
-> RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006
-> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
-> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
-> The buggy address belongs to the virtual mapping at
->  [ffffc90000e0e000, ffffc90000e10000) created by:
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000
-> index:0xffff8880401b9a80 pfn:0x401b9
-> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-> raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-> raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask
-> 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316
-> (syz-executor229), ts 69039468240, free_ts 68666765389
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
->  prep_new_page mm/page_alloc.c:1545 [inline]
->  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
->  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
->  alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
->  alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
->  vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
->  __vmalloc_area_node mm/vmalloc.c:3646 [inline]
->  __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
->  __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
->  vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> page last free pid 5312 tgid 5312 stack trace:
->  reset_page_owner include/linux/page_owner.h:25 [inline]
->  free_pages_prepare mm/page_alloc.c:1108 [inline]
->  free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
->  __folio_put+0x2c7/0x440 mm/swap.c:126
->  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
->  pipe_update_tail fs/pipe.c:224 [inline]
->  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
->  new_sync_read fs/read_write.c:488 [inline]
->  vfs_read+0x991/0xb70 fs/read_write.c:569
->  ksys_read+0x183/0x2b0 fs/read_write.c:712
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Memory state around the buggy address:
->  ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> >ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
->                                         ^
->  ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/672a3997.050a0220.2a847.=
-11f7.GAE%40google.com
-> .
+> >
+> > I don't trust myself privacy soft buttons, specially when handled in userspace,
+> > so what I have are webcam covers (and a small stick glued at a laptop camera
+> > that has a too small sensor for a webcam cover). I only remove the cover/stick
+> > when I want to participate on videoconf with video enabled with the builtin
+> > camera.
+> >
+> > Regards
+> >
+> > Thanks,
+> > Mauro
+> >
 >
 
---00000000000045d9ca06268c8ba1
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot=
- &lt;<a href=3D"mailto:syzbot%2B7534f060ebda6b8b51b3@syzkaller.appspotmail.=
-com">syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com</a>&gt; wrote:<b=
-r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
-;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
-<br>
-syzbot found the following issue on:<br>
-<br>
-HEAD commit:=C2=A0 =C2=A0 2e1b3cc9d7f7 Merge tag &#39;arm-fixes-6.12-2&#39;=
- of git://git.ker..<br>
-git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
-console output: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D1241=
-8e30580000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
-com/x/log.txt?x=3D12418e30580000</a><br>
-kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
-=3D11254d3590b16717" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
-.appspot.com/x/.config?x=3D11254d3590b16717</a><br>
-dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3D7534f0=
-60ebda6b8b51b3" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
-pot.com/bug?extid=3D7534f060ebda6b8b51b3</a><br>
-compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0Debian clang version 15.0.6, GNU ld (GN=
-U Binutils for Debian) 2.40<br>
-syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
-epro.syz?x=3D12170f40580000" rel=3D"noreferrer" target=3D"_blank">https://s=
-yzkaller.appspot.com/x/repro.syz?x=3D12170f40580000</a><br>
-C reproducer:=C2=A0 =C2=A0<a href=3D"https://syzkaller.appspot.com/x/repro.=
-c?x=3D16418e30580000" rel=3D"noreferrer" target=3D"_blank">https://syzkalle=
-r.appspot.com/x/repro.c?x=3D16418e30580000</a><br>
-<br>
-Downloadable assets:<br>
-disk image (non-bootable): <a href=3D"https://storage.googleapis.com/syzbot=
--assets/7feb34a89c2a/non_bootable_disk-2e1b3cc9.raw.xz" rel=3D"noreferrer" =
-target=3D"_blank">https://storage.googleapis.com/syzbot-assets/7feb34a89c2a=
-/non_bootable_disk-2e1b3cc9.raw.xz</a><br>
-vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/2f2588b04a=
-e9/vmlinux-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
-e.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc9.xz</a><br>
-kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/2c932=
-4cf16df/bzImage-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
-torage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc9.xz</a><br=
->
-<br>
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:<br>
-Reported-by: <a href=3D"mailto:syzbot%2B7534f060ebda6b8b51b3@syzkaller.apps=
-potmail.com" target=3D"_blank">syzbot+7534f060ebda6b8b51b3@syzkaller.appspo=
-tmail.com</a><br>
-<br>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>
-BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/core.c:4=
-16 [inline]<br>
-BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0 drivers/ac=
-pi/nfit/core.c:459<br>
-Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316<br>
-<br>
-CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted 6.12.0-rc6-syzkal=
-ler-00077-g2e1b3cc9d7f7 #0<br>
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16=
-.3-2~bpo12+1 04/01/2014<br>
-Call Trace:<br>
-=C2=A0&lt;TASK&gt;<br>
-=C2=A0__dump_stack lib/dump_stack.c:94 [inline]<br>
-=C2=A0dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120<br>
-=C2=A0print_address_description mm/kasan/report.c:377 [inline]<br>
-=C2=A0print_report+0x169/0x550 mm/kasan/report.c:488<br>
-=C2=A0kasan_report+0x143/0x180 mm/kasan/report.c:601<br>
-=C2=A0cmd_to_func drivers/acpi/nfit/core.c:416 [inline]<br>
-=C2=A0acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459<br>
-=C2=A0__nd_ioctl drivers/nvdimm/bus.c:1186 [inline]<br>
-=C2=A0nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264<br>
-=C2=A0vfs_ioctl fs/ioctl.c:51 [inline]<br>
-=C2=A0__do_sys_ioctl fs/ioctl.c:907 [inline]<br>
-=C2=A0__se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893<br>
-=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
-=C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83<br>
-=C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f<br>
-RIP: 0033:0x7fb399ccda79<br>
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 =
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 &lt;48&gt; 3d 01 f=
-0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48<br>
-RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010<br>
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79<br>
-RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003<br>
-RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006<br>
-R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001<br>
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001<br>
-=C2=A0&lt;/TASK&gt;<br>
-<br>
-The buggy address belongs to the virtual mapping at<br>
-=C2=A0[ffffc90000e0e000, ffffc90000e10000) created by:<br>
-=C2=A0__nd_ioctl drivers/nvdimm/bus.c:1169 [inline]<br>
-=C2=A0nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264<br>
-<br>
-The buggy address belongs to the physical page:<br>
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880401b9a=
-80 pfn:0x401b9<br>
-flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)<br>
-raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000<br=
->
-raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000<br=
->
-page dumped because: kasan: bad access detected<br>
-page_owner tracks the page as allocated<br>
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2cc2(GFP=
-_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316 (syz-executor229),=
- ts 69039468240, free_ts 68666765389<br>
-=C2=A0set_page_owner include/linux/page_owner.h:32 [inline]<br>
-=C2=A0post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537<br>
-=C2=A0prep_new_page mm/page_alloc.c:1545 [inline]<br>
-=C2=A0get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457<br>
-=C2=A0__alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733<br>
-=C2=A0alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681<br>
-=C2=A0alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2=
-556<br>
-=C2=A0vm_area_alloc_pages mm/vmalloc.c:3542 [inline]<br>
-=C2=A0__vmalloc_area_node mm/vmalloc.c:3646 [inline]<br>
-=C2=A0__vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828<br>
-=C2=A0__vmalloc_node_noprof mm/vmalloc.c:3893 [inline]<br>
-=C2=A0vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926<br>
-=C2=A0__nd_ioctl drivers/nvdimm/bus.c:1169 [inline]<br>
-=C2=A0nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264<br>
-=C2=A0vfs_ioctl fs/ioctl.c:51 [inline]<br>
-=C2=A0__do_sys_ioctl fs/ioctl.c:907 [inline]<br>
-=C2=A0__se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893<br>
-=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
-=C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83<br>
-=C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f<br>
-page last free pid 5312 tgid 5312 stack trace:<br>
-=C2=A0reset_page_owner include/linux/page_owner.h:25 [inline]<br>
-=C2=A0free_pages_prepare mm/page_alloc.c:1108 [inline]<br>
-=C2=A0free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638<br>
-=C2=A0__folio_put+0x2c7/0x440 mm/swap.c:126<br>
-=C2=A0pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]<br>
-=C2=A0pipe_update_tail fs/pipe.c:224 [inline]<br>
-=C2=A0pipe_read+0x6ed/0x13e0 fs/pipe.c:344<br>
-=C2=A0new_sync_read fs/read_write.c:488 [inline]<br>
-=C2=A0vfs_read+0x991/0xb70 fs/read_write.c:569<br>
-=C2=A0ksys_read+0x183/0x2b0 fs/read_write.c:712<br>
-=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
-=C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83<br>
-=C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f<br>
-<br>
-Memory state around the buggy address:<br>
-=C2=A0ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8<br>
-=C2=A0ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8<br>
-&gt;ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ^<br>
-=C2=A0ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8<br>
-=C2=A0ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8<br>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>
-<br>
-<br>
----<br>
-This report is generated by a bot. It may contain errors.<br>
-See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
-https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
-syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
-.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
-<br>
-syzbot will keep track of this issue. See:<br>
-<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
-k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
-<br>
-If the report is already addressed, let syzbot know by replying with:<br>
-#syz fix: exact-commit-title<br>
-<br>
-If you want syzbot to run the reproducer, reply with:<br>
-#syz test: git://repo/address.git branch-or-commit-hash<br>
-If you attach or paste a git patch, syzbot will apply it before testing.<br=
->
-<br>
-If you want to overwrite report&#39;s subsystems, reply with:<br>
-#syz set subsystems: new-subsystem<br>
-(See the list of subsystem names on the web dashboard)<br>
-<br>
-If the report is a duplicate of another one, reply with:<br>
-#syz dup: exact-subject-of-another-report<br>
-<br>
-If you want to undo deduplication, reply with:<br>
-#syz undup<br>
-<br>
--- <br>
-You received this message because you are subscribed to the Google Groups &=
-quot;syzkaller-bugs&quot; group.<br>
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
-rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
-To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
-syzkaller-bugs/672a3997.050a0220.2a847.11f7.GAE%40google.com" rel=3D"norefe=
-rrer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/67=
-2a3997.050a0220.2a847.11f7.GAE%40google.com</a>.<br>
-</blockquote></div>
-
---00000000000045d9ca06268c8ba1--
---00000000000045d9cc06268c8ba3
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-v3KASAN-vmalloc-out-of-bounds-Read-in-acpi_nfit_ctl-.patch"
-Content-Disposition: attachment; 
-	filename="0001-v3KASAN-vmalloc-out-of-bounds-Read-in-acpi_nfit_ctl-.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3bgjv640>
-X-Attachment-Id: f_m3bgjv640
-
-RnJvbSA0NDNiNWMzNjY2OTQ2NTBmOWM3NzE4NjM1NTY0MzMyNzBmZmY4YmMyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
-aWwuY29tPgpEYXRlOiBTdW4sIDEwIE5vdiAyMDI0IDE2OjAxOjI0ICswNTMwClN1YmplY3Q6IFtQ
-QVRDSCB2M10gS0FTQU46IHZtYWxsb2Mtb3V0LW9mLWJvdW5kcyBSZWFkIGluIGFjcGlfbmZpdF9j
-dGwgKDIpCgpzeXogdGVzdAoKU2lnbmVkLW9mZi1ieTogU3VyYWogU29uYXdhbmUgPHN1cmFqc29u
-YXdhbmUwMjE1QGdtYWlsLmNvbT4KLS0tCiBkcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMgfCA5ICsr
-KysrKystLQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkK
-CmRpZmYgLS1naXQgYS9kcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMgYi9kcml2ZXJzL2FjcGkvbmZp
-dC9jb3JlLmMKaW5kZXggNTQyOWVjOWVmLi40YTI5OTdiNjAgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
-YWNwaS9uZml0L2NvcmUuYworKysgYi9kcml2ZXJzL2FjcGkvbmZpdC9jb3JlLmMKQEAgLTQ1NCw4
-ICs0NTQsMTMgQEAgaW50IGFjcGlfbmZpdF9jdGwoc3RydWN0IG52ZGltbV9idXNfZGVzY3JpcHRv
-ciAqbmRfZGVzYywgc3RydWN0IG52ZGltbSAqbnZkaW1tLAogCWlmIChjbWRfcmMpCiAJCSpjbWRf
-cmMgPSAtRUlOVkFMOwogCi0JaWYgKGNtZCA9PSBORF9DTURfQ0FMTCkKLQkJY2FsbF9wa2cgPSBi
-dWY7CisJaWYgKGNtZCA9PSBORF9DTURfQ0FMTCkgeworCQlpZiAoYnVmID09IE5VTEwgfHwgYnVm
-X2xlbiA8IHNpemVvZihzdHJ1Y3QgbmRfY21kX3BrZykpIHsKKwkJCXJjID0gLUVJTlZBTDsKKwkJ
-CWdvdG8gb3V0OworCQl9CisJCWNhbGxfcGtnID0gKHN0cnVjdCBuZF9jbWRfcGtnICopYnVmOwor
-CX0KIAlmdW5jID0gY21kX3RvX2Z1bmMobmZpdF9tZW0sIGNtZCwgY2FsbF9wa2csICZmYW1pbHkp
-OwogCWlmIChmdW5jIDwgMCkKIAkJcmV0dXJuIGZ1bmM7Ci0tIAoyLjM0LjEKCg==
---00000000000045d9cc06268c8ba3--
+-- 
+Ricardo Ribalda
 
