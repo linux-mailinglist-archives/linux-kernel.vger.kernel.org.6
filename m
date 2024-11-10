@@ -1,144 +1,162 @@
-Return-Path: <linux-kernel+bounces-403377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD489C34BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:16:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7087B9C34C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:16:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0973B20E3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284BC1F213DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50723155C9A;
-	Sun, 10 Nov 2024 21:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB27156F27;
+	Sun, 10 Nov 2024 21:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EZBpJIe1"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NnUPrlCT"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357A861FE9
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A5061FE9;
+	Sun, 10 Nov 2024 21:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731273357; cv=none; b=ixI5cF70FBhssaavOMUKgQO52d0Qr/8o39H3pqo9aIaOXvmA3Q9hyQ8/Wc4kEW9fggB7uqbuMFH95aJ+vEEBf3mX+fzaoeWyULaqYI9WmAwLLTEusdPlCMijjP6Tz8XgA4DE69KjE3+AGRuMKQQjKpAKlF5SLEnM4eduj/vf4lU=
+	t=1731273410; cv=none; b=T1a4r3W3cI0U4fpedJ3OHPi3S8lx4XrRSbb3a3CF4qw4Ywv8qytRn3wlQ3ouyWwwxmXNXKVM1MK2kqa0aY6jgu2lZaKEnohoIOJKN4MzPSgzRhJiiopGHWxsmVc2tljaAfVjJjtcX2qgg/ZxvSQCbA0qPm5FiL69EtIYfq0yKrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731273357; c=relaxed/simple;
-	bh=z75w7avnvBb0t7zr8OGTyA4zqWln9jUElk77pQBRSi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Glyre0EKN9O9VHmM6D1KkYESS8su9cY5slT7YzA6zrJuu9uRKiK0ksWCJ5X/ksFOiEReMrSixeSjl/2rOZzWUj3qRuSUVGGC4pDb5xSLn5tb51DUobQ7y1bsBWDUB0p/O7s2qDpz+PHUE2NGkpAWac3WfLKU+iMfzNdNxEj86ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EZBpJIe1; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4609d8874b1so32063591cf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 13:15:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731273355; x=1731878155; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AG8mReJsrFYSFuqEgfHLQC6MR+XTmmn8w2H1oDxPNbo=;
-        b=EZBpJIe1JMeUJ8xt/fNM1Rt38PsnvBp0YQNOhcZR/t5v0Q5HipAQlV0H9UXsjPKA46
-         prFWqQRdNGqIvZzrAqxRG1nGoSVYUCk3V6Km1JUlmoTafWYqLWQnjG1Ga7EENoqBcm1U
-         NqCRidrorb0dL3wUpcCoNTh8hLnTKwgclzejzOIjdlN8G04/vtHFMj1GFwLZYZi150MP
-         HzvFRriCdGPzFYpWJFb8vzgK8ggkxpr51nN/sms2Lk0eZsvUkJQQ09g86LtlWmUUKDXK
-         /17PM6qhq8kITwKyOwHG+GOLKMyHMBIdKlci2/wRGpRKFMw7GFG1ug66uuksjJlpOvv9
-         j6iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731273355; x=1731878155;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AG8mReJsrFYSFuqEgfHLQC6MR+XTmmn8w2H1oDxPNbo=;
-        b=PfIgD+5vnFiD4wUjF61HvZMkKMDcBVtXlNJrbSqlh2/3Gh1IjeEru7p1phQ+sompsN
-         qNe9WkgSoUCO1nRekvp78PATzRQENTb3Fgtlaf6tRs1k9nl738v7X9yAGFYHV2vm/kw/
-         lsSQm4ZREy6Q+zgS7sA2a0TI6uCsYe7U6SvgYZk1mifUtGapUK+RDuu7XBsLZFjAqIsk
-         lvQWS1cE1tGZd2e+Epw7wWgdDzd+QrjagFNniuak8Sul4m3YX7Iq0zbTIj9Fqmm81ALV
-         bK0t2/G6irio+5SPH7eYxwyTanypdj+UOWv9d8w2xcY2LcQUKFuZO27vQYBuZs9044vK
-         KJ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCViXNvMLmykqT6Ch0Y1clcoDek1zzYPSz5k+vUWzZGCE9sr/O4PGqafgdnKJvu6IHDEVOAPcBUARYVh0G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwflgKQbgEeWWHd9s4yf3EIB36Zn8u3c/JvFKWstuHAC87sB6cT
-	YTobjakZzOw0Z1KKLkgf+fXVKial3mmD9V99pMX/U8Mr3z/IyiO9
-X-Google-Smtp-Source: AGHT+IEUA21eJT6RC7BGoCrGQUVP+nm95ovUgv7XydgYTHvq0Jcdo48GbJHMhG6cNEi8Ea0f+JicQQ==
-X-Received: by 2002:a05:622a:4d:b0:460:c5b2:58b7 with SMTP id d75a77b69052e-4630942cc70mr139025861cf.51.1731273355031;
-        Sun, 10 Nov 2024 13:15:55 -0800 (PST)
-Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff3df534sm51691451cf.10.2024.11.10.13.15.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2024 13:15:54 -0800 (PST)
-Message-ID: <208f8a06-c176-4377-8255-7800ecd2cf6c@gmail.com>
-Date: Sun, 10 Nov 2024 16:15:53 -0500
+	s=arc-20240116; t=1731273410; c=relaxed/simple;
+	bh=SOb6+PCqPezk//gqKgeQow+owfg+gFpAZFc8g+4YUd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N4oJ+Z2Zo5kvIT270fuK0x37MpFXVNmqS3a6kcntQganAdmPXt2UTYKB8JQQVtv/qKQCktKnXL4dqEWW4Au0hCfLHz9lvAvFnM7wr5sEkmKuHqc4Ft9qvxGK2+U6n7Pd1qpxMt08mBdF5Na10FcAvg6K+pQK1EKl48pmYOTonds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NnUPrlCT; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+rZ6R6+emkG1vIh+xndKO9B1+qYVh3QHCutdQutXlKE=; b=NnUPrlCTnmzmH/8JFVsLNY/gVt
+	Q+NZJrc6k+eaANoAusGXscEaxYD0IvNNWFYn46mTOkdwv9jPAoIVs9Db1NYV2k4KhUcrSpT5w4Mv7
+	/QwB+FzrhW7awQ8yFqx0SaNH4QOZNjNqMeuDvqjhL/9lp0NbNLrIqn+HfFruoQOvq0Yxm4F4e7+8F
+	sKRnQWeE50imeZcub+IfMd2f0sS9o1bJIWAaAWjlXRMVpsWwB+D6Io8pcS07uq9+0mmbJ6o8srZrr
+	BqGnPE7YXZ/GywRajtSpzxgMUr3vfgjWe0WRI5laYIagGllkyELSBO1/WgLIZQTMCXmjoFEyRop20
+	Db2Xlsig==;
+Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tAFIY-0006tu-Sn; Sun, 10 Nov 2024 22:16:42 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
+ PinePhone Pro
+Date: Sun, 10 Nov 2024 22:16:42 +0100
+Message-ID: <865640012.0ifERbkFSE@diego>
+In-Reply-To: <fb3700f2d67c7f062c66cb8eb0f59b17@manjaro.org>
+References:
+ <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
+ <4386271.ejJDZkT8p0@diego> <fb3700f2d67c7f062c66cb8eb0f59b17@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next v2] riscv: Fix default misaligned access trap
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241108-fix_handle_misaligned_load-v2-1-91d547ce64db@rivosinc.com>
-Content-Language: en-US
-From: Jesse Taube <mr.bossman075@gmail.com>
-In-Reply-To: <20241108-fix_handle_misaligned_load-v2-1-91d547ce64db@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+
+Am Sonntag, 10. November 2024, 21:47:15 CET schrieb Dragan Simic:
+> Hello Heiko,
+>=20
+> On 2024-11-10 21:08, Heiko St=FCbner wrote:
+> > Am Sonntag, 10. November 2024, 19:44:31 CET schrieb Dragan Simic:
+> >> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in=
+=20
+> >> the
+> >> PinePhone Pro device dts file are too restrictive, which prevents the=
+=20
+> >> highest
+> >> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's=20
+> >> fix that
+> >> by making the regulator-{min,max}-microvolt values less strict, using=
+=20
+> >> the
+> >> voltage range that the Silergy SYR838 chip used for the vdd_gpu=20
+> >> regulator is
+> >> actually capable of producing. [1][2]
+> >>=20
+> >> This also eliminates the following error messages from the kernel log:
+> >>=20
+> >>   core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV:=20
+> >> 1150000, not supported by regulator
+> >>   panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators=20
+> >> (800000000)
+> >>=20
+> >> These changes to the regulator-{min,max}-microvolt values make the=20
+> >> PinePhone
+> >> Pro device dts consistent with the dts files for other Rockchip=20
+> >> RK3399-based
+> >> boards and devices.  It's possible to be more strict here, by=20
+> >> specifying the
+> >> regulator-{min,max}-microvolt values that don't go outside of what the=
+=20
+> >> GPU
+> >> actually may use, as the consumer of the vdd_gpu regulator, but those=
+=20
+> >> changes
+> >> are left for a later directory-wide regulator cleanup.
+> >=20
+> > With the Pinephone Pro using some sort of special-rk3399, how much of
+> > "the soc variant cannot use the highest gpu opp" is in there, and just=
+=20
+> > the
+> > original implementation is wrong?
+>=20
+> Good question, I already asked it myself.  I'm unaware of any kind of
+> GPU-OPP-related restrictions when it comes to the PinePhone-Pro-specific
+> RK3399S.  Furthermore, "the word on the street" is that the RK3399S can
+> work perfectly fine even at the couple of "full-fat" RK3399 CPU OPPs
+> that are not defined for the RK3399S, and the only result would be the
+> expected higher power consumption and a bit more heat generated.
+
+In the past we already had people submit higher cpu OPPs with the
+reasoning "the cpu runs fine with it", but which where outside of the
+officially specified frequencies and were essentially overclocking the
+CPU cores and thus possibly reducing its lifetime.
+
+So "it runs fine" is a bit of thin argument ;-) . I guess for the gpu it
+might not matter too much, compared to the cpu cores, but I still like
+the safe sides - especially for the mainline sources.
+
+I guess we'll wait for people to test the change and go from there ;-) .
 
 
+> This just reaffirms that no known GPU OPP restrictions exist.  Even
+> if they existed, enforcing them _primarily_ through the constraints of
+> the associated voltage regulator would be the wrong approach.  Instead,
+> the restrictions should be defined primarily through the per-SoC-variant
+> GPU OPPs, which are, to my best knowledge, not known to be existing for
+> the RK3399S SoC variant.
 
-On 11/8/24 18:47, Charlie Jenkins wrote:
-> Commit d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses
-> supported") removed the default handlers for handle_misaligned_load()
-> and handle_misaligned_store(). When the kernel is compiled without
-> RISCV_SCALAR_MISALIGNED, these handlers are never defined, causing
-> compilation errors.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-Reviewed-by: Jesse Taube <mr.bossman075@gmail.com>
+Yes, that is what I was getting at, if that is a limiting implementation
+it is of course not done correctly, but I'd like to make sure.
 
-Thanks,
-Jesse
-> Fixes: d1703dc7bc8e ("RISC-V: Detect unaligned vector accesses supported")
-> ---
-> Changes in v2:
-> - Change CONFIG_RISCV_SCALAR_MISALIGNED to CONFIG_RISCV_MISALIGNED
->    (Jesse)
-> - Link to v1: https://lore.kernel.org/r/20241107-fix_handle_misaligned_load-v1-1-07d7852c9991@rivosinc.com
-> ---
->   arch/riscv/include/asm/entry-common.h | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/entry-common.h b/arch/riscv/include/asm/entry-common.h
-> index 7b32d2b08bb6..b28ccc6cdeea 100644
-> --- a/arch/riscv/include/asm/entry-common.h
-> +++ b/arch/riscv/include/asm/entry-common.h
-> @@ -25,7 +25,19 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
->   void handle_page_fault(struct pt_regs *regs);
->   void handle_break(struct pt_regs *regs);
->   
-> +#ifdef CONFIG_RISCV_MISALIGNED
->   int handle_misaligned_load(struct pt_regs *regs);
->   int handle_misaligned_store(struct pt_regs *regs);
-> +#else
-> +static inline int handle_misaligned_load(struct pt_regs *regs)
-> +{
-> +	return -1;
-> +}
-> +
-> +static inline int handle_misaligned_store(struct pt_regs *regs)
-> +{
-> +	return -1;
-> +}
-> +#endif
->   
->   #endif /* _ASM_RISCV_ENTRY_COMMON_H */
-> 
-> ---
-> base-commit: 74741a050b79d31d8d2eeee12c77736596d0a6b2
-> change-id: 20241107-fix_handle_misaligned_load-8be86cb0806e
+Of course Pine's development model doesn't help at all in that regard.
+There isn't even a "vendor" kernel source it seems. [0]
+
+
+Heiko
+
+
+[0] https://wiki.pine64.org/wiki/PinePhone_Pro_Development#Kernel
+states "There's no canonical location for Pinephone Pro Linux kernel develo=
+pment,"
+
+
 
 
