@@ -1,219 +1,134 @@
-Return-Path: <linux-kernel+bounces-403331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5D29C3442
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:51:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A499C3445
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88D2A2813CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DF5B1C20892
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE1613C9C7;
-	Sun, 10 Nov 2024 18:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79C113DDB5;
+	Sun, 10 Nov 2024 18:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aGu85AiV"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="Eo8NXdmw"
+Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFDD381AF;
-	Sun, 10 Nov 2024 18:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE5913775E;
+	Sun, 10 Nov 2024 18:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731264671; cv=none; b=tHoYKv8XNvGcggAY6nAcr8lQOr4w2HrKwGjV9WiKMAqUe5U061Tty5hMJbV71pg2rxjUkFasA1mSq72YAr8+A1rX7mPAARbjHXS9uILW0wK1iuT9VAkSviI9tSo5FLov0LoF8XiF+QnrRqbyYS2tjF1uhXD8zEHu5/pGJgoQD9A=
+	t=1731264885; cv=none; b=VJ2204I6yoOfMEGuzC7Y1pkl5yqnn9O3WJrtvwo6Qpkpv25ul+oelVdFhlDo5Xq/7LFtiW2i0zXd9nEcXnRe1ATGeTC0rHW4kyF0WBmfOoBFgPsVoUho6HXL2Wn7SHQd2cOsFQnNx/c8FeUxSQeUcRjn9FEWl4uW7ySaoK+Iots=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731264671; c=relaxed/simple;
-	bh=hxoFXh2tf+fSHJm5jTqWTme4JJ8C+JkVWWODbJ/lMdE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iZsx5fd0WzVx2AeprwtowFOExT9ZX4pcwzl6C6on9X4RUfbkvw8PE5DvctZu4lGIlP5RYnj5u6WSvWxc33Rbm5AbyKMJH7tpO2K6wg2AQnxi4zpzCTFu/Drwr9PACBWia+MhjhAcI0HObb7T1tELnllAmEv0jBvaOCsfTk/w+IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aGu85AiV; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9ec86a67feso673535266b.1;
-        Sun, 10 Nov 2024 10:51:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731264667; x=1731869467; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/4pjCP82gvfS9OpswKVNnjN1UrKYwhiQEVjC6lI57Q=;
-        b=aGu85AiV/zhbXph1tydnFrJHzoPcmeREYsXAoMkx6z3FCZAkoa09mn4+IAiSFzLs0z
-         qDoAW0ArvPGXnjwjyU0Q00XArW4wi4bRBq9HS/4vhLed+aElCu81EXV16czrhzqjCups
-         Z0XKDSMm+w8X8GyDD+xvKAnYG6v3sGxae8VMt94rlxsc9AWitaltiwgHWHynF2szkKBB
-         IvWsa/ZrMB5vFDuiWqQRs9uK/5SqKGmrJDSq5hUJRVV1cdnQcwbOI/wz3HTYPJeuY+nL
-         bKDs6rFnztXVR7g2XoCzFDM84QPXGMWU9DDeMbp523VxEslzqOFYy7AztSe8UbN0p5hN
-         c/Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731264667; x=1731869467;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9/4pjCP82gvfS9OpswKVNnjN1UrKYwhiQEVjC6lI57Q=;
-        b=mv0m3pLRfK2cDjZxDAYTGVtZRemVbaxuLrUIOdJlpFq5EAFTgMUI6onx1uQpEpiB11
-         V1X2r8rcYYW3x9BJs+MPY5V0rrNU/zlRKruaQRXYjcGnXT4RlJPlMI88n1o4jGLu4o2B
-         UX6J7bq7yisKFDtt+b+Lt3kIIkxQphAZ1pahTY1caJlL+lY8mB5+EpH+jABlBoYt5doe
-         MGLAQ09oZf8p3yXhrWRbdeTBtNwOnHMuCekWAGgWmJUJxqVR2IyhFm3+j8Hm8GdJEKCy
-         KUHGwFgXX4ASn7ZiPCQyK9rTrAAibzgxw7ZOWGvNm5JRRTuD245K4yd/dw76rzH4kEIm
-         4i5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwpIEFeOgOVhTCV8+oxua/PPld/2pBZY0+mODDTx9dNQtO+t4UYSpdy29wQHDPyawFE5C8lXd1J+sGl6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk5Q0084viyd+TGl0j5bRlQ35hA3YZmz1aKzUN9D6JtpGbJSNK
-	vXfkspJkZAKeoqBCCk08M7mcyeWTrWW/vhW+/A9CGinCx8nepQmL
-X-Google-Smtp-Source: AGHT+IF94RU14sYzHF8bjEr+0jO9Wvs+vc/Y0hkEmXamxVU+iLlP6EtFkiM6BPwnfpFQDvOkn5ocWw==
-X-Received: by 2002:a17:907:7baa:b0:a9a:2afc:e4e4 with SMTP id a640c23a62f3a-a9ef0052ae7mr1015948166b.59.1731264667234;
-        Sun, 10 Nov 2024 10:51:07 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abea92sm502076066b.85.2024.11.10.10.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 10:51:06 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: bbrezillon@kernel.org,
-	arno@natisbad.org,
-	schalla@marvell.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	karprzy7@gmail.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] crypto: marvell/cesa: fix uninit value for struct mv_cesa_op_ctx
-Date: Sun, 10 Nov 2024 19:50:58 +0100
-Message-Id: <20241110185058.2226730-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731264885; c=relaxed/simple;
+	bh=V+eE/t+FzySWFWW/6drfU3OwnnKhqgPc3wtXAEWTS1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSENU/ljid7gFJ7yQgaP3M/uFq9JPBqBBUSWUEEajSeVjTXdQ3QHloCPxRmqbG4CyHcOaiU5MIB+pvdd+zDfgkoqzvr738pMYbmjnrYsbUK4Sw84k4NsQ01M2YZcEeQSJkSUas9CGpSsq52qcajxNKiVmuPNxDJ8Eh8BGGSpN+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=Eo8NXdmw; arc=none smtp.client-ip=206.189.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+	by a.peacevolution.org (Postfix) with ESMTPA id 60E3A4C82C;
+	Sun, 10 Nov 2024 18:54:41 +0000 (UTC)
+Date: Sun, 10 Nov 2024 13:54:39 -0500
+From: Aren <aren@peacevolution.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] iio: light: stk3310: Implement vdd and leda
+ supplies
+Message-ID: <5t7wdgzq37oiu4knc7o7kkx26k35ueu73r5m7aky747em5faqw@e5scnj6ng5pq>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-9-aren@peacevolution.org>
+ <ZyiHXl0mRIvM4Qa0@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyiHXl0mRIvM4Qa0@smile.fi.intel.com>
+X-Spamd-Bar: /
+Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
+	s=dkim; t=1731264882;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
+	bh=nzu+fFQ9R2PNTPL2rGE7HX35eqiZ6et7aOyn84A4GMI=;
+	b=Eo8NXdmwWsEbOWsTdYpDI6QhJyazSLcdZWHHMOYyDmM6zdPoBbWR23Uk2K1d24I6iIhpU4
+	j3LIbq8fC9P8c6D6EO7oOwLADrxCSjgNQCgomPhZCoc3QbeckTar8AbRHjcyghOKyy7iKV
+	xH0MbmEgsn8QbhU95YITmrqi19tfVL8=
 
-In cesa/cipher.c most declarations of struct mv_cesa_op_ctx are uninitialized.
-This causes one of the values in the struct to be left unitialized in later
-usages.
+On Mon, Nov 04, 2024 at 10:35:42AM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 02, 2024 at 03:50:39PM -0400, Aren Moynihan wrote:
+> > The vdd and leda supplies must be powered on for the chip to function
+> > and can be powered off during system suspend.
+> > 
+> > This was originally based on a patch by Ondrej Jirman[1], but has been
+> > rewritten since.
+> > 
+> > 1: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82
+> 
+> Make it a Link tag...
+> 
+> > 
+> 
+> ...here
+> 
+> Link: https://codeberg.org/megi/linux/commit/a933aff8b7a0e6e3c9cf1d832dcba07022bbfa82 [1]
 
-This patch fixes it by adding initializations in the same way it is done in
-cesa/hash.c.
+Makes sense
 
-Fixes errors discovered in coverity: 1600942, 1600939, 1600935, 1600934, 1600929, 1600927,
-1600925, 1600921, 1600920, 1600919, 1600915, 1600914
+> > Signed-off-by: Aren Moynihan <aren@peacevolution.org>
+> 
+> ...
+> 
+> > +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(data->supplies),
+> > +				      data->supplies);
+> > +	if (ret)
+> > +		return dev_err_probe(&client->dev, ret, "get regulators failed\n");
+> 
+> With previously introduced temporary 'dev' variable these become:
+> 
+> 	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(data->supplies), data->supplies);
+> 	if (ret)
+> 		return dev_err_probe(dev, ret, "get regulators failed\n");
+> 
+> ...
+> 
+> > +	ret = stk3310_regulators_enable(data);
+> > +	if (ret)
+> > +		return dev_err_probe(&client->dev, ret,
+> > +				     "regulator enable failed\n");
+> > +
+> > +	ret = devm_add_action_or_reset(&client->dev, stk3310_regulators_disable, data);
+> > +	if (ret)
+> > +		return dev_err_probe(&client->dev, ret,
+> > +				     "failed to register regulator cleanup\n");
+> 
+> So do these...
+> 
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- drivers/crypto/marvell/cesa/cipher.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Cleaning all of these up
 
-diff --git a/drivers/crypto/marvell/cesa/cipher.c b/drivers/crypto/marvell/cesa/cipher.c
-index 0f37dfd42d85..cf62db50f958 100644
---- a/drivers/crypto/marvell/cesa/cipher.c
-+++ b/drivers/crypto/marvell/cesa/cipher.c
-@@ -489,7 +489,7 @@ static int mv_cesa_des_op(struct skcipher_request *req,
- 
- static int mv_cesa_ecb_des_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -500,7 +500,7 @@ static int mv_cesa_ecb_des_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_ecb_des_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -543,7 +543,7 @@ static int mv_cesa_cbc_des_op(struct skcipher_request *req,
- 
- static int mv_cesa_cbc_des_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl, CESA_SA_DESC_CFG_DIR_ENC);
- 
-@@ -552,7 +552,7 @@ static int mv_cesa_cbc_des_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_cbc_des_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl, CESA_SA_DESC_CFG_DIR_DEC);
- 
-@@ -596,7 +596,7 @@ static int mv_cesa_des3_op(struct skcipher_request *req,
- 
- static int mv_cesa_ecb_des3_ede_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -608,7 +608,7 @@ static int mv_cesa_ecb_des3_ede_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_ecb_des3_ede_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -649,7 +649,7 @@ static int mv_cesa_cbc_des3_op(struct skcipher_request *req,
- 
- static int mv_cesa_cbc_des3_ede_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_CBC |
-@@ -661,7 +661,7 @@ static int mv_cesa_cbc_des3_ede_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_cbc_des3_ede_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_CBC |
-@@ -725,7 +725,7 @@ static int mv_cesa_aes_op(struct skcipher_request *req,
- 
- static int mv_cesa_ecb_aes_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -736,7 +736,7 @@ static int mv_cesa_ecb_aes_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_ecb_aes_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl,
- 			   CESA_SA_DESC_CFG_CRYPTCM_ECB |
-@@ -778,7 +778,7 @@ static int mv_cesa_cbc_aes_op(struct skcipher_request *req,
- 
- static int mv_cesa_cbc_aes_encrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl, CESA_SA_DESC_CFG_DIR_ENC);
- 
-@@ -787,7 +787,7 @@ static int mv_cesa_cbc_aes_encrypt(struct skcipher_request *req)
- 
- static int mv_cesa_cbc_aes_decrypt(struct skcipher_request *req)
- {
--	struct mv_cesa_op_ctx tmpl;
-+	struct mv_cesa_op_ctx tmpl = { };
- 
- 	mv_cesa_set_op_cfg(&tmpl, CESA_SA_DESC_CFG_DIR_DEC);
- 
--- 
-2.34.1
+> > +	ret = regulator_bulk_disable(ARRAY_SIZE(data->supplies), data->supplies);
+> 
+> Is array_size.h included?
 
+It's not, it looks like it came one of the headers that's already
+included. I'll add it explicitly.
+
+Thanks
+ - Aren
 
