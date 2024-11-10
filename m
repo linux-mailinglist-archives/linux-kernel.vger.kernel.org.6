@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-403089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22FB9C30EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2499C30F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDE7EB211ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 05:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18EDAB21243
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 05:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E85149DFA;
-	Sun, 10 Nov 2024 05:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D448F1482F6;
+	Sun, 10 Nov 2024 05:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jn+UOAQ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LBi/wc9Y"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3BF323D;
-	Sun, 10 Nov 2024 05:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEE2347B4;
+	Sun, 10 Nov 2024 05:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731215532; cv=none; b=LJzvC5vzjAIohE3iaiH/4hnlMawRbV0lB/2XXNVzW7oWD/iuDeKlN5DPsR2tcPYwvO8YWnnoaUoWxRSWCiM7tG2NLJq9gyg0ZjeW8yGlvpRGC5LJTUQAA/pv5gWIQkB58RTcs8UVixFI/7aRxb7buM3xOiFPafpoaWe/sYbvYoU=
+	t=1731215972; cv=none; b=BaVuTSbNYNXQa4y/RGtWv9Lk/z3D6kxzESw3HNaYv8GcM/k+neGQPuhMLmGdL5rVa6dgf434l8uV0lIhomJS4v+evsB97pdRz2Ykxx7DJE/Un9FzNIEg1sUatnb1gEjnlXU6vKlX3oq2oVs6k6Dp8XileJL1q6ZIGEeRsD2lW64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731215532; c=relaxed/simple;
-	bh=A3mqV6PHUB2URWifQ6V2Gc1bNiij55Y6N0KVYnFZYeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SGT0YXk32V7CmjLqO3fBpvVkhgoPj/MMDik9PTYlMt0zICmFwkIGaBL1SxmhZIMGH3/JzRxmbI12eU+wIO83LXaA6/n9hIMX/JzEgWFNl3yIh/DCtB32zDCwI8gziofYff5g6OdZ8G5oLM2tATX1dDZwVtnUpb67SA/4CitZ7ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jn+UOAQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B61C4C4CECD;
-	Sun, 10 Nov 2024 05:12:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731215531;
-	bh=A3mqV6PHUB2URWifQ6V2Gc1bNiij55Y6N0KVYnFZYeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jn+UOAQ3YEgKCcw6Te03lAx5vw3f+IuFQCy4c1jjhGDrlVQGHZJXy+dQWTJdVbEeJ
-	 dhoubIn1shl49hkq1XmnLKuBZRvc9GLdHAJdbUUQ7MOA3BixUO9eOdyyNrPBjTsWMb
-	 Mo+gZcYn6B/Kvo4znuUZ6cqX05fyrPXCCL9qB8Qs=
-Date: Sun, 10 Nov 2024 06:12:08 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, acme@kernel.org,
-	adrian.hunter@intel.com, alexander.shishkin@linux.intel.com,
-	irogers@google.com, mark.rutland@arm.com, namhyung@kernel.org,
-	peterz@infradead.org, acme@redhat.com, kprateek.nayak@amd.com,
-	ravi.bangoria@amd.com, sandipan.das@amd.com,
-	anshuman.khandual@arm.com, german.gomez@arm.com,
-	james.clark@arm.com, terrelln@fb.com, seanjc@google.com,
-	changbin.du@huawei.com, liuwenyu7@huawei.com,
-	yangjihong1@huawei.com, mhiramat@kernel.org, ojeda@kernel.org,
-	song@kernel.org, leo.yan@linaro.org, kjain@linux.ibm.com,
-	ak@linux.intel.com, kan.liang@linux.intel.com,
-	atrajeev@linux.vnet.ibm.com, siyanteng@loongson.cn,
-	liam.howlett@oracle.com, pbonzini@redhat.com, jolsa@kernel.org
-Subject: Re: [PATCH 5.10.y 0/2] Fixed perf abort when taken branch stack
- sampling enabled
-Message-ID: <2024111029-gorged-humiliate-f0bb@gregkh>
-References: <20241104112736.28554-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1731215972; c=relaxed/simple;
+	bh=1pI+1hXvAZDsPYyFJCp0JUmnMP4z7cnbB2n5ysqGvKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PrYIfMPW2Q3cQoXX65no/O5myc8RKWqC/bzprj6Nhp+C7NawkG8249SzHqFSAlO6WGd+AoVonHSb6o7SctDx5rblIoaptN5M1vt74qIjawjlmdScgyocxmOLj4imsGJba7kJRnhl16v9v1J5KQbmEbaVHC3KNHpXEYPCDzykSqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LBi/wc9Y; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-50d5a459ebdso61921e0c.0;
+        Sat, 09 Nov 2024 21:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731215970; x=1731820770; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTMju2UnNFrYjgugqzkVlUGD0mmpi2BJWg3s7Jc/TXA=;
+        b=LBi/wc9YafhHorycScw0EJ6qa4EQPE+l+zLkfLmL01bwboUezeUDCygmi7koKG5IzX
+         13PMUfw+Ael1q8pwexz+mskdN/EYfegYtFydBqRQUQpmn5G7Lmh/VpwKNL1uxFqJGZTq
+         EmvwZKujD9j1uO4ZimbklqHLsotmB7+RuhDKoVdYG7If1mZgX6ASEGFE0SdLvvPjbIwU
+         WP2Fm/ZSx6VmRdTTPq9fg/B0d5ZITnct4ynyBaqe6Eb/yRTk2Utmocz5iLdQUhu1fBOI
+         yeIWA/+P8Dxpeu2M9rodAs4i+p1vwiobLsmrn6nhBf+F7Gi8VAIbo5UCzwAOP8nfqk70
+         fZXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731215970; x=1731820770;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NTMju2UnNFrYjgugqzkVlUGD0mmpi2BJWg3s7Jc/TXA=;
+        b=STkcbpHERyOVsaH59eph7JaowTm42Tu2XkJAKxJUU6tHiFUgLPrZJCk2eVury2kNcm
+         y6PPg9drCSuAVwPQOzjKvvx3koiHsbKADKZRBsSxdAE0TzwLtjxIV6HuWzdBO43waLb9
+         CVroDl+iNz5TxaSWmZRTk341wcdAYC5eaT4ZmOllyLN8/HetkCesJR0j4ZCP+1Z9NQA1
+         6ga2vts1QT9lbIIvehRD7OKlzMyoL9PQPNKgIcTwOpBccjb8eJ6jY9woYHdxPTxmpbBd
+         5og4p0nO3uvB/VjYr6SD7YRbv8juQ2vkRwmu45/3szmGrbi/fYzdVRaSSp7UPkpy5nLl
+         vYpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsSgFExAGQh6DzkPWY3U9TFgHXXDXBZAZioD8DEXGnpTLn0vHkGHXPkirKkDaq6D2E4C2L/Axqnjokz1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWMDtc9PsEJ3m12pLwQvZYdLoGCxurJ9nOseDWWK6UGUkudri3
+	c1oOnE+EPIh254a5wOqpi07cUoOAppqHABPV/iXP0zdFdZ7gC/wwC/C0tTTi0BL2L3kEz4zUEpS
+	qL09AbC20HH60RYQs/QSQ92VtHs0=
+X-Google-Smtp-Source: AGHT+IHU81GseyS7OqHvNJXOmUvRgbeU9iufbSZ8jAKaBdcr+2TucRuAFt9UN8Ha2wNxAxFckp5T6BlzyNYAgBLYs5c=
+X-Received: by 2002:a05:6102:150f:b0:4a4:8b67:4f71 with SMTP id
+ ada2fe7eead31-4aae134fcc0mr2744146137.1.1731215969605; Sat, 09 Nov 2024
+ 21:19:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241104112736.28554-1-xueshuai@linux.alibaba.com>
+References: <20241109055442.85190-1-christiansantoslima21@gmail.com> <CANiq72mhgL-eidEBhxkzMKFztAjRjAFEdeO5Oe6Uv1mVMtEdoA@mail.gmail.com>
+In-Reply-To: <CANiq72mhgL-eidEBhxkzMKFztAjRjAFEdeO5Oe6Uv1mVMtEdoA@mail.gmail.com>
+From: Christian <christiansantoslima21@gmail.com>
+Date: Sun, 10 Nov 2024 02:19:18 -0300
+Message-ID: <CABm2a9cRno91A9yPRzkoYytNf6SxMUmtew7B=3fQ5qZ5=0ojEg@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: transmute: Add implementation for FromBytes trait
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, ~lkcamp/patches@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 04, 2024 at 07:27:34PM +0800, Shuai Xue wrote:
-> On x86 platform, kernel v5.10.228, perf-report command aborts due to "free():
-> invalid pointer" when perf-record command is run with taken branch stack
-> sampling enabled. This regression can be reproduced with the following steps:
-> 
-> 	- sudo perf record -b
-> 	- sudo perf report
-> 
-> The root cause is that bi[i].to.ms.maps does not always point to thread->maps,
-> which is a buffer dynamically allocated by maps_new(). Instead, it may point to
-> &machine->kmaps, while kmaps is not a pointer but a variable. The original
-> upstream commit c1149037f65b ("perf hist: Add missing puts to
-> hist__account_cycles") worked well because machine->kmaps had been refactored to
-> a pointer by the previous commit 1a97cee604dc ("perf maps: Use a pointer for
-> kmaps").
-> 
-> The memory leak issue, which the reverted patch intended to fix, has been solved
-> by commit cf96b8e45a9b ("perf session: Add missing evlist__delete when deleting
-> a session"). The root cause is that the evlist is not being deleted on exit in
-> perf-report, perf-script, and perf-data. Consequently, the reference count of
-> the thread increased by thread__get() in hist_entry__init() is not decremented
-> in hist_entry__delete(). As a result, thread->maps is not properly freed.
-> 
-> To this end,
-> 
-> - PATCH 1/2 reverts commit a83fc293acd5c5050a4828eced4a71d2b2fffdd3 to fix the
->   abort regression.
-> - PATCH 2/2 backports cf96b8e45a9b ("perf session: Add missing evlist__delete
->   when deleting a session") to fix memory leak issue.
-> 
-> Riccardo Mancini (1):
->   perf session: Add missing evlist__delete when deleting a session
-> 
-> Shuai Xue (1):
->   Revert "perf hist: Add missing puts to hist__account_cycles"
-> 
->  tools/perf/util/hist.c    | 10 +++-------
->  tools/perf/util/session.c |  5 ++++-
->  2 files changed, 7 insertions(+), 8 deletions(-)
+Hi, Miguel! Thanks!  The last change was because the code didn't
+compile and I didn't realize I had removed it. I'm adding it again so
+the code can compile now.
 
-perf actually works and builds on this kernel tree?  That's news to me,
-but hey, I'll take these now as obviously someone is still trying to run
-it.
-
-But why not just use the latest version of perf instead?
-
-thanks,
-
-greg k-h
+Best regards,
+Christian
 
