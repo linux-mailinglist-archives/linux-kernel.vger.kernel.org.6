@@ -1,121 +1,90 @@
-Return-Path: <linux-kernel+bounces-403299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4D39C33CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:09:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 551D79C33CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709D8281341
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:09:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C7A28145D
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B939355C29;
-	Sun, 10 Nov 2024 16:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF30884D29;
+	Sun, 10 Nov 2024 16:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mostlynerdless.de header.i=@mostlynerdless.de header.b="INBWz1WJ"
-Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UqEvglzF"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA535219ED
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB6017C8D
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731254967; cv=none; b=lHteCC6qgov5kQyN4xZGIK3MvoOXnqzVEblFGTGquj7JYhkmkVfzxZkwua54/mNNRjbqWuM/or+yBlcz1c6j9K2bnEzPjj+SsLxX8GF/D3M95H2BD4crgOOqUUXIqrknH0h0F3t8Vi+ROSHVRv+DOTrByB/tKiZZOvgFTTurE0g=
+	t=1731255769; cv=none; b=HUwW3oY96Sqyl3L07cJxNMtxerlhZrANa6w3e9SgMOurt2GaW4IBYt2uHZdol17YTTF7F9xynKLW/Qa4djBhbiHQfyWJxbvryO9o/St0F60kv203pQSw05kNvUwn2AOLc/0cYmPCjV0sZgG8plBI9ezrZvDn3Vl8yDnTQOqZ8x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731254967; c=relaxed/simple;
-	bh=4NAc2AkKLp5I66oeHbu8URv4jNovvI/XKC2rooRfomw=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=Ay7iFKUzJZMFBZ/CQAq+O00Jxnr2XXfMX1Z/5WN1MkfRylvoPhDGuLTsUTptUTQHiLSAYKkkFxKyRvAH32bdtP0slELwkGTSn6u9aTQEE5ObxRK7pQPxSbU03vwztR6TU8Iy00TmzFGrSHUv2ul/f4FIdlpLElcqmSMPjyRaeaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mostlynerdless.de; spf=fail smtp.mailfrom=mostlynerdless.de; dkim=fail (0-bit key) header.d=mostlynerdless.de header.i=@mostlynerdless.de header.b=INBWz1WJ reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mostlynerdless.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mostlynerdless.de
-Received: from helike.uberspace.de (helike.uberspace.de [185.26.156.135])
-	by mailgate02.uberspace.is (Postfix) with ESMTPS id 781091801EB
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 17:09:16 +0100 (CET)
-Received: (qmail 1702 invoked by uid 988); 10 Nov 2024 16:09:16 -0000
-Authentication-Results: helike.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by helike.uberspace.de (Haraka/3.0.1) with ESMTPSA; Sun, 10 Nov 2024 17:09:16 +0100
+	s=arc-20240116; t=1731255769; c=relaxed/simple;
+	bh=NLlzz/LVWtRJ0R6hwnxFKEnhYg4IoKIHrAyfwR0WuIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ck1HUlXkxEh4NYXFEt2ExZYYmuAjB3Fbpz3SYL9t37W1p80MyTelUfI+81wWFwYOuplBNwtA8eJoNR8mpzDCQNu+mvVrPH8sSzLD0IYGvxrOhrrc9gDf4dQvf/LaUbL51as7d3nr/VRE/ys3CbpCECE1Q0BAqECu934WQ4HSUnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UqEvglzF; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731255764;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UqFBbtKCvn2uiiJOd1o/KjH4nUtT3WyJ3xfVwaTrNto=;
+	b=UqEvglzFeNOhDzYxajvvlX0CDxH15EInV3wh39Dr57bxgbCcRLfzaF8qGFKCZNcoHn+gUI
+	mAxVDFiTTPDGDS5LqLvOjKyAOiHd/Lp3KCuEtxEC+4RTivVsd0u3uCkmwSiNdJK6w6Xyse
+	M4ZDObUYf/2Vd0uab8AM6ptY/ZbFvzU=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: Transliterate author name and remove FIXME
+Date: Sun, 10 Nov 2024 17:21:37 +0100
+Message-ID: <20241110162139.5179-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 10 Nov 2024 16:09:15 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-From: "Johannes Bechberger" <me@mostlynerdless.de>
-Message-ID: <42a6a270d7b01c02eb4d78bb408165641c6b435a@mostlynerdless.de>
-TLS-Required: No
-Subject: Re: [PATCH 2/3] sched_ext: Rename scx_bpf_consume() to
- scx_bpf_dsq_move_to_local()
-To: "Andrea Righi" <arighi@nvidia.com>, "Changwoo Min" <multics69@gmail.com>
-Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
- kernel-team@meta.com, sched-ext@meta.com, ggherdovich@suse.com,
- dschatzberg@meta.com, yougmark94@gmail.com, changwoo@igalia.com,
- kernel-dev@igalia.com
-In-Reply-To: <ZzCej_1NNr2wB0AD@gpd3>
-References: <20241109194853.580310-1-tj@kernel.org>
- <20241109194853.580310-3-tj@kernel.org>
- <81281555-d57f-4507-a3a5-ea9d1aa27871@gmail.com>
- <ZzCej_1NNr2wB0AD@gpd3>
-X-Rspamd-Bar: ---
-X-Rspamd-Report: BAYES_HAM(-2.999999) MIME_GOOD(-0.1)
-X-Rspamd-Score: -3.099999
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=mostlynerdless.de; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=4NAc2AkKLp5I66oeHbu8URv4jNovvI/XKC2rooRfomw=;
-	b=INBWz1WJzki5zGzAN2lwyJfpvQcFnROS8ISugzZgGqg/xMa0O1bEZ27bNG9VGQXrixT53JUDlP
-	byalxs5BQPfw9pj70/6ccr+gpYb2QJXX252/qG+ybobgg3Osd0DS660WtFqTUBD2XXmU3z8r0S4D
-	59bCmXPxrTQMbju9PDToBl8Zrx5YTt7MK6bmif1IzedMPuxUXV29n1JzyxONXaXmUgrSUGQKk3l/
-	TwvYCu/X/MEhVbRPixghBR/gW4Ru1n6VVXS54ycsBgG45CQ1548b9jFMu8Gr9Ffczx0M1utpLiam
-	K2cwJcMPe5fABciCYsPLcLIx4IsqHV1qhTCppCrg6RDC/HL8DrsXehUo1ccAZxn8gIC1fDmR4q6a
-	/xEch679DehGljJC+uMUkkyAqwWTQZj1mMa4A1MDltc+R7PkRh/ZHA+FDVTfOJLPmWe61GHymkJH
-	Eji1CZWs6YhUXb5Fl9YijTojN1VzhAtt4giGhJ/cnpA9/MmyLrgIQbM+Ax3/ofjls6XBrs5Ix3mQ
-	TQvAQJ5YF2HJFOomfI2bCH4oc5LyzgWX/ec0bbhh9zyG9qYQidmW6rRLp5lSrVfy0Xtszm+Xp1F6
-	pV0v6AEgrgkjZdIpNl/FV2e2P6jk1h8AkHCdx6i4MGchFHsajYIV1mweVq/ldhdC9ZNWkX91zxGg
-	M=
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello all,
+The name is Mimi Phuong-Thao Vo.
 
-the changes look really good and the renaming will make it much easier
-to explain what a simple scheduler does, lowering the entry barrier.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/powerpc/boot/rs6000.h | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-> > * Insert @p into the vtime priority queue of the DSQ identified by @d=
-sq_id.
-> > - * Tasks queued into the priority queue are ordered by @vtime and al=
-ways
-> > - * consumed after the tasks in the FIFO queue. All other aspects are=
- identical
-> > - * to scx_bpf_dsq_insert().
-> > + * Tasks queued into the priority queue are ordered by @vtime. All o=
-ther aspects
-> > + * are identical to scx_bpf_dsq_insert().
-> >
-> > I suggest keeping this part, "and always consumed after the tasks
-> > in the FIFO queue." Otherwise, IIRC, there is no place to explain
-> > the priority between FIFO and priority DSQs explicitly.
-> >
-> I think we don't allow anymore to use the FIFO queue and the prio queue
-> at the same time. Maybe we should clarify this here and also mention
-> that we can't use scx_bpf_dsq_insert_vtime() with the built-in DSQs.
->
-> Thanks,
-> -Andrea
->
+diff --git a/arch/powerpc/boot/rs6000.h b/arch/powerpc/boot/rs6000.h
+index a9d879155ef9..16df8f3c43f1 100644
+--- a/arch/powerpc/boot/rs6000.h
++++ b/arch/powerpc/boot/rs6000.h
+@@ -1,11 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /* IBM RS/6000 "XCOFF" file definitions for BFD.
+    Copyright (C) 1990, 1991 Free Software Foundation, Inc.
+-   FIXME: Can someone provide a transliteration of this name into ASCII?
+-   Using the following chars caused a compiler warning on HIUX (so I replaced
+-   them with octal escapes), and isn't useful without an understanding of what
+-   character set it is.
+-   Written by Mimi Ph\373\364ng-Th\345o V\365 of IBM
++   Written by Mimi Phuong-Thao Vo of IBM
+    and John Gilmore of Cygnus Support.  */
+ 
+ /********************** FILE HEADER **********************/
+-- 
+2.47.0
 
-I would like to second that we clarify the differences between the built-=
-in
-and the non-builtin DSQs.
-
-Also: Could we mention that the priority queue is stable? If I remember c=
-orrectly,
-then tasks with the same priority are scheduled in a FIFO manner.
-
-Regards
-Johannes
 
