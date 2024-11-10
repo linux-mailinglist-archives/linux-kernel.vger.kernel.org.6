@@ -1,86 +1,176 @@
-Return-Path: <linux-kernel+bounces-403133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E949E9C317C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D9C9C317F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6AD281A96
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA79F1F21588
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380F2153820;
-	Sun, 10 Nov 2024 09:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D2A15443F;
+	Sun, 10 Nov 2024 09:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FyJA0tos"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vc85F1+q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xbtDXHoB";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SIg2cies";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="e7ZZrLlE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD5D14D6F6;
-	Sun, 10 Nov 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94431537AA;
+	Sun, 10 Nov 2024 09:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731231661; cv=none; b=Tg9UcrAmZoBUIlpg+l0V7dZc0YmG3XaCnmwcUZ4XsAzsTZpjw4H2T9SEm3WuTlHVXgZgcRyIYJnhHQ1pLQkffE66u1cU5fHjEqDURZdezHQkVK54zjEnCzvc+9LCaBAA1ceopI1jhDNP774XTTMzzAkFR/JJS+ddgl//vC6vUGQ=
+	t=1731231688; cv=none; b=EYgVOsEaN2b2GhdGgbsY8JlSasX5EAQ89PWRR86qEjWnVx9GIr4AS9r10os0SPY5L1ugPLnRrx3T1KV/nPrhDSZxCJf3xCNsfmnNKgLeCzLVT0oSRC1SS8XTm6PL87vo4gWhAFj0d4EMrhAY/BD45RUVB5Wods4yST3NzXNwDb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731231661; c=relaxed/simple;
-	bh=e0akP6Dp9VssLV8Ge1X9qSf7GSDKHgH8n4C2cc93ftI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YXUFy5DArkyZ3c8cFaleNAjcofiaubbEMgsPVQPvDEBDtuWV2s7DU9877cOGK80MuNFGqLC9I43z5j9G1t2LxXc2oMivkJiam5uw4K1Q6Q7L0hNCT/2UHmJB0HpMimHG/DI8g8O4HA+WDaRyGU2YVJZ7UOPfFtTkS3yjMIk5DkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FyJA0tos; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8674DC4CECD;
-	Sun, 10 Nov 2024 09:41:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731231661;
-	bh=e0akP6Dp9VssLV8Ge1X9qSf7GSDKHgH8n4C2cc93ftI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FyJA0tos2bLpH3VkQxQwsPaYO5df095+tSIqJ+0AKbsWrzEKcXjLlKnDvlwOGjmDR
-	 tcQZvCoHhyfywpfKOzAg+iYTSRHFtRsVn1CKpZYFGQU93Y/rD1094/0w1trq5i7BGk
-	 uP+xJfHYgs3ss4fN1DvmwIC4EppAptt6ZPFA9vQs=
-Date: Sun, 10 Nov 2024 10:40:57 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: cve@kernel.org, linux-cve-announce@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kpsing@google.com,
-	ciprietti@google.com, melotti@google.com, sanjay.k.kumar@intel.com
-Subject: Re: CVE-2024-49993: iommu/vt-d: Fix potential lockup if
- qi_submit_sync called with 0 count
-Message-ID: <2024111012-proofs-tinsmith-9569@gregkh>
-References: <2024102138-CVE-2024-49993-5b57@gregkh>
- <20241029114008.2436272-1-jackmanb@google.com>
+	s=arc-20240116; t=1731231688; c=relaxed/simple;
+	bh=4qvdpQkT3SlRFIlu6TD25SeR7NwDjNqtyUfySTP5Dbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OiW+cJPKTgX00WHUWDl0kdg7n/uobAm+4Ju5w6rlAXq6c625RJ2ker7VeMNB3ahyBFLWQt2KN6ZED52TEk/2EuyUDWnX6tYVtLTvKE1h+EHOQmihykHUUfsvhL63cGCHSsEQhP2Q0Qof1Ps9NVLzaqvj0ohBny5TlHAw5QWhS+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vc85F1+q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xbtDXHoB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SIg2cies; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=e7ZZrLlE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CC68921A73;
+	Sun, 10 Nov 2024 09:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731231685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
+	b=vc85F1+qXSlODxZaLhmNcZrstutruYw4x2I0CBroDXHmysmrEDftTJABxh9ZovWyDp/kYa
+	hAHrpOfIzZAtsoPFkLxL3ASV/DSv8R4HvP9asGScEqI8e/BrEGrJViIXTG1tb/UyouURWZ
+	bDj0mPuAuPA/5oSpeGuMfbZ3fQcrcAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731231685;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
+	b=xbtDXHoBGiX6KQaqAz0fV/teTf19uPjPeWisqeq4Va4sKwKMIR6cGCxbfB9wsnF8t4DaQM
+	u+HESoWYH0ETEeAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SIg2cies;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=e7ZZrLlE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731231684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
+	b=SIg2ciesrB2kCBhM4fo5FIaTlEodFUvLoaQrC3cx2yA8YwIfKP1VFZEYoYGkcyk5vMqESM
+	DGacZ+DeJgSQ3BY3HXyqBK3lAaAfkNriiQSEeCKYmXNh95ebcx4h0DoKuuFUFJnKQ867i7
+	fAfPURE0kigQaZPnz1TgoJlnNmz03/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731231684;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
+	b=e7ZZrLlEkEfpRFMd1jnS8waLpaAogHYsT9Klum1apOlrYGFGliQr3gykKwWvKnC6lG2+aa
+	QAFl9wRDGAd41XDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D018C13980;
+	Sun, 10 Nov 2024 09:41:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 7erzL8N/MGfcFQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Sun, 10 Nov 2024 09:41:23 +0000
+Message-ID: <3724f8ff-4b89-465c-ac9d-1dec7c86fb62@suse.de>
+Date: Sun, 10 Nov 2024 11:41:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029114008.2436272-1-jackmanb@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/10] PCI: brcmstb: Enable external MSI-X if available
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20241025124515.14066-1-svarbanov@suse.de>
+ <20241025124515.14066-7-svarbanov@suse.de>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20241025124515.14066-7-svarbanov@suse.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: CC68921A73
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
-On Tue, Oct 29, 2024 at 11:40:08AM +0000, Brendan Jackman wrote:
-> Hi Greg,
+Hi,
+
+Jim, Florian there is no review comments on this patch. Could you please
+take a look.
+
+regards,
+~Stan
+
+On 10/25/24 15:45, Stanimir Varbanov wrote:
+> On RPi5 there is an external MIP MSI-X interrupt controller
+> which can handle up to 64 interrupts.
 > 
-> > Currently, there is no impact
-> > by this bug on the existing users because no callers are submitting
-> > invalidations with 0 descriptors.
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+> v3 -> v4:
+>  - no changes.
 > 
-> I think this CVE could be discarded, the count arg is always hard-coded to 1.
-> The buggy function isn't even exposed to modules so I think even if we care
-> about out-of-tree code we should be OK here. (But based on [1] it sounds like
-> out-of-tree code is probably out-of-scope for kernel CVEs anyway?)
+>  drivers/pci/controller/pcie-brcmstb.c | 63 +++++++++++++++++++++++++--
+>  1 file changed, 59 insertions(+), 4 deletions(-)
 > 
-> [1] https://docs.kernel.org/process/cve.html#invalid-cves
 
-Yes, out-of-tree code is on its own, for obvious reasons (i.e. we have
-no idea what they are doing, and they know exactly what we are doing...)
-
-> FWIW, I don't have any burning desire to kill this CVE in particular, I'm just
-> testing the water to see if this is one reasonable way we could share some
-> triage effort among consumers of kernel CVEs...
-
-Yes, you are right, this one should be rejected, and that's now done,
-thanks for the review.
-
-greg k-h
+<cut>
 
