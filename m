@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-403302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C19A9C33D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:40:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058439C33D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17169B20D4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:40:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346831C20A37
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C576135A53;
-	Sun, 10 Nov 2024 16:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fr.zoreil.com header.i=@fr.zoreil.com header.b="FFkxxDRa"
-Received: from violet.fr.zoreil.com (violet.fr.zoreil.com [92.243.8.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9844136353;
+	Sun, 10 Nov 2024 16:52:08 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C61E136E3B;
-	Sun, 10 Nov 2024 16:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.243.8.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13782B9A6;
+	Sun, 10 Nov 2024 16:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731256824; cv=none; b=iSuXuXIky6BB/7BR7upixxKoeGmSW1MtJxF1eoCBEyIJczYNwnMuSVfrnKnA0gtSv+NdfLjolSIQka2AzEul6gRGf+avprAt95o/+w7Qetuzv2bT9GuwkVOs/01Eka+KkKjovFnDCo3C6Oh3YUmegS7pHr+Mwo8kg3/VoxMzeTA=
+	t=1731257528; cv=none; b=WTBBl5gOe56CczYqxYfjKfVh2NaDb+HlZsLbvZhgrdZTgRj6UhHBcxnFNK/Sey3HWSeujWHMJuIIOoF3V7o1W+DbRE7gQ3m+cL6FJlLPT94MUL1C1D4xV7Xt4ncaSFexFX1QE24tu/3U4C6IgxICymYKkZTMXjm1KOHpgLrrB8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731256824; c=relaxed/simple;
-	bh=2K5caTP3z34WOhy1GQkAjTSSj/hs1LyjIWxZCrtUmSk=;
+	s=arc-20240116; t=1731257528; c=relaxed/simple;
+	bh=+y86gxO0Qzp7rWLMZ6NDFXF5z9IpPHPeGKuzAxRUdIA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0EOzBhjxZTv2kRKAnnOmIL48ylhw47qucJNI3NES6TU+zCAI+oaObcMVVyLPDG2CIfkFk7X93YrzigONM6xGWH5cCrVb941GL7Ctj9WZ/kWdH0nV1ZbCb1Ox4UmvVpop6cZ5BuobIpoQUCJ1yZW5IQB7p3qYuOKE8meNQlXw7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fr.zoreil.com; spf=pass smtp.mailfrom=fr.zoreil.com; dkim=pass (1024-bit key) header.d=fr.zoreil.com header.i=@fr.zoreil.com header.b=FFkxxDRa; arc=none smtp.client-ip=92.243.8.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fr.zoreil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fr.zoreil.com
-Received: from violet.fr.zoreil.com ([127.0.0.1])
-	by violet.fr.zoreil.com (8.17.1/8.17.1) with ESMTP id 4AAGbouY3930604;
-	Sun, 10 Nov 2024 17:37:50 +0100
-DKIM-Filter: OpenDKIM Filter v2.11.0 violet.fr.zoreil.com 4AAGbouY3930604
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fr.zoreil.com;
-	s=v20220413; t=1731256670;
-	bh=5+y2QMykRjhaG+PDz43DPVOX9kNsX0ZYGqEKpJPmxSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FFkxxDRaq1CSSsHRAAocoXu+u98Fyc5BN4GR4nHWXkWF9G4P4eEIgMKVy9d4t4ZBx
-	 67hd1nY0BOtuujJ85otrSRji5KektIdUuvhwvsToPqe4Q8utQnGKfPgxcaEBz42GxQ
-	 aqLq3/kra2W7ijiY9fEnrh/5yk7KY5bQZ8QjDUt0=
-Received: (from romieu@localhost)
-	by violet.fr.zoreil.com (8.17.1/8.17.1/Submit) id 4AAGblIR3930603;
-	Sun, 10 Nov 2024 17:37:47 +0100
-Date: Sun, 10 Nov 2024 17:37:47 +0100
-From: Francois Romieu <romieu@fr.zoreil.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
-        Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Vladimir Oltean <olteanv@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-        Byungho An <bh74.an@samsung.com>,
-        Kevin Brace <kevinbrace@bracecomputerlab.com>,
-        Michal Simek <michal.simek@amd.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>, Zhao Qiang <qiang.zhao@nxp.com>,
-        "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" <linux-arm-kernel@lists.infradead.org>,
-        "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
-        "open list:FREESCALE SOC FS_ENET DRIVER" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH net-next] net: use pdev instead of OF funcs
-Message-ID: <20241110163747.GA3930570@electric-eye.fr.zoreil.com>
-References: <20241109233821.8619-1-rosenp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ELOTg2A4qVYtJRYXPfWdIHu6dBwvQRMooWgvXtwcM4oRs6IvINMGSA/5bw7R6xXQmOo79Q3BvbI2xBh0SVBxgrzSYOrGesVT4Ap3Cxggl/0Hkw+ZGvUFWmXayXZDaTjJnj2bJYXuGR8lOyDRh9tjkVmWJc6BVUJyIJs3FTEVRc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 2828428017287;
+	Sun, 10 Nov 2024 17:44:53 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 0CDCB1AD7F2; Sun, 10 Nov 2024 17:44:53 +0100 (CET)
+Date: Sun, 10 Nov 2024 17:44:53 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, bhelgaas@google.com,
+	tony.luck@intel.com, bp@alien8.de
+Subject: Re: [RFC PATCH] PCI: pciehp: Generate a RAS tracepoint for hotplug
+ event
+Message-ID: <ZzDjBQaO2YjUlsjz@wunner.de>
+References: <20241108030939.75354-1-xueshuai@linux.alibaba.com>
+ <Zy-hbwLohwf-_hCN@wunner.de>
+ <faccb715-8d9f-4761-855a-0fb8be2ebad4@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,46 +57,86 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109233821.8619-1-rosenp@gmail.com>
-X-Organisation: Land of Sunshine Inc.
+In-Reply-To: <faccb715-8d9f-4761-855a-0fb8be2ebad4@linux.alibaba.com>
 
-Rosen Penev <rosenp@gmail.com> :
-> np here is ofdev->dev.of_node. Better to use the proper functions as
-> there's no use of children or anything else.
+On Sun, Nov 10, 2024 at 06:12:09PM +0800, Shuai Xue wrote:
+> 2024/11/10 01:52, Lukas Wunner:
+> > On Fri, Nov 08, 2024 at 11:09:39AM +0800, Shuai Xue wrote:
+> > > --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> > > +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> > > @@ -19,6 +19,7 @@
+> > >   #include <linux/types.h>
+> > >   #include <linux/pm_runtime.h>
+> > >   #include <linux/pci.h>
+> > > +#include <ras/ras_event.h>
+> > >   #include "pciehp.h"
+> > 
+> > Hm, why does the TRACE_EVENT() definition have to live in ras_event.h?
+> > Why not, say, in pciehp.h?
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
-[...]
-> diff --git a/drivers/net/ethernet/via/via-rhine.c b/drivers/net/ethernet/via/via-rhine.c
-> index 894911f3d560..f079242c33e2 100644
-> --- a/drivers/net/ethernet/via/via-rhine.c
-> +++ b/drivers/net/ethernet/via/via-rhine.c
-> @@ -1127,7 +1127,7 @@ static int rhine_init_one_platform(struct platform_device *pdev)
->  	if (IS_ERR(ioaddr))
->  		return PTR_ERR(ioaddr);
->  
-> -	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
-> +	irq = platform_get_irq(pdev, 0);
->  	if (!irq)
->  		return -EINVAL;
->  
-> diff --git a/drivers/net/ethernet/via/via-velocity.c b/drivers/net/ethernet/via/via-velocity.c
-> index dd4a07c97eee..4aac9599c14d 100644
-> --- a/drivers/net/ethernet/via/via-velocity.c
-> +++ b/drivers/net/ethernet/via/via-velocity.c
-> @@ -2950,7 +2950,7 @@ static int velocity_platform_probe(struct platform_device *pdev)
->  	if (!info)
->  		return -EINVAL;
->  
-> -	irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
-> +	irq = platform_get_irq(pdev, 0);
->  	if (!irq)
->  		return -EINVAL;
->  
+> IMHO, it is a type of RAS related event, so I add it in ras_event.h,
+> similar to other events like aer_event and memory_failure_event.
+> 
+> I could move it to pciehp.h, if the maintainers prefer that location.
 
-The change makes sense. However neither the description nor the commit message
-really match here.
+IMO pciehp.h makes more sense than ras/ras_event.h.
 
--- 
-Ueimor
+The addition of AER to ras/ras_event.h was over a decade ago with
+commit 0a2409aad38e ("trace, AER: Move trace into unified interface").
+That commit wasn't acked by Bjorn.  It wasn't even cc'ed to linux-pci:
+
+https://lore.kernel.org/all/1402475691-30045-3-git-send-email-gong.chen@linux.intel.com/
+
+I can see a connection between AER and RAS, but PCI hotplug tracepoints
+are not exclusively RAS, they might be useful for other purposes as well.
+Note that pciehp is not just used on servers but also e.g. for Thunderbolt
+on mobile devices and the tracepoints might come in handy to debug that.
+
+
+> > Wouldn't it be more readable to just log the event that occured
+> > as a string, e.g. "Surprise Removal" (and "Insertion" or "Hot Add"
+> > for the other trace event you're introducing) instead of the state?
+> > 
+> > Otherwise you see "ON_STATE" in the log but that's actually the
+> > *old* value so you have to mentally convert this to "previously ON,
+> > so now must be transitioning to OFF".
+> 
+> I see your point. "Surprise Removal" or "Insertion" is indeed the exact
+> state transition. However, I am concerned that using a string might make
+> it difficult for user space tools like rasdaemon to parse.
+
+If this is parsed by a user space daemon, put the enum in a uapi header,
+e.g. include/uapi/linux/pci.h.
+
+
+> How about adding a new enum for state transition? For example:
+> 
+> 	enum pciehp_trans_type {
+> 		PCIEHP_SAFE_REMOVAL,
+> 		PCIEHP_SURPRISE_REMOVAL,
+> 		PCIEHP_Hot_Add,
+> 	...
+> 	}
+
+In that case, I'd suggest adding an entry to the enum for all the
+ctrl_info() messages, i.e.
+
+Link Up
+Link Down
+Card present
+Card not present
+
+Amend pciehp_handle_presence_or_link_change() with curly braces
+around all the affected if-blocks and put a trace event next to the
+ctrl_info() message.
+
+Also, since these events are not pciehp-specific, I'd call the enum
+something like pci_hotplug_event and the entries PCI_HOTPLUG_...
+(or PCI_HP_... if you prefer short names).  These trace events could
+in principle be raised by any of the other hotplug drivers in
+drivers/pci/hotplug/, not just pciehp.
+
+Thanks,
+
+Lukas
 
