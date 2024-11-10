@@ -1,628 +1,200 @@
-Return-Path: <linux-kernel+bounces-403382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718F59C34CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4ED9C34D0
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C23C8B2143F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5FB9281611
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79171157A55;
-	Sun, 10 Nov 2024 21:37:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489A7155743;
+	Sun, 10 Nov 2024 21:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uNPa1blX"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="fj2oVLwh"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2070.outbound.protection.outlook.com [40.107.21.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4105618E1F
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731274667; cv=none; b=e4QcUzgS0INBRTZgAZJ0mT0bRSasZrpz24sSsKPO4T+wf4tZA3XaZN5Cb2F+WwsZZbK/tKA7sIN7VL/KHj8Boarwd5dTgFuzvKXHhdmNclg4ZutVf04I3qBVlD+Cut11gZKR6dMvPWWYzC1ijLURZCH1VtMm/8qLJYK4Q6ruQto=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731274667; c=relaxed/simple;
-	bh=9gBzSEQEadYKikF5EtPh2kdsYRbjpFtILtx4lVSppog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DmrhpyAAZbY+BFEaibTV7qmL6kj6yda0Iw8eT6QeoXXMUGgJ7zhwKe5ihb9iAW9jdMk+3P4+PCA4VDLayyPzdCD4YAQqMHStZETZ2w7AWUTVgUe7TV05qp6Pyl+b/0dZI847YcwqavgRFI5l9NBboHuTd9pJgm2oNzDqlNlP6Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uNPa1blX; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so31562985e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 13:37:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731274662; x=1731879462; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JmYuAa6t8nGCE6+aRkzTSD0KnWIju2Fdo+/2ju5i0sY=;
-        b=uNPa1blXkjFC2/D63XeWQLu3lWuhzw5VrLhXkef/teElC/g5kBjpcSUFt0syF6JBN6
-         3d5OyzrkAmnty8Lro+fKQbLMR6P/8eGNFJBJYTct2Dgv5ZpeVlnawJfl/mtv5IORvdzL
-         7Kw3M5Bv6Q527I6Cp8WQqp4sFiV2DE9y1d7mkSua9+85qrZA1QKEKZrXxJSHwITpg/Dw
-         X0Tcd3ZwL3ktjc8Do5FxcfjG5HcvUs/zuewAIFrLFFdqXrMVAd2qF9tma93XgSCltx9Z
-         VGMSYCmDXiTWsROIQjjEwns1rHbJdXFKewcoHR9q6o9CwUAm9I3rxVt3HuAPCcOckjuy
-         1q9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731274662; x=1731879462;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JmYuAa6t8nGCE6+aRkzTSD0KnWIju2Fdo+/2ju5i0sY=;
-        b=Y8w9rZxjg6ZZ/vxc3jnjzg3gYuz7VMLOiZlTYT81FxfXCL2Q9Pb6M8rwf/PbRzd/kF
-         pTn/zbFSp8on6HIRIdaIqXLZoMzCn0NuSiOKO1STSXxFMjsMJcEJRrLwwM3FILh1gnfj
-         mkPsA2N1JxxYSIGKvfeEy8eHuv0EfIZyKmQ5mV1HZeq3x1jSENrjk22Qs0NT27sSHcep
-         hQ7Ko2knJl0HOAjZLsChey56mm6c56SE1zmudiM9/IzUcyM/n8kArYn4nqog5gzbIJpL
-         mLylLBkRONhf7hjKM028zzuHfUwDVQbJa5Ma3THaEW4/lgYhlEx7gsf+3kR/8dzbhVUA
-         9x0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUi0izJVdRLhHvEcQ0r3r67Aw9mv51E3QNvayhGz6syU5rUa856g1yH7d4AmgtYnNHeQmBbHSZpzhKSS2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7XKLoCCBDEuhLdFtaqeQvOzoib/9xClmqBwzg5gn9wqQBP5gu
-	LbAG9jdxZ5aPmURnPDngPjJM1fH7BPdlV6JPnmJJfqqZ3d75Nr5d1yIFvZl+6Sk=
-X-Google-Smtp-Source: AGHT+IESFYcuK4LbVK1mhuQglwRx3XCzxpihvpAxgd0lw6n74R3kjpaTp1shzNbqrRyh7vHGq7+19w==
-X-Received: by 2002:a05:600c:3ca4:b0:431:680e:95d9 with SMTP id 5b1f17b1804b1-432b7517221mr86608905e9.22.1731274662489;
-        Sun, 10 Nov 2024 13:37:42 -0800 (PST)
-Received: from [192.168.0.48] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed970d4fsm11456302f8f.5.2024.11.10.13.37.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2024 13:37:41 -0800 (PST)
-Message-ID: <0d0e76ce-fac9-4cd9-b177-7180daffbf86@linaro.org>
-Date: Sun, 10 Nov 2024 21:37:39 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538B5224FD
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731275338; cv=fail; b=trAUQ3TDnJ/TkJlxmYNsqMb172sKhsQHwwziz4DUPUWfKkZhSA287iDfPk2zj7RhEt/Yi7ealq4WCEwpSdF2cMXC9oRWiRgOsMJqwFYvXeJd4sbizPsSr4UMxfic9r4ZHJ7ftbYXbwCMlqPlZ5MSiuRH0739SAtr0rL7I+jPUH4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731275338; c=relaxed/simple;
+	bh=6hT0PhjWeDdtWxOOW/qZGoYpHYnDztIbW6wv7hVjr/E=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=i8v+HEgOL6/9JfHk60gFYZ6ct8M6UoauCce9aqCuPoI4IyW6NojcHfeV3J1WAI777hZLbdNSkqCecoUe/zV49Ys54H/T1yRvHXhXCBcBjlJgamCUNwBH2dnVRqzIxqKaoNQnGNumYECn+8BZBjv90QpalPFfMSvYSlbuaXwv+Bo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=fj2oVLwh; arc=fail smtp.client-ip=40.107.21.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZeEozcx6wjbMsfoc0ZPAq3dRIQGqsDY8fWOSU836NNTO0tj/szsIGB8LiKEF1rPCWYejOY2xfYYuB4NtUWc15b3zvNlLjryh3HGIaLIvn2d5nURwYNxR6P4K/VLAHf36UsJWFgipj+v0AJCrJbia2wbW9bn6I+iDghR49/bcgtxVzrEusxXNKiNzpwDu7L1pElos3NIEO4oOk0sbDBayqFltVlYZK7Ef926eCKuzG28lY8yMb249ZOKqkZpn0BxFpLZYnlL5ZTFZWcfI99VRbH1bvYcjtXF3kDMCgWWA5iHr09/kFcsMdAMji2hzT7ev4TZrKwdy0tLVRddsacT38A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XCX42AwCmM7xTqVst8syx4YPcffvPA1Pttk2cTfwD6E=;
+ b=j8ONTVefOK2btjVnfFnr6YR75KXYYWYHvs6p5BlapqvfoU6Ta+Rk03SE1dju17g7ouIV5e/ZcXASbgjGuPp8rcwbJNVh7rI8RLeT45PxMJ9qqggohqyTSOxPIvD9EpkOiz25/MYU5sZuQ37sG64Cek0rd5H/5eu1tWQBYSAOQPNXYSRRJK2DM9iQKUd9ZwhHrVxJ8wbS9viHsRRnvlfFDSa7J+WORbvvbt0API99/bbf79r1xvoezinwkTwG72dIHnUAAIUKLOnjFHgjUl3Stw/2aj9GAh8vkj1QCi1ybUhpSUx+zOn6xJy5S+fPhvwtV+gz7wdhGNKqRPsm+yZSuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XCX42AwCmM7xTqVst8syx4YPcffvPA1Pttk2cTfwD6E=;
+ b=fj2oVLwhK9IipMBKZRKbdoal/ujpVICEMEQlXPRCJ0sIQ4o2hc3ebTjwbEFeQohfPI08K6wkZdRXjd3GFAB1j/mMChieATCYQXDxrUe9fdU8QAdDxu1IbTXFYq/wiTDR8fSKHOsRqQMMSCiwiur8elMKsgqYRQAvmteiDPpGM8Y=
+Received: from AS4PR10CA0003.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5dc::16)
+ by AS4PR02MB8742.eurprd02.prod.outlook.com (2603:10a6:20b:58e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Sun, 10 Nov
+ 2024 21:48:52 +0000
+Received: from AMS0EPF00000199.eurprd05.prod.outlook.com
+ (2603:10a6:20b:5dc:cafe::e6) by AS4PR10CA0003.outlook.office365.com
+ (2603:10a6:20b:5dc::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28 via Frontend
+ Transport; Sun, 10 Nov 2024 21:48:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AMS0EPF00000199.mail.protection.outlook.com (10.167.16.245) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Sun, 10 Nov 2024 21:48:52 +0000
+Received: from pc52311-2249 (10.4.0.13) by se-mail01w.axis.com (10.20.40.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 10 Nov
+ 2024 22:48:50 +0100
+From: Waqar Hameed <waqar.hameed@axis.com>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
+	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ubifs: Fix use-after-free in ubifs_tnc_end_commit
+In-Reply-To: <3c46013e-809e-cdcf-8648-2ffe2ab6c32b@huawei.com> (Zhihao Cheng's
+	message of "Sat, 9 Nov 2024 10:34:25 +0800")
+References: <e7b5151bb1186e2342ed677cce0ef77592923084.1731088341.git.waqar.hameed@axis.com>
+	<3c46013e-809e-cdcf-8648-2ffe2ab6c32b@huawei.com>
+Date: Sun, 10 Nov 2024 22:48:50 +0100
+Message-ID: <pndbjymzrnh.fsf@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/28] media: iris: introduce iris core state
- management with shared queues
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nicolas Dufresne <nicolas@ndufresne.ca>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241105-qcom-video-iris-v5-0-a88e7c220f78@quicinc.com>
- <20241105-qcom-video-iris-v5-4-a88e7c220f78@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241105-qcom-video-iris-v5-4-a88e7c220f78@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: se-mail01w.axis.com (10.20.40.7) To se-mail01w.axis.com
+ (10.20.40.7)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000199:EE_|AS4PR02MB8742:EE_
+X-MS-Office365-Filtering-Correlation-Id: a10795e7-91e9-459d-07dd-08dd01d17787
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WkZKYkhaaTFyMXJFYUhwK3A1NXJiNmlGUmhXNlo2N2ZicndHMHhrVXhXV1Vq?=
+ =?utf-8?B?bHpYWUxmZk1tbk1ubkplbHFva21pQzY3cUNmeTdMWHBSYUtPZTdTTmpKNVZ0?=
+ =?utf-8?B?ak90aHhEVHVwNGpjWjRXSTRVY1JCRldPSFRINC8reXFLa1RwWERKUHJRRXUz?=
+ =?utf-8?B?TUdCbHU4UmxjWllkM0owa1NjUHpmWWozVi9CVlpjREswVWlYMmFDM3NBRmh6?=
+ =?utf-8?B?bnkweVdjNnBIRUprRldWWXczYTJqWFN1WHZTbjZEMVQxZThsMGJ4TVZCYzBG?=
+ =?utf-8?B?b1haNU9DdkxhVkQwZFViYWxvSjFXcEFiaGt5NXlLaEMxQVNXRTZjelBNRkhp?=
+ =?utf-8?B?dGI0c04reXkrWkZKc0N5TWQ0dEVLVjQ5NGIvQi9taUNYWWFEZ2tocjEvclYv?=
+ =?utf-8?B?cGRqQmN1QUJ2R0UwQWZHWWsvcXFFNlJEUk04TnJQL2s2dUJHcHd6MXFLSmp3?=
+ =?utf-8?B?aDc3bmNVL2hlNW9md3FRd2tSMG9JY0p4a0RzTHB4bGdXYlg5KzZ5SE5NM2pE?=
+ =?utf-8?B?cVNsdkMxazRmVGQvWnM4czArZDNXRWdWVkVsWFFEZDRxajE3eElqSkl1Z3JP?=
+ =?utf-8?B?bndScERJQXJMOWd3Tk9aRS9EbUNMaEN5VmlFNnFTMXo5b3R0Y09PVkRFS0du?=
+ =?utf-8?B?bzhFd2l1QmZKTVN4RnF4UWh3aHhMNVUxS0xQMTJXZUNwbk5ZeGpTdjZqeHZv?=
+ =?utf-8?B?UVEremxIc1M3SFVnb095OEpscnc1SUl2aXA4Ynl4RUdNVGNIUWx4a3J4OVRt?=
+ =?utf-8?B?UW02Z0RNc01xdzQ3cDltVVhIT0x2VzY0NXp0VnNHMlEvOU50MGc0MzRxd0do?=
+ =?utf-8?B?eURYaW94N2tmK0FXd3Z3VmVlcEFWbitGNzR1U3lLM0t6amR3cmlydUNRZXJT?=
+ =?utf-8?B?N0NlbS92QVl0OWJ2V0N4aVRjSXU2SDFkKzZ1Z1VwWjhQVGx5b2lXb0wxMk0x?=
+ =?utf-8?B?Y29Ca2ZER1RQSmQ2NFFVL1JyWHo2cDFMYWw2Q1JCWnRENXJXdDBSQTM4VE9k?=
+ =?utf-8?B?NUEyRnVqSllKMVlta1RjdkU5NW9Nc21LMU9aWU54RGFqWGZDRmQ0M2hpRmxZ?=
+ =?utf-8?B?Y3JlL2hLbXNabWhaL3N4T01xMUw5WGRPS3QwbUNoZmxJNmFjL2llZjhxT2Z5?=
+ =?utf-8?B?THdCSUl1V3VEKzB5V29JZFU2TXRBU1FhYTN1NzhBVldHekF6eHRzazc2c3hl?=
+ =?utf-8?B?MGNVVENCRWR6N1REQmc0dWdiRlMwdU9acTBVaGczYTJYN1lSUlBMQlRsamVv?=
+ =?utf-8?B?TFY2Z0h5UTYweG54RmtVQysveFZDSVkxL1Y0c2ZEdE1zQzBHUFBHS2ROekFU?=
+ =?utf-8?B?STd0NHl2RE5Gd2pSaU9WTFJmT2hEK3BsanFyVjViYUtmcjZpTXNaenJCR1RE?=
+ =?utf-8?B?WWFDYWVQalVUWk41dlZhV1BKVTFXc1JzN0dHK1RvU1ExczBzckppZXRpdUlr?=
+ =?utf-8?B?ZFMvU3JRSDE0WjFNSmpOS3drYjV3cjNwamgwcUhNdmlMNkpjdENRNEpBMllC?=
+ =?utf-8?B?SFJldzZKYk90T1A3Z0F5eUNnY2tBQy9HVG9JNlkzdGhVb3BhOE1BNThuQ1JM?=
+ =?utf-8?B?QzFxOUg4YVd5aGpUKzMybi9yZk8vRmZIRERwbmZVb21TMnZDVmtUNlRlRHF5?=
+ =?utf-8?B?VjVXWldFeHhlOVJDNTl5Z0d3d3A5cWE4NDdPMXJ6YkZETFRIYjdvelhHZzdz?=
+ =?utf-8?B?Y1pHWFVmTG1lSWNBaXRkWlBEdFpBcWVBVHpwSFVva0RmNDA1ajVyNWhlSmt3?=
+ =?utf-8?B?WVlQSVNtaGFGdCtUakxtSjRWYWpzUEZwbENZUFErSEFpWDVlWmRlZ1N2M0w5?=
+ =?utf-8?B?dUd2T1d6UDBVaXdKcnhpQVZRZ3RCZUxjMytranEzTHpmL0lDbXd3VktQV2RI?=
+ =?utf-8?B?dXhvQ2kyYURoL1o3Z3B0TldqZEJSS1ZBUVo3TTFNemFnVlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Nov 2024 21:48:52.1140
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a10795e7-91e9-459d-07dd-08dd01d17787
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000199.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR02MB8742
 
-On 05/11/2024 06:55, Dikshita Agarwal wrote:
-> Introduce core state management for iris driver with necessary queues
-> needed for host firmware communication.
-> 
-> There are 3 types of queues:
-> Command queue - driver to write any command to firmware.
-> Message queue - firmware to send any response to driver.
-> Debug queue - firmware to write debug messages.
-> Initialize and configire shared queues during probe.
-> 
-> Different states for core:
-> IRIS_CORE_DEINIT - default state.
-> IRIS_CORE_INIT - core state with core initialized. FW loaded and HW
-> brought out of reset, shared queues established between host driver and
-> firmware.
-> IRIS_CORE_ERROR - error state.
->        -----------
->             |
->             V
->         -----------
->         | DEINIT  |
->         -----------
->             ^
->            / \
->           /   \
->          /     \
->         /       \
->        v         v
->   -----------   ----------.
->   |  INIT  |-->|  ERROR  |
->   -----------   ----------.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/iris/Makefile          |   4 +-
->   drivers/media/platform/qcom/iris/iris_core.c       |  46 ++++++
->   drivers/media/platform/qcom/iris/iris_core.h       |  23 +++
->   drivers/media/platform/qcom/iris/iris_hfi_queue.c  | 123 +++++++++++++++
->   drivers/media/platform/qcom/iris/iris_hfi_queue.h  | 175 +++++++++++++++++++++
->   .../platform/qcom/iris/iris_platform_common.h      |   1 +
->   .../platform/qcom/iris/iris_platform_sm8550.c      |   1 +
->   drivers/media/platform/qcom/iris/iris_probe.c      |  20 +++
->   drivers/media/platform/qcom/iris/iris_state.h      |  41 +++++
->   drivers/media/platform/qcom/iris/iris_vidc.c       |   6 +
->   10 files changed, 439 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> index 6de584090a3a..93711f108a77 100644
-> --- a/drivers/media/platform/qcom/iris/Makefile
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -1,5 +1,7 @@
-> -iris-objs += iris_hfi_gen1_command.o \
-> +iris-objs += iris_core.o \
-> +             iris_hfi_gen1_command.o \
->                iris_hfi_gen2_command.o \
-> +             iris_hfi_queue.o \
->                iris_platform_sm8550.o \
->                iris_probe.o \
->                iris_vidc.o \
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.c b/drivers/media/platform/qcom/iris/iris_core.c
-> new file mode 100644
-> index 000000000000..360a54909ef6
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_core.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include "iris_core.h"
-> +#include "iris_state.h"
-> +
-> +void iris_core_deinit(struct iris_core *core)
-> +{
-> +	mutex_lock(&core->lock);
-> +	iris_hfi_queues_deinit(core);
-> +	core->state = IRIS_CORE_DEINIT;
-> +	mutex_unlock(&core->lock);
-> +}
-> +
-> +int iris_core_init(struct iris_core *core)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(&core->lock);
-> +	if (core->state == IRIS_CORE_INIT) {
-> +		ret = 0;
-> +		goto exit;
-> +	} else if (core->state == IRIS_CORE_ERROR) {
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
-> +	core->state = IRIS_CORE_INIT;
-> +
-> +	ret = iris_hfi_queues_init(core);
-> +	if (ret)
-> +		goto error;
-> +
-> +	mutex_unlock(&core->lock);
-> +
-> +	return 0;
-> +
-> +error:
-> +	core->state = IRIS_CORE_DEINIT;
-> +exit:
-> +	mutex_unlock(&core->lock);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.h b/drivers/media/platform/qcom/iris/iris_core.h
-> index 73c835bb6589..5fd11c3f99c5 100644
-> --- a/drivers/media/platform/qcom/iris/iris_core.h
-> +++ b/drivers/media/platform/qcom/iris/iris_core.h
-> @@ -9,7 +9,9 @@
->   #include <linux/types.h>
->   #include <media/v4l2-device.h>
->   
-> +#include "iris_hfi_queue.h"
->   #include "iris_platform_common.h"
-> +#include "iris_state.h"
->   
->   struct icc_info {
->   	const char		*name;
-> @@ -34,6 +36,15 @@ struct icc_info {
->    * @clk_count: count of iris clocks
->    * @resets: table of iris reset clocks
->    * @iris_platform_data: a structure for platform data
-> + * @state: current state of core
-> + * @iface_q_table_daddr: device address for interface queue table memory
-> + * @sfr_daddr: device address for SFR (Sub System Failure Reason) register memory
-> + * @iface_q_table_vaddr: virtual address for interface queue table memory
-> + * @sfr_vaddr: virtual address for SFR (Sub System Failure Reason) register memory
-> + * @command_queue: shared interface queue to send commands to firmware
-> + * @message_queue: shared interface queue to receive responses from firmware
-> + * @debug_queue: shared interface queue to receive debug info from firmware
-> + * @lock: a lock for this strucure
->    */
->   
->   struct iris_core {
-> @@ -51,6 +62,18 @@ struct iris_core {
->   	u32					clk_count;
->   	struct reset_control_bulk_data		*resets;
->   	const struct iris_platform_data		*iris_platform_data;
-> +	enum iris_core_state			state;
-> +	dma_addr_t				iface_q_table_daddr;
-> +	dma_addr_t				sfr_daddr;
-> +	void					*iface_q_table_vaddr;
-> +	void					*sfr_vaddr;
-> +	struct iris_iface_q_info		command_queue;
-> +	struct iris_iface_q_info		message_queue;
-> +	struct iris_iface_q_info		debug_queue;
-> +	struct mutex				lock; /* lock for core related operations */
->   };
->   
-> +int iris_core_init(struct iris_core *core);
-> +void iris_core_deinit(struct iris_core *core);
-> +
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_queue.c b/drivers/media/platform/qcom/iris/iris_hfi_queue.c
-> new file mode 100644
-> index 000000000000..bb7e0d747f0f
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_queue.c
-> @@ -0,0 +1,123 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include "iris_core.h"
-> +#include "iris_hfi_queue.h"
-> +
-> +static void iris_hfi_queue_set_header(struct iris_core *core, u32 queue_id,
-> +				      struct iris_iface_q_info *iface_q)
-> +{
-> +	iface_q->qhdr->status = 0x1;
+On Sat, Nov 09, 2024 at 10:34 +0800 Zhihao Cheng <chengzhihao1@huawei.com> =
+wrote:
 
-What does 0x1 indicate ?
+> =E5=9C=A8 2024/10/9 22:46, Waqar Hameed =E5=86=99=E9=81=93:
+> 3 nits below.
+>
+> 1. Make the title as 'ubifs: authentication: Fix use-after-free in
+> ubifs_tnc_end_commit'
+>
+> 2. At the begining of the commit msg, describe the problem:
+> After TNC tree inserting(which may trigger a znode split and change the
+> znode->parent) and deleting(which may trigger znode freeing), the
+> znode->cparent(which still points to a freed znode) may not be updated at=
+ the
+> begining of commit, which could trigger an UAF problem while accessing
+> znode->cparent in write_index().
 
-Could this be a define instead of an assigned number ?
+Alright, will rephrase the commit message a bit.
 
-> +	iface_q->qhdr->start_addr = iface_q->device_addr;
-> +	iface_q->qhdr->header_type = IFACEQ_DFLT_QHDR;
-> +	iface_q->qhdr->queue_type = queue_id;
-> +	iface_q->qhdr->q_size = IFACEQ_QUEUE_SIZE / sizeof(u32);
-> +	iface_q->qhdr->pkt_size = 0; /* variable packet size */
-> +	iface_q->qhdr->rx_wm = 0x1;
-> +	iface_q->qhdr->tx_wm = 0x1;
-> +	iface_q->qhdr->rx_req = 0x1;
-> +	iface_q->qhdr->tx_req = 0x0;
-> +	iface_q->qhdr->rx_irq_status = 0x0;
-> +	iface_q->qhdr->tx_irq_status = 0x0;
-> +	iface_q->qhdr->read_idx = 0x0;
-> +	iface_q->qhdr->write_idx = 0x0;
-> +
-> +	/*
-> +	 * Set receive request to zero on debug queue as there is no
-> +	 * need of interrupt from video hardware for debug messages
-> +	 */
-> +	if (queue_id == IFACEQ_DBGQ_ID)
-> +		iface_q->qhdr->rx_req = 0;
-> +}
-> +
-> +static void
-> +iris_hfi_queue_init(struct iris_core *core, u32 queue_id, struct iris_iface_q_info *iface_q)
-> +{
-> +	struct iris_hfi_queue_table_header *q_tbl_hdr = core->iface_q_table_vaddr;
-> +	u32 offset = sizeof(*q_tbl_hdr) + (queue_id * IFACEQ_QUEUE_SIZE);
-> +
-> +	iface_q->device_addr = core->iface_q_table_daddr + offset;
-> +	iface_q->kernel_vaddr =
-> +			(void *)((char *)core->iface_q_table_vaddr + offset);
-> +	iface_q->qhdr = &q_tbl_hdr->q_hdr[queue_id];
-> +
-> +	iris_hfi_queue_set_header(core, queue_id, iface_q);
-> +}
-> +
-> +static void iris_hfi_queue_deinit(struct iris_iface_q_info *iface_q)
-> +{
-> +	iface_q->qhdr = NULL;
-> +	iface_q->kernel_vaddr = NULL;
-> +	iface_q->device_addr = 0;
-> +}
-> +
-> +int iris_hfi_queues_init(struct iris_core *core)
-> +{
-> +	struct iris_hfi_queue_table_header *q_tbl_hdr;
-> +	u32 queue_size;
-> +
-> +	/* Iris hardware requires 4K queue alignment */
-> +	queue_size = ALIGN((sizeof(*q_tbl_hdr) + (IFACEQ_QUEUE_SIZE * IFACEQ_NUMQ)), SZ_4K);
-> +	core->iface_q_table_vaddr = dma_alloc_attrs(core->dev, queue_size,
-> +						    &core->iface_q_table_daddr,
-> +						    GFP_KERNEL, DMA_ATTR_WRITE_COMBINE);
-> +	if (!core->iface_q_table_vaddr) {
-> +		dev_err(core->dev, "queues alloc and map failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	core->sfr_vaddr = dma_alloc_attrs(core->dev, SFR_SIZE,
-> +					  &core->sfr_daddr,
-> +					  GFP_KERNEL, DMA_ATTR_WRITE_COMBINE);
-> +	if (!core->sfr_vaddr) {
-> +		dev_err(core->dev, "sfr alloc and map failed\n");
-> +		dma_free_attrs(core->dev, sizeof(*q_tbl_hdr), core->iface_q_table_vaddr,
-> +			       core->iface_q_table_daddr, DMA_ATTR_WRITE_COMBINE);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	iris_hfi_queue_init(core, IFACEQ_CMDQ_ID, &core->command_queue);
-> +	iris_hfi_queue_init(core, IFACEQ_MSGQ_ID, &core->message_queue);
-> +	iris_hfi_queue_init(core, IFACEQ_DBGQ_ID, &core->debug_queue);
-> +
-> +	q_tbl_hdr = (struct iris_hfi_queue_table_header *)core->iface_q_table_vaddr;
-> +	q_tbl_hdr->version = 0;
-> +	q_tbl_hdr->device_addr = (void *)core;
-> +	strscpy(q_tbl_hdr->name, "iris-hfi-queues", sizeof(q_tbl_hdr->name));
-> +	q_tbl_hdr->size = sizeof(*q_tbl_hdr);
-> +	q_tbl_hdr->qhdr0_offset = sizeof(*q_tbl_hdr) -
-> +		(IFACEQ_NUMQ * sizeof(struct iris_hfi_queue_header));
-> +	q_tbl_hdr->qhdr_size = sizeof(q_tbl_hdr->q_hdr[0]);
-> +	q_tbl_hdr->num_q = IFACEQ_NUMQ;
-> +	q_tbl_hdr->num_active_q = IFACEQ_NUMQ;
-> +
-> +	 /* Write sfr size in first word to be used by firmware */
-> +	*((u32 *)core->sfr_vaddr) = SFR_SIZE;
-> +
-> +	return 0;
-> +}
-> +
-> +void iris_hfi_queues_deinit(struct iris_core *core)
-> +{
-> +	if (!core->iface_q_table_vaddr)
-> +		return;
-> +
-> +	iris_hfi_queue_deinit(&core->debug_queue);
-> +	iris_hfi_queue_deinit(&core->message_queue);
-> +	iris_hfi_queue_deinit(&core->command_queue);
-> +
-> +	dma_free_attrs(core->dev, SFR_SIZE, core->sfr_vaddr,
-> +		       core->sfr_daddr, DMA_ATTR_WRITE_COMBINE);
-> +
-> +	core->sfr_vaddr = NULL;
-> +	core->sfr_daddr = 0;
-> +
-> +	dma_free_attrs(core->dev, sizeof(struct iris_hfi_queue_table_header),
-> +		       core->iface_q_table_vaddr, core->iface_q_table_daddr,
-> +		       DMA_ATTR_WRITE_COMBINE);
-> +
-> +	core->iface_q_table_vaddr = NULL;
-> +	core->iface_q_table_daddr = 0;
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_queue.h b/drivers/media/platform/qcom/iris/iris_hfi_queue.h
-> new file mode 100644
-> index 000000000000..54994bb776f1
-> --- /dev/null
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_queue.h
-> @@ -0,0 +1,175 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#ifndef _IRIS_HFI_QUEUE_H_
-> +#define _IRIS_HFI_QUEUE_H_
-> +
-> +struct iris_core;
-> +
-> +/*
-> + * Maximum number of buffers which queue can hold until
-> + * hardware stops responding and driver times out.
-> + */
-> +#define IFACEQ_MAX_BUF_COUNT		50
+>
+>> Running
+>>    rm -f /etc/test-file.bin
+>>    dd if=3D/dev/urandom of=3D/etc/test-file.bin bs=3D1M count=3D60 conv=
+=3Dfsync
+>> in a loop, with `CONFIG_UBIFS_FS_AUTHENTICATION`, KASAN reports:
+>>    BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
+>>    Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
+>>    Call trace:
+>
+> [...]
+>> diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
+>> index a55e04822d16..a464eb557585 100644
+>> --- a/fs/ubifs/tnc_commit.c
+>> +++ b/fs/ubifs/tnc_commit.c
+>> @@ -657,6 +657,7 @@ static int get_znodes_to_commit(struct ubifs_info *c)
+>>   		znode->alt =3D 0;
+>>   		cnext =3D find_next_dirty(znode);
+>>   		if (!cnext) {
+>
+> 3. I'd like to add the the assertion 'ubifs_assert(c, !znode->parent);'
 
-Is there any reason 50 is chosen here ?
+Wouldn't the assert always be true? Since the root node wouldn't have a
+parent. Or are we afraid of some other edge cases (bugs?) that might
+have been missed and want to be defensive here? Either way, I'll add the
+assert.
 
-Could it be 32, 64 or another 0x10 aligned number ?
-
-> +/*
-> + * Max session supported are 16.
-> + * this value is used to calcualte the size of
-> + * individual shared queue.
-> + */
-> +#define IFACE_MAX_PARALLEL_SESSIONS	16
-> +#define IFACEQ_DFLT_QHDR		0x0101
-> +#define IFACEQ_MAX_PKT_SIZE		1024 /* Maximum size of a packet in the queue */
-> +
-> +/*
-> + * SFR: Subsystem Failure Reason
-> + * when hardware goes into bad state/failure, firmware fills this memory
-> + * and driver will get to know the actual failure reason from this SFR buffer.
-> + */
-> +#define SFR_SIZE			SZ_4K /* Iris hardware requires 4K queue alignment */
-> +
-> +#define IFACEQ_QUEUE_SIZE		(IFACEQ_MAX_PKT_SIZE * \
-> +					 IFACEQ_MAX_BUF_COUNT * IFACE_MAX_PARALLEL_SESSIONS)
-> +
-> +/*
-> + * Memory layout of the shared queues:
-> + *
-> + *   ||=================||  ^        ^         ^
-> + *   ||                 ||  |        |         |
-> + *   ||    Queue Table  || 288 Bytes |         |
-> + *   ||      Header     ||  |        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||-----------------||  V        |         |
-> + *   ||-----------------||  ^        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||  Command Queue  || 56 Bytes  |         |
-> + *   ||     Header      ||  |        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||-----------------||  V       456 Bytes  |
-> + *   ||-----------------||  ^        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||  Message Queue  || 56 Bytes  |         |
-> + *   ||     Header      ||  |        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||-----------------||  V        |         Buffer size aligned to 4k
-> + *   ||-----------------||  ^        |         Overall Queue Size = 2,404 KB
-> + *   ||                 ||  |        |         |
-> + *   ||   Debug Queue   || 56 Bytes  |         |
-> + *   ||     Header      ||  |        |         |
-> + *   ||                 ||  |        |         |
-> + *   ||=================||  V        V         |
-> + *   ||=================||           ^         |
-> + *   ||                 ||           |         |
-> + *   ||     Command     ||         800 KB      |
-> + *   ||      Queue      ||           |         |
-> + *   ||                 ||           |         |
-> + *   ||=================||           V         |
-> + *   ||=================||           ^         |
-> + *   ||                 ||           |         |
-> + *   ||     Message     ||         800 KB      |
-> + *   ||      Queue      ||           |         |
-> + *   ||                 ||           |         |
-> + *   ||=================||           V         |
-> + *   ||=================||           ^         |
-> + *   ||                 ||           |         |
-> + *   ||      Debug      ||         800 KB      |
-> + *   ||      Queue      ||           |         |
-> + *   ||                 ||           |         |
-> + *   ||=================||           V         |
-> + *   ||                 ||                     |
-> + *   ||=================||                     V
-> + */
-> +
-> +/*
-> + * Shared queues are used for communication between driver and firmware.
-> + * There are 3 types of queues:
-> + * Command queue - driver to write any command to firmware.
-> + * Message queue - firmware to send any response to driver.
-> + * Debug queue - firmware to write debug message.
-> + */
-> +
-> +/* Host-firmware shared queue ids */
-> +enum iris_iface_queue {
-> +	IFACEQ_CMDQ_ID,
-> +	IFACEQ_MSGQ_ID,
-> +	IFACEQ_DBGQ_ID,
-> +	IFACEQ_NUMQ, /* not an index */
-> +};
-> +
-> +/**
-> + * struct iris_hfi_queue_header
-> + *
-> + * @status: Queue status, qhdr_state define possible status
-> + * @start_addr: Queue start address in non cached memory
-> + * @type: qhdr_tx, qhdr_rx, qhdr_q_id and priority defines qhdr type
-> + * @q_size: Queue size
-> + *		Number of queue packets if pkt_size is non-zero
-> + *		Queue size in bytes if pkt_size is zero
-> + * @pkt_size: Size of queue packet entries
-> + *		0x0: variable queue packet size
-> + *		non zero: size of queue packet entry, fixed
-> + * @pkt_drop_cnt: Number of packets dropped by sender
-> + * @rx_wm: Receiver watermark, applicable in event driven mode
-> + * @tx_wm: Sender watermark, applicable in event driven mode
-> + * @rx_req: Receiver sets this bit if queue is empty
-> + * @tx_req: Sender sets this bit if queue is full
-> + * @rx_irq_status: Receiver sets this bit and triggers an interrupt to
-> + *		the sender after packets are dequeued. Sender clears this bit
-> + * @tx_irq_status: Sender sets this bit and triggers an interrupt to
-> + *		the receiver after packets are queued. Receiver clears this bit
-> + * @read_idx: Index till where receiver has consumed the packets from the queue.
-> + * @write_idx: Index till where sender has written the packets into the queue.
-> + */
-> +struct iris_hfi_queue_header {
-> +	u32 status;
-> +	u32 start_addr;
-> +	u16 queue_type;
-> +	u16 header_type;
-> +	u32 q_size;
-> +	u32 pkt_size;
-> +	u32 pkt_drop_cnt;
-> +	u32 rx_wm;
-> +	u32 tx_wm;
-> +	u32 rx_req;
-> +	u32 tx_req;
-> +	u32 rx_irq_status;
-> +	u32 tx_irq_status;
-> +	u32 read_idx;
-> +	u32 write_idx;
-> +};
-> +
-> +/**
-> + * struct iris_hfi_queue_table_header
-> + *
-> + * @version: Queue table version number
-> + * @size: Queue table size from version to last parametr in qhdr entry
-> + * @qhdr0_offset: Offset to the start of first qhdr
-> + * @qhdr_size: Queue header size in bytes
-> + * @num_q: Total number of queues in Queue table
-> + * @num_active_q: Total number of active queues
-> + * @device_addr: Device address of the queue
-> + * @name: Queue name in characters
-> + */
-> +struct iris_hfi_queue_table_header {
-> +	u32 version;
-> +	u32 size;
-> +	u32 qhdr0_offset;
-> +	u32 qhdr_size;
-> +	u32 num_q;
-> +	u32 num_active_q;
-> +	void *device_addr;
-> +	char name[256]; /* NUL-terminated array of characters */
-> +	struct iris_hfi_queue_header q_hdr[IFACEQ_NUMQ];
-> +};
-> +
-> +struct iris_iface_q_info {
-> +	struct iris_hfi_queue_header *qhdr;
-> +	dma_addr_t	device_addr;
-> +	void		*kernel_vaddr;
-> +};
-> +
-> +int iris_hfi_queues_init(struct iris_core *core);
-> +void iris_hfi_queues_deinit(struct iris_core *core);
-> +
-> +#endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index b3a2903698ff..dac64ec4bf03 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -31,6 +31,7 @@ struct iris_platform_data {
->   	unsigned int clk_tbl_size;
->   	const char * const *clk_rst_tbl;
->   	unsigned int clk_rst_tbl_size;
-> +	u64 dma_mask;
->   };
->   
->   #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> index dba8d3c22ce5..9b305b8e2110 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> @@ -36,4 +36,5 @@ struct iris_platform_data sm8550_data = {
->   	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
->   	.clk_tbl = sm8550_clk_table,
->   	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +	.dma_mask = GENMASK(31, 29) - 1,
->   };
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index ce16d894c809..0d858c7b015f 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -168,15 +168,21 @@ static void iris_remove(struct platform_device *pdev)
->   	if (!core)
->   		return;
->   
-> +	iris_core_deinit(core);
-> +
->   	video_unregister_device(core->vdev_dec);
->   
->   	v4l2_device_unregister(&core->v4l2_dev);
-> +
-> +	mutex_destroy(&core->lock);
-> +	core->state = IRIS_CORE_DEINIT;
-
-This setting of the state is redundant, you've already set the state @ 
-iris_core_deinit();
-
----
-bod
+>> +			znode->cparent =3D NULL;
+>>   			znode->cnext =3D c->cnext;
+>>   			break;
+>>   		}
+>>=20
 
