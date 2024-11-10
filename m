@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-403229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1213D9C32CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:26:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 935C19C32CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD3428153B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237CC2814CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34873A1BA;
-	Sun, 10 Nov 2024 14:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D8E3A1BA;
+	Sun, 10 Nov 2024 14:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEn3SF5K"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3du1XFb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E2F1BC2A;
-	Sun, 10 Nov 2024 14:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D4438FA3;
+	Sun, 10 Nov 2024 14:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731248758; cv=none; b=ePGJ9vcH4xaVSS6WjO5odLkjuVjx3pb68dSniEAYfUcXRzEvNg5/E9GqKMULQofMLXUsj4dOkkJwhvFAwelhkqz2uwL2C6+sTfsgL4zeh1hRC/cIxrScHDbo6XN3nTKERH2BHrLy/cqXucakEynqf3VKo894ph/Fk7YV7LurpDM=
+	t=1731248924; cv=none; b=CzIbYc7HfFB4VLo0ZkmtVzZaY4cCXgbvT588jTXUusP2Dtu06BLAfncRw6h0HpPHK5g6I9x5MzXW0s5ulqrnVyBjAk/5QAE9ffeKoZY1pmyMzhFa23qVAFj5NlXtNJO9scve9JqmatFrS2jf09Q/CEfpzd6PfubUBnRxc4P5gLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731248758; c=relaxed/simple;
-	bh=H6kkLRcCXpgXgSCHKLz+/8/hd+KsxQu+a+akF/jsTAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aPaX2oTgg4UjD+gFoLVCVD9qDWOrNn+h6pib1gXwPI+Q6jKEVFCKlwBfp4lD0bmtFyOYi9BpbGKzmTJSC1tlmfctoHCvZ6log/h1/kGQVLXfhxbQTRrDkXz/NGO7WYvfDnxDlCntsRUzkeo+SJI4p63PaD23BMMedV9cCGIaszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEn3SF5K; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-460963d6233so24542611cf.2;
-        Sun, 10 Nov 2024 06:25:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731248755; x=1731853555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6kkLRcCXpgXgSCHKLz+/8/hd+KsxQu+a+akF/jsTAI=;
-        b=BEn3SF5KfH4O7E/sA69T/mzOmt6l3loIRdGxTd4KkpM1N6uRYXlfiLkZ02Sm+t/vUa
-         Mmm66wNNxyHyy4ODsrFI9CfTpB7T3WDeDQALt5OxVe1T5bHwkAB09nOTSPlgH/iunQHP
-         CUOozO72+KsQAEMmdU95Gm53x0mAJW1/sSmLv17IdE5UZF0kBuLIvEiY8kbrVkz9pRO4
-         7C2bkM0sQfocuSNeFbZnQcrfzSjKavpmv7niVuEXxzlV8kDkgAUgUTsnQt3uCCDNI/3F
-         OGnJ6D3SXS/pomShI3VurE2KHGNZ/mZ+gFlOBJgGgVLeIu6KVq4Wx9WWzOn7wR2v+jA7
-         ZPiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731248755; x=1731853555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H6kkLRcCXpgXgSCHKLz+/8/hd+KsxQu+a+akF/jsTAI=;
-        b=s40Y44O49WQEPGejdMlJJ9e8SzlGMyKYwW0N4rolUumQMs+WamUa9WcaSGXlB1VtB8
-         KR/lY9sLEG8U4azyJ0B/mm4ZBr+fep/mtlNPuI1QgDS7iFCmA5Ro1Pz4ttys8/FY+ScO
-         cYfApl7d4AputT53XdmT+mr9ml3bQ4ew9xCLKSksVFDnSQBQZVaBV7X6rVq646W9GyrB
-         DaY7ECnrcdySuoZoNwWHVoIyXHY0gQQI5BV99JDrv0fVftMznJhbK30ialHDnhjfa+ts
-         zyik59PXbxw5I+IYSU9KVOJu6hGzjqhF6vSPYlLWaCtztKmrq2HdtQIjAE2zhCDXxcZg
-         rmCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPK+Dw18WkgFFWNlhyb/5k2t42azXKEtWT4Znpm0k6eJzEb+lzmh5B8ygBprgMD8U94WoUAMmZSKtsQwQ=@vger.kernel.org, AJvYcCVoH4Nzj3kDs7Y4bwhA62e3bdyfXDwEHUzmbMCeqGCpiCVFTgQvv2k2pZwypLlcRmiqgWgenlVP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhDfl6eFjlv+vc8X7FFSZECceBlKJOjFePmE0PeuhVq80MlH/A
-	lGRk+7mbGYqw4MuyujYPMLj7z2QqquFSnh4w/Kv0zm2p95S68iM72J5JnwMdH+Y08siAWAiouca
-	wn9wrt3Lnypndh9MeL7HkMJ3VN0A=
-X-Google-Smtp-Source: AGHT+IGkQLLgn2HEodulrOeD6p6V4fTHRrJtR65Lt9rJEe9gs+IOxxbj0YOJbG4tjZ8xYiHxCYzb0iR26ZuY9IqtE8k=
-X-Received: by 2002:a05:6214:5f04:b0:6cb:7e7a:ae87 with SMTP id
- 6a1803df08f44-6d39e1b4162mr124681656d6.33.1731248755569; Sun, 10 Nov 2024
- 06:25:55 -0800 (PST)
+	s=arc-20240116; t=1731248924; c=relaxed/simple;
+	bh=NKEdFAEQX3z9SwrCkMOGWoU4HvTVSn4adV5zJi4cTxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpHfkxebIBRTDrY+pQIQnJK59aWSdw7fmAcYHjkRT7VrxmrMQjhIbinFpOlNAHclNZsb8weMYgdMmxS53L58cgvkEfLomQr1GorCC8oILFRgW0HeiqvgYGck7HwQeaxtR/UOmKyC8x0DzJJTQ+zUPw8R77/qpEReXGgvGS0ydLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3du1XFb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C106C4CECD;
+	Sun, 10 Nov 2024 14:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731248923;
+	bh=NKEdFAEQX3z9SwrCkMOGWoU4HvTVSn4adV5zJi4cTxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y3du1XFb3G6LjwQLw59sQB99r4WAEgy53T+lqd3vpCdwJ9fw18h+InLwE1JirawDZ
+	 OyPuKVp9Y7FLKpe5dBcPvQM8vsLw/yWv15gZH0QyMiz3DO9Mx2ltxjz/gbGH/srgKY
+	 U27wN08+Uax6IYZvt/GPO+7paWj56HdUrKSem4rpeBIIMHJ24UEvYguAP4apJovbAR
+	 q+K/N5MM1iG4vf/zP2zbbXmlj1iKRpVBFLFsXnAIiuqkQQsX+uHWYq/bzrpleDOgO/
+	 BW48ZtRZrWgZ11XxF9dloLjawWWFFrKdbSG9zjnYfNpnoZEkw9e+vWu8sFuGOS4+Hn
+	 sw81Lu8+UE9pA==
+Date: Sun, 10 Nov 2024 16:28:36 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
+Subject: Re: [PATCH v2 for-next] RDMA/hns: Fix different dgids mapping to the
+ same dip_idx
+Message-ID: <20241110142836.GB50588@unreal>
+References: <20241107061148.2010241-1-huangjunxian6@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107151929.37147-5-yyyynoom@gmail.com> <20241107200940.4dff026d@kernel.org>
-In-Reply-To: <20241107200940.4dff026d@kernel.org>
-From: Moon Yeounsu <yyyynoom@gmail.com>
-Date: Sun, 10 Nov 2024 23:25:44 +0900
-Message-ID: <CAAjsZQwhDeFEK2qEwy6b4-GbDUymiOz5xzrYwmMSTe-Jf_3oKQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: dlink: add support for reporting stats
- via `ethtool -S`
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, andrew@lunn.ch
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107061148.2010241-1-huangjunxian6@hisilicon.com>
 
-First of all, I would like to extend my apologies.
-In the previous patch, the `get_ethtool_rmon_stats()` function should
-have called the `get_stats()` function to update the stats
-information,
-but I missed this. I will include this part in the next patch.
+On Thu, Nov 07, 2024 at 02:11:48PM +0800, Junxian Huang wrote:
+> From: Feng Fang <fangfeng4@huawei.com>
+> 
+> DIP algorithm requires a one-to-one mapping between dgid and dip_idx.
+> Currently a queue 'spare_idx' is used to store QPN of QPs that use
+> DIP algorithm. For a new dgid, use a QPN from spare_idx as dip_idx.
+> This method lacks a mechanism for deduplicating QPN, which may result
+> in different dgids sharing the same dip_idx and break the one-to-one
+> mapping requirement.
+> 
+> This patch replaces spare_idx with xarray and introduces a refcnt of
+> a dip_idx to indicate the number of QPs that using this dip_idx.
+> 
+> The state machine for dip_idx management is implemented as:
+> 
+> * The entry at an index in xarray is empty -- This indicates that the
+>   corresponding dip_idx hasn't been created.
+> 
+> * The entry at an index in xarray is not empty but with 0 refcnt --
+>   This indicates that the corresponding dip_idx has been created but
+>   not used as dip_idx yet.
+> 
+> * The entry at an index in xarray is not empty and with non-0 refcnt --
+>   This indicates that the corresponding dip_idx is being used by refcnt
+>   number of DIP QPs.
+> 
+> Fixes: eb653eda1e91 ("RDMA/hns: Bugfix for incorrect association between dip_idx and dgid")
+> Fixes: f91696f2f053 ("RDMA/hns: Support congestion control type selection according to the FW")
+> Signed-off-by: Feng Fang <fangfeng4@huawei.com>
+> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> ---
+> v1 -> v2:
+> * Use xarray instead of bitmaps as Leon suggested.
+> * v1: https://lore.kernel.org/all/20240906093444.3571619-10-huangjunxian6@hisilicon.com/
+> ---
+>  drivers/infiniband/hw/hns/hns_roce_device.h | 11 +--
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 96 +++++++++++++++------
+>  drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |  2 +-
+>  drivers/infiniband/hw/hns/hns_roce_main.c   |  2 -
+>  drivers/infiniband/hw/hns/hns_roce_qp.c     |  7 +-
+>  5 files changed, 74 insertions(+), 44 deletions(-)
+> 
+> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+> index 9b51d5a1533f..560a1d9de408 100644
+> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
+> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+> @@ -489,12 +489,6 @@ struct hns_roce_bank {
+>  	u32 next; /* Next ID to allocate. */
+>  };
+> 
+> -struct hns_roce_idx_table {
+> -	u32 *spare_idx;
+> -	u32 head;
+> -	u32 tail;
+> -};
+> -
+>  struct hns_roce_qp_table {
+>  	struct hns_roce_hem_table	qp_table;
+>  	struct hns_roce_hem_table	irrl_table;
+> @@ -503,7 +497,7 @@ struct hns_roce_qp_table {
+>  	struct mutex			scc_mutex;
+>  	struct hns_roce_bank bank[HNS_ROCE_QP_BANK_NUM];
+>  	struct mutex bank_mutex;
+> -	struct hns_roce_idx_table	idx_table;
+> +	struct xarray			dip_xa;
 
-On Fri, Nov 8, 2024 at 1:09=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
-te:
-> Do these macro wrappers really buy you anything?
-> They make the code a lot harder to follow :(
-I fully understand that these macros can be difficult to comprehend at
-first glance.
-However, I wanted to avoid code duplication with this structure.
-For now, I will write the code in a way that minimizes the use of
-macros as much as possible.
+I don't see xa_destroy() for this xarray, why?
 
-> nit: multiple empty lines, checkpatch --strict should catch this
-In the next patch, I will use the `checkpatch --strict` option to fix
-as many warnings and checks as possible before submitting the patch.
-I also confirmed from patchwork[1] that there were additional warning messa=
-ges.
-I will pay attention to and correct these warnings in the next patch.
-Thank you for pointing that out.
-
-> We've been getting conversion patches replacing such code with
-> ethtool_puts() lately, let's use it from the start.
-I will do so.
-
-[1]: https://patchwork.kernel.org/project/netdevbpf/patch/20241107151929.37=
-147-5-yyyynoom@gmail.com/
+Thanks
 
