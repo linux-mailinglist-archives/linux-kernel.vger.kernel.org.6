@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-403367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46959C34A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:01:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694F69C34A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99D5A2820E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:01:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C3D1F2143E
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB101547C8;
-	Sun, 10 Nov 2024 21:01:00 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B34C155725;
+	Sun, 10 Nov 2024 21:00:57 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4B157487
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011EA1547C8
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731272460; cv=none; b=MZgG2hHLKGzxYhvdRseVScQg8wMQwgwzGGCsUcBFElG3lLNDN9DPYTtA9VnizO/VBavFa+u+LAGSCZkDzD0mvo7aB+8p00cdQtj4766wYK4bFxWbrq9QtonrLPT1pZaeh5Cp1drFtEIxCdMIzWA4lGYzh0Z7QiIZK+MnEu6lE/0=
+	t=1731272456; cv=none; b=mzcsQKAtAwgDQvbyu04Mpw5yghsnVCeuHsXssf7o35MEol8gXq6M4Giw50elxos24GUqsnPmITwXdHCNysZKLI4JgEt4itt1ykD2zF6x64Kux6PavRVieH3p/8/gphGxjMwV5ciekRlSAV4yJog2Kaf9KuL2jywpy2S0qw3vBwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731272460; c=relaxed/simple;
-	bh=IAcBwFzWYVJh6SimAOjlIxXhGXkWE1ZKpdBpKfVlNUA=;
+	s=arc-20240116; t=1731272456; c=relaxed/simple;
+	bh=xT1oVb9NpWC5R2d9TuBbIB+PsiQJSZuYSy4aGbdjdFE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TI1AhDmYmFKQvJuR+B/lVAqlFP8FgwbAhcbCoruTO2Rs62uXWoQJEhKQMtLeFR/ZZEGR/Oe8b3JW9auAwaIFgSNE+3Tp+o6YBV+Jdxpo7PvttnAUaHDkdTP5Ur9Z7B+3Cl1S/j49vK1GSNO3oVq2uyvSOY7zjguS1Zg09iiGFzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
+	 MIME-Version; b=aVi5IOsETk1aqlyNPBymxPXyCRJlr4z9tkWAOHOvFCarGyHuzc+15l3vPpVzLVF635buzjyTuAHWKLj/gTqpPD4ZaaA31MYrUSVyMF7S+5Tj9Weg3wJgzpIOiBQdZ5bmBAnZ5QQkY9cqZZ/FzOpHsjIj1hs/fPgEaCDlJ1lgmFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
 Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id db5f26d3-9fa6-11ef-9b01-005056bd6ce9;
-	Sun, 10 Nov 2024 23:00:46 +0200 (EET)
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id dc5d416a-9fa6-11ef-8874-005056bdd08f;
+	Sun, 10 Nov 2024 23:00:48 +0200 (EET)
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
 To: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v1 1/6] pinctrl: cy8c95x0: Use 2-argument strscpy()
-Date: Sun, 10 Nov 2024 22:59:41 +0200
-Message-ID: <20241110210040.18918-2-andy.shevchenko@gmail.com>
+Subject: [PATCH v1 2/6] pinctrl: cy8c95x0: switch to using devm_regulator_get_enable()
+Date: Sun, 10 Nov 2024 22:59:42 +0200
+Message-ID: <20241110210040.18918-3-andy.shevchenko@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241110210040.18918-1-andy.shevchenko@gmail.com>
 References: <20241110210040.18918-1-andy.shevchenko@gmail.com>
@@ -52,46 +52,140 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use 2-argument strscpy(), which is not only shorter but also provides
-an additional check that destination buffer is an array.
+The driver does not actively manage regulator state past probe() time,
+so we can use devm_regulator_get_enable() to simplify the code.
 
 Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/pinctrl/pinctrl-cy8c95x0.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-cy8c95x0.c | 58 ++++++------------------------
+ 1 file changed, 11 insertions(+), 47 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 5096ccdd459e..5f533dff4417 100644
+index 5f533dff4417..cb6d9458c1e8 100644
 --- a/drivers/pinctrl/pinctrl-cy8c95x0.c
 +++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -1424,7 +1424,7 @@ static int cy8c95x0_detect(struct i2c_client *client,
+@@ -141,7 +141,6 @@ static const struct dmi_system_id cy8c95x0_dmi_acpi_irq_info[] = {
+  * @nport:          Number of Gports in this chip
+  * @gpio_chip:      gpiolib chip
+  * @driver_data:    private driver data
+- * @regulator:      Pointer to the regulator for the IC
+  * @dev:            struct device
+  * @pctldev:        pin controller device
+  * @pinctrl_desc:   pin controller description
+@@ -163,7 +162,6 @@ struct cy8c95x0_pinctrl {
+ 	int nport;
+ 	struct gpio_chip gpio_chip;
+ 	unsigned long driver_data;
+-	struct regulator *regulator;
+ 	struct device *dev;
+ 	struct pinctrl_dev *pctldev;
+ 	struct pinctrl_desc pinctrl_desc;
+@@ -1434,7 +1432,6 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 	struct cy8c95x0_pinctrl *chip;
+ 	struct regmap_config regmap_conf;
+ 	struct regmap_range_cfg regmap_range_conf;
+-	struct regulator *reg;
+ 	int ret;
+ 
+ 	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
+@@ -1448,8 +1445,6 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 	if (!chip->driver_data)
+ 		return -ENODEV;
+ 
+-	i2c_set_clientdata(client, chip);
+-
+ 	chip->tpin = chip->driver_data & CY8C95X0_GPIO_MASK;
+ 	chip->nport = DIV_ROUND_UP(CY8C95X0_PIN_TO_OFFSET(chip->tpin), BANK_SZ);
+ 
+@@ -1472,26 +1467,15 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 		return -ENODEV;
  	}
  
- 	dev_info(&client->dev, "Found a %s chip at 0x%02x.\n", name, client->addr);
--	strscpy(info->type, name, I2C_NAME_SIZE);
-+	strscpy(info->type, name);
+-	reg = devm_regulator_get(&client->dev, "vdd");
+-	if (IS_ERR(reg)) {
+-		if (PTR_ERR(reg) == -EPROBE_DEFER)
+-			return -EPROBE_DEFER;
+-	} else {
+-		ret = regulator_enable(reg);
+-		if (ret) {
+-			dev_err(&client->dev, "failed to enable regulator vdd: %d\n", ret);
+-			return ret;
+-		}
+-		chip->regulator = reg;
+-	}
++	ret = devm_regulator_get_enable(&client->dev, "vdd");
++	if (ret)
++		return dev_err_probe(&client->dev, ret, "failed to enable regulator vdd\n");
  
- 	return 0;
+ 	/* bring the chip out of reset if reset pin is provided */
+ 	chip->gpio_reset = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
+-	if (IS_ERR(chip->gpio_reset)) {
+-		ret = dev_err_probe(chip->dev, PTR_ERR(chip->gpio_reset),
+-				    "Failed to get GPIO 'reset'\n");
+-		goto err_exit;
+-	} else if (chip->gpio_reset) {
++	if (IS_ERR(chip->gpio_reset))
++		return dev_err_probe(chip->dev, PTR_ERR(chip->gpio_reset), "Failed to get GPIO 'reset'\n");
++	if (chip->gpio_reset) {
+ 		usleep_range(1000, 2000);
+ 		gpiod_set_value_cansleep(chip->gpio_reset, 0);
+ 		usleep_range(250000, 300000);
+@@ -1506,10 +1490,8 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 	regmap_conf.num_reg_defaults_raw = regmap_range_conf.range_max;
+ 
+ 	chip->regmap = devm_regmap_init_i2c(client, &regmap_conf);
+-	if (IS_ERR(chip->regmap)) {
+-		ret = PTR_ERR(chip->regmap);
+-		goto err_exit;
+-	}
++	if (IS_ERR(chip->regmap))
++		return PTR_ERR(chip->regmap);
+ 
+ 	bitmap_zero(chip->push_pull, MAX_LINE);
+ 	bitmap_zero(chip->shiftmask, MAX_LINE);
+@@ -1525,31 +1507,14 @@ static int cy8c95x0_probe(struct i2c_client *client)
+ 	if (client->irq) {
+ 		ret = cy8c95x0_irq_setup(chip, client->irq);
+ 		if (ret)
+-			goto err_exit;
++			return ret;
+ 	}
+ 
+ 	ret = cy8c95x0_setup_pinctrl(chip);
+ 	if (ret)
+-		goto err_exit;
++		return ret;
+ 
+-	ret = cy8c95x0_setup_gpiochip(chip);
+-	if (ret)
+-		goto err_exit;
+-
+-	return 0;
+-
+-err_exit:
+-	if (!IS_ERR_OR_NULL(chip->regulator))
+-		regulator_disable(chip->regulator);
+-	return ret;
+-}
+-
+-static void cy8c95x0_remove(struct i2c_client *client)
+-{
+-	struct cy8c95x0_pinctrl *chip = i2c_get_clientdata(client);
+-
+-	if (!IS_ERR_OR_NULL(chip->regulator))
+-		regulator_disable(chip->regulator);
++	return cy8c95x0_setup_gpiochip(chip);
  }
-@@ -1457,15 +1457,15 @@ static int cy8c95x0_probe(struct i2c_client *client)
  
- 	switch (chip->tpin) {
- 	case 20:
--		strscpy(chip->name, cy8c95x0_id[0].name, I2C_NAME_SIZE);
-+		strscpy(chip->name, cy8c95x0_id[0].name);
- 		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 3 * MUXED_STRIDE;
- 		break;
- 	case 40:
--		strscpy(chip->name, cy8c95x0_id[1].name, I2C_NAME_SIZE);
-+		strscpy(chip->name, cy8c95x0_id[1].name);
- 		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 6 * MUXED_STRIDE;
- 		break;
- 	case 60:
--		strscpy(chip->name, cy8c95x0_id[2].name, I2C_NAME_SIZE);
-+		strscpy(chip->name, cy8c95x0_id[2].name);
- 		regmap_range_conf.range_max = CY8C95X0_VIRTUAL + 8 * MUXED_STRIDE;
- 		break;
- 	default:
+ static const struct acpi_device_id cy8c95x0_acpi_ids[] = {
+@@ -1565,7 +1530,6 @@ static struct i2c_driver cy8c95x0_driver = {
+ 		.acpi_match_table = cy8c95x0_acpi_ids,
+ 	},
+ 	.probe		= cy8c95x0_probe,
+-	.remove		= cy8c95x0_remove,
+ 	.id_table	= cy8c95x0_id,
+ 	.detect		= cy8c95x0_detect,
+ };
 -- 
 2.47.0
 
