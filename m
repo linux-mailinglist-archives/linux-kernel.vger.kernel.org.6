@@ -1,78 +1,123 @@
-Return-Path: <linux-kernel+bounces-403334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769CC9C344B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:05:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791069C3448
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CD1D28159D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:05:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA73B2815A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB7977111;
-	Sun, 10 Nov 2024 19:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C241213D25E;
+	Sun, 10 Nov 2024 18:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mxV67elR"
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="K23TZD1F"
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EBD1CA81
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 19:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CDE84D29
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 18:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731265524; cv=none; b=kHKwK7+di9inQBFfRNeRC/M2fIFfpK8jddEYy8hdiVQ6ND56Q85seaHIhzvbf/YuqzDBvW/oguVtc8c4eyVftL5yucCEDuZmhfKikwf6cFMbpzwvn8vQcrE6DJDl2REwvkdqAiWACxJyeQDKOZpSNIIlaf+mqkj1BT6V/AMgKQs=
+	t=1731265094; cv=none; b=Hizq+bPPCfmCmcPtIytxSi/bi6B8Lkf7Y/X9jCHv8lAYckWNqr5fQpLSl26v3BWkXKjT9BR3zI/MDh7xhM5i1hiC3p6DshXJwN53S49guudqKhJtIwzWYWKNaJdT03uuHcNZLbkMitViqMx5aawKUyQliXixoIL8vn+xkbL9J8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731265524; c=relaxed/simple;
-	bh=MaEFS9bus4W6Lu28k4HbgCiUQ4Zh+/UyfhUhzlj7n68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FBfGF3RDo7nlzZvOyYFZ8RkYWcMyS4PGlKbzMIVR+0r9hjCnbaX3uE5O/1XDCaSnSKIIA55z7lJUpEZqjnTQS6Wt13flZHV8CM7oz/2adMtJfivzS7TdHgggS7rlbWwjClynXWt3CU+YxVuk4uklg14VDEKEJ2Z0Cxpwsqy2AUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mxV67elR; arc=none smtp.client-ip=185.125.25.11
+	s=arc-20240116; t=1731265094; c=relaxed/simple;
+	bh=gwNhPkdB4ruEn6kKJNJyb3mDaAE5VeSeNIQnUk2j1vk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aafk2V2ZbKXf/+nITPh8Htms8jSmi6NdXsgMAWqwFMGNi6VS2vEFeHBafa2S5IVVURaCj4g8WpLa9tUKexqS68tC5KLiUBHKmt69v1DD5acgCUCAs+0AkNu3OAmu/ckUmsE59bGHimjVjG8V/DCfQ39/pETKHsqvcKhhlPO+MV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=K23TZD1F; arc=none smtp.client-ip=185.125.25.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xmhjh0vGgzRKW;
-	Sun, 10 Nov 2024 19:56:40 +0100 (CET)
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XmhlM1GQ7zSJb;
+	Sun, 10 Nov 2024 19:58:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731265000;
-	bh=Q+LBf0Sv5jwbPqaYWAqayiv7fFnFEnvkioJQxITAAdk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mxV67elRaNQ31kjFhRw7Oje8v9A4C+1/pe8CUUCkU0VfpGJdiKPlg1Lyt7ErX5499
-	 piNSrfgDc6G/ISIE40wmh6Djq5FeoXUdjZpOTDCQz0/mOnj4CBRCMQyO3U8/8Y78XI
-	 AW5r4fS48/jJ1Www2hxsv44GXkNQarAf2tabgim8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xmhjg1dn8zWsF;
-	Sun, 10 Nov 2024 19:56:39 +0100 (CET)
-Date: Sun, 10 Nov 2024 19:56:37 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+	s=20191114; t=1731265087;
+	bh=dLQPd5L0DoALOdUi/7m3a7RNhlisSihSXNCjGti09EA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=K23TZD1FdH4gPv1ljPAngEUDpTcZGdoivT+Q5AQ2HT4dKhoMHlZr6Vvl3Wjf1DvWX
+	 xUI/QuNDLzsgp548R1mnA5i6QaQTW/JKQdD98v3W+LRoDrsFHKryhP82YrLQzFdqIJ
+	 q9oQDutkwDZpYfiN6quYQAGLiniYpRFfC0kMLW7o=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XmhlL4ky6zk66;
+	Sun, 10 Nov 2024 19:58:06 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Daniel Burgener <dburgener@linux.microsoft.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, linux-kernel@vger.kernel.org, 
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] Landlock fix for v6.12-rc7
-Message-ID: <20241110.Iek0rephiele@digikod.net>
-References: <20241109194158.422529-1-mic@digikod.net>
- <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
+Subject: [GIT PULL] Landlock fix for v6.12-rc7 #2
+Date: Sun, 10 Nov 2024 19:58:04 +0100
+Message-ID: <20241110185804.73158-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Nov 09, 2024 at 01:59:39PM -0800, Linus Torvalds wrote:
-> On Sat, 9 Nov 2024 at 11:42, Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > This PR fixes issues in the Landlock's sandboxer [...]
-> 
-> There were neither diffstats nor a shortlog in the pull request, so
-> honestly, it's not a pull request at all as far as I'm concerned.
+Hi Linus,
 
-Indeed, my git request-pull command was buggy.  Sorry for the trouble,
-I'll send a fixed one.
+This PR fixes issues in the Landlock's sandboxer sample and documentation,
+slightly refactors helpers (required for ongoing patch series), and improve/fix
+a feature merged in v6.12 (signal and abstract UNIX socket scoping).
+
+Please pull these changes for v6.12-rc7 (or rc8, if any).  These commits merge
+cleanly with your master branch.  The kernel code has been tested in the latest
+linux-next releases for a few weeks, but I updated the last three patches with
+cosmetic changes according to reviews.
+
+Test coverage for security/landlock is 92.5% of 1129 lines according to
+gcc/gcov-14, and it was 92.8% of 1134 lines before this PR.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
+
+for you to fetch changes up to 03197e40a22c2641a1f9d1744418cd29f4954b83:
+
+  landlock: Optimize scope enforcement (2024-11-09 19:52:13 +0100)
+
+----------------------------------------------------------------
+Landlock fix for v6.12-rc7
+
+----------------------------------------------------------------
+Daniel Burgener (1):
+      landlock: Fix grammar issues in documentation
+
+Matthieu Buffet (3):
+      samples/landlock: Fix port parsing in sandboxer
+      samples/landlock: Refactor help message
+      samples/landlock: Clarify option parsing behaviour
+
+Mickaël Salaün (4):
+      landlock: Improve documentation of previous limitations
+      landlock: Refactor filesystem access mask management
+      landlock: Refactor network access mask management
+      landlock: Optimize scope enforcement
+
+ Documentation/security/landlock.rst      |  14 ++--
+ Documentation/userspace-api/landlock.rst |  90 ++++++++++++-------------
+ samples/landlock/sandboxer.c             | 112 +++++++++++++++++++------------
+ security/landlock/fs.c                   |  31 +++------
+ security/landlock/net.c                  |  28 ++------
+ security/landlock/ruleset.h              |  74 +++++++++++++++++---
+ security/landlock/syscalls.c             |   2 +-
+ security/landlock/task.c                 |  18 ++++-
+ 8 files changed, 217 insertions(+), 152 deletions(-)
 
