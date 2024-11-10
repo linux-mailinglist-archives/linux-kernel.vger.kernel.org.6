@@ -1,94 +1,83 @@
-Return-Path: <linux-kernel+bounces-403345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EFC9C3471
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:51:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C5B9C3473
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:51:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E452A1C20A18
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:51:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9160C1F21518
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8115013B5B3;
-	Sun, 10 Nov 2024 19:51:35 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409FB149011;
+	Sun, 10 Nov 2024 19:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="oyu4m7oo"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AEFA923
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 19:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF8214600D;
+	Sun, 10 Nov 2024 19:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731268295; cv=none; b=UmjJRPKgV/oPIaQHA86daC1S8b/5lLNM6A16nYod35u2oFy111IMxPY83F6Z+K60vioIvAZiadD0NgQ43jemWbBhoeutfNgaHV16Q/5Rup8FmmvmIW62AwpdYDj9J0+ajtsztxkoc8gz1HWlOoDWeOywYxui5L+848yHauxd6Qk=
+	t=1731268298; cv=none; b=kbq2UaygbPZUJW4h6JVBd8o9T0Tba0caA53RW4vrZdRz3jKGbTTgZ8FvI3aar3w7zuoR72UnOnvR6a68IfI0lf/Y/bbo3rvR/aU4+xS1+Z4cOmxNkjvkpCo2JYB0EMWqnj2ncEkw6C4gTBT/hn5XlAH9NxMGCIhW8VzeaQXhzmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731268295; c=relaxed/simple;
-	bh=PgYesiTdPA5OVXXO/NUazx9gOX69ohmxZNRoY8rs0cw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfwHozJ7FA9wxOAMdMqCTf6zfCgbz1EjAADf6CvADCBv7t2ObkeFDJ0MEUjUcR7OkSinfG73qonvQL/NUHbSuCrj+J9Iryq5SaesOoCWdusVxEoJR5YI3W9SokAmn+SAaXw9i129wE+fuhnbmfAGq8xY1ArtFg00xcPyW5R8RlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id 1eef05fe-9f9d-11ef-9aff-005056bd6ce9;
-	Sun, 10 Nov 2024 21:51:07 +0200 (EET)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 10 Nov 2024 21:51:04 +0200
-To: Aren <aren@peacevolution.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
- devm callbacks
-Message-ID: <ZzEOqC9dAHCRX5a9@surfacebook.localdomain>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-7-aren@peacevolution.org>
- <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
- <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
+	s=arc-20240116; t=1731268298; c=relaxed/simple;
+	bh=Zk0yKqcLszl7HOiRtJf2Uqi9dlPLtZbTnCSwnm+RNTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcNS4qOdigSNyq/5FQFVExtp+D+RNiXpUrLUHQzPA0oHbiy2AzudFfWtiQDH4+4eHncc0tn2ExKRDOQeNjM0iLQygnifvsfPbO7vRmcK7hoVJNzHqpz5nHYYLBvgeTOJBvKXf4JA6gM3UiY4Na/8t3kQscBwpjm8UP853wc4PSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=oyu4m7oo; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=Message-ID:Cc:To:From:Date;
+	bh=Zk0yKqcLszl7HOiRtJf2Uqi9dlPLtZbTnCSwnm+RNTA=; b=oyu4m7oot7hp9g5+0K8XfsvYJG
+	Mu2mPkAyppiOYMcBrGPyJpW5PxkUabyU2RjdSPIpY3mJesc1SRkvjnNZ/e4F799qCmbxPCIfEY9MW
+	c2Ma+LFfw2XSmGnFFpRhq9UPKjE0tjXSF7YTgH+/Dq+xqt5VOiHrrBOs6QRSWXTWR4J3zx7UginR9
+	aF47HSuT1MioD7yM9utejYlgxbnDuHSHe2zVPRdkPEWD9RKEehdCwPUUcGbnPmdMnfXBw5Tc2rSgl
+	3xJ9xqZy/3TdrLj5VlugojKxEZWp2c8oh+FeeLhyQxhvh5X8H52MNVaHBkGn3WqNRb0964XiRGfDh
+	DD9iowVmzuyWj4X6n0/SAWr2Tn0eq2SH+VTPE21izs6m4m3fS+ofOU+kGavuY24KhRa6pKhvYrJ8j
+	/d6oKUFtx3/nJbprc4ydgkneiVVqhzbEICW8+t6Drkp1cDgu+JKltr88bOGvWKrC89viDGNfqOq/l
+	hqeK9jLM/hfTy/p64qAIbA2d;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tADy2-009wGa-2j;
+	Sun, 10 Nov 2024 19:51:27 +0000
+Date: Sun, 10 Nov 2024 11:51:22 -0800
+From: Jeremy Allison <jra@samba.org>
+To: Steve French <smfrench@gmail.com>
+Cc: "Dr. David Alan Gilbert" <linux@treblig.org>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Bharath S M <bharathsm@microsoft.com>,
+	CIFS <linux-cifs@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] cifs: Remove pre-historic unused CIFSSMBCopy
+Message-ID: <ZzEOuqDwagwoGCMf@jeremy-HP-Z840-Workstation>
+Reply-To: Jeremy Allison <jra@samba.org>
+References: <20241007210214.102568-1-linux@treblig.org>
+ <Zy0reBfykkwXA47d@gallifrey>
+ <CAH2r5mvL+xXH_nnoKKKnVPFo_xtOb=8mPSqrG28Dgngx6Aab7Q@mail.gmail.com>
+ <CAH2r5ms1y3XsGmA2kU6Vdvdmg_jnVyd2w7mQPRyX9oh9rFD2tA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
+In-Reply-To: <CAH2r5ms1y3XsGmA2kU6Vdvdmg_jnVyd2w7mQPRyX9oh9rFD2tA@mail.gmail.com>
 
-Sun, Nov 10, 2024 at 01:38:39PM -0500, Aren kirjoitti:
-> On Mon, Nov 04, 2024 at 10:32:08AM +0200, Andy Shevchenko wrote:
-> > On Sat, Nov 02, 2024 at 03:50:37PM -0400, Aren Moynihan wrote:
+On Fri, Nov 08, 2024 at 10:09:58PM -0600, Steve French wrote:
+>As an alternative, might be useful to see if this command still works
+>to Samba and/or older Windows (and e.g. enable an ioctl for it - might
+>have been useful in the past to old servers)
 
-...
-
-> > > +	ret = devm_add_action_or_reset(&client->dev, stk3310_set_state_disable, data);
-> > 
-> > Why not simply 'dev' as in below call?
-> 
-> I was trying to avoid refactoring the entire function to replace
-> &client->dev with dev, I'll add a patch for that to the next revision.
-
-I'm not talking about refactoring, I'm talking only about the lines that you
-have touched / added.
-
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret, "failed to register cleanup function\n");
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+No, this command has *never* been useful. Please don't enable
+it, just remove support.
 
