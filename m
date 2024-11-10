@@ -1,214 +1,174 @@
-Return-Path: <linux-kernel+bounces-403129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBDF9C3170
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:16:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8D29C3174
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9954DB210BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FD82819E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80161537C6;
-	Sun, 10 Nov 2024 09:16:31 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91AE153598;
+	Sun, 10 Nov 2024 09:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="jSoSj08a"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDC12AD20
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 09:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D60214264A;
+	Sun, 10 Nov 2024 09:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731230191; cv=none; b=NMqOsCMf7iJTOLxyJLYndmd6rcc7VnqFcs4DJiz8n3R2nx1eEE6NuWn3KkR1e9P8zHy82E87ESd/olRCDApx9PnLMHHDfjgW0SAGq4qLmBgoIROhrZZCy2RtMA8R0xZyZur+y5SVDJJmQQukx6j/2Cfwl9nDidj9x/RZolTdMC0=
+	t=1731230739; cv=none; b=WbCLVrgc3RETNnD9nkBAVOJ828bej+EbFk1UTEYRhOVBpwhGQd9HsDsPFKpnCD7eLbgTQcSJUjNy3kJY8I+VGIvYDd87QcE/eP7n0wLbcC+m8bsU5i/Ekp5TPFYhC60OsjtYLDD3euHUVzIhfeP9TtopbLj1/LHkf2t4v2NGuZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731230191; c=relaxed/simple;
-	bh=OsnUAXyHg+P42BTDDEOJFFaWKvYbAmVUmWLPyXpWq6s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IGLN1kdvmIC2WZyaN4AbQJpidhO5piMJdg8+C0LI0T4kfxQIPkaRyQbKbZl35DUsrD9HzQBLH6+Zm38JTCFPDycaziGMv0ENoGAMhcsLOUUSu2JaH4YErv6JXcuRXqUxpJoTBS7y2eekVsrBxUzetlM0fCS1Z5KdZYyA46vtf4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso420522739f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 01:16:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731230188; x=1731834988;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=09hinxszG83YGxaOH0ls20KaKRhsqmXtiSWPoMI9v48=;
-        b=m94mzI/FOiQDYzd5UHDciF/4MPOwNTZ8keXzlE2STZg4pzKTdUOtWf+s3I5icp9ohU
-         YMVlxc3MpXqEkXdhpmYJyuUNmyao3PdK1Bb9sVT3Visi1f8MXvBKc1TSsEb2oElZdxPT
-         rcEBe4p+LRaLOpoR8NWSSCFtD2ZzhhfkJwC7DsYMPwtVgjwNZ86w533ZprFZjFiiX2cs
-         10BidMa46SYBBNNEenarMBZxDUdeEzonguCLfmAPzDB3E/zJPOQ1xxYAPSgrGAu/+MeH
-         5R0AVx5G5u2WTy2zrIFE6g7IvGgQM42NmlyWnm9KNcaRoyRbDaWS3qkVXAr4PAQf17ZE
-         nLmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUk6uhqUeR+mhKDNowLKB1sbmwl218UJAtIBhyvK1dEStTkT8+V+7jSm205fjE/R0AmWBqf8aegcaWtz0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6vCZ1jVR3JcGGI8P5DaEa7QvqgENxCauj1DGKUIkvFPrHFKSy
-	2Pl4DWSOOpW4ZZ+bWlrMnyYlRnrRxI2+VR6ihaLPF/7Rp4hYzXc2Vh2Vn/FAANexN0+Q7DfYEG4
-	q0UF1fHVfMp3rkUT4Ww1q1VV1XSJGuF0fYhH0zRjy/Gaoo0XUx7Bi0Qg=
-X-Google-Smtp-Source: AGHT+IE5YmaR/OwFXrAmdG4CYFHsTFF88FojUVoMzaTVqr1ZHtHE4yIQwFplJ7dJPQO8H37QXtO6ncJVXFEV6HErWMCGOHvjCKyo
+	s=arc-20240116; t=1731230739; c=relaxed/simple;
+	bh=Qaqre+jsEhO0tkFSo2F1PLyonrfGswTYb/oXllxHJMk=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=ZAX9L49tBcnE8fbC795HISk180ZRnvFXvLT6X6nRXJw50+64Ut87sDs0HlDqs9FhGAkx5GvmEGtc4wYf4QCwEBK719cah18pGXAivBNs6LUzNh5aCBmul6Zf/9uEC/JFBV8uXDshLl4dbh2Iqnz13GQU7+/duNy9DvFw6uxEtmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=jSoSj08a; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1731230715; x=1731835515; i=frank-w@public-files.de;
+	bh=ODiLHG2Ffc5cmNLj+uQw6bBYYjn+EFVvea+2eMhlgco=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=jSoSj08aH6c/G2nMMCpmA4VNk9L6/tGDjjuv1K/+evYySUMrcK95HHIMifrgsdDl
+	 7oLbJx7klxRd0wj8sCe/WLg90rOPI1p89/By69OmMP8RceklGb/eGTxDcD1Oqhba8
+	 WZwF7eYxn2EIIEZhRChmlnCCYT/ztsI/yNnKsKDwXhTBrZJ6CvWmVFMammSpjJePk
+	 pS+1DFS/LwLyPdJDtJ6mhYCFO3tuK5uj4f/qs+fimR9Thea6ovxsEIE/uiHk92f4/
+	 8Sg3oTh3uheil5EcUu6uqEUDgANFaJVAIWTR7cOylm42+5GjjdiEswpyjk7L2sGCa
+	 5RtrBlS3RRpAeYNTzA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([217.61.152.71]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M1Hdq-1tCo0v2Sdu-00GIb9; Sun, 10
+ Nov 2024 10:25:15 +0100
+Date: Sun, 10 Nov 2024 10:25:13 +0100
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Andrew Lunn <andrew@lunn.ch>, Frank Wunderlich <linux@fw-web.de>
+CC: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/3] arm64: dts: marvell: Fix anyOf conditional failed
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
+References: <20241109094623.37518-1-linux@fw-web.de> <20241109094623.37518-2-linux@fw-web.de> <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
+Message-ID: <9B1A5D20-3DE5-40C1-8B2D-B1C4F53FA5F4@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a28:b0:3a6:b258:fcf with SMTP id
- e9e14a558f8ab-3a6f19a0126mr112940285ab.2.1731230188557; Sun, 10 Nov 2024
- 01:16:28 -0800 (PST)
-Date: Sun, 10 Nov 2024 01:16:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673079ec.050a0220.138bd5.004b.GAE@google.com>
-Subject: [syzbot] [btrfs?] BUG: MAX_LOCK_DEPTH too low! (5)
-From: syzbot <syzbot+c589dd1d06df2d690925@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:maTSukvmMra9qVKvHkk79WQlRTYa0IZQRVTxBhre9SYrZ/pYGoA
+ r16LNgxS3BAgLczXLgdXcJZ5CueuvVkMLMUl3RrTNuT9G3Pq9APO5LNt/oiW31lCHPgyqvf
+ vX1FO7mYRP6ILBNbwSNKRYMnxVSNBpV4mjcD+SqyWDmocMGWPFnZ3do4wgVus8xHCF3878t
+ L2w1h8sFZeTMzaWwkVRcQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iV2Z3Z0ITEs=;c7adgpma3OaHJNJrenNxn9fHEun
+ EmVbBaVYsLHkLqwLL/mhit20Vy0Fego5GuDZmMXuY1980qL5C1+aTBC5pHPXCzHvkNDfiqLxi
+ UQCUkVlGpfbLxFhBLnO2ii8+OCacYRrIMyB4rB085cZiLnnUrc/WE8Y+IZXL+RFbMlr8c57rE
+ gObYmEBtKIbnf/3gDUQb3hAExsDN0asnZ8qZUs/4UD+oNtpFlTKPs4SjCUQhnPeRTMo35wYrn
+ cqy/k89qcGAMbeb/JsU76T+lNKQUYgI3HlEjWChbmHYPyWHmovmQ4qXyNQineqGy3WLbRazAl
+ kzKvktjRhhFrGx+R+3olIC8k8OrK9sKIv4iQCFZfmWlWz/6Oig+hMW+/TAYxpcTAkxwnSu3xE
+ NFr+G+xYNiMVyacURCCttgXogQblKigQ/DDz24Im6lCPmxYBNN40oSxDUCJL/lbNMUCOSQVhF
+ n+AJ1xhdVQ+2j3EATfmULHPryDQeyVXCxTrSo1DqXBbtE+fRWPqkaiaVnj0DP77tZegpHijJw
+ 7040z/5tYHMsGUcbV8+cib1P9y2k3Z+WxVG0KubuMdZWV8cCitDT+mxQ2Ss99TTbixlufYyyc
+ v9AWtO2lUn358IaZJHRlkUXan0xiWDOnhIJIpUg5lTg2hJE9goIxZnPavd4CX+8L+kgJ1egZZ
+ bZnG1GF9xgdjtxitfaPeoD8WhLHCJ5fhjZ2aIhMMAonfRM1nDBeFEHG/+WLsuTbS4IjYTMjYC
+ Cp1RgKTwLe7oNmpHIEoDvgGpP+3pjMBebwSZigU48enkeRETf/oQChhCjDOHhern3AexjqLmQ
+ 0qGJ7/UAeSoWDxII3E1T/IXg==
 
-Hello,
+Am 9=2E November 2024 18:29:44 MEZ schrieb Andrew Lunn <andrew@lunn=2Ech>:
+>On Sat, Nov 09, 2024 at 10:46:19AM +0100, Frank Wunderlich wrote:
+>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>=20
+>> after converting the ahci-platform binding to yaml the following files
+>> reporting "'anyOf' conditional failed" on
+>>=20
+>> sata@540000: sata-port@0
+>> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts b/arch/ar=
+m64/boot/dts/marvell/armada-7040-db=2Edts
+>> index 1e0ab35cc686=2E=2E2b5e45d2c5a6 100644
+>> --- a/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts
+>> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db=2Edts
+>> @@ -214,6 +214,7 @@ &cp0_sata0 {
+>> =20
+>>  	sata-port@1 {
+>>  		phys =3D <&cp0_comphy3 1>;
+>> +		status =3D "okay";
+>>  	};
+>>  };
+>
+>> =20
+>> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts b/a=
+rch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
+>> index 7af949092b91=2E=2E6bdc4f1e6939 100644
+>> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
+>> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin=2Edts
+>> @@ -433,11 +433,13 @@ &cp0_sata0 {
+>>  	/* 7 + 12 SATA connector (J24) */
+>>  	sata-port@0 {
+>>  		phys =3D <&cp0_comphy2 0>;
+>> +		status =3D "okay";
+>>  	};
+>> =20
+>>  	/* M=2E2-2250 B-key (J39) */
+>>  	sata-port@1 {
+>>  		phys =3D <&cp0_comphy3 1>;
+>> +		status =3D "okay";
+>>  	};
+>>  };
+>> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi b/arch/arm=
+64/boot/dts/marvell/armada-cp11x=2Edtsi
+>> index 7e595ac80043=2E=2E161beec0b6b0 100644
+>> --- a/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi
+>> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x=2Edtsi
+>> @@ -347,10 +347,12 @@ CP11X_LABEL(sata0): sata@540000 {
+>> =20
+>>  			sata-port@0 {
+>>  				reg =3D <0>;
+>> +				status =3D "disabled";
+>>  			};
+>
+>I don't know the yaml too well, but it is not obvious how adding a few=20
+>status =3D "disabled"; status =3D "okay"; fixes a "'anyOf' conditional fa=
+iled"=2E
+>
+>Maybe you can expand the explanation a bit?
+>
+>	Andrew
 
-syzbot found the following issue on:
+Hi angelo,
 
-HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16d0b6a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=c589dd1d06df2d690925
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14bcce30580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1755cf40580000
+I guess the dtbs_check only checks required properties from yaml if the no=
+de is enabled=2E
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2e1b3cc9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc9.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a39c54e6dbd4/mount_0.gz
+As you know, phys that can supply different types (sata,usb,pcie,*gmii,=2E=
+=2E=2E),but only one mode can be used per phy=2E So only one controller can=
+ be used with it,the other(s) can not=2E I do not know marvell,but there ar=
+e similar in mediatek (xsphy) and rockchip (combphy)=2E
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c589dd1d06df2d690925@syzkaller.appspotmail.com
+From=20my PoV it makes sense to check only enabled nodes for required proper=
+ties,but i do not know internals of dtbs_check=2E This patch is 2 years old=
+ and i only rebased it and run dtbs check with the others to have a clean r=
+esult=2E=2E=2Ei can test again without this one to check if anyOf is shown =
+again=2E
 
- </TASK>
-BTRFS error (device loop0): failed to run delayed ref for logical 5365760 num_bytes 4096 type 176 action 2 ref_mod 1: -12
-BTRFS error (device loop0 state A): Transaction aborted (error -12)
-BTRFS: error (device loop0 state A) in btrfs_run_delayed_refs:2215: errno=-12 Out of memory
-BTRFS info (device loop0 state EA): forced readonly
-BUG: MAX_LOCK_DEPTH too low!
-turning off the locking correctness validator.
-depth: 48  max: 48!
-48 locks held by syz-executor281/5311:
- #0: ffff8880346b4420 (sb_writers#10){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
- #0: ffff8880346b4420 (sb_writers#10){.+.+}-{0:0}, at: vfs_writev+0x2d1/0xba0 fs/read_write.c:1062
- #1: ffff888045ee1638 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_trylock include/linux/fs.h:835 [inline]
- #1: ffff888045ee1638 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: btrfs_inode_lock+0x87/0xe0 fs/btrfs/inode.c:357
- #2: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #3: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #4: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #5: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #6: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #7: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #8: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #9: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #10: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #11: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #12: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #13: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #14: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #15: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #16: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #17: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #18: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #19: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #20: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #21: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #22: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #23: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #24: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #25: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #26: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #27: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #28: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #29: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #30: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #31: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #32: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #33: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #34: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #35: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #36: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #37: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #38: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #39: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #40: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #41: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #42: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #43: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #44: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #45: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #46: ffff888043cebe18 (btrfs-tree-01){++++}-{3:3}, at: btrfs_try_tree_read_lock+0x1c/0x240 fs/btrfs/locking.c:157
- #47: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #47: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #47: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: find_extent_buffer_nolock+0x21/0x320 fs/btrfs/extent_io.c:1615
-INFO: lockdep is turned off.
-CPU: 0 UID: 0 PID: 5311 Comm: syz-executor281 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- __lock_acquire+0x10ee/0x2050
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- find_extent_buffer_nolock+0x3e/0x320 fs/btrfs/extent_io.c:1615
- find_extent_buffer+0x24/0x340 fs/btrfs/extent_io.c:2710
- read_block_for_search+0x348/0x920 fs/btrfs/ctree.c:1540
- btrfs_search_slot+0x120d/0x30d0 fs/btrfs/ctree.c:2200
- btrfs_lookup_file_extent+0x14c/0x210 fs/btrfs/file-item.c:267
- can_nocow_extent+0x1c5/0x940 fs/btrfs/inode.c:7055
- btrfs_check_nocow_lock+0x274/0x400 fs/btrfs/file.c:1106
- btrfs_buffered_write+0x63f/0x1360 fs/btrfs/file.c:1280
- btrfs_do_write_iter+0x279/0x760 fs/btrfs/file.c:1508
- do_iter_readv_writev+0x600/0x880
- vfs_writev+0x376/0xba0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_sys_pwritev2 fs/read_write.c:1224 [inline]
- __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1215
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effcb021b49
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcc8a399f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
-RAX: ffffffffffffffda RBX: 00007ffcc8a39a30 RCX: 00007effcb021b49
-RDX: 0000000000000001 RSI: 00000000200001c0 RDI: 0000000000000005
-RBP: 0000000000000001 R08: 0000000000000009 R09: 0000000000000008
-R10: 0000000000000002 R11: 0000000000000246 R12: 00007ffcc8a39a60
-R13: 00007ffcc8a39b40 R14: 431bde82d7b634db R15: 00007effcb06301d
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+regards Frank
 
