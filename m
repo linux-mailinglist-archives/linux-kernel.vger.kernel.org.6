@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-403104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300A79C310E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 07:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3289C3112
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 07:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C04B1C20A73
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0FE1C20C00
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A6014600F;
-	Sun, 10 Nov 2024 06:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8B214A4E1;
+	Sun, 10 Nov 2024 06:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="C/4ozmBd"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Df2F3LB1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9C51482ED;
-	Sun, 10 Nov 2024 06:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBDE13B2A4;
+	Sun, 10 Nov 2024 06:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731220339; cv=none; b=A047GanIgvXLb7boNpI9oI55I5Z6+pxVMO+b4WzmkVMHbqjtnt/fJfrL63eALfJM7bQsLqUKg9L+jb4VjoLcGOMVLKGVl2x3Yw37pPUng2Df8/m9LrUAml/Kmy2sXXZrGW4HE1OMH6LRfXATmnPD5m5C0ZuaAx2ZjvtEgAidM1Q=
+	t=1731220478; cv=none; b=sIN+Mmq6Ich5itN/NRT5B76Mk7KpFHbpbS+Q7RlVk/34SOmLLbLP7Iv6x5xXcme2JaMXLo3KzunQABVELl6XsHqVSy6XxUhaKdzZacGxj3jhDbk40H4nMFTFEBOA19o9Tn/S5tGghL+zv2FJUw1M2Mq5A5gqr/cOtYVyyf2wkEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731220339; c=relaxed/simple;
-	bh=AjhYlj8tyARTa2RCiia+7OSmZ8Ese3c76HgmSnjHpxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rPt2MrAhQPCMytEw9hP6RItYMFiC5mYhDZvbf5TXkmwAXShgJKZ3pKSZrfDl+5M+1XWR28R4t3EtsX5fscj6O0nuFe6o9cSojU0r5x2TMovVZXMNPkQjgns4b627Oo8P3X08s3oloK5w/h0sgDGSWGfleVFOmYDpg3iV47QoLKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=C/4ozmBd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A6E0C4CECD;
-	Sun, 10 Nov 2024 06:32:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731220339;
-	bh=AjhYlj8tyARTa2RCiia+7OSmZ8Ese3c76HgmSnjHpxA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=C/4ozmBd4UQQ0vsJq6vpV4rDLkKjDld95JAaJsj5iN21HzRxh9EvhvIfYbeOg4xP6
-	 tJa977w0ocEnlH58e+F/fCyB5cTPKNY4ijGo8OzmXdDR/ufl5A3z1Vrl13SVRfQaaR
-	 cMs1zd7hIf9W+EGtOTUdN4B9Ly1uxYa4RuP5zXI0=
-Date: Sun, 10 Nov 2024 07:31:58 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB fixes for 6.12-rc7
-Message-ID: <ZzBTXpQKqugWe1vN@kroah.com>
+	s=arc-20240116; t=1731220478; c=relaxed/simple;
+	bh=P+zouEwL96UEYTvP12h4pj1ZTB5iJ35wVWPueyC/av0=;
+	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=VMILJocvLcGN+uFsOJxG9AF635Y3M5ud3IPrOXza8DUta2cQ7t07fFhq9u8WpNXn6apS95hugqCUIfQPSzyL/8WqMZkAd1UotKjOXhz6oMnIF9Ivkkdqrd8kKMyjD4JPcG3UrqsgRH4RINMvhu1SQ/2zlsrOxYak1ElAjUtoWDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Df2F3LB1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEB5C4CECD;
+	Sun, 10 Nov 2024 06:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731220477;
+	bh=P+zouEwL96UEYTvP12h4pj1ZTB5iJ35wVWPueyC/av0=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=Df2F3LB1P500NPM9dDLmAwySFvAEMFBQeJNEyq6FyrJ7oliBN3YcGK7addaUQLjpj
+	 vK/Vo2HAwz8/Mkc4cq+Nj8532yDEwqW1eQ247fNrjzwpIj1YzogpjxXUmMxxIrCnPJ
+	 EKqT5jWaTMjOWkJNBOpIVu/w+r5hZtyVLbmZaA8c=
+Date: Sat, 9 Nov 2024 22:34:36 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>, Donet Tom
+ <donettom@linux.ibm.com>, Shuah Khan <shuah@kernel.org>,
+ kernel@collabora.com, linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: hugetlb_dio: Check for initial conditions to
+ skip in the start
+Message-Id: <20241109223436.3ddeaf1d60e1ade8f562d757@linux-foundation.org>
+In-Reply-To: <20241109222001.f4272214f90c72458c1c09ec@linux-foundation.org>
+References: <20241101141557.3159432-1-usama.anjum@collabora.com>
+	<5883b1c0-13c6-4593-9dd5-17f34c1319fe@linux.ibm.com>
+	<13a96176-1bfa-4567-8ce5-a2b75b110afc@linux.ibm.com>
+	<ddabd00d-7bd8-40f1-9a1b-22a31b07fd8c@collabora.com>
+	<20241109222001.f4272214f90c72458c1c09ec@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+On Sat, 9 Nov 2024 22:20:01 -0800 Andrew Morton <akpm@linux-foundation.org>=
+ wrote:
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+> On Fri, 8 Nov 2024 19:13:04 +0500 Muhammad Usama Anjum <Usama.Anjum@colla=
+bora.com> wrote:
+>=20
+> > On 11/8/24 3:49 PM, Donet Tom wrote:
+> >=20
+> > > I think below changes are required.
+> > >=20
+> > > iff --git a/tools/testing/selftests/mm/hugetlb_dio.c b/tools/testing/=
+selftests/mm/hugetlb_dio.c
+> > > index 60001c142ce9..4b52106b8124 100644
+> > > --- a/tools/testing/selftests/mm/hugetlb_dio.c
+> > > +++ b/tools/testing/selftests/mm/hugetlb_dio.c
+> > > @@ -44,6 +44,9 @@ void run_dio_using_hugetlb(unsigned int start_off, =
+unsigned int end_off)
+> > > =A0=A0=A0=A0=A0=A0=A0 if (fd < 0)
+> > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ksft_exit_fail_perror("=
+Error opening file\n");
+> > > =A0
+> > > +=A0=A0=A0=A0=A0=A0 /* Get the free huge pages before allocation */
+> > > +=A0=A0=A0=A0=A0=A0 free_hpage_b =3D get_free_hugepages();
+> > > +
+> > > =A0=A0=A0=A0=A0=A0=A0 /* Allocate a hugetlb page */
+> > >=20
+> > > =A0=A0=A0=A0=A0=A0=A0 orig_buffer =3D mmap(NULL, h_pagesize, mmap_pro=
+t, mmap_flags, -1, 0);
+> > >=20
+> > > =A0=A0=A0=A0=A0=A0=A0 if (orig_buffer =3D=3D MAP_FAILED) {
+> > Please can you send a fixup patch as you have working test setup?
+> > Otherwise I'll take it up and try to test on working setup before
+> > posting the fixup patch. Please let me know.
+>=20
+> I've removed this patch from mm-hotfixes-stable.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.12-rc7
-
-for you to fetch changes up to 742afcc22d8eb5dcc67c1dc58ed249851e7cdbdf:
-
-  Merge tag 'usb-serial-6.12-rc7' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2024-11-08 08:36:31 +0100)
-
-----------------------------------------------------------------
-USB/Thunderbolt fixes for 6.12-rc7
-
-Here are some small remaining USB and Thunderbolt fixes and device ids
-for 6.12-rc7.  Included in here are:
-  - new USB serial driver device ids
-  - thunderbolt driver fixes for reported problems
-  - typec bugfixes
-  - dwc3 driver fix
-  - musb driver fix
-
-All of these have been in linux-next this past week with no reported issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Benoît Monin (1):
-      USB: serial: option: add Quectel RG650V
-
-Dan Carpenter (2):
-      USB: serial: io_edgeport: fix use after free in debug printk
-      usb: typec: fix potential out of bounds in ucsi_ccg_update_set_new_cam_cmd()
-
-Greg Kroah-Hartman (2):
-      Merge tag 'thunderbolt-for-v6.12-rc7' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-linus
-      Merge tag 'usb-serial-6.12-rc7' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
-
-Jack Wu (1):
-      USB: serial: qcserial: add support for Sierra Wireless EM86xx
-
-Mika Westerberg (2):
-      thunderbolt: Add only on-board retimers when !CONFIG_USB4_DEBUGFS_MARGINING
-      thunderbolt: Fix connection issue with Pluggable UD-4VPD dock
-
-Reinhard Speyerer (1):
-      USB: serial: option: add Fibocom FG132 0x0112 composition
-
-Rex Nie (1):
-      usb: typec: qcom-pmic: init value of hdr_len/txbuf_len earlier
-
-Roger Quadros (1):
-      usb: dwc3: fix fault at system suspend if device was already runtime suspended
-
-Zijun Hu (1):
-      usb: musb: sunxi: Fix accessing an released usb phy
-
- drivers/thunderbolt/retimer.c                      |  2 ++
- drivers/thunderbolt/usb4.c                         |  2 +-
- drivers/usb/dwc3/core.c                            | 25 +++++++++++-----------
- drivers/usb/musb/sunxi.c                           |  2 --
- drivers/usb/serial/io_edgeport.c                   |  8 +++----
- drivers/usb/serial/option.c                        |  6 ++++++
- drivers/usb/serial/qcserial.c                      |  2 ++
- .../usb/typec/tcpm/qcom/qcom_pmic_typec_pdphy.c    |  8 +++----
- drivers/usb/typec/ucsi/ucsi_ccg.c                  |  2 ++
- 9 files changed, 33 insertions(+), 24 deletions(-)
+I changed my mind.  Please send any fixup against the previous patch.
 
