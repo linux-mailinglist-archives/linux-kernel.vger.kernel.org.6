@@ -1,54 +1,35 @@
-Return-Path: <linux-kernel+bounces-403151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C5E09C31AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:45:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC6B9C31AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362DC1C20A24
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CFD41C20850
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2246814F121;
-	Sun, 10 Nov 2024 10:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="npCXaA+9"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CABB1547F5;
+	Sun, 10 Nov 2024 10:48:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC09153573;
-	Sun, 10 Nov 2024 10:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A8323D;
+	Sun, 10 Nov 2024 10:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731235518; cv=none; b=X+2a4atDSzUZQ9NW6OUSrdnc+GABPSOGy4+CQtNMPtHGVDbR9a41KbTH1WH70GWysJEZBJ+fn7VmVSOOCCcHEcfuzH6jqjvYp+f/xylKpRTj63wwWEPzjWnPxfjbe82ghcgbnWo3+ciqqyjMdVdfvUusP/v6d460YpxltNtGY6Q=
+	t=1731235679; cv=none; b=nRYOl8ECKW2a9DnrqwbquaMW5A756YUj9HgxHXnhYlN2uo9wCjTXQdz0WihiTO3w/xfpnnNHLsCpcz2msj87dt/kiEajA/nUsMmIq+MaGEffDRXn+iYewdxdKAYM1dWnooiNPRQJepaIbrpk9YfUkEf2YTdhjw9FmieRJN79GYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731235518; c=relaxed/simple;
-	bh=RBkaVa+v3bdfSur4TMosKjf3T1UqOD8FCPd0qxXj+5E=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=AVYZE6aQu6QF8d7FJn7g5WT5d8Rq/i3kr+Ywoq8v6XefhTEcXREKMKN67hx+bHI3rCL+3i2lgGwl5OSquj7GEEhTX4pB/cNLh2WN39xTkBywyu73A7pyb1TIi8l1UcghBZZvOUrbjU+eZAK36TEjXJyFEiiM4DFbDC33XhqdoKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=npCXaA+9; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731235492; x=1731840292; i=markus.elfring@web.de;
-	bh=RBkaVa+v3bdfSur4TMosKjf3T1UqOD8FCPd0qxXj+5E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=npCXaA+9LbaI7T4MUptHXIE9s/sTgjf3EYTUtUB+Z+fPf+8Vrohx9Uq7Qj04mhbp
-	 vXAEOLtqNplPRibmcXOhHGw4UNiD8YzLJLPq1PrU6IC/LM0PpwwaQ7xTvkoEwYgY9
-	 iv/hk/LP2/SBDjcUacZwMDU2RhRI84eGcNPr2PazTD1A1VlosUCq/Ri/8sxp6ZGEA
-	 kNoZ7SvZC/1UVyNxLrzmLwwLmWtqL6rI1dVROPSLmg+wE0S2iUO+d9DLv26LJ2cSh
-	 PunNhNo8bTt9G58fY/93IZsRjRPiHBl5aDViBvEs1KrEmSoZXwJTgHa4SLc0hLS8g
-	 4QjBYf8v89CWZiNHDg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3Xnl-1tssBb2LND-00tFjA; Sun, 10
- Nov 2024 11:44:52 +0100
-Message-ID: <6ed94ce6-211e-4f6a-9479-34467e6ca7d2@web.de>
-Date: Sun, 10 Nov 2024 11:44:19 +0100
+	s=arc-20240116; t=1731235679; c=relaxed/simple;
+	bh=8XlUl5XB+VZm2zlEdmFv6xvhMYwfnhh6B4baWXxXoOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A7yuvPGblBxE2Z/D0+je0kAn3r8/YJViRTsFAizBlLOJiFTB+acvitVP5Dyytsb9EciE/o/uL+lFzJq+khbfdiAfB/KZQSQenrhn+m+rTq0NMysuT79wca+ctqnlUqTNCeltFlaiFEZAt3/4jJ+m3xclakix+p0Ff7bjixL58pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D5FC4CECD;
+	Sun, 10 Nov 2024 10:47:57 +0000 (UTC)
+Message-ID: <ef6c4737-44f6-472b-8130-fe58f7930c4a@xs4all.nl>
+Date: Sun, 10 Nov 2024 11:47:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,46 +37,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Tang Bin <tangbin@cmss.chinamobile.com>, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, Baojun Xu <baojun.xu@ti.com>,
- Jaroslav Kysela <perex@perex.cz>, Kevin Lu <kevin-lu@ti.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Shenghao Ding <shenghao-ding@ti.com>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241025082042.2872-1-tangbin@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: tas2781: Fix redundant logical jump
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241025082042.2872-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110110257.5160a7d1@foz.lan>
+ <2fd9053f-34b6-4e97-a898-98fd71a485e8@xs4all.nl>
+ <CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:kq2cIavDfgtbPbNSQLm6JLpH3awd+E/fzjLmAO/20DY0oIkYfk4
- U6iqWBnEmLcu7h0s8lk/RD3Y0DDBdzQICiPLvt1/NfBWurjZiQxw6+vWhjXKL3kIy6FbtER
- 0Mqn3I2Cz7Aa2GXWLqLt6L2qov+ZDPZLYINjjet5yQWpK+xF4NY74POlVQyxdJfi9wVAOTg
- UluwJ61bqcVojDU99xtLA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1/WxcWUAL50=;NI6XhN6vHl5Cy63vKB5kyxF2Kcm
- vtmiiTN+CsU0/YgbrcgPKKS59yKWfV7NJw7GrR5y+8sTCMy7m4mWL60VS7sI2O7sfc7guZvHy
- Rz3Mni7eMtFJlwS1618bk+WYNvQsYmVJhVSzxKh7sTXlI+yukCAdqamnrEZvAMzDHl4btoD3E
- /108XPlr6Da/oIu5RRp8359wAkqk4VSfmLiP7Fsam5StD4C+SfA8tNAM5oXto5u0csQ38tPQt
- wSuuPCkawIOF6Z2gojWbGYdJ2ErtUL2nyNi2i/yQA2L++FjPoMJvAW9KnxOfGv4okkHRURxsU
- QmKloITV5GCO0ELLLP0OM41f4Xaysm1ZGXRRDoEs8cXIGYb3DdY2isCCWNYn75r7ihIWbmDyZ
- M6rPSf16AjJnssgZlFaTHb/AlobB81WrabFm8OI8uhyYEu48KIpk7OpEk5meVxf4HFGFFOL5+
- SyZ5WgPGBEBu2IcnS9ShPh9jeFGimX+pYhpO2rTIP6Mz49ZF9cbOhPinYwGyWgYlbYC6Vv2+Z
- Q6nDCXkLOKdyhIBDk7VFbry+WH7qe4dpLZe0LOYmDtRz71rrcXuZ8skJYAfn2DToxX5uqrXey
- iNcRX0z51Q9mBtHaRCU3U+xpeNKrOFPF/r9y6yV8dZe7q2Y9Q6O9Em0ep9otwmysTq0FtVXHZ
- w+OZihCMsjB9W+mdr9p3nHtQIG6wqHS4wuA5dQt4P3PydSlrTVmfZluDS7W6Ds3yCXltjkWj7
- MN3NM8kSALPNheGu5S9BIkGnT/n+1PF+nlopqfUhzXffFvZ2d9c3CzTllrNTWQM42X0cQy0/V
- uVppwj1bR7dR1ErWq5O/ODpLBtNF8M0zgyjSbL53voWD+21+1An0t9F/q7r9JkdqZoSSGlnOo
- xerYhEwPndfmdThlEBjYymJIKlTZp9wGSGPgZ1G6TaTWMANTuAwwCDwfz
 
-> In these functions, some logical jump of "goto" and variable
-> are redundant, thus remove them.
+On 10/11/2024 11:37, Ricardo Ribalda wrote:
+> On Sun, 10 Nov 2024 at 11:29, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>>
+>> On 10/11/2024 11:02, Mauro Carvalho Chehab wrote:
+>>> Em Sat, 9 Nov 2024 17:29:54 +0100
+>>> Ricardo Ribalda <ribalda@chromium.org> escreveu:
+>>>
+>>>>>
+>>>>> I think that should sort the issue, assuming that 1. above holds true.
+>>>>>
+>>>>> One downside is that this stops UVC button presses from working when
+>>>>> not streaming. But userspace will typically only open the /dev/video#
+>>>>> node if it plans to stream anyways so there should not be much of
+>>>>> a difference wrt button press behavior.
+>>>>
+>>>> I do not personally use the button, but it is currently implemented as
+>>>> a standard HID device.
+>>>
+>>> IMO, controlling the privacy via evdev is the best approach then. There's
+>>> no need for a RW control neither at subdev or at device level. It could
+>>> make sense a Read only to allow apps to read, but still it shall be up to
+>>> the Kernel to protect the stream if the button is pressed.
+>>>
+>>>> Making it only work during streamon() might be
+>>>> a bit weird.
+>>>> I am afraid that if there is a button we should keep the current behaviour.
+>>>
+>>> Privacy matters only when streaming. IMO the Kernel check for it needs to
+>>> be done at DQBUF time and at read() calls, as one can enable/disable the
+>>> camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+>>> and on devices that physically support cutting the video.
+>>
+>> We could add a vb2_s_privacy(bool privacy) function to vb2 to tell vb2 if the privacy
+>> mode is on. And if so, take action. E.g. calling QBUF/DQBUF would return a -EACCES error.
+>>
+>> That will ensure consistent behavior for all drivers that have a privacy function.
+> 
+> I am not against adding a feature like this, but we still need a way
+> to notify userspace about a change of the privacy state when the user
+> presses it.
+> Controls are great for this.
+> 
+>>
+>> Note that there are two types of privacy GPIO: one that triggers when a physical
+>> cover is moved, blocking the sensor, and one that is a button relying on software
+>> to stop streaming video. In the first case it is informative, but you can keep
+>> streaming.
+> 
+> I am curious who implements a software privacy switch. I would
+> definitely use a physical cover in those devices.
+> 
+> Chromebooks only support physical cover and hardware privacy switch. I
+> have not seen software privacy switches.
 
-Another wording suggestion:
-Return some values directly in a few function implementations.
-Thus remove local variables which became redundant with this refactoring.
+I actually thought this discussion was about software privacy switched.
+I haven't seen any, but it wouldn't surprise me if there are webcams that do something
+like that.
+
+For proper privacy covers I don't think you need a vb2 implementation, even if you
+keep streaming you should just see black video, no need to refuse QBUF/DQBUF.
 
 Regards,
-Markus
+
+	Hans
+
+> 
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>>>
+>>> I don't trust myself privacy soft buttons, specially when handled in userspace,
+>>> so what I have are webcam covers (and a small stick glued at a laptop camera
+>>> that has a too small sensor for a webcam cover). I only remove the cover/stick
+>>> when I want to participate on videoconf with video enabled with the builtin
+>>> camera.
+>>>
+>>> Regards
+>>>
+>>> Thanks,
+>>> Mauro
+>>>
+>>
+> 
+> 
+
 
