@@ -1,90 +1,112 @@
-Return-Path: <linux-kernel+bounces-403300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 551D79C33CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:22:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800319C33CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C7A28145D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:22:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F852813B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF30884D29;
-	Sun, 10 Nov 2024 16:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C10A12BF24;
+	Sun, 10 Nov 2024 16:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UqEvglzF"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ja2il8K2"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB6017C8D
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F57A25634;
+	Sun, 10 Nov 2024 16:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731255769; cv=none; b=HUwW3oY96Sqyl3L07cJxNMtxerlhZrANa6w3e9SgMOurt2GaW4IBYt2uHZdol17YTTF7F9xynKLW/Qa4djBhbiHQfyWJxbvryO9o/St0F60kv203pQSw05kNvUwn2AOLc/0cYmPCjV0sZgG8plBI9ezrZvDn3Vl8yDnTQOqZ8x8=
+	t=1731256546; cv=none; b=Ph4U0tljUP2fYdc5r9jOYRnLbNzh+0MsWltBs6w9I5BrzRCS/888D6ugHL5wyDAKWLPBtziNCnEo0n9xRw+lmHNA8KQ8tFro0PZTNXsLmNmfe1BFHsBnZmj0N1ZdxKnzpKleDSvDw8CEloelaz5gSNy+c7lab8IpldQJNy5jQZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731255769; c=relaxed/simple;
-	bh=NLlzz/LVWtRJ0R6hwnxFKEnhYg4IoKIHrAyfwR0WuIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ck1HUlXkxEh4NYXFEt2ExZYYmuAjB3Fbpz3SYL9t37W1p80MyTelUfI+81wWFwYOuplBNwtA8eJoNR8mpzDCQNu+mvVrPH8sSzLD0IYGvxrOhrrc9gDf4dQvf/LaUbL51as7d3nr/VRE/ys3CbpCECE1Q0BAqECu934WQ4HSUnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UqEvglzF; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731255764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UqFBbtKCvn2uiiJOd1o/KjH4nUtT3WyJ3xfVwaTrNto=;
-	b=UqEvglzFeNOhDzYxajvvlX0CDxH15EInV3wh39Dr57bxgbCcRLfzaF8qGFKCZNcoHn+gUI
-	mAxVDFiTTPDGDS5LqLvOjKyAOiHd/Lp3KCuEtxEC+4RTivVsd0u3uCkmwSiNdJK6w6Xyse
-	M4ZDObUYf/2Vd0uab8AM6ptY/ZbFvzU=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: Transliterate author name and remove FIXME
-Date: Sun, 10 Nov 2024 17:21:37 +0100
-Message-ID: <20241110162139.5179-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1731256546; c=relaxed/simple;
+	bh=TNJaMT1zqxNkdHyroxsxotRyykkxHS6q+UHiCcs3H4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PP/WWmgJX555+HtwUJeJwJuf051Mntmtsa6voNxAnZ9pPgWBDkJWSCEzMAoM8ekeUdME14GSgn5nQBUVTjm7K8rvHKs/Te1/Rr2kdpZMjCapBeZy+c78QENlhdHKgqwkZubG0xGkA1YP8oh4YfuHDKzRRb+UIx937lU2YtzfM4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ja2il8K2; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 943D140E0163;
+	Sun, 10 Nov 2024 16:35:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id gwzr6Gs2LUTs; Sun, 10 Nov 2024 16:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731256537; bh=wApLrmap1eGd1HQWqBvQpBXIejNG2H6AgtD++ZkiNWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ja2il8K2JuBanP/bytU3WQphmOLYKNS3ruhpoa7CMkPmVpyw9EzhRKO/v7CQAJyZG
+	 AFP3zOcNomPjRsdNbs0RNBSCdLbaYx600sLux95u4M50VVHVUleYGfQBVBkshkdjgA
+	 f9l+ujy3j2GY7urmfJZypVeeLeAyh8/K4B13rpKIWhgu17ybZ18I8bAx9w88QmGjYn
+	 m/x3f1wkqnicHH0+Er1UEcI70sJIHWBvnViTrGQm5P9jg1gt0eBV7kT1/S09iCznr4
+	 16uS3UfEUp5EZ54d63D4oca9zf89sW6TSSnkGMO6xZoN+j2OfB9XWmiXAMkF0f0EMt
+	 F2IhmC4CE0mjRhmNsqcnotBYY79EpOEMa97ietu7tdsnnxuB+ubQ8iErpX28ZEJWdH
+	 a5Jl/X7j8z2nPDklRfREsuURG9lOu7B9xm9XeiFX4HNQiCXliz5Yu95jXzB1RhAwZa
+	 X75nOMyPD35zsZXIgCqHqhdgPOn/7+YOXUOfD6lxw8Vq39lbvB8R9PSWCu7rNH5FSn
+	 VIdgdpLDZXradARx0/wO3qei82k2BjgSLf0xGtjPydcECI1DlP4BpOWSyMWDhi2MIM
+	 bgKGlMYq9p+/2TL7vlbxIPxE91kr3/nrNvv6MFjnDTO3hZdJNjmNan8yHVKM/Mw9TH
+	 kTuWqDG/6T0vBbXdECN70PQU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E2BB540E015F;
+	Sun, 10 Nov 2024 16:35:18 +0000 (UTC)
+Date: Sun, 10 Nov 2024 17:34:53 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: "Melody (Huibo) Wang" <huibo.wang@amd.com>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [sos-linux-ext-patches] [RFC 05/14] x86/apic: Initialize APIC ID
+ for Secure AVIC
+Message-ID: <20241110163453.GAZzDgrYY2oO7fKvxl@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-6-Neeraj.Upadhyay@amd.com>
+ <f4ce3668-28e7-4974-bfe9-2f81da41d19e@amd.com>
+ <29d161f1-e4b1-473b-a1f5-20c5868a631a@amd.com>
+ <20241110121221.GAZzCjJU1AUfV8vR3Q@fat_crate.local>
+ <674ef1e9-e99e-45b4-a770-0a42015c20a4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <674ef1e9-e99e-45b4-a770-0a42015c20a4@amd.com>
 
-The name is Mimi Phuong-Thao Vo.
+On Sun, Nov 10, 2024 at 08:52:03PM +0530, Neeraj Upadhyay wrote:
+> If I get your point, unless a corrective action is possible without
+> hard reboot of the guest, doing a snp_abort() on detecting mismatch works better
+> here. That way, the issue can be caught early, and it does not disrupt the running
+> applications on a limping guest (which happens for the case where we only emit
+> a warning). So, thinking more, snp_abort() looks more apt here.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/powerpc/boot/rs6000.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Well, sometimes you have no influence on the HV (public cloud, for example).
 
-diff --git a/arch/powerpc/boot/rs6000.h b/arch/powerpc/boot/rs6000.h
-index a9d879155ef9..16df8f3c43f1 100644
---- a/arch/powerpc/boot/rs6000.h
-+++ b/arch/powerpc/boot/rs6000.h
-@@ -1,11 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* IBM RS/6000 "XCOFF" file definitions for BFD.
-    Copyright (C) 1990, 1991 Free Software Foundation, Inc.
--   FIXME: Can someone provide a transliteration of this name into ASCII?
--   Using the following chars caused a compiler warning on HIUX (so I replaced
--   them with octal escapes), and isn't useful without an understanding of what
--   character set it is.
--   Written by Mimi Ph\373\364ng-Th\345o V\365 of IBM
-+   Written by Mimi Phuong-Thao Vo of IBM
-    and John Gilmore of Cygnus Support.  */
- 
- /********************** FILE HEADER **********************/
+So WARN_ONCE was on the right track but the error message should be more
+user-friendly:
+
+	WARN_ONCE(hv_apic_id != apic_id, 
+		  "APIC IDs mismatch: %d (HV: %d). IPI handling will suffer!",
+		  apic_id, hv_apic_id);
+
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
