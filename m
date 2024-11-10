@@ -1,163 +1,106 @@
-Return-Path: <linux-kernel+bounces-403136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC4B9C3181
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:45:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA499C3182
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:03:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EA81F214BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:45:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C25A3B21180
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBEB15443D;
-	Sun, 10 Nov 2024 09:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92C515383E;
+	Sun, 10 Nov 2024 10:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lq7AHUTd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLNQFUS+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E8F15443C;
-	Sun, 10 Nov 2024 09:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601314264A;
+	Sun, 10 Nov 2024 10:03:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731231909; cv=none; b=QYUYZRBc5uq4IEZYEi2I5c5eMubtoMwgY0i7E+rYI2XIoHsCUBReBHJ7UVppTodzIh42GsPDjhYBQE9qcozg6fckMBw10eik6uKwbmXrC4C1RTydSCEAF6py1+Aaj9by29xfOU04hl+9NvTQ3xVkpD9guMS8RN+lmskkPz85YnI=
+	t=1731232984; cv=none; b=BzDxD3vGr3zn1KTHLwHruQuKXhMW9xw7u48H3IwJYoNS/3QnCSlJZSRFzC9+2tkAue4abv9aPEoYQEXUMeDYrPRYnIo1ri/u1YvbTor21q40pc7uucvY6VulHI5/1E/Et++i6qpgScX+vqgH1IQ+pMBIy8Uzz5KYe6jS9rxP3WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731231909; c=relaxed/simple;
-	bh=3wkqWUW1Et9tJfzKL8re7wqENmSdU2idaeVd1VHX6sI=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=rTlNlcdGejoDEErQEOsWo7FigpeKDKW9KeB7TLaMXD2old5GXClesgd5HCvjb7P7z1sM9d5wFOuWj4m1LM8etNkkVOL2mV4svMtxZO0+IF73mzXIJcNyr3ETdCndZsPH3R7vwcUOs8ZPF+T5pk9DBBh66/54/LuTcg79ClX9Gz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Lq7AHUTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42F8C4CECD;
-	Sun, 10 Nov 2024 09:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1731231909;
-	bh=3wkqWUW1Et9tJfzKL8re7wqENmSdU2idaeVd1VHX6sI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Lq7AHUTdnpLeFWV+SBSARtLlOlsAi9H51J3zbCaaf25XPbcA/kmhlZToj5REz3lJ4
-	 1FVqxt8SYyFmeETNzv+Xda8uTSO7E6h1D/AemfF/5tTxPfMY6HSjBodh5Hx0rkvVKj
-	 Bihi3qQOoHVYeMoLrnMgQTVbegr+/ybfv5VYeB9w=
-Date: Sun, 10 Nov 2024 01:45:08 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.12-rc7
-Message-Id: <20241110014508.c2626adfff36ba70af88b0a0@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731232984; c=relaxed/simple;
+	bh=2T78Ii61IdDlQvvpobNBGDbWVCm6kDtn4WhH9m4bfiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eOceTTiVQELaVApiigb91yKDrowd6aEGDvmEQmUTwYfsVpeFaoBCAO7oy2udHp9mlJeNo24RL/ayNtIackBMCGsQpPaoIy0nrUwoBenjPxvlLTq1szO4q+h4IQz+J8NedTYkRwH44Ij+Y67e6OhCBh/khOICalNCg+2mmelphrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLNQFUS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B913EC4CECD;
+	Sun, 10 Nov 2024 10:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731232983;
+	bh=2T78Ii61IdDlQvvpobNBGDbWVCm6kDtn4WhH9m4bfiY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mLNQFUS+iFKSNMRdpatTJlyOsJRRG4Zd1NLzfUKw3LE/CLYe/OPkDi5UHIuZ0LyDs
+	 qD4tojjkrzTRsioMkHyZnpCMywUPl+UZjsIb9Sh9p/3ERcj+vWDLpYlN5VLc7CZxsq
+	 TPzAfemfDxvphZvNQ/5GkHBxUS1CyFVIv2uP7YKwhZVls6jfaFf1aKByhTIhcCO7fR
+	 WeqQfqPXB7Qyqv9Aadwnv79E2dsoVm1nENiCbIzYcy+AGrOpCxxynpXy21qug0M7ca
+	 xl48/Bxfx50xDjPS+iHrhN0aAziDA0t4+Vjcm5cM9dwVR3zzNrskHmJNuwvx3ilymL
+	 mOJaU4Q5ImKcw==
+Date: Sun, 10 Nov 2024 11:02:57 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Yunke Cao
+ <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241110110257.5160a7d1@foz.lan>
+In-Reply-To: <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+	<5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+	<CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Em Sat, 9 Nov 2024 17:29:54 +0100
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-Linus, please pull this batch of hotfixes, thanks.
+> >
+> > I think that should sort the issue, assuming that 1. above holds true.
+> >
+> > One downside is that this stops UVC button presses from working when
+> > not streaming. But userspace will typically only open the /dev/video#
+> > node if it plans to stream anyways so there should not be much of
+> > a difference wrt button press behavior.  
+> 
+> I do not personally use the button, but it is currently implemented as
+> a standard HID device. 
 
+IMO, controlling the privacy via evdev is the best approach then. There's
+no need for a RW control neither at subdev or at device level. It could
+make sense a Read only to allow apps to read, but still it shall be up to
+the Kernel to protect the stream if the button is pressed.
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+> Making it only work during streamon() might be
+> a bit weird.
+> I am afraid that if there is a button we should keep the current behaviour.
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+Privacy matters only when streaming. IMO the Kernel check for it needs to
+be done at DQBUF time and at read() calls, as one can enable/disable the
+camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+and on devices that physically support cutting the video. 
 
-are available in the Git repository at:
+I don't trust myself privacy soft buttons, specially when handled in userspace,
+so what I have are webcam covers (and a small stick glued at a laptop camera
+that has a too small sensor for a webcam cover). I only remove the cover/stick
+when I want to participate on videoconf with video enabled with the builtin
+camera.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
-able-2024-11-09-22-40
+Regards
 
-for you to fetch changes up to c289f4de8e479251b64988839fd0e87f246e03a2:
-
-  mailmap: add entry for Thorsten Blum (2024-11-07 14:14:59 -0800)
-
-----------------------------------------------------------------
-20 hotfixes, 14 of which are cc:stable.
-
-Three affect DAMON.  Lorenzo's five-patch series to address the
-mmap_region error handling is here also.
-
-Apart from that, various singletons.
-
-----------------------------------------------------------------
-Andrei Vagin (1):
-      ucounts: fix counter leak in inc_rlimit_get_ucounts()
-
-Andrew Kanner (1):
-      ocfs2: remove entry once instead of null-ptr-dereference in ocfs2_xa_=
-remove()
-
-Hugh Dickins (2):
-      mm/thp: fix deferred split queue not partially_mapped
-      mm/thp: fix deferred split unqueue naming and locking
-
-Lorenzo Stoakes (5):
-      mm: avoid unsafe VMA hook invocation when error arises on mmap hook
-      mm: unconditionally close VMAs on error
-      mm: refactor map_deny_write_exec()
-      mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
-      mm: resolve faulty mmap_region() error path behaviour
-
-Masami Hiramatsu (Google) (1):
-      objpool: fix to make percpu slot allocation more robust
-
-Ma=EDra Canal (1):
-      mm: fix docs for the kernel parameter ``thp_anon=3D``
-
-Muhammad Usama Anjum (1):
-      selftests: hugetlb_dio: check for initial conditions to skip in the s=
-tart
-
-Qi Xi (1):
-      fs/proc: fix compile warning about variable 'vmcore_mmap_ops'
-
-Roman Gushchin (1):
-      signal: restore the override_rlimit logic
-
-SeongJae Park (3):
-      mm/damon/core: handle zero {aggregation,ops_update} intervals
-      mm/damon/core: handle zero schemes apply interval
-      mm/damon/core: avoid overflow in damon_feed_loop_next_input()
-
-Thorsten Blum (1):
-      mailmap: add entry for Thorsten Blum
-
-Wei Yang (1):
-      mm/mlock: set the correct prev on failure
-
-Yu Zhao (1):
-      mm/page_alloc: keep track of free highatomic
-
- .mailmap                                        |   1 +
- Documentation/admin-guide/kernel-parameters.txt |   2 +-
- Documentation/admin-guide/mm/transhuge.rst      |   2 +-
- arch/arm64/include/asm/mman.h                   |  10 +-
- arch/parisc/include/asm/mman.h                  |   5 +-
- fs/ocfs2/xattr.c                                |   3 +-
- fs/proc/vmcore.c                                |   9 +-
- include/linux/mman.h                            |  28 +++--
- include/linux/mmzone.h                          |   1 +
- include/linux/user_namespace.h                  |   3 +-
- kernel/signal.c                                 |   3 +-
- kernel/ucount.c                                 |   9 +-
- lib/objpool.c                                   |  18 ++--
- mm/damon/core.c                                 |  42 +++++---
- mm/huge_memory.c                                |  56 +++++++---
- mm/internal.h                                   |  55 +++++++++-
- mm/memcontrol-v1.c                              |  25 +++++
- mm/memcontrol.c                                 |   9 +-
- mm/migrate.c                                    |   4 +-
- mm/mlock.c                                      |   9 +-
- mm/mmap.c                                       | 130 +++++++++++++-------=
-----
- mm/mprotect.c                                   |   2 +-
- mm/nommu.c                                      |   9 +-
- mm/page_alloc.c                                 |  16 +--
- mm/shmem.c                                      |   3 -
- mm/swap.c                                       |   4 +-
- mm/vma.c                                        |  14 +--
- mm/vma.h                                        |   6 +-
- mm/vmscan.c                                     |   4 +-
- tools/testing/selftests/mm/hugetlb_dio.c        |  19 ++--
- 30 files changed, 329 insertions(+), 172 deletions(-)
-
+Thanks,
+Mauro
 
