@@ -1,194 +1,121 @@
-Return-Path: <linux-kernel+bounces-403093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD2E9C30FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:38:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CDA19C3104
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 07:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36BB1B21281
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 05:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D77B1C20B66
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 06:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFDF14830A;
-	Sun, 10 Nov 2024 05:38:25 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581581487E9;
+	Sun, 10 Nov 2024 06:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="AWpm4gsU"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CDFF9DA
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 05:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13D813B58F
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 06:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731217104; cv=none; b=GVnpjnPGvRBCpWB7axSpbNEMEii/lznojx2nRIzxKdToaB7sGBHM+mzHjRUd7R7Vby0GPlD1qqIv19jUKKevdLHVC6F3x2nf9ZLamyVS4bmxwZuOXfuLjxQjvC9bkWEVeSJe7zdsgG4yxYXKCz95e2Ub5brfTIc5UZVDJGjL4g0=
+	t=1731219075; cv=none; b=PbqoLehSA7RNjfvw9RK9yNufbAtGHxtNy7v4SHZE8almGaTvRNY4lTL4a6dyXWOR3yFstcIIgfQPYUfFcoFZC5j1GuzHezigi4RNy8UPIRc95IOsd4lCQ35keepJayXepz7EFfUW939cPIA/LeHhzrOkc4RTTQOoQdGMgjv4cMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731217104; c=relaxed/simple;
-	bh=Iwog/SfpYIZ60BrBQWvB4WDqoF4CiUk6Bgw+Yrqc/Ms=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=byw/sk0TaY+aQNu0Xd+xlllk2EFGXhIGlAffRZX2gjLktoHN7/vOe0Q9odxNooEX24VAH4F16hVanMoxn8w5CwwjBGdCF7q2TEGcGZapuSbee2l9EucdrrNVJS3f4fJFKPm/Ep5PYtuHzrceWrPFMABy48wLVsFhLZJ1bEJ+emg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4f2698c76so42706235ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 21:38:22 -0800 (PST)
+	s=arc-20240116; t=1731219075; c=relaxed/simple;
+	bh=ghOxaHkb8fT8cboRFWIlckWraHKHiWH7y5asxPZdkZk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JZd+Cn5QSpPFxpwDga+ht0swsN8WSezbqWqbi3eqjjcDH/4AVbzAO51rrSUBdR/p40PL/Zn70ORU9SPDMN7jyYHfy/8lPoa0RlOBSw/0qRpxALeMvEnBMXoYMTzuGHMl1FELSDbgNakWzB7M5beZ9n0htalqxfZUgEpUVdCiFhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=AWpm4gsU; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so2409015a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 22:11:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1731219073; x=1731823873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aRM5Ww9FHH05vD+pnExec4peRxorVW2HFD8O0Pjugs=;
+        b=AWpm4gsUdLZdy0gninx6HWSn+J9gaxdARqj+vGEd1AoZI+guk+7iQvtU8P/EXDo45L
+         3LrZy2Z7qAZoVeCPfrxUgJAMV2x7NjBab923xU9UC7yKkP+x3KQ8/Ieb8YE10+swLu+F
+         hwlL03G5GdmdKPPnlSafhlDdZA1rUsC/X61Y+Cs0V6mtJ2zU8V5jdpak+adw1H6EEDD9
+         RTeP/B9iNNORnHKF1HR4iTSVbk0kT/wtXdKHWv/HrrGmCBzt4HvTRrqYWQYtwDynGYXh
+         T01pRz//Ut3AvCI/4yVz5NROIrxlX+R2Uyy45qgnLmJeUBg9IIUtRDMGrDpqNJIAh65w
+         Krag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731217102; x=1731821902;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lmvVSZmVhW/bVRs+taXZzHsPGtRjZzb2r5dYuk17DCI=;
-        b=OdaebVBeBKFOU/JwMwYxpIfeq+AMW4ibRt7EzbgMahrUsJEvPesoeQA41tWBDTOHSO
-         lhcoTveAfKxyG3SUfZdm1fnEkeSVHM47kJKMeiNfovLQm9c+G88i7f/KtGCXY2ueQRsQ
-         biz8RqorQiua8FZuNpS4l+c+M4p39LZ0NupA3AN6NYKzCFJhT5SFaLGt9dyEBFuYt163
-         UfWY4W8R89jo+VXX35LobBnB1gmASPsar2iIBlbAxgRb/o8YxZxtiepL4Ca8XhC6CE2i
-         JHfpoQxEQMk9dFsUC3VmtZ3mAhRlJXGqEcohOvahJ3+1DAoORf6CUg8bmPZ2o1sMATdh
-         A+Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJpauOD6IouBHoJ0nvSKuSIGyBnPc1clDMtvBV+YFIylEDVBYHbR7Rrud1cbvjj3A2V6PO1Xf3MQdGtZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFje5aBwCqS6DxTkxKVXN4rmGKN7vPrjxNRjfkyNJJ/nnb/AmR
-	DKuSZ5sFvBl78D2xz1NQUQEl4CKR/o34ZRX86FQbd1cJtq0LksRR6U7H6JlbiMy7xfvPuxSxygJ
-	lw2SP2stYiNVoiSw7eEJZpYxE3jdfJMLNgGwBRcBGIsrc+eWEFgb6wxU=
-X-Google-Smtp-Source: AGHT+IHAIvN7x/2FXRelYyzM2X/z2BP2bWzoc0PSJKUsjn9l7ukKWScsfsuuqVubmAT2IFMg8dgBv73Wf0a1keNsBGke+9TzXbRT
+        d=1e100.net; s=20230601; t=1731219073; x=1731823873;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/aRM5Ww9FHH05vD+pnExec4peRxorVW2HFD8O0Pjugs=;
+        b=sB9naI8/VWgCd2bpKQ208apd1sfYffeamyGGTYVbKnpJ5RlrywEGOagA1BZPHMnArv
+         XvOFq7g+d/e+v/Z3nTVBE0APVxf9kAU5Ljfx8/qWWatz1+xfPaRwLcX758UTvKqWfD07
+         PCwNHNO9ONLnEwE5aesnMJBpgFSQGFv0w5hHbui8uBjjE0622ODd2OYKDu6IoGkWELyA
+         NAGLynPlhD3iBfh0pWP9287Wo2BUkawuKbH1I7napac6t77D7z8+iOh8O+FNwpjWF7Uz
+         iT4UeonNYnuW4TU8xSN7k+E5CHUAQxuCyEkIagUHgfhOiy/4VwJJOukhZYH01D6q2juC
+         UAvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaiz8VeZwEw5OFspmxFG9t7V3rv1EkYbhrRkIBxQh8RoqcGvDKMmQ1Cxzl1KVjPD5oH9LxmO1HUQGnQyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhiA65f1bfxnTQRmAfHK9odNQBYR4+wC8Y0AlWZSI1Fz7DRfng
+	h/RClhwsXe65u0PouwGUg/LpYEznaXTAZCf12lNxTgclyzfRcz39/L5LZEahV5Kxy5JfmjrYBXC
+	T
+X-Google-Smtp-Source: AGHT+IH7Xi3ivP4+SmhzEM00uzgJKu3Ewsu9l50QIYl6viRlDLtPY+yrZXelv5RLlMBav+OKnuEI6A==
+X-Received: by 2002:a17:90b:4c4c:b0:2e2:cf6d:33fd with SMTP id 98e67ed59e1d1-2e9b174821bmr12073495a91.31.1731219072969;
+        Sat, 09 Nov 2024 22:11:12 -0800 (PST)
+Received: from x1.tailc1103.ts.net (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fe8e1bsm6205467a91.51.2024.11.09.22.11.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 22:11:12 -0800 (PST)
+From: Drew Fustini <drew@pdp7.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Drew Fustini <drew@pdp7.com>
+Subject: [PATCH] riscv: defconfig: enable pinctrl and dwmac support for TH1520
+Date: Sat,  9 Nov 2024 21:44:11 -0800
+Message-Id: <20241110054405.667779-1-drew@pdp7.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1685:b0:3a0:98b2:8f3b with SMTP id
- e9e14a558f8ab-3a6f19ebd22mr100043095ab.7.1731217102244; Sat, 09 Nov 2024
- 21:38:22 -0800 (PST)
-Date: Sat, 09 Nov 2024 21:38:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673046ce.050a0220.320e73.031d.GAE@google.com>
-Subject: [syzbot] [ntfs3?] KMSAN: uninit-value in ntfs_read_hdr
-From: syzbot <syzbot+6b97c7810fd3600a03e0@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Enable pinctrl and ethernet dwmac driver for the TH1520 SoC boards like
+the BeagleV Ahead and the Sipeed LicheePi 4A.
 
-syzbot found the following issue on:
-
-HEAD commit:    da4373fbcf00 Merge tag 'thermal-6.12-rc7' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c5e0c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4580d62ee1893a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=6b97c7810fd3600a03e0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/204d5ed3c12b/disk-da4373fb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b51aa0c6ab3a/vmlinux-da4373fb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/197213720e0c/bzImage-da4373fb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6b97c7810fd3600a03e0@syzkaller.appspotmail.com
-
-ntfs3(loop4): Different NTFS sector size (2048) and media sector size (512).
-=====================================================
-BUG: KMSAN: uninit-value in ntfs_dir_emit fs/ntfs3/dir.c:333 [inline]
-BUG: KMSAN: uninit-value in ntfs_read_hdr+0xfba/0x1290 fs/ntfs3/dir.c:383
- ntfs_dir_emit fs/ntfs3/dir.c:333 [inline]
- ntfs_read_hdr+0xfba/0x1290 fs/ntfs3/dir.c:383
- ntfs_readdir+0xf48/0x1a10 fs/ntfs3/dir.c:494
- iterate_dir+0x5b3/0x9e0 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:407 [inline]
- __se_sys_getdents64+0x16e/0x550 fs/readdir.c:392
- __x64_sys_getdents64+0x96/0xe0 fs/readdir.c:392
- x64_sys_call+0x3430/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:218
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- ntfs_readdir+0xe07/0x1a10 fs/ntfs3/dir.c:489
- iterate_dir+0x5b3/0x9e0 fs/readdir.c:108
- __do_sys_getdents64 fs/readdir.c:407 [inline]
- __se_sys_getdents64+0x16e/0x550 fs/readdir.c:392
- __x64_sys_getdents64+0x96/0xe0 fs/readdir.c:392
- x64_sys_call+0x3430/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:218
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_insert_into_buffer+0xd8f/0x2010 fs/ntfs3/index.c:1811
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3120
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1735
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x94c/0xb70 fs/namei.c:4739
- do_linkat+0x4f5/0xfd0 fs/namei.c:4809
- __do_sys_linkat fs/namei.c:4837 [inline]
- __se_sys_linkat fs/namei.c:4834 [inline]
- __x64_sys_linkat+0x186/0x230 fs/namei.c:4834
- x64_sys_call+0x37e1/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:266
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- hdr_insert_de fs/ntfs3/index.c:838 [inline]
- indx_insert_into_buffer+0xcdf/0x2010 fs/ntfs3/index.c:1807
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3120
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1735
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x94c/0xb70 fs/namei.c:4739
- do_linkat+0x4f5/0xfd0 fs/namei.c:4809
- __do_sys_linkat fs/namei.c:4837 [inline]
- __se_sys_linkat fs/namei.c:4834 [inline]
- __x64_sys_linkat+0x186/0x230 fs/namei.c:4834
- x64_sys_call+0x37e1/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:266
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x637/0xb20 mm/slub.c:4141
- ntfs_link_inode+0x8f/0x310 fs/ntfs3/inode.c:1723
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x94c/0xb70 fs/namei.c:4739
- do_linkat+0x4f5/0xfd0 fs/namei.c:4809
- __do_sys_linkat fs/namei.c:4837 [inline]
- __se_sys_linkat fs/namei.c:4834 [inline]
- __x64_sys_linkat+0x186/0x230 fs/namei.c:4834
- x64_sys_call+0x37e1/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:266
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 10448 Comm: syz.4.1589 Not tainted 6.12.0-rc6-syzkaller-00272-gda4373fbcf00 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-
-
+Signed-off-by: Drew Fustini <drew@pdp7.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Note: the th1520 pinctrl driver and thead dwmac ethernet driver have
+been applied by their respective subsystems and are in linux-next.
+I've successfully tested next on both the ahead and lpi4a boards.
+This patch is based on next-20241108.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ arch/riscv/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+index b4a37345703e..99a11142c03c 100644
+--- a/arch/riscv/configs/defconfig
++++ b/arch/riscv/configs/defconfig
+@@ -167,6 +167,7 @@ CONFIG_PINCTRL_SOPHGO_CV1800B=y
+ CONFIG_PINCTRL_SOPHGO_CV1812H=y
+ CONFIG_PINCTRL_SOPHGO_SG2000=y
+ CONFIG_PINCTRL_SOPHGO_SG2002=y
++CONFIG_PINCTRL_TH1520=y
+ CONFIG_GPIO_DWAPB=y
+ CONFIG_GPIO_SIFIVE=y
+ CONFIG_POWER_RESET_GPIO_RESTART=y
+@@ -242,6 +243,7 @@ CONFIG_RTC_DRV_SUN6I=y
+ CONFIG_DMADEVICES=y
+ CONFIG_DMA_SUN6I=m
+ CONFIG_DW_AXI_DMAC=y
++CONFIG_DWMAC_THEAD=y
+ CONFIG_VIRTIO_PCI=y
+ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_INPUT=y
+-- 
+2.34.1
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
