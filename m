@@ -1,234 +1,225 @@
-Return-Path: <linux-kernel+bounces-403122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1AC9C3152
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:33:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A9D9C3157
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:34:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4AB281BA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 08:33:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56AFA281C91
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 08:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9A915098B;
-	Sun, 10 Nov 2024 08:33:34 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A751531F2;
+	Sun, 10 Nov 2024 08:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZdjARC4H"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011009.outbound.protection.outlook.com [52.101.125.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAB414F115
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 08:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731227613; cv=none; b=NmMVfUefHuiGlJmKTHEmzwmwU5OI9WPMO/ogxf0HLnTQCKrC+pLzJfFmSKeppTpE2F3n9t8clYt70oLOqgmo+WeLgALGpL1MTZTdsWYaKtPITAzipxNxCqDuRgpQMD9yXnnREkalDAi6Ikrsus25hnyP6HI35dLCSOa2C/YZ/Pw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731227613; c=relaxed/simple;
-	bh=EA8rRVaHhXclWEvb6Nhxfcw0iDTQZY0Qhmo0EsTLtZY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DX1yAIPDI49lFUNXoL391rdnDM9v7b9A8wzKEP5XIRb0qAmByiE0NCZOyo9BLNkfzxt/lDuR9AN/7tXHXtCZqfm+uxTCPxoPeKd8+7xOFaTXy+DExl+q5gJzKLgYYZazvVCxuviYC9405qNyBH0+yFr81p9TzCZ1E1fRF7hvvHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c90919a2so46392795ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 00:33:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731227611; x=1731832411;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uyJKeRIFU1WmL8qzWPTR5eRitL2d2mm93xapJSMYkOc=;
-        b=I93IJqR/C7M/sSJUFYSno+qUMvFHfr0Phol0NQl6tauhnC7KnabSPwWXwwAXEnTMd2
-         HTNK7gPEE1Sv9bKL3tc5ujjFsxnFtyj+pxgM+ZXJWdSi//ds1isuODJhxIbJu6M7N/WX
-         70p1lFCnPPV7/CIoaHXKWCMl54KwolzcANYcAm5HvTiZ9jnsNxl8zluu3dQpaO33Azex
-         pvzcAUeY7cIPOVJlTLHvcrbIgOAZGeHC/dWcgZ7iuGehDSKPriEHZPOL5T/dvyEvyDSE
-         uHYZSTMAkH1oaqLIsTBjHDMIe+k84lR/Bvo3YAcAx982jmahge0J7o3RA9Kv54rp9Y5G
-         kLRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFGPHdu58DaFYgDQN0A8u4PEruEV55Q0lY2DLnVX/LeYaHlL6qk0nUU3+Vn2VkbrUFAZqtwupmU7MG7v0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz3E3qOyfeduUkL4D8spfxiO13RLQdIiYd1XK+A1pO/4awNh3Z
-	o5gHz510z/y2KRc//YnK9lxcs6b4Q0W7YerI8zXAhOdvZ04jB7I66u9ZG9bLzpShpkKW5noKJ00
-	M9WD1OZW9qAdUWG++Shxc67FZGFPF0FXs+kPvietjT73xnDxPiEBOsAI=
-X-Google-Smtp-Source: AGHT+IE0nU7kX1sQ1aXwDrc0Kmtce2lguUdrS6A8Ux6ko6dCapBwqWqK8b8VGFd8sl4wjDpMEhOiHzl4ETvOS2XBxHLX/99sK9Cm
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163CB14D70F;
+	Sun, 10 Nov 2024 08:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731227635; cv=fail; b=b7/myH8UGDi1/YxwdHccQbSLd72niBPZOBgI4Mni2Jh7vCoVVrQqOd8OmvnIsTfcemgEDJfyHZ9bH/JHr8cEc0cqDKhxe+pv3QmZziiRNHemDP3fpE3YNIhq/ADdE+qVHy/aoiJ+ENJMpSbgfJnNxe88zIOjaW0bH9VWr3Ucmms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731227635; c=relaxed/simple;
+	bh=lTrvtAkulv3eAEgLx6CllkWfZTCS6f/nynQnnRBrM+k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WKi+/BbEZwhIVoe8bGq+60pw9c8vtdEIsWucnZfR58eZ+J9mMdvJdBRTs4JtYaIvF6T0qI3BJfEbktfv7uUX0pgD81esPrmwxMquiUel92VtNLYHyFsaitXJkVJiKetMw5VlHa47wshC+0dQ4+T4qBY5RzNJ4IvWEer0iHkeqQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZdjARC4H; arc=fail smtp.client-ip=52.101.125.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hbAUULXTzC219Tc3mnAKe8xfWWJ9TIqxweC41/sKzJudkfyY9gx12u3EywYK7iAU4zbp7Byl0QdUKvohLw7WZpySAouH1InY8/DfK37FYOpYE7bJUHsLMaKU1i+zPiBeVKcOZ9NeUpmCkfMoYOgyJWrGEIfn/u/P7Dl9d3VqFu4fwLVAr8NMkv3DikYqsHECfMevfqwHXAfG4yCdg8WFsJt1JxkuyUlJ4H/T9Bj6/Zz6fD1dlh3UF7crb8amu6y+yHhf1sB3BV/3cn+PZAg04xgrvlecgH7Y5lIas415Ihx92WrUuC6zMmmWqq6P8uDcrcb+qVfEWJq4MD6JJz5Gnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z2a//vbx02dnoOU0YhJ2gBNN0pCy6Yyor1PmiIs8Qt0=;
+ b=iSRC3gkBM6w/HAwt+FvIL8YSexg+/T6jFSk5RnRcwo3BNmB8RX4aAOdNKzbmk5wuWPE7NL/jgS/EUAVGMSa7qhwMERqPo8BnmizhUwwibbovjSW2mOfV9IiBt+sJxHqYLmP4WQe5TmiFg21LCezupc+dRPe6coklop4ZhhRgT9dTUPvSvanHbSFu9/ZjWygljLUpesCTUhk749WnGZSrDoxkWQb9RQAG5gNTXeAXkA3lJg2sqF3SdK1ElV2Soegm7x2yXk4/g+PsTGKAOEXT98a5dtaZCP0HTx8dUDcyzhsBMMBjyBC+IsMJd3nZxmA0LTj7SSQjSqWjsa/qWlgSaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z2a//vbx02dnoOU0YhJ2gBNN0pCy6Yyor1PmiIs8Qt0=;
+ b=ZdjARC4H6Kv1HYsHyuwIHCFH9p+me9N3VCQJxtzz90/8yjQ4m/3dZKc19X8TuwMAZklEXG6QuBz7aO+2nopM/jFSUlkTKZpllMyiRg9UyNfO4R+ieZZyNBM/eOk5LfRCjtoqxMX+dKj4P9lew3isn3rUoqpUijlI70ohaWFqZFo=
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
+ by TYWPR01MB8807.jpnprd01.prod.outlook.com (2603:1096:400:16c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Sun, 10 Nov
+ 2024 08:33:50 +0000
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479%4]) with mapi id 15.20.8137.019; Sun, 10 Nov 2024
+ 08:33:50 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "geert+renesas@glider.be"
+	<geert+renesas@glider.be>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Prabhakar
+ Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "lgirdwood@gmail.com"
+	<lgirdwood@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "linus.walleij@linaro.org"
+	<linus.walleij@linaro.org>, "perex@perex.cz" <perex@perex.cz>,
+	"tiwai@suse.com" <tiwai@suse.com>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v2 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+Thread-Topic: [PATCH v2 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+Thread-Index: AQHbMcwGxLNsq4zxjkmF9Ri6pfuKYLKwMtJg
+Date: Sun, 10 Nov 2024 08:33:50 +0000
+Message-ID:
+ <TYCPR01MB11332871E3DB562DB9E28FD6F865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241108104958.2931943-6-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|TYWPR01MB8807:EE_
+x-ms-office365-filtering-correlation-id: d29932a3-85d0-4de1-a1ea-08dd0162671b
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|7416014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?yvqgM6SLolWlFVIUGVsRKTUR/LxThzb7R6F1piKk9/8Vtgq986vcNjQPyBpo?=
+ =?us-ascii?Q?WS2BeT3faOgaB1OY96IQSfv9dP/Fzgvog7XRwl4bgC9KpusJq5qbumsY0ndI?=
+ =?us-ascii?Q?oX5gYKqm13nDNS6NwC1ll1/lK87pVgll2I2gD6w6GDiYU4Vcz2lwxcwnzUHy?=
+ =?us-ascii?Q?6sudGbPQbu9BHH/gP4LyyhWWg6C4B8RD2IE3lLGk/Xn0YJhnYr2Rv3jBMn21?=
+ =?us-ascii?Q?AFudaegXI0oT4QH/eRbFmQvCylnnQDn6YQeKBPNyUmPdyhP9QWKH5OtBjy1a?=
+ =?us-ascii?Q?DMHAwz9jKWoczKL/hcI8UNqKGAk/+rxtYcyJA3my40Yrl/YM0+6WLiDIkLpD?=
+ =?us-ascii?Q?VQRfP/UXtI4xRLvCFj9pTeLytPnLW920KkgGgzB039SaKB8QpZEsexwPmnFA?=
+ =?us-ascii?Q?XTIvCu1RRGw75+gavWtxjQ6HWSLZ6GxD5tdMaQkNQyUC3peOLJZvduphJbdR?=
+ =?us-ascii?Q?/+y76gqDDW57pGV1Zm64WAvSQxPe0y68p0hGX77yN34S+FTvf9U9DM19DnvS?=
+ =?us-ascii?Q?uNPQhzneB1TUa8U73Dzpo0aQStLQgnEDsDwgh3jsD5h+LEM7fJxkgICtXT3U?=
+ =?us-ascii?Q?M5uuBAq05gCCK0378xAVZ9kFCGbIpPlfWMgaH+VdwoIXC1SFaf4CI5BGliSY?=
+ =?us-ascii?Q?5dX5VwEsgfqGJz8raXxQ8DBvJCmJ/CbPpkYUmc9c6cE9sEm4QAADe+X1+oRb?=
+ =?us-ascii?Q?Fjdc9CQ1Ao6qVgLw1JDaxRt1E/LVVviYG7oXLaeQGrJjAyZMMZ+qqgJhb3JV?=
+ =?us-ascii?Q?fr2m8NvTSLx/qGvQa9s/Fq+tTSX4NJaykLfZPNWx3sUqY69E+N6gV9Viy/HD?=
+ =?us-ascii?Q?3fbCyh4Kt+L7jk3tFb/6defJ6PpeH/rTHVrjPQlaTG3DG8me+9J/+OyTKdTc?=
+ =?us-ascii?Q?bvOR4tzPdA207WuvWnVz4gbSNeAGUhWFiXLtCLbUhpjSqlBFXkBMkcXgNQu9?=
+ =?us-ascii?Q?Q+zDSHDZjAcozn4tbMdagbX7qgL1RIN/mQshSlZEiWlPTjvO7l2A7OGJLcgB?=
+ =?us-ascii?Q?/LziRnuXtmGhCWWqP1U8WGmF/ed3qcf3GrvCW34yWCmYZtZBzem5pATFmxBl?=
+ =?us-ascii?Q?0P4TplJBrhIBQWO9U0BPHf5/lAGWgoPVLvcwqJ+KsLJpTnYfRNXrmpQbs/Ig?=
+ =?us-ascii?Q?vGix+7sufeK6Qb/r9+LML25U3HSDSGAevwueAX/a/+MbzmvcL5jZuqw7HMGh?=
+ =?us-ascii?Q?6QFmekQJTsAaB7vpvR6LivY5/skImh758Sp9EzDJeiMo5vn+BALkn4T3jakF?=
+ =?us-ascii?Q?veyxxLEiTwi4zpXinvr4umzu+KpQCRiKy218V3no1jjofIyA6VCt2wnkVRrJ?=
+ =?us-ascii?Q?HskqPcTDkBCGpuK4QeQXZy6grKbsqyghlN7oHICM2LuB/EWtuGITk3Xdei8L?=
+ =?us-ascii?Q?KOBFKn0ZhieWRuDc/IlXiEzB5BLg?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?l/MdvHkWobtziMrfKugJ21MAILNgE4lEBTAp633FskceDWCuHCcuYKv8Rhez?=
+ =?us-ascii?Q?FyPWhR65nJ+gN44GIYmLg+EoFo1GaTsrKRZHk1k5zZsqcfjbbSf2IQadh2xl?=
+ =?us-ascii?Q?1r0LW5hV32GRV6lpekRRdLNNmpUKWRUCnsCdD//NELYZv2E3wM38qKWtg9ny?=
+ =?us-ascii?Q?ma+7xETPKiN4xMR9KJ2SJx5lJEJsZQ59CVQu4eGvUTSUzrmwhr+tPHUUHiox?=
+ =?us-ascii?Q?BVpyLgPCGAWN/OXA6ZBWaZRUuEZuLArNxtv7wzLu00b08bHrizuYviKUYRWe?=
+ =?us-ascii?Q?fNx+COJS52t4qCiimSLurwehwfavK0C64hKfP22SnuX1iy9Wu5ssdwIocj1a?=
+ =?us-ascii?Q?+zNa1sZHh0uCwlEDQcSrjaj1ypg5jW3956yuNebxDXUt5s/aGmY9d3BW5izv?=
+ =?us-ascii?Q?OvUQr8Za6dFCqVEPSG3W4O/R+dnhYfa9HsnLAZDNwwy4/o0cm8GRI74cs2YK?=
+ =?us-ascii?Q?gKowY13Q7gPukQ39znmdQ/ukZOZfLJcecKXqHm8LTiRXuIrg9YO1g/RbTXOR?=
+ =?us-ascii?Q?2BjKPhJAUywg3nMBg3uuf/VCGju0muWaVehON/xHiFXFuaZkjXEDI1kfOoS1?=
+ =?us-ascii?Q?8VnXMDoaahDBynJGZPG4dYdH2pDoQPRy4zvPjkTiayKBEOhScpWb97qqEyMO?=
+ =?us-ascii?Q?8piS03NDa+nc8sz6tVugoR1azF3a61n8iuBA2UoKeeP3CNufikr37iQPKgDw?=
+ =?us-ascii?Q?H24pD/yaGH4Np86UQAW+B8pNGqg3DulbDFluFwSBiUeHZxib8Vf/EZGK0MKi?=
+ =?us-ascii?Q?IPsltTU/pHblQ6h51hfiV7uGhq9IsP/kaPRJEPXeD717Ngu50Q118tFbjItH?=
+ =?us-ascii?Q?RyqOkalZSSYlS3NHeBlI70KnpL0bjTFEfRVOAeBRbVdUcibQbazj0x3Ga+3M?=
+ =?us-ascii?Q?hquFcig60e+exb286+LeeRpz23EtgDsesUswJ4IqOCSGly4tiTy3cuwV3D3w?=
+ =?us-ascii?Q?5EdledtlgK0fQeB/mFklndIC8qCU51WPfB2D55MGtEbo3zxryigOKexP6QCL?=
+ =?us-ascii?Q?krMP5yo+MDwmPL9A/AyRx5gbiCCihU7Un8Rr9DzaaYi4nfUYaPqYcpN5OOtN?=
+ =?us-ascii?Q?R5EropZ/+XGz/2q3KO43jVRktfILYzw0SjHNAB0qwMxOZG8jAbVvGoSAjqQd?=
+ =?us-ascii?Q?zXz8RE+zUL7kafuzQexovlqT1FYNDiDZM2tv+LdBY/qBCLkVDQizdM7QdVzZ?=
+ =?us-ascii?Q?3FIuMKwVGFQgmel9Vad7ntL6GvoC4sN9nIx4KKqXtI5PG5ncKTSsEvUdw+JX?=
+ =?us-ascii?Q?uiBovI5vEbFFtJ0O0B3J6j9a0xocpFCdE6htR8o4VQmxlXyeJSI4X3CNJ15H?=
+ =?us-ascii?Q?GqHoro2CuqkdHlLGfGA15NQ62VnP5/0voqzK1vuMJTUEKN2/syMYz1v2FsRo?=
+ =?us-ascii?Q?8D/2Pd2BjT7bsw/Bx7SnPTiHRAy7MJnIv2VW3QXAjg38ufZNxs4/6r6Lp6zg?=
+ =?us-ascii?Q?RBRkskOi/hSe1oDGO0M95g3MwXQdxxOFWFqtuqN7lRa7n9w0HjKcUOd9rn1D?=
+ =?us-ascii?Q?EF9xl85D8nm1MQtU4iiTPLF3KgW2qpChV/HiR9WiT8o7Ji7jWpobdxrdaX4X?=
+ =?us-ascii?Q?Xkkfbp+ntc7j8CfHqT19NKPjzQpn/bNp76BnewG+?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa3:b0:3a6:ac17:13e4 with SMTP id
- e9e14a558f8ab-3a6f1a48bdemr91889025ab.18.1731227610933; Sun, 10 Nov 2024
- 00:33:30 -0800 (PST)
-Date: Sun, 10 Nov 2024 00:33:30 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67306fda.050a0220.138bd5.0049.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in btree_write_buffer_flush_seq
-From: syzbot <syzbot+cf3d1015b55ff73dcdc8@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d29932a3-85d0-4de1-a1ea-08dd0162671b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Nov 2024 08:33:50.4205
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YyK9Ag/mlOBI7NOAktPRWNcy8i0la8/4ADltJ2EIkbSMrkNzczIVxqEn87gEVh6yVec1/pbxfH9xn8kKIqznubhGPDdXuODzHLw/FOm1nsc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB8807
 
-Hello,
+Hi Claudiu,
 
-syzbot found the following issue on:
+Thanks for the patch.
 
-HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=163f4e30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=11254d3590b16717
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf3d1015b55ff73dcdc8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a536a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1402cf40580000
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: 08 November 2024 10:50
+> Subject: [PATCH v2 05/25] pinctrl: renesas: rzg2l: Add audio clock pins
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Add audio clock pins. These are used by audio IPs as input pins to feed t=
+hem with audio clocks.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6a49054c25b2/disk-2e1b3cc9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0d6873a86739/vmlinux-2e1b3cc9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/630443e7db25/bzImage-2e1b3cc9.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e7e7dcf3a227/mount_0.gz
+Cheers,
+Biju
 
-The issue was bisected to:
+> ---
+>=20
+> Changes in v2:
+> - none
+>=20
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/re=
+nesas/pinctrl-rzg2l.c
+> index 8ffb9430a134..1190ca4b1808 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -2086,6 +2086,8 @@ static const struct rzg2l_dedicated_configs rzg3s_d=
+edicated_pins[] =3D {
+>  						      PIN_CFG_SOFT_PS)) },
+>  	{ "TDO", RZG2L_SINGLE_PIN_PACK(0x1, 1, (PIN_CFG_IOLH_A | PIN_CFG_SOFT_P=
+S)) },
+>  	{ "WDTOVF_PERROUT#", RZG2L_SINGLE_PIN_PACK(0x6, 0, PIN_CFG_IOLH_A | PIN=
+_CFG_SOFT_PS) },
+> +	{ "AUDIO_CLK1", RZG2L_SINGLE_PIN_PACK(0x2, 0, PIN_CFG_IEN) },
+> +	{ "AUDIO_CLK2", RZG2L_SINGLE_PIN_PACK(0x2, 1, PIN_CFG_IEN) },
+>  	{ "SD0_CLK", RZG2L_SINGLE_PIN_PACK(0x10, 0, (PIN_CFG_IOLH_B | PIN_CFG_I=
+O_VMC_SD0)) },
+>  	{ "SD0_CMD", RZG2L_SINGLE_PIN_PACK(0x10, 1, (PIN_CFG_IOLH_B | PIN_CFG_I=
+EN |
+>  						     PIN_CFG_IO_VMC_SD0)) },
+> --
+> 2.39.2
 
-commit 49fd90b2cc332b8607a616d99d4bb792f18208b9
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Sep 25 22:17:31 2024 +0000
-
-    bcachefs: Fix unlocked access to c->disk_sb.sb in bch2_replicas_entry_validate()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=117e0ea7980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=137e0ea7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=157e0ea7980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cf3d1015b55ff73dcdc8@syzkaller.appspotmail.com
-Fixes: 49fd90b2cc33 ("bcachefs: Fix unlocked access to c->disk_sb.sb in bch2_replicas_entry_validate()")
-
-INFO: task bch-reclaim/loo:5865 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:bch-reclaim/loo state:D stack:25848 pid:5865  tgid:5865  ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0x184f/0x4c30 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6839
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- btree_write_buffer_flush_seq+0x1a39/0x1bc0 fs/bcachefs/btree_write_buffer.c:509
- bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
- journal_flush_pins+0x5f9/0xb20 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x174/0x560 fs/bcachefs/journal_reclaim.c:740
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6720
-2 locks held by getty/5591:
- #0: ffff8880349da0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-3 locks held by syz-executor155/5854:
- #0: ffff88807c9ae420 (sb_writers#10){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3228
- #2: ffff8880704266d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
-3 locks held by bch-reclaim/loo/5865:
- #0: ffff88807044b0a8 (&j->reclaim_lock){+.+.}-{3:3}, at: bch2_journal_reclaim_thread+0x167/0x560 fs/bcachefs/journal_reclaim.c:739
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3228
- #2: ffff888070404740 (&wb->flushing.lock){+.+.}-{3:3}, at: btree_write_buffer_flush_seq+0x1a39/0x1bc0 fs/bcachefs/btree_write_buffer.c:509
-3 locks held by bch-copygc/loop/5866:
- #0: ffff888070404740 (&wb->flushing.lock){+.+.}-{3:3}, at: bch2_btree_write_buffer_flush_nocheck_rw fs/bcachefs/btree_write_buffer.c:543 [inline]
- #0: ffff888070404740 (&wb->flushing.lock){+.+.}-{3:3}, at: bch2_btree_write_buffer_tryflush+0x14b/0x1c0 fs/bcachefs/btree_write_buffer.c:558
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #1: ffff888070404398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: bch2_trans_srcu_lock+0x97/0x1a0 fs/bcachefs/btree_iter.c:3053
- #2: ffff8880704266d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 67 Comm: kworker/u8:4 Not tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue:  0x0 (events_unbound)
-RIP: 0010:srso_alias_safe_ret+0x0/0x7 arch/x86/lib/retpoline.S:171
-Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc <48> 8d 64 24 08 c3 cc e8 f4 ff ff ff 0f 0b cc cc cc cc cc cc cc cc
-RSP: 0018:ffffc900015f72b0 EFLAGS: 00000096
-RAX: 1ffffffff1cffcbc RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000008 RDI: ffffffff8e7fe6d0
-RBP: 0000000000000048 R08: ffffffff8e7fe6d7 R09: 1ffffffff1cffcda
-R10: dffffc0000000000 R11: fffffbfff1cffcdb R12: ffff888020af0000
-R13: ffff888020af0068 R14: 1ffff1100415e00d R15: ffff8880b873ea80
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000558081776600 CR3: 000000000e734000 CR4: 0000000000350ef0
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- srso_alias_return_thunk+0x5/0xfbef5 arch/x86/lib/retpoline.S:181
- activate_task+0x61/0xc0 kernel/sched/core.c:2067
- attach_task+0xee/0x190 kernel/sched/fair.c:9641
- attach_tasks kernel/sched/fair.c:9676 [inline]
- sched_balance_rq+0x664a/0x8620 kernel/sched/fair.c:11753
- sched_balance_newidle+0x6ba/0xfd0 kernel/sched/fair.c:12795
- pick_next_task_fair+0x40/0xc90 kernel/sched/fair.c:8943
- __pick_next_task+0xdd/0x400 kernel/sched/core.c:5968
- __schedule+0x776/0x4c30 kernel/sched/core.c:6644
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6782
- worker_thread+0xa30/0xd30 kernel/workqueue.c:3406
- kthread+0x2f2/0x390 kernel/kthread.c:389
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
