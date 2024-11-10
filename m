@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-403378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7087B9C34C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:16:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8F79C34C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 284BC1F213DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:16:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5952B1F21427
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB27156F27;
-	Sun, 10 Nov 2024 21:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4966156661;
+	Sun, 10 Nov 2024 21:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NnUPrlCT"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwtUn9hR"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A5061FE9;
-	Sun, 10 Nov 2024 21:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC85DDD9
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731273410; cv=none; b=T1a4r3W3cI0U4fpedJ3OHPi3S8lx4XrRSbb3a3CF4qw4Ywv8qytRn3wlQ3ouyWwwxmXNXKVM1MK2kqa0aY6jgu2lZaKEnohoIOJKN4MzPSgzRhJiiopGHWxsmVc2tljaAfVjJjtcX2qgg/ZxvSQCbA0qPm5FiL69EtIYfq0yKrw=
+	t=1731273775; cv=none; b=eXeAeQiu55T9V62xXkLn5To8+xsQd5Jw4hO8UbQZHvDW0fRA/dUEsg6FLz/3ZDBa1ohFdIow7V06to4jRciEah7lT+vggHwsTAjCs1D4Ww4OpBue9kH4t3d/LcdXsqFo2TXb2Gx+CqxIeBT6KpEmkQT8I4h+g8fohMYBUOpG0yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731273410; c=relaxed/simple;
-	bh=SOb6+PCqPezk//gqKgeQow+owfg+gFpAZFc8g+4YUd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N4oJ+Z2Zo5kvIT270fuK0x37MpFXVNmqS3a6kcntQganAdmPXt2UTYKB8JQQVtv/qKQCktKnXL4dqEWW4Au0hCfLHz9lvAvFnM7wr5sEkmKuHqc4Ft9qvxGK2+U6n7Pd1qpxMt08mBdF5Na10FcAvg6K+pQK1EKl48pmYOTonds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NnUPrlCT; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+rZ6R6+emkG1vIh+xndKO9B1+qYVh3QHCutdQutXlKE=; b=NnUPrlCTnmzmH/8JFVsLNY/gVt
-	Q+NZJrc6k+eaANoAusGXscEaxYD0IvNNWFYn46mTOkdwv9jPAoIVs9Db1NYV2k4KhUcrSpT5w4Mv7
-	/QwB+FzrhW7awQ8yFqx0SaNH4QOZNjNqMeuDvqjhL/9lp0NbNLrIqn+HfFruoQOvq0Yxm4F4e7+8F
-	sKRnQWeE50imeZcub+IfMd2f0sS9o1bJIWAaAWjlXRMVpsWwB+D6Io8pcS07uq9+0mmbJ6o8srZrr
-	BqGnPE7YXZ/GywRajtSpzxgMUr3vfgjWe0WRI5laYIagGllkyELSBO1/WgLIZQTMCXmjoFEyRop20
-	Db2Xlsig==;
-Received: from i53875b28.versanet.de ([83.135.91.40] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tAFIY-0006tu-Sn; Sun, 10 Nov 2024 22:16:42 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
-Subject:
- Re: [PATCH] arm64: dts: rockchip: Fix vdd_gpu voltage constraints on
- PinePhone Pro
-Date: Sun, 10 Nov 2024 22:16:42 +0100
-Message-ID: <865640012.0ifERbkFSE@diego>
-In-Reply-To: <fb3700f2d67c7f062c66cb8eb0f59b17@manjaro.org>
-References:
- <0718feb8e95344a0b615f61e6d909f6e105e3bf9.1731264205.git.dsimic@manjaro.org>
- <4386271.ejJDZkT8p0@diego> <fb3700f2d67c7f062c66cb8eb0f59b17@manjaro.org>
+	s=arc-20240116; t=1731273775; c=relaxed/simple;
+	bh=zqUQJ2Pu6i5ume09EW6ICqKQUFgVIvevgWfXdVJyCjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XrM2GcmglPB0k6n9/cFsJgeNLpEzQ2MxoTM04p+kfA5Hfcv0712YJbBW589NWQRLDYod0n4UjNidLicRqLbb+sqg74R+ZhErkj2GBTG/bM+/HGNk8UxJG7B3qIWzomkWqxMo3I9tsKnMAdFJPBkRuqSSL7bsf2rXkSkIN5mt1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwtUn9hR; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431695fa98bso29520235e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 13:22:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731273772; x=1731878572; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RUakL32jpYP2PR6je8V0wbYzXZCA/i3ZS8OutJHFp68=;
+        b=XwtUn9hRCmWkhpedhK17BYBmfNNSX9edyy6kbJDbSSFaqz/L4u4pQ0Q6Kn2Otnm3/j
+         sPPCDd1bfWa6ftQLgO82asQOS2oagj0FrRhxTMArlyX6jy88Wjyp6U66T/K1ZZgMNJuh
+         PDLFJBiW8waFD3VSOGdfnW6QVJakk2Jx7k74E/DvZ/9GqqAOkUdWLqa6769M/ZbiK6dK
+         Ut+BfBJ7/vLhvH0HUDeo9vRKmveOTcuCTqVFBV+/eMIEAsW+ziF0AVbhg5rWbVxKEFVq
+         6iZa6u0hzkpagwUAVTBPh2T5iPZFFjiCXEFeI77ER7sFHlEyvQ3Y1alc8pYMCFePVmT8
+         c03w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731273772; x=1731878572;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RUakL32jpYP2PR6je8V0wbYzXZCA/i3ZS8OutJHFp68=;
+        b=wjVIAqS93XzJWVduQUbMs0b2vmXujT0JFsjCZyWdQSPp5Nlo2imIlpsxy9JX77w+JM
+         xY+FqPr2WnvNseBMIc7kZidKxybxp2ROXn/e4I0TbfM6vW97ovp5YvbBYQxhKwy8DRY3
+         UE8RBz2B84+OgpxAE7r2+Z9ViCxUk1qZdLP/RqEkOPnY+guVDY9YCKgUBOjHEYR3Sl54
+         67qc8a3fr+RivryAHWZkf5Eizs0xcRaRvZKWD+ngrIl0tVFo6490a/UynkDgDr6aG8eB
+         U0zAGXK4wVko80VLPd3b6nLD670qPNj09rBM28jGu9DZe/cA37BUODU1pfzaVj5Pu50C
+         NnLA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEbsrtlIUAMiDCeGNunw2KBPtwNhV24P3X6HVjbEIGXEsUzGzxvpiWMaLQ+MPJAbjogSgcBoGEHrGwLYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjRZrGMlXdGgxY3qtKrspLCeVJzsuP7rECI/Tw37JRnzddRZJm
+	sWftPRbKYK+bwuSzDJiPsKaSK3RQrP05KKhrpz7jZpVFmFfLAyKE
+X-Google-Smtp-Source: AGHT+IHWsg9yrWJD0rDrDbcpxEIgDdeLHT6gO7kg1qaZ7WeHwCRSkPsGRGxM7KR3w+353itlR+hYQg==
+X-Received: by 2002:a5d:6d85:0:b0:37d:4e9d:233f with SMTP id ffacd0b85a97d-381f186b5eemr9487326f8f.24.1731273771766;
+        Sun, 10 Nov 2024 13:22:51 -0800 (PST)
+Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97c6b6sm11081641f8f.24.2024.11.10.13.22.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Nov 2024 13:22:51 -0800 (PST)
+Message-ID: <683dc253-8dd0-4990-944c-e20a3f79074c@gmail.com>
+Date: Sun, 10 Nov 2024 21:22:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-
-Am Sonntag, 10. November 2024, 21:47:15 CET schrieb Dragan Simic:
-> Hello Heiko,
->=20
-> On 2024-11-10 21:08, Heiko St=FCbner wrote:
-> > Am Sonntag, 10. November 2024, 19:44:31 CET schrieb Dragan Simic:
-> >> The regulator-{min,max}-microvolt values for the vdd_gpu regulator in=
-=20
-> >> the
-> >> PinePhone Pro device dts file are too restrictive, which prevents the=
-=20
-> >> highest
-> >> GPU OPP from being used, slowing the GPU down unnecessarily.  Let's=20
-> >> fix that
-> >> by making the regulator-{min,max}-microvolt values less strict, using=
-=20
-> >> the
-> >> voltage range that the Silergy SYR838 chip used for the vdd_gpu=20
-> >> regulator is
-> >> actually capable of producing. [1][2]
-> >>=20
-> >> This also eliminates the following error messages from the kernel log:
-> >>=20
-> >>   core: _opp_supported_by_regulators: OPP minuV: 1100000 maxuV:=20
-> >> 1150000, not supported by regulator
-> >>   panfrost ff9a0000.gpu: _opp_add: OPP not supported by regulators=20
-> >> (800000000)
-> >>=20
-> >> These changes to the regulator-{min,max}-microvolt values make the=20
-> >> PinePhone
-> >> Pro device dts consistent with the dts files for other Rockchip=20
-> >> RK3399-based
-> >> boards and devices.  It's possible to be more strict here, by=20
-> >> specifying the
-> >> regulator-{min,max}-microvolt values that don't go outside of what the=
-=20
-> >> GPU
-> >> actually may use, as the consumer of the vdd_gpu regulator, but those=
-=20
-> >> changes
-> >> are left for a later directory-wide regulator cleanup.
-> >=20
-> > With the Pinephone Pro using some sort of special-rk3399, how much of
-> > "the soc variant cannot use the highest gpu opp" is in there, and just=
-=20
-> > the
-> > original implementation is wrong?
->=20
-> Good question, I already asked it myself.  I'm unaware of any kind of
-> GPU-OPP-related restrictions when it comes to the PinePhone-Pro-specific
-> RK3399S.  Furthermore, "the word on the street" is that the RK3399S can
-> work perfectly fine even at the couple of "full-fat" RK3399 CPU OPPs
-> that are not defined for the RK3399S, and the only result would be the
-> expected higher power consumption and a bit more heat generated.
-
-In the past we already had people submit higher cpu OPPs with the
-reasoning "the cpu runs fine with it", but which where outside of the
-officially specified frequencies and were essentially overclocking the
-CPU cores and thus possibly reducing its lifetime.
-
-So "it runs fine" is a bit of thin argument ;-) . I guess for the gpu it
-might not matter too much, compared to the cpu cores, but I still like
-the safe sides - especially for the mainline sources.
-
-I guess we'll wait for people to test the change and go from there ;-) .
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hotfix] mm/thp: fix deferred split queue not
+ partially_mapped: fix
+To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Zi Yan <ziy@nvidia.com>, Yang Shi <shy828301@gmail.com>,
+ Wei Yang <richard.weiyang@gmail.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <baohua@kernel.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>,
+ Chris Li <chrisl@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <81e34a8b-113a-0701-740e-2135c97eb1d7@google.com>
+ <C4ECCA8C-FBF6-41AA-9877-4376EC94E021@nvidia.com>
+ <6fcaaa72-4ef6-ebda-cf37-b6f49874d966@google.com>
+ <3c995a30-31ce-0998-1b9f-3a2cb9354c91@google.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <3c995a30-31ce-0998-1b9f-3a2cb9354c91@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-> This just reaffirms that no known GPU OPP restrictions exist.  Even
-> if they existed, enforcing them _primarily_ through the constraints of
-> the associated voltage regulator would be the wrong approach.  Instead,
-> the restrictions should be defined primarily through the per-SoC-variant
-> GPU OPPs, which are, to my best knowledge, not known to be existing for
-> the RK3399S SoC variant.
 
-Yes, that is what I was getting at, if that is a limiting implementation
-it is of course not done correctly, but I'd like to make sure.
+On 10/11/2024 21:11, Hugh Dickins wrote:
+> Though even more elusive than before, list_del corruption has still been
+> seen on THP's deferred split queue.
+> 
+> The idea in commit e66f3185fa04 was right, but its implementation wrong.
+> The context omitted an important comment just before the critical test:
+> "split_folio() removes folio from list on success."  In ignoring that
+> comment, when a THP split succeeded, the code went on to release the
+> preceding safe folio, preserving instead an irrelevant (formerly head)
+> folio: which gives no safety because it's not on the list. Fix the logic.
+> 
+> Fixes: e66f3185fa04 ("mm/thp: fix deferred split queue not partially_mapped")
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Of course Pine's development model doesn't help at all in that regard.
-There isn't even a "vendor" kernel source it seems. [0]
-
-
-Heiko
-
-
-[0] https://wiki.pine64.org/wiki/PinePhone_Pro_Development#Kernel
-states "There's no canonical location for Pinephone Pro Linux kernel develo=
-pment,"
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
 
+> ---
+>  mm/huge_memory.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 03fd4bc39ea1..5734d5d5060f 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3790,7 +3790,9 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>  		 * in the case it was underused, then consider it used and
+>  		 * don't add it back to split_queue.
+>  		 */
+> -		if (!did_split && !folio_test_partially_mapped(folio)) {
+> +		if (did_split) {
+> +			; /* folio already removed from list */
+> +		} else if (!folio_test_partially_mapped(folio)) {
+>  			list_del_init(&folio->_deferred_list);
+>  			removed++;
+>  		} else {
 
 
