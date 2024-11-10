@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-403168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9839C31E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:00:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555749C31E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7F21F20CA6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:00:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8F6B20F39
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F92156676;
-	Sun, 10 Nov 2024 12:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFDB156641;
+	Sun, 10 Nov 2024 12:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtrqhVB9"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nAQdAjwg"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED86154BEC;
-	Sun, 10 Nov 2024 12:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D351537C6;
+	Sun, 10 Nov 2024 12:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731240019; cv=none; b=LE6tTLFFJBKcKouw893gZw7y+okzquf4UvhI/w+yBjrLWa0RnmT0F82OrLApk5DgrytYZY2V+P+jNWjCERoHxyWXnWHp3BsDM+SDP52f6YbvSpjDBtGKl9amxzMUNiNQGYHx1fslMTS7ujQL6eCOafHn3L5m/6d4e3OeMtyHDEc=
+	t=1731240652; cv=none; b=JeEOA7sefXPPKScKis1Ggln1IVwR4hGrj0JJPVZ1OPd/p4dBeQT+Fi5EZMRxHTAa92lbb1mgVfNLuR0/CH5O6ChbFKaV28u9l/xpeMJSNKmElrTCDA2uueWerWJkVQeoaLH8nBPvMAd+m/68RZq0FXYlAXyhnGMmQ9kad2muWS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731240019; c=relaxed/simple;
-	bh=+iGXVv70BjpHo11LPSnc/euVJyQdr2vgH/jCA8gMuB8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwxzXfHSLIaI2KzJDV2whB1eXmkTAR+kNzXmqerFzemPI83HUurDfi5TQt9vLxYb/dyRK5NcXBLv/j+yNlNvY+qTKn6/qxzhHzxlFIj3WrlPGPqJ6kEARPzOe82I8N/HPII1YL0Ymopjthapbu5jYTTqJgzyLAWWoeceVLI44NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtrqhVB9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431481433bdso31595085e9.3;
-        Sun, 10 Nov 2024 04:00:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731240017; x=1731844817; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0JSpHx89Mxpbqklk6UomFHnNHdXyPnoFk3iGSRwdDnw=;
-        b=XtrqhVB98ifGkzhk60jn/3DWOCbGz4T6XhNHx8mCzXd/gQ4Y4ySsq91P//AZ2tgeLi
-         /ym83mtKPgNtiJiuS2BwOZUt/GzXM2Z0uS0laZ/AW258/RJdkvplv8dcX68iRJI/660g
-         gWQuPmhE7GUGVGL/lqiedaELD+Kn3RL1aefyVuy6IXAVJ/z2zXWz+beIkUEyOz5Syt0F
-         ZLJBeLH2/bnDO9mM5sdeD4IJwOBLbF9cXoS+haDLkufO9oe8E4vefVDkEExh8pcFetXU
-         fcDHnlAH8fM1OEL1kfUo9tNX+pPDJUIQGim8p2vmBTbFDYLOP15CeCNn+1PAVG97kRty
-         w5Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731240017; x=1731844817;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0JSpHx89Mxpbqklk6UomFHnNHdXyPnoFk3iGSRwdDnw=;
-        b=qZ6YQWhJsuMbQ7GH4fLpsWQKF2Az+JvtpCYeylVEPS5MOrx+QNGsK0STJzv3XdpZ8v
-         IWAuZnog15dlXfAp6OzDh4GWGIcst21kQoMmqnIZpx175Rfk8H0XAMEeGkgD5g6x80TJ
-         xpm6dy2t/qQdyrHphwNnLAPri6QT62N7zEKy1hkUcJrWFNjoGqs8zF4yptpu7kuu1keQ
-         RBVetIV7z4+4m8nHZfKkmpPSohDF0Zy2DxQOL5PUelbJmgMf6Nn1NIL//Pc6w7t5RZnK
-         vuRn4JDJC9YwTVbDbdgq/BpvfSfO4xvdnNttTXw4Jv/g7plemyHo/IJRm/bvK00chLa8
-         wyjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeA2UT5ED+RtgNPhBnyUVxpTXhgkrOImuw/awvRitXumFygt+Jb3rKFEOyxOkA77+ae4i4MhA3NHKlxD7h@vger.kernel.org, AJvYcCW2O/4RKuZ0A+pJfKMpnrS+aWOHD2d9e03RaSZIhWXqQWv7hCH4pGaF/U6O+SX+duK6xF5CheQs4QTBkZWG@vger.kernel.org, AJvYcCXJFJbB0VZgUdl193UJbqfsTn/oyOcr+YkK7WNTD65UGGrebZat8k2yW0e1ml83Loin95e/vlVySk0b@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKYLhxO2N0OKQ1IaMJ9QEqtwITem+7VboAHdHm4wi8drrRnKX7
-	bl+VIsMMtEcPI4lQpr1KIba5Bl2w+qsToBuze1mZumVFa+PUkuJk
-X-Google-Smtp-Source: AGHT+IHIkJjS6Pb64F4BoNyzDgmoxYJiJsm4/OANqTyDXPHClXYnfnLXWEYNLFC7W1o52YCm516nOA==
-X-Received: by 2002:a05:600c:1909:b0:431:58bc:ad5e with SMTP id 5b1f17b1804b1-432b7522abemr70019435e9.28.1731240016543;
-        Sun, 10 Nov 2024 04:00:16 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6beea6sm177450915e9.20.2024.11.10.04.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 04:00:15 -0800 (PST)
-Message-ID: <6730a04f.050a0220.1633d0.07c2@mx.google.com>
-X-Google-Original-Message-ID: <ZzCgTE5OXgCfCUo8@Ansuel-XPS.>
-Date: Sun, 10 Nov 2024 13:00:12 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com,
-	Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v6 3/3] crypto: Add Mediatek EIP-93 crypto engine support
-References: <20241102175045.10408-1-ansuelsmth@gmail.com>
- <20241102175045.10408-3-ansuelsmth@gmail.com>
- <ZzAs--iaKCXIY-Kq@gondor.apana.org.au>
+	s=arc-20240116; t=1731240652; c=relaxed/simple;
+	bh=XTR/nhj5MrW+3ggTFQ749a6iLnniw2ba6f0H4nA+qfA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Me9MaHnvCnL0otiqtYfD1vj1Qp6JOnRrVMhlXoakgSFiuZGa46RzGFX3YPJffbMTpD0Z67zsK2cwtq7wIp91CwEp0kHni4zJ8lp3/GdOiSAdcNEvxV4bp5L60xO4cTZPzVZGdKIdEMz4qBzMPZ2PEOafESidDTTyUIHxrpRRUPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nAQdAjwg; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731240625; x=1731845425; i=markus.elfring@web.de;
+	bh=XTR/nhj5MrW+3ggTFQ749a6iLnniw2ba6f0H4nA+qfA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=nAQdAjwgADWFJo5qTN9mgG2FdrguVGoYj/xwvqAfcuQW9i4WHJDNFjcD78cHmVaC
+	 yIY3WmzjFZ41JAbXSHcXvEK7nJmSwG7TE9uhYOzbwVpdxMBpxlW4PLQjOQLRk+24m
+	 AtSf797iZok8gnigCT2lWL6O8MNO95hGejezOlgmUa4pxe+GJalqWPXGmLkdAz4fo
+	 YbI7xu4b1cMA56XnIzG3FNuNoI/iRDPIo1/P0Fl7xMX30JCfoL8kM/hcrRijT4Mkc
+	 JHJSL/WwgWcSpf7r6al7B5Kw5B5V7O1C1OEJlQGP92jMS6eX0M4JygEZTK4nPSQmz
+	 ChOvIvpy0LOUGOhiVA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N2SKz-1tw8eE1Vtf-00w35Z; Sun, 10
+ Nov 2024 13:10:25 +0100
+Message-ID: <28f2bba7-40f0-4015-af84-d3c08c9a14c1@web.de>
+Date: Sun, 10 Nov 2024 13:10:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzAs--iaKCXIY-Kq@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+To: Tang Bin <tangbin@cmss.chinamobile.com>,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-sound@vger.kernel.org,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241025080026.2393-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8192-afe-pcm: Simplify probe() with
+ local dev variable
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241025080026.2393-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:cFryH+0NX5oq80c/QNEmOxjeC51hOP9U2wT+P96GpQKaFgokGkG
+ 7Wf4Mn8YFwyLHHvCbMMy7JcZy5ok+8spkddeOF/7In/eQzmAe6ZLdtEX7AObfjUs7k48cJQ
+ bOq79U5aJKSnzi3foN5ca5TGCXTnYYYP0k8wUbidQsVqnSc1M2E+ehKnocTiasfpdMF5C+6
+ jGyK9d1+5Xa0gJAFHiGuA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ix+3Vngnm6w=;p5QE56Xzwca5K5BFHiuaLGJAO7e
+ auLYxV4OV05Pw5RnzItnmtcO2ieqKwINlj2b7mgshnGe9v4h666f4G3PXQqhbfWO1gRZxzxXP
+ G2o0xQEphxeYmpPNS9GcDQwG89SlGCCWZqeY15vwpzDg8aXkMD627qJt/pq78A/hFnvU8VbLJ
+ uLnReYZtDslBjIcVTHC/d0h4H9DE81xMwOvl0HtOuIlM7KnabVQ2rabX/Z6CpQgprA2DoJDgm
+ 6UTisdG/AABwXS2pUv999C+jRLRRNMrY5XlrSt4LHnTo0SuwZaSmSxwNkEt9DVHlTVKa0kEJG
+ Qj8uADrUnMEzKQvx8In0aTIJ7U8DPhBiSTqOL9qrKKvLlK0LVzltBz72KQ0IjUID+jkMY5eKx
+ zuyMRDOca7cWeWhU8KPn7wAESWXGMai7IJGoMjFk5ii848OglElYfNamS4xzybeqbQGGRUYu6
+ vxqauGbXI6yxyqiRkjU2xJif5KsbeUep1V0hSHU/8CzKVsEV9SyzikeaRe5TYxLMqpSR8PRM2
+ d/3drYn8kg+G65WOE159FhvXYEDBBR4Bz0mK4ATVwS3JNj4LM4vHyhqcnDBXF+9ATbe+pWli8
+ /pIblUEdqbL06nKzC4h0Gv2BKrMtpFnpNP9i7qS0jD96nxHcLwSH57Xu0iP3QBfF7e173NrSo
+ bRp/Z6SMpvHpi8s/qiTfJUIr2/GNT2k9KBrMIfIxrUVPcCKGEmXyd4FGFdT6A8Z8+h+CvkXvu
+ RKIpvVM+P2aMza0wS1zeq+oA2N++LyuFapUbaXM9g5lcaSNOji7/DoB0PGTUUbK0oI9HXh2ti
+ AY1/w/8YCyi+PHKY2Md0odpg==
 
-On Sun, Nov 10, 2024 at 11:48:11AM +0800, Herbert Xu wrote:
-> On Sat, Nov 02, 2024 at 06:50:35PM +0100, Christian Marangi wrote:
-> > Add support for the Mediatek EIP-93 crypto engine used on MT7621 and new
-> > Airoha SoC.
-> > 
-> > EIP-93 IP supports AES/DES/3DES ciphers in ECB/CBC and CTR modes as well as
-> > authenc(HMAC(x), cipher(y)) using HMAC MD5, SHA1, SHA224 and SHA256.
-> > 
-> > EIP-93 provide regs to signal support for specific chipers and the
-> > driver dynamically register only the supported one by the chip.
-> > 
-> > Signed-off-by: Richard van Schagen <vschagen@icloud.com>
-> > Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> Please ensure that this passes the kernel crypto fuzz testing
-> (CRYPTO_MANAGER_EXTRA_TESTS).
->
+> Simplify the function mt8192_afe_pcm_dev_probe() by
+> using local 'dev' instead of '&pdev->dev'.
 
-Yep I also tested with setting the fuzzing to 10000 just to make sure
-and they all pass correctly.
+You may occasionally put more than 51 characters into text lines
+for an improved change description.
 
--- 
-	Ansuel
+Regards,
+Markus
 
