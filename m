@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-403373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D96D9C34B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:08:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20FB9C34B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 22:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331E11F22102
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:08:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F421B1C20F86
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3B015443C;
-	Sun, 10 Nov 2024 21:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E8A155743;
+	Sun, 10 Nov 2024 21:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qeridPJl"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qvrPK/KQ"
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2181F153838
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECED13B5B3
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731272933; cv=none; b=BD3/50fnjneE7WaeIWUPzVUEffW3v5dLV6u6Nz8OVMY0t6Mzr3BjRbwEoEkCKy2lzPlBXIB3xEyJXvxLwxTlpa46EX2Hh1K18oxy2epXcRE2yainUA218Id1sScjeu8KZYuh+J8KTQBwiCOwyjgGdQAKxZ+Wtzjml83LMHqXBc4=
+	t=1731273087; cv=none; b=Z9rkVtKjBymM3+fHfftK/cHkiXcBulIZw6cXKK+uBfAlFyJ8fQIP+UoMHbKAOb78J9R8M2XaqUhpvPbi+t8AMyI2N/tR/8EbYx23auIhRLnJzNsN9L6p9tFZkvJ0GH8/JD3qj7JMAQPmc0efiY8x0zbe717zsVemT5bek0zdCuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731272933; c=relaxed/simple;
-	bh=t8RoIVM8yxBt8+znlr3MEbsoYeB+vGg8Q5gl1kAFOsI=;
+	s=arc-20240116; t=1731273087; c=relaxed/simple;
+	bh=6UwvPEOCr9hcboEYF4WfwJu4qonjGE2rQ5sHZtR7UNQ=;
 	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BY4o6wfWxZvupLPMifyWbiwywG689t8mk27Q2Oa0Qne7s3uPlYUx684bIXEqp10aqptRhVUT2xZ92yYhQ9F9l2VSRZTCjQp7pI5/hVwRqDd42PYUu3ZhwlAWdd2LkuBxy0ec/0dYmYvYz4Tma79+OKgwIjdD2kryTLmXXT2VsHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qeridPJl; arc=none smtp.client-ip=209.85.161.51
+	 MIME-Version:Content-Type; b=YHnurFvl+lJJiIyUcDVrtZ+TsHDQ8hSwt3pW+4lEySEvL5XC7NV6TZ8qEhdL0hByvyHSmS38UhquNulX8Y/cdhT/6jJj3VsJ244er10LnI2w3vd12aMxhTG6It+s+EMYZzBCKJYnuHeH0dIf064bDNel0KEtxefN0UErXrPDKHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qvrPK/KQ; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ebbed44918so2594333eaf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 13:08:51 -0800 (PST)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-260e6298635so1889069fac.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 13:11:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731272931; x=1731877731; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731273085; x=1731877885; darn=vger.kernel.org;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMht+vxaFjz9axh0ZalC7+1ISXKbvuYgeiAVju4o7E0=;
-        b=qeridPJlavrOnaQdT+yaH++9kTfCbx6VCzsYKJia3w/Q8eSAcyNgaAnyVbegTebodd
-         pxpzVWXmRdkOoX4El9VSmXWidKIuv6h5e/Y7dWMIVR7eHemSzXI6sVkiSJm2hVkRw3Z7
-         fvCvkY+1e/F8mOTtL2RgA9QuwfSFAP0ut3ifsUqh02vgvgEk2BMH2XM6shoYxRXrnWdK
-         MeYP+3porY703+c4h0FGbI52E9xO8IKpmG8KnHr4eLj7n4MbpBzokwzHW3c2DgZVaHfk
-         LKzEoK63MZqJiy/cL90CBLTtmR1Cs7SU15QJ5/3hZu3+2BFS6FT5M6gy2JR5oaGM+jXQ
-         AFEg==
+        bh=wm7lqc6cjJtGfdaDUhdk/4pQrGz/TeIdmCREqGvtLL4=;
+        b=qvrPK/KQH/ayknkkc8Hb/wiRq+m4DeBJ/OsDhI5LsC+CX7aWB+M04Egu3NkPcHCjsb
+         RYRoWcIqBu9WOGxv1CYrtc/PHe6XWlnu/rspm/Pqh0PkIFTVE0pFMGKXoOIQ4amLeizQ
+         hP/iZVYFzIxpvyTl/9GDIlqlFqIyh0ORTKrBj2wnQQ7efu2ef0x7WWhgxgKog1IMgs+1
+         fdhQTBVPIncjezspO+ktRwLhzLohY2GPPP4MG9VIinCaTk9jCyCuOzk+F7ZdVXTzXKZS
+         7EwWzx+6hOx9GL8TWFOeWLFXdqmXrNpVm+JcwSuRcSGtT17osErGkPwxFceTfsKqpn9n
+         +vrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731272931; x=1731877731;
+        d=1e100.net; s=20230601; t=1731273085; x=1731877885;
         h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMht+vxaFjz9axh0ZalC7+1ISXKbvuYgeiAVju4o7E0=;
-        b=vRI+gO+pcspZXkXzMXMUgaTk0BeAdh4oFSaZz1Mh8C8GLgXIXe1ZcfkGjgDcJkXeXL
-         uVT1Vov4M2Du0t8+VfJAULbDVqvhX62KD0HhA75GtVSaonAQ6ljluvxM9MAf2sHVA9n/
-         AbITPo2oq5KgLUwfxN76/zP0EqfpYjTbPxqY6qaURtpLAheOC541KmvLuCeiwjqJaiW3
-         ZtH3gwEsmsr5dMEOB0AzG0afJdcyXRQ8OzF2iX+T0XrptBwtym88MgRXJvMKIxaKfKdh
-         XckS76v4Ltm7814WkxrRr1OadVuoKAbAU7UxpwY5IpApaq+8tAjktfu5ZWVAdOjaYK+t
-         NJqw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/TWQycvOQlMqn+V7lCigVkwhFqy8r7NZnHr1b9XiHYGrT1OEtXlJ1YWxL6yYXaCwOcRXqyTDSW7+YciU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ7MX4Qbl1CnCEkorQHA72Ux0AflQciPpvY5QzDc/teiSrg3rP
-	jk08KTxvFvltOWH6wanl03i4qqVjqwnDBbgzBu7p61xjfEilzzfQC+mPsZqaDw==
-X-Google-Smtp-Source: AGHT+IGFj8eLtBd7Jy5XaqUUsdZIzcV0pQhujMhDeP/QPwnZPS3lmAbgCtfgoEh5J5pjLxtyPfKjQA==
-X-Received: by 2002:a05:6820:2d0b:b0:5ec:c22c:72db with SMTP id 006d021491bc7-5ee57bba7b6mr7528549eaf.2.1731272931003;
-        Sun, 10 Nov 2024 13:08:51 -0800 (PST)
+        bh=wm7lqc6cjJtGfdaDUhdk/4pQrGz/TeIdmCREqGvtLL4=;
+        b=XoHLQR9Cz6AAEz6WypB2viDFYUJ2CjhrJE8y5JLaGGQwsEOn86OYmAzmmMqUWpzq9d
+         MVCd6yMxVM1+n5Hfg7IjYztn8kiEW+5NeCOOjCNWj/umhFrokJ2OS/IfZsyEJPS/daZP
+         BLtm7Sw+rm5iBBw9EeI/vD1U4mxGXvFW2McjBF/0dZ02OyH05Koiwfj0g21xB86rbfbA
+         u8WCWOpUHuqlg63mYM9LfrlSpHpvqtz7OppxTgH7kEZH4I9ywrcpxQT+CrABhoRzr1qy
+         G3x3prbGTSdbt+XjcTxcE7777OYxB6Os56JhisxokltoLrOTcvbxWTfBXk2O24zpUCiY
+         uWeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUke4vXz5956EFYnnx4D472vK/D2gnP+FvugYMSIMqfuAKZLjRDLPkh0h1WYdOf2ZG8ytNz+c6o7Y7uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/wZzwx5KvSKXRZ8Aq2fAmC+ER5fxNqk+Fl9WzBxwHNYKQhibJ
+	fwD8wwCPJd47YLm7OTQby3KkADqt4cEHkO9+nxNT1/h+o0gc4r25Yzg5gbo3tg==
+X-Google-Smtp-Source: AGHT+IF85Gy4fzCNG92ic3IycLYyvuh/85UvmtrWOu0VB2aYEskhi8P2P3+nsuvrZAMyj67x1wyViA==
+X-Received: by 2002:a05:6870:d60b:b0:260:ffc8:6d9f with SMTP id 586e51a60fabf-295606ff3b5mr5639440fac.19.1731273085318;
+        Sun, 10 Nov 2024 13:11:25 -0800 (PST)
 Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ee495275f0sm1668915eaf.25.2024.11.10.13.08.47
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546edff25sm2414735fac.37.2024.11.10.13.11.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 13:08:49 -0800 (PST)
-Date: Sun, 10 Nov 2024 13:08:37 -0800 (PST)
+        Sun, 10 Nov 2024 13:11:24 -0800 (PST)
+Date: Sun, 10 Nov 2024 13:11:21 -0800 (PST)
 From: Hugh Dickins <hughd@google.com>
-To: Zi Yan <ziy@nvidia.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
-    Wei Yang <richard.weiyang@gmail.com>, 
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Zi Yan <ziy@nvidia.com>, Usama Arif <usamaarif642@gmail.com>, 
+    Yang Shi <shy828301@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
     Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
     Johannes Weiner <hannes@cmpxchg.org>, 
@@ -78,11 +77,11 @@ cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
     Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
     Chris Li <chrisl@kernel.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
     linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH hotfix v2 1/2] mm/thp: fix deferred split queue not
- partially_mapped
-In-Reply-To: <C4ECCA8C-FBF6-41AA-9877-4376EC94E021@nvidia.com>
-Message-ID: <6fcaaa72-4ef6-ebda-cf37-b6f49874d966@google.com>
-References: <81e34a8b-113a-0701-740e-2135c97eb1d7@google.com> <C4ECCA8C-FBF6-41AA-9877-4376EC94E021@nvidia.com>
+Subject: [PATCH hotfix] mm/thp: fix deferred split queue not partially_mapped:
+ fix
+In-Reply-To: <6fcaaa72-4ef6-ebda-cf37-b6f49874d966@google.com>
+Message-ID: <3c995a30-31ce-0998-1b9f-3a2cb9354c91@google.com>
+References: <81e34a8b-113a-0701-740e-2135c97eb1d7@google.com> <C4ECCA8C-FBF6-41AA-9877-4376EC94E021@nvidia.com> <6fcaaa72-4ef6-ebda-cf37-b6f49874d966@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,70 +90,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 
-On Sun, 27 Oct 2024, Zi Yan wrote:
-> On 27 Oct 2024, at 15:59, Hugh Dickins wrote:
-> 
-> > Recent changes are putting more pressure on THP deferred split queues:
-> > under load revealing long-standing races, causing list_del corruptions,
-> > "Bad page state"s and worse (I keep BUGs in both of those, so usually
-> > don't get to see how badly they end up without).  The relevant recent
-> > changes being 6.8's mTHP, 6.10's mTHP swapout, and 6.12's mTHP swapin,
-> > improved swap allocation, and underused THP splitting.
-> >
-> > The new unlocked list_del_init() in deferred_split_scan() is buggy.
-> > I gave bad advice, it looks plausible since that's a local on-stack
-> > list, but the fact is that it can race with a third party freeing or
-> > migrating the preceding folio (properly unqueueing it with refcount 0
-> > while holding split_queue_lock), thereby corrupting the list linkage.
-> >
-> > The obvious answer would be to take split_queue_lock there: but it has
-> > a long history of contention, so I'm reluctant to add to that. Instead,
-> > make sure that there is always one safe (raised refcount) folio before,
-> > by delaying its folio_put().  (And of course I was wrong to suggest
-> > updating split_queue_len without the lock: leave that until the splice.)
-> >
-> > And remove two over-eager partially_mapped checks, restoring those tests
-> > to how they were before: if uncharge_folio() or free_tail_page_prepare()
-> > finds _deferred_list non-empty, it's in trouble whether or not that folio
-> > is partially_mapped (and the flag was already cleared in the latter case).
-> >
-> > Fixes: dafff3f4c850 ("mm: split underused THPs")
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > Acked-by: Usama Arif <usamaarif642@gmail.com>
-> > Reviewed-by: David Hildenbrand <david@redhat.com>
-> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > ---
-> > Based on 6.12-rc4
-> > v2: added ack and reviewed-bys
-> 
-> Acked-by: Zi Yan <ziy@nvidia.com>
+Though even more elusive than before, list_del corruption has still been
+seen on THP's deferred split queue.
 
-Thank you: but I owe you and Andrew and everyone else an apology.
+The idea in commit e66f3185fa04 was right, but its implementation wrong.
+The context omitted an important comment just before the critical test:
+"split_folio() removes folio from list on success."  In ignoring that
+comment, when a THP split succeeded, the code went on to release the
+preceding safe folio, preserving instead an irrelevant (formerly head)
+folio: which gives no safety because it's not on the list. Fix the logic.
 
-Those 1/2 and 2/2, which have gone in to Linus's tree this morning
-(thank you all), have still left a once-a-week list_del corruption on
-the deferred split queue: which I've been agonizing over then giving up
-on repeatedly for three weeks now (last weekend's seemed to get fixed by
-applying a missed microcode update; but then another crash this Friday).
+Fixes: e66f3185fa04 ("mm/thp: fix deferred split queue not partially_mapped")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ mm/huge_memory.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Sorry if the timing makes it look as if I'm trying to game the system
-in some way, but it was only yesterday evening that at last I understood
-the reason for (I hope the last of) these deferred split queue corruptions;
-and the fix turns out to be to this patch.  Perhaps if I'd worked out why
-sooner, I'd have just switched to proper spinlocking as you asked; but now
-that I do understand, I still prefer to continue this much more tested way.
-
-My ability to reproduce these crashes seems to be one or two orders of
-magnitude weaker than it used to be (generally a good thing I suppose: but
-frustrating when I want to test), and there's no way I can satisfy myself
-that the crashes are completely eliminated in a single week.
-
-But I have been successful in adding temporary debug code, to check that
-the preceding "safe" folio on the local list has non-0 refcount: that
-check fails much sooner than reaching corruption, and I've run it often
-enough now to confirm that the fix does fix that.
-
-Fix patch follows... as you'll see, it's very obvious *in retrospect*.
-
-Hugh
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 03fd4bc39ea1..5734d5d5060f 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3790,7 +3790,9 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 		 * in the case it was underused, then consider it used and
+ 		 * don't add it back to split_queue.
+ 		 */
+-		if (!did_split && !folio_test_partially_mapped(folio)) {
++		if (did_split) {
++			; /* folio already removed from list */
++		} else if (!folio_test_partially_mapped(folio)) {
+ 			list_del_init(&folio->_deferred_list);
+ 			removed++;
+ 		} else {
+-- 
+2.35.3
 
