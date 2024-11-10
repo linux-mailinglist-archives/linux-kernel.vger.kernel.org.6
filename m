@@ -1,56 +1,108 @@
-Return-Path: <linux-kernel+bounces-403310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602659C33EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:12:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827BA9C33F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9100A1C20818
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1C7B20F4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBB313AD22;
-	Sun, 10 Nov 2024 17:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0DD13B2BB;
+	Sun, 10 Nov 2024 17:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qb35O84S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c4vg8FMP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB2617C91;
-	Sun, 10 Nov 2024 17:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199E483CC7;
+	Sun, 10 Nov 2024 17:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731258758; cv=none; b=jdmcUjQqQSzbtbGpuDOOKzceikpy+E5C9NExCc6DNDGQD5oZZmFBD2oI+j0GIZjOYpni2fjcWJgZwMSWjaEGlzMvA5AbWtnSfIT5E3cvAsBP3dXKzTtf8d/ZfpbzjqNA7qFMywqcjaGG6V3Tdyb1G030ptwCGmxxCQaxiMvPams=
+	t=1731259036; cv=none; b=ZK6eXgWgTbE1WPD+yWZrr4UOhGC9Vyo0w9SKr+j0Z0azvNy6btM4XsCyyrSUDqdbWYGDAeyu9ktfyjZfUav35QVO6mCUBUgJtCr7A9c5rZC2x0ASRMLlBDPMREoCh85p0b+jmDcyZm1WDK7qFXNzRJVkQvyqoZX+Ng+urF5vRIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731258758; c=relaxed/simple;
-	bh=f+xJQK8qTxKaBoNsqvHUio0u/tyW7z+uPR0etrMifvo=;
+	s=arc-20240116; t=1731259036; c=relaxed/simple;
+	bh=d/Nbv/2a4fNGYpYfknQMtQ/oP/laBmvhR1O2gSULEUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VY+Nq4MJgkA6GOEoKi/ttx4+PJLoyMfdmMvKHxoGK+PZ4FLJRVCTcH2ITSC9CaAhYwkqR5bIlYHMzLeJQFLG/HnPaplHYN8Hq7FHjQkfzhgwmiyIEGD77FaZFkFmrxghgl+VgpbfD89VZ64mxulDn6qgwGMEWgtTcUB7xBBMJ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qb35O84S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DBC8C4CECD;
-	Sun, 10 Nov 2024 17:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731258757;
-	bh=f+xJQK8qTxKaBoNsqvHUio0u/tyW7z+uPR0etrMifvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qb35O84S4/dlUpuzaNYBWgqQZ0NaJ/qIgDwm9VpchJBYt5mTo0XbuF04yYMQeucrf
-	 XD2smO2O1cjwLUkRXxD8KH4IKpizNfgZ29dJQBGqqGToDu5V+nvVMpRjxl466IhpLN
-	 GaIY+73kLlCkd2Y9mbMLNKLLNEyP2NJLAnZE5p4AIZgMWLyCjiW09eoSqZAbJDbM3O
-	 hK1qJaeLxMTtNitUm3MnRVVDAJiZGfnfa+Bdc4EjtRsLK0txO7C788YTqVHe/dC42h
-	 ZCejshQd6nEZ8FH1Rg61tTyclNc3uQe3EAFIzFaR5kcOL76Ik0r3iqb56QF4gOaQnW
-	 dAwboE0c5bHuA==
-Date: Sun, 10 Nov 2024 12:12:36 -0500
-From: Mike Snitzer <snitzer@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>
-Cc: trondmy@kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: [PATCH RESEND] filemap: Fix bounds checking in filemap_read()
-Message-ID: <ZzDphC-x1XEFlDvD@kernel.org>
-References: <f875d790e335792eca5b925d0c2c559c4e7fa299.1729859474.git.trond.myklebust@hammerspace.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGIBYSSNZ3Z2xxtrLutlvBqz9+xY9zXre3Wea3Zhjhy8vlX5OniHncZkMH5fIIaxOJnNeG38H6qDQsVWP2u26KsGfyu0U8kPencYD5Mw3h2MooHypyMURJHM+JudiPcz9RbjtMoN2g4iLodt/RCI0VrmUEn/NqQddp6+eau8HqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c4vg8FMP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAFb5L1032278;
+	Sun, 10 Nov 2024 17:16:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=lFd4Fam7Rl/a+c8SETSijmhw1wHdaw
+	vG28+eDPKUbTY=; b=c4vg8FMPd5AkvBn7/EwHFTHjzKEByCnTy9mxwklBTl5QOB
+	Iup4yAtEAtH083cxsjawyIAccQpg3ZKNVHK5mwQR/F9B4XMNwUqvyIiTSTTD8ziH
+	e8FETXvslUZspkYOBGnIgcotR2fRV1le+A3egia/S5xw5rkCtz8h2H6i84R9/n7Z
+	5lRQRjxnUeNa505alx/OH8Xg/TLH86GVkDdRe1qL2zYsv+YUWdj1prIYfXUxWFP1
+	ZAwJkkXrMOq6DAVatxG0R6FCGxBQah9KUWwtcgAV4ohtZfM3KJeB0w1AJDNWxDPz
+	ZHD/JBr9YnC0myexcE7sUaP/uc8Vbzosb3v/hcWQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tjg3a9qj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:16:46 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AAHGjEu019200;
+	Sun, 10 Nov 2024 17:16:45 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tjg3a9qg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:16:45 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AA2gvH9007218;
+	Sun, 10 Nov 2024 17:16:44 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tm9j8vnk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:16:44 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AAHGeVw21692846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 10 Nov 2024 17:16:41 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D150E20043;
+	Sun, 10 Nov 2024 17:16:40 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A8E3F20040;
+	Sun, 10 Nov 2024 17:16:39 +0000 (GMT)
+Received: from osiris (unknown [9.171.74.231])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 10 Nov 2024 17:16:39 +0000 (GMT)
+Date: Sun, 10 Nov 2024 18:16:38 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v19 13/19] fprobe: Add fprobe_header encoding feature
+Message-ID: <20241110171638.6661-E-hca@linux.ibm.com>
+References: <173125372214.172790.6929368952404083802.stgit@devnote2>
+ <173125388510.172790.1161831132316963172.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +111,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f875d790e335792eca5b925d0c2c559c4e7fa299.1729859474.git.trond.myklebust@hammerspace.com>
+In-Reply-To: <173125388510.172790.1161831132316963172.stgit@devnote2>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: GJCKposUAeWJS4L6p4y06TvBF-vByzu7
+X-Proofpoint-GUID: n_GXdkFm3pIvgXraT9dt0EiUt6IaSzmq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=345 lowpriorityscore=0 adultscore=0 mlxscore=0 impostorscore=0
+ bulkscore=0 phishscore=0 clxscore=1015 spamscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411100151
 
-On Fri, Oct 25, 2024 at 08:32:57AM -0400, trondmy@kernel.org wrote:
-> From: Trond Myklebust <trond.myklebust@hammerspace.com>
+On Mon, Nov 11, 2024 at 12:51:25AM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> If the caller supplies an iocb->ki_pos value that is close to the
-> filesystem upper limit, and an iterator with a count that causes us to
-> overflow that limit, then filemap_read() enters an infinite loop.
+> Fprobe store its data structure address and size on the fgraph return stack
+> by __fprobe_header. But most 64bit architecture can combine those to
+> one unsigned long value because 4 MSB in the kernel address are the same.
+> With this encoding, fprobe can consume less space on ret_stack.
 > 
-> This behaviour was discovered when testing xfstests generic/525 with the
-> "localio" optimisation for loopback NFS mounts.
+> This introduces asm/fprobe.h to define arch dependent encode/decode
+> macros. Note that since fprobe depends on CONFIG_HAVE_FUNCTION_GRAPH_FREGS,
+> currently only arm64, loongarch, riscv, s390 and x86 are supported.
 > 
-> Reported-by: Mike Snitzer <snitzer@kernel.org>
-> Fixes: c2a9737f45e2 ("vfs,mm: fix a dead loop in truncate_inode_pages_range()")
-> Tested-by: Mike Snitzer <snitzer@kernel.org>
-> Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > ---
->  mm/filemap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 36d22968be9a..56fa431c52af 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2625,7 +2625,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
->  	if (unlikely(!iov_iter_count(iter)))
->  		return 0;
->  
-> -	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
-> +	iov_iter_truncate(iter, inode->i_sb->s_maxbytes - iocb->ki_pos);
->  	folio_batch_init(&fbatch);
->  
->  	do {
-> -- 
-> 2.47.0
-> 
-> 
+>  arch/arm64/include/asm/Kbuild       |    1 +
+>  arch/loongarch/include/asm/fprobe.h |   12 +++++++++
+>  arch/riscv/include/asm/Kbuild       |    1 +
+>  arch/s390/include/asm/fprobe.h      |   10 ++++++++
 
-Hi,
-
-This mm fix is still needed for 6.12.  Otherwise we're exposed to an
-infinite loop that is easily triggered by xfstests generic/525 when
-running against 6.12's new NFS LOCALIO feature.
-
-The irony of the original "dead loop" fix (commit c2a9737f45e2) itself
-having introduced the potential for infinite loop is amusing.
-
-Thanks,
-Mike
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
 
