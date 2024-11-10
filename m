@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-403138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722449C3184
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:03:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C1619C3185
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48D141C20A8D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97EEE1C209FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A65015530B;
-	Sun, 10 Nov 2024 10:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A2B15443C;
+	Sun, 10 Nov 2024 10:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsTVO1NT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="oztQlIp9"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAD514264A
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 10:03:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731232990; cv=none; b=XV44IuPe95zXxniCI7lAKa/U2r4AMBfaFppn5cejIlmYDOICjJCngIsOcPbfeoOglrK+c7FYruDk3MYJiLnxNHhP9PYmpGnJjO/PiByYLQTRrkrlS+ZJKMN9FBS4M3FOrij31mOixxrMiN7pQwbuC81PKKX265tQ3bSxvyUAR+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731232990; c=relaxed/simple;
-	bh=JuPQprxNdVS79jMbT3E3umbB75WSFf1D77oRImzuC44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ng+/T3OiDwgkZG1/vb+S3upEbZ/d49D3z78JmRAg6lyrzODYySzImDd5xDe0ubxlyZVP05ymo64WfE+bphr1eNinOVTtmUmULsDLOgLa8qW9UcxZCinzJBZrU/68SZoyO7Jlk1oDiaSSRS73QkVygM44D6h+XY0Z93ZeRn6liRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KsTVO1NT; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c803787abso29255165ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:03:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731232988; x=1731837788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xiFZTH3qTL0WXCX7QodtQLZhQsphF3bYxcB5sAqZdks=;
-        b=KsTVO1NTLJr3zoAXyCAUwUcm66Q/kjH+OcXx4gOMpme/4SjvV0ejJdC/dcrGQyBGNN
-         ex6iIuwz82QufSFzOhv2l1gPXhL16iZstSHb8FS7tJe+H15AbXPizUrRcHg1WGVFCIvP
-         C0oHrK+AT2a2+6L59pNYhwyGvshFfKuag2pCe2dR3X1vVUu3XZ6PVYeyKRUYjhWRvApP
-         umfewWVKAidXK2GramxmI+16PhXJj0SN0qetPhioay2SQJkDhrH15FPSqlVxM6F8Ip5P
-         +/xRyLAzTKluItgg08YKQgjsTqGsa9HhAdg6QPTO5OWidFJk++uiURvaCET9CzvFjiEC
-         6cTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731232988; x=1731837788;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xiFZTH3qTL0WXCX7QodtQLZhQsphF3bYxcB5sAqZdks=;
-        b=rD3rF8ApseW5lGXjD609S9980MKTrd+BVFGAsl9Tqo523Ad9D0lR7dbbV1Ga4SG1P0
-         nwFUUlamM6rJ1/XndkERa4HnDh+8rgMLco70c64cileNoXdcZarHMhM/dj8g711x7tXw
-         xTCmQTwqC3d/bf22NjJYZXzjR7uNJOOdWfojnqbzHhQ8GhCalBPEOu6uaVNqMteFJNHv
-         fHR8WK8IG9hPixaxfQ3o6NH3wB1L+I2HvonquC2Z9C3bfyvptwYDOgtstIkh41HXtrzR
-         Bcq+AQ16So9YZiYvyqarT8BsVCDeIit+xuhijY/89wMIMCuxGS1HsYnNAWMXENkPtK5O
-         yFTQ==
-X-Gm-Message-State: AOJu0Yyl9kKfR7jxyCx9lnnmxh4Zfhj2VYxzSeWmX8bEqel8Vm34kznT
-	GTbq7ksfPc3fFBNqvIK34VvcnTmT8Cc4ElhoUdS7hE2gTfm7VhFn
-X-Google-Smtp-Source: AGHT+IF0Ent+47+UfTJNKd+3ZY8VkzZR6EUVI8axRWAbnSchXFtBVNAbuZjru2Rs/H0veagYC0f7PA==
-X-Received: by 2002:a17:902:f651:b0:211:3363:8c8d with SMTP id d9443c01a7336-21182202b3dmr164494035ad.20.1731232988096;
-        Sun, 10 Nov 2024 02:03:08 -0800 (PST)
-Received: from [192.168.1.6] ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f5e57fsm6554439a91.14.2024.11.10.02.03.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 10 Nov 2024 02:03:07 -0800 (PST)
-Message-ID: <81281555-d57f-4507-a3a5-ea9d1aa27871@gmail.com>
-Date: Sun, 10 Nov 2024 19:03:03 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF5914264A;
+	Sun, 10 Nov 2024 10:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731233163; cv=pass; b=cW1tEhgDWQCtM2iT4fAskUY4HgEvwaQDbassTBKFXrUEzw8+h/4M3tyMZJP8y1rIZfXXNa4K89wiieHHbvVdBJYoIR//YKdLsRMQu5xcmE+6Mrd+sKCJo07u8trnwI22bdgo74pzcHVaYfVaxTgyeDWIQMyIN1ZWchwHkXXm9VQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731233163; c=relaxed/simple;
+	bh=Pllu+OUHoJ8NwyryLcY0ZPUDDYuEZKtWJFEI1VKX6Lk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=flOx1VUJ3Zf39Xb3BII6N0xWxNfApR6ESZV83k5MoQKkyr2fbeUXsshoCbcfTLuK7EDKfP2dM8b+oJvG+cszNvbJHcvNOZjhGZYhed2glIEdYrWEzhVn2Tr68Nkar7WKBT5KSEYjCxdhsQamZr5YB2k21ptTpfEwkPQ6qnnOYu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=oztQlIp9; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4XmSxD4RPJz49Q02;
+	Sun, 10 Nov 2024 12:05:52 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1731233153;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GSJyOWE4WAYvSphsWbU3m6wKxqDPYhI7turGKUFNKWw=;
+	b=oztQlIp9jUONRwWrdK0vgXZqKnAkVbSl72rRkjRzsUxRoPtF7K90lMAYlg9wvTgGzOV62V
+	C42E8GNwDQFLg9zi3JDIf/PbRVMPVWpJdFgYLuA+ColhewSI7+gC+CBP2SJkrFgbU0TEil
+	0PWK+XsECJVmma8VfODpzcav6A9CCu0RqB9w/eJxSxf5wxi6DhZEUwjjqoL9OtLW+7ElC1
+	VYbOIGGyaqLpQBG08u1Kx1DUToYs6CZbNBk/qcfastV0RoyI7eLA8fVl8sPDpSTN2HZAPY
+	OFIzTLOOPD4dbn6HAUJ0RjqS4WUsfLz5HZ2ACa7pyfCUc1gXix9De0QcMwHWnw==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1731233153; a=rsa-sha256;
+	cv=none;
+	b=GvGT4FXOiL2pGxU0W1DtHd/jviUqRNK8EmvfxAPO8DWUB6QhqZZ0msBr8JqD5uQ4ulRhKU
+	F3iUUr+MpIK+7tc9JmDWp/D2HQPIP8vTk1DV6b3OC4YIxhVQo9s+ZZjp+FVd0+7OomIEO1
+	1pk5FlbDZeZX7BE621kFs+zHUPCMSCaiS/qPAVTT6H8WFBJdymecfIMvaidLt6p/7BHAS9
+	Sqg1qTs4IqqEm5YqbRYrMI58XP7+laG+X9b5JlO1sELZdDTY08rTrWP2bnZXy2el0MaOwT
+	59BIUffa3RAOV/nzDcEIW+T5IlhgOoYIJoNnw59a94ZdFEU6t9dJsXyazPWO2g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1731233153;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GSJyOWE4WAYvSphsWbU3m6wKxqDPYhI7turGKUFNKWw=;
+	b=kWLJ32NgklsQjaZcWXK/Ana7xIntIW/lMJGWKhjv2at7eCXu0hLvB0xDdT98LO5eGHNkkW
+	IaFqYNR/GCsEfqf5PE8rwXoldHT24hMOr+qJJC/WPbyYyJI+1cuu5tmjQYvNeTnUfifnag
+	V1da4jqXKQ0ZbynEzWFSiMpjxNrVOjN0Apl6qMOacX29Y6ajLezX5lBiAaTMRaygZ0DXQi
+	/Q3IylJ8tvkw73pVcra1YlosgK3pHlNKCBdkE/EE2fyGaRmUqmG/HVPo9cWx/9yeYVR71o
+	1Etox8jihyDd1VwyBdLLDv+uclsG94VfUSbyvJrD0TbolhTWmW2/akaBpoKkZQ==
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 30E17634C22;
+	Sun, 10 Nov 2024 12:05:51 +0200 (EET)
+Date: Sun, 10 Nov 2024 10:05:50 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v2 4/6] media: uvcvideo: Create ancillary link for GPIO
+ subdevice
+Message-ID: <ZzCFfnTVgvY7vURV@valkosipuli.retiisi.eu>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <20241108-uvc-subdev-v2-4-85d8a051a3d3@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] sched_ext: Rename scx_bpf_consume() to
- scx_bpf_dsq_move_to_local()
-To: tj@kernel.org, void@manifault.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
- arighi@nvidia.com, me@mostlynerdless.de, ggherdovich@suse.com,
- dschatzberg@meta.com, yougmark94@gmail.com, changwoo@igalia.com,
- kernel-dev@igalia.com
-References: <20241109194853.580310-1-tj@kernel.org>
- <20241109194853.580310-3-tj@kernel.org>
-From: Changwoo Min <multics69@gmail.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20241109194853.580310-3-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108-uvc-subdev-v2-4-85d8a051a3d3@chromium.org>
 
-Hello Tejun,
+Hi Ricardo,
 
-Overall looks good to me. I have one minior comment:
+On Fri, Nov 08, 2024 at 08:25:48PM +0000, Ricardo Ribalda wrote:
+> Make an ancillary device between the streaming subdevice and the GPIO
 
-On 24. 11. 10. 04:48, Tejun Heo wrote:
-> @@ -6372,9 +6372,8 @@ __bpf_kfunc void scx_bpf_dispatch(struct task_struct *p, u64 dsq_id, u64 slice,
->    * @enq_flags: SCX_ENQ_*
->    *
->    * Insert @p into the vtime priority queue of the DSQ identified by @dsq_id.
-> - * Tasks queued into the priority queue are ordered by @vtime and always
-> - * consumed after the tasks in the FIFO queue. All other aspects are identical
-> - * to scx_bpf_dsq_insert().
-> + * Tasks queued into the priority queue are ordered by @vtime. All other aspects
-> + * are identical to scx_bpf_dsq_insert().
+s/device/link/
 
-I suggest keeping this part, "and always consumed after the tasks
-in the FIFO queue." Otherwise, IIRC, there is no place to explain
-the priority between FIFO and priority DSQs explicitly.
+> subdevice.
 
+Either subdev or sub-device. Same above.
+
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_entity.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_entity.c b/drivers/media/usb/uvc/uvc_entity.c
+> index c1b69f9eaa56..dad77b96fe16 100644
+> --- a/drivers/media/usb/uvc/uvc_entity.c
+> +++ b/drivers/media/usb/uvc/uvc_entity.c
+> @@ -53,6 +53,16 @@ static int uvc_mc_create_links(struct uvc_video_chain *chain,
+>  			return ret;
+>  	}
+>  
+> +	/* Create ancillary link for the GPIO. */
+> +	if (chain->dev->gpio_unit && UVC_ENTITY_TYPE(entity) == UVC_ITT_CAMERA) {
+
+This seems to be over 80 for no apparent reason.
+
+> +		struct media_link *link;
+> +
+> +		link = media_create_ancillary_link(sink,
+> +					&chain->dev->gpio_unit->subdev.entity);
+
+And following the alignment rules would push this over 80. I have no
+problem with that.
+
+> +		if (IS_ERR(link))
+> +			return PTR_ERR(link);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> 
+
+-- 
 Regards,
-Changwoo Min
+
+Sakari Ailus
 
