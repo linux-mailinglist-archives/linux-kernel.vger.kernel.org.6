@@ -1,141 +1,158 @@
-Return-Path: <linux-kernel+bounces-403145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44EA9C3199
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:29:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D9E69C319B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2D8281811
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:29:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED8F281878
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5359D323D;
-	Sun, 10 Nov 2024 10:29:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18D11547E0;
+	Sun, 10 Nov 2024 10:29:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C442563
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 10:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C561534FB;
+	Sun, 10 Nov 2024 10:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731234544; cv=none; b=LLeL5ug7LJHaF/djd7rkvhCzmtzcZFeD3ARk+5AJZJ2EC4Ml2rQe92OxfGcEAYJ0T8pBB6qsKbzG5BCvwGqInBNk06T5i8aZCLNywrCmEdjn+78ROzMtpzWV4tpP0prHryP7p+EQ2Dgj+O8c4k5j/5nd96zMkFL7iUcjhiqAeIM=
+	t=1731234572; cv=none; b=oMqGdamBc7MM6SEmsFTL1qIJSgsWwzhAB3hSbGWO361vadz4T8kwflxbgv+2K/geZGmn9YdI0H+EyMQWDpwzL/f13r+9vCTvLQHAlLRg+imuaO0g39uXtOBe9gZ2gAbqzzahCakNPYultko8GwGpakEbfMU9Edln8m2ksJa+G7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731234544; c=relaxed/simple;
-	bh=ZDV9DrPd5Fn9DiOWrrPc8SVGF0rY28BuX14K/BhjTa8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NgWK03ayz7Bnu2AVhKMo4BdZDlvkeVXbI0F+sbgMfSzyVQSlJqbuRfmsRrnEve5+MqXCEO7/lPPw6Ur5Xs7t87J1ujes9ENtiko+r1F8tTU78ZCbdMwHV/vG26ePef6NFRuxPYXyBlaHX+YRP53rTC7/aDZ7EJALvWpgOlzVYbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b563871eso43681415ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:29:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731234542; x=1731839342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ohjvkhyrNBM8QruFwNM4KFzLSCzL37uESi2wXlUJ/JA=;
-        b=TBH1fysbvSZlLs0TAPaXkv9+E7zMSLqhwhPLgU1013iSy3o1VMrLA14+9JgUlkTgUo
-         Fqprts6FMfVBWqVFj71SHoANEz7N+vq2qYweipKNIMZiJ4CrIVt25x55qD2tTzoDJf5B
-         eBXzcGkN9+97SQ2k2aNokqbldnYPVwOxxjO6dtWQSFQFQzxQGptt7mLe+EioMImhTZZ9
-         Tqg+5g/LE2rMl/xgrSKitDDdsrP9QBxUvjKX6UfJmK3I/Y2EFdt44eRubXHLSsUHNyWS
-         b10ZHCKpTQ5vjNQMlfwLSbtPYGlk5vukJJv1czB5o8MpKMVKA2XQRRhS7fVPlGYUn5wH
-         1EHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZfoKJ9akvK/kgVjXhAiYHGUmQ1oJKvVpEDgSRyEllg/APpT4PFkwNqb6v0Sq8OiSjmKGab1s/Vk315GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOGKDuxG0ipmIQ44/LdKU9SUn91dtr59J7v/n5HuomWcszV42Q
-	LDlsu9gukTpMJav1UGVVbKDTngiF6pO3/tI92LlRcKO7Y9eYtGkYwjR1Hrj7IDVsN9TPrxkteSs
-	r4paV7Fqf+/0Y+XdJT3ZNGF40P1gUW9VDHwlCdBd21l3R4NNM43aC5Kg=
-X-Google-Smtp-Source: AGHT+IHxv1DOZUA8WE1UIRPvNKotW8J62xedsBUneqTASq+HdYXFl++iD3MAuslLwEQ+l/uDv3mcAMHfRbp3nEGnRxLleIEa02Ug
+	s=arc-20240116; t=1731234572; c=relaxed/simple;
+	bh=x6IqzuQNfmgWlsUEg7sxtczQPELpAj11YBCL7KQVKrQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uf38PdioiIMh6gdKsOKryy0WyjLKHAGuQguXAbJT3EoBE4p1azhEj9c+RiQB2fYvFUumQrkiqvMhHfj5JNY4noIWN3crGqnC/hbVejcVwUpeBu5Wysjh0IS89AfKTsyKSYOiX+L0ANk5vcmTL2Snw48CO7u3IlejtnJjMVKX4WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03531C4CECD;
+	Sun, 10 Nov 2024 10:29:29 +0000 (UTC)
+Message-ID: <2fd9053f-34b6-4e97-a898-98fd71a485e8@xs4all.nl>
+Date: Sun, 10 Nov 2024 11:29:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a28:b0:3a6:b258:fcf with SMTP id
- e9e14a558f8ab-3a6f19a0126mr114185185ab.2.1731234542576; Sun, 10 Nov 2024
- 02:29:02 -0800 (PST)
-Date: Sun, 10 Nov 2024 02:29:02 -0800
-In-Reply-To: <CAHiZj8jPNG+_4CHjud8qYxGkzXYsCXNxCw6ejQ0wCeFcKxBR3w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67308aee.050a0220.138bd5.004d.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+ Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+ <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110110257.5160a7d1@foz.lan>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241110110257.5160a7d1@foz.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/11/2024 11:02, Mauro Carvalho Chehab wrote:
+> Em Sat, 9 Nov 2024 17:29:54 +0100
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
+> 
+>>>
+>>> I think that should sort the issue, assuming that 1. above holds true.
+>>>
+>>> One downside is that this stops UVC button presses from working when
+>>> not streaming. But userspace will typically only open the /dev/video#
+>>> node if it plans to stream anyways so there should not be much of
+>>> a difference wrt button press behavior.  
+>>
+>> I do not personally use the button, but it is currently implemented as
+>> a standard HID device. 
+> 
+> IMO, controlling the privacy via evdev is the best approach then. There's
+> no need for a RW control neither at subdev or at device level. It could
+> make sense a Read only to allow apps to read, but still it shall be up to
+> the Kernel to protect the stream if the button is pressed.
+> 
+>> Making it only work during streamon() might be
+>> a bit weird.
+>> I am afraid that if there is a button we should keep the current behaviour.
+> 
+> Privacy matters only when streaming. IMO the Kernel check for it needs to
+> be done at DQBUF time and at read() calls, as one can enable/disable the
+> camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+> and on devices that physically support cutting the video. 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in bch2_copygc
+We could add a vb2_s_privacy(bool privacy) function to vb2 to tell vb2 if the privacy
+mode is on. And if so, take action. E.g. calling QBUF/DQBUF would return a -EACCES error.
 
-=====================================================
-BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
-BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:646 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
-BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:184 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc+0x20b9/0x5970 fs/bcachefs/movinggc.c:235
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:184 [inline]
- bch2_copygc+0x20b9/0x5970 fs/bcachefs/movinggc.c:235
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:395
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+That will ensure consistent behavior for all drivers that have a privacy function.
 
-Local variable b232.i created at:
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:184 [inline]
- bch2_copygc+0x1925/0x5970 fs/bcachefs/movinggc.c:235
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:395
+Note that there are two types of privacy GPIO: one that triggers when a physical
+cover is moved, blocking the sensor, and one that is a button relying on software
+to stop streaming video. In the first case it is informative, but you can keep
+streaming.
 
-CPU: 0 UID: 0 PID: 6614 Comm: bch-copygc/loop Not tainted 6.12.0-rc6-syzkaller-00279-gde2f378f2b77-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-Kernel panic - not syncing: kmsan.panic set ...
-CPU: 0 UID: 0 PID: 6614 Comm: bch-copygc/loop Tainted: G    B              6.12.0-rc6-syzkaller-00279-gde2f378f2b77-dirty #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
- dump_stack+0x1e/0x30 lib/dump_stack.c:129
- panic+0x4e2/0xcf0 kernel/panic.c:354
- kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
- __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:184 [inline]
- bch2_copygc+0x20b9/0x5970 fs/bcachefs/movinggc.c:235
- bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:395
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Regards,
 
+	Hans
 
-Tested on:
-
-commit:         de2f378f Merge tag 'nfsd-6.12-4' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a994e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4580d62ee1893a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1715635f980000
+> 
+> I don't trust myself privacy soft buttons, specially when handled in userspace,
+> so what I have are webcam covers (and a small stick glued at a laptop camera
+> that has a too small sensor for a webcam cover). I only remove the cover/stick
+> when I want to participate on videoconf with video enabled with the builtin
+> camera.
+> 
+> Regards
+> 
+> Thanks,
+> Mauro
+> 
 
 
