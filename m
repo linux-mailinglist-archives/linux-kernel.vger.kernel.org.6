@@ -1,89 +1,128 @@
-Return-Path: <linux-kernel+bounces-403235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AEB9C32DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:51:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C76719C32E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464701F212FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F4541F213F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B285F29422;
-	Sun, 10 Nov 2024 14:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7D2535D8;
+	Sun, 10 Nov 2024 14:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="xT5bAb4u"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kWWXv4LO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C36617BCE
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 14:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB3D38FA6;
+	Sun, 10 Nov 2024 14:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731250304; cv=none; b=NCc2JtO35WbUYBS/Qthz3mhr0wqWTTW4BIUnspCJHahaQUMxUxN73dkr+0fVMUMcUcygx5z3rBRGY0RSuhcfbiZdpMxjr3vdbsNDlvI58eWeEp+LXLgaYhPTcJQ6i/lhd7Ruybe+sbTQMWQBsaYE60qez2KE1N1njShRaptnnQg=
+	t=1731250430; cv=none; b=g1WZYh31rWhXti/A53KwRvJOOE8x4LK0fCulouwpjDN346P1uHACxp/PWcXNvfRVdBAAWgoOjRTR+KGCeSUUu+E3E89xpm7y+mg05NPdLnOtVCkJ5EMFDG0aZVX84IDFWiwymU+wRdpoH1y/Y2jQuPLzbjCW2KtUDw5CkyvIw/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731250304; c=relaxed/simple;
-	bh=L7wTZVOs8zACLd3w1V/xD+YauM16GswzKc8NvpnNUE4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=TFMMNhqMW+YFHBRUjXxPNSy0uCJroMXUeZj03CiQvXcviYDFv4U4LYf30lpja4QBxrXLHKzMRY1FeNq8Lg+Qy+60ke9zrLYOVjjlOKNWLFigWXQj2oS58vK12XBJwhztNU2IoXamQV2cRM+xPAsVWbGH2Ypu0VTohOlbDJdiv8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=xT5bAb4u; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
-	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
-	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rovwVfA92aX8zM1zR0iEvK4EKSTbmIx/Zwmw0e8YmLo=; b=xT5bAb4uYw36qaDQax+7no79X1
-	rsg0++n9l2T0bGlh01EmEvFU9yJfU/PzIFqzZSQzoV44L4TkKzv2kZieqcUWbqUy+BStM71BT4RHn
-	deJWGUkvgSip5ZGrh7NGlnoMB7BA+BtWNs2kLWlhltuFdkM3wekcc54hiUk04G28fIWWzAJ9LNgyL
-	PiUHJLRFStftFPs9EMmisVUYL9qiPUk5TOjgMcFJGOOf5h5gOkaQoPDfW8dqdagPZz40BJiCWpUVk
-	JegTCMGeeGe5ss2MQd0a6OZqky29rOaVgZqG+ezRZr4nLFuwvMW3yXamkSjfyaf+Hgj5vyd+AS8nF
-	X4VadJ8w==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1tA9Hp-003E1l-Jw
-	for linux-kernel@vger.kernel.org;
-	Sun, 10 Nov 2024 15:51:33 +0100
-Message-ID: <31c6070d-b326-4f58-9003-e0d07a30fa44@bit-x.org>
-Date: Sun, 10 Nov 2024 15:51:32 +0100
+	s=arc-20240116; t=1731250430; c=relaxed/simple;
+	bh=zXXL8XVOJGtbLtlHPbbrscaKQpSAYJGhNwBcF722BSg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PctsWjPSyBum/HSCwQn2uSqq9mthYSWKcxMzL/MuGQVseE6Wo2izFSBxVNNLuk8w2GGoEx9V2eyQQnI07UhQo6K6FevZj3D5su8aMkt8+/LKn+ooF90t3sddlLBNxW6tWC7dXMcKRmEtrWm5UNQvuw7qRziz9VEMFwaZw/8jya0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kWWXv4LO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAB0IB7017950;
+	Sun, 10 Nov 2024 14:53:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=eE7bsU9ESG+Cpm+/7T6tUKiYCpbk5f8YzIk
+	XxWNXxb8=; b=kWWXv4LOChYGX423oSVXbrUv+yO1vg6JQNeKSBq2sn5QI2hqrex
+	CD/a/w1UKbrJyx60T907DSRf08b00hqbbYK3bDd1tvTsHKXxmjtI4zPHSGheqYzU
+	qrWEEErZ0DsoMcp37kY65FJJLRb/xEPEG1TQ7uTrzECd5EpYeu1TLwZMdA9QCTWd
+	APSMGsMOhvLGuEDiwrrGamLb241+a5E46d9oT4AUAP86Xk4ywMao/gkXXdcAUf44
+	W5tCk2/PCA0Daaya7gWQd8gxPaxbBUInuXP39gkMO3VuZ2/IdwUk5XhAUwvygJy7
+	ZEDJNMT95v0USPXdiWwvuKMKJ4MgNdYqcLA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxpqaaby-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 14:53:46 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAErhEo019252;
+	Sun, 10 Nov 2024 14:53:43 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 42t0tkewh3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 14:53:43 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AAErhqi019227;
+	Sun, 10 Nov 2024 14:53:43 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 4AAErhgU019220
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 14:53:43 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id 388FF59E; Sun, 10 Nov 2024 20:23:41 +0530 (+0530)
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Wasim Nazir <quic_wasimn@quicinc.com>
+Subject: [PATCH 0/5] arm64: qcom: Add support for QCS9075 boards
+Date: Sun, 10 Nov 2024 20:23:34 +0530
+Message-ID: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
-Subject: Bit X Philosophy Perfected! (harmonizes with Bit Coin (+ Fair Pay
- Politics) and Bit Stream)
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: kAMYBO1ZEBIJKdMVacPhych1t1TOGq2G
+X-Proofpoint-ORIG-GUID: kAMYBO1ZEBIJKdMVacPhych1t1TOGq2G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 impostorscore=0 mlxscore=0 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411100133
 
-Hackers and Witches!
+Add support for Qualcomm's rb8, ride/ride-r3 boards using QCS9075 SoC.
 
-I most pleasantly present the perfected version of Bit X Philosophy.
+QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
+without safety monitorng feature of SAfetyIsLand subsystem.
+This subsystem continues to supports other features like built-in
+self-test, error-detection, reset-handling, etc.
 
-Where the theo is O, and label Sami-Muslim. This is compatible with 
-society at large, and only taking the correct of it.
+Wasim Nazir (5):
+  dt-bindings: arm: qcom,ids: add SoC ID for QCS9075
+  soc: qcom: socinfo: add QCS9075 SoC ID
+  dt-bindings: arm: qcom: Document rb8/ride/ride-r3 on QCS9075
+  arm64: dts: qcom: Add support for QCS9075 RB8
+  arm64: dts: qcom: Add support for QCS9075 Ride & Ride-r3
 
-The philosophy from before supports Fair Pay, and prices on files. And 
-ofcourse makes sense with the development of Bitcoin and Bitstreams.
+ .../devicetree/bindings/arm/qcom.yaml         |   9 +
+ arch/arm64/boot/dts/qcom/Makefile             |   3 +
+ arch/arm64/boot/dts/qcom/qcs9075-rb8.dts      | 287 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts  |  12 +
+ arch/arm64/boot/dts/qcom/qcs9075-ride.dts     |  12 +
+ drivers/soc/qcom/socinfo.c                    |   1 +
+ include/dt-bindings/arm/qcom,ids.h            |   1 +
+ 7 files changed, 325 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-rb8.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
 
-Indeed a dream once dreamed of many in retro days, of our own ecomony 
-for our own abilities, rather than "Print and GFX card help."
 
-I hope you will enjoy
-
-https://bit-x.org/
-
-Light,
-Bishop Cærlyn.
-
-
+base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
+--
+2.47.0
 
 
