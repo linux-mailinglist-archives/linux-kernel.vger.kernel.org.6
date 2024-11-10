@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-403158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACED29C31C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0303C9C31C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F271F20F9F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32BD1F213E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31611547F2;
-	Sun, 10 Nov 2024 11:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21845154C0B;
+	Sun, 10 Nov 2024 11:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfrZefiI"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F90ElSPr"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F176013D600;
-	Sun, 10 Nov 2024 11:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA6C13D600;
+	Sun, 10 Nov 2024 11:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731237404; cv=none; b=pJoJv+c8KJFwDfnY9oWneGMv3qLkzEE232PYPlj4uBefhJx/MZVkzTGETsgHKgv/mRQvWkOD+A8e2SNOEd4Tggpy3I7ATd7Ud4VzgAbJlhbCiQMWoelcyoTJ+kaC4bsuc1RRPxQRG4aINJ2/XicqVvymlRksxVZyde91/TTFa2s=
+	t=1731237444; cv=none; b=d3h/pSJ9XvM8Rr7vB1qKa9XGF2RdRCDAiNYGPjACB1jLmHnBzFrcFcKyVvplcdMUgQrOAv+ebKQctYtBtc+AmmRSoy5pvPQmdN2CxK545iBZpYdZAsTntA8GenWYoVM7EF6I7tgnXGAlk9jC8BUv7W5/379W30Rr0GXks8NV9TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731237404; c=relaxed/simple;
-	bh=OZq9vlY9kg8nMFQ9iEn/BhUcSlMehFtK5IV3YHw9HC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a4xSEAntPQn/Ss2He0bHQ+V8IgDUtzzaNX+YY2yozVzpaXeEmCmJHTwvNBPrUKZvDr5Jj29R1oxsZYPrUu0xYZQMIRvBni9/fKWgPfMKRqX78E+sL+CEIK9NqAFEeXQZ/eAHDVpp3S7oHCjsr0j2rcYkfDrx1nBopmGiiEHnuQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfrZefiI; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1731237444; c=relaxed/simple;
+	bh=yoWjm0XRqOLVjsy3PFi7Za+Mcz55k2ULoVmbPjSpmj4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qIjIjmmBEuZt5XSIDajreSVlJdt/kGlYM7jPE36+NUoqiPPUPrjST89cUhNNbzROPxagATRjqNY0tN2u/kiJoFeFZ1u3iqqXcsSUgSqAZmAnqAHFzPm7NAfZly9/72xxH+5WnB+oVhLxCxxB14Se61wuCjko+L3KBev7H+LxqfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F90ElSPr; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso2908566a91.3;
-        Sun, 10 Nov 2024 03:16:42 -0800 (PST)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so4623112a12.0;
+        Sun, 10 Nov 2024 03:17:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731237402; x=1731842202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QWLoy1wYXdVgZ3Zzo/mgTNAnxY3fZNEXmyBhaGh3Xds=;
-        b=TfrZefiIi93OLr6+GdwWL27ufVOSjanvpwlvUHt54VRTme63C5cAfMryP73beXumHX
-         UPUFTj3qeQKgg9QZgHi/ssmmMBWLJP67BbcHy6qIjHGPMxKcQwiZuViye9vRRUQi4IDj
-         fHACmMOLu5DJSO0hXFbSBAakaj9uCiPuBRkvWCM0oMW5DwzQyYqOgxQM1EAjrZDWZVyu
-         J54XnqTcWUh1uc56s1NYISH6wIscWX8OlomAsOpmj4RLfVg+ggOvlW2uh0rZrfBWUbUT
-         xBBQxKT7Pf9ZciAHyp/IJkfXlTIE9pHyVxYvVpA9O2peCHIWEoMKRClRhrsl5rL6kOWY
-         k8OA==
+        d=gmail.com; s=20230601; t=1731237441; x=1731842241; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/dyL3oREILD25QRwM7Myswpp642In7rJWpzkAIDiwU=;
+        b=F90ElSPryixonCzAMEPzTrnqnLDScbz+uxegz75H/xJdtF1iKxE0p7J00HlKRuJ92w
+         lOaFmZwMtSsXDbJG+cjoeyGRWaKu9SyQ2meimgXHODgofIfd/e3fzvL1wwqySpgIU1oR
+         Ehbu0sl116N/Pw/WrKoivEd3qSA2zchDJTvVCG8jfJuZDs6/Z2L3uOdzC3opm1Rc3N8P
+         lvSYQ766wmezOrL16qeMuqk2Pmjz9EWNLRFqv4JxmifFfUYxQTOA4YZ1ratJT1IQmq+P
+         N0aW2FIIOqSwORzeiz3CT5aqsT0AJSM+GvlWMsEo4w6qMMEbfdjBxYVVA+CnAidFdf/w
+         W5Pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731237402; x=1731842202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QWLoy1wYXdVgZ3Zzo/mgTNAnxY3fZNEXmyBhaGh3Xds=;
-        b=OSpGUtRrF9wFBNNNOFTHs2FXXSGkE9Q4PY97Pg4bhPwkqF+5autCVZTfeUlNHEhCgb
-         CItc66BNL52G2NKJFzrbKtHqUDvSUcUmukj/u+Bhk5epnChMpXLdsY844743x6IKbi7S
-         13Fihi9nR7w+kJu6U+xnjiezNtjFKHoPnAfdNdZsvQLKLDSi6yLNdxrpC7KxaZldrUOX
-         p0GX/jknhHW3R8Rf6BnahvbGb3QyJkDqkAIfBs8gWCh2fFx6F0i3UpmPyNL+eL3zuJAt
-         ESN/qbG6I4DrMHeDNSOkyr9/FfN5KdLKnzpMA+NyE9fJES5JiMFxHEt82Te2EO7vpIAD
-         3/cA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZrRrhujFlNAplAKjlLfz4dHcZGll/rsmt57zWXo2vYOCzQqKXTykCrXKHv2tyg+iR2GOjC5c2jKaC@vger.kernel.org, AJvYcCXMDcpHjIdRoeYsbegEhN5Kk34oAHuEVGLd6vNFNp9VGZ8D/YBr3XNX6RDP6bvSaWVneUGahOlzJb7V@vger.kernel.org, AJvYcCXmoeYfQhTxjPuiCVSbdoIC5rtmdW4y4gtljRBbxaSCZj03nVTjcK6CFKxp6oKhfjzWLI+j0XxPGAEdOaGT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLeq69xN4HeWH2nTvDe5LKgai3VcKazklwcvwIqzWq1K05OKW9
-	MGQ1PFCY3OrF3qtYel1vCBc3Cudc9nre/hZr6JDaCPsq4je8EY3bZbGiXab7L2qjr7PdqugH8oR
-	hXBXAm5MEDYI2iwck3dCHiHnm7g==
-X-Google-Smtp-Source: AGHT+IGasTpM/6LzeFT5yJG2TU6X3TKSkJ385a+2Pbzh0IgAuKC/AoNByQH4zEUJkFnY3DZ/d/AESg6jv7LXg1ObLTE=
-X-Received: by 2002:a17:90b:4a91:b0:2e2:a3aa:6509 with SMTP id
- 98e67ed59e1d1-2e9b1697bf5mr11996579a91.14.1731237402258; Sun, 10 Nov 2024
- 03:16:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731237441; x=1731842241;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g/dyL3oREILD25QRwM7Myswpp642In7rJWpzkAIDiwU=;
+        b=fZBglI+yDM7Qp+RbGNA4tyO5z0qIHUO2XKbAOMXbJEt50jCN8ld1shZXkPGu/CSjqE
+         m2e7BihGJPjFuaQ8RnPCKVqFnjSV5JIUCXszxT8jQWKMbLimy0+nBhTSduaYC/wXckwc
+         4I6e3mdNaBxPx8Y9/S15BBOv1X5QCLHSyuQ7mKE5LxTqcj0saulua/4E6SP3NiIiXpaA
+         CsDUiTvqMt9WGWcRfm+nB9thel3UENRsGxc6FHbtXWki13+YuY5AFJao2ZlE4TxaMC93
+         FIIPO8LHJWlR1a+vFc/ffXu1q74k/pgtU8G64NNkYNvDGWehmdvBWo40d0OUJB2nYKeB
+         MmOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJAoHrUR71QIMhv/C7GsHktT/IZvPgWl7Xa7ke4dxpJR1QKE+IwtwfzdLRZg0+opM0iVfeUgMSVxGzLtf+@vger.kernel.org, AJvYcCXGB2fjYvxM5Sv15VxpvfblBgER8xc2dHxQ2rXTPyWJ2PkgElCFPN1bACH886UFe5MsZ5Dot7l2T0v/KZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJcULNNcouCG/NltTcsJ0mPxRIpqCmESop/TQyg3mhi0F6kbUS
+	Lt4aymsgaz6xrlnQ9BIiGEZayHIreeiZPxhdnePSjvSocT4JDRk8o23LUHOcUkY=
+X-Google-Smtp-Source: AGHT+IHu8ryjX2DwIw+wBIhJQQIq+kJ6x/P8Lq1zDEp1or0+F4+QNtf6WZHRBOQxYI+TJZMowwTq+g==
+X-Received: by 2002:a17:907:9690:b0:a9e:670e:38bc with SMTP id a640c23a62f3a-a9eefebd05bmr849340166b.3.1731237440946;
+        Sun, 10 Nov 2024 03:17:20 -0800 (PST)
+Received: from DESKTOP-T8HPDSG.int.xargs.net (77-56-160-4.dclient.hispeed.ch. [77.56.160.4])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9efd2fe9fdsm232078066b.132.2024.11.10.03.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 03:17:20 -0800 (PST)
+From: Filip Brozovic <fbrozovic@gmail.com>
+To: 
+Cc: Filip Brozovic <fbrozovic@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: [PATCH] serial: 8250_fintek: Add support for F81216E
+Date: Sun, 10 Nov 2024 12:17:00 +0100
+Message-Id: <20241110111703.15494-1-fbrozovic@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011102751.153248-1-privatesub2@gmail.com>
- <20241011102751.153248-2-privatesub2@gmail.com> <4ioz6f6efs2uhf5mitb4xhebqeryyz5ukple4fkn54wpqep3c4@4ktefld35c3s>
-In-Reply-To: <4ioz6f6efs2uhf5mitb4xhebqeryyz5ukple4fkn54wpqep3c4@4ktefld35c3s>
-From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGAINCo0YPQsdC40L0=?= <privatesub2@gmail.com>
-Date: Sun, 10 Nov 2024 14:16:31 +0300
-Message-ID: <CAF4idNmDMQpFppUvCBbC1=SNMQBrTOqmFO60SMvKvaHvNJy=Bg@mail.gmail.com>
-Subject: Re: [PATCH v10 1/3] dt-bindings: pwm: Add binding for Allwinner
- D1/T113-S3/R329 PWM controller
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Cheo Fusi <fusibrandon13@gmail.com>, 
-	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello Uwe,
+The F81216E is a LPC/eSPI to 4 UART Super I/O and is mostly compatible with
+the F81216H, but does not support RS-485 auto-direction delays on any port.
 
-I appreciate your suggestion to use a more standardized
-property name like "pwm-number" instead of vendor-specific names.
+Signed-off-by: Filip Brozovic <fbrozovic@gmail.com>
+---
+ drivers/tty/serial/8250/8250_fintek.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Since the name "pwm-number" is present in two drivers,
-we could consider using this name here as an option.
-Or perhaps we should choose a new common name "npwms"
-as you suggested?
+diff --git a/drivers/tty/serial/8250/8250_fintek.c b/drivers/tty/serial/8250/8250_fintek.c
+index e2aa2a1a02dd..ecbce226b874 100644
+--- a/drivers/tty/serial/8250/8250_fintek.c
++++ b/drivers/tty/serial/8250/8250_fintek.c
+@@ -21,6 +21,7 @@
+ #define CHIP_ID_F81866 0x1010
+ #define CHIP_ID_F81966 0x0215
+ #define CHIP_ID_F81216AD 0x1602
++#define CHIP_ID_F81216E 0x1617
+ #define CHIP_ID_F81216H 0x0501
+ #define CHIP_ID_F81216 0x0802
+ #define VENDOR_ID1 0x23
+@@ -158,6 +159,7 @@ static int fintek_8250_check_id(struct fintek_8250 *pdata)
+ 	case CHIP_ID_F81866:
+ 	case CHIP_ID_F81966:
+ 	case CHIP_ID_F81216AD:
++	case CHIP_ID_F81216E:
+ 	case CHIP_ID_F81216H:
+ 	case CHIP_ID_F81216:
+ 		break;
+@@ -181,6 +183,7 @@ static int fintek_8250_get_ldn_range(struct fintek_8250 *pdata, int *min,
+ 		return 0;
+ 
+ 	case CHIP_ID_F81216AD:
++	case CHIP_ID_F81216E:
+ 	case CHIP_ID_F81216H:
+ 	case CHIP_ID_F81216:
+ 		*min = F81216_LDN_LOW;
+@@ -250,6 +253,7 @@ static void fintek_8250_set_irq_mode(struct fintek_8250 *pdata, bool is_level)
+ 		break;
+ 
+ 	case CHIP_ID_F81216AD:
++	case CHIP_ID_F81216E:
+ 	case CHIP_ID_F81216H:
+ 	case CHIP_ID_F81216:
+ 		sio_write_mask_reg(pdata, FINTEK_IRQ_MODE, IRQ_SHARE,
+@@ -263,7 +267,8 @@ static void fintek_8250_set_irq_mode(struct fintek_8250 *pdata, bool is_level)
+ static void fintek_8250_set_max_fifo(struct fintek_8250 *pdata)
+ {
+ 	switch (pdata->pid) {
+-	case CHIP_ID_F81216H: /* 128Bytes FIFO */
++	case CHIP_ID_F81216E: /* 128Bytes FIFO */
++	case CHIP_ID_F81216H:
+ 	case CHIP_ID_F81966:
+ 	case CHIP_ID_F81866:
+ 		sio_write_mask_reg(pdata, FIFO_CTRL,
+@@ -297,6 +302,7 @@ static void fintek_8250_set_termios(struct uart_port *port,
+ 		goto exit;
+ 
+ 	switch (pdata->pid) {
++	case CHIP_ID_F81216E:
+ 	case CHIP_ID_F81216H:
+ 		reg = RS485;
+ 		break;
+@@ -346,6 +352,7 @@ static void fintek_8250_set_termios_handler(struct uart_8250_port *uart)
+ 	struct fintek_8250 *pdata = uart->port.private_data;
+ 
+ 	switch (pdata->pid) {
++	case CHIP_ID_F81216E:
+ 	case CHIP_ID_F81216H:
+ 	case CHIP_ID_F81966:
+ 	case CHIP_ID_F81866:
+@@ -438,6 +445,11 @@ static void fintek_8250_set_rs485_handler(struct uart_8250_port *uart)
+ 			uart->port.rs485_supported = fintek_8250_rs485_supported;
+ 		break;
+ 
++	case CHIP_ID_F81216E: /* F81216E does not support RS485 delays */
++		uart->port.rs485_config = fintek_8250_rs485_config;
++		uart->port.rs485_supported = fintek_8250_rs485_supported;
++		break;
++
+ 	default: /* No RS485 Auto direction functional */
+ 		break;
+ 	}
+-- 
+2.40.1
 
-Please let me know what you think about this.
-
-Best regards,
-Aleksandr.
-
-=D0=B2=D1=82, 29 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 11:56, Uwe=
- Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>:
->
-> Hello,
->
-> On Fri, Oct 11, 2024 at 01:27:32PM +0300, Aleksandr Shubin wrote:
-> > +  allwinner,pwm-channels:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: The number of PWM channels configured for this instan=
-ce
-> > +    enum: [6, 9]
->
-> I wonder if the number of channels is a property common enough that we
-> can use "num-pwm-channels" here instead of a vendor specific property.
-> Or would you suggest a different name? gpio-controller nodes have
-> "ngpios", so maybe "npwms"?
->
-> A quick grep suggests we already have:
->
->         fsl,pwm-number in mxs-pwm.yaml
->         st,pwm-num-chan in pwm-st.txt
->         snps,pwm-number in snps,dw-apb-timers-pwm2.yaml
->
-> As a follow up this could then be used by pwmchip_alloc() to determine
-> the number of channels if the passed npwm value is 0.
->
-> Best regards
-> Uwe
 
