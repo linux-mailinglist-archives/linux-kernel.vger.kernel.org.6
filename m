@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-403253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6919C3326
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:30:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD79C3328
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70648B20629
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54ADF2812F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CFC13A3F3;
-	Sun, 10 Nov 2024 15:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A6213C3C2;
+	Sun, 10 Nov 2024 15:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ouq80bgN"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ARRTGlBZ"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB0F12F375
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 15:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD461369BC
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731252560; cv=none; b=n9WaiGKHLie2miEDMbftNw1srXF96fkeD8chRR8fXTusreklIKsGxC/XaVK9pifjg5vx53MFDR8Cx1fvVGMnppdBDeXo5gS/auDOFQXwksythaX1bq9tXE+PZm4UjidQe1pEvZhND3cfrag2JVmNrGJ0oSQYWj0lX7TeSjr8hEw=
+	t=1731252562; cv=none; b=k7OEnW7qqIX5ar8aGPcUCyOh6/rceoS64JKxoBKfNLBwG0IABWQF6bVuGv9iaBjG+A2UNFZuKSSJFrp4095hvBsh8iouhpHI3mObKGjrcVykFL3QKEy77/4u4Cg4S3RVisk2epV7/xRUlNMbmzybL/cLtsZ/uOEx365FvJoQ/BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731252560; c=relaxed/simple;
-	bh=klEANlDo0QcivFe1NIYDNiOFa1lRCa2wf9JjLv/2My8=;
+	s=arc-20240116; t=1731252562; c=relaxed/simple;
+	bh=AFLrZl3fH+/hMhwZTjgZ0OWM0ndgzDi220n1zUDQffQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xp+GwFOdRdq8Y1DSNhPSl80Rb95604HaVlIHaAEgRcqsbF98OBNyv6sM0hjiA5Qd+ULyp9S7/njseWtj5U6hRYKgkXoo5rJEE9+tx8ctb+JalWd8Lq+qirHy4UzjFQguF4RAI9G5IUxCtbRCTMGDnjmj6CvQtcMSee+4MHE9Nb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ouq80bgN; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=HBAh30OH2l+fiWXiTk83FMK+TKGQgv0/xz46TVKUZfMJny5lCPodkz/KWVZZaYz2BQs0tvYNBM9Bp0tct5OxJvAzk9WVxi8RO/dUOHedGX3D7WMCKrcv0iFx+Da8EkjA/0SyZZf4de3TsKVgT/Pz21A2ayDtcNBsOPlmnXzC9aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ARRTGlBZ; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso2830518a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 07:29:18 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e91403950dso2822713a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 07:29:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731252558; x=1731857358; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731252559; x=1731857359; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9QDQ8u+XOjRX6rdX1KxWEpFxXqQ9HPCp5iTXnKjwIis=;
-        b=Ouq80bgN+n62Hh9S9w/3uvP7bBk73EYoisR8aw+jBueVfm+r4+aWtgK9tEB+wPWIJ0
-         KTgwvudsL7/hDAnzDN948WPH195zh88m4Pv1TNRzon2pLz9Ea+JNHHKBC196Gu1FtZR1
-         /F1rRfYGoAHkKOjjx9KaWXSu6SINBA4LeRoPcUNL+7VzvudwSQNrvBCjxb4QxNTgDpqU
-         WgQyQCEfKf05RFRBvSjs9tDDP6fcXnbrWYTxSkuKKlkKL10oAjxG4TK1Bk5mzgYxM2w1
-         0etMBm3oPlVdz9oNcJUtYzrxfMLHhmEHEE7pjqMr3w5mZ+5lJH0KAUKOtQ7VN5A3n+pZ
-         6XIw==
+        bh=jvfAlDie45/dO/q2Oa4nMUlSYRbUQddnQckYeJvFoiA=;
+        b=ARRTGlBZxa5PHUsy9Q2tvu9pwq5hBq6iX1QXmL76/dMi8cd4bCAVhakos3YMhFgzxM
+         8L0F5BfA/KXHRhfZ+5fXXW3wO+YH7oZiJbghZtvvdOF1Zg0dWlXnAQOckFK6uHIOrq3z
+         3NMgg2Uk3HgKDmBEeCB/W4yVCBuF5a4ovwOgYDiEaoqon8TL8jt9CPezX4OQe6P6/tzM
+         ikqmm5eCnG3bBlPI7w9H0f6sQLZGCByWLUs7u9Oyw2wdxEPovJEXROlrYoUZnbU5Fdqa
+         nQXK9H8GE4ofJDQVp3nVL/DVlViWOayXNDNydyF2FEB4EBCB1nAUJ48JW2/o7aE3jkDA
+         OFSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731252558; x=1731857358;
+        d=1e100.net; s=20230601; t=1731252559; x=1731857359;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9QDQ8u+XOjRX6rdX1KxWEpFxXqQ9HPCp5iTXnKjwIis=;
-        b=NhcIUodZih6MncGL1ENyL6tat5liD7ZQJEUu/XHzsyH5ikVd4RkaC1PZ5vHMEKNhRl
-         6MYUkX8QDNWoGIgLSXbVer0yvbgWCuXC03v6eO91reibOrXotHSoEExSMejrIra3g8cg
-         4WG7odIXtuqNtifNtGwgpjuipFbrFrgbhUv/Q6yHVhAlQAraj5iPTQcQoa+Atg0Vz8FZ
-         hsfmzpaSkDZ7oF+qse2tR/RkvHgGZxbVhfJVtZQnnrnIL3AAyMiw/PaN5QRLwz2Ox8rb
-         9RTLMFwGPTU2FxMU0OLDhRYlFo1xNakRSjZ6L1Sk6aU+J2nGS5FARAS066YDDcqLE57p
-         sI8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcotGK8fdgRoN/UF0zKqtQVQun8x++ane0yvKwSQtRtUHox5W0VagD5rRz0VNURt87NRZ9sw7+QFcqDlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJN/vWq15RFUf8URS0aeXVOfReFYw5SloIMDXVzh0SqDl4yJG7
-	dEt52Eo7STVyuxy7VuuvszleLGQRIH+624yeoyWQ3APCFarx0Q+un6z6n4huxBw=
-X-Google-Smtp-Source: AGHT+IEK+RdpBHKlpp5v8yHzxXuRsIFP9YbjrZgEGVdARDnq+2H6kYv6T3B7kfQSRNLPJFM3Uvu8sw==
-X-Received: by 2002:a17:90b:35cf:b0:2e9:48d0:3b59 with SMTP id 98e67ed59e1d1-2e9b16eb007mr12818842a91.8.1731252557781;
-        Sun, 10 Nov 2024 07:29:17 -0800 (PST)
+        bh=jvfAlDie45/dO/q2Oa4nMUlSYRbUQddnQckYeJvFoiA=;
+        b=XZ+HQksaDD9Ai5f1kMgCpVa73ehJzrQ4HxfuQAfL357cM1ccDYwl9c6x7khl17DH3S
+         6p72lkzuKOZlq+zh/vrlBK+3PFuSOIPqoB/Ml2k4il/kvLx4eQz1e4MutjQtrR3L4Mjt
+         kISM0siQwb/E5/4TrUezUzxCZCRM24Jv36q/TKifSQXDeiPqqR5jitJSua5FAdONoknW
+         fUs9VKnjz/iqg0ukDhR6sgNNr2XsyVRxnY1U81KI02+VNZTxb2uSCQp4yYnB2cOKKgRG
+         NnIDmTgJYRiz9SxTv93HM0Aa6szDsu9Wf3LuVZeSPfOsXKZR1PoBkqbe0gKtj9/UV1d2
+         M/jw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0fSXCANCvs1m6TAntVRGO1uKuthjqoqnRcr5uXsPUg9Mo4cInwO2RpNC+962E1mUM/M8+3tiUZIpjmWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3bDvatI/RUhziI5yM4CEBAyAN+pP2cf6O3lEto3PTpQSREbMh
+	dXQRbZu85j2wcNTTOaG41iDg2OEgbf2HDEK8Zd1IEm6MmihIiJyCNSoSuWx/f9w=
+X-Google-Smtp-Source: AGHT+IGu/u+FhGsz3wBr1Zsic2L7vJ+0uwzRrgnEJRvL3npe1QZdpxBowle6ldDc43UF6F8F8hYjFQ==
+X-Received: by 2002:a17:90b:2ecb:b0:2e5:5ab5:ba52 with SMTP id 98e67ed59e1d1-2e9b173f1ddmr13558707a91.20.1731252559257;
+        Sun, 10 Nov 2024 07:29:19 -0800 (PST)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f935dsm9940973a91.35.2024.11.10.07.29.16
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a5f935dsm9940973a91.35.2024.11.10.07.29.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 07:29:16 -0800 (PST)
+        Sun, 10 Nov 2024 07:29:18 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -74,9 +74,9 @@ Cc: hannes@cmpxchg.org,
 	linux-kernel@vger.kernel.org,
 	willy@infradead.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 03/15] mm: add PG_uncached page flag
-Date: Sun, 10 Nov 2024 08:27:55 -0700
-Message-ID: <20241110152906.1747545-4-axboe@kernel.dk>
+Subject: [PATCH 04/15] mm/readahead: add readahead_control->uncached member
+Date: Sun, 10 Nov 2024 08:27:56 -0700
+Message-ID: <20241110152906.1747545-5-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241110152906.1747545-1-axboe@kernel.dk>
 References: <20241110152906.1747545-1-axboe@kernel.dk>
@@ -88,53 +88,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a page flag that file IO can use to indicate that the IO being done
-is uncached, as in it should not persist in the page cache after the IO
-has been completed.
+If ractl->uncached is set to true, then folios created are marked as
+uncached as well.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- include/linux/page-flags.h     | 5 +++++
- include/trace/events/mmflags.h | 3 ++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ include/linux/pagemap.h | 1 +
+ mm/readahead.c          | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index cc839e4365c1..3c4003495929 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -110,6 +110,7 @@ enum pageflags {
- 	PG_reclaim,		/* To be reclaimed asap */
- 	PG_swapbacked,		/* Page is backed by RAM/swap */
- 	PG_unevictable,		/* Page is "unevictable"  */
-+	PG_uncached,		/* uncached read/write IO */
- #ifdef CONFIG_MMU
- 	PG_mlocked,		/* Page is vma mlocked */
- #endif
-@@ -562,6 +563,10 @@ PAGEFLAG(Reclaim, reclaim, PF_NO_TAIL)
- FOLIO_FLAG(readahead, FOLIO_HEAD_PAGE)
- 	FOLIO_TEST_CLEAR_FLAG(readahead, FOLIO_HEAD_PAGE)
- 
-+FOLIO_FLAG(uncached, FOLIO_HEAD_PAGE)
-+	FOLIO_TEST_CLEAR_FLAG(uncached, FOLIO_HEAD_PAGE)
-+	__FOLIO_SET_FLAG(uncached, FOLIO_HEAD_PAGE)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 68a5f1ff3301..8afacb7520d4 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1350,6 +1350,7 @@ struct readahead_control {
+ 	pgoff_t _index;
+ 	unsigned int _nr_pages;
+ 	unsigned int _batch_count;
++	bool uncached;
+ 	bool _workingset;
+ 	unsigned long _pflags;
+ };
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 003cfe79880d..8dbeab9bc1f0 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -191,7 +191,13 @@ static void read_pages(struct readahead_control *rac)
+ static struct folio *ractl_alloc_folio(struct readahead_control *ractl,
+ 				       gfp_t gfp_mask, unsigned int order)
+ {
+-	return filemap_alloc_folio(gfp_mask, order);
++	struct folio *folio;
 +
- #ifdef CONFIG_HIGHMEM
- /*
-  * Must use a macro here due to header dependency issues. page_zone() is not
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index bb8a59c6caa2..b60057284102 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -116,7 +116,8 @@
- 	DEF_PAGEFLAG_NAME(head),					\
- 	DEF_PAGEFLAG_NAME(reclaim),					\
- 	DEF_PAGEFLAG_NAME(swapbacked),					\
--	DEF_PAGEFLAG_NAME(unevictable)					\
-+	DEF_PAGEFLAG_NAME(unevictable),					\
-+	DEF_PAGEFLAG_NAME(uncached)					\
- IF_HAVE_PG_MLOCK(mlocked)						\
- IF_HAVE_PG_HWPOISON(hwpoison)						\
- IF_HAVE_PG_IDLE(idle)							\
++	folio = filemap_alloc_folio(gfp_mask, order);
++	if (folio && ractl->uncached)
++		__folio_set_uncached(folio);
++
++	return folio;
+ }
+ 
+ /**
 -- 
 2.45.2
 
