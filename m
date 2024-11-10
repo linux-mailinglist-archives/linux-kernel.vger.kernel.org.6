@@ -1,237 +1,141 @@
-Return-Path: <linux-kernel+bounces-403073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B8C9C30A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 03:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4509C30AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 04:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9CD1F216CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 02:51:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4ED91F216ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 03:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7021B1482E9;
-	Sun, 10 Nov 2024 02:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB64145A11;
+	Sun, 10 Nov 2024 03:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NZLEq03r"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="AR667vp/"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601C146A79
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD292CAB
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 03:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731207074; cv=none; b=R+qtKaEEsxflmYi+bG7eB6/95SbL1w+ssvyv0EiHDxG4ACF0GK+917iIvuItDJJkBElUWTXYxexBFChAFckDZd6h0bMVEzFnzIE4aasUWe31SF4ewqLuskSVul4xf00s8h6ETdXKLjQv/tvYMZ++gj416qfoAbr37jY9/wSjMPo=
+	t=1731208075; cv=none; b=WTMKa8NHc9/VMInOiI/PxReOBzu84iM8ykWKmBypmqu74rM0liFX3EQHlxJc1f57LsR3KABu1aQw09W3YBaEiuOACCHzMgDVG+5zWjgxksFdFa9mskNOBhRhS1PqdC7vZegjG9QBKpjR8DOKKyLFQMRgX9NrKp1ZtkAuIxwb8t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731207074; c=relaxed/simple;
-	bh=C7F0hzSEvRCvJoaGfUa7jxx615Hn7j/4+kWTa1FsAmw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LqAvQZEAKpggqpXgMK41rpl3GlcMM6TVrNojqD3laAtLK5qy0a0yj4hLjrwGSOhUd7BPTkGivenddgB7vBDKxh4w6rXXPhn1ShwTLWIUpZOODoHaKj+rcVWANyG+wB1a8lzns+u1Sum6uwqm8CGcK7jYVYq6B+ZEBoqOMPeGndU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NZLEq03r; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731207071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mgT/glyX8PvJewj2/e81B/ji7YZiFdXrkaiYQgRzgk0=;
-	b=NZLEq03rs27wfDhA6XDT9p0T95B3tvdpqPWJY/dDEehc0uFwKxL3U8+HKqeUUIrROpkQoy
-	LGu30U5F08j3bFL9wo+Gk+GQlJDA8BXi+wVdYEDdCGUHCVt3BEstOG/aZ/U4035NBPGR4H
-	tejCFoN2c2o5pVr19s871Y2+e2tNXiM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-56-XOcphakvOOW-wLlRePT7FA-1; Sat,
- 09 Nov 2024 21:51:10 -0500
-X-MC-Unique: XOcphakvOOW-wLlRePT7FA-1
-X-Mimecast-MFC-AGG-ID: XOcphakvOOW-wLlRePT7FA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9841D19560AF;
-	Sun, 10 Nov 2024 02:51:08 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.2.16.3])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DF98F300019E;
-	Sun, 10 Nov 2024 02:51:06 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH 3/3] cgroup/cpuset: Further optimize code if CONFIG_CPUSETS_V1 not set
-Date: Sat,  9 Nov 2024 21:50:23 -0500
-Message-ID: <20241110025023.664487-4-longman@redhat.com>
-In-Reply-To: <20241110025023.664487-1-longman@redhat.com>
-References: <20241110025023.664487-1-longman@redhat.com>
+	s=arc-20240116; t=1731208075; c=relaxed/simple;
+	bh=Ddlkrurer8cK/hJ0z+vu0jL3CNQu+azPve2HSFJpx2o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K9jfUDXYE9ccc3uvwsl7FnaaB+aYtPnrJMzZmIxUyNrmFity2LoP60GD3UmnZ5KRIOK3hxsv2mqnqSZtiajiwd/cik7gye3432NdQ55o8pSAa44QWsqeK0/iiUSXmKQVD7onyMYTC6Pw13mk9dlMljvTjzbfCfXlUKEU7pGvnFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=AR667vp/; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso2745751a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 09 Nov 2024 19:07:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731208073; x=1731812873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+ah3ff/iaOakiD1bDDFQjjjXs2a3Yki555XDccDYKo=;
+        b=AR667vp/Q4rC0t/oR6N1B5l2R+/jMfeObLrMRCMzYuUnhLv+MPcPQUeOvvsY7p68fL
+         steUTjuimNZe38GrA705yzT+5oDF68BKCD4+kkneia2EYDI0MkJJs891Ac/Xhngyr50z
+         rT8Grk/r1Sq7rnjYuWWKXLm5THF3By+L2+2JqBGjoF53TNSvLQ3fEbTXKOUKFqsNri/X
+         a+49fcyaw9whkaUNnocCe2mqKq9fgLTv26eL81vPeFiYuuRwtU+nWI/0mM9tLw5OmNYl
+         tNAPLblbSfYQzZq7qjbw2KgkvTpP28jHIBTZEqwmsOYas/kC7syqKPu2Njl+OJ35UpEx
+         0D0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731208073; x=1731812873;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+ah3ff/iaOakiD1bDDFQjjjXs2a3Yki555XDccDYKo=;
+        b=FLQMOrAvOGJxYO6r6tVuZN8BMm/mdvtkXpUv79DoK7j0qKllnkjagEisCxvD9xRfdb
+         LZsU/YK+8hnrfdPYw5Evw4v0VRhn7eNJtu7hx91lJzWfkk5VGh9eABMyV4gtspE6quY5
+         1wVvTx+AW6Wne0ZsUpIOO7VMPFf0VIxWC7C17j0UbCuR8LhcTaqz/m7YCxoIoi8yB0N+
+         VYEmBRfb2DKHIBOMXG+FtXwuHaCQSAt0EmmFgTx+vVg3AkcHCMwnJk6U8WcBQ87J6huJ
+         CVRVYCyHn7Y1/8+hgWyYU1rxAd5LgTYSrVF/IpaIx7v65dFQ3yL+B7pHh+e/WfDkGhCZ
+         so9A==
+X-Gm-Message-State: AOJu0Yz+BwGDurXopYLVPC4xaErnsh5O56ojBLl23w6ukr6VXuplwdaZ
+	c1M8ftBF3w6Tz/bdF4562bqkJuaQfS2oI+cR0sPv9ILb30szblZJPblVadzjbmE=
+X-Google-Smtp-Source: AGHT+IESpJhtDuk4HXdiWHoXeGIL3Q6nSo2M5QBjlKiB852AVIVQd+1bXezgbCpqL4E716wxYAr6Fw==
+X-Received: by 2002:a05:6a20:8421:b0:1d9:c6e8:60fc with SMTP id adf61e73a8af0-1dc228931b2mr13005769637.6.1731208072986;
+        Sat, 09 Nov 2024 19:07:52 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65ba92sm5922982a12.80.2024.11.09.19.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 09 Nov 2024 19:07:52 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Minchan Kim <minchan@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Liu Shixin <liushixin2@huawei.com>
+Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+In-Reply-To: <20241108100147.3776123-1-liushixin2@huawei.com>
+References: <20241108100147.3776123-1-liushixin2@huawei.com>
+Subject: Re: [PATCH] zram: fix NULL pointer in comp_algorithm_show()
+Message-Id: <173120807169.1615597.15714479143069057914.b4-ty@kernel.dk>
+Date: Sat, 09 Nov 2024 20:07:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Currently the cpuset code uses group_subsys_on_dfl() to check if we
-are running with cgroup v2. If CONFIG_CPUSETS_V1 isn't set, there is
-really no need to do this check and we can optimize out some of the
-unneeded v1 specific code paths. Introduce a new cpuset_v2() and use it
-to replace the cgroup_subsys_on_dfl() check to further optimize the
-code.
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+On Fri, 08 Nov 2024 18:01:47 +0800, Liu Shixin wrote:
+> LTP reported a NULL pointer dereference as followed:
+> 
+>  CPU: 7 UID: 0 PID: 5995 Comm: cat Kdump: loaded Not tainted 6.12.0-rc6+ #3
+>  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+>  pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : __pi_strcmp+0x24/0x140
+>  lr : zcomp_available_show+0x60/0x100 [zram]
+>  sp : ffff800088b93b90
+>  x29: ffff800088b93b90 x28: 0000000000000001 x27: 0000000000400cc0
+>  x26: 0000000000000ffe x25: ffff80007b3e2388 x24: 0000000000000000
+>  x23: ffff80007b3e2390 x22: ffff0004041a9000 x21: ffff80007b3e2900
+>  x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000000000
+>  x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+>  x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+>  x11: 0000000000000000 x10: ffff80007b3e2900 x9 : ffff80007b3cb280
+>  x8 : 0101010101010101 x7 : 0000000000000000 x6 : 0000000000000000
+>  x5 : 0000000000000040 x4 : 0000000000000000 x3 : 00656c722d6f7a6c
+>  x2 : 0000000000000000 x1 : ffff80007b3e2900 x0 : 0000000000000000
+>  Call trace:
+>   __pi_strcmp+0x24/0x140
+>   comp_algorithm_show+0x40/0x70 [zram]
+>   dev_attr_show+0x28/0x80
+>   sysfs_kf_seq_show+0x90/0x140
+>   kernfs_seq_show+0x34/0x48
+>   seq_read_iter+0x1d4/0x4e8
+>   kernfs_fop_read_iter+0x40/0x58
+>   new_sync_read+0x9c/0x168
+>   vfs_read+0x1a8/0x1f8
+>   ksys_read+0x74/0x108
+>   __arm64_sys_read+0x24/0x38
+>   invoke_syscall+0x50/0x120
+>   el0_svc_common.constprop.0+0xc8/0xf0
+>   do_el0_svc+0x24/0x38
+>   el0_svc+0x38/0x138
+>   el0t_64_sync_handler+0xc0/0xc8
+>   el0t_64_sync+0x188/0x190
+> 
+> [...]
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 0d56a226c522..655396e75b58 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -293,6 +293,12 @@ static inline void dec_attach_in_progress(struct cpuset *cs)
- 	mutex_unlock(&cpuset_mutex);
- }
- 
-+static inline bool cpuset_v2(void)
-+{
-+	return !IS_ENABLED(CONFIG_CPUSETS_V1) ||
-+		cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-+}
-+
- /*
-  * Cgroup v2 behavior is used on the "cpus" and "mems" control files when
-  * on default hierarchy or when the cpuset_v2_mode flag is set by mounting
-@@ -303,7 +309,7 @@ static inline void dec_attach_in_progress(struct cpuset *cs)
-  */
- static inline bool is_in_v2_mode(void)
- {
--	return cgroup_subsys_on_dfl(cpuset_cgrp_subsys) ||
-+	return cpuset_v2() ||
- 	      (cpuset_cgrp_subsys.root->flags & CGRP_ROOT_CPUSET_V2_MODE);
- }
- 
-@@ -738,7 +744,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
--	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-+	bool cgrpv2 = cpuset_v2();
- 	int nslot_update;
- 
- 	doms = NULL;
-@@ -1198,7 +1204,7 @@ static void reset_partition_data(struct cpuset *cs)
- {
- 	struct cpuset *parent = parent_cs(cs);
- 
--	if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys))
-+	if (!cpuset_v2())
- 		return;
- 
- 	lockdep_assert_held(&callback_lock);
-@@ -2017,7 +2023,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 		 */
- 		if (!cp->partition_root_state && !force &&
- 		    cpumask_equal(tmp->new_cpus, cp->effective_cpus) &&
--		    (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys) ||
-+		    (!cpuset_v2() ||
- 		    (is_sched_load_balance(parent) == is_sched_load_balance(cp)))) {
- 			pos_css = css_rightmost_descendant(pos_css);
- 			continue;
-@@ -2091,8 +2097,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 		 * from parent if current cpuset isn't a valid partition root
- 		 * and their load balance states differ.
- 		 */
--		if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
--		    !is_partition_valid(cp) &&
-+		if (cpuset_v2() && !is_partition_valid(cp) &&
- 		    (is_sched_load_balance(parent) != is_sched_load_balance(cp))) {
- 			if (is_sched_load_balance(parent))
- 				set_bit(CS_SCHED_LOAD_BALANCE, &cp->flags);
-@@ -2108,8 +2113,7 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
- 		 */
- 		if (!cpumask_empty(cp->cpus_allowed) &&
- 		    is_sched_load_balance(cp) &&
--		   (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys) ||
--		    is_partition_valid(cp)))
-+		   (!cpuset_v2() || is_partition_valid(cp)))
- 			need_rebuild_sched_domains = true;
- 
- 		rcu_read_lock();
-@@ -2246,7 +2250,7 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
- 
- 	retval = validate_change(cs, trialcs);
- 
--	if ((retval == -EINVAL) && cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
-+	if ((retval == -EINVAL) && cpuset_v2()) {
- 		struct cgroup_subsys_state *css;
- 		struct cpuset *cp;
- 
-@@ -2738,8 +2742,7 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs,
- 	spin_unlock_irq(&callback_lock);
- 
- 	if (!cpumask_empty(trialcs->cpus_allowed) && balance_flag_changed) {
--		if (!IS_ENABLED(CONFIG_CPUSETS_V1) ||
--		    cgroup_subsys_on_dfl(cpuset_cgrp_subsys))
-+		if (cpuset_v2())
- 			cpuset_force_rebuild();
- 		else
- 			rebuild_sched_domains_locked();
-@@ -2925,8 +2928,7 @@ static int cpuset_can_attach(struct cgroup_taskset *tset)
- 		 * migration permission derives from hierarchy ownership in
- 		 * cgroup_procs_write_permission()).
- 		 */
--		if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys) ||
--		    (cpus_updated || mems_updated)) {
-+		if (!cpuset_v2() || (cpus_updated || mems_updated)) {
- 			ret = security_task_setscheduler(task);
- 			if (ret)
- 				goto out_unlock;
-@@ -3040,8 +3042,7 @@ static void cpuset_attach(struct cgroup_taskset *tset)
- 	 * in effective cpus and mems. In that case, we can optimize out
- 	 * by skipping the task iteration and update.
- 	 */
--	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
--	    !cpus_updated && !mems_updated) {
-+	if (cpuset_v2() && !cpus_updated && !mems_updated) {
- 		cpuset_attach_nodemask_to = cs->effective_mems;
- 		goto out;
- 	}
-@@ -3391,7 +3392,7 @@ cpuset_css_alloc(struct cgroup_subsys_state *parent_css)
- 	INIT_LIST_HEAD(&cs->remote_sibling);
- 
- 	/* Set CS_MEMORY_MIGRATE for default hierarchy */
--	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys))
-+	if (cpuset_v2())
- 		__set_bit(CS_MEMORY_MIGRATE, &cs->flags);
- 
- 	return &cs->css;
-@@ -3418,8 +3419,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	/*
- 	 * For v2, clear CS_SCHED_LOAD_BALANCE if parent is isolated
- 	 */
--	if (cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
--	    !is_sched_load_balance(parent))
-+	if (cpuset_v2() && !is_sched_load_balance(parent))
- 		clear_bit(CS_SCHED_LOAD_BALANCE, &cs->flags);
- 
- 	cpuset_inc();
-@@ -3489,8 +3489,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
- 	if (is_partition_valid(cs))
- 		update_prstate(cs, 0);
- 
--	if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys) &&
--	    is_sched_load_balance(cs))
-+	if (!cpuset_v2() && is_sched_load_balance(cs))
- 		cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
- 
- 	cpuset_dec();
+Applied, thanks!
+
+[1/1] zram: fix NULL pointer in comp_algorithm_show()
+      commit: 5fcfcd51ea1c1309a673d45f12698dec53ffbd9b
+
+Best regards,
 -- 
-2.47.0
+Jens Axboe
+
+
 
 
