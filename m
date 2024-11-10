@@ -1,122 +1,117 @@
-Return-Path: <linux-kernel+bounces-403185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDE79C3212
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:58:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03139C3216
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 14:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42099B20DE3
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4562815C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21519156F5F;
-	Sun, 10 Nov 2024 12:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A9115696E;
+	Sun, 10 Nov 2024 13:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fFlUgfRx"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="DnGbR8tB"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9885145323;
-	Sun, 10 Nov 2024 12:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DA11527B4;
+	Sun, 10 Nov 2024 13:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731243506; cv=none; b=qF5wRx3w0ke6GNZ24JRKYI4tnqKqqoUSvqIU8e+w0ZA6GENMbmgNswk/7G9l/qhIV5FnteF/kznBne7aIFBqlvkMQ8xwXCL/7/2Gjs/yB8jVCRWG2PGB8DnB+yywcOUhqr58WUNT8fRngHIK3eGRsg8pZwQ2DPo3tO3N3QlPLrU=
+	t=1731243981; cv=none; b=mk2fTsGr7M6FruOxhBCbfs2jsWjFDx9jqwaFrJyPazj/KdaO0E50qRIbungno1eExPirSabLEQ4SeK2Q3MQZuTuQWxiHj9ny69QXwn+87ViJu+HedqfGJOBYC1no4eUqUUcoQ6EA9+SYqMj3Myn4272s+U3GlFM+o5ZHLFHBSMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731243506; c=relaxed/simple;
-	bh=V8kc5F2Kjhi2UfihVL54oZ8rcLO2/+1BFW/M1E8TBuU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gKPCtouTdGDQTjEv+ZUaRX3P5swtC3E2aLQJhThQGqF0VOjKCV5dkna/7mYKj1JjZ5SujrgXSW+AnMsdD3a6DBf3smB2Ax1iNmXlmd0QhEpGU1sEaYSejqm4WSWMuFBNqIMYVkuT29Ha9kAWAhLNd1Uh1sSnc4JDvp5WvIx/yAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fFlUgfRx; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a628b68a7so659470866b.2;
-        Sun, 10 Nov 2024 04:58:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731243503; x=1731848303; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8Xkum7xc7VMXVl2k/SXjUke76FdBWCX5aQNeK5s+6w=;
-        b=fFlUgfRxGzi+mKW8kx4gxqHmGPe8H6+lfs1Xh7mDzQhcCMfkwBXwAQqlR0oV3WMECH
-         FlufnGdf5IrdcJ8UOacX1W8dNQ0g9M+DpEFM3KDm7gzCvAtLHGCCVYgvOOG32i7KBH1l
-         YWtUAB03RgO2Y8AMqNnqGXYcOh3uy1MMoVdp8qk1QIAURAbFvDI5LPBbqDsVAiqi/wjj
-         /pZzlczhNWsquLjzKchqOa+cIJydQD9xniaqN9Cx9rc1zgbHqO9NgadcLo8Q+h4AXFKa
-         56KGPa2Dy/XMHqMF8k20Fv+lRGjlts3aAKCy5E8oAugY5/49YpX9Ga1IHW8E83PRdAv4
-         Idnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731243503; x=1731848303;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d8Xkum7xc7VMXVl2k/SXjUke76FdBWCX5aQNeK5s+6w=;
-        b=aJee/QNE3AzDl4C4gs0WbhxGgQO0+1i5IY/po1lvCVX8/ko8zNoIjIRMYYwAPh1EQf
-         cSVKBm5CwGxjS23AmNW3ERSPFt8qbnmZ8bvhdSe8RYemHpUwf4jGVk34waaKqpWnFS/K
-         huukdCafl10XKtOv8rCqNZcWz7Wd62bLJggw7UOSUkSwvjp/o8enN34bVi2k8WTrX6d/
-         ZpqeP0AdUh30mv5SefYif1yBq9stGqnnmKPAyDBCYhe63Au9o4e33BhqQOQGZn+IU6V7
-         MC8EWZID95PZQeMOPxcvYpu7bPaMHC+r8uRbbkYXvNeJago/uYwbFT5nsqtUV7g+Qm/S
-         Majg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUPGBDgVpUIejTAt3bxPiZst+q1kH9fV2dt9ibnjBWVK4S8pT3q1wmY9OIvCys705JtdvY3rb4+2VlwpA=@vger.kernel.org, AJvYcCUwTkNWdTdJSd/k2UbSCohjMEGHEpCmkIsq8Ap9jniLhJYzokxpd3rgSKqUmGhksQRqZmmjW2kmBotf//4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxunV4PhaYFP13pIe3+iWDWntnKtC6Mu6DDocYxbgyFk9gLY07+
-	cdOWmFo9s+u99tj5+ThrTGhWlk9YQdmQaqUXSp2f6FIUk8Qgcx4D
-X-Google-Smtp-Source: AGHT+IGbsus2b6UYUkvaGG1aDXCmv7ldx7gBtR1guLY+eEBHUBruYzKPA4z+e3+0bDlFOVFHr3XLpA==
-X-Received: by 2002:a17:907:6d05:b0:a9e:c440:2c0f with SMTP id a640c23a62f3a-a9eeffeff9emr866160166b.39.1731243503016;
-        Sun, 10 Nov 2024 04:58:23 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a1769asm477210866b.1.2024.11.10.04.58.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 04:58:22 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: hverkuil@xs4all.nl,
-	mchehab@kernel.org
-Cc: Karol Przybylski <karprzy7@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] media: cec: extron-da-hd-4k-plus: add return check for wait_for_completion*()
-Date: Sun, 10 Nov 2024 13:58:13 +0100
-Message-Id: <20241110125814.1899076-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731243981; c=relaxed/simple;
+	bh=ukpF2+Y5Ke9wT1m8xce/XMCdXKiLhtaqiOtlR3wy6fM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dIQrMdDsbYe7mHtvyfPWG4qge8TergVaNuP21U8v4hRD3zzmM4mzrV+vGRtFFba+cHxMiAwm0VJSVeOS5Plvj9m2M2Dho3kChlBOcIgK9VfrQorF33efu3nSuN6e6hLbnuPccp3/u8xY3OBem9XE+8fkf00BBRiqIRUmeNuJB1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=DnGbR8tB; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id d13f1c4cd115f8a8; Sun, 10 Nov 2024 14:06:11 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 89CA8838538;
+	Sun, 10 Nov 2024 14:06:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1731243971;
+	bh=ukpF2+Y5Ke9wT1m8xce/XMCdXKiLhtaqiOtlR3wy6fM=;
+	h=From:Subject:Date;
+	b=DnGbR8tBBo9EVUmlhPVCsucn3hhKIprzn98YQnh6/pTatQWxQXGrJeF1sEy6hNFlo
+	 j+JTaGHArDQs/vLDfRa+eAVAz04M0vm0aBl11aeW8Aph5YIStCuyiXrcJ0OczmoKDe
+	 qea/rASZl0ZXcYYeVzPzbRpdIdfnR0KHdKc1A/pwGIbgjM6rxvTruvAysqOxH4p79h
+	 KFeNVmOyLtLyYTAIEcMpdPGCSrykgO5Ibr14tnrzCv7HQrxKDc5BbkwITtffMdnudW
+	 FEBloj8l3eWU4iiO0PIu1j4ARhT5rn8yPLk9cDzjbgsWaa2DDGqzLuD+u/asjAaetd
+	 lH4ewfvOXEVaQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH v1 1/2] thermal: testing: Simplify tt_get_tt_zone()
+Date: Sun, 10 Nov 2024 14:04:47 +0100
+Message-ID: <6120304.lOV4Wx5bFT@rjwysocki.net>
+In-Reply-To: <12569620.O9o76ZdvQC@rjwysocki.net>
+References: <12569620.O9o76ZdvQC@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddruddtgdegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhprghmkfhpucdlfedttddmnecujfgurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpedvffeuiedtgfdvtddugeeujedtffetteegfeekffdvfedttddtuefhgeefvdejhfenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeegpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordh
+X-DCC--Metrics: v370.home.net.pl 0; Body=4 Fuz1=4 Fuz2=4
 
-According to scheduler/completion.rst, return status of wait_for_completion*()
-function variants should be checked or be accompanied by explanation.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I examined code in extron-da-hd-4k-plus.c and it does look like the return value
-should be checked, but perhaps there is a reason for ignoring it.
-I drafted a patch for this, but I'm not entirely sure how to approach error handling in this case.
+Notice that tt_get_tt_zone() need not use the ret variable in
+the tt_thermal_zones list walk and make it return right after
+incrementing the reference counter of the matching entry.
 
-Discovered in coverity, CID1599679
+No functional impact.
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- .../cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c    | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/thermal/testing/zone.c |    9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c b/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-index cfbfc4c1b2e6..83a790117411 100644
---- a/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-+++ b/drivers/media/cec/usb/extron-da-hd-4k-plus/extron-da-hd-4k-plus.c
-@@ -559,9 +559,12 @@ static void extron_read_edid(struct extron_port *port)
+Index: linux-pm/drivers/thermal/testing/zone.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/testing/zone.c
++++ linux-pm/drivers/thermal/testing/zone.c
+@@ -288,19 +288,14 @@ static struct tt_thermal_zone *tt_get_tt
  
- 	extron->edid_reading = true;
+ 	guard(mutex)(&tt_thermal_zones_lock);
  
--	if (!extron_send_and_wait(extron, port, cmd, reply))
--		wait_for_completion_killable_timeout(&extron->edid_completion,
-+	if (!extron_send_and_wait(extron, port, cmd, reply)) {
-+		ret = wait_for_completion_killable_timeout(&extron->edid_completion,
- 						     msecs_to_jiffies(1000));
-+		if (ret < 0)
-+			goto unlock;
-+	}
- 	if (port->edid_blocks) {
- 		extron_parse_edid(port);
- 		port->read_edid = true;
--- 
-2.34.1
+-	ret = -EINVAL;
+ 	list_for_each_entry(tt_zone, &tt_thermal_zones, list_node) {
+ 		if (tt_zone->id == id) {
+ 			tt_zone->refcount++;
+-			ret = 0;
+-			break;
++			return tt_zone;
+ 		}
+ 	}
+ 
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+-	return tt_zone;
++	return ERR_PTR(-EINVAL);
+ }
+ 
+ static void tt_put_tt_zone(struct tt_thermal_zone *tt_zone)
+
+
 
 
