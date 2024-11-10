@@ -1,131 +1,110 @@
-Return-Path: <linux-kernel+bounces-403327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4001F9C3430
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:30:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822D29C343A
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96920B20B5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B45FD1C208E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4288513C3D3;
-	Sun, 10 Nov 2024 18:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1986C13DBA0;
+	Sun, 10 Nov 2024 18:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlzfDWkW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="YaCXOLZ6"
+Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9218C81741;
-	Sun, 10 Nov 2024 18:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2CC132132;
+	Sun, 10 Nov 2024 18:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731263415; cv=none; b=pPaj5TkWTTvP2ZQ4NT3xi4vP168ja/LXhczxYCHfp+2LveMlbbXCBMt7EBMYW192YM8wvrR7ZNUYsdBhI/UIEtpA4GL+gPa/LdCThiyDdKSAZNmvi0MC/XA59QHixodXTUGHF/b8miFK8HCn0XtdYRAFim74SBsOMN/QaHLpC4Q=
+	t=1731263932; cv=none; b=c0tJ15maFD8i8dYZo9d9xhm9ea/1El8+A2re2Mo6ilb1eafNY4DO3XUj4qdAbwHL0jDPck4ebUDOoHkscyxjKvUjczXhzFYESairxFgWfOBUUclY3BskR6AKxJA9oz0d5DngALNopmpyoG3btq1qTF8bGKYghIuoOC6+5WuMKJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731263415; c=relaxed/simple;
-	bh=i5og9rerJModkU+s8ItbMf0HvALRDPrt0CbiJyiqxrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cUlgt8Go2DIogu42YMn1nocOEicDTDxtV74PI+aIPDzT3KRWFVSFoXxlOxH2I0LeIC2H3HLpzicWQpnfEfDJ025V7tiGNIWNszroaLflevRBf5qr0lNxXpEyvBj5GUPPffgmvKMA+ZOf0KIFAGQgmCjxp0qGpOkjme8tvoDOdeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlzfDWkW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8639C4CECD;
-	Sun, 10 Nov 2024 18:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731263414;
-	bh=i5og9rerJModkU+s8ItbMf0HvALRDPrt0CbiJyiqxrk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YlzfDWkWupht7IeASI7yR/xKOjtVVTXFpVWWvNqct3rBqRtfi6eC3kLATqhhF98jV
-	 Hi/ZsdfC7ZQi35vNS/GuCdVnN7Ls9GYlvDUOP71lnj16MGuCBlEUeVxx0R9SthAwjD
-	 6xS/1Zoe7egkq10mBnNVtGsaGnGchbNOLYaqpvlo9Zg2ATWTW9dCbTTMZajF6s43N9
-	 dEyUVTPqZHZDdOQpvEw4Tf/PLxXn0M0y66x+nqNKUHfurFuuZCaUMY50KpeC67rPzw
-	 ss8r9a5co9fYUq2BrDc13dxrWH2qjRSjh5NPzyJpFy7GQFVmwZYkapBFqjU2sXO6PU
-	 VESvAyewAoZwQ==
-Date: Sun, 10 Nov 2024 19:30:10 +0100
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.12-rc7
-Message-ID: <ZzD7sqWIYWBgRmKr@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1731263932; c=relaxed/simple;
+	bh=PsBg7Ce1DYJDfWfovTedXuQXSEUBe+bUODMBThwdmPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaKkJ17zVXCQhJPIVcEtkKbk8dl9QWagLtM5CBZIT58rd8bbnHSdg2q5r+4mZLxgfKqF6YizBAHwlCvahb/vR5P1T7Ym3LcrlyGNoPNMmz8bmD72i6fRDW6qhZ+62yD2jgtlH9AeVtZNof2pz5ikkM5SykYyeUeKPUdxEKOraCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=YaCXOLZ6; arc=none smtp.client-ip=206.189.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+	by a.peacevolution.org (Postfix) with ESMTPA id 7ED404C930;
+	Sun, 10 Nov 2024 18:38:42 +0000 (UTC)
+Date: Sun, 10 Nov 2024 13:38:39 -0500
+From: Aren <aren@peacevolution.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
+ devm callbacks
+Message-ID: <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-7-aren@peacevolution.org>
+ <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iFio4otqGN+Dc48d"
-Content-Disposition: inline
-
-
---iFio4otqGN+Dc48d
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
+X-Spamd-Bar: /
+Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
+	s=dkim; t=1731263923;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:in-reply-to:references;
+	bh=Qy4vL7Aa/N0uJPCViG8PBJ+nuYrVrBC0UAvzWwrOHL0=;
+	b=YaCXOLZ6I9KETZJhjAINjNnyvKBf5znCzqyzCvW4Gt6yAj5JjKSUvVMbRxsmAL17MFKNpI
+	W+YoXyfVwq8Jnn5gFd/1msRzP8Ge43ZWspuzVa/ObWb/dmOzhX8EyBxwxa6YRKbM/cepxI
+	mLCuNzWmXaiUdXgUFFEzx6RHq990McU=
 
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+On Mon, Nov 04, 2024 at 10:32:08AM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 02, 2024 at 03:50:37PM -0400, Aren Moynihan wrote:
+> > Using devm callbacks helps to make the ordering of probe / remove
+> > operations easier to reason about and removes some duplicate code
+> > between the probe error path and driver remove.
+> 
+> Where is SoB?
 
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+Oops that got lost in a rebase
 
-are available in the Git repository at:
+> ...
+> 
+> > +	ret = devm_add_action_or_reset(&client->dev, stk3310_set_state_disable, data);
+> 
+> Why not simply 'dev' as in below call?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.12-rc7
+I was trying to avoid refactoring the entire function to replace
+&client->dev with dev, I'll add a patch for that to the next revision.
 
-for you to fetch changes up to 547aad93e00d5acdefb9ba6de2a7dfaeaf311475:
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to register cleanup function\n");
+> 
+> ...
+> 
+> > -	mutex_init(&data->lock);
+> > +	devm_mutex_init(&client->dev, &data->lock);
+> 
+> Missed error check, otherwise what's the point?
+> 
+> 
+> Also can add a temporary variable for 'dev'.
 
-  Merge tag 'i2c-host-fixes-6.12-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current (2024-11-09 23:47:51 +0100)
+Yup, fixing... I need to read the docs / function type more carefully
+sometimes.
 
-----------------------------------------------------------------
-i2c-for-6.12-rc7
-
-Core has no updates.
-
-i2c-host fixes for v6.12-rc7 (from Andi)
-
-In designware an incorrect behavior has been fixes when
-concluding a transmission.
-
-Fixed return error value evaluation in the Mule multiplexer.
-
-----------------------------------------------------------------
-Liu Peibao (1):
-      i2c: designware: do not hold SCL low when I2C_DYNAMIC_TAR_UPDATE is not set
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-fixes-6.12-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-current
-
-Yang Yingliang (1):
-      i2c: muxes: Fix return value check in mule_i2c_mux_probe()
-
- drivers/i2c/busses/i2c-designware-common.c | 6 ++++--
- drivers/i2c/busses/i2c-designware-core.h   | 1 +
- drivers/i2c/muxes/i2c-mux-mule.c           | 4 ++--
- 3 files changed, 7 insertions(+), 4 deletions(-)
-
---iFio4otqGN+Dc48d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmcw+7IACgkQFA3kzBSg
-KbYPDQ//STFzCO0q5mYKvHww7syobd0Wrzy3TADs1u5BtfvCxNx+6mvfj0WdlCAI
-66Orxqbd/Vm8tVu+yDrLC9HMTJuRqAz7alWDPXwz5qV5w0XLz+yB3pvaqEyaEvRN
-WOPvwcCRnOPC6XA6njCnxZQ+L4AzdcBI7eoy/RZm9B+OGdQ1r1DCrGo2TBwvRskl
-pICZYfmjRykOC3/LYTP7ySY5A1o30vdVyKGTQjiEpq/7HRhAg885SJSQ1D6XW6Ba
-t58KwBthnbO15hLaW5lvXpJJp6pgg/aMCmjLhlX/RIGgbs7BGAC5xP4E55HfBUXk
-IhXF8ggIgjbCiwBAtkxpjWyWke/lX7lLt6EvAQertAZsmOxyklMTNBAifG5CaTWj
-WJSYhrhZbqhph9LNr9pStKYisa5OIWDKc+sWnIhrbGhhMvXk5PcuUaR1HNfgEYfF
-/rtri0wAj7NZQZJY8vEhmHwrCuqcYb1zLtbaJaSVqJPlJ/B8JmEWyIM5EH8FVOIT
-Fdzg5KKxIsmeyeSwOg6bGqsXBptIZV+cLVvyXMBod9twAP1M8o5IQgj7/O4NngPB
-ZutTfzz9O7FZxX1bB0bgWpPtmw2Lif2XU96Uff/koabG7aWrQ2FXVMJAQ4ACQ8UL
-I5cxVJOZfFV0LRL8TulKk1fmAvV9Tl1RD53xOD4+hD5kmaYJdcY=
-=AXw2
------END PGP SIGNATURE-----
-
---iFio4otqGN+Dc48d--
+Thanks
+ - Aren
 
