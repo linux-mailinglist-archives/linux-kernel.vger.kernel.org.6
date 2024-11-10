@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-403349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3AB9C347E
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:57:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4219C347F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 21:03:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7557B281F75
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:57:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DFFBB20E61
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243F51474C9;
-	Sun, 10 Nov 2024 19:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B6413D62B;
+	Sun, 10 Nov 2024 20:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RI5N6bs+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkVl+qbn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64AE13A87C;
-	Sun, 10 Nov 2024 19:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4688D4D8D1
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 20:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731268664; cv=none; b=ENEOj+SN/1PC6BfNFkxdP7u9+8QdNUTqaSqmja6LwTrzpMPPSuvJqi6xqKO7ACxJ5JqrvBVZq0AI7nnaGWDtFzr3KFMJBdCZrO04CBobxoyW1BHpmG5mWaxOQo+Q4I3c9fFuYwO42+96HLLefXXmfWNkcv4J5hWMZ0V0pqFuWJw=
+	t=1731268991; cv=none; b=booyO8Of4Xn+kTQmuPDoo2Q38La8aP+qXo8r3U5p1qLP8YeX+Z3luK6Kvqp6LGvJ6aKPjzM9JK0jDQJ4HECGV1vZ5zHPv0ykLXL3dea4NbmlFyfXMgUqUc2idj0jizHMHxg5VioGVqoMmoOnKd21BEhtWbaJWfGVURP24dJi2oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731268664; c=relaxed/simple;
-	bh=t5o95VKolGNwuTZOMbTSwEHJVtGUn83UNE6mDL/SRkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihxstC+eTVnJZnMj1csx9d/bVWinYWEghVOD23rWu2nmv2p1VF+D4ojsd2CyMsDj33t+NuHR5QLUIrTRzZ16JUC5OGzmCxtnPKZC8Guxoo96OIjNHokTLE1Jo2EYwdCI4g6mr1cvIQTC94E7pK3ip3rxd2E9m7nPlCgYpVlYkRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RI5N6bs+; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731268662; x=1762804662;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=t5o95VKolGNwuTZOMbTSwEHJVtGUn83UNE6mDL/SRkU=;
-  b=RI5N6bs+X8hA/VcWD1Iu+YleOlcZZXGDhUx111tl/yU0pARLnpCTifo3
-   rWqKMpjnm8SUHqzw4awYNNqCrrJTDDmECr/Kne9tE1n/qtk16aKk4+fGo
-   4GH/8JzQDyuw7+eIYS6Y3p8FedN5N0d7ipYHemfw5bsAz0cKjxeUipnT3
-   P4QrrSOt5dtqps1v7R0c4JoIAfDBLvyGCAS/Ej6CsDcE8lOjKn+hNv7Hk
-   O2YGwdxdQZ0lanvYAHghK+A8P/mdXibQG674QIFAR3YGAAa5dOg/WN62T
-   RDebSdHif2YHfPHcD2TugRNJWOX4JU+FldQ1Op9Ja0z2NkrkVFWfQ002w
-   g==;
-X-CSE-ConnectionGUID: kF3LNp6iTJ6vI1omz5ks6A==
-X-CSE-MsgGUID: ldfS91dvSd6Jj519P8HuQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="48595993"
-X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
-   d="scan'208";a="48595993"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 11:57:41 -0800
-X-CSE-ConnectionGUID: xm8BLjwFQE66C3JJgcMDxg==
-X-CSE-MsgGUID: TMBMR7lxSEWJ8u7Jhr0j/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,143,1728975600"; 
-   d="scan'208";a="117488860"
-Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 Nov 2024 11:57:38 -0800
-Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tAE40-0000Mv-14;
-	Sun, 10 Nov 2024 19:57:36 +0000
-Date: Mon, 11 Nov 2024 03:57:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>, Lee Duncan <lduncan@suse.com>,
-	Chris Leech <cleech@redhat.com>,
-	Mike Christie <michael.christie@oracle.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: Replace zero-length array with flexible array
- member
-Message-ID: <202411110336.IDRXgcR4-lkp@intel.com>
-References: <20241110151749.3311-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1731268991; c=relaxed/simple;
+	bh=JAFCgV+vvL28xIrdStFZGIrVMc23/ZkPo06cE4EtZuc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vem2hz1HyUe7NGstZ7jmsV++bL+QZ7NS5NsaSyHlP3CicOwIjvbN+vXZRNTNdsY4dSYfQb14GIoJ3GjF038HdlSKNOE/L5CrTsQfpr2OMizlnCrULupp13Kvy16XP1UM11UKdzvPE/D4WY1LNd2UmmsHdkcJ9qAjC+qXU5HsxMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkVl+qbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A439BC4CED2;
+	Sun, 10 Nov 2024 20:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731268990;
+	bh=JAFCgV+vvL28xIrdStFZGIrVMc23/ZkPo06cE4EtZuc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rkVl+qbnMQ0RCh4/WkOWkOW/T/SwHbfce3Zzs2i6Ly5lk4Uv5tYSHhDyGvC3tCs0K
+	 TH34NrrDKiAQiB7r5Y2gO8ao1t4xjAaIhWpBRH/VqZL4ujgFbaSlzpbdG0UeLleuPi
+	 WC4L5Xfqj9uvvzt5Xd1LwkpgbC670qZHN3a2pxpifHXZmUT2+1CCdpNoFlqAmOMZ6B
+	 Wi1de//kziNUHTQ8x97YblocG+OZ4dAg7lsHFlGyKFNYshAImSU3Ega0JyDv9Ax+F1
+	 lIuG8OPvtIFVRvPwMQ7TiT7tx2wQVe8cNYsDBDe327ikH5iKMnDXZL7t9MwxRnLg00
+	 j+ASpvS//NB3Q==
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	sched-ext@meta.com,
+	arighi@nvidia.com,
+	multics69@gmail.com,
+	me@mostlynerdless.de,
+	ggherdovich@suse.com,
+	dschatzberg@meta.com,
+	yougmark94@gmail.com
+Subject: [PATCHSET sched_ext/for-6.13] sched_ext: Rename dispatch and consume kfuncs
+Date: Sun, 10 Nov 2024 10:02:50 -1000
+Message-ID: <20241110200308.103681-1-tj@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110151749.3311-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-Hi Thorsten,
+Hello,
 
-kernel test robot noticed the following build errors:
+[v1] -> v2: Comment and documentation updates.
 
-[auto build test ERROR on jejb-scsi/for-next]
-[also build test ERROR on mkp-scsi/for-next linus/master v6.12-rc6 next-20241108]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+In sched_ext API, a repeatedly reported pain point is the overuse of the
+verb "dispatch" and confusion around "consume":
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thorsten-Blum/scsi-Replace-zero-length-array-with-flexible-array-member/20241110-232327
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20241110151749.3311-2-thorsten.blum%40linux.dev
-patch subject: [PATCH] scsi: Replace zero-length array with flexible array member
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241111/202411110336.IDRXgcR4-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241111/202411110336.IDRXgcR4-lkp@intel.com/reproduce)
+- ops.dispatch()
+- scx_bpf_dispatch[_vtime]()
+- scx_bpf_consume()
+- scx_bpf_dispatch[_vtime]_from_dsq*()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411110336.IDRXgcR4-lkp@intel.com/
+This overloading of the term is historical. Originally, there were only
+built-in DSQs and moving a task into a DSQ always dispatched it for
+execution. Using the verb "dispatch" for the kfuncs to move tasks into these
+DSQs made sense.
 
-All errors (new ones prefixed by >>):
+Later, user DSQs were added and scx_bpf_dispatch[_vtime]() updated to be
+able to insert tasks into any DSQ. The only allowed DSQ to DSQ transfer was
+from a non-local DSQ to a local DSQ and this operation was named "consume".
+This was already confusing as a task could be dispatched to a user DSQ from
+ops.enqueue() and then the DSQ would have to be consumed in ops.dispatch().
+Later addition of scx_bpf_dispatch_from_dsq*() made the confusion even worse
+as "dispatch" in this context meant moving a task to an arbitrary DSQ from a
+user DSQ.
 
-   In file included from drivers/scsi/scsi_transport_iscsi.c:23:
->> include/scsi/scsi_bsg_iscsi.h:62:18: error: flexible array member in a struct with no named members
-      62 |         uint32_t vendor_rsp[];
-         |                  ^~~~~~~~~~
+Clean up the API with the following renames:
 
+1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
+2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
+3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
 
-vim +62 include/scsi/scsi_bsg_iscsi.h
+This patchset is on top of sched_ext/for-6.13 72b85bf6a7f6 ("sched_ext:
+scx_bpf_dispatch_from_dsq_set_*() are allowed from unlocked context") and
+contains the following patches:
 
-    57	
-    58	/* Response:
-    59	 */
-    60	struct iscsi_bsg_host_vendor_reply {
-    61		/* start of vendor response area */
-  > 62		uint32_t vendor_rsp[];
-    63	};
-    64	
-    65	
+ 0001-sched_ext-Rename-scx_bpf_dispatch-_vtime-to-scx_bpf_.patch
+ 0002-sched_ext-Rename-scx_bpf_consume-to-scx_bpf_dsq_move.patch
+ 0003-sched_ext-Rename-scx_bpf_dispatch-_vtime-_from_dsq-s.patch
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+and is always available in the following git branch:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git scx-api-rename-dispatch-v2
+
+diffstat follows. Thanks.
+
+ Documentation/scheduler/sched-ext.rst    |   71 ++++++-------
+ kernel/sched/ext.c                       |  243 +++++++++++++++++++++++++++++-----------------
+ tools/sched_ext/include/scx/common.bpf.h |   18 +--
+ tools/sched_ext/include/scx/compat.bpf.h |  117 +++++++++++++++++++---
+ tools/sched_ext/scx_central.bpf.c        |   14 +-
+ tools/sched_ext/scx_flatcg.bpf.c         |   20 ++-
+ tools/sched_ext/scx_qmap.bpf.c           |   36 +++---
+ tools/sched_ext/scx_simple.bpf.c         |   16 +--
+ 8 files changed, 348 insertions(+), 187 deletions(-)
+
+--
+tejun
+
+[v2] http://lkml.kernel.org/r/20241109194853.580310-1-tj@kernel.org
 
