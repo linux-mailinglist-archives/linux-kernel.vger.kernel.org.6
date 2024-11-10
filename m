@@ -1,54 +1,113 @@
-Return-Path: <linux-kernel+bounces-403305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292619C33DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:55:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2149C33E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:05:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5C1280938
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:55:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E63B20DD8
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F4E1386C9;
-	Sun, 10 Nov 2024 16:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8384A179A7;
+	Sun, 10 Nov 2024 17:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/ferP/k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VJsFhROb"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842EE4778E;
-	Sun, 10 Nov 2024 16:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A0D81749;
+	Sun, 10 Nov 2024 17:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731257713; cv=none; b=i0eLTtu+995lmt2ZF6w9azIzBFrRMjCgY2KENi2Q8h/Uc2dRX7DmWOG2+nXCu3+urejp+XTNpu7PANBJrHQZ44LLhrZiqPEM97f+8CR+3io+Bs1IRqK3CIA8btOIG7RYTmtkLRip1w2znzCbEnNkNpWY2Low0QpeU4ZZadFof0M=
+	t=1731258326; cv=none; b=uuun5VY1qG+cs9+9k4QRQWCxiCScnOReZyuXnJYq3v0XbN67jd8pvPA6alZ9TSv13Lp7zPK14ob0k7g0Ywqfkl/rDJ1UwqYix8Kxj5BHC5mD+67tF71GWpR19f/3ki5qAUzr3Iahe6bLA5VJ6LiNvvAAHqaWwsCpOoHTLyQlIQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731257713; c=relaxed/simple;
-	bh=AUZskdJBYevNYTGe0KPeZyYfuq+MaJc1K9ZNMQotNl4=;
+	s=arc-20240116; t=1731258326; c=relaxed/simple;
+	bh=Pnh3433UtHsbIP9/dYZxTpk00g1+JZSbalZdN33ybvM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RDVsapV0s8jvdJ5IHAOg3tt8Ane/NdGgtnOHAY6bhosaacxxolMyBrxP5w36d+xqLszj0swOz7RVqEQ1SIRwkGw8jEHLKq1SKHAZ3lXI20gBu6K+XEhkNHg2mqf5Sa3cYsj8Zt75zcbU4GBWKd9h8zghoEDV3o1jeLK7Vd9dBwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/ferP/k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFACC4CECD;
-	Sun, 10 Nov 2024 16:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731257713;
-	bh=AUZskdJBYevNYTGe0KPeZyYfuq+MaJc1K9ZNMQotNl4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l/ferP/khg0VXEakjcXIw7NF5yuPND+LsEIV15NV0+NvMWryrmeWMr162LPPXgj2h
-	 mdehU44PqpqDruH9xl+MOV6WSXeX4EN1Vo7lYrvOrubIbEF0Q0eh9aEVx7Y3nUyxg6
-	 0gXgBkIbnna7dGvQE/uueuNn8Xk11JBdjpywWR7Jea7cag7bkFoy1SPJRaJD5i4OvU
-	 A0AGRyUCu1kuwSXVWOCGwEWyg1h1brXEUzTHUrdQFd8Jj0hmOoDixpDW+HsrdXvNWB
-	 0oOv1hVZyhxAkfgSBy6PNioJBebTIXScAZUSYCwjojUTdX2OzKEv4lurwGArCSRF7x
-	 c231OwRtXn8cQ==
-Date: Sun, 10 Nov 2024 10:55:10 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: maud_spierings@hotmail.com
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] enable the gpu node
-Message-ID: <rfdg37xvvfqumw6xjk6fod5iwsrdq3okadsz62eygymllh3pv3@llvipo64oz37>
-References: <20241110-qcom-asus-gpu-v1-1-13d7b05784b8@hotmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LggVJDnPWZDtKGzBWq0TY7hLbTq9RfCr321Epf6o2P7uF278lwYHZhVUfzpRKKoBCZCj0s9ieRGpjuP1gW9dRHz2Wrhl+NGHDaNdS5aFq8O0F81ppebNpHrT1Nzkpn4Z/GYnEFu54poIRWlJEmB1+GjLu32Vn4pW5xu3veuUAGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VJsFhROb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AABQ85T024414;
+	Sun, 10 Nov 2024 17:04:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=frQ6QYtXz5tMjJ8Ox9swnqK1a1aNNK
+	cBTsSHw7pehXE=; b=VJsFhRObJYitThQEqjAIsMuoGRseEjDNnOJihVcv4iSAoH
+	lAO+DequcP6W2vm6+BrcQroo8jl3UD9noUUl0V0S+lCLFT7R6SpLYdaG6LsYkXGP
+	MVlnKtBlLoTWpjmtbFpiU8qydsZLw9oB+oqe86j0SS8lYPO4xaOl9BgP50SwVtE3
+	TLMHce9EjmzjbvbitbrqUIJUDTxoG8Vt4vbHQXwBpPuOXW6NFdWO4QZyi3B4OLVx
+	Wc+LsxmLeqJLMQNSl15mFllgen1i2CctWJ68Kox/+SnDmoLe/34dJ2iATUdGsNyd
+	TmkwwUSJZoaGV/q8wTFVx0n+OWoZTjng8RbRtopw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tqass9yj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:04:21 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AAH4K0E007951;
+	Sun, 10 Nov 2024 17:04:20 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tqass9yf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:04:20 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAGPktE018059;
+	Sun, 10 Nov 2024 17:04:19 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2mry51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 10 Nov 2024 17:04:19 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AAH4FgP35324206
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 10 Nov 2024 17:04:15 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4020820043;
+	Sun, 10 Nov 2024 17:04:15 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ACD6520040;
+	Sun, 10 Nov 2024 17:04:13 +0000 (GMT)
+Received: from osiris (unknown [9.171.74.231])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sun, 10 Nov 2024 17:04:13 +0000 (GMT)
+Date: Sun, 10 Nov 2024 18:04:12 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Florent Revest <revest@chromium.org>,
+        linux-trace-kernel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Alan Maguire <alan.maguire@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+        Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Song Liu <song@kernel.org>, KP Singh <kpsingh@kernel.org>,
+        Matt Bobrowski <mattbobrowski@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Eduard Zingerman <eddyz87@gmail.com>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v19 05/19] fprobe: Use ftrace_regs in fprobe exit handler
+Message-ID: <20241110170412.6661-A-hca@linux.ibm.com>
+References: <173125372214.172790.6929368952404083802.stgit@devnote2>
+ <173125378270.172790.5407978814601760638.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,71 +116,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241110-qcom-asus-gpu-v1-1-13d7b05784b8@hotmail.com>
+In-Reply-To: <173125378270.172790.5407978814601760638.stgit@devnote2>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Y4KkmDzv_RfQUUDzdkAuzUGlBSRvEsau
+X-Proofpoint-ORIG-GUID: lTz9pkfDChxrEnI8Wbh9YNbvhWacrVls
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=3 priorityscore=1501
+ spamscore=3 malwarescore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ clxscore=1011 impostorscore=0 adultscore=0 mlxscore=3 mlxlogscore=147
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411100151
 
-On Sun, Nov 10, 2024 at 01:46:12PM +0100, maud spierings via B4 Relay wrote:
-
-Please run 
-  git log --oneline -- arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-and add a prefix to your subject line to make your change match others
-to this file.
-
-Please also drop "node", as it's the GPU you're actually enabling.
-
-> From: maud spierings <maud_spierings@hotmail.com>
+On Mon, Nov 11, 2024 at 12:49:42AM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> enable the gpu node on the snapdragon powered asus vivobook s15
-
-Looks good, please capitalize the 'e' at the beginning of your sentence.
-
+> Change the fprobe exit handler to use ftrace_regs structure instead of
+> pt_regs. This also introduce HAVE_FTRACE_REGS_HAVING_PT_REGS which
+> means the ftrace_regs is including the pt_regs so that ftrace_regs
+> can provide pt_regs without memory allocation.
+> Fprobe introduces a new dependency with that.
 > 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > ---
-
-Anything below the '---' line is omitted from the git history,
-including your Signed-off-by. So move that above this line (and remove
-the "enables..."-line below.
-
-> enables the gpu on the asus vivobook s15
-> 
-> Signed-off-by: maud spierings <maud_spierings@hotmail.com>
-
-It would make me happy if you capitalized the 'm' and 's' in your
-name...
-
-Regards,
-Bjorn
-
+>   Changes in v16:
+>    - Rename HAVE_PT_REGS_TO_FTRACE_REGS_CAST to
+>      HAVE_FTRACE_REGS_HAVING_PT_REGS.
+>   Changes in v3:
+>    - Use ftrace_regs_get_return_value()
+>   Changes from previous series: NOTHING, just forward ported.
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> index 8515c254e15868a5d7f378b0dc0bf8f339fc7b19..f25991b887de3fca0092c5f81c881c5d8bd71aac 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> @@ -328,6 +328,14 @@ vreg_l3j_0p8: ldo3 {
->  	};
->  };
->  
-> +&gpu {
-> +	status = "okay";
-> +
-> +	zap-shader {
-> +		firmware-name = "qcom/x1e80100/ASUSTeK/vivobook-s15/qcdxkmsuc8380.mbn";
-> +	};
-> +};
-> +
->  &i2c0 {
->  	clock-frequency = <400000>;
->  	status = "okay";
-> 
-> ---
-> base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
-> change-id: 20241110-qcom-asus-gpu-870c7c22935c
-> 
-> Best regards,
-> -- 
-> maud spierings <maud_spierings@hotmail.com>
-> 
-> 
+>  arch/loongarch/Kconfig          |    1 +
+>  arch/s390/Kconfig               |    1 +
+
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
 
