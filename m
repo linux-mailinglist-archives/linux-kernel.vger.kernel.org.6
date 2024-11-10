@@ -1,129 +1,245 @@
-Return-Path: <linux-kernel+bounces-403276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CCB9C336F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:50:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAC79C3372
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 16:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F591F2029D
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF3628129B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 15:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D7D13698E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F041F13BC18;
 	Sun, 10 Nov 2024 15:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bn/FJD54"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uu80gdyH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AEC22097;
-	Sun, 10 Nov 2024 15:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2951369AE;
+	Sun, 10 Nov 2024 15:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731253817; cv=none; b=k8+bmU/P3tmc4q+FCYMLuiTpW0AzLqLRxAKUi64A2vL9Jm76+952CuPE9U0cX1iuaoe4W7w80YuzC5wE8l0Jc9OFDYRrebtmJPo2a9YrWbKfB8C8ZJ1/tC5STFK8madjsNtix/4fDeSAyZ2koZpIj06FGmvjtbhHtXaLnwQg6yA=
+	t=1731253818; cv=none; b=dkSqnAPIeGB7yYRgRM5TVQX0MBWbtDE9hAOSNu1s8wzVuU5eEXE0379/DgFpHyGXDNKfdQidNNs5USDTGSsBKlkRR2p3ZH5HzDVb7etwD4zBEPv4lc6j0BK4n4wpMOis58qLbMciBDPu9IGUoSDrVcyDuKOIwhET9dyk30xoCM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731253817; c=relaxed/simple;
-	bh=X2WODjlo5k6M6C+3y9/0HbRt/kyKqfDqB/5oktD9bWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L5h2MtFxg8XMFtRYCplJghKpqxQPI+UucFIeOgOhTyIaveItokc6xyN7ViYYCH6hNi6czORGIslT0e/h4gmiKJjYy1BPGywg0DBk6lhT7X6wiRLSoC+uvBiLZ2QQKX454Uo9omyqR8OrAgfCcsb3ST72pgVUtGFCdZYtcCiMUwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bn/FJD54; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e28fc8affdaso569678276.1;
-        Sun, 10 Nov 2024 07:50:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731253814; x=1731858614; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=431engaI3ETj/ECuLKJ1/FXiWtPiKP8c1q4cS9zRAsI=;
-        b=Bn/FJD54yGvdxE0aOUQOyExaESiidTU2T3T+tPY01HtlXRor1yNzVKcOv5PHBlNHT/
-         Ba2LheaIw94DnDx33Hj2WTpdPvxfB8fYwCRG9OeEQYUUoRpSbrK6qrpei7hZjyELnKd4
-         d+dfEFzAnTQ4chi70T7fyo8ODpby00cPGLrYrTkpcFujlu+FDBIc1FJ0qWNvPMItFZbu
-         3HHAbckYF0bsUCPRp9wPcNdSHkDKclQCUubwmjrQGnQC3BYcBnI0KpbXnp0LmgxWqYCJ
-         Mk2rta+nGgjUYJnCN2vDc4h5SVzcmJqChP5svve/lAd/rf8lJSbB0JH4j2Qx21+AlAp1
-         Wf0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731253814; x=1731858614;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=431engaI3ETj/ECuLKJ1/FXiWtPiKP8c1q4cS9zRAsI=;
-        b=P4Qy40Oc7O7lKbhAHHD+oXjDhSCWHF+pNzKmDvkZ7sw1hafHWQwvZgWVB/Mh2hny3W
-         au9qxeSU/x8mWWHbx7Gl4ZVpwzL7pbLyMWhJUZLtXs4xn9g8A/iGOf2KB/Vxv8FLqqVU
-         K4JuaoAwsd5M2Clj+WVeb1yX9V8hL44xht+wBtHIPpg+c0cVRQpqGAUZLcJnn9IAM4u5
-         smJ5oWdVsJ8Qr01yWgFe3Ra4FJq1qyybUeEcqpL/IjmLBAHUEdA+KQFCFkwwiDG16VLO
-         xkBZhYgkWxrbo2Bg7fwjgslI+RJ/gdVvQln+00WqvNhxa4Vg/odCsAw6+wnAbH5vyB4i
-         uP1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU/76csbG2aKkR5iI7F1UZdntDx+Whxh0xWwhhPl6G09YFYGDjFK1U2Fhk9/Y73QIQzWiKSucuIB2AI@vger.kernel.org, AJvYcCU72T0JAirjqxjogtZ8ZCov7Mr/Y+X8fudtiuBNi/Cjc8bjiOXmoQbivoEcz8mCrENnkhb8enX3@vger.kernel.org, AJvYcCVE0ayCIciJVikmfMSyN0lKZmKU1hag7YXBww/tIQpC09qSb4r6RUuytWRzzDNBjCywG3sZ1liTOm/eSDCs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6P6tc4slKyL3X/p+tQjrDoNuR54PiY8J8YgPVqSJFJHK+Y0gu
-	Mrgq1jaMVNYnULW5XNdn73sYdYTtur/ly22tOCldn7Coy82VErEB95sKQEXf3k7Ncu2ziV2KIIj
-	xfZYDKCYmfJDhxEno9Sl4gh4I1+M=
-X-Google-Smtp-Source: AGHT+IHPN/wBuMSlYobvPfwyK0eBpeDQCeS36N5ParCeUsQxZMu7SQ7a+5vgzU74VvQQ+ZK1sH5FzhoeWhu1JvyCyy4=
-X-Received: by 2002:a05:690c:9b08:b0:630:ed11:e751 with SMTP id
- 00721157ae682-6eaddd9f19fmr34550727b3.3.1731253813818; Sun, 10 Nov 2024
- 07:50:13 -0800 (PST)
+	s=arc-20240116; t=1731253818; c=relaxed/simple;
+	bh=O6aPdlc3GU/IJJYpZi5XgJjtV62OSvEqbzGak40xdP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wh2TGOXtG3J/E2Dgmyz52TmuAZ9CejpOTHcU/pk2G8Yzv7Pqr9XP6ZXUp2TskEnFyxV4rpGMAxHXJOCYzs4tvWIh1SSipd1RJrD6yqAv05kvPjLF0tWFjLZQBy0WmQb+mT7JYlmZKy9j0O4j5ltdEFZ3Ax47Kn0PpstKwulWFEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uu80gdyH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C46D6C4CECD;
+	Sun, 10 Nov 2024 15:50:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731253818;
+	bh=O6aPdlc3GU/IJJYpZi5XgJjtV62OSvEqbzGak40xdP0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Uu80gdyHsgGvNkugiPO/4FyI9FebDJAOt7jdcGYMMZEAtEjaNkQMRuNKr3BV244fJ
+	 1DsnzghU0iYnb38xr4a7SNtbH7IpUVY3DTyxgPF6KeCFr5uDMLBuQU9maZF1HQCg3K
+	 37jEt+9DZBN/u8OccrETzIKQzinwhkeEbf5ijluvYGyWLGpfWwhle6Y9TUVFdptxFw
+	 ojemhVrnpSJGKEHtCizbQuzwQOs6vqSupCGA+BLI6JeTLTKXP+zoK4uESkEEKfNvY1
+	 qEFF2MNSFBN1kJ+lrVUS+di80t1/+N45qg+VNbjc11SVVpjf5hnX++NrZOFFoFTDU2
+	 4WJRpeG9f3Reg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH v19 07/19] tracing: Add ftrace_fill_perf_regs() for perf event
+Date: Mon, 11 Nov 2024 00:50:09 +0900
+Message-ID: <173125380933.172790.13871919598133716103.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <173125372214.172790.6929368952404083802.stgit@devnote2>
+References: <173125372214.172790.6929368952404083802.stgit@devnote2>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109015633.82638-1-Tristram.Ha@microchip.com> <20241109015633.82638-3-Tristram.Ha@microchip.com>
-In-Reply-To: <20241109015633.82638-3-Tristram.Ha@microchip.com>
-From: Vladimir Oltean <olteanv@gmail.com>
-Date: Sun, 10 Nov 2024 17:50:02 +0200
-Message-ID: <CA+h21hqWPHHqMQONY2bKZ2uA2pUzm2Rqwo7LTX+guj7CHo4skQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/2] net: dsa: microchip: Add SGMII port support
- to KSZ9477 switch
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Marek Vasut <marex@denx.de>, 
-	UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 9 Nov 2024 at 03:56, <Tristram.Ha@microchip.com> wrote:
-> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-> index f73833e24622..8163342d778a 100644
-> --- a/drivers/net/dsa/microchip/ksz_common.c
-> +++ b/drivers/net/dsa/microchip/ksz_common.c
-> @@ -354,10 +354,30 @@ static void ksz9477_phylink_mac_link_up(struct phylink_config *config,
->                                         int speed, int duplex, bool tx_pause,
->                                         bool rx_pause);
->
-> +static struct phylink_pcs *
-> +ksz_phylink_mac_select_pcs(struct phylink_config *config,
-> +                          phy_interface_t interface)
-> +{
-> +       struct dsa_port *dp = dsa_phylink_to_port(config);
-> +       struct ksz_device *dev = dp->ds->priv;
-> +       struct ksz_port *p = &dev->ports[dp->index];
-> +
-> +       if (!p->sgmii)
-> +               return ERR_PTR(-EOPNOTSUPP);
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Since commit 7530ea26c810 ("net: phylink: remove "using_mac_select_pcs""),
-returning ERR_PTR(-EOPNOTSUPP) here would actually be fatal. This error
-code no longer carries any special meaning.
+Add ftrace_fill_perf_regs() which should be compatible with the
+perf_fetch_caller_regs(). In other words, the pt_regs returned from the
+ftrace_fill_perf_regs() must satisfy 'user_mode(regs) == false' and can be
+used for stack tracing.
 
-It would be a good idea to Cc Russell King for phylink changes.
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Acked-by: Will Deacon <will@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Naveen N Rao <naveen@kernel.org>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
 
-> +       switch (interface) {
-> +       case PHY_INTERFACE_MODE_SGMII:
-> +       case PHY_INTERFACE_MODE_1000BASEX:
-> +               return &p->pcs_priv->pcs;
-> +       default:
-> +               return NULL;
-> +       }
-> +}
-> +
->  static const struct phylink_mac_ops ksz9477_phylink_mac_ops = {
->         .mac_config     = ksz_phylink_mac_config,
->         .mac_link_down  = ksz_phylink_mac_link_down,
->         .mac_link_up    = ksz9477_phylink_mac_link_up,
-> +       .mac_select_pcs = ksz_phylink_mac_select_pcs,
->  };
+---
+  Changes in v16:
+   - Fix s390 to clear psw.mask according to Heiko's suggestion.
+---
+ arch/arm64/include/asm/ftrace.h   |    7 +++++++
+ arch/powerpc/include/asm/ftrace.h |    7 +++++++
+ arch/s390/include/asm/ftrace.h    |    6 ++++++
+ arch/x86/include/asm/ftrace.h     |    7 +++++++
+ include/linux/ftrace.h            |   31 +++++++++++++++++++++++++++++++
+ 5 files changed, 58 insertions(+)
+
+diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+index 09210f853f12..10e56522122a 100644
+--- a/arch/arm64/include/asm/ftrace.h
++++ b/arch/arm64/include/asm/ftrace.h
+@@ -148,6 +148,13 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+ 	return regs;
+ }
+ 
++#define arch_ftrace_fill_perf_regs(fregs, _regs) do {		\
++		(_regs)->pc = arch_ftrace_regs(fregs)->pc;			\
++		(_regs)->regs[29] = arch_ftrace_regs(fregs)->fp;		\
++		(_regs)->sp = arch_ftrace_regs(fregs)->sp;			\
++		(_regs)->pstate = PSR_MODE_EL1h;		\
++	} while (0)
++
+ int ftrace_regs_query_register_offset(const char *name);
+ 
+ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec);
+diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
+index 0edfb874eb02..407ce6eccc04 100644
+--- a/arch/powerpc/include/asm/ftrace.h
++++ b/arch/powerpc/include/asm/ftrace.h
+@@ -40,6 +40,13 @@ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *
+ 	return arch_ftrace_regs(fregs)->regs.msr ? &arch_ftrace_regs(fregs)->regs : NULL;
+ }
+ 
++#define arch_ftrace_fill_perf_regs(fregs, _regs) do {		\
++		(_regs)->result = 0;				\
++		(_regs)->nip = arch_ftrace_regs(fregs)->regs.nip;		\
++		(_regs)->gpr[1] = arch_ftrace_regs(fregs)->regs.gpr[1];		\
++		asm volatile("mfmsr %0" : "=r" ((_regs)->msr));	\
++	} while (0)
++
+ static __always_inline void
+ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+ 				    unsigned long ip)
+diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
+index 5c94c1fc1bc1..5b7cb49c41ee 100644
+--- a/arch/s390/include/asm/ftrace.h
++++ b/arch/s390/include/asm/ftrace.h
+@@ -76,6 +76,12 @@ ftrace_regs_get_frame_pointer(struct ftrace_regs *fregs)
+ 	return ftrace_regs_get_stack_pointer(fregs);
+ }
+ 
++#define arch_ftrace_fill_perf_regs(fregs, _regs)	 do {		\
++		(_regs)->psw.mask = 0;					\
++		(_regs)->psw.addr = arch_ftrace_regs(fregs)->regs.psw.addr;		\
++		(_regs)->gprs[15] = arch_ftrace_regs(fregs)->regs.gprs[15];		\
++	} while (0)
++
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ /*
+  * When an ftrace registered caller is tracing a function that is
+diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+index d61407c680c2..7e06f8c7937a 100644
+--- a/arch/x86/include/asm/ftrace.h
++++ b/arch/x86/include/asm/ftrace.h
+@@ -47,6 +47,13 @@ arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ 	return &arch_ftrace_regs(fregs)->regs;
+ }
+ 
++#define arch_ftrace_fill_perf_regs(fregs, _regs) do {	\
++		(_regs)->ip = arch_ftrace_regs(fregs)->regs.ip;		\
++		(_regs)->sp = arch_ftrace_regs(fregs)->regs.sp;		\
++		(_regs)->cs = __KERNEL_CS;		\
++		(_regs)->flags = 0;			\
++	} while (0)
++
+ #define ftrace_regs_set_instruction_pointer(fregs, _ip)	\
+ 	do { arch_ftrace_regs(fregs)->regs.ip = (_ip); } while (0)
+ 
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index ad2b46e1d5b0..6d29c640697c 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -207,6 +207,37 @@ ftrace_partial_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
+ 
+ #endif /* !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS || CONFIG_HAVE_FTRACE_REGS_HAVING_PT_REGS */
+ 
++#ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
++
++/*
++ * Please define arch dependent pt_regs which compatible to the
++ * perf_arch_fetch_caller_regs() but based on ftrace_regs.
++ * This requires
++ *   - user_mode(_regs) returns false (always kernel mode).
++ *   - able to use the _regs for stack trace.
++ */
++#ifndef arch_ftrace_fill_perf_regs
++/* As same as perf_arch_fetch_caller_regs(), do nothing by default */
++#define arch_ftrace_fill_perf_regs(fregs, _regs) do {} while (0)
++#endif
++
++static __always_inline struct pt_regs *
++ftrace_fill_perf_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
++{
++	arch_ftrace_fill_perf_regs(fregs, regs);
++	return regs;
++}
++
++#else /* !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS */
++
++static __always_inline struct pt_regs *
++ftrace_fill_perf_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
++{
++	return &arch_ftrace_regs(fregs)->regs;
++}
++
++#endif
++
+ /*
+  * When true, the ftrace_regs_{get,set}_*() functions may be used on fregs.
+  * Note: this can be true even when ftrace_get_regs() cannot provide a pt_regs.
+
 
