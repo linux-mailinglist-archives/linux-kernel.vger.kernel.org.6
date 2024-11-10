@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-403344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EB09C346A
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:38:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EFC9C3471
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 20:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98C031C21231
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E452A1C20A18
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 19:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD9B13C670;
-	Sun, 10 Nov 2024 19:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m118utQW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8115013B5B3;
+	Sun, 10 Nov 2024 19:51:35 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C0E10A3E
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 19:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AEFA923
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 19:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731267488; cv=none; b=PZI5ZK80uZiO7P7M6U3YcDgOAxrSwzkyqQSFRUz6WDz8R3s4jlzVuFYRTg+4uvbZzcBZ83F/wgipVj3q5XY5YbUcNltPLjqK6tmUthGs2obhFBDfI9jHorwd0ZlRNJs3+4xtHalqR2J0ad1K5Z17K4ROhoTPiurDB8/yfnP4JZQ=
+	t=1731268295; cv=none; b=UmjJRPKgV/oPIaQHA86daC1S8b/5lLNM6A16nYod35u2oFy111IMxPY83F6Z+K60vioIvAZiadD0NgQ43jemWbBhoeutfNgaHV16Q/5Rup8FmmvmIW62AwpdYDj9J0+ajtsztxkoc8gz1HWlOoDWeOywYxui5L+848yHauxd6Qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731267488; c=relaxed/simple;
-	bh=5raMsL3YtEnQyRroqq9Rox8lVOkFKhPtiGZ9lTnhkgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhGB09mJVfLwtyA77bheoOxK57Pa4wzRhqRmrbtwpmzbqf4vaqayWzA1l9QSPsF/hCGmTe4lsmBD7K8Pk7Z4YUUKe3Jz7tkIcgvEcHwrcpkt8JnjKQ7syIiktAdNfI/DWhi8tG0ypebmP1VV0Kc5aH/i1ViK9wbmyGVhF9G3jNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m118utQW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6867C4CECD;
-	Sun, 10 Nov 2024 19:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731267488;
-	bh=5raMsL3YtEnQyRroqq9Rox8lVOkFKhPtiGZ9lTnhkgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m118utQWIGUa4e4DgltV1NqVZp2+Q6Fikl0FKEUXB8GeKszg0Tb/0UDACgTlGIxTh
-	 K3FI79SCjafrgPOrUjaL/sHdLIS8vzYd6AGt27DBZiuD+Tzm/8Cc05HBqBpK4dupwP
-	 UJo+sVzxgxlIKg3fu6bUYPtKwnxV9WfLXAZII8bdxkvZ6+JLt/tyu/TOzpc4r4MzAZ
-	 keZ7hLXYzZsYYplDqcSmTIF2+sJ7Zh+xm0MjbS3TStl/QqXqjVUnNqgI0AUKEHoLgs
-	 ZuDI+tC/zBX53HKS6Vx/HSrJbdpwJSlqAy2mk83QgQYfu9I2iFaRdz2MCQVE0G/fOn
-	 tfPRtHE1Nw4iA==
-Date: Sun, 10 Nov 2024 09:38:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Johannes Bechberger <me@mostlynerdless.de>
-Cc: Andrea Righi <arighi@nvidia.com>, Changwoo Min <multics69@gmail.com>,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, sched-ext@meta.com, ggherdovich@suse.com,
-	dschatzberg@meta.com, yougmark94@gmail.com, changwoo@igalia.com,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH 2/3] sched_ext: Rename scx_bpf_consume() to
- scx_bpf_dsq_move_to_local()
-Message-ID: <ZzELnt99rwACjvIJ@slm.duckdns.org>
-References: <20241109194853.580310-1-tj@kernel.org>
- <20241109194853.580310-3-tj@kernel.org>
- <81281555-d57f-4507-a3a5-ea9d1aa27871@gmail.com>
- <ZzCej_1NNr2wB0AD@gpd3>
- <42a6a270d7b01c02eb4d78bb408165641c6b435a@mostlynerdless.de>
+	s=arc-20240116; t=1731268295; c=relaxed/simple;
+	bh=PgYesiTdPA5OVXXO/NUazx9gOX69ohmxZNRoY8rs0cw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfwHozJ7FA9wxOAMdMqCTf6zfCgbz1EjAADf6CvADCBv7t2ObkeFDJ0MEUjUcR7OkSinfG73qonvQL/NUHbSuCrj+J9Iryq5SaesOoCWdusVxEoJR5YI3W9SokAmn+SAaXw9i129wE+fuhnbmfAGq8xY1ArtFg00xcPyW5R8RlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 1eef05fe-9f9d-11ef-9aff-005056bd6ce9;
+	Sun, 10 Nov 2024 21:51:07 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 10 Nov 2024 21:51:04 +0200
+To: Aren <aren@peacevolution.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
+ devm callbacks
+Message-ID: <ZzEOqC9dAHCRX5a9@surfacebook.localdomain>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-7-aren@peacevolution.org>
+ <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
+ <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,48 +65,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <42a6a270d7b01c02eb4d78bb408165641c6b435a@mostlynerdless.de>
+In-Reply-To: <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
 
-Hello,
+Sun, Nov 10, 2024 at 01:38:39PM -0500, Aren kirjoitti:
+> On Mon, Nov 04, 2024 at 10:32:08AM +0200, Andy Shevchenko wrote:
+> > On Sat, Nov 02, 2024 at 03:50:37PM -0400, Aren Moynihan wrote:
 
-On Sun, Nov 10, 2024 at 04:09:15PM +0000, Johannes Bechberger wrote:
-> Hello all,
+...
+
+> > > +	ret = devm_add_action_or_reset(&client->dev, stk3310_set_state_disable, data);
+> > 
+> > Why not simply 'dev' as in below call?
 > 
-> the changes look really good and the renaming will make it much easier
-> to explain what a simple scheduler does, lowering the entry barrier.
+> I was trying to avoid refactoring the entire function to replace
+> &client->dev with dev, I'll add a patch for that to the next revision.
 
-Andrea, Changwoo, Johannes, can you guys reply with Acked-by so that I can
-record the consensus in the commit?
+I'm not talking about refactoring, I'm talking only about the lines that you
+have touched / added.
 
-> > > * Insert @p into the vtime priority queue of the DSQ identified by @dsq_id.
-> > > - * Tasks queued into the priority queue are ordered by @vtime and always
-> > > - * consumed after the tasks in the FIFO queue. All other aspects are identical
-> > > - * to scx_bpf_dsq_insert().
-> > > + * Tasks queued into the priority queue are ordered by @vtime. All other aspects
-> > > + * are identical to scx_bpf_dsq_insert().
-> > >
-> > > I suggest keeping this part, "and always consumed after the tasks
-> > > in the FIFO queue." Otherwise, IIRC, there is no place to explain
-> > > the priority between FIFO and priority DSQs explicitly.
-> > >
-> > I think we don't allow anymore to use the FIFO queue and the prio queue
-> > at the same time. Maybe we should clarify this here and also mention
-> > that we can't use scx_bpf_dsq_insert_vtime() with the built-in DSQs.
-> 
-> I would like to second that we clarify the differences between the built-in
-> and the non-builtin DSQs.
-
-Will add that.
-
-> Also: Could we mention that the priority queue is stable? If I remember correctly,
-> then tasks with the same priority are scheduled in a FIFO manner.
-
-If it is, that's accidental. I don't think we want to make a guarantee about
-ordering stability. It's not like that's going to make any meaningful
-difference.
-
-Thanks.
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret, "failed to register cleanup function\n");
 
 -- 
-tejun
+With Best Regards,
+Andy Shevchenko
+
+
 
