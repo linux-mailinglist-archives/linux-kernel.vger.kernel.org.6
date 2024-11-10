@@ -1,155 +1,163 @@
-Return-Path: <linux-kernel+bounces-403135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556509C3180
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC4B9C3181
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746811C20A70
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93EA81F214BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC03153808;
-	Sun, 10 Nov 2024 09:41:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBEB15443D;
+	Sun, 10 Nov 2024 09:45:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g1S/OGKo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Lq7AHUTd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437401537CB
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 09:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E8F15443C;
+	Sun, 10 Nov 2024 09:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731231710; cv=none; b=bdo4W2CZ4h2S0i2GXagjVmStzLwFyUlXq629il1M49SHzJhPJBymToQG7punmgSi0KfDpHeOTnVeduXs3oEhCt4V1otZN6XmNIKJRVWZY9P5NeBaLXk0SdXLdJ8eMPLVc3dLsCSSSEwm5QTFtn+zTS/EoS8tlmKpudPzHz0rkdY=
+	t=1731231909; cv=none; b=QYUYZRBc5uq4IEZYEi2I5c5eMubtoMwgY0i7E+rYI2XIoHsCUBReBHJ7UVppTodzIh42GsPDjhYBQE9qcozg6fckMBw10eik6uKwbmXrC4C1RTydSCEAF6py1+Aaj9by29xfOU04hl+9NvTQ3xVkpD9guMS8RN+lmskkPz85YnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731231710; c=relaxed/simple;
-	bh=O6gcBtee8F7pDHU8XSKzSZ8bhN8r1JiN22kEQ9b+yhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qDb/lr4KVzzyp7pKN26qJwb+MuHzzvpa0HBRlCwydC0mga9a+ShxhOZ8PinkKGgyNdz3/fB0VvC3EHvOeoE1KCU3Pv/nMHCLvTMRb1926Rdhf8sAMQxiLwQ3VximoNKkaWhQkuMaqnLzc/yf9EX+MZxZYZC+c/vS510vfHocZXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g1S/OGKo; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731231707; x=1762767707;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=O6gcBtee8F7pDHU8XSKzSZ8bhN8r1JiN22kEQ9b+yhY=;
-  b=g1S/OGKopO8UbqAb1+tPfUJX51sPLmaAxh1lE29IbmmS20KNollDaba/
-   P6S6DUrnBUROjJED3rOewEFSl88MtW4q9fc4IRfc8GPzTEARJhPnpKr4H
-   jwN/ONCuwldxLgBi6B4OEwg2X+c7Y+aFPnPItftFExOioZbO68/g5TxxC
-   pdFagdspIhMosauClri4WNT+/kbAFcCrnFDfd/1YcH+INvwsYUipNxe6G
-   4ILfjEPtRUpb/T5G1AQqYk7+yqs52WlMd7A0xU2YBzCLvDNFASGN2SSS2
-   zyWWen5VUJJWVWYhSNdpRCWKVd+32a8185555Suln2khFOQCmz6OEmxpr
-   w==;
-X-CSE-ConnectionGUID: gEWDJGxyTfCxFeqNjAVX8A==
-X-CSE-MsgGUID: BKUxgNK3TBGjO1jGZJObgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30914255"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30914255"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 01:41:47 -0800
-X-CSE-ConnectionGUID: pHFv7Ze3TemACIde+2843g==
-X-CSE-MsgGUID: IAduJv4URA6jJFLa097/4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
-   d="scan'208";a="86694296"
-Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 10 Nov 2024 01:41:45 -0800
-Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tA4Rz-00004D-19;
-	Sun, 10 Nov 2024 09:41:43 +0000
-Date: Sun, 10 Nov 2024 17:41:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol
- 'primary_uic' was not declared. Should it be static?
-Message-ID: <202411101746.lD8YdVzY-lkp@intel.com>
+	s=arc-20240116; t=1731231909; c=relaxed/simple;
+	bh=3wkqWUW1Et9tJfzKL8re7wqENmSdU2idaeVd1VHX6sI=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=rTlNlcdGejoDEErQEOsWo7FigpeKDKW9KeB7TLaMXD2old5GXClesgd5HCvjb7P7z1sM9d5wFOuWj4m1LM8etNkkVOL2mV4svMtxZO0+IF73mzXIJcNyr3ETdCndZsPH3R7vwcUOs8ZPF+T5pk9DBBh66/54/LuTcg79ClX9Gz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Lq7AHUTd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42F8C4CECD;
+	Sun, 10 Nov 2024 09:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731231909;
+	bh=3wkqWUW1Et9tJfzKL8re7wqENmSdU2idaeVd1VHX6sI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lq7AHUTdnpLeFWV+SBSARtLlOlsAi9H51J3zbCaaf25XPbcA/kmhlZToj5REz3lJ4
+	 1FVqxt8SYyFmeETNzv+Xda8uTSO7E6h1D/AemfF/5tTxPfMY6HSjBodh5Hx0rkvVKj
+	 Bihi3qQOoHVYeMoLrnMgQTVbegr+/ybfv5VYeB9w=
+Date: Sun, 10 Nov 2024 01:45:08 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.12-rc7
+Message-Id: <20241110014508.c2626adfff36ba70af88b0a0@linux-foundation.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christophe,
 
-First bad commit (maybe != root cause):
+Linus, please pull this batch of hotfixes, thanks.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   de2f378f2b771b39594c04695feee86476743a69
-commit: d5d1a1a55a7f227c0f41847b0598982f0a93170d powerpc/platforms: Move files from 4xx to 44x
-date:   5 months ago
-config: powerpc-randconfig-r133-20241110 (https://download.01.org/0day-ci/archive/20241110/202411101746.lD8YdVzY-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce: (https://download.01.org/0day-ci/archive/20241110/202411101746.lD8YdVzY-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411101746.lD8YdVzY-lkp@intel.com/
+The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
 
-sparse warnings: (new ones prefixed by >>)
->> arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol 'primary_uic' was not declared. Should it be static?
-   arch/powerpc/platforms/44x/uic.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/slab.h):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
---
->> arch/powerpc/platforms/44x/pci.c:116:54: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     expected restricted __be32 const [usertype] *cell
-   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     got unsigned int const [usertype] *
->> arch/powerpc/platforms/44x/pci.c:117:74: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 const [usertype] *in_addr @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     expected restricted __be32 const [usertype] *in_addr
-   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     got unsigned int const [usertype] *
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     expected restricted __be32 const [usertype] *cell
-   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     got unsigned int const [usertype] *
->> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char const volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     expected unsigned char const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     got unsigned char [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     got unsigned short [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     got unsigned int [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     expected unsigned char volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     got unsigned char [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     got unsigned short [usertype] *
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: cast removes address space '__iomem' of expression
->> arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
-   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     got unsigned int [usertype] *
-   arch/powerpc/platforms/44x/pci.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
 
-vim +/primary_uic +40 arch/powerpc/platforms/44x/uic.c
+are available in the Git repository at:
 
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  39  
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18 @40  struct uic *primary_uic;
-e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  41  
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
+able-2024-11-09-22-40
 
-:::::: The code at line 40 was first introduced by commit
-:::::: e58923ed14370e0facc5eb2c3923216adc3bf260 [POWERPC] Add arch/powerpc driver for UIC, PPC4xx interrupt controller
+for you to fetch changes up to c289f4de8e479251b64988839fd0e87f246e03a2:
 
-:::::: TO: David Gibson <david@gibson.dropbear.id.au>
-:::::: CC: Paul Mackerras <paulus@samba.org>
+  mailmap: add entry for Thorsten Blum (2024-11-07 14:14:59 -0800)
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+----------------------------------------------------------------
+20 hotfixes, 14 of which are cc:stable.
+
+Three affect DAMON.  Lorenzo's five-patch series to address the
+mmap_region error handling is here also.
+
+Apart from that, various singletons.
+
+----------------------------------------------------------------
+Andrei Vagin (1):
+      ucounts: fix counter leak in inc_rlimit_get_ucounts()
+
+Andrew Kanner (1):
+      ocfs2: remove entry once instead of null-ptr-dereference in ocfs2_xa_=
+remove()
+
+Hugh Dickins (2):
+      mm/thp: fix deferred split queue not partially_mapped
+      mm/thp: fix deferred split unqueue naming and locking
+
+Lorenzo Stoakes (5):
+      mm: avoid unsafe VMA hook invocation when error arises on mmap hook
+      mm: unconditionally close VMAs on error
+      mm: refactor map_deny_write_exec()
+      mm: refactor arch_calc_vm_flag_bits() and arm64 MTE handling
+      mm: resolve faulty mmap_region() error path behaviour
+
+Masami Hiramatsu (Google) (1):
+      objpool: fix to make percpu slot allocation more robust
+
+Ma=EDra Canal (1):
+      mm: fix docs for the kernel parameter ``thp_anon=3D``
+
+Muhammad Usama Anjum (1):
+      selftests: hugetlb_dio: check for initial conditions to skip in the s=
+tart
+
+Qi Xi (1):
+      fs/proc: fix compile warning about variable 'vmcore_mmap_ops'
+
+Roman Gushchin (1):
+      signal: restore the override_rlimit logic
+
+SeongJae Park (3):
+      mm/damon/core: handle zero {aggregation,ops_update} intervals
+      mm/damon/core: handle zero schemes apply interval
+      mm/damon/core: avoid overflow in damon_feed_loop_next_input()
+
+Thorsten Blum (1):
+      mailmap: add entry for Thorsten Blum
+
+Wei Yang (1):
+      mm/mlock: set the correct prev on failure
+
+Yu Zhao (1):
+      mm/page_alloc: keep track of free highatomic
+
+ .mailmap                                        |   1 +
+ Documentation/admin-guide/kernel-parameters.txt |   2 +-
+ Documentation/admin-guide/mm/transhuge.rst      |   2 +-
+ arch/arm64/include/asm/mman.h                   |  10 +-
+ arch/parisc/include/asm/mman.h                  |   5 +-
+ fs/ocfs2/xattr.c                                |   3 +-
+ fs/proc/vmcore.c                                |   9 +-
+ include/linux/mman.h                            |  28 +++--
+ include/linux/mmzone.h                          |   1 +
+ include/linux/user_namespace.h                  |   3 +-
+ kernel/signal.c                                 |   3 +-
+ kernel/ucount.c                                 |   9 +-
+ lib/objpool.c                                   |  18 ++--
+ mm/damon/core.c                                 |  42 +++++---
+ mm/huge_memory.c                                |  56 +++++++---
+ mm/internal.h                                   |  55 +++++++++-
+ mm/memcontrol-v1.c                              |  25 +++++
+ mm/memcontrol.c                                 |   9 +-
+ mm/migrate.c                                    |   4 +-
+ mm/mlock.c                                      |   9 +-
+ mm/mmap.c                                       | 130 +++++++++++++-------=
+----
+ mm/mprotect.c                                   |   2 +-
+ mm/nommu.c                                      |   9 +-
+ mm/page_alloc.c                                 |  16 +--
+ mm/shmem.c                                      |   3 -
+ mm/swap.c                                       |   4 +-
+ mm/vma.c                                        |  14 +--
+ mm/vma.h                                        |   6 +-
+ mm/vmscan.c                                     |   4 +-
+ tools/testing/selftests/mm/hugetlb_dio.c        |  19 ++--
+ 30 files changed, 329 insertions(+), 172 deletions(-)
+
 
