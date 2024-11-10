@@ -1,121 +1,96 @@
-Return-Path: <linux-kernel+bounces-403183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8C129C320F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9404B9C3210
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 13:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DDE728135B
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E8E2813FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9079155CBA;
-	Sun, 10 Nov 2024 12:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97166156F4A;
+	Sun, 10 Nov 2024 12:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1fUOyOs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYsJbvt9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2512F142E7C;
-	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E2A142E7C;
+	Sun, 10 Nov 2024 12:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731242783; cv=none; b=a4BgKC4G/S9+G59UQEkYgFNd923c4R1c3q/QYBz+sPeu2xHIACiy6x8+LX2qeTmQ+0ip7TXvo0RGEx33g42knysFSOP02iRIa3bFwsy4a884n8QaWyGu9Q1HcvAflqZlxlgayzLFXh807RNzgN94Y7bXGrs3BIk8IJFul4ksD/M=
+	t=1731242894; cv=none; b=JRnvOj7Pz+8FzBjQNFI93eRcJFcY6KYacESssksyfi9vBnt2SRv1Afxfmz2m9yPpx0M5ensQPy1GaC6BsHvs4QYNA6fwvnH0bA6t32yZks4EHADh/UB5yFDVhdWbksGoKCqbFAzV7xpbAunx1ZGoVIPUHKH7rnpD7MUADmatYPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731242783; c=relaxed/simple;
-	bh=ElkLMRZRMv9XJWjsopnKZFC+Gem4zHcyAOxbtRxcg8g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kux9ZA2iKtSopVmrYThm19OMUA639Q50WsIti+JHDs7GUeXpJON0Ukk9aeOU2U1sxr4VnxpOEQNn0cAt0iwFy2l5tBduNf11JFGdddsZO6hJJY4T24PrD1z5ohg5qEa5H0u+/Y5xngubZAWo/VV0Sr2QDbuErXdYARD52MiIhDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1fUOyOs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B156DC4CECD;
-	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
+	s=arc-20240116; t=1731242894; c=relaxed/simple;
+	bh=ZBBP9tCs7B8oMNkOKGW5MTUmJLU36fHH0WHhmx+Si30=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mwfDqcgyTTYKAELAhBEOT0Mh9KmzXNOGq85ZS4atg9E0O48fQu2wLTUYrRCdGDgiKt/CryliTDIvlBR1PzBEhue/KmuYjwEDLvZCWYv6QO5deNBo1HLDFDjUqxDIUnt4VnFSGuumqcp1eF01zKgGBXiSy2xhZigcaK/FIRw2RZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYsJbvt9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D4A7C4CECD;
+	Sun, 10 Nov 2024 12:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731242782;
-	bh=ElkLMRZRMv9XJWjsopnKZFC+Gem4zHcyAOxbtRxcg8g=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=u1fUOyOsGG1MHxtnIOBClBP5NVPdIeCrg7M+h2jl3w0joJVwtfW0rx1FlNuKi0eGG
-	 X1kIVwiNZ3v73cCO4HZeQU/viIYkR4S4jZDoyW2y5QFxoT5sq+8u4PANJd/O8B1bjW
-	 rch0ShXmIbB0EgxSTT6C06wn54jmWQR/JkIvOHTt6CvcVxU6wwY/LKpJyAtwep8Aq+
-	 vs+Pje3+km+zjXabYDCAOB7b+maZsRBUKKyWBiUN3Ia3ESeIvX5lEpbAtzaMaI401d
-	 9iUWemkLTCR5qkUe9g6lR7eV1qs1JSdahfaq+/kJuirlZXbxccJ+ihDp4dORhCFIO6
-	 0MkNwl8ap6a8A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8270D5E382;
-	Sun, 10 Nov 2024 12:46:22 +0000 (UTC)
-From: maud spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
-Date: Sun, 10 Nov 2024 13:46:12 +0100
-Subject: [PATCH] enable the gpu node
+	s=k20201202; t=1731242893;
+	bh=ZBBP9tCs7B8oMNkOKGW5MTUmJLU36fHH0WHhmx+Si30=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RYsJbvt9E4P4f2k3tcOJO5gfGQ4ASX7P2P0frhgmFcO/Kt+k9TEHpToqphAOzCSmz
+	 yCYNVgycQkmikZc0iM4XrjCEgZV6GafhrPnqw0egfnfLSQZHfAHCCT/XfToTEdLE5v
+	 5Vs3y/3Cr1gtMEg98EW8Fcj31uIxKKK6MJmjyxVbjHT+PhinSlVTGF0MSQH4XuhQBN
+	 u5tfS4tvaJOFxVRE20iMPlJh4V1+Co4hU8FxlCDlZ2FUUCnvajrfYVUGaNr6E6Kwf0
+	 Gx18DElbhz7fXcw6co6foJZpf5NAUv3rePR234xUcgv/X0CJYuAMOj37QjJjDeSaPD
+	 PGUphnYeQwSdg==
+Date: Sun, 10 Nov 2024 13:48:08 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hdegoede@redhat.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, Yunke Cao
+ <yunkec@chromium.org>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+Message-ID: <20241110134808.328da075@foz.lan>
+In-Reply-To: <CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+	<5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
+	<CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+	<20241110110257.5160a7d1@foz.lan>
+	<2fd9053f-34b6-4e97-a898-98fd71a485e8@xs4all.nl>
+	<CANiDSCt=Qht8CwAxCkpn=5owtQ_JBUkK+9yaLsZ5W2RJJxbz8A@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241110-qcom-asus-gpu-v1-1-13d7b05784b8@hotmail.com>
-X-B4-Tracking: v=1; b=H4sIABOrMGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ0MD3cLk/FzdxOLSYt30glJdC3ODZPNkIyNLY9NkJaCegqLUtMwKsHn
- RsbW1AMtWuORfAAAA
-X-Change-ID: 20241110-qcom-asus-gpu-870c7c22935c
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, maud spierings <maud_spierings@hotmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731242781; l=1072;
- i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
- bh=r3QqlTk6/PdijpA+1hzU7uSYno80RzxewgsClzl2Gxo=;
- b=uz7Ftt5vnXmdUh012LFdLEbFGUKoaVnsAceQDCjeb1yYRh2yL3NhijBx8qekuLKRIKLTrHVSj
- lohsU+0kM6CAzhd0g59n/a23dmGmQ5y+UirXSPhHAymGi1ZLnnu+LY0
-X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
- pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
-X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
- with auth_id=273
-X-Original-From: maud spierings <maud_spierings@hotmail.com>
-Reply-To: maud_spierings@hotmail.com
 
-From: maud spierings <maud_spierings@hotmail.com>
+Em Sun, 10 Nov 2024 11:37:46 +0100
+Ricardo Ribalda <ribalda@chromium.org> escreveu:
 
-enable the gpu node on the snapdragon powered asus vivobook s15
+> > > Privacy matters only when streaming. IMO the Kernel check for it needs to
+> > > be done at DQBUF time and at read() calls, as one can enable/disable the
+> > > camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+> > > and on devices that physically support cutting the video.  
+> >
+> > We could add a vb2_s_privacy(bool privacy) function to vb2 to tell vb2 if the privacy
+> > mode is on. And if so, take action. E.g. calling QBUF/DQBUF would return a -EACCES error.
+> >
+> > That will ensure consistent behavior for all drivers that have a privacy function.  
+> 
+> I am not against adding a feature like this, but we still need a way
+> to notify userspace about a change of the privacy state when the user
+> presses it.
+> Controls are great for this.
 
----
-enables the gpu on the asus vivobook s15
+It doesn't sound a good idea. See, from users PoV, they want the stream
+to start with black frames when privacy is on, and dynamically being
+able to enable/disable actual frame output. So, the best is to have the
+stream running independently of the privacy being enabled or not.
 
-Signed-off-by: maud spierings <maud_spierings@hotmail.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index 8515c254e15868a5d7f378b0dc0bf8f339fc7b19..f25991b887de3fca0092c5f81c881c5d8bd71aac 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -328,6 +328,14 @@ vreg_l3j_0p8: ldo3 {
- 	};
- };
- 
-+&gpu {
-+	status = "okay";
-+
-+	zap-shader {
-+		firmware-name = "qcom/x1e80100/ASUSTeK/vivobook-s15/qcdxkmsuc8380.mbn";
-+	};
-+};
-+
- &i2c0 {
- 	clock-frequency = <400000>;
- 	status = "okay";
-
----
-base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
-change-id: 20241110-qcom-asus-gpu-870c7c22935c
-
-Best regards,
--- 
-maud spierings <maud_spierings@hotmail.com>
-
-
+Thanks,
+Mauro
 
