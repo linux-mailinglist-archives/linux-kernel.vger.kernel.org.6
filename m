@@ -1,101 +1,85 @@
-Return-Path: <linux-kernel+bounces-403403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 593B69C353F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:02:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA039C3541
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099E0282124
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 23:02:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25A8D1F21218
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 23:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8040D15855D;
-	Sun, 10 Nov 2024 23:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C76158851;
+	Sun, 10 Nov 2024 23:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUW3VY31"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Aw331g6A"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D2A647;
-	Sun, 10 Nov 2024 23:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20BD647;
+	Sun, 10 Nov 2024 23:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731279737; cv=none; b=YtgxxNGIXyK+NIgKpAWI7FI3c7io5WoZ+ozX3D/V9h/YJ0+MvuFiOtNJxJIbhRqoiX0O/HlrEB8soHALL+o4ri8b9mUOQxMwmcBt8fO66l8d/J7r6HWcnjMcfJFLmHZwY7rZ+YVrFbkUwIXv3JJKwrxfhz6OkysTsM5igMcHPHY=
+	t=1731280057; cv=none; b=OF+ufzm8Eq9IY71qK05pnCoQZ9Ec4CTVn4mB+YbJrRJUslwcu//PivewAPS87ztlUjAtHPhDIXfNfQosh3abznZkflRSDYX52Z/Ff3+AFWPDvephMov0xYS4/+TVs2nxu5FTRYE31TCaY/tecw2RBikzQl7kZoTEoT7Zm+V+Tb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731279737; c=relaxed/simple;
-	bh=vAz+LR65uBstdyYP2ATEBuceJLStdpC/o6JglmhL/mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PnRxXbmHu71a1cVgg15JA/ZPdQdYmw/z4IglkvaTMVZOZGjQAq7/XyIc4htw0KAC+t9JgGG3MjAwVn7BHu3hxkj1peWOjkXIlSV27Rq67LTVhkYotHxyZRgqc+Qvr7vbhcfXooEAHj+7zCenKUCmVd/VOOm/Lvjkc/XEWv7gNn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUW3VY31; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20caea61132so34875925ad.2;
-        Sun, 10 Nov 2024 15:02:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731279735; x=1731884535; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bitiFti2cmHrS8tjbLhDtwNlCQXcEb2acAduFPY3M2g=;
-        b=VUW3VY31wPZy3kSIyK/A4hNlP8ZOTnX5QsEzFVqKIArLX8+l9lP6y2e50JHPDs7vTy
-         O7eCvvkKh7UvDcsBUN3cyt0ENRqYzwMdGAo8C911zWKZocn5SixNSPPeoAxF7d7CMj9g
-         DtUcaA7tHoSEG8FpKHEFgobjYaL//3q7IUDdjzTE6bSvEfZpJy3zrUEAuZ+K4Rl4ZLEC
-         I2xc0hlqEzjE/VJpudbFdc0a6iQLilkOJwXusqXG1Zw6rsqiC2V6SSzhmZAwzJOPm2th
-         tczNXo2IUrIsxJ7hdd9ntHhadxx83D8ePngucjBb9qVa3iY8TTACue//J1eIxSZ9v4Gq
-         R5VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731279735; x=1731884535;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bitiFti2cmHrS8tjbLhDtwNlCQXcEb2acAduFPY3M2g=;
-        b=RWshm0X4IvkIWPI5Xei/8x3e5c2mKN1turHxfuyRENvntp99eoRl/7g8s6fGQSLNoD
-         iLdhQ05Z9PbZ1vMjtWxyInLzbsg7MphMyS3KgP1bAY0kJzjEZOinkD5KXsbIjV8bQzhw
-         77EAnDdPU/f0grknO0qLcVJaV3XH8BCG2AC1gMkfocNoiE/lYk2zPR3E0ji3jvJmjXK/
-         5sNuWHTaf0oK8dLqQ2/mNnGTPnpQqirxcgBCO8iTbBFr0vneqJb8CwpmGM7mf0BqwDIT
-         PgsTgNTaX2lqhqRNDesrmq7+QkpqJqO/1iwcldbi/WywuukOWJ+rh8mjya5RHBnkuK24
-         WCAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhUbG+8F02KD8Px3KYK1tFn9J8TUscI52nckGzgYIsH3WGkJu9u+gDYDH6zxofyeRrkJ5Uh3O4v8yG@vger.kernel.org, AJvYcCVqpfesTC2DxB63etL0vkYCTD5+ykPEI7P9ZXtugd7fAoMBzFksZESnrZCmhZ/X7GZ3l9WWdlx1hOBxKrgU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCOpL12CldaGke3DZUvqzrub4IP3BTzWJLiCu283z5b31ZK6Dx
-	HjriIJiDmDYBV6H3mnoghIsPkySTNX0idUiNIWGi/MeWcg5YWl1VIpq5BZ5mlPOfO8rX/zcO3On
-	7cd98Z6wyEkrRnrlMa0CWDl6/7TpIVA1s
-X-Google-Smtp-Source: AGHT+IHZMZDNkenYFapUuPRJJtxFq43VXnEH1vwTgHc1o4VnTwbQRHJ+HCjszyDPcMGh3f5eVyTEN/MfQkOpnlyw6jA=
-X-Received: by 2002:a17:902:f68a:b0:20c:a692:cf1e with SMTP id
- d9443c01a7336-2118358afb4mr150394205ad.43.1731279734830; Sun, 10 Nov 2024
- 15:02:14 -0800 (PST)
+	s=arc-20240116; t=1731280057; c=relaxed/simple;
+	bh=YCiJLqgE/+ORuOIMXJMF+gS543VBlbcaW4MsUQgMwIk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYFftQr3k4aEipXSvCvMpvul8Rjp/ftb8SqFsyD1nI+bkag3sWZQSBxpd6L0OE5nka32FD6Nx2htaqq067s8VnUCtDfkjjDBPG5zo/XxuMgMW2pHbNb+B0rf0YJvRmfOt5e3yDm57hbCyyESmkXL3YsucElY0whapQ51FotpDq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Aw331g6A; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 71563240003;
+	Sun, 10 Nov 2024 23:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731280052;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=03vAuxqA4NMD9rUvnJjL8xcPWjzMwBZpzBa1pX3H2k4=;
+	b=Aw331g6AAN8HWgF7CX65vRaADWt1d7w2Hm0d3kOxf/T40+425rriUPRzBDnVP6OppSYiBs
+	NGWi9uB7ivNX7kiL0QXRzGYsjGOM7R9LzG7jpWXLBSQkDf6zIT75N8RRiijU1Fi0Y4ApSI
+	hauzd9mfLwHQB5L9NrZry6QjZ15iGEIWoSLamL+55y94wOpXEicyXIkU6FEs9qEfpOO3Y0
+	TOb334EetOMIc4xCJCLJ9wqjH+zW7zuFd2N5SO7ZYgKWj+J1u61NjTP3+jwLBosQ4jJ9p4
+	Ks/2WA7SXgQ9ohapVEMmBOi0mAgIUcNO+2VUkQ7aOhqHqfhwVw9LUDb0A81y4A==
+Date: Mon, 11 Nov 2024 00:07:32 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Esben Haabendal <esben@geanix.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] rtc: isl12022: Add alarm support
+Message-ID: <173128003850.3029485.17192040022999942503.b4-ty@bootlin.com>
+References: <20240913-rtc-isl12022-alarm-irq-v2-0-37309d939723@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007210214.102568-1-linux@treblig.org> <Zy0reBfykkwXA47d@gallifrey>
- <CAH2r5mvL+xXH_nnoKKKnVPFo_xtOb=8mPSqrG28Dgngx6Aab7Q@mail.gmail.com>
- <CAH2r5ms1y3XsGmA2kU6Vdvdmg_jnVyd2w7mQPRyX9oh9rFD2tA@mail.gmail.com> <ZzEOuqDwagwoGCMf@jeremy-HP-Z840-Workstation>
-In-Reply-To: <ZzEOuqDwagwoGCMf@jeremy-HP-Z840-Workstation>
-From: ronnie sahlberg <ronniesahlberg@gmail.com>
-Date: Mon, 11 Nov 2024 09:02:03 +1000
-Message-ID: <CAN05THTgj+_78kG3LFnpU9zsjEEBAsyDZ0P20YL3-DP94r3KUA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Remove pre-historic unused CIFSSMBCopy
-To: Jeremy Allison <jra@samba.org>
-Cc: Steve French <smfrench@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Bharath S M <bharathsm@microsoft.com>, CIFS <linux-cifs@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913-rtc-isl12022-alarm-irq-v2-0-37309d939723@geanix.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-All of SMB1 should be removed.  Not just disabled but deleted.
+On Fri, 13 Sep 2024 12:29:11 +0200, Esben Haabendal wrote:
+> Extend the rtc-isl12022 driver with alarm IRQ support.
+> 
+> 
 
-What are the plans in samba? Any timeline to literally delete the smb1 code?
+Applied, thanks!
 
-On Mon, 11 Nov 2024 at 05:51, Jeremy Allison <jra@samba.org> wrote:
->
-> On Fri, Nov 08, 2024 at 10:09:58PM -0600, Steve French wrote:
-> >As an alternative, might be useful to see if this command still works
-> >to Samba and/or older Windows (and e.g. enable an ioctl for it - might
-> >have been useful in the past to old servers)
->
-> No, this command has *never* been useful. Please don't enable
-> it, just remove support.
+[1/3] rtc: isl12022: Prepare for extending rtc device drvdata
+      https://git.kernel.org/abelloni/c/d4a6161f242b
+[2/3] rtc: isl12022: Add alarm support
+      https://git.kernel.org/abelloni/c/c62d658e5253
+[3/3] rtc: isl12022: Replace uint8_t types with u8
+      https://git.kernel.org/abelloni/c/5a36826a5909
+
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
