@@ -1,176 +1,155 @@
-Return-Path: <linux-kernel+bounces-403134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D9C9C317F
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 556509C3180
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA79F1F21588
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746811C20A70
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 09:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D2A15443F;
-	Sun, 10 Nov 2024 09:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC03153808;
+	Sun, 10 Nov 2024 09:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vc85F1+q";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xbtDXHoB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SIg2cies";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="e7ZZrLlE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g1S/OGKo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94431537AA;
-	Sun, 10 Nov 2024 09:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437401537CB
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 09:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731231688; cv=none; b=EYgVOsEaN2b2GhdGgbsY8JlSasX5EAQ89PWRR86qEjWnVx9GIr4AS9r10os0SPY5L1ugPLnRrx3T1KV/nPrhDSZxCJf3xCNsfmnNKgLeCzLVT0oSRC1SS8XTm6PL87vo4gWhAFj0d4EMrhAY/BD45RUVB5Wods4yST3NzXNwDb8=
+	t=1731231710; cv=none; b=bdo4W2CZ4h2S0i2GXagjVmStzLwFyUlXq629il1M49SHzJhPJBymToQG7punmgSi0KfDpHeOTnVeduXs3oEhCt4V1otZN6XmNIKJRVWZY9P5NeBaLXk0SdXLdJ8eMPLVc3dLsCSSSEwm5QTFtn+zTS/EoS8tlmKpudPzHz0rkdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731231688; c=relaxed/simple;
-	bh=4qvdpQkT3SlRFIlu6TD25SeR7NwDjNqtyUfySTP5Dbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OiW+cJPKTgX00WHUWDl0kdg7n/uobAm+4Ju5w6rlAXq6c625RJ2ker7VeMNB3ahyBFLWQt2KN6ZED52TEk/2EuyUDWnX6tYVtLTvKE1h+EHOQmihykHUUfsvhL63cGCHSsEQhP2Q0Qof1Ps9NVLzaqvj0ohBny5TlHAw5QWhS+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vc85F1+q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xbtDXHoB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SIg2cies; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=e7ZZrLlE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CC68921A73;
-	Sun, 10 Nov 2024 09:41:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731231685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
-	b=vc85F1+qXSlODxZaLhmNcZrstutruYw4x2I0CBroDXHmysmrEDftTJABxh9ZovWyDp/kYa
-	hAHrpOfIzZAtsoPFkLxL3ASV/DSv8R4HvP9asGScEqI8e/BrEGrJViIXTG1tb/UyouURWZ
-	bDj0mPuAuPA/5oSpeGuMfbZ3fQcrcAc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731231685;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
-	b=xbtDXHoBGiX6KQaqAz0fV/teTf19uPjPeWisqeq4Va4sKwKMIR6cGCxbfB9wsnF8t4DaQM
-	u+HESoWYH0ETEeAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=SIg2cies;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=e7ZZrLlE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731231684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
-	b=SIg2ciesrB2kCBhM4fo5FIaTlEodFUvLoaQrC3cx2yA8YwIfKP1VFZEYoYGkcyk5vMqESM
-	DGacZ+DeJgSQ3BY3HXyqBK3lAaAfkNriiQSEeCKYmXNh95ebcx4h0DoKuuFUFJnKQ867i7
-	fAfPURE0kigQaZPnz1TgoJlnNmz03/Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731231684;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iVJB3Qkd5+VbKsHz2eRls6oNz9FZXUF6a+d/UpC1v0A=;
-	b=e7ZZrLlEkEfpRFMd1jnS8waLpaAogHYsT9Klum1apOlrYGFGliQr3gykKwWvKnC6lG2+aa
-	QAFl9wRDGAd41XDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D018C13980;
-	Sun, 10 Nov 2024 09:41:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7erzL8N/MGfcFQAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Sun, 10 Nov 2024 09:41:23 +0000
-Message-ID: <3724f8ff-4b89-465c-ac9d-1dec7c86fb62@suse.de>
-Date: Sun, 10 Nov 2024 11:41:11 +0200
+	s=arc-20240116; t=1731231710; c=relaxed/simple;
+	bh=O6gcBtee8F7pDHU8XSKzSZ8bhN8r1JiN22kEQ9b+yhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qDb/lr4KVzzyp7pKN26qJwb+MuHzzvpa0HBRlCwydC0mga9a+ShxhOZ8PinkKGgyNdz3/fB0VvC3EHvOeoE1KCU3Pv/nMHCLvTMRb1926Rdhf8sAMQxiLwQ3VximoNKkaWhQkuMaqnLzc/yf9EX+MZxZYZC+c/vS510vfHocZXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g1S/OGKo; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731231707; x=1762767707;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=O6gcBtee8F7pDHU8XSKzSZ8bhN8r1JiN22kEQ9b+yhY=;
+  b=g1S/OGKopO8UbqAb1+tPfUJX51sPLmaAxh1lE29IbmmS20KNollDaba/
+   P6S6DUrnBUROjJED3rOewEFSl88MtW4q9fc4IRfc8GPzTEARJhPnpKr4H
+   jwN/ONCuwldxLgBi6B4OEwg2X+c7Y+aFPnPItftFExOioZbO68/g5TxxC
+   pdFagdspIhMosauClri4WNT+/kbAFcCrnFDfd/1YcH+INvwsYUipNxe6G
+   4ILfjEPtRUpb/T5G1AQqYk7+yqs52WlMd7A0xU2YBzCLvDNFASGN2SSS2
+   zyWWen5VUJJWVWYhSNdpRCWKVd+32a8185555Suln2khFOQCmz6OEmxpr
+   w==;
+X-CSE-ConnectionGUID: gEWDJGxyTfCxFeqNjAVX8A==
+X-CSE-MsgGUID: BKUxgNK3TBGjO1jGZJObgw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30914255"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30914255"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 01:41:47 -0800
+X-CSE-ConnectionGUID: pHFv7Ze3TemACIde+2843g==
+X-CSE-MsgGUID: IAduJv4URA6jJFLa097/4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,142,1728975600"; 
+   d="scan'208";a="86694296"
+Received: from lkp-server01.sh.intel.com (HELO 7b17a4138caf) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 10 Nov 2024 01:41:45 -0800
+Received: from kbuild by 7b17a4138caf with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tA4Rz-00004D-19;
+	Sun, 10 Nov 2024 09:41:43 +0000
+Date: Sun, 10 Nov 2024 17:41:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol
+ 'primary_uic' was not declared. Should it be static?
+Message-ID: <202411101746.lD8YdVzY-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/10] PCI: brcmstb: Enable external MSI-X if available
-To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20241025124515.14066-1-svarbanov@suse.de>
- <20241025124515.14066-7-svarbanov@suse.de>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20241025124515.14066-7-svarbanov@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CC68921A73
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+Hi Christophe,
 
-Jim, Florian there is no review comments on this patch. Could you please
-take a look.
+First bad commit (maybe != root cause):
 
-regards,
-~Stan
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   de2f378f2b771b39594c04695feee86476743a69
+commit: d5d1a1a55a7f227c0f41847b0598982f0a93170d powerpc/platforms: Move files from 4xx to 44x
+date:   5 months ago
+config: powerpc-randconfig-r133-20241110 (https://download.01.org/0day-ci/archive/20241110/202411101746.lD8YdVzY-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce: (https://download.01.org/0day-ci/archive/20241110/202411101746.lD8YdVzY-lkp@intel.com/reproduce)
 
-On 10/25/24 15:45, Stanimir Varbanov wrote:
-> On RPi5 there is an external MIP MSI-X interrupt controller
-> which can handle up to 64 interrupts.
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> ---
-> v3 -> v4:
->  - no changes.
-> 
->  drivers/pci/controller/pcie-brcmstb.c | 63 +++++++++++++++++++++++++--
->  1 file changed, 59 insertions(+), 4 deletions(-)
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411101746.lD8YdVzY-lkp@intel.com/
 
-<cut>
+sparse warnings: (new ones prefixed by >>)
+>> arch/powerpc/platforms/44x/uic.c:40:12: sparse: sparse: symbol 'primary_uic' was not declared. Should it be static?
+   arch/powerpc/platforms/44x/uic.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/slab.h):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+--
+>> arch/powerpc/platforms/44x/pci.c:116:54: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     expected restricted __be32 const [usertype] *cell
+   arch/powerpc/platforms/44x/pci.c:116:54: sparse:     got unsigned int const [usertype] *
+>> arch/powerpc/platforms/44x/pci.c:117:74: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected restricted __be32 const [usertype] *in_addr @@     got unsigned int const [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     expected restricted __be32 const [usertype] *in_addr
+   arch/powerpc/platforms/44x/pci.c:117:74: sparse:     got unsigned int const [usertype] *
+   arch/powerpc/platforms/44x/pci.c:118:52: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected restricted __be32 const [usertype] *cell @@     got unsigned int const [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     expected restricted __be32 const [usertype] *cell
+   arch/powerpc/platforms/44x/pci.c:118:52: sparse:     got unsigned int const [usertype] *
+>> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1528:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char const volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     expected unsigned char const volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1528:30: sparse:     got unsigned char [usertype] *
+   arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1531:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short const volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     expected unsigned short const volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1531:33: sparse:     got unsigned short [usertype] *
+   arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1534:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int const volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     expected unsigned int const volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1534:33: sparse:     got unsigned int [usertype] *
+   arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1585:24: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned char volatile [noderef] [usertype] __iomem *addr @@     got unsigned char [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     expected unsigned char volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1585:24: sparse:     got unsigned char [usertype] *
+   arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1588:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned short volatile [noderef] [usertype] __iomem *addr @@     got unsigned short [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     expected unsigned short volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1588:27: sparse:     got unsigned short [usertype] *
+   arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: cast removes address space '__iomem' of expression
+>> arch/powerpc/platforms/44x/pci.c:1591:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected unsigned int volatile [noderef] [usertype] __iomem *addr @@     got unsigned int [usertype] * @@
+   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     expected unsigned int volatile [noderef] [usertype] __iomem *addr
+   arch/powerpc/platforms/44x/pci.c:1591:27: sparse:     got unsigned int [usertype] *
+   arch/powerpc/platforms/44x/pci.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+
+vim +/primary_uic +40 arch/powerpc/platforms/44x/uic.c
+
+e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  39  
+e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18 @40  struct uic *primary_uic;
+e58923ed14370e arch/powerpc/sysdev/uic.c David Gibson 2007-04-18  41  
+
+:::::: The code at line 40 was first introduced by commit
+:::::: e58923ed14370e0facc5eb2c3923216adc3bf260 [POWERPC] Add arch/powerpc driver for UIC, PPC4xx interrupt controller
+
+:::::: TO: David Gibson <david@gibson.dropbear.id.au>
+:::::: CC: Paul Mackerras <paulus@samba.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
