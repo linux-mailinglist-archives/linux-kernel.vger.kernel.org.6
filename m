@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-403150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD979C31A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:41:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5E09C31AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:45:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6A928180C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:41:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362DC1C20A24
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FE8155342;
-	Sun, 10 Nov 2024 10:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2246814F121;
+	Sun, 10 Nov 2024 10:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JW8duPR4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="npCXaA+9"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D367142E7C;
-	Sun, 10 Nov 2024 10:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC09153573;
+	Sun, 10 Nov 2024 10:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731235298; cv=none; b=TZnUl+2jMH5+ry0rhEY8QcMtRNsMd2mYwDslnS8SlQCgY3/YwGGmsF+MsCPD8g4DHkmjCXrU1c3W71kXJckTmOEjS/KLvDUzkw+mZriIVkZ/LGNy1dS2EUBfww7RN3tm+WSONcrvbluncK+qx1QkXqZzsIfI5tC4aqimg8W5PMw=
+	t=1731235518; cv=none; b=X+2a4atDSzUZQ9NW6OUSrdnc+GABPSOGy4+CQtNMPtHGVDbR9a41KbTH1WH70GWysJEZBJ+fn7VmVSOOCCcHEcfuzH6jqjvYp+f/xylKpRTj63wwWEPzjWnPxfjbe82ghcgbnWo3+ciqqyjMdVdfvUusP/v6d460YpxltNtGY6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731235298; c=relaxed/simple;
-	bh=KJTVz52sJu2oQj0BOPzh46r/ng+VWSz4cJfy6f2DTow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrjRRUscW6sF9gtF1X9gjp6Q+I7nc8kjMLZPgBtFLcGwpGfE8Gg+IIfTLigpkDs5F2KTOB91TKSKiDoD+3A1Y1fK707EhgsjdWVJhI70O49Kgen0CTfg8PgSYluf9kDtxqCo16iNqbpsl9SF52gNTfxTzwt7cv3Iw7FFM698Gnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JW8duPR4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A12DC4CECD;
-	Sun, 10 Nov 2024 10:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731235297;
-	bh=KJTVz52sJu2oQj0BOPzh46r/ng+VWSz4cJfy6f2DTow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JW8duPR4zgtshHYsGnyTHtlzUbI9C7VSu6DKWCkFGrApkoWJWSxhGLCw5xgUraK37
-	 KyNCPb36UhLBki49PXkqcD2sBnsPb3pSEYoDPi+P4LFHLRa96gSHPosI6C7dqbYMip
-	 vIVxA0qXAzTZEbJq1b7ufQuqLIfu45BQHuHyL9EX1PQY+YtgJ833g0BRQjd7iEAg3m
-	 WndbNLaXlStjkG2lTw6sbX+1iBBO11XE41go4jd7Z15Ik1RN38Prs+eyzYb42sG812
-	 MOTUu7mg3HBNZVbtRKgzK0VBiDj1HOzE5fnpSg4ms0Wa3VJ7O+NYsKsaWDPF/fo35+
-	 lxhrXIwkV8nJA==
-Date: Sun, 10 Nov 2024 12:41:30 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
-Message-ID: <20241110104130.GA19265@unreal>
-References: <cover.1730298502.git.leon@kernel.org>
- <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org>
- <87ttchwmde.fsf@trenco.lwn.net>
- <20241108200355.GC189042@unreal>
- <87h68hwkk8.fsf@trenco.lwn.net>
- <20241108202736.GD189042@unreal>
+	s=arc-20240116; t=1731235518; c=relaxed/simple;
+	bh=RBkaVa+v3bdfSur4TMosKjf3T1UqOD8FCPd0qxXj+5E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=AVYZE6aQu6QF8d7FJn7g5WT5d8Rq/i3kr+Ywoq8v6XefhTEcXREKMKN67hx+bHI3rCL+3i2lgGwl5OSquj7GEEhTX4pB/cNLh2WN39xTkBywyu73A7pyb1TIi8l1UcghBZZvOUrbjU+eZAK36TEjXJyFEiiM4DFbDC33XhqdoKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=npCXaA+9; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731235492; x=1731840292; i=markus.elfring@web.de;
+	bh=RBkaVa+v3bdfSur4TMosKjf3T1UqOD8FCPd0qxXj+5E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=npCXaA+9LbaI7T4MUptHXIE9s/sTgjf3EYTUtUB+Z+fPf+8Vrohx9Uq7Qj04mhbp
+	 vXAEOLtqNplPRibmcXOhHGw4UNiD8YzLJLPq1PrU6IC/LM0PpwwaQ7xTvkoEwYgY9
+	 iv/hk/LP2/SBDjcUacZwMDU2RhRI84eGcNPr2PazTD1A1VlosUCq/Ri/8sxp6ZGEA
+	 kNoZ7SvZC/1UVyNxLrzmLwwLmWtqL6rI1dVROPSLmg+wE0S2iUO+d9DLv26LJ2cSh
+	 PunNhNo8bTt9G58fY/93IZsRjRPiHBl5aDViBvEs1KrEmSoZXwJTgHa4SLc0hLS8g
+	 4QjBYf8v89CWZiNHDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N3Xnl-1tssBb2LND-00tFjA; Sun, 10
+ Nov 2024 11:44:52 +0100
+Message-ID: <6ed94ce6-211e-4f6a-9479-34467e6ca7d2@web.de>
+Date: Sun, 10 Nov 2024 11:44:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108202736.GD189042@unreal>
+User-Agent: Mozilla Thunderbird
+To: Tang Bin <tangbin@cmss.chinamobile.com>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, Baojun Xu <baojun.xu@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Kevin Lu <kevin-lu@ti.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Shenghao Ding <shenghao-ding@ti.com>, Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241025082042.2872-1-tangbin@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: tas2781: Fix redundant logical jump
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241025082042.2872-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:kq2cIavDfgtbPbNSQLm6JLpH3awd+E/fzjLmAO/20DY0oIkYfk4
+ U6iqWBnEmLcu7h0s8lk/RD3Y0DDBdzQICiPLvt1/NfBWurjZiQxw6+vWhjXKL3kIy6FbtER
+ 0Mqn3I2Cz7Aa2GXWLqLt6L2qov+ZDPZLYINjjet5yQWpK+xF4NY74POlVQyxdJfi9wVAOTg
+ UluwJ61bqcVojDU99xtLA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1/WxcWUAL50=;NI6XhN6vHl5Cy63vKB5kyxF2Kcm
+ vtmiiTN+CsU0/YgbrcgPKKS59yKWfV7NJw7GrR5y+8sTCMy7m4mWL60VS7sI2O7sfc7guZvHy
+ Rz3Mni7eMtFJlwS1618bk+WYNvQsYmVJhVSzxKh7sTXlI+yukCAdqamnrEZvAMzDHl4btoD3E
+ /108XPlr6Da/oIu5RRp8359wAkqk4VSfmLiP7Fsam5StD4C+SfA8tNAM5oXto5u0csQ38tPQt
+ wSuuPCkawIOF6Z2gojWbGYdJ2ErtUL2nyNi2i/yQA2L++FjPoMJvAW9KnxOfGv4okkHRURxsU
+ QmKloITV5GCO0ELLLP0OM41f4Xaysm1ZGXRRDoEs8cXIGYb3DdY2isCCWNYn75r7ihIWbmDyZ
+ M6rPSf16AjJnssgZlFaTHb/AlobB81WrabFm8OI8uhyYEu48KIpk7OpEk5meVxf4HFGFFOL5+
+ SyZ5WgPGBEBu2IcnS9ShPh9jeFGimX+pYhpO2rTIP6Mz49ZF9cbOhPinYwGyWgYlbYC6Vv2+Z
+ Q6nDCXkLOKdyhIBDk7VFbry+WH7qe4dpLZe0LOYmDtRz71rrcXuZ8skJYAfn2DToxX5uqrXey
+ iNcRX0z51Q9mBtHaRCU3U+xpeNKrOFPF/r9y6yV8dZe7q2Y9Q6O9Em0ep9otwmysTq0FtVXHZ
+ w+OZihCMsjB9W+mdr9p3nHtQIG6wqHS4wuA5dQt4P3PydSlrTVmfZluDS7W6Ds3yCXltjkWj7
+ MN3NM8kSALPNheGu5S9BIkGnT/n+1PF+nlopqfUhzXffFvZ2d9c3CzTllrNTWQM42X0cQy0/V
+ uVppwj1bR7dR1ErWq5O/ODpLBtNF8M0zgyjSbL53voWD+21+1An0t9F/q7r9JkdqZoSSGlnOo
+ xerYhEwPndfmdThlEBjYymJIKlTZp9wGSGPgZ1G6TaTWMANTuAwwCDwfz
 
-On Fri, Nov 08, 2024 at 10:27:36PM +0200, Leon Romanovsky wrote:
-> On Fri, Nov 08, 2024 at 01:13:27PM -0700, Jonathan Corbet wrote:
-> > Leon Romanovsky <leon@kernel.org> writes:
-> > 
-> > >> So, I see that you have nice kernel-doc comments for these; why not just
-> > >> pull them in here with a kernel-doc directive rather than duplicating
-> > >> the information?
-> > >
-> > > Can I you please point me to commit/lore link/documentation with example
-> > > of such directive and I will do it?
-> > 
-> > Documentation/doc-guide/kernel-doc.rst has all the information you need.
-> > It could be as simple as replacing your inline descriptions with:
-> > 
-> >   .. kernel-doc:: drivers/iommu/dma-iommu.c
-> >      :export:
-> > 
-> > That will pull in documentation for other, unrelated functions, though;
-> > assuming you don't want those, something like:
-> > 
-> >   .. kernel-doc:: drivers/iommu/dma-iommu.c
-> >      :identifiers: dma_iova_try_alloc dma_iova_free ...
-> > 
-> > Then do a docs build and see the nice results you get :)
-> 
-> Thanks for the explanation, will change it.
+> In these functions, some logical jump of "goto" and variable
+> are redundant, thus remove them.
 
-Jonathan,
+Another wording suggestion:
+Return some values directly in a few function implementations.
+Thus remove local variables which became redundant with this refactoring.
 
-I tried this today and the output (HTML) in the new section looks
-so different from the rest of dma-api.rst that I lean to leave
-the current doc implementation as is.
-
-Thanks
-
-> 
-> > 
-> > Thanks,
-> > 
-> > jon
-> 
+Regards,
+Markus
 
