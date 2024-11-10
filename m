@@ -1,147 +1,215 @@
-Return-Path: <linux-kernel+bounces-403311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827BA9C33F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:17:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F33649C33F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 18:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA1C7B20F4C
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:17:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CDDE1F2123B
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 17:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0DD13B2BB;
-	Sun, 10 Nov 2024 17:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D229713A868;
+	Sun, 10 Nov 2024 17:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c4vg8FMP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhIPJ3wK"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199E483CC7;
-	Sun, 10 Nov 2024 17:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2D04D8D1;
+	Sun, 10 Nov 2024 17:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731259036; cv=none; b=ZK6eXgWgTbE1WPD+yWZrr4UOhGC9Vyo0w9SKr+j0Z0azvNy6btM4XsCyyrSUDqdbWYGDAeyu9ktfyjZfUav35QVO6mCUBUgJtCr7A9c5rZC2x0ASRMLlBDPMREoCh85p0b+jmDcyZm1WDK7qFXNzRJVkQvyqoZX+Ng+urF5vRIU=
+	t=1731259314; cv=none; b=lNP63zfKOwc1ByXhFGKnw0u/RDg1cPGpcNFmf3ETEumDAiFx0ySAx/gvM2pqRClayxC/0x73AtngY/rN/UXawP06iJB7+h0hdFm2zrsecq/VsWxQ1GjI9cp6kL5k++Sui1ApnSecnIk0NUmOAYnweF36Ab8FqiCcQ3fszxu+5Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731259036; c=relaxed/simple;
-	bh=d/Nbv/2a4fNGYpYfknQMtQ/oP/laBmvhR1O2gSULEUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGIBYSSNZ3Z2xxtrLutlvBqz9+xY9zXre3Wea3Zhjhy8vlX5OniHncZkMH5fIIaxOJnNeG38H6qDQsVWP2u26KsGfyu0U8kPencYD5Mw3h2MooHypyMURJHM+JudiPcz9RbjtMoN2g4iLodt/RCI0VrmUEn/NqQddp6+eau8HqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c4vg8FMP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAFb5L1032278;
-	Sun, 10 Nov 2024 17:16:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=lFd4Fam7Rl/a+c8SETSijmhw1wHdaw
-	vG28+eDPKUbTY=; b=c4vg8FMPd5AkvBn7/EwHFTHjzKEByCnTy9mxwklBTl5QOB
-	Iup4yAtEAtH083cxsjawyIAccQpg3ZKNVHK5mwQR/F9B4XMNwUqvyIiTSTTD8ziH
-	e8FETXvslUZspkYOBGnIgcotR2fRV1le+A3egia/S5xw5rkCtz8h2H6i84R9/n7Z
-	5lRQRjxnUeNa505alx/OH8Xg/TLH86GVkDdRe1qL2zYsv+YUWdj1prIYfXUxWFP1
-	ZAwJkkXrMOq6DAVatxG0R6FCGxBQah9KUWwtcgAV4ohtZfM3KJeB0w1AJDNWxDPz
-	ZHD/JBr9YnC0myexcE7sUaP/uc8Vbzosb3v/hcWQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tjg3a9qj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Nov 2024 17:16:46 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AAHGjEu019200;
-	Sun, 10 Nov 2024 17:16:45 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42tjg3a9qg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Nov 2024 17:16:45 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AA2gvH9007218;
-	Sun, 10 Nov 2024 17:16:44 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tm9j8vnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 10 Nov 2024 17:16:44 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AAHGeVw21692846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 10 Nov 2024 17:16:41 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D150E20043;
-	Sun, 10 Nov 2024 17:16:40 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8E3F20040;
-	Sun, 10 Nov 2024 17:16:39 +0000 (GMT)
-Received: from osiris (unknown [9.171.74.231])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sun, 10 Nov 2024 17:16:39 +0000 (GMT)
-Date: Sun, 10 Nov 2024 18:16:38 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v19 13/19] fprobe: Add fprobe_header encoding feature
-Message-ID: <20241110171638.6661-E-hca@linux.ibm.com>
-References: <173125372214.172790.6929368952404083802.stgit@devnote2>
- <173125388510.172790.1161831132316963172.stgit@devnote2>
+	s=arc-20240116; t=1731259314; c=relaxed/simple;
+	bh=2FcSsXY+10WWOV0Bi0RlXieUG2QaCbLbUd6Z5ZVXiMM=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=m4ddEd1l7rSXOnwT/uEO0QtBmOU5wkVTNSOtr4aEQc9oHv+V4n6EI6+tMR3SEXEVH7dduyaFtM4nizFVSrVwJKVFYvyqAtEb+/+YywipF6d1UUpslV/wI3H0SNUbwefyJMF+l5A8YnCiI2qJGkbBFRoooQjG4REBB6EQPyiWkPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhIPJ3wK; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315eac969aso21251445e9.1;
+        Sun, 10 Nov 2024 09:21:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731259311; x=1731864111; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mokPi9ZL3cxamUAuRmzofp9mo1EVl430YFmYNrUNf6s=;
+        b=OhIPJ3wKwF4IPU0fgLE4rm1pT2V3RndZpJ7Wp/X87obuT0HDn/TDA5ZZhYhBX8Ifk6
+         RZBXCI4NsNfWcQ0kgz99szZHNAru+Vi4Xedo9S0JLp53GqG21QmITtZEN4YDDkqcwUB5
+         s5atgwdxoDX4j/uGZ9TJEc/rG0yDe0tfP2n+RfvjUPXZ2FVoDC4vPFWSTgtiL366rBSG
+         d0Gc+OnbB3OFB+fniwJCG2UZeZorBC71d37eFNKljb/EXEivR45XtD1tkpC5Gp6Ya19F
+         ZfxtzLSwDqSSjdTsreOh37wnpq1w6dUnXseNIMjTwu1bqNsfXEXGB7OFDUQFyd75w0uZ
+         0skg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731259311; x=1731864111;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mokPi9ZL3cxamUAuRmzofp9mo1EVl430YFmYNrUNf6s=;
+        b=BrYKq/+vcXPPb1jwEhvcchdtRSylRGASmAG5/62GwI2/v6XS7983JKuFcr5OBg1n5A
+         RWxF3wE50pA5ym+hEkgKYakTgwxH9zbkaQ2QRDelmauJ2NapePs1smz9dXupZnp48Erv
+         xn/H9Q68y+jeNt6oosYWO0hUjIyxJyVdkkzgKZ49VGD1stM4JjXhTaoBo5cZLGjFPQbh
+         Z+Wphq0t8mDDAo3J0zY1TTG1WDmP0iSdN3Fy2MV6uiXBJkLfzMj8TXwNElsP0oB/PrEJ
+         RN6bTbV0RWQspyB5cnU0CTv8KPAXMSa8J/P/r8mVo+t2nvxejgexZRXXzwCjNjJtEWyA
+         +1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHX5PuEiX+Mn5g6tVsu2vQk92r2y8Sg5cSwiQnnH4N8aEAmag4DF7n/iygTsfFCz2szz0pYyYLmcP31fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcEYXB3+fI8FhcGCErCqmErLem+dzy3yHTGm+MvP2VOE7tXPqv
+	GvWI4+hSDkBvZyabYrUBh1h1FBJWV9xanZldsQhnGSWME0ZYUvNp
+X-Google-Smtp-Source: AGHT+IESnmez5aUFqH9bv/RhCPqIHamNdFaHEORyPgHrx0l52Ivn8ocPy2wWqEKnaQsgH9NRO7Ffzg==
+X-Received: by 2002:a05:600c:3c9d:b0:431:4fbd:f571 with SMTP id 5b1f17b1804b1-432b74ce199mr82614475e9.13.1731259310376;
+        Sun, 10 Nov 2024 09:21:50 -0800 (PST)
+Received: from [192.168.216.100] (public-gprs9991.centertel.pl. [87.96.39.7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381eda137dbsm10659370f8f.110.2024.11.10.09.21.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 09:21:49 -0800 (PST)
+Message-ID: <4ee1ead4525f78fb5909a8cbf99513ad0082ad21.camel@gmail.com>
+Subject: [PATCH v2] usb: musb: Fix hardware lockup on first Rx endpoint
+ request
+From: Hubert =?UTF-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>
+To: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 10 Nov 2024 18:21:48 +0100
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173125388510.172790.1161831132316963172.stgit@devnote2>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GJCKposUAeWJS4L6p4y06TvBF-vByzu7
-X-Proofpoint-GUID: n_GXdkFm3pIvgXraT9dt0EiUt6IaSzmq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=345 lowpriorityscore=0 adultscore=0 mlxscore=0 impostorscore=0
- bulkscore=0 phishscore=0 clxscore=1015 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411100151
 
-On Mon, Nov 11, 2024 at 12:51:25AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Fprobe store its data structure address and size on the fgraph return stack
-> by __fprobe_header. But most 64bit architecture can combine those to
-> one unsigned long value because 4 MSB in the kernel address are the same.
-> With this encoding, fprobe can consume less space on ret_stack.
-> 
-> This introduces asm/fprobe.h to define arch dependent encode/decode
-> macros. Note that since fprobe depends on CONFIG_HAVE_FUNCTION_GRAPH_FREGS,
-> currently only arm64, loongarch, riscv, s390 and x86 are supported.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> ---
->  arch/arm64/include/asm/Kbuild       |    1 +
->  arch/loongarch/include/asm/fprobe.h |   12 +++++++++
->  arch/riscv/include/asm/Kbuild       |    1 +
->  arch/s390/include/asm/fprobe.h      |   10 ++++++++
+There is a possibility that a request's callback could be invoked from
+usb_ep_queue() (call trace below, supplemented with missing calls):
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
+req->complete from usb_gadget_giveback_request
+	(drivers/usb/gadget/udc/core.c:999)
+usb_gadget_giveback_request from musb_g_giveback
+	(drivers/usb/musb/musb_gadget.c:147)
+musb_g_giveback from rxstate
+	(drivers/usb/musb/musb_gadget.c:784)
+rxstate from musb_ep_restart
+	(drivers/usb/musb/musb_gadget.c:1169)
+musb_ep_restart from musb_ep_restart_resume_work
+	(drivers/usb/musb/musb_gadget.c:1176)
+musb_ep_restart_resume_work from musb_queue_resume_work
+	(drivers/usb/musb/musb_core.c:2279)
+musb_queue_resume_work from musb_gadget_queue
+	(drivers/usb/musb/musb_gadget.c:1241)
+musb_gadget_queue from usb_ep_queue
+	(drivers/usb/gadget/udc/core.c:300)
+
+According to the docstring of usb_ep_queue(), this should not happen:
+
+"Note that @req's ->complete() callback must never be called from within
+usb_ep_queue() as that can create deadlock situations."
+
+In fact, a hardware lockup might occur in the following sequence:
+
+1. The gadget is initialized using musb_gadget_enable().
+2. Meanwhile, a packet arrives, and the RXPKTRDY flag is set, raising an
+   interrupt.
+3. If IRQs are enabled, the interrupt is handled, but musb_g_rx() finds an
+   empty queue (next_request() returns NULL). The interrupt flag has
+   already been cleared by the glue layer handler, but the RXPKTRDY flag
+   remains set.
+4. The first request is enqueued using usb_ep_queue(), leading to the call
+   of req->complete(), as shown in the call trace above.
+5. If the callback enables IRQs and another packet is waiting, step (3)
+   repeats. The request queue is empty because usb_g_giveback() removes the
+   request before invoking the callback.
+6. The endpoint remains locked up, as the interrupt triggered by hardware
+   setting the RXPKTRDY flag has been handled, but the flag itself remains
+   set.
+
+For this scenario to occur, it is only necessary for IRQs to be enabled at
+some point during the complete callback. This happens with the USB Ethernet
+gadget, whose rx_complete() callback calls netif_rx(). If called in the
+task context, netif_rx() disables the bottom halves (BHs). When the BHs are
+re-enabled, IRQs are also enabled to allow soft IRQs to be processed. The
+gadget itself is initialized at module load (or at boot if built-in), but
+the first request is enqueued when the network interface is brought up,
+triggering rx_complete() in the task context via ioctl(). If a packet
+arrives while the interface is down, it can prevent the interface from
+receiving any further packets from the USB host.
+
+The situation is quite complicated with many parties involved. This
+particular issue can be resolved in several possible ways:
+
+1. Ensure that callbacks never enable IRQs. This would be difficult to
+   enforce, as discovering how netif_rx() interacts with interrupts was
+   already quite challenging and u_ether is not the only function driver.
+   Similar "bugs" could be hidden in other drivers as well.
+2. Disable MUSB interrupts in musb_g_giveback() before calling the callback
+   and re-enable them afterwars (by calling musb_{dis,en}able_interrupts(),
+   for example). This would ensure that MUSB interrupts are not handled
+   during the callback, even if IRQs are enabled. In fact, it would allow
+   IRQs to be enabled when releasing the lock. However, this feels like an
+   inelegant hack.
+3. Modify the interrupt handler to clear the RXPKTRDY flag if the request
+   queue is empty. While this approach also feels like a hack, it wastes
+   CPU time by attempting to handle incoming packets when the software is
+   not ready to process them.
+4. Flush the Rx FIFO instead of calling rxstate() in musb_ep_restart().
+   This ensures that the hardware can receive packets when there is at
+   least one request in the queue. Once IRQs are enabled, the interrupt
+   handler will be able to correctly process the next incoming packet
+   (eventually calling rxstate()). This approach may cause one or two
+   packets to be dropped (two if double buffering is enabled), but this
+   seems to be a minor issue, as packet loss can occur when the software is
+   not yet ready to process them. Additionally, this solution makes the
+   gadget driver compliant with the rule mentioned in the docstring of
+   usb_ep_queue().
+
+There may be additional solutions, but from these four, the last one has
+been chosen as it seems to be the most appropriate, as it addresses the
+"bad" behavior of the driver.
+
+Fixes: baebdf48c360 ("net: dev: Makes sure netif_rx() can be invoked in any=
+ context.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Hubert Wi=C5=9Bniewski <hubert.wisniewski.25632@gmail.com>
+---
+v2: Add fixes and cc to stable tags
+
+ drivers/usb/musb/musb_gadget.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.=
+c
+index bdf13911a1e5..c6076df0d50c 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -1161,12 +1161,19 @@ void musb_free_request(struct usb_ep *ep, struct us=
+b_request *req)
+  */
+ void musb_ep_restart(struct musb *musb, struct musb_request *req)
+ {
++	u16 csr;
++	void __iomem *epio =3D req->ep->hw_ep->regs;
++
+ 	trace_musb_req_start(req);
+ 	musb_ep_select(musb->mregs, req->epnum);
+-	if (req->tx)
++	if (req->tx) {
+ 		txstate(musb, req);
+-	else
+-		rxstate(musb, req);
++	} else {
++		csr =3D musb_readw(epio, MUSB_RXCSR);
++		csr |=3D MUSB_RXCSR_FLUSHFIFO | MUSB_RXCSR_P_WZC_BITS;
++		musb_writew(epio, MUSB_RXCSR, csr);
++		musb_writew(epio, MUSB_RXCSR, csr);
++	}
+ }
+=20
+ static int musb_ep_restart_resume_work(struct musb *musb, void *data)
+
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+--=20
+2.39.5
+
+
 
