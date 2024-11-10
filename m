@@ -1,115 +1,192 @@
-Return-Path: <linux-kernel+bounces-403155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF439C31B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:57:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13419C31BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3713C1F21402
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 10:57:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2305FB20F65
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934661547D5;
-	Sun, 10 Nov 2024 10:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4872914B95A;
+	Sun, 10 Nov 2024 11:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tPNRG97x"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="War74eiG"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB32B153BF8
-	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 10:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E940B155756
+	for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 11:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731236221; cv=none; b=k82eBVhXqNYGjcJ4TI3FHaaygtJe8qjtDKYI9Iws4/abwB2QT1ZID9wbu5p/pxbM95HL/62aK9pAuhS54jzNDQrUMezrCjgw+7vdPEevPJPQTqjdL2izATfMvkI68Fpd47M1Z9ZQcxh8u8Dv3rk2QWA1iqed0OADtjpr0ddzcWc=
+	t=1731236406; cv=none; b=r/zn6FGZZ6+43ntTxfb4qhsGBaPFFMri5EPIfwyFiIjPi1a0xEi8ZoLW6kRnAKs3IkOIX/4vZ5qJE/Hya1er1xYoThMaR2uFaEbRKH8df5maDGSLhf2z8bInzgHBUFfPQzQVtulwGE0scBuupcTC03/1BqTRvpC6h6TkHcyFJ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731236221; c=relaxed/simple;
-	bh=fApCHzHaNaMN9ZQJrGXmdWes5ZsjF+zWr97kyjUl1Ww=;
+	s=arc-20240116; t=1731236406; c=relaxed/simple;
+	bh=hd9MxZmaHUtz1GKr3sObWuJOomwjoTrZHnjIWaw4wx0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgstSNEHUtLfDPNBbVk0USZ4n0twoRRKkWw6tKscubzk7KLS5YJizBdDbwRwD55HkBkXNs7zcQrZu25QDcNDYnJVtnPoiHZdpgT5FqLtH71KGfRlq4exdaUjBGHxoRbiMTS92sR+HrUVbHi8fJLb0EgyCCQnon1dBBvZUqsEfek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tPNRG97x; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43155afca99so25859645e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 02:56:58 -0800 (PST)
+	 To:Cc:Content-Type; b=tLnpDsSKdyPYkuBYxynukxFOmgk0ISNzyZHmIahfXKBG9Qwp1ZbikpVrx5ZowOgT/5U292TlhK5UvNFYG/szLKur/5ca5HpTHWAjN5Co6gml7QX2ZHeUHnJ2PK+Gq93aEvgmekicu1+wKRmQ7Kug9vdy0Cq1g6rDwqyv9CKjpgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=War74eiG; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so3074818b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 03:00:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731236217; x=1731841017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S6pZc1K5vHW1yLRrOq46D/RKiIu83zxt8iuFPjL5iSM=;
-        b=tPNRG97xDYcZRaVFOPuoMoDKQsphmkyD+SxrMAW2TwOnX22AtrW3+672fryaqR0zAj
-         us4HTz+iOj+cyP4peFjaoZJWZp3V0Mc8PvMU64xJFkuuTvaskWHuKkvvOmr6liD8BKDE
-         0+dc3X6Vu1ttFp/99H+6PAaBg4PJ0mDP2ntPvGWmN+ln0A0PJRnnBaqSmM8F2f/cIPdH
-         HZdoWgdAPK3+HMfkgONVXMJJJQ3TPIXq6yWUsMs10rN5U9O85d+PSv3yKVWjnUHh2Xei
-         mN7G/YO1P5UOaZqhUsfos2UY7zWTKrzA1O3gBCKlGHwAZXYsQXSX2ndgX0q7AlVliEnE
-         eX7w==
+        d=chromium.org; s=google; t=1731236404; x=1731841204; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMpDe5w9iUW90NujS3qbzllTGg6PQPGBsS1EJKhPt2k=;
+        b=War74eiGt6Irw3sgnHUsjdSPAc1w67UqKRNtxc/HN98PZV2D+VgRc97KG7yy3ymlUP
+         gt4CmhAGDzoZPZuZGZyqWv1e6iP8iQ8Kd6LM1X9tdUUYERB6/fKh2teduSMLwOOeIyrW
+         Cluw3Qlh5Zrj61nmDUSi/b1YwxJk/8fw1hJ0w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731236217; x=1731841017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S6pZc1K5vHW1yLRrOq46D/RKiIu83zxt8iuFPjL5iSM=;
-        b=OWTdzmpA2GM5MM0M37vMDv9F0RibnAmH29s/RaRiaYD+euJgxIhCW8WituA2ZzzDNM
-         2PoR8jr5+YHiyh3Z5fm9HW1BDrY27ShKzSi35YwnC85XX2X8BPuA/bMfCG+VKHL4r9cz
-         AELbTgWbsASgOBMdY6JFYv0+3P3TQKRmK+VYAtt2GLTpe6RI5EzzWE9hVq5GjwYfC9rS
-         JstnOpzppadOw86x3thtOW8UBkYdg54UIy7f3uz4jbey13ywmqolwD/BXqORQ6n8r4k3
-         /zMLqJxXcH140XoukXB3nfe3s80is3WqA/VLq3mtucXqdwujYYb5Spm4tJPyAD9lIU7D
-         xY9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKseEqHvnfMkvMRwkEzkEGn76CIAbBECUp/2wjsg7YaRU8WcwGZNnTboxJjS0UDL/WXJ60D/IzTwqZcQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgm79+u1OExEjQiLn/aDWkqz9VquqkkIbNSmn7KiGlMjf+KLDd
-	TcXfKSktJrdpT0RglVMHwW69Gfz86/uS6gZbBvhIlxp9GOUm+WS1wSmpZcWIwBRVcSDTrdMBrtC
-	R8hH+/zDuA4GQuHvehQz/VVVsK1BBpq5p5sn4
-X-Google-Smtp-Source: AGHT+IHMoahnfY0BITCuLZrb0MEqyF9R5+UE+yA+o8e4yfiWrcrbfycPVvQoH4GneTAdVu6kkPrdqxT9YFq58Bk4Ryc=
-X-Received: by 2002:a05:6000:1acc:b0:37c:cc7c:761c with SMTP id
- ffacd0b85a97d-381f1a6675fmr6413285f8f.3.1731236217034; Sun, 10 Nov 2024
- 02:56:57 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731236404; x=1731841204;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMpDe5w9iUW90NujS3qbzllTGg6PQPGBsS1EJKhPt2k=;
+        b=q1wVYKARzN5eUnSQbILy5rZlIk+bofkG8FzPMve4JaFzueY1ZV9yBu1hXJbKsGLW3W
+         LhgMnlcowXjUAs/l5kkdm5ZG0LU66+kcYSgZb161NkvTYTeXjSgMYnX5IdgM58kx0siw
+         4IQvPvLT4sE1/G2fe56CIBLDNVORt/h/CUEOWG3YVNQiSrHsKhDfB5u4hsSb4B07l74b
+         ewc6x6BCkux05ZPqrtpgMK+O2SJEox+Nq6gmDuQ44ebh2NS/ErwvOiVHAbuA4Z6Kmshm
+         lbPuO5oNc+MzUOJPMEbEVanj8Ymwb6JmTNCJQCZ2Fqux2EdZhElcB8cCbnOV4yZ19jXX
+         gNnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbEps9XKJZdyqIS9J8hd27jyjGePin1ORRE8Am7RR75ZvLpOXRjFpnZlN8mYCC+zPi/Q2XfkGBmbyKKRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG734iFS8X5tfqdHKkt7gFFss/Z97KflG+VS0l7Mjfm7YgWBYt
+	5aU+k0aOSjse8tzCHVx/9YQpC4PMbEY2qZwko9HZ2AIEXaH9cJtlrtXfZX/++DcCf2/zn63Z7ms
+	=
+X-Google-Smtp-Source: AGHT+IEdKy8zmRWjkP07fh9+J8Al6vGIvXseBEBeFye11BLezlAOV/yVxSSUpdJjcq0FNgLLQLzVXA==
+X-Received: by 2002:a05:6a00:14d3:b0:71d:ee1b:c854 with SMTP id d2e1a72fcca58-724132a134dmr13035026b3a.9.1731236403908;
+        Sun, 10 Nov 2024 03:00:03 -0800 (PST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com. [209.85.216.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a3d44sm6901464b3a.114.2024.11.10.03.00.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 10 Nov 2024 03:00:02 -0800 (PST)
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso2642372a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 03:00:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVO5Z8kIrum/e6qZQFHTizKmQMfF6hrx6dnAUe0D9mGXPwi9PEDAN37xT4FmpC+vTydK+534HaJCJe/YLY=@vger.kernel.org
+X-Received: by 2002:a17:90b:53c6:b0:2e2:cf5c:8edf with SMTP id
+ 98e67ed59e1d1-2e9b170eaf9mr12405962a91.9.1731236401269; Sun, 10 Nov 2024
+ 03:00:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109165520.1461400-1-ojeda@kernel.org>
-In-Reply-To: <20241109165520.1461400-1-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Sun, 10 Nov 2024 11:56:44 +0100
-Message-ID: <CAH5fLghd2qdW02CeX5QgP2p2mwgxGEj93MrW5G-T1zOCVaUOhw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] samples: rust: fix `rust_print` build making it a
- combined module
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, patches@lists.linux.dev, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+ <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com> <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
+ <20241110110257.5160a7d1@foz.lan> <CANiDSCvYo8=x_QAeg0_S=_H=R1EgM9xLUy4DXURcuEadYcQjQQ@mail.gmail.com>
+In-Reply-To: <CANiDSCvYo8=x_QAeg0_S=_H=R1EgM9xLUy4DXURcuEadYcQjQQ@mail.gmail.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Sun, 10 Nov 2024 11:59:48 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsE5A+gH5gVuZBPJZ=Jnxer2-44AWUG+OaV73mr=0SoFA@mail.gmail.com>
+Message-ID: <CANiDSCsE5A+gH5gVuZBPJZ=Jnxer2-44AWUG+OaV73mr=0SoFA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a subdevice
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 9, 2024 at 5:55=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
+On Sun, 10 Nov 2024 at 11:32, Ricardo Ribalda <ribalda@chromium.org> wrote:
 >
-> The `rust_print` module, when built as a module, fails to build with:
+> Hi Mauro
 >
->     ERROR: modpost: missing MODULE_LICENSE() in samples/rust/rust_print_e=
-vents.o
->     ERROR: modpost: "__tracepoint_rust_sample_loaded" [samples/rust/rust_=
-print.ko] undefined!
->     ERROR: modpost: "rust_do_trace_rust_sample_loaded" [samples/rust/rust=
-_print.ko] undefined!
+> On Sun, 10 Nov 2024 at 11:03, Mauro Carvalho Chehab
+> <mchehab+huawei@kernel.org> wrote:
+> >
+> > Em Sat, 9 Nov 2024 17:29:54 +0100
+> > Ricardo Ribalda <ribalda@chromium.org> escreveu:
+> >
+> > > >
+> > > > I think that should sort the issue, assuming that 1. above holds true.
+> > > >
+> > > > One downside is that this stops UVC button presses from working when
+> > > > not streaming. But userspace will typically only open the /dev/video#
+> > > > node if it plans to stream anyways so there should not be much of
+> > > > a difference wrt button press behavior.
+> > >
+> > > I do not personally use the button, but it is currently implemented as
+> > > a standard HID device.
+> >
+> > IMO, controlling the privacy via evdev is the best approach then. There's
+> > no need for a RW control neither at subdev or at device level. It could
+> > make sense a Read only to allow apps to read, but still it shall be up to
+> > the Kernel to protect the stream if the button is pressed.
+> >
+> > > Making it only work during streamon() might be
+> > > a bit weird.
+> > > I am afraid that if there is a button we should keep the current behaviour.
+> >
+> > Privacy matters only when streaming. IMO the Kernel check for it needs to
+> > be done at DQBUF time and at read() calls, as one can enable/disable the
+> > camera while doing videoconf calls. I do that a lot with app "soft" buttons,
+> > and on devices that physically support cutting the video.
+> >
+> > I don't trust myself privacy soft buttons, specially when handled in userspace,
+> > so what I have are webcam covers (and a small stick glued at a laptop camera
+> > that has a too small sensor for a webcam cover). I only remove the cover/stick
+> > when I want to participate on videoconf with video enabled with the builtin
+> > camera.
+> >
+> > Regards
 >
-> Fix it by building it as a combined one.
+> I think we are mixing up concepts here.
 >
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/all/20241108152149.28459a72@canb.auug.org=
-.au/
-> Fixes: 91d39024e1b0 ("rust: samples: add tracepoint to Rust sample")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> On one side we have the uvc button. You can see one here
+> https://www.sellpy.dk/item/2Yk1ZULbki?utm_source=google&utm_medium=cpc&utm_campaign=17610409619&gad_source=1&gclid=Cj0KCQiA0MG5BhD1ARIsAEcZtwR9-09ZtTIVNbVknrZCtCd7ezVM8YFw1yQXfs81FWhofg9eW-iBrsIaAopVEALw_wcB
+> That button is not represented as a hid device. We do not know how the
+That button is NOW represented as a hid device. sorry :)
+> user will use this button. They could even use it to start an app when
+> pressed.
+>
+> On the other side we have  the privacy gpio. The chassis has a switch
+> that is connected to the camera and to the SOC. You can see one here:
+> https://support.hp.com/ie-en/document/ish_3960099-3335046-16 .We link
+> the camera with a gpio via the acpi table. When the user flips the
+> button, the camera produces black frames and the SOC gets an IRQ. The
+> IRQ is used to display a message like "Camera off" and the value of
+> the GPIO can be checked when an app is running to tell the user:
+> "Camera not available, flip the privacy button if you want to use it."
+> Userspace cannot change the value of the gpio. It is read-only,
+> userspace cannot override the privacy switch. The privacy gpio is
+> represented with a control in /dev/videoX This patchset wants to move
+> it to /dev/v4l2-subdevX
+>
+> To make things more complicated. Recently some cameras are starting to
+> have their own privacy control without the need of an external gpio.
+> This is also represented as a control in /dev/videoX.
+>
+>
+> Now that we have these 3 concepts in place:
+>
+> Today a uvc camera is powered up when /dev/videoX is open(), not when
+> it is streaming. This means that if we want to get an event for the
+> privacy gpio we have to powerup the camera, which results in power
+> consumption. This can be fixed by moving the control to a subdevice
+> (technically the gpio is not part of the camera, so it makes sense).
+>
+> If we only powerup the camera during streamon we will break the uvc
+> button, and the async controls.
+>
+>
+>
+> >
+> > Thanks,
+> > Mauro
+>
+>
+>
+> --
+> Ricardo Ribalda
 
-Thanks for fixing this, Miguel!
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+
+-- 
+Ricardo Ribalda
 
