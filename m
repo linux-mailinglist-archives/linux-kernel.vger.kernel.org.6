@@ -1,128 +1,137 @@
-Return-Path: <linux-kernel+bounces-403157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D069C31BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:06:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACED29C31C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 12:16:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B2A1F21416
-	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F271F20F9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 10 Nov 2024 11:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FC11547D8;
-	Sun, 10 Nov 2024 11:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31611547F2;
+	Sun, 10 Nov 2024 11:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1EtzCi/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfrZefiI"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AE20145A07;
-	Sun, 10 Nov 2024 11:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F176013D600;
+	Sun, 10 Nov 2024 11:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731236762; cv=none; b=mtE4firzt3byYZeGLXEUAwhGPsW/tWxlG1IaccZZh5d/scHdTyKFPE/u2Wgj0aMd5V+HN4cCF73TeoNJddmqqflIJkQUDrPCIciOJskysiBfAPI8xvEa8ZGgxCh7ZQ78+l258IcwLHLJaeoHXG5UuJl5uVN4CHhnw7HSfT3FRE0=
+	t=1731237404; cv=none; b=pJoJv+c8KJFwDfnY9oWneGMv3qLkzEE232PYPlj4uBefhJx/MZVkzTGETsgHKgv/mRQvWkOD+A8e2SNOEd4Tggpy3I7ATd7Ud4VzgAbJlhbCiQMWoelcyoTJ+kaC4bsuc1RRPxQRG4aINJ2/XicqVvymlRksxVZyde91/TTFa2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731236762; c=relaxed/simple;
-	bh=JrSQGG15LXh7EHM9jxGHjoA+82yehZX3lpYcI5Ku6v4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O85yk3OlpeVr+lMnes0we4O3+LDmufJZxdk536wuxx2J7KyglaybQuc1PSg3mSqfpK87mD8EdN928kCiSRfWhOxsJ4YmYH53V3dFfRl5EuvY0BlgcnIqLlHE5dPQnyOddmiskDeiHDV6n2Wve5ozzJcCMtROaefOooWxi9LgabM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1EtzCi/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED048C4CECD;
-	Sun, 10 Nov 2024 11:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731236762;
-	bh=JrSQGG15LXh7EHM9jxGHjoA+82yehZX3lpYcI5Ku6v4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D1EtzCi/bDRvyIgaRgcAfws07iy4lKS6mN/vD2uwMehNvZwBt1LTmnOP+1msGahjT
-	 43eKrHmUsVXkAUOTqnc2waCweK/vp0m+SBByaJdqjMghe9Xl9Q/aK+VoJqFDLaFxSV
-	 TDZ+UCi1shXr879YkxkUWWl0ZM4Msp0PzpWsU8vg8ltWQ0ZF30xmZ2WgLVfLCMgxK7
-	 e3XZ2q1nAtzH9i+WJwk2lhsXVdvrX/C0w/0r7wLUuYHaUwc6Btqx/OXdEOzcqbn91X
-	 ElmPCvrx2uWNf2Ylheq6TUQpm9mpO/PTSAVkZYTTYFS5uxOYAZWWfkbB6jGIsQCoxv
-	 gdar6IyuncQ7A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tA5lX-00BbDn-AP;
-	Sun, 10 Nov 2024 11:05:59 +0000
-Date: Sun, 10 Nov 2024 11:05:58 +0000
-Message-ID: <86r07jz6uh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Kalesh Singh <kaleshsingh@google.com>
-Cc: will@kernel.org,
-	qperret@google.com,
-	broonie@kernel.org,
-	mark.rutland@arm.com,
-	keir@google.com,
-	vdonnefort@google.com,
-	kernel-team@android.com,
-	android-mm@google.com,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	D Scott Phillips <scott@os.amperecomputing.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Ankit Agrawal <ankita@nvidia.com>,
-	Wang Jinchao <wangjinchao@xfusion.com>,
-	"Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-	"=?UTF-8?q?Pierre-Cl=C3=A9ment=20Tosi?=" <ptosi@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH] arm64: kvm: Make nvhe stack size configurable
-In-Reply-To: <20241108211446.3304809-1-kaleshsingh@google.com>
-References: <20241108211446.3304809-1-kaleshsingh@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1731237404; c=relaxed/simple;
+	bh=OZq9vlY9kg8nMFQ9iEn/BhUcSlMehFtK5IV3YHw9HC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a4xSEAntPQn/Ss2He0bHQ+V8IgDUtzzaNX+YY2yozVzpaXeEmCmJHTwvNBPrUKZvDr5Jj29R1oxsZYPrUu0xYZQMIRvBni9/fKWgPfMKRqX78E+sL+CEIK9NqAFEeXQZ/eAHDVpp3S7oHCjsr0j2rcYkfDrx1nBopmGiiEHnuQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfrZefiI; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso2908566a91.3;
+        Sun, 10 Nov 2024 03:16:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731237402; x=1731842202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWLoy1wYXdVgZ3Zzo/mgTNAnxY3fZNEXmyBhaGh3Xds=;
+        b=TfrZefiIi93OLr6+GdwWL27ufVOSjanvpwlvUHt54VRTme63C5cAfMryP73beXumHX
+         UPUFTj3qeQKgg9QZgHi/ssmmMBWLJP67BbcHy6qIjHGPMxKcQwiZuViye9vRRUQi4IDj
+         fHACmMOLu5DJSO0hXFbSBAakaj9uCiPuBRkvWCM0oMW5DwzQyYqOgxQM1EAjrZDWZVyu
+         J54XnqTcWUh1uc56s1NYISH6wIscWX8OlomAsOpmj4RLfVg+ggOvlW2uh0rZrfBWUbUT
+         xBBQxKT7Pf9ZciAHyp/IJkfXlTIE9pHyVxYvVpA9O2peCHIWEoMKRClRhrsl5rL6kOWY
+         k8OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731237402; x=1731842202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QWLoy1wYXdVgZ3Zzo/mgTNAnxY3fZNEXmyBhaGh3Xds=;
+        b=OSpGUtRrF9wFBNNNOFTHs2FXXSGkE9Q4PY97Pg4bhPwkqF+5autCVZTfeUlNHEhCgb
+         CItc66BNL52G2NKJFzrbKtHqUDvSUcUmukj/u+Bhk5epnChMpXLdsY844743x6IKbi7S
+         13Fihi9nR7w+kJu6U+xnjiezNtjFKHoPnAfdNdZsvQLKLDSi6yLNdxrpC7KxaZldrUOX
+         p0GX/jknhHW3R8Rf6BnahvbGb3QyJkDqkAIfBs8gWCh2fFx6F0i3UpmPyNL+eL3zuJAt
+         ESN/qbG6I4DrMHeDNSOkyr9/FfN5KdLKnzpMA+NyE9fJES5JiMFxHEt82Te2EO7vpIAD
+         3/cA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZrRrhujFlNAplAKjlLfz4dHcZGll/rsmt57zWXo2vYOCzQqKXTykCrXKHv2tyg+iR2GOjC5c2jKaC@vger.kernel.org, AJvYcCXMDcpHjIdRoeYsbegEhN5Kk34oAHuEVGLd6vNFNp9VGZ8D/YBr3XNX6RDP6bvSaWVneUGahOlzJb7V@vger.kernel.org, AJvYcCXmoeYfQhTxjPuiCVSbdoIC5rtmdW4y4gtljRBbxaSCZj03nVTjcK6CFKxp6oKhfjzWLI+j0XxPGAEdOaGT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLeq69xN4HeWH2nTvDe5LKgai3VcKazklwcvwIqzWq1K05OKW9
+	MGQ1PFCY3OrF3qtYel1vCBc3Cudc9nre/hZr6JDaCPsq4je8EY3bZbGiXab7L2qjr7PdqugH8oR
+	hXBXAm5MEDYI2iwck3dCHiHnm7g==
+X-Google-Smtp-Source: AGHT+IGasTpM/6LzeFT5yJG2TU6X3TKSkJ385a+2Pbzh0IgAuKC/AoNByQH4zEUJkFnY3DZ/d/AESg6jv7LXg1ObLTE=
+X-Received: by 2002:a17:90b:4a91:b0:2e2:a3aa:6509 with SMTP id
+ 98e67ed59e1d1-2e9b1697bf5mr11996579a91.14.1731237402258; Sun, 10 Nov 2024
+ 03:16:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: kaleshsingh@google.com, will@kernel.org, qperret@google.com, broonie@kernel.org, mark.rutland@arm.com, keir@google.com, vdonnefort@google.com, kernel-team@android.com, android-mm@google.com, catalin.marinas@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, ardb@kernel.org, scott@os.amperecomputing.com, andreyknvl@gmail.com, ankita@nvidia.com, wangjinchao@xfusion.com, madvenka@linux.microsoft.com, ptosi@google.com, bhelgaas@google.com, ryan.roberts@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20241011102751.153248-1-privatesub2@gmail.com>
+ <20241011102751.153248-2-privatesub2@gmail.com> <4ioz6f6efs2uhf5mitb4xhebqeryyz5ukple4fkn54wpqep3c4@4ktefld35c3s>
+In-Reply-To: <4ioz6f6efs2uhf5mitb4xhebqeryyz5ukple4fkn54wpqep3c4@4ktefld35c3s>
+From: =?UTF-8?B?0JDQu9C10LrRgdCw0L3QtNGAINCo0YPQsdC40L0=?= <privatesub2@gmail.com>
+Date: Sun, 10 Nov 2024 14:16:31 +0300
+Message-ID: <CAF4idNmDMQpFppUvCBbC1=SNMQBrTOqmFO60SMvKvaHvNJy=Bg@mail.gmail.com>
+Subject: Re: [PATCH v10 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Cheo Fusi <fusibrandon13@gmail.com>, 
+	linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[that's an impressive Cc list...]
+Hello Uwe,
 
-On Fri, 08 Nov 2024 21:14:00 +0000,
-Kalesh Singh <kaleshsingh@google.com> wrote:
-> 
-> In order to make the nVHE stack size easily configurable,
-> introduce NVHE_STACK_SHIFT which must be >= PAGE_SHIFT.
-> 
-> The default stack size remains 1 page (no functional change)
-> 
-> Downstream vendor features which require a larger stack
-> can configure it by setting CONFIG_NVHE_STACK_SHIFT.
+I appreciate your suggestion to use a more standardized
+property name like "pwm-number" instead of vendor-specific names.
 
-We don't let make the stack size configurable for the rest of the
-kernel, do we? Why should a tiny portion be treated differently?
+Since the name "pwm-number" is present in two drivers,
+we could consider using this name here as an option.
+Or perhaps we should choose a new common name "npwms"
+as you suggested?
 
-Making this configurable means that testing is harder, and bugs harder
-to reproduce. It also seems specially designed to allow badly written
-code to run in hypervisor context. And once you allow two pages to be
-used (up to 128kB), what prevents the "downstream vendor" to push this
-to 4 or 8?
+Please let me know what you think about this.
 
-If anything, I would prefer to see this (obviously out of tree) code
-isolated with its own stack instead of growing EL2's private stack. At
-least this would make the problems attributable to the guilty party.
+Best regards,
+Aleksandr.
 
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+=D0=B2=D1=82, 29 =D0=BE=D0=BA=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 11:56, Uwe=
+ Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>:
+>
+> Hello,
+>
+> On Fri, Oct 11, 2024 at 01:27:32PM +0300, Aleksandr Shubin wrote:
+> > +  allwinner,pwm-channels:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description: The number of PWM channels configured for this instan=
+ce
+> > +    enum: [6, 9]
+>
+> I wonder if the number of channels is a property common enough that we
+> can use "num-pwm-channels" here instead of a vendor specific property.
+> Or would you suggest a different name? gpio-controller nodes have
+> "ngpios", so maybe "npwms"?
+>
+> A quick grep suggests we already have:
+>
+>         fsl,pwm-number in mxs-pwm.yaml
+>         st,pwm-num-chan in pwm-st.txt
+>         snps,pwm-number in snps,dw-apb-timers-pwm2.yaml
+>
+> As a follow up this could then be used by pwmchip_alloc() to determine
+> the number of channels if the passed npwm value is 0.
+>
+> Best regards
+> Uwe
 
