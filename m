@@ -1,260 +1,176 @@
-Return-Path: <linux-kernel+bounces-403802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597509C3B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:39:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B65C9C3B09
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19357283035
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:39:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1611C21CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481DF1547FD;
-	Mon, 11 Nov 2024 09:39:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517941531C5;
+	Mon, 11 Nov 2024 09:40:02 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1ABE143C72
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C1149C55;
+	Mon, 11 Nov 2024 09:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317969; cv=none; b=rBKcqqHaMlsa7OevGw5hbuqBewvaGb+h5pdX61KdPoMc65fn7Te4EIcu9TFjqLpUV9kQMwHk8Jjng7iHx/YbGRdF1f2x1YVWMbBbyTLyzzSdkfikM2ft/3GYB7b9dTSuptU52wIXBs9LuQgbaF1ceAMC0zKSIopAH3Xrag7Zv50=
+	t=1731318001; cv=none; b=Zod/SUaQFDesoykWZ1KRMo6Pc8vk/Dwj5etpLWwHatCC0YO7dS8H9UqmJVjdKr9U21i8WyL3LPCplGV58OVvcrTLvPxNPdcYm+8ek/ZW8QgU4sKBO3RhS/GawX4n/VTXXt0IHJ7qRh/PpXa6Rg/3qBKUZVuuu8JqBJqS0MAr2NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317969; c=relaxed/simple;
-	bh=lTD1P3tCgg5S3yJIsX6jPoiJ9dwBjqcoYbYtvsEm5G4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Co501WnoSdXuiZDoJPhJkzKS5XzifVmtF9d74ch3ZKjCYUy1NvVvEL1CCSdIpbq18caoYm7yiVs/KKrf9GlkFzXw2j5JwUWgcViW8yTd3QhVNjWMP8rsLifnm7y4y6iYpwQ64u7NNSC7y9FTwSxPzAmw4sanI/tPPowgSsSM+Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b2581364so48554615ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:39:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731317967; x=1731922767;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JCSbdSqMsa6vIYKv72RO0xVkn3c/ngVgoErGoKJHg9I=;
-        b=PF4q9DJ57aPHS4QUE55joAdEgClm73TOEzyMwPaaxEbsGiSIYkETPeWyfjcBAn59k6
-         YgxmzolW/RDbmICfN2bBZluJTyoSAcvN+BYmaNuictplujIHVkQHVoT6XIfGbk2l1E2P
-         gAq3DYK2i9fCjUJUUBS+qRpGbi0KVeqTXKpSP8JmDxV1++v41Kj6xV91eVD25qzPDuhV
-         ejNRnU7ZYpeyTi2G+3AvbSFPLdNaSX0iLIDgvXhlY6zMXuSVnI3RCN5lLwYDXKkHQXzz
-         BnaX4Ncr9b+XGMKrd1Znv7g6z5xtyQJXjQeacRWZxVXa0BeD8N4uZgys7DPI1XDNglNs
-         BJAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJIk18KfnXgRBL0RLevpIpGxojh+ZbXSFg3W9iYMtYFccFLzHemO2Q514tQFQfy+FgDNU1LIO0LgZozGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9iCFZ2fEVma6fVIsA+wrU3/4VlUnTPci+w00ks4L3B6oKDAph
-	UDpxNbtOrSvLsGEtlHoGavvJD5kIHaTuDHnU/zV0R0/dDedb5DyJ2SqMzAihjG29AuKv0uTB9OK
-	XuesN845l31ZiiYYW2Z90XlWlGZ81FGhHJdlqct7uW1uWm2JpwZvoYRA=
-X-Google-Smtp-Source: AGHT+IGtqwNgP+nN+Zw9CAS2FDKoMLDcISnOWfj2J/GXdijiyD36pOXQzzaUsz3G+mld3HcUQy2xGUuoHu33JYJJhut5yzavRsA1
+	s=arc-20240116; t=1731318001; c=relaxed/simple;
+	bh=P40txRj0/uQ3mq52SEAERh2H6v3P6Bd0QHsKYHZPEBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fPp9fvERwrwhWb9huiwZgUJmyyq7maQA3guzFOXCwPx/pXvW5ZT3Eeyroe0eY8g0RjBvfFyls5pIVVEXrRy0aWJVVNeZqumiSazcnJ5Di6TVEsDHaceEQ5PaRdgmGP9Q+u1C0LyocbUAoHaIEwBLdxfNRvQ26c80Y1U+U0fqk3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xn4GZ3Hl4z1jy0r;
+	Mon, 11 Nov 2024 17:37:58 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C4BA1401F4;
+	Mon, 11 Nov 2024 17:39:45 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 11 Nov 2024 17:39:44 +0800
+Message-ID: <4586d072-873f-3df5-9656-38bb7aba358b@huawei.com>
+Date: Mon, 11 Nov 2024 17:39:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26d:0:b0:3a5:e1f5:157c with SMTP id
- e9e14a558f8ab-3a6f1a21eadmr122800815ab.15.1731317967059; Mon, 11 Nov 2024
- 01:39:27 -0800 (PST)
-Date: Mon, 11 Nov 2024 01:39:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6731d0cf.050a0220.138bd5.0063.GAE@google.com>
-Subject: [syzbot] [bcachefs?] general protection fault in six_lock_ip_waiter
-From: syzbot <syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Content-Language: en-US
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+CC: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
+	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
+	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+ <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
+ <Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name>
 Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    f1dce1f09380 Merge tag 'slab-for-6.12-rc7' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e99e30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=64aa0d9945bd5c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=13b85e45ca365499aad5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-f1dce1f0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c2f2da35f667/vmlinux-f1dce1f0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/31f60f71e8a7/bzImage-f1dce1f0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 32768
-bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=none,compression=lz4,str_hash=crc64,journal_flush_disabled,norecovery,nojournal_transaction_names,allocator_stuck_timeout=32767,no_data_io
-bcachefs (loop0): recovering from clean shutdown, journal seq 10
-bcachefs (loop0): accounting_read... done
-bcachefs (loop0): alloc_read... done
-bcachefs (loop0): stripes_read... done
-bcachefs (loop0): snapshots_read... done
-bcachefs (loop0): going read-write
-bcachefs (loop0): done starting filesystem
-FAULT_INJECTION: forcing a failure.
-name failslab, interval 1, probability 0, space 0, times 1
-CPU: 0 UID: 0 PID: 5331 Comm: syz.0.0 Not tainted 6.12.0-rc6-syzkaller-00192-gf1dce1f09380 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- fail_dump lib/fault-inject.c:53 [inline]
- should_fail_ex+0x3b0/0x4e0 lib/fault-inject.c:154
- should_failslab+0xac/0x100 mm/failslab.c:46
- slab_pre_alloc_hook mm/slub.c:4038 [inline]
- slab_alloc_node mm/slub.c:4114 [inline]
- kmem_cache_alloc_noprof+0x6c/0x2a0 mm/slub.c:4141
- __bkey_cached_alloc+0x26/0xe0 fs/bcachefs/btree_key_cache.c:123
- bkey_cached_alloc fs/bcachefs/btree_key_cache.c:149 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:220 [inline]
- btree_key_cache_fill+0x2043/0x2920 fs/bcachefs/btree_key_cache.c:309
- bch2_btree_path_traverse_cached+0x84e/0xbe0 fs/bcachefs/btree_key_cache.c:361
- bch2_btree_path_traverse_one+0x45d/0x2940 fs/bcachefs/btree_iter.c:1159
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- bch2_trans_update_get_key_cache+0x6c0/0x1230 fs/bcachefs/btree_update.c:494
- bch2_trans_update+0x9b1/0x2550 fs/bcachefs/btree_update.c:539
- bch2_inode_write fs/bcachefs/inode.h:139 [inline]
- bch2_create_trans+0xdfb/0x1af0 fs/bcachefs/fs-common.c:179
- __bch2_create+0x7ae/0xf60 fs/bcachefs/fs.c:522
- bch2_mknod fs/bcachefs/fs.c:673 [inline]
- bch2_create+0xea/0x1b0 fs/bcachefs/fs.c:687
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_open fs/open.c:1438 [inline]
- __se_sys_open fs/open.c:1434 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1434
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f061377e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f061457d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f0613935f80 RCX: 00007f061377e719
-RDX: 0000000000000000 RSI: 000000000014927e RDI: 0000000020000180
-RBP: 00007f061457d090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f0613935f80 R15: 00007ffdaceeed98
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000e: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-CPU: 0 UID: 0 PID: 5331 Comm: syz.0.0 Not tainted 6.12.0-rc6-syzkaller-00192-gf1dce1f09380 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5065
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d e8 ed ac 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 a9 51 8e 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000d9a60d0 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a146 R12: ffff888000adc880
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000070
-FS:  00007f061457d6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f9c4079148 CR3: 0000000042e60000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- six_lock_ip_waiter+0x9e/0x160 fs/bcachefs/six.c:553
- six_lock_ip fs/bcachefs/six.h:253 [inline]
- six_lock_ip_intent fs/bcachefs/six.h:366 [inline]
- six_lock_intent fs/bcachefs/six.h:366 [inline]
- bkey_cached_alloc fs/bcachefs/btree_key_cache.c:169 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:220 [inline]
- btree_key_cache_fill+0x59a/0x2920 fs/bcachefs/btree_key_cache.c:309
- bch2_btree_path_traverse_cached+0x84e/0xbe0 fs/bcachefs/btree_key_cache.c:361
- bch2_btree_path_traverse_one+0x45d/0x2940 fs/bcachefs/btree_iter.c:1159
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- bch2_trans_update_get_key_cache+0x6c0/0x1230 fs/bcachefs/btree_update.c:494
- bch2_trans_update+0x9b1/0x2550 fs/bcachefs/btree_update.c:539
- bch2_inode_write fs/bcachefs/inode.h:139 [inline]
- bch2_create_trans+0xdfb/0x1af0 fs/bcachefs/fs-common.c:179
- __bch2_create+0x7ae/0xf60 fs/bcachefs/fs.c:522
- bch2_mknod fs/bcachefs/fs.c:673 [inline]
- bch2_create+0xea/0x1b0 fs/bcachefs/fs.c:687
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_open fs/open.c:1438 [inline]
- __se_sys_open fs/open.c:1434 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1434
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f061377e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f061457d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f0613935f80 RCX: 00007f061377e719
-RDX: 0000000000000000 RSI: 000000000014927e RDI: 0000000020000180
-RBP: 00007f061457d090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f0613935f80 R15: 00007ffdaceeed98
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5065
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d e8 ed ac 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 a9 51 8e 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000d9a60d0 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a146 R12: ffff888000adc880
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000070
-FS:  00007f061457d6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f9c4079148 CR3: 0000000042e60000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	b6 04                	mov    $0x4,%dh
-   2:	30 84 c0 0f 85 9b 16 	xor    %al,0x169b850f(%rax,%rax,8)
-   9:	00 00                	add    %al,(%rax)
-   b:	45 31 f6             	xor    %r14d,%r14d
-   e:	83 3d e8 ed ac 0e 00 	cmpl   $0x0,0xeacede8(%rip)        # 0xeacedfd
-  15:	0f 84 b6 13 00 00    	je     0x13d1
-  1b:	89 54 24 54          	mov    %edx,0x54(%rsp)
-  1f:	89 5c 24 68          	mov    %ebx,0x68(%rsp)
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 ff             	mov    %r15,%rdi
-  33:	e8 a9 51 8e 00       	call   0x8e51e1
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2024/11/9 21:02, Kuan-Wei Chiu wrote:
+> On Sat, Nov 09, 2024 at 08:40:30PM +0800, Kuan-Wei Chiu wrote:
+>> Hi Jinjie,
+>>
+>> On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
+>>> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+>>> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+>>> has assigned before, and the error path only free the suite->log's stream
+>>> memory but not set it to NULL in string_stream_destroy(), so the later
+>>> string_stream_clear() of suite->log in kunit_init_suite() will cause
+>>> below UAF bug.
+>>>
+>>> Set stream pointer to NULL after free in string_stream_destroy()
+>>> to fix it.
+>>>
+>>> 	Unable to handle kernel paging request at virtual address 006440150000030d
+>>> 	Mem abort info:
+>>> 	  ESR = 0x0000000096000004
+>>> 	  EC = 0x25: DABT (current EL), IL = 32 bits
+>>> 	  SET = 0, FnV = 0
+>>> 	  EA = 0, S1PTW = 0
+>>> 	  FSC = 0x04: level 0 translation fault
+>>> 	Data abort info:
+>>> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>>> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>> 	[006440150000030d] address between user and kernel address ranges
+>>> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>>> 	Dumping ftrace buffer:
+>>> 	   (ftrace buffer empty)
+>>> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+>>> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+>>> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+>>> 	Hardware name: linux,dummy-virt (DT)
+>>> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>> 	pc : string_stream_clear+0x54/0x1ac
+>>> 	lr : string_stream_clear+0x1a8/0x1ac
+>>> 	sp : ffffffc080b47410
+>>> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+>>> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+>>> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+>>> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+>>> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+>>> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+>>> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+>>> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+>>> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+>>> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+>>> 	Call trace:
+>>> 	 string_stream_clear+0x54/0x1ac
+>>> 	 __kunit_test_suites_init+0x108/0x1d8
+>>> 	 kunit_exec_run_tests+0xb8/0x100
+>>> 	 kunit_module_notify+0x400/0x55c
+>>> 	 notifier_call_chain+0xfc/0x3b4
+>>> 	 blocking_notifier_call_chain+0x68/0x9c
+>>> 	 do_init_module+0x24c/0x5c8
+>>> 	 load_module+0x4acc/0x4e90
+>>> 	 init_module_from_file+0xd4/0x128
+>>> 	 idempotent_init_module+0x2d4/0x57c
+>>> 	 __arm64_sys_finit_module+0xac/0x100
+>>> 	 invoke_syscall+0x6c/0x258
+>>> 	 el0_svc_common.constprop.0+0x160/0x22c
+>>> 	 do_el0_svc+0x44/0x5c
+>>> 	 el0_svc+0x48/0xb8
+>>> 	 el0t_64_sync_handler+0x13c/0x158
+>>> 	 el0t_64_sync+0x190/0x194
+>>> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+>>> 	---[ end trace 0000000000000000 ]---
+>>> 	Kernel panic - not syncing: Oops: Fatal exception
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>>> ---
+>>>  lib/kunit/string-stream.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+>>> index 54f4fdcbfac8..00ad518b730b 100644
+>>> --- a/lib/kunit/string-stream.c
+>>> +++ b/lib/kunit/string-stream.c
+>>> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+>>>  
+>>>  	string_stream_clear(stream);
+>>>  	kfree(stream);
+>>> +	stream = NULL;
+>>
+>> Thanks for proposing the fix. However, I don't believe it fully
+>> resolves the UAF issue. Changing the stream pointer value within
+>> string_stream_destroy() doesn't update the caller's stream pointer, so
+>> the issue remains.
+>>
+>> I think the correct approach would be to set the log pointer to NULL in
+>> the error path of kunit_debugfs_create_suite() to address the issue.
+>> Let me know if I've missed something or overlooked an obvious detail.
+>>
+> BTW, since alloc_string_stream() returns -ENOMEM on error rather than
+> NULL, it's best for the caller to check it with IS_ERR() instead of
+> IS_ERR_OR_NULL(). It's not a big issue, but I can send a cleanup patch
+> later to address this.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Yes, I also notice it, but It's not a big issue. Thank you very much!
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> 
+> Regards,
+> Kuan-Wei
 
