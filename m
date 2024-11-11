@@ -1,52 +1,103 @@
-Return-Path: <linux-kernel+bounces-404463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2759C43FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:45:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08D79C443D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641BE1F22564
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:45:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D205B2375A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12FF1A76CB;
-	Mon, 11 Nov 2024 17:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEEF1AA78C;
+	Mon, 11 Nov 2024 17:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlLbJXLB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QdsIBHcq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AGOXF755";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D6Fok6nx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQCynE9Q"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2031A3AAD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C501454728;
+	Mon, 11 Nov 2024 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347027; cv=none; b=nD8zZWpeIpLnzZYT09rRpyGMu0sTK5+dISfM3zIvtdJvwVcP4QNIdF9RPfIVXxXhueaOqfDmoGnQznK5ifX7xDDXabF8HHierA0LaBLryKN20gdep2VxTE5kpoebCFec2rQ/ITS76EKdWXzGOz99xjB2GNA8s1ArxrMRWNmp520=
+	t=1731347048; cv=none; b=O4mL8y0VqB32WokSjbL9bOF9j6v/avMZRsCG0cSInUSdMEMglzhsP1LUoGLDFnqPUT8alIRF3r9+8vAvJtYi6aiVbtkRtqF+sc4MOYQpLsVN5zCigr3S2qQ48CFdoGszhscLKiGwDru9wLZo8ShDon+caLElPf3tsOyK+zqntJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347027; c=relaxed/simple;
-	bh=7szS0JcxAGIA/EZsPYEvx6AhLPm6rNTGOAPQfCCP3kA=;
+	s=arc-20240116; t=1731347048; c=relaxed/simple;
+	bh=8msUvZ35GmffzXX36gtrgCsOR2MwdCn5l2jBjHagB/4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f9TAN0PyQ5VH1mRI4c6XR62YNEVU7yz4DvJuSPb1RhD0ppCOVqxIOEYKEZjami/NLjPxCS/QouKQvcioj+N1XkJU4kbbmGhsFGezRkI5aB4B4JgKyLL3AS2JnYaz2XRzHCRW3MQfoQXFCuvgyyu85U8sure4kGc+zCfRlbxnifE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlLbJXLB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E415C4CECF;
-	Mon, 11 Nov 2024 17:43:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731347026;
-	bh=7szS0JcxAGIA/EZsPYEvx6AhLPm6rNTGOAPQfCCP3kA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rlLbJXLBm1nswLr94bS9mXpTvWaNhXrVk7dGs3jsHfwQ9gekuMPk5irl3PdK7S9O5
-	 48nFt5+AOnTDOKZQPZMDr9Mo0ub7GOmUHKWB4hhqdPZRGOQ9TnUZdx0bIroCOl+AbK
-	 LtNY8uhLFPqwYYA7G9zv23NaiN24wHFA1QqrOBtJPOEJPG8zCxDuUtMagtJHoaEoT5
-	 KZ7cztUY0oiU1LsEzU6fc+csp6eXqleeryFVjtiMZnRpGeWYMkqzx/c6eiNqfncsfZ
-	 cQA+TIzpfaRSXITzskO4iaZy8L6Xq190NQH7+p3dC5oz6zvmqM2z5tc4jPp2/12eSq
-	 gMKz+K0ZT2ktw==
-Date: Mon, 11 Nov 2024 14:43:43 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Luo Yifan <luoyifan@cmss.chinamobile.com>
-Cc: jpoimboe@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/lib/subcmd: Move va_end before exit
-Message-ID: <ZzJCT_LkhkKRQOTt@x1>
-References: <20241111091701.275496-1-luoyifan@cmss.chinamobile.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ax7Ck5wrPjw1w+HWPBUvgajoGx6WDSdC+tPRj7/BVbfE6w7AxNdqehdlgHZ3rGGsM/5TmXcFkYf/jYaNV+FkTS8rZTN4iLuNx5a5uj3k5yRZYu9HMELm8RDoKxW3ocTaoP3yzt7Lg1Xieg17SBloRjdPoURdc76Jeqm7n8sh1e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QdsIBHcq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AGOXF755; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D6Fok6nx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQCynE9Q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E8CED1F45A;
+	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731347045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=QdsIBHcqz1UtgYzt55dY5coH7df1IGw2RuI33vwE588muPYBnQeQqU4eb+eCTQFxT+K+nW
+	hj65vWMAwQCfSOv2uAjRR01SuF0hH+fsFsZd+bHd4yQDfOQKrp1QZ2TzjxYIiq4UOe+Jbf
+	cVpyA/RJlosJb2FzCBdzr3xjJGC78Vs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731347045;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=AGOXF755K3pf3rbYEqpzHB4zS+swNJtn+giaMji1R2PS+lCTWx28vn4xlITwp+1Qoqyn9v
+	idZ90L1izWjS4JDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=D6Fok6nx;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OQCynE9Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731347043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=D6Fok6nxpOpKcp68zkOS4JNWcGJfXmQ2gI9TpheEBLwdnZ4bGl59gKwpIepR8SeluS0rX4
+	KiPD3B8PewIIgH+zb2kzYw3jlkButydQdA7tk+jSbqwM2RuQ7BO/bVZH/KNPLhTUygKgYF
+	vMjZKSLXINb6BZc+Rv9dPiMY5mT+zoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731347043;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
+	b=OQCynE9QDy3C0ucdQ+XYpMrzF7FMO0xI3n/76lw8NEagVPxB/eL/a+ODKWt61sKClfWYuD
+	vAVQIBBMOuAtbiCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEFAC137FB;
+	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ox16MmNCMmfBIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 11 Nov 2024 17:44:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 54766A0986; Mon, 11 Nov 2024 18:44:03 +0100 (CET)
+Date: Mon, 11 Nov 2024 18:44:03 +0100
+From: Jan Kara <jack@suse.cz>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] fs: don't let statmount return empty strings
+Message-ID: <20241111174403.qm7eqdl5pxwjhb3h@quack3>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,40 +106,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241111091701.275496-1-luoyifan@cmss.chinamobile.com>
+In-Reply-To: <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
+X-Rspamd-Queue-Id: E8CED1F45A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	MISSING_XM_UA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Mon, Nov 11, 2024 at 05:17:01PM +0800, Luo Yifan wrote:
-> This patch makes a minor adjustment by moving the va_end call before
-> exit. Since the exit() function terminates the program, any code
-> after exit(128) (i.e., va_end(params)) is unreachable and thus not
-> executed. Placing va_end before exit ensures that the va_list is
-> properly cleaned up.
+On Mon 11-11-24 10:09:55, Jeff Layton wrote:
+> When one of the statmount_string() handlers doesn't emit anything to
+> seq, the kernel currently sets the corresponding flag and emits an empty
+> string.
+> 
+> Given that statmount() returns a mask of accessible fields, just leave
+> the bit unset in this case, and skip any NULL termination. If nothing
+> was emitted to the seq, then the EOVERFLOW and EAGAIN cases aren't
+> applicable and the function can just return immediately.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Thanks, applied to perf-tools-next,
+Looks good. Feel free to add:
 
-- Arnaldo
- 
-> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  tools/lib/subcmd/subcmd-util.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/namespace.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/lib/subcmd/subcmd-util.h b/tools/lib/subcmd/subcmd-util.h
-> index dfac76e35..c742b0881 100644
-> --- a/tools/lib/subcmd/subcmd-util.h
-> +++ b/tools/lib/subcmd/subcmd-util.h
-> @@ -20,8 +20,8 @@ static __noreturn inline void die(const char *err, ...)
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..28ad153b1fb6f49653c0a85d12da457c4650a87e 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -5046,22 +5046,23 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  	size_t kbufsize;
+>  	struct seq_file *seq = &s->seq;
+>  	struct statmount *sm = &s->sm;
+> +	u32 start = seq->count;
 >  
->  	va_start(params, err);
->  	report(" Fatal: ", err, params);
-> -	exit(128);
->  	va_end(params);
-> +	exit(128);
->  }
+>  	switch (flag) {
+>  	case STATMOUNT_FS_TYPE:
+> -		sm->fs_type = seq->count;
+> +		sm->fs_type = start;
+>  		ret = statmount_fs_type(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_ROOT:
+> -		sm->mnt_root = seq->count;
+> +		sm->mnt_root = start;
+>  		ret = statmount_mnt_root(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_POINT:
+> -		sm->mnt_point = seq->count;
+> +		sm->mnt_point = start;
+>  		ret = statmount_mnt_point(s, seq);
+>  		break;
+>  	case STATMOUNT_MNT_OPTS:
+> -		sm->mnt_opts = seq->count;
+> +		sm->mnt_opts = start;
+>  		ret = statmount_mnt_opts(s, seq);
+>  		break;
+>  	default:
+> @@ -5069,6 +5070,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+>  		return -EINVAL;
+>  	}
 >  
->  #define zfree(ptr) ({ free(*ptr); *ptr = NULL; })
+> +	/*
+> +	 * If nothing was emitted, return to avoid setting the flag
+> +	 * and terminating the buffer.
+> +	 */
+> +	if (seq->count == start)
+> +		return ret;
+>  	if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
+>  		return -EOVERFLOW;
+>  	if (kbufsize >= s->bufsize)
+> 
 > -- 
-> 2.27.0
+> 2.47.0
 > 
-> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
