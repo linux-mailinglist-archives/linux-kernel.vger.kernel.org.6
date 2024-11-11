@@ -1,238 +1,115 @@
-Return-Path: <linux-kernel+bounces-404315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57459C424D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:01:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60FF9C424F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572601F26395
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:01:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB58287711
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF301A257A;
-	Mon, 11 Nov 2024 16:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2108E149E17;
+	Mon, 11 Nov 2024 16:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDdr8Inh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z38NPxLI"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEFB4C66;
-	Mon, 11 Nov 2024 16:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9A813C3F2
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340878; cv=none; b=fu76EWBdAdz4zX0ciskWDdFjTeRoJGT0i0cNO2SLd0+vyw6WefUxgNK1rIk323znAlKt87hl6QyBlYXBefFnvElZPv4PSRVBX2zp9+G/UO2JrfYCtCjEDb/qB7zv9tVGhdSbA59Ra47j+ycrcNuNgUREPcUJGkWl9kZ38aCIc7U=
+	t=1731340936; cv=none; b=Gq44s2qKTifyi5AJI/gyRfNuK6sKlBf9AYwI3Zs0jGlw2DvEEoqmQcgDmyAPnpU7gE888EQ8vtKM+I2sRHMFDIlco6bohzuTmuTsW4fXKQDIvXyFl52Xy4lFnTNopDpOxVCghbg7p3EQT79u8ORZiZM56xro5M60y+Osdy1IAKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340878; c=relaxed/simple;
-	bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M+HtlNva6nNDtzfCTvf3mK5+2vmI+JNaqiMMX9qs25bvAkZtfk+GLeaUHkMgDlv6by3Z1+UrczW0ONz57vxjcrrIZrcPjz4auS1DB/lKws8Y39Ln2L4PMnwuyF0QKa3cuAkHiTYCTtrKTHvsgPbPgdMTVZHYNN/xFr9A94BPpDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDdr8Inh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FDD8C4CECF;
-	Mon, 11 Nov 2024 16:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731340877;
-	bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=uDdr8Inh2AFEMajRA7+mgMWudV8I6P8yvMMzNGAuZmfjbQcXI3BtBQ5qtYmjyMzQc
-	 8t9aX0D7Yg++FrM6wP2MjmiqFDceRN87HOxZ3S/HUSxymeef68BvCKjieDr5dn2to/
-	 onVpRzjDRWz8eqmzOzGwBrUUEhZFfy3ggNXXRKCeMQ31cY4qkJA0BBI9TKhiDFn8Qz
-	 gIg5V3G0y+ds+HyxK7uqotUCpouZUv/TeCdR1FuozJB3kPYA6uaTqg3yZdTX93LoYf
-	 5qGzKc9iqOmZqdZCvOT1/TuvhlINI7Aq96qyzEZPUEffSpuVssOOp1zSqBZWkw68WN
-	 2OJhOIPRAvtKA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 11 Nov 2024 11:01:13 -0500
-Subject: [PATCH v2] nfsd: drop inode parameter from
- nfsd4_change_attribute()
+	s=arc-20240116; t=1731340936; c=relaxed/simple;
+	bh=CQ9Sw7fcqvjg7WQQ5OAcKFHGVWUJEp5ve8sL7cBh/X0=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BCGq+YeNJVCyAUOrQjMoGC0XsFR6TgvMupyNKNwBCaOiGeZMjwofKO1YbTW0JaEoYjFq/6kw3r9N19e6r+q+YzeYZjvNfKVcDUaW6tpq7TlTyHrIrXSL6/ptlinz33fkwbIOG9dhc3CuCcDgxmDVzCllNSR4vyDAcejmh9lp08A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z38NPxLI; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316cce103dso59182625e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:02:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731340933; x=1731945733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zNTdYjuZhy64JHds08+8Qi9c87EJbOLQsau9tlMXGws=;
+        b=Z38NPxLIVER8GYyhlI5+LOPtxLd0/BjGl07Uz/BSHJXwRYDbPgBo5jg9PeMyB3r+oT
+         I+Mrq/36xk+ZD4UsRv9jfWriaTmF36pEizoTx6bbtwenxPg9fvcoroOz24gRR77teBoL
+         yxfuyPzJXbCrakPi2hm+om5MPBcMtyIq9005FpeaKkNgp3gRcmQSkcZ8azkHKr8vyOyI
+         xfvsLQjqThJ+I5rH3z46B3WuqijnpnWk1aGS1p2HYURPZrE1Q6XPbQQmI8ofBAqCZLUO
+         w3+zvTL0Xrzi1JAg4SEo3IjgQ4dHHGFcZgsncKpD/zztXlnT/XKOKu7ZhicHnQWsEbI3
+         sk6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731340933; x=1731945733;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zNTdYjuZhy64JHds08+8Qi9c87EJbOLQsau9tlMXGws=;
+        b=Fm2ALOO4QlWjLx/Na+RwzKpLoHGNnVY7Tok8tPbSlQnCMSo9ObeT+7QhVqnobdcgE+
+         c9ZQgSUCofRECP8SLH5mF7exw13brqmSL0cHK437Dv4S/RWkM80/loTLHnT/gMYZ5kTv
+         Hjt8k1NhSpGFGmnwNEcnwCWbo3O6wXSj+BhTFcy8mDATdOsKODd+9XpKDxS3ISnzKn8D
+         5yAVMjRdRAapFsNF6NVHg5vyUxbcP6uWEOpi59K2iuDGzwoYaMBNDZixbbaUQMRnx29F
+         QS8lWNwGg2E3KLtgFjTFpvcNk8imH5B8CU+Ldp+/aCxCWMIzEloDYZjTu7j13WyIhvcV
+         NYBg==
+X-Gm-Message-State: AOJu0Ywa+eGnageFrX5EQtwQw7hqBwmiBBxb2fO5I8nPyIsZxqY+tZBh
+	B20luC/hywBHdfNN1wvK9Pb28p6T7kiyavo49lE1wbumKLhfFIqlBi3hyH7/R/s=
+X-Google-Smtp-Source: AGHT+IFs9kqvRfuZtP1E6uwgQ5wItTkrYyqnfQURTQ94xTon1d4AR+XsfHtnQwpU9hswaBlWc9+W3A==
+X-Received: by 2002:a05:600c:154c:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-432b750acb9mr121499505e9.15.1731340932329;
+        Mon, 11 Nov 2024 08:02:12 -0800 (PST)
+Received: from [192.168.42.30] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c2161sm179836285e9.31.2024.11.11.08.02.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 08:02:12 -0800 (PST)
+From: Giovanni Gherdovich <giovanni.gherdovich@suse.com>
+X-Google-Original-From: Giovanni Gherdovich <ggherdovich@suse.com>
+Message-ID: <d86b8a16-6e1d-4580-83b6-fb186d8b8996@suse.com>
+Date: Mon, 11 Nov 2024 17:02:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] sched_ext: Rename
+ scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
+ arighi@nvidia.com, multics69@gmail.com, me@mostlynerdless.de,
+ dschatzberg@meta.com, yougmark94@gmail.com, void@manifault.com
+References: <20241110200308.103681-1-tj@kernel.org>
+ <20241110200308.103681-4-tj@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20241110200308.103681-4-tj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-master-v2-1-e0a52a156a03@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAEgqMmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
- vPSU3UzU4B8JSMDIxNDINDNTSwuSS3STU6yTExLTEwySU40UAIqLihKTcusABsUHVtbCwC54SL
- ZWAAAAA==
-X-Change-ID: 20241111-master-cb9afaab4ca0
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5955; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnMipMe6eqzdouhLcI/E4YVjaXqGF0luZ6TzzkC
- ZmRBjNRgnqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzIqTAAKCRAADmhBGVaC
- FTaSD/4r91kzcwtXpblBv1yFivtWWhd3AqrUEPCKW1bzNXxRXEPhMmaFsNEWkOhNJxcL1RCH6CB
- DFYxm5yhGZGIlXhYyfo9HdjpVjSAvFxX5LbgH/gbwW/ko7TXKC/k96quGskbRKhH/eOLJPzSoZm
- MlWpX4AZ0oSAmMPOzafUb2AAUXgGuGKEffvMWvZZzb5x+6bWH1L0OLr0TFqwoh9s2KkRt2Z4CJo
- RnZXq6pDrt55LG+dgfEo9v5z3pWsbqnbESjhOzrZrxZTjWWLR6B5s06rDSUjSTNnsD3Jz2NTNfN
- SDjLwWX9y8TqpkJ57iNIYfRpsGjYZzd+cCFZNMrQM9mrCxszWYokanjHtI6EX0qw9NqWfPehmEO
- lbFerONIqGps95RTowpGTRLANglfU4CYozdhWp4N6VH7CrIGZ1dM6SYiIVo2sWuvIc84JsMT7TE
- xNFxYMvek1xLRe2LuBQozgCjM57lD4QKjyVg4qNugggci6BIO5B2108lI7em2d57dzAyfv8B749
- jyGAQDkYNBFVsHdZe5C6vi2O49Ob1jzZZC7BkIEyx1XAX29DfI9SrMUSRbNWY+OaEM9MADjWQSs
- mUGx6Ucoryi2QUrwffRiULpVJn9EnA1OW4GePAyL+zRnkY78pdKqh62nccsFJ5e0lxPO9uxAv41
- vZaUyCyLco4gLaA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-The inode that nfs4_open_delegation() passes to this function is
-wrong, which throws off the result. The inode will end up getting a
-directory-style change attr instead of a regular-file-style one.
+Hello,
 
-Fix up nfs4_delegation_stat() to fetch STATX_MODE, and then drop the
-inode parameter from nfsd4_change_attribute(), since it's no longer
-needed.
+On Sun Nov 10, 2024 21:02, Tejun Heo wrote:
+> In sched_ext API, a repeatedly reported pain point is the overuse of the
+> verb "dispatch" and confusion around "consume": [...]
+> 
+> Clean up the API with the following renames:
+> 
+> 1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
+> 2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
+> 3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
+> 
+> This patch performs the third set of renames. Compatibility is maintained
+> by: [...]
 
-Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegation")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-This version should apply cleanly to v6.12-rc7. Some later patches in
-nfsd-next might need to be twiddled as a result, but it should be simple
-to fix. Also, I fixed up the Fixes: to point to the right commit. This
-dates back a bit further than I had originally thought.
----
- fs/nfsd/nfs4state.c |  5 ++---
- fs/nfsd/nfs4xdr.c   |  2 +-
- fs/nfsd/nfsfh.c     | 20 ++++++++++++--------
- fs/nfsd/nfsfh.h     |  3 +--
- 4 files changed, 16 insertions(+), 14 deletions(-)
+Thanks Tejun.
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 551d2958ec2905be51b4a96414a15a5e4f87f9ea..d3cfc6471539932fadc01a95a1fe0948f2935666 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -5957,7 +5957,7 @@ nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
- 	path.dentry = file_dentry(nf->nf_file);
- 
- 	rc = vfs_getattr(&path, stat,
--			 (STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
-+			 (STATX_MODE | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
- 			 AT_STATX_SYNC_AS_STAT);
- 
- 	nfsd_file_put(nf);
-@@ -6041,8 +6041,7 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
- 		}
- 		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
- 		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
--		dp->dl_cb_fattr.ncf_initial_cinfo =
--			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
-+		dp->dl_cb_fattr.ncf_initial_cinfo = nfsd4_change_attribute(&stat);
- 		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
- 	} else {
- 		open->op_delegate_type = NFS4_OPEN_DELEGATE_READ;
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index f118921250c3163ea45b77a53dc57ef364eec32b..8d25aef51ad150625540e1b8baba8baf9d64b788 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -3040,7 +3040,7 @@ static __be32 nfsd4_encode_fattr4_change(struct xdr_stream *xdr,
- 		return nfs_ok;
- 	}
- 
--	c = nfsd4_change_attribute(&args->stat, d_inode(args->dentry));
-+	c = nfsd4_change_attribute(&args->stat);
- 	return nfsd4_encode_changeid4(xdr, c);
- }
- 
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index 40ad58a6a0361e48a48262a2c61abbcfd908a3bb..96e19c50a5d7ee8cd610bec4ecaec617286deea3 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -667,20 +667,18 @@ fh_update(struct svc_fh *fhp)
- __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp)
- {
- 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
--	struct inode *inode;
- 	struct kstat stat;
- 	__be32 err;
- 
- 	if (fhp->fh_no_wcc || fhp->fh_pre_saved)
- 		return nfs_ok;
- 
--	inode = d_inode(fhp->fh_dentry);
- 	err = fh_getattr(fhp, &stat);
- 	if (err)
- 		return err;
- 
- 	if (v4)
--		fhp->fh_pre_change = nfsd4_change_attribute(&stat, inode);
-+		fhp->fh_pre_change = nfsd4_change_attribute(&stat);
- 
- 	fhp->fh_pre_mtime = stat.mtime;
- 	fhp->fh_pre_ctime = stat.ctime;
-@@ -697,7 +695,6 @@ __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp)
- __be32 fh_fill_post_attrs(struct svc_fh *fhp)
- {
- 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
--	struct inode *inode = d_inode(fhp->fh_dentry);
- 	__be32 err;
- 
- 	if (fhp->fh_no_wcc)
-@@ -713,7 +710,7 @@ __be32 fh_fill_post_attrs(struct svc_fh *fhp)
- 	fhp->fh_post_saved = true;
- 	if (v4)
- 		fhp->fh_post_change =
--			nfsd4_change_attribute(&fhp->fh_post_attr, inode);
-+			nfsd4_change_attribute(&fhp->fh_post_attr);
- 	return nfs_ok;
- }
- 
-@@ -804,7 +801,14 @@ enum fsid_source fsid_source(const struct svc_fh *fhp)
- 	return FSIDSOURCE_DEV;
- }
- 
--/*
-+/**
-+ * nfsd4_change_attribute - Generate an NFSv4 change_attribute value
-+ * @stat: inode attributes
-+ *
-+ * Caller must fill in @stat before calling, typically by invoking
-+ * vfs_getattr() with STATX_MODE, STATX_CTIME, and STATX_CHANGE_COOKIE.
-+ * Returns an unsigned 64-bit changeid4 value (RFC 8881 Section 3.2).
-+ *
-  * We could use i_version alone as the change attribute.  However, i_version
-  * can go backwards on a regular file after an unclean shutdown.  On its own
-  * that doesn't necessarily cause a problem, but if i_version goes backwards
-@@ -821,13 +825,13 @@ enum fsid_source fsid_source(const struct svc_fh *fhp)
-  * assume that the new change attr is always logged to stable storage in some
-  * fashion before the results can be seen.
-  */
--u64 nfsd4_change_attribute(const struct kstat *stat, const struct inode *inode)
-+u64 nfsd4_change_attribute(const struct kstat *stat)
- {
- 	u64 chattr;
- 
- 	if (stat->result_mask & STATX_CHANGE_COOKIE) {
- 		chattr = stat->change_cookie;
--		if (S_ISREG(inode->i_mode) &&
-+		if (S_ISREG(stat->mode) &&
- 		    !(stat->attributes & STATX_ATTR_CHANGE_MONOTONIC)) {
- 			chattr += (u64)stat->ctime.tv_sec << 30;
- 			chattr += stat->ctime.tv_nsec;
-diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
-index 5b7394801dc4270dbd5236f3e2f2237130c73dad..876152a91f122f83fb94ffdfb0eedf8fca56a20c 100644
---- a/fs/nfsd/nfsfh.h
-+++ b/fs/nfsd/nfsfh.h
-@@ -297,8 +297,7 @@ static inline void fh_clear_pre_post_attrs(struct svc_fh *fhp)
- 	fhp->fh_pre_saved = false;
- }
- 
--u64 nfsd4_change_attribute(const struct kstat *stat,
--			   const struct inode *inode);
-+u64 nfsd4_change_attribute(const struct kstat *stat);
- __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp);
- __be32 fh_fill_post_attrs(struct svc_fh *fhp);
- __be32 __must_check fh_fill_both_attrs(struct svc_fh *fhp);
+For the whole series,
 
----
-base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-change-id: 20241111-master-cb9afaab4ca0
+Acked-by: Giovanni Gherdovich <ggherdovich@suse.com>
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
 
+Giovanni
 
