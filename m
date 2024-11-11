@@ -1,94 +1,118 @@
-Return-Path: <linux-kernel+bounces-404672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9E49C4679
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:19:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9849C4673
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A73171F22C4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7180283282
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F239D19CC0C;
-	Mon, 11 Nov 2024 20:18:54 +0000 (UTC)
-Received: from a3.inai.de (a3.inai.de [144.76.212.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD931AAE19;
+	Mon, 11 Nov 2024 20:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqxqfibK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A2A1ACDE7;
-	Mon, 11 Nov 2024 20:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDC41BC4E;
+	Mon, 11 Nov 2024 20:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356334; cv=none; b=MWpT2dR0mwVQJtKd29ace6FesiqaNE6Vv5gJJKbsr7MJh3aAgKAzNIMufYaQZToEo70KylN5LPMSbWi3f2oiYVv7xfl8PgwMIuOJn93MIoiB63ufbd/qhYi5yfaByy3FjMYvL6BZCUiTS7CjfiQvIbhjE0VJ2OrvswsxbyJnGhE=
+	t=1731356329; cv=none; b=JpP+lNumWBxMxvSCnqeEJsKEdsuS4rSMjFKdy1FCKHtBvf3x6bI0FfucooUfbtkjHMrk9IZMT4VsPl7a/Gdj9hTJJfbNcU6GhG9tsZ+OJQNuxSFUbr653oHqpTFry+GmHb8w314zuo6wR8TwnT7UzpNWK9N9zGdkKQ9Rdtk0Heg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356334; c=relaxed/simple;
-	bh=5i5l9MKkZVlFVs5cwNIXH5c0rcSzMfWOTFR/CxDx4Us=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VH0JhwVhQSpA9gdUKF2oA6i/w6Y0D5Fnpqq6uW/H6/3p677Mnz3Z0kGnUQr2jToXDHtp0JthdSlH+Bs7iJtRInAA/yxpExMsJbAuYABFt4+TCM7Jjxxlo/iky3vb7/2awPbQtC6olXQaMViRxl2MarW3jvwnfWI5EvwV4H18EDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=fail smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=inai.de
-Received: by a3.inai.de (Postfix, from userid 25121)
-	id 04BFF101A397E2; Mon, 11 Nov 2024 21:18:42 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by a3.inai.de (Postfix) with ESMTP id 02DFB1100D3C49;
-	Mon, 11 Nov 2024 21:18:42 +0100 (CET)
-Date: Mon, 11 Nov 2024 21:18:41 +0100 (CET)
-From: Jan Engelhardt <ej@inai.de>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-cc: egyszeregy@freemail.hu, Florian Westphal <fw@strlen.de>, 
-    kadlec@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
-    edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-    linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
- filesystem.
-In-Reply-To: <ZzJORY4eWl4xEiMG@calendula>
-Message-ID: <706544q5-q0o9-8sq0-9q14-onr01r8rqq5q@vanv.qr>
-References: <20241111163634.1022-1-egyszeregy@freemail.hu> <20241111165606.GA21253@breakpoint.cc> <ZzJORY4eWl4xEiMG@calendula>
-User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
+	s=arc-20240116; t=1731356329; c=relaxed/simple;
+	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oTevicbxBOAmWracM6uXHtVMXwXmoLUZ0YHqQDZ782X94ctUXmbWy/sbHqayohP0H2exbLmsxK44ffJMk/Y+6/QkB6pfWS8B2zs1AY34IUMq/v3z97ekJ8islIZxD+QbB4FAyDN994UwabHwlrrbh3r8NlDMdQFH8NH4o0oAtok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqxqfibK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B07C4CECF;
+	Mon, 11 Nov 2024 20:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731356328;
+	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gqxqfibKGViofJ8HKYz5PSJPB7/H6OvWWhJ/kb7COtar9EoQ1MgLDvNlR1bmXyw5h
+	 EfYGFIq0amhZd+Ig3cP4u4pSXVCWFo85owkKMFuAjzwS6En24XVQzwpQ38m3qpdOny
+	 FecvGyxmlWvNZNaZXaNvj60n4qs8+PkYOPfxh9GiSAC+D0qFhXsgMkz42TOspX0Zlb
+	 M6YZRSzEDvNA6GIY6QdVdW2a3VHf7GkDMWWkQ96jwp0jPXwyBEOC7GdQ6V5kW+orht
+	 iA+5UA5Nz7BCL5j4f69dTYmc3A1GQxLXj7Wqdsc9/PLNtaADoBXVpzIWJz+51Iejqc
+	 IQLLGUsjqZ8uw==
+Date: Mon, 11 Nov 2024 20:18:44 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Sota4Ever <wachiturroxd150@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: arm: samsung: Add compatible for
+ Samsung Galaxy S20 FE (SM-G780F)
+Message-ID: <20241111-dreadlock-anaconda-e164c85d1ae7@spud>
+References: <20241109230402.831-1-wachiturroxd150@gmail.com>
+ <20241109230402.831-2-wachiturroxd150@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MPVSYDEanEQ+DG5z"
+Content-Disposition: inline
+In-Reply-To: <20241109230402.831-2-wachiturroxd150@gmail.com>
 
 
-On Monday 2024-11-11 19:34, Pablo Neira Ayuso wrote:
->On Mon, Nov 11, 2024 at 05:56:06PM +0100, Florian Westphal wrote:
->> egyszeregy@freemail.hu <egyszeregy@freemail.hu> wrote:
->> >  rename net/ipv4/netfilter/{ipt_ECN.c => ipt_ECN_TARGET.c} (98%)
->> >  rename net/netfilter/{xt_DSCP.c => xt_DSCP_TARGET.c} (98%)
->> >  rename net/netfilter/{xt_HL.c => xt_HL_TARGET.c} (100%)
->> >  rename net/netfilter/{xt_RATEEST.c => xt_RATEEST_TARGET.c} (99%)
->> >  rename net/netfilter/{xt_TCPMSS.c => xt_TCPMSS_TARGET.c} (99%)
->> 
->> No, please, if we have to do this, then lets merge the targets
->> (uppercase name) into the match (lowercase), i.e. most of the contents
->> of xt_DSCP.c go into xt_dscp.c.
->
->Agreed, please don't do this.
->
->We have seen people sending patches like this one for several years,
->this breaks stuff.
+--MPVSYDEanEQ+DG5z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Because all those submissions renamed (e.g.) xt_DSCP.h to something
-else.
+On Sat, Nov 09, 2024 at 11:04:01PM +0000, Sota4Ever wrote:
+> Add binding for the Samsung Galaxy S20 FE (SM-G780F) board, which is
+> based on the Samsung Exynos990 SoC.
+>=20
+> Signed-off-by: Sota4Ever <wachiturroxd150@gmail.com>
 
-It's kinda obvious that #include <xt_dscp.h> and <xt_DSCP.h>
-must produce the same declarations as previously available.
-Which seems doable with a layout like so:
+I doubt "sota4ever" is an known alias, can you use your name here
+please?
 
-xt_DSCP.h:
-	#include "xt_dscp_1.h"
-xt_dscp.h:
-	#include "xt_dscp_1.h"
-xt_dscp_1.h:
-	<the usual contents>
+> ---
+>  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
+=2Eyaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> index b5ba5ffc3..168e77375 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
+> @@ -240,6 +240,7 @@ properties:
+>          items:
+>            - enum:
+>                - samsung,c1s                     # Samsung Galaxy Note20 =
+5G (SM-N981B)
+> +              - samsung,r8s                     # Samsung Galaxy S20 FE =
+(SM-G780F)
+>            - const: samsung,exynos990
+> =20
+>        - description: Exynos Auto v9 based boards
+> --=20
+> 2.34.1
+>=20
 
-That way, xt_DSCP.h overwriting xt_dscp.h as a result of `make
-install` (or some other file creation action) becomes
-inconsequential since they have the same content under that model.
+--MPVSYDEanEQ+DG5z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJmpAAKCRB4tDGHoIJi
+0rizAP42h+6ryK5OuKYwHGBlhnYmZRsNL+6V9i7RBw14mZ5NXAD/WnsmQirug9Uy
+IvnvhlHbzmHxe/KvQJfQvQfNxwJr/wU=
+=oo5p
+-----END PGP SIGNATURE-----
+
+--MPVSYDEanEQ+DG5z--
 
