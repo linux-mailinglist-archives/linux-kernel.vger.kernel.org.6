@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-404333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AEF9C4286
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:22:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31039C428F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD571F23FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:22:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98999B2836F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379E91A0B13;
-	Mon, 11 Nov 2024 16:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFE01A0B13;
+	Mon, 11 Nov 2024 16:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a4+7fOH8"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4u3Dzsp"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB8239ACC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5781314AD3F;
+	Mon, 11 Nov 2024 16:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731342119; cv=none; b=LLty5EdX2NxIwWK7ZZWtjtxd2Ow0jcLv+y+DzdfzVuv3v8Uxq+6mRbgd+5xNXCzeJTHpiC9YhQ+VZVLcOoT6lCbWRBU1mQsW7bfyYf2d9vuMwsRhjpvWAGeTzCFyCtNVi5QaE5Gzt9+LaaV5ivyDBJ0WZQvoWQsCBxfpbw01Yr0=
+	t=1731342158; cv=none; b=bEBsMSE0JD1d+bJtJcF8y/FKx6eNvTHKnPzSHTmr8kuhWX4kf4jrpHeb/c9GAnnyuLw1dSNGOEcq0pKOMmpmbnAtfod5RcGIIrBuGN5IgbSeZoo/yWbr1NLoKdiCPrB7Py74DhvarObswHUcJbW121Qhj2b68rsYcDcMPq/A3v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731342119; c=relaxed/simple;
-	bh=XulLSXLOSWzhZwJrpywVHrCwfeA088N5ljiB+NZtPBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GdgtBEx0Kbq/m5VcZ8u6lyEEgueQf5QLsUVaXq23+oBQavEBixZDr6tZvHUmDMn/NWR2tUScFgCKeSFVk/0+rpYgWb65nXwFqPMewxUPID+gz5tn2MdvvjnUkpL2C+ydL9gBcM3cw4BvXPloAziXJjuKs+ZfM3gnc3nZ+qPPkgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a4+7fOH8; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e6d27adb-151c-46c1-9668-1cd2b492321b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731342114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZT3RbCRXBHxXEQlTTWxDvrCJixuMw29drHdutEN1wOY=;
-	b=a4+7fOH804lPTA220vTLYn82ssbezjKcuvoxaCZnrsUz8vLy2jU/L1kqdH4nwu5b1grSg7
-	DwYzqyD1nuugc1jG3+6818g7QpZo07rcNJtDPWxR+esd6eMk0SfbYbtKEYq1MB8AcXU81m
-	NnB+w9yOyFINwxUfCv6HJwrFFgBlEp0=
-Date: Mon, 11 Nov 2024 16:21:47 +0000
+	s=arc-20240116; t=1731342158; c=relaxed/simple;
+	bh=xTNhME1VdFsNUJWfXk4ApwmuFATHXp8LJHT4mlO0noo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ACY7fQvYOwVe6VbKoBkjL6vKuW66iv130XAZYQjA2tiSFNHG6bujBs7tF/q0P6AFvbkmdPKuymN2cv14KN98ECIr1PLXYZA36PWNv6qCvem2L4W4e4j9FT3AOpZfmycL1fYgcxnjJ7cq8qIcL2zNv+11tKtLDquLiIxQ1HrHvwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4u3Dzsp; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5111747cso40124451fa.2;
+        Mon, 11 Nov 2024 08:22:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731342155; x=1731946955; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xTNhME1VdFsNUJWfXk4ApwmuFATHXp8LJHT4mlO0noo=;
+        b=V4u3DzspELuf0lGTtvO/jwvEy2LIlIfQkCJEnS5nAqjXjMlcljMiCqq5Mc28IZqJGc
+         gHFOwR9m4wvM51ztTGAY61ronGzPnHfNFfaoLkvE2AGJy2j1fyGYMv9KWgnGGycNZKl4
+         rFeCRpVmDW966giUKT1308Ql3bHG9K1ozpwXuquXIpmh0PEmFgIgzm1R5lVR8jfmRK/4
+         AdC9Ey5ggk/GwOAK+DF1EshcpOK2SGoeCrgsK14MidBfssEJC0nhWwk7iXKaIVlVnB7m
+         UtWoPpYFpNs8mUbmfoOST6rM2QCDWXdy7saaFo4iGl+8inYiI37h2pLjioap7vO3/66X
+         YyoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731342155; x=1731946955;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xTNhME1VdFsNUJWfXk4ApwmuFATHXp8LJHT4mlO0noo=;
+        b=tSA7G9KVYdTFFq9X/7rENAYulwBoT5DFy+Tpr/IWvfvWVmeydOTK1Blkp6epdUwo1z
+         CLwARfVFZPSb5jDDBnAnQvbkDKzFu8jjloaiCSvN7E5m49tWdt82kAq7/fjfOwrUYDB0
+         /D+jSF2MqKNSs3jORwHb8pdNpyrc1JdIDNafGA9p627hDmsYUlB0inm5ilewUCrYoliL
+         xxB/6bqpj+O1Xaj01pXggRLrlDYMkItExorASoDNrf4nmliTAo+izj86nBKlVcW1TmPv
+         qWOt8rIny2r7BCy35UIqJhBApk5z+uwMxZgBPMtJucCyTTl6B4X++hRxWuw+i5dY8oY/
+         jVag==
+X-Forwarded-Encrypted: i=1; AJvYcCWSjTwqjKffNXsllvlcgeuswsZ38f/DOi+xt1sk9IsbOCDVrXFANC6POWloPMlOLLmUNLAgV3ZSK2bYpTfaPSM=@vger.kernel.org, AJvYcCX4fXLo2T27wky18t7HnJK87yioTG6kyUGXZkji6ISx0DuKFuOJIjBmDSMmPYGc50DJ5FHhrc8n0PAY81g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+zdDfc/wSQkrUfyXNTvfFDm6bylvUN4Odn+VI7CM4K9Rae5BS
+	SQuKnTMfBwKksJe/X7HHl/hBuEqm+RH1EDHWqvTTdaEQCLURXJeBp6mRWJZzpFuBDGfgumRjxA/
+	wOatS5Kb1KTWtUlO5HXJH6O/c008=
+X-Google-Smtp-Source: AGHT+IEzoBHnroavSqPI+DyXBy2o7Y8WhVjAAjjvbVHDpyFmTEohP3B2n4rcjwe0ybUCz9Ezm7pjvAfpZJxbjroObh8=
+X-Received: by 2002:a2e:a994:0:b0:2f6:649e:bf5c with SMTP id
+ 38308e7fff4ca-2ff2024a683mr53160041fa.17.1731342155064; Mon, 11 Nov 2024
+ 08:22:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] ARC: bpf_jit_arcv2: Remove redundant condition check
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- ast@kernel.org, andrii@kernel.org
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shahab Vahedi <list+bpf@vahedi.org>,
- Vineet Gupta <vgupta@kernel.org>, bpf@vger.kernel.org,
- linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241111142028.67708-1-hardevsinh.palaniya@siliconsignals.io>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241111142028.67708-1-hardevsinh.palaniya@siliconsignals.io>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241110-borrow-mut-v4-0-053976068215@gmail.com>
+ <20241110-borrow-mut-v4-6-053976068215@gmail.com> <CAJ-ks9mSu0Wivnsn605ZTFHiYqK4VEhURO-7rj5jFAwSxJsABg@mail.gmail.com>
+ <CAH5fLghAJFbCaOF8YPKJaKow3RdPXAqRvkJ7Ua5Mo5LcFo2WbA@mail.gmail.com>
+In-Reply-To: <CAH5fLghAJFbCaOF8YPKJaKow3RdPXAqRvkJ7Ua5Mo5LcFo2WbA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Mon, 11 Nov 2024 11:21:58 -0500
+Message-ID: <CAJ-ks9mnGvcsCZUjyjkYUSNSAv3004rtFcczBA-Wo58w-L+-vA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] rust: add improved version of `ForeignOwnable::borrow_mut`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/11/2024 14:19, Hardevsinh Palaniya wrote:
-> The condition 'if (ARC_CC_AL)' is always true, as ARC_CC_AL is a constant
-> integer. This makes the check redundant, so it is safe to remove.
-> 
-> Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-> ---
->   arch/arc/net/bpf_jit_arcv2.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/arch/arc/net/bpf_jit_arcv2.c b/arch/arc/net/bpf_jit_arcv2.c
-> index 4458e409ca0a..19792ce952be 100644
-> --- a/arch/arc/net/bpf_jit_arcv2.c
-> +++ b/arch/arc/net/bpf_jit_arcv2.c
-> @@ -2916,10 +2916,7 @@ bool check_jmp_32(u32 curr_off, u32 targ_off, u8 cond)
->   	addendum = (cond == ARC_CC_AL) ? 0 : INSN_len_normal;
->   	disp = get_displacement(curr_off + addendum, targ_off);
->   
-> -	if (ARC_CC_AL)
-> -		return is_valid_far_disp(disp);
-> -	else
-> -		return is_valid_near_disp(disp);
-> +	return is_valid_far_disp(disp);
->   }
->   
->   /*
+> You should probably wait for Miguel to decide what to do about
+> https://lore.kernel.org/all/20241111175842.550fc29d@canb.auug.org.au/
+>
+> Alice
 
-The original code is obviously optimized out, but the intention, I
-believe, was to check if the jump is conditional or not.
+Thanks for the pointer!
 
-So the proper fix should change the code to check cond:
+My reading of that discussion is that the new `crate::ffi` module
+isn't going anywhere, it's just the later patches that diverge the
+types that might be dropped for now and taken later.
 
--	if (ARC_CC_AL)
-+	if (cond == ARC_CC_AL)
+In my case though I have a hard conflict as the patch introducing
+`crate::ffi` and this series touch the same lines so I think a rebase
+is unavoidable.
 
 
+Tamir
 
