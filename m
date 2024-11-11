@@ -1,141 +1,150 @@
-Return-Path: <linux-kernel+bounces-404556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962419C450F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:36:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60FB9C4511
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A79C2870A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D66A1F25A2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB11B1AAE3A;
-	Mon, 11 Nov 2024 18:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B551AAE24;
+	Mon, 11 Nov 2024 18:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1RP0KIgH"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFNbg1tL"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B8A1AAE31
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19601AAE13;
+	Mon, 11 Nov 2024 18:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731350180; cv=none; b=hNeRicH0ADt47F3ViQtF4MFGeZelopLITUr08XBtVfmEHEW2MH5PbYZHbDZ3v7uHFPWFLirW89WoZQhj0WGQbrfEqPBhYrPLtZX6G/AzFTpljcMmaVglqj1H+6y0oCN+MLhfgQUNRzSRziTxTXrGn8tyjswopJFZovDCCj3BHsM=
+	t=1731350191; cv=none; b=Y0MKG3VnCM9FS9FJj9CKRCpyGK6Jscpr2oC2TJ/1oxARChtxuvY2RRlMwlBrDxLNJ7cRX1nvJOA6s/k3knBVl26Q85cJCOiNmrHVM/v1X9sfufAyCa4Nd4Bp+9sQ91+Db1qNRQloTO6xysewNf4xY4AYBqeBfFeDTeVLZQGVSO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731350180; c=relaxed/simple;
-	bh=PV+dFXayKSoza4QKboAoM48LK/FZeCJuiCqWhtXBk0E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iqjxQZaMWL8q9QgbfKamtm0j0swUXkcPFs+P8nK2LFADAt263t9KykIWpimjznguj2pUIg8w5PSZCtsoWItJmX62bz/hX2HbryXOhmzE2SzZFGb33NIAV1pR3wYxPWbJpm+M4t5ZNP0kwZmCmqBkvEdSSlgPng8cdNF9H9omCxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1RP0KIgH; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e2d396c77fso5974168a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:36:18 -0800 (PST)
+	s=arc-20240116; t=1731350191; c=relaxed/simple;
+	bh=npFH5UHaCbdQUl4s0bE97PA9ZIxx3/oEitT9i+OrTQo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mmwqv3UZbudt2bO5kxitSVn8EQVUeqCEOZNBhJpTYmUhFlC1krHDj8DKF9vj4TgpHeUnXTL/rTTK6I0N/2get1KqxNbQCBrRsLlF9C3C+6SJXhlelIOaC2IFLMLZCeRGExfCp3wdw0RU3L/lZb2OYk1BQwmoh0l9yv7+1BCuCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFNbg1tL; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ca1b6a80aso51533165ad.2;
+        Mon, 11 Nov 2024 10:36:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731350178; x=1731954978; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xT65ccAjs8Gh3WkVN2oxehYUfXZk8VYjMpoaHsa33o0=;
-        b=1RP0KIgHNyK4Ur5hol+Yu7G4mRLT5tpDqZKDX+teyt5MNs2yBx2OY1QvIMD3BKtJpY
-         Tm7AOHxYmRV9NaSxUZZuG3kk5lsUeX1X30ZoixVr4WI1su5YKD/jIl2uSs75SDhMUYQs
-         lKnCVRLqS1q1tO8yaRZXNBlm9PKTocDncHCDW6BtCaJjuXPf8e47MmGK79GRt2/HmFHR
-         Z8G1z4WKiRi+48GzPgrAwCmIW+5QOhG+Yez/bVR0LSE01QCItXedJdbqOKW4uQdN1hPI
-         jmTksgzrW8DUqt8wbXQXMMiMAqUUoBQnAQ5GEZ03tHwNVA69ttUxwWdKfSrxIjHhmjAn
-         9bWQ==
+        d=gmail.com; s=20230601; t=1731350189; x=1731954989; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HH6jhSkN/16Cl04BKJOtxSm6lU3/J3emxmBivgKISP4=;
+        b=QFNbg1tLlZnEz61vYwI6NNza2IpQslVdr5UBft8LlI2LmfzscvI9t5O9Sn6lI4IjR7
+         0Z6YbaFV0PvxVmphZ7ppuY09sFzGcs02/uRbindELnBxU6gaiQqxp8uPTGcER3xEozeM
+         awyQjc2wnl58rvtEp0A7v0yK3OWZoVKf7Qsq18Bd/BRjfBxeOlijPOM1ll8RqAzFa8oS
+         4E+6WjcYreziV047VIQcEAi9zfLGoNrkCW6Ow2QUT/0mGOlcRkodINj0XgOWt8pgdqL+
+         WhtN7WQv5lXe94DNCWiMA8mU3NU4gG8+FIfLys/lVtDaUF51JjQcjA7017hLdWydt4BJ
+         J2yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731350178; x=1731954978;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xT65ccAjs8Gh3WkVN2oxehYUfXZk8VYjMpoaHsa33o0=;
-        b=ZyZORQqJ2XRLJyePP6yk4mQ90LgTL2kwazFPiSdhCdYNGZPSQF+XKQFY38Z+Ut/Zkg
-         U2l8fz8NcgRb9ZCZCG9b1w4jTawfmKVnuAslt0mxciYqyWcu2yjD3d50ILwPSruUi21A
-         tMJ6pI3Pa4bJktx7hJoFgfvfIq7pfCX6LtPTF/lhy1NS7Y8JuuTfzcaBw5TPaHsElJb0
-         WuhwpHzRVmiClAMe+cZOPsV67VcEl6bKhSPlw1r4enZKL1VEL4sDGeScsgLZfLvUSGzW
-         JmEwugy9V3lTNv/KGSh8UfqJ73SjFLnsemslD1qx8yumIfhu58xvQTTX3Y2RhKl6eG50
-         x+KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYSjsy5MWzS0lVtFGtp/edSCxTwKQ725lTsx558SGXsHreMTgYIo4EK4XlA8JIPv2OhHXc6jqCnSUGEfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpFy0hsm1Oexhs23MEfOYr9HjG84c1+R5E+eHGeN6/k6/3tvim
-	tmVte+lT9kLPK+Z7E6Bffg6X4xz9UW+UT+eNPXUTcYDH2nCafM9pzFCezo8ziiNbOkH5GRMUHBr
-	Elg==
-X-Google-Smtp-Source: AGHT+IGsaV/1tgPpIVqWB5Mn7y56a6i4yKq/u3n7iqOCe1NxKLezWYvBI7qvvP2xMM7HdjgqR6IWPDWEFzg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90a:8306:b0:2e9:9234:2db7 with SMTP id
- 98e67ed59e1d1-2e9b16eb06fmr126213a91.1.1731350177740; Mon, 11 Nov 2024
- 10:36:17 -0800 (PST)
-Date: Mon, 11 Nov 2024 10:36:16 -0800
-In-Reply-To: <ZzHsZoYlwYpNx9A5@infradead.org>
+        d=1e100.net; s=20230601; t=1731350189; x=1731954989;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HH6jhSkN/16Cl04BKJOtxSm6lU3/J3emxmBivgKISP4=;
+        b=NYOeAgKRstNjcP8ohTypzzVlKmm/tcJBFW9VH3ICh0n6u0gkemS/TCYHq+EMGOgABV
+         0jbjPAK3KumZ/3klJDX3vuvqgoKqTC4/L4vaW6M5nDCInFGvWyG4saq+AkY+T1MbiV4+
+         akTKMWM+0m44mWRAwCfT1SOOJ5efMxrBZQ39UDy341IX7Tba9nsQiWeS4MSz8nw24Gte
+         e4Ihwinsu6nD4dF/OfdDoDUCBFplt/ESJivu52Eg6s8PoX0IkwD6Z49M3UqtaJpm6YPA
+         vKtR2cEZIGVKIXgvCNeHeng/vulBqWwWef5awRepQa1P+0BwdTH7ZRf3aAG8hDTYeDkQ
+         lpfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFNVGO5BZB7MU08I1Y/bLz1pNJWZGUq2VX0UHCiw+kFQyJNeb3S7aaNKixQVvC9WqOVwIgKsEbtPbX3cM=@vger.kernel.org, AJvYcCXQ67OQmIcAngTjmlRs1hELSL4krhkrmWlWx/q+7lAUgRfyWDAwAERkb7f2VvmWt4y2X2RHLEZwm/PbZq4/Jm90EJK9uw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMmicjmuXOdvt9wkTPIi3OPFnbSdTmbf79Aca4nHnwFT9tadif
+	4Hm6r7hybWNqQsQpZN/tXmO1ibli+4WqJAAJ2Gdwzr7wIB4otXGjszpa1YRW
+X-Google-Smtp-Source: AGHT+IHcD9h4VAWGyFcZAZfLvrUFYyvbbkvRN7M10hgNdrzal9lhpFdUsKJkwuhabdt8p+CSwwp5Ww==
+X-Received: by 2002:a17:902:eccf:b0:20c:e2ff:4a2e with SMTP id d9443c01a7336-21183d7cf32mr212791995ad.53.1731350189029;
+        Mon, 11 Nov 2024 10:36:29 -0800 (PST)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dde262sm79156765ad.68.2024.11.11.10.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 10:36:28 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: ilpo.jarvinen@linux.intel.com,
+	w_armin@gmx.de,
+	hdegoede@redhat.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Dell.Client.Kernel@dell.com
+Subject: [PATCH 4/5] alienware-wmi: create_thermal_profile no longer brute-forces IDs
+Date: Mon, 11 Nov 2024 15:36:23 -0300
+Message-ID: <20241111183623.14691-1-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241111183308.14081-3-kuurtb@gmail.com>
+References: <20241111183308.14081-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241111105430.575636482@infradead.org> <20241111111817.532312508@infradead.org>
- <ZzHsZoYlwYpNx9A5@infradead.org>
-Message-ID: <ZzJOoFFPjrzYzKir@google.com>
-Subject: Re: [RFC][PATCH 6/8] module: Add module specific symbol namespace support
-From: Sean Christopherson <seanjc@google.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, 
-	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com, 
-	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024, Christoph Hellwig wrote:
-> On Mon, Nov 11, 2024 at 11:54:36AM +0100, Peter Zijlstra wrote:
-> > Designate the "MODULE_${modname}" symbol namespace to mean: 'only
-> > export to the named module'.
-> > 
-> > Notably, explicit imports of anything in the "MODULE_" space is
-> > forbidden. Modules implicitly get the "MODULE_${modname}" namespace
-> > added.
-> 
-> Btw, I finally remember why I wanted a separate macro for this:
-> so that we can also add the config symbol as an argument and not
-> export the symbol if the module isn't configured or built in.
+WMAX_METHOD_THERMAL_INFORMATION has a *system description* operation
+that outputs a buffer with the following structure:
 
-That could get ugly, especially in generic code, as multiple KVM architectures
-use multiple modules, e.g. x86 generates kvm.ko, and then vendor specific modules
-kvm-amd.ko and kvm-intel.ko; and PPC generates kvm.ko, and kvm-hv.ko and kvm-pr.ko.
-PPC in particular is annoying because it generates kvm.ko for KVM_BOOK3S_32=m or
-KVM_BOOK3S_64=m.
+out[0] -> Number of fans
+out[1] -> Number of sensors
+out[2] -> 0x00
+out[3] -> Number of thermal modes
 
-The other quirk is that, on x86 at least, kvm.ko is now built if and only if at
-least one of KVM_AMD=m or KVM_INTEL=m, which triggers KVM_X86=m.  I.e. kvm.ko isn't
-built if there are no vendor modules, even if KVM=m.
+This is now used by create_thermal_profile to retrieve available thermal
+codes instead of brute-forcing every ID.
 
-I'd also like to use this infrastructure to restrict KVM's own exports, e.g. so
-that KVM exports its symbols for kvm-{amd,intel,hv,pr}.ko only as needed.
+Tested on an Alienware x15 R1. Verified by checking ACPI tables of
+supported models.
 
-So rather than having EXPORT_SYMBOL_GPL_FOR() deal with KVM's messes, would it
-instead make sense to have KVM provide EXPORT_SYMBOL_GPL_FOR_KVM()?  Then KVM can
-reuse the painful extrapolation of Kconfigs to module names for its own exports.
-And IMO, that'd make the code that does the exports much more readable, too.
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-E.g. for x86, something like:
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 36d182f217e2..77465ed9b449 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -68,6 +68,7 @@ enum WMAX_CONTROL_STATES {
+ };
+ 
+ enum WMAX_THERMAL_INFORMATION_OPERATIONS {
++	WMAX_OPERATION_SYS_DESCRIPTION		= 0x02,
+ 	WMAX_OPERATION_LIST_IDS			= 0x03,
+ 	WMAX_OPERATION_CURRENT_PROFILE		= 0x0B,
+ };
+@@ -1110,13 +1111,22 @@ static int thermal_profile_set(struct platform_profile_handler *pprof,
+ static int create_thermal_profile(void)
+ {
+ 	u32 out_data;
++	u8 sys_desc[4];
++	u32 first_mode;
+ 	enum wmax_thermal_mode mode;
+ 	enum platform_profile_option profile;
+ 	int ret;
+ 
+-	for (u8 i = 0x2; i <= 0xD; i++) {
++	ret = wmax_thermal_information(WMAX_OPERATION_SYS_DESCRIPTION,
++				       0, (u32 *) &sys_desc);
++	if (ret < 0)
++		return ret;
++
++	first_mode = sys_desc[0] + sys_desc[1];
++
++	for (u32 i = 0; i < sys_desc[3]; i++) {
+ 		ret = wmax_thermal_information(WMAX_OPERATION_LIST_IDS,
+-					       i, &out_data);
++					       i + first_mode, &out_data);
+ 
+ 		if (ret == -EIO)
+ 			return ret;
+-- 
+2.47.0
 
-#if IS_MODULE(CONFIG_KVM_AMD) && IS_MODULE(CONFIG_KVM_INTEL)
-#define KVM_VENDOR_MODULES kvm-amd,kvm-intel
-#elif IS_MODULE(CONFIG_KVM_AMD)
-#define KVM_VENDOR_MODULES kvm-amd
-#elif IS_MODULE(CONFIG_KVM_INTEL)
-#define KVM_VENDOR_MODULES kvm-intel
-#else
-#undef KVM_VENDOR_MODULES
-#endif
-
-#ifdef KVM_VENDOR_MODULES
-static_assert(IS_MODULE(CONFIG_KVM_X86));
-
-#define EXPORT_SYMBOL_GPL_FOR_KVM_INTERNAL(symbol) \
-	EXPORT_SYMBOL_GPL_FOR(symbol, __stringify(KVM_VENDOR_MODULES))
-#define EXPORT_SYMBOL_GPL_FOR_KVM(symbol) \
-	EXPORT_SYMBOL_GPL_FOR(symbol, "kvm," __stringify(KVM_VENDOR_MODULES))
-#else
-EXPORT_SYMBOL_GPL_FOR_KVM_INTERNAL(symbol)
-EXPORT_SYMBOL_GPL_FOR_KVM(symbol)
-#endif
 
