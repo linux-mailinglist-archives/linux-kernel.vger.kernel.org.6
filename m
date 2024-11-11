@@ -1,136 +1,85 @@
-Return-Path: <linux-kernel+bounces-404394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6DBD9C4330
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:07:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4ED9C4331
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACB8E28390A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:07:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420D71F21E96
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2051A4E70;
-	Mon, 11 Nov 2024 17:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2221A3BC3;
+	Mon, 11 Nov 2024 17:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPLqLaiz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oq7DZoSo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8419013E022;
-	Mon, 11 Nov 2024 17:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A542AF1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344813; cv=none; b=XqBAkzD19AMvVkbSbt45Z1Ys5qs1eujMDo5PSxwb+kbgBukzr/Y2poGr5zdJpsRoiTB6KxvvxWF4MkaCG5QoAHAjq082yrPE5Ez3XiaEnPzS4ahQ/S/5LQG5qFXK2SfeHQIJDXSz3G48HpjQpuC8vtI/zPJ+0p1dIzD/pZcsYdQ=
+	t=1731344849; cv=none; b=dv86pnq7haF55RZwaLijGdbb4H0+vQTWukmAlTLn8Xa3h3UhqhtyIBa3yjDihVX5tKTo5W0Y2cOkI26Fm5M3uB0Cglty1iB5ecenMpLiODrvvs/gaddy/YVyDyjq02tue7PzDAOP8Qic0DWGAG1E8ttiRGmptQj+jR0klVhGSag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344813; c=relaxed/simple;
-	bh=feWL9fgmmw9QG92svt4ITVSK7A6maEehKtjcSkF0SEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o50wWiiuZsSkF54vsbZ187VQ80I0FV+FR05NtD/mdixIT2PLqBw5tcWaSF8TV9wqs0NbXqalHvdDt7HsNp1jV9/d1MZHAns6XQSvtMBwMsDzF0b953bQTWYdM8Y69vAJ//tS48Zcc+1jg3Jbb30ZPmawECf9bbdhpBcFu2gYrT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPLqLaiz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025BBC4CED5;
-	Mon, 11 Nov 2024 17:06:52 +0000 (UTC)
+	s=arc-20240116; t=1731344849; c=relaxed/simple;
+	bh=W/aQj+pAHcpmE/eJCgmauLYUmPofPLI1BcTAQ+MBIHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nmKN8bShsw1zlRWsA3tDwskbYVNPlzsJxiMUFrU7wkUzP73EdciA3sRyLK0AqFrvuJL/ARfxQFDpEHi94LY4Ui/FErYvfkygAsvGtLHz5W7mj0HqxnGboG7ZGAMD1Lm+LIXNysmJJPAEg7sdT4Hh68bufuhPNEeyCDw3NRPsQb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oq7DZoSo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022CFC4CECF;
+	Mon, 11 Nov 2024 17:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731344813;
-	bh=feWL9fgmmw9QG92svt4ITVSK7A6maEehKtjcSkF0SEQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fPLqLaizjJbk1Iwqs/BZnTbAdagLPzisXvNNbhWyaLKHrvoma1CBBYF7FS2u1c1mP
-	 fNo+21tb+XpqWV9rtA1eu3k+EXUI8oVtYBw4VUEqs6oQeP7TqMjRbXi3nmI4MKwl++
-	 GqYN0LNBrqpByijyayZtqlTrMS8b2c3aiLsrXo+0m4zDrCjnJ2ylKgbYSKn3AN0L/q
-	 RQGf5ZdjWBjOQk9Hk9KZyqPnQDfk6CqEQc/U/LSlvdnN8HzKdCKG321AOFGHWToTIT
-	 XefUPtjAP5ftbSDo9XtJ98BzT8jON61E2gHMiFOfTITNSsLHNrVZ8KaylrOobLQNIF
-	 zP7ygysk+2nDg==
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so4334127276.2;
-        Mon, 11 Nov 2024 09:06:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVdmluuRj7S/ab+SU4G+Jcf4dNoH/xmN6vW2zEugmuXV0pEosEPL46fYsGR8H+SzV4k5kbnVM6+R81o@vger.kernel.org, AJvYcCWOlMcC400Wf0DbyjlKkoX5qf7V++ynbPZQcWiOpWEZMvfdOEJ43+PYpJzGeL+oK4yFX+HSf0R3P0EB5Nt+GQ==@vger.kernel.org, AJvYcCXTfACVb3gNRnlGGeaaqd7/ARQqo+YYzrmgDGyovCDxFxPZ5542JF+8REiGnZvL5cHCcVypPplBe3L30Okj@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhJizdROnF+gxtwgcprlc1mj/sJYtj4W4pk7tFFZYFpHgruhYi
-	DePt2+sm9cW3OC+50A5nSie2lTo/RKqAuO7sLzWDgGJAkv7UasrjtdehPAooOIsZulnLMt+dTj3
-	D4oJQM2nDzj4UKJcPEvGNcvcP8g==
-X-Google-Smtp-Source: AGHT+IEg+ZdXyhSVjowIdMTiFtczDqq6/O1NAD+xe1ZO9PXm0V/eW6I+PrJSsMZu5rrCYy4oAydNqSZhcQKsejZ/zxs=
-X-Received: by 2002:a05:690c:6b11:b0:6e2:ab93:8c68 with SMTP id
- 00721157ae682-6eadddaf35cmr116692697b3.25.1731344812198; Mon, 11 Nov 2024
- 09:06:52 -0800 (PST)
+	s=k20201202; t=1731344849;
+	bh=W/aQj+pAHcpmE/eJCgmauLYUmPofPLI1BcTAQ+MBIHI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oq7DZoSoE7dNGz6TqnAOuiIp9z/ZX4M8WzeGoMxk74tpwB3jAzyEpK0zxlN2qJuLr
+	 jp7g6/snJXQbc+4BV6Fp0s9zaIvFvQFPM5ptY9P8NVkQxjqseyLRUKlEXVjfjiBinZ
+	 fDKujvFUMLwS0gJWzZRgvd+J+IhOH2weZ63zq2xNR73YXmx021pigRITWg1zYBaLED
+	 5iMadvZAqExfjJDFm7oTvcadEEeKR1ZBBsrYS1xxeKT64A3//jbaI7va4i6nytEtoa
+	 XFu+OmsoS5saw0L19sZox8AC7XSkSZW2zUNvHTmNCR9+FrdmBaXVvup7CJJCZnJOKY
+	 9mpUNLyiVZulA==
+Date: Mon, 11 Nov 2024 07:07:27 -1000
+From: Tejun Heo <tj@kernel.org>
+To: void@manifault.com
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
+	arighi@nvidia.com, multics69@gmail.com, me@mostlynerdless.de,
+	ggherdovich@suse.com, dschatzberg@meta.com, yougmark94@gmail.com
+Subject: Re: [PATCHSET sched_ext/for-6.13] sched_ext: Rename dispatch and
+ consume kfuncs
+Message-ID: <ZzI5z-1lREMbp1Sf@slm.duckdns.org>
+References: <20241110200308.103681-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-patchv3_1-v4-0-cd683a9ca554@quicinc.com>
- <20241009-patchv3_1-v4-1-cd683a9ca554@quicinc.com> <ugkiv4m3etpydvosjkyzwr4qus74xnwccow7xrpvr77kzcx6bv@odlz7dzldqc5>
-In-Reply-To: <ugkiv4m3etpydvosjkyzwr4qus74xnwccow7xrpvr77kzcx6bv@odlz7dzldqc5>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 11 Nov 2024 11:06:40 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ0zoyaZAgZtyJ8xMsPY+YzrbF-YG1vPN6tFoFXQaW09w@mail.gmail.com>
-Message-ID: <CAL_JsqJ0zoyaZAgZtyJ8xMsPY+YzrbF-YG1vPN6tFoFXQaW09w@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Mahadevan <quic_mahap@quicinc.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kalyan Thota <quic_kalyant@quicinc.com>, 
-	Jayaprakash Madisetty <quic_jmadiset@quicinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110200308.103681-1-tj@kernel.org>
 
-On Fri, Oct 18, 2024 at 6:00=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Oct 09, 2024 at 08:02:01PM +0530, Mahadevan wrote:
-> > Document the MDSS hardware found on the Qualcomm SA8775P platform.
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
-> > ---
-> >  .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 241 +++++++++++++=
-++++++++
-> >  1 file changed, 241 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p=
--mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mds=
-s.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..37c04ae6876f873c2cddc51=
-b5160b1f54e2b5118
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.y=
-aml
->
-> [...]
->
-> > +
-> > +        display-controller@ae01000 {
-> > +            compatible =3D "qcom,sa8775p-dpu";
-> > +            reg =3D <0x0ae01000 0x8f000>,
-> > +                  <0x0aeb0000 0x2008>;
-> > +            reg-names =3D "mdp", "vbif";
-> > +
-> > +            clocks =3D <&gcc GCC_DISP_HF_AXI_CLK>,
-> > +                     <&dispcc_ahb_clk>,
-> > +                     <&dispcc_mdp_lut_clk>,
-> > +                     <&dispcc_mdp_clk>,
-> > +                     <&dispcc_mdp_vsync_clk>;
-> > +            clock-names =3D "bus",
-> > +                          "iface",
-> > +                          "lut",
-> > +                          "core",
-> > +                          "vsync";
-> > +
->
-> It's been more than a week since Rob reported issues with the bindings.
-> Any updates? Obviously I can not pick up patches with binding errors.
+On Sun, Nov 10, 2024 at 10:02:50AM -1000, Tejun Heo wrote:
+...
+> Clean up the API with the following renames:
+> 
+> 1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
+> 2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
+> 3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
+> 
+> This patchset is on top of sched_ext/for-6.13 72b85bf6a7f6 ("sched_ext:
+> scx_bpf_dispatch_from_dsq_set_*() are allowed from unlocked context") and
+> contains the following patches:
+> 
+>  0001-sched_ext-Rename-scx_bpf_dispatch-_vtime-to-scx_bpf_.patch
+>  0002-sched_ext-Rename-scx_bpf_consume-to-scx_bpf_dsq_move.patch
+>  0003-sched_ext-Rename-scx_bpf_dispatch-_vtime-_from_dsq-s.patch
 
-Well, someone picked up this version rather than v5 which appears to
-have fixed it. So, probably need an incremental patch to fix the
-warning in linux-next.
+Applied to sched_ext/for-6.13.
 
-Rob
+Thanks.
+
+-- 
+tejun
 
