@@ -1,134 +1,109 @@
-Return-Path: <linux-kernel+bounces-404550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E819C453D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:48:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0B39C4507
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BADEAB256E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041201F2482A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253181A9B33;
-	Mon, 11 Nov 2024 18:33:21 +0000 (UTC)
-Received: from yyz.mikelr.com (yyz.mikelr.com [170.75.163.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1371AAE24;
+	Mon, 11 Nov 2024 18:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKkwCSLY"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10D414F117
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.75.163.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA61AA787;
+	Mon, 11 Nov 2024 18:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731350000; cv=none; b=ableAse/Xrf3XfclLOcAsnWxNjYpFKmxkynwTKZ8jVz7XLpWdr/GEGQDar1IeT1wWxn2sCQldCZUujqt7A5SXB2OJHWJojnUvCEGl2ZtUbXr8eYGsLdqaIX2cKkTBJp5+/rOtr2LVT8Mr7IyayLyBWQiGuwWtgOEvjlqGHQAPyI=
+	t=1731350024; cv=none; b=AMHzTnUbTbIcRh9Wnk6ImKri9LUB/7dM/BrE3VkepAV7Cu4LZGt7JJ7KpXj3GYfO1VYze/5ltuENvWS+lXkrVvblyLjBbgxYypf+IWEkdx1SRJX75n3Vwl2IkUfP4kvW1GtLNbe0ApTSg9BUmAS4aEkCSrlzx5k3WwCJkdAFULM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731350000; c=relaxed/simple;
-	bh=WtRh060pFXnEbb1RL5Llocr/Ie55dloclFd1qlV9uO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hVEYyN0Un+8QdDfRGXEUa2acOOmxsiPhwzX/36+uiSQN0QuajUrZYDYFNdP/9Dx0snU1EPcINSjj9zoz7r/NFhbUH8aHGORm2CrqU06zwSDpVeUqhTB9SoC2rDMZohSGyPb98ewV3bOBuoN07Cp2APFDsCPhMWgcONe7bs5eqIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com; spf=pass smtp.mailfrom=mikelr.com; arc=none smtp.client-ip=170.75.163.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mikelr.com
-Received: from basin.localnet (unknown [IPv6:2607:f2c0:e554:1200:4b8f:795f:f483:85bf])
-	by yyz.mikelr.com (Postfix) with ESMTPA id 65B77727AD;
-	Mon, 11 Nov 2024 13:33:11 -0500 (EST)
-From: Mikel Rychliski <mikel@mikelr.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
- David Laight <David.Laight@aculab.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: Fix off-by-one error in __access_ok
-Date: Mon, 11 Nov 2024 13:33:10 -0500
-Message-ID: <2987600.vYhyI6sBWr@basin>
-In-Reply-To: <382372a83d1644f8b3a701ff7e14d5f1@AcuMS.aculab.com>
-References:
- <20241109210313.440495-1-mikel@mikelr.com>
- <382372a83d1644f8b3a701ff7e14d5f1@AcuMS.aculab.com>
+	s=arc-20240116; t=1731350024; c=relaxed/simple;
+	bh=rXdD1oT6KgLnQ/pe7yWmTd+J9qmQH/4AG+g/e9zGCs0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eOtPoTgR9NQ9AlAw6oP5MglKtkJoQFUUiZaeiLrw6YwjuoxKEbjMe3yiDRbyBhsi6mS6+6FZnrytgOCdpFtqHA4JyTKTkSEJl8ZQGqyFh2x4pFTmiGhiHKUxu+Idm9KqbQ4aq0AS6bQWnQ1IDZq/+H0lBEoVYA345OX3nKWyx4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKkwCSLY; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720be27db74so3585214b3a.1;
+        Mon, 11 Nov 2024 10:33:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731350022; x=1731954822; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OhDoeGPGQSclK0b1CMHj/7Ipo+GIKYolTtBk4YgDi9Y=;
+        b=BKkwCSLYQUDtmOuznfdLbsNyvwD1/eWADS/ccw1VKFveHOiViuCaySsiwRzmJ9iuH3
+         RDnTo6vp7j59ToTprwKZ11rRuwM9W9x0szr5ktdU12N4T9YzXGCBDiaRizULsFFSwUwM
+         Ie2t1kyNXryQYuhOsIOgXL+Zx28NAvfcsHybWExWk8bHRpbupg9kUnpF4L68um0B2RIs
+         SowfT9Wi9i1aNElcNfI2qRj1uZ6RNniBZ4p1NaRVjj5S3TyPAHMpHT0RhjiD37rNRQiC
+         o/W2U9hhc1O5T6fJr/YyUgR/QdJ+3UgcUbqpCrT962k5268xmQnb3QLuhWhZFZYcrT5l
+         b2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731350022; x=1731954822;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OhDoeGPGQSclK0b1CMHj/7Ipo+GIKYolTtBk4YgDi9Y=;
+        b=T8IGlhEiWSsHPu0D7FTZtalypE6Aob26QRBVolc6grShEHDVWydXvlRa/dAoSf3OW3
+         uUcqI3Irhi8eeLVNQ+HXQ63/AwanNY9qpu6ymT7w5NR6T2Ooa5CwouBeSFHxi63ZPXqM
+         QrsNN7sZuz8VX57vUrKYlqjmjhg4FKBlmdMaLTl/gFLoIM3lg52vJ1ZLZa/JC/qgMPqI
+         Qf7wjEudEp/FC8CpW0UJXBCbQR7OsTf8zSObmgXPALPHAz1ItJXyBcELUvU+dfCeWwIo
+         +n7wGD7inm+X2qo/QyUPVIZN5iqcwQa8njhbt8L5YDq77MdGEafQLxL9kUcVlimw2O5T
+         JACg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEAU8EsEFFhhA2Kff9btkf0tSnCDTx6eswBoeyrq5xuy5de2e0x71xB+is2cL1+rSS3EbRv7/V2es8gdCXxgH8KpUGPQ==@vger.kernel.org, AJvYcCWHkB+aWBk0nECUJEbq16YqynDcjb7gM/o89pqZUt2U3vrC6u2nxOFo2nEbDeYspRhDoW6dQBI8BW8TdoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj7fJ0ZQMYUU4hY19jM7E0u6M34TusdfFCr+8EfPJv0+4s1xZj
+	bZUHmcUqY8Munh8cojK6iEVyCSTd7b5ay7PJsJutJUKAosd6siR+
+X-Google-Smtp-Source: AGHT+IF8zo6FIWAmimgIxaU2f+zhwXAwfFuxwo4SGyqC5LN0d7hRRKE5Xb+l8KPh1aP3CNVLPBWGiw==
+X-Received: by 2002:a05:6a00:3c92:b0:71e:44f6:690f with SMTP id d2e1a72fcca58-7241407ca6emr20927435b3a.8.1731350021827;
+        Mon, 11 Nov 2024 10:33:41 -0800 (PST)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a5ebaasm9517037b3a.191.2024.11.11.10.33.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 10:33:41 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: ilpo.jarvinen@linux.intel.com,
+	w_armin@gmx.de,
+	hdegoede@redhat.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Dell.Client.Kernel@dell.com
+Subject: [PATCH 0/5] Better thermal mode probing + support for 9 models
+Date: Mon, 11 Nov 2024 15:33:10 -0300
+Message-ID: <20241111183308.14081-3-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Hi!
 
-Thanks for the review:
+I added models for all the acpidumps I could find. Also I find a way to
+not brute force create_thermal_profile and that's always a good thing.
 
-On Sunday, November 10, 2024 2:36:49 P.M. EST David Laight wrote:
-> From: Mikel Rychliski
-> 
-> > Sent: 09 November 2024 21:03
-> > 
-> > We were checking one byte beyond the actual range that would be accessed.
-> > Originally, valid_user_address would consider the user guard page to be
-> > valid, so checks including the final accessible byte would still succeed.
-> 
-> Did it allow the entire page or just the first byte?
-> The test for ignoring small constant sizes rather assumes that accesses
-> to the guard page are errored (or transfers start with the first byte).
-> 
+I hope you all have a great week!
 
-valid_user_address() allowed the whole guard page. __access_ok() was 
-inconsistent about ranges including the guard page (and, as you mention, would 
-continue to be with this change).
+Kurt Borja (5):
+  alienware-wmi: order alienware_quirks[] alphabetically
+  alienware-wmi: extends the list of supported models
+  alienware-wmi: Adds support to Alienware x17 R2
+  alienware-wmi: create_thermal_profile no longer brute-forces IDs
+  Documentation: alienware-wmi: Describe THERMAL_INFORMATION operation
+    0x02
 
-The problem is before 86e6b1547b3d, the off-by-one calculation just lead to 
-another harmless inconsistency in checks including the guard page. Now it 
-prohibits reads of the last mapped userspace byte.
+ Documentation/wmi/devices/alienware-wmi.rst |  12 +-
+ drivers/platform/x86/dell/alienware-wmi.c   | 150 ++++++++++++++++----
+ 2 files changed, 136 insertions(+), 26 deletions(-)
 
-> > diff --git a/arch/x86/include/asm/uaccess_64.h
-> > b/arch/x86/include/asm/uaccess_64.h index b0a887209400..3e0eb72c036f
-> > 100644
-> > --- a/arch/x86/include/asm/uaccess_64.h
-> > +++ b/arch/x86/include/asm/uaccess_64.h
-> > @@ -100,9 +100,11 @@ static inline bool __access_ok(const void __user
-> > *ptr, unsigned long size)> 
-> >  	if (__builtin_constant_p(size <= PAGE_SIZE) && size <= PAGE_SIZE) 
-{
-> >  	
-> >  		return valid_user_address(ptr);
-> >  	
-> >  	} else {
-> > 
-> > -		unsigned long sum = size + (__force unsigned long)ptr;
-> > +		unsigned long end = (__force unsigned long)ptr;
-> > 
-> > -		return valid_user_address(sum) && sum >= (__force 
-unsigned long)ptr;
-> > +		if (size)
-> > +			end += size - 1;
-> > +		return valid_user_address(end) && end >= (__force 
-unsigned long)ptr;
-> 
-> Why not:
-> 	if (statically_true(size <= PAGE_SIZE) || !size)
-> 		return vaid_user_address(ptr);
-> 	end = ptr + size - 1;
-> 	return ptr <= end && valid_user_address(end);
-
-Sure, agree this works as well.
-
-> Although it is questionable whether a zero size should be allowed.
-> Also, if you assume that the actual copies are 'reasonably sequential',
-> it is valid to just ignore the length completely.
-> 
-> It also ought to be possible to get the 'size == 0' check out of the common
-> path. Maybe something like:
-> 	if (statically_true(size <= PAGE_SIZE)
-> 		return vaid_user_address(ptr);
-> 	end = ptr + size - 1;
-> 	return (ptr <= end || (end++, !size)) && valid_user_address(end);
-
-The first issue I ran into with the size==0 is that __import_iovec() is 
-checking access for vectors with io_len==0 (and the check needs to succeed, 
-otherwise userspace will get a -EFAULT). Not sure if there are others.
-
-Similarly, the iovec case is depending on access_ok(0, 0) succeeding. So with 
-the example here, end underflows and gets rejected.
-
-
+-- 
+2.47.0
 
 
