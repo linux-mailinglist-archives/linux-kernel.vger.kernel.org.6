@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-403718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816949C3990
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:17:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD579C3995
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE65F1C21566
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626E71F211CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8A31607B7;
-	Mon, 11 Nov 2024 08:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QH2wxovs"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B2D15A86B;
-	Mon, 11 Nov 2024 08:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1CD146A6B;
+	Mon, 11 Nov 2024 08:19:36 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A013E02E;
+	Mon, 11 Nov 2024 08:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731313018; cv=none; b=IyxOY8YUNC1l8X/zJ3ZVDxBlQ/nTHi5+Qaoshej7btGbC59t3dzbj5dQAdUUmX53jQBZrTKdutntDCts/QSfwwT1Hh2tv7n6f23xrPGSv7NEt+u9klvc8ELQKOxfNuAzp/JGpv+W2n9EiixSDHmNU52EJ9CfuX6oJAOfzM6WSS4=
+	t=1731313176; cv=none; b=uGVuseeDCGxKQeOhLwrWwpEVvYYenF3U28mLfkxcOxChcu4dz2HSW+fvfCi8bPxEe65JI3TkSLHPJB+ZqXZkTc2vC0C3Y9ndYSZg6u/CyXuff9z5alSq393EoNxnq1c/zWDz6J4H9VNZVUyRMPR5A49E4o8qGgX5PuH+1zj+A7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731313018; c=relaxed/simple;
-	bh=GvMvDjY9KTjukdadvKB8O94pJ4nJ6tWmLvAoLceCEUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n++ep3+18ll57cseOOGsnIFHW5LobKn7ac/k3C58aT5ImvvEdsiKneItsr5tTqpKskPilyWMNIlnjYC3zZF+dLYh3eOi/oLSxK9U6w+orV0PoTtxwO4VwseG8J6RmQuW3WyEGnvC1+v+OSbWeJJ/WHw0AILmQT3iQlSyrVnCj4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QH2wxovs; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-211985ed4c3so1170735ad.2;
-        Mon, 11 Nov 2024 00:16:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731313016; x=1731917816; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfWHwi/OtcjiHabudi9zWdTmEl0MHfGKcPLOFemBebo=;
-        b=QH2wxovsHw4z9r2Tk9yQ4TKHHQQQnje+WWwRTLPXFkkiKkAmyBXy8epXmA+tv/yQjb
-         sd4mFkbkPz0mkmLdE7KToTIH+M86YHAMOdLyxOySiFlaqeWxf6T04xdn15Xej75P8Kct
-         PitUSbnySfXJM9lGYqU/gfWOiarLmSfLgKg6KAgzsTdclDvV6P6AfCEi/K1mlPXWK92e
-         3jPP4nZO7VeIwoVandFdpdUdKZ1vbWe4BK/MBKSK7X69nK/j34UWcmJX+cVCtKb4NnTm
-         4DxkmdDHVcSiOWrGoznt5tyQHLIdnkT4gWsC58FBelck9vh8msK7YbHh9E+PaXxDzhHr
-         erCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731313016; x=1731917816;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HfWHwi/OtcjiHabudi9zWdTmEl0MHfGKcPLOFemBebo=;
-        b=mcduSt9xeRHaXAgqF1Tc5N2RCB7isvD0Z5Nov/G7U3sIlyMktybhoIuVRgSJvByUdj
-         fuH1IfJQD0oMhXTSpaOD6WSIRuxokJBtTmHO57DP0/extf+MazqwtCagg6i6eOpwS9+B
-         NUbbInsrPWycc+mSHMkvam8bTWLE2snunkTHE3brhCwwQ+8I1rGI4HNhNOKH3GTA3wp+
-         eQxmGQpSI+LyxyT8NyXktcLYdarw+vd6bHkPdTR1U8HjcUHiT0YB3DQoy/TOOXst45su
-         yQ3dtr1k+AbQOL2JvE27NVYVT4yIAPjG1Tm36QQeNweW86D0ht/n/UpX4/y4yi50ty3y
-         C7mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURazYU/LXJcN1Tovn9m972PUJ7e+dav0kBM+WhRQczq1qhf0JSzTG9NbIjLYtMT/TBYCrlb+UCFP4zdA==@vger.kernel.org, AJvYcCVKl0W9cf6JFHd6tEzNDDAuhFq5ADE84MfFSusNrrly3luFdGzqh5slkAyfGkLLBsvzof7f48rUqUO1nbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5aPscV3EEWc3vwnkphESHvNAdyEsy0XdSecIv1Zp4UvTF35IY
-	Ch+S5U7cgcwc2X1Htwhv/PuBj5NF8s42qHcmM/vmp04Z9xY6WX/Rrn0hKO5nkfqu2rmOzLMCrCl
-	MthBbYIHDHiL4XRrFDxHmMoiBkJM=
-X-Google-Smtp-Source: AGHT+IHepygJxaMRWEY+r4zIfJzBpAgteSshbY3Qmj+9QV2/1qQoCszAwCNlxqNFPOBf+pVUdS7juAsrz9krUkVP6/g=
-X-Received: by 2002:a17:902:f70f:b0:207:14ab:c436 with SMTP id
- d9443c01a7336-2118357ff3fmr64222285ad.12.1731313015783; Mon, 11 Nov 2024
- 00:16:55 -0800 (PST)
+	s=arc-20240116; t=1731313176; c=relaxed/simple;
+	bh=UrMHmMibXxLuxC7cq6KCdFjhLGzisbnz7OopfqqHEvg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dJS20f0gP0zSPUeZmILFm/0n2kBky7XbsD8Z6wdKMk7gDfTY1atbFdNuPgakkzr+VXwS4Mx2XvsIjNdJkXMTPoL8lVUnGT8UtlOLf1JnoT9hojydfB5D1Sw82eslGkWKmzdzTwDuNJYo2spfqhVWVnEMVzUbkMwgn8UhFnOFWew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee16731be0a068-d497d;
+	Mon, 11 Nov 2024 16:19:22 +0800 (CST)
+X-RM-TRANSID:2ee16731be0a068-d497d
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66731be09bd1-27283;
+	Mon, 11 Nov 2024 16:19:22 +0800 (CST)
+X-RM-TRANSID:2ee66731be09bd1-27283
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: rafael@kernel.org
+Cc: daniel.lezcano@linaro.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	rui.zhang@intel.com,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH] tools/thermal: Fix common realloc mistake
+Date: Mon, 11 Nov 2024 16:19:18 +0800
+Message-Id: <20241111081918.15229-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <CAJZ5v0gHGrRn0cLvsSTaX=tX8mVhxudoJ4aSh5jWNxh171oKgg@mail.gmail.com>
+References: <CAJZ5v0gHGrRn0cLvsSTaX=tX8mVhxudoJ4aSh5jWNxh171oKgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111175842.550fc29d@canb.auug.org.au>
-In-Reply-To: <20241111175842.550fc29d@canb.auug.org.au>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 11 Nov 2024 09:16:43 +0100
-Message-ID: <CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the rust tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024 at 7:58=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> My first rust build error!  ;-)
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-:)
+On Fri, 8 Nov 2024 13:09 PM Rafael J. Wysocki
+<Rafael J. Wysocki> wrote:
+>>On Fri, Nov 8, 2024 at 7:39 AM zhangjiao2
+>><zhangjiao2@cmss.chinamobile.com> wrote:
+>>
+>> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>>
+>> Do not set thermometer->tz NULL when realloc failed.
 
-> error[E0308]: mismatched types
->      --> rust/kernel/device.rs:176:17
->       |
-> 175   |             bindings::_dev_printk(
->       |             --------------------- arguments to this function are =
-incorrect
-> 176   |                 klevel as *const _ as *const core::ffi::c_char,
->       |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ ex=
-pected `*const u8`, found `*const i8`
->       |
->       =3D note: expected raw pointer `*const u8`
->                  found raw pointer `*const i8`
+>Presumably, this fixes a problem.
 
-Yeah, sorry about that, this had very high chances of happening. For
-instance, here we would need `crate::ffi::c_char`.
+>What problem does it fix?
+Thermometer->tz is NULL when realloc failed.
+This will cause memory leaks. 
+We should use temporary variables to 
+check the return value of realloc.
 
-I am thinking perhaps the easiest way for everyone is to take for the
-moment only the patches up to introducing the new `ffi::` crate (which
-includes most of the changes), i.e. up to commit d072acda4862 ("rust:
-use custom FFI integer types") but without doing the big remapping
-just yet, so that others have it available for their branches, and
-then take that last part later, ideally early in a cycle.
+>> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>> ---
+>>  tools/thermal/thermometer/thermometer.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/thermal/thermometer/thermometer.c b/tools/thermal/thermometer/thermometer.c
+>> index 1a87a0a77f9f..e08291a97fd8 100644
+>> --- a/tools/thermal/thermometer/thermometer.c
+>> +++ b/tools/thermal/thermometer/thermometer.c
+>> @@ -259,6 +259,7 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
+>>  {
+>>         int fd;
+>>         char tz_path[PATH_MAX];
+>> +       void *tmp;
+>>
+>>         sprintf(tz_path, CLASS_THERMAL"/%s/temp", path);
+>>
+>> @@ -268,12 +269,13 @@ static int thermometer_add_tz(const char *path, const char *name, int polling,
+>>                 return -1;
+>>         }
+>>
+>> -       thermometer->tz = realloc(thermometer->tz,
+>> +       tmp = realloc(thermometer->tz,
+>>                                   sizeof(*thermometer->tz) * (thermometer->nr_tz + 1));
+>> -       if (!thermometer->tz) {
+>> +       if (!tmp) {
+>>                 ERROR("Failed to allocate thermometer->tz\n");
+>>                 return -1;
+>>         }
+>> +       thermometer->tz = tmp;
+>>
+>>         thermometer->tz[thermometer->nr_tz].fd_temp = fd;
+>>         thermometer->tz[thermometer->nr_tz].name = strdup(name);
+-- 
+2.33.0
 
-Gary: what do you think?
 
-Thanks!
 
-(Relatedly, I have been thinking of moving the `c_*` types into the prelude=
-).
-
-Cheers,
-Miguel
 
