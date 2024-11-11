@@ -1,196 +1,198 @@
-Return-Path: <linux-kernel+bounces-404641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9A89C4626
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C299C4627
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03C4B23703
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37D8B25D3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F961ABEB5;
-	Mon, 11 Nov 2024 19:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6871AF0CC;
+	Mon, 11 Nov 2024 19:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwSCkS3g"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IL/vZUxi"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAE81A7AFD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E3F2AEE0;
+	Mon, 11 Nov 2024 19:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731354410; cv=none; b=bPeFYQ2FEhykI2S8WdefyrN2/A3jFIrcm4nulmGeV6RGDoq8L4IOMrQA9e1M+L6NSsitUzoRTGWmOPRV9wjeJJRVLGkZJx8MIwTvtEbF28JUE6eTyZn3HHqQ/AaWU6884XaVv603lJR0bXSmehpy4BGxcYqbXUlrMosMh6XWKBc=
+	t=1731354426; cv=none; b=QLokDvPnuTKBdY/4YSOSbvL64eCAM4AMYVAcfMXIBtocevmDM20uZkpT/yfqvcvqFvLdKNrGbJzBLFuRhPNp5+YlD5W0E2UkZFPs14KGGoNAh8z1+gWifpkvZ8L+B9Qlbr03huKOmolGs3FwX0bBM9V84b9TeLwcxwpEV+w3ycI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731354410; c=relaxed/simple;
-	bh=SVD/D1neY/VMzCUafgxPxYWWoSXIv9EEnzkncaGe/f8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nt6cyUaP9mg3aisYnYIFuC/Bads2zcsjr/A9ZjLalpYIsV/m13jyNcIo2Op5BAVpERgMqaHDFJB7cMIPkTT8InUUnpIAPT9U9VCTjXfiHbA6DkRcG+WvIStPTSxg13WCFQD8oVO7n8xrfrLMp7j7r/0rePrSYNZkztLqrjOH62w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwSCkS3g; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c8ac50b79so27345ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:46:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731354408; x=1731959208; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yb/lRtOScrkbHEVqeEiNru9i+NEX9M9BCRiwMog+ERw=;
-        b=MwSCkS3gWyEZWgTrC0O8WdnNURPdIQN+4foMKL5wkrt7g8uh5KUB0Ew0LFrmy787Tz
-         4P1YMXL1+tbU8XIQFZT73RcNGk6Cl9OxvkfwehpdWQ8+EtcaAVwc5hbqjGwxB3BDXyPE
-         +tmrlgvgaloHgwdpQB9zhpxK3GBri/7DyjV4U/o3yL2fby2t6SSpjkkaGgoyB1rmtrWC
-         cu3dfQjHWPTi182oaARP3xGr2NW/8Yt0AUW5PRL5gNNszq4wFyg24HhwJGA8ukGf4DiT
-         6UypoFodUDAy+Bo4S24O+HGluFj7qVWQuVwflWpGy38rpMcltnP1YcT1ZC85YPsji5IU
-         qNLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731354408; x=1731959208;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yb/lRtOScrkbHEVqeEiNru9i+NEX9M9BCRiwMog+ERw=;
-        b=P2Dig2jUJfgikdY1N1s1yRGLG6tAy4M4pPfWrNQnQUgWD74K/D9aJQPYYkMr9IGxmG
-         mmZf5MEOu6prAHhcPkLF9TMbpJz1AU0+mPPn0CZRza6vxXO9ijU7v/evmJeEAmzSy+AC
-         AGTAdqTdrh1xkni6Py1yboQXw8FMl0QSHg+z1i1n8XNR3jn1h7eUS0Ws3oEOkSd+3do9
-         JRaWSBSzOk8E5d6tI9hB4L2ETf4Iy5fBmL8v3H5tHe/1FImF/dzlBgHVHj3kq6f23blC
-         5utD47CqxIbO6X46vCc5qpybvzPtwPQOdIukSvOEbFhnhBFxWpNMb0dpWIprfnBWMzo4
-         POvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEv5t4bn30eXqee2FCQpxqJ20MfX4dkVdiDqBZSDj4a1FzG0DLvMQdD+ubkjcupp5RIjRfEYL5QAb9FgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwqNSc7/9fZa+u8h6dNXLRkVzqRjp4ml5jJEUV/hDUJ6Ii0uhl
-	YHvjv6eZSbsvKkPs3SXbikRIrVlrFjULYAPkflGQ83utz8PzCOkHAu5ZnM68Yq+OWAYLU/8ymsh
-	Rwa5lPYdXrrMi8oygoawmcJyMoTTXINBjCEEu
-X-Gm-Gg: ASbGncu2qpmIjBu7vUTIHcq+JUAC3hopFbMVL3uDj8OTCqEs7tFoqs485uCfdOL6upA
-	O44SCbys8MTf45GUDVO4B0BvosJnHCxKI7D2Qgut57ERDxRjw5PRlsWluIdIZBv0=
-X-Google-Smtp-Source: AGHT+IG3Voeoea9hH7MagKOMnVkHeysRZ87ScGQtbCyWe5pD36B+XNBUQSB/AHysZ4FWUFGnwuCGsdWTmHyzBa4M8Q4=
-X-Received: by 2002:a17:902:e541:b0:20c:79f1:fee2 with SMTP id
- d9443c01a7336-211ab6fd382mr58045ad.10.1731354408310; Mon, 11 Nov 2024
- 11:46:48 -0800 (PST)
+	s=arc-20240116; t=1731354426; c=relaxed/simple;
+	bh=waIrtis7FuR7Y1TSuVP41KBpxAm+KAfN9/b1pnq4nsI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pMW8QcLkOkWwh+pmYpW6ES4F7A/viHriUCrKG08kHbH5OUfLcO5c/eUoAIajn4ajqTsiQSEGqwTfVEeFVsudTtTS+8k/+coRHK2jO7UqN5PPhIdTvvI+tFXgATOBVcXhwCCUY6tYox+TIAVSSMDQDjl4RgMeJt3G7gWvvChx5oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IL/vZUxi; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B446240003;
+	Mon, 11 Nov 2024 19:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731354420;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6LitTWAgz24VNApIoun+JJSEVyh1XHLlrSrHK1MMSQ=;
+	b=IL/vZUxi6rK1Dv1dIs5JYGW4WrA/+dbJ3FQVaSV4YJqsLfSaTj+YXSaX8JvX+3tjU5rL60
+	/JoCG5XACc5Xrv1qyECGgsQNVC5FoYeBGqYjCLD2l3VJefUbeLUUc1AUyHMLdsdHTZKlu3
+	88e7m0P+Jtj6gLDq6Hc78XqewP4yzCff9A4yn1pSPHUi1AaSVxJ3kMPgclBUlEzgaP8kIq
+	UqMODls0FJtTPkkvQN+fuX5mbIKLWRJfljM3KVUq36RS35hs/zHJ3YkCfjLs7bdd2YjQdt
+	P8u3aE+C2sRiZkNq1HjHeEo2klTaEgZNmJ4O9wGoQWfR0HDL7yZ5dy3uXgU8aw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
+  <alex.aring@gmail.com>,  <davem@davemloft.net>,  <edumazet@google.com>,
+  <horms@kernel.org>,  <kuba@kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <linux-usb@vger.kernel.org>,  <linux-wpan@vger.kernel.org>,
+  <netdev@vger.kernel.org>,  <pabeni@redhat.com>,
+  <stefan@datenfreihafen.org>,  <syzkaller-bugs@googlegroups.com>, Dmitry
+ Antipov <dmantipov@yandex.ru>
+Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
+In-Reply-To: <20241108145420.2445641-1-lizhi.xu@windriver.com> (Lizhi Xu's
+	message of "Fri, 8 Nov 2024 22:54:20 +0800")
+References: <672b9f03.050a0220.350062.0276.GAE@google.com>
+	<20241108145420.2445641-1-lizhi.xu@windriver.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 11 Nov 2024 20:46:57 +0100
+Message-ID: <87msi5pn7y.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108061500.2698340-1-namhyung@kernel.org>
-In-Reply-To: <20241108061500.2698340-1-namhyung@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 11:46:37 -0800
-Message-ID: <CAP-5=fWqE6bM=MVQy7P0tTSWW-ZBXY4in_bfQYFK-C4h6L-Ykw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] perf lock contention: Symbolize locks using slab
- cache names
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, Nov 7, 2024 at 10:15=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hello,
->
-> This is to support symbolization of dynamic locks using slab
-> allocator's metadata.  The kernel support is in the bpf-next tree now.
->
-> It provides the new "kmem_cache" BPF iterator and "bpf_get_kmem_cache"
-> kfunc to get the information from an address.  The feature detection is
-> done using BTF type info and it won't have any effect on old kernels.
->
-> v2 changes)
->
->  * don't use libbpf_get_error()  (Andrii)
->
-> v1) https://lore.kernel.org/linux-perf-users/20241105172635.2463800-1-nam=
-hyung@kernel.org
->
-> With this change, it can show locks in a slab object like below.  I
-> added "&" sign to distinguish them from global locks.
+Hello,
 
-I know the & is intentional but I worry it could later complicate
-parsing of filters. Perhaps @ is a viable alternative. Other than
-that:
+On 08/11/2024 at 22:54:20 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
 
-Acked-by: Ian Rogers <irogers@google.com>
+> syzkaller reported a corrupted list in ieee802154_if_remove. [1]
+>
+> Remove an IEEE 802.15.4 network interface after unregister an IEEE 802.15=
+.4
+> hardware device from the system.
+>
+> CPU0					CPU1
+> =3D=3D=3D=3D					=3D=3D=3D=3D
+> genl_family_rcv_msg_doit		ieee802154_unregister_hw
+> ieee802154_del_iface			ieee802154_remove_interfaces
+> rdev_del_virtual_intf_deprecated	list_del(&sdata->list)
+> ieee802154_if_remove
+> list_del_rcu
+
+FYI this is a "duplicate" but with a different approach than:
+https://lore.kernel.org/linux-wpan/87v7wtpngj.fsf@bootlin.com/T/#m02cebe86e=
+c0171fc4d3350676bbdd4a7e3827077
 
 Thanks,
-Ian
+Miqu=C3=A8l
 
->     # perf lock con -abl sleep 1
->      contended   total wait     max wait     avg wait            address =
-  symbol
 >
->              2      1.95 us      1.77 us       975 ns   ffff9d5e852d3498 =
-  &task_struct (mutex)
->              1      1.18 us      1.18 us      1.18 us   ffff9d5e852d3538 =
-  &task_struct (mutex)
->              4      1.12 us       354 ns       279 ns   ffff9d5e841ca800 =
-  &kmalloc-cg-512 (mutex)
->              2       859 ns       617 ns       429 ns   ffffffffa41c3620 =
-  delayed_uprobe_lock (mutex)
->              3       691 ns       388 ns       230 ns   ffffffffa41c0940 =
-  pack_mutex (mutex)
->              3       421 ns       164 ns       140 ns   ffffffffa3a8b3a0 =
-  text_mutex (mutex)
->              1       409 ns       409 ns       409 ns   ffffffffa41b4cf8 =
-  tracepoint_srcu_srcu_usage (mutex)
->              2       362 ns       239 ns       181 ns   ffffffffa41cf840 =
-  pcpu_alloc_mutex (mutex)
->              1       220 ns       220 ns       220 ns   ffff9d5e82b534d8 =
-  &signal_cache (mutex)
->              1       215 ns       215 ns       215 ns   ffffffffa41b4c28 =
-  tracepoint_srcu_srcu_usage (mutex)
+> Avoid this issue, by adding slave data state bit SDATA_STATE_LISTDONE, set
+> SDATA_STATE_LISTDONE when unregistering the hardware from the system, and
+> add state bit SDATA_STATE_LISTDONE judgment before removing the interface
+> to delete the list.=20
 >
-> The first two were from "task_struct" slab cache.  It happened to
-> match with the type name of object but there's no guarantee.  We need
-> to add type info to slab cache to resolve the lock inside the object.
-> Anyway, the third one has no dedicated slab cache and was allocated by
-> kmalloc.
+> [1]
+> kernel BUG at lib/list_debug.c:58!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+> CPU: 0 UID: 0 PID: 6277 Comm: syz-executor157 Not tainted 6.12.0-rc6-syzk=
+aller-00005-g557329bcecc2 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> RIP: 0010:__list_del_entry_valid_or_report+0xf4/0x140 lib/list_debug.c:56
+> Code: e8 a1 7e 00 07 90 0f 0b 48 c7 c7 e0 37 60 8c 4c 89 fe e8 8f 7e 00 0=
+7 90 0f 0b 48 c7 c7 40 38 60 8c 4c 89 fe e8 7d 7e 00 07 90 <0f> 0b 48 c7 c7=
+ a0 38 60 8c 4c 89 fe e8 6b 7e 00 07 90 0f 0b 48 c7
+> RSP: 0018:ffffc9000490f3d0 EFLAGS: 00010246
+> RAX: 000000000000004e RBX: dead000000000122 RCX: d211eee56bb28d00
+> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+> RBP: ffff88805b278dd8 R08: ffffffff8174a12c R09: 1ffffffff2852f0d
+> R10: dffffc0000000000 R11: fffffbfff2852f0e R12: dffffc0000000000
+> R13: dffffc0000000000 R14: dead000000000100 R15: ffff88805b278cc0
+> FS:  0000555572f94380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000056262e4a3000 CR3: 0000000078496000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  __list_del_entry_valid include/linux/list.h:124 [inline]
+>  __list_del_entry include/linux/list.h:215 [inline]
+>  list_del_rcu include/linux/rculist.h:157 [inline]
+>  ieee802154_if_remove+0x86/0x1e0 net/mac802154/iface.c:687
+>  rdev_del_virtual_intf_deprecated net/ieee802154/rdev-ops.h:24 [inline]
+>  ieee802154_del_iface+0x2c0/0x5c0 net/ieee802154/nl-phy.c:323
+>  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+>  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+>  genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+>  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
+>  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg+0x221/0x270 net/socket.c:744
+>  ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
+>  ___sys_sendmsg net/socket.c:2661 [inline]
+>  __sys_sendmsg+0x292/0x380 net/socket.c:2690
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 >
-> Those slab objects can be used to filter specific locks using -L or
->  --lock-filter option.  (It needs quotes to avoid special handling in
-> the shell).
+> Reported-and-tested-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail=
+.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D985f827280dc3a6e7e92
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  net/mac802154/ieee802154_i.h | 1 +
+>  net/mac802154/iface.c        | 4 ++++
+>  2 files changed, 5 insertions(+)
 >
->     # perf lock con -ab -L '&task_struct' sleep 1
->        contended   total wait     max wait     avg wait         type   ca=
-ller
->
->                1     25.10 us     25.10 us     25.10 us        mutex   pe=
-rf_event_exit_task+0x39
->                1     21.60 us     21.60 us     21.60 us        mutex   fu=
-tex_exit_release+0x21
->                1      5.56 us      5.56 us      5.56 us        mutex   fu=
-tex_exec_release+0x21
->
-> The code is available at 'perf/lock-slab-v2' branch in my tree
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
->
-> Thanks,
-> Namhyung
->
->
-> Namhyung Kim (4):
->   perf lock contention: Add and use LCB_F_TYPE_MASK
->   perf lock contention: Run BPF slab cache iterator
->   perf lock contention: Resolve slab object name using BPF
->   perf lock contention: Handle slab objects in -L/--lock-filter option
->
->  tools/perf/builtin-lock.c                     |  39 ++++-
->  tools/perf/util/bpf_lock_contention.c         | 140 +++++++++++++++++-
->  .../perf/util/bpf_skel/lock_contention.bpf.c  |  70 ++++++++-
->  tools/perf/util/bpf_skel/lock_data.h          |  15 +-
->  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |   8 +
->  tools/perf/util/lock-contention.h             |   2 +
->  6 files changed, 267 insertions(+), 7 deletions(-)
->
-> --
-> 2.47.0.277.g8800431eea-goog
->
+> diff --git a/net/mac802154/ieee802154_i.h b/net/mac802154/ieee802154_i.h
+> index 08dd521a51a5..6771c0569516 100644
+> --- a/net/mac802154/ieee802154_i.h
+> +++ b/net/mac802154/ieee802154_i.h
+> @@ -101,6 +101,7 @@ enum {
+>=20=20
+>  enum ieee802154_sdata_state_bits {
+>  	SDATA_STATE_RUNNING,
+> +	SDATA_STATE_LISTDONE,
+>  };
+>=20=20
+>  /* Slave interface definition.
+> diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
+> index c0e2da5072be..aed2fc63395d 100644
+> --- a/net/mac802154/iface.c
+> +++ b/net/mac802154/iface.c
+> @@ -683,6 +683,9 @@ void ieee802154_if_remove(struct ieee802154_sub_if_da=
+ta *sdata)
+>  {
+>  	ASSERT_RTNL();
+>=20=20
+> +	if (test_bit(SDATA_STATE_LISTDONE, &sdata->state))
+> +		return;
+> +
+>  	mutex_lock(&sdata->local->iflist_mtx);
+>  	list_del_rcu(&sdata->list);
+>  	mutex_unlock(&sdata->local->iflist_mtx);
+> @@ -698,6 +701,7 @@ void ieee802154_remove_interfaces(struct ieee802154_l=
+ocal *local)
+>  	mutex_lock(&local->iflist_mtx);
+>  	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
+>  		list_del(&sdata->list);
+> +		set_bit(SDATA_STATE_LISTDONE, &sdata->state);
+>=20=20
+>  		unregister_netdevice(sdata->dev);
+>  	}
 
