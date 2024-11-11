@@ -1,313 +1,211 @@
-Return-Path: <linux-kernel+bounces-404276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F179C41C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:20:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F1939C41C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9F71B23A62
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:20:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E933284CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317E213AA38;
-	Mon, 11 Nov 2024 15:20:33 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1577D13B5B3;
+	Mon, 11 Nov 2024 15:25:25 +0000 (UTC)
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2093.outbound.protection.outlook.com [40.107.222.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7271BC58;
-	Mon, 11 Nov 2024 15:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338432; cv=none; b=LAH6GZky2wP++ddGpdxkOLpansrOo9R7FOg+TO1tfrdeOfn8FIdkjRFQfWAOMagTWlepQtlzkCAch/l/d1trmnMr5pkeZwdGIE/LgKpLRa3S5hFOxmrQy2W4FD1xl2eskwBPpeyu5FJaxuuQHwE+MgeXPK0nuE22c4wUIAFiktI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338432; c=relaxed/simple;
-	bh=cnqbt/Xh8UvrMdtmDUPR9+kGBZQFXIwEQu6Z9OrYXr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gx+ZdOnLpcINQAtgylyNHe08kxeqs5ONTDI5HQ3R/MscJuHbhCmrS81ORTLinglK65+NO9Y6HvqXXG2LxIWVLNzHDwjp9DiRaW126X2U9qXO0A38AX9PJ0N7BrNEsiWXnCUrYGepI0HfHug7r7wzLqmpjV3/jkr+Sao9g5rQ/sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XnCsL26CRz4f3jsX;
-	Mon, 11 Nov 2024 23:20:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 712481A0194;
-	Mon, 11 Nov 2024 23:20:24 +0800 (CST)
-Received: from [10.174.177.210] (unknown [10.174.177.210])
-	by APP4 (Coremail) with SMTP id gCh0CgB3U4exIDJn3+D7BQ--.18810S3;
-	Mon, 11 Nov 2024 23:20:19 +0800 (CST)
-Message-ID: <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
-Date: Mon, 11 Nov 2024 23:20:17 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EEC53389
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731338724; cv=fail; b=FlQwvTYLYhkNfkX1yz0RKZOxTj15cGc6cq3xGpSgbAU6KW8F6Cj9s9WE92uhvzk6Za6Lu/0GrgOr+ckQnKlQRRaGikHMq9PeCxj3FeMvNhst940ur3Q2RPNARzoli8yjr4sVUMfoPemVlugOHDVcjDn22y2Dkzqx1Kuw/udi8TY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731338724; c=relaxed/simple;
+	bh=kTtont8KABRlRWH72/4BYpNbp+uRbCclFcVujlw32yk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CCjccC89T2M50Hf6eXkQ68o4JC6xZMRluoqMUOtqTYRgfvklsGmh9yCvp9IxybGhCsFVYsqmTOPZLwFOirBMR0OSRcGp+7eTPMGul4qAtS+gpxL0O6t0Pj+G58IZhQqhwvvw1AANt15Bc36mPjMDpHJbpYtFuaY3+xGlsKunXMo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GD4jHzzV/UmMuoof1EP+p8T5gMFvWMGzawBW7djl7z1MCzggQE+JQhfxz/Hw93f+k+BuWuQ/N7vzdqKDJMFp/fdokacUVieHCxA3W0vBGn/FW/pMshur0/JzjplY6AaYhdTZ5C3t3E2Ie7QN6tAWnNed4Qf2d4EvXSfQe7pfR7/OXTEJHhjUuFCzTgx8Mr9hBgbV3E2cc/gaSoW8ODnDXZWm2myS6qHTkYKUk+vDmrapdoPKkA0OxNoo8aFgKQo/L977Dqk1m06sN4lyKqZhwlm0DHgBa40s9eQaOM45BpmpgHGhX6AFuo2CmCECapvObyb7R6S1k+I9mkeqF7qqng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kTtont8KABRlRWH72/4BYpNbp+uRbCclFcVujlw32yk=;
+ b=H+2f2emm0hCeSYCb4AnGM5wk2iM1zeu0nVaD72YMepRFHFYrNfBDCileIkIUnOuohDTmdW8+JHBxgVEIYvdviJwrBjwvJ+PsFDGVBv3ipcs4WzQ6zWXlS/n0i5qDPc2R5y/4tMxem6DCLvbneY26NhXoPYPecx8WyqSPwrdUJJzXwqDlyNXD5YfaFXeJ8hBPUrmjGzBROH7h0ip1u3lmzzaR9eW60jzAZBNtyEomBpJGtqW3FLHSVNta1IDSSIlH3f15Bo2a7w7j886MO6prjERfl/lLdJDw2h7DIv4G3Wr0fqNt2NbczqP/Igx1/2sCMYhvT2NirJwkTl827EK4HQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
+ by PN2P287MB1343.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1ae::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
+ 2024 15:25:18 +0000
+Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+ ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
+ 15:25:18 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: Mark Brown <broonie@kernel.org>
+CC: "will@kernel.org" <will@kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Oliver Upton <oliver.upton@linux.dev>, Marc
+ Zyngier <maz@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Joey Gouly <joey.gouly@arm.com>, Ryan Roberts
+	<ryan.roberts@arm.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Tarang Raval <tarang.raval@siliconsignals.io>
+Subject: Re: [PATCH] arm64: Refactor conditional logic
+Thread-Topic: [PATCH] arm64: Refactor conditional logic
+Thread-Index: AQHbNEUhfUua9TGhXUuHxRV9W2oRIrKyLkkAgAAC0L8=
+Date: Mon, 11 Nov 2024 15:25:18 +0000
+Message-ID:
+ <PN0P287MB2843B5DAB4BF01A06C5F3DF4FF582@PN0P287MB2843.INDP287.PROD.OUTLOOK.COM>
+References: <20241111142204.67751-1-hardevsinh.palaniya@siliconsignals.io>
+ <ZzIdrLFldf_L3X_V@finisterre.sirena.org.uk>
+In-Reply-To: <ZzIdrLFldf_L3X_V@finisterre.sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN0P287MB2843:EE_|PN2P287MB1343:EE_
+x-ms-office365-filtering-correlation-id: c291ee02-8056-47d3-abdf-08dd02650cc4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?0Kg9v0xO5v+stX9ASMRQTr7CR8QfSd1rlYqaw+0MXGHrbnhvs6I5sFmibL?=
+ =?iso-8859-1?Q?NGr01leoQNDaU8H7tzG/j8FBQ7rrzNlh63AZLj9NBnkRfgyZ6wJUOp53b4?=
+ =?iso-8859-1?Q?RVPFpcmwEa3OdceskRbnLcjqHDmJ6U/cugpcEeAbgwgJAxJwtbiHDMkdhh?=
+ =?iso-8859-1?Q?EpIYriGcZrJIkU1ZzEh0IVWXECk8mug1pfIfQnbU079dU8nWiwXcqfsGIq?=
+ =?iso-8859-1?Q?ROpknPBG2Wn0VmMFXGQSwjdNY6xAhFmCQefa0Qo5+CrUO3bKuXs/SBq4Vm?=
+ =?iso-8859-1?Q?StPS0IscuIqvZuwjRKxMD5Y1id6VxdK6dhY8gegMFm/1r9CAZ3nci33OtY?=
+ =?iso-8859-1?Q?smHGiYwqrvZqhOV5gqH/eVgwWeQ9MymDsuxfxGh6IbMm10/1SIjdvx2O9x?=
+ =?iso-8859-1?Q?7VsVz7Qi6GZIU+84anHMswAziIgLIAETMja2JgxW6GKeqZPWAoubOClzxP?=
+ =?iso-8859-1?Q?3XEM0rxfydJFBdWQnQrrsvN4AtNWA10UTTn6FyqzNIY9ibrqjve1mKZMj+?=
+ =?iso-8859-1?Q?WFryb7bLLoJVjS4I2WNAwDaRaDC0IYegmW1anujAODv9JHcQLSzuf4P3X8?=
+ =?iso-8859-1?Q?sw3PnH7IYAj84iRPehfnlLaRzGw52rEqopKu6XiOuSyyEb0Oamwe7Rln27?=
+ =?iso-8859-1?Q?3P+Rg5GMDDwSEYKz4oQt+nqI8hFfsX8PHm+7eMMv3vjABUICLc5CrqZ7jr?=
+ =?iso-8859-1?Q?Ozy2sdf8aNfcWDzisAzhWgAfSosXLHK+dP7JJ8LjRQ7nnVRZUcVYwDSqi+?=
+ =?iso-8859-1?Q?SMPJKadrITKLrO2IN82MSlq5a1RdqErAjY5Vw4W75xkpctxfgnV5ORnw0Q?=
+ =?iso-8859-1?Q?il6uoYu0Q6VNZZCln+R9XXdkwjIcSYAvjV/g0NPQbkAM330kSCNIIoX+gB?=
+ =?iso-8859-1?Q?j5QGX4pvKyTdSiq7aOkAjtYAg99BXJLDerD89kP8AZQnol91YuEIv0Fyzs?=
+ =?iso-8859-1?Q?z65ljQot4WXSCyzl5LSo3a0YQvB/K2khxnQMNUyXepFBZ66IejCil1qTZ8?=
+ =?iso-8859-1?Q?ZAS9L9AjNstxVe4XYCK6XnoJqcyJtUuOxzP+dLoqqwqS1HrqzX7/D0lCAX?=
+ =?iso-8859-1?Q?dpSNTmRvx8d2lygKDoqfK/kOts+fz+VWn0fcTObs7/GPBHdx9bjMyBE1j1?=
+ =?iso-8859-1?Q?crWCM6URmmiNROJqgDFkQMsgZ9bDw1ds0GHnoFk3GswkZ2FtWaNN64i4d+?=
+ =?iso-8859-1?Q?FTigWtIEUVSLwAGGEHlq4iYqaV/8eaoJ5IcnYqIIFwTNbBPHIT93RAnj56?=
+ =?iso-8859-1?Q?I49r+Yw/DYTth4alt/G9F3kikjeNLr85OLBmUvJE6p4CeDxEjGJb6uJe+l?=
+ =?iso-8859-1?Q?+UWpLxXQDN937Wgr+YpbGAdfWrJjTMtUl9LYwUfOfXV2YhxE2Kd8L4i5YM?=
+ =?iso-8859-1?Q?X2kKVfqI7j4HkI7B7NwXpXEp0uhePCs1mW+rsXOahOI9NMIAKfGoI=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?5NevRAusrll/0eHeIny+N6eUbsqksYh9xGtc9dQm31sjtnfdUlUQKx7JcR?=
+ =?iso-8859-1?Q?106XuTpOx1oK1o08sSc6gaWcQjL/vcuShSQVpZv5pvlaqiKozBtSAkTWNR?=
+ =?iso-8859-1?Q?XvOUn5AdPc5pJ/dKe0o8QoKonFSXdNmiHifC8SG3JRgAckh0K2ID/CvYP0?=
+ =?iso-8859-1?Q?ZwFQq5gVUJCuG2J7tabdRamCZKUvJ8Z+s42njXBZhs08Hiwhv7W35mrfyp?=
+ =?iso-8859-1?Q?qOxRrd3xVXUZzSsOBcCJObhEBKEeUuyy8+VZBwXddukUP6uYXIcagyqVgF?=
+ =?iso-8859-1?Q?ujClrEcXW5XI56q1cR5VzGZ6usz3qxyTSCIHQI7Nn3XnddqogylYGR3J5V?=
+ =?iso-8859-1?Q?UE3hGQjQKG0kVPKWuqpgT1X9fm6gRusNf6ULooSPsDchHqIdmtWcQHgtnj?=
+ =?iso-8859-1?Q?dE2I2iKl0aLz/l5GL7OxkOWLYrX/QPvVVSLdyWpuqMgQ1lGoTqg7vW3A9T?=
+ =?iso-8859-1?Q?P9Ip3PVPEBLm1EcraGG5AyvYf4JJWp230IpcH5mNaMx/sMM/IUJbtjRAxs?=
+ =?iso-8859-1?Q?uhLtG3o00H4bFhBxJmdxNDo5pAwbwi3d2eQwaX0aD/+M4Kzq4Ufnc+oCD8?=
+ =?iso-8859-1?Q?o6zFTDzIPLqZ02oG+iqYgsCdYqJ/JmvvONOFW16xNHgJ9foNWbBVa4MHBC?=
+ =?iso-8859-1?Q?QzZiPgmyguFuIl+spNZTDli272Dr90JpvYE4+midOZwIZlM3GaSFSkU+xp?=
+ =?iso-8859-1?Q?ehuQFZnKJ7Va8htPD3doFAwA6VoVwQD4wGoTmuk54wTU8rWXNYrLzr4ntW?=
+ =?iso-8859-1?Q?rnJK+kSJ6vYgBqnJ8/YUSphbw1XlBcetkE3WAY3luvDRRg3xhG8Zg5WG1R?=
+ =?iso-8859-1?Q?U1qpkwLsOC3yz8gDIGu9j7G81r/Mhm7B84Zhb4G+gYC9vAqemsGxKn3Xxq?=
+ =?iso-8859-1?Q?rJ5t5Ial8w3ihVlAL2k4iQ7AQECMwdq/2ChE/p/ewPm5B4zS4gyziVXkyt?=
+ =?iso-8859-1?Q?ggfht2r2qD5mzwWujbu71n4Olztod2+HcLxIRcCz4zxdkSVkYFG4e0M2Wl?=
+ =?iso-8859-1?Q?Hr6yNojY5E4IwV2OGFhb92eJCOmo0iQxbI4vJuz6x9r5EyIpEBWchH4IAV?=
+ =?iso-8859-1?Q?dQ1ZWFSCwCKzEmiBSytM/4IDWoN2LB+rgLPcMgr0lm6+tC8AZkU40le+aZ?=
+ =?iso-8859-1?Q?+G6hhx0XFtx/00MrycVBeRxfBjeLFTmwaSflGJGIsxUf2H2Tolub3iAkoP?=
+ =?iso-8859-1?Q?nldya5RGoCerI5ddNM0q7biI4Q0LcldcKVYxQY1ik6lm//1+B2VGzg9Gc5?=
+ =?iso-8859-1?Q?si59eqwtQSSwR2xnxTfT3vQao/j+P2Pq7z+wOfIiP17hhhTrNGc7w075wk?=
+ =?iso-8859-1?Q?NHCnoE5lo8Dy8zqyZ7vJlbyyqHbWxeDRP0meq1Xo1DHRpOyKGtZcOSqNHE?=
+ =?iso-8859-1?Q?NG+1947VeFsSUjU2xztG/gAuQCnDLNPCkgbGrwr7w7AL+rddAo5g5il8ge?=
+ =?iso-8859-1?Q?QxJ1kTILMIsOjpgw7yPUWaVst7dFzD01SKbAbUmNwuOFGngzY+hRBYKKtE?=
+ =?iso-8859-1?Q?pRiRcceHXHJuid7aJixwSkU5belcvC+Xj1ijWeRCDv/mi+ed4E+rII40lT?=
+ =?iso-8859-1?Q?evUhs2+4jRvOmmF6Decx7tjq1X2nT3myR4Om5/+T/nFKpc9Ps2jRDBqjTS?=
+ =?iso-8859-1?Q?HGW0I7qw/J/xiwprqDi/COlJpHFPQzLXy9UQ7SCNE1sDbnmiO+4iFb63/n?=
+ =?iso-8859-1?Q?YZQs48TC78GUB7m7BKs=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
- offset dir
-To: Chuck Lever III <chuck.lever@oracle.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Chuck Lever <cel@kernel.org>, linux-stable <stable@vger.kernel.org>,
- "harry.wentland@amd.com" <harry.wentland@amd.com>,
- "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
- "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
- "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
- "christian.koenig@amd.com" <christian.koenig@amd.com>,
- "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
- "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
- Liam Howlett <liam.howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
- "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
- "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
- "mingo@kernel.org" <mingo@kernel.org>,
- "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
- "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
- "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
- linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20241111005242.34654-1-cel@kernel.org>
- <20241111005242.34654-7-cel@kernel.org>
- <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
- <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
-From: yangerkun <yangerkun@huaweicloud.com>
-In-Reply-To: <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3U4exIDJn3+D7BQ--.18810S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw48Ar4xCFW5tF45Wr48JFb_yoW3JF17pF
-	Z8Gan8Krs7X34UGr4vv3WDZFyS93Z7Kr45XrZ5W34UJr9Fqr43KF1Iyr4Y9a4UArs3Cr12
-	qF45K343Zw45CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
-X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: c291ee02-8056-47d3-abdf-08dd02650cc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2024 15:25:18.5482
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bEPIE0OY/vyKWQhHl+epvkIbvJ5ZrOk4hbFbsFKdHw3kj6ZPcrJSiJ2utjQzulse+CMnbfQ1oWD0hXDgl5PcoenFim5I48A4DWRSGxBDkZckKIFOzAE9bl/U5hpYp8CK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB1343
 
-
-
-在 2024/11/11 22:39, Chuck Lever III 写道:
-> 
-> 
->> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/11/11 8:52, cel@kernel.org 写道:
->>> From: yangerkun <yangerkun@huawei.com>
->>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
->>> After we switch tmpfs dir operations from simple_dir_operations to
->>> simple_offset_dir_operations, every rename happened will fill new dentry
->>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
->>> key starting with octx->newx_offset, and then set newx_offset equals to
->>> free key + 1. This will lead to infinite readdir combine with rename
->>> happened at the same time, which fail generic/736 in xfstests(detail show
->>> as below).
->>> 1. create 5000 files(1 2 3...) under one dir
->>> 2. call readdir(man 3 readdir) once, and get one entry
->>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
->>> 4. loop 2~3, until readdir return nothing or we loop too many
->>>     times(tmpfs break test with the second condition)
->>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
->>> directory reads") to fix it, record the last_index when we open dir, and
->>> do not emit the entry which index >= last_index. The file->private_data
->>
->> Please notice this requires last_index should never overflow, otherwise
->> readdir will be messed up.
-> 
-> It would help your cause if you could be more specific
-> than "messed up".
-> 
-> 
->>> now used in offset dir can use directly to do this, and we also update
->>> the last_index when we llseek the dir file.
->>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
->>> Signed-off-by: yangerkun <yangerkun@huawei.com>
->>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
->>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
->>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
->>> Signed-off-by: Christian Brauner <brauner@kernel.org>
->>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
->>> [ cel: adjusted to apply to origin/linux-6.6.y ]
->>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
->>> ---
->>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
->>>   1 file changed, 25 insertions(+), 12 deletions(-)
->>> diff --git a/fs/libfs.c b/fs/libfs.c
->>> index a87005c89534..b59ff0dfea1f 100644
->>> --- a/fs/libfs.c
->>> +++ b/fs/libfs.c
->>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>    xa_destroy(&octx->xa);
->>>   }
->>>   +static int offset_dir_open(struct inode *inode, struct file *file)
->>> +{
->>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>> +
->>> + file->private_data = (void *)ctx->next_offset;
->>> + return 0;
->>> +}
->>
->> Looks like xarray is still used.
-> 
-> That's not going to change, as several folks have already
-> explained.
-> 
-> 
->> I'm in the cc list ,so I assume you saw my set, then I don't know why
->> you're ignoring my concerns.
-> 
->> 1) next_offset is 32-bit and can overflow in a long-time running
->> machine.
->> 2) Once next_offset overflows, readdir will skip the files that offset
->> is bigger.
-> 
-
-I'm sorry, I'm a little busy these days, so I haven't responded to this
-series of emails.
-
-> In that case, that entry won't be visible via getdents(3)
-> until the directory is re-opened or the process does an
-> lseek(fd, 0, SEEK_SET).
-
-Yes.
-
-> 
-> That is the proper and expected behavior. I suspect you
-> will see exactly that behavior with ext4 and 32-bit
-> directory offsets, for example.
-
-Emm...
-
-For this case like this:
-
-1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
-2. open /tmp/dir with fd1
-3. readdir and get /tmp/dir/file1
-4. rm /tmp/dir/file2
-5. touch /tmp/dir/file2
-4. loop 4~5 for 2^32 times
-5. readdir /tmp/dir with fd1
-
-For tmpfs now, we may see no /tmp/dir/file2, since the offset has been 
-overflow, for ext4 it is ok... So we think this will be a problem.
-
-> 
-> Does that not directly address your concern? Or do you
-> mean that Erkun's patch introduces a new issue?
-
-Yes, to be honest, my personal feeling is a problem. But for 64bit, it 
-may never been trigger.
-
-> 
-> If there is a problem here, please construct a reproducer
-> against this patch set and post it.
-> 
-> 
->> Thanks,
->> Kuai
->>
->>> +
->>>   /**
->>>    * offset_dir_llseek - Advance the read position of a directory descriptor
->>>    * @file: an open directory whose position is to be updated
->>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
->>>    */
->>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>   {
->>> + struct inode *inode = file->f_inode;
->>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
->>> +
->>>    switch (whence) {
->>>    case SEEK_CUR:
->>>    offset += file->f_pos;
->>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
->>>    }
->>>      /* In this case, ->private_data is protected by f_pos_lock */
->>> - file->private_data = NULL;
->>> - return vfs_setpos(file, offset, U32_MAX);
->>> + if (!offset)
->>> + file->private_data = (void *)ctx->next_offset;
->>> + return vfs_setpos(file, offset, LONG_MAX);
->>>   }
->>>     static struct dentry *offset_find_next(struct xa_state *xas)
->>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
->>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
->>>   }
->>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
->>>   {
->>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
->>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
->>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>    while (true) {
->>>    dentry = offset_find_next(&xas);
->>>    if (!dentry)
->>> - return ERR_PTR(-ENOENT);
->>> + return;
->>> +
->>> + if (dentry2offset(dentry) >= last_index) {
->>> + dput(dentry);
->>> + return;
->>> + }
->>>      if (!offset_dir_emit(ctx, dentry)) {
->>>    dput(dentry);
->>> - break;
->>> + return;
->>>    }
->>>      dput(dentry);
->>>    ctx->pos = xas.xa_index + 1;
->>>    }
->>> - return NULL;
->>>   }
->>>     /**
->>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
->>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
->>>   {
->>>    struct dentry *dir = file->f_path.dentry;
->>> + long last_index = (long)file->private_data;
->>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
->>>      if (!dir_emit_dots(file, ctx))
->>>    return 0;
->>>   - /* In this case, ->private_data is protected by f_pos_lock */
->>> - if (ctx->pos == DIR_OFFSET_MIN)
->>> - file->private_data = NULL;
->>> - else if (file->private_data == ERR_PTR(-ENOENT))
->>> - return 0;
->>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
->>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
->>>    return 0;
->>>   }
->>>     const struct file_operations simple_offset_dir_operations = {
->>> + .open = offset_dir_open,
->>>    .llseek = offset_dir_llseek,
->>>    .iterate_shared = offset_readdir,
->>>    .read = generic_read_dir,
-> 
-> 
-> --
-> Chuck Lever
-> 
-> 
-
+Hi Mark,=0A=
+=0A=
+Thanks for the input=0A=
+=0A=
+> > @@ -989,7 +989,7 @@ static void init_cpu_ftr_reg(u32 sys_reg, u64 new)=
+=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 /* Override was valid */=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 ftr_new =3D tmp;=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 str =3D "forced";=0A=
+> > -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 } else if=
+ (ftr_ovr =3D=3D tmp) {=0A=
+> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 } else {=
+=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 /* Override was the safe value */=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 str =3D "already set";=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 }=
+=0A=
+>=0A=
+> Your changelog wasn't very clear on this but the tests in this if/else=0A=
+> tree are=0A=
+>=0A=
+>=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (ftr_ovr !=3D tmp) {=0A=
+>=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else if (ftr_new !=3D tm=
+p) {=0A=
+>=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else if (ftr_ovr =3D=3D =
+tmp) {=0A=
+>=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }=0A=
+>=0A=
+> so your analysis is accurate, the first and last tests are the inverse=0A=
+> of each other so onr must be true.=A0 This should be clear from your=0A=
+> commit log.=A0 Also all of those branches set "str" and we then=0A=
+> immediately test=0A=
+>=0A=
+>=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (str)=0A=
+>=0A=
+> before logging a diagnostic.=A0 If we're looking to reduce unneeded tests=
+=0A=
+> then either that one is redundant too or there's another bug in the=0A=
+> logic (I think from a quick scan just the former).=0A=
+=0A=
+Yes, I agree=0A=
+=0A=
+that also we can remove=A0=0A=
+=0A=
+Best Regards,=0A=
+Hardev=
 
