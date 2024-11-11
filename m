@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-403541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0DF9C3701
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:24:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812729C3702
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:24:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837AA2829B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:24:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E84C1F22329
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EA213AD20;
-	Mon, 11 Nov 2024 03:23:41 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4E614A4D6;
+	Mon, 11 Nov 2024 03:23:56 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4ED1465BA
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8BA14037F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731295421; cv=none; b=neYeu3WUEzGAfQ/4G7pBQHx9nnQDDn8/uoT7cBsb+dv/XnXyOQEFh+Q/l9LdEKqtCmZTBTGYcVvadQgm/OuyRG/KCeI4vLaCprSjq2fpjHfbiRfdJFuhI0BBb/aoGu/Vg2L8M+P9pAPMjoZbTvgFPWGguL/2B1VwKuZQLvcFr6I=
+	t=1731295436; cv=none; b=Gy1F8Na+l2jsqJaU6hINnINvnc6gDe6WQiMyAxxEC8E695z87HN89fw5MU5rzUlgL8zie2DVmjknSLO5Dq9LLUEb7PiqdGiUqeXrH/6cwBIeoXZA6qIA6set4DWik4SCE2olkkwvknaN2QPK1KsSONR2QYYHYKd50R1Wyb/Izgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731295421; c=relaxed/simple;
-	bh=5Yqtd0zpcPEfI0UEVC8ExUgkB7Y7yInW28amVXFiDds=;
+	s=arc-20240116; t=1731295436; c=relaxed/simple;
+	bh=m9ft7oayCTdqhZhJpS3fkgOi/HD2VwIHoShKBv/Y24s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JWRgjWAC7DyBZFrbJM9evOz38JqD2ZZjqwEr1DMN65298ZSyOut3Pk4GVPqnfuwwsqIM6gM8+pe7c50HiwknfHOHckjCv8UQRLiFhzWe7gQnxqTJhF/BWnvXUlFggafYc+OWKxGskk+W97MgZKfD/fO2VyUAN4iDpkxk+IxkLvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.204.34.130
+	 MIME-Version; b=Z6PnladlHUBHyROQXtlakYjLf4EptGPu5nPLha7ybPVrgCWhEw0XoXo4kBZu4aH3s/X2Nbjfhi0OgDBJ3Wjx+H3EcbfYbVGIQOufwtg1R25C1/JRyJnFrj8/mGnqx8lUyypEhtruNxldVqYwYu6LmebW9CEw2ra2SNE6/0LJ/CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.92.39.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz5t1731295371t6qpfl3
-X-QQ-Originating-IP: hEaHh3itLNXjtnk8YnvUAaD7phrY2EbCwovJpNgObzk=
+X-QQ-mid: bizesmtpsz5t1731295385ts11owj
+X-QQ-Originating-IP: /GbQ/HB/INrFDZmzy9qkrIEl2FAoqRZXE+uqupwHtag=
 Received: from HX09040029.powercore.com.cn ( [116.233.136.127])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Nov 2024 11:22:32 +0800 (CST)
+	id ; Mon, 11 Nov 2024 11:22:52 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7169842749842943046
+X-BIZMAIL-ID: 8040518500708632268
 From: Luming Yu <luming.yu@shingroup.cn>
 To: linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ To: linuxppc-dev@lists.ozlabs.org,
 	christophe.leroy@csgroup.eu,
 	luming.yu@gmail.com
 Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: [PATCH v2 7/8] powerpc/entry: fix 32bit compile issue for common entry
-Date: Mon, 11 Nov 2024 11:19:38 +0800
-Message-ID: <713F5D03CD2B8708+20241111031934.1579-14-luming.yu@shingroup.cn>
+Subject: [PATCH v2 8/8] powerpc/entry: fix ppc syscall entry issues for common entry
+Date: Mon, 11 Nov 2024 11:19:40 +0800
+Message-ID: <AD7BF1A62C0AD367+20241111031934.1579-16-luming.yu@shingroup.cn>
 X-Mailer: git-send-email 2.42.0.windows.2
 In-Reply-To: <20241111031934.1579-2-luming.yu@shingroup.cn>
 References: <20241111031934.1579-2-luming.yu@shingroup.cn>
@@ -59,86 +59,119 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NWT6b+CD3I3QSY2wyTlQb0OaM02OWqrZCgE4/OKz3sXVaSuuC5kX3PsM
-	Vl46hmNLEKGjGtk+BDwoxOA+YqB0JgFb2VC2aSgr2OtxRGUAFoImlm5ibehmiQaUIPy69ey
-	G+LHUcb/8kirGrsjzJCTd9wo4Ks8Ha98l60ClAhYzFtqM19Poi7fGtWQVsrSIHqKpYWp4Fw
-	p9H1PBVHYp10AtQ2ykxIDZKCBJFO1nv9Cqy63Pqh9Y9+pGcle+ybe757ilJJb2zJkAm/glD
-	jVTsW6CnnBOSfeGsl6JZLeSZ12czXBH8g7oepQOYh5BMQERCuqAwHAAvFTBcUY4AXTsLS75
-	aRRkEJLPty3I//KQblm/ooAKKPI73Hb6s994NpIDEMcJ1KYVmdsEecE7gDk6aPIcP9sYsmq
-	LcJC8nDsHvuJn9sJNOyljthkbiz5q+0qxyC1+oDAkEKPasUYMXNaueGCOtW4k7MdIWvtEDS
-	D9s21Jb8j2cKfoAZ6eXdbMsijg1+YZ37Sy8pMhPTe6oao+4xQ1H7FNfzNMvpRuwdtK8/pLe
-	5TxlYcCiLMc8pXTCZ3lhwZ6pbTN2GcSngL4yueelRWoGwr0OlGWs5s3iSsP+hkLCAXGJy4+
-	goh+7C2+PViYEkF67lQrw2Ar0zBgr1gHX9Fuh5LKhQXpr0WDVp9zGxRuaMfGERHAasIoGZj
-	X62uliWiDJQWv4BJIA5zM/PKrMQfk9H99K0K24f1sohByi9a5IF5Mhiyr3SjSI8f3y/5fcj
-	Yb7QOU484FGg9KV/G0AE2WM0Rl46jyM941K0ELYlPH3WlZK5LvRwyX84zZrAQTd71UvmCef
-	OhALr/t63ULjKcE5gZ9meFJ9SrqNnKKAICW8PuNBZ+saSYEi6v33C+H4nt+A0DMSxZqQ7r8
-	UivOjJrhsRangoSyz4Iyohmiy2/HqBS58wuuX7nfpTWYsm3GHqMSKg+WRpBxDAfPmFtMS8C
-	b9BBpZY1+ES7RWKVtNCf162k97zxq/vnJM0XCiMPwyFpNUopDvNNpWAQq
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-XMAILINFO: Mb4RgdP5R+YFL4OWP+Z3hgokEAcqPRcy+45Qc3tKZP7hH8yQB8OrTNzl
+	NX0VKVK5ikOoxEx7IwWfYgJPyf+273ui2Wh8urebXFPzN4IhjpYTxu34MNzcuzo65nXZdKU
+	+VOmtEM977KDmLnyIkq1cnKmu2rKWqbnxcKTzkvcw+VbSiVzN61Ipq1t3TzJUBIfsOjOcFa
+	TjguVfgaMVwAkAkQJcLpa6J5VbqDcnAz5vX9PiKOzPoWclVbcbNBBjqzlZ+zssn2rbem7tE
+	77saG4z0L8IIlsjN6+oO2YxfUMhxgFQms0RUA0svD3n4yC11K1ihLXhjlyrF3+FBF8w97JV
+	z2kflxt14KxgVO3SsJ1foRgy2me5uS37IUOzdAJl99jVWiIZ06d1yphfUiUVBBm/6WmhADY
+	JysBRNtJi/qBeWS2yUtIhqLg5GmbcX6soe1ZtxnmsyU2N3XaQrMWuusrXsrmwj2ehGGsFpP
+	OmO+ijS8Y/8Y2XIJTbPM3ucIyidyhyRHdPNT0KWaunwjW6H3Q5aORjuK+bBp8DvKOx9wiiO
+	ADvfMcrkZEBUqA/8uSfr87QbLrqk0F+fPbGMb460UZDQn13ZymUGE7VZ91lukbkakHuknVE
+	/UJg8bOBcNBUe/cxiqLJZ/AZOcHOb3JVuzqPPJD3H2l960LJr9IgW2Wtf6l/1tmeI8wsnhd
+	EZtLy4UUBpTz80h0P7vAEafkzH5aW9T307kBqOtvxUdZdDGsdoVJ2JykgD+kwgLxRZh3SkS
+	2rTc5EWIIBM4yLKkasUOMa2Z8w4LpnAS4spf5SRVPnyHlK5pi0VNjP6yHJ5t4XwSCxOr4dg
+	M+SR6zTUL/kbpQmQ2ladQZJp671FbsOs00h1ihtWrPqzUOeU61vcyvzk24WksFYc5nQ0F2j
+	pZnQo+bSpRV4Us3SbufI7Sl8EwGxdfgvL0m8MQFG750gSGbPTwvAVQV1S5TCN4Y2Wq+kiit
+	dpv1oNJhnymCLkTvhtMoy39KxvtNFaE4RiNClcAkiQApr8L8lOPQ3b3Ma
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 
-fix irqentry in 32bit code path and hw_irq helpers.
+From: Yu Luming <luming.yu@gmail.com>
+
+Due to the common layer and internal calls details are hidden from
+the top level at the call side in ppc arch code, there are some
+difficulties in preserving
+all semantics implications of the original code in the patch. e.g  when
+we got -1 returned
+from syscall_enter_from_user_mode, without touching common code, we have
+to do
+our own inference to recover the reasonable route to return, in order to
+have correct errno
+and syscall work behaviors,that are tested in seccomp_bpf 98 test cases.
 
 Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
 ---
- arch/powerpc/include/asm/hw_irq.h | 6 ++++++
- arch/powerpc/kernel/interrupt.c   | 4 ++++
- include/linux/entry-common.h      | 1 +
- 3 files changed, 11 insertions(+)
+ arch/powerpc/kernel/interrupt.c |  4 ++++
+ arch/powerpc/kernel/syscall.c   | 28 +++++++++++++++++++++++++++-
+ 2 files changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index a3d591784c95..99104f95e1d7 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -469,6 +469,12 @@ static inline bool arch_irqs_disabled(void)
- 	return arch_irqs_disabled_flags(arch_local_save_flags());
- }
- 
-+/*for common entry*/
-+static __always_inline bool regs_irqs_disabled(struct pt_regs *regs)
-+{
-+	return arch_irqs_disabled();
-+}
-+
- #define hard_irq_disable()		arch_local_irq_disable()
- 
- static inline bool arch_irq_disabled_regs(struct pt_regs *regs)
 diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index 8e4cabb0c592..31167700f894 100644
+index 2a5693b5f336..380697e35d3a 100644
 --- a/arch/powerpc/kernel/interrupt.c
 +++ b/arch/powerpc/kernel/interrupt.c
-@@ -311,7 +311,9 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
- 	BUG_ON(regs_is_unrecoverable(regs));
- 	BUG_ON(arch_irq_disabled_regs(regs));
- 	CT_WARN_ON(ct_state() == CONTEXT_USER);
-+#ifdef CONFIG_PPC64
- 	local_paca->irqentry_s = irqentry_enter(regs);
-+#endif
+@@ -232,6 +232,7 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
+ {
+ 	unsigned long ti_flags;
+ 	unsigned long ret = 0;
++	unsigned long work = READ_ONCE(current_thread_info()->syscall_work);
+ 	bool is_not_scv = !IS_ENABLED(CONFIG_PPC_BOOK3S_64) || !scv;
  
- 	/*
- 	 * We don't need to restore AMR on the way back to userspace for KUAP.
-@@ -424,7 +426,9 @@ notrace unsigned long interrupt_exit_kernel_prepare(struct pt_regs *regs)
- 	 * AMR value from the check above.
- 	 */
- 	kuap_kernel_restore(regs, kuap);
-+#ifdef CONFIG_PPC64
- 	irqentry_exit(regs, local_paca->irqentry_s);
-+#endif
+ 	CT_WARN_ON(ct_state() == CT_STATE_USER);
+@@ -268,6 +269,9 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
  
- 	return ret;
- }
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index 6521171469f2..b68eada65a8a 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -8,6 +8,7 @@
- #include <linux/seccomp.h>
- #include <linux/sched.h>
+ 	if (ti_flags & _TIF_SIGPENDING)
+ 		ret |= _TIF_RESTOREALL;
++
++	if (work)
++		ret |= _TIF_RESTOREALL;
+ #ifdef CONFIG_PPC64
+ 	regs->exit_result = ret;
+ #endif
+diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
+index dabe7f2b4bd4..358340f7fe75 100644
+--- a/arch/powerpc/kernel/syscall.c
++++ b/arch/powerpc/kernel/syscall.c
+@@ -18,6 +18,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+ {
+ 	long ret;
+ 	syscall_fn f;
++	unsigned long work = READ_ONCE(current_thread_info()->syscall_work);
  
-+#include <linux/irqentry-state.h>
- #include <asm/entry-common.h>
+ 	kuap_lock();
  
- /*
+@@ -119,7 +120,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+ 
+ 	local_irq_enable();
+ 
+-	if (unlikely(read_thread_flags() & _TIF_SYSCALL_DOTRACE)) {
++	if (work & SYSCALL_WORK_ENTER) {
+ 		if (unlikely(trap_is_unsupported_scv(regs))) {
+ 			/* Unsupported scv vector */
+ 			_exception(SIGILL, regs, ILL_ILLOPC, regs->nip);
+@@ -132,7 +133,32 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+ 		 * and the test against NR_syscalls will fail and the return
+ 		 * value to be used is in regs->gpr[3].
+ 		 */
++		if (test_syscall_work(SECCOMP) &&
++				!test_syscall_work(SYSCALL_EMU))
++			regs->gpr[3] = -ENOSYS;
+ 		r0 = syscall_enter_from_user_mode(regs, r0);
++
++		if (test_syscall_work(SECCOMP)) {
++			if (r0 != -1)
++				regs->gpr[3] = regs->orig_gpr3;
++			else
++				goto skip;
++		}
++		if ((r0 == -1) && (test_syscall_work(SYSCALL_TRACE))) {
++			goto skip1;
++		}
++		if ((r0 == -1) && test_syscall_work(SYSCALL_EMU))
++			goto skip;
++		if (regs->gpr[0] >= NR_syscalls)
++			goto skip1;
++
++		r0 = regs->gpr[0];
++		if (r0 != -1)
++			goto skip;
++skip1:
++		r0 = -1;
++		regs->gpr[3] = -ENOSYS;
++skip:
+ 		if (unlikely(r0 >= NR_syscalls))
+ 			return regs->gpr[3];
+ 
 -- 
 2.42.0.windows.2
 
