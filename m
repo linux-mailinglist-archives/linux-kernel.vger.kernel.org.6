@@ -1,76 +1,175 @@
-Return-Path: <linux-kernel+bounces-404769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4BFF9C48AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:01:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4BF9C4839
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4ED1B30928
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:16:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377B6B2BEAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F7F1A9B3E;
-	Mon, 11 Nov 2024 21:16:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439CA1B6CF2;
+	Mon, 11 Nov 2024 21:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tk3OccAE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FE1A070E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E8C1EB36;
+	Mon, 11 Nov 2024 21:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731359790; cv=none; b=RcibKFuLs5W3mRmY/vGYSoa5zPxiA91DITwjDLBJ2tFjACLwerkdv0upu9ayRTAYjTVaimrUuMDayBUG20IXPpSgkmNoGI79ALo4pjdquhPqv8FABoYdix30qZmIknIMVJ1O6tqdNr9BY9Bup8LkGTG3baNTlo8+g3Ea6TrCOkA=
+	t=1731359865; cv=none; b=eE43FQSYqY6ym7jqA6O3vSBrv7FC9mvNHsqT7R2OsL3QQBaeyp6q4kMTTlH3v5XW8idyMm6kAZE/bOrV2OiZ3zWa7Wc0YJslqy3YFA084c5mzh4kANBTurwolGW0KrT6wevMfsPhGYglxwf3Ch7jnG0Ue3kOi/s78Jv68MXf3/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731359790; c=relaxed/simple;
-	bh=7WyqOUOYl2qSgOkIYEyNj6gMwTnxCtu7uYiWpjTb610=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lZY4F2lEzNVD9LmvE/JNMhAKTg2m1hRwc5jsY2QNbmpEeNciw4K3Oel2veXNrMTZ5+ScVo4xR8o8e+BN/lLeTzKBwMNcqeUhBywkHMltXi1Ml3/L2HP8SZv+HlO9hnBHwPRr535bUJZjA4zCYDgTmGOh7FUWwsZc0qm+4tjWc+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3cb771556so61491895ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:16:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731359787; x=1731964587;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=clNnOLzNPxim1+kawbjDSGfOrNZUji9+W2LA6+ReuP8=;
-        b=fpqCaZPii31kotf7IHZubcH+Pli6x8tlgIxrlbdemA11mVuT3GH8HubxLVbNXOYDKE
-         oCcuFGJp/rcey8AJlNV67aqlA7UHsuWzGntf5YHT2Alw35ZpZrzTpym7K7lJJKVW+bia
-         iUq/8SjAsNxnVTC4+Ek44dPYcKj8zFoG4PjyZOMXk9krs/ajJl/bTqpQmtbHia+AnNXq
-         y3+D0YdYe6H0Vh6ZH1QzpeGlDRpaiEgr7VH1Rj+jRLr2N3HwoM5JDQIVazEIGV0LLpoZ
-         Ej2o81vSqbu2S6LEyGYJ5Pv9c4UHpBZWCwtTHONmRv7CDIklW8tssMZ7kvD1vWmhLEVQ
-         rIFQ==
-X-Gm-Message-State: AOJu0Ywe35ZdauCuYtB/Hl4u8vaXyratEmYD9i7bMEc4FbhHxsJfzdxP
-	OpL71lCQ/i68O05lplUD1m7p34H5Cld7RkNAaEKISeDY/AFfl8hlnPX5Ow90Tt31+UP2KR+m55n
-	iCN2yxJ94CNgUyWtI+TZDtc6pDjDTwr4H17b9kbWRt4o3amrkoPBJonI=
-X-Google-Smtp-Source: AGHT+IF+zSa5Ro0L8wqUbsyJ0I+kSJOrwdQPGZSJEn6qB9hi2Pjs/hIzWiQUvjtbILzIDa5WoEMRGMK6egHatS4m8/tTk4+OeGpm
+	s=arc-20240116; t=1731359865; c=relaxed/simple;
+	bh=55d8zFxgd1F6xBx/xYeMQ67dmd9zAj4BWDzpNGNC0sI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLCAxrqT2x/PpC0VKxbBJOZ+IhAUplqAQ02TCmqfDJ/Ssik/RMAMYkkNGx5qFDOXq+XPA+RvzxNKDd14cFPRbJjLe9oWR/eFLPMgfr3ygjDxt7MeSWHtCqrek3dQ7JP4A1bkr5vhiBZos4eTFW38RM7mFfxr5uBR4IuOyrJnTgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tk3OccAE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270DBC4CECF;
+	Mon, 11 Nov 2024 21:17:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731359865;
+	bh=55d8zFxgd1F6xBx/xYeMQ67dmd9zAj4BWDzpNGNC0sI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tk3OccAEqfjDJrT2ba2C/kFEVGZZG23OvIjOB9DRPicb37XCN42ebDegbsAYs4D+x
+	 79uXDgbn1A/1fg+nCS2rWRGId/vrlaFwg3vUcciWv3YvCNlH/Zt0nhKfZTixVkBM8u
+	 EG/K4Yyj/dgfW/ZSw6mHUCxqe8JmE2aCIFlDT592aoKXW2LNXmIc+FBnvk7F6CwppH
+	 BPhla0Wz8YC5vrXccztrRPRVINOP7J0470zwjOa99s3UE+Ry8us2m+sChxCCsEbSXO
+	 vTyKfTYHwbFhEBOlMYD0ZG/6M9XqLy3UMXMhC7fjht+ZXfX/oFo4Bbi2PwDPhAR1Mb
+	 mh8aSoFvagBwA==
+Date: Mon, 11 Nov 2024 23:17:38 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
+ attributes
+Message-ID: <20241111211738.GD71181@unreal>
+References: <f93e6b2393301df6ac960ef6891b1b2812da67f3.1731005223.git.leonro@nvidia.com>
+ <20241111204104.GA1817395@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214e:b0:3a2:f7b1:2f70 with SMTP id
- e9e14a558f8ab-3a6f1a759aamr137811895ab.21.1731359786852; Mon, 11 Nov 2024
- 13:16:26 -0800 (PST)
-Date: Mon, 11 Nov 2024 13:16:26 -0800
-In-Reply-To: <671877ae.050a0220.1e4b4d.0084.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732742a.050a0220.1fb99c.015a.GAE@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+4f29c3f12f864d8a8d17@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111204104.GA1817395@bhelgaas>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Mon, Nov 11, 2024 at 02:41:04PM -0600, Bjorn Helgaas wrote:
+> On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > The Vital Product Data (VPD) attribute is not readable by regular
+> > user without root permissions. Such restriction is not really needed
+> > for many devices in the world, as data presented in that VPD is not
+> > sensitive and access to the HW is safe and tested.
+> > 
+> > This change aligns the permissions of the VPD attribute to be accessible
+> > for read by all users, while write being restricted to root only.
+> > 
+> > For the driver, there is a need to opt-in in order to allow this
+> > functionality.
+> 
+> I don't think the use case is very strong (and not included at all
+> here).
 
-***
+I will add the use case, which is running monitoring application without
+need to be root. IMHO reducing number of applications that require
+privileged access is a very strong case. I personally try to avoid
+applications with root/setuid privileges.
 
-Subject: 
-Author: kent.overstreet@linux.dev
+> 
+> If we do need to do this, I think it's a property of the device, not
+> the driver.
 
-#syz fix: bcachefs: Fix assertion pop in bch2_ptr_swab()
+But how will device inform PCI core about safe VPD read?
+Should I add new field to struct pci_device_id? Add a quirk?
+Otherwise, I will need to add a line "pci_dev->downgrade_vpd_read=true"
+to mlx5 probe function and it won't change a lot from current
+implementation.
+
+> 
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  drivers/pci/vpd.c   | 9 ++++++++-
+> >  include/linux/pci.h | 7 ++++++-
+> >  2 files changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+> > index e4300f5f304f..7c70930abaa0 100644
+> > --- a/drivers/pci/vpd.c
+> > +++ b/drivers/pci/vpd.c
+> > @@ -156,6 +156,7 @@ static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
+> >  			    void *arg, bool check_size)
+> >  {
+> >  	struct pci_vpd *vpd = &dev->vpd;
+> > +	struct pci_driver *drv;
+> >  	unsigned int max_len;
+> >  	int ret = 0;
+> >  	loff_t end = pos + count;
+> > @@ -167,6 +168,12 @@ static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
+> >  	if (pos < 0)
+> >  		return -EINVAL;
+> >  
+> > +	if (!capable(CAP_SYS_ADMIN)) {
+> > +		drv = to_pci_driver(dev->dev.driver);
+> > +		if (!drv || !drv->downgrade_vpd_read)
+> > +			return -EPERM;
+> > +	}
+> > +
+> >  	max_len = check_size ? vpd->len : PCI_VPD_MAX_SIZE;
+> >  
+> >  	if (pos >= max_len)
+> > @@ -317,7 +324,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
+> >  
+> >  	return ret;
+> >  }
+> > -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
+> > +static BIN_ATTR_RW(vpd, 0);
+> >  
+> >  static struct bin_attribute *vpd_attrs[] = {
+> >  	&bin_attr_vpd,
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index 573b4c4c2be6..b8fed74e742e 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -943,6 +943,10 @@ struct module;
+> >   *		how to manage the DMA themselves and set this flag so that
+> >   *		the IOMMU layer will allow them to setup and manage their
+> >   *		own I/O address space.
+> > + * @downgrade_vpd_read: Device doesn't require root permissions from the users
+> > + *              to read VPD information. The driver doesn't expose any sensitive
+> > + *              information through that interface and safe to be accessed by
+> > + *              unprivileged users.
+> >   */
+> >  struct pci_driver {
+> >  	const char		*name;
+> > @@ -960,7 +964,8 @@ struct pci_driver {
+> >  	const struct attribute_group **dev_groups;
+> >  	struct device_driver	driver;
+> >  	struct pci_dynids	dynids;
+> > -	bool driver_managed_dma;
+> > +	bool driver_managed_dma : 1;
+> > +	bool downgrade_vpd_read : 1;
+> >  };
+> >  
+> >  #define to_pci_driver(__drv)	\
+> > -- 
+> > 2.47.0
+> > 
 
