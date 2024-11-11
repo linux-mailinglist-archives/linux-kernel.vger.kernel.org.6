@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-404716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB879C4727
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:49:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4605D9C4722
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458FA1F2508C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3EC28CC2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2031591EA;
-	Mon, 11 Nov 2024 20:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AHwC26w0"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D531AB6DA;
+	Mon, 11 Nov 2024 20:47:35 +0000 (UTC)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2113698E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104BD13698E;
+	Mon, 11 Nov 2024 20:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358180; cv=none; b=jMhRfx54APtWd0fJraGo07/r4gdehXL1BQlYQgZ6pZPxDM52/JQolEfkZTv0Op2KC3PGcNuJqDwK1WxVvT2o9mOp3EkDWGamjGbrpg9LoA/PJe+1HN4Lqa7omWq4IpMf3gaCzL0BQabRkfEnhZFwKc5dmFERug75Z8yEoVEvbnI=
+	t=1731358054; cv=none; b=fGapnzKgETeFqOUn0FVaI3/Ho43mIPFavfOi9iUhstdX1jWQgObEm/NfRxoc57rtEOnRg7jw5vROVwzW6Ns81FnhYBafcFXFEWjE5rrkRpQ9I1yHlCyWgMW0LiIZVBDd83W49NZBgRDm4IAkhh3+oMq5NruQZ++7tCXcRbgDoAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358180; c=relaxed/simple;
-	bh=D8s++4EnV2bNYvN5wrQ3WljRShbW0f+sEVQALGUlCUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GtsrAed7Ck4T8zAnic8cXZqaRc2Q+yIjtTwamSAej4rga4iLsz5PYFNO2WubxMlrejL6Bw6H2wGV0UHs9crXI+XNkB8if4RYgnScHHR+HJ7W+Z4BkBQY3p5uKdg5Dxrct5M40L7U8SD8G1GIDm3K6+WblCijaqbF9WNhqnDI2lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AHwC26w0; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731358176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bw/uAtfi/0ahqKcqeR+WxFJl39p2Qshd9Y7/NqgYqQM=;
-	b=AHwC26w0YLZfSoXPU1Nx7tXF+glc9a2JSyh08+xfwrZpt+xV0HJVmVcmgIbQN/ZjAYZUkW
-	tdxIkN4BXVuAbCAgkywWoND65FSoxP1pqGQOr2kJk3UHp7VHJ0FUI1ttLkYDRoluCHxIxf
-	FvNOmxvA8WmH/pV1ZR+fvRIq6UbKros=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-hardening@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sparc: Replace one-element array with flexible array member
-Date: Mon, 11 Nov 2024 21:47:21 +0100
-Message-ID: <20241111204724.165263-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1731358054; c=relaxed/simple;
+	bh=jpWRdSD3w2487IWRKyT0ss5uQYKe+lnpZOydQN/c4+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxNHyetYb3cqMVTIV9T5vVn0BGtHCkkpRb566YbGxrOlWDMCs5iA1BAvTUHDxjrFXvp1pJQsOPdXoU8OaetUPjCOdGLPpGkcYagzl8YPmrVJsNhUv+2LUW+re5IRla1eCanw1HtDEg2f4RbCdEHvfXm+Hs8KQrrhzk0bG9EjNfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4316cce103dso62319065e9.3;
+        Mon, 11 Nov 2024 12:47:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731358051; x=1731962851;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8FJxCy9nRJVtXfCTsU3KXy5JjuHCmavURmafpMWip8Y=;
+        b=sQjUEoVE0GUxV+BNbHVqmuzqInZRjMz/YkrOq2BVbXdt+3eYx3Ux6Sif4EoaaeACmY
+         UmOVKwRj8NHyQQNl4/6uRbUE/w2lWS4KKTcjI5kAMZ3qotIOQjj2RH/Xhw1uAPSqZriK
+         sLGEq5hrdSBzuoosPB6Y9HaHJdmh3V6GScoHoN7rUokKwAIiJpShsDqzZc25nYcRUnxn
+         fO5WCYgDNnfSyyufRXvVtNR+OdEOBa6/3vFAx94uLEyK8bKWOBu0oA6AqTEcGCnhWZ/4
+         ED8zVu1tLQYJ4GsYm2IFNo3T7ZPTV9nANSby1jiEWrW1ZjOk8uyn+AWUvIxHQ5wj+3mi
+         JBDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUObsXlEG1LqTafjow4Xqb6gbtZAtbl4/mZQukAeEU9ShWksm8fG54iJWXraExAwDTfY4y3H6SR/MYT@vger.kernel.org, AJvYcCUjBOkFb5Cba9UiVZPt5RhkC2lKmRcCEdiHFCQVwzhyhEZRG53iRg2A/xfWAiZ7H3ThZW5aAV9UlHIY91Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjSfMW73NyQ/Nl7PSbT6IFwXn+Ftw3U9BwazmehTyLKR3cutb3
+	qzDAPZ3iC3O5TH/uIykzikkpTjtTub/zd0Nzed9bVfa1JgHdzIj0
+X-Google-Smtp-Source: AGHT+IFI2E55Rc3mQG84xqyhIN5Toyfc2naC+drFE80OuMZoOLBtHsrsaeYFSq9y+fXhLMa9XRR2xg==
+X-Received: by 2002:a5d:6c6b:0:b0:382:5af:e996 with SMTP id ffacd0b85a97d-38205afeae9mr2197479f8f.46.1731358051094;
+        Mon, 11 Nov 2024 12:47:31 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed987d33sm13946207f8f.43.2024.11.11.12.47.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 12:47:30 -0800 (PST)
+Date: Tue, 12 Nov 2024 05:47:26 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Jianjun Wang =?utf-8?B?KOeOi+W7uuWGmyk=?= <Jianjun.Wang@mediatek.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"kernel@collabora.com" <kernel@collabora.com>,
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	Ryder Lee <Ryder.Lee@mediatek.com>,
+	"fshao@chromium.org" <fshao@chromium.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>
+Subject: Re: [PATCH v4 1/2] PCI: mediatek-gen3: Add support for setting
+ max-link-speed limit
+Message-ID: <20241111204726.GA2193665@rocinante>
+References: <20241104114935.172908-1-angelogioacchino.delregno@collabora.com>
+ <20241104114935.172908-2-angelogioacchino.delregno@collabora.com>
+ <D5DF0QIO2UZQ.29U999LYCC05M@rocinante>
+ <f8ca0f82-2851-40d9-983b-2a143b44263a@collabora.com>
+ <20241104132512.GC2504924@rocinante>
+ <c5385db34878763ba7df3711a514e4332418cbbd.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5385db34878763ba7df3711a514e4332418cbbd.camel@mediatek.com>
 
-Replace the deprecated one-element array with a modern flexible array
-member in the struct hvtramp_descr.
+Hello,
 
-Additionally, 15 unnecessary bytes were allocated for hdesc, but instead
-of fixing the parentheses in the open-coded version, use struct_size()
-to calculate the correct number of bytes.
+[...]
+> This patch may need more discussion. I have replied in the previous
+> version:
+> 
+> https://lore.kernel.org/linux-pci/7e220693f076c84cc1bc3d91e797580b320b4598.camel@mediatek.com/T/#m1b9f2d26a228712b6b9d02eba11d8063862772c1
+> 
+> Should we wait longer before applying this patch?
 
-Link: https://github.com/KSPP/linux/issues/79
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- Fix the number of mappings after feedback from Gustavo A. R. Silva
-- Link to v1: https://lore.kernel.org/r/20241111200155.164621-3-thorsten.blum@linux.dev/
----
- arch/sparc/include/asm/hvtramp.h | 2 +-
- arch/sparc/kernel/smp_64.c       | 4 +---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+We can drop the series, and it's not yet too lat to do so, if you believe
+this would break devices like the one you tested the changes on.
 
-diff --git a/arch/sparc/include/asm/hvtramp.h b/arch/sparc/include/asm/hvtramp.h
-index 688ea43af0f5..ce2453ea4f2b 100644
---- a/arch/sparc/include/asm/hvtramp.h
-+++ b/arch/sparc/include/asm/hvtramp.h
-@@ -17,7 +17,7 @@ struct hvtramp_descr {
- 	__u64			fault_info_va;
- 	__u64			fault_info_pa;
- 	__u64			thread_reg;
--	struct hvtramp_mapping	maps[1];
-+	struct hvtramp_mapping	maps[];
- };
- 
- void hv_cpu_startup(unsigned long hvdescr_pa);
-diff --git a/arch/sparc/kernel/smp_64.c b/arch/sparc/kernel/smp_64.c
-index e40c395db202..24d980220bf1 100644
---- a/arch/sparc/kernel/smp_64.c
-+++ b/arch/sparc/kernel/smp_64.c
-@@ -297,9 +297,7 @@ static void ldom_startcpu_cpuid(unsigned int cpu, unsigned long thread_reg,
- 	unsigned long hv_err;
- 	int i;
- 
--	hdesc = kzalloc(sizeof(*hdesc) +
--			(sizeof(struct hvtramp_mapping) *
--			 num_kernel_image_mappings - 1),
-+	hdesc = kzalloc(struct_size(hdesc, maps, num_kernel_image_mappings),
- 			GFP_KERNEL);
- 	if (!hdesc) {
- 		printk(KERN_ERR "ldom_startcpu_cpuid: Cannot allocate "
--- 
-2.47.0
+> Do you have any suggestions? I can provide more logs or test results if
+> needed. Sorry for the inconvenience.
 
+AngeloGioacchino, have you seen the reply (see the link above) from Jianjun?
+
+	Krzysztof
 
