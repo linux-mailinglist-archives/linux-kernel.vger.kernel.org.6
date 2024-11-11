@@ -1,92 +1,77 @@
-Return-Path: <linux-kernel+bounces-403903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C69C3C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:54:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1D49C3C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E223B228BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:54:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D461F2100A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DD915ECD7;
-	Mon, 11 Nov 2024 10:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A4A175D54;
+	Mon, 11 Nov 2024 10:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2CXu645"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dFWlgv4y"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7639C1474B9;
-	Mon, 11 Nov 2024 10:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA8B1474B9
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322433; cv=none; b=gNcByNnFeMBjxJpsw9RedAH9eW0ZlBUQTFpiWwmbvGJPldy5qSV4JdsiwPI24hs5aVA6ZlrN0SBDvu+TrQogo7q3HzCivS/L5bT+C/FlQntNkN1ufSE8P5rvj5wjjdxZ0M1B2GkOU0dlxMGrVApYMVEPkdip8N39A1AYF2FiDrM=
+	t=1731322456; cv=none; b=aqHO9uY+4bYrkY44hR9CMyRErKN8ymk75ViuRZIdCEWOajUBmWv+R5CHkqQzwV8s+1ikAe9QPMuWc8nfVgI2tLFo90soZ2a6kgiSpsn17/OJyVOy3TlTQvvLrWF+3ghYf6NCZ87eK8mVMQ/hYWtkIe3bMxzlD/OaDqM/clBlUk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322433; c=relaxed/simple;
-	bh=843lH2nksBH9ZPKjXzoI7/eb/Yf7G60TjC9UvpvGhrA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e6Rn7NTRHnq30XdEA52TZ7Gsu2BDxczdrh2IKQBSe8xPGmCdgS+Mb7Cs6mM38ylrpAllRVMW1tgHI1m2tV1oJIB9c6CHPKlH984QGuf7hi9CjP6R4MHuhlEbPQ/GPKtj5VbaxKXD0L32Q/G4SEMETHVAJ0+RHmeH6wSg5PZGZ7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2CXu645; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e8607c2aso4867567e87.3;
-        Mon, 11 Nov 2024 02:53:51 -0800 (PST)
+	s=arc-20240116; t=1731322456; c=relaxed/simple;
+	bh=OowcFAz5Dwz/C1seGeNFxtRG1mxbi5v5LtbKYioHDjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kHFWFVVIsJ8qpd3l96h0EKFO4R6c2Deq1bp8LHdj+QMEWiBQBJRr0bOrFCc5NraMEGSGnWheuSPgVsi6QNu6KIROZbFMACFHODB3FuuPw/e0bO0GkOoRgFDVqf6d4f/RY0rdaELKXTZz2PCI6kJ9VKwnph17EhM3Gpd37/TUA3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dFWlgv4y; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so177317066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:54:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731322429; x=1731927229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DSf4fVS1djz2Q0u9Lv07J43WmD0mvpB6AA34eLsgv/8=;
-        b=m2CXu645rVZ/EJ/tftZYmSp7gljychVfbqiFZGtAHP+URi2YIL2HLRkE9TPHE7LOj5
-         oBcQest0WSBQLE9gsxGWRTq7noucdXWGlLNWdi7ULeZX2t6C8R6pYf/j+8pa5rOeoh7G
-         QGs50BtV/3otIJNOxX5+ku0m1hSaVdfxiBQ5LosjE7PXesogpmbK4BvFQ0H3YbAmFo+h
-         VBG0dIOLi7Dv2dkxjO2nZnbg6hdGksxrpQuoYueC3wpUEpZOV7hOgE4PSb8V9hPxhn5y
-         AS7ugmmnJv9ViFu+7ykZcEqfTlbJiSJGd9U93vECoBPiDi9miPRGphbAAaH5DLCeGmAR
-         WP7g==
+        d=linaro.org; s=google; t=1731322453; x=1731927253; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VQneMUOMjSH+Cp2gVnrl7p/sshIVbnp503eWg1V6QLc=;
+        b=dFWlgv4y5jEjfnjNP5Rxf29H+bSS1HT7f5qxixeRk/Pf0OL0idbXp/folesxxMZxGz
+         P7BwQpdNvxTjeLg6qURBwHJ1bqb52ywYZIy4vZSaDRoWcfGllCMDiI2/35YawF9CmOSM
+         sWR9yakxxUra4El48sVqaNhO4Ut7X0yev+aQK+u6ho5HlVEOti9ndAgYY/cyl+1UktvJ
+         asuRT6sCFBui7ExBvOwyBeAWM0O5/+exEl/Dz5v9sb99WB+NcAIzBRNMJdxnm7OTfyKe
+         HH7xbZ3EMiv6PjMz769Pg4j4EAbNe5XTNv6ESo/og7iBdYWtAELOsijGlELMfacT2QXa
+         FFGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322429; x=1731927229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DSf4fVS1djz2Q0u9Lv07J43WmD0mvpB6AA34eLsgv/8=;
-        b=E4hNldESmSHvqN9AvGYlfszmIj/dat5BlQljaKjsiwRQrwSPuaZvCziareRcj3/0Qb
-         X9TjZWW3IZitP5BEcYSOv7gp0mYL/S8UD6B+nrpzQEF7oWHhwN0+5UBVzPSq6PvgwBjn
-         ughbQjc+ydv6Qz0AMKXGNer+SpeINHG1IO/BQrfELVZb++/kOYYkZdl6b0CLbxyn6P8k
-         xSBW7sHkWD27LFEIN5vze3UpHnSxWjeDetoUnDTUnqELVEKZG7edr2qG+qqc86H/TYwV
-         1pL24Ea9YRRDt/TDKYQOHnYLDkWmMnJOwSRhfuNP/MPhzI3rTkOk+htidodSYuewM0kj
-         HGXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnCgAc7juT5nftF1dYN/UqaPz0BtTiOrWgPIK60hsCunnvUBpRjYPP0UUYNjh/4DhzBcsU@vger.kernel.org, AJvYcCWioz0+fWzg03Npu/h48o5xck9IgYLgy1iXhYVaHFcnkRQac6xbWybF313XnFQ6DECeVQk6KrMC2YDa/H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHf0mYKb2H0fDlOzumClxrCPM9FUfMRMOuklPX4q9dnRF7eWga
-	AZuko6+mQg7fT3Mkr4k3SwdjlFhdZyS2UkD+JdW0Z7qVUEpL0Ev5
-X-Google-Smtp-Source: AGHT+IGcUvXmPPxitucFWfX6c3npi5xquT33/uRqlCJQp7f1VQ5K2u9judneEGjIFJ5JuMKAJhxxQQ==
-X-Received: by 2002:a05:6512:308a:b0:539:fde9:4bbe with SMTP id 2adb3069b0e04-53d862bd55dmr4704725e87.20.1731322429101;
-        Mon, 11 Nov 2024 02:53:49 -0800 (PST)
-Received: from pc636 (host-95-203-27-13.mobileonline.telia.com. [95.203.27.13])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d82685f7csm1515516e87.93.2024.11.11.02.53.47
+        d=1e100.net; s=20230601; t=1731322453; x=1731927253;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VQneMUOMjSH+Cp2gVnrl7p/sshIVbnp503eWg1V6QLc=;
+        b=Hzy1SkdOkX46WaCeV6bUSZfR6j+E81DCUEvPvhSm8UElg0W43dtzYeT2yVQ5KVQVS6
+         Gjt2P2Y06iFgh2FVPgjgQX8eBSQk6NNoEIG81/2MM/SVH3Q0KyDPIHjDs+KyKXRplJXw
+         z7pSK8Ht7qGVMGQKd4HQn9NXmo5l9Yhd/4Om+dFEVr7GSqGZcpIXkto0PJY1Dcb43Qil
+         uub5CXtQdyb/zgg1plXIcgfCXpbf6I3PyxF9J02/T3LPYXz7C+232Um1Fj56xQ6yMpaS
+         wRcuhJ6QI/HOAS2hv0UR2g54pU0yrxAa/AaPeloJKjgODpEwMD7r0OydPnIp1tKE61UF
+         3GQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgywCTZi33SLPsI0AVzOElSVZS4bpedeqHtlF/vM/axoaNBnWqAcVmkhZ/YPo2xfbLsY0vglD0fzHA4rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLKzkmi+yD2xjt22PDkTv1nnMOA9xrszczd5lQflj7Gv6aca5h
+	XiN57EUhR/Vp8sD3mfUXsaehGdtbpdfi86T1tfF5SeKXlqGQg6SstmK7/fm2oN4=
+X-Google-Smtp-Source: AGHT+IGGNGfUJKhCO6MzCsxlQnH5pxc4VNoNzngtjkm0QZ2t1Vi54hvYQhkfEkzTtVc4Yp3e4sQ5dQ==
+X-Received: by 2002:a17:907:1c11:b0:a9a:26a5:d508 with SMTP id a640c23a62f3a-a9eefebd194mr1111771566b.9.1731322452841;
+        Mon, 11 Nov 2024 02:54:12 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0abe369sm575830366b.83.2024.11.11.02.54.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:53:48 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 11 Nov 2024 11:53:45 +0100
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH 5/6] rcuscale: Do a proper cleanup if kfree_scale_init()
- fails
-Message-ID: <ZzHiOQCIwt_hyFUQ@pc636>
-References: <20241106160223.42119-1-frederic@kernel.org>
- <20241106160223.42119-6-frederic@kernel.org>
- <f4c8fcaf-185c-47f8-b926-5bc2429103a4@amd.com>
+        Mon, 11 Nov 2024 02:54:12 -0800 (PST)
+Date: Mon, 11 Nov 2024 13:54:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
+Message-ID: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,36 +80,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f4c8fcaf-185c-47f8-b926-5bc2429103a4@amd.com>
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Nov 11, 2024 at 03:24:38PM +0530, Neeraj Upadhyay wrote:
-> 
-> > diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-> > index 6d37596deb1f..de7d511e6be4 100644
-> > --- a/kernel/rcu/rcuscale.c
-> > +++ b/kernel/rcu/rcuscale.c
-> > @@ -890,13 +890,13 @@ kfree_scale_init(void)
-> >  		if (WARN_ON_ONCE(jiffies_at_lazy_cb - jif_start < 2 * HZ)) {
-> >  			pr_alert("ERROR: call_rcu() CBs are not being lazy as expected!\n");
-> >  			WARN_ON_ONCE(1);
-> > -			return -1;
-> > +			goto unwind;
-> 
-> Do we need to set firsterr = -1 here before "goto unwind"? Otherwise, 0
-> is returned from kfree_scale_init().
-> 
-> >  		}
-> >  
-> >  		if (WARN_ON_ONCE(jiffies_at_lazy_cb - jif_start > 3 * HZ)) {
-> >  			pr_alert("ERROR: call_rcu() CBs are being too lazy!\n");
-> >  			WARN_ON_ONCE(1);
-> > -			return -1;
-> > +			goto unwind;
-> 
-> Ditto
-> 
-Let me check it!
+Kuan-Wei Chiu pointed out that the kernel doc for kunit_zalloc_skb()
+needs to include the @gfp information.  Add it.
 
---
-Uladzislau Rezki
+Reported-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Closes: https://lore.kernel.org/all/Zy+VIXDPuU613fFd@visitorckw-System-Product-Name/
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ include/kunit/skbuff.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
+index 345e1e8f0312..07784694357c 100644
+--- a/include/kunit/skbuff.h
++++ b/include/kunit/skbuff.h
+@@ -20,8 +20,9 @@ static void kunit_action_kfree_skb(void *p)
+  * kunit_zalloc_skb() - Allocate and initialize a resource managed skb.
+  * @test: The test case to which the skb belongs
+  * @len: size to allocate
++ * @gfp: allocation flags
+  *
+- * Allocate a new struct sk_buff with GFP_KERNEL, zero fill the give length
++ * Allocate a new struct sk_buff with gfp flags, zero fill the given length
+  * and add it as a resource to the kunit test for automatic cleanup.
+  *
+  * Returns: newly allocated SKB, or %NULL on error
+-- 
+2.45.2
+
 
