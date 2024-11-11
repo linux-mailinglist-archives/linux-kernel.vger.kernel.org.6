@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-404575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8929E9C4571
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:00:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E109C4546
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CDD1B2820E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:50:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF72D282B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279C61BDA9B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3781A1BDAA1;
 	Mon, 11 Nov 2024 18:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icJJ5Yoo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0EqHnA/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841961BD9F5;
-	Mon, 11 Nov 2024 18:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939331BD9EC;
+	Mon, 11 Nov 2024 18:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731350900; cv=none; b=q4gbDa7rb9/eR0AXieRupvtnk5LOXZsTuEdyG5hKFJWQOIjnybkNpjSbfN8oKnmoJuUiWjRbyONa/0t/BudIK6xxayBbXH75DfaMGb8so9NvQyR2cNX+OLlKQHrffA61UF1lIy5YTipxRfTXVo76BLECuOK4p6tqnS8ffR3C9Ug=
+	t=1731350900; cv=none; b=d5NkkyJdq3fvgaego2ij+JVXXUSBnEX+DHpjGVCfCHIB63AgJ30xLh5WklnSuKHSupR9i/m30933TSkE3vAkFCN9c1nuYR/c1uY/f5ervwhkIBhnD6u2GRtSwURUU2NBn5uteokYRJRb/CLudZadU13XCPL4JlS3wJzkIATeTDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731350900; c=relaxed/simple;
-	bh=T7siN2OD1nhjgEqSbG9tSYiPQ8u74NKBqDYBKUBHj04=;
+	bh=2Yw2lyGhOM67zJI4OO0X7e4T+eCJzeW7+KHB/QyTw5o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JLf/0dXdeimd7Or92mB9noeUF5Wbws9PittSCIiHmjfBSRVX+sQdgVuMQUru/vYEzs5S4Jt0ZyYWlzJzf1xH60iUuXOjUXYXAbPQjhVoon3JMmsoJmlBTEp2y7gqFVovNOb0g+ux9876Yo8Ai4Hhvscz1ag7NA5LLo8/ArIe0wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icJJ5Yoo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FA5C4CEDA;
-	Mon, 11 Nov 2024 18:48:17 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=GdxELsNsi1t+YFowyGHRopT2cx66LLKzj5bKypPlswYYiKgPdiWRopTjBjglj4O/pJGPxhqmbHB0E7CPShzehHWkdyVVnn8U040NW+VEnnEq4+Pwc2R02Ou7j85Zb5UOAyNAHXCZv24PYIMA0wCwurV9HWixVPGRunk/Az76b1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0EqHnA/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6457AC4CED4;
+	Mon, 11 Nov 2024 18:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731350899;
-	bh=T7siN2OD1nhjgEqSbG9tSYiPQ8u74NKBqDYBKUBHj04=;
+	s=k20201202; t=1731350900;
+	bh=2Yw2lyGhOM67zJI4OO0X7e4T+eCJzeW7+KHB/QyTw5o=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=icJJ5YoopY5gPUJ4qeGqYOBz5M2FFEe+QbJLSY0k5L9QbSCQgwtC5YD12R2WDvDzc
-	 gesMFonQYpjsq9ic2BfrfCMY8aEXd0GW1aW304bSeH25/TO1PBUinXI3r13Lmm3icj
-	 hzsUzb2uQDi2lDwDsG2X6ILDM1QR9bpvTq8NH1ec+luu34PrODSY8XbaAGnpv3rMOt
-	 WTXHb/vijX7Davj/RoceLK6hzA4CDJ3+nroG/kpwRVoEJasZcAX3hrKnMkEIGt8jYT
-	 tq2L5l1PXGkjQBX9z42agOWV8D9fwj3DfldF7IgvpkfWQZB32m6t0Of6b2zmMnZdPJ
-	 gbSk4D1I+kzZw==
+	b=Y0EqHnA/Cse72QjgsgkE7bxdrz4XkTdlfu1iraq32nCOwT/k1XjV22qneUCsfth5B
+	 fe+kCi+Gy7GxRsLBYQ0mztiwnRGaYfq4u8E04xyH0oY3pqFvoLZTMYgesK9AFiYFCW
+	 TrHrt52j7hZyfgOegGZ/mKWcHhjOWt76rINdIXON8LgEeWuNOY5aYZ2aRAMoAdwuNj
+	 dE2Z75iliHm2RDKzNnrnFSyFljPAioixp+Ol60GFbs3m7kybJ75/IL5/1Aopt0yXtG
+	 35R43qvqcnaTOwpiKQwIMpVc7rukevmPlSymGzlig+FavJxw0PUmRQu2a7Z1piLMuk
+	 uTucB9rrGxQhQ==
 From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Nov 2024 18:47:41 +0000
-Subject: [PATCH 09/17] ASoC: max98396: Use maple tree register cache
+Date: Mon, 11 Nov 2024 18:47:42 +0000
+Subject: [PATCH 10/17] ASoC: max98504: Use maple tree register cache
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,22 +51,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-asoc-maxim-maple-v1-9-baa315dc546b@kernel.org>
+Message-Id: <20241111-asoc-maxim-maple-v1-10-baa315dc546b@kernel.org>
 References: <20241111-asoc-maxim-maple-v1-0-baa315dc546b@kernel.org>
 In-Reply-To: <20241111-asoc-maxim-maple-v1-0-baa315dc546b@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Peter Rosin <peda@axentia.se>
 Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1946; i=broonie@kernel.org;
- h=from:subject:message-id; bh=T7siN2OD1nhjgEqSbG9tSYiPQ8u74NKBqDYBKUBHj04=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnMlFeUtsLNdob01i/guV+udMz7ks1x2BIAM9x0
- eTf/KTvu12JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZzJRXgAKCRAk1otyXVSH
- 0FVhB/0Q06SsY5TFdXTF/rIoZQ+p2C0g1bbYJTlcEl0N2g31sxrBPv4UYyTp2JbCPPXglneTDZM
- 66XnQ73hFBnAwMMvVPuwe9Xr6knkXUWaE9hk06wGbrQ8IxN4o64uYZJLgZ+eudhbSoB74TcM1L0
- oO+hVFnhdF5SlcVJDQ+FMOodsD5Q1479fBbRD6YhVOzUo6/JxbkveMdt+MUNsFuwLasJTjqPqFC
- FjSeNiggCNCw54Em1u29H8vZxtveKi+F9uqiK6NtqPJWiK8u+apwBDv5P1INg2aDzyU9wPEpAAf
- 2q3syKIZ/oHjQQYs+KP3RwVmItIaL9+wdn+hO6b7jfuEIKOY
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1047; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=2Yw2lyGhOM67zJI4OO0X7e4T+eCJzeW7+KHB/QyTw5o=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnMlFfZQv8n0PwZxZxDFnoaGbqbu1sN71fgjDF0
+ x1sgnYydNSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZzJRXwAKCRAk1otyXVSH
+ 0G5aB/9hSeUX2b9G33sQzX11HqmcBTeUGhoSoCGGZm+DRmG20jGSA9SWXvpbmwgOfM2gblYhNIY
+ rVx/W+fY+5ztO5N9+DmalkD1d8sKQsUj2Al6X0J2q4pPIP6GJZNZlBDo/SRKvHTH4YgbjtHJjMT
+ crLn2CNZdCu+ibxmWboOJvoSWJWgSpKjpfTD4r5MET/1Vg1qyZjOzmwewXKblTLzis8v5p42hqu
+ +Rhk/hNfJsE682/aKMbprYTNExiYDdgo+z2nqz/1XFOYxoD6nsGWz5v2VnJQ5C2QzCFC21KMRCq
+ 8dmRXqwVpuT6FEF0GI/Iazwf/zLH1qmZwLr6oRQhXzFw8bnH
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
@@ -77,45 +77,22 @@ then maple is a better choice for most devices. Switch to it.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/max98396.c | 4 ++--
- sound/soc/codecs/max9850.c  | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/codecs/max98504.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/max98396.c b/sound/soc/codecs/max98396.c
-index e52bb2266fa16792ad5dba79c515b5900ade4b2a..345e04da6d3782b296768d836eb4717d1ea39f7c 100644
---- a/sound/soc/codecs/max98396.c
-+++ b/sound/soc/codecs/max98396.c
-@@ -1656,7 +1656,7 @@ static const struct regmap_config max98396_regmap = {
- 	.num_reg_defaults = ARRAY_SIZE(max98396_reg),
- 	.readable_reg = max98396_readable_register,
- 	.volatile_reg = max98396_volatile_reg,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
+diff --git a/sound/soc/codecs/max98504.c b/sound/soc/codecs/max98504.c
+index 6b6a7ece4cecc3d114da276faf859c8176955300..677d0894e058c5e84f3fc591fb8bdc02eb8d5633 100644
+--- a/sound/soc/codecs/max98504.c
++++ b/sound/soc/codecs/max98504.c
+@@ -304,7 +304,7 @@ static const struct regmap_config max98504_regmap = {
+ 	.num_reg_defaults	= ARRAY_SIZE(max98504_reg_defaults),
+ 	.volatile_reg		= max98504_volatile_register,
+ 	.readable_reg		= max98504_readable_register,
+-	.cache_type		= REGCACHE_RBTREE,
++	.cache_type		= REGCACHE_MAPLE,
  };
  
- static const struct regmap_config max98397_regmap = {
-@@ -1667,7 +1667,7 @@ static const struct regmap_config max98397_regmap = {
- 	.num_reg_defaults = ARRAY_SIZE(max98397_reg),
- 	.readable_reg = max98397_readable_register,
- 	.volatile_reg = max98397_volatile_reg,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- };
- 
- static void max98396_read_device_property(struct device *dev,
-diff --git a/sound/soc/codecs/max9850.c b/sound/soc/codecs/max9850.c
-index c395132689b4ef2e0bca6d1e9a2f3da4990b8600..9ac0b045bc619cd9d55a8083e88a4c2b78fd8cea 100644
---- a/sound/soc/codecs/max9850.c
-+++ b/sound/soc/codecs/max9850.c
-@@ -46,7 +46,7 @@ static const struct regmap_config max9850_regmap = {
- 
- 	.max_register = MAX9850_DIGITAL_AUDIO,
- 	.volatile_reg = max9850_volatile_register,
--	.cache_type = REGCACHE_RBTREE,
-+	.cache_type = REGCACHE_MAPLE,
- };
- 
- static const DECLARE_TLV_DB_RANGE(max9850_tlv,
+ static int max98504_i2c_probe(struct i2c_client *client)
 
 -- 
 2.39.5
