@@ -1,313 +1,148 @@
-Return-Path: <linux-kernel+bounces-403720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4839C3996
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:21:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019149C399A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:22:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40E991F2121B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3815A1C2061F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FD315D5B6;
-	Mon, 11 Nov 2024 08:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B215DBAE;
+	Mon, 11 Nov 2024 08:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RRwprxxP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FRj5AnFh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2113E02E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55B13E02E;
+	Mon, 11 Nov 2024 08:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731313264; cv=none; b=EmtQGf85PFnf9HFsaTuBUOpqcjIfw7yUXI4Vaxh8M9nPZwKU5z0l1hN3+PP/sUd+YWV8WcpM+b/cX/Wnf8bjS2KNr3/I6Tsu7csil1P1UHKC0oX+9T1cvDrVaIb2j61GXz8H8gcAANucvhXeg5vuNWzUulIYCPxIA7qB4atemog=
+	t=1731313349; cv=none; b=gw42BvfTvmUKPRDIl44mQfAbs5Gi+AhM8FIUVHq7C2bTns59Lm/EcfJ++vOiRqUrL/d6u86EKLlMsxiWbU0lx4lgOHCXLtUsg36I+nUifMhsGuWtCXI5FBoTji3ie+1BxkYUpTUtw+9wazJjRSpV3krtwk7nukThjJRBAlg9cBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731313264; c=relaxed/simple;
-	bh=qg0QjFI1zdVvmMtIBHoub3Tgi2sonevocVqmmOJtMh0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+zAvwV7rHdOUWq4IOkZPdHKLPl+u1Vo6NP4rPeZUpnRTTncYA+BzSlM0w2CIcZ46as0YtMpQ31kCbaS1jxfRC1SD3COHkUxENHF1Q8Km/KGhGXmaft2EZWcqe0EYJGdrJPMeYCEEL1wK/I1a+C42Gjb5ZF6ef+O/3ujtUJggB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RRwprxxP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731313260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=731nUNUH56RkNe1YrJYqN6ub2oea0yPftrA68rs2+yI=;
-	b=RRwprxxPAxfnJBRDE+HEGa7UknB7JtGh3jitzwU+FK2+WCvlQYAddGLIsqcZ4e8xV31w5g
-	ZHYKGX7E9bWsq7ugO3xLX5KYrp77ZRdPhaFyp93QkHRORrfiDZqqthk5sPow/RN+7Pm+hl
-	hu13+bjU+fjZMd098LP/i9utetFBj8k=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-182-7xn4yeNAOpC6SNgqf230zw-1; Mon, 11 Nov 2024 03:20:59 -0500
-X-MC-Unique: 7xn4yeNAOpC6SNgqf230zw-1
-X-Mimecast-MFC-AGG-ID: 7xn4yeNAOpC6SNgqf230zw
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-718071a2128so939544a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 00:20:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731313258; x=1731918058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=731nUNUH56RkNe1YrJYqN6ub2oea0yPftrA68rs2+yI=;
-        b=fGWjttxSx2i/f72kgXz0OOCtO5yUwM6tFZ/and6SSfP1f/AhJuNZ7vQfdsOd3u8hMP
-         B1VcwWPZqgS8gejvHy3pK6BPQyLUDVGXjDo0hhfCNTm/gqwsw8Fc/JIUm1azX2bKtknw
-         aaaywrOC64ZKhfYIT46MFUbG/qcblWw6HulGyuqUNB5r4TCtV2/u1WYMDEhtS0qAXfbr
-         P7j5qxSSYnMby/9WT8ZfAhPRVbNCI/ayasKEt4ZoBPn2t7AsHGjr49sjEozkJN0hZFLB
-         fCqQPkYRq8E4yafIDSCK3A4d2kARYb6cWFLMwT2Jo3Vuq8+c5xfeWqjZII4LMtxmnNWI
-         +EbA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/T4lVsdtXMjktizPvvtzkYlUTGV1ZHiQiOj5w4VuA43SGyiF+UTR+WKwns5HS6z/gdHA+kK7gRYPhzH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrluXmonlDc4N5rioPQiK8SQ7AjTjn/vO6cVvsLo8Um0j/5ckR
-	+hvUfkrtsbJUK3dv0ziwdJzndMvwkU4ELKFd2dAOwsIka6VkZxQrRHDwEAle2XIM8VSy0Z70J7o
-	+11Y/cCz+o8UiBDm4kwPIS4VU8u2NxjKQrpfmFph/NR6Sr3o4Z52kOEW+J86AB+QGvVrpYYKiU9
-	79onCAgRye+OHkCTSBHItn8XvNWafE0drF3XYn
-X-Received: by 2002:a05:6808:159b:b0:3e7:5b5f:b287 with SMTP id 5614622812f47-3e794627395mr2705876b6e.2.1731313257979;
-        Mon, 11 Nov 2024 00:20:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHnEFp6/9FBZIbouIExDE3KA6MzIaSOVyXssNYKMt6oqF3c+m/uBwhrK59Jz1TWkrqwgPbdS/q5TsC6YgHvtmU=
-X-Received: by 2002:a05:6808:159b:b0:3e7:5b5f:b287 with SMTP id
- 5614622812f47-3e794627395mr2705872b6e.2.1731313257637; Mon, 11 Nov 2024
- 00:20:57 -0800 (PST)
+	s=arc-20240116; t=1731313349; c=relaxed/simple;
+	bh=ZeS5FDAy33Y1fgENv3rGXF2N71PNFOa6/M3tla6PgPc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTdGWo8ky/+Q729cK0Vlw8ugHempf3lE8dmsuC8rwKQCJYi+//MNZ7iAxTOsCDgi44cbbGkwR/KBGa/BU/FGV5f6F8Nw53XXOQTwnRQufwklPRM9J0Rqy2ojeI6XSsvzqBhquBXcB3sNj2vMWDr7EhrkvHSq6zGbz/Nan/6/Yuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FRj5AnFh; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731313348; x=1762849348;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZeS5FDAy33Y1fgENv3rGXF2N71PNFOa6/M3tla6PgPc=;
+  b=FRj5AnFhn5MV6UbELJbPyoRrL7FIBElgEYy55vf3qvraosVSwTYZAGCn
+   ePLj21+uP7fGgjHSR6NSZaw8lmp+OvifnaPuB2ibzyhrvJk82CxpZuAyf
+   /ZIFMaDa1AmnH9Qi8kSq59LUZgiIXvHWWuRkeNDbDvrC3gxc+DTj/1JDs
+   syhzSGxk5ROYw3g7/KvHfH6o4GI0LU71IZES69gL9BYfCRVQiuQsgZkuI
+   1iaRZjK1PmGhcQQziB5rGVX2J6fH3sl+hiJYzJ3YzvLBFHKnuySpHW8hW
+   cQrC15amr+jLxsR6rHv1ensREm9h0LOxw9IEmweu1npMWEz0qP0MekGH6
+   g==;
+X-CSE-ConnectionGUID: Gen74E88ReiG3EQnFi8HuA==
+X-CSE-MsgGUID: fphF9OllQfiGZFdbmhFXFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="41725082"
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="41725082"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 00:22:27 -0800
+X-CSE-ConnectionGUID: UywAEPtrQzepja8ojdagUw==
+X-CSE-MsgGUID: OMy91UvUSqW18zPoeJ6qSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="91889528"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 11 Nov 2024 00:22:26 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0C559193; Mon, 11 Nov 2024 10:22:23 +0200 (EET)
+Date: Mon, 11 Nov 2024 10:22:23 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
+	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
+	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
+	Gil Fine <gil.fine@linux.intel.com>
+Subject: Re: USB-C DisplayPort display failing to stay active with Intel
+ Barlow Ridge USB4 controller, power-management related issue?
+Message-ID: <20241111082223.GP275077@black.fi.intel.com>
+References: <20241023174413.451710ea@kf-ir16>
+ <20241024154341.GK275077@black.fi.intel.com>
+ <20241031095542.587e8aa6@kf-ir16>
+ <20241101072155.GW275077@black.fi.intel.com>
+ <20241101181334.25724aff@kf-ir16>
+ <20241104060159.GY275077@black.fi.intel.com>
+ <20241105141627.5e5199b3@kf-ir16>
+ <20241106060635.GJ275077@black.fi.intel.com>
+ <20241106110134.1871a7f6@kf-ir16>
+ <20241107094543.GL275077@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
- <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
- <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com> <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
-In-Reply-To: <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Mon, 11 Nov 2024 09:20:46 +0100
-Message-ID: <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
-Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
-	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
-	Masahisa Kojima <kojima.masahisa@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241107094543.GL275077@black.fi.intel.com>
 
-Hi Ilias,
+Hi,
 
-On Sat, Nov 9, 2024 at 1:31=E2=80=AFAM Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@redhat.com>=
- wrote:
-> >
-> > Hi Ilias,
-> >
-> > Thanks for your quick answer.
-> >
-> > On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
-> > <ilias.apalodimas@linaro.org> wrote:
-> > >
-> > > Hi Enric,
-> > >
-> > > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@redhat.=
-com> wrote:
-> > > >
-> > > > Hi all,
-> > > >
-> > > > I'm looking for any advice/clue to help me to progress on enabling
-> > > > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
-> > > >
-> > > > I basically followed the steps described in u-boot documentation [1=
-],
-> > > > I enabled some debugging messages but I think I'm at the point that
-> > > > the problem might be in the StandaloneMM application, and I'm not s=
-ure
-> > > > how to debug it.
-> > > >
-> > > > What I see is that when I run the tee-supplicant daemon, it looks l=
-ike
-> > > > the tee_client_open_session() call loops forever and the tee_stmm_e=
-fi
-> > > > driver never ends to probe.
-> > > >
-> > > > With debug enabled I got the following messages.
-> > >
-> > > I assume reading and storing variables already works in U-Boot right?
-> > >
-> >
-> > Reading and storing variables to the RPMB partition in U-Boot works,
-> > that's using the mmc rpmb command from u-boot,
->
-> Are you talking about env variables? Perhaps you store them in the mmc
-> and not the RPMB partition?
-> There's some information here [0]
->
-> > But setting
-> > CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
-> > (although I'm not able to debug at u-boot level) What I see is that
-> > u-boot gets stuck
-> > when bootefi bootmgr is invoqued. I can also reproduce the issue with
-> > bootefi hello.
-> >
-> > =3D> run bootcmd
-> >   Scanning for bootflows in all bootdevs
-> >   Seq  Method       State   Uclass    Part  Name                      F=
-ilename
-> >   ---  -----------  ------  --------  ----  ------------------------
-> > ----------------
-> >   Scanning global bootmeth 'efi_mgr':
-> > ( gets stuck here)
-> >
-> > or
-> >
-> > =3D> bootefi hello
-> > (gets stuck)
-> >
-> > To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and bypass
-> > the error and go to Linux. My understanding is that
-> > CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables at
-> > u-boot level but OPTEE is running the StandaloneMM service. Am I
-> > right?
->
-> U-Boot has two ways of storing EFI variables [0] . You can either
-> store them in a file or the RPMB partition. The correct thing to do,
-> since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TEE. I am
-> not sure why the hand happens, but one thing we can improve is figure
-> out why it hangs and print a useful message.
-> There are a number of reasons that might lead to a failure. Is the
-> RPMB key programmed on your board? Have a look at this [1] in case it
-> helps
->
-> >
-> > > >
-> > > > # tee-supplicant
-> > > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted servi=
-ce
-> > > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
-> > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-> > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
->
-> If I had to guess, OP-TEE doesn't store the variables in the RPMB, can
-> you compile it with a bit more debugging enabled?
->
+On Thu, Nov 07, 2024 at 11:45:44AM +0200, Mika Westerberg wrote:
+> Hi,
+> 
+> On Wed, Nov 06, 2024 at 11:01:34AM -0600, Aaron Rainbolt wrote:
+> > > Unfortunately that does not help here. I need to figure something else
+> > > how to detect the redrive case with this firmware but first, does this
+> > > work in Windows? I mean if you install Windows to this same system
+> > > does it work as expected?
+> > 
+> > It does work as expected under Windows 11, with one major caveat. We
+> > used a Windows 11 ISO with a setup.exe created on April 05 2023 for
+> > installing the test system, and after initial installation it behaved
+> > exactly the same way as Linux behaves now (displays going blank soon
+> > after being plugged in). However, after installing all available
+> > Windows updates, the issue resolved, and the displays worked exactly as
+> > intended (the screens are recognized when attached and do not end up
+> > disconnecting after a timeout).
+> > 
+> > Would it be helpful to test on Windows 11, and provide a report and
+> > system logs?
+> 
+> Unfortunately, I don't know anything about Windows ;-)
+> 
+> However, I asked our Thunderbolt hardware/firmware team about this, if
+> they have any idea how it was solved in Windows side. Might take a
+> couple of days though.
 
-Here is a log with CFG_TEE_CORE_LOG_LEVEL=3D4, CFG_TEE_CORE_DEBUG=3Dy and
-CFG_TEE_TA_LOG_LEVEL=3D4
+While waiting for this, I wonder if you guys could do one more
+experiment? I would like to get the traces what is happening there
+(hoping something pops out there). Following steps:
 
-https://paste.centos.org/view/eed83a5b
+  1. Download and install tbtools [1].
+  2. Build and install the kernel with my "redrive" patch.
+  3. Boot the system up, nothing connected.
+  4. Wait until the Barlow Ridge is in runtime suspend (so wait for
+     ~30s or so)
+  5. Enable tracing:
 
-At the beginning of the log I see
+    # tbtrace enable
 
-D/TC:0 0 check_ta_store:449 TA store: "REE"
+  6. Plug in USB-C monitor to the USB-C port of the Barlow Ridge. Do not
+     run 'lspci -k'. Expectation here is that there is no picture on
+     the monitor (in other words the issue reproduces).
 
-Which looks wrong to me as I built optee with:
-  CFG_REE_FS=3Dn
-  CFG_RPMB_FS_DEV_ID=3D0
-  CFG_RPMB_FS=3Dy
+  7. Stop tracing and take full dump:
 
-I'll try to add some more prints to verify if REE is used as a store
-system, I assume this should say something about RPMB. Am I right with
-this?
+    # tbtrace disable
+    # tbtrace dump -vv > trace.out
 
-> > > >
-> > > > And tracing the function calls gives me that:
-> > > >
-> > > >       tee_stmm_efi_probe() {
-> > > >              tee_client_open_context() {
-> > > >                optee_get_version() {
-> > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                } (ret=3D0xd)
-> > > >                tee_ctx_match(); (ret=3D0x1)
-> > > >                optee_smc_open() {
-> > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                  optee_open() {
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                  } (ret=3D0x0)
-> > > >                } (ret=3D0x0)
-> > > >              } (ret=3D0xffff000004e71c80)
-> > > >              tee_client_open_session() {
-> > > >                optee_open_session() {
-> > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                  optee_get_msg_arg() {
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > >                  } (ret=3D0xffff000002909000)
-> > > >                  tee_session_calc_client_uuid(); (ret=3D0x0)
-> > > >                  optee_to_msg_param(); (ret=3D0x0)
-> > > >                  optee_smc_do_call_with_arg() {
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
-> > > >                    optee_cq_wait_init(); (ret=3D0xffff000002e55910)
-> > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > >      ... continues sending this forever ...
-> > > >      ... Hit ^C to stop recording ...
-> > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > >                    optee_smccc_smc() {
-> > > >
-> > > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#using-=
-op-tee-for-efi-variables
-> > > >
-> > > > Thanks in advance,
-> > >
-> > > The most common problem with this is miscompiling the tee_supplicant
-> > > application.
-> > > Since we don't know if the system has an RPMB, we emulate it in the
-> > > tee_supplicant. How did you get the supplicant and can you check if i=
-t
-> > > was compiled with RPMB_EMU=3D0 or 1?
-> > >
-> >
-> > I'm using the tee-supplicant provided by the fedora package which is
-> > built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
-> >
->
-> Yes, this is correct. We fixed the Fedora package to compile the
-> supplicant correctly a while back.
->
-> [0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
-> [1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-Boot=
-.html#Protected%20UEFI%20variables%20with%20U-Boot
->
->
-> Regards
-> /Ilias
-> > Thanks,
-> >    Enric
-> >
-> > > Thanks
-> > > /Ilias
-> > >
-> > > >    Enric
-> > > >
-> > >
-> >
->
+  8. Send trace.out along with full dmesg to me.
 
+Thanks!
+
+[1] https://github.com/intel/tbtools
 
