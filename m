@@ -1,191 +1,154 @@
-Return-Path: <linux-kernel+bounces-404079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBB89C3EDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:56:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A80C9C3DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471A01F230E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:56:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 574D6B242B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE191A38D7;
-	Mon, 11 Nov 2024 12:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4217319C552;
+	Mon, 11 Nov 2024 12:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WoxR2q26"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuvNKBFg"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34A119CC20;
-	Mon, 11 Nov 2024 12:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEA4199943;
+	Mon, 11 Nov 2024 12:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329679; cv=none; b=dav2UBF9ZUgDEqs8DzVOSyEHDm4ycGUX/5dDduwRz+UTWlFS2817GC/o50xL3XUKrVO8pq+7uwvY2i5BRjV9WCIY/XLftF9cqX9FSODGF+livEGlxGJc5WQPR7PZynFvE6MjBHQRBjVOY+QP02RPShiOtBJOxxlStut6KxqbsJ0=
+	t=1731326405; cv=none; b=kkFeR0pqV1OIFOlWuuL0ckfxRGsShCpcrXw4VtJbiXZQ7AQtjSXK4Acc0Wza1UGm9N4cwfRLpiTSqQ6UDh7zVVOBUb1t0vy0jCPfZ4u6u7eiT7FafpfAO9G+WZ/OsV4XmpwgrPqyYy2mXumVk3KpKBZ8F5uDNgKHXDGEtX7xm7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329679; c=relaxed/simple;
-	bh=kDi+TVCXm76xbQAD1/onHdkrODKXEEtiHXcBLawYGW4=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=pjaoi/11X1/zt0OCW0idZmgOUPV9OBXcqRUrriYRzp8I8Y32fEw9i5UsjHaLbUL1xk27uNpDEcbkPoGzz7jDHdZkAbn1jJD6lQ40Xpj7DkwS9YfbbNWEDdwTuSNlK09Kt/NI6yOQ8+QuAeKKz5I5RBAucqzBoClK2Ii87tOSJe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WoxR2q26; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=cKtSfZ5sWaSTj7tZINYGDLIwyP/HVC5Nz5I81xWPCwk=; b=WoxR2q26i+JGKuI+u/OTnBS/As
-	fN2FnAawEqX+BeWD0xU8yoKIHkTbWmmIgJNS0w0wfaX+hAMsSCpueVLcPkHDCLSCBTY7T9lzNugWl
-	yBNCYhG9B6gpLKORP0MAw4J2cByVteC6b1QeZ6xT7/ZPP//bDHr16bWYcsEnoGHIx7lE+dxIqBU9h
-	y6xnub51UBoGZ67ajic4ja9gVG3eRS1IUqNKXFDyhAu35eRydrLEkgoOl+ndQdKPzgeqpvtHvwlXX
-	tBkjjrwbbbhug7Ix6u0q1XTf46MXqCT+bq+MUwAn2RqIr8heZZesK3QEp7zyRPyG+E0amY/eO4AcE
-	h5kq3Z3A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tATwA-0000000Coet-23KF;
-	Mon, 11 Nov 2024 12:54:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id F102C302795; Mon, 11 Nov 2024 13:54:32 +0100 (CET)
-Message-Id: <20241111125219.361243118@infradead.org>
-User-Agent: quilt/0.65
-Date: Mon, 11 Nov 2024 12:59:47 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: seanjc@google.com,
- pbonzini@redhat.com,
- jpoimboe@redhat.com,
- tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
- x86@kernel.org,
- kvm@vger.kernel.org,
- jthoughton@google.com,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH v2 12/12] x86/kvm/emulate: Avoid RET for fastops
-References: <20241111115935.796797988@infradead.org>
+	s=arc-20240116; t=1731326405; c=relaxed/simple;
+	bh=aeOsBBfNgbMgQSr1NnwyxTSfx3+qg+WQGpKzj08cjqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hiFWMWObBu+XAmUY4k/p74OUSAkHZz0Vey6qhOInWaS2GQmSSDX1vry5rKzDmYiOuOSHyt1e6qPd9oItQdpft2IHo+Jt7myFkjIWTzW9EwIu8JMn0FoRfCy77ZvXh0qKuRPB4k5jTRn1kUkT7rHXmt8AZ7w3Jj8h2162ZNUprzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuvNKBFg; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so188542266b.0;
+        Mon, 11 Nov 2024 04:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731326402; x=1731931202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ERz2Qab/QZHhmp5ujVARsacqaYheTwZvXRQSx29cBsY=;
+        b=iuvNKBFg8P3JMe5bizOeWjTKqe87+Bw8aoDThhHn9dRsqMNmQSio73UGNjZQan6Wng
+         dgpwJyLv3cw0q/R4aYaVV1InSi+7JPbMWLf2z0Sqf965WNFLl/tJVAe1No2G98GTRQAF
+         OZO5xup74bOBK0reGayY2ZLl3LTKI/DSLgqgNsrXevLOFlWF0nT7nD6KtySWVUdq6DVP
+         8r+1x6OUpnxBwytXMwsEDEjzrDZPP6XbtCPUUbDRV5hD00QFANOnc5CUzH4WQduhudkp
+         vWbSAFmAs/eDYoxDNkjTJ6NmT1cKFqlACka8yHBc31mnXNq30rGq1f0NNPEPj1rXMbbn
+         zNWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731326402; x=1731931202;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ERz2Qab/QZHhmp5ujVARsacqaYheTwZvXRQSx29cBsY=;
+        b=A1KTHZnrNhd3/ZStLvQGX9X8N8gEOkmGmNDJKTSikmN9pfVUlaNJvR8kbZqpOhOjl1
+         Sufils/Yqgh/SswOhi3/5VLi9XKPUZYWA93gfw9bhV3km9G3pP4qGRUbB/REfqT+T45v
+         sI2rK/LcoItQd+xjJSBTdemh0B3+vGEBppNgPdJYiXKHHUUL0OxvHVg/BLB+LVzA5+GN
+         4GgbAP1OHn2/CDU9w6Di0mV9dR3HUaEvc/doU14byKm7FNwpGlNH9IAHkerNwet14ofo
+         A4ts3p1236/yRGF+CIPW7Himqs8Huy3pJdJ6YHHcaBpsMFDhPBBPD+vsjmPyY+7mJM3l
+         /QQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCv1VKkmw7teADE7fp6aRpOOydZcrMIsN6cdNqkzIjSmjOZsQYRNuYo2eznN1ISYMfFmMxKkvBiuUYkA==@vger.kernel.org, AJvYcCVUt2++MR0kpkspqS3SJJ5jngJ1FrGzZdO308P9psyG+a8FPhR9vfGLx9SCuSW3c0E1xhL3ntSsiSDFnUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOD09wMDKD0IAgLaTCr8MIi0HgMGNBJIWaHNvlfxSTk8p3iNdK
+	uFPHD3/fo/HdYPhKnxSwh2q/rm+GqnsxxKeg3ZlGWZOy3UAgbpEq
+X-Google-Smtp-Source: AGHT+IElto91yI/s7EETqqUQ6isEerHA+zumw4wYVTzMGHsiInbZsOqOX2Jy0VD1W+4Ay5TlSktDLA==
+X-Received: by 2002:a17:907:94c1:b0:a9e:d417:c725 with SMTP id a640c23a62f3a-a9eefebd49emr1221025466b.3.1731326400309;
+        Mon, 11 Nov 2024 04:00:00 -0800 (PST)
+Received: from [172.27.51.98] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dee5e6sm584993166b.137.2024.11.11.03.59.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 04:00:00 -0800 (PST)
+Message-ID: <f1a56268-f1d5-4204-be34-5c7a1749bcd9@gmail.com>
+Date: Mon, 11 Nov 2024 13:59:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/2] mlx5/core: relax memory barrier in
+ eq_update_ci()
+To: Parav Pandit <parav@nvidia.com>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <ZyxMsx8o7NtTAWPp@x130>
+ <20241107183054.2443218-1-csander@purestorage.com>
+ <CY8PR12MB7195A03D0F6C66D906354549DC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <CY8PR12MB7195A03D0F6C66D906354549DC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since there is only a single fastop() function, convert the FASTOP
-stuff from CALL_NOSPEC+RET to JMP_NOSPEC+JMP, avoiding the return
-thunks and all that jazz.
 
-Specifically FASTOPs rely on the return thunk to preserve EFLAGS,
-which not all of them can trivially do (call depth tracing suffers
-here).
 
-Objtool strenuously complains about this:
+On 08/11/2024 12:46, Parav Pandit wrote:
+> 
+>> From: Caleb Sander Mateos <csander@purestorage.com>
+>> Sent: Friday, November 8, 2024 12:01 AM
+>>
+>> The memory barrier in eq_update_ci() after the doorbell write is a significant
+>> hot spot in mlx5_eq_comp_int(). Under heavy TCP load, we see 3% of CPU
+>> time spent on the mfence instruction.
+>>
+>> 98df6d5b877c ("net/mlx5: A write memory barrier is sufficient in EQ ci
+>> update") already relaxed the full memory barrier to just a write barrier in
+>> mlx5_eq_update_ci(), which duplicates eq_update_ci(). So replace mb() with
+>> wmb() in eq_update_ci() too.
+>>
+>> On strongly ordered architectures, no barrier is actually needed because the
+>> MMIO writes to the doorbell register are guaranteed to appear to the device in
+>> the order they were made. However, the kernel's ordered MMIO primitive
+>> writel() lacks a convenient big-endian interface.
+>> Therefore, we opt to stick with __raw_writel() + a barrier.
+>>
+>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>> ---
+>> v2: keep memory barrier instead of using ordered writel()
+>>
+>>   drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
+>> b/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
+>> index 4b7f7131c560..b1edc71ffc6d 100644
+>> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
+>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
+>> @@ -70,11 +70,11 @@ static inline void eq_update_ci(struct mlx5_eq *eq, int
+>> arm)
+>>   	__be32 __iomem *addr = eq->doorbell + (arm ? 0 : 2);
+>>   	u32 val = (eq->cons_index & 0xffffff) | (eq->eqn << 24);
+>>
+>>   	__raw_writel((__force u32)cpu_to_be32(val), addr);
+>>   	/* We still want ordering, just not swabbing, so add a barrier */
+>> -	mb();
+>> +	wmb();
+>>   }
+>>
+>>   int mlx5_eq_table_init(struct mlx5_core_dev *dev);  void
+>> mlx5_eq_table_cleanup(struct mlx5_core_dev *dev);  int
+>> mlx5_eq_table_create(struct mlx5_core_dev *dev);
+>> --
+>> 2.45.2
+> 
+> Reviewed-by: Parav Pandit <parav@nvidia.com>
+> 
 
- - indirect call without a .rodata, fails to determine JUMP_TABLE,
-   annotate
- - fastop functions fall through, exception
- - unreachable instruction after fastop_return, save/restore
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/kvm/emulate.c              |   20 +++++++++++++++-----
- include/linux/objtool_types.h       |    1 +
- tools/include/linux/objtool_types.h |    1 +
- tools/objtool/check.c               |   11 ++++++++++-
- 4 files changed, 27 insertions(+), 6 deletions(-)
-
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -285,8 +285,8 @@ static void invalidate_registers(struct
-  * different operand sizes can be reached by calculation, rather than a jump
-  * table (which would be bigger than the code).
-  *
-- * The 16 byte alignment, considering 5 bytes for the RET thunk, 3 for ENDBR
-- * and 1 for the straight line speculation INT3, leaves 7 bytes for the
-+ * The 16 byte alignment, considering 5 bytes for the JMP, 4 for ENDBR
-+ * and 1 for the straight line speculation INT3, leaves 6 bytes for the
-  * body of the function.  Currently none is larger than 4.
-  */
- static int fastop(struct x86_emulate_ctxt *ctxt, fastop_t fop);
-@@ -304,7 +304,7 @@ static int fastop(struct x86_emulate_ctx
- 	__FOP_FUNC(#name)
- 
- #define __FOP_RET(name) \
--	"11: " ASM_RET \
-+	"11: jmp fastop_return; int3 \n\t" \
- 	".size " name ", .-" name "\n\t"
- 
- #define FOP_RET(name) \
-@@ -5071,14 +5071,24 @@ static void fetch_possible_mmx_operand(s
- 		kvm_read_mmx_reg(op->addr.mm, &op->mm_val);
- }
- 
--static int fastop(struct x86_emulate_ctxt *ctxt, fastop_t fop)
-+/*
-+ * All the FASTOP magic above relies on there being *one* instance of this
-+ * so it can JMP back, avoiding RET and it's various thunks.
-+ */
-+static noinline int fastop(struct x86_emulate_ctxt *ctxt, fastop_t fop)
- {
- 	ulong flags = (ctxt->eflags & EFLAGS_MASK) | X86_EFLAGS_IF;
- 
- 	if (!(ctxt->d & ByteOp))
- 		fop += __ffs(ctxt->dst.bytes) * FASTOP_SIZE;
- 
--	asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
-+	asm("push %[flags]; popf \n\t"
-+	    UNWIND_HINT(UNWIND_HINT_TYPE_SAVE, 0, 0, 0)
-+	    ASM_ANNOTATE(ANNOTYPE_JUMP_TABLE)
-+	    JMP_NOSPEC
-+	    "fastop_return: \n\t"
-+	    UNWIND_HINT(UNWIND_HINT_TYPE_RESTORE, 0, 0, 0)
-+	    "pushf; pop %[flags]\n"
- 	    : "+a"(ctxt->dst.val), "+d"(ctxt->src.val), [flags]"+D"(flags),
- 	      [thunk_target]"+S"(fop), ASM_CALL_CONSTRAINT
- 	    : "c"(ctxt->src2.val));
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -64,5 +64,6 @@ struct unwind_hint {
- #define ANNOTYPE_UNRET_BEGIN		5
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALLS	7
-+#define ANNOTYPE_JUMP_TABLE		8
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/include/linux/objtool_types.h
-+++ b/tools/include/linux/objtool_types.h
-@@ -64,5 +64,6 @@ struct unwind_hint {
- #define ANNOTYPE_UNRET_BEGIN		5
- #define ANNOTYPE_IGNORE_ALTS		6
- #define ANNOTYPE_INTRA_FUNCTION_CALLS	7
-+#define ANNOTYPE_JUMP_TABLE		8
- 
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2386,6 +2386,14 @@ static int __annotate_late(struct objtoo
- 		insn->unret = 1;
- 		break;
- 
-+	/*
-+	 * Must be after add_jump_table(); for it doesn't set a sane
-+	 * _jump_table value.
-+	 */
-+	case ANNOTYPE_JUMP_TABLE:
-+		insn->_jump_table = (void *)1;
-+		break;
-+
- 	default:
- 		break;
- 	}
-@@ -3459,7 +3467,8 @@ static int validate_branch(struct objtoo
- 		if (func && insn_func(insn) && func != insn_func(insn)->pfunc) {
- 			/* Ignore KCFI type preambles, which always fall through */
- 			if (!strncmp(func->name, "__cfi_", 6) ||
--			    !strncmp(func->name, "__pfx_", 6))
-+			    !strncmp(func->name, "__pfx_", 6) ||
-+			    !strcmp(insn_func(insn)->name, "fastop"))
- 				return 0;
- 
- 			WARN("%s() falls through to next function %s()",
-
+Acked-by: Tariq Toukan <tariqt@nvidia.com>
 
 
