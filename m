@@ -1,116 +1,257 @@
-Return-Path: <linux-kernel+bounces-403799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50D59C3B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:38:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107F99C3B05
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E81151C21A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:38:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339461C21CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1087915534B;
-	Mon, 11 Nov 2024 09:38:26 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB700156968;
+	Mon, 11 Nov 2024 09:38:27 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8C9143C72;
-	Mon, 11 Nov 2024 09:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712461474A7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317905; cv=none; b=iuJQdDSZeHlhOMGON38xDnj+kve2ZSIjVNt7QLp0d4IDHaeqA8xezmjq65tSZDdO5OlWKrSRRd1v2ok7ZdEdS0yVZh5jTqshFuRwl0IgaBPoffRPc7eSs+L5u193ZbDtlhF+3ntNnU0mn7hudelVYCnLDctjsUUDjxwBcd5VmAM=
+	t=1731317907; cv=none; b=KP3ezz/fQtNmc4u91MnAX6Qbk79zMfFQBkDzn0f+2TEM5GUFm2d+ahIY15sOFxyj86rIOextZz8fCtRfTEk0X+/Rx7L9kuXQ5eQk4NYPY2nzmb4pnbT9VpOnm/pdictvXEQbAFo1NPSKyqwnME1Jd64sQwemjf5R1ga3Aufi0m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317905; c=relaxed/simple;
-	bh=xeAyYEonYfltQhc7TK13Y/TErfyKMLlkw7rNEBEmLZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMUoR/BOcz9HkmXezVcfh/XEMNPsy54Q6giEjP749Fqy4/wrAWUYqNjrhqvTY62jhhSQUcNQhlBF3b1CmDyb+1oKan/LFJ36W1x6MpZr8+BkIMDYvFE/8doX3JvO8eVHyARWT1Pa+X2kXWlnRkElExCwn8jYYAnjUdgsTQx01ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: SHRe0o4mSM2Dbi0HHIojsA==
-X-CSE-MsgGUID: 7TM6ngcORletU/gd1KwUIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31283510"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31283510"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:38:23 -0800
-X-CSE-ConnectionGUID: vKgxvLnxSW2eLqkX5QZQww==
-X-CSE-MsgGUID: e+5VjbTJS5GlYdx0irgteA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="87640065"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:38:20 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy.shevchenko@gmail.com>)
-	id 1tAQsB-0000000DXr3-2uiO;
-	Mon, 11 Nov 2024 11:38:15 +0200
-Date: Mon, 11 Nov 2024 11:38:15 +0200
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Aren <aren@peacevolution.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] iio: light: stk3310: handle all remove logic with
- devm callbacks
-Message-ID: <ZzHQh8CV4c2HC4NY@smile.fi.intel.com>
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-7-aren@peacevolution.org>
- <ZyiGiK6bSd_d0VQ6@smile.fi.intel.com>
- <mlvzaskgxqjfu6yiib2u7m3pczsifsluc4mqnzy6w3xzxblvm6@xrxvvruzftn2>
- <ZzEOqC9dAHCRX5a9@surfacebook.localdomain>
- <qqk4rbx6wxr7vofepk63yvuimavafbiy2srkqx2zvl2kxttlrk@axpphmdxffis>
+	s=arc-20240116; t=1731317907; c=relaxed/simple;
+	bh=kJBbh4Fm3ILmfJ3jKxe9c2m8aB4+qxhGd4KbMVUrVAY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aL0So7xQldTFLMk/08te/9JdH8MCWUlFmNAMD46uCk0flIbx+YFuz3swKx9mTY0p7+6eqCrBY9mrRuZ3xZaSOsmlx0t2IQ4AwRXJzsQuj3MB37juXRw+M2kLmjcF0e8/U+SayHhLpr8APRoifL4kGeg+Go1UKsuXDbsEvB30SPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso54143145ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:38:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731317904; x=1731922704;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z2fMry5KBVwMZe9quyl6EG8F0EZX5XU7mvooyI6GyqY=;
+        b=pmNvipkNSTXr3G3shsqXyZ02U3hU9SL0NJy46SQhj04LZspBFGbMdJMq6ck406J9xP
+         UdU4ygDS/YDeKx/n1WOkKU1pI66Hg02lE7T5G7oj7JEscgdxd/h2x0QQmvVYNkQkZpup
+         49vD/Fnve9TiNnVXzF1PWpLQ0quFAzClTB9HGfeC77yR8Hf0yCY9Vszvg+iDncwuMgOh
+         kbAi5c9LZzmaJBeHPKMuv99t8ZyMlK5fJm7JRaoxJxGmw2y/hfGJbHwvdYiH0aRWLRLW
+         lcqk8gBoFY/1HHpnNZrb3cglnhgDHcoUc7zivTUnEWHVcjF/Glp9Hcq8LdeOJqX2spr5
+         sd4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXt0ARXn1sp6TDIo6HllkEVFUN/bVGH9otP1FBbPuh8WQqeQQQkjR2LsfecR4PVVuZn0KdUqsPrZLSXEhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLCrCbpRyah/cjzHXTbf5b5iGJtDciTjTH5KfYTahQ06XjOL97
+	HKjpR9ujZFrzZqSZ3v/xbOXKaC3ow/KkFDm673Wopwk3iwL+0CRaiLkpmYuohT9MvAlmt9xnvcz
+	YbLY3O/9L1xrNCkPm6T0g03T5SblJcNKDsGNBhlBeJBaofdpGLe1BDpk=
+X-Google-Smtp-Source: AGHT+IFAJAHxoHS3qWPCQlE6LiNAwKKcDTO/MZl5LjxmHPa5vGBpjE0yu8BWhSE6SIeabucv6QcpsXFqdN/iFqyo/YW3ysVPJsmV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <qqk4rbx6wxr7vofepk63yvuimavafbiy2srkqx2zvl2kxttlrk@axpphmdxffis>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:18c7:b0:3a0:49da:8f6d with SMTP id
+ e9e14a558f8ab-3a6f1a44f1amr128696695ab.22.1731317904492; Mon, 11 Nov 2024
+ 01:38:24 -0800 (PST)
+Date: Mon, 11 Nov 2024 01:38:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6731d090.050a0220.138bd5.0061.GAE@google.com>
+Subject: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in
+ fb_pad_unaligned_buffer (2)
+From: syzbot <syzbot+6649e4a17d8ebca21a28@syzkaller.appspotmail.com>
+To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 10, 2024 at 05:37:56PM -0500, Aren wrote:
-> On Sun, Nov 10, 2024 at 09:51:04PM +0200, Andy Shevchenko wrote:
-> > Sun, Nov 10, 2024 at 01:38:39PM -0500, Aren kirjoitti:
-> > > On Mon, Nov 04, 2024 at 10:32:08AM +0200, Andy Shevchenko wrote:
-> > > > On Sat, Nov 02, 2024 at 03:50:37PM -0400, Aren Moynihan wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> > > > > +	ret = devm_add_action_or_reset(&client->dev, stk3310_set_state_disable, data);
-> > > > 
-> > > > Why not simply 'dev' as in below call?
-> > > 
-> > > I was trying to avoid refactoring the entire function to replace
-> > > &client->dev with dev, I'll add a patch for that to the next revision.
-> > 
-> > I'm not talking about refactoring, I'm talking only about the lines that you
-> > have touched / added.
-> 
-> Ah right, this one makes sense, my comment should have been on the next
-> patch in this series which is a little more complex. For that patch it
-> seemed inconsistent to use dev only in new code and mix it with calls
-> using &client->dev.
+HEAD commit:    6efbea77b390 Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=144e8c5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4c9b3fd66df7ebb7
+dashboard link: https://syzkaller.appspot.com/bug?extid=6649e4a17d8ebca21a28
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-It's fine, you can add a new cleanup patch later on.
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-6efbea77.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fe29ba490b2c/vmlinux-6efbea77.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/08bf31ef1152/bzImage-6efbea77.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6649e4a17d8ebca21a28@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in fb_pad_unaligned_buffer+0x43c/0x470 drivers/video/fbdev/core/fbmem.c:116
+Read of size 1 at addr ffff888041c73758 by task syz.3.3711/20535
+
+CPU: 2 UID: 0 PID: 20535 Comm: syz.3.3711 Not tainted 6.12.0-rc3-syzkaller-00183-g6efbea77b390 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ fb_pad_unaligned_buffer+0x43c/0x470 drivers/video/fbdev/core/fbmem.c:116
+ bit_putcs_unaligned drivers/video/fbdev/core/bitblit.c:130 [inline]
+ bit_putcs+0x86a/0xdf0 drivers/video/fbdev/core/bitblit.c:188
+ fbcon_putcs+0x364/0x480 drivers/video/fbdev/core/fbcon.c:1308
+ do_update_region+0x1f8/0x3f0 drivers/tty/vt/vt.c:609
+ update_region+0xc1/0x160 drivers/tty/vt/vt.c:633
+ vcs_write+0x7cd/0xdb0 drivers/tty/vt/vc_screen.c:698
+ do_loop_readv_writev fs/read_write.c:857 [inline]
+ do_loop_readv_writev fs/read_write.c:842 [inline]
+ vfs_writev+0x6da/0xdd0 fs/read_write.c:1066
+ do_writev+0x137/0x370 fs/read_write.c:1111
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f20a6d7dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f20a7aa2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007f20a6f36058 RCX: 00007f20a6d7dff9
+RDX: 0000000000000004 RSI: 0000000020000a40 RDI: 0000000000000007
+RBP: 00007f20a6df0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f20a6f36058 R15: 00007ffc5a9e3328
+ </TASK>
+
+Allocated by task 18704:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x1e8/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ fbcon_set_font+0x434/0xb60 drivers/video/fbdev/core/fbcon.c:2516
+ con_font_set drivers/tty/vt/vt.c:4804 [inline]
+ con_font_op+0x7fd/0xf50 drivers/tty/vt/vt.c:4851
+ vt_k_ioctl drivers/tty/vt/vt_ioctl.c:474 [inline]
+ vt_ioctl+0x4ca/0x2f80 drivers/tty/vt/vt_ioctl.c:751
+ tty_ioctl+0x651/0x15d0 drivers/tty/tty_io.c:2803
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888041c70000
+ which belongs to the cache kmalloc-8k of size 8192
+The buggy address is located 6728 bytes to the right of
+ allocated 7440-byte region [ffff888041c70000, ffff888041c71d10)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888041c74000 pfn:0x41c70
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000240 ffff88801b043180 ffffea0001265810 ffffea000151d410
+raw: ffff888041c74000 0000000000020001 00000001f5000000 0000000000000000
+head: 00fff00000000240 ffff88801b043180 ffffea0001265810 ffffea000151d410
+head: ffff888041c74000 0000000000020001 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001071c01 ffffffffffffffff 0000000000000000
+head: ffff888000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd28c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5055, tgid 5055 (dhcpcd), ts 868171753255, free_ts 868153154119
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2ba/0x3f0 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ netlink_dump+0x2c1/0xcc0 net/netlink/af_netlink.c:2292
+ netlink_recvmsg+0xa0d/0xf30 net/netlink/af_netlink.c:1983
+ sock_recvmsg_nosec net/socket.c:1051 [inline]
+ sock_recvmsg+0x1f6/0x250 net/socket.c:1073
+ ____sys_recvmsg+0x219/0x6b0 net/socket.c:2826
+ ___sys_recvmsg+0x115/0x1a0 net/socket.c:2868
+ __sys_recvmsg+0x114/0x1e0 net/socket.c:2898
+page last free pid 18495 tgid 18495 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0x5f4/0xdc0 mm/page_alloc.c:2638
+ __put_partials+0x14c/0x170 mm/slub.c:3145
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __kmalloc_cache_noprof+0x11e/0x300 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ ref_tracker_alloc+0x17c/0x5b0 lib/ref_tracker.c:203
+ __netdev_tracker_alloc include/linux/netdevice.h:4050 [inline]
+ netdev_hold include/linux/netdevice.h:4079 [inline]
+ netdev_hold include/linux/netdevice.h:4074 [inline]
+ register_netdevice+0x164b/0x1e90 net/core/dev.c:10511
+ veth_newlink+0x366/0x9e0 drivers/net/veth.c:1830
+ rtnl_newlink_create net/core/rtnetlink.c:3539 [inline]
+ __rtnl_newlink+0x1197/0x1920 net/core/rtnetlink.c:3759
+ rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3772
+ rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6675
+ netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2551
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg net/socket.c:744 [inline]
+ __sys_sendto+0x479/0x4d0 net/socket.c:2214
+
+Memory state around the buggy address:
+ ffff888041c73600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888041c73680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888041c73700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                                    ^
+ ffff888041c73780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888041c73800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
