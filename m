@@ -1,162 +1,202 @@
-Return-Path: <linux-kernel+bounces-404188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB6A9C4068
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E66899C406B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9682AB21420
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7794C1F224A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961B019F130;
-	Mon, 11 Nov 2024 14:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F02719E99E;
+	Mon, 11 Nov 2024 14:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EcSaGMBb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="GxuLtTHp"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pRJhStbg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982641A0737
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08C319E97A;
+	Mon, 11 Nov 2024 14:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334300; cv=none; b=Hdc5Ls2Az450WHPpKy/d0qefDyj4Oi5V4ZUTTpgRvPGOMTsPI8JlRUfTY4fqE5xgl7gof5Kv296Hd8nyRQRp/9MmzTXNVd9MFj6Vt2w/WO4BfRWgwo1c9CIg1Smoafx6GmEbYuRipK3Gz20O2YIWzcPwomR1o88fvx35VqgRaGc=
+	t=1731334330; cv=none; b=diI/u2rbd7J1sqnNI+XOPSOZ/a0Vbvz8LNwQf+fQvjuyEK8Yu3NLH6zjJlO425yJzPlgYzFuzYpdRR4x/Zqgc1e0qfaA3B4oXG/SuZvPL2cQjAAsWK3a44XyxuBZ0EdaeqHg6JzAQCx/Y0GiWnyZJ4dSXthOSC2gxeApVVEyUK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334300; c=relaxed/simple;
-	bh=ITLTQe4IwIVfMF9vMHmkjHkFPbTvcSak1wsm0nCNqqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UN0P9kyGAJr4wnHr59Sph5GqK1RE/3vb59A8qUZwWKfSOyT6tEkhBGpSPdOZaT4ss6GzHSQY/TEjxIhfAp9W9M7FY3FtpUKuWM8vdMi/x1w/RkgtjBU1GXN6Fx+KCZw06kzlAShhWHkp06FOd7VrIRoACjYkFubnZ+d+xo3R/Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EcSaGMBb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=GxuLtTHp reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1731334298; x=1762870298;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=oCv9AlYEwKdYqm17u15TzBK9bW+nvaK/He+UnkJ6eow=;
-  b=EcSaGMBblXOk0hhgFdNFLYU6DJego5DUx77lNSi1TZmYvLS7Es8Ee61l
-   bppqKCfCNHhC9XbOrN2T1RlbWIHIAuSOYevrXTp/MShkhA9vuAzLJrh7S
-   KWuR36H0IAPXQkygn3/pQwsE9H382w8FfZEV5Lk+1gyuo9ERRtwyRthW7
-   hhy8Mz3ry9VWD0vQpIBjEj7IwWOf8spsEPt4l+nIwkY0AmLnfo5rNujeF
-   dgcxhdy/sVdGfHFEZjiSa7Itl6uDtFVgC/zExLL2PZ6jWXMT2AcyHu5wG
-   vstK+gexrSwezN0Ysffysk45vNW4ZlXAdS4Iwg/+uSkv8aBSCiCsj+qNt
-   g==;
-X-CSE-ConnectionGUID: Vkll+ek1TEyv5ptsUbyTJA==
-X-CSE-MsgGUID: 5n/cIIAJQ+m2unzB+/RX/Q==
-X-IronPort-AV: E=Sophos;i="6.12,145,1728943200"; 
-   d="scan'208";a="39967040"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 11 Nov 2024 15:11:37 +0100
-X-CheckPoint: {67321099-25-F5DC7025-F79421CB}
-X-MAIL-CPID: 2BF4CDB44D290D73AE1164C742094A63_0
-X-Control-Analysis: str=0001.0A682F24.6732109A.0045,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 89DBD166E08;
-	Mon, 11 Nov 2024 15:11:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1731334293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oCv9AlYEwKdYqm17u15TzBK9bW+nvaK/He+UnkJ6eow=;
-	b=GxuLtTHpEptkkAif8bvKt5A0gavUAaqwZGIMI3D1S7ksGEx1i2Ki0jjspcISbIbGo3WoBP
-	YOIbojCkY6+Eqxx7rW6fPTt6ACONSlAZCV2nGe2NpOZQLqtQXiNPYdWZbeHpPJlYrYf0/a
-	KkBdRj5BmH+CRRcCI9ijM3HwEapBbOLfvvWTfesEarG/p+Fbc7cpfqNS1eo7srRadYY5z0
-	wqh46st1l8g0SmeEovkNOnEqNL1ik4HXJU8O6m/vD58zuFNP+60hJYITZFs1F3SF7Nxmrb
-	35NGw01yhCxZc0qfNEIgkSRXgehuuNFniWSw1MbVbEZts4AMGR9jyoj5Mu54rw==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Lee Jones <lee@kernel.org>
-Cc: linux@ew.tq-group.com,
-	linux-kernel@vger.kernel.org,
-	Gregor Herburger <gregor.herburger@tq-group.com>,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v7 5/5] mfd: tqmx86: add I2C IRQ support
-Date: Mon, 11 Nov 2024 15:10:32 +0100
-Message-ID: <c1b0769e00a8a4e463cffe725e939b0e5c2992c8.1731325758.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <cover.1731325758.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1731325758.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1731334330; c=relaxed/simple;
+	bh=7R447KrACOYn/wDV6Nkji9SncyMQTorTnGt2p9OKqvM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NXj7MwhBnRdNtSImYyI4b76JknDBzu4JTRA3aMFpiH8vuWMEXr/bR/xRvUjJoA+xd7mlnGfyJJgHRzgo1VCOCjcprMUDmq6RNLPFYVeP5dgLzlb/e++rLJN5KFyn/yhWqzpiDz/EA8xgSKmfN2CNo/wkiGilL80ysLz/di0wUSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pRJhStbg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABDeNi8025828;
+	Mon, 11 Nov 2024 14:11:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VRiEJt
+	BoUewLxXPVxIHiLo0HWiLCzYbuVCpo6iunYBU=; b=pRJhStbgtjeb10SGXVT501
+	g/2bpjcnZ45DiJPtZ1QeEgc9WN43fyno7wgsPur3ZPks/iska965sWmcLMyavlm0
+	LsFF+Ju6dn/jot5Q/ohrKHCPmBAN1hrgs0zhqDaSsgmM07jrWOqBzgWXW06gRNE5
+	szqNeEY/xhmqSetgiWNadbNrQH0kWhkI1zgSbXh8eF4LKwCdtabF3gdm7WldGMId
+	skDi5ZMekaHklYl2IbGoC7hrW5xC0OoiYZ2hpubIckot47s4VEEkSvYBbWpBVRL8
+	7xnwjMxv6hvSYzYLV3egWnBx6N/rdvjWZ3nrcLpkzNzR/GsqO+gN2Fu7HE35/4eg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42uk0rg45m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 14:11:49 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ABEBnOS025233;
+	Mon, 11 Nov 2024 14:11:49 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42uk0rg45h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 14:11:49 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AB897Ri006603;
+	Mon, 11 Nov 2024 14:11:48 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tm9ja92a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 14:11:48 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ABEBmTP54198612
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Nov 2024 14:11:48 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E72CE58060;
+	Mon, 11 Nov 2024 14:11:47 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B8E9758056;
+	Mon, 11 Nov 2024 14:11:45 +0000 (GMT)
+Received: from [9.179.23.76] (unknown [9.179.23.76])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 11 Nov 2024 14:11:45 +0000 (GMT)
+Message-ID: <ae8e61c6-e407-4303-aece-b7ce4060d73e@linux.ibm.com>
+Date: Mon, 11 Nov 2024 15:11:44 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
+To: manas18244@iiitd.ac.in, Jan Karcher <jaka@linux.ibm.com>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4C5mASve2whXvM_WL953xWdc_KxJU8lX
+X-Proofpoint-ORIG-GUID: Qxm2kzobVISdmhXTG2g3pw-7R_eySd5-
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 impostorscore=0
+ mlxscore=0 priorityscore=1501 phishscore=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411110116
 
-From: Gregor Herburger <gregor.herburger@tq-group.com>
 
-The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
-Add a module parameter to allow configuring the IRQ number, similar to the
-handling of the GPIO IRQ.
 
-The new code and module parameter refer to the I2C controller as "I2C1",
-as the TQMx86 PLD actually contains a second I2C controller, for which
-driver support will be added in the future.
+On 09.11.24 07:28, Manas via B4 Relay wrote:
+> From: Manas <manas18244@iiitd.ac.in>
+> 
+> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+> There is only one instance of this function being called and its passed
+> with a NULL value in place of bc.
+> 
+> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+> ---
+> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+> There is only one instance of this function being called and its passed
+> with a NULL value in place of bc.
+> 
+> Though, the compiler (gcc) optimizes it. Looking at the object dump of
+> vmlinux (via `objdump -D vmlinux`), a new function clone
+> (__smc_diag_dump.constprop.0) is added which removes this parameter from
+> calling convention altogether.
+> 
+> ffffffff8a701770 <__smc_diag_dump.constprop.0>:
+> ffffffff8a701770:       41 57                   push   %r15
+> ffffffff8a701772:       41 56                   push   %r14
+> ffffffff8a701774:       41 55                   push   %r13
+> ffffffff8a701776:       41 54                   push   %r12
+> 
+> There are 5 parameters in original function, but in the cloned function
+> only 4.
+> 
+> I believe this patch also fixes this oops bug[1], which arises in the
+> same function __smc_diag_dump. But I couldn't verify it further. Can
+> someone please test this?
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+> ---
+>   net/smc/smc_diag.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+> index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
+> --- a/net/smc/smc_diag.c
+> +++ b/net/smc/smc_diag.c
+> @@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+>   
+>   static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
+>   			   struct netlink_callback *cb,
+> -			   const struct smc_diag_req *req,
+> -			   struct nlattr *bc)
+> +			   const struct smc_diag_req *req)
+>   {
+>   	struct smc_sock *smc = smc_sk(sk);
+>   	struct smc_diag_fallback fallback;
+> @@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>   	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
+>   	struct net *net = sock_net(skb->sk);
+>   	int snum = cb_ctx->pos[p_type];
+> -	struct nlattr *bc = NULL;
+>   	struct hlist_head *head;
+>   	int rc = 0, num = 0;
+>   	struct sock *sk;
+> @@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>   			continue;
+>   		if (num < snum)
+>   			goto next;
+> -		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
+> +		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
+>   		if (rc < 0)
+>   			goto out;
+>   next:
+> 
+> ---
+> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+> change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+> 
+> Best regards,
 
-Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- drivers/mfd/tqmx86.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+That's true that the last parameter is not used. And the patch you 
+suggested as a cleanup patch looks good to me. However, it should not 
+fix the bug[1], because it does not match what the bug[1] described. 
+Thank you, Jeongjun, for testing it! That verified that it indeed didn't 
+fix the issue. I think the root cause is on handling idiag_sport. I'll 
+look into it.
 
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-index d2704526f9d4b..1cba3b67b0fb9 100644
---- a/drivers/mfd/tqmx86.c
-+++ b/drivers/mfd/tqmx86.c
-@@ -50,6 +50,7 @@
- #define TQMX86_REG_IO_EXT_INT_9			2
- #define TQMX86_REG_IO_EXT_INT_12		3
- #define TQMX86_REG_IO_EXT_INT_MASK		0x3
-+#define TQMX86_REG_IO_EXT_INT_I2C1_SHIFT	0
- #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
- #define TQMX86_REG_SAUC		0x17
- 
-@@ -60,8 +61,19 @@ static uint gpio_irq;
- module_param(gpio_irq, uint, 0);
- MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
- 
--static const struct resource tqmx_i2c_soft_resources[] = {
--	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-+static uint i2c1_irq;
-+module_param(i2c1_irq, uint, 0);
-+MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 12)");
-+
-+enum tqmx86_i2c1_resource_type {
-+	TQMX86_I2C1_IO,
-+	TQMX86_I2C1_IRQ,
-+};
-+
-+static struct resource tqmx_i2c_soft_resources[] = {
-+	[TQMX86_I2C1_IO] = DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-+	/* Placeholder for IRQ resource */
-+	[TQMX86_I2C1_IRQ] = {},
- };
- 
- static const struct resource tqmx_watchdog_resources[] = {
-@@ -264,6 +276,13 @@ static int tqmx86_probe(struct platform_device *pdev)
- 	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
- 
- 	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
-+		if (i2c1_irq) {
-+			err = tqmx86_setup_irq(dev, "I2C1", i2c1_irq, io_base,
-+					       TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
-+			if (!err)
-+				tqmx_i2c_soft_resources[TQMX86_I2C1_IRQ] = DEFINE_RES_IRQ(i2c1_irq);
-+		}
-+
- 		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
- 					   tqmx86_i2c_soft_dev,
- 					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+[1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
 
+Thanks,
+Wenjia
 
