@@ -1,102 +1,178 @@
-Return-Path: <linux-kernel+bounces-404686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCC69C46D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:30:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739B49C46D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:31:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C851F24FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:30:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E541F25916
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA261ACDE8;
-	Mon, 11 Nov 2024 20:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170E81AD5DE;
+	Mon, 11 Nov 2024 20:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gI8/4gq6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqK3ele"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610691B95B;
-	Mon, 11 Nov 2024 20:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F2145346;
+	Mon, 11 Nov 2024 20:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357025; cv=none; b=aK14I5FXthCIEGj5G1KP+hjeQRbHlg3ttr6y6YiPrmZ4rXj5YHW73KxJ8HKDP2N5pisxbMOEpIbQsPzEH+Zf8IKwwjSI/3VHSIEAQZufhpYJJIPrpiNDdDgejpmg5ETb4dH4DUuah3AXHoWEG8iZFgSEMT4eTICe7G9Kkk6vYh4=
+	t=1731357051; cv=none; b=ZtqySZ+RFj08XKvoXcVOQ+hds8OVTg4CHYg8AoMMVi0y8aTNS5/DshO06yHlKctnxKDWbCupDI008O1bQHUjj5RLUdhonzPL2kA7W2UMYcx4nPYJqZ1RBxZcghi7Z1q5Ltd6soeEDEF7cX6jchfy0QA1qv8JHJ70LLT91R/wQmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357025; c=relaxed/simple;
-	bh=eFV6Mn9rlXPZKNihJg/acSCpZerYn1vyH7FUQTaubZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=bkwVeRwR+RxAOIL/H48aiTpI9JqAuwxpZwhF1hFN1JFyG4GEwHjoYf+8+NLl8+VvG2jz+UM25VvwRqZzVaq2YfkFlJVIJFZlPY663KOYZkvisrp7ONF0dSawDXA5TPryPq2xX1iyJdMPFCxzYmbMhtgu9s9GgmWsdVCnkPlJgHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gI8/4gq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C84F6C4CECF;
-	Mon, 11 Nov 2024 20:30:24 +0000 (UTC)
+	s=arc-20240116; t=1731357051; c=relaxed/simple;
+	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BblTsEpmKrYNrZ5GycK/MVrRkJfCckvKtcgq49aygWCt2fxm/GAFZVXGXQMrpOrBwXW3FkfFpz5Z8Umb66cXdH6XO3tY7y6WbsqVPFp+n5XRxvMHnU4rluAYYGRThPw13J3Jmd2uZHG0wZQaNpuYpusLLupGDifj6GrHMf9SmM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqK3ele; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94885C4CECF;
+	Mon, 11 Nov 2024 20:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357025;
-	bh=eFV6Mn9rlXPZKNihJg/acSCpZerYn1vyH7FUQTaubZ0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gI8/4gq6Yr6ar+OCNS6VAjGcLnm81nZyKzFPy6mZJ3dUSsi0ZKKaf+3ZDY1W+AQjf
-	 hbmpDvXRA0qa+AjNngfU01CZsUXiiS8blrpbqOW7Hksjgp1BQpdiP/EYkvT1TEQTcD
-	 RLWPjpVMt5mlyBpxrg/r2Ii+vdPgkIrURTp0LasCIUteCWvEpHhn2zEzH1wIOzF5Wu
-	 FW8TrRMeXVFPC/wPCMweLozeYcBbNhzV/2gr8viGSpFhuegah57nYZo1QJNpcDPp5D
-	 wc7OM+pI2/hgbCZW7R+h4P+V3G/xGC+oCHMPcxB1dZrrG7h9O97SQm+0N0EmCh4Vkt
-	 gzLxBTZt4F5QA==
-Date: Mon, 11 Nov 2024 14:30:23 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v9 3/9] PCI: Store all PCIe Supported Link Speeds
-Message-ID: <20241111203023.GA1816689@bhelgaas>
+	s=k20201202; t=1731357050;
+	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UtqK3eleeS+IR8r9f119Olaf76MrcX6pSyrNXS7x+FZjRQrGBdI9soR3JUiY492+H
+	 P7PYLvi7POUG9LdFzYb3TBpgKGyPm6feJKnsuld5v1aZ89ZMVsx+5fw0TymPW7ojP1
+	 KtkiN+ug3ki++x4OGIFscQ/WI5iHxEGZix81xjcONdhPCK/tPyp4nvXs1aUFu/hKGD
+	 5dA+cWHj1XgIVX37ia1dg4SqKD0v2DLnKzlw4HumnZkPI8j/hpFlmXeQ9lD1PX6JlA
+	 tIOE/o5nkkjNb3WyFZPnNqid9q1puKehdZooPyh9dNKPZOaWvr3yP1WFsFzGqRlfLi
+	 MXXHt21tRZetg==
+Date: Mon, 11 Nov 2024 20:30:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert mux.txt to json-schema
+Message-ID: <20241111-finished-jinx-e810458a3381@spud>
+References: <20241108231453.247660-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Trh0whuzKXWjCbWM"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzIFV8UNYSvgZtQM@wunner.de>
+In-Reply-To: <20241108231453.247660-1-andreas@kemnade.info>
 
-On Mon, Nov 11, 2024 at 02:23:35PM +0100, Lukas Wunner wrote:
-> On Fri, Oct 18, 2024 at 05:47:49PM +0300, Ilpo Järvinen wrote:
-> > diff --git a/include/linux/pci.h b/include/linux/pci.h
-> > index be5ed534c39c..a02b77fe7865 100644
-> > --- a/include/linux/pci.h
-> > +++ b/include/linux/pci.h
-> > @@ -303,6 +303,7 @@ enum pci_bus_speed {
-> >  	PCI_SPEED_UNKNOWN		= 0xff,
-> >  };
-> >  
-> > +u8 pcie_get_supported_speeds(struct pci_dev *dev);
-> >  enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
-> >  enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
-> 
-> I realize this is now already queued as commit 73ee11953294 on pci/bwctrl,
-> nevertheless one belated comment:
-> 
-> Since there are no callers of pcie_get_supported_speeds() outside the
-> PCI core, the above declaration should probably rather live in
-> drivers/pci/pci.h.
 
-I moved them, thanks!
+--Trh0whuzKXWjCbWM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I noticed duplicate declarations for pcie_get_speed_cap() and
-pcie_get_width_cap(), so I'll add a patch to drop them from
-drivers/pci/pci.h.
+On Sat, Nov 09, 2024 at 12:14:53AM +0100, Andreas Kemnade wrote:
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml=
+ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> new file mode 100644
+> index 000000000000..4a6f349ba2b0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments mux clock
+> +
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +
+> +description: |
+> +  This clock assumes a register-mapped multiplexer with multiple inpt cl=
+ock
+> +  signals or parents, one of which can be selected as output. This clock=
+ does
+> +  not gate or adjust the parent rate via a divider or multiplier.
+> +
+> +  By default the "clocks" property lists the parents in the same order
+> +  as they are programmed into the register.  E.g:
+> +
+> +    clocks =3D <&foo_clock>, <&bar_clock>, <&baz_clock>;
+> +
+> +  Results in programming the register as follows:
+> +
+> +  register value   selected parent clock
+> +  0                foo_clock
+> +  1                bar_clock
+> +  2                baz_clock
+> +
+> +  Some clock controller IPs do not allow a value of zero to be programmed
+> +  into the register, instead indexing begins at 1.  The optional property
+> +  "index-starts-at-one" modified the scheme as follows:
 
-Bjorn
+Not your doing, but this is a crock. How is someone meant to know when
+to use the property or not? Par for the course for ancient bindings I
+guess..
+
+> +
+> +  register value   selected clock parent
+> +  1                foo_clock
+> +  2                bar_clock
+> +  3                baz_clock
+> +
+> +  The binding must provide the register to control the mux. Optionally
+> +  the number of bits to shift the control field in the register can be
+> +  supplied. If the shift value is missing it is the same as supplying
+> +  a zero shift.
+> +  - |
+> +    bus {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      clock-controller@110 {
+> +        #clock-cells =3D <0>;
+> +        compatible =3D "ti,mux-clock";
+> +        clocks =3D <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_1680=
+0000_ck>;
+> +        reg =3D <0x0110>;
+> +        ti,index-starts-at-one;
+> +        ti,set-rate-parent;
+> +      };
+> +
+> +      clock-controller@120 {
+> +        #clock-cells =3D <0>;
+> +        compatible =3D "ti,composite-mux-clock";
+> +        clocks =3D <&core_96m_fck>, <&mcbsp_clks>;
+> +        ti,bit-shift =3D <4>;
+> +        reg =3D <0x0120>;
+
+Ordering here should be compatible, reg, clock properties, vendor
+properties.
+
+With that,=20
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+> +      };
+> +    };
+> --=20
+> 2.39.5
+>=20
+
+--Trh0whuzKXWjCbWM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJpdgAKCRB4tDGHoIJi
+0pRrAP9IAMMC4QQ1XmcaRQcIxjloiEmGeCoz/KUhen7MTd7ZcQD+O8dU04TD/eW1
+EzJCZAsNA+kwHG4eR4aM+L8k5NoJzAo=
+=VTPP
+-----END PGP SIGNATURE-----
+
+--Trh0whuzKXWjCbWM--
 
