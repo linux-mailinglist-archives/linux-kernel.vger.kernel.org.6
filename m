@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-403453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7339C35F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:31:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90ED49C35FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C618D281648
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2F6B21776
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495FA7602D;
-	Mon, 11 Nov 2024 01:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0222D482DD;
+	Mon, 11 Nov 2024 01:30:53 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8406654279;
-	Mon, 11 Nov 2024 01:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976F85C5E;
+	Mon, 11 Nov 2024 01:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731288649; cv=none; b=D2s8YP4+35i2H2NuTBM0K7IewDo/AhT6mIiPPLEa4685kbdckAeCQvFSRRmXQnmdLFUYEjQnQ8nc6Rp+WgRKsQ3iLoww/Ayg6qmnhloRRF9LfBsP83DdLFGeIs8DohocgkeQr4/9uSRgkO81hsRWuc5LEYuTc+5M/YyWODHr/24=
+	t=1731288652; cv=none; b=UsTCOnh9fC8djPl2o7eiUv06yYtQFbcOZBPtLi9Y9jDTC4PtMrJo/gB2PllnFiuy68YWv3Mgbzqi8FLYN8mq0vt/Ts+AUOzN1DXrm65sVV2BqVBQ00t2+r2nlFQtMwbmuObivEnPI/IkP40ebt4r4ArqUwBphKvJThTtPjE5h2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731288649; c=relaxed/simple;
-	bh=WYeKIyoUVK3KUUHWBSgGcTi/jGmz4oWmd/izzeKpOTg=;
+	s=arc-20240116; t=1731288652; c=relaxed/simple;
+	bh=MSgyfh8JQ8IhWBVSCbM3Kve8T1LhHCLog5V9N7pHy1Q=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JiZFgLk8ljQYDhyqWdegzyDkl/dOyYBt4PYh2Vk8qXLrqX1B9R+CYG2O9N2ShBa9L9KTZiPwQHzHaKoGPh2XiQX/ZRKWpTpvzXY0CGfmmHw4KACm9NarHHh3L9dBc2wTpthiodSd8+aq0Qw2rAupaPUa2KzPrIiGhQMWxKLTGlI=
+	 MIME-Version; b=LiI/wz1TLPXDPRNk34ozjoBYOEM6kGSPWQuEE6AphbNG5ookS5Y+pK5vYoSaUrBdLwh5Lpk1HG89rKeKe8p6UYyfccmyzCFT2ijexEnk0+R1R9y1iIBOWNlUdPgxo3mNAnFXxzOEtNBnri+xO49O/gkRta080nAQWyXNiinLqTc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC4021480;
-	Sun, 10 Nov 2024 17:31:17 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6E6E1CDD;
+	Sun, 10 Nov 2024 17:31:19 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 624A83F66E;
-	Sun, 10 Nov 2024 17:30:46 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C5003F66E;
+	Sun, 10 Nov 2024 17:30:48 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -45,9 +45,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	linux-mmc@vger.kernel.org
-Subject: [PATCH 01/14] dt-bindings: mmc: sunxi: Simplify compatible string listing
-Date: Mon, 11 Nov 2024 01:30:20 +0000
-Message-ID: <20241111013033.22793-2-andre.przywara@arm.com>
+Subject: [PATCH 02/14] dt-bindings: mmc: sunxi: add compatible strings for Allwinner A523
+Date: Mon, 11 Nov 2024 01:30:21 +0000
+Message-ID: <20241111013033.22793-3-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241111013033.22793-1-andre.przywara@arm.com>
 References: <20241111013033.22793-1-andre.przywara@arm.com>
@@ -59,73 +59,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-New Allwinner SoCs only occasionally update their MMC IP, leading to many
-pairs of compatible strings, though there are sometimes a number of them
-being compatible with one particular SoC.
+The Allwinner A523 uses the same MMC IP as the D1.
 
-Collate the compatible string listing in the binding, to group those
-being compatible together. This makes the list more readable, and allows
-for easier addition of new SoC's MMC devices.
+Introduce the new specific compatible strings, and use them with
+fallbacks to the D1 strings.
+
+Also it turned out that the A100 is not compatible to the H616, instead
+it is the same as the D1. For compatibility we cannot change the fallback
+chain, but any drivers are from now on supposed to match on the H616
+string directly. Mark this fallback chain as deprecated, to avoid new
+users to be added.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml | 36 ++++++++-----------
- 1 file changed, 14 insertions(+), 22 deletions(-)
+ .../devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-index 0ccd632d56200..8e4c77b7e4ab9 100644
+index 8e4c77b7e4ab9..40b83af02c3f9 100644
 --- a/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
 +++ b/Documentation/devicetree/bindings/mmc/allwinner,sun4i-a10-mmc.yaml
-@@ -30,38 +30,30 @@ properties:
-       - const: allwinner,sun50i-a100-emmc
-       - const: allwinner,sun50i-a100-mmc
-       - items:
--          - const: allwinner,sun8i-a83t-mmc
-+          - enum:
-+              - allwinner,sun8i-a83t-mmc
-+              - allwinner,suniv-f1c100s-mmc
-           - const: allwinner,sun7i-a20-mmc
-       - items:
--          - const: allwinner,sun8i-r40-emmc
-+          - enum:
-+              - allwinner,sun8i-r40-emmc
-+              - allwinner,sun50i-h5-emmc
-+              - allwinner,sun50i-h6-emmc
-           - const: allwinner,sun50i-a64-emmc
-       - items:
--          - const: allwinner,sun8i-r40-mmc
-+          - enum:
-+              - allwinner,sun8i-r40-mmc
-+              - allwinner,sun50i-h5-mmc
-+              - allwinner,sun50i-h6-mmc
-           - const: allwinner,sun50i-a64-mmc
-       - items:
--          - const: allwinner,sun50i-h5-emmc
--          - const: allwinner,sun50i-a64-emmc
--      - items:
--          - const: allwinner,sun50i-h5-mmc
--          - const: allwinner,sun50i-a64-mmc
--      - items:
--          - const: allwinner,sun50i-h6-emmc
--          - const: allwinner,sun50i-a64-emmc
--      - items:
--          - const: allwinner,sun50i-h6-mmc
--          - const: allwinner,sun50i-a64-mmc
--      - items:
--          - const: allwinner,sun20i-d1-emmc
--          - const: allwinner,sun50i-a100-emmc
--      - items:
--          - const: allwinner,sun50i-h616-emmc
-+          - enum:
-+              - allwinner,sun20i-d1-emmc
-+              - allwinner,sun50i-h616-emmc
+@@ -50,10 +50,14 @@ properties:
+           - enum:
+               - allwinner,sun20i-d1-emmc
+               - allwinner,sun50i-h616-emmc
++              - allwinner,sun55i-a523-emmc
            - const: allwinner,sun50i-a100-emmc
-       - items:
+-      - items:
++      - items:  # deprecated fallback chain
            - const: allwinner,sun50i-h616-mmc
            - const: allwinner,sun50i-a100-mmc
--      - items:
--          - const: allwinner,suniv-f1c100s-mmc
--          - const: allwinner,sun7i-a20-mmc
++      - items:
++          - const: allwinner,sun55i-a523-mmc
++          - const: allwinner,sun20i-d1-mmc
  
    reg:
      maxItems: 1
