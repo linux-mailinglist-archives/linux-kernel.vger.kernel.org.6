@@ -1,72 +1,215 @@
-Return-Path: <linux-kernel+bounces-404510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644EE9C44B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F073F9C449C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E509B27EEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DE61F21AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:10:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562231AA78A;
-	Mon, 11 Nov 2024 18:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EF61AA78C;
+	Mon, 11 Nov 2024 18:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fx5d984v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zxt4CgIZ"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE942B9A9;
-	Mon, 11 Nov 2024 18:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38FF2B9A9;
+	Mon, 11 Nov 2024 18:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348613; cv=none; b=uA883C0uR7o+MEf4v6dSQWQDEMkV9vW8y0S9Qdie3GNTeAgf/DvG7WehAMTsNW9dIxs5ZfTYUvHyILD7AlMxRdqm/Un0FJ8AdgIHU2lQCPEOW1hh3SNx3EESJyajMGPVgJJqaFMw3RrCCvRKWhdHTmAKgMAQQ7w6AV9fewLK5n0=
+	t=1731348629; cv=none; b=b9p+KmrJDLUVirEiPdZM4ThXCbiG+PFyqdOZKVAF4ZpTt//OWty2R7WaZpjc0m2Qx9i7VArAmNnNl8SCMZTDcIarVCpfZNklMbLqsnJXMMBxOS2cfAXLuSVkUC1rW37sZiAxZhoSoG9nk7fxcExX/8W4w1iFLkcVkOa7ROLDsEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731348613; c=relaxed/simple;
-	bh=7vlsVM41rkfd8n8v64r+8xQCmi8NiyCLz7rtqbFRmEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sxvf9dMpvOpoMf+GkzKMOk7YDPXtUx0b6VSnsce+eo+PnCbfRaoNACc4tdrIvkoJ+ezjGdjvAageHykMmZ7g7gaFnvcCVBaOhSa2fJuUKP6Ne6NsZfFqhTQJzIwGrKEriNMUv+N5gqfjAqHMqOJ1K/Ta7KzxTDgsf/fVr1N+Csg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fx5d984v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF193C4CECF;
-	Mon, 11 Nov 2024 18:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731348613;
-	bh=7vlsVM41rkfd8n8v64r+8xQCmi8NiyCLz7rtqbFRmEY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fx5d984v6XlO4AhvzeG0ALATi8GlzTvluAwtV3CQgF5XX67RogJwUO7xvy0KmcVJy
-	 NvNSJxU4EinIiuOpn7dCewLmbQeW7GTs68Y44M6VMfXwH7R+J/+X7FteXpLpFh3ekH
-	 t/BJPa/MRxoBnly1zNYQt47jJggq8TJIavxJaExzw3nXea3rUcqONLPpLk4/mc1sYO
-	 pi3Xj82Pj17XXxQuFyy1yCqc8Qwvz2fkgalbVag3qC+S1Vg71NzOa477mAvon1Gd0j
-	 mHRbfv8SlDgY/0HXEDLB44dcoRntRsnM2fSEn7wzsc/6qvBKuM1LRI1hy3FFHqqDhE
-	 zfVhAA5LzDxtw==
-Date: Mon, 11 Nov 2024 10:10:11 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
- <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-can@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
- voltage
-Message-ID: <20241111101011.30e04701@kernel.org>
-In-Reply-To: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+	s=arc-20240116; t=1731348629; c=relaxed/simple;
+	bh=KVQbaVfnsvZbaShHbiM3dinKsf/mPrc06yjMtqn9jEg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdnI6YRPKIMqE0zWR8WvRLhUfiQxsM6KJMtOPO9fZzIKLX4MdA3l9R2ijNrSIxzmiCHnAnI8vP6lt6wpYEk/kCg3GtlC2e9fnBlLppFdk1XaNyexCUsf7KXSiJVVHAVrZlMd8X1MONljVKketRPZZWQlW2Hqdz5C0Fv0EvELCOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zxt4CgIZ; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6ea8419a57eso49569157b3.1;
+        Mon, 11 Nov 2024 10:10:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731348627; x=1731953427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9dr3t1x7HP1NO5f0yrodeNYm5JayGOZwIg+TjEcYTq4=;
+        b=Zxt4CgIZai7eypGmYK8FyV0VZtq11k2GpOrGTyCpFJp+W2trWeCXQeJOv+SIyd4YR5
+         MUpThXVTGAwcj6zFdoHz4p1zDJ1JG7KeQUzkcHTYHfTUV9ROgzWpBV+UHXVUmzpHDwQh
+         NzehBskm+uPG5MtIaq1ip/KVVn2tL/p6iqwO5d13/icsF3qffgNchiRWd9neZ/1VuZbF
+         nWHM6bpZ3sNEhAf8qH283cT6mG0KrQ12C7co7bbAbvpYClXgbX1eJ/evTxoi2mKVAyYW
+         5qbi+mEvEuvR/HY25THQvR9GtWxdmyVUNWXDPWH3lJM1HbXWkIBmIoAMK9xZSgWszkGH
+         uJ1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731348627; x=1731953427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9dr3t1x7HP1NO5f0yrodeNYm5JayGOZwIg+TjEcYTq4=;
+        b=N3AfkH8TTYVbI6NHmpBan+o4KIsG0TVuccLaOYeUvVLAkG3Y9uT6Q8pm65PP56QCzc
+         EU2eVJYuAJqb9TDhEg5cG8HIluc3qxebKayRFWSA+ltBgtYP/Dpjo3dbS+k+g/chzA0N
+         iqHxryajHaEDXKlEIPQhwZOKjvgrcaT4vAU5/MP5td+7YlhzaQz6HfCTcvZ/H1CVS+/Y
+         +HiiZTRzyzHA8B2gydZ0MjGHuzAcFMbQK0bmtZARUSomt1egkdoEy5+jk5SNPTg5tGnW
+         27hZPTszQl8PBoX66ft3czBkUqCWZghPLRgiu/uHxCtIlSqZ9m5Ck3ppvKVwi2aIlcd9
+         UBOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNK08d+agj1/1+Ed65w7JQv7FvB7HCq7bhdeCydVFpkhfxltKSHRYql+hbnboukLM7PBkUWyEmiICK004=@vger.kernel.org, AJvYcCVfck1VnMS9h5bUATDk7yVltetDXAOUtuyDF1hScKjjsGEwiALJnUTKhuypoy7J4hviRLqtAvQ2o1m9cY2EAH8vAQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVs6pW6IKcpyg7dPKzkehtOQsvWAhdqUBhCUZTUerbYCWGpbQ2
+	sIpvanDfpGbv3bIY7W4nENG2m1dZjeKCuFIc/PMheh6cpyho6ujGwUfouD11IBTK5Z75FA+4QhM
+	CSsOJCKb9oyfPxe+pfKh+IpvJqTU=
+X-Google-Smtp-Source: AGHT+IF9O2x9ZNWM0IjG3Zn5hEu1pIfyV/KMjTZavD5IEBgatDz2fYO7iABluw3ldAxoUbKkOAl7k4LK/pTMneUhSNc=
+X-Received: by 2002:a05:690c:620a:b0:6e3:420f:a2d1 with SMTP id
+ 00721157ae682-6eadddb0f82mr124102007b3.23.1731348626804; Mon, 11 Nov 2024
+ 10:10:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <20241108204137.2444151-4-howardchu95@gmail.com> <CAP-5=fW4pKRdmiQ5J4mdzVfXgKpnzHxHWooSktp5xsy68FQKaA@mail.gmail.com>
+In-Reply-To: <CAP-5=fW4pKRdmiQ5J4mdzVfXgKpnzHxHWooSktp5xsy68FQKaA@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 11 Nov 2024 10:10:15 -0800
+Message-ID: <CAH0uvog4RCPZEF3zwuvnj=dBqbvhC1hP08DVsJyP-DLPOzHtBg@mail.gmail.com>
+Subject: Re: [PATCH v7 03/10] perf record --off-cpu: Parse off-cpu event
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 11 Nov 2024 09:54:48 +0100 Sean Nyekjaer wrote:
-> This series adds support for setting the nWKRQ voltage.
+Hello,
 
-There is no need to CC netdev@ on pure drivers/net/can changes.
-Since these changes are not tagged in any way I have to manually
-go and drop all of them from our patchwork.
+On Mon, Nov 11, 2024 at 9:45=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
+> wrote:
+> >
+> > Parse the off-cpu event using parse_event, as bpf-output.
+> >
+> > no-inherit is should be set to 1, here's the reason:
+>
+> nit: s/is should be/should be/
+
+Interesting sed substitution format.
+
+Good catch! I will fix that in a next commit, thanks!
+
+>
+> > We update the BPF perf_event map for direct off-cpu sample dumping (in
+> > following patches), it executes as follows:
+> >
+> > bpf_map_update_value()
+> >  bpf_fd_array_map_update_elem()
+> >   perf_event_fd_array_get_ptr()
+> >    perf_event_read_local()
+> >
+> > In perf_event_read_local(), there is:
+> >
+> > int perf_event_read_local(struct perf_event *event, u64 *value,
+> >                           u64 *enabled, u64 *running)
+> > {
+> > ...
+> >         /*
+> >          * It must not be an event with inherit set, we cannot read
+> >          * all child counters from atomic context.
+> >          */
+> >         if (event->attr.inherit) {
+> >                 ret =3D -EOPNOTSUPP;
+> >                 goto out;
+> >         }
+> >
+> > Which means no-inherit has to be true for updating the BPF perf_event
+> > map.
+> >
+> > Moreover, for bpf-output events, we primarily want a system-wide event
+> > instead of a per-task event.
+> >
+> > The reason is that in BPF's bpf_perf_event_output(), BPF uses the CPU
+> > index to retrieve the perf_event file descriptor it outputs to.
+> >
+> > Making a bpf-output event system-wide naturally satisfies this
+> > requirement by mapping CPU appropriately.
+> >
+> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/util/bpf_off_cpu.c | 33 +++++++++++----------------------
+> >  1 file changed, 11 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
+u.c
+> > index a590a8ac1f9d..558c5e5c2dc3 100644
+> > --- a/tools/perf/util/bpf_off_cpu.c
+> > +++ b/tools/perf/util/bpf_off_cpu.c
+> > @@ -38,32 +38,21 @@ union off_cpu_data {
+> >
+> >  static int off_cpu_config(struct evlist *evlist)
+> >  {
+> > +       char off_cpu_event[64];
+> >         struct evsel *evsel;
+> > -       struct perf_event_attr attr =3D {
+> > -               .type   =3D PERF_TYPE_SOFTWARE,
+> > -               .config =3D PERF_COUNT_SW_BPF_OUTPUT,
+> > -               .size   =3D sizeof(attr), /* to capture ABI version */
+> > -       };
+> > -       char *evname =3D strdup(OFFCPU_EVENT);
+> > -
+> > -       if (evname =3D=3D NULL)
+> > -               return -ENOMEM;
+> >
+> > -       evsel =3D evsel__new(&attr);
+> > -       if (!evsel) {
+> > -               free(evname);
+> > -               return -ENOMEM;
+> > +       scnprintf(off_cpu_event, sizeof(off_cpu_event), "bpf-output/no-=
+inherit=3D1,name=3D%s/", OFFCPU_EVENT);
+> > +       if (parse_event(evlist, off_cpu_event)) {
+> > +               pr_err("Failed to open off-cpu event\n");
+> > +               return -1;
+>
+> Woot, love this! Much happier to see parse_events being used than hand
+> crafted attributes. This will help us keep things synchronized via
+> event parsing.
+>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+>
+> Thanks,
+> Ian
+>
+> >         }
+> >
+> > -       evsel->core.attr.freq =3D 1;
+> > -       evsel->core.attr.sample_period =3D 1;
+> > -       /* off-cpu analysis depends on stack trace */
+> > -       evsel->core.attr.sample_type =3D PERF_SAMPLE_CALLCHAIN;
+> > -
+> > -       evlist__add(evlist, evsel);
+> > -
+> > -       free(evsel->name);
+> > -       evsel->name =3D evname;
+> > +       evlist__for_each_entry(evlist, evsel) {
+> > +               if (evsel__is_offcpu_event(evsel)) {
+> > +                       evsel->core.system_wide =3D true;
+> > +                       break;
+> > +               }
+> > +       }
+> >
+> >         return 0;
+> >  }
+> > --
+> > 2.43.0
+> >
+
+Thanks,
+Howard
 
