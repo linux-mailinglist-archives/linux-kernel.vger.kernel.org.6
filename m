@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-404190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043C69C406D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6E59C406E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B7B1C21857
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7ADEBB2197E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E769719F12A;
-	Mon, 11 Nov 2024 14:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF54219E99E;
+	Mon, 11 Nov 2024 14:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IIZvOGzY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MsjPSJoV"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A9D19CD0E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8436519E98C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334346; cv=none; b=PlfK9Ltjt0YLbIVzSfVypJOyZLDSfjcdDwvNrzyzUmGKCOVdeRBI9En8yVdtBvj26likBVtJIFr92KeLzVD30oSARbvSvBpemlWBM2RtUQKGlSIUKcAfzwTxL8ZmtF9zY8xE85kv7ySFl4G2gEiv5Zbb9e0kSGHLLmncHDcXoys=
+	t=1731334361; cv=none; b=J4pW6vyomwxE9cm7Mxj66GixeNW5PPo5ttkMUyjAqmnnT4z2U03PbesN9ls5xAdOqf/TaXl2ewbB8OEzHwtUZ15ZsWDD9J6x8lDtBsNjpXTfdde9yhv3aygMKt4zW7rHhfVUYaM/aMhZxtESO3PP8BALA5vrmjhClS5KwUufTVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334346; c=relaxed/simple;
-	bh=d194LAtbHHA+WQxpTakn4/4xXjdgsxHN5zzVyFMbmZo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DOcw3wryqP5zyy/BQ5ETMv51A4s49bJ9MWC6cMSynKE8LumVVkkBnXcbtx+b+BMB/rLMmetVGT9FwXzOrYIo5UMRjUokZtH3K/EM2BaEihakOaZ5SBFWyaJ2Yf/F/Ac/P8bN7FuZkcq0dGYK4Yryp6HfXr9xG675sA3AjCD604s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IIZvOGzY; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731334345; x=1762870345;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=d194LAtbHHA+WQxpTakn4/4xXjdgsxHN5zzVyFMbmZo=;
-  b=IIZvOGzY6sHlW6YxAl4QjWTWnWsUfIvFyw7wUtiscGWX64y0RRjdlUUM
-   9vyNZFlrxW1WpcKX66wJRDkukJhnrBWFL5OoRdJCj3OPVVNPdazMPT8vf
-   BlvRSTCS9mVkmlBnbtptOG9Tpiy3tipFqTEJb/l5jDKcjWawpzFon2IKs
-   1J6wm1i8bol0Af/PAakyO2rv+TsgOKGPxqMDSkVa/edhIftZejK8zGYEL
-   Z3pwfxtbgqu5RC8PtWdt5cZOKOZkdnYSmDxFkIxQvTIzcb9cn072oDhQT
-   uo0ImhZMvmi13CUvJLNnpmBGt3ikfEmmDF1z1qjcMrBLW6BG/V6fDGpwc
-   g==;
-X-CSE-ConnectionGUID: 5gwy1huAQK65ALQcrGGFgA==
-X-CSE-MsgGUID: dt/AWaObTrizn0xoDwuXtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="56535210"
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="56535210"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 06:12:24 -0800
-X-CSE-ConnectionGUID: 0O9YeO9nR0mJkqccr+rJfg==
-X-CSE-MsgGUID: Ws0h1OM1QryPUar4jSR7LA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="117864269"
-Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
-  by fmviesa001.fm.intel.com with ESMTP; 11 Nov 2024 06:12:21 -0800
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH] hwtracing: Switch back to struct platform_driver::remove()
-In-Reply-To: <20241111110922.334610-2-u.kleine-koenig@baylibre.com>
-References: <20241111110922.334610-2-u.kleine-koenig@baylibre.com>
-Date: Mon, 11 Nov 2024 16:12:20 +0200
-Message-ID: <87h68duaez.fsf@ubik.fi.intel.com>
+	s=arc-20240116; t=1731334361; c=relaxed/simple;
+	bh=y6v1Vwuu9NHE+26R0D2cweNBEfu1yKI914fpXfcyO8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pQJZtWTpK7bYpM2cyxNCtfvG/V+SDZQs4TYGAQRBubrRDfPFEU0M9JGRDSqdZnsQMuUkNVU+V2EqO7MzfFm/jlxQkrMANDFWh4qlrgRRVsrYJn+h0wW36zU2A+NxjufDqGzFmYRlkypddhZ1W+0SZIPi1abqSEILgbcUzOll5PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MsjPSJoV; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2958ddf99a7so881958fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:12:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731334358; x=1731939158; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=66uLGc0gYWY6pl4vJKWVk60NF3N9pYxdiSnhiB0bZ+0=;
+        b=MsjPSJoVwuhF1WW5SDMaDgeQ5JqU1coxJVfH+ybEFTggL1ldPexTOL03JW51I8WTdQ
+         YmzlyIS2QZGcgLHaoR29v9C2EtWEgGgLdwpa+17XwdIFB/XEXK/COvmWfYpwokL3cyKn
+         NtH47dvKcb0gYzk4uUnXaMn10RQ7/c5TyKlzsbr+6L33Gz487Nv/AjPnw1+15ZnTr3aH
+         sThIWjCWqM7iYAyeUQwB0zMupzLf9M5iS73o3A3Clov5RXZZ+X/QkNU3X1DujJWnZ6BT
+         am/CGsYEitUi1bCTzLuaAmmcieGGKumtt/U2/cExA4ZIfehIrojGTb77JfgVHn//Pdkf
+         dk0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731334358; x=1731939158;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=66uLGc0gYWY6pl4vJKWVk60NF3N9pYxdiSnhiB0bZ+0=;
+        b=PGRtTs0AbiSC4l9YpDikJZXozgTmyUj1dN6yElLgfgp2aPaCWr5N0YpdtyUN0ySnwV
+         dPyOpeU5wXSrcgoRaREI4cCv1K29BCRKgDZ532bLSoiMsp/n6lOqUIeYJY/zNPy4AsbB
+         PhBzDQ2XJXQTfWSE/5bTiTvUG24t6TUv3+xIDPjEoidgNfo0UTfsjx8AXm9WedwhDSXq
+         ac3jvUZkqf0dEnXrECIeRFVs/VxWLXofwfF5S2D+KeO9jCii7Si/QYC09T3XpJMQi/VL
+         thZSwrnT2gHfwiR/ep8HIecObL3wid/KgxMkwg0FL8htoHi+vss1U5FKvfq6DxVfKCEA
+         9crg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/M6n2K6oiJ0k6SjlINCupK5DtpWXGmVBEIO9thRonRez/kbkph1oJLKmQvADlb8X3oVPIxRIeRK7k5FE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkpDEX6e6LtsZJ70yI0poU2lPG6YK+I9VY4s/ftNCYKW4w24Mp
+	2stWo5GOzLiXeMe6+wA1MTkUkSyT/Hfl+isHI0SUKE3Io/nL5gfOWjtPjT/07j+jV8NZZUtZ8Z0
+	DccI=
+X-Google-Smtp-Source: AGHT+IHWv0kv6W+zOTjySZdLHaaUykzq/EEMfTz+FtiPzYyUcdtRJI2JmM+5cYpADP+e2ShIZZv6SA==
+X-Received: by 2002:a05:6870:d8cd:b0:277:d9f6:26f6 with SMTP id 586e51a60fabf-29560063fa6mr11114760fac.12.1731334357158;
+        Mon, 11 Nov 2024 06:12:37 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546f4ff2fsm2787996fac.51.2024.11.11.06.12.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 06:12:36 -0800 (PST)
+Message-ID: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+Date: Mon, 11 Nov 2024 07:12:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> writes:
+On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
+>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+>>  			}
+>>  		}
+>>  put_folios:
+>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
+>> -			folio_put(fbatch.folios[i]);
+>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+>> +			struct folio *folio = fbatch.folios[i];
+>> +
+>> +			if (folio_test_uncached(folio)) {
+>> +				folio_lock(folio);
+>> +				invalidate_complete_folio2(mapping, folio, 0);
+>> +				folio_unlock(folio);
+> 
+> I am not sure it is safe. What happens if it races with page fault?
+> 
+> The only current caller of invalidate_complete_folio2() unmaps the folio
+> explicitly before calling it. And folio lock prevents re-faulting.
+> 
+> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
+> also mark the page accessed.
 
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
->
-> Convert all platform drivers below drivers/hwtracing to use .remove(),
-> with the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
->
-> Also adapt some whitespace to make indention consistent.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+Ok thanks, let me take a look at that and create a test case that
+exercises that explicitly.
 
-Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>> diff --git a/mm/swap.c b/mm/swap.c
+>> index 835bdf324b76..f2457acae383 100644
+>> --- a/mm/swap.c
+>> +++ b/mm/swap.c
+>> @@ -472,6 +472,8 @@ static void folio_inc_refs(struct folio *folio)
+>>   */
+>>  void folio_mark_accessed(struct folio *folio)
+>>  {
+>> +	if (folio_test_uncached(folio))
+>> +		return;
+> 
+> 	if (folio_test_uncached(folio)) {
+> 		if (folio_mapped(folio))
+> 			folio_clear_uncached(folio);
+> 		else
+> 			return;
+> 	}
 
-> ---
-> Hello,
->
-> I did a single patch for all of drivers/hwtracing. While I usually
-> prefer to do one logical change per patch, this seems to be
-> overengineering here as the individual changes are really trivial and
-> shouldn't be much in the way for stable backports. But I'll happily
-> split the patch if you prefer it split. Maybe split for coresight vs.
-> intel_th? Also if you object the indentation stuff, I can rework that.
+Noted, thanks!
 
-I'm fine with it as is.
-
-> This is based on today's next, if conflicts arise when you apply it at
-> some later time and don't want to resolve them, feel free to just drop
-> the changes to the conflicting files. I'll notice and followup at a
-> later time then. Or ask me for a fixed resend. (Having said that, I
-> recommend b4 am -3 + git am -3 which should resolve most conflicts just
-> fine.)
-
-Does anybody want to pick this up or should I? I'm fine either way, but
-if there are any conflicts they won't be from my end of things, so it
-might make sense to take it via the coresight path.
-
-Thanks,
---
-Alex
+-- 
+Jens Axboe
 
