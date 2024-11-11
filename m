@@ -1,126 +1,110 @@
-Return-Path: <linux-kernel+bounces-403795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601659C3AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE19C3AF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F302EB220BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:35:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A8A8B226F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DF2146A68;
-	Mon, 11 Nov 2024 09:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D4914A60F;
+	Mon, 11 Nov 2024 09:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+fwPH4T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Pf2E7tYo"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916FC224D6;
-	Mon, 11 Nov 2024 09:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54120145B25
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317698; cv=none; b=b96kaD9UcO/uw6EXbyih12Pfc3Cqh+WjPzWX+U7iL2ze4UYD97550t2iVTNOYXtA+MhDmQY9u/aUYeoCvAbxXXGfMiTflutbCm60CxNNix3vhr7lZF5b/D2tRDtVfYWZGTB1x+AuSaQPD85E4oxWceZgUdzRRGiyn24E77LpE20=
+	t=1731317762; cv=none; b=r2Ioc+E8aBQxsXQzN3TjGKj8tz7ivXbB4mEgdJDDadVcofGkQ5/hhV0ie7VBftFfU8Dmcl8EqcSGfP/6TxQ5Oy3a2kxYmjXu6gSciwBA4eZ5ZMyX58kZJxdS53JHX3A1IeHZU5Wwf2NT/Hejn/mpUZlJzo2gB1lvHwjdG9/JLUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317698; c=relaxed/simple;
-	bh=rUnm2FdY/OLS/8AxyOpljESVF9x1DK5QupuPhKyvdjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZgNRw2jx9C/a4WhoW4u/pklsgVhphmdyR93fTAWF419++EReTggRbUxGiVQSE3yEjkngghw/SVQW9N72bD7soQfwEFQUFjku9pAg7h98Ch/qriB9qP0IHLdKAetvCL7p7IXeAP3anYKn4M+TFy63DqTZalKJUAWwoh0DfmX74s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+fwPH4T; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731317697; x=1762853697;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rUnm2FdY/OLS/8AxyOpljESVF9x1DK5QupuPhKyvdjk=;
-  b=m+fwPH4TtoVUxxLecERh5a3+lavWr8J6f4SwPCFz3ufZYHmi87LYyX6+
-   TWYYmuGMVtILWMu/w5TI+DHATDC3WImmSceSgMUkTwpb4v4Jt7jycBlom
-   qHQ3z0fo0ZLgaGcvUxFBlhJo+LC9OplJHrhZOefk15fBZSNDl7xmHfSUT
-   ye+xuGTHl2UpVJ+5V1GZkrgyE9Dpkx3caJSUdOrxpt4CrbYrDk3jn5WFn
-   gMsKVLDxC22Z1+ncdiam64QtLus4EXdgs7r+oWCGjcmyoyS4kQrIF2Chz
-   ytdSflHQc8EDBlG5jilxM7xToGKvliPqn/K1ZuksLfa4y6ULrrJG+hwSO
-   Q==;
-X-CSE-ConnectionGUID: C/WlcEosTS+lYFDl41Rl0A==
-X-CSE-MsgGUID: dI6FGNMfT2208XaE/GCfOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41678016"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41678016"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:34:57 -0800
-X-CSE-ConnectionGUID: 4iLhGHbyQTaH/HX0q8sZdQ==
-X-CSE-MsgGUID: g/25x4VyTj+JOidQGT/xJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="86951247"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:34:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tAQop-0000000DXmm-2DTa;
-	Mon, 11 Nov 2024 11:34:47 +0200
-Date: Mon, 11 Nov 2024 11:34:47 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: maz@kernel.org, tglx@linutronix.de, bhelgaas@google.com,
-	alex.williamson@redhat.com, jgg@nvidia.com, leonro@nvidia.com,
-	shameerali.kolothum.thodi@huawei.com, robin.murphy@arm.com,
-	dlemoal@kernel.org, kevin.tian@intel.com, smostafa@google.com,
-	reinette.chatre@intel.com, eric.auger@redhat.com,
-	ddutile@redhat.com, yebin10@huawei.com, brauner@kernel.org,
-	apatel@ventanamicro.com, shivamurthy.shastri@linutronix.de,
-	anna-maria@linutronix.de, nipun.gupta@amd.com,
-	marek.vasut+renesas@mailbox.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [PATCH RFCv1 6/7] PCI/MSI: Add pci_alloc_irq_vectors_iovas helper
-Message-ID: <ZzHPtwPdCehYyXWE@smile.fi.intel.com>
-References: <cover.1731130093.git.nicolinc@nvidia.com>
- <e9399426b08b16efbdf7224c0122f5bf80f6d0ea.1731130093.git.nicolinc@nvidia.com>
+	s=arc-20240116; t=1731317762; c=relaxed/simple;
+	bh=iIW5qj9a/eM0HykFd6sTzBvh1Kj4iue7W2O9hAD71jA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qeptA9CMJ3SiFdtvDffTaaVpi8MZHPgFeolpFlncRMN8+z6hnXdWBT/ON8SykEc1nIwH2L7Qr2BaYB6INWQcEpuvJ9BRpTtChY8LGc793ZVFoPiTriP6YBchb9p89PqzOryIhotO425ykhT2uoNrFViDpg7tpva165Y8SCT9UqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Pf2E7tYo; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731317751; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Hpg+68rgL8L/zyM5X4Eco0pzFbnhK0+ZZq9cQjmtXs4=;
+	b=Pf2E7tYo8zi2voOJpM678R/ntAiUXjnFnxSslTvzOR7g9QLBELYFE3/7sN9aBVvy8N4LI0ct5u3OnbF04GCt54Xd751DBNO+HP8qpXNhjC0ZlNWFa6wIjz53mWDPD13jny5rvLLSvMXtpuIEm3TMFzIdJ4bT6EODQJdFyRTE654=
+Received: from 30.221.129.158(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WJ8TrbA_1731317750 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 11 Nov 2024 17:35:50 +0800
+Message-ID: <6c468b6c-c449-444d-90af-fd2a6c7c1993@linux.alibaba.com>
+Date: Mon, 11 Nov 2024 17:35:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9399426b08b16efbdf7224c0122f5bf80f6d0ea.1731130093.git.nicolinc@nvidia.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: update seq_file index in ocfs2_dlm_seq_next
+To: Wengang Wang <wen.gang.wang@oracle.com>
+Cc: "ocfs2-devel@lists.linux.dev" <ocfs2-devel@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241108192829.58813-1-wen.gang.wang@oracle.com>
+ <614f6304-f096-41f7-b0a4-05127904e601@linux.alibaba.com>
+ <72E849B5-ECE7-4304-AF90-A60784B4EEFF@oracle.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <72E849B5-ECE7-4304-AF90-A60784B4EEFF@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 08, 2024 at 09:48:51PM -0800, Nicolin Chen wrote:
-> Now, the common __pci_alloc_irq_vectors() accepts an array of msi_iovas,
-> which is a list of preset IOVAs for MSI doorbell addresses.
+
+
+On 11/11/24 3:04 PM, Wengang Wang wrote:
 > 
-> Add a helper that would pass in a list. A following patch will call this
-> to forward msi_iovas from user space.
+> 
+>> On Nov 10, 2024, at 5:38 PM, Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> On 11/9/24 3:28 AM, Wengang Wang wrote:
+>>> The following INFO level message was seen:
+>>>
+>>> seq_file: buggy .next function ocfs2_dlm_seq_next [ocfs2] did not
+>>> update position index
+>>>
+>>> Fix:
+>>> Updata m->index to make seq_read_iter happy though the index its self makes
+>>> no sense to ocfs2_dlm_seq_next.
+>>>
+>>> Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+>>> ---
+>>> fs/ocfs2/dlmglue.c | 1 +
+>>> 1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+>>> index 60df52e4c1f8..349d131369cf 100644
+>>> --- a/fs/ocfs2/dlmglue.c
+>>> +++ b/fs/ocfs2/dlmglue.c
+>>> @@ -3120,6 +3120,7 @@ static void *ocfs2_dlm_seq_next(struct seq_file *m, void *v, loff_t *pos)
+>>> }
+>>> spin_unlock(&ocfs2_dlm_tracking_lock);
+>>>
+>>> + m->index++;
+>>
+>> We can directly use '(*pos)++' instead.
+>>
+> 
+> The input/output "pos” indicates more an offset into the file. Actually the output for an item is not really 1 byte in length, so incrementing the offset by 1 sounds a bit strange to me. Instead If we increment the “index”, It would be easier to understand it as  for next item. Though updating “index” or updating “*pos” instead makes no difference to binary running, the code understanding is different.  I know other seq_operations.next functions are directly incrementing the “*pos”, I think updating “index” is better. Well, if you persist (*pos)++, I will also let it go.
+> 
+From seq_read_iter(), the input pos is equivalent to '&m->index'. So the
+above two ways seems have no functional difference.
+IMO, we'd better hide the m->index logic into seqfile and just use pos
+instead like other .next implementations.
 
-...
-
-> +/**
-> + * pci_alloc_irq_vectors_iovas() - Allocate multiple device interrupt
-> + *                                 vectors with preset msi_iovas
-> + * @dev:       the PCI device to operate on
-> + * @min_vecs:  minimum required number of vectors (must be >= 1)
-> + * @max_vecs:  maximum desired number of vectors
-> + * @flags:     allocation flags, as in pci_alloc_irq_vectors()
-> + * @msi_iovas: list of IOVAs for MSI between [min_vecs, max_vecs]
-> + *
-> + * Same as pci_alloc_irq_vectors(), but with the extra @msi_iovas parameter.
-> + * Check that function docs, and &struct irq_affinity, for more details.
-> + */
-
-Always validate your kernel-doc descriptions
-
-	scripts/kernel-doc -Wall -none -v ...
-
-will give you a warning here.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Thanks,
+Joseph
 
 
