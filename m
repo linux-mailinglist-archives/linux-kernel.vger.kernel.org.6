@@ -1,175 +1,226 @@
-Return-Path: <linux-kernel+bounces-404303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EF49C4229
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:52:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CA019C422B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E5D2868C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:52:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E112B2861DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EBD19E99C;
-	Mon, 11 Nov 2024 15:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3191A0BC5;
+	Mon, 11 Nov 2024 15:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="UDuNNtgK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RXlIDeTX"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AaoC2YE6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448A125777;
-	Mon, 11 Nov 2024 15:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F120D25777;
+	Mon, 11 Nov 2024 15:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340313; cv=none; b=hX+lkmotTQP62veEl7WrB3d/3zIF3VRDG1MoDUvEA1hcYQ/1uqisW/UitafnT+9pIZIM5PWBuoPX8w7L7kOwrHD398YihaoXmN2LJV+/wlxwZBmJxwm5dbty44aUIlW0rmPj4onBbnfXUashXeJ+th/uTWN61kScn4cJ9JOrCoc=
+	t=1731340324; cv=none; b=XPkY0jAYcCx70k/RJTXLsk4PVLjt8C2dcxncv3p90OEgnnDAw5L3y3QsSeLhcd3VQV7hWl89GkKbL77I5yb6wG8MOevJlKnjHzt/ObTChwZ/YVtfmlQ1SkHjPQIy0e5sR4aW2QxGbS0wXbDzK/0JJKFDPlP6GpvzfzYZv79CR28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340313; c=relaxed/simple;
-	bh=p0y/edzcANgZ9Yq4x1BTo288Tix9RxkWNx1rV1TI3ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fcjNpVXjxp5WimI+4HjFEOErp3YkKEadSjdu3YYS0YxGGYPUaguqGWy88evkpRTR/ldWnuZ5+rCLX1T1CS9yK/WUusx0iyWHnhei+u/Bc6c+anJMGtH7Nboqa3xTlcCio3V9kl1PPFB4Z7NOKyFa4fKsTxRr7PaI4/wW4ea6Jxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=UDuNNtgK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RXlIDeTX; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6552A1380679;
-	Mon, 11 Nov 2024 10:51:51 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Mon, 11 Nov 2024 10:51:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1731340311; x=
-	1731426711; bh=sb7goKiV2lwec3DtIWx/4XS6HkWtaXhVKBL0qgh/MLk=; b=U
-	DuNNtgK30tGFfgc46KCYp1pkTqcNpgfcP0jMEf+aU88lgw1/PHLKV913yGYrPBoS
-	AHzH0TvfNj3XA0n1TBmwR8P8BbZtQ3JK/5i10JZaQ8rzxf9YfQ2y7Jtop+RECWRY
-	N3Dv+SmVmTMfStL4r67tAl8u2NerCveEM2EbmCd+4AOisvYdfsEwzcZtBJa5FqoD
-	4cwJ7vgKWgxDKTnvgUR3PaWePjGNA12xG/5brvw4qAUW3+iiKtqFrZwP/78e6LwX
-	mU+R1ojclGqv5/NqLYSeHErEwpJ0sAd0D4tOJOCmPTUBYRGZYG2SnM9Lobd7Ga09
-	Eoj6wxRj+PQcPWwE5lrtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731340311; x=1731426711; bh=sb7goKiV2lwec3DtIWx/4XS6HkWtaXhVKBL
-	0qgh/MLk=; b=RXlIDeTXFg8aCHV0FLht94dARccM2sXlLp1TjVtRCP7SNh0ZeXI
-	3muWXleEigeqCHIsVaiX6Aupb3UwdMLgtI/LUBQ1L5dYQ6EsBr1HZNwIxFedqeWh
-	z4uEgvSsA2eIjPTfOwIfg+5Q9de9qhL0btjXj3OVxs3ZEkkwJv2EchYKyop5lrl1
-	1ax7EtxXVqCNh/rMPbDd+QTU97Z9r7FkCaJ1W3nCWSQ+y3yDfmS6Qi132+ANXP6h
-	jPV2YhsxJ/iiE0Zk9xweFN3OlyfQbMDBlT7nb8bobo4AMA3XdrmnZhvdd/LWFeyb
-	VRJvfbNYl0f3IWaddvd/Z/sxTV4rC5nYKqg==
-X-ME-Sender: <xms:FigyZwm22GrJqET7MUv8cp0zqiKKWBUpL1ewQ0nmSQYyP3Eok3vBxg>
-    <xme:FigyZ_2zExiXI7erehh_qegwLXJVeTv5a4h8PQJNDm-BPi9GDdMtBn6TfSkWjjFAX
-    tDHzScI5Nl4WcZ9RMA>
-X-ME-Received: <xmr:FigyZ-pItT7PVvnTxvk65ixSYDkfkAkUn0aOxDcJm-r4UF5eE0BzTTr_K0DoXUzKCMMACQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdekudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
-    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
-    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
-    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
-    sehinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:FigyZ8mzTfuVg8VymzOzSnBqNo1GZtiEJBZyaf1tf6sQ5wLlXzGANw>
-    <xmx:FigyZ-3mKxfYzkYPDLFgfNHztIsA3RTOb_R2ryVgk0moSzuZog32AA>
-    <xmx:FigyZzvdjDgtzQNE7ujH4FGR5dp8g7e3pwSnrGU3lhlohGczLs8TTw>
-    <xmx:FigyZ6XFvjF44G2vVkwL3TS8pzE92VltzhBAslVGWlnVGNwpmSxdGg>
-    <xmx:FygyZ3k3dqUMHOfCwPljYm0D7RBMstJo2faswK0mDRBpa-S0FxQ_hr-2>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Nov 2024 10:51:48 -0500 (EST)
-Date: Mon, 11 Nov 2024 17:51:44 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-Message-ID: <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
- <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
+	s=arc-20240116; t=1731340324; c=relaxed/simple;
+	bh=Bk7fNC5QBsWVG5w730kOIBqCQsP6WrGkaYmNw/aVTqY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=i2TAcSqVXj6/e2gqYybjSqRyaY+xz8cjQdYOBExmnCida9D6FXNow1hfWMbjGhBkm2Fz+mp1+dtv0X9P6RygI1Ep4/CCK5683XOLY5n5g3QGujghQPRFbUC6IlsQLXh7lk6CCE2GZH8WdQSrHi3WVc8YQGzqWzNFOPZrbuS3+R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AaoC2YE6; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731340323; x=1762876323;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=Bk7fNC5QBsWVG5w730kOIBqCQsP6WrGkaYmNw/aVTqY=;
+  b=AaoC2YE6vQf7eR5ufcMAlkun7WGW2ZHOffNKZl353J2nnHLT68d3/sw6
+   BOg0g+xweCdBjQ/DVjwovT6dToUmhmTRqfNtuqvCiSoeOKB9Q6FTm2Qf6
+   xiRD7IC9R+LlapUJ5Xcipu8yhbl6wxmegYjn1U4wJPLdBmYN7hh2ZSOSz
+   YMzjFptPpE6/YyW27FNlItrb4XZ5tucOubB+HQz2RUBiySNxMv+jxPFb/
+   oGyfqUJwmxTQh1GHQ43phRNkE4xcEaj4B5Q4GuDd67z5oDGY1K9ZyeQ45
+   SeXy4Q1tTlQApM0ozuZZbcPI9goFmZTj4ixJXxPCmdjgrTPqhUv4F9ESl
+   g==;
+X-CSE-ConnectionGUID: zXivCupiRHC84rbnL6SIHg==
+X-CSE-MsgGUID: o5TdqNFwQo2t3XCFpX/TIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="30542918"
+X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
+   d="scan'208";a="30542918"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 07:52:02 -0800
+X-CSE-ConnectionGUID: KWye0nSgRMehPDqZg57X6g==
+X-CSE-MsgGUID: 1hAASl0IRrC/k//f9k+zag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
+   d="scan'208";a="90970264"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 07:52:02 -0800
+Received: from [10.212.84.100] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.100])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 816F120B5703;
+	Mon, 11 Nov 2024 07:52:00 -0800 (PST)
+Message-ID: <bfba7266-1903-41ca-9961-aa449f982912@linux.intel.com>
+Date: Mon, 11 Nov 2024 10:51:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf test: Add a runs-per-test flag
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241109160219.49976-1-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20241109160219.49976-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 08:31:28AM -0700, Jens Axboe wrote:
-> On 11/11/24 8:25 AM, Kirill A. Shutemov wrote:
-> > On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
-> >> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
-> >>>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
-> >>>>  			}
-> >>>>  		}
-> >>>>  put_folios:
-> >>>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
-> >>>> -			folio_put(fbatch.folios[i]);
-> >>>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-> >>>> +			struct folio *folio = fbatch.folios[i];
-> >>>> +
-> >>>> +			if (folio_test_uncached(folio)) {
-> >>>> +				folio_lock(folio);
-> >>>> +				invalidate_complete_folio2(mapping, folio, 0);
-> >>>> +				folio_unlock(folio);
-> >>>
-> >>> I am not sure it is safe. What happens if it races with page fault?
-> >>>
-> >>> The only current caller of invalidate_complete_folio2() unmaps the folio
-> >>> explicitly before calling it. And folio lock prevents re-faulting.
-> >>>
-> >>> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
-> >>> also mark the page accessed.
-> >>
-> >> Ok thanks, let me take a look at that and create a test case that
-> >> exercises that explicitly.
-> > 
-> > It might be worth generalizing it to clearing PG_uncached for any page cache
-> > lookups that don't come from RWF_UNCACHED.
+
+
+On 2024-11-09 11:02 a.m., Ian Rogers wrote:
+> To detect flakes it is useful to run tests more than once. Add a
+> runs-per-test flag that will run each test multiple times.
 > 
-> We can do that - you mean at lookup time? Eg have __filemap_get_folio()
-> do:
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/builtin-test.c | 38 ++++++++++++++++++++-------------
+>  1 file changed, 23 insertions(+), 15 deletions(-)
 > 
-> if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
-> 	folio_clear_uncached(folio);
-> 
-> or do you want this logic just in filemap_read()? Arguably it should
-> already clear it in the quoted code above, regardless, eg:
-> 
-> 	if (folio_test_uncached(folio)) {
-> 		folio_lock(folio);
-> 		invalidate_complete_folio2(mapping, folio, 0);
-> 		folio_clear_uncached(folio);
-> 		folio_unlock(folio);
-> 	}
-> 
-> in case invalidation fails.
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index d2cabaa8ad92..574fbd5caff0 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -42,6 +42,8 @@
+>  static bool dont_fork;
+>  /* Fork the tests in parallel and wait for their completion. */
+>  static bool sequential;
+> +/* Numer of times each test is run. */
+> +static unsigned int runs_per_test = 1;
+>  const char *dso_to_test;
+>  const char *test_objdump_path = "objdump";
+>  
+> @@ -490,10 +492,10 @@ static int __cmd_test(struct test_suite **suites, int argc, const char *argv[],
+>  				len = strlen(test_description(*t, subi));
+>  				if (width < len)
+>  					width = len;
+> -				num_tests++;
+> +				num_tests += runs_per_test;
+>  			}
+>  		} else {
+> -			num_tests++;
+> +			num_tests += runs_per_test;
+>  		}
+>  	}
 
-The point is to leave the folio in page cache if there's a
-non-RWF_UNCACHED user of it.
+Seems we just need to calculate the num_tests once at the end for each
+loop. Something as below may works. (not tested)
 
-Putting the check in __filemap_get_folio() sounds reasonable.
+@@ -482,20 +490,19 @@ static int __cmd_test(struct test_suite **suites,
+int argc, const char *argv[],
 
-But I am not 100% sure it would be enough to never get PG_uncached mapped.
-Will think about it more.
+        for (struct test_suite **t = suites; *t; t++) {
+                int len = strlen(test_description(*t, -1));
++               int subi = 0, subn = 1;
 
-Anyway, I think we need BUG_ON(folio_mapped(folio)) inside
-invalidate_complete_folio2().
+                if (width < len)
+                        width = len;
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+                if (has_subtests(*t)) {
+-                       for (int subi = 0, subn = num_subtests(*t); subi
+< subn; subi++) {
++                       for (subn = num_subtests(*t); subi < subn; subi++) {
+                                len = strlen(test_description(*t, subi));
+                                if (width < len)
+                                        width = len;
+-                               num_tests++;
+                        }
+-               } else {
+-                       num_tests++;
+                }
++               num_tests += subn * runs_per_test;
+        }
+        child_tests = calloc(num_tests, sizeof(*child_tests));
+        if (!child_tests)
+
+
+
+
+>  	child_tests = calloc(num_tests, sizeof(*child_tests));
+> @@ -556,21 +558,25 @@ static int __cmd_test(struct test_suite **suites, int argc, const char *argv[],
+>  			}
+>  
+>  			if (!has_subtests(*t)) {
+> -				err = start_test(*t, curr, -1, &child_tests[child_test_num++],
+> -						 width, pass);
+> -				if (err)
+> -					goto err_out;
+> +				for (unsigned int run = 0; run < runs_per_test; run++) {
+> +					err = start_test(*t, curr, -1, &child_tests[child_test_num++],
+> +							width, pass);
+> +					if (err)
+> +						goto err_out;
+> +				}
+>  				continue;
+>  			}
+> -			for (int subi = 0, subn = num_subtests(*t); subi < subn; subi++) {
+> -				if (!perf_test__matches(test_description(*t, subi),
+> -							curr, argc, argv))
+> -					continue;
+> -
+> -				err = start_test(*t, curr, subi, &child_tests[child_test_num++],
+> -						 width, pass);
+> -				if (err)
+> -					goto err_out;
+> +			for (unsigned int run = 0; run < runs_per_test; run++) {
+> +				for (int subi = 0, subn = num_subtests(*t); subi < subn; subi++) {
+> +					if (!perf_test__matches(test_description(*t, subi),
+> +									curr, argc, argv))
+> +						continue;
+> +
+> +					err = start_test(*t, curr, subi, &child_tests[child_test_num++],
+> +							width, pass);
+> +					if (err)
+> +						goto err_out;
+> +				}
+
+Can we add a wrapper for the start_test()? Something similar to below?
+It avoids adding the loop for every places using the start_test.
+
++static int start_test(struct test_suite *test, int i, int subi, struct
+child_test **child,
++               int width, int pass)
++{
++       for (unsigned int run = 0; run < runs_per_test; run++) {
++               __start_test();
++       }
++}
+
+Thanks,
+Kan
+
+>  			}
+>  		}
+>  		if (!sequential) {
+> @@ -714,6 +720,8 @@ int cmd_test(int argc, const char **argv)
+>  		    "Do not fork for testcase"),
+>  	OPT_BOOLEAN('S', "sequential", &sequential,
+>  		    "Run the tests one after another rather than in parallel"),
+> +	OPT_UINTEGER('r', "runs-per-test", &runs_per_test,
+> +		     "Run each test the given number of times, default 1"),
+>  	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing, use '--list-workloads' to list the available ones."),
+>  	OPT_BOOLEAN(0, "list-workloads", &list_workloads, "List the available builtin workloads to use with -w/--workload"),
+>  	OPT_STRING(0, "dso", &dso_to_test, "dso", "dso to test"),
+
 
