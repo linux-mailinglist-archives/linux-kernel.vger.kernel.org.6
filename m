@@ -1,271 +1,192 @@
-Return-Path: <linux-kernel+bounces-403822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD869C3B45
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:47:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0689C3B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F3A1C21D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498671F229ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B82616C6A1;
-	Mon, 11 Nov 2024 09:46:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2DC1714BC;
+	Mon, 11 Nov 2024 09:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fCp2Dxep"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF0313BAD5
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C086D174EDB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318387; cv=none; b=hXfDPepGsffnKDhhKHKykBu4+3DKW22R597PkYedOBidmhT2svNELa8F2eZxRrbIQxai2UjTnKriZe4HfXOd0CRqhb2Qa8f0NFxChC7BPUU3TFDjZeGEfkzD5kZ6smAKPmt/9SfUyep+hoQWhL5YqFHVauQ7ukKJhiuCua7SUwo=
+	t=1731318403; cv=none; b=Uhoqyfm21Kr4StBmIy0ptF7Bjj3okUJ6GmWfyeqJyd99GljYII6nagxlwqGMQgM+e2dkYl7kHdpSNDEUjNvYhwwhM70InBQi5G7ekxm9RKc4GjG7RnoitI+7cS8KMYaxt0SYixoEWCfU4m2rC4n8fi8IPbMzXw6fD5eQzGBg1Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318387; c=relaxed/simple;
-	bh=IcdsDmh4lFp0GgeUIjd3e1pf0wxJazod891NpMGBnGw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iClWvMKrcEHhziPKHzZeC2OZMzqJZozAXr7P1Bn+ZaBzaaCjf9Z1FECzVlAyhwYiuBKSK+COxZpX3BRHhhwEvZicCjJqduw+H4UZuOUIigpDKd8RcCwD8uijDnC6HjqJx33gxoUlj24D22902yFGIP9/pZjGnDs50eN0khcFLFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso52760925ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:46:25 -0800 (PST)
+	s=arc-20240116; t=1731318403; c=relaxed/simple;
+	bh=w920tSfB0M075as5TYxc4W+nRALAsTg7M4Tx8ZBYXlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BO6phq3AHc8x18pTDB68dBeQHijggz5wQneN2I+pm52qIG4A80Zy4Zwi7tfR/cC981SJZ3H8qg5XARqn5j7Za3UYHxoQB7oAWDo+GA1maHwMD5T5FlFUTjSjgJMq0oTA23x45oBCYWhxlOpFFxMrp7Pu5hsRW9LZWwbciqEb6Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fCp2Dxep; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731318397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=62GSbDvUL0zOMpHftPm6BKPDBc/cKDzWGTr8CdJHqeQ=;
+	b=fCp2Dxep9Hnqbf8QSzJ/TpfTH1Umdqi/J7Z3k16etl2tYZ8kbG4fVQcNq9/DzF7yk5s73U
+	h0HYA6ee+aqSrOgJUjHy6VcwicpYBb5+2ZkwGfXF9WZ7beNSgOsgU8VbDWSjoXR7QUCzNW
+	BzpovTngx3jDgTe8rXW4wB1ADaJo3bg=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-164-yxnp8MviPzu_rB12e8J9CA-1; Mon, 11 Nov 2024 04:46:35 -0500
+X-MC-Unique: yxnp8MviPzu_rB12e8J9CA-1
+X-Mimecast-MFC-AGG-ID: yxnp8MviPzu_rB12e8J9CA
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9a2c3e75f0so332804866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:46:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731318385; x=1731923185;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=foIUVhk7FPWeE6KKNZvbhWrSDgh7muMDD0HRvNyKrL0=;
-        b=dpp/f39iyi07KTwWgL91wBU31rZhjDfNghJSNxvRKQZ70KSvyWE84/CvgfhuSJyvTc
-         C1Vzn9OM1bG6ACUYzg8KZfeGlChLJYOCzjrqZnWDBmrCeBO0CGWre2kzQyss0p4oIuRU
-         8V97LfCl6N0n3RIlC8Pv/LQGaMA/XSn+hVtI8Cp0M01tG+/C/7OfgBBeQnX47brwFkx6
-         cu7mbifRnWjn6UhIedgUs4SHd++a33g9DZTo/z5tdWmnSO7s6qdfLIJIhc/Ae9/VRlQ0
-         Xhhy+nvQEXQwdVOeZUW8pK1LAcks5nTG1FS0/NQap2pPqi3Jp3MB/5uJwzCG3iR+q8h+
-         uiRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBOyGrdyat61VjIXdHtqC3sziNV/4SUE3oIU+Laq/ZQQz5pojP5rObHdqajOB/Enf2hRWvs6PWCiN3WIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeVsq8ZfblyBNmxRHZV//3RA1ii1XjgB3X3xh6weUdqIrd4l04
-	VGw6uBFHs9qEAyc12D7AyFZs46vYKpeAeU4x/5CQCMYm2JsVETP/rWHH4Wq+zHDhe5juzPwPwpx
-	U+pK00BWLKg1nuRuAh/NOJPowXbfHS6eJiMODUMdDRlF4yWcLAmF0Af8=
-X-Google-Smtp-Source: AGHT+IGCNRFOH/at0VfaBcw2KbhCiaj1vzUSgrOlp4Li5ow21+4StNBhRoa4kpQrIhUCVIXNgL6Xh7osxpS7LtV92NhG/CkxCEbu
+        d=1e100.net; s=20230601; t=1731318394; x=1731923194;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=62GSbDvUL0zOMpHftPm6BKPDBc/cKDzWGTr8CdJHqeQ=;
+        b=jyD7d8Femhb20uT3VoizlDTIXevBLap2pbEHGkRJ8F/6QI4oIyAtVhhRtuZ0qozAvb
+         DQQ6zVZjDs53LVb7YOWqH0WcD2kyIDJlpMxho1lWW+vAi6r64pssfAujFHYQHEYjGaK4
+         kKqi7+7TI4zTMg5m6LJjs9GGMQmIkzTb4qnftXl6e33vLJovD3tb2hNoA5aNNebebyQR
+         c38aF5eKlFwkZcDmFD5Uhy5uugwh6K8X2EX+DSMrAdrmxtzQdQpBAR7/V+eWu3g8b4n5
+         dL8YQe1H7E0pBdqlTERzbCC44whsM6lxBtAD9tN7US33KgKlMVUMFP4HyqaawA2eQ1A+
+         AELA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrZvDgChiswU1NK35iw0OExTumQB+JFzZLZ2LUHSynOSKlxnWlOwTuWVorkT54KqKwxQLtnXCi4VN/J1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrcNwG7KZ1h72sidLALF8QK1JrVVVyOJZPA7dlWWKAWbTBm/n2
+	aMCfuValazyyJv8XDkvQr1kF+onwyaOAieyFU5sYdCwd9lDow6xiymxoq9NL4ok+WaXCVtWQOEg
+	qcRyEtl33ZFP/a7yspg48wSn/ktR+aqeCfZo+A7RkuALqobIfJpfnzAzCzja3Kg==
+X-Received: by 2002:a17:907:94ca:b0:a99:2ab0:d973 with SMTP id a640c23a62f3a-a9ef001b427mr1268844566b.55.1731318394105;
+        Mon, 11 Nov 2024 01:46:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFoMiWttuHvhIkKbgxZGj6GDKOKya83rJOg8cvtcHZgwwiRdP5umpQQXdpMqR/iJ/UXIQKO5A==
+X-Received: by 2002:a17:907:94ca:b0:a99:2ab0:d973 with SMTP id a640c23a62f3a-a9ef001b427mr1268841566b.55.1731318393695;
+        Mon, 11 Nov 2024 01:46:33 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a4e1desm566629466b.81.2024.11.11.01.46.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 01:46:33 -0800 (PST)
+Message-ID: <20b988cb-603a-4c1f-8a6e-76a4cb98baa0@redhat.com>
+Date: Mon, 11 Nov 2024 10:46:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1789:b0:3a0:a070:b81 with SMTP id
- e9e14a558f8ab-3a6f1a59322mr108957395ab.23.1731318383710; Mon, 11 Nov 2024
- 01:46:23 -0800 (PST)
-Date: Mon, 11 Nov 2024 01:46:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6731d26f.050a0220.1fb99c.014b.GAE@google.com>
-Subject: [syzbot] [ocfs2?] KASAN: slab-use-after-free Read in ocfs2_lock_global_qf
-From: syzbot <syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] media: ov7251: Remap "reset" to "enable" for
+ OV7251
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20241108145024.1490536-1-andriy.shevchenko@linux.intel.com>
+ <Zy43D7wAZLrBDtiX@kekkonen.localdomain> <Zy48Fc_nUceCs3PK@smile.fi.intel.com>
+ <Zy4_hR9AsDhmK5MK@kekkonen.localdomain>
+ <2957d1f6-f846-4916-980d-4346bc2b9d64@redhat.com>
+ <ZzG4ekFKe25Ws0D7@kekkonen.localdomain>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <ZzG4ekFKe25Ws0D7@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+On 11-Nov-24 8:55 AM, Sakari Ailus wrote:
+> Hi Hans,
+> 
+> On Fri, Nov 08, 2024 at 07:19:05PM +0100, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 8-Nov-24 5:42 PM, Sakari Ailus wrote:
+>>> Hi Andy,
+>>>
+>>> On Fri, Nov 08, 2024 at 06:28:05PM +0200, Andy Shevchenko wrote:
+>>>> On Fri, Nov 08, 2024 at 04:06:39PM +0000, Sakari Ailus wrote:
+>>>>> On Fri, Nov 08, 2024 at 04:50:24PM +0200, Andy Shevchenko wrote:
+>>>>>> The driver of OmniVision OV7251 expects "enable" pin instead of "reset".
+>>>>>> Remap "reset" to "enable" and update polarity.
+>>>>>>
+>>>>>> In particular, the Linux kernel can't load the camera sensor
+>>>>>> driver on Microsoft Surface Book without this change:
+>>>>>>
+>>>>>>  ov7251 i2c-INT347E:00: supply vdddo not found, using dummy regulator
+>>>>>>  ov7251 i2c-INT347E:00: supply vddd not found, using dummy regulator
+>>>>>>  ov7251 i2c-INT347E:00: supply vdda not found, using dummy regulator
+>>>>>>  ov7251 i2c-INT347E:00: cannot get enable gpio
+>>>>>>  ov7251 i2c-INT347E:00: probe with driver ov7251 failed with error -2
+>>>>
+>>>> ...
+>>>>
+>>>>> Should this be cc'd to stable? I guess it's not exactly a fix in the driver
+>>>>> but a BIOS bug, but it can be worked around in the driver. :-)
+>>>>
+>>>> It's everything, but a BIOS bug, it's DT bug and whoever first introduced that
+>>>> GPIO in the driver. Even in the DT present in kernel the pin was referred as
+>>>
+>>> How is that a DT (binding?) bug?
+>>
+>> Since it is not following the datasheet name for the pin,
+>> it arguably is a DT binding bug
+>>
+>> But whatever, the whole discussion about if it is a bug and whose
+>> bug it is is not useful. Since we cannot go back in time and change
+>> the DT binding DT and ACPI are simply going to disagree on the name
+>> and we will need something like this patch.
+>>
+>>>> CAM_RST_N, which is exactly how this patch names it.
+>>>>
+>>>> OTOH it's a fix to the driver that never worked for ACPI case, so there never
+>>>> was a regression to fix.
+>>>
+>>> It probably worked just fine, just not with that Surface Book.
+>>>
+>>> The polarity of the enable gpio appears to be set wrong in devm_gpiod_get()
+>>> call. I can post a patch but cannot test it.
+>>
+>> That is on purpose, at least the polarity if the devm_gpiod_get(..., "reset",
+>> ...) is inverted from the existing one for "enable" because reset needs
+>> to be inactive/disabled to enable the sensor.
+>>
+>>> Similarly, you should actually set the flags to GPIOD_OUT_HIGH as reset
+>>> should be enabled here -- it's disabled only in power_on() as part of the
+>>> power-on sequence.
+>>
+>> This seems to be a pre-existing bug in this driver, which currently
+>> starts driving enable high, enabling the sensor at gpiod_get() time.
+>>
+>> Note that fixing this is tricky-ish, if the pin was already high at
+>> gpiod_get() time then changing the gpiod_get() to drive it low
+>> will result in it only being driven low for a very short time since
+>> ov7251_set_power_on() will get called almost immediately after this
+>> and it will drive the pin high again without any delays.
+> 
+> The question here is not about how long the hard reset is applied, but
+> whether or not the sensor's power-on sequence is followed. Currently it is
+> not.
 
-HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bfcc30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
-dashboard link: https://syzkaller.appspot.com/bug?extid=d173bf8a5a7faeede34c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Right / agreed. The 2 points which I am trying to make are:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+1. This is a pre-existing problem unrelated to this patch.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d116f71ad0eb/disk-c2ee9f59.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/bdd6f545b105/vmlinux-c2ee9f59.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0d26b05e3d7c/bzImage-c2ee9f59.xz
+So this should be fixed in a separate patch.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d173bf8a5a7faeede34c@syzkaller.appspotmail.com
+2. That separate patch should put a delay after requesting the GPIO
+to enforce that it is (logically) low (for "enable") for a minimum
+amount of time.
 
-==================================================================
-BUG: KASAN: slab-use-after-free in ocfs2_lock_global_qf+0xb8/0x2b0 fs/ocfs2/quota_global.c:303
-Read of size 8 at addr ffff88805fc78028 by task syz.3.122/6441
+Regards,
 
-CPU: 1 UID: 0 PID: 6441 Comm: syz.3.122 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- ocfs2_lock_global_qf+0xb8/0x2b0 fs/ocfs2/quota_global.c:303
- ocfs2_get_next_id+0x233/0x760 fs/ocfs2/quota_global.c:900
- dquot_get_next_dqblk+0x73/0x3a0 fs/quota/dquot.c:2701
- quota_getnextquota+0x2c5/0x6c0 fs/quota/quota.c:250
- __do_sys_quotactl fs/quota/quota.c:961 [inline]
- __se_sys_quotactl+0x2c4/0xa30 fs/quota/quota.c:917
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f89ffd7dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f8a00b48038 EFLAGS: 00000246 ORIG_RAX: 00000000000000b3
-RAX: ffffffffffffffda RBX: 00007f89fff35f80 RCX: 00007f89ffd7dff9
-RDX: 0000000000000000 RSI: 0000000020000c80 RDI: ffffffff80000900
-RBP: 00007f89ffdf0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f89fff35f80 R15: 00007fff22979a58
- </TASK>
-
-Allocated by task 6441:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
- kmalloc_noprof include/linux/slab.h:878 [inline]
- ocfs2_local_read_info+0x1ee/0x19f0 fs/ocfs2/quota_local.c:699
- dquot_load_quota_sb+0x762/0xbb0 fs/quota/dquot.c:2458
- dquot_load_quota_inode+0x320/0x600 fs/quota/dquot.c:2495
- ocfs2_enable_quotas+0x169/0x450 fs/ocfs2/super.c:926
- ocfs2_fill_super+0x4c8d/0x5750 fs/ocfs2/super.c:1141
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6441:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- ocfs2_local_free_info+0x81f/0x9a0 fs/ocfs2/quota_local.c:869
- dquot_disable+0x1160/0x1cd0 fs/quota/dquot.c:2303
- dquot_suspend include/linux/quotaops.h:85 [inline]
- ocfs2_susp_quotas+0x16c/0x340 fs/ocfs2/super.c:892
- ocfs2_remount+0x576/0xc30 fs/ocfs2/super.c:647
- reconfigure_super+0x445/0x880 fs/super.c:1083
- do_remount fs/namespace.c:3047 [inline]
- path_mount+0xc22/0xfa0 fs/namespace.c:3826
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88805fc78000
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 40 bytes inside of
- freed 1024-byte region [ffff88805fc78000, ffff88805fc78400)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5fc78
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801ac41dc0 ffffea0001e51c00 dead000000000002
-raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88801ac41dc0 ffffea0001e51c00 dead000000000002
-head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea00017f1e01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5289, tgid 5289 (kworker/u8:8), ts 91435154744, free_ts 91399801248
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3039/0x3180 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
- kmalloc_noprof include/linux/slab.h:882 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- ieee802_11_parse_elems_full+0xdb/0x2880 net/mac80211/parse.c:958
- ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2383 [inline]
- ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2390 [inline]
- ieee80211_rx_mgmt_probe_beacon net/mac80211/ibss.c:1575 [inline]
- ieee80211_ibss_rx_queued_mgmt+0x4c8/0x2d70 net/mac80211/ibss.c:1606
- ieee80211_iface_process_skb net/mac80211/iface.c:1603 [inline]
- ieee80211_iface_work+0x8a5/0xf20 net/mac80211/iface.c:1657
- cfg80211_wiphy_work+0x2db/0x490 net/wireless/core.c:440
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
-page last free pid 5574 tgid 5574 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcd0/0xf00 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- getname_flags+0xb7/0x540 fs/namei.c:139
- user_path_at+0x24/0x60 fs/namei.c:3015
- do_faccessat+0x5e2/0xb80 fs/open.c:493
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88805fc77f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88805fc77f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88805fc78000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                  ^
- ffff88805fc78080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88805fc78100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Hans
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
