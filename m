@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-403845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B239C3BAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:06:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161E39C3BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:08:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8F31F22617
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982C32825C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D93717838C;
-	Mon, 11 Nov 2024 10:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F801176240;
+	Mon, 11 Nov 2024 10:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TK+aT1jc"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tvfl304a"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905221487DC;
-	Mon, 11 Nov 2024 10:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D996149C4D
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731319551; cv=none; b=ddNakcaRMQ9PQCool/ruhmrGxU3q34BoSPSXt+aAPeu/vJRbbqQwp7woU49lLnUhvtb9bfR5q8HOI589ksTf0n4KyU6xPIcV/8k3eymWEJc6JMnEiql2YzuySWD6rAI/WDn4hvbgXAIXVRuS+KjdSeDlovMTXY48w+whu++tRqw=
+	t=1731319674; cv=none; b=A62RgxrFgIUjTB2uuGQicVYVtB6oEHGFfJSkNHqt6U4AxXYubaxsk3+mqdaTMgv0aBQrV3Ez+KcVftsrGcsHHkv28NvtqwiePfAym0B1mvDs/ZuoBbnKhtz6WM0zk5lY1HMi2S4R9d8kFBfvNSXPJGUn0N3LifBmvgsTDDRUajU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731319551; c=relaxed/simple;
-	bh=Zfe5DqoVix5jhLP1E1nVQV2CPcwNRrCNvsL8r70Lcc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNbkv9+/bz78KyeWLDs6jh5/zxneGZt5cJFnGyxlKbZg2XG7n8sD0JwY2p+B0Izs5YCtQFBXIKBvT+6XY/71FUNgcJ05xnjvfH0NNMyNe3xMGQkSX3kf15L9S0paGyrVvePW8AUOfHfYHUlBMK54JRQ1P82xyX9kNhzxPg3Kat4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TK+aT1jc; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c767a9c50so41199005ad.1;
-        Mon, 11 Nov 2024 02:05:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731319550; x=1731924350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FvPH2N3OAhQHoEMAlrZgn2gjzjGSexp2plsOz/L89/o=;
-        b=TK+aT1jcLEOtUbkykUaxBh8WqmJ6jv+ZeUIVwzwEcKhIugJ+jCqd4UhTt5yYgReeRl
-         GuMOkRP38duMaJfVc/NR9+g2AtbxfYYEoSQJ4YAR3QoOLZQ+YdWRepNcxJ4nfUBObKy3
-         /mzhj3Ll1ZFZTW9GmhDrqZ2/vizvlny9xlN8Pjyqey6noG+TYrlD/gYYaYosBI3zgxWh
-         lrzBdjj26UxZpsIAdLmafcsvPT7TFroXJxlGTHvyrQG/zdR77etATo1XlLjI71TneOEm
-         dgPxsA6mSywOhBlgBficI1tDEXEAZc31oM/2eXPEevMz5Q5gqTkobKlXCuXoGQH6AUsD
-         f69Q==
+	s=arc-20240116; t=1731319674; c=relaxed/simple;
+	bh=EDylGzCINTlcMYhzXXjs1IH58DJ8JzXAdgUHQqn70ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e3833YLVcDWJEQWHMu2HBX8aQyZKdTZXvCobjat1u2sr1vmFmJzXtJlPxb8QY+3SAQAyKszg0ao2V5t7q60ywVd8bwquJrtQEOa3DXIKppAkmzRAWYCRb3LFtHNO9Sm2Su5BFoB8uZbvGLMuQQ9vY0aFuPq/ffusIBDOTxU2DVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tvfl304a; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731319672;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yezwXuy1oqB/Mlke0JXcT/QliEzB4XcNQBVIjSWzpa8=;
+	b=Tvfl304azIRJQIJ9HliptWSfVvFVuULPEMjSRj/x2gEt8WM/0i+hRXEUQsVcNdL598q+Ge
+	OqQs/ffLfjtsUR+pcnOdprtFvgEXFaBP1Xn3qLI3gaKFgwDV8n5XGwR0AeJIao5u/yUS9M
+	tgGBWeuBK7u9CMVGwqTO57CCBt4mqHA=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-IAN4fUWaPsyRLyBOYgpatQ-1; Mon, 11 Nov 2024 05:07:50 -0500
+X-MC-Unique: IAN4fUWaPsyRLyBOYgpatQ-1
+X-Mimecast-MFC-AGG-ID: IAN4fUWaPsyRLyBOYgpatQ
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e9b723c384so2774913a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:07:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731319550; x=1731924350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FvPH2N3OAhQHoEMAlrZgn2gjzjGSexp2plsOz/L89/o=;
-        b=HEEIFoyF3wYLF+vT/saYWZgnOhjt5lA2MSfcRkOM9B51K8sKfEd8HL0GMc54uZmAkd
-         EYEa1qSF+Z91ohCEmDxnHudJUXzHyi/ghh4VPh1cidwfVl5Th7kEVm2lKwPlQldA8ToX
-         ClE2ySyYpO+s7ihIHDOx19/EVcpZRRlhhp0i7wB6TgYHhoIqZ3VmhW5BmevQ0IcQUm1w
-         nxfwpVVLsOZK0AXssCPNvsB7qq5KmmHIyTorhE0dTFfVgeQ4MsubRtZBBeEaaOM6+WrP
-         ePeEDLGUAhiWh2Kitl6odiuD1O8ubxYUY2HPPbwYGfliJM8WStUUAwkwWwnk7JDCic7z
-         aDSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbHICEki5vnNIkwkfb7rLKcXjCPOJPaVAOhqJsKFMUWUR9dcHeQbYKoOJoGV94m+vUk09TYrAw/CGd4g0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7eMHkKHugEv3VAH7tmg3uKgIxFv7GpvqZta3fAfiZRkhm7qRL
-	+mgSoLOa2o7Dsj0obxGLxttO7P7xvi3fzPLsQTtARWuKgkSPLQ6p8dQlLOZOWhHMtA==
-X-Google-Smtp-Source: AGHT+IEiabOAJ7wISpdweL+1JDundoKuZoGfOQLtSIakO8qurYurwUN2EarAaFuij48zfW8FP5TsaQ==
-X-Received: by 2002:a17:903:230a:b0:208:d856:dbb7 with SMTP id d9443c01a7336-21183d5552fmr165550465ad.39.1731319549735;
-        Mon, 11 Nov 2024 02:05:49 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf754sm73095645ad.98.2024.11.11.02.05.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:05:48 -0800 (PST)
-Date: Mon, 11 Nov 2024 10:05:42 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andy Gospodarek <andy@greyhouse.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 net 1/2] bonding: add ns target multicast address to
- slave device
-Message-ID: <ZzHW9llUizisMk3u@fedora>
-References: <20241106051442.75177-1-liuhangbin@gmail.com>
- <20241106051442.75177-2-liuhangbin@gmail.com>
- <ZytEBmPmqHwfCIzo@penguin>
+        d=1e100.net; s=20230601; t=1731319669; x=1731924469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yezwXuy1oqB/Mlke0JXcT/QliEzB4XcNQBVIjSWzpa8=;
+        b=B2AFIZiii7Yh3IFYqgKTaInnVKfeZHnUP082zP0n/Sh80Opuj6A8HMOBhvI28eEhaa
+         VaPqLDsG5K/FxfvLMzIWDJutlsL5nF1NBqGKYEoOXlJfkQwybDrXsAsKOISdamlpYU2Q
+         9ycgdkvZ60rbMKI9ex/UcHoDeq7nta+XqfxiwVa1/DiSF+3OZThVjp9ALA2Vw46bhSSp
+         ftJd223+WFDkB5Mr3qOBtKDEgVdcYSMB1bwVSpH+zbxV/NhS3sa0yDXviWGdLKJMTaCC
+         4Ti2JCbJkBpkO3/OkYvSCdRqUpRNguu0Ifmh+85b3jxKJBWUnfPzzimCDZhSL34roy59
+         o9jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtCe4M2L9V0ypIauc33DEn4gAh+YKhKbMRuTB6Zpstu9R/utZjeNz+/8Ycp6ovEhV7ndk2EqRK3MS5oZs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHmj9/pJtWqOSkJ41kGBwMOlJNHCwmw7tC9jckWwQpqOB0lN14
+	SnMcIsZ8q2Up+9A9UROnM96bxLpcQHWyOGTgzBUB3i6EQuB31lmRxxZkbrP0P0LJZPrPve/muo7
+	qAESPqed0v8fmQlD4YRoVx8BPV87o+nXPBfffJiUT0Xt4dx4X4bUjdY+7KI4OLgaR+viK7uGf
+X-Received: by 2002:a17:90b:4d0f:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e9b17730f0mr15948436a91.29.1731319669093;
+        Mon, 11 Nov 2024 02:07:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGQkNwwiHyh2arF/dEtQ9CoiCRLtC7ejiIPDEIh4JQE97bKk655Gfxfl4GXdPX+ZWkfZBB+LQ==
+X-Received: by 2002:a17:90b:4d0f:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e9b17730f0mr15948419a91.29.1731319668715;
+        Mon, 11 Nov 2024 02:07:48 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a06asm72304995ad.235.2024.11.11.02.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 02:07:48 -0800 (PST)
+Message-ID: <dad7496b-265e-4910-986e-98cefea1b4d0@redhat.com>
+Date: Mon, 11 Nov 2024 20:07:42 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZytEBmPmqHwfCIzo@penguin>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64/mm: Change protval as 'pteval_t' in map_range()
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+References: <20241111075249.609493-1-anshuman.khandual@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241111075249.609493-1-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 06, 2024 at 12:25:10PM +0200, Nikolay Aleksandrov wrote:
-> > diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
-> > index 95d59a18c022..60368cef2704 100644
-> > --- a/drivers/net/bonding/bond_options.c
-> > +++ b/drivers/net/bonding/bond_options.c
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/sched/signal.h>
-> >  
-> >  #include <net/bonding.h>
-> > +#include <net/ndisc.h>
-> >  
-> >  static int bond_option_active_slave_set(struct bonding *bond,
-> >  					const struct bond_opt_value *newval);
-> > @@ -1234,6 +1235,64 @@ static int bond_option_arp_ip_targets_set(struct bonding *bond,
-> >  }
-> >  
-> >  #if IS_ENABLED(CONFIG_IPV6)
-> > +static bool slave_can_set_ns_maddr(struct bonding *bond, struct slave *slave)
+On 11/11/24 5:52 PM, Anshuman Khandual wrote:
+> pgprot_t has been defined as an encapsulated structure with pteval_t as its
+> element. Hence it is prudent to use pteval_t as the type instead of via the
+> size based u64. Besides pteval_t type might be different size later on with
+> FEAT_D128.
 > 
-> const bond/slave
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+> This applies on v6.12-rc7
 > 
-> > +{
-> > +	return BOND_MODE(bond) == BOND_MODE_ACTIVEBACKUP &&
-> > +	       !bond_is_active_slave(slave) &&
-> > +	       slave->dev->flags & IFF_MULTICAST;
-> > +}
+>   arch/arm64/kernel/pi/map_range.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Hi, FYI, in new patch I only set bond to const as slave will be called
-by bond_is_active_slave().
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
-Thanks
-Hangbin
 
