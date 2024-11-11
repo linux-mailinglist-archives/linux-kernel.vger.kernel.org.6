@@ -1,180 +1,248 @@
-Return-Path: <linux-kernel+bounces-404205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA679C40CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:22:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8AA9C40CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B30C1C20321
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:22:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC892B2269C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E151A00FA;
-	Mon, 11 Nov 2024 14:22:32 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2131.outbound.protection.outlook.com [40.107.239.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6216519F461;
+	Mon, 11 Nov 2024 14:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iSivWRvG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RTcrkz3T";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iSivWRvG";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RTcrkz3T"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6F815A85A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334952; cv=fail; b=YsIQ9q4Wc9NLwiKL/W2jWIQS1BgUXP15Vlk0qwZVzV89vH5beAU8gXEuQgZ0qkMWwbSgDL7yRT7I4mYRJfwFWbVKrNToCduTIC07WHudnrASBbhkjePbPk/TXYT5wjoV7cMdyBbr8tLkjawBRGd76OCowInYQ4DTWibXbLvIQ4I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334952; c=relaxed/simple;
-	bh=9l2lDNiVYb06H0SWJBs7LRlRjl4GzT8xywYpSgoBGZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=R/RGJ4VqiJJ9abs5MRJ8e+s0DQIFigiROA0E3V+2Ct24TJbQYpRZ/l5vW7xdTCIUjPRjxWqJzym/suGPhZjv8h1QWR3TH34uzJM65p+9H/5F4J74mBZ5VXI00ipmGENRdicLt69lEXSlxd58JrYVA8md+jSRk3sFWaUznDSTaBk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=c6dab1rGH9EOqstXtMdxkjkfyCTUMnrixm9zxcaI8iMzyIN7MFJVNEVja03UNS0jPJ6LFj637346W//6+TFbXHu9+hQEvbgjK8XsMlKEokbuE/zCOzXPjW5xWPDzaWMX5SoDTuOiF9mwnh0xedmF+L6sugRvw2BDDsJ9Ryv66ZuSA6XtUQ1BcrPLQP5fzBt3PXaz8KbE46N1o76XLw/gJXxX9VlqgUjzuOUtmYoPippZu9EQKlFzOCPlIMTKUZrh8k/7qCKK+JrFW40CDspWr2HQgbNFa+2p7+VamBdskSRKOYHPEcRG41jcoAUx2baPUkae/1IbbpkXpIrdbwjGlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xLzAuLFmKjPuTsLOMKHI8zz76Uk7wZ+X4PYIZo7w5uk=;
- b=WZ3S/9i9oAdKnTikbDr9ZIFuQ6j+m+oWvIevx7tt6bEgzNImMA5NisrHqF3eJrWDhjBSf5T85k668CENFJHQyrgS7LHi7RPrKsochAzbxxbgcg2AwuMAreQWV2XeRxcw5aqAEGYDym1ZVuHh8EFw9jhpk+c84um0kO/EY0aYBgirrv5ZJnYT2Gz1SXHLKnXjdVFOzA8CHEx9LMnT5o2fXL/+gzs//kcEjWPAawTqanLgszLb//22BB9kRfKbNSzDMilH4x+1pBfLr/+NOBXtO3VtEV2EXcj/WzY0RjPFdtUJ56ZFFVvFSdWeyzhnR4jLy82YZFPL0GW6eW8JZ/sO/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
- by MA0P287MB1516.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:fb::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
- 2024 14:22:26 +0000
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
- 14:22:26 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: will@kernel.org
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Marc Zyngier <maz@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mark Brown <broonie@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: Refactor conditional logic
-Date: Mon, 11 Nov 2024 19:51:45 +0530
-Message-ID: <20241111142204.67751-1-hardevsinh.palaniya@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN2PR01CA0092.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::7) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:204::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E07419F40A;
+	Mon, 11 Nov 2024 14:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731334980; cv=none; b=cwHz0wnjQIdLbMJ7mkURRfcM8zjQ9sp6ATmFh10K/+mvhdobo5br/YZ5/XPGtISOHsqpB5tUx6yLS30FCt1B/ukHE/7J5ZOjDyFMTpyGYc7VWUiuO14YoBDwjBulsvX0av3kuM2UcG8Gu0Z+iuvGysr7o+oq/HqaszshGx46Oq0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731334980; c=relaxed/simple;
+	bh=jkmx01FPidqvXCxiFNOh5MQi5I4qha5aRUZgQmYFg3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H0DjmVaSlVHy0hjvITi5nMbtC2eyzoCgLGWtOEaTSdupILiHyro7CeBhJNY78yATRfowIiyW1iBi0BvurO5yUNk3j2pU0KqRdchW+72+xS75T+PqyIRe2e7egylVZ24GODhRzGGVA4qzBOof3o/n+umtfFnLuivAlz6oRPqoPlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iSivWRvG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RTcrkz3T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iSivWRvG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RTcrkz3T; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9F15A2197F;
+	Mon, 11 Nov 2024 14:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731334976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ylqRczdtPk6FBk0ATcE9oLq4cfq/CJi8fE0TC6Molow=;
+	b=iSivWRvGAdPQQrNW9ZzBPEszT0gBicVI7rxmq078gcziTcL/JzPqr3g6MHoyIn0k1kR4qA
+	3HVaX8W1P/0eeNnpSGIHxe7TCjCsf2chGDfL3AXRFhECoA3lFiU94zPEeHRhfgAiW8883z
+	OGyQ/2ccFnu8lz3OutdqIVXzjVSazqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731334976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ylqRczdtPk6FBk0ATcE9oLq4cfq/CJi8fE0TC6Molow=;
+	b=RTcrkz3Tq6dgPYbq9UYZyx9VzGGDq0bKrcL2Q5g3tiu4pkaxfUXhagLpgP0/gfzlmLoEwD
+	xDEcXO1TtSO6gwBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731334976; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ylqRczdtPk6FBk0ATcE9oLq4cfq/CJi8fE0TC6Molow=;
+	b=iSivWRvGAdPQQrNW9ZzBPEszT0gBicVI7rxmq078gcziTcL/JzPqr3g6MHoyIn0k1kR4qA
+	3HVaX8W1P/0eeNnpSGIHxe7TCjCsf2chGDfL3AXRFhECoA3lFiU94zPEeHRhfgAiW8883z
+	OGyQ/2ccFnu8lz3OutdqIVXzjVSazqM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731334976;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ylqRczdtPk6FBk0ATcE9oLq4cfq/CJi8fE0TC6Molow=;
+	b=RTcrkz3Tq6dgPYbq9UYZyx9VzGGDq0bKrcL2Q5g3tiu4pkaxfUXhagLpgP0/gfzlmLoEwD
+	xDEcXO1TtSO6gwBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8EDD613A17;
+	Mon, 11 Nov 2024 14:22:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sMteIkATMmfXZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 11 Nov 2024 14:22:56 +0000
+Message-ID: <52f12d95-f8f2-4c18-9aa9-2e55768e0a94@suse.cz>
+Date: Mon, 11 Nov 2024 15:22:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|MA0P287MB1516:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6aeecbbb-181e-4546-83c5-08dd025c4419
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0WHCwGsOnuZFxL8RIs22sO/JMHuAv1MHrPI7npvL5TWQocvtzThU7YSHTSVk?=
- =?us-ascii?Q?ztNS2xwSdDR0jBTwmUO1ZIfcZ4+mWm3XXNRk8xD4CmhTvZ966Oo6rciRHywH?=
- =?us-ascii?Q?kcqMs3GSYMhFbkM1RwSCl+RZKQG16GAn9s/0a7Gls5A9NMUNTBBixlwb08/n?=
- =?us-ascii?Q?2bUykg4pWUJEBYvW8WsofPCEZcP3ryEwRpGEpQOY0EI9F0ZC6DjtC4DLB/Oo?=
- =?us-ascii?Q?+4eUhBEfEh5YxQW5LdR9umf8cExt1lCFAaKJ2hzxW//nuFm6AWT2l97ayj1y?=
- =?us-ascii?Q?27C5v9n6enc+vwyNBQ+havUzNe3HBq1/x0dHHjik5bYSsGabTmxftJ2pXbrv?=
- =?us-ascii?Q?WFTQ/CqltJZTnt4yo4H5siLuR3NVQoO/Bjv0Q2TZNKl1chDWyhT2SUj0QpgC?=
- =?us-ascii?Q?0UU1cIPVH5S8pN/HpLREtEWAEnr/NqT3dMPXb9cenF2QNYQnWoOW8BI4xeqW?=
- =?us-ascii?Q?los6sXNHcX28MBzbzVxcjFJszrfwN9hhl4IrxAtEExIzFCfHGkMbK1hmcwac?=
- =?us-ascii?Q?OWtEhZYPHDRPSllRGN3ynIpiXodnnCEPIguBtj9eT/u6IhhWjM/YyzNVo87S?=
- =?us-ascii?Q?1/zSyKeGRxDweW/RIQu5oAuHoMPkSOgj0pZT+4w4tWnnFV0kJqWE+Js0x7mS?=
- =?us-ascii?Q?feJgxxUMlPeAaXLpZbequOlE+aZLsHl+vagKetjEirQDnMLKlRWKU+k+mij4?=
- =?us-ascii?Q?Rbt9I4K1Q0cB41b3Km2EQgvCHUaGfHVS02KFTt0+05d4doF6cG428xo7+/f0?=
- =?us-ascii?Q?sibXRE5TcgCzCQ3rUqed0+MmB78wi8h19R2wRMmWf/Vg7RPXSutiR63MmniL?=
- =?us-ascii?Q?uG8YRPAamctqk9Sjf2Wre4i5CKEuqrx4SCmEBxCHiiYi4m+tEVzftYNzslN4?=
- =?us-ascii?Q?pcZXyU+aPjeVAEfxzLb3UcK1b3pQE3QTwayxqxV/hBVSTVI7LMb4Ew/0ZDza?=
- =?us-ascii?Q?6/qsAiB49coTUD9TZtiGOBIR0irKoLa87wcZXLBU2DynEQUL7s6CAVXXNH0r?=
- =?us-ascii?Q?nSHveUbKfAMSxnyK5YKjca5x7QLGMsPAQ1zPH6hmUntq25tXMD3JG57JlU5a?=
- =?us-ascii?Q?24nY6D/UROfu2jaQZbVXSLmf1ZCVx6ZW/Qklty/I7RuZbs1BnpEoSNDEB1un?=
- =?us-ascii?Q?GojyV/kNgNaz2IrD1ujZo1ddlRDXa0xvlKj4u7QHJts/yUsxpKQIyYCzjTZI?=
- =?us-ascii?Q?bueo58/Qc/Oi2DXDxSQfY5hQPRppkpWYbzHMwLzscv4mehOBPw6acab56Sf6?=
- =?us-ascii?Q?T8qFZb43UCFBuGFqG/sQ0FHnscklyxesUNNxqjmwTObP003OxlF7BbEkDt8N?=
- =?us-ascii?Q?uBAggXIw8m2Kmyx0U7hQrZzkfVT5k+TuuqytQYLDiUdZTlKhFwXzO/A96BBQ?=
- =?us-ascii?Q?jClVDR4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?DDVSdIP0rxPffmZqyLWcGn3B6ctcL3+rfr9v9KSSkT/a/h1DPCmPsc4IBizV?=
- =?us-ascii?Q?uElcpbXYaHK/0AYIA3d8mXVBAR8HJBj+JDHZbGweHM+LMfOM3bNLC36nR5GR?=
- =?us-ascii?Q?xpa4Lb/w0a/RhoALrknLw8nhEEWJBtZwXxg38L2SEWSqfphVKUjRr0SLZN7A?=
- =?us-ascii?Q?szWYtmD+nIg/+wmRIbwdZOJHpt4hiMRPhhfsAlG5MHa7db20pzYGmJCftPNd?=
- =?us-ascii?Q?wY1HiV06wV9uyLc4IvB8V3QyeFvyn4GoiZnBgH8oqB+159Z/ZN9ExrA56U6M?=
- =?us-ascii?Q?HFYt/JWDq1UbLgqXtWdiHtargnTXC0OnCWFNZzQM+ts+xFt92lRozlsotYRO?=
- =?us-ascii?Q?op2FyDgjj85CHi09c4Ht//jiDr+nn7HAnKhBv5eIcK9Ba3wJtAQGgt/zUgOP?=
- =?us-ascii?Q?vwYvnwRzCgnakjci7/OOD3jZmBhurE43p1GICGjvgb1H5J1kk61l437+s8JQ?=
- =?us-ascii?Q?0CFrFO67HowvlPIURUCSl+fzEjiFKdpNfiK8eU3tLOI3Cnoi6Rz3vJgb/1sF?=
- =?us-ascii?Q?t00EavRWCOO7GXu7CvfNeXs387yb4y4X5sBIkWNWPzE+55KzkaEGVBLlqGoG?=
- =?us-ascii?Q?ODYFcCVjAkBsFyGZEwSafRPDvp8RobkFCw2y66Ac4Dr3NecHY2pv/oJHAeKg?=
- =?us-ascii?Q?ioz0eCl5E25Bwqf8ej9vpTKoGLr6abNBMB6kcSU7zaVwGmc0dR5L39vqabDL?=
- =?us-ascii?Q?WIHcY+0+77J/fSpEezkbNE/ToIVqO9DOe29aaqNhtG5ERQcX/f8mXqzVGkWn?=
- =?us-ascii?Q?2f1gb42RhbSVy6ulg1w4FBXCtq/EIGE2YuR4/SQcTyNxF8piQDsrhu5gZ7TA?=
- =?us-ascii?Q?wV1ivOW1aUv2qLUa2S0c/pYaVFoYuOfGew2bvRjV6n6rBYweh1fJOCBVwPKr?=
- =?us-ascii?Q?Xy1Vsir7NRGgz2guo3c5elx6cRwSdIX0LirU/VSEwhS68gS39pGaIYdvsRKa?=
- =?us-ascii?Q?dOIYVUfX/hXOTmoFgGAylBJo2tBXHyhiPvVf7vxFX/87QShThAdG6xWZi2PX?=
- =?us-ascii?Q?9h9SbQJK6QS13xherAOAcTBaCdXiTOKwRIqFNsEt25v9Klk1v1FtEeT4Ijok?=
- =?us-ascii?Q?lf8mnqVJx/lA1NCRjE1pjNpb0EjPW5Zi3IrJl81B+qxqZxO8tRVfhft7UjYO?=
- =?us-ascii?Q?fAH2NGennngBYbAvN8viQtjfTjeSb0iIAnsv2q00i8pp7Nr8dHAIFqQHaX6b?=
- =?us-ascii?Q?swiezPzzkgEJutnPsJ+mKhWVeBzS1m8AZsWo+R7afuHYioVD+FoHxFMVhmjp?=
- =?us-ascii?Q?FosHRAexectYTtgA7SHxxMpi3QANX1tj34IwiQyPvNp81vlSuSOjQPIGEEtJ?=
- =?us-ascii?Q?JZ4hdhaoToa5UqvJDopWFou4uhIkiaytfF9zRhsv+hDCuRCotNffZ5E3CknX?=
- =?us-ascii?Q?0WTQy7Hig+P8S+eT3cTkcMZhkul16yByorsC/hFctl8deoypJ+hGWIRzuxqZ?=
- =?us-ascii?Q?Wx3jxBr62SinlIAFt5lUgUs49yOeSNliksFwlYeYWFOOU3g8rUDs74jDr6YO?=
- =?us-ascii?Q?F23YGGBFWDRv0RG4sjILxm8ZebbOfYlgaJu0eVA4hVBFnnLhs9APShr6dlBb?=
- =?us-ascii?Q?G0qyHJ3OphESrShz74nJiFtEdFZQ4N/BMzLcp2o5xnfT5EAuIHThmOKirKP2?=
- =?us-ascii?Q?DU6QTbLBjeya6kfV1S7WhJwsE26GvYtfkYx+pyXhvi3d?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6aeecbbb-181e-4546-83c5-08dd025c4419
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 14:22:26.0974
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MhV5UwHFkWy0myGlalgNUKaK28wGZDZV8sjCSwwi1Kg2F1l00AKN1qq3jEGWAPe2Bgco3j8rE9yxlfDyRPbGP0Wo7rtdH8ZksWOSoteab7QoUZLa74nM+r8rWW27WMSS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1516
+User-Agent: Mozilla Thunderbird
+Subject: Re: CVE-2024-50219: mm/page_alloc: let GFP_ATOMIC order-0 allocs
+ access highatomic reserves
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+ linux-cve-announce@vger.kernel.org, Matt Fleming <mfleming@cloudflare.com>
+References: <2024110925-CVE-2024-50219-c970@gregkh>
+ <f6e053b5-982d-472b-9c75-95d7f390bd68@suse.cz>
+ <2024111147-spur-stooge-c0b0@gregkh>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <2024111147-spur-stooge-c0b0@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Unnecessarily checks ftr_ovr == tmp in an extra else if, which is not
-needed because that condition would already be true by default if the
-previous conditions are not satisfied.
+On 11/11/24 15:04, Greg Kroah-Hartman wrote:
+> On Mon, Nov 11, 2024 at 11:40:49AM +0100, Vlastimil Babka wrote:
+>> On 11/9/24 11:15, Greg Kroah-Hartman wrote:
+>> > Description
+>> > ===========
+>> > 
+>> > In the Linux kernel, the following vulnerability has been resolved:
+>> > 
+>> > mm/page_alloc: let GFP_ATOMIC order-0 allocs access highatomic reserves
+>> > 
+>> > Under memory pressure it's possible for GFP_ATOMIC order-0 allocations to
+>> > fail even though free pages are available in the highatomic reserves. 
+>> > GFP_ATOMIC allocations cannot trigger unreserve_highatomic_pageblock()
+>> > since it's only run from reclaim.
+>> > 
+>> > Given that such allocations will pass the watermarks in
+>> > __zone_watermark_unusable_free(), it makes sense to fallback to highatomic
+>> > reserves the same way that ALLOC_OOM can.
+>> > 
+>> > This fixes order-0 page allocation failures observed on Cloudflare's fleet
+>> > when handling network packets:
+>> 
+>> Hi,
+>> 
+>> I would like to dispute the CVE. GFP_ATOMIC page allocations failures can
+>> generally happen (typically from network receive path, like here) and should
+>> always have a fallback. The impact could be somewhat worse performance at
+>> worst. AFAIK they are not affected by panic_on_warn nor panic_on_oom either,
+>> it's a pr_warn(), so I don't think there's a DoS vector.
+> 
+> I read this as "there was a failure, with no fallback", but in looking
+> at the traceback:
+> 
+>> >   kswapd1: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
+>> >   nodemask=(null),cpuset=/,mems_allowed=0-7
+>> >   CPU: 10 PID: 696 Comm: kswapd1 Kdump: loaded Tainted: G           O 6.6.43-CUSTOM #1
+>> >   Hardware name: MACHINE
+>> >   Call Trace:
+>> >    <IRQ>
+>> >    dump_stack_lvl+0x3c/0x50
+>> >    warn_alloc+0x13a/0x1c0
+>> >    __alloc_pages_slowpath.constprop.0+0xc9d/0xd10
+>> >    __alloc_pages+0x327/0x340
+>> >    __napi_alloc_skb+0x16d/0x1f0
+> 
+> This function DOES have a fallback if this failed, so it's ok here.
+> Many other ATOMIC allocations in the kernel do not have fallbacks, which
+> would cause a crash.
 
-Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
----
- arch/arm64/kernel/cpufeature.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That would make them buggy and those should either use __GFP_NOFAIL or
+handle the failure gracefully.
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 718728a85430..d9021b1b9cff 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -989,7 +989,7 @@ static void init_cpu_ftr_reg(u32 sys_reg, u64 new)
- 				/* Override was valid */
- 				ftr_new = tmp;
- 				str = "forced";
--			} else if (ftr_ovr == tmp) {
-+			} else {
- 				/* Override was the safe value */
- 				str = "already set";
- 			}
--- 
-2.43.0
+> Note, it is setting the NOWARN flag, so shouldn't this not be warning?
+
+Hmm seems it does now, but AFAICS it's since 6e9b01909a81 ("net: remove
+gfp_mask from napi_alloc_skb()") (since v6.10?) but the report above was
+from 6.6.
+Wasn't aware they decided to silence the warnings, I thought it was
+intentional to make the admin aware they might need to increase the atomic
+memory reserves for better performance (it's not trivial to tune AFAIK,
+depends on bursty arrivals of packets etc). Also if there's a suboptimal
+behavior in the implementation like the one commit fixed, it won't be so
+easy to spot it anymore. On the other hand, less need to explain the
+occasional warning :)
+
+> Anyway, you are right, I'll go reject this one, thanks for the review!
+
+Thanks!
+Vlastimil
+
+> 
+> thanks,
+> 
+> greg k-h
 
 
