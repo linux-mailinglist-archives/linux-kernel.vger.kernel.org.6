@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-403998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AF49C3DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:52:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C81C9C3DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09FE7B224F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:52:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDFF283589
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0851946CF;
-	Mon, 11 Nov 2024 11:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFBE18BBA2;
+	Mon, 11 Nov 2024 11:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lip2pPS+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="DYzQwwGH"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3B918A925;
-	Mon, 11 Nov 2024 11:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D51158866;
+	Mon, 11 Nov 2024 11:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731325919; cv=none; b=W2Ab9smrus1h+a4OT+Ze6zClfjJEg1/xiFHAAkkreA26pS5o1QbRlMMCvDEPbF1Nsts8UjhhRWzqLZZwM/psbp8LDe3Uc2oMnPWpK0QoC+X/2xDgRxmdo8GDeKh4LDrjmc/GshS60trlNOVozb0xHOVn1VhiE5B5NHIKOEu1DVk=
+	t=1731325897; cv=none; b=ahv1TyTEdx27OPpsJnkxg9ll8FufVhhnaPQ5Puis6/vCqa6p/Ur+6CqU6+PHLUrOG6a36KjtOB298mu6WPz+FNccKBQickmrgFC+S2dthUiMW/LgzP6RFSRELjTP1Rg2zO0hTSVIC1BVqgXqnbCKGzdS0MDYPgvvvo8LsQGMQQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731325919; c=relaxed/simple;
-	bh=2ZRdE/hklbN5yxNc4Bd8fkZA0OS4OFNYOt3zUxtbBFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n8dC0ETXGbIjoSuG9ciSQ228yHzNmJNTlGhpywW4NdxULy4Ay7pV7Cgr3qHDWltLJWGIbJ0jMivwNX3NhsDkS2kJar6CH8+4lqNMYRlgu75qKhMruGcLHEqJUCQOBc7BsESGT9u0Whdeimw5HGpa+n0ht7VzyI5OfjkAj8hB7bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lip2pPS+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AANhedH030322;
-	Mon, 11 Nov 2024 11:51:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pi0JfNWi1w0WIDh6nzdtsGpavJ1rJC8KJdmTr5MweWo=; b=lip2pPS+DL/PkDGO
-	0yoB7G1TIsNWXxL2yHhjhWja+zU0Entp9Vcs/05BYsAR+SyMFW5NyRLR4cL4y5/+
-	7ABGKzOuel5CfhyUHKkzlUTx75qHP2sgVwKj7QCBAyFksFYxe5x36Z1qwWin9hQa
-	F1+AOnTLzWKRTjeH/WRrDGhX6WMQRKC7P/Xr7pyXrLMeKIm6TNUFOts7WtYDJZPz
-	MznZE2yquEOXHgR4Mjy9kwZgDIEb+6MElsU5i7NdBAlfiGx+5Pqoj1QBYQwrExUj
-	DoLNycWZ1PpqSdvt+AbLtzXFXEvL9dyn3ccKX4Myh2KEgoLOWa6MBcDxQbVGI83P
-	pHke3w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sytsm4ds-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 11:51:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABBpX3o016228
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 11:51:33 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 03:51:27 -0800
-Message-ID: <f5ceee66-9d09-44f9-9217-3abd467d1086@quicinc.com>
-Date: Mon, 11 Nov 2024 17:21:23 +0530
+	s=arc-20240116; t=1731325897; c=relaxed/simple;
+	bh=ISJWEmMxsmod2D4KVfAa2MMK2czNifmOQg4CF8TLCAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=f0z4jmAgq8dFB6f03Xtz6/EHOG5Zy5TQQm4+g1Nc/ED69r3uPcJUv0IgbfZhz4KUgEXXvsxrgqS8+hzkjKZ5ntDyXfKexE7nnZ9gqSpoOFtYcY2HZZbB7gbi3cMx/U6cjJOUnqfUbpfrTvTzPSDxejV7V4IFF6kI2jrRRVf143E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=DYzQwwGH; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Cc:From:References:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=SnUsHg0g7ocxgAJ2EMV5UPPKW9SIRZO/tfjwhGCRr5g=; t=1731325895;
+	x=1731757895; b=DYzQwwGHoEw10ZbVzcmywETy3LcOu1PunbcyScgme5530EpkaVq8UygUgtteO
+	Gx3nexOzuATC7hJF/YxVHFyfhK4+v3TqW8UVApDqYXWwzN362URsdqI1sGoeu5LVhaNhkj5ti0yAk
+	hN8uc4bIE+VIHUgd/8o2fX0/gWzj34Npsqjabz7jd/uahAJ/Vs4ywXwvcMbiz7HE3iYMHK564ccg8
+	4SKxHfYuvaZ67TO1k4pU9V9ayYe7YuALGALseElFTcq8pSW4HCwC8wvOs/WckymFFpMLPhbcHAVm3
+	rrTRUje4zygANL70wVSlZ/HzoWUVpVeqNPJ/ifREwMzyf+v5aQ==;
+Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1tASxA-0006Fz-HS; Mon, 11 Nov 2024 12:51:32 +0100
+Message-ID: <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
+Date: Mon, 11 Nov 2024 12:51:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +53,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 7/7] arm64: dts: qcom: ipq5424: Add thermal zone nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Konrad Dybcio
-	<konradybcio@gmail.com>,
-        <srinivas.kandagatla@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <rafael@kernel.org>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
- <20241104124413.2012794-8-quic_mmanikan@quicinc.com>
- <91ea0f03-9bbe-491d-9056-ebd9fdc73bfa@oss.qualcomm.com>
- <8cb665f5-4885-4853-804a-7313decc719c@quicinc.com>
- <2c7ece9d-95e8-4d01-a9da-c1d5d7388771@gmail.com>
- <fc676574-ffac-40d2-aa47-8d7cb61b5e3f@quicinc.com>
- <9bd3d4e2-aba1-423c-946a-f5c60da71497@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <9bd3d4e2-aba1-423c-946a-f5c60da71497@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: drm/fbdev-dma: regression
+To: =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+References: <20220621104617.8817-1-tzimmermann@suse.de>
+ <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-MW
+Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
+ dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
+ Linux Framebuffer <linux-fbdev@vger.kernel.org>
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: B0ib5jzU4Lmhg0zbaLwMvGAC_4moaKeL
-X-Proofpoint-ORIG-GUID: B0ib5jzU4Lmhg0zbaLwMvGAC_4moaKeL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411110100
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1731325895;180159c4;
+X-HE-SMSGID: 1tASxA-0006Fz-HS
 
+[CCing a few more lists]
 
-
-On 11/7/2024 8:17 PM, Konrad Dybcio wrote:
-> On 6.11.2024 11:25 AM, Manikanta Mylavarapu wrote:
->>
->>
->> On 11/6/2024 2:42 PM, Konrad Dybcio wrote:
->>>
->>>
->>> On 11/6/24 09:47, Manikanta Mylavarapu wrote:
->>>>
->>>>
->>>> On 11/4/2024 7:21 PM, Konrad Dybcio wrote:
->>>>> On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
->>>>>> Add thermal zone nodes for sensors present in IPQ5424.
->>>>>>
->>>>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>>>>> ---
->>>>> [...]
->>>>>
->>>>>> +
->>>>>> +        cpu3-thermal {
->>>>>> +            polling-delay-passive = <0>;
->>>>>> +            polling-delay = <0>;
->>>>>> +            thermal-sensors = <&tsens 13>;
->>>>>> +
->>>>>> +            trips {
->>>>>> +                cpu-critical {
->>>>>> +                    temperature = <120000>;
->>>>>> +                    hysteresis = <9000>;
->>>>>> +                    type = "critical";
->>>>>> +                };
->>>>>> +
->>>>>> +                cpu-passive {
->>>>>> +                    temperature = <110000>;
->>>>>> +                    hysteresis = <9000>;
->>>>>> +                    type = "passive";
->>>>>
->>>>> You have a passive trip point without passive polling
->>>>>
->>>>
->>>> Okay, will remove this.
->>>
->>> You most likely want to preserve it, while keeping a sensible
->>> polling frequency, so that userspace will be aware of the current
->>> CPU temperature. <100> sounds like a sensible value here.
->>>
->>> Konrad
->>
->> Temperature sensor's present in IPQ5424 supports interrupts.
+On 21.10.24 15:03, Nuno Gonçalves wrote:
 > 
-> Correct.
+> Since 5ab91447aa13b8b98bc11f5326f33500b0ee2c48 and still happening in
+> master, I often get a kernel crash, either a "Unable to handle kernel
+> NULL pointer dereference at virtual address" or "Unable to handle
+> kernel paging request at virtual address".
 > 
->> Hence no need to configure polling frequency.
+> This happens in ARM64 with ili9225 and display size 220, 176. It also
+> happens in another board with a different tinydrm driver and size 320,
+> 240.
 > 
-> No, that interrupt firing signifies crossing the temp threshold (meaning
-> no updates beyond that) or the tsens watchdog barking.
-> 
-> Konrad
+> I've reported in 2022 a bug (that you fixed, thanks!), where it was
+> related to screen size causing non alignment of scanlines and pages.
+> I've not investigated further this time as I was not doing any driver
+> development, but let me know if I can do any further testing.
 
-An interrupt fires when the temperature crosses a threshold.
+Thx for the report. I might be missing something, but from here it looks
+like nothing happened. So allow me to ask:
 
-Thanks & Regards,
-Manikanta.
+What's the status? Did anyone look into this? Is this sill happening?
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+#regzbot poke
 
