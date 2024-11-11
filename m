@@ -1,158 +1,199 @@
-Return-Path: <linux-kernel+bounces-403703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26FA9C3942
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:51:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8E59C3945
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B31D280A88
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700CA1C20F9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF46F15D5C4;
-	Mon, 11 Nov 2024 07:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFB0165F16;
+	Mon, 11 Nov 2024 07:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4mSbadJ"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="od4nhaWL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE4315C15B;
-	Mon, 11 Nov 2024 07:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A48B15ECD7;
+	Mon, 11 Nov 2024 07:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731311452; cv=none; b=Nxo8jIPZu26A+9QkcFl36TGfIwvh78AIYQY1W4mr6lz60sAVl5+z5k9whznOxuTDaBioAA89pwpkIpGgMytTiDPLYyPAn3tUvjGBgAhrviRgF7C27O5RiRo1/+VPPIHu9IjeG4EF3ls2F2NWgc1gp3ZbayBpviX9H/yV4jz80tk=
+	t=1731311456; cv=none; b=EhXW3lywY3vjzTz/c+jCyjYrWm7jNHcMr9zbRPIOXJqLL+trEBVMVVwhvfgaJ/fgC3XukvCZd9FGaINA7M1JyeL/cFqnJJnqSdqZ9Nof2PNS8+1vUlA+a0oPSU4F6N2bJTBRfdWKnOY0K2eL5PCY/72U6OB8BWBOPUCzYagL7JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731311452; c=relaxed/simple;
-	bh=7B8rgNk0xIB2DZIRdN4VBbTtsMQ2tmsRQHywMaS5Pg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AMuFhpLg0jaKk2xC08Tmw/41l2vKtZ+T6UPSE/5D2VnvajfgA64dnZ7aGNdjaq0bK+jgVpcscEUH2GV/gCXYJ1wlFQbM2UKEAZXUVmvfkajMcT2LOYnjYDVzr+GeoaVz+DZjiso52bCvLSlK7OKXYTRmnwFxnCJ0GfoEMXGkM3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4mSbadJ; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso3165884a91.1;
-        Sun, 10 Nov 2024 23:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731311450; x=1731916250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zC6ip2qwUCDI5jyGzbtDI4HvIASASQ60A9sbrc+tJT0=;
-        b=G4mSbadJ9RfeQol5/mumw7k0OQlNtan823UmT2GOg82NbE2ln2171B3QKnHHg+E/NW
-         equptGhS7EFbb20AVLt/cZuqChFPsWwszed+RWH0p9r52UeP0pdtvhqNtDvJuaQ3e1F9
-         0gRMWAMPtA2OuZbN+7dbocmWuPc7rX+WRDtgH4S+pU3NZ21WwQ513rrTTWA5yadH7tDI
-         mRIxF9CJ3CvC1MoWpXBWcYphntzGTzMmC32KHcCOpcLWsXokNz78gRB0PlT4dlEFq8RR
-         ZCWaebXtdQupHbhFYSqzRSJIRSGFUOBwZ230IhiENdiXNWDXZt8CXri1Vts+i95L3ffT
-         EZCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731311450; x=1731916250;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zC6ip2qwUCDI5jyGzbtDI4HvIASASQ60A9sbrc+tJT0=;
-        b=LMvVjnK8X5TCw0vkHVkmYmgPhftlOVukPyHDUZUCA56JFwsJBKM4+LAqs0I6bi7JhP
-         oae/PqgnrgCWtweHkTOJ8QWX0SacYgulNSj24PWyff7fym9q/0kHYLvyZ/HFU8wCj0qI
-         7b9se+J5dvFrXVOegooFsaLN+DZQ56gxAgWAMoH6s+P6Jv3jKIuZnCIAHRudSIucY6i8
-         8+2UR6vNg8MmxMVRwBec44YOpXuNjluJpYpMvengb34Y4e+DxXx4iUjdQIX6Pkj87M0Y
-         VUQUWYxXNVvpsKapzs421NF4rpbS1KwL4RP9nMlQi8p/roaHT8XXbzjN5UVgCnCYdco5
-         YCVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV72aDt8TrwS2ZRavN5gx+aZc3u0SQnlKtrphuL32+oa4sAuZY3XaYdjEdz2hQU6UN6e9BiW4jTyyxQvu+R@vger.kernel.org, AJvYcCVpVrJe8/g5wEiO1t1YVGX+4YxDwhbuJKAxk0l7chQEKUE1BHTSipgn2vsrEqEXxtJhk+0OXngo7MSl@vger.kernel.org, AJvYcCVtUL5feOOQBqbI8riz+Xdsieu9anvb5XoJhieXrzRwXWKoSOHQCfd9sfkEIBLf5lcbR002GG4YuXySDVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZThE2CwfFfHk4cunYhgMt6MWgpio4dfnK5gby2HH93I1t2ncd
-	lAfkGJ6zxUUT2GnP/eFYALYdhzBklQ2tpFAkFCH+6oAzHomsmiIx
-X-Google-Smtp-Source: AGHT+IGJ2s8nCbv9giuX4TsUPyFRZ4W2qwEOYpL76NC6gsnIfuPFTfJNMVD3zLtIJ+LCmxUWrF9log==
-X-Received: by 2002:a17:90b:37cf:b0:2e5:8392:afe7 with SMTP id 98e67ed59e1d1-2e9b14dc341mr16113763a91.0.1731311449998;
-        Sun, 10 Nov 2024 23:50:49 -0800 (PST)
-Received: from ux-UP-WHL01.. (mailgw01.goodix.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5feb222sm8951522a91.52.2024.11.10.23.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 23:50:49 -0800 (PST)
-From: Charles Wang <charles.goodix@gmail.com>
-To: robh@kernel.org,
-	krzk@kernel.org,
-	hbarnor@chromium.org,
-	dianders@chromium.org,
-	conor.dooley@microchip.com
-Cc: dmitry.torokhov@gmail.com,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Wang <charles.goodix@gmail.com>
-Subject: [PATCH v4 2/2] HID: hid-goodix: Add OF supports
-Date: Mon, 11 Nov 2024 15:50:00 +0800
-Message-ID: <20241111075000.111509-3-charles.goodix@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241111075000.111509-1-charles.goodix@gmail.com>
-References: <20241111075000.111509-1-charles.goodix@gmail.com>
+	s=arc-20240116; t=1731311456; c=relaxed/simple;
+	bh=ltTZSnkDQIGoQk/N9ULeVLgYWLr0hGAW6/vFQwPTloM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FCa+MmmQm1wL6gGtFacMv/w6DVUb59/nCjIn3OaxnDWlNQPpfRxFaZHGl5rIiIidc2OtelnRrZhW817teIoLjVdYC6aKwjRToEUAz9h5tB9jdA9YrsbfaJHo7pZlmL+QVdoFuUiULms6AHaEMOel2tPEhxIr5BCQ9KBSQZe64bE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=od4nhaWL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-143-109.net.vodafone.it [5.90.143.109])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0A5BE6AF;
+	Mon, 11 Nov 2024 08:50:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731311440;
+	bh=ltTZSnkDQIGoQk/N9ULeVLgYWLr0hGAW6/vFQwPTloM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=od4nhaWLHCHRHzN2rQroGEm3yAt4hxxP/10jgPgmVHw5A3O1TFS3DJlugtbv5EZq4
+	 U4MCIV40aGktQWr52NWAVB/A+Ndpj/Ibs/gzhx4+7OmwZ/quXLs/JzAonBgbFGlQrK
+	 qWDJ3a0t2tBWOCQ3qDtCbW2PAfFWH9TEaTPtozkE=
+Date: Mon, 11 Nov 2024 08:50:47 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Keke Li <keke.li@amlogic.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kieran.bingham@ideasonboard.com, 
+	laurent.pinchart@ideasonboard.com, dan.scally@ideasonboard.com
+Subject: Re: [PATCH v3 7/9] media: platform: Add c3 ISP driver
+Message-ID: <bwar32yjdafkvvw75u64e6yof2egj6kyo4yh7hs6fhiy5y4cp6@rcosn2wjf2vy>
+References: <20240918-c3isp-v3-0-f774a39e6774@amlogic.com>
+ <20240918-c3isp-v3-7-f774a39e6774@amlogic.com>
+ <kk23fd7evat3haw7o5l5xcbkx22tpupllheownw4u2kxl433d4@yd66zdccnwmr>
+ <fedec977-632c-44bc-ae8b-44fe96dd3648@amlogic.com>
+ <br5rdk5jmsf7lsoucah75nhjm4l3ocrdx2bvluab7lvf2yqd4l@jqqkohxdxzbf>
+ <6cf52356-28ee-4067-85f4-e97cf64c8137@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6cf52356-28ee-4067-85f4-e97cf64c8137@amlogic.com>
 
-This patch introduces the following changes:
-- Adds OF match table.
-- Hardcodes hid-report-addr in the driver rather than fetching it
-  from the device property.
+Hi Keke,
+   let me ask Sakari's and Laurent's opinion on this specific
+issue
 
-Signed-off-by: Charles Wang <charles.goodix@gmail.com>
----
- drivers/hid/hid-goodix-spi.c | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+On Mon, Nov 11, 2024 at 11:00:07AM +0800, Keke Li wrote:
+> Hi Jacopo
+>
+> Thanks very much for your reply.
+>
+> On 2024/11/8 22:04, Jacopo Mondi wrote:
+> > [ EXTERNAL EMAIL ]
+> >
+> > Hi Keke
+> >
+> > On Fri, Nov 08, 2024 at 08:34:41PM +0800, Keke Li wrote:
+> > > Hi Jacopo
+> > >
+> > > Thanks very much for your reply.
+> > >
+> > > On 2024/11/8 00:03, Jacopo Mondi wrote:
+> > > > [ EXTERNAL EMAIL ]
+> > > >
+> > > > Hi Keke
+> > > >
+> > > >      a first pass of review without going into details about the
+> > > > ISP parameters and stats but mostly on architecture.
+> > > >
+> > > > On Wed, Sep 18, 2024 at 02:07:18PM +0800, Keke Li via B4 Relay wrote:
+> > > > > From: Keke Li <keke.li@amlogic.com>
+> > > > >
+> > > > > The C3 ISP supports multi-camera and muti-exposure
+> > > > > high dynamic range (HDR). It brings together some
+> > > > > advanced imaging technologies to provide good image quality.
+> > > > > This driver mainly responsible for driving ISP pipeline
+> > > > > to process raw image.
+> > > > >
+> > > > > Signed-off-by: Keke Li <keke.li@amlogic.com>
+> > > > > ---
+> > > > >    drivers/media/platform/amlogic/Kconfig             |   1 +
 
-diff --git a/drivers/hid/hid-goodix-spi.c b/drivers/hid/hid-goodix-spi.c
-index 6ae2300a6..80c0288a3 100644
---- a/drivers/hid/hid-goodix-spi.c
-+++ b/drivers/hid/hid-goodix-spi.c
-@@ -20,6 +20,7 @@
- #define GOODIX_HID_REPORT_DESC_ADDR	0x105AA
- #define GOODIX_HID_SIGN_ADDR		0x10D32
- #define GOODIX_HID_CMD_ADDR		0x10364
-+#define GOODIX_HID_REPORT_ADDR		0x22C8C
- 
- #define GOODIX_HID_GET_REPORT_CMD	0x02
- #define GOODIX_HID_SET_REPORT_CMD	0x03
-@@ -701,12 +702,7 @@ static int goodix_spi_probe(struct spi_device *spi)
- 		return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
- 				     "failed to request reset gpio\n");
- 
--	error = device_property_read_u32(dev, "goodix,hid-report-addr",
--					 &ts->hid_report_addr);
--	if (error)
--		return dev_err_probe(dev, error,
--				     "failed get hid report addr\n");
--
-+	ts->hid_report_addr = GOODIX_HID_REPORT_ADDR;
- 	error = goodix_dev_confirm(ts);
- 	if (error)
- 		return error;
-@@ -790,6 +786,14 @@ static const struct acpi_device_id goodix_spi_acpi_match[] = {
- MODULE_DEVICE_TABLE(acpi, goodix_spi_acpi_match);
- #endif
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id goodix_spi_of_match[] = {
-+	{ .compatible = "goodix,gt7986u-spifw", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, goodix_spi_of_match);
-+#endif
-+
- static const struct spi_device_id goodix_spi_ids[] = {
- 	{ "gt7986u" },
- 	{ },
-@@ -800,6 +804,7 @@ static struct spi_driver goodix_spi_driver = {
- 	.driver = {
- 		.name = "goodix-spi-hid",
- 		.acpi_match_table = ACPI_PTR(goodix_spi_acpi_match),
-+		.of_match_table = of_match_ptr(goodix_spi_of_match),
- 		.pm = pm_sleep_ptr(&goodix_spi_pm_ops),
- 	},
- 	.probe =	goodix_spi_probe,
--- 
-2.43.0
+[snip]
 
+> >  > > > > +++ b/drivers/media/platform/amlogic/c3-isp/c3-isp-capture.c
+> > > > > @@ -0,0 +1,759 @@
+> > > > > +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+> > > > > +/*
+> > > > > + * Copyright (C) 2024 Amlogic, Inc. All rights reserved
+> > > > > + */
+> > > > > +
+> > > > > +#include <linux/cleanup.h>
+> > > > > +#include <linux/pm_runtime.h>
+> > > > > +
+> > > > > +#include <media/v4l2-ctrls.h>
+> > > > > +#include <media/v4l2-event.h>
+> > > > > +#include <media/v4l2-ioctl.h>
+> > > > > +#include <media/v4l2-mc.h>
+> > > > > +#include <media/videobuf2-dma-contig.h>
+> > > > > +
+> > > > > +#include "c3-isp-common.h"
+> > > > > +#include "c3-isp-regs.h"
+> > > > > +
+> > > > > +static const struct c3_isp_capture_format cap_formats[] = {
+> > > > > +     {
+> > > > > +             .mbus_code = MEDIA_BUS_FMT_Y8_1X8,
+> > > > > +             .fourcc = V4L2_PIX_FMT_GREY,
+> > > > > +             .depth = 8,
+> > > > > +     },
+> > > > > +     {
+> > > > > +             .mbus_code = MEDIA_BUS_FMT_YUYV8_1_5X8,
+> > > > Does the 5X8 version represents the format on the internal bus between
+> > > > the resizers and the capture device ?
+> > > >
+> > > > How does format propagation work from the ISP to the resizers and the
+> > > > capture devices ? I mean, is there an internal bus where the number of
+> > > > samples (5X8 vs 2X8) changes depending on the output format ?
+> > > >
+> > > There is no internal bus between the resizer and the capture device.
+> > >
+> > I presume there is at least a data path, maybe as internal memory
+> > buffers, between the different components of the ISP though.
+>
+>
+> Yes, there is a data path between  resizer and capture node.
+>
+> > > The output format should be only configured in capture device.
+> > >
+> > Ok, what I'm after here is finding out the reason why you have
+> > different mbus codes associated with different output formats. Same
+> > thing as per the below question about the mbus codes used between the
+> > ISP and the resizers.
+> >
+> > The mbus code should describe the format as it actually is in the data
+> > path between the different ISP components. In example, if your
+> > demosaicing block outputs data in a specific format with a specific
+> > bit-depth (in example RGB data with a 30 bits wide bus) you should use
+> > MEDIA_BUS_FMT_RGB101010_1X30.
+> >
+> > However, if this information is not available, or not relevant as it
+> > doesn't influence the behaviour of any of the ISP blocks, I think
+> > using MEDIA_BUS_FMT_FIXED should be fine.
+> >
+> > Otherwise, if there are reasons to use MEDIA_BUS_FMT_YUYV8_1_5X8 over
+> > MEDIA_BUS_FMT_YUYV8_2X8 it's fine, but please explain them :)
+> >
+> > Thanks
+> >    j
+>
+>
+> I have checked the ISP datasheet, there is no need to use mbus code.
+>
+> So decided to use MEDIA_BUS_FMT_FIXED.
+>
+> > > > > +             .fourcc = V4L2_PIX_FMT_NV12,
+> > > > > +             .depth = 12,
+> > > > > +     }, {
+> > > > > +             .mbus_code = MEDIA_BUS_FMT_YUYV8_1_5X8,
+> > > > > +             .fourcc = V4L2_PIX_FMT_NV21,
+> > > > > +             .depth = 12,
+> > > > > +     }, {
+> > > > > +             .mbus_code = MEDIA_BUS_FMT_YUYV8_2X8,
+> > > > > +             .fourcc = V4L2_PIX_FMT_NV16,
+> > > > > +             .depth = 16,
+> > > > > +     }, {
+> > > > > +             .mbus_code = MEDIA_BUS_FMT_YUYV8_2X8,
+> > > > > +             .fourcc = V4L2_PIX_FMT_NV61,
+> > > > > +             .depth = 16,
+> > > > > +     },
+> > > > > +};
 
