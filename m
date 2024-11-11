@@ -1,379 +1,294 @@
-Return-Path: <linux-kernel+bounces-404326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABAF9C4272
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:16:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392219C4276
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9A6B2701C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:16:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8A41F22A6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229701A08C2;
-	Mon, 11 Nov 2024 16:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440321A0737;
+	Mon, 11 Nov 2024 16:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MBsW7vSb"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FEN5MEFa"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2063.outbound.protection.outlook.com [40.107.21.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BD419D093
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731341768; cv=none; b=SR4nA2+eqopsKidMBC8bRVyQNlL7UEk1tkZEo9mLf1UEW0BJM7YYPgP/ecpZDKrgBE9uwj4VlcIqF39DdhEgcwN9EreSluLUpjJ7IPcELmbnyH/2Y5GQbiSCCGc1rrqn/oSZLTnArUqgZ4HdY8RxOfpAcSl9CSi3LseskdeqTCI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731341768; c=relaxed/simple;
-	bh=bc4KAQgTO/LpNZDhBvbFp6qGF1a90shX6G5VP3QrCVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=haXOpGJiq23Lrah+ImkJJJ622LEFBDfRkkXFM/dlMlHpx9kUEczNrA87veqxh45KFQDZoAKimL1reGp1tsgzHZ5jwc6lss1uGx1L8CwZYFH6t8ndWX+4gc0fpWZ5EmHNPII07mUlHtJ9HA+Pd+Cy24M3g4O0VaSBj9geAw+VY2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MBsW7vSb; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so511425ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:16:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731341765; x=1731946565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W7An62prIT0mx4+wHQH6g2p+dtTcsG620N4i8weLcLo=;
-        b=MBsW7vSbsn0kbc9qfJ5QBwKBjgrXI/GD2wEoVJ4H3YbGMthgA6Fv1CflHlKVVhTRmL
-         iiTonyPzWpN/+WZdNSbqWTqZcqKqZqizsKlLS/i6KWfZJWuIz0flpYglvYRmTipZhuFa
-         d0MVvEkhEb7ue4oe8KpTGtJGJYrwaj5eBBdy3jkS1aRhgzftbIxfUdnZ+qgjzjhSmavQ
-         dlofCrXzbCfULJmTFwIc9Q4r4YOCx+YOp96AwU58YzzVh7XdKyNV8sKXKM3kSMYMhDa0
-         Y3O4HD2iX7RIT17AS21rJ2tlYkWDo3JuGzOTWDWFmttNVmyBRqjkKBi1kMR31lyx6Qyj
-         AqLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731341765; x=1731946565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W7An62prIT0mx4+wHQH6g2p+dtTcsG620N4i8weLcLo=;
-        b=Vki7I9hcur+Y1V/x1ZyAEL9EtZ9Mw68IrerN9MM1Xc4Uvj+0pCc0Trq9WcV4vMd9WK
-         0AiwNRpjlFOADBM+tuzq8u358t8CpMJGDL9aql+GtcCqWz3/dQMq3iSHOsYIWC/GtyFg
-         gYgNga8rttj0SowqJFaBB3I6BiKMHj5uFPTYscGDvdhbmDxvJf14C68dLRkbe6WT1d7H
-         eKz8ceRNN2Zs86hM5/JgVjSB3pZ/FAc8u63Edhll464vLNqT/uzaoHRAZ0xSksrKj35m
-         Mx1yA4jH5c0OBWjXp6pYMj9Kv1J470UGCVgs27b21bhG7pWeyO8fk7a7GVj9P8JYm97y
-         MmdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLNqycfVYH4vuryY9ck3z4sD/Xi3psXwTPMkViEFlX8fbMWbTFVnOVIfgTdTtBUZuKR0dTbWQdWm5twu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZGSy4P47xkj7xbb0eorVhg2717JM7U+GfzayxSkP2IIdoeD/J
-	KUss6aoP8oZBrlh59q0FpD8PAICNg+Ih22a8E6T6Yc8gSo0nJijlBVKfcc9v7b1rgG1lJJIH0i5
-	3XSbwePiD9m6iYW1w6TUpTCl0xQllN+U2N4vG
-X-Gm-Gg: ASbGncsP7HMN6auzDugYKIRt8Q4tq9UoSXle0yYW5209OQzURXQGjnntLOAOZLMWRA8
-	bFNpWUVvrAqXg/hOtMGg0VP+gymj6wPMzAiCViRKQOVUNtwE5+zH0/dRmW6/6mWY=
-X-Google-Smtp-Source: AGHT+IHWCPReyu3goMc7v/I2utHhizkuzvgKH/WebrIaU7sxzP5C7tYELPhfV952bZmJDSIJPwFxgpFMd2ZQiSjChCs=
-X-Received: by 2002:a92:c546:0:b0:3a5:e506:162b with SMTP id
- e9e14a558f8ab-3a6f95396a3mr8100635ab.11.1731341765453; Mon, 11 Nov 2024
- 08:16:05 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C45B54728;
+	Mon, 11 Nov 2024 16:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731341899; cv=fail; b=YX4qu1euJfR26PDHOTfA4ACYfB1E3xI7UcDoMdw5PQly5mM+DLECr/VzZs0jken5Cahj59tBO+V/xllC3hdoKDRPthLZNCtEZKdGLlosdh7P+gQca+Lhmp3G1ysnfge2eDEVC8XrxO72YroenAapdHTJwTQaAZ1R6+/b+E6v1EI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731341899; c=relaxed/simple;
+	bh=nUaSiwQA9OHl+ya2gD7cmHNJqKLoPd07Au3+ChrbYsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MKQecuO14FbaLRSrDBveumIfA80nUTnRzPwSGyMjH/Ae5vT9/0KFXMZjSqDMB3lmOnbV2mDi1lgqkrWE2g+uLJ6oAPXRaTUetVqBIWsM/R7nzWeJjC3lGqiEW+Ou7nMFUuQySnp7JaqSETBellFbb//TKWOWZi7pyXS5MlcAltM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FEN5MEFa; arc=fail smtp.client-ip=40.107.21.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GXrMb99nj7bm19LeyETCNGxOO11rPqlMdT7QYUFUnEsJ/Rz0CApn7u8ftyI+PzonXcZPyof+Att8wcEYyeoH+RXFJfT+AK3j0sY2mj6glciidpl3K+K7mUq1fu6DMY72Wy3IdSJM7mqDNH6FHM0xrvc9GVHALLwOP+ycY61lNAObzFdvWa5ERvHzWeCvgf+4+GYQmAWswInd0PWwOqiU+Bf5DRJBN1moSnd0TI4Hd9EKCsYBbH5tw2L6AS9iZGQoYD3ozD/hCf9QFNmOFEWKXGTcBJIrkb+e+YLckHU6oCld5aaI/GQC9kPsgVtlOIVuSsiYsi7u7ZzIrLM0hp8x7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oCZQthyOH7dZGlaP/X9ZHU0x/q4RyJ8stekV+S7c5io=;
+ b=pH+3tC2pLGos+b8autL9sWRVcN0OireouzeQnAKXLa6zjqTBjIW3HgrR7KES6Top69RIYlORgNSK7gKsZdshk35UUlkxQImAaGJV9CkuchRmDkR8j2Z8WQ4NeQKoUkD5pIOTr3zGCISyMNqWlL8GJtVTmBx2ga0IRybzcCTiBo7VmwKJaydg1nKJnETbR2jcRLbrkngGEFWSdZ1v1zNXN/dkwBJxC8t0LWfCM6fJcw/A8pxK3mRoHaSBVqFpfDmu7sSdHtzdxo+4M9aO9l11WpUdGmwnXKy5jIPJ+YBkWsRmdDgVlXqWxPny8O3EP8ehENgGJR7d/FdKhHACsgwwXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oCZQthyOH7dZGlaP/X9ZHU0x/q4RyJ8stekV+S7c5io=;
+ b=FEN5MEFaC0swCyzhzd54PU02gJ7MjdGCo/ry4dqxQAc9j/78qdpF30un/nAxbR8vikQElINcHndbosETHUgec6TOKZum07UN+zEuMOgJa4TdByOCd6qFwNiINBCaVcx9/Y7XQzjz40gBF5m4rLNLrF3vqvZmxaY9u15P93o/bPEYsHE32JhwO3E3aGwCmbmRD94Q4bFroGo7eTuPpVHGF4Hfljv4WG5YWM2DbLgG2omaB+Ym5Z2oqbqc43hLm7AMUFSIe7ulT0xYEzE72IOBMYAlWluVSgUPUYY7pRecse3UK6fH7qcesl3jZQcQGl466mUlU2yunWOBqeJ3XsKaCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DU0PR04MB9371.eurprd04.prod.outlook.com (2603:10a6:10:35a::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Mon, 11 Nov
+ 2024 16:18:13 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%3]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
+ 16:18:13 +0000
+Date: Mon, 11 Nov 2024 11:18:05 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Hongxing Zhu <hongxing.zhu@nxp.com>,
+	Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+Message-ID: <ZzIuPYAXUVWUMs9+@lizhi-Precision-Tower-5810>
+References: <20241108002425.GA1631063@bhelgaas>
+ <b5f56ec9-9b5f-5369-52ed-bcf0c8012dbb@quicinc.com>
+ <DU2PR04MB8677ECC185DFF1E2B62B05858C582@DU2PR04MB8677.eurprd04.prod.outlook.com>
+ <20241111053322.bh6qhoigqdxui65l@thinkpad>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241111053322.bh6qhoigqdxui65l@thinkpad>
+X-ClientProxiedBy: SJ0PR05CA0102.namprd05.prod.outlook.com
+ (2603:10b6:a03:334::17) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111151734.1018476-1-acme@kernel.org> <20241111151734.1018476-2-acme@kernel.org>
-In-Reply-To: <20241111151734.1018476-2-acme@kernel.org>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 08:15:53 -0800
-Message-ID: <CAP-5=fXxwf2wJf-JN7p5F_-V7WdDt_s9jk+Mz5YMkH+9gkpJUg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] perf disasm: Introduce symbol__disassemble_objdump()
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, "Steinar H. Gunderson" <sesse@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DU0PR04MB9371:EE_
+X-MS-Office365-Filtering-Correlation-Id: 082e2965-d246-4dd8-531c-08dd026c70d7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WlI2cUlMWkdwVU1yamlSRk85Rmlab1VEa2EyZzFoQmdOWnFCVmNjaDdiOTda?=
+ =?utf-8?B?UHFiRXdTT2k2NkVhU0xUZUFxTXozbm9XdUVZQ1U2TTZHazh4Yzk4YlB2b2kv?=
+ =?utf-8?B?MnE3ZkxTMXpJU3BpcElTdlVhS2lpYnc3ZUFlNWR1UVI2YmpuUHNhcFRSd0Z3?=
+ =?utf-8?B?UFRTRkozUm1Xak9YenFxOGVqZjhnTUg5Rm43VDZTWjBvQS96bVVZejVFYm4v?=
+ =?utf-8?B?U1Z5VFdRWkt6YkoyZDJhb2hPN2tybStEMUZvZFByejdEN2VCWlVram1yV0F3?=
+ =?utf-8?B?WUw3WjRtVlhJdzlrTWVVcWdMWlhvNG1pK2V4QXR3Zm03bzhYZnFERTZwN0hF?=
+ =?utf-8?B?SU5aczEyUmFndVhQWGdRb28waWJDcEFZRy9YYjlpZmdZcFpGVHFkc0V6emRq?=
+ =?utf-8?B?Z2hISDlyT3FWUEtXZy8yMi80TVZBTWx3TFlyUHFwMnJjNW1nYjgxZWhENzBG?=
+ =?utf-8?B?MGZybXEyWjRucTQzeldHZUxkSWlPTGdGS0EyaFVOZG1lMjVCK2N2cVp6R0dQ?=
+ =?utf-8?B?OHRIYmI5OWtiQThRQTNCbENCdnZwWk1ZNTViR0R6b2hZT2grdXZkbkUxa0ls?=
+ =?utf-8?B?VUtldDRHZWdnMTdDQnZBQ3VuY2JLOERPd0pyL2l1V28vVTdNa2VNNVQrcERF?=
+ =?utf-8?B?SkxCWDZkR1hycXNaK2pMMDJaNDNBc3p5b2RoNW5HZ1g0RVk5UXFWOHZTQjht?=
+ =?utf-8?B?NVNrRVduQW5nNmlnZ29ZTE9Yd0VKSzI3Nk1NaWR5VmZQVXhRdXlkN1RiQi9l?=
+ =?utf-8?B?eDVTWFkrSVUwdmRVSnI5Y0FZb1RGNCtmZUk1eW5uN3l0TUd6KzZJVlAzSWFT?=
+ =?utf-8?B?TkRQM1pQUGlVOENRemRnaG1ZQTk2a2RzNm5Oa1Y0M29wTFVkU0RxcU4ybVRW?=
+ =?utf-8?B?bGlZOWJGWnlvR08wWXdlMjllamNXOGE5RWlhaHo3MDcybVdlQm1NWnkrV3h4?=
+ =?utf-8?B?Q3EwYTV3MHhvdHlXNnk1MkR2ek03V1h5SzhvZG1od1JteWg4RnFoN0JzQzd6?=
+ =?utf-8?B?QjJkT2pEWHpXcnZQU2lyTWdodG1NZkVIWE5KZ0hkekxJaWRNOGF4UEsycTd4?=
+ =?utf-8?B?M2JlNnVneFQwZU9qYjBtZDJNM1N1NjdLS1pEZDBSWG81OHRVRTgzeWdxVGpx?=
+ =?utf-8?B?Ylc3WnN5V0hjZVhTY24zNE9GZFVDa3BXRUJKWFlnajZLMHZvVERTKzRFNVBt?=
+ =?utf-8?B?MjUvaVB4azh6UjlMaXlPdlJBYkIzMjB2cDk1R2JseFJrRm5OcnB3bWNHUlpD?=
+ =?utf-8?B?eWtmbnA0dkdnRmpzMU8rUi9WYWZIZHIvY2JFVEFKNEQvTllmMGJRWDRHRFRl?=
+ =?utf-8?B?dW50Rlc4ZXlWZkV1cVh2VlBSTmN2T0ZBVGVEaEw0RHFEN1piMmgzT0RzOGIv?=
+ =?utf-8?B?MFdlSWo3VEpicDJ5d1JTTkpheHd0a3FEeW5kV2VseWt0alBTUEFPYWQzd1Ro?=
+ =?utf-8?B?RytuVG1tNUE4eHhoU0FZNHRjRmVJeXFUNEhlVXZqNFc3WklVd3V5eHh2MXl2?=
+ =?utf-8?B?VFhvUTlkWk9FZnMvY21zdHQrckJrSllUcTNKa05aMmVpNHYyTWVJeGVmSXll?=
+ =?utf-8?B?TVo0ajFiZ1lrV09RaFF1bUxmQkdscThxVTlZanI0M2dLSEZKRjN6QmpiaVVC?=
+ =?utf-8?B?anZzS3o0Sm4xR2JsNGp0MGV6Sll3dmxHR1dhUDBsUFl6cmFmTlZUM3hVM3ZT?=
+ =?utf-8?B?QzJGSkZHcVVSMGhGU2xGTkgxaEpYcUc3azZWTmxYQmJPbUY5b0d2eGJnYlVU?=
+ =?utf-8?B?T2o1a2JPR3ZsT1dLOHE0TkFxY3ZlMyt0SVhRMDlzRWtjb0lCdzZxOHJsQWRC?=
+ =?utf-8?Q?QuWKJhI36zAWAy0f4rfl05gQDXq7HfghUlU/Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ny9YeGN0b2hSczBDL0FzaW5tNGlTMVhQZ0dOV2lRU0R6cnJCU25qdTkxb3hP?=
+ =?utf-8?B?M3dhVUI2QllTa2tFY1c2NWlNN2ZLMWxlMGNBM2l0SE13V0F1V2szSGVvUDdw?=
+ =?utf-8?B?VzA1VFlSREwyN3dRMUpWQXFkKzdteitSbjlGZ2ZCczdGR0Ixb0wyL2JlWnZV?=
+ =?utf-8?B?aEw3T1VnYlM4SFc3Z0duOS9BRGNOZ0xsWmtNTlJTSEFPZlF5RUZ5Z1dMMlFt?=
+ =?utf-8?B?aW1jaVRsa3NURk5NU2xqMzFxUXREVzlmOG56eEtLN3UwSlhCYm5mWmxCN0dh?=
+ =?utf-8?B?NEVoNE1BRmp5djVXWjhEdS9XTUJTQ3N2d1FUYkZ0Z1hmQWxaODhJbldhQ01l?=
+ =?utf-8?B?QnJHY2ZhM29oYXhheHpiMkpaeFhRMUt5NWZCNWozL1FhKzJ2U1JiQkJqNHdz?=
+ =?utf-8?B?VzJ3ZGxXeHV6V3NMZTF2SHdmTjFpcndVR0paTWZEcWJNcjVrc2RzUy9KeVFs?=
+ =?utf-8?B?Z1FqdFZTUVpSdnpKNVJJb0I1eStkd24xdUtoRys0dUJwTk4yVE1HZ2RlcUgw?=
+ =?utf-8?B?dU1LYmdWcTNxRDFKK3grVWlUeW5seG9UWExubGlsaGxUOGZib3Q4MlBSY0Ny?=
+ =?utf-8?B?QkFDeEs3WTFBTnBzZ2JyOWRTN1d4UXdwUmFYMlZrK1lNbTU4aXBEMTNTcEti?=
+ =?utf-8?B?ZTBOVTFZZktzU1dMdVpXTUIyQVc0aTllUlIxeERWbTZsSEtZUzU1Nk9xR1pV?=
+ =?utf-8?B?MjMrVUIxWUNqaUhiTVh6VFFCclo2SUhNSll1N3hZZURuYWhaS01DQ0ZMUFQx?=
+ =?utf-8?B?S2pMRHhFNkVZeUVBRVVxTFk1d3MvaDQrRSs5N0xYYWNJbG9KVnllZmFNSG1N?=
+ =?utf-8?B?YXc2cGlPV3NsaG9iT1Jyd2tiMXJDRWpSa0o0ZW42bmIzbGFCWm1hc0ZQRDVW?=
+ =?utf-8?B?cENNcFdKY09pK25HK0hlQ0JLVDZHY24ydGgzNCtBN25QU0VpaFlBVXdkVUxB?=
+ =?utf-8?B?Z3VHVEo1aExQWWlPbFpXMVR0NU9EaGVBZkpaeWhFOHBMUkt2V243QkNhNnhu?=
+ =?utf-8?B?a2lVbjBuWTNQTE1LY3oyRzc1emFzQVovVDFuTUZxM09GUEEveTcvSFo0UEtE?=
+ =?utf-8?B?bytlaThqampmc2hNbVVLWlVzVWIxWW9Hd3I4MEw2VVRiL3VjeWVUZ0JWNTls?=
+ =?utf-8?B?UVN3VGY1bUpORzZML2x6UmtSYUl3REpLZVpIZm40Q0NLT3Y4S3lRcDBZZW9U?=
+ =?utf-8?B?a2gwVjhZcWRiZjB6UlJ2T2RHTHhMb1E1K2hyUWFNWFJHemlsdjJyZElBMGZv?=
+ =?utf-8?B?eWNnUFFaMDhEdnNXSllVWGNBU21DeWplc3h6cU41RURlZVdyUU8yYVJjbWls?=
+ =?utf-8?B?bXdvUGRqWjZFWk9YWldqdXhWYnJMdjVBU3J0OWQ3aTdvSEwrNUtydFovaEFM?=
+ =?utf-8?B?RzJJaHlKVkZxanQyWFZaTmJCL3I5bXpjUWRuUjVyVjBtOVZINzFCcXB0c20z?=
+ =?utf-8?B?LzVBbDcxMHpTYSs1aTRMc2ZHbXVkS05Tay92WFg5UDRTMEg5anMreHI2WGVq?=
+ =?utf-8?B?b0hPbEVKdE9lM2dvQ0Z4UlUxYXhqRG5tWG1INlEwc01wdWtDMVRqZjJuUk9Z?=
+ =?utf-8?B?STRTTXRBU2xMcnhnRWgwQThrSlNlalZoS0wrcFpDS2VPWU1nOU9Vb1daVHZp?=
+ =?utf-8?B?U1grazRtTHVsbEtJWmZrcU1EY3JwZ1VWYmJPRGl4anVKNG5MandvR3lSWk1y?=
+ =?utf-8?B?bG1hTmhneHphWlBjeWtXTHVCYzhuTUVVL2NoQVl5SWUvd25zZ2gxV2NCRndV?=
+ =?utf-8?B?NjE2UzdJeXB2bENTQ1VuZjBFSnl2VnZBejRMdzhCdUplVG9LSEhERjJ5RERX?=
+ =?utf-8?B?N05hU3I5Ui9jRUdOQ1hLc1JucWZScVNVUDV3L3cvb1JQakE3OGJleDlHZnkw?=
+ =?utf-8?B?RXNUdWNMRWRobGl2VkNWY0Zrblp6a1JHRFJudDNmaThJYVZuemRLK3FkOHls?=
+ =?utf-8?B?NFdzNTBoZW1PWFNnNVIyOWYrU0preXRtUUU0aXB1aURXK0M1N0IyalE4Y0Q4?=
+ =?utf-8?B?K2M3Ym12MXBpWFhKaC85azcrNUd6QTNKbXMxZXgrWEZWbEVla29Vd1RkcCsy?=
+ =?utf-8?B?Z0VnQXZhc3hwRUlsZStGQzVRWUoyVXZsaUllck1oc09LK0hxLytpem82MzQy?=
+ =?utf-8?Q?cFE6Da8ftj/xlBK6EMhvtGixW?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 082e2965-d246-4dd8-531c-08dd026c70d7
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 16:18:13.1611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aY49aUDbBbpf7M2kadhUdqcq7Jc//VXHvT3nOhoU2NKJAALzv7xjRoGa3h77slzWxiAdky6MEVVbLusq4utMEw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9371
 
-On Mon, Nov 11, 2024 at 7:17=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+On Mon, Nov 11, 2024 at 11:03:22AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Nov 11, 2024 at 03:29:18AM +0000, Hongxing Zhu wrote:
+> > > -----Original Message-----
+> > > From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+> > > Sent: 2024年11月10日 8:10
+> > > To: Bjorn Helgaas <helgaas@kernel.org>; Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org>
+> > > Cc: Hongxing Zhu <hongxing.zhu@nxp.com>; jingoohan1@gmail.com;
+> > > bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
+> > > robh@kernel.org; Frank Li <frank.li@nxp.com>; imx@lists.linux.dev;
+> > > kernel@pengutronix.de; linux-pci@vger.kernel.org;
+> > > linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
+> > > dw_pcie_suspend_noirq()
+> > >
+> > >
+> > >
+> > > On 11/8/2024 5:54 AM, Bjorn Helgaas wrote:
+> > > > On Thu, Nov 07, 2024 at 11:13:34AM +0000, Manivannan Sadhasivam
+> > > wrote:
+> > > >> On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
+> > > >>> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's
+> > > >>> safe to send PME_TURN_OFF message regardless of whether the link is
+> > > >>> up or down. So, there would be no need to test the LTSSM stat before
+> > > >>> sending PME_TURN_OFF message.
+> > > >>
+> > > >> What is the incentive to send PME_Turn_Off when link is not up?
+> > > >
+> > > > There's no need to send PME_Turn_Off when link is not up.
+> > > >
+> > > > But a link-up check is inherently racy because the link may go down
+> > > > between the check and the PME_Turn_Off.  Since it's impossible for
+> > > > software to guarantee the link is up, the Root Port should be able to
+> > > > tolerate attempts to send PME_Turn_Off when the link is down.
+> > > >
+> > > > So IMO there's no need to check whether the link is up, and checking
+> > > > gives the misleading impression that "we know the link is up and
+> > > > therefore sending PME_Turn_Off is safe."
+> > > >
+> > > Hi Bjorn,
+> > >
+> > > I agree that link-up check is racy but once link is up and link has gone down
+> > > due to some reason the ltssm state will not move detect quiet or detect act, it
+> > > will go to pre detect quiet (i.e value 0f 0x5).
+> > > we can assume if the link is up LTSSM state will greater than detect act even if
+> > > the link was down.
+> > >
+> > > - Krishna Chaitanya.
+> > > >>> Remove the L2 poll too, after the PME_TURN_OFF message is sent out.
+> > > >>> Because the re-initialization would be done in
+> > > >>> dw_pcie_resume_noirq().
+> > > >>
+> > > >> As Krishna explained, host needs to wait until the endpoint acks the
+> > > >> message (just to give it some time to do cleanups). Then only the
+> > > >> host can initiate D3Cold. It matters when the device supports L2.
+> > > >
+> > > > The important thing here is to be clear about the *reason* to poll for
+> > > > L2 and the *event* that must wait for L2.
+> > > >
+> > > > I don't have any DesignWare specs, but when dw_pcie_suspend_noirq()
+> > > > waits for DW_PCIE_LTSSM_L2_IDLE, I think what we're doing is waiting
+> > > > for the link to be in the L2/L3 Ready pseudo-state (PCIe r6.0, sec
+> > > > 5.2, fig 5-1).
+> > > >
+> > > > L2 and L3 are states where main power to the downstream component is
+> > > > off, i.e., the component is in D3cold (r6.0, sec 5.3.2), so there is
+> > > > no link in those states.
+> > > >
+> > > > The PME_Turn_Off handshake is part of the process to put the
+> > > > downstream component in D3cold.  I think the reason for this handshake
+> > > > is to allow an orderly shutdown of that component before main power is
+> > > > removed.
+> > > >
+> > > > When the downstream component receives PME_Turn_Off, it will stop
+> > > > scheduling new TLPs, but it may already have TLPs scheduled but not
+> > > > yet sent.  If power were removed immediately, they would be lost.  My
+> > > > understanding is that the link will not enter L2/L3 Ready until the
+> > > > components on both ends have completed whatever needs to be done with
+> > > > those TLPs.  (This is based on the L2/L3 discussion in the Mindshare
+> > > > PCIe book; I haven't found clear spec citations for all of it.)
+> > > >
+> > > > I think waiting for L2/L3 Ready is to keep us from turning off main
+> > > > power when the components are still trying to dispose of those TLPs.
+> > > >
+> > > > So I think every controller that turns off main power needs to wait
+> > > > for L2/L3 Ready.
+> > > >
+> > > > There's also a requirement that software wait at least 100 ns after
+> > > > L2/L3 Ready before turning off refclock and main power (sec
+> > > > 5.3.3.2.1).
+> > Thanks for the comments.
+> > So, the L2 poll is better kept, since PCIe r6.0, sec 5.3.3.2.1 also recommends
+> >  1ms to 10ms timeout to check L2 ready or not.
+> > The v2 of this patch would only remove the LTSSM stat check when issue
+> >  the PME_TURN_OFF message if there are no further comments.
+> >
 >
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
->
-> With the first disassemble method in perf, the parsing of objdump
-> output, just like we have for llvm and capstone.
->
-> This paves the way to allow the user to specify what disassemblers are
-> preferred and to also to at some point allow building without the
-> objdump method.
->
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Steinar H. Gunderson <sesse@google.com>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> If you unconditionally send PME_Turn_Off message, then you'd end up polling for
+> L23 Ready, which may result in a timeout and users will see the error message.
+> This is my concern.
 
-Acked-by: Ian Rogers <irogers@google.com>
+Yes, may we can check if entry L2 or link down, so no such message print
+for link down case.
 
-Nit below relating to a pre-existing condition in the code.
-
-> ---
->  tools/perf/util/disasm.c | 168 ++++++++++++++++++++-------------------
->  1 file changed, 88 insertions(+), 80 deletions(-)
->
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index a525b80b934fdb5f..36cf61602c17fe69 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -2045,17 +2045,14 @@ static char *expand_tabs(char *line, char **stora=
-ge, size_t *storage_len)
->         return new_line;
->  }
->
-> -int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
-> +static int symbol__disassemble_objdump(const char *filename, struct symb=
-ol *sym,
-> +                                      struct annotate_args *args)
->  {
->         struct annotation_options *opts =3D &annotate_opts;
->         struct map *map =3D args->ms.map;
->         struct dso *dso =3D map__dso(map);
->         char *command;
->         FILE *file;
-> -       char symfs_filename[PATH_MAX];
-> -       struct kcore_extract kce;
-> -       bool delete_extract =3D false;
-> -       bool decomp =3D false;
->         int lineno =3D 0;
->         char *fileloc =3D NULL;
->         int nline;
-> @@ -2070,77 +2067,7 @@ int symbol__disassemble(struct symbol *sym, struct=
- annotate_args *args)
->                 NULL,
->         };
->         struct child_process objdump_process;
-> -       int err =3D dso__disassemble_filename(dso, symfs_filename, sizeof=
-(symfs_filename));
-> -
-> -       if (err)
-> -               return err;
-> -
-> -       pr_debug("%s: filename=3D%s, sym=3D%s, start=3D%#" PRIx64 ", end=
-=3D%#" PRIx64 "\n", __func__,
-> -                symfs_filename, sym->name, map__unmap_ip(map, sym->start=
-),
-> -                map__unmap_ip(map, sym->end));
-> -
-> -       pr_debug("annotating [%p] %30s : [%p] %30s\n",
-> -                dso, dso__long_name(dso), sym, sym->name);
-> -
-> -       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_PROG_INFO) =
-{
-> -               return symbol__disassemble_bpf(sym, args);
-> -       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_IMAG=
-E) {
-> -               return symbol__disassemble_bpf_image(sym, args);
-> -       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__NOT_FOUN=
-D) {
-> -               return -1;
-> -       } else if (dso__is_kcore(dso)) {
-> -               kce.kcore_filename =3D symfs_filename;
-> -               kce.addr =3D map__rip_2objdump(map, sym->start);
-> -               kce.offs =3D sym->start;
-> -               kce.len =3D sym->end - sym->start;
-> -               if (!kcore_extract__create(&kce)) {
-> -                       delete_extract =3D true;
-> -                       strlcpy(symfs_filename, kce.extract_filename,
-> -                               sizeof(symfs_filename));
-> -               }
-> -       } else if (dso__needs_decompress(dso)) {
-> -               char tmp[KMOD_DECOMP_LEN];
-> -
-> -               if (dso__decompress_kmodule_path(dso, symfs_filename,
-> -                                                tmp, sizeof(tmp)) < 0)
-> -                       return -1;
-> -
-> -               decomp =3D true;
-> -               strcpy(symfs_filename, tmp);
-> -       }
-> -
-> -       /*
-> -        * For powerpc data type profiling, use the dso__data_read_offset
-> -        * to read raw instruction directly and interpret the binary code
-> -        * to understand instructions and register fields. For sort keys =
-as
-> -        * type and typeoff, disassemble to mnemonic notation is
-> -        * not required in case of powerpc.
-> -        */
-> -       if (arch__is(args->arch, "powerpc")) {
-> -               extern const char *sort_order;
-> -
-> -               if (sort_order && !strstr(sort_order, "sym")) {
-> -                       err =3D symbol__disassemble_raw(symfs_filename, s=
-ym, args);
-> -                       if (err =3D=3D 0)
-> -                               goto out_remove_tmp;
-> -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> -                       err =3D symbol__disassemble_capstone_powerpc(symf=
-s_filename, sym, args);
-> -                       if (err =3D=3D 0)
-> -                               goto out_remove_tmp;
-> -#endif
-> -               }
-> -       }
-> -
-> -#ifdef HAVE_LIBLLVM_SUPPORT
-> -       err =3D symbol__disassemble_llvm(symfs_filename, sym, args);
-> -       if (err =3D=3D 0)
-> -               goto out_remove_tmp;
-> -#endif
-> -#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> -       err =3D symbol__disassemble_capstone(symfs_filename, sym, args);
-> -       if (err =3D=3D 0)
-> -               goto out_remove_tmp;
-> -#endif
-> +       int err;
->
->         err =3D asprintf(&command,
->                  "%s %s%s --start-address=3D0x%016" PRIx64
-> @@ -2163,13 +2090,13 @@ int symbol__disassemble(struct symbol *sym, struc=
-t annotate_args *args)
->
->         if (err < 0) {
->                 pr_err("Failure allocating memory for the command to run\=
-n");
-> -               goto out_remove_tmp;
-> +               return err;
->         }
->
->         pr_debug("Executing: %s\n", command);
->
->         objdump_argv[2] =3D command;
-> -       objdump_argv[4] =3D symfs_filename;
-> +       objdump_argv[4] =3D filename;
->
->         /* Create a pipe to read from for stdout */
->         memset(&objdump_process, 0, sizeof(objdump_process));
-> @@ -2207,8 +2134,8 @@ int symbol__disassemble(struct symbol *sym, struct =
-annotate_args *args)
->                         break;
->
->                 /* Skip lines containing "filename:" */
-> -               match =3D strstr(line, symfs_filename);
-> -               if (match && match[strlen(symfs_filename)] =3D=3D ':')
-> +               match =3D strstr(line, filename);
-> +               if (match && match[strlen(filename)] =3D=3D ':')
->                         continue;
->
->                 expanded_line =3D strim(line);
-> @@ -2253,6 +2180,87 @@ int symbol__disassemble(struct symbol *sym, struct=
- annotate_args *args)
->
->  out_free_command:
->         free(command);
-> +       return err;
-> +}
-> +
-> +int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
-> +{
-> +       struct map *map =3D args->ms.map;
-> +       struct dso *dso =3D map__dso(map);
-> +       char symfs_filename[PATH_MAX];
-> +       bool delete_extract =3D false;
-> +       struct kcore_extract kce;
-> +       bool decomp =3D false;
-> +       int err =3D dso__disassemble_filename(dso, symfs_filename, sizeof=
-(symfs_filename));
-> +
-> +       if (err)
-> +               return err;
-> +
-> +       pr_debug("%s: filename=3D%s, sym=3D%s, start=3D%#" PRIx64 ", end=
-=3D%#" PRIx64 "\n", __func__,
-> +                symfs_filename, sym->name, map__unmap_ip(map, sym->start=
-),
-> +                map__unmap_ip(map, sym->end));
-> +
-> +       pr_debug("annotating [%p] %30s : [%p] %30s\n", dso, dso__long_nam=
-e(dso), sym, sym->name);
-> +
-> +       if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_PROG_INFO) =
-{
-> +               return symbol__disassemble_bpf(sym, args);
-> +       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__BPF_IMAG=
-E) {
-> +               return symbol__disassemble_bpf_image(sym, args);
-> +       } else if (dso__binary_type(dso) =3D=3D DSO_BINARY_TYPE__NOT_FOUN=
-D) {
-> +               return -1;
-> +       } else if (dso__is_kcore(dso)) {
-> +               kce.addr =3D map__rip_2objdump(map, sym->start);
-> +               kce.kcore_filename =3D symfs_filename;
-> +               kce.len =3D sym->end - sym->start;
-> +               kce.offs =3D sym->start;
-> +
-> +               if (!kcore_extract__create(&kce)) {
-> +                       delete_extract =3D true;
-> +                       strlcpy(symfs_filename, kce.extract_filename, siz=
-eof(symfs_filename));
-> +               }
-> +       } else if (dso__needs_decompress(dso)) {
-> +               char tmp[KMOD_DECOMP_LEN];
-> +
-> +               if (dso__decompress_kmodule_path(dso, symfs_filename, tmp=
-, sizeof(tmp)) < 0)
-> +                       return -1;
-> +
-> +               decomp =3D true;
-> +               strcpy(symfs_filename, tmp);
-> +       }
-> +
-> +       /*
-> +        * For powerpc data type profiling, use the dso__data_read_offset=
- to
-> +        * read raw instruction directly and interpret the binary code to
-> +        * understand instructions and register fields. For sort keys as =
-type
-> +        * and typeoff, disassemble to mnemonic notation is not required =
-in
-> +        * case of powerpc.
-> +        */
-> +       if (arch__is(args->arch, "powerpc")) {
-> +               extern const char *sort_order;
-> +
-> +               if (sort_order && !strstr(sort_order, "sym")) {
-> +                       err =3D symbol__disassemble_raw(symfs_filename, s=
-ym, args);
-> +                       if (err =3D=3D 0)
-> +                               goto out_remove_tmp;
-> +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> +                       err =3D symbol__disassemble_capstone_powerpc(symf=
-s_filename, sym, args);
-> +                       if (err =3D=3D 0)
-> +                               goto out_remove_tmp;
-> +#endif
-> +               }
-> +       }
-> +
-> +#ifdef HAVE_LIBLLVM_SUPPORT
-> +       err =3D symbol__disassemble_llvm(symfs_filename, sym, args);
-> +       if (err =3D=3D 0)
-> +               goto out_remove_tmp;
-> +#endif
-> +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> +       err =3D symbol__disassemble_capstone(symfs_filename, sym, args);
-> +       if (err =3D=3D 0)
-> +               goto out_remove_tmp;
-> +#endif
-> +       err =3D symbol__disassemble_objdump(symfs_filename, sym, args);
-
-This sure does read like the symbol will be disassembled 3 times if
-those ifdefs are defined. Is there anyway to make the code look more
-intuitive?
-
-Thanks,
-Ian
+Frank
 
 >
->  out_remove_tmp:
->         if (decomp)
+> - Mani
+>
 > --
-> 2.47.0
->
+> மணிவண்ணன் சதாசிவம்
 
