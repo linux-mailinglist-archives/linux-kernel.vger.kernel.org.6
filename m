@@ -1,116 +1,82 @@
-Return-Path: <linux-kernel+bounces-403660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE459C38C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE5A9C38C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:58:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3CA7B21A38
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23967B21487
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0886B156230;
-	Mon, 11 Nov 2024 06:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PFgcds0F"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0393156997;
-	Mon, 11 Nov 2024 06:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E44155352;
+	Mon, 11 Nov 2024 06:58:23 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218541487F4;
+	Mon, 11 Nov 2024 06:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731308197; cv=none; b=Xtf4vYJllegk5pshlF+OMw2Y4pITlulfymViIDxAQQB4kOk15CkYslFUSw4FWfvtf7oV4yZ7vIrgZiOKB2WZShTxlGB35w3M7v28U0bgArljjavv0Ylqpa98h0NAo3rPQ9N8QUckjOE4yBCH0pbSJaTiYxD0WesM1ReoLQRL4hI=
+	t=1731308303; cv=none; b=a3eBaTukY+4Om2y6p1Ei8oERPnaxv4KL9fT2et6jy9UonCXd3ofGurO1gzHi0RloIZZEnUPVnmtctGNMnxuCfaofvX9R+3c7kpxV1BFjCYsRcP2wIHDyLm5YC5xBYgDk6hU8uYS1qgKHQ2j20g3paTBz8rCUhILLKrB5cr+ofls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731308197; c=relaxed/simple;
-	bh=Fi00+RpncPzVAuACaU69mwSsQhQappFQ26XGuBF9PQk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bMlyNMbkFj09TjAc4sCvpTVGPduQKoggfKkKvAYQWgZQ0sBa2nK89CV+HAlvqE2WsThFDMkKUbH1Y8Glei385VQE7py9KJ0y4KKVw102Xq/vjzry74qhdt1vpXkDsSqrViv/rknMTSfLSV2RcmnJ9hx9dedSGYa2NefJ6S4oauA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PFgcds0F; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731308195; x=1762844195;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Fi00+RpncPzVAuACaU69mwSsQhQappFQ26XGuBF9PQk=;
-  b=PFgcds0FRzt4zFj+lLyA+0j/jaQGOJpfZ2Zr7Btq+k3VhEPxQ/O335EW
-   g9jy7UzIRRabyLfXlxg6V5r8QH2YfOXuQQ75Dn5l1j2dFhff/HnKwIBYt
-   L929qrgOW6z1v0X8TaGo31auv5MJZ9n+OsjuK7yqNjnXp96Ek9UlTsQVA
-   HfQHgkhH18WD8fR3S2Uk/Xzg1l3orq77qxPgMlJCJMVAy4A8Bchg81/LF
-   +PeNO4AK6Mf5SimnLwcg6ZEqHxDffMqvrQ6cEix8WHeA88xMxvn0Is1XX
-   unMcTcFmGwk6QTJwCFwL/NUvVNx+nCAEwZJqswPwuK5qb8tQkq5DVUk2y
-   w==;
-X-CSE-ConnectionGUID: lT75xDi8RYiILIE+dkdmKg==
-X-CSE-MsgGUID: 6Y6sTHuZRt2Lu/MYse8nCg==
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="201566528"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Nov 2024 23:56:34 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 10 Nov 2024 23:55:54 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Sun, 10 Nov 2024 23:55:45 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <dharma.b@microchip.com>,
-	<hari.prasathge@microchip.com>, <varshini.rajendran@microchip.com>,
-	<arnd@arndb.de>, <dri-devel@lists.freedesktop.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v6 4/4] ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller support
-Date: Mon, 11 Nov 2024 12:25:02 +0530
-Message-ID: <20241111065502.411710-5-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241111065502.411710-1-manikandan.m@microchip.com>
-References: <20241111065502.411710-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1731308303; c=relaxed/simple;
+	bh=RRfA/3dJQQAyx8yE8jLrEZTN7L+GQSAafq7NHGwZh3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=Gpwx2ZMOVDXUi5dDlnmigNJxXHLQjOHgUTf7IM3y/RhyNVTO0IfB8OsY9/kq0Gpu8Uz0FQT3vV0fgbvdeZh5+BKn61O0R2OjwWZ9sVsBty6u3iZFg/MHWEZVW1QfmVBIbEH1aiJs6LTuRYCexCMf811tmwy5KK6JDIfLdSnnUfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee86731ab0408b-3e0d4;
+	Mon, 11 Nov 2024 14:58:13 +0800 (CST)
+X-RM-TRANSID:2ee86731ab0408b-3e0d4
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee86731ab04f4b-173d5;
+	Mon, 11 Nov 2024 14:58:12 +0800 (CST)
+X-RM-TRANSID:2ee86731ab04f4b-173d5
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: pavel@ucw.cz
+Cc: lee@kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] leds: ss4200: Fix the wrong format specifier
+Date: Sun, 10 Nov 2024 22:58:09 -0800
+Message-Id: <20241111065809.3814-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Enable the Microchip's DSI controller wrapper driver that uses
-the Synopsys DesignWare MIPI DSI host controller bridge for
-sam9x7 SoC family.
+The format specifier of "signed int" in sprintf() should be "%d", not
+"%u".
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 ---
-changes in v6:
-- Rewrite commit message
----
- arch/arm/configs/at91_dt_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/leds/leds-ss4200.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/at91_dt_defconfig b/arch/arm/configs/at91_dt_defconfig
-index 2022a7fca0f9..3ff89e27e770 100644
---- a/arch/arm/configs/at91_dt_defconfig
-+++ b/arch/arm/configs/at91_dt_defconfig
-@@ -145,6 +145,7 @@ CONFIG_VIDEO_OV7740=m
- CONFIG_DRM=y
- CONFIG_DRM_ATMEL_HLCDC=y
- CONFIG_DRM_MICROCHIP_LVDS_SERIALIZER=y
-+CONFIG_DRM_MICROCHIP_DW_MIPI_DSI=y
- CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_DRM_PANEL_EDP=y
- CONFIG_FB_ATMEL=y
+diff --git a/drivers/leds/leds-ss4200.c b/drivers/leds/leds-ss4200.c
+index 2ef9fc7371bd..f24ca75c7cb1 100644
+--- a/drivers/leds/leds-ss4200.c
++++ b/drivers/leds/leds-ss4200.c
+@@ -451,7 +451,7 @@ static ssize_t blink_show(struct device *dev,
+ 	int blinking = 0;
+ 	if (nasgpio_led_get_attr(led, GPO_BLINK))
+ 		blinking = 1;
+-	return sprintf(buf, "%u\n", blinking);
++	return sprintf(buf, "%d\n", blinking);
+ }
+ 
+ static ssize_t blink_store(struct device *dev,
 -- 
-2.25.1
+2.17.1
+
+
 
 
