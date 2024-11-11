@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-403421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAC99C357C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:48:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42A39C357F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC59282176
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04BBD1C2178E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDA31386DA;
-	Mon, 11 Nov 2024 00:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE39F9FE;
+	Mon, 11 Nov 2024 00:47:46 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E815880034;
-	Mon, 11 Nov 2024 00:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313FD137930;
+	Mon, 11 Nov 2024 00:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731286063; cv=none; b=fchPfOYAe6tjLfYXpSvtQFuwbNRygjs+n9+fBPBwZ7Cf43YjK6mUS+QxL1SyjxbLASvzxvwUx4E7PAyIznY67E6cpz/LpjPJFJD+iL6xxxCRdFYMeXL+MDWuHT+k/UcojycjNguys5tPuwyTJh2cpCI4XO5G+4b3mygB/7GOqi8=
+	t=1731286065; cv=none; b=C9yiDf6CeQH++6XtdaJZ7AZA/4E9T8ON0LDlKU3GpKNdx6TyOCZZtqEZ5w5JVi602aYf/0KbLu2VsHDAKcqbqdfrWtNgWQBLHxtQgMavPYOXx6UZPOio37x+1JLaUfNbot5p7rgmdPXjm1uHQqgRkJ+Ux/Nn7LlB+tGpOeEpwuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731286063; c=relaxed/simple;
-	bh=LM504u5jXE4XURjkFquNfWq7uvfQPnvOwkXZLfw4GvU=;
+	s=arc-20240116; t=1731286065; c=relaxed/simple;
+	bh=EN6jiVQR7bKb3A/8zF1CoXsGMuq/UW5yGgrprlmnyfE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IoVS8ynVGlLT9r1s5gcmqWDBz7kolvjtZL1CvBP09asjQMmAzzks21bU5hFokv+XeS/v8N0avAybmLTawjSeXBepBTAzU+tpcX1dvhNp6oaGUIyAlqsMsJ9Kf8HuF4VnZUk5AKt4fbcmSxWplBT9ES/ravlF/jD2hxLbFC9f6CI=
+	 MIME-Version; b=V2eh4TeB21H+5/PhatCP3pRO+6sNmMTFPd7JkbCpIPcwQyeHL5CLJyAQ4VkfbOV0pL37Uz9zNcvd4FDE3a+fc53qRdRiG3Ez4Diwr1WGpT9L4msP4NYhZMEPMyfBBkE5MiqQZpKhduaNc8JFnSjmiB53dWrHInkI/gXDewUnv8A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FFDE13D5;
-	Sun, 10 Nov 2024 16:48:11 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD5211480;
+	Sun, 10 Nov 2024 16:48:13 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BC0F3F66E;
-	Sun, 10 Nov 2024 16:47:39 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D46823F66E;
+	Sun, 10 Nov 2024 16:47:41 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -48,9 +48,9 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] dt-bindings: clk: sunxi-ng: add compatible for the A523 CCU
-Date: Mon, 11 Nov 2024 00:47:19 +0000
-Message-ID: <20241111004722.10130-5-andre.przywara@arm.com>
+Subject: [PATCH 5/7] dt-bindings: clk: sunxi-ng: add compatible for the A523 PRCM-CCU
+Date: Mon, 11 Nov 2024 00:47:20 +0000
+Message-ID: <20241111004722.10130-6-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241111004722.10130-1-andre.przywara@arm.com>
 References: <20241111004722.10130-1-andre.przywara@arm.com>
@@ -63,328 +63,224 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-the main CCU.
+the PRCM R_CCU.
 
 Add the new compatible string, along with the required input clock
-lists.
+lists. There is now an extra input clock (PLL_AUDIO), so add this to the
+list of allowed clocks and required it for the A523 PRCM CCU.
 Also add the DT binding headers, listing all the clocks with their ID
 numbers.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- .../clock/allwinner,sun4i-a10-ccu.yaml        |   2 +
- include/dt-bindings/clock/sun55i-a523-ccu.h   | 187 ++++++++++++++++++
- include/dt-bindings/reset/sun55i-a523-ccu.h   |  87 ++++++++
- 3 files changed, 276 insertions(+)
- create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
- create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
+ .../clock/allwinner,sun4i-a10-ccu.yaml        | 76 ++++++++++++-------
+ include/dt-bindings/clock/sun55i-a523-r-ccu.h | 36 +++++++++
+ include/dt-bindings/reset/sun55i-a523-r-ccu.h | 25 ++++++
+ 3 files changed, 109 insertions(+), 28 deletions(-)
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
 
 diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-index 1690b9d99c3d4..451a18de1b6c1 100644
+index 451a18de1b6c1..791dc333be74d 100644
 --- a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
 +++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-@@ -45,6 +45,7 @@ properties:
-       - allwinner,sun50i-h6-r-ccu
+@@ -46,6 +46,7 @@ properties:
        - allwinner,sun50i-h616-ccu
        - allwinner,sun50i-h616-r-ccu
-+      - allwinner,sun55i-a523-ccu
+       - allwinner,sun55i-a523-ccu
++      - allwinner,sun55i-a523-r-ccu
        - allwinner,suniv-f1c100s-ccu
        - nextthing,gr8-ccu
  
-@@ -106,6 +107,7 @@ else:
-           - allwinner,sun50i-a100-ccu
-           - allwinner,sun50i-h6-ccu
-           - allwinner,sun50i-h616-ccu
-+          - allwinner,sun55i-a523-ccu
+@@ -59,6 +60,7 @@ properties:
+       - description: Low Frequency Oscillator (usually at 32kHz)
+       - description: Internal Oscillator
+       - description: Peripherals PLL
++      - description: Audio PLL
+ 
+   clock-names:
+     minItems: 2
+@@ -67,6 +69,7 @@ properties:
+       - const: losc
+       - const: iosc
+       - const: pll-periph
++      - const: pll-audio
+ 
+ required:
+   - "#clock-cells"
+@@ -80,54 +83,71 @@ if:
+   properties:
+     compatible:
+       enum:
+-        - allwinner,sun8i-a83t-r-ccu
+-        - allwinner,sun8i-h3-r-ccu
+-        - allwinner,sun20i-d1-r-ccu
+-        - allwinner,sun50i-a64-r-ccu
+-        - allwinner,sun50i-a100-r-ccu
+-        - allwinner,sun50i-h6-r-ccu
+-        - allwinner,sun50i-h616-r-ccu
++        - allwinner,sun55i-a523-r-ccu
+ 
+ then:
+   properties:
+     clocks:
+-      minItems: 4
+-      maxItems: 4
++      minItems: 5
++      maxItems: 5
+ 
+     clock-names:
+-      minItems: 4
+-      maxItems: 4
++      minItems: 5
++      maxItems: 5
+ 
+ else:
+   if:
+     properties:
+       compatible:
+         enum:
+-          - allwinner,sun20i-d1-ccu
+-          - allwinner,sun50i-a100-ccu
+-          - allwinner,sun50i-h6-ccu
+-          - allwinner,sun50i-h616-ccu
+-          - allwinner,sun55i-a523-ccu
++          - allwinner,sun8i-a83t-r-ccu
++          - allwinner,sun8i-h3-r-ccu
++          - allwinner,sun20i-d1-r-ccu
++          - allwinner,sun50i-a64-r-ccu
++          - allwinner,sun50i-a100-r-ccu
++          - allwinner,sun50i-h6-r-ccu
++          - allwinner,sun50i-h616-r-ccu
  
    then:
      properties:
-diff --git a/include/dt-bindings/clock/sun55i-a523-ccu.h b/include/dt-bindings/clock/sun55i-a523-ccu.h
+       clocks:
+-        minItems: 3
+-        maxItems: 3
++        minItems: 4
++        maxItems: 4
+ 
+       clock-names:
+-        minItems: 3
+-        maxItems: 3
++        minItems: 4
++        maxItems: 4
+ 
+   else:
+-    properties:
+-      clocks:
+-        minItems: 2
+-        maxItems: 2
+-
+-      clock-names:
+-        minItems: 2
+-        maxItems: 2
++    if:
++      properties:
++        compatible:
++          enum:
++            - allwinner,sun20i-d1-ccu
++            - allwinner,sun50i-a100-ccu
++            - allwinner,sun50i-h6-ccu
++            - allwinner,sun50i-h616-ccu
++            - allwinner,sun55i-a523-ccu
++
++    then:
++      properties:
++        clocks:
++          minItems: 3
++          maxItems: 3
++
++        clock-names:
++          minItems: 3
++          maxItems: 3
++
++    else:
++      properties:
++        clocks:
++          minItems: 2
++          maxItems: 2
++
++        clock-names:
++          minItems: 2
++          maxItems: 2
+ 
+ additionalProperties: false
+ 
+diff --git a/include/dt-bindings/clock/sun55i-a523-r-ccu.h b/include/dt-bindings/clock/sun55i-a523-r-ccu.h
 new file mode 100644
-index 0000000000000..c94669156ffce
+index 0000000000000..b738054f1576b
 --- /dev/null
-+++ b/include/dt-bindings/clock/sun55i-a523-ccu.h
-@@ -0,0 +1,187 @@
++++ b/include/dt-bindings/clock/sun55i-a523-r-ccu.h
+@@ -0,0 +1,36 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 +/*
 + * Copyright (C) 2024 Arm Ltd.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_SUN55I_A523_CCU_H_
-+#define _DT_BINDINGS_CLK_SUN55I_A523_CCU_H_
++#ifndef _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_
++#define _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_
 +
-+#define CLK_PLL_DDR0		0
-+#define CLK_PLL_PERIPH0_4X	1
-+#define CLK_PLL_PERIPH0_2X	2
-+#define CLK_PLL_PERIPH0_800M	3
-+#define CLK_PLL_PERIPH0_480M	4
-+#define CLK_PLL_PERIPH0_600M	5
-+#define CLK_PLL_PERIPH0_400M	6
-+#define CLK_PLL_PERIPH0_300M	7
-+#define CLK_PLL_PERIPH0_200M	8
-+#define CLK_PLL_PERIPH0_160M	9
-+#define CLK_PLL_PERIPH0_150M	10
-+#define CLK_PLL_PERIPH1_4X	11
-+#define CLK_PLL_PERIPH1_2X	12
-+#define CLK_PLL_PERIPH1_800M	13
-+#define CLK_PLL_PERIPH1_480M	14
-+#define CLK_PLL_PERIPH1_600M	15
-+#define CLK_PLL_PERIPH1_400M	16
-+#define CLK_PLL_PERIPH1_300M	17
-+#define CLK_PLL_PERIPH1_200M	18
-+#define CLK_PLL_PERIPH1_160M	19
-+#define CLK_PLL_PERIPH1_150M	20
-+#define CLK_PLL_GPU		21
-+#define CLK_PLL_VIDEO0_8X	22
-+#define CLK_PLL_VIDEO0_4X	23
-+#define CLK_PLL_VIDEO0_3X	24
-+#define CLK_PLL_VIDEO1_8X	25
-+#define CLK_PLL_VIDEO1_4X	26
-+#define CLK_PLL_VIDEO1_3X	27
-+#define CLK_PLL_VIDEO2_8X	28
-+#define CLK_PLL_VIDEO2_4X	29
-+#define CLK_PLL_VIDEO2_3X	30
-+#define CLK_PLL_VE		31
-+#define CLK_PLL_AUDIO0_4X	32
-+#define CLK_PLL_AUDIO0_2X	33
-+#define CLK_PLL_AUDIO0		34
-+#define CLK_PLL_AUDIO1		35
-+#define CLK_PLL_AUDIO1_DIV2	36
-+#define CLK_PLL_AUDIO1_DIV5	37
-+#define CLK_PLL_NPU_4X		38
-+#define CLK_PLL_NPU_2X		39
-+#define CLK_PLL_NPU		40
-+#define CLK_AHB			41
-+#define CLK_APB0		42
-+#define CLK_APB1		43
-+#define CLK_MBUS		44
-+#define CLK_DE			45
-+#define CLK_BUS_DE		46
-+#define CLK_DI			47
-+#define CLK_BUS_DI		48
-+#define CLK_G2D			49
-+#define CLK_BUS_G2D		50
-+#define CLK_GPU			51
-+#define CLK_BUS_GPU		52
-+#define CLK_CE			53
-+#define CLK_BUS_CE		54
-+#define CLK_BUS_CE_SYS		55
-+#define CLK_VE			56
-+#define CLK_BUS_VE		57
-+#define CLK_BUS_DMA		58
-+#define CLK_BUS_MSGBOX		59
-+#define CLK_BUS_SPINLOCK	60
-+#define CLK_HSTIMER0		61
-+#define CLK_HSTIMER1		62
-+#define CLK_HSTIMER2		63
-+#define CLK_HSTIMER3		64
-+#define CLK_HSTIMER4		65
-+#define CLK_HSTIMER5		66
-+#define CLK_BUS_HSTIMER		67
-+#define CLK_BUS_DBG		68
-+#define CLK_BUS_PWM0		69
-+#define CLK_BUS_PWM1		70
-+#define CLK_IOMMU		71
-+#define CLK_BUS_IOMMU		72
-+#define CLK_DRAM		73
-+#define CLK_MBUS_DMA		74
-+#define CLK_MBUS_VE		75
-+#define CLK_MBUS_CE		76
-+#define CLK_MBUS_TVIN		77
-+#define CLK_MBUS_CSI		78
-+#define CLK_BUS_DRAM		79
-+#define CLK_NAND0		80
-+#define CLK_NAND1		81
-+#define CLK_BUS_NAND		82
-+#define CLK_MMC0		83
-+#define CLK_MMC1		84
-+#define CLK_MMC2		85
-+#define CLK_BUS_SYSDAP		86
-+#define CLK_BUS_MMC0		87
-+#define CLK_BUS_MMC1		88
-+#define CLK_BUS_MMC2		89
-+#define CLK_BUS_UART0		90
-+#define CLK_BUS_UART1		91
-+#define CLK_BUS_UART2		92
-+#define CLK_BUS_UART3		93
-+#define CLK_BUS_UART4		94
-+#define CLK_BUS_UART5		95
-+#define CLK_BUS_UART6		96
-+#define CLK_BUS_UART7		97
-+#define CLK_BUS_I2C0		98
-+#define CLK_BUS_I2C1		99
-+#define CLK_BUS_I2C2		100
-+#define CLK_BUS_I2C3		101
-+#define CLK_BUS_I2C4		102
-+#define CLK_BUS_I2C5		103
-+#define CLK_BUS_CAN		104
-+#define CLK_SPI0		105
-+#define CLK_SPI1		106
-+#define CLK_SPI2		107
-+#define CLK_SPIFC		108
-+#define CLK_BUS_SPI0		109
-+#define CLK_BUS_SPI1		110
-+#define CLK_BUS_SPI2		111
-+#define CLK_BUS_SPIFC		112
-+#define CLK_EMAC0_25M		113
-+#define CLK_EMAC1_25M		114
-+#define CLK_BUS_EMAC0		115
-+#define CLK_BUS_EMAC1		116
-+#define CLK_IR_RX		117
-+#define CLK_BUS_IR_RX		118
-+#define CLK_IR_TX		119
-+#define CLK_BUS_IR_TX		120
-+#define CLK_GPADC0		121
-+#define CLK_GPADC1		122
-+#define CLK_BUS_GPADC0		123
-+#define CLK_BUS_GPADC1		124
-+#define CLK_BUS_THS		125
-+#define CLK_USB_OHCI0		126
-+#define CLK_USB_OHCI1		127
-+#define CLK_BUS_OHCI0		128
-+#define CLK_BUS_OHCI1		129
-+#define CLK_BUS_EHCI0		130
-+#define CLK_BUS_EHCI1		131
-+#define CLK_BUS_OTG		132
-+#define CLK_BUS_LRADC		133
-+#define CLK_PCIE_AUX		134
-+#define CLK_BUS_DPSS_TOP	135
-+#define CLK_HDMI_24M		136
-+#define CLK_HDMI_CEC_32K	137
-+#define CLK_HDMI_CEC		138
-+#define CLK_BUS_HDMI		139
-+#define CLK_MIPI_DSI0		140
-+#define CLK_MIPI_DSI1		141
-+#define CLK_BUS_MIPI_DSI0	142
-+#define CLK_BUS_MIPI_DSI1	143
-+#define CLK_TCON_LCD0		144
-+#define CLK_TCON_LCD1		145
-+#define CLK_COMBOPHY_DSI0	146
-+#define CLK_COMBOPHY_DSI1	147
-+#define CLK_BUS_TCON_LCD0	148
-+#define CLK_BUS_TCON_LCD1	149
-+#define CLK_TCON_TV0		150
-+#define CLK_TCON_TV1		151
-+#define CLK_BUS_TCON_TV0	152
-+#define CLK_BUS_TCON_TV1	153
-+#define CLK_EDP			154
-+#define CLK_BUS_EDP		155
-+#define CLK_LEDC		156
-+#define CLK_BUS_LEDC		157
-+#define CLK_CSI_TOP		158
-+#define CLK_CSI_MCLK0		159
-+#define CLK_CSI_MCLK1		160
-+#define CLK_CSI_MCLK2		161
-+#define CLK_CSI_MCLK3		162
-+#define CLK_BUS_CSI		163
-+#define CLK_ISP			164
-+#define CLK_DSP			165
-+#define CLK_BUS_DSP_CFG		166
-+#define CLK_FANOUT_24M		167
-+#define CLK_FANOUT_12M		168
-+#define CLK_FANOUT_16M		169
-+#define CLK_FANOUT_25M		170
-+#define CLK_FANOUT_32K		171
-+#define CLK_FANOUT_27M		172
-+#define CLK_FANOUT_PCLK		173
-+#define CLK_FANOUT0		174
-+#define CLK_FANOUT1		175
-+#define CLK_FANOUT2		176
++#define CLK_R_AHB		0
++#define CLK_R_APB0		1
++#define CLK_R_APB1		2
++#define CLK_R_TIMER0		3
++#define CLK_R_TIMER1		4
++#define CLK_R_TIMER2		5
++#define CLK_BUS_R_TIMER		6
++#define CLK_BUS_R_TWD		7
++#define CLK_R_PWMCTRL		8
++#define CLK_BUS_R_PWMCTRL	9
++#define CLK_BUS_R_SPI		10
++#define CLK_BUS_R_SPINLOCK	11
++#define CLK_BUS_R_MSGBOX	12
++#define CLK_BUS_R_UART0		13
++#define CLK_BUS_R_UART1		14
++#define CLK_BUS_R_I2C0		15
++#define CLK_BUS_R_I2C1		16
++#define CLK_BUS_R_I2C2		17
++#define CLK_BUS_R_PPU0		18
++#define CLK_BUS_R_PPU1		19
++#define CLK_BUS_R_CPU_BIST	20
++#define CLK_R_IR_RX		21
++#define CLK_BUS_R_IR_RX		22
++#define CLK_BUS_R_DMA		23
++#define CLK_BUS_R_RTC		24
++#define CLK_BUS_R_CPUCFG	25
 +
-+#endif /* _DT_BINDINGS_CLK_SUN55I_A523_CCU_H_ */
-diff --git a/include/dt-bindings/reset/sun55i-a523-ccu.h b/include/dt-bindings/reset/sun55i-a523-ccu.h
++#endif /* _DT_BINDINGS_CLK_SUN55I_A523_R_CCU_H_ */
+diff --git a/include/dt-bindings/reset/sun55i-a523-r-ccu.h b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
 new file mode 100644
-index 0000000000000..221d045bf8656
+index 0000000000000..dd6fbb372e190
 --- /dev/null
-+++ b/include/dt-bindings/reset/sun55i-a523-ccu.h
-@@ -0,0 +1,87 @@
++++ b/include/dt-bindings/reset/sun55i-a523-r-ccu.h
+@@ -0,0 +1,25 @@
 +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 +/*
-+ * Copyright (c) 2024 Arm Ltd.
++ * Copyright (C) 2024 Arm Ltd.
 + */
 +
-+#ifndef _DT_BINDINGS_RST_SUN55I_A523_CCU_H_
-+#define _DT_BINDINGS_RST_SUN55I_A523_CCU_H_
++#ifndef _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_
++#define _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_
 +
-+#define RST_MBUS		0
-+#define RST_BUS_NSI		1
-+#define RST_BUS_DE		2
-+#define RST_BUS_DI		3
-+#define RST_BUS_G2D		4
-+#define RST_BUS_SYS		5
-+#define RST_BUS_GPU		6
-+#define RST_BUS_CE		7
-+#define RST_BUS_SYS_CE		8
-+#define RST_BUS_VE		9
-+#define RST_BUS_DMA		10
-+#define RST_BUS_MSGBOX		11
-+#define RST_BUS_SPINLOCK	12
-+#define RST_BUS_CPUXTIMER	13
-+#define RST_BUS_DBG		14
-+#define RST_BUS_PWM0		15
-+#define RST_BUS_PWM1		16
-+#define RST_BUS_DRAM		17
-+#define RST_BUS_NAND		18
-+#define RST_BUS_MMC0		19
-+#define RST_BUS_MMC1		20
-+#define RST_BUS_MMC2		21
-+#define RST_BUS_SYSDAP		22
-+#define RST_BUS_UART0		23
-+#define RST_BUS_UART1		24
-+#define RST_BUS_UART2		25
-+#define RST_BUS_UART3		26
-+#define RST_BUS_UART4		27
-+#define RST_BUS_UART5		28
-+#define RST_BUS_UART6		29
-+#define RST_BUS_UART7		30
-+#define RST_BUS_I2C0		31
-+#define RST_BUS_I2C1		32
-+#define RST_BUS_I2C2		33
-+#define RST_BUS_I2C3		34
-+#define RST_BUS_I2C4		35
-+#define RST_BUS_I2C5		36
-+#define RST_BUS_CAN		37
-+#define RST_BUS_SPI0		38
-+#define RST_BUS_SPI1		39
-+#define RST_BUS_SPI2		40
-+#define RST_BUS_SPIFC		41
-+#define RST_BUS_EMAC0		42
-+#define RST_BUS_EMAC1		43
-+#define RST_BUS_IR_RX		44
-+#define RST_BUS_IR_TX		45
-+#define RST_BUS_GPADC0		46
-+#define RST_BUS_GPADC1		47
-+#define RST_BUS_THS		48
-+#define RST_USB_PHY0		49
-+#define RST_USB_PHY1		50
-+#define RST_BUS_OHCI0		51
-+#define RST_BUS_OHCI1		52
-+#define RST_BUS_EHCI0		53
-+#define RST_BUS_EHCI1		54
-+#define RST_BUS_OTG		55
-+#define RST_BUS_3		56
-+#define RST_BUS_LRADC		57
-+#define RST_BUS_PCIE_USB3	58
-+#define RST_BUS_DPSS_TOP	59
-+#define RST_BUS_HDMI_MAIN	60
-+#define RST_BUS_HDMI_SUB	61
-+#define RST_BUS_MIPI_DSI0	62
-+#define RST_BUS_MIPI_DSI1	63
-+#define RST_BUS_TCON_LCD0	64
-+#define RST_BUS_TCON_LCD1	65
-+#define RST_BUS_VO1_TCONLCD0	66
-+#define RST_BUS_TCON_TV0	67
-+#define RST_BUS_TCON_TV1	68
-+#define RST_BUS_LVDS0		69
-+#define RST_BUS_LVDS1		70
-+#define RST_BUS_EDP		71
-+#define RST_BUS_VIDEO_OUT0	72
-+#define RST_BUS_VIDEO_OUT1	73
-+#define RST_BUS_LEDC		74
-+#define RST_BUS_CSI		75
-+#define RST_BUS_ISP		76
++#define RST_BUS_R_TIMER		0
++#define RST_BUS_R_TWD		1
++#define RST_BUS_R_PWMCTRL	2
++#define RST_BUS_R_SPI		3
++#define RST_BUS_R_SPINLOCK	4
++#define RST_BUS_R_MSGBOX	5
++#define RST_BUS_R_UART0		6
++#define RST_BUS_R_UART1		7
++#define RST_BUS_R_I2C0		8
++#define RST_BUS_R_I2C1		9
++#define RST_BUS_R_I2C2		10
++#define RST_BUS_R_PPU1		11
++#define RST_BUS_R_IR_RX		12
++#define RST_BUS_R_RTC		13
++#define RST_BUS_R_CPUCFG	14
 +
-+#endif /* _DT_BINDINGS_RST_SUN55I_A523_CCU_H_ */
++#endif /* _DT_BINDINGS_RST_SUN55I_A523_R_CCU_H_ */
 -- 
 2.46.2
 
