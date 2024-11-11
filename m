@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-404680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04B59C46C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:26:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270AD9C4720
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7509728A166
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:26:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6C92B26AEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:26:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0291BE243;
-	Mon, 11 Nov 2024 20:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XO27st+G";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QYsTkWdL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B336B1BCA05;
+	Mon, 11 Nov 2024 20:21:08 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0021AB6CD;
-	Mon, 11 Nov 2024 20:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63161AB6CD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356474; cv=none; b=YUPew8ncG+o4DqRwiWFlvQBIdJ3Qtk4rzGodZmg8vQfbX/aysrv7Nzqxo2XMXjtNQCypwIad45LUPy+YcoA8fEgtbfm852AUWA+t5qCjnTHlOw2NQvzJl7LruUr3TGUNUTUB3kYHzRIboc7Sf/yqaoamBGaoK/n1wUz4XAudVH0=
+	t=1731356468; cv=none; b=FBB+F0CiPNc+yGsuZh4Ul7I5kj5Qe6fOru8P2ExungQ+12ysCupWHtUk6WJfmemtFspPgVh2kF2PnCL0CHyyHzwwYEetsM47JBWVkeU7HZW0sx3EbzbZsaFAz4Sx6FJILqilKM0JieCWv6XgQcienjmjFUDLacQZ9rOUD2HaTH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356474; c=relaxed/simple;
-	bh=ojQykrLwa+tKVHzD0LKClI4RYtpcQsk2fkaiV9hWwpU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EzNGbYKrEA92zEzxNdzXYaq6/jYq4GimwOG4rr4pi8VXX1LdlESEr8O0VkJOHG28rtdhTx0g8xpf3tU07tL8eXZ31Dzo1R0AzdsctiPqMFIVQTwdt2lALHoHM9yAGLMXuliXUjAkJT3zdDrmkyZwtMNQi6tkpzqQezzpgKNdhEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XO27st+G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QYsTkWdL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731356470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6hSl5IUzYiQFRrGtMgdO4k5sLda41cEm5CkQfrFqzmg=;
-	b=XO27st+GHxZL95ZbvppHkQaXDaJcUHok9iYlRsmI35VBlEa0A2e9T+Bg6PuYqpL25nG7a1
-	tuZ+iCcfaeLakCH3Zs64Ayj7B+9285nVSJFDTw80ocGV7EIH8W/Q4vuNVWZo8iVwjnjRV9
-	h+LYslP0m7iCGEnMGcLXf4gDP6ppy3sVVrQnLIyQiqg8zyMUD6mzBrq9bIadLGrE2DFudf
-	WKLPZSxdEs34o2OZHyJ5U3MptPi3QG3T+cuQcjuEmt7Fexj85BnEl2undFq0eXa/kNf8qA
-	qpxLiESJ6IVxLGHpcOfoGOsL+rAV165AyEjlGAyoTqJvH6FEKyxxXM2m8aCGbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731356470;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6hSl5IUzYiQFRrGtMgdO4k5sLda41cEm5CkQfrFqzmg=;
-	b=QYsTkWdLTzQnfzA4P0VAiCNBJsx//D6VySQ3xBlhN0TSRc6RKxay3wX046CGMfOKMr4akp
-	bpAnO0aTER4xLRDw==
-To: Len Brown <lenb@kernel.org>, peterz@infradead.org, x86@kernel.org
-Cc: rafael@kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Len Brown <len.brown@intel.com>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] x86/cpu: Add INTEL_LUNARLAKE_M to X86_BUG_MONITOR
-In-Reply-To: <20241108135206.435793-3-lenb@kernel.org>
-References: <20241108135206.435793-1-lenb@kernel.org>
- <20241108135206.435793-3-lenb@kernel.org>
-Date: Mon, 11 Nov 2024 21:20:32 +0100
-Message-ID: <87msi5o73j.ffs@tglx>
+	s=arc-20240116; t=1731356468; c=relaxed/simple;
+	bh=d8A2c1DjZvM2zYOqQ/xG+gf2/qCL7nEQFYWu9RK/Dv8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nIlImFvuEU+OGPNfaAKAOyffMI/8NsCDDaGGVq23lS96zKlFfSn3KdvRu3V5c7VayCMS5qATXj6avXcXEDgJIGcNLMSIM3DpbIkc9huVILUtN1ls6IjPCT3mAJfJKmFBASEf18gSySydfzDOJoceXeTZc60/u5VD3zPrv1YVMrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso60722175ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:21:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731356466; x=1731961266;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdDKwOQ93P2ZZ2YC0YYBYLVt9HNXo8frAID6MN0wAdM=;
+        b=m/LtBGZIHiS+bOyoBRMicqdodpi0uInmRCbEQoz0J9KNGIbnvqNOynsaWcKBVb/Uof
+         cPMOSbHg58PZB9JzAnAqu3emFcuQSvVXH9vbX0qFbz/2ovB/MFGblA3wPFpX3D5ifyxY
+         dFkKmEDQSSsXUyGLT2wUol9b/oSNGaWRHwO5fl67rUz7pDR/VrRUUZHhQsXEgWFO/L86
+         GosHoiHAA/UMqTWCW0BVjoIOslC4tTrpYaN3u24CC8Y8iqYdRqXR6rkVq7vJgOE/AF0S
+         9unJUvYoVnZLIMaDLatUQA+KdRzxj0nw55bS6QEHMjeyjeDDDuZnFtiSqNBqDXsuF6ZZ
+         79zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUd0tRqqY2Z+s7IFiYT+A5mBqSOnf8h9SHX1kk9BGomY2D+X9STWArs4sxl6nR4nWt5VV2kDDXCokgTzg4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBeQBGhTVywxw0FB7h60HH02iyQ6jPuItm3EcdrJaHutCvsrr9
+	6310ObbKxG3MufYfjai6Wy3sux48mu8rpSpwriWRWv27tXEzOSOParzJC3eBUu0xYr+mRsR5byM
+	1bIsbjXbX1cvfjZ6r4f7YZd7Iea4w87EzYf5dYN1xB5okBDV3nhErDs8=
+X-Google-Smtp-Source: AGHT+IHLDZ18nOfpP6pz8FPw4mbzvT45eAjmWogaOAXRKjrZrye5SZtXZb72GQHvz2tfvbEReZs17Zb9qjsx+zoQ0EyhxuIlEon7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1:b0:3a2:6cd7:3250 with SMTP id
+ e9e14a558f8ab-3a6f19c1b01mr154430485ab.10.1731356465942; Mon, 11 Nov 2024
+ 12:21:05 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:21:05 -0800
+In-Reply-To: <18374947-f71e-4f71-b097-f06eb0699bfa@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67326731.050a0220.1fb99c.0156.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_free_fork
+From: syzbot <syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08 2024 at 08:49, Len Brown wrote:
-> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> index e7656cbef68d..aa63f5f780a0 100644
-> --- a/arch/x86/kernel/cpu/intel.c
-> +++ b/arch/x86/kernel/cpu/intel.c
-> @@ -586,7 +586,8 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	     c->x86_vfm == INTEL_WESTMERE_EX))
->  		set_cpu_bug(c, X86_BUG_CLFLUSH_MONITOR);
->  
-> -	if (boot_cpu_has(X86_FEATURE_MWAIT) && c->x86_vfm == INTEL_ATOM_GOLDMONT)
-> +	if (boot_cpu_has(X86_FEATURE_MWAIT) &&
-> +			(c->x86_vfm == INTEL_ATOM_GOLDMONT || c->x86_vfm == INTEL_LUNARLAKE_M))
+Hello,
 
-This indentation is bogus.
+syzbot tried to test the proposed patch but the build/boot failed:
 
->  		set_cpu_bug(c, X86_BUG_MONITOR);
+failed to apply patch:
+checking file fs/hfs/bfind.c
+patch: **** unexpected end of file in patch
 
-> diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-> index 766f092dab80..910cb2d72c13 100644
-> --- a/arch/x86/kernel/smpboot.c
-> +++ b/arch/x86/kernel/smpboot.c
-> @@ -1377,6 +1377,9 @@ void smp_kick_mwait_play_dead(void)
->  		for (i = 0; READ_ONCE(md->status) != newstate && i < 1000; i++) {
->  			/* Bring it out of mwait */
->  			WRITE_ONCE(md->control, newstate);
-> +			/* If MONITOR unreliable, send IPI */
-> +			if (boot_cpu_has_bug(X86_BUG_MONITOR))
-> +				__apic_send_IPI(cpu, RESCHEDULE_VECTOR);
 
-How is this supposed to work?
 
-The local APIC of the offline CPU is shut down and only responds to
-INIT, NMI, SMI, and SIPI.
+Tested on:
 
-Even if the APIC would react to the IPI, then the offline CPU would not
-notice as is has interrupts disabled when it reaches mwait_play_dead().
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=522060455c43d52e
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cfb4e8580000
 
-Seriously?
-
-Thanks,
-
-        tglx
 
