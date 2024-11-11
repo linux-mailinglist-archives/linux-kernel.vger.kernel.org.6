@@ -1,128 +1,121 @@
-Return-Path: <linux-kernel+bounces-404380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7074D9C430C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:55:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A426B9C4323
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35AE0284080
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:55:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D023B28490
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91DA1A3028;
-	Mon, 11 Nov 2024 16:55:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB781A2643
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045AE1A3020;
+	Mon, 11 Nov 2024 16:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKC/tGr6"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09AC19C569;
+	Mon, 11 Nov 2024 16:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344108; cv=none; b=OPctLvdcHeq82/Vk0hMq81HTpkFXfUctWJJVtZ1xWRRqEPfJOkdLFef3iBMCFvFyslxwj1yZogUfhA0igZZktg8sB4uxpgTSgPuHTdqck8aB63xB0htt+wgRD8eu29pSNNv+dLfWhUDEzKZMxrwJrsrpiE/TLwxoJM02pAmoU3g=
+	t=1731344166; cv=none; b=Em7z6QMxHEs+YNPWbRRhGY+ndt1mxWa1fWtDRiqzEknzF0PLvnTuUQqvIIo9G2gXF+s5bZ0tfeJDg3I51ZT/mh8x0J25f4aL5atsefaER/ok6IKjZxAqtguPuoXJU+VEozK4U8JS9eHZaoJlGNZTCnFSM3I+IR3ONobAd4qBjdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344108; c=relaxed/simple;
-	bh=cqAXmbWQCVuQ0DRV0fslJMxWqh1upgfqE87vbMsb/5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2+Tt/FbumCpWW2PztgGl8BjyufgbppCiohTYlXqioz9Pvkc7A4lj22YoHqyNDodya6ZtxoBytBgz6z9TluSwEixYpsc4366eLWdK9OrX8F+IVRmOMnb9mTjm8Kw2tgu7/qX7Yd7cvbuI4Axsy8QNC+0foSW0D+qTDhvcd1BsbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26A471480;
-	Mon, 11 Nov 2024 08:55:35 -0800 (PST)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 131923F66E;
-	Mon, 11 Nov 2024 08:55:03 -0800 (PST)
-Message-ID: <d1be99d6-0ce5-473f-9416-d33d61effee8@arm.com>
-Date: Mon, 11 Nov 2024 16:55:01 +0000
+	s=arc-20240116; t=1731344166; c=relaxed/simple;
+	bh=K92yUvKG6bNkexeKvclLDYbTcFbU3nDHCbBcWLUUUAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lr8tTds38liQ16xcTeXmkvOxyxn/pwE92q6Ga1tUd44KTqx2ZZLeAhmB/M03VU4c/IfrPcHtCm/frP5ruQ2w5cv5UeMjOw9vQVUEsuvIdmUQP6rcOT81iV4lRklW3c0HzL9bmM+D4dZrZTZclsF5QPLAP4aZ+KTcnBMJAqmmF4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKC/tGr6; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53b34ed38easo4728674e87.0;
+        Mon, 11 Nov 2024 08:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731344163; x=1731948963; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Exk6mmiqQi1A5uEjYEtmgEMregcS5xH2lmr7GxpUfF0=;
+        b=ZKC/tGr6ne5vDEe9yyND27sq1BWQmCxdMrtUv7r5avYeZ37lv+QYfiBTaoibt8CfhE
+         SdbSnS+dTed69MoRYbEaDqYNB+bz7V0eDV8kwYjo/NoLZ9gZ9q2HHmsYtDSsbB+oBwU5
+         KRuHDhz6VJHxo364bBr5GVod+PY/qAXhtjmkNM3GquV4/v2gz5GHVu/qt/PP0jaZywDy
+         Mly/SkrCbqgbZxA2dnFdtFdp2R/0MMxy4TXvhyVnRH6JAD+Xltow3NXYsSoSSf7GS0KF
+         Q1X6kGsKCjYxZ7eWFlX/1ZD2EdUUrm6hR3t3k8SZbsH2XDupL1pDzzLDxkm0RpfhxMYN
+         JBoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731344163; x=1731948963;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Exk6mmiqQi1A5uEjYEtmgEMregcS5xH2lmr7GxpUfF0=;
+        b=uX6rC9Wtf4kjwpagjmAXsORrF/7KgRkaBQVppnAz//d25k4LH8rpVMUBw0x0gdTgFk
+         U6eFS/+kzD2IYxvcZYzbv2LriRw+2yfIYg9yZc8VaG15KViFOL3InmCQEXSD+muSFmBj
+         bv5bbawnWBwmjbgQKO7Fz37GCXnD2sFEv7lHt9J8mrsS+lmdH3Q+y3bfWVU/xQBdLLTV
+         yTbD7qENnlOEJGMY6ykFjgS/wb+Ngya24fEP049ME0I3HP2y0O7CdaaYJ0cvK7ihXDGf
+         65dv7SS56fTEycT5UjoEQWEGniBFTAEKPWact3MURPd3U9y8iAIowtZAfk74ba9vel3l
+         K0qw==
+X-Forwarded-Encrypted: i=1; AJvYcCW54pm8L3/Uz4EmSwpSCQJp5Yr2nisr11/uWtiCaCsPblZ/kJ8S1w13f9+XzVN5nkyXM6CthHZGGYyKQQ4rT1mi@vger.kernel.org, AJvYcCXfTfb4eTLFRv8t07OZfJE2zmsYV4SHzeuzw4ynW3YhNldvqidqrd9oLDrtFcxRu9Hn8y7VkIubloKlUKc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwurbYHztS7kyGpx+kveBPXSUCZFgg+Lfv4N2t7kGQnTJ3F85NY
+	RpqMoNJTf2Twf0Y/JyMGx3izzfGjZZ2STCwLTpv4hMLKETtUWItHApCmIvrn
+X-Google-Smtp-Source: AGHT+IFfvqMK9GbFqDOZdFvb8j2DCucKOk0qdQPlVNUo+VQIMAi19mPFqP3vzp3bFje3LVb4xZypOg==
+X-Received: by 2002:a05:6512:2389:b0:539:ebb6:7b36 with SMTP id 2adb3069b0e04-53d862c587dmr6133828e87.25.1731344162409;
+        Mon, 11 Nov 2024 08:56:02 -0800 (PST)
+Received: from localhost.localdomain (c90-142-33-119.bredband.tele2.se. [90.142.33.119])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826a7387sm1624737e87.140.2024.11.11.08.56.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 08:56:01 -0800 (PST)
+From: codekipper@gmail.com
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@vger.kernel.org,
+	linux-sunxi@googlegroups.com,
+	linux-sunxi@lists.linux.dev,
+	linux-sound@vger.kernel.org,
+	lander@jagmn.com
+Cc: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	jernej.skrabec@gmail.com,
+	samuel@sholland.org,
+	andre.przywara@arm.com,
+	wens@csie.org,
+	u.kleine-koenig@baylibre.com,
+	Marcus Cooper <codekipper@gmail.com>
+Subject: [PATCH 0/3] ASoC: sun4i-spdif: Add 24bit support
+Date: Mon, 11 Nov 2024 17:55:28 +0100
+Message-ID: <20241111165600.57219-1-codekipper@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 2/3] tick-sched: Keep tick on if hrtimer is due imminently
-To: Joel Fernandes <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-3-joel@joelfernandes.org>
- <a491e879-364c-4b57-aa69-28608d8af4f0@arm.com>
- <CAEXW_YTxgpEzA4Vo5+pX=iNYG=xioN=J+bh9YLdSFEc4bEXhLA@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAEXW_YTxgpEzA4Vo5+pX=iNYG=xioN=J+bh9YLdSFEc4bEXhLA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 11/11/24 15:56, Joel Fernandes wrote:
-> On Mon, Nov 11, 2024 at 7:38 AM Christian Loehle
-> <christian.loehle@arm.com> wrote:
->>
->> On 11/8/24 17:48, Joel Fernandes (Google) wrote:
->>> In highres mode, the kernel only considers timer wheel events when
->>> considering whether to keep the tick on (via get_next_interrupt()).
->>>
->>> This seems odd because it consider several other reasons to keep the
->>> tick on. Further, turning off the tick does not help because once idle
->>> exit happens due to that imminent hrtimer interrupt, the tick hrtimer
->>> interrupt is requeued. That means more hrtimer rbtree operations for not
->>> much benefit.
->>>
->>> Ideally we should not have to do anything because the cpuidle governor
->>> should not try to the stop the tick because it knows about this
->>> situation, but apparently it still does try to stop the tick.
->>
->> Any details on this? Which governor?
-> 
-> I noticed this in Qemu (virtualized hardware). Actually I need to
-> update the commit message. I think it is not because of the governor
-> but because of lack of guest cpuidle support.
+From: Marcus Cooper <codekipper@gmail.com>
 
-Ah indeed, then it makes sense.
-FYI Anna-Maria proposed something like below a year ago:
-https://lore.kernel.org/lkml/20231215130501.24542-1-anna-maria@linutronix.de/
-I have no strong opinion on it either way.
+Hi All,
+I've tested this patch series on the Allwinner H3, A64, H6 and H313 SoCs
+up to 192KHz.
+24bit support is working on my H313 board but 16bit plays a bit slow and
+I suspect that there is an issue with the clock setups. This is even
+present without this patch stack. I would look to address this asap,
+but for now can you please review what's here. 
+BR,
+CK
 
-Regards,
-Christian
+George Lander (1):
+  ASoC: sun4i-spdif: Add clock multiplier settings
 
-> 
-> static void cpuidle_idle_call(void)
-> {
-> ....
->   if (cpuidle_not_available(drv, dev)) {
->     tick_nohz_idle_stop_tick();
->     default_idle_call();
->     goto exit_idle;
->   }
-> ...
-> Over here dev and drv are NULL for me. I will also test on real hardware.
-> 
-> Also maybe the " if (cpuidle_not_available(drv, dev))" condition
-> should do some more work to determine if tick_nohz_idle_stop_tick()
-> should be called instead of unconditionally calling it?
-> 
-> Pasting relevant parts of my .config:
-> 
-> # grep IDLE .config
-> CONFIG_NO_HZ_IDLE=y
-> CONFIG_ARCH_CPUIDLE_HALTPOLL=y
-> CONFIG_ACPI_PROCESSOR_IDLE=y
-> # CPU Idle
-> CONFIG_CPU_IDLE=y
-> # CONFIG_CPU_IDLE_GOV_LADDER is not set
-> CONFIG_CPU_IDLE_GOV_MENU=y
-> # CONFIG_CPU_IDLE_GOV_TEO is not set
-> CONFIG_CPU_IDLE_GOV_HALTPOLL=y
-> CONFIG_HALTPOLL_CPUIDLE=y
-> # end of CPU Idle
-> CONFIG_INTEL_IDLE=y
-> 
-> thanks,
-> 
->  - Joel
+Marcus Cooper (2):
+  ASoC: sun4i-spdif: Always set the valid data to be the MSB
+  ASoC: sun4i-spdif: Add working 24bit audio support
+
+ sound/soc/sunxi/sun4i-spdif.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+-- 
+2.47.0
 
 
