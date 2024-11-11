@@ -1,253 +1,154 @@
-Return-Path: <linux-kernel+bounces-404509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110539C4492
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:09:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC169C451B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:39:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C91283586
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:09:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEC43B31576
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADD61AA787;
-	Mon, 11 Nov 2024 18:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A04E1AB539;
+	Mon, 11 Nov 2024 18:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BZmKdjx8"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ZEc/M4XZ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF87C1A7066
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399EA1A9B37;
+	Mon, 11 Nov 2024 18:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348542; cv=none; b=FVwYV1pZHaFfHZSwAEo8mgXUGr9z+deGwBRxKvkyu5chzdNNS+1W5JPF/1I20MQ+k0Pt/YQC6F4TrB6h4q6sfpevojbYm8KRs/IkFNFrQnFv/Gt2eUld6pUMuBrRQWQDbo8HwwYxeWnUajssIMZA93PWCOuq9Iktxrxaofym77Y=
+	t=1731348631; cv=none; b=kBLffkUCKbnuYAnuGYBoPiVv0otQa6JdPS5k68DOFVgcDs7wxXdguTJm8fIpraDNdvRH4uBZx2nOroPfYMhFGXN+mTEBhNdc9WHFXV6DpQearStgatFwRgvpJLIodqgopa69ildAZ6QICQOXOdvJviybGmpI2yEZRKLzCObYSNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731348542; c=relaxed/simple;
-	bh=+olZ5sDQhxS7+5VbaMBZxP2EBhVUkFyFGJZus+nf10Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S92fk1bwuExPil6HttzsY5HQJuEVfrKs0+HAk6j5d2VBOQ0eLiXnii8dgEVM0QupIMTPhB6Z6k4imMRBJDIJDyiYB0UwVboTImgfnjO1iPTY3fGvJlIYURz9aMUJhefSvHB/LIj0Bvxpdq14mk2Qa+cbCi1/aYfwqd5+QZwqyZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BZmKdjx8; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a4e54d3cefso5615ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:09:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731348540; x=1731953340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tNEY19iZBbxXIaQg0/D9FwGzGfUYeqyG0tUI+MNK9Wg=;
-        b=BZmKdjx8YR9IhBl2FK/cL9BC3ZklfpFXADrLGwviPMB0LvjUzwoLKNfJw8yC8AuLI8
-         FykniceMuGccqOWLR9tKrrnyoK+Pl97f2Rq0E0Gs3+IwnComTU7/mu2SwDcf19fPKWs3
-         sf3VRBc4WUDbhGE6cKhz1vanKm+IU0whQ6nRNVJv3vgsoUlbkjMs5hDPEz9B+H9mULTr
-         2gEfgidJwocuwgrHDMcKxQ73jdqhUX2qHumKAmfxEKZzzXBphzTpDdEUj03aLloj64Ds
-         Eu8EmKVp7BJX1G87dH7a8NhgYVbtFwvoxV2QRGynBaFIbvEEYIQqSDEzv9YZIN0YY9ms
-         AsSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731348540; x=1731953340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tNEY19iZBbxXIaQg0/D9FwGzGfUYeqyG0tUI+MNK9Wg=;
-        b=nWkiNgH9UoTObIv/0xG1MaIULWyypfhLa7+83lQRmQkErBbhPHT4KDYLxmqe8c5sgG
-         VlaU3QRHBA1wc/O16+mtHeq7fJZVjamkWELoFI81aQR3r8gFKbutNXka4JsUwXQDw1yN
-         EqYT+B1n9hk7ewg64q31pMU1hN7aUFE1Ii6Y+v+NcTJJkd+Y92PLftudmrsqBxVQ6Aym
-         4CnBUCimzK2L4IHwC0k0S6FcpAy7cdI/YuBYirZJOlGs98EUa5YfzXND8ouMBtvI2VTi
-         GoXnU67eW1A1DUdDJ3o7GsvbtrkJzw4xnqmkoDSxWcyr2MNNaEEI+qm+eRyW2lAkIAAy
-         XfGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXAyxFe/ROleBdzX+HYNADUreYii0mFn2EeFykBIITHFun7cr5MeqDtOC7trw0pnJqqmHzvGV+Sbg2bnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW/3eWjOzCJ8Ntgf7zVOVZxgq0fKttpKdRFNp5PjV1ZbOxwKzn
-	W6PKxBK0cIgUdPduNF0iXcjUePb4u88/weLJ+hFplALHaTYTmWnnTsCWhsgsTISUmfN5X4TBbaU
-	ntiVa4t2Vm9rOrTzIDXQ9lRC2XOo91h3uNwme
-X-Gm-Gg: ASbGncs+cdk943ZTO8awFGDGn0w9KtwBiMel02Kv1nAPUmdxUMjzRDZSef3O/gt+Z9O
-	n6bz1EivA4wCsyQ9fcNwo3fWOimqKIUOIZ+8fSo1q6AJfqWwNP2RYD+aPPhk1dPk=
-X-Google-Smtp-Source: AGHT+IFZSuPj8LxNceeOupyoW1iZI+pgjz4ngu2gLWcKj6u7BRiLDzpA7XauiYmwCFssZXSk3yomoxCQBEdATWpjOZY=
-X-Received: by 2002:a05:6e02:1ca7:b0:39b:b1f:5be1 with SMTP id
- e9e14a558f8ab-3a6f94ebbbamr8889475ab.1.1731348539752; Mon, 11 Nov 2024
- 10:08:59 -0800 (PST)
+	s=arc-20240116; t=1731348631; c=relaxed/simple;
+	bh=0fcvhlGDwQjs39aD+J+QDRM4SeIBKZg07OzIxurnNCE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Qu2FcAL2OOyqWvzzHNE3aEhdth3/1igHjWavgemP6AlFPgoFYZ+L3+qw19kWLmXuXh9bVpxNGzvso5wOE2Hzupvl0gjlYZ60xpO01iyqtXf0BjsfjzjdsCQtTZ+2vKVBjU5azgs0nNjNpU30vg5ypc1oMkxW31QfZIhgAqiVJ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ZEc/M4XZ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731348626;
+	bh=0fcvhlGDwQjs39aD+J+QDRM4SeIBKZg07OzIxurnNCE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ZEc/M4XZ8yOwd7ahUu/EXreUc6S9fTj2aLz8Dk5y8wxieSXUITdAbqC/p6DSG0IXk
+	 VHhzaSeaCNCGM9tdvQRpjwg1hliakvTpBREgxG+LM6gGfjWJ5J/WEocCjLW5f8MJwH
+	 AZfglvDxsEtv/A163I0dP2qgdLTsU6vqfY2hn5z4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v7 0/4] drm: Minimum backlight overrides and implementation
+ for amdgpu
+Date: Mon, 11 Nov 2024 19:09:34 +0100
+Message-Id: <20241111-amdgpu-min-backlight-quirk-v7-0-f662851fda69@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com> <20241108204137.2444151-11-howardchu95@gmail.com>
-In-Reply-To: <20241108204137.2444151-11-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 10:08:48 -0800
-Message-ID: <CAP-5=fUnV_vkHGgQuK0M-oLOf2+DmZOBH=WtOddPmviB-+tuSw@mail.gmail.com>
-Subject: Re: [PATCH v7 10/10] perf test: Add direct off-cpu test
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF5IMmcC/43NS07DMBSF4a1UHmPktx1G7AMxuLavE6s0LXESQ
+ FX2jttJIxFFDP8z+M6VFBwyFvJyuJIB51zyua9hnw4kdNC3SHOsTQQTihnOKJxie5noKffUQzh
+ +5LYb6eeUhyN1iokUHVppgFTgMmDK33f87b12l8t4Hn7uXzO/rf9iZ055tXXjGg3aC3j9wlxKC
+ d3UPfc4kps9i5Un5K4nKKMBQ7JJNREav+nJh2cl3/Vk9ZSJinkvOBix6amH57jY9VT1tAEjU3K
+ N9XbT02vP7Xq6et4EhhBZsDJuemblCbXrmepxjNYa4DZ5+cdbluUXlg1dJFkCAAA=
+X-Change-ID: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+To: Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Simona Vetter <simona@ffwll.ch>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>, 
+ linux-doc@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731348626; l=2864;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=0fcvhlGDwQjs39aD+J+QDRM4SeIBKZg07OzIxurnNCE=;
+ b=8s8m4HLB0qmD8Rb7rvfcrOFluNqdx1cDU6eJsavU3i9D2J2ifoCqE6rLQfvPk2WJyi+k0Nrt4
+ q3pw3JsYmwBDbgTzLtfGyKk/lq7n1bOPspAfIgnp0BdJRIv7CMFWNgg
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Fri, Nov 8, 2024 at 12:42=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Why is there a --off-cpu-thresh 2000000?
->
-> We collect an off-cpu period __ONLY ONCE__, either in direct sample form,
-> or in accumulated form (in BPF stack trace map). If I don't add
-> --off-cpu-thresh 200000, the sample in the original test goes into the
-> ring buffer instead of the BPF stack trace map. Additionally, when using
-> -e dummy, the ring buffer is not open, causing us to lose a sample.
+The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+is "12". This leads to a fairly bright minimum display backlight.
 
-Lgtm, could we move some of this commit message into a comment in the
-code. Often refactoring will move things around making hunting for
-appropriate comments like this a challenge.
+Introduce a quirk to override "min_input_signal" to "0" which leads to a
+much lower minimum brightness, which is still readable even in daylight.
 
-Thanks,
-Ian
+One solution would be a fixed firmware version, which was announced but
+has no timeline.
 
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/tests/builtin-test.c         |  1 +
->  tools/perf/tests/shell/record_offcpu.sh | 31 ++++++++++++++++++++++++-
->  tools/perf/tests/tests.h                |  1 +
->  tools/perf/tests/workloads/Build        |  1 +
->  tools/perf/tests/workloads/offcpu.c     | 16 +++++++++++++
->  5 files changed, 49 insertions(+), 1 deletion(-)
->  create mode 100644 tools/perf/tests/workloads/offcpu.c
->
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-t=
-est.c
-> index d2cabaa8ad92..2228e6064d16 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -145,6 +145,7 @@ static struct test_workload *workloads[] =3D {
->         &workload__brstack,
->         &workload__datasym,
->         &workload__landlock,
-> +       &workload__offcpu,
->  };
->
->  #define workloads__for_each(workload) \
-> diff --git a/tools/perf/tests/shell/record_offcpu.sh b/tools/perf/tests/s=
-hell/record_offcpu.sh
-> index 678947fe69ee..fda1c1ad4555 100755
-> --- a/tools/perf/tests/shell/record_offcpu.sh
-> +++ b/tools/perf/tests/shell/record_offcpu.sh
-> @@ -6,6 +6,10 @@ set -e
->
->  err=3D0
->  perfdata=3D$(mktemp /tmp/__perf_test.perf.data.XXXXX)
-> +TEST_PROGRAM=3D"perf test -w offcpu"
-> +
-> +ts=3D$(printf "%u" $((~0 << 32))) # OFF_CPU_TIMESTAMP
-> +dummy_timestamp=3D${ts%???} # remove the last 3 digits to match perf scr=
-ipt
->
->  cleanup() {
->    rm -f ${perfdata}
-> @@ -39,7 +43,7 @@ test_offcpu_priv() {
->  test_offcpu_basic() {
->    echo "Basic off-cpu test"
->
-> -  if ! perf record --off-cpu -e dummy -o ${perfdata} sleep 1 2> /dev/nul=
-l
-> +  if ! perf record --off-cpu --off-cpu-thresh 2000000 -e dummy -o ${perf=
-data} sleep 1 2> /dev/null
->    then
->      echo "Basic off-cpu test [Failed record]"
->      err=3D1
-> @@ -88,6 +92,27 @@ test_offcpu_child() {
->    echo "Child task off-cpu test [Success]"
->  }
->
-> +test_offcpu_direct() {
-> +  echo "Direct off-cpu test"
-> +
-> +  # dump off-cpu samples for task blocked for more than 1.999999s
-> +  # -D for initial delay, to enable evlist
-> +  if ! perf record -e dummy -D 500 --off-cpu --off-cpu-thresh 1999999 -o=
- ${perfdata} ${TEST_PROGRAM} 2> /dev/null
-> +  then
-> +    echo "Direct off-cpu test [Failed record]"
-> +    err=3D1
-> +    return
-> +  fi
-> +  # Direct sample's timestamp should be lower than the dummy_timestamp o=
-f the at-the-end sample.
-> +  if ! perf script -i ${perfdata} -F time,period | sed "s/[\.:]//g" | \
-> +       awk "{ if (\$1 < ${dummy_timestamp} && \$2 > 1999999999) exit 0; =
-else exit 1; }"
-> +  then
-> +    echo "Direct off-cpu test [Failed missing direct sample]"
-> +    err=3D1
-> +    return
-> +  fi
-> +  echo "Direct off-cpu test [Success]"
-> +}
->
->  test_offcpu_priv
->
-> @@ -99,5 +124,9 @@ if [ $err =3D 0 ]; then
->    test_offcpu_child
->  fi
->
-> +if [ $err =3D 0 ]; then
-> +  test_offcpu_direct
-> +fi
-> +
->  cleanup
->  exit $err
-> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-> index af284dd47e5c..58de36e0edc5 100644
-> --- a/tools/perf/tests/tests.h
-> +++ b/tools/perf/tests/tests.h
-> @@ -216,6 +216,7 @@ DECLARE_WORKLOAD(sqrtloop);
->  DECLARE_WORKLOAD(brstack);
->  DECLARE_WORKLOAD(datasym);
->  DECLARE_WORKLOAD(landlock);
-> +DECLARE_WORKLOAD(offcpu);
->
->  extern const char *dso_to_test;
->  extern const char *test_objdump_path;
-> diff --git a/tools/perf/tests/workloads/Build b/tools/perf/tests/workload=
-s/Build
-> index 5af17206f04d..0e78fd01eaf1 100644
-> --- a/tools/perf/tests/workloads/Build
-> +++ b/tools/perf/tests/workloads/Build
-> @@ -7,6 +7,7 @@ perf-test-y +=3D sqrtloop.o
->  perf-test-y +=3D brstack.o
->  perf-test-y +=3D datasym.o
->  perf-test-y +=3D landlock.o
-> +perf-test-y +=3D offcpu.o
->
->  CFLAGS_sqrtloop.o         =3D -g -O0 -fno-inline -U_FORTIFY_SOURCE
->  CFLAGS_leafloop.o         =3D -g -O0 -fno-inline -fno-omit-frame-pointer=
- -U_FORTIFY_SOURCE
-> diff --git a/tools/perf/tests/workloads/offcpu.c b/tools/perf/tests/workl=
-oads/offcpu.c
-> new file mode 100644
-> index 000000000000..57cee201a4c3
-> --- /dev/null
-> +++ b/tools/perf/tests/workloads/offcpu.c
-> @@ -0,0 +1,16 @@
-> +#include <linux/compiler.h>
-> +#include <unistd.h>
-> +#include "../tests.h"
-> +
-> +static int offcpu(int argc __maybe_unused, const char **argv __maybe_unu=
-sed)
-> +{
-> +       /* get past the initial delay */
-> +       sleep(1);
-> +
-> +       /* what we want to collect as a direct sample */
-> +       sleep(2);
-> +
-> +       return 0;
-> +}
-> +
-> +DEFINE_WORKLOAD(offcpu);
-> --
-> 2.43.0
->
+---
+Changes in v7:
+- Rebase on drm-next
+- Drop now unnecessary hacky allocation of struct drm_edid
+- Link to v6: https://lore.kernel.org/r/20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net
+
+Changes in v6:
+- Clean up cover letter and commit messages
+- Add my S-o-b to patch from Dustin
+- Mention testing in combination with "panel_power_savings"
+- Link to v5: https://lore.kernel.org/r/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net
+
+Changes in v5:
+- Forward-declare struct drm_edid
+- Reorder patches, quirk entries are last
+- Add patch from Dustin for additional quirk entries
+- Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
+
+Changes in v4:
+- Switch back to v2 implementation
+- Add MODULE_DESCRIPTION()
+- Simplify quirk infrastructure to only handle min backlight quirks.
+  It can be extended if necessary.
+- Expand documentation.
+- Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
+
+Changes in v3:
+- Switch to cmdline override parameter
+- Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
+
+Changes in v2:
+- Introduce proper drm backlight quirk infrastructure
+- Quirk by EDID and DMI instead of only DMI
+- Limit quirk to only single Framework 13 matte panel
+- Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
+
+---
+Dustin L. Howett (1):
+      drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
+
+Thomas Weißschuh (3):
+      drm: Add panel backlight quirks
+      drm/amd/display: Add support for minimum backlight quirk
+      drm: panel-backlight-quirks: Add Framework 13 matte panel
+
+ Documentation/gpu/drm-kms-helpers.rst             |  3 +
+ drivers/gpu/drm/Kconfig                           |  4 +
+ drivers/gpu/drm/Makefile                          |  1 +
+ drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 ++
+ drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
+ include/drm/drm_utils.h                           |  4 +
+ 7 files changed, 113 insertions(+)
+---
+base-commit: 377dda2cff59825079aee3906aa4904779747b0b
+change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
