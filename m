@@ -1,102 +1,186 @@
-Return-Path: <linux-kernel+bounces-403554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9B89C3721
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:47:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3559C372E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:49:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57572282104
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:47:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7181F22069
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D78481B3;
-	Mon, 11 Nov 2024 03:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229DE14D452;
+	Mon, 11 Nov 2024 03:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxuA9Zbo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mGdTcS62"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0E1184F;
-	Mon, 11 Nov 2024 03:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69946288B1;
+	Mon, 11 Nov 2024 03:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731296866; cv=none; b=i0Om7p7v1whLhiXVnCL6gsnREEOYCMPWlpVyZVbWh8xYXvrgRdlLTbbZ42u4gOJ5cx4WQX4H6Rr3PfJg68tG2L06GVF8g31QGOt5URb0nVx2/0LL+/sSzSomZJXfVCoRfTBvRP6dWZRHkg1WCU42hdiGAimA4IkzUUCWnkc9TLU=
+	t=1731296942; cv=none; b=pyU+1NZxFCvNBGHnkKI6pbr9KujrmAl7kgkXzm/c8i+pgsOQhggViiE5sotYasQ90M1R5q46pNxQMKgG5MDtIsfY25HK5UyCyQXE9lNod7uQk8P1QCKr7JizpfaGtnFkDeGzrBqRanGZRsXbgERlKvXyhgbrWNTeUcxJn1q97zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731296866; c=relaxed/simple;
-	bh=alkdc62O/qq+P1005nwlDTA80rR8H65BGJRqrWQj13c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAuSm2/KG9VAEthZA1X/D/lLJT1Rmv+7gDuZ77mbLi8jynDuXyJz8eyuaVXM4Vl+fPNQGj704ESOzpZdhpKDKwYfWtiuaQ3fN3aB1qV6wyNSIWkPr9rzPqwr797r+IIcqaWbPqGvGjqGPam/adeMwHh4VAkLqr/h6f68Hs+AGdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxuA9Zbo; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731296865; x=1762832865;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=alkdc62O/qq+P1005nwlDTA80rR8H65BGJRqrWQj13c=;
-  b=KxuA9ZboJmK2duoylQPc4t9px4YG14LnDUtPywWSSoXSjeFCsf9b3Sw9
-   vnCebeH1H5c0F8j+FYmUjk0RVWXlzYf+k8Yi9XIXijtKN6tbPV69fOQ2b
-   +N6ESDr4Af+5c72N4rqTfTcMl50LmwrEUvqzRTVvyFiGPJ/ldrVxHrWIZ
-   PDNQQCKc6zXVWDgxcNvso/zvpV0UPCMJ2Wa4sBz7sCwsFUKAIEmIWj2nM
-   4laABRLOfheUPHNKu8gqyYZUK+XUJe/u5TKzsqQ5vkiFOeAdKlCMnvxbb
-   rlfFbbLM9EkEHtcnei6YYAWq2xLqPoXlDJMeZKAOyDJFh/SUPxLk2t/rB
-   g==;
-X-CSE-ConnectionGUID: FwO/cGafQoOV9EgWDNPU7Q==
-X-CSE-MsgGUID: Aw1yxrCRQ4iU76v8uRWfDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="33956632"
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="33956632"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 19:47:44 -0800
-X-CSE-ConnectionGUID: vnCxt3TrR9SBrEVL53/voQ==
-X-CSE-MsgGUID: EVu8N+ZfSQC2gB2Ppe6InA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="87164397"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa010.fm.intel.com with ESMTP; 10 Nov 2024 19:47:42 -0800
-Date: Mon, 11 Nov 2024 11:43:55 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
-	Peter Colberg <peter.colberg@intel.com>,
-	Michal Simek <michal.simek@amd.com>, linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] fpga: Switch back to struct platform_driver::remove()
-Message-ID: <ZzF9e1yS9GnUiyD8@yilunxu-OptiPlex-7050>
-References: <20241108160002.252517-2-u.kleine-koenig@baylibre.com>
+	s=arc-20240116; t=1731296942; c=relaxed/simple;
+	bh=GNdEUWzAyIgSlNNedw2qimCp1Gqeo16UMOHXLJs0siM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=G8ySEWCM26YQMFQzu35g6klO19Pb90Ra7KwbemYzXXlPp+M62P14SZSmsvRr7lYxXDEqwuypuxb3QFf9hclhFu+lFnGxtOCy0K6F4neGvGDDrIO5H2YSPYlrMm+DU7wHay1+VLq0v3pKTputwMQ74ic9+gbaOBTTHDTGmNkagfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mGdTcS62; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AALvacq006661;
+	Mon, 11 Nov 2024 03:44:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yG/N73WbiaCBaSJcWEGfw81oQaDhMKagaRX64zNWUEc=; b=mGdTcS622VVvDrus
+	B80zcKvpYLLPGDHp1YhUMeE0KnVCmgAW+jHtSRIJb7NWjDujywkWkEyhR20t1fCH
+	JioSJpMb2d8oTwXKHisT0qkYA2/gu3tZWb/pWDCGprGjlTZpDzL9Z69+MQ+WGz3J
+	eWzNqpHZzbia8z+vvnuyVh9yy8Z2r2DGc0oOxI7zcSYB/DwEkYolEkSJVBLUArFp
+	xIMo3J9W1gCMSt/uwLpJuQ+40fXQufEoX6Ai5YFeJlo4ra1aLGI/b8R4Nw5IwDHp
+	WkpoNyHq7GIhxAc+P3OFkIaDbU0vbdzSdhdQqC5jgyZ/CYLRG/JuBAiq/POOwDBP
+	Vn0l6w==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t046340j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 03:44:26 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AB3iPnm020632
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 03:44:25 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 10 Nov
+ 2024 19:44:20 -0800
+Message-ID: <c558f9eb-d190-4b77-b5a3-7af6b7de68d8@quicinc.com>
+Date: Mon, 11 Nov 2024 11:44:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/5] arm64: dts: qcom: x1e80100: Add support for PCIe3
+ on x1e80100
+From: Qiang Yu <quic_qianyu@quicinc.com>
+To: Johan Hovold <johan@kernel.org>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <johan+linaro@kernel.org>
+References: <20241101030902.579789-1-quic_qianyu@quicinc.com>
+ <20241101030902.579789-6-quic_qianyu@quicinc.com>
+ <ZyjbrLEn8oSJjaZN@hovoldconsulting.com>
+ <de5f40ab-90b7-4c75-b981-dd5824650660@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <de5f40ab-90b7-4c75-b981-dd5824650660@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108160002.252517-2-u.kleine-koenig@baylibre.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6CLDlkiXpATCHQED5YVP_aSUHQtsFrX9
+X-Proofpoint-ORIG-GUID: 6CLDlkiXpATCHQED5YVP_aSUHQtsFrX9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 adultscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411110030
 
-On Fri, Nov 08, 2024 at 05:00:02PM +0100, Uwe Kleine-König wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
-> 
-> Convert all platform drivers below drivers/fpga to use .remove(), with
-> the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
-> 
-> A few white space changes are included to make indention consistent.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
-
-Applied to for-next and submitted to v6.13-rc1
+On 11/5/2024 1:28 PM, Qiang Yu wrote:
+>
+> On 11/4/2024 10:35 PM, Johan Hovold wrote:
+>> On Thu, Oct 31, 2024 at 08:09:02PM -0700, Qiang Yu wrote:
+>>> Describe PCIe3 controller and PHY. Also add required system 
+>>> resources like
+>>> regulators, clocks, interrupts and registers configuration for PCIe3.
+>>>
+>>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+>>> +        pcie3: pcie@1bd0000 {
+>>> +            device_type = "pci";
+>>> +            compatible = "qcom,pcie-x1e80100";
+>>> +            reg = <0x0 0x01bd0000 0x0 0x3000>,
+>>> +                  <0x0 0x78000000 0x0 0xf1d>,
+>>> +                  <0x0 0x78000f40 0x0 0xa8>,
+>>> +                  <0x0 0x78001000 0x0 0x1000>,
+>>> +                  <0x0 0x78100000 0x0 0x100000>,
+>>> +                  <0x0 0x01bd3000 0x0 0x1000>;
+>>> +            reg-names = "parf",
+>>> +                    "dbi",
+>>> +                    "elbi",
+>>> +                    "atu",
+>>> +                    "config",
+>>> +                    "mhi";
+>>> +            #address-cells = <3>;
+>>> +            #size-cells = <2>;
+>>> +            ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 
+>>> 0x100000>,
+>>> +                 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 
+>>> 0x3d00000>,
+>> Can you double check the size here so that it is indeed correct and not
+>> just copied from the other nodes which initially got it wrong:
+>>
+>>     https://lore.kernel.org/lkml/20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org/
+BTW, regions of PCIe6a, PCIe4, PCIe5 are 64MB, 32MB, 32MB, respectively.
+Why range size is set to 0x1d00000 for PCIe6a, any issue is reported on 
+PCIe6a?
 
 Thanks,
-Yilun
+Qiang Yu
+> From memory maps, region of PCIe3 is 64MB, the size here is correct.
+>
+> Thanks,
+> Qiang Yu
+>>
+>>> +                 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 
+>>> 0x40000000>;
+>>> +            bus-range = <0x00 0xff>;
+>>> +            clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
+>>> +                 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
+>>> +                 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
+>>> +                 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
+>>> +                 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
+>>> +                 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
+>>> +                 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
+>>> +            clock-names = "aux",
+>>> +                      "cfg",
+>>> +                      "bus_master",
+>>> +                      "bus_slave",
+>>> +                      "slave_q2a",
+>>> +                      "noc_aggr",
+>>> +                      "cnoc_sf_axi";
+>>> +
+>>> +            assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
+>>> +            assigned-clock-rates = <19200000>;
+>>> +
+>>> +            interconnects = <&pcie_south_anoc MASTER_PCIE_3 
+>>> QCOM_ICC_TAG_ALWAYS
+>> This should be &pcie_north_anoc
+>>
+>>> +                     &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>> +                    <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>> +                     &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
+>>> +            interconnect-names = "pcie-mem",
+>>> +                         "cpu-pcie";
+>> With the above addressed, feel free to keep my Reviewed-by tag.
+>>
+>> Johan
 
