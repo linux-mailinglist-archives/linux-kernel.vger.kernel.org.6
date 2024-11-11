@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-404602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FD79C4580
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:02:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 883079C4584
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E47DB1F21CF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC62282F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354B21AB6DA;
-	Mon, 11 Nov 2024 19:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FF61B5827;
+	Mon, 11 Nov 2024 19:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CHVUN8R1"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tkyUUal8"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0471AA790
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223B31B4C30
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731351720; cv=none; b=rHZxoBCrKIuQuX9KdTIN7qmEUY4awDDDKmP9nI/aKyWe8GpTtc1kc5XM3VDzVIEHfWPP8pLvzSLBdEb35NnfL+DQRpCCltV8gj7m/A3hlcJxZgzfPtG+aQhdGb1eIziSwLXR2vd210nSCpG4qSf5aQKkxUcW1DS9pjWHwrYSonY=
+	t=1731351732; cv=none; b=Ma5QymTAOL+MfMgJxpkwhLJOLDztc4xcS7ZyTz9UseNMNDewJmX1lzobZLyMCxxGsvorYMHkEqqKxm0rzdvF57oL/MAvuh0WnqR/cYpt4Ny7fwLP6q/GC0H/9JiheEL/tJOpkC0cypJUX9eVeQLgM13uqynStx0ED5JNdj1cEkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731351720; c=relaxed/simple;
-	bh=z1XCHDUfA0PxGzFbFqfqqwrYK8Ux8SYswgZx5Q1cqwo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qpXZMwoPIcM7YehXqZZdcm9FIvKtYkaH2zpie3Zbdirtdu0GywxqZEir6/pu8+38KOsOsCLZKcZfiCoLpZHXoqEyf7obeIlbxWQOPY9q+cL7mp7plUy5tpGrX5aazpT2kF+aUlFIeKCrRjWvhEDHwjovZiG8rCJsN49xc1zTeXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CHVUN8R1; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so3452303a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:01:58 -0800 (PST)
+	s=arc-20240116; t=1731351732; c=relaxed/simple;
+	bh=4N9knBXymCpfc4Wwk2CuKtkyRcONwXCAC+9PyZhgAys=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=H2o21C489sjEC8JRkM8EgdDsb9O0xn0grMlQNidyI3W7xN6jCknbPcBu9/Zw+VyRqvKkp6iQdIM2ALILAL4ohs78HUypJFa4DWUoTMK6PyeZX082KgJdGRzjk2hFqiayI1xDvcdNQqXOuwEQQFq3itoLoGobWbD9hj3WRbrRfII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tkyUUal8; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ee55fa4b31so1927340eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:02:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731351718; x=1731956518; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1XCHDUfA0PxGzFbFqfqqwrYK8Ux8SYswgZx5Q1cqwo=;
-        b=CHVUN8R1PZM/KgP7Hq72omn4QzUSgeEfKEb92/HStIRFuqQwe1viyZPPrv2yR1K789
-         wvCaLwTWhE4FQoPVkTq55nhYMF1y/gjCf7LBv4umfeEBp9B8VIqma6kBdUZBsQnU7r06
-         7eNUrQ66d5bebgtrYPullu3bPe1Gb3k18JPsOJuYOhzyfRuIiFm1zbTJdJafFPz0NPsH
-         7Q3dnp+rNejL1I4r8Ca+Q9G5FW6vTN2nxct4aepvHWlfbPNPFwX6LyZJpWqMowMC4KSt
-         KKz5k9z+GPDyEZszWVytvETxhmLgn4Y0Eqc77dmwfW4tohFFaHRme74QAA04xI34ZuK0
-         wo3Q==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731351729; x=1731956529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SYeUp2ksje6X3bKBR+OPp1X0YBqVWbN0OakxvnrOfRA=;
+        b=tkyUUal8xechy3sQWVE1qhtluaOmCkF7B6XK7eTk7l6DW1+u7oCh9eRjlUw6mooRDm
+         8IlebO9KoTTyad/zgCK0lVZ4CZAdeFzjdSkrZfJfoBLDG3cTngtczKyesvXjXeIlRIbh
+         fiXLtDNix0DL4borRU5bFLqBs0zn2Ylq7Ah+nUfXQjWzP8b+wZ26kU1ZWTxDXH1YPIqV
+         tjbCGv4a3qXUvZtC69phVrjuGtyLLlqLLuz7BohnMpJZN9RqdEdcKk62HXC3I71WcbrY
+         p68kc2aBUP10kNIxqtwhHVxm+ePs/GkLSGMAPllDAutmSwIxzT/n0NGai15dGPeS4/R3
+         BcrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731351718; x=1731956518;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1XCHDUfA0PxGzFbFqfqqwrYK8Ux8SYswgZx5Q1cqwo=;
-        b=VsYdoHopgpFja90dvvilW/r//Xnl6wYDnMvGoWSxu8rOnEGt/eUGMrONBmJkps6Wd4
-         bPnB95E84GlslyUiyHcJJrPk9XvPyOnFOx0Uf9iUn03HRTMriVTwqiAdwk3qqKrj9Eqj
-         yXSf3tIhuvaBVA7uqwKUFFuHllekZ2XPJh+NKi7yhgVsk51W78w2V2wljyTIPSY+NR2+
-         VreHvL1oB+cuJCXV6NUvQylTbaxAA0RvCCmb+4nhV1RnCuHYdCx/AQGrIJz4p0tkERJX
-         ZZI8z/+HTc86yqXsrsakq2YLTLbP+/bB7VS18zRU9vYfQBXvrGmWpn2S+dWF902FHKsx
-         4dEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXA6wgRVROPbfsElRGOdHq7xNyWe702lG7OVEa3xxo4kNWuJgwtYlkV/67ZNZwn+zEJ321YsFqkgpIUcTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6L6Lvw6L8dDlTxvfg2XhJKSQrUhSlItZCwYwaP27wPD1qLkkT
-	ycD2Ftvn9EZ/Mp0s4qZ+H2p8jLeeEVJIJHdGidizqafi0JSRbijgaKAXKIWl3wRMsyBf/fQT8qF
-	7FziC8UFW/ozEWzm7v6LM/t1H1MQ3rebJcqg3Qg==
-X-Google-Smtp-Source: AGHT+IFOr2IGuH7hA9mN4t/v3mgjzevZv3iyvqAr2lDpBhkMF4UQN4c+N55CzmYNO1W2w3fv3gBA1zRlScgIdP/HAoQ=
-X-Received: by 2002:a17:90b:17cc:b0:2e2:af54:d2fe with SMTP id
- 98e67ed59e1d1-2e9b178fe12mr18200196a91.34.1731351718325; Mon, 11 Nov 2024
- 11:01:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731351729; x=1731956529;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYeUp2ksje6X3bKBR+OPp1X0YBqVWbN0OakxvnrOfRA=;
+        b=vCutlSkIJinPRowbBftlzzfaqDKNZKVO+avT20lGI3AxEWDccoA/9ZHfwd60eY1Ahk
+         Z2dbrZWhbeBgxYZgWHfApm8tjR1uURbcR2O5RbfVLz9ejm1zCy/JGuVt2DSYlnFlstUY
+         X8hYkC/JKpFX8qh1Tb1DrFRcmSiwkIbxrUO0Ur040bIHMlSopp3pT8Y/iN/9j428kEtv
+         uBSkQ3mnA8bDpeFdyk8hq/4IYzkuY8H8uoWHNtDwfQoCK2qy55pMNxUSIl7LR1k9crE2
+         XH9jmHtCNYyPrjdXlZhcQBhOw6cetYrr/uTcYKeI5PvWdJYdCUzN7j7QPmOdA/JGeUNO
+         0KUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKwH9HF/ZyWxF2Vw8Xo5aWkvBM6oPwLBMvu2aYhcDEaStr+EQejoBN33qlhtTR/D+nie/7acPNhctwFpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWF+B1pirY/xIPVZO+ORgJtOe7PZPvyhagqb3KCv7A37oW5VI/
+	XZrtXbA5XCOnKMk76m4JO9BJRqxxKYACVefanfKH3FUQepBHuZfthZcYh6BJaHk=
+X-Google-Smtp-Source: AGHT+IGZZwuEsd0sY6LkRnXLDXV/g/0buarvUztGCrRbqjgjFOGhciCMWCSGMCzA2OXEbZd0x2m4cw==
+X-Received: by 2002:a05:6820:983:b0:5e5:c517:4d88 with SMTP id 006d021491bc7-5ee57a23ddcmr9245314eaf.0.1731351729230;
+        Mon, 11 Nov 2024 11:02:09 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ee494fb9adsm2038562eaf.4.2024.11.11.11.02.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 11:02:07 -0800 (PST)
+Message-ID: <9b0fc4b6-ae7b-4370-8002-c2128056721c@baylibre.com>
+Date: Mon, 11 Nov 2024 13:02:05 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
-In-Reply-To: <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 11 Nov 2024 20:01:47 +0100
-Message-ID: <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Saravana Kannan <saravanak@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 02/15] spi: add basic support for SPI offloading
+From: David Lechner <dlechner@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
+ <20241026160521.52205cb0@jic23-huawei>
+ <66b3e462-bb17-4806-b991-8f0eb33b1233@baylibre.com>
+Content-Language: en-US
+In-Reply-To: <66b3e462-bb17-4806-b991-8f0eb33b1233@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.com> wrote:
->
-> On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
-> >
-> > > I actually quickly hacked up the cpu_overutilized() function to retur=
-n
-> > > true during suspend/resume and the threads are nicely spread out and
-> > > running in parallel. That actually reduces the total of the
-> > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
-> >
-> > Right, so that kills EAS and makes it fall through to the regular
-> > select_idle_sibling() thing.
-> >
-> > > Peter,
-> > >
-> > > Would you be open to the scheduler being aware of
-> > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > > overutilized behavior during these phases? I know it's a very use cas=
-e
-> > > specific behavior but how often do we NOT want to speed up
-> > > suspend/resume? We can make this a CONFIG or a kernel command line
-> > > option -- say, fast_suspend or something like that.
-> >
-> > Well, I don't mind if Vincent doesn't. It seems like a very
-> > specific/targeted thing and should not affect much else, so it is a
-> > relatively safe thing to do.
-> >
-> > Perhaps a more direct hack in is_rd_overutilized() would be even less
-> > invasive, changing cpu_overutilized() relies on that getting propagated
-> > to rd->overutilized, might as well skip that step, no?
->
-> is_rd_overutilized() sounds good to me. Outside of setting a flag in
+On 11/11/24 11:14 AM, David Lechner wrote:
+> On 10/26/24 10:05 AM, Jonathan Cameron wrote:
+>> On Wed, 23 Oct 2024 15:59:09 -0500
+>> David Lechner <dlechner@baylibre.com> wrote:
+>>
+> 
+> ...
+> 
+>>> +struct spi_offload *devm_spi_offload_get(struct device *dev,
+>>> +					 struct spi_device *spi,
+>>> +					 const struct spi_offload_config *config)
+>>> +{
+>>> +	struct spi_offload *offload;
+>>> +	int ret;
+>>> +
+>>> +	if (!spi || !config)
+>>> +		return ERR_PTR(-EINVAL);
+>>> +
+>>> +	if (!spi->controller->get_offload)
+>>> +		return ERR_PTR(-ENODEV);
+>>> +
+>>> +	offload = spi->controller->get_offload(spi, config);
+>>
+>> Why let this return an offload that is already in use?
+>> Maybe make that a problem for the spi controller
+>> Seems odd to pass it spi then set it later.
+>>
+>> I.e. have this return ERR_PTR(-EBUSY);
+> 
+> I would expect that to effectively be handled by the
+> if (IS_ERR(offload)) below. Only the controller can
+> know which offloads are already in use, so the callback
+> should return the appropriate -EBUSY in that case.
 
-At know I'm not convinced that this is a solution but just a quick
-hack for your problem. We must understand 1st what is wrong
+Just realized I said exactly what you said! Will fix this.
 
-> sched.c that the suspend/resume code sets/clears, I can't think of an
-> interface that's better at avoiding abuse. Let me know if you have
-> any. Otherwise, I'll just go with the flag option. If Vincent gets the
-> scheduler to do the right thing without this, I'll happily drop this
-> targeted hack.
->
-> -Saravana
+> 
+>>
+>>
+>>> +	if (IS_ERR(offload))
+>>> +		return offload;
+>>> +
+>>> +	if (offload->spi)
+>>> +		return ERR_PTR(-EBUSY);
+>>> +
+>>> +	offload->spi = spi;
+>>> +	get_device(offload->provider_dev);
+>>> +
+>>> +	ret = devm_add_action_or_reset(dev, spi_offload_put, offload);
+>>> +	if (ret)
+>>> +		return ERR_PTR(ret);
+>>> +
+>>> +	return offload;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(devm_spi_offload_get);
+> 
+
 
