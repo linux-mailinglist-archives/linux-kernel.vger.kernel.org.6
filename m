@@ -1,218 +1,128 @@
-Return-Path: <linux-kernel+bounces-404181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B512E9C405E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:09:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822039C4063
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CEA280D67
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BDA1F220E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5D319EEBD;
-	Mon, 11 Nov 2024 14:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383D719E97A;
+	Mon, 11 Nov 2024 14:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ln9fse8M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5NxOqGTg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ln9fse8M";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5NxOqGTg"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="cUQNk+eS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Jc106dW4"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6455915A85A;
-	Mon, 11 Nov 2024 14:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CE519CD0E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334170; cv=none; b=auJ4Jy+bj6etaLKQsdwNGtVdnlZoyGpCEyg2OSjwWDEKxPHkcwkGs8BP+fqcQsyIHrkaPWsrZYAXTFBiU+36A8o9enIVXZAwMMqKc2zH6slRcXvm5szFLyT3zwmq74cgcbaMgCPbJwAiyg0MlHwKqXBFOgrFCaqsmgKybXiW5+M=
+	t=1731334283; cv=none; b=fuliarrKZw5xD4lA3qZqgfqf2oasX840/BKovoS0q7LxZTWVzhG+IzoSmqNwdcopKmPVkpwYjDCN+yIhWf6Y1DIaXIS8JafL2SZ9OPaSVgu/C0DAIxE7HJfokqyPIVm+CfDSiq6vT4h38t4lnt6p6f2CUDVyajtE5Vc1ObHuXcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334170; c=relaxed/simple;
-	bh=+Kqj0wUzn8ov779XVt7eb/3ht2dGP3T5U3kcawmJ53o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drQlCTTYSoPnLkqvWptuKr9rTdjVn7/xmWDZHmXrNH4lghXPMD4yMDyB5Meli0N976WT/rUdosoaKz2SORz+GYqJD1irHJWki8aN5x6t5+IJR+HqozL8MZ2GezxEE5i8s4XviF1dXdsY20l40wNdoJcx4ygbFJIS426krRpp+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ln9fse8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5NxOqGTg; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ln9fse8M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5NxOqGTg; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7CA572197F;
-	Mon, 11 Nov 2024 14:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731334165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
-	b=Ln9fse8MOtn6aKCAzKFL5y9BX2pdajZLwEKjiphBuCvIC3GC8PzFlI89+xLmeAJOLQ+/ev
-	JYr6h6TODHWC1cc4U/mhbeD9smnq+1Ajd4vmO1Ndpim8nebAHU87BCsSFjxm4cjzXHorkT
-	bTA9FMCODOmU+hfQpDvo2enfd6NStXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731334165;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
-	b=5NxOqGTglxzhTvvAbh0Gw8f9+YPJ9v8AphAFvytsLuCVti0FbYfD+9k2o7jtclQLTTNPf0
-	TSwKjRrncg1DJeAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Ln9fse8M;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=5NxOqGTg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731334165; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
-	b=Ln9fse8MOtn6aKCAzKFL5y9BX2pdajZLwEKjiphBuCvIC3GC8PzFlI89+xLmeAJOLQ+/ev
-	JYr6h6TODHWC1cc4U/mhbeD9smnq+1Ajd4vmO1Ndpim8nebAHU87BCsSFjxm4cjzXHorkT
-	bTA9FMCODOmU+hfQpDvo2enfd6NStXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731334165;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0Pt73YJ20dEht5wZaXQwgMJ6DvPqwUd8ZGZK+GzCfs=;
-	b=5NxOqGTglxzhTvvAbh0Gw8f9+YPJ9v8AphAFvytsLuCVti0FbYfD+9k2o7jtclQLTTNPf0
-	TSwKjRrncg1DJeAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C6E113301;
-	Mon, 11 Nov 2024 14:09:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PkqDGhUQMmdWYQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 11 Nov 2024 14:09:25 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1CFC1A0986; Mon, 11 Nov 2024 15:09:25 +0100 (CET)
-Date: Mon, 11 Nov 2024 15:09:25 +0100
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <songliubraving@meta.com>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Amir Goldstein <amir73il@gmail.com>,
-	"repnop@google.com" <repnop@google.com>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [RFC bpf-next fanotify 1/5] fanotify: Introduce fanotify
- fastpath handler
-Message-ID: <20241111140925.ykmdp3oywuw2ut5p@quack3>
-References: <20241029231244.2834368-1-song@kernel.org>
- <20241029231244.2834368-2-song@kernel.org>
- <20241107104821.xpu45m3volgixour@quack3>
- <AE6EEE9B-B84F-4097-859B-B4509F2B6AF8@fb.com>
+	s=arc-20240116; t=1731334283; c=relaxed/simple;
+	bh=jCOxLwvh7C2p0JLIyM+gsxEuaXaWXwvBivCiEjjwOd0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JiirGMFsl960ljEAT+BNz4+qGkuragMKBMTTidhmZK6AcO0iZnD4W8Xn7xeocx429uO7DrHTEuZ7ZKGHbA+XBbxiAHwnpXd4W14u0aaSRKiSbTyiQrFMVJinK5unrluUXGZV/6mGzaZGpqrbMWIdMWzdpRDxbNx5AceMOgr7c8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=cUQNk+eS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Jc106dW4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1731334279; x=1762870279;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SBRKjCDmNpQLqy/F+SAhTgNBF926ZxkPY6Sl5Uxf7cg=;
+  b=cUQNk+eS3eCP6ISOcj/YeyXd0DrorcOKqTfAwQROeeKj/ax7fQMtONx1
+   Ul+7wVdLp6gmvLecxf7nG5xvttdl7myaH3PuRJtJTsKPQx9rIEl99Z9tq
+   FD/MkvfrljJabf7y+B+vEFBZx+ybQFCgZQO+tVFVj90KF9xikb6sWm+u7
+   pdH4+SL7rC59ZrPRzI0lbx43YiTGVkANVbRSZssg8S7Ujm3uOYCxgxjru
+   H2oSIfNwT6VTWgzwHSx+3Lm8uPWt7/17RwAx6shTQ1mYhhQd1JlRPBf0V
+   kh7GQi5qYAJU/hTJf8kCVKVUbypvxnVrfUtmsJB+4Uaxmt4EqxDxYoCvH
+   Q==;
+X-CSE-ConnectionGUID: lkLw+gGTROmq5vmMCaC/XQ==
+X-CSE-MsgGUID: 1XT1Q7waRcWfIoRRJBbReg==
+X-IronPort-AV: E=Sophos;i="6.12,145,1728943200"; 
+   d="scan'208";a="39967033"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 11 Nov 2024 15:11:15 +0100
+X-CheckPoint: {67321083-28-5736D786-D50827BE}
+X-MAIL-CPID: 74957C9BDAB2CA9381F929A650FB20AB_2
+X-Control-Analysis: str=0001.0A682F16.67321084.0011,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 36476166E82;
+	Mon, 11 Nov 2024 15:11:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1731334271;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SBRKjCDmNpQLqy/F+SAhTgNBF926ZxkPY6Sl5Uxf7cg=;
+	b=Jc106dW4uJ/8n9JVdev84G8NESHmMG4wN4MLkDD3HiC++O2oYYyyW+7SEtHmduxa1KIRLZ
+	j68Z7GHWcPYafZ7GGUHS4LkAPP6fHZ8lUyMRW2ZPVB2D4g0IfVLTztD2hHVxCo82xO5dJU
+	kCu2ilR0zFY4DA4wNO03aFQWRaaumZpaqwqYDxTqFhPQKPbpSsRoIj43pqkR9ijPwGbXLx
+	dtfzAed05LLvtWQHb10+oBDNw4Yx6aPU23NtrsoQk+hciKoHZV0XIF5/tp4M8+fMJIuM+2
+	kkt4jtyd0dASjR1oR/kA2h+E739Cg0heUTXchwgJasYovubzMhij4SrBfsf5eg==
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux@ew.tq-group.com,
+	linux-kernel@vger.kernel.org,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v7 0/5] mfd: tqmx86: new hardware and GPIO/I2C IRQ improvements/additions
+Date: Mon, 11 Nov 2024 15:10:27 +0100
+Message-ID: <cover.1731325758.git.matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AE6EEE9B-B84F-4097-859B-B4509F2B6AF8@fb.com>
-X-Rspamd-Queue-Id: 7CA572197F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,kernel.org,vger.kernel.org,meta.com,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,google.com,toxicpanda.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu 07-11-24 19:13:23, Song Liu wrote:
-> > On Nov 7, 2024, at 2:48 AM, Jan Kara <jack@suse.cz> wrote:
-> > On Tue 29-10-24 16:12:40, Song Liu wrote:
-> >> fanotify fastpath handler enables handling fanotify events within the
-> >> kernel, and thus saves a trip to the user space. fanotify fastpath handler
-> >> can be useful in many use cases. For example, if a user is only interested
-> >> in events for some files in side a directory, a fastpath handler can be
-> >> used to filter out irrelevant events.
-> >> 
-> >> fanotify fastpath handler is attached to fsnotify_group. At most one
-> >> fastpath handler can be attached to a fsnotify_group. The attach/detach
-> >> of fastpath handlers are controlled by two new ioctls on the fanotify fds:
-> >> FAN_IOC_ADD_FP and FAN_IOC_DEL_FP.
-> >> 
-> >> fanotify fastpath handler is packaged in a kernel module. In the future,
-> >> it is also possible to package fastpath handler in a BPF program. Since
-> >> loading modules requires CAP_SYS_ADMIN, _loading_ fanotify fastpath
-> >> handler in kernel modules is limited to CAP_SYS_ADMIN. However,
-> >> non-SYS_CAP_ADMIN users can _attach_ fastpath handler loaded by sys admin
-> >> to their fanotify fds. To make fanotify fastpath handler more useful
-> >> for non-CAP_SYS_ADMIN users, a fastpath handler can take arguments at
-> >> attach time.
-> > 
-> > Hum, I'm not sure I'd be fine as an sysadmin to allow arbitary users to
-> > attach arbitrary filters to their groups. I might want some filters for
-> > priviledged programs which know what they are doing (e.g. because the
-> > filters are expensive) and other filters may be fine for anybody. But
-> > overall I'd think we'll soon hit requirements for permission control over
-> > who can attach what... Somebody must have created a solution for this
-> > already?
-> 
-> I have "flags" in fanotify_fastpath_ops. In an earlier version of my 
-> local code, I actually have "SYS_ADMIN_ONLY" flag that specifies some
-> filters are only available to users with CAP_SYS_ADMIN. I removed this 
-> flag later before sending the first RFC for simplicity. 
-> 
-> The model here (fast path loaded in kernel modules) is similar to 
-> different TCP congestion control algorithms. Regular user can choose 
-> which algorithm to use for each TCP connection. This model is 
-> straightforward because the kernel modules are global. With BPF, we 
-> have the option not to add the fast path to a global list, so that 
-> whoever loads the fast path can attach it to specific group (I didn't
-> include this model in the RFC).
-> 
-> For the first version, I think a SYS_ADMIN_ONLY flag would be good
-> enough?
+Patch 1 adds support for 3 new TQMx86 COMs. GPIO support on SMARC
+modules is currently limited (not all GPIOs can be controlled, pins use
+incorrect default directions, IRQ configuration is handled incorrectly),
+however this is a preexisting issue also effecting the TQMxE39S and
+TQMxE40S, not only the new TQMxE41S. This will be addressed by a future
+patch series involving both the TQMx86 MFD and GPIO drivers.
 
-Yes, initially that should be enough.
+Patches 2-5 improve module parameter description and error handling of
+GPIO IRQ configuration and add support for configuring an IRQ for the
+TQMx86's OpenCores I2C controller in the same way.
 
-								Honza
+Changelog:
+
+v2: improve module parameter description (new patch 2, adjusted patch 5)
+v3: replace IRQ 0 resource entries with empty placeholders to simplify
+    error handling (patches 4 and 5)
+v4: remove tqmx86_irq_to_irq_cfg() function (patch 3)
+v5: move placeholders to the end of the resource arrays, use defines for
+    index (patches 4 and 5)
+v6: remove obsolete comment; refer to I2C controller as I2C1 (patch 5)
+v7: replaced index defines with enums; shortened verbose comments (patch 4
+    and 5)
+
+Gregor Herburger (1):
+  mfd: tqmx86: add I2C IRQ support
+
+Matthias Schiffer (4):
+  mfd: tqmx86: add board definitions for TQMx120UC, TQMx130UC and
+    TQMxE41S
+  mfd: tqmx86: improve gpio_irq module parameter description
+  mfd: tqmx86: refactor GPIO IRQ setup
+  mfd: tqmx86: make IRQ setup errors non-fatal
+
+ drivers/mfd/tqmx86.c | 115 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 79 insertions(+), 36 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht München, HRB 105018
+Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
+https://www.tq-group.com/
 
