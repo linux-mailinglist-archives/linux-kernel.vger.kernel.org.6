@@ -1,87 +1,153 @@
-Return-Path: <linux-kernel+bounces-403773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCBEB9C3AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:17:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438E79C3AB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26441C218CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:17:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED9F91F21FF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FA115D5B8;
-	Mon, 11 Nov 2024 09:17:15 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B105149C4A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A416172BD3;
+	Mon, 11 Nov 2024 09:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="LekmzLgi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F1c+RZqI"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF44B155330;
+	Mon, 11 Nov 2024 09:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731316635; cv=none; b=tiWXUu2ST5Kpr5YNAU5eYRNR3+ddPkZR0z7xjm/y72h1IpHBkDyvYsg+STUp4HrfMRFi8bm0Jxfnp0G+K1WK5xoL1+gqpyeHIGdraP1HfTetPHmWjCxXT4g8acRsqwmB0v7OCe0IGVhi21AhSC9DMK9/NA0P8l0VSLFBz3svtQg=
+	t=1731316635; cv=none; b=jUArSxJFtPdkTzJORcyi+jSVGViS6Hs8YVRaJap1OWCE9gxWBZaD4hLoSx1fxXvR0ofiPeMNX6j6T6kGRtI6k7U9TAUpS/NK9gN2IYRrUkRKp+sid3lLxr5LpHrH+TChiTgcaUaMsTp0MABodQhTmR65AbV0slWN33nc8GvUwEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731316635; c=relaxed/simple;
-	bh=SsAUIRV4dI67TI/ZhJOFyUAXdCCfU6LycSKaXyT+mKk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WKVWE5oX1PDMs829j7dhBoLAFVCaE+SQEa5h6qF3cfzW8Wv2Parf9BATErT/mExtaA/lLXzVxnuxRkCBkWgyoxqCFRznhDC1a9Wz404c15vjBkE8HfGmhfxE4SIc8rhYoKxxEkNR9VZmi90yzd3W2LmA8WBKfkAFKNGlFBuQ/ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee66731cb8f228-d3af8;
-	Mon, 11 Nov 2024 17:17:03 +0800 (CST)
-X-RM-TRANSID:2ee66731cb8f228-d3af8
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee56731cb8e9fa-217c4;
-	Mon, 11 Nov 2024 17:17:03 +0800 (CST)
-X-RM-TRANSID:2ee56731cb8e9fa-217c4
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: jpoimboe@redhat.com,
-	acme@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH] tools/lib/subcmd: Move va_end before exit
-Date: Mon, 11 Nov 2024 17:17:01 +0800
-Message-Id: <20241111091701.275496-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	bh=ckYPYgW/v4vmdXHfm/iNhh8JzZotLLEJV6rNnzwjaSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIvWvLBztZzP5IlL/a+RPjmol+c9/PWqHWB1usp40AaNrEYh7xSHpfGb9pNQCkjh7oy4jPzZriOLXFDd2ZKcjQiiXPur1j/3tjJh/KNXjiQINsvBte5mKajHM7Sf2srGaA/3EwvwR63bnAt/sjXnulvdFKQlFIhz4DeBxBUYsR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=LekmzLgi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F1c+RZqI; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D55FF2540092;
+	Mon, 11 Nov 2024 04:17:12 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Mon, 11 Nov 2024 04:17:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731316632; x=
+	1731403032; bh=XmE3W7zetRFDLRGbYnAfuW8ktkcE5sxS4dONI2aWK9o=; b=L
+	ekmzLgiqx0Wv2UAa1SzpB10lqdpkCl9CQIw0/J0rCpvM0TGiL3ubC2O7PCe5ia06
+	rM2oouUZManNnhvwSs5RaoC9UTJPqNhg2VPCY1w2DjN0ItiiyXZkRgFy4N8n7PGP
+	cuP5g3yMgtUNKdj7sVU470RdLCeTYHUFZxlR1u1E75l3Wu1ny4EZy49MvoRbRNkB
+	ZMXqfoAagOAeizFJCzMBqbce/4+LCvH6Wg+eFLEOk+at3zMDokGcgh7I/rsdFxaH
+	RLnDVa/uMECchEo9h7vr6TDvTdDIsuuXdzsril3CiwSwLHJUmvIextdSZroMrTp6
+	C0BXm7qM5e11SH0DbjcRg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731316632; x=1731403032; bh=XmE3W7zetRFDLRGbYnAfuW8ktkcE5sxS4dO
+	NI2aWK9o=; b=F1c+RZqIrDFmV3pW5Jd4pDJLeZRq4Vqnb8Q00u6Njhx2p4S41+8
+	tkZLE8zcria+Hi0+odfoBaNrgdVovfZXHicJaX2sUN1fuhORoHExYhYu7Z6MVwsc
+	j9j4tk2RzmzxAkjvG7J6WqrEy1LptSpMtlzMbsGBLyq0j3tw4eor4Udmn5Wa/3Oj
+	eljEQHqNqAn10QXDFeFQJrQWu7boe1p8m3GUEowqNjM8ZXkmi67d96SoEHa2EDkN
+	DrzSO7REjUrfFyVYH6cO2S53LbpNg4W/CAeALOcQAPfVVvzPQZrrmirGoAhQ/m/5
+	euW9flcHZxMJiXLbbR+EYTytrmST5kRSHbw==
+X-ME-Sender: <xms:mMsxZ6bfXLeTZbCO5qbawodzSD-F4Ee_7PeVfRIPsJwvx05yrI3U8Q>
+    <xme:mMsxZ9Z5eOwzxI9JOHu4cPdILBR0GHezg3dyr9FqqoxCjc-7EnxsmxCa_aDP0eHge
+    eAM3_g5FW535tKfSnU>
+X-ME-Received: <xmr:mMsxZ098askg9K6WSFk9HDBE5fG-lgpe1MvHnaNV5xRqUrxoKyukjb-OR17VMrEStW4ERg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgddtvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
+    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
+    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
+    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
+    sehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:mMsxZ8pTvc3bHJY4tCGSFA8xk8DAq7RHPK1TH48DrlG4adz3djfEJA>
+    <xmx:mMsxZ1rtX1nidtYNXJ4rzuJUdW2dn0DIJ2mJ1J5rKqRf9MvikTrJdA>
+    <xmx:mMsxZ6SH9ZiFRZucW9NnMAuy097JpV-9uGMJLe6bvDGwYI5Bm389fg>
+    <xmx:mMsxZ1qqNW7wsCeKdj9gKPbn6jmYMQ1pdTADSQjFNQVTgRnI2lhOwg>
+    <xmx:mMsxZ5Il7GLjh_VpfXAcHQbKBqFThS1TY1vCigb6TXo17ebCjdeKI0Rn>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 04:17:09 -0500 (EST)
+Date: Mon, 11 Nov 2024 11:17:06 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 09/15] mm/filemap: drop uncached pages when writeback
+ completes
+Message-ID: <2tkpzi5y2dzihcji6byngv53qjyklcforon2fnnxsmkduwiue3@vfqxataeqdaw>
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-10-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110152906.1747545-10-axboe@kernel.dk>
 
-This patch makes a minor adjustment by moving the va_end call before
-exit. Since the exit() function terminates the program, any code
-after exit(128) (i.e., va_end(params)) is unreachable and thus not
-executed. Placing va_end before exit ensures that the va_list is
-properly cleaned up.
+On Sun, Nov 10, 2024 at 08:28:01AM -0700, Jens Axboe wrote:
+> If the folio is marked as uncached, drop pages when writeback completes.
+> Intended to be used with RWF_UNCACHED, to avoid needing sync writes for
+> uncached IO.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  mm/filemap.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index bd698340ef24..efd02b047541 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1600,6 +1600,23 @@ int folio_wait_private_2_killable(struct folio *folio)
+>  }
+>  EXPORT_SYMBOL(folio_wait_private_2_killable);
+>  
+> +/*
+> + * If folio was marked as uncached, then pages should be dropped when writeback
+> + * completes. Do that now. If we fail, it's likely because of a big folio -
+> + * just reset uncached for that case and latter completions should invalidate.
+> + */
+> +static void folio_end_uncached(struct folio *folio)
+> +{
+> +	bool reset = true;
+> +
+> +	if (folio_trylock(folio)) {
+> +		reset = !invalidate_complete_folio2(folio->mapping, folio, 0);
+> +		folio_unlock(folio);
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/lib/subcmd/subcmd-util.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The same problem with folio_mapped() here.
 
-diff --git a/tools/lib/subcmd/subcmd-util.h b/tools/lib/subcmd/subcmd-util.h
-index dfac76e35..c742b0881 100644
---- a/tools/lib/subcmd/subcmd-util.h
-+++ b/tools/lib/subcmd/subcmd-util.h
-@@ -20,8 +20,8 @@ static __noreturn inline void die(const char *err, ...)
- 
- 	va_start(params, err);
- 	report(" Fatal: ", err, params);
--	exit(128);
- 	va_end(params);
-+	exit(128);
- }
- 
- #define zfree(ptr) ({ free(*ptr); *ptr = NULL; })
+> +	}
+> +	if (reset)
+> +		folio_set_uncached(folio);
+> +}
+> +
+>  /**
+>   * folio_end_writeback - End writeback against a folio.
+>   * @folio: The folio.
+
 -- 
-2.27.0
-
-
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
