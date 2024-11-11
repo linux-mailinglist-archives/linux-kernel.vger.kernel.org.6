@@ -1,113 +1,289 @@
-Return-Path: <linux-kernel+bounces-403587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560D19C3794
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:39:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 626289C3796
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DF271F21F75
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA8B1F21EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BED146D6B;
-	Mon, 11 Nov 2024 04:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BDF13AA2E;
+	Mon, 11 Nov 2024 04:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="SgdetogM"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Zl9i2S9P"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2079.outbound.protection.outlook.com [40.107.94.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900104594D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731299966; cv=none; b=L5jBv5yt21Ernj+FdFR+GxClkrJB6GvoQtDpjEWLdIK0psPqJ0E5VLkDgPgdxP3FhHz355SsBhSK0pCx5ytJhKbFAqAB2wX5xiqU6Jc6M3BMaKPpTrOThnP61/MIsDBW0AMh/gZjmtoAik6P8nMBN/txJAUdRR2Sts/LPuNV0sc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731299966; c=relaxed/simple;
-	bh=W8lMUupaMdWObhzeagnCd+rqivWgp6XoH2HFEMVHlXk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FOkL7wzQFNh541zbxioD/zQoFtSlJmffU2uBgWeNKkrZGxeG6tbRVy4e5WHQpcagmlP7nY/ekFFZ0ZbGIOqF8C4tL0uiE4alopCeNP7MozwsJfkQj+zG878+4jpjA9HMfkYtI68fENhanFVNlppOAUyo2hVH8mn678S6OUjiYlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=SgdetogM; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 16C022C04D0;
-	Mon, 11 Nov 2024 17:39:21 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1731299961;
-	bh=W8lMUupaMdWObhzeagnCd+rqivWgp6XoH2HFEMVHlXk=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=SgdetogMEIKiZ8WDW4KuNJiF9P1uZFDr9Upzz+lsDeVaR0iV8qrnbBKNMuXloo5ac
-	 IJXFmFgQRSRJ31+BELLoezR+WNxWp54yjinbNn4c3LSBsDVNTMo0JZ8gaj3wft99Bf
-	 bPuog/1RKYROcb4vf75+9bNDjszfW3tKlGm/8Td4A0DscKhE8o9Uma8z8zcqn3eLVy
-	 vpFAnRZ20vd6jWFuDBl+YwNmfA7vyJiY0ZVZLRSFJT6BiUnJkRf2LZWYz8wivh/2tz
-	 ZLlpKKa3PYIbGS6VH+vNk6MWgHa4ychpebrHL0T83l1AbLrzTNlUDEEkxzWpaGk/mN
-	 GeJlatJUjcQ5Q==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67318a790000>; Mon, 11 Nov 2024 17:39:21 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8:f753:6de:11c0:a008) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 17:39:20 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Mon, 11 Nov 2024 17:39:20 +1300
-From: Elliot Ayrey <Elliot.Ayrey@alliedtelesis.co.nz>
-To: "andrew@lunn.ch" <andrew@lunn.ch>
-CC: "razor@blackwall.org" <razor@blackwall.org>, "olteanv@gmail.com"
-	<olteanv@gmail.com>, "bridge@lists.linux.dev" <bridge@lists.linux.dev>,
-	"davem@davemloft.net" <davem@davemloft.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-	"roopa@nvidia.com" <roopa@nvidia.com>, "edumazet@google.com"
-	<edumazet@google.com>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>
-Subject: Re: [RFC net-next (resend) 3/4] net: dsa: mv88e6xxx: handle
- member-violations
-Thread-Topic: [RFC net-next (resend) 3/4] net: dsa: mv88e6xxx: handle
- member-violations
-Thread-Index: AQHbMZIaQ3J67Iwom067VLvbmY9w5bKsjSAAgAQdJgA=
-Date: Mon, 11 Nov 2024 04:39:20 +0000
-Message-ID: <9026b4a60c2782b5d50fd26f07a12d7cd5e23015.camel@alliedtelesis.co.nz>
-References: <20241108035546.2055996-1-elliot.ayrey@alliedtelesis.co.nz>
-	 <20241108035546.2055996-4-elliot.ayrey@alliedtelesis.co.nz>
-	 <e9829b58-664a-4bd1-bc07-5f80915a3eed@lunn.ch>
-In-Reply-To: <e9829b58-664a-4bd1-bc07-5f80915a3eed@lunn.ch>
-Accept-Language: en-US, en-NZ
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D9428D0726E8C74291D0917B807C5FB5@atlnz.lc>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142C7EC5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731300140; cv=fail; b=HmVKj/rCPP3f54aVj5x22kuJbHuGOESsNOWC5e7Sb7ZpwCfCU8rAo67YGk8hsYIGas3YUB6AKLeclQxjOwxUiKcg4eoN9UYLsXIHFcwIqtSqpkdkmADTkf9wu2QMu1rpsaLfZb+SmhmhtPmuAKCIBSJUO/1HYAKZ6qctMEsZDDI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731300140; c=relaxed/simple;
+	bh=/NjPNG3QZSf5/6j5r4ZX3SOrzCX/WPsreS4UDaA5iHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZxSJugrZ0+dAJcF0xUVfOMLc3mez7JXChCOFUrFkA00VmXEjos2PFrsxCfsC8jZSj5+lXPTt8qRqu/32bURt1hcu3aSmLvPBRQSetFPWSN9Hyqo0+MbnT7ZLEujpHeGXnyCRdTGf7MfK21rvDkmB3BUtkT0voz+PNKFg1t9n/iY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Zl9i2S9P; arc=fail smtp.client-ip=40.107.94.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tc/yHS8C/UJdfolFysNY7HthUKhsArHpxbfN+8c4CyfsolGk7CSG1IgnNVHe3gOpw6FWoS1Ej8VlDQb7uGxHIw1SXnZg4kpRa5G6L0jBeBEIzIqIylKY6ihy5E4YEsOG9jimL4p0ZHrv+B2bikfx+TGeCp19WJvyNdB9Stzk1rVwARTuIZWzCNDg8DS3hjgcMrMQbC9ZIlMbmQeh5RXrI6+FxBgH/3FRARukBPb9Nv/eTdiUoNg8sz4+U0tEK3pQHFUJB11CLEpcPGDuDB/X5aSA97W+lx8UZyDlMgPJbUlz+dySfg4K7rWbJ/vZx+uLFGl6f2MzEuZ+X6s9Gr+ztA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aHciraEHHrA7AYs4NQi4/efhBa22YhSyiezzxc20M1U=;
+ b=CapXoy1MqxnCbS+Uf1dj9kB8aGwQuvpVKW+HghYAvudHQh6mYD8UU9uaE7DgBtfXW/yVwqhOnpH9uQSWc/btcX6j+FHFaWbPA9NBnfBfQ/kVKQpsqlO4hTRjt5wCxseNS1lFIygzGa2GEOOWxFoHk89/iiUNb+CFe9g+Hd6uyhPZmZ3EC1UqBecAa6lGDy5I+etxJ3ZnWaA8Sh/qNQw4imQTLR12ohuEXSMMh1I8GZ3cJmMeedpVt/NzATPF2YkIR2kQscXNwpZfiHbP8yO6TdhHj1qs8MVGhLwijYRf2nasrs61kYlBVLyf/iMWyO/+UO5sVFC5M0UpCOuj6/Ke4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aHciraEHHrA7AYs4NQi4/efhBa22YhSyiezzxc20M1U=;
+ b=Zl9i2S9P/fpYWrFXb8u1mLDD2yU7nwJ3dBAYEjYox5gfAi6q0+wxNxWDdeQGSe6CAunX4Nwom/UBqCYZJnOxJejBA4BR+4M3mskOkADO62myhd85RtoPPDxEFUv4sYgT12kgU2W+QAcal4oW54AFKu2LVXmAI4eGS9VxXjqk3MY=
+Received: from BN9PR03CA0284.namprd03.prod.outlook.com (2603:10b6:408:f5::19)
+ by CY5PR12MB6324.namprd12.prod.outlook.com (2603:10b6:930:f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Mon, 11 Nov
+ 2024 04:42:16 +0000
+Received: from BN2PEPF00004FBE.namprd04.prod.outlook.com
+ (2603:10b6:408:f5:cafe::17) by BN9PR03CA0284.outlook.office365.com
+ (2603:10b6:408:f5::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28 via Frontend
+ Transport; Mon, 11 Nov 2024 04:42:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF00004FBE.mail.protection.outlook.com (10.167.243.184) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Mon, 11 Nov 2024 04:42:16 +0000
+Received: from [10.136.47.222] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 10 Nov
+ 2024 22:42:09 -0600
+Message-ID: <b311ff68-4571-cbfc-a4f0-bcfeade54836@amd.com>
+Date: Mon, 11 Nov 2024 10:12:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=67318a79 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=nyesw9g_oEEA:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=62ntRvTiAAAA:8 a=8i6-b8GgAAAA:8 a=_Z8lNTzjtIKWTrsjzlEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=XAGLwFu5sp1jj7jejlXE:22
-X-SEG-SpamProfiler-Score: 0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [PATCH v4 3/3] sched/core: Prevent wakeup of ksoftirqd during
+ idle load balance
+Content-Language: en-US
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, Clark Williams <clrkwllms@kernel.org>, "Steven
+ Rostedt" <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>,
+	<linux-rt-devel@lists.linux.dev>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Tejun Heo <tj@kernel.org>, Jens Axboe
+	<axboe@kernel.dk>, NeilBrown <neilb@suse.de>, Zqiang
+	<qiang.zhang1211@gmail.com>, Caleb Sander Mateos <csander@purestorage.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, Chen Yu <yu.c.chen@intel.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>
+References: <20241030071557.1422-1-kprateek.nayak@amd.com>
+ <20241030071557.1422-4-kprateek.nayak@amd.com>
+ <20241108121748.tGlosO1b@linutronix.de>
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20241108121748.tGlosO1b@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBE:EE_|CY5PR12MB6324:EE_
+X-MS-Office365-Filtering-Correlation-Id: e540c3a5-340b-4bb6-62e1-08dd020b3822
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WXVoa0d0eGhMN2JBL3BDY1JGUkVKdHVEaDJjRVp2empvOFNHRFNvZVhQWmlM?=
+ =?utf-8?B?WEZFSHRsWUwzSzZrWkVWNzFoek1tN0lFYk9teVJtdFZFQXg0cm16N0pvdStz?=
+ =?utf-8?B?S0xQYjZTVVdTNzFlajJsaElNRzJKZ3ZPTjhvZHltL29tSzRYak00SE54d2xH?=
+ =?utf-8?B?RTd6MGkvTDVVeDlCOFBMaFZjRDlZQXZsS0JOM0VpclJBcTBrZDFpUXBNR2E2?=
+ =?utf-8?B?a3VTWVdNWkU5YnZWbDJKYWpTRm5RZXZnN2JHYkxORzZWSWcvY21jT0pzUHBU?=
+ =?utf-8?B?WWtqVXUzdDZFTWg2bzdKaXBZY3c4MjlYcjlUVUtyVVZpeEloWmgyY0htMjNr?=
+ =?utf-8?B?T3ZSR3ZsTUpGZFpxeHBZT0d1bXlNZ05PVDV6dkl6OWgrbGlrUVhucytwNXU5?=
+ =?utf-8?B?RW5TV2JoRzNuY3dHVWhnM3lSMllTaFlrb1ZXbXc2VWt4ZjdxTk51U2s3T3Jz?=
+ =?utf-8?B?anlid1I0S2ZjT09XVWhjQ1NnOC8vd2k2b1lsVmEyODZVaXpkL21vRFBpNFJI?=
+ =?utf-8?B?NmZKUTBSSzdXRU5wS2lGNUNEVkdZZVNOV3ZJSTUyT0tITEJEUmRjdlo5Zmwy?=
+ =?utf-8?B?aUw5dGg1czRVSkc1NDBZRW8wOS85Njl2enUvaTh3OHZiUEtvM293a05uLzJu?=
+ =?utf-8?B?Z1VWcnBGaDJZeDN3bXVmOXBVNmxpcTF6aXovQjc3YTlLY0twM1ZMR3hhc0Jm?=
+ =?utf-8?B?TytYLzU5cVcxNVR6RWloOXZZZDdkSVdQYkJCMUJTTk9vcHhBc1VJS1dsQ0FR?=
+ =?utf-8?B?bU9SUm5WSkF6aUtjN0JZdmUrUUMvaVN6RE8walBVNGViSTZzV3pLNDdNRks4?=
+ =?utf-8?B?MTYwUkpkazZsZE1XTDYySEtYam5vZzZDT3g2elRoa3ZHQkU0cGFrMjdaZGpF?=
+ =?utf-8?B?TFE1a3NkUUJvMnNEb2dPSnZJRjlieFZ2cUJXMUNPK1NXYW5KWkhzV283TjlQ?=
+ =?utf-8?B?OXUrZFgxZkVaL2FRdzhXeFQzUWZHcHRUVURSODQ0YUNrYTRvWitjRFRYNWh4?=
+ =?utf-8?B?MjBIWmlTaElCcS9Rd0IxbGZPcVdnaGovd2VUNktmb2VCK2hNcnRTYmIvaURm?=
+ =?utf-8?B?anRDSGVGdlQxZWQxYlFpT2czTXpnc3QzMm1hYnJETUxDcUtycjdFb2ZBanE0?=
+ =?utf-8?B?WTY1Q0RWdXdIcFpEbnhRbWdFMXFMcXNFSWhheXJxK0lsc2h3eC9XQnlPL1Vq?=
+ =?utf-8?B?UEdkbk5lTWtEak40UjJPSDExY25TWjUrbzhXRldlMjF0cGN5MDBYK3NjWk5l?=
+ =?utf-8?B?Zk9tQlRLbjNqRitaSTlPa2p3RTZ2d3QyNlhVeXBGcFQxWlE5eTlNK05Nemky?=
+ =?utf-8?B?TkRJSmozMmtjTHZPYmRaNTZ1UmlzZmlTWGFqMUJIWWpFVXkxNUttSXZvc2pZ?=
+ =?utf-8?B?alBxc3FTelBFa0I2eE9WQmNsR05IdVVMeXQ2MCtKQTdrbS9zZnRadjZ3Zy9F?=
+ =?utf-8?B?bXpDZ2hodmdkems5YnErREZiNjhieGd0MURhY0VkV0c2U0ZBcHJNVCtCWXNP?=
+ =?utf-8?B?N2p6b1MwTXUxd1NETDA0Mmw1SkZWNHlSS1BCQUR6TDBXYXU2NzU2QkRXU2NP?=
+ =?utf-8?B?aWpzazZvZFR0OXFEa08zbUkrbU5taytxTlcrbC9xTFlkZWE3TTdVTE05UWpk?=
+ =?utf-8?B?K2pvQnJ1N0dmb01DcFNxak9kblVZZ1RpcTdxSXU4OWo0a01ta0JXY2lTd2tp?=
+ =?utf-8?B?Wk8rQnUzRXhRWnNFdWFRTlU4Z2xyeVhZYVg0WWE2SzRGQkZEcUNMSWpWZk9u?=
+ =?utf-8?B?dWMwV2h4dTVDcGRmQmNGQlNLSHlDMEsrcGxKMmFXNnBBM2ZzekxWd3VvMWky?=
+ =?utf-8?B?QTFidUxRaWNmb1VUb1E3THBibWY4b25wSDBSbFl6NTBaaGg5SW9KMnU1WEtk?=
+ =?utf-8?B?aHJKRlRIeUc1emlhRVZUOEozVGNVQ3lwYkNySzZidFp4YWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 04:42:16.5370
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e540c3a5-340b-4bb6-62e1-08dd020b3822
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6324
 
-T24gRnJpLCAyMDI0LTExLTA4IGF0IDE0OjQ5ICswMTAwLCBBbmRyZXcgTHVubiB3cm90ZToNCj4g
-PiAtLS0gYS9kcml2ZXJzL25ldC9kc2EvbXY4OGU2eHh4L3N3aXRjaGRldi5jDQo+ID4gKysrIGIv
-ZHJpdmVycy9uZXQvZHNhL212ODhlNnh4eC9zd2l0Y2hkZXYuYw0KPiA+IEBAIC03OSw1ICs3OSwz
-NiBAQCBpbnQgbXY4OGU2eHh4X2hhbmRsZV9taXNzX3Zpb2xhdGlvbihzdHJ1Y3QNCj4gPiBtdjg4
-ZTZ4eHhfY2hpcCAqY2hpcCwgaW50IHBvcnQsDQo+ID4gwqAJCQkJICAgICAgIGJycG9ydCwNCj4g
-PiAmaHR0cDovL3NjYW5tYWlsLnRydXN0d2F2ZS5jb20vP2M9MjA5ODgmZD1qWmV1NTI4cXNkZlZt
-SUNIZGtaQW91ZW9nDQo+ID4gV0xFd3NOX1dhX1JJTGxhMFEmdT1odHRwJTNhJTJmJTJmaW5mbyUy
-ZWluZm8gTlVMTCk7DQo+ID4gwqAJcnRubF91bmxvY2soKTsNCj4gPiDCoA0KPiA+IC0JcmV0dXJu
-IGVycjsNCj4gPiArCXJldHVybiBub3RpZmllcl90b19lcnJubyhlcnIpOw0KPiA+ICt9DQo+IA0K
-PiBUaGlzIGNoYW5nZSBkb2VzIG5vdCBsb29rIG9idmlvdXNseSBjb3JyZWN0IHRvIG1lLiBXaGF0
-IGhhcyBhIG1pc3MNCj4gdmlvbGF0aW9uIGdvdCB0byBkbyB3aXRoIG1lbWJlciB2aW9sYXRpb24/
-IElzIHRoZSBleGlzdGluZyBjb2RlDQo+IHdyb25nPw0KPiBXaGF0IGFib3V0IHRoZSBjYXNlIHdo
-ZW4gbXY4OGU2eHh4X2ZpbmRfdmlkKCkgcmV0dXJucyBhbiBlcnJvcj8NCj4gDQo+IAlBbmRyZXcN
-Cg0KSGkgQW5kcmV3LCBJIGZvcmdvdCB0byByZW1vdmUgdGhpcyB3aGVuIHByZXBhcmluZyB0aGUg
-cGF0Y2hlcywgdGhpcyB3YXMNCmludGVuZGVkIHRvIGJlIGEgc2VwYXJhdGUgYnVnIGZpeC4NCg0K
-SWYgbXY4OGU2eHh4X2ZpbmRfdmlkKCkgcmV0dXJucyBhbiBlcnJvciBpdCB3aWxsIHJldHVybiBl
-YXJseSwgc28gdGhlDQpub3RpZmllcl90b19lcnJubygpIGNvbnZlcnNpb24gd2lsbCBvbmx5IGhh
-cHBlbiBhZnRlcg0KY2FsbF9zd2l0Y2hkZXZfbm90aWZpZXJzKCkuDQo=
+Hello Sebastian,
+
+On 11/8/2024 5:47 PM, Sebastian Andrzej Siewior wrote:
+> On 2024-10-30 07:15:57 [+0000], K Prateek Nayak wrote:
+>> Scheduler raises a SCHED_SOFTIRQ to trigger a load balancing event on
+>> from the IPI handler on the idle CPU. Since the softirq can be raised
+>> from flush_smp_call_function_queue(), it can end up waking up ksoftirqd,
+>> which can give an illusion of the idle CPU being busy when doing an idle
+>> load balancing.
+>>
+>> Adding a trace_printk() in nohz_csd_func() at the spot of raising
+>> SCHED_SOFTIRQ and enabling trace events for sched_switch, sched_wakeup,
+>> and softirq_entry (for SCHED_SOFTIRQ vector alone) helps observing the
+>> current behavior:
+>>
+>>         <idle>-0   [000] dN.1.:  nohz_csd_func: Raising SCHED_SOFTIRQ from nohz_csd_func
+>>         <idle>-0   [000] dN.4.:  sched_wakeup: comm=ksoftirqd/0 pid=16 prio=120 target_cpu=000
+>>         <idle>-0   [000] .Ns1.:  softirq_entry: vec=7 [action=SCHED]
+>>         <idle>-0   [000] .Ns1.:  softirq_exit: vec=7  [action=SCHED]
+>>         <idle>-0   [000] d..2.:  sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=ksoftirqd/0 next_pid=16 next_prio=120
+>>    ksoftirqd/0-16  [000] d..2.:  sched_switch: prev_comm=ksoftirqd/0 prev_pid=16 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
+>>         ...
+>>
+>> ksoftirqd is woken up before the idle thread calls
+>> do_softirq_post_smp_call_flush() which can make the runqueue appear
+>> busy and prevent the idle load balancer from pulling task from an
+>> overloaded runqueue towards itself[1].
+>>
+>> Since the softirq raised is guranteed to be serviced in irq_exit() or
+>> via do_softirq_post_smp_call_flush(), set SCHED_SOFTIRQ without checking
+>> the need to wakeup ksoftirq for idle load balancing.
+>>
+>> Following are the observations with the changes when enabling the same
+>> set of events:
+>>
+>>         <idle>-0       [000] dN.1.: nohz_csd_func: Raising SCHED_SOFTIRQ for nohz_idle_balance
+>>         <idle>-0       [000] dN.1.: softirq_raise: vec=7 [action=SCHED]
+>>         <idle>-0       [000] .Ns1.: softirq_entry: vec=7 [action=SCHED]
+>>
+>> No unnecessary ksoftirqd wakeups are seen from idle task's context to
+>> service the softirq.
+> 
+> | Use __raise_softirq_irqoff() to raise the softirq. The SMP function call
+> | is always invoked on the requested CPU in an interrupt handler. It is
+> | guaranteed that soft interrupts are handled at the end.
+> 
+> You could extend it
+> 
+> | If the SMP function is invoked from an idle CPU via
+> | flush_smp_call_function_queue() then the HARD-IRQ flag is not set and
+> | raise_softirq_irqoff() wakes needlessly ksoftirqd because soft
+> | interrupts are handled before ksoftirqd get on the CPU.
+
+I'll reword the log as suggested in the next version.
+
+> 
+> This on its own is a reasonable optimisation. A different question would
+> be if flush_smp_call_function_queue() should pretend to be in-IRQ like a
+> regular IPI but…
+
+I thought about it initially but seeing optimizations and checks around
+"hardirq_stack" and checks to reuse it in certain context led be to
+believe that there may be more nuances that I do not have a full picture
+of, and I went ahead with this simpler solution.
+
+> 
+> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Thank you for the review!
+
+> 
+>> Fixes: b2a02fc43a1f ("smp: Optimize send_call_function_single_ipi()")
+>> Reported-by: Julia Lawall <julia.lawall@inria.fr>
+>> Closes: https://lore.kernel.org/lkml/fcf823f-195e-6c9a-eac3-25f870cb35ac@inria.fr/ [1]
+>> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+>> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+>> ---
+>> v3..v4:
+>>
+>> o New patch based on Sebastian's suggestion.
+>> ---
+>>   kernel/sched/core.c | 13 ++++++++++++-
+>>   1 file changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index aaf99c0bcb49..2ee3621d6e7e 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -1244,7 +1244,18 @@ static void nohz_csd_func(void *info)
+>>   	rq->idle_balance = idle_cpu(cpu);
+>>   	if (rq->idle_balance) {
+>>   		rq->nohz_idle_balance = flags;
+>> -		raise_softirq_irqoff(SCHED_SOFTIRQ);
+>> +
+>> +		/*
+>> +		 * Don't wakeup ksoftirqd when raising SCHED_SOFTIRQ
+>> +		 * since the idle load balancer may mistake wakeup of
+>> +		 * ksoftirqd as a genuine task wakeup and bail out from
+>> +		 * load balancing early. Since it is guaranteed that
+>> +		 * pending softirqs will be handled soon, either on
+>> +		 * irq_exit() or via do_softirq_post_smp_call_flush(),
+>> +		 * raise SCHED_SOFTIRQ without checking the need to
+>> +		 * wakeup ksoftirqd.
+>> +		 */
+> 
+> /*
+>   * This is always invoked from an interrupt handler, simply raise the
+>   * softirq.
+>   */
+> 
+> should be enough IMHO. But *I* would even skip that, since it is
+> obvious.
+
+I'll remove it in the subsequent version. I'll wait a bit before sending
+it to see if folks have any suggestion on the parallel thread regarding
+handling SCHED_SOFTIRQ from ksoftirqd.
+
+> 
+>> +		__raise_softirq_irqoff(SCHED_SOFTIRQ);
+>>   	}
+>>   }
+> 
+> Sebastian
+
+-- 
+Thanks and Regards,
+Prateek
 
