@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-404867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B899C495D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:54:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6359C4960
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8341F25886
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB249B22202
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BD91BD4EB;
-	Mon, 11 Nov 2024 22:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51C91BD032;
+	Mon, 11 Nov 2024 22:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VmsTHvRC"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkRD84Ud"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B541BC9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24C58468;
+	Mon, 11 Nov 2024 22:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731365642; cv=none; b=JhPNC1m9zkz5Q3h+w94lRPsldF89sCYIjv9oYeFeE0Kat5h8ZAIjlb9qm5/t41TqetikvygFm39nCPsNV4iS4ZRf/zcoJjJfhrG11cKQ6F3f33uEM5AEJ1zEIOgn7PYw7qBYL8TNcEOBKa/8OZYdFvpUFIlN9+px2AbYxfQArvM=
+	t=1731365916; cv=none; b=jmebbjqBui+/RyLIPEfRu21x6xhItYqnFeGvHtDRqBg2h+4jgbUTbw0dYjmmsAGTHe3eUMsHdotEYrrrs0ttf+jTmsfu4FTDpx2Wht9Z26ZLDrgZFw2+UprkLCpWK5crNduSpXaLePM6Em0qo9t8KlhMS645AoZDzK+/znG1kQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731365642; c=relaxed/simple;
-	bh=GUxdK3bWrbQNduznuDLaYiQ2csEsHVvbRbbUGA4YOcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=clzn+BhFv8wotIPG7y7eE+CtmpTP4XjRG47VWnqi2qFkP8GvSWzSP4GJj1yTLf/Wx7/TsxMe1ZieW7Pp+V5xABEvnUw3Jp8UtXolWJX+Djq3vE3lh9u2HEj/2rR6B+YEGTCU81WWXouq/vvTL8d7cl33/K31HX0k0Ek0QTIPemA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VmsTHvRC; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e6105886dfso3165307b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:54:00 -0800 (PST)
+	s=arc-20240116; t=1731365916; c=relaxed/simple;
+	bh=QBxO2beGb702TUptZzPVEp3r/vThbAYJ4Humv9sdi/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pmEyMOchdvjTgD1eD+z0zqnUb23SCZ/FfomsYamaom4kgqd3lpN658+gdCYLY5p2QejKZKqbSV/FrbdZ6xN7QYywTEuzZ+k69pPdWcSBnonPCeICii+QbkqZEJ8JbIHnaGhaoCVx9FfNuFvxrza1HIXAfF6I9BwarCpyDT+B2tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TkRD84Ud; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-85054107836so1811738241.3;
+        Mon, 11 Nov 2024 14:58:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731365639; x=1731970439; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3qeQLVqGYO4ALLLE6OpBa6NKUVcn6gN8ZfFj0qfpOGg=;
-        b=VmsTHvRCTngDbzqmvItbFrkMs4u8KzvVbvOI6Qw4gUBzPpMXutGgJBbodRuHSSA7y3
-         JwdeOBB9egDRZRAqIdWG81+8pRglKUAcSr1EI4d/7go7kA7+dfFGf5cDeRFmcWxII9JO
-         9kTjSHq+OXbIpk9g45HTd0D+B29yXTjA20TC8nbWP5BYQrJNtgi7CB9daZeRXguEnNSN
-         u/WMJ4B92+AoYTItPZUhYTaA08W+t/l3B7EivmepKZQyMDXYzjJH/KvLbsw8QCyN0w9y
-         ByZKOMV8ugWBT31R2F50RqPmbFLgzVYFYDaguj2ArRvZw6RHod3LDR2SDiL+Ck7HKEs8
-         EYkQ==
+        d=gmail.com; s=20230601; t=1731365913; x=1731970713; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xsifnW581PltcYhZ2uCG2F+RlDUiyCr2zolEtVcEoyc=;
+        b=TkRD84UdU0ZpyD/x8quqw0HGkUjavxhwzp5JfKHC6c9WCeAG/wlM/vQj9czWq69rfy
+         2JhZ4+c5NvePTVAS+NBrEN4MDeBI8Y8KN4xzlH828fC4AbNpruciq0be5QLdywr9eddk
+         v3++aKq6rv5FZ+clPNxNmB6y7oSLdQYTb5ozG91DyOs+aRLZUCi171Bus6Jq/vIJy3Vz
+         mjO1l1Bi+4YQ7/EV9wV9GVtIA3s4pLYrnUeIX9l7IerQdRA14kllh1yLg7Ba0UdcoR8U
+         f3tfZ6PEUvkk9uXJLpwnrGCrqoZdbebE5f7FGK0OvtrYjpwq/CE17QjVsm/7BlztMj1O
+         /Gtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731365639; x=1731970439;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qeQLVqGYO4ALLLE6OpBa6NKUVcn6gN8ZfFj0qfpOGg=;
-        b=JzSnMwVG088HYeS/F9/ogDmIwhstal4X0ayzuwF+2my3D0s3QySeIIc5FR2GvTLqKD
-         1q/SAwTkEyRk9HC8Xa7KR7rQzUdER7RUbaCrrex1tQEuwYEeHHWKo6dIcOyMQdjZhZtI
-         WKEru6RfM+fjwIYil4Qh1ydFHXLZoJk9T0tBb3US+FtbJMlZD81N2Q2CQKhxGYnxrcLQ
-         G4/SGJsJJgiHp4L00JBcpUuY0sFR/wOP+BxJKKXx/ad+7b/p70ZJi4q1+6FtrEB/iU1A
-         YJZQ674TY7367BPFNSOGOfNkcwyDI+Io8gIj/YhTcbacX2dB+g3tyhWoMOqF5JEzIGck
-         +8Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv+wIB0Dnh5ZCCNOCZjcQOPYJa+YRIEBHKi3Ouo1JkHOhLwGAN8Ut8LVI6sKcU7gsoJiPkOK2t+d6tEhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtDyImVQhDQsvfRLOmwo07ltHiYj5J+rxK9WzsGTgre97HwKxu
-	5tgLlUveueHNN6qpzEw/Tkps601d1MrSplYQ79s70cKSZsH4KXQq0WmdVdz2yyc=
-X-Google-Smtp-Source: AGHT+IFI70O9qWZLYbfZv+s3z1ZWen9vEBjFIao6aaE9nVOytwkkB4ogTBF3q06vdafFfqOS5zD5bg==
-X-Received: by 2002:a05:6808:23d2:b0:3e6:4f60:407a with SMTP id 5614622812f47-3e793ebe322mr7790726b6e.4.1731365639507;
-        Mon, 11 Nov 2024 14:53:59 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cc803a2sm2249913b6e.15.2024.11.11.14.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 14:53:58 -0800 (PST)
-Message-ID: <f02fc95c-a2ef-494a-afbd-5af78ad1f489@baylibre.com>
-Date: Mon, 11 Nov 2024 16:53:57 -0600
+        d=1e100.net; s=20230601; t=1731365913; x=1731970713;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xsifnW581PltcYhZ2uCG2F+RlDUiyCr2zolEtVcEoyc=;
+        b=kOD004x9NASi2mQFaXijfM4zyiQSnek3Tz7mdacVL5yXPuYQgKsHT6U7xdVpt8XiEB
+         3tColHlsQ1UCVM6kS5hqIpy5a3ysvtS6yT7eNU5zGArxN4npUz4qFGpxOg2ifDzCkEKj
+         pHfUSh/QsrayWE7FSwg5ZhiiV1mi35R0v71bC3qW8p9swY8UAIul7lmyLlda9wVYyF1S
+         7sUzgasq+mNEaoASNYDyKUFE9xlHkmxUBlFIntGynTiChOUZ4hRH7n4m5Ynu5RnebEqm
+         EicPsHgQnJSbM2gd3QeBWLC5ZeNxUe6gD0fu238QH53rPCNphCjF29KYtyfrL9bqohoL
+         AtYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUa8zjSywTIS/cnkCeaT1zgfLzW3bVhnBdZUANcqbNkX+arx6vUvTJanc/V/EhDc/mT4rssXJM7KzwbP4SN1CQ=@vger.kernel.org, AJvYcCW0gGR4Uh37oflJhfiCNsYSwJh8b2g4B6AZayYZPnSuVEsSxkpSOJr5VL1qTmbxFCtSkZ6eVs5DnZcBUTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaE/LO2I+60wiE8utgbmyMrMJPQ29WJBe50vRvuaPo8hczhFrl
+	JZL2KEvmsfJCFlHb6SMHuTYV6zuXI7oqg7NSDmvnRyeLDoOHJuRVPEpQvjnrX+50dXlV9gbVmjY
+	aGoh0EcxT1QZNIDtQNnrR3YPiRNM=
+X-Google-Smtp-Source: AGHT+IEWRoi6tBvIXIEAjCCEv9bkVAcC3LAGFzr1vnQaJGYyNdNQOe6AwRKFYXd6fAfHpioMGj8lz6HF3NUuhu9k0jg=
+X-Received: by 2002:a05:6102:38c7:b0:4a3:ac2b:bfff with SMTP id
+ ada2fe7eead31-4aae16623d6mr12871748137.22.1731365913427; Mon, 11 Nov 2024
+ 14:58:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] iio: trigger: stm32-timer-trigger: Add check for
- clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com,
- tgamblin@baylibre.com, fabrice.gasnier@st.com, lee@kernel.org,
- linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241111222310.12339-1-jiashengjiangcool@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241111222310.12339-1-jiashengjiangcool@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241111112615.179133-1-alistair@alistair23.me>
+ <x6OyXuGQi1xeknAX_pjcl17BOpxRM6OGtLWGhGOH4LUgghJaP29a4ebzCT21QdfxBb88PwZCc2U7zizrTTSzVg==@protonmail.internalid>
+ <20241111112615.179133-2-alistair@alistair23.me> <878qtqt1n4.fsf@kernel.org>
+In-Reply-To: <878qtqt1n4.fsf@kernel.org>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 12 Nov 2024 08:58:07 +1000
+Message-ID: <CAKmqyKNjjELzVbWgBHaHr8N1XnOJHk-U6RfLyb-FbTJ7h9jPoA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] rust: bindings: Support some inline static functions
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alistair Francis <alistair@alistair23.me>, linux-kernel@vger.kernel.org, 
+	boqun.feng@gmail.com, me@kloenk.dev, benno.lossin@proton.me, 
+	tmgross@umich.edu, aliceryhl@google.com, gary@garyguo.net, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, alex.gaynor@gmail.com, 
+	alistair.francis@wdc.com, bjorn3_gh@protonmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/24 4:23 PM, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception.
-> 
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
-Reviewed-by: David Lechner <dlechner@baylibre.com>
+On Mon, Nov 11, 2024 at 10:07=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>
+> "Alistair Francis" <alistair@alistair23.me> writes:
+>
+> <cut>
+>
+> > diff --git a/rust/exports.c b/rust/exports.c
+> > index 587f0e776aba..288958d2ebea 100644
+> > --- a/rust/exports.c
+> > +++ b/rust/exports.c
+> > @@ -18,6 +18,7 @@
+> >  #include "exports_core_generated.h"
+> >  #include "exports_helpers_generated.h"
+> >  #include "exports_bindings_generated.h"
+> > +#include "exports_bindings_static_generated.h"
+>
+> Generating `exports_bindings_static_generated.h` depends on `exports.o`,
+> which depends on `exports.c`. Does this not create chicken-egg kind of
+> problem?
 
+It is a bit confusing as there are a few levels of autogeneration, but
+Make happily handles it.
+
+`exports.c` depends on `exports_bindings_static_generated.h`
+
+But `exports_bindings_static_generated.h` depends on `extern.o`
+(extern not exports).
+
+`extern.o` then depends on `extern.c`
+
+`extern.c` then depends on `bindings_generated_static.rs`, which is
+generated by bindgen.
+
+So there isn't a chick-egg problem and this happily builds from a clean tre=
+e.
+
+Alistair
+
+>
+> Best regards,
+> Andreas Hindborg
+>
+>
 
