@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-403789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01CF9C3AD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:27:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91219C3AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B9D1B21D9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001EE280CB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3584175D34;
-	Mon, 11 Nov 2024 09:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X0a6FEtj"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C9F170A2C;
+	Mon, 11 Nov 2024 09:27:43 +0000 (UTC)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A0175D26
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCF91684B4;
+	Mon, 11 Nov 2024 09:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317217; cv=none; b=PZXFwWPIPPyFwm5g+jR7G83iHaoIHWaIZMtMWhFrDrBDRgLnf7Ue8tfZ816VDU8nyQcY2anC6AIYfx2BZfv5U+bdyKkk7mtG8kVUsXEHCN52XhsE8HTeeNGbMaGH4csvC9nMl8ohyNCNV7owR/pmbOetw1yiQ5qEIpASSuS918g=
+	t=1731317263; cv=none; b=nfXwCg3ds6t9D7YRRXkbn3sYgBEpq643dcTLiVeSkG7IY1ImFPq2Roac6MWHXJGr7/oeD6CpvgDGMrto259xyu9/EPT8HUEnICQDXkBaj2el9bt/re2doFJKwnan4fZlapiPwn0WUqb633irMC1QQReNaSCXqTth1bmuqH/1d7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317217; c=relaxed/simple;
-	bh=mgnfN2q0S7QgoKKl/Rauu5sGyAO9tc59zopJz1rrAdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qphimCOg4M1JGEIubr4QZhYi0m0dF6YIDzC/xtuQBKLtaOOFMdaLHN678OocBE209R1JSETY8G6Uy5XFIi0Ugh5EIZyL2r/kry6dTMyUX7DwOZOucdrj+nOg0jFGFKp7MiLCe2OH+haWgNAZEq7UlgP66J0EBdpZ/nSort3xmDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X0a6FEtj; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720c286bcd6so3612717b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:26:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731317215; x=1731922015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=brECuhaURidIOgej2HcdOUsYknBD6I4Lcs1/D1CO8rs=;
-        b=X0a6FEtjcQ2FpXrujEcQAoffCiUlhwkIw6utF+m0UGWyzrfNPlyjtkUo4DVqGCPReq
-         gvryHQ6TnFrmG9i/URxIUK3A67dnhsnQaJyEIQRjnG94/ivqimQAVMmWgNK92foC/yx+
-         wnpOxl21X7ZAQVktl6j4txAYbWtLdtI7f1S1Y=
+	s=arc-20240116; t=1731317263; c=relaxed/simple;
+	bh=/EYlPQZYbG0qx2DDHeUItmP9wnSlVmM8158e/7RMOxE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H0nVooLTdxLLFQQYN44zkeMaVJzXiIs/QQpKYdLTlinSV0MaGeRA2v3Cwj2ebuwLF4W/hImi9yrlvd4hmAUjrFeXIZiZBQLZxzvznF/fUGBA/sqRxOADhytRrlbOUFqaIWs4PXpe3F87Tc8z6GdidxGzXqMnF+gZDTHVq+1i5OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e30d212b6b1so3892991276.0;
+        Mon, 11 Nov 2024 01:27:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731317215; x=1731922015;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=brECuhaURidIOgej2HcdOUsYknBD6I4Lcs1/D1CO8rs=;
-        b=ZZUIAHgWPI0y2ztY/OEtYMlk2XG8YeMSHbz7ZIAvtyNuFB0lDza8aZazp0gqzsqoy1
-         C6ksrPhgydm2doznAHoYmahyF8APVfpzud7AmZBUbL76OATPHKRs9F3be+DJH1/w+LC+
-         MXmme/h5bpOEHRlzIFIjLjZapUGR6gHH0wnbDCCJPThM1z+4bZDqGOjqpUgY5ZjoT+Za
-         B2SgTHp4z0ZIWJ8x31PoagRNKOi0mnygny2GiH/TTo9ARdn6Nn2Lu234AU8s4LLBXeGb
-         cvOSkrcO4Cd/2o+llzHyu2PX2KDpKyxAfclsnKrPBcHLM1/1AVp0VHkdD6hsrH39LqiS
-         Y37w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2mWOW/gNWaO0gVDngM2ckxcXhIoIyU7BVGybzU2dNmk2UVYwOnPMHs0QO3GZVp58yB0KVQcNHxindwLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrTLu6uh1ZqSeD24jqB/dGnIEHKrHd8UJHOpqDCk+HqgeFz3o7
-	cgomDucL+1b2Rn2luj6+x0R4/15mEiavlVDpP9ykWpCXuOeb9uDagasgkaPCtg==
-X-Google-Smtp-Source: AGHT+IFv3/Z9/+3X9loXLTyXmodu1y1jPdWhOQT6PyEwQSEN4yeKKN8edDW3dCWplxOZylQnJGuxzA==
-X-Received: by 2002:a05:6a21:32a1:b0:1db:f087:5b1d with SMTP id adf61e73a8af0-1dc22b94a7cmr16452244637.37.1731317214962;
-        Mon, 11 Nov 2024 01:26:54 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:a43c:b34:8b29:4f8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860a42sm8662311b3a.17.2024.11.11.01.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 01:26:54 -0800 (PST)
-Date: Mon, 11 Nov 2024 18:26:50 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] zram: ZRAM_DEF_COMP should depend on ZRAM
-Message-ID: <20241111092650.GB1458936@google.com>
-References: <64e05bad68a9bd5cc322efd114a04d25de525940.1730807319.git.geert@linux-m68k.org>
+        d=1e100.net; s=20230601; t=1731317258; x=1731922058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nEEZs1hubftFpA2mQvUEi2H6qdFebKUYB14kCvXL5QE=;
+        b=UwqhWBreg+aQgja2X2Bg7/r2ueT0QqANOYWZC3bk6NofBWSSlX1TPrOr7OuZm2XBsX
+         EOfNkPE86iY7wrSt1Kr5KCOaEWJodMCe+q5tW8OIdZ9YPwl9w3iMlPLqVItk63M4SB/E
+         w0u7CzlUqg2QRdfAac8vK1OFx9agHqi7IZxSxz0WSSz3QfDXMylJXo2ZGgUCtKghrfB4
+         HrGonfr9v7h6fz0PpzSEAztXulmpejJJYDQBZnmwaeHmYdbWhZtIJHIRtPgwJgWauWD+
+         7PdZPT7r4E/RDPxsDDulut8DjKHSFj4GsGk02nUzw+3IA9WssyJoUBa/dUgCW1tHiN+I
+         rDEw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9+qH/2iCkO0TQMYUOjpCtq36EdIby+HAh5CvWrwjMuTNH01LADg6CGkv/C74lRYZJvsngJHz0ouDr@vger.kernel.org, AJvYcCVgVnG7T7k0QAhdngex7PLwxGTDb8/GqtIk8o9wrFFraXr6G+5e4paTVHz0dLnSWl+dh7orowOxV8yTaJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlWOjHcUe6a0WBStJ/UMt3iimRCT1tV3WcoWJgjxxLoG4C2z6s
+	qgqx8prFg1bs9GU2EbLEJSPWli44pWRn7cdoK3tfo7lES/+sYmQtWixHfnLb
+X-Google-Smtp-Source: AGHT+IH8Xb8oV4z+9z/V6IKXhrP7lfSrWxIVE+1/JLcPQln2a25uhQ5qxiVvUcJZ0NrJisZn5P0fwQ==
+X-Received: by 2002:a05:6902:c0d:b0:e30:cc34:af19 with SMTP id 3f1490d57ef6-e337f8d8ecdmr8994268276.44.1731317258549;
+        Mon, 11 Nov 2024 01:27:38 -0800 (PST)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e336ee1556asm2161014276.3.2024.11.11.01.27.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 01:27:37 -0800 (PST)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e30d212b6b1so3892962276.0;
+        Mon, 11 Nov 2024 01:27:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXHYQgz9BqYMr19/5pCzY1TJ1m4FAQyN6trGLjnk3tyRq1cdPxdfSpzRqgqv73Ovu8cLQskfnV56Wk5Yx0=@vger.kernel.org, AJvYcCXzpCKppAqrEDruxsYK2JXB0lJfutOTX7ADs+XuWIM2vKOo+CqLUbJdykLEOT/JMXhlbr2bFTP2dLw0@vger.kernel.org
+X-Received: by 2002:a05:690c:f93:b0:6e3:28ec:1a7f with SMTP id
+ 00721157ae682-6eadddbd0d5mr111198207b3.23.1731317257635; Mon, 11 Nov 2024
+ 01:27:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <64e05bad68a9bd5cc322efd114a04d25de525940.1730807319.git.geert@linux-m68k.org>
+References: <cover.1728377511.git.fthain@linux-m68k.org> <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
+In-Reply-To: <a912689ee714d35c13f4a5fe05df58c662a6dc8d.1728377511.git.fthain@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Nov 2024 10:27:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU45SmMZ+OGn9yS9rrFThESAsFu5Leb_kNVueffM3o_4A@mail.gmail.com>
+Message-ID: <CAMuHMdU45SmMZ+OGn9yS9rrFThESAsFu5Leb_kNVueffM3o_4A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform driver
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>, 
+	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Finn,
 
-Sorry for the delay
+On Tue, Oct 8, 2024 at 10:55=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> =
+wrote:
+> Both mvme147 and mvme16x platforms have their own RTC driver
+> implementations that duplicate functionality provided by the rtc-m48t59
+> driver. Adopt the rtc-m48t59 driver and remove the other ones.
+>
+> Tested-by: Daniel Palmer <daniel@0x0f.com>
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> ---
+> This patch depends upon the m48t59 driver changes in the preceding patch.
+>
+> Changed since v1:
+>  - Initialize yy_offset in struct m48t59_plat_data.
 
+> --- a/arch/m68k/configs/multi_defconfig
+> +++ b/arch/m68k/configs/multi_defconfig
+> @@ -506,6 +506,7 @@ CONFIG_RTC_CLASS=3Dy
+>  CONFIG_RTC_DRV_MSM6242=3Dm
+>  CONFIG_RTC_DRV_RP5C01=3Dm
+>  CONFIG_RTC_DRV_GENERIC=3Dm
+> +CONFIG_RTC_DRV_M48T59=3Dm
+>  # CONFIG_VIRTIO_MENU is not set
+>  # CONFIG_VHOST_MENU is not set
+>  # CONFIG_IOMMU_SUPPORT is not set
+> diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme=
+147_defconfig
+> index 2248db426081..4a0928b3b842 100644
+> --- a/arch/m68k/configs/mvme147_defconfig
+> +++ b/arch/m68k/configs/mvme147_defconfig
+> @@ -392,6 +392,7 @@ CONFIG_UHID=3Dm
+>  CONFIG_RTC_CLASS=3Dy
+>  # CONFIG_RTC_NVMEM is not set
+>  CONFIG_RTC_DRV_GENERIC=3Dm
+> +CONFIG_RTC_DRV_M48T59=3Dy
+>  # CONFIG_VIRTIO_MENU is not set
+>  # CONFIG_VHOST_MENU is not set
+>  # CONFIG_IOMMU_SUPPORT is not set
+> diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme=
+16x_defconfig
+> index 2975b66521f6..481fb2810f1e 100644
+> --- a/arch/m68k/configs/mvme16x_defconfig
+> +++ b/arch/m68k/configs/mvme16x_defconfig
+> @@ -393,6 +393,7 @@ CONFIG_UHID=3Dm
+>  CONFIG_RTC_CLASS=3Dy
+>  # CONFIG_RTC_NVMEM is not set
+>  CONFIG_RTC_DRV_GENERIC=3Dm
+> +CONFIG_RTC_DRV_M48T59=3Dy
+>  # CONFIG_VIRTIO_MENU is not set
+>  # CONFIG_VHOST_MENU is not set
+>  # CONFIG_IOMMU_SUPPORT is not set
 
-On (24/11/05 12:50), Geert Uytterhoeven wrote:
-> When Compressed RAM block device support is disabled, the
-> CONFIG_ZRAM_DEF_COMP symbol still ends up in the generated config file:
-> 
->     CONFIG_ZRAM_DEF_COMP="unset-value"
-> 
-> While this causes no real harm, avoid polluting the config file by
-> adding a dependency on ZRAM.
-> 
-> Fixes: 917a59e81c342f47 ("zram: introduce custom comp backends API")
+All of the above don't seem to be inserted at the right location?
 
-Sort of feels like it might be 3d711a382735d that introduced
-it first, but I'm okay with Fixes 917a59e81c342f47
+Gr{oetje,eeting}s,
 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+                        Geert
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
