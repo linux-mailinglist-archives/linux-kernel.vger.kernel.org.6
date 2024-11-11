@@ -1,132 +1,362 @@
-Return-Path: <linux-kernel+bounces-403871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D0D9C3C08
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:33:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37DC79C3C35
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:42:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751491C20ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:33:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB5901F22238
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03532155C9E;
-	Mon, 11 Nov 2024 10:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F92218A6C2;
+	Mon, 11 Nov 2024 10:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAxOgm6I"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M1hhh6Cq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE16C14600D;
-	Mon, 11 Nov 2024 10:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA88616A930;
+	Mon, 11 Nov 2024 10:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731321209; cv=none; b=E8ITrSIce2FKsOVQvsnsMgzLt0yZI+krDiLXS+Bn4uybYtdP0ZqUWGA2OP6WBg2zUJD/1nxR40VQ/Qqp3zTmRfUZ0fOxQCX5TLXsDtd8/NFqnrYOgKSMezFLnz1+V6UgHE9Q+aKydhvK/PUHHcwC+Fh7EonOrR6Zn5xrJvlXH6I=
+	t=1731321614; cv=none; b=Fj9Qb1Z0GVNlyGt0jDf9XtHWiIIMZ4P0HqjUzT8KkP2q5MQWQjZ1uaWPcd9J+RpT9NEW17VKNrp6L//EPGeVlXr5hIlHkk0SQ0jXc53RuI4DFOV8WRzUCCtKi13ZhHsbd6FkFYKTCNqpmnu1KmbvdLk+upfLI1wgVnJ8HbDaDKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731321209; c=relaxed/simple;
-	bh=K32Aa/FCygnL5TajBnwQRhBUUmy/Rq9LwOa70qZz4R8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jqzDB6r6FiEg25fueV6Sw/vHk4c0FfpvHBqHy8/yzFTwkU9VoyZ50G+xBMwkqNKX5ymmUotBpJhKWJDcPalsfF99U1WzU0ldX+U/CW8o6P0TkPgCyKvnRAjw6n0aP8j/D4Q2cbtZdSl36dmfhUrBvp80aySKM/iYfDeLLm7CF3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JAxOgm6I; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so55159165e9.2;
-        Mon, 11 Nov 2024 02:33:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731321206; x=1731926006; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/75HCuIvnIChwVSX8bQ0PTjz4RwEQPBR5AO+hQeL43E=;
-        b=JAxOgm6Iw1PE1oMq/fD+wrKk7HOziMs+QFJ1es9Wg0uHkXbTHGb8ot8lzqDSkjbvRv
-         Dx01zDlCuuwyPVqKWik67OkpCozuQEMUxqbjyQB49mmsflpY5sSVwesHShFJ8LHUZX+0
-         Hw1IyF01ddLNdXHLbTWC/MTPQnw35lszj9a0UTtIq2vRfA4vOqgXwYNxz9vwNzgrvdQu
-         8gdk50sHtryXHhJZwlzGZBcT5EIjfBM6LAnuc7RI8jt7GO0Qxuvk9iOSwg7Lw67P0NlN
-         XZzm9zNsKfOAhn0mef/OPEcUyGySZnA6SqcyjdEEIz+UAAp82X6nU0qVvs5WLLpLi4gc
-         oQBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731321206; x=1731926006;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/75HCuIvnIChwVSX8bQ0PTjz4RwEQPBR5AO+hQeL43E=;
-        b=rrKF6tZw9H7Jhf46hHRFf1Z7tLxwkEoBwr2ompqkV48RrIfHZ6w5Tmbnda44g1Bybq
-         +6JiQ3F43ZxfdaiRbeYOYRsVuyYAQEhLduTrjDqPsOnN+ibA/3ZQZLT9ThwlAhhTlADp
-         jkeEicju8ox93JRY+ulIvpQkbLLQ5CVq9ap0WjTpvgQe9Zzw8BCdGkdo+qPTe6vBvun2
-         +g3D4XhyRNyCVPuotyqmCNZM96ykMcZ+qcaAwrNS3IIUuB6/vNhHZHoTSYCZY38x5ztr
-         PXRuRDRzePhhILSFsfMrukBso9DGeg0rS2GscTZC4WxtcTi+A96ce0AoRJrKlfuY2vYo
-         CA3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUiOLleMDRS8IsNzzYPD4+YJvAlIak58VWowwP1sylZWx/V7k9o+ERwK48kmOmQydTLkL3WrNIdaL0=@vger.kernel.org, AJvYcCWS97mYaHthhfhDcvs0pZ6M/bu+fm4PkHJeyCuBf6EeFW63mwjhjgwLrYMFp6VoCOOkTROeK+BuS0uuCvfd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw+xWHXLjxgOzp0KYwwe/2nGePOV7mSRxkvJKomNsF+4Ai96zH
-	vhiQKDrEj1jfDDogwoLozvwX5w793nZyRCpXDHNcDex0ErH8dLU7dxHDe+TqLtXVMLS0
-X-Google-Smtp-Source: AGHT+IEkZDqDdh3QMhEX84sxbC1DLAibYOfUNoW3mxdqgHJOxsyjnCdL1DfqMfWXGfMrnpjcvN0eag==
-X-Received: by 2002:a05:600c:5494:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-432bbf6ba6emr111063015e9.26.1731321204648;
-        Mon, 11 Nov 2024 02:33:24 -0800 (PST)
-Received: from ?IPv6:2003:f6:ef02:f400:a23c:697f:16fb:11c5? (p200300f6ef02f400a23c697f16fb11c5.dip0.t-ipconnect.de. [2003:f6:ef02:f400:a23c:697f:16fb:11c5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0530694sm175469345e9.7.2024.11.11.02.33.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:33:24 -0800 (PST)
-Message-ID: <b91ccaa161b962336324af31cd507fd1255e5c5c.camel@gmail.com>
-Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than
- the hardware is capable of
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
- Lars-Peter Clausen
-	 <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron
-	 <jic23@kernel.org>
-Cc: Mircea Caprioru <mircea.caprioru@analog.com>, linux-iio@vger.kernel.org,
- 	linux-kernel@vger.kernel.org
-Date: Mon, 11 Nov 2024 11:37:46 +0100
-In-Reply-To: <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
-References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
-	 <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1731321614; c=relaxed/simple;
+	bh=MXMCzIaNOSRkH3nz2MJpmuNfBaqvBWenPM22q1GVMTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jbnn/ZX/qfk+cieQxzMBUM6ZxFg56sXqbCS32uNPq23rBcGEuLoFCIsLahR21HZ1U34pNHdYiaTHWzJal09ZPlm3WFoacKG/jHe9cgnMuwEg86DtiRpz0S5/b4vosJUbFw7esyUzPgFuFwJZyZjv6MfiSe5V0M5uzRo5ndfCMpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M1hhh6Cq; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731321613; x=1762857613;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=MXMCzIaNOSRkH3nz2MJpmuNfBaqvBWenPM22q1GVMTs=;
+  b=M1hhh6CqOqjRMMqD7FWvvWE+3Qr7TOMRLsPxurZsDaWVmDLf9VgPrz+Y
+   sV/oB8cI5k4w6E4a9dShiEK9VtW9vQFxmhqvLXi/19C46pfLVXUnIWEVV
+   qyHSATu0NuPtryVUUlIm5lcgHur5KjSfFiVnN2Vhr9Pq5Yi1Oo2qoLo05
+   tPq8LtWIkZgzbI0DSCswHyuDtod8MgXcCuJQ97YaDd7uu33en80jKO/j0
+   MgKDuuTZUAomG4948v8o35EOyyOk9FJqFDPjtuFtr3wUPT0+pseoyTO/x
+   dUgR0gjvknjJaQfuC/1D5OCalDlREqC4q/wQGdp+71MTdEpX1yUt4P/tL
+   w==;
+X-CSE-ConnectionGUID: dDOhZ41cQjS1n27UVzBckw==
+X-CSE-MsgGUID: 0D8e6AcJT2ed5TPXqXLJ+w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41682574"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41682574"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 02:40:13 -0800
+X-CSE-ConnectionGUID: x8Wy55MJQDK32T/Cutv6fA==
+X-CSE-MsgGUID: t2aAMlP+T0ylsSpgXBQIGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="117667086"
+Received: from uaeoff-desk2.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.223.207])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 02:40:09 -0800
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	kirill.shutemov@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	dan.j.williams@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	nik.borisov@suse.com,
+	kai.huang@intel.com
+Subject: [PATCH v7 00/10] TDX host: metadata reading tweaks, bug fix and info dump
+Date: Mon, 11 Nov 2024 23:39:36 +1300
+Message-ID: <cover.1731318868.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-11-08 at 19:18 +0100, Uwe Kleine-K=C3=B6nig wrote:
-> The ad7124-4 and ad7124-8 both support 16 channel registers. Don't
-> accept more (logical) channels from dt than that.
->=20
-> Fixes: b3af341bbd96 ("iio: adc: Add ad7124 support")
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
-> =C2=A0drivers/iio/adc/ad7124.c | 6 ++++++
-> =C2=A01 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index a5d91933f505..7473bcef7bc6 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -18,6 +18,7 @@
-> =C2=A0#include <linux/property.h>
-> =C2=A0#include <linux/regulator/consumer.h>
-> =C2=A0#include <linux/spi/spi.h>
-> +#include <linux/stringify.h>
-> =C2=A0
-> =C2=A0#include <linux/iio/iio.h>
-> =C2=A0#include <linux/iio/adc/ad_sigma_delta.h>
-> @@ -821,6 +822,11 @@ static int ad7124_parse_channel_config(struct iio_de=
-v
-> *indio_dev,
-> =C2=A0	if (!st->num_channels)
-> =C2=A0		return dev_err_probe(dev, -ENODEV, "no channel children\n");
-> =C2=A0
-> +	if (st->num_channels > AD7124_MAX_CHANNELS) {
-> +		dev_warn(dev, "Limit number of channels to "
-> __stringify(AD7124_MAX_CHANNELS) "\n");
-> +		st->num_channels =3D AD7124_MAX_CHANNELS;
-> +	}
+This series does necessary tweaks to TDX host "global metadata" reading
+code to fix some immediate issues in the TDX module initialization code,
+with intention to also provide a flexible code base to support sharing
+global metadata to KVM (and other kernel components) for future needs.
 
-Hmmm, I would treat it as an error...
+This series, and additional patches to initialize TDX when loading KVM
+module and read essential metadata fields for KVM TDX can be found at
+[1].
 
-- Nuno S=C3=A1
+Hi Dave (and maintainers),
+
+This series targets x86 tip.  Also add Dan, KVM maintainers and KVM list
+so people can also review and comment.
+
+This is a pre-work of the "quite near future" KVM TDX support.  I
+appreciate if you can review, comment and take this series if the
+patches look good to you.
+
+History:
+
+v6 -> v7:
+ - Collect tags from Dan and Nikolay (Thanks!)
+ - Address nit comments from Dan in patch 3 changelog.
+ - Rebase to tip/x86/tdx
+
+v5 -> v6:
+ - Change to use a script [*] to auto-generate metadata reading code.
+
+  - https://lore.kernel.org/kvm/f25673ea-08c5-474b-a841-095656820b67@intel.com/
+  - https://lore.kernel.org/kvm/CABgObfYXUxqQV_FoxKjC8U3t5DnyM45nz5DpTxYZv2x_uFK_Kw@mail.gmail.com/
+
+   Per Dave, this patchset doesn't contain a patch to add the script
+   to the kernel tree but append it in this cover letter in order to
+   minimize the review effort.
+
+ - Change to use auto-generated code to read TDX module version,
+   supported features and CMRs in one patch, and made that from and
+   signed by Paolo.
+ - Couple of new patches due to using the auto-generated code
+ - Remove the "reading metadata" part (due to they are auto-generated
+   in one patch now) from the consumer patches.
+
+Pervious versions and more background please see:
+
+ - https://lore.kernel.org/kvm/9a06e2cf469cbca2777ac2c4ef70579e6bb934d5.camel@intel.com/T/
+
+[1]: https://github.com/intel/tdx/tree/kvm-tdxinit-host-metadata-v7
+
+[*] The script used to generate the patch 3:
+
+#! /usr/bin/env python3
+import json
+import sys
+
+# Note: this script does not run as part of the build process.
+# It is used to generate structs from the TDX global_metadata.json
+# file, and functions to fill in said structs.  Rerun it if
+# you need more fields.
+
+TDX_STRUCTS = {
+    "version": [
+        "BUILD_DATE",
+        "BUILD_NUM",
+        "MINOR_VERSION",
+        "MAJOR_VERSION",
+        "UPDATE_VERSION",
+        "INTERNAL_VERSION",
+    ],
+    "features": [
+        "TDX_FEATURES0"
+    ],
+    "tdmr": [
+        "MAX_TDMRS",
+        "MAX_RESERVED_PER_TDMR",
+        "PAMT_4K_ENTRY_SIZE",
+        "PAMT_2M_ENTRY_SIZE",
+        "PAMT_1G_ENTRY_SIZE",
+    ],
+    "cmr": [
+        "NUM_CMRS", "CMR_BASE", "CMR_SIZE"
+    ],
+}
+
+STRUCT_PREFIX = "tdx_sys_info"
+FUNC_PREFIX = "get_tdx_sys_info"
+STRVAR_PREFIX = "sysinfo"
+
+def print_class_struct_field(field_name, element_bytes, num_fields, num_elements, file):
+    element_type = "u%s" % (element_bytes * 8)
+    element_array = ""
+    if num_fields > 1:
+        element_array += "[%d]" % (num_fields)
+    if num_elements > 1:
+        element_array += "[%d]" % (num_elements)
+    print("\t%s %s%s;" % (element_type, field_name, element_array), file=file)
+
+def print_class_struct(class_name, fields, file):
+    struct_name = "%s_%s" % (STRUCT_PREFIX, class_name)
+    print("struct %s {" % (struct_name), file=file)
+    for f in fields:
+        print_class_struct_field(
+            f["Field Name"].lower(),
+            int(f["Element Size (Bytes)"]),
+            int(f["Num Fields"]),
+            int(f["Num Elements"]),
+            file=file)
+    print("};", file=file)
+
+def print_read_field(field_id, struct_var, struct_member, indent, file):
+    print(
+        "%sif (!ret && !(ret = read_sys_metadata_field(%s, &val)))\n%s\t%s->%s = val;"
+        % (indent, field_id, indent, struct_var, struct_member),
+        file=file,
+    )
+
+def print_class_function(class_name, fields, file):
+    func_name = "%s_%s" % (FUNC_PREFIX, class_name)
+    struct_name = "%s_%s" % (STRUCT_PREFIX, class_name)
+    struct_var = "%s_%s" % (STRVAR_PREFIX, class_name)
+
+    print("static int %s(struct %s *%s)" % (func_name, struct_name, struct_var), file=file)
+    print("{", file=file)
+    print("\tint ret = 0;", file=file)
+    print("\tu64 val;", file=file)
+
+    has_i = 0
+    has_j = 0
+    for f in fields:
+        num_fields = int(f["Num Fields"])
+        num_elements = int(f["Num Elements"])
+        if num_fields > 1:
+            has_i = 1
+        if num_elements > 1:
+            has_j = 1
+
+    if has_i == 1 and has_j == 1:
+        print("\tint i, j;", file=file)
+    elif has_i == 1:
+        print("\tint i;", file=file)
+
+    print(file=file)
+    for f in fields:
+        fname = f["Field Name"]
+        field_id = f["Base FIELD_ID (Hex)"]
+        num_fields = int(f["Num Fields"])
+        num_elements = int(f["Num Elements"])
+        struct_member = fname.lower()
+        indent = "\t"
+        if num_fields > 1:
+            if fname == "CMR_BASE" or fname == "CMR_SIZE":
+                limit = "%s_%s->num_cmrs" %(STRVAR_PREFIX, "cmr")
+            elif fname == "CPUID_CONFIG_LEAVES" or fname == "CPUID_CONFIG_VALUES":
+                limit = "%s_%s->num_cpuid_config" %(STRVAR_PREFIX, "td_conf")
+            else:
+                limit = "%d" %(num_fields)
+            print("%sfor (i = 0; i < %s; i++)" % (indent, limit), file=file)
+            indent += "\t"
+            field_id += " + i"
+            struct_member += "[i]"
+        if num_elements > 1:
+            print("%sfor (j = 0; j < %d; j++)" % (indent, num_elements), file=file)
+            indent += "\t"
+            field_id += " * 2 + j"
+            struct_member += "[j]"
+
+        print_read_field(
+            field_id,
+            struct_var,
+            struct_member,
+            indent,
+            file=file,
+        )
+
+    print(file=file)
+    print("\treturn ret;", file=file)
+    print("}", file=file)
+
+def print_main_struct(file):
+    print("struct tdx_sys_info {", file=file)
+    for class_name, field_names in TDX_STRUCTS.items():
+        struct_name = "%s_%s" % (STRUCT_PREFIX, class_name)
+        struct_var = class_name
+        print("\tstruct %s %s;" % (struct_name, struct_var), file=file)
+    print("};", file=file)
+
+def print_main_function(file):
+    print("static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)", file=file)
+    print("{", file=file)
+    print("\tint ret = 0;", file=file)
+    print(file=file)
+    for class_name, field_names in TDX_STRUCTS.items():
+        func_name = "%s_%s" % (FUNC_PREFIX, class_name)
+        struct_var = class_name
+        print("\tret = ret ?: %s(&sysinfo->%s);" % (func_name, struct_var), file=file)
+    print(file=file)
+    print("\treturn ret;", file=file)
+    print("}", file=file)
+
+jsonfile = sys.argv[1]
+hfile = sys.argv[2]
+cfile = sys.argv[3]
+hfileifdef = hfile.replace(".", "_")
+
+with open(jsonfile, "r") as f:
+    json_in = json.load(f)
+    fields = {x["Field Name"]: x for x in json_in["Fields"]}
+
+with open(hfile, "w") as f:
+    print("/* SPDX-License-Identifier: GPL-2.0 */", file=f)
+    print("/* Automatically generated TDX global metadata structures. */", file=f)
+    print("#ifndef _X86_VIRT_TDX_AUTO_GENERATED_" + hfileifdef.upper(), file=f)
+    print("#define _X86_VIRT_TDX_AUTO_GENERATED_" + hfileifdef.upper(), file=f)
+    print(file=f)
+    print("#include <linux/types.h>", file=f)
+    print(file=f)
+    for class_name, field_names in TDX_STRUCTS.items():
+        print_class_struct(class_name, [fields[x] for x in field_names], file=f)
+        print(file=f)
+    print_main_struct(file=f)
+    print(file=f)
+    print("#endif", file=f)
+
+with open(cfile, "w") as f:
+    print("// SPDX-License-Identifier: GPL-2.0", file=f)
+    print("/*", file=f)
+    print(" * Automatically generated functions to read TDX global metadata.", file=f)
+    print(" *", file=f)
+    print(" * This file doesn't compile on its own as it lacks of inclusion", file=f)
+    print(" * of SEAMCALL wrapper primitive which reads global metadata.", file=f)
+    print(" * Include this file to other C file instead.", file=f)
+    print(" */", file=f)
+    for class_name, field_names in TDX_STRUCTS.items():
+        print(file=f)
+        print_class_function(class_name, [fields[x] for x in field_names], file=f)
+    print(file=f)
+    print_main_function(file=f)
+
+
+
+
+
+Kai Huang (9):
+  x86/virt/tdx: Rename 'struct tdx_tdmr_sysinfo' to reflect the spec
+    better
+  x86/virt/tdx: Start to track all global metadata in one structure
+  x86/virt/tdx: Use dedicated struct members for PAMT entry sizes
+  x86/virt/tdx: Add missing header file inclusion to local tdx.h
+  x86/virt/tdx: Switch to use auto-generated global metadata reading
+    code
+  x86/virt/tdx: Trim away tail null CMRs
+  x86/virt/tdx: Reduce TDMR's reserved areas by using CMRs to find
+    memory holes
+  x86/virt/tdx: Require the module to assert it has the NO_RBP_MOD
+    mitigation
+  x86/virt/tdx: Print TDX module version
+
+Paolo Bonzini (1):
+  x86/virt/tdx: Use auto-generated code to read global metadata
+
+ arch/x86/virt/vmx/tdx/tdx.c                 | 178 ++++++++++++--------
+ arch/x86/virt/vmx/tdx/tdx.h                 |  43 +----
+ arch/x86/virt/vmx/tdx/tdx_global_metadata.c |  89 ++++++++++
+ arch/x86/virt/vmx/tdx/tdx_global_metadata.h |  42 +++++
+ 4 files changed, 247 insertions(+), 105 deletions(-)
+ create mode 100644 arch/x86/virt/vmx/tdx/tdx_global_metadata.c
+ create mode 100644 arch/x86/virt/vmx/tdx/tdx_global_metadata.h
+
+
+base-commit: 7ae15e2f69bad06527668b478dff7c099ad2e6ae
+-- 
+2.46.2
 
 
