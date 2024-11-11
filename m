@@ -1,109 +1,151 @@
-Return-Path: <linux-kernel+bounces-403830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE7E9C3B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:50:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2782C9C3B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5388282CDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E081D283379
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6B31531C5;
-	Mon, 11 Nov 2024 09:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB34615696E;
+	Mon, 11 Nov 2024 09:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aQTf89N4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="jPqmi/ol"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3462137747;
-	Mon, 11 Nov 2024 09:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318583; cv=none; b=NAwMd5Btls2movv+VFVwt82wu4jdvzjcaVkyVkeadV1FN7pflfwNmfiIlwR4PaymOMZOifp0R+RGMSEmGMl4Fx1kKzQyT3ya4+yEYBqUNrbVGUv7ee012fd3nTs5p8Mo7qwHVM9h+4LUoZAPu6yP43+jCquBCkhOGh+l62nu7EI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318583; c=relaxed/simple;
-	bh=bFuwQvVDaRobEbDMsM+r1TnG8PeZqFEjybiX/ieA7ao=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7857012C54B;
+	Mon, 11 Nov 2024 09:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731318648; cv=pass; b=hBMe+5gh7gns8FglvHAhVk29KkDLJigyK3ag6iD2O5Kfcrx3f1WpVO9GvFtJXBNCOC6GfPZ2FMGgJtSkHl/zp+CyfjbdxqMgIseiH876RWgamwoB3CsMZvPpOJomylRLnSR8IC0LZxJb47f96SjZEfv10awm+4aGVjn9pugHfaU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731318648; c=relaxed/simple;
+	bh=KHw8aASocynsGpdOMjdykW8c3ar0Kk3HVfQKKxdmquk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZmTsV91kOGIl2sRifVN42OK8t1QlebtS8304mSzaz9LRcfvwnL+9sShbuh7/QJcE2zuioOVFp6teDKsXz9I4zfVqi6b/nd2qUw+Mjk/dQOk95D9B0YDar5B8/wK2DxcMoBRF+FuJqRruo03Nf+U2aNRUb+KpswiKsK71/ZgOaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aQTf89N4; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731318582; x=1762854582;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=bFuwQvVDaRobEbDMsM+r1TnG8PeZqFEjybiX/ieA7ao=;
-  b=aQTf89N4gTXd85/mrdeShLOH4NaC7G3zO9JoQa5EpRiS4397W4z+WDmZ
-   68J5Uaor9sptt5D0lSX1Fvwtb0jokmN8X3WRcNpnxtnUty6FAcVU/rIFA
-   BK0t/o7e9VKvpBPY7fepsmZ9Udlvh8d2WOUHp3981hWnLi1wyqVWAQzEa
-   S5nrG81l98jbSVyxQfrK86JEngzDMmVKJcrASWHRm3s7RbaOY+JaN24op
-   oz2sLsqRvaCHsw47vACcQtTUNCXr1KsUEzYb12rxo2FtCOrTC2zXfN0+n
-   v/CQwdtyuMElVDPjeRJRuM4o0dHqu8XwcZ/4oYn04o/zmcTOge576vjIj
-   Q==;
-X-CSE-ConnectionGUID: ARP5W4r8QBmcGDU76jkWGA==
-X-CSE-MsgGUID: 8zUyzvHdQMum0eGRtn15zw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="34906426"
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="34906426"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:49:42 -0800
-X-CSE-ConnectionGUID: 4ak59gGPRAKHqTAWJvIpyg==
-X-CSE-MsgGUID: VY60hJLdT1SP3bAb22nJkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="117768257"
-Received: from sschumil-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.68])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:49:37 -0800
-Date: Mon, 11 Nov 2024 11:49:32 +0200
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
-	seanjc@google.com, yan.y.zhao@intel.com, isaku.yamahata@gmail.com,
-	kai.huang@intel.com, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, xiaoyao.li@intel.com,
-	reinette.chatre@intel.com
-Subject: Re: [PATCH v2 00/25] TDX vCPU/VM creation
-Message-ID: <ZzHTLO-TM_5_Q7U3@tlindgre-MOBL1>
-References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
- <d0cf8fb2-9cff-40d0-8ffb-5d0ba9c86539@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z/86TqWXd1jUzK6+wQLKDc1xLndqCZtrtWq9riJ2w1qvJlGbvwkr1oi6GF9dEd6fu5V9XzNHehxYFOfHokqpkGxE8lmkCCLZP7x+8833TG58s+2Pl0zGdnt/0BVs8/Wvo9vlAS2vBB3cINsh8+Z+mGETSf4TFfjjvJL84hOdgZU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=jPqmi/ol; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731318633; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=FJbLeqL/G39HXHQzyIFGOdq3j78SumA8CUhi2kwKNgF5AW7XJMh8PFP6uvYcd+d5fgRvdkoTW95J5/NEih+i/vwpkn4g2m1OOrcvczN3JFArVOiG6a2M+fb6JBofwEiN5ZobFecCUv9apWabKKo880eWEPrs3nIzTlPgUUf43Uk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731318633; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XE2jxCW3lT2gfcGcIJ55cVRHtECsFw9StdzcJc6RzQs=; 
+	b=jRgfgZEoodAkd2wS7M8nd+wbV+4clKrG15K+DHKJFGpwBdIRekkacsHXdfAltVa8PVLdSqdSPE61430UcuGcfHJfGrbPGZkdSPzVX0U1ZVKjq64yWAslmNcOp19NZpzq/CTgIf7a4wwRt3c/IxakjbstYD9Y8TRR02XY5pkyjLY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731318633;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=XE2jxCW3lT2gfcGcIJ55cVRHtECsFw9StdzcJc6RzQs=;
+	b=jPqmi/olbNy5iJkBOWCARHuOletkrjEqLRwHOG/eAOHP61dAJQsH9YMy7QCH8z7U
+	sj1ddJJVQUggDIoh/cDJEo8DSgKig6iny8xvh758q+6pfw66lKwpurVYGJllYyNi2Is
+	Z3uIu4MgBLHUx/uUr+7OBGzMD744WzrCzGiXVLnc=
+Received: by mx.zohomail.com with SMTPS id 1731318631570982.4858105678952;
+	Mon, 11 Nov 2024 01:50:31 -0800 (PST)
+Date: Mon, 11 Nov 2024 10:50:27 +0100
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+	mauro.chehab@linux.intel.com, kernel@collabora.com,
+	bob.beckett@collabora.com, nicolas.dufresne@collabora.com
+Subject: Re: [PATCH 2/2] docs: media: Debugging guide for the media subsystem
+Message-ID: <20241111095027.m36ef62bltcjbxkc@basti-XPS-13-9310>
+References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
+ <20241028-media_docs_improve_v3-v1-2-2b1b486c223e@collabora.com>
+ <87h68i22ww.fsf@trenco.lwn.net>
+ <20241108101243.a6rxed2lx55hwcmj@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d0cf8fb2-9cff-40d0-8ffb-5d0ba9c86539@intel.com>
+In-Reply-To: <20241108101243.a6rxed2lx55hwcmj@basti-XPS-13-9310>
+X-ZohoMailClient: External
 
-On Thu, Oct 31, 2024 at 09:21:29PM +0200, Adrian Hunter wrote:
-> On 30/10/24 21:00, Rick Edgecombe wrote:
-> > Here is v2 of TDX VM/vCPU creation series. As discussed earlier, non-nits 
-> > from v1[0] have been applied and it’s ready to hand off to Paolo. A few 
-> > items remain that may be worth further discussion:
-> >  - Disable CET/PT in tdx_get_supported_xfam(), as these features haven’t 
-> >    been been tested.
-> 
-> It seems for Intel PT we have no support for restoring host
-> state.  IA32_RTIT_* MSR preservation is Init(XFAM(8)) which means
-> the TDX Module sets the MSR to its RESET value after TD Enty/Exit.
-> So it seems to me XFAM(8) does need to be disabled until that is
-> supported.
+Hey Jonathan,
 
-So for now, we should remove the PT bit from tdx_get_supported_xfam(),
-but can still keep it in tdx_restore_host_xsave_state()?
+On 08.11.2024 11:12, Sebastian Fricke wrote:
+>Hey Jon,
+>
+>On 07.11.2024 13:40, Jonathan Corbet wrote:
+>>Sebastian Fricke <sebastian.fricke@collabora.com> writes:
+>>
+>>>Provide a guide for developers on how to debug code with a focus on the
+>>>media subsystem. This document aims to provide a rough overview over the
+>>>possibilities and a rational to help choosing the right tool for the
+>>>given circumstances.
+>>>
+>>>Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+>>>---
+>>> Documentation/process/debugging/index.rst          |   1 +
+>>> .../debugging/media_specific_debugging_guide.rst   | 178 +++++++++++++++++++++
+>>> 2 files changed, 179 insertions(+)
+>>
+>>Mostly overall comments here
+>>
+>>- much of what's here seems redundant with your other new documents; you
+>> seem to be going over the same list of tools?  Why not just talk about
+>> the ones that are unique to the media subsystem?
+>
+>I choosed the minimum duplication path because of the perspective that I
+>envisioned of the reader.
+>The reader reads that there is a debugging guide for the media
+>subsystem, which to my ears sounds like:
+>"Everything you need to know to get started debugging in this subsystem,
+>with recommendations for useful tools"
+>and not
+>"Some specific media bits that expect you to have read every other
+>debugging documentation and judge yourself which of these tools might be
+>useful for your debugging".
+>
+>I look at that specifically from a perspective that the general
+>debugging guides are probably going to be extended in the future with
+>more general debugging tools which might not be as useful for the media
+>subsystem.
 
-Then for save/restore, maybe we can just use the pt_guest_enter() and
-pt_guest_exit() also for TDX. Some additional checks are needed for
-the pt_mode though as the TDX module always clears the state if PT is
-enabled. And the PT_MODE_SYSTEM will be missing TDX enter/exit data
-but might be otherwise usable.
+@Jon: Does that sound reasonable to you? Or should I rework the page? I
+think this is especially interesting for the audio debugging guide as
+well, because this determines how subsystem specific guides should be
+formatted.
 
 Regards,
+Sebastian
 
-Tony
+>
+>>
+>>- Please use the function() convention throughout.
+>
+>Ack. I assume you also mean the titles as well.
+>
+>>
+>>- Back in the ancient past when I was writing V4L2 drivers, one of my
+>> biggest problems was figuring out why applications weren't getting
+>> what they expected.  The vivi driver was most useful for finding
+>> subtle differences...  One would use vivid now, but I suspect the
+>> utility remains.
+>
+>Okay I'll look into that.
+>
+>>
+>>Thanks,
+>>
+>>jon
+>>
+>Regards,
+>
+>Sebastian Fricke
+>
 
