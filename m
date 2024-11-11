@@ -1,230 +1,291 @@
-Return-Path: <linux-kernel+bounces-404502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E339C4480
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:05:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004809C4482
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:06:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6893281F50
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:05:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FDD1F21B5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE32C1AAE19;
-	Mon, 11 Nov 2024 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E691AA1E6;
+	Mon, 11 Nov 2024 18:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QagBZooc"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZDhHYVS"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209AC15D5C5;
-	Mon, 11 Nov 2024 18:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C077145B2E;
+	Mon, 11 Nov 2024 18:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348261; cv=none; b=lmreh49pI3+X84c1ncY4m3KswpJTfa7kkRAHtRnuVZbpeTPAkz2Nb/Y3S8yhWOenKHAjL6Vwe1bY8PknkCXtf6ZxwK1kolh7RM1yQyh9RKtKq5YyGBUNUle2krDkMXc13v22KR9OUWTrDyIkiVC1egu4eA4shAbFNvfqa3KaOTY=
+	t=1731348341; cv=none; b=TtQXyFOb0/s2QdNvtqJCYgfeNJIJCEPbcezDi+vreCWiAiUQMszgqOkyjVIbvFEh8yhkg3ZnNDwA6lUTmkv526WS6NCptM+C6cphuArbqsMv/Yuz+Unq/GT8yUG6Us30GSmryz6WTKoirAFqSbPP97Jrp24UHFcb2dJRMFNxxZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731348261; c=relaxed/simple;
-	bh=Zob6Dhfvuz9YDRj9DmM4VlKOg1HCcxbuB+dKRE5WFO8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YOgkDz0NWl4qAQsRFWSLsTcpuweMlg4q0MCIVfrfymBRQzJ0Gf3PHsrlCODbxbsVxsEfwz5CuQwGr+NmrM2xexL1el0+xgJq7GAL3CWSn/DQU/wqeroiX7cqQYqu02FNDRGiFqzVRYzCYH9mgBGioG8NW/b89tmMRwGXYmQkkl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QagBZooc; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1731348341; c=relaxed/simple;
+	bh=JEO+B8QOizatqwb1g9mjpIaXLtkamIuvdm5kIgrtzDM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GDjk33p3NjSJiWaQaX4hCku+tsVh6YKxNhUhmdo1OdzsyfrIF8WlOzSf/bL6XOnf4r5OpiLgT2MhFWwFKW5e2JbFiduPPv8iRWCzHiSNANTNigRznWoyxJQ78RFbm7u8vsihYFtZFIlj1KOb5UcwKwHonnqJm/VP3ub0T5IzZ7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZDhHYVS; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so3810084b3a.1;
-        Mon, 11 Nov 2024 10:04:17 -0800 (PST)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e3cdbc25a0so46905047b3.2;
+        Mon, 11 Nov 2024 10:05:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731348257; x=1731953057; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=PKmxg9GGHmNCX++vTNZsc4EelTdMMRYckJbYtzhirFw=;
-        b=QagBZoocTwxQqlCUVROh0clmFzXhZM2g3IDS+xXtMtB8f6Z/AH9IxFXRV2sT6S4jYo
-         HdPwpajQqJDJbSFhMvb87nbuysAf4KZRMTesfZ1iC6IxE+Trzcwm6GDIPHyl8IXI5NG8
-         7NPFqphkWzN21Q0cEEVZQsO/8vC60EVm3kPPuVa5Egr+Ik0GQPw/oMtwxKLV+T7hd3yY
-         E4+sacmEEEsAeKR+Kw1dhM0av4bbIUjzARpgu1JOXwBL2TGBWI73HQBtn1Zt5NlG8Qnp
-         tV9nLsi7n0Qyab/Wc+Fbgr7R7kzYGuWZRGykrS9JwIzncWXZ5ZhPXb2AtjVQweBgoV27
-         PlEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731348257; x=1731953057;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731348339; x=1731953139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PKmxg9GGHmNCX++vTNZsc4EelTdMMRYckJbYtzhirFw=;
-        b=NLFMLAjMsUFE8ZivQjV0aeBpOiw65ykvHnI5O7rnetlxCbE3ntzPg4cgnzqK+OCaNM
-         ue1vzl/vqKXrXXAIc0+iUydcHFbULDZvJcUcVORx+NMCbEPMlaN4bM0xkTaqClYxKplA
-         TpyHY4hvGwG/B4o61TGzNuWuW7/96U5XniqMSDKrAeMZFHbC6LXJGjSHjQfEnSPvH57i
-         mUbLAZjkxsjhNlBAqzUfZMDN7/BK2VPZJIEtw16tfcEVa8JI7noKV4raSKYbnVuEB5q0
-         H7vzQpyOma2i3GgyoLweNGdZfgydFxy/kWjjNlLMieam2LBrfAS1k40RCuHcNorFhKd/
-         6rbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXIIWS4QjBxEPY5aSMwwaA9z4UvHQEJ62tEUCFtZzUQnlT5xmpDc/2FBaD9SGoswFfXvgy8UswKo3@vger.kernel.org, AJvYcCX2jQMK+yWqHZ+mHyA5ZnViyA2KGIz0YQScRL25i4fVHi0Yfz82znFbjk+idRPrT/mCMdXYBHrO/0wgUitV@vger.kernel.org, AJvYcCXO1dQFHK11TOzOqCoMu/lcblxDDbkG9VIGRC/iCioIk0ZKHSj2YmFtmm9r5s+yF7UJfID9hN/7XI7upQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+QcehXAMhDW+OBESKqTHoziRsBGzblDAPlWOgJMqoXbPsmwbA
-	KMiDsoCwYzg5soxyI1YcJVzJOlhOCE3SJslV99xCn1WbX2oJmWbq
-X-Google-Smtp-Source: AGHT+IHm6HOvOrc1BUjUnjkjMNhGEE2/6o5R182iW37iCcmgBZIxz3bXmpi/ntFA/fVZ/0ndenLwkQ==
-X-Received: by 2002:a05:6a21:6da7:b0:1d9:21a0:14e0 with SMTP id adf61e73a8af0-1dc229266a9mr19535036637.12.1731348257036;
-        Mon, 11 Nov 2024 10:04:17 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f644a23sm8798446a12.53.2024.11.11.10.04.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 10:04:15 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <41995c8a-8b05-4c56-b4a3-5f275a88b899@roeck-us.net>
-Date: Mon, 11 Nov 2024 10:04:13 -0800
+        bh=/O5vwpnOpUfo0dGuASRPQwgdNYcihVOMr+xGnfkmQOM=;
+        b=SZDhHYVSNIlaRbmd86Jgz5RSEAhx6rvLQi7Jp/A4es2WmJguPQoWTTingEofv/9mGZ
+         5JLrUusLpOg7oPrQMN8KCxSyG0dkoNtrK4HTDnvdnLi3jBMPyIz76QoCPauGuTqigfDP
+         WdDAxrYy4ZZeGA6+xB7JGeBSBDAoBr414fbfCmpU7OFbG89REWr9WmoOS7x7dhrdjJAe
+         neDiHXrlpKfU4jbY0zECuiNeDXJgbcSK78K2N4TkSdP67yFRKMQiTQP8XdvvRyekR8aX
+         VCJgH2HkLNhDTCV/sfu2b5ifyVIWgSs5DGHjGkyvaw8NlffADy7P1k3nrNSYOdr5xuQK
+         9wpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731348339; x=1731953139;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/O5vwpnOpUfo0dGuASRPQwgdNYcihVOMr+xGnfkmQOM=;
+        b=ImxLLC4SSqFUPTgxTjMzORJ7LjE9aT3iUkvbDy3Tfl+p4zBuyt5FmieIlX8YBg+Qhz
+         pqUT1FYyuuocxm86RWW585/Zug7TQ8Gcp/EnFNwoF1fRFeEZP3FqhjW7FllOZ6dAVhif
+         1cetF5jdhui+pq6vbYvDakOFkq3JuDaYX6RbDUq6BzgomoKkUyvyGl80fJLFUt81BMts
+         CkU699x6FWfS2Lnr2TvJD9A7VmRxUdtlFIGDTlBOUVhXzYS+30pC3LxeKgvC4M0Sp+cj
+         vPip3WjP+7JSeVW6YZsQIolWIVEkkUEXKEx3kMnuzuvG1nXTAgC+HV7C2G1XN6mLIOm2
+         3/iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmRUIJub5ppN19Rfi2DP6ao12Nn4sYvLwrKrjDNIN7TIZRIQHyJDhAEHM2skdlqHJKMMLL6HmFTFaZcyI=@vger.kernel.org, AJvYcCWphAAN3yN3EyDl3dcwAbSV95T7NwljBi9y3+SEs7ZVFUeCoSLfEA6kYbWLLF1k/nPnartRj3dpTiOg/07of6XT7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMTRKv3TwvvSzx8YHv/iQlEX63ZGIWOexe4jLq/HpaotAqDNl+
+	+lVbxCrVnCbiiqZ43OPivcUspSAX3ouLv/iNsWi95HMD9JHPIkCqieWiDIWO3mpjkNJJqWU12Yj
+	1gopbFTx6iyud+HSPuSzXtRKzkrw=
+X-Google-Smtp-Source: AGHT+IGX9vLtZICs88jg6RGBDCMcD2/P34q0X6s03XFLDnj8l5B1ZYNafGrYjWaXV9znGxuqXPcGf6p/8cFdSiGgatw=
+X-Received: by 2002:a05:690c:388:b0:6ea:807c:bbaa with SMTP id
+ 00721157ae682-6eaddd79c47mr130256457b3.5.1731348339099; Mon, 11 Nov 2024
+ 10:05:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] hwmon: tmp108: Add support for I3C device
-To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jean Delvare <jdelvare@suse.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzk@kernel.org>,
- linux-hwmon@vger.kernel.org
-References: <20241111-p3t1085-v3-0-bff511550aad@nxp.com>
- <20241111-p3t1085-v3-4-bff511550aad@nxp.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241111-p3t1085-v3-4-bff511550aad@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <20241108204137.2444151-6-howardchu95@gmail.com> <CAP-5=fXDd2MUvukB6NVMN962wxjPN6_F-AxOxOUUb-uj5BVV0A@mail.gmail.com>
+In-Reply-To: <CAP-5=fXDd2MUvukB6NVMN962wxjPN6_F-AxOxOUUb-uj5BVV0A@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 11 Nov 2024 10:05:28 -0800
+Message-ID: <CAH0uvogkoUW+hA7V8TgyUT-PrGx6JajKZDMj9-w9z25QVT5O4Q@mail.gmail.com>
+Subject: Re: [PATCH v7 05/10] perf record --off-cpu: Dump off-cpu samples in BPF
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/11/24 09:32, Frank Li wrote:
-> Add support for I3C device in the tmp108 driver to handle the P3T1085
-> sensor. Register the I3C device driver to enable I3C functionality for the
-> sensor.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change from v2 to v3
-> - change kconfig to select REGMAP_I3C if enable i3c
-> - remove i3c/master.h
-> - remove , after {}
-> - use #ifdef CONFIG_I3C about i3c register code
-> 
-> I2C    I3C
-> Y       Y       support both
-> Y       N       i3c part code will not be compiled
-> N       Y       whole TPM108 will not be compiled
-> N       N       whole TPM108 will not be compiled
-> ---
->   drivers/hwmon/Kconfig  |  1 +
->   drivers/hwmon/tmp108.c | 31 +++++++++++++++++++++++++++++++
->   2 files changed, 32 insertions(+)
-> 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index d43ca7aa4a548..9579db7849e1f 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -2298,6 +2298,7 @@ config SENSORS_TMP108
->   	tristate "Texas Instruments TMP108"
->   	depends on I2C
->   	select REGMAP_I2C
-> +	select REGMAP_I3C if I3C
->   	help
->   	  If you say yes here you get support for Texas Instruments TMP108
->   	  sensor chips and NXP P3T1085.
-> diff --git a/drivers/hwmon/tmp108.c b/drivers/hwmon/tmp108.c
-> index bfbea6349a95f..deb1505321335 100644
-> --- a/drivers/hwmon/tmp108.c
-> +++ b/drivers/hwmon/tmp108.c
-> @@ -13,6 +13,7 @@
->   #include <linux/mutex.h>
->   #include <linux/of.h>
->   #include <linux/i2c.h>
-> +#include <linux/i3c/device.h>
->   #include <linux/init.h>
->   #include <linux/jiffies.h>
->   #include <linux/regmap.h>
-> @@ -442,6 +443,36 @@ static struct i2c_driver tmp108_driver = {
->   
->   module_i2c_driver(tmp108_driver);
->   
-> +#ifdef CONFIG_I3C
-> +static const struct i3c_device_id p3t1085_i3c_ids[] = {
-> +	I3C_DEVICE(0x011b, 0x1529, NULL),
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i3c, p3t1085_i3c_ids);
-> +
-> +static int p3t1085_i3c_probe(struct i3c_device *i3cdev)
-> +{
-> +	struct device *dev = i3cdev_to_dev(i3cdev);
-> +	struct regmap *regmap;
-> +
-> +	regmap = devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return dev_err_probe(dev, PTR_ERR(regmap),
-> +				     "Failed to register i3c regmap\n");
-> +
-> +	return tmp108_common_probe(dev, regmap, "p3t1085_i3c");
-> +}
-> +
-> +static struct i3c_driver p3t1085_driver = {
-> +	.driver = {
-> +		.name = "p3t1085_i3c",
-> +	},
-> +	.probe = p3t1085_i3c_probe,
-> +	.id_table = p3t1085_i3c_ids,
-> +};
-> +module_i3c_driver(p3t1085_driver);
-> +#endif
+Hi Ian,
 
-While looking at i3c code, I found module_i3c_i2c_driver(). Can we use
-that function to register both i2c and i3c in one call ?
+On Mon, Nov 11, 2024 at 9:54=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
+> wrote:
+> >
+> > Collect tid, period, callchain, and cgroup id and dump them when off-cp=
+u
+> > time threshold is reached.
+> >
+> > We don't collect the off-cpu time twice (the delta), it's either in
+> > direct samples, or accumulated samples that are dumped at the end of
+> > perf.data.
+> >
+> > Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/util/bpf_skel/off_cpu.bpf.c | 83 ++++++++++++++++++++++++--
+> >  1 file changed, 78 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
+pf_skel/off_cpu.bpf.c
+> > index dc6acafb9353..bf652c30b1c9 100644
+> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > @@ -18,10 +18,18 @@
+> >  #define MAX_STACKS   32
+> >  #define MAX_ENTRIES  102400
+> >
+> > +#define MAX_CPUS  4096
+> > +#define MAX_OFFCPU_LEN 37
+> > +
+> > +struct stack {
+> > +       u64 array[MAX_STACKS];
+> > +};
+> > +
+> >  struct tstamp_data {
+> >         __u32 stack_id;
+> >         __u32 state;
+> >         __u64 timestamp;
+> > +       struct stack stack;
+> >  };
+> >
+> >  struct offcpu_key {
+> > @@ -39,6 +47,24 @@ struct {
+> >         __uint(max_entries, MAX_ENTRIES);
+> >  } stacks SEC(".maps");
+> >
+> > +struct offcpu_data {
+> > +       u64 array[MAX_OFFCPU_LEN];
+> > +};
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
+> > +       __uint(key_size, sizeof(__u32));
+> > +       __uint(value_size, sizeof(__u32));
+> > +       __uint(max_entries, MAX_CPUS);
+> > +} offcpu_output SEC(".maps");
+>
+> Does patch 4 build without this definition? (we're in patch 5 here). I
+> think this should be in patch 4.
+
+Okay sure thanks :)
+
+>
+> > +
+> > +struct {
+> > +       __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+> > +       __uint(key_size, sizeof(__u32));
+> > +       __uint(value_size, sizeof(struct offcpu_data));
+> > +       __uint(max_entries, 1);
+> > +} offcpu_payload SEC(".maps");
+> > +
+> >  struct {
+> >         __uint(type, BPF_MAP_TYPE_TASK_STORAGE);
+> >         __uint(map_flags, BPF_F_NO_PREALLOC);
+> > @@ -185,6 +211,39 @@ static inline int can_record(struct task_struct *t=
+, int state)
+> >         return 1;
+> >  }
+> >
+> > +static inline int copy_stack(struct stack *from, struct offcpu_data *t=
+o, int n)
+> > +{
+> > +       int len =3D 0;
+> > +
+> > +       for (int i =3D 0; i < MAX_STACKS && from->array[i]; ++i, ++len)
+> > +               to->array[n + 2 + i] =3D from->array[i];
+> > +
+> > +       return len;
+> > +}
+> > +
+>
+> Dump is something of a generic name. Could you kernel-doc this
+> function to describe the behavior?
+
+Sure.
+
+>
+> > +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct of=
+fcpu_key *key,
+> > +                       struct stack *stack, __u64 delta, __u64 timesta=
+mp)
+> > +{
+> > +       /* dump tid, period, callchain, and cgroup id */
+> > +       int n =3D 0, len =3D 0;
+> > +
+> > +       data->array[n++] =3D (u64)key->tgid << 32 | key->pid;
+> > +       data->array[n++] =3D delta;
+> > +
+> > +       /* data->array[n] is callchain->nr (updated later) */
+> > +       data->array[n + 1] =3D PERF_CONTEXT_USER;
+> > +       data->array[n + 2] =3D 0;
+> > +       len =3D copy_stack(stack, data, n);
+> > +
+> > +       /* update length of callchain */
+> > +       data->array[n] =3D len + 1;
+> > +       n +=3D len + 2;
+> > +
+> > +       data->array[n++] =3D key->cgroup_id;
+> > +
+> > +       return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT=
+_CPU, data, n * sizeof(u64));
+> > +}
+> > +
+> >  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
+> >                         struct task_struct *next, int state)
+> >  {
+> > @@ -209,6 +268,12 @@ static int off_cpu_stat(u64 *ctx, struct task_stru=
+ct *prev,
+> >         pelem->state =3D state;
+> >         pelem->stack_id =3D stack_id;
+> >
+> > +       /*
+> > +        * If stacks are successfully collected by bpf_get_stackid(), c=
+ollect them once more
+> > +        * in task_storage for direct off-cpu sample dumping
+> > +        */
+> > +       if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STACK=
+S * sizeof(u64), BPF_F_USER_STACK)) {
+> > +       }
+>
+> Why the empty if?
+
+Forgot to say in the commit message, bpf_get_stack() has a return
+value and if I don't use it I'll get result unused warning from clang,
+so either this or:
+    int __attribute__((unused)) len;
+    len =3D bpf_get_stack(ctx, stack_p->array, MAX_STACKS * sizeof(u64),
+
+We don't need error handling, it goes to "next:" naturally, there's no
+code in between.
+
+>
+> > +
+> >  next:
+> >         pelem =3D bpf_task_storage_get(&tstamp, next, NULL, 0);
+> >
+> > @@ -223,11 +288,19 @@ static int off_cpu_stat(u64 *ctx, struct task_str=
+uct *prev,
+> >                 __u64 delta =3D ts - pelem->timestamp;
+> >                 __u64 *total;
+> >
+> > -               total =3D bpf_map_lookup_elem(&off_cpu, &key);
+> > -               if (total)
+> > -                       *total +=3D delta;
+> > -               else
+> > -                       bpf_map_update_elem(&off_cpu, &key, &delta, BPF=
+_ANY);
+> > +               if (delta >=3D offcpu_thresh) {
+> > +                       int zero =3D 0;
+> > +                       struct offcpu_data *data =3D bpf_map_lookup_ele=
+m(&offcpu_payload, &zero);
+> > +
+> > +                       if (data)
+> > +                               off_cpu_dump(ctx, data, &key, &pelem->s=
+tack, delta, pelem->timestamp);
+> > +               } else {
+> > +                       total =3D bpf_map_lookup_elem(&off_cpu, &key);
+> > +                       if (total)
+> > +                               *total +=3D delta;
+> > +                       else
+> > +                               bpf_map_update_elem(&off_cpu, &key, &de=
+lta, BPF_ANY);
+> > +               }
+>
+> Looks good! :-)
+>
+> Thanks,
+> Ian
+>
+> >
+> >                 /* prevent to reuse the timestamp later */
+> >                 pelem->timestamp =3D 0;
+> > --
+> > 2.43.0
+> >
 
 Thanks,
-Guenter
-
+Howard
 
