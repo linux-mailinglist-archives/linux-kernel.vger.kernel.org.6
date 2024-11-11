@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-403441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 888869C35C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:59:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F02B9C35C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206622827F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:59:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915BE1C21CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0331146A9B;
-	Mon, 11 Nov 2024 00:58:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4C7149011;
-	Mon, 11 Nov 2024 00:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29191250F8;
+	Mon, 11 Nov 2024 01:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BS53ovdm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB6DE545;
+	Mon, 11 Nov 2024 01:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731286694; cv=none; b=mFnshnHmwvczyiMjW25JxxK8oGzXYi+P8U389m0nGWPWKlBMfPQPiE6qrshuR/YZAR4/qYiBVkmHTOR1XH0RwneS1mME6TviZoommayvSnUs11QfvLMCWIvIEuO7LBfsYNjASy2XQMv611JLh8gzXIyNMO77mpMpXHSDRgdwkd4=
+	t=1731286808; cv=none; b=spxOoD/Bn/XJC3YrvnriO/2kZYHZ4DP+RyUKBOGgYOIszjkcLw8X/e+o8okrfBn6mpPkOPCnCmL5t6vqIhh3DoJMB0WVvyhA8YkIj8am+Kizr7qixai5oiMRBr8ZUjy+11BqQDKGbseeHuto2migIERA4FoLnWgmPM0OkZ42pjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731286694; c=relaxed/simple;
-	bh=zOQK/qxhm2/XvBVcerogONH/FQX1BUF8X2uJVIxyYYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RzK3zguJQBI4l6ynwx2C2u7pCJtCntDvivw8JdK9/jJgeTflYcEQpyT/u5Z+ghbmI32EZsVKYwrqaR8BU6uuU2Cd6cBCX12UhRwVIusQsPhLLUrCW0NsF5qeZYCM9uNYZ3cs26vaDx5L7iW8Uo4NMYiP0/S/nehKUnVOcTbw+hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D2613D5;
-	Sun, 10 Nov 2024 16:58:42 -0800 (PST)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D004C3F66E;
-	Sun, 10 Nov 2024 16:58:10 -0800 (PST)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] pinctrl: sunxi: Add support for the secondary A523 GPIO ports
-Date: Mon, 11 Nov 2024 00:57:50 +0000
-Message-ID: <20241111005750.13071-8-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241111005750.13071-1-andre.przywara@arm.com>
-References: <20241111005750.13071-1-andre.przywara@arm.com>
+	s=arc-20240116; t=1731286808; c=relaxed/simple;
+	bh=no3mHB2twsXlA34Fy00xchLZk1X7cfEzBJRPPAJUjRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQXhn87Kf0VNkaLkF+Bx94Zh6rSPxx1lj8XYRRbbaXUkK18MC9XW/+dAS8kQeVBz5EntXViG9pQhMT++k4osZfxing8fyb4EOoP6uWBYqAp1CmsvFF1Rkk53BdpNKMVkwGsSREpKfE8/fJIMTIuKyVHbqFxGxXiNttDC76Uko/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BS53ovdm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8328C4CECD;
+	Mon, 11 Nov 2024 01:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731286808;
+	bh=no3mHB2twsXlA34Fy00xchLZk1X7cfEzBJRPPAJUjRw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BS53ovdmcARC2LJNIkTDqC5iweZIkJSpWY4cJD3qR2rbB/lMcuucooHXfrvSbtwPI
+	 FoB869q1PbtN92TbO3Bc3I7n2ZZYb9j6W4ZxiEOKub8ohCm8ABRL8eLh+HY6eoAxwU
+	 EfBCwANOKbGcJKGtnYFbd2ZlPoPG8XBrYWsM9g1goDuweWV3BrIjLypvPrin4gsW73
+	 HVPDbFgtOa3wdbGJx7v863aNeGdhalhsCB5QkcKjtp2z7tuko9Df/iC+8qNnlbqgMr
+	 LJswad35BErfFCTnwaQztTtpNS4v0r0AKkM/slKFwyrl+jMbJ2ubK70WH0mo7BwQ8C
+	 xNt2so64ggnhw==
+Message-ID: <ccd59d15-c831-4f9e-9626-7c813301b090@kernel.org>
+Date: Sun, 10 Nov 2024 18:00:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
+ held
+To: Breno Leitao <leitao@debian.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
+Content-Language: en-US
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As most other Allwinner SoCs before, the A523 chip contains a second
-GPIO controller, managing banks PL and PM.
-Use the newly introduced DT based pinctrl driver to describe just the
-generic pinctrl properties, so advertise the number of pins per bank
-and the interrupt capabilities. The actual function/mux assignment is
-taken from the devicetree.
+On 11/8/24 7:08 AM, Breno Leitao wrote:
+> Accessing `mr_table->mfc_cache_list` is protected by an RCU lock. In the
+> following code flow, the RCU read lock is not held, causing the
+> following error when `RCU_PROVE` is not held. The same problem might
+> show up in the IPv6 code path.
+> 
+> 	6.12.0-rc5-kbuilder-01145-gbac17284bdcb #33 Tainted: G            E    N
+> 	-----------------------------
+> 	net/ipv4/ipmr_base.c:313 RCU-list traversed in non-reader section!!
+> 
+> 	rcu_scheduler_active = 2, debug_locks = 1
+> 		   2 locks held by RetransmitAggre/3519:
+> 		    #0: ffff88816188c6c0 (nlk_cb_mutex-ROUTE){+.+.}-{3:3}, at: __netlink_dump_start+0x8a/0x290
+> 		    #1: ffffffff83fcf7a8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_dumpit+0x6b/0x90
+> 
+> 	stack backtrace:
+> 		    lockdep_rcu_suspicious
+> 		    mr_table_dump
+> 		    ipmr_rtm_dumproute
+> 		    rtnl_dump_all
+> 		    rtnl_dumpit
+> 		    netlink_dump
+> 		    __netlink_dump_start
+> 		    rtnetlink_rcv_msg
+> 		    netlink_rcv_skb
+> 		    netlink_unicast
+> 		    netlink_sendmsg
+> 
+> This is not a problem per see, since the RTNL lock is held here, so, it
+> is safe to iterate in the list without the RCU read lock, as suggested
+> by Eric.
+> 
+> To alleviate the concern, modify the code to use
+> list_for_each_entry_rcu() with the RTNL-held argument.
+> 
+> The annotation will raise an error only if RTNL or RCU read lock are
+> missing during iteration, signaling a legitimate problem, otherwise it
+> will avoid this false positive.
+> 
+> This will solve the IPv6 case as well, since ip6mr_rtm_dumproute() calls
+> this function as well.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+> Changes in v2:
+> - Instead of getting an RCU read lock, rely on rtnl mutex (Eric)
+> - Link to v1: https://lore.kernel.org/r/20241107-ipmr_rcu-v1-1-ad0cba8dffed@debian.org
+> - Still sending it against `net`, so, since this warning is annoying
+> ---
+>  net/ipv4/ipmr_base.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/pinctrl/sunxi/Kconfig                 |  5 ++
- drivers/pinctrl/sunxi/Makefile                |  1 +
- drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c | 54 +++++++++++++++++++
- 3 files changed, 60 insertions(+)
- create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
+Reviewed-by: David Ahern <dsahern@kernel.org>
 
-diff --git a/drivers/pinctrl/sunxi/Kconfig b/drivers/pinctrl/sunxi/Kconfig
-index 0cbe466683650..dc62eba96348e 100644
---- a/drivers/pinctrl/sunxi/Kconfig
-+++ b/drivers/pinctrl/sunxi/Kconfig
-@@ -136,4 +136,9 @@ config PINCTRL_SUN55I_A523
- 	default ARM64 && ARCH_SUNXI
- 	select PINCTRL_SUNXI
- 
-+config PINCTRL_SUN55I_A523_R
-+	bool "Support for the Allwinner A523 R-PIO"
-+	default ARM64 && ARCH_SUNXI
-+	select PINCTRL_SUNXI
-+
- endif
-diff --git a/drivers/pinctrl/sunxi/Makefile b/drivers/pinctrl/sunxi/Makefile
-index 4e55508ff7f76..951b3f1e4b4f1 100644
---- a/drivers/pinctrl/sunxi/Makefile
-+++ b/drivers/pinctrl/sunxi/Makefile
-@@ -28,5 +28,6 @@ obj-$(CONFIG_PINCTRL_SUN50I_H6_R)	+= pinctrl-sun50i-h6-r.o
- obj-$(CONFIG_PINCTRL_SUN50I_H616)	+= pinctrl-sun50i-h616.o
- obj-$(CONFIG_PINCTRL_SUN50I_H616_R)	+= pinctrl-sun50i-h616-r.o
- obj-$(CONFIG_PINCTRL_SUN55I_A523)	+= pinctrl-sun55i-a523.o
-+obj-$(CONFIG_PINCTRL_SUN55I_A523_R)	+= pinctrl-sun55i-a523-r.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80)		+= pinctrl-sun9i-a80.o
- obj-$(CONFIG_PINCTRL_SUN9I_A80_R)	+= pinctrl-sun9i-a80-r.o
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-new file mode 100644
-index 0000000000000..69cd2b4ebd7d7
---- /dev/null
-+++ b/drivers/pinctrl/sunxi/pinctrl-sun55i-a523-r.c
-@@ -0,0 +1,54 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Allwinner A523 SoC r-pinctrl driver.
-+ *
-+ * Copyright (C) 2024 Arm Ltd.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/pinctrl/pinctrl.h>
-+
-+#include "pinctrl-sunxi.h"
-+
-+static const u8 a523_r_nr_bank_pins[SUNXI_PINCTRL_MAX_BANKS] =
-+/*	  PL  PM */
-+	{ 14,  6 };
-+
-+static const unsigned int a523_r_irq_bank_map[] = { 0, 1 };
-+
-+static const u8 a523_r_irq_bank_muxes[SUNXI_PINCTRL_MAX_BANKS] =
-+/*	  PL  PM */
-+	{ 14, 14 };
-+
-+static struct sunxi_pinctrl_desc a523_r_pinctrl_data = {
-+	.irq_banks = ARRAY_SIZE(a523_r_irq_bank_map),
-+	.irq_bank_map = a523_r_irq_bank_map,
-+	.irq_read_needs_mux = true,
-+	.io_bias_cfg_variant = BIAS_VOLTAGE_PIO_POW_MODE_SEL,
-+	.pin_base = PL_BASE,
-+};
-+
-+static int a523_r_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return sunxi_pinctrl_dt_table_init(pdev, a523_r_nr_bank_pins,
-+					   a523_r_irq_bank_muxes,
-+					   &a523_r_pinctrl_data,
-+					   SUNXI_PINCTRL_NEW_REG_LAYOUT);
-+}
-+
-+static const struct of_device_id a523_r_pinctrl_match[] = {
-+	{ .compatible = "allwinner,sun55i-a523-r-pinctrl", },
-+	{}
-+};
-+
-+static struct platform_driver a523_r_pinctrl_driver = {
-+	.probe	= a523_r_pinctrl_probe,
-+	.driver	= {
-+		.name		= "sun55i-a523-r-pinctrl",
-+		.of_match_table	= a523_r_pinctrl_match,
-+	},
-+};
-+builtin_platform_driver(a523_r_pinctrl_driver);
--- 
-2.46.2
 
 
