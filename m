@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-403527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 712549C36E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:10:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BD099C37A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6F21F20EC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:10:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D3971C210A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8A7145B0B;
-	Mon, 11 Nov 2024 03:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FE914C5AE;
+	Mon, 11 Nov 2024 04:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="n3uIJO9e"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CAhwIL9T"
+Received: from mail-m25477.xmail.ntesmail.com (mail-m25477.xmail.ntesmail.com [103.129.254.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA9E79CD;
-	Mon, 11 Nov 2024 03:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8967C36B;
+	Mon, 11 Nov 2024 04:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.129.254.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731294640; cv=none; b=oEkqIjU8Utw55o6GPDX+k9BYD3xd2pM8thGXiVFJd+G78TXnUmNAG9yRiCikIQuAassThOnVXKNyIKVxEW0sKUz0bFgM/UksmIaFg7YISoquFmyZCDDlITyi1EVVZ+TpiDLVBD218CHQEoTKUXd2ULbUcIagpKDjMtA4ZSbQipg=
+	t=1731301018; cv=none; b=uEGuG9Ug0VcnGkwDJnOVsrkkEpQTcMt1PjZCHqxkQlwSNElAHsMkpUCtiSLogkf4VuVZLs3Q5xtIELVb+ip+BvSVW+SKZs8UMUWbj63gWxJxAe1nL7hH0z85cKgtbr/UBVACBjWh7IdFNZa8nXASS+b8OfQ3Y/Ehx/L8xb26LFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731294640; c=relaxed/simple;
-	bh=uE7wtkLrFkkr5ZP5dZEVaD6lbf0me56voPoqdQyPNSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CEUciymic7zE4dbLnGXJZkEksspDkEG1IupYs40+e7sbG9k3wvJkX4C5tdLSdrHMbHkdKciCRZupPulQPQJaCi9KjAtMhFWUO+HzhDb7S7wsFy2uK0IGAM1l+hPoEW3GAnTxPInl1sFcuSZOOBuH/usIjzVrF0i3KE6LyorJP3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=n3uIJO9e; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731294631;
-	bh=vNCScQf9VWjezJtNrCNSqYw3fxE/N1TFD4sswO0hZcQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n3uIJO9eC94wZNU5aMi9WeSuYj/2wfwpPEuvVfpVsKuUdaLUsk438UsgDZwxNGelx
-	 CqDDJU4rYlCyZ2mKZs2F6Pnw0JRMqpWqAamoLGAkDCEmHzbKw32kHKptzi9DfWNYBW
-	 dBdNp0JlJ8A6EoeC1EIGlp+Y9GBZ60DrGGJRkjNT9DQS5ihz/zk/96ZijKMPs4xkEI
-	 dDReP+gbjUIE6MJB+9BES61CCWx2/kIqvFU3q9PyMMsC3dgw5gCCoEdixH5bnpN6l9
-	 pjbFc7yV9bb+LZ8vp6HDDCxl8K3uN/JSRMM+AWXgj2df0sjyyv+36uwBe0dV/DXwdL
-	 DYQTWjP/UJopQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmvgW0w8lz4x7G;
-	Mon, 11 Nov 2024 14:10:31 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 14:10:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Breno Leitao <leitao@debian.org>, Keith Busch <kbusch@kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Ming Lei <ming.lei@redhat.com>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Message-ID: <20241111141033.2485eb96@canb.auug.org.au>
+	s=arc-20240116; t=1731301018; c=relaxed/simple;
+	bh=+pCzj59HmF6uc3ofgxTrGgy8nuo0lXQjwBjROEJTEmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dpLijNb5tvZ8QodXHP6coNGxa1a7NZi6/9IO6B5o5JgGKZFO8OP/ar3ufzmfNxc/dymSNAInzTlOsmMdhyepkv/lVEvAc3jCo+9CUBT8D0/ZOUpbu9z6Mz7LmY6+VZaOygp09ioSplqjYkV+CR5IYNjzrlJfXtO6bmxaEGfA7wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CAhwIL9T; arc=none smtp.client-ip=103.129.254.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 258a5842;
+	Mon, 11 Nov 2024 10:34:20 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: [PATCH v4 1/4] gpio: rockchip: explan the format of the GPIO version ID
+Date: Mon, 11 Nov 2024 10:34:09 +0800
+Message-Id: <20241111023412.3466161-2-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
+References: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_//=19vAkJKIy7woiqCJgNah=";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0gaHVZNQk5MQ0xPTUoZHh5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a931912755a09d8kunm258a5842
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NVE6Mio5AzIhNCwiIwgTGDY2
+	Sz1PCjJVSlVKTEhKSUJJT01JT0pNVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSktPQzcG
+DKIM-Signature:a=rsa-sha256;
+	b=CAhwIL9TPSOIgZTHl4UJ5tsTP4/WuxKODyQlakAqUTs/AhGlDQj7pAzT1JeLgzeS5RsfcXWGwYv/oR5SgVMChfrod/cTyNbyCYCkwUm6KKg71BflYlY+GOepVUW5Uv3W7spoH040aVhDobQx1m4DCysnKtvRHTTA4XX3RRyfHtE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=oYOeFEvjF9EiBqY8V2DdoQCpdhmvNoj/sQPxdzZTp+Y=;
+	h=date:mime-version:subject:message-id:from;
 
---Sig_//=19vAkJKIy7woiqCJgNah=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Remove redundant comments and provide a detailed explanation of the
+GPIO version ID.
 
-Hi all,
+Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
+---
+ drivers/gpio/gpio-rockchip.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Today's linux-next merge of the block tree got a conflict in:
+diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
+index 365ab947983c..71672d654491 100644
+--- a/drivers/gpio/gpio-rockchip.c
++++ b/drivers/gpio/gpio-rockchip.c
+@@ -26,9 +26,15 @@
+ #include "../pinctrl/core.h"
+ #include "../pinctrl/pinctrl-rockchip.h"
+ 
++/*
++ * Version ID Register
++ * Bits [31:24] - Major Version
++ * Bits [23:16] - Minor Version
++ * Bits [15:0]  - SVN Number
++ */
+ #define GPIO_TYPE_V1		(0)           /* GPIO Version ID reserved */
+-#define GPIO_TYPE_V2		(0x01000C2B)  /* GPIO Version ID 0x01000C2B */
+-#define GPIO_TYPE_V2_1		(0x0101157C)  /* GPIO Version ID 0x0101157C */
++#define GPIO_TYPE_V2		(0x01000C2B)
++#define GPIO_TYPE_V2_1		(0x0101157C)
+ 
+ static const struct rockchip_gpio_regs gpio_regs_v1 = {
+ 	.port_dr = 0x00,
+-- 
+2.34.1
 
-  drivers/nvme/host/core.c
-
-between commit:
-
-  6d1c69945ce6 ("nvme/host: Fix RCU list traversal to use SRCU primitive")
-
-from Linus' tree and commit:
-
-  6b6f6c41c8ac ("nvme: core: switch to non_owner variant of start_freeze/un=
-freeze queue")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/nvme/host/core.c
-index 855b42c92284,b5b5d5dd6b51..000000000000
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@@ -4893,9 -4891,8 +4893,9 @@@ void nvme_unfreeze(struct nvme_ctrl *ct
-  	int srcu_idx;
- =20
-  	srcu_idx =3D srcu_read_lock(&ctrl->srcu);
- -	list_for_each_entry_rcu(ns, &ctrl->namespaces, list)
- +	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
- +				 srcu_read_lock_held(&ctrl->srcu))
-- 		blk_mq_unfreeze_queue(ns->queue);
-+ 		blk_mq_unfreeze_queue_non_owner(ns->queue);
-  	srcu_read_unlock(&ctrl->srcu, srcu_idx);
-  	clear_bit(NVME_CTRL_FROZEN, &ctrl->flags);
-  }
-@@@ -4938,9 -4933,13 +4938,14 @@@ void nvme_start_freeze(struct nvme_ctr
- =20
-  	set_bit(NVME_CTRL_FROZEN, &ctrl->flags);
-  	srcu_idx =3D srcu_read_lock(&ctrl->srcu);
- -	list_for_each_entry_rcu(ns, &ctrl->namespaces, list)
- +	list_for_each_entry_srcu(ns, &ctrl->namespaces, list,
- +				 srcu_read_lock_held(&ctrl->srcu))
-- 		blk_freeze_queue_start(ns->queue);
-+ 		/*
-+ 		 * Typical non_owner use case is from pci driver, in which
-+ 		 * start_freeze is called from timeout work function, but
-+ 		 * unfreeze is done in reset work context
-+ 		 */
-+ 		blk_freeze_queue_start_non_owner(ns->queue);
-  	srcu_read_unlock(&ctrl->srcu, srcu_idx);
-  }
-  EXPORT_SYMBOL_GPL(nvme_start_freeze);
-
---Sig_//=19vAkJKIy7woiqCJgNah=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxdakACgkQAVBC80lX
-0Gxm2wf7BWDqbkSlSYQhNRzjKsHixGTxlVhFsCC7N00yvw542oFz38VJ/JXNP0We
-ODEMMABWy/fjmhedwW9GP4GAW332Fo26AKHek3JpCAC4s/1LAop0BoNABJg3ksBz
-fvo/KCdBm7ixteeUNzaLr41p78b5ZttA0TJp2Au4rdA5BDm0SrS/QuagUUHdYXAE
-D6K2Yo4/8cjE0hfNXcgBrmoaq7X2UYqiLBug5KOJf8SU1mz2BdBW8m4oZ3QvRaCH
-vfi1zmzThefJV3nOWmvKVD4odtrpPmKVaShcfZFFSquFUBp5xGflKxnWOshsERif
-i0S5+PwteDeb2ahNQharDGNo35CTRg==
-=IP+m
------END PGP SIGNATURE-----
-
---Sig_//=19vAkJKIy7woiqCJgNah=--
 
