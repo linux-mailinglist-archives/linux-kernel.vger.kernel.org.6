@@ -1,1017 +1,207 @@
-Return-Path: <linux-kernel+bounces-403687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C059C3910
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:34:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E5EB9C3913
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:37:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47FE280FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 249A2B21A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083B2157A5A;
-	Mon, 11 Nov 2024 07:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D743158862;
+	Mon, 11 Nov 2024 07:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g51Zsnlz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3W0BCZrp"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A48E545;
-	Mon, 11 Nov 2024 07:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731310437; cv=none; b=Y53CQ6OXS/mVe+cZIA3Hn4T+rppY2J0SLO4Y7fJFzvwzLNPg40azu26Gk73u9rOTULlGsRjweQj1Zmd1JAat3hhWVVPBll14XZ4emeiKdn1hJc1F4MHYNY6W0SKrXAmzBCn7keD+/OOYKZ8U6XzYEtvLF4Vbn5HqbajabwW1mQQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731310437; c=relaxed/simple;
-	bh=GqAoKKjGplrk3rSM5efbyMIGsSjkh1SD7y3r3REBe0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xf9Hh/EZSYyytlN0THPuGDop5GZtpkiExjOO9xj8lBIwsItz/nII2nkAfQXNzveQA3wbyP82f2OD5GZtWoIse1oH/SfAFnTc/TTTAfsmUusRmjMBxxki31eQxiXfclVFwAa/UqZdGV17FuVvCBOQgsdFmdfwu522exQ5bx5VCbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g51Zsnlz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569C8C4CED4;
-	Mon, 11 Nov 2024 07:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731310437;
-	bh=GqAoKKjGplrk3rSM5efbyMIGsSjkh1SD7y3r3REBe0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g51Zsnlz0h7FB6C4fEe7TMCz9OF/eGeZcX+o4n4u0WGNglKBviH++TDIeUsI2RJfM
-	 VRSrRE2XvpdGQGBe7l+cgG9k5FSgAGbf9mnkPbnIEggc6fQGS4Q9LuNMfq6ajm+vSf
-	 mPsp8giCX6HVhtiQjdoGfhxVwbTTsfwLUweRef4eRetURQqkMlxoNrZJEiWDuN1DXr
-	 1H5Tnsd1GOxiiPeAY257ON4SKMY3eLszwkBFgkps7z9BXHO0wqSQpjbyyN6XqueogR
-	 ucpoFCpBCaoiURMBoCdLwDyHyRNHIm/2H0coyQ13up8+P+ydD/PNZkjSX1Gso4jScW
-	 w7TLcts832Hkw==
-Date: Mon, 11 Nov 2024 09:33:41 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Suren Baghdasaryan <surenb@google.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Qi Zheng <zhengqi.arch@bytedance.com>,
-	SeongJae Park <sj@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: Re: [PATCH v2] docs/mm: add VMA locks documentation
-Message-ID: <ZzGzVUfsq_Ar7GRA@kernel.org>
-References: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8189E545;
+	Mon, 11 Nov 2024 07:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731310658; cv=fail; b=jZir0sGmLxQXhcHOBktJEs+XKaCZjEhM9g4oQk/7apUYsxz7AIW4WwCg3KVxQ8st0BxKf5821S/d+J/dVq1pkX7NBeyO8XMVNws6AM1Qb1IahIxWQay5KIZbhHAeMB/l3QMcD9mirrN3jpSadNuZq8yXP6XLVgTv4toqQrICoFU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731310658; c=relaxed/simple;
+	bh=WEqgR964Ksc2kPKzJAEHn+g+OlfmrcZLlEODW563hDQ=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ttxarHca1hCIvy9DShbdiYwyt/IEzss/Ftku4HBP/cs+EPUXrK6VXh4EzZP0MwRCx83uQzfrnM3/aSQFG+Yq9Papsx6Tzyt6UKZKvCD2gvHjp+E8uKbfmjqJKz56/OllQSPP0ipHA9RNrszmnSzafVW5FXXz4V9YahV5p8dwmZI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3W0BCZrp; arc=fail smtp.client-ip=40.107.94.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yXSWRKyllO2xaZHt5EoLi2tE07A3g7IH3AhOQcKRCEiy7PFtKxxls7qQ6Z2Ntf+vIjIWdCB5EbPwE/7NVSTNA+ffVWyD/PndxUd8NNLItkHfwJpt7qeplI7ByYVuza6pO6kWmqrXX5awY5hQdJSzXCSkttcyoMfk2PFFur9073mOhA0mGr7lzLMfvOMfdtOw/J9qc78VnUQ34UGgdzCln8LvIJQ7rXYtvZsVLVkspI+dkpPBYXMR6pkbyDeIREaBvwolz9ZTwwFLrvNCLJ3fdOTfLE72TAD1RDP/MWPsg7wAajoh3fyevHElsUk4Z29C/rQZMEvXyrUcrAFTQeTrVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rJ1NP9iZgqJdYJJZAyHKsPh41dDd+48GLKxVJhrcbWc=;
+ b=Y8oBf2v114eFixI/95WE7k32c962QdhhCRmWQz/LRqCu8e0zuiO2Qva9jo3R5LT4wN/9X0Sbe03pHKuIy75eoEBJqEP0BJCxZt9cjiLX//XW4VIuXSesjawnqIHxY+jN/uaFzROPb1eraK3bHWv+/cErRO/5Lt7V8CE5u/b4iQnnXfzXADEG5orCQaCxpJvTlikaJs1dAVVBd6xTIocPRxf7msSX5WMhDX24jeskJO2uHsBNte+jI+bhx8DxK+ghK5tLgXNRWMF3Y0HgG5TtINhd8324PYoYoMwoX5Q/O+mi+SiQ3VstBh0Z3LGYujNLsKPUhTU7G2GyCnFWe8Xr/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rJ1NP9iZgqJdYJJZAyHKsPh41dDd+48GLKxVJhrcbWc=;
+ b=3W0BCZrpCkhtganavJQmGo1vr5AJAqe5tw6QbFCcC/CMWKNb2RgWHj15xJus0+kEmm4Lwbr2sOvzb6uoMrUDTJfU+t8QAIIeedI5rA/bP9Z3fDdVZxIIlVRDtqcyoXD2JMgGYAhxT3By6zyix3g2IVqJ94dCEeFUncsaGtYHyfw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ DM6PR12MB4233.namprd12.prod.outlook.com (2603:10b6:5:210::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.18; Mon, 11 Nov 2024 07:37:34 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8137.019; Mon, 11 Nov 2024
+ 07:37:34 +0000
+Message-ID: <68c39e33-6281-4978-ba4e-131c6336aa7e@amd.com>
+Date: Mon, 11 Nov 2024 13:07:16 +0530
+User-Agent: Mozilla Thunderbird
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH 2/2] rcu/nocb: Fix missed RCU barrier on deoffloading
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Zqiang <qiang.zhang1211@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Uladzislau Rezki <urezki@gmail.com>,
+ rcu <rcu@vger.kernel.org>
+References: <20241106153213.38896-1-frederic@kernel.org>
+ <20241106153213.38896-3-frederic@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20241106153213.38896-3-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0012.apcprd02.prod.outlook.com
+ (2603:1096:4:194::7) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|DM6PR12MB4233:EE_
+X-MS-Office365-Filtering-Correlation-Id: e348b885-6a00-47cb-611f-08dd0223b516
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VURPYjBiMGo0aU1BYmZLOTBWNnAwd1ZIaTQ2MTFKbk1xSENLV1BCMFkrb3B4?=
+ =?utf-8?B?VU1JRG9EVTd4ai9XV2s4d29pNThPY0E2ZHE3dlB4L1hOUVRDdlJYeGE1M2ZB?=
+ =?utf-8?B?YlZ3UWNQa3dCVUc0UjdoK01kaEt0dU41VW0zcmhGWjJzMUEzNkxWMHV3ZHRz?=
+ =?utf-8?B?UXhCVWRGQ2hIOElBUmtoSHY0RDFCN0RjRjZoZEtBSnJianpIWW1oUC9KeG8r?=
+ =?utf-8?B?OEdoVWZ1WmFUQk9QQzQxRURZY2pXZ2dpbGpZb2piU0FaZlEvSzBMbG92NGhz?=
+ =?utf-8?B?RU9jdEhmR1dCaDQyY08rQ3hGaGcvWlBmTGhLbnB3VTNDQVJoSmpHcWNlalAr?=
+ =?utf-8?B?MEFPL3VkdXh0UzJEZ1RBUzlGV0RSTFg2aVZEYnBEZUNINGFXZGd2dXRLMUZP?=
+ =?utf-8?B?QlFOVEtJN0Q0VDN4RWExVzlVVDJIbUQ0NnJaS0MvUXJRbXRKZHk2UnVEZlhX?=
+ =?utf-8?B?a25kaDVsZFZKcDdyWWhBYVl4c1pFTUZvV2ZTazRNazVEQi9UNEJsQjZETW9j?=
+ =?utf-8?B?RFhncVNJMlhwTk9BZE5acTEzRnFOVm1tVXA1eVRmVjZBbWpEelFvdCtqcjhN?=
+ =?utf-8?B?MXV6ZkRrMnpUd3UwN2w5UkozRGdiNks3SFgrY3N3Q3JleXpzRW5vSHdjT1dD?=
+ =?utf-8?B?Ly94a1ZXdUVHcTh2eFVnd0dOdmEyRk9zc0FkTGRxTzJ5UEEzS2cyUjdZRkpz?=
+ =?utf-8?B?amFYZDZ0bEhsTFVWKzhLb0lYVVQ1M25zbi8vRStsZktZWGJvNmlENnFLU0lL?=
+ =?utf-8?B?SEh6cFhXU2Zra3o1VGtzZEU4aUhOeWFuOENKSjNOYWRiRDNUNlgwdmE3V01O?=
+ =?utf-8?B?M0VIK1JsTDBqL2FkMVBNbzZoN1NaRk91T2IvRENMQ3RXUjI0NVN0WitxZ0hl?=
+ =?utf-8?B?THEyY2Z2SmV1eDdUb0NucWxkVVpRbDYwOGJVZTlEdk1HcU1oUnViMThuWjd4?=
+ =?utf-8?B?eVlpUnlacGpxZWM0UG1lR25TRml6aUZMK0dZQnJOL0plWm03QStDU2VmT20z?=
+ =?utf-8?B?ZXJNZnhUVSt2Wm14WmZYQzB5SXNZVU1saEwyOW4wbkRWZkI2RmRLTWRyU1Z6?=
+ =?utf-8?B?Ri90dHJCWms0MnpRUWJOSWNUNi9HZG5kSjN4TnBXaDA0clY1UC9mRE9yQXZk?=
+ =?utf-8?B?UlZmaSsxaWRZSkkyWnl2L3Y3VGw5MUFKaG9JbmhQS1kyamRZaVg4T0hNcWFL?=
+ =?utf-8?B?TC9VMFdCdEk4Nk9kOFpWYTFqaXFTS0Nhb1JkTDZRMDJFcjM2M1ZWa1RVVXNQ?=
+ =?utf-8?B?ZVJFUVJhSzYrdzgxOGF5TjZ4TmFLWWVzbktwdlArSkdMejFhQWJjb1Y1Qmt2?=
+ =?utf-8?B?cC9qSEptZmVFUUlNdGRncFlZMFU2RXRuVncxR3lGOWlNT1ZXcFZnK3NKa2Iw?=
+ =?utf-8?B?NkMxa1BEWDBrcC90NDJmcER2Skxrd0FHM1VMSlZZT0xhS2F3Y1ZhUkZTanFa?=
+ =?utf-8?B?R3JISytpajJWeDR2ZXpKRlJFSWNIcEpYWjhMUEhNVGs5WjlhUlgzU05EelhI?=
+ =?utf-8?B?YUZoK1ppeTVwTE1qdDVnZElCM3ZxNmU2SlZ5RjFCcWZCUituQlcvOHVTSWVs?=
+ =?utf-8?B?V0M4Y2tGak9LTlV5MWZPWVllUFRoYytNSWExc09NMmFQZFRqUW0vdkk2Y3ZZ?=
+ =?utf-8?B?eTZyUXFybkV4TkF6TWFrZ3ZxaWlPa016Rk1IVG5CMTVTVUJDTlpoZ3BQVmpI?=
+ =?utf-8?B?SjJLcDRUK3pVTDZUSFd0S3RlNWlrUjFZbnhhQmN3NExkdmR3MGdEQ1YxNnVp?=
+ =?utf-8?Q?6LNjTROZtmH4eLJMeM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eDhkM21IQmUrb0lEdWRHdU9pSnFqc1d5WGZYK1lQMEtSWkJwamgwL01kd3ln?=
+ =?utf-8?B?MnV4Q3FhbHE5QnhWZXM5QTN6RVY1UmJDNVpET2NnVVVXQjVkQ3F3UkRham5S?=
+ =?utf-8?B?c1U2Z0FnZU9ZM3hTYWZETExuYlgxUVpuVXJ2SHZiNDFpS3pqL0FrZG5VeWt6?=
+ =?utf-8?B?VU1xVzgyNEtkV21LV05GcmtlNmdic29hSVJEQjBYc0FyamN4WnExb2pHRGh3?=
+ =?utf-8?B?amp0bXBzMjI0MUpUMnJydlhDTStZVzExOGFTTjhkZExKYVRBY056L0xMRXVt?=
+ =?utf-8?B?Y0pZNWU5cS9jdVA0L2VBdGhXYlZMSEtGbGdtUUdTblV1cmU0ZG1KK1Nkem1z?=
+ =?utf-8?B?SSs5OEtES3BnbmdFMmZHKzRrMk1EWUJKdkhRZlFUV2d2WGxaMmJzR1VQRlRE?=
+ =?utf-8?B?Q1NQNUhMOGFlVktvQVVvTVVzN1RRMHQzWit6bW9KTHhncVVuaGFjUlpjbmhP?=
+ =?utf-8?B?amNSUWRuYXMrKzJhcmxuTWVDSi9OaXRLY1FEOHk1Q3FxMFJlc0NicUllWGk3?=
+ =?utf-8?B?TW1temRDd0VnUEFDcktNMUQyWlg0ZnJ5ckVKbWd3YkMxY2E0VWlOWVdGcUpD?=
+ =?utf-8?B?cXNnRkEwOHB2UFdyeC9mbldrYU4rVVUycDZZbDFjc1duTllMUFE2eng3QUY4?=
+ =?utf-8?B?bFVqQlYxMWt0YzN6TmdDSCtZRmdXcVN4cU1qd0RVcUw0eGZ6cll4UjhLaUlx?=
+ =?utf-8?B?ek53TENRVmQyMStWMytGdnJ4YlFrc1JOWWlMZ0VpanltL291N3pCSjlycEVq?=
+ =?utf-8?B?OUk5OUpyOG16Qm4veERVakxxZlVKSGpTeUovNVZKc0RvTFNuU05uMncrcGZU?=
+ =?utf-8?B?Sk5ocVNIR21tMVR5OG9uUUNFYllieDQ1ZHU0Rm9VWWFUb1VWQ0Q0WUpnSU40?=
+ =?utf-8?B?eEpIc1A3UEZJYXROMGNOa1Z0bmtyd3lML0tMK0JxWG5XUkc5NHlFMjVXcVRy?=
+ =?utf-8?B?dzQwZG9CYUdHTm91YndOU2lrYnVnYnU5RGdxSmN0Z0k4TUFPMmRlTHNYK2dm?=
+ =?utf-8?B?MU1YcTl6eGNrc0hxTzErOG1VeSt6THViQjhHZ1Bnbnc0czlqNFllTE5abmZt?=
+ =?utf-8?B?cXREVExwcE1IWFREZVhhd1pQamZVZitycG1wY2M0ZFA4US8yR1dqSTFBUXB6?=
+ =?utf-8?B?b1RpL3ptS0kvUCt0aHV0Vm9hNFN3ZXAvSVBDSFJrNExpbndzcUZESmFNdTFh?=
+ =?utf-8?B?M0VEYmhlcWRsTmRmdkI3U1JqbFZpMzd5REhDOGl1ZUpKSitLTXpEMjNXdlBU?=
+ =?utf-8?B?dytnQS92SFR0R1Q1MFJkc3BNOUkrSDJaQWh4d1NCWi84SjIyaDdLSFVtTmQx?=
+ =?utf-8?B?ZVI1K2hDYnJybDQyaitjTG93bFVldDNZODBEYkQ3Vy8zYmxCNm9namhRRmhR?=
+ =?utf-8?B?SmZMZmNQOTd6QUFGOUtXNjlPZGNOWkVRcDV4eDY4bWNKZUVYSnZ3RzBQRU9p?=
+ =?utf-8?B?OUdMT05SbGVlZDdJdW8xV2ZlaFhkb051Q2xYZUoxMnBnaEUvaWFoUVQ2ZU1l?=
+ =?utf-8?B?V05XTE9YTm1XWlBiTzFPb0x6bzIxMG5CeUx0U1Z6SG4yeVFQbU55UWRTcGlY?=
+ =?utf-8?B?L0UvenlnV0pqSHdnYm02VDFQeUZhbjNCTGVaY3ExcHVuOVNOeThPWDljZklC?=
+ =?utf-8?B?dEl3RzNLR1R6MkhkUGZ1M0ZoWmVmTElCY1AzSTBoaWJkekQxdnBGVjZJRFBv?=
+ =?utf-8?B?emJqeDBQOUp6YjNzeEVad1RkWmNMQXdOU09XY2NDaHQvaG5UN2FuR2xNcVND?=
+ =?utf-8?B?TGVDK21oditUbXI1RGczUkQvdzk4NC9WSHV4QmJyMUJtTUEvQUd3WEJGcC9m?=
+ =?utf-8?B?WWhGY2FDTHRTRkFUTUVsZjY1RHNFY0ZDUFFCcUtMUU4vMHl5bzBuK0pKaDV0?=
+ =?utf-8?B?ZzZBMEQzeGpxeFZ5TnpGUG1xSFc3c1g3ZS9iUFdlMFk1VG1yUWJaNnpjRXdZ?=
+ =?utf-8?B?b2RUenFpNnRzb0VaQy93Wi91U0w4ZHdOYmJ1TVVYRDhjb0pWZGljRzU2MVNj?=
+ =?utf-8?B?a2FMdUxkeFpMNCtUOFUzeUpQenQ2a1NmT3NGdzFaQ3YzeHNtTDZMRWNUem0r?=
+ =?utf-8?B?cU9JbHAzU2tJSUtjM1pUL3c5bzljMldwVjZQUzRsWlYzWjZXbXc2RHJhODlp?=
+ =?utf-8?Q?VsCU2ighWld9GXEDAll9fo1iU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e348b885-6a00-47cb-611f-08dd0223b516
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 07:37:34.5216
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fNDqXB6e37cvLdEeGNgcsdjqjESs/D6ZU/yqh/mSh+nAuRohiy3mlsEl6cMwX7gO8rV8E/pNerJElsmHpdS0EA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4233
 
-On Fri, Nov 08, 2024 at 01:57:06PM +0000, Lorenzo Stoakes wrote:
-> Locking around VMAs is complicated and confusing. While we have a number of
-> disparate comments scattered around the place, we seem to be reaching a
-> level of complexity that justifies a serious effort at clearly documenting
-> how locks are expected to be used when it comes to interacting with
-> mm_struct and vm_area_struct objects.
-> 
-> This is especially pertinent as regards the efforts to find sensible
-> abstractions for these fundamental objects in kernel rust code whose
-> compiler strictly requires some means of expressing these rules (and
-> through this expression, self-document these requirements as well as
-> enforce them).
-> 
-> The document limits scope to mmap and VMA locks and those that are
-> immediately adjacent and relevant to them - so additionally covers page
-> table locking as this is so very closely tied to VMA operations (and relies
-> upon us handling these correctly).
-> 
-> The document tries to cover some of the nastier and more confusing edge
-> cases and concerns especially around lock ordering and page table teardown.
-> 
-> The document is split between generally useful information for users of mm
-> interfaces, and separately a section intended for mm kernel developers
-> providing a discussion around internal implementation details.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> diff --git a/kernel/rcu/tree_nocb.h b/kernel/rcu/tree_nocb.h
+> index 16865475120b..2605dd234a13 100644
+> --- a/kernel/rcu/tree_nocb.h
+> +++ b/kernel/rcu/tree_nocb.h
+> @@ -891,7 +891,18 @@ static void nocb_cb_wait(struct rcu_data *rdp)
+>  	swait_event_interruptible_exclusive(rdp->nocb_cb_wq,
+>  					    nocb_cb_wait_cond(rdp));
+>  	if (kthread_should_park()) {
+> -		kthread_parkme();
+> +		/*
+> +		 * kthread_park() must be preceded by an rcu_barrier().
+> +		 * But yet another rcu_barrier() might have sneaked in between
+> +		 * the barrier callback execution and the callbacks counter
+> +		 * decrement.
+> +		 */
+> +		if (rdp->nocb_cb_sleep) {
 
-> ---
-> 
-> REVIEWERS NOTES:
-> * As before, for convenience, I've uploaded a render of this document to my
->   website at https://ljs.io/v2/mm/process_addrs
-> * You can speed up doc builds by running `make SPHINXDIRS=mm htmldocs`.
-> 
-> v2:
-> * Fixed grammar and silly typos in various places.
-> * Further sharpening up of prose.
-> * Updated remark about empty -> populated requiring mmap lock not rmap -
->   this goes for populating _anything_, as we don't want to race the gap
->   between zap and freeing of page tables which _assumes_ you can't do this.
-> * Clarified point on installing page table entries with rmap locks only.
-> * Updated swap_readahead_info and numab state entries to mention other
->   locks/atomicity as per Kirill.
-> * Improved description of vma->anon_vma and vma->anon_vma_chain as per
->   Jann.
-> * Expanded vma->anon-vma to add more details.
-> * Various typos/small tweaks via Jann.
-> * Clarified mremap() higher page table lock requirements as per Jann.
-> * Clarified that lock_vma_under_rcu() _looks up_ the VMA under RCU as per
->   Jann.
-> * Clarified RCU requirement for VMA read lock in VMA lock implementation
->   detail section as per Jann.
-> * Removed reference to seqnumber increment on mmap write lock as out of
->   scope at the moment, and incorrect explanation on this (is intended for
->   speculation going forward) as per Jann.
-> * Added filemap.c lock ordering also as per Kirill.
-> * Made the reference to anon/file-backed interval tree root nodes more
->   explicit in implementation detail section.
-> * Added note about `MAP_PRIVATE` being in both anon_vma and i_mmap trees.
-> * Expanded description of page table folding as per Bagas.
-> * Added missing details about _traversing_ page tables.
-> * Added the caveat that we can just go ahead and read higher page table
->   levels if we are simply _traversing_, but if we are to install page table
->   locks must be acquired and the read double-checked.
-> * Corrected the comments about gup-fast - we are simply traversing in
->   gup-fast, which like other page table traversal logic does not acquire
->   page table locks, but _also_ does not keep the VMA stable.
-> * Added more details about PMD/PTE lock acquisition in
->   __pte__offset_map_lock().
-> 
-> v1:
-> * Removed RFC tag as I think we are iterating towards something workable
->   and there is interest.
-> * Cleaned up and sharpened the language, structure and layout. Separated
->   into top-level details and implementation sections as per Alice.
-> * Replaced links with rather more readable formatting.
-> * Improved valid mmap/VMA lock state table.
-> * Put VMA locks section into the process addresses document as per SJ and
->   Mike.
-> * Made clear as to read/write operations against VMA object rather than
->   userland memory, as per Mike's suggestion, also that it does not refer to
->   page tables as per Jann.
-> * Moved note into main section as per Mike's suggestion.
-> * Fixed grammar mistake as per Mike.
-> * Converted list-table to table as per Mike.
-> * Corrected various typos as per Jann, Suren.
-> * Updated reference to page fault arches as per Jann.
-> * Corrected mistaken write lock criteria for vm_lock_seq as per Jann.
-> * Updated vm_pgoff description to reference CONFIG_ARCH_HAS_PTE_SPECIAL as
->   per Jann.
-> * Updated write lock to mmap read for vma->numab_state as per Jann.
-> * Clarified that the write lock is on the mmap and VMA lock at VMA
->   granularity earlier in description as per Suren.
-> * Added explicit note at top of VMA lock section to explicitly highlight
->   VMA lock semantics as per Suren.
-> * Updated required locking for vma lock fields to N/A to avoid confusion as
->   per Suren.
-> * Corrected description of mmap_downgrade() as per Suren.
-> * Added a note on gate VMAs as per Jann.
-> * Explained that taking mmap read lock under VMA lock is a bad idea due to
->   deadlock as per Jann.
-> * Discussed atomicity in page table operations as per Jann.
-> * Adapted the well thought out page table locking rules as provided by Jann.
-> * Added a comment about pte mapping maintaining an RCU read lock.
-> * Added clarification on moving page tables as informed by Jann's comments
->   (though it turns out mremap() doesn't necessarily hold all locks if it
->   can resolve races other ways :)
-> * Added Jann's diagram showing lock exclusivity characteristics.
-> https://lore.kernel.org/all/20241107190137.58000-1-lorenzo.stoakes@oracle.com/
-> 
-> RFC:
-> https://lore.kernel.org/all/20241101185033.131880-1-lorenzo.stoakes@oracle.com/
-> 
->  Documentation/mm/process_addrs.rst | 813 +++++++++++++++++++++++++++++
->  1 file changed, 813 insertions(+)
-> 
-> diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/process_addrs.rst
-> index e8618fbc62c9..5aef4fd0e0e9 100644
-> --- a/Documentation/mm/process_addrs.rst
-> +++ b/Documentation/mm/process_addrs.rst
-> @@ -3,3 +3,816 @@
->  =================
->  Process Addresses
->  =================
-> +
-> +.. toctree::
-> +   :maxdepth: 3
-> +
-> +
-> +Userland memory ranges are tracked by the kernel via Virtual Memory Areas or
-> +'VMA's of type :c:struct:`!struct vm_area_struct`.
-> +
-> +Each VMA describes a virtually contiguous memory range with identical
-> +attributes, each described by a :c:struct:`!struct vm_area_struct`
-> +object. Userland access outside of VMAs is invalid except in the case where an
-> +adjacent stack VMA could be extended to contain the accessed address.
-> +
-> +All VMAs are contained within one and only one virtual address space, described
-> +by a :c:struct:`!struct mm_struct` object which is referenced by all tasks (that is,
-> +threads) which share the virtual address space. We refer to this as the
-> +:c:struct:`!mm`.
-> +
-> +Each mm object contains a maple tree data structure which describes all VMAs
-> +within the virtual address space.
-> +
-> +.. note:: An exception to this is the 'gate' VMA which is provided by
-> +          architectures which use :c:struct:`!vsyscall` and is a global static
-> +          object which does not belong to any specific mm.
-> +
-> +-------
-> +Locking
-> +-------
-> +
-> +The kernel is designed to be highly scalable against concurrent read operations
-> +on VMA **metadata** so a complicated set of locks are required to ensure memory
-> +corruption does not occur.
-> +
-> +.. note:: Locking VMAs for their metadata does not have any impact on the memory
-> +          they describe nor the page tables that map them.
-> +
-> +Terminology
-> +-----------
-> +
-> +* **mmap locks** - Each MM has a read/write semaphore :c:member:`!mmap_lock`
-> +  which locks at a process address space granularity which can be acquired via
-> +  :c:func:`!mmap_read_lock`, :c:func:`!mmap_write_lock` and variants.
-> +* **VMA locks** - The VMA lock is at VMA granularity (of course) which behaves
-> +  as a read/write semaphore in practice. A VMA read lock is obtained via
-> +  :c:func:`!lock_vma_under_rcu` (and unlocked via :c:func:`!vma_end_read`) and a
-> +  write lock via :c:func:`!vma_start_write` (all VMA write locks are unlocked
-> +  automatically when the mmap write lock is released). To take a VMA write lock
-> +  you **must** have already acquired an :c:func:`!mmap_write_lock`.
-> +* **rmap locks** - When trying to access VMAs through the reverse mapping via a
-> +  :c:struct:`!struct address_space` or :c:struct:`!struct anon_vma` object
-> +  (reachable from a folio via :c:member:`!folio->mapping`) VMAs must be stabilised via
-> +  :c:func:`!anon_vma_[try]lock_read` or :c:func:`!anon_vma_[try]lock_write` for
-> +  anonymous memory and :c:func:`!i_mmap_[try]lock_read` or
-> +  :c:func:`!i_mmap_[try]lock_write` for file-backed memory. We refer to these
-> +  locks as the reverse mapping locks, or 'rmap locks' for brevity.
-> +
-> +We discuss page table locks separately in the dedicated section below.
-> +
-> +The first thing **any** of these locks achieve is to **stabilise** the VMA
-> +within the MM tree. That is, guaranteeing that the VMA object will not be
-> +deleted from under you nor modified (except for some specific fields
-> +described below).
-> +
-> +Stabilising a VMA also keeps the address space described by it around.
-> +
-> +Using address space locks
-> +-------------------------
-> +
-> +If you want to **read** VMA metadata fields or just keep the VMA stable, you
-> +must do one of the following:
-> +
-> +* Obtain an mmap read lock at the MM granularity via :c:func:`!mmap_read_lock` (or a
-> +  suitable variant), unlocking it with a matching :c:func:`!mmap_read_unlock` when
-> +  you're done with the VMA, *or*
-> +* Try to obtain a VMA read lock via :c:func:`!lock_vma_under_rcu`. This tries to
-> +  acquire the lock atomically so might fail, in which case fall-back logic is
-> +  required to instead obtain an mmap read lock if this returns :c:macro:`!NULL`,
-> +  *or*
-> +* Acquire an rmap lock before traversing the locked interval tree (whether
-> +  anonymous or file-backed) to obtain the required VMA.
-> +
-> +If you want to **write** VMA metadata fields, then things vary depending on the
-> +field (we explore each VMA field in detail below). For the majority you must:
-> +
-> +* Obtain an mmap write lock at the MM granularity via :c:func:`!mmap_write_lock` (or a
-> +  suitable variant), unlocking it with a matching :c:func:`!mmap_write_unlock` when
-> +  you're done with the VMA, *and*
-> +* Obtain a VMA write lock via :c:func:`!vma_start_write` for each VMA you wish to
-> +  modify, which will be released automatically when :c:func:`!mmap_write_unlock` is
-> +  called.
-> +* If you want to be able to write to **any** field, you must also hide the VMA
-> +  from the reverse mapping by obtaining an **rmap write lock**.
-> +
-> +VMA locks are special in that you must obtain an mmap **write** lock **first**
-> +in order to obtain a VMA **write** lock. A VMA **read** lock however can be
-> +obtained without any other lock (:c:func:`!lock_vma_under_rcu` will acquire then
-> +release an RCU lock to lookup the VMA for you).
-> +
-> +.. note:: The primary users of VMA read locks are page fault handlers, which
-> +          means that without a VMA write lock, page faults will run concurrent with
-> +          whatever you are doing.
-> +
-> +Examining all valid lock states:
-> +
-> +.. table::
-> +
-> +   ========= ======== ========= ======= ===== =========== ==========
-> +   mmap lock VMA lock rmap lock Stable? Read? Write most? Write all?
-> +   ========= ======== ========= ======= ===== =========== ==========
-> +   \-        \-       \-        N       N     N           N
-> +   \-        R        \-        Y       Y     N           N
-> +   \-        \-       R/W       Y       Y     N           N
-> +   R/W       \-/R     \-/R/W    Y       Y     N           N
-> +   W         W        \-/R      Y       Y     Y           N
-> +   W         W        W         Y       Y     Y           Y
-> +   ========= ======== ========= ======= ===== =========== ==========
-> +
-> +.. warning:: While it's possible to obtain a VMA lock while holding an mmap read lock,
-> +             attempting to do the reverse is invalid as it can result in deadlock - if
-> +             another task already holds an mmap write lock and attempts to acquire a VMA
-> +             write lock that will deadlock on the VMA read lock.
-> +
-> +All of these locks behave as read/write semaphores in practice, so you can
-> +obtain either a read or a write lock for each of these.
-> +
-> +.. note:: Generally speaking, a read/write semaphore is a class of lock which
-> +          permits concurrent readers. However a write lock can only be obtained
-> +          once all readers have left the critical region (and pending readers
-> +          made to wait).
-> +
-> +          This renders read locks on a read/write semaphore concurrent with other
-> +          readers and write locks exclusive against all others holding the semaphore.
-> +
-> +VMA fields
-> +^^^^^^^^^^
-> +
-> +We can subdivide :c:struct:`!struct vm_area_struct` fields by their purpose, which makes it
-> +easier to explore their locking characteristics:
-> +
-> +.. note:: We exclude VMA lock-specific fields here to avoid confusion, as these
-> +          are in effect an internal implementation detail.
-> +
-> +.. table:: Virtual layout fields
-> +
-> +   ===================== ======================================== ===========
-> +   Field                 Description                              Write lock
-> +   ===================== ======================================== ===========
-> +   :c:member:`!vm_start` Inclusive start virtual address of range mmap write,
-> +                         VMA describes.                           VMA write,
-> +                                                                  rmap write.
-> +   :c:member:`!vm_end`   Exclusive end virtual address of range   mmap write,
-> +                         VMA describes.                           VMA write,
-> +                                                                  rmap write.
-> +   :c:member:`!vm_pgoff` Describes the page offset into the file, mmap write,
-> +                         the original page offset within the      VMA write,
-> +                         virtual address space (prior to any      rmap write.
-> +                         :c:func:`!mremap`), or PFN if a PFN map
-> +                         and the architecture does not support
-> +                         :c:macro:`!CONFIG_ARCH_HAS_PTE_SPECIAL`.
-> +   ===================== ======================================== ===========
-> +
-> +These fields describes the size, start and end of the VMA, and as such cannot be
-> +modified without first being hidden from the reverse mapping since these fields
-> +are used to locate VMAs within the reverse mapping interval trees.
-> +
-> +.. table:: Core fields
-> +
-> +   ============================ ======================================== =========================
-> +   Field                        Description                              Write lock
-> +   ============================ ======================================== =========================
-> +   :c:member:`!vm_mm`           Containing mm_struct.                    None - written once on
-> +                                                                         initial map.
-> +   :c:member:`!vm_page_prot`    Architecture-specific page table         mmap write, VMA write.
-> +                                protection bits determined from VMA
-> +                                flags.
-> +   :c:member:`!vm_flags`        Read-only access to VMA flags describing N/A
-> +                                attributes of the VMA, in union with
-> +                                private writable
-> +                                :c:member:`!__vm_flags`.
-> +   :c:member:`!__vm_flags`      Private, writable access to VMA flags    mmap write, VMA write.
-> +                                field, updated by
-> +                                :c:func:`!vm_flags_*` functions.
-> +   :c:member:`!vm_file`         If the VMA is file-backed, points to a   None - written once on
-> +                                struct file object describing the        initial map.
-> +                                underlying file, if anonymous then
-> +                                :c:macro:`!NULL`.
-> +   :c:member:`!vm_ops`          If the VMA is file-backed, then either   None - Written once on
-> +                                the driver or file-system provides a     initial map by
-> +                                :c:struct:`!struct vm_operations_struct` :c:func:`!f_ops->mmap()`.
-> +                                object describing callbacks to be
-> +                                invoked on VMA lifetime events.
-> +   :c:member:`!vm_private_data` A :c:member:`!void *` field for          Handled by driver.
-> +                                driver-specific metadata.
-> +   ============================ ======================================== =========================
-> +
-> +These are the core fields which describe the MM the VMA belongs to and its attributes.
-> +
-> +.. table:: Config-specific fields
-> +
-> +   ================================= ===================== ======================================== ===============
-> +   Field                             Configuration option  Description                              Write lock
-> +   ================================= ===================== ======================================== ===============
-> +   :c:member:`!anon_name`            CONFIG_ANON_VMA_NAME  A field for storing a                    mmap write,
-> +                                                           :c:struct:`!struct anon_vma_name`        VMA write.
-> +                                                           object providing a name for anonymous
-> +                                                           mappings, or :c:macro:`!NULL` if none
-> +                                                           is set or the VMA is file-backed.
-> +   :c:member:`!swap_readahead_info`  CONFIG_SWAP           Metadata used by the swap mechanism      mmap read,
-> +                                                           to perform readahead. This field is      swap-specific
-> +                                                           accessed atomically.                     lock.
-> +   :c:member:`!vm_policy`            CONFIG_NUMA           :c:type:`!mempolicy` object which        mmap write,
-> +                                                           describes the NUMA behaviour of the      VMA write.
-> +                                                           VMA.
-> +   :c:member:`!numab_state`          CONFIG_NUMA_BALANCING :c:type:`!vma_numab_state` object which  mmap read,
-> +                                                           describes the current state of           numab-specific
-> +                                                           NUMA balancing in relation to this VMA.  lock.
-> +                                                           Updated under mmap read lock by
-> +                                                           :c:func:`!task_numa_work`.
-> +   :c:member:`!vm_userfaultfd_ctx`   CONFIG_USERFAULTFD    Userfaultfd context wrapper object of    mmap write,
-> +                                                           type :c:type:`!vm_userfaultfd_ctx`,      VMA write.
-> +                                                           either of zero size if userfaultfd is
-> +                                                           disabled, or containing a pointer
-> +                                                           to an underlying
-> +                                                           :c:type:`!userfaultfd_ctx` object which
-> +                                                           describes userfaultfd metadata.
-> +   ================================= ===================== ======================================== ===============
-> +
-> +These fields are present or not depending on whether the relevant kernel
-> +configuration option is set.
-> +
-> +.. table:: Reverse mapping fields
-> +
-> +   =================================== ========================================= ============================
-> +   Field                               Description                               Write lock
-> +   =================================== ========================================= ============================
-> +   :c:member:`!shared.rb`              A red/black tree node used, if the        mmap write, VMA write,
-> +                                       mapping is file-backed, to place the VMA  i_mmap write.
-> +                                       in the
-> +                                       :c:member:`!struct address_space->i_mmap`
-> +                                       red/black interval tree.
-> +   :c:member:`!shared.rb_subtree_last` Metadata used for management of the       mmap write, VMA write,
-> +                                       interval tree if the VMA is file-backed.  i_mmap write.
-> +   :c:member:`!anon_vma_chain`         List of pointers to both forked/CoW’d     mmap read, anon_vma write.
-> +                                       :c:type:`!anon_vma` objects and
-> +                                       :c:member:`!vma->anon_vma` if it is
-> +                                       non-:c:macro:`!NULL`.
-> +   :c:member:`!anon_vma`               :c:type:`!anon_vma` object used by        When :c:macro:`NULL` and
-> +                                       anonymous folios mapped exclusively to    setting non-:c:macro:`NULL`:
-> +                                       this VMA. Initially set by                mmap read, page_table_lock.
-> +                                       :c:func:`!anon_vma_prepare` serialised
-> +                                       by the :c:macro:`!page_table_lock`. This  When non-:c:macro:`NULL` and
-> +                                       is set as soon as any page is faulted in. setting :c:macro:`NULL`:
-> +                                                                                 mmap write, VMA write,
-> +                                                                                 anon_vma write.
-> +   =================================== ========================================= ============================
-> +
-> +These fields are used to both place the VMA within the reverse mapping, and for
-> +anonymous mappings, to be able to access both related :c:struct:`!struct anon_vma` objects
-> +and the :c:struct:`!struct anon_vma` in which folios mapped exclusively to this VMA should
-> +reside.
-> +
-> +.. note:: If a file-backed mapping is mapped with :c:macro:`!MAP_PRIVATE` set
-> +          then it can be in both the :c:type:`!anon_vma` and :c:type:`!i_mmap`
-> +          trees at the same time, so all of these fields might be utilised at
-> +          once.
-> +
-> +Page tables
-> +-----------
-> +
-> +We won't speak exhaustively on the subject but broadly speaking, page tables map
-> +virtual addresses to physical ones through a series of page tables, each of
-> +which contain entries with physical addresses for the next page table level
-> +(along with flags), and at the leaf level the physical addresses of the
-> +underlying physical data pages or a special entry such as a swap entry,
-> +migration entry or other special marker. Offsets into these pages are provided
-> +by the virtual address itself.
-> +
-> +In Linux these are divided into five levels - PGD, P4D, PUD, PMD and PTE. Huge
-> +pages might eliminate one or two of these levels, but when this is the case we
-> +typically refer to the leaf level as the PTE level regardless.
-> +
-> +.. note:: In instances where the architecture supports fewer page tables than
-> +	  five the kernel cleverly 'folds' page table levels, that is stubbing
-> +	  out functions related to the skipped levels. This allows us to
-> +	  conceptually act is if there were always five levels, even if the
-> +	  compiler might, in practice, eliminate any code relating to missing
-> +	  ones.
-> +
-> +There are free key operations typically performed on page tables:
-> +
-> +1. **Traversing** page tables - Simply reading page tables in order to traverse
-> +   them. This only requires that the VMA is kept stable, so a lock which
-> +   establishes this suffices for traversal (there are also lockless variants
-> +   which eliminate even this requirement, such as :c:func:`!gup_fast`).
-> +2. **Installing** page table mappings - Whether creating a new mapping or
-> +   modifying an existing one. This requires that the VMA is kept stable via an
-> +   mmap or VMA lock (explicitly not rmap locks).
-> +3. **Zapping/unmapping** page table entries - This is what the kernel calls
-> +   clearing page table mappings at the leaf level only, whilst leaving all page
-> +   tables in place. This is a very common operation in the kernel performed on
-> +   file truncation, the :c:macro:`!MADV_DONTNEED` operation via
-> +   :c:func:`!madvise`, and others. This is performed by a number of functions
-> +   including :c:func:`!unmap_mapping_range` and :c:func:`!unmap_mapping_pages`
-> +   among others. The VMA need only be kept stable for this operation.
-> +4. **Freeing** page tables - When finally the kernel removes page tables from a
-> +   userland process (typically via :c:func:`!free_pgtables`) extreme care must
-> +   be taken to ensure this is done safely, as this logic finally frees all page
-> +   tables in the specified range, ignoring existing leaf entries (it assumes the
-> +   caller has both zapped the range and prevented any further faults or
-> +   modifications within it).
-> +
-> +**Traversing** and **zapping** ranges can be performed holding any one of the
-> +locks described in the terminology section above - that is the mmap lock, the
-> +VMA lock or either of the reverse mapping locks.
-> +
-> +That is - as long as you keep the relevant VMA **stable** - you are good to go
-> +ahead and perform these operations on page tables (though internally, kernel
-> +operations that perform writes also acquire internal page table locks to
-> +serialise - see the page table implementation detail section for more details).
-> +
-> +When **installing** page table entries, the mmap or VMA lock mut be held to keep
-> +the VMA stable. We explore why this is in the page table locking details section
-> +below.
-> +
-> +**Freeing** page tables is an entirely internal memory management operation and
-> +has special requirements (see the page freeing section below for more details).
-> +
-> +.. warning:: When **freeing** page tables, it must not be possible for VMAs
-> +             containing the ranges those page tables map to be accessible via
-> +             the reverse mapping.
-> +
-> +             The :c:func:`!free_pgtables` function removes the relevant VMAs
-> +             from the reverse mappings, but no other VMAs can be permitted to be
-> +             accessible and span the specified range.
-> +
-> +Lock ordering
-> +-------------
-> +
-> +As we have multiple locks across the kernel which may or may not be taken at the
-> +same time as explicit mm or VMA locks, we have to be wary of lock inversion, and
-> +the **order** in which locks are acquired and released becomes very important.
-> +
-> +.. note:: Lock inversion occurs when two threads need to acquire multiple locks,
-> +   but in doing so inadvertently cause a mutual deadlock.
-> +
-> +   For example, consider thread 1 which holds lock A and tries to acquire lock B,
-> +   while thread 2 holds lock B and tries to acquire lock A.
-> +
-> +   Both threads are now deadlocked on each other. However, had they attempted to
-> +   acquire locks in the same order, one would have waited for the other to
-> +   complete its work and no deadlock would have occurred.
-> +
-> +The opening comment in :c:macro:`!mm/rmap.c` describes in detail the required
-> +ordering of locks within memory management code:
-> +
-> +.. code-block::
-> +
-> +  inode->i_rwsem        (while writing or truncating, not reading or faulting)
-> +    mm->mmap_lock
-> +      mapping->invalidate_lock (in filemap_fault)
-> +        folio_lock
-> +          hugetlbfs_i_mmap_rwsem_key (in huge_pmd_share, see hugetlbfs below)
-> +            vma_start_write
-> +              mapping->i_mmap_rwsem
-> +                anon_vma->rwsem
-> +                  mm->page_table_lock or pte_lock
-> +                    swap_lock (in swap_duplicate, swap_info_get)
-> +                      mmlist_lock (in mmput, drain_mmlist and others)
-> +                      mapping->private_lock (in block_dirty_folio)
-> +                          i_pages lock (widely used)
-> +                            lruvec->lru_lock (in folio_lruvec_lock_irq)
-> +                      inode->i_lock (in set_page_dirty's __mark_inode_dirty)
-> +                      bdi.wb->list_lock (in set_page_dirty's __mark_inode_dirty)
-> +                        sb_lock (within inode_lock in fs/fs-writeback.c)
-> +                        i_pages lock (widely used, in set_page_dirty,
-> +                                  in arch-dependent flush_dcache_mmap_lock,
-> +                                  within bdi.wb->list_lock in __sync_single_inode)
-> +
-> +There is also a file-system specific lock ordering comment located at the top of
-> +:c:macro:`!mm/filemap.c`:
-> +
-> +.. code-block::
-> +
-> +  ->i_mmap_rwsem                (truncate_pagecache)
-> +    ->private_lock              (__free_pte->block_dirty_folio)
-> +      ->swap_lock               (exclusive_swap_page, others)
-> +        ->i_pages lock
-> +
-> +  ->i_rwsem
-> +    ->invalidate_lock           (acquired by fs in truncate path)
-> +      ->i_mmap_rwsem            (truncate->unmap_mapping_range)
-> +
-> +  ->mmap_lock
-> +    ->i_mmap_rwsem
-> +      ->page_table_lock or pte_lock     (various, mainly in memory.c)
-> +        ->i_pages lock  (arch-dependent flush_dcache_mmap_lock)
-> +
-> +  ->mmap_lock
-> +    ->invalidate_lock           (filemap_fault)
-> +      ->lock_page               (filemap_fault, access_process_vm)
-> +
-> +  ->i_rwsem                     (generic_perform_write)
-> +    ->mmap_lock         (fault_in_readable->do_page_fault)
-> +
-> +  bdi->wb.list_lock
-> +    sb_lock                     (fs/fs-writeback.c)
-> +    ->i_pages lock              (__sync_single_inode)
-> +
-> +  ->i_mmap_rwsem
-> +    ->anon_vma.lock             (vma_merge)
-> +
-> +  ->anon_vma.lock
-> +    ->page_table_lock or pte_lock       (anon_vma_prepare and various)
-> +
-> +  ->page_table_lock or pte_lock
-> +    ->swap_lock         (try_to_unmap_one)
-> +    ->private_lock              (try_to_unmap_one)
-> +    ->i_pages lock              (try_to_unmap_one)
-> +    ->lruvec->lru_lock  (follow_page_mask->mark_page_accessed)
-> +    ->lruvec->lru_lock  (check_pte_range->folio_isolate_lru)
-> +    ->private_lock              (folio_remove_rmap_pte->set_page_dirty)
-> +    ->i_pages lock              (folio_remove_rmap_pte->set_page_dirty)
-> +    bdi.wb->list_lock           (folio_remove_rmap_pte->set_page_dirty)
-> +    ->inode->i_lock             (folio_remove_rmap_pte->set_page_dirty)
-> +    bdi.wb->list_lock           (zap_pte_range->set_page_dirty)
-> +    ->inode->i_lock             (zap_pte_range->set_page_dirty)
-> +    ->private_lock              (zap_pte_range->block_dirty_folio)
-> +
-> +Please check the current state of these comments which may have changed since
-> +the time of writing of this document.
-> +
-> +------------------------------
-> +Locking Implementation Details
-> +------------------------------
-> +
-> +Page table locking details
-> +--------------------------
-> +
-> +In addition to the locks described in the terminology section above, we have
-> +additional locks dedicated to page tables:
-> +
-> +* **Higher level page table locks** - Higher level page tables, that is PGD, P4D
-> +  and PUD each make use of the process address space granularity
-> +  :c:member:`!mm->page_table_lock` lock when modified.
-> +
-> +* **Fine-grained page table locks** - PMDs and PTEs each have fine-grained locks
-> +  either kept within the folios describing the page tables or allocated
-> +  separated and pointed at by the folios if :c:macro:`!ALLOC_SPLIT_PTLOCKS` is
-> +  set. The PMD spin lock is obtained via :c:func:`!pmd_lock`, however PTEs are
-> +  mapped into higher memory (if a 32-bit system) and carefully locked via
-> +  :c:func:`!pte_offset_map_lock`.
-> +
-> +These locks represent the minimum required to interact with each page table
-> +level, but there are further requirements.
-> +
-> +Importantly, note that on a **traversal** of page tables, no such locks are
-> +taken. Whether care is taken on reading the page table entries depends on the
-> +architecture, see the section on atomicity below.
-> +
-> +Locking rules
-> +^^^^^^^^^^^^^
-> +
-> +We establish basic locking rules when interacting with page tables:
-> +
-> +* When changing a page table entry the page table lock for that page table
-> +  **must** be held, except if you can safely assume nobody can access the page
-> +  tables concurrently (such as on invocation of :c:func:`!free_pgtables`).
-> +* Reads from and writes to page table entries must be *appropriately*
-> +  atomic. See the section on atomicity below for details.
-> +* Populating previously empty entries requires that the mmap or VMA locks are
-> +  held (read or write), doing so with only rmap locks would be dangerous (see
-> +  the warning below).
-> +* As mentioned previously, zapping can be performed while simply keeping the VMA
-> +  stable, that is holding any one of the mmap, VMA or rmap locks.
-> +* Special care is required for PTEs, as on 32-bit architectures these must be
-> +  mapped into high memory and additionally, careful consideration must be
-> +  applied to racing with THP, migration or other concurrent kernel operations
-> +  that might steal the entire PTE table from under us. All this is handled by
-> +  :c:func:`!pte_offset_map_lock` (see the section on page table installation
-> +  below for more details).
-> +
-> +.. warning:: Populating previously empty entries is dangerous as, when unmapping
-> +             VMAs, :c:func:`!vms_clear_ptes` has a window of time between
-> +             zapping (via :c:func:`!unmap_vmas`) and freeing page tables (via
-> +             :c:func:`!free_pgtables`), where the VMA is still visible in the
-> +             rmap tree. :c:func:`!free_pgtables` assumes that the zap has
-> +             already been performed and removes PTEs unconditionally (along with
-> +             all other page tables in the freed range), so installing new PTE
-> +             entries could leak memory and also cause other unexpected and
-> +             dangerous behaviour.
-> +
-> +There are additional rules applicable when moving page tables, which we discuss
-> +in the section on this topic below.
-> +
-> +.. note:: Interestingly, :c:func:`!pte_offset_map_lock` holds an RCU read lock
-> +          while the PTE page table lock is held.
-> +
-> +Atomicity
-> +^^^^^^^^^
-> +
-> +Regardless of page table locks, the MMU hardware concurrently updates accessed
-> +and dirty bits (perhaps more, depending on architecture). Additionally, page
-> +table traversal operations in parallel (though holding the VMA stable) and
-> +functionality like GUP-fast locklessly traverses (that is reads) page tables,
-> +without even keeping the VMA stable at all.
-> +
-> +When performing a page table traversal and keeping the VMA stable, whether a
-> +read must be performed once and only once or not depends on the architecture
-> +(for instance x86-64 does not require any special precautions).
-> +
-> +It is on the write side, or if a read informs whether a write takes place (on an
-> +installation of a page table entry say, for instance in
-> +:c:func:`!__pud_install`), where special care must always be taken. In these
-> +cases we can never assume that page table locks give us entirely exclusive
-> +access, and must retrieve page table entries once and only once.
-> +
-> +If we are reading page table entries, then we need only ensure that the compiler
-> +does not rearrange our loads. This is achieved via :c:func:`!pXXp_get`
-> +functions - :c:func:`!pgdp_get`, :c:func:`!p4dp_get`, :c:func:`!pudp_get`,
-> +:c:func:`!pmdp_get`, and :c:func:`!ptep_get`.
-> +
-> +Each of these uses :c:func:`!READ_ONCE` to guarantee that the compiler reads
-> +the page table entry only once.
-> +
-> +However, if we wish to manipulate an existing page table entry and care about
-> +the previously stored data, we must go further and use an hardware atomic
-> +operation as, for example, in :c:func:`!ptep_get_and_clear`.
-> +
-> +Equally, operations that do not rely on the VMA being held stable, such as
-> +GUP-fast (see :c:func:`!gup_fast` and its various page table level handlers like
-> +:c:func:`!gup_fast_pte_range`), must very carefully interact with page table
-> +entries, using functions such as :c:func:`!ptep_get_lockless` and equivalent for
-> +higher level page table levels.
-> +
-> +Writes to page table entries must also be appropriately atomic, as established
-> +by :c:func:`!set_pXX` functions - :c:func:`!set_pgd`, :c:func:`!set_p4d`,
-> +:c:func:`!set_pud`, :c:func:`!set_pmd`, and :c:func:`!set_pte`.
-> +
-> +Equally functions which clear page table entries must be appropriately atomic,
-> +as in :c:func:`!pXX_clear` functions - :c:func:`!pgd_clear`,
-> +:c:func:`!p4d_clear`, :c:func:`!pud_clear`, :c:func:`!pmd_clear`, and
-> +:c:func:`!pte_clear`.
-> +
-> +Page table installation
-> +^^^^^^^^^^^^^^^^^^^^^^^
-> +
-> +Page table installation is performed with the VMA held stable explicitly by an
-> +mmap or VMA lock in read or write mode (see the warning in the locking rules
-> +section for details as to why).
-> +
-> +When allocating a P4D, PUD or PMD and setting the relevant entry in the above
-> +PGD, P4D or PUD, the :c:member:`!mm->page_table_lock` must be held. This is
-> +acquired in :c:func:`!__p4d_alloc`, :c:func:`!__pud_alloc` and
-> +:c:func:`!__pmd_alloc` respectively.
-> +
-> +.. note:: :c:func:`!__pmd_alloc` actually invokes :c:func:`!pud_lock` and
-> +   :c:func:`!pud_lockptr` in turn, however at the time of writing it ultimately
-> +   references the :c:member:`!mm->page_table_lock`.
-> +
-> +Allocating a PTE will either use the :c:member:`!mm->page_table_lock` or, if
-> +:c:macro:`!USE_SPLIT_PMD_PTLOCKS` is defined, a lock embedded in the PMD
-> +physical page metadata in the form of a :c:struct:`!struct ptdesc`, acquired by
-> +:c:func:`!pmd_ptdesc` called from :c:func:`!pmd_lock` and ultimately
-> +:c:func:`!__pte_alloc`.
-> +
-> +Finally, modifying the contents of the PTE requires special treatment, as the
-> +PTE page table lock must be acquired whenever we want stable and exclusive
-> +access to entries contained within a PTE, especially when we wish to modify
-> +them.
-> +
-> +This is performed via :c:func:`!pte_offset_map_lock` which carefully checks to
-> +ensure that the PTE hasn't changed from under us, ultimately invoking
-> +:c:func:`!pte_lockptr` to obtain a spin lock at PTE granularity contained within
-> +the :c:struct:`!struct ptdesc` associated with the physical PTE page. The lock
-> +must be released via :c:func:`!pte_unmap_unlock`.
-> +
-> +.. note:: There are some variants on this, such as
-> +   :c:func:`!pte_offset_map_rw_nolock` when we know we hold the PTE stable but
-> +   for brevity we do not explore this.  See the comment for
-> +   :c:func:`!__pte_offset_map_lock` for more details.
-> +
-> +When modifying data in ranges we typically only wish to allocate higher page
-> +tables as necessary, using these locks to avoid races or overwriting anything,
-> +and set/clear data at the PTE level as required (for instance when page faulting
-> +or zapping).
-> +
-> +A typical pattern taken when traversing page table entries to install a new
-> +mapping is to optimistically determine whether the page table entry in the table
-> +above is empty, if so, only then acquiring the page table lock and checking
-> +again to see if it was allocated underneath is.
-> +
-> +This allows for a traversal with page table locks only being taken when
-> +required. An example of this is :c:func:`!__pud_alloc`.
-> +
-> +At the leaf page table, that is the PTE, we can't entirely rely on this pattern
-> +as we have separate PMD and PTE locks and a THP collapse for instance might have
-> +eliminated the PMD entry as well as the PTE from under us.
-> +
-> +This is why :c:func:`!__pte_offset_map_lock` locklessly retrieves the PMD entry
-> +for the PTE, carefully checking it is as expected, before acquiring the
-> +PTE-specific lock, and then *again* checking that the PMD lock is as expected.
-> +
-> +If a THP collapse (or similar) were to occur then the lock on both pages would
-> +be acquired, so we can ensure this is prevented while the PTE lock is held.
-> +
-> +Installing entries this way ensures mutual exclusion on write.
-> +
-> +Page table freeing
-> +^^^^^^^^^^^^^^^^^^
-> +
-> +Tearing down page tables themselves is something that requires significant
-> +care. There must be no way that page tables designated for removal can be
-> +traversed or referenced by concurrent tasks.
-> +
-> +It is insufficient to simply hold an mmap write lock and VMA lock (which will
-> +prevent racing faults, and rmap operations), as a file-backed mapping can be
-> +truncated under the :c:struct:`!struct address_space->i_mmap_rwsem` alone.
-> +
-> +As a result, no VMA which can be accessed via the reverse mapping (either
-> +through the :c:struct:`!struct anon_vma->rb_root` or the :c:member:`!struct
-> +address_space->i_mmap` interval trees) can have its page tables torn down.
-> +
-> +The operation is typically performed via :c:func:`!free_pgtables`, which assumes
-> +either the mmap write lock has been taken (as specified by its
-> +:c:member:`!mm_wr_locked` parameter), or that the VMA is already unreachable.
-> +
-> +It carefully removes the VMA from all reverse mappings, however it's important
-> +that no new ones overlap these or any route remain to permit access to addresses
-> +within the range whose page tables are being torn down.
-> +
-> +Additionally, it assumes that a zap has already been performed and steps have
-> +been taken to ensure that no further page table entries can be installed between
-> +the zap and the invocation of :c:func:`!free_pgtables`.
-> +
-> +Since it is assumed that all such steps have been taken, page table entries are
-> +cleared without page table locks (in the :c:func:`!pgd_clear`, :c:func:`!p4d_clear`,
-> +:c:func:`!pud_clear`, and :c:func:`!pmd_clear` functions.
-> +
-> +.. note:: It is possible for leaf page tables to be torn down independent of
-> +          the page tables above it as is done by
-> +          :c:func:`!retract_page_tables`, which is performed under the i_mmap
-> +          read lock, PMD, and PTE page table locks, without this level of care.
-> +
-> +Page table moving
-> +^^^^^^^^^^^^^^^^^
-> +
-> +Some functions manipulate page table levels above PMD (that is PUD, P4D and PGD
-> +page tables). Most notable of these is :c:func:`!mremap`, which is capable of
-> +moving higher level page tables.
-> +
-> +In these instances, it is required that **all** locks are taken, that is
-> +the mmap lock, the VMA lock and the relevant rmap lock.
-> +
-> +You can observe this in the :c:func:`!mremap` implementation in the functions
-> +:c:func:`!take_rmap_locks` and :c:func:`!drop_rmap_locks` which perform the rmap
-> +side of lock acquisition, invoked ultimately by :c:func:`!move_page_tables`.
-> +
-> +VMA lock internals
-> +------------------
-> +
-> +Overview
-> +^^^^^^^^
-> +
-> +VMA read locking is entirely optimistic - if the lock is contended or a competing
-> +write has started, then we do not obtain a read lock.
-> +
-> +A VMA **read** lock is obtained by :c:func:`!lock_vma_under_rcu` function, which
-> +first calls :c:func:`!rcu_read_lock` to ensure that the VMA is looked up in an
-> +RCU critical section, then attempts to VMA lock it via
-> +:c:func:`!vma_start_read`, before releasing the RCU lock via
-> +:c:func:`!rcu_read_unlock`.
-> +
-> +VMA read locks hold the read lock on the :c:member:`!vma->vm_lock` semaphore for
-> +their duration and the caller of :c:func:`!lock_vma_under_rcu` must release it
-> +via :c:func:`!vma_end_read`.
-> +
-> +VMA **write** locks are acquired via :c:func:`!vma_start_write` in instances where a
-> +VMA is about to be modified, unlike :c:func:`!vma_start_read` the lock is always
-> +acquired. An mmap write lock **must** be held for the duration of the VMA write
-> +lock, releasing or downgrading the mmap write lock also releases the VMA write
-> +lock so there is no :c:func:`!vma_end_write` function.
-> +
-> +Note that a semaphore write lock is not held across a VMA lock. Rather, a
-> +sequence number is used for serialisation, and the write semaphore is only
-> +acquired at the point of write lock to update this.
-> +
-> +This ensures the semantics we require - VMA write locks provide exclusive write
-> +access to the VMA.
-> +
-> +Implementation details
-> +^^^^^^^^^^^^^^^^^^^^^^
-> +
-> +The VMA lock mechanism is designed to be a lightweight means of avoiding the use
-> +of the heavily contended mmap lock. It is implemented using a combination of a
-> +read/write semaphore and sequence numbers belonging to the containing
-> +:c:struct:`!struct mm_struct` and the VMA.
-> +
-> +Read locks are acquired via :c:func:`!vma_start_read`, which is an optimistic
-> +operation, i.e. it tries to acquire a read lock but returns false if it is
-> +unable to do so. At the end of the read operation, :c:func:`!vma_end_read` is
-> +called to release the VMA read lock.
-> +
-> +Invoking :c:func:`!vma_start_read` requires that :c:func:`!rcu_read_lock` has
-> +been called first, establishing that we are in an RCU critical section upon VMA
-> +read lock acquisition. Once acquired, the RCU lock can be released as it is only
-> +required for lookup. This is abstracted by :c:func:`!lock_vma_under_rcu` which
-> +is the interface a user should use.
-> +
-> +Writing requires the mmap to be write-locked and the VMA lock to be acquired via
-> +:c:func:`!vma_start_write`, however the write lock is released by the termination or
-> +downgrade of the mmap write lock so no :c:func:`!vma_end_write` is required.
-> +
-> +All this is achieved by the use of per-mm and per-VMA sequence counts, which are
-> +used in order to reduce complexity, especially for operations which write-lock
-> +multiple VMAs at once.
-> +
-> +If the mm sequence count, :c:member:`!mm->mm_lock_seq` is equal to the VMA
-> +sequence count :c:member:`!vma->vm_lock_seq` then the VMA is write-locked. If
-> +they differ, then it is not.
-> +
-> +Each time the mmap write lock is released in :c:func:`!mmap_write_unlock` or
-> +:c:func:`!mmap_write_downgrade`, :c:func:`!vma_end_write_all` is invoked which
-> +also increments :c:member:`!mm->mm_lock_seq` via
-> +:c:func:`!mm_lock_seqcount_end`.
-> +
-> +This way, we ensure that, regardless of the VMA's sequence number, a write lock
-> +is never incorrectly indicated and that when we release an mmap write lock we
-> +efficiently release **all** VMA write locks contained within the mmap at the
-> +same time.
-> +
-> +Since the mmap write lock is exclusive against others who hold it, the automatic
-> +release of any VMA locks on its release makes sense, as you would never want to
-> +keep VMAs locked across entirely separate write operations. It also maintains
-> +correct lock ordering.
-> +
-> +Each time a VMA read lock is acquired, we acquire a read lock on the
-> +:c:member:`!vma->vm_lock` read/write semaphore and hold it, while checking that
-> +the sequence count of the VMA does not match that of the mm.
-> +
-> +If it does, the read lock fails. If it does not, we hold the lock, excluding
-> +writers, but permitting other readers, who will also obtain this lock under RCU.
-> +
-> +Importantly, maple tree operations performed in :c:func:`!lock_vma_under_rcu`
-> +are also RCU safe, so the whole read lock operation is guaranteed to function
-> +correctly.
-> +
-> +On the write side, we acquire a write lock on the :c:member:`!vma->vm_lock`
-> +read/write semaphore, before setting the VMA's sequence number under this lock,
-> +also simultaneously holding the mmap write lock.
-> +
-> +This way, if any read locks are in effect, :c:func:`!vma_start_write` will sleep
-> +until these are finished and mutual exclusion is achieved.
-> +
-> +After setting the VMA's sequence number, the lock is released, avoiding
-> +complexity with a long-term held write lock.
-> +
-> +This clever combination of a read/write semaphore and sequence count allows for
-> +fast RCU-based per-VMA lock acquisition (especially on page fault, though
-> +utilised elsewhere) with minimal complexity around lock ordering.
-> +
-> +mmap write lock downgrading
-> +---------------------------
-> +
-> +When an mmap write lock is held one has exclusive access to resources within the
-> +mmap (with the usual caveats about requiring VMA write locks to avoid races with
-> +tasks holding VMA read locks).
-> +
-> +It is then possible to **downgrade** from a write lock to a read lock via
-> +:c:func:`!mmap_write_downgrade` which, similar to :c:func:`!mmap_write_unlock`,
-> +implicitly terminates all VMA write locks via :c:func:`!vma_end_write_all`, but
-> +importantly does not relinquish the mmap lock while downgrading, therefore
-> +keeping the locked virtual address space stable.
-> +
-> +An interesting consequence of this is that downgraded locks are exclusive
-> +against any other task possessing a downgraded lock (since a racing task would
-> +have to acquire a write lock first to downgrade it, and the downgraded lock
-> +prevents a new write lock from being obtained until the original lock is
-> +released).
-> +
-> +For clarity, we map read (R)/downgraded write (D)/write (W) locks against one
-> +another showing which locks exclude the others:
-> +
-> +.. list-table:: Lock exclusivity
-> +   :widths: 5 5 5 5
-> +   :header-rows: 1
-> +   :stub-columns: 1
-> +
-> +   * -
-> +     - R
-> +     - D
-> +     - W
-> +   * - R
-> +     - N
-> +     - N
-> +     - Y
-> +   * - D
-> +     - N
-> +     - Y
-> +     - Y
-> +   * - W
-> +     - Y
-> +     - Y
-> +     - Y
-> +
-> +Here a Y indicates the locks in the matching row/column are mutually exclusive,
-> +and N indicates that they are not.
-> +
-> +Stack expansion
-> +---------------
-> +
-> +Stack expansion throws up additional complexities in that we cannot permit there
-> +to be racing page faults, as a result we invoke :c:func:`!vma_start_write` to
-> +prevent this in :c:func:`!expand_downwards` or :c:func:`!expand_upwards`.
-> --
-> 2.47.0
+Is READ_ONCE() not required here?
 
--- 
-Sincerely yours,
-Mike.
+
+- Neeraj
+
+> +			rcu_nocb_lock_irqsave(rdp, flags);
+> +			WARN_ON_ONCE(rcu_segcblist_n_cbs(&rdp->cblist));
+> +			rcu_nocb_unlock_irqrestore(rdp, flags);
+> +			kthread_parkme();
+> +		}
+>  	} else if (READ_ONCE(rdp->nocb_cb_sleep)) {
+>  		WARN_ON(signal_pending(current));
+>  		trace_rcu_nocb_wake(rcu_state.name, rdp->cpu, TPS("WokeEmpty"));
+
 
