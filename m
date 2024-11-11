@@ -1,251 +1,177 @@
-Return-Path: <linux-kernel+bounces-404237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C7B9C413C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:48:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B0A69C4145
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4021FB21D86
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB71D1F22FD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6805819DFB5;
-	Mon, 11 Nov 2024 14:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4833919FA9D;
+	Mon, 11 Nov 2024 14:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DN53s34B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="OQi6q1Kt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LdIl/Z1Z"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82A71BC58;
-	Mon, 11 Nov 2024 14:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24FF1E481;
+	Mon, 11 Nov 2024 14:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336526; cv=none; b=LgOYu3E6q1d4pRkuCwjOeJhAgScpCqIXWb+m2zHa15ZVtofy5Zu4ehujJUHqgUKHfyZluitTV14ohtwP0Sbru8EC/KP/4U7xPfCu7uGr2rtoeUgeRHFpZn7K0oxFVo1Y11LjO6L3M+3+0lUvsz0BTQN1/Dx4iqCFnUy4PcPZCjU=
+	t=1731336862; cv=none; b=WSPiCUuTmC7iTQGfNaEP5hSUFjm1fG4M349BZrkth/83B3NYUfQ8b00RNpx7TZOJCdjcB9M/tugH74MMxYRTzZ4elGN+Cfqyy3GEQzqoroF255m+CP7jVMTy6QvnAXoV8+xOYtu24XBVbsiNCJk1kUfc6mUe999pw/wYSO3z3hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336526; c=relaxed/simple;
-	bh=6MInw1nF1jtgbOJqQyUTTN/pSphFnTwKR2goS/QMk6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RpTgSoAz8Pg6c7kT+3kuFMDXT4zzSFEku6OWKoik2aDDa0FjAWgVay9JPHA8WbTssDgM/6yySYIIQ5NsufGg35qZ1Xk9Ep/XXdL13LYP2r9aTNTf9Re1bgriMayg1X71RANEFTGAvVkokZFZGaKWaJoJqG2L/VFfI8ENDy0aENw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DN53s34B; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731336524; x=1762872524;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=6MInw1nF1jtgbOJqQyUTTN/pSphFnTwKR2goS/QMk6Q=;
-  b=DN53s34BzptcimEw0JXDtsGONEaxrgt8BHMsB0SWohOe0oBiqe7VCDZj
-   R/C0PW0Qppi1gwZIyhxSVqbt9laxUw9436UMWyUWCK0AxXbZ0nOByXGqn
-   AsdCpW9Lb8iSGFVrhhKskVzyWd44tGNIwVqDourDU3/2O7vvd+QmlhZTL
-   +ZEIuKppehg9CfbVTIL5huzsVZOohKWo1NfabcAzoC5z9nNfY+cUVsBFl
-   tyvE/neCL7lkUnqjJtOBy7mJWp6qL9fJ3VWdhFC6EDD8WqeTloXg+TcUm
-   0syGWFtDHGl8DnegrZVgPK6qEvs3BPu8AZtYgAPlyzdYu/8WtK/Y3GTWx
-   g==;
-X-CSE-ConnectionGUID: lVjivA+KSOGPxeX3v5cZDA==
-X-CSE-MsgGUID: PXlGI1BATbWicmgqkaxGPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="42539938"
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="42539938"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 06:48:44 -0800
-X-CSE-ConnectionGUID: sSe0xfOYROmcGreLfcJs8Q==
-X-CSE-MsgGUID: 9lqi+h25SEWhYg1xm50ChA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="91908219"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 06:48:44 -0800
-Received: from [10.212.84.100] (kliang2-mobl1.ccr.corp.intel.com [10.212.84.100])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id D4A3D20B5703;
-	Mon, 11 Nov 2024 06:48:42 -0800 (PST)
-Message-ID: <7676a058-e7ae-4c6b-a9f8-be450b64f5e1@linux.intel.com>
-Date: Mon, 11 Nov 2024 09:48:41 -0500
+	s=arc-20240116; t=1731336862; c=relaxed/simple;
+	bh=Ap+4hf6VsRoYFyoCEQOrKL/R/na4+/6WF+/F7CZ8H/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2JOSdVPZ8gPLptDphctX1FJgEbD85g5COICEwER9e9fm7MM/qI1fKRzCYPghUNsAFN3TyFPhq3lVyrygZ9nhhR5JNGdtvePyAfWlyzUS1zpU9Tjp8m5CXSiLNX0rNBQaFUYBLFGfwwiL3ijUZFGm31TL+tTBzlB4J5HRvsg+mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=OQi6q1Kt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LdIl/Z1Z; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4253511401D3;
+	Mon, 11 Nov 2024 09:54:18 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 11 Nov 2024 09:54:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1731336858; x=1731423258; bh=Gb1MC1LUYU
+	mcyqEnMezL4wQNDKx6ZVAYCnYNqlhDCC8=; b=OQi6q1KtnfZecpwRaABqR7Pm3X
+	MGS7Ug+KF49mZnJzCuXlK3I6iIGh7ne4UxLKPzc/r03o8F0Qwpvox/An1QtdJ0MG
+	2LaQtL5cqYNJih11nIDWyGDAEGhGvKx/TtLlcOh9krSrOWK04Cedro5MuGVaDhoZ
+	6Z8LIIZyE6qfvpK/D0SKeOO98KIdjcSvlX1+wSJgFe3jUtBImGdZOMKGG3HcMQbX
+	xx7La2tm1LJ/Q9H14EGDPzhoSwEtbAm2Wja4NmknNxeYwBAvYVSJk50Ql4UyxjSt
+	hb86Qp4el1KroEy3dxJ/bV4KeTFnHMMe/r78KZgRFJORiN7cqyscTSks0fPg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731336858; x=1731423258; bh=Gb1MC1LUYUmcyqEnMezL4wQNDKx6ZVAYCnY
+	NqlhDCC8=; b=LdIl/Z1ZprWLmHPKCfkqJGcyVrNi23p91Ua3Oxgdl91q2n+89Fn
+	4az+MUUurLxhwHElYBssYlD/5Cgjbz7pS4eo3sff+wztUwzLlo2MCFZGt/cOk2Da
+	YZh08YBaoZNVdqi2jmcnzKqZoTaKRf3lTZIUej9TBuOePzOSDL9N5nQ8wm83DaIL
+	MihtitGwvlCK2pYoJMJXYUN6D0ZPS8UQORIPepgakedFaJrxRRKuUT0ucsQviOtV
+	26WPx5ggbVjXidUbhfxHxNHpSbLq/nKc6EGI5pktFbzgJxTaj4pzVRYOHgBs9y7e
+	9mAwV/+UB+/gIGLBQB9uWBablp1AllD9/eA==
+X-ME-Sender: <xms:mRoyZ3R_YAF3Qwce9LeRCJDx50irfo0n0lWoACElsIvE7qfzXJ8TQA>
+    <xme:mRoyZ4yYfqf1HWlDMtV-YGeVdw1gytHHl5KZ3XJOIJqsk-wezJiz22jbbTMO1UOom
+    xuzsDh7ANyLng>
+X-ME-Received: <xmr:mRoyZ80TZQ6piRQPnEqRtBoByVSc-BEQBSOMBQdC5f-Lo3qccW8TboJVf5d5qiA4XYerhranMwmbpbp28oTLFmkgLkDtXq7mAofZ2Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdeilecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffg
+    heekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    hgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepudeipdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprh
+    gtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnuges
+    rghrnhgusgdruggvpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifrghlmhgvihgu
+    rgesmhhitghrohhsohhfthdrtghomh
+X-ME-Proxy: <xmx:mRoyZ3AIszxAzmuAStndRzeln51VqTShUEWECA2essOYNEbVcmGOLg>
+    <xmx:mRoyZwj8UtUDJam2R7ZZj0URmlql298KSlinG9UXg9FwFuGkatnNWg>
+    <xmx:mRoyZ7obCyvmHPhCD72PUZhkbT6BtxX9BU-6520mHRrYZ01-wMgCkw>
+    <xmx:mRoyZ7h7uZwYinAxTGRoI_l6qCtpNTyrhB3RvfIoCqjgQT1UrfCMYA>
+    <xmx:mhoyZ3SxmA8DNnWAo05O88lMUY7cWTDtaMVzrqj4VQJqj48RoYEy_3FX>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 09:54:17 -0500 (EST)
+Date: Mon, 11 Nov 2024 15:54:10 +0100
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: linux-next: manual merge of the rust tree with the char-misc tree
+Message-ID: <2024111102-baffling-budding-1d7d@gregkh>
+References: <20241111173459.2646d4af@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf list: Fix topic and pmu_name argument order
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
- Junhao He <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241109025801.560378-1-irogers@google.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20241109025801.560378-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111173459.2646d4af@canb.auug.org.au>
 
-
-
-On 2024-11-08 9:58 p.m., Ian Rogers wrote:
-> From: Jean-Philippe Romain <jean-philippe.romain@foss.st.com>
+On Mon, Nov 11, 2024 at 05:34:59PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Fix function definitions to match header file declaration. Fix two
-> callers to pass the arguments in the right order.
+> Today's linux-next merge of the rust tree got a conflict in:
 > 
-> On Intel Tigerlake, before:
-> ```
-> $ perf list -j|grep "\"Topic\""|sort|uniq
->         "Topic": "cache",
->         "Topic": "cpu",
->         "Topic": "floating point",
->         "Topic": "frontend",
->         "Topic": "memory",
->         "Topic": "other",
->         "Topic": "pfm icl",
->         "Topic": "pfm ix86arch",
->         "Topic": "pfm perf_raw",
->         "Topic": "pipeline",
->         "Topic": "tool",
->         "Topic": "uncore interconnect",
->         "Topic": "uncore memory",
->         "Topic": "uncore other",
->         "Topic": "virtual memory",
-> $ perf list -j|grep "\"Unit\""|sort|uniq
->         "Unit": "cache",
->         "Unit": "cpu",
->         "Unit": "cstate_core",
->         "Unit": "cstate_pkg",
->         "Unit": "i915",
->         "Unit": "icl",
->         "Unit": "intel_bts",
->         "Unit": "intel_pt",
->         "Unit": "ix86arch",
->         "Unit": "msr",
->         "Unit": "perf_raw",
->         "Unit": "power",
->         "Unit": "tool",
->         "Unit": "uncore_arb",
->         "Unit": "uncore_clock",
->         "Unit": "uncore_imc_free_running_0",
->         "Unit": "uncore_imc_free_running_1",
-> ```
+>   rust/macros/module.rs
 > 
-> After:
-> ```
-> $ perf list -j|grep "\"Topic\""|sort|uniq
->         "Topic": "cache",
->         "Topic": "floating point",
->         "Topic": "frontend",
->         "Topic": "memory",
->         "Topic": "other",
->         "Topic": "pfm icl",
->         "Topic": "pfm ix86arch",
->         "Topic": "pfm perf_raw",
->         "Topic": "pipeline",
->         "Topic": "tool",
->         "Topic": "uncore interconnect",
->         "Topic": "uncore memory",
->         "Topic": "uncore other",
->         "Topic": "virtual memory",
-> $ perf list -j|grep "\"Unit\""|sort|uniq
->         "Unit": "cpu",
->         "Unit": "cstate_core",
->         "Unit": "cstate_pkg",
->         "Unit": "i915",
->         "Unit": "icl",
->         "Unit": "intel_bts",
->         "Unit": "intel_pt",
->         "Unit": "ix86arch",
->         "Unit": "msr",
->         "Unit": "perf_raw",
->         "Unit": "power",
->         "Unit": "tool",
->         "Unit": "uncore_arb",
->         "Unit": "uncore_clock",
->         "Unit": "uncore_imc_free_running_0",
->         "Unit": "uncore_imc_free_running_1",
-> ```
+> between commit:
 > 
-> Fixes: e5c6109f4813 ("perf list: Reorganize to use callbacks to allow honouring command line options")
-> Signed-off-by: Jean-Philippe Romain <jean-philippe.romain@foss.st.com>
-> Tested-by: Ian Rogers <irogers@google.com>
+>   7f15c46a57c3 ("rust: introduce `InPlaceModule`")
+> 
+> from the char-misc tree and commit:
+> 
+>   d072acda4862 ("rust: use custom FFI integer types")
+> 
+> from the rust tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc rust/macros/module.rs
+> index a03266a78cfb,e7a087b7e884..000000000000
+> --- a/rust/macros/module.rs
+> +++ b/rust/macros/module.rs
+> @@@ -332,15 -330,21 +332,15 @@@ pub(crate) fn module(ts: TokenStream) -
+>                       /// # Safety
+>                       ///
+>                       /// This function must only be called once.
+> -                     unsafe fn __init() -> core::ffi::c_int {{
+> +                     unsafe fn __init() -> kernel::ffi::c_int {{
+>  -                        match <{type_} as kernel::Module>::init(&super::super::THIS_MODULE) {{
+>  -                            Ok(m) => {{
+>  -                                // SAFETY: No data race, since `__MOD` can only be accessed by this
+>  -                                // module and there only `__init` and `__exit` access it. These
+>  -                                // functions are only called once and `__exit` cannot be called
+>  -                                // before or during `__init`.
+>  -                                unsafe {{
+>  -                                    __MOD = Some(m);
+>  -                                }}
+>  -                                return 0;
+>  -                            }}
+>  -                            Err(e) => {{
+>  -                                return e.to_errno();
+>  -                            }}
+>  +                        let initer =
+>  +                            <{type_} as kernel::InPlaceModule>::init(&super::super::THIS_MODULE);
+>  +                        // SAFETY: No data race, since `__MOD` can only be accessed by this module
+>  +                        // and there only `__init` and `__exit` access it. These functions are only
+>  +                        // called once and `__exit` cannot be called before or during `__init`.
+>  +                        match unsafe {{ initer.__pinned_init(__MOD.as_mut_ptr()) }} {{
+>  +                            Ok(m) => 0,
+>  +                            Err(e) => e.to_errno(),
+>                           }}
+>                       }}
+>   
 
-Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+Looks good to me, thanks!
 
-Thanks,
-Kan
-
-> ---
-> Note from Ian, I fixed the two callers and added it to
-> Jean-Phillippe's original change.
-> ---
->  tools/perf/builtin-list.c | 4 ++--
->  tools/perf/util/pfm.c     | 4 ++--
->  tools/perf/util/pmus.c    | 2 +-
->  3 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-> index b8378ba18c28..9e7fdfcdd7ff 100644
-> --- a/tools/perf/builtin-list.c
-> +++ b/tools/perf/builtin-list.c
-> @@ -113,7 +113,7 @@ static void wordwrap(FILE *fp, const char *s, int start, int max, int corr)
->  	}
->  }
->  
-> -static void default_print_event(void *ps, const char *pmu_name, const char *topic,
-> +static void default_print_event(void *ps, const char *topic, const char *pmu_name,
->  				const char *event_name, const char *event_alias,
->  				const char *scale_unit __maybe_unused,
->  				bool deprecated, const char *event_type_desc,
-> @@ -354,7 +354,7 @@ static void fix_escape_fprintf(FILE *fp, struct strbuf *buf, const char *fmt, ..
->  	fputs(buf->buf, fp);
->  }
->  
-> -static void json_print_event(void *ps, const char *pmu_name, const char *topic,
-> +static void json_print_event(void *ps, const char *topic, const char *pmu_name,
->  			     const char *event_name, const char *event_alias,
->  			     const char *scale_unit,
->  			     bool deprecated, const char *event_type_desc,
-> diff --git a/tools/perf/util/pfm.c b/tools/perf/util/pfm.c
-> index 5ccfe4b64cdf..0dacc133ed39 100644
-> --- a/tools/perf/util/pfm.c
-> +++ b/tools/perf/util/pfm.c
-> @@ -233,7 +233,7 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
->  	}
->  
->  	if (is_libpfm_event_supported(name, cpus, threads)) {
-> -		print_cb->print_event(print_state, pinfo->name, topic,
-> +		print_cb->print_event(print_state, topic, pinfo->name,
->  				      name, info->equiv,
->  				      /*scale_unit=*/NULL,
->  				      /*deprecated=*/NULL, "PFM event",
-> @@ -267,8 +267,8 @@ print_libpfm_event(const struct print_callbacks *print_cb, void *print_state,
->  				continue;
->  
->  			print_cb->print_event(print_state,
-> -					pinfo->name,
->  					topic,
-> +					pinfo->name,
->  					name, /*alias=*/NULL,
->  					/*scale_unit=*/NULL,
->  					/*deprecated=*/NULL, "PFM event",
-> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> index 107de86c2637..6d4c7c9ecf3a 100644
-> --- a/tools/perf/util/pmus.c
-> +++ b/tools/perf/util/pmus.c
-> @@ -501,8 +501,8 @@ void perf_pmus__print_pmu_events(const struct print_callbacks *print_cb, void *p
->  			goto free;
->  
->  		print_cb->print_event(print_state,
-> -				aliases[j].pmu_name,
->  				aliases[j].topic,
-> +				aliases[j].pmu_name,
->  				aliases[j].name,
->  				aliases[j].alias,
->  				aliases[j].scale_unit,
+greg k-h
 
 
