@@ -1,224 +1,95 @@
-Return-Path: <linux-kernel+bounces-403484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEADD9C365A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:06:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5FF9C366A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11B01C2161C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFF62833CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ACA478289;
-	Mon, 11 Nov 2024 02:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFK9Cyfo"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440242595;
-	Mon, 11 Nov 2024 02:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF7D481D1;
+	Mon, 11 Nov 2024 02:11:58 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F5B3C3C;
+	Mon, 11 Nov 2024 02:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731290752; cv=none; b=Mr0hcG3hZ7Rv472niDGUc9Xq4Bb0XBuD9JD8Ijy9wc9UrYPbjzlGGs3YKYJ/KFJgxLX8Jzk2wOpYDtEP0fZhjSq7+O2cp468seTrJvTvBvXw6K+Hd2Zk1v72jYSS08O5YwYfI6NczpD8aDQo+V/NH9isl95KjCouhMHTwiYXV5c=
+	t=1731291118; cv=none; b=oMZVKOwmpyD/xZY3vwwwfGSK8RsLqoRvunRh7R4N1uKmpuEH+XHVcaalIgTtrwo8RMD4s0e2ZUj5BuXXGkHEZ9sCpG3EGTpXFC+Y5ar8tTeap4P4jr4zn/N9IzV41rwjxjilfQH5IPFzjLncmDS8EijWRoGkingBE+MooCRNV3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731290752; c=relaxed/simple;
-	bh=bWyRCGTcPRNkiQbPV1UIZK/QkxgPyfNx5HGKdVQ0DSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dAIWiktJVOro7AWm3cKyo5KVtnHgyLJ3/whJK+NksWJjmCSZImmnNkcQievHcgW470LlJS8ptQ2+XBP4zY9+1C5bnSLbR315/WvAggXC66mwORGVfNsYyockuoGFhLGmekEFDrsXSrXr29gJpZMXY7f/zHksTGundu/RiVe8xZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFK9Cyfo; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso33894481fa.0;
-        Sun, 10 Nov 2024 18:05:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731290747; x=1731895547; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GdEkfAJOsElSV+ujZ/1dK2DOAkU54yl3So/8rs20Jag=;
-        b=TFK9CyfoYPA3xi/BnMiYSy2AZc+3QS03ZSbcciD9ujKPMayJSD5iXScOTnTamENIwR
-         1eTjtNG9BiHj0/48GqvKhZTByuE0lmexlVbH4GZt9zib4iuwWU4vJqXjv9SrpmqahZ2/
-         dmFJvdBgiIUL4ncrY1hazNeY+R4ewAhfDpgTqDstXMgl5Kqob6TCbM+LGfVzy/Ppogfg
-         AEuIEx/80ZICocy4zps4aj7K7Ioon8rOtD9nWXkt8GUJd4HH0HRU/rVUbOx9phGHwecR
-         Vd0VZbmRAdCvhLyCV1cGo7ZIGnnE3Hme0pNo2lA48QQL7DJ98nWmPf06d+8uYsAeDcrY
-         ZJcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731290747; x=1731895547;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GdEkfAJOsElSV+ujZ/1dK2DOAkU54yl3So/8rs20Jag=;
-        b=S/4delkvH62/eogfJL78YQs8DUzfMupTrvJJYrkHspJqbL6FfYDcSnKwecYjw8bpe3
-         GsnsIN+zUOlm9hBp3rkiyjgPQIzbTB1SZHC3aNW8txWhtKgAlIkuxM3/Hz1v0pxPe4sH
-         xuszKnN77CarCSS5WiZrWTk5sdIKAuotDCf9XvD7EhlbHhM6Aa59C5GnmwIaQk08ANdn
-         JM+AmzmjfZH12dFnlgV60V84oMstm5nLltm5oNbSo+tYV44skKFO73emN8WXlxrXCJDb
-         oUWkfXAodbiEPyaUSBHdjC0d1whbNC+4LccvWx8n+Z/VYEpaZszHz+rz6xSsyxg0omXB
-         v+VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdESwwDHmZfmJ521sofsn2EZ67Z8i7YGI4CUiWLL1k+MRLSbXO0yIZ3Q+R2akvpmkRTtW6q+EOXBBO+b4=@vger.kernel.org, AJvYcCUeiehGzvIPBQRCYMTKlbLvIY3a5XiDpHb0xnWAr8dATf54P8zFUiWz12AHkinWxoMUbMr60O8vSiqa@vger.kernel.org, AJvYcCUy05lnbbyUMhB+O1vJRsXJmpU4lXoEg8DuZTHFtepvZXJg9auyGshuBIVfiahg7+5RKFi7Cp79rfDk@vger.kernel.org, AJvYcCV5TtRSa0vzGjLs6D8vr7xKDxrNkDYiUQQTBN8qP0vpDOOnHh/WXpxePoSnDZXqqeFxTQaDy/q5Rok5Rzxz@vger.kernel.org, AJvYcCVV5ck3dhrIVNT69VaDePYUrclbeOx9PG10iyUW/zAneQbKKXVTc724v5I/B0zltPtDyAU=@vger.kernel.org, AJvYcCXHpuVsut4y3Tw3LkZV/lnSUejTJhe9ZjmSKGrFHYlA6VGs5BirF2DZ63vd0Lv0O70ZQ9r+wgeG18IB2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaKYI7iABcv1/nhqVQxU7Gs5+ka9LpUbLYHp+78YrnqE6YtyFg
-	v+AeMcyipGkd4Ssq6FHlMTQMIf4YuemG/4lykIgyZ7JJYPEPPF9BB7YD/B7r63p5ZDT+0yEyJc+
-	f65hmku2a+kHuhsa3iPfNNNOn1+Y=
-X-Google-Smtp-Source: AGHT+IF0tJPIolZyNYPTT2b/MpCJe82Fg/iZslXB6gzAqlmjhMUqVGRF2M5H+UaSiVlIP433HQ0w2T+2CyxfkrVJL68=
-X-Received: by 2002:a2e:bc1d:0:b0:2fb:5014:8eb9 with SMTP id
- 38308e7fff4ca-2ff2014ec60mr46592301fa.10.1731290746959; Sun, 10 Nov 2024
- 18:05:46 -0800 (PST)
+	s=arc-20240116; t=1731291118; c=relaxed/simple;
+	bh=/GqSN44up1BEAN00a9vcx/k8X0/LYqowKV5wg1GRuuI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l0x0VQYUft8r6JKYg05R2Tl/PT4tutY2wcTssMffFQ8LEavWvYvqcsZiu9boDfcaDmz9ae9KWPwyLOfug6P4P7sipqG5G1rWO0lblb7djujOZT5vYhwogDK5+2aY/rxRPymktybo/8pOV8zx2fAAbdOXug/awuZwVy/6q7sgfZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3673167e0761-cef81;
+	Mon, 11 Nov 2024 10:11:44 +0800 (CST)
+X-RM-TRANSID:2ee3673167e0761-cef81
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.103])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea673167dfc2b-0d6e0;
+	Mon, 11 Nov 2024 10:11:44 +0800 (CST)
+X-RM-TRANSID:2eea673167dfc2b-0d6e0
+From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luo Yifan <luoyifan@cmss.chinamobile.com>
+Subject: [PATCH] tools/bpf_jit_disasm: Fix the wrong format specifier
+Date: Mon, 11 Nov 2024 10:10:04 +0800
+Message-Id: <20241111021004.272293-1-luoyifan@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1731244445.git.leon@kernel.org> <dca3aecdeeaa962c7842bc488378cdf069201d65.1731244445.git.leon@kernel.org>
-In-Reply-To: <dca3aecdeeaa962c7842bc488378cdf069201d65.1731244445.git.leon@kernel.org>
-From: anish kumar <yesanishhere@gmail.com>
-Date: Sun, 10 Nov 2024 18:05:35 -0800
-Message-ID: <CABCoZhAN-eeu=E5r+ZbZGTNwQta5yUw86sy8e_Je+Yri-+iuoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 09/17] docs: core-api: document the IOVA-based API
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>, 
-	Yishai Hadas <yishaih@nvidia.com>, 
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>, 
-	Alex Williamson <alex.williamson@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	=?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-mm@kvack.org, Randy Dunlap <rdunlap@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 10, 2024 at 5:50=E2=80=AFAM Leon Romanovsky <leon@kernel.org> w=
-rote:
->
-> From: Christoph Hellwig <hch@lst.de>
->
-> Add an explanation of the newly added IOVA-based mapping API.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  Documentation/core-api/dma-api.rst | 70 ++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->
-> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api/=
-dma-api.rst
-> index 8e3cce3d0a23..61d6f4fe3d88 100644
-> --- a/Documentation/core-api/dma-api.rst
-> +++ b/Documentation/core-api/dma-api.rst
-> @@ -530,6 +530,76 @@ routines, e.g.:::
->                 ....
->         }
->
-> +Part Ie - IOVA-based DMA mappings
-> +---------------------------------
-> +
-> +These APIs allow a very efficient mapping when using an IOMMU.  They are=
- an
+There is a static checker warning that the %d in format string is
+mismatch with the corresponding argument type, which could result in
+incorrect data print. This patch fixes it.
 
-"They" doesn't sound nice.
-> +optional path that requires extra code and are only recommended for driv=
-ers
-> +where DMA mapping performance, or the space usage for storing the DMA ad=
-dresses
-> +matter.  All the considerations from the previous section apply here as =
-well.
+Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+---
+ tools/bpf/bpf_jit_disasm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-These APIs provide an efficient mapping when using an IOMMU. However, they
-are optional and require additional code. They are recommended primarily fo=
-r
-drivers where performance in DMA mapping or the storage space for DMA
-addresses are critical. All the considerations discussed in the previous se=
-ction
-also apply in this case.
+diff --git a/tools/bpf/bpf_jit_disasm.c b/tools/bpf/bpf_jit_disasm.c
+index a90a5d110..1baee9e2a 100644
+--- a/tools/bpf/bpf_jit_disasm.c
++++ b/tools/bpf/bpf_jit_disasm.c
+@@ -210,7 +210,7 @@ static uint8_t *get_last_jit_image(char *haystack, size_t hlen,
+ 		return NULL;
+ 	}
+ 	if (proglen > 1000000) {
+-		printf("proglen of %d too big, stopping\n", proglen);
++		printf("proglen of %u too big, stopping\n", proglen);
+ 		return NULL;
+ 	}
+ 
+-- 
+2.27.0
 
-You can disregard this comment, as anyone reading this paragraph will
-understand the intended message.
 
-> +
-> +::
-> +
-> +    bool dma_iova_try_alloc(struct device *dev, struct dma_iova_state *s=
-tate,
-> +               phys_addr_t phys, size_t size);
-> +
-> +Is used to try to allocate IOVA space for mapping operation.  If it retu=
-rns
-> +false this API can't be used for the given device and the normal streami=
-ng
-> +DMA mapping API should be used.  The ``struct dma_iova_state`` is alloca=
-ted
-> +by the driver and must be kept around until unmap time.
-> +
-> +::
-> +
-> +    static inline bool dma_use_iova(struct dma_iova_state *state)
-> +
-> +Can be used by the driver to check if the IOVA-based API is used after a
-> +call to dma_iova_try_alloc.  This can be useful in the unmap path.
-> +
-> +::
-> +
-> +    int dma_iova_link(struct device *dev, struct dma_iova_state *state,
-> +               phys_addr_t phys, size_t offset, size_t size,
-> +               enum dma_data_direction dir, unsigned long attrs);
-> +
-> +Is used to link ranges to the IOVA previously allocated.  The start of a=
-ll
-> +but the first call to dma_iova_link for a given state must be aligned
-> +to the DMA merge boundary returned by ``dma_get_merge_boundary())``, and
-> +the size of all but the last range must be aligned to the DMA merge boun=
-dary
-> +as well.
-> +
-> +::
-> +
-> +    int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-> +               size_t offset, size_t size);
-> +
-> +Must be called to sync the IOMMU page tables for IOVA-range mapped by on=
-e or
-> +more calls to ``dma_iova_link()``.
-> +
-> +For drivers that use a one-shot mapping, all ranges can be unmapped and =
-the
-> +IOVA freed by calling:
-> +
-> +::
-> +
-> +   void dma_iova_destroy(struct device *dev, struct dma_iova_state *stat=
-e,
-> +               enum dma_data_direction dir, unsigned long attrs);
-> +
-> +Alternatively drivers can dynamically manage the IOVA space by unmapping
-> +and mapping individual regions.  In that case
-> +
-> +::
-> +
-> +    void dma_iova_unlink(struct device *dev, struct dma_iova_state *stat=
-e,
-> +               size_t offset, size_t size, enum dma_data_direction dir,
-> +               unsigned long attrs);
-> +
-> +is used to unmap a range previously mapped, and
-> +
-> +::
-> +
-> +   void dma_iova_free(struct device *dev, struct dma_iova_state *state);
-> +
-> +is used to free the IOVA space.  All regions must have been unmapped usi=
-ng
-> +``dma_iova_unlink()`` before calling ``dma_iova_free()``.
->
->  Part II - Non-coherent DMA allocations
->  --------------------------------------
-> --
-> 2.47.0
->
->
+
 
