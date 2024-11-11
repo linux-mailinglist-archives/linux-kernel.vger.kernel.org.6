@@ -1,195 +1,350 @@
-Return-Path: <linux-kernel+bounces-403832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9456D9C3B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:51:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D8E9C3B64
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:51:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE1D1F20FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6138FB228A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5204E15665E;
-	Mon, 11 Nov 2024 09:51:05 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F9F1714B2;
+	Mon, 11 Nov 2024 09:51:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6E112C54B;
-	Mon, 11 Nov 2024 09:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265B71684B4
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318664; cv=none; b=IDyb9dFS7eVuw99+WpCpWtBNhcljA3/kesq1g10XPYQsPhcJY3GkdNPAR6qfkaPeqPx1BUfrGE5NCZoKSv8FsPIbq/sKsqup2dw7GSqtagd4qXDxYh8E7wqwagrhBx8X9w8eGOTvsAgoOsZA2blICngdLgZV7vM/I5DDwzn1fI0=
+	t=1731318687; cv=none; b=MEBeWnJQ5v/pMkR8xHz+185KyVP+crlJedwhDrPliMVkGUOonsOfknppOXsK91FXGleOUNoe1+wNWjsRxJPIk3oSaXGLL6xe1l0milJ2SZylCBJyiSHstNy0FtS54V3FtbXnefuxr7T7ipSS3V6WvLOkj4YBK6gPZt3G37LLA6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318664; c=relaxed/simple;
-	bh=HC/ogAR3Zp78Y0WWpVUF9wh3e+CQs2kaSl+coBmIIHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l4IAdLdf1QPBUlCn7/mxeSjiNpOgjh+ipwD+oZeBjaiBlWjyu9MaNQ7jN78wdFoy4ajkuNwDdchu8TmM31C0BT35248PrBpJLXyIO2KHdosTFAd43itbrmyCQ91NZmWgA9iw0+fBsOxIlQMf3FtG6y1piBXglzYheb9s9NZ/pCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xn4Vl5DHNz1TB4C;
-	Mon, 11 Nov 2024 17:48:31 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2C4C0180064;
-	Mon, 11 Nov 2024 17:50:58 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 17:50:57 +0800
-Message-ID: <64a81255-b634-0d36-860a-bf5dc9b070a8@huawei.com>
-Date: Mon, 11 Nov 2024 17:50:56 +0800
+	s=arc-20240116; t=1731318687; c=relaxed/simple;
+	bh=gkqyy+Sx/d0RAzoWaeODvQzB6skuyesUJglUJjCKYHM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=orQ1zCTJRCQBttKsH85X9GcAqmlm+de2ULBADZAVwKuQNbUs2eMjrnnKaslHWvPiGtgFsNTcEmwzPFUPNuogN6optvLcdXxSv5f/9SBPmBXkHB3I7EoiPH41bKKNo/JRUu2QCxmewc/JrdEAcNqT4B4Eya55Q8BHoCBOmb8Lucw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso53082815ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:51:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731318684; x=1731923484;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kIzHnBclllhFj6f1GFim2BlLKv3Nds0ATxfyGD+ACa8=;
+        b=NaXQdklFG72n8VgsDG28WjFDEiCnsnY0Hs/VgMOV09sDbs+GwOia3gLno+6AnFecZa
+         EJXzoc+MGdxRiZFus9oGxSgaTrI4L8FwwqvZw04ZZ+1owOHhPjOZrBX7V2kZptXGYsJu
+         BljwD2xqS7C3SV8lr358IRKAd+CxXjt9sS4SbPTUdPpQdtBLaeS7ONXx2HiKiYiTQhc8
+         SQ4gG3+qdxQKbj2QoA3MVUZX5PynVXMEtTeMiZBVe2b0FUNNZgreRNGj+3Oaxye+pO8s
+         gKBGd6TA2hrtGkdHtel78JfH46ZRy/Lo/a/U/U6jaV9Au0gO0MEL4YstrFodknl3uYGY
+         3zhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWe5acBkMfqsoe2LQD9aJEzNptUlZo0cOSpEemhtA7NJR4yOMPoBhu/Wnnd+K7jfuUDU8Pa6GT7GC62J5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0+LGJOw/MdKySAp2jXn/mKm28HUXq2Ts11gLoN34aJhQ5wM03
+	mfb/NGXzOORuSZZULbTttSLUKYNigBSvZ9Oh2VUBAzmBGyKzKngQ59cESEonRo7eCTdZhctefq5
+	nH3PoRgtn9B5nCfcqS1piuaMTUucAtrdKRbuMKLnWPtWBYTIL/h5+QbI=
+X-Google-Smtp-Source: AGHT+IGyvkW0Ubo5rsQSi/5ny2Za8r1pp8Ul7irFtVKrCXgERCwszXQBrEH78RpYz5TMTFH71bsOiwzBcXJ5GUREb41Bd7ihrWOZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
-Content-Language: en-US
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-CC: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
-	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
-	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
- <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
+X-Received: by 2002:a05:6e02:1c87:b0:3a6:ac17:13e5 with SMTP id
+ e9e14a558f8ab-3a6f1a1ed84mr120407955ab.11.1731318684203; Mon, 11 Nov 2024
+ 01:51:24 -0800 (PST)
+Date: Mon, 11 Nov 2024 01:51:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6731d39c.050a0220.1fb99c.014e.GAE@google.com>
+Subject: [syzbot] [v9fs?] BUG: stack guard page was hit in sys_open
+From: syzbot <syzbot+885c03ad650731743489@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    ff7afaeca1a1 Merge tag 'nfs-for-6.12-3' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=128029f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c0b2fb415081f288
+dashboard link: https://syzkaller.appspot.com/bug?extid=885c03ad650731743489
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-ff7afaec.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0480df9db5e9/vmlinux-ff7afaec.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7633120d135f/bzImage-ff7afaec.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+885c03ad650731743489@syzkaller.appspotmail.com
+
+BUG: TASK stack guard page was hit at ffffc90003fb7fd8 (stack is ffffc90003fb8000..ffffc90003fc0000)
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 9740 Comm: syz.7.827 Not tainted 6.12.0-rc6-syzkaller-00110-gff7afaeca1a1 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__lock_acquire+0x53/0x3ce0 kernel/locking/lockdep.c:5053
+Code: 84 24 90 00 00 00 b3 8a b5 41 48 c7 84 24 98 00 00 00 54 85 93 8d 48 c7 84 24 a0 00 00 00 90 5a 6a 81 65 4c 8b 3d dd 80 99 7e <48> 89 44 24 10 48 8d 84 24 90 00 00 00 48 c1 e8 03 48 89 44 24 18
+RSP: 0018:ffffc90003fb7fe8 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88806a9440c0
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff905f590f R11: 0000000000000000 R12: ffff88806a9440c0
+R13: ffff88806a9440c0 R14: 0000000000000000 R15: ffff88802271c880
+FS:  00007fc96a8406c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90003fb7fd8 CR3: 0000000056fd8000 CR4: 0000000000352ef0
+DR0: fffffffffffffffc DR1: 0000000000000000 DR2: 0000000000000002
+DR3: 0000000000000800 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <#DF>
+ </#DF>
+ <TASK>
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+ ___slab_alloc+0x123/0x1880 mm/slub.c:3695
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4141
+ radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
+ idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
+ idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
+ idr_alloc+0xc1/0x130 lib/idr.c:87
+ p9_tag_alloc+0x394/0x870 net/9p/client.c:321
+ p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+ p9_client_rpc+0x1c3/0xc10 net/9p/client.c:691
+ p9_client_read_once+0x24f/0x820 net/9p/client.c:1575
+ p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
+ v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+ netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+ netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+ netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ __kernel_read+0x3f1/0xb50 fs/read_write.c:527
+ integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x89f/0xa40 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+ ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x8e/0x210 security/security.c:3129
+ do_open fs/namei.c:3776 [inline]
+ path_openat+0x1419/0x2d60 fs/namei.c:3933
+ do_filp_open+0x1dc/0x430 fs/namei.c:3960
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_open fs/open.c:1438 [inline]
+ __se_sys_open fs/open.c:1434 [inline]
+ __x64_sys_open+0x154/0x1e0 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc96997e719
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc96a840038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fc969b35f80 RCX: 00007fc96997e719
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
+RBP: 00007fc9699f139e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fc969b35f80 R15: 00007fff1d293ff8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__lock_acquire+0x53/0x3ce0 kernel/locking/lockdep.c:5053
+Code: 84 24 90 00 00 00 b3 8a b5 41 48 c7 84 24 98 00 00 00 54 85 93 8d 48 c7 84 24 a0 00 00 00 90 5a 6a 81 65 4c 8b 3d dd 80 99 7e <48> 89 44 24 10 48 8d 84 24 90 00 00 00 48 c1 e8 03 48 89 44 24 18
+RSP: 0018:ffffc90003fb7fe8 EFLAGS: 00010086
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88806a9440c0
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff905f590f R11: 0000000000000000 R12: ffff88806a9440c0
+R13: ffff88806a9440c0 R14: 0000000000000000 R15: ffff88802271c880
+FS:  00007fc96a8406c0(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90003fb7fd8 CR3: 0000000056fd8000 CR4: 0000000000352ef0
+DR0: fffffffffffffffc DR1: 0000000000000000 DR2: 0000000000000002
+DR3: 0000000000000800 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	84 24 90             	test   %ah,(%rax,%rdx,4)
+   3:	00 00                	add    %al,(%rax)
+   5:	00 b3 8a b5 41 48    	add    %dh,0x4841b58a(%rbx)
+   b:	c7 84 24 98 00 00 00 	movl   $0x8d938554,0x98(%rsp)
+  12:	54 85 93 8d
+  16:	48 c7 84 24 a0 00 00 	movq   $0xffffffff816a5a90,0xa0(%rsp)
+  1d:	00 90 5a 6a 81
+  22:	65 4c 8b 3d dd 80 99 	mov    %gs:0x7e9980dd(%rip),%r15        # 0x7e998107
+  29:	7e
+* 2a:	48 89 44 24 10       	mov    %rax,0x10(%rsp) <-- trapping instruction
+  2f:	48 8d 84 24 90 00 00 	lea    0x90(%rsp),%rax
+  36:	00
+  37:	48 c1 e8 03          	shr    $0x3,%rax
+  3b:	48 89 44 24 18       	mov    %rax,0x18(%rsp)
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 2024/11/9 20:40, Kuan-Wei Chiu wrote:
-> Hi Jinjie,
-> 
-> On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
->> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
->> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
->> has assigned before, and the error path only free the suite->log's stream
->> memory but not set it to NULL in string_stream_destroy(), so the later
->> string_stream_clear() of suite->log in kunit_init_suite() will cause
->> below UAF bug.
->>
->> Set stream pointer to NULL after free in string_stream_destroy()
->> to fix it.
->>
->> 	Unable to handle kernel paging request at virtual address 006440150000030d
->> 	Mem abort info:
->> 	  ESR = 0x0000000096000004
->> 	  EC = 0x25: DABT (current EL), IL = 32 bits
->> 	  SET = 0, FnV = 0
->> 	  EA = 0, S1PTW = 0
->> 	  FSC = 0x04: level 0 translation fault
->> 	Data abort info:
->> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->> 	[006440150000030d] address between user and kernel address ranges
->> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->> 	Dumping ftrace buffer:
->> 	   (ftrace buffer empty)
->> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
->> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
->> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
->> 	Hardware name: linux,dummy-virt (DT)
->> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> 	pc : string_stream_clear+0x54/0x1ac
->> 	lr : string_stream_clear+0x1a8/0x1ac
->> 	sp : ffffffc080b47410
->> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
->> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
->> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
->> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
->> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
->> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
->> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
->> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
->> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
->> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
->> 	Call trace:
->> 	 string_stream_clear+0x54/0x1ac
->> 	 __kunit_test_suites_init+0x108/0x1d8
->> 	 kunit_exec_run_tests+0xb8/0x100
->> 	 kunit_module_notify+0x400/0x55c
->> 	 notifier_call_chain+0xfc/0x3b4
->> 	 blocking_notifier_call_chain+0x68/0x9c
->> 	 do_init_module+0x24c/0x5c8
->> 	 load_module+0x4acc/0x4e90
->> 	 init_module_from_file+0xd4/0x128
->> 	 idempotent_init_module+0x2d4/0x57c
->> 	 __arm64_sys_finit_module+0xac/0x100
->> 	 invoke_syscall+0x6c/0x258
->> 	 el0_svc_common.constprop.0+0x160/0x22c
->> 	 do_el0_svc+0x44/0x5c
->> 	 el0_svc+0x48/0xb8
->> 	 el0t_64_sync_handler+0x13c/0x158
->> 	 el0t_64_sync+0x190/0x194
->> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
->> 	---[ end trace 0000000000000000 ]---
->> 	Kernel panic - not syncing: Oops: Fatal exception
->>
->> Cc: stable@vger.kernel.org
->> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  lib/kunit/string-stream.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
->> index 54f4fdcbfac8..00ad518b730b 100644
->> --- a/lib/kunit/string-stream.c
->> +++ b/lib/kunit/string-stream.c
->> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
->>  
->>  	string_stream_clear(stream);
->>  	kfree(stream);
->> +	stream = NULL;
-> 
-> Thanks for proposing the fix. However, I don't believe it fully
-> resolves the UAF issue. Changing the stream pointer value within
-> string_stream_destroy() doesn't update the caller's stream pointer, so
-> the issue remains.
-> 
-> I think the correct approach would be to set the log pointer to NULL in
-> the error path of kunit_debugfs_create_suite() to address the issue.
-> Let me know if I've missed something or overlooked an obvious detail.
-> 
-> Here's the proposed code:
-> 
-> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
-> index d548750a325a..b25d214b93e1 100644
-> --- a/lib/kunit/debugfs.c
-> +++ b/lib/kunit/debugfs.c
-> @@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
-> 
->  err:
->  	string_stream_destroy(suite->log);
-> -	kunit_suite_for_each_test_case(suite, test_case)
-> +	suite->log = NULL;
-> +	kunit_suite_for_each_test_case(suite, test_case) {
->  		string_stream_destroy(test_case->log);
-> +		test_case->log = NULL;
-> +	}
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-It looks fine, test it and if ok, will update it.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->  }
-> 
->  void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
-> 
-> 
->>  }
->>  
->>  static void resource_free_string_stream(void *p)
->> -- 
->> 2.34.1
->>
->>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
