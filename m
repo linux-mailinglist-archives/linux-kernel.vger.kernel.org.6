@@ -1,202 +1,240 @@
-Return-Path: <linux-kernel+bounces-403969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4482F9C3D36
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:29:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848989C3D46
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:30:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360921C2297F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4438028514B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C1619DFA2;
-	Mon, 11 Nov 2024 11:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342C419923A;
+	Mon, 11 Nov 2024 11:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b="ZReCH5hG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nKiGXhPs"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SuhjY9Xn"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474FB19D8B4;
-	Mon, 11 Nov 2024 11:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77374189BBB;
+	Mon, 11 Nov 2024 11:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731324437; cv=none; b=gLNKX2TcfeJBgLpbsO5zpwsxLwkiks8puvLT4V3xvh9jLnt65JOOV4kbqGdPChqspZKfH+rNSgcVisW6r9Ima9vKmxZ+ghstFZ8xJmEeC83YtcZLmzELcsWP+gx/LeQnbjLQXMB+HMoutn2iwOaeSLSTK3MwCKdNGT5I8nclkeg=
+	t=1731324565; cv=none; b=h9OmmAzsFi4RtSMxthjmYk87RAigsXQb5ROmSPrAqcZbmjEIi+igJr7Cqyjs2kb/wQneo/P0RRZkyfUKrvWz8sayjtL4Hehnj6/zSIfShlO8Pu46I618e+pPHYcHrK2WmCliFOb0QL1Gvxx1gXTMrUZ6QjMLgm2MzO8ndEdQCQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731324437; c=relaxed/simple;
-	bh=zTGp2tNg+iUcSEL7U57VPmRiKo5PyUGyTr5Wzj3OZss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gARnDjP1jfPez5O8q5/J4XyiI2aEoKQpA9a9E+SMcs9v43ISHnDb4NFeB81WiiyWhDQocj5tFH/TJNIAW/ptZS6nGZD0tFASrqIQfJ1tLZrYzfJfOF+heY/WlYyXbc+IIc0wUqQv9dIpzefTSPWJBHyWG2Vfkr9aQcxn61TBE5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me; spf=pass smtp.mailfrom=alistair23.me; dkim=pass (2048-bit key) header.d=alistair23.me header.i=@alistair23.me header.b=ZReCH5hG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nKiGXhPs; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alistair23.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alistair23.me
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id 48A3E13806A2;
-	Mon, 11 Nov 2024 06:27:15 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 11 Nov 2024 06:27:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alistair23.me;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1731324435; x=
-	1731410835; bh=9Edqij0qmUbgqLwK4hO3iEBCcscgXfAGElwn+Vgc2xs=; b=Z
-	ReCH5hGqvGAi93bmP6cpjuWqpanszsYw/m7Sa1hyX0UELdKzqqjX/KoIdVPIKzZl
-	2catNhmsCuxb/hsR7pb2tjDD4Qc1sezaDubmuHYUYpid5YPbav7gziHpuZ2eJZ7e
-	ZTwICaHRcGdqctoVDOh9UhzyIZB4smkK5Hgz4adsA6aTZmc1vBiYCYONRJReCbvB
-	cUJCReH877LQ32yqxSW7JQuMnfAHLjXbSGh4ddx+8/GyftlfyuNs5HpOzkMS/Mw8
-	jqfYzDXvzPPWg6YjR7JHn4kWXZAMZEKii7wSK8NKMoHOfEyHI61tYaspN0PN9bHX
-	3VpHoimzhdJ2wheTBBSpg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1731324435; x=1731410835; bh=9
-	Edqij0qmUbgqLwK4hO3iEBCcscgXfAGElwn+Vgc2xs=; b=nKiGXhPsMfgugeJZ4
-	OfYdf16mF/Opy6TyMKOPy7TiqnKiFk3ZM5S4hG484fNquwe1CUJl0UxxOUYcPajb
-	b76Oyh95IGpIIVP/EUX+diAKfP7FupkYP7Zf3JQpkeyYNIDlTCEqcIaQkS0r9bwg
-	Jc+i30BpuvnMy1hONPT6tVeSK3dUieDYWuOgR5wQDsu998iUSl6xe6vVZOn8jgjG
-	4zPLPN/IvukqgcbVXeDjDJ/YgRbTJj/R/40GgevS/cks88PBg9qbZ6lXO26FADcE
-	3TzeIk8d6SqYUqysebMU2+p3WeCOOIA2dwIDxBsXpvbPiwIZwe6JTx90BbwBEo++
-	t3PkA==
-X-ME-Sender: <xms:E-oxZ_rh9c1NLBeeN7qchYF6s98lZflwAGGC9E-Loedas6OgxIe4Zg>
-    <xme:E-oxZ5rvJQGDJVkuDMjkT8UPDqyUC_kUpd2czht3x7T65L33iTleE1BKRGBQV4y35
-    GkYS19qQpwQMDg9pIg>
-X-ME-Received: <xmr:E-oxZ8O4w_dhFDB8IgIwUGZrLvlj_jD2YygGjgvkIveoi_aymPj7esbettB50yXK63CeuIAgSECM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgddvkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
-    fkofgjfhgggfestdekredtredttdenucfhrhhomheptehlihhsthgrihhrucfhrhgrnhgt
-    ihhsuceorghlihhsthgrihhrsegrlhhishhtrghirhdvfedrmhgvqeenucggtffrrghtth
-    gvrhhnpeeitdefkeetledvleevveeuueejffeugfeuvdetkeevjeejueetudeftefhgfeh
-    heenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrlh
-    hishhtrghirhesrghlihhsthgrihhrvdefrdhmvgdpnhgspghrtghpthhtohepudehpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghi
-    lhdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtohepmhgvsehklhhovghnkhdruggvvhdprhgtphhtthhopegsvghnnhhordhl
-    ohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopehtmhhgrhhoshhssehumhhitg
-    hhrdgvughupdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrdgtohhmpdhr
-    tghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepohhjvggurg
-    eskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:E-oxZy5J_AiYqeXogcrkQnmmJU7G6dzW3X2ZFfchP0y11YqlfyP5rQ>
-    <xmx:E-oxZ-5A1hNjKRRNaI_1Yh9h63C-kGql6cK0Xcgw5WDCZC9q-75B4g>
-    <xmx:E-oxZ6gV3rAUIWKpfujbZEWlRk3gzcxzZchK9J5x9U5bWJMhKIAfAw>
-    <xmx:E-oxZw66ge-WlBYW90WyqYuoA7n3AQgvs8W4h9WOiDhf_1O_TRYrKw>
-    <xmx:E-oxZxqVcv3kUt4AB7OsI8LTInRAsD4GanpvBfuLUuNpwBvwOrDTLmbO>
-Feedback-ID: ifd214418:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Nov 2024 06:27:10 -0500 (EST)
-From: Alistair Francis <alistair@alistair23.me>
-To: linux-kernel@vger.kernel.org,
-	boqun.feng@gmail.com,
-	a.hindborg@kernel.org,
-	me@kloenk.dev,
-	benno.lossin@proton.me,
-	tmgross@umich.edu,
-	aliceryhl@google.com,
-	gary@garyguo.net,
-	ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	alex.gaynor@gmail.com,
-	alistair.francis@wdc.com,
-	bjorn3_gh@protonmail.com
-Cc: alistair23@gmail.com,
-	Alistair Francis <alistair@alistair23.me>
-Subject: [PATCH v3 11/11] rust: helpers: Remove uaccess helpers
-Date: Mon, 11 Nov 2024 21:26:15 +1000
-Message-ID: <20241111112615.179133-12-alistair@alistair23.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241111112615.179133-1-alistair@alistair23.me>
-References: <20241111112615.179133-1-alistair@alistair23.me>
+	s=arc-20240116; t=1731324565; c=relaxed/simple;
+	bh=5cgp7iaZi8tgG12DuQYS4WxE3EZhYIb7ihHP94ue5g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S+nVyKDgKgIHU6Uah9clMYVcdklsES2q5Twwygg/1w6//t59ctBMj2kM3zMAqo8shOBRS01aWahSF5N7KCIjchFEIM7CZZoGzpQVNZEMbR2RRJMwK1wguLCTw0z4lI7Satj7rTZ+00gWbspWQQCw+Zv7/yskIKhZ8U2E2ePieZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SuhjY9Xn; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B3C040E01FE;
+	Mon, 11 Nov 2024 11:29:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LH789wugla_b; Mon, 11 Nov 2024 11:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731324553; bh=JihSgH5EEo1zZNt1PcMAqI+W39owOYa2GO/ORFME5H8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SuhjY9XnZ61YUXJC4uvZeRaxLqOrfY2JaVRfozxcZVCcQQoiMIzqFT+q9PDTupY4u
+	 Hz6vFjCezBUMp1Z9ilVs57fs5c6sOSvIgddWYN9XDQQbbHztkqGCUGJnu53EOeNcgV
+	 8xqOueQtp8xg415nHLXdvfrxQ0hxs+W7Rsj2K/Hha8+z9Wpqlt6/OUzOamqctNuVc6
+	 JEhLX+Zm2Uc8Y98c0WDxXUTOa+N3VASdpO9X12FoJ1MKyMVs8g5ps+Bjn7R5OsEuvm
+	 AzdopQYAzqqcC9Vv6zbV2pQAydaDbwevNcOHJGMg73p9bJcofd6iGewT0XED0AvR3Q
+	 cqzSB/hrFEJm9E2wnLLW24/0vbwSxWAbbL1+SDPKBoNr3A47OcbR9RBX56CY2dKTbv
+	 M75Mj7BP7raefAdBGWvIMkUYisRxJ3AsO2Mn5plb8jx6zaoxz3Tx1DhOfR2wKD51kq
+	 FmJ+KskVIy4cHuZqfCBB7FPAQC+gcPEnKb5lhfiWjkwJR7/qjrg4Bx4kkui9Mfgz6S
+	 tQhlJQofepQFryNPWV4eDH4/4QJcNt0cWG699kJQkKCK/fWqHHPYDxKe4BRbKJqddS
+	 v2Z7IqzW1qI2QfQyWdntY6GwFMG/gtHUeUYkCQLXd0A4SK+bD7GxMCW1/J3dk9/p6o
+	 rCqL4WPLRSj3eru4yUfxmUXk=
+Received: from zn.tnic (p200300ea973a31c3329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31c3:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C093040E015F;
+	Mon, 11 Nov 2024 11:28:26 +0000 (UTC)
+Date: Mon, 11 Nov 2024 12:28:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shiju Jose <shiju.jose@huawei.com>
+Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+	"dave@stgolabs.net" <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+	"ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
+	"leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>,
+	"jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>,
+	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
+	"erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>,
+	"duenwen@google.com" <duenwen@google.com>,
+	"gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
+	tanxiaofei <tanxiaofei@huawei.com>,
+	"Zengtao (B)" <prime.zeng@hisilicon.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
+	wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: Re: [PATCH v15 11/15] EDAC: Add memory repair control feature
+Message-ID: <20241111112819.GCZzHqUz1Sz-vcW09c@fat_crate.local>
+References: <20241101091735.1465-1-shiju.jose@huawei.com>
+ <20241101091735.1465-12-shiju.jose@huawei.com>
+ <20241104061554.GOZyhmmo9melwI0c6q@fat_crate.local>
+ <1ac30acc16ab42c98313c20c79988349@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1ac30acc16ab42c98313c20c79988349@huawei.com>
 
-Now that we support wrap-static-fns we no longer need the custom helper.
+On Mon, Nov 04, 2024 at 01:05:31PM +0000, Shiju Jose wrote:
+> More detailed explanation of PPR and memory sparing and use cases was added
+> in Documentation/edac/memory_repair.rst, which is part of the last common
+> patch ("EDAC: Add documentation for RAS feature control") added for
+> documentation of various RAS features supported in this series. Was not sure
+> the file to be part of this patch or not.
 
-Signed-off-by: Alistair Francis <alistair@alistair23.me>
----
- rust/bindgen_static_functions   |  3 +++
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers/helpers.c          |  6 ++----
- rust/helpers/uaccess.c          | 15 ---------------
- 4 files changed, 6 insertions(+), 19 deletions(-)
- delete mode 100644 rust/helpers/uaccess.c
+If the commit message doesn't contain a justification for a patch's existence,
+why do you even bother sending it?
 
-diff --git a/rust/bindgen_static_functions b/rust/bindgen_static_functions
-index 8bc291a7a799..ec48ad2e8c78 100644
---- a/rust/bindgen_static_functions
-+++ b/rust/bindgen_static_functions
-@@ -27,3 +27,6 @@
- 
- --allowlist-function get_task_struct
- --allowlist-function put_task_struct
-+
-+--allowlist-function copy_from_user
-+--allowlist-function copy_to_user
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 63b78a833303..7847b2b3090b 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -24,6 +24,7 @@
- #include <linux/sched/signal.h>
- #include <linux/sched/task.h>
- #include <linux/slab.h>
-+#include <linux/uaccess.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
- 
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index ebe3a85c7210..42c28222f6c2 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -1,8 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Non-trivial C macros cannot be used in Rust. Similarly, inlined C functions
-- * cannot be called either. This file explicitly creates functions ("helpers")
-- * that wrap those so that they can be called from Rust.
-+ * Non-trivial C macros cannot be used in Rust. This file explicitly creates
-+ * functions ("helpers") that wrap those so that they can be called from Rust.
-  *
-  * Sorted alphabetically.
-  */
-@@ -16,7 +15,6 @@
- #include "slab.c"
- #include "spinlock.c"
- #include "task.c"
--#include "uaccess.c"
- #include "vmalloc.c"
- #include "wait.c"
- #include "workqueue.c"
-diff --git a/rust/helpers/uaccess.c b/rust/helpers/uaccess.c
-deleted file mode 100644
-index f49076f813cd..000000000000
---- a/rust/helpers/uaccess.c
-+++ /dev/null
-@@ -1,15 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--
--#include <linux/uaccess.h>
--
--unsigned long rust_helper_copy_from_user(void *to, const void __user *from,
--					 unsigned long n)
--{
--	return copy_from_user(to, from, n);
--}
--
--unsigned long rust_helper_copy_to_user(void __user *to, const void *from,
--				       unsigned long n)
--{
--	return copy_to_user(to, from, n);
--}
+IOW, no redirections pls - just state here what the use case is in short. You
+can always go nuts into details in the docs.
+
+> persist_mode used to readback the value of persist_mode presently set.  For
+> eg.  1 - soft memory sparing for a sparing instance, though the CXL memory
+> device supports both soft and hard sparing, which is configurable.
+> persist_mode_avail used to return the temporary and permanent repair
+> capability of the device.  
+
+Wait, sysfs does a one value per file thing. What does persist_mode_avail
+give?
+
+Surely you can't dump a list of all available modes...
+
+From that doc:
+
+root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/mem_repair0/persist_mode_avail
+0
+
+Does that mean only sPPR is available?
+
+If only one mode is available, why am I even querying things? There's no other
+option.
+
+Catch my drift?
+
+> Also I will update here with more details which was given in the last part
+> of this document about DPA.  Some memory devices (For eg. a CXL memory
+> device) may expect the Device Physical Address(DPA) for a repair operation
+> instead of Host Physical Address(HPA), because it may not have an active
+> mapping in the main host address physical address map.  'dpa_support'
+> attribute used to return this info to the user.  
+
+All this stuff needs to be documented properly and especially how one is
+supposed to use this interface. Not have people go read CXL specs just to be
+able to even try to use this. I'd like to see clear steps in the docs what to
+do and what they mean.
+
+> The nibble mask actually for CXL memory PPR and memory sparing operations,
+> which is reported by the device in DRAM Event Record and to the userspace in the
+> CXL DRAM trace event.
+> Please see the details from the spec.
+
+This is *exactly* what I mean!
+
+If I have to see the spec in order to use an interface, than that's a major
+fail.
+
+> I was not sure add or not these CXL specific details in this EDAC document.
+
+So that document should contain enough info on how to use the interface. You
+can always put links to the spec giving people further reading but some
+initial how-do-I-use-this-damn-thing example should be there so that people
+can find their way around this.
+
+> The visibility of these control attributes to the user  in sysfs is decided
+> by the is_visible() callback in the EDAC, which in turn depends on a memory
+> device support or not the control of a repair attribute. 
+
+That still doesn't answer my question: what are valid values I can put in all
+those?
+
+Try as many as I can until one sticks?
+
+This is not a good interface.
+
+And since sysfs does one-value-per-file, dumping ranges here is kinda wrong.
+
+> This attribute used request to determine availability of resources for a repair operation
+> (For eg. memory PPR and sparing operation) for a given address and memory attributes set.
+> The device may return result for this request in different ways.
+> For example, in CXL device request query resource command for a,  
+> 1. PPR operation returns resource availability as a return code of the command. 
+> 2. memory sparing operation, the device will report the resource availability by producing a
+> Memory Sparing Event Record and  memory sparing trace event to the userspace.
+> 
+> May be 'dry-run' better name instead of query?
+
+Maybe this should not exist at all: my simple thinking would say that
+determining whether resources are available should be part of the actual
+repair operation. If none are there, it should return "no resources
+available". If there are, it should simply use them and do the repair.
+
+Exposing this as an explicit step sounds silly.
+
+> >Yeh, this needs to be part of the interface and not hidden in some obscure doc.
+> Adding this info in Documentation/edac/memory_repair.rst is sufficient? 
+
+Yap, for example. You can always concentrate the whole documentation there and
+point to it from everywhere else.
+
+> The details of the repairing control was added in
+> Documentation/edac/memory_repair.rst, which is part of the common
+> patch ("EDAC: Add documentation for RAS feature control").
+
+Ok, point to it pls in this doc so that people can find it.
+
+Thx.
+
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
