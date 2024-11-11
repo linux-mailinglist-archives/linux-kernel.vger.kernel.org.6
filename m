@@ -1,146 +1,180 @@
-Return-Path: <linux-kernel+bounces-404802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38B59C485C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:44:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CD09C4861
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59ABE1F22F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:44:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744AB1F22F63
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE361BD00C;
-	Mon, 11 Nov 2024 21:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDAF1B9B50;
+	Mon, 11 Nov 2024 21:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="JakcHvMD"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PgG39R/K"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889D61AA7AF;
-	Mon, 11 Nov 2024 21:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1C316DC3C;
+	Mon, 11 Nov 2024 21:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731361302; cv=none; b=E0O14foaW9wIAhQdIS4zGFgkKy3/+yDzhvZ3goSrzslN4RwnqTmJ29b/MdF44kPSbVYFs2QQZIA6cMW33rQB39a7SvzZx2CQvzXUpTZfbCT3KFbi7F6fgUPLdU654MuC65pYF24YeplVWqZBtPHFAda/kse9QU/vB4NwZ6j1cEc=
+	t=1731361467; cv=none; b=ee+VANL4jr8QZdsCk9Cd1VFyA5Cpcjyn8bazj54B1e7WIYCmTk3UmRaBpwKL6iZH02yAMaLcTm/hCJm1YTi85t+qKmCur4qWvVRbMwl1skN1U78Ykd9Adpg/ynwdRhXhMw203rk+9hip0KEI/PvO49X8rHMpuCaWA3jJqpEFV5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731361302; c=relaxed/simple;
-	bh=rAnzzK5zdRKn2L0gzXe9C5T7wps3+4L97bJig/V80l4=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:
-	 In-Reply-To:References:Date; b=HWbMSIm/5XMxJvz1n8qrCQl7gCA1nA5XJzNpuiE5NzdGOeflpwfmm/UKoyfvl79zBOfQhgKA4acalBkouMsSwRFJETRQHaHY6b78CskZ4XWB17Df41yWOS+foGxRRdR96onfPhLJyD8IEB4+WutoVBsf3ZfJql5Du16W5NgTLc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=JakcHvMD; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1731361279; x=1731966079; i=frank-w@public-files.de;
-	bh=6aJ7+7tAZ00QWBqGIx3TLXHhs8RBVJf18eC8WQggc1I=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:In-Reply-To:References:Date:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=JakcHvMDEcpFlELbXSTKoXlcb5SwyEHL0MxwTh+Z/5lArev21g99vCVHIKJVKack
-	 wVGZNxyhco+frD3tEdR/Tb27phfJjAL/lOjK2a3R0UTOgz1m9Tqc1l3Gu7lm6fbK9
-	 KLzJzWeYTEiEENUG8eLQuqkXmFVrslUzL01S5U20PDqwEOdI/6dq7pjN+As3Uw7SJ
-	 KY94cHFUFy2txQWC4lfIgp5SGT0HxtOqF0JA6y9WCOhx/Vs+1YD0yAAD9IHUts403
-	 CLoPotKo3JiKLJ4SovYkGtc0TNVfiHfRDfs7qGmUuXA/QS3kVujmKJYa0IOQheWQm
-	 muFvbbsfYxAP/RMeKA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.144.196] ([217.61.144.196]) by
- trinity-msg-rest-gmx-gmx-live-67cd9ff8f8-qxw8q (via HTTP); Mon, 11 Nov 2024
- 21:41:19 +0000
+	s=arc-20240116; t=1731361467; c=relaxed/simple;
+	bh=hr28Jzb4t27J6dZ45ZmNnAwUhS5FlHHu4qHutaG4GVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mjlql0yHjuFEEja3b2HpLJGoUrFWwItMmX3uMYCXYSnSHt9wyFr8H2mVVXyMJ7aUtuwFmfJaSaEADNYkxug6y7brjZcPybbr195LCfJk+TgMxhJN3oq6mxvUZSuZPVf1p9ofAaCTqdifiFu744zrNR2b1CTvsN+l8JHee8PdLxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PgG39R/K; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460ace055d8so37369771cf.1;
+        Mon, 11 Nov 2024 13:44:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731361464; x=1731966264; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=itkjvb9I+aBKuWOCo7K0Xg8I/MkZ4NMqhq67SD9l5UM=;
+        b=PgG39R/Kf9ps4/Dianv4xwBn1M9kqi/RiG4w6aSiXmsIVlsGDiZmNjws+b8fBUGj00
+         0qLe1u3P5qeXdCiMmR7x/wBZUYc8t0NE0oIYSQ1HKZYslVOMwp/4XNGSSc7FxJSUxa1L
+         PbNlSXPH/zRrZ/ivVasHoCS5yA3WSVgCN1Wg08d1MH6YrKYhrmjPcXV+8hW90PpjFJqq
+         +FcAiVHBjJIOehyX2bkpW8iVOhdVRKThrFlzsKwuMeCQWPGrD8KMSvwmXWbikx6F5NaI
+         aEMHJWK90SD+ZQEiMWGvATjmyngO2BC4m7KufzqmhzrF1MLfJPYE5bgRqSf8kSyryVar
+         u06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731361464; x=1731966264;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=itkjvb9I+aBKuWOCo7K0Xg8I/MkZ4NMqhq67SD9l5UM=;
+        b=gnYYhdEJYUawZDKO0G0QiJgrD0keATFKS/NzeHI4HcVaezH/RAnUeJO6SeY0sAhDSv
+         RJ0/kYe+DFyumyN+VdgsrOF2RV6MNxMG8s4gpkwgeyHOrhMI6cC7UHDyoODRKumswpCF
+         UOgd6Dbou79RzKKwk5qCKemXFj6Gg8I2zEt4WouY375zOHOQks5XlIyvi0PeI1fXKycc
+         k4E8VJeX5YCT6NsPuOhqn46F2b9X2EcVoRQyyOeAbqZ9346XlbfeIkwUCQxpV7xQwtmg
+         adHa1kj6m1VPQusTM7p+9oKD5kPWsmHhvjTlBHIcMTigLpbiTJn45O+NT8BdFTpI6uBt
+         pSMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmBYtUVrDxjd8UU8WCMU2MmS/r+Ao6fhOkkLYoRfPe0i11ipncwQtuIRnxG5gQatD92kzR+Sy70hAa@vger.kernel.org, AJvYcCWqcJoXG+HmvjMzpIV6hbNRbtf8QbWClXzAjr9XhQ07cZ+rA9XG4LQGHG+CGCrlyjKGPG+tW0OqJUn7MpzK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza3XOVgXEU2QbTNPKgBnDNjtj7kqf6+54lYC/GpptpJH+A8bXE
+	fj7sZfPUeJ/S41PhErdDgR1wllXgD+Z8gnvFbbmBnq1MBZgEwIpj
+X-Google-Smtp-Source: AGHT+IGGQw9xSO9K/8sKheTnSqCCrMGLDs/3H9lx42LPWQzzQrl0qeQ/9F1j4zfJWVeXoYWW3Q53Rg==
+X-Received: by 2002:a05:622a:610a:b0:460:af80:ceb9 with SMTP id d75a77b69052e-4630931929dmr154291581cf.4.1731361464452;
+        Mon, 11 Nov 2024 13:44:24 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff3df35fsm67597831cf.13.2024.11.11.13.44.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 13:44:23 -0800 (PST)
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 62C241200078;
+	Mon, 11 Nov 2024 16:44:23 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 11 Nov 2024 16:44:23 -0500
+X-ME-Sender: <xms:t3oyZ15xjU9DUDwOp_DiqtIv9vKgm9e3DSlPFpfuR5GhIbOvUufpww>
+    <xme:t3oyZy7VsUEOgzZDybzoh_sdyZ6bRN-oF4dFD4C4AeX1c3Owkk5tB8s_ZVSweVMwL
+    0_fEStMUJQPU3lFWg>
+X-ME-Received: <xmr:t3oyZ8dwByCYCo405nSqIW6zlVsGHjhVycS7RIwat4h2-f_6ydE2Xj3jCoq16w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdduheduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
+    fukfhfgggtuggjsehttdertddttddunecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegs
+    ohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnhepveehte
+    ffvdffteekueduuedukedtgfehtddugfehvdfgtdegudffhfduudfhjeeunecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvsh
+    hmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheeh
+    vddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpd
+    hnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvghg
+    hihsiigvrhgvghihsehfrhgvvghmrghilhdrhhhupdhrtghpthhtohepphgruhhlmhgtkh
+    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtvghrnhesrhhofihlrghnugdrhhgr
+    rhhvrghrugdrvgguuhdprhgtphhtthhopehprghrrhhirdgrnhgurhgvrgesghhmrghilh
+    drtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    phgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepnhhpihhgghhinh
+    esghhmrghilhdrtghomhdprhgtphhtthhopeguhhhofigvlhhlshesrhgvughhrghtrdgt
+    ohhmpdhrtghpthhtohepjhdrrghlghhlrghvvgesuhgtlhdrrggtrdhukh
+X-ME-Proxy: <xmx:t3oyZ-I61SD9KdNwIrq7IS0mn9GxjXdKd_af53m8gTMnaab25cU8-Q>
+    <xmx:t3oyZ5LiTA6zCjpTbAEZvVG8HMWctoSDJYOfu4o2yGos2aJgIQJ0cQ>
+    <xmx:t3oyZ3xAyiWWY-iFfdayu9MATUzEa2b-3i2-NOSaa-kMEx6FDgFUCw>
+    <xmx:t3oyZ1Ju-jlA2Qqb7KRfcY2PyXn3-DJvRNmeym162R0bi2sstBaErw>
+    <xmx:t3oyZ8ZxB4fp2x5qhkbALSYYP4i5zVACDr0vYEGzduG4A42foncExZwp>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 16:44:22 -0500 (EST)
+Date: Mon, 11 Nov 2024 13:44:21 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: =?iso-8859-1?Q?Sz=22oke?= Benjamin <egyszeregy@freemail.hu>
+Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+	will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev, torvalds@linux-foundation.org
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <ZzJ6tWbbdi-zlxS3@tardis.local>
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
+ <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+ <ZzJ13eM2SNNB3fl7@tardis.local>
+ <10ffb1e1-163d-4e30-9be3-0f229f3b7492@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-57bdaab7-5f4f-463d-9657-377ccfe7df25-1731361278993@trinity-msg-rest-gmx-gmx-live-67cd9ff8f8-qxw8q>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: robh@kernel.org, linux@fw-web.de
-Cc: broonie@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
- leilk.liu@mediatek.com, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Subject: Aw: Re: [PATCH] dt-bindings: spi: add compatibles for mt7988
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20241111203803.GA1917413-robh@kernel.org>
-Importance: normal
-References: <20241109105029.52748-1-linux@fw-web.de>
- <20241111203803.GA1917413-robh@kernel.org>
-Date: Mon, 11 Nov 2024 21:41:19 +0000
-Sensitivity: Normal
-X-Priority: 3
-X-UI-CLIENT-META-MAIL-DROP: W10=
-X-Provags-ID: V03:K1:lhWuv2tYMHpt7DO7Z/Dm56Q7NZVx3nihPbPFXJJSEf5DPtX75eGDbSyV4XaE9W5I2YcGW
- WKtcggTre7VQtvMYnR0+UCnrmrQqQ4YDQglMCWGW0SLXrWdy0kNMJqDC8k2ifbJmS6+Aiw42glBb
- z88/SvPlEczxqExLblIRyHVbcn9fPdCDh7zMIG3OFQKqUjJufbGxQl/jVL2LZwbFd1nRejHbCcPP
- myMMaooIhnQZZjzPlOpCrf5jc+WwQ2Kvve7SGPImdsQqzVSYYUUT5aWX/CmTaW9npY63ELcrMwfu
- jRG5SbNgmAWLsy9JZImnJh43koRoozoCZ0Z7vVBrYArvOeMMjdFlUcJs5VeXi6IEXc=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2iLa3uBn1KI=;niY7MlI2EUB5Nlxhv6aaM1TMYCo
- 55wGD8AOhwrMB31IDL4MsTkyZk1d9UybNK9Z34MaSrpVRzXjE6VH7YrMG+UBgghcJc5zmK+Af
- 4VgYUDbUQ3bMAmF4mBX5W1dZ7ugyfOcOYsdPoZvycG0k308wrinC/IloXV1/fBDiodJ0mtTK/
- SavEaYcVK9pyhEBo4jm7F4wVeazCuvCaArYi/trYAtCo4CPb8RsDYLmX2wmM9Tt3d4CAmpW0Q
- kqd0mR6GnsnLAvd3bm4Gu+wZLWXlIcFORGVwC1WIXFsh4PHqbPulLmVkqnVqmlzRFPV2ZzUpM
- z2ch847wRtPVyehjJajW7ofxfvPV/Twev297EDbF6jq3yEr01HYOIWrzB/PUB5SD/uBGlK49/
- UCDocskb7i9mpjTB78NA63q2pGop5l6JLhn0GLGulLEFYLEw9Yd3Lr8kvychbpQu9tYJo+d8s
- krnaQh1Lpc/I2fHYq+6T3Aqc2sTxhL7/NnBH0fIt1Duoiw0RfV6WgAwWs6GUwq2XbcypIIkZA
- h0c+6h0fjpaREmRQoV1VmoTyJ4J6bfkFP3Tx/eZhHApLduWQxSlPorx5vMdy0br0+TfNhqueV
- JiApG+yF5EUWqOc/DIkMJ4nVBOeKufHUeSW/1urz8s4j8y+nRyZUt9Szxy0fY7d25gyiy+xr+
- c/2j4p6lSFwRQB4S1HcTESkgSk0S1weiffTTgTUKUw==
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <10ffb1e1-163d-4e30-9be3-0f229f3b7492@freemail.hu>
 
-&gt; Gesendet: Montag, 11. November 2024 um 21:38
-&gt; Von: "Rob Herring" <robh@kernel.org>
-&gt; An: "Frank Wunderlich" <linux@fw-web.de>
-&gt; CC: "Mark Brown" <broonie@kernel.org>, "Krzysztof Kozlowski" <krzk+dt=
-@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Matthias Brugger" <ma=
-tthias.bgg@gmail.com>, "AngeloGioacchino Del Regno" <angelogioacchino.delr=
-egno@collabora.com>, "Frank Wunderlich" <frank-w@public-files.de>, "Leilk =
-Liu" <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org, devicetree@vger.=
-kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead=
-.org, linux-mediatek@lists.infradead.org
-&gt; Betreff: Re: [PATCH] dt-bindings: spi: add compatibles for mt7988
-&gt;
-&gt; On Sat, Nov 09, 2024 at 11:50:28AM +0100, Frank Wunderlich wrote:
-&gt; &gt; From: Frank Wunderlich <frank-w@public-files.de>
-&gt; &gt;
-&gt; &gt; MT7988 has 2 different spi controllers. Add their compatibles.
-&gt; &gt;
-&gt; &gt; Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-&gt; &gt; ---
-&gt; &gt;  Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml =
-| 2 ++
-&gt; &gt;  1 file changed, 2 insertions(+)
-&gt; &gt;
-&gt; &gt; diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-=
-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.ya=
-ml
-&gt; &gt; index e1f5bfa4433c..ed17815263a8 100644
-&gt; &gt; --- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.=
-yaml
-&gt; &gt; +++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.=
-yaml
-&gt; &gt; @@ -35,6 +35,8 @@ properties:
-&gt; &gt;            - enum:
-&gt; &gt;                - mediatek,mt7981-spi-ipm
-&gt; &gt;                - mediatek,mt7986-spi-ipm
-&gt; &gt; +              - mediatek,mt7988-spi-quad
-&gt; &gt; +              - mediatek,mt7988-spi-single
-&gt; &gt;                - mediatek,mt8188-spi-ipm
-&gt; &gt;            - const: mediatek,spi-ipm
-&gt;
-&gt; Does the fallback make sense for both? Is there some common subset of
-&gt; functionality where they are the same?
+On Mon, Nov 11, 2024 at 10:39:07PM +0100, Sz"oke Benjamin wrote:
+[...]
+> > > 
+> > > There is a technical issue in the Linux kernel source tree's file
+> > > naming/styles in git clone command on case-insensitive filesystem.
+> > > 
+> > > 
+> > > warning: the following paths have collided (e.g. case-sensitive paths
+> > > on a case-insensitive filesystem) and only one from the same
+> > > colliding group is in the working tree:
+> > > 
+> > >    'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
+> > >    'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
+> > > 
+> > > 
+> > > As you a maintainer, what is your suggestion to fix it in the source code of
+> > > the Linux kernel? Please send a real technical suggestion not just how could
+> > > it be done in an other way (which is out of the scope now).
+> > > 
+> > > Is my renaming patch correct to solve it? Question is what is the most
+> > 
+> > No, because once you do a checkout to a commit that previous to your
+> > changes, things are going to break again. The real "issue" is git use
+> > case-sensitive file names, so unless you can rewrite the whole history,
+> > your "solution" goes nowhere.
+> > 
+> > Regards,
+> > Boqun
+> > 
+> > > effective and proper fix/solution which can be commited into the Linux
+> > > kernel repo to fix it.
+> 
+> 
+> My renaming solution can not fix the old history line, but after this patch
+> in latest master branch there are no any issue anymore, in git cloning. This
+> the bare minimum solution which can fix its "cloning" issue for the future.
 
-currently they work only with the fallback compatible, but we see in SDK t=
-hat there are 2 types...in SDK non-soc specific compatibles are used which=
- was rejected last time.
+You asked for a technical issue for doing the renaming, and I gave you
+one: simply renaming doesn't solve the issue you want to resolve,
+develop Linux kernel on a case-insensitive filesystem. Do you admit that
+the original issue won't get fixed with your patch? Then technically,
+the best way to "work around" it is to use a case-sensitive filesystem,
+right?
 
-&gt; Rob
-&gt; </frank-w@public-files.de></frank-w@public-files.de></leilk.liu@media=
-tek.com></frank-w@public-files.de></angelogioacchino.delregno@collabora.co=
-m></matthias.bgg@gmail.com></conor+dt@kernel.org></krzk+dt@kernel.org></br=
-oonie@kernel.org></linux@fw-web.de></robh@kernel.org>
+Regards,
+Boqun
 
