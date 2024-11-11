@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-403492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342BA9C366D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:12:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2258D9C366F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73471283734
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:12:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BD5CB215E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54F0433B3;
-	Mon, 11 Nov 2024 02:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EDE3EA98;
+	Mon, 11 Nov 2024 02:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="GyCESk3f"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QX6bvX+r"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9100318E2A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D0A217F7;
+	Mon, 11 Nov 2024 02:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731291142; cv=none; b=P6VYpgnVT87Pv05bCHDIltZ0qnYRxJNKxmlm//GW2YA4lvUdfiFrH2fUxdEYSJdP+DAcYHe6xuM8K2zZGWOwPE00o3XFYFqEAA6JcUXPTuzNytPLHSYmCx4OTgyR+6m+GEoRuonkKo/wDulA3NXKZXM2uelcZZ+zVCdTBCj6wpI=
+	t=1731291338; cv=none; b=Dal0TZOTMctlrK/B9s+pMnAOfAIstre/ZKECWXzmLsDHfybOo29pwR0eWb13CsvwRjUxTRP7n0m9sXdMlu8ZKIp1bFN3/ELeV/Ss9T6C7VACFghXxuaI4TwhYXToBViL03Kkc0/S3S1LeauMTDPw1rPCGe6ePFtoyA4M9sLkWUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731291142; c=relaxed/simple;
-	bh=9i+Zm+SHVHfVUy4FUtz9eeM5Fw+2zvF/lIBDEQq6Dto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hsoRuzCEJq2YIzTGCD8Vr+sBUrWil0pkNXlRCJepLeYujZ8SiIP/RFVBpidJ6XTDFZ+JkXzc5Q2KzwxWAIs1NejVZ/O/EPLvteapAo25H/2OK4HmribucZx4ymGjm728WWoQbr89TtFtbKdpeh4tJmWkkl4CmwUcxE1CMQFtn8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=GyCESk3f; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731291130; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=kPhZpfwim8Tr8MRzViTRwXJRChpSgC6ZbMn8DI4K++I=;
-	b=GyCESk3f5GUIPwYNVTASF92LQtlcAeiPByVlUv7ptrC6KwjTASKkkndze4Rb+pG6IOeq1tGFBLydW0Pp7W8qOPLhm0LbY9/66cBccGCzU4Fkiykma4UuAmJqioI2pOZ3G/QtLVd9w49GvWtTOc6cYaO6t4lrkPIXE3CgRgro5HQ=
-Received: from 30.221.130.244(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJ3sJBC_1731291129 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 11 Nov 2024 10:12:10 +0800
-Message-ID: <bda19625-e43e-4ebe-82f5-dad860782e6d@linux.alibaba.com>
-Date: Mon, 11 Nov 2024 10:12:09 +0800
+	s=arc-20240116; t=1731291338; c=relaxed/simple;
+	bh=9Co/huiCFIkoDUcT8/Xj3fsF6cMccbLqTTQ/2iA5sXo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=TNsLrPu+2K1li3wyC4RYmMgPP/iydyhuYOW8wAi3Lvxtg1s33G4VbLkZj+Pc87GfR6emb3uoL0vRbpPLeYTMer02Rlnuq8vYDVey9hPw7PSg4Nl8uZ1mQuyLbzl/dCdQWtaKDQ/gCpmOc1rhek0HTHgmKoP/FKzl8UoL/Ia1y+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QX6bvX+r; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731291337; x=1762827337;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=9Co/huiCFIkoDUcT8/Xj3fsF6cMccbLqTTQ/2iA5sXo=;
+  b=QX6bvX+r2vwr0welLvHXPQIHN0UnNhvz58WI5tKkdzJlf+oXQnKnbmby
+   bb4OOLphptfj4pBtkRdWjtgWgFl2gU3v3kJIpoilF/5tnr5kHlhrYkOlM
+   bMrRFBNoZ+QjSGCha87x73w7CX1CQ0FNxzS55CeadKF/J+6UMzP8rfQUp
+   lc+mnrB4XNUmuADz2BnUvcNYVISARmUGZHe8E4GpNSTnLlTw8QCVvKSqR
+   8ce+FGLoV9sdL4bLAaL7ZgqRqKXIieAmIdDLxXdUfHAC6MBipHlPkdf9S
+   B+jibihI2gu581YWgUIaD0+jsz6pUtNUeJ03rJH27Q0a8NoLex6k/M1/7
+   Q==;
+X-CSE-ConnectionGUID: 8wPQxb9dQeiUa+MZyCxq8Q==
+X-CSE-MsgGUID: XMZG8djaRPa33DUss2G6Ww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="30504557"
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="30504557"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 18:15:36 -0800
+X-CSE-ConnectionGUID: GpN0AMdhSgCcpWsiu57xlg==
+X-CSE-MsgGUID: m4vVSHHUQGGvupmEHhJYwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="87485503"
+Received: from ipu5-build.bj.intel.com (HELO [10.238.232.136]) ([10.238.232.136])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 18:15:34 -0800
+Subject: Re: [PATCH -next] media: ipu6: Remove duplicated include in
+ ipu6-dma.h
+To: Yang Li <yang.lee@linux.alibaba.com>, sakari.ailus@linux.intel.com,
+ bingbu.cao@intel.com, tian.shu.qiu@intel.com, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20241111015659.86760-1-yang.lee@linux.alibaba.com>
+From: Bingbu Cao <bingbu.cao@linux.intel.com>
+Message-ID: <67c23810-259b-fc0a-2792-eecdbbcc292e@linux.intel.com>
+Date: Mon, 11 Nov 2024 10:12:37 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] erofs: get rid of erofs_{find,insert}_workgroup
-To: Chao Yu <chao@kernel.org>, linux-erofs@lists.ozlabs.org
-Cc: Chunhai Guo <guochunhai@vivo.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20241021035323.3280682-1-hsiangkao@linux.alibaba.com>
- <36d1653d-249a-47b0-a87c-1216ed5bf1ca@kernel.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <36d1653d-249a-47b0-a87c-1216ed5bf1ca@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241111015659.86760-1-yang.lee@linux.alibaba.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Hi Chao,
+Li,
 
-On 2024/11/7 11:09, Chao Yu wrote:
-> On 2024/10/21 11:53, Gao Xiang wrote:
->> Just fold them into the only two callers since
->> they are simple enough.
->>
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> ---
->> v1: https://lore.kernel.org/r/20241017115705.877515-1-hsiangkao@linux.alibaba.com
->> change since v1:
->>   - !grp case should be handled properly mentioned by Chunhai;
->>
->>   fs/erofs/internal.h |  5 +----
->>   fs/erofs/zdata.c    | 38 +++++++++++++++++++++++++---------
->>   fs/erofs/zutil.c    | 50 +--------------------------------------------
->>   3 files changed, 30 insertions(+), 63 deletions(-)
->>
->> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
->> index 4efd578d7c62..8081ee43cd83 100644
->> --- a/fs/erofs/internal.h
->> +++ b/fs/erofs/internal.h
->> @@ -457,10 +457,7 @@ void erofs_release_pages(struct page **pagepool);
->>   #ifdef CONFIG_EROFS_FS_ZIP
->>   void erofs_workgroup_put(struct erofs_workgroup *grp);
->> -struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
->> -                         pgoff_t index);
->> -struct erofs_workgroup *erofs_insert_workgroup(struct super_block *sb,
->> -                           struct erofs_workgroup *grp);
->> +bool erofs_workgroup_get(struct erofs_workgroup *grp);
->>   void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
->>   void erofs_shrinker_register(struct super_block *sb);
->>   void erofs_shrinker_unregister(struct super_block *sb);
->> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
->> index a569ff9dfd04..bb1b73d99d07 100644
->> --- a/fs/erofs/zdata.c
->> +++ b/fs/erofs/zdata.c
->> @@ -714,9 +714,10 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
->>   {
->>       struct erofs_map_blocks *map = &fe->map;
->>       struct super_block *sb = fe->inode->i_sb;
->> +    struct erofs_sb_info *sbi = EROFS_SB(sb);
->>       bool ztailpacking = map->m_flags & EROFS_MAP_META;
->>       struct z_erofs_pcluster *pcl;
->> -    struct erofs_workgroup *grp;
->> +    struct erofs_workgroup *grp, *pre;
->>       int err;
->>       if (!(map->m_flags & EROFS_MAP_ENCODED) ||
->> @@ -752,15 +753,23 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
->>           pcl->obj.index = 0;    /* which indicates ztailpacking */
->>       } else {
->>           pcl->obj.index = erofs_blknr(sb, map->m_pa);
->> -
->> -        grp = erofs_insert_workgroup(fe->inode->i_sb, &pcl->obj);
->> -        if (IS_ERR(grp)) {
->> -            err = PTR_ERR(grp);
->> -            goto err_out;
->> +        while (1) {
->> +            xa_lock(&sbi->managed_pslots);
->> +            pre = __xa_cmpxchg(&sbi->managed_pslots, grp->index,
->> +                       NULL, grp, GFP_KERNEL);
->> +            if (!pre || xa_is_err(pre) || erofs_workgroup_get(pre)) {
->> +                xa_unlock(&sbi->managed_pslots);
->> +                break;
->> +            }
->> +            /* try to legitimize the current in-tree one */
->> +            xa_unlock(&sbi->managed_pslots);
->> +            cond_resched();
->>           }
->> -
->> -        if (grp != &pcl->obj) {
+Thanks for the patch.
+
+On 11/11/24 9:56 AM, Yang Li wrote:
+> The header files linux/iova.h is included twice in ipu6-dma.h,
+> so one inclusion of each can be removed.
 > 
-> Do we need to keep this logic?
+> ./drivers/media/pci/intel/ipu6/ipu6-dma.h: linux/iova.h is included more
+> than once.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11791
 
-Thanks for the review.  I think
+It'd better to add:
+Fixes: 799d91fd3fe0 ("media: ipu6: not override the dma_ops of device in driver")
 
-		if (grp != &pcl->obj)
+> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+> ---
+>  drivers/media/pci/intel/ipu6/ipu6-dma.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/media/pci/intel/ipu6/ipu6-dma.h b/drivers/media/pci/intel/ipu6/ipu6-dma.h
+> index b51244add9e6..a902eec5c07a 100644
+> --- a/drivers/media/pci/intel/ipu6/ipu6-dma.h
+> +++ b/drivers/media/pci/intel/ipu6/ipu6-dma.h
+> @@ -7,7 +7,6 @@
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/iova.h>
+> -#include <linux/iova.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/types.h>
+>  
+>
 
-equals to (pre && erofs_workgroup_get(pre)) here, so
+Reviewed-by: Bingbu Cao <bingbu.cao@intel.com>
 
-		} else if (pre) {
-			fe->pcl = container_of(pre,
-				struct z_erofs_pcluster, obj);
-			err = -EEXIST;
-			goto err_out;
-		}
 
-Handles this case.
-
-Thanks,
-Gao Xiang
+-- 
+Best regards,
+Bingbu Cao
 
