@@ -1,155 +1,152 @@
-Return-Path: <linux-kernel+bounces-403714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28E49C3968
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:07:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53449C3965
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9250C2823AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037D41C22442
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679515B122;
-	Mon, 11 Nov 2024 08:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4829315ADAF;
+	Mon, 11 Nov 2024 08:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="G7hrW6fd"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.65.219])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="leevOo8C"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A514B077;
-	Mon, 11 Nov 2024 08:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.65.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D1514B077
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731312455; cv=none; b=mv9YMn/5Jyn0aYCm4V/XZfu9FK8zsF6feffYc1P5IVd4U3lS70IwEGPJTApw0Szn7g0C6bHJlh8jgw1Au6VgtoEyZW6SNHXRHsWmsdaZmDRKPrukH9Kepe6VvQ4lvzTJxRhRkWOCu7BvVgDyHO40V1Q9v5Laq2cc7hQ4YknJTfI=
+	t=1731312402; cv=none; b=c67dmY9vTwlI/wyBPKmR/exl1zTxD67sqazWQlz3r/zhwrW27m832IDBjinUReE0PymTgA3zWc/SbKCd75Q3qsXfhEsoJy54VImDEEj0UXCbRz5ddjgB0VT6s5daXOXopGLZZknvYGcaguTcEHxz0Mhnt+0Lx7YvCQUPxTsCngQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731312455; c=relaxed/simple;
-	bh=PhwDtEg/LEpTPpLUYCpjCql2vZFz2gWbSSuDrAl9AKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c58tu2wm2RoocEtjuZX4V1yjox+CMR9wQqOeJE3rDvGlkgRMrbTSKVLqgB1GnOg5weioZVIWVwgdYrZfi3JFt4zYO4ZOs5C8oriivhVuFhr2vYPVP5bMxOZaLUFuiO2Wv+rGO20A6ZyZ5KQHqdCiP4gqPV4ljAR0vPCYUs91YFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=G7hrW6fd; arc=none smtp.client-ip=114.132.65.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731312435;
-	bh=Y1fuglRgUw47/f3KQYozli3/k4/a9X3TSldSFC8XL5o=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=G7hrW6fd6BKCGpmY3swi8/cH+8+Dt+0u+dkjl/nPaH1YBmro9pg5Ocwjd+NOKJQtp
-	 dcfTmQ0QCRZlf/jZr06JhM8RHY/qCD3HcnaSQLjIJh66UoRmoQQNjCRGunuG6OlHa3
-	 E5z/e6iZ44oZ8s53DgXaUAr5ruX7cSrRUkgqaAWc=
-X-QQ-mid: bizesmtpsz8t1731312404twhijyk
-X-QQ-Originating-IP: sjAl8FxYTJ6OMhx6nAYKrFe48tSnxFP11GG7iE8sYj8=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Nov 2024 16:06:42 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6476989594551450920
-From: WangYuli <wangyuli@uniontech.com>
-To: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	f.fainelli@gmail.com,
-	sebastian.hesselbarth@gmail.com,
-	mugunthanvnm@ti.com,
-	geert+renesas@glider.be,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] net: phy: fix may not suspend when phy has WoL
-Date: Mon, 11 Nov 2024 16:06:27 +0800
-Message-ID: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731312402; c=relaxed/simple;
+	bh=aeNy0DuaGFVuo5k3rdPwp5gTQmzmV5Dq7lW1ynUi704=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=AufByDAHQC1CxsIJH9isH9lOWsLiVzZZY/Z4g1VkS8/emftZsHncVF2hDwIeu6J4CL1UA7w+FOhN4jbdr4+ZaRWG8JAAz2EzkiuEP6kGjMmmyyQbrbaH2qvf2dTFUaXMf60KxeDfXIIYGhJtqb+tYmR9xIb4aria8d6lJf5LV60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=leevOo8C; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241111080636epoutp04851604027e78b967e6cc20821948259a~G23O7V6fq2108521085epoutp041
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:06:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241111080636epoutp04851604027e78b967e6cc20821948259a~G23O7V6fq2108521085epoutp041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731312396;
+	bh=flaFcwJald/rkzEebnMVSU7S4KyWdSWn/CtTa251TKc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=leevOo8CuAeO9cRQe9jIF9VlSyahNDl+/VO0ZF6bU9OCLHyzmzs6EImPdHqBQAyog
+	 Th/U+EWSIgyNiukOXsl5oTh1GSqr7r8sC8msrelrpi60etjMkZ7tiDVE8AxeS2nh+L
+	 6Idab4N0RgEtwgQuKuvud1XccmH+F9zSU1JfUaP8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241111080636epcas1p1698e5d20a7b2dd1c7bc0620447c8c980~G23OeZJRk0041500415epcas1p1Q;
+	Mon, 11 Nov 2024 08:06:36 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.242]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Xn2F809Z9z4x9QM; Mon, 11 Nov
+	2024 08:06:36 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E9.A9.08588.B0BB1376; Mon, 11 Nov 2024 17:06:35 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241111080635epcas1p3ac1df881f67c49f065302c231615cff8~G23NoMxmY1583615836epcas1p3T;
+	Mon, 11 Nov 2024 08:06:35 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241111080635epsmtrp2f41731602b10d7b9c74f5c07c1148d19~G23Nm0WG42626226262epsmtrp2T;
+	Mon, 11 Nov 2024 08:06:35 +0000 (GMT)
+X-AuditID: b6c32a33-a57ff7000000218c-33-6731bb0b1d6b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	20.FF.08227.B0BB1376; Mon, 11 Nov 2024 17:06:35 +0900 (KST)
+Received: from jangsubyi03 (unknown [10.253.100.135]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241111080635epsmtip2f4d5f0e8fb0f8b80910bca86b6ce6156~G23NcSIX92026320263epsmtip2h;
+	Mon, 11 Nov 2024 08:06:35 +0000 (GMT)
+From: "Jangsub Yi" <jangsub.yi@samsung.com>
+To: "'Christoph Hellwig'" <hch@infradead.org>
+Cc: <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <junwoo80.lee@samsung.com>,
+	<sh8267.baek@samsung.com>, <wkon.kim@samsung.com>
+In-Reply-To: <ZyzYnw0PgpyViFdf@infradead.org>
+Subject: RE: [PATCH] mmc: Add config_host callback to set a mmc queue
+Date: Mon, 11 Nov 2024 17:06:35 +0900
+Message-ID: <0b2e01db3410$a05f41c0$e11dc540$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NV9lVvsB36OpD6PKvxpVWu6D1z11YJfLSY4u2HvUy/KS3zr3hAkPgjS5
-	okRxcIKaAdmn90ieMiTsXMmXt0/nVVQ1XXMusgHlsiTnU+S6qQE+9CzIz6dX8nYYS2Akf5l
-	IKP3L6K8MtxtBttfe1WbVF7tADyLp17ZdzGIXd4vloeUQLhsOjYslfrG7JeVUvD/92y1xaA
-	c1PfIw2JlRBFcpui3PlRxNtghtUHu19CL8k7CsHD+iXguDwO7eFf4ns5sv7oADNt3XrGNeW
-	SLZkLs9UxcsCr+weGUHOdOUK8//pp/4tyjWQcfiMDuQFX+bMdsvS5GSjoYnFIhlVcYqwxGv
-	0BNhk9YbfbXA6mTIqGffhubRZXneZv7BXSqlYDOa9p/8cymNkHj4Fr2H/xAoZhaJU9qUND1
-	QmcXPYOLO+lAahJZO/izSlMqfxpzs/xMdFj+VMDAurBhjjx9/ANrvoDcsxLMNmEYxVx1plq
-	lkPZr3ISSdM/Vs1+oNaNS/L70nPr4A8HEWpqlxEOjgNdKkSChd3c95SVykWGgzIgFTD6Goy
-	TUsLsjB8PKkjDzPgeuFmcfh7Sbl+dza3Xb+//lmprh00wojN8gs217OP4zd0qZ15KS9A5nN
-	Hu+NUBelClE9/viLC7XZ3tyAlckdeV2phFWsPx0dBis8Ia9Z206iEHlGLPKFEQs/Io5T8PW
-	wbxbUAKw8I0yk+dggcabFHu3a4iqMGRaFJ79lp0m37u/iLq1cJs1QMcb94wJW8/XA/m2XAj
-	GLO3huJcsJ76tCigMOmLyfgF2LO2dkRJOcDE5MQ+R8L5s+ZZmeEgQ52MkubsoTNfVeVecri
-	ZWN10Zx6AewPnupR5i9w9jEo6v+geosZfhvVXZzNIVYgA74wZZcF4I7i5QHL1MwmARgt/Vq
-	WkOX+Oy7zIdbsCw4lE2R9ndo3RzGaEFC9bnplp7cVU4b/b5DTSF520QCIpSx7pf0P4qaFbc
-	LOLFFCzY6FL8kkTy4apwhfV8A0F27FLyMEykllEW7pFqwdsMlUQwE4ZQXXta3DMdugW4xVE
-	ybzlBghd5GA+i/KByC8dhmJ133BpIXXAhMQ8enPJ2MJShZHUleMUhjgPO/tJw=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH5zy9MrK58XqKdq8KPmuKMwnV7FAHbhmEtAfVDB6QBL9uedwJ0SwfJsjjaF+A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmri73bsN0g0+zLSxOT1jEZLHrbzOT
+	xeVdc9gsjvzvZ7S4duYEq8XxteEWmy99Y3Fg99i8QsvjzrU9bB59W1YxenzeJBfAEpVtk5Ga
+	mJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuWmQO0X0mhLDGnFCgU
+	kFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYFagV5yYW1yal66Xl1piZWhgYGQKVJiQnfHu/xO2
+	gjNsFZe7TjM1MM5m7WLk5JAQMJH41HeOrYuRi0NIYAejxMnDc9khnE+MEqemtrJCON8YJVo2
+	3mGDaTnyfj5Uy15Gif1LzjFBOK8YJc7d3gdWxSagLXHk23IwW0RAV+LswheMIEXMAmsYJdov
+	bWQESXACJZbv388MYgsLuEo8WnYBLM4ioCrxek032IW8ApYS9xo/QNmCEidnPmEBsZkFDCTe
+	n5vPDGHLS2x/O4cZ4jwFiZ9Pl7FCLPaTmPfhCztEjYjE7M42ZpAjJAR6OSR69t5ih2hwkXg2
+	4xxUs7DEq+NboOJSEp/f7YX6uVjiwLNHLBB2jcSOhq9MELa9RHNrMxvEAj6Jd197gBZzAMV5
+	JTrahCBMFYmtfWowEzfumQa1yUNi6rkr7BMYFWch+WwWks9mIflsFpIPFjCyrGIUSy0ozk1P
+	TTYsMITHd3J+7iZGcOrUMt7BeHn+P71DjEwcjIcYJTiYlUR4Nfz104V4UxIrq1KL8uOLSnNS
+	iw8xmgIDeyKzlGhyPjB555XEG5pYGpiYGZlYGFsamymJ8565UpYqJJCeWJKanZpakFoE08fE
+	wSnVwJT8LnZHbvp5NwORt+t/uR+/WdIbLODMlcIss12sqdLstOfx/652So+bNP7UP1jc93pd
+	ufOfb4s2WK7eXi3W+n3r57933rz4d+EuC99+8a2P8vc8TIl1EU+XdRL9se7ChWXu3zcKZCwq
+	/XF430//TWs4r7lNyw5ina2YU8WxcMfs8EPPZTuXXOJWY29Z+H3l6Sa2adqnH5gHTbkXG/f2
+	k8h0tUUXtSQNpPdubvzRL1juPUOQMXO5gMKprdHf8x27W3t281ybqvWia8KjvU4TjoVmPvg8
+	YdWiU+f37pP3zz7r8/LGuZWz/fdfS6/59WHSNLa6WtWCKMcP19kjN39ctYOxbubcPZkv5dIu
+	GlkpXDQUUmIpzkg01GIuKk4EAK5IQdImBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrNLMWRmVeSWpSXmKPExsWy7bCSvC73bsN0g22vxC1OT1jEZLHrbzOT
+	xeVdc9gsjvzvZ7S4duYEq8XxteEWmy99Y3Fg99i8QsvjzrU9bB59W1YxenzeJBfAEsVlk5Ka
+	k1mWWqRvl8CV8e7/E7aCM2wVl7tOMzUwzmbtYuTkkBAwkTjyfj4biC0ksJtRonGGQRcjB1Bc
+	SuLDpxQIU1ji8OHiLkYuoIoXjBItp14zgpSzCWhLHPm2HKxVREBX4uzCF4wgRcwCmxgl3v5b
+	zwzR8ZtRYvfC+2BVnEBVy/fvZwaxhQVcJR4tuwA2iUVAVeL1mm6wg3gFLCXuNX6AsgUlTs58
+	wgJiMwsYSZw7tJ8NwpaX2P52DjPEAwoSP58uY4W4wk9i3ocv7BA1IhKzO9uYJzAKz0IyahaS
+	UbOQjJqFpGUBI8sqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzg+NHS2sG4Z9UHvUOM
+	TByMhxglOJiVRHg1/PXThXhTEiurUovy44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBa
+	BJNl4uCUamBiuB+yI2dq3h53zZPqDd2/LRJzzVIX2izTtLPWEXy/f8Ziqwf7TskaLZ3n88Vo
+	944OtfWHQp+byhpUri3fWGTO8Jd136sWzfkXV4anWJ0r+Sih+vLx303rzSL5bVjcJcLv3w59
+	E6L0d5fLcu3r3ycErjq/mbUjbekNo/W5kRUzX/DtOzm9IrDO+BGzy7LsyXz/XzhylzhsE6rY
+	8H+t+MmdLCe+Bm87yf2p/Vpi2ItVWryJD2dISKgLZr22+Lr9REq064/7+xM2Om5dF/fw6+Qn
+	P/dvnlhync3TzW9PA2MwX9W8vlcdzUmuyT/aH55Vf7jJhs/jmsGNxOgtzvfS1wtFhAiqzXnt
+	zZT9MSJx6kUpJZbijERDLeai4kQA2ZbDXQ4DAAA=
+X-CMS-MailID: 20241111080635epcas1p3ac1df881f67c49f065302c231615cff8
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c
+References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
+	<20241106051347.969-1-jangsub.yi@samsung.com>
+	<ZyxelKdmXXiSVL1g@infradead.org>
+	<000001db30f4$4a749770$df5dc650$@samsung.com>
+	<ZyzYnw0PgpyViFdf@infradead.org>
 
-From: Wentao Guan <guanwentao@uniontech.com>
+> On Thu, Nov 07, 2024 at 06:06:11PM +0900, ??? wrote:
+> > Currently, there is no way to configure a request queue on the host
+side.
+> > Although there are various exported symbols in
+> > kernel/block/blk-settings.c that can be used to configure a request
+> > queue, users cannot utilize them as needed.
+> 
+> If you actually provided a user and didn't just try to offend the kernel
+> maintainers by submitting dead code I could explain you in detail why
+> youre idea is flawed.
+> 
+If a machine uses both SD and MMC simultaneously, how should timeouts be set
 
-When system suspends and mdio_bus_phy goes to suspend, if the phy
-enabled wol, phy_suspend will returned -EBUSY, and break system
-suspend.
-
-Commit 93f41e67dc8f ("net: phy: fix WoL handling when suspending
-the PHY") fixes the case when netdev->wol_enabled=1, but some case,
-netdev->wol_enabled=0 and phydev set wol_enabled enabled, so check
-phydev->wol_enabled.
-
-This case happens when using some out of tree ethernet drivers or
-phy drivers.
-
-Log:
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to suspend: error -16
-PM: Some devices failed to suspend, or early wake event detected
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to suspend: error -16
-PM: Some devices failed to suspend, or early wake event detected
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
-YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to freeze: error -16
-
-Link: https://lore.kernel.org/all/20240827092446.7948-1-guanwentao@uniontech.com/
-Fixes: 481b5d938b4a ("net: phy: provide phy_resume/phy_suspend helpers")
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/phy/phy_device.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index bc24c9f2786b..12af590bfd99 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -315,6 +315,19 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
- 	if (netdev->ethtool->wol_enabled)
- 		return false;
- 
-+	/* Ethernet and phy device wol state may not same, netdev->wol_enabled
-+	 * disabled, and phydev set wol_enabled enabled, so netdev->wol_enabled
-+	 * is not enough.
-+	 * Check phydev->wol_enabled.
-+	 */
-+	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
-+
-+	phy_ethtool_get_wol(phydev, &wol);
-+	if (wol.wolopts) {
-+		phydev_warn(phydev, "Phy and mac wol are not compatible\n");
-+		return false;
-+	}
-+
- 	/* As long as not all affected network drivers support the
- 	 * wol_enabled flag, let's check for hints that WoL is enabled.
- 	 * Don't suspend PHY if the attached netdev parent may wake up.
--- 
-2.45.2
+for each? And if different timeout values need to be used depending on the
+manufacturer of the SD card, how can this be implemented? I believe it is
+not appropriate to make such changes in the core code. There needs to be
+a way to configure these settings per host.
 
 
