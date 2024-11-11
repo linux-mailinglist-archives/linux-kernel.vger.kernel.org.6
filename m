@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-404377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5179C4305
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:54:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C778F9C4307
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:54:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40507284241
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:54:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2AA1F25570
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B67B1A3035;
-	Mon, 11 Nov 2024 16:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF151A2C29;
+	Mon, 11 Nov 2024 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l4SDUtYw"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8GlLOdT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EB1A2C3A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D40197A7F;
+	Mon, 11 Nov 2024 16:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344010; cv=none; b=njdGYyucnzo165o6tL5UA0vuC/huKiIknrJUgjybtO0ZJa+WujARlnXmXsELykIpR2tLzO7xIHsDIFxRsxbQpJTDk0N2M7NSZFKnQ2aBmvkCdC4ovtAcK51w+hnUSsVPGLxTayVxEvL/AqPgxL3j5vprdxJz9QjkKk4XfWYytLI=
+	t=1731344062; cv=none; b=EmWcYWx1AjiN7zYP8z8RLNLHmd4r5Wu+93B6WjMe4Rjk6yaLe8cv/Oyfi1Mcs+aHbz9jPf217jbE4PNl2LS9pCUo2BC9mEmWBQhFzQt8KwZmwvuVCdHYNcfor9z7A8UsYILsapbS/9STwnpSpeVm1sDKwB6QY6HFMJlKBsi/KPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344010; c=relaxed/simple;
-	bh=7jB/VlRFjzf4Ba1mF3gK2PSxXXZWjrnSx7YLjrpKSQ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xt3uvPO5FV03ogqi3s1WUrNbj8uj4to0tuMBMyqzlHq7cVDkowX/LSumFx1ybDqPaGY65dkGSGtWHUCmGfVLrAiJVuZ6ag+m16xCz6ffoAIiRk5N+qoPjHEB5wK4dXWTxzd6oQjcpHQSJxueSPXgP4dOiqbeFg4yPOL3PwaaRIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l4SDUtYw; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2110a622d76so41643755ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731344007; x=1731948807; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zp+nbh/dZKfux7FpHpW59JPT00IgC82bEOR9JMylv+k=;
-        b=l4SDUtYwBW1rAy4ev/WRce8Tog+c3WzMGC4SWW4dO8G3XNxv28uXcgqrFm14jWUvvX
-         3CegGh4svka5I2HyQT8l0SALGlloOqKIlHLJIRKM8qnHrEY41TMV/Z0hwn9gymDLl+v3
-         LsTtaDNAnn8Tmu1GjxQCQRonzzREdXdwRQtJ6sYSKCq7v0q5cHKJpOM3EJ2EPLrPVLCi
-         6ZR/sxuZmBmgQauUzajFVE+sDNQJ8mJncl2kTdqS94FTdY0cN8CcQKkrkH7PllQc+VAK
-         jfjD+AnF0jgROaiFqQtn4iyfKGA4wGnAleTpwbPmXqM8IVYELFv+SSNReHMMUPIxbNU+
-         ffjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731344007; x=1731948807;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zp+nbh/dZKfux7FpHpW59JPT00IgC82bEOR9JMylv+k=;
-        b=ddYU18yqcPUxcMJ/qyftm+eyEpGqXS3ngoIcUAC1Xcnw61zi6bEhLwAi0k/5qzomBo
-         tUn4na107cwm2ISDdW3dmK25h9Q4bqGjmXvRd4tCqcIGSErtZriamuwQA1RUALCp2Ozu
-         JVRzCYo+thBEji86Yua9kLiqJfjYuFZDlcbtT26QyK097rqMsizSVnraCDn4Ooi0jcip
-         AhHx41uAdZvalzKrd657dCHHim2izG5SyeRFRCexJRwicFlCS2B/uXKtBRSy00lTg+BM
-         KmbTs9zLmeaClecUEdEoKOrTJ6Vqk2JS97mWdPpskwjSMi5ypyLFdasNb2u+Tjy3F3uN
-         Vwaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCFTaIDb0t4hP6eQlGJDoJ7e40ytddlqEGkbwoZYPluq20nELUlXcBX/FV7Zx3JMHAp8e74THWLgZjW/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGR3WBn5LjwBRSTbyFb507F8x2AgjeRVlpulJihDvepKfL2IG9
-	ThuAn3WuydWpKswjLl9HIKfdJOMdetpY/gI/mKs8zHzW0agZ937P
-X-Google-Smtp-Source: AGHT+IHXISfj9AJxeg33E7YdEoBMj42RHz9afc6u3daioNxNqg+xQD+UBy59Q/iDkkJ+0C2kRQrlew==
-X-Received: by 2002:a17:902:eccf:b0:20c:8abc:733a with SMTP id d9443c01a7336-21183daceb8mr208915355ad.53.1731344006976;
-        Mon, 11 Nov 2024 08:53:26 -0800 (PST)
-Received: from localhost.localdomain ([2409:40c1:5f:8acf:5c94:d8c3:91ab:c98b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd154asm8809116a91.40.2024.11.11.08.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 08:53:26 -0800 (PST)
-From: Amit Vadhavana <av2082000@gmail.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	sfr@canb.auug.org.au,
-	saravanak@google.com,
-	ricardo@marliere.net
-Cc: skhan@linuxfoundation.org,
-	av2082000@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: core: fw_devlink: Fix excess parameter description in docstring
-Date: Mon, 11 Nov 2024 22:22:53 +0530
-Message-Id: <20241111165253.16672-1-av2082000@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1731344062; c=relaxed/simple;
+	bh=mspEjnUL8FzcXKfpr+cohV5+ZL+sx/0/VOUfpAs6itc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9ZmKIJWSY6Z0IIM7P1MtF1iHO4TOFMvHNyvRMvfee+q3p7inL2tZRkS9IoHKCNIbogkRcmrqHB7s9r7cTDhMyD19hVgMojZxhiF9jD19fhkr57nKKFHNAgHu71Nn8PFa3J9FuccFBL65IZAuyyO+MvEQY2ZQJHw84emTcOCSj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8GlLOdT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E08BC4CECF;
+	Mon, 11 Nov 2024 16:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731344061;
+	bh=mspEjnUL8FzcXKfpr+cohV5+ZL+sx/0/VOUfpAs6itc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=e8GlLOdTkBO988H1TU2ouEM5Kj/kaP26JWy4J+dCc1GEttNT7pfUzFIiQwq8osNuE
+	 bxgrEOn8OsFdXHWByAZQ7bEKatQUU+nNg9wHVze/IN0keTwYKNid4jYez5bii0Ez1x
+	 bU+Y1JwM3uJaiInGAX8xyhuKtqwbajdxOZXfQmjfeZxv5+hntEqlIqtRAMMgpYG+Y6
+	 Dupmr9supKCYeGqSVOlGK11n4ft4LBUPagCK1Ng8nRVuxJ6gea2kMfqWDRaARamWvg
+	 zjwxRHS6D50FX8c+5P4yf514hCUxQMqHM3W2RQX7w8Wl4Ci0EqeXZ/b782sFDnBCaj
+	 mopINpldTRSTg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0B33ECE09DE; Mon, 11 Nov 2024 08:54:21 -0800 (PST)
+Date: Mon, 11 Nov 2024 08:54:21 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: egyszeregy@freemail.hu
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241111164248.1060-1-egyszeregy@freemail.hu>
 
-Replace the parameter name 'con' with 'con_handle' in the docstring of
-__fw_devlink_relax_cycles() to resolve the kernel-doc warning about an
-excess parameter description.
+On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
+> From: Benjamin Szőke <egyszeregy@freemail.hu>
+> 
+> The goal is to fix Linux repository for case-insensitive filesystem,
+> to able to clone it and editable on any operating systems.
+> 
+> Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
+> "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
+> 
+> Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
 
-Address the following warning:
-./drivers/base/core.c:1994: warning: Excess function parameter 'con' description in '__fw_devlink_relax_cycles'
+Ummm...  Really?
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20241107223528.3781323e@canb.auug.org.au/
-Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
----
- drivers/base/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just out of curiosity, which operating-system/filesystem combination are
+you working with?  And why not instead fix that combination to handle
+mixed case?
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 78b2c0eacb26..94865c9d8adc 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -1971,7 +1971,7 @@ static struct device *fwnode_get_next_parent_dev(const struct fwnode_handle *fwn
- 
- /**
-  * __fw_devlink_relax_cycles - Relax and mark dependency cycles.
-- * @con: Potential consumer device.
-+ * @con_handle: Potential consumer device fwnode.
-  * @sup_handle: Potential supplier's fwnode.
-  *
-  * Needs to be called with fwnode_lock and device link lock held.
--- 
-2.25.1
+							Thanx, Paul
 
+> ---
+>  tools/memory-model/Documentation/locking.txt                    | 2 +-
+>  tools/memory-model/Documentation/recipes.txt                    | 2 +-
+>  tools/memory-model/litmus-tests/README                          | 2 +-
+>  ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
+>  4 files changed, 3 insertions(+), 3 deletions(-)
+>  rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
+> 
+> diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
+> index 65c898c64a93..42bc3efe2015 100644
+> --- a/tools/memory-model/Documentation/locking.txt
+> +++ b/tools/memory-model/Documentation/locking.txt
+> @@ -184,7 +184,7 @@ ordering properties.
+>  Ordering can be extended to CPUs not holding the lock by careful use
+>  of smp_mb__after_spinlock():
+>  
+> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
+> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		spin_lock(&mylock);
+> diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+> index 03f58b11c252..35996eb1b690 100644
+> --- a/tools/memory-model/Documentation/recipes.txt
+> +++ b/tools/memory-model/Documentation/recipes.txt
+> @@ -159,7 +159,7 @@ lock's ordering properties.
+>  Ordering can be extended to CPUs not holding the lock by careful use
+>  of smp_mb__after_spinlock():
+>  
+> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
+> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+>  	void CPU0(void)
+>  	{
+>  		spin_lock(&mylock);
+> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> index d311a0ff1ae6..e3d451346400 100644
+> --- a/tools/memory-model/litmus-tests/README
+> +++ b/tools/memory-model/litmus-tests/README
+> @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
+>  	spin_lock() sufficient to make ordering apparent to accesses
+>  	by a process not holding the lock?
+>  
+> -Z6.0+pooncelock+poonceLock+pombonce.litmus
+> +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+>  	As above, but with smp_mb__after_spinlock() immediately
+>  	following the spin_lock().
+>  
+> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+> similarity index 100%
+> rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
+> rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+> -- 
+> 2.47.0.windows.2
+> 
 
