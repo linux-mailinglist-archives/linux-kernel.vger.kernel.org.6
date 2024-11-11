@@ -1,188 +1,157 @@
-Return-Path: <linux-kernel+bounces-404193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9031F9C4075
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:14:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835E89C4077
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8412824E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:14:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475A7282CB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACA19E97A;
-	Mon, 11 Nov 2024 14:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFE919F133;
+	Mon, 11 Nov 2024 14:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNtyEaEl"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k27hNG3z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE652155CBF;
-	Mon, 11 Nov 2024 14:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA1F19D881;
+	Mon, 11 Nov 2024 14:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334453; cv=none; b=eFMGQFvW285bIsxNVcgAKNGDn30wKWNG9spUJYgEMGrAChXxDaysQk+yirwkriMIgOY7UNKGNRCKV/ES7wPJ/Wnr18j+5wD8kMD0m0wFcJ1QLULZtnF37RaoLHJmbf0ZQF9rouAqAbqRhUBnGgyI00+jwn3ZkB+RjLpV2elEk6k=
+	t=1731334460; cv=none; b=WouuU36uzpbryhUoca4l1/GO0hsYrd/GePw0lTzNDEr5UyplXEFl+tqcdhxaN9EnciJeqvKV2kl4YCSkxnNVeqMuiMNv0vS4YFFI96B+ISdqS3gLIJSMTS8y4HohouV+quMvuva8/2Y7YoomO+VgeUS11Qz2m1kf6qKMFTDzOsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334453; c=relaxed/simple;
-	bh=xGQ25APo1pmW8WG57GB3HGbTAoRBmkZTBps8h+sJlS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pVkCBsbRhjbXJYCtsq8hhr0yTuXmhEMZUDpyw3yFJ3buf1uV6ZVQhsui+j6xjqdfQEGrdOKNLllXT6f4VamLQF0gFsOPgNg8719bRTc1kTdFBwZhTSu8WdLPoPRUuOaozwp3zqMpoq2pK/BBazQAd6bzUBS307FPHd5Nr+D+U0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNtyEaEl; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3556374b3a.2;
-        Mon, 11 Nov 2024 06:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731334451; x=1731939251; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=8jh8QF7rmmzQyQcev1TztdNC8/1ytTeCqpc34ixJhxg=;
-        b=LNtyEaElrerjp7dkxU/ErKKiFh8jgIgZhaTh1UteSgok53axqUdT3U4FiPc8u6sRsI
-         uAh1KoqB5jsa2hVDoseQqR87gu6G7E8YdyVYWjdjFi9wQfI46DhOAyXTS6olL0usxr1F
-         dd6pYdx8e9ybks0T4Yu+AgwCLFEH5FI2SCgppxz3UiyEhf4FBqXJjD9QiUMN8IFiYNJq
-         JO3BK3CTvKG8HXK0cC5I/wtbvP5P5CZvXVuqSCB0ihsA9XbUMo2vJMJYjgIIVqpxtnuE
-         +Y90SpIYlDmANBIRBu6NlKJ7ijjhheQxwutk0rbndzDYo8o1oLUsl9YWxbsuEBJ3Hspi
-         udwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731334451; x=1731939251;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8jh8QF7rmmzQyQcev1TztdNC8/1ytTeCqpc34ixJhxg=;
-        b=pF/OFkE45UUBUqIWdnsgc/fR22vCHzwWemp+AbA/YyxbhXkGL3rEjkK1BZmB0JIqHb
-         DMn5btXisEQwX2OiWqxqEkZ+AWjd/t0ClpMJ92jE+dE8uldNN8yiGDyeAtnhFwEciAPy
-         LB1YrWrAKggfh4ep1SDIT1Uy0A6UGrAYGes8Nb1K6Nfh61ERAr5tNEUkFQqAtwU589zv
-         X9QdtzBKzLVbqb5LFOXKOtFK/pnkgW/7SkDmYeCvRBUjHzrI+rYH2mQw3Af8utjeHNR6
-         6zVgIL6euvQKn1TQLAAKSlIrLvigB+9OCdwTXkGjKjEZxG+1K/8JXtFsoX987BLXS9Vs
-         cLzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYx9uGBHDpHWTpztMmTIO2DWgIaRW+fvFGkkP6l6dLpRhj8OnvkfkjiEIj1kA13LeUeAOMEz102Iryg64D@vger.kernel.org, AJvYcCWJgQYYCrtCAwkov7YFg814MAVTnlWA4eaCWROby3FFRXgaPVPttC8Bn5YyZwNznyLe0z9ddXNW0gPAMQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeAFhbMJwYTcTv8l+cI/U3hH45FSMmk0/WxXtiOo5/AmM/NCD5
-	6kYHbArY5nNZGorFA5khsaAUX5g/dHVis08aUVHyNYQpac1ApPCKiNTReQ==
-X-Google-Smtp-Source: AGHT+IET+G0UaXITs9wG4Kj5nfiKyeTCptDdZ0V44/o1aJdALw0v9hcUL9uHHK7Cp2cmEWCye1/TeA==
-X-Received: by 2002:a05:6a20:4c17:b0:1db:e9d8:be4f with SMTP id adf61e73a8af0-1dc22af3e51mr12261706637.29.1731334450902;
-        Mon, 11 Nov 2024 06:14:10 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65bd78sm8663461a12.78.2024.11.11.06.14.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 06:14:10 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5ef20452-a38c-4c2f-b49d-3999b217f622@roeck-us.net>
-Date: Mon, 11 Nov 2024 06:14:09 -0800
+	s=arc-20240116; t=1731334460; c=relaxed/simple;
+	bh=PoPdwj1OQ3NAGnnRRgFR/1m9IjlmuXmKSCrXN0KMYnI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ChKSqqVrEDijJ2F9FdPEyZgVQKKNpOolkNlYpa2GD6cAh2Rhq2hQnu60BWLBWCrwcmP3mTo8gsfwbfI+qxekr1TZ0SFt4dXg7hjVf/db03EFEtLpWL47pIfCr+P7eijGD6N2YcfjmnOnkbXXqc6nXdZHc9neettwW/kET2z+HQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k27hNG3z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301A0C4CECF;
+	Mon, 11 Nov 2024 14:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731334459;
+	bh=PoPdwj1OQ3NAGnnRRgFR/1m9IjlmuXmKSCrXN0KMYnI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=k27hNG3zdyrQjrjJlks+mEgxDtHxY3SQ+EK/+jcSreLIOQf8WQaUjYn23dS+3Dj9f
+	 wEYpMNPSMoNzvlRj3Pfa6lVCfha1+8/uYZ9UgPKtxgQ73Cljb3g6hJwqGWvqID4neW
+	 cAcRvAcEc6vvNLZF1lFqzASOtf5FId14eIkXpQOfZFx6rpyoT9kjpxdSVt3qNmoLqP
+	 +O6ZaLqD2ih3BDLt1wy8YDCJm6cYqp/EtuhSipP/Y7JOk8ExpSUk6abaTCXUZjxRC2
+	 rvGBRz+GWbeniUhP8nOlxGmUHSeZf7Db3CGqxooLeSNZr2seCGIZvlG8ABxfCwl3yl
+	 4M2Kz8Gkq6kCQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tAVBI-00Bsig-MM;
+	Mon, 11 Nov 2024 14:14:16 +0000
+Date: Mon, 11 Nov 2024 14:14:15 +0000
+Message-ID: <86pln1zwlk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Nicolin Chen <nicolinc@nvidia.com>,
+	tglx@linutronix.de,
+	bhelgaas@google.com,
+	alex.williamson@redhat.com,
+	jgg@nvidia.com,
+	leonro@nvidia.com,
+	shameerali.kolothum.thodi@huawei.com,
+	dlemoal@kernel.org,
+	kevin.tian@intel.com,
+	smostafa@google.com,
+	andriy.shevchenko@linux.intel.com,
+	reinette.chatre@intel.com,
+	eric.auger@redhat.com,
+	ddutile@redhat.com,
+	yebin10@huawei.com,
+	brauner@kernel.org,
+	apatel@ventanamicro.com,
+	shivamurthy.shastri@linutronix.de,
+	anna-maria@linutronix.de,
+	nipun.gupta@amd.com,
+	marek.vasut+renesas@mailbox.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH RFCv1 0/7] vfio: Allow userspace to specify the address for each MSI vector
+In-Reply-To: <a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
+References: <cover.1731130093.git.nicolinc@nvidia.com>
+	<a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] hwmon: (nct6775-core) Fix overflows seen when writing limit
- attributes
-To: Pei Xiao <xiaopei01@kylinos.cn>, jdelvare@suse.com,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <b09c4396-1578-45bb-b1fb-23c1f91cabe7@kylinos.cn>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <b09c4396-1578-45bb-b1fb-23c1f91cabe7@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: robin.murphy@arm.com, nicolinc@nvidia.com, tglx@linutronix.de, bhelgaas@google.com, alex.williamson@redhat.com, jgg@nvidia.com, leonro@nvidia.com, shameerali.kolothum.thodi@huawei.com, dlemoal@kernel.org, kevin.tian@intel.com, smostafa@google.com, andriy.shevchenko@linux.intel.com, reinette.chatre@intel.com, eric.auger@redhat.com, ddutile@redhat.com, yebin10@huawei.com, brauner@kernel.org, apatel@ventanamicro.com, shivamurthy.shastri@linutronix.de, anna-maria@linutronix.de, nipun.gupta@amd.com, marek.vasut+renesas@mailbox.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, kvm@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 11/11/24 00:36, Pei Xiao wrote:
-> hi Guenter Roeck,
->    Excuse me, may I ask a question?
->    When I see this commit (Fixes: 0403e10bf082 ("hwmon: (nct6775-core) Fix underflows seen when writing limit attributes")), I found an issue,
-> DIV_ROUND_CLOSEST() after kstrtoul() results in an overflow if a large
-> number such as 18446744073709551615 is provided by the user.
-> Fix it by reordering clamp_val() and DIV_ROUND_CLOSEST() operations.
+On Mon, 11 Nov 2024 13:09:20 +0000,
+Robin Murphy <robin.murphy@arm.com> wrote:
 > 
-> If the issue described above does indeed exist, I will send an formal patch.
+> On 2024-11-09 5:48 am, Nicolin Chen wrote:
+> > On ARM GIC systems and others, the target address of the MSI is translated
+> > by the IOMMU. For GIC, the MSI address page is called "ITS" page. When the
+> > IOMMU is disabled, the MSI address is programmed to the physical location
+> > of the GIC ITS page (e.g. 0x20200000). When the IOMMU is enabled, the ITS
+> > page is behind the IOMMU, so the MSI address is programmed to an allocated
+> > IO virtual address (a.k.a IOVA), e.g. 0xFFFF0000, which must be mapped to
+> > the physical ITS page: IOVA (0xFFFF0000) ===> PA (0x20200000).
+> > When a 2-stage translation is enabled, IOVA will be still used to program
+> > the MSI address, though the mappings will be in two stages:
+> >    IOVA (0xFFFF0000) ===> IPA (e.g. 0x80900000) ===> 0x20200000
+> > (IPA stands for Intermediate Physical Address).
+> > 
+> > If the device that generates MSI is attached to an IOMMU_DOMAIN_DMA, the
+> > IOVA is dynamically allocated from the top of the IOVA space. If attached
+> > to an IOMMU_DOMAIN_UNMANAGED (e.g. a VFIO passthrough device), the IOVA is
+> > fixed to an MSI window reported by the IOMMU driver via IOMMU_RESV_SW_MSI,
+> > which is hardwired to MSI_IOVA_BASE (IOVA==0x8000000) for ARM IOMMUs.
+> > 
+> > So far, this IOMMU_RESV_SW_MSI works well as kernel is entirely in charge
+> > of the IOMMU translation (1-stage translation), since the IOVA for the ITS
+> > page is fixed and known by kernel. However, with virtual machine enabling
+> > a nested IOMMU translation (2-stage), a guest kernel directly controls the
+> > stage-1 translation with an IOMMU_DOMAIN_DMA, mapping a vITS page (at an
+> > IPA 0x80900000) onto its own IOVA space (e.g. 0xEEEE0000). Then, the host
+> > kernel can't know that guest-level IOVA to program the MSI address.
+> > 
+> > To solve this problem the VMM should capture the MSI IOVA allocated by the
+> > guest kernel and relay it to the GIC driver in the host kernel, to program
+> > the correct MSI IOVA. And this requires a new ioctl via VFIO.
 > 
+> Once VFIO has that information from userspace, though, do we really
+> need the whole complicated dance to push it right down into the
+> irqchip layer just so it can be passed back up again? AFAICS
+> vfio_msi_set_vector_signal() via VFIO_DEVICE_SET_IRQS already
+> explicitly rewrites MSI-X vectors, so it seems like it should be
+> pretty straightforward to override the message address in general at
+> that level, without the lower layers having to be aware at all, no?
 
-Yes, and good find, but please fix the calculations.
++1.
+
+I would like to avoid polluting each and every interrupt controller
+with usage-specific knowledge (they usually are brain-damaged enough).
+We already have an indirection into the IOMMU subsystem and it
+shouldn't be a big deal to intercept the message for all
+implementations at this level.
+
+I also wonder how to handle the case of braindead^Wwonderful platforms
+where ITS transactions are not translated by the SMMU. Somehow, VFIO
+should be made aware of this situation.
 
 Thanks,
-Guenter
 
-> 
-> diff --git a/drivers/hwmon/nct6775-core.c b/drivers/hwmon/nct6775-core.c
-> index 934fed3dd586..12ee2ca4a6d6 100644
-> --- a/drivers/hwmon/nct6775-core.c
-> +++ b/drivers/hwmon/nct6775-core.c
-> @@ -2878,8 +2878,7 @@ store_target_temp(struct device *dev, struct device_attribute *attr,
->          if (err < 0)
->                  return err;
-> 
-> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0,
-> -                       data->target_temp_mask);
-> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 1000), 1000);
-> 
-                                                     data->target_temp_mask
->          mutex_lock(&data->update_lock);
->          data->target_temp[nr] = val;
-> @@ -2959,7 +2958,7 @@ store_temp_tolerance(struct device *dev, struct device_attribute *attr,
->                  return err;
-> 
->          /* Limit tolerance as needed */
-> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, data->tolerance_mask);
-> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 1000), 1000);
-> 
->          mutex_lock(&data->update_lock);
->          data->temp_tolerance[index][nr] = val;
-> @@ -3085,7 +3084,7 @@ store_weight_temp(struct device *dev, struct device_attribute *attr,
->          if (err < 0)
->                  return err;
-> 
-> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, 255);
-> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, 25500), 1000);
-                                                     255000
-> 
->          mutex_lock(&data->update_lock);
->          data->weight_temp[index][nr] = val;
-> 
-> Thanks!
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
