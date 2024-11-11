@@ -1,52 +1,79 @@
-Return-Path: <linux-kernel+bounces-403655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB339C38B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:54:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1569C38B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B86B1F211B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5252A281FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2330F14F9F9;
-	Mon, 11 Nov 2024 06:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B7201553A3;
+	Mon, 11 Nov 2024 06:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mQ/nSwPE"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kvg7Qyqo"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC083C3C;
-	Mon, 11 Nov 2024 06:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F481487F4;
+	Mon, 11 Nov 2024 06:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731308089; cv=none; b=jpgrnqRFrJrGDVQra5SQv5aZFcF2d7dN/kP0p7XnP2iHYbcMJRvl6KRRR9STmn/mQCyIm2SkZHLqb77gAyP0LAQxD5DSNN5ltTmZkRBKyv+9MyS5jTNcXtkkr6rG1XtDBnHow34nt8IBjUJsmI+t8PF78rYkrSxFOst56fyXeZI=
+	t=1731308156; cv=none; b=Gz0iCWmePBrpucbYrd1arh0h4Lwu0LIh4gKDaq4IZnrV9cGrJ5CTHIK869w4InYi0NUvzZi+zCPjRTvBT9GomkcG/QsSRWZxNaYrGgR2yOxEcNj1jmpEuaLfwcoo0ooBldwWJ4hOWK7dnWR9ailjtfRJ1vnrlsOVCVSGa1bXBmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731308089; c=relaxed/simple;
-	bh=T5G/7MG/FAAjRjOLEwmImdy4jBQDSCLqk5vZf3jNtZo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=occmc2CYkQvb4UQaVWQdtC9ZwugZcUReFLKgHgufaI2bPjxJTz31sY+RIkEh8soj7SpOByHjUV/LbLztqS+ZResegXvVAuq2jqpxXk7oq8e1jbiqYYr43WvZLoopedVqfJw2kno64s/H7hfYfsQFdRJ2oVK30WnBj/VpCrEdIKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mQ/nSwPE; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731308076; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=3w224ktOqagLWitq0jzUtvakJXzZioCdJS1eDcHoEak=;
-	b=mQ/nSwPEa7uD+yg1UQmFLdbcNZB95sZxva9onWKnuGwuijHQZKtigeNwYK8/dTwStPYGzqfxqfj0tT3ekqvyZCzKOlD2ooeDdhv7ubR+xX8YnP2N45wh7v73rZEF+Wpo9rhn6X/fCklGa8xdDkEw8HKR5L731Dt1th9w6FxJXY8=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WJ6PLQ9_1731308066 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 11 Nov 2024 14:54:35 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: broonie@kernel.org
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] spi: apple: Remove unnecessary .owner for apple_spi_driver
-Date: Mon, 11 Nov 2024 14:54:25 +0800
-Message-Id: <20241111065425.103645-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1731308156; c=relaxed/simple;
+	bh=aPMrsjI+c6iPJKbzOjnFcwEzzSVmYfrtlku2cTvvpw0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EHJGgA6ijJglvVxWixKGZnKDi+xqvgIF5qyuAXNz+pSX5ebij9iP1u4fL49psXrU7WQ2BC6M3G4rNplMJUbSWHOBg3Q7hDvaMSFrFBXjRapx3f6Xd95vS3xhXNwdYCZXsZ3IUteZVJwP2oA2dRM5zQJEjxKoRkFFefxFDbli1T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kvg7Qyqo; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731308156; x=1762844156;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aPMrsjI+c6iPJKbzOjnFcwEzzSVmYfrtlku2cTvvpw0=;
+  b=kvg7QyqoM/0ZQakMiKA8C/nJHMArbl0c4iTT6BLu5Ej9fxIrhJUIF0q9
+   rsQ92XO4QWBd/X5qiRSTnD6MH5B950bFx/dvajxJHRm0JQ+BixenmtG5r
+   lr1IkuW1atGLjhgJXslpY1oPnmdPrCbvOtBDpfrRPoqvR3CEWDIOOESkT
+   UDjRCyKHsErl61IJ8G5VJo5Ve5wAzNQlsTbnt4gIVkYC+uQGKYvG1p1uV
+   yiYMG4Hn31lbWUj/aRF8uF1j+jjHDVESdWSgiWSz+EhWTQ92xfoZqEl2u
+   xzAoNEPaopUNJGoL8aTdouebtTFmtp3gUTL/Q60Zr+SNdXxP9yDI0pQHV
+   w==;
+X-CSE-ConnectionGUID: ep4875LgSx6tm9VmeD6HJQ==
+X-CSE-MsgGUID: Xs8eyJPZSGinRZUJIbtNZw==
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="265270146"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Nov 2024 23:55:55 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 10 Nov 2024 23:55:15 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Sun, 10 Nov 2024 23:55:06 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux@armlinux.org.uk>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <dharma.b@microchip.com>,
+	<hari.prasathge@microchip.com>, <varshini.rajendran@microchip.com>,
+	<arnd@arndb.de>, <dri-devel@lists.freedesktop.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v6 0/4] MIPI DSI Controller support for SAM9X75 series
+Date: Mon, 11 Nov 2024 12:24:58 +0530
+Message-ID: <20241111065502.411710-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,31 +81,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Remove .owner field if calls are used which set it automatically.
+This patch series adds support for the Microchip's MIPI DSI Controller
+wrapper driver that uses the Synopsys DesignWare MIPI DSI host controller
+bridge for SAM9X75 SoC series.
 
-./drivers/spi/spi-apple.c:522:3-8: No need to set .owner here. The core will do it.
+Changelogs are available in respective patches.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11799
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/spi/spi-apple.c | 1 -
- 1 file changed, 1 deletion(-)
+Manikandan Muralidharan (4):
+  dt-bindings: display: bridge: add sam9x75-mipi-dsi binding
+  drm/bridge: add Microchip DSI controller support for sam9x7 SoC series
+  MAINTAINERS: add SAM9X7 SoC's Microchip's MIPI DSI host wrapper driver
+  ARM: configs: at91: Enable Microchip's MIPI DSI Host Controller
+    support
 
-diff --git a/drivers/spi/spi-apple.c b/drivers/spi/spi-apple.c
-index 1ce91cea89be..d4b126c8701a 100644
---- a/drivers/spi/spi-apple.c
-+++ b/drivers/spi/spi-apple.c
-@@ -519,7 +519,6 @@ static struct platform_driver apple_spi_driver = {
- 	.probe = apple_spi_probe,
- 	.driver = {
- 		.name = "apple-spi",
--		.owner = THIS_MODULE,
- 		.of_match_table = apple_spi_of_match,
- 	},
- };
+ .../bridge/microchip,sam9x75-mipi-dsi.yaml    | 109 ++++
+ MAINTAINERS                                   |   7 +
+ arch/arm/configs/at91_dt_defconfig            |   1 +
+ drivers/gpu/drm/bridge/Kconfig                |   8 +
+ drivers/gpu/drm/bridge/Makefile               |   1 +
+ drivers/gpu/drm/bridge/dw-mipi-dsi-mchp.c     | 545 ++++++++++++++++++
+ 6 files changed, 671 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/microchip,sam9x75-mipi-dsi.yaml
+ create mode 100644 drivers/gpu/drm/bridge/dw-mipi-dsi-mchp.c
+
+
+base-commit: 4f537776340dab2b680a4d8554567f6884240d0b
 -- 
-2.32.0.3.g01195cf9f
+2.25.1
 
 
