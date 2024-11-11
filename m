@@ -1,123 +1,110 @@
-Return-Path: <linux-kernel+bounces-403913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF0AB9C3C90
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:59:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777259C3C93
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C4531C21889
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ACCC2824B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B654917ADE9;
-	Mon, 11 Nov 2024 10:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A316189B83;
+	Mon, 11 Nov 2024 11:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NvXYl6Kt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/zpH/BIP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Js7EjRbF"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B082417BECA;
-	Mon, 11 Nov 2024 10:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279015B554;
+	Mon, 11 Nov 2024 10:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322770; cv=none; b=kk7xHzbSAkiOPe9pIP2Zme3hT/qdSr1zx4B0CJQekewIwCRrL1ygSXCrvNIkKNc5YiO0LIfv0FwR/5LAZc5iUH3y2GFjwq9EbUEcO/GdBgU8TBMoKLVX6NfLDJ0VFnyIqPWDByCig0Qr+jmaXBWHW5jnH8u7YBIBaAI8scXJ7DU=
+	t=1731322806; cv=none; b=loH45R6efgolZV/Aeuub1up8EJLcADQbZ2oz1Y1UnUpQZ1QZMVhbfoQ8JxibRL2itKGHDT0ZSQS42OwCsa0BRcu1WMoj7sUFu5LMk27kPsQbETFh7C0yRCvlYjXy0IwX2YT8e+4bZVkaexXUkhSJ/pDZW63R7xkcB/VsugCb7Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322770; c=relaxed/simple;
-	bh=+YsuAWwMtnlD3Q5cRdx7psix1M4qBlk9fGvHL1vdy8g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PqGb0N9AOpinMs698qdXhFNkQw9A6qqimtN7FnyBGe6rxVobr6edrl2qHsR97+JkRhiGTVviXNF6YPFZNLwodLgoZV11KTM5j8QtNWIg7YloTkweRGintXBm/nq1lzVoO5sBWXpMjBCLGyZWxLvct8HqppWhUtFueyHPJc4maUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NvXYl6Kt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/zpH/BIP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 11 Nov 2024 10:59:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731322765;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZrKxPWBHu8DIXF3QMFDgmVEtzCTtk54Bt6QpwP1VDes=;
-	b=NvXYl6Kteqzg/ySv8Ny/m/g5DwRK7z6vbJ2evq2RFPGPpGKj0qzxoCegl0qnugDqms89dn
-	WZlLKsefE/0nWQREaQnijFF/hIKq3XspkAXQhWqOzEKYizOjutChhrJhVX9qDXLOp8LCxD
-	7GzkPP7JHkv+9+hoKcYFkT2N+2g0cY/05VzIcqVd485ozWT25/uHTFcOtyRpYTCZjjnRFw
-	STHb11UmAOvjO8B0EgEpj94Ae4zE1Av/iplRPjz1uSImZClFyw43ssS6yQrVMgy6JUx1Ks
-	0gOo87HXLWyhIxmwy1B8iNYukQq63hmzcDj/SZuxEcQs0Zh2wUIFCALazuY6UA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731322765;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZrKxPWBHu8DIXF3QMFDgmVEtzCTtk54Bt6QpwP1VDes=;
-	b=/zpH/BIPBlMaLaY8h83pfr9IIgKDG0VdHT5x6Fej85xVLFYwq7cqV7sfQR8VOYyoQUVH6m
-	Se9HhkU7A6OQznDA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: objtool/core] objtool: Exclude __tracepoints data from ENDBR checks
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241108184618.GG38786@noisy.programming.kicks-ass.net>
-References: <20241108184618.GG38786@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1731322806; c=relaxed/simple;
+	bh=WURrtf0NMt1WYhBC3LGoAw0srDrFnd+O8AWYApNJrdw=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=jeBYkIjfki7xLtSRlFUgcz9BO956fcwCmywlp7bhydWltup8Sdt2m8a1yAK4fbPg/SBZE2rjsP7lxoCM9C6oWvw8aVEHITqBkS4CieDAAKWr9ID0GqPQ2Th8FPpoYKyUJxi6JxsCWfekSNpfIQLBYcOqiLDST84y7WvacmKMBSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Js7EjRbF; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1731322791;
+	bh=WURrtf0NMt1WYhBC3LGoAw0srDrFnd+O8AWYApNJrdw=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=Js7EjRbFCnZtwqK70iJEv1VRJ1Lc924wyrFjgr22vP3yiu2aGq4yd8HOClBBCBC5b
+	 jQzKh/0DEXyrihXUwMHZV4Y4eggdjKm1Be3isZKJkzmnLmXunPJSI6W34i05SpBNu5
+	 59PdbP5e73b7aF4WydM/x60kB+2J9mGTXcmPAdjI=
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: SjlQqd0Lqwfm5luGlfnOgxZrdN/y7uwlSvBS70ky8t8=
+X-QQ-STYLE: 
+X-QQ-mid: t5gz7a-2t1731322770t2557572
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?UnVzc2VsbCBLaW5nIChPcmFjbGUp?=" <linux@armlinux.org.uk>, "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>
+Cc: "=?utf-8?B?YW5kcmV3?=" <andrew@lunn.ch>, "=?utf-8?B?aGthbGx3ZWl0MQ==?=" <hkallweit1@gmail.com>, "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?Zi5mYWluZWxsaQ==?=" <f.fainelli@gmail.com>, "=?utf-8?B?c2ViYXN0aWFuLmhlc3NlbGJhcnRo?=" <sebastian.hesselbarth@gmail.com>, "=?utf-8?B?bXVndW50aGFudm5t?=" <mugunthanvnm@ti.com>, "=?utf-8?B?Z2VlcnQrcmVuZXNhcw==?=" <geert+renesas@glider.be>
+Subject: Re: [PATCH] net: phy: fix may not suspend when phy has WoL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <173132276382.32228.11223762940167419288.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Mon, 11 Nov 2024 18:59:29 +0800
+X-Priority: 3
+Message-ID: <tencent_4B3AACEA45FBC48A019C11B2@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
+	<ZzHW4wOAH769WSJ0@shell.armlinux.org.uk>
+In-Reply-To: <ZzHW4wOAH769WSJ0@shell.armlinux.org.uk>
+X-QQ-ReplyHash: 3258678409
+X-BIZMAIL-ID: 15323754145262448692
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Mon, 11 Nov 2024 18:59:31 +0800 (CST)
+Feedback-ID: t:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NNCgUTg3ctKTaAVBsYrRRZqyGi9zN4ZgIkn/3VDMMo5w/rEWDJNZL0FS
+	OZNa6tnxlPJDPm5gTDN7EHPNzXxRilKjQxrPxqKiJw+v/LsHep/ePkQYHMZT2YgS8bn7sTv
+	xNIsa6e5+LOeh2fRiMV1Bwuavd7Skx6ISSYz1b2UAdQlmaVJlLvyHsFV1oEmD9Y0URwPLt5
+	bkKcv4xvo8fxtP7oScMBDWd2UjSDT0rlEXUIRz3JKUxDnnCUWTXHeIKBlsEDzIZytA0ZEQK
+	dlcBADqoS6II3aG8sjqTcRew/IUTIL4mfmYdcBsLFLJDpQ1J9mfQq8bHND6hVVHOFC5wgNv
+	WlN/pAghJXaF2YJ42tKd5OYeNV1fkv7RNyPLouOUUBr57QJsLe0cd4j445Mm6qYV2+NpdO4
+	775xKw6TZ5ZGxGaHJcGqPCaiyE7/+hTyrFwE0c5iWsmbBS/coJA/dMFzfsCMFdywWO2Pl6P
+	/jlyiBm7Rf7V3H/lHY9kANwwqaHjKoSDYvTUGvz3SzDZ+sQvwX3ZKbcv6bUec0oK/yDGwiI
+	T/STWSeLMBGsgzwV/cqUTgYkgsCyD21hViZNl//HqP/dFFrx4fIh6PQBTZglTxJW7MM5Qd0
+	0mV52nXcSl5L4prvw/rOYbKFpjVLXFpkO88OOdYsK+k/JngkMoT7HdHFTJGCVPTkn9gJnud
+	j4Tb80lHng5LJVOUPThC9ZyaJpf3xo3/fQT0MX2EutBnkMLsrJFKt/QlBXoZV1Wjmf9XN/M
+	Jn9u0WP4EdvP+WyBtU7jXWQNqS0SgxzLc+3xGsj02/d+F2Xr2AtHi6N81/wzl8YSthvhVHG
+	s0/6ttJAx9LGJfUs4hamJt3bLJJc2oJHdU0oT1V4fuDLQWggST1z8xKasOnFvlE6sVrasb6
+	YD0uK8bf9pe0afBk1ru5cfXUTlZvpz27yD3xWXUMRTxUPOi/lTJzf4G+/dBs8aBZC1FGUJR
+	AzE8NcpJenUSwxJcmFu9nzGwaADPCXzXCYfuyaeDrDZ14LFTPBw1kacPwU7Hp/tiJl6gW1q
+	jGvgJ9WAUrnqI3eyAGDfK7tMg/O9T8C/29YwCCRfSuiqzhHEBy
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-The following commit has been merged into the objtool/core branch of tip:
+V2VsbCBxdWVzdGlvbiwgYnV0IEkgZG8gbm90IGtub3cgYW55IGtub3dsZWRnZSBhYm91dCBw
+aHlkcnYtPnN1c3BlbmQgbWF5IG9yIG5vdCByZXR1cm4gRUJVU1k/DQpBcm91bmQgdGhlIFdv
+TCBzdGF0ZSBoYW5kbGluZyBpcyBiZWNvbWluZyBjb21wbGV4IGZvciBjaGVja2luZyB0aGUg
+c2FtZSBsb2dpYyBpbiBwaHlfc3VzcGVuZA0KYW5kIG1kaW9fYnVzX3BoeV9tYXlfc3VzcGVu
+ZC4NCkkgc3RpbGwgZG8gbm90IGtub3cgd2h5IHRoYXQgd2UgbmVlZCB0byB1c2UgLUVCVVNZ
+IGluIDExIHllYXJzIGFnbyANCmNvbW1pdCgiNDgxYjVkOSIgbmV0OiBwaHk6IHByb3ZpZGUg
+cGh5X3Jlc3VtZS9waHlfc3VzcGVuZCBoZWxwZXJzKQ0KSWYgaXQgaXMgbm90IG5lZWQsIG1h
+eWJlIGEgc2ltcGxlIHNvbHV0aW9uIGlzIGNoYW5nZSBFQlVTWSB0byAwIGFuZCBhZGQgYSB3
+YXJuaW5nIHByaW50Pw0KDQpBbmQgZGlzY3Vzc2luZyB0aGUgcGF0Y2gsIGl0IGlzIHNhbWUg
+YXMgY29tbWl0IDRmNTM0YjdmMCBpbiB2Ni4xMi1yYzEsIGFuZCBpdCBjb250ZXh0IHNob3Vs
+ZCBiZWZvcmUNCiJpZiAoIWRydiB8fCAhcGh5ZHJ2LT5zdXNwZW5kKSIgY2hlY2tbSXQgZ29l
+cyB3cm9uZyB3aGVuIEkgbW92aW5nIHRoZSBwYXRjaCBmcm9tIG91ciBkaXN0IGJyYW5jaCB0
+byB1cHN0cmVhbSBicmFuY2hdDQosIHNvIEkgc2VuZCBhIE5BSyBmb3IgdGhlIHBhdGNoLg0K
+DQpCUnMNCldlbnRhbyBHdWFu
 
-Commit-ID:     d5173f7537505315557d8580e3a648f07f17deda
-Gitweb:        https://git.kernel.org/tip/d5173f7537505315557d8580e3a648f07f17deda
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Fri, 08 Nov 2024 10:32:02 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 11 Nov 2024 11:49:42 +01:00
-
-objtool: Exclude __tracepoints data from ENDBR checks
-
-For some, as of yet unexplained reason, Clang-19, but not GCC,
-generates and endless stream of:
-
-drivers/iio/imu/bno055/bno055_ser.o: warning: objtool: __tracepoint_send_chunk+0x20: data relocation to !ENDBR: __SCT__tp_func_send_chunk+0x0
-drivers/iio/imu/bno055/bno055_ser.o: warning: objtool: __tracepoint_cmd_retry+0x20: data relocation to !ENDBR: __SCT__tp_func_cmd_retry+0x0
-drivers/iio/imu/bno055/bno055_ser.o: warning: objtool: __tracepoint_write_reg+0x20: data relocation to !ENDBR: __SCT__tp_func_write_reg+0x0
-drivers/iio/imu/bno055/bno055_ser.o: warning: objtool: __tracepoint_read_reg+0x20: data relocation to !ENDBR: __SCT__tp_func_read_reg+0x0
-drivers/iio/imu/bno055/bno055_ser.o: warning: objtool: __tracepoint_recv+0x20: data relocation to !ENDBR: __SCT__tp_func_recv+0x0
-
-Which is entirely correct, but harmless. Add the __tracepoints section
-to the exclusion list.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20241108184618.GG38786@noisy.programming.kicks-ass.net
----
- tools/objtool/check.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 7fc96c3..f7586f8 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -4573,6 +4573,7 @@ static int validate_ibt(struct objtool_file *file)
- 		    !strcmp(sec->name, "__jump_table")			||
- 		    !strcmp(sec->name, "__mcount_loc")			||
- 		    !strcmp(sec->name, ".kcfi_traps")			||
-+		    !strcmp(sec->name, "__tracepoints")			||
- 		    strstr(sec->name, "__patchable_function_entries"))
- 			continue;
- 
 
