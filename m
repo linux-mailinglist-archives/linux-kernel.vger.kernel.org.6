@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-404368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE889C42EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:47:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F63A9C42F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:50:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D081F245FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D46082842A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0197C1A2C0E;
-	Mon, 11 Nov 2024 16:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B0E1A2643;
+	Mon, 11 Nov 2024 16:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sN5xcHC1"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMA3htcY"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182E0219ED;
-	Mon, 11 Nov 2024 16:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2BD14AD3F;
+	Mon, 11 Nov 2024 16:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343659; cv=none; b=B3bROarbcS+lsDP6KNW+5zvgCTcif5/d13DFJT3ueKMgJPfaLbBCUlZ0SSmQ3QWrDGDo7d02IeVdGSXt0txnQ8zu4D9pSWAAKj8cUU5MAAJ+ZToCcGUzLslqs05a+LwcJrQIYkJCQGmq/fdtBAkJgrwhZxVROKV9JaXGQYtLnXY=
+	t=1731343844; cv=none; b=GosBu1PewpZnqjX54AyQBcrsV5LkjNFIoyOUozL8YuRKlwDt+aw8emvP8TAZCsZPWmGYRY9HyijFrLsIzbW4b1UmBnXrKH9nX3dCa+QAPgfai0BCSat001jwQZnhlPYwBQcj/1KtPdjLugqHCl4aAEAzF8C8hguXcWqIQrk7MCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343659; c=relaxed/simple;
-	bh=idA+filDyPw3rtGNLeHXCP5Utn3MX6yIIZNPSx5A+u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=abj4goq4osx5eKDBxkuuXND8pZRG83uZ3ryFV0WPljeX+pmfAmx+ojsYvcq6i6/wxzRCqfCKDSE0FNrtgEosp44MtlleAYS8f0Jku7O+A1LEBJkcI1orZpiow3kWq0Soh8b1Vj5Okwqx/KRvWT3jdIM3nrc0N9K5ftCyk01x1go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sN5xcHC1; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731343601; x=1731948401; i=markus.elfring@web.de;
-	bh=cR3QyJUDLLs7/h5/e6FjiBeq7j2PY8VaCAT/k4+iCdM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=sN5xcHC1p9U2jTSsVdQHZFMR+gdNUwrKFVJMHQkCiahxzmRx/zpa53jw/g8MzM6z
-	 VfwPed5XJxOcCG9hg9tuJbi3bj/iDk4hPTDYyS1s9U5HCbCcrYMSFclsAn7dN6JRC
-	 ID8S4qWHfL9HDVwnxoHLMWhRXrgbbO1SpBUSqYIzybP+yT4FM1Zh26lM7p0JvqAKT
-	 WGC3RwCUvOqrrx9EgUIQsFZyA6qVHYS8ES3H9O+xiIumJKGs8PZ2QurP9sfkMEveX
-	 qmlmuY55dPB5wwFFZGnOtmiSFR4uFTLu2D2vI40YYAGWF5PhY2X2z9qi2GGMj7HRS
-	 8mWbW/Zkjqev0QAmSA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBSB9-1t4jra374p-007lpA; Mon, 11
- Nov 2024 17:46:41 +0100
-Message-ID: <4de3c1d4-2488-40bf-8089-9e2246dbf28c@web.de>
-Date: Mon, 11 Nov 2024 17:46:29 +0100
+	s=arc-20240116; t=1731343844; c=relaxed/simple;
+	bh=sElvzsHvrd+4hzyW0PrhVJdn9RdhnUYT/nACWV1KTB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y/rQYbl4/5vAWdn0h/8pOIzFgrhSll0PywFAf81IZslxvyrL7psPTprOkbVJgILyj3JCKUhwLhT9iTrEg/byYgGwkyydvvgrwZLFRF+5EXVYZxrbfff0lf6sW1ut4FKcofJMP+YdpMgmLGMxFbzLuW+H4GKBxsRiL+d/0fjRdAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMA3htcY; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e4eb91228so521984b3a.2;
+        Mon, 11 Nov 2024 08:50:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731343842; x=1731948642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EdWdARSqH7VvgDN7UrZIngwwkVF/tqPP+awpBPVeunA=;
+        b=gMA3htcYUDt0sBL6aQqQviAEBgpJ4MrOxjNcy7875sLw8peVJExwy44GcaXVmYjlcC
+         h1ofeKRMuiaqgdythFwhRt75tGNenmtBYSbGCeWfGH39VaSv0X2PdWL/PeHkCJ11CltS
+         HJR80O9526mmMY5gZVn6qrmMTk97Cf5v2GuwGkjSaihO9eJHiwtGBtm/y2Q+iRFzXNPV
+         sR8wqYDtpZgy0o7B0i6/Eza/O6vJklH9mP8gA66fJS7wqgBabLjF+feVH8H7I96gwKQ7
+         54+H1xuzwem2BV9vq3oKZncyfcdc+KFjOLOhcM0QT7H15Yv3bwacxG5JL40frRqPAxj9
+         KNDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731343842; x=1731948642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EdWdARSqH7VvgDN7UrZIngwwkVF/tqPP+awpBPVeunA=;
+        b=cGB1Yr5UQ3vPu3TE4hNs+jUyzLsQxBWMPgb8em6xSLTGYB5INVYXNUHMXvmN44RAbo
+         hDrNz1s376uWyT4cF6yYFgWRb/mjezWpqJYNs9KY74pLtZlDqJ7A12VTi+j8/bdTPhfW
+         LJpaQdDHxVgwsU8+G4AB8D+xQJpP3hb2XAIbwVI0362vjxg4p85aA5fb1neL9Y8Jvue4
+         5Ch7c4YApPbMMzlp+bPKACfCV3qEN5rGIUBRDYrvF5nqSoi7IcXtN+53UJccbfR9jkI4
+         K/LGhGWnig5GID3EYfpaObMqUEFHjKk/rjFCD2cMYeUavKJI1aQhV+uvkdRhlhlv/UrM
+         LpUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXgY+DMVeRGvN15QDRMdrkkrroD0tdlb9kXSUhDpMpIgSY24OS9IU1tM1vV0Q5fACgeftFnYqJx5WGE1Mn@vger.kernel.org, AJvYcCXpcI3mK4r+H+lAF+H+ElnMM3Kcz+vJcW6q/6pJIc1hcjFUF9RF20VH/EE2A0lXdUsskftDPwtD/tBU@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfNBHZZj9YoeiZSJ/9BQ7a2Lxao4Fbk9o320d5f8MLQaT2EVdl
+	e+JAunedAe9MYxLXPOm8k4v1WuchDckXe+KtjuoGIRWGODAnRO0B
+X-Google-Smtp-Source: AGHT+IG+XccuE4KvYTSXke9l8OsGYWA/KjiYABk6ydRkJ/0nKNr6Qq+wuMabAt9nkiEhGa67coCiQg==
+X-Received: by 2002:a05:6a00:18a1:b0:71e:7bcc:a0de with SMTP id d2e1a72fcca58-7241335ac30mr7232729b3a.3.1731343841891;
+        Mon, 11 Nov 2024 08:50:41 -0800 (PST)
+Received: from rock-5b.. ([221.220.134.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a19dd8sm9401955b3a.157.2024.11.11.08.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 08:50:41 -0800 (PST)
+From: Jianfeng Liu <liujianfeng1994@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Jianfeng Liu <liujianfeng1994@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Enable HDMI0 on ArmSoM boards
+Date: Tue, 12 Nov 2024 00:50:02 +0800
+Message-ID: <20241111165026.60805-1-liujianfeng1994@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] PCI: Enable runtime pm of the host bridge
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
- linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, Kevin Xie <kevin.xie@starfivetech.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Mayank Rana <quic_mrana@quicinc.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20241111-runtime_pm-v7-0-9c164eefcd87@quicinc.com>
- <20241111-runtime_pm-v7-2-9c164eefcd87@quicinc.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241111-runtime_pm-v7-2-9c164eefcd87@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XXNAiQrUrh6//MXhU3j4k3pKsMLGkFEvqty0RCywRPATEOyTvqo
- ET1k0UvALQijmwqey6UybFbvck+riq6miQ1MJ4M+8I1qbnlq8tVfL++OP6Z4RawqKqDT009
- d8pLZUP4pvBh4CYtn61FnQOeUtiIwQis8LaHepOQzEOYndKr7f2+fbu08YxqUvKlLuyUbSA
- IvQ0WJorO5V3AIlhrMX4A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oiGROT6BuaM=;G66i91LWLcSs5d57EmCBu0dTi67
- p/EQHJI0kcV9pLPqXDEZADzeyRV/MoGCkz6U7CBsZHTP454ZJa62qchSw7F3nALtds9eQXwbF
- E8lcEGFeZ+7kKGExx0rqitm8Ba+tq/jZ4FT372eLsMtF7UXOxUOOwfeauVi/+XpvOUZtcdfr0
- icdaS+FIxnCwG9WO4wAwdO04nAzJ34D6mEUNs5cBYmeJ2K9ZRKIlTn86DpHVgVm0uMCkRbKRc
- LnrGosSa8+lzCC2J0aoprjRk1zH6RVFlGx+dXeRj1ZsCgNufuPQruUvCGIeAx573n6utgAzuk
- TpFHsXbJmdfMxcjzZ+BEZtsBOolZCLRhvcKqGEKnNVP/s7E7kB79m2xs3ZylIBZZCmW24ccy7
- L01te47jEnFzpfvOGfdZp9+PtKlaySCieGrenQNKBOt4ZROpQ9hC7ErlFx+XKiOnQGQzIIjbi
- RPBVPswktXSx6fgvCTCXlZ91RJPDbxcJqEBOYLp9roE7KmdvpudX9rsqAEkpGFnaWRVeQ1CS9
- d5yHhzTV/82iuLiq6ojK5IPIznVqXIfJm5nvZnsS3DLiX6/ZL286MRA4x1lU42mAmfIayYi0h
- q015roYrypuwAJzNJIkITrOVgpvfNpuu9ykNl7ev5IfIutzLMJbarfhSfkgJhgkugAYDIyz/l
- xz2ZMaeqhK3Igd9f14LYL7VSqQICrTFSD+AmQpAQRSYa7tcNLKPfAajC+vnoW4+0czUhbu3zb
- c7ZZd2snFsq6vd78BZtjazSUuxzbkgQ3pjh0T6fiNCcSzw9ki/fGcGu6EPcClOHvUMGTLxVPy
- kTAnpcndze6EbnjranBAmeB2K9heTG7Sr/7JrRxHPRa3qX/E+/HAqarl+cAM+WueUYmlxD+vI
- 8REQfYVFEFNKSE3+7dwJrBfdrPtTOR5uJRypEvYR+a5Y2vmxqegnk+wVY
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> PM framework expectes parent runtime pm enabled before enabling runtime
-
-               expects?                PM?
+Since HDMI QP controller driver of rk3588 is merged, we can enable HDMI0
+on ArmSoM boards.
 
 
-> pm of the child. =E2=80=A6
+Jianfeng Liu (2):
+  arm64: dts: rockchip: Enable HDMI0 on armsom-sige7
+  arm64: dts: rockchip: Enable HDMI0 on armsom-w3
 
-  PM?
+ .../boot/dts/rockchip/rk3588-armsom-sige7.dts | 47 +++++++++++++++++++
+ .../boot/dts/rockchip/rk3588-armsom-w3.dts    | 47 +++++++++++++++++++
+ 2 files changed, 94 insertions(+)
 
+-- 
+2.43.0
 
-> drivers, before calling pci_host_probe() as pm frameworks expects if the
-
-                                              PM framework?
-
-
-> parent device supports runtime pm then it needs to enabled before child
-
-                                 PM?
-
-
-> runtime pm.
-
-          PM?
-
-
-Can any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9CCc=E2=80=9D) becom=
-e helpful for the proposed change?
-
-Regards,
-Markus
 
