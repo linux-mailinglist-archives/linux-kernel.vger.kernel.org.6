@@ -1,154 +1,107 @@
-Return-Path: <linux-kernel+bounces-404369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E45E9C42EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:48:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3489C42E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5161F24FFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4094E2820E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB5C1A262D;
-	Mon, 11 Nov 2024 16:47:56 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212A31A2C29;
+	Mon, 11 Nov 2024 16:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nc4FGU5I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD3414AD3F;
-	Mon, 11 Nov 2024 16:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C79B1A256E;
+	Mon, 11 Nov 2024 16:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343676; cv=none; b=bGMm8ge0g3W6UjCgd8ad7GprhGUGNsXhpnAMevmSlkudK2mwlFlJKlzM6oF+9TmKCXPRuEx4316olxCWOR0r8HlFEabA1uPm3VhNxdZOQhgk3t9bQmkoJpVSv9i3O2uEY/7u4OJ+iJMOUtEHUX4+lRJc6y8T/zmuwr12KcSA1a8=
+	t=1731343432; cv=none; b=rm7JWJcDVpYVOwCbvvjl8qUVF5U0Vw3hKcr2xAYjjCYWZ+2469vizf40BTcgX+O2AetnGmBwtUtDiIH3H/8XkdWg8NqkujI62THI8/CfUsoMoULxXiFcKbzPvHjBrsZPi8NtTZPASm1af8h18jFR79L+wJwvnCa+JyTe30+jJ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343676; c=relaxed/simple;
-	bh=cv7HOX0Be8oHN7NlH//fc5XDhKL3U1WcsBw8HaIGpAs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQm3NId4XXmxj4F4PQs2OUD3aL7drNyxPb4OczKjUUx85/NXsMnHlBYg0ajyYsbj6U00Yf3Pkp9NYA0BLuT02fCOeigJ6HtOm8wI9QtL8L8EdAQZqhiC7pdYSF37ARhkQqO6QBRFGa+0ZCZvmfXt13DNOHCPz+5bhvhmmCwT/8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e681bc315so3351885b3a.0;
-        Mon, 11 Nov 2024 08:47:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731343674; x=1731948474;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yVmNpVa6d/vTSwVDSMcQM5C6SueKqprysTTJDf+O7Ww=;
-        b=MG9iN78W9Gl29k/H2cWMD8jaZMANy7m0FVWb48jKZXKcxcYjHoXiWbIgkVsoVWp30r
-         Y0XEXxpUbp9Z4BFYplKXBNld4T5c9fo5J5O4ngw0jY/tbH8ZKCI+JwVmvHhVaF59nG0w
-         Anffk5hCLrFOU06BZUH1CDDahRvFonppQcA34pORj6zsXnzkUypVRYlvw1bh5YM/9y6T
-         Ar+vP3AJ6dIbYb0Q3kFySRpTJluZB16G5f8UnxQk0txn+EnmyQ3iZdq/Ryfo81mh1Kq3
-         Bs+O8WWvXBPw/9BphYhvWZ4JWNoj7tmA7KWnECFk91EqRErBpwBWctTSL4nEfS4ni0BC
-         0Z+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWK/w2Ibyi9/7SwdJ4t3Rb8A9l/Vh7VrnHbWUvSw0ID4B48z7HnVxKjByy4ZMsJhX2cEWRqbyA6BBk3do4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdMbxS+5VPQGu2utj4IRmGNC75NX8ml/O3KlUiCjLnYMSSx7uZ
-	OQr5rZwQU2cr020IYDevijVFYM+sLG2ViCgC11WutDrVV9tXanOEo1nP2g==
-X-Google-Smtp-Source: AGHT+IGSM7pZgBQnjHeMc2NFU1cL0j9i+gxsihDAEjJ3LFHOucYoiCJyTai75Q2+UnECBNXfPwgS5A==
-X-Received: by 2002:a05:6a00:21c4:b0:71e:7f08:492c with SMTP id d2e1a72fcca58-72413f4c526mr20021547b3a.1.1731343673645;
-        Mon, 11 Nov 2024 08:47:53 -0800 (PST)
-Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a5ea27sm9232913b3a.177.2024.11.11.08.47.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 08:47:53 -0800 (PST)
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-To: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sparse@vger.kernel.org,
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Subject: [PATCH v2] linux/bits: simplify GENMASK_INPUT_CHECK()
-Date: Tue, 12 Nov 2024 01:43:30 +0900
-Message-ID: <20241111164743.339117-2-mailhol.vincent@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731343432; c=relaxed/simple;
+	bh=nG6iTzLFLjsLDmo/ST31XIcMDE99NoMA5MCsudLilOs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=BWR6+ztclFGd0BU5tY9QqT6QZ20IAdrsqrHLB4BgoiQ14bOvlDc6ejyB+r+K1qbfyN5DmC+ywWGdB1L9otI7UVio/7TMInZcTSKP183uqCRtvG6jRVgHdx+/K0hdXyA/wP5WxQDWoWJbYsJjNLdlL2kqbcXArjAF40Ya7JHe3YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nc4FGU5I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D385C4CED4;
+	Mon, 11 Nov 2024 16:43:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731343432;
+	bh=nG6iTzLFLjsLDmo/ST31XIcMDE99NoMA5MCsudLilOs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Nc4FGU5IL/zyOcxlmD9PnplkFpxcMylo57MEO5Ck3ZuPDx/G0RI0Yzc0EXJ7J6N2O
+	 bjDzbJTcnZnEPmFmPIL5/ecFoOPwKbJXdbyBsI9e+jgi+6evBkXo6NBeTo+5KOyfT3
+	 DBBXTw2/fopDpwj9FlpHfJrxFwgTWgt3Xy0wpqAPKaX9n8QrLXnzuxw/5t6wKg2mug
+	 eQP5+ty6ejGfyOPLeRUgI7UBVbXIC0FyY7rd52GOFuJ04h17SoNnoHvMbmWRm1vhOu
+	 ryCaKPtg4OB2rPnTBaqbKla9wg5Ww0TJj/sEaLJ9mIHnhUHFmMuONzpFP0wU22CHRM
+	 +xu1ZIJPxPKWA==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, peter.ujfalusi@linux.intel.com, 
+ yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
+ daniel.baluta@nxp.com, kai.vehmanen@linux.intel.com, 
+ pierre-louis.bossart@linux.dev, 
+ Suraj Sonawane <surajsonawane0215@gmail.com>
+Cc: perex@perex.cz, tiwai@suse.com, sound-open-firmware@alsa-project.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241107063609.11627-1-surajsonawane0215@gmail.com>
+References: <20241107063609.11627-1-surajsonawane0215@gmail.com>
+Subject: Re: [PATCH v3] ASoc: SOF: ipc4-pcm: fix uninit-value in
+ sof_ipc4_pcm_dai_link_fixup_rate
+Message-Id: <173134342880.341130.18079450114790118970.b4-ty@kernel.org>
+Date: Mon, 11 Nov 2024 16:43:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2564; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=cv7HOX0Be8oHN7NlH//fc5XDhKL3U1WcsBw8HaIGpAs=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOlGpvot4dKidyLWMF5kWtCXdrI8WdSAKeuFncmbk7+Pc zutZ13fUcrCIMbFICumyLKsnJNboaPQO+zQX0uYOaxMIEMYuDgFYCK7fBn+GS3w26X36fefI3Yt uZ9WqmilBX9lKr+48MTt7XIvojI/v2ZkWHf8/rmtiYLyml/9zp64m1g67SzD8RNHnzvNOp/dtkQ okh8A
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-355e8
 
-Because of the shortcut logic of the && operator, below expression:
+On Thu, 07 Nov 2024 12:06:09 +0530, Suraj Sonawane wrote:
+> Fix an issue detected by the Smatch tool:
+> 
+> sound/soc/sof/ipc4-pcm.c: sof_ipc4_pcm_dai_link_fixup_rate()
+> error: uninitialized symbol 'be_rate'.
+> 
+> The warning highlights a case where `be_rate` could remain uninitialized
+> if `num_input_formats` is zero, which would cause undefined behavior
+> when setting `rate->min` and `rate->max` based on `be_rate`.
+> 
+> [...]
 
-  __builtin_choose_expr(condition, boolean_expression, false)
+Applied to
 
-can be simplified as:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-  condition && boolean_expression
+Thanks!
 
-Applied to GENMASK_INPUT_CHECK(),
+[1/1] ASoc: SOF: ipc4-pcm: fix uninit-value in sof_ipc4_pcm_dai_link_fixup_rate
+      commit: 9a59718a5340aa0240a442115eb499de2ed18ee4
 
-  __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-can be replaced by:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-  __is_constexpr((l) > (h)) && (l) > (h)
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Finally, above expression is nearly the same as the expansion of
-statically_true((l) > (h)), except from the use of __is_constexpr()
-instead of __builtin_constant_p().
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Introduce _statically_true() which is similar to statically_true()
-but with __is_constexpr(). Apply _statically_true() to simplify
-GENMASK_INPUT_CHECK().
-
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
----
-This change passes the unit tests from CONFIG_BITS_TEST, including the
-extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
-
-[1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
-Link: https://git.kernel.org/torvalds/c/6d511020e13d
-
-
-** Changelog **
-
-v1 -> v2:
-
-   - introduce _statically_true(), taking inspiration from
-     statically_true() as introduced in commit 22f546873149 ("minmax:
-     improve macro expansion and type checking")
-
-Link: https://lore.kernel.org/all/20240609073513.256179-1-mailhol.vincent@wanadoo.fr/
----
- include/linux/bits.h     | 5 ++---
- include/linux/compiler.h | 1 +
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/bits.h b/include/linux/bits.h
-index 60044b608817..01713e1eda56 100644
---- a/include/linux/bits.h
-+++ b/include/linux/bits.h
-@@ -20,9 +20,8 @@
-  */
- #if !defined(__ASSEMBLY__)
- #include <linux/build_bug.h>
--#define GENMASK_INPUT_CHECK(h, l) \
--	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
--		__is_constexpr((l) > (h)), (l) > (h), 0)))
-+#include <linux/compiler.h>
-+#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(_statically_true((l) > (h)))
- #else
- /*
-  * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 4d4e23b6e3e7..fee66166eca2 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -307,6 +307,7 @@ static inline void *offset_to_ptr(const int *off)
-  * values to determine that the condition is statically true.
-  */
- #define statically_true(x) (__builtin_constant_p(x) && (x))
-+#define _statically_true(x) (__is_constexpr(x) && (x))
- 
- /*
-  * This is needed in functions which generate the stack canary, see
--- 
-2.45.2
+Thanks,
+Mark
 
 
