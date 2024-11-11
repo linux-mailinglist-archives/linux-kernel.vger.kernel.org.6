@@ -1,238 +1,182 @@
-Return-Path: <linux-kernel+bounces-403447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA459C35D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:18:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BF19C35DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15391C20DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:18:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC90AB2159C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28013C8F0;
-	Mon, 11 Nov 2024 01:17:55 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FABEAF9;
+	Mon, 11 Nov 2024 01:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EGUU+gPt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1529CA29
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9E779CD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731287874; cv=none; b=mfqxAmdUJ0h6OLaAVCbDXyjDGxUa+LoaCMakAA3P8fapOOypNKipX4upPhMutleflMTpzMGllyUSQ8lLeEajHAAUMNk9rp3rbFLMmCWaSD6Rdbhxym0eM8zMyYJM7uEiks7ETacDhAZTe2TpESt9MXWpmINjKYwpkRkL01fbzcY=
+	t=1731287924; cv=none; b=KWsIe50maFOF+wZATM6GkcvJzhu+VFDjrq5ZIfGwmRAsTax4ZNzzsTVSwEaSmGRlht1IC03Kb4UONZCVhiDVRxZ/tV12mt75VWzGfAqDXSsPdausDTGKas1+uifr7oL4Xl0mSWcpIMkAiV7NVXJ0RT66AD1IFa7LR0hzfOVKdas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731287874; c=relaxed/simple;
-	bh=lR3dZow86LqqLFTAsHoJ8ZdfBqU2d9l1E1FF55TUQKA=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=A4fjzNw3xnU6z9bB56WrGpfnehoaH8unpI8rwBvHFVplIlelLZNefh1hxclNreTup9MWblY1Uv4BSy/y4Wy6h/mg3xv5LCxerKYbaBuf957F+5LGPbb9obN7RvFEwTD4KUV/oEB6lIXQFIUW6GRXYlGgqb3yRoiD5DfY7bzRWeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xms6J3Kp0zsRSw;
-	Mon, 11 Nov 2024 09:15:04 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E12D1403A0;
-	Mon, 11 Nov 2024 09:17:43 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 09:17:42 +0800
-Subject: Re: [PATCH v3] ubifs: authentication: Fix use-after-free in
- ubifs_tnc_end_commit
-To: Waqar Hameed <waqar.hameed@axis.com>, Richard Weinberger <richard@nod.at>,
-	Sascha Hauer <s.hauer@pengutronix.de>
-CC: <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <3712a732100057abc054833c6ec3ccc579eb647e.1731276611.git.waqar.hameed@axis.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <5a3846c9-876f-b8e5-377c-42eafa3b775a@huawei.com>
-Date: Mon, 11 Nov 2024 09:17:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1731287924; c=relaxed/simple;
+	bh=k+zYKvZtccWCCR7nyPdyVzSewpU58C/nG5kCkTh4o4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YpCxl+1Yy7eo4QfdyFPURu+hKpPF76yc1uwyWJFuRkos+NXnDP2TbLc+GsDkAULFS/3KYV3BE2afNI0lPfSXFI3MVIe1mIE7eu9sonKQTO0rETktRiUqwx8hvcGf8uzMREFRdd8DuaMmjrNwcQXlHAE0tGF2PCMkSFexI87CCts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EGUU+gPt; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731287922; x=1762823922;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=k+zYKvZtccWCCR7nyPdyVzSewpU58C/nG5kCkTh4o4k=;
+  b=EGUU+gPtfBp0rwtyIaUH6Mnfnsy8TsH8n5UnDx90f1cvO/RKpmi6dHY8
+   4zHS4LH3VLre+R3e/rUXZ41chlzeFNleHLpuK5btvQlNPD7oeS5nUFUqg
+   1Bu5qhxTEIz7fNM5B8J+asO2q4jQXfQ32l/qdxxBczXpPLxwwNzupNPXB
+   +uEoMD6T6wnNlNl3oPLUkFNV9wBWPq+DTaGjrvyxVvwKs4Q6HrEdgDq/1
+   P+gQIe+sXN/dE8S/l/NqiK2x19ViqfQcdkF9EGSkilVnBEoxGN6hB46fn
+   xPem4XAfrPKtFaxs4JtoGed6i3afVuB+7poRpLUFcQ5LXIehFpPGnl2P7
+   w==;
+X-CSE-ConnectionGUID: 53nIl8jLT1Ob9d7ydVi0Yg==
+X-CSE-MsgGUID: I56mvAZTSi2axvswO14CZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="41713914"
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="41713914"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 17:18:41 -0800
+X-CSE-ConnectionGUID: 6eW+UiEnSSCtCAi537p7WQ==
+X-CSE-MsgGUID: 4D64gkvNSRqcIizxj4oMKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="86761864"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 17:18:39 -0800
+Message-ID: <05969b08-6c84-46b8-b795-85980ef15269@linux.intel.com>
+Date: Mon, 11 Nov 2024 09:17:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3712a732100057abc054833c6ec3ccc579eb647e.1731276611.git.waqar.hameed@axis.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: intel: apply quirk_iommu_igfx for 8086:0044
+ (QM57/QS57)
+To: Mingcong Bai <jeffbai@aosc.io>
+Cc: kexybiscuit@aosc.io, weiguangtwk@outlook.com,
+ David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+ intel-gfx@lists.freedesktop.org
+References: <20241108120838.495931-1-jeffbai@aosc.io>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241108120838.495931-1-jeffbai@aosc.io>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ÔÚ 2024/10/9 22:46, Waqar Hameed Ð´µÀ:
-> After an insertion in TNC, the tree might split and cause a node to
-> change its `znode->parent`. A further deletion of other nodes in the
-> tree (which also could free the nodes), the aforementioned node's
-> `znode->cparent` could still point to a freed node. This
-> `znode->cparent` may not be updated when getting nodes to commit in
-> `ubifs_tnc_start_commit()`. This could then trigger a use-after-free
-> when accessing the `znode->cparent` in `write_index()` in
-> `ubifs_tnc_end_commit()`.
+On 11/8/24 20:08, Mingcong Bai wrote:
+> (I'm not very confident about the approach of this patch but I failed to
+> find a better way to address the issue I have on hand, so please consider
+> this patch as an RFC...)
 > 
-> This can be triggered by running
+> On the Lenovo ThinkPad X201, when Intel VT-d is enabled in the BIOS, the
+> kernel boots with errors related to DMAR, the graphical interface appeared
+> quite choppy, and the system resets erratically within a minute after it
+> booted:
 > 
->    rm -f /etc/test-file.bin
->    dd if=/dev/urandom of=/etc/test-file.bin bs=1M count=60 conv=fsync
+> DMAR: DRHD: handling fault status reg 3
+> DMAR: [DMA Write NO_PASID] Request device [00:02.0] fault addr 0xb97ff000
+> [fault reason 0x05] PTE Write access is not set
 > 
-> in a loop, and with `CONFIG_UBIFS_FS_AUTHENTICATION`. KASAN then
-> reports:
+> Upon comparing boot logs with VT-d on/off, I found that the Intel Calpella
+> quirk (`quirk_calpella_no_shadow_gtt()') correctly applied the igfx IOMMU
+> disable/quirk correctly:
 > 
->    BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
->    Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
+> pci 0000:00:00.0: DMAR: BIOS has allocated no shadow GTT; disabling IOMMU
+> for graphics
 > 
->    Call trace:
->     dump_backtrace+0x0/0x340
->     show_stack+0x18/0x24
->     dump_stack_lvl+0x9c/0xbc
->     print_address_description.constprop.0+0x74/0x2b0
->     kasan_report+0x1d8/0x1f0
->     kasan_check_range+0xf8/0x1a0
->     memcpy+0x84/0xf4
->     ubifs_tnc_end_commit+0xa5c/0x1950
->     do_commit+0x4e0/0x1340
->     ubifs_bg_thread+0x234/0x2e0
->     kthread+0x36c/0x410
->     ret_from_fork+0x10/0x20
+> Whereas with VT-d on, it went into the "else" branch, which then
+> triggered the DMAR handling fault above:
 > 
->    Allocated by task 401:
->     kasan_save_stack+0x38/0x70
->     __kasan_kmalloc+0x8c/0xd0
->     __kmalloc+0x34c/0x5bc
->     tnc_insert+0x140/0x16a4
->     ubifs_tnc_add+0x370/0x52c
->     ubifs_jnl_write_data+0x5d8/0x870
->     do_writepage+0x36c/0x510
->     ubifs_writepage+0x190/0x4dc
->     __writepage+0x58/0x154
->     write_cache_pages+0x394/0x830
->     do_writepages+0x1f0/0x5b0
->     filemap_fdatawrite_wbc+0x170/0x25c
->     file_write_and_wait_range+0x140/0x190
->     ubifs_fsync+0xe8/0x290
->     vfs_fsync_range+0xc0/0x1e4
->     do_fsync+0x40/0x90
->     __arm64_sys_fsync+0x34/0x50
->     invoke_syscall.constprop.0+0xa8/0x260
->     do_el0_svc+0xc8/0x1f0
->     el0_svc+0x34/0x70
->     el0t_64_sync_handler+0x108/0x114
->     el0t_64_sync+0x1a4/0x1a8
+> ... else if (!disable_igfx_iommu) {
+> 	/* we have to ensure the gfx device is idle before we flush */
+> 	pci_info(dev, "Disabling batched IOTLB flush on Ironlake\n");
+> 	iommu_set_dma_strict();
+> }
 > 
->    Freed by task 403:
->     kasan_save_stack+0x38/0x70
->     kasan_set_track+0x28/0x40
->     kasan_set_free_info+0x28/0x4c
->     __kasan_slab_free+0xd4/0x13c
->     kfree+0xc4/0x3a0
->     tnc_delete+0x3f4/0xe40
->     ubifs_tnc_remove_range+0x368/0x73c
->     ubifs_tnc_remove_ino+0x29c/0x2e0
->     ubifs_jnl_delete_inode+0x150/0x260
->     ubifs_evict_inode+0x1d4/0x2e4
->     evict+0x1c8/0x450
->     iput+0x2a0/0x3c4
->     do_unlinkat+0x2cc/0x490
->     __arm64_sys_unlinkat+0x90/0x100
->     invoke_syscall.constprop.0+0xa8/0x260
->     do_el0_svc+0xc8/0x1f0
->     el0_svc+0x34/0x70
->     el0t_64_sync_handler+0x108/0x114
->     el0t_64_sync+0x1a4/0x1a8
+> Now, this is not exactly scientific, but moving 0x0044 to quirk_iommu_igfx
+> seems to have fixed the aforementioned issue. Running a few `git blame'
+> runs on the function, I have found that the quirk was originally
+> introduced as a fix specific to ThinkPad X201:
 > 
-> The offending `memcpy()` in `ubifs_copy_hash()` has a use-after-free
-> when a node becomes root in TNC but still has a `cparent` to an already
-> freed node. More specifically, consider the following TNC:
+> commit 9eecabcb9a92 ("intel-iommu: Abort IOMMU setup for igfx if BIOS gave
+> no shadow GTT space")
 > 
->           zroot
->           /
->          /
->        zp1
->        /
->       /
->      zn
+> Which was later revised twice to the "else" branch we saw above:
 > 
-> Inserting a new node `zn_new` with a key smaller then `zn` will trigger
-> a split in `tnc_insert()` if `zp1` is full:
+> - 2011: commit 6fbcfb3e467a ("intel-iommu: Workaround IOTLB hang on
+>    Ironlake GPU")
+> - 2024: commit ba00196ca41c ("iommu/vt-d: Decouple igfx_off from graphic
+>    identity mapping")
 > 
->           zroot
->           /   \
->          /     \
->        zp1     zp2
->        /         \
->       /           \
->    zn_new          zn
+> I'm uncertain whether further testings on this particular laptops were
+> done in 2011 and (honestly I'm not sure) 2024, but I would be happy to do
+> some distro-specific testing if that's what would be required to verify
+> this patch.
 > 
-> `zn->parent` has now been moved to `zp2`, *but* `zn->cparent` still
-> points to `zp1`.
+> P.S., I also see IDs 0x0040, 0x0062, and 0x006a listed under the same
+> `quirk_calpella_no_shadow_gtt()' quirk, but I'm not sure how similar these
+> chipsets are (if they share the same issue with VT-d or even, indeed, if
+> this issue is specific to a bug in the Lenovo BIOS). With regards to
+> 0x0062, it seems to be a Centrino wireless card, but not a chipset?
 > 
-> Now, consider a removal of all the nodes _except_ `zn`. Just when
-> `tnc_delete()` is about to delete `zroot` and `zp2`:
+> I have also listed a couple (distro and kernel) bug reports below as
+> references (some of them are from 7-8 years ago!), as they seem to be
+> similar issue found on different Westmere/Ironlake, Haswell, and Broadwell
+> hardware setups.
 > 
->           zroot
->               \
->                \
->                zp2
->                  \
->                   \
->                   zn
-> 
-> `zroot` and `zp2` get freed and the tree collapses:
-> 
->             zn
-> 
-> `zn` now becomes the new `zroot`.
-> 
-> `get_znodes_to_commit()` will now only find `zn`, the new `zroot`, and
-> `write_index()` will check its `znode->cparent` that wrongly points to
-> the already freed `zp1`. `ubifs_copy_hash()` thus gets wrongly called
-> with `znode->cparent->zbranch[znode->iip].hash` that triggers the
-> use-after-free!
-> 
-> Fix this by explicitly setting `znode->cparent` to `NULL` in
-> `get_znodes_to_commit()` for the root node. The search for the dirty
-> nodes is bottom-up in the tree. Thus, when `find_next_dirty(znode)`
-> returns NULL, the current `znode` _is_ the root node. Add an assert for
-> this.
-> 
-> Fixes: 16a26b20d2af ("ubifs: authentication: Add hashes to index nodes")
-> Tested-by: Waqar Hameed <waqar.hameed@axis.com>
-> Co-developed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> Signed-off-by: Waqar Hameed <waqar.hameed@axis.com>
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=197029
+> Link: https://groups.google.com/g/qubes-users/c/4NP4goUds2c?pli=1
+> Link: https://bugs.archlinux.org/task/65362
+> Link: https://bbs.archlinux.org/viewtopic.php?id=230323
+> Reported-by: Wenhao Sun <weiguangtwk@outlook.com>
+> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
 > ---
-> Changes in v3:
-> * Add "ubifs: authentication: ..." prefix to commit message subject
-> * Rephrase the commit message with a short description of the problem at
->    the beginning.
-> * Add `ubifs_assert(c, !znode->parent)` when `find_next_dirty()` returns
->    `NULL`.
-> * Link to v2: https://lore.kernel.org/lkml/e7b5151bb1186e2342ed677cce0ef77592923084.1731088341.git.waqar.hameed@axis.com/
+>   drivers/iommu/intel/iommu.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> Changes in v2:
-> * Implement the actual fix from discussions in RFC patch.
-> * Link to first RFC version: https://lore.kernel.org/lkml/1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com/
-> 
->   fs/ubifs/tnc_commit.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index e860bc9439a2..1ccea83c2c95 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4646,6 +4646,9 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e30, quirk_iommu_igfx);
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e40, quirk_iommu_igfx);
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2e90, quirk_iommu_igfx);
+>   
+> +/* QM57/QS57 integrated gfx malfunctions with dmar */
+> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_iommu_igfx);
+> +
+>   /* Broadwell igfx malfunctions with dmar */
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x1606, quirk_iommu_igfx);
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x160B, quirk_iommu_igfx);
+> @@ -4723,7 +4726,6 @@ static void quirk_calpella_no_shadow_gtt(struct pci_dev *dev)
+>   	}
+>   }
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0040, quirk_calpella_no_shadow_gtt);
+> -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0044, quirk_calpella_no_shadow_gtt);
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x0062, quirk_calpella_no_shadow_gtt);
+>   DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x006a, quirk_calpella_no_shadow_gtt);
+>   
 
-Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
-> diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
-> index a55e04822d16..7c43e0ccf6d4 100644
-> --- a/fs/ubifs/tnc_commit.c
-> +++ b/fs/ubifs/tnc_commit.c
-> @@ -657,6 +657,8 @@ static int get_znodes_to_commit(struct ubifs_info *c)
->   		znode->alt = 0;
->   		cnext = find_next_dirty(znode);
->   		if (!cnext) {
-> +			ubifs_assert(c, !znode->parent);
-> +			znode->cparent = NULL;
->   			znode->cnext = c->cnext;
->   			break;
->   		}
-> 
+Cc: intel-gfx@lists.freedesktop.org
 
+--
+baolu
 
