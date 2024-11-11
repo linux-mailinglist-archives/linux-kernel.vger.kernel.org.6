@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-403980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D7A9C3D5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF6C9C3D5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:32:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183F31C22B20
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11BE284E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC9B18A93E;
-	Mon, 11 Nov 2024 11:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="VIpH+amj"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39519158A09;
-	Mon, 11 Nov 2024 11:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65662199249;
+	Mon, 11 Nov 2024 11:31:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6421991AA
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731324674; cv=none; b=ciVZaJKswpceSOGJtsoQRHIwJ76JWyNQQE3Wbznthq/0UgisqIhihcNG7zw+sPfAYo75xojyO7V1fuj0UyKhSelg33tqhIPIjHHkAsA+IwzXUQ6pL29pWICV5VamJ8aSprMUnBnWw+h2AdiaGJbYM6/x/mLjHlL/7x5JFu0h4UI=
+	t=1731324678; cv=none; b=NhvjjfyUVg9DNFf5BNMP8wIMGb/o3odUYP5Vc1mpWvxWnnlv8MLLB2/ETFXZFtsGk9oC8gzgrE+M3clkGtOvRD26i2UnZLRgh0DhxyZlKx+sE+05cvEDAaWJiFUbFZkF+6AsNzhAxYBRJn91FJ628uqYYcjXuRVnoIAbA4BAaf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731324674; c=relaxed/simple;
-	bh=vMg2pCpu5IA+RdZRhOZ9ibA+Z8DTNXF32ji+f7AER5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GCTkQjQMaW/mTP7XbhIxmTrhNSaNHFMMd4s2JPCSLxwUKTSov5hOUPEM5mASjp71LLm8WzABNcwz8tt14vE/w7kED35UCFsfBJKzSOKV5mrzSbNwAVx93ouQ6PMtfnkmG8afs2I9FHTT5Wi1LKS1ix8020SQ4pW+Sinn4t06E6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=VIpH+amj; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1D3AA40E0169;
-	Mon, 11 Nov 2024 11:31:10 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id q4FdW_DnE7aN; Mon, 11 Nov 2024 11:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731324666; bh=1i35xRLuOIMeKe4gXXpoFv7Vf3wLVDEnHnT2V6tVKlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VIpH+amj7V0qfR/YXFVUS9HIsM3T2yx7hX1gSkrvY03EZLd30SxX9T4xk5kpkdYOJ
-	 KkSfU6GuFRjmE1uGtKscGwZKPzogh2cRs2r1qlqRymQ/scllVHyjSRSyGLnX7p14lZ
-	 APjgDS+y0xfTU02SHMMF+OqfDDucAYub1uU4GUeLEu6eIIxOeOiSRS6UviTFpS6Neo
-	 ukaGovLtnR6eaqevdRS58C4PwsUrC1cTLXowe2As++pQHyVRc0ksDbW2bmbq+tvx48
-	 pm/qtlcDIlphpBwjNJFEjTl2Zxe91v3axvDoJVcypxKOiSOEN/ZcYGp3v7RVrQuIRe
-	 ORcr2Eck4zVmTAT6wQyoH6L3WV2neqk5RukklpRYV73AV1751vFlyZxji34ixHsKQl
-	 rs1KqJL4kf9/Sx+8gqCW/JnOcRvug7nnzPAP3bXXsQYHC5+1HhJWjueYH4qJbx335X
-	 FEE4ZJSRyrdvXo8yE5andkoGprv42+gspXHvy5d0xmcYfFUP6iWwh6e1rApdsfwWx1
-	 lgndkLJ/cQHnmU48qxaP9phK1vsnYQ1Amaeg7pmGw0fZl/dqLVcTUqVRssSeQlbQg9
-	 9k7gfsgUbZWADg8YKi58s8tDx2XHpWPBqsrOjr9kDT3JETLBgxnmQGebENXGTctZae
-	 4ulUSf+M/jyYnd4s7l+qS+GQ=
-Received: from zn.tnic (p200300ea973a31c3329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31c3:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 074BD40E0028;
-	Mon, 11 Nov 2024 11:30:54 +0000 (UTC)
-Date: Mon, 11 Nov 2024 12:30:54 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
-Message-ID: <20241111113054.GAZzHq7m-HqMz9Vqiv@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-4-nikunj@amd.com>
- <20241101160019.GKZyT7E6DrVhCijDAH@fat_crate.local>
- <6816f40e-f5aa-1855-ef7e-690e2b0fcd1b@amd.com>
- <4115f048-5032-8849-bb92-bdc79fc5a741@amd.com>
- <20241111105152.GBZzHhyL4EkqJ5z84X@fat_crate.local>
- <df1da11b-6413-8198-1bb0-587212942dbc@amd.com>
+	s=arc-20240116; t=1731324678; c=relaxed/simple;
+	bh=P6IqENS6xfIuFFZgeNsg4qDCruzvn+4syWoHMlvrRWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sjApuve5HKzERWd54KI/bU1amTf8Fh8+36pAET0h/a0oiTsPYebKXrBloSgJO9J/3VCaOoyX8zOVPnA7M9DywPzGxXlea9MnHeWlSq4F2Sslmb3kQ3LBOkqGkRh+wESIXSCw/vLqlLgfH9u2R2wq5eILQ6nudDg2sceY19BxHak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 126DA1D14;
+	Mon, 11 Nov 2024 03:31:45 -0800 (PST)
+Received: from [10.1.26.32] (e122027.cambridge.arm.com [10.1.26.32])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A33D3F6A8;
+	Mon, 11 Nov 2024 03:31:13 -0800 (PST)
+Message-ID: <bff9ae58-8587-4f44-a797-d919770978aa@arm.com>
+Date: Mon, 11 Nov 2024 11:31:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <df1da11b-6413-8198-1bb0-587212942dbc@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panthor: Fix handling of partial GPU mapping of BOs
+To: Akash Goel <akash.goel@arm.com>, boris.brezillon@collabora.com,
+ liviu.dudau@arm.com
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ mihail.atanassov@arm.com, ketil.johnsen@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
+References: <20241111092621.763285-1-akash.goel@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241111092621.763285-1-akash.goel@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 04:53:30PM +0530, Nikunj A. Dadhania wrote:
-> When snp_msg_alloc() is called by the sev-guest driver, secrets will
-> be reinitialized and buffers will be re-allocated, leaking memory
-> allocated during snp_get_tsc_info()::snp_msg_alloc(). 
+On 11/11/2024 09:26, Akash Goel wrote:
+> This commit fixes the handling of partial GPU mapping of buffer objects
+> in Panthor.
+> VM_BIND ioctl allows Userspace to partially map the BOs to GPU.
+> To map a BO, Panthor walks through the sg_table to retrieve the physical
+> address of pages. If the mapping is created at an offset into the BO,
+> then the scatterlist(s) at the beginning have to be skipped to reach the
+> one corresponding to the offset. But the case where the offset didn't
+> point to the first page of desired scatterlist wasn't handled correctly.
+> The bug caused the partial GPU mapping of BO to go wrong for the said
+> case, as the pages didn't get map at the expected virtual address and
+> consequently there were kernel warnings on unmap.
+> 
+> Signed-off-by: Akash Goel <akash.goel@arm.com>
 
-Huh?
+Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
 
-How do you leak memory when you clear all buffers before that?!?
+Reviewed-by: Steven Price <steven.price@arm.com>
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Steve
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
+> index d8cc9e7d064e..6bc188d9a9ad 100644
+> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> @@ -957,6 +957,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
+>  
+>  		paddr += offset;
+>  		len -= offset;
+> +		offset = 0;
+>  		len = min_t(size_t, len, size);
+>  		size -= len;
+>  
+
 
