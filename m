@@ -1,80 +1,147 @@
-Return-Path: <linux-kernel+bounces-404771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810C59C47E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:17:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B759C47F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4771128A03E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:17:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFE61F21870
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127FF1BC097;
-	Mon, 11 Nov 2024 21:16:48 +0000 (UTC)
-Received: from a3.inai.de (a3.inai.de [144.76.212.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58091AC423;
+	Mon, 11 Nov 2024 21:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="tZXu665B"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8B21BC06C;
-	Mon, 11 Nov 2024 21:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9841EB36
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731359807; cv=none; b=d3RSh594tJuf94wLXDi8bTCRjZQR7rSIRtVhXn2XZPb22RMnKry84dAw/xtlfHR75qQdXsI8KW5JCNIynTjRXzdvGmBlJvvw02kpy0nCs9hEjYCiV2FuUk9di7Fw+QVWm9GWNtWg9Y/LrnRB21DOkMnazSYvzz3cRLGOdh53Us0=
+	t=1731360183; cv=none; b=f/y/PSTiFTRQajjJCvW4ar+kEHtej6LLHIaoA2Li/ZsnTaoATv0Q2UQB7J/v4CbWvxFy2xsNlozljWwUzaqJvMw85hm/d9rfFW5UY1ShTg/hDCK3/0OJiULqJmkVVdPh+D94VkmN1DoPjyq9EHROANA5rUXOpeF+eHxh0myEU8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731359807; c=relaxed/simple;
-	bh=LFUxDm15kTu7EqTwyvhKA9ENEhPjrw6Y5ATaPQBTGPk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Y+QvGJBgOndC41VV161CsiTQi2VxDXA0i5yWW3EQoxLfENwCxfGyeuXIyRm/6V4b3s/HVb9GpgELsEoivJx8T6omktlLV4eqovn8/aK2ZI6l5F/uA5/xBWxD6DJdzzfqrGmnXM11llThSUvdZq98y+GI6T+LH630v77pdC1y/Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=fail smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=inai.de
-Received: by a3.inai.de (Postfix, from userid 25121)
-	id DCE5A1003F4283; Mon, 11 Nov 2024 22:16:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by a3.inai.de (Postfix) with ESMTP id DAFB21100D19CD;
-	Mon, 11 Nov 2024 22:16:41 +0100 (CET)
-Date: Mon, 11 Nov 2024 22:16:41 +0100 (CET)
-From: Jan Engelhardt <ej@inai.de>
-To: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-cc: Pablo Neira Ayuso <pablo@netfilter.org>, Florian Westphal <fw@strlen.de>, 
-    kadlec@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
-    edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-    netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-    linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
- filesystem.
-In-Reply-To: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
-Message-ID: <3s5r805n-208r-754q-80or-or22s65659n4@vanv.qr>
-References: <20241111163634.1022-1-egyszeregy@freemail.hu> <20241111165606.GA21253@breakpoint.cc> <ZzJORY4eWl4xEiMG@calendula> <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
-User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
+	s=arc-20240116; t=1731360183; c=relaxed/simple;
+	bh=XK/ElYCdI62mAAT1lSY2EoNqVW7PNLO3gyefzHxVesI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Pk2C3n/SWDX+3MhqerdYP9NdGiYZQr1EcdRZtB+eX3K/Kt4svDjTdv3MLN1jYFAz4HskB9d5hvXsJ88Xxc6EDHCVGxgVZnUd5NPaplhtw4S1nLuWK7IaZTocVJxvcOcxrmgUsQZLbRNpc/KIlVyemgBw0ZP1TkLc76Ext3bz/jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=tZXu665B; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id A9BE41770FF; Mon, 11 Nov 2024 21:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1731360174; bh=XK/ElYCdI62mAAT1lSY2EoNqVW7PNLO3gyefzHxVesI=;
+	h=Date:From:To:Subject:From;
+	b=tZXu665Bx7dbSP+U6t0cnVWLtOyaijqFS/WtqQ7aVNVSedHhISU2uYdlI/YHrBjyZ
+	 bqxlDzPbqoM2uIi8nlDX5zKcBVQAwsUTwIAC8HvM7Uf7d+eWqjbav4RGAlM9m3bxhu
+	 P3BUhNGGTr01uzbQ0ICpoW57OFS43+axpVoeKJMoMLBHPxhPne4hDVunsvlSTPYRu3
+	 GQhXt6AFH7L6yZ685Q/3bFFj1BSG60hiyL889qwAYF1Zazg4P+MvLGVFe0P1ZmO/ZE
+	 SrRrlPFkn4I3i0g5/z70Fi8s8RMQ+uh2f5zdm2srp9nfztulpEs7zXGyZX43ssS863
+	 MYKGl4Pp3Lpsw==
+Date: Mon, 11 Nov 2024 21:22:54 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: jason.wessel@windriver.com, daniel.thompson@linaro.org,
+	dianders@chromium.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kdb: fix ctrl+e/a/f/b/d/p/n broken in keyboard mode
+Message-ID: <20241111212254.GA160555@lichtman.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Problem: When using kdb via keyboard it does not react to control
+characters which are supported in serial mode.
 
-On Monday 2024-11-11 21:28, Szőke Benjamin wrote:
-> What is your detailed plans to solve it? Maybe the contents of both upper and
-> lower case *.h files can be merged to a common header files like
-> "xt_dscp_common.h" but what about the *.c sources? For example if xt_DSCP.c
-> removed and its content merged to xt_dscp.c before, what is the plan with
-> kernel config options of CONFIG_NETFILTER_XT_TARGET_DSCP which was made for
-> only xt_DSCP.c source to use in Makefile? Can we remove all of
-> CONFIG_NETFILTER_XT_TARGET* config in the future which will lost their *.c
-> source files?
->
-> obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
-> ...
-> obj-$(CONFIG_NETFILTER_XT_MATCH_DSCP) += xt_dscp.o
+Example: Chords such as ctrl+a/e/d/p do not work in keyboard mode
 
-This issue you would approach by unconditionally building a .c file
-and using #ifdef IS_ENABLED(...) inside the .c file.
+Solution: Before disregarding non-printable key characters, check if they
+are one of the supported control characters, I have took the control
+characters from the switch case upwards in this function that translates
+scan codes of arrow keys/backspace/home/.. to the control characters.
 
-Truth to be told, the overhead for a module (12288 bytes on on x86_64)
-completely dwarfs the code inside it (xt_dscp.o: 765 bytes), so combining
-modules should provide some decent memory savings.
+Suggested-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Nir Lichtman <nir@lichtman.org>
+---
+
+v2: Add CTRL macro following Douglas's suggestion in the CR of v1
+
+ kernel/debug/kdb/kdb_keyboard.c | 33 ++++++++++++++++++++++++---------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/debug/kdb/kdb_keyboard.c b/kernel/debug/kdb/kdb_keyboard.c
+index 3c2987f46f6e..9b8b172f48c3 100644
+--- a/kernel/debug/kdb/kdb_keyboard.c
++++ b/kernel/debug/kdb/kdb_keyboard.c
+@@ -25,6 +25,8 @@
+ #define KBD_STAT_OBF 		0x01	/* Keyboard output buffer full */
+ #define KBD_STAT_MOUSE_OBF	0x20	/* Mouse output buffer full */
+ 
++#define CTRL(c) (c - 64)
++
+ static int kbd_exists;
+ static int kbd_last_ret;
+ 
+@@ -123,24 +125,24 @@ int kdb_get_kbd_char(void)
+ 		return 8;
+ 	}
+ 
+-	/* Special Key */
++	/* Translate special keys to equivalent CTRL control characters */
+ 	switch (scancode) {
+ 	case 0xF: /* Tab */
+-		return 9;
++		return CTRL('I');
+ 	case 0x53: /* Del */
+-		return 4;
++		return CTRL('D');
+ 	case 0x47: /* Home */
+-		return 1;
++		return CTRL('A');
+ 	case 0x4F: /* End */
+-		return 5;
++		return CTRL('E');
+ 	case 0x4B: /* Left */
+-		return 2;
++		return CTRL('B');
+ 	case 0x48: /* Up */
+-		return 16;
++		return CTRL('P');
+ 	case 0x50: /* Down */
+-		return 14;
++		return CTRL('N');
+ 	case 0x4D: /* Right */
+-		return 6;
++		return CTRL('F');
+ 	}
+ 
+ 	if (scancode == 0xe0)
+@@ -172,6 +174,19 @@ int kdb_get_kbd_char(void)
+ 	switch (KTYP(keychar)) {
+ 	case KT_LETTER:
+ 	case KT_LATIN:
++		switch (keychar) {
++			/* non-printable supported control characters */
++			case CTRL('A'): /* Home */
++			case CTRL('B'): /* Left */
++			case CTRL('D'): /* Del */
++			case CTRL('E'): /* End */
++			case CTRL('F'): /* Right */
++			case CTRL('I'): /* Tab */
++			case CTRL('N'): /* Down */
++			case CTRL('P'): /* Up */
++				return keychar;
++		}
++
+ 		if (isprint(keychar))
+ 			break;		/* printable characters */
+ 		fallthrough;
+-- 
+2.39.2
 
