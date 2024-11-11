@@ -1,150 +1,134 @@
-Return-Path: <linux-kernel+bounces-403990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA89B9C3D9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:43:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EE99C3DB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B0AB240C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B45E1C219C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E73E189BBB;
-	Mon, 11 Nov 2024 11:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A174A18BBA8;
+	Mon, 11 Nov 2024 11:47:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U3NbSHt4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cqsSjQ2/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C50139578;
-	Mon, 11 Nov 2024 11:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6CF15666B;
+	Mon, 11 Nov 2024 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731325391; cv=none; b=GeHE2fCjXoeMrBtqHhAk3LhN9MF/5mUZnhh62GBT6hYXwIZZj0NPh9nFx/GSN0jMRURSyqT88JqpD5QaaJAsflCoxxr33bMdSi8CPZ81VxUsPZ1VgDbu3I9BzdPLv0WCdI1ru7xZmRDJsXjG2DN5F29kisSrv/Eex1vmh8hPs0Y=
+	t=1731325669; cv=none; b=PUjS50r1We6Jh5PqsJMDhh3+o/bCF6P0FGKV4jpKEOhWQTuFaxiPSulJuolABAPWqRSYQ5ugWQZ8V+JNJVE4LF4ktQI9LuxUUUnDqjxUpWKDn1DKwowGPgaa/bByEoOuRkzjp7R0b3h6GvcYu+OxIGVnTS9mqqLUWXf92xcO/Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731325391; c=relaxed/simple;
-	bh=ljvC2kSt0UzwNCZYGIqJcQ4jT1G4WFSNjK9yLyBmSJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hzN909lN1YtG6gimRIjmdhtKwNE9mAm5kFd6l/deRMXqgMljFgjPbPCPrH8jEHKt/gT77z4xaMeYtWYBzACjjW2GMH4pMwcNWRWDdWcgKcqztPYQz88/hSDC5LSOi7TXbhibJ6xG0a/mGPFuDpBEQsBll04OyZOBCuj+2A7xViw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U3NbSHt4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AALxLRH028205;
-	Mon, 11 Nov 2024 11:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+DDIk7Lk2w68YCbx4DDXFvWC08q9N97okqJUTGNc3vw=; b=U3NbSHt4nNJ0ouAx
-	wS0WlO4KVGYpr+5qLmsQefsXCkb7zSGAgG8gnnFJRW1DTgJbeomR/LRSJheq+/Nx
-	fZySLs1kuINKKbWh9ljZG7/6RVRbpPt+ubinzHa4thg8JohPakl9HzgKGY6RkLgS
-	ByrP1tApZxzZOiRcOm1PNcymBmBCDKnmzW7nxHIITMtphfQWbw5hBscoBn5P+swb
-	J0WYnSNYwxs8YZuHg/GRcWVtvm9Rvdj62xkoLcq9MyqGdBBaCXUduHQROWAo8Sxa
-	7V/SPijlqPdvGzrmDiSQnki9fDP2LaszaKTXE5OlSJyuKKsQ1eZ0e16I62X5Z8a9
-	kf+vlQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0wjuxht-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 11:43:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABBh1xp001617
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 11:43:01 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 03:42:54 -0800
-Message-ID: <379add10-7b4d-49f2-9bdf-6374f4dd5f16@quicinc.com>
-Date: Mon, 11 Nov 2024 17:12:51 +0530
+	s=arc-20240116; t=1731325669; c=relaxed/simple;
+	bh=5djMP0zfplNhwi+uRW+WX0FrSX70E2848BtYGXQR5Cs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kxLkXm9qv0L65VAafIvL5ooIIZgRFSc9N1ek+eh6QStT8IujbuDyNYF4ug2qEwv4k4Qx4zzxrYmrfb4F3Y6MjOkxcCfLTXsQbi2Mw2XOxJJmYLhpx6xEUnJvRwAeJ63e05l34F3bFE1izqVPjr9i9/AuS1xNpaT1jPZyi6GGMn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cqsSjQ2/; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731325667; x=1762861667;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=5djMP0zfplNhwi+uRW+WX0FrSX70E2848BtYGXQR5Cs=;
+  b=cqsSjQ2/EzBaG2vgRfToRQfPs22nHobCnjfiOTRXRoHEVjjXSR0kbXY8
+   928x4Xe9XBL4kv8bmv6dlYjWuW7Ai/Alb4ses+PdrIaTkRmXH/5ahOHTQ
+   B3hdGnCs8rghYmUSssc43UEISSQ6aml5azqwnM7c5hmyQ7uacJp+1MDG+
+   dM/0N/kL4wn0S8x7kJVdm60hlPSya3DVtHjAa2ej+C4H6H0aD5LG+veiy
+   /tTFdJTUSc1d87Zt06BIag0uwIo9K+LE33qVQSS8FMFDFyn+WSetZvEpQ
+   b6aa4P6kOT2T1aCrlQf1MoI2/ox5JGUGUoHzw2mHAafDyEdYw5aUA1AAc
+   g==;
+X-CSE-ConnectionGUID: ion0PxhPQbezV6Gyi/tYCA==
+X-CSE-MsgGUID: kyzb8klQR4ef7QorsrZHFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31293997"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31293997"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 03:47:46 -0800
+X-CSE-ConnectionGUID: ci7DUUYTRP6Yd9RjZA+j8w==
+X-CSE-MsgGUID: 3QYAQafmTGijx5ef0bBYVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
+   d="scan'208";a="87685693"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 03:47:43 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: zhangheng <zhangheng@kylinos.cn>
+Cc: marcel@holtmann.org,  johan.hedberg@gmail.com,  luiz.dentz@gmail.com,
+  erick.archer@outlook.com,  kees@kernel.org,  geert@linux-m68k.org,
+  jirislaby@kernel.org,  linux-bluetooth@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] tty: rfcomm: use sysfs_emit() instead of sprintf()
+In-Reply-To: <20241109091748.4037589-1-zhangheng@kylinos.cn>
+	(zhangheng@kylinos.cn's message of "Sat, 9 Nov 2024 17:17:48 +0800")
+References: <20241109091748.4037589-1-zhangheng@kylinos.cn>
+Date: Mon, 11 Nov 2024 19:44:10 +0800
+Message-ID: <87y11qyoz9.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/7] arm64: dts: qcom: ipq5332: Add tsens node
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <srinivas.kandagatla@linaro.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <amitk@kernel.org>,
-        <thara.gopinath@gmail.com>, <rafael@kernel.org>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241104124413.2012794-1-quic_mmanikan@quicinc.com>
- <20241104124413.2012794-5-quic_mmanikan@quicinc.com>
- <69000e68-c1ef-4cdd-8fc0-2a04a6d38e02@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <69000e68-c1ef-4cdd-8fc0-2a04a6d38e02@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BrQUo0y8It_xsicTngNOoixZQ_tDUR1F
-X-Proofpoint-ORIG-GUID: BrQUo0y8It_xsicTngNOoixZQ_tDUR1F
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- malwarescore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
- phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411110098
+Content-Type: text/plain; charset=ascii
 
+Hi, Heng,
 
+Thanks for your patch.
 
-On 11/7/2024 8:20 PM, Konrad Dybcio wrote:
-> On 4.11.2024 1:44 PM, Manikanta Mylavarapu wrote:
->> From: Praveenkumar I <quic_ipkumar@quicinc.com>
->>
->> IPQ5332 has tsens v2.3.3 peripheral. This patch adds the tsense
->> node with nvmem cells for calibration data.
->>
->> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in V6:
->> 	- No change
->>
->>  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 66 +++++++++++++++++++++++++++
->>  1 file changed, 66 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
->> index d3c3e215a15c..94dca05fdc2a 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
->> @@ -177,6 +177,46 @@ cpu_speed_bin: cpu-speed-bin@1d {
->>  				reg = <0x1d 0x2>;
->>  				bits = <7 2>;
->>  			};
->> +
->> +			s11: s11@3a5 {
-> 
-> You're adding 's11' etc. to the global label namespace. Please make
-> the names more specific, like tsens_sens11_off
-> 
-> [...]
-> 
+zhangheng <zhangheng@kylinos.cn> writes:
 
-Okay, sure. I will update.
+> Follow the advice in Documentation/filesystems/sysfs.rst:
+> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
+> the value to be returned to user space.
 
->> +		tsens: thermal-sensor@4a9000 {
->> +			compatible = "qcom,ipq5332-tsens";
->> +			reg = <0x4a9000 0x1000>,
->> +			      <0x4a8000 0x1000>;
-> 
-> Please pad the address part to 8 hex digits with leading zeroes.
-> 
+Please provide a cover letter [0/4] for your series, and send your
+series with `git send-email '[0/4]' '[1/4]' ... '[4/4]', so that it will
+be shown as a thread in most email clients, like shown in lore,
 
-Leading zeros are already padded in V7 series.
+https://lore.kernel.org/linux-mm/20241107101005.69121-1-21cnbao@gmail.com/
 
-Thanks & Regards,
-Manikanta.
+While your email are shown as separate emails,
+
+https://lore.kernel.org/lkml/20241109091748.4037589-1-zhangheng@kylinos.cn/
+
+If there are no direct relationship among 4 patches in series, you can
+send them separately instead of a series.
+
+> Signed-off-by: zhangheng <zhangheng@kylinos.cn>
+> ---
+>  net/bluetooth/rfcomm/tty.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
+> index af80d599c337..21a5b5535ebc 100644
+> --- a/net/bluetooth/rfcomm/tty.c
+> +++ b/net/bluetooth/rfcomm/tty.c
+> @@ -201,14 +201,14 @@ static ssize_t address_show(struct device *tty_dev,
+>  			    struct device_attribute *attr, char *buf)
+>  {
+>  	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%pMR\n", &dev->dst);
+> +	return sysfs_emit(buf, "%pMR\n", &dev->dst);
+>  }
+>  
+>  static ssize_t channel_show(struct device *tty_dev,
+>  			    struct device_attribute *attr, char *buf)
+>  {
+>  	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
+> -	return sprintf(buf, "%d\n", dev->channel);
+> +	return sysfs_emit(buf, "%d\n", dev->channel);
+>  }
+>  
+>  static DEVICE_ATTR_RO(address);
+
+--
+Best Regards,
+Huang, Ying
 
