@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-403411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E999C3559
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:06:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865189C355D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF9F1F21C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:06:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F06A281F7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBB223CB;
-	Mon, 11 Nov 2024 00:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC5C23CB;
+	Mon, 11 Nov 2024 00:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rgls9w2R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HcxrxXVu"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBC8191;
-	Mon, 11 Nov 2024 00:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775CF191;
+	Mon, 11 Nov 2024 00:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731283552; cv=none; b=O5W4gDTEX1rWVfYDZNWHhcRXsG/ADlbeFnpdtNRaRXQzsoXtACF5mhSNiFI5IBHFKcJxWj7oxIGyt92Vu+kLVNMDQyJJznbDJYC1w93RSoRPkFQMHRQun7V06LxJBbDUnIi7Ctt0FXIKEn/buZalfPNjck6ST7S7yy3aqHBTilI=
+	t=1731284080; cv=none; b=H4dV47rBJ1W83hCvAqJ7UMH4Xp/g0NtiiTF42IAI/1rv/noTmSPLZDy12RIeUP9xJwuBvrqfGTAqchMUw8ELEoLHCL2+36GcEXlmI8fNDKmCV2XXPoJ/o/9xpFUV4GE2dtTEKNDqVDo49dTTvyLNvBUAqmtrzGQl8jcdqyDTCRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731283552; c=relaxed/simple;
-	bh=LEbk0UwzMReWGMLM1N0ZN67ounf8WzkA5leISWNctcg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uh/RKIsWoS3TDufbg1+eusnmTJ3Iad4Be1PUfH+QHDbcPAmCgmvjffbGV9VJ1m9aHKcnXibGo/fkRRIJUQVjs+GJdn4mfLfmOkOAAOCKPs0lmAhbEiGdtLh49liaOG4KEiPSHVmCx4mNHypZ2Lt1XuNkaWoCRHi72JTAwojLF0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rgls9w2R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F58C4CECD;
-	Mon, 11 Nov 2024 00:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731283552;
-	bh=LEbk0UwzMReWGMLM1N0ZN67ounf8WzkA5leISWNctcg=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=Rgls9w2RaznQ+91jdI4cssdxWso5jSndTFs3MQMRGCKOkHWtccDPVuLuHTwnQ2Pks
-	 JqsIyuk86QeOE11KmSrxX1aL4mDG76MH53uKpS/PZEf1wcuimcXG199AXJFnuwyAmH
-	 A1gnW0fWpI4xsemcmd1qCW6lVUHh65W7Hdu9epTCTq2Ex/7BeLN+THiwlEUxVRR5oP
-	 lUdHVjGmItx2L0W73fc3JOlqbQu6G9mMcS/snX1L/ype6AQdFNBBO9+AXtERM7ol8d
-	 cH9y+tu2NyAtO5Nm4Gq59+bK/HGnv3H9rEbO0KSkxGOuV65CawlGZsQgi9S7oHjcBo
-	 TXIdRvJZ307+g==
-Message-ID: <c6dade2e-fd8a-4a7b-89a1-b1276d8e9106@kernel.org>
-Date: Mon, 11 Nov 2024 09:05:48 +0900
+	s=arc-20240116; t=1731284080; c=relaxed/simple;
+	bh=FA0pHzI3a8QeIv6vuBQBF1Hk+P9sd8MLIZx2+Wu0gxI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n2VbWyaPHMJe2iPeM88A51zqBzSDop9yJikIPd4I+e++SrFacqMlpmRJ6HPd7xlxI96fo3BDl5OxlnfIKScZpAOMP749Cw3N4RO0mnYe4scn1J/AqXRYZK6CcSiU7WaNDqVqmWq2FRv1QhzThn3kAwYG0pP0Hzoxz+9SNbxA9ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HcxrxXVu; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ea535890e0so480189a12.2;
+        Sun, 10 Nov 2024 16:14:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731284079; x=1731888879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OVPcuA1Lb3NU3EYzVk9FmDWDAJC/EXe09zYXMxVhIgI=;
+        b=HcxrxXVuibtJZ/BojzAZsH2W0Pc8XmEZditQpXfwp7ty2USwcVIRiqQ+thtXXrtSwG
+         pr3+hhGiJNj2QbISBO241xNC1O5ssSo3sQozXabpJO/Evnxq/ZUILM5vj8dQcF/iltR6
+         18qi8rWJMFOIpdQexS/RJXB5+9Q1VG4jv+rv7cvJBtu4ZjCDwZyQuHV/DapbCI9fwish
+         8AobOHiFZDwGe/4f5IUpB3RVD7zGomoOgmJaNCVZV1zX96T0Q1cUdtrUf4UPhz2anlJf
+         n1QTt+iFVeE7muz9X0EYQIcRBu/cJ5ufdIjrR4MZ5J+XvfdrYH6c32OvRsRuKJc0fAio
+         CGLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731284079; x=1731888879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OVPcuA1Lb3NU3EYzVk9FmDWDAJC/EXe09zYXMxVhIgI=;
+        b=V2jXjTXP0zUbBx4nQPqzvODIFgCZEQzyVowGj1dkGTg7pcRx9awBxV6Z8t06ukvWDP
+         /3dN0ORGwXPF6oD1MVWcsQfW0JuJazGnGRN8jdzP1rRVPgpjm1bwIUszo32VeQE7OsGN
+         vOlWChfuKMq0FSp6mh6Q/16884SbH56v80FEHNBYLsSwYHn5ShjrYPdX4D/bLWQOs1iW
+         kmO9DUNJXUl1/iRMlaoyJarMK652+KdcfNRd1fy6uwpHhtrlUo6orzcPxfm3aUPO+ZCF
+         +AAzKMNz6eNhV8+anu23VeKdro0lf4kWv3pmM5fjOScS3WtjaCT6+COEYiGh9d+tZxli
+         ejmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoQy/3qVyZOPJVJ38D/zYnTYE4McvHeyp21j3VHuxVRiDUsPfUqoJlh6dkbsD5/+YqU6qlTz+isOOM2BL38+w=@vger.kernel.org, AJvYcCW594DcRmKdHEFaBRw6Ry6CqLlphDf/p8K91HlTaILXpUy3PxgIGX9/bW2N0Pz04F34+T8aDXj589P6ZNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzddZ+rA42OwK6c0bkEeeDk/B4l9BBcYmhdsVNCrO0JfO2SrFxd
+	6yX+UTdtQH0vHvuEkzRMDCnYzLB+wcYgz4Tvafq6E/nighQFyjmHKObIoS0ndozo25yeUkvQ5r7
+	I09XJ4hczZeL6qrevCfwywal9z/2vyB2W
+X-Google-Smtp-Source: AGHT+IHePB739lHbLv8UjuySPc+C2rUJcPYwQtwi8rXMEfOhNfQzrkMc8XqAneH+3Sft+Vr02k4yMCzRZICT191OOR0=
+X-Received: by 2002:a17:902:da8f:b0:20c:f281:fbf0 with SMTP id
+ d9443c01a7336-2118352b5b5mr60427945ad.8.1731284078657; Sun, 10 Nov 2024
+ 16:14:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Damien Le Moal <dlemoal@kernel.org>
-Subject: Re: [PATCH v1 2/3] arm64: dts: marvell: drop additional phy-names for
- sata
-To: Frank Wunderlich <linux@fw-web.de>, Niklas Cassel <cassel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Russell King <linux@armlinux.org.uk>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
- Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241109094623.37518-1-linux@fw-web.de>
- <20241109094623.37518-3-linux@fw-web.de>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241109094623.37518-3-linux@fw-web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
+In-Reply-To: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 11 Nov 2024 01:14:25 +0100
+Message-ID: <CANiq72mYmowikom+AwdhSABKnx9iGDTpcE9Tizvq65QVXj7_Hw@mail.gmail.com>
+Subject: Re: [PATCH v6] rust: add global lock support
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/9/24 18:46, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Commit facbe7092f8a ("arm64: dts: marvell: Drop undocumented SATA phy names")
+On Wed, Oct 23, 2024 at 3:23=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Add support for creating global variables that are wrapped in a mutex or
+> spinlock.
+>
+> The implementation here is intended to replace the global mutex
+> workaround found in the Rust Binder RFC [1]. In both cases, the global
+> lock must be initialized before first use. The macro is unsafe to use
+> for the same reason.
+>
+> The separate initialization step is required because it is tricky to
+> access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+> require changes to the C side. That change will happen as a follow-up to
+> this patch.
+>
+> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08=
+ba9197f637@google.com/#Z31drivers:android:context.rs [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Isn't a Fixes tag for the above commit desired here ?
+Applied to `rust-next` -- thanks everyone!
 
-> drops some phy-names from devicetrees but misses some. Drop them too.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->  arch/arm64/boot/dts/marvell/armada-8040-db.dts     | 2 --
->  arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi | 2 --
->  2 files changed, 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-db.dts b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-> index fe5d6cb9d692..9d45e881a97d 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-> +++ b/arch/arm64/boot/dts/marvell/armada-8040-db.dts
-> @@ -307,11 +307,9 @@ &cp1_sata0 {
->  
->  	sata-port@0 {
->  		phys = <&cp1_comphy1 0>;
-> -		phy-names = "cp1-sata0-0-phy";
->  	};
->  	sata-port@1 {
->  		phys = <&cp1_comphy3 1>;
-> -		phy-names = "cp1-sata0-1-phy";
->  	};
->  };
->  
-> diff --git a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
-> index 5043cf2eb33e..0d4a5fd9503f 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtsi
-> @@ -345,13 +345,11 @@ &cp1_sata0 {
->  	/* CPS Lane 1 - U32 */
->  	sata-port@0 {
->  		phys = <&cp1_comphy1 0>;
-> -		phy-names = "cp1-sata0-0-phy";
->  	};
->  
->  	/* CPS Lane 3 - U31 */
->  	sata-port@1 {
->  		phys = <&cp1_comphy3 1>;
-> -		phy-names = "cp1-sata0-1-phy";
->  	};
->  };
->  
+    [ Simplified a few intra-doc links. Formatted a few comments. Reworded
+      title. - Miguel ]
 
-
--- 
-Damien Le Moal
-Western Digital Research
+Cheers,
+Miguel
 
