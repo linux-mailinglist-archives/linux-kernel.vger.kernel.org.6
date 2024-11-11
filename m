@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-404875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269489C499E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:17:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A159D9C49A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7353D288A40
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:17:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597241F231B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC83F1714BC;
-	Mon, 11 Nov 2024 23:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1640A1714BC;
+	Mon, 11 Nov 2024 23:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDup/3i2"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W4rR9/Iz"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA0F156F36;
-	Mon, 11 Nov 2024 23:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1119C158A31
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731367024; cv=none; b=rf6SXIPphXlMqnIc1O19zCG9uaJ1pQLf7J0A3kG5GJvoS1aeJ4jCCw8lmP2huMOPSm5mMEgRq8CjGY2VDvw/OhkoCsSsKdv6n1rIIOBcC/8eDozwQEAFjbHamDn0BVNoZiR26AKc/B3IROyjN8h4OhVygbxASX31/EJoZ3XTDyY=
+	t=1731367176; cv=none; b=VFEpBEMaDNCI2cOAq5HiandJGw4QW9GfBvhNIafM62F8qaj3UOzMs0cFGJldO6d5264SSv7/GFk21q/icF2LozFn0AIHpJkeAFlsxnHKrzER0cx1vq+DjejNz6S3H0wnvs/rukK1Jt20UFz8T+teT3D0UrCccMsWDtmtNYmx5Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731367024; c=relaxed/simple;
-	bh=6ByKhrtnTdSeq5vYslz0IFBDSTan/9x2BpoAYQz8zD0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KBJeMjEhCYkhmyLvUgrTBYLC3rJDsfz1Dte4Ptix58L7pD6Oj7loCiTHt86q85cftdWgmMZLtCvgIil8D8PIfFJty8FjZWFE3fLLZCoZzdsJAdCYUhfSoRTprrA3DD1A5EtPpa7xIUYiTuB6rz4g9WaChKIigXdtruVPkX6Iu8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDup/3i2; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so3355071f8f.0;
-        Mon, 11 Nov 2024 15:17:02 -0800 (PST)
+	s=arc-20240116; t=1731367176; c=relaxed/simple;
+	bh=qbrwfDgUxbdDSES2yhtB78VnKGsb17TFeBb2a4z4m54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=j6HiTgVjFV4E6kRfH42UCXScFK5Jg5x9J+OBKu52C+S+eJ6DtZ3MZ0cgYV/9CpDVaVdjqQl2IzkWw28lPmojTa/tELDKI1dm/Qt6k/3XjaF90ip6ll7qAgc1EjpEjz7D+kBjfrABGi3Du85di16MFj1CP1SauZlqHi8tgkLNkE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W4rR9/Iz; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a6c3bdbebcso19455ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:19:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731367021; x=1731971821; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6ByKhrtnTdSeq5vYslz0IFBDSTan/9x2BpoAYQz8zD0=;
-        b=LDup/3i21LdbUHDNUku9sWJUSaohVdpzsXD3z4DNQogpbYPNP+CSCbKMG6yFr/YDPp
-         PEy6wrOsQA3nvt8pZ6lOV+lq/l5L653vTuu3rghPUyXBEIKHG/E/mAmkFPcuKVxAWm7I
-         bu+GKF9R3cwEUQXTOZBa1jCdmaSCGgnBRy+42bZkh1ByXRAcrhUvXEJnc+cfCMsPqjFj
-         DjYYW030UBlJxajR0dIxLHheb0JfA2onEdJBBvBjcnynJp2W4QY0Ld97gw9pf5qyCJM4
-         y+TgYGCNgjWgcq7QO1ldKf2GwgYWVVljzS1aLyLn2/TQdKhfKzLkmbC15o2D4WhMa2Z2
-         a0iQ==
+        d=google.com; s=20230601; t=1731367174; x=1731971974; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cckibaKiKNSOfZ/m75CIbHIvVaalZEyDHgB5Y3tCiHg=;
+        b=W4rR9/Izgds0GJ0y+glImxg3IhgcUp5Ph5Xe3DqJPJy+A6sQHKQAzRCTW7/6ixtNbV
+         b6PiqKFOq2Z4P72w3TnHSo/4AycqN0OU26qFikRzfrHDhV3DisShn+ZXd5v4qwOCjxmM
+         B19p4Xhuu+DclofJQLTmV+Rvgnb5OavjPKMkRjmp7aPFes4L0ah0mTi+6JjlQCB9otRV
+         ydJpnnRUQ/8OAasilUEjAu6jWd2+nQfNA2kgCv1NxSP15xSB7guSNxZyxX4m9bl+d1WX
+         vy1AykoKYcQBkFW44zDMukXV1pUlUZCLkW/GYR6NMnh/jkIwErp3nxWQuuaWpWpO80TJ
+         Z8wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731367021; x=1731971821;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ByKhrtnTdSeq5vYslz0IFBDSTan/9x2BpoAYQz8zD0=;
-        b=GrHhstKF/E5jF0Wbk+293wuiDrK8phQ8zaA9WD1talKSEHR8/gSdOBPMe4tC291Psu
-         uKxLPZUdndyd7cbKh6VdELuwpdahphkgrzD/7v3yMoDF6lIDSdbA3pKQzlZ7g6sBjOqd
-         rbjjRo2UFz2ijUnNMX+l3V+Au/SfT3sUcT6A3O3lklmUeKRzFKYMefiKaFxJHAn7Hfhq
-         pSwygnrWkKE9V2IObwg5/OLdVWYs2LEtIUMEwA1/omS8G6En+928r8bvOjujaOxS690k
-         CLLTzWcgEOWwk9uuo0qdzjQiSlSQkhQRZEf8HHLXcw1fd6xPYFDuPawcccFdYySMFhlM
-         jJNA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBACEXRmatipdCUwQgADACAsxMsCjnLTBk8yQMXGVGYJYZaSujtnjNvGBC+NjwBs9TGpABLlp+k3E73FE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzABNLJ9MqPol2107r9L84wpvJl9jj78S1VCYwOiTCBAavguzVZ
-	IfLnpPwIgdmDpkkwIYaInUy24kiNIHuGuQgrm2DbUmzpMq0nmhSr
-X-Google-Smtp-Source: AGHT+IG5ti3h3me+DJUuyl1FQhWTw1PmIZ89CcgzTIS31zmkSMTfMmpkQDykkej6v1wyvZcbqouzKw==
-X-Received: by 2002:a5d:59a3:0:b0:37d:3999:7b4 with SMTP id ffacd0b85a97d-3820811097cmr227508f8f.17.1731367020461;
-        Mon, 11 Nov 2024 15:17:00 -0800 (PST)
-Received: from p200300c58705a887af351ac25877d5c0.dip0.t-ipconnect.de (p200300c58705a887af351ac25877d5c0.dip0.t-ipconnect.de. [2003:c5:8705:a887:af35:1ac2:5877:d5c0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c1a13sm189943475e9.29.2024.11.11.15.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 15:16:59 -0800 (PST)
-Message-ID: <2d9aa1f9ed2e63d29dc2a7745fdd4f6db45d8db0.camel@gmail.com>
-Subject: Re: [PATCH v3 1/2] scsi: ufs: core: Introduce a new clock_gating
- lock
-From: Bean Huo <huobean@gmail.com>
-To: Avri Altman <avri.altman@wdc.com>, "Martin K . Petersen"
-	 <martin.petersen@oracle.com>, beanhuo@micron.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, Bart Van
- Assche <bvanassche@acm.org>
-Date: Tue, 12 Nov 2024 00:16:58 +0100
-In-Reply-To: <20241105112502.710427-2-avri.altman@wdc.com>
-References: <20241105112502.710427-1-avri.altman@wdc.com>
-	 <20241105112502.710427-2-avri.altman@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        d=1e100.net; s=20230601; t=1731367174; x=1731971974;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cckibaKiKNSOfZ/m75CIbHIvVaalZEyDHgB5Y3tCiHg=;
+        b=izttAh2uM+meV50gmA2keVspLtkWa+YRC7bcgTPJPgo7LpJYynSTaXwWK0LDWri6mV
+         gkUuQIE/kaxKAbfx5LBa49JYk3g0GKiqvaHuFDHO+tk6H5cWykotydNIZxDcG0KO7MB5
+         9ai9CukOv9ZC3Tp2qaU7h9DIp6XYlfmOCQ8UBY7ErAdo5ZrUIip8WcpmK5UlJKicm++t
+         GeBVzqvTTOZra1e/xnxg0Yr6BtVpDIp9y+BrEdKkYJZIXACYA9M2S6qZ+gS7iVuiJLU7
+         Z82yHqIZP2Q8bg12V8AlQTSd/3NFHvCHXeJpaclz0QG5uA+6trYt6f4WflcZB4FRq2Q6
+         XbyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRnyk9iBk/D2bg0Ja5GtfAq/mN8mbLiuQYOHsm3LWx7kYXqqFmc9uClMiecd7nBRdsVu1sIhD0tabVr80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgTwN78Yes4NlXYdyjynmcBZc9GvUTKv8cFm90E8xsAaL4rt6r
+	4x1XBS9ULdQI3aXaayVs8RTAj5DhwsDjVaO5TwHzpzxk6Bk1VPj+hC6iIJnORARaevf00k8gqQv
+	HiKbzj9FOTgYuo7gTHimhUbQPGJavzCb9WKCq
+X-Gm-Gg: ASbGncv7zRFczbfhZVZLRvnv1U5IfjZlKrr/d/i8JcZsphHeQejWjuUrZhZZrtmkKO4
+	tvPq82SjNAVa0YzeeXU6R58/9K60kCH8=
+X-Google-Smtp-Source: AGHT+IGeh9r23ezmUSk7kTjdXoTQAzjQbjGWun7emtM/lg8qMNJnpD269veSSX8de0tnPclONJLxCn+Nr4lnTv7OXmY=
+X-Received: by 2002:a05:6e02:1b06:b0:3a0:a9a3:8a74 with SMTP id
+ e9e14a558f8ab-3a70c4ba422mr1007725ab.15.1731367173840; Mon, 11 Nov 2024
+ 15:19:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241111205506.3404479-1-surenb@google.com> <20241111221839.w4rqqlvvkm42jdgm@offworld>
+In-Reply-To: <20241111221839.w4rqqlvvkm42jdgm@offworld>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 11 Nov 2024 15:19:22 -0800
+Message-ID: <CAJuCfpGw1Nnh3nonDHv-UAeqTB=-3z1+hJk9Opy4X-6mbvdEhw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, willy@infradead.org, 
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
+	hdanton@sina.com, hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCAyMDI0LTExLTA1IGF0IDEzOjI1ICswMjAwLCBBdnJpIEFsdG1hbiB3cm90ZToKPiAt
-wqDCoMKgwqDCoMKgwqBzcGluX2xvY2tfaXJxc2F2ZShoYmEtPmhvc3QtPmhvc3RfbG9jaywgZmxh
-Z3MpOwo+IC3CoMKgwqDCoMKgwqDCoC8qCj4gLcKgwqDCoMKgwqDCoMKgICogSW4gY2FzZSB5b3Ug
-YXJlIGhlcmUgdG8gY2FuY2VsIHRoaXMgd29yayB0aGUgZ2F0aW5nIHN0YXRlCj4gLcKgwqDCoMKg
-wqDCoMKgICogd291bGQgYmUgbWFya2VkIGFzIFJFUV9DTEtTX09OLiBJbiB0aGlzIGNhc2Ugc2F2
-ZSB0aW1lIGJ5Cj4gLcKgwqDCoMKgwqDCoMKgICogc2tpcHBpbmcgdGhlIGdhdGluZyB3b3JrIGFu
-ZCBleGl0IGFmdGVyIGNoYW5naW5nIHRoZSBjbG9jawo+IC3CoMKgwqDCoMKgwqDCoCAqIHN0YXRl
-IHRvIENMS1NfT04uCj4gLcKgwqDCoMKgwqDCoMKgICovCj4gLcKgwqDCoMKgwqDCoMKgaWYgKGhi
-YS0+Y2xrX2dhdGluZy5pc19zdXNwZW5kZWQgfHwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgKGhiYS0+Y2xrX2dhdGluZy5zdGF0ZSAhPSBSRVFfQ0xLU19PRkYpKSB7Cj4gLcKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGhiYS0+Y2xrX2dhdGluZy5zdGF0ZSA9IENMS1NfT047
-Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRyYWNlX3Vmc2hjZF9jbGtfZ2F0aW5n
-KGRldl9uYW1lKGhiYS0+ZGV2KSwKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaGJhLT5jbGtfZ2F0
-aW5nLnN0YXRlKTsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ290byByZWxfbG9j
-azsKPiArwqDCoMKgwqDCoMKgwqBzY29wZWRfZ3VhcmQoc3BpbmxvY2tfaXJxc2F2ZSwgJmhiYS0+
-Y2xrX2dhdGluZy5sb2NrKQo+ICvCoMKgwqDCoMKgwqDCoHsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgLyoKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICogSW4gY2Fz
-ZSB5b3UgYXJlIGhlcmUgdG8gY2FuY2VsIHRoaXMgd29yayB0aGUKPiBnYXRpbmcgc3RhdGUKPiAr
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICogd291bGQgYmUgbWFya2VkIGFzIFJFUV9D
-TEtTX09OLiBJbiB0aGlzIGNhc2Ugc2F2ZQo+IHRpbWUgYnkKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgICogc2tpcHBpbmcgdGhlIGdhdGluZyB3b3JrIGFuZCBleGl0IGFmdGVyIGNo
-YW5naW5nCj4gdGhlIGNsb2NrCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIHN0
-YXRlIHRvIENMS1NfT04uCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqLwo+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoaGJhLT5jbGtfZ2F0aW5nLmlzX3N1c3Bl
-bmRlZCB8fAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaGJhLT5jbGtf
-Z2F0aW5nLnN0YXRlICE9IFJFUV9DTEtTX09GRikgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgaGJhLT5jbGtfZ2F0aW5nLnN0YXRlID0gQ0xLU19PTjsK
-PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHRyYWNlX3Vm
-c2hjZF9jbGtfZ2F0aW5nKGRldl9uYW1lKGhiYS0+ZGV2KSwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoGhiYS0KPiA+Y2xrX2dhdGluZy5zdGF0ZSk7Cj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByZXR1cm47Cj4gK8KgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoH0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-aWYgKHVmc2hjZF9pc191ZnNfZGV2X2J1c3koaGJhKSB8fAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgaGJhLT51ZnNoY2Rfc3RhdGUgIT0gVUZTSENEX1NUQVRFX09QRVJB
-VElPTkFMKQo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-cmV0dXJuOwo+IMKgwqDCoMKgwqDCoMKgwqB9CgpJJ20gd29uZGVyaW5nIGlmIGl0IHdvdWxkIGJl
-IHNhZmUgdG8gcmVwbGFjZSBob3N0X2xvY2sgd2l0aCBnYXRpbmcubG9jawpvciBzY2FsaW5nLmxv
-Y2suIEZvciBpbnN0YW5jZSwgaW4gYWJvdmUgY29udGV4dCwgdWZzaGNkX3N0YXRlIG5lZWRzIHRv
-CmJlIGNoZWNrZWQsIGJ1dCBpdCdzIGN1cnJlbnRseSBzZXJpYWxpemVkIGJ5IGhvc3RfbG9jay4K
-CktpbmcgcmVnYXJkcywKQmVhbgo=
+On Mon, Nov 11, 2024 at 2:18=E2=80=AFPM Davidlohr Bueso <dave@stgolabs.net>=
+ wrote:
+>
+> On Mon, 11 Nov 2024, Suren Baghdasaryan wrote:
+>
+> >To minimize memory overhead, vm_lock implementation is changed from
+> >using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+> >vm_area_struct members are moved into the last cacheline, resulting
+> >in a less fragmented structure:
+>
+> I am not a fan of building a custom lock, replacing a standard one.
 
+Understandable.
+
+> How much do we really care about this?
+
+In the Android world I got complaints after introducing per-vma locks.
+More specifically, moving from 5.15 to 6.1 kernel, where we first
+started using these locks, the memory usage increased by 10MB on
+average. Not a huge deal but if we can trim it without too much
+complexity, that would be definitely appreciated.
+
+>  rwsems are quite optimized and are known to heavily affect mm performanc=
+e altogether.
+
+I know, that's why I spent an additional week profiling the new
+implementation. I asked Oliver (CC'ed) to rerun the tests he used in
+https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/ to
+confirm no regressions.
+
+>
+> ...
+>
+> >Performance measurements using pft test on x86 do not show considerable
+> >difference, on Pixel 6 running Android it results in 3-5% improvement in
+> >faults per second.
+>
+> pft is a very micro benchmark, these results do not justify this change, =
+imo.
+
+I'm not really trying to claim performance gains here. I just want to
+make sure there are no regressions.
+Thanks,
+Suren.
+
+>
+> Thanks,
+> Davidlohr
 
