@@ -1,157 +1,113 @@
-Return-Path: <linux-kernel+bounces-404194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835E89C4077
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:14:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C2E9C407C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475A7282CB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:14:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A94D71C21935
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BFE919F133;
-	Mon, 11 Nov 2024 14:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EC019F12A;
+	Mon, 11 Nov 2024 14:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k27hNG3z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aHbO1KI2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA1F19D881;
-	Mon, 11 Nov 2024 14:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE8819E99B;
+	Mon, 11 Nov 2024 14:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334460; cv=none; b=WouuU36uzpbryhUoca4l1/GO0hsYrd/GePw0lTzNDEr5UyplXEFl+tqcdhxaN9EnciJeqvKV2kl4YCSkxnNVeqMuiMNv0vS4YFFI96B+ISdqS3gLIJSMTS8y4HohouV+quMvuva8/2Y7YoomO+VgeUS11Qz2m1kf6qKMFTDzOsc=
+	t=1731334512; cv=none; b=cwODK9f+5Zax2JNLXkJ87r+ENPMDJxaXN2NOs161NqzviKhHA6V7SSIt3ErOSnliyIzEIjMLZ8xt870ORXhZIBHLvpTtE6Zbut0kf95to+CXnv0tyyLyoWcY62Urc5itnJ1oZlOtDYVmW/WbnLamVIx4M3/Bykw2BN89DoHs5ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334460; c=relaxed/simple;
-	bh=PoPdwj1OQ3NAGnnRRgFR/1m9IjlmuXmKSCrXN0KMYnI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ChKSqqVrEDijJ2F9FdPEyZgVQKKNpOolkNlYpa2GD6cAh2Rhq2hQnu60BWLBWCrwcmP3mTo8gsfwbfI+qxekr1TZ0SFt4dXg7hjVf/db03EFEtLpWL47pIfCr+P7eijGD6N2YcfjmnOnkbXXqc6nXdZHc9neettwW/kET2z+HQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k27hNG3z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301A0C4CECF;
-	Mon, 11 Nov 2024 14:14:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731334459;
-	bh=PoPdwj1OQ3NAGnnRRgFR/1m9IjlmuXmKSCrXN0KMYnI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k27hNG3zdyrQjrjJlks+mEgxDtHxY3SQ+EK/+jcSreLIOQf8WQaUjYn23dS+3Dj9f
-	 wEYpMNPSMoNzvlRj3Pfa6lVCfha1+8/uYZ9UgPKtxgQ73Cljb3g6hJwqGWvqID4neW
-	 cAcRvAcEc6vvNLZF1lFqzASOtf5FId14eIkXpQOfZFx6rpyoT9kjpxdSVt3qNmoLqP
-	 +O6ZaLqD2ih3BDLt1wy8YDCJm6cYqp/EtuhSipP/Y7JOk8ExpSUk6abaTCXUZjxRC2
-	 rvGBRz+GWbeniUhP8nOlxGmUHSeZf7Db3CGqxooLeSNZr2seCGIZvlG8ABxfCwl3yl
-	 4M2Kz8Gkq6kCQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tAVBI-00Bsig-MM;
-	Mon, 11 Nov 2024 14:14:16 +0000
-Date: Mon, 11 Nov 2024 14:14:15 +0000
-Message-ID: <86pln1zwlk.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Nicolin Chen <nicolinc@nvidia.com>,
-	tglx@linutronix.de,
-	bhelgaas@google.com,
-	alex.williamson@redhat.com,
-	jgg@nvidia.com,
-	leonro@nvidia.com,
-	shameerali.kolothum.thodi@huawei.com,
-	dlemoal@kernel.org,
-	kevin.tian@intel.com,
-	smostafa@google.com,
-	andriy.shevchenko@linux.intel.com,
-	reinette.chatre@intel.com,
-	eric.auger@redhat.com,
-	ddutile@redhat.com,
-	yebin10@huawei.com,
-	brauner@kernel.org,
-	apatel@ventanamicro.com,
-	shivamurthy.shastri@linutronix.de,
-	anna-maria@linutronix.de,
-	nipun.gupta@amd.com,
-	marek.vasut+renesas@mailbox.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH RFCv1 0/7] vfio: Allow userspace to specify the address for each MSI vector
-In-Reply-To: <a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
-References: <cover.1731130093.git.nicolinc@nvidia.com>
-	<a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1731334512; c=relaxed/simple;
+	bh=jYoF1pKVGKwDVgCm3pW+hEr+ADcmqkmquiJ1YcEpkok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EzXVsCFdzgRqPu0VObBXMDSabWjklnrKne2HK7iUIaTKAR9UhVtgIemvxRui89fsusGk9QeImPHDH5IyU5Hd2b1iAIRldtudWeAeSQ+AITs19l1GBp69T7X2ty/s8mauP43G9C0fECF8YJZ8o8q01azXzUJPYwJUtLuDzuMit+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aHbO1KI2; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731334511; x=1762870511;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jYoF1pKVGKwDVgCm3pW+hEr+ADcmqkmquiJ1YcEpkok=;
+  b=aHbO1KI2SWRwoyT68eYzrelhXndjSn5nJVEJUKiAGJ8HSRuLFXzTCkpE
+   wkPGF/kxnbXKA7eTwFJ8LbqzWeZN8MtkIAPLqecm6+6i85D2ZP40caM0P
+   QiR8ZWKctws0XvCWDTlGOZFJJJbhb94o+xMsI0zsVkoM/F9BTYise0Jch
+   VD/n7vB58a5Kjpu0QdSShLDB81zkpeS3SD8uNvC85rgvrF8jaPTNVKfl8
+   S9KZ2tjLlLg5OTmjG2cB5ZVbnbcv52lFJ/GKlyruTsaJmbhw7NhJlHQxo
+   Br9SkB7/jgn+QxTDSjtAbLvPcsyKQvtuE2kZ8p1cbVaA2rRAfPdR50rS7
+   w==;
+X-CSE-ConnectionGUID: MbUZPfrfRBWTwi+oU79xig==
+X-CSE-MsgGUID: NXAWuTDZSIOVntbk4U3Agw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31304061"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31304061"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 06:15:11 -0800
+X-CSE-ConnectionGUID: HevwKZaPQLu5EEjqvziHWA==
+X-CSE-MsgGUID: jRGlD3PkSLqat6eWXSC9yA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
+   d="scan'208";a="87304187"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 06:15:09 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tAVC7-0000000Ddqn-0Wvh;
+	Mon, 11 Nov 2024 16:15:07 +0200
+Date: Mon, 11 Nov 2024 16:15:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Konstantin Aladyshev <aladyshev22@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: i2c: piix4: Add ACPI section
+Message-ID: <ZzIRakOl9VTAxc3w@smile.fi.intel.com>
+References: <ZzH-KeSavsPkldLU@smile.fi.intel.com>
+ <20241111140231.15198-1-aladyshev22@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: robin.murphy@arm.com, nicolinc@nvidia.com, tglx@linutronix.de, bhelgaas@google.com, alex.williamson@redhat.com, jgg@nvidia.com, leonro@nvidia.com, shameerali.kolothum.thodi@huawei.com, dlemoal@kernel.org, kevin.tian@intel.com, smostafa@google.com, andriy.shevchenko@linux.intel.com, reinette.chatre@intel.com, eric.auger@redhat.com, ddutile@redhat.com, yebin10@huawei.com, brauner@kernel.org, apatel@ventanamicro.com, shivamurthy.shastri@linutronix.de, anna-maria@linutronix.de, nipun.gupta@amd.com, marek.vasut+renesas@mailbox.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, kvm@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111140231.15198-1-aladyshev22@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 11 Nov 2024 13:09:20 +0000,
-Robin Murphy <robin.murphy@arm.com> wrote:
-> 
-> On 2024-11-09 5:48 am, Nicolin Chen wrote:
-> > On ARM GIC systems and others, the target address of the MSI is translated
-> > by the IOMMU. For GIC, the MSI address page is called "ITS" page. When the
-> > IOMMU is disabled, the MSI address is programmed to the physical location
-> > of the GIC ITS page (e.g. 0x20200000). When the IOMMU is enabled, the ITS
-> > page is behind the IOMMU, so the MSI address is programmed to an allocated
-> > IO virtual address (a.k.a IOVA), e.g. 0xFFFF0000, which must be mapped to
-> > the physical ITS page: IOVA (0xFFFF0000) ===> PA (0x20200000).
-> > When a 2-stage translation is enabled, IOVA will be still used to program
-> > the MSI address, though the mappings will be in two stages:
-> >    IOVA (0xFFFF0000) ===> IPA (e.g. 0x80900000) ===> 0x20200000
-> > (IPA stands for Intermediate Physical Address).
-> > 
-> > If the device that generates MSI is attached to an IOMMU_DOMAIN_DMA, the
-> > IOVA is dynamically allocated from the top of the IOVA space. If attached
-> > to an IOMMU_DOMAIN_UNMANAGED (e.g. a VFIO passthrough device), the IOVA is
-> > fixed to an MSI window reported by the IOMMU driver via IOMMU_RESV_SW_MSI,
-> > which is hardwired to MSI_IOVA_BASE (IOVA==0x8000000) for ARM IOMMUs.
-> > 
-> > So far, this IOMMU_RESV_SW_MSI works well as kernel is entirely in charge
-> > of the IOMMU translation (1-stage translation), since the IOVA for the ITS
-> > page is fixed and known by kernel. However, with virtual machine enabling
-> > a nested IOMMU translation (2-stage), a guest kernel directly controls the
-> > stage-1 translation with an IOMMU_DOMAIN_DMA, mapping a vITS page (at an
-> > IPA 0x80900000) onto its own IOVA space (e.g. 0xEEEE0000). Then, the host
-> > kernel can't know that guest-level IOVA to program the MSI address.
-> > 
-> > To solve this problem the VMM should capture the MSI IOVA allocated by the
-> > guest kernel and relay it to the GIC driver in the host kernel, to program
-> > the correct MSI IOVA. And this requires a new ioctl via VFIO.
-> 
-> Once VFIO has that information from userspace, though, do we really
-> need the whole complicated dance to push it right down into the
-> irqchip layer just so it can be passed back up again? AFAICS
-> vfio_msi_set_vector_signal() via VFIO_DEVICE_SET_IRQS already
-> explicitly rewrites MSI-X vectors, so it seems like it should be
-> pretty straightforward to override the message address in general at
-> that level, without the lower layers having to be aware at all, no?
++Cc: Andi
 
-+1.
+On Mon, Nov 11, 2024 at 05:02:31PM +0300, Konstantin Aladyshev wrote:
+> Provide information how to reference I2C busses created by the PIIX4
+> chip driver from the ACPI code.
 
-I would like to avoid polluting each and every interrupt controller
-with usage-specific knowledge (they usually are brain-damaged enough).
-We already have an indirection into the IOMMU subsystem and it
-shouldn't be a big deal to intercept the message for all
-implementations at this level.
+So, this is not ideal, but it's a good start so far.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+We may amend this later on.
 
-I also wonder how to handle the case of braindead^Wwonderful platforms
-where ITS transactions are not translated by the SMMU. Somehow, VFIO
-should be made aware of this situation.
+Thanks!
 
-Thanks,
+> Signed-off-by: Konstantin Aladyshev <aladyshev22@gmail.com>
+> ---
 
-	M.
+This place is for changelog and comments, if any. Since this is a v2 of a
+standalone patch, the changelog is good to have. No need to resend now,
+you can just reply to your original v2 with the missing changelog.
+
+>  Documentation/i2c/busses/i2c-piix4.rst | 62 ++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
+
+
 
