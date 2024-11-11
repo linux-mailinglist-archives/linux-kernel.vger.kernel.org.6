@@ -1,201 +1,242 @@
-Return-Path: <linux-kernel+bounces-403497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9169C3683
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:25:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF739C3687
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:26:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F184CB217AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4B228099D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556731F931;
-	Mon, 11 Nov 2024 02:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D94433B3;
+	Mon, 11 Nov 2024 02:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VmFzjfb4"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="E8FkPk6W"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6583917F7
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE922E62C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731291942; cv=none; b=PoBSgeb6ZOHPSTlJ3SM1EauLr9sio7sCDSflduUdGmdEDNkNa6poORAcVxg1T/1kFl53s1F+2PGh5AZNEKGiWhUC2bWwv4eAEaRs78WjaUzsqctkubxBoKyEH284G5C8iLxKkLHOblQE+0qV1ti18jics1PXl7kUUgS6B80DFjo=
+	t=1731292010; cv=none; b=XTP7xoZIrCDRfmNqMlMA8Eroonu0gG+wwjD4KtM4uV16YXZRXijSpWHSLJHd1Dbgnk8KoKL0wSlVjmM8aruazZjbmqtHH6V7mptZ43WksOfWOrSN5Q5QAzL0eaAgvwtntLHQ4LKSrUxtZ7krwzhAKACUTcsTsCqW0Ed67WUe8uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731291942; c=relaxed/simple;
-	bh=VMjBwW+2LOcMQILgv06ITF9jWjyqw9ZZlwpx5k11UFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cPVTlZ2zzsTYv4qUVz6yuZ4rHtP4PLjPr7UwFWSYPnZX1rSS5NiHXgZjFHaAh5ApVDY6SxsBU0zXWW0L7TGcx7n/vNV9uuO8YL4xbN6cCy/t4khOCKtfjvlTAP1fSwyggOePTKbYnBsSf4NW6GZkIxkcmDriDJz9zmudkG+VZ84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VmFzjfb4; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731291930; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=J7nJT3kT/1BIUWoxqyiSR8GeWtZCte2Tm+Vp1zGFxtQ=;
-	b=VmFzjfb4wB+gvXS+zYuywK/KZ7YtJFDSQhs+axpUD+Bw01W7uO0/EpTUErfiw/dLtVJzX3dHrBhymin1JhOsHGakgjvkZK5VbupFhp3E3ijFlGck7zryouq5Vrs3v0p3iB5Dz6fgL35S/6/JRenwPzRpzeAyvSbYufSvZtJKZG8=
-Received: from 30.221.130.244(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJ3wSZr_1731291929 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 11 Nov 2024 10:25:30 +0800
-Message-ID: <f0fb91d9-6809-4efa-a5ab-b8d38fe5dbdc@linux.alibaba.com>
-Date: Mon, 11 Nov 2024 10:25:29 +0800
+	s=arc-20240116; t=1731292010; c=relaxed/simple;
+	bh=XDWlJThTvaEq9P/OevyjuO/i+ZiQzOi0XEza0wyZbR4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PdInL2/qz8+yWrmXJY78mLo6U6kYyfdqugqLKfSPtXCmd0qJiD/+ED4XWHY+23cDcRzCvvZq4A5PotrnvYufcLQEh1JZSxacg+2oP0lSfl8QVv01rGtkfWverdGYovCTY3saQ2jJQtuEiVmEdu4MPWMOiFl+4uMb44iXxAd6mg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=E8FkPk6W; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731291999;
+	bh=XDWlJThTvaEq9P/OevyjuO/i+ZiQzOi0XEza0wyZbR4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=E8FkPk6WUbvD4usg0Pmf9ON+pnXSczRLsZfy5EZig+vkVz7R76kWossXEyJrj1hyF
+	 Kx8xJNwWUUiahssiEPUX0M7rI0uR0GR32hpX+J2PoYoumIrgCuKB+WQbzSoVW43xNe
+	 84aLRx8/+c9NAoAxr/sa11HWrVCGXheEUPLk5WY4wwBWpWHg+6TNUG1N0oepDAeLly
+	 x+eR5tWwM+mUzQs3nwH9ij66pRLbFCprH6YKsGtsw4XH985ppiLCUmcseoC0u4miuH
+	 oL8EsfPZf/BGKBF4GgIEF57r3GWwO+8Kt8UogMSULlZs0LO8FCdj2T3Kn1ffIedfP/
+	 nK+YjuLXFeHfA==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::580])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id F258C17E0FAB;
+	Mon, 11 Nov 2024 03:26:37 +0100 (CET)
+Message-ID: <866f8a40473d13e50b7db9441618ee199c63425c.camel@collabora.com>
+Subject: Re: [PATCH] drm/fourcc: Add modifier definition for describing
+ Verisilicon video framebuffer
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ 	airlied@gmail.com, simona@ffwll.ch, laurentiu.palcu@nxp.com,
+ aisheng.dong@nxp.com,  Lucas Stach <l.stach@pengutronix.de>, Philipp Zabel
+ <p.zabel@pengutronix.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Collabora
+ Kernel ML <kernel@collabora.com>
+Date: Sun, 10 Nov 2024 21:26:35 -0500
+In-Reply-To: <a8e06d9dcc664918d91fb6e7dd80692230df9b68.camel@collabora.com>
+References: 
+	<0102019301ab1b2d-5539e1c7-e026-47bc-8692-b3335f6f7584-000000@eu-west-1.amazonses.com>
+		 <e5b0252f-f097-4e47-ad07-701cadd965fb@collabora.com>
+	 <a8e06d9dcc664918d91fb6e7dd80692230df9b68.camel@collabora.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] erofs: free pclusters if no cached folio attached
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
-Cc: chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
- dhavale@google.com, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20241101063821.3021559-1-guochunhai@vivo.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241101063821.3021559-1-guochunhai@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Chunhai,
+Hi,
 
-On 2024/11/1 14:38, Chunhai Guo wrote:
-> Once a pcluster is fully decompressed and there are no attached cached
-> folios, its corresponding `struct z_erofs_pcluster` will be freed. This
-> will significantly reduce the frequency of calls to erofs_shrink_scan()
-> and the memory allocated for `struct z_erofs_pcluster`.
+I have an update on top of what I've said ealier.
+
+Le mercredi 06 novembre 2024 à 14:49 -0500, Nicolas Dufresne a écrit :
+> Hi,
 > 
-> The tables below show approximately a 96% reduction in the calls to
-> erofs_shrink_scan() and in the memory allocated for `struct
-> z_erofs_pcluster` after applying this patch. The results were obtained
-> by performing a test to copy a 4.1GB partition on ARM64 Android devices
-> running the 6.6 kernel with an 8-core CPU and 12GB of memory.
+> Le mercredi 06 novembre 2024 à 16:53 +0100, Benjamin Gaignard a écrit :
+> > + nicolas
 > 
-> 1. The reduction in calls to erofs_shrink_scan():
-> +-----------------+-----------+----------+---------+
-> |                 | w/o patch | w/ patch |  diff   |
-> +-----------------+-----------+----------+---------+
-> | Average (times) |   11390   |   390    | -96.57% |
-> +-----------------+-----------+----------+---------+
+> Thanks for the CC, I'm obviously watching kernel@collabora.com, I don't know why
+> it didn't make it to my mailbox.
 > 
-> 2. The reduction in memory released by erofs_shrink_scan():
-> +-----------------+-----------+----------+---------+
-> |                 | w/o patch | w/ patch |  diff   |
-> +-----------------+-----------+----------+---------+
-> | Average (Byte)  | 133612656 | 4434552  | -96.68% |
-> +-----------------+-----------+----------+---------+
+> I'm adding explicitly Lucas and Philipp, as I believe they can provide relevant
+> information here.
 > 
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> ---
-> v1: https://lore.kernel.org/linux-erofs/588351c0-93f9-4a04-a923-15aae8b71d49@linux.alibaba.com/
-> change since v1:
->   - rebase this patch on "sunset z_erofs_workgroup` series
->   - remove check on pcl->partial and get rid of `be->try_free`
->   - update test results base on 6.6 kernel
-> ---
->   fs/erofs/zdata.c | 59 +++++++++++++++++++++++++++++++++---------------
->   1 file changed, 41 insertions(+), 18 deletions(-)
+> > 
+> > Le 06/11/2024 à 14:30, Benjamin Gaignard a écrit :
+> > > Verisilicon hardware video decoders can produce tiled (8x4 or 4x4)
+> > > and compressed video framebuffers.
+> > > It considerably reduces memory bandwidth while writing and reading
+> > > frames in memory.
 > 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 4558e6a98336..1a7f56259f45 100644
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -896,14 +896,11 @@ static void z_erofs_rcu_callback(struct rcu_head *head)
->   			struct z_erofs_pcluster, rcu));
->   }
->   
-> -static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-> +static bool erofs_prepare_to_release_pcluster(struct erofs_sb_info *sbi,
->   					  struct z_erofs_pcluster *pcl)
->   {
-> -	int free = false;
-> -
-> -	spin_lock(&pcl->lockref.lock);
->   	if (pcl->lockref.count)
-> -		goto out;
-> +		return false;
->   
->   	/*
->   	 * Note that all cached folios should be detached before deleted from
-> @@ -911,7 +908,7 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
->   	 * orphan old pcluster when the new one is available in the tree.
->   	 */
->   	if (erofs_try_to_free_all_cached_folios(sbi, pcl))
-> -		goto out;
-> +		return false;
->   
->   	/*
->   	 * It's impossible to fail after the pcluster is freezed, but in order
-> @@ -920,8 +917,18 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
->   	DBG_BUGON(__xa_erase(&sbi->managed_pslots, pcl->index) != pcl);
->   
->   	lockref_mark_dead(&pcl->lockref);
-> -	free = true;
-> -out:
-> +	return true;
-> +}
-> +
-> +static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-> +					  struct z_erofs_pcluster *pcl)
-> +{
-> +	bool free = false;
-> +
-> +	/* Using trylock to avoid deadlock with z_erofs_put_pcluster() */
-> +	if (!spin_trylock(&pcl->lockref.lock))
-> +		return free;
+> I've seen for years this 8x4 references, but in reality, and I've implemented
+> software converters that works on all the VSI/Hantro drivers we have mainline,
+> there is no such thing as 8x4 tiled coming out of these chips.
 
-Thanks for the patch!
+I completely missed that tiled has never been an output format from the upstream
+Hantro G1 driver, meaning it could possibly be 8x4, sorry for this.
 
-I think no need to move the common shrink path into trylock,
-instead
+That being said, it also means we have nothing upstream producing that, so I'd
+avoid the risk of making up a bad definition.
 
-> +	free = erofs_prepare_to_release_pcluster(sbi, pcl);
->   	spin_unlock(&pcl->lockref.lock);
->   	if (free) {
->   		atomic_long_dec(&erofs_global_shrink_cnt);
-> @@ -953,16 +960,27 @@ unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
->   	return freed;
->   }
->   
-> -static void z_erofs_put_pcluster(struct z_erofs_pcluster *pcl)
-> +static void z_erofs_put_pcluster(struct erofs_sb_info *sbi,
-> +		struct z_erofs_pcluster *pcl, bool try_free)
->   {
-> +	bool free = false;
-> +
->   	if (lockref_put_or_lock(&pcl->lockref))
->   		return;
->   
->   	DBG_BUGON(__lockref_is_dead(&pcl->lockref));
-> -	if (pcl->lockref.count == 1)
-> -		atomic_long_inc(&erofs_global_shrink_cnt);
-> -	--pcl->lockref.count;
-> +	if (--pcl->lockref.count == 0) {
-> +		if (try_free) {
+> 
+> Unless we have new evidence, and V4L2 patches enabling these formats, I don't
+> see any point of bringing what I believe is a TRM mistake, or an historical
+> format.
+> 
+> > > 
+> > > The underlying storage in NV12 (for 8-bit) or NV15 (for 10-bit).
+> > > 
+> > > Display controllers, like imx DCSS, could use these modifier definition
+> > > as input for overlay planes.
+> > > 
+> > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > > ---
+> > > The original code comes from:
+> > > https://github.com/nxp-imx/linux-imx/commit/ab01b7fe82d5a11dfb533cfbd08c4dfa140815de
+> > > I have port it and modify DRM_FORMAT_MOD_VENDOR_VSI value.
+> > > 
+> > >   include/uapi/drm/drm_fourcc.h | 27 +++++++++++++++++++++++++++
+> > >   1 file changed, 27 insertions(+)
+> > > 
+> > > diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
+> > > index 78abd819fd62..31d09a98d0d7 100644
+> > > --- a/include/uapi/drm/drm_fourcc.h
+> > > +++ b/include/uapi/drm/drm_fourcc.h
+> > > @@ -421,6 +421,7 @@ extern "C" {
+> > >   #define DRM_FORMAT_MOD_VENDOR_ARM     0x08
+> > >   #define DRM_FORMAT_MOD_VENDOR_ALLWINNER 0x09
+> > >   #define DRM_FORMAT_MOD_VENDOR_AMLOGIC 0x0a
+> > > +#define DRM_FORMAT_MOD_VENDOR_VSI     0x0b
+> > >   
+> > >   /* add more to the end as needed */
+> > >   
+> > > @@ -1607,6 +1608,32 @@ drm_fourcc_canonicalize_nvidia_format_mod(__u64 modifier)
+> > >   #define AMD_FMT_MOD_CLEAR(field) \
+> > >   	(~((__u64)AMD_FMT_MOD_##field##_MASK << AMD_FMT_MOD_##field##_SHIFT))
+> > >   
+> > > +/* Verisilicon framebuffer modifiers */
+> > > +
+> > > +/*
+> > > + * Verisilicon 8x4 tiling layout
+> > > + *
+> > > + * This is G1 VPU tiled layout using tiles of 8x4 pixels in a row-major
+> > > + * layout.
+> > > + */
+> > > +#define DRM_FORMAT_MOD_VSI_G1_TILED fourcc_mod_code(VSI, 1)
+> 
+> I have code in GStreamer mainline that handle the tiled G1 output in software
+> and its 4x4, no doubt here ... 
 
-I think here since we are really doing _try free_, so just
+Appology again for my mistake, this can effectively be 8x4, a format we have no
+producer for upstream.
 
-			spin_unlock(&pcl->lockref.lock);
+> 
+> > > +
+> > > +/*
+> > > + * Verisilicon 4x4 tiling layout
+> > > + *
+> > > + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> > > + * layout.
+> > > + */
+> > > +#define DRM_FORMAT_MOD_VSI_G2_TILED fourcc_mod_code(VSI, 2)
+> 
+> ... Meaning this split make no sense, G2 shares the same format in V4L2 and
+> works well in GStreamer software converters. In fact, in the NXP TRM, you should
+> notice that in the G1 section, they document G2 tile and G1 tile is ignored.
+> Perhaps the DCSS do implement some 8x4 tiling, but considering we don't have
+> evidence of anything producing that, we should probably not have it.
+> 
+> From the documentation from NXP, G2 Tile is identical to
+> DRM_FORMAT_MOD_VIVANTE_TILED, so we really should reuse the existing definition.
+> If not, I'd really like to know in the text why. Running Etnaviv patched with
+> NV12 support (which I think got merged now), I can see that the combination is
+> supported (but haven't tested it though since its not mapped properly in
+> GStreamer yet):
+> 
+> 
+> > NV12         | NV12                    | external only |
+> >              | NV12:0x0600000000000001 | external only |
+> >              | NV12:0x0600000000000002 | external only |
+> 
+> Having a GL path is very efficient, but also gives compositors a composition
+> fallback which is needed to enable a format and guarantee it can be rendered at
+> all time.
 
-			xa_lock(&sbi->managed_pslots);
-			free = erofs_try_to_release_pcluster(sbi, pcl);
-			xa_unlock(&sbi->managed_pslots);
+I wanted to confirm my claimed that VIVANTE_TILED is the same. So I worked on
+this claim, and demonstrated that it is effectively the same by passing that
+through the GPU. Here's my GStreamer modification to make this happen:
 
-is enough. IOWs, if other users race with it, I think the other user
-will be responsible for this.
+https://gitlab.freedesktop.org/ndufresne/gstreamer/-/commits/imx8m-nv12-4l4-gl
 
-Thanks,
-Gao Xiang
+This has been tested with glimagesink and hantro G2 mainline decoder.
 
-> +			xa_lock(&sbi->managed_pslots);
-> +			free = erofs_prepare_to_release_pcluster(sbi, pcl);
-> +			xa_unlock(&sbi->managed_pslots);
-> +		}
-> +		if (!free)
-> +			atomic_long_inc(&erofs_global_shrink_cnt);
-> +	}
->   	spin_unlock(&pcl->lockref.lock);
-> +	if (free)
-> +		call_rcu(&pcl->rcu, z_erofs_rcu_callback);
+> 
+> > > +
+> > > +/*
+> > > + * Verisilicon 4x4 tiling with compression layout
+> > > + *
+> > > + * This is G2 VPU tiled layout using tiles of 4x4 pixels in a row-major
+> > > + * layout with compression.
+> > > + */
+> > > +#define DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED fourcc_mod_code(VSI, 3)
+> 
+> This one needs definition, but the doc provided does not seem to match what I
+> can see in IMX8M TRM (see 14.2.2.3 Compressed format), here's a snippet, I don't
+> yet fully understand it. They only explain the storage, not the compression
+> technique, but this should be enough to understand its not a simple row-major
+> 4x4 tiling.
+> 
+>    When compression is enabled, the picture is divided into CBS rows, which is
+>    further divided into continuous CBS groups. Each CBS group is composed of 16
+>    CBS. The luminance CBS is composed of 1 8x8 coded block (CB), which one
+>    chrominance CBS is composed of two 8x4 coded blocks, with cb CB first then cr
+>    CB following. The compression is performed to each CB in the CBS. The first
+>    CB's compressed data saved from the same offset of that CBS in raster scan
+>    buffer. And the compressed output of following CBs in the CBS row is saved
+>    continuously. That means there may be gaps between the compressed data of
+>    each CBS row.
+
+I will also raise the same question, if we have nothing upstream producing it,
+shall we take the risk and upstream a definition for it ? We can clearly live
+with just VIVANTE_TILED in the short term and wait until V4L2 drivers evolves.
+
+> 
+> Nicolas
+> 
+> > > +
+> > >   #if defined(__cplusplus)
+> > >   }
+> > >   #endif
+> 
+
 
