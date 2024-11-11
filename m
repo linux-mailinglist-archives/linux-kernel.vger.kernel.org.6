@@ -1,156 +1,104 @@
-Return-Path: <linux-kernel+bounces-404222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB979C4107
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:34:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042269C40F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97237B22711
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADDF9282986
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8674B1A073F;
-	Mon, 11 Nov 2024 14:34:41 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A17319D060;
+	Mon, 11 Nov 2024 14:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="e4lRltPZ"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689C116D9B8;
-	Mon, 11 Nov 2024 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51E11E481
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731335681; cv=none; b=TFeuQEYY0SJ6jtuG+zE5uJQcvSDF4YvwnSahqReD+miaqVEe9+9CjiyR+BXaboTtfemW+6qcnw+OrYBrPfUeTG5+IscgYGZt7DakxzJcNTuyZju3fgokZrff2pJAiRJAz4lDcYi/ICRYVoCsZPJTZGPYrZuCKtgZu9Y1ftkb9u0=
+	t=1731335475; cv=none; b=Hz079eFmk2VzMqIf2yZDHs80PkRkP/WXj5NAyRP65f38DCFK0DNVYDYFlAYpT4Y/sEWb9kSNKkGBCf0cup18wi0/Uiciu+AK9kfCfiidHxGDS1HVHA/0uZ4CC06FLXYH/Zs7mM8MX4b1CFrHq4aId+QMfvtssZvX5TeGYY9ZwWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731335681; c=relaxed/simple;
-	bh=VOJskPes35d/MDk8uVewPYUAlhDZ99HRMRkVQpprJ64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GHZJPePy4Itgy6UPuI2hgjjzmN4bNjnz+Mk5bAf26hd6AcU8q/+lizgFcUL2qYk2O0/ffXgr7b8TmJxlM4ubGGj2PlX1omStgTxFxP+vWiV+vR5o11oh7RGvw6QIGytJ6pgTesSxdZuJ54CN2mwzLe+ZHDzE22l8+XfZGBK3ggc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so6764599a12.2;
-        Mon, 11 Nov 2024 06:34:39 -0800 (PST)
+	s=arc-20240116; t=1731335475; c=relaxed/simple;
+	bh=XG5CRUkTbt5WTQ85dK7AB2Vi2VrUURBKyYaPqbFSJsQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rXBwg76Y53uFUYSxh2NTAQz/h1PNhIiTcVBh+8lsAR3xByFipWxEwu6n/bBZrPSyftYiwUkDpqwk9l0digKJx8oT5jkNBSnV0ix0fm3hZerM6TYLLub8iGXOS6fMofWjsA/0Y2A7XfxYJB1NzXTY86MzgugK65ZKSyuGnRZSfRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=e4lRltPZ; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460b16d4534so26451801cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:31:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1731335473; x=1731940273; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjQEvgWBp2B3femAyiEE2sDZdOd4LPyc39EnesXrraI=;
+        b=e4lRltPZTRMcRopYCSZ5K4E5GjNBPRaQYkQeb5myivIgE6hPKRiWritJKsHWqUekba
+         qRFfs3qLroyjcT7G5AA4PKkylisQUiqu3uQ9GvgRbl/wfQh+XY8Gytj5cAytC7bInR6S
+         BpXM8/UjE+R1rrbM7ktRkO7nc9/p/JYoWYwwI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731335678; x=1731940478;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1731335473; x=1731940273;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hz6uHalMmUiaUFgiKior+KaxTNmvWdbfrpj+EULzQ5Q=;
-        b=IqRicIBM/KWhSADZCm8rAd2p/uzU3CFY6sf0hnygjN994XxoALAQx1ZxLnC+rx5OTh
-         nx7pDxAsD2lvnmjBTG0HJJozQ2ALPaJeokehm6Gp14RJtwQZ/xt9CBQ14zFpviMQxAzC
-         TwUAdghns5ViLM2WxVIjPhkAi2BtEXhbeKgc6tBkT/GB/CDGa4WVfnVxMpB9Em3OFlBT
-         1D+Ver+ke/p2su8ArXBTYVpBvl7HG2CCV8TU4Ka3rpyshPeBqmTgJ6yW04/pWJcUgj1M
-         Mqb/xyThT8QQpB9A8kkmY2Q4P+loD25ZfB4dDVk4+xiHPSoGGS38TZ4c1a6VfVA7xWxk
-         7/YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXbGBy9XR3Vnv4t08KpSv/Z/QSRQNyjAMqwyABYCQAQ/zRhTg6lxV4YzqrZ6LNKgmhoow0QE0LJCuI64N09yIG@vger.kernel.org, AJvYcCXp2evfG8ALI3v6/wJGycoYqsnnqGonrtNvUMK2ctCIB+rjDAQ6tGFN6VbfXli6jqaNPWsYEp4xy+Na/TgnU+12c9w2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC3GiKY7HsTdd4nCQCP/H5b44b/Ez38lipKInfvNqXvYvUUBmN
-	pbyikwxB6GiIroAGD72/EbqI18m/TmdKGVNDhHp7UtEM3MqCmAL7
-X-Google-Smtp-Source: AGHT+IHBvDYvseRFWb1bhjU2TZxmStwtfMLBxP+C1E1/LbVMrTP0tYJSHCmGBwbCfdHMRgkJtWDRwQ==
-X-Received: by 2002:a05:6402:1ecb:b0:5cf:757:f493 with SMTP id 4fb4d7f45d1cf-5cf0a44193dmr10097302a12.24.1731335677556;
-        Mon, 11 Nov 2024 06:34:37 -0800 (PST)
-Received: from localhost (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b5d4e0sm4998883a12.10.2024.11.11.06.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 06:34:36 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 11 Nov 2024 06:30:30 -0800
-Subject: [PATCH v2] uprobes: Remove unnecessary RCU list traversal in
- filter_chain()
+        bh=bjQEvgWBp2B3femAyiEE2sDZdOd4LPyc39EnesXrraI=;
+        b=F1ACwhdMQfYineZZmrzL91NaFfgDxqk5vCoybo7vvf/rU0wQpLasVNYhs4JvoP7Mom
+         Suk4jAYYA6CwYGNvRrS8k7eY+hmijXT8MG0HcpJQiPQXMeClHZs3dCYxf6JH3e8Uaz8A
+         5OKCBdFEfMW4x1BHjubJu5kC8PYME+NoJ5XRffKzzIyg0ebtQa8wFOzTjO0rRGgxVF5e
+         uaTZ9qyM7V5CfKO91MGWRI2yVRc/4YLpfsJY2wZPk/SyRM1bP4gDFaXWMq0MEigDPrgI
+         5/WqVHXXhvQntcXOpypvPH7vEPt371XjnG2sRClzOwoxdC+yQ3k6CWsctSp3CpKLsGC7
+         tJGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXO0cZTMvtiiFQIKrVu6tn9N8Kg7sczYkr2x0cZJRVEqmEdGmthYVbFDVLWKPV+I0YTCI3EtZJlNl0cx04=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5odWuMPQkeVpXV10Ig5HqduRpxIm2mbMb/DkmdhxZHFHfbVc6
+	zvwfYAcC1HDyy6L99t+DGJqa40+586BmU9Oy53iiQW/MFP+Li3NKRuwGKZopSRIXQsJTqHvJWSA
+	o4gpiWiydlfDWTAJmv6b2GN/XlHWtQiszW3EnHA==
+X-Google-Smtp-Source: AGHT+IFwjfVAdGvSWbVD01pjbiSg9CpPS5Fc1yt3FmFrR38tF8H5FoVF5ez+II/L5JrvR2ee4KQG3Qf9gFrr1WpImC4=
+X-Received: by 2002:a05:622a:4e85:b0:45f:8ee:1859 with SMTP id
+ d75a77b69052e-46309209d1cmr172053631cf.0.1731335472760; Mon, 11 Nov 2024
+ 06:31:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-rcu_probe-v2-1-a091b59b58b6@debian.org>
-X-B4-Tracking: v=1; b=H4sIAAYVMmcC/x3MYQpAQBAG0KtM329bZlHaq0haazB/0Gyk5O7KO
- 8B7kMVUMgI9MLk0674hkC8IaY3bIk4nBIIvfc3M7Cydw2H7KK4c22mOTRXbyCgIh8ms9391/ft
- +qUJph1sAAAA=
-X-Change-ID: 20241111-rcu_probe-0b8dfa53a8a1
-To: Masami Hiramatsu <mhiramat@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2256; i=leitao@debian.org;
- h=from:subject:message-id; bh=VOJskPes35d/MDk8uVewPYUAlhDZ99HRMRkVQpprJ64=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnMhX6bKP9iOggzHd/RX/p63dQ7cUQRyF3IYp5D
- P6ISBvalBaJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZzIV+gAKCRA1o5Of/Hh3
- bZV9D/9NyrwgdSUq68jZb34b+QkqCgJeNPE+XN77ppfanCvSWaD+8OZaYX3Y8Hre8hzFUT45OSJ
- EKOsCICA0d9OvcIraU3PzxC0CIPzaq/q22X3c/OQkcm34s067RT+8beix80Me1ilrR3XHNYLZUb
- TOOztKWcl8C/xn++0cHabrsTlaWO1kuitPNgvMtkIopw55B+1Qz1Hi8VxwlLKHZa8EjG9e4Zmn7
- 7zuPM2cIKNAukIlj3AYe4jOcXlUMwzu1g9CM/I7HE3pT+k+rx3Q6SN47odccZO37CIdYzDOdgLn
- /YpCm/WT25/mc7ik9E7TRi/FiLJ53oHpgs+d6l3fCVubQ5v95o+RfwSlwCi+G5P4GeM0tkoH4C3
- pbXWXWFSXub6XZsxJb6Avyio5keMFtPtPstOgblUc5b1ZrLF9lB34/oWxlFaULT5kVdLqxn+zvG
- UWbMplKrUDcydjOiyf357yY5CJGeuP4wFN4J3X4KL8DxdUrQ6gsL22DH7A1jAAtl3LyG7w0n1th
- 0AT/x69wkaJ3Yisb0maSgFa7Ehw833cl+Z3A0SCB5Jkk198wK8tNhEJw1BFESh5FbVr/9TqU5An
- YhjTcoqI2YiGwnX6EncrRRwVI2cg1Gv67ejP2vUFcuwmdcbeVTrtxaU09zDIcBscxSKVudAxXcu
- djTaaazZ32EZo1A==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20241107-statmount-v3-0-da5b9744c121@kernel.org> <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+In-Reply-To: <20241107-statmount-v3-2-da5b9744c121@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 11 Nov 2024 15:31:02 +0100
+Message-ID: <CAJfpegs9ntOf-nZchBgx3DnxY-gYzBM0atOBQuXQse-9pinLSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] fs: add the ability for statmount() to report the mnt_devname
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The filter_chain() function was using list_for_each_entry_rcu() to traverse
-uprobe->consumers without holding an RCU read lock, causing warnings when
-CONFIG_RCU_PROVING is enabled:
+On Thu, 7 Nov 2024 at 22:00, Jeff Layton <jlayton@kernel.org> wrote:
 
-    kernel/events/uprobes.c:937 RCU-list traversed without holding the required lock!!
-        5 locks held by bench/182758:
-        #1: ffff888603aaac90 (&uprobe->register_rwsem){+.+.}-{3:3}, at: uprobe_unregister_nosync+0x28/0xc0
-        #4: ffff888603aaad28 (&uprobe->consumer_rwsem){++++}-{3:3}, at: filter_chain+0x20/0xe0
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..3de1b0231b639fb8ed739d65b5b5406021f74196 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -174,7 +174,7 @@ struct statmount {
+>         __u32 mnt_point;        /* [str] Mountpoint relative to current root */
+>         __u64 mnt_ns_id;        /* ID of the mount namespace */
+>         __u32 fs_subtype;       /* [str] Subtype of fs_type (if any) */
+> -       __u32 __spare1[1];
+> +       __u32 mnt_devname;      /* [str] Device string for the mount */
 
-The uprobe->consumers list is actually protected by uprobe->consumer_rwsem,
-which is already held when the list traversal begins. This means the RCU
-primitive is unnecessary here - the rwsem provides sufficient protection
-for the list traversal, as reported by Peterz.
+One more point:  this is called source in both the old mount(2) API
+and in new the fsconfig(2) API, where it's handled just like a plain
+option (i.e. "-osource=/dev/foo").
 
-Replace list_for_each_entry_rcu() with list_for_each_entry() since the
-RCU read lock is not needed when accessing uprobe->consumers under the
-protection of consumer_rwsem.
+Also this is a sb property, not a mount property, so the naming is confusing.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: cc01bd044e6a ("uprobes: travers uprobe's consumer list locklessly under SRCU protection")
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
----
-Changelog:
-v2:
- * Move away from the RCU primitive (list_for_each_entry_rcu) to the
-   non-rcu one, since RCU is not needed here (Peter)
+So I'd call this "sb_source" for consistency.
 
-v1:
- * https://lore.kernel.org/all/20241107-rcu_probe-v1-1-0ca8cc2dedfb@debian.org/
----
- kernel/events/uprobes.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 4b52cb2ae6d620b2526de7e86291bdc137aa4f49..372fde678cefce72650b6c200ebea0093193ad6a 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -934,8 +934,7 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
- 	bool ret = false;
- 
- 	down_read(&uprobe->consumer_rwsem);
--	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
--				 srcu_read_lock_held(&uprobes_srcu)) {
-+	list_for_each_entry(uc, &uprobe->consumers, cons_node) {
- 		ret = consumer_filter(uc, mm);
- 		if (ret)
- 			break;
-
----
-base-commit: 774ca6d3bf24287ff60b7d6dd4171ebb6e47760a
-change-id: 20241111-rcu_probe-0b8dfa53a8a1
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+Thanks,
+Miklos
 
