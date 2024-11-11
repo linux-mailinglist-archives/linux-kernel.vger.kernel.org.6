@@ -1,85 +1,330 @@
-Return-Path: <linux-kernel+bounces-404395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4ED9C4331
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:07:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3273A9C4337
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 420D71F21E96
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:07:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20611F21E6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2221A3BC3;
-	Mon, 11 Nov 2024 17:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F16A1A3A8D;
+	Mon, 11 Nov 2024 17:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oq7DZoSo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="K6AMPVyq"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A542AF1C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC892AF1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344849; cv=none; b=dv86pnq7haF55RZwaLijGdbb4H0+vQTWukmAlTLn8Xa3h3UhqhtyIBa3yjDihVX5tKTo5W0Y2cOkI26Fm5M3uB0Cglty1iB5ecenMpLiODrvvs/gaddy/YVyDyjq02tue7PzDAOP8Qic0DWGAG1E8ttiRGmptQj+jR0klVhGSag=
+	t=1731344960; cv=none; b=UnM3RBn1m8KHOEZQ6NI9S2xPZyATK3DG1jCIOzwMO1uqSElyr8RRawcZdJY81u70h92ybhWbUqUkocCruPTTg8kd9XcPv1M36dPeJA1QIX6u4aDHk0PKXEg3i4kK6Xx93n8k5a6uA6Gmzp0dkylHjKIOiYr8K4cYyVfjvUahKHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344849; c=relaxed/simple;
-	bh=W/aQj+pAHcpmE/eJCgmauLYUmPofPLI1BcTAQ+MBIHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nmKN8bShsw1zlRWsA3tDwskbYVNPlzsJxiMUFrU7wkUzP73EdciA3sRyLK0AqFrvuJL/ARfxQFDpEHi94LY4Ui/FErYvfkygAsvGtLHz5W7mj0HqxnGboG7ZGAMD1Lm+LIXNysmJJPAEg7sdT4Hh68bufuhPNEeyCDw3NRPsQb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oq7DZoSo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022CFC4CECF;
-	Mon, 11 Nov 2024 17:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731344849;
-	bh=W/aQj+pAHcpmE/eJCgmauLYUmPofPLI1BcTAQ+MBIHI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oq7DZoSoE7dNGz6TqnAOuiIp9z/ZX4M8WzeGoMxk74tpwB3jAzyEpK0zxlN2qJuLr
-	 jp7g6/snJXQbc+4BV6Fp0s9zaIvFvQFPM5ptY9P8NVkQxjqseyLRUKlEXVjfjiBinZ
-	 fDKujvFUMLwS0gJWzZRgvd+J+IhOH2weZ63zq2xNR73YXmx021pigRITWg1zYBaLED
-	 5iMadvZAqExfjJDFm7oTvcadEEeKR1ZBBsrYS1xxeKT64A3//jbaI7va4i6nytEtoa
-	 XFu+OmsoS5saw0L19sZox8AC7XSkSZW2zUNvHTmNCR9+FrdmBaXVvup7CJJCZnJOKY
-	 9mpUNLyiVZulA==
-Date: Mon, 11 Nov 2024 07:07:27 -1000
-From: Tejun Heo <tj@kernel.org>
-To: void@manifault.com
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
-	arighi@nvidia.com, multics69@gmail.com, me@mostlynerdless.de,
-	ggherdovich@suse.com, dschatzberg@meta.com, yougmark94@gmail.com
-Subject: Re: [PATCHSET sched_ext/for-6.13] sched_ext: Rename dispatch and
- consume kfuncs
-Message-ID: <ZzI5z-1lREMbp1Sf@slm.duckdns.org>
-References: <20241110200308.103681-1-tj@kernel.org>
+	s=arc-20240116; t=1731344960; c=relaxed/simple;
+	bh=FWFU++bHMwg8DYm85y0XjcNuvtTGRgPVpTC09F8Y7xE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gydyy0aE0Y1tlrt1PmYrIzeCDWS7dmkzMOLEBwUDfiqiTj9uX+7pIsgE24mKQyJ0N4ag1XkYE7YZNv2BJQF6qOvenTKKErucW2bcqOT7wAD3tSO+mvIig+aXndgWDPche1d/Fl3Br11lHkJJB1jr/+qp8uXyuup5uco9notpFqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=K6AMPVyq; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71811aba576so2984535a34.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731344956; x=1731949756; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=f6fLv7NDwAwgh2zTfiGl9xXcUzRaOQnOkOpbb/tKGe0=;
+        b=K6AMPVyqy4twA+xwqmYbYJytw4z2hIsW+NQr4mbx7rDwRPZsc7P3UQzXYOiXxOq5vz
+         XnHipzTeBHtAZ4NLD7DD3NVjGPdJSVG+5w9/M8KmNpvAxX0J/6D56QJCwzH8bo9RIXC1
+         RjdzoihivyhdzLBock49IEDiK9K/D1UwDgT6p0nSdcc2cJxWdeJOAnvVijHqD7Z1QIVo
+         qTaz8qanaTOUa2K87l9n4vw5pEHAGB0h1ubA64MA0kDtmTyQYek5/O25pB951VjmR35Z
+         LwOO2k2vpmltuxR3uWFQj8R7IKSsq/qtuB82SQ4QMz8oxK9lo7vWbq2nP8U8rg0eyxq2
+         cNvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731344956; x=1731949756;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f6fLv7NDwAwgh2zTfiGl9xXcUzRaOQnOkOpbb/tKGe0=;
+        b=pHxQYRu30iIece7Pbdc7a0La3XuPbqGyLCqjZD4Pj6snqjmMBAXp2dBaj5kqX2JTFM
+         H0gFfD8gnFArOt8prRodXzZ5Tt0SRtuwrZzyEZUQJh60N3yhOCOm8klSXMv0+eOpd7AH
+         hdJ/e4d3uWxHxWNDZcxZg59VxjbsrJIGkhnSvld17ile5PDxctCOYjht+WHD/sVsCUd5
+         smDiNRVmfRoWG/vAMN+dSR3poSLsN1iFEN00iJ9xr4aF0W7ygVjXudhksPEAraIMAKt6
+         Jc8bCFow32oyrNfyLmRdlE+v5cHBUbe4IVJpzacRat/1pdjFJ56ilHDg1Y5vibXxDEcz
+         FLQg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqFCnvtzDKfNHDlJfBEzUnZBGdjzOUIBu71Ag1nTBhnLZm/72VMcKlj5GQ9JXAMUlz4AimwemVaqtuEFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrolYQ3sfZ/kLgl6q/5cDaVkpWvqBey4MA1PZ381U+YbPQl+Qc
+	wHIUdpQCqYocjqmwiVoW4G9ZEj8iBBGiiXgvBiKm8Wf3r7kNjObPz8M8NZFun/Q=
+X-Google-Smtp-Source: AGHT+IFNZamT2bZFDaSjw1Yl3jaxXvbQV8DNZNoPpnlYjKrFHE1JGXIOAPe3KflgKlcoZRhw+QrWwg==
+X-Received: by 2002:a9d:4c12:0:b0:710:e1e4:1bc3 with SMTP id 46e09a7af769-71a1b013b2bmr6535107a34.6.1731344956471;
+        Mon, 11 Nov 2024 09:09:16 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a107eb5desm2315700a34.3.2024.11.11.09.09.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 09:09:15 -0800 (PST)
+Message-ID: <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
+Date: Mon, 11 Nov 2024 10:09:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110200308.103681-1-tj@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+From: Jens Axboe <axboe@kernel.dk>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+ linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <ZzIfwmGkbHwaSMIn@infradead.org>
+ <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Nov 10, 2024 at 10:02:50AM -1000, Tejun Heo wrote:
-...
-> Clean up the API with the following renames:
+On 11/11/24 8:17 AM, Jens Axboe wrote:
+> On 11/11/24 8:16 AM, Christoph Hellwig wrote:
+>> On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
+>>> Ok thanks, let me take a look at that and create a test case that
+>>> exercises that explicitly.
+>>
+>> Please add RWF_UNCACHED to fsstress.c in xfstests also.  That is our
+>> exerciser for concurrent issuing of different I/O types to hit these
+>> kinds of corner cases.
 > 
-> 1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
-> 2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
-> 3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
-> 
-> This patchset is on top of sched_ext/for-6.13 72b85bf6a7f6 ("sched_ext:
-> scx_bpf_dispatch_from_dsq_set_*() are allowed from unlocked context") and
-> contains the following patches:
-> 
->  0001-sched_ext-Rename-scx_bpf_dispatch-_vtime-to-scx_bpf_.patch
->  0002-sched_ext-Rename-scx_bpf_consume-to-scx_bpf_dsq_move.patch
->  0003-sched_ext-Rename-scx_bpf_dispatch-_vtime-_from_dsq-s.patch
+> Sure, can do.
 
-Applied to sched_ext/for-6.13.
+Not familiar with fsstress at all, but something like the below? Will
+use it if available, if it gets EOPNOTSUPP it'll just fallback to
+using writev_f()/readv_f() instead.
 
-Thanks.
+Did give it a quick test spin and I see uncached reads and writes on the
+kernel that supports it.
+
+diff --git a/ltp/fsstress.c b/ltp/fsstress.c
+index 3d248ee25791..6430f10efbc7 100644
+--- a/ltp/fsstress.c
++++ b/ltp/fsstress.c
+@@ -82,6 +82,12 @@ static int renameat2(int dfd1, const char *path1,
+ #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
+ #endif
+ 
++#ifndef RWF_UNCACHED
++#define RWF_UNCACHED		0x80
++#endif
++
++static int have_rwf_uncached = 1;
++
+ #define FILELEN_MAX		(32*4096)
+ 
+ typedef enum {
+@@ -117,6 +123,7 @@ typedef enum {
+ 	OP_COLLAPSE,
+ 	OP_INSERT,
+ 	OP_READ,
++	OP_READ_UNCACHED,
+ 	OP_READLINK,
+ 	OP_READV,
+ 	OP_REMOVEFATTR,
+@@ -143,6 +150,7 @@ typedef enum {
+ 	OP_URING_READ,
+ 	OP_URING_WRITE,
+ 	OP_WRITE,
++	OP_WRITE_UNCACHED,
+ 	OP_WRITEV,
+ 	OP_EXCHANGE_RANGE,
+ 	OP_LAST
+@@ -248,6 +256,7 @@ void	zero_f(opnum_t, long);
+ void	collapse_f(opnum_t, long);
+ void	insert_f(opnum_t, long);
+ void	unshare_f(opnum_t, long);
++void	read_uncached_f(opnum_t, long);
+ void	read_f(opnum_t, long);
+ void	readlink_f(opnum_t, long);
+ void	readv_f(opnum_t, long);
+@@ -273,6 +282,7 @@ void	unlink_f(opnum_t, long);
+ void	unresvsp_f(opnum_t, long);
+ void	uring_read_f(opnum_t, long);
+ void	uring_write_f(opnum_t, long);
++void	write_uncached_f(opnum_t, long);
+ void	write_f(opnum_t, long);
+ void	writev_f(opnum_t, long);
+ void	exchangerange_f(opnum_t, long);
+@@ -315,6 +325,7 @@ struct opdesc	ops[OP_LAST]	= {
+ 	[OP_COLLAPSE]	   = {"collapse",      collapse_f,	1, 1 },
+ 	[OP_INSERT]	   = {"insert",	       insert_f,	1, 1 },
+ 	[OP_READ]	   = {"read",	       read_f,		1, 0 },
++	[OP_READ_UNCACHED] = {"read_uncached", read_uncached_f,	1, 0 },
+ 	[OP_READLINK]	   = {"readlink",      readlink_f,	1, 0 },
+ 	[OP_READV]	   = {"readv",	       readv_f,		1, 0 },
+ 	/* remove (delete) extended attribute */
+@@ -346,6 +357,7 @@ struct opdesc	ops[OP_LAST]	= {
+ 	[OP_URING_WRITE]   = {"uring_write",   uring_write_f,	1, 1 },
+ 	[OP_WRITE]	   = {"write",	       write_f,		4, 1 },
+ 	[OP_WRITEV]	   = {"writev",	       writev_f,	4, 1 },
++	[OP_WRITE_UNCACHED]= {"write_uncaced", write_uncached_f,4, 1 },
+ 	[OP_EXCHANGE_RANGE]= {"exchangerange", exchangerange_f,	2, 1 },
+ }, *ops_end;
+ 
+@@ -4635,6 +4647,76 @@ readv_f(opnum_t opno, long r)
+ 	close(fd);
+ }
+ 
++void
++read_uncached_f(opnum_t opno, long r)
++{
++	int		e;
++	pathname_t	f;
++	int		fd;
++	int64_t		lr;
++	off64_t		off;
++	struct stat64	stb;
++	int		v;
++	char		st[1024];
++	struct iovec	iov;
++
++	if (!have_rwf_uncached) {
++		readv_f(opno, r);
++		return;
++	}
++
++	init_pathname(&f);
++	if (!get_fname(FT_REGFILE, r, &f, NULL, NULL, &v)) {
++		if (v)
++			printf("%d/%lld: read - no filename\n", procid, opno);
++		free_pathname(&f);
++		return;
++	}
++	fd = open_path(&f, O_RDONLY);
++	e = fd < 0 ? errno : 0;
++	check_cwd();
++	if (fd < 0) {
++		if (v)
++			printf("%d/%lld: read - open %s failed %d\n",
++				procid, opno, f.path, e);
++		free_pathname(&f);
++		return;
++	}
++	if (fstat64(fd, &stb) < 0) {
++		if (v)
++			printf("%d/%lld: read - fstat64 %s failed %d\n",
++				procid, opno, f.path, errno);
++		free_pathname(&f);
++		close(fd);
++		return;
++	}
++	inode_info(st, sizeof(st), &stb, v);
++	if (stb.st_size == 0) {
++		if (v)
++			printf("%d/%lld: read - %s%s zero size\n", procid, opno,
++			       f.path, st);
++		free_pathname(&f);
++		close(fd);
++		return;
++	}
++	lr = ((int64_t)random() << 32) + random();
++	off = (off64_t)(lr % stb.st_size);
++	iov.iov_len = (random() % FILELEN_MAX) + 1;
++	iov.iov_base = malloc(iov.iov_len);
++	e = preadv2(fd, &iov, 1, off, RWF_UNCACHED) < 0 ? errno : 0;
++	if (e == EOPNOTSUPP) {
++		have_rwf_uncached = 0;
++		e = 0;
++	}
++	free(iov.iov_base);
++	if (v)
++		printf("%d/%lld: read uncached %s%s [%lld,%d] %d\n",
++		       procid, opno, f.path, st, (long long)off,
++		       (int)iov.iov_len, e);
++	free_pathname(&f);
++	close(fd);
++}
++
+ void
+ removefattr_f(opnum_t opno, long r)
+ {
+@@ -5509,6 +5591,70 @@ writev_f(opnum_t opno, long r)
+ 	close(fd);
+ }
+ 
++void
++write_uncached_f(opnum_t opno, long r)
++{
++	int		e;
++	pathname_t	f;
++	int		fd;
++	int64_t		lr;
++	off64_t		off;
++	struct stat64	stb;
++	int		v;
++	char		st[1024];
++	struct iovec	iov;
++
++	if (!have_rwf_uncached) {
++		writev_f(opno, r);
++		return;
++	}
++
++	init_pathname(&f);
++	if (!get_fname(FT_REGm, r, &f, NULL, NULL, &v)) {
++		if (v)
++			printf("%d/%lld: write - no filename\n", procid, opno);
++		free_pathname(&f);
++		return;
++	}
++	fd = open_path(&f, O_WRONLY);
++	e = fd < 0 ? errno : 0;
++	check_cwd();
++	if (fd < 0) {
++		if (v)
++			printf("%d/%lld: write - open %s failed %d\n",
++				procid, opno, f.path, e);
++		free_pathname(&f);
++		return;
++	}
++	if (fstat64(fd, &stb) < 0) {
++		if (v)
++			printf("%d/%lld: write - fstat64 %s failed %d\n",
++				procid, opno, f.path, errno);
++		free_pathname(&f);
++		close(fd);
++		return;
++	}
++	inode_info(st, sizeof(st), &stb, v);
++	lr = ((int64_t)random() << 32) + random();
++	off = (off64_t)(lr % MIN(stb.st_size + (1024 * 1024), MAXFSIZE));
++	off %= maxfsize;
++	iov.iov_len = (random() % FILELEN_MAX) + 1;
++	iov.iov_base = malloc(iov.iov_len);
++	memset(iov.iov_base, nameseq & 0xff, iov.iov_len);
++	e = pwritev2(fd, &iov, 1, off, RWF_UNCACHED) < 0 ? errno : 0;
++	free(iov.iov_base);
++	if (v)
++		printf("%d/%lld: write uncached %s%s [%lld,%d] %d\n",
++		       procid, opno, f.path, st, (long long)off,
++		       (int)iov.iov_len, e);
++	free_pathname(&f);
++	close(fd);
++	if (e == EOPNOTSUPP) {
++		writev_f(opno, r);
++		have_rwf_uncached = 0;
++	}
++}
++
+ char *
+ xattr_flag_to_string(int flag)
+ {
 
 -- 
-tejun
+Jens Axboe
 
