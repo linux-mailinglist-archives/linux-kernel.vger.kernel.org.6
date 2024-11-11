@@ -1,80 +1,238 @@
-Return-Path: <linux-kernel+bounces-404314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C0D9C424A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:01:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57459C424D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8BD01F260A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572601F26395
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EAB189BB5;
-	Mon, 11 Nov 2024 16:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF301A257A;
+	Mon, 11 Nov 2024 16:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDsXTkF3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDdr8Inh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C553D4C66;
-	Mon, 11 Nov 2024 16:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEFB4C66;
+	Mon, 11 Nov 2024 16:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340874; cv=none; b=Jfszqw35I45luomo68vwicNr+Gpr0no32DuWZ54CYM+mARckmegbZPOeydnGNaoxa2F2rjhxMjdJplj69EOGbAoKEZz777j48JcCsi2e6/fNULl2r/k8FTFLfk7/ZTK+zmMiUuyZE0S9V2DhTW8aQm4RDlzcjSaSvwfyZ1HZWmw=
+	t=1731340878; cv=none; b=fu76EWBdAdz4zX0ciskWDdFjTeRoJGT0i0cNO2SLd0+vyw6WefUxgNK1rIk323znAlKt87hl6QyBlYXBefFnvElZPv4PSRVBX2zp9+G/UO2JrfYCtCjEDb/qB7zv9tVGhdSbA59Ra47j+ycrcNuNgUREPcUJGkWl9kZ38aCIc7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340874; c=relaxed/simple;
-	bh=9n0asBWOcoO7lwV+uq9jbYFvYUrxvms5zO7vjFHGzDc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLnrOwv3K+L6FTXowxR1lCgzRPE2JIW3EPpfxDHfl3HSaTEtktBWNig/N5nCzQuEdAo/wHIw6sD2ptsTxU8UgZGNc6RUgRGnDNNef0zNHeIPielykhXNYvYkU85yGoexpM+Jr1n8PjFel3XKTIeOzVmEC7H03ryAiAqpUTjSQmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDsXTkF3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C7B0C4CECF;
-	Mon, 11 Nov 2024 16:01:12 +0000 (UTC)
+	s=arc-20240116; t=1731340878; c=relaxed/simple;
+	bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=M+HtlNva6nNDtzfCTvf3mK5+2vmI+JNaqiMMX9qs25bvAkZtfk+GLeaUHkMgDlv6by3Z1+UrczW0ONz57vxjcrrIZrcPjz4auS1DB/lKws8Y39Ln2L4PMnwuyF0QKa3cuAkHiTYCTtrKTHvsgPbPgdMTVZHYNN/xFr9A94BPpDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDdr8Inh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FDD8C4CECF;
+	Mon, 11 Nov 2024 16:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731340874;
-	bh=9n0asBWOcoO7lwV+uq9jbYFvYUrxvms5zO7vjFHGzDc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HDsXTkF3QudITamYiv4CNN7n2hHZjw1Gl3nuTLTVgliCq4jT6JccW0z0vkrn+AdIC
-	 EXxpSmOp+qjhSfX8GzvhG3qoMvhwqiOOttuG684uJP+WtCtLZGb+e4PcH77WYUMAf0
-	 CByxT8N3JiUbJYbU0AhjhbTRTWTUaTiLQ4qsqRVIAKTTYSEVkWo9LONQMadgbqHrOK
-	 MwYLej9HHWi13mTAA3TDtLgGGqu4DKp9TFiD/4rKoeWFfr4Syrb5eqNF8WCtMVphTe
-	 H9gJ/w/ur52JSjJotn0yiiYE142MEZ+JWdsAWYtiWnZxRfzGN4/X1uiVzIZOKNHuJ7
-	 ABSOEhvpco5BA==
-Date: Mon, 11 Nov 2024 16:01:10 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: netconsole: selftests: Check if netdevsim
- is available
-Message-ID: <20241111160110.GE4507@kernel.org>
-References: <20241108-netcon_selftest_deps-v1-1-1789cbf3adcd@debian.org>
+	s=k20201202; t=1731340877;
+	bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=uDdr8Inh2AFEMajRA7+mgMWudV8I6P8yvMMzNGAuZmfjbQcXI3BtBQ5qtYmjyMzQc
+	 8t9aX0D7Yg++FrM6wP2MjmiqFDceRN87HOxZ3S/HUSxymeef68BvCKjieDr5dn2to/
+	 onVpRzjDRWz8eqmzOzGwBrUUEhZFfy3ggNXXRKCeMQ31cY4qkJA0BBI9TKhiDFn8Qz
+	 gIg5V3G0y+ds+HyxK7uqotUCpouZUv/TeCdR1FuozJB3kPYA6uaTqg3yZdTX93LoYf
+	 5qGzKc9iqOmZqdZCvOT1/TuvhlINI7Aq96qyzEZPUEffSpuVssOOp1zSqBZWkw68WN
+	 2OJhOIPRAvtKA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Mon, 11 Nov 2024 11:01:13 -0500
+Subject: [PATCH v2] nfsd: drop inode parameter from
+ nfsd4_change_attribute()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-netcon_selftest_deps-v1-1-1789cbf3adcd@debian.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241111-master-v2-1-e0a52a156a03@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAEgqMmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDINDNTSwuSS3STU6yTExLTEwySU40UAIqLihKTcusABsUHVtbCwC54SL
+ ZWAAAAA==
+X-Change-ID: 20241111-master-cb9afaab4ca0
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5955; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=FdjD6SQVms2k4ytfPfE+ONeBDEAaFyrTBrkjJU3b/kE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnMipMe6eqzdouhLcI/E4YVjaXqGF0luZ6TzzkC
+ ZmRBjNRgnqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzIqTAAKCRAADmhBGVaC
+ FTaSD/4r91kzcwtXpblBv1yFivtWWhd3AqrUEPCKW1bzNXxRXEPhMmaFsNEWkOhNJxcL1RCH6CB
+ DFYxm5yhGZGIlXhYyfo9HdjpVjSAvFxX5LbgH/gbwW/ko7TXKC/k96quGskbRKhH/eOLJPzSoZm
+ MlWpX4AZ0oSAmMPOzafUb2AAUXgGuGKEffvMWvZZzb5x+6bWH1L0OLr0TFqwoh9s2KkRt2Z4CJo
+ RnZXq6pDrt55LG+dgfEo9v5z3pWsbqnbESjhOzrZrxZTjWWLR6B5s06rDSUjSTNnsD3Jz2NTNfN
+ SDjLwWX9y8TqpkJ57iNIYfRpsGjYZzd+cCFZNMrQM9mrCxszWYokanjHtI6EX0qw9NqWfPehmEO
+ lbFerONIqGps95RTowpGTRLANglfU4CYozdhWp4N6VH7CrIGZ1dM6SYiIVo2sWuvIc84JsMT7TE
+ xNFxYMvek1xLRe2LuBQozgCjM57lD4QKjyVg4qNugggci6BIO5B2108lI7em2d57dzAyfv8B749
+ jyGAQDkYNBFVsHdZe5C6vi2O49Ob1jzZZC7BkIEyx1XAX29DfI9SrMUSRbNWY+OaEM9MADjWQSs
+ mUGx6Ucoryi2QUrwffRiULpVJn9EnA1OW4GePAyL+zRnkY78pdKqh62nccsFJ5e0lxPO9uxAv41
+ vZaUyCyLco4gLaA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Fri, Nov 08, 2024 at 06:59:25AM -0800, Breno Leitao wrote:
-> The netconsole selftest relies on the availability of the netdevsim module.
-> To ensure the test can run correctly, we need to check if the netdevsim
-> module is either loaded or built-in before proceeding.
-> 
-> Update the netconsole selftest to check for the existence of
-> the /sys/bus/netdevsim/new_device file before running the test. If the
-> file is not found, the test is skipped with an explanation that the
-> CONFIG_NETDEVSIM kernel config option may not be enabled.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+The inode that nfs4_open_delegation() passes to this function is
+wrong, which throws off the result. The inode will end up getting a
+directory-style change attr instead of a regular-file-style one.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Fix up nfs4_delegation_stat() to fetch STATX_MODE, and then drop the
+inode parameter from nfsd4_change_attribute(), since it's no longer
+needed.
+
+Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegation")
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This version should apply cleanly to v6.12-rc7. Some later patches in
+nfsd-next might need to be twiddled as a result, but it should be simple
+to fix. Also, I fixed up the Fixes: to point to the right commit. This
+dates back a bit further than I had originally thought.
+---
+ fs/nfsd/nfs4state.c |  5 ++---
+ fs/nfsd/nfs4xdr.c   |  2 +-
+ fs/nfsd/nfsfh.c     | 20 ++++++++++++--------
+ fs/nfsd/nfsfh.h     |  3 +--
+ 4 files changed, 16 insertions(+), 14 deletions(-)
+
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 551d2958ec2905be51b4a96414a15a5e4f87f9ea..d3cfc6471539932fadc01a95a1fe0948f2935666 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -5957,7 +5957,7 @@ nfs4_delegation_stat(struct nfs4_delegation *dp, struct svc_fh *currentfh,
+ 	path.dentry = file_dentry(nf->nf_file);
+ 
+ 	rc = vfs_getattr(&path, stat,
+-			 (STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
++			 (STATX_MODE | STATX_SIZE | STATX_CTIME | STATX_CHANGE_COOKIE),
+ 			 AT_STATX_SYNC_AS_STAT);
+ 
+ 	nfsd_file_put(nf);
+@@ -6041,8 +6041,7 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+ 		}
+ 		open->op_delegate_type = NFS4_OPEN_DELEGATE_WRITE;
+ 		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
+-		dp->dl_cb_fattr.ncf_initial_cinfo =
+-			nfsd4_change_attribute(&stat, d_inode(currentfh->fh_dentry));
++		dp->dl_cb_fattr.ncf_initial_cinfo = nfsd4_change_attribute(&stat);
+ 		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+ 	} else {
+ 		open->op_delegate_type = NFS4_OPEN_DELEGATE_READ;
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index f118921250c3163ea45b77a53dc57ef364eec32b..8d25aef51ad150625540e1b8baba8baf9d64b788 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -3040,7 +3040,7 @@ static __be32 nfsd4_encode_fattr4_change(struct xdr_stream *xdr,
+ 		return nfs_ok;
+ 	}
+ 
+-	c = nfsd4_change_attribute(&args->stat, d_inode(args->dentry));
++	c = nfsd4_change_attribute(&args->stat);
+ 	return nfsd4_encode_changeid4(xdr, c);
+ }
+ 
+diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+index 40ad58a6a0361e48a48262a2c61abbcfd908a3bb..96e19c50a5d7ee8cd610bec4ecaec617286deea3 100644
+--- a/fs/nfsd/nfsfh.c
++++ b/fs/nfsd/nfsfh.c
+@@ -667,20 +667,18 @@ fh_update(struct svc_fh *fhp)
+ __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp)
+ {
+ 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
+-	struct inode *inode;
+ 	struct kstat stat;
+ 	__be32 err;
+ 
+ 	if (fhp->fh_no_wcc || fhp->fh_pre_saved)
+ 		return nfs_ok;
+ 
+-	inode = d_inode(fhp->fh_dentry);
+ 	err = fh_getattr(fhp, &stat);
+ 	if (err)
+ 		return err;
+ 
+ 	if (v4)
+-		fhp->fh_pre_change = nfsd4_change_attribute(&stat, inode);
++		fhp->fh_pre_change = nfsd4_change_attribute(&stat);
+ 
+ 	fhp->fh_pre_mtime = stat.mtime;
+ 	fhp->fh_pre_ctime = stat.ctime;
+@@ -697,7 +695,6 @@ __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp)
+ __be32 fh_fill_post_attrs(struct svc_fh *fhp)
+ {
+ 	bool v4 = (fhp->fh_maxsize == NFS4_FHSIZE);
+-	struct inode *inode = d_inode(fhp->fh_dentry);
+ 	__be32 err;
+ 
+ 	if (fhp->fh_no_wcc)
+@@ -713,7 +710,7 @@ __be32 fh_fill_post_attrs(struct svc_fh *fhp)
+ 	fhp->fh_post_saved = true;
+ 	if (v4)
+ 		fhp->fh_post_change =
+-			nfsd4_change_attribute(&fhp->fh_post_attr, inode);
++			nfsd4_change_attribute(&fhp->fh_post_attr);
+ 	return nfs_ok;
+ }
+ 
+@@ -804,7 +801,14 @@ enum fsid_source fsid_source(const struct svc_fh *fhp)
+ 	return FSIDSOURCE_DEV;
+ }
+ 
+-/*
++/**
++ * nfsd4_change_attribute - Generate an NFSv4 change_attribute value
++ * @stat: inode attributes
++ *
++ * Caller must fill in @stat before calling, typically by invoking
++ * vfs_getattr() with STATX_MODE, STATX_CTIME, and STATX_CHANGE_COOKIE.
++ * Returns an unsigned 64-bit changeid4 value (RFC 8881 Section 3.2).
++ *
+  * We could use i_version alone as the change attribute.  However, i_version
+  * can go backwards on a regular file after an unclean shutdown.  On its own
+  * that doesn't necessarily cause a problem, but if i_version goes backwards
+@@ -821,13 +825,13 @@ enum fsid_source fsid_source(const struct svc_fh *fhp)
+  * assume that the new change attr is always logged to stable storage in some
+  * fashion before the results can be seen.
+  */
+-u64 nfsd4_change_attribute(const struct kstat *stat, const struct inode *inode)
++u64 nfsd4_change_attribute(const struct kstat *stat)
+ {
+ 	u64 chattr;
+ 
+ 	if (stat->result_mask & STATX_CHANGE_COOKIE) {
+ 		chattr = stat->change_cookie;
+-		if (S_ISREG(inode->i_mode) &&
++		if (S_ISREG(stat->mode) &&
+ 		    !(stat->attributes & STATX_ATTR_CHANGE_MONOTONIC)) {
+ 			chattr += (u64)stat->ctime.tv_sec << 30;
+ 			chattr += stat->ctime.tv_nsec;
+diff --git a/fs/nfsd/nfsfh.h b/fs/nfsd/nfsfh.h
+index 5b7394801dc4270dbd5236f3e2f2237130c73dad..876152a91f122f83fb94ffdfb0eedf8fca56a20c 100644
+--- a/fs/nfsd/nfsfh.h
++++ b/fs/nfsd/nfsfh.h
+@@ -297,8 +297,7 @@ static inline void fh_clear_pre_post_attrs(struct svc_fh *fhp)
+ 	fhp->fh_pre_saved = false;
+ }
+ 
+-u64 nfsd4_change_attribute(const struct kstat *stat,
+-			   const struct inode *inode);
++u64 nfsd4_change_attribute(const struct kstat *stat);
+ __be32 __must_check fh_fill_pre_attrs(struct svc_fh *fhp);
+ __be32 fh_fill_post_attrs(struct svc_fh *fhp);
+ __be32 __must_check fh_fill_both_attrs(struct svc_fh *fhp);
+
+---
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+change-id: 20241111-master-cb9afaab4ca0
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
