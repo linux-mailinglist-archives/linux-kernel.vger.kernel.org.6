@@ -1,145 +1,96 @@
-Return-Path: <linux-kernel+bounces-404760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75AE9C47C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:12:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7F59C47C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3241F20CBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3D5628C753
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22F11C3F3B;
-	Mon, 11 Nov 2024 21:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BA81C6F6A;
+	Mon, 11 Nov 2024 21:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="eUAB3miH"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MAVkRchX"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723FA1BCA02
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAB31BD000;
+	Mon, 11 Nov 2024 21:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731359050; cv=none; b=pl7n1H9IZ85vHBsh+8qb2I7N2SwQ0Ap2XiSaplI4oNbr+iMWre8ZgTRl84JalAdjaSaCY6Srqd1Q0pS0UpuedlyGb+HJu9TsJRL4vIYGMRp6wDK9rBlHPz4jPvSgS3rGqhfPXC5eiHGlBuRpFQsngMaODMaCS7HX9FFgHdbnOGg=
+	t=1731359092; cv=none; b=bvXgQBR51m/C8SVkdfMkuXFs2XYNnMxA8RYNlOnCf9xIF/JI5GX8bRC2xvoDnrphGrttMFVqHVbGU8ebFeI0kKfmOonph5tMyP5u5C4zIzzprJKNrkqusjksF4ArAMuLvReITLSmHh5gFclKiaWgLvbh2JeUYisFu6vJi5brNeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731359050; c=relaxed/simple;
-	bh=CcyrHtiCdpGxp1+G1hE2ZWOvMoT8IICiqmb9jA9nwm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ppvwcMG5BHSU4rcbaLaFNdBTqfDXi/1+GdZrWNC+6XLDTmuDXcT2NFsPootuUL5KEGyNTIT69UNdv62J6HpjV1x6Cuc5lRKIsAZg2ggSj/cIF4/GY97avCedjoJQRea7vJAaWNBK+YKNknRyJPdMMvoza/zjs+JgjrtU1NhAdp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=eUAB3miH; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
-	by cmsmtp with ESMTPS
-	id A0W4tJB6RrKrbAbZptLqfq; Mon, 11 Nov 2024 21:04:01 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id AbZotJYVnCgT6AbZotLbaZ; Mon, 11 Nov 2024 21:04:00 +0000
-X-Authority-Analysis: v=2.4 cv=XvwxOkF9 c=1 sm=1 tr=0 ts=67327140
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7T7KSl7uo7wA:10
- a=HaXXRGzUH37Hqg1fP10A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3/QWkNiM7d6MQV5CTzi6B7p4uTQHyjQVd9bhUj5m0Kg=; b=eUAB3miH/q38+Ewlh2WdlqHP5p
-	6pbKGVsC+A+TdRJiKZs4PMoHE5juRgH3+VoX9dnOFRjKC1jGqdgqQXbZeHlJU24ow8sDTi4aW71nc
-	zaUg64HBwMhgkuTZZWFNCBQI/L+Z2lDyKxvj8c8NPLfY1vx3s7pOCme37IkqLmxS6L6aMgzER7/Rn
-	uNqgMwVbc0QdBOKq+/ku8nMl4prOs92wV9iPWkyURRiBsCDMytLi6UBnYptXxTpPyK2ARvYulV4yi
-	4SAOQZB2REIT83E6PrzdG8ACy/V9SZRtyX9e/iY4zd30P3XG7QQjoRH9YlLmZKGqpC06vf12jwt6v
-	BHimHIaw==;
-Received: from [177.238.21.80] (port=3392 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tAbZm-000Ufm-35;
-	Mon, 11 Nov 2024 15:03:59 -0600
-Message-ID: <3fe26d01-d704-47a8-be65-750b6a945045@embeddedor.com>
-Date: Mon, 11 Nov 2024 15:03:52 -0600
+	s=arc-20240116; t=1731359092; c=relaxed/simple;
+	bh=iB24JtsBeFLIFaXulkr/dFKm+SEgcBjFNMAFM0/AtNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EkHkfGywvexLBskHZC5jhR9Ro/k3z0NONAuzPZ3fvoxzfSr+MYJ+ZE6YVfMWG02FsFxmVvsQ9k7Nk+hUiG3O4mDH637UkYuOGMkFAByeDWFCyx1vxJsFe0K4gvXsMY39lst7WDpyUGJUImFpoLJZDicgrwtb2wqn+/BKz4nJePg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MAVkRchX; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8DBEDFF807;
+	Mon, 11 Nov 2024 21:04:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731359088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LObrxn3R4XtlprnERAFFhmw2ApkNAoiNEB3fkoJZITE=;
+	b=MAVkRchXggZBxDxPHd6AZX2qiAifA7ijtIEZo1438VSGrVZamdo414JKLILgKBS/E/GudL
+	K7eJdXQd1BSX/kXpLhu1oVKxXHBbkvOgEoz/kbVdeotMDe4m8cF5zmI6vGXN0p6bgGZJLq
+	bd4f8CJKP9ALVDp7JfHogGIhiVdXK7sTK58s0XJMRqgUnRkAcxaGzoLe3EF4rj8dCSmHu3
+	JF/WmZq+GxWgyj08XEoGRTnZHBaGYeZmv4qvAkYslCF4qKufG5VBQC6HFSUhFjf4t3cylk
+	xRsBYTHFsNO17OAdY17sdmGz6dpSn66m3NsZTyNJV9/BR6Lmzr/pBPLTm5jHyQ==
+Date: Mon, 11 Nov 2024 22:04:44 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: lee@kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, eddie.huang@mediatek.com,
+	sean.wang@mediatek.com, sen.chu@mediatek.com,
+	macpaul.lin@mediatek.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-rtc@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: (subset) [PATCH v1 0/3] rtc: mt6359: Cleanup and support
+ start-year property
+Message-ID: <173135898216.3303301.4242491728556386052.b4-ty@bootlin.com>
+References: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sparc: Replace one-element array with flexible array
- member
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Sam Ravnborg <sam@ravnborg.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111200155.164621-3-thorsten.blum@linux.dev>
- <83a95dfe-533b-468c-8dd4-439157c0e1cf@embeddedor.com>
- <7F05D8B9-E13A-4331-895A-65D92649B42B@linux.dev>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <7F05D8B9-E13A-4331-895A-65D92649B42B@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tAbZm-000Ufm-35
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:3392
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 1
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfHa+NKPoBioclL97zjB+tkTx2MStVy2whHsMvU/IrZDFAb9zBAtYvUjw7huurA4lLrhI8Xv9k+JDtPgEt+vDPci9ATpy6/E/5VVHD5VVXhjULMnd+xOD
- /nYBuuU1Z7JBGhiGg0HxZ7ljUGBGwXfhJoCqgBZqHJpRaVJmJbrN5MSaFkhQkBqB5TTG7tAkZFPJsC1tH0Za5N00bWyvthstkx7rdHPcT2C6OWAfMYQrfoIm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240923100010.97470-1-angelogioacchino.delregno@collabora.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
+On Mon, 23 Sep 2024 12:00:07 +0200, AngeloGioacchino Del Regno wrote:
+> This series adds support for the start-year property and removes the
+> custom handling of the RTC_MIN_YEAR_OFFSET (which is, effectively, doing
+> the exact same).
+> 
+> The start_secs timestamp was set to match the previous one from the
+> custom behavior so that there is no time drift on any device after
+> applying this.
+> 
+> [...]
 
+Applied, thanks!
 
-On 11/11/24 14:45, Thorsten Blum wrote:
-> On 11. Nov 2024, at 21:20, Gustavo A. R. Silva wrote:
->> On 11/11/24 14:01, Thorsten Blum wrote:
->>> Replace the deprecated one-element array with a modern flexible array
->>> member in the struct hvtramp_descr.
->>> Additionally, 15 unnecessary bytes are allocated for hdesc, but instead
->>
->> 15? unnecessary?
-> 
-> hvtramp_mapping is 16 bytes and the size is calculated as follows:
-> 
->    (16 * num_kernel_image_mappings - 1)
-> 
-> which is 15 bytes too many for any number of mappings because hdesc
-> includes the first map. It probably should have been:
-> 
->    16 * (num_kernel_image_mappings - 1)
+[2/3] rtc: mt6359: Add RTC hardware range and add support for start-year
+      https://git.kernel.org/abelloni/c/34bbdc12d04e
+[3/3] rtc: mt6359: Use RTC_TC_DOW hardware register for wday
+      https://git.kernel.org/abelloni/c/d6f471a74790
 
-Ah yes, that opening parenthesis before `sizeof(struct hvtramp_mapping)`
-was misplaced.
+Best regards,
 
-> 
-> unless I'm missing something.
-> 
->> It seems this struct is a candidate for `__counted_by()`
-> 
-> Yes, but sparc doesn't seem to support it?
-> 
->> Now the code is broken because it's allocating `num_kernel_image_mappings - 1`
->> elements instead of `num_kernel_image_mappings`.
-> 
-> Ah sorry, missed that and will fix in v2 shortly.
-
-Thanks
---
-Gustavo
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
