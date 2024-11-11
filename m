@@ -1,88 +1,142 @@
-Return-Path: <linux-kernel+bounces-403626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37209C3843
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:15:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCC99C3849
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C2D2822AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:15:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1001C21631
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E991547F5;
-	Mon, 11 Nov 2024 06:15:25 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D16818E1F;
-	Mon, 11 Nov 2024 06:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310EC155327;
+	Mon, 11 Nov 2024 06:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QvXQdnzP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA003B1A2;
+	Mon, 11 Nov 2024 06:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731305724; cv=none; b=eo/mPQ6LrVRBvttnREwpHI+1HiJGLj0rVkGfwNWarwy5gXvdYDn7thYgHZoneY9i8YOxTMnQ5Xilv89XcTjZ4tm3doPLT/etL0C3nC6Oo5oVEDwRzHdoD5BeYC+d9JSB8mhRto1mMEjAa52T/29XDtUNtydS73plLn5d+F2EVsY=
+	t=1731305859; cv=none; b=d1n4nyZY7Zm059hW318P3k3L7ux7LvKy2Xy7w/f9LSkY71IqawBoI52W2eL8vv/DGiGhIBo0s5Poc5IIHYRRqCTrJAnXQZUJ5q7HtMRRmpZZyBHrYf+D1oORhJRaL+KEiFAV/m6wpiNRl18ZnuF64HNwB78fEyFGGAJxk0V9bYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731305724; c=relaxed/simple;
-	bh=djhqMcvNei+15HbeeSkpFbxE/FBQ5+n7EBel/b2ljMo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=Y3pDHKs4rhTiJ3O33jjEG1Y/h2FbZkRGj+CMUg4qhvvzaesXiTS/83DqNbJIa+ubLbye0VJ1IuJjATc6oQO0Xd2GYxlwjSWfWg7VQzU/Pb3h2A2wsN3aN5DgpusI4J82uW3nnBKJlMZqd6s977THwtq/Fwfwsfzyrhvs0gTTMo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76731a0f44ff-0251b;
-	Mon, 11 Nov 2024 14:15:17 +0800 (CST)
-X-RM-TRANSID:2ee76731a0f44ff-0251b
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee26731a0f423d-1b859;
-	Mon, 11 Nov 2024 14:15:17 +0800 (CST)
-X-RM-TRANSID:2ee26731a0f423d-1b859
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: martin.lau@linux.dev
-Cc: eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH] samples: bpf: Remove unused variable
-Date: Sun, 10 Nov 2024 22:15:14 -0800
-Message-Id: <20241111061514.3257-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1731305859; c=relaxed/simple;
+	bh=ncjbv0XqcOfZzaJmbOfOv+5qicSMAB21heGShx92YTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rl9ySRBLg6OggBWeIHY/wy7ORwBSNe2OpsphqbD3825DR8/7uIRNu6wNEdoXC1e6Ib5ht0f024gI5pHSMsXAG2djNik8qPloBynu1hlkjnDkToqd3nh+9zZh2Em1iL+ir6+LBKP/mAzSU/oKNspw2rUFKUmFx1Ydgi3IPW5ZdO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QvXQdnzP; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731305858; x=1762841858;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ncjbv0XqcOfZzaJmbOfOv+5qicSMAB21heGShx92YTE=;
+  b=QvXQdnzPkhos+xv7IWzx5myavSgcDu8a3zwv6iDms+OLD3+LTQxDvNSg
+   rk8vcxIHm3JdG4qE5e/i0gKpaTVO9NTh62N+ZK/Mj52RF79xtZXFWmykL
+   fctVZSH1gH8wpbEHXN58zYjyJur43RCR7p/CvQsomXVIAcLOu9+iBbqi/
+   RTfhIhCHshy5WZ3VxmiLdjL35Qkw8qeVxRQYnSdSHlbis+69oBjNtB3t0
+   dnrYaxkkjHmC0Hg8fjc35NLcukhn2fghWRA3Vn+OSBTx6pmX3b+PywgxM
+   ua4+x5jnFMmzgD25QFZZxoHbsRwAok4/v0eZMofaHTwiT2PMy8tiSQEYn
+   g==;
+X-CSE-ConnectionGUID: 3Bp7ecOJTfCuizI0j6e3Hw==
+X-CSE-MsgGUID: /FDLnMy0RbG98vSD0Uaa4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="42500681"
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="42500681"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:17:37 -0800
+X-CSE-ConnectionGUID: UcLni4JlRH2QesEAdpU4AA==
+X-CSE-MsgGUID: BcXks8rnT8SdkKne2iF2/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="86920847"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:17:33 -0800
+Message-ID: <c1592c50-e903-4ee5-a560-530792fcbae7@intel.com>
+Date: Mon, 11 Nov 2024 08:17:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf tools: Fix typos Muliplier -> Multiplier
+To: Andrew Kreimer <algonell@gmail.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Liang Kan <kan.liang@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <20241108134728.25515-1-algonell@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241108134728.25515-1-algonell@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The variable is never referenced in the code, just remove it.
+On 8/11/24 15:47, Andrew Kreimer wrote:
+> There are some typos in fprintf messages.
+> Fix them via codespell.
+> 
+> Signed-off-by: Andrew Kreimer <algonell@gmail.com>
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
- samples/bpf/xdp2skb_meta_kern.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-diff --git a/samples/bpf/xdp2skb_meta_kern.c b/samples/bpf/xdp2skb_meta_kern.c
-index d5631014a176..af29a1bde4e4 100644
---- a/samples/bpf/xdp2skb_meta_kern.c
-+++ b/samples/bpf/xdp2skb_meta_kern.c
-@@ -32,7 +32,7 @@ SEC("xdp_mark")
- int _xdp_mark(struct xdp_md *ctx)
- {
- 	struct meta_info *meta;
--	void *data, *data_end;
-+	void *data;
- 	int ret;
- 
- 	/* Reserve space in-front of data pointer for our meta info.
--- 
-2.17.1
-
-
+> ---
+>  tools/perf/util/intel-bts.c | 2 +-
+>  tools/perf/util/intel-pt.c  | 2 +-
+>  tools/perf/util/tsc.c       | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+> index 3ea82d5e8d2e..a7c589fecb98 100644
+> --- a/tools/perf/util/intel-bts.c
+> +++ b/tools/perf/util/intel-bts.c
+> @@ -808,7 +808,7 @@ static int intel_bts_synth_events(struct intel_bts *bts,
+>  static const char * const intel_bts_info_fmts[] = {
+>  	[INTEL_BTS_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
+>  	[INTEL_BTS_TIME_SHIFT]		= "  Time Shift         %"PRIu64"\n",
+> -	[INTEL_BTS_TIME_MULT]		= "  Time Muliplier     %"PRIu64"\n",
+> +	[INTEL_BTS_TIME_MULT]		= "  Time Multiplier    %"PRIu64"\n",
+>  	[INTEL_BTS_TIME_ZERO]		= "  Time Zero          %"PRIu64"\n",
+>  	[INTEL_BTS_CAP_USER_TIME_ZERO]	= "  Cap Time Zero      %"PRId64"\n",
+>  	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
+> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> index 3fe67bf652b6..30be6dfe09eb 100644
+> --- a/tools/perf/util/intel-pt.c
+> +++ b/tools/perf/util/intel-pt.c
+> @@ -4110,7 +4110,7 @@ static int intel_pt_parse_vm_tm_corr_args(struct intel_pt *pt)
+>  static const char * const intel_pt_info_fmts[] = {
+>  	[INTEL_PT_PMU_TYPE]		= "  PMU Type            %"PRId64"\n",
+>  	[INTEL_PT_TIME_SHIFT]		= "  Time Shift          %"PRIu64"\n",
+> -	[INTEL_PT_TIME_MULT]		= "  Time Muliplier      %"PRIu64"\n",
+> +	[INTEL_PT_TIME_MULT]		= "  Time Multiplier     %"PRIu64"\n",
+>  	[INTEL_PT_TIME_ZERO]		= "  Time Zero           %"PRIu64"\n",
+>  	[INTEL_PT_CAP_USER_TIME_ZERO]	= "  Cap Time Zero       %"PRId64"\n",
+>  	[INTEL_PT_TSC_BIT]		= "  TSC bit             %#"PRIx64"\n",
+> diff --git a/tools/perf/util/tsc.c b/tools/perf/util/tsc.c
+> index 2e33a20e1e1b..511a517ce613 100644
+> --- a/tools/perf/util/tsc.c
+> +++ b/tools/perf/util/tsc.c
+> @@ -119,7 +119,7 @@ size_t perf_event__fprintf_time_conv(union perf_event *event, FILE *fp)
+>  	size_t ret;
+>  
+>  	ret  = fprintf(fp, "\n... Time Shift      %" PRI_lu64 "\n", tc->time_shift);
+> -	ret += fprintf(fp, "... Time Muliplier  %" PRI_lu64 "\n", tc->time_mult);
+> +	ret += fprintf(fp, "... Time Multiplier %" PRI_lu64 "\n", tc->time_mult);
+>  	ret += fprintf(fp, "... Time Zero       %" PRI_lu64 "\n", tc->time_zero);
+>  
+>  	/*
 
 
