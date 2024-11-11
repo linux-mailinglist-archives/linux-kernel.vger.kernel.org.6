@@ -1,126 +1,195 @@
-Return-Path: <linux-kernel+bounces-403834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B419C3B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:51:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9456D9C3B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 004701C21648
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE1D1F20FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA8316726E;
-	Mon, 11 Nov 2024 09:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="odeVkTyJ"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5204E15665E;
+	Mon, 11 Nov 2024 09:51:05 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FDA157A46
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6E112C54B;
+	Mon, 11 Nov 2024 09:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318686; cv=none; b=XE5+tM4yMn+XPyv+qjjSNk2XIoaI/eqoqA15kCPzfN88oXhoeQ1u7/UFKWCeShl0nLwLoEpb7Pz4VIOeGwSEtqbhOQlw5qoC0MDykqsl4XVSWoB7zP8TpXKWmSMj71R1u68g5ghPSzKBQ6xB1GqqHCt2m3RRWtTomk6TyM9DmzQ=
+	t=1731318664; cv=none; b=IDyb9dFS7eVuw99+WpCpWtBNhcljA3/kesq1g10XPYQsPhcJY3GkdNPAR6qfkaPeqPx1BUfrGE5NCZoKSv8FsPIbq/sKsqup2dw7GSqtagd4qXDxYh8E7wqwagrhBx8X9w8eGOTvsAgoOsZA2blICngdLgZV7vM/I5DDwzn1fI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318686; c=relaxed/simple;
-	bh=FAFR0+tSOv4I8gRENdRAuULdCjfZHDr1M0BGBxx8hmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U9kg6oOJVNhyGL+5PLB5K2Whk1bxcOzlmmC1M163vGyKPvxDAzCVD135JBx1lLpcVBREFBIM+DgiUlpsumGxDIlvCj3cB6GYLpNO68Fkio93WjU1m/AyJrsYAdP+AzCBZZ+a4lGMvPeLsUK8tHCmqWcWFQG7NObjVMczZvmteYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=odeVkTyJ; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e5ffbc6acbso2544451b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:51:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731318683; x=1731923483; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=guSru76DQNk4jTAiYkWrlXoJU1Cr/ZCthqHp1IjuiWw=;
-        b=odeVkTyJv1v2P0UX/0OcEwDEvehyj4DRJKNr8/0dAvf6PVUx3iCPfW5Xq99Jghuczv
-         /A04CRdkwaHSKwWcc/5JC5+a+JBiU4KpCne5vKThi2gDfJRWHZw68x2W9MxccmjLqdUt
-         t8uKL1BDdNUH3DoVkU/H4+kNIAK6+U/lKca0U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731318683; x=1731923483;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=guSru76DQNk4jTAiYkWrlXoJU1Cr/ZCthqHp1IjuiWw=;
-        b=LmBE+m9H69KLfL5DYnCvihTDNmDQg6wwkyEkxNQVuQJtJV8s0qPeLaAQ5tIrsAU18B
-         2b3SxV4yvy5cgnryJguTgYyoO0zTpWxX4T1bpHgB8NwJycSPZO5d54kHOxdQOx5fARV7
-         yt998DedUeUEZUnSDNbmEnZf2iqi4Gtq7/+Ju+g5j48ex/6pytrh6+QG6tnYMMZZ4a+9
-         ki2QQSciTrr/MgpPUSeZivMHd5nX9AOq2kskvE6ckYbSTplfLgJGOGV4cNhOKoAMCYRY
-         KJ4PG8Vy4U3wr1axx7kFBFCxD2+88bJaOEBoxqRG35MdoBFBP0gwS5IjKKo0+dpu12+Y
-         zHKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyrJecHw+BJnC7rvdO30hGvnmCJDHwjl7BOP0IMelnb+vPFR2XJt6w2NiGlnsu9yOPJgzpsAf9btyKU84=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwm/quAuy+3UqcFpkBjtUAMsO/LGVRJFYnkP1v1roAZr5ao6sn
-	FI5NkqyVGoCRyxePsCZvOJbJerW7HSaWYz6/Vp7z3xd+0tD5C1bE0QfqXXHSRw==
-X-Google-Smtp-Source: AGHT+IG0E+pWn2Nhc1Tx7OrG49FBDcEDXCgNq4jPe83YpmSRM4g+0j589dM2a8bt6edqHtXly6EVuA==
-X-Received: by 2002:a05:6808:1a01:b0:3e6:5908:1776 with SMTP id 5614622812f47-3e7946952camr11345320b6e.15.1731318682973;
-        Mon, 11 Nov 2024 01:51:22 -0800 (PST)
-Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:ec9f:d26:733c:7acf])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5b48c6sm8075164a12.18.2024.11.11.01.51.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 01:51:22 -0800 (PST)
-From: Sung-Chi <lschyi@chromium.org>
-To: 
-Cc: Sung-Chi <lschyi@chromium.org>,
-	Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: [PATCH v2 2/2] dt-bindings: mfd: Add properties for thermal sensor cells
-Date: Mon, 11 Nov 2024 17:50:31 +0800
-Message-ID: <20241111095045.1218986-2-lschyi@chromium.org>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-In-Reply-To: <20241111095045.1218986-1-lschyi@chromium.org>
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241111095045.1218986-1-lschyi@chromium.org>
+	s=arc-20240116; t=1731318664; c=relaxed/simple;
+	bh=HC/ogAR3Zp78Y0WWpVUF9wh3e+CQs2kaSl+coBmIIHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l4IAdLdf1QPBUlCn7/mxeSjiNpOgjh+ipwD+oZeBjaiBlWjyu9MaNQ7jN78wdFoy4ajkuNwDdchu8TmM31C0BT35248PrBpJLXyIO2KHdosTFAd43itbrmyCQ91NZmWgA9iw0+fBsOxIlQMf3FtG6y1piBXglzYheb9s9NZ/pCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Xn4Vl5DHNz1TB4C;
+	Mon, 11 Nov 2024 17:48:31 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2C4C0180064;
+	Mon, 11 Nov 2024 17:50:58 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 11 Nov 2024 17:50:57 +0800
+Message-ID: <64a81255-b634-0d36-860a-bf5dc9b070a8@huawei.com>
+Date: Mon, 11 Nov 2024 17:50:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Content-Language: en-US
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+CC: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
+	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
+	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>
+References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+ <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-The cros_ec supports reading thermal values from thermal sensors
-connect to it. Add the property '#thermal-sensor-cells' bindings, such
-that thermal framework can recognize cros_ec as a valid thermal device.
 
-Change-Id: I95a22c0f1a69de547fede5f0f9c43cbd60820789
-Signed-off-by: Sung-Chi <lschyi@chromium.org>
----
- Changes in v2:
-   - Add changes for DTS binding.
----
- Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-index aac8819bd00b..c7d63e3aacd2 100644
---- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-+++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-@@ -96,6 +96,9 @@ properties:
-   '#gpio-cells':
-     const: 2
- 
-+  '#thermal-sensor-cells':
-+    const: 1
-+
-   gpio-controller: true
- 
-   typec:
--- 
-2.47.0.277.g8800431eea-goog
+On 2024/11/9 20:40, Kuan-Wei Chiu wrote:
+> Hi Jinjie,
+> 
+> On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
+>> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+>> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+>> has assigned before, and the error path only free the suite->log's stream
+>> memory but not set it to NULL in string_stream_destroy(), so the later
+>> string_stream_clear() of suite->log in kunit_init_suite() will cause
+>> below UAF bug.
+>>
+>> Set stream pointer to NULL after free in string_stream_destroy()
+>> to fix it.
+>>
+>> 	Unable to handle kernel paging request at virtual address 006440150000030d
+>> 	Mem abort info:
+>> 	  ESR = 0x0000000096000004
+>> 	  EC = 0x25: DABT (current EL), IL = 32 bits
+>> 	  SET = 0, FnV = 0
+>> 	  EA = 0, S1PTW = 0
+>> 	  FSC = 0x04: level 0 translation fault
+>> 	Data abort info:
+>> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>> 	[006440150000030d] address between user and kernel address ranges
+>> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>> 	Dumping ftrace buffer:
+>> 	   (ftrace buffer empty)
+>> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+>> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+>> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+>> 	Hardware name: linux,dummy-virt (DT)
+>> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> 	pc : string_stream_clear+0x54/0x1ac
+>> 	lr : string_stream_clear+0x1a8/0x1ac
+>> 	sp : ffffffc080b47410
+>> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+>> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+>> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+>> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+>> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+>> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+>> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+>> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+>> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+>> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+>> 	Call trace:
+>> 	 string_stream_clear+0x54/0x1ac
+>> 	 __kunit_test_suites_init+0x108/0x1d8
+>> 	 kunit_exec_run_tests+0xb8/0x100
+>> 	 kunit_module_notify+0x400/0x55c
+>> 	 notifier_call_chain+0xfc/0x3b4
+>> 	 blocking_notifier_call_chain+0x68/0x9c
+>> 	 do_init_module+0x24c/0x5c8
+>> 	 load_module+0x4acc/0x4e90
+>> 	 init_module_from_file+0xd4/0x128
+>> 	 idempotent_init_module+0x2d4/0x57c
+>> 	 __arm64_sys_finit_module+0xac/0x100
+>> 	 invoke_syscall+0x6c/0x258
+>> 	 el0_svc_common.constprop.0+0x160/0x22c
+>> 	 do_el0_svc+0x44/0x5c
+>> 	 el0_svc+0x48/0xb8
+>> 	 el0t_64_sync_handler+0x13c/0x158
+>> 	 el0t_64_sync+0x190/0x194
+>> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+>> 	---[ end trace 0000000000000000 ]---
+>> 	Kernel panic - not syncing: Oops: Fatal exception
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  lib/kunit/string-stream.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+>> index 54f4fdcbfac8..00ad518b730b 100644
+>> --- a/lib/kunit/string-stream.c
+>> +++ b/lib/kunit/string-stream.c
+>> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+>>  
+>>  	string_stream_clear(stream);
+>>  	kfree(stream);
+>> +	stream = NULL;
+> 
+> Thanks for proposing the fix. However, I don't believe it fully
+> resolves the UAF issue. Changing the stream pointer value within
+> string_stream_destroy() doesn't update the caller's stream pointer, so
+> the issue remains.
+> 
+> I think the correct approach would be to set the log pointer to NULL in
+> the error path of kunit_debugfs_create_suite() to address the issue.
+> Let me know if I've missed something or overlooked an obvious detail.
+> 
+> Here's the proposed code:
+> 
+> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+> index d548750a325a..b25d214b93e1 100644
+> --- a/lib/kunit/debugfs.c
+> +++ b/lib/kunit/debugfs.c
+> @@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+> 
+>  err:
+>  	string_stream_destroy(suite->log);
+> -	kunit_suite_for_each_test_case(suite, test_case)
+> +	suite->log = NULL;
+> +	kunit_suite_for_each_test_case(suite, test_case) {
+>  		string_stream_destroy(test_case->log);
+> +		test_case->log = NULL;
+> +	}
 
+It looks fine, test it and if ok, will update it.
+
+>  }
+> 
+>  void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
+> 
+> 
+>>  }
+>>  
+>>  static void resource_free_string_stream(void *p)
+>> -- 
+>> 2.34.1
+>>
+>>
 
