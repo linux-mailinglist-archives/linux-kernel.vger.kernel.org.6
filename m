@@ -1,160 +1,250 @@
-Return-Path: <linux-kernel+bounces-404710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A739C47CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:13:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959A09C47B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692F6B276EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:41:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83412B226D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A961B5ED1;
-	Mon, 11 Nov 2024 20:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D0B1B1D61;
+	Mon, 11 Nov 2024 20:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fadq8Ssa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="th4JP1D9"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FCB1AD5D8;
-	Mon, 11 Nov 2024 20:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4F81B140D
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357666; cv=none; b=Cf6wIxiEt2Wg8+dnMjcWVamlGBK2KONwrpqlc7dvmowTRn2uwZBnQdxC2fO6i4Uw//NcOBepMN14woZr1yhMJq2qWwjdJsXxUmAbKGaprKgKgZha2uZpzAkJ0ww1R+ho0grTj8g5p3mm7t97uixlM0WTTuZZg4TYuepEsFM8mNk=
+	t=1731357849; cv=none; b=ozs7bKD9RaDczkxiOus+ryekfw+MOxDPiCzUAMoiLQU/zxdTogkgD3RCMtw0tv2Pkw+hY1gRON4KobX0+2FLGD6dD/TSpGb+ycD3O6gOJb4ebQ4f8Tp7EMwVPdya+iF+RyQUzKFrPTnNJbGmHg/dPYfH5rsTKAD/bbg4sE4FtS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357666; c=relaxed/simple;
-	bh=PZaCN9EPbcxDm/Qe14VyzI6oXNbmlunaeGU2DgI/vbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YGiG1yEtrIyM6v0p10Iyl193OdF+59ub9TcnTLPDJ/A3QMiHKY6IDF01O2I36mDowMbHJq56S6kPeI4e8VLGWpKc3UBYA0Kn4aswHDFH9y9Rabf1gWJHHc1MsVlmsPhhOwVMRTeNnu+z/d4eetvGbeRpEh1uk6L9K1i3IieVBjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fadq8Ssa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F634C4CECF;
-	Mon, 11 Nov 2024 20:41:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357665;
-	bh=PZaCN9EPbcxDm/Qe14VyzI6oXNbmlunaeGU2DgI/vbw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fadq8SsatNNa8beqtst3Wmd9WWa0zD8pa70OmBHd4IaIBfrI6TcTwSaDeX2RcUuVl
-	 NAywBadU8GdGP6nCM83Fg0WryPN8VMSVRgUAM3QDzwfMVhUMWPoyun5q3MmnXLq0Qq
-	 zQLPPZ8W2Jpdklhb/5niCu3iFDj+4FVVskAmVwsURfBAqxS2vMPOiMknXtzAXyLw+1
-	 yzbMgZsD960kpgQEPWWlaqpRQIS9QWtfOhQnqIv5xT0AdlngVBtPkLJxdkSh2irrEF
-	 GqTycp11XGNvm6jFMRKk+xA4RmvANwl3zw67jJgaBgw/KukWHbeseBv+Qn3GBZ2Fqt
-	 x8QsQ0gooK36g==
-Date: Mon, 11 Nov 2024 14:41:04 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Jean Delvare <jdelvare@suse.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
- attributes
-Message-ID: <20241111204104.GA1817395@bhelgaas>
+	s=arc-20240116; t=1731357849; c=relaxed/simple;
+	bh=pu1bE2oQyz4PIzvOKsfMnSgcPR/vFs7LU5lLf0wlKVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bhH9a/MLCZlmxErPqEIsQtjCZqOYVrBL25CQ3n8/i7c/Zs9u7Bph7lcMXpkGnUl9BBOYQew7/JhC8pjtevoqznIIm/zOeXfWvy74XoXdOKETdWA1lE5ruCA2GXqgGq8Eo5PRvBTFmU4vb/GR/8U+4Q1kgfjjO18WRdlnL8Jthwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=th4JP1D9; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460a8d1a9b7so1601cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731357847; x=1731962647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wJ6uFcLfCmrIfQWM4xw2qYGBJMJQRq1denWE0S9O56A=;
+        b=th4JP1D92CK3cfrjBEFzfpzxnrBrwJZUBTJIbHXzUfJkZ5RmdqnaEnn+3K2ZvNLqgs
+         qIIr9Yos1Y8AxPSEJCov1/XvepIiV2VZqbMykG2K3XF7pK3pK/7wYXHBqrYHX9/hkMZI
+         Jb0krIPMLBExfk3O6+Jgj0vVk/61RghT0qh8e42Mz033A/k3DaWdTAvZDVs131T/ZLrD
+         kvTMZhmeIDKunUCd1VqnGp6t0zvRAk9QHiUFaRPHYuDBL3kEJooHwZFEKrguq4PLkNBi
+         B0vbK/mloWngKj8P4pPBx53Exj761aTLx4+FOLhKsQ+bet60Tcid9Uu2JTfvizeEI+jl
+         uIrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731357847; x=1731962647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wJ6uFcLfCmrIfQWM4xw2qYGBJMJQRq1denWE0S9O56A=;
+        b=FA9ylDXq1W+YpA0TIHh2nMvg7nPwTWiBRlUYmL3lymETNaBaFaGDaNGCAQAnyqQydx
+         dHU1l4TQve8+G7uc6MUietr4xSwMl3FnimP9Wp+35nnj3h6VpnZMIRzGA5a1ZvudP5lu
+         CfnMI4AjXIlv519kp7UPbEZO1Yuux3JQh0alCo2XoyZhM3XzjQ7FCtefKAnoef2Yrbr1
+         yZYx6wc1KSYBYiZdWpCFQIWHuX/hZ+7pVwPTwPIo0H6GJK8ohCHh5CI/shWUkyjsCqN7
+         lnTNLOTuJTT6hgQEgqoYhLT62YQtzZ8LTDdCDlVvBfpv8kRxsDosmmm6gfome2jCd890
+         oANQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxQd1Ocln7fooW3C1I9jS7M4ao5qFGisCTUTxwGAPj4jMxPT+TvZcIb4y7XbYVRLdNzrZEvMFz36EeyJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN7Ph69kvv2yV8VUKfvx4Mk6UkioZDqrA8JtX+owNVfrZBwzmO
+	o41eP7xcYzJbHt+wQHmr+jKPPGFzjj+E0BFn7+dZkpVWgTkAN3QWxoXejcFeQGd/bSBwNsdQwYx
+	5sHOHCdR7dhKmYlPYB3GnfbhDQpOhPJbWj+M+
+X-Gm-Gg: ASbGncsI34vIsoukbjXMhMOZJ03SB/5L0dJKZFssIRRwmH+RKj1Swe3ogQxkxbVICuh
+	hNwK8s8Pcdyu0tYWTcHTlrTCNHEYONFEBRh2f9Og1FZ0AH2yNND6QtHNW873QQw==
+X-Google-Smtp-Source: AGHT+IHN/VTkEzYYSUDWzDF6ttzYMfgpvSZeOr4oSBlM+xWBr13kyerRjwvS3iVYPd8P6qhTDE91E+q+P0S+4DZZ1Yw=
+X-Received: by 2002:ac8:57cb:0:b0:462:c961:ab88 with SMTP id
+ d75a77b69052e-4633f2ba6b3mr499291cf.13.1731357846333; Mon, 11 Nov 2024
+ 12:44:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f93e6b2393301df6ac960ef6891b1b2812da67f3.1731005223.git.leonro@nvidia.com>
+References: <20241026051410.2819338-1-xur@google.com> <20241026051410.2819338-4-xur@google.com>
+ <44193ca7-9d31-4b58-99cc-3300a6ad5289@gmail.com>
+In-Reply-To: <44193ca7-9d31-4b58-99cc-3300a6ad5289@gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Mon, 11 Nov 2024 12:43:54 -0800
+Message-ID: <CAF1bQ=ShjoEQZGPjDoy_B6wZdD_jr-RevVXwEDPA_-o-Ba0Omg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] Adjust symbol ordering in text output section
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Wei Yang <richard.weiyang@gmail.com>, 
+	workflows@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Maksim Panchenko <max4bolt@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	Yabin Cui <yabinc@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>, 
+	Sriraman Tallam <tmsriram@google.com>, Stephane Eranian <eranian@google.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> The Vital Product Data (VPD) attribute is not readable by regular
-> user without root permissions. Such restriction is not really needed
-> for many devices in the world, as data presented in that VPD is not
-> sensitive and access to the HW is safe and tested.
-> 
-> This change aligns the permissions of the VPD attribute to be accessible
-> for read by all users, while write being restricted to root only.
-> 
-> For the driver, there is a need to opt-in in order to allow this
-> functionality.
+Thanks for reporting this issue!
 
-I don't think the use case is very strong (and not included at all
-here).
+I'm assuming your kernel build enables dead code elimination and
+uses the --ffunction-sections compiler flag. Without this patch, all
+the functions
+-- I think there are only .text.unlikely.* and .text.* are grouped
+together in the
+final vmlinux. This patch modifies the linker script to place
+.text.unlikely.* functions
+ before .text.* functions. I've examined arch/mips/kernel/vmlinux.lds.S, an=
+d
+haven't found any obvious issue.
 
-If we do need to do this, I think it's a property of the device, not
-the driver.
+Can you send me the following?
+(1) the kernel build command
+(2) System.map without the patch
+(3) System.map with the patch
 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  drivers/pci/vpd.c   | 9 ++++++++-
->  include/linux/pci.h | 7 ++++++-
->  2 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-> index e4300f5f304f..7c70930abaa0 100644
-> --- a/drivers/pci/vpd.c
-> +++ b/drivers/pci/vpd.c
-> @@ -156,6 +156,7 @@ static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
->  			    void *arg, bool check_size)
->  {
->  	struct pci_vpd *vpd = &dev->vpd;
-> +	struct pci_driver *drv;
->  	unsigned int max_len;
->  	int ret = 0;
->  	loff_t end = pos + count;
-> @@ -167,6 +168,12 @@ static ssize_t pci_vpd_read(struct pci_dev *dev, loff_t pos, size_t count,
->  	if (pos < 0)
->  		return -EINVAL;
->  
-> +	if (!capable(CAP_SYS_ADMIN)) {
-> +		drv = to_pci_driver(dev->dev.driver);
-> +		if (!drv || !drv->downgrade_vpd_read)
-> +			return -EPERM;
-> +	}
-> +
->  	max_len = check_size ? vpd->len : PCI_VPD_MAX_SIZE;
->  
->  	if (pos >= max_len)
-> @@ -317,7 +324,7 @@ static ssize_t vpd_write(struct file *filp, struct kobject *kobj,
->  
->  	return ret;
->  }
-> -static BIN_ATTR(vpd, 0600, vpd_read, vpd_write, 0);
-> +static BIN_ATTR_RW(vpd, 0);
->  
->  static struct bin_attribute *vpd_attrs[] = {
->  	&bin_attr_vpd,
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 573b4c4c2be6..b8fed74e742e 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -943,6 +943,10 @@ struct module;
->   *		how to manage the DMA themselves and set this flag so that
->   *		the IOMMU layer will allow them to setup and manage their
->   *		own I/O address space.
-> + * @downgrade_vpd_read: Device doesn't require root permissions from the users
-> + *              to read VPD information. The driver doesn't expose any sensitive
-> + *              information through that interface and safe to be accessed by
-> + *              unprivileged users.
->   */
->  struct pci_driver {
->  	const char		*name;
-> @@ -960,7 +964,8 @@ struct pci_driver {
->  	const struct attribute_group **dev_groups;
->  	struct device_driver	driver;
->  	struct pci_dynids	dynids;
-> -	bool driver_managed_dma;
-> +	bool driver_managed_dma : 1;
-> +	bool downgrade_vpd_read : 1;
->  };
->  
->  #define to_pci_driver(__drv)	\
-> -- 
-> 2.47.0
-> 
+Best regards,
+
+-Rong
+
+On Sat, Nov 9, 2024 at 7:39=E2=80=AFAM Klara Modin <klarasmodin@gmail.com> =
+wrote:
+>
+> Hi,
+>
+> On 2024-10-26 07:14, Rong Xu wrote:
+> > When the -ffunction-sections compiler option is enabled, each function
+> > is placed in a separate section named .text.function_name rather than
+> > putting all functions in a single .text section.
+> >
+> > However, using -function-sections can cause problems with the
+> > linker script. The comments included in include/asm-generic/vmlinux.lds=
+.h
+> > note these issues.:
+> >    =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely if=
+ dead
+> >     code elimination is enabled, so these sections should be converted
+> >     to use ".." first.=E2=80=9D
+> >
+> > It is unclear whether there is a straightforward method for converting
+> > a suffix to "..".
+> >
+> > This patch modifies the order of subsections within the text output
+> > section. Specifically, it repositions sections with certain fixed patte=
+rns
+> > (for example .text.unlikely) before TEXT_MAIN, ensuring that they are
+> > grouped and matched together. It also places .text.hot section at the
+> > beginning of a page to help the TLB performance.
+> >
+> > Note that the limitation arises because the linker script employs glob
+> > patterns instead of regular expressions for string matching. While ther=
+e
+> > is a method to maintain the current order using complex patterns, this
+> > significantly complicates the pattern and increases the likelihood of
+> > errors.
+> >
+> > This patch also changes vmlinux.lds.S for the sparc64 architecture to
+> > accommodate specific symbol placement requirements.
+>
+> With this patch (622240ea8d71a75055399fd4b3cc2b190e44d2e2 in
+> next-20241108) my Edgerouter 6P hangs on boot (Cavium Octeon III,
+> mips64, running in big endian). It's using device tree passed from the
+> vendored u-boot (attached in case it's relevant).
+>
+> Disabling dead code elimination does not fix the issue.
+>
+> Please let me know if there's anything else you need.
+>
+> Regards,
+> Klara Modin
+>
+> >
+> > Co-developed-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Han Shen <shenhan@google.com>
+> > Signed-off-by: Rong Xu <xur@google.com>
+> > Suggested-by: Sriraman Tallam <tmsriram@google.com>
+> > Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+> > Tested-by: Yonghong Song <yonghong.song@linux.dev>
+> > Tested-by: Yabin Cui <yabinc@google.com>
+> > Change-Id: I5202d40bc7e24f93c2bfb2f0d987e9dc57dec1b1
+> > ---
+> >   arch/sparc/kernel/vmlinux.lds.S   |  5 +++++
+> >   include/asm-generic/vmlinux.lds.h | 19 ++++++++++++-------
+> >   2 files changed, 17 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/arch/sparc/kernel/vmlinux.lds.S b/arch/sparc/kernel/vmlinu=
+x.lds.S
+> > index d317a843f7ea9..f1b86eb303404 100644
+> > --- a/arch/sparc/kernel/vmlinux.lds.S
+> > +++ b/arch/sparc/kernel/vmlinux.lds.S
+> > @@ -48,6 +48,11 @@ SECTIONS
+> >       {
+> >               _text =3D .;
+> >               HEAD_TEXT
+> > +             ALIGN_FUNCTION();
+> > +#ifdef CONFIG_SPARC64
+> > +             /* Match text section symbols in head_64.S first */
+> > +             *head_64.o(.text)
+> > +#endif
+> >               TEXT_TEXT
+> >               SCHED_TEXT
+> >               LOCK_TEXT
+> > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vm=
+linux.lds.h
+> > index eeadbaeccf88b..fd901951549c0 100644
+> > --- a/include/asm-generic/vmlinux.lds.h
+> > +++ b/include/asm-generic/vmlinux.lds.h
+> > @@ -553,19 +553,24 @@
+> >    * .text section. Map to function alignment to avoid address changes
+> >    * during second ld run in second ld pass when generating System.map
+> >    *
+> > - * TEXT_MAIN here will match .text.fixup and .text.unlikely if dead
+> > - * code elimination is enabled, so these sections should be converted
+> > - * to use ".." first.
+> > + * TEXT_MAIN here will match symbols with a fixed pattern (for example=
+,
+> > + * .text.hot or .text.unlikely) if dead code elimination or
+> > + * function-section is enabled. Match these symbols first before
+> > + * TEXT_MAIN to ensure they are grouped together.
+> > + *
+> > + * Also placing .text.hot section at the beginning of a page, this
+> > + * would help the TLB performance.
+> >    */
+> >   #define TEXT_TEXT                                                   \
+> >               ALIGN_FUNCTION();                                       \
+> > +             *(.text.asan.* .text.tsan.*)                            \
+> > +             *(.text.unknown .text.unknown.*)                        \
+> > +             *(.text.unlikely .text.unlikely.*)                      \
+> > +             . =3D ALIGN(PAGE_SIZE);                                  =
+ \
+> >               *(.text.hot .text.hot.*)                                \
+> >               *(TEXT_MAIN .text.fixup)                                \
+> > -             *(.text.unlikely .text.unlikely.*)                      \
+> > -             *(.text.unknown .text.unknown.*)                        \
+> >               NOINSTR_TEXT                                            \
+> > -             *(.ref.text)                                            \
+> > -             *(.text.asan.* .text.tsan.*)
+> > +             *(.ref.text)
+> >
+> >
+> >   /* sched.text is aling to function alignment to secure we have same
 
