@@ -1,142 +1,137 @@
-Return-Path: <linux-kernel+bounces-404683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4D09C46CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:28:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 225129C4763
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EE228A930
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B7AB2337A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7DD19F46D;
-	Mon, 11 Nov 2024 20:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB8F1B1422;
+	Mon, 11 Nov 2024 20:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ofLOlyzN"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="p+EaXxd+"
+Received: from smtp-out.freemail.hu (fmfe28.freemail.hu [46.107.16.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3B91EB36
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA1C8468;
+	Mon, 11 Nov 2024 20:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356864; cv=none; b=Zg3evj1oSZrHfSsUIz5FpbjzF14R5U9SxZQBHO+rN9E19u49MIoG4Z8z0WzptbdCoyfQpLD1hasU13BWyrQTlbR/Ssqm91o7Z2rOQ3Kshw4XuBrfxXFKRKEocpjF72iUboonPlVmulVlbzkvF3eRO3tOmzAgovVLwHl+bSGjSqI=
+	t=1731357442; cv=none; b=ZWYVpvUdj6oE0cFwt9gCJVhVcHXLLKeOUiXo9EFUIGUB7dFTfLlo0oZjtcc7qXNqyBw4m0MhfwK6uXyVHaOjvHcLYKhH3SHZ5wdLEBxd1vmN8oAdgSwz3LDsDGmpsZER5OgggjO69JRqK2hFpeBr/jE6kiUXCZMUkg4fSlbg1Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356864; c=relaxed/simple;
-	bh=5xq9A5l1i9Igv1/7m4w9nDZzIX3x5k17d5L7FGPm2Dw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RZMEW+TBzCfDMx94GWvGZE1j0xNzfg4WudpVI0Z4jwxVFP2vHV+Fx0GQHmB+DG+4E37eP614aI5IAg3RtmsnbN3MFUBDzEVQu/o6bpoMETt9nGRZuphIWXc7m2i0sn1+Vi2H2kO3NU8hrBlR9svZeYsRPz4INyaRLqApsojMBYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ofLOlyzN; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1497F20003;
-	Mon, 11 Nov 2024 20:27:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731356860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5xq9A5l1i9Igv1/7m4w9nDZzIX3x5k17d5L7FGPm2Dw=;
-	b=ofLOlyzNIds6ghTysRaYefoQ/z63D8cK21p0RetzdsuNqG0btKw7ivJnvxeltPe6YSDwDE
-	x/o04SiiiPXBU5F+QGqR1t1HfAPswzOsII8N7VlyTinZDHYTM3CvMazrK1gMVyNH+fDo8Y
-	Fd3sZqrwIQQ1bqLsl57VQLwzT/y8o2TtjvsdXEXK6FbgkLWaQjE//0//AO+17qznrUWt03
-	wZhltzUMD8Fv0Lao+7Ms7c3EVfCXELA14BIhkC/dyihvZeKyD6gmnokskqpUlzPwh449Gg
-	EVHp4STgwKh+iDvtQoAb4zJwN7WtJ2Qj1ECB8cswqBQWAzN0m1epZKHohYSLkA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,  "Gupta, Anshuman"
- <anshuman.gupta@intel.com>,  "Deak, Imre" <imre.deak@intel.com>,  Richard
- Weinberger <richard@nod.at>,  "Vignesh Raghavendra" <vigneshr@ti.com>,
-  "De Marchi, Lucas" <lucas.demarchi@intel.com>,  Thomas =?utf-8?Q?Hellstr?=
- =?utf-8?Q?=C3=B6m?=
- <thomas.hellstrom@linux.intel.com>,  Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
-  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
- <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Jani Nikula
- <jani.nikula@linux.intel.com>,  Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
-  "Weil, Oren jer" <oren.jer.weil@intel.com>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-  "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/10] mtd: intel-dg: wake card on operations
-In-Reply-To: <CY5PR11MB6366051E35678864805BC89CED582@CY5PR11MB6366.namprd11.prod.outlook.com>
-	(Alexander Usyskin's message of "Mon, 11 Nov 2024 11:29:47 +0000")
-References: <20241022104119.3149051-1-alexander.usyskin@intel.com>
-	<20241022104119.3149051-7-alexander.usyskin@intel.com>
-	<Zx-mPQSHXv5Teq_j@intel.com>
-	<CY5PR11MB621157335FFB1089F49CEF8B954A2@CY5PR11MB6211.namprd11.prod.outlook.com>
-	<CY5PR11MB6366EF9CA6552ADF6E01A557ED4B2@CY5PR11MB6366.namprd11.prod.outlook.com>
-	<Zyk5kueKlusKlwqM@intel.com>
-	<CY5PR11MB636622B23A3646D58A70A920ED522@CY5PR11MB6366.namprd11.prod.outlook.com>
-	<Zy1EAIPEaY8Wlh-h@intel.com>
-	<CY5PR11MB6366769459115688B8AA100AED5F2@CY5PR11MB6366.namprd11.prod.outlook.com>
-	<CY5PR11MB6366051E35678864805BC89CED582@CY5PR11MB6366.namprd11.prod.outlook.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Mon, 11 Nov 2024 21:27:37 +0100
-Message-ID: <87msi5o6rq.fsf@bootlin.com>
+	s=arc-20240116; t=1731357442; c=relaxed/simple;
+	bh=Gmogja/cDdKp/sSar/DZuJv8d1D/g9ALttb3MTCX7X8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kncp3VE7xPHxuvrUk6ezae7D8XjGu6rxkjt2vBr6usrppQQUV3aUn9nWRLqKmxeRgwd445zi02ogo3/6xYs0d+c5++saZWV7ajXsfQdiOu3zvlPlMFv38bSx0pjYeCkw3MUxl9qya6nZHYI958tM+zvkUWZYIEh902SsWgyMI8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=p+EaXxd+ reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnLly4dFszsql;
+	Mon, 11 Nov 2024 21:30:54 +0100 (CET)
+Message-ID: <5f28d3d4-fa55-425c-9dd2-5616f5d4c0ac@freemail.hu>
+Date: Mon, 11 Nov 2024 21:28:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] netfilter: uapi: Fix file names for case-insensitive
+ filesystem.
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Florian Westphal <fw@strlen.de>, kadlec@netfilter.org,
+ davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20241111163634.1022-1-egyszeregy@freemail.hu>
+ <20241111165606.GA21253@breakpoint.cc> <ZzJORY4eWl4xEiMG@calendula>
+Content-Language: hu
+From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
+In-Reply-To: <ZzJORY4eWl4xEiMG@calendula>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731357055;
+	s=20181004; d=freemail.hu;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=2684; bh=I/fsxw1x4bWN9ougYPy1wE6Zy6ScLkgxwwxi4txHsY8=;
+	b=p+EaXxd+Xl2WQ76AfbJ+QIMltF95vherQMohmpDmlSHLW88pc/ZEbrD1PEQqsquL
+	rH3XLlhIekESYnt0DwFS2/vFfyPctZjNdyR0Br3PGyBdaQ7FA7opg0wzq+jT51oLwkH
+	yOC2azGiGqqoWKk1dLf7IkJ1VuM3WWm90tr2plNL3zluBJkMBrXsSFjRZOes6jpKXJT
+	VtIndpDGzSdElngrn2LKGE30CeQGzqC7uUVoZl0LaUTa2YhvOh4YDH5nCG5tqattV3V
+	PVJTCmbvqdV1zhqTQAs1uTRZoBSIQW5f5b2HqJuUQ54k3pa5rt+eDYRxkXj1bttAhOG
+	jAWKfQef8w==
 
-Hi Alexander,
+2024. 11. 11. 19:34 keltezéssel, Pablo Neira Ayuso írta:
+> On Mon, Nov 11, 2024 at 05:56:06PM +0100, Florian Westphal wrote:
+>> egyszeregy@freemail.hu <egyszeregy@freemail.hu> wrote:
+>>>   rename net/ipv4/netfilter/{ipt_ECN.c => ipt_ECN_TARGET.c} (98%)
+>>>   rename net/netfilter/{xt_DSCP.c => xt_DSCP_TARGET.c} (98%)
+>>>   rename net/netfilter/{xt_HL.c => xt_HL_TARGET.c} (100%)
+>>>   rename net/netfilter/{xt_RATEEST.c => xt_RATEEST_TARGET.c} (99%)
+>>>   rename net/netfilter/{xt_TCPMSS.c => xt_TCPMSS_TARGET.c} (99%)
+>>
+>> No, please, if we have to do this, then lets merge the targets
+>> (uppercase name) into the match (lowercase), i.e. most of the contents
+>> of xt_DSCP.c go into xt_dscp.c.
+> 
+> Agreed, please don't do this.
+> 
+> We have seen people sending patches like this one for several years,
+> this breaks stuff.
 
-Please reduce the context when answering, otherwise it's hard to find
-all places where you commented.
+These all files are broken in case-insensitive filesystem.
 
->> > > > That's the part that I'm not sure if I agree. if I remember from s=
-ome
->> > > > experiments in the past,
->> > > > when you call to wake up the child, the parent will wakeup first a=
-nyway.
->> > > >
->> > > The child (mtd device) does not exist at this point of time.
->> > > To create MTD device, the partition table should be provided
->> > > and it read directly from flash that should be powered to do read.
->> >
->> > I don't understand... you have the mtd->dev at this point... this is
->> > the one you should be touching, not the mtd->dev.parent... even at the
->> > probe, but moreover on everywhere else as well.
->> >
->>=20
->> At the probe time I do not have dev->mtd, but now I see you point here.
->> I'll separate power management:
->> - probe before dev->mtd creation will use aux_dev->dev (that will be mtd-
->> >dev.parent later)
->> - mtd functions will use mtd->dev
->>=20
->> Is this that you have in mind?
->
-> I've tried it and found out that mtd->dev is not initialized if partition=
-s are present [1].
-> Miquel - this may be the reason why other mtd drivers use pci or platform
-> devices to manage runtime pm.
-> Or I have missed something?
+warning: the following paths have collided (e.g. case-sensitive paths
+on a case-insensitive filesystem) and only one from the same
+colliding group is in the working tree:
 
-Please keep in mind there is _a lot_ of history behind mtd, and
-sometimes choices from the past cannot be simply "fixed" without
-breaking userspace. The problem with mtd is that the "mtd" structure
-defines nothing with precision. It may be a controller, a chip, a
-partition, or whatever mix of those. In this particular case, I believe
-you are mentioning the KEEP_PARTITIONED_MASTER configuration, which by
-default is unset, which means you'll loose the "top level" mtd device?
+   'include/uapi/linux/netfilter/xt_CONNMARK.h'
+   'include/uapi/linux/netfilter/xt_connmark.h'
+   'include/uapi/linux/netfilter/xt_DSCP.h'
+   'include/uapi/linux/netfilter/xt_dscp.h'
+   'include/uapi/linux/netfilter/xt_MARK.h'
+   'include/uapi/linux/netfilter/xt_mark.h'
+   'include/uapi/linux/netfilter/xt_RATEEST.h'
+   'include/uapi/linux/netfilter/xt_rateest.h'
+   'include/uapi/linux/netfilter/xt_TCPMSS.h'
+   'include/uapi/linux/netfilter/xt_tcpmss.h'
+   'include/uapi/linux/netfilter_ipv4/ipt_ECN.h'
+   'include/uapi/linux/netfilter_ipv4/ipt_ecn.h'
+   'include/uapi/linux/netfilter_ipv4/ipt_TTL.h'
+   'include/uapi/linux/netfilter_ipv4/ipt_ttl.h'
+   'include/uapi/linux/netfilter_ipv6/ip6t_HL.h'
+   'include/uapi/linux/netfilter_ipv6/ip6t_hl.h'
+   'net/netfilter/xt_DSCP.c'
+   'net/netfilter/xt_dscp.c'
+   'net/netfilter/xt_HL.c'
+   'net/netfilter/xt_hl.c'
+   'net/netfilter/xt_RATEEST.c'
+   'net/netfilter/xt_rateest.c'
+   'net/netfilter/xt_TCPMSS.c'
+   'net/netfilter/xt_tcpmss.c'
 
-However in general I believe the "framework" struct device is maybe less
-relevant than the "bus" struct device when it comes to runtime PM, so
-actually I would eventually expect this device to be used?
 
-> [1] https://elixir.bootlin.com/linux/v6.12-rc6/source/drivers/mtd/mtdcore=
-.c#L1078
+What is your detailed plans to solve it? Maybe the contents of both upper and 
+lower case *.h files can be merged to a common header files like 
+"xt_dscp_common.h" but what about the *.c sources? For example if xt_DSCP.c 
+removed and its content merged to xt_dscp.c before, what is the plan with kernel 
+config options of CONFIG_NETFILTER_XT_TARGET_DSCP which was made for only 
+xt_DSCP.c source to use in Makefile? Can we remove all of 
+CONFIG_NETFILTER_XT_TARGET* config in the future which will lost their *.c 
+source files?
 
-Thanks,
-Miqu=C3=A8l
+obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
+...
+obj-$(CONFIG_NETFILTER_XT_MATCH_DSCP) += xt_dscp.o
+
 
