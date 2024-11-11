@@ -1,106 +1,146 @@
-Return-Path: <linux-kernel+bounces-403504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9F29C3693
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:35:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D7F9C3695
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19611C21758
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F71281297
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E95145B16;
-	Mon, 11 Nov 2024 02:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4ED85C5E;
+	Mon, 11 Nov 2024 02:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S4nbMRNX"
-Received: from mail-m244.xmail.ntesmail.com (mail-m244.xmail.ntesmail.com [45.195.24.4])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LM20ucsf"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE94B13B592;
-	Mon, 11 Nov 2024 02:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F83823CB;
+	Mon, 11 Nov 2024 02:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731292477; cv=none; b=MuuVuglh9Qn+OK1Eh4DWsMLGjp1EzCJ7FBTGhUUTB/V5ueRDSVqhj6J2GlhaHVCZHxVkwijO2DZKtXNHOPbk5l7ircexcaocZIjg8WRXZYyV/aWG8URg6KCasFGCD7vHRXmXcS3EBT2DX/ZXpXRX+NcbyajCacj3Lvj7JzhZO98=
+	t=1731292506; cv=none; b=IQ9zdIaZTFOMz3frmLUVEQ9mylfLwy8vI5APAoZa6DRXHpbnl3lYUXP63NTrXojsZRJE8TwznJg5p9+FEwL3vANw9oID7DmC602id4bjkndYpzE3VHDAuMqy7yRaFYLuFSb+8eALSaJ/3b1o/LwAiVPafnStyXIwvRnW9hy3QLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731292477; c=relaxed/simple;
-	bh=k31nfqs4XLuqABw+CYqLzarfy971jg3wjtFI/OPU2Vo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JX4bXWCvhQ2JxSXIRZ9/mnX+zMIoop5CF1JF6hntTkvQjGkKOdXBqxcIOWZbx+fNxhbHQ6NvnSJKUiIFN9vPPrT+aNGhzZMS+HAfler/1SvJwmstHkgO1ffbr7MSzTPlYxmex7H+e8vyv6BZOvNaT7GG3IFLuewTrGpyExj0stA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S4nbMRNX; arc=none smtp.client-ip=45.195.24.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 258a586a;
-	Mon, 11 Nov 2024 10:34:25 +0800 (GMT+08:00)
-From: Ye Zhang <ye.zhang@rock-chips.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	heiko@sntech.de,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com,
-	tao.huang@rock-chips.com,
-	finley.xiao@rock-chips.com,
-	tim.chen@rock-chips.com,
-	elaine.zhang@rock-chips.com
-Subject: [PATCH v4 4/4] gpio: rockchip: Set input direction when request irq
-Date: Mon, 11 Nov 2024 10:34:12 +0800
-Message-Id: <20241111023412.3466161-5-ye.zhang@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
-References: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
+	s=arc-20240116; t=1731292506; c=relaxed/simple;
+	bh=N4u/9Qlg4NarCD+XkWN+IgphnpzAjEM/upXCTa11kBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=V1FiKJJvt9Ee2PxFIOSWJcn3hw5d33jHqhFqCbV20dxotEfefSUPrAmp9IQ2fEEvYvx+VZq4mbXMp5Ov0C2Yg822I7GpUFNO5FbGDuthyyFi3Wg9drJqWDzWwpXGR+/CSR0HMSEAaoAf8zHwddpQ/3cUZrjBQF22IG2yk+/sunQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LM20ucsf; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731292500; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=CU3B1EyfsLW6KcRonKtvq9y8mTUGD04GuiPTTgA6r48=;
+	b=LM20ucsfEJnQhI6Hqm2An/mNK8R329IqH0702yjy8Lc1+KOY3DIYJKeNV+M3pRjWhyDh/WFhzXgNll5nrsEsXhJBiap9YK38tNkF5XHvYtBG5m+3sq9uSJPRKHfsGw9mWge+yYK2VN+WoXCko4iM3ml723PpFzmD3eTlPCC/WUw=
+Received: from 30.221.130.244(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJ3wtz9_1731292499 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 11 Nov 2024 10:34:59 +0800
+Message-ID: <916771cb-6131-4f81-8aed-33877dbdde97@linux.alibaba.com>
+Date: Mon, 11 Nov 2024 10:34:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ08fSVZIHUJMHU9JH0xLGUNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
-	NVSktLVUpCS0tZBg++
-X-HM-Tid: 0a9319128a6a09d8kunm258a586a
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODo6Exw4IzIfCiwBMw4xGDwN
-	LBRPCRlVSlVKTEhKSUJJT01MSUtKVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
-	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBQkxJNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=S4nbMRNXQ3eIAPG7NtbSJ2jTJJEm67pkoMh0tQThPPA69ReLy4qvuPUjnOY8dTv+sNY4CgwNRfrSFeCtucZnG4AiAXrQi9aIIKakdR2IK1wbuG6HTjYpmljpsbNf5C1TfPrjKAvLCLlQ7Boe02/1kr/q8nEsO6PQotNNHFxn1qA=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=wA6Lfw0pVK4KIHrVEahwSZAHmfqAeDyaeLLez6Fbs2s=;
-	h=date:mime-version:subject:message-id:from;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in read_cache_folio
+To: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <66f574eb.050a0220.211276.0076.GAE@google.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <66f574eb.050a0220.211276.0076.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since the GPIO can only generate interrupts when its direction is set to
-input, it is set to input before requesting the interrupt resources.
 
-Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
----
- drivers/gpio/gpio-rockchip.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-index b7a43e492965..40c2476699aa 100644
---- a/drivers/gpio/gpio-rockchip.c
-+++ b/drivers/gpio/gpio-rockchip.c
-@@ -476,8 +476,11 @@ static int rockchip_irq_reqres(struct irq_data *d)
- {
- 	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(d);
- 	struct rockchip_pin_bank *bank = gc->private;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
- 
--	return gpiochip_reqres_irq(&bank->gpio_chip, d->hwirq);
-+	rockchip_gpio_direction_input(&bank->gpio_chip, hwirq);
-+
-+	return gpiochip_reqres_irq(&bank->gpio_chip, hwirq);
- }
- 
- static void rockchip_irq_relres(struct irq_data *d)
--- 
-2.34.1
+On 2024/9/26 22:51, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    88264981f208 Merge tag 'sched_ext-for-6.12' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16084107980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba9c4620d9519d1f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+> compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11084107980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a0d880580000
+> 
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/384ffdcca292/non_bootable_disk-88264981.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e96d7b6835d2/vmlinux-88264981.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0e1e66778641/Image-88264981.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+> 
+> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> Mem abort info:
+>    ESR = 0x0000000086000006
+>    EC = 0x21: IABT (current EL), IL = 32 bits
+>    SET = 0, FnV = 0
+>    EA = 0, S1PTW = 0
+>    FSC = 0x06: level 2 translation fault
+> user pgtable: 4k pages, 52-bit VAs, pgdp=00000000462cce00
+> [0000000000000000] pgd=080000004468e003, p4d=08000000466cc003, pud=0800000046cd6003, pmd=0000000000000000
+> Internal error: Oops: 0000000086000006 [#1] PREEMPT SMP
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 3265 Comm: syz-executor218 Tainted: G    B              6.11.0-syzkaller-08481-g88264981f208 #0
+> Tainted: [B]=BAD_PAGE
+> Hardware name: linux,dummy-virt (DT)
+> pstate: 61400809 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=-c)
+> pc : 0x0
+> lr : filemap_read_folio+0x44/0xf4 mm/filemap.c:2363
+> sp : ffff800088e6bac0
+> x29: ffff800088e6bac0 x28: f1f000000474e000 x27: 0000000020ffd000
+> x26: 0000000000000000 x25: 0000000000000000 x24: 0000000002100cca
+> x23: f6f0000006cd5c00 x22: 0000000000000000 x21: f6f0000006cd5c00
+> x20: 0000000000000000 x19: ffffc1ffc02e3300 x18: ffff800088e6bc20
+> x17: ffff8000804fee60 x16: ffff80008052fe10 x15: 0000000000000001
+> x14: 0000000000000000 x13: 0000000000000003 x12: 00000000000706a3
+> x11: 0000000000000001 x10: ffff800081f19060 x9 : 0000000000000000
+> x8 : fff07ffffd1f0000 x7 : fff000007f8e9d60 x6 : 0000000000000002
+> x5 : ffffc1ffc02e3300 x4 : 0000000000000000 x3 : faf0000005491240
+> x2 : 0000000000000000 x1 : ffffc1ffc02e3300 x0 : f6f0000006cd5c00
+> Call trace:
+>   0x0
+>   do_read_cache_folio+0x18c/0x29c mm/filemap.c:3821
+>   read_cache_folio+0x14/0x20 mm/filemap.c:3853
+>   freader_get_folio+0x1a8/0x1f8 lib/buildid.c:72
+>   freader_fetch+0x44/0x164 lib/buildid.c:115
+>   __build_id_parse.isra.0+0x98/0x2a8 lib/buildid.c:300
+>   build_id_parse+0x18/0x24 lib/buildid.c:354
+>   do_procmap_query+0x670/0x7a0 fs/proc/task_mmu.c:534
+>   procfs_procmap_ioctl+0x2c/0x44 fs/proc/task_mmu.c:613
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>   __se_sys_ioctl fs/ioctl.c:893 [inline]
+>   __arm64_sys_ioctl+0xac/0xf0 fs/ioctl.c:893
+>   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>   invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
+>   el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
+>   do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
+>   el0_svc+0x34/0xec arch/arm64/kernel/entry-common.c:712
+>   el0t_64_sync_handler+0x100/0x12c arch/arm64/kernel/entry-common.c:730
+>   el0t_64_sync+0x19c/0x1a0 arch/arm64/kernel/entry.S:598
+> Code: ???????? ???????? ???????? ???????? (????????)
+> ---[ end trace 0000000000000000 ]---
+> 
 
+Sorry, I don't think the syz subsystems is correct
+for this report (it seems related to procfs), so
+
+#syz set subsystems: fs
+
+Thanks,
+Gao Xiang
 
