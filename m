@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-404753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DE79C47D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:15:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245499C47B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA774B376CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CB51F21CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FD31F7080;
-	Mon, 11 Nov 2024 20:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E570A1F7576;
+	Mon, 11 Nov 2024 20:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Ep/fl7n"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eZn6Py1d"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0E31F6692
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23B61BBBDA
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358521; cv=none; b=oQYUSpo4ObqfWEA7+0KzuXaitD28UU2St01xZuwX6NsoS2UNLl2HFVt4O59BDcqOAI/IuotCXDJWpfIMTi0mc/2K0SgjrMsE5QJnj2TL9iAcrAWYLt7kWbvXL5Fkc9MbQBuDbcNSHI11ZzD2dZEeKE2JWBeb1oH2ZaAjlt5E0ec=
+	t=1731358533; cv=none; b=TXdfIfyQhYxTB3EsRvB5nqk+xh5nMsupamgeTXM51ttgMhfma9ELBvAOuLFxhWRleTPFrcgLY4vOOnphba6pOwOo+PpAJY9p8DvE/EgNlukKWwZ6FcVrwdsmYAT/DA8woFKP2JOpKj9UmE80I7QhERMrScZtHm0FNVIXv2i7myM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358521; c=relaxed/simple;
-	bh=uX6t1+V+VWD9TPr8MaOqU9mwvP8DvU6pbc0DsbnErqI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XmWpD4Txr8xqkHxx6MoRH3uBuSs/9n6+5TJk2MrykX7TeoiBY6/9cgzqoEZAA7dDit4q8lmniL/ryarR0Rf5X/ZiqsBT17aYpuS6TGM+HAQCyV0z+opLiI8/9ClfBOZ1yI1gT7OoladgdLpnmIhTIU/hgN6d3blcFYwA9WK5CFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Ep/fl7n; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e33152c8225so10007122276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:55:19 -0800 (PST)
+	s=arc-20240116; t=1731358533; c=relaxed/simple;
+	bh=LgM4AE7Tzv9AeqRy7Q+sooaI9o29H4tTVyGDKuUHyHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lIy9JXGO6xd36uOW8SYB30A9X+qpUI8i6erFSdPcwCV9LR40VcFcI43bbZ28OEeAj1GKAekj3G1VjVtzLB2wkN5W7I93F4k8MxdT9bKiaO1Cnh0FeZjW3AAygoZi26dMIITihN8Pi3ChG/u/u1YG7JtnBjJ5N9RqC8JLT9W0BH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eZn6Py1d; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9ed7d8d4e0so762266366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:55:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731358519; x=1731963319; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=akNUNHRHwFgLbLvzRySURA4LLcUajIyMqiu+hcl7K7Q=;
-        b=0Ep/fl7n+5y5UYg5kNDRcQfH7L0ChD/RLAJMwgzG8n09KSJim+JgsGNR4cHFyaO6AX
-         f8x7w0yHc0Hx5z5Qh4ybw4/i2bRK/ZVhFkZlqCYrI8EEiEC1x/BZhBKF82d04XdPc0SK
-         rDwilq0tQinXEqi2dxySBQtUWiHN+5FEbRNuQx+jLgt+lUMQPIuPirzy0hwlhiRXcEGE
-         VHkGGpO5jmjZHuTVArFdTHljY5KpRMqY87VK+2V8HoDwE6/jHQcwvlIV4BfPjXdzleyz
-         dgEe4+sXrDMQP250AafQJQjZombVbA4JmsPtQgxGV972JXFMDDMQJQemjNGer3vc2Ybv
-         iwqg==
+        d=broadcom.com; s=google; t=1731358528; x=1731963328; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5PzwaJfpjCWLO4jufnqOHdSuICRaS5WL/Td3je3MgZo=;
+        b=eZn6Py1dfumgs1cm6dhEDE1YmLGi3J74BijEyhzL8aDGHwnAclF7mOsMXgUog28FuH
+         ZI8X/Z6w/HKJxtsRVXdTJAJOciZlVF0JxYneHt4YQX/uHtL+85wbFv4x+PfsdwhowN+w
+         yl+UTGGsugdjwNq0G+d7jXtSbgFldcX2bdfVo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358519; x=1731963319;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=akNUNHRHwFgLbLvzRySURA4LLcUajIyMqiu+hcl7K7Q=;
-        b=mNWG/BJJZkyn9As7NAL5bFLUs8Q6HR2s6+e1+C8m/K5xV9pkuw/+Sd2jwh1deu3863
-         2Y0BfBUH585uSD4SRQ+Hxk5Q0fk/8otvIQyBTEyduxLh73E+UmkF3KTEPLTyDgX/zi4T
-         tYHR5u5wVDMTqbrUNF2o5fuQvE2UfrP9saRkyB4iN0gwFafu7jMfictqbSPqvdAOBW4P
-         2m4SN13zsUo06/drg0I3MATrzVXA25SY851oNYtDt9yPIEtQmEsIoRfhxUtjkdHoq4ow
-         Ks73H4KzWohTMRpnQ+2uMqN7VBjxO7CCOEMm3+d5/UUY400Av2pYxrMmpvoI9iDAfZNE
-         wx7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5wiu/OYEekiOBNWXKdyzfQPdch5KJeUDg3EcgdT2hgbVyHjuN8LBqzQthqSC2NiC3tSM6/CqNFC8GqJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVyPyvpaHhI230+ygWG0deL/LL965pnEjJHamOquc7Jm3DNj7M
-	MELiUeBxbpuoivSK0iSP8amhLDX7NVNwX9KnkK2ttLlNSXh/EHNIrWHNnzytd4QNhiSPE4b5LnV
-	B2Q==
-X-Google-Smtp-Source: AGHT+IHpj1lpqX7UFCEsgQvhYlvsKEu/LqdCTRcWojtEX3DucdiIWzMOj6Fj6hWiR/dHK1I4p9BRUvnrioQ=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:53af:d9fa:522d:99b1])
- (user=surenb job=sendgmr) by 2002:a25:bcc2:0:b0:e2b:e955:d58a with SMTP id
- 3f1490d57ef6-e337f8fa240mr13216276.7.1731358518983; Mon, 11 Nov 2024 12:55:18
- -0800 (PST)
-Date: Mon, 11 Nov 2024 12:55:06 -0800
-In-Reply-To: <20241111205506.3404479-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1731358528; x=1731963328;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5PzwaJfpjCWLO4jufnqOHdSuICRaS5WL/Td3je3MgZo=;
+        b=lgp/h5A6gzc5OZsEMDJtokRu9PrtgxviNpmol03zlqKpagjpYEqTx+H+8FqbRq36w5
+         Bl+z0M+jLeJPuaEwwf/5BACYg2C+PTwB0sKYnaFTv7LLgAc0JD17v1SYzrBceeETfJ3n
+         pf23YYjyCBDHH9D1ZfIGpEQyboitzDPTsGRltblzQ5CHAFJ/ShNss7i8LVo2vgUdLv8j
+         wn9wEXN9BGcFKt/xrLdJYDxu7aXliv6oTENjSogrLKlkGYWclVLyLl9zWbr9hq3NZvhW
+         1lk8pH4dxMoGlUnMMhjPejeIgLAmKkkAH+MW0AinLKQaqz5jjYB2CVmm2AbCZCPDRzox
+         jRxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUlZ//fEQGB5PppXdFbNNXa7ttrNbg1MBGBxcbbSD6oOEp/vW2Rxo8xNkW4VSqxfyQjp2HS32egaKfqPis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVlWzXonhTMm/vcp/T/pyUtu6Qr1K0ysaocuLGAblt6OMTe7A3
+	JEzxn4xGRvehMlZacDrajlAESuklY71Uz7pg9jK7yovxD+NtxGPBKDSTBR9CnX8BzI+eueZ9vgC
+	Y3jnO0s60+r46okuRSoY6c185+r/Xit8xvLVm317T7JNEqsbwtyOqVnWzEFnU9gRd1nfysg82Yt
+	GigyLgrzPsoxJIB/K+C9SzaNWiAw==
+X-Google-Smtp-Source: AGHT+IHtHJN2wlO/dS5Ho/xwNaDeL38A3oTas8GP+XhFN9vBlIEyqtN762oFpzrjya5bJyQoWb9F5Nm6P8AF1PfXcNY=
+X-Received: by 2002:a17:907:2cc7:b0:a9e:6e77:3ecd with SMTP id
+ a640c23a62f3a-a9ef00191a8mr1012446866b.54.1731358527999; Mon, 11 Nov 2024
+ 12:55:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241111205506.3404479-1-surenb@google.com>
-X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
-Message-ID: <20241111205506.3404479-5-surenb@google.com>
-Subject: [PATCH 4/4] mm: move lesser used vma_area_struct members into the
- last cacheline
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com, surenb@google.com
+MIME-Version: 1.0
+References: <20241030033514.1728937-1-zack.rusin@broadcom.com>
+ <20241030033514.1728937-3-zack.rusin@broadcom.com> <CABgObfaRP6zKNhrO8_atGDLcHs=uvE0aT8cPKnt_vNHHM+8Nxg@mail.gmail.com>
+ <CABQX2QMR=Nsn23zojFdhemR7tvGUz6_UM8Rgf6WLsxwDqoFtxg@mail.gmail.com>
+ <Zy0__5YB9F5d0eZn@google.com> <CABQX2QNxFDhH1frsGpSQjSs3AWSdTibkxPrjq1QC7FGZC8Go-Q@mail.gmail.com>
+ <e3f943a7-a40a-45cb-b0d9-e3ed58344d8b@redhat.com> <CADH9ctD1uf_yBA3NXNQu7TJa_TPhLRN=0YZ3j2gGhgmaFRdCFg@mail.gmail.com>
+ <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com>
+In-Reply-To: <c3026876-8061-4ab2-9321-97cc05bad510@redhat.com>
+From: Doug Covelli <doug.covelli@broadcom.com>
+Date: Mon, 11 Nov 2024 15:55:17 -0500
+Message-ID: <CADH9ctBivnvP1tNcatLKzd8EDz8Oo6X65660j8ccxYzk3aFzCA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] KVM: x86: Add support for VMware guest specific hypercalls
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Zack Rusin <zack.rusin@broadcom.com>, Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Joel Stanley <joel@jms.id.au>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Move several vma_area_struct members which are rarely or never used
-during page fault handling into the last cacheline to better pack
-vm_area_struct. As a result vm_area_struct will fit into 3 cachelines
-as opposed to 4 cachelines before this change. New vm_area_struct layout:
+On Mon, Nov 11, 2024 at 1:49=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com>=
+ wrote:
+>
+> On 11/9/24 22:11, Doug Covelli wrote:
+> > On Sat, Nov 9, 2024 at 1:20=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.c=
+om> wrote:
+> >> On 11/8/24 06:03, Zack Rusin wrote:
+> >>>>> There's no spec but we have open headers listing the hypercalls.
+> >>>>> There's about a 100 of them (a few were deprecated), the full
+> >>>>> list starts here:
+> >>>>> https://github.com/vmware/open-vm-tools/blob/739c5a2f4bfd4cdda491e6=
+a6f6869d88c0bd6972/open-vm-tools/lib/include/backdoor_def.h#L97
+> >>>>> They're not well documented, but the names are pretty self-explenat=
+ory.
+> >>>>
+> >>>> At a quick glance, this one needs to be handled in KVM:
+> >>>>
+> >>>>     BDOOR_CMD_VCPU_MMIO_HONORS_PAT
+> >>>>
+> >>>> and these probably should be in KVM:
+> >>>>
+> >>>>     BDOOR_CMD_GETTIME
+> >>>>     BDOOR_CMD_SIDT
+> >>>>     BDOOR_CMD_SGDT
+> >>>>     BDOOR_CMD_SLDT_STR
+> >>>>     BDOOR_CMD_GETTIMEFULL
+> >>>>     BDOOR_CMD_VCPU_LEGACY_X2APIC_OK
+> >>>>     BDOOR_CMD_STEALCLOCK
+> >>>
+> >>> I'm not sure if there's any value in implementing a few of them.
+> >>
+> >> The value is that some of these depend on what the hypervisor does, no=
+t
+> >> on what userspace does.  For Hypervisor.framework you have a lot of
+> >> leeway, for KVM and Hyper-V less so. [..] From the KVM maintainers'
+> >> point of view, the feature you're adding might be used by others and
+> >> not just VMware Workstation.  Microsoft and Apple might see things
+> >> differently (Apple in particular has a much thinner wrapper around
+> >> the processor's virtualization capbilities).
+> >
+> > [...]
+> >
+> > the SGDT/SLDT/STR/SIDT backdoor calls these were added > 20
+> > years ago for SW that used these instructions from CPL3 which did not
+> > work well before VT/SVM were introduced.  These are really of no use
+> > on modern CPUs and will be blocked if the guest OS has enabled UMIP.
+> > [...]
+> >
+> > For stolen time the backdoor call is [...] currently
+> > really only supported by ESX (and only currently used by Photon OS) so
+> > I don't think adding that support to KVM is critical.
+>
+> Sounds good.  All I want is ensuring that someone with access to the
+> spec did the exercise.
+>
+> Still guessing, but for MMIO_HONORS_PAT we probably want to add a
+> separate KVM_CHECK_EXTENSION capability.
+>
+> Is BDOOR_CMD_VCPU_LEGACY_X2APIC_OK something where you can just return a
+> constant?
+>
+> This leaves just GETTIME and GETTIMEFULL.  If four hypercalls require
+> some care in the hypervisor (which may or may not be an in-kernel
+> implementation), that's not bad.  Can you share a bit more about these fo=
+ur?
 
-struct vm_area_struct {
-	union {
-		struct {
-			long unsigned int vm_start;      /*     0     8 */
-			long unsigned int vm_end;        /*     8     8 */
-		};                                       /*     0    16 */
-		struct callback_head vm_rcu ;            /*     0    16 */
-	} __attribute__((__aligned__(8)));               /*     0    16 */
-	struct mm_struct *         vm_mm;                /*    16     8 */
-	pgprot_t                   vm_page_prot;         /*    24     8 */
-	union {
-		const vm_flags_t   vm_flags;             /*    32     8 */
-		vm_flags_t         __vm_flags;           /*    32     8 */
-	};                                               /*    32     8 */
-	bool                       detached;             /*    40     1 */
+BDOOR_CMD_VCPU_MMIO_HONORS_PAT and BDOOR_CMD_VCPU_LEGACY_X2APIC_OK are not
+actually backdoor calls - they are flags returned by BDOOR_CMD_GET_VCPU_INF=
+O.
 
-	/* XXX 3 bytes hole, try to pack */
+BDOOR_CMD_VCPU_MMIO_HONORS_PAT is only ever set to 1 on ESX as it is only
+relevant for PCI passthru which is not supported on Linux/Windows/macOS.  I=
+IRC
+this was added over 10 years ago for some Infiniband device vendor to use i=
+n
+their driver although I'm not sure that ever materialized.
 
-	unsigned int               vm_lock_seq;          /*    44     4 */
-	struct list_head           anon_vma_chain;       /*    48    16 */
-	/* --- cacheline 1 boundary (64 bytes) --- */
-	struct anon_vma *          anon_vma;             /*    64     8 */
-	const struct vm_operations_struct  * vm_ops;     /*    72     8 */
-	long unsigned int          vm_pgoff;             /*    80     8 */
-	struct file *              vm_file;              /*    88     8 */
-	void *                     vm_private_data;      /*    96     8 */
-	atomic_long_t              swap_readahead_info;  /*   104     8 */
-	struct mempolicy *         vm_policy;            /*   112     8 */
+BDOOR_CMD_VCPU_LEGACY_X2APIC_OK indicates if it is OK to use x2APIC w/o
+interrupt remapping (e.g a virtual IOMMU).  I'm not sure if KVM supports th=
+is
+but I think this one can be set to TRUE unconditionally as we have no plans=
+ to
+use KVM_CREATE_IRQCHIP - if anything we would use KVM_CAP_SPLIT_IRQCHIP alt=
+hough
+my preference would be to handle all APIC/IOAPIC/PIC emulation ourselves
+provided we can avoid CR8 exits but that is another discussion.
 
-	/* XXX 8 bytes hole, try to pack */
+For now I think it makes sense to handle BDOOR_CMD_GET_VCPU_INFO at userlev=
+el
+like we do on Windows and macOS.
 
-	/* --- cacheline 2 boundary (128 bytes) --- */
-	struct vma_lock       vm_lock (__aligned__(64)); /*   128     4 */
+BDOOR_CMD_GETTIME/BDOOR_CMD_GETTIMEFULL are similar with the former being
+deprecated in favor of the latter.  Both do essentially the same thing whic=
+h is
+to return the host OS's time - on Linux this is obtained via gettimeofday. =
+ I
+believe this is mainly used by tools to fix up the VM's time when resuming =
+from
+suspend.  I think it is fine to continue handling these at userlevel.
 
-	/* XXX 4 bytes hole, try to pack */
+Doug
 
-	struct {
-		struct rb_node     rb (__aligned__(8));  /*   136    24 */
-		long unsigned int  rb_subtree_last;      /*   160     8 */
-	} __attribute__((__aligned__(8))) shared;        /*   136    32 */
-	struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     0 */
+> >> Anyway, one question apart from this: is the API the same for the I/O
+> >> port and hypercall backdoors?
+> >
+> > Yeah the calls and arguments are the same.  The hypercall based
+> > interface is an attempt to modernize the backdoor since as you pointed
+> > out the I/O based interface is kind of hacky as it bypasses the normal
+> > checks for an I/O port access at CPL3.  It would be nice to get rid of
+> > it but unfortunately I don't think that will happen in the foreseeable
+> > future as there are a lot of existing VMs out there with older SW that
+> > still uses this interface.
+>
+> Yeah, but I think it still justifies that the KVM_ENABLE_CAP API can
+> enable the hypercall but not the I/O port.
+>
+> Paolo
+>
 
-	/* size: 192, cachelines: 3, members: 17 */
-	/* sum members: 153, holes: 3, sum holes: 15 */
-	/* padding: 24 */
-	/* forced alignments: 3, forced holes: 2, sum forced holes: 12 */
-} __attribute__((__aligned__(64)));
-
-
-Memory consumption per 1000 VMAs becomes 48 pages:
-
-    slabinfo after vm_area_struct changes:
-     <name>           ... <objsize> <objperslab> <pagesperslab> : ...
-     vm_area_struct   ...    192   42    2 : ...
-
-
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- include/linux/mm_types.h | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
-
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 789bccc05520..c3755b680911 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -733,16 +733,6 @@ struct vm_area_struct {
- 	unsigned int vm_lock_seq;
- #endif
- 
--	/*
--	 * For areas with an address space and backing store,
--	 * linkage into the address_space->i_mmap interval tree.
--	 *
--	 */
--	struct {
--		struct rb_node rb;
--		unsigned long rb_subtree_last;
--	} shared;
--
- 	/*
- 	 * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_vma
- 	 * list, after a COW of one of the file pages.	A MAP_SHARED vma
-@@ -762,14 +752,6 @@ struct vm_area_struct {
- 	struct file * vm_file;		/* File we map to (can be NULL). */
- 	void * vm_private_data;		/* was vm_pte (shared mem) */
- 
--#ifdef CONFIG_ANON_VMA_NAME
--	/*
--	 * For private and shared anonymous mappings, a pointer to a null
--	 * terminated string containing the name given to the vma, or NULL if
--	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
--	 */
--	struct anon_vma_name *anon_name;
--#endif
- #ifdef CONFIG_SWAP
- 	atomic_long_t swap_readahead_info;
- #endif
-@@ -782,11 +764,28 @@ struct vm_area_struct {
- #ifdef CONFIG_NUMA_BALANCING
- 	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
- #endif
--	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
- #ifdef CONFIG_PER_VMA_LOCK
- 	/* Unstable RCU readers are allowed to read this. */
- 	struct vma_lock vm_lock ____cacheline_aligned_in_smp;
- #endif
-+	/*
-+	 * For areas with an address space and backing store,
-+	 * linkage into the address_space->i_mmap interval tree.
-+	 *
-+	 */
-+	struct {
-+		struct rb_node rb;
-+		unsigned long rb_subtree_last;
-+	} shared;
-+#ifdef CONFIG_ANON_VMA_NAME
-+	/*
-+	 * For private and shared anonymous mappings, a pointer to a null
-+	 * terminated string containing the name given to the vma, or NULL if
-+	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
-+	 */
-+	struct anon_vma_name *anon_name;
-+#endif
-+	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
- } __randomize_layout;
- 
- #ifdef CONFIG_NUMA
--- 
-2.47.0.277.g8800431eea-goog
-
+--=20
+This electronic communication and the information and any files transmitted=
+=20
+with it, or attached to it, are confidential and are intended solely for=20
+the use of the individual or entity to whom it is addressed and may contain=
+=20
+information that is confidential, legally privileged, protected by privacy=
+=20
+laws, or otherwise restricted from disclosure to anyone else. If you are=20
+not the intended recipient or the person responsible for delivering the=20
+e-mail to the intended recipient, you are hereby notified that any use,=20
+copying, distributing, dissemination, forwarding, printing, or copying of=
+=20
+this e-mail is strictly prohibited. If you received this e-mail in error,=
+=20
+please return the e-mail to the sender, delete it from your computer, and=
+=20
+destroy any printed copy of it.
 
