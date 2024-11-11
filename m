@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-404777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246AF9C47FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:24:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4169C4815
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B64283264
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:24:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFEE8B27D4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928631BA272;
-	Mon, 11 Nov 2024 21:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2XSLsWu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366A11A2846;
+	Mon, 11 Nov 2024 20:49:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEAD1AB52B;
-	Mon, 11 Nov 2024 21:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D8F13698E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731360264; cv=none; b=hDNgx0eD7bpKFsCtPG0RuFxW/3ui4CQd7QB14dX6nZKJGLQYIvfBcEA1LPVyV+0qmPmTQKa/dKVvkwlYNLSOmeR/2f4DEZgEu5Piv3SXMmiVHtwNImFrImNbX5NHk/opyWUTQcybQ4QgDY1VQIkR7pErS/x7IG5sVdweHJ1dmc0=
+	t=1731358146; cv=none; b=ImceYsAK4gjODSxNPECRjNZn8Qy6KMcszbvwEDKB5j+mSt0vXV/psq3OF8ttw67kRXQJMvgsxPbCirwmCIxrYmN7gP6NguUdEsEGMuWlUSPbRXzJ/oKfv0xJCogwtIJqyLRpkN1EnU2hU/MtIqSI30GPANV2VNQAxYRMgF3ElkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731360264; c=relaxed/simple;
-	bh=HB0kuKAWWrMtuX07WkanXAABx99ZqOF5K/K51IvRFXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dz/xNsgKKKesUIrVF8KXYw2NGF1a8QRt8JO02ZqvZR0aYOINPxsltY8XjxYpaoLLXGHdzR2UY/GDUysbjfxHosgjaYxe3n8O/EbjaNgT6g/cNPtA/JZ0eBEWk+wRUHUf9r3tVD99lT3hypyk3Ib7lU/K9aY5i6vHLvU+4u8Zml4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2XSLsWu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC7FC4CECF;
-	Mon, 11 Nov 2024 21:24:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731360263;
-	bh=HB0kuKAWWrMtuX07WkanXAABx99ZqOF5K/K51IvRFXA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L2XSLsWunbbgzyrqIeKSnRWpnnnj2wEztJGI6Hs6ag6JdtphJvDIbem+CxOvUYw0+
-	 wnt0eszF8GaRQFSqa0bRfmhnYmYCeB/sDIEmQerakDSzGRcwi3tiTdCxf5OIUpmit5
-	 Usp0j07alJ6NIAD0Oq0ky55uROVUtUYs3iwY+I4JsTmYFM221qMbNs8lvVvDNRlQ5P
-	 enB45y2icTYwxXHVhq+iK5aenPUZA3Sj8AsvluYr6ScHEfrhBX8ndpbmbRts3eGEa/
-	 sjnxMC0SEXxX1ofVmRjxhrooruAiKq0T4KbFL1aaRSOnS5RI8zP0EENhdGZRTCovj+
-	 Q/SvU06QCcsNA==
-Date: Mon, 11 Nov 2024 15:24:20 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-	Tony Luck <tony.luck@intel.com>, Hari Nagalla <hnagalla@ti.com>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Devarsh Thakkar <devarsht@ti.com>, devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux@ew.tq-group.com,
-	Tero Kristo <kristo@kernel.org>
-Subject: Re: [PATCH 2/5] dt-bindings: arm: ti: Add compatible for AM625-based
- TQMa62xx SOM family and carrier board
-Message-ID: <173136025956.1976607.11893890247843400314.robh@kernel.org>
-References: <cover.1730299760.git.matthias.schiffer@ew.tq-group.com>
- <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1731358146; c=relaxed/simple;
+	bh=ZW9SHPbDzvnkCVpJo+G/LIPTZwhy147bMPzwD8k+Aqs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WOteFbbC0U8LDu2AB4EahDeAcE/VW1JHOiXAXXqk10jwqFCszImsYZyJNb9FLMvfxchMxZ7RuXBW0+ZiVDoAnuufMS5z8486j8dHh2qNkcdOP2JJn0fHgrzb04fy3Sp59yq0hsI00O89EhATKFtCv+mP3C8vR3pxoR142bVj1/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6a9cb7efdso50470685ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:49:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731358144; x=1731962944;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wQfjBeegKWza/6sgH2MEBvG2A8qLJBSV74IIuFigZaE=;
+        b=C/+HqE/JV64H2om5mbaBSdWy0XZu2UCOXLwARWwfXBiyw9yF4d/JcS36flcceufgcC
+         MsWQXLwkq6RgWmRga4wuhLQFmWtkDiZGDYwncADVKQwVUsUx5d99piR02HQKu40CAuxr
+         EHgl+Jy1dTRjnZoqL5qftLfqSY9ZcNaJzuozgDDbK2cdAFhlLqLUzeRt3s6/JjDS3Z+G
+         CwdNIKQk8q4EgIiMPeVWCS5RBXue06vWBtzJXEad9qIkib7OoumKHmdAou6rMI5sqjLO
+         SURL8Mdj1djKvXCir8qKofj7a1fQjzzqSLO6cpxaxtqBNm+NAg4D9iKf85ngzMjhorO8
+         K6JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVf9qxXr4TJYUZwscEzSKaCrZzclBKBrj0v4oc/Tbqzc1rH+Zq669sO+nSUHQ9CEbHsL59HOrBo4TNh5Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws5CrHlh5fgYnHo+uifn0YRUhPsXqu1+9Xj9Ovn0WjM7Qc9+Nc
+	oAWUJz4iIxGWao3WjdUNab8G0CmH35ezpfHj962m+RL6kXDyZVdGpNcUmMJXLays6HimdOt97ES
+	VD6jhYFa3qmcfiFqwKq4b4+9vuS8J/Dfabz1U5XkomKZALgULDfTI7Kc=
+X-Google-Smtp-Source: AGHT+IFI87C+FKzvNvUi2zXBpi7xEMGMw2Pipg1RmGVpsxNH6IhaoekXBWWqMKaTdEZ+/zeiV3G5RZD9GvnTJ1gAf8jKiUfOiFQ9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
+X-Received: by 2002:a05:6e02:1b09:b0:3a0:8d2f:2914 with SMTP id
+ e9e14a558f8ab-3a6f1a45bc1mr144908145ab.23.1731358143975; Mon, 11 Nov 2024
+ 12:49:03 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:49:03 -0800
+In-Reply-To: <6f129270-4c3c-454b-831b-4fe2f5597bc7@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67326dbf.050a0220.138bd5.00cb.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_free_fork
+From: syzbot <syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
-On Mon, 04 Nov 2024 10:47:25 +0100, Matthias Schiffer wrote:
-> The TQMa62xx is a SoM family with a pluggable connector. The MBa62xx is
-> the matching reference/starterkit carrier board.
-> 
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-> ---
->  Documentation/devicetree/bindings/arm/ti/k3.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reported-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
+Tested-by: syzbot+2e6fb1f89ce5e13cd02d@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136874e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d1e659028faecb9
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e6fb1f89ce5e13cd02d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1739bea7980000
+
+Note: testing is done by a robot and is best-effort only.
 
