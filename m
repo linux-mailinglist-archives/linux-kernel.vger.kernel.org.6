@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-403462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D49C39C360F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:33:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB1E9C3612
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CD0B21EE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46B68B21FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF204158520;
-	Mon, 11 Nov 2024 01:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10CC1591EA;
+	Mon, 11 Nov 2024 01:31:07 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCFD156997;
-	Mon, 11 Nov 2024 01:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395415852E;
+	Mon, 11 Nov 2024 01:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731288665; cv=none; b=N118/Lk88G2gaS1Ln54iWiFluxGUCsybcB7se/6v1Co1xrAuFFnl5b4OPNSP425wbXGbuRjIFsCgZo/ysgnSJ82GJLehc+grHrfm4bma9IHpkIVafEykj2/P4SC+Hi8NII8QyXh08mBWdcX1xQ8OAI98Q5wNZ8L5Bb369zZ00G4=
+	t=1731288667; cv=none; b=nVeaY0jLyeNBNY2jy2lME5tKw9pd893eurczW6bUF3v3q1A/KpjpAbcd4/6nAwLPcldcUbJB9j181KoRIKm6HnamBaiLguY3iWkhxy9jLbK29GDSpnvMkQQuEeRPjZlkWz2RdlgB9PTZMQ4FJaXH5HgzazCGURwHGxP3LvTAeuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731288665; c=relaxed/simple;
-	bh=QMrladCcmc33UDoppwI2Mj3WEkVy8BFwUOhKtfkegqU=;
+	s=arc-20240116; t=1731288667; c=relaxed/simple;
+	bh=LZCOi285j7O4lbN4YKXUfdjxAXbA4mMOF4QR+DNejS0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AZhU3cy5jGjiOg6N3c0aK3YpQhFMrrK/anyiktWWgufMSD3Vq/oSRKGbosFYm5I4XsDpXA/xrzOfDbzO5f8LfFYvQUbZdpX9aRrgQ1OheTXQhGuSX3VyxycoX96ku/gg4FAtBjsMkrLBjxUIRFjJY8RG247OEz0Ii7eeZ8MKt7Q=
+	 MIME-Version; b=cTKFhRVd33GDqcyofEEon/8IYplDjuVelELwZy6YagGSJuTYORIPZ2t0E+wYY7qy++aVwRTpq4lNdDYrEU6Sgg9TWYGCoO2CbKSQaHbuOqF8dLWXAanM6O4Dow9U8elae89X31Sql/lPWpaUtENDbVkwc6GUAK47HydvZZCl43w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E2D913D5;
-	Sun, 10 Nov 2024 17:31:33 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 784711480;
+	Sun, 10 Nov 2024 17:31:35 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04A193F66E;
-	Sun, 10 Nov 2024 17:31:01 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E27B33F66E;
+	Sun, 10 Nov 2024 17:31:03 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -39,15 +39,15 @@ To: Rob Herring <robh@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	Samuel Holland <samuel@sholland.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: [PATCH 09/14] dt-bindings: usb: add A523 compatible string for EHCI and OCHI
-Date: Mon, 11 Nov 2024 01:30:28 +0000
-Message-ID: <20241111013033.22793-10-andre.przywara@arm.com>
+	linux-rtc@vger.kernel.org
+Subject: [PATCH 10/14] dt-bindings: rtc: sun6i: Add Allwinner A523 support
+Date: Mon, 11 Nov 2024 01:30:29 +0000
+Message-ID: <20241111013033.22793-11-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241111013033.22793-1-andre.przywara@arm.com>
 References: <20241111013033.22793-1-andre.przywara@arm.com>
@@ -59,41 +59,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Allwinner A523/T527 feature generic EHCI and OHCI compatible USB-2.0
-host controllers (in addition to an MUSB and an XHCI controller).
-
-Add the new name to the list of supported compatible strings.
+The RTC in the Allwinner A523 SoC is compatible to the D1 and R329, so
+just add its name and use the R329 as a fallback.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
- Documentation/devicetree/bindings/usb/generic-ohci.yaml | 1 +
- 2 files changed, 2 insertions(+)
+ .../devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml      | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-index 2ed178f16a782..9c5884c1e7c53 100644
---- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-+++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-@@ -31,6 +31,7 @@ properties:
-               - allwinner,sun50i-a64-ehci
-               - allwinner,sun50i-h6-ehci
-               - allwinner,sun50i-h616-ehci
-+              - allwinner,sun55i-a523-ehci
-               - allwinner,sun5i-a13-ehci
-               - allwinner,sun6i-a31-ehci
-               - allwinner,sun7i-a20-ehci
-diff --git a/Documentation/devicetree/bindings/usb/generic-ohci.yaml b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-index b9576015736bf..f1ae45aa4c86c 100644
---- a/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-+++ b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-@@ -18,6 +18,7 @@ properties:
-               - allwinner,sun50i-a64-ohci
-               - allwinner,sun50i-h6-ohci
-               - allwinner,sun50i-h616-ohci
-+              - allwinner,sun55i-a523-ohci
-               - allwinner,sun5i-a13-ohci
-               - allwinner,sun6i-a31-ohci
-               - allwinner,sun7i-a20-ohci
+diff --git a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+index 4531eec568a65..9df5cdb6f63f2 100644
+--- a/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
++++ b/Documentation/devicetree/bindings/rtc/allwinner,sun6i-a31-rtc.yaml
+@@ -30,7 +30,9 @@ properties:
+           - const: allwinner,sun50i-a64-rtc
+           - const: allwinner,sun8i-h3-rtc
+       - items:
+-          - const: allwinner,sun20i-d1-rtc
++          - enum:
++              - allwinner,sun20i-d1-rtc
++              - allwinner,sun55i-a523-rtc
+           - const: allwinner,sun50i-r329-rtc
+ 
+   reg:
 -- 
 2.46.2
 
