@@ -1,345 +1,133 @@
-Return-Path: <linux-kernel+bounces-404137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7A569C3F98
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:36:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6651F9C3FA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:37:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 865C1B20D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C2F28271A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168B019DF44;
-	Mon, 11 Nov 2024 13:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3680F19D891;
+	Mon, 11 Nov 2024 13:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ph8uvYk3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bk5lvahY"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF6C14D70E;
-	Mon, 11 Nov 2024 13:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46738194ACC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332158; cv=none; b=D9TZUQp8HHuruoo/ssQMf/NgIhMXBKzlDAmIs86I7FYzS6X/N9qoWe40piHdgQw8V2kPQ3lsmZNTY90eJWGQ3hdTzwWSZZ/jnNrV06xG7JDTaN58fv9Q+9F22gxBA1H845/bG4BxAIE5jchvwayDECVW6RjTCbXozzA4kBYf1oI=
+	t=1731332266; cv=none; b=kSwyaG0zV8z+ocmWZ0agJOVeN1J0PeJ5ffW7LxJGtfxPCXRIA6QwBq92AgkkuHVigjyVGMyixYbGa668hbmrqdzlBmKMWiADfrRgux6R24/o32yyXUHz9Xw5zDGoc4S+F0alkR1B+wslwLK6nuTIis1qQk5iCOQ4+OObwCuppqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332158; c=relaxed/simple;
-	bh=iPu3eZ8Yt1K0b34zdtrTLdfD6vMJlFmg6oScveGlqAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lYtHIOFJtdZp9jCc+h8I7rnDHjcPvdO3tIWGgK7knRE8Zdid1pVxUorz1s7V66AqeU0yztYduCL12sSlhCQte033vu3lCfePK16guFFp/RNouiUMCElMk5u8B2d78ix0BvYZp9MUlLehpSLMNi1fNYVn+oCbv44zAaJA3jC67UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ph8uvYk3; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ABDZOsE106565;
-	Mon, 11 Nov 2024 07:35:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731332124;
-	bh=ARv813cKslKKQWZ93C2TzKgoNMtNoqLJ0mQWOTjUbFw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ph8uvYk3dFZ+XpemF4590usys80QFtDewHFgwDB6fNks3YzG/ioBz4cKYoeXgBzfS
-	 RqaqY5ov1VA/AVM0R5nP3aYe19eJVdMR7FOmpZR4ODbAybrM9vfUHAlMS7EdgDEgrL
-	 tSY4tawkW+bMpL4QzO4OMFZIekgi1/1MJcvoVULM=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ABDZOkT065508
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 11 Nov 2024 07:35:24 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 11
- Nov 2024 07:35:23 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 11 Nov 2024 07:35:23 -0600
-Received: from [10.249.129.69] ([10.249.129.69])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ABDZGX2022347;
-	Mon, 11 Nov 2024 07:35:16 -0600
-Message-ID: <0c6a3091-3b3d-4f41-83df-2183171200c8@ti.com>
-Date: Mon, 11 Nov 2024 19:05:15 +0530
+	s=arc-20240116; t=1731332266; c=relaxed/simple;
+	bh=zldQuZy7Vw8Jc/U9Gqrx5DoU6JGXukbJ4pnR6Ieqjxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sh9G9LBo/0W8hLxbqG1/vC62ZnJMuK1/xTv+aWmxuOPSy9k+8t5qHitAZ5EMwQJemYOFhTMqBPcLOJbaJbfF10pDLvqtkJWMFSrQGT1sFq0pXUPEGvL94Q0tBfPSJDMNIXlyjesS1ftizcisVX2yF/6VsXOJEQm+wn5i7shibs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bk5lvahY; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43193678216so43091915e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:37:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731332262; x=1731937062; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H3alwZykr3cxEiilJjH/3zMnNgVJKTf1Srqg5Us7D+k=;
+        b=Bk5lvahYiGE4jL6tcHqoopyu1WfjPDKbyX9SCGrki38ITA/li6vQ4fSa17eLU+lIEI
+         HDrsOhffM/DSoNIop0GykMihgHxucYtxYSCMHPNguohhSSp8co+Kk4SVaVwzEN0rSVQN
+         SHY2N22Xf3167NC32mYBFscPBa48OzLZj63HaCbMkc6wSm4Ze82x+8gHLAwcpI04fqd0
+         h4xKHtRtjYxM4aQG42Cx+4hmCi8Qyn9KSg7UptIO76TJF0Vis95OM3QDqpLEOrrt7K8L
+         OQMJPHmP0VzSIxicV5aWPRJ+Kd7LQMzXMVZA1WMmKPeLPmcoCJGegf0VYyyQJB2lDtt5
+         WNYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731332262; x=1731937062;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H3alwZykr3cxEiilJjH/3zMnNgVJKTf1Srqg5Us7D+k=;
+        b=awGg3e+bbT/T18A5eTjbHc7scIVpXFlG3IY1Uu2XPhBjS6QbAluAqIhyiG0MfM+PCU
+         77bW28fZ2QFXqT3MVvehe3ma9m0UnndSun65Mqz1uDYgBSvs9van6xjq6HfmDJM+0Mde
+         Me20WTpQNIjm4bzQuQDFoYdCH/8WTQ5iO2A8Xq1788tKh9w8HERwojx3YM0ULkTKrhrE
+         YDbpElVCb1Kw2OEc9KF5z5Y1GvDvpN4jCJYUxKYtuSSZonhl8QRp/erzjaFgavsNc6tx
+         OWP2hfYz+JN0tsdSB6XD4zSG67oQfSSO8rNC4O9TyBF3Vzx5UHYiuy3zSj97Wa1vbw7t
+         FaBw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+8pt/9CNM1BBZX5iQSSHYSXNm+59i6tLWYM2+3Teugd25hXT9xfJU4zPcueLIuJQUs4nUdXXf5qTUwyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJPypWceXxQr91ttsbkBSiVivoS0ZTnNJuqjR1eYYSDXzNdEvQ
+	TRBCyiHgIe4OR7PMtpyc7B9LhpPlezxBiyNPwaImXaBbhOePgtIM536pB+WHbs0=
+X-Google-Smtp-Source: AGHT+IHN6VX3szu3asu+FTdSapdN3XKQswp3SlPLA1xm4qyKmZWBrqljtY+pMYxuZ/VQ0J6d4xUkSQ==
+X-Received: by 2002:a05:600c:8715:b0:431:93d8:e1a1 with SMTP id 5b1f17b1804b1-432b751bcc2mr103836265e9.27.1731332261641;
+        Mon, 11 Nov 2024 05:37:41 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b054b3fesm173495965e9.17.2024.11.11.05.37.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 05:37:41 -0800 (PST)
+Date: Mon, 11 Nov 2024 14:37:38 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] printk: Add force_con printk flag to not suppress
+ sysrq header msgs
+Message-ID: <ZzIIouTeCZiwJihg@pathway.suse.cz>
+References: <20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com>
+ <ZyzjcLF-wleMTpoY@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-To: Roger Quadros <rogerq@kernel.org>, Meghana Malladi <m-malladi@ti.com>,
-        <vigneshr@ti.com>, <m-karicheri2@ti.com>, <jan.kiszka@siemens.com>,
-        <javier.carrasco.cruz@gmail.com>, <jacob.e.keller@intel.com>,
-        <horms@kernel.org>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <danishanwar@ti.com>
-References: <20241106074040.3361730-1-m-malladi@ti.com>
- <20241106074040.3361730-2-m-malladi@ti.com>
- <ad2afaa3-7e76-47e8-943b-7bea0c02c9c0@kernel.org>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <ad2afaa3-7e76-47e8-943b-7bea0c02c9c0@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyzjcLF-wleMTpoY@pathway.suse.cz>
 
-
-
-On 11/11/2024 6:33 PM, Roger Quadros wrote:
-> Hi,
+On Thu 2024-11-07 16:57:40, Petr Mladek wrote:
+> On Tue 2024-11-05 16:45:07, Marcos Paulo de Souza wrote:
+> > Hello,
+> > 
+> > This is the second version of the patchset. It now addresses comments
+> > from John and Petr, while also mentioning that the current work solves
+> > one issue on handle_sysrq when the printk messages are deferred.
+> > 
+> > The original cover-letter in is the v1.
+> > 
+> > Please review!
+> > 
+> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
+> > ---
+> > Changes in v2:
+> > - Mentioned that it fixes a bug related to loglevel= dance (suggested by John)
+> > - Changed to loud_con to FORCE_CON (John, Petr)
+> > - Don't skip printk delay if FORCE_CON is specified (John)
+> > - Set FORCE_CON when LOG_CONT is handled (John)
+> > - Changed force_con from a per-CPU variable to a global variable because
+> >   we can't disable migration on the callsites. (John, Petr)
+> > - Used is_printk_force_console() on boot_delay_msec(), since it's used
+> >   when the message is stored, instead of setting is as an argument.
+> > - Link to v1: https://lore.kernel.org/r/20241016-printk-loud-con-v1-0-065e4dad6632@suse.com
+> > ---
+> > Marcos Paulo de Souza (2):
+> >       printk: Introduce FORCE_CON flag
+> >       tty: sysrq: Use printk_force_console context on __handle_sysrq
 > 
-> On 06/11/2024 09:40, Meghana Malladi wrote:
->> From: MD Danish Anwar <danishanwar@ti.com>
->>
->> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
->> and SLICE1. Currently whenever any ICSSG interface comes up we load the
->> respective firmwares to PRU cores and whenever interface goes down, we
->> stop the respective cores. Due to this, when SLICE0 goes down while
->> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
->> stopped. This results in clock jump for SLICE1 interface as the timesync
->> related operations are no longer running.
->>
->> Fix this by running both PRU0 and PRU1 firmwares as long as at least 1
->> ICSSG interface is up.
->>
->> rx_flow_id is updated before firmware is loaded. Once firmware is loaded,
->> it reads the flow_id and uses it for rx. emac_fdb_flow_id_updated() is
->> used to let firmware know that the flow_id has been updated and to use the
->> latest rx_flow_id.
+> The patchset looks ready for linux-next from my POV. I am going to
+> push it there tomorrow or on Monday unless anyone complains.
 > 
-> is rx_flow_id releated to timesync releated issue that this patch is fixing?
-> If not please split it into separate patch and mention what functionality
-> it is fixing.
-> 
+> There was some bike-shedding about the code style in the reviews.
+> But the proposals did not look like a big win. I think that it
+> is not worth a respin.
 
-Roger, rx_flow_id is not related to timesync. However loading both
-SLICE0 and SLICE1 firmware together results in wrong rx_flow_id used by
-firmware for the interface that is brought later.
+JFYI, the patchset has been committed into printk/linux.git,
+branch for-6.13-force-console.
 
-When eth0 (SLICE0) is brought up, it's flow_id is obtained from dma and
-written to SMEM. Slice0 and Slice1 both firmwares are loaded. Firmware
-reads the flow_id from SMEM and uses it for RX.
-
-Second interface eth1 (SLICE1) comes up, it's flow id is obtained from
-dma and written to SMEM. However firmware doesn't read the flow ID
-again. It only reads it once when loaded and uses that through out. The
-flow id for this interface remains 0 and that results in RX being broken.
-
-To fix this, emac_fdb_flow_id_updated() is added which will let firmware
-know that we have updated the flow_id and use the latest one.
-
-This not related to timesync instead related to the fix of timesync
-issue. Breaking this into separate patch will result in RX (ICSSG) being
-broken at the former patch.
-
-In order to avoid feature breakage at the former patch, the change
-related to flow_id update is kept in the same patch.
-
-If you think having the feature broken is OK, the patch can be splitted.
-However IMO, these chanegs should be together in one patch.
-
->>
->> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->> ---
->>  drivers/net/ethernet/ti/icssg/icssg_config.c | 28 ++++++++++
->>  drivers/net/ethernet/ti/icssg/icssg_config.h |  1 +
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 58 ++++++++++++++++----
->>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  1 +
->>  4 files changed, 77 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
->> index 5d2491c2943a..f1f0c8659e2d 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
->> @@ -786,3 +786,31 @@ void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port)
->>  		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT0_DEFAULT_VLAN_OFFSET);
->>  }
->>  EXPORT_SYMBOL_GPL(icssg_set_pvid);
->> +
->> +int emac_fdb_flow_id_updated(struct prueth_emac *emac)
->> +{
->> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
->> +	int slice = prueth_emac_slice(emac);
->> +	struct mgmt_cmd fdb_cmd = { 0 };
->> +	int ret = 0;
->> +
->> +	fdb_cmd.header = ICSSG_FW_MGMT_CMD_HEADER;
->> +	fdb_cmd.type   = ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW;
->> +	fdb_cmd.seqnum = ++(emac->prueth->icssg_hwcmdseq);
->> +	fdb_cmd.param  = 0;
->> +
->> +	fdb_cmd.param |= (slice << 4);
->> +	fdb_cmd.cmd_args[0] = 0;
->> +
->> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
->> +
->> +	if (ret)
->> +		return ret;
->> +
->> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
->> +	if (fdb_cmd_rsp.status == 1)
->> +		return 0;
->> +
->> +	return -EINVAL;
->> +}
->> +EXPORT_SYMBOL_GPL(emac_fdb_flow_id_updated);
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
->> index 92c2deaa3068..c884e9fa099e 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
->> @@ -55,6 +55,7 @@ struct icssg_rxq_ctx {
->>  #define ICSSG_FW_MGMT_FDB_CMD_TYPE	0x03
->>  #define ICSSG_FW_MGMT_CMD_TYPE		0x04
->>  #define ICSSG_FW_MGMT_PKT		0x80000000
->> +#define ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW	0x05
->>  
->>  struct icssg_r30_cmd {
->>  	u32 cmd[4];
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> index 0556910938fa..9df67539285b 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> @@ -534,6 +534,7 @@ static int emac_ndo_open(struct net_device *ndev)
->>  {
->>  	struct prueth_emac *emac = netdev_priv(ndev);
->>  	int ret, i, num_data_chn = emac->tx_ch_num;
->> +	struct icssg_flow_cfg __iomem *flow_cfg;
->>  	struct prueth *prueth = emac->prueth;
->>  	int slice = prueth_emac_slice(emac);
->>  	struct device *dev = prueth->dev;
->> @@ -549,8 +550,12 @@ static int emac_ndo_open(struct net_device *ndev)
->>  	/* set h/w MAC as user might have re-configured */
->>  	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
->>  
->> +	if (!prueth->emacs_initialized) {
->> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
->> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
->> +	}
->> +
->>  	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
->>  	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->>  
->>  	/* Notify the stack of the actual queue counts. */
->> @@ -588,10 +593,31 @@ static int emac_ndo_open(struct net_device *ndev)
->>  		goto cleanup_napi;
->>  	}
->>  
->> -	/* reset and start PRU firmware */
->> -	ret = prueth_emac_start(prueth, emac);
->> -	if (ret)
->> -		goto free_rx_irq;
->> +	if (!prueth->emacs_initialized) {
->> +		if (prueth->emac[ICSS_SLICE0]) {
->> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE0]);
->> +			if (ret) {
->> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE0);
->> +				goto free_rx_irq;
->> +			}
->> +		}
->> +		if (prueth->emac[ICSS_SLICE1]) {
->> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE1]);
->> +			if (ret) {
->> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE1);
->> +				goto halt_slice0_prus;
->> +			}
-> 
-> Did I understand right: SLICE0 needs to be always running if any of the
-> interface is up but SLICE0 doesn't need to be running if only SLICE0
-
-I think you meant `but SLICE1 doesn't need to be running if only SLICE0`
-
-> interface is running.
-> 
-> If yes then you need to update the patch so SLICE1 is not always running.
-> 
-
-For Timesync - YES. Only slice0 is needed to be always running. However
-these both firmwares have some more inter dependencies, timesync is just
-one of them. As a result, firmware team has recommended to keep both
-Slice0 and Slice1 firmware running as long as at least one ICSSG
-interface is up. Stop both firmware only if no ICSSG interface is up.
-
-I think the commit message can be modified to state that the dependecy
-is not only SLICE0 but on SLICE1 as well and they both need to be running.
-
->> +		}
->> +	}
->> +
->> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
->> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
->> +	ret = emac_fdb_flow_id_updated(emac);
->> +
->> +	if (ret) {
->> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
->> +		goto stop;
->> +	}
->>  
->>  	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
->>  
->> @@ -644,7 +670,11 @@ static int emac_ndo_open(struct net_device *ndev)
->>  free_tx_ts_irq:
->>  	free_irq(emac->tx_ts_irq, emac);
->>  stop:
->> -	prueth_emac_stop(emac);
->> +	if (prueth->emac[ICSS_SLICE1])
->> +		prueth_emac_stop(prueth->emac[ICSS_SLICE1]);
->> +halt_slice0_prus:
->> +	if (prueth->emac[ICSS_SLICE0])
->> +		prueth_emac_stop(prueth->emac[ICSS_SLICE0]);
->>  free_rx_irq:
->>  	free_irq(emac->rx_chns.irq[rx_flow], emac);
->>  cleanup_napi:
->> @@ -680,7 +710,10 @@ static int emac_ndo_stop(struct net_device *ndev)
->>  	if (ndev->phydev)
->>  		phy_stop(ndev->phydev);
->>  
->> -	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
->> +	if (prueth->emacs_initialized == 1) {
->> +		icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
->> +		icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
->> +	}
->>  
->>  	if (emac->prueth->is_hsr_offload_mode)
->>  		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
->> @@ -719,11 +752,14 @@ static int emac_ndo_stop(struct net_device *ndev)
->>  	/* Destroying the queued work in ndo_stop() */
->>  	cancel_delayed_work_sync(&emac->stats_work);
->>  
->> -	if (prueth->emacs_initialized == 1)
->> +	if (prueth->emacs_initialized == 1) {
->>  		icss_iep_exit(emac->iep);
->> -
->> -	/* stop PRUs */
->> -	prueth_emac_stop(emac);
->> +		/* stop PRUs */
->> +		if (prueth->emac[ICSS_SLICE0])
->> +			prueth_emac_stop(prueth->emac[ICSS_SLICE0]);
->> +		if (prueth->emac[ICSS_SLICE1])
->> +			prueth_emac_stop(prueth->emac[ICSS_SLICE1]);
->> +	}
->>  
->>  	free_irq(emac->tx_ts_irq, emac);
->>  
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> index 8722bb4a268a..c4f5f0349ae7 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> @@ -365,6 +365,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
->>  		       u8 untag_mask, bool add);
->>  u16 icssg_get_pvid(struct prueth_emac *emac);
->>  void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
->> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
->>  #define prueth_napi_to_tx_chn(pnapi) \
->>  	container_of(pnapi, struct prueth_tx_chn, napi_tx)
->>  
-> 
-
--- 
-Thanks and Regards,
-Md Danish Anwar
+Best Regards,
+Petr
 
