@@ -1,638 +1,424 @@
-Return-Path: <linux-kernel+bounces-404150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C7C9C3FCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4359B9C3FC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6861F1F22AB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48A21F22AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B2A19D894;
-	Mon, 11 Nov 2024 13:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57A619D8BC;
+	Mon, 11 Nov 2024 13:45:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="AsBoE7Zt"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dw06XvjN"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95301DA53;
-	Mon, 11 Nov 2024 13:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37D714EC55
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332852; cv=none; b=bLC+LbGv+oPRjqNIrNEOXKOz52PF+1RRkTH4OoEy7MfdDYxmwRGS66HrWpDtWDicFKKtbH0Ca5IJDuB/2hLwwubecmXzcW1AjMPfL3YHpgColDueh+icptcpI/xKKhKi8UkwoG6+EcWYorcQQ4FIkwJUsf6bCB1VM0+k/U9CxaI=
+	t=1731332749; cv=none; b=ddkgOox/e7vVGu1lMT149poTQegMeVlCPwHvqM4x9kHNHq13eBq9or3TYNldB9R8UHPmzjVG9xY1pgvB2LXxWhWW9c3zGd9/SynVCyC6mvDAj8HADWStXPznuykg8rDipVPQpJm6TkfbMvDfj6qH7Ds51kbCdfIhG+xCtVwuxJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332852; c=relaxed/simple;
-	bh=L8QoZtTB7AbXEqQmAnLjc/IAFlAnVukuPHsW3t6rSFo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jX1Dvl0M67mMK1NNSVjqrvT4HjotoOZ0IuuJzOZmefpuewQeQW3q5oMsAepFIPYqTtQd4yMLYiBXOMziAKF42KnHPjHzd9LEnA3C6jEexDjixGFPGQ1R6xClYsXlGJoc7GXeNB8wU3WKR1+D9HYRMlLIGbJUWFtrK93jvDrd+xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=AsBoE7Zt; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AB9kHiB009743;
-	Mon, 11 Nov 2024 05:47:10 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
-	7l/vJ8mD4csTGHSm6d7bhvC4Kru/VCs6l8eQTP0tm0=; b=AsBoE7ZtuvVXWYSTH
-	jEnsoc66ZmpD26NfEElGS2fzUXbH8Agq+WCXG1dwYsQTfK0k08PyQH7+PyT4lVmA
-	j0WebC+v9Xr7/IGpT64JdtkC2RG57QCdPyPaqXvS5pHQp9YuI36iKzzLT/Oku6pU
-	88ofmiUME7d/Q7n43y7/dtpMp/mrq7Q9fU1KmFaDQzMSOh1CPXGS6tjMxXtB6M6a
-	HA9HvGsTVLSWjOcRYX9yjnK6I//ExLqZAD1hPvDK+6j9+rl3fK/ow1EIFyGSiBJW
-	/3NINvL+miMEAGyFcZfbrzGdVwvd+brbXWR5gY0wqzsyHxTwdOHsYp1FIgnmASRO
-	sblAg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 42t84pjyyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 05:47:10 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 11 Nov 2024 05:47:08 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 11 Nov 2024 05:47:08 -0800
-Received: from localhost.localdomain (unknown [10.28.34.29])
-	by maili.marvell.com (Postfix) with ESMTP id EBCC55B692C;
-	Mon, 11 Nov 2024 05:47:04 -0800 (PST)
-From: Shijith Thotton <sthotton@marvell.com>
-To: <bhelgaas@google.com>
-CC: Shijith Thotton <sthotton@marvell.com>, <ilpo.jarvinen@linux.intel.com>,
-        <Jonathan.Cameron@Huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <rafael@kernel.org>,
-        <scott@os.amperecomputing.com>, <jerinj@marvell.com>,
-        <schalla@marvell.com>, <vattunuru@marvell.com>
-Subject: [PATCH v4] PCI: hotplug: Add OCTEON PCI hotplug controller driver
-Date: Mon, 11 Nov 2024 19:15:11 +0530
-Message-ID: <20241111134523.2796699-1-sthotton@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240826104531.1232136-1-sthotton@marvell.com>
-References: <20240826104531.1232136-1-sthotton@marvell.com>
+	s=arc-20240116; t=1731332749; c=relaxed/simple;
+	bh=nLzzCWa4B2Tkzxt8us3X6UMIA/lIl9nYeJK2LXv5yL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qAUqxTqakyrkMTQxv+5ucYM2G9LCbrMEwo1K5I6uHhvOab1P7HvBE7Z0qgGNZ8wzS4sixDCkfnY5S1kQhfP9eJFVTcw9ei3M0pv3WYLbsw49+mngDCtMv490vHqgjKnBefxPK8oHGDi7/vC7o3sSyY6V1BHhKF6VfwbnKzzV87Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=dw06XvjN; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e5cec98cceso34379127b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:45:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1731332747; x=1731937547; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rm3BImctwtqWjbORyBrsavb1u/lJM8uC19lQxWeLcEc=;
+        b=dw06XvjNvVzvM1aW52yQ1m8JEoYlyliTA9H7mwbTsb3Sl0ZQmb7eaWZeWfz5mxrV7Q
+         e/MhUNd70Y0AhBnxrwSzI/xP5Ano1gGk1B36uAlIgpbHztblhtSFKjhCpuBvmUY/uIzU
+         hsRC7ykqA4swzC8kv9iKOlS/jdgKnzSvryx4I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731332747; x=1731937547;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rm3BImctwtqWjbORyBrsavb1u/lJM8uC19lQxWeLcEc=;
+        b=aCNxYn32E1/fq1szoynJT0wdEjEAQAaJndVL25v90b1D4R+IZympy4oP53S6llQPMi
+         ZagT+PVCwgihuMdRJkrQ+sjQqbwGa94+l8HWmXIjuJbkaRTDKixSOlsRXCfvPeYFRLTw
+         IPzJk1206OTq5CfOjijkQ5YejHmtaKrCswIooP66kCTcEawNrAnENeziZXBtaTHltMNW
+         cUZiClw9ddhym0oHd5eoJCPsImUA5eJpqz2gwXHvJjV6IF7KOnSKvnZF16Xkg2afXuQs
+         9uOGYRgk0WqS7ARWzhv69B2PNpts9txvidr6SCxjozpD6zvIy/lr2pxLBfWF/Oh7rL9q
+         KHew==
+X-Gm-Message-State: AOJu0Yy0PbcdkKJv1YFTh/uknDzfWb9CLrZ1EbXGVBY9CLKM15M/flL6
+	iQuQOURV6ZB+fz1Pqb8mZL7eIxXbXFeL5NaFxcsX6+VOTszr69VLgnlau2HZeGSazrLLbM7HDF8
+	fdzjvsLQIEr4sUmg18pmMtqvgkuMpHw1pchV3mg==
+X-Google-Smtp-Source: AGHT+IFfas91t+lW7XnXNqsTwzeayIn+Qyj/NGlB149wN0USrAE3ytPby0ys5kySfPd9nSoYixCu9Zu87WuCEygU7Rs=
+X-Received: by 2002:a05:690c:710a:b0:6e5:e714:3be0 with SMTP id
+ 00721157ae682-6eaddd725f0mr112372177b3.1.1731332746787; Mon, 11 Nov 2024
+ 05:45:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 8kz9jCabhvDq93VBwQeMASQI1Fs0w7D9
-X-Proofpoint-GUID: 8kz9jCabhvDq93VBwQeMASQI1Fs0w7D9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20241106090549.3684963-1-dario.binacchi@amarulasolutions.com>
+ <20241106090549.3684963-2-dario.binacchi@amarulasolutions.com>
+ <4bix7me5vaoyhcuffyp4btajmhy7no6ltczoesopaz2fqupyaw@fensx4nn472u>
+ <b7c1499b-8337-421c-9734-6e518d678ff8@kernel.org> <CABGWkvrYJL9=zrPSFuEAgKO+9gDHD6RmCJM6Br6Le_eh578ETQ@mail.gmail.com>
+ <54dd6ae6-b992-451e-b1c6-8a1968955f4a@kernel.org> <PAXPR04MB8459BE3474EFD4FCC28E0E82885D2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <8c310eca-d695-418c-82cb-a89351d83887@kernel.org> <PAXPR04MB8459B6F8D5C623D19CCF6B39885E2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <bc02327b-dea8-48c9-b036-4a0eda0c4cb9@kernel.org> <9f6b243b-0642-41db-85ed-d020bfa3e6e2@kernel.org>
+ <PAXPR04MB845978F4D3C6E887E0DE8D5488582@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <CABGWkvqXOg=Y7K+oc6Q-3UWGC-WLEK_tmQzyRBW6x0fvQTsqvw@mail.gmail.com>
+In-Reply-To: <CABGWkvqXOg=Y7K+oc6Q-3UWGC-WLEK_tmQzyRBW6x0fvQTsqvw@mail.gmail.com>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Mon, 11 Nov 2024 14:45:35 +0100
+Message-ID: <CABGWkvqPFq0gnCVEKY6SV_K71F30TFGXa-xHjvG5BikeHQNyCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Peng Fan <peng.fan@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-amarula@amarulasolutions.com" <linux-amarula@amarulasolutions.com>, Abel Vesa <abelvesa@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces a PCI hotplug controller driver for the OCTEON
-PCIe device. The OCTEON PCIe device is a multi-function device where the
-first function serves as the PCI hotplug controller.
+On Mon, Nov 11, 2024 at 12:57=E2=80=AFPM Dario Binacchi
+<dario.binacchi@amarulasolutions.com> wrote:
+>
+> On Mon, Nov 11, 2024 at 2:49=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote=
+:
+> >
+> > > Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock: support
+> > > spread spectrum clocking
+> > >
+> > > On 09/11/2024 11:05, Krzysztof Kozlowski wrote:
+> > > > On 09/11/2024 01:37, Peng Fan wrote:
+> > > >>> Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock:
+> > > support
+> > > >>> spread spectrum clocking
+> > > >>>
+> > > >>> On 08/11/2024 13:50, Peng Fan wrote:
+> > > >>>>> Subject: Re: [PATCH v3 1/8] dt-bindings: clock: imx8m-clock:
+> > > >>> support
+> > > >>>>> spread spectrum clocking
+> > > >>>>>
+> > > >>>>> On 07/11/2024 15:57, Dario Binacchi wrote:
+> > > >>>>>>     clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>,
+> > > <&clk_ext2>,
+> > > >>>>>>                   <&clk_ext3>, <&clk_ext4>;
+> > > >>>>>>     clock-names =3D "osc_32k", "osc_24m", "clk_ext1", "clk_ext=
+2",
+> > > >>>>>>                              "clk_ext3", "clk_ext4";
+> > > >>>>>>     assigned-clocks =3D <&clk IMX8MN_CLK_A53_SRC>,
+> > > >>>>>>                                   <&clk IMX8MN_CLK_A53_CORE>,
+> > > >>>>>>                                   <&clk IMX8MN_CLK_NOC>,
+> > > >>>>>>                                   <&clk IMX8MN_CLK_AUDIO_AHB>,
+> > > >>>>>>                                   <&clk IMX8MN_CLK_IPG_AUDIO_R=
+OOT>,
+> > > >>>>>>                                   <&clk IMX8MN_SYS_PLL3>,
+> > > >>>>>>                                   <&clk IMX8MN_AUDIO_PLL1>,
+> > > >>>>>>                                   <&clk IMX8MN_AUDIO_PLL2>;
+> > > >>>>>>     assigned-clock-parents =3D <&clk IMX8MN_SYS_PLL1_800M>,
+> > > >>>>>>                                              <&clk IMX8MN_ARM_=
+PLL_OUT>,
+> > > >>>>>>                                              <&clk IMX8MN_SYS_=
+PLL3_OUT>,
+> > > >>>>>>                                              <&clk IMX8MN_SYS_=
+PLL1_800M>;
+> > > >>>>>>     assigned-clock-rates =3D <0>, <0>, <0>,
+> > > >>>>>>                                          <400000000>,
+> > > >>>>>>                                          <400000000>,
+> > > >>>>>>                                          <600000000>,
+> > > >>>>>>                                          <393216000>,
+> > > >>>>>>                                          <361267200>; };
+> > > >>>>>>
+> > > >>>>>> The spread spectrum is not configurable on these clocks or,
+> > > more
+> > > >>>>>> generally, may not be configurable (only 4 PLLs have this
+> > > >>> capability).
+> > > >>>>>> Therefore, I need the "fsl,ssc-clocks"
+> > > >>>>>
+> > > >>>>> No. That's not true. You do not need it.
+> > > >>>>>
+> > > >>>>
+> > > >>>> i.MX8M clock hardware is similar as:
+> > > >>>>
+> > > >>>> OSC->ANATOP->CCM
+> > > >>>>
+> > > >>>> ANATOP will produce PLLs.
+> > > >>>> CCM use PLLs as input source.
+> > > >>>>
+> > > >>>> Currently there is no dedicated ANATOP driver in linux.
+> > > >>>> The CCM linux driver will parse the ANATOP node and register
+> > > clk_hw
+> > > >>>> for the PLLs.
+> > > >>>
+> > > >>> I do not know what is CCM and how does it fit here. What's more, =
+I
+> > > >>> don't get driver context here. We talk about bindings.
+> > > >>
+> > > >>
+> > > >> CCM: Clock Control Module, it accepts PLL from anatop as inputs,
+> > > and
+> > > >> outputs clocks to various modules, I2C, CAN, NET, SAI and ...
+> > > >>
+> > > >>>
+> > > >>>
+> > > >>>>
+> > > >>>>
+> > > >>>>> First, the clock inputs for this device are listed in clocks *o=
+nly*.
+> > > >>>>> What is no there, is not an input to the device. Including also
+> > > >>>>> Linux aspect (missing devlinks etc). Therefore how can you
+> > > >>>>> configure
+> > > >>> spread
+> > > >>>>> spectrum on clocks which are not connected to this device?
+> > > >>>>
+> > > >>>> I not understand this well, you mean add clocks =3D <xx
+> > > >>>> CLK_IMX8MM_VIDEO_PLL> in the ccm dtb node?
+> > > >>>
+> > > >>> Yes. Let me re-iterate and please respond to this exactly comment
+> > > >>> instead of ignoring it.
+> > > >>>
+> > > >>> How a device can care about spread spectrum of a clock which is
+> > > not
+> > > >>> supplied to this device?
+> > > >>
+> > > >> I hope we are on same page of what spread spectrum means.
+> > > >> spread spectrum of a clock is the clock could produce freq in a
+> > > >> range, saying [500MHz - 100KHz, 500MHz + 100KHz]. software only
+> > > need
+> > > >> to configure the middle frequency and choose the up/down border
+> > > >> range(100KHz here) and enable spread spectrum.
+> > > >>
+> > > >> device: I suppose you mean the Clock Control Module(CCM) here.
+> > > >
+> > > > I mean the device we discuss here, in this binding. Whatever this
+> > > > device is. CCM or CCX
+> > > >
+> > > >> CCM does not care, it just accepts the PLL as input, and output
+> > > >
+> > > > Takes PLL as input but you refuse to add it as clocks? Are you real=
+ly
+> > > > responding to my question?
+> > > >
+> > > > I asked how can you set spread spectrum on clock which you do not
+> > > > receive. Why you do not receive? Because you refuse to add it to
+> > > > clocks even though I speak about this since months.
+> > > >
+> > > >> divided clock to various IPs(Video here). The video IPs care about
+> > > >> the spread spectrum of the clock.
+> > > >
+> > > > So which device do we talk about? I am not a NXP clock developer
+> > > and I
+> > > > care zero about NXP, so keep it simple. We discuss this one specifi=
+c
+> > > > binding for specific device which is called "imx8m-clock" - see
+> > > > subject prefix.
+> > > >
+> > > >>
+> > > >> The clock hardware path is as below:
+> > > >>
+> > > >> OSC(24M) --> Anatop(produce PLL with spread spectrum) -> Clock
+> > > >> Control Module(output clock to modules) -> Video IP
+> > > >>
+> > > >> From hardware perspective, Clock Control Module does not care
+> > > spread
+> > > >> spectrum. Video IP cares spread spectrum.
+> > > >>
+> > > >>
+> > > >>>
+> > > >>> Why would you care about spread spectrum of some clock which is
+> > > not
+> > > >>> coming to this device?
+> > > >>
+> > > >> device, I suppose you mean clock control module(CCM).
+> > > >>
+> > > >> There is no 'clocks =3D <&ccm CLK_IMX8M_VIDEO_PLL>' under ccm
+> > > node.
+> > > >> Because in current design, ccm is taken as producer of
+> > > >> CLK_IMX8M_VIDEO_PLL, not consumer.
+> > > >
+> > > > I don't understand now even more. Or I understand even less now.
+> > > Why
+> > > > binding references its own clocks via phandle? This makes no sense
+> > > at
+> > > > all, except of course assigned clocks, but that's because we have o=
+ne
+> > > > property for multiple cases.
+> > >
+> > > And BTW if that was the point then the example is confusing because
+> > > the &clk phandle is not the device node in the example but it should.
+> > > Neither description says which device's clocks are these.
+> > >
+> > > This is expressed very poorly in the binding, look:
+> > > "Phandles of the PLL" - it clearly suggests some other clocks, not it=
+s
+> > > own, that's so obvious I did not even think of asking. Patchset goes
+> > > slow also because of poor explanation, lack of diagrams and expecting
+> > > me to remember your clock hierarchy.
+> >
+> >
+> > Dario may improve the patchset in new version. But let me just try
+> > to explain a bit more about the hardware logic, I hope this could
+> > give you some knowledge on i.MX clock and we could get some
+> > suggestions on next:
+> >
+> >
+> > OSC will generate 24MHz clock to Anatop module.
+> > Anatop module takes 24MHz as input and produces various PLLs.
+> > Clock Control Module(CCM) takes PLLs as input, and outputs the final
+> > clocks to various IPs, saying video IPs.
+> >
+> > The Anatop module could produce PLLs with spread spectrum enabled.
+> > The Clock Control module just divides the freq and output the end IPs.
+> > The end IPs cares about spread spectrum for high quality clock, the
+> > Clock Control modules does not care. Now back to binding,
+> >
+> > There is a imx8m-anatop binding fsl,imx8m-anatop.yaml for anatop
+> > and a imx8m-clock.yaml binding for clock control module.
+> >
+> > I think the patchset is to enable spread spectrum of a PLL globally,
+> > not for a specific device saying video IP here. So the patchset put
+> > the properties under the clock control module.
+> >
+> > For example, there are VPU_JPEG, VPU_DECODE, both will use
+> > video PLL with high quality. So the clock producer just produce
+> > PLLs with Spread Spectrum(SS) enabled, and put the SS properties
+> > under CCM or anatop node, not video IP nodes.
+>
+> Thank you Peng, for the information.
+>
+> Do you think it would make sense to add the PLL nodes with SSCG to the
+> anatop node?
+>
+> anatop: clock-controller@30360000 {
+>     compatible =3D "fsl,imx8mn-anatop", "fsl,imx8mm-anatop";
+>     reg =3D <0x30360000 0x10000>;
+>     #clock-cells =3D <1>;
+>
+>     clk_video_pll1_ref_sel: clock-video-pll1-ref-sel@28 {
+>         compatible =3D "fsl,imx8mn-mux-clock";
+>         #clock-cells =3D <0>;
+>         clocks =3D <&osc_24m>, <&clk_dummy>, <&clk_dummy>, <&clk_dummy>;
+>         fsl,anatop =3D <&anatop 0x28>;
+>         fsl,bit-shift =3D <0>;
+>         clock-output-names =3D "video_pll1_ref_sel";
+>     };
+>
+>     clk_video_pll1: clock-video-pll1@28 {
+>         compatible =3D "fsl,pll14xx-clock";
+>         #clock-cells =3D <0>;
+>         clocks =3D <&clk_video_pll1_ref_sel>;
+>         ...
+>         fsl,ssc-modfreq-hz =3D <6000>;
+>         fsl,ssc-modrate-percent =3D <3>;
+>         fsl,ssc-modmethod =3D "down-spread";
+>     };
+> };
+>
+> This example only considers the video PLL, so to be complete, it
+> should also add the clk_audio_pll1,
+> clk_audio_pll2 and clk_dram_pll nodes. It is based on an RFC series
+> that I sent about a year ago,
+> which was not accepted. In this way, the SSCG properties (i.e.,
+> "fsl,ssc-modfreq-hz", "fsl,ssc-modrate-percent"
+> and "fsl,ssc-modmethod") would be added to the relevant nodes, and I
+> would take only the essential parts
+> from that series. This would still mean implementing the PLL driver
+> ("fsl,pll14xx-clock") and its mux ("fsl,imx8mn-mux-clock").
+>
+> These clocks can then be added to the "clocks" list of the "ccm" node:
+>
+> clk: clock-controller@30380000 {
+>     compatible =3D "fsl,imx8mn-ccm";
+>     ...
+>     clocks =3D <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
+>                   <&clk_ext3>, <&clk_ext4>, <&clk_video_pll1>,
+>                   <&clk_audio_pll1>, <&clk_audio_pll2>, <&clk_dram_pll>;
+>     ...
+> }
+>
+> >
+> >
 
-               +--------------------------------+
-               |           Root Port            |
-               +--------------------------------+
-                               |
-                              PCIe
-                               |
-+---------------------------------------------------------------+
-|              OCTEON PCIe Multifunction Device                 |
-+---------------------------------------------------------------+
-             |                    |              |            |
-             |                    |              |            |
-+---------------------+  +----------------+  +-----+  +----------------+
-|      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
-| (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
-+---------------------+  +----------------+  +-----+  +----------------+
-             |
-             |
-+-------------------------+
-|   Controller Firmware   |
-+-------------------------+
+Next the series I forgot to reference in the previous email:
+https://lore.kernel.org/lkml/20230101175740.1010258-1-dario.binacchi@amarul=
+asolutions.com/
 
-The hotplug controller driver enables hotplugging of non-controller
-functions within the same device. During probing, the driver removes
-the non-controller functions and registers them as PCI hotplug slots.
-These slots are added back by the driver, only upon request from the
-device firmware.
+Thanks and regards,
+Dario
 
-The controller uses MSI-X interrupts to notify the host of hotplug
-events initiated by the OCTEON firmware. Additionally, the driver
-allows users to enable or disable individual functions via sysfs slot
-entries, as provided by the PCI hotplug framework.
+> > We could have a talk on IRC if Dario, Abel and you are available to
+> > discuss on this topic.
+>
+> Yes, I am available.
+>
+> Thanks and regards,
+> Dario
+>
+> >
+> > Thanks,
+> > Peng.
+> >
+> > >
+> > > Best regards,
+> > > Krzysztof
+> >
+>
+>
+> --
+>
+> Dario Binacchi
+>
+> Senior Embedded Linux Developer
+>
+> dario.binacchi@amarulasolutions.com
+>
+> __________________________________
+>
+>
+> Amarula Solutions SRL
+>
+> Via Le Canevare 30, 31100 Treviso, Veneto, IT
+>
+> T. +39 042 243 5310
+> info@amarulasolutions.com
+>
+> www.amarulasolutions.com
 
-Co-developed-by: Vamsi Attunuru <vattunuru@marvell.com>
-Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
-Signed-off-by: Shijith Thotton <sthotton@marvell.com>
----
-Changes in v2:
-- Added missing include files.
-- Used dev_err_probe() for error handling.
-- Used guard() for mutex locking.
-- Splited cleanup actions and added per-slot cleanup action.
-- Fixed coding style issues.
-- Added co-developed-by tag.
 
-Changes in v3:
-- Explicit assignment of enum values.
-- Use pcim_iomap_region() instead of pcim_iomap_regions().
 
-Changes in v4:
-- Updated the commit message.
-- Improved wordings and added new log messages.
-- Modified device ID define to match namespace.
-- Avoided use of for_each_pci_dev().
+--=20
 
- MAINTAINERS                    |   6 +
- drivers/pci/hotplug/Kconfig    |  10 +
- drivers/pci/hotplug/Makefile   |   1 +
- drivers/pci/hotplug/octep_hp.c | 427 +++++++++++++++++++++++++++++++++
- 4 files changed, 444 insertions(+)
- create mode 100644 drivers/pci/hotplug/octep_hp.c
+Dario Binacchi
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 42decde38320..2258f1459440 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13677,6 +13677,12 @@ R:	schalla@marvell.com
- R:	vattunuru@marvell.com
- F:	drivers/vdpa/octeon_ep/
- 
-+MARVELL OCTEON HOTPLUG DRIVER
-+R:	Shijith Thotton <sthotton@marvell.com>
-+R:	Vamsi Attunuru <vattunuru@marvell.com>
-+S:	Supported
-+F:	drivers/pci/hotplug/octep_hp.c
-+
- MATROX FRAMEBUFFER DRIVER
- L:	linux-fbdev@vger.kernel.org
- S:	Orphan
-diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
-index 1472aef0fb81..123c4c7c2ab5 100644
---- a/drivers/pci/hotplug/Kconfig
-+++ b/drivers/pci/hotplug/Kconfig
-@@ -118,6 +118,16 @@ config HOTPLUG_PCI_CPCI_GENERIC
- 
- 	  When in doubt, say N.
- 
-+config HOTPLUG_PCI_OCTEONEP
-+	bool "Marvell OCTEON PCI Hotplug driver"
-+	depends on HOTPLUG_PCI
-+	help
-+	  Say Y here if you have an OCTEON PCIe device with a hotplug
-+	  controller. This driver enables the non-controller functions of the
-+	  device to be registered as hotplug slots.
-+
-+	  When in doubt, say N.
-+
- config HOTPLUG_PCI_SHPC
- 	bool "SHPC PCI Hotplug driver"
- 	help
-diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
-index 240c99517d5e..40aaf31fe338 100644
---- a/drivers/pci/hotplug/Makefile
-+++ b/drivers/pci/hotplug/Makefile
-@@ -20,6 +20,7 @@ obj-$(CONFIG_HOTPLUG_PCI_RPA)		+= rpaphp.o
- obj-$(CONFIG_HOTPLUG_PCI_RPA_DLPAR)	+= rpadlpar_io.o
- obj-$(CONFIG_HOTPLUG_PCI_ACPI)		+= acpiphp.o
- obj-$(CONFIG_HOTPLUG_PCI_S390)		+= s390_pci_hpc.o
-+obj-$(CONFIG_HOTPLUG_PCI_OCTEONEP)	+= octep_hp.o
- 
- # acpiphp_ibm extends acpiphp, so should be linked afterwards.
- 
-diff --git a/drivers/pci/hotplug/octep_hp.c b/drivers/pci/hotplug/octep_hp.c
-new file mode 100644
-index 000000000000..d2475feb44cc
---- /dev/null
-+++ b/drivers/pci/hotplug/octep_hp.c
-@@ -0,0 +1,427 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (C) 2024 Marvell. */
-+
-+#include <linux/cleanup.h>
-+#include <linux/container_of.h>
-+#include <linux/delay.h>
-+#include <linux/dev_printk.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/pci.h>
-+#include <linux/pci_hotplug.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/workqueue.h>
-+
-+#define OCTEP_HP_INTR_OFFSET(x) (0x20400 + ((x) << 4))
-+#define OCTEP_HP_INTR_VECTOR(x) (16 + (x))
-+#define OCTEP_HP_DRV_NAME "octep_hp"
-+
-+/*
-+ * Type of MSI-X interrupts.
-+ * The macros OCTEP_HP_INTR_VECTOR and OCTEP_HP_INTR_OFFSET are used to
-+ * generate the vector and offset for an interrupt type.
-+ */
-+enum octep_hp_intr_type {
-+	OCTEP_HP_INTR_INVALID = -1,
-+	OCTEP_HP_INTR_ENA = 0,
-+	OCTEP_HP_INTR_DIS = 1,
-+	OCTEP_HP_INTR_MAX = 2,
-+};
-+
-+struct octep_hp_cmd {
-+	struct list_head list;
-+	enum octep_hp_intr_type intr_type;
-+	u64 intr_val;
-+};
-+
-+struct octep_hp_slot {
-+	struct list_head list;
-+	struct hotplug_slot slot;
-+	u16 slot_number;
-+	struct pci_dev *hp_pdev;
-+	unsigned int hp_devfn;
-+	struct octep_hp_controller *ctrl;
-+};
-+
-+struct octep_hp_intr_info {
-+	enum octep_hp_intr_type type;
-+	int number;
-+	char name[16];
-+};
-+
-+struct octep_hp_controller {
-+	void __iomem *base;
-+	struct pci_dev *pdev;
-+	struct octep_hp_intr_info intr[OCTEP_HP_INTR_MAX];
-+	struct work_struct work;
-+	struct list_head slot_list;
-+	struct mutex slot_lock; /* Protects slot_list */
-+	struct list_head hp_cmd_list;
-+	spinlock_t hp_cmd_lock; /* Protects hp_cmd_list */
-+};
-+
-+static void octep_hp_enable_pdev(struct octep_hp_controller *hp_ctrl,
-+				 struct octep_hp_slot *hp_slot)
-+{
-+	guard(mutex)(&hp_ctrl->slot_lock);
-+	if (hp_slot->hp_pdev) {
-+		dev_dbg(&hp_slot->hp_pdev->dev, "Slot %s is already enabled\n",
-+			hotplug_slot_name(&hp_slot->slot));
-+		return;
-+	}
-+
-+	/* Scan the device and add it to the bus */
-+	hp_slot->hp_pdev = pci_scan_single_device(hp_ctrl->pdev->bus,
-+						  hp_slot->hp_devfn);
-+	pci_bus_assign_resources(hp_ctrl->pdev->bus);
-+	pci_bus_add_device(hp_slot->hp_pdev);
-+
-+	dev_dbg(&hp_slot->hp_pdev->dev, "Enabled slot %s\n",
-+		hotplug_slot_name(&hp_slot->slot));
-+}
-+
-+static void octep_hp_disable_pdev(struct octep_hp_controller *hp_ctrl,
-+				  struct octep_hp_slot *hp_slot)
-+{
-+	guard(mutex)(&hp_ctrl->slot_lock);
-+	if (!hp_slot->hp_pdev) {
-+		dev_dbg(&hp_ctrl->pdev->dev, "Slot %s is already disabled\n",
-+			hotplug_slot_name(&hp_slot->slot));
-+		return;
-+	}
-+
-+	dev_dbg(&hp_slot->hp_pdev->dev, "Disabling slot %s\n",
-+		hotplug_slot_name(&hp_slot->slot));
-+
-+	/* Remove the device from the bus */
-+	pci_stop_and_remove_bus_device_locked(hp_slot->hp_pdev);
-+	hp_slot->hp_pdev = NULL;
-+}
-+
-+static int octep_hp_enable_slot(struct hotplug_slot *slot)
-+{
-+	struct octep_hp_slot *hp_slot =
-+		container_of(slot, struct octep_hp_slot, slot);
-+
-+	octep_hp_enable_pdev(hp_slot->ctrl, hp_slot);
-+	return 0;
-+}
-+
-+static int octep_hp_disable_slot(struct hotplug_slot *slot)
-+{
-+	struct octep_hp_slot *hp_slot =
-+		container_of(slot, struct octep_hp_slot, slot);
-+
-+	octep_hp_disable_pdev(hp_slot->ctrl, hp_slot);
-+	return 0;
-+}
-+
-+static struct hotplug_slot_ops octep_hp_slot_ops = {
-+	.enable_slot = octep_hp_enable_slot,
-+	.disable_slot = octep_hp_disable_slot,
-+};
-+
-+#define SLOT_NAME_SIZE 16
-+static struct octep_hp_slot *
-+octep_hp_register_slot(struct octep_hp_controller *hp_ctrl,
-+		       struct pci_dev *pdev, u16 slot_number)
-+{
-+	char slot_name[SLOT_NAME_SIZE];
-+	struct octep_hp_slot *hp_slot;
-+	int ret;
-+
-+	hp_slot = kzalloc(sizeof(*hp_slot), GFP_KERNEL);
-+	if (!hp_slot)
-+		return ERR_PTR(-ENOMEM);
-+
-+	hp_slot->ctrl = hp_ctrl;
-+	hp_slot->hp_pdev = pdev;
-+	hp_slot->hp_devfn = pdev->devfn;
-+	hp_slot->slot_number = slot_number;
-+	hp_slot->slot.ops = &octep_hp_slot_ops;
-+
-+	snprintf(slot_name, sizeof(slot_name), "octep_hp_%u", slot_number);
-+	ret = pci_hp_register(&hp_slot->slot, hp_ctrl->pdev->bus,
-+			      PCI_SLOT(pdev->devfn), slot_name);
-+	if (ret) {
-+		kfree(hp_slot);
-+		return ERR_PTR(ret);
-+	}
-+
-+	dev_info(&pdev->dev, "Registered slot %s for device %s\n",
-+		 slot_name, pci_name(pdev));
-+
-+	list_add_tail(&hp_slot->list, &hp_ctrl->slot_list);
-+	octep_hp_disable_pdev(hp_ctrl, hp_slot);
-+
-+	return hp_slot;
-+}
-+
-+static void octep_hp_deregister_slot(void *data)
-+{
-+	struct octep_hp_slot *hp_slot = data;
-+	struct octep_hp_controller *hp_ctrl = hp_slot->ctrl;
-+
-+	pci_hp_deregister(&hp_slot->slot);
-+	octep_hp_enable_pdev(hp_ctrl, hp_slot);
-+	list_del(&hp_slot->list);
-+	kfree(hp_slot);
-+}
-+
-+static const char *octep_hp_cmd_name(enum octep_hp_intr_type type)
-+{
-+	switch (type) {
-+	case OCTEP_HP_INTR_ENA:
-+		return "hotplug enable";
-+	case OCTEP_HP_INTR_DIS:
-+		return "hotplug disable";
-+	default:
-+		return "invalid";
-+	}
-+}
-+
-+static void octep_hp_cmd_handler(struct octep_hp_controller *hp_ctrl,
-+				 struct octep_hp_cmd *hp_cmd)
-+{
-+	struct octep_hp_slot *hp_slot;
-+
-+	/*
-+	 * Enable or disable the slots based on the slot mask.
-+	 * intr_val is a bit mask where each bit represents a slot.
-+	 */
-+	list_for_each_entry(hp_slot, &hp_ctrl->slot_list, list) {
-+		if (!(hp_cmd->intr_val & BIT(hp_slot->slot_number)))
-+			continue;
-+
-+		dev_info(&hp_ctrl->pdev->dev, "Received %s command for slot %s\n",
-+			 octep_hp_cmd_name(hp_cmd->intr_type),
-+			 hotplug_slot_name(&hp_slot->slot));
-+
-+		switch (hp_cmd->intr_type) {
-+		case OCTEP_HP_INTR_ENA:
-+			octep_hp_enable_pdev(hp_ctrl, hp_slot);
-+			break;
-+		case OCTEP_HP_INTR_DIS:
-+			octep_hp_disable_pdev(hp_ctrl, hp_slot);
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+}
-+
-+static void octep_hp_work_handler(struct work_struct *work)
-+{
-+	struct octep_hp_controller *hp_ctrl;
-+	struct octep_hp_cmd *hp_cmd;
-+	unsigned long flags;
-+
-+	hp_ctrl = container_of(work, struct octep_hp_controller, work);
-+
-+	/* Process all the hotplug commands */
-+	spin_lock_irqsave(&hp_ctrl->hp_cmd_lock, flags);
-+	while (!list_empty(&hp_ctrl->hp_cmd_list)) {
-+		hp_cmd = list_first_entry(&hp_ctrl->hp_cmd_list,
-+					  struct octep_hp_cmd, list);
-+		list_del(&hp_cmd->list);
-+		spin_unlock_irqrestore(&hp_ctrl->hp_cmd_lock, flags);
-+
-+		octep_hp_cmd_handler(hp_ctrl, hp_cmd);
-+		kfree(hp_cmd);
-+
-+		spin_lock_irqsave(&hp_ctrl->hp_cmd_lock, flags);
-+	}
-+	spin_unlock_irqrestore(&hp_ctrl->hp_cmd_lock, flags);
-+}
-+
-+static enum octep_hp_intr_type octep_hp_intr_type(struct octep_hp_intr_info *intr,
-+						  int irq)
-+{
-+	enum octep_hp_intr_type type;
-+
-+	for (type = OCTEP_HP_INTR_ENA; type < OCTEP_HP_INTR_MAX; type++) {
-+		if (intr[type].number == irq)
-+			return type;
-+	}
-+
-+	return OCTEP_HP_INTR_INVALID;
-+}
-+
-+static irqreturn_t octep_hp_intr_handler(int irq, void *data)
-+{
-+	struct octep_hp_controller *hp_ctrl = data;
-+	struct pci_dev *pdev = hp_ctrl->pdev;
-+	enum octep_hp_intr_type type;
-+	struct octep_hp_cmd *hp_cmd;
-+	u64 intr_val;
-+
-+	type = octep_hp_intr_type(hp_ctrl->intr, irq);
-+	if (type == OCTEP_HP_INTR_INVALID) {
-+		dev_err(&pdev->dev, "Invalid interrupt %d\n", irq);
-+		return IRQ_HANDLED;
-+	}
-+
-+	/* Read and clear the interrupt */
-+	intr_val = readq(hp_ctrl->base + OCTEP_HP_INTR_OFFSET(type));
-+	writeq(intr_val, hp_ctrl->base + OCTEP_HP_INTR_OFFSET(type));
-+
-+	hp_cmd = kzalloc(sizeof(*hp_cmd), GFP_ATOMIC);
-+	if (!hp_cmd)
-+		return IRQ_HANDLED;
-+
-+	hp_cmd->intr_val = intr_val;
-+	hp_cmd->intr_type = type;
-+
-+	/* Add the command to the list and schedule the work */
-+	spin_lock(&hp_ctrl->hp_cmd_lock);
-+	list_add_tail(&hp_cmd->list, &hp_ctrl->hp_cmd_list);
-+	spin_unlock(&hp_ctrl->hp_cmd_lock);
-+	schedule_work(&hp_ctrl->work);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void octep_hp_irq_cleanup(void *data)
-+{
-+	struct octep_hp_controller *hp_ctrl = data;
-+
-+	pci_free_irq_vectors(hp_ctrl->pdev);
-+	flush_work(&hp_ctrl->work);
-+}
-+
-+static int octep_hp_request_irq(struct octep_hp_controller *hp_ctrl,
-+				enum octep_hp_intr_type type)
-+{
-+	struct pci_dev *pdev = hp_ctrl->pdev;
-+	struct octep_hp_intr_info *intr;
-+	int irq;
-+
-+	irq = pci_irq_vector(pdev, OCTEP_HP_INTR_VECTOR(type));
-+	if (irq < 0)
-+		return irq;
-+
-+	intr = &hp_ctrl->intr[type];
-+	intr->number = irq;
-+	intr->type = type;
-+	snprintf(intr->name, sizeof(intr->name), "octep_hp_%d", type);
-+
-+	return devm_request_irq(&pdev->dev, irq, octep_hp_intr_handler,
-+				IRQF_SHARED, intr->name, hp_ctrl);
-+}
-+
-+static int octep_hp_controller_setup(struct pci_dev *pdev,
-+				     struct octep_hp_controller *hp_ctrl)
-+{
-+	struct device *dev = &pdev->dev;
-+	enum octep_hp_intr_type type;
-+	int ret;
-+
-+	ret = pcim_enable_device(pdev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable PCI device\n");
-+
-+	hp_ctrl->base = pcim_iomap_region(pdev, 0, OCTEP_HP_DRV_NAME);
-+	if (IS_ERR(hp_ctrl->base))
-+		return dev_err_probe(dev, PTR_ERR(hp_ctrl->base),
-+				     "Failed to map PCI device region\n");
-+
-+	pci_set_master(pdev);
-+	pci_set_drvdata(pdev, hp_ctrl);
-+
-+	INIT_LIST_HEAD(&hp_ctrl->slot_list);
-+	INIT_LIST_HEAD(&hp_ctrl->hp_cmd_list);
-+	mutex_init(&hp_ctrl->slot_lock);
-+	spin_lock_init(&hp_ctrl->hp_cmd_lock);
-+	INIT_WORK(&hp_ctrl->work, octep_hp_work_handler);
-+	hp_ctrl->pdev = pdev;
-+
-+	ret = pci_alloc_irq_vectors(pdev, 1,
-+				    OCTEP_HP_INTR_VECTOR(OCTEP_HP_INTR_MAX),
-+				    PCI_IRQ_MSIX);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to alloc MSI-X vectors\n");
-+
-+	ret = devm_add_action(&pdev->dev, octep_hp_irq_cleanup, hp_ctrl);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to add IRQ cleanup action\n");
-+
-+	for (type = OCTEP_HP_INTR_ENA; type < OCTEP_HP_INTR_MAX; type++) {
-+		ret = octep_hp_request_irq(hp_ctrl, type);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to request IRQ for vector %d\n",
-+					     OCTEP_HP_INTR_VECTOR(type));
-+	}
-+
-+	return 0;
-+}
-+
-+static int octep_hp_pci_probe(struct pci_dev *pdev,
-+			      const struct pci_device_id *id)
-+{
-+	struct octep_hp_controller *hp_ctrl;
-+	struct pci_dev *tmp_pdev, *next;
-+	struct octep_hp_slot *hp_slot;
-+	u16 slot_number = 0;
-+	int ret;
-+
-+	hp_ctrl = devm_kzalloc(&pdev->dev, sizeof(*hp_ctrl), GFP_KERNEL);
-+	if (!hp_ctrl)
-+		return -ENOMEM;
-+
-+	ret = octep_hp_controller_setup(pdev, hp_ctrl);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Register all hotplug slots. Hotplug controller is the first function
-+	 * of the PCI device. The hotplug slots are the remaining functions of
-+	 * the PCI device. The hotplug slot functions are logically removed from
-+	 * the bus during probing and are re-enabled by the driver when a
-+	 * hotplug event is received.
-+	 */
-+	list_for_each_entry_safe(tmp_pdev, next, &pdev->bus->devices, bus_list) {
-+		if (tmp_pdev == pdev)
-+			continue;
-+
-+		hp_slot = octep_hp_register_slot(hp_ctrl, tmp_pdev, slot_number);
-+		if (IS_ERR(hp_slot))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(hp_slot),
-+					     "Failed to register hotplug slot %u\n",
-+					     slot_number);
-+
-+		ret = devm_add_action(&pdev->dev, octep_hp_deregister_slot,
-+				      hp_slot);
-+		if (ret)
-+			return dev_err_probe(&pdev->dev, ret,
-+					     "Failed to add action for deregistering slot %u\n",
-+					     slot_number);
-+		slot_number++;
-+	}
-+
-+	return 0;
-+}
-+
-+#define PCI_DEVICE_ID_CAVIUM_OCTEP_HP_CTLR  0xa0e3
-+static struct pci_device_id octep_hp_pci_map[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVICE_ID_CAVIUM_OCTEP_HP_CTLR) },
-+	{ },
-+};
-+
-+static struct pci_driver octep_hp = {
-+	.name = OCTEP_HP_DRV_NAME,
-+	.id_table = octep_hp_pci_map,
-+	.probe = octep_hp_pci_probe,
-+};
-+
-+module_pci_driver(octep_hp);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Marvell");
-+MODULE_DESCRIPTION("Marvell OCTEON PCI Hotplug driver");
--- 
-2.25.1
+Senior Embedded Linux Developer
 
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
