@@ -1,80 +1,83 @@
-Return-Path: <linux-kernel+bounces-404092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4AC99C3F00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:00:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 844319C3F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 026071C225C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60DE1C2249E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB2019F40A;
-	Mon, 11 Nov 2024 12:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB1019F487;
+	Mon, 11 Nov 2024 12:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WnULSqMW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NJu89gx2"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0140A19F115;
-	Mon, 11 Nov 2024 12:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1794719F47E;
+	Mon, 11 Nov 2024 12:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329737; cv=none; b=cowIcHBXPZaQc3Yz1eQhy1V2cm4iYoLlqlKkoqQehk4h0OGv2uKfdTA4wU8DhyB0+Ea7i7AozEtF+78GyqAvO/2x1JIsxgODQpLdJSWSs10UCDnQ+1Fy2yEVqHZcvtGsnWYdrVA1bXyr6/vefQAFIasR88yS7Bd8IP6JnHfdWF4=
+	t=1731329746; cv=none; b=HRTAOWtUY3HxiiBjWtOAPOwtUXRFViDtNtsmTZSMbykqV50NAtmFhiykDSEFZFZdXSOdm4uQ+NcMHRgHafrTA0LvH3N1mE8bl/jF7+PGwtEMDpVm/SFakNPWsv7biEVGxEDG8M/bhJdjQItiLMiPC+UXjaB5M/g0RboCCJO2jlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329737; c=relaxed/simple;
-	bh=ACqJW+Dv2r1izoBTSGmwVYJZ4/uZ989CLEhAmXXKpiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TivqOfwuLTImK9wZQ/Zd7RQzrVcfehNIMccr/p9Fhk40hDKVL+Kb69gc//h6YTWglsApwjf2Oe9bsLjcf1+tF5fxBm3nmuM9gOuYXhl+k30oC+O5rxcyGS1ku+rgGd4TJvSuI3nAJnplcnMxZinxrQJ786z5UsY2F9oUoC1v49w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WnULSqMW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=T5UP7GuDQvQJR85C2aqyJRkB6kHFOZ5WkMvZvaIB7QM=; b=WnULSqMWb8nHiAa/Z+etNqZBzx
-	Gw02A7PaJcp3VHVpgOqVx4ChWWe+vYUr+bxZt+YbUwfBEZivRpgS9PY8pMSubRK7xOFnwXjn23Gfu
-	aFAPWuUAbqb8Jp+A2aWbtFBhqtnJgfCMEQiJrIk+gi+ogXrEjwmpYtRYaURXquyR4XkMUrjGBVzX4
-	xL4eIbyuBxAmAJD245zrBzmkygA7YakF3Vu9LQNQFSO61xyaiiqF+Z9MVXtt1wyDfcZkmxL2/4zWT
-	oCRpu6uhJt3cp8WiKH6SRXSLc3xsEZWFRS6MLQu1NFioE6E2xWDGzgjKrYkXFzlNsyJwhJHzKeGve
-	guYlc6UA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tATx4-0000000CooV-1oOY;
-	Mon, 11 Nov 2024 12:55:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E3BD830042E; Mon, 11 Nov 2024 13:55:29 +0100 (CET)
-Date: Mon, 11 Nov 2024 13:55:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: mcgrof@kernel.org, x86@kernel.org, hpa@zytor.com, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com, masahiroy@kernel.org,
-	nathan@kernel.org, nicolas@fjasle.eu, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Subject: Re: [RFC][PATCH 1/8] module: Prepare for script
-Message-ID: <20241111125529.GF22801@noisy.programming.kicks-ass.net>
-References: <20241111105430.575636482@infradead.org>
- <20241111111816.912388412@infradead.org>
- <ZzHsOTLCZlUBN7iW@infradead.org>
+	s=arc-20240116; t=1731329746; c=relaxed/simple;
+	bh=qRe/F76H/58frwLfvI3LBKbI4uSiq7qspmyH+LRyX1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHGVzkCzPxvDbzZi7EPKdiHTswzQGaHYTck6xbELVEuD8WZ2beCJKOpUqpJub+SD7VwrOgvINFJp8J7HAxu6gqTvXuqgAC93DUbgDUSS5emnsw/o0XbRsWnM+/xQxDu0t+VK3YqnfOKgzMiCQu9djjRYWezOwR6qgSaxqAl6BKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NJu89gx2; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=qRe/F76H/58frwLfvI3LBKbI4uSiq7qspmyH+LRyX1Q=; b=NJu89gx2+QbjuwtdHd17k4ai9q
+	+/mCnxFmT47or1dA7jWHUZtWJsdX0PD0TFI4RN9AQVDtJuehuwynkaT5lM5Tjtm6nQPno5t+AxXD6
+	8E4jRIL4ctIwjby6fPZSHSoutH12csjdrVU9xG/6NRYYyOVYx/X+VmPy/FiigqWkE3GJqv2h1SWFu
+	xk6GqjOEz15jdGReWm2REPD8WgFQ9Am/z2oimu01PcuAs4+v92ep08qVtSKauUGVWxsOSylE0CMO9
+	XOgfC1p3Pf9/+4LJOYJ8LLAfbUxqwnbsHVMXpd8YEYYgOrKjlfvE8tIKxGClb/xzPkRsYow/uFtEm
+	WmpPDA6tAat3EyrLykEb2AaOvibgdP8ah0Edq+uP2ELa1sU0K/1fHVsFfMgr9j2JRcnv6N+sCXcGh
+	8ek1kyBccTH7aSzZaTbmdRVQB5WmEIQXYstU4fKthxdbLw62gsv/RD2h1tvZTMoTOpuL2D/rwF3xC
+	LPLF2mfvZHvnALrG9qjr/g2e;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1tATxD-00A3CN-1S;
+	Mon, 11 Nov 2024 12:55:39 +0000
+Message-ID: <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
+Date: Mon, 11 Nov 2024 13:55:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzHsOTLCZlUBN7iW@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v4] Uncached buffered IO
+To: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org
+Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
+References: <20241108174505.1214230-1-axboe@kernel.dk>
+Content-Language: en-US, de-DE
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <20241108174505.1214230-1-axboe@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 03:36:25AM -0800, Christoph Hellwig wrote:
-> On Mon, Nov 11, 2024 at 11:54:31AM +0100, Peter Zijlstra wrote:
-> > Since sed doesn't like multi-line make sure all EXPORT_SYMBOL_NS
-> > things are a single line.
-> 
-> Eww.  Just use coccinelle or another tool not so simplistic.
+Hi Jens,
 
-Feel free to do so. I've never managed to get coccinelle to do anything.
+I'm wondering about the impact on memory mapped files.
+
+Let's say one (or more) process(es) called mmap on a file in order to
+use the content of the file as persistent shared memory.
+As far as I understand pages from the page cache are used for this.
+
+Now another process uses RWF_UNCACHED for a read of the same file.
+What happens if the pages are removed from the page cache?
+Or is the removal deferred based on some refcount?
+
+Thanks!
+metze
+
 
