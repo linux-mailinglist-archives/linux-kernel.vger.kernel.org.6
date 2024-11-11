@@ -1,191 +1,94 @@
-Return-Path: <linux-kernel+bounces-404506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9ED9C4489
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:08:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0C29C448E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252161F21BCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:08:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E051F22098
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4981AA1CA;
-	Mon, 11 Nov 2024 18:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AB1AA1C8;
+	Mon, 11 Nov 2024 18:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+rX673a"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ8ZConb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40AC15D5C5;
-	Mon, 11 Nov 2024 18:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D464C66;
+	Mon, 11 Nov 2024 18:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348497; cv=none; b=dWFt7/FlbEvman60VYlwm0vFeID+cJ2Z1lGPz9DZu+54I5A3ZnLD5+244w927GXSsJN8VKFO2CD6Bwk2h1NtDisYfEusSe7WPyjFdgHeeazmXVNF0CCgk2kHa/gsOuGqztTmVB1sAlZNEsRZ7s54qVw/l/vHLoXSV2Jdaqo/kEY=
+	t=1731348514; cv=none; b=AT7FB2O8cUXd7Y/55xrn/7+NQmH0K6hMzir1F80JTsO3e9kx5ldqTOA1xtQEw2/k03aHs4lR1fVWvyszHdDWYUoCyjHO3sF/wkEmHeEuSi+uW4gMSPBO58OcQybFXefWqhLC65Wmi0pUttyonLdj1PCDb6sGghmaBqyBtp+SHxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731348497; c=relaxed/simple;
-	bh=y5iMvf/4S+stnGMBQDra4kM7g4r4/MchdWRgR3GZ/IM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PuOccxuxmPdmMv0kCT683Sy/YBiU+shG4E82AWD6teQHNy1ZwKjGhwVRbd+m5xnHmvbmDy1rq7Kt2zUJNZT1BcjUlfit26GpaKBO8F2SNNxpDfaEKZIz44s8pW7evFemY37zbGNNp77cgD+NEhyLY6qmHI4xzEqSCUddLWEPXGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+rX673a; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e6005781c0so2827485b6e.3;
-        Mon, 11 Nov 2024 10:08:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731348495; x=1731953295; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIIw8COZ4qGRV5piskJJQw93/eMz7AU4LzzjWnY9cLs=;
-        b=d+rX673aSEa0diFEKs3Dk+QgrgIe98N2ijTQ0hrXIMyd9JwZjkfSeKTyKTX4nELKwF
-         Xwyg3982Gp2mwmxjakwcp6ZAm4y0rJqNXl+ZLydnbyyZsjRE1+Gq44Wx05NY7NBm32lf
-         hRcdtatnCl0cyUr2e97B1+eow/A2qA4GWniK98o4U+Ep8Yl3iVPap32tKv4cZEx8tALW
-         5Biam7wbIGjFRW3hp/H8x2hMseqQowweq8GKvmPHjuT9KNx8DTBRtY3DIEYbhYrH8+Yd
-         RJIl/F3Kwybg3dzax/bD3zQ2yWJPWdcxTUum1YF2ektLdOE95oXpERpvO9hMA0jpWPd6
-         /8kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731348495; x=1731953295;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FIIw8COZ4qGRV5piskJJQw93/eMz7AU4LzzjWnY9cLs=;
-        b=jxn5lY6yIKJ5MwOQN+leAIFa9nDH2kLFOJqynQrxkirhmfXkmgmNi52i9xsTJTrF9O
-         iGV9VTxTIr0ud+G770cfZhJiyN/7KNSoc6E84KAPyULmR813ohPnGc3WOETN2lMcLNya
-         4FYjUkSfurUQcPE3uD6zu+oyY7NYoK+hIMHLpqnhnu+sTskI2H7zQUtRY69nAsG7PIWd
-         zen83yklmFGRUeER4Sd5GT5HX7HyVbKp6KrB7VefvOu0y08AudMQwNFETiDmB643ZTtb
-         QlpSSOYVHkVUxUaP7+aQ5yikWq5+44Xl6LDL/Bolet31ZRbrdVp/WnXIWDicYyetlFbU
-         +zGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYPVkB6Q8XF44XHNPo4w1oEqmfbH4TNEK1Kf0yrnZEj0YJ2+w6LB3suQeSACg+++SXdIjPdzVuDn3IokQ6NWDeZA==@vger.kernel.org, AJvYcCWQfNAL9l9FHp9zMUC8r0wriJqQzh0IEnuP9vXl17nzde/OK5zzo2H6j/nBsJk67VGqV8l/iAtdmu9SwDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZOASLqIorh3tPDjjnUseD9ylMFQglNZYKtg+/f2TZdePPv6Ax
-	w2YastPNEDBlccl/oRUfh/yrdRgdJyWpAhkfiznwzc4AlJWB3ikm6Wr7fPn1zgJBWyY1LoeheMs
-	trsHqq7FAyoxBpoyLGZIVHXZhRrY=
-X-Google-Smtp-Source: AGHT+IFxQV//xr4nFb8zAKndk3eGjv43kUYYuIGwaqWrE52AdsOUkUFvVEprjDC4xGxFvda47ZJ0Y+TlGt2SpbLi4kc=
-X-Received: by 2002:a05:6808:14ca:b0:3e6:773:c99e with SMTP id
- 5614622812f47-3e7945c7ddbmr11748872b6e.21.1731348495032; Mon, 11 Nov 2024
- 10:08:15 -0800 (PST)
+	s=arc-20240116; t=1731348514; c=relaxed/simple;
+	bh=AEvF+lxs/+5g7LFaaobL1cTI1sRUJ97tB8YlBhuVWfg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tLfevYuLag+4ww9YQShBd+XEOOVdhZqKUP0SO7S7qcSWqKBDWEOIn0Er4vWZafgMQ8is9FBYrjpmr3KKYG/QGOE+5bGolTdiYMbwLmKFiqMrp9XxtH8iwbjvMocT+KVtZjCmjusUGhS0gU7HTOwl1oOlXKCD/CsuDR0r0dtlYCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ8ZConb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC05C4CECF;
+	Mon, 11 Nov 2024 18:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731348514;
+	bh=AEvF+lxs/+5g7LFaaobL1cTI1sRUJ97tB8YlBhuVWfg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KZ8ZConbsjyDJcVw6oxZ+ctk2irCZm2M8eq6B88tVhGYr1AabBhfilstVivond0wU
+	 zOJssRhGu/jQ/MtALIE4SZ+4Mj/Av6tc+Ozz5lYY+jcDKcBzysgN52dEXZCfO2Ss+z
+	 VpqvpT4SqEwAkzimaNDQV+75qtlUgbVxVuLHx39fs83eMObPj8RDdt4kdBIxqvaAdl
+	 bD26t3H79LIdJ2KuE2Zyk7EEzqCY5Hw3LFSB3GwYJJ3BVkEv4bsVmZ8GdyDelqy7W0
+	 NQwwFjlwWimiqvEINDyW092S++cw3enZ39km4PUoecwFW/Z6c33/T9uauTBMuBpelv
+	 k2UMAfkuGWkpw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Sean Paul <sean@poorly.run>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Subject: Re: [PATCH v2 0/2] drm/msm/adreno: Setup SMMU aparture
+Date: Mon, 11 Nov 2024 12:08:31 -0600
+Message-ID: <173134850914.212509.17711783777299070949.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
+References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com>
- <20241108204137.2444151-5-howardchu95@gmail.com> <CAP-5=fV8_DxYxKy4A71z0gb82u8W+8qGXvVDSEW2A1GOfSf=oA@mail.gmail.com>
-In-Reply-To: <CAP-5=fV8_DxYxKy4A71z0gb82u8W+8qGXvVDSEW2A1GOfSf=oA@mail.gmail.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Mon, 11 Nov 2024 10:08:04 -0800
-Message-ID: <CAH0uvoh_qeOqrU+52SqUfaFJY5eCMvr5gKNkn8N4iEt_KS3jVg@mail.gmail.com>
-Subject: Re: [PATCH v7 04/10] perf record --off-cpu: Preparation of off-cpu
- BPF program
-To: Ian Rogers <irogers@google.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-On Mon, Nov 11, 2024 at 9:47=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
-> wrote:
-> >
-> > Set the perf_event map in BPF for dumping off-cpu samples.
-> >
-> > Set the offcpu_thresh to specify the threshold.
-> >
-> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > ---
-> >  tools/perf/util/bpf_off_cpu.c          | 20 ++++++++++++++++++++
-> >  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
-> >  2 files changed, 22 insertions(+)
-> >
-> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
-u.c
-> > index 558c5e5c2dc3..cfe5b17393e9 100644
-> > --- a/tools/perf/util/bpf_off_cpu.c
-> > +++ b/tools/perf/util/bpf_off_cpu.c
-> > @@ -13,6 +13,7 @@
-> >  #include "util/cgroup.h"
-> >  #include "util/strlist.h"
-> >  #include <bpf/bpf.h>
-> > +#include <internal/xyarray.h>
-> >
-> >  #include "bpf_skel/off_cpu.skel.h"
-> >
-> > @@ -73,6 +74,23 @@ static void off_cpu_start(void *arg)
-> >                 bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
-> >         }
-> >
-> > +       /* update BPF perf_event map */
-> > +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
-> > +       if (evsel =3D=3D NULL) {
-> > +               pr_err("%s evsel not found\n", OFFCPU_EVENT);
-> > +               return;
-> > +       }
-> > +
-> > +       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
-> > +               err =3D bpf_map__update_elem(skel->maps.offcpu_output, =
-&pcpu.cpu, sizeof(__u32),
-> > +                                          xyarray__entry(evsel->core.f=
-d, i, 0),
-> > +                                          sizeof(__u32), BPF_ANY);
-> > +               if (err) {
-> > +                       pr_err("Failed to update perf event map for dir=
-ect off-cpu dumping\n");
-> > +                       return;
-> > +               }
-> > +       }
-> > +
-> >         skel->bss->enabled =3D 1;
-> >  }
-> >
-> > @@ -261,6 +279,8 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
-arget *target,
-> >                 }
-> >         }
-> >
-> > +       skel->bss->offcpu_thresh =3D opts->off_cpu_thresh * 1000;
-> > +
-> >         err =3D off_cpu_bpf__attach(skel);
-> >         if (err) {
-> >                 pr_err("Failed to attach off-cpu BPF skeleton\n");
-> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
-pf_skel/off_cpu.bpf.c
-> > index c152116df72f..dc6acafb9353 100644
-> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > @@ -97,6 +97,8 @@ const volatile bool uses_cgroup_v1 =3D false;
-> >
-> >  int perf_subsys_id =3D -1;
-> >
-> > +__u64 offcpu_thresh;
->
-> nit: would be nice to include the unit in the variable name, ie
-> offcpu_thresh_us.
+On Sun, 10 Nov 2024 09:33:39 -0800, Bjorn Andersson wrote:
+> Support for per-page tables requires the SMMU aparture to be setup, on
+> some targets this is done statically in firmware, on others it's
+> expected to be requested in runtime by the driver, through a SCM call.
+> 
+> Marking the series as RFT, as this has been tested on a few different
+> modern platforms, but only with Qualcomm presence in EL2.
+> 
+> [...]
 
-Sure I will, thanks.
+Applied, thanks!
 
->
-> Reviewed-by: Ian Rogers <irogers@google.com>
->
-> Thanks,
-> Ian
->
-> > +
-> >  /*
-> >   * Old kernel used to call it task_struct->state and now it's '__state=
-'.
-> >   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
-> > --
-> > 2.43.0
-> >
+[1/2] firmware: qcom: scm: Introduce CP_SMMU_APERTURE_ID
+      commit: 1af75b2ad08bd5977c51c2d0fc11741a4c0a48d9
+[2/2] drm/msm/adreno: Setup SMMU aparture for per-process page table
+      commit: 98e5b7f98356cef2f13b54862ca9ac016b71ff06
 
-Thanks,
-Howard
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
