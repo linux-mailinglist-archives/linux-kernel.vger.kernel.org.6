@@ -1,172 +1,142 @@
-Return-Path: <linux-kernel+bounces-403905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88C29C3C7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3669C3C7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77B851F21F00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E4228252B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6263C17A58C;
-	Mon, 11 Nov 2024 10:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F4517C7BD;
+	Mon, 11 Nov 2024 10:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLDSqv/m"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="il/YDmB/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6556F15B554;
-	Mon, 11 Nov 2024 10:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D2175D34
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322585; cv=none; b=JTBczxgyLbL8GMQ9vJP2isJ7j/v1RcJgB4dslk/Kpr1MiA53PfRijdb40sfvpbaVpNWuPkaowvycLG+nGLumNYyM9pPLaIrnl+7E53sFTZWgZnz185Fl9ClfqCEpjLjwKSHi1mqw5XhJC64yPlkLe1QsZrTCERgkmLrG0Y5xZeQ=
+	t=1731322597; cv=none; b=QX8TgSmih1gG2TghAw5x+p/3NbjzqkHoezTIQVhsRciYZCfGFlotambwYdw7MquYe4ZtSxzNXLrzIgdtaqjJpqnYiSc4f4T9xCgssITtacQY5+rdG7Uqu2t2auj1fKSnfyERcWLU1ayX+OSDlCNsUl1iXJSyxOITpO+WlLjY9oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322585; c=relaxed/simple;
-	bh=BwQ9j2GDl/1hCk5TWbxqiCBINu0rl8yOHNuJrRUeed8=;
+	s=arc-20240116; t=1731322597; c=relaxed/simple;
+	bh=xyu2W+AkhEUFrLCZO/aFXuBzwn1sWoS3HvpP6+mglTo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alPST/3fLvxfai7UKoowMlA/63PAd2eHWxoeorYgapC7DK0/3XdCgGpqtN8asQIS0hl24kuHlnokKcss/6Cjw/jmbLYkcOGFJmy38eI7x6+PS5iTjGrfJjf1zN++LI/uNw0/V1kg2B8j7fX01oiyOoArqusNHQGr1g842LdKvgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLDSqv/m; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c803787abso35290155ad.0;
-        Mon, 11 Nov 2024 02:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731322583; x=1731927383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sd9tR5Govy2G9ckfvVxyx3zB2jsN18XRDCx2eel1ir8=;
-        b=OLDSqv/mqVPXEgeUwvi6HoLVVHrPUtbIj/2GWgW9p9XbbDs9rgHt5hWUBt2nsuHSO4
-         DZlGf7v6A5vIU4rXWTvu85E9p2W+hPX6za5IOZ2KCqnfVhMjbHJ/S8biNUfl8QGCL2M7
-         cnx53+ssTSFwNIusVrTCbTdtCQj89pFtWI9/RdZKCJ63UGjrrAVKlONtou686YhdJBfF
-         TCZRDRLGTiVIFl/47r96mlXAKVBTerK39hAOC5YuHvYEDFcJXmurDjtp6BQbytSiwf8O
-         MRepjJE735lpq/KtANdtuWagvojLWaQuY+oRBnI7BpsJNfmEQ1X1ssmuVU4XBNZRggde
-         Dyqg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJz/gKdIhFBhawGsiCzu/ZhvfVOX3nC9FtEIRHQ7RLkthxbEEKrLvfMUjN5n52ioISHP5VROnADp8GWsE3oFKbtSf2mgy7+JAGQT2KmlYuu1ITej8PKFaSGYURHNAVD2PCUjVQeJYp1XFIlRl/PuiAb4L8J+ICBXg/2cFEHQGuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=il/YDmB/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731322595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PzxqFjD6NsHew4NyK62jDoA1MQuiNh2M1h/kJUKkO+w=;
+	b=il/YDmB/rKdLU0paZKBte+vzrX65cqqNejz8gwzFPrrV9c6Q2Tgyw1txfLUNp1oX5artx+
+	IwnzgwT0rrif/7iBaTyiLEKzM+RX7tWIgsmF7uWlyn0D18b0doUEzlK11W+jIQQrbxHwFp
+	hTk2/yjr6SDUtCOwzOAu2Sa5iI8ZS+g=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-tX_-tBiMNumxF_u03GvLBw-1; Mon, 11 Nov 2024 05:56:33 -0500
+X-MC-Unique: tX_-tBiMNumxF_u03GvLBw-1
+X-Mimecast-MFC-AGG-ID: tX_-tBiMNumxF_u03GvLBw
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-381d0582ad3so3654896f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:56:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322583; x=1731927383;
+        d=1e100.net; s=20230601; t=1731322592; x=1731927392;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sd9tR5Govy2G9ckfvVxyx3zB2jsN18XRDCx2eel1ir8=;
-        b=a7YN9VM6jXVhM3cZoy/3oDE5ENjwIPK+9g+laszpH5Pdc1RkLfDDvOgCjs0cLI01un
-         UypKAgKg5Mp6qIZ520mjA/RepK2z9j+qIBYvZ3K3CCPolSTbCY+yYhB2quOj5h52k8O3
-         8YUNOvfgLWNwqOF2FxjNWCNYFjeF8RmDCsksOEuxZofdSdiP+4X13DCHZRhJr+wLYF5n
-         4P0UYrpNw7UG/uk1RriTjnLwQrHaffG8gIIAckfkAPM5lJDVGOo6Pv//ugIvMpTn8fAn
-         nFIG1O3OcHdr3XMW2zc4QHMLfqVlC9IytWNZeM97i3KpLyt2C1nU6tTfwnDkNNL9Uz+N
-         ymSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0GPR6ZZj4oGEn44bpByb28LOAasWLVwZ8XU3Qk8t25F86BL6td69OcSL0SmbJ0WksD/4HolnaIX4QkGg=@vger.kernel.org, AJvYcCXmZiO+bpPqXU4mFslNP4gzmcBC5khuJv12uBKRngKkwNx3VdTzgJ5xZX6e+G42Eh9LFGLkxzNwl4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL52JmX3NOTZBVTw69UR4DbqASYKjkROlMzBovrXO9iBQK5LRJ
-	8i4ysLjY1XyjBFg/Pjmwa2nwwdI2lsbNXsWqKHekaHSBRiGHej03
-X-Google-Smtp-Source: AGHT+IGBeF2/30b+ICRW7AMbuJJyB2s6thTc7CDi93f23isHluxZwIzPAZiF08YXCRIYoC1mB2c2oQ==
-X-Received: by 2002:a17:903:1c2:b0:205:7007:84fa with SMTP id d9443c01a7336-211837c3ddemr204820355ad.28.1731322582419;
-        Mon, 11 Nov 2024 02:56:22 -0800 (PST)
-Received: from archie.me ([103.124.138.80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6c12csm74206375ad.251.2024.11.11.02.56.20
+        bh=PzxqFjD6NsHew4NyK62jDoA1MQuiNh2M1h/kJUKkO+w=;
+        b=ssUEQvaFA6h3yLG16VR415nqMxKqU7My2rKhI65rFeRWeAY5PCyVmUCmmDYeG3HDP1
+         p1N/FzE3A6ubY/0/bHhCEy/hrP96gkKghO/TlpqQssYUUHoZHxKF/s63uV93nYpCamtA
+         KeGNQkwh4BLCkU32prw5BBpCfXziKjouI0hBwOukKYWBlR1E3Xb8O8ia/PtAV7nYZbDb
+         nr1GXc5PNUkc6OEBS/L+4iIfhQjoxWBFOY1gvFsJyGTh5PiTLuRCnzuccCL/qlQheww/
+         +Ywc0jTWnQSAXWcVIlrzEATZBmFmiRhXVHpxYnln0vFglyWk+KCNUtiL8ozlaNL4rLrQ
+         XUyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzlobcqfl+Aaj0qah1/cn2Mvmk3UBNbr34L60XEjMEFDMJgAZtFKuYY6HdRZkvPDo2wcBSB3jANS4aCMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqEfakIUbjypY6DoWMusWS6JqqYEJRyoIeohAOr+4XCwzCC62B
+	8NMBpaWFeRIKVYGvCHPuAXJFRQ/HUVe8X6Y2khyZrBgLAozuY3Qb3f2m/7K4caAZCvp81yD+Cn2
+	/4sybF+AaBp3Py7+hFtXn2XdoNK0ZvwwKNHMWnJNKvcZAGw26kvuwhlAxacOTVA==
+X-Received: by 2002:a05:6000:782:b0:37d:612c:5e43 with SMTP id ffacd0b85a97d-381f1838df9mr13309458f8f.0.1731322591716;
+        Mon, 11 Nov 2024 02:56:31 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH4fjQnzFja0IJnI8AD28pvo7qsfh9Pd6dcZnWBKwZ9TR9z3dtExcl6hKH6mrCYf74gr9Y9+w==
+X-Received: by 2002:a05:6000:782:b0:37d:612c:5e43 with SMTP id ffacd0b85a97d-381f1838df9mr13309436f8f.0.1731322591400;
+        Mon, 11 Nov 2024 02:56:31 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-250.as13285.net. [89.240.117.250])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9f8984sm12792910f8f.71.2024.11.11.02.56.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:56:21 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7376D4231EB7; Mon, 11 Nov 2024 17:56:16 +0700 (WIB)
-Date: Mon, 11 Nov 2024 17:56:16 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: anish kumar <yesanishhere@gmail.com>, lgirdwood@gmail.com,
-	broonie@kernel.org, perex@perex.cz, tiwai@suse.com, corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH V3] ALSA: machine: update documentation
-Message-ID: <ZzHi0BaxIEStMsY2@archie.me>
-References: <20241109192231.11623-1-yesanishhere@gmail.com>
+        Mon, 11 Nov 2024 02:56:30 -0800 (PST)
+Date: Mon, 11 Nov 2024 10:56:29 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] cgroup/cpuset: Enforce at most one
+ rebuild_sched_domains_locked() call per operation
+Message-ID: <ZzHi3VIQAx4AJ3lP@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241110025023.664487-1-longman@redhat.com>
+ <20241110025023.664487-3-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="DOSrT3liDLmmX29u"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109192231.11623-1-yesanishhere@gmail.com>
+In-Reply-To: <20241110025023.664487-3-longman@redhat.com>
 
+Hi,
 
---DOSrT3liDLmmX29u
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09/11/24 21:50, Waiman Long wrote:
+> Since commit ff0ce721ec21 ("cgroup/cpuset: Eliminate unncessary
+> sched domains rebuilds in hotplug"), there is only one
+> rebuild_sched_domains_locked() call per hotplug operation. However,
+> writing to the various cpuset control files may still casue more than
+> one rebuild_sched_domains_locked() call to happen in some cases.
+> 
+> Juri had found that two rebuild_sched_domains_locked() calls in
+> update_prstate(), one from update_cpumasks_hier() and another one from
+> update_partition_sd_lb() could cause cpuset partition to be created
+> with null total_bw for DL tasks. IOW, DL tasks may not be scheduled
+> correctly in such a partition.
+> 
+> A sample command sequence that can reproduce null total_bw is as
+> follows.
+> 
+>   # echo Y >/sys/kernel/debug/sched/verbose
+>   # echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
+>   # mkdir /sys/fs/cgroup/test
+>   # echo 0-7 > /sys/fs/cgroup/test/cpuset.cpus
+>   # echo 6-7 > /sys/fs/cgroup/test/cpuset.cpus.exclusive
+>   # echo root >/sys/fs/cgroup/test/cpuset.cpus.partition
+> 
+> Fix this double rebuild_sched_domains_locked() calls problem
+> by replacing existing calls with cpuset_force_rebuild() except
+> the rebuild_sched_domains_cpuslocked() call at the end of
+> cpuset_handle_hotplug(). Checking of the force_sd_rebuild flag is
+> now done at the end of cpuset_write_resmask() and update_prstate()
+> to determine if rebuild_sched_domains_locked() should be called or not.
+> 
+> The cpuset v1 code can still call rebuild_sched_domains_locked()
+> directly as double rebuild_sched_domains_locked() calls is not possible.
+> 
+> Reported-by: Juri Lelli <juri.lelli@redhat.com>
+> Closes: https://lore.kernel.org/lkml/ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb/
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-On Sat, Nov 09, 2024 at 11:22:31AM -0800, anish kumar wrote:
-> diff --git a/Documentation/sound/soc/machine.rst b/Documentation/sound/so=
-c/machine.rst
-> index 515c9444deaf..9db132bc0070 100644
-> --- a/Documentation/sound/soc/machine.rst
-> +++ b/Documentation/sound/soc/machine.rst
-> @@ -71,6 +71,18 @@ struct snd_soc_dai_link is used to set up each DAI in =
-your machine. e.g.
->  	.ops =3D &corgi_ops,
->    };
-> =20
-> +In the above struct, dai=E2=80=99s are registered using names but you ca=
-n pass
-> +either dai name or device tree node but not both. Also, names used here
-> +for cpu/codec/platform dais should be globally unique.
-> +
-> +Additionaly below example macro can be used to register cpu, codec and
-> +platform dai::
-> +
-> +  SND_SOC_DAILINK_DEFS(wm2200_cpu_dsp,
-> +	DAILINK_COMP_ARRAY(COMP_CPU("samsung-i2s.0")),
-> +	DAILINK_COMP_ARRAY(COMP_CODEC("spi0.0", "wm0010-sdi1")),
-> +	DAILINK_COMP_ARRAY(COMP_PLATFORM("samsung-i2s.0")));
-> +
->  struct snd_soc_card then sets up the machine with its DAIs. e.g.
->  ::
-> =20
-> @@ -81,6 +93,10 @@ struct snd_soc_card then sets up the machine with its =
-DAIs. e.g.
->  	.num_links =3D 1,
->    };
-> =20
-> +Following this, ``devm_snd_soc_register_card`` can be used to register
-> +the sound card. During the registration, the individual components
-> +such as the codec, CPU, and platform are probed. If all these components
-> +are successfully probed, the sound card gets registered.
-> =20
->  Machine Power Map
->  -----------------
-> @@ -95,3 +111,13 @@ Machine Controls
->  ----------------
-> =20
->  Machine specific audio mixer controls can be added in the DAI init funct=
-ion.
-> +
-> +
-> +Clocking Controls
-> +-----------------
-> +
-> +As previously noted, clock configuration is handled within the machine d=
-river.
-> +For details on the clock APIs that the machine driver can utilize for
-> +setup, please refer to Documentation/sound/soc/clocking.rst. However, the
-> +callback needs to be registered by the CPU/Codec/Platform drivers to con=
-figure
-> +the clocks that is needed for the corresponding device operation.
+This indeed works for me and fixes things with the test above (on v2).
 
-Looks good, thanks!
+Tested-by: Juri Lelli <juri.lelli@redhat.com>
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Thanks!
+Juri
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---DOSrT3liDLmmX29u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZzHiywAKCRD2uYlJVVFO
-owsdAP96V6UP1EBcRZGyLlEKuYOhwUs2JOWKbveshD8rM2nxzwEA6D4/9xF27TC1
-PUIGCApEI003/4kuCecnkqov6/T8rAI=
-=6FkS
------END PGP SIGNATURE-----
-
---DOSrT3liDLmmX29u--
 
