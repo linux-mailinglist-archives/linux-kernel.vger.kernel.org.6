@@ -1,163 +1,157 @@
-Return-Path: <linux-kernel+bounces-404486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD599C44B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:15:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8509C4441
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 146AAB24679
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FA6F1F22490
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851F81A9B2C;
-	Mon, 11 Nov 2024 17:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8015A1AA7B1;
+	Mon, 11 Nov 2024 17:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ABfWiFW4"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0F41A726F
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nejyAANH"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E023019F113;
+	Mon, 11 Nov 2024 17:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347760; cv=none; b=u9noasR6t8jdLkaZw8EPsqolX2RCePvfabl9d6Mj+DRBM1UEyjOLKMoqKLsJwn4NZEso1e/RW9mCXGeJAHMPRzhB/fE2TjfCVT5H10pcbN5Qa/+WTdH+E0J8cSpHQemn7I5BQjAYS0LuS5R5XZeEjSNnlLRj6G+nEvfCMJRE5gk=
+	t=1731347773; cv=none; b=CQQ1Aq+hXwnFtO3YrOzz1jOlOWveJdIHj+dcSjvEPfrns9KO1kvouV9ks6d+VGJz+MOHxH2QMddUvDgGqOfmcbW3CwE9DhuN0aMGirRMiu4jnw+vcA8iogB+pO+zpSrGWFYDMYorKV1woffDZC063Xi8BrDsK8FRTkmhkhGlQCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347760; c=relaxed/simple;
-	bh=Gk3Bd65cbPXkb67tabSPVYvDafMdc4UaLcN1JZUm3MY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DUp32CS7KZMaGfqMsSDFTm6J2mMRhTuMRbqCjXnX2c+YzTMm15PUcoTTgQJr7LpeyZ6GKsFd+PF7Bh0iX1wBbrVomI8m1R02lqa1tZdodAItNC5+o+kfeeqSsRro83FzdtiZeukQXxPo9MOBi3zM9bK9L7Kp3oNFIueze72dzdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ABfWiFW4; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a6c3bdbebcso2015ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:55:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731347758; x=1731952558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hWCEpVzPP2C567p2YX+zooGp6OPXofG6vmEFnRTKNhU=;
-        b=ABfWiFW4gYDdLyXDhWJfnQF3j0Tnfg9+xjmYm3e1p3ip5lQHh7km/3r77EynbDIyYT
-         LgJDMJQZ6tkWXFTNRtZ9JlylGESTW5idOB9L1Gi+K09P0I39+1k+MPQ//QI9rSKGns12
-         2i8tAGyPv4xRYPRs0MjaM2Ho+hgfgxUPtHtOEFuepffZE2LK+7i7Tozi+DEMkFu6nasG
-         A6F6oPBybmBtbPkEnioppQewtouc8C+OnnuGAwLxowj0IFZXK9sWpSMg5WWfmiwwet3n
-         1Dg8dHS9SdEtm1rGnzZ5nUF741bsJXLzupE1XC965Pcmiztf0i8QMWh7UQ2vtGO/Bor1
-         0vLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731347758; x=1731952558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hWCEpVzPP2C567p2YX+zooGp6OPXofG6vmEFnRTKNhU=;
-        b=Vv/uRFCfSskk+icOzdWeVDjOS+7wg5qanRKyVLZppH50QsmpqRi9yzAXwDGY25wAXN
-         386Jalio1xBndhVS7/zzK76xvQekKbshbyDC8I/4eOkOB61xT22pQSB4Ocw0sAgc26iP
-         qyhIhRH1606RGE7jv2Hb5lW2YGvawkUq9TX6B5ryp5y3aj+SK6+AUQjHg2LPWq5twts7
-         oajeFb1Diz2Ql6ViLHkR5sw3pRC+DIATTq6V61tWzoW/cVq4PBa7S0ZUkKeBAiXLeV46
-         NsYRUCOrd81BORz9zL0uZWKRG44ljzegATC3PDYstze2xixcHoWstQK+JWjKyrPrgfdT
-         wa1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGYlH/kHsXvqyyjNCH6BPUjLRhTg1feTVZngsmx34862gd3alRKhhPwkQIlQvksyg54o1UitHaMxA0mmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6nEpaIkh1nXpsKPihfH/b/JF0gxaZAe98uKKmqVbjC1RkY1lA
-	RKIzFWBQpNw4NpZzt0D4QmbQrzJFTs82KDEELMamxxqRgjXprUHfkDFHmfF5/Zcpq7WjhP21yh9
-	jtn9Uvu09TExF6rzWh++mYbt6AQ5h19//iaEm
-X-Gm-Gg: ASbGncsquLHF366s5F0VV0ar8wxFTCdo5EtCGQOVKOC1t8KQyVNSzphwbMTZlY2s45g
-	Z5fV9LR2fBOZWv2pLGg6+5QtitnQn1vtlmjxHO27l55vy1x0COKN4xlbcA4yPDhQ=
-X-Google-Smtp-Source: AGHT+IFhSYq0STb5lF6oh/lN0IEV8ozrjpzp1B9XixwyORRQYQpKjw+W9mCRekpu31DkLDY6hY5cBsmbP4Hr0C2pjdg=
-X-Received: by 2002:a05:6e02:1605:b0:3a6:b0a3:540b with SMTP id
- e9e14a558f8ab-3a6f8a97e8fmr7613755ab.20.1731347757481; Mon, 11 Nov 2024
- 09:55:57 -0800 (PST)
+	s=arc-20240116; t=1731347773; c=relaxed/simple;
+	bh=UhScj4HpDOH4p4UAdARMSOnIjb6CiQWNTlqjF5ncNO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eiA62wTjWsiZ9tA+U0555ZztAcC5wQ8kIo9nOfz0B3LLhYAdlR7F0bfc/MjlXQWlJ/JapgAqjmNpudikhUlNkMxFKT2adJ5Gmt7UjbgX7aSiNWsGdm+1tf/4mLo1+H7eJuLWcqa8hLgsrEcTDCefejmMvZMMfmlrThhAPkPo75Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nejyAANH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.115] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 54F1A2171FA8;
+	Mon, 11 Nov 2024 09:56:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 54F1A2171FA8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731347770;
+	bh=9vJd/Xt8CL3/r6fhnnHBJNHCUCe8NNZ/NF76sGIG8Ms=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nejyAANH9MJ0obK6mmW65iWVfPeQ6DB9jkiusgAdjWTcADeLJ8qQkOD2WkR7mSn++
+	 G8hlwRLrMiApiVnWsLvQi/iqx+8zcBiNOnzc6qA2kGe15l1xQW3qk2fNVMj8W7HBkA
+	 P9ROuFGDwmH27ODflklr6wrod7Zn0iL59Y3cBZyo=
+Message-ID: <403306e2-bc7a-491c-ab4e-033456a9fbea@linux.microsoft.com>
+Date: Mon, 11 Nov 2024 09:55:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com> <20241108204137.2444151-7-howardchu95@gmail.com>
-In-Reply-To: <20241108204137.2444151-7-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 09:55:46 -0800
-Message-ID: <CAP-5=fU8DC+-bS0E+=8UwNtjch8MUNJOx8TshhjcPD+-NMGKNA@mail.gmail.com>
-Subject: Re: [PATCH v7 06/10] perf evsel: Assemble offcpu samples
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] hyperv: Add new Hyper-V headers in include/hyperv
+To: Naman Jain <namjain@linux.microsoft.com>, linux-hyperv@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, iommu@lists.linux.dev, netdev@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+ virtualization@lists.linux.dev
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ mhklinux@outlook.com, decui@microsoft.com, catalin.marinas@arm.com,
+ will@kernel.org, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+ daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+ bhelgaas@google.com, arnd@arndb.de, sgarzare@redhat.com,
+ jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
+ skinsburskii@linux.microsoft.com, mukeshrathor@microsoft.com,
+ vkuznets@redhat.com, ssengar@linux.microsoft.com, apais@linux.microsoft.com
+References: <1731018746-25914-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1731018746-25914-4-git-send-email-nunodasneves@linux.microsoft.com>
+ <ef2686dc-ec9e-4efd-9c52-5ba9434b7ce8@linux.microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <ef2686dc-ec9e-4efd-9c52-5ba9434b7ce8@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Use the data in bpf-output samples, to assemble offcpu samples.
->
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+On 11/7/2024 9:59 PM, Naman Jain wrote:
+> 
+> 
+> On 11/8/2024 4:02 AM, Nuno Das Neves wrote:
+>> These headers contain definitions for regular Hyper-V guests (as in
+>> hyperv-tlfs.h), as well as interfaces for more privileged guests like
+>> Dom0.
+>>
+>> These files are derived from headers exported from Hyper-V, rather than
+>> being derived from the TLFS document. (Although, to preserve
+>> compatibility with existing Linux code, some definitions are copied
+>> directly from hyperv-tlfs.h too).
+>>
+>> The new files follow a naming convention according to their original
+>> use:
+>> - hdk "host development kit"
+>> - gdk "guest development kit"
+>> With postfix "_mini" implying userspace-only headers, and "_ext" for
+>> extended hypercalls.
+> 
+> Naming convention for mini (which may have come from HyperV code) is a bit odd TBH. May be it has more to it than what is mentioned here or what I know. If more information helps, or this can be changed, please see.
+> 
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+The naming is originally from the Hyper-V code. See below: "The original
+names are kept intact primarily to keep the provenance of exactly where
+they came from in Hyper-V code, which is helpful for manual maintenance
+and extension of these definitions."
 
-Thanks,
-Ian
+>>
+>> These names should be considered a rough guide only - since there are
+>> many places already where both host and guest code are in the same
+>> place, hvhdk.h (which includes everything) can be used most of the time.
+>>
+>> The original names are kept intact primarily to keep the provenance of
+>> exactly where they came from in Hyper-V code, which is helpful for
+>> manual maintenance and extension of these definitions. Microsoft
+>> maintainers importing new definitions should take care to put them in
+>> the right file.
+>>
+>> Note also that the files contain both arm64 and x86_64 code guarded by
+>> \#ifdefs, which is how the definitions originally appear in Hyper-V.
+>> Keeping this convention from Hyper-V code is another tactic for
+>> simplying the process of importing new definitions.
+>>
+>> These headers are a step toward importing headers directly from Hyper-V
+>> in the future, similar to Xen public files in include/xen/interface/.
+>>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> 
+> While I understand the motivation behind this series that this is going to ease out the process of updating the header files with respect to HyperV, I think, we will need to pay attention to what we are bringing in with these headers, whether there are any users of it or not, and make sure that TLFS document is updated regularly, to avoid having bunch of code with no information of it.
+> The code comments in these files are one step forward towards that.
+> And from your cover letter it seems that some changes which actually make use of these additional interfaces are underway, so things will make more sense later. For now, this looks good to me.
+> 
 
-> ---
->  tools/perf/util/evsel.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 695f831b463d..20f07597fac1 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2783,6 +2783,35 @@ static inline bool evsel__has_branch_counters(cons=
-t struct evsel *evsel)
->         return false;
->  }
->
-> +static int __set_offcpu_sample(struct perf_sample *data)
-> +{
-> +       u64 *array =3D data->raw_data;
-> +       u32 max_size =3D data->raw_size, *p32;
-> +       const void *endp =3D (void *)array + max_size;
-> +
-> +       if (array =3D=3D NULL)
-> +               return -EFAULT;
-> +
-> +       OVERFLOW_CHECK_u64(array);
-> +       p32 =3D (void *)array++;
-> +       data->pid =3D p32[0];
-> +       data->tid =3D p32[1];
-> +
-> +       OVERFLOW_CHECK_u64(array);
-> +       data->period =3D *array++;
-> +
-> +       OVERFLOW_CHECK_u64(array);
-> +       data->callchain =3D (struct ip_callchain *)array++;
-> +       OVERFLOW_CHECK(array, data->callchain->nr * sizeof(u64), max_size=
-);
-> +       data->ip =3D data->callchain->ips[1];
-> +       array +=3D data->callchain->nr;
-> +
-> +       OVERFLOW_CHECK_u64(array);
-> +       data->cgroup =3D *array;
-> +
-> +       return 0;
-> +}
-> +
->  int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->                         struct perf_sample *data)
->  {
-> @@ -3134,6 +3163,9 @@ int evsel__parse_sample(struct evsel *evsel, union =
-perf_event *event,
->                 array =3D (void *)array + sz;
->         }
->
-> +       if (evsel__is_offcpu_event(evsel))
-> +               return __set_offcpu_sample(data);
-> +
->         return 0;
->  }
->
-> --
-> 2.43.0
->
+Yes, we do need to be careful about what interfaces we add here. Not just
+anything can be copied from Hyper-V code into these files. The exact
+process is a matter we can discuss internally. But, as you say, there are
+upcoming patches (previous versions can be found in the mailing list) which
+use the new root partition interfaces.
+
+Updating the TLFS and documenting the interfaces is a different matter.
+I can't speak to the best way forward for documenting these, but in many
+cases the use of the new interfaces will be self-evident from the code
+that uses them, and/or comments as you mentioned.
+
+Over the years many Hyper-V definitions have already been added and used
+in Linux which have not been documented in the TLFS or elsewhere. This
+patch series makes that fact more obvious and sets us on a path towards a
+more maintainable method (i.e., publishing headers directly from the Hyper-V
+code, hopefully).
+
+Thanks
+Nuno
+
+> > Regards,
+> Naman
+> 
+> <snip>
+
 
