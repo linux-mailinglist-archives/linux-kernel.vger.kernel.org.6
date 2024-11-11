@@ -1,146 +1,292 @@
-Return-Path: <linux-kernel+bounces-403520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739D49C36C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:58:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6C79C36CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:00:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9971F21EC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D89B215F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FA213E022;
-	Mon, 11 Nov 2024 02:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6570D13AD20;
+	Mon, 11 Nov 2024 02:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="P6ZlMDKu"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sCLSrXWZ"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085F7137930;
-	Mon, 11 Nov 2024 02:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46694335D3
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731293921; cv=none; b=la3SHHcEKUpz9XjOTooZ2/Jueu2g1y0X9XpLUmRX3fRio5HpzJip/O2f4/OYb5iEuO3J6OY0iTd+DO3uE6Hn2WvWsmZtcET3TaCIh4/SiuJ3Vjh3xI6DTYcF433ZUz6nUdRqVQ8XSdSbt0TYqFjGp4JV/z0m6BBtjJ6okX0Fi1U=
+	t=1731293995; cv=none; b=FFelk7HT8IDXMMl/E/3NPlDLca8TBAixrHhtRTWADFfJT12HwP96UcS7Ab5tk3T5KQy5I0nmfYFAOKuDdm3AFzeJkBRV6hN+DH9j4L2LfpR6eTqP3viMqgyvybdrPUVMUmzv42SVZL2AXbYj7wfHzhzAYpq6UKU28BxGv/Sl/vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731293921; c=relaxed/simple;
-	bh=TXUjXTHL0gZIfdJ3mRDyIitRCP4DKtW7kpcpVpBjQW0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y+N0HnGDlBvJutikMNX9Pi3pKoMgZmvNJqAH3ZuJQadYbPxWQ/8iAnkQicxfh3IDx3g2fwFfBQO1gRhyK3DNX3/zrj3Ip5/Z0oGYfAwX1Qoww6WiY4EDZNIp0MusPzFqcI7AcMKEYxjNnC6X0Fczj9WTyCHNiW98cBZadBWM1mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=P6ZlMDKu; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 04194403E9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731293919; bh=LZzQtmhOW2A0Cbau7zJcHxp+bCIY31NKdrMFpZxwDXo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=P6ZlMDKuMAATbHo1fiGbEgO4Fdf7nPT7SqDPMzQuradyDOv6suOb6fxutsindrE+7
-	 YAqe/nrrvIXe19T+BoIJr/MCECgPllblWRKx8hLHqgoYKi4NLzXbeUsRzQpHT46Apk
-	 16WvyKjjWECdMAXfC++MoWNfnbZX+wQ26rLDNJXwPHBBonUUml1zP30i+yuASAkjfu
-	 vyYGpz9zJfCirLY0C0kPoVZJ2DwCt1B305HCUxe1W4/wxWkSW8SGY7ATGH6Tlu1/oF
-	 bK8Iuk+1i1x1IgiBH4F39RZX0SXtnRWWPHBQU2Di1gdMOpHExP/t+4A4PrTP3krfc3
-	 mdt6p5c5a5xeg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 04194403E9;
-	Mon, 11 Nov 2024 02:58:39 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: anish kumar <yesanishhere@gmail.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>, Robin
- Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
- <will@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg
- <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas
- <yishaih@nvidia.com>, Shameer Kolothum
- <shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, =?utf-8?B?SsOpcsO0bWU=?= Glisse
- <jglisse@redhat.com>, Andrew
- Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org, Randy Dunlap
- <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 09/17] docs: core-api: document the IOVA-based API
-In-Reply-To: <CABCoZhAN-eeu=E5r+ZbZGTNwQta5yUw86sy8e_Je+Yri-+iuoQ@mail.gmail.com>
-References: <cover.1731244445.git.leon@kernel.org>
- <dca3aecdeeaa962c7842bc488378cdf069201d65.1731244445.git.leon@kernel.org>
- <CABCoZhAN-eeu=E5r+ZbZGTNwQta5yUw86sy8e_Je+Yri-+iuoQ@mail.gmail.com>
-Date: Sun, 10 Nov 2024 19:58:38 -0700
-Message-ID: <875xouv5lt.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731293995; c=relaxed/simple;
+	bh=sCuJ92VB7/8VGm6pZdX1x4/K7oyFT31xytavwtn7Hno=;
+	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=QJKSdpMIbz0cPwUAxQ547ZcpNL8jtrLfUCURDZI/lMAVFMpPqUeCycgZ5J0VHv1q05kd5JRVJ+Xd2tQXzW4ivLWTb3l1nvhHZx1BueXP7t5NizBs5WAR03QhhqIw/RtFgguYfdGli9Czapz8o9Dt0WL2rchmcv8L7NJdKp1RzEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sCLSrXWZ; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731293988; h=Message-ID:Subject:Date:From:To;
+	bh=D0HiFPS7RCuNDYOuBzuf/2eUC+oaWpRyl5+UecPwCB8=;
+	b=sCLSrXWZ409pgI0Um84zADbMTjnt4w38PTnq0P8kKyOHbdtXYME2CkzQb3NWVIU5MbqYbDAVeWtxryxL0xOI6FFruoor3rh9Acs6CjfSwuy1jL1ooaIrSQISpxIbqJT6+YxTQfx+ZmK/TvYUhYwgSXnamKnHJN5sOFlc5bJ1gJQ=
+Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WJ4C9Kh_1731293987 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 11 Nov 2024 10:59:48 +0800
+Message-ID: <1731293980.2695758-1-xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH] virtio_ring: skip cpu sync when mapping fails
+Date: Mon, 11 Nov 2024 10:59:40 +0800
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com,
+ jasowang@redhat.com,
+ eperezma@redhat.com,
+ virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20241111025538.2837-1-jasowang@redhat.com>
+In-Reply-To: <20241111025538.2837-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-anish kumar <yesanishhere@gmail.com> writes:
-
-> On Sun, Nov 10, 2024 at 5:50=E2=80=AFAM Leon Romanovsky <leon@kernel.org>=
- wrote:
->>
->> From: Christoph Hellwig <hch@lst.de>
->>
->> Add an explanation of the newly added IOVA-based mapping API.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
->> ---
->>  Documentation/core-api/dma-api.rst | 70 ++++++++++++++++++++++++++++++
->>  1 file changed, 70 insertions(+)
->>
->> diff --git a/Documentation/core-api/dma-api.rst b/Documentation/core-api=
-/dma-api.rst
->> index 8e3cce3d0a23..61d6f4fe3d88 100644
->> --- a/Documentation/core-api/dma-api.rst
->> +++ b/Documentation/core-api/dma-api.rst
->> @@ -530,6 +530,76 @@ routines, e.g.:::
->>                 ....
->>         }
->>
->> +Part Ie - IOVA-based DMA mappings
->> +---------------------------------
->> +
->> +These APIs allow a very efficient mapping when using an IOMMU.  They ar=
-e an
+On Mon, 11 Nov 2024 10:55:38 +0800, Jason Wang <jasowang@redhat.com> wrote:
+> There's no need to sync DMA for CPU on mapping errors. So this patch
+> skips the CPU sync in the error handling path of DMA mapping.
 >
-> "They" doesn't sound nice.
->> +optional path that requires extra code and are only recommended for dri=
-vers
->> +where DMA mapping performance, or the space usage for storing the DMA a=
-ddresses
->> +matter.  All the considerations from the previous section apply here as=
- well.
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+
+Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+
+
+> ---
+>  drivers/virtio/virtio_ring.c | 98 +++++++++++++++++++++---------------
+>  1 file changed, 57 insertions(+), 41 deletions(-)
 >
-> These APIs provide an efficient mapping when using an IOMMU. However, they
-> are optional and require additional code. They are recommended primarily =
-for
-> drivers where performance in DMA mapping or the storage space for DMA
-> addresses are critical. All the considerations discussed in the previous =
-section
-> also apply in this case.
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index be7309b1e860..b422b5fb22db 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -441,8 +441,10 @@ static void virtqueue_init(struct vring_virtqueue *vq, u32 num)
+>   */
 >
-> You can disregard this comment, as anyone reading this paragraph will
-> understand the intended message.
-
-I don't understand the comment, honestly.  You say "they" doesn't "sound
-nice", whatever that means, but your suggestion retains the "they"...?
-
-I'm all for reviews that improve our documentation, but it is
-*incredibly* easy to fall into the trivial bikeshed mode.  I've
-certainly done it myself.  The end result is less documentation as
-people decide, understandably, that it's not worth the pain.  Hopefully
-we can all try to do a bit less of that.
-
-FWIW, I think the paragraph is fine as written.
-
-Thanks,
-
-jon
+>  static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+> -					   const struct vring_desc *desc)
+> +					   const struct vring_desc *desc,
+> +					   bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>
+>  	if (!vq->do_unmap)
+> @@ -450,16 +452,18 @@ static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+>
+>  	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+>
+> -	dma_unmap_page(vring_dma_dev(vq),
+> -		       virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> -		       virtio32_to_cpu(vq->vq.vdev, desc->len),
+> -		       (flags & VRING_DESC_F_WRITE) ?
+> -		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	dma_unmap_page_attrs(vring_dma_dev(vq),
+> +			     virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> +			     virtio32_to_cpu(vq->vq.vdev, desc->len),
+> +			     (flags & VRING_DESC_F_WRITE) ?
+> +			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +			     attrs);
+>  }
+>
+>  static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+> -					  unsigned int i)
+> +					  unsigned int i, bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	struct vring_desc_extra *extra = vq->split.desc_extra;
+>  	u16 flags;
+>
+> @@ -469,20 +473,22 @@ static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+>  		if (!vq->use_dma_api)
+>  			goto out;
+>
+> -		dma_unmap_single(vring_dma_dev(vq),
+> -				 extra[i].addr,
+> -				 extra[i].len,
+> -				 (flags & VRING_DESC_F_WRITE) ?
+> -				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_single_attrs(vring_dma_dev(vq),
+> +				       extra[i].addr,
+> +				       extra[i].len,
+> +				       (flags & VRING_DESC_F_WRITE) ?
+> +				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				       attrs);
+>  	} else {
+>  		if (!vq->do_unmap)
+>  			goto out;
+>
+> -		dma_unmap_page(vring_dma_dev(vq),
+> -			       extra[i].addr,
+> -			       extra[i].len,
+> -			       (flags & VRING_DESC_F_WRITE) ?
+> -			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_page_attrs(vring_dma_dev(vq),
+> +				     extra[i].addr,
+> +				     extra[i].len,
+> +				     (flags & VRING_DESC_F_WRITE) ?
+> +				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				     attrs);
+>  	}
+>
+>  out:
+> @@ -717,10 +723,10 @@ static inline int virtqueue_add_split(struct virtqueue *_vq,
+>  		if (i == err_idx)
+>  			break;
+>  		if (indirect) {
+> -			vring_unmap_one_split_indirect(vq, &desc[i]);
+> +			vring_unmap_one_split_indirect(vq, &desc[i], true);
+>  			i = virtio16_to_cpu(_vq->vdev, desc[i].next);
+>  		} else
+> -			i = vring_unmap_one_split(vq, i);
+> +			i = vring_unmap_one_split(vq, i, true);
+>  	}
+>
+>  free_indirect:
+> @@ -775,12 +781,12 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>  	i = head;
+>
+>  	while (vq->split.vring.desc[i].flags & nextflag) {
+> -		vring_unmap_one_split(vq, i);
+> +		vring_unmap_one_split(vq, i, false);
+>  		i = vq->split.desc_extra[i].next;
+>  		vq->vq.num_free++;
+>  	}
+>
+> -	vring_unmap_one_split(vq, i);
+> +	vring_unmap_one_split(vq, i, false);
+>  	vq->split.desc_extra[i].next = vq->free_head;
+>  	vq->free_head = head;
+>
+> @@ -804,7 +810,8 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>
+>  		if (vq->do_unmap) {
+>  			for (j = 0; j < len / sizeof(struct vring_desc); j++)
+> -				vring_unmap_one_split_indirect(vq, &indir_desc[j]);
+> +				vring_unmap_one_split_indirect(vq,
+> +							&indir_desc[j], false);
+>  		}
+>
+>  		kfree(indir_desc);
+> @@ -1221,8 +1228,10 @@ static u16 packed_last_used(u16 last_used_idx)
+>  }
+>
+>  static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+> -				     const struct vring_desc_extra *extra)
+> +				     const struct vring_desc_extra *extra,
+> +				     bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>
+>  	flags = extra->flags;
+> @@ -1231,24 +1240,28 @@ static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+>  		if (!vq->use_dma_api)
+>  			return;
+>
+> -		dma_unmap_single(vring_dma_dev(vq),
+> -				 extra->addr, extra->len,
+> -				 (flags & VRING_DESC_F_WRITE) ?
+> -				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_single_attrs(vring_dma_dev(vq),
+> +				       extra->addr, extra->len,
+> +				       (flags & VRING_DESC_F_WRITE) ?
+> +				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				       attrs);
+>  	} else {
+>  		if (!vq->do_unmap)
+>  			return;
+>
+> -		dma_unmap_page(vring_dma_dev(vq),
+> -			       extra->addr, extra->len,
+> -			       (flags & VRING_DESC_F_WRITE) ?
+> -			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_page_attrs(vring_dma_dev(vq),
+> +				     extra->addr, extra->len,
+> +				     (flags & VRING_DESC_F_WRITE) ?
+> +				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				     attrs);
+>  	}
+>  }
+>
+>  static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+> -				    const struct vring_packed_desc *desc)
+> +				    const struct vring_packed_desc *desc,
+> +				    bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>
+>  	if (!vq->do_unmap)
+> @@ -1256,11 +1269,12 @@ static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+>
+>  	flags = le16_to_cpu(desc->flags);
+>
+> -	dma_unmap_page(vring_dma_dev(vq),
+> -		       le64_to_cpu(desc->addr),
+> -		       le32_to_cpu(desc->len),
+> -		       (flags & VRING_DESC_F_WRITE) ?
+> -		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	dma_unmap_page_attrs(vring_dma_dev(vq),
+> +			     le64_to_cpu(desc->addr),
+> +			     le32_to_cpu(desc->len),
+> +			     (flags & VRING_DESC_F_WRITE) ?
+> +			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +			     attrs);
+>  }
+>
+>  static struct vring_packed_desc *alloc_indirect_packed(unsigned int total_sg,
+> @@ -1389,7 +1403,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  	err_idx = i;
+>
+>  	for (i = 0; i < err_idx; i++)
+> -		vring_unmap_desc_packed(vq, &desc[i]);
+> +		vring_unmap_desc_packed(vq, &desc[i], true);
+>
+>  free_desc:
+>  	kfree(desc);
+> @@ -1539,7 +1553,8 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+>  	for (n = 0; n < total_sg; n++) {
+>  		if (i == err_idx)
+>  			break;
+> -		vring_unmap_extra_packed(vq, &vq->packed.desc_extra[curr]);
+> +		vring_unmap_extra_packed(vq,
+> +					 &vq->packed.desc_extra[curr], true);
+>  		curr = vq->packed.desc_extra[curr].next;
+>  		i++;
+>  		if (i >= vq->packed.vring.num)
+> @@ -1619,7 +1634,8 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+>  		curr = id;
+>  		for (i = 0; i < state->num; i++) {
+>  			vring_unmap_extra_packed(vq,
+> -						 &vq->packed.desc_extra[curr]);
+> +						 &vq->packed.desc_extra[curr],
+> +						 false);
+>  			curr = vq->packed.desc_extra[curr].next;
+>  		}
+>  	}
+> @@ -1636,7 +1652,7 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+>  			len = vq->packed.desc_extra[id].len;
+>  			for (i = 0; i < len / sizeof(struct vring_packed_desc);
+>  					i++)
+> -				vring_unmap_desc_packed(vq, &desc[i]);
+> +				vring_unmap_desc_packed(vq, &desc[i], false);
+>  		}
+>  		kfree(desc);
+>  		state->indir_desc = NULL;
+> --
+> 2.31.1
+>
 
