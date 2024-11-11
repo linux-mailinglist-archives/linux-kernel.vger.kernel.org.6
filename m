@@ -1,188 +1,220 @@
-Return-Path: <linux-kernel+bounces-403534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE099C36F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:18:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 068B59C36F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:23:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF4AE1F21AD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:18:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D2BB212BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A554B5C1;
-	Mon, 11 Nov 2024 03:18:42 +0000 (UTC)
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11022122.outbound.protection.outlook.com [40.107.200.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1A11494C3;
+	Mon, 11 Nov 2024 03:22:53 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38772595;
-	Mon, 11 Nov 2024 03:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.122
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731295121; cv=fail; b=pks0qpP5/la81x7c13mxZCHfAHMXBmSAAXPa8+2FbuOh+/Ho6B2wc/ECiFaNGxU++HBq2GH+7I0wCDM3ol4/iEtZ21iYMnSesjWWXvRVFIqdgeJ/KMWy2OpCMRXu8mLQU0I9rLtB2XCpT2c+cp/Fjl6lldrS50G6dZJrLODo9XI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731295121; c=relaxed/simple;
-	bh=R5Os5KkKEu/McVsXusNjzzW48BomyY+DX6z0Fcn4S4k=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TqH9ZwxXrhObJ/HP2FNgDbaTdteBpPcpvA1679bwy4fJF/W4ocYWisWMrTAhGwKGiG7JJwzutQ+wZh8pSFNfQJGO13h22OwvTO4Tt6a5tAfgj6nmDSR+RUy8qGf22PIQCx7j2L9FY5v4897xtOspOO96gSIEpDt5d4xRuniub8o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.200.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lw793b640PJOjZ/C3tgaErJYPmctjeMhjVU/kbltp3eyPiOBJBxuWA9MQ9c80U6Di3VjEKVRQPR4urmzB/ptr0IlZFalJor0OTjT8g3vYy70mlpyKoxACxkE9WgG829htTxplo0uQmEFX41M0iAIyoYWUxCNyj9WatJHpqDQpxhBYhOrexCcdw/eQRmobwnUSf8IeUy2H1bM4GeVIoPNn+XepDlmlL1dHOKB4i+RXkaoJ11C3g/z/DQBpPuTpjfoRt7+nBlin3XGcBtOdul4SdAtuwwvMvxKGVTwlAnsmXOM2zAmG+ZNdmx872iTNkyrxnF64MbPdfxDu0NSPPouyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pguS1pS7f7ba5unp9/haI4ynQ9qCV2Ood3CphxSfWHE=;
- b=K2vJcCF/qH9WhPKJrvRKmN5raLmLYd0sIk2N89LBE3Y2TvnzoabhQE35mCmFUF/tiTNxR6qMSmeKA1B/bfSp/Is6y40BIACSVU+1ZBLWXnSNldOuCk5P1PfHnB2hfJupuvwWSTTpPNrDIpxSkFmyWp6o9cKsTfxnHojheonyF6lXBwztZ/W0JQxmmtwFliL8uoHa0vz93nw1Grb4vSq8uN6crg2Vp7Zno6yCFDR1ZtwfSZDaVc7pqZ+x/Q38msuaJanDJeTpFVOHGgIyJl6U8s4i+WURven835r+BMbF5G9jwWhL+Ci7OOI7JJnyZ00wNzO5OHdsRPqL+khjal5Y+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from SN6PR01MB5246.prod.exchangelabs.com (2603:10b6:805:d8::14) by
- DS0PR01MB8009.prod.exchangelabs.com (2603:10b6:8:149::18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.12; Mon, 11 Nov 2024 03:18:35 +0000
-Received: from SN6PR01MB5246.prod.exchangelabs.com
- ([fe80::cf18:495f:c6c:ec90]) by SN6PR01MB5246.prod.exchangelabs.com
- ([fe80::cf18:495f:c6c:ec90%3]) with mapi id 15.20.8158.013; Mon, 11 Nov 2024
- 03:18:35 +0000
-Message-ID: <c60e636f-8d69-4ec5-84d7-58cf72bbd0e8@talpey.com>
-Date: Sun, 10 Nov 2024 22:18:33 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] nfsd: allow for up to 32 callback session slots
-To: Olga Kornievskaia <aglo@umich.edu>, Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>,
- Dai Ngo <Dai.Ngo@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241105-bcwide-v4-1-48f52ee0fb0c@kernel.org>
- <CAN-5tyHqDNRm-O+NKNXGG_J91M3vCgz8LVZWUjePpYUyy6Pmsg@mail.gmail.com>
- <CAN-5tyHGgtBv6u4TBtx8+0nQy26fbqBE0ic_orGHUihNoHNa4g@mail.gmail.com>
- <ec6f82804aac6fa2b75e35c39977703bde38f507.camel@kernel.org>
- <CAN-5tyFmEUyZS-hXURdhhETwC-0MPPz0Vnu6oRW6dbZdWanpjA@mail.gmail.com>
-Content-Language: en-US
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <CAN-5tyFmEUyZS-hXURdhhETwC-0MPPz0Vnu6oRW6dbZdWanpjA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN0PR04CA0078.namprd04.prod.outlook.com
- (2603:10b6:408:ea::23) To SN6PR01MB5246.prod.exchangelabs.com
- (2603:10b6:805:d8::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C072595
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731295372; cv=none; b=Nw8oGOGnv4bMWImCfQiyK7sdJvIuQ1TsetrkvgaTa1zpMGFTB7eJJH/s3OqU7nRUkZIDt66BAv5ol5LMLZbHsRmr2q9bRNU0sncDMiKtEVP5YyH9gXB/csqU5ruus+4dEFas64KpVR6I4WeYj6NqSbRYWOIvnPxp1V4KApSwYps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731295372; c=relaxed/simple;
+	bh=rKROmmDoSOObRig7ZH4oIvpqzZR23pDY8BRvxFH7zAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZOH+44BauoAl0LB+qJh4IDCAZ3p0iDshaGGXdEfKLMHboglL8JB6wrtwmWNxYn3vHogMX5qiDfLu8eq1XdRZZ1grOQewXfHtLBspFo7+5wwzcAtrL7zfIwQN65nwCeEowj0A5p7tPxMjxTyMPquunGA288GG34PeF5778IlEdeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=114.132.124.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtpsz5t1731295266thwmuwl
+X-QQ-Originating-IP: Q2y7X3cnjFZOhjfAcpkHrhgyw0X7/r3GqnDyvzLJO1M=
+Received: from HX09040029.powercore.com.cn ( [116.233.136.127])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 11 Nov 2024 11:21:03 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11046684575156124262
+From: Luming Yu <luming.yu@shingroup.cn>
+To: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	luming.yu@gmail.com
+Cc: Luming Yu <luming.yu@shingroup.cn>
+Subject: [PATCH v2 1/8] powerpc/entry: convert to common and generic entry
+Date: Mon, 11 Nov 2024 11:19:26 +0800
+Message-ID: <F0AE0A4571CE3126+20241111031934.1579-2-luming.yu@shingroup.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR01MB5246:EE_|DS0PR01MB8009:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c53bc75-879a-4681-1454-08dd01ff8729
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bC9ma2hIY0dNTDJZNFhBUk5nSEpOTVVyU3BXOUhBV3lwVnpzRlFaV2ExdDJS?=
- =?utf-8?B?V3lZUXA2VHFIaFl4Mk4vVVRGdGNGWjc5dG16NG53ZEk4YmJSY3M2RnE0bVNH?=
- =?utf-8?B?MmwvdlltSC9KcDYwNmlqRFVGNlJkZHplZmFuV3N3REMyWVQ3Yk5FT2ZhTEJq?=
- =?utf-8?B?WmkxL3hNWWltQ0lEYzdrc1ZHZitkMjFtc2JyYUpoQXBYbWRZMnB2WlhPaU9P?=
- =?utf-8?B?N2FLaXo0SUIrOWpMNy9vZGordWdKNmVjaUpWdkNqSm1HMjVwYy84aC8wRk9v?=
- =?utf-8?B?MHh0L3YwK0V0dEh4aTRFdDVsNWkxTlVtUjlSQ3pXZXJQbHZJVlhHUTdYemhQ?=
- =?utf-8?B?M3dITXZmYVZyOVlYQjNNajRweis5VGIvTmh6NzI2bSttcUhFZ284c2hER29X?=
- =?utf-8?B?OUc4eHRWTnRCYUloS09tbXNxUDg0VUdGUDNMSHNIOW9HQkU1T054c25ZeXFh?=
- =?utf-8?B?NUhMR2xzYVhPUE5Vb29ZMkNpTkVlVEpNbElIb1lBMThCMUpCbmc3WnAwOTl6?=
- =?utf-8?B?VFdmbjJRdm5UVVlLeDQxMjJ0ckZTd214RG0zNHAybHpqVit3MXVhY00vQzFB?=
- =?utf-8?B?UFNlQ2tqdktMeWtZR3BmbzdyNzdvUkRZRDkrUnJaS0c5YUxiYWpaYjhiZWVs?=
- =?utf-8?B?eDNDbHhxUnFOTUFydlJnWjBRRGc1WXlvcjFTR3JHa253Y0FLMERuTHljMmli?=
- =?utf-8?B?ekJnbEVXWTg2OEI3cGVOZGkwenBjbGZocVQvdGYyZVFrVUVPaHcrMFRhd2Z1?=
- =?utf-8?B?K2ZRS1cyV1BkN1FNdzhYbkZmZTNYNkp6RTZkTlB5OHMvdXlxTE4vdFNZM1hJ?=
- =?utf-8?B?enliVTU5Vmg5TzVtQklpQ2o3d0FmaVkwR3R0eENDdkNCK0F6dmlNbkNKTjl0?=
- =?utf-8?B?REdsSDlzc0FnSDMrRnJ2RzRJMlZYV2cyTE9pSFduaURnU2x6ZVBQVVlXZjFF?=
- =?utf-8?B?eXA1UlU5NHlQYVFEY210L2FXbFl4S0RYMm44QnBEUnUwa3pOdWtMR0dPZ2Vt?=
- =?utf-8?B?K3B3c1R1b2Z5NFFxdEwvWkJTMWJ4Nm5nbXQ2aTFYVGVnMVJNbUNib1RmVnhU?=
- =?utf-8?B?RzUzNnpEZ250Z0g4MXBnQk4xSnFyL2dOdUwreEN4aGUzVGZZdWR6Znp4cTJB?=
- =?utf-8?B?UEVqL09SY3VJR2g3VU1lWEVGVDNJaFJLU2VJRGJyNEY1QXZUcVBQaDJEMWFt?=
- =?utf-8?B?Wk42aVJHdlZMVFUzaTBEV1JJRDgwOWtjQUNhc3hDYjJmdmV6RnVQYmgyZ2Iz?=
- =?utf-8?B?VDVjTXAvZHJwUnFuNWg1Y203UWs5M0lZYXVBNTFKRldjU08xVitBNVltOG41?=
- =?utf-8?B?ekh4MXRiNkxkcG5sWHVLYTJZWTcvYkh0cFZuVTJLbDl2RHBiS2FGV2xybkxI?=
- =?utf-8?B?QkJiTVVaMUVpNEZTODdTK0krMGcwVEtuY3o4Qm5zWmZucm1PektTOEVHbFpO?=
- =?utf-8?B?QW5TcngzMURkT0lkaHFocThpcktyNXRHZHRPWE01bnR6SnlWMkxwOEF1NnNI?=
- =?utf-8?B?ME1UTkxxWjh2T0ZKTUxDNlBnaDZvaGN2N1A0SXZnSUowWkd1ZW5ETzl5UHdH?=
- =?utf-8?B?akhGOWRjZnRXdkFXdzlRek1aM3BxWkpuTVp5Qk9Rb3ZEeGZubGpPc2paN0o5?=
- =?utf-8?B?OEFKMFFTZjNYUnFkdWM4bUYyazNFM1NrbXo0OEdRZ1VsK0JhRmdSUWQ1V2Zv?=
- =?utf-8?B?UW1SVjl5bmhPelcvRTl5WmxxL2Zvcnc2eWdUVmFPNmk3R3ppY20ySGFCZTBw?=
- =?utf-8?Q?B8T7ko8e64OcWLvqfuSfcbX2WGqNxqQvQBVCnMv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB5246.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LytqNFZIWVpaT0xOR3puVjU1WENqeU9HUzVyK3BlMW0rSTl4RTcwUFh1a3BI?=
- =?utf-8?B?YWM3aVJLVXA1cVpLamptVU9VdzAvdmJtVW9kYit5dHhpUWtnemdueERvUk4x?=
- =?utf-8?B?R1d2ZDlMaTB2cW9wNFBMcWFOV3hhczJqVUtuVXBlYTg2Vnp0OW81bWREQTFC?=
- =?utf-8?B?VEhLekt0SGFWUCtDWTQ2eGNWOU5yNXdObFdJUnF2WGxmOU5sQi9GTE5ZRk9l?=
- =?utf-8?B?RTlpaFRrSzNYdUVQZlIzWCtsbkt1M1dkL0pGc0tRMmMyUWhDTmJFOVBuZnda?=
- =?utf-8?B?azByQzYyOTFnTUxkbTVPRjByb1pPNWRVREgvc3VRc0FUZEV1SmpRUTVGLzBE?=
- =?utf-8?B?M3U2T2JQNjRIOUJQc0hrUmZzZllMeUxyQWsrSWUvWWxrSUVjTGc4aFlTb3ZT?=
- =?utf-8?B?VnhGWU9ueGpka281SEtIa2dVdUZBQ3RvNWRTeEw4eXJQNDRheFZwemVHZDQ1?=
- =?utf-8?B?NkdFVEZVV2kySGxuUEIrNFlaV2l0blB3V2R0Y2xDeU1BSjIzcmxUQkFJVFBF?=
- =?utf-8?B?eEZmeWMzS0I2YVJydS9HRmxVU3d2a1Vuc0phU1diMHdYUk52YVVFMWJ5ZDJ4?=
- =?utf-8?B?U3B5UW9ZWmJ2c3R3eHYzR1JVUGpaTzZhSUtBellRVmFVUk5YQldMYWpkcmx2?=
- =?utf-8?B?SnByNStTQXpBZGdQSG83Z1I5a1Q1Y2xLN0YybUs2Y1J3clRCWWs1TDlscVZO?=
- =?utf-8?B?Y2NXQ3dDelkydDFFWTdjVCt5N1FONU4wcVg5TGNSNno2ZkdDM2NlR2IyRGxz?=
- =?utf-8?B?aUttWUVZbkI3N0FIYmFKcWNjc0xCK2M0T2gvcjFSakhMRmcweDJYQlBnQllT?=
- =?utf-8?B?NC9xWEQ1aVNBS051bi9ZNVJWV3lMZTFDbE54RU1pV3VnZ3ZoelVleFo2K0pp?=
- =?utf-8?B?ay9ncnNld2xFbjZXdUIzSld6WndTT1VMNElHa2plMGVzSlliODBCUEdwWXJ0?=
- =?utf-8?B?MVJ6ZzM1OHkyeWF2Y0NFK2xSTExiQk1ZUWQrem1US3YveTZNUHJrdmJwT0dm?=
- =?utf-8?B?Q2RkQ3A3V3l5ZnV6ZWJtK05wQ01kMWo2OTJka0pwTnlSVkNPZm5JOWRaTXVP?=
- =?utf-8?B?VVJQa2VYUUJvb2RyWkV2d1Q1YVprek5QTHIxOW1abVF4NVVOaXRYZDQ3Tk9k?=
- =?utf-8?B?dFg5V3VOb2dnT0NnOHNxQjZBbFBUc2ppbDNOMVlkYmlqNmNQY3ZPTmQ5dnlB?=
- =?utf-8?B?K3VTZDBvYXBQNW8wOFpPZjREZ1l1VDg5a2JtNjdpMmJkbzRyTWNuVm1sUFhi?=
- =?utf-8?B?ZDhYejlOSUltOVFqVDB6T1d2V0cyMWFXOU5Kd0ZsNDJjc29kU2RJaDBDL25Z?=
- =?utf-8?B?V3EwTk5tcUtkaGZOa21uemkvYzd4WnNhMzhHNnRDOUJHMnBXdDRpc0JaZWcw?=
- =?utf-8?B?aEdMdDRESTU0TnVrZjd4bitJalFVMFVRdUxhbDZvZnhqTEJYSjVBeEo5aUwr?=
- =?utf-8?B?NythQ2V2c0hsMnErMWhQNktzT2dYLy9pN29xckZUbFBkS1VtakdEUmxrYlF6?=
- =?utf-8?B?cWtNSVNEYVc3NDlhd0xKd3B3TmdJdWhCOC9hVXV0N3owT1YyZnRZWENtOW5F?=
- =?utf-8?B?YVY1QjVYcDdPNjZQaU5ZekpsRytoMTlXTzREN2gwT1orSTVjY0czaHVMdWIy?=
- =?utf-8?B?SmdmVlFYRzhobTFYSjdDQXVBdW5xUnorOXdlMTIyaFJkZjRJRFNlZllwMGx3?=
- =?utf-8?B?c2JLQmNlaDl1d3NZV3hpMVFLK0VpVHgxc3ExeVk4aVY4TXorcmVmc054UllR?=
- =?utf-8?B?bnhWWGVtYzFuRVk3MG5nTlR5SzA0V0F5SzNxWU1wSUFyeHY5eGFPWnlhdUdm?=
- =?utf-8?B?UndIdTEzbDNZMzlGK3JrWWdWcC9HU1Q4YU0zakFHL2VhK2lEeUkraE5zN3Nl?=
- =?utf-8?B?aWthZmdjTmEyeDdUWnNvVnZwSTlrQWppSTNrYUVPa2pRR0FwSjY2Q3RPMW8z?=
- =?utf-8?B?elpRNkJJb0RtbXdwZzhxYWxmRGJMOSt0VGc4STdYbHkzUVgvRCtCNUVzd3RP?=
- =?utf-8?B?U3NPbHlOTFZiQWdqQlZ0dzJjMExvdyt0S0s5blhNUEpEZkYxUmNNVW53dGxG?=
- =?utf-8?B?YlVjdzM4S3VHZGlaM2RzbEZCcXJ2UGxMdkZIYS9PL2c5VUJpZ3F3Und4Uysx?=
- =?utf-8?Q?743M=3D?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c53bc75-879a-4681-1454-08dd01ff8729
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB5246.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 03:18:35.3789
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n5LOppdMUnH9Tm3RhB3aLfPpm/6mWI0JBV2mX0r/gKXTGI9b1BZ9HnMrqZ8NIawu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR01MB8009
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NOnalZjVTVf0PdX+TiWwR5wGXQfDdiUaDSO3CqQsmaX3kcJPiR2QwaG8
+	pVWp7gE3muz6RH37o3sE6VMEYGGAozv/mMzvT5Hcy+3uNUpVY2lHfGLVogPySlU4igZzOZr
+	1g2clOaNceUnaUnk7A42baYn/o7x3GHv6vy0AbXPVyooHef5/AQRaKc/+ul4zh4izmWKwJY
+	e8LQzDXFI3716Tsfo4G4zR+s/iQd13LGMpuqeEdGaC8WE3mLGt5Xg0ujs/4ObSqsPe2U0L6
+	sV2gzWtcIXa8Br2Uy+OPtfYGLaZKwyE0oiBIv0ljQiPr+qGq/4jzGnT1JajeinUCjescykA
+	/j1nhLRnfpk/I0Hm7R7U2g0gRPJr+m7kq2hhxuo2LTtznbKWX3PgK9aW2HO7WRxMhvMCpwi
+	Xu6HG/Rnku2dDjsi4XHQNP/3Zj9hLrzV6wMhah0/xokhQ4qJ9Vw7lBR2ynr8DZhMiK/GpU8
+	xmH1/bKUr2N+inwdNrPkBbE04rAESLy0DmZTefKWSX4gSZL/Es1ShS9K6i2PYqtIVULRldN
+	9/VJWku1j8gk7tyHIjJcjGpamSqS61y9yV/eN/Cqsl4vdniyApqDi12hujcT9cssYI2xYQ6
+	xedXqKiHcMc5i8rIOqIVR+AC4NqkWYylU8RtujEqnfftWtfC+HjYSGyxvW2rjZn+vg1G88+
+	BN5LLrr+Z/tlqsOvaLRMXLA7eUGzhcpoq2NlohV9UqlEQFfI68rDWxq8ASi7Oe/yq+O8bQI
+	VWQf2SPkRBXOpksTjUXaAY1/+FSfoVTTQHXdlt9D3UuUmypHfxEQQp9V/9q2RGy0XT90FSs
+	Oj4UH2HWYjZ1Bmudsyu7hCsV3PUuhfzJlQZWrnU5aHs1eOPDcltjHZbl3DlMEQcFprjGHIc
+	JVmvWpEvo+8enCAPqS5h1O9vFaGWUoZtFfZTKQbCbHiiNiVRsJOHD1ZhDFkBhO1h9k54Pkn
+	g9JnAFUhtzqWkEZPbWi2AA6X6
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 11/10/2024 9:24 PM, Olga Kornievskaia wrote:
-> On Sat, Nov 9, 2024 at 4:10 PM Jeff Layton <jlayton@kernel.org> wrote:
->> Sounds like a client-side capacity issue? nfs4_callback_recall()
->> returns NFS4ERR_DELAY when nfs_delegation_find_inode() returns -EAGAIN.
->> Maybe there is something weird going on there? Eventually the server
->> has no choice but to revoke an unreturned delegation.
-> 
-> I'm not trying to imply in any matter that there is a problem with
-> either server or client side. I'm simply trying to state that there
-> was a theory that having multiple cb_table slots would help in the
-> case of having a lot of recalled/revoked state.  What I'm finding is
-> that it doesn't seem so (and possibly makes things just slightly
-> slower. But no measures were taken so my focus is elsewhere).
+convert powerpc entry code in syscall and fault to use syscall_work
+and irqentry_state as well as common calls implemented in generic
+entry infrastructure.
 
-We should definitely understand this! I'd say that supporting multiple 
-slots is worthwhile and should be merged if stable.
+Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
+---
+v1->v2: fix ppc syscall entry seccomp_bpf test errors for common entry conversion.
+---
+ arch/powerpc/Kconfig                   | 1 +
+ arch/powerpc/include/asm/hw_irq.h      | 5 +++++
+ arch/powerpc/include/asm/processor.h   | 6 ++++++
+ arch/powerpc/include/asm/syscall.h     | 5 +++++
+ arch/powerpc/include/asm/thread_info.h | 1 +
+ arch/powerpc/kernel/syscall.c          | 5 ++++-
+ arch/powerpc/mm/fault.c                | 3 +++
+ 7 files changed, 25 insertions(+), 1 deletion(-)
 
-But if they're no better performance-wise, we're missing something. 
-There's got to be something else serializing them.
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 6f105ee4f3cf..261c9116d6fa 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -202,6 +202,7 @@ config PPC
+ 	select GENERIC_IRQ_SHOW_LEVEL
+ 	select GENERIC_PCI_IOMAP		if PCI
+ 	select GENERIC_PTDUMP
++        select GENERIC_ENTRY
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select GENERIC_TIME_VSYSCALL
+ 	select GENERIC_VDSO_TIME_NS
+diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
+index 317659fdeacf..a3d591784c95 100644
+--- a/arch/powerpc/include/asm/hw_irq.h
++++ b/arch/powerpc/include/asm/hw_irq.h
+@@ -216,6 +216,11 @@ static inline bool arch_irqs_disabled(void)
+ 	return arch_irqs_disabled_flags(arch_local_save_flags());
+ }
+ 
++/*common entry*/
++static __always_inline bool regs_irqs_disabled(struct pt_regs *regs)
++{
++	return arch_irqs_disabled();
++}
+ static inline void set_pmi_irq_pending(void)
+ {
+ 	/*
+diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
+index b2c51d337e60..1292282f8b0e 100644
+--- a/arch/powerpc/include/asm/processor.h
++++ b/arch/powerpc/include/asm/processor.h
+@@ -383,6 +383,12 @@ int validate_sp(unsigned long sp, struct task_struct *p);
+ int validate_sp_size(unsigned long sp, struct task_struct *p,
+ 		     unsigned long nbytes);
+ 
++/*for common entry*/
++static __always_inline bool on_thread_stack(void)
++{
++	return validate_sp(current_stack_pointer, current);
++}
++
+ /*
+  * Prefetch macros.
+  */
+diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
+index 3dd36c5e334a..0e94806c7bfe 100644
+--- a/arch/powerpc/include/asm/syscall.h
++++ b/arch/powerpc/include/asm/syscall.h
+@@ -119,4 +119,9 @@ static inline int syscall_get_arch(struct task_struct *task)
+ 	else
+ 		return AUDIT_ARCH_PPC64;
+ }
++
++static inline bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
++{
++	return false;
++}
+ #endif	/* _ASM_SYSCALL_H */
+diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
+index bf5dde1a4114..9df2bcf28544 100644
+--- a/arch/powerpc/include/asm/thread_info.h
++++ b/arch/powerpc/include/asm/thread_info.h
+@@ -58,6 +58,7 @@ struct thread_info {
+ 	unsigned int	cpu;
+ #endif
+ 	unsigned long	local_flags;		/* private flags for thread */
++	unsigned long	syscall_work;
+ #ifdef CONFIG_LIVEPATCH_64
+ 	unsigned long *livepatch_sp;
+ #endif
+diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
+index 77fedb190c93..e0338bd8d383 100644
+--- a/arch/powerpc/kernel/syscall.c
++++ b/arch/powerpc/kernel/syscall.c
+@@ -3,6 +3,7 @@
+ #include <linux/compat.h>
+ #include <linux/context_tracking.h>
+ #include <linux/randomize_kstack.h>
++#include <linux/entry-common.h>
+ 
+ #include <asm/interrupt.h>
+ #include <asm/kup.h>
+@@ -131,7 +132,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+ 		 * and the test against NR_syscalls will fail and the return
+ 		 * value to be used is in regs->gpr[3].
+ 		 */
+-		r0 = do_syscall_trace_enter(regs);
++		r0 = syscall_enter_from_user_mode(regs, r0);
+ 		if (unlikely(r0 >= NR_syscalls))
+ 			return regs->gpr[3];
+ 
+@@ -184,6 +185,8 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+ 	 * So the resulting 6 or 7 bits of entropy is seen in SP[9:4] or SP[9:3].
+ 	 */
+ 	choose_random_kstack_offset(mftb());
++	/*common entry*/
++	syscall_exit_to_user_mode(regs);
+ 
+ 	return ret;
+ }
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index 9e49ede2bc1c..6cb923fe4c4d 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -23,6 +23,7 @@
+ #include <linux/mman.h>
+ #include <linux/mm.h>
+ #include <linux/interrupt.h>
++#include <linux/entry-common.h>
+ #include <linux/highmem.h>
+ #include <linux/extable.h>
+ #include <linux/kprobes.h>
+@@ -577,7 +578,9 @@ static __always_inline void __do_page_fault(struct pt_regs *regs)
+ 
+ DEFINE_INTERRUPT_HANDLER(do_page_fault)
+ {
++	irqentry_state_t state = irqentry_enter(regs);
+ 	__do_page_fault(regs);
++	irqentry_exit(regs, state);
+ }
+ 
+ #ifdef CONFIG_PPC_BOOK3S_64
+-- 
+2.42.0.windows.2
 
-Tom.
 
