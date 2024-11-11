@@ -1,128 +1,92 @@
-Return-Path: <linux-kernel+bounces-403514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2DC9C36B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:52:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E67C9C36BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:56:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7EE1F22623
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:52:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3A08B21717
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB0F137930;
-	Mon, 11 Nov 2024 02:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5FC13CFBD;
+	Mon, 11 Nov 2024 02:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aDgsZc3v"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="jjUll8Qh"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BCF3C3C;
-	Mon, 11 Nov 2024 02:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CDE136E3F;
+	Mon, 11 Nov 2024 02:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731293570; cv=none; b=Ivx4I3mKKZqiybrSxv9/YVEDECjF83M/wrkkc7Eoa/OunX8klapXhDKXZNlM8pI9OWZD+fHdjEvFRkfy+TJVeTaJUBfj2+7c3sv5yHlVTZd70nzJY3xzVx/BHao7a11ygA8Ib9setF9QUlkMeO4+SIbm4EsdGMBHAZ566/JsvfA=
+	t=1731293776; cv=none; b=F+TUU11IRvdHXY6vesbndiPirTuELNmmnQ/1ZPrryVVsFvKTx6RdkO2b+zIQ3Cq0xnXwKc+f4JkIjk12yItxtTPDUaEUwv6s+xCqS2HxH7mVwUC/bDeqJ8+qFD8+E8e3Fofd4cUaNnYpHcbnNWI3PzFSOAIqeeW1AYPJGv2NyTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731293570; c=relaxed/simple;
-	bh=tDmjCi8zJ4eOVXkIRewl+MZnnsV0r///O63ADzMiAJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m8PHPBQWM/uPefoyzCWLCCHpLnvvo6+7AvxUmI3uWlGJuxTQiwXjnr2xwVt1FaqlJ7aIHk3YgsT/6s/5v+D9ohVy3dtO08XrdDUAAhOOCuCzqNLGnaVSjKsyvwI4vGfp4hGeUYghucLkIQFQHJa3RlXXDKWxXqf1zCi9rCv/R/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aDgsZc3v; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731293561;
-	bh=g/FOHCPE2UK3MaRW3btwxddEVADpRzIwOa53MDhB/z8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=aDgsZc3vZ/g+Y+Crj1GuRE9AAJp8REfi5WMzT4ugMJki9ZKLq3eh3ybz/9xVbGTY+
-	 XvFQUt0+oUKkzgPHv6Kl1o9bM9BbO4vNbmM7AUIsjkTJAjKnnPa0SZOe0HcfdBIQrr
-	 xeQqyX3fqqYwaoDGF1MfZsTzNguASLwJbR9+MlNHadMS+1fUlKVO5uUTmcIqlG8YwC
-	 SynpalTAzqnfaQ4P2trZ38a8Evj2SBKyMUZcbU/YKFOlhvCibuRA7gO993mhSgjU//
-	 F3bUCtUaAtizWsAjyQBT6Vifv1ukqmGzPyAx4OJHrPI4IMnF7RQIUqtumiR1vqFYGo
-	 I5RSdeHbGmXNw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmvGw3T7Lz4wbp;
-	Mon, 11 Nov 2024 13:52:39 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 13:52:41 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Liu Shixin
- <liushixin2@huawei.com>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: linux-next: manual merge of the block tree with the mm-stable tree
-Message-ID: <20241111135241.1640f547@canb.auug.org.au>
+	s=arc-20240116; t=1731293776; c=relaxed/simple;
+	bh=tivdGFRzWnPNSNUizSGzGAB5Gv0u3CDXEFZanAO+k+U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OvkpsYKMhdli19qwtlTiiCDW2qqATKGIzC6FfXFKpIp2pBE9JYnvl56pJENfdT17+7dcgR2t4csIDrvjL1Cm4PsQgLah1/0QNx/K1Ish1DkAw8BOF2nGTu07RT9jCwNsVE6lmB1ozbTNSyY+T/A6syAeAOqrijBor2dm1Y0+K7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=jjUll8Qh; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AB2thUjB1487418, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1731293743; bh=tivdGFRzWnPNSNUizSGzGAB5Gv0u3CDXEFZanAO+k+U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=jjUll8Qh5ryl4yW3U+Dx4xv6meW/oIrnBzmc/rCl8ucM+YdhKIm/VC+ZdP5/o3umW
+	 +dBAtYDCKW+vTgjUa5mAH2XM2t2lDuvOt0EORcUw9Oi+w0qDOCnFjK5MPtgLDjLugI
+	 qqPL0wKtFDBsJoKYGHAG288kIWXY/pBuhzlDTbnvdtYVSH0csKaDJcucv/8jEeqdwq
+	 FxcGOxFppxSN3LyivFOEH0i1e2Vxq4xqoKF9IaoXHWShhZD/HGYCVah0O3rxEVO06N
+	 YG4GBEdUm+V47DScsWRDwPXYavKqXNwqfgkm2MQ9Jc+0vI8yh+9H/fxVnXaaCPRPeT
+	 FKjmQKwJEik6A==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AB2thUjB1487418
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Nov 2024 10:55:43 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 11 Nov 2024 10:55:43 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 11 Nov
+ 2024 10:55:43 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
+Subject: [PATCH net-next 0/2] Add support for the RTL907XD-VA and fix a driver warning
+Date: Mon, 11 Nov 2024 10:55:30 +0800
+Message-ID: <20241111025532.291735-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xnEfGR7zq4Gzz6Z4xAC00gY";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36506.realtek.com.tw (172.21.6.27) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
---Sig_/xnEfGR7zq4Gzz6Z4xAC00gY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch set includes adding support for the RTL907XD-VA. Fixing the
+warning raised by the reviewer, which points out that error handling
+should be implemented when rtase_check_mac_version_valid() returns an
+error.
 
-Hi all,
+Justin Lai (2):
+  rtase: Add support for RTL907XD-VA PCIe port
+  rtase: Fix error code in rtase_init_one()
 
-Today's linux-next merge of the block tree got a conflict in:
+ drivers/net/ethernet/realtek/rtase/rtase.h    | 10 +++-
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 54 ++++++++++++-------
+ 2 files changed, 44 insertions(+), 20 deletions(-)
 
-  drivers/block/zram/zram_drv.c
+-- 
+2.34.1
 
-between commit:
-
-  58652f2b6d21 ("zram: permit only one post-processing operation at a time")
-
-from the mm-stable tree and commit:
-
-  5fcfcd51ea1c ("zram: fix NULL pointer in comp_algorithm_show()")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/block/zram/zram_drv.c
-index cee49bb0126d,5223a03cb10e..000000000000
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@@ -2571,7 -2381,8 +2571,9 @@@ static int zram_add(void
-  	zram->disk->fops =3D &zram_devops;
-  	zram->disk->private_data =3D zram;
-  	snprintf(zram->disk->disk_name, 16, "zram%d", device_id);
- +	atomic_set(&zram->pp_in_progress, 0);
-+ 	zram_comp_params_reset(zram);
-+ 	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
- =20
-  	/* Actual capacity set using sysfs (/sys/block/zram<id>/disksize */
-  	set_capacity(zram->disk, 0);
-
---Sig_/xnEfGR7zq4Gzz6Z4xAC00gY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxcXkACgkQAVBC80lX
-0Gy4BQf9GgDI8Py65qK9izGX5yTBLPuOxtH3tsVbYA2T0dmIkNr5rBB13luCj130
-LtZx/95iyHtVAZcp5XImx4NDYltIIgureSlXWdZ2D6D5Fi9kPKAzAffNJZcIkvoE
-v1qk3mJhvWS3vQ1nKIGJ6TbergLnBjj/d8YeDimvPghpTHWpAl9+RU/o7R9GP9PV
-dMirJG2VUQml2N1mA6MDUBdW9Dl/qsjt10C7LEFRMFxRBaOUbaWgrFiADKOXA+U3
-nwjavYNf/DOLZvenk6q6NGJUqAtaxL/a6moHnES+GA9Sv87w7rndt38gdDzqrChf
-IL4h1tqeUizddFur+WrNfABDxHT3hg==
-=uBGF
------END PGP SIGNATURE-----
-
---Sig_/xnEfGR7zq4Gzz6Z4xAC00gY--
 
