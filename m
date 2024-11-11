@@ -1,94 +1,107 @@
-Return-Path: <linux-kernel+bounces-403724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1F29C39A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:27:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0157A9C39A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9B121C21784
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DCAE1C211A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156EE165EFA;
-	Mon, 11 Nov 2024 08:27:37 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BE215625A;
-	Mon, 11 Nov 2024 08:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A5116C453;
+	Mon, 11 Nov 2024 08:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f80qaaZK"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF82165F1D;
+	Mon, 11 Nov 2024 08:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731313656; cv=none; b=GZ3ZOCHT+LEDfgsTz7OkPlEXma9+aW+IES+1cWhmCdLzH42+ccKsMG9jzJ6hoEIs5btJfjCRGNXOP5h+kwydcdaRtAhOcg4dyUlpJJwWxCO7QLDMpNfOYpb1bAzem0POeIxB0e0PZKyMePpNZde35r5wRyGOyAowmSMvmvG16cg=
+	t=1731313747; cv=none; b=I00+u8ZUZumf3MA0PQ1CGBxUgld2qV7TOYQ42UTvmRxiN3pWpQ1fupHTvHHacflt6betZ8f23oSvO8A8X/wQFpER2I6a9QopBAM9r9k8L54I15PoBXF10SE/QdIPnytlGqZrUwcTQQ41QT0fNTbL1a1qrNI0sl1lPnS1dxmCQxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731313656; c=relaxed/simple;
-	bh=BXBpk2AxFop0CaSxn3CIwUgeiR8slV0oNhrUI0E+fks=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GsnXsAmN+COm4bZM7gHGNFBTgbIinvqvYVWuQAMgzP5/ptwlbvW5w45TXENev425Bo1ZAs68CxVEcDptU98NtcbInQSoyILAPbdpzIGpkjMkIhlxeBiylZPPucC+7TpKQfFHunSBQoCbZCDlKnj4qS0j6oWAaDfJeuFrrG4FxZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee16731bff220c-d4b21;
-	Mon, 11 Nov 2024 16:27:30 +0800 (CST)
-X-RM-TRANSID:2ee16731bff220c-d4b21
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee36731bff1b67-20d7e;
-	Mon, 11 Nov 2024 16:27:30 +0800 (CST)
-X-RM-TRANSID:2ee36731bff1b67-20d7e
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH] perf tools: Remove redundant variable assignment
-Date: Mon, 11 Nov 2024 16:27:13 +0800
-Message-Id: <20241111082713.274761-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1731313747; c=relaxed/simple;
+	bh=Oao6DLOaHKR9F5y+/oAW+6ER8e+7Nikyydk7w+x0y2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SBux+w8QbK251rAjtjjUGYTtv7FNCqhs7lR3jqtQctMcfe9ysYeBD6vO6kZGIAIs6tvW00EVj0Ao69SzVnwrqgvlUmHwhLjd8ln6hMP3V6zW4O52cAbwxErdPwHKGs41vI7UsXBD0WFS7winsL8/DUqcxW23Yb436qTXSRAhDjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f80qaaZK; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7c3d415f85eso507414a12.0;
+        Mon, 11 Nov 2024 00:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731313745; x=1731918545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oao6DLOaHKR9F5y+/oAW+6ER8e+7Nikyydk7w+x0y2g=;
+        b=f80qaaZKs6bWnIJySLSw+Enx/xMqZzgPVbbzVOLQo5rjWFPJq+aCA2X/NStPg9JaAL
+         UIIJKyqXuZU00zPlOGsGK4aIy7QSxyVsfBrHriaSWQQgcU9Y869iuORR2wpnwZjcN3I4
+         g61F86PnZHJALx/QevKuYCd3phWLomkvAUFU5kaB98YMcgzRPDxt4GTKXNacROp+ELLS
+         ftzUEiTukQWCnPMx2AoY4cdcHk8jF6SlqK8ZTPz6FEAS7gvPoOhfgr30XuclRv8rIGib
+         YP8dIQItvaoJjN1fzUubgAIDGaGbI16RCxvu2l9FQCXAFb0io9kVprthag7sXvk/1SKO
+         Aqtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731313745; x=1731918545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oao6DLOaHKR9F5y+/oAW+6ER8e+7Nikyydk7w+x0y2g=;
+        b=WMPMBI1Jq0D+DWPNSRdpbDgooGQ3moLmfhjimO208e0thuN+5dlsupLyqQ+C0JOa5j
+         TPZ6vZynUwwzC1lZIH/yJekqwlvrf9PPj32h5bZ3spKTcRDeEKYPIbY3Wj7cIlqLGOAF
+         ECoqx+cs0+QJkYhbm4rwat+mtpQ7LL3B8qjpw6Uc0c6Ozl3jBeaZSwpYzN85L9NO1LlG
+         /R4SvSOkqktnUV4KnKlSJjrX1NG776Mi+J4C2rJDShtpOTd1ln+IS0DMHO59AFN1xUyy
+         AKAU4CCKVapykYqPBe6Zsk5Sff7fJvC9ZhFP9JH3WPdNTzPMruOuEEpu0A266hhLknAK
+         QwUA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4f3cmApUbadwuVGMEhAAexO8/QLV9j0SNfRiykEdrTNXfUCLeKA2xkUyt36ioSpmBNPSVlIIbC9wga+Q=@vger.kernel.org, AJvYcCXoEZE9sk41WgHadKr3ByeEMzbEl9II2fEsMfCESIMc//F+WFhwWy9ReysWCwbG+wkng6mnYvx9/RYTIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD4NPCC8iTIPSaNgyVNZyVJnfzE2hiQ8U6KAzoib07KBB1o6az
+	w8nrqnXoxq/Vqyl850ndZ2Ln0EuumDGukMJpISWGExeq7VJzdEDfirlYaujc24n/W+9XBckXJT2
+	WhdrLbt1y1CDjl0CTKekb2AgQU9NsisUCMGg=
+X-Google-Smtp-Source: AGHT+IGGDNxvXicV7PPV03Ls180FsS/eV1ZEE+X/zeyEmfKUf6s2/YP0V25YFNZTryyOpsI8S9bh0spcJYvkUsOLxw0=
+X-Received: by 2002:a17:902:c949:b0:20c:e250:d4e with SMTP id
+ d9443c01a7336-21183547da5mr69462375ad.9.1731313745090; Mon, 11 Nov 2024
+ 00:29:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241111175842.550fc29d@canb.auug.org.au> <CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
+In-Reply-To: <CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 11 Nov 2024 09:28:53 +0100
+Message-ID: <CANiq72nyWAhyORsDij6P6U7Ww=eCp6S=LzPWZN4wxGD8JiK+RQ@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch makes a minor change that removes the redundant assignment
-to the variable ret, simplifying the code.
+On Mon, Nov 11, 2024 at 9:16=E2=80=AFAM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> moment only the patches up to introducing the new `ffi::` crate (which
+> includes most of the changes), i.e. up to commit d072acda4862 ("rust:
+> use custom FFI integer types") but without doing the big remapping
+> just yet, so that others have it available for their branches, and
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/perf/jvmti/jvmti_agent.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+"without doing the big remapping" is ambiguous -- I meant "actual
+remapping", i.e. taking the commit as-is without the next commit,
+since we should be able to do most of the renames already.
 
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index 526dcaf9f..751219143 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -408,9 +408,7 @@ jvmti_write_code(void *agent, char const *sym,
- 
- 	funlockfile(fp);
- 
--	ret = 0;
--
--	return ret;
-+	return 0;
- }
- 
- int
--- 
-2.27.0
+But the other interpretation, i.e. skipping most of the
+changes/renames `core` -> `ffi` in that commit and do those later when
+we do the actual remapping (which is most of the changes, in fact), is
+also fine. They are not needed right away.
 
+I will check how it would look like on top of next.
 
-
+Cheers,
+Miguel
 
