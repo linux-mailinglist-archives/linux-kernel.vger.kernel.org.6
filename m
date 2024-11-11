@@ -1,140 +1,255 @@
-Return-Path: <linux-kernel+bounces-403432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FCA9C35A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:55:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B429C35AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:57:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37DCE1F21126
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83FC1C218BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 00:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A420AD58;
-	Mon, 11 Nov 2024 00:54:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797791B95B;
+	Mon, 11 Nov 2024 00:57:09 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7777E28EC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 00:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4FC4683;
+	Mon, 11 Nov 2024 00:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731286446; cv=none; b=L3GlxO5c0icudYPpf/xJACRjmtmLmoGozXGZvuUVmFhUD8flKLAvE9D6qsDxDMDlqUOmLkYaD8kJdpP3J/pzLIopxo2y3vDskXRETJkBLlirfFhr6wV9s9Ve0qLG+DuN31APr1IqGRcX3y1hfErn7a7t/SFxEtRthnQGk6cYqCY=
+	t=1731286628; cv=none; b=BHm/+h7Ud4UhaVDra86WY1APXygZHgbCgoqULISZZ30OkLglcF5SXyi2A4CZcGUodNMQLxUgt9F/EYjm6HdO2ZfF6A4BemirWqfwYDI1enQr6wgJ8RXW4RRbItCxJOBljDRxgCS0Rk/R6ismlLgg/2i1vq2wdpGwoOUvIBq6w4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731286446; c=relaxed/simple;
-	bh=ApmCT5cnWuroD4cp5Oj5H1ghdG0uyVocG7NzcJ51/eU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XYWOKzEDHVNRZLreh1D7Lun50MgIl6CDApllAYqgsPGikwAZh0y9bRZok3Xfg0ChObe828LC/rPJhfNStFILBw2e/uE2ZbykMEYFAMddiUTGLyQPuXMrc4KbWjURWY8ZFxw0yMmNNq6u2gXxkNgJRPqn2h46KDwi8JjCaVZCgcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aecd993faso441716639f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 16:54:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731286443; x=1731891243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yZiQTJSXb+dM7SOuBpw+d8tJFPZfnS3IdFxNDjVPzEA=;
-        b=ed/GF4oc2C7gVXxJbdZA1ko4rHC5+xyiAHnCEw2nhksOQi2KxaBPvOY27RicbaK3nn
-         QutJsgMBEV9+i8VDU5maC/rCtN7YsZFyKpUQI+NA0z+09fhK2Q6GH88ZPFAh8oJ+X95B
-         VcK3fvuJlTPpjGrIWqmv3u2qyme2ZjMzlIFd2eNpm3DL+9alZugeDYEMybDc0vXiSN5t
-         P/nudqF0j3bhyXq1X4YbqTpdYj4ryaLo6dmnptrro+Qs1ABQeGrFVevX8VyP3mk48HNH
-         ir5gGWLubc1Zpam0zV399aJ08A2vP2ClJBpiaYl6poRGXLa0ywYjy+i8kUmh3Zh5+l+O
-         +YHA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4TftyuH6QYMwbIPpaUzq/yEKSAuzpW/+KT+Tg3Wsz/NTXogwEZDxnS4mpw3BpFkDolJtVfB5hGBaY/Fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygi6DiLIXb3W+vihrpZGeibaPQLJcaLB+nRKErGgw54UrK0s1Q
-	BF7B8oOCUI4VUNS0FSnmAZdCHbth9FRgbEvLo/Q31KeBSymBxNPBwCtWU/lg/xN71kmsciyX2Sj
-	BhGBd0OeSpxcjE/XSxCoDGWqGily8Wf+1MrQ4H/etP6pxoFbtG1J3xmE=
-X-Google-Smtp-Source: AGHT+IGyghi6kOcG3rB5k1wRzHAsz3nmfeMABM8tI8oKNd1/jauj+ZMc6fPW9c3BfbpeIs24irDtCLxSmYvR0jtVmp7qedjQQ/ka
+	s=arc-20240116; t=1731286628; c=relaxed/simple;
+	bh=YiwAxheJeXuTTs5LgyTbWIwSD/voYYc0qeEeT8u6KIo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CbLt6dQxVlFn34o0QJwjqU+miiYCTGdQTrTkWxBZDjvoXCTGPitqatZYMBLKAV2Va/1BK88VaZTBKU/HFzGdfocAokN26SzSbD31px6hC7ZjxU3Wxc/WEgkM97ibJXSISpxH4JYfjHxbnnRll/s4KAqUGgPPtHhd9Oyz+1mGTH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xmrj031bGz4f3nJc;
+	Mon, 11 Nov 2024 08:56:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6D1331A0568;
+	Mon, 11 Nov 2024 08:56:55 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgBHIoZSVjFnd7PCBQ--.2481S3;
+	Mon, 11 Nov 2024 08:56:52 +0800 (CST)
+Subject: Re: [PATCH 6.6 00/28] fix CVE-2024-46701
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
+ <2024110625-earwig-deport-d050@gregkh>
+ <7AB98056-93CC-4DE5-AD42-49BA582D3BEF@oracle.com>
+ <8bdd405e-0086-5441-e185-3641446ba49d@huaweicloud.com>
+ <ZyzRsR9rMQeIaIkM@tissot.1015granger.net>
+ <4db0a28b-8587-e999-b7a1-1d54fac4e19c@huaweicloud.com>
+ <D2A4C13B-3B50-4BA7-A5CC-C16E98944D55@oracle.com>
+ <a223b1dd-9699-5f6c-2b71-98e9cd377007@huaweicloud.com>
+ <976C0DD5-4337-4C7D-92C6-A38C2EC335A4@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <48bb5f01-b82b-79a7-dbc6-6ec91bcaab67@huaweicloud.com>
+Date: Mon, 11 Nov 2024 08:56:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c88b:0:b0:3a0:ce43:fb62 with SMTP id
- e9e14a558f8ab-3a6f11d4c97mr96226615ab.11.1731286443694; Sun, 10 Nov 2024
- 16:54:03 -0800 (PST)
-Date: Sun, 10 Nov 2024 16:54:03 -0800
-In-Reply-To: <2a46b846-9279-4cde-91c9-b01fc77e9052@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673155ab.050a0220.1fb99c.013d.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <976C0DD5-4337-4C7D-92C6-A38C2EC335A4@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHIoZSVjFnd7PCBQ--.2481S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Ar18GF17ZrWDJF47Xw45Awb_yoW7AF1kpr
+	Z5t3Wjkr4DJr12kwnFvw1jvFyFyw45Gry5Xrn8WryUCas09r1fKF47Gr4Y9a4DGws3Cw1j
+	qr4ava4xZF1UJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in bch2_copygc
+在 2024/11/10 0:58, Chuck Lever III 写道:
+> 
+> 
+>> On Nov 8, 2024, at 8:30 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/11/08 21:23, Chuck Lever III 写道:
+>>>> On Nov 7, 2024, at 8:19 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> 在 2024/11/07 22:41, Chuck Lever 写道:
+>>>>> On Thu, Nov 07, 2024 at 08:57:23AM +0800, Yu Kuai wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> 在 2024/11/06 23:19, Chuck Lever III 写道:
+>>>>>>>
+>>>>>>>
+>>>>>>>> On Nov 6, 2024, at 1:16 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>>>>>>>
+>>>>>>>> On Thu, Oct 24, 2024 at 09:19:41PM +0800, Yu Kuai wrote:
+>>>>>>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>>>>>>
+>>>>>>>>> Fix patch is patch 27, relied patches are from:
+>>>>>>>
+>>>>>>> I assume patch 27 is:
+>>>>>>>
+>>>>>>> libfs: fix infinite directory reads for offset dir
+>>>>>>>
+>>>>>>> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+>>>>>>>
+>>>>>>> I don't think the Maple tree patches are a hard
+>>>>>>> requirement for this fix. And note that libfs did
+>>>>>>> not use Maple tree originally because I was told
+>>>>>>> at that time that Maple tree was not yet mature.
+>>>>>>>
+>>>>>>> So, a better approach might be to fit the fix
+>>>>>>> onto linux-6.6.y while sticking with xarray.
+>>>>>>
+>>>>>> The painful part is that using xarray is not acceptable, the offet
+>>>>>> is just 32 bit and if it overflows, readdir will read nothing. That's
+>>>>>> why maple_tree has to be used.
+>>>>> A 32-bit range should be entirely adequate for this usage.
+>>>>>   - The offset allocator wraps when it reaches the maximum, it
+>>>>>     doesn't overflow unless there are actually billions of extant
+>>>>>     entries in the directory, which IMO is not likely.
+>>>>
+>>>> Yes, it's not likely, but it's possible, and not hard to trigger for
+>>>> test.
+>>> I question whether such a test reflects any real-world
+>>> workload.
+>>> Besides, there are a number of other limits that will impact
+>>> the ability to create that many entries in one directory.
+>>> The number of inodes in one tmpfs instance is limited, for
+>>> instance.
+>>>> And please notice that the offset will increase for each new file,
+>>>> and file can be removed, while offset stays the same.
+>>
+>> Did you see the above explanation? files can be removed, you don't have
+>> to store that much files to trigger the offset to overflow.
+>>>>>   - The offset values are dense, so the directory can use all 2- or
+>>>>>     4- billion in the 32-bit integer range before wrapping.
+>>>>
+>>>> A simple math, if user create and remove 1 file in each seconds, it will
+>>>> cost about 130 years to overflow. And if user create and remove 1000
+>>>> files in each second, it will cost about 1 month to overflow.
+> 
+>> The problem is that if the next_offset overflows to 0, then after patch
+>> 27, offset_dir_open() will record the 0, and later offset_readdir will
+>> return directly, while there can be many files.
+> 
+> 
+> Let me revisit this for a moment. The xa_alloc_cyclic() call
+> in simple_offset_add() has a range limit argument of 2 - U32_MAX.
+> 
+> So I'm not clear how an overflow (or, more precisely, the
+> reuse of an offset value) would result in a "0" offset being
+> recorded. The range limit prevents the use of 0 and 1.
+> 
+> A "0" offset value would be a bug, I agree, but I don't see
+> how that can happen.
+> 
+> 
+>>> The question is what happens when there are no more offset
+>>> values available. xa_alloc_cyclic should fail, and file
+>>> creation is supposed to fail at that point. If it doesn't,
+>>> that's a bug that is outside of the use of xarray or Maple.
+>>
+>> Can you show me the code that xa_alloc_cyclic should fail? At least
+>> according to the commets, it will return 1 if the allocation succeeded
+>> after wrapping.
+>>
+>> * Context: Any context.  Takes and releases the xa_lock.  May sleep if
+>> * the @gfp flags permit.
+>> * Return: 0 if the allocation succeeded without wrapping.  1 if the
+>> * allocation succeeded after wrapping, -ENOMEM if memory could not be
+>> * allocated or -EBUSY if there are no free entries in @limit.
+>> */
+>> static inline int xa_alloc_cyclic(struct xarray *xa, u32 *id, void *entry,
+>> struct xa_limit limit, u32 *next, gfp_t gfp)
+> 
+> I recall (dimly) that directory entry offset value re-use
+> is acceptable and preferred, so I think ignoring a "1"
+> return value from xa_alloc_cyclic() is OK. If there are
+> no unused offset values available, it will return -EBUSY,
+> and file creation will fail.
+> 
+> Perhaps Christian or Al can chime in here on whether
+> directory entry offset value re-use is indeed expected
+> to be acceptable.
 
-=====================================================
-BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
-BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:646 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
-BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:145 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:171 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:222
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:145 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:171 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:222
- bch2_copygc_thread+0x83a/0xff0 fs/bcachefs/movinggc.c:383
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+This can't be acceptable in this case, the reason is straightforward,
+it will mess readdir, and this is mucth more serious than the cve
+itself.
 
-Local variable b205.i created at:
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:171 [inline]
- bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:222
- bch2_copygc_thread+0x83a/0xff0 fs/bcachefs/movinggc.c:383
+Thanks,
+Kuai
 
-CPU: 1 UID: 0 PID: 6672 Comm: bch-copygc/loop Not tainted 6.12.0-rc7-syzkaller-g2d5404caa8c7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-Kernel panic - not syncing: kmsan.panic set ...
-CPU: 1 UID: 0 PID: 6672 Comm: bch-copygc/loop Tainted: G    B              6.12.0-rc7-syzkaller-g2d5404caa8c7-dirty #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
- dump_stack+0x1e/0x30 lib/dump_stack.c:129
- panic+0x4e2/0xcf0 kernel/panic.c:354
- kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
- __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:145 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:171 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:222
- bch2_copygc_thread+0x83a/0xff0 fs/bcachefs/movinggc.c:383
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
-Tested on:
-
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=115e135f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
-dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=168608c0580000
+> 
+> Further, my understanding is that:
+> 
+> https://lore.kernel.org/stable/20241024132225.2271667-12-yukuai1@huaweicloud.com/
+> 
+> fixes a rename issue that results in an infinite loop,
+> and that's the (only) issue that underlies CVE-2024-46701.
+> 
+> You are suggesting that there are other overflow problems
+> with the xarray-based simple_offset implementation. If I
+> can confirm them, then I can get these fixed in v6.6. But
+> so far, I'm not sure I completely understand these other
+> failure modes.
+> 
+> Are you suggesting that the above fix /introduces/ the
+> 0 offset problem?
+> 
+> --
+> Chuck Lever
+> 
+> 
 
 
