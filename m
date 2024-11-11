@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-404708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30BF9C470D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:40:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BAC9C470E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6411A1F25098
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ECCB286FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C191BB6BE;
-	Mon, 11 Nov 2024 20:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23501BA272;
+	Mon, 11 Nov 2024 20:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QN881zKS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHu05cTb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4D51AFB35;
-	Mon, 11 Nov 2024 20:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A991B5827;
+	Mon, 11 Nov 2024 20:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357589; cv=none; b=kkC7GCql7zMF7CVqZ16yBhbS+AWo7rf37g43jBGeZ0tJPjqdYO3+O5FwKfWtwa9NJY9B2M4AnUlW6DDHuys6ZjaajMFPYog7Qn3tq4HIG3poSI0CqoIprJuC1WuIiyxwrSigYornCph2Nb081Hd4SADpJuSCZfgFU9BitfmXy6E=
+	t=1731357641; cv=none; b=DyRHtvHVDunvOFJgwX/HjMgzRLxjjqc9H9Jq52bSXcsCwYrjrBKTpc0kT9qAYV1DJTnMbpkEQe9zlmUqncf43kRTd/aRyZLhQRwUQz2U1sCPLtir2BdYt9ONBs+SMkE6L/LxQ7utDiBjOFAvIxMJpcxxa+0+rB7OVhfLuW1aN9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357589; c=relaxed/simple;
-	bh=ftDw5gj4OX0ZX2AWggS6ZGbu3W01ORpuvQpfE7Hwv6I=;
+	s=arc-20240116; t=1731357641; c=relaxed/simple;
+	bh=HyFMaRXITnzt3qjNKojKuR0TkanFbUkPSq/dln3OrRU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RacExYVAC4zKqDLRdNIkb5BIlEEZd8m9JMeAnVLxsX48Onx4BpeDcEMw1Ck2fPyF9ReVY0+Hv6KJvYP3mAeGA4txoN2lUtO4wOOS5UsL5dOUelRuWlQFxHtVJNXyh8dIPYje3qo1v9x/W0RdVMRM39SQH211l0rdzacEaz+lsKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QN881zKS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9668C4CECF;
-	Mon, 11 Nov 2024 20:39:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CYoqTYY7QXNEmMUfhZj7GxGb1Wmxh9EP7PrSzOTVMlMIIESrgEOh8JiT69eqyNrn1xbn8KFt7cyvTfhP8EYarhURAZNGL2Z3CRUlAmGLXQpW/XF3ICzZX7AomUP/rp2dt312fkfc6Lym5kf/E5ftQKESpoNS9siGLe8/MWRVbqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHu05cTb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 470DAC4CECF;
+	Mon, 11 Nov 2024 20:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357589;
-	bh=ftDw5gj4OX0ZX2AWggS6ZGbu3W01ORpuvQpfE7Hwv6I=;
+	s=k20201202; t=1731357641;
+	bh=HyFMaRXITnzt3qjNKojKuR0TkanFbUkPSq/dln3OrRU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QN881zKSy8AnevXU94HIdRkWlYDZ1ubm2eedwnzzcUzinFFF/CFsd7RiA5RUeVnjV
-	 FGYB/eAc1wY8LIXwsO4h84ITzTbJS8dfAa+3ksQgjWZyTtgUMlw0EEHx9ofUqU8ruv
-	 PK9kBZGae5+ufWhNGEPcSLJ28sVurdhz8nTw9F/FsGJrp2JFEEAeoRja0eRBH29KHV
-	 pect20WQttAh0pJ9yE7clknWmGIIvSz7oB2m7QLf0uk7ODSNcudxD4htyWbIOnCb8U
-	 J+/8wY1+NZXEuC62Agn6VtoDH9E75a24OPrAk4htmZfRQGsD79Xx9gNEoHUaDSvAYv
-	 bnpRqKAJxq/Ww==
-Date: Mon, 11 Nov 2024 20:39:44 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/14] dt-bindings: arm: sunxi: Add Avaota A1 board
-Message-ID: <20241111-unflawed-nativity-f5c25cb3889b@spud>
-References: <20241111013033.22793-1-andre.przywara@arm.com>
- <20241111013033.22793-14-andre.przywara@arm.com>
+	b=jHu05cTbLuzCMXfu/EO0asvCTvczfjZetFhAHLh0V4kK9q6DflN9ElW/ljISjezhZ
+	 7EZa6FmPUOABOVp7aIzf5RNIi2dorW0d9qRQnHqkIxWouF7R+1+VjAaYoQOTt7mNuB
+	 c+7zft/c82ac8mhE00YQZVqn5t2ZQrFwPH2+8XKNIxea+aRi8GWLsgTRiZVdbzG5n0
+	 1ayZwIVlTyDJu9VJ59Uk0UOKhwvCCTrSl6tvh7XGrLvV0k5T1orjv04vRwLGtVHndJ
+	 +NHrVy2UVGQMZ34BAtbanNgP0C14JwuNvggRlFT8yJEOuEtipWIBt4Ie3hl+wOBC4h
+	 aHr9Xw3t0x6CA==
+Date: Mon, 11 Nov 2024 12:40:38 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Amit Shah <amit@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"Shah, Amit" <Amit.Shah@amd.com>,
+	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"kai.huang@intel.com" <kai.huang@intel.com>,
+	"Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"Moger, Babu" <Babu.Moger@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Message-ID: <20241111204038.63ny4i74irngw2si@jpoimboe>
+References: <20241111163913.36139-1-amit@kernel.org>
+ <20241111163913.36139-2-amit@kernel.org>
+ <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+ <LV3PR12MB9265A6B2030DAE155E7B560B94582@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20241111203906.a2y55qoi767hcmht@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FQrGi8tboct4VcBk"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241111013033.22793-14-andre.przywara@arm.com>
+In-Reply-To: <20241111203906.a2y55qoi767hcmht@jpoimboe>
 
+On Mon, Nov 11, 2024 at 12:39:09PM -0800, Josh Poimboeuf wrote:
+> This is why it's important to spell out all the different cases in the
+> comments.  I was attempting to document the justifications for the
+> existing behavior.
+> 
+> You make some good points, though backing up a bit, I realize my comment
+> was flawed for another reason: the return thunks only protect the
+> kernel, but RSB filling on context switch is meant to protect user
+> space.
+> 
+> So, never mind...
 
---FQrGi8tboct4VcBk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That said, I still think the comments need an update.  I'll try to come
+up with something later.
 
-On Mon, Nov 11, 2024 at 01:30:32AM +0000, Andre Przywara wrote:
-> The Avaota A1 is an Open Source hardware router board using the
-> Allwinner T527 SoC.
->=20
-> Add its compatible name to the list.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---FQrGi8tboct4VcBk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJrkAAKCRB4tDGHoIJi
-0gs0AQDcHH0lqvHvvyzDj2HN8e60RgpmVUImioduTNl3J/oMNwD9GfcJxYVrSAz0
-k05tYZzb0T1k0tRsTAVWuIroTF3IbgU=
-=DZjw
------END PGP SIGNATURE-----
-
---FQrGi8tboct4VcBk--
+-- 
+Josh
 
