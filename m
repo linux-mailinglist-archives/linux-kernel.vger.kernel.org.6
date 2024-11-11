@@ -1,111 +1,164 @@
-Return-Path: <linux-kernel+bounces-404140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004079C3FA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:41:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD889C3FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9CF1F2289A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF803282A13
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143F9194ACC;
-	Mon, 11 Nov 2024 13:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1946919D8BD;
+	Mon, 11 Nov 2024 13:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="O8PY86N9"
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PbMwkWqG"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A057D55C29;
-	Mon, 11 Nov 2024 13:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2280955C29
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332455; cv=none; b=aObiklIwSLNGa82Uq2OUY0JiCD3K4zcAd1j6XoyNsWQkodve7hbevEwhSPXYVR/9Oxl2Qu1N/cjEqTsr+T8jOip4ReUpMIWjyn5uIVafzuzOmxxGXgIs2ALb+NuPg3cFWpqWNYqKbm1ARe9yiCqNSXfdIKkBB8OqR4h2+AGPMI4=
+	t=1731332506; cv=none; b=qfV7gwBAYN0vXDnE7l5Xnx6+0gw2aCwC0p1mXbVv7KytKP4uK2QMWj46mnMOjAk5H0hzDSUgY4Ra9YVw3CnofD3tGkqFw+n9xyp8Ega0wezi63tA3E02uIyfI2J0vmrV1tXKnCKGyCeNt0iH5DMd8Mp85tJBzilpNMBK3ENyKdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332455; c=relaxed/simple;
-	bh=/lRgHsdUwoCuJ9prqAOMcFVLNmskl71F/Sic+hVnauo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UjI3y1sjMTB08bjOIJlC/+nfLSk7JHCMm7kUkMQVXvlBkgQCwmDPZONsihN0CUNZunUzNvMbaF95vhlVRfxK/WIcf3gvWtUejizL/q0s+MdYdRm3W7tDr6/zwejTXH/R4lpsEGPJrZc6jxqOXfhnEdaYo/PmEyBMKOwRGK1vBzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=O8PY86N9; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id AUeotDgOMjazzAUeotYuEf; Mon, 11 Nov 2024 14:40:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731332445;
-	bh=aySs7bPSbKHWLCsqe0IIm6YT4GwJ1SdufWSYkYaSwbI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=O8PY86N9o1YxVmAvOi+EPQ182u26D9pzzm1S1y6qWETG6+O2hE66wviD3oAwa2Gt6
-	 9nIIMvC4ADzLn1TvnNYhVDo//mJuQAavXJjQC6yx1YZjwPgmeVckyMGIMtLCLyVh25
-	 3iHLtI2DuUTMNTE5pt4ejl8e/Fwe4XPqrmKXA+agqkg2S+0uIO4dhvkaxH3VwA2X/M
-	 RumGr+FGQoTQ6ePSEu5YlXfHNydANZ+b0jeS/GU14Twiu4J8nLBOAruIITf/XiHhxo
-	 SDj8578AqRNmy7e4E2VJ4OK5xTwtsHVtDGINf+5TS3aWJI9Q3Z4W7h+nr9KyDCuuq7
-	 bbGJtXZuY83ig==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 11 Nov 2024 14:40:45 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Kalle Valo <kvalo@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-wireless@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] wlcore: testmode: Constify strutc nla_policy
-Date: Mon, 11 Nov 2024 14:40:35 +0100
-Message-ID: <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731332506; c=relaxed/simple;
+	bh=+QRXRDdIlw+Svhh4sVB+mO1XLL8LjPKIRH2bR+ZAz9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LzA9SCJC2NLS6UTBYCcncgtPgkzeOxzijY/gJy8X8cJ8ErJiRSDK5/sRWRp0u3ruaSTfdZ8w1RyqbMRoEJj/9bpWpYghp/nhmUwkFqUw/jn4sFp9ksPMgsr+Op5OJfExvao0XIrRpjaQDSoWfM7B/mo8pffpnhHOxVM4JsDwcf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PbMwkWqG; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e9312a77-80fa-4915-b2a9-2dcbfcf581a4@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731332502;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0tJFZxcADoWnsLW+WgeM0GNfB/Rg8Wjey9ZAg9wb7rY=;
+	b=PbMwkWqG7KHdN/ghiO4BJ6ne3eB5G5oizRQ1ncfWrqkRtQpOfDPwV+nQxqsx0OZSvjUazq
+	eF9Kzupko4oXK1N6MQltGpD7i3OgU9NldNFeQR5PCF/c4MjD0vep40qagUOjoL43vwfomr
+	GIfpu4FpwFH7xIJeTIdoEGGIbxv0VeI=
+Date: Mon, 11 Nov 2024 13:41:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2 2/5] net: phy: microchip_ptp : Add ptp library
+ for Microchip phys
+To: Divya Koppera <divya.koppera@microchip.com>, andrew@lunn.ch,
+ arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com
+References: <20241111125833.13143-1-divya.koppera@microchip.com>
+ <20241111125833.13143-3-divya.koppera@microchip.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241111125833.13143-3-divya.koppera@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-'struct nla_policy' is not modified in this driver.
+On 11/11/2024 12:58, Divya Koppera wrote:
+> Add ptp library for Microchip phys
+> 1-step and 2-step modes are supported, over Ethernet and UDP(ipv4, ipv6)
+> 
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> ---
+> v1 -> v2
+> - Removed redundant memsets
+> - Moved to standard comparision than memcmp for u16
+> - Fixed sparse/smatch warnings reported by kernel test robot
+> - Added spinlock to shared code
+> - Moved redundant part of code out of spinlock protected area
+> ---
+>   drivers/net/phy/microchip_ptp.c | 998 ++++++++++++++++++++++++++++++++
+>   1 file changed, 998 insertions(+)
+>   create mode 100644 drivers/net/phy/microchip_ptp.c
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security, especially when the structure holds some
-function pointers.
+[..snip..]
 
-On a x86_64, with allmodconfig:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   5062	    528	      0	   5590	   15d6	drivers/net/wireless/ti/wlcore/testmode.o
+> +static struct mchp_ptp_rx_ts *mchp_ptp_get_rx_ts(struct mchp_ptp_clock *ptp_clock)
+> +{
+> +	struct phy_device *phydev = ptp_clock->phydev;
+> +	struct mchp_ptp_rx_ts *rx_ts = NULL;
+> +	u32 sec, nsec;
+> +	int rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_NS_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	if (!(rc & MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID)) {
+> +		phydev_err(phydev, "RX Timestamp is not valid!\n");
+> +		goto error;
+> +	}
+> +	nsec = (rc & GENMASK(13, 0)) << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_NS_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	nsec |= rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_SEC_HI(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	sec = rc << 16;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_INGRESS_SEC_LO(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +	sec |= rc;
+> +
+> +	rc = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +			  MCHP_PTP_RX_MSG_HEADER2(BASE_PORT(ptp_clock)));
+> +	if (rc < 0)
+> +		goto error;
+> +
+> +	rx_ts = kzalloc(sizeof(*rx_ts), GFP_KERNEL);
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   5178	    404	      0	   5582	   15ce	drivers/net/wireless/ti/wlcore/testmode.o
+I think I've asked it already, but why zero out new allocation, which
+will be fully re-written by the next instructions? Did you find any
+problems?
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only
----
- drivers/net/wireless/ti/wlcore/testmode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/ti/wlcore/testmode.c b/drivers/net/wireless/ti/wlcore/testmode.c
-index 3f338b8096c7..fc8ea58bc165 100644
---- a/drivers/net/wireless/ti/wlcore/testmode.c
-+++ b/drivers/net/wireless/ti/wlcore/testmode.c
-@@ -45,7 +45,7 @@ enum wl1271_tm_attrs {
- };
- #define WL1271_TM_ATTR_MAX (__WL1271_TM_ATTR_AFTER_LAST - 1)
- 
--static struct nla_policy wl1271_tm_policy[WL1271_TM_ATTR_MAX + 1] = {
-+static const struct nla_policy wl1271_tm_policy[WL1271_TM_ATTR_MAX + 1] = {
- 	[WL1271_TM_ATTR_CMD_ID] =	{ .type = NLA_U32 },
- 	[WL1271_TM_ATTR_ANSWER] =	{ .type = NLA_U8 },
- 	[WL1271_TM_ATTR_DATA] =		{ .type = NLA_BINARY,
--- 
-2.47.0
-
+> +	if (!rx_ts)
+> +		return NULL;
+> +
+> +	rx_ts->seconds = sec;
+> +	rx_ts->nsec = nsec;
+> +	rx_ts->seq_id = rc;
+> +
+> +error:
+> +	return rx_ts;
+> +}
+> +
+> +static void mchp_ptp_process_rx_ts(struct mchp_ptp_clock *ptp_clock)
+> +{
+> +	struct phy_device *phydev = ptp_clock->phydev;
+> +	int caps;
+> +
+> +	do {
+> +		struct mchp_ptp_rx_ts *rx_ts;
+> +
+> +		rx_ts = mchp_ptp_get_rx_ts(ptp_clock);
+> +		if (rx_ts)
+> +			mchp_ptp_match_rx_ts(ptp_clock, rx_ts);
+> +
+> +		caps = phy_read_mmd(phydev, PTP_MMD(ptp_clock),
+> +				    MCHP_PTP_CAP_INFO(BASE_PORT(ptp_clock)));
+> +		if (caps < 0)
+> +			return;
+> +	} while (MCHP_PTP_RX_TS_CNT(caps) > 0);
+> +}
+> +
 
