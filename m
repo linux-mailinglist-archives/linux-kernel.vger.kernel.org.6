@@ -1,76 +1,88 @@
-Return-Path: <linux-kernel+bounces-404167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 698319C401F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:01:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3A099C4021
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D792284BFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:01:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A391C2083B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7AB19CD0B;
-	Mon, 11 Nov 2024 14:01:23 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB69419D881;
+	Mon, 11 Nov 2024 14:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAthVMoF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8865C175D2D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFC615A85A;
+	Mon, 11 Nov 2024 14:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731333683; cv=none; b=UzhMhFiMs6qb8tJ275OFFLaTMFBxES0Uzh3LCtyf1Jmqu3Cbu/sxH3EdlHqqI5iPsoK8xocXY+Y3QopuL8TrsjA3n8th7+9GysRPoLbq+K9VhrAhmSioZazBeqhM6cdhYCCICBTkBYiuzwjAA9pl/lkSBDZWE7TVynQa2rEWYTE=
+	t=1731333730; cv=none; b=GAQLWgrx/1upZ3XI5CZl+sS1Uwy2qdZOQtWlEnVTt5a/vprTZI1+I9Ys2VJNF+TAh5XiZlCk4IbP7XVpt/wWo1Lw1Bgi0wY7Py/LRq9GG2MWwANf3syLEdnYbd8iSyAhJuisXbzaCEJAFXRcvtxPsdzsFMFbQtMGwnsu8YLX1rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731333683; c=relaxed/simple;
-	bh=hbIpnS+URpvAyTJ1xTBqOdFUnKaXpRqxrapc6IgmV04=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KCk7yJMSZyMHj8q5f9pvR5DRnbPwvuqWHC8Ekb8bLs7HF2Ppq1uxLnyAhaNNreJDNx4OjeOuo43YaYtmNR2QIjfq/WKjr9OxhVaHHHSGwrJFeiwMsW+Jyu+5fKDTr8xWRcjSfuTSRzG+pwaOkXBR/4JLjjXkNVhg4mzhpkcZgjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aecd993faso481423539f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:01:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731333680; x=1731938480;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbIpnS+URpvAyTJ1xTBqOdFUnKaXpRqxrapc6IgmV04=;
-        b=Yp94MPqxvfk/FU/0NhNKgkMKO4hCsW4c/slqvpfXh1jkgE3m+9OBEXtTSUFL78BGbO
-         CHQDNh9IikHXCPzhW8Z4i3n5ek0qSf7VnNZYsk54AyfTyK7MjqtfXLx21DdxDHXrtAUZ
-         yc3kejYrl6RNX+3C+j142gdpaJvDudblTgo+KBA2bGj64VY75M+zPeVFmKRzR+Z3yHV1
-         ux7XcOzK1byf7W9DT2e8OUdu0BU25paKk9ykM/xtiYJg+HtZ87uhqieP7kusFl89ysX6
-         7Y2J3tffkNDWToSOL9EOV8+imgaEW0TlLaqBMvelK3mC612WgsfdIsVKA0BUmNsJqddm
-         ZN1Q==
-X-Gm-Message-State: AOJu0YwR4yymUyAg6/PmVCpyn10KaTU7z6EBtVIC3JrXF0r84tapQIeO
-	Lqz3Ch/x/odvFAbctsImZCPS1cMe+rII98iQPj2scfQ8ytAvbYaxrBKqIkmI2wV1WGTk61VcA2H
-	EnOZuketX6Cpk+dIZAdC/tVAxzKmB/mR1ZKBnt1U7E93O/CyfVpA8aPs=
-X-Google-Smtp-Source: AGHT+IHVx7FGX18htxA83igWZ/K17keJ9i4XGHD4Pa3aqhK2T8PK1QNkLyNQYERbZ9yJSLiP4xUqqr1jecBhm0T35eWcYAA9Llpn
+	s=arc-20240116; t=1731333730; c=relaxed/simple;
+	bh=sdI2GoFfHjss+k6nPzpItWxYvNsdy9CTWpBrfpUgQb0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QySuZthGuiqKtMjv3ViBu3+yaF3DH+yGUPIyGJiphiz5/iy34U3kzOB8kDosepV9a4nYE+651Odm/LABfsYOJwp2HpCWfYTUf7VB5VjS2woN3/NbtDuNA71zeveUVo0ug1sHLAg2v1LHjvqk9vqVLPMJ2BCqISBNkkV+OruECAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAthVMoF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8616C4CECF;
+	Mon, 11 Nov 2024 14:02:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731333729;
+	bh=sdI2GoFfHjss+k6nPzpItWxYvNsdy9CTWpBrfpUgQb0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YAthVMoFwipRt1rboQjLhlCNM0aWs9pTsKn0Rtgb+B3XZEpehyMV/ye50x2cRmTeM
+	 EtKdAP99NBLxdBnIVBWFme2H8txgWVx4zKFLNHYxaV7qss4Z+T/UozSYqK7PaPXkj4
+	 EbzwqW8w6t/CXyzTjY5F7pjkm+idiV9yYC4LFv3Zus7RsmlouZB7ziniWm2md88kbP
+	 ZHUB8PQIM0BNBM8AygnNu0scWi+dekyROVDJUkttIeryRos55Ff6x5KthqCJxqVAI+
+	 llDLrlGweSp/ZeGnBfyJxNoqnU+6QA+cgRwHSUikl4w4Mxrhq2e0b1dETqc4uAQWyi
+	 uLI8YcKR/zOeQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: peng.fan@oss.nxp.com,  m.felsch@pengutronix.de,  pratyush@kernel.org,
+  mwalle@kernel.org,  miquel.raynal@bootlin.com,  richard@nod.at,
+  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
+  conor+dt@kernel.org,  shawnguo@kernel.org,  s.hauer@pengutronix.de,
+  kernel@pengutronix.de,  festevam@gmail.com,
+  linux-mtd@lists.infradead.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  imx@lists.linux.dev,
+  linux-arm-kernel@lists.infradead.org,  Peng Fan <peng.fan@nxp.com>
+Subject: Re: [RESEND PATCH v4 2/2] mtd: spi-nor: support vcc-supply regulator
+In-Reply-To: <20241029102238.44673-2-tudor.ambarus@linaro.org> (Tudor
+	Ambarus's message of "Tue, 29 Oct 2024 10:22:38 +0000")
+References: <20241029102238.44673-1-tudor.ambarus@linaro.org>
+	<20241029102238.44673-2-tudor.ambarus@linaro.org>
+Date: Mon, 11 Nov 2024 14:02:05 +0000
+Message-ID: <mafs0zfm57tsy.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cd:b0:3a2:6402:96b9 with SMTP id
- e9e14a558f8ab-3a6f2532be7mr118361945ab.9.1731333680552; Mon, 11 Nov 2024
- 06:01:20 -0800 (PST)
-Date: Mon, 11 Nov 2024 06:01:20 -0800
-In-Reply-To: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67320e30.050a0220.1fb99c.014f.GAE@google.com>
-Subject: Re: [syzbot] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Tue, Oct 29 2024, Tudor Ambarus wrote:
 
-***
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> SPI NOR flashes needs power supply to work properly. The power supply
+> maybe software controllable per board design. So add the support
+> for an vcc-supply regulator.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+> [ta: move devm_regulator_get_enable() to spi_nor_probe(). Add local dev
+> variable to avoid dereferences.]
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-Subject: KMSAN: uninit-value in bch2_copygc
-Author: gianf.trad@gmail.com
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-#syz test
+-- 
+Regards,
+Pratyush Yadav
 
