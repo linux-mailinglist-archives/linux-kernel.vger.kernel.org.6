@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-404290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE149C41FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:36:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4B19C41FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FF01F21F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:36:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E141A1F22531
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C347145FE0;
-	Mon, 11 Nov 2024 15:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40C219E83D;
+	Mon, 11 Nov 2024 15:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZyydijVb"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3ei5kF+"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B3219CC17
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55925339A0
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731339363; cv=none; b=QpvCYdUKirwYwPh1NEjunWSphSPyEMw7+6fkiTBRxMRNe7K+yaQzuncEwPwc0mpeNHjhNQon4DYXZAg1+ScLyjfNlBATyRD7N+AyfPpk5jvKtXThewQr+oghhfQGuPX+DH/EFwg6RZFGnkPACAoTPDmZn+RX+XrhjntrFR2BykI=
+	t=1731339377; cv=none; b=B4FXFGBy7W87XaCQteKnBGuUsVyx3L/PZECi6Uex6EdFpjyXlljtT34TBUc2aGCIlhidMw5NXkUF9sHJw5zWRc2LPRB2urUVCmzeFuMGnhvdni5qUFUzGcxj5s/r5Iy2J4s5m5RUK5hx3J/XopE6SSBBJWMTLgj37et1layQzv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731339363; c=relaxed/simple;
-	bh=OBRfdUOhUc18FSDoG4WeOQwkCPsFwRa+ZgkLbMnSqNg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=aQ2NL0Zm9LQxrodJMz60DiY9I9OxAbnM3xOwH6l/r3BPHXjnO5E+WQcLvW1NlyqX0z3k7JtCBiNSMJ910k8kdLn2nP84/j0kaUUb1adhUDyHX09F52FLqGZtWcoABGBe1Qff1z5zXtGelre+ItUOZFpDULYZLtXEWXtVuWfQCns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZyydijVb; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e786167712so2897637b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:36:01 -0800 (PST)
+	s=arc-20240116; t=1731339377; c=relaxed/simple;
+	bh=NRRKFI5CRLmFX/TFIsOeeIVmclbjK5DwanPrU3DqCJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYVUa0Dg8D2H8uHyGfH2YArC6+sWT/VwBQMKIESvTflh4xydXQQ7l8CHpl2Nh6nTMba2x+7BaacRaAa0sGFLxG4ISjS0DPUOcdqoRq3Zmu3XCoFydaPiobxFr5VqPRWbXB3g9HkQv3QMF/0pp/mRWWWidweFRuXuRXFf59AUPbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3ei5kF+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a5f555cfbso393806266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:36:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731339361; x=1731944161; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731339373; x=1731944173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S46mhgRP3J5A5d+3Z7kJ6fAD51PqjNfpb9mTVeDYByI=;
-        b=ZyydijVb8NzYaSCxZwX/2i6atVavIRkfN1HWCHY/alR14B0HLe5/pdb8uOJyCkGhFW
-         d+GldpEbCpxyjbF8slihwR4YymWbw8ZuuaM8oA3qG58QJ861lhJSlaO58l7TzAFwQT0v
-         wxNIqBXqBIQfkr+rhZwt0ZuLlgGli4n+1Za526aQX4Z8JgVwPbCwIXwyB69AoRk0vy+k
-         Rxx96cOer2MLpJ1qXOboNTG32d1XYTnlv54DbUNsn+UfYvXZDkxJboj+Ljfqt9/riCmF
-         CsDmF7sF1NlaykDFgwmwipcIuTQcnPc7BMkTaXMin7Ntdip/9Rv6B0IJHklU4uNkMB/V
-         x2XQ==
+        bh=JrQEGC9PRsm3JYQqZA9Dl5qL7FnUg8LFubc6nH6wGVg=;
+        b=l3ei5kF+UHKOoWqiWqjhlLDEKhY9X6eWrbfzV4khKvJUM+ZDW2dNdfRluvFWANCSbR
+         5wJ7gieOi8B5V/LGmBHfO7+1KiJVLaDz1aSzjR45xkiZF3zLroOKaCMhwxJoKmbSc6dW
+         jm5s3aI/pel+ZS2nSg5fbY9JOynkYRP3bisbE/9gAMDydkboDLXnHKP0uyr4BQ6NchXy
+         D4WGCRdr0+6ZgLX1MeqOosvHcbHDcty6pbkgcZNrzCv6WEY4KlYUk9D5ylVGMfP5FUZU
+         9Z+3BgvFMcgfCZKohblnRWrwEFTwDmCZ6SAB8JkJ2QEVlYSNoppjam7e+3fwX6lW9G4R
+         k4rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731339361; x=1731944161;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731339373; x=1731944173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S46mhgRP3J5A5d+3Z7kJ6fAD51PqjNfpb9mTVeDYByI=;
-        b=Uo5MVZRm+XbSj62oHrD2fD4fmpJBvAsx/dOYfuyKq5sd2bgFD12VVs6u/HadWY4J0f
-         7Vh1beeeusPdTkEpKfrbPNeDPrPq231Caef2/P1BMRYxDmEgAUQ1qo1QcBnJmU8CSluW
-         1qPt+ALF1UX4/2nFVnC7FO/gKqNJe2/vx8GJfyOTCFlh0u3CCwWO1QQ3hRP/JOWxu1pR
-         DtZErCBBMR6a5ueuTYRbp36r8GHvCCeUF/xfhITPzr41s6s/GCT/P+YAXNgMnxjNja6E
-         woqAC6w/bSgGoj0CtRjq2BDXWaKlBWTWdXl/q2vtE48wrkVsdPsZ11WEOjq0ipRcbPfG
-         ElbA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/PM2PMDhU6cWM4MFrk7zU6K6TyhgyNMqb8HlI0r+tuvnvTSkFEWk8xRM7HA/q6KaIeHHAA6J3UXXVSZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtYJZi+eFb+iiOYbZ3QthkbpPokKegVt1HhhO1rFSZaUfrOPyK
-	RJrDvVkXaMM2S1hpQW7gnRvqLFbNzLFAWBVsvtk6RSkjA56qMluDCNHFqBtBh+Y=
-X-Google-Smtp-Source: AGHT+IFvznCtuLrDpkKB0XoerwZtjF/Nue50YwF2kIdZ94QrpZpe7NHwx230HHEdCVWg6u8n84ozaQ==
-X-Received: by 2002:a05:6808:f09:b0:3e6:ad7:9a38 with SMTP id 5614622812f47-3e794685550mr10424004b6e.24.1731339360892;
-        Mon, 11 Nov 2024 07:36:00 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78cc678d8sm2116943b6e.7.2024.11.11.07.35.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 07:36:00 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: song@kernel.org, yukuai3@huawei.com, hch@lst.de, 
- John Garry <john.g.garry@oracle.com>
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de, 
- Johannes.Thumshirn@wdc.com
-In-Reply-To: <20241111112150.3756529-1-john.g.garry@oracle.com>
-References: <20241111112150.3756529-1-john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 0/6] bio_split() error handling rework
-Message-Id: <173133935959.1861985.10564315713118419113.b4-ty@kernel.dk>
-Date: Mon, 11 Nov 2024 08:35:59 -0700
+        bh=JrQEGC9PRsm3JYQqZA9Dl5qL7FnUg8LFubc6nH6wGVg=;
+        b=svfrK8/1sJg44clA5s73qSzfYBug4aD+DqyjWyo+sITkxaUMnxPVyvks6/hiJzWI+y
+         7ixfm9zed1tpafyfiZbWXBf94zlWJ15IbBNq3UyF7R5aJoi9SsMF5I0Vtpjirgty4vQW
+         qatIew2Ecn9A4u7y54Dgnh5Mjl39z1N7eMWwwQ6J0ea5HD3CtI+HQTWNK/rTMvSOj736
+         8dP9k+QU9oIzdJ0zc7uPkijLysQlOwL+ynpG8HbbyzXWy8aIMeBi+CIrO3B5UJ0SWsSJ
+         +Z/RtyY+o3Jpe94b2U+poeaxi0v4/pS5/Ha+XMcudQss/xwBlSioiWuYrLHIoZcKNzwR
+         VpEg==
+X-Gm-Message-State: AOJu0YwIxQLaGRhS/MDb0rT/HzMr9Gf2wZrYeC4KsOnBsWyubq2JX4Cd
+	1KFztfY2mhcwoWOLZswbO7odb5ROC5HXdK3IUiark6Co0S/Oamn/JK2XheaiOxQosklkg8mlVx/
+	DybxhI6WiGU5+VRN5y2UCjrXhMeA=
+X-Google-Smtp-Source: AGHT+IFxaKpcSudgr7poq3Yca77MR1aHGU7ulfTSAs7BWro+39Z+DQGE1sNy+3RtK0tC416EJD0E1gq4UK10HWgb81U=
+X-Received: by 2002:a05:6402:35d4:b0:5ce:af08:a2cd with SMTP id
+ 4fb4d7f45d1cf-5cf0a446916mr19079038a12.33.1731339373336; Mon, 11 Nov 2024
+ 07:36:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <CACzwLxjdRmD02Uu+3umNEvP-b9fXuT6WWS+a9gYhOeQEayK_ww@mail.gmail.com>
+ <2024111124-hardly-jaundice-08c4@gregkh> <2024111129-hence-resigned-b2e7@gregkh>
+In-Reply-To: <2024111129-hence-resigned-b2e7@gregkh>
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Date: Mon, 11 Nov 2024 20:36:01 +0500
+Message-ID: <CACzwLxgUJ_kqPwXEZspfG5UXn+MwD5iD8f7vJWo7VTv4KbfRmA@mail.gmail.com>
+Subject: Re: [RFC] syzkaller/docs: reporting kernel security bugs guide
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Potapenko <glider@google.com>, 
+	Aleksandr Nogikh <nogikh@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 11, 2024 at 7:42=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
+>
+> On Mon, Nov 11, 2024 at 03:37:27PM +0100, Greg KH wrote:
+> > On Mon, Nov 11, 2024 at 06:24:36PM +0500, Sabyrzhan Tasbolatov wrote:
+> > > Hello,
+> > >
+> > > Greg,
+> > > Could you please confirm that the updated version of
+> > > reporting Linux kernel security bugs guide is correct
+> > > since kernel.org is CNA as of February 13, 2024 and
+> > > with linux-cve-announce reference?
+> > >
+> > > The updated doc and drawn diagram is available
+> > > in this PR of syzkaller project:
+> > > https://github.com/google/syzkaller/pull/5461
+> >
+> > I can't read this mess:
+> >       https://github.com/google/syzkaller/pull/5461/commits/35b45ef3c46=
+00fd62f5d05a17fc6855fc0b5e402
+> >
+> > So I have no idea, sorry.
+>
+> Ah, the graph is at the bottom of the page, kind of messy...
+>
+> Anyway, as I have stated numerous times, I DO NOT RECOMMEND EVER
+> CONTACTING the linux-distros mailing list for lots of various reasons.
+> You do so at your own risk and liability (i.e. doing so imparts a number
+> of requirements on you!)
 
-On Mon, 11 Nov 2024 11:21:44 +0000, John Garry wrote:
-> bio_split() error handling could be improved as follows:
-> - Instead of returning NULL for an error - which is vague - return a
->   PTR_ERR, which may hint what went wrong.
-> - Remove BUG_ON() calls - which are generally not preferred - and instead
->   WARN and pass an error code back to the caller. Many callers of
->   bio_split() don't check the return code. As such, for an error we would
->   be getting a crash still from an invalid pointer dereference.
-> 
-> [...]
+Thanks for the feedback! Sorry for the messy diagram :(
+I don't have the real experience with kernel CVEs or contacting linux-distr=
+os,
+so this updated syzkaller documentation reflects only my understanding
+based on reading guides from kernel.org and oss-security,
+and also watching your recent OS Summit talk in Japan.
 
-Applied, thanks!
+So I've wanted to update this guide for myself in the first place :)
 
-[1/6] block: Rework bio_split() return value
-      commit: e546fe1da9bd47a6fddce6b37c17b1aa1811f7d3
-[2/6] block: Error an attempt to split an atomic write in bio_split()
-      commit: 27b26f09a7e6ae3ecae460299349b31fe0b5452f
-[3/6] block: Handle bio_split() errors in bio_submit_split()
-      commit: 6eb09685885a4445da31097aa6418ee1875f9cec
-[4/6] md/raid0: Handle bio_split() errors
-      commit: 74538fdac3e85aae55eb4ed786478ed2384cb85d
-[5/6] md/raid1: Handle bio_split() errors
-      commit: b1a7ad8b5c4fa28325ee7b369a2d545d3e16ccde
-[6/6] md/raid10: Handle bio_split() errors
-      commit: 4cf58d9529097328b669e3c8693ed21e3a041903
+> So be VERY VERY VERY careful to ever tell
+> anyone to do so as the side affects can be very bad in some cases (i.e.
+> they "blackmail" you to release information even if you don't have a
+> fix.)
+>
+> good luck!
+>
+> greg k-h
 
-Best regards,
--- 
-Jens Axboe
+From oss-security documentation [1] it's said:
+[1] https://oss-security.openwall.org/wiki/mailing-lists/distros
 
+> For Linux kernel issues, you must notify the kernel security team first, =
+wait for the fix,
+> and only then notify linux-distros or oss-security (depending on whether =
+the information
+> is still private or already public, as well as on issue severity).
 
+I understand that their policy follows with security@kernel.org
+interests to release the fix,
+but it may be postponed if the reporter asks for an embargo period to
+let linux-distros
+prepare the update rollout during this embargo period and prior to the
+bug disclosure,
+the fix should be merged into the Linux kernel stable tree first.
 
+If the reporter chooses not to request for an embargo period for
+linux-distros sake,
+then the fix is merged ASAP, CVE is assigned "after-the-fact" and the
+reporter may
+optionally report to oss-security, and linux-distros can pick the
+merged fix post factum.
+Personally, I prefer this option without the embargo period complexity.
+
+But this is according to my non-experienced understanding, so there
+are definitely pitfalls
+I am not aware of.
+
+So I'm still confused how the syzkaller doc should be updated,
+perhaps it should just refer to existing kernel.org and oss-security guidel=
+ines,
+so the reporter should consider which option is preferable.
+
+Andrey, please suggest as well or let me know
+how to proceed with the syzkaller doc update.
+
+Thanks
 
