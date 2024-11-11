@@ -1,750 +1,780 @@
-Return-Path: <linux-kernel+bounces-404530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846D29C44D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:18:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7BD19C44C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4332E283892
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:18:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBF82834D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFBB1B3F30;
-	Mon, 11 Nov 2024 18:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAE51AA1DE;
+	Mon, 11 Nov 2024 18:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SUGs2dLd"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H13cSO1C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89241AB6E6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349049; cv=fail; b=YrDB3RMewieEDEA/oYEdeoHP6n16LN1olDufMdNBsAxhbQf25P9Ni1gfPXGy2/4Mp3FxI8dcl2fY+htRttGDwzTQDcGejivV0i0bHp5n2isVdDV0Tbn5SPEBObie6HvMuP+Qjbx5/YHh5QIMdvuxoIdSlF/vkyzLSRbZC/2Knk8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349049; c=relaxed/simple;
-	bh=jIcBTiu0h3CoDWBZ3tPA8XQvIT3bDE0aEt+IeJaChOQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WhNdRvq19MdTtb6rFlrJB/mXBhsdVArlhsoI6eDxfucIZ4Q3zaXgZeEKDA3US2vmGo5OyERYqB8w0fZ41gGb5Bq4mauDb36MwkfMtvR5pStzVD3/7etO+j6XyY9kXIrLespqs2dPFmdCGH5XjaHrStL58mKJNpUzJ4cKoQTDJH4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SUGs2dLd; arc=fail smtp.client-ip=40.107.220.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j3evLYqR5Z4H/uOt0aHl0sRBseEqRWPWJVn+YjictABe0wVadPcEVKZdEZZ+fpWY/EysFyy7RStjOenFrEauBmHZQt969O4P2fwC1jEEKx6Y+GEbG0nz3RZk50Cob+9G7yRcyX1NR81U8rQF5FB57dOkxc0zvm6hsHEVrkFYKE88Qqgu817wXdlVDjrsptgYVDOp4FVv4w5S3yCaE3h1lXrmVnALtXsbIB1rL4wVWllVHLiA2xJhvBdsd0VgoK4AzAa+TikzF5vFCTdZ/LJww2XT/HeGVjf9JyLNZuxRaa9jFtcVSO5hgAgq+A2NHpTfECgZNUDLo7/MTVShykKUIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0anr4NVtFZ1oZnBQ+Lc9U0l/2iiNIK5fNgfBjk5OIHM=;
- b=pIb1RAx02t16+21RkoX9VxwFcm/U9YpAFNTUUzfJQIB0hX3OogM+kihl36YKphR8s5qDsKvI7NfoqW24XLa/6As5Wio+zSoooR7yiCmu1N0j4/9yxnrf7+JOAmERaAemLjg4uJuaYr2m3OhwRu1wZVlKBiLELASwhOOBwfoCAcnR2uYEjy+81BAzZqKiAVA+OjSyMJ9nvhYXRw2Ori0n1tfiisso3RJCq9pgI7C4Gz3IojzwvC6nB12aIkjTOGXunaaJ3NZ+jtOu0j5+Oe+PVAPybuUuPthPrxvmG/kvQPFipv096t/UhrskZDE03KpyxD2LImLuP2nq3tP+8p03BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0anr4NVtFZ1oZnBQ+Lc9U0l/2iiNIK5fNgfBjk5OIHM=;
- b=SUGs2dLd1JhoQ/jaWLE6PSlEupLj9KXej0YqQpYoGcKbg8Ctvx7WyWOX8g4Zcrvr5KOhSbHa8zVFyiSDdxPBUWJC5qxeR/UJt/pPcMyDm15KKyL5f6tXePu4wyIVcZ6mOtBGNVfgumlT7JmLPiUwdxA4ehS404cJlrTn6XPSviw=
-Received: from BN9PR03CA0417.namprd03.prod.outlook.com (2603:10b6:408:111::32)
- by SJ1PR12MB6193.namprd12.prod.outlook.com (2603:10b6:a03:459::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Mon, 11 Nov
- 2024 18:17:23 +0000
-Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
- (2603:10b6:408:111:cafe::d8) by BN9PR03CA0417.outlook.office365.com
- (2603:10b6:408:111::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27 via Frontend
- Transport; Mon, 11 Nov 2024 18:17:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Mon, 11 Nov 2024 18:17:23 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Nov
- 2024 12:17:22 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 11 Nov
- 2024 12:17:22 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 11 Nov 2024 12:17:21 -0600
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>
-Subject: [PATCH V9 10/10] accel/amdxdna: Add query functions
-Date: Mon, 11 Nov 2024 10:17:11 -0800
-Message-ID: <20241111181711.662686-11-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241111181711.662686-1-lizhi.hou@amd.com>
-References: <20241111181711.662686-1-lizhi.hou@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BC21A706A;
+	Mon, 11 Nov 2024 18:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731349037; cv=none; b=mAkuP2SFayvM8DYCjsd2zlPEMJlGaPuDdrTZVm2o6vnlezgfkgq74tjYIVaJc6cSyBm9XHxD6dtsoqWLQHhqUOHfCZpq1jbitWzdXaN2gx9kH8x2cD0aPIkKAS2Wtx3umuvdIDI2IQD6N/b5+QSl3rinR1cayT447+rd+Qnc/Yw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731349037; c=relaxed/simple;
+	bh=xr1DeVtZr4J8a+spIOoFszBr4HiDXR4GonfFzafpes8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YYanQwO9GQPqReBntwIDrNKFxQD1oYgxeSbn5ZqQoo8eWmM6Jw3QdOGaHVWctbz2bvhnWRVGQPDL1lLDznL8tj9pKrPY62tjPWOM0puEnDVfQoV/BM2hnAR+RUQ8JVBIkU5BshKZBzS/iYf4dtYFiYCiFqQlMXZLFgnRnhQqY8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H13cSO1C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41E60C4CECF;
+	Mon, 11 Nov 2024 18:17:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731349037;
+	bh=xr1DeVtZr4J8a+spIOoFszBr4HiDXR4GonfFzafpes8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=H13cSO1CShIOWR0ex4x6X8jp5lcWQxpP/BBouY0AliINdQxE7SvrCDPD2lR3y3DGG
+	 3muiBt6eW0j3nVELXxdGIbl+AxK95PYKkkUJ/KLuW6NJsm5x8ofo/623E+PLdDSkJb
+	 7LSQzI9XQzp70PTva6or24ndQAbrj2uoTLeUcGaBD2X/GCzGox7jmO2hRCYRjyGx9H
+	 fsKBYJZlVmuOY/khE/29dIbZqVUA1DBSLrgvq4ugQCpzRsKTBrRHob6BVgzSfgpW5O
+	 JHBtJxLftJZ/DcylyS9nYXeVIXk8H8uQ2nQCGVfZjpHkhI0FDn71xcHgEVhDwB7yKc
+	 RbZCTUF1DI5fw==
+Message-ID: <3c60acaa79ec27ed1ecb8fdc42a2cb75c75c0a25.camel@kernel.org>
+Subject: Re: [PATCH v4] nfsd: allow for up to 32 callback session slots
+From: Jeff Layton <jlayton@kernel.org>
+To: Olga Kornievskaia <aglo@umich.edu>
+Cc: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, Dai
+ Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Olga Kornievskaia
+ <okorniev@redhat.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Mon, 11 Nov 2024 13:17:15 -0500
+In-Reply-To: <CAN-5tyEh6MrTBQQt99+VO4FcnX3x1DX7XOpRwmkXFryqzr95Jw@mail.gmail.com>
+References: <20241105-bcwide-v4-1-48f52ee0fb0c@kernel.org>
+	 <CAN-5tyEEfJ5p=NUaj+ubzCijq+d9vxT9EBVHvwQYgF=CMtrNTw@mail.gmail.com>
+	 <59e803abae0b7441c1440ebd4657e573b1c02dd2.camel@kernel.org>
+	 <CAN-5tyH8xw6XtpnXELJfrxibN3P=xRax31pCexcuOtBMZhooxw@mail.gmail.com>
+	 <b7f6454176746f5e7a8d75ba41be71e46590a08c.camel@kernel.org>
+	 <ZzIa5q8cG5LYW5D7@tissot.1015granger.net>
+	 <CAN-5tyGc-jHHCQwLNAH4mFFUqZqdieygCbe+ux7rww5PC7qjMw@mail.gmail.com>
+	 <83b950633c5b7f6949939a4d51581196b5757c07.camel@kernel.org>
+	 <CAN-5tyEh6MrTBQQt99+VO4FcnX3x1DX7XOpRwmkXFryqzr95Jw@mail.gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|SJ1PR12MB6193:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ce08b6e-04ad-42ff-e63c-08dd027d16b9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V7wk1VyK6sgLIdB/uYOlW5PEEoZm6iPJ8GbqmKchbFNOEgmC92YSXBPuN1KI?=
- =?us-ascii?Q?ClGlOPXa2Imv6s7SuURSM64XPhirTmjak7M/DrFuG1aDgQmttVxq531kphIo?=
- =?us-ascii?Q?TKKwdxOqJaW55jawEGwyZhpKi4rOEm/fJRjMykUYNCdVy0ssu2q6BqiIvP+n?=
- =?us-ascii?Q?iYSXQW+1XfmJRyuTcB06koB4jdo3xJhwMwWZRpuKKTjWykacrIA/jeFSEcna?=
- =?us-ascii?Q?fqVm1YxS1myP/jSMvnFPkajJ1BKcpjUkXTsd7UYzev1u+Z9SFQo0cQyc3yKV?=
- =?us-ascii?Q?Cj5foQ9REJyifh6dBdiXm4OXNHNuZ6UH25dkVmtO8QuNlkn+Fdi+oy4i5R9P?=
- =?us-ascii?Q?98mc3xVrd08fERE4mL7bnptEw5esTtIrT24orO47e04vzEQpjn2C0asQ+epR?=
- =?us-ascii?Q?ME+aqYHwGUsmDvBDNPa1miMxTML2hbbhEiWB4XjdHT8FyzzaYCi53rd/X321?=
- =?us-ascii?Q?HEzalZLgKirh1o7VcHp6sED4zRCCo1d2ZstE1TRfcV4AZlwhzoyR8GCEmowJ?=
- =?us-ascii?Q?uRAdljhRBf5/Cefn2LFAmTHDh+H3y4lGmgdGV7y6qtLteJeyKxRuJ5qICUr/?=
- =?us-ascii?Q?4rQvzlzrqHpB9B4N5qfq9Z9AdIPrzvvm6AwKfhQR86Y582xeO2yr9+X98DFy?=
- =?us-ascii?Q?srcrBGncvRhiLV3YdRly3symX5OrCKaf9dy0EHa7f7Nl0hL5kheflWiLggYb?=
- =?us-ascii?Q?aBbFSENgv/pyYVKd2EpxUj6ElcPJabarzM2rOacw8mJ/lSVyV5QUiTVVdiXO?=
- =?us-ascii?Q?vBrI1Wbr34MDyqChuKslqcoHp7DOeFyvQdW2RjdRcmvrWJn1JkqUydAbATjR?=
- =?us-ascii?Q?gDepfX3tOkdVJJ8Y5UtR6T/+SbfbZKQtvy144vOOqpIWLzN8I9lYNZUhdXn/?=
- =?us-ascii?Q?ffqEohXFAhSoam1tPQO2287tFg0YKjAS/VOKpE6KZc2T0RRYAXCnAKWj6RkH?=
- =?us-ascii?Q?gq48n64xaLIEgcV/wyEsIQ8AxScVthqw97PphcfPzMzWZirFs7D39TQpB4JY?=
- =?us-ascii?Q?AP1htNx/cY9/CRQBrk2WaKlqkqvs0+ZmPHNes/12G08rfj2UkmJryiJC4o0K?=
- =?us-ascii?Q?ik66Ll+8r03inf42PK4QrRL2MfIv6EBHg0KxKQtfqY6qddQ8tmJwpm4+vb+C?=
- =?us-ascii?Q?OAkIffZURQNZoYSyhiMsYYaUwY5opWzrHNm0oed80aZ31jtD+29CPbNN75o2?=
- =?us-ascii?Q?k8pwmu+W/zzVcJImFpYpVIJ32SR1TFiljqqCBlYod8GOE8KNRd9gpftC+JBV?=
- =?us-ascii?Q?LAaqKc2hSzpvtvB+Jy1P7mwpBG5dL4/F1nLoWtK2AFmX2TIdZswWxiVEoiRR?=
- =?us-ascii?Q?KEVSBQ94mjta7XfqVnq2SjivnQiLIkOUY3TavkgBIZAmG20AUdHM8jOPUff8?=
- =?us-ascii?Q?nI/pGXQ4Ky8PvZEcrcfiFe4wE5rveSVJIr5OiLK8LNQwZ4NsDQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 18:17:23.0677
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ce08b6e-04ad-42ff-e63c-08dd027d16b9
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00005FFD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6193
 
-Add GET_INFO ioctl to retrieve hardware information, including
-AIE, clock, hardware context etc.
+On Mon, 2024-11-11 at 12:56 -0500, Olga Kornievskaia wrote:
+> On Mon, Nov 11, 2024 at 12:40=E2=80=AFPM Jeff Layton <jlayton@kernel.org>=
+ wrote:
+> >=20
+> > On Mon, 2024-11-11 at 12:17 -0500, Olga Kornievskaia wrote:
+> > > On Mon, Nov 11, 2024 at 9:56=E2=80=AFAM Chuck Lever <chuck.lever@orac=
+le.com> wrote:
+> > > >=20
+> > > > On Mon, Nov 11, 2024 at 08:22:07AM -0500, Jeff Layton wrote:
+> > > > > On Sun, 2024-11-10 at 21:19 -0500, Olga Kornievskaia wrote:
+> > > > > > On Sat, Nov 9, 2024 at 2:26=E2=80=AFPM Jeff Layton <jlayton@ker=
+nel.org> wrote:
+> > > > > > >=20
+> > > > > > > On Sat, 2024-11-09 at 13:50 -0500, Olga Kornievskaia wrote:
+> > > > > > > > On Tue, Nov 5, 2024 at 7:31=E2=80=AFPM Jeff Layton <jlayton=
+@kernel.org> wrote:
+> > > > > > > > >=20
+> > > > > > > > > nfsd currently only uses a single slot in the callback ch=
+annel, which is
+> > > > > > > > > proving to be a bottleneck in some cases. Widen the callb=
+ack channel to
+> > > > > > > > > a max of 32 slots (subject to the client's target_maxreqs=
+ value).
+> > > > > > > > >=20
+> > > > > > > > > Change the cb_holds_slot boolean to an integer that track=
+s the current
+> > > > > > > > > slot number (with -1 meaning "unassigned").  Move the cal=
+lback slot
+> > > > > > > > > tracking info into the session. Add a new u32 that acts a=
+s a bitmap to
+> > > > > > > > > track which slots are in use, and a u32 to track the late=
+st callback
+> > > > > > > > > target_slotid that the client reports. To protect the new=
+ fields, add
+> > > > > > > > > a new per-session spinlock (the se_lock). Fix nfsd41_cb_g=
+et_slot to always
+> > > > > > > > > search for the lowest slotid (using ffs()).
+> > > > > > > > >=20
+> > > > > > > > > Finally, convert the session->se_cb_seq_nr field into an =
+array of
+> > > > > > > > > counters and add the necessary handling to ensure that th=
+e seqids get
+> > > > > > > > > reset at the appropriate times.
+> > > > > > > > >=20
+> > > > > > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > > > > > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> > > > > > > > > ---
+> > > > > > > > > v3 has a bug that Olga hit in testing. This version shoul=
+d fix the wait
+> > > > > > > > > when the slot table is full. Olga, if you're able to test=
+ this one, it
+> > > > > > > > > would be much appreciated.
+> > > > > > > > > ---
+> > > > > > > > > Changes in v4:
+> > > > > > > > > - Fix the wait for a slot in nfsd41_cb_get_slot()
+> > > > > > > > > - Link to v3: https://lore.kernel.org/r/20241030-bcwide-v=
+3-0-c2df49a26c45@kernel.org
+> > > > > > > > >=20
+> > > > > > > > > Changes in v3:
+> > > > > > > > > - add patch to convert se_flags to single se_dead bool
+> > > > > > > > > - fix off-by-one bug in handling of NFSD_BC_SLOT_TABLE_MA=
+X
+> > > > > > > > > - don't reject target highest slot value of 0
+> > > > > > > > > - Link to v2: https://lore.kernel.org/r/20241029-bcwide-v=
+2-1-e9010b6ef55d@kernel.org
+> > > > > > > > >=20
+> > > > > > > > > Changes in v2:
+> > > > > > > > > - take cl_lock when fetching fields from session to be en=
+coded
+> > > > > > > > > - use fls() instead of bespoke highest_unset_index()
+> > > > > > > > > - rename variables in several functions with more descrip=
+tive names
+> > > > > > > > > - clamp limit of for loop in update_cb_slot_table()
+> > > > > > > > > - re-add missing rpc_wake_up_queued_task() call
+> > > > > > > > > - fix slotid check in decode_cb_sequence4resok()
+> > > > > > > > > - add new per-session spinlock
+> > > > > > > > > ---
+> > > > > > > > >  fs/nfsd/nfs4callback.c | 113 +++++++++++++++++++++++++++=
++++++++++-------------
+> > > > > > > > >  fs/nfsd/nfs4state.c    |  11 +++--
+> > > > > > > > >  fs/nfsd/state.h        |  15 ++++---
+> > > > > > > > >  fs/nfsd/trace.h        |   2 +-
+> > > > > > > > >  4 files changed, 101 insertions(+), 40 deletions(-)
+> > > > > > > > >=20
+> > > > > > > > > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callbac=
+k.c
+> > > > > > > > > index e38fa834b3d91333acf1425eb14c644e5d5f2601..47a678333=
+907eaa92db305dada503704c34c15b2 100644
+> > > > > > > > > --- a/fs/nfsd/nfs4callback.c
+> > > > > > > > > +++ b/fs/nfsd/nfs4callback.c
+> > > > > > > > > @@ -406,6 +406,19 @@ encode_cb_getattr4args(struct xdr_st=
+ream *xdr, struct nfs4_cb_compound_hdr *hdr,
+> > > > > > > > >         hdr->nops++;
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > > +static u32 highest_slotid(struct nfsd4_session *ses)
+> > > > > > > > > +{
+> > > > > > > > > +       u32 idx;
+> > > > > > > > > +
+> > > > > > > > > +       spin_lock(&ses->se_lock);
+> > > > > > > > > +       idx =3D fls(~ses->se_cb_slot_avail);
+> > > > > > > > > +       if (idx > 0)
+> > > > > > > > > +               --idx;
+> > > > > > > > > +       idx =3D max(idx, ses->se_cb_highest_slot);
+> > > > > > > > > +       spin_unlock(&ses->se_lock);
+> > > > > > > > > +       return idx;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  /*
+> > > > > > > > >   * CB_SEQUENCE4args
+> > > > > > > > >   *
+> > > > > > > > > @@ -432,15 +445,35 @@ static void encode_cb_sequence4args=
+(struct xdr_stream *xdr,
+> > > > > > > > >         encode_sessionid4(xdr, session);
+> > > > > > > > >=20
+> > > > > > > > >         p =3D xdr_reserve_space(xdr, 4 + 4 + 4 + 4 + 4);
+> > > > > > > > > -       *p++ =3D cpu_to_be32(session->se_cb_seq_nr);     =
+ /* csa_sequenceid */
+> > > > > > > > > -       *p++ =3D xdr_zero;                        /* csa_=
+slotid */
+> > > > > > > > > -       *p++ =3D xdr_zero;                        /* csa_=
+highest_slotid */
+> > > > > > > > > +       *p++ =3D cpu_to_be32(session->se_cb_seq_nr[cb->cb=
+_held_slot]);    /* csa_sequenceid */
+> > > > > > > > > +       *p++ =3D cpu_to_be32(cb->cb_held_slot);          =
+ /* csa_slotid */
+> > > > > > > > > +       *p++ =3D cpu_to_be32(highest_slotid(session)); /*=
+ csa_highest_slotid */
+> > > > > > > > >         *p++ =3D xdr_zero;                        /* csa_=
+cachethis */
+> > > > > > > > >         xdr_encode_empty_array(p);              /* csa_re=
+ferring_call_lists */
+> > > > > > > > >=20
+> > > > > > > > >         hdr->nops++;
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > > +static void update_cb_slot_table(struct nfsd4_session *s=
+es, u32 target)
+> > > > > > > > > +{
+> > > > > > > > > +       /* No need to do anything if nothing changed */
+> > > > > > > > > +       if (likely(target =3D=3D READ_ONCE(ses->se_cb_hig=
+hest_slot)))
+> > > > > > > > > +               return;
+> > > > > > > > > +
+> > > > > > > > > +       spin_lock(&ses->se_lock);
+> > > > > > > > > +       if (target > ses->se_cb_highest_slot) {
+> > > > > > > > > +               int i;
+> > > > > > > > > +
+> > > > > > > > > +               target =3D min(target, NFSD_BC_SLOT_TABLE=
+_MAX);
+> > > > > > > > > +
+> > > > > > > > > +               /* Growing the slot table. Reset any new =
+sequences to 1 */
+> > > > > > > > > +               for (i =3D ses->se_cb_highest_slot + 1; i=
+ <=3D target; ++i)
+> > > > > > > > > +                       ses->se_cb_seq_nr[i] =3D 1;
+> > > > > > > > > +       }
+> > > > > > > > > +       ses->se_cb_highest_slot =3D target;
+> > > > > > > > > +       spin_unlock(&ses->se_lock);
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  /*
+> > > > > > > > >   * CB_SEQUENCE4resok
+> > > > > > > > >   *
+> > > > > > > > > @@ -468,7 +501,7 @@ static int decode_cb_sequence4resok(s=
+truct xdr_stream *xdr,
+> > > > > > > > >         struct nfsd4_session *session =3D cb->cb_clp->cl_=
+cb_session;
+> > > > > > > > >         int status =3D -ESERVERFAULT;
+> > > > > > > > >         __be32 *p;
+> > > > > > > > > -       u32 dummy;
+> > > > > > > > > +       u32 seqid, slotid, target;
+> > > > > > > > >=20
+> > > > > > > > >         /*
+> > > > > > > > >          * If the server returns different values for ses=
+sionID, slotID or
+> > > > > > > > > @@ -484,21 +517,22 @@ static int decode_cb_sequence4resok=
+(struct xdr_stream *xdr,
+> > > > > > > > >         }
+> > > > > > > > >         p +=3D XDR_QUADLEN(NFS4_MAX_SESSIONID_LEN);
+> > > > > > > > >=20
+> > > > > > > > > -       dummy =3D be32_to_cpup(p++);
+> > > > > > > > > -       if (dummy !=3D session->se_cb_seq_nr) {
+> > > > > > > > > +       seqid =3D be32_to_cpup(p++);
+> > > > > > > > > +       if (seqid !=3D session->se_cb_seq_nr[cb->cb_held_=
+slot]) {
+> > > > > > > > >                 dprintk("NFS: %s Invalid sequence number\=
+n", __func__);
+> > > > > > > > >                 goto out;
+> > > > > > > > >         }
+> > > > > > > > >=20
+> > > > > > > > > -       dummy =3D be32_to_cpup(p++);
+> > > > > > > > > -       if (dummy !=3D 0) {
+> > > > > > > > > +       slotid =3D be32_to_cpup(p++);
+> > > > > > > > > +       if (slotid !=3D cb->cb_held_slot) {
+> > > > > > > > >                 dprintk("NFS: %s Invalid slotid\n", __fun=
+c__);
+> > > > > > > > >                 goto out;
+> > > > > > > > >         }
+> > > > > > > > >=20
+> > > > > > > > > -       /*
+> > > > > > > > > -        * FIXME: process highest slotid and target highe=
+st slotid
+> > > > > > > > > -        */
+> > > > > > > > > +       p++; // ignore current highest slot value
+> > > > > > > > > +
+> > > > > > > > > +       target =3D be32_to_cpup(p++);
+> > > > > > > > > +       update_cb_slot_table(session, target);
+> > > > > > > > >         status =3D 0;
+> > > > > > > > >  out:
+> > > > > > > > >         cb->cb_seq_status =3D status;
+> > > > > > > > > @@ -1203,6 +1237,22 @@ void nfsd4_change_callback(struct =
+nfs4_client *clp, struct nfs4_cb_conn *conn)
+> > > > > > > > >         spin_unlock(&clp->cl_lock);
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > > +static int grab_slot(struct nfsd4_session *ses)
+> > > > > > > > > +{
+> > > > > > > > > +       int idx;
+> > > > > > > > > +
+> > > > > > > > > +       spin_lock(&ses->se_lock);
+> > > > > > > > > +       idx =3D ffs(ses->se_cb_slot_avail) - 1;
+> > > > > > > > > +       if (idx < 0 || idx > ses->se_cb_highest_slot) {
+> > > > > > > > > +               spin_unlock(&ses->se_lock);
+> > > > > > > > > +               return -1;
+> > > > > > > > > +       }
+> > > > > > > > > +       /* clear the bit for the slot */
+> > > > > > > > > +       ses->se_cb_slot_avail &=3D ~BIT(idx);
+> > > > > > > > > +       spin_unlock(&ses->se_lock);
+> > > > > > > > > +       return idx;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > > >  /*
+> > > > > > > > >   * There's currently a single callback channel slot.
+> > > > > > > > >   * If the slot is available, then mark it busy.  Otherwi=
+se, set the
+> > > > > > > > > @@ -1211,28 +1261,32 @@ void nfsd4_change_callback(struct=
+ nfs4_client *clp, struct nfs4_cb_conn *conn)
+> > > > > > > > >  static bool nfsd41_cb_get_slot(struct nfsd4_callback *cb=
+, struct rpc_task *task)
+> > > > > > > > >  {
+> > > > > > > > >         struct nfs4_client *clp =3D cb->cb_clp;
+> > > > > > > > > +       struct nfsd4_session *ses =3D clp->cl_cb_session;
+> > > > > > > > >=20
+> > > > > > > > > -       if (!cb->cb_holds_slot &&
+> > > > > > > > > -           test_and_set_bit(0, &clp->cl_cb_slot_busy) !=
+=3D 0) {
+> > > > > > > > > +       if (cb->cb_held_slot >=3D 0)
+> > > > > > > > > +               return true;
+> > > > > > > > > +       cb->cb_held_slot =3D grab_slot(ses);
+> > > > > > > > > +       if (cb->cb_held_slot < 0) {
+> > > > > > > > >                 rpc_sleep_on(&clp->cl_cb_waitq, task, NUL=
+L);
+> > > > > > > > >                 /* Race breaker */
+> > > > > > > > > -               if (test_and_set_bit(0, &clp->cl_cb_slot_=
+busy) !=3D 0) {
+> > > > > > > > > -                       dprintk("%s slot is busy\n", __fu=
+nc__);
+> > > > > > > > > +               cb->cb_held_slot =3D grab_slot(ses);
+> > > > > > > > > +               if (cb->cb_held_slot < 0)
+> > > > > > > > >                         return false;
+> > > > > > > > > -               }
+> > > > > > > > >                 rpc_wake_up_queued_task(&clp->cl_cb_waitq=
+, task);
+> > > > > > > > >         }
+> > > > > > > > > -       cb->cb_holds_slot =3D true;
+> > > > > > > > >         return true;
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > >  static void nfsd41_cb_release_slot(struct nfsd4_callback=
+ *cb)
+> > > > > > > > >  {
+> > > > > > > > >         struct nfs4_client *clp =3D cb->cb_clp;
+> > > > > > > > > +       struct nfsd4_session *ses =3D clp->cl_cb_session;
+> > > > > > > > >=20
+> > > > > > > > > -       if (cb->cb_holds_slot) {
+> > > > > > > > > -               cb->cb_holds_slot =3D false;
+> > > > > > > > > -               clear_bit(0, &clp->cl_cb_slot_busy);
+> > > > > > > > > +       if (cb->cb_held_slot >=3D 0) {
+> > > > > > > > > +               spin_lock(&ses->se_lock);
+> > > > > > > > > +               ses->se_cb_slot_avail |=3D BIT(cb->cb_hel=
+d_slot);
+> > > > > > > > > +               spin_unlock(&ses->se_lock);
+> > > > > > > > > +               cb->cb_held_slot =3D -1;
+> > > > > > > > >                 rpc_wake_up_next(&clp->cl_cb_waitq);
+> > > > > > > > >         }
+> > > > > > > > >  }
+> > > > > > > > > @@ -1249,8 +1303,8 @@ static void nfsd41_destroy_cb(struc=
+t nfsd4_callback *cb)
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > >  /*
+> > > > > > > > > - * TODO: cb_sequence should support referring call lists=
+, cachethis, multiple
+> > > > > > > > > - * slots, and mark callback channel down on communicatio=
+n errors.
+> > > > > > > > > + * TODO: cb_sequence should support referring call lists=
+, cachethis,
+> > > > > > > > > + * and mark callback channel down on communication error=
+s.
+> > > > > > > > >   */
+> > > > > > > > >  static void nfsd4_cb_prepare(struct rpc_task *task, void=
+ *calldata)
+> > > > > > > > >  {
+> > > > > > > > > @@ -1292,7 +1346,7 @@ static bool nfsd4_cb_sequence_done(=
+struct rpc_task *task, struct nfsd4_callback
+> > > > > > > > >                 return true;
+> > > > > > > > >         }
+> > > > > > > > >=20
+> > > > > > > > > -       if (!cb->cb_holds_slot)
+> > > > > > > > > +       if (cb->cb_held_slot < 0)
+> > > > > > > > >                 goto need_restart;
+> > > > > > > > >=20
+> > > > > > > > >         /* This is the operation status code for CB_SEQUE=
+NCE */
+> > > > > > > > > @@ -1306,10 +1360,10 @@ static bool nfsd4_cb_sequence_don=
+e(struct rpc_task *task, struct nfsd4_callback
+> > > > > > > > >                  * If CB_SEQUENCE returns an error, then =
+the state of the slot
+> > > > > > > > >                  * (sequence ID, cached reply) MUST NOT c=
+hange.
+> > > > > > > > >                  */
+> > > > > > > > > -               ++session->se_cb_seq_nr;
+> > > > > > > > > +               ++session->se_cb_seq_nr[cb->cb_held_slot]=
+;
+> > > > > > > > >                 break;
+> > > > > > > > >         case -ESERVERFAULT:
+> > > > > > > > > -               ++session->se_cb_seq_nr;
+> > > > > > > > > +               ++session->se_cb_seq_nr[cb->cb_held_slot]=
+;
+> > > > > > > > >                 nfsd4_mark_cb_fault(cb->cb_clp);
+> > > > > > > > >                 ret =3D false;
+> > > > > > > > >                 break;
+> > > > > > > > > @@ -1335,17 +1389,16 @@ static bool nfsd4_cb_sequence_don=
+e(struct rpc_task *task, struct nfsd4_callback
+> > > > > > > > >         case -NFS4ERR_BADSLOT:
+> > > > > > > > >                 goto retry_nowait;
+> > > > > > > > >         case -NFS4ERR_SEQ_MISORDERED:
+> > > > > > > > > -               if (session->se_cb_seq_nr !=3D 1) {
+> > > > > > > > > -                       session->se_cb_seq_nr =3D 1;
+> > > > > > > > > +               if (session->se_cb_seq_nr[cb->cb_held_slo=
+t] !=3D 1) {
+> > > > > > > > > +                       session->se_cb_seq_nr[cb->cb_held=
+_slot] =3D 1;
+> > > > > > > > >                         goto retry_nowait;
+> > > > > > > > >                 }
+> > > > > > > > >                 break;
+> > > > > > > > >         default:
+> > > > > > > > >                 nfsd4_mark_cb_fault(cb->cb_clp);
+> > > > > > > > >         }
+> > > > > > > > > -       nfsd41_cb_release_slot(cb);
+> > > > > > > > > -
+> > > > > > > > >         trace_nfsd_cb_free_slot(task, cb);
+> > > > > > > > > +       nfsd41_cb_release_slot(cb);
+> > > > > > > > >=20
+> > > > > > > > >         if (RPC_SIGNALLED(task))
+> > > > > > > > >                 goto need_restart;
+> > > > > > > > > @@ -1565,7 +1618,7 @@ void nfsd4_init_cb(struct nfsd4_cal=
+lback *cb, struct nfs4_client *clp,
+> > > > > > > > >         INIT_WORK(&cb->cb_work, nfsd4_run_cb_work);
+> > > > > > > > >         cb->cb_status =3D 0;
+> > > > > > > > >         cb->cb_need_restart =3D false;
+> > > > > > > > > -       cb->cb_holds_slot =3D false;
+> > > > > > > > > +       cb->cb_held_slot =3D -1;
+> > > > > > > > >  }
+> > > > > > > > >=20
+> > > > > > > > >  /**
+> > > > > > > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > > > > > > > > index baf7994131fe1b0a4715174ba943fd2a9882aa12..75557e7cc=
+9265517f51952563beaa4cfe8adcc3f 100644
+> > > > > > > > > --- a/fs/nfsd/nfs4state.c
+> > > > > > > > > +++ b/fs/nfsd/nfs4state.c
+> > > > > > > > > @@ -2002,6 +2002,9 @@ static struct nfsd4_session *alloc_=
+session(struct nfsd4_channel_attrs *fattrs,
+> > > > > > > > >         }
+> > > > > > > > >=20
+> > > > > > > > >         memcpy(&new->se_fchannel, fattrs, sizeof(struct n=
+fsd4_channel_attrs));
+> > > > > > > > > +       new->se_cb_slot_avail =3D ~0U;
+> > > > > > > > > +       new->se_cb_highest_slot =3D battrs->maxreqs - 1;
+> > > > > > > > > +       spin_lock_init(&new->se_lock);
+> > > > > > > > >         return new;
+> > > > > > > > >  out_free:
+> > > > > > > > >         while (i--)
+> > > > > > > > > @@ -2132,11 +2135,14 @@ static void init_session(struct s=
+vc_rqst *rqstp, struct nfsd4_session *new, stru
+> > > > > > > > >=20
+> > > > > > > > >         INIT_LIST_HEAD(&new->se_conns);
+> > > > > > > > >=20
+> > > > > > > > > -       new->se_cb_seq_nr =3D 1;
+> > > > > > > > > +       atomic_set(&new->se_ref, 0);
+> > > > > > > > >         new->se_dead =3D false;
+> > > > > > > > >         new->se_cb_prog =3D cses->callback_prog;
+> > > > > > > > >         new->se_cb_sec =3D cses->cb_sec;
+> > > > > > > > > -       atomic_set(&new->se_ref, 0);
+> > > > > > > > > +
+> > > > > > > > > +       for (idx =3D 0; idx < NFSD_BC_SLOT_TABLE_MAX; ++i=
+dx)
+> > > > > > > > > +               new->se_cb_seq_nr[idx] =3D 1;
+> > > > > > > > > +
+> > > > > > > > >         idx =3D hash_sessionid(&new->se_sessionid);
+> > > > > > > > >         list_add(&new->se_hash, &nn->sessionid_hashtbl[id=
+x]);
+> > > > > > > > >         spin_lock(&clp->cl_lock);
+> > > > > > > > > @@ -3159,7 +3165,6 @@ static struct nfs4_client *create_c=
+lient(struct xdr_netobj name,
+> > > > > > > > >         kref_init(&clp->cl_nfsdfs.cl_ref);
+> > > > > > > > >         nfsd4_init_cb(&clp->cl_cb_null, clp, NULL, NFSPRO=
+C4_CLNT_CB_NULL);
+> > > > > > > > >         clp->cl_time =3D ktime_get_boottime_seconds();
+> > > > > > > > > -       clear_bit(0, &clp->cl_cb_slot_busy);
+> > > > > > > > >         copy_verf(clp, verf);
+> > > > > > > > >         memcpy(&clp->cl_addr, sa, sizeof(struct sockaddr_=
+storage));
+> > > > > > > > >         clp->cl_cb_session =3D NULL;
+> > > > > > > > > diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> > > > > > > > > index d22e4f2c9039324a0953a9e15a3c255fb8ee1a44..848d023cb=
+308f0b69916c4ee34b09075708f0de3 100644
+> > > > > > > > > --- a/fs/nfsd/state.h
+> > > > > > > > > +++ b/fs/nfsd/state.h
+> > > > > > > > > @@ -71,8 +71,8 @@ struct nfsd4_callback {
+> > > > > > > > >         struct work_struct cb_work;
+> > > > > > > > >         int cb_seq_status;
+> > > > > > > > >         int cb_status;
+> > > > > > > > > +       int cb_held_slot;
+> > > > > > > > >         bool cb_need_restart;
+> > > > > > > > > -       bool cb_holds_slot;
+> > > > > > > > >  };
+> > > > > > > > >=20
+> > > > > > > > >  struct nfsd4_callback_ops {
+> > > > > > > > > @@ -307,6 +307,9 @@ struct nfsd4_conn {
+> > > > > > > > >         unsigned char cn_flags;
+> > > > > > > > >  };
+> > > > > > > > >=20
+> > > > > > > > > +/* Highest slot index that nfsd implements in NFSv4.1+ b=
+ackchannel */
+> > > > > > > > > +#define NFSD_BC_SLOT_TABLE_MAX (sizeof(u32) * 8 - 1)
+> > > > > > > >=20
+> > > > > > > > Are there some values that are known not to work? I was exp=
+erimenting
+> > > > > > > > with values and set it to 2 and 4 and the kernel oopsed. I =
+understand
+> > > > > > > > it's not a configurable value but it would still be good to=
+ know the
+> > > > > > > > expectations...
+> > > > > > > >=20
+> > > > > > > > [  198.625021] Unable to handle kernel paging request at vi=
+rtual
+> > > > > > > > address dfff800020000000
+> > > > > > > > [  198.625870] KASAN: probably user-memory-access in range
+> > > > > > > > [0x0000000100000000-0x0000000100000007]
+> > > > > > > > [  198.626444] Mem abort info:
+> > > > > > > > [  198.626630]   ESR =3D 0x0000000096000005
+> > > > > > > > [  198.626882]   EC =3D 0x25: DABT (current EL), IL =3D 32 =
+bits
+> > > > > > > > [  198.627234]   SET =3D 0, FnV =3D 0
+> > > > > > > > [  198.627441]   EA =3D 0, S1PTW =3D 0
+> > > > > > > > [  198.627627]   FSC =3D 0x05: level 1 translation fault
+> > > > > > > > [  198.627859] Data abort info:
+> > > > > > > > [  198.628000]   ISV =3D 0, ISS =3D 0x00000005, ISS2 =3D 0x=
+00000000
+> > > > > > > > [  198.628272]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =
+=3D 0
+> > > > > > > > [  198.628619]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, =
+Xs =3D 0
+> > > > > > > > [  198.628967] [dfff800020000000] address between user and =
+kernel address ranges
+> > > > > > > > [  198.629438] Internal error: Oops: 0000000096000005 [#1] =
+SMP
+> > > > > > > > [  198.629806] Modules linked in: rpcsec_gss_krb5 nfsv4 dns=
+_resolver
+> > > > > > > > nfs netfs nfnetlink_queue nfnetlink_log nfnetlink bluetooth=
+ cfg80211
+> > > > > > > > rpcrdma rdma_cm iw_cm ib_cm ib_core nfsd auth_rpcgss nfs_ac=
+l lockd
+> > > > > > > > grace isofs uinput snd_seq_dummy snd_hrtimer vsock_loopback
+> > > > > > > > vmw_vsock_virtio_transport_common qrtr rfkill vmw_vsock_vmc=
+i_transport
+> > > > > > > > vsock sunrpc vfat fat snd_hda_codec_generic snd_hda_intel
+> > > > > > > > snd_intel_dspcfg snd_hda_codec snd_hda_core snd_hwdep snd_s=
+eq uvcvideo
+> > > > > > > > videobuf2_vmalloc snd_seq_device videobuf2_memops uvc video=
+buf2_v4l2
+> > > > > > > > videodev snd_pcm videobuf2_common mc snd_timer snd vmw_vmci=
+ soundcore
+> > > > > > > > xfs libcrc32c vmwgfx drm_ttm_helper ttm nvme drm_kms_helper
+> > > > > > > > crct10dif_ce nvme_core ghash_ce sha2_ce sha256_arm64 sha1_c=
+e drm
+> > > > > > > > nvme_auth sr_mod cdrom e1000e sg fuse
+> > > > > > > > [  198.633799] CPU: 5 UID: 0 PID: 6081 Comm: nfsd Kdump: lo=
+aded Not
+> > > > > > > > tainted 6.12.0-rc6+ #47
+> > > > > > > > [  198.634345] Hardware name: VMware, Inc. VMware20,1/VBSA,=
+ BIOS
+> > > > > > > > VMW201.00V.21805430.BA64.2305221830 05/22/2023
+> > > > > > > > [  198.635014] pstate: 11400005 (nzcV daif +PAN -UAO -TCO +=
+DIT -SSBS BTYPE=3D--)
+> > > > > > > > [  198.635492] pc : nfsd4_sequence+0x5a0/0x1f60 [nfsd]
+> > > > > > > > [  198.635798] lr : nfsd4_sequence+0x340/0x1f60 [nfsd]
+> > > > > > > > [  198.636065] sp : ffff8000884977e0
+> > > > > > > > [  198.636234] x29: ffff800088497910 x28: ffff0000b1b39280 =
+x27: ffff0000ab508128
+> > > > > > > > [  198.636624] x26: ffff0000b1b39298 x25: ffff0000b1b39290 =
+x24: ffff0000a65e1c64
+> > > > > > > > [  198.637049] x23: 1fffe000212e6804 x22: ffff000109734024 =
+x21: 1ffff00011092f16
+> > > > > > > > [  198.637472] x20: ffff00010aed8000 x19: ffff000109734000 =
+x18: 1fffe0002de20c8b
+> > > > > > > > [  198.637883] x17: 0100000000000000 x16: 1ffff0000fcef234 =
+x15: 1fffe000212e600f
+> > > > > > > > [  198.638286] x14: ffff80007e779000 x13: ffff80007e7791a0 =
+x12: 0000000000000000
+> > > > > > > > [  198.638697] x11: ffff0000a65e1c38 x10: ffff00010aedaca0 =
+x9 : 1fffe000215db594
+> > > > > > > > [  198.639110] x8 : 1fffe00014cbc387 x7 : ffff0000a65e1c03 =
+x6 : ffff0000a65e1c00
+> > > > > > > > [  198.639541] x5 : ffff0000a65e1c00 x4 : 0000000020000000 =
+x3 : 0000000100000001
+> > > > > > > > [  198.639962] x2 : ffff000109730060 x1 : 0000000000000003 =
+x0 : dfff800000000000
+> > > > > > > > [  198.640332] Call trace:
+> > > > > > > > [  198.640460]  nfsd4_sequence+0x5a0/0x1f60 [nfsd]
+> > > > > > > > [  198.640715]  nfsd4_proc_compound+0xb94/0x23b0 [nfsd]
+> > > > > > > > [  198.640997]  nfsd_dispatch+0x22c/0x718 [nfsd]
+> > > > > > > > [  198.641260]  svc_process_common+0x8e8/0x1968 [sunrpc]
+> > > > > > > > [  198.641566]  svc_process+0x3d4/0x7e0 [sunrpc]
+> > > > > > > > [  198.641827]  svc_handle_xprt+0x828/0xe10 [sunrpc]
+> > > > > > > > [  198.642108]  svc_recv+0x2cc/0x6a8 [sunrpc]
+> > > > > > > > [  198.642346]  nfsd+0x270/0x400 [nfsd]
+> > > > > > > > [  198.642562]  kthread+0x288/0x310
+> > > > > > > > [  198.642745]  ret_from_fork+0x10/0x20
+> > > > > > > > [  198.642937] Code: f2fbffe0 f9003be4 f94007e2 52800061 (3=
+8e06880)
+> > > > > > > > [  198.643267] SMP: stopping secondary CPUs
+> > > > > > > >=20
+> > > > > > > >=20
+> > > > > > > >=20
+> > > > > > >=20
+> > > > > > >=20
+> > > > > > > Good catch. I think the problem here is that we don't current=
+ly cap the
+> > > > > > > initial value of se_cb_highest_slot at NFSD_BC_SLOT_TABLE_MAX=
+. Does
+> > > > > > > this patch prevent the panic?
+> > > > > > >=20
+> > > > > > > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> > > > > > > index 3afe56ab9e0a..839be4ba765a 100644
+> > > > > > > --- a/fs/nfsd/nfs4state.c
+> > > > > > > +++ b/fs/nfsd/nfs4state.c
+> > > > > > > @@ -2011,7 +2011,7 @@ static struct nfsd4_session *alloc_sess=
+ion(struct nfsd4_channel_attrs *fattrs,
+> > > > > > >=20
+> > > > > > >         memcpy(&new->se_fchannel, fattrs, sizeof(struct nfsd4=
+_channel_attrs));
+> > > > > > >         new->se_cb_slot_avail =3D ~0U;
+> > > > > > > -       new->se_cb_highest_slot =3D battrs->maxreqs - 1;
+> > > > > > > +       new->se_cb_highest_slot =3D min(battrs->maxreqs - 1, =
+NFSD_BC_SLOT_TABLE_MAX);
+> > > > > > >         spin_lock_init(&new->se_lock);
+> > > > > > >         return new;
+> > > > > > >  out_free:
+> > > > > >=20
+> > > > > > It does help. I thought that the CREATE_SESSION reply for the
+> > > > > > backchannel would be guided by the NFSD_BC_SLOT_TABLE_MAX value=
+ but
+> > > > > > instead it seems like it's not. But yes I can see that the high=
+est
+> > > > > > slot used by the server is capped by the NFSD_BC_SLOT_TABLE_MAX=
+ value.
+> > > > >=20
+> > > > > Thanks for testing it, Olga.
+> > > > >=20
+> > > > > Chuck, would you be OK with folding the above delta into 9ab4c407=
+7de9,
+> > > > > or would you rather I resend the patch?
+> > > >=20
+> > > > I've folded the above one-liner into the applied patch.
+> > > >=20
+> > > > I agree with Tom, I think there's probably a (surprising)
+> > > > explanation lurking for not seeing the expected performance
+> > > > improvement. I can delay sending the NFSD v6.13 merge window pull
+> > > > request for a bit to see if you can get it teased out.
+> > >=20
+> > > I would like to raise a couple of issues:
+> > > (1) I believe the server should be reporting back an accurate value
+> > > for the backchannel session table size. I think if the
+> > > NFSD_BC_SLOT_TABLE_MAX was way lower than the client's value then the
+> > > client would be wasting resources for its bc session table?
+> >=20
+> > Yes, but those resources are 32-bit integer per wasted slot. The Linux
+> > client allows for up to 16 slots, so we're wasting 64 bytes per session
+> > with this scheme with the Linux client. I didn't think it was worth
+> > doing a separate allocation for that.
+> >=20
+> > We could make NFSD_BC_SLOT_TABLE_MAX smaller though. Maybe we should
+> > match the client's size and make it 15?
+> >=20
+> > > ->back_channel->maxreqs gets decoded in nfsd4_decode_create_session()
+> > > and is never adjusted for the reply to be based on the
+> > > NFSD_BC_SLOT_TABLE_MAX. The problem is currently invisible because
+> > > linux client's bc slot table size is 16 and nfsd's is higher.
+> > >=20
+> >=20
+> > I'm not sure I understand the problem here. We don't care about most of
+> > the backchannel attributes. maxreqs is the only one that matters, and
+> > track that in se_cb_highest_slot.
+>=20
+> Client sends a create_session with cba_back_chan_attrs with max_reqs
+> of 16 -- stating that the client can handle 16 slots in it's slot
+> table. Server currently doesn't do anything about reflecting back to
+> the client its session slot table. It blindly returns what the client
+> sent. Say NFSD_BC_SLOT_TABLE_MAX was 4. Server would never use more
+> than 4 slots and yet the client would have to create a reply cache
+> table for 16 slots. Isn't that poor sportsmanship on behalf of the
+> linux server?
+>=20
+>=20
 
-Co-developed-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Min Ma <min.ma@amd.com>
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_message.c    |  65 +++++++
- drivers/accel/amdxdna/aie2_pci.c        | 222 ++++++++++++++++++++++++
- drivers/accel/amdxdna/aie2_pci.h        |   1 +
- drivers/accel/amdxdna/amdxdna_pci_drv.c |  19 ++
- drivers/accel/amdxdna/amdxdna_pci_drv.h |   3 +
- include/uapi/drm/amdxdna_accel.h        | 166 ++++++++++++++++++
- 6 files changed, 476 insertions(+)
+Thanks, that does sound like a bug. I think we can fix that with
+another one-liner.=C2=A0 When we allocate the new session, update the
+back_channel attrs in the request with the correct maxreqs. Thoughts?
 
-diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-index eb7e27045213..c01a1d957b56 100644
---- a/drivers/accel/amdxdna/aie2_message.c
-+++ b/drivers/accel/amdxdna/aie2_message.c
-@@ -308,6 +308,71 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u6
- 	return 0;
- }
- 
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf,
-+		      u32 size, u32 *cols_filled)
-+{
-+	DECLARE_AIE2_MSG(aie_column_info, MSG_OP_QUERY_COL_STATUS);
-+	struct amdxdna_dev *xdna = ndev->xdna;
-+	struct amdxdna_client *client;
-+	struct amdxdna_hwctx *hwctx;
-+	dma_addr_t dma_addr;
-+	u32 aie_bitmap = 0;
-+	u8 *buff_addr;
-+	int next = 0;
-+	int ret, idx;
-+
-+	buff_addr = dma_alloc_noncoherent(xdna->ddev.dev, size, &dma_addr,
-+					  DMA_FROM_DEVICE, GFP_KERNEL);
-+	if (!buff_addr)
-+		return -ENOMEM;
-+
-+	/* Go through each hardware context and mark the AIE columns that are active */
-+	list_for_each_entry(client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&client->hwctx_srcu);
-+		idr_for_each_entry_continue(&client->hwctx_idr, hwctx, next)
-+			aie_bitmap |= amdxdna_hwctx_col_map(hwctx);
-+		srcu_read_unlock(&client->hwctx_srcu, idx);
-+	}
-+
-+	*cols_filled = 0;
-+	req.dump_buff_addr = dma_addr;
-+	req.dump_buff_size = size;
-+	req.num_cols = hweight32(aie_bitmap);
-+	req.aie_bitmap = aie_bitmap;
-+
-+	drm_clflush_virt_range(buff_addr, size); /* device can access */
-+	ret = aie2_send_mgmt_msg_wait(ndev, &msg);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Error during NPU query, status %d", ret);
-+		goto fail;
-+	}
-+
-+	if (resp.status != AIE2_STATUS_SUCCESS) {
-+		XDNA_ERR(xdna, "Query NPU status failed, status 0x%x", resp.status);
-+		ret = -EINVAL;
-+		goto fail;
-+	}
-+	XDNA_DBG(xdna, "Query NPU status completed");
-+
-+	if (size < resp.size) {
-+		ret = -EINVAL;
-+		XDNA_ERR(xdna, "Bad buffer size. Available: %u. Needs: %u", size, resp.size);
-+		goto fail;
-+	}
-+
-+	if (copy_to_user(buf, buff_addr, resp.size)) {
-+		ret = -EFAULT;
-+		XDNA_ERR(xdna, "Failed to copy NPU status to user space");
-+		goto fail;
-+	}
-+
-+	*cols_filled = aie_bitmap;
-+
-+fail:
-+	dma_free_noncoherent(xdna->ddev.dev, size, buff_addr, dma_addr, DMA_FROM_DEVICE);
-+	return ret;
-+}
-+
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t))
- {
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index 5467aabe7308..349ada697e48 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -5,6 +5,7 @@
- 
- #include <drm/amdxdna_accel.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_print.h>
-@@ -525,11 +526,232 @@ static void aie2_fini(struct amdxdna_dev *xdna)
- 	pci_free_irq_vectors(pdev);
- }
- 
-+static int aie2_get_aie_status(struct amdxdna_client *client,
-+			       struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_status status;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret;
-+
-+	ndev = xdna->dev_handle;
-+	if (copy_from_user(&status, u64_to_user_ptr(args->buffer), sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request into kernel");
-+		return -EFAULT;
-+	}
-+
-+	if (ndev->metadata.cols * ndev->metadata.size < status.buffer_size) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given Size: %u. Need Size: %u.",
-+			 status.buffer_size, ndev->metadata.cols * ndev->metadata.size);
-+		return -EINVAL;
-+	}
-+
-+	ret = aie2_query_status(ndev, u64_to_user_ptr(status.buffer),
-+				status.buffer_size, &status.cols_filled);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed to get AIE status info. Ret: %d", ret);
-+		return ret;
-+	}
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &status, sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request info to user space");
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int aie2_get_aie_metadata(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_metadata *meta;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	meta = kzalloc(sizeof(*meta), GFP_KERNEL);
-+	if (!meta)
-+		return -ENOMEM;
-+
-+	meta->col_size = ndev->metadata.size;
-+	meta->cols = ndev->metadata.cols;
-+	meta->rows = ndev->metadata.rows;
-+
-+	meta->version.major = ndev->metadata.version.major;
-+	meta->version.minor = ndev->metadata.version.minor;
-+
-+	meta->core.row_count = ndev->metadata.core.row_count;
-+	meta->core.row_start = ndev->metadata.core.row_start;
-+	meta->core.dma_channel_count = ndev->metadata.core.dma_channel_count;
-+	meta->core.lock_count = ndev->metadata.core.lock_count;
-+	meta->core.event_reg_count = ndev->metadata.core.event_reg_count;
-+
-+	meta->mem.row_count = ndev->metadata.mem.row_count;
-+	meta->mem.row_start = ndev->metadata.mem.row_start;
-+	meta->mem.dma_channel_count = ndev->metadata.mem.dma_channel_count;
-+	meta->mem.lock_count = ndev->metadata.mem.lock_count;
-+	meta->mem.event_reg_count = ndev->metadata.mem.event_reg_count;
-+
-+	meta->shim.row_count = ndev->metadata.shim.row_count;
-+	meta->shim.row_start = ndev->metadata.shim.row_start;
-+	meta->shim.dma_channel_count = ndev->metadata.shim.dma_channel_count;
-+	meta->shim.lock_count = ndev->metadata.shim.lock_count;
-+	meta->shim.event_reg_count = ndev->metadata.shim.event_reg_count;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), meta, sizeof(*meta)))
-+		ret = -EFAULT;
-+
-+	kfree(meta);
-+	return ret;
-+}
-+
-+static int aie2_get_aie_version(struct amdxdna_client *client,
-+				struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+
-+	ndev = xdna->dev_handle;
-+	version.major = ndev->version.major;
-+	version.minor = ndev->version.minor;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &version, sizeof(version)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int aie2_get_clock_metadata(struct amdxdna_client *client,
-+				   struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_clock_metadata *clock;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
-+	if (!clock)
-+		return -ENOMEM;
-+
-+	memcpy(clock->mp_npu_clock.name, ndev->mp_npu_clock.name,
-+	       sizeof(clock->mp_npu_clock.name));
-+	clock->mp_npu_clock.freq_mhz = ndev->mp_npu_clock.freq_mhz;
-+	memcpy(clock->h_clock.name, ndev->h_clock.name, sizeof(clock->h_clock.name));
-+	clock->h_clock.freq_mhz = ndev->h_clock.freq_mhz;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), clock, sizeof(*clock)))
-+		ret = -EFAULT;
-+
-+	kfree(clock);
-+	return ret;
-+}
-+
-+static int aie2_get_hwctx_status(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_hwctx __user *buf;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_drm_query_hwctx *tmp;
-+	struct amdxdna_client *tmp_client;
-+	struct amdxdna_hwctx *hwctx;
-+	bool overflow = false;
-+	u32 req_bytes = 0;
-+	u32 hw_i = 0;
-+	int ret = 0;
-+	int next;
-+	int idx;
-+
-+	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-+
-+	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	buf = u64_to_user_ptr(args->buffer);
-+	list_for_each_entry(tmp_client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&tmp_client->hwctx_srcu);
-+		next = 0;
-+		idr_for_each_entry_continue(&tmp_client->hwctx_idr, hwctx, next) {
-+			req_bytes += sizeof(*tmp);
-+			if (args->buffer_size < req_bytes) {
-+				/* Continue iterating to get the required size */
-+				overflow = true;
-+				continue;
-+			}
-+
-+			memset(tmp, 0, sizeof(*tmp));
-+			tmp->pid = tmp_client->pid;
-+			tmp->context_id = hwctx->id;
-+			tmp->start_col = hwctx->start_col;
-+			tmp->num_col = hwctx->num_col;
-+			tmp->command_submissions = hwctx->priv->seq;
-+			tmp->command_completions = hwctx->priv->completed;
-+
-+			if (copy_to_user(&buf[hw_i], tmp, sizeof(*tmp))) {
-+				ret = -EFAULT;
-+				srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+				goto out;
-+			}
-+			hw_i++;
-+		}
-+		srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+	}
-+
-+	if (overflow) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given: %u Need: %u.",
-+			 args->buffer_size, req_bytes);
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	kfree(tmp);
-+	args->buffer_size = req_bytes;
-+	return ret;
-+}
-+
-+static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_dev *xdna = client->xdna;
-+	int ret, idx;
-+
-+	if (!drm_dev_enter(&xdna->ddev, &idx))
-+		return -ENODEV;
-+
-+	switch (args->param) {
-+	case DRM_AMDXDNA_QUERY_AIE_STATUS:
-+		ret = aie2_get_aie_status(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_METADATA:
-+		ret = aie2_get_aie_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_VERSION:
-+		ret = aie2_get_aie_version(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_CLOCK_METADATA:
-+		ret = aie2_get_clock_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_HW_CONTEXTS:
-+		ret = aie2_get_hwctx_status(client, args);
-+		break;
-+	default:
-+		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
-+		ret = -EOPNOTSUPP;
-+	}
-+	XDNA_DBG(xdna, "Got param %d", args->param);
-+
-+	drm_dev_exit(idx);
-+	return ret;
-+}
-+
- const struct amdxdna_dev_ops aie2_ops = {
- 	.init           = aie2_init,
- 	.fini           = aie2_fini,
- 	.resume         = aie2_hw_start,
- 	.suspend        = aie2_hw_stop,
-+	.get_aie_info   = aie2_get_info,
- 	.hwctx_init     = aie2_hwctx_init,
- 	.hwctx_fini     = aie2_hwctx_fini,
- 	.hwctx_config   = aie2_hwctx_config,
-diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-index 4422dd6c985e..6a2686255c9c 100644
---- a/drivers/accel/amdxdna/aie2_pci.h
-+++ b/drivers/accel/amdxdna/aie2_pci.h
-@@ -231,6 +231,7 @@ int aie2_query_firmware_version(struct amdxdna_dev_hdl *ndev,
- int aie2_create_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_destroy_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u64 size);
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char *buf, u32 size, u32 *cols_filled);
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t));
- int aie2_config_cu(struct amdxdna_hwctx *hwctx);
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-index c611024f060d..4f8ec5f16325 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-@@ -143,6 +143,23 @@ static int amdxdna_flush(struct file *f, fl_owner_t id)
- 	return 0;
- }
- 
-+static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
-+{
-+	struct amdxdna_client *client = filp->driver_priv;
-+	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-+	struct amdxdna_drm_get_info *args = data;
-+	int ret;
-+
-+	if (!xdna->dev_info->ops->get_aie_info)
-+		return -EOPNOTSUPP;
-+
-+	XDNA_DBG(xdna, "Request parameter %u", args->param);
-+	mutex_lock(&xdna->dev_lock);
-+	ret = xdna->dev_info->ops->get_aie_info(client, args);
-+	mutex_unlock(&xdna->dev_lock);
-+	return ret;
-+}
-+
- static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	/* Context */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_CREATE_HWCTX, amdxdna_drm_create_hwctx_ioctl, 0),
-@@ -154,6 +171,8 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_SYNC_BO, amdxdna_drm_sync_bo_ioctl, 0),
- 	/* Execution */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
-+	/* AIE hardware */
-+	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
- };
- 
- static const struct file_operations amdxdna_fops = {
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-index 3be058af3545..4e18513ad019 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-@@ -17,7 +17,9 @@
- 
- extern const struct drm_driver amdxdna_drm_drv;
- 
-+struct amdxdna_client;
- struct amdxdna_dev;
-+struct amdxdna_drm_get_info;
- struct amdxdna_gem_obj;
- struct amdxdna_hwctx;
- struct amdxdna_sched_job;
-@@ -37,6 +39,7 @@ struct amdxdna_dev_ops {
- 	void (*hwctx_suspend)(struct amdxdna_hwctx *hwctx);
- 	void (*hwctx_resume)(struct amdxdna_hwctx *hwctx);
- 	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
-+	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
- };
- 
- /*
-diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-index 3e88ed386fac..af12af8bd699 100644
---- a/include/uapi/drm/amdxdna_accel.h
-+++ b/include/uapi/drm/amdxdna_accel.h
-@@ -32,6 +32,7 @@ enum amdxdna_drm_ioctl_id {
- 	DRM_AMDXDNA_GET_BO_INFO,
- 	DRM_AMDXDNA_SYNC_BO,
- 	DRM_AMDXDNA_EXEC_CMD,
-+	DRM_AMDXDNA_GET_INFO,
- };
- 
- /**
-@@ -235,6 +236,167 @@ struct amdxdna_drm_exec_cmd {
- 	__u64 seq;
- };
- 
-+/**
-+ * struct amdxdna_drm_query_aie_status - Query the status of the AIE hardware
-+ * @buffer: The user space buffer that will return the AIE status.
-+ * @buffer_size: The size of the user space buffer.
-+ * @cols_filled: A bitmap of AIE columns whose data has been returned in the buffer.
-+ */
-+struct amdxdna_drm_query_aie_status {
-+	__u64 buffer; /* out */
-+	__u32 buffer_size; /* in */
-+	__u32 cols_filled; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_version - Query the version of the AIE hardware
-+ * @major: The major version number.
-+ * @minor: The minor version number.
-+ */
-+struct amdxdna_drm_query_aie_version {
-+	__u32 major; /* out */
-+	__u32 minor; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_tile_metadata - Query the metadata of AIE tile (core, mem, shim)
-+ * @row_count: The number of rows.
-+ * @row_start: The starting row number.
-+ * @dma_channel_count: The number of dma channels.
-+ * @lock_count: The number of locks.
-+ * @event_reg_count: The number of events.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_aie_tile_metadata {
-+	__u16 row_count;
-+	__u16 row_start;
-+	__u16 dma_channel_count;
-+	__u16 lock_count;
-+	__u16 event_reg_count;
-+	__u16 pad[3];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_metadata - Query the metadata of the AIE hardware
-+ * @col_size: The size of a column in bytes.
-+ * @cols: The total number of columns.
-+ * @rows: The total number of rows.
-+ * @version: The version of the AIE hardware.
-+ * @core: The metadata for all core tiles.
-+ * @mem: The metadata for all mem tiles.
-+ * @shim: The metadata for all shim tiles.
-+ */
-+struct amdxdna_drm_query_aie_metadata {
-+	__u32 col_size;
-+	__u16 cols;
-+	__u16 rows;
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_drm_query_aie_tile_metadata core;
-+	struct amdxdna_drm_query_aie_tile_metadata mem;
-+	struct amdxdna_drm_query_aie_tile_metadata shim;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock - Metadata for a clock
-+ * @name: The clock name.
-+ * @freq_mhz: The clock frequency.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_clock {
-+	__u8 name[16];
-+	__u32 freq_mhz;
-+	__u32 pad;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock_metadata - Query metadata for clocks
-+ * @mp_npu_clock: The metadata for MP-NPU clock.
-+ * @h_clock: The metadata for H clock.
-+ */
-+struct amdxdna_drm_query_clock_metadata {
-+	struct amdxdna_drm_query_clock mp_npu_clock;
-+	struct amdxdna_drm_query_clock h_clock;
-+};
-+
-+enum amdxdna_sensor_type {
-+	AMDXDNA_SENSOR_TYPE_POWER
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_sensor - The data for single sensor.
-+ * @label: The name for a sensor.
-+ * @input: The current value of the sensor.
-+ * @max: The maximum value possible for the sensor.
-+ * @average: The average value of the sensor.
-+ * @highest: The highest recorded sensor value for this driver load for the sensor.
-+ * @status: The sensor status.
-+ * @units: The sensor units.
-+ * @unitm: Translates value member variables into the correct unit via (pow(10, unitm) * value).
-+ * @type: The sensor type from enum amdxdna_sensor_type.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_sensor {
-+	__u8  label[64];
-+	__u32 input;
-+	__u32 max;
-+	__u32 average;
-+	__u32 highest;
-+	__u8  status[64];
-+	__u8  units[16];
-+	__s8  unitm;
-+	__u8  type;
-+	__u8  pad[6];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_hwctx - The data for single context.
-+ * @context_id: The ID for this context.
-+ * @start_col: The starting column for the partition assigned to this context.
-+ * @num_col: The number of columns in the partition assigned to this context.
-+ * @pad: Structure padding.
-+ * @pid: The Process ID of the process that created this context.
-+ * @command_submissions: The number of commands submitted to this context.
-+ * @command_completions: The number of commands completed by this context.
-+ * @migrations: The number of times this context has been moved to a different partition.
-+ * @preemptions: The number of times this context has been preempted by another context in the
-+ *               same partition.
-+ * @errors: The errors for this context.
-+ */
-+struct amdxdna_drm_query_hwctx {
-+	__u32 context_id;
-+	__u32 start_col;
-+	__u32 num_col;
-+	__u32 pad;
-+	__s64 pid;
-+	__u64 command_submissions;
-+	__u64 command_completions;
-+	__u64 migrations;
-+	__u64 preemptions;
-+	__u64 errors;
-+};
-+
-+enum amdxdna_drm_get_param {
-+	DRM_AMDXDNA_QUERY_AIE_STATUS,
-+	DRM_AMDXDNA_QUERY_AIE_METADATA,
-+	DRM_AMDXDNA_QUERY_AIE_VERSION,
-+	DRM_AMDXDNA_QUERY_CLOCK_METADATA,
-+	DRM_AMDXDNA_QUERY_SENSORS,
-+	DRM_AMDXDNA_QUERY_HW_CONTEXTS,
-+	DRM_AMDXDNA_NUM_GET_PARAM,
-+};
-+
-+/**
-+ * struct amdxdna_drm_get_info - Get some information from the AIE hardware.
-+ * @param: Value in enum amdxdna_drm_get_param. Specifies the structure passed in the buffer.
-+ * @buffer_size: Size of the input buffer. Size needed/written by the kernel.
-+ * @buffer: A structure specified by the param struct member.
-+ */
-+struct amdxdna_drm_get_info {
-+	__u32 param; /* in */
-+	__u32 buffer_size; /* in/out */
-+	__u64 buffer; /* in/out */
-+};
-+
- #define DRM_IOCTL_AMDXDNA_CREATE_HWCTX \
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_CREATE_HWCTX, \
- 		 struct amdxdna_drm_create_hwctx)
-@@ -263,6 +425,10 @@ struct amdxdna_drm_exec_cmd {
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_EXEC_CMD, \
- 		 struct amdxdna_drm_exec_cmd)
- 
-+#define DRM_IOCTL_AMDXDNA_GET_INFO \
-+	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_INFO, \
-+		 struct amdxdna_drm_get_info)
-+
- #if defined(__cplusplus)
- } /* extern c end */
- #endif
--- 
-2.34.1
-
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 15438826ed5b..c35d8fc2f693 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -3885,6 +3885,7 @@ nfsd4_create_session(struct svc_rqst *rqstp,
+ 	new =3D alloc_session(&cr_ses->fore_channel, &cr_ses->back_channel);
+ 	if (!new)
+ 		goto out_release_drc_mem;
++	cr_ses->back_channel.maxreqs =3D new->se_cb_highest_slot;
+ 	conn =3D alloc_conn_from_crses(rqstp, cr_ses);
+ 	if (!conn)
+ 		goto out_free_session;
 
