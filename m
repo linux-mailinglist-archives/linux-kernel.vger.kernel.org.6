@@ -1,108 +1,113 @@
-Return-Path: <linux-kernel+bounces-403982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314749C3D5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:32:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758019C3D63
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F961C22B20
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:32:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12F4CB23641
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CD119AD73;
-	Mon, 11 Nov 2024 11:31:28 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD7F188905;
+	Mon, 11 Nov 2024 11:33:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iKZG7oTq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DE18B477;
-	Mon, 11 Nov 2024 11:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4012E139578;
+	Mon, 11 Nov 2024 11:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731324688; cv=none; b=Vu235pAISZyEaqHQLkIOUY/rW5yOmKuXEpcI+93EENjx4xUUFI8OPozGfrvFvZEy2aD+NCjpc3eHhi7v/T75ONgf85tbN412yqk1TYNEufMqQ9ByuqRkjcfz2P7S6xLXGYzs751tOtDasv5EBSkO/Cq/hcEInu6l7sTB+KnVNJ8=
+	t=1731324831; cv=none; b=ngpCUkeqmgAFhloEC97TYHCRtHLEXcNwtU/Op7rnz1TqxKmMXSNeBjpTgj9lOUZHi0MNvjXfwV+KoXodw8iOdPSib/KtlLRGJKHcoKzYWbPeUUtJ8x0t2IHmaUB5Dc4Izj/8rqluhif/386sIfHwKG2IDQ8USdCYdjdr2HYsSZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731324688; c=relaxed/simple;
-	bh=byO06VlftwJVrxXzWWMMcmptQKF3tyHFGekyDgcW5LY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=ZbarT0PpEvx+1olenAULRtvaIUKMLd+a2n9YmwM1J90HJnS1kz5vLKemGeP4/5FmyYKADWiTgPB0MhHswqpmowWKXQV3U5XM9lJN93xHug93KCyfD6VoX9HQxxceorLuhLUvvTW9rpWJ1PHNUXcVY9RjCxaFh7DsHyAl427KnWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xn6h05zhdz28fSh;
-	Mon, 11 Nov 2024 19:26:40 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6929B1A0188;
-	Mon, 11 Nov 2024 19:31:22 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 19:31:22 +0800
-Message-ID: <4564c77b-a54d-4307-b043-d08e314c4c5f@huawei.com>
-Date: Mon, 11 Nov 2024 19:31:21 +0800
+	s=arc-20240116; t=1731324831; c=relaxed/simple;
+	bh=ykZQH5VbdujAJrOFHP+G49/xP/6A09GupDXNuDZK4fc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FBOJZ+fvvHE0Svlzft3cGvp4d2Zd7XC38ldnlZfIcc3zDRm/FtDddGnTvWxStG8PMcISYwka/Rp3S/B/YCqFh+E0+/And4yS06AW38ex2gT1wZqLSoBFHVpjG813LspjR54KfLk/4E7fZyZWaBRatULnZEmc1vejUqP1274lKnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iKZG7oTq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EE50C4CECF;
+	Mon, 11 Nov 2024 11:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731324830;
+	bh=ykZQH5VbdujAJrOFHP+G49/xP/6A09GupDXNuDZK4fc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iKZG7oTqQCLuJh+FMFDBetvW8vOirsihp5x4ZVOdurOzqy5XwChse15QgEXeaQzJx
+	 r/GnRycfiyEVQCkcIASg2vebK5zFt1KsF3d5vbpu7e5SF45SYYXpW0lR/4vB1ieqCx
+	 Z0hdi+Av5K3X2p9lUYWQf+3RNd7v41n4tNm/4Z1yBMtDS6QXajFmSYmc3YtHAzduGS
+	 1Esabn8cn9B6Br+RurBiDACQoWsFX0SI4OCROBfv5p0kH9ZHydLc20CGVSBevSgV6S
+	 7mlqnj/DnNSTk2qEwvMoblG78qasp5s1wHlpZFgq18qp0QiJWzJ6Tnk1M1gean+4vB
+	 LchdL864Tbh0A==
+From: Christian Brauner <brauner@kernel.org>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jefflexu@linux.alibaba.com,
+	zhujia.zj@bytedance.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	libaokun1@huawei.com,
+	yangerkun@huawei.com,
+	houtao1@huawei.com,
+	yukuai3@huawei.com,
+	Gao Xiang <xiang@kernel.org>,
+	netfs@lists.linux.dev,
+	dhowells@redhat.com,
+	jlayton@kernel.org
+Subject: Re: [PATCH v2 0/5] fscache/cachefiles: Some bugfixes
+Date: Mon, 11 Nov 2024 12:33:36 +0100
+Message-ID: <20241111-helft-lachs-9d6ff31e2549@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241107110649.3980193-1-wozizhi@huawei.com>
+References: <20241107110649.3980193-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>,
-	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
-	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
- Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
- Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
-	<kernel-team@cloudflare.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
- <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
-Content-Language: en-US
-In-Reply-To: <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1715; i=brauner@kernel.org; h=from:subject:message-id; bh=ykZQH5VbdujAJrOFHP+G49/xP/6A09GupDXNuDZK4fc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbvp6+tOSEbuPnvSLHst6msK/KXXFCkbdgf8h3bf8I0 Y4s2WkHOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbS9oGR4ZHwI+Hse9nPvOf+ vyf7XiR/CU87w9n5+SZaq2cmNVYX32L4w1F+f8XNsx5Pbz1O8LSx+36wQTdeoO6UW1WAZuf2sLW rmAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 2024/10/26 15:33, Yunsheng Lin wrote:
-
-...
-
->>>
->>> AFAIU Jakub's comment on his RFC patch for waiting, he was suggesting
->>> exactly this: Add the wait, and see if the cases where it can stall turn
->>> out to be problems in practice.
->>
->> +1
->>
->> I like Jakub's approach.
+On Thu, 07 Nov 2024 19:06:44 +0800, Zizhi Wo wrote:
+> Changes since V1[1]:
+>  - Removed some incorrect patches.
+>  - Modified the description of the first patch.
+>  - Modified the fourth patch to move fput out of lock execution.
 > 
-> As mentioned in Toke's comment, I am still not convinced that there is some
-> easy way of waiting here, doing the kick in the kernel space is hard enough,
-> I am not even sure if kick need to be done or how it can be done in the user
-> space if some page_pool owned page is held from user space for the cases of zero
-> rx copy, io_uring and devmem tcp? killing the userspace app?
+> Recently, I sent the first version of the patch series. After some
+> discussions, I made modifications to a few patches and have now officially
+> sent this second version.
 > 
-> If you and Toke still think the waiting is the way out for the problem here, maybe
-> we should wait for jakub's opinion and let him decide if he want to proceed with
-> his waiting patch.
+> [...]
 
-Is there any other suggestion/concern about how to fix the problem here?
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
-From the previous discussion, it seems the main concern about tracking the
-inflight pages is about how many inflight pages it is needed.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-If there is no other suggestion/concern , it seems the above concern might be
-addressed by using pre-allocated memory to satisfy the mostly used case, and
-use the dynamically allocated memory if/when necessary.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
+
+[1/5] cachefiles: Fix incorrect length return value in cachefiles_ondemand_fd_write_iter()
+      https://git.kernel.org/vfs/vfs/c/544e429e5bc6
+[2/5] cachefiles: Fix missing pos updates in cachefiles_ondemand_fd_write_iter()
+      https://git.kernel.org/vfs/vfs/c/a89ef3809efd
+[3/5] cachefiles: Clean up in cachefiles_commit_tmpfile()
+      https://git.kernel.org/vfs/vfs/c/d76293bc8658
+[4/5] cachefiles: Fix NULL pointer dereference in object->file
+      https://git.kernel.org/vfs/vfs/c/53260e5cb920
+[5/5] netfs/fscache: Add a memory barrier for FSCACHE_VOLUME_CREATING
+      https://git.kernel.org/vfs/vfs/c/37e1f64cbc1b
 
