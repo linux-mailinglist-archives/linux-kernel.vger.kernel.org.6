@@ -1,130 +1,148 @@
-Return-Path: <linux-kernel+bounces-404755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D05C9C47B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:10:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80E89C47BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62C31F24E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7AC928B49B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A741B6555;
-	Mon, 11 Nov 2024 20:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82E01AB51D;
+	Mon, 11 Nov 2024 21:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NCFW8zOT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtuLLDAA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BE213698E
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6B213698E;
+	Mon, 11 Nov 2024 21:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358661; cv=none; b=CZzB52V4Wi/zItW6VBV3HMAw52nwWkcGcnBTrRH7w4T73IlY+Jw1711+3kty3oderdg9L72zJFs7akXSN+035BHb2CJoFDTMPdaEtJ+M9ga1+ur3W39PBPZfBWVRKeuR8ZKWaAA2w9ZS6eg51Aw6sUGbyQBDwJRLgK49S/WnBjw=
+	t=1731358826; cv=none; b=pCoRHp+P3Vu4Z4nSi9sIJnhf9DNozTDsoWYyMOpQcV0yBvatoulj0TbFxNIB6rMzponwfMiL2LqET9WV5HScYmPp9nP2xwT/zoIlvSJSfcOCcl6qawgqTjxkZFcBIYu3QQ+so2r4cE7o1RatEmCJJ4+2VZRx0KVUn4M94SVUZts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358661; c=relaxed/simple;
-	bh=Vc5nYJphpxePVqXdWVJpcK+tQTcghIrwNPx+RTzFR6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E94o3V9wWz11WVDV6aXjVGVyPydgPZfaBCPB7lfvV+UXCEJK1eIoIC4RYLBUSnLKuPTk2Dd6BaeHb+8ABUVaXG4yXpW+GYX62NNijKfsNCfDpybxbuwBxmthjbDWQXoL5J6goLPk8YoHeYbtDTlkF3JJ9Lz9fI5QXet1DA6aMDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NCFW8zOT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720be27db74so3675258b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731358659; x=1731963459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DqqAJkrv0yVPoqg2lzfc8sKJkc9kA0WxcjS+iK6jMjo=;
-        b=NCFW8zOTsu9M5syQl55Bltgmpd2Wl7GhXLYhtWHTTSbrMlaL+7/HR8W5OELm45/bzw
-         8sW3pTldSLn9iqZKspS+5kHxc0FltaDlpo2UekHcWHqeYcdn/h1jgx7+tNd5bDxKiN1j
-         XwolAdQHF/V5FcEfk6E6dSX5dadKbtkblyDZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358659; x=1731963459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DqqAJkrv0yVPoqg2lzfc8sKJkc9kA0WxcjS+iK6jMjo=;
-        b=aBx4I5KQsViVaj4zEpnAQ32VHRs62euV/cMn09+XNbKcvD+oTGMvR6rnSFB4zFB7V/
-         EDrRaZzV5YRJE8693Vohz/XnurGsR+Z6qd66uJFnyTr/e1HOAtje62goBeWoV1/EX1Pb
-         zIqnTgrIqpeQjFrWcINt6nO3sDQ+5nUB6pAiFjxB+2WIxnJRGDsYS2ny716jJEk8e56D
-         pXEpeaqfHORcs+aJhKK83UGjPJHpZYqvsca+pRCtH+8yRym9r51CUfnlIEfyevT1KNws
-         eKJ1gykmsThyCas595qjaiL85W3F+UH7oM3+FnELrhjyjFsDXCSAdTm2B3UbJ3WWme6y
-         CKeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHu1Z/0mQHvvwTq3J55rQSXWg0EWm0+Vmo6qemV9ojn+YsjFTysY+EseiiZ25+/GOW0vOwv9DArWDdcBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrz5S2pcdgrvnbfNtk4Jzqyohzhl5g/tFdPVFuzTCVAdCTXfk+
-	PW3TtH4DK9d2kiQ4mo8bu3gx/MjGRYy3h0k0NVSWPKJyI7nKwhqSi7Mpt2/Xhf8eikbrWceiO2Q
-	=
-X-Google-Smtp-Source: AGHT+IHzObwGU14s/KxeM+v9itqBClQluPUEnyodWHLybERgim04HWyosSpD1xIVg7mMpGkGYGGCZg==
-X-Received: by 2002:a05:6a00:13a3:b0:720:3092:e75f with SMTP id d2e1a72fcca58-724122d2c59mr25497376b3a.8.1731358659057;
-        Mon, 11 Nov 2024 12:57:39 -0800 (PST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com. [209.85.214.177])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799baf7sm9972686b3a.121.2024.11.11.12.57.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 12:57:38 -0800 (PST)
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so3295ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:57:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXW8wv8OixxSOKlCVtCy5xwAQ3sQnkbxKi3gZHzc8PNzAV6RuYI5y/DPeRQrr48lgHAsth8OxMWncLQ0vw=@vger.kernel.org
-X-Received: by 2002:a17:902:da91:b0:20c:a5fb:7a0a with SMTP id
- d9443c01a7336-211ab402b1fmr475765ad.19.1731358657430; Mon, 11 Nov 2024
- 12:57:37 -0800 (PST)
+	s=arc-20240116; t=1731358826; c=relaxed/simple;
+	bh=/Br54z6T0qS7Wbf6l+prUwGUWQjI1w3sLhzxdzz7bFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kZ2bGilCTGwUql94yQww+FI7WL+ZGgyIxIM3vNdrxC3rMuJ1GEOOY7CyMfW6iEDrNia/So2QD9s60EVywDLaRpT+n+dSOgvDzji+6n+PQt4HmXdUJkuZJ1gJvNiRL3lQHaoh8woNVt2lKoUM2/BbIdQeZEdWkynpzxJu+HVbiac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtuLLDAA; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731358824; x=1762894824;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/Br54z6T0qS7Wbf6l+prUwGUWQjI1w3sLhzxdzz7bFg=;
+  b=LtuLLDAAG4GB4/Eyzcyg+asDgqceO7qQK0Pj6xVl90qsydXCtAHBHTl6
+   1Isrdjbf57t/jRWAoaUWAQ0qsFYr0IEsU3vclFtBK7W67XjSN7SpflMb2
+   O7c2Cz3QNxMcgZjV1AcjdSITPVkCK4cdzzrh86XfpHa2T2bgF0q627Wns
+   cOlk2+1cIKlpKpVlDDjlibUb3NEENaKEcKfJ4760I49lfAaL1ertHQsHE
+   7Svtj36NnzGR0JUOvOqrQ6Pnqq46QzQlQJWcHnFYsiju5/yVywTgQU6QT
+   E4UyOhWCGpkb3iPFitqHnE6ngsHIYI811GRQ2yxYFAUKkzD+xmsyIZAEG
+   A==;
+X-CSE-ConnectionGUID: Z95lEN6cQc+JRKTOPDpzxQ==
+X-CSE-MsgGUID: ZkGu+/rNR3CObXXroajysQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31142218"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31142218"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 13:00:24 -0800
+X-CSE-ConnectionGUID: u9Ydgm7MTh6l7cOFDhJ/Xg==
+X-CSE-MsgGUID: zJYmaCWhTsCaNfXI+Ni5Fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="87468342"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.216]) ([10.124.223.216])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 13:00:21 -0800
+Message-ID: <c4adf8da-fac0-4a1a-9b83-7a585fc63ca2@intel.com>
+Date: Mon, 11 Nov 2024 13:00:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7cbbd751-8332-4ab2-afa7-8c353834772a@linux.ibm.com>
- <CA+ASDXPKosUXy1x7Yvbu3pEYiMfDPSt69xt3Jq-zHw66yeUSRw@mail.gmail.com> <6f0cd0ce-f217-4397-8785-7590d1e0e0e0@linux.ibm.com>
-In-Reply-To: <6f0cd0ce-f217-4397-8785-7590d1e0e0e0@linux.ibm.com>
-From: Brian Norris <briannorris@chromium.org>
-Date: Mon, 11 Nov 2024 12:57:25 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXPw+1mvHaS21_Z=E7cCsErv8sMseW2pBCMRdB4iyVzzKA@mail.gmail.com>
-Message-ID: <CA+ASDXPw+1mvHaS21_Z=E7cCsErv8sMseW2pBCMRdB4iyVzzKA@mail.gmail.com>
-Subject: Re: [bug report] cpumask: gcc 13.x emits compilation error on PowerPC
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: kees@kernel.org, nathan@kernel.org, yury.norov@gmail.com, 
-	linux-kernel@vger.kernel.org, Gregory Joyce <gjoyce@ibm.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/10] TDX host: metadata reading tweaks, bug fix and
+ info dump
+To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
+ <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "peterz@infradead.org" <peterz@infradead.org>, "hpa@zytor.com"
+ <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
+ "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "Yamahata, Isaku"
+ <isaku.yamahata@intel.com>
+References: <cover.1731318868.git.kai.huang@intel.com>
+ <0adb0785-286c-4702-8454-372d4bb3b862@intel.com>
+ <f5bc2da140f16da41af948adb50a369840ff890c.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <f5bc2da140f16da41af948adb50a369840ff890c.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nilay,
+On 11/11/24 12:49, Huang, Kai wrote:
+> It also has a patch to fail module initialization when NO_MOD_BBP feature is not
+> support.
+> 
+> Just want to confirm, do you want to remove the code to:
+> 
+>  - print CMRs;
+>  - print TDX module versoin;
 
-I'm responding here to try to help move things along for you, even
-though I'm not a maintainer here and don't have a strong (nor
-authoritative) opinion.
-
-On Thu, Nov 7, 2024 at 5:38=E2=80=AFAM Nilay Shroff <nilay@linux.ibm.com> w=
-rote:
-> On 11/6/24 23:30, Brian Norris wrote:
-> > IIUC, he was hoping for better compiler diagnostics to help out there.
-> Hmm ok
-
-AFAICT, things aren't moving so fast there, so it might wise to try to
-silence the problem for now.
-
-> > (Also, I imitated Thomas's .config notes from that report and couldn't
-> > reproduce with my GCC 13.2.0.)
-> >
-> > I also happen to see there are a few scattered instances of either
-> > disabling or working around -Wstringop-overread false positives in the
-> > tree today.
-> >
-> So shall we wait until we get better diagnostics from GCC or can we bypas=
-s this
-> error temporarily with either using __NO_FORTIFY (as I proposed  in my an=
-other
-> email) or disable -Wstringop-overread for kernel/padata.c file? Later whe=
-n we
-> find a better fix, we may then revert this change.
-
-If this warning is causing pain, then we should probably bypass it. I
-*think* there's less blast radius by simply disabling
--Wstringop-overread for this file, but I'm not completely sure.
-
-Brian
+What is your goal?  What is the bare minimum amount of code to get there?
 
