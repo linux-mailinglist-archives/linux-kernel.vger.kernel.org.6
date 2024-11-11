@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-404870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FC69C4987
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:02:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7705D9C498D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1747D1F25ECA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C56289298
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8BA1B4F07;
-	Mon, 11 Nov 2024 23:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D2F1BD4F7;
+	Mon, 11 Nov 2024 23:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="XBmuFp3x"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+Gg9nRi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D31224FD;
-	Mon, 11 Nov 2024 23:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731366144; cv=pass; b=SE/A04Pmvs92qj9oxW+JQTeSM07aYJ1/c8YOUPG3wNMsk1I9rl57HeFoU+JrlcPZln3iESO4fVCLbKPWsWe7lxGPOBIPwOnisHZutzcoVsb0axyRyRwmizbBO8wjmQvYef2yOIqpaCwnzsQis+8UkuIAwIvHJo6vck0R8ZU0AOE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731366144; c=relaxed/simple;
-	bh=L3YqrZ8c1afv2KPFq5IYUPEZ7m8x9Zd+jTFEWvmDMuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbQ+wRt18FHvRXqsZPG6bLWFfizM5m4e5zF2cR8wPc/XyEiZaLdGrqY/GVl40AoZPgz2HTUWwrQaekYjWNj1s5YaESegts9zwUDT2mA+DkAtqst5qvrAC0uYF/Q092KkzOeSO/o30wkLgGCSLi0mDAyM8jUDz/rhGxFbtbSCiLQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=XBmuFp3x; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1731366126; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=g/Yz57YJhY2Ik8qETjfI+9U/OftgnBNe8hwqlteJebKRwk3SBSiNGfLaYhT5LRv6HZ+O5yzzH9S478IY4fkVPPsB02gS8g3GmurF8K8Ls66YO70wLY2GkEMAu38pZb5+wqbzdpMUhEWuLrWyOsQ6MH8HUfXJ/f+fyVY9LEY3XUI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1731366126; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=hPRVom/8RjWezWblZ3K3t1teLpTNa9AC8C0X/PUx5JY=; 
-	b=mO9AklKbipJKU/jmI1JT9+eJUMyLsdN6sNJqegi+0MqLeFTWbw4KFx5AZKj3+xYjF9DRwl0qPKGpRdTl195XHqhl1c02bgmtqzp32iAKme/N+79NJFgE5X0UEVMiB+Oejc45wUcXJQM8YgUT7d+1AZknqy0key0SVSvqYVZFaVs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731366126;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=hPRVom/8RjWezWblZ3K3t1teLpTNa9AC8C0X/PUx5JY=;
-	b=XBmuFp3x1T2HyEZ9JwdSrp8Fl2KmEs23PL7Fu8ANTMpFTxtcB9OCqM7ElmmQdmsP
-	WhlPcowqe9Nf4f8L4hfmpWxxGDAZQ0cMsdW5ZGcz7wwe3dNYHN+s2SPf1gOcl3hcKgI
-	ag4F052wStl89jMlk9D5yo2vW6PI0Nnly9v+PeZI=
-Received: by mx.zohomail.com with SMTPS id 1731366125552486.2187532054958;
-	Mon, 11 Nov 2024 15:02:05 -0800 (PST)
-Received: by mercury (Postfix, from userid 1000)
-	id BA8611060457; Tue, 12 Nov 2024 00:02:00 +0100 (CET)
-Date: Tue, 12 Nov 2024 00:02:00 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Ye Zhang <ye.zhang@rock-chips.com>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, 
-	andriy.shevchenko@linux.intel.com, tao.huang@rock-chips.com, finley.xiao@rock-chips.com, 
-	tim.chen@rock-chips.com, elaine.zhang@rock-chips.com
-Subject: Re: [PATCH v4 4/4] gpio: rockchip: Set input direction when request
- irq
-Message-ID: <tqve7heg2dwbxzbmcinyt6qhsjzlnddmbf6toxizxixghfth5y@d6g22ith7eqf>
-References: <20241111023412.3466161-1-ye.zhang@rock-chips.com>
- <20241111023412.3466161-5-ye.zhang@rock-chips.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE5B16F0CA;
+	Mon, 11 Nov 2024 23:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731366372; cv=none; b=H3YjDkcO8ohtrIHXjLkAx49rmjfOSbDWbKNkp40uhSyIMS+N8Z072Q1pnTyb70Ut9atorEm7iG/k2Kz7RcMIihHfX/uIbgbGhA4cCv0VI5h0Rv5ptAxJ59S2Fr0R0gQbPE8nVYZ1EWYrdJZg6ZOoKnSgbSEKI+z69qy0TZ6ArFM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731366372; c=relaxed/simple;
+	bh=5cQ0zZajVpfP0QpuAM0B+3kFcgW+YfPO7ZhjFNsXkNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LsGM0DadK1B1wJfU/C93TOodQYKj/bX0FNiN+Gfd9Q7afhHcWq2CUHpBMOmGCkuei7WPKqxgCvP+d0vnKYkRNCrCAzhD4nIUmiE6Uqlp3VvjNAnW5uL8I0MnISahoyMG7sJ0NuWwcK8zbwg82re9dHJuIXTbyru25YBeo2tT9L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+Gg9nRi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B25CC4CECF;
+	Mon, 11 Nov 2024 23:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731366372;
+	bh=5cQ0zZajVpfP0QpuAM0B+3kFcgW+YfPO7ZhjFNsXkNA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S+Gg9nRivyOHyZripGCNnKCa1o8L3XYcZA5Zrum3/rqRrjztDRo3fPkVSMfcuBDU8
+	 4lH1rH/Jlxk5mtst2T1xiWmFeLPTdpOodh6xJObbGFxFcgi7V2vPX0/0+HUK3mO2ep
+	 McajZR4QGpy+nMDTTp1r5S2dDGsJeODW6JlgVmWtDbPCEpzf8/lAHj0I3tpnha966Q
+	 zDw1Wzh78DRKJ7aWZs0wNi2sFGfFpV3Ri7c50H2cGfWZ58QDkhsObjAi9ow9yE1wsn
+	 A7oe5ai8ZCZHxq2Lcod0G2HqK/v5uV+0dCyYTI7oO9nvsGGypNGz6t+2+BWqoYvePi
+	 o82cYopzw5H8g==
+Date: Mon, 11 Nov 2024 15:06:09 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
+ Cochran <richardcochran@gmail.com>, Radu Pirea
+ <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
+ Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
+ danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
+ Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
+ register specific PTP clock or get information
+Message-ID: <20241111150609.2b0425f6@kernel.org>
+In-Reply-To: <20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
+References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
+	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eqdhcrysbp4nlnmm"
-Content-Disposition: inline
-In-Reply-To: <20241111023412.3466161-5-ye.zhang@rock-chips.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.3.1/231.287.20
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 30 Oct 2024 14:54:45 +0100 Kory Maincent wrote:
+> @@ -41,6 +43,11 @@ struct ptp_clock {
+>  	struct ptp_clock_info *info;
+>  	dev_t devid;
+>  	int index; /* index into clocks.map */
+> +	enum hwtstamp_source phc_source;
+> +	union { /* Pointer of the phc_source device */
+> +		struct net_device *netdev;
+> +		struct phy_device *phydev;
+> +	};
 
---eqdhcrysbp4nlnmm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 4/4] gpio: rockchip: Set input direction when request
- irq
-MIME-Version: 1.0
+Storing the info about the "user" (netdev, phydev) in the "provider"
+(PHC) feels too much like a layering violation. Why do you need this?
 
-Hi,
+In general I can't shake the feeling that we're trying to configure 
+the "default" PHC for a narrow use case, while the goal should be 
+to let the user pick the PHC per socket.
 
-On Mon, Nov 11, 2024 at 10:34:12AM +0800, Ye Zhang wrote:
-> Since the GPIO can only generate interrupts when its direction is set to
-> input, it is set to input before requesting the interrupt resources.
->=20
-> Signed-off-by: Ye Zhang <ye.zhang@rock-chips.com>
-> ---
+> +/**
+> + * netdev_ptp_clock_register() - Register a PTP hardware clock driver for
+> + *				 a net device
+> + *
+> + * @info: Structure describing the new clock.
+> + * @dev:  Pointer of the net device.
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> +/**
+> + * ptp_clock_from_netdev() - Does the PTP clock comes from netdev
+> + *
+> + * @ptp:  The clock obtained from net/phy_ptp_clock_register().
+> + *
+> + * Return: True if the PTP clock comes from netdev, false otherwise.
 
--- Sebastian
+> +/**
+> + * ptp_clock_netdev() - Obtain the net_device reference of PTP clock
 
->  drivers/gpio/gpio-rockchip.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-rockchip.c b/drivers/gpio/gpio-rockchip.c
-> index b7a43e492965..40c2476699aa 100644
-> --- a/drivers/gpio/gpio-rockchip.c
-> +++ b/drivers/gpio/gpio-rockchip.c
-> @@ -476,8 +476,11 @@ static int rockchip_irq_reqres(struct irq_data *d)
->  {
->  	struct irq_chip_generic *gc =3D irq_data_get_irq_chip_data(d);
->  	struct rockchip_pin_bank *bank =3D gc->private;
-> +	irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
-> =20
-> -	return gpiochip_reqres_irq(&bank->gpio_chip, d->hwirq);
-> +	rockchip_gpio_direction_input(&bank->gpio_chip, hwirq);
-> +
-> +	return gpiochip_reqres_irq(&bank->gpio_chip, hwirq);
->  }
-> =20
->  static void rockchip_irq_relres(struct irq_data *d)
-> --=20
-> 2.34.1
->=20
->=20
+nit: pick one way to spell netdev ?
 
---eqdhcrysbp4nlnmm
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	ret = ptp_clock_get(dev, ptp);
+> +	if (ret)
+> +		return ERR_PTR(ret);
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcyjOgACgkQ2O7X88g7
-+pp6lw/8CQDrUfA+mk0LAGtKVejWOvdaGfNTnCa7DY5P3llWNqKwCJfQyKbHlKH/
-5SE//XbN6eODOyLRxw46HxFN4CCGpkIKIga1cpUWFA5HXCLLLVellpdXOsJ4U917
-Fp4SDGlzyX9Mv6hTyMHvDbPmnsD+xKaf+H2/szyqUCB/sqLSx7TFzkee1JbgYKmW
-xZEQ7AWnzqtZ6SEEUBXv8zVxYwc/mUybhf7X+67H7DGGgfF8dZ7TDdPQ55TR8LxK
-72BF8VcTDIZCA0yJPAmOkBRlUABtyMff9IIrTN7vAdra8IXIjY0t3nnJKgD/7Zx/
-1XncXqdTz7Zvyjzx/gy7m4OfNIgrAIJjQeXgiSr69plQvYkasPF9pi+BTa/rZo7E
-kzkM9tlJ0wj7uIR2x8pss40s/bLOR7GCh78gAiCBsE4IToiW5OTtTJxvc0kE4j8X
-VBOViWxYYXXDiXptInpronVaRp2H3Np5vodXHTRgC4mpyyG9Lx/QVrZp/e708/mN
-agbxOBRl6ZNPqLiFKSNaaVxqfeF8PJeusuJHgU+5CswN3ensorw5NHRGfl2QyV5M
-7YBrUr9BWEd1MqdxXHtlYuL5vnRECJMjN/4BhtZaPTFRUDFrtNYhivkKDYmPK3o3
-8itQUu/BhsJXA9Rw5doEEiJ53rxOByLygcGJbbsdwyObmk9xxEw=
-=pqGX
------END PGP SIGNATURE-----
-
---eqdhcrysbp4nlnmm--
+why do you take references on the ptp device?
 
