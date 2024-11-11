@@ -1,303 +1,154 @@
-Return-Path: <linux-kernel+bounces-404453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517959C43EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:43:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E88139C43E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:42:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CED6B2BDCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786461F22419
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE861AB53F;
-	Mon, 11 Nov 2024 17:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEE61AAE1B;
+	Mon, 11 Nov 2024 17:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BTxH4duz"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="GPfhgvbt"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2891AA788;
-	Mon, 11 Nov 2024 17:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D241A7AF5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346755; cv=none; b=BEa3tE4mCffmuSJyzn3NtjS2/BkflLntkshBqUZ8Vc/mMrC2og0Naq0JDTyk6yr5BxTmJdXGVxsj0vxaE02MDqNZtNAFjO2rQURQtGBJl2AtbgpK/K4gHUfuCsYrJ1hdb/p0rP4HQ7Ua0AZAEw7yzvq+aXehP6S0DyvrL1d9pTM=
+	t=1731346800; cv=none; b=U0/71ly/iLrDp2Juln10rzN5bq1g/XdNldrPKCkSQTu893SkmFXe8TjClxdyeOQg6xxC/bsUUY3/vkTb+zOvQt8lVsjxQnaYW7eFxJazQpFYnxqQBYZzVw/uL/tA9mV+jX5JXwZMr7rOw6paz6lUzJ33lDj93esp4sB2H/jyDGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346755; c=relaxed/simple;
-	bh=lBbzUyMqfHeDD6ko8cw3TFL2RQtuO/mV4Rr1WqZ++08=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uV77hvBnixpf1gJwpkn0P2JFy0uUbivm6FyhTu5C+M62xL8XZHaB3nXeCLq0opmNSePi7bYU2HRTZWvgoYXSPpZioKdvb+8hlP+yJFWUk/YLtnEr9GKL4Vb+1o+nxnBveOOQ+fwd1ltezhFW69hm4E7bTBSCfrYfIof/3/bt4ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BTxH4duz; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABBUkq9027315;
-	Mon, 11 Nov 2024 17:39:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nq2M7QKq6EEuAV62YaLr21VLlQSB1WvMDPSk2WFA9DE=; b=BTxH4duzTUmjDLjt
-	jbec2dWNfpnhOl9WU/i+HMOpX5ARjg3DvvLIrP680zHl7MbNEo8pq+FAA4ymH4Hh
-	jg1C8IrKjfnUxeZWiwOI4AGlUPrGIud6MM0OS29256XgUgJZywFQlCC/hjpEc3DS
-	2Epx9idLPxq2m0nCqlFyQpi23d/bROJiwYZLlqSQ9vW7HCtet/BFtALRLu9ych7d
-	GvD/2Ur94ERkoZ1jPPuXcvQzbat2u778O2OJYzhB4AOx0j222upzgfwxTRX31xcC
-	v2+VCSywJQxfiv1Uw3ozM0cKGv2hMwRfxOspzcaTM9Ubjvr7v+gDoqCjFKSaGdC+
-	aXlj1Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sytsmxcw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 17:39:09 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABHd85m021957
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 17:39:08 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 11 Nov 2024 09:39:02 -0800
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>
-CC: <quic_vikramsa@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v1 1/1] media: qcom: camss: Restructure camss_link_entities
-Date: Mon, 11 Nov 2024 23:08:45 +0530
-Message-ID: <20241111173845.1773553-2-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241111173845.1773553-1-quic_vikramsa@quicinc.com>
-References: <20241111173845.1773553-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1731346800; c=relaxed/simple;
+	bh=tjcL0LbBa9Ai1V/5sOI3hTL3tqmtPymVsDfumEV68Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AcHzEiXgxo0KfKDXuHf1kPHw3ueeXJjqBjrXHIduE+t7ELTlH4acOgSs4mkxNZizNXxRpH2tbWnPcTlnJ1AyvMyMITQHMReoGxmtTOubigee3buv/HT87+vpRbLKxBVs9ZEwrOvPHEAQoqy1bwfeSJEJEABU0fl7VlpC1/Si4J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=GPfhgvbt; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-718065d6364so2448113a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731346797; x=1731951597; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zornXYrQK1q5jDp72wLGbGUMhA7z4OfmXLBGicUzQUM=;
+        b=GPfhgvbtBc+B5UsVQSM7C/73J4V0OxTJrWz6rHm+iefdemKS5ASpssooTO+W+AtVwU
+         xlFMOs0BBVDkdUtib1+yxbj0f0qjOtNdX+Z3XXffgsaBi/xzPoTDRvV7UpZHRsQoi14c
+         BPteC9aSdqpfVcujpj6SEn6+Edcw5oGE2tKw9dTzRebu+qk4vZvABQCe0v16D9GcRhYn
+         fFWizib2VX+o7bhF9y2qfBrEO2gvSH5CXBjUwj/HZSmxdTbuMwvx4Bsdk8lx093MZQsM
+         X+EuPnMapk4SFNRsH+EJPPSSa2NQjnvgOgLptyYjYeqJOwWn1tCrHHEkxSV4e/3zvGOz
+         LDkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731346797; x=1731951597;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zornXYrQK1q5jDp72wLGbGUMhA7z4OfmXLBGicUzQUM=;
+        b=GRO8LTm3rZYclbV84AURuTdnoSMBLRWZjDabgknkCfdcLduZ8J3SX0BtD89slkwv3j
+         SAAa1kHgCi096ZO+rVtWuFLt8GbMrnMAgSboNpTIBVa2TIAwKk/KsYFh6v2LWY3tDs/s
+         b1YWjVJ1tYBQCQ9TwSgKxw7AqL4jL4CsBdI5caujwlVUbiILFRl+BTdkd6WS2xNUmctd
+         bQ/zd4NhrdlRO6KMa18VR4am+AaJl5K9C670HvMVUXYYK9tDG1uoxHainp3wHsAX8ETZ
+         mBfdfEZfY/ysKnbXlEs3LmvElivjmVINjgs9zSGYYUON3f5B/xM5AsApdlDtpvxPB2jP
+         bSUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhI8jOkUgrHC0gUfK2NFENpHbRm2R4ZO/DPZ/MvDm2KWUFGRtEDyXuYaPXk1WDq7Yg0siuus80dnS19hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmocsiRF22YCIgw+al6bInwMbI4xNCsOCk5hOTdFNU+mRDvA4Z
+	9+8H8CmcHwFHG2MFG9duldYmb6XycXaGyizDp7gfR9k6dtj7n2NSUuAV02HePjw=
+X-Google-Smtp-Source: AGHT+IG4NBeRv1XZA/CiIhXb6FBtUBNiBbImRao8a/5WPPZ6TVlAlQmjjSke+YET1UaXJNr4aEjOnQ==
+X-Received: by 2002:a9d:7856:0:b0:718:c2e:a186 with SMTP id 46e09a7af769-71a1c2b11fdmr9515988a34.26.1731346797472;
+        Mon, 11 Nov 2024 09:39:57 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a1092c14fsm2308234a34.72.2024.11.11.09.39.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 09:39:56 -0800 (PST)
+Message-ID: <3c904d74-c685-4f8a-bc1d-edc24da59fa5@kernel.dk>
+Date: Mon, 11 Nov 2024 10:39:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SV-byBueOOr2E40MG4ait_CY_ab7_2Ty
-X-Proofpoint-ORIG-GUID: SV-byBueOOr2E40MG4ait_CY_ab7_2Ty
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
- mlxlogscore=811 lowpriorityscore=0 malwarescore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411110143
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <ZzI97bky3Rwzw18C@casper.infradead.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <ZzI97bky3Rwzw18C@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Refactor the camss_link_entities function by breaking it down into
-three distinct functions. Each function will handle the linking of
-a specific entity separately, enhancing readability.
+On 11/11/24 10:25 AM, Matthew Wilcox wrote:
+> On Sun, Nov 10, 2024 at 08:27:52AM -0700, Jens Axboe wrote:
+>> 5 years ago I posted patches adding support for RWF_UNCACHED, as a way
+>> to do buffered IO that isn't page cache persistent. The approach back
+>> then was to have private pages for IO, and then get rid of them once IO
+>> was done. But that then runs into all the issues that O_DIRECT has, in
+>> terms of synchronizing with the page cache.
+> 
+> Today's a holiday, and I suspect you're going to do a v3 before I have
+> a chance to do a proper review of this version of the series.
 
-Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- drivers/media/platform/qcom/camss/camss.c | 159 ++++++++++++++--------
- 1 file changed, 105 insertions(+), 54 deletions(-)
+Probably, since I've done some fixes since v2 :-). So you can wait for
+v3, I'll post it later today anyway.
 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index fabe034081ed..1052c01b45f3 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1840,14 +1840,66 @@ static int camss_init_subdevices(struct camss *camss)
- }
- 
- /*
-- * camss_link_entities - Register subdev nodes and create links
-+ * camss_link_entities_csid - Register subdev nodes and create links
-  * @camss: CAMSS device
-  *
-  * Return 0 on success or a negative error code on failure
-  */
--static int camss_link_entities(struct camss *camss)
-+static int camss_link_entities_csid(struct camss *camss)
- {
--	int i, j, k;
-+	int i, j;
-+	int ret, line_num;
-+	u16 src_pad;
-+	u16 sink_pad;
-+	struct media_entity *src_entity;
-+	struct media_entity *sink_entity;
-+
-+	for (i = 0; i < camss->res->csid_num; i++) {
-+		if (camss->ispif)
-+			line_num = camss->ispif->line_num;
-+		else
-+			line_num = camss->vfe[i].res->line_num;
-+
-+		src_entity = &camss->csid[i].subdev.entity;
-+		for (j = 0; j < line_num; j++) {
-+			if (camss->ispif) {
-+				sink_entity = &camss->ispif->line[j].subdev.entity;
-+				src_pad = MSM_CSID_PAD_SRC;
-+				sink_pad = MSM_ISPIF_PAD_SINK;
-+			} else {
-+				sink_entity = &camss->vfe[i].line[j].subdev.entity;
-+				src_pad = MSM_CSID_PAD_FIRST_SRC + j;
-+				sink_pad = MSM_VFE_PAD_SINK;
-+			}
-+
-+			ret = media_create_pad_link(src_entity,
-+						    src_pad,
-+						    sink_entity,
-+						    sink_pad,
-+						    0);
-+			if (ret < 0) {
-+				dev_err(camss->dev,
-+					"Failed to link %s->%s entities: %d\n",
-+					src_entity->name,
-+					sink_entity->name,
-+					ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * camss_link_entities_csiphy - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities_csiphy(struct camss *camss)
-+{
-+	int i, j;
- 	int ret;
- 
- 	for (i = 0; i < camss->res->csiphy_num; i++) {
-@@ -1868,71 +1920,70 @@ static int camss_link_entities(struct camss *camss)
- 		}
- 	}
- 
--	if (camss->ispif) {
--		for (i = 0; i < camss->res->csid_num; i++) {
--			for (j = 0; j < camss->ispif->line_num; j++) {
--				ret = media_create_pad_link(&camss->csid[i].subdev.entity,
--							    MSM_CSID_PAD_SRC,
--							    &camss->ispif->line[j].subdev.entity,
--							    MSM_ISPIF_PAD_SINK,
-+	return 0;
-+}
-+
-+/*
-+ * camss_link_entities_ispif - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities_ispif(struct camss *camss)
-+{
-+	int i, j, k;
-+	int ret;
-+
-+	for (i = 0; i < camss->ispif->line_num; i++) {
-+		for (k = 0; k < camss->res->vfe_num; k++) {
-+			for (j = 0; j < camss->vfe[k].res->line_num; j++) {
-+				struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
-+				struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
-+
-+				ret = media_create_pad_link(&ispif->entity,
-+							    MSM_ISPIF_PAD_SRC,
-+							    &vfe->entity,
-+							    MSM_VFE_PAD_SINK,
- 							    0);
- 				if (ret < 0) {
- 					dev_err(camss->dev,
- 						"Failed to link %s->%s entities: %d\n",
--						camss->csid[i].subdev.entity.name,
--						camss->ispif->line[j].subdev.entity.name,
-+						ispif->entity.name,
-+						vfe->entity.name,
- 						ret);
- 					return ret;
- 				}
- 			}
- 		}
--
--		for (i = 0; i < camss->ispif->line_num; i++)
--			for (k = 0; k < camss->res->vfe_num; k++)
--				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--					struct v4l2_subdev *ispif = &camss->ispif->line[i].subdev;
--					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--					ret = media_create_pad_link(&ispif->entity,
--								    MSM_ISPIF_PAD_SRC,
--								    &vfe->entity,
--								    MSM_VFE_PAD_SINK,
--								    0);
--					if (ret < 0) {
--						dev_err(camss->dev,
--							"Failed to link %s->%s entities: %d\n",
--							ispif->entity.name,
--							vfe->entity.name,
--							ret);
--						return ret;
--					}
--				}
--	} else {
--		for (i = 0; i < camss->res->csid_num; i++)
--			for (k = 0; k < camss->res->vfe_num; k++)
--				for (j = 0; j < camss->vfe[k].res->line_num; j++) {
--					struct v4l2_subdev *csid = &camss->csid[i].subdev;
--					struct v4l2_subdev *vfe = &camss->vfe[k].line[j].subdev;
--
--					ret = media_create_pad_link(&csid->entity,
--								    MSM_CSID_PAD_FIRST_SRC + j,
--								    &vfe->entity,
--								    MSM_VFE_PAD_SINK,
--								    0);
--					if (ret < 0) {
--						dev_err(camss->dev,
--							"Failed to link %s->%s entities: %d\n",
--							csid->entity.name,
--							vfe->entity.name,
--							ret);
--						return ret;
--					}
--				}
- 	}
- 
- 	return 0;
- }
- 
-+/*
-+ * camss_link_entities - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities(struct camss *camss)
-+{
-+	int ret;
-+
-+	ret = camss_link_entities_csiphy(camss);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = camss_link_entities_csid(camss);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (camss->ispif)
-+		ret = camss_link_entities_ispif(camss);
-+
-+	return ret;
-+}
-+
- /*
-  * camss_register_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
+> I think "uncached" isn't quite the right word.  Perhaps 'RWF_STREAMING'
+> so that userspace is indicating that this is a streaming I/O and the
+> kernel gets to choose what to do with that information.
+
+Yeah not sure, it's the one I used back in the day, and I still haven't
+found a more descriptive word for it. That doesn't mean one doesn't
+exist, certainly taking suggestions. I don't think STREAMING is the
+right one however, you could most certainly be doing random uncached IO.
+
+> Also, do we want to fail I/Os to filesystems which don't support
+> it?  I suppose really sophisticated userspace might fall back to
+> madvise(DONTNEED), but isn't most userspace going to just clear the flag
+> and retry the I/O?
+
+Also something that's a bit undecided, you can make arguments for both
+ways. For just ignoring the flag if not support, the argument would be
+that the application just wants to do IO, uncached if available. For the
+other argument, maybe you have an application that wants to fallback to
+O_DIRECT if uncached isn't available. That application certainly wants
+to know if it works or not.
+
+Which is why I defaulted to return -EOPNOTSUPP if it's not available.
+An applicaton may probe this upfront if it so desires, and just not set
+the flag for IO. That'd keep it out of the hot path.
+
+Seems to me that returning whether it's supported or not is the path of
+least surprises for applications, which is why I went that way.
+
+> Um.  Now I've looked, we also have posix_fadvise(POSIX_FADV_NOREUSE),
+> which is currently a noop.  But would we be better off honouring
+> POSIX_FADV_NOREUSE than introducing RWF_UNCACHED?  I'll think about this
+> some more while I'm offline.
+
+That would certainly work too, for synchronous IO. But per-file hints
+are a bad idea for async IO, for obvious reasons. We really want per-IO
+hints for that, we have a long history of messing that up. That doesn't
+mean that FMODE_NOREUSE couldn't just set RWF_UNCACHED, if it's set.
+That'd be trivial.
+
+Then the next question is if setting POSIX_FADV_NOREUSE should fail of
+file->f_op->fop_flags & FOP_UNCACHED isn't true. Probably not, since
+it'd potentially break applications. So probably best to just set
+f_iocb_flags IFF FOP_UNCACHED is true for that file.
+
+And the bigger question is why on earth do we have this thing in the
+kernel that doesn't do anything... But yeah, now we could make it do
+something.
+
 -- 
-2.25.1
-
+Jens Axboe
 
