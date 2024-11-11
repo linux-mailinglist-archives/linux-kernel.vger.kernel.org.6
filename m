@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-403870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C89C3C06
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:33:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9872D9C3C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:33:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0654280EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C66161C217AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCC016F85E;
-	Mon, 11 Nov 2024 10:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B555415B554;
+	Mon, 11 Nov 2024 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVmw5MMb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GaaX34r0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D00156676;
-	Mon, 11 Nov 2024 10:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211F2155C9E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731321184; cv=none; b=OO1PXQgeKLiGdbmhHvocpzwpmPNQ71QAr4Dn+oqiR4UXX7amNYwA3/V+0MaK59QkvW5h98k2P07JpbcJdt/3MBIlQQ9TjWLq7qC/xaSyol/JukLmWSFMeOVnXF7y9/4tflXcfiqTgkXQCA7zLACQUy7fhVLjILIaolI8InvuovQ=
+	t=1731321220; cv=none; b=lHRj+A24xuoyTUgCu3kvW05Kj5BBQyOgBarN3ErUrKcitzDJ67MtBLxel75dt46L+cR0QBT3OFdSxIOpyRCuthr0mnNw1OjJWvF9NVwnLfr/0nH3qRYjEzsX7iuuMkl7LKT6VBsLkFoNjGkjb44k8vUllgrvgzodHmoPxMCCwC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731321184; c=relaxed/simple;
-	bh=NjPJn+zfrKu3tcRhst3xGKHkantZhJOFnxnhWOpcfh0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oMJIXxiHJMP/9+vJjSTg/qtptGboeez5aXpB6j43YDi/zierFqqUgug1DdDLqosgFL4KPGz7i34fLJj0bYPrjkg0ovbd1c/IF6+5QWN/+bYZzZ9KvjDiRYyH6KSV3kpWUj91jgiLQz8ept7Z50mVmbK9ubPWhO4Klxw5ZhDiQWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVmw5MMb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56530C4CECF;
-	Mon, 11 Nov 2024 10:33:01 +0000 (UTC)
+	s=arc-20240116; t=1731321220; c=relaxed/simple;
+	bh=ANOdJENUCJKn1xcRedyJ5K+RBJ5qt9+JWo/NXTjq0QQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Jq0o+IGyqfNLyI4AzcpV+rVFfkzWHIDWC0fmv6hoQDNDnyTMQaVq343ecYrrSxYBz2el+uFxZhAwBVaKPuIO4cmazqd9dmxniM+F7johiPiIBhivLC7eX7lNZ6K7MlknqQMe4NUQYmR435paMa+hOXXP63mJ84F+fXXb+uxeZ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GaaX34r0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41BFFC4CECF;
+	Mon, 11 Nov 2024 10:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731321183;
-	bh=NjPJn+zfrKu3tcRhst3xGKHkantZhJOFnxnhWOpcfh0=;
+	s=k20201202; t=1731321218;
+	bh=ANOdJENUCJKn1xcRedyJ5K+RBJ5qt9+JWo/NXTjq0QQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=tVmw5MMb3lf8EdeG/sOBDMHo/5P9xNH+eGqTG1Zia20nuVYLIP+kV/snNWmeA80nz
-	 LbRkQmJe0BfUsXbIk9vxCyHuxwOtBhC10X1Y9ZWeZZJSKhlVdt6lRV20swIG3GJnCZ
-	 4+D9CBMGyHc4iwOdLvNOX5NugJLal/ZER2HhJCLLv5JOHvlqVE/CAJwHxj7Y0iEWZJ
-	 S0EWrMOzmB898vY0oVouYB8WwWDl5o09vzY+/4S+tR9Lu32ZmJgd0/oBZb0OyTmHBC
-	 uuxxUA2iGi25V2RTXOm63AyIJqXPOvgEHAtsQFWhH6Rhu7dqRXVhbkjSsBkJx+cwBm
-	 9ZFnkiGdGCXpg==
+	b=GaaX34r0ckRSaugHwOWeewv6Bi7hxsFOoFD07JipTamVceJDLZULzDZqaBKLWppwE
+	 BeVC7tz8/rneA0YWP8aN/q3iDRSNHD0dYdRoWDqIWsN5F38LRDgoK/NWZuUva3jDn+
+	 Qor10e3tvz5pr5EUu2MnYN9yFeHFlaX3VfuLYKJ1EVo6soeo1HknBTAv4mp9+6hV2Q
+	 4tmfKXeqkfZwTv7Nv6msD06e/NeylwpzQConxRBF2iHp4l/o+kaQFhm7OgqFlcisQR
+	 s14Nl1XH312oJ5+vDoTtMgyocstpC9iXNLz0b8E4FVfs7QgFgxqQ6ka22/bjj17550
+	 p6G4gp+2HYg4g==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>
+To: Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Abhijit Gangurde <abhijit.gangurde@amd.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: remove unused data from gcc-ipq5424.c
-Date: Mon, 11 Nov 2024 11:32:51 +0100
-Message-Id: <20241111103258.3336183-1-arnd@kernel.org>
+Subject: [PATCH] cdx: constify bin_attribute callback
+Date: Mon, 11 Nov 2024 11:33:24 +0100
+Message-Id: <20241111103333.3355250-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,71 +65,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The newly added driver causes a warnings when enabling -Wunused-const-variables:
+This one was missed in the treewide conversion:
 
-drivers/clk/qcom/gcc-ipq5424.c:1064:30: error: 'ftbl_gcc_q6_axi_clk_src' defined but not used [-Werror=unused-const-variable=]
- 1064 | static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~~~
-drivers/clk/qcom/gcc-ipq5424.c:957:30: error: 'ftbl_gcc_qpic_clk_src' defined but not used [-Werror=unused-const-variable=]
-  957 | static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~
-drivers/clk/qcom/gcc-ipq5424.c:497:30: error: 'ftbl_gcc_qupv3_2x_core_clk_src' defined but not used [-Werror=unused-const-variable=]
-  497 | static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
-      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/cdx/cdx.c: In function 'cdx_create_res_attr':
+drivers/cdx/cdx.c:773:24: error: assignment to 'int (*)(struct file *, struct kobject *, const struct bin_attribute *, struct vm_area_struct *)' from incompatible pointer type 'int (*)(struct file *, struct kobject *, struct bin_attribute *, struct vm_area_struct *)' [-Wincompatible-pointer-types]
+  773 |         res_attr->mmap = cdx_mmap_resource;
+      |                        ^
 
-In order to hopefully enable this warning by default in the future,
-remove the data for now. If it gets used in the future, it can
-trivially get added back.
-
-Fixes: 21b5d5a4a311 ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC")
+Fixes: 94a20fb9af16 ("sysfs: treewide: constify attribute callback of bin_attribute::mmap()")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/qcom/gcc-ipq5424.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+ drivers/cdx/cdx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-index 3458c1c98bb7..88a7d5b2e751 100644
---- a/drivers/clk/qcom/gcc-ipq5424.c
-+++ b/drivers/clk/qcom/gcc-ipq5424.c
-@@ -494,11 +494,6 @@ static struct clk_rcg2 gcc_pcie_aux_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_qupv3_2x_core_clk_src[] = {
--	F(200000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
--	{ }
--};
--
- static const struct freq_tbl ftbl_gcc_qupv3_i2c0_clk_src[] = {
- 	F(4800000, P_XO, 5, 0, 0),
- 	F(9600000, P_XO, 2.5, 0, 0),
-@@ -954,13 +949,6 @@ static struct clk_rcg2 gcc_qpic_io_macro_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_qpic_clk_src[] = {
--	F(24000000, P_XO, 1, 0, 0),
--	F(100000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
--	F(200000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
--	{ }
--};
--
- static struct clk_rcg2 gcc_qpic_clk_src = {
- 	.cmd_rcgr = 0x32020,
- 	.mnd_width = 0,
-@@ -1061,12 +1049,6 @@ static struct clk_regmap_div gcc_qupv3_i2c1_div_clk_src = {
- 	},
- };
- 
--static const struct freq_tbl ftbl_gcc_q6_axi_clk_src[] = {
--	F(480000000, P_GPLL4_OUT_AUX, 2.5, 0, 0),
--	F(533333333, P_GPLL0_OUT_MAIN, 1.5, 0, 0),
--	{ }
--};
--
- static struct clk_regmap_div gcc_usb0_mock_utmi_div_clk_src = {
- 	.reg = 0x2c040,
- 	.shift = 0,
+diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
+index 07371cb653d3..316bd89a95ca 100644
+--- a/drivers/cdx/cdx.c
++++ b/drivers/cdx/cdx.c
+@@ -707,7 +707,7 @@ static const struct vm_operations_struct cdx_phys_vm_ops = {
+  * Return: true on success, false otherwise.
+  */
+ static int cdx_mmap_resource(struct file *fp, struct kobject *kobj,
+-			     struct bin_attribute *attr,
++			     const struct bin_attribute *attr,
+ 			     struct vm_area_struct *vma)
+ {
+ 	struct cdx_device *cdx_dev = to_cdx_device(kobj_to_dev(kobj));
 -- 
 2.39.5
 
