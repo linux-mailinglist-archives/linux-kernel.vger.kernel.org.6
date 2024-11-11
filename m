@@ -1,148 +1,111 @@
-Return-Path: <linux-kernel+bounces-403740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07F09C3A00
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:49:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8F89C3A08
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 784821F222EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:49:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C5A1F21F8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1E916C6A1;
-	Mon, 11 Nov 2024 08:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E913A8F7;
+	Mon, 11 Nov 2024 08:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OercpXh1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QAmYd0nC"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880393A8F7;
-	Mon, 11 Nov 2024 08:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815B642A8A;
+	Mon, 11 Nov 2024 08:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731314933; cv=none; b=b86OJUarkCAKGF8LnEQawl7NK3D9BWPQWhM/5SQsODTeGJH91ty1ICPmorVGS7AVc/H3kUy+aCGHZqraLh6WBMxDHkjVh68EkhztGaI7nJPCg6E13TUVq2y99TWo6nI7cj6OvMkX93SJixSaLxcAVxxad3MWMkZCYMSIpC8zr8A=
+	t=1731315052; cv=none; b=QceaftkjBXLKIlCMWHnmSEW103lmOt+hQvlbeDKTg7wbyEVCtE8YlOYZiD4QKYDe+KW8hwqxKqmkVGhiL4ECvkc2T8kov3mTftBIGPmtr1eJYwRi3EqmuhwpYVVsJvZwJ+cvl0N2b0JVnVLqGKfjGVLqYZWwsG/pv1EVRI2d9nU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731314933; c=relaxed/simple;
-	bh=xQKt1lK8GwBq77cZBspA/bVJgEyRoTR8hrlSr+xVmeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A9lF0ShmwubBijCmtq5ZvVZRs+y822HTAjmSQEOMWAjdD7Ex3oQzxQ6G1AOorjB5bhalltOVBNJ0Bms25ym46sFnLu4l6z1xq8fL5aQvhEoPQYaDCmwMSQizpn8fsmoViRwSRsWGyorBG+w5DD5lrIIqfL6JlP9wX6mflhAteSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OercpXh1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AALwQNO015580;
-	Mon, 11 Nov 2024 08:48:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qUkaK4V+txW5YUCCJsunixq9avxafCIj+kEcUtZK9ac=; b=OercpXh1ciL4fEwO
-	dVG4DuKhUkW8aG6/XMJ/JdPVMvPBhxjRI/qyzLa0USFjdn6o6BfmFAlQJBLETlni
-	Bbq8qaISA2azbSxtXLXpg9kFR4xD6UNABsIY9Fo8PU9nhyPEwsuTXXYW1qTchP6s
-	Ivk5xjVnZy8eI+q+J9jtgdYvGWhcaxyAbQEYZRNSHGWqcDU9d05xvWxFShN2ff3Z
-	OwAd3WqCCrMebdsVTiNxdmf0rK6ThcXkfn5jnA7Fff2b/7ovyCu6zvRraiLDiLC8
-	zR9ZDiJcyLGu3urRTcTKclmjJg/H7OHEpDg2mOinJAZ7hcHBE/zj4a659csQGiu2
-	9pFrVg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxr5usb5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 08:48:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AB8mgrL006646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 08:48:42 GMT
-Received: from [10.216.36.177] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 00:48:39 -0800
-Message-ID: <f3e49c6f-891d-4421-851a-25efa1d5b80c@quicinc.com>
-Date: Mon, 11 Nov 2024 14:18:36 +0530
+	s=arc-20240116; t=1731315052; c=relaxed/simple;
+	bh=HUVu5PzPWctsCfq0WgvE2365SU+hH9xVLEljiQJSADg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aeXQ6fBJK6JVYtCvNCOaAIDjmlVupbWTxf8nKuh+a4VsZdIJR8ytTF5ft1Hd7HSNBe1lLZl/BjhBhSOlK241GjkWk8bZuXco2pJpWpCLPmyaTciXqK7sxijYOOT/vTYBq55rt6RNK9eT7wWswkAshPmgcsmwCx4Rp0S2K0/+Jp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QAmYd0nC; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 08ed9a24a00a11efb88477ffae1fc7a5-20241111
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5F4rAbapCjtRK+5E3cd9kMWPwT8eNM90FXJAZ2gUrmc=;
+	b=QAmYd0nCfOuPJZe7seXjTcC0geKFkwYljm2hIcafUFXFoBnHsAAx6H7sW+8mLfd0BsHRP0Vkf8+FLH+G9kHpq3jRI5dXzoRwa+OLkPEYyAObDs3HQqvgC6UgHW5ibbdkblsUlukcRj7yy7To4P0k5UrThwZ0DoAsVhMc3DlAvh8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:fdaf42e2-9166-4f68-ae9e-1b2c4e8db7bf,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:d8e7e206-6ce0-4172-9755-bd2287e50583,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,UR
+	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 08ed9a24a00a11efb88477ffae1fc7a5-20241111
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <andy-ld.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1010684209; Mon, 11 Nov 2024 16:50:43 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 11 Nov 2024 16:50:41 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 11 Nov 2024 16:50:41 +0800
+From: Andy-ld Lu <andy-ld.lu@mediatek.com>
+To: <angelogioacchino.delregno@collabora.com>, <matthias.bgg@gmail.com>,
+	<ulf.hansson@linaro.org>, <wenbin.mei@mediatek.com>,
+	<mengqi.zhang@mediatek.com>
+CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Andy-ld Lu <andy-ld.lu@mediatek.com>
+Subject: [PATCH] mmc: mtk-sd: Fix MMC_CAP2_CRYPTO flag setting
+Date: Mon, 11 Nov 2024 16:49:31 +0800
+Message-ID: <20241111085039.26527-1-andy-ld.lu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: dts: qcom: qcs615: Add QUPv3 configuration
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20241011103346.22925-1-quic_vdadhani@quicinc.com>
- <15238992-4ede-4b85-9947-391baaa4c8a9@oss.qualcomm.com>
- <332f7a0a-d9df-49bd-81d5-cc04c50183b9@quicinc.com>
- <my3im4zjjozoze4s5vkwlraailrd6njbof75acn7lqt5oxzgor@eu6aq2754uqf>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <my3im4zjjozoze4s5vkwlraailrd6njbof75acn7lqt5oxzgor@eu6aq2754uqf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1bzX2aRKXUXs8H0bbYWwgP9E5q8Z-z1c
-X-Proofpoint-GUID: 1bzX2aRKXUXs8H0bbYWwgP9E5q8Z-z1c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxscore=0 malwarescore=0 priorityscore=1501 spamscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 adultscore=0
- mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411110074
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+Currently, the MMC_CAP2_CRYPTO flag is set by default for eMMC hosts.
+However, this flag should not be set for hosts that do not support inline
+encryption.
 
+The 'crypto' clock, as described in the documentation, is used for data
+encryption and decryption. Therefore, only hosts that are configured with
+this 'crypto' clock should have the MMC_CAP2_CRYPTO flag set.
 
-On 10/28/2024 5:58 PM, Dmitry Baryshkov wrote:
-> On Mon, Oct 28, 2024 at 04:49:43PM +0530, Viken Dadhaniya wrote:
->>
->>
->> On 10/26/2024 1:10 AM, Konrad Dybcio wrote:
->>> On 11.10.2024 12:33 PM, Viken Dadhaniya wrote:
->>>> Add DT support for QUPv3 Serial Engines.
->>>>
->>>> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>>> ---
->>>
->>> [...]
->>>
->>>> @@ -392,6 +427,24 @@
->>>>    			#size-cells = <1>;
->>>>    		};
->>>> +		gpi_dma0: qcom,gpi-dma@800000  {
->>>> +			compatible = "qcom,sdm845-gpi-dma";
->>>
->>> You must define a new compatible for qcs615, sdm845 is used as a fallback
->>> (so that we don't have to add new driver entries). You will however need
->>> to submit a separate dt-bindings change.
->>
->> We have added sdm845 in compatible due to below comment in driver file
->>
->> File: https://github.com/torvalds/linux/blob/81983758430957d9a5cb3333fe324fd70cf63e7e/drivers/dma/qcom/gpi.c#L2284
->>
->>    /*
->>     * Do not grow the list for compatible devices. Instead use
->>     * qcom,sdm845-gpi-dma (for ee_offset = 0x0) or qcom,sm6350-gpi-dma
->>     * (for ee_offset = 0x10000).
->>     */
->>
->> Do we still require new compatible for qcs615 ?
-> 
-> You are not living in the void space. `git grep qcom,sdm845-gpi-dma`
-> immediately shows what is being expected. Please don't ignore existing
-> work.
+Fixes: 7b438d0377fb ("mmc: mtk-sd: add Inline Crypto Engine clock control")
+Fixes: ed299eda8fbb ("mmc: mtk-sd: fix devm_clk_get_optional usage")
+Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
+---
+ drivers/mmc/host/mtk-sd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks, Pushed separate patch for GPI documentation patch.
-https://lore.kernel.org/all/w66ki7lwrqol24iptikn7ccna25ujqoywjena5ulekf6vynxny@dylbj2r34h7l/T/
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 022526a1f754..efb0d2d5716b 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -2907,7 +2907,8 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 		host->crypto_clk = devm_clk_get_optional(&pdev->dev, "crypto");
+ 		if (IS_ERR(host->crypto_clk))
+ 			return PTR_ERR(host->crypto_clk);
+-		mmc->caps2 |= MMC_CAP2_CRYPTO;
++		else if (host->crypto_clk)
++			mmc->caps2 |= MMC_CAP2_CRYPTO;
+ 	}
+ 
+ 	host->irq = platform_get_irq(pdev, 0);
+-- 
+2.46.0
 
-> 
->>
->>>
-> 
 
