@@ -1,335 +1,260 @@
-Return-Path: <linux-kernel+bounces-403917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161689C3C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:01:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6783E9C3CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA5F428213B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6DCA280D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1231714C6;
-	Mon, 11 Nov 2024 11:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2FA189B85;
+	Mon, 11 Nov 2024 11:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IllDAVpK"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P49p6Xb9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tkrmPWiL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="P49p6Xb9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tkrmPWiL"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DAA143C72
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D1B156C52;
+	Mon, 11 Nov 2024 11:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322907; cv=none; b=Z8BXZHAPoLXYN7lDu+TDPF5ctf/Jto0cEYwqAV2V6Af6P+4uxIJZmbMz86/STmpRgXOQb3dkCQnc3/Zc24IZZKh+gbJNfIfeIqbidqrmuLpUkXrMJgYFSKrHQAZ/WpZGTA6UC6fZgs/b/njVxZ59eegptmJkDSCDznEdo8SmdUA=
+	t=1731322927; cv=none; b=snShHvuMv7AQbt6/S+Ua7Vhy8cQpdTVdt5+fTL562tnFjzU8b9QhXFB5qWihc/QB5XUlo+B4HgO3WBSOxD1E9cZApcM1WEqfxa3jX0eLWj4fLR7xVeAIq9bB6k0elL572dAVrU3udKy7iNV33ksN7eojdGSffYf1tvsNJrs65gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322907; c=relaxed/simple;
-	bh=ggTJ7n17/0xP8iJ9TwR9jevz7cpzd7bElzejP72QT8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rCjnjUrZ48jBNeUX4ETUXmi35PtOjcQDTq1VDeHcBRH6rof5UV4g9DisadSxj9lIvwweLmPGBkYbn6snpKt/B4dv1qAa9NLml3+R8wdzVu10/DjulXqkDNDr+otT3JeGnCVDk+sBVivxZXvMJM636qa4wWwZ+P8wUbVT3oXIud4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IllDAVpK; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so3520985a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:01:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731322905; x=1731927705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TcEL/g7UU6A5oURZwwzACF+il7qsicK7CTj+asC7v20=;
-        b=IllDAVpKG2mGJtokIiPrLYrdlOvO1mgL7ZUz0MngTm8w9tGT6B4AsmD7CARB2lBJpi
-         fSO/ig6CLZNfk8AkKOQlZh66Jtwvx0KRxdTQRNYegknWqnlIyZHYDk7LBz6dUKKOlkQv
-         H4F0mTnh/oRLJfS8u2PKc2ful5ht9nNtassRFNKhStQM7axh7gMitN/oagk0U0jBjbeA
-         a1mTrP6gS8x7bDzWyyQQ5sKQGU7q5q0fLPVeNzrYixGzVpQotwDzVpUEpd8Qs9qKOnpd
-         6NN1Y9gaOdMO9x1iLcst3jGeFOLIDbFZtnw05SnNVKG5aVKMFgU8ee1Sf9Z/XZ1AZPgl
-         ju5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322905; x=1731927705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TcEL/g7UU6A5oURZwwzACF+il7qsicK7CTj+asC7v20=;
-        b=LWCOGl2XW5ZTju2WsYo9gJz9snEcBmUT431cgSwZCfdLxTmyCpTvkxghQ/GUvxA+wj
-         8s+fpcArre31V4dGiwB0wgPGHysGB6mRnKmFYbsIK79EHYLpALVD05s/jSKgrxTMPeSv
-         ut9kWBvZICNe3ZxKS3pe/gMUSPMybsSKERiaK4mADfVaIxbakLDx+Mm6pNnXNyTR6i7B
-         AaWsnB8Mz3JSe+8RVt24Tpq1+dQzVQOsIJ+o6GzAXgh8JXRCGUMDcTK+lSw6Ih921qlO
-         nFbsFGWlMJrlTWb1i5Nif2RheY9Y7qBExhnOLRkfuBmTTsvv4iI+wfu7AsttHwKbsEgJ
-         2DbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAdp7BOzR3LQzkO4WpMESIvFbnPyaI6cTy1pUoBdF5g3t+QRO76kqxh/77ECuGghXCx11OAnvvnAUswjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ2yMd/Ne1HU8S+eleXNvwlWr8R0bMSkj6IFaXKaCLLxV6Gn4T
-	gg+T8eXQfV2CV4FQG8zh5BZpfBTDrR8Qc7HzE9nemveGodkCG8evf6qoqujDeVRhO0/iQdcb1Ez
-	2UCH/O2AWLgZJpHkBCJ92q8zr92PogKjVR5YyCQ==
-X-Google-Smtp-Source: AGHT+IFyYA9Cvs63Fdp2H3AkCI6uaGHNNzXquZF1X9Q8r2XE4XoIOEjQkozWfVHHkSoY/Fhxx4kebpwP792jnJ0kkgQ=
-X-Received: by 2002:a17:90b:3d91:b0:2e2:a029:3b4b with SMTP id
- 98e67ed59e1d1-2e9b177632bmr16563493a91.28.1731322904951; Mon, 11 Nov 2024
- 03:01:44 -0800 (PST)
+	s=arc-20240116; t=1731322927; c=relaxed/simple;
+	bh=zKv3Vn3RngXApMuDLHQ3tdm8G0jfhbJLEdut14IqwrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rOl+jegiR34GfMvAWSLxj1DJwH8Bw19jLc1vN1zGNXEBOduQhyy5WtjngUfbk1zsY9hoRJU5PPEqv5DEY+nTpLNs/OLICWT0WDi5rVyREkvGVU4XXDKb+ZvvLqEYlQYiykUavYEXh06seFc1Ak+C8eGeUJ2DCzja49/G7LFeV0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P49p6Xb9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tkrmPWiL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=P49p6Xb9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tkrmPWiL; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9C1381F38E;
+	Mon, 11 Nov 2024 11:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731322923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uXHVH0ccgWFcGpeM6HgeltmGCkaKDRVIsW9/gEoqXsg=;
+	b=P49p6Xb9X9EU2crk2y1oMy2KeTCSI+7k6Cf4qmPXhaV50qDusoH3M+AMdTpVGy/6Sw6I3k
+	fnrYtFYt4WdUKE7CGto1/WoVovedVCYShD6+l5IRSG7wNAYlv48lXRP3KaFSgszfEodJWJ
+	sO/nDG7MsI1U1JfpVZOXgSTrqJ10mdY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731322923;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uXHVH0ccgWFcGpeM6HgeltmGCkaKDRVIsW9/gEoqXsg=;
+	b=tkrmPWiLNNj2qm3VuGpKD+E8ycRAHQNEVnHcYHSe5dia8bkPxhGQfF3p8F1nao0Gio6rFJ
+	jN8zHuwwIRfhMYBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731322923; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uXHVH0ccgWFcGpeM6HgeltmGCkaKDRVIsW9/gEoqXsg=;
+	b=P49p6Xb9X9EU2crk2y1oMy2KeTCSI+7k6Cf4qmPXhaV50qDusoH3M+AMdTpVGy/6Sw6I3k
+	fnrYtFYt4WdUKE7CGto1/WoVovedVCYShD6+l5IRSG7wNAYlv48lXRP3KaFSgszfEodJWJ
+	sO/nDG7MsI1U1JfpVZOXgSTrqJ10mdY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731322923;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uXHVH0ccgWFcGpeM6HgeltmGCkaKDRVIsW9/gEoqXsg=;
+	b=tkrmPWiLNNj2qm3VuGpKD+E8ycRAHQNEVnHcYHSe5dia8bkPxhGQfF3p8F1nao0Gio6rFJ
+	jN8zHuwwIRfhMYBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60442137FB;
+	Mon, 11 Nov 2024 11:02:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ricQFyvkMWfuIwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 11 Nov 2024 11:02:03 +0000
+Message-ID: <ff3174f8-c8b5-4fae-a9d9-87546d37c162@suse.cz>
+Date: Mon, 11 Nov 2024 12:02:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
- <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
- <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
- <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com> <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
-In-Reply-To: <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Mon, 11 Nov 2024 13:01:08 +0200
-Message-ID: <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
-Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
-To: Enric Balletbo i Serra <eballetb@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
-	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
-	Masahisa Kojima <kojima.masahisa@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
+ guest_memfd
+Content-Language: en-US
+To: Paolo Bonzini <pbonzini@redhat.com>, Matthew Wilcox
+ <willy@infradead.org>, Shivank Garg <shivankg@amd.com>
+Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ jack@suse.cz, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, kvm@vger.kernel.org,
+ chao.gao@intel.com, pgonda@google.com, thomas.lendacky@amd.com,
+ seanjc@google.com, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, arnd@arndb.de, kees@kernel.org,
+ bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ Neeraj.Upadhyay@amd.com, linux-coco@lists.linux.dev
+References: <20241105164549.154700-1-shivankg@amd.com>
+ <ZypqJ0e-J3C_K8LA@casper.infradead.org>
+ <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
+ <ZyzYUOX_r3uWin5f@casper.infradead.org>
+ <10ffac79-0dba-4c30-991e-f3ca2b5ff639@redhat.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <10ffac79-0dba-4c30-991e-f3ca2b5ff639@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[30];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RL81e5qggtdx371s8ik49ru6xr)];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, 11 Nov 2024 at 10:21, Enric Balletbo i Serra
-<eballetb@redhat.com> wrote:
->
-> Hi Ilias,
->
-> On Sat, Nov 9, 2024 at 1:31=E2=80=AFAM Ilias Apalodimas
-> <ilias.apalodimas@linaro.org> wrote:
-> >
-> > On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@redhat.co=
-m> wrote:
-> > >
-> > > Hi Ilias,
-> > >
-> > > Thanks for your quick answer.
-> > >
-> > > On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
-> > > <ilias.apalodimas@linaro.org> wrote:
-> > > >
-> > > > Hi Enric,
-> > > >
-> > > > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@redha=
-t.com> wrote:
-> > > > >
-> > > > > Hi all,
-> > > > >
-> > > > > I'm looking for any advice/clue to help me to progress on enablin=
-g
-> > > > > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
-> > > > >
-> > > > > I basically followed the steps described in u-boot documentation =
-[1],
-> > > > > I enabled some debugging messages but I think I'm at the point th=
-at
-> > > > > the problem might be in the StandaloneMM application, and I'm not=
- sure
-> > > > > how to debug it.
-> > > > >
-> > > > > What I see is that when I run the tee-supplicant daemon, it looks=
- like
-> > > > > the tee_client_open_session() call loops forever and the tee_stmm=
-_efi
-> > > > > driver never ends to probe.
-> > > > >
-> > > > > With debug enabled I got the following messages.
-> > > >
-> > > > I assume reading and storing variables already works in U-Boot righ=
-t?
-> > > >
-> > >
-> > > Reading and storing variables to the RPMB partition in U-Boot works,
-> > > that's using the mmc rpmb command from u-boot,
-> >
-> > Are you talking about env variables? Perhaps you store them in the mmc
-> > and not the RPMB partition?
-> > There's some information here [0]
-> >
-> > > But setting
-> > > CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
-> > > (although I'm not able to debug at u-boot level) What I see is that
-> > > u-boot gets stuck
-> > > when bootefi bootmgr is invoqued. I can also reproduce the issue with
-> > > bootefi hello.
-> > >
-> > > =3D> run bootcmd
-> > >   Scanning for bootflows in all bootdevs
-> > >   Seq  Method       State   Uclass    Part  Name                     =
- Filename
-> > >   ---  -----------  ------  --------  ----  ------------------------
-> > > ----------------
-> > >   Scanning global bootmeth 'efi_mgr':
-> > > ( gets stuck here)
-> > >
-> > > or
-> > >
-> > > =3D> bootefi hello
-> > > (gets stuck)
-> > >
-> > > To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and bypas=
-s
-> > > the error and go to Linux. My understanding is that
-> > > CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables a=
-t
-> > > u-boot level but OPTEE is running the StandaloneMM service. Am I
-> > > right?
-> >
-> > U-Boot has two ways of storing EFI variables [0] . You can either
-> > store them in a file or the RPMB partition. The correct thing to do,
-> > since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TEE. I am
-> > not sure why the hand happens, but one thing we can improve is figure
-> > out why it hangs and print a useful message.
-> > There are a number of reasons that might lead to a failure. Is the
-> > RPMB key programmed on your board? Have a look at this [1] in case it
-> > helps
-> >
-> > >
-> > > > >
-> > > > > # tee-supplicant
-> > > > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted ser=
-vice
-> > > > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
-> > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-> > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> >
-> > If I had to guess, OP-TEE doesn't store the variables in the RPMB, can
-> > you compile it with a bit more debugging enabled?
-> >
->
-> Here is a log with CFG_TEE_CORE_LOG_LEVEL=3D4, CFG_TEE_CORE_DEBUG=3Dy and
-> CFG_TEE_TA_LOG_LEVEL=3D4
->
-> https://paste.centos.org/view/eed83a5b
->
-> At the beginning of the log I see
->
-> D/TC:0 0 check_ta_store:449 TA store: "REE"
->
-> Which looks wrong to me as I built optee with:
->   CFG_REE_FS=3Dn
->   CFG_RPMB_FS_DEV_ID=3D0
->   CFG_RPMB_FS=3Dy
+On 11/8/24 18:31, Paolo Bonzini wrote:
+> On 11/7/24 16:10, Matthew Wilcox wrote:
+>> On Thu, Nov 07, 2024 at 02:24:20PM +0530, Shivank Garg wrote:
+>>> The folio allocation path from guest_memfd typically looks like this...
+>>>
+>>> kvm_gmem_get_folio
+>>>    filemap_grab_folio
+>>>      __filemap_get_folio
+>>>        filemap_alloc_folio
+>>>          __folio_alloc_node_noprof
+>>>            -> goes to the buddy allocator
+>>>
+>>> Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
+>> 
+>> It only takes that path if cpuset_do_page_mem_spread() is true.  Is the
+>> real problem that you're trying to solve that cpusets are being used
+>> incorrectly?
+> 
+> If it's false it's not very different, it goes to alloc_pages_noprof(). 
+> Then it respects the process's policy, but the policy is not 
+> customizable without mucking with state that is global to the process.
+> 
+> Taking a step back: the problem is that a VM can be configured to have 
+> multiple guest-side NUMA nodes, each of which will pick memory from the 
+> right NUMA node in the host.  Without a per-file operation it's not 
+> possible to do this on guest_memfd.  The discussion was whether to use 
+> ioctl() or a new system call.  The discussion ended with the idea of 
+> posting a *proposal* asking for *comments* as to whether the system call 
+> would be useful in general beyond KVM.
+> 
+> Commenting on the system call itself I am not sure I like the 
+> file_operations entry, though I understand that it's the simplest way to 
+> implement this in an RFC series.  It's a bit surprising that fbind() is 
+> a total no-op for everything except KVM's guest_memfd.
+> 
+> Maybe whatever you pass to fbind() could be stored in the struct file *, 
+> and used as the default when creating VMAs; as if every mmap() was 
+> followed by an mbind(), except that it also does the right thing with 
+> MAP_POPULATE for example.  Or maybe that's a horrible idea?
 
-Yes it does look wrong. Our compilation flags are
-CFG_RPMB_FS=3Dy CFG_RPMB_FS_DEV_ID=3D0 CFG_RPMB_WRITE_KEY=3Dy
-CFG_RPMB_TESTKEY=3Dy CFG_REE_FS=3Dn CFG_CORE_ARM64_PA_BITS=3D48
-CFG_SCTLR_ALIGNMENT_CHECK=3Dn
+mbind() manpage has this:
 
-The testkey etc aren't required if your board has a way of reading the
-RPMB key from a secure location -- in fact, using the testkey is not
-secure. Is the RPMB programmed on your board? Also can you make sure
-CFG_RPMB_FS_DEV_ID needs to be 0? How many sd interfaces your board
-has?
-IOW in U-Boot does 'mmc dev 0 && mmc info' print information for the
-RPMB partition?
+       The  specified  policy  will  be  ignored  for  any MAP_SHARED
+mappings in the specified memory range.  Rather the pages will be allocated
+according to the memory policy of the thread that caused the page to be
+allocated. Again, this may not be the thread that called mbind().
 
-Thanks
-/Ilias
->
-> I'll try to add some more prints to verify if REE is used as a store
-> system, I assume this should say something about RPMB. Am I right with
-> this?
+So that seems like we're not very keen on having one user of a file set a
+policy that would affect other users of the file?
 
+Now the next paragraph of the manpage says that shmem is different, and
+guest_memfd is more like shmem than a regular file.
 
->
-> > > > >
-> > > > > And tracing the function calls gives me that:
-> > > > >
-> > > > >       tee_stmm_efi_probe() {
-> > > > >              tee_client_open_context() {
-> > > > >                optee_get_version() {
-> > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                } (ret=3D0xd)
-> > > > >                tee_ctx_match(); (ret=3D0x1)
-> > > > >                optee_smc_open() {
-> > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                  optee_open() {
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                  } (ret=3D0x0)
-> > > > >                } (ret=3D0x0)
-> > > > >              } (ret=3D0xffff000004e71c80)
-> > > > >              tee_client_open_session() {
-> > > > >                optee_open_session() {
-> > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                  optee_get_msg_arg() {
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > > >                  } (ret=3D0xffff000002909000)
-> > > > >                  tee_session_calc_client_uuid(); (ret=3D0x0)
-> > > > >                  optee_to_msg_param(); (ret=3D0x0)
-> > > > >                  optee_smc_do_call_with_arg() {
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
-> > > > >                    optee_cq_wait_init(); (ret=3D0xffff000002e5591=
-0)
-> > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > >      ... continues sending this forever ...
-> > > > >      ... Hit ^C to stop recording ...
-> > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > >                    optee_smccc_smc() {
-> > > > >
-> > > > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#usin=
-g-op-tee-for-efi-variables
-> > > > >
-> > > > > Thanks in advance,
-> > > >
-> > > > The most common problem with this is miscompiling the tee_supplican=
-t
-> > > > application.
-> > > > Since we don't know if the system has an RPMB, we emulate it in the
-> > > > tee_supplicant. How did you get the supplicant and can you check if=
- it
-> > > > was compiled with RPMB_EMU=3D0 or 1?
-> > > >
-> > >
-> > > I'm using the tee-supplicant provided by the fedora package which is
-> > > built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
-> > >
-> >
-> > Yes, this is correct. We fixed the Fedora package to compile the
-> > supplicant correctly a while back.
-> >
-> > [0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
-> > [1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-Bo=
-ot.html#Protected%20UEFI%20variables%20with%20U-Boot
-> >
-> >
-> > Regards
-> > /Ilias
-> > > Thanks,
-> > >    Enric
-> > >
-> > > > Thanks
-> > > > /Ilias
-> > > >
-> > > > >    Enric
-> > > > >
-> > > >
-> > >
-> >
->
+My conclusion from that is that fbind() might be too broad and we don't want
+this for actual filesystem-backed files? And if it's limited to guest_memfd,
+it shouldn't be an fbind()?
+
+> Adding linux-api to get input; original thread is at
+> https://lore.kernel.org/kvm/20241105164549.154700-1-shivankg@amd.com/.
+> 
+> Paolo
+> 
+>> Backing up, it seems like you want to make a change to the page cache,
+>> you've had a long discussion with people who aren't the page cache
+>> maintainer, and you all understand the pros and cons of everything,
+>> and here you are dumping a solution on me without talking to me, even
+>> though I was at Plumbers, you didn't find me to tell me I needed to go
+>> to your talk.
+>> 
+>> So you haven't explained a damned thing to me, and I'm annoyed at you.
+>> Do better.  Starting with your cover letter.
+>> 
+> 
+> 
+
 
