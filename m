@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-404903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D988E9C4A52
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:03:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B6B9C4A20
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:54:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 711C4B2EDA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:54:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCB11F2145B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B7A1CDA23;
-	Mon, 11 Nov 2024 23:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442461CBE9F;
+	Mon, 11 Nov 2024 23:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YTNRgjZ/"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z93zQai8"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAF91CC886
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB971CCED1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731368944; cv=none; b=kKdSGG8U+zhe4ILiAhzWug1UYaM+12HhJqrq/wy2gtNeelQ1FotvgLqt1qXE5X2Zl9DlYd8DRVQ+/iWT8LbGaDuMyO11NPg/xrZEYIs/rIPNRBwBUBaVMjiC2x16/btDVNp4TEKR1ch8tCzY/l9KaGvvynFrB4rpTd/jjwraEVU=
+	t=1731368945; cv=none; b=lYgQaj3IRupSSg7y/623zX5fb7Wp7o7wmTYETllDh+gKufO1Pzbdg7hibDPiOxfSzq+llgwrPYoGa8OzGaWbL3Ya9VoWmErUrWL09p5AtR4+5d7feYN0/AUMrpSlBpUeddoXiKEV7JB9+sJD8SSOx/TKHrnZ2LXKB0nkjiK28xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731368944; c=relaxed/simple;
-	bh=MmJ6uQz4zS+zNMk4WrnYAN8q8MiBRG7hHBRj4kFfBpY=;
+	s=arc-20240116; t=1731368945; c=relaxed/simple;
+	bh=0ZmHSWGFJPGRrfbaLjT1JKVVHDI+Z6ojoSVY2VwoI0U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GBRwKHRXfOC6rZ+TYTMrel2BUAHIhqm8mOJ14st0YNNTgfesZxtGqPqq4ULddhQZY72DaEJngDntguw64wZlDatSPtpWwgUa4L/259Ir/4bm8HctNbz8dUQoaOF++duBJLy1j/vsdn0Pgmbf2H0YGNfMLhY2JUz3s6YegTpIdSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YTNRgjZ/; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version; b=Peoc5CKveP0zHuWUqhGUuFcZoTKfOW6fhY+c9G8ZPnuIErstCm2JJw0GMs0IRZomYfZ06iDPC7nKJaI/fwBUktjfgV8GHRdxjRyraVqdMepqmVwZHd+TI3TgpkWFdVlPpyEGaSxkMATEGH29fu+LN3leoORiG44RNiZ24izuZuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z93zQai8; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so4274074b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:49:01 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7240fa50694so3694784b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:49:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731368941; x=1731973741; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731368943; x=1731973743; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C5BmZ07D5DYJBYmt5fURgbXo4UgCrxSfGObLVz7UJ+Y=;
-        b=YTNRgjZ/MujhL1xey9f4SDncEWX7de/DW5gFOJgg4nNqo8XNnKioHjJtWjDEDKVrBT
-         +OTMRvJBUxmHACUDseiSgz2Dt3mRgyFr2zaziavJ4bP+8RMrgxwXC/0CHD25DZMJfILu
-         lOUn5A0jpHBfCc0aGLijfpiFvavcMiorqdi0Qjj28n73+8p9j7oOQoVc49EPBCAs20PM
-         eLjl+84GPAk8pawLiXuOUe8k47oW0EM1dZK//nSqFMZeU59vdwpAV4EcFQS9eFIrGBPm
-         KEfwaiuuhyd0wlLJv+/n0Ay+v0LDQghf8eL1pEmWs//NHHOlx5I8F5HyGeugU1lKSLHM
-         xcuQ==
+        bh=34CEBvu7gjOMz8fnHdZ3R+2IdL/8ao7S7M5vWTfYjmM=;
+        b=z93zQai8EpIDgD0jRAEwLB46HhfxNTDRich3xQOHrqHEJG5auElXfawUzoyo49tXVl
+         SdcnVtshzSvFh/Xsz7tm7NXASeQuHaCfD2xrlIGRSvHx9PCnpda0OJxaH7rnsSPkPNie
+         agc3KKChj1DU+YZs3+6rvxEw6n/Y41cLyUPlal5eoI4Ci+u2J4eOaYuuslRPPd2w9xVC
+         YC8DH9rN1UwT8CIGTVmM/1KJwWytLIo+n92UC22ppiJYn7Ja40/a7UX82i9ve7kc5YhM
+         zwSZbZX8U0ztvWOHyeYGyd79SesUdvtq+VlkvmU2nbd/DGPxN/XWVoN+1zWewLvEtEOv
+         HOEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731368941; x=1731973741;
+        d=1e100.net; s=20230601; t=1731368943; x=1731973743;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C5BmZ07D5DYJBYmt5fURgbXo4UgCrxSfGObLVz7UJ+Y=;
-        b=dE71OjiNDrYyDZkU3G5dVVVZ54B1z47e0SNbGEs7q9tU6tav8DihFCxjLGZqHEdTBY
-         fyfhX02ni1beNpIm6MKqSr8W4L3IPW8ZsoaKuOs8ryLDWluGNnx0PMOcWsDmHUgEhpCx
-         LxWUbfpNhR3A0FpE75RaVySY2s39TcJLmNqN7Mf7kf0EwrVe3x657SwojZywBLZbx1qX
-         IEJXgGgML1rlF4E/AiY1akAARqQN8Wodw7QHNsWKXfhWWJ2CzvpeZQm7cUSwpgncLxy3
-         aI6ndwHhM2PNLAc+SjMQKNkzzNj8R6G6EpCMsaR9r1Sw4BK98580Ytxr/1ze1NNqlNQG
-         zixg==
-X-Forwarded-Encrypted: i=1; AJvYcCX2k4bkKxMIzDXFnZrHAWWlOCZrOUOnGsQvhm9LQP41kZRMTw8J9bw7IrE9yqsMPA7mw03I7/zLQicH05w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDpfMh47AXeUVBMxW3Ub3SQJBqN7i/fSGTtijikav1Kwdf0WRq
-	VwgU8x4omjINIVtnkoHWV3ynAtX8WIRoTYeBVB533GzDm0y2qbzs1lgiHDYFtVA=
-X-Google-Smtp-Source: AGHT+IHVAuYVOMfDSGlPxbnuC87wShBLb7OXW58ajqvAinndw3wlptYvFjbRCeInYbnH7Qo2aVFY4A==
-X-Received: by 2002:a05:6a21:9101:b0:1db:e3c7:9974 with SMTP id adf61e73a8af0-1dc228ef1damr21176002637.12.1731368941302;
-        Mon, 11 Nov 2024 15:49:01 -0800 (PST)
+        bh=34CEBvu7gjOMz8fnHdZ3R+2IdL/8ao7S7M5vWTfYjmM=;
+        b=qHd7qnXWgm0RzI5R2l5fD3Y923V/a6aPcHl5yPfQvBJ5K7YhCQTqI/xP7L9WGGvKlD
+         IlwodihL0S1Q+WZUmQqZs6e27lNfNUsuusokw4zDwYdltrekQq0MojZaho5czvrz74j5
+         uxe2/nYWDFIfe3X+qW1qU7p/6AZMrvrnX9BE/7iMUGYLBPlyMheW+bRGPBTGn71yx5dj
+         dLNqLxXotBQDH2gyjgBn0LrVvZNRNISX0gcAPfwsxPOxla7bn0A8E6r+TFLcXM/ogWKA
+         g8QGUaUzZHsCz2LYuTkYD5aohwHB5/Zfbd6JwEK6WSpkbBHCN/C3aTePj4y6727wITyw
+         K5zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHlDlguU3QsPK8zkqMt4H0Tklu2iJkkDHS9FwGRxnCMHDlYCpHMa3YFaiQ0ULpCkZyZ/rDOmTKb/+nGW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvKiEnB6SxeEvXCkh/viJhvJBVzsPpQ4myVxA2/Cq90dg1eXxE
+	Lacl8s9bt7o1unDxdHfWt0RtVoHc+VQTyttOO0CQJtjaOEN3X1+UXKu9zlnR1os=
+X-Google-Smtp-Source: AGHT+IH/Zn0FG6bgzME+vU3LW7llTjZ8LDSnQYNIFX21AVqsAPSSvTFEg9AexjHSBcXEhmlzou7m5w==
+X-Received: by 2002:a05:6a20:7292:b0:1db:e82f:2a63 with SMTP id adf61e73a8af0-1dc228c6973mr20790006637.3.1731368942803;
+        Mon, 11 Nov 2024 15:49:02 -0800 (PST)
 Received: from localhost.localdomain ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ee9sm10046057b3a.64.2024.11.11.15.48.59
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7ee9sm10046057b3a.64.2024.11.11.15.49.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 15:49:00 -0800 (PST)
+        Mon, 11 Nov 2024 15:49:02 -0800 (PST)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org
@@ -78,9 +78,9 @@ Cc: hannes@cmpxchg.org,
 	linux-ext4@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 09/16] mm/filemap: drop uncached pages when writeback completes
-Date: Mon, 11 Nov 2024 16:37:36 -0700
-Message-ID: <20241111234842.2024180-10-axboe@kernel.dk>
+Subject: [PATCH 10/16] mm/filemap: make buffered writes work with RWF_UNCACHED
+Date: Mon, 11 Nov 2024 16:37:37 -0700
+Message-ID: <20241111234842.2024180-11-axboe@kernel.dk>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241111234842.2024180-1-axboe@kernel.dk>
 References: <20241111234842.2024180-1-axboe@kernel.dk>
@@ -92,71 +92,182 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the folio is marked as uncached, drop pages when writeback completes.
-Intended to be used with RWF_UNCACHED, to avoid needing sync writes for
-uncached IO.
+If RWF_UNCACHED is set for a write, mark new folios being written with
+uncached. This is done by passing in the fact that it's an uncached write
+through the folio pointer. We can only get there when IOCB_UNCACHED was
+allowed, which can only happen if the file system opts in. Opting in means
+they need to check for the LSB in the folio pointer to know if it's an
+uncached write or not. If it is, then FGP_UNCACHED should be used if
+creating new folios is necessary.
+
+Uncached writes will drop any folios they create upon writeback
+completion, but leave folios that may exist in that range alone. Since
+->write_begin() doesn't currently take any flags, and to avoid needing
+to change the callback kernel wide, use the foliop being passed in to
+->write_begin() to signal if this is an uncached write or not. File
+systems can then use that to mark newly created folios as uncached.
+
+Add a helper, generic_uncached_write(), that generic_file_write_iter()
+calls upon successful completion of an uncached write.
+
+This provides similar benefits to using RWF_UNCACHED with reads. Testing
+buffered writes on 32 files:
+
+writing bs 65536, uncached 0
+  1s: 196035MB/sec
+  2s: 132308MB/sec
+  3s: 132438MB/sec
+  4s: 116528MB/sec
+  5s: 103898MB/sec
+  6s: 108893MB/sec
+  7s: 99678MB/sec
+  8s: 106545MB/sec
+  9s: 106826MB/sec
+ 10s: 101544MB/sec
+ 11s: 111044MB/sec
+ 12s: 124257MB/sec
+ 13s: 116031MB/sec
+ 14s: 114540MB/sec
+ 15s: 115011MB/sec
+ 16s: 115260MB/sec
+ 17s: 116068MB/sec
+ 18s: 116096MB/sec
+
+where it's quite obvious where the page cache filled, and performance
+dropped from to about half of where it started, settling in at around
+115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
+reclaim pages.
+
+Running the same test with uncached buffered writes:
+
+writing bs 65536, uncached 1
+  1s: 198974MB/sec
+  2s: 189618MB/sec
+  3s: 193601MB/sec
+  4s: 188582MB/sec
+  5s: 193487MB/sec
+  6s: 188341MB/sec
+  7s: 194325MB/sec
+  8s: 188114MB/sec
+  9s: 192740MB/sec
+ 10s: 189206MB/sec
+ 11s: 193442MB/sec
+ 12s: 189659MB/sec
+ 13s: 191732MB/sec
+ 14s: 190701MB/sec
+ 15s: 191789MB/sec
+ 16s: 191259MB/sec
+ 17s: 190613MB/sec
+ 18s: 191951MB/sec
+
+and the behavior is fully predictable, performing the same throughout
+even after the page cache would otherwise have fully filled with dirty
+data. It's also about 65% faster, and using half the CPU of the system
+compared to the normal buffered write.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- mm/filemap.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ include/linux/pagemap.h | 29 +++++++++++++++++++++++++++++
+ mm/filemap.c            | 17 +++++++++++++++--
+ 2 files changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 3d0614ea5f59..40debe742abe 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1600,6 +1600,27 @@ int folio_wait_private_2_killable(struct folio *folio)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index d55bf995bd9e..d35280744aa1 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -14,6 +14,7 @@
+ #include <linux/gfp.h>
+ #include <linux/bitops.h>
+ #include <linux/hardirq.h> /* for in_interrupt() */
++#include <linux/writeback.h>
+ #include <linux/hugetlb_inline.h>
+ 
+ struct folio_batch;
+@@ -70,6 +71,34 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
+ 	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
  }
- EXPORT_SYMBOL(folio_wait_private_2_killable);
  
 +/*
-+ * If folio was marked as uncached, then pages should be dropped when writeback
-+ * completes. Do that now. If we fail, it's likely because of a big folio -
-+ * just reset uncached for that case and latter completions should invalidate.
++ * generic_uncached_write - start uncached writeback
++ * @iocb: the iocb that was written
++ * @written: the amount of bytes written
++ *
++ * When writeback has been handled by write_iter, this helper should be called
++ * if the file system supports uncached writes. If %IOCB_UNCACHED is set, it
++ * will kick off writeback for the specified range.
 + */
-+static void folio_end_uncached(struct folio *folio)
++static inline void generic_uncached_write(struct kiocb *iocb, ssize_t written)
 +{
-+	/*
-+	 * Hitting !in_task() should not happen off RWF_UNCACHED writeback, but
-+	 * can happen if normal writeback just happens to find dirty folios
-+	 * that were created as part of uncached writeback, and that writeback
-+	 * would otherwise not need non-IRQ handling. Just skip the
-+	 * invalidation in that case.
-+	 */
-+	if (in_task() && folio_trylock(folio)) {
-+		if (folio->mapping)
-+			folio_unmap_invalidate(folio->mapping, folio, 0);
-+		folio_unlock(folio);
++	if (iocb->ki_flags & IOCB_UNCACHED) {
++		struct address_space *mapping = iocb->ki_filp->f_mapping;
++
++		/* kick off uncached writeback */
++		__filemap_fdatawrite_range(mapping, iocb->ki_pos,
++					   iocb->ki_pos + written, WB_SYNC_NONE);
 +	}
 +}
 +
++/*
++ * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
++ * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
++ * must check for this and pass FGP_UNCACHED for folio creation.
++ */
++#define foliop_uncached			((struct folio *) 0xfee1c001)
++#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
++
  /**
-  * folio_end_writeback - End writeback against a folio.
-  * @folio: The folio.
-@@ -1610,6 +1631,8 @@ EXPORT_SYMBOL(folio_wait_private_2_killable);
-  */
- void folio_end_writeback(struct folio *folio)
- {
-+	bool folio_uncached = false;
-+
- 	VM_BUG_ON_FOLIO(!folio_test_writeback(folio), folio);
+  * filemap_set_wb_err - set a writeback error on an address_space
+  * @mapping: mapping in which to set writeback error
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 40debe742abe..0d312de4e20c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -430,6 +430,7 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
  
- 	/*
-@@ -1631,9 +1654,14 @@ void folio_end_writeback(struct folio *folio)
- 	 * reused before the folio_wake_bit().
- 	 */
- 	folio_get(folio);
-+	if (folio_test_uncached(folio) && folio_test_clear_uncached(folio))
-+		folio_uncached = true;
- 	if (__folio_end_writeback(folio))
- 		folio_wake_bit(folio, PG_writeback);
- 	acct_reclaim_writeback(folio);
-+
-+	if (folio_uncached)
-+		folio_end_uncached(folio);
- 	folio_put(folio);
+ 	return filemap_fdatawrite_wbc(mapping, &wbc);
  }
- EXPORT_SYMBOL(folio_end_writeback);
++EXPORT_SYMBOL_GPL(__filemap_fdatawrite_range);
+ 
+ static inline int __filemap_fdatawrite(struct address_space *mapping,
+ 	int sync_mode)
+@@ -4076,7 +4077,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 	ssize_t written = 0;
+ 
+ 	do {
+-		struct folio *folio;
++		struct folio *folio = NULL;
+ 		size_t offset;		/* Offset into folio */
+ 		size_t bytes;		/* Bytes to write to folio */
+ 		size_t copied;		/* Bytes copied from user */
+@@ -4104,6 +4105,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
+ 			break;
+ 		}
+ 
++		/*
++		 * If IOCB_UNCACHED is set here, we now the file system
++		 * supports it. And hence it'll know to check folip for being
++		 * set to this magic value. If so, it's an uncached write.
++		 * Whenever ->write_begin() changes prototypes again, this
++		 * can go away and just pass iocb or iocb flags.
++		 */
++		if (iocb->ki_flags & IOCB_UNCACHED)
++			folio = foliop_uncached;
++
+ 		status = a_ops->write_begin(file, mapping, pos, bytes,
+ 						&folio, &fsdata);
+ 		if (unlikely(status < 0))
+@@ -4234,8 +4245,10 @@ ssize_t generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		ret = __generic_file_write_iter(iocb, from);
+ 	inode_unlock(inode);
+ 
+-	if (ret > 0)
++	if (ret > 0) {
++		generic_uncached_write(iocb, ret);
+ 		ret = generic_write_sync(iocb, ret);
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(generic_file_write_iter);
 -- 
 2.45.2
 
