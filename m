@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-404717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DDEB9C4728
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:50:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1489C47F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8C31F25374
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:50:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09828B2DC0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8AE1B3F30;
-	Mon, 11 Nov 2024 20:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCDD1B0F2B;
+	Mon, 11 Nov 2024 20:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fR8BdtbL"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNTqKvzj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA921B5ED1;
-	Mon, 11 Nov 2024 20:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FD813698E;
+	Mon, 11 Nov 2024 20:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358184; cv=none; b=oMcf6T7w2x2QtaVtZUlYEWdxy/Gc3hEMq+lWcYVzSTTyMSyoMgoQ/N/+VKLxFt5Ni9J4XwTyUJJNyEUHvfSXNqqhezRJ7ammIhVbXiAQaxJCSqO/d6cLmA78iZafrMZf6YzaaL3XVDzjMr12z1xt4344vNZB2VqoHm2EhRIGn1w=
+	t=1731358246; cv=none; b=uvyjoarwVVjPGsIyDVznalvcqB5DfE/klR/d2rEXqY1p8SUBqEw1PdPend+DS7tnlL2/OrHTgVPtYxAl0gbHhElMofShTpgeiwfFy37LYrNVIre55LXU034h9X22D9zXTMZJcYJn1I3AG7npYPEOleR1A7UXnSTqyR5xKbT+kaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358184; c=relaxed/simple;
-	bh=sHYP6V0fJrDnHZFz5NK/y5NMjVSRmmZ8xbrpg/df5VA=;
+	s=arc-20240116; t=1731358246; c=relaxed/simple;
+	bh=KpxZC/P8ao2LzdInQZVMA84c4VfSpNvVV342XvO09Kc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqpr4MKMkCqm7M2HXL/eTRWaf/PFesZ4cik/VADWHXcOHOepozJYVmAbkSrOXY6X0iXsFmWNijJXc4ypqHGGB1TjuwU8UDIc/7/BqxBSOzkT1pBM8vdZLmxXv1IpoP2tpFcXQy/3tdwUQV9cAf4t+LO2CXFRNtidrUreBj8rHl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fR8BdtbL; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EACAA40003;
-	Mon, 11 Nov 2024 20:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731358179;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nYiVjrcxZpTi/c06BPQHiFC8F+p+6wh7EIqPd/zEwtM=;
-	b=fR8BdtbLRORymTS3lN4WPxSA0gFafroYaf0+NPUNSYqFRz9s9YIJKoWcRxSyPUJK+T+GOK
-	PDAT9kd0OL/+BSkML1RRiHrg4SNAbPz8qapqjynItAHTMXd3TVYuoruuiWfGssEMX05iML
-	cRnrz7vx8nSCAK4Moe5i12X8Htm/mFPzVJFflXGFXkk/TumQfEf+mV8hV+RdrV4Dq2OwwF
-	WWCdn/CrHb312hihColuJ1DRDDS91iiVj8aUbSV3TnVQgnSg0xxXmEDMwYHYepMgyUkMrL
-	Oo8eGycEX9fW4rQCCC6+Sw01fq4NeyMHjov8vfmn3zbwxPiBBQVHeWcbFq8HgQ==
-Date: Mon, 11 Nov 2024 21:49:36 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org
-Subject: Re: (subset) [PATCH 10/14] dt-bindings: rtc: sun6i: Add Allwinner
- A523 support
-Message-ID: <173135816498.3301625.12210632932642052880.b4-ty@bootlin.com>
-References: <20241111013033.22793-1-andre.przywara@arm.com>
- <20241111013033.22793-11-andre.przywara@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7f8ManlHyCjzvTpzg+9pMIHnexoh6hcS7RgdxlUFKpLGrhzD4O1DbrG2qQT+ln5bvYeVR7ybF30ptVtqtlVO6A7x4FxE7DPGYheuxyXFCCkA4tkFJTUgpLE1CAVU/t9uH/A/eVCV5Up0SMdK0eSvLY5k3IO3QTawyfAvSljh8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNTqKvzj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C606C4CED4;
+	Mon, 11 Nov 2024 20:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731358245;
+	bh=KpxZC/P8ao2LzdInQZVMA84c4VfSpNvVV342XvO09Kc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KNTqKvzjrtuTP8+YPJU/gM5ZMXFSB0RpgVNc2aPCauXheFcYN7+dflGoAJShq5FHM
+	 1nErK+6N/co0TEckyf3XdLAvuDx+KWX5Oj3VB2WWDLD7DmzxcC8ebeIL92NNu/r8r7
+	 zYJXLSv+ZbJdDlXDT2BHPr+4+xjg47UJ+cmXL/B+Fn2lu0Bw6mUtIFT++DlnhYaU+2
+	 538KYmb4sd+X/qZnm26LCEJTCZn2A51M5rfdI5dbTzACj2VY4X8lrS9hblJPgS8dU2
+	 Y9SV96l1/twH2Q3a0R2n2NCealTiwk3P5ZCKsErKKPj+1eutqGyxqCoOfavqcpTTqQ
+	 ve2DEMzRI8dIw==
+Date: Mon, 11 Nov 2024 14:50:43 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Sowon Na <sowon.na@samsung.com>
+Cc: kishon@kernel.org, alim.akhtar@samsung.com, devicetree@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, krzk+dt@kernel.org,
+	vkoul@kernel.org, linux-kernel@vger.kernel.org, krzk@kernel.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+ bindings
+Message-ID: <173135823464.1934645.11982879743240085874.robh@kernel.org>
+References: <20241111043306.1250488-1-sowon.na@samsung.com>
+ <CGME20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e@epcas2p4.samsung.com>
+ <20241111043306.1250488-2-sowon.na@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,24 +61,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241111013033.22793-11-andre.przywara@arm.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20241111043306.1250488-2-sowon.na@samsung.com>
 
-On Mon, 11 Nov 2024 01:30:29 +0000, Andre Przywara wrote:
-> The RTC in the Allwinner A523 SoC is compatible to the D1 and R329, so
-> just add its name and use the R329 as a fallback.
+
+On Mon, 11 Nov 2024 13:33:00 +0900, Sowon Na wrote:
+> Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
 > 
+> Signed-off-by: Sowon Na <sowon.na@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
-Applied, thanks!
 
-[10/14] dt-bindings: rtc: sun6i: Add Allwinner A523 support
-        https://git.kernel.org/abelloni/c/9beeecbd63d5
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-Best regards,
+If a tag was not added on purpose, please state why and what changed.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Missing tags:
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+
 
