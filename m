@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-403586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5AF9C3792
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:34:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B699C3791
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BEF928174A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559F62815E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71686156F5E;
-	Mon, 11 Nov 2024 04:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F8315532A;
+	Mon, 11 Nov 2024 04:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uCYKwNOY"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fpBi3Kzz"
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6480155352
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B621531E2
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731299607; cv=none; b=P2P7aQNp7xY6/HNu8SuBbz/kmV8iYayEqkOHNfsEJQoufpGl9JW3bddzra6VKkRadvEKzo16PdSgfvk3qYiRRvieWWOi18GSbggoE2oz3sLE/r8AhzTgSsFwXyC3TFhCgjnC9DRgFoVYoumqN89mqB/Msi5OJLmrW2B2CljtgSA=
+	t=1731299604; cv=none; b=JoH9VLUd+B+E0t418K5XyTaRwLTR3+Xb2/ox//qIoaOB3p9BG8mXGFflLe2+UnP0ubPfDyfhrhL80r1PTaSEIhHrhttZl7ajYkpg7105yqP2ZnaMAL6/310NDFvrL8wMrl2mAOD2MdoQ4QFs11cDsbs2rAODsyZ8Q2FIVpD/JS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731299607; c=relaxed/simple;
-	bh=f9rIRdH01sOBbAWm3uTjGf87zwwnOagb9SoPfc0q4zU=;
+	s=arc-20240116; t=1731299604; c=relaxed/simple;
+	bh=vn8E1TQaqhsbhLJBhBGlv+TheJqOc3cyRxq+aC9yjnc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=QGu/rKXEzXmcYwRg+MRPY6y7qUKPwtzg6TBObNQrpsxMlTT5OTAQwswyrd3yYOCl4e49Xkxei47Jlo2oOiklFpSLFSG6uXZF36A8l3nJgn8Jm38NlsEHEsWwnImHSwJD/pER+sDcFRc40eYcJpH0OwcQLQrowBlhp5pHH6+EX2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uCYKwNOY; arc=none smtp.client-ip=203.254.224.25
+	 Content-Type:References; b=C0f7r1boHinsrt9wTV2ins5K/7StgWtzVmHJztF9ySo8OVxLC+edSOJ3Eqro2ooOSZuTSOL2uh4HxKuVu/mvssH/s9WiFJrlAnaGO2iQw9O2+vbzA+/g3N4QoHBEp42GeTDIaegLQ+QuhdpBWwAKk4J1mburT6iRy1Vpr4HC1VY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fpBi3Kzz; arc=none smtp.client-ip=203.254.224.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241111043320epoutp02d4cd7e076050295cf27bb68a1238584b~Gz9BOS7Xa2713827138epoutp02r
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:33:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241111043320epoutp02d4cd7e076050295cf27bb68a1238584b~Gz9BOS7Xa2713827138epoutp02r
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241111043319epoutp02eec858df8da6d2d4c0b047c798b995eb~Gz9AfcDd92649126491epoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:33:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241111043319epoutp02eec858df8da6d2d4c0b047c798b995eb~Gz9AfcDd92649126491epoutp02h
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731299600;
-	bh=ZttJkELPYPkA6TBzXEj++IetKmjboKHw+U7WRdrbwy8=;
+	s=mail20170921; t=1731299599;
+	bh=igRWfuNqTfPwHBFKj4np22Spt+NI8v7GAGapPljbOy4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uCYKwNOYNOzcbkVfPEu5gRQoHRDB2tUZRAWKH8DDSQeQKyW5ZXcNERMB9oHUZiVLi
-	 9aiIFkp3f0hbvU/kKGdLZtI4XwQyIAbQ50OWwP0QAjWifqEk5lTe3AnocCcLWTVo3E
-	 HIoZf1JgcFy4ja4cFGN5wUvsrnYKS/JyKqcVm+Yg=
+	b=fpBi3KzzSGB4H+8sgJLtNq/fokB8b5h8EHsWBoUqASYhaml50ESsJSdp+4nl0SSXN
+	 12PxIk/P8I41u6wfrSUTybflNUii51WDhHbVdVZO5ZNWj0dv0PiveH616+hl+3L/YQ
+	 /aV+OwxGA+F2O+3DgzOW2xRrg499ryrl1OFWPsCc=
 Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-	20241111043319epcas2p4f445a38d5e22496964e086c9e60be6ca~Gz9A5e23o3265432654epcas2p4R;
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20241111043319epcas2p344f636105068c5ee001d822d83c81d07~Gz9AFUP9W1539115391epcas2p3e;
 	Mon, 11 Nov 2024 04:33:19 +0000 (GMT)
-Received: from epsmges2p2.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XmxW31RzMz4x9Pw; Mon, 11 Nov
-	2024 04:33:19 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
-	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-	26.91.09770.E0981376; Mon, 11 Nov 2024 13:33:18 +0900 (KST)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.97]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4XmxW21nV8z4x9Pw; Mon, 11 Nov
+	2024 04:33:18 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	96.48.14040.E0981376; Mon, 11 Nov 2024 13:33:18 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e~Gz8_w0wvW0046200462epcas2p4w;
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241111043317epcas2p1fbabc25054bd345de15565982325c400~Gz8_3H4hb2764327643epcas2p1P;
 	Mon, 11 Nov 2024 04:33:17 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
 	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241111043317epsmtrp1a8feaf6a2d800dced55eaa390c887068~Gz8_wIqMO2461724617epsmtrp1V;
+	20241111043317epsmtrp1df67b7d57304f1a2d3291d069e18e6ae~Gz8_1YsnU2474224742epsmtrp10;
 	Mon, 11 Nov 2024 04:33:17 +0000 (GMT)
-X-AuditID: b6c32a46-da9ff7000000262a-3e-6731890e5811
+X-AuditID: b6c32a45-ee3fa700000136d8-76-6731890e7bc7
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.89.07371.D0981376; Mon, 11 Nov 2024 13:33:17 +0900 (KST)
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	43.E5.18937.D0981376; Mon, 11 Nov 2024 13:33:17 +0900 (KST)
 Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
 	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241111043317epsmtip1db456f75a4c548e4086c2455a980d141~Gz8_gXnji3208132081epsmtip1n;
+	20241111043317epsmtip1978158f323632d0027a6fa86c6dcbf1c~Gz8_nBnNv3087930879epsmtip1V;
 	Mon, 11 Nov 2024 04:33:17 +0000 (GMT)
 From: Sowon Na <sowon.na@samsung.com>
 To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
@@ -73,10 +73,10 @@ To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
 Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
 	sowon.na@samsung.com
-Subject: [PATCH v2 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
- bindings
-Date: Mon, 11 Nov 2024 13:33:00 +0900
-Message-ID: <20241111043306.1250488-2-sowon.na@samsung.com>
+Subject: [PATCH v2 2/3] phy: samsung-ufs: support ExynosAutov920 ufs phy
+ driver
+Date: Mon, 11 Nov 2024 13:33:01 +0900
+Message-ID: <20241111043306.1250488-3-sowon.na@samsung.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241111043306.1250488-1-sowon.na@samsung.com>
 Precedence: bulk
@@ -86,68 +86,293 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmuS5fp2G6wb+/HBYP5m1js1iz9xyT
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMJsWRmVeSWpSXmKPExsWy7bCmmS5fp2G6wcF+DosH87axWazZe47J
+	Yv6Rc6wWR1v/M1u8nHWPzeL8+Q3sFpd3zWGzmHF+H5PF/z072C1+/zzEZLHzzglmB26PTas6
+	2Tz6tqxi9Pi8SS6AOSrbJiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VW
+	ycUnQNctMwfoICWFssScUqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpe
+	XmqJlaGBgZEpUGFCdsapjpPMBYd9Kx59XcjSwLjbuYuRk0NCwETi3bfjrF2MXBxCAjsYJT4v
+	mMkC4XxilFjYvpMdpArMWb25DKZj+ZnVzBBFOxklzv/thur4xSgx+/oXti5GDg42AVWJaw1V
+	IKaIQKXE3GXOICXMAr2MEv131rKADBIWCJQ48P8qE0gNC1D50Y86IGFeAWuJrdsXs0Dskpe4
+	uOY5G4jNKWAj8fF6LzNEjaDEyZlPwGqYgWqat84Gu0dC4CO7xJaVh5ggml0ktp+ewwphC0u8
+	Or6FHcKWknjZ3wZl50usf3iXDcKukLh76D/UYnuJRWd+soPcxiygKbF+lz6IKSGgLHHkFtRa
+	PomOw3/ZIcK8Eh1tQhCNShId5+dAHSAhserFZKjhHhInP51jhwRUP6PEmZvLWSYwKsxC8s0s
+	JN/MQli8gJF5FaNYakFxbnpqsVGBITx6k/NzNzGCU6eW6w7GyW8/6B1iZOJgPMQowcGsJMKr
+	4a+fLsSbklhZlVqUH19UmpNafIjRFBjUE5mlRJPzgck7ryTe0MTSwMTMzNDcyNTAXEmc917r
+	3BQhgfTEktTs1NSC1CKYPiYOTqkGpr6jIdK+Z94bxe/RXzL7V+e2rfN9GRVKuCcxcZ01YXy+
+	5FWudM4Rw0uSrzZ5pLsHHbun9ulR8EmzjuP3AmW3Lz1xM7Cvz+X417V1VjeeXsy4tiHPt0c8
+	8uRRQzXe9wmPZN7+NZm9UtwiPqJne6KaiHXCbP7FqrKRMR3NtuoWjCkH31gvZDeZeGTvuVXf
+	j+jyHmOt+lOu+urh7wVxv7u/XNA/GX3l/J68S56v2PRn//5v9jh/ssPCaV3ZB29Ovp+nWXm9
+	XL1u+Zq4AzaefdKTfXasTXnK4mGmdZN5gYfsNdZI3dc7eQ58/BfTk/3l2y11Hr61zuoMsuGq
+	TXLC3x56qsWFLPxibaLPdPTgNRadO0osxRmJhlrMRcWJAEJQo4omBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDLMWRmVeSWpSXmKPExsWy7bCSnC5vp2G6wdtTGhYP5m1js1iz9xyT
 	xfwj51gtjrb+Z7Z4Oesem8X58xvYLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
-	snn0bVnF6PF5k1wAc1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqt
-	kotPgK5bZg7QQUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScAvMCveLE3OLSvHS9
-	vNQSK0MDAyNToMKE7IybK54yFvxnrVh84ghzA2MXaxcjJ4eEgInEwcb9QDYXh5DADkaJN/eX
-	MEM4nxglHrW0MEI43xgllrW9hmtpPTYfqmUvo8S3fwvZIZxfjBKzvmwBauHgYBNQlbjWUAVi
-	ighUSsxd5gxSwizQyyjRf2ctC8ggYQF/ib3dD8FsFqDyP/dPg9m8AtYSfd29TBDL5CUurnnO
-	BmJzCthIfLzeywxRIyhxcuYTsHpmoJrmrbPBzpYQ+MouMXXPfRaQxRICLhLLD/lCzBGWeHV8
-	CzuELSXxsr8Nys6XWP/wLhuEXSFx99B/FgjbXmLRmZ/sIGOYBTQl1u/Sh5ioLHHkFtRWPomO
-	w3/ZIcK8Eh1tQhCNShId5+dAHS8hserFZKjhHhKt1zdDQ62fUeLGsfVsExgVZiF5ZhaSZ2Yh
-	LF7AyLyKUSy1oDg3PbXYqMAIHr/J+bmbGMHJU8ttB+OUtx/0DjEycTAeYpTgYFYS4dXw108X
-	4k1JrKxKLcqPLyrNSS0+xGgKDOqJzFKiyfnA9J1XEm9oYmlgYmZmaG5kamCuJM57r3VuipBA
-	emJJanZqakFqEUwfEwenVAOTgs4EkfhTrGcNXk6Xz4/NF3e0l+g9cnIXk2/BL4ayhFe3qmSN
-	Bb68cp9V/uSn1Htpd8N9c5bsebrT3u1I1C9lzW/XRVaUPHhnsG3fsZ2dO5z9dHP3Xn7E9+H4
-	qTxVV4O9uXUBa08aTZojdJ/5WMe00tVHeL9YOvYf4U92txBtNCl52/yrNC13hu2DiancWmv0
-	AsL+GHpMfaujXcgn9Sw89m3Y09WRWqtlVOr5kv5+CZaInZOvslTvTZiKebrcNeXD1rZLazWE
-	z17nDGWP87i66MOUtQ2qCxx2fJtVcUD9huGNGZ9FpdyTbu8O8L7se2nexy2TDQ1enr/D0vFj
-	6befwh4fniR8Yr3X86npxYZwJZbijERDLeai4kQAnwQXYicEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrELMWRmVeSWpSXmKPExsWy7bCSnC5vp2G6wYQ9ahYP5m1js1iz9xyT
-	xfwj51gtjrb+Z7Z4Oesem8X58xvYLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
-	snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxs0VTxkL/rNWLD5xhLmBsYu1i5GTQ0LARKL1
-	2Hwgm4tDSGA3o8SjWU+hEhIS397sYYKwhSXutxyBKvrBKPGjYTlbFyMHB5uAqsS1hiqQuIhA
-	I6PE8w+TmUEcZoGJjBLn5x1hB+kWFvCV2DtjG9hUFqCGP/dPs4DYvALWEn3dvVAb5CUurnnO
-	BmJzCthIfLzeywxiCwHVnL5/ixmiXlDi5MwnYL3MQPXNW2czT2AUmIUkNQtJagEj0ypGydSC
-	4tz03GTDAsO81HK94sTc4tK8dL3k/NxNjOBg19LYwXhv/j+9Q4xMHIyHGCU4mJVEeDX89dOF
-	eFMSK6tSi/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYFJQ5Ek+pntF
-	+JbfY9kmFdaKO65F05QOS4sxnbd1bT0yk2N3o8i02S3lMovymqKv7NJY9+CrVI0c/6PjUvVa
-	ezZcmnbaMXWXb9x999rTDxjuPVN9LJjR73Sq53jnW50VHikvKk73lXn9lX/reVBiwXOnSXur
-	7XLX1TAHWSX3Z5YfqXHbbK5/Q2OfneLzEnuGZ+4Pm3ifBP68s3Nylkf4Ba+g5FlLOD/U3Pl7
-	sbM6M0DQW2zXrmU1cc/vSHodupvGu0t03x2G9mSFsGkB8Zf0LDtifvMzFd50ctOttkieopUx
-	41fvgVrmRUsePdRzS7bd7Fq6Oc9vitBVjju74j8rhzLeK1Ni4t3xYt/13dpJSizFGYmGWsxF
-	xYkA6FYvnuUCAAA=
-X-CMS-MailID: 20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e
+	snn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJXxqmOk8wFh30rHn1dyNLAuNu5i5GTQ0LARGL5
+	mdXMILaQwHZGiTUzWCHiEhLf3uxhgrCFJe63HAGKcwHV/GCUmPzjGnsXIwcHm4CqxLWGKpC4
+	iEAjo8TzD5OZQRxmgYmMEufnHWEH6RYW8JfobJgH1sAC1HD0ow5ImFfAWmLr9sUsEAvkJS6u
+	ec4GYnMK2Eh8vN4LdZC1xOn7t5gh6gUlTs58AlbPDFTfvHU28wRGgVlIUrOQpBYwMq1iFE0t
+	KM5Nz00uMNQrTswtLs1L10vOz93ECA5wraAdjMvW/9U7xMjEwXiIUYKDWUmEV8NfP12INyWx
+	siq1KD++qDQntfgQozQHi5I4r3JOZ4qQQHpiSWp2ampBahFMlomDU6qBaa0iU1jDLLmTAh3b
+	rj1iYA9x9b2Y6XvmcWMxx8q/Vaeqb/+sYl6xqNfn0/ODqjLxk8u/7D3fEn1JWuiGsUDE9ab7
+	CR43RTbUH+Q2tnFQLD93TqfnwCWLnPrw0NJbf5PC2ma8+GstaLV9T9YfXZ/ot50Nb+WC+4Vl
+	FLrsCpbnL54k2FExPT6kbB3H9ZowfrtjkSH6einzUjboqHycdeF7bOLMF5/vl9TPn/VBZd0C
+	n+p1UVNbQ/bt/7cmTSecrd/6EDPj29PeJ7I3btm/+pmKdGXlU7MHK+cGnBdedHIqr+xaYwGe
+	OMlds4Un/eoNv2v+PbTh/22pF2zPNpv9Zbbast5y8VlW7x8BFS7713DNVWIpzkg01GIuKk4E
+	AKI5sHTfAgAA
+X-CMS-MailID: 20241111043317epcas2p1fbabc25054bd345de15565982325c400
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: AUTO_CONFIDENTIAL
 CMS-TYPE: 102P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e
+X-CMS-RootMailID: 20241111043317epcas2p1fbabc25054bd345de15565982325c400
 References: <20241111043306.1250488-1-sowon.na@samsung.com>
-	<CGME20241111043317epcas2p48ebdc4c0219c1a4bf7c0a44873c5a98e@epcas2p4.samsung.com>
+	<CGME20241111043317epcas2p1fbabc25054bd345de15565982325c400@epcas2p1.samsung.com>
 
-Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
+Add support for ExynosAutov920 ufs phy driver.
 
 Signed-off-by: Sowon Na <sowon.na@samsung.com>
 ---
- Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/samsung/Makefile                 |   1 +
+ drivers/phy/samsung/phy-exynosautov920-ufs.c | 170 +++++++++++++++++++
+ drivers/phy/samsung/phy-samsung-ufs.c        |   9 +-
+ drivers/phy/samsung/phy-samsung-ufs.h        |   4 +
+ 4 files changed, 181 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/phy/samsung/phy-exynosautov920-ufs.c
 
-diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-index f402e31bf58d..d70ffeb6e824 100644
---- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-@@ -18,6 +18,7 @@ properties:
-       - google,gs101-ufs-phy
-       - samsung,exynos7-ufs-phy
-       - samsung,exynosautov9-ufs-phy
-+      - samsung,exynosautov920-ufs-phy
-       - tesla,fsd-ufs-phy
+diff --git a/drivers/phy/samsung/Makefile b/drivers/phy/samsung/Makefile
+index fea1f96d0e43..342682638a87 100644
+--- a/drivers/phy/samsung/Makefile
++++ b/drivers/phy/samsung/Makefile
+@@ -7,6 +7,7 @@ phy-exynos-ufs-y			+= phy-gs101-ufs.o
+ phy-exynos-ufs-y			+= phy-samsung-ufs.o
+ phy-exynos-ufs-y			+= phy-exynos7-ufs.o
+ phy-exynos-ufs-y			+= phy-exynosautov9-ufs.o
++phy-exynos-ufs-y			+= phy-exynosautov920-ufs.o
+ phy-exynos-ufs-y			+= phy-fsd-ufs.o
+ obj-$(CONFIG_PHY_SAMSUNG_USB2)		+= phy-exynos-usb2.o
+ phy-exynos-usb2-y			+= phy-samsung-usb2.o
+diff --git a/drivers/phy/samsung/phy-exynosautov920-ufs.c b/drivers/phy/samsung/phy-exynosautov920-ufs.c
+new file mode 100644
+index 000000000000..f00f82132921
+--- /dev/null
++++ b/drivers/phy/samsung/phy-exynosautov920-ufs.c
+@@ -0,0 +1,170 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * UFS PHY driver data for Samsung ExynosAuto v920 SoC
++ *
++ * Copyright (C) 2024 Samsung Electronics Co., Ltd.
++ */
++
++#include "phy-samsung-ufs.h"
++
++#define EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL			0x708
++#define EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL_MASK		0x1
++#define EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL_EN		BIT(0)
++#define EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CDR_LOCK_STATUS	0x5e
++
++#define EXYNOSAUTOV920_CDR_LOCK_OFFSET				0xCE4
++
++#define PHY_EXYNOSAUTOV920_LANE_OFFSET				0x200
++#define PHY_TRSV_REG_CFG_AUTOV920(o, v, d) \
++	PHY_TRSV_REG_CFG_OFFSET(o, v, d, PHY_EXYNOSAUTOV920_LANE_OFFSET)
++
++/* Calibration for phy initialization */
++static const struct samsung_ufs_phy_cfg exynosautov920_pre_init_cfg[] = {
++	PHY_COMN_REG_CFG(0x29, 0x22, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x43, 0x10, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x3C, 0x14, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x46, 0x48, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x04, 0x95, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x06, 0x30, PWR_MODE_ANY),
++
++	PHY_TRSV_REG_CFG_AUTOV920(0x200, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x201, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x202, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x203, 0x0A, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x204, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x205, 0x10, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x207, 0x0C, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2E1, 0xC0, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x22D, 0xF8, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x234, 0x60, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x238, 0x13, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x239, 0x48, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23A, 0x01, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23B, 0x29, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23C, 0x2A, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23D, 0x01, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23E, 0x14, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x23F, 0x13, PWR_MODE_ANY),
++
++	PHY_TRSV_REG_CFG_AUTOV920(0x240, 0x4A, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x243, 0x40, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x244, 0x02, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x25D, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x25E, 0x3F, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x25F, 0xFF, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x26F, 0xF0, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x273, 0x33, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x274, 0x50, PWR_MODE_ANY),
++
++	PHY_TRSV_REG_CFG_AUTOV920(0x284, 0x02, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x285, 0x02, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2A2, 0x04, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x27D, 0x01, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2FA, 0x01, PWR_MODE_ANY),
++
++	PHY_TRSV_REG_CFG_AUTOV920(0x286, 0x03, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x287, 0x03, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x288, 0x03, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x289, 0x03, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2B3, 0x04, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2B6, 0x0B, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2B7, 0x0B, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2B8, 0x0B, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2B9, 0x0B, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2BA, 0x0B, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2BB, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2BC, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2BD, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x2BE, 0x06, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x34B, 0x01, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x34C, 0x24, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x34D, 0x23, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x34E, 0x45, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x34F, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x350, 0x31, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x351, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x352, 0x02, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x353, 0x00, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x354, 0x01, PWR_MODE_ANY),
++
++	PHY_COMN_REG_CFG(0x43, 0x18, PWR_MODE_ANY),
++	PHY_COMN_REG_CFG(0x43, 0x00, PWR_MODE_ANY),
++
++	END_UFS_PHY_CFG,
++};
++
++/* Calibration for HS mode series A/B */
++static const struct samsung_ufs_phy_cfg exynosautov920_pre_pwr_hs_cfg[] = {
++	PHY_TRSV_REG_CFG_AUTOV920(0x369, 0x11, PWR_MODE_ANY),
++	PHY_TRSV_REG_CFG_AUTOV920(0x246, 0x03, PWR_MODE_ANY),
++
++	END_UFS_PHY_CFG,
++};
++
++static const struct samsung_ufs_phy_cfg exynosautov920_post_pwr_hs_cfg[] = {
++	END_UFS_PHY_CFG,
++};
++
++#define DELAY_IN_US	40
++#define RETRY_CNT	100
++#define EXYNOSAUTOV920_CDR_LOCK_MASK	0x8
++int samsung_exynosautov920_ufs_phy_wait_cdr_lock(struct phy *phy, u8 lane)
++{
++	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
++	int ret = 0;
++	u32 reg, i;
++
++	struct samsung_ufs_phy_cfg cfg[4] = {
++		PHY_TRSV_REG_CFG_AUTOV920(0x222, 0x10, PWR_MODE_ANY),
++		PHY_TRSV_REG_CFG_AUTOV920(0x222, 0x18, PWR_MODE_ANY),
++		PHY_TRSV_REG_CFG_AUTOV920(0x246, 0x01, PWR_MODE_ANY),
++		END_UFS_PHY_CFG,
++	};
++
++	for (i = 0; i < RETRY_CNT; i++) {
++		udelay(DELAY_IN_US);
++
++		reg = readl(ufs_phy->reg_pma + EXYNOSAUTOV920_CDR_LOCK_OFFSET +
++			(PHY_APB_ADDR(PHY_EXYNOSAUTOV920_LANE_OFFSET) * lane));
++		if ((reg & EXYNOSAUTOV920_CDR_LOCK_MASK)
++					== EXYNOSAUTOV920_CDR_LOCK_MASK)
++			break;
++
++		udelay(DELAY_IN_US);
++
++		samsung_ufs_phy_config(ufs_phy, &cfg[0], lane);
++		samsung_ufs_phy_config(ufs_phy, &cfg[1], lane);
++	}
++
++	samsung_ufs_phy_config(ufs_phy, &cfg[2], lane);
++
++	if (i >= RETRY_CNT) {
++		dev_err(ufs_phy->dev, "failed to get phy cdr lock\n");
++		ret = -ETIMEDOUT;
++	}
++
++	return ret;
++}
++
++static const struct samsung_ufs_phy_cfg *exynosautov920_ufs_phy_cfgs[CFG_TAG_MAX] = {
++	[CFG_PRE_INIT]          = exynosautov920_pre_init_cfg,
++	[CFG_PRE_PWR_HS]        = exynosautov920_pre_pwr_hs_cfg,
++	[CFG_POST_PWR_HS]       = exynosautov920_post_pwr_hs_cfg,
++};
++
++static const char * const exynosautov920_ufs_phy_clks[] = {
++	"ref_clk",
++};
++
++const struct samsung_ufs_phy_drvdata exynosautov920_ufs_phy = {
++	.cfgs = exynosautov920_ufs_phy_cfgs,
++	.isol = {
++		.offset = EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL,
++		.mask = EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL_MASK,
++		.en = EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CTRL_EN,
++	},
++	.clk_list = exynosautov920_ufs_phy_clks,
++	.num_clks = ARRAY_SIZE(exynosautov920_ufs_phy_clks),
++	.cdr_lock_status_offset = EXYNOSAUTOV920_EMBEDDED_COMBO_PHY_CDR_LOCK_STATUS,
++	.wait_for_cdr = samsung_exynosautov920_ufs_phy_wait_cdr_lock,
++};
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
+index 6c5d41552649..c13fe149bc75 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.c
++++ b/drivers/phy/samsung/phy-samsung-ufs.c
+@@ -28,9 +28,9 @@
  
-   reg:
+ #define PHY_DEF_LANE_CNT	1
+ 
+-static void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
+-				   const struct samsung_ufs_phy_cfg *cfg,
+-				   u8 lane)
++void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
++			    const struct samsung_ufs_phy_cfg *cfg,
++			    u8 lane)
+ {
+ 	enum {LANE_0, LANE_1}; /* lane index */
+ 
+@@ -323,6 +323,9 @@ static const struct of_device_id samsung_ufs_phy_match[] = {
+ 	}, {
+ 		.compatible = "samsung,exynosautov9-ufs-phy",
+ 		.data = &exynosautov9_ufs_phy,
++	}, {
++		.compatible = "samsung,exynosautov920-ufs-phy",
++		.data = &exynosautov920_ufs_phy,
+ 	}, {
+ 		.compatible = "tesla,fsd-ufs-phy",
+ 		.data = &fsd_ufs_phy,
+diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
+index 9b7deef6e10f..7f759141ee87 100644
+--- a/drivers/phy/samsung/phy-samsung-ufs.h
++++ b/drivers/phy/samsung/phy-samsung-ufs.h
+@@ -143,9 +143,13 @@ static inline void samsung_ufs_phy_ctrl_isol(
+ }
+ 
+ int samsung_ufs_phy_wait_for_lock_acq(struct phy *phy, u8 lane);
++int samsung_exynosautov920_ufs_phy_wait_cdr_lock(struct phy *phy, u8 lane);
++void samsung_ufs_phy_config(struct samsung_ufs_phy *phy,
++			    const struct samsung_ufs_phy_cfg *cfg, u8 lane);
+ 
+ extern const struct samsung_ufs_phy_drvdata exynos7_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata exynosautov9_ufs_phy;
++extern const struct samsung_ufs_phy_drvdata exynosautov920_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata fsd_ufs_phy;
+ extern const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy;
+ 
 -- 
 2.45.2
 
