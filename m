@@ -1,178 +1,158 @@
-Return-Path: <linux-kernel+bounces-404687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739B49C46D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:31:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118DF9C46DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E541F25916
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD38D1F2660D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170E81AD5DE;
-	Mon, 11 Nov 2024 20:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EAF13A250;
+	Mon, 11 Nov 2024 20:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtqK3ele"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDi5WtVu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F2145346;
-	Mon, 11 Nov 2024 20:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6B18468;
+	Mon, 11 Nov 2024 20:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357051; cv=none; b=ZtqySZ+RFj08XKvoXcVOQ+hds8OVTg4CHYg8AoMMVi0y8aTNS5/DshO06yHlKctnxKDWbCupDI008O1bQHUjj5RLUdhonzPL2kA7W2UMYcx4nPYJqZ1RBxZcghi7Z1q5Ltd6soeEDEF7cX6jchfy0QA1qv8JHJ70LLT91R/wQmc=
+	t=1731357067; cv=none; b=iE3mRe5g+PctQirNi+3/L0bV6O6l9Jb0bO4N/baZ6TXpdH0aJ3JQ4yN1bQLDtWSwb9Tl5oLgp5XPSks3NDWE58P+tf6/ccCBq5SXv8QuRxwC17AsVY84Qjvpa/u8bxrUcjmjYKgJ4WR1jLbDptHZCmhSmknNnSDFzKjPZwncgTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357051; c=relaxed/simple;
-	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	s=arc-20240116; t=1731357067; c=relaxed/simple;
+	bh=4I34QEy3zPSWv8GHju8qDWe1DpbrSW7bMCIC8u+UuPc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BblTsEpmKrYNrZ5GycK/MVrRkJfCckvKtcgq49aygWCt2fxm/GAFZVXGXQMrpOrBwXW3FkfFpz5Z8Umb66cXdH6XO3tY7y6WbsqVPFp+n5XRxvMHnU4rluAYYGRThPw13J3Jmd2uZHG0wZQaNpuYpusLLupGDifj6GrHMf9SmM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtqK3ele; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94885C4CECF;
-	Mon, 11 Nov 2024 20:30:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i5hrQWYFXczRtlxBSo4EkJYhgcW7NI0ODOYGdyO3MC7EovhwpT7oi09K9X/gkYxva+tlVuK2FyyTepv4+IOuvDxkVAllpuPoyKx5/tqH19EcpFA43dpiaoiff2zFXbYIVDTHhpqRDf4HBBM16cgUE8cOBVsAVVJ+YeUCShg8xeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDi5WtVu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D830FC4CED4;
+	Mon, 11 Nov 2024 20:31:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357050;
-	bh=WGz13CZe+VKZX/rdxUUf7kIQc8SZ1agbogHAyM7xm4A=;
+	s=k20201202; t=1731357067;
+	bh=4I34QEy3zPSWv8GHju8qDWe1DpbrSW7bMCIC8u+UuPc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UtqK3eleeS+IR8r9f119Olaf76MrcX6pSyrNXS7x+FZjRQrGBdI9soR3JUiY492+H
-	 P7PYLvi7POUG9LdFzYb3TBpgKGyPm6feJKnsuld5v1aZ89ZMVsx+5fw0TymPW7ojP1
-	 KtkiN+ug3ki++x4OGIFscQ/WI5iHxEGZix81xjcONdhPCK/tPyp4nvXs1aUFu/hKGD
-	 5dA+cWHj1XgIVX37ia1dg4SqKD0v2DLnKzlw4HumnZkPI8j/hpFlmXeQ9lD1PX6JlA
-	 tIOE/o5nkkjNb3WyFZPnNqid9q1puKehdZooPyh9dNKPZOaWvr3yP1WFsFzGqRlfLi
-	 MXXHt21tRZetg==
-Date: Mon, 11 Nov 2024 20:30:46 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+	b=FDi5WtVu4/m62hLrLsWTmk+k2LQyfuFh2Di+SeiUbIBR4tcvNGp1PTDZECpd5/M7B
+	 kcwCf7mOYQ+IB3u+JdsD07YtrdVR80HS25oNVRB8luHJ3BznoQZa/CNFvYmtOQOL3e
+	 vE9w4qkbpH7V5641kh3S/jhvdduolCXX74m/JPaGKCOFo23ocjb4s58a5N9jktW64N
+	 6rISV0mb/5V5H1q7FV4iKwxMr5B64iyYbaEOECgYuoHi9/RcIAdogZIx8E7yrfKDPG
+	 xY92J3IvGrDIQ617rHDbwCnffqHuzDNbLQfOV2O/DzSKd57MYqjIJkLVSNxpGTAJ2B
+	 +hFLCiyJtTRdA==
+Date: Mon, 11 Nov 2024 14:31:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert mux.txt to json-schema
-Message-ID: <20241111-finished-jinx-e810458a3381@spud>
-References: <20241108231453.247660-1-andreas@kemnade.info>
+	Conor Dooley <conor+dt@kernel.org>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/3] arm64: dts: marvell: Fix anyOf conditional failed
+Message-ID: <20241111203104.GA1887580-robh@kernel.org>
+References: <20241109094623.37518-1-linux@fw-web.de>
+ <20241109094623.37518-2-linux@fw-web.de>
+ <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
+ <9B1A5D20-3DE5-40C1-8B2D-B1C4F53FA5F4@public-files.de>
+ <CAL_JsqJnOa_9Poz86vOWBCQigvv-Ab4Tt1hrwTxSa5zNraVxXQ@mail.gmail.com>
+ <e7a8e087-fb92-4911-b7fb-34521635e8da@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Trh0whuzKXWjCbWM"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241108231453.247660-1-andreas@kemnade.info>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e7a8e087-fb92-4911-b7fb-34521635e8da@lunn.ch>
 
+On Mon, Nov 11, 2024 at 06:15:16PM +0100, Andrew Lunn wrote:
+> On Mon, Nov 11, 2024 at 10:25:12AM -0600, Rob Herring wrote:
+> > On Sun, Nov 10, 2024 at 3:25 AM Frank Wunderlich
+> > <frank-w@public-files.de> wrote:
+> > >
+> > > Am 9. November 2024 18:29:44 MEZ schrieb Andrew Lunn <andrew@lunn.ch>:
+> > > >On Sat, Nov 09, 2024 at 10:46:19AM +0100, Frank Wunderlich wrote:
+> > > >> From: Frank Wunderlich <frank-w@public-files.de>
+> > > >>
+> > > >> after converting the ahci-platform binding to yaml the following files
+> > > >> reporting "'anyOf' conditional failed" on
+> > > >>
+> > > >> sata@540000: sata-port@0
+> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> > > >> index 1e0ab35cc686..2b5e45d2c5a6 100644
+> > > >> --- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
+> > > >> @@ -214,6 +214,7 @@ &cp0_sata0 {
+> > > >>
+> > > >>      sata-port@1 {
+> > > >>              phys = <&cp0_comphy3 1>;
+> > > >> +            status = "okay";
+> > > >>      };
+> > > >>  };
+> > > >
+> > > >>
+> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> > > >> index 7af949092b91..6bdc4f1e6939 100644
+> > > >> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
+> > > >> @@ -433,11 +433,13 @@ &cp0_sata0 {
+> > > >>      /* 7 + 12 SATA connector (J24) */
+> > > >>      sata-port@0 {
+> > > >>              phys = <&cp0_comphy2 0>;
+> > > >> +            status = "okay";
+> > > >>      };
+> > > >>
+> > > >>      /* M.2-2250 B-key (J39) */
+> > > >>      sata-port@1 {
+> > > >>              phys = <&cp0_comphy3 1>;
+> > > >> +            status = "okay";
+> > > >>      };
+> > > >>  };
+> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+> > > >> index 7e595ac80043..161beec0b6b0 100644
+> > > >> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+> > > >> @@ -347,10 +347,12 @@ CP11X_LABEL(sata0): sata@540000 {
+> > > >>
+> > > >>                      sata-port@0 {
+> > > >>                              reg = <0>;
+> > > >> +                            status = "disabled";
+> > > >>                      };
+> > > >
+> > > >I don't know the yaml too well, but it is not obvious how adding a few
+> > > >status = "disabled"; status = "okay"; fixes a "'anyOf' conditional failed".
+> > > >
+> > > >Maybe you can expand the explanation a bit?
+> > > >
+> > > >       Andrew
+> > >
+> > > Hi angelo,
+> > >
+> > > I guess the dtbs_check only checks required properties from yaml if the node is enabled.
+> > 
+> > Yes, that is exactly how it works.
+> 
+> So from this, can i imply that phys is a required property?
+> 
+> Looking at the above patch, it appears that for armada-*.dts,
+> sata-port@0 always uses phys = <&cp0_comphy2 0> and sata-port@1 uses
+> phys = <&cp0_comphy3 1>. Is this an actual SoC property? Could it be
+> moved up into the .dtsi file? Or is it really a board property?
 
---Trh0whuzKXWjCbWM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Depends if the phy connection/assignment is really fixed or all boards 
+so far just happen to use the same one. If it is fixed and it's just a 
+matter of only one user can be active at a time, then yes, moving to the 
+SoC dtsi makes sense. The connection in the h/w is there, enabled or 
+not. Also, then the board is only dealing with "status" like many of the 
+blocks.
 
-On Sat, Nov 09, 2024 at 12:14:53AM +0100, Andreas Kemnade wrote:
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml=
- b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> new file mode 100644
-> index 000000000000..4a6f349ba2b0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,mux-clock.yaml
-> @@ -0,0 +1,125 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti/ti,mux-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments mux clock
-> +
-> +maintainers:
-> +  - Tero Kristo <kristo@kernel.org>
-> +
-> +description: |
-> +  This clock assumes a register-mapped multiplexer with multiple inpt cl=
-ock
-> +  signals or parents, one of which can be selected as output. This clock=
- does
-> +  not gate or adjust the parent rate via a divider or multiplier.
-> +
-> +  By default the "clocks" property lists the parents in the same order
-> +  as they are programmed into the register.  E.g:
-> +
-> +    clocks =3D <&foo_clock>, <&bar_clock>, <&baz_clock>;
-> +
-> +  Results in programming the register as follows:
-> +
-> +  register value   selected parent clock
-> +  0                foo_clock
-> +  1                bar_clock
-> +  2                baz_clock
-> +
-> +  Some clock controller IPs do not allow a value of zero to be programmed
-> +  into the register, instead indexing begins at 1.  The optional property
-> +  "index-starts-at-one" modified the scheme as follows:
-
-Not your doing, but this is a crock. How is someone meant to know when
-to use the property or not? Par for the course for ancient bindings I
-guess..
-
-> +
-> +  register value   selected clock parent
-> +  1                foo_clock
-> +  2                bar_clock
-> +  3                baz_clock
-> +
-> +  The binding must provide the register to control the mux. Optionally
-> +  the number of bits to shift the control field in the register can be
-> +  supplied. If the shift value is missing it is the same as supplying
-> +  a zero shift.
-> +  - |
-> +    bus {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      clock-controller@110 {
-> +        #clock-cells =3D <0>;
-> +        compatible =3D "ti,mux-clock";
-> +        clocks =3D <&virt_12000000_ck>, <&virt_13000000_ck>, <&virt_1680=
-0000_ck>;
-> +        reg =3D <0x0110>;
-> +        ti,index-starts-at-one;
-> +        ti,set-rate-parent;
-> +      };
-> +
-> +      clock-controller@120 {
-> +        #clock-cells =3D <0>;
-> +        compatible =3D "ti,composite-mux-clock";
-> +        clocks =3D <&core_96m_fck>, <&mcbsp_clks>;
-> +        ti,bit-shift =3D <4>;
-> +        reg =3D <0x0120>;
-
-Ordering here should be compatible, reg, clock properties, vendor
-properties.
-
-With that,=20
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
-Cheers,
-Conor.
-
-> +      };
-> +    };
-> --=20
-> 2.39.5
->=20
-
---Trh0whuzKXWjCbWM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJpdgAKCRB4tDGHoIJi
-0pRrAP9IAMMC4QQ1XmcaRQcIxjloiEmGeCoz/KUhen7MTd7ZcQD+O8dU04TD/eW1
-EzJCZAsNA+kwHG4eR4aM+L8k5NoJzAo=
-=VTPP
------END PGP SIGNATURE-----
-
---Trh0whuzKXWjCbWM--
+Rob
 
