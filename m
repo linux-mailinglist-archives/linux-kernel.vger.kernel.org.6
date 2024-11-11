@@ -1,103 +1,135 @@
-Return-Path: <linux-kernel+bounces-403601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D48D9C37C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:28:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8389C37CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:29:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2AECB21540
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:28:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A607E1F21DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F8A1531E1;
-	Mon, 11 Nov 2024 05:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB67149DF4;
+	Mon, 11 Nov 2024 05:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qqqf2NMA"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LU80uqT7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QNCkvie/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD187F48C;
-	Mon, 11 Nov 2024 05:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818137F48C;
+	Mon, 11 Nov 2024 05:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731302909; cv=none; b=aGsKeHZtVX9O9FH5dKQRPwhHsQPb8aTjHnezgR76AssLxSmn07ziAe624F4qFdE3P8XWpDpmQI1POykBdi5MtfFJRtAEYmwMw7CuselVDlPVPxehpB+Tj87ooIavcHuiTLZmNTKCy+Sb2Ctw+1s9fnqOIZfiwQZrtfz4j+wGLWs=
+	t=1731302975; cv=none; b=O6lYQg4chZPZ6+j6Fq2QfgCP9BxIxY1nyAMHvA7B0kaDjBtG0aggP+Yn+KRlKmtC5bBT0rORXlTl9ic3cE0CT+vzooP+YSZWTmt4e2S8qnss2IQrrvO5WLir0toHEzMf+anEEOqN2BJYBOGFLTQFhH59IZ3pw9sC84c+S0cwapU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731302909; c=relaxed/simple;
-	bh=2VJkj37W8NzBI765umzbn9mxHpPfu6i6XO7znx1mpC0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIvw7jOr2g4yL8dHFpq6RZl67e7JVXlAfkga2dKi5o0gXSROxuVetwIP+mLF1NdpHZdvEdy2ChgRZp+LJcrs0emeWf853pK51+Yh9Ouo+BEeztx+TezkuQaas+9nLEuinBR83C3cWsd83VjVEckSuOXHynhpPyzOGEseOz8ij5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qqqf2NMA; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AB5S5xc2447016
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 10 Nov 2024 23:28:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731302885;
-	bh=4ZEV2ZxgnwEtllg7eufXuTV2CsupDYa/A/hD/pRwm/k=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Qqqf2NMAXqxsCp7Dqs7SsZf/q7POm90bWVGXvkkqm8PQepSk5Fd8wthyS80WAE8yW
-	 6WvPitUz9iDq1TvORdTETyfhMCWHbWVZXzR4Sf5Ie0nHrsEmP3WR2HP2yi2jOhfdqn
-	 9X9IGUm0MDS1sfuhbLN4F9EwWpsHfLNv0ZBu1g0A=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AB5S4PU107926
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 10 Nov 2024 23:28:04 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 10
- Nov 2024 23:28:04 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 10 Nov 2024 23:28:04 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AB5S2Ye082772;
-	Sun, 10 Nov 2024 23:28:03 -0600
-Date: Mon, 11 Nov 2024 10:58:02 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Roger Quadros <rogerq@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Pekka Varis <p-varis@ti.com>
-Subject: Re: [PATCH net-next v3 2/2] net: ethernet: ti: am65-cpsw: enable
- DSCP to priority map for RX
-Message-ID: <96666e98-3754-4f75-b1c6-3c14a840da05@ti.com>
-References: <20241109-am65-cpsw-multi-rx-dscp-v3-0-1cfb76928490@kernel.org>
- <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
+	s=arc-20240116; t=1731302975; c=relaxed/simple;
+	bh=0EkOHW/GJxxmU6q0KeBRuqftyEYNIOEqhS9QoTPwRp0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lJXk2wb07fVLTIX687ZnMor0ksPwC7xwxAkDKLmslYqduy7dBhlDOwPCobFawvFIB71oNcjRccSqe8KqMeGIZfzMZCFiSFT5xT9j0Ncw/Afux51ca//i5GbS1PCgDe/yXJhaim2IP7cyO1r5ObB4EfwUE5PwL7MkyS1vw2+Tl10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LU80uqT7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QNCkvie/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731302966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cogWb+w2daVn5OZHdS5AyR304srh7kVKobKMakof5IE=;
+	b=LU80uqT7GWN755odMcZYEWGJ+BZIKwDyx2b7/ikTSrWeKIcZQOCaBgvu6w0j2yj+MvBklG
+	qxZU6gjTH4i+fs1wKKoJ8g6gU6VGtdBnStFHvMbSAnKEKQVlQ5fzpOM4vk2dtiQ41ItJ/c
+	76RG8FQw/ZpgjsVi86V8CuVmLObUkCVmovUhO5Hvfck9YbPKdQg9H3QNQVLP68QWLmmLhn
+	yeeMRUxJreDwasYEFZFHMxnIiECE0UZ6OGYek6qe4FIR45LrhX7pcj2dpXnt8hW2Y5QuqY
+	XRAJbcEkZWqEpLUS7dI9d/9RV79+Ap5Y6wbgZDjdZvkrk1tQani/O0tleZCrCg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731302966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cogWb+w2daVn5OZHdS5AyR304srh7kVKobKMakof5IE=;
+	b=QNCkvie/wz3p6eRKRYYFxz8gPrLWTLGFYWnwWMBcmeKsEGDgMh3K1NNqQNyqop9Eky0LBt
+	hq0YClN/sUnWD/Aw==
+Subject: [PATCH v2 0/3] kunit: Add support for LoongArch
+Date: Mon, 11 Nov 2024 06:29:17 +0100
+Message-Id: <20241111-kunit-loongarch-v2-0-7676eb5f2da3@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241109-am65-cpsw-multi-rx-dscp-v3-2-1cfb76928490@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAC2WMWcC/3WNQQ6CMBBFr0JmbU3bAFJX3sOwKDDCRNKSaSEY0
+ rtb2bt8L/nvHxCQCQPciwMYNwrkXQZ9KaCfrBtR0JAZtNSlkqoU79VRFLP3brTcT8I0tupuVY2
+ NaiCvFsYX7Wfx2WaeKETPn/NgUz/7v7UpIYWqjem0HWppzGMmt0b2jvbrgNCmlL6W/oGIsgAAA
+ A==
+X-Change-ID: 20241014-kunit-loongarch-98a5b756e818
+To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: Bibo Mao <maobibo@loongson.cn>, loongarch@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ kunit-dev@googlegroups.com, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731302965; l=1949;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=0EkOHW/GJxxmU6q0KeBRuqftyEYNIOEqhS9QoTPwRp0=;
+ b=EiVA11RVs0mMF5skCcPmy2ETQ1buIaeIrT4i7PvB3uldPozkU5Eol+g2+FLZ+QZSGu+0kaJYv
+ FyXGpcOWAxyD4qmrj7IbCeCQ71W2NZ4Ol+VEHPNeSXfIG54brf7wAMP
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Sat, Nov 09, 2024 at 01:00:08PM +0200, Roger Quadros wrote:
-> AM65 CPSW hardware can map the 6-bit DSCP/TOS field to
-> appropriate priority queue via DSCP to Priority mapping registers
-> (CPSW_PN_RX_PRI_MAP_REG).
-> 
-> We use the upper 3 bits of the DSCP field that indicate IP Precedence
-> to map traffic to 8 priority queues.
-> 
-> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+Enable LoongArch support in kunit.
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Example:
 
-Regards,
-Siddharth.
+	$ ./tools/testing/kunit/kunit.py run --arch=loongarch --cross_compile=$CROSS_COMPILE
+	[13:32:45] Configuring KUnit Kernel ...
+	[13:32:45] Building KUnit Kernel ...
+	Populating config with:
+	$ make ARCH=loongarch olddefconfig CROSS_COMPILE=$CROSS_COMPILE
+	Building with:
+	$ make all compile_commands.json ARCH=loongarch --jobs=8 CROSS_COMPILE=$CROSS_COMPILE
+	[13:32:48] Starting KUnit Kernel (1/1)...
+	[13:32:48] ============================================================
+	Running tests with:
+	$ qemu-system-loongarch64 -nodefaults -m 1024 -kernel .kunit/arch/loongarch/boot/vmlinux.elf -append 'kunit.enable=1 console=ttyS0 kunit_shutdown=poweroff' -no-reboot -nographic -serial stdio -machine virt -device pvpanic-pci -cpu max
+
+	...
+
+	[13:33:14] ============================================================
+	[13:33:14] Testing complete. Ran 493 tests: passed: 453, skipped: 40
+	[13:33:14] Elapsed time: 28.862s total, 0.002s configuring, 2.526s building, 26.302s running
+
+This series is meant to be merged through the kselftest tree.
+	
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Drop already applied patch
+- Pick up review tags
+- Add SPDX header
+- Link to v1: https://lore.kernel.org/r/20241014-kunit-loongarch-v1-0-1699b2ad6099@linutronix.de
+
+---
+Thomas Weißschuh (3):
+      kunit: qemu_configs: Add LoongArch config
+      kunit: tool: Allow overriding the shutdown mode from qemu config
+      kunit: qemu_configs: loongarch: Enable shutdown
+
+ tools/testing/kunit/kunit_kernel.py           |  4 +++-
+ tools/testing/kunit/qemu_configs/loongarch.py | 21 +++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+---
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+change-id: 20241014-kunit-loongarch-98a5b756e818
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
