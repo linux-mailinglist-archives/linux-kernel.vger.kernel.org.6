@@ -1,283 +1,205 @@
-Return-Path: <linux-kernel+bounces-404539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BEBD9C44E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:22:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF769C44E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F194E1F25B31
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213ED281643
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6111AA7BA;
-	Mon, 11 Nov 2024 18:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536501AAE3A;
+	Mon, 11 Nov 2024 18:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NBZl4qAW"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P+dWOpS4"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E631A7270
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E791A76CC;
+	Mon, 11 Nov 2024 18:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349232; cv=none; b=qbA+3eUAC0iS7/xmQEsqcDXn2uj3SGW8MekPamEMj5fmsYwTRmeU9UXG3A4iauBzWkBDljvgAcHeE1mtuLOUPQ1hsxkKzMFtvyMOJ4Ut6uQyu+oVsYj9iJpi1wBONf/Qb902eL0cI2ibALFYTN4GgPS89TWw9bWpB1Q0GOeqMTg=
+	t=1731349329; cv=none; b=dA1FBmbQet64bHeEkOgsQti0/P6lLMly9qdEfE6i4eNNEOVaaQx+3aHjfqfiiylfIvvAC+kMs9PrdlW4ObQ5zQ+iHwSpfaYtollZSTVucdpVxIHM2SplfQmmEBjcbwDFQZAkP8ESvbHw1ZuLlwEn2oMup6P5hIpHrXVjuV4qf8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349232; c=relaxed/simple;
-	bh=BjBfjJdldjSvoJiOX4p+lvkjb82Phfr9vuxzVSaa6Y4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sOt9S093lasGJ765OPZq/2ZTceBS/vxOIzOQ8LyDKmPSxhjvVEttr8FyaExmEteWJjBpWEzKTDnzljW4XqtMrMHLBr2eOerReLvTTorgE798wMeBU9wGZserCERWa4a0/RrsmFR5k4IL6UoXsRuCkbA8BiONYPyM1PvJ/McEkbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NBZl4qAW; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a6c3bdbebcso5825ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:20:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731349229; x=1731954029; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h3sA5IBP5XfCzOqDGRj5yXsIlkQEa9Ya5EuikdBBSd8=;
-        b=NBZl4qAWDIbK3jylnwZ96f2EEgC1GI7sivkrnhqHX0qp49ffyGKyuNRadKYvQGvHGq
-         dX6bfUOvAj1k58IZx0xc4I44xc9wr65z/Nt1QsRGfl7pZPlz7U5BKzBMfo2wLmSUrcMb
-         l6GhX4dCnn/zkCQxZs6IJhP7Cv2Gx0jmuJV7pm/Q34gNYjvV+u4xTUByh6T35hLuFDi7
-         +hHD01L9KY64D3Hr43fA/XLYWlvOMM2fOylcHSuWRYm5duBfj5oaXcsGtgnFct2eoins
-         5M8bGRJK2k50VQvR7Tc5zeO8u9RQ8S5dUfCKuqzy1wRAe20piWdxKBCXOECrIfrRcSJk
-         Usdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731349229; x=1731954029;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h3sA5IBP5XfCzOqDGRj5yXsIlkQEa9Ya5EuikdBBSd8=;
-        b=UbfmsVhMfhAto6682CVgspmE7Tq836X9HcG39pKmBmdbEWoRk/WvpR6IxPMk5FHJt+
-         Rsu/CiseIlFql7OM5prKCbjOEHlwYy3Q8SO3aBbb0s0pFy9BN9a3r619gC4kubO06PFT
-         1E6N8+QbmmHK1vujdcTpa6S8FXE9+ph7RdotesIPW6rFyyng0TRbmsjoLIz/JAtmrmXy
-         sna+quIczCIXOyyFXYZycH4/P2LfqfYuRYAoaJbjxVuYVOIoaFNcNjw251V4AxGtHfn4
-         kK9rqw9mLQetVd+wK8KZJaoEmNfSZerG6SsXWtRNqe0Z8dpFZ+sz6aYx0GGAgqCLaN+V
-         MJ/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKUTnU7t5/lw1oCMCtQwjDDrMdThVWLha15fjsiH9byvFl59/8eBQVmR0voQS319QnSGvv8cocYY5eEtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztm2AJ7UjehS79fjCFBsOZAYtu/5PHJjZ/QTtKSzlYNw/H7zFG
-	IAUX4UPfAiTp4qPdbNUiXf68b1DAKBc+SpyRtlivAZ4NadvvExPVliT2QUvzS2bdLHtHQ72vq+5
-	rBPqdBjAdJyY13GBnVDud39oClKs3LbDGjG8N
-X-Gm-Gg: ASbGnctiVhIvRnuCwa70KNqBVNe6hRpS/Nsre16OlJ35ZVusibE7kY170sddQ0/6SFs
-	Iqerbz+1GoFUsaGYO2ug6nEfPyRty56jNFC5GUDsuTddpNZkXombb5aYnepGNDoI=
-X-Google-Smtp-Source: AGHT+IE6rUjryIlk/oYvovqa8d72bal0qewnNOnb64tZJbTtsQ71iPHXvuK4GcoX5nuQMqeVgHtcmzmOzdXp+73DabY=
-X-Received: by 2002:a05:6e02:1605:b0:3a6:b0a3:540b with SMTP id
- e9e14a558f8ab-3a6f8a97e8fmr7719985ab.20.1731349229254; Mon, 11 Nov 2024
- 10:20:29 -0800 (PST)
+	s=arc-20240116; t=1731349329; c=relaxed/simple;
+	bh=PutfDBf0Mx9OWmqvjfRpMgbqwDTWo42qlTELEX0R0Bk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=quPlH53d3W8dLUAl931rr5lyT//1FURdjAgngW6Mym0ckyiLHa+9dBl8DEPMnd+AQvgnGvHjdZEOz2w1fAL+JtJO9JSToEjJkVpRxA6F3ECBtYxuv6+cJprwYgRJXtnnqryNyqJcwwkz00wViUPG/osUJa8xxJpCuhoZzq0l5ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P+dWOpS4; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 49EFE1C0005;
+	Mon, 11 Nov 2024 18:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731349324;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m5qBMJyupmVmP3WenwgqG6fxdPxLJkkXl5JQ5DHXwD0=;
+	b=P+dWOpS4lvwV7ml2Qfzzvid2JahTF5umrRz6pPlZxfoDSVN7P7RBPC5/L1AoCYDmEGs0z6
+	GdDwxm/e9vaPg8V5YM6NfeSx4yMOUgh42kO+kgWriWfrwiFd8aP0fwgcKoIOcEyJxICjcT
+	cZdji2E5SwsT6f8SzmW7zJzfOPv0P2496z5WA7e+5h4ZOpCkf1LCJdaCVT24l8Wngjqc2Y
+	mYK/iiOEOP4qlB4TdWuml/EGZm+obhm5ZNr5y9qhERlkvscEShimeq1nJc5xtuWmMyZEUI
+	BoLHmgJDkaqq/JTSpjMR3HbpocvPW8UvZmSp4xJEkexDK7lIJ+dgKPl/tg/hnw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>
+Cc: richard@nod.at,  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
+  conor+dt@kernel.org,  nikita.shubin@maquefel.me,  arnd@arndb.de,
+  vkoul@kernel.org,  esben@geanix.com,
+  linux-arm-kernel@lists.infradead.org,  linux-mtd@lists.infradead.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+In-Reply-To: <20241023092617.108021-3-hpchen0nvt@gmail.com> (Hui-Ping Chen's
+	message of "Wed, 23 Oct 2024 09:26:17 +0000")
+References: <20241023092617.108021-1-hpchen0nvt@gmail.com>
+	<20241023092617.108021-3-hpchen0nvt@gmail.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 11 Nov 2024 19:22:02 +0100
+Message-ID: <87y11p1vhx.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109025801.560378-1-irogers@google.com> <7676a058-e7ae-4c6b-a9f8-be450b64f5e1@linux.intel.com>
- <ZzJAQeHqFT_Z9JiW@x1>
-In-Reply-To: <ZzJAQeHqFT_Z9JiW@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 10:20:18 -0800
-Message-ID: <CAP-5=fXEe+O+pctnO-MhCLrX071uvkLzA-L9AWP=LR81YKYG6Q@mail.gmail.com>
-Subject: Re: [PATCH v1] perf list: Fix topic and pmu_name argument order
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Junhao He <hejunhao3@huawei.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Nov 11, 2024 at 9:35=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Nov 11, 2024 at 09:48:41AM -0500, Liang, Kan wrote:
-> >
-> >
-> > On 2024-11-08 9:58 p.m., Ian Rogers wrote:
-> > > From: Jean-Philippe Romain <jean-philippe.romain@foss.st.com>
-> > >
-> > > Fix function definitions to match header file declaration. Fix two
-> > > callers to pass the arguments in the right order.
-> > >
-> > > On Intel Tigerlake, before:
-> > > ```
-> > > $ perf list -j|grep "\"Topic\""|sort|uniq
-> > >         "Topic": "cache",
-> > >         "Topic": "cpu",
-> > >         "Topic": "floating point",
-> > >         "Topic": "frontend",
-> > >         "Topic": "memory",
-> > >         "Topic": "other",
-> > >         "Topic": "pfm icl",
-> > >         "Topic": "pfm ix86arch",
-> > >         "Topic": "pfm perf_raw",
-> > >         "Topic": "pipeline",
-> > >         "Topic": "tool",
-> > >         "Topic": "uncore interconnect",
-> > >         "Topic": "uncore memory",
-> > >         "Topic": "uncore other",
-> > >         "Topic": "virtual memory",
-> > > $ perf list -j|grep "\"Unit\""|sort|uniq
-> > >         "Unit": "cache",
-> > >         "Unit": "cpu",
-> > >         "Unit": "cstate_core",
-> > >         "Unit": "cstate_pkg",
-> > >         "Unit": "i915",
-> > >         "Unit": "icl",
-> > >         "Unit": "intel_bts",
-> > >         "Unit": "intel_pt",
-> > >         "Unit": "ix86arch",
-> > >         "Unit": "msr",
-> > >         "Unit": "perf_raw",
-> > >         "Unit": "power",
-> > >         "Unit": "tool",
-> > >         "Unit": "uncore_arb",
-> > >         "Unit": "uncore_clock",
-> > >         "Unit": "uncore_imc_free_running_0",
-> > >         "Unit": "uncore_imc_free_running_1",
-> > > ```
-> > >
-> > > After:
-> > > ```
-> > > $ perf list -j|grep "\"Topic\""|sort|uniq
-> > >         "Topic": "cache",
-> > >         "Topic": "floating point",
-> > >         "Topic": "frontend",
-> > >         "Topic": "memory",
-> > >         "Topic": "other",
-> > >         "Topic": "pfm icl",
-> > >         "Topic": "pfm ix86arch",
-> > >         "Topic": "pfm perf_raw",
-> > >         "Topic": "pipeline",
-> > >         "Topic": "tool",
-> > >         "Topic": "uncore interconnect",
-> > >         "Topic": "uncore memory",
-> > >         "Topic": "uncore other",
-> > >         "Topic": "virtual memory",
-> > > $ perf list -j|grep "\"Unit\""|sort|uniq
-> > >         "Unit": "cpu",
-> > >         "Unit": "cstate_core",
-> > >         "Unit": "cstate_pkg",
-> > >         "Unit": "i915",
-> > >         "Unit": "icl",
-> > >         "Unit": "intel_bts",
-> > >         "Unit": "intel_pt",
-> > >         "Unit": "ix86arch",
-> > >         "Unit": "msr",
-> > >         "Unit": "perf_raw",
-> > >         "Unit": "power",
-> > >         "Unit": "tool",
-> > >         "Unit": "uncore_arb",
-> > >         "Unit": "uncore_clock",
-> > >         "Unit": "uncore_imc_free_running_0",
-> > >         "Unit": "uncore_imc_free_running_1",
-> > > ```
-> > >
-> > > Fixes: e5c6109f4813 ("perf list: Reorganize to use callbacks to allow=
- honouring command line options")
-> > > Signed-off-by: Jean-Philippe Romain <jean-philippe.romain@foss.st.com=
->
-> > > Tested-by: Ian Rogers <irogers@google.com>
-> >
-> > Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
->
-> > > ---
-> > > Note from Ian, I fixed the two callers and added it to
-> > > Jean-Phillippe's original change.
->
-> I think that in this case we need:
->
-> [ I fixed the two callers and added it to Jean-Phillippe's original chang=
-e. ]
-> Signed-off-by: Ian Rogers <irogers@google.com>
->
-> Ok?
+Hello,
 
-Sgtm.
+> +static int ma35_nand_attach_chip(struct nand_chip *chip)
+> +{
+> +	struct ma35_nand_info *nand =3D nand_get_controller_data(chip);
+> +	struct ma35_nand_chip *nvtnand =3D to_ma35_nand(chip);
+> +	struct mtd_info *mtd =3D nand_to_mtd(chip);
+> +	struct device *dev =3D mtd->dev.parent;
+> +	u32 reg;
+> +
+> +	if (chip->options & NAND_BUSWIDTH_16) {
+> +		dev_err(dev, "16 bits bus width not supported");
+> +		return -EINVAL;
+> +	}
+> +
+> +	nvtnand->nchunks =3D mtd->writesize / chip->ecc.steps;
+> +	nvtnand->nchunks =3D (nvtnand->nchunks < 4) ? 1 : nvtnand->nchunks / 4;
+
+This second division looks broken. Also, you probably don't want to do
+that outside of the ON_HOST situation. Finally, you should probably
+update chip->ecc.steps and chip->ecc.size to your final choice.
+
+> +
+> +	reg =3D readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~PSIZE_MASK);
+> +	if (mtd->writesize =3D=3D 2048)
+> +		writel(reg | PSIZE_2K, nand->regs + MA35_NFI_REG_NANDCTL);
+> +	else if (mtd->writesize =3D=3D 4096)
+> +		writel(reg | PSIZE_4K, nand->regs + MA35_NFI_REG_NANDCTL);
+> +	else if (mtd->writesize =3D=3D 8192)
+> +		writel(reg | PSIZE_8K, nand->regs + MA35_NFI_REG_NANDCTL);
+> +
+> +	switch (chip->ecc.engine_type) {
+> +	case NAND_ECC_ENGINE_TYPE_ON_HOST:
+> +		chip->options |=3D NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA;
+
+What is the reason for refusing subpage writes? This is not something
+you can do later, so unless there is a good reason, please do not set
+this flag.
+
+> +		chip->ecc.write_page =3D ma35_nand_write_page_hwecc;
+> +		chip->ecc.read_page  =3D ma35_nand_read_page_hwecc;
+> +		chip->ecc.read_oob   =3D ma35_nand_read_oob_hwecc;
+> +		return ma35_nand_hwecc_init(chip, nand);
+> +	case NAND_ECC_ENGINE_TYPE_NONE:
+> +	case NAND_ECC_ENGINE_TYPE_SOFT:
+> +	case NAND_ECC_ENGINE_TYPE_ON_DIE:
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+...
+
+> +static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info=
+ *nand,
+> +				 struct device_node *np)
+> +{
+> +	struct ma35_nand_chip *nvtnand;
+> +	struct nand_chip *chip;
+> +	struct mtd_info *mtd;
+> +	int nsels;
+> +	u32 tmp;
+> +	int ret;
+> +	int i;
+> +
+> +	if (!of_get_property(np, "reg", &nsels))
+
+Please convert to device_property_ helpers. And remove the of include
+once you no longer need it.
+
+> +		return -ENODEV;
+> +
+> +	nsels /=3D sizeof(u32);
+> +	if (!nsels || nsels > MA35_MAX_NSELS) {
+> +		dev_err(dev, "invalid reg property size %d\n", nsels);
+> +		return -EINVAL;
+> +	}
+> +
+> +	nvtnand =3D devm_kzalloc(dev, struct_size(nvtnand, sels, nsels),
+> +			      GFP_KERNEL);
+> +	if (!nvtnand)
+> +		return -ENOMEM;
+> +
+> +	nvtnand->nsels =3D nsels;
+> +	for (i =3D 0; i < nsels; i++) {
+> +		ret =3D of_property_read_u32_index(np, "reg", i, &tmp);
+> +		if (ret) {
+> +			dev_err(dev, "reg property failure : %d\n", ret);
+> +			return ret;
+> +		}
+> +
+> +		if (tmp >=3D MA35_MAX_NSELS) {
+> +			dev_err(dev, "invalid CS: %u\n", tmp);
+> +			return -EINVAL;
+> +		}
+> +
+> +		if (test_and_set_bit(tmp, &nand->assigned_cs)) {
+> +			dev_err(dev, "CS %u already assigned\n", tmp);
+> +			return -EINVAL;
+> +		}
+> +
+> +		nvtnand->sels[i] =3D tmp;
+> +	}
+> +
+
+...
+
+> +
+> +	ret =3D mtd_device_register(mtd, NULL, 0);
+> +	if (ret) {
+> +		dev_err(dev, "MTD parse partition error\n");
+
+probably useless error message?
+
+> +		nand_cleanup(chip);
+> +		return ret;
+> +	}
+> +
+> +	list_add_tail(&nvtnand->node, &nand->chips);
+> +
+> +	return 0;
+> +}
+
+I believe next iteration should be the one, I'm rather happy with the
+overall look.
 
 Thanks,
-Ian
-
-> > > ---
-> > >  tools/perf/builtin-list.c | 4 ++--
-> > >  tools/perf/util/pfm.c     | 4 ++--
-> > >  tools/perf/util/pmus.c    | 2 +-
-> > >  3 files changed, 5 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-> > > index b8378ba18c28..9e7fdfcdd7ff 100644
-> > > --- a/tools/perf/builtin-list.c
-> > > +++ b/tools/perf/builtin-list.c
-> > > @@ -113,7 +113,7 @@ static void wordwrap(FILE *fp, const char *s, int=
- start, int max, int corr)
-> > >     }
-> > >  }
-> > >
-> > > -static void default_print_event(void *ps, const char *pmu_name, cons=
-t char *topic,
-> > > +static void default_print_event(void *ps, const char *topic, const c=
-har *pmu_name,
-> > >                             const char *event_name, const char *event=
-_alias,
-> > >                             const char *scale_unit __maybe_unused,
-> > >                             bool deprecated, const char *event_type_d=
-esc,
-> > > @@ -354,7 +354,7 @@ static void fix_escape_fprintf(FILE *fp, struct s=
-trbuf *buf, const char *fmt, ..
-> > >     fputs(buf->buf, fp);
-> > >  }
-> > >
-> > > -static void json_print_event(void *ps, const char *pmu_name, const c=
-har *topic,
-> > > +static void json_print_event(void *ps, const char *topic, const char=
- *pmu_name,
-> > >                          const char *event_name, const char *event_al=
-ias,
-> > >                          const char *scale_unit,
-> > >                          bool deprecated, const char *event_type_desc=
-,
-> > > diff --git a/tools/perf/util/pfm.c b/tools/perf/util/pfm.c
-> > > index 5ccfe4b64cdf..0dacc133ed39 100644
-> > > --- a/tools/perf/util/pfm.c
-> > > +++ b/tools/perf/util/pfm.c
-> > > @@ -233,7 +233,7 @@ print_libpfm_event(const struct print_callbacks *=
-print_cb, void *print_state,
-> > >     }
-> > >
-> > >     if (is_libpfm_event_supported(name, cpus, threads)) {
-> > > -           print_cb->print_event(print_state, pinfo->name, topic,
-> > > +           print_cb->print_event(print_state, topic, pinfo->name,
-> > >                                   name, info->equiv,
-> > >                                   /*scale_unit=3D*/NULL,
-> > >                                   /*deprecated=3D*/NULL, "PFM event",
-> > > @@ -267,8 +267,8 @@ print_libpfm_event(const struct print_callbacks *=
-print_cb, void *print_state,
-> > >                             continue;
-> > >
-> > >                     print_cb->print_event(print_state,
-> > > -                                   pinfo->name,
-> > >                                     topic,
-> > > +                                   pinfo->name,
-> > >                                     name, /*alias=3D*/NULL,
-> > >                                     /*scale_unit=3D*/NULL,
-> > >                                     /*deprecated=3D*/NULL, "PFM event=
-",
-> > > diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> > > index 107de86c2637..6d4c7c9ecf3a 100644
-> > > --- a/tools/perf/util/pmus.c
-> > > +++ b/tools/perf/util/pmus.c
-> > > @@ -501,8 +501,8 @@ void perf_pmus__print_pmu_events(const struct pri=
-nt_callbacks *print_cb, void *p
-> > >                     goto free;
-> > >
-> > >             print_cb->print_event(print_state,
-> > > -                           aliases[j].pmu_name,
-> > >                             aliases[j].topic,
-> > > +                           aliases[j].pmu_name,
-> > >                             aliases[j].name,
-> > >                             aliases[j].alias,
-> > >                             aliases[j].scale_unit,
+Miqu=C3=A8l
 
