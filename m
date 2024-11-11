@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-403922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F59B9C3CB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:08:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC979C3CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5AE1C2173F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F044F1C2181A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D11189B83;
-	Mon, 11 Nov 2024 11:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493EF1991BA;
+	Mon, 11 Nov 2024 11:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="RjdPiKHr"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z1Rad/aj"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D49185920;
-	Mon, 11 Nov 2024 11:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048D31885B0;
+	Mon, 11 Nov 2024 11:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731323320; cv=none; b=C/WRdu0TndryzqGIHJRtNJ1yPJx5i/pch3BjMgRjKg7HCrLAZKVu3s/4j0MXG2QTxhYeppFmTN2O+Bhg8HjEpdr1oOYZtHxYCzI+e+l4azMIOLyqSuV6BHofV85FfCOqNdZfkqGu7bT9YbVP1u4Izz7EVDKNNm5e/buj7fqK2M0=
+	t=1731323938; cv=none; b=DHWMbY5Eb5SPobt0t7y4/w+uRRGVa7vwfhLZuT61Z9ILxUb90LmNK5SSOREY73S+YX6o1ojqHCTPggknFxdTT3KWpEMTBwWWLSk5FLkOg+tF0HPf6aqKHo9ig6rtQgU7qYw6Ts1fcFIrNI9qXSu5uA2hdFeuV9Z5Tsqqs0SZEQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731323320; c=relaxed/simple;
-	bh=WKPt/yqlvCh6WXh/shxcRQ0bf/KslpLgjP8nAlAXJ2c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a981ZwsdK27nspZCkznOev1PftVPIwQKGjd36Bz66C/I+32q9lUOV+6t6fTmn7nUfwdr02SD25beMWfhtzqOnLVHv+RJaG+i7t9RILp4aI87hXCgU4xGBcAtU7tiDXlVVyEssxj/q/y2WXxAZxEC9h+q/IcZjU5Boe46jIy6gwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=RjdPiKHr; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=5G+2VudxYkgR5Q+WSydh4Dzc/KKgJNma63QxDjf6acI=; b=RjdPiKHrB+x4Q2dmA6Cdas0Szk
-	kcqDjWgHmJAVm+l9mVs1OdtZ0kNvrCjqqqOq6STCZNiVxY6T99Ko+L2RvMOP5eBJgIQX5MeWOaqqk
-	GwVGmD9G2NEkCnF2FLvNK0/Jf3trpi/XG+ZeK2g76f61UA/b8igp2RaIRUsv58NLjDwZz74F5GpK0
-	m1UZqGbNfH6CZQqfhqFn51WljFMEGkDgB2YeqmoXhxJZUuGfxfmyJKCAHvkHnG7xl6PxcPnGPIkaH
-	J1HEXWb5P0a/8B/o/cAJvFifC8wXxLWaL+cnLMiEUsFeDRQFS/B+YYKVIm4yLbfzMvg5ZJXgY/tqT
-	aaLra4Hg==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tAS1A-0000j5-Cd; Mon, 11 Nov 2024 11:51:36 +0100
-Received: from [185.17.218.86] (helo=zen.localdomain)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tAS19-000JnT-2U;
-	Mon, 11 Nov 2024 11:51:35 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Mon, 11 Nov 2024 11:51:25 +0100
-Subject: [PATCH 3/3] can: m_can: call deinit callback when going into
- suspend.
+	s=arc-20240116; t=1731323938; c=relaxed/simple;
+	bh=AVTVQFaCxRrH60DxHmd5acjD1ixXYXYxIbQZmNktscg=;
+	h=Message-Id:Date:From:To:Cc:Subject; b=inX3S5la+RvT1OAFoWGmmJMHg+IDcUa393+mV/0mVqOSPLLhmI3LQ9jndL5U0yTwCW5mbz8POJunOkdlrahjGPKvdC+wDpBj4pzRd541TS3J4nG1OKL7HzEaQv+a3rMpw4mIxuoz/ZtCCjCLHkoaFuEAd3lzDQ6DRK9MSRfKlzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Z1Rad/aj; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Subject:Cc:To:From:Date:Message-Id:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=99NP88Axcs9KhoqW1tMbLJHKCZ3cOuZFnq7LB2MhYis=; b=Z1Rad/ajLhKK2ieSm7MOZM1Eu4
+	LVa18CSsZBgpyIXhK5jfyQDFwmmSagPRLEWigZY+f+WDqZvwKPd/Xvu1UBgs7HwqzMrMXVhPex4s3
+	7/rvNAnSjtI1idC1oHq6HAThJluqyjui/CdMds9LITd5ciKerAntLL/cbt//mNOW+j2lTCH8+iutq
+	JALHI2TRxtW/j4uv3kVv+EdnTbfVxmu/jAl09gd/g2SF8VD+gaIAAvTmOJZIQTDmTmPLFK7bJgg8u
+	wS9OigG/TUS/COPHYODuynOugA/rCrsO2FuDBYD1Xhu/PXg3G898Er1m89NVkafl9Ae/TvGXOICNJ
+	YXb9CRjw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tASRT-0000000Cpw5-21cd;
+	Mon, 11 Nov 2024 11:18:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id E8377300C1F; Mon, 11 Nov 2024 12:18:46 +0100 (CET)
+Message-Id: <20241111105430.575636482@infradead.org>
+User-Agent: quilt/0.65
+Date: Mon, 11 Nov 2024 11:54:30 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mcgrof@kernel.org
+Cc: x86@kernel.org,
+ hpa@zytor.com,
+ petr.pavlu@suse.com,
+ samitolvanen@google.com,
+ da.gomez@samsung.com,
+ masahiroy@kernel.org,
+ nathan@kernel.org,
+ nicolas@fjasle.eu,
+ linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org,
+ linux-kbuild@vger.kernel.org,
+ hch@infradead.org,
+ gregkh@linuxfoundation.org
+Subject: [RFC][PATCH 0/8] module: Strict per-modname namespaces
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-tcan-standby-v1-3-f9337ebaceea@geanix.com>
-References: <20241111-tcan-standby-v1-0-f9337ebaceea@geanix.com>
-In-Reply-To: <20241111-tcan-standby-v1-0-f9337ebaceea@geanix.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
 
-m_can user like the tcan4x5x device, can go into standby mode.
-Low power RX mode is enabled to allow wake on can.
+Hi!
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
- drivers/net/can/m_can/m_can.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Implement a means for exports to be available only to an explicit list of named
+modules. By explicitly limiting the usage of certain exports, the abuse
+potential/risk is greatly reduced.
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index a171ff860b7c6992846ae8d615640a40b623e0cb..d9f820b5609ea3e8a98dc8a9f4d9948c09aa85c6 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -2451,6 +2451,9 @@ int m_can_class_suspend(struct device *dev)
- 		if (cdev->pm_wake_source) {
- 			hrtimer_cancel(&cdev->hrtimer);
- 			m_can_write(cdev, M_CAN_IE, IR_RF0N);
-+
-+			if (cdev->ops->deinit)
-+				cdev->ops->deinit(cdev);
- 		} else {
- 			m_can_stop(ndev);
- 		}
-@@ -2490,6 +2493,10 @@ int m_can_class_resume(struct device *dev)
- 			 * again.
- 			 */
- 			cdev->active_interrupts |= IR_RF0N | IR_TEFN;
-+
-+			if (cdev->ops->init)
-+				cdev->ops->init(cdev);
-+
- 			m_can_write(cdev, M_CAN_IE, cdev->active_interrupts);
- 		} else {
- 			ret  = m_can_start(ndev);
+The first three 'patches' clean up the existing export namespace code along the
+same lines of 33def8498fdd ("treewide: Convert macro and uses of __section(foo)
+to __section("foo")") and for the same reason, it is not desired for the
+namespace argument to be a macro expansion itself.
 
--- 
-2.46.2
+In fact, the second patch is really only a script, because sending the output
+to the list is a giant waste of bandwidth. Whoever eventually commits this to a
+git tree should squash these first three patches.
+
+The remainder of the patches introduce the special "MODULE_<modname-list>"
+namespace, which shall be forbidden from being explicitly imported. A module
+that matches the simple modname-list will get an implicit import.
+
+Lightly tested with something like:
+
+git grep -l EXPORT_SYMBOL arch/x86/kvm/ | while read file;
+do
+  sed -i -e 's/EXPORT_SYMBOL_GPL(\(.[^)]*\))/EXPORT_SYMBOL_GPL_FOR(\1, "kvm,kvm-intel,kvm-amd")/g' $file;
+done
+
+Also available at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git module/namespace
 
 
