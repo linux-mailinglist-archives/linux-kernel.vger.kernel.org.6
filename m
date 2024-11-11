@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-403997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C81C9C3DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:51:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BE59C3DC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CDFF283589
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:51:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0447BB231FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFBE18BBA2;
-	Mon, 11 Nov 2024 11:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7323818A93E;
+	Mon, 11 Nov 2024 11:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="DYzQwwGH"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cjKbOj34"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D51158866;
-	Mon, 11 Nov 2024 11:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EAF18B493
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731325897; cv=none; b=ahv1TyTEdx27OPpsJnkxg9ll8FufVhhnaPQ5Puis6/vCqa6p/Ur+6CqU6+PHLUrOG6a36KjtOB298mu6WPz+FNccKBQickmrgFC+S2dthUiMW/LgzP6RFSRELjTP1Rg2zO0hTSVIC1BVqgXqnbCKGzdS0MDYPgvvvo8LsQGMQQY=
+	t=1731325993; cv=none; b=Hgk3LjoU92q9hd0KiMaguEYILW7Eq+uuNVlDmq7epTq13LrWuWYDfwi8wX+xdrENycppVVwvicJakB759KTBkG6Fd4XPZ/wr7MvDWqjTIibTf3ev4uzy36f6p3Cd/P+fa1QgDQcfkM4LQW//HFjjdHqeiIMwh4AA3xewQKUUGM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731325897; c=relaxed/simple;
-	bh=ISJWEmMxsmod2D4KVfAa2MMK2czNifmOQg4CF8TLCAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=f0z4jmAgq8dFB6f03Xtz6/EHOG5Zy5TQQm4+g1Nc/ED69r3uPcJUv0IgbfZhz4KUgEXXvsxrgqS8+hzkjKZ5ntDyXfKexE7nnZ9gqSpoOFtYcY2HZZbB7gbi3cMx/U6cjJOUnqfUbpfrTvTzPSDxejV7V4IFF6kI2jrRRVf143E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=DYzQwwGH; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:From:References:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=SnUsHg0g7ocxgAJ2EMV5UPPKW9SIRZO/tfjwhGCRr5g=; t=1731325895;
-	x=1731757895; b=DYzQwwGHoEw10ZbVzcmywETy3LcOu1PunbcyScgme5530EpkaVq8UygUgtteO
-	Gx3nexOzuATC7hJF/YxVHFyfhK4+v3TqW8UVApDqYXWwzN362URsdqI1sGoeu5LVhaNhkj5ti0yAk
-	hN8uc4bIE+VIHUgd/8o2fX0/gWzj34Npsqjabz7jd/uahAJ/Vs4ywXwvcMbiz7HE3iYMHK564ccg8
-	4SKxHfYuvaZ67TO1k4pU9V9ayYe7YuALGALseElFTcq8pSW4HCwC8wvOs/WckymFFpMLPhbcHAVm3
-	rrTRUje4zygANL70wVSlZ/HzoWUVpVeqNPJ/ifREwMzyf+v5aQ==;
-Received: from [2a02:8108:8980:2478:87e9:6c79:5f84:367d]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1tASxA-0006Fz-HS; Mon, 11 Nov 2024 12:51:32 +0100
-Message-ID: <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
-Date: Mon, 11 Nov 2024 12:51:31 +0100
+	s=arc-20240116; t=1731325993; c=relaxed/simple;
+	bh=2jO+hHAo2zaWunTfHYmIa9Rr+ZQoaqA8wl7u31R1Reo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LggKQt+N+F3Z1BxQO3IFnYec4bbgOUGlkLi9Zfs5eWARolHDwdTaJBA2eAL6+d1gffkwna5m8byIwc6CUDqmaa6k+e6XdHS33pne6QCE/PcoO7wIRXvpHhffgqPoa6loOczJszOegIZWv4AmzrdraS30Z4Zex/KM224LGjfeAi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cjKbOj34; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so42036635e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:53:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731325990; x=1731930790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/R0jIiMzJGgFn/fcNhSqiwXAU49AEe6L4AYFJaeHz7k=;
+        b=cjKbOj34OMSIqrA6YwrkmPnUwy+7CEtuRR0kaBb1kvckTEiG7L9WOrmyJEVJrIQSt6
+         kOAqkKH/I85XpQPIv9dIlvarVIlM6lQv+W5wrFr8JMPGI/8hDF2S4a7GZGt3xDdflU4g
+         kC58r+UbrAFYHZY2YbflVSN+B0xgIch8pvpBIFAo5F7HatPMYXslwWS3FsdhWqGsufxV
+         O3R4NJn9+gCufgaflwF7tjNoSbT1FoeQPSCcn9jzV95IA5fF5mDlOA1o142UcDeYAIHD
+         ekAgZX00CeaZm9o2NQzH4iSZYx5EklFXSM6N/w9OvmKlLXJGUhDWUu+hwOBr7Sw1WzhR
+         0uQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731325990; x=1731930790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/R0jIiMzJGgFn/fcNhSqiwXAU49AEe6L4AYFJaeHz7k=;
+        b=dRGJtSyKB54c2ZQnpDmO85RXNFcIS3lPyLXTYHPi8XhU1Yw5/OcZsMdzBwW8XsVavo
+         ciRfquDNiNdLcoftRGQVV6/deROmEqQq7WUvOfdyXXw2REWvt8kvC4WQ86mqM+wr79xs
+         ZC5KWdtM4DgIPdvQy8Jwx/I4OUVtgn0AXTh1PfiT6bzNVgpRdXj0lx31BTNbHepKHAzl
+         cvTVLnjN1ENY0BhVA8NKKJi+3oyWHiXIF/nOurUUhevSccmT5AkZqmwDDDH5nsY9/xfX
+         9ukgQgQ0l2l8EqAFjmgpVExKvuQyYUZyGfulj9fUott7dvTnZJz5TRpyn+7EpAVRtt+V
+         jBRA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3pDzlaIwwHAPElGWuZc/wmMId8TpwX15fp4GZv2+ZTntBO7VJ61ZhAqudYRtfj41QEZLRiXHg4e/kirw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsHf0yKvFzOc85VlIWqMCDAWyQxKwb/9d5Qxblh8wipeFh/oz1
+	S3nvFt2Qi36GcPqlCgW57ZHKzm2fB9rCBKbD0hCMnGigB1Rqd4CIvsZO5h6wQns=
+X-Google-Smtp-Source: AGHT+IGGeLBRlpmJAyKRcjDha6kGt2TTY4dbvpp0DM5LOvcfKSTrhefyDpfbWmlvXteOSBMPU5eh/w==
+X-Received: by 2002:a05:600c:1f93:b0:42c:e0da:f15c with SMTP id 5b1f17b1804b1-432b75168b0mr96904475e9.20.1731325989967;
+        Mon, 11 Nov 2024 03:53:09 -0800 (PST)
+Received: from localhost (p200300f65f28bb0063ffae39110fa2df.dip0.t-ipconnect.de. [2003:f6:5f28:bb00:63ff:ae39:110f:a2df])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c1205sm213426295e9.26.2024.11.11.03.53.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 03:53:09 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:53:08 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Mircea Caprioru <mircea.caprioru@analog.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than
+ the hardware is capable of
+Message-ID: <25w34mtjiy2t6t44xa4sewan6qrqettsfrcxjv7cnfhoxfnbnp@mcwrqo2hikrc>
+References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
+ <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
+ <b91ccaa161b962336324af31cd507fd1255e5c5c.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drm/fbdev-dma: regression
-To: =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-References: <20220621104617.8817-1-tzimmermann@suse.de>
- <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-MW
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
- dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Linux Framebuffer <linux-fbdev@vger.kernel.org>
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1731325895;180159c4;
-X-HE-SMSGID: 1tASxA-0006Fz-HS
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hwrf6qnj7nanlwtq"
+Content-Disposition: inline
+In-Reply-To: <b91ccaa161b962336324af31cd507fd1255e5c5c.camel@gmail.com>
 
-[CCing a few more lists]
 
-On 21.10.24 15:03, Nuno Gonçalves wrote:
-> 
-> Since 5ab91447aa13b8b98bc11f5326f33500b0ee2c48 and still happening in
-> master, I often get a kernel crash, either a "Unable to handle kernel
-> NULL pointer dereference at virtual address" or "Unable to handle
-> kernel paging request at virtual address".
-> 
-> This happens in ARM64 with ili9225 and display size 220, 176. It also
-> happens in another board with a different tinydrm driver and size 320,
-> 240.
-> 
-> I've reported in 2022 a bug (that you fixed, thanks!), where it was
-> related to screen size causing non alignment of scanlines and pages.
-> I've not investigated further this time as I was not doing any driver
-> development, but let me know if I can do any further testing.
+--hwrf6qnj7nanlwtq
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than
+ the hardware is capable of
+MIME-Version: 1.0
 
-Thx for the report. I might be missing something, but from here it looks
-like nothing happened. So allow me to ask:
+Hello Nuno,
 
-What's the status? Did anyone look into this? Is this sill happening?
+On Mon, Nov 11, 2024 at 11:37:46AM +0100, Nuno S=E1 wrote:
+> On Fri, 2024-11-08 at 19:18 +0100, Uwe Kleine-K=F6nig wrote:
+> > @@ -821,6 +822,11 @@ static int ad7124_parse_channel_config(struct iio_=
+dev
+> > *indio_dev,
+> > =A0	if (!st->num_channels)
+> > =A0		return dev_err_probe(dev, -ENODEV, "no channel children\n");
+> > =A0
+> > +	if (st->num_channels > AD7124_MAX_CHANNELS) {
+> > +		dev_warn(dev, "Limit number of channels to "
+> > __stringify(AD7124_MAX_CHANNELS) "\n");
+> > +		st->num_channels =3D AD7124_MAX_CHANNELS;
+> > +	}
+>=20
+> Hmmm, I would treat it as an error...
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+Well, it probably results in an error further below when the first child
+is hit that uses a too high reg property. I considered erroring out
+here, but thought this might not be justified if some children are not
+logical channels. I'm not sure either way, but can rework accordingly if
+all other concerns are resolved.
 
-#regzbot poke
+Best regards
+Uwe
+
+--hwrf6qnj7nanlwtq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcx8CEACgkQj4D7WH0S
+/k6ASQgAub3i5oIlX9u91Q0IQRkzI6EcgzfwBHa9Hd4RKWIQnCVzEjnWB2NFGLs0
+0+IPYH4mJbzbYzdc42D0z2YHPNBFsmw3awweAAPvBmhDE2g3uWNDFzwfn89j+O6+
+NsOMOcWjlKciHT8XwqtnCkEYYxjpDj0fhEnauLSWtjQCng7kN/PPYYCBUqc3rX+u
+T4jpx9Z6emS6NQubqjjfTvYVj0mTY2S9D0Z95zjsOiXKtQr6iJTQ45gJYPYYQ263
+NVkd5tImzpfezsfnQfOZMBnBM69B2YUdo/0RlMnfPcI1VeOvd/09Lz05OO8dJN/3
+5tjpr5+Wl/ZLRz6M8OhDw22J1v3rpw==
+=x9w+
+-----END PGP SIGNATURE-----
+
+--hwrf6qnj7nanlwtq--
 
