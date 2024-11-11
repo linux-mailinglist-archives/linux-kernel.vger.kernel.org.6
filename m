@@ -1,158 +1,250 @@
-Return-Path: <linux-kernel+bounces-404688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118DF9C46DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:31:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74539C46DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:31:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD38D1F2660D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5946C1F26F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EAF13A250;
-	Mon, 11 Nov 2024 20:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105491ACDE8;
+	Mon, 11 Nov 2024 20:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FDi5WtVu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q4SJgzFv"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6B18468;
-	Mon, 11 Nov 2024 20:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFC41AA78A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357067; cv=none; b=iE3mRe5g+PctQirNi+3/L0bV6O6l9Jb0bO4N/baZ6TXpdH0aJ3JQ4yN1bQLDtWSwb9Tl5oLgp5XPSks3NDWE58P+tf6/ccCBq5SXv8QuRxwC17AsVY84Qjvpa/u8bxrUcjmjYKgJ4WR1jLbDptHZCmhSmknNnSDFzKjPZwncgTs=
+	t=1731357092; cv=none; b=SpSOwfhmGUxC4ev7becph49QtQjW0pHQFg0QdOefeDXU7BPBeGfcm54B1q2dj0+zqkwQ/PxDd3wcYdpdxQtIZ72CjrLais5Olc+CQ6GRcbSTCqfgcVbsG4qQ+cY5y6QtBgkAZz2F+2sDgzSKct+AC+v3E/5qRW+Oa6ZHKdASpO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357067; c=relaxed/simple;
-	bh=4I34QEy3zPSWv8GHju8qDWe1DpbrSW7bMCIC8u+UuPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5hrQWYFXczRtlxBSo4EkJYhgcW7NI0ODOYGdyO3MC7EovhwpT7oi09K9X/gkYxva+tlVuK2FyyTepv4+IOuvDxkVAllpuPoyKx5/tqH19EcpFA43dpiaoiff2zFXbYIVDTHhpqRDf4HBBM16cgUE8cOBVsAVVJ+YeUCShg8xeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FDi5WtVu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D830FC4CED4;
-	Mon, 11 Nov 2024 20:31:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357067;
-	bh=4I34QEy3zPSWv8GHju8qDWe1DpbrSW7bMCIC8u+UuPc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDi5WtVu4/m62hLrLsWTmk+k2LQyfuFh2Di+SeiUbIBR4tcvNGp1PTDZECpd5/M7B
-	 kcwCf7mOYQ+IB3u+JdsD07YtrdVR80HS25oNVRB8luHJ3BznoQZa/CNFvYmtOQOL3e
-	 vE9w4qkbpH7V5641kh3S/jhvdduolCXX74m/JPaGKCOFo23ocjb4s58a5N9jktW64N
-	 6rISV0mb/5V5H1q7FV4iKwxMr5B64iyYbaEOECgYuoHi9/RcIAdogZIx8E7yrfKDPG
-	 xY92J3IvGrDIQ617rHDbwCnffqHuzDNbLQfOV2O/DzSKd57MYqjIJkLVSNxpGTAJ2B
-	 +hFLCiyJtTRdA==
-Date: Mon, 11 Nov 2024 14:31:04 -0600
-From: Rob Herring <robh@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 1/3] arm64: dts: marvell: Fix anyOf conditional failed
-Message-ID: <20241111203104.GA1887580-robh@kernel.org>
-References: <20241109094623.37518-1-linux@fw-web.de>
- <20241109094623.37518-2-linux@fw-web.de>
- <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
- <9B1A5D20-3DE5-40C1-8B2D-B1C4F53FA5F4@public-files.de>
- <CAL_JsqJnOa_9Poz86vOWBCQigvv-Ab4Tt1hrwTxSa5zNraVxXQ@mail.gmail.com>
- <e7a8e087-fb92-4911-b7fb-34521635e8da@lunn.ch>
+	s=arc-20240116; t=1731357092; c=relaxed/simple;
+	bh=o3FK/0IgoGk9NuJ8Hrvq4qVdMuiPvjzK/CdXlMtyQ84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uLkuTqo/pvI+h4dsWg2i49Qz0kzqCSCespSpm5xIex5lBFXRgqJnC44TmHUDRJRJbCesSb//xFwIB+YEqXXyC/Aq7ge61Qz4FLDE8w7pNuVSmhV+5DQDldB1S92OlfFruP/20x9gn8GZiLiBMmF5rpUICne4ZHNDSs3ZkJgZ8Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q4SJgzFv; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ebc0e13d25so1873702eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:31:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731357089; x=1731961889; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lpnhkffXcHhvvIH2AEJndbfTGO8RYj08GSS7kAB7Fzk=;
+        b=q4SJgzFvbl9r18DDHWCwWndf3WCV/t+YS28xzIOqNRKRCcGu6I7LvTBnwdp5TQ5RI0
+         pW4jiUZjNvARK2kDxxvsEtGDrwKsOu6sSotn4a4ZwbXCzjfQwvh8bylmMou4KJ9vXK6F
+         dfrA9hMu3uiqaNnNXmZdqiqiIG0WgAA/cOYtCtcuOyEMgTJ651FCkMKxyiAJ4Ne8A3IL
+         Zrxhb72Q8PhMJg5+Yael6SjUUkeni1lheSNc2sw5YAUSDM7zJtDkbEvf8wISmi+YXuDz
+         sjZkNGPm7eY2SdCg1VDzod+d8GlHLWMtEp2IpdQS2+NT3w4jHPlUEfzSKjrgMYIz2wyo
+         x2mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731357089; x=1731961889;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lpnhkffXcHhvvIH2AEJndbfTGO8RYj08GSS7kAB7Fzk=;
+        b=KP2Cc4N8ekyrIWcY4qXSJEJtbgfc6dPg4NUwndW//l0R6a22WBOBFqS+IeGdGghW9x
+         vU3YdF7LWdLyQRdctmtIIFmLzLiAh83BzGe9nUmULPDW6n3sAGua0zJSiL0NDBKHITDd
+         aRpVrQ78rrlZyTvHwEGp1sbzPMBzhiPoN03G2N66uEXDH11zZizz7b5T2tDlHkWk5Gyl
+         28L9//+AI6VtaqNuG21LXZSmFCiRrQwh6YkgSUmZw69KEOiXz8qxVcIBPfEYa5+mx6Lj
+         v0tf/viFHJvXkKh4roxWWaxi8mMw3Bz7N17QLKKfEUVG2gPWmxJMk25LvnmLZluZks8o
+         0L4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWX6G6uYg5L9lj5LVeJ1+BZ5dN3DrH2yub7rqhoIbwR4R/SF/T50vkz6M6QQUVV/jI65MIuTvyXLsl3ErU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPxeXEGe0qUjW3HT367anI+WY+scTIVM94YdPRhhSAkIXjGz8H
+	KDCEJh/heIGMdHe1jfUNPANnnO501NTENuCQ7Ku0yVjQJwlMEsULdsrTnKgimWU=
+X-Google-Smtp-Source: AGHT+IEobLDEagfW54O8GAanUWU7O3PxAB0d8AINlGQ7LblFN+wqIM6qfOx/tA5OR+entlvpbshn+A==
+X-Received: by 2002:a05:6358:d581:b0:1c3:7b75:24ec with SMTP id e5c5f4694b2df-1c641ece629mr629538355d.15.1731357088991;
+        Mon, 11 Nov 2024 12:31:28 -0800 (PST)
+Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d39643b390sm63461636d6.90.2024.11.11.12.31.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 12:31:28 -0800 (PST)
+Message-ID: <7bae5453-ff1f-40b3-b6ab-2f38e60ddaf4@baylibre.com>
+Date: Mon, 11 Nov 2024 15:31:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7a8e087-fb92-4911-b7fb-34521635e8da@lunn.ch>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] iio: adc: ad4695: add custom regmap bus callbacks
+To: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241111-tgamblin-ad4695_improvements-v1-0-698af4512635@baylibre.com>
+ <20241111-tgamblin-ad4695_improvements-v1-3-698af4512635@baylibre.com>
+Content-Language: en-US
+From: Trevor Gamblin <tgamblin@baylibre.com>
+In-Reply-To: <20241111-tgamblin-ad4695_improvements-v1-3-698af4512635@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 06:15:16PM +0100, Andrew Lunn wrote:
-> On Mon, Nov 11, 2024 at 10:25:12AM -0600, Rob Herring wrote:
-> > On Sun, Nov 10, 2024 at 3:25 AM Frank Wunderlich
-> > <frank-w@public-files.de> wrote:
-> > >
-> > > Am 9. November 2024 18:29:44 MEZ schrieb Andrew Lunn <andrew@lunn.ch>:
-> > > >On Sat, Nov 09, 2024 at 10:46:19AM +0100, Frank Wunderlich wrote:
-> > > >> From: Frank Wunderlich <frank-w@public-files.de>
-> > > >>
-> > > >> after converting the ahci-platform binding to yaml the following files
-> > > >> reporting "'anyOf' conditional failed" on
-> > > >>
-> > > >> sata@540000: sata-port@0
-> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-db.dts b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-> > > >> index 1e0ab35cc686..2b5e45d2c5a6 100644
-> > > >> --- a/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-7040-db.dts
-> > > >> @@ -214,6 +214,7 @@ &cp0_sata0 {
-> > > >>
-> > > >>      sata-port@1 {
-> > > >>              phys = <&cp0_comphy3 1>;
-> > > >> +            status = "okay";
-> > > >>      };
-> > > >>  };
-> > > >
-> > > >>
-> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
-> > > >> index 7af949092b91..6bdc4f1e6939 100644
-> > > >> --- a/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
-> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-7040-mochabin.dts
-> > > >> @@ -433,11 +433,13 @@ &cp0_sata0 {
-> > > >>      /* 7 + 12 SATA connector (J24) */
-> > > >>      sata-port@0 {
-> > > >>              phys = <&cp0_comphy2 0>;
-> > > >> +            status = "okay";
-> > > >>      };
-> > > >>
-> > > >>      /* M.2-2250 B-key (J39) */
-> > > >>      sata-port@1 {
-> > > >>              phys = <&cp0_comphy3 1>;
-> > > >> +            status = "okay";
-> > > >>      };
-> > > >>  };
-> > > >> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> > > >> index 7e595ac80043..161beec0b6b0 100644
-> > > >> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> > > >> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
-> > > >> @@ -347,10 +347,12 @@ CP11X_LABEL(sata0): sata@540000 {
-> > > >>
-> > > >>                      sata-port@0 {
-> > > >>                              reg = <0>;
-> > > >> +                            status = "disabled";
-> > > >>                      };
-> > > >
-> > > >I don't know the yaml too well, but it is not obvious how adding a few
-> > > >status = "disabled"; status = "okay"; fixes a "'anyOf' conditional failed".
-> > > >
-> > > >Maybe you can expand the explanation a bit?
-> > > >
-> > > >       Andrew
-> > >
-> > > Hi angelo,
-> > >
-> > > I guess the dtbs_check only checks required properties from yaml if the node is enabled.
-> > 
-> > Yes, that is exactly how it works.
-> 
-> So from this, can i imply that phys is a required property?
-> 
-> Looking at the above patch, it appears that for armada-*.dts,
-> sata-port@0 always uses phys = <&cp0_comphy2 0> and sata-port@1 uses
-> phys = <&cp0_comphy3 1>. Is this an actual SoC property? Could it be
-> moved up into the .dtsi file? Or is it really a board property?
 
-Depends if the phy connection/assignment is really fixed or all boards 
-so far just happen to use the same one. If it is fixed and it's just a 
-matter of only one user can be active at a time, then yes, moving to the 
-SoC dtsi makes sense. The connection in the h/w is there, enabled or 
-not. Also, then the board is only dealing with "status" like many of the 
-blocks.
+On 2024-11-11 10:59, Trevor Gamblin wrote:
+> Add a custom implementation of regmap read/write callbacks using the SPI
+> bus. This allows them to be performed at a lower SCLK rate than data
+> reads. Previously, all SPI transfers were being performed at a lower
+> speed, but with this change sample data is read at the max bus speed
+> while the register reads/writes remain at the lower rate.
+>
+> Also remove .can_multi_write from the AD4695 driver's regmap_configs, as
+> this isn't implemented or needed.
+>
+> For some background context, see:
+>
+> https://lore.kernel.org/linux-iio/20241028163907.00007e12@Huawei.com/
+>
+> Suggested-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> ---
+>   drivers/iio/adc/Kconfig  |  2 +-
+>   drivers/iio/adc/ad4695.c | 74 +++++++++++++++++++++++++++++++++++++++++++-----
+>   2 files changed, 68 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 6c4e74420fd2..e0f9d01ce37d 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -51,9 +51,9 @@ config AD4130
+>   config AD4695
+>   	tristate "Analog Device AD4695 ADC Driver"
+>   	depends on SPI
+> -	select REGMAP_SPI
+>   	select IIO_BUFFER
+>   	select IIO_TRIGGERED_BUFFER
+> +	select REGMAP
+>   	help
+>   	  Say yes here to build support for Analog Devices AD4695 and similar
+>   	  analog to digital converters (ADC).
+> diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+> index f36c1a1db886..180a0fd4f03c 100644
+> --- a/drivers/iio/adc/ad4695.c
+> +++ b/drivers/iio/adc/ad4695.c
+> @@ -150,6 +150,8 @@ struct ad4695_state {
+>   	/* Commands to send for single conversion. */
+>   	u16 cnv_cmd;
+>   	u8 cnv_cmd2;
+> +	/* Buffer for storing data from regmap bus reads/writes */
+> +	u8 regmap_bus_data[4];
+>   };
+>   
+>   static const struct regmap_range ad4695_regmap_rd_ranges[] = {
+> @@ -194,7 +196,6 @@ static const struct regmap_config ad4695_regmap_config = {
+>   	.max_register = AD4695_REG_AS_SLOT(127),
+>   	.rd_table = &ad4695_regmap_rd_table,
+>   	.wr_table = &ad4695_regmap_wr_table,
+> -	.can_multi_write = true,
+>   };
+>   
+>   static const struct regmap_range ad4695_regmap16_rd_ranges[] = {
+> @@ -226,7 +227,67 @@ static const struct regmap_config ad4695_regmap16_config = {
+>   	.max_register = AD4695_REG_GAIN_IN(15),
+>   	.rd_table = &ad4695_regmap16_rd_table,
+>   	.wr_table = &ad4695_regmap16_wr_table,
+> -	.can_multi_write = true,
+> +};
+> +
+> +static int ad4695_regmap_bus_reg_write(void *context, const void *data,
+> +				       size_t count)
+> +{
+> +	struct ad4695_state *st = context;
+> +	struct spi_transfer xfer = {
+> +			.speed_hz = AD4695_REG_ACCESS_SCLK_HZ,
+> +			.len = count,
+> +			.tx_buf = st->regmap_bus_data,
+> +	};
+> +
+> +	if (count > ARRAY_SIZE(st->regmap_bus_data))
+> +		return -EINVAL;
+> +
+> +	memcpy(st->regmap_bus_data, data, count);
+> +
+> +	return spi_sync_transfer(st->spi, &xfer, 1);
+> +}
+> +
+> +static int ad4695_regmap_bus_reg_read(void *context, const void *reg,
+> +				      size_t reg_size, void *val,
+> +				      size_t val_size)
+> +{
+> +	struct ad4695_state *st = context;
+> +	struct spi_transfer xfers[] = {
+> +		{
+> +			.speed_hz = AD4695_REG_ACCESS_SCLK_HZ,
+> +			.len = reg_size,
+> +			.tx_buf = &st->regmap_bus_data[0],
+> +		}, {
+> +			.speed_hz = AD4695_REG_ACCESS_SCLK_HZ,
+> +			.len = val_size,
+> +			.rx_buf = &st->regmap_bus_data[2],
+> +		},
+> +	};
+> +	int ret;
+> +
+> +	if (reg_size > 2)
+> +		return -EINVAL;
+> +
+> +	if (val_size > 2)
+> +		return -EINVAL;
+> +
+> +	memcpy(&st->regmap_bus_data[0], reg, reg_size);
+> +
+> +	ret = spi_sync_transfer(st->spi, xfers, ARRAY_SIZE(xfers));
+> +	if (ret)
+> +		return ret;
+> +
+> +	memcpy(val, &st->regmap_bus_data[2], val_size);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct regmap_bus ad4695_regmap_bus = {
+> +	.write = ad4695_regmap_bus_reg_write,
+> +	.read = ad4695_regmap_bus_reg_read,
+> +	.read_flag_mask = 0x80,
+> +	.reg_format_endian_default = REGMAP_ENDIAN_BIG,
+> +	.val_format_endian_default = REGMAP_ENDIAN_BIG,
+>   };
+>   
+>   static const struct iio_chan_spec ad4695_channel_template = {
+> @@ -1040,15 +1101,14 @@ static int ad4695_probe(struct spi_device *spi)
+>   	if (!st->chip_info)
+>   		return -EINVAL;
+>   
+> -	/* Registers cannot be read at the max allowable speed */
+> -	spi->max_speed_hz = AD4695_REG_ACCESS_SCLK_HZ;
+> -
+> -	st->regmap = devm_regmap_init_spi(spi, &ad4695_regmap_config);
+> +	st->regmap = devm_regmap_init(dev, &ad4695_regmap_bus, st,
+> +				      &ad4695_regmap_config);
+>   	if (IS_ERR(st->regmap))
+>   		return dev_err_probe(dev, PTR_ERR(st->regmap),
+>   				     "Failed to initialize regmap\n");
+>   
+> -	st->regmap16 = devm_regmap_init_spi(spi, &ad4695_regmap16_config);
+> +	st->regmap16 = devm_regmap_init(dev, &ad4695_regmap_bus, st,
+> +					&ad4695_regmap_config);
 
-Rob
+Note that there's a bug here - that should be
+
++	st->regmap16 = devm_regmap_init(dev, &ad4695_regmap_bus, st,
++					&ad4695_regmap16_config);
+
+I can fix this in v2, unless it would just be easier to fix during merge 
+(assuming there is no other major feedback).
+
+>   	if (IS_ERR(st->regmap16))
+>   		return dev_err_probe(dev, PTR_ERR(st->regmap16),
+>   				     "Failed to initialize regmap16\n");
+>
 
