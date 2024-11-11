@@ -1,211 +1,149 @@
-Return-Path: <linux-kernel+bounces-404825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0879C48C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9589C48C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6D1D287930
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:06:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04941F22A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703101BC9E2;
-	Mon, 11 Nov 2024 22:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A481BC9F5;
+	Mon, 11 Nov 2024 22:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IZxqg1x9"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="imyVC+Kf"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1DB150990
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731362807; cv=none; b=CaPudLn/CLLIUTsltgvQTtxNmfHuXWbdrfYzh43HWWj1lMT/afnmJNxC6T2BeEkK/bRiiG9lnexe8xgQvvIXfA41rtpxs4Yw+DqxXr6buhSfw/BBQM2aiLDKTQfILSrUwfafAsBrXUis4JjP5og6DDrY5a2mqGyr9LXQ530nWOk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731362807; c=relaxed/simple;
-	bh=EPKwnFN72GqnWTv0FRKofJ0Z3G5/cPUCr0xuV4BDCus=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=RX/Vx+hL778BECV8XRS97a+rrB5fFm4gRfpZhpzJJGhy0lct1t66LW4Ox/PdU33dAc/8hdY1ih9Twzyc4PXCsuD8XXPvptlGLOzLqA5VyWsJRvYlkOPg1PR6OJVISUg1T5pw/VWg2KtQJFGXx0eC/E8djyOa5IW9/2YN5K06hTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IZxqg1x9; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6cc03b649f2so32314996d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:06:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1731362805; x=1731967605; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4AMdHYNGlYIASZLa3FKx7DJfP+twmxC9nd5VkZnNeFQ=;
-        b=IZxqg1x9Y4jN5SZCNUkkgkSejDvoXzFHBCfAJE/IjAEf4deaNYYfr05wc+qk/HGB1W
-         XokGRJ72cmPXMeXM5wkWbHI4OJcM1F0YP/6HXUN7Z1IUvrko7Sd9HoiqPS/BJVC5eHUQ
-         GUC+lNFMfzI/BSveRTgp7PpTq4YT893mAUdSwa7oTRXiptgWPu8ocrKyfgL6Fz2XkVZR
-         AvlYh1Kv5KIr0vRXaLY4dJOpS+f1MiEUaerYaC22be1TcZQeXL5IBIKUjIiSps/8Ibth
-         cNadwMFILkyHGquW4VfkkeY58MZJB3ZjtNYJEhvB+vcbTURu9RCJgg6iNdDGOeGxYAaQ
-         1z2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731362805; x=1731967605;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4AMdHYNGlYIASZLa3FKx7DJfP+twmxC9nd5VkZnNeFQ=;
-        b=poizy8o/20LjwpQjWlJOdDecw50gjLY1CJRQ145VrUMsRRXjdNWttAvx0paz3wJeG/
-         9NJLtaNyJ/bsh7WBmnVOZdGol0Ge4hBvkQQQYPEKCf72AdBpj5TnIhMKPTlNK7fowbvP
-         UHP1O5elceQ28bMvRXJ5wPawzSbuPbLcBUgkJuKIu69X6rhiULFWNZbTMrqbcmcxY9r7
-         XQK8syxekF4cvJM94K09B2qjVqUbDHS+HHN1hFjpgLxIgwM5Gg/4PnGKHi2VCOUGvWsI
-         MAL9BNXWbHWdCN6leFAR0e1nxRel3K8ycnT/yI4vFyUVI67Zax4N2QxlPcoLlEBwgX2Q
-         BT5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVecj5BFss9RrTm6HHoLArP/XazIxOiM+nzRCaML16XYS+uik2OhDG8F45CLEEIZ+d7QXl7QZ3RIIvOros=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXRv8bGQ14X+vnqz9vlmETaStyFJ+/fWUVmVRooPQlQV4KXA2b
-	f2gpbH+0QcjaKn6HVQjS0BFyOOjHxaI2G0tFGoWPdqBSDREu5TLhAWmfogkmHzKweZqxxyvC3wQ
-	=
-X-Google-Smtp-Source: AGHT+IHkqb4U/hzuKsngL0QG2qYbbm19tUW9M69hYWLdsy7CMg/Kp3CGKstidtnUiFzCyTSsXzk/4g==
-X-Received: by 2002:a05:6214:3b84:b0:6cb:5d17:62df with SMTP id 6a1803df08f44-6d39e1973eamr185610526d6.26.1731362804816;
-        Mon, 11 Nov 2024 14:06:44 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d396637613sm64035146d6.116.2024.11.11.14.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 14:06:44 -0800 (PST)
-Date: Mon, 11 Nov 2024 17:06:43 -0500
-Message-ID: <2d9292c28df34c50c1c0d1cbf6ce3b52@paul-moore.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C087F477;
+	Mon, 11 Nov 2024 22:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731362845; cv=pass; b=gyqeH6OANHtJf38w02A4cTaAbYGrdOX8LSkkRA71aOdFmv8T79OIRhCVdOsYJXjepUje08BvE16bsh5IjSk826CkTWZQ4HYxWmn+eyW5ShYnAena1jEWJ8/KNmazjIs0i11ypI9bEActhlXNbkJxzEJZmkao3m6AVfWo2gWIOYE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731362845; c=relaxed/simple;
+	bh=e9q42B/7N4WlAuyztwSZ9VdcviFPUtwEoO/lcrc5lyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oonfllfl0UiIfc0TxyALGr8kq0tKY/0mb6jq2XrvDj1gcvVh1LkDBKsA/uZvsCfBFSNDcPukdsMe4afJQfZzwuQ2n8Eyi/NBU0IS8LfwSHWBJfMoZRFrGRB6tKGRETqrXCLPf+eG606HEzYCvtTIetKmyiHkUv2b3SYwfvO5frE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=imyVC+Kf; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731362836; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=hFZehPDvm58jjuS1AU8JWoBz5FxXrL7A69N7520+tRBgFYZQZvNyLq8EyHrTiCIY/WWK0gXaoFuJSRkIny0P2c09FPbg5r2LFmhX+C5A8eZeU1Kvzk2woCOJrnvsNU04dR3LM5wlbfpvE3r09/u7GgHb3YhpwGjy47LSWrGUv1E=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731362836; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hzLbd03HG2BFfh20ycJHkdjB0SaLheHeQWEBrY8n7kg=; 
+	b=LXZwlHJnsW9gfYOHYqF1+Ms4L3z5Rbx8LS4L6OMoK1rnolGQbzk+eshrLm/RdT4HdnDkmx201kZWry69R14y7qWEfkE5gqz7PrX+htjjveuan0OhaRvh+13ahjnwl5ToMC7SGD+kObQY2qYUQleQTP6Nt2wGYrpHRW4kX6lTPSk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731362836;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=hzLbd03HG2BFfh20ycJHkdjB0SaLheHeQWEBrY8n7kg=;
+	b=imyVC+KfjdILBJVY8chRNSocuiTVSVO5MBuYVzCgmQB77YoDlEc034A4uMGRSb/I
+	CXDVS9H9Qw4+Ah7jXaE9gJUdMVThuszFZ5X2HRLJ9sRxZQvoblxmVvojgBYHppEDKaM
+	mOVc7XPUsFhFMaqDdIH5Z62IhQMTMuhmtRgYeJeI=
+Received: by mx.zohomail.com with SMTPS id 1731362835355973.3650981655287;
+	Mon, 11 Nov 2024 14:07:15 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id E804A1060457; Mon, 11 Nov 2024 23:07:11 +0100 (CET)
+Date: Mon, 11 Nov 2024 23:07:11 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Jennifer Berringer <jberring@redhat.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] power: reset: nvmem-reboot-mode: fix write for
+ small cells
+Message-ID: <x2iuidzuodgo35iy5rvtmowz3o4s6nurrpunyhvvqniujmgpg5@hwrup7rr5pmc>
+References: <20241104152312.3813601-1-jberring@redhat.com>
+ <20241104152312.3813601-4-jberring@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20241111_1610/pstg-lib:20241111_1250/pstg-pwork:20241111_1610
-From: Paul Moore <paul@paul-moore.com>
-To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Ricardo Robaina <rrobaina@redhat.com>, eparis@redhat.com, rgb@redhat.com
-Subject: Re: [PATCH v1] audit: fix suffixed '/' filename matching in  __audit_inode_child()
-References: <20241105123807.1257948-1-rrobaina@redhat.com>
-In-Reply-To: <20241105123807.1257948-1-rrobaina@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2uq3qzykfhdkdn5j"
+Content-Disposition: inline
+In-Reply-To: <20241104152312.3813601-4-jberring@redhat.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/231.261.35
+X-ZohoMailClient: External
 
-On Nov  5, 2024 Ricardo Robaina <rrobaina@redhat.com> wrote:
-> 
-> When the user specifies a directory to delete with the suffix '/',
-> the audit record fails to collect the filename, resulting in the
-> following logs:
-> 
->  type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=2 name=(null)
->  type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=1 name=(null)
-> 
-> It happens because the value of the variables dname, and n->name->name
-> in __audit_inode_child() differ only by the suffix '/'. This commit
-> treats this corner case by cleaning the input and passing the correct
-> filename to audit_compare_dname_path().
-> 
-> Steps to reproduce the issue:
-> 
->  # auditctl -w /tmp
->  $ mkdir /tmp/foo
->  $ rm -r /tmp/foo/ or rmdir /tmp/foo/
->  # ausearch -i | grep PATH | tail -3
-> 
-> This patch is based on a GitHub patch/PR by user @hqh2010.
-> https://github.com/linux-audit/audit-kernel/pull/148
-> 
-> Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
+
+--2uq3qzykfhdkdn5j
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 3/3] power: reset: nvmem-reboot-mode: fix write for
+ small cells
+MIME-Version: 1.0
+
+Hi,
+
+On Mon, Nov 04, 2024 at 10:23:12AM -0500, Jennifer Berringer wrote:
+> Some devices, such as Qualcomm sa8775p, have an nvmem reboot mode cell
+> that is smaller than 32 bits, which resulted in
+> nvmem_reboot_mode_write() failing. Using nvmem_cell_write_variable_u32()
+> fixes this by writing only the least-significant byte of the magic value
+> when the size specified in device tree is only one byte.
+>=20
+> Signed-off-by: Jennifer Berringer <jberring@redhat.com>
 > ---
->  kernel/auditsc.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 6f0d6fb6523f..d4fbac6b71a8 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2419,7 +2419,8 @@ void __audit_inode_child(struct inode *parent,
->  	struct audit_names *n, *found_parent = NULL, *found_child = NULL;
->  	struct audit_entry *e;
->  	struct list_head *list = &audit_filter_list[AUDIT_FILTER_FS];
-> -	int i;
-> +	int i, dlen, nlen;
-> +	char *fn = NULL;
->  
->  	if (context->context == AUDIT_CTX_UNUSED)
->  		return;
-> @@ -2443,6 +2444,7 @@ void __audit_inode_child(struct inode *parent,
->  	if (inode)
->  		handle_one(inode);
->  
-> +	dlen = strlen(dname->name);
->  	/* look for a parent entry first */
->  	list_for_each_entry(n, &context->names_list, list) {
->  		if (!n->name ||
-> @@ -2450,15 +2452,27 @@ void __audit_inode_child(struct inode *parent,
->  		     n->type != AUDIT_TYPE_UNKNOWN))
->  			continue;
->  
-> +		/* special case, entry name has the sufix "/" */
 
-/sufix/suffix/
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-> +		nlen = strlen(n->name->name);
-> +		if (dname->name[dlen - 1] != '/' && n->name->name[nlen - 1] == '/') {
+-- Sebastian
 
-I'm guessing @dname is never going to have a trailing slash so we don't
-care about @n missing the trailing slash?
+>  drivers/power/reset/nvmem-reboot-mode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/rese=
+t/nvmem-reboot-mode.c
+> index 41530b70cfc4..b52eb879d1c1 100644
+> --- a/drivers/power/reset/nvmem-reboot-mode.c
+> +++ b/drivers/power/reset/nvmem-reboot-mode.c
+> @@ -24,7 +24,7 @@ static int nvmem_reboot_mode_write(struct reboot_mode_d=
+river *reboot,
+> =20
+>  	nvmem_rbm =3D container_of(reboot, struct nvmem_reboot_mode, reboot);
+> =20
+> -	ret =3D nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
+> +	ret =3D nvmem_cell_write_variable_u32(nvmem_rbm->cell, magic);
+>  	if (ret < 0)
+>  		dev_err(reboot->dev, "update reboot mode bits failed\n");
+> =20
+> --=20
+> 2.46.2
+>=20
+>=20
 
-> +			fn = kmalloc(PATH_MAX, GFP_KERNEL);
-> +			if (!fn) {
-> +				audit_panic("out of memory in __audit_inode_child()");
-> +				return;
-> +			}
-> +			strscpy(fn, n->name->name, nlen);
-> +		}
+--2uq3qzykfhdkdn5j
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'm looking at the extra work involved above with the alloc/copy and I'm
-wondering if we can't solve this a bit more generically (I suspect all
-the audit_compare_dname_path() callers may have similar issues) and with
-out the additional alloc/copy.
+-----BEGIN PGP SIGNATURE-----
 
-This is completely untested, I didn't even compile it, but what about
-something like the following?  We do add an extra strlen(), but that is
-going to be faster than the alloc/copy.
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmcygA8ACgkQ2O7X88g7
++pp0tw//SayViUspcDf8LsO+rs4zeH5MyQ//lWRTjD+nPERPrniUJC6RxRRAoNx6
+QqQ2rCvAdB/P+tPfF3LKimtJnmko5zgUQ1Avg8EFzABoL5sgkDdz6V71mRar5bJA
+ojBRsys49TGdUG5GmRMUAmRPMh+pq/rxyfF2HbiMMe//TjVIVW45VHji1mNhJPYf
+aLvswDLJpjCuEG/sjWmp0hv5juZwry7ea3OS/wsdBVqi5XrtdclkNSUgKC/Qa0yi
+wLWxqHZEOifYTp+Kp6PZtV21QcGQ+wUPP0IDKK0gOOLpWE8V6arTvpwBRZZxDHDF
+3GqtRefrsKTKiL+4/1i1/4DuuJdsylPWmdl5uxAluCIn9BHHGFSsy5BdR1dfwpcr
+aA5EcuYJg/yDY8xhSdEeU3A1Jcp/kAO/+BjoTq/kXPneAk+8hcAVM3uptkwNoEn1
+KS7aiZ4wULK4jIRdTV5Xpm4s60uXhwc6Uhc+eHiwLTPndh6kSt2bkb/v2XKrXA6O
+6G/YGsmrKiYaJ0Np9yKa2BPjjOIbXgDERNYfsyHh5HkmpVcuh2X1XBIXkup4G5/n
+H6JtoOQqM3PYPewf6frAsqKvcVoVea6e3hWZWJsvPw1gOMWH6R59Fr1WXruV2sDP
+e6EcUmwz//7EJvX35mEQm7Zi/Ivf25KgNTUEOavN+gvRLms98Wk=
+=rvxO
+-----END PGP SIGNATURE-----
 
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 470041c49a44..c30c2ee9fb77 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -1320,10 +1320,13 @@ int audit_compare_dname_path(const struct qstr *dname, const char *path, int par
-                return 1;
- 
-        parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
--       if (pathlen - parentlen != dlen)
--               return 1;
--
-        p = path + parentlen;
-+       pathlen = strlen(p);
-+       if (p[pathlen - 1] == '/')
-+               pathlen--;
-+
-+       if (pathlen != dlen)
-+               return 1;
- 
-        return strncmp(p, dname->name, dlen);
- }
-
->  		if (n->ino == parent->i_ino && n->dev == parent->i_sb->s_dev &&
->  		    !audit_compare_dname_path(dname,
-> -					      n->name->name, n->name_len)) {
-> +					      fn ? fn : n->name->name, n->name_len)) {
->  			if (n->type == AUDIT_TYPE_UNKNOWN)
->  				n->type = AUDIT_TYPE_PARENT;
->  			found_parent = n;
->  			break;
->  		}
->  	}
-> +	kfree(fn);
->  
->  	cond_resched();
->  
-> -- 
-> 2.47.0
-
---
-paul-moore.com
+--2uq3qzykfhdkdn5j--
 
