@@ -1,205 +1,132 @@
-Return-Path: <linux-kernel+bounces-404540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF769C44E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:22:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6899C454B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213ED281643
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:22:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2DFB23297
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536501AAE3A;
-	Mon, 11 Nov 2024 18:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7811A76DD;
+	Mon, 11 Nov 2024 18:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="P+dWOpS4"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ge+ZVc7q"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E791A76CC;
-	Mon, 11 Nov 2024 18:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CA1527B1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349329; cv=none; b=dA1FBmbQet64bHeEkOgsQti0/P6lLMly9qdEfE6i4eNNEOVaaQx+3aHjfqfiiylfIvvAC+kMs9PrdlW4ObQ5zQ+iHwSpfaYtollZSTVucdpVxIHM2SplfQmmEBjcbwDFQZAkP8ESvbHw1ZuLlwEn2oMup6P5hIpHrXVjuV4qf8M=
+	t=1731349462; cv=none; b=ZhTsp3cIEbZTwOHEnvFy7ctqO6Mp2oro3aawyPKzyMHQDZZ/uyz74iPtZSHB+Y10F1hctXf6Cxelo+kPzgxvN83wDB1qaPCJEsabtLhyMyi7vYGtSpmFCKT7zo0o/L7limHg2L7dejzZdwHb3Kmx32pG9IFEqd+sAFH2jHPFpDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349329; c=relaxed/simple;
-	bh=PutfDBf0Mx9OWmqvjfRpMgbqwDTWo42qlTELEX0R0Bk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=quPlH53d3W8dLUAl931rr5lyT//1FURdjAgngW6Mym0ckyiLHa+9dBl8DEPMnd+AQvgnGvHjdZEOz2w1fAL+JtJO9JSToEjJkVpRxA6F3ECBtYxuv6+cJprwYgRJXtnnqryNyqJcwwkz00wViUPG/osUJa8xxJpCuhoZzq0l5ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=P+dWOpS4; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 49EFE1C0005;
-	Mon, 11 Nov 2024 18:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731349324;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m5qBMJyupmVmP3WenwgqG6fxdPxLJkkXl5JQ5DHXwD0=;
-	b=P+dWOpS4lvwV7ml2Qfzzvid2JahTF5umrRz6pPlZxfoDSVN7P7RBPC5/L1AoCYDmEGs0z6
-	GdDwxm/e9vaPg8V5YM6NfeSx4yMOUgh42kO+kgWriWfrwiFd8aP0fwgcKoIOcEyJxICjcT
-	cZdji2E5SwsT6f8SzmW7zJzfOPv0P2496z5WA7e+5h4ZOpCkf1LCJdaCVT24l8Wngjqc2Y
-	mYK/iiOEOP4qlB4TdWuml/EGZm+obhm5ZNr5y9qhERlkvscEShimeq1nJc5xtuWmMyZEUI
-	BoLHmgJDkaqq/JTSpjMR3HbpocvPW8UvZmSp4xJEkexDK7lIJ+dgKPl/tg/hnw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>
-Cc: richard@nod.at,  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
-  conor+dt@kernel.org,  nikita.shubin@maquefel.me,  arnd@arndb.de,
-  vkoul@kernel.org,  esben@geanix.com,
-  linux-arm-kernel@lists.infradead.org,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] mtd: rawnand: nuvoton: add new driver for the
- Nuvoton MA35 SoC
-In-Reply-To: <20241023092617.108021-3-hpchen0nvt@gmail.com> (Hui-Ping Chen's
-	message of "Wed, 23 Oct 2024 09:26:17 +0000")
-References: <20241023092617.108021-1-hpchen0nvt@gmail.com>
-	<20241023092617.108021-3-hpchen0nvt@gmail.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Mon, 11 Nov 2024 19:22:02 +0100
-Message-ID: <87y11p1vhx.fsf@bootlin.com>
+	s=arc-20240116; t=1731349462; c=relaxed/simple;
+	bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=guwbP3O6yGaVfQ3jLsuq8tTIBL7h5PRhEG0D4eo+Tey9NqzdooF/rePoPY+2haQWSXm70uAQQ0s9hLgPpQgTF6Y9FKfkebpLiH24tVppNIdiOUb+7enB2D5AE4XqH2Rk4Z2hXH8wsFT+IRPvQX/uzTNZyqttHd6REJZdU2wmcnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ge+ZVc7q; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2e88cb0bbso3709287a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:24:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731349460; x=1731954260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
+        b=Ge+ZVc7quCjrHLDXthxDCEPAwpXx9QLeto1nDKLKJBXUcyQ3KXbU5TMX55/DZroApg
+         R7ArtStBNdVhf55AYRaMwSV4L8otYrg0MdxdViFusbvOUbWkJbMdD+qonLHLLhPSXG1d
+         veUy5XAYhMnta2+GwBBQOMr5aQ/0444eSO0qn0/1uGnJFDIhCuSn9zcwnOxybhHb6ozy
+         Mlutm2kOCVom2LSG7qY/1Md0cpnJEeUmE12zlLgXf4euqzbhg5EUrWKAyxRxuQHPcyMA
+         8k2ULJCPwbKVTONmEN2KDk8YMhNr6eT1Y5VR+/ZK+mCLvxhtt+QGmFv6dm2Gs95t9vQH
+         V1mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731349460; x=1731954260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
+        b=Zh/kOgw3MasKQ4h3e9iQBgI7nb5bkHuaHj0swnUR/qCEUDxq+f9ioLf4Nc1x4Tc72r
+         fp9lR0vjGpRcQiU0zyZcXmi/dz3U+yLkj+gxwbRlEXg6YAJb0+wsfDRqrCdYVcCxMykO
+         VpISFUrHRC59EgJMmYY2jBAz8miTKsKO44+I2PgRjk1T1etbpA09dhXiy5Kbe9CXBV1o
+         tPofbId/pMjdAK4RDDzP3MQCxd9BskwApy2JfdQIPMenYXeCc4LohfkddUygCM107uaF
+         cUyZ+OIpQbMR++wbGfi8Fd6aX7bBFEOGlkBOHvnc+WVmZtMUTsUWnHd75rcVo7v+5nKQ
+         YF4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWbu43/nXUyXfZSaq/JWxbyqFH70UJvAP2gRki1Ylvl1cBbyy/HFm1VFFzoPvb45P2AVvCVqWnjX2p286s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQU0ZTuSpVsPCsy1zs6cXVj6E4TLEMbOg4xvoYJpooxW45uUJv
+	UL//4mWEK4Ilk+rQ4fd879T0bQRwkXuiQkdlPCb2fYDYIdUYSDK/bKjTsF0EDf9QZ++6h+BZGZJ
+	Fk2efgW7xvRikW3DHJOj4o8qyQz1PIdTFwSwg
+X-Google-Smtp-Source: AGHT+IFkderX9FsAkQ/eC/Ud17ckv4LSSzyIo4hQQMxFMAw9dvOZbg4S5RW9egfYju0Itb68L1146lsXTVMs6GhwThQ=
+X-Received: by 2002:a17:90b:4b86:b0:2e2:991c:d796 with SMTP id
+ 98e67ed59e1d1-2e9b171ff6cmr18004783a91.9.1731349459673; Mon, 11 Nov 2024
+ 10:24:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
+ <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+ <20241111104054.GE22801@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241111104054.GE22801@noisy.programming.kicks-ass.net>
+From: Saravana Kannan <saravanak@google.com>
+Date: Mon, 11 Nov 2024 10:23:40 -0800
+Message-ID: <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
+	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
+>
+> > I actually quickly hacked up the cpu_overutilized() function to return
+> > true during suspend/resume and the threads are nicely spread out and
+> > running in parallel. That actually reduces the total of the
+> > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
+>
+> Right, so that kills EAS and makes it fall through to the regular
+> select_idle_sibling() thing.
+>
+> > Peter,
+> >
+> > Would you be open to the scheduler being aware of
+> > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
+> > overutilized behavior during these phases? I know it's a very use case
+> > specific behavior but how often do we NOT want to speed up
+> > suspend/resume? We can make this a CONFIG or a kernel command line
+> > option -- say, fast_suspend or something like that.
+>
+> Well, I don't mind if Vincent doesn't. It seems like a very
+> specific/targeted thing and should not affect much else, so it is a
+> relatively safe thing to do.
+>
+> Perhaps a more direct hack in is_rd_overutilized() would be even less
+> invasive, changing cpu_overutilized() relies on that getting propagated
+> to rd->overutilized, might as well skip that step, no?
 
-> +static int ma35_nand_attach_chip(struct nand_chip *chip)
-> +{
-> +	struct ma35_nand_info *nand =3D nand_get_controller_data(chip);
-> +	struct ma35_nand_chip *nvtnand =3D to_ma35_nand(chip);
-> +	struct mtd_info *mtd =3D nand_to_mtd(chip);
-> +	struct device *dev =3D mtd->dev.parent;
-> +	u32 reg;
-> +
-> +	if (chip->options & NAND_BUSWIDTH_16) {
-> +		dev_err(dev, "16 bits bus width not supported");
-> +		return -EINVAL;
-> +	}
-> +
-> +	nvtnand->nchunks =3D mtd->writesize / chip->ecc.steps;
-> +	nvtnand->nchunks =3D (nvtnand->nchunks < 4) ? 1 : nvtnand->nchunks / 4;
+is_rd_overutilized() sounds good to me. Outside of setting a flag in
+sched.c that the suspend/resume code sets/clears, I can't think of an
+interface that's better at avoiding abuse. Let me know if you have
+any. Otherwise, I'll just go with the flag option. If Vincent gets the
+scheduler to do the right thing without this, I'll happily drop this
+targeted hack.
 
-This second division looks broken. Also, you probably don't want to do
-that outside of the ON_HOST situation. Finally, you should probably
-update chip->ecc.steps and chip->ecc.size to your final choice.
-
-> +
-> +	reg =3D readl(nand->regs + MA35_NFI_REG_NANDCTL) & (~PSIZE_MASK);
-> +	if (mtd->writesize =3D=3D 2048)
-> +		writel(reg | PSIZE_2K, nand->regs + MA35_NFI_REG_NANDCTL);
-> +	else if (mtd->writesize =3D=3D 4096)
-> +		writel(reg | PSIZE_4K, nand->regs + MA35_NFI_REG_NANDCTL);
-> +	else if (mtd->writesize =3D=3D 8192)
-> +		writel(reg | PSIZE_8K, nand->regs + MA35_NFI_REG_NANDCTL);
-> +
-> +	switch (chip->ecc.engine_type) {
-> +	case NAND_ECC_ENGINE_TYPE_ON_HOST:
-> +		chip->options |=3D NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA;
-
-What is the reason for refusing subpage writes? This is not something
-you can do later, so unless there is a good reason, please do not set
-this flag.
-
-> +		chip->ecc.write_page =3D ma35_nand_write_page_hwecc;
-> +		chip->ecc.read_page  =3D ma35_nand_read_page_hwecc;
-> +		chip->ecc.read_oob   =3D ma35_nand_read_oob_hwecc;
-> +		return ma35_nand_hwecc_init(chip, nand);
-> +	case NAND_ECC_ENGINE_TYPE_NONE:
-> +	case NAND_ECC_ENGINE_TYPE_SOFT:
-> +	case NAND_ECC_ENGINE_TYPE_ON_DIE:
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-
-...
-
-> +static int ma35_nand_chip_init(struct device *dev, struct ma35_nand_info=
- *nand,
-> +				 struct device_node *np)
-> +{
-> +	struct ma35_nand_chip *nvtnand;
-> +	struct nand_chip *chip;
-> +	struct mtd_info *mtd;
-> +	int nsels;
-> +	u32 tmp;
-> +	int ret;
-> +	int i;
-> +
-> +	if (!of_get_property(np, "reg", &nsels))
-
-Please convert to device_property_ helpers. And remove the of include
-once you no longer need it.
-
-> +		return -ENODEV;
-> +
-> +	nsels /=3D sizeof(u32);
-> +	if (!nsels || nsels > MA35_MAX_NSELS) {
-> +		dev_err(dev, "invalid reg property size %d\n", nsels);
-> +		return -EINVAL;
-> +	}
-> +
-> +	nvtnand =3D devm_kzalloc(dev, struct_size(nvtnand, sels, nsels),
-> +			      GFP_KERNEL);
-> +	if (!nvtnand)
-> +		return -ENOMEM;
-> +
-> +	nvtnand->nsels =3D nsels;
-> +	for (i =3D 0; i < nsels; i++) {
-> +		ret =3D of_property_read_u32_index(np, "reg", i, &tmp);
-> +		if (ret) {
-> +			dev_err(dev, "reg property failure : %d\n", ret);
-> +			return ret;
-> +		}
-> +
-> +		if (tmp >=3D MA35_MAX_NSELS) {
-> +			dev_err(dev, "invalid CS: %u\n", tmp);
-> +			return -EINVAL;
-> +		}
-> +
-> +		if (test_and_set_bit(tmp, &nand->assigned_cs)) {
-> +			dev_err(dev, "CS %u already assigned\n", tmp);
-> +			return -EINVAL;
-> +		}
-> +
-> +		nvtnand->sels[i] =3D tmp;
-> +	}
-> +
-
-...
-
-> +
-> +	ret =3D mtd_device_register(mtd, NULL, 0);
-> +	if (ret) {
-> +		dev_err(dev, "MTD parse partition error\n");
-
-probably useless error message?
-
-> +		nand_cleanup(chip);
-> +		return ret;
-> +	}
-> +
-> +	list_add_tail(&nvtnand->node, &nand->chips);
-> +
-> +	return 0;
-> +}
-
-I believe next iteration should be the one, I'm rather happy with the
-overall look.
-
-Thanks,
-Miqu=C3=A8l
+-Saravana
 
