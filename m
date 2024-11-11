@@ -1,456 +1,188 @@
-Return-Path: <linux-kernel+bounces-404192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1999C4071
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:13:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9031F9C4075
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B479D1F226A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:13:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D8412824E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCD619E97E;
-	Mon, 11 Nov 2024 14:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACA19E97A;
+	Mon, 11 Nov 2024 14:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WR0rOHuf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LNtyEaEl"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40267156C52
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE652155CBF;
+	Mon, 11 Nov 2024 14:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334401; cv=none; b=SJDdBi0QVeXnDgf6TiNYjkk73YKIhUsz0iQveYI2ANS0Uu8J//A92Hz7K1Bf8jAV5M/TOJAAuIlrxD+i4QICxdU0vDuI4UjvVTVUDzp1pjbLBvLMaJrE9uuW1pVd22jscxShh/5tPmZ3fCgnLhr41quyy47lAxDnKBTNUG82Fyk=
+	t=1731334453; cv=none; b=eFMGQFvW285bIsxNVcgAKNGDn30wKWNG9spUJYgEMGrAChXxDaysQk+yirwkriMIgOY7UNKGNRCKV/ES7wPJ/Wnr18j+5wD8kMD0m0wFcJ1QLULZtnF37RaoLHJmbf0ZQF9rouAqAbqRhUBnGgyI00+jwn3ZkB+RjLpV2elEk6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334401; c=relaxed/simple;
-	bh=mjeBNDvtnIDcbk5gGjsKUFp2tHzWRdm/BTgebsVlxh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JB8U5pjUP/JHldYqvj2xacDcm5QUgG1xKQu5N5p6NLdTeUKyouihbwh06Yb+NBa3VGi9qeo4Fh8F93+WFF3wOy8JxKegsyc+JKbr8eLsJiANtjhOdkZnsJQk0yrsIvbIEaeC5zjJ1ioKC9/6JSuazJmISMJVSLNHQ8jB9aTptKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WR0rOHuf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731334398;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mj2DNZ1KVT5OMTBp9DuFZAenW0xgDUzq6xmlXFq+iFA=;
-	b=WR0rOHufg9NlQQIZUjsym4d+IZkAtdkfDizH1nkx90+pg/pXwKrlfBSJRZRH0Z+Gi2xMy7
-	5ItTTPlSTt5NFvTTx3Zc+6nNu9Ee9EfYY0DaNw3554bOY0nQ2RWH/hlkoep5XnFUFqGlHO
-	bU8YdAFnoGXLWIj2AIYteHtvDDq2luY=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-179-K8ztwuLLOvOHW9KSwW1KmA-1; Mon, 11 Nov 2024 09:13:16 -0500
-X-MC-Unique: K8ztwuLLOvOHW9KSwW1KmA-1
-X-Mimecast-MFC-AGG-ID: K8ztwuLLOvOHW9KSwW1KmA
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-718071a2128so985438a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:13:16 -0800 (PST)
+	s=arc-20240116; t=1731334453; c=relaxed/simple;
+	bh=xGQ25APo1pmW8WG57GB3HGbTAoRBmkZTBps8h+sJlS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pVkCBsbRhjbXJYCtsq8hhr0yTuXmhEMZUDpyw3yFJ3buf1uV6ZVQhsui+j6xjqdfQEGrdOKNLllXT6f4VamLQF0gFsOPgNg8719bRTc1kTdFBwZhTSu8WdLPoPRUuOaozwp3zqMpoq2pK/BBazQAd6bzUBS307FPHd5Nr+D+U0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LNtyEaEl; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3556374b3a.2;
+        Mon, 11 Nov 2024 06:14:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731334451; x=1731939251; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jh8QF7rmmzQyQcev1TztdNC8/1ytTeCqpc34ixJhxg=;
+        b=LNtyEaElrerjp7dkxU/ErKKiFh8jgIgZhaTh1UteSgok53axqUdT3U4FiPc8u6sRsI
+         uAh1KoqB5jsa2hVDoseQqR87gu6G7E8YdyVYWjdjFi9wQfI46DhOAyXTS6olL0usxr1F
+         dd6pYdx8e9ybks0T4Yu+AgwCLFEH5FI2SCgppxz3UiyEhf4FBqXJjD9QiUMN8IFiYNJq
+         JO3BK3CTvKG8HXK0cC5I/wtbvP5P5CZvXVuqSCB0ihsA9XbUMo2vJMJYjgIIVqpxtnuE
+         +Y90SpIYlDmANBIRBu6NlKJ7ijjhheQxwutk0rbndzDYo8o1oLUsl9YWxbsuEBJ3Hspi
+         udwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731334396; x=1731939196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mj2DNZ1KVT5OMTBp9DuFZAenW0xgDUzq6xmlXFq+iFA=;
-        b=QrulKrEyOayxkl++1RsTtk5aGi7XsxMFO+KAhnJKv0BQRYuDaJ7GxHQnVpzm1ISR3N
-         VGF1+CAAGp3SIO28hgd7te7Px3If6/aJ/oUhRQuZ1qn+/m8fbjo6RCd+a3CfjDOYDker
-         n/XIHabVVmz85+yGjrQEDIwBVWkrTWlLeB2/81HapNupLy4Q3XF+tunuqVfmza1xbEB9
-         38dvYP01/BJ4SBE84JkGBUHtJYGytQdJJ3kIXMgDyOEdTzKBLJtGJFpsstXML9UNhFyg
-         vdMTwVQBA+q++tXMXeJGTJh6PvhlVf2ZTorc1+GXuglRG0q9A2IwDVlrlpmp+PQ51WIC
-         U+Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4JMsnMdv9A283bNhAbfEAVo9icTA/WGTqzrvwZWKx3e9GNbkWRQL5QNYQGJWBxv/fzTrHBR3hjfbOfNY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycSABjlzQxgVN+qYcAVRqzkZTXmo5+NyBZdrj6lzI47f0SPogH
-	K8NxpOPFhZOoSej0t7nkMPgNK/0G1pU2IgPpRW00HzxbFPKAbjLjBAkJyEiWFUBiO1g6QK/aQCB
-	/2ot3ID84WSFHlPnkNepI6Y9XJaf5ViekcWLSwJYNfWBQTKWlKe/jPDEFK8QqOVzbHv0fDdtZSc
-	9M9weq7JDD44WvwvVLHN+fM5t+3EiIAUjCfdJd
-X-Received: by 2002:a05:6830:3983:b0:703:7777:244b with SMTP id 46e09a7af769-71a1c1de353mr2811829a34.1.1731334395772;
-        Mon, 11 Nov 2024 06:13:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGo6HGRnVfI0fIsFktnZWZHQNrBxxLllEj9rzg2nwPC9BnHMmVQLaszslpdE13aC0lzeqP2KIYWY8A9A1AJpG4=
-X-Received: by 2002:a05:6830:3983:b0:703:7777:244b with SMTP id
- 46e09a7af769-71a1c1de353mr2811813a34.1.1731334395414; Mon, 11 Nov 2024
- 06:13:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731334451; x=1731939251;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8jh8QF7rmmzQyQcev1TztdNC8/1ytTeCqpc34ixJhxg=;
+        b=pF/OFkE45UUBUqIWdnsgc/fR22vCHzwWemp+AbA/YyxbhXkGL3rEjkK1BZmB0JIqHb
+         DMn5btXisEQwX2OiWqxqEkZ+AWjd/t0ClpMJ92jE+dE8uldNN8yiGDyeAtnhFwEciAPy
+         LB1YrWrAKggfh4ep1SDIT1Uy0A6UGrAYGes8Nb1K6Nfh61ERAr5tNEUkFQqAtwU589zv
+         X9QdtzBKzLVbqb5LFOXKOtFK/pnkgW/7SkDmYeCvRBUjHzrI+rYH2mQw3Af8utjeHNR6
+         6zVgIL6euvQKn1TQLAAKSlIrLvigB+9OCdwTXkGjKjEZxG+1K/8JXtFsoX987BLXS9Vs
+         cLzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYx9uGBHDpHWTpztMmTIO2DWgIaRW+fvFGkkP6l6dLpRhj8OnvkfkjiEIj1kA13LeUeAOMEz102Iryg64D@vger.kernel.org, AJvYcCWJgQYYCrtCAwkov7YFg814MAVTnlWA4eaCWROby3FFRXgaPVPttC8Bn5YyZwNznyLe0z9ddXNW0gPAMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeAFhbMJwYTcTv8l+cI/U3hH45FSMmk0/WxXtiOo5/AmM/NCD5
+	6kYHbArY5nNZGorFA5khsaAUX5g/dHVis08aUVHyNYQpac1ApPCKiNTReQ==
+X-Google-Smtp-Source: AGHT+IET+G0UaXITs9wG4Kj5nfiKyeTCptDdZ0V44/o1aJdALw0v9hcUL9uHHK7Cp2cmEWCye1/TeA==
+X-Received: by 2002:a05:6a20:4c17:b0:1db:e9d8:be4f with SMTP id adf61e73a8af0-1dc22af3e51mr12261706637.29.1731334450902;
+        Mon, 11 Nov 2024 06:14:10 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f65bd78sm8663461a12.78.2024.11.11.06.14.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 06:14:10 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <5ef20452-a38c-4c2f-b49d-3999b217f622@roeck-us.net>
+Date: Mon, 11 Nov 2024 06:14:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALE0LRvJ-n77oU=O9__NdSLw2v33zMK+WYkn2LcwWMwHCbohQw@mail.gmail.com>
- <CAC_iWjJEXU+dodjvWQYM9ohPa3P2p0bFG=exGoi-iYFrLLbCTA@mail.gmail.com>
- <CALE0LRtUz8hd4pdR9sX2Sb6tOn=K4wkRnGG9B7f72qU8JFQSYQ@mail.gmail.com>
- <CAC_iWjJLSSTO0Ca7rgOWAHfWzbkBkKHkQedRUbcwsoU0dtrsGA@mail.gmail.com>
- <CALE0LRvN3tYgWig1XnCiAZvdzE8x=cdLanGxbUvpPr5nfexSPQ@mail.gmail.com> <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
-In-Reply-To: <CAC_iWjL4mp-sTsp5a+yFkUauXuMvZ1yoTAk_60nm-CCKUgwayw@mail.gmail.com>
-From: Enric Balletbo i Serra <eballetb@redhat.com>
-Date: Mon, 11 Nov 2024 15:13:04 +0100
-Message-ID: <CALE0LRsYXXaao2uCUMFkd8Y6f5Mxgoc-Qpft_y8wWW3ZiekbbA@mail.gmail.com>
-Subject: Re: optee-based efi runtime variable service on TI j784s4 platforms
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Sumit Garg <sumit.garg@linaro.org>, linux-efi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Manorit Chawdhry <m-chawdhry@ti.com>, 
-	Udit Kumar <u-kumar1@ti.com>, "Menon, Nishanth" <nm@ti.com>, 
-	Masahisa Kojima <kojima.masahisa@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] hwmon: (nct6775-core) Fix overflows seen when writing limit
+ attributes
+To: Pei Xiao <xiaopei01@kylinos.cn>, jdelvare@suse.com,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b09c4396-1578-45bb-b1fb-23c1f91cabe7@kylinos.cn>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <b09c4396-1578-45bb-b1fb-23c1f91cabe7@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 11/11/24 00:36, Pei Xiao wrote:
+> hi Guenter Roeck,
+>    Excuse me, may I ask a question?
+>    When I see this commit (Fixes: 0403e10bf082 ("hwmon: (nct6775-core) Fix underflows seen when writing limit attributes")), I found an issue,
+> DIV_ROUND_CLOSEST() after kstrtoul() results in an overflow if a large
+> number such as 18446744073709551615 is provided by the user.
+> Fix it by reordering clamp_val() and DIV_ROUND_CLOSEST() operations.
+> 
+> If the issue described above does indeed exist, I will send an formal patch.
+> 
 
-Thanks a lot for your support.
-
-On Mon, Nov 11, 2024 at 12:01=E2=80=AFPM Ilias Apalodimas
-<ilias.apalodimas@linaro.org> wrote:
->
-> On Mon, 11 Nov 2024 at 10:21, Enric Balletbo i Serra
-> <eballetb@redhat.com> wrote:
-> >
-> > Hi Ilias,
-> >
-> > On Sat, Nov 9, 2024 at 1:31=E2=80=AFAM Ilias Apalodimas
-> > <ilias.apalodimas@linaro.org> wrote:
-> > >
-> > > On Fri, 8 Nov 2024 at 23:11, Enric Balletbo i Serra <eballetb@redhat.=
-com> wrote:
-> > > >
-> > > > Hi Ilias,
-> > > >
-> > > > Thanks for your quick answer.
-> > > >
-> > > > On Fri, Nov 8, 2024 at 4:48=E2=80=AFPM Ilias Apalodimas
-> > > > <ilias.apalodimas@linaro.org> wrote:
-> > > > >
-> > > > > Hi Enric,
-> > > > >
-> > > > > On Fri, 8 Nov 2024 at 12:26, Enric Balletbo i Serra <eballetb@red=
-hat.com> wrote:
-> > > > > >
-> > > > > > Hi all,
-> > > > > >
-> > > > > > I'm looking for any advice/clue to help me to progress on enabl=
-ing
-> > > > > > TEE-base EFI Runtime Variable Service on TI a j784s4 platforms.
-> > > > > >
-> > > > > > I basically followed the steps described in u-boot documentatio=
-n [1],
-> > > > > > I enabled some debugging messages but I think I'm at the point =
-that
-> > > > > > the problem might be in the StandaloneMM application, and I'm n=
-ot sure
-> > > > > > how to debug it.
-> > > > > >
-> > > > > > What I see is that when I run the tee-supplicant daemon, it loo=
-ks like
-> > > > > > the tee_client_open_session() call loops forever and the tee_st=
-mm_efi
-> > > > > > driver never ends to probe.
-> > > > > >
-> > > > > > With debug enabled I got the following messages.
-> > > > >
-> > > > > I assume reading and storing variables already works in U-Boot ri=
-ght?
-> > > > >
-> > > >
-> > > > Reading and storing variables to the RPMB partition in U-Boot works=
-,
-> > > > that's using the mmc rpmb command from u-boot,
-> > >
-> > > Are you talking about env variables? Perhaps you store them in the mm=
-c
-> > > and not the RPMB partition?
-> > > There's some information here [0]
-> > >
-> > > > But setting
-> > > > CONFIG_EFI_MM_COMM_TEE=3Dy in u-boot I end with a similar behaviour
-> > > > (although I'm not able to debug at u-boot level) What I see is that
-> > > > u-boot gets stuck
-> > > > when bootefi bootmgr is invoqued. I can also reproduce the issue wi=
-th
-> > > > bootefi hello.
-> > > >
-> > > > =3D> run bootcmd
-> > > >   Scanning for bootflows in all bootdevs
-> > > >   Seq  Method       State   Uclass    Part  Name                   =
-   Filename
-> > > >   ---  -----------  ------  --------  ----  -----------------------=
--
-> > > > ----------------
-> > > >   Scanning global bootmeth 'efi_mgr':
-> > > > ( gets stuck here)
-> > > >
-> > > > or
-> > > >
-> > > > =3D> bootefi hello
-> > > > (gets stuck)
-> > > >
-> > > > To debug I disabled CONFIG_EFI_MM_COMM_TEE to not get stuck and byp=
-ass
-> > > > the error and go to Linux. My understanding is that
-> > > > CONFIG_EFI_MM_COMM_TEE is only required to read/write efi variables=
- at
-> > > > u-boot level but OPTEE is running the StandaloneMM service. Am I
-> > > > right?
-> > >
-> > > U-Boot has two ways of storing EFI variables [0] . You can either
-> > > store them in a file or the RPMB partition. The correct thing to do,
-> > > since you want to use the RPMB, is enable CONFIG_EFI_MM_COMM_TEE. I a=
-m
-> > > not sure why the hand happens, but one thing we can improve is figure
-> > > out why it hangs and print a useful message.
-> > > There are a number of reasons that might lead to a failure. Is the
-> > > RPMB key programmed on your board? Have a look at this [1] in case it
-> > > helps
-> > >
-> > > >
-> > > > > >
-> > > > > > # tee-supplicant
-> > > > > > D/TC:? 0 tee_ta_init_session_with_context:557 Re-open trusted s=
-ervice
-> > > > > > 7011a688-ddde-4053-a5a9-7b3c4ddf13b8
-> > > > > > D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-> > > > > > D/TC:? 0 spm_handle_scall:859 Received FFA version
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > > > > > D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-> > >
-> > > If I had to guess, OP-TEE doesn't store the variables in the RPMB, ca=
-n
-> > > you compile it with a bit more debugging enabled?
-> > >
-> >
-> > Here is a log with CFG_TEE_CORE_LOG_LEVEL=3D4, CFG_TEE_CORE_DEBUG=3Dy a=
-nd
-> > CFG_TEE_TA_LOG_LEVEL=3D4
-> >
-> > https://paste.centos.org/view/eed83a5b
-> >
-> > At the beginning of the log I see
-> >
-> > D/TC:0 0 check_ta_store:449 TA store: "REE"
-> >
-> > Which looks wrong to me as I built optee with:
-> >   CFG_REE_FS=3Dn
-> >   CFG_RPMB_FS_DEV_ID=3D0
-> >   CFG_RPMB_FS=3Dy
->
-> Yes it does look wrong. Our compilation flags are
-> CFG_RPMB_FS=3Dy CFG_RPMB_FS_DEV_ID=3D0 CFG_RPMB_WRITE_KEY=3Dy
-> CFG_RPMB_TESTKEY=3Dy CFG_REE_FS=3Dn CFG_CORE_ARM64_PA_BITS=3D48
-> CFG_SCTLR_ALIGNMENT_CHECK=3Dn
->
-
-Mine are very similar
-
-make CROSS_COMPILE=3D"$CC32" CROSS_COMPILE64=3D"$CC64" \
-    PLATFORM=3Dk3-j784s4 CFG_ARM64_core=3Dy CFG_CONSOLE_UART=3D0x8 \
-    CFG_RPMB_FS_DEV_ID=3D0 CFG_REE_FS=3Dn CFG_RPMB_FS=3Dy \
-    CFG_RPMB_WRITE_KEY=3Dy CFG_RPMB_TESTKEY=3Dy \
-    CFG_STMM_PATH=3DBL32_AP_MM.fd \
-    CFG_CORE_HEAP_SIZE=3D524288 CFG_CORE_DYN_SHM=3Dy CFG_SCTLR_ALIGNMENT_CH=
-ECK=3Dn \
-    CFG_TEE_CORE_LOG_LEVEL=3D4 CFG_TEE_CORE_DEBUG=3Dy CFG_TEE_TA_LOG_LEVEL=
-=3D4
-
-There is a difference with CFG_CORE_ARM64_PA_BITS=3D48 , my platform define=
-s it to
-
-   core/arch/arm/plat-k3/conf.mk:$(call force,CFG_CORE_ARM64_PA_BITS,36)
-
-But I don't think this is the problem.
-
-> The testkey etc aren't required if your board has a way of reading the
-> RPMB key from a secure location -- in fact, using the testkey is not
-> secure. Is the RPMB programmed on your board? Also can you make sure
-> CFG_RPMB_FS_DEV_ID needs to be 0? How many sd interfaces your board
-> has?
-
-My board has two interfaces, an eMMC and a SD-card, 0 is indeed the
-eMMC and I'm using the testkey which I assume was programmed the first
-time I booted with all this. Unfortunately I lost the traces. But,
-optee_rpmb works. I.e:
-
-     =3D> optee_rpmb write test 1234
-     =3D> optee_rpmb read test 4
-     Read 4 bytes, value =3D 1234
-
-
-> IOW in U-Boot does 'mmc dev 0 && mmc info' print information for the
-> RPMB partition?
->
-
-    =3D> mmc dev 0
-    switch to partitions #0, OK
-    mmc0(part 0) is current device
-    =3D> mmc info
-    Device: mmc@4f80000
-    Manufacturer ID: 13
-    OEM: 4e
-    Name: G1M15L
-    Bus Speed: 200000000
-    Mode: HS400 (200MHz)
-    Rd Block Len: 512
-    MMC version 5.1
-    High Capacity: Yes
-    Capacity: 29.6 GiB
-    Bus Width: 8-bit DDR
-    Erase Group Size: 512 KiB
-    HC WP Group Size: 8 MiB
-    User Capacity: 29.6 GiB WRREL
-    Boot Capacity: 31.5 MiB ENH
-    RPMB Capacity: 4 MiB ENH
-    Boot area 0 is not write protected
-    Boot area 1 is not write protected
-    =3D> mmc list
-    mmc@4f80000: 0 (eMMC)
-    mmc@4fb0000: 1
-
-Any interaction with efi gives me the same result (printenv -e,
-efidebug, bootefi ...)
-
-=3D> efidebug query -bs -rt -nv
-D/TC:? 0 load_stmm:297 stmm load address 0x40004000
-D/TC:? 0 spm_handle_scall:859 Received FFA version
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-D/TC:? 0 spm_handle_scall:867 Received FFA direct request
-... stuck here ... I need to reset the board
-
-Will continue to see if I can get more useful messages
+Yes, and good find, but please fix the calculations.
 
 Thanks,
-  Enric
+Guenter
 
-> Thanks
-> /Ilias
-> >
-> > I'll try to add some more prints to verify if REE is used as a store
-> > system, I assume this should say something about RPMB. Am I right with
-> > this?
->
->
-> >
-> > > > > >
-> > > > > > And tracing the function calls gives me that:
-> > > > > >
-> > > > > >       tee_stmm_efi_probe() {
-> > > > > >              tee_client_open_context() {
-> > > > > >                optee_get_version() {
-> > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > > >                } (ret=3D0xd)
-> > > > > >                tee_ctx_match(); (ret=3D0x1)
-> > > > > >                optee_smc_open() {
-> > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > > >                  optee_open() {
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                  } (ret=3D0x0)
-> > > > > >                } (ret=3D0x0)
-> > > > > >              } (ret=3D0xffff000004e71c80)
-> > > > > >              tee_client_open_session() {
-> > > > > >                optee_open_session() {
-> > > > > >                  tee_get_drvdata(); (ret=3D0xffff000002e55800)
-> > > > > >                  optee_get_msg_arg() {
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > > > >                  } (ret=3D0xffff000002909000)
-> > > > > >                  tee_session_calc_client_uuid(); (ret=3D0x0)
-> > > > > >                  optee_to_msg_param(); (ret=3D0x0)
-> > > > > >                  optee_smc_do_call_with_arg() {
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909000)
-> > > > > >                    tee_shm_get_va(); (ret=3D0xffff000002909060)
-> > > > > >                    optee_cq_wait_init(); (ret=3D0xffff000002e55=
-910)
-> > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    optee_smccc_smc(); (ret=3D0xffff0004)
-> > > > > >      ... continues sending this forever ...
-> > > > > >      ... Hit ^C to stop recording ...
-> > > > > >                    tee_get_drvdata(); (ret=3D0xffff000002e55800=
-)
-> > > > > >                    optee_smccc_smc() {
-> > > > > >
-> > > > > > [1] https://docs.u-boot.org/en/latest/develop/uefi/uefi.html#us=
-ing-op-tee-for-efi-variables
-> > > > > >
-> > > > > > Thanks in advance,
-> > > > >
-> > > > > The most common problem with this is miscompiling the tee_supplic=
-ant
-> > > > > application.
-> > > > > Since we don't know if the system has an RPMB, we emulate it in t=
-he
-> > > > > tee_supplicant. How did you get the supplicant and can you check =
-if it
-> > > > > was compiled with RPMB_EMU=3D0 or 1?
-> > > > >
-> > > >
-> > > > I'm using the tee-supplicant provided by the fedora package which i=
-s
-> > > > built with ` -DRPMB_EMU=3D0`, I think that's correct, right?
-> > > >
-> > >
-> > > Yes, this is correct. We fixed the Fedora package to compile the
-> > > supplicant correctly a while back.
-> > >
-> > > [0] https://www.linaro.org/blog/uefi-secureboot-in-u-boot/
-> > > [1] https://apalos.github.io/Protected%20UEFI%20variables%20with%20U-=
-Boot.html#Protected%20UEFI%20variables%20with%20U-Boot
-> > >
-> > >
-> > > Regards
-> > > /Ilias
-> > > > Thanks,
-> > > >    Enric
-> > > >
-> > > > > Thanks
-> > > > > /Ilias
-> > > > >
-> > > > > >    Enric
-> > > > > >
-> > > > >
-> > > >
-> > >
-> >
->
+> 
+> diff --git a/drivers/hwmon/nct6775-core.c b/drivers/hwmon/nct6775-core.c
+> index 934fed3dd586..12ee2ca4a6d6 100644
+> --- a/drivers/hwmon/nct6775-core.c
+> +++ b/drivers/hwmon/nct6775-core.c
+> @@ -2878,8 +2878,7 @@ store_target_temp(struct device *dev, struct device_attribute *attr,
+>          if (err < 0)
+>                  return err;
+> 
+> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0,
+> -                       data->target_temp_mask);
+> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 1000), 1000);
+> 
+                                                     data->target_temp_mask
+>          mutex_lock(&data->update_lock);
+>          data->target_temp[nr] = val;
+> @@ -2959,7 +2958,7 @@ store_temp_tolerance(struct device *dev, struct device_attribute *attr,
+>                  return err;
+> 
+>          /* Limit tolerance as needed */
+> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, data->tolerance_mask);
+> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 1000), 1000);
+> 
+>          mutex_lock(&data->update_lock);
+>          data->temp_tolerance[index][nr] = val;
+> @@ -3085,7 +3084,7 @@ store_weight_temp(struct device *dev, struct device_attribute *attr,
+>          if (err < 0)
+>                  return err;
+> 
+> -       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, 255);
+> +       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, 25500), 1000);
+                                                     255000
+> 
+>          mutex_lock(&data->update_lock);
+>          data->weight_temp[index][nr] = val;
+> 
+> Thanks!
 
 
