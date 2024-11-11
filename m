@@ -1,306 +1,142 @@
-Return-Path: <linux-kernel+bounces-404518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7D69C44AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84A39C44B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA442835BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 905F31F21B3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8221AB512;
-	Mon, 11 Nov 2024 18:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF031AA1CA;
+	Mon, 11 Nov 2024 18:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QujB9rwJ"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SmhxaNdb"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A091AAE34
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA0C136E28
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348675; cv=none; b=LtQpgU8m56BXEqc4n0YoHprH+OgPkGZLioV37giyzjQvcwXffDWoY9Mr+XNIz/nQcQ8yzoF3TnU9fJpninfhTyh8nDaNdgeRv35NuXWE0C9IMye5idiV6Q+s0Hl+5A3jqqBoGojhZgy6o1/Eck3U/tr6xmcgt45/d43iim0RFmM=
+	t=1731348891; cv=none; b=bgThKS+KUtDWaD2L71vFVmCoJWOe0IcTK37mWKW2CuJWmcXdRa17ATWyWG1YkfcvPQymNUVFZvRniW+pFl5Q7ZMRsGuoFvRduRONGec0n38Bwawqj0kAPA1lMwBGWAExYRNf9iQAF7KVkyoIsz5ZcNyE+9wz0bIV2HYIiN6BXZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731348675; c=relaxed/simple;
-	bh=C8xKwoGQoMQK9ZgUsMPcEh0TUdId4YbQ9YGMzarKLKg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Px1w42fQg/7m1wEw32Q3TCkN8fKgmffao+z1hnnCpKiFPDgdu0JnSx1Vq/FsQ1NB2K9hhHqiNln6o/SUlCwtHO9pn2cBx7Fcp+6f/48sqq4PcTNSrFP1ZpdW8cQ7UOtEqWoqQmbOeuujtUVzmwthDjW0giiR+/dZugxayAVfIzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QujB9rwJ; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4608dddaa35so16311cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:11:13 -0800 (PST)
+	s=arc-20240116; t=1731348891; c=relaxed/simple;
+	bh=2TXJ1EmXXe6JGcHq0islC06ZuiS7W6be+KOSVMPiOMY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WTQf+6R2ctTCUO4SbSkcU/rN1XvFq/bWa+IVFYfvhV+qo5uBG7u384RZPRT+/gStgW7sBIgo3g+mGwVPI10+N4NU1zeTUO0maB0NWEiBEfGxVUEa6Bqk4vJQugw2ZI5tQjX316MF4s70JnyfLgnVqNe2yf8gx9tDzt0DXNWQy9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SmhxaNdb; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3757311b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:14:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731348672; x=1731953472; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qLeUScaZOLp4AS2pmDqoo02DY+qDAt8yb7nGV4VChPc=;
-        b=QujB9rwJf1vbXBMYn3vi/bjbbadYHe/Dfe5A9UVF1zz0MUjMKZZMPVy3Ob2814JBid
-         UGwq5NZPYMHwNuORkf9A9X1WOtVoAUfZnVnBTYmLCO1k6miKMY07F3Vqat9EvqK4BXcw
-         Zdumrsvyu7V6nwAjDzn5ciDMNIMkUv7kQ6IK9YySuRzINqoWGh4onwxM6UF2ktM8cCJv
-         PAARij9/mnQR0tH2cCwPfD+H8mKGeY6W9IJamXnN8QtZvRN3kgmMqkScIEiSfRRAMMv6
-         nnfbhkcbgfIgsGwZF0u7O5Vc+ksFW8V/OXKgLf0l1zpDcMW4l7KnIS5hWqx14wMh9xWE
-         WEPA==
+        d=gmail.com; s=20230601; t=1731348889; x=1731953689; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PcG5Ghtfgj5GW/5qfLw7yewkg+yGj/V/bjMocxCMdSQ=;
+        b=SmhxaNdb5d/QVQlKjYfiIcDvX0kDS3N0T/NpvL4/q7nGixg3C/+NtBZfu+3+uVFJ+x
+         Iw428P5mg83jF3HyuevY8WVncxhQgngd762FQ3g3wutOZQqOBvOyoV96z2gHWWw2svGx
+         Da4QlTnMcRVV7sPk0Ugv+U0GrJV6YFD0uVLX9rQkS+G/S3Shg1evrv1mDrFQPNvSbmFO
+         xgnh7Bw3UUA7cK+fZfo6xrThMwFL+Wf2Qclgri8meHkJeDL0DGmU3NHojVOxNdF/xNYR
+         dH4qaJoTUXECApVURs9YD6jNI/CUkmma5T3VwkHGXlSzUjnuQB+iUjgak//jEma8HBwR
+         l/qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731348672; x=1731953472;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qLeUScaZOLp4AS2pmDqoo02DY+qDAt8yb7nGV4VChPc=;
-        b=k5fuvSAw6PrQ+QE02o/HQgLlMMEtlTZBDkTnwgQOBJkGnlW3I4XIUyKt039UO5Tlu2
-         FLY4/vB8FwL04WPDdvss+d5UiG/fh8GI/NgyrKuerXenrFdUNXZYcoFDNckhZR11COxp
-         K8UgKcjSJUJp6YkAZ9woheSgoiI/rPm8XzXvoL2+UtTz276SMoP1tzafNZAVYsCZ8qON
-         YSPZdYiA/ovB5mMc8SKRhYXpPRraVHqFW4Ccal5jda8eY4+rKz70TKa6O9pQoKzOEYzm
-         i7nr5uw9s9UXI0AvF1OErSoUellh9unQCsCvrSb9WKIvXp4Bv3B9d6QACNNBR6JXF3iV
-         YFeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOuEDxye2Wllg4tJN5d22wc9cLWOyTTUxopDcCOaFpUyKIkynKgY4QkEwKjWVraipxPsnbGawt29vX1KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPQJQl8s2dIOrexH7AvSCWvGejCP3QkXk05wacnoVwEnVrsego
-	RKONzumj8Y7inZA8Y1IzwriZQ9Ms7rcJ9pB7JsQYy2vmBdx8RgPAlIqW37MeIZIQj4d8iz1nV/W
-	Onu5fK2IJ5wf37cYjHxEmSo287U1FCGZo+xJcgQCuk+khxz4tyIsJ
-X-Gm-Gg: ASbGncvi34OMlmHpc+ctTg2Tdb8C+u8Bwe5GEmkiloCPGCofDsHrVcSD0k9iHg8kLdA
-	qpxjLkbG+2zbysTrGMrVwJqNFJnlIvggmFx8G404G181d2YAvcj/JKsUX4zaYqJQ=
-X-Google-Smtp-Source: AGHT+IFzpXd9zGmGA+nX7CLwsyojNd+rl5R+mn5ACPkmw1xt2toSBXUTHR+DciUmrkBHeWjJboxHHcNAxN+MryXdOps=
-X-Received: by 2002:a05:622a:1813:b0:460:491e:d2a2 with SMTP id
- d75a77b69052e-46317e2f552mr5075631cf.17.1731348672277; Mon, 11 Nov 2024
- 10:11:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731348889; x=1731953689;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PcG5Ghtfgj5GW/5qfLw7yewkg+yGj/V/bjMocxCMdSQ=;
+        b=KkGlmnI5Ou3ha59+l4OtIhQCHi0SENkti5UIvv8HtBuCqtRtiRhFKJ1zGq7G2O4auj
+         WGDybb6h6ppEBqyYlWmRCPV+WZDzOnywkMVQuzOXfECvJdjse1hQ3WA3kgGThIdtRHRb
+         hBW1y6hR2n7Lx6xZAJeYR75FhmkyWU2WbuYjnGfXO+NLmCVv3PWg1RVL+NJ6/Pt9nIQJ
+         aeg1z//9JpTFRnvAzdujL17zwDnRqArxYItYLJwuIBX8nDqSW4YoLyTCAgsU5pgrVN46
+         8roD3tjfN15tgIa7SMMo/1/5HBKLvGhX53mh3BQv9rfoU01bY9/w6LIUVUZWPMNUtIKB
+         tdFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmzaVR/VrXLOo4RUaOceLl3QCoq3UcMrFEXZO5A3ktPk/YT91pO7xhnXTJf/v72VL84gb3aYdrgxveRmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/UsLVxE4deEGEGN8oYympBkgGuD4Sk27vJ05ilVsC6/U1NLus
+	VI4y7tCE+H7OppyrwhF5kOroazl4+5w0/9IlPCV3BKv56msOKSrN
+X-Google-Smtp-Source: AGHT+IHRY0yX/5Z9BgqASQU4ZZ39SI5JUr83H/XUjHQ21anzAVa6uoUX7kOFpkJY9khvsfngWxmH4g==
+X-Received: by 2002:a05:6a20:a10e:b0:1db:ebf4:2cb8 with SMTP id adf61e73a8af0-1dc22b38e98mr19023560637.38.1731348888950;
+        Mon, 11 Nov 2024 10:14:48 -0800 (PST)
+Received: from Emma ([2401:4900:1c94:38cd:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5d9460sm7537614a12.35.2024.11.11.10.14.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 10:14:48 -0800 (PST)
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+Date: Mon, 11 Nov 2024 18:14:43 +0000
+Subject: [PATCH] drm/mediatek: Initialize pointer before use to avoid
+ undefiend behaviour
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com>
- <20241108204137.2444151-6-howardchu95@gmail.com> <CAP-5=fXDd2MUvukB6NVMN962wxjPN6_F-AxOxOUUb-uj5BVV0A@mail.gmail.com>
- <CAH0uvogkoUW+hA7V8TgyUT-PrGx6JajKZDMj9-w9z25QVT5O4Q@mail.gmail.com>
-In-Reply-To: <CAH0uvogkoUW+hA7V8TgyUT-PrGx6JajKZDMj9-w9z25QVT5O4Q@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 10:11:01 -0800
-Message-ID: <CAP-5=fVXgQjAh1OFDN7DMp=xw5cAHRaO8j8UQfe4CZHrZc8uFg@mail.gmail.com>
-Subject: Re: [PATCH v7 05/10] perf record --off-cpu: Dump off-cpu samples in BPF
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241111-uninitializedpointer1601557-v1-1-7d03668e8141@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJJJMmcC/x3MQQqDMBBG4avIrBtIotG2VxEXxkzrDzJKYoso3
+ t3g232bd1DiCE70Lg6K/EfCLBnmUdAw9vJlhZBNVtvK5NRPIFjRT9g5LDNk5WhqbZxr1OupS99
+ Y52sfKB+WyB9s973tzvMCtI1RQm0AAAA=
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Alexandre Mergnat <amergnat@baylibre.com>, 
+ Sui Jingfeng <sui.jingfeng@linux.dev>, CK Hu <ck.hu@mediatek.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Karan Sanghavi <karansanghvi98@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731348885; l=1580;
+ i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
+ bh=2TXJ1EmXXe6JGcHq0islC06ZuiS7W6be+KOSVMPiOMY=;
+ b=XnSsGvh9arXwU0TzFneIvfBvnhGG3ywcwXCrVXSmtOIjjRf655y5J6qAlm7chmE39XOFBDzZe
+ nUFfZpHEs26DRSdOnEKnl4vOjiv5k/rnxZz0tZkMGvmD1Uwys+tKhXs
+X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
+ pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
 
-On Mon, Nov 11, 2024 at 10:05=E2=80=AFAM Howard Chu <howardchu95@gmail.com>=
- wrote:
->
-> Hi Ian,
->
-> On Mon, Nov 11, 2024 at 9:54=E2=80=AFAM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.c=
-om> wrote:
-> > >
-> > > Collect tid, period, callchain, and cgroup id and dump them when off-=
-cpu
-> > > time threshold is reached.
-> > >
-> > > We don't collect the off-cpu time twice (the delta), it's either in
-> > > direct samples, or accumulated samples that are dumped at the end of
-> > > perf.data.
-> > >
-> > > Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> > > Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> > > ---
-> > >  tools/perf/util/bpf_skel/off_cpu.bpf.c | 83 ++++++++++++++++++++++++=
---
-> > >  1 file changed, 78 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util=
-/bpf_skel/off_cpu.bpf.c
-> > > index dc6acafb9353..bf652c30b1c9 100644
-> > > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> > > @@ -18,10 +18,18 @@
-> > >  #define MAX_STACKS   32
-> > >  #define MAX_ENTRIES  102400
-> > >
-> > > +#define MAX_CPUS  4096
-> > > +#define MAX_OFFCPU_LEN 37
-> > > +
-> > > +struct stack {
-> > > +       u64 array[MAX_STACKS];
-> > > +};
-> > > +
-> > >  struct tstamp_data {
-> > >         __u32 stack_id;
-> > >         __u32 state;
-> > >         __u64 timestamp;
-> > > +       struct stack stack;
-> > >  };
-> > >
-> > >  struct offcpu_key {
-> > > @@ -39,6 +47,24 @@ struct {
-> > >         __uint(max_entries, MAX_ENTRIES);
-> > >  } stacks SEC(".maps");
-> > >
-> > > +struct offcpu_data {
-> > > +       u64 array[MAX_OFFCPU_LEN];
-> > > +};
-> > > +
-> > > +struct {
-> > > +       __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
-> > > +       __uint(key_size, sizeof(__u32));
-> > > +       __uint(value_size, sizeof(__u32));
-> > > +       __uint(max_entries, MAX_CPUS);
-> > > +} offcpu_output SEC(".maps");
-> >
-> > Does patch 4 build without this definition? (we're in patch 5 here). I
-> > think this should be in patch 4.
->
-> Okay sure thanks :)
->
-> >
-> > > +
-> > > +struct {
-> > > +       __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> > > +       __uint(key_size, sizeof(__u32));
-> > > +       __uint(value_size, sizeof(struct offcpu_data));
-> > > +       __uint(max_entries, 1);
-> > > +} offcpu_payload SEC(".maps");
-> > > +
-> > >  struct {
-> > >         __uint(type, BPF_MAP_TYPE_TASK_STORAGE);
-> > >         __uint(map_flags, BPF_F_NO_PREALLOC);
-> > > @@ -185,6 +211,39 @@ static inline int can_record(struct task_struct =
-*t, int state)
-> > >         return 1;
-> > >  }
-> > >
-> > > +static inline int copy_stack(struct stack *from, struct offcpu_data =
-*to, int n)
-> > > +{
-> > > +       int len =3D 0;
-> > > +
-> > > +       for (int i =3D 0; i < MAX_STACKS && from->array[i]; ++i, ++le=
-n)
-> > > +               to->array[n + 2 + i] =3D from->array[i];
-> > > +
-> > > +       return len;
-> > > +}
-> > > +
-> >
-> > Dump is something of a generic name. Could you kernel-doc this
-> > function to describe the behavior?
->
-> Sure.
->
-> >
-> > > +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct =
-offcpu_key *key,
-> > > +                       struct stack *stack, __u64 delta, __u64 times=
-tamp)
-> > > +{
-> > > +       /* dump tid, period, callchain, and cgroup id */
-> > > +       int n =3D 0, len =3D 0;
-> > > +
-> > > +       data->array[n++] =3D (u64)key->tgid << 32 | key->pid;
-> > > +       data->array[n++] =3D delta;
-> > > +
-> > > +       /* data->array[n] is callchain->nr (updated later) */
-> > > +       data->array[n + 1] =3D PERF_CONTEXT_USER;
-> > > +       data->array[n + 2] =3D 0;
-> > > +       len =3D copy_stack(stack, data, n);
-> > > +
-> > > +       /* update length of callchain */
-> > > +       data->array[n] =3D len + 1;
-> > > +       n +=3D len + 2;
-> > > +
-> > > +       data->array[n++] =3D key->cgroup_id;
-> > > +
-> > > +       return bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRE=
-NT_CPU, data, n * sizeof(u64));
-> > > +}
-> > > +
-> > >  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
-> > >                         struct task_struct *next, int state)
-> > >  {
-> > > @@ -209,6 +268,12 @@ static int off_cpu_stat(u64 *ctx, struct task_st=
-ruct *prev,
-> > >         pelem->state =3D state;
-> > >         pelem->stack_id =3D stack_id;
-> > >
-> > > +       /*
-> > > +        * If stacks are successfully collected by bpf_get_stackid(),=
- collect them once more
-> > > +        * in task_storage for direct off-cpu sample dumping
-> > > +        */
-> > > +       if (stack_id > 0 && bpf_get_stack(ctx, &pelem->stack, MAX_STA=
-CKS * sizeof(u64), BPF_F_USER_STACK)) {
-> > > +       }
-> >
-> > Why the empty if?
->
-> Forgot to say in the commit message, bpf_get_stack() has a return
-> value and if I don't use it I'll get result unused warning from clang,
-> so either this or:
->     int __attribute__((unused)) len;
->     len =3D bpf_get_stack(ctx, stack_p->array, MAX_STACKS * sizeof(u64),
->
-> We don't need error handling, it goes to "next:" naturally, there's no
-> code in between.
+Initialize the pointer with NULL as mtk_drm_of_get_ddp_ep_cid
+function might return before assigning value to next pointer
+but yet further dereference to next can lead to some undefined
+behavior as it may point to some invalid location.
 
-Perhaps capture that as a comment in the `if` and/or add a continue,
-just to show that the code doesn't care about errors.
+Fixes: 4c932840db1d ("drm/mediatek: Implement OF graphs support for display paths")
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+Coverity Message:
+CID 1601557: (#1 of 1): Uninitialized pointer read (UNINIT)
+3. uninit_use: Using uninitialized value next.
 
-Thanks,
-Ian
+Coverity Link:
+https://scan7.scan.coverity.com/#/project-view/10043/11354?selectedIssue=1601557
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >
-> > > +
-> > >  next:
-> > >         pelem =3D bpf_task_storage_get(&tstamp, next, NULL, 0);
-> > >
-> > > @@ -223,11 +288,19 @@ static int off_cpu_stat(u64 *ctx, struct task_s=
-truct *prev,
-> > >                 __u64 delta =3D ts - pelem->timestamp;
-> > >                 __u64 *total;
-> > >
-> > > -               total =3D bpf_map_lookup_elem(&off_cpu, &key);
-> > > -               if (total)
-> > > -                       *total +=3D delta;
-> > > -               else
-> > > -                       bpf_map_update_elem(&off_cpu, &key, &delta, B=
-PF_ANY);
-> > > +               if (delta >=3D offcpu_thresh) {
-> > > +                       int zero =3D 0;
-> > > +                       struct offcpu_data *data =3D bpf_map_lookup_e=
-lem(&offcpu_payload, &zero);
-> > > +
-> > > +                       if (data)
-> > > +                               off_cpu_dump(ctx, data, &key, &pelem-=
->stack, delta, pelem->timestamp);
-> > > +               } else {
-> > > +                       total =3D bpf_map_lookup_elem(&off_cpu, &key)=
-;
-> > > +                       if (total)
-> > > +                               *total +=3D delta;
-> > > +                       else
-> > > +                               bpf_map_update_elem(&off_cpu, &key, &=
-delta, BPF_ANY);
-> > > +               }
-> >
-> > Looks good! :-)
-> >
-> > Thanks,
-> > Ian
-> >
-> > >
-> > >                 /* prevent to reuse the timestamp later */
-> > >                 pelem->timestamp =3D 0;
-> > > --
-> > > 2.43.0
-> > >
->
-> Thanks,
-> Howard
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 9a8ef8558da9..bc06c664e80f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -900,7 +900,7 @@ static int mtk_drm_of_ddp_path_build_one(struct device *dev, enum mtk_crtc_path
+ 					 const unsigned int **out_path,
+ 					 unsigned int *out_path_len)
+ {
+-	struct device_node *next, *prev, *vdo = dev->parent->of_node;
++	struct device_node *next = NULL, *prev, *vdo = dev->parent->of_node;
+ 	unsigned int temp_path[DDP_COMPONENT_DRM_ID_MAX] = { 0 };
+ 	unsigned int *final_ddp_path;
+ 	unsigned short int idx = 0;
+
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241111-uninitializedpointer1601557-9803b725b6bd
+
+Best regards,
+-- 
+Karan Sanghavi <karansanghvi98@gmail.com>
+
 
