@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-404414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0280A9C437B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:24:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EC29C437C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBE71F21E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C869C284335
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA851A704C;
-	Mon, 11 Nov 2024 17:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33581A7259;
+	Mon, 11 Nov 2024 17:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUKgE4N7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7SdwfcC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA73925777
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BDF925777;
+	Mon, 11 Nov 2024 17:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731345833; cv=none; b=Z2b/Lyd6Aj+TvqH1FSmzDPkXarpClrNBx/Lr3vgu2cxSvAhOybrvER1+TL28zHJ1Huocll7m0MQj2w8xI70+zM6eWEFxnUc9c67n1gQ4rjaIf7V4tqoOXrMxKMevf/wKZ1/yQKKOTsPyFvBJzEDw/qADyquNuR+DMr0tjc2fUFc=
+	t=1731345879; cv=none; b=HftTrAq3XvUTmpVUmxMP6DPaiJW4TuYJFrZabdWCf1rUFb6WJVJ9KtpM59JPoAR8LfAHPAbQsOjR+Bnu+NEC0zaJ/EEwR4eT35LCg5PBNexPj8q1P29O27jAlisXjLEF8VLdaEqqnHs9HtFDxATp+bCuiREMwxA0DwCtEpZqinE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731345833; c=relaxed/simple;
-	bh=b0c9HKVf+NUMnKmXEFv0KUuL/x0pXi5FJDssH2sljPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c3KyoJlQ3jRF7DB0GEZlvN6AC7cHW56Vmpk6WjK0VFYV/R3zOBWnPhVz8AM4f17mWpLjPlgZR2FNy+gF4Jm2EILrr/VQhCaaWl1wnGQPwt8ByfKxvqeIB4n/DFKlpteJH+H/5LBFkTgDeQddHiWRPkODuypIJaAhg+Tnoz0I+Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUKgE4N7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DD8DC4CECF;
-	Mon, 11 Nov 2024 17:23:53 +0000 (UTC)
+	s=arc-20240116; t=1731345879; c=relaxed/simple;
+	bh=xh1BIOn6bTtRRTvFH8GTfXspQZ3u7OOmcZloPlJEqzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPuOWddTzqc/6A4PDsrfEIEg8eKCjn8LIVohfkUNPkX47m6S8pCbas0qGyCEGemB+OoSvlmv4hHc0zhXiYLuKgsDBTZzffuo+uMyWxybN++LmGf7isao4R8rWk7jfMMvohpfjGgAXJ/UWSs/KrlF60Io9t+/Mun7DLWZ8ZgH58g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7SdwfcC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C75B9C4CECF;
+	Mon, 11 Nov 2024 17:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731345833;
-	bh=b0c9HKVf+NUMnKmXEFv0KUuL/x0pXi5FJDssH2sljPE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BUKgE4N7CwTXWvxvthGfnfF3KcmKNH82DSfcqD2Ryrmk+xRwDCQtD6Ft96vZqzCXk
-	 s9IP6M5/6Pim4QbvuBGUqP8KEpahZa2Z45r0dSA98izmfzFywIgTl/A9plr5NOLOjf
-	 rCmRxJebUsxpS9tiBoUGxdmJd1GHuemZ7FkHuSOo+fS28q1O4ZZ/haz2n6+fbtL5P2
-	 iaJ1fDK1AHyiC06Itbb23lAUUO63UdHxQjL0y8WgNcNbD9VaYYIZyIHTBBW1nixseZ
-	 rOzZ9OzPtBGiIpN86VOpyDa5MfmiFkJlRS6jGjuL6z4vBYXeBmxgSlLUqCsBe45Uuh
-	 FKWbQiJROULfQ==
-Date: Mon, 11 Nov 2024 07:23:52 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, sched-ext@meta.com,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [GIT PULL] sched_ext: Fixes for v6.12-rc7
-Message-ID: <ZzI9qJ_LLdELWhQX@slm.duckdns.org>
+	s=k20201202; t=1731345878;
+	bh=xh1BIOn6bTtRRTvFH8GTfXspQZ3u7OOmcZloPlJEqzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n7SdwfcCZ3ubq69yN1nbJKfM59dgwusxM0Nr07mp/DfRjE0q9Dm5M4V910i6+0zig
+	 B3064haTYJl1ikMfYeiBGaO8rPiROP3EUemOmBJr+KM1ZkgVb5YQjsNGe1jNhJ+vFL
+	 sMa2iQ6YJbQrUv3qe9vaU3WPVbsbg88tstsKRtOeU5szHqA0P1EcgewVDocswyDJy3
+	 WIXI/8jlS9xW9IWIpMUqpMEdj6AhSafO30AH7rrcZokHIUlF3JArAy/ckhrXWTn8fD
+	 wGDjDLNnJ0dByciB0UqKcX6QehSs8NYPEVUHtG7+ALokrDm5U7uAErDgvFsE9UO0Ze
+	 zHZXWQoDjJ/dA==
+Date: Mon, 11 Nov 2024 14:24:34 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	"Steinar H. Gunderson" <sesse@google.com>
+Subject: Re: [PATCH 3/3] perf disasm: Allow configuring what disassemblers to
+ use
+Message-ID: <ZzI90g83cGIKSUDu@x1>
+References: <20241111151734.1018476-1-acme@kernel.org>
+ <20241111151734.1018476-4-acme@kernel.org>
+ <CAP-5=fW7teKmRfGtjkvk1=PArt7M-v=CBF2EjdY0SbgdU6DtqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fW7teKmRfGtjkvk1=PArt7M-v=CBF2EjdY0SbgdU6DtqQ@mail.gmail.com>
 
-The following changes since commit c31f2ee5cd7da3086eb4fbeef9f3afdc8e01d36b:
+On Mon, Nov 11, 2024 at 08:27:38AM -0800, Ian Rogers wrote:
+> On Mon, Nov 11, 2024 at 7:18 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > The perf tools annotation code used for a long time parsing the output
+> > of binutils's objdump (or its reimplementations, like llvm's) to then
+> > parse and augment it with samples, allow navigation, etc.
 
-  sched_ext: Fix enq_last_no_enq_fails selftest (2024-10-25 12:20:29 -1000)
+> > More recently disassemblers from the capstone and llvm (libraries, not
+> > parsing the output of tools using those libraries to mimic binutils's
+> > objdump output) were introduced.
 
-are available in the Git repository at:
+> > So when all those methods are available, there is a static preference
+> > for a series of attempts of disassembling a binary, with the 'llvm,
+> > capstone, objdump' sequence being hard coded.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.12-rc7-fixes
+> So it LLVM is the preference can we just switch to using the LLVM ELF
+> libraries, etc? :-) I was a bit surprised to see LLVM as preferable to
 
-for you to fetch changes up to a6250aa251eacaf3ebfcfe152a96a727fd483ecd:
+I'd have to look up the discussion to see how this ended up being the
+default when LLVM is available, but when I wanted to have source code
+intermixed with it and noticed that the LLVM output doesn't have it,
+that lead me to try to make this selectable so that we can go from one
+to the other when needing something not available in one of them.
 
-  sched_ext: Handle cases where pick_task_scx() is called without preceding balance_scx() (2024-11-09 10:43:55 -1000)
+On my todo list, and here Steinar could help, is to check if we an have
+source code intermixed with the llvm based disassembler, like we have
+with the objdump based one.
 
-----------------------------------------------------------------
-sched_ext: Fixes for v6.12-rc7
+> capstone, which feels more agnostic in the LLVM vs GCC/binutils wars.
+> Fwiw, I'm happy with LLVM being the preference.
 
-- The fair sched class currently has a bug where its balance() returns true
-  telling the sched core that it has tasks to run but then NULL from
-  pick_task(). This makes sched core call sched_ext's pick_task() without
-  preceding balance() which can lead to stalls in partial mode. For now,
-  work around by detecting the condition and forcing the CPU to go through
-  another scheduling cycle.
+<SNIP>
 
-- Add a missing newline to an error message and fix drgn introspection tool
-  which went out of sync.
+> > After adding a way to select the disassembler from the command line a
+> > 'perf test' comparing the output of the various diassemblers should be
+> > introduced, to test these codebases.
+> >
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> > Cc: Ian Rogers <irogers@google.com>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Steinar H. Gunderson <sesse@google.com>
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> Acked-by: Ian Rogers <irogers@google.com>
 
-----------------------------------------------------------------
-Tejun Heo (3):
-      sched_ext: Add a missing newline at the end of an error message
-      sched_ext: Update scx_show_state.py to match scx_ops_bypass_depth's new type
-      sched_ext: Handle cases where pick_task_scx() is called without preceding balance_scx()
+Thanks!
 
- kernel/sched/core.c               | 13 ++++++-----
- kernel/sched/ext.c                | 46 +++++++++++++++++++++++++++------------
- kernel/sched/sched.h              |  5 +++--
- tools/sched_ext/scx_show_state.py |  2 +-
- 4 files changed, 44 insertions(+), 22 deletions(-)
-
--- 
-tejun
+- Arnaldo
 
