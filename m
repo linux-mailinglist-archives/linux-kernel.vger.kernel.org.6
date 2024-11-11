@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-403852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DCE9C3BC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:18:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8229C3BCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9131F22AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF34D2829FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E5016F8EB;
-	Mon, 11 Nov 2024 10:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DXJxbpyo"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B7017C9BB;
+	Mon, 11 Nov 2024 10:21:33 +0000 (UTC)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31E51474B9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB7016DEAA;
+	Mon, 11 Nov 2024 10:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731320299; cv=none; b=MdzKI7kIoU9pkb0a0YtXeRPV7ZPV8Oeyv1tXRncRprQn4/y5HUuDuHqc98bjUzznmfc/NHp2MWNuE4R7HABrrht7WEeiinaXZZruHUahVZnA4aDTNaguVsZnhDpW2K/iRqGYddERpHoFP4t4Zh+onhw+LrNvIDCE/IfoAsjBgO8=
+	t=1731320493; cv=none; b=dh5f1LZ5/JXYpPTHYE/TJoHcb60cXOh7Tmd6B6ysdQHBLYl0a1l+qX9quBpKEp3wv0MN6J0zkCpm1IHVrBX8gJU1JPoNqohOT4xjUb+scZZX6xHk83Uygj4iOTVwrn8wkJgHArWKZhNyD5EqRsDMCFvTJRe/hbuR4DQK4XpctRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731320299; c=relaxed/simple;
-	bh=YQnV5IcYve0K6ImjwVy9/VTkz6Bo7ZdNcGNvHGpQgb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X30KP29B1HayqxaoexsKFEbLOZWaJv2X8qB030ecnHa525DDU1z8l35J1eV/rnVR2/pPwd8jS7tW3RnEYAaKKlSoG9IVoTrl6PKl+yaVD6Xz9ixpHt2z2NOz3Z+u3i3040ZAXQ7bGlILJ751TgRW+v9veRgNBx9zpk8zDjWwcNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DXJxbpyo; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53b34ed38easo4290632e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:18:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731320296; x=1731925096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zhyKJC+ZlhIvd2RI2qZdoBI7BLL1Xj6/nlNpmII5adA=;
-        b=DXJxbpyoW3WJEFq7L2lq69nUggqYp4+hgMaCrieLVLdeUtCseerwcFuQ0YPCnmEEeb
-         46ID4nnWiT74PPtY0R1wwuwZ4S2+jfwCsWjxFJYIn8lsLHrHNgPWnBeRxUDteSorwZVg
-         zMBbKtSGIXDVk121S49McTJ8vGMBm50HQ30KaWAu9asCT2qHnVNMPo1ewq8zDtAOzyGb
-         4mtIj3uK0nPcal0e7WF2qZ/Bx0PDHgGYReHWItx4r1v7KoTubm9VKhnsTwMUt8+gJImw
-         CxZODKtaya29fGdbePhfxisMr/z4b73cfvzibj4tsBL14zmTwgGjHa+VHfB4BiCYYGb8
-         +Q6Q==
+	s=arc-20240116; t=1731320493; c=relaxed/simple;
+	bh=KdiGJu18JwQkumaQM+w3BP2/Lc/VQeBEoG4u7PY69rY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H7/KeZu7yR1cgjVEU9U7Kn3NPKw4fFj4Z//mjVclUEferYEjJ2sh6dBAesmAQ6O6YiUHBkBVMlS9NO07i9DV7Flg+xvkapcRYDpMd61c58NC9IY9ZSOFaJetzbIA0KLOj0x1dtfqlhzEfYrBJoHAJYmLbxmsHa0YdIAKfb51EzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e30cef4ac5dso3936248276.0;
+        Mon, 11 Nov 2024 02:21:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731320296; x=1731925096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhyKJC+ZlhIvd2RI2qZdoBI7BLL1Xj6/nlNpmII5adA=;
-        b=XZnppYXwQ2JXMYubPhSa84wEI/mdDggRGaVnbw7yodoYoXJ+1v2nMkhRNBbQ5ddUBR
-         pTP5YUttyVrsfvosJtuiimmsLFkBB06jEOxlw2VHN49ASRDE4An2sTdE25ERmUBeVIcn
-         jQB7MBMIZ1oGDVS1h7/D/cFmJTZrHXecKVoSbQPGdGYxeyEEZRvH5onnYPCha9vUVThF
-         cgs4BUsVQWhfqpzAefAemUFtZxszVqlC4xFj3PL1ywnQ9bRUvdhgEjvMkr/cQCe3eOcP
-         2O0PAcXzQ4mjcalp8uv3pXWCNt0xUAQkGCTU/gxYY3HzeLnHOezYAEj1bsbdRVIIE1yv
-         UIMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRL1DHoOE+8QJTuic2ItKqMelAy0lLqdrJex54dJQT1kDoEg9DvXQ4B91UOKS4rLJMLz5SDSi9S+kjcqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLdcISJ4NutxiZ78n1ZdSpVDhVI7NgE29r05gdHLi7xYsKmimz
-	qFybcLK45WEisl3e5FbF8bKERrLbIgzAheKpLbnyD5wnqOz+J108Kw3py5qqyd4=
-X-Google-Smtp-Source: AGHT+IEfUlCd+ogGcecrle4DmhwPBvBsn78CHE0X/HnxFrBFSrVBduh4K745TFt0HlnQBVGN0Q4Geg==
-X-Received: by 2002:a05:6512:3408:b0:539:8980:2009 with SMTP id 2adb3069b0e04-53d862e4d8dmr5193051e87.36.1731320295752;
-        Mon, 11 Nov 2024 02:18:15 -0800 (PST)
-Received: from [192.168.0.157] ([79.115.63.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6b2c32sm204503145e9.10.2024.11.11.02.18.13
+        d=1e100.net; s=20230601; t=1731320489; x=1731925289;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IaEOyMbaVWJTZKa+Sq5zT53vxz01/13ANVZcLosS5Ms=;
+        b=jDLJdejJlY/6TA84nbZD3l/s0gzRKm0hcQQ9+3+G52CdqJ5ooCb33SEn9rM7+e9Fdt
+         Mv9dkCkmws8olzvZPMJfW1glQdUf3lLAM7TsnU2GB5AT9/ENYdlvinPhfU8SK4P7ZBqU
+         7K/51gFH6Se/B4zEkwNiXB9Q2lIgsEMlAbrajDkQzJv8Le8ESgf2lG8SxVUD8f1J6A83
+         QcjFJ6lKnM06VJ8nF5oEj6yrQ1ycjQXAadW6HlAvUryThQrf4T5g6YtZCvPwG4gydcUd
+         XDfiBxy0Y+8cYqP73+mQYxh+zC6MN5gvVkaSXdoUj6YEAD7bauoIPiMutiywzTQ5OFye
+         xJ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUsaqAplziFITNFej7hFdoyH6nykbhloKirUfC//J4zrR9ctbvaztniPf8yZ9sP0nmV1E0pA9+1IDMQ@vger.kernel.org, AJvYcCWNlJtk7TIjBs5Ztv6mkuF/Pt9MOu98ZGwbiBh8XYy8KYCtdWzBgf8XyrD/EdS7orunNk2AX6/dyycA++8=@vger.kernel.org, AJvYcCWT2zgFSQdv30cFZnLDxI4RPdRkMpVTHoXjiQC/F/4QxkTh9kK1Q09RWtIyvGSe/K5sR99F/6Hko0e23EMD@vger.kernel.org, AJvYcCXV6/K1GHa/hcYSYDoVI1a7GqT7iW3QF1X0JOQgbiLIcRsNamuS6nv0gaSpcPVhDTSrOwcErlmbflC2jw==@vger.kernel.org, AJvYcCXZuwiM6mjOLIxaGf6Y46ljofms6tmgoh6KmpuFAx4i+PWwfR410wHNmIC5aHANkoS/HORkXkeUkCYH@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5+VKP4OMA53sUX1F2xtTMIrBf3vl0Zn5Micv4J00AkxMEOTUf
+	NrU0i5ZXjIs0ib0TT5vGoLqUoZIyZJ4lSW2sh/txrPXS1MfDAwF0Qi9SsyGG
+X-Google-Smtp-Source: AGHT+IH8py6XlkejS5DyRf+Z0e9sH7h9872vwc0BFnIf+3PeS1F4vKD44G6pnKQ65kR4Jc0vAdUO4g==
+X-Received: by 2002:a05:690c:4d83:b0:6e5:a4d6:e544 with SMTP id 00721157ae682-6eadddb5d23mr114054677b3.24.1731320488964;
+        Mon, 11 Nov 2024 02:21:28 -0800 (PST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eace8ef432sm19515317b3.33.2024.11.11.02.21.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 02:18:14 -0800 (PST)
-Message-ID: <437e9c87-fbae-4402-858c-ce6de0a992c7@linaro.org>
-Date: Mon, 11 Nov 2024 10:18:11 +0000
+        Mon, 11 Nov 2024 02:21:28 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e333af0f528so3915956276.3;
+        Mon, 11 Nov 2024 02:21:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUI5bc8AoeoLZys7+iNnSC82DVSlYIWfU0RfrQBzdfhO0bF4kQVxsP5QT6eJxKkD0EtmPYDgE4wd7FATQ==@vger.kernel.org, AJvYcCUajA/u1aaYhXtdfvYlJIQqllqCjcgt9xLPTMrFRz+APXo+Kh1Dr1F0oud7QvXQi3rl2/nF0D8/d0L4@vger.kernel.org, AJvYcCWtoAbKrh0McsRLstayYKZU22LEe6LX2qcrFnVP+avGUtr3cJO+q4eoKOJ9RqGlrse5Nwl+fjfIFwXt@vger.kernel.org, AJvYcCXXkY3twezjs+O+Tu7BvQlUn+EGbYrcqV7BHZN+QL+vCImfZ9Cx5M+5BuiZLH8lVtmTvcZWH0GsXMnYn50=@vger.kernel.org, AJvYcCXxGMlN/X2f/wjwLWbyjaEy9cU/26+kQHIl2L569vOJlPOCjepc/VqHrGBJcvNFuDu27B+FKYdjMF7z1J/Y@vger.kernel.org
+X-Received: by 2002:a05:690c:6288:b0:6e5:9cb7:853c with SMTP id
+ 00721157ae682-6eaddf6f2cemr115795827b3.31.1731320487426; Mon, 11 Nov 2024
+ 02:21:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: core: replace dummy buswidth from addr to
- data
-To: Cheng Ming Lin <linchengming884@gmail.com>, pratyush@kernel.org,
- mwalle@kernel.org, miquel.raynal@bootlin.com, richard@nod.at,
- vigneshr@ti.com, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
- Cheng Ming Lin <chengminglin@mxic.com.tw>
-References: <20241107093016.151448-1-linchengming884@gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241107093016.151448-1-linchengming884@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241104093609.156059-1-andriy.shevchenko@linux.intel.com>
+ <20241104093609.156059-4-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdXx6hYsdKo-5sw+-vH7GOJYWn_de=wSvhj1QVVpbwCN7Q@mail.gmail.com> <ZzHU4absCxcA1FBG@smile.fi.intel.com>
+In-Reply-To: <ZzHU4absCxcA1FBG@smile.fi.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 11 Nov 2024 11:21:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVsjfSCcdVQee6tFgvs6PDB+iKWd964XhHKmF9WRDHWkA@mail.gmail.com>
+Message-ID: <CAMuHMdVsjfSCcdVQee6tFgvs6PDB+iKWd964XhHKmF9WRDHWkA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/6] leds: gpio: Avoid using GPIOF_ACTIVE_LOW
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>, 
+	Dominik Brodowski <linux@dominikbrodowski.net>, Daniel Mack <daniel@zonque.org>, 
+	Haojian Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andy,
 
+On Mon, Nov 11, 2024 at 10:57=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Mon, Nov 11, 2024 at 10:45:13AM +0100, Geert Uytterhoeven wrote:
+> > On Mon, Nov 4, 2024 at 10:37=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+>
+> ...
+>
+> > > -       if (template->active_low)
+> > > -               flags |=3D GPIOF_ACTIVE_LOW;
+> > > -
+> > > -       ret =3D devm_gpio_request_one(dev, template->gpio, flags,
+> > > +       ret =3D devm_gpio_request_one(dev, template->gpio, GPIOF_OUT_=
+INIT_LOW,
+> > >                                     template->name);
+> >
+> > Just wondering, as I am not 100% sure: can this change change the
+> > initial state of the GPIO?
+>
+> You probably wonder how ACTIVE_LOW affects the OUT_INIT_LOW given above.
+> I have an answer to you, however I might be mistaken as well, but I spent=
+ some
+> time to investigate.
+>
+> The above mentioned call ends up in the gpiod_direction_output_raw_commit=
+() which
+> uses the value (low in this case) as an absolute value. It does not inclu=
+de the
+> ACTIVE_LOW in the value calculations. Hence, setting ACTIVE_LOW before or=
+ afterwards
+> has no effect on the existing flow.
+>
+> If you notice a mistake, please elaborate this, so I can fix the approach=
+!
 
-On 11/7/24 9:30 AM, Cheng Ming Lin wrote:
-> From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> 
-> The default dummy cycle for Macronix SPI NOR flash in Octal Output
-> Read Mode(1-1-8) is 20.
-> 
-> Currently, the dummy buswidth is set according to the address bus width.
-> In the 1-1-8 mode, this means the dummy buswidth is 1. When converting
-> dummy cycles to bytes, this results in 20 x 1 / 8 = 2 bytes, causing the
-> host to read data 4 cycles too early.
-> 
-> Since the protocol data buswidth is always greater than or equal to the
-> address buswidth. Setting the dummy buswidth to match the data buswidth
-> increases the likelihood that the dummy cycle-to-byte conversion will be
-> divisible, preventing the host from reading data prematurely.
+Thanks, I had discovered the same, but wanted to double-check!
 
-This is still very wrong and the `fix` is working just by chance.
-Consider what happens when one requires 10 dummy cycles. BTW, does this
-fix a real problem, or it's just a theoretical fix?
+Gr{oetje,eeting}s,
 
-I don't like that we're chasing our tails here. The fix is to pass
-directly cycles instead of bytes and update MTD and SPI to use cycles. I
-had an attempt to fix this in the past, but I can't allocate time to
-respin. Are you interested in taking over and fixing MTD and SPI?
+                        Geert
 
-> Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> ---
->  drivers/mtd/spi-nor/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index f9c189ed7353..c7aceaa8a43f 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -89,7 +89,7 @@ void spi_nor_spimem_setup_op(const struct spi_nor *nor,
->  		op->addr.buswidth = spi_nor_get_protocol_addr_nbits(proto);
->  
->  	if (op->dummy.nbytes)
-> -		op->dummy.buswidth = spi_nor_get_protocol_addr_nbits(proto);
-> +		op->dummy.buswidth = spi_nor_get_protocol_data_nbits(proto);
->  
->  	if (op->data.nbytes)
->  		op->data.buswidth = spi_nor_get_protocol_data_nbits(proto);
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
