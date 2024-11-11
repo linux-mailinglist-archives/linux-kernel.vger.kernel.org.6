@@ -1,80 +1,142 @@
-Return-Path: <linux-kernel+bounces-404359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55299C42DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:43:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A79C431D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C8B25E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:42:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59487B27387
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B191A254E;
-	Mon, 11 Nov 2024 16:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216341A7261;
+	Mon, 11 Nov 2024 16:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ1qYURT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="g52+/9sB"
+Received: from smtp-out.freemail.hu (fmfe38.freemail.hu [46.107.16.243])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8B189BBF
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0932C1A706A;
+	Mon, 11 Nov 2024 16:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343339; cv=none; b=aIqej/0pHz9pUdgdckgQQGKpaj+H4/7ithHNoVQigPNPb2OknA6AVblbg4BH6bTlHmfk9O7JX+aMcxkgYOhYZRzpnOwiu9+Ixbh2UB/I0/QZXeYwN9To9XMEt0AmdhVssgqMAiFycrs1olTv7BhNHQIzKKAhtkwJP7Atr+I6sF4=
+	t=1731344000; cv=none; b=C1b+nxLGlBSPiPOj1MlR9ulWShXD+zkBqDq+OM+JaAx7Y80NQkXH3BKXvDlLT2q2lxe8gvZyDhPY/K0qylQz+jvzhXt8JhIkDOrVSPd7fV6ZRzbkPAiIaMXxV72tB1DVLFe3OzV99nb0/h1BqeyIoxiSEtg2KFzSzA3yjQ0S0EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343339; c=relaxed/simple;
-	bh=bMvBiLBnkjt3874HBhx/ZepwiWrsNm8t1pyp0Dzw9vM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Fcj2TCx/7QnSThaiRq/WRHdVplqiw0erWiObDkIFhmd3o8cTXIViRNSWa/Fxe6q21QfynbUelXzp6IAHT47hcqsl1zuvFVBYpXXmxZRL8157U+IthGaicVhbYA90U+GOYx2IL0wVmPnue1skd0Kp6sbL9FqYtOW/IL09OOhzWPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ1qYURT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D992C4CECF;
-	Mon, 11 Nov 2024 16:42:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731343338;
-	bh=bMvBiLBnkjt3874HBhx/ZepwiWrsNm8t1pyp0Dzw9vM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JJ1qYURT4/USA0qQ9SPzD1Jr6mPgThmCVBYRsVQkC+T8zvX2AEVJQB5XzdYoC1XFG
-	 I+Dv8zHL06ZiptgznmMxJ3AnB816j262Q2rkV1CpixB3zpyg30iyHVZVlXAe7wmmJ7
-	 S38ixJcz8/lJq1/I0KakQD+WUAQ64bfs4CenYVbmiPl33VLjWN8qxgfRx9gsR5bjkE
-	 egwiaXIwMM0ap9ZBXNNHfrPdhhRFwSwa3GOnxPwLuIjeNy+Vg8jJhmP3hmYDtbL1k9
-	 /ZoLUzZXT6R/ldYELGUut2hsxctZp0s+tpzfAJfbiinTydLaZ5TLkW0Ocq1kedle+T
-	 +TVDiRXNCWMxQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
- Jason Wessel <jason.wessel@windriver.com>, 
- Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
- kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-In-Reply-To: <20241108-new-maintainer-address-2-v1-1-47c9d71aac11@linaro.org>
-References: <20241108-new-maintainer-address-2-v1-0-47c9d71aac11@linaro.org>
- <20241108-new-maintainer-address-2-v1-1-47c9d71aac11@linaro.org>
-Subject: Re: (subset) [PATCH 1/2] MAINTAINERS: Use Daniel Thompson's korg
- address for backlight work
-Message-Id: <173134333678.299614.17079258343612609351.b4-ty@kernel.org>
-Date: Mon, 11 Nov 2024 16:42:16 +0000
+	s=arc-20240116; t=1731344000; c=relaxed/simple;
+	bh=my6kpv51R2cZYX7QWBuaiZ5YJ3cTY+lUC8c8KSMPStY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Fah51Ta2Nnhx/H9lxNWD98Sms2gippdZVknx3ceq+k8ioQDcQy+SB4N1+RZJlr/Wi03BOVb9E4jkW6dPh0qSS7svGwkzbkKpA6rINHDgRFqIi7uyrsGs5ZVpzC6yM7hy4jveWdtFlc0R/BMkpk3Ir39gVs8HsWwh0DAkCh2T3RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=g52+/9sB reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from localhost.localdomain (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnFlH3WNQzRRG;
+	Mon, 11 Nov 2024 17:44:59 +0100 (CET)
+From: egyszeregy@freemail.hu
+To: stern@rowland.harvard.edu,
+	parri.andrea@gmail.com,
+	will@kernel.org,
+	peterz@infradead.org,
+	boqun.feng@gmail.com,
+	npiggin@gmail.com,
+	dhowells@redhat.com,
+	j.alglave@ucl.ac.uk,
+	luc.maranget@inria.fr,
+	paulmck@kernel.org,
+	akiyks@gmail.com,
+	dlustig@nvidia.com,
+	joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev
+Cc: =?UTF-8?q?Benjamin=20Sz=C5=91ke?= <egyszeregy@freemail.hu>
+Subject: [PATCH] tools/memory-model: Fix litmus-tests's file names for case-insensitive filesystem.
+Date: Mon, 11 Nov 2024 17:42:47 +0100
+Message-ID: <20241111164248.1060-1-egyszeregy@freemail.hu>
+X-Mailer: git-send-email 2.47.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731343500;
+	s=20181004; d=freemail.hu;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding;
+	l=2944; bh=cCPkD+u0S/L0jyUmIwbYJI+sFNNB67K8RH+1NXOKewo=;
+	b=g52+/9sB+0+XIfF0eM+kfn7QoNqU6pZ5WWAYlEjZldfna8PP3uR+ZpL+Xq88znJA
+	R1wgMjAtIPHRGoDubremxQyfjfSZ8mrga88kBJ5bPbzkU5MmxSzMjBny1JSq8UJXtmP
+	YIDsuMD6G18niuEtkDOFrzEliBvtT/Zox6vNuEw6SP/JXE/BgoPhxnOXpqI475zwyUZ
+	5jB51etvXr6KBKnqd/PjC5ahZjC7N+f7S8seEzlRGP/WTNyhofonPGc1S5dXzIFwIZK
+	q88zFe8VflFmswH60Tl99g7dD2CA8sR7jjIH/gJe6EHsKhvuCsMrT6p6OvYGmgoW+Rh
+	rc/gAf/c2g==
 
-On Fri, 08 Nov 2024 08:30:44 +0000, Daniel Thompson wrote:
-> Going forward, I'll be using my kernel.org address for upstream work.
-> 
-> 
+From: Benjamin Szőke <egyszeregy@freemail.hu>
 
-Applied, thanks!
+The goal is to fix Linux repository for case-insensitive filesystem,
+to able to clone it and editable on any operating systems.
 
-[1/2] MAINTAINERS: Use Daniel Thompson's korg address for backlight work
-      commit: 3adec6f907b698b32ab62f70da31b41abed00c59
+Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
+"Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
 
---
-Lee Jones [李琼斯]
+Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
+---
+ tools/memory-model/Documentation/locking.txt                    | 2 +-
+ tools/memory-model/Documentation/recipes.txt                    | 2 +-
+ tools/memory-model/litmus-tests/README                          | 2 +-
+ ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
+ 4 files changed, 3 insertions(+), 3 deletions(-)
+ rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
+
+diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
+index 65c898c64a93..42bc3efe2015 100644
+--- a/tools/memory-model/Documentation/locking.txt
++++ b/tools/memory-model/Documentation/locking.txt
+@@ -184,7 +184,7 @@ ordering properties.
+ Ordering can be extended to CPUs not holding the lock by careful use
+ of smp_mb__after_spinlock():
+ 
+-	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
++	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		spin_lock(&mylock);
+diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+index 03f58b11c252..35996eb1b690 100644
+--- a/tools/memory-model/Documentation/recipes.txt
++++ b/tools/memory-model/Documentation/recipes.txt
+@@ -159,7 +159,7 @@ lock's ordering properties.
+ Ordering can be extended to CPUs not holding the lock by careful use
+ of smp_mb__after_spinlock():
+ 
+-	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
++	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		spin_lock(&mylock);
+diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+index d311a0ff1ae6..e3d451346400 100644
+--- a/tools/memory-model/litmus-tests/README
++++ b/tools/memory-model/litmus-tests/README
+@@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
+ 	spin_lock() sufficient to make ordering apparent to accesses
+ 	by a process not holding the lock?
+ 
+-Z6.0+pooncelock+poonceLock+pombonce.litmus
++Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+ 	As above, but with smp_mb__after_spinlock() immediately
+ 	following the spin_lock().
+ 
+diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+similarity index 100%
+rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
+rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+-- 
+2.47.0.windows.2
 
 
