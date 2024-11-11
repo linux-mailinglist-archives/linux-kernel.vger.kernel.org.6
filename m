@@ -1,232 +1,292 @@
-Return-Path: <linux-kernel+bounces-404400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE909C4351
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:14:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEC09C4352
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE66B282545
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:14:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEA7C282830
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398361A707A;
-	Mon, 11 Nov 2024 17:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DFE1A76B4;
+	Mon, 11 Nov 2024 17:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NHMo+lmP"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GnOcGjuE"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2040.outbound.protection.outlook.com [40.107.93.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCA01A4F20
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731345229; cv=none; b=tWRpyTEbtKqYMG8HdG3y29YWmfg6dloU+nRHfJUryxDBet9DLmU+v2ZF30rxrAdLIMda8up22SD0XI7/pNuM5/XKhDeI/p3diX37aVY86jtJFfUxhWzXqnSuoF+3crI21wMNeKKjpJhIyBl18F1qWSm8IyPY4BU2KTq05T9NKs8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731345229; c=relaxed/simple;
-	bh=ret7sqyESc5ruXA3nhuPZ3KHNPXoIw4dcOwwP4EC084=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ePS7HpMG6K8h283xUrWjsVe91fA82YA8V2m/lx2uwV6Oxk4iBbHQiQBCqWz8CIqiQsMlZ0a+Uv2Dd83nq5A8cVznfdAT1JEZU3i2/SNJYNT9CDbi9ZqMf+OT0Yv0bURC1htTb3N4r7O15kXwsQAkmR+PRNz3kTi3c+qI3nGXgQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NHMo+lmP; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e6a7f3b67so5202082b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:13:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731345227; x=1731950027; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SF+DpAbHUmcXzFvmBd4F+PWQudXrAabpaBlA9QzlTpM=;
-        b=NHMo+lmPF5hKzpo1YbEXsTarRiGiTBb41iMmclPnQyxpKlDpXjAK4WA02glmfY+owQ
-         FqHQIDaYjAI8vex8derkAkSQ2HUeR3KZFGwyrplhwS5CbmuhVZF6707R7Et00eE9grs6
-         VXEh6X97vVflpslmlHQ9xnqtGUcOaXbhPLsVZYtTwn2RtrRCeQaKdDkP1WllY/1Wc5pm
-         Z2RsjEgq9rk/1GLB4lqGci6Wmg9nJDxEktRPAmgyFQiW6FAQh3LU8NmQRL4/PYUuPOoI
-         yZ4LO0QHpvyRPQmzPGuGut8flS1mSbHDV5lKw8ibE7lHpCVk1U7d32bkPgQTTQLyFJ2F
-         ZihQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731345227; x=1731950027;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SF+DpAbHUmcXzFvmBd4F+PWQudXrAabpaBlA9QzlTpM=;
-        b=KWdaiuTKXQsY9AvpkfMg8/gD6BJhbofR27rc4/RNQJkhK8CufoXe0z9JDGmPdGcFvi
-         CRXLVCgsiDwBay45VOuxBLLe4T3Bi2qTT6pd610mbyDupfIvBxjGPq9VikJLZq3snQjy
-         /jT+HxJhqo5ESu+ojC+tFNvXEq8phcxlhsY7C2IQPCkLin0wH6Acl2rz9va/aVLuyPKa
-         awTMluXFbae+Y1ME3BCJ0stsF+E20sUQd1MNN6MWwB6mVo1tNNXW2IBDgzc22ApEOyPd
-         H36hjilAakcBMRcCDgDedBLyvLJW98GMd7l0R4DePMpAFdsfFfjZ7imZIwDli71zIXno
-         8bMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyxzEIiZNloOFtKfLkPVL7jhunLhylj01ZzI+V0JclPIsQhPcmsAGPra5I+fljmzaI3Wz5yL5l3rfXEsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjSqQAKkzZdLkwLwl0ySeFdMHZXfNs4aWpKJcXIISoKjQc+M0/
-	wlNmXrF9mJkOdDlp3l4ILkAdnz5nBOBz2Zz7ZLouY2dDUGxkrNtNtNA4K5AHM3Ys/5vCIa7w8zI
-	Eeg==
-X-Google-Smtp-Source: AGHT+IEq5f1Lu3Rh31Wea8fuGHNmDS+fJf+Kyq0/eZwavPBgk4wsyTcpVC6U2U12WYNBrtAGigqVlq9MOgI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:a18:b0:71e:69bb:d0f8 with SMTP id
- d2e1a72fcca58-7241325edcdmr780540b3a.1.1731345227229; Mon, 11 Nov 2024
- 09:13:47 -0800 (PST)
-Date: Mon, 11 Nov 2024 09:13:45 -0800
-In-Reply-To: <20241111125219.248649120@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7227B1B95B;
+	Mon, 11 Nov 2024 17:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731345238; cv=fail; b=B9JV4K5tTWUQGzcrPpW9QZOaUUfoO/WCeqgmz3LRLbdZhs4wgwvhYt7kWKN6IOYrhO2AjsHC2XJSJ9qXNL9v7ol5Uho7Y/1V4LP/4JWN8NYeNoAc/tjkEH2vSNFwI8mqey/tIHygw7Tfq3E/wf7OTs4+O8ryBnavBeI101owulc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731345238; c=relaxed/simple;
+	bh=Hq7jb5qG1yDy8sUEEaFnIZcPBIY7w67iV6FcnEc9V3Q=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=D9378kqlEt0q9MbOwPIIaN2TnSkTZjVIsm8O49wy5/PaFFEtJ0yTuX6gK46k/pQLWUfDpGNYzTcgqiGn9dA3JdtMl2IURwgSGxrFZh6Wgq+If0QHaYgHUnCgM4Tb4gETtRznIiGrgimwo6KdSAqDTNW3hGEQWkLumTEcVAcdZrs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GnOcGjuE; arc=fail smtp.client-ip=40.107.93.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oxlHQGtJi3qQjz9Q/qZsnQIzrk7hU1fQu8iAXGXKht3MTqIc5uVaO1b5qLKs/dag8rstZyPEK3mGBBSbLzdLogthSc6JCTM60oOMOvUq0sndY4R3/vacxryVQCPEcWsrhSk7M3UBRhAw+lJzEdhY5MvDikZPurGjA++q9hr/4FqfZC8SpAFMmbRzX8pLAZykVE4FRACYTa/d4hszY2YVQK6PS30MUx/KICQSAAskRUf0NkZbf/gTYInokfd6KvuGf4gwWbZW9omhD+Njf9PpN+nES8tC5yOtCdyZ0bndZdOVT49J5Gv7NtNctCyH7PDDJ0o1beuaojJUHxKd9uBs/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j5i+qviQCLpr7O6qUlVV7a8ApFitu3Kp60TKWTC9jsA=;
+ b=f6ULMD/a+Wr+AiHK9E2tmSJUrHLxNxiG0jfj5Rj02MAy9Ol4O/7VE8lBHdM/fQ+I7Yua1lyIHCKNwnzudGE2dzwiBv9e4LAWeb7uD6vb+T8WWbMgCzW1dwQl+DVYGtykPyXrfnzsyN2HMZPtQt2U2yPRUwLtW5NrLLumZfvxbsHVBH9BywHXvIVzi9OuqHRxuKiRHJDhG1imj1nn43h1TFa+jHQiYHZ8PgqvUwixwNK/L/XDe0BzilIXjoQnccQgWh0IYAHxRl/+afg0y8wKqAui5JRcQlX0pqJ35eoXta9l76zP5RizvgWuPlEylxWdaa3xF+Sp0zGm+gNTdW2hkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j5i+qviQCLpr7O6qUlVV7a8ApFitu3Kp60TKWTC9jsA=;
+ b=GnOcGjuE5y2K8Xe//kg6hx8NIoG0HhN8Y30MohiFjsNHLQFrLnqVsglDQdEPIbWut8GkkrBDsWaExqlVmbK+75mJf6SKtmPmxGAJJg2gCy9VVVp2VpmJe7mXCcQDdFmE5xK0O3b06UfA6VRdbU2tvNHZ00SyE6gAQR02vsaJgx8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by PH7PR12MB7307.namprd12.prod.outlook.com (2603:10b6:510:20b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.25; Mon, 11 Nov
+ 2024 17:13:51 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
+ 17:13:51 +0000
+Message-ID: <d2f7d2cd-9019-47d0-a4a9-01918cda32c3@amd.com>
+Date: Mon, 11 Nov 2024 11:13:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Dionna Amalie Glaze <dionnaglaze@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+ Ashish Kalra <ashish.kalra@amd.com>, John Allen <john.allen@amd.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, linux-coco@lists.linux.dev,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Michael Roth <michael.roth@amd.com>, Luis Chamberlain <mcgrof@kernel.org>,
+ Russ Weight <russ.weight@linux.dev>, Danilo Krummrich <dakr@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Tianfei zhang <tianfei.zhang@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
+ linux-crypto@vger.kernel.org
+References: <20241107232457.4059785-1-dionnaglaze@google.com>
+ <20241107232457.4059785-6-dionnaglaze@google.com>
+ <71db9119-a667-96c1-7aaa-4f0241f203ea@amd.com>
+ <CAAH4kHaVDTokOR9BBbinXkw=Hk3ztYoiZOK_77JahmQ64vjK_g@mail.gmail.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v5 05/10] crypto: ccp: Add GCTX API to track ASID
+ assignment
+In-Reply-To: <CAAH4kHaVDTokOR9BBbinXkw=Hk3ztYoiZOK_77JahmQ64vjK_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR08CA0028.namprd08.prod.outlook.com
+ (2603:10b6:805:66::41) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241111115935.796797988@infradead.org> <20241111125219.248649120@infradead.org>
-Message-ID: <ZzI7SYxeXWOJmlun@google.com>
-Subject: Re: [PATCH v2 11/12] x86/kvm/emulate: Implement test_cc() in C
-From: Sean Christopherson <seanjc@google.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: pbonzini@redhat.com, jpoimboe@redhat.com, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
-	jthoughton@google.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|PH7PR12MB7307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f5cb723-b26c-4d1b-499b-08dd027436ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SlJlOWdjL3pMaTFraDdzb0FBOUMwVEFMbHIxRW1uOWplL0lYWlovS2FNUlFh?=
+ =?utf-8?B?MXpWWmc5VjZxYUozV3Y0VWc4L2Fqd1dYU3FkakFXUnE0STNmYk56UXlrODhw?=
+ =?utf-8?B?R2QzNFhYbWhCK3NRRFZyUmRzTm4vWWlRWFNONVFkeERwczlqUEVYZ2QrWFlU?=
+ =?utf-8?B?NVZMS1E2d2l1QzZPSVVKZWZMalQyOTM2ZFdmUnFKbSthTVMwa1J5YlJIcE5w?=
+ =?utf-8?B?UFE2L1R4VTR2MU5BK0JmMlpBaER4aElFVXByVzMvbDk3Z3FQM2lPRTc4dmov?=
+ =?utf-8?B?Rk15THIxaTRON3Y5WDRSOVhEWTNYTkVITWxudFhyWXp0Uy9xL1ZwRHBFYjU2?=
+ =?utf-8?B?TWQvVmZZUSs1TitDbTJ6MXJQeWhLSVpjQVpjNGtkMXpBV2M1UDhrZHF1cGlM?=
+ =?utf-8?B?bDdOSWFjcFJUQTNnTm05SHUvQUJwRDljS0Jtd0UxTGExMCs1QTBKdkNHa2d0?=
+ =?utf-8?B?MUhNRzd4VFhXMzlVRE4zMGNhdDYzUjBISWQwZy9FTkpPTFp6Yi95UlpVSXFK?=
+ =?utf-8?B?ZFdHcktKZ1FlYXd5cEc2SFE1b0k4dU5uQWE3SUpXcDd1SDFnSW9oa2d2ZElH?=
+ =?utf-8?B?WWtEWllTWGsrdE52UDEvM0dxSjUwTXB0amxiWmZNSzlrUUR1RUFPdnFGdHJT?=
+ =?utf-8?B?TCt2S3RQd2pnMkJOZ2NPQlpjenUwSlVmZTMwbUtBeEFhc2NJbWlSNXRkWVgx?=
+ =?utf-8?B?dVVQL0hwQ3VLb2RwM01DQzRHNFJ1ajdYR3NFejkxWnNhSTIyL3RBMDc0THhM?=
+ =?utf-8?B?cUErTVpMbDMwbkZIZmNVcGI4eGt1c0xnRi9JYjM0VGwxZWlFM2lKM3ZWQjgz?=
+ =?utf-8?B?Vnpxc1Q5MkhIcGlYUTdVWVhHbUYvZm5UOXJwN1JwdmYvUmZyK2hvVCtIU0lZ?=
+ =?utf-8?B?eHRib3hESE9QbjNyUHlvQVBNYXU2c0I1dnYyZVJpZ1puOVE1eTNCOFdRb2VZ?=
+ =?utf-8?B?aXVjY0cyZ1crQlNwWmdnS1NzejYraGJnM2hWcGxxQUI4UjBKK0R1SG9jU1gx?=
+ =?utf-8?B?MURPUDAweERUSTc2RCtKRGdlekl6QnlyMFJUY3NPSDBBUHdXaVFjbXlNSEJm?=
+ =?utf-8?B?YW82cnhGdlVXUVhDL09SSjRuVmd5NHZrM09FWmNUTmNFQUxpWGcxei9pbTVo?=
+ =?utf-8?B?bjJXcXFvU1VBK0xLQ0xLSXdGeTdsQUFXK2lCdW02KytCSHVsb2JEZGJJK3Mw?=
+ =?utf-8?B?SXJWNHJQb2lUWTA0V1pPQmRET1hVTkw0blhaenZsV1pnTU56WWFibHQ0SVlP?=
+ =?utf-8?B?SndYMDUwTi9kcWxzM3FnbHczaGp6MTNsR1RpNkl1ODhRclhncnhMWXlYRFdC?=
+ =?utf-8?B?cVhEYTlCcG9YNFZsNS91UXdUN2RRQi9Rd3hFVEZaa2E3aUxmVm5xNkRLZGRZ?=
+ =?utf-8?B?b29nU1dFWmh4ZkVBWU4vai9iL1EyWXdrMkFtbGxid3N4YmFMNGJYYmpjdmlV?=
+ =?utf-8?B?M0RRYjdxNzNjTi81dGszWDIrMmtQak01ajJvMWU0SFoxZHNrajJqOVhMVU9Q?=
+ =?utf-8?B?ZlU1V2VqU0d6ZEpoeTVUOU5DN2x2eGVGUVJLRzNWTGpIdjMvY1lHaXMxY2FR?=
+ =?utf-8?B?dGFiYzhpRlFsaWcrMmNPWEJMcGRXYnFRMFRad3c5K20xOFRvVWhHalAyRjNZ?=
+ =?utf-8?B?dTNVelJHR21vWS9nOHFiaWhTT0lEVkd0SU1TbDY3bGF2MVVPdXhkNzVVNnRr?=
+ =?utf-8?B?VmxoT1FaZm1hVWVpMzhEMG8zREtyL2JpR2R1S00wOExseHEzcGxhN1Nuc3Jj?=
+ =?utf-8?Q?R/psw9OuoCdrid3AhCoJNT6Ccj5Y7b31Vy3TS9z?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q0VOVmxudFpRYXJkQzdLVS83SVhhNFBjK2RrR0lrWmljekZXallpaFFNdHBw?=
+ =?utf-8?B?YTZiTy8yTEx6VUovOFp3ckwvcFJ3NnRGU3Bnd200OGdSaWRwWGI5VmRQb296?=
+ =?utf-8?B?VTRiNlA1UlFXTjlxWWNoenpmVzkxWmx3QXY0WHAyUitGeEVlbVMrVmRpMzgx?=
+ =?utf-8?B?SnBXb2gvOTkwM3l5MHJQNTN4Zzl2dkZJT2NKWEQzOGxVak9SVVVjWlpSWHd6?=
+ =?utf-8?B?SjRFT3hJakZ5aXVtaXNaSzNvc0pMRVdBMWV1WVRWektxYWV1NS9DWjNpdWlq?=
+ =?utf-8?B?a01qS3ZRa01Mb0dPeDlrOVFCbW41bGp5ZDhzb0FuRWxQU1g3aXEreTJPa2FC?=
+ =?utf-8?B?cTNaODNWd3RvZE0xeDQ1c2VxODFrVHo4N2lLWUljdTFPMittdzVyMWZiRVcv?=
+ =?utf-8?B?Z2NQdDlKaGREUnNvbm5xeW42TU04QWFMZUdBa3JCSHVHbW1MUlo3bUpxaTM4?=
+ =?utf-8?B?RkJ4MkhKMS9SbUs0N1FiTVQwREpUTlFWTDFoTEpjRmE2dC9jMys3MVd0djU5?=
+ =?utf-8?B?cGgwSmJRb2JtcnMxYzJDTHJLMkhqdUtDY0NzY1h1RHVBeVJScURWUllGK1dx?=
+ =?utf-8?B?UmhPdXVrdjdPTzJLRjFOc1JQU2pGSnY0Z2QwcDNvSUx5b1dFaDhrNXBHcVRa?=
+ =?utf-8?B?SDNxbjNJNzlXT0RIZTZzdEViNDkzTk9PbFVMdlFnRzI0MlBaZllZV2M4NFhK?=
+ =?utf-8?B?b2FLNmtuSTMwajJJZTRmWVZDbDRZWWt5bWhQZk9VanZnU1phZkpEMHN2c2Rx?=
+ =?utf-8?B?SnhHSU9lbHU5cFNQdkhIZlBCMGpjZ2tQcEZyQlpqVGhUM3lTVWRJa0k2c2Zq?=
+ =?utf-8?B?ZkRJODFOMitMcStKQVpORnNSTTVVam95THg1b3NkSFV1aDhBQTZoVlhzNTVB?=
+ =?utf-8?B?MTFOTFZHcEgyaElCYnB1Q20zT3dwNXZKZXlRc2dyR3ZSbXNqMnRzZUFKTTc3?=
+ =?utf-8?B?YlY3dWp4ZmlQalFpUFV3b251OWliZUI3YkZpa3BvWlQ1QVdseXpxQ3BSODV6?=
+ =?utf-8?B?dGN3S251b1JpeW9lL1V1QmU0SzlEaE4vN2ZWOU85OUh3UDNCYWhZY1pHQUgz?=
+ =?utf-8?B?cjl6VjlDMWtreDk4cWpqVnAyR1U2Y2JYYTBEOUxWVHBwdVNnMFc4NWVMVzFy?=
+ =?utf-8?B?Zm50WHJ1Q1A4VEpnc004Y3lueU8vMEQ1enExaGE0bk9IbmZST0ZHOUx2Vy9Z?=
+ =?utf-8?B?dWxBU0ZVUGhnYW9zOXhQenhuL2YxRXUyQWF3d0RUMDJERzJvdXlBRHBLWkZH?=
+ =?utf-8?B?clNMMi9QR1Ywem9XVE5nZUN6UjdkWTBVaGptQ2RjbVBmTlpUTTQ4WU5MeHM3?=
+ =?utf-8?B?M1BhTm9sVnJlUG9BK1Y3VEtZT29yMTV0ZDQ2M0ZnMkZaMSt2T203emg2T2RT?=
+ =?utf-8?B?aVdQV2ZSaTlXYjFBdU9IYkJrQnd6K0s3dUZBOGZud0NuZVlaR05XKzdEVGJW?=
+ =?utf-8?B?OE1FWElJSENoTW04RHBMY0xXWTVGbXFzQ2d2cUo3WituWWFWTFMxY0J0SVJh?=
+ =?utf-8?B?OUJtVTNMVDlWd1lFQUV6VGVJd0lLTzBNdjhhZDlmUXZPNExLMy9wUXphQ0xi?=
+ =?utf-8?B?bTM5TFRFWjFrOXRtdVRMMWZIMkF6WUNMVm96YkdQZlhqb2hvYy9PRTg3ODNF?=
+ =?utf-8?B?M3lXOUo2eVhTbmlyZTUraytZdEFiT2VUdGRsV3pHMGd4cmFXci9PVGxyRmlp?=
+ =?utf-8?B?UWdBU3JrdXBQQWtwS2ZHTDFmRlcxMmY3d0FjNUZjazd3S3h4V0lxdjdmMk9L?=
+ =?utf-8?B?Q3lsQVVqdTYzK2RYOGFsOHR0eHNzT2I3QjRRa1IxTEYzRitPVDFrSVhza2Qv?=
+ =?utf-8?B?elplMzFLL2NXOGw2cmczb3FHQ2VYeU05RWo5eG1OUitrMDl3M1FJSG45aUE5?=
+ =?utf-8?B?QWdrd2Q2aURHY1dHWlAyV011VGM3OHJCUFR0R0VCRVFub040Skc5akdOOHc1?=
+ =?utf-8?B?VmxES1VBOUxqUEwzYnQ0ZFVrSXhreGhPeU1wOGF2ZWZlSERPNDB0Sm1PMGUz?=
+ =?utf-8?B?MVpxMUdaS1NYZTdmNCt3SWVPc1dEUDJ5STJmc1R6NzdqN0dxeTcvTlVMZFNm?=
+ =?utf-8?B?VlowZmp5RkVuaXlTNm1hSWtxdTR1bEU2ZHhYOFVnZ0FqR0tjSVdwejRHZlZF?=
+ =?utf-8?Q?hp3ccnVuL8xwPUnvBLzzW/89h?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f5cb723-b26c-4d1b-499b-08dd027436ca
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 17:13:51.6911
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8dIUtpnv9kSuyiHuk5D5oXjvzIaxxZW3hDcJCWWFSRoQMKLPz4FZPxTo+vmA9BHBzaIlAC4VATXndQ4Ex/TBLA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7307
 
-Can you use "KVM: x86" for the scope?  "x86/kvm" is used for guest changes, i.e.
-for paravirt code when running as a KVM guest.
+On 11/8/24 16:13, Dionna Amalie Glaze wrote:
+> On Fri, Nov 8, 2024 at 9:24 AM Tom Lendacky <thomas.lendacky@amd.com> wrote:
+>>
+>> On 11/7/24 17:24, Dionna Glaze wrote:
+>>> In preparation for SEV firmware hotloading support, introduce a new way
+>>> to create, activate, and decommission GCTX pages such that ccp is has
+>>
+>> s/is has/has/
+>>
+>>> all GCTX pages available to update as needed.
+>>>
+>>> Compliance with SEV-SNP API section 3.3 Firmware Updates and 4.1.1
+>>> Live Update: before a firmware is committed, all active GCTX pages
+>>> should be updated with SNP_GUEST_STATUS to ensure their data structure
+>>> remains consistent for the new firmware version.
+>>> There can only be CPUID 0x8000001f_EDX-1 many SEV-SNP asids in use at
+>>> one time, so this map associates asid to gctx in order to track which
+>>> addresses are active gctx pages that need updating. When an asid and
+>>> gctx page are decommissioned, the page is removed from tracking for
+>>> update-purposes.
+>>
+>> You should be consistent with capitalization of gctx and also capitalize ASID.
+>>
+>>>
+>>> CC: Sean Christopherson <seanjc@google.com>
+>>> CC: Paolo Bonzini <pbonzini@redhat.com>
+>>> CC: Thomas Gleixner <tglx@linutronix.de>
+>>> CC: Ingo Molnar <mingo@redhat.com>
+>>> CC: Borislav Petkov <bp@alien8.de>
+>>> CC: Dave Hansen <dave.hansen@linux.intel.com>
+>>> CC: Ashish Kalra <ashish.kalra@amd.com>
+>>> CC: Tom Lendacky <thomas.lendacky@amd.com>
+>>> CC: John Allen <john.allen@amd.com>
+>>> CC: Herbert Xu <herbert@gondor.apana.org.au>
+>>> CC: "David S. Miller" <davem@davemloft.net>
+>>> CC: Michael Roth <michael.roth@amd.com>
+>>> CC: Luis Chamberlain <mcgrof@kernel.org>
+>>> CC: Russ Weight <russ.weight@linux.dev>
+>>> CC: Danilo Krummrich <dakr@redhat.com>
+>>> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> CC: "Rafael J. Wysocki" <rafael@kernel.org>
+>>> CC: Tianfei zhang <tianfei.zhang@intel.com>
+>>> CC: Alexey Kardashevskiy <aik@amd.com>
+>>>
+>>> Signed-off-by: Dionna Glaze <dionnaglaze@google.com>
+>>> ---
+>>>  drivers/crypto/ccp/sev-dev.c | 107 +++++++++++++++++++++++++++++++++++
+>>>  drivers/crypto/ccp/sev-dev.h |   8 +++
+>>>  include/linux/psp-sev.h      |  52 +++++++++++++++++
+>>>  3 files changed, 167 insertions(+)
+>>>
+>>> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+>>> index af018afd9cd7f..036e8d5054fcc 100644
+>>> --- a/drivers/crypto/ccp/sev-dev.c
+>>> +++ b/drivers/crypto/ccp/sev-dev.c
 
-On Mon, Nov 11, 2024, Peter Zijlstra wrote:
-> Current test_cc() uses the fastop infrastructure to test flags using
-> SETcc instructions. However, int3_emulate_jcc() already fully
-> implements the flags->CC mapping, use that.
+>>
+>> But, I don't think that SEV_CMD_SNP_ACTIVATE needs to be here since it
+>> doesn't change anything related to the sev_asid_data struct. KVM has the
+>> guest context and can issue the commands similar to the other commands KVM
+>> issues that use the guest context. So this function can be removed and
+>> still performed in KVM.
+> 
+> My intention for adding it was for safety, not raw capability.
+> Is it not safer to ensure that the GCTX used for activation is the one
+> that is tracked?
+> 
 
-I think it's worth presenting this as a revert of sorts, even though it's not a
-strict revert.  KVM also emulated jcc-like operations in software prior to commit
-9ae9febae950 ("KVM: x86 emulator: covert SETCC to fastop"), i.e. the fastop
-madness was introduced for performance reasons, not because writing the code was
-hard.
+I'm not sure... all the code is really doing at this moment is tracking
+guest context pages so that you can update them on firmware changes. Any
+misuse of the context page and ASIDs can happen today in KVM so I'm not
+sure it matters. And any duplicate ASID usage is recognized when
+creating the guest context page.
 
-Looking at the output of the fastop versus __emulate_cc(), the worst case cost is
-two extra conditional branches.  Assuming that eliminating the test_cc() fastop
-code avoids having to add another special case in objtool, I am a-ok with the
-tradeoff.  Especially since emulating instructions that use test_cc() is largely
-limited to older hardware running guest firmware that uses (emulated) SMM, and
-maybe a few bespoke use cases.  E.g. I get literally zero hits on test_cc() when
-booting a 24 vCPU VM (64-bit or 32-bit kernel) with EPT and unrestricted guest
-disabled, as the OVMF build I use doesn't rely on SMM.
+I guess we can keep it here, though.
 
-And FWIW, a straight revert appears to generate worse code.  I see no reason to
-bring it back.
+>>> +     cpuid(0x8000001f, &eax, &ebx, &sev_max_asid, &sev_min_asid);
+>>> +     if (!sev_max_asid)
+>>> +             return -ENODEV;
+>>> +
+>>> +     nr_asids = sev_max_asid + 1;
+>>
+>> Can we get rid of sev_max_asid and then just use nr_asids or sev_asids in
+>> the cpuid() call and adjust by 1 after the above check.
+>>
+> I'm not sure I know what you mean.
 
-With a massaged shortlog+changelog,
+You only need one of either nr_asids or sev_max_asid. So you could do:
 
-Acked-by: Sean Christopherson <seanjc@google.com>
+	cpuid(0x8000001f, &eax, &ebx, &sev_max_asid, &sev_min_asid);
+	if (!sev_max_asid)
+		return -ENODEV;
 
+	/* Bump SEV ASIDs count to allow for simple array checking */
+	sev_max_asid++;
 
-fastop:
-   0x0000000000042c41 <+1537>:  movzbl 0x61(%rbp),%eax
-   0x0000000000042c45 <+1541>:  mov    0x10(%rbp),%rdx
-   0x0000000000042c49 <+1545>:  shl    $0x4,%rax
-   0x0000000000042c4d <+1549>:  and    $0xf0,%eax
-   0x0000000000042c52 <+1554>:  and    $0x8d5,%edx
-   0x0000000000042c58 <+1560>:  or     $0x2,%dh
-   0x0000000000042c5b <+1563>:  add    $0x0,%rax
-   0x0000000000042c61 <+1569>:  push   %rdx
-   0x0000000000042c62 <+1570>:  popf   
-   0x0000000000042c63 <+1571>:  call   0x42c68 <x86_emulate_insn+1576>
-   0x0000000000042c68 <+1576>:  mov    %eax,%edx
-   0x0000000000042c6a <+1578>:  xor    %eax,%eax
-   0x0000000000042c6c <+1580>:  test   %dl,%dl
-   0x0000000000042c6e <+1582>:  jne    0x42f24 <x86_emulate_insn+2276>
+Then you can get rid of nr_asids and just use sev_max_asid in the
+appropriate places and manner.
 
-__emulate_cc:
-   0x0000000000042b95 <+1541>:	movzbl 0x61(%rbp),%eax
-   0x0000000000042b99 <+1545>:	mov    0x10(%rbp),%rcx
-   0x0000000000042b9d <+1549>:	and    $0xf,%eax
-   0x0000000000042ba0 <+1552>:	cmp    $0xb,%al
-   0x0000000000042ba2 <+1554>:	ja     0x42e90 <x86_emulate_insn+2304>
-        0x0000000000042e90 <+2304>:  mov    %rcx,%rdx
-        0x0000000000042e93 <+2307>:  mov    %rcx,%rsi
-        0x0000000000042e96 <+2310>:  shr    $0x7,%rdx
-        0x0000000000042e9a <+2314>:  shr    $0xb,%rsi
-        0x0000000000042e9e <+2318>:  xor    %rsi,%rdx
-        0x0000000000042ea1 <+2321>:  cmp    $0xd,%al
-        0x0000000000042ea3 <+2323>:  ja     0x4339a <x86_emulate_insn+3594>
-                0x000000000004339a <+3594>:  and    $0x1,%edx
-                0x000000000004339d <+3597>:  and    $0x40,%ecx
-                0x00000000000433a0 <+3600>:  or     %rcx,%rdx
-                0x00000000000433a3 <+3603>:  setne  %dl
-                0x00000000000433a6 <+3606>:  jmp    0x42bba <x86_emulate_insn+1578>
-        0x0000000000042ea9 <+2329>:  and    $0x1,%edx
-        0x0000000000042eac <+2332>:  jmp    0x42bba <x86_emulate_insn+1578>
-   0x0000000000042ba8 <+1560>:	mov    %eax,%edx
-   0x0000000000042baa <+1562>:	shr    %dl
-   0x0000000000042bac <+1564>:	and    $0x7,%edx
-   0x0000000000042baf <+1567>:	and    0x0(,%rdx,8),%rcx
-   0x0000000000042bb7 <+1575>:	setne  %dl
-   0x0000000000042bba <+1578>:	test   $0x1,%al
-   0x0000000000042bbc <+1580>:	jne    0x43323 <x86_emulate_insn+3475>
-        0x0000000000043323 <+3475>:  test   %dl,%dl
-        0x0000000000043325 <+3477>:  jne    0x4332f <x86_emulate_insn+3487>
-        0x0000000000043327 <+3479>:  test   $0x1,%al
-        0x0000000000043329 <+3481>:  jne    0x42bca <x86_emulate_insn+1594>
-        0x000000000004332f <+3487>:  xor    %eax,%eax
-        0x0000000000043331 <+3489>:  jmp    0x42be0 <x86_emulate_insn+1616>
-   0x0000000000042bc2 <+1586>:	test   %dl,%dl
-   0x0000000000042bc4 <+1588>:	je     0x43327 <x86_emulate_insn+3479>
-        0x0000000000043327 <+3479>:  test   $0x1,%al
-        0x0000000000043329 <+3481>:  jne    0x42bca <x86_emulate_insn+1594>
-        0x000000000004332f <+3487>:  xor    %eax,%eax
-        0x0000000000043331 <+3489>:  jmp    0x42be0 <x86_emulate_insn+1616>
-   0x0000000000042bca <+1594>:	movslq 0xd0(%rbp),%rsi
-   0x0000000000042bd1 <+1601>:	mov    %rbp,%rdi
-   0x0000000000042bd4 <+1604>:	add    0x90(%rbp),%rsi
-   0x0000000000042bdb <+1611>:	call   0x3a7c0 <assign_eip>
+Thanks,
+Tom
 
-revert:
-   0x0000000000042bc9 <+1545>:  movzbl 0x61(%rbp),%esi
-   0x0000000000042bcd <+1549>:  mov    0x10(%rbp),%rdx
-   0x0000000000042bd1 <+1553>:  mov    %esi,%eax
-   0x0000000000042bd3 <+1555>:  shr    %eax
-   0x0000000000042bd5 <+1557>:  and    $0x7,%eax
-   0x0000000000042bd8 <+1560>:  cmp    $0x4,%eax
-   0x0000000000042bdb <+1563>:  je     0x42ed4 <x86_emulate_insn+2324>
-        0x0000000000042ed4 <+2324>:  mov    %edx,%ecx
-        0x0000000000042ed6 <+2326>:  and    $0x80,%ecx
-        0x0000000000042edc <+2332>:  jmp    0x42bff <x86_emulate_insn+1599>
-   0x0000000000042be1 <+1569>:  ja     0x43225 <x86_emulate_insn+3173>
-        0x0000000000043225 <+3173>:  cmp    $0x6,%eax
-        0x0000000000043228 <+3176>:  je     0x434ec <x86_emulate_insn+3884>
-                0x00000000000434ec <+3884>:  xor    %edi,%edi
-                0x00000000000434ee <+3886>:  jmp    0x43238 <x86_emulate_insn+3192>
-        0x000000000004322e <+3182>:  mov    %edx,%edi
-        0x0000000000043230 <+3184>:  and    $0x40,%edi
-        0x0000000000043233 <+3187>:  cmp    $0x7,%eax
-        0x0000000000043236 <+3190>:  jne    0x4325c <x86_emulate_insn+3228>
-                0x000000000004325c <+3228>:  mov    %edx,%ecx
-                0x000000000004325e <+3230>:  and    $0x4,%ecx
-                0x0000000000043261 <+3233>:  cmp    $0x5,%eax
-                0x0000000000043264 <+3236>:  je     0x42bff <x86_emulate_insn+1599>
-                0x000000000004326a <+3242>:  jmp    0x43218 <x86_emulate_insn+3160>
-        0x0000000000043238 <+3192>:  mov    %rdx,%rcx
-        0x000000000004323b <+3195>:  shr    $0xb,%rdx
-        0x000000000004323f <+3199>:  shr    $0x7,%rcx
-        0x0000000000043243 <+3203>:  xor    %edx,%ecx
-        0x0000000000043245 <+3205>:  and    $0x1,%ecx
-        0x0000000000043248 <+3208>:  or     %edi,%ecx
-        0x000000000004324a <+3210>:  jmp    0x42bff <x86_emulate_insn+1599>
-   0x0000000000042be7 <+1575>:  mov    %edx,%ecx
-   0x0000000000042be9 <+1577>:  and    $0x40,%ecx
-   0x0000000000042bec <+1580>:  cmp    $0x2,%eax
-   0x0000000000042bef <+1583>:  je     0x42bff <x86_emulate_insn+1599>
-   0x0000000000042bf1 <+1585>:  mov    %edx,%ecx
-   0x0000000000042bf3 <+1587>:  and    $0x41,%ecx
-   0x0000000000042bf6 <+1590>:  cmp    $0x3,%eax
-   0x0000000000042bf9 <+1593>:  jne    0x4320a <x86_emulate_insn+3146>
-        0x000000000004320a <+3146>:  mov    %edx,%ecx
-        0x000000000004320c <+3148>:  and    $0x1,%ecx
-        0x000000000004320f <+3151>:  cmp    $0x1,%eax
-        0x0000000000043212 <+3154>:  je     0x42bff <x86_emulate_insn+1599>
-        0x0000000000043218 <+3160>:  mov    %edx,%ecx
-        0x000000000004321a <+3162>:  and    $0x800,%ecx
-        0x0000000000043220 <+3168>:  jmp    0x42bff <x86_emulate_insn+1599>
-   0x0000000000042bff <+1599>:  test   %ecx,%ecx
-   0x0000000000042c01 <+1601>:  setne  %dl
-   0x0000000000042c04 <+1604>:  and    $0x1,%esi
-   0x0000000000042c07 <+1607>:  xor    %eax,%eax
-   0x0000000000042c09 <+1609>:  cmp    %sil,%dl
-   0x0000000000042c0c <+1612>:  je     0x42c24 <x86_emulate_insn+1636>
-   0x0000000000042c0e <+1614>:  movslq 0xd0(%rbp),%rsi
-   0x0000000000042c15 <+1621>:  mov    %rbp,%rdi
-   0x0000000000042c18 <+1624>:  add    0x90(%rbp),%rsi
-   0x0000000000042c1f <+1631>:  call   0x3a7c0 <assign_eip>
+>>> +     sev_es_max_asid = sev_min_asid - 1;
+>>> +
+>>> +     sev_asid_data = kcalloc(nr_asids, sizeof(*sev_asid_data), GFP_KERNEL);
+>>
 
