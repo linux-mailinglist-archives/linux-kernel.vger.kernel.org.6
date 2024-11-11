@@ -1,257 +1,190 @@
-Return-Path: <linux-kernel+bounces-404124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BBE9C3F68
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:13:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302B69C3F71
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757CAB23D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B34211F23318
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC4619CC20;
-	Mon, 11 Nov 2024 13:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC3819D075;
+	Mon, 11 Nov 2024 13:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M/PKMMw0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvVf7Wbn"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CEC158558
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEFD15575E;
+	Mon, 11 Nov 2024 13:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330773; cv=none; b=tq8Szm4GmHMeAczURRDzQO5NX7IRVsXw+suwPAGjkvP30VGNYBfE7Q72aH8H3ynziIvb0OrJKluenbXv5r4LBL0LrHCiY6pRw+PFS5oG/Z8PGUrMWRKylGtPe8+w34APnoRFhaUZG1Pe/DWB7w6IDKDdXNSk+N8l3Y0sXm1kLDA=
+	t=1731331295; cv=none; b=bHsWGzyCFRKjJmggPRCG9X5/U7gQkIQiSsc0EiK3HDPkhkju7+0PQpqyn0oAnJzLsafxtzSEUNWkgD1Rbimr8LoKVAppBsrTnVimBixMmSfndUXb0oQaMc/EqBj6uGcWHOkcS8iWsaQyGTp7AvCCPS7k3JcMfNmNhvXqT3NnZk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330773; c=relaxed/simple;
-	bh=hlCgYj4KqFoNje7LPqbjN114QT5GqWux5iHnY488pNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jx4AYpi2t5yquOA7Mr2FhgFtEZBAxNl5b9q46MGuvxpVG7OrHrwQEBmgTcrZptIAtvRjJLI4peAPGTxJSjNRecUSxN3w0gtZ9aDh26gr/z5Pi+602Hcm5iSGJxnnKA6ssIWP6bFYCjAQytvsYna/dICFBNtrplG5gTRlY3gpdrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M/PKMMw0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731330770;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FyfkMBNSykWaaIeAogOFuYzRo8X+mQaFAtl/EmHfBwc=;
-	b=M/PKMMw0WKGcpzJ4ioJMRmO095V4tR1L6BVcWaY7vqAZk+z3eQMe7UfyEYEENe7ajcoA6o
-	CoUcUzte224kglS3Awbp25B38rtz+MzyGpf5ZtPXHdeh6RMhx2KpoK+HwUtlYibihvNVI0
-	lEUDucOYqOBJSdYNXB2iJ38zpr3Fv/Q=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-216-7XekgXwUNGWoRRtlMyqelg-1; Mon,
- 11 Nov 2024 08:12:47 -0500
-X-MC-Unique: 7XekgXwUNGWoRRtlMyqelg-1
-X-Mimecast-MFC-AGG-ID: 7XekgXwUNGWoRRtlMyqelg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 81DEA1953940;
-	Mon, 11 Nov 2024 13:12:45 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.225.127])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A03D21956086;
-	Mon, 11 Nov 2024 13:12:41 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
-	mhklinux@outlook.com,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] HID: hyperv: streamline driver probe to avoid devres issues
-Date: Mon, 11 Nov 2024 14:12:40 +0100
-Message-ID: <20241111131240.35158-1-vkuznets@redhat.com>
+	s=arc-20240116; t=1731331295; c=relaxed/simple;
+	bh=J878j2auIlZ6D4VaLIs/77JAMKT8MvD19nROHcVxwrY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ntV578N1ngY4fQZ8jGSkYTd1qWT826wFDY0W+aunFvN03XClzzxvv9NEgxedmgXFTcdlvcsZVAN68WTJPQATxHJnLFpNyGGhsa2t16h7A936jLD7LBDnZGw6fyUXzDUA5G4vDxj847CEqlCo7F2vORuJRvdcs1OPxIku4nq5bB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvVf7Wbn; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdbe608b3so44873095ad.1;
+        Mon, 11 Nov 2024 05:21:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731331293; x=1731936093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=im6Jy38t0M9P8Ds0Fkv3ZVsul0UJjJFJRXt3zjTYHNw=;
+        b=TvVf7WbnHQhT0DfKNkUKqSBYuI0nqkNmH5VKgto98YlDCpXgAl2wKeOckfm6tq34Ww
+         eWnm1UH0JIAFwjH6RTVcUxjUhyhAhCba+QC6aNN9/oCK8C5XhF1TN/Is5Xc9hzVNkDQg
+         TObHiM8dIwz6sfAqeuLwPVM51PrRtRU42E9AeR1AUQhQRKBRQT9WC9k/boFP6bHLOMyB
+         AHOEVGT/17CGW7CaNXBI2FiSMeiB3PChljUClzfch70Ql9T2n4ocQd4MvQiJkMFJEtFX
+         Agy9Ld4S/4Yh+xMIhWdNHWZU8kSscYoTIj4kAVA2xZSTvxteHDTbP+Ojczrzmxy536nK
+         OCdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731331293; x=1731936093;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=im6Jy38t0M9P8Ds0Fkv3ZVsul0UJjJFJRXt3zjTYHNw=;
+        b=WR2bHcdkH39Btub/+c8IEFUISRSPjkEvneacGGe+Ot/RdI6eH4Aiz0hSyfVrBCxOpk
+         74iF2JbbLi5Gp4tYDX3zuQK2MCMidCSjW9/FzmVxHnC+SG/qsS7TqrFw4mDOi3t0hIAH
+         D35MC9iSTxd7K/UU9a+UOQlF8cFRSaw0Ym8z1JVFPDkKgyOiIktXFc57GNas/6ZZ88AR
+         3SocS3D8r+5ovvrApM54LqS7JRNoyuR3r9GLxjof61etQWj+B4iDecxxqpXRYYbWzR6r
+         JCF4Bv3pJPYb/negsvvQYjrvCVNhqmmaD14jzPhxRLpVGPJ92Sc9NptqlakF40byIUEQ
+         dc1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUTPWOVA9WHpmeuEiOcy2qEHGYZkrTnl2d5ZI8RuuEJzsZUzcLzRKeXofV73biXdU9mnnDI+HZmMF1hf9/T@vger.kernel.org, AJvYcCVfM5LWczL1rBfnOV7vQNIzYwP0q6O2sWto1xp8SG1fKfZdt3L98m4hLLd7j9mDD3a8tX/JCvfR92lR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHPYcGlGlk3X+YWo9/6NpAivNwphbx6u1e/TegO9PXst5kX7VW
+	fbi7HZ1ftgWothUGwAgn1rYrxNZ1/qGHpStTlasndM0Dq39tgGaK
+X-Google-Smtp-Source: AGHT+IEwB+o+/qeuUZ9d+KrtWbQEvreMHXJGwJsXjC8Rzhc8kuxIoz8kE4yXWm4kMcXlus1xtS5EDA==
+X-Received: by 2002:a17:902:d4cc:b0:211:6b21:5a87 with SMTP id d9443c01a7336-2118360bcccmr143105485ad.56.1731331292724;
+        Mon, 11 Nov 2024 05:21:32 -0800 (PST)
+Received: from [192.168.0.107] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd17e9sm9591693a91.39.2024.11.11.05.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 05:21:32 -0800 (PST)
+Message-ID: <005130df-fea4-462a-8efb-73d8445aca32@gmail.com>
+Date: Mon, 11 Nov 2024 21:21:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH asahi-soc/dt v3 00/10] Add PMGR nodes for Apple A7-A11
+ SoCs
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241103073319.30672-1-towinchenmi@gmail.com>
+Content-Language: en-US
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20241103073319.30672-1-towinchenmi@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-It was found that unloading 'hid_hyperv' module results in a devres
-complaint:
 
- ...
- hv_vmbus: unregistering driver hid_hyperv
- ------------[ cut here ]------------
- WARNING: CPU: 2 PID: 3983 at drivers/base/devres.c:691 devres_release_group+0x1f2/0x2c0
- ...
- Call Trace:
-  <TASK>
-  ? devres_release_group+0x1f2/0x2c0
-  ? __warn+0xd1/0x1c0
-  ? devres_release_group+0x1f2/0x2c0
-  ? report_bug+0x32a/0x3c0
-  ? handle_bug+0x53/0xa0
-  ? exc_invalid_op+0x18/0x50
-  ? asm_exc_invalid_op+0x1a/0x20
-  ? devres_release_group+0x1f2/0x2c0
-  ? devres_release_group+0x90/0x2c0
-  ? rcu_is_watching+0x15/0xb0
-  ? __pfx_devres_release_group+0x10/0x10
-  hid_device_remove+0xf5/0x220
-  device_release_driver_internal+0x371/0x540
-  ? klist_put+0xf3/0x170
-  bus_remove_device+0x1f1/0x3f0
-  device_del+0x33f/0x8c0
-  ? __pfx_device_del+0x10/0x10
-  ? cleanup_srcu_struct+0x337/0x500
-  hid_destroy_device+0xc8/0x130
-  mousevsc_remove+0xd2/0x1d0 [hid_hyperv]
-  device_release_driver_internal+0x371/0x540
-  driver_detach+0xc5/0x180
-  bus_remove_driver+0x11e/0x2a0
-  ? __mutex_unlock_slowpath+0x160/0x5e0
-  vmbus_driver_unregister+0x62/0x2b0 [hv_vmbus]
-  ...
 
-And the issue seems to be that the corresponding devres group is not
-allocated. Normally, devres_open_group() is called from
-__hid_device_probe() but Hyper-V HID driver overrides 'hid_dev->driver'
-with 'mousevsc_hid_driver' stub and basically re-implements
-__hid_device_probe() by calling hid_parse() and hid_hw_start() but not
-devres_open_group(). hid_device_probe() does not call __hid_device_probe()
-for it. Later, when the driver is removed, hid_device_remove() calls
-devres_release_group() as it doesn't check whether hdev->driver was
-initially overridden or not.
+Nick Chan 於 2024/11/3 下午3:31 寫道:
+> This series adds the PMGR nodes and all known power state subnodes for
+> Apple A7-A11 SoCs, along with the associated dt-bindings.
+> 
+> Changes since v2:
+> - Removed "apple,always-on" property from "ps_pmp" from s8001, t8011,
+> t8015 power domains. It is not on at boot. (Mixed up with ps_pms which
+> is required to be on)
+> - Add asahi-soc/dt back into the subject prefix, missing from v2.
+> 
+> Link to v2: https://lore.kernel.org/asahi/20241102011004.59339-1-towinchenmi@gmail.com
+> 
+> Changes since v1:
+> - Removed "framebuffer0" dt aliases. It is not standard and not needed.
+This is in response to Rob's comment[1]. It would be nice to get the
+series reviewed by the dt folks[2] in time so it does not slip a cycle.
 
-The issue seems to be related to the commit 62c68e7cee33 ("HID: ensure
-timely release of driver-allocated resources") but the commit itself seems
-to be correct.
+[1]:
+https://lore.kernel.org/asahi/CAL_JsqLv2DJOsL=3bxf229ZdArL1TqArw+9cLtmjYMkm5yfZ7Q@mail.gmail.com/
+[2]:
+https://lore.kernel.org/asahi/23074410-ffe2-4f68-a983-67cec430f68f@marcan.st/
 
-Fix the issue by dropping the 'hid_dev->driver' override and using
-hid_register_driver()/hid_unregister_driver() instead. Alternatively, it
-would have been possible to rely on the default handling but
-HID_CONNECT_DEFAULT implies HID_CONNECT_HIDRAW and it doesn't seem to work
-for mousevsc as-is.
+> 
+> Link to v1: https://lore.kernel.org/asahi/20241029010526.42052-1-towinchenmi@gmail.com
+> 
+> Nick Chan
+> ---
+> 
+> Nick Chan (10):
+>   dt-bindings: arm: apple: apple,pmgr: Add A7-A11 compatibles
+>   dt-bindings: arm: apple: apple,pmgr-pwrstate: Add A7-A11 compatibles
+>   arm64: dts: apple: s5l8960x: Add PMGR node
+>   arm64: dts: apple: t7000: Add PMGR node
+>   arm64: dts: apple: t7001: Add PMGR node
+>   arm64: dts: apple: s8000: Add PMGR nodes
+>   arm64: dts: apple: s8001: Add PMGR nodes
+>   arm64: dts: apple: t8010: Add PMGR nodes
+>   arm64: dts: apple: t8011: Add PMGR nodes
+>   arm64: dts: apple: t8015: Add PMGR nodes
+> 
+>  .../bindings/arm/apple/apple,pmgr.yaml        |   5 +
+>  .../bindings/power/apple,pmgr-pwrstate.yaml   |   5 +
+>  arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/s5l8960x-air1.dtsi  |   4 +
+>  arch/arm64/boot/dts/apple/s5l8960x-mini2.dtsi |   4 +
+>  arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi  | 610 ++++++++++++
+>  arch/arm64/boot/dts/apple/s5l8960x.dtsi       |  13 +
+>  arch/arm64/boot/dts/apple/s8000-pmgr.dtsi     | 757 ++++++++++++++
+>  arch/arm64/boot/dts/apple/s8000.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/s8001-common.dtsi   |   1 +
+>  .../arm64/boot/dts/apple/s8001-j98a-j99a.dtsi |  26 +
+>  arch/arm64/boot/dts/apple/s8001-j98a.dts      |   1 +
+>  arch/arm64/boot/dts/apple/s8001-j99a.dts      |   1 +
+>  arch/arm64/boot/dts/apple/s8001-pmgr.dtsi     | 822 ++++++++++++++++
+>  arch/arm64/boot/dts/apple/s8001.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/s800x-6s.dtsi       |   4 +
+>  arch/arm64/boot/dts/apple/s800x-ipad5.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/s800x-se.dtsi       |   4 +
+>  arch/arm64/boot/dts/apple/t7000-6.dtsi        |   4 +
+>  arch/arm64/boot/dts/apple/t7000-j42d.dts      |   1 +
+>  arch/arm64/boot/dts/apple/t7000-mini4.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/t7000-n102.dts      |   4 +
+>  arch/arm64/boot/dts/apple/t7000-pmgr.dtsi     | 641 ++++++++++++
+>  arch/arm64/boot/dts/apple/t7000.dtsi          |  14 +
+>  arch/arm64/boot/dts/apple/t7001-air2.dtsi     |   1 +
+>  arch/arm64/boot/dts/apple/t7001-pmgr.dtsi     | 650 ++++++++++++
+>  arch/arm64/boot/dts/apple/t7001.dtsi          |  13 +
+>  arch/arm64/boot/dts/apple/t8010-7.dtsi        |   4 +
+>  arch/arm64/boot/dts/apple/t8010-ipad6.dtsi    |   4 +
+>  arch/arm64/boot/dts/apple/t8010-n112.dts      |   4 +
+>  arch/arm64/boot/dts/apple/t8010-pmgr.dtsi     | 772 +++++++++++++++
+>  arch/arm64/boot/dts/apple/t8010.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/t8011-common.dtsi   |   1 +
+>  arch/arm64/boot/dts/apple/t8011-pmgr.dtsi     | 806 +++++++++++++++
+>  arch/arm64/boot/dts/apple/t8011-pro2.dtsi     |   8 +
+>  arch/arm64/boot/dts/apple/t8011.dtsi          |  22 +
+>  arch/arm64/boot/dts/apple/t8015-common.dtsi   |   1 +
+>  arch/arm64/boot/dts/apple/t8015-pmgr.dtsi     | 930 ++++++++++++++++++
+>  arch/arm64/boot/dts/apple/t8015.dtsi          |  21 +
+>  39 files changed, 6236 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8000-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8001-j98a-j99a.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/s8001-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8010-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8011-pmgr.dtsi
+>  create mode 100644 arch/arm64/boot/dts/apple/t8015-pmgr.dtsi
+> 
+> 
+> base-commit: 5c9de6f45db36b8a74c12e448cf9db87c97bf1e5
 
-Fixes: 62c68e7cee33 ("HID: ensure timely release of driver-allocated resources")
-Suggested-by: Michael Kelley <mhklinux@outlook.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
-Changes since v1:
-- Keep custom HID driver for mousevsc but do it properly
-[Michael Kelley].
-- Add 'Fixes:' tag [Saurabh Singh Sengar].
----
- drivers/hid/hid-hyperv.c | 58 ++++++++++++++++++++++++++++------------
- 1 file changed, 41 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index f33485d83d24..0fb210e40a41 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -422,6 +422,25 @@ static int mousevsc_hid_raw_request(struct hid_device *hid,
- 	return 0;
- }
- 
-+static int mousevsc_hid_probe(struct hid_device *hid_dev, const struct hid_device_id *id)
-+{
-+	int ret;
-+
-+	ret = hid_parse(hid_dev);
-+	if (ret) {
-+		hid_err(hid_dev, "parse failed\n");
-+		return ret;
-+	}
-+
-+	ret = hid_hw_start(hid_dev, HID_CONNECT_HIDINPUT | HID_CONNECT_HIDDEV);
-+	if (ret) {
-+		hid_err(hid_dev, "hw start failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct hid_ll_driver mousevsc_ll_driver = {
- 	.parse = mousevsc_hid_parse,
- 	.open = mousevsc_hid_open,
-@@ -431,7 +450,16 @@ static const struct hid_ll_driver mousevsc_ll_driver = {
- 	.raw_request = mousevsc_hid_raw_request,
- };
- 
--static struct hid_driver mousevsc_hid_driver;
-+static const struct hid_device_id mousevsc_devices[] = {
-+	{ HID_DEVICE(BUS_VIRTUAL, HID_GROUP_ANY, 0x045E, 0x0621) },
-+	{ }
-+};
-+
-+static struct hid_driver mousevsc_hid_driver = {
-+	.name = "hid-hyperv",
-+	.id_table = mousevsc_devices,
-+	.probe = mousevsc_hid_probe,
-+};
- 
- static int mousevsc_probe(struct hv_device *device,
- 			const struct hv_vmbus_device_id *dev_id)
-@@ -473,7 +501,6 @@ static int mousevsc_probe(struct hv_device *device,
- 	}
- 
- 	hid_dev->ll_driver = &mousevsc_ll_driver;
--	hid_dev->driver = &mousevsc_hid_driver;
- 	hid_dev->bus = BUS_VIRTUAL;
- 	hid_dev->vendor = input_dev->hid_dev_info.vendor;
- 	hid_dev->product = input_dev->hid_dev_info.product;
-@@ -488,20 +515,6 @@ static int mousevsc_probe(struct hv_device *device,
- 	if (ret)
- 		goto probe_err2;
- 
--
--	ret = hid_parse(hid_dev);
--	if (ret) {
--		hid_err(hid_dev, "parse failed\n");
--		goto probe_err2;
--	}
--
--	ret = hid_hw_start(hid_dev, HID_CONNECT_HIDINPUT | HID_CONNECT_HIDDEV);
--
--	if (ret) {
--		hid_err(hid_dev, "hw start failed\n");
--		goto probe_err2;
--	}
--
- 	device_init_wakeup(&device->device, true);
- 
- 	input_dev->connected = true;
-@@ -579,12 +592,23 @@ static struct  hv_driver mousevsc_drv = {
- 
- static int __init mousevsc_init(void)
- {
--	return vmbus_driver_register(&mousevsc_drv);
-+	int ret;
-+
-+	ret = hid_register_driver(&mousevsc_hid_driver);
-+	if (ret)
-+		return ret;
-+
-+	ret = vmbus_driver_register(&mousevsc_drv);
-+	if (ret)
-+		hid_unregister_driver(&mousevsc_hid_driver);
-+
-+	return ret;
- }
- 
- static void __exit mousevsc_exit(void)
- {
- 	vmbus_driver_unregister(&mousevsc_drv);
-+	hid_unregister_driver(&mousevsc_hid_driver);
- }
- 
- MODULE_LICENSE("GPL");
--- 
-2.47.0
+Nick Chan
 
 
