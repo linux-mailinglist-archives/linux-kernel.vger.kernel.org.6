@@ -1,278 +1,141 @@
-Return-Path: <linux-kernel+bounces-403633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E099C3855
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:26:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90129C3859
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A4B2820B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28E79B20D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018EE155393;
-	Mon, 11 Nov 2024 06:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67312155382;
+	Mon, 11 Nov 2024 06:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WNjwaGw4"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.67.179])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pdmNN5r+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1788215539F;
-	Mon, 11 Nov 2024 06:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.67.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B33A933;
+	Mon, 11 Nov 2024 06:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731306372; cv=none; b=tl18eRLyD/84CHTReSTqwpTupRzpReZjXlvBJvYcJAZgeSQZFREZxpE3HGiXuOGji4N0wkiGb01v/l4w95iMgzpv9lOAVjhtbi85y6BdURtBCIXTsuiy+FSFZ2KjkeMLIPNn1YahdZM+GPmGxQUwN1GkJ9kf24Xp2x8Q4QJEnwY=
+	t=1731306593; cv=none; b=ok1DrT6j+PfOqDn1uIiO2c6JE/+1Pn7k5pS12/C+NkwqGyu3g2DX/nHrE7aIDv+hdALt6S3FjbHUF5giHtUEC8oBlXeiYHKnTkTYNXWtE688YZ2zjWFSgJwUgBJQGLdfGjXcY+tIW5Hn0KyOw3jSj6q97snNaVBYQzDfcb/frhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731306372; c=relaxed/simple;
-	bh=FBMEXsB2qzeZlTQOmTKM5Xf8X7yqy8bE7p2PQNX/XG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGTOZBXkBVgfywiCAcJ64/lyIJGkp8D/jZHp+VkzRFVfn/8V2nt5g70A8VnQTZReFbv4jzWOLJ1P5VaxaOOHrTO1g9TFxHpoQ+Zmm2uXUeXJ/PbQ/ywPr99VNarZcYNUQbnYmXo2pQjWLgGAugJPeqrt7jG9v4T1up4PHt+TJ4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WNjwaGw4; arc=none smtp.client-ip=114.132.67.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731306317;
-	bh=a3700QODi51nDA2tPcEBFNTNF0pUu84KZh3aJFSeGFs=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=WNjwaGw496W1Tmz3MzitEomESuoROk8PuwoP8ScrXQgBqrtMUFjADYBQwuaiKb/Xq
-	 Wk+HvMzWG5zLBjsNcYAnukyGcXcI1ryjIZzCcb0QQlb8e6qIedIXHI0XmDFTyLTEnF
-	 0smtBgFqeJ55tzbb0Gg+0uc77BFv2la63QKT7EmY=
-X-QQ-mid: bizesmtpsz5t1731306271tlmo0ie
-X-QQ-Originating-IP: Z3Ti45RRs53q3ix/SoJshZSIToGnISkhvGeBrKBsiFg=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Nov 2024 14:24:29 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 12643988938903092547
-From: WangYuli <wangyuli@uniontech.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yushengjin@uniontech.com,
-	zhangdandan@uniontech.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	oliver.sang@intel.com,
-	ebiederm@xmission.com,
-	colin.king@canonical.com,
-	josh@joshtriplett.org,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [RESEND. PATCH] fs/pipe: Introduce a check to skip sleeping processes during pipe read/write
-Date: Mon, 11 Nov 2024 14:24:25 +0800
-Message-ID: <1E5B985ECFF2CAD9+20241111062425.939027-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731306593; c=relaxed/simple;
+	bh=MsGkDlyRzUvHO9JQvDqb6yalK4ylfTkXZGgxs/CLPTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Hk/1GQQehcPPf4bmjjKgcx9Vy92TfRvQH6S5dGPMbqvGY4Q2YKhBUqgeC7c4X1UUgPVOhRUz4JuvRB9FvhznChKNL+bSg/Umi/mI/xBdR8JYBq8/rEVqy4/TMQ/LC+fqIpVXwG4ckWyhnC8vxDchHAFLX0l/CPCb/21tfFIFERM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=pdmNN5r+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731306586;
+	bh=7XdyAqAuJIDFhl8oP7a2OYC/KdOeH4Rds6/l++IVPxg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=pdmNN5r+HTTFwMJY8VTBmoWYuRfPMpOHAaTbWAUbRClELZusrMQbwsVB3xvE0sn8b
+	 BopJd6UDy6+RNM/BTo3SZ1cDXyxzc57R2PUgAV/NnpEV2j6ObzND7wh/BDWOwbCo0q
+	 xYWMHEi2dWa8a4u1xWafJh1+qCxSAdVPCsT6RnyFp1SiGx4J7KwK+6PxgF5D55Au4h
+	 LHUvTskEhuL9P97swLeulqvr9WHT2ISKYuCR8NOldZux2UBbXD1twRkIlRnRYlmfCi
+	 Qh8jvdiEVpcnJSrPyZxEvSoWV+dZKS8Cy9FlAFpVYTiUo+l6Fr8FtZ2sZI5GcwTGFT
+	 FxngW8TK2/J1w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xn05P5B98z4x8C;
+	Mon, 11 Nov 2024 17:29:45 +1100 (AEDT)
+Date: Mon, 11 Nov 2024 17:29:47 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Gary Guo <gary@garyguo.net>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust tree with the vfs-brauner tree
+Message-ID: <20241111172947.63ee16dc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NzmZMORfs0iDlhMaCu2cgTLVT8mklCXReEPNhFGas4Sga6IbrKRehSBM
-	8dxiTRF0TYJjwdQvu3xSOOP2RyCzjaRhh8Xs6efN66jwOS71cDQPqUaC9veWckYFYT+F+uH
-	yoncFXiSfLgSwZyh0DBiWSgMAWZ5++LSfbj7IousSNX1dH6ECxiqdw6lbEhli2W/jS2h5Zs
-	vVphAuhD7p8IntO9a3arEKqRZfx48u2mnZjDV1N8sSmX0RPBPS6JCHHWve39TxgK4ef37KI
-	XreI5cxpxL0PRksz7WrZOZfx3yNz0VaNCqUJyr9SQqSvXnjRt/remCUe/JSLHhnF8A6aerA
-	gcgtj5BnSM3iacGuSlNL4YzYr24bBvrwluhKZIn7AI6qHgi1IEw9J3zbKvE+NH1Rv0PZS7m
-	2CtgpFxjVA0ik6X0QLdvB4k3xUdNvLpYXmQ+wncl3urhMX65gu9+8k933HXOmPjYGhC4NyW
-	Xo4wxcLjx4XBbXCnPnTOf315ov/pNgYoJ13n/gAPDGmJtZEPe0wsaFu3juWzFsGYW5SGlK8
-	jx2y66G5hmK7J8YqQ0ySMm+DYwf2/EjUytJlg7JDWkEgG0O891Ju0cmdEYZ++zwE13ZmC+q
-	fmvXQ2urms59EOgXck47sBucx8QJYokDwQy8OCN0rmG7xXGvtShGKLg1x5RTD/JR8MdbSqj
-	CASMhtUf/yEPkr80SdnsKx3ZgQX5Bcjz2/S6515iiMdFuI8+jI5JF5uQQXoyOhvc5m1m+K1
-	XRsIwlw3WXNcwukZnXtxnifa5TK/nYqSXdFaxa4OBXjNTX0UQGt3J12PVAGpebDkMugrpb5
-	yM0AC6KPG3MBLSnfBUNscHKk22HVFkC0vY3/YSc7NtOHxvFlXWY7TRhhtw+9O1rtH5gkdJA
-	zHOfUr1B5i17Sk7dwa9mw7j+gJWmq/gjR0/BacGewpANpYamDjk7n2Ee30C4gEvHXNJFVnb
-	OLLTCwW5bQqwWxygD3ZKT/hXIDx/l1WN4eJk16NUbu48j6kcxxRvPJfL/1308jlo1j0/Ftk
-	q2uDfWqkWZnimqvdWy1S3A6WgCD4toGIt0joOP3Kqz0g6D8YzKV6cBUzGB5uyykr1P68FoU
-	W3hz6M+fcOiA5hr6/VC5W6dvb4xktwdWJa/4cNRgE7G
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: multipart/signed; boundary="Sig_/rm3mdfZ.4JV1jEEKOhAAubL";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-When a user calls the read/write system call and passes a pipe
-descriptor, the pipe_read/pipe_write functions are invoked:
+--Sig_/rm3mdfZ.4JV1jEEKOhAAubL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-1. pipe_read():
-  1). Checks if the pipe is valid and if there is any data in the
-pipe buffer.
-  2). Waits for data:
-    *If there is no data in the pipe and the write end is still open,
-the current process enters a sleep state (wait_event()) until data
-is written.
-    *If the write end is closed, return 0.
-  3). Reads data:
-    *Wakes up the process and copies data from the pipe's memory
-buffer to user space.
-    *When the buffer is full, the writing process will go to sleep,
-waiting for the pipe state to change to be awakened (using the
-wake_up_interruptible_sync_poll() mechanism). Once data is read
-from the buffer, the writing process can continue writing, and the
-reading process can continue reading new data.
-  4). Returns the number of bytes read upon successful read.
+Hi all,
 
-2. pipe_write():
-  1). Checks if the pipe is valid and if there is any available
-space in the pipe buffer.
-  2). Waits for buffer space:
-    *If the pipe buffer is full and the reading process has not
-read any data, pipe_write() may put the current process to sleep
-until there is space in the buffer.
-    *If the read end of the pipe is closed (no process is waiting
-to read), an error code -EPIPE is returned, and a SIGPIPE signal may
-be sent to the process.
-  3). Writes data:
-    *If there is enough space in the pipe buffer, pipe_write() copies
-data from the user space buffer to the kernel buffer of the pipe
-(using copy_from_user()).
-    *If the amount of data the user requests to write is larger than
-the available space in the buffer, multiple writes may be required,
-or the process may wait for new space to be freed.
-  4). Wakes up waiting reading processes:
-    *After the data is successfully written, pipe_write() wakes up
-any processes that may be waiting to read data (using the
-wake_up_interruptible_sync_poll() mechanism).
-  5). Returns the number of bytes successfully written.
+Today's linux-next merge of the rust tree got a conflict in:
 
-Check if there are any waiting processes in the process wait queue
-by introducing wq_has_sleeper() when waking up processes for pipe
-read/write operations.
+  rust/kernel/task.rs
 
-If no processes are waiting, there's no need to execute
-wake_up_interruptible_sync_poll(), thus avoiding unnecessary wake-ups.
+between commits:
 
-Unnecessary wake-ups can lead to context switches, where a process
-is woken up to handle I/O events even when there is no immediate
-need.
+  e7572e5deaf3 ("rust: types: add `NotThreadSafe`")
+  8ad1a41f7e23 ("rust: file: add `Kuid` wrapper")
+  e0020ba6cbcb ("rust: add PidNamespace")
 
-Only wake up processes when there are actually waiting processes to
-reduce context switches and system overhead by checking
-with wq_has_sleeper().
+from the vfs-brauner tree and commit:
 
-Additionally, by reducing unnecessary synchronization and wake-up
-operations, wq_has_sleeper() can decrease system resource waste and
-lock contention, improving overall system performance.
+  d072acda4862 ("rust: use custom FFI integer types")
 
-For pipe read/write operations, this eliminates ineffective scheduling
-and enhances concurrency.
+from the rust tree.
 
-It's important to note that enabling this option means invoking
-wq_has_sleeper() to check for sleeping processes in the wait queue
-for every read or write operation.
+I fixed it up (I think - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
-While this is a lightweight operation, it still incurs some overhead.
+--=20
+Cheers,
+Stephen Rothwell
 
-In low-load or single-task scenarios, this overhead may not yield
-significant benefits and could even introduce minor performance
-degradation.
+diff --cc rust/kernel/task.rs
+index 5120dddaf916,5bce090a3869..000000000000
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@@ -4,17 -4,9 +4,17 @@@
+  //!
+  //! C header: [`include/linux/sched.h`](srctree/include/linux/sched.h).
+ =20
++ use crate::ffi::{c_int, c_long, c_uint};
+ -use crate::types::Opaque;
+ -use core::{marker::PhantomData, ops::Deref, ptr};
+ +use crate::{
+ +    bindings,
+ +    pid_namespace::PidNamespace,
+ +    types::{ARef, NotThreadSafe, Opaque},
+ +};
+ +use core::{
+ +    cmp::{Eq, PartialEq},
+-     ffi::{c_int, c_long, c_uint},
+ +    ops::Deref,
+ +    ptr,
+ +};
+ =20
+  /// A sentinel value used for infinite timeouts.
+  pub const MAX_SCHEDULE_TIMEOUT: c_long =3D c_long::MAX;
 
-UnixBench Pipe benchmark results on Zhaoxin KX-U6780A processor:
+--Sig_/rm3mdfZ.4JV1jEEKOhAAubL
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-With the option disabled: Single-core: 841.8, Multi-core (8): 4621.6
-With the option enabled:  Single-core: 877.8, Multi-core (8): 4854.7
+-----BEGIN PGP SIGNATURE-----
 
-Single-core performance improved by 4.1%, multi-core performance
-improved by 4.8%.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxpFsACgkQAVBC80lX
+0Gwp5AgApYShZHNOTdtNW4KsiZqV2LBP3KcnJx7OZSiihknVnNLyeyeTjWDyuCVw
+KCeC4G9ZwA0+gFd1yqlRNkwWl0yok9uo0MJxnGMyoGB+P6UNBLSCOWf2v7gMynd/
+gSVTUIUpgUIYnMtp988JRVjnzLNgXqp3TFZfhk/M2tSyD0yO79lerIPPnyssO1Qo
+ODeItbB//jV+TF68vwbed2bqkW8gsdtWgiuWY1gUKbHPfzBDQQo8JhcCitUn3Fg+
+I/ml2O6IH9xvXEsF9QWz2/t7stqaj+ng0W3YYrDmJTsNxWCg6fc8dvX6Q/QiUoW1
+5KNHgttzN4N8Fwho7DEHuJBzYmFfuw==
+=7+Ys
+-----END PGP SIGNATURE-----
 
-Co-developed-by: Shengjin Yu <yushengjin@uniontech.com>
-Signed-off-by: Shengjin Yu <yushengjin@uniontech.com>
-Co-developed-by: Dandan Zhang <zhangdandan@uniontech.com>
-Signed-off-by: Dandan Zhang <zhangdandan@uniontech.com>
-Tested-by: Dandan Zhang <zhangdandan@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- fs/Kconfig | 13 +++++++++++++
- fs/pipe.c  | 21 +++++++++++++++------
- 2 files changed, 28 insertions(+), 6 deletions(-)
-
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 949895cff872..068f4f886a58 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -430,4 +430,17 @@ source "fs/unicode/Kconfig"
- config IO_WQ
- 	bool
- 
-+config PIPE_SKIP_SLEEPER
-+	bool "Skip sleeping processes during pipe read/write"
-+	default n
-+	help
-+	  This option introduces a check whether the sleep queue will
-+	  be awakened during pipe read/write.
-+
-+	  It often leads to a performance improvement. However, in
-+	  low-load or single-task scenarios, it may introduce minor
-+	  performance overhead.
-+
-+	  If unsure, say N.
-+
- endmenu
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..c085333ae72c 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -247,6 +247,15 @@ static inline unsigned int pipe_update_tail(struct pipe_inode_info *pipe,
- 	return tail;
- }
- 
-+static inline bool
-+pipe_check_wq_has_sleeper(struct wait_queue_head *wq_head)
-+{
-+	if (IS_ENABLED(CONFIG_PIPE_SKIP_SLEEPER))
-+		return wq_has_sleeper(wq_head);
-+	else
-+		return true;
-+}
-+
- static ssize_t
- pipe_read(struct kiocb *iocb, struct iov_iter *to)
- {
-@@ -377,7 +386,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * _very_ unlikely case that the pipe was full, but we got
- 		 * no data.
- 		 */
--		if (unlikely(was_full))
-+		if (unlikely(was_full) && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 
-@@ -398,9 +407,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		wake_next_reader = false;
- 	mutex_unlock(&pipe->mutex);
- 
--	if (was_full)
-+	if (was_full && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
--	if (wake_next_reader)
-+	if (wake_next_reader && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	if (ret > 0)
-@@ -573,7 +582,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 * become empty while we dropped the lock.
- 		 */
- 		mutex_unlock(&pipe->mutex);
--		if (was_empty)
-+		if (was_empty && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
-@@ -598,10 +607,10 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * Epoll nonsensically wants a wakeup whether the pipe
- 	 * was already empty or not.
- 	 */
--	if (was_empty || pipe->poll_usage)
-+	if ((was_empty || pipe->poll_usage) && pipe_check_wq_has_sleeper(&pipe->rd_wait))
- 		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
--	if (wake_next_writer)
-+	if (wake_next_writer && pipe_check_wq_has_sleeper(&pipe->wr_wait))
- 		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
- 		int err = file_update_time(filp);
--- 
-2.45.2
-
+--Sig_/rm3mdfZ.4JV1jEEKOhAAubL--
 
