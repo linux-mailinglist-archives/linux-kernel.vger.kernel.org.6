@@ -1,104 +1,197 @@
-Return-Path: <linux-kernel+bounces-404143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D437A9C3FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:42:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F479C3FB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125C81C21B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DA11F22898
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD519E971;
-	Mon, 11 Nov 2024 13:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EM9XClah"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC4719E7E2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D915919E7E0;
 	Mon, 11 Nov 2024 13:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6VNur4k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432F9461;
+	Mon, 11 Nov 2024 13:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332551; cv=none; b=F+mQg8pVWRy/veYI0xdyYLrYOmsqZR8g4Lf1lK/atJI4T8U/RNNqELjgPytjSaQzb8qxeCcwdk3lBnKNoUkdUxlwzzX/vH1DCa37nPwX7SFWHF8wNiAcuuav6KUOugAtCCfQAgmw8t91UnOY/xA4HXn4C+PZZSkmGjsRTYZliQo=
+	t=1731332549; cv=none; b=kIw1Onc4pW2xNWmbm+uGRJxPPBKOjDkwWF+qxCpf25kwez4ASq6yOKn0rxpjvfLuu8EZK8IqnRZW6a58VduG6//tovTyBQaxlzlT08aXYAsvuHsii7RjEuO5M/5VsErcAkInfN1mIDGS8Hdkm2+hPebgb/vXJBstOYCGsgNGrEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332551; c=relaxed/simple;
-	bh=TOVU60syZuDHp0JNrqJ7EWmh83zOgByqn90mAhZeuHI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VQzhPGxew/q7/ZG0VqERPjF7ckYfGas4bLYoFOlM7T31qRrmRQYHMmhDHE58YSXi+jvGiKtUZWjmpVtliGoRTWU5OTfFdPoyGhqZYYGulqQE6xITy8G4Q1SRpn9tiuHoYr5B+aO2KEdDiq03cK/Sa1D5zFYj/m+okf/WyJSU2rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EM9XClah; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e2e41bd08bso44513377b3.2;
-        Mon, 11 Nov 2024 05:42:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731332549; x=1731937349; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TOVU60syZuDHp0JNrqJ7EWmh83zOgByqn90mAhZeuHI=;
-        b=EM9XClahG9M7HynfRiOHXqO/43s9zD70OyZtNggrwf1jzem0zXYpLV+pVue0eA2qN7
-         QH1HpXikR+7vpjaXm67+hzAIWxWnU2QphtoB13tXSmZzV4YD2rVjHGWRNbqrvjLRTeCR
-         bfSrjfeoubFDjWn7QH1TZ6G0x/qRdbVAIBzSgF+fh55dV0B0XX45OfhNQUFzVjnNNWOF
-         AI+tBasuPNFnrm8GRp0dzi8DAehWVp56hVB8Vrv0eX+W8enhh2VUyfNGQCcNxK7g9zeI
-         rKaaqe9l2BE1kDzNbQunIFv6Bps945tDkTOinKiMzMKQB4iM2ycLl+Bhh6ezYpYPqdJC
-         PwXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731332549; x=1731937349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TOVU60syZuDHp0JNrqJ7EWmh83zOgByqn90mAhZeuHI=;
-        b=QG3qFiccNFjUQsnTBi0H5YiAU4sMMyRPQMR3dy6FC7jWnL1bpNUiPGl7wwaCq9XIYn
-         pbyeP+btXd0YvkckEDvVC6Y7HnDtq7vU9stTBAmUMQ6quhQkarHTiBzoe8UOdN8aTk4v
-         XlHQn5RYPd+clOvUKtFRQrKjWiCH1xO9DzODh9dAEGYeGtl4KwKiF+dw36Tg43VWHpSq
-         5dY76SYv6g4qqTJzWadHr05fCRxUh4a+IszJ9YDfNC8UcUA3W+47NSM7AZN8uXxJGu1z
-         Bk+kx7w3rMLEzp4mRQ/vEj7JEystNyGGk+is1mopc22ct5CpKmpH+J7bEaNPI/L6sAmP
-         pI1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVaJ5u4aUyDoTD7eY0CGQqQ1qcDoDlmd8N+rE0W/7pX7xw+RNklSNVngVYYR1e5AU2Zl+LHpKZth8emzA==@vger.kernel.org, AJvYcCW/NG2/RDmPX+RVT1sPaoYs55KfFo8PW5ssb4iQ6QdryF+aB1ClSKiufKvaOuyMZM80xKXzZOc4mV8ExHIW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaZYaW/zqzWPfgw58bPKyI8uweXlMIPMPG2OhlklUGD3txEbbC
-	4RsG3R6mwZKdpbFJDefNanymB9cyCIvLMoiKg4f3fvr67f2RjGkgpQufJMrY+AMNb/sZJDOwxmx
-	RMBHubl5NFSDV5iI3kVp8WmQzHfk=
-X-Google-Smtp-Source: AGHT+IEvkAyFNa0HaZCEuLW8IXvn4B7Ev3wlVuFC2U6An17+S2XLaxjQuC63dbErNk+gcYBt8OjC0lWJedOAoiUZG6A=
-X-Received: by 2002:a05:690c:c96:b0:6ea:4b85:7a13 with SMTP id
- 00721157ae682-6eaddd861d2mr115856877b3.3.1731332548770; Mon, 11 Nov 2024
- 05:42:28 -0800 (PST)
+	s=arc-20240116; t=1731332549; c=relaxed/simple;
+	bh=ut+vvT3FzvCooHNaMg7QDWOjzR3vq3uhUdkRXUwmx+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dWdkKBtgex+O2mhcLFaqnTqt/RdbOCq0646Y4LxG+d+BvF176th2KhBIrGPd1frXg2WAuXya7DcMv/ERILKC5c7VnLdhdM5/TsIpwg5/5dKOc7/ohjJAFM6+ij/JUVc3LQpuFqwJBYf/AlftJjBOSZ+QmTDxt3soJHZXxmPsfYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6VNur4k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC3C9C4CECF;
+	Mon, 11 Nov 2024 13:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731332548;
+	bh=ut+vvT3FzvCooHNaMg7QDWOjzR3vq3uhUdkRXUwmx+0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=g6VNur4kQ6EkUzLt6AbVvaoCA+6OeHOW90r3EdnP6CH8cjCVZw0yleo1OWueao9jZ
+	 Opa6XH0S2qo2xXrri/Ld3QczMIItwzlDGlEs3Qu9/9hfEZXAzMgJ9VmGK+girZOAJD
+	 d8gTGX1sKV/yHkpKmvGvNwWFt0Hm84cvxWgHh0ew+IHEv7R1fnaB0GwBEdFEhSsr+s
+	 f00WFdL7nsqVCZraNeQ8QZIdwUJsMHnsclUlexsjceQUq0ToPmLr/58yv6hrnArwg6
+	 4EcF5oqu3Q0ztUdXekIHlUBVfKmyBfWeri9WTlidVe9rHp1RZROevoKNLRaghdeev/
+	 gtxOD5N10u3LA==
+Message-ID: <5418c22b64ac0d8d469d8f9725f1b7685e8daa1b.camel@kernel.org>
+Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and
+ devname
+From: Jeff Layton <jlayton@kernel.org>
+To: Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, Josef
+ Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  Alexander Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>
+Date: Mon, 11 Nov 2024 08:42:26 -0500
+In-Reply-To: <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
+References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
+	 <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20220621104617.8817-1-tzimmermann@suse.de> <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
- <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info> <b4d28b98-a85c-4095-9c1b-8ebdfa13861c@suse.de>
-In-Reply-To: <b4d28b98-a85c-4095-9c1b-8ebdfa13861c@suse.de>
-From: =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>
-Date: Mon, 11 Nov 2024 13:42:16 +0000
-Message-ID: <CAEXMXLQEJPVPyqLpH6C7R6iqhhKBpdNS9QeESbEdcmxB70goSA@mail.gmail.com>
-Subject: Re: drm/fbdev-dma: regression
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, 
-	Linux kernel regressions list <regressions@lists.linux.dev>, dri-devel@lists.freedesktop.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux Framebuffer <linux-fbdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11, 2024 at 1:22=E2=80=AFPM Thomas Zimmermann <tzimmermann@suse=
-.de> wrote:
-> The patch in question changes the whole memory management of the
-> affected code. It's also noteworthy that most of it has been reworked
-> for the upcoming v6.12. Maybe this already fixed the problem. Kernel
-> v6.11-rc7 added commit 5a498d4d06d6 ("drm/fbdev-dma: Only install
-> deferred I/O if necessary"), which possibly fixes the problem as well.
->
-> But there's no explicit fix for this problem and I have not seen any
-> other related reports. Any further information is welcome.
+On Mon, 2024-11-11 at 10:17 +0100, Christian Brauner wrote:
+> On Thu, 07 Nov 2024 16:00:05 -0500, Jeff Layton wrote:
+> > Meta has some internal logging that scrapes /proc/self/mountinfo today.
+> > I'd like to convert it to use listmount()/statmount(), so we can do a
+> > better job of monitoring with containers. We're missing some fields
+> > though. This patchset adds them.
+> >=20
+> >=20
+>=20
+> I know Karel has been wanting this for libmount as well. Thanks for
+> doing this! It would be nice if you could also add some selftests!
+>=20
 
-Issue was present since 5ab91447aa13b8b98bc11f5326f33500b0ee2c48 and
-tested until 6.12-rc3.
-Is there any suggestion on how to dig down?
+(cc'ing Karel)
 
-Thanks
+Thanks. We may need to tweak this a bit, based on Miklos' comments
+about how empty strings are handled now, but it shouldn't be too big a
+change.
+
+I actually have a related question about libmount: glibc doesn't
+currently provide syscall wrappers for statmount() and listmount().
+Would it make sense to have libmount provide those? We could copy the
+wrappers in tools/testing/selftests/filesystems/statmount/statmount.h
+to libmount.h.
+
+It's error-prone and a pain to roll these yourself, and that would make
+things simpler until someone is ready to do something for glibc.
+
+Another idea might be to start a new userland header file that is just
+a collection of static inline wrappers for syscalls that aren't
+packaged in glibc.e.g.  pidfd_open also doesn't have glibc bindings, so
+we could add that there too.
+
+> ---
+>=20
+> Applied to the vfs.misc branch of the vfs/vfs.git tree.
+> Patches in the vfs.misc branch should appear in linux-next soon.
+>=20
+> Please report any outstanding bugs that were missed during review in a
+> new review to the original patch series allowing us to drop it.
+>=20
+> It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> patch has now been applied. If possible patch trailers will be updated.
+>=20
+> Note that commit hashes shown below are subject to change due to rebase,
+> trailer updates or similar. If in doubt, please check the listed branch.
+>=20
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> branch: vfs.misc
+>=20
+> [1/2] fs: add the ability for statmount() to report the fs_subtype
+>       https://git.kernel.org/vfs/vfs/c/ddfdeccd46bd
+> [2/2] fs: add the ability for statmount() to report the mnt_devname
+>       https://git.kernel.org/vfs/vfs/c/6fb42b3c00cd
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
