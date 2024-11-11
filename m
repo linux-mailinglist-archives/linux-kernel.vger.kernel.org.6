@@ -1,433 +1,346 @@
-Return-Path: <linux-kernel+bounces-404210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D89C89C40D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:26:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D936C9C40D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E28B2229B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:26:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64F311F22EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A61A08C1;
-	Mon, 11 Nov 2024 14:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E411A01D8;
+	Mon, 11 Nov 2024 14:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7lObpHW"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgTsHOKf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712DE19FA92;
-	Mon, 11 Nov 2024 14:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006A19F40B;
+	Mon, 11 Nov 2024 14:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731335171; cv=none; b=KPfH5MYkweopANQPdw4AsUp6Qu3TWcHWtg2NwXfQEd85efWPoTN8L1mKSMXS1G1r0lJSRrINa47u20NRkYLIgC6fZySD6LOp1mvH88a5m0hEmZrb4cjEquYZYB6YCvicrCgay5Xkctnlkuoi47MqSlbIsLyYCng89SvKhydm3ws=
+	t=1731335144; cv=none; b=cvxTIGNQsKo5wLA3MpuRQ739jnswlPNI+UZ/qYPztVdGAmvIOOeB220JKjfXaPA7rlho29q4MliJyR+XwFoOe//01SueQ2TfnF8MC+jlcXk2BFALgdC8x6fggI+hr0wbolluY7gqYggurfVC3PMYp5TRKUl2Rt9O4UOw0ZMTm+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731335171; c=relaxed/simple;
-	bh=hapXi8GFcfuNfCI3GbgrWfcIITIDhd32luEnxxJvL6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jIlwv0pTES7oInZCasiyWfa9NGPGEmlJO/On1XHxIrsG6yt551j8G6hXF49ov3E5HhW8rgk2kG5mHAsmTAKIVzl6LNeK+hoiCmOrw7Qn0wQM+C5hP2o/cwK/RKwp5MAY7RM0zCZTkPTnWgEVGZ96o3mG/eaC3WeT7cHVc67IktU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7lObpHW; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso214698166b.1;
-        Mon, 11 Nov 2024 06:26:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731335168; x=1731939968; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YarspSDft1pkwbqjUkTnnfdI6PdmguJoxF+IkD1JXG4=;
-        b=J7lObpHWwo4lAWYAMU9bPd1G5wkoZAaLyRmiUa80uRqxj0ucMVblJrIOgDADH05cAI
-         VPeFKFRLJX97q2EV6aIdwvm9PCJxG+byKLjy0VzBPcmALi7cc+x9crFOWSMxC22I5khr
-         Stp/2k7XS9FpRPPBWQVGRyhOewFVeKnAm1kOhFZKj/1RsV2ZS2efQ6EHohWSltSQgBQb
-         n4498W7anZ4XAu+rOdCizFVxwGLjzpyGJaPs0pVqO83ctXMb+vt9u4iP10wYgrm9VkEJ
-         b9npPJpwrzoyXGPH5qlseUTMa9gIvc7W0IQ6Gj9eXzfOJ0lwuTbNRMqr6eR5+4tj7m7e
-         Fsjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731335168; x=1731939968;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YarspSDft1pkwbqjUkTnnfdI6PdmguJoxF+IkD1JXG4=;
-        b=JcydMBLH6Km/xT6Ug9qvY+X7D+5gZPvLh8Ql28/jhHWQf8EpR/kwkbcnlGOkOnVgAN
-         DbGPPnksG2IMk8UpJd5Fmr22SwTtcCwf2Vn53XLGS8XypucbTcdBB9sdzvDXJglXPYby
-         mAE6xC4goH0ndihhxIkXivGnShyUWMjixQtl0AV+hbCs0Ch12/zwbfpOvlb0EkW5QSFO
-         /w4Nr9v2yhxO2GJtK58Kc2ubfkt5U7trpUteWdDE9rm9qQD6WgrwXoPPltuWIPGfKuQL
-         KqS7kQEiy1/fgwIEH758yTWmU35lOrGv0m8wkaOpucxsbACoxn1bhA6pJlSO/7vmUTyI
-         H0FA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1XianhnlbEO0s09XYbvHEnevcS2paz17ost7KKGKiFq6Amqnqk54zdX8qxs+VxpdSKWLfTg2HKpT9DSc6@vger.kernel.org, AJvYcCWQT1FqipV0ModjEQf5m/YQgU93eyy9dsIdc53CuAXvKV6SpaaiEVMZ/W3qSMToSv3VoEe8nnO4lGcjGFt1lw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpJUiMGC/H9PsbgNmy1+/BlRNrtoCe/coXDNpa4SragaEbJ3A5
-	PhzYR1aA0NbYzKc/KTURQBaFVqIYPgF/vcUFq5Tc2EtH1gKxyLwVCVvU0uDHWNXIxYk85RfuXJX
-	SOTcTANgEu+pWoAuvI3GTPzYOF3o=
-X-Google-Smtp-Source: AGHT+IGia4ssXtS9zEz3H0cyLf/YsQYO93OGud10PttfkhoGcFBs3hxTEAgwmf0Fb3QuY7CWsvchQn0ymTRY/mV5kxY=
-X-Received: by 2002:a17:907:608a:b0:a99:499f:4cb7 with SMTP id
- a640c23a62f3a-a9eeff0e34fmr1305857766b.23.1731335167314; Mon, 11 Nov 2024
- 06:26:07 -0800 (PST)
+	s=arc-20240116; t=1731335144; c=relaxed/simple;
+	bh=B5mvklzayk4b+hck6sULwSMWLCrackunp+m5MmTi7so=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cpnZxE/DUsX78cq8KzmOgzV17vJy2atcsvRz1YyuLtkM3Lf1q5T04jJaFxgdWA1oV9bbS17T80B0WB6BrP2GUDgYx69IayC+wzdm2wWFgKPwYutl3GRYMWsrOqb+KlG8CQlhRLPrK3z6ykXTc1j5y95+9CioCrKc92FnG/Wegmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgTsHOKf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F58CC4CECF;
+	Mon, 11 Nov 2024 14:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731335143;
+	bh=B5mvklzayk4b+hck6sULwSMWLCrackunp+m5MmTi7so=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kgTsHOKfdZpcV2/HYVIcDBjB7YGGMBCi1y8Ul5VMBPyZsYiCmNtTj6y0SHp/k2yKc
+	 ACaBiqE8RgvRDxi1RLE7XnyKQq33y6DE4NCxqr1fAzJlDfBUT3Q4faaqson4YMQ9qe
+	 YoKCSIgYhkfHkrFna6a/D8mWXkfjP/KmR5spTJ5PnAzoVVWkrkaVA6IuWE7NMG3vpX
+	 uB+vB8XQoibxZgw9rJrSEA3mfxSsKyM0sDnwbPqDIYo9oJ4qcL2SbMRmZebeVp2xWJ
+	 7/FzHNGs+cEtAfKzr82uJxteomiv3Tf+CpR5f0nUIydTLXrpcJtUQZJqtQW3OLtRbH
+	 +dFACBWioW7EQ==
+Message-ID: <17390fbf-7505-4e0a-8496-a6a4b22a261b@kernel.org>
+Date: Mon, 11 Nov 2024 16:25:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
-In-Reply-To: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-Date: Mon, 11 Nov 2024 19:55:29 +0530
-Message-ID: <CAHiZj8gcQgEXB4XZG09m+pOG2vk_xwEYxS93t6kttzNFED6PQA@mail.gmail.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-To: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="000000000000a2c4530626a3e14b"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/2] net: ti: icssg-prueth: Fix firmware load
+ sequence.
+To: "Anwar, Md Danish" <a0501179@ti.com>, Meghana Malladi <m-malladi@ti.com>,
+ vigneshr@ti.com, m-karicheri2@ti.com, jan.kiszka@siemens.com,
+ javier.carrasco.cruz@gmail.com, jacob.e.keller@intel.com, horms@kernel.org,
+ diogo.ivo@siemens.com, pabeni@redhat.com, kuba@kernel.org,
+ edumazet@google.com, davem@davemloft.net, andrew+netdev@lunn.ch
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
+References: <20241106074040.3361730-1-m-malladi@ti.com>
+ <20241106074040.3361730-2-m-malladi@ti.com>
+ <ad2afaa3-7e76-47e8-943b-7bea0c02c9c0@kernel.org>
+ <0c6a3091-3b3d-4f41-83df-2183171200c8@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <0c6a3091-3b3d-4f41-83df-2183171200c8@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---000000000000a2c4530626a3e14b
-Content-Type: multipart/alternative; boundary="000000000000a2c44a0626a3e149"
 
---000000000000a2c44a0626a3e149
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-#syz test
+On 11/11/2024 15:35, Anwar, Md Danish wrote:
+> 
+> 
+> On 11/11/2024 6:33 PM, Roger Quadros wrote:
+>> Hi,
+>>
+>> On 06/11/2024 09:40, Meghana Malladi wrote:
+>>> From: MD Danish Anwar <danishanwar@ti.com>
+>>>
+>>> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
+>>> and SLICE1. Currently whenever any ICSSG interface comes up we load the
+>>> respective firmwares to PRU cores and whenever interface goes down, we
+>>> stop the respective cores. Due to this, when SLICE0 goes down while
+>>> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
+>>> stopped. This results in clock jump for SLICE1 interface as the timesync
+>>> related operations are no longer running.
+>>>
+>>> Fix this by running both PRU0 and PRU1 firmwares as long as at least 1
+>>> ICSSG interface is up.
+>>>
+>>> rx_flow_id is updated before firmware is loaded. Once firmware is loaded,
+>>> it reads the flow_id and uses it for rx. emac_fdb_flow_id_updated() is
+>>> used to let firmware know that the flow_id has been updated and to use the
+>>> latest rx_flow_id.
+>>
+>> is rx_flow_id releated to timesync releated issue that this patch is fixing?
+>> If not please split it into separate patch and mention what functionality
+>> it is fixing.
+>>
+> 
+> Roger, rx_flow_id is not related to timesync. However loading both
+> SLICE0 and SLICE1 firmware together results in wrong rx_flow_id used by
+> firmware for the interface that is brought later.
+> 
+> When eth0 (SLICE0) is brought up, it's flow_id is obtained from dma and
+> written to SMEM. Slice0 and Slice1 both firmwares are loaded. Firmware
+> reads the flow_id from SMEM and uses it for RX.
+> 
+> Second interface eth1 (SLICE1) comes up, it's flow id is obtained from
+> dma and written to SMEM. However firmware doesn't read the flow ID
+> again. It only reads it once when loaded and uses that through out. The
+> flow id for this interface remains 0 and that results in RX being broken.
+> 
+> To fix this, emac_fdb_flow_id_updated() is added which will let firmware
+> know that we have updated the flow_id and use the latest one.
+> 
+> This not related to timesync instead related to the fix of timesync
+> issue. Breaking this into separate patch will result in RX (ICSSG) being
+> broken at the former patch.
+> 
+> In order to avoid feature breakage at the former patch, the change
+> related to flow_id update is kept in the same patch.
 
-On Sat, Nov 9, 2024 at 8:12=E2=80=AFAM syzbot <
-syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com> wrote:
+But setting the Flow ID should be taken care by icssg_config() which is
+done in prueth_emac_start()?
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
-> git://git.ker..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D11361d5f98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fdf74cce3772=
-23b
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D8689d10f1894eedf774d
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12348f40580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11e7b58798000=
-0
->
-> Downloadable assets:
-> disk image:
-> https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.r=
-aw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc=
-9.xz
-> mounted in repro:
-> https://storage.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376
-> [inline]
-> BUG: KMSAN: uninit-value in __rhashtable_lookup
-> include/linux/rhashtable.h:607 [inline]
-> BUG: KMSAN: uninit-value in rhashtable_lookup
-> include/linux/rhashtable.h:646 [inline]
-> BUG: KMSAN: uninit-value in rhashtable_lookup_fast
-> include/linux/rhashtable.h:672 [inline]
-> BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144
-> [inline]
-> BUG: KMSAN: uninit-value in bch2_copygc_get_buckets
-> fs/bcachefs/movinggc.c:170 [inline]
-> BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0
-> fs/bcachefs/movinggc.c:221
->  rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
->  __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
->  rhashtable_lookup include/linux/rhashtable.h:646 [inline]
->  rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
->  bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
->  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
->  bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
->  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
->  kthread+0x3e2/0x540 kernel/kthread.c:389
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Local variable b205.i created at:
->  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
->  bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221
->  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
->
-> CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 09/13/2024
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> Kernel panic - not syncing: kmsan.panic set ...
-> CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G    B
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Tainted: [B]=3DBAD_PAGE
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 09/13/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
->  dump_stack+0x1e/0x30 lib/dump_stack.c:129
->  panic+0x4e2/0xcf0 kernel/panic.c:354
->  kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
->  __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
->  rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
->  __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
->  rhashtable_lookup include/linux/rhashtable.h:646 [inline]
->  rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
->  bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
->  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
->  bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
->  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
->  kthread+0x3e2/0x540 kernel/kthread.c:389
->  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/672ecc13.050a0220.138bd5=
-.0038.GAE%40google.com
-> .
->
+is it really OK to provide wrong flow id to the Firmware or even start
+the second PRU core without DMA/IRQ resources allocated to it?
 
---000000000000a2c44a0626a3e149
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I will suggest to introduce emac_ndo_common_open() and emac_ndo_common_stop()
+and move the common code there i.e. allocating/freeing resources for both
+cores and starting/stopping both cores.
 
-<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
-=3D"ltr" class=3D"gmail_attr">On Sat, Nov 9, 2024 at 8:12=E2=80=AFAM syzbot=
- &lt;<a href=3D"mailto:syzbot%2B8689d10f1894eedf774d@syzkaller.appspotmail.=
-com">syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com</a>&gt; wrote:<b=
-r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
-;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
-<br>
-syzbot found the following issue on:<br>
-<br>
-HEAD commit:=C2=A0 =C2=A0 2e1b3cc9d7f7 Merge tag &#39;arm-fixes-6.12-2&#39;=
- of git://git.ker..<br>
-git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
-console+strace: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D1136=
-1d5f980000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
-com/x/log.txt?x=3D11361d5f980000</a><br>
-kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
-=3D6fdf74cce377223b" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
-.appspot.com/x/.config?x=3D6fdf74cce377223b</a><br>
-dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3D8689d1=
-0f1894eedf774d" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
-pot.com/bug?extid=3D8689d10f1894eedf774d</a><br>
-compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0Debian clang version 15.0.6, GNU ld (GN=
-U Binutils for Debian) 2.40<br>
-syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
-epro.syz?x=3D12348f40580000" rel=3D"noreferrer" target=3D"_blank">https://s=
-yzkaller.appspot.com/x/repro.syz?x=3D12348f40580000</a><br>
-C reproducer:=C2=A0 =C2=A0<a href=3D"https://syzkaller.appspot.com/x/repro.=
-c?x=3D11e7b587980000" rel=3D"noreferrer" target=3D"_blank">https://syzkalle=
-r.appspot.com/x/repro.c?x=3D11e7b587980000</a><br>
-<br>
-Downloadable assets:<br>
-disk image: <a href=3D"https://storage.googleapis.com/syzbot-assets/08456e3=
-7db58/disk-2e1b3cc9.raw.xz" rel=3D"noreferrer" target=3D"_blank">https://st=
-orage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz</a><br=
->
-vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/cc957f7ba8=
-0b/vmlinux-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
-e.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz</a><br>
-kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/7579f=
-e72ed89/bzImage-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
-torage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz</a><br=
->
-mounted in repro: <a href=3D"https://storage.googleapis.com/syzbot-assets/5=
-903d7d7fe58/mount_4.gz" rel=3D"noreferrer" target=3D"_blank">https://storag=
-e.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz</a><br>
-<br>
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:<br>
-Reported-by: <a href=3D"mailto:syzbot%2B8689d10f1894eedf774d@syzkaller.apps=
-potmail.com" target=3D"_blank">syzbot+8689d10f1894eedf774d@syzkaller.appspo=
-tmail.com</a><br>
-<br>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D<br>
-BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inl=
-ine]<br>
-BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:=
-607 [inline]<br>
-BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:64=
-6 [inline]<br>
-BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable=
-.h:672 [inline]<br>
-BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [in=
-line]<br>
-BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:=
-170 [inline]<br>
-BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.=
-c:221<br>
-=C2=A0rht_ptr_rcu include/linux/rhashtable.h:376 [inline]<br>
-=C2=A0__rhashtable_lookup include/linux/rhashtable.h:607 [inline]<br>
-=C2=A0rhashtable_lookup include/linux/rhashtable.h:646 [inline]<br>
-=C2=A0rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]<br>
-=C2=A0bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]<br>
-=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
-=C2=A0bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221<br>
-=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
-=C2=A0kthread+0x3e2/0x540 kernel/kthread.c:389<br>
-=C2=A0ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147<br>
-=C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244<br>
-<br>
-Local variable b205.i created at:<br>
-=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
-=C2=A0bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221<br>
-=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
-<br>
-CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted 6.12.0-rc6-syzkal=
-ler-00077-g2e1b3cc9d7f7 #0<br>
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 09/13/2024<br>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D<br>
-Kernel panic - not syncing: kmsan.panic set ...<br>
-CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G=C2=A0 =C2=A0 B=C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 6.12.0-rc6-syzkaller-00077-g2=
-e1b3cc9d7f7 #0<br>
-Tainted: [B]=3DBAD_PAGE<br>
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
-gle 09/13/2024<br>
-Call Trace:<br>
-=C2=A0&lt;TASK&gt;<br>
-=C2=A0__dump_stack lib/dump_stack.c:94 [inline]<br>
-=C2=A0dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120<br>
-=C2=A0dump_stack+0x1e/0x30 lib/dump_stack.c:129<br>
-=C2=A0panic+0x4e2/0xcf0 kernel/panic.c:354<br>
-=C2=A0kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218<br>
-=C2=A0__msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318<br>
-=C2=A0rht_ptr_rcu include/linux/rhashtable.h:376 [inline]<br>
-=C2=A0__rhashtable_lookup include/linux/rhashtable.h:607 [inline]<br>
-=C2=A0rhashtable_lookup include/linux/rhashtable.h:646 [inline]<br>
-=C2=A0rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]<br>
-=C2=A0bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]<br>
-=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
-=C2=A0bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221<br>
-=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
-=C2=A0kthread+0x3e2/0x540 kernel/kthread.c:389<br>
-=C2=A0ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147<br>
-=C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244<br>
-=C2=A0&lt;/TASK&gt;<br>
-Kernel Offset: disabled<br>
-Rebooting in 86400 seconds..<br>
-<br>
-<br>
----<br>
-This report is generated by a bot. It may contain errors.<br>
-See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
-https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
-syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
-.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
-<br>
-syzbot will keep track of this issue. See:<br>
-<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
-k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
-<br>
-If the report is already addressed, let syzbot know by replying with:<br>
-#syz fix: exact-commit-title<br>
-<br>
-If you want syzbot to run the reproducer, reply with:<br>
-#syz test: git://repo/address.git branch-or-commit-hash<br>
-If you attach or paste a git patch, syzbot will apply it before testing.<br=
->
-<br>
-If you want to overwrite report&#39;s subsystems, reply with:<br>
-#syz set subsystems: new-subsystem<br>
-(See the list of subsystem names on the web dashboard)<br>
-<br>
-If the report is a duplicate of another one, reply with:<br>
-#syz dup: exact-subject-of-another-report<br>
-<br>
-If you want to undo deduplication, reply with:<br>
-#syz undup<br>
-<br>
--- <br>
-You received this message because you are subscribed to the Google Groups &=
-quot;syzkaller-bugs&quot; group.<br>
-To unsubscribe from this group and stop receiving emails from it, send an e=
-mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
-rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
-To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
-syzkaller-bugs/672ecc13.050a0220.138bd5.0038.GAE%40google.com" rel=3D"noref=
-errer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/6=
-72ecc13.050a0220.138bd5.0038.GAE%40google.com</a>.<br>
-</blockquote></div>
+> 
+> If you think having the feature broken is OK, the patch can be splitted.
+> However IMO, these chanegs should be together in one patch.
+> 
+>>>
+>>> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+>>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>>> ---
+>>>  drivers/net/ethernet/ti/icssg/icssg_config.c | 28 ++++++++++
+>>>  drivers/net/ethernet/ti/icssg/icssg_config.h |  1 +
+>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 58 ++++++++++++++++----
+>>>  drivers/net/ethernet/ti/icssg/icssg_prueth.h |  1 +
+>>>  4 files changed, 77 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> index 5d2491c2943a..f1f0c8659e2d 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+>>> @@ -786,3 +786,31 @@ void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port)
+>>>  		writel(pvid, prueth->shram.va + EMAC_ICSSG_SWITCH_PORT0_DEFAULT_VLAN_OFFSET);
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(icssg_set_pvid);
+>>> +
+>>> +int emac_fdb_flow_id_updated(struct prueth_emac *emac)
+>>> +{
+>>> +	struct mgmt_cmd_rsp fdb_cmd_rsp = { 0 };
+>>> +	int slice = prueth_emac_slice(emac);
+>>> +	struct mgmt_cmd fdb_cmd = { 0 };
+>>> +	int ret = 0;
+>>> +
+>>> +	fdb_cmd.header = ICSSG_FW_MGMT_CMD_HEADER;
+>>> +	fdb_cmd.type   = ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW;
+>>> +	fdb_cmd.seqnum = ++(emac->prueth->icssg_hwcmdseq);
+>>> +	fdb_cmd.param  = 0;
+>>> +
+>>> +	fdb_cmd.param |= (slice << 4);
+>>> +	fdb_cmd.cmd_args[0] = 0;
+>>> +
+>>> +	ret = icssg_send_fdb_msg(emac, &fdb_cmd, &fdb_cmd_rsp);
+>>> +
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>> +	WARN_ON(fdb_cmd.seqnum != fdb_cmd_rsp.seqnum);
+>>> +	if (fdb_cmd_rsp.status == 1)
+>>> +		return 0;
+>>> +
+>>> +	return -EINVAL;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(emac_fdb_flow_id_updated);
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.h b/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> index 92c2deaa3068..c884e9fa099e 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.h
+>>> @@ -55,6 +55,7 @@ struct icssg_rxq_ctx {
+>>>  #define ICSSG_FW_MGMT_FDB_CMD_TYPE	0x03
+>>>  #define ICSSG_FW_MGMT_CMD_TYPE		0x04
+>>>  #define ICSSG_FW_MGMT_PKT		0x80000000
+>>> +#define ICSSG_FW_MGMT_FDB_CMD_TYPE_RX_FLOW	0x05
+>>>  
+>>>  struct icssg_r30_cmd {
+>>>  	u32 cmd[4];
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> index 0556910938fa..9df67539285b 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+>>> @@ -534,6 +534,7 @@ static int emac_ndo_open(struct net_device *ndev)
+>>>  {
+>>>  	struct prueth_emac *emac = netdev_priv(ndev);
+>>>  	int ret, i, num_data_chn = emac->tx_ch_num;
+>>> +	struct icssg_flow_cfg __iomem *flow_cfg;
+>>>  	struct prueth *prueth = emac->prueth;
+>>>  	int slice = prueth_emac_slice(emac);
+>>>  	struct device *dev = prueth->dev;
+>>> @@ -549,8 +550,12 @@ static int emac_ndo_open(struct net_device *ndev)
+>>>  	/* set h/w MAC as user might have re-configured */
+>>>  	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
+>>>  
+>>> +	if (!prueth->emacs_initialized) {
+>>> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
+>>> +		icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
+>>> +	}
+>>> +
+>>>  	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+>>> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
+>>>  	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
+>>>  
+>>>  	/* Notify the stack of the actual queue counts. */
+>>> @@ -588,10 +593,31 @@ static int emac_ndo_open(struct net_device *ndev)
+>>>  		goto cleanup_napi;
+>>>  	}
+>>>  
+>>> -	/* reset and start PRU firmware */
+>>> -	ret = prueth_emac_start(prueth, emac);
+>>> -	if (ret)
+>>> -		goto free_rx_irq;
+>>> +	if (!prueth->emacs_initialized) {
+>>> +		if (prueth->emac[ICSS_SLICE0]) {
+>>> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE0]);
+>>> +			if (ret) {
+>>> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE0);
+>>> +				goto free_rx_irq;
+>>> +			}
+>>> +		}
+>>> +		if (prueth->emac[ICSS_SLICE1]) {
+>>> +			ret = prueth_emac_start(prueth, prueth->emac[ICSS_SLICE1]);
+>>> +			if (ret) {
+>>> +				netdev_err(ndev, "unable to start fw for slice %d", ICSS_SLICE1);
+>>> +				goto halt_slice0_prus;
+>>> +			}
+>>
+>> Did I understand right: SLICE0 needs to be always running if any of the
+>> interface is up but SLICE0 doesn't need to be running if only SLICE0
+> 
+> I think you meant `but SLICE1 doesn't need to be running if only SLICE0`
+> 
+>> interface is running.
+>>
+>> If yes then you need to update the patch so SLICE1 is not always running.
+>>
+> 
+> For Timesync - YES. Only slice0 is needed to be always running. However
+> these both firmwares have some more inter dependencies, timesync is just
+> one of them. As a result, firmware team has recommended to keep both
+> Slice0 and Slice1 firmware running as long as at least one ICSSG
+> interface is up. Stop both firmware only if no ICSSG interface is up.
+> 
+> I think the commit message can be modified to state that the dependecy
+> is not only SLICE0 but on SLICE1 as well and they both need to be running.
+> 
 
---000000000000a2c44a0626a3e149--
---000000000000a2c4530626a3e14b
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-v6KMSAN-fix-uninit-value-in-bch2_copygc.patch"
-Content-Disposition: attachment; 
-	filename="0001-v6KMSAN-fix-uninit-value-in-bch2_copygc.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3d48d7j0>
-X-Attachment-Id: f_m3d48d7j0
+OK Please mention this in commit log.
 
-RnJvbSA5NzBiYWMwMzVkMDgzMjllNDA2OTAxNDA1ZmU2MzVjN2I2NjZmMzg1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
-aWwuY29tPgpEYXRlOiBNb24sIDExIE5vdiAyMDI0IDE5OjQ5OjA1ICswNTMwClN1YmplY3Q6IFtQ
-QVRDSCB2Nl0gS01TQU46IGZpeCB1bmluaXQtdmFsdWUgaW4gYmNoMl9jb3B5Z2MKCnN5eiB0ZXN0
-CgpTaWduZWQtb2ZmLWJ5OiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21haWwu
-Y29tPgotLS0KIGZzL2JjYWNoZWZzL21vdmluZ2djLmMgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvYmNhY2hlZnMvbW92aW5nZ2MuYyBiL2Zz
-L2JjYWNoZWZzL21vdmluZ2djLmMKaW5kZXggZDY1OGJlOTBmLi44YTY1NjhkYzUgMTAwNjQ0Ci0t
-LSBhL2ZzL2JjYWNoZWZzL21vdmluZ2djLmMKKysrIGIvZnMvYmNhY2hlZnMvbW92aW5nZ2MuYwpA
-QCAtMzI3LDYgKzMyNyw4IEBAIHN0YXRpYyBpbnQgYmNoMl9jb3B5Z2NfdGhyZWFkKHZvaWQgKmFy
-ZykKIAl1NjQgbGFzdCwgd2FpdDsKIAlpbnQgcmV0ID0gMDsKIAorCW1lbXNldCgmY3R4dCwgMCwg
-c2l6ZW9mKGN0eHQpKTsKKwogCWJ1Y2tldHMgPSBremFsbG9jKHNpemVvZihzdHJ1Y3QgYnVja2V0
-c19pbl9mbGlnaHQpLCBHRlBfS0VSTkVMKTsKIAlpZiAoIWJ1Y2tldHMpCiAJCXJldHVybiAtRU5P
-TUVNOwotLSAKMi4zNC4xCgo=
---000000000000a2c4530626a3e14b--
+>>> +		}
+>>> +	}
+>>> +
+>>> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
+>>> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
+>>> +	ret = emac_fdb_flow_id_updated(emac);
+>>> +
+>>> +	if (ret) {
+>>> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
+>>> +		goto stop;
+>>> +	}
+>>>  
+>>>  	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
+>>>  
+>>> @@ -644,7 +670,11 @@ static int emac_ndo_open(struct net_device *ndev)
+>>>  free_tx_ts_irq:
+>>>  	free_irq(emac->tx_ts_irq, emac);
+>>>  stop:
+>>> -	prueth_emac_stop(emac);
+>>> +	if (prueth->emac[ICSS_SLICE1])
+>>> +		prueth_emac_stop(prueth->emac[ICSS_SLICE1]);
+>>> +halt_slice0_prus:
+>>> +	if (prueth->emac[ICSS_SLICE0])
+>>> +		prueth_emac_stop(prueth->emac[ICSS_SLICE0]);
+>>>  free_rx_irq:
+>>>  	free_irq(emac->rx_chns.irq[rx_flow], emac);
+>>>  cleanup_napi:
+>>> @@ -680,7 +710,10 @@ static int emac_ndo_stop(struct net_device *ndev)
+>>>  	if (ndev->phydev)
+>>>  		phy_stop(ndev->phydev);
+>>>  
+>>> -	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
+>>> +	if (prueth->emacs_initialized == 1) {
+>>> +		icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
+>>> +		icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
+>>> +	}
+>>>  
+>>>  	if (emac->prueth->is_hsr_offload_mode)
+>>>  		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
+>>> @@ -719,11 +752,14 @@ static int emac_ndo_stop(struct net_device *ndev)
+>>>  	/* Destroying the queued work in ndo_stop() */
+>>>  	cancel_delayed_work_sync(&emac->stats_work);
+>>>  
+>>> -	if (prueth->emacs_initialized == 1)
+>>> +	if (prueth->emacs_initialized == 1) {
+>>>  		icss_iep_exit(emac->iep);
+>>> -
+>>> -	/* stop PRUs */
+>>> -	prueth_emac_stop(emac);
+>>> +		/* stop PRUs */
+>>> +		if (prueth->emac[ICSS_SLICE0])
+>>> +			prueth_emac_stop(prueth->emac[ICSS_SLICE0]);
+>>> +		if (prueth->emac[ICSS_SLICE1])
+>>> +			prueth_emac_stop(prueth->emac[ICSS_SLICE1]);
+>>> +	}
+>>>  
+>>>  	free_irq(emac->tx_ts_irq, emac);
+>>>  
+>>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> index 8722bb4a268a..c4f5f0349ae7 100644
+>>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+>>> @@ -365,6 +365,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
+>>>  		       u8 untag_mask, bool add);
+>>>  u16 icssg_get_pvid(struct prueth_emac *emac);
+>>>  void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
+>>> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
+>>>  #define prueth_napi_to_tx_chn(pnapi) \
+>>>  	container_of(pnapi, struct prueth_tx_chn, napi_tx)
+>>>  
+>>
+> 
+
+-- 
+cheers,
+-roger
 
