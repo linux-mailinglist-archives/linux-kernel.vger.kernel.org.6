@@ -1,206 +1,140 @@
-Return-Path: <linux-kernel+bounces-404347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4AA9C42AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:33:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 500CD9C42AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6138B21A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BA81F2153B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862561A0BD7;
-	Mon, 11 Nov 2024 16:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4651A0BC1;
+	Mon, 11 Nov 2024 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="V5PhpvXo"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="e1MTcKfQ"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8806819C575;
-	Mon, 11 Nov 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB3118A6BD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731342657; cv=none; b=GTCExmJqgetgL9Yi7yMZSJlMyqbZFWQxFuzD8EHuFn/cPdUqWJdewVanwlrzWNX0+C/S+OHYOBsLyA4ciHTO577RYk77snyzK44R4EbRuGUmxbGyuqLjZ3iNbYtfv2OdYpfIKMV2NmU1M2AsarZdjo6DlzJvrEqGSV0MghqY8Fc=
+	t=1731342751; cv=none; b=JgmeqiRfIbxme0oTcHn2ZZYtmQMZOaQvQYnbl2zbRhLEqdhjviG2fM2TPN4Y/YZVglf+iZcKSoFT2irh1DGJxi8NGMvJw3tUxPCnk8ckvcQXrN9AO7xF7+Whdvk2Mjp7DfY4I2w1Aa4+sCXsr+Q4WqSS1uVU91u/c36s++QLFfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731342657; c=relaxed/simple;
-	bh=+x8bnIxKFSLgLd0LiO4UJ5+z4gmDHKrgkS3pxB6CIcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9ruMw5zgzb3ZX1cSXC0M953PD+S7htW4KIzmqXFvPtAK7HoAHr6+Ld163/WFxeENU0ukCLkMyTf/S0KBQMBepsQRr/mdOrV4w6kke7dIh2lOzA5FvDGREz0WhVRi1PcOlurHZo3+bwYKxRRz6YeuzBybWfLZz7SENzL4fqIQzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=V5PhpvXo; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731342651;
-	bh=+x8bnIxKFSLgLd0LiO4UJ5+z4gmDHKrgkS3pxB6CIcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V5PhpvXoJi6Mra+JvR4Eg+IKph3+MR9f/gberukS05wwjidHQUIK0FqSI/pZhmfuQ
-	 JezkGkYvRViJxjXucl5DxB1pN/m/Aw/S4jnp0dro8nrt7adguYUogAw3Xv1K5X34LH
-	 rpABCe6qEcZtOSG+HsWHepf8K1K29uEmxK+B5O2Q=
-Date: Mon, 11 Nov 2024 17:30:51 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
-To: Sung-Chi <lschyi@chromium.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
-	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: (cros_ec) register thermal sensors to thermal
- framework
-Message-ID: <a469852b-4cbd-467c-89de-b1acf6de1402@t-8ch.de>
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241111095045.1218986-1-lschyi@chromium.org>
+	s=arc-20240116; t=1731342751; c=relaxed/simple;
+	bh=wgPgZjiap0AW6XOsWOQNirQ5MtbEYQMVp/D2VL6PP6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=len3xRVuOM/KlNR+al8PyI6OYbp2Gghtg3nYh1tA/SJD+G36ukVAFM3LmFKinBWj+tlWb5gDsLAfcKPWD0y6dslZpNIKzJgqv5zgmZHvbCG6VrBkuv+f4hJgDvdNw8q1+mTXoMiFoGpldueecSw1GbDzIWxzEC2JBjnjSik5Nl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=e1MTcKfQ; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539fb49c64aso6763978e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:32:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731342747; x=1731947547; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iBYAHP+O3hcuMK9k5NB3Be02x+OSCZv3yyXgIhdeSc8=;
+        b=e1MTcKfQTQf468hzFbDI6QiHOUUE4NzS6GrID85/QBXoI8Ij6Fel/vBTP0JpLCQF8f
+         Or5wnJtwsoOeeG8TcNkfkvqioErf7oqHKi4vllakhfgTk1PxH7pAxvUIoLIroIdQ/kOm
+         7h+lAK2PECJ7cb3VcGaVlOC3KRoMwcnxtob55cfND9aeDtwc38DVNnF7NFX2FnwGJzYj
+         upenOGdhPKl717wiWFxPoNct6MFfZAM9S9pKFWT6KwYKH7awzZwXXSoTtp4oMVtRfy38
+         UeqBWVc9qVmU7H1fyRCp51JkvROTyw0GlDRAbP8C/MZmgs7vcrQ2HM25RD6DDaUX6QwI
+         /+mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731342747; x=1731947547;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iBYAHP+O3hcuMK9k5NB3Be02x+OSCZv3yyXgIhdeSc8=;
+        b=s9OzLXEwfoUE3D92O2xxdPlAN73QWhMqyX+NAulo2Ff4r2eBMSQkARgo70zxAv8O1X
+         2VJCAR6/2OZvxbg8qMBcna46kpz9pnHmJeBrV9G6ezad9yhpmU2q6f1d87QDtIUBdxke
+         Z1OgHDlnKqr06+jYoCXHso7FXVcO+DdOEQNTIDiR8ul/KisVHnVjBlVTjuQ29gwUIzdU
+         LzVveOFbYRGOphUb5BeXr8QBjqN4WiigPRg5qWisw6dQEnKD66FZzS09dTiPb7yDod02
+         Kgj3tuChOA3h04a3cE16lVJ5xySgzEMnAPAPulKeumqJoB2eDQj+iSer/B00EMQ0W1Rp
+         f4WA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqq4Iq7ubFeqx20bWaqScP4D9o1Yl4r62Xau/WSgE39tff8NkmxwsC9VDcyGMUzlRAYWFsPn1j6aawGDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmM5m5LFRr+IjV4/wcxiIV3lBUTo6yV1TgsC/FimAzapvtZNLe
+	74j2ZentrwWTSobcWwU/tL6Ti7JioLLQBK6pskLNscaRsIUpjxtD7H/51V/87BY=
+X-Google-Smtp-Source: AGHT+IHN23iRQMnByCFkyICQ+iUaWQ+aYPKOc6IcG+d6Jg86X+n2ilMatHSTOVuqudNP3Pp83tQmsQ==
+X-Received: by 2002:a05:6512:1594:b0:539:8f68:e036 with SMTP id 2adb3069b0e04-53d862cd727mr8436995e87.34.1731342747469;
+        Mon, 11 Nov 2024 08:32:27 -0800 (PST)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [85.187.217.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a48585sm607966066b.45.2024.11.11.08.32.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 08:32:27 -0800 (PST)
+Message-ID: <46f58028-9787-4363-96b9-e9b2b3122396@suse.com>
+Date: Mon, 11 Nov 2024 18:32:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111095045.1218986-1-lschyi@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/10] x86/virt/tdx: Trim away tail null CMRs
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com, pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com, adrian.hunter@intel.com
+References: <cover.1731318868.git.kai.huang@intel.com>
+ <fba5b229f4e0a80aa8bb1001c1aa27fddec5f172.1731318868.git.kai.huang@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <fba5b229f4e0a80aa8bb1001c1aa27fddec5f172.1731318868.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-11-11 17:50:30+0800, Sung-Chi wrote:
-> From: "Sung-Chi, Li" <lschyi@chromium.org>
+
+
+On 11.11.24 г. 12:39 ч., Kai Huang wrote:
+> TDX architecturally supports up to 32 CMRs.  The global metadata field
+> "NUM_CMRS" reports the number of CMR entries that can be read by the
+> kernel.  However, that field may just report the maximum number of CMRs
+> albeit the actual number of CMRs is smaller, in which case there are
+> tail null CMRs (size is 0).
+
+nit: Is it safe to assume that null CMRs are going to be sequential and 
+always at the end? Nothing in the TDX module spec suggests this. I.e 
+can't we have :
+
+
+1. Valid CMR region
+2. ZERO CMR
+3. Valid CMR
+
+Sure, it might be a dummy and pointless but nothing prevents such CMR 
+records. In any case I think the mentioning of "tail" is a bit too much 
+detail and adds to unnecessary mental overload. Simply say you trim 
+empty CMR's and that such regions will be sequential (if that's the 
+case) and be done with it.
+
+Because having "tail null cmr" can be interpreted as also having  there 
+might be "non-tail null CMR", which doesn't seem to be the case?
+
 > 
-> cros_ec hwmon driver probes available thermal sensors when probing the
-> driver.  Register these thermal sensors to the thermal framework, such
-> that thermal framework can adopt these sensors as well.
-
-The driver also supports fan readings. These could also be wired up as
-cooling devices.
-
-> To make cros_ec registrable to thermal framework, the cros_ec dts need
-> the corresponding changes:
+> Trim away those null CMRs, and print valid CMRs since they are useful
+> at least to developers.
 > 
-> &cros_ec {
-> 	#thermal-sensor-cells = <1>;
-> };
-
-If this is the only thing that is meant to be configured I'm wondering
-why the OF variant is needed in the first place.
-Why not register a non-OF thermal device?
-
-Please send the next revision also to the maintainers of the THERMAL
-subsystem so we can figure out the most correct way forward.
-
-> Change-Id: I29b638427c715cb44391496881fc61ad53abccaf
-> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
-> ---
->  Changes in v2:
->    - Rename `cros_ec_sensor_data` to `cros_ec_hwmon_thermal_zone_data`.
->    - Rename `addr` in struct `cros_ec_hwmon_thermal_zone_data` to `idx`.
->    - Use `cros_ec_hwmon_temp_to_millicelsius` to do value conversion in 
->      `cros_ec_thermal_get_temp` function.
->    - Rename `cros_ec_thermal_get_temp` to `cros_ec_hwmon_thermal_get_temp` to
->      make `cros_ec_hwmon` a prefix.
->    - Use `%pe` in `cros_ec_hwmon_probe_temp_sensors` when printing out
->      `data->tz_dev` if failed register thermal device.
->    - Remove `cros_ec_hwmon_remove`, and the `.remove` value in
->      `cros_ec_hwmon_driver` since there is no need to call
->      `devm_thermal_of_zone_unregister` for clean up.
->    - Revert function signature of `cros_ec_hwmon_probe_temp_sensors` since all
->      needed parameters are presented.
->    - Revert include of `linux/list.h` because no list data structure is used.
-> ---
->  drivers/hwmon/cros_ec_hwmon.c | 41 +++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+> More information about CMR can be found at "Intel TDX ISA Background:
+> Convertible Memory Ranges (CMRs)" in TDX 1.5 base spec [1], and
+> "CMR_INFO" in TDX 1.5 ABI spec [2].
 > 
-> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
-> index 5514cf780b8b..81e563e0455f 100644
-> --- a/drivers/hwmon/cros_ec_hwmon.c
-> +++ b/drivers/hwmon/cros_ec_hwmon.c
-> @@ -12,6 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> +#include <linux/thermal.h>
->  #include <linux/types.h>
->  #include <linux/units.h>
->  
-> @@ -23,6 +24,12 @@ struct cros_ec_hwmon_priv {
->  	u8 usable_fans;
->  };
->  
-> +struct cros_ec_hwmon_thermal_zone_data {
-> +	struct cros_ec_device *cros_ec;
-> +	struct thermal_zone_device *tz_dev;
-> +	int idx;
-> +};
-> +
->  static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
->  {
->  	int ret;
-> @@ -185,11 +192,30 @@ static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
->  	.info = cros_ec_hwmon_info,
->  };
->  
-> +static int cros_ec_hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
-> +{
-> +	struct cros_ec_hwmon_thermal_zone_data *data =
-> +		thermal_zone_device_priv(tz);
-> +	int ret;
-> +	u8 val;
-> +
-> +	ret = cros_ec_hwmon_read_temp(data->cros_ec, data->idx, &val);
-> +	if (ret || cros_ec_hwmon_is_error_temp(temp))
-> +		return -ENODATA;
-> +	*temp = cros_ec_hwmon_temp_to_millicelsius(val);
-> +	return 0;
-> +}
-> +
-> +static const struct thermal_zone_device_ops thermal_ops = {
-
-Symbol still needs namespacing.
-
-> +	.get_temp = cros_ec_hwmon_thermal_get_temp,
-> +};
-> +
->  static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_hwmon_priv *priv,
->  					     u8 thermal_version)
->  {
->  	struct ec_params_temp_sensor_get_info req = {};
->  	struct ec_response_temp_sensor_get_info resp;
-> +	struct cros_ec_hwmon_thermal_zone_data *data;
->  	size_t candidates, i, sensor_name_size;
->  	int ret;
->  	u8 temp;
-> @@ -216,6 +242,21 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
->  		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
->  							    (int)sensor_name_size,
->  							    resp.sensor_name);
-> +
-> +		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +		if (!data)
-> +			continue;
-> +
-> +		data->idx = i;
-> +		data->cros_ec = priv->cros_ec;
-> +		data->tz_dev = devm_thermal_of_zone_register(
-> +			priv->cros_ec->dev, i, data, &thermal_ops);
-
-Doesn't this also automatically create new hwmon device off of the
-thermal device? That shouldn't happen.
-
-In general I'm not sure how the hwmon and thermal subsystems are meant
-to interact. Is one recommended over the other?
-Should the driver become a first-class thermal driver and use the
-automatic hwmon functionality?
-
-> +		if (IS_ERR_VALUE(data->tz_dev)) {
-> +			dev_err(dev,
-> +				"failed to register %zu thermal sensor, err = %pe",
-> +				i, data->tz_dev);
-
-If !CONFIG_OF || !CONFIG_THERMAL this will always log an error.
-EOPNOTSUP should not trigger that logging.
-
-> +			continue;
-> +		}
->  	}
->  }
->  
-> -- 
-> 2.47.0.277.g8800431eea-goog
+> Now get_tdx_sys_info() just reads kernel-needed global metadata to
+> kernel structure, and it is auto-generated.  Add a wrapper function
+> init_tdx_sys_info() to invoke get_tdx_sys_info() and provide room to do
+> additional things like dealing with CMRs.
 > 
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/733575 [1]
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/733579 [2]
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+
 
