@@ -1,363 +1,237 @@
-Return-Path: <linux-kernel+bounces-404800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A529C4902
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:21:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDE89C48A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:58:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB549B31294
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8670CB322AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9810D1C9B7A;
-	Mon, 11 Nov 2024 21:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6A21B86F7;
+	Mon, 11 Nov 2024 21:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ZSZaTDSf"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K+mzvevP"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4811B86F7;
-	Mon, 11 Nov 2024 21:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A631ACDE7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731361217; cv=none; b=tWDczyGwwuxHBzcyzk1/p8Pi4UHwnGfTZMXYpLMRkjTeVsOi6PbiK4+5D2Rs1i/Aax/JFOzDN4jwKCkiRiPJ6hasJIcEH1Q38RYRych/vMS+tZ6pviCYfsWWvTEyPyP7QxUxCPmb9pI4SBjdM6qh/F/lUH2v6YBwVJxvKL1E6Uk=
+	t=1731361282; cv=none; b=Yvc+DZUhtRw3Np6UuTjkWY2h1OZPer2QPJ8zA9T5B+kXCKwrZKqTMc938xiE3xMX/RRsoMWwdbB4ivYs7yA/cu6clbvQE20TEDXqS5ckUFUda740ykFh5vQKJVzMdeBTUNBGpMAtW5tpfN32zhDatVnIEJ3by1cr6CRihCZMooc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731361217; c=relaxed/simple;
-	bh=z21J+OltFWwTkbmEn7wl0xG9/rhtTpo3QenCuL3bWPQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CcbxV2ixLbovAxBQK0cD0b/yKL12BFXaVPrvZU3AXs1aGzGN7JP1BgcyUCKCTfWgE7SQ1un8+x9s+UOHoRkxjQ1oy5zg4LwQ2Np3VXMWwUMDtLjuiYyB/7HN26lFhxAJQDGclSY8JDgtNUSJgrFHzJ8wiez0CEOygV6Nx8x2PcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ZSZaTDSf; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731361209;
-	bh=z21J+OltFWwTkbmEn7wl0xG9/rhtTpo3QenCuL3bWPQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZSZaTDSfsJTUjeoQybIKjg7qG5FtrOgL6DZtM/whHkNdZRxCPxIEV7ZgRcKIy7GCu
-	 GxKM4aMXsUjP1ZcdozNmY8rqNSt0EsJg20dN/JwOLc6bzRvTQmrDsKMSyjgHjyf9MP
-	 /DbxFN1ZBPGgZ9iWjdwodikjJiamPAF3XsTVW+8U=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 11 Nov 2024 22:40:11 +0100
-Subject: [PATCH v4 9/9] power: supply: cros_charge-control: use
- power_supply extensions
+	s=arc-20240116; t=1731361282; c=relaxed/simple;
+	bh=S6fdu8sFu/GWAJIun7mvI081Uo8T6EO7isMpOAR+YNM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UnoM7miIZxS0EFC4weLvQjbe1ek49F0jbTwPPGZ9AOJCmOpnlu54WAky+AbNVViaSAO1+HR+nJz0OUR37+1bfh/2zEW6J67uMl+0GfTXBNz6L95yri5aDAygOENQ0/uOSRFDnujKcfKN6VkwBo+hdqtcyLC9xi8wYJ+5TwBnDg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K+mzvevP; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460b295b9eeso15871cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:41:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731361280; x=1731966080; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0o1VajD5WDcGAgvLwqsAPBGDplXjntm8i6Rb+8zCTPc=;
+        b=K+mzvevPNjW4fY0UmtSt+loA5lLhCWmpDQJxSK/K/ULv4t9X3DSlavuJBjoNNAJLtu
+         3flT0SWeYoLQWrQMFtpIFvMAy03750vOHzm1Au3pNHVuD5TzfZsGbGtrgCbdiyaDKhX7
+         ezcslNBVJgjZ2V2ubZTE6UFqjrvvbFUvoKcAYniQnnzUTJVwOGjd/fqEOjlXPMG5aTK1
+         AIfyOHnToZPoB4semfLGcJOtDzHz2faOh/V6B95t6pgnUqarbS1hJLLVOWGVyklDwyV/
+         rkyAEZpiZCAluB7oJLm+FgDqB3XSxDx9JStc+6PfBAj9IhWPbFqob2LOgkL+x/PM9huI
+         LV5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731361280; x=1731966080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0o1VajD5WDcGAgvLwqsAPBGDplXjntm8i6Rb+8zCTPc=;
+        b=h3EQp60UQgD+K0S4HbeMjkkvOLWKRdUQz11HqBcsluFmXmAr088HeaMzo1x3tmCl00
+         IwaY2v/7tI3Bn+Cv+ubfP2FHcIGQHhTKSoaHUFM8zkyXaoeL6RqzJD/o/4rXHgm4/tzR
+         PxnRazERiS+2Zc2DKrW0cetN044yQwIMpbBha8tbpIQLuXatsQyntamcXV3rF2nmT5hd
+         pMd5N7tpxn9GOci0anGDMQ+akFEy7hmZJoAtVyFLQDGDKYkFd0s6aoCN1XxSSx+/BZbZ
+         Z7jYFh6RUvNXHB8uw4NUzx6Dzt/yY9mXowK73Jy0zchV8NPPSJNClur9HwfdBMq4LA6K
+         kozQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUa6Z44+0c/Flc++dM3MW6a1YVBORxhxaFZaMguMkinncu2xE99YfacClfL4e3f/8utd5Ynu6iIuMw5wDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx71lNXhwhsDdtftMmO3pKqw9cSWEp8O/iciwRRZSupXBhRBl2m
+	HKHfABqrd6a3TNE8PYHFIK2kNqGgFjDV6CTUa/TbQPbwqiMpNbVhA/+Ofk8guW+ahafVJZVWNRe
+	gZ3fZNy//iBwxGdHhIv42CIlZRdxkd/45SwhU
+X-Gm-Gg: ASbGnct5TwnkIqMHaSZZD6TqtPbnAiTMz1yGlBhBqAu/AeRCe3Vbf0al8844hNSBgBG
+	zLUT1xQs0+gBRTPRPhJ+001lIMKmiRDw=
+X-Google-Smtp-Source: AGHT+IGSwFkpn8md6DrPvbrEu1U0QdNk3aUasW3xWTUdEwmk8GNUKmRmgbqP0HdWP0odQfGStJVRwETqSfVia9SbpSA=
+X-Received: by 2002:a05:622a:190a:b0:462:c96a:bb30 with SMTP id
+ d75a77b69052e-4633ef60502mr927611cf.2.1731361279387; Mon, 11 Nov 2024
+ 13:41:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241111-power-supply-extensions-v4-9-7240144daa8e@weissschuh.net>
-References: <20241111-power-supply-extensions-v4-0-7240144daa8e@weissschuh.net>
-In-Reply-To: <20241111-power-supply-extensions-v4-0-7240144daa8e@weissschuh.net>
-To: Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- chrome-platform@lists.linux.dev, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731361208; l=10701;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=z21J+OltFWwTkbmEn7wl0xG9/rhtTpo3QenCuL3bWPQ=;
- b=Lguc2j8iuLKHKj0BxN9dqGPb67JZiqYrD9/hcKmWGI+wd/BW0f4Eamy2Y+Fo8WZoOGkfGRC7n
- dqKbCZ6FIjVDox/A5Fy8c67L0FNsNaIVri53wxeOGW4C8IbwGACKAUK
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20241111205506.3404479-1-surenb@google.com>
+In-Reply-To: <20241111205506.3404479-1-surenb@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 11 Nov 2024 13:41:08 -0800
+Message-ID: <CAJuCfpER+Er8PAGVh2ScN70g267n4iuSukEifMS4929yVqv4xg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
+	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Power supply extensions provide an easier mechanism to implement
-additional properties for existing power supplies.
-Use that instead of reimplementing the sysfs attributes manually.
+On Mon, Nov 11, 2024 at 12:55=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> Back when per-vma locks were introduces, vm_lock was moved out of
+> vm_area_struct in [1] because of the performance regression caused by
+> false cacheline sharing. Recent investigation [2] revealed that the
+> regressions is limited to a rather old Broadwell microarchitecture and
+> even there it can be mitigated by disabling adjacent cacheline
+> prefetching, see [3].
+> This patchset moves vm_lock back into vm_area_struct, aligning it at the
+> cacheline boundary and changing the cache to be cache-aligned as well.
+> This causes VMA memory consumption to grow from 160 (vm_area_struct) + 40
+> (vm_lock) bytes to 256 bytes:
+>
+>     slabinfo before:
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vma_lock         ...     40  102    1 : ...
+>      vm_area_struct   ...    160   51    2 : ...
+>
+>     slabinfo after moving vm_lock:
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vm_area_struct   ...    256   32    2 : ...
+>
+> Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 pages,
+> which is 5.5MB per 100000 VMAs.
+> To minimize memory overhead, vm_lock implementation is changed from
+> using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+> vm_area_struct members are moved into the last cacheline, resulting
+> in a less fragmented structure:
+>
+> struct vm_area_struct {
+>         union {
+>                 struct {
+>                         long unsigned int vm_start;      /*     0     8 *=
+/
+>                         long unsigned int vm_end;        /*     8     8 *=
+/
+>                 };                                       /*     0    16 *=
+/
+>                 struct callback_head vm_rcu ;            /*     0    16 *=
+/
+>         } __attribute__((__aligned__(8)));               /*     0    16 *=
+/
+>         struct mm_struct *         vm_mm;                /*    16     8 *=
+/
+>         pgprot_t                   vm_page_prot;         /*    24     8 *=
+/
+>         union {
+>                 const vm_flags_t   vm_flags;             /*    32     8 *=
+/
+>                 vm_flags_t         __vm_flags;           /*    32     8 *=
+/
+>         };                                               /*    32     8 *=
+/
+>         bool                       detached;             /*    40     1 *=
+/
+>
+>         /* XXX 3 bytes hole, try to pack */
+>
+>         unsigned int               vm_lock_seq;          /*    44     4 *=
+/
+>         struct list_head           anon_vma_chain;       /*    48    16 *=
+/
+>         /* --- cacheline 1 boundary (64 bytes) --- */
+>         struct anon_vma *          anon_vma;             /*    64     8 *=
+/
+>         const struct vm_operations_struct  * vm_ops;     /*    72     8 *=
+/
+>         long unsigned int          vm_pgoff;             /*    80     8 *=
+/
+>         struct file *              vm_file;              /*    88     8 *=
+/
+>         void *                     vm_private_data;      /*    96     8 *=
+/
+>         atomic_long_t              swap_readahead_info;  /*   104     8 *=
+/
+>         struct mempolicy *         vm_policy;            /*   112     8 *=
+/
+>
+>         /* XXX 8 bytes hole, try to pack */
+>
+>         /* --- cacheline 2 boundary (128 bytes) --- */
+>         struct vma_lock       vm_lock (__aligned__(64)); /*   128     4 *=
+/
+>
+>         /* XXX 4 bytes hole, try to pack */
+>
+>         struct {
+>                 struct rb_node     rb (__aligned__(8));  /*   136    24 *=
+/
+>                 long unsigned int  rb_subtree_last;      /*   160     8 *=
+/
+>         } __attribute__((__aligned__(8))) shared;        /*   136    32 *=
+/
+>         struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     0 *=
+/
+>
+>         /* size: 192, cachelines: 3, members: 17 */
+>         /* sum members: 153, holes: 3, sum holes: 15 */
+>         /* padding: 24 */
+>         /* forced alignments: 3, forced holes: 2, sum forced holes: 12 */
+> } __attribute__((__aligned__(64)));
+>
+> Memory consumption per 1000 VMAs becomes 48 pages, saving 2 pages compare=
+d
+> to the 50 pages in the baseline:
+>
+>     slabinfo after vm_area_struct changes:
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vm_area_struct   ...    192   42    2 : ...
+>
+> Performance measurements using pft test on x86 do not show considerable
+> difference, on Pixel 6 running Android it results in 3-5% improvement in
+> faults per second.
+>
+> [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.c=
+om/
+> [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
+> [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_k=
+bfP_pR+-2g@mail.gmail.com/
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/power/supply/cros_charge-control.c | 205 +++++++++++------------------
- 1 file changed, 75 insertions(+), 130 deletions(-)
+And of course I forgot to update Lorenzo's new locking documentation :/
+Will add that in the next version.
 
-diff --git a/drivers/power/supply/cros_charge-control.c b/drivers/power/supply/cros_charge-control.c
-index 17c53591ce197d08d97c94d3d4359a282026dd7d..f0933ac3f042c19e7c1dfdc9aff1ad03443ceb16 100644
---- a/drivers/power/supply/cros_charge-control.c
-+++ b/drivers/power/supply/cros_charge-control.c
-@@ -18,13 +18,6 @@
- 					 BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_INHIBIT_CHARGE)   | \
- 					 BIT(POWER_SUPPLY_CHARGE_BEHAVIOUR_FORCE_DISCHARGE))
- 
--enum CROS_CHCTL_ATTR {
--	CROS_CHCTL_ATTR_START_THRESHOLD,
--	CROS_CHCTL_ATTR_END_THRESHOLD,
--	CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR,
--	_CROS_CHCTL_ATTR_COUNT
--};
--
- /*
-  * Semantics of data *returned* from the EC API and Linux sysfs differ
-  * slightly, also the v1 API can not return any data.
-@@ -41,13 +34,7 @@ struct cros_chctl_priv {
- 	struct power_supply *hooked_battery;
- 	u8 cmd_version;
- 
--	/* The callbacks need to access this priv structure.
--	 * As neither the struct device nor power_supply are under the drivers
--	 * control, embed the attributes within priv to use with container_of().
--	 */
--	struct device_attribute device_attrs[_CROS_CHCTL_ATTR_COUNT];
--	struct attribute *attributes[_CROS_CHCTL_ATTR_COUNT];
--	struct attribute_group group;
-+	struct power_supply_ext psy_ext;
- 
- 	enum power_supply_charge_behaviour current_behaviour;
- 	u8 current_start_threshold, current_end_threshold;
-@@ -114,123 +101,85 @@ static int cros_chctl_configure_ec(struct cros_chctl_priv *priv)
- 	return cros_chctl_send_charge_control_cmd(priv->cros_ec, priv->cmd_version, &req);
- }
- 
--static struct cros_chctl_priv *cros_chctl_attr_to_priv(struct attribute *attr,
--						       enum CROS_CHCTL_ATTR idx)
--{
--	struct device_attribute *dev_attr = container_of(attr, struct device_attribute, attr);
--
--	return container_of(dev_attr, struct cros_chctl_priv, device_attrs[idx]);
--}
-+static const enum power_supply_property cros_chctl_psy_ext_props[] = {
-+	POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR, /* has to be first */
-+	POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD,
-+	POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD,
-+};
- 
--static ssize_t cros_chctl_store_threshold(struct device *dev, struct cros_chctl_priv *priv,
--					  int is_end_threshold, const char *buf, size_t count)
-+static int cros_chctl_psy_ext_get_prop(struct power_supply *psy,
-+				       const struct power_supply_ext *ext,
-+				       void *data,
-+				       enum power_supply_property psp,
-+				       union power_supply_propval *val)
- {
--	int ret, val;
-+	struct cros_chctl_priv *priv = data;
- 
--	ret = kstrtoint(buf, 10, &val);
--	if (ret < 0)
--		return ret;
--	if (val < 0 || val > 100)
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-+		val->intval = priv->current_start_threshold;
-+		return 0;
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-+		val->intval = priv->current_end_threshold;
-+		return 0;
-+	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
-+		val->intval = priv->current_behaviour;
-+		return 0;
-+	default:
- 		return -EINVAL;
--
--	if (is_end_threshold) {
--		if (val <= priv->current_start_threshold)
--			return -EINVAL;
--		priv->current_end_threshold = val;
--	} else {
--		if (val >= priv->current_end_threshold)
--			return -EINVAL;
--		priv->current_start_threshold = val;
- 	}
--
--	if (priv->current_behaviour == POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO) {
--		ret = cros_chctl_configure_ec(priv);
--		if (ret < 0)
--			return ret;
--	}
--
--	return count;
- }
- 
--static ssize_t charge_control_start_threshold_show(struct device *dev,
--						   struct device_attribute *attr,
--						   char *buf)
--{
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_START_THRESHOLD);
- 
--	return sysfs_emit(buf, "%u\n", (unsigned int)priv->current_start_threshold);
--}
--
--static ssize_t charge_control_start_threshold_store(struct device *dev,
--						    struct device_attribute *attr,
--						    const char *buf, size_t count)
-+static int cros_chctl_psy_ext_set_prop(struct power_supply *psy,
-+				       const struct power_supply_ext *ext,
-+				       void *data,
-+				       enum power_supply_property psp,
-+				       const union power_supply_propval *val)
- {
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_START_THRESHOLD);
--
--	return cros_chctl_store_threshold(dev, priv, 0, buf, count);
--}
--
--static ssize_t charge_control_end_threshold_show(struct device *dev, struct device_attribute *attr,
--						 char *buf)
--{
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_END_THRESHOLD);
--
--	return sysfs_emit(buf, "%u\n", (unsigned int)priv->current_end_threshold);
--}
--
--static ssize_t charge_control_end_threshold_store(struct device *dev, struct device_attribute *attr,
--						  const char *buf, size_t count)
--{
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_END_THRESHOLD);
--
--	return cros_chctl_store_threshold(dev, priv, 1, buf, count);
--}
--
--static ssize_t charge_behaviour_show(struct device *dev, struct device_attribute *attr, char *buf)
--{
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
--
--	return power_supply_charge_behaviour_show(dev, EC_CHARGE_CONTROL_BEHAVIOURS,
--						  priv->current_behaviour, buf);
--}
--
--static ssize_t charge_behaviour_store(struct device *dev, struct device_attribute *attr,
--				      const char *buf, size_t count)
--{
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(&attr->attr,
--							       CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR);
-+	struct cros_chctl_priv *priv = data;
- 	int ret;
- 
--	ret = power_supply_charge_behaviour_parse(EC_CHARGE_CONTROL_BEHAVIOURS, buf);
--	if (ret < 0)
--		return ret;
--
--	priv->current_behaviour = ret;
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD:
-+	case POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD:
-+		if (val->intval < 0 || val->intval > 100)
-+			return -EINVAL;
- 
--	ret = cros_chctl_configure_ec(priv);
--	if (ret < 0)
--		return ret;
-+		if (psp == POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD) {
-+			if (val->intval <= priv->current_start_threshold)
-+				return -EINVAL;
-+			priv->current_end_threshold = val->intval;
-+		} else {
-+			if (val->intval >= priv->current_end_threshold)
-+				return -EINVAL;
-+			priv->current_start_threshold = val->intval;
-+		}
-+
-+		if (priv->current_behaviour == POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO) {
-+			ret = cros_chctl_configure_ec(priv);
-+			if (ret < 0)
-+				return ret;
-+		}
- 
--	return count;
-+		return 0;
-+	case POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR:
-+		priv->current_behaviour = val->intval;
-+		ret = cros_chctl_configure_ec(priv);
-+		if (ret < 0)
-+			return ret;
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
- }
- 
--static umode_t cros_chtl_attr_is_visible(struct kobject *kobj, struct attribute *attr, int n)
-+static int cros_chctl_psy_prop_is_writeable(struct power_supply *psy,
-+					    const struct power_supply_ext *ext,
-+					    void *data,
-+					    enum power_supply_property psp)
- {
--	struct cros_chctl_priv *priv = cros_chctl_attr_to_priv(attr, n);
--
--	if (priv->cmd_version < 2) {
--		if (n == CROS_CHCTL_ATTR_START_THRESHOLD)
--			return 0;
--		if (n == CROS_CHCTL_ATTR_END_THRESHOLD)
--			return 0;
--	}
--
--	return attr->mode;
-+	return true;
- }
- 
- static int cros_chctl_add_battery(struct power_supply *battery, struct acpi_battery_hook *hook)
-@@ -241,7 +190,7 @@ static int cros_chctl_add_battery(struct power_supply *battery, struct acpi_batt
- 		return 0;
- 
- 	priv->hooked_battery = battery;
--	return device_add_group(&battery->dev, &priv->group);
-+	return power_supply_register_extension(battery, &priv->psy_ext, priv);
- }
- 
- static int cros_chctl_remove_battery(struct power_supply *battery, struct acpi_battery_hook *hook)
-@@ -249,7 +198,7 @@ static int cros_chctl_remove_battery(struct power_supply *battery, struct acpi_b
- 	struct cros_chctl_priv *priv = container_of(hook, struct cros_chctl_priv, battery_hook);
- 
- 	if (priv->hooked_battery == battery) {
--		device_remove_group(&battery->dev, &priv->group);
-+		power_supply_unregister_extension(battery, &priv->psy_ext);
- 		priv->hooked_battery = NULL;
- 	}
- 
-@@ -275,7 +224,6 @@ static int cros_chctl_probe(struct platform_device *pdev)
- 	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
- 	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
- 	struct cros_chctl_priv *priv;
--	size_t i;
- 	int ret;
- 
- 	ret = cros_chctl_fwk_charge_control_versions(cros_ec);
-@@ -305,23 +253,20 @@ static int cros_chctl_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "Command version: %u\n", (unsigned int)priv->cmd_version);
- 
- 	priv->cros_ec = cros_ec;
--	priv->device_attrs[CROS_CHCTL_ATTR_START_THRESHOLD] =
--		(struct device_attribute)__ATTR_RW(charge_control_start_threshold);
--	priv->device_attrs[CROS_CHCTL_ATTR_END_THRESHOLD] =
--		(struct device_attribute)__ATTR_RW(charge_control_end_threshold);
--	priv->device_attrs[CROS_CHCTL_ATTR_CHARGE_BEHAVIOUR] =
--		(struct device_attribute)__ATTR_RW(charge_behaviour);
--	for (i = 0; i < _CROS_CHCTL_ATTR_COUNT; i++) {
--		sysfs_attr_init(&priv->device_attrs[i].attr);
--		priv->attributes[i] = &priv->device_attrs[i].attr;
--	}
--	priv->group.is_visible = cros_chtl_attr_is_visible;
--	priv->group.attrs = priv->attributes;
- 
- 	priv->battery_hook.name = dev_name(dev);
- 	priv->battery_hook.add_battery = cros_chctl_add_battery;
- 	priv->battery_hook.remove_battery = cros_chctl_remove_battery;
- 
-+	priv->psy_ext.properties = cros_chctl_psy_ext_props;
-+	priv->psy_ext.num_properties = ARRAY_SIZE(cros_chctl_psy_ext_props);
-+	if (priv->cmd_version == 1)
-+		priv->psy_ext.num_properties = 1;
-+	priv->psy_ext.charge_behaviours = EC_CHARGE_CONTROL_BEHAVIOURS;
-+	priv->psy_ext.get_property = cros_chctl_psy_ext_get_prop;
-+	priv->psy_ext.set_property = cros_chctl_psy_ext_set_prop;
-+	priv->psy_ext.property_is_writeable = cros_chctl_psy_prop_is_writeable;
-+
- 	priv->current_behaviour = POWER_SUPPLY_CHARGE_BEHAVIOUR_AUTO;
- 	priv->current_start_threshold = 0;
- 	priv->current_end_threshold = 100;
-
--- 
-2.47.0
-
+>
+> Suren Baghdasaryan (4):
+>   mm: introduce vma_start_read_locked{_nested} helpers
+>   mm: move per-vma lock into vm_area_struct
+>   mm: replace rw_semaphore with atomic_t in vma_lock
+>   mm: move lesser used vma_area_struct members into the last cacheline
+>
+>  include/linux/mm.h        | 163 +++++++++++++++++++++++++++++++++++---
+>  include/linux/mm_types.h  |  59 +++++++++-----
+>  include/linux/mmap_lock.h |   3 +
+>  kernel/fork.c             |  50 ++----------
+>  mm/init-mm.c              |   2 +
+>  mm/userfaultfd.c          |  14 ++--
+>  6 files changed, 205 insertions(+), 86 deletions(-)
+>
+>
+> base-commit: 931086f2a88086319afb57cd3925607e8cda0a9f
+> --
+> 2.47.0.277.g8800431eea-goog
+>
 
