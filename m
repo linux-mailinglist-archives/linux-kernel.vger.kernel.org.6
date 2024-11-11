@@ -1,86 +1,146 @@
-Return-Path: <linux-kernel+bounces-404154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B03F9C3FE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:52:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14709C3FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3017E286053
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B381F22D27
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C2D19E82A;
-	Mon, 11 Nov 2024 13:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B136619E96D;
+	Mon, 11 Nov 2024 13:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBxND8Qu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA5O1gyQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622EE19C552;
-	Mon, 11 Nov 2024 13:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1401B19C552;
+	Mon, 11 Nov 2024 13:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731333130; cv=none; b=G7jicl+u+V5+l+59RtwN+KLQ5+hKOqrDCzjM6naf6wC38LLF6pTjscVKXGbfY0D5WnibB2QsiFFrqZhdRsQ4qZ7jJcxFaHWmrfW8Kt/kHr2bw/l+bI8xwbqup/XaOy6cl7B6xY3Rvce96h4I0xVWaT9M8fd+lxSkd/vbPCDgN74=
+	t=1731333201; cv=none; b=ZqFn/cbRmGux40+oyYV5C1xYXhEIgTXZZhpLuFC4TN6OYY73TkrXmnYXrX0vgNAWWrByMJIqoPZvADG+OcIazJGbbnWHDyn3Y3zE3puVL+DYLw1YG90qfpGao25aLNCJZhWLMOpFLuejut2eB8nYuSX/6/j/YVEEZF0kze9bS6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731333130; c=relaxed/simple;
-	bh=QxF/kLnSp35vJXvisUEwnI1LBa6wyV6iJAHjZxY0B2U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F8VQ8XGw/sIP9GJRVLoKKwA9bcAg8ru2neTXiM97BRzN0jWgRHzod2SVClXZvQpNRLdYlehVdrKoKhSl8e3bgi+UedGC+8/uRNHcQuSjBjaY6qiHton1sdGUFcGKQglkp24vxZrw1hTkuSY5Rqxcu1gMdeAOGr087WYsM1M8RpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBxND8Qu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C33C7C4CED5;
-	Mon, 11 Nov 2024 13:52:06 +0000 (UTC)
+	s=arc-20240116; t=1731333201; c=relaxed/simple;
+	bh=ge5oa0wYzEMJ7QB+lZ6ggej9jKDVWgoVDWlv5rzge9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PhAk1yr6pZ4kJGFpDHcUmJzsungf1hS5ULTBYJ7ps/CSVCm19f6ZbfTCRT4/ZMaSM5i3xesNecL2+DzIYoIHFQXxDf+5TSdgvvp3Q/+ruTZyXi57R1GKMY/O2qgQkr0GVhZiml0YSS48Wl3T9/rfaTzFtOyGR/x+sWLdH+5JGqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA5O1gyQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE7E2C4CECF;
+	Mon, 11 Nov 2024 13:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731333129;
-	bh=QxF/kLnSp35vJXvisUEwnI1LBa6wyV6iJAHjZxY0B2U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=cBxND8Qu9cTGbaT7QfeYp70ZWP2tXTwzTvXIHRapuEG0Ql+UwTfi/gg7nh5mms4jE
-	 QEjOCra/die2mSlP2N7KOW34mEQPiZJzZYUF849N0M/crm3qoJrRTzeofoQ9Rf1SPl
-	 hErSIaRuKagLCGffIyjTSD6oy/Ig5hEtxexOdwENYVKF99Ht/efEgfEBz6k6Wf2mHp
-	 F1GPtQXkEdc40wtc5WuPVcY5mM+CgSnEt+EcGjkH1UV/73cvWbjA5p4IyyCVG5uoIb
-	 d6W9Nf7bx6i4HF/LsAZwxty8imOk2T+LUYz1brFyZLgM9Gyn13nVu3GSgVZPOYXq66
-	 rMjkX0WRj2eZw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Dirk Behme" <dirk.behme@de.bosch.com>
-Cc: "Alistair Francis" <alistair@alistair23.me>,
-  <linux-kernel@vger.kernel.org>,  <boqun.feng@gmail.com>,
-  <me@kloenk.dev>,  <benno.lossin@proton.me>,  <tmgross@umich.edu>,
-  <aliceryhl@google.com>,  <gary@garyguo.net>,  <ojeda@kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <alex.gaynor@gmail.com>,
-  <alistair.francis@wdc.com>,  <bjorn3_gh@protonmail.com>,
-  <alistair23@gmail.com>
-Subject: Re: [PATCH v3 00/11] rust: bindings: Auto-generate inline static
- functions
-In-Reply-To: <9369b621-47d1-4967-8a68-874bb602deeb@de.bosch.com> (Dirk Behme's
-	message of "Mon, 11 Nov 2024 14:23:07 +0100")
-References: <20241111112615.179133-1-alistair@alistair23.me>
-	<bR_L15e11CHC0AS4d41vkbo-whYRfTKoU_htcjK8F_inG0Y5HQslqOWHOLBeNTCYqsgSqOtHXeoOj4ifT5ndJA==@protonmail.internalid>
-	<9369b621-47d1-4967-8a68-874bb602deeb@de.bosch.com>
-Date: Mon, 11 Nov 2024 14:51:56 +0100
-Message-ID: <87msi5swsj.fsf@kernel.org>
+	s=k20201202; t=1731333200;
+	bh=ge5oa0wYzEMJ7QB+lZ6ggej9jKDVWgoVDWlv5rzge9E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YA5O1gyQh3kljoc/vTndzAudVh7CVjwqrznl4tjWw+sqAaO/LLIHElV1SQhhU84fj
+	 YL1FSkeoCXx3frSZHkns7PtW0sjBiUYcL3zojU3q4Rsb/Li1YJTqXthbhaZmvaVJNe
+	 NJjMaNWrneeLWHvfh8kyPSZBtU33OiuO0FdHevrcylMKN3PZVBFYCdkSTKGP2dX4j+
+	 g2oGkXJkBtC/GiwJp3gjJ/pRNZvlaRWap0PkEI8rd83GYidhwuP+SGpJPqXW11nezi
+	 9zIDMVCkPKfVtpyokm2+mTPzeykcjQ1vjKq6HlgjO9SEBTqvbb0kuVXNf5LRBfcRzg
+	 0cdTK+ay0TnTw==
+Message-ID: <f28bf97c-783d-489c-9549-0dd0f576497e@kernel.org>
+Date: Mon, 11 Nov 2024 15:53:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] net: ti: icssg-prueth: Fix clearing of
+ IEP_CMP_CFG registers during iep_init
+To: Meghana Malladi <m-malladi@ti.com>, vigneshr@ti.com, m-karicheri2@ti.com,
+ jan.kiszka@siemens.com, javier.carrasco.cruz@gmail.com,
+ jacob.e.keller@intel.com, horms@kernel.org, diogo.ivo@siemens.com,
+ pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+ davem@davemloft.net, andrew+netdev@lunn.ch
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
+References: <20241106074040.3361730-1-m-malladi@ti.com>
+ <20241106074040.3361730-3-m-malladi@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241106074040.3361730-3-m-malladi@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"Dirk Behme" <dirk.behme@de.bosch.com> writes:
+Hi,
 
->
-> It builds for me now and the htmldocs were built as well.
->
-> Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
+On 06/11/2024 09:40, Meghana Malladi wrote:
+> When ICSSG interfaces are brought down and brought up again, the
+> pru cores are shut down and booted again, flushing out all the memories
+> and start again in a clean state. Hence it is expected that the
+> IEP_CMP_CFG register needs to be flushed during iep_init() to ensure
+> that the existing residual configuration doesn't cause any unusual
+> behavior. If the register is not cleared, existing IEP_CMP_CFG set for
+> CMP1 will result in SYNC0_OUT signal based on the SYNC_OUT register values.
+> 
+> After bringing the interface up, calling PPS enable doesn't work as
+> the driver believes PPS is already enabled, (iep->pps_enabled is not
+> cleared during interface bring down) and driver  will just return true
+> even though there is no signal. Fix this by setting the iep->pps_enable
+> and iep->perout_enable flags to false during the link down.
+> 
+> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> ---
+>  drivers/net/ethernet/ti/icssg/icss_iep.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+> index 5d6d1cf78e93..03abc25ced12 100644
+> --- a/drivers/net/ethernet/ti/icssg/icss_iep.c
+> +++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+> @@ -195,6 +195,12 @@ static void icss_iep_enable_shadow_mode(struct icss_iep *iep)
+>  
+>  	icss_iep_disable(iep);
+>  
+> +	/* clear compare config */
+> +	for (cmp = IEP_MIN_CMP; cmp < IEP_MAX_CMP; cmp++) {
+> +		regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+> +				   IEP_CMP_CFG_CMP_EN(cmp), 0);
+> +	}
+> +
 
-Does it build for you if you have a clean tree? I think there is a
-dependency issue in the makefile, as indicated in another email.
+A bit later we are clearing compare status. Can clearing CMP be done in same for loop?
 
+>  	/* disable shadow mode */
+>  	regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+>  			   IEP_CMP_CFG_SHADOW_EN, 0);
+> @@ -778,6 +784,10 @@ int icss_iep_exit(struct icss_iep *iep)
+>  		ptp_clock_unregister(iep->ptp_clock);
+>  		iep->ptp_clock = NULL;
+>  	}
+> +
+> +	iep->pps_enabled = false;
+> +	iep->perout_enabled = false;
+> +
 
-Best regards,
-Andreas Hindborg
+But how do you keep things in sync with user space?
+User might have enabled PPS or PEROUT and then put SLICE0 interface down.
+Then if SLICE0 is brought up should PPS/PEROUT keep working like before?
+We did call ptp_clock_unregister() so it should unregister the PPS as well.
+What I'm not sure is if it calls the ptp->enable() hook to disable the PPS/PEROUT.
 
+If yes then that should take care of the flags as well.
 
+If not then you need to call the relevant hooks explicitly but just after
+ptp_clock_unregister().
+e.g.
+	if (iep->pps_enabled)
+		icss_iep_pps_enable(iep, false);
+	else if (iep->perout_enabled)
+		icss_iep_perout_enable(iep, NULL, false);
 
+But this means that user has to again setup PPS/PEROUT.	
 
+>  	icss_iep_disable(iep);
+>  
+>  	return 0;
+
+-- 
+cheers,
+-roger
 
