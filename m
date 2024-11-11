@@ -1,95 +1,81 @@
-Return-Path: <linux-kernel+bounces-404128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEFE9C3F78
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:22:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449999C3F7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:23:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B6921F23477
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:22:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 980D4B2329E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0AA19E802;
-	Mon, 11 Nov 2024 13:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8A719D075;
+	Mon, 11 Nov 2024 13:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QWTs67rn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5D+F0Hbg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QWTs67rn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5D+F0Hbg"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="j+NXb3nK"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2043.outbound.protection.outlook.com [40.107.103.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AF919DF61;
-	Mon, 11 Nov 2024 13:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731331337; cv=none; b=fgGwrPMcyq7e5ujLpsb01F2+Tyk6yzMiLtJGKZnV+7dAI1cNNadx47qX3APHALlCnkhFnIYGf/CZMserbkaH/46A6mtt3hcj6n0/vNGZSsDjdMPtBzJayZmSN2XQ+gZLfIkObEaY5QWC5InpcwQ64h4rS/r/WcbrbKpkAiaqlco=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731331337; c=relaxed/simple;
-	bh=k6cKkce3ms0d6yA2QTVALSgrxPnR+Aggth2Cprl7rUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cEuEy0jljzDhESIgYJ7dCO/NiKQ0jjsCbgAAg0Xfz43/P8foMteL9FziYdYlGBPFemcv3nPtKcp7KJiue54NVD4I7nRYwp6UuiUanYD+vX31bgI9AfF7Ldf1UqHvK0kpWHle0QAI9B5CiBOYBTqIq2ZbCceMdrRrzqI5DQ78adg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QWTs67rn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5D+F0Hbg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QWTs67rn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5D+F0Hbg; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8047C1F38E;
-	Mon, 11 Nov 2024 13:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731331333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ocKgn5B0DQMYE4A7pbFqcWfEQbriCAiTW18OimNY0uA=;
-	b=QWTs67rn59qHWYZmB/y98/zI45cOFrxdO6wpjY8i+fSgjWFO5UoEVCEzutaW4li41wMfAz
-	WAF0M6sY9a2xK+NMXiDoPfnJU8Xr7+kRN6uCnB/brsk7+o5GBb8abcXTddJMKyTTw+i14x
-	2BRL9k21dVGxD9Xl9cGF44Yb8V5porI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731331333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ocKgn5B0DQMYE4A7pbFqcWfEQbriCAiTW18OimNY0uA=;
-	b=5D+F0HbgJjBs7INHsXkLNgHB/XKq/5siWAV8IP13QYptxTlHIwxTZeNV42zbNY7z1RPsSc
-	40b1D/AW/nZUDPCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=QWTs67rn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=5D+F0Hbg
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731331333; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ocKgn5B0DQMYE4A7pbFqcWfEQbriCAiTW18OimNY0uA=;
-	b=QWTs67rn59qHWYZmB/y98/zI45cOFrxdO6wpjY8i+fSgjWFO5UoEVCEzutaW4li41wMfAz
-	WAF0M6sY9a2xK+NMXiDoPfnJU8Xr7+kRN6uCnB/brsk7+o5GBb8abcXTddJMKyTTw+i14x
-	2BRL9k21dVGxD9Xl9cGF44Yb8V5porI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731331333;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ocKgn5B0DQMYE4A7pbFqcWfEQbriCAiTW18OimNY0uA=;
-	b=5D+F0HbgJjBs7INHsXkLNgHB/XKq/5siWAV8IP13QYptxTlHIwxTZeNV42zbNY7z1RPsSc
-	40b1D/AW/nZUDPCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48CDD137FB;
-	Mon, 11 Nov 2024 13:22:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BN1nEAUFMmfqUQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 11 Nov 2024 13:22:13 +0000
-Message-ID: <b4d28b98-a85c-4095-9c1b-8ebdfa13861c@suse.de>
-Date: Mon, 11 Nov 2024 14:22:12 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9982215575E;
+	Mon, 11 Nov 2024 13:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731331415; cv=fail; b=Tzi6ieiWRhmRG6+TMpHv4Zvkqw/6FqqjuwO6qdS15cLkq4QnzNDAZhm/4bS5m+9L0IIuuVluVG3G1Ph0YjYdoHMStx+NwcWquydaPHA6/Ma6f/ZoKIJf/Vpl0Opz5NC4isfP3kBTs4GdhTQuHBrODBKz8wMyH3AIXs7OfuVOyFc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731331415; c=relaxed/simple;
+	bh=jejUd6cZBhnxuSn3GApacZEh9MeW1jJGd+6iV9XJxNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uLtulrOJ6Euei09DtLYdczKBqCTKyDkqN4dwHBY/E5tYOmhpfNRbsunv6ysfX9UTyE88PFSvOZFoiekl/0T4DshNhK7IRsjXXiNakbFcHR6ly718WTTtNzdN8YGOsBl62NJasCA0kxYieUi/GZEvDmVweR+KQDNDw1/YMiFscDY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=j+NXb3nK; arc=fail smtp.client-ip=40.107.103.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N+HrWVu7DfoJCXiRDSMoHMQ92Wl3ZCnR3g6KSImmNDHpzZ3p6JT6O1P8n905lal52VIFnDrUtKpcIA+LZ1sAF0xcgGoAsWEffKXLZ/2AOjlNkjnOqSzWYmSaxdYPaVT1xe1fbba8j3iAf9Db02C4w2m3CmJtJA2QqH8hDQMGA//S4sKsGswsJg6Vv6Ekf8XMFrM7MrtbQKPWfuEH/kL/GDtZ4Dd02UaUHY5GcLbNSDyT8jDAlKRUINKtS6t7uDq5FHvREdyriES02fA/IufzwtgK/eyiKMTjueWd51GHDI9UeXmtsfXnUJgVfL60Mp/AHgDboxD+ikT+xXuN38/sIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TmA9+7tOsOLmql2C523VhIBQhpLaxcwkiLy6O/QmM+I=;
+ b=Ksb+rh7fgSKk6JmVQRJE0HjmSn2aUgdr7sDlRh+rhxlXxVD4aEJhGPZWamGmfGR/hYLfx4ui4QKvz7nKeng+IiRgfNZX3zeiPuHV8MQn/R+BCeAeEXzH4lQzly8qpWzQMoMAswKgWl/EqoUJiRz00qR0XVWUthD/vk+zFcdvu/XQ9mxC9rvfKiAktzDbq5MvWn+VXDK5TfnnSZ+dJ747kFe50Zs2t2ir544eG0PpGDYnjOXFRrLWwxm0oL6jGI7NfOKIKEcuV93dfubnS4pXSRE26CjHlTcv8oBcdE8ZQasPKNfXIxdL5/wt63DueqQejAKN0UuC/ZLth0ylAqzqVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=alistair23.me smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TmA9+7tOsOLmql2C523VhIBQhpLaxcwkiLy6O/QmM+I=;
+ b=j+NXb3nKEFObkB/rAn3d8wf3OGo9hxpFUfPjTBbbyuGhlZE4xLJzXBgjp6LR97GJ0KflL0wDgKwea8Ut/bdiHXcqy9vtPdU2sWEC41VExEadAFi25KkEzltQdvFDbHOWZTPsC5ftMlLhPPVyfffbQOM6u+djLywwXuMcBWHikDkUo0DWlJ69V+OD/lQzfUyU/pTV99K/m7Fx0tE46jBxZJRNpDzJPYroQO0kZnNBHJPVm1eyxAWSznmioXeWMrCiyVf40AYKIfgCmeuMZruS2OXPpTK8hiVu9sQHg5Z7DZU7/aV3sJk2JoAd0jzrPaGQLgTOz8tgoCU/nrr10FN9IQ==
+Received: from AM9P192CA0025.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:21d::30)
+ by DU0PR10MB7408.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:443::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.14; Mon, 11 Nov
+ 2024 13:23:28 +0000
+Received: from AMS1EPF0000004C.eurprd04.prod.outlook.com
+ (2603:10a6:20b:21d:cafe::68) by AM9P192CA0025.outlook.office365.com
+ (2603:10a6:20b:21d::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29 via Frontend
+ Transport; Mon, 11 Nov 2024 13:23:28 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ AMS1EPF0000004C.mail.protection.outlook.com (10.167.16.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Mon, 11 Nov 2024 13:23:28 +0000
+Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 11 Nov
+ 2024 14:23:18 +0100
+Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2001.de.bosch.com
+ (10.139.217.202) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 11 Nov
+ 2024 14:23:18 +0100
+Message-ID: <9369b621-47d1-4967-8a68-874bb602deeb@de.bosch.com>
+Date: Mon, 11 Nov 2024 14:23:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,131 +83,157 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: drm/fbdev-dma: regression
-To: Thorsten Leemhuis <regressions@leemhuis.info>,
- =?UTF-8?Q?Nuno_Gon=C3=A7alves?= <nunojpg@gmail.com>
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
- dri-devel@lists.freedesktop.org, LKML <linux-kernel@vger.kernel.org>,
- Linux Framebuffer <linux-fbdev@vger.kernel.org>
-References: <20220621104617.8817-1-tzimmermann@suse.de>
- <CAEXMXLR55DziAMbv_+2hmLeH-jP96pmit6nhs6siB22cpQFr9w@mail.gmail.com>
- <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
+Subject: Re: [PATCH v3 00/11] rust: bindings: Auto-generate inline static
+ functions
+To: Alistair Francis <alistair@alistair23.me>, <linux-kernel@vger.kernel.org>,
+	<boqun.feng@gmail.com>, <a.hindborg@kernel.org>, <me@kloenk.dev>,
+	<benno.lossin@proton.me>, <tmgross@umich.edu>, <aliceryhl@google.com>,
+	<gary@garyguo.net>, <ojeda@kernel.org>, <rust-for-linux@vger.kernel.org>,
+	<alex.gaynor@gmail.com>, <alistair.francis@wdc.com>,
+	<bjorn3_gh@protonmail.com>
+CC: <alistair23@gmail.com>
+References: <20241111112615.179133-1-alistair@alistair23.me>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <d2562174-eebe-4462-9a9a-03936b3bcf89@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Dirk Behme <dirk.behme@de.bosch.com>
+In-Reply-To: <20241111112615.179133-1-alistair@alistair23.me>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 8047C1F38E
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[leemhuis.info,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF0000004C:EE_|DU0PR10MB7408:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2c7869f4-9265-4000-711a-08dd02540763
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UG5sMnRkN2hqV0ZLQTZvLzVMV3pNR2ZCMVNHaW5IMWVWZmVwd2FxVXdBWGdv?=
+ =?utf-8?B?bHlnaGlYL2RUK0FDM2NFOW9SY0VoUFowVEx5MlA3NHhISkhYcEpFc1lWWkJQ?=
+ =?utf-8?B?azFUOWdHbVB6bHNOVHViTXRVY2oxcTFaR1BlU2tBc1dmQlpuTzluTC9RenJk?=
+ =?utf-8?B?NUNBK0tYKy83NHdKRXVLemVEZktkMUR4ZitmYldrcVk4Y0p3SmZMNDhLcVBV?=
+ =?utf-8?B?Q2wzT2FZcWxlS0VPLzFWR0NPWlBXMXA0QWg2MWprZENPMURBcnhObDFEdVlE?=
+ =?utf-8?B?VnptbTlTNnJzZVZ4a2daS0piYldBZ2R2NFBseDVWaVZOMEI4RXBsQXJ1ME42?=
+ =?utf-8?B?UDBWcyt5dUo5TUU3NjdOZEVyMWlLKzM1VUZCZDNNdTVkdW1Udkd6dU84L0Fu?=
+ =?utf-8?B?SkkxNEp0cE9YbXF0VUVrbktTcXVKWU04VEx4LzRjaDlMNVhYRkI0S3lsN1VN?=
+ =?utf-8?B?OEMyZmEzVnB4aEY3WndXQUx3M2JXSUNLRjRkaitiLzJMdGdaalJYejExRkxa?=
+ =?utf-8?B?bkFFb0Y0UUx0MC9Va0hYMm9rODZoSTcwRWIwbWRwUWJ5YndqTWpxTTA1T1ps?=
+ =?utf-8?B?dnNIUGx4LzI1RGhERWkyR2xQTy9GSk8vRUhoNG4wb0xzaWhQNktsdVY0RDFu?=
+ =?utf-8?B?blNCSUJUUkhKM1NpT2RsSURLMzdCaXQxbUlGak1WRVFkQ1Y0S2JmV1NnSW8w?=
+ =?utf-8?B?eDNjbHBPNVlrN09SV09BQXZaaE90R1ZnQnd0V2FBdXBrWlZINTYrWFNpOVVG?=
+ =?utf-8?B?eFFsd0xhNzlPSmlNcExhL2hYWlIwMU11OGpBQzR0ZURSQitrTDg5cm5BZEVa?=
+ =?utf-8?B?ZmJiVHhBUXZEVXNHakprT1BHOWcxdXJLekp4UmVTUU1CcUJOUWMraFBSbEV0?=
+ =?utf-8?B?TWh5K1AxQUVJWUl4QzU0WDBQenNwM3JnWldJZytDMlZJRE9nbzVQV2JWeUhC?=
+ =?utf-8?B?Y1dGMndzd0lRZS9SZ2JTR1I0NDloMHV2ejk1eFNBV2ZxbkpOc3RBKy9aMitS?=
+ =?utf-8?B?YlRFV0FkM1R6V3hSQXVpNHpvR3lkMk1KZXpsYkFmbnZRd3FQQkk3TERoQlhW?=
+ =?utf-8?B?UVlKV3lHNmREK1RPdGllS1c0ZUNsWEo3cFI1c1BsdGVmVHFuOE1KNlBETVRO?=
+ =?utf-8?B?SXdseVRCWEhXR1lIS2QzNFRqRkxyTEtqdXZOOGpiS2lvait3L2I5VDBUUGNU?=
+ =?utf-8?B?TnJLRWp2MSt3Vlg2MXltWVpBcWlHeHcxbXUxY1VuTTYxRFRLMG1jcnpGT3c5?=
+ =?utf-8?B?YkxSM0ttZW93L2FIazVsVGZvVzJoQUxBelVUc1NUNzh0M00xK2kvdUFQYlRP?=
+ =?utf-8?B?d3RIazlVVllyNGpZem1DellkOGtkSXdWaTB4OW1FSWxXSi9hTE9UQ2dUaFVD?=
+ =?utf-8?B?dDJtL3p3MElVbDhjS1Y4MHI1ZC8zSEVkd1pSTVg1REFZR2hWSGFocWdrMm8y?=
+ =?utf-8?B?WmwrWm1kR2h6aDhYa2tsVmtBU3EzdDlMcWpGcllQalR1cDhOb2tTSzJ4R0k2?=
+ =?utf-8?B?VzlvSXJZODdOS1J3M2xMUGFEbkJhMVM3YTdxMFRCVE8xM0dGc3NDeUFkNVhk?=
+ =?utf-8?B?K2xtSzFIRnY2U3ZkYi95aFE5SGZkS2RtWlFHbCtmUTFmT2FWcmhrRS9zMEN5?=
+ =?utf-8?B?TU1Wd0hxeDAzc2hrZ2dHVGw2NzBHSVE4cXZJRWZreTFmaUFuTGxvU0RhNTVY?=
+ =?utf-8?B?Yk9kTUxCNUdjcEtxdVhhdURuRmdYUnBTWnU5dUVieXYrTXVaQi90R0lOc05E?=
+ =?utf-8?B?QU02a3hzZ0kvanE1cSs4cGF2K0doL1dLa0ZTM253bU45RFBZNmswUllJRU9O?=
+ =?utf-8?B?UG4ybkk0UVJZaUdHODQ2eExlY2hOYTdyTW1GaHJXWkZOaURqQ2hNczhucGNq?=
+ =?utf-8?B?VzFqK3pnQ3Y4U1pGTDNNaDR6NVdJZzBvN2RuaW4zODFjNlYrS0F4bEpuK0NT?=
+ =?utf-8?Q?4FqIZUJXrkI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 13:23:28.0319
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c7869f4-9265-4000-711a-08dd02540763
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF0000004C.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB7408
 
-Hi
+On 11.11.2024 12:26, Alistair Francis wrote:
+> The kernel includes a large number of static inline functions that are
+> defined in header files. One example is the crypto_shash_descsize()
+> function which is defined in hash.h as
+> 
+> ```
+> static inline unsigned int crypto_shash_descsize(struct crypto_shash *tfm)
+> {
+>          return tfm->descsize;
+> }
+> ```
+> 
+> bindgen is currently unable to generate bindings to these functions as
+> they are not publically exposed (they are static after all).
+> 
+> The Rust code currently uses rust_helper_* functions, such as
+> rust_helper_alloc_pages() for example to call the static inline
+> functions. But this is a hassle as someone needs to write a C helper
+> function.
+> 
+> Instead we can use the bindgen wrap-static-fns feature. The feature
+> is marked as experimental, but has recently been promoted to
+> non-experimental (depending on your version of bindgen).
+> 
+> By supporting wrap-static-fns we automatically generate a C file called
+> extern.c that exposes the static inline functions, for example like this
+> 
+> ```
+> unsigned int crypto_shash_descsize__extern(struct crypto_shash *tfm) { return crypto_shash_descsize(tfm); }
+> ```
+> 
+> The nice part is that this is auto-generated.
+> 
+> We then also get a bindings_generate_static.rs file with the Rust
+> binding, like this
+> 
+> ```
+> extern "C" {
+>      #[link_name = "crypto_shash_descsize__extern"]
+>      pub fn crypto_shash_descsize(tfm: *mut crypto_shash) -> core::ffi::c_uint;
+> }
+> ```
+> 
+> So now we can use the static inline functions just like normal
+> functions.
+> 
+> There are a bunch of static inline functions that don't work though, because
+> the C compiler fails to build extern.c:
+>   * functions with inline asm generate "operand probably does not match constraints"
+>     errors (rip_rel_ptr() for example)
+>   * functions with bit masks (u32_encode_bits() and friends) result in
+>     "call to ‘__bad_mask’ declared with attribute error: bad bitfield mask"
+>     errors
+> 
+> As well as that any static inline function that calls a function that has been
+> kconfig-ed out will fail to link as the function being called isn't built
+> (mdio45_ethtool_gset_npage for example)
+> 
+> Due to these failures we use a allow-list system (where functions must
+> be manually enabled).
+> 
+> This series adds support for bindgen generating wrappers for inline statics and
+> then converts the existing helper functions to this new method. This doesn't
+> work for C macros, so we can't reamove all of the helper functions, but we
+> can remove most.
+> 
+> v3:
+>   - Change SoB email address to match from address
+>   - Fixup kunit test build failure
+>   - Update Rust binding documentation
 
+Many thanks for the update!
 
-Am 11.11.24 um 12:51 schrieb Thorsten Leemhuis:
-> [CCing a few more lists]
->
-> On 21.10.24 15:03, Nuno Gonçalves wrote:
->> Since 5ab91447aa13b8b98bc11f5326f33500b0ee2c48 and still happening in
->> master, I often get a kernel crash, either a "Unable to handle kernel
->> NULL pointer dereference at virtual address" or "Unable to handle
->> kernel paging request at virtual address".
->>
->> This happens in ARM64 with ili9225 and display size 220, 176. It also
->> happens in another board with a different tinydrm driver and size 320,
->> 240.
->>
->> I've reported in 2022 a bug (that you fixed, thanks!), where it was
->> related to screen size causing non alignment of scanlines and pages.
->> I've not investigated further this time as I was not doing any driver
->> development, but let me know if I can do any further testing.
-> Thx for the report. I might be missing something, but from here it looks
-> like nothing happened. So allow me to ask:
->
-> What's the status? Did anyone look into this? Is this sill happening?
+It builds for me now and the htmldocs were built as well.
 
-I briefly looked into this bug report some time ago.
+Tested-by: Dirk Behme <dirk.behme@de.bosch.com>
 
-The patch in question changes the whole memory management of the 
-affected code. It's also noteworthy that most of it has been reworked 
-for the upcoming v6.12. Maybe this already fixed the problem. Kernel 
-v6.11-rc7 added commit 5a498d4d06d6 ("drm/fbdev-dma: Only install 
-deferred I/O if necessary"), which possibly fixes the problem as well.
+Thanks!
 
-But there's no explicit fix for this problem and I have not seen any 
-other related reports. Any further information is welcome.
+Dirk
 
-Best regards
-Thomas
-
->
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
->
-> #regzbot poke
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
 
 
