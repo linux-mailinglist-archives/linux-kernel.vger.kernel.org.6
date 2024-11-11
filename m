@@ -1,91 +1,60 @@
-Return-Path: <linux-kernel+bounces-403874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE6B9C3C20
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C97B9C3C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14C5C1F221D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69BB1F22239
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86111171E7C;
-	Mon, 11 Nov 2024 10:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494F915B554;
+	Mon, 11 Nov 2024 10:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bT/Knw0q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKHBPUQe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432F62B9A9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A935B183CA2
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731321420; cv=none; b=RFdjtfYqmKp2Hhen2UFHMz2fX2qKN8DcLB/6G8ERW8hCWd3a47WbwfkxvQZyJjpH7Yu8zOC9Uxluaxzex5/0Whw9iPPi/3QM86rw5DUcDA9W0ywziY2/g7PVDAzJ6tHPxFWMLuUStQP+v6T5nQbyJtvCLkY1clBd/hwkPDn69IQ=
+	t=1731321440; cv=none; b=UkrDzJKmeO+5nmEBKZ3ntNyX19bihMvrozQaV5z5kRvLE/GxlV+Oh2c1OF8kyJGMFug5vHX6U9I/2V1HO+aTzCmFsQljd6J/N7+2WQJthoPcXIDJXFyfYoJUy0mABjLhH1YpPAK1Jz275+kP4yH1RvCOqoks8TO1zw5mycqETSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731321420; c=relaxed/simple;
-	bh=bXU6qDTSZfdnUSD+4IE5/jWD0VuzlQrzjYHOoEMWsy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=itOqF7lu/WDswaaSSRo9qG5hWCKNav72utM+pB1xHzNpiHdORcge64f8Ib8QF3oHm0VUXomuW8EoGwI9EmLU8QO7hV3FRFdeD4Lm5N21Z58o3F6AHnMkbmgWs0GLOfjMYN7BWDkEMwD4Fb0ozolrOZskxR1FcXmV/NzSMl00dkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bT/Knw0q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731321417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7mKvZHVqjxIR5wxBFLvC1h4vE0943EV7c7fgh6Pdqfg=;
-	b=bT/Knw0qMYtHifVj/ECTkxqqEaapec7KCm+K9u61YyS3vOcdFtoUyZ247FMfCUXZhz+Bxx
-	wy9YKoDdHuW14G8zIZfZnTG10x2E1pLLdUA6nzzpY5qIaWN1AXuPqYQOpGdRS826MVQyTu
-	DmKgoqlhNUwEwSnltIpesR4KHHumVx8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-eUMn4L1jPgWVy5et_QjfdQ-1; Mon, 11 Nov 2024 05:36:56 -0500
-X-MC-Unique: eUMn4L1jPgWVy5et_QjfdQ-1
-X-Mimecast-MFC-AGG-ID: eUMn4L1jPgWVy5et_QjfdQ
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315d98a873so29585225e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:36:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731321415; x=1731926215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7mKvZHVqjxIR5wxBFLvC1h4vE0943EV7c7fgh6Pdqfg=;
-        b=lfRiNY0ParqEqW5+OO1XBEaOKvDR07XAFEYMDV6oaahI9WtGfl+BNX5oblBEunjP/f
-         r/91tOQlAVHh5Gbb3wro5oHVkGhkVBaTQBYa4hcGL66T0ZETA5+EckrH/PsBLGFHkpLH
-         DL/DamXY7t9IH0Z3gcUL73kDsvHhcMbTzfvU04W5XZX0JHLB7veEKkqFLwkulcMwyEQ/
-         PVqQmPDEpqvtKQZTBNe3JUavOb63KJ/vW4WKaRJTFXoaRNoMfJ2gW/wvPar5oKrckJ34
-         W/D7c6CSeuwn+KRaemr6kQaqgQG7dQhNyU1s9eoB6QiNVbX+VUtZYYZs2YhJyvCmIgKC
-         Lspw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN/NdQ/JEzIZg4Jkm3HXZUds0o4OYXdJ5V0C1O2Ru5IKJUhRhF5I9MiGJlOSqGwU/B8+AK/jUTMP0OGiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzwAv4EmN1atCCRNz/6jJ6Yas7N4WQRQO4F7TfyrKycpjGnQ25
-	8alFGYSWMtZhAsIt9FIA5UG9E0Q1eZnfBB14V1HQYjYJpDUWY+WJ0ZTe1F9BsxUJca//bevRzpu
-	AYa+tUAecHSCrI6x5fJ/vvtVJJf36ycVT+UKbvJwLSKH4IQ1j5Ahg+gftpeFboftnc1Uehw==
-X-Received: by 2002:a05:600c:1c14:b0:431:5871:6c5d with SMTP id 5b1f17b1804b1-432b74fc9c5mr107169775e9.3.1731321413272;
-        Mon, 11 Nov 2024 02:36:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IENwrhfUBy1/5CRb94lG9HyA0lrxWL80J6LxeKnMdJ0WNHabZPawLpABaX1uhN+Wpl3BRk2Yg==
-X-Received: by 2002:a05:600c:1c14:b0:431:5871:6c5d with SMTP id 5b1f17b1804b1-432b74fc9c5mr107169555e9.3.1731321412896;
-        Mon, 11 Nov 2024 02:36:52 -0800 (PST)
-Received: from eisenberg.fritz.box (200116b82d9ab900a46c5a062bbe27a3.dip.versatel-1u1.de. [2001:16b8:2d9a:b900:a46c:5a06:2bbe:27a3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6c11f8sm204440725e9.25.2024.11.11.02.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:36:52 -0800 (PST)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2] x86/platform/intel-mid: Replace deprecated PCI functions
-Date: Mon, 11 Nov 2024 11:36:03 +0100
-Message-ID: <20241111103602.16615-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731321440; c=relaxed/simple;
+	bh=jNP3EEmQCRYGu8RVX1ba7R/suetM+TihlMSotd59zHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=neipiVkaG/YMrm8yleNNAeEgioSQnNBYnbSweP1b9M6W7Qg0lJ5EP/Ytr91DS8PPPrgm9tlrH1RqVLy5KbtSGiQidd78u3/AuhqLdVhfyEtWmRVwIexx+5Hlc95PP+xVyMZdZy8TAFxXpQb41p3azta6jdnQvvlkC3YtR/AnUCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKHBPUQe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86C0C4CED5;
+	Mon, 11 Nov 2024 10:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731321438;
+	bh=jNP3EEmQCRYGu8RVX1ba7R/suetM+TihlMSotd59zHY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jKHBPUQefIWzQGovAC+9QQCjuqX7+leHBXJqOsNjgQVSuF6OiCpOvaHlnDumrDreH
+	 l2Sk+t9JTwk7SoJJPguosMtJAkKG6CDeAekLy7lKKSH2wryDDqNbimLwO//CQB4Idx
+	 a77AcUqMxzLlJSEA78CqGMWrwmOnNSo2qQXNOpky4nQnB1cKdvGWtidhTnv/2C8ocF
+	 f8Rh98ltcCqJBU8Xgvj74dIudRl4SRHRVdVGkf0eW34ixl/xgPLdeqpFll9FUIxJwK
+	 dZICPzDmfB4A46avMMOYb0Li9M5siGskf591O0h/7RUw/2jPKHmj9YjdUcjhENPNE1
+	 C5GEMWT8gvBKw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	linux-phy@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: stm32: work around constant-value overflow assertion
+Date: Mon, 11 Nov 2024 11:37:02 +0100
+Message-Id: <20241111103712.3520611-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,59 +63,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-pcim_iomap_table() and pcim_request_regions() have been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()") and commit d140f80f60358 ("PCI:
-Deprecate pcim_iomap_regions() in favor of pcim_iomap_region()"),
-respectively.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Replace these functions with pcim_iomap_region().
+FIELD_PREP() checks that a constant fits into the available bitfield,
+but if one of the two lookup tables in stm32_impedance_tune() does
+not find a matching entry, the index is out of range, which gcc
+correctly complains about:
 
-Additionally, pass the actual driver name to pcim_iomap_region()
-instead of the previous pci_name(), since the 'name' parameter should
-always reflect which driver owns a region.
+In file included from <command-line>:
+In function 'stm32_impedance_tune',
+    inlined from 'stm32_combophy_pll_init' at drivers/phy/st/phy-stm32-combophy.c:247:9:
+include/linux/compiler_types.h:517:38: error: call to '__compiletime_assert_447' declared with attribute error: FIELD_PREP: value too large for the field
+  517 |  _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+      |                                      ^
+include/linux/bitfield.h:68:3: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+   68 |   BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?  \
+  115 |   __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: "); \
+      |   ^~~~~~~~~~~~~~~~
+drivers/phy/st/phy-stm32-combophy.c:162:8: note: in expansion of macro 'FIELD_PREP'
+  162 |        FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_VSWING, vswing_of));
+      |        ^~~~~~~~~~
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Rework this so the field value gets set inside of the loop and otherwise
+set to zero.
+
+Fixes: 47e1bb6b4ba0 ("phy: stm32: Add support for STM32MP25 COMBOPHY.")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Changes in v2:
-  - (Re-)add dev_err() print message. (Andy)
-  - Add Andy's RB.
----
- arch/x86/platform/intel-mid/pwr.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/phy/st/phy-stm32-combophy.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/platform/intel-mid/pwr.c b/arch/x86/platform/intel-mid/pwr.c
-index 27288d8d3f71..cd7e0c71adde 100644
---- a/arch/x86/platform/intel-mid/pwr.c
-+++ b/arch/x86/platform/intel-mid/pwr.c
-@@ -358,18 +358,18 @@ static int mid_pwr_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return ret;
+diff --git a/drivers/phy/st/phy-stm32-combophy.c b/drivers/phy/st/phy-stm32-combophy.c
+index 765bb34fe358..49e9fa90a681 100644
+--- a/drivers/phy/st/phy-stm32-combophy.c
++++ b/drivers/phy/st/phy-stm32-combophy.c
+@@ -122,6 +122,7 @@ static int stm32_impedance_tune(struct stm32_combophy *combophy)
+ 	u32 max_vswing = imp_lookup[imp_size - 1].vswing[vswing_size - 1];
+ 	u32 min_vswing = imp_lookup[0].vswing[0];
+ 	u32 val;
++	u32 regval;
+ 
+ 	if (!of_property_read_u32(combophy->dev->of_node, "st,output-micro-ohms", &val)) {
+ 		if (val < min_imp || val > max_imp) {
+@@ -129,16 +130,20 @@ static int stm32_impedance_tune(struct stm32_combophy *combophy)
+ 			return -EINVAL;
+ 		}
+ 
+-		for (imp_of = 0; imp_of < ARRAY_SIZE(imp_lookup); imp_of++)
+-			if (imp_lookup[imp_of].microohm <= val)
++		regval = 0;
++		for (imp_of = 0; imp_of < ARRAY_SIZE(imp_lookup); imp_of++) {
++			if (imp_lookup[imp_of].microohm <= val) {
++				regval = FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_OHM, imp_of);
+ 				break;
++			}
++		}
+ 
+ 		dev_dbg(combophy->dev, "Set %u micro-ohms output impedance\n",
+ 			imp_lookup[imp_of].microohm);
+ 
+ 		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+ 				   STM32MP25_PCIEPRG_IMPCTRL_OHM,
+-				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_OHM, imp_of));
++				   regval);
+ 	} else {
+ 		regmap_read(combophy->regmap, SYSCFG_PCIEPRGCR, &val);
+ 		imp_of = FIELD_GET(STM32MP25_PCIEPRG_IMPCTRL_OHM, val);
+@@ -150,16 +155,20 @@ static int stm32_impedance_tune(struct stm32_combophy *combophy)
+ 			return -EINVAL;
+ 		}
+ 
+-		for (vswing_of = 0; vswing_of < ARRAY_SIZE(imp_lookup[imp_of].vswing); vswing_of++)
+-			if (imp_lookup[imp_of].vswing[vswing_of] >= val)
++		regval = 0;
++		for (vswing_of = 0; vswing_of < ARRAY_SIZE(imp_lookup[imp_of].vswing); vswing_of++) {
++			if (imp_lookup[imp_of].vswing[vswing_of] >= val) {
++				regval = FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_VSWING, vswing_of);
+ 				break;
++			}
++		}
+ 
+ 		dev_dbg(combophy->dev, "Set %u microvolt swing\n",
+ 			 imp_lookup[imp_of].vswing[vswing_of]);
+ 
+ 		regmap_update_bits(combophy->regmap, SYSCFG_PCIEPRGCR,
+ 				   STM32MP25_PCIEPRG_IMPCTRL_VSWING,
+-				   FIELD_PREP(STM32MP25_PCIEPRG_IMPCTRL_VSWING, vswing_of));
++				   regval);
  	}
  
--	ret = pcim_iomap_regions(pdev, 1 << 0, pci_name(pdev));
--	if (ret) {
--		dev_err(&pdev->dev, "I/O memory remapping failed\n");
--		return ret;
--	}
--
- 	pwr = devm_kzalloc(dev, sizeof(*pwr), GFP_KERNEL);
- 	if (!pwr)
- 		return -ENOMEM;
- 
-+	pwr->regs = pcim_iomap_region(pdev, 0, "intel_mid_pwr");
-+	ret = PTR_ERR_OR_ZERO(pwr->regs);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Could not request / ioremap I/O-Mem: %d\n", ret);
-+		return ret;
-+	}
-+
- 	pwr->dev = dev;
--	pwr->regs = pcim_iomap_table(pdev)[0];
- 	pwr->irq = pdev->irq;
- 
- 	mutex_init(&pwr->lock);
+ 	return 0;
 -- 
-2.47.0
+2.39.5
 
 
