@@ -1,171 +1,113 @@
-Return-Path: <linux-kernel+bounces-404618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC8B9C45BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:22:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E709C45C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FF82839F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:22:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1802B1F22310
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61951AB6C0;
-	Mon, 11 Nov 2024 19:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29CA1ABEB4;
+	Mon, 11 Nov 2024 19:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6lI8h5u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iIyGccWA"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644A1AA7BA;
-	Mon, 11 Nov 2024 19:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFEC6CDBA;
+	Mon, 11 Nov 2024 19:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731352929; cv=none; b=TXsruPx/9/tKJoAgtUZUFw21CO3LzHepuYVoIslDFO97uLrEQuVI4N7mX4dXX8w9R1AN9h9w1CcY+e9xYkhMO+Zbd4ASWTVZ5bnQ9QTp2KivFpXqYhXMnEzFWXQciN69Chd8PGEYRTrLxZnpcAeoObLJeqCJaqmdSykEzps562I=
+	t=1731353012; cv=none; b=IY07b1W1qp+ZfGl0tyfcf+i+Hz0WcHz7xV9kvMUrN1XjeF+8h0gWrqcc3LdSb8lxJU40XSi7YAJ3oNhTulSuA6qicgivJPWWum4BH6Q2lFAYjL+cc6mNhjofg40DsGXqqtUcQgPqO7VJC89fZ+cYhtQS9+Dons4TpG4lQwm/3OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731352929; c=relaxed/simple;
-	bh=c02hTB78MoPcZ0Dt5j9XxHug0jIQ86D9X3K/ewWt1u8=;
+	s=arc-20240116; t=1731353012; c=relaxed/simple;
+	bh=ANE+3Z4Gyg1tlcJwOYEwYd+wJ7Qoc7aVZQor/12U2H4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qGqvSgnDwAJG9KYpn7MhDjkCIwqWt14Ulaiw7imOT9D0YXkguW/KWKePZhJdXhYwzd6wnusYRWK/K3fjaC+8C5iYFz1yuWfbLIosxFaOyXP2oYpYfiz87AW8K3efkOgr0bhU2ShXNawjrnW3uS/xOM+oVNHcq3DxYPvRsdaV/3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6lI8h5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69464C4CECF;
-	Mon, 11 Nov 2024 19:22:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731352928;
-	bh=c02hTB78MoPcZ0Dt5j9XxHug0jIQ86D9X3K/ewWt1u8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=S6lI8h5ukNNudMSoQPI8TQUJ1r0QO6459lwmnJHoFzf3/OtKRhFMkLf+qbPVPqkqr
-	 BcDkV2J5Cprd7Yh2oR0VV1Bc8VoJAb/9RrBPrWEbfb2zIDhD9DY15g0MH4+pU3SaPQ
-	 ibUxidFVQ4T+6/eswo8zuoVEKnyY0rg+ZeF8Wm+NnzQBZIKc/wIdG0z5vj2qzaU/4R
-	 8YV/kgf3984f+lU4JI/1BP6vuyGkd9FouVsmWV8E149XMRwNAzBdAVtFwKdPr0dnca
-	 6hXPNrwl4mhPKMiSt29oITHt+M4lkckRozsm7/r/JBDPYLuw6wqAWWiWO6xSmQT0so
-	 5tKh0GphHlcwg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 08A5DCE0BA3; Mon, 11 Nov 2024 11:22:08 -0800 (PST)
-Date: Mon, 11 Nov 2024 11:22:07 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUWG8q5z6hCaZ+mfXhb1wDrTpHMH+AjxAfQ1MKJEAf95qb5WA8PUyt0jHvNEZiBU6SkXaAeevZIvqNFjapB5OIQJRJ+l+s1numkMRKtun+T2t7XBKRCD1tWvTWH7FMeUYI7QdCqgBeyb0q7lKU6eaHOkKq3LcCvAGTjLdDEmrLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iIyGccWA; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso3909998b3a.3;
+        Mon, 11 Nov 2024 11:23:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731353010; x=1731957810; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OG1vbKR+3pDFc8nEwm1ZvVOlqvzLfcT/ZGyivy84CdU=;
+        b=iIyGccWAY4R3RFyVcxxbupuVbgu4J8rjhclQKNOmwuwXxFta9lU9oleF/UIaV1Rgg6
+         yuKixM1urp8eZ43rieL7tqB3nO1Q5ZzqeI0giyQuUG4jmD8heZ76O6q4AkNTDDex2iOl
+         5BGi5F5zj7koPky25sUd1HnG++yd07gXdUjMkLlEuIWMOHSrHfhUV0p6Lf+pDbwF9Urk
+         FmTUsS1agk35a0RZ2dAo+OaOxFzarGB7V6Efg+9AyBHvaOPs40QNbX8hVP3q5ruTs5gm
+         Dl1E4RSbQdrVvr+2Vbq6K8ehKUtuQYtYuDCAvELtu8bOTMqKIueYA0PbD8HevEK6onPI
+         AJmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731353010; x=1731957810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OG1vbKR+3pDFc8nEwm1ZvVOlqvzLfcT/ZGyivy84CdU=;
+        b=sYspFL5jl5nfndPUI621Stn84ws5i6z4qBfOzMDFoVkJZ1UGGXGfDfm//SMsboAoyA
+         vrIqBDh+vcor33ZcKoG29Axf31UM2V+9ooAvNJTQ2fq5izgYiL03uNtXHFlLDKDWBfjL
+         aVlG/2mAECJikaq4CEarH+mecpchzZFucbp8lI1DQNN96Da8uB6WsgKw7NEWD/IVh7w7
+         59LfPAToauvqW1dYZo5iF8QT4luEw4bOM8iZeRNtYUmhee24lZPq5gn5N4Y4vVODNtlZ
+         NwqAOyhDP9piHAKvQ6pdVYT8Exa/Ato6jgKZt2y7t0sciLsMkVIOZOU8lyC8Lf55di5F
+         zGlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjC/jWXh/uScC+XO0bmkIsnYMCnrypGn3cvSX4pTuPFp9FfBimvhg8DZSoewHSnwlGnDKOVRBnYRMX2gM=@vger.kernel.org, AJvYcCVip8AdKZyEZ4u5sinqa3tQRIj5Ed+HgM3Moy/PwATXM3xW1K2wB2FUyg8Jfo3COYHRUVSprxlfshDTNbSe@vger.kernel.org, AJvYcCVtzqR93MMyh8tfsn8HTW+ah2nMdEZcCZeyuNC4BRj8cOGAkLBUh016K4Epx/IX1EZFTRY060OJiV6d@vger.kernel.org, AJvYcCW5Wi6nhnxTCCKM7HdN/lqsHJdj78FEtNnPtbC9geVVgoFujTHQ6mCpCo1jpxLjyzo94az+thqLxKYR@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmGgF+E3op88a/y2Ml/wLAjY4pc6RGiQP53I44bIGFptGszNJe
+	n48FB7n8pidu+VQXIk4g2funYLnxCNu498co/i9BY7ESUvx4YxtS
+X-Google-Smtp-Source: AGHT+IEOXb9dMYWoaOSDkxeJwpcmRG5zOxNUAn9W/2lBSOlh8h6XPV9j5KFH5WXswgBqfSkR4E6eqA==
+X-Received: by 2002:a05:6a20:9150:b0:1db:f89a:c6fe with SMTP id adf61e73a8af0-1dc22b00e61mr19740459637.32.1731353010371;
+        Mon, 11 Nov 2024 11:23:30 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f643cddsm7591486a12.54.2024.11.11.11.23.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 11:23:29 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 11 Nov 2024 11:23:28 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] hwmon: tmp108: Add NXP p3t1085 support
+Message-ID: <576b3e70-9c09-4d8e-8b3f-f98a801b20dd@roeck-us.net>
+References: <20241111-p3t1085-v3-0-bff511550aad@nxp.com>
+ <20241111-p3t1085-v3-2-bff511550aad@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+In-Reply-To: <20241111-p3t1085-v3-2-bff511550aad@nxp.com>
 
-On Mon, Nov 11, 2024 at 07:52:50PM +0100, Szőke Benjamin wrote:
-> 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
-> > On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
-> > > From: Benjamin Szőke <egyszeregy@freemail.hu>
-> > > 
-> > > The goal is to fix Linux repository for case-insensitive filesystem,
-> > > to able to clone it and editable on any operating systems.
-> > > 
-> > > Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
-> > > "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
-> > > 
-> > > Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
-> > 
-> > Ummm...  Really?
-> > 
-> > Just out of curiosity, which operating-system/filesystem combination are
-> > you working with?  And why not instead fix that combination to handle
-> > mixed case?
-> > 
-> > 							Thanx, Paul
+On Mon, Nov 11, 2024 at 12:31:59PM -0500, Frank Li wrote:
+> Add compatible string 'nxp,p3t1085' since p3t1085's register layout is the
+> same as tmp108.
 > 
-> Windows and also MacOS is not case sensitive by default. My goal is to
-> improve Linux kernel source-tree, to able to develop it in any operating
-> systems for example via Visual Studio Code extensions/IntelliSense feature
-> or any similar IDE which is usable in any OS.
-
-Why not simply enable case sensitivity on the file tree in which you
-are processing Linux-kernel source code?
-
-For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
-For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
-
-In some cases it might work better to simply run a Linux VM on top of
-Windows or MacOS.
-
-They tell me that webservers already do this, so why not also for
-Linux-kernel source code?
-
-> There were some accepted patches which aim this same goal.
-> https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
-> https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
-
-Fair enough, as it is the maintainer's choice.  Which means that
-their accepting these case-sensitivity changes does not require other
-maintainers to do so.
-
-							Thanx, Paul
-
-> > > ---
-> > >   tools/memory-model/Documentation/locking.txt                    | 2 +-
-> > >   tools/memory-model/Documentation/recipes.txt                    | 2 +-
-> > >   tools/memory-model/litmus-tests/README                          | 2 +-
-> > >   ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
-> > >   4 files changed, 3 insertions(+), 3 deletions(-)
-> > >   rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
-> > > 
-> > > diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
-> > > index 65c898c64a93..42bc3efe2015 100644
-> > > --- a/tools/memory-model/Documentation/locking.txt
-> > > +++ b/tools/memory-model/Documentation/locking.txt
-> > > @@ -184,7 +184,7 @@ ordering properties.
-> > >   Ordering can be extended to CPUs not holding the lock by careful use
-> > >   of smp_mb__after_spinlock():
-> > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > >   	void CPU0(void)
-> > >   	{
-> > >   		spin_lock(&mylock);
-> > > diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-> > > index 03f58b11c252..35996eb1b690 100644
-> > > --- a/tools/memory-model/Documentation/recipes.txt
-> > > +++ b/tools/memory-model/Documentation/recipes.txt
-> > > @@ -159,7 +159,7 @@ lock's ordering properties.
-> > >   Ordering can be extended to CPUs not holding the lock by careful use
-> > >   of smp_mb__after_spinlock():
-> > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > >   	void CPU0(void)
-> > >   	{
-> > >   		spin_lock(&mylock);
-> > > diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-> > > index d311a0ff1ae6..e3d451346400 100644
-> > > --- a/tools/memory-model/litmus-tests/README
-> > > +++ b/tools/memory-model/litmus-tests/README
-> > > @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
-> > >   	spin_lock() sufficient to make ordering apparent to accesses
-> > >   	by a process not holding the lock?
-> > > -Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > >   	As above, but with smp_mb__after_spinlock() immediately
-> > >   	following the spin_lock().
-> > > diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > similarity index 100%
-> > > rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > -- 
-> > > 2.47.0.windows.2
-> > > 
+> The p3t1085 supports I3C interface.
 > 
+> Update document tmp108.rst and Kconfig's help context.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Applied.
+
+Thanks,
+Guenter
 
