@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-404391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CCB9C4339
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:09:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 559269C4332
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 988B1B236F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F5FB22173
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4371A3BDE;
-	Mon, 11 Nov 2024 17:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269AA1A3A80;
+	Mon, 11 Nov 2024 17:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ktTUYju0"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eVRL0dlP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1oudpA56"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF032AF1C;
-	Mon, 11 Nov 2024 17:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7C12AF1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344641; cv=none; b=E12EOHLc7c/HxMy2kbkAEpInvRC8w5tmv1L7spXYAgunqltPJ8+R977KY8Tev06umgm+IuDUqEJy8VZOqRH9wzbUpUBUBuPTSES4yotIkKcOEITNgXhMdRSu7HA/PYP3u40A+zuo/wZBuaDIc9agYqJsONMwm+kpwpcORAMUEVE=
+	t=1731344695; cv=none; b=KgBst2NBN4ARAdQsBTqXGhLWnABKwrhnkvscGdKLzI/ciAdo6uq1ELw7F6+m4R4E77nBg/4lg9YmRttY7aX5l2p7nfiOUUM1nZ14aVMJF6ftgVmPmtadrf8fTYcVctdtX9mNpvLnAsqHMhCo+iG0UtzOVtoB0IVaNi4jWsO/WRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344641; c=relaxed/simple;
-	bh=b42IXBG2ZzuDtvKd6UwelPTGnlk2S+RVLNr2UIVmYdU=;
+	s=arc-20240116; t=1731344695; c=relaxed/simple;
+	bh=/cQSO12xjoXZeCu3GfeRSnSVBAnVS5PQ4CLchFp837o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=upKe52vGTNRTnb3M2PqnYJQFoeLZacPum/wDBVkxAuERI2SmM/EjppEQrf3eo38lLmUF9nw4xsNm/1irtCEMw7Dr7MFKWnb+X1U8zANEJoQOMMMT0CRtPAysRtQeWHR4E63iAcmdIg++H1xlujkCrVpU6ySaxEqI2jDa+r0fWeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ktTUYju0; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ADF6040E0208;
-	Mon, 11 Nov 2024 17:03:55 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id JOYfo92pp0hu; Mon, 11 Nov 2024 17:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731344628; bh=xLT93QlMRWqU3xrzbFjpjjh1ZpElVmgF8uk9lkKXUqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ktTUYju0nUXlbfr4t3QdQAfcCr3lSnLVlc1xvEja1+ywGS/7epdyeoGRyZAe8MKZU
-	 3f9CSavMSBvzUnpGv9eCkMxPuqHXJ3dbTfXGlrnlzgXejM+kgLp1F/XbOGTD82P8t2
-	 nD17ZJbVsCKw+KJ3uQUiro3u+JvZKqSm1jbGnsTsaKT60oNJmPUgnEG60Km9QHHhp7
-	 WbCO4u94+F2+WmtLYFLlRBCrXegywvGPdJVsogD9JX7/KYUg4Df5LeWV/k24qioHu3
-	 ccSXEzbs2Pw01dEnRTJiFDDkTbsiV2unQIJhbjm/7V2ZUXFQXLOCj1hrPUJ1hqLY04
-	 3Tftl8/gnzRsLuPzwKY2lkvhZbyd7EcUWhyyVrJbrmGD6Hhoo1Z8vxAQYbihZxmkXY
-	 uuxI4rlzGCMaREP8u53iwofEqqh0Ys9uTP6FuwcEY4xTiIhotYr7AMvdo6OLDMbLtD
-	 haG9PL/QwvHSkHm2Ktd/FsqiubCPahMMVh+R38bT7prN1PIKW24Ysarl6Z+xsb6s8f
-	 bxPhasG2SDhgzYNE9soMOu/EE5t0SFo2eyBUc+WPGSEQDn+OH1UNQPk0DjRI4RqDRS
-	 1CMV574EOZ9XHcdaY73Sokqt+STVXoDoAMkeWfspCM9tdyx45ekuZlvCvgzYa/vSBu
-	 eZ0R9q4AZwjsOljpl2z58aHA=
-Received: from zn.tnic (p200300ea973a31e1329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31e1:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 83BCA40E0169;
-	Mon, 11 Nov 2024 17:03:37 +0000 (UTC)
-Date: Mon, 11 Nov 2024 18:03:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v14 05/13] x86/sev: Prevent RDTSC/RDTSCP interception for
- Secure TSC enabled guests
-Message-ID: <20241111170327.GCZzI43wnrZoMaGGMk@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-6-nikunj@amd.com>
- <20241111155355.GDZzIok9eRWDPKnmS_@fat_crate.local>
- <638034b7-5c1e-d261-058a-79d795580410@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DxKGD8ISH/6/XJjioftF2FQJ/ooSEePnJ9+utOuSxToxyv7BhR9nzC5JwolFrzyPAuUsLLtMxdJC904wz5h6JjDMorWwYU7R/NHrZ8M1hXceNisjYzr23dxLXJ/TyaN1xdmHIabf6lGyMTAmj0P2yw5N2SV05UwSZCyGKMdRz7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eVRL0dlP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1oudpA56; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Nov 2024 18:04:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731344691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ebwGfJO17+1+k7VTbKQrJt2zHv2/RjHTI4fHgxadG3k=;
+	b=eVRL0dlPa8p/yztz6h7G5ujB3HP/E2dsGjabQIg9mmpIq7aMjebm4LEowpjz0SWFkoSYmE
+	JWEvjgaGUOS0PrnHX+l03g3TVmTw5hzdKA6ifPygLPcWoePvuOUtnusMJwcF2/IAf+cgty
+	p3fw4H91d2CYB0nNRCLZjgxd9/1/grAgL4EvJ1rmFAgPrQHcCueZYFoEm/T/v5ciyq5aCQ
+	ZbFZrcL6lf+IHIT/0zgZWrqkY1GHbtOi7XTLy/XTi6WH7VAs+jcKuHPF4X8SSqhe3ZpkVx
+	LTGhDfE/uuZQELBK7gM7i0frGPTIxuTZY7Lz8s+aiaL02/wWi9AkRrZPT1Hmxg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731344691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ebwGfJO17+1+k7VTbKQrJt2zHv2/RjHTI4fHgxadG3k=;
+	b=1oudpA56vIGLxv0+UdZtEXTUjii/bpmnxK5aigAjLUzaKpz9zK9k9VGTzOp0TEPP3t4F7J
+	CCajMsZqS7Yn9+AQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de,
+	syzbot <syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com>
+Subject: Re: [PATCH] kernfs: Use RCU for kernfs_node::name lookup.
+Message-ID: <20241111170450.mUxDpLiW@linutronix.de>
+References: <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
+ <ZyK0YPgtWExT4deh@elver.google.com>
+ <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
+ <20241102001224.2789-1-hdanton@sina.com>
+ <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
+ <ZykNhbMOrlgCXFYJ@slm.duckdns.org>
+ <20241108100503.H-__545n@linutronix.de>
+ <Zy5EIHUwoXjK1sAJ@slm.duckdns.org>
+ <20241108222406.n5azgO98@linutronix.de>
+ <Zy6ROmfQhUvYK9YK@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,19 +80,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <638034b7-5c1e-d261-058a-79d795580410@amd.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zy6ROmfQhUvYK9YK@slm.duckdns.org>
 
-On Mon, Nov 11, 2024 at 10:09:14PM +0530, Nikunj A. Dadhania wrote:
-> Same message in commit and the code comment ?
+On 2024-11-08 12:31:22 [-1000], Tejun Heo wrote:
+> Hello, Sebastian.
+Hi Tejun,
 
-Yes, the explanation in the commit message is more detailed than in the
-comment below. And if you have to put it in a comment, then it is preferrable
-the comment contains the more detailed variant because the comment is a lot
-easier to find than some commit message in git history...
+> On Fri, Nov 08, 2024 at 11:24:06PM +0100, Sebastian Andrzej Siewior wrote:
+> > Instead of using kernfs_rename_lock for lookups of ::name use RCU for
+> > lookup. Rely on kn's kernfs_root::kernfs_rwsem for update
+> > synchronisation.
+> >=20
+> > The .*_locked() have been moved into the callers.
+> > The lock in kernfs_get_parent() has been dropped, the parent node should
+> > node vanish underneath us. The RCU read-lock and atomic_inc_not_zero()
+> > is a safety net in case it does.
+> > kernfs_fop_readdir() no longer drops kernfs_root::kernfs_rwsem to ensure
+> > the name pointer does not vanish while the page fault is handled.
+> > kernfs_notify_workfn() gained the lock for the same reason.
+>=20
+> I owe an apology. I was just thinking about cgroups. Sysfs, I think, does
 
--- 
-Regards/Gruss,
-    Boris.
+no worries.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> allow moving node a different parent, which IIRC is used by netdevs. How
+> about something like this:
+>=20
+> - Add a KERNFS_ROOT flag indicating that parent-changing moves aren't
+>   allowed.
+>=20
+> - Update kernfs_rename_ns() to trigger warning and fail if the above flag=
+ is
+>   set and new_parent is different from the old one.
+>=20
+> - Create a separate interface which uses RCU instead of rename lock for n=
+ame
+>   / path lookups. The RCU ones should trigger warning if used when the ab=
+ove
+>   KERNFS_ROOT flag is not set.
+
+Let me check if I understood. We have three users of kernfs:
+
+- cgroup
+  cgroup1_rename(): parent check (would get the new KERNFS_ROOT flag)
+
+- resctrl
+  rdtgroup_rename(): seems to allow any "mon group" directory
+  different parent possible.
+
+- sysfs
+  sysfs_move_dir_ns(): reame to a different parent
+
+That new RCU interface would be used by cgroup only and sysfs/ resctrl
+would remain using the "old" code?
+If so, would you  prefer=20
+|struct kernfs_node {
+|	=E2=80=A6
+|	union {
+|		const char              name;
+|		const char              __rcu *name_rcu;
+|	}
+
+to avoid patching resctrl + sysfs for for the rcu_derference name
+lookup?
+
+> Thanks.
+
+Sebastian
 
