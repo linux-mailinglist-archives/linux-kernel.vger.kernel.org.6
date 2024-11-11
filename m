@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-404068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8879C3EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDAD99C3EC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592711F213F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F8B1F20AA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5893619CC22;
-	Mon, 11 Nov 2024 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FCC19CD0E;
+	Mon, 11 Nov 2024 12:53:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hzMP4hCF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dtv0b8+a";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t5hwhBcy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429508F77;
-	Mon, 11 Nov 2024 12:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF898F77;
+	Mon, 11 Nov 2024 12:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329583; cv=none; b=lyHVQX/IrBJlTNtMEL9kFXnXeP7kwnq8sfcL9hEZUQI68VQyJz/4+AjLINtBHIIVkstP2rnGS2TrgF2QMNaNLqsEWD6oRKz2g2AgD/M7oQTsKZeYnZNMhRcXVtKU0BXQdhrqKAfI3ChfT8d+d8HNm5yqbWXCr8CDcrOgppOdh+Q=
+	t=1731329630; cv=none; b=kS9QTGJht4k9EtEtBI+VOxVxEAL/0Qe3MXJr1OnHe9GbuMmfAwa/vmO/QfpBCYlW3M/cYjU4MsDfDM2CkaPSdv+PLRX5MFs9ho1oc6aYlg2ZdDgl+gqF0xDZ90VsjtyopljkmaicgaGlgVAVfOPf/K6kcPT01/yxCfbHjvn5dLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329583; c=relaxed/simple;
-	bh=EmDy8i8hq5it3Fzv+p2d4R9idtdlFivFg170LFd5xFc=;
+	s=arc-20240116; t=1731329630; c=relaxed/simple;
+	bh=FmF3bZ1r/WsmIZmkn/Wp3I4nzVPM0WOoQQ+6z63YQIY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpmz4rw7CJvZB6znJmkpcoY7pH7f+QXyRWdQE4C03bwV2zRWurBEVHLXrKrF0TXtwMJV8tj8s6uIQyLeG7B/xAP79YvmH7xwtV9TyTmWgrS9exdZKrD8QGqO0WwVjE390UiafQYmNehjksoie2Njnft5T7nsz7J/WN95rVf9+6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hzMP4hCF; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731329582; x=1762865582;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EmDy8i8hq5it3Fzv+p2d4R9idtdlFivFg170LFd5xFc=;
-  b=hzMP4hCF33Z1QPLehjncsL+5W0ACLUYa8+gGt2X26Y0QRiBYlV8CmqkB
-   uc99wo0KHDD2UB8RFWyT9VNCihqT2HbyE/SCFtQ6iyKj0uo87Txz4NEvX
-   iOAy0PflWlBJwnPHXCbo2zcssEqIerVmfIFrXWafEvT7iLP5zQRqscG2L
-   jbQ91WSLv9zQFr6zBvIjiqi9bVfpR1C2pFB1KAo8EWKRBtcgTfocwlb3H
-   //y9rxgvn2Xnd/Wu/qGh5Uinh5nVCmM8JCEYiJWhXDBbs01ZlsEXJ5vpB
-   wTJtVeFtE0M7sX5cgRYkiNPbO5c1h2vp/A5lnq2p64b73CMGUsjDKabp6
-   w==;
-X-CSE-ConnectionGUID: m3Z434tcQ1Koaeo7xiL/kQ==
-X-CSE-MsgGUID: DS8nbV04R0u1lbD6cyItsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30986451"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30986451"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 04:53:02 -0800
-X-CSE-ConnectionGUID: nkympEP/SWyGr5a94tnk+Q==
-X-CSE-MsgGUID: We31eq1/Qyi6nsO4uvUtWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="110174084"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 04:53:00 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tATub-0000000DcLB-3Y0I;
-	Mon, 11 Nov 2024 14:52:57 +0200
-Date: Mon, 11 Nov 2024 14:52:57 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Konstantin Aladyshev <aladyshev22@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: i2c: piix4: Add ACPI section
-Message-ID: <ZzH-KeSavsPkldLU@smile.fi.intel.com>
-References: <20241111115652.10831-1-aladyshev22@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+6Gnn9CfC/NgUW5REQPmqkd+ATro53/a6/NplQ55KbnFtvkLCfNf2+jkNzmNFWxpnXfROsiEq6tFqPzFgtuMSsixABWhxGvns9S26w4RvJOcEZ8PR4YSP80Mj6pQUfti2rqwU98HLPdsk1isK85HR9XtwSMQujXu0Feg35G4+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dtv0b8+a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t5hwhBcy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Nov 2024 13:53:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731329626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w7z8yhXRBnlRYKfyfn4Xe3Y3OGC88TCWkSEzDPuPxNQ=;
+	b=dtv0b8+aCLwhVivvFUjFNqplSCPxGWFTtHuKMDvxFHL34tKWExWlHHNyW10RM/mrjJMI8f
+	089D2TK1AQ7sdF73yWg0qz0vACWNAENLY/QEQyRYuDTnwhNjzdyGccp1zYHtp0epqFcTky
+	U/Y0Q5SMvLKYQ4zAYI1SO3PKEYD2dZ4Vc3RWNarc7vJ8+OSFhOlQhTr8atuPRInTizsNdT
+	hUabpL8xT/N43Yya3ER6WSfvOoBQqJjQg5zaBA+LWBysOPwA1mdxCKsKtQpTgAN7lEIVsg
+	V2WPFmskshbU4nieE/3UMDrNexHbqdABCxsutrdzg3IdHiAImLC4UaFmC2vMTw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731329626;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w7z8yhXRBnlRYKfyfn4Xe3Y3OGC88TCWkSEzDPuPxNQ=;
+	b=t5hwhBcysw6sr0uejWOPe0jN8ijZp6hxiaMi9xUsvaQ53fESoFBjWOSwjJQXUj2QkJp+lK
+	w4qAM5LVRIo4O/Dg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Wander Lairson Costa <wander@redhat.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>, tglx@linutronix.de,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Simon Horman <horms@kernel.org>,
+	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:Real-time Linux (PREEMPT_RT):Keyword:PREEMPT_RT" <linux-rt-devel@lists.linux.dev>
+Subject: Re: [PATCH v2 1/4] Revert "igb: Disable threaded IRQ for
+ igb_msix_other"
+Message-ID: <20241111125345.T10WlDUG@linutronix.de>
+References: <20241106111427.7272-1-wander@redhat.com>
+ <1b0ecd28-8a59-4f06-b03e-45821143454d@intel.com>
+ <20241108122829.Dsax0PwL@linutronix.de>
+ <9f3fe7f3-9309-441c-a2c8-4ee8ad51550d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241111115652.10831-1-aladyshev22@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <9f3fe7f3-9309-441c-a2c8-4ee8ad51550d@intel.com>
 
-On Mon, Nov 11, 2024 at 02:56:52PM +0300, Konstantin Aladyshev wrote:
-> Provide information how to reference I2C busses created by the PIIX4
-> chip driver from the ACPI code.
+On 2024-11-08 15:00:48 [-0800], Jacob Keller wrote:
+> 
+> 
+> On 11/8/2024 4:28 AM, Sebastian Andrzej Siewior wrote:
+> > On 2024-11-08 13:20:28 [+0100], Przemek Kitszel wrote:
+> >> I don't like to slow things down, but it would be great to have a Link:
+> >> to the report, and the (minified) splat attached.
+> > 
+> > I don't have a splat, I just reviewed the original patch. Please do
+> > delay this.
 
-...
+this clearly lacks a `not'
 
-> +Therefore if you want to access one of these busses in the ACPI code, you need to
-> +declare port subdevices inside the PIIX device::
-> +
-> +    Scope (\_SB_.PCI0.SMBS)
-> +    {
-> +        Name (_ADR, 0x00140000)
-> +
-> +        Device (SMB0) {
-> +            Name (_ADR, 0)
-> +        }
-> +        Device (SMB1) {
-> +            Name (_ADR, 1)
-> +        }
-> +        Device (SMB2) {
-> +            Name (_ADR, 2)
-> +        }
-> +    }
+> > Sebastian
+> 
+> It will definitely splat on RT kernels at some point, if there is a
+> spinlock.
 
-You need to elaborate that some of this data may be already present in the BIOS
-DSDT (you give your example as it seems most common so far) and hence requires
-an additional per-port addresses. With that you should add a note that this
-will require to load SSDT quite in advance to make sure that the driver will
-see these changes before its ->probe().
+exactly my point.
 
-...
-
-The rest is LGTM.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Sebastian
 
