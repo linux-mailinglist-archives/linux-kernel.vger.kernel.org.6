@@ -1,214 +1,112 @@
-Return-Path: <linux-kernel+bounces-403945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9409C3D03
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:21:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB0B9C3D08
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:22:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 212D2B23228
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:21:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FA4B237BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B47197A87;
-	Mon, 11 Nov 2024 11:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B27189B8C;
+	Mon, 11 Nov 2024 11:21:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EO/Dtp0I"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZAy6roTZ"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD4918A925
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4FD156F44
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731323997; cv=none; b=GeYR0axpFQB+Y334f5CW1USIjmWC7LP+e1BDsznqxeE77XzN+6BbfO2AbUKtoNxVgQUDY34reiYlFMgpY/UXY5q7M87WHR8nf7u2krwsdKrZ8U4m6EqTG9Stjduf3WO8VyahqMCayr6sznp67xUXwLqpb+/FJokuuB15usvP4Ok=
+	t=1731324078; cv=none; b=t97biE68CNTQYjfN7LXSvupJ7/P5jofwM+8TDqEbGOXxOKuE6irV0NZc1+qMi7nJ4K/BYOoo8viRxIKOUjPYJ9T30cTraDmquGwGj2ZSIWcoMHc9EdRoQ5MmU7ZlGyJ/ML7nx6TVh04B6XI4m8m4xG02RhqHT+y6qxp1lDzJY+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731323997; c=relaxed/simple;
-	bh=doVS2FjDRkq4c2IHXmTNPcOL4I0Od2rKyJgRrUG5QOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c3EwTokRsZ62tvwe/9crSvEccqJcVhjIzLPykmRn5f1QnrIt6YB9seUPQrt4HMF2JFDF9I9YevVX/d3eefbWj7uBLP3cu7uQoTMjjh6G3avOTnII3U0eLBxGftPLkAM/CH7RobjR37HlJ7Nwo8O8bRVjUuNCMZwDW7/L79jLAqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EO/Dtp0I; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4319399a411so41664305e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:19:55 -0800 (PST)
+	s=arc-20240116; t=1731324078; c=relaxed/simple;
+	bh=gVRNVXU+XsTveFPESwuAaoUa9rADH15YraU1uwLLr5I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q3MyR3g44dvOErd2hVsp0vcUZIVYlqwAC7hafcM52z/JezPumLe1wOCrn/R3KnLWWWtY+nbfCXyWvo07S0eM6YA2ziQWg6SPPp8SHhFcezfPlbItuTJQkq9TdpPKUPQxVTcNdGt4w3zlFU7OqJChX7sY1CdN1F5SSdRZSN5l4qU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZAy6roTZ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso746816766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:21:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731323994; x=1731928794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Rw4WfXknbvTv9k5vxcl4gUNbP7Ohsij/aCpukU/A3Vk=;
-        b=EO/Dtp0IV154LpqV4SO5kkDTm/hZXoBCP82EUWwjf4E2wPCFP4m0NBGGeQEatIiwph
-         gKt6hscJpqiKDJKSD4kj/0k4CDmpkEhBGfZhdtcbHQ+S/0g6MHPRrBVlx9WlFndpulDD
-         eOa/TXZN8+KY8MYt8jGHfdbted8Bqm+yt3DHxLOy9zA+13eDzCgm8hhNYB/XukWf1p2t
-         1Mztkgwi42tBpEmDcIQxvcPt6uz94ULFaNFB6c1Vi08Mn8uOd3rT1wl0lAkoFtDLe1CJ
-         011irTrJSuX+DYxx+B798HbhW86uw36Vtw8NP6lOJO3l5pPuGfzIcgijnkb1Ibd2cYSi
-         eAPg==
+        d=linaro.org; s=google; t=1731324075; x=1731928875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xadGs5mwD1qsGTtzkxs+MHJf7d9pXe1KKCe8zYpsmpo=;
+        b=ZAy6roTZLgZ0TMqrx8YOQClPQSIgmyfb6r8xA7R61SjGZ4V6WRMlfmR4Y1Ie5ycRvs
+         742eP+YL20dvjAHHGffZQL/YviHuJea0izeXBbFDYO5s2Fi0+6Nd4o5SniNkoCEUXAcs
+         FXQHWTaeB0lK+JkEq4LhWtlwkCFbr2ilU8UxyP9+S2e7LPHheF9Z9ckSDLJmd+FBSFS9
+         YvPsUkFRHj5HwxJCPaE6Wh2zk95+jXVNaPUUkCZAJIP2kWuFrzebb2RSP4wUkq8Y2KR0
+         bRqn8JNVOV3UU6DhUwOaOLj/swy0ow8kqrpN3pk1q/KgUuX7ACIGulFho9zg7hbXlNNm
+         PMog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731323994; x=1731928794;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rw4WfXknbvTv9k5vxcl4gUNbP7Ohsij/aCpukU/A3Vk=;
-        b=NAPqoiwnSCHchX6gNXHni4xMd53ZUDxzbHhXHKWBIB5XVZ/cW6pPCY8ZKUhCGbpZnd
-         jqQFP/lA0C1QI7VJZcSK+DVA5x4Ulsxd5eMH9RiylgdTB2K7kqFjvnQZX2op/Yj0Watu
-         D4Y9VMirFXUl0IHzl4ipcyLtn1ACbc7aldec4+9OfbVpn+XdlRSiDzRP0wetC0TPyg9A
-         f/Tuc11BxoffgdMdcCHS7MI5/MQ8juvZp6o9moKj25DtCg1U+I+SI80Us3IXHdzvHe1v
-         c0xbjs5p81bK+JYf301OyfeaBhxXeo96SpfhC5O/C0EAnC2YqU+RPKMEbJtQNseaLJ+t
-         BXxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzqbu4Yr0zGy7lHbGHthT1E8VR3VGgckdQwQ1N5kQ7T73LiYggrPgb0STIHdkxbGLOFw2Yqj+R1wQKGrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+uUveYxWZVH1smyGL2pQGrnw10IR0bJf1DODDB8sM71viNJCB
-	00aIWxJmk2nXeZVSwUheUGWXO+zT/re4C/LKMHV6gbDOVlphXmkuhIfDkwf3p/w=
-X-Google-Smtp-Source: AGHT+IEPlE7s7WR+Igk2ywhz8l2p851jHgVb2oB6ZyOPVQBtqGnlCuUDU91Ga3Z/F8+t6vhFYowZqw==
-X-Received: by 2002:a05:6000:2588:b0:381:c8fe:20b1 with SMTP id ffacd0b85a97d-381f18855b8mr10158643f8f.42.1731323993363;
-        Mon, 11 Nov 2024 03:19:53 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed99a0efsm12691906f8f.58.2024.11.11.03.19.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 03:19:52 -0800 (PST)
-Message-ID: <c15bb621-6cd9-4be3-beec-20fecd411547@tuxon.dev>
-Date: Mon, 11 Nov 2024 13:19:50 +0200
+        d=1e100.net; s=20230601; t=1731324075; x=1731928875;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xadGs5mwD1qsGTtzkxs+MHJf7d9pXe1KKCe8zYpsmpo=;
+        b=p16yYXs2Y15keDRLdyFUzq6Ecyy2UiVNk6be1UqcyrZ98rpUTw3zYPZZ1/GaxzFSDI
+         xK0ILIhXbCrbVaUfGPvkctw9pinKoK6M5aOTQTA34Y4XMnuxBYj/9G2pK3PqGbspiv/e
+         0AOW0+yoTPpCALSxsUFYISOsKpU/6njrA2ySRYeNbrkXs8G0UhA70cZNJ0I9QHCf4/zd
+         PRA1+em4bNL1Dp8yqgyJW+Fvn/SnIxoUEmtJjbW6Pcg7DixHNx9aXpypRJN7L9BkUe9l
+         giC0LGQIzc94CScRWtySJTq5FKH4asTqGgnIh38nEzp6EHmap5K2uBqhosrarD59d6iw
+         NIuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWrMpIG+2DJBi+TJTwpOYJmQ/6PPhsfJSYRGtitQhe8oT/oRjV6EwNcra0G5p2JTmFR1E0/49BGw+BTkGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5keBVuhBKUgnwRQzI7qmAbotNTNUr7nOUMqObCUyMMZ7VF0s6
+	uAgl8YL55HWS+fgqZAiVhB3c0HptfbOb3yBtA9fXtbZROLrdWPAIy5PCSI4CQROoIpqlThMmifV
+	3
+X-Google-Smtp-Source: AGHT+IEwy2N2c63rj8E+OlMUwXaIcbDUR7Sk7oDxP0sPZ3aSNMocv7LL9KE0Izc+N6rNT+6VMc/psA==
+X-Received: by 2002:a17:907:7e8e:b0:a99:37f5:de59 with SMTP id a640c23a62f3a-a9ef001919bmr1200287766b.53.1731324074792;
+        Mon, 11 Nov 2024 03:21:14 -0800 (PST)
+Received: from 1.. ([79.115.63.225])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a48585sm580264166b.45.2024.11.11.03.21.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 03:21:14 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: pratyush@kernel.org,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: mwalle@kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: winbond: add "w/ and w/o SFDP" comment
+Date: Mon, 11 Nov 2024 13:21:11 +0200
+Message-Id: <173132406532.9203.16605766715028942192.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241029080049.96679-1-tudor.ambarus@linaro.org>
+References: <20241029080049.96679-1-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
- "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
- <20241108104958.2931943-25-claudiu.beznea.uj@bp.renesas.com>
- <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TYCPR01MB113329FE5E9E610BEF45DC001865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=730; i=tudor.ambarus@linaro.org; h=from:subject:message-id; bh=gVRNVXU+XsTveFPESwuAaoUa9rADH15YraU1uwLLr5I=; b=owEBbQGS/pANAwAKAUtVT0eljRTpAcsmYgBnMeil94i1AddMV1iOqINU7/gzjAdNXiYIo44l5 x07nJhNGjaJATMEAAEKAB0WIQQdQirKzw7IbV4d/t9LVU9HpY0U6QUCZzHopQAKCRBLVU9HpY0U 6VGgB/4k5MVyWCGYYf01ruTnRsPkUVYYgauJWhy0qDI4NPnSs64C4HMLTFjMmWZjHXUONCIVOLK juKPOhBh91AO67d0FxAKeFPBfhIiEQK2rFKPdqhJ5QGgLp8JQutlGfn5vuy5TVX7retT+51y+Cg k6FlLEmQAUbKQI8KcDdvTIVEsaKWUmySe2h/yTcJ2yYdKZUxOPXgbDBy1xJsriHXRpSeTLF1PQT 6PWEwdsLaQTmsub0/tpBo9KWZQJvj+Cqo/Afpwp9g40QoqM/+xeBthgvw5mFopw3UthIHHfb2hi az78nFCgPRmeZkGQu9xj8q0S86bE1B63lY01WQu39kM9FVKn
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=openpgp; fpr=280B06FD4CAAD2980C46DDDF4DB1B079AD29CF3D
+Content-Transfer-Encoding: 8bit
 
-Hi, Biju,
+On Tue, 29 Oct 2024 08:00:49 +0000, Tudor Ambarus wrote:
+> Commit d35df77707bf ("mtd: spi-nor: winbond: fix w25q128 regression")
+> upstream fixed a regression for flavors of 0xef4018 flash that don't
+> define SFDP tables. Add a comment on the flash definition highlighting
+> that there are flavors of flashes with and without SFDP support.
+> It spares developers searching the entire git log for when we'll better
+> handle these cases.
+> 
+> [...]
 
-On 10.11.2024 10:54, Biju Das wrote:
-> Hi Claudiu,
-> 
-> Thanks for the patch.
-> 
-> 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: 08 November 2024 10:50
->> Subject: [PATCH v2 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Enable SSI3.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - none
->>
->>  arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 26 ++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-
->> smarc.dtsi
->> index 4aa99814b808..6dd439e68bd4 100644
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
->> @@ -64,6 +64,11 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
->>  	};
->>  };
->>
-> 
-> &audio_clk1 {
->        assigned-clocks = <&versa3 xx>;
->        clock-frequency = <11289600>;
-> };
+Applied to git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git,
+spi-nor/next branch. Thanks!
 
-audio_clk1 node is in the RZ/G3S dtsi to keep the compilation happy.
+[1/1] mtd: spi-nor: winbond: add "w/ and w/o SFDP" comment
+      https://git.kernel.org/mtd/c/f8f6224948d8
 
-For this board the audio clock1 for the SSI 3 is from <&versa3 2>.
-
-If we fill in the audio_clk1 here it will be useless, there will be no
-consumers for it and it is not available on board.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Maybe add audio_clk1, so that it described properly in clock tree??
-> 
-> Cheers,
-> Biju
-> 
->> +&audio_clk2 {
->> +	clock-frequency = <12288000>;
->> +	status = "okay";
->> +};
->> +
->>  &i2c0 {
->>  	status = "okay";
->>
->> @@ -94,6 +99,11 @@ da7212: codec@1a {
->>  };
->>
->>  &pinctrl {
->> +	audio_clock_pins: audio-clock {
->> +		pins = "AUDIO_CLK1", "AUDIO_CLK2";
->> +		input-enable;
->> +	};
->> +
->>  	key-1-gpio-hog {
->>  		gpio-hog;
->>  		gpios = <RZG2L_GPIO(18, 0) GPIO_ACTIVE_LOW>; @@ -151,6 +161,13 @@ cd {
->>  			pinmux = <RZG2L_PORT_PINMUX(0, 2, 1)>; /* SD1_CD */
->>  		};
->>  	};
->> +
->> +	ssi3_pins: ssi3 {
->> +		pinmux = <RZG2L_PORT_PINMUX(18, 2, 8)>, /* BCK */
->> +			 <RZG2L_PORT_PINMUX(18, 3, 8)>, /* RCK */
->> +			 <RZG2L_PORT_PINMUX(18, 4, 8)>, /* TXD */
->> +			 <RZG2L_PORT_PINMUX(18, 5, 8)>; /* RXD */
->> +	};
->>  };
->>
->>  &scif0 {
->> @@ -171,3 +188,12 @@ &sdhi1 {
->>  	max-frequency = <125000000>;
->>  	status = "okay";
->>  };
->> +
->> +&ssi3 {
->> +	clocks = <&cpg CPG_MOD R9A08G045_SSI3_PCLK2>,
->> +		 <&cpg CPG_MOD R9A08G045_SSI3_PCLK_SFR>,
->> +		 <&versa3 2>, <&audio_clk2>;
->> +	pinctrl-names = "default";
->> +	pinctrl-0 = <&ssi3_pins>, <&audio_clock_pins>;
->> +	status = "okay";
->> +};
->> --
->> 2.39.2
-> 
+Cheers,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
 
