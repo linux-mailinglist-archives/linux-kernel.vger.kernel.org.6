@@ -1,108 +1,288 @@
-Return-Path: <linux-kernel+bounces-404301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23E39C4224
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:45:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8219C4227
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:50:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 588C3B26D05
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:45:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF3A3B22876
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE6019E7F3;
-	Mon, 11 Nov 2024 15:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5BA19E98C;
+	Mon, 11 Nov 2024 15:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="K8Hrj4gY"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zc8RP/56"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3547142AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E4A6026A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731339925; cv=none; b=s1O45buHl/iSr3uU3L1bl46Eln17fThEISrXLiZzT3TVYFqoH5yqE/5lrHZqzWzt/0bf0ICNDx755NxWAmCAcJWEKcF2EZvwzCMH98iKonadm6jm/ACWK87GFmygRHLrdSrpUSx7wN1kUrSnGJ8nRzSSca5db/j9cNCYe9wJ6cA=
+	t=1731340194; cv=none; b=r3EHg6VjUBGaDoneAMsLBVC04GkccWLFAyMCLr8dSDlgx54n8cM8oiNLJuQM5iEu0O7vJGm2mmoICLHnTwFdm2lWI8kEv31fx/sk6HePgWAva3M1i5KWEzg4JRHx6AE0TmCxMSPr4HgE8fOYvgCwUk33t+VM+n0GVcyK2yAyF24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731339925; c=relaxed/simple;
-	bh=exa2y6eKjt46ZR+xY0nZgxZZaTA8O9D4XD+FG9JWtlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1Q/rgkEo5bva8RoREHj1+Dt8ZfEdrbLi6QJiFsP2AXmk2zEb2jqvJxEqG4BtFRUkea5RgsoTb37AmpPrd8CSg6yfvPZFj9F5j+b4sQWr76DmYvGrYHn/vbrkXOaQxkwHz+9oocYRrrqn1FBBU2f8lKxJSssIws28Qit28zFgDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=K8Hrj4gY; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4609b968452so33713521cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:45:23 -0800 (PST)
+	s=arc-20240116; t=1731340194; c=relaxed/simple;
+	bh=MZuDi8YiFcvSQY2GhW+yLY67xviqlcVS6wLgx7J3BBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=eLFz5UhRsDjEiHmOxZkolx6OCIPZwMvJSexuGoPkaDIgft3e/EEIxz2p5AOxI+C3g6OUzLUnyw9iwl4RMk3/1mtLHncuNvSzf3HvWPku8PQ1fyHmBIzwrLZGz2r/U+fRFgpns/riA4NYLEgIwvGCuyKoG0pif6AL7Ov3ELK4Xoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zc8RP/56; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so37453435e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:49:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1731339922; x=1731944722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCXsU+nIi3O7Py500c5fEHZL4/6y1J44sJ8PdhEWdk4=;
-        b=K8Hrj4gY0JU0XM+wiZHO60gS031T5f+Y/cDHMmm3MKI2SVaBvIAnT9VMQy3lQRE4xV
-         IZwg8AksyprVvUgf7HC/zeuoreWTmgh9el1NTp6tRx+Dix/JPkcoitYGc7rf4LeZ7OSG
-         AzkQcJoXZZxYKACz3RtIyVkBF+26KYOOhj0Omj05ztjzrjNWFK+5Uo9gDDuvobgTeqVO
-         spDAW7aUeKq5H4jsvrYKpISfcGgbHwDY7vsHNd+iaRhm3ERiN42Px+X+YRocx434vZuz
-         39W/ysCdHcho9kvbm7X8JQ91CJikpzQbYkHSu6zd0UHFxSCJmZ/6i2hHXtM/fzIRGXl3
-         kxXg==
+        d=linaro.org; s=google; t=1731340189; x=1731944989; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=7ZiuG6vO285AeoXa2+/Nuxw8bBquuL6RNvtIRl6EjA8=;
+        b=zc8RP/56Y076lvGsUqUsubptJI4v4LekD9kjBJAZYSuTnWrdiNOQ5pnGK+vyoiY/UF
+         cqcf3m1I4dgiOwKTrZ/bU+0jI+HIPu4D0ftrkqLrumviqafUizrhpg8s3dfAS1yRTd4i
+         3X5ITEqoplu9Wtn4GYn0yjAc9gBKrzft5Oh0ZIqSyggMda6jgatxqQI6MFJJCVrshe/M
+         NBV7rZtvXi4akd8L/1R7R0o+BMOnrzjLt6ie++skXHnENM7Bsod4bgYzvFgyA4/yjxdr
+         5pymQ+4pYk+8H/I+CSp8Nqmj6MaTmncD0iAb36aTMhdVV+qaq/14luwUsyu/QnQ7W56C
+         wTrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731339922; x=1731944722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iCXsU+nIi3O7Py500c5fEHZL4/6y1J44sJ8PdhEWdk4=;
-        b=STriSiqlPeJDF2dL4PlnXB94fpHrR8zCu+50Himx/SzeS3NGAYu428IrAJMPeTFBid
-         LeBJQ+qDR7D9t+LZ1eRhczsSJdpnnKE8XsXrZo0Lmii9SAv6s1QS1ipMhZF41Tisp1XS
-         ROE5xh0gFhxcVnxkenp8Ay1xyrXxum7Miym71yl/8zKC5d6L7HYgTPtlyob27lJ/oJct
-         2640gxzboVkjMS1Tm1ArTCnXBnL7Oo16gWAkakw3P/syN5FQp5a1a1bRnrTWaeoDi1Jv
-         sfkP8QxJ1KxkpwvRZBCct1XJeoycMNPznSZFUCudxI0MsCbyC3XKOpHw3E1bOiHsf1sB
-         RFdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2YQ+Q81jZsQnYYwkgVZRzDE5EV7AR/AyS2Hac043RzN5O0xwuvSom483uJW3m1TEyt4ICsvnIJphzbGE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIaOeEFIBEaN9btIYNvyUgksHQf8kkEMFWXG+/DeAEUcORE1+F
-	2X9SPhpolGE2Fhq0ywcquVA2sCvPMmXQ+g50iM1DNcWTVNDTE+LfskiRb+iXSw==
-X-Google-Smtp-Source: AGHT+IEj3sl4CA3R9xS24YOsLMugaKGVPIrva5w5VBDVhL0F6m4Bo20B2UlSKP2+WdzSbxHG/fODlQ==
-X-Received: by 2002:a05:622a:294:b0:460:bb96:dd08 with SMTP id d75a77b69052e-4630930ecfemr184669691cf.5.1731339922180;
-        Mon, 11 Nov 2024 07:45:22 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::9dc2])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ff3df36asm64043171cf.18.2024.11.11.07.45.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 07:45:21 -0800 (PST)
-Date: Mon, 11 Nov 2024 10:45:18 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+e8e879922808870c3437@syzkaller.appspotmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in ld_usb_release
-Message-ID: <1af819ae-cd88-4db0-af6e-02064489ebb2@rowland.harvard.edu>
-References: <6731d32b.050a0220.1fb99c.014d.GAE@google.com>
+        d=1e100.net; s=20230601; t=1731340189; x=1731944989;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ZiuG6vO285AeoXa2+/Nuxw8bBquuL6RNvtIRl6EjA8=;
+        b=H7Iz0GGNOZbHCtc+bLmCaNHoi2aJiwjFpuJTaFIE6Ml2YcmYGVOcalrdxj8HEnNeVB
+         hqC37VTnKoCaOTb6IAcln3tMXi9tIJPporvFdxx1g7gPBJhBPmdK5ky9vzOodyahRt/7
+         ikTspX8RoyqN6y6VB5YZ9GzOKFUaRTY4Fpio0/zVPhYQr+wsTfHniOi+ZTKIVQ/+Qrim
+         TYrOANFPRMjOfQDO99khUsfvMumMy1mZ5qFfo9YQUbqWHpoUuSdeuYUIXz99d2Tbipg7
+         AFbKaY65JovBUWr0A5maCg8m8IB1eVYCgqwisSHz/XyEwjGrQaePLzd4bPxMxtEzcYO1
+         D1DA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4gKXX6GPS9Awo0fTOPW/eXxOowjYPUw1o0X4QHnes84Ral1FGFeqw95XbKafFpxEHAk7dqy2rv4a3C1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZbqcIZPpqYjmkCotoP1gCGHH51mvPQc6ZvrpPcKCidZhO7Ypr
+	Ag2v0WU1l/7l/7N2dpSfX2SfS5VMwfcDNIUecgNuBfkonxBaYZr52uSXyTINRYg=
+X-Google-Smtp-Source: AGHT+IEf8ZLfYGz4Ep81ktvQnSsWEJgpx9GkGgRDp+Sp5/zXGXroLdE9Ahp4goxrI71QaW6Qs6uJlA==
+X-Received: by 2002:a05:600c:4ecc:b0:431:5a93:4e3c with SMTP id 5b1f17b1804b1-432b7507c0bmr113526115e9.16.1731340189222;
+        Mon, 11 Nov 2024 07:49:49 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.90.214])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5fc9sm214217075e9.3.2024.11.11.07.49.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 07:49:48 -0800 (PST)
+Message-ID: <7c1a0bbf-12fd-46ef-9db2-183dfa70a334@linaro.org>
+Date: Mon, 11 Nov 2024 15:49:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6731d32b.050a0220.1fb99c.014d.GAE@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] perf record: Skip don't fail for events that don't
+ open
+To: Ian Rogers <irogers@google.com>, Atish Patra <atishp@rivosinc.com>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>
+References: <20241026121758.143259-1-irogers@google.com>
+ <20241026121758.143259-4-irogers@google.com>
+Content-Language: en-US
+Cc: linux-riscv@lists.infradead.org, beeman@rivosinc.com,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
+ Weilin Wang <weilin.wang@intel.com>, Ben Gainey <ben.gainey@arm.com>,
+ Dominique Martinet <asmadeus@codewreck.org>, Junhao He
+ <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241026121758.143259-4-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 01:49:31AM -0800, syzbot wrote:
-> Hello,
+
+
+On 26/10/2024 1:17 pm, Ian Rogers wrote:
+> Whilst for many tools it is an expected behavior that failure to open
+> a perf event is a failure, ARM decided to name PMU events the same as
+> legacy events and then failed to rename such events on a server uncore
+> SLC PMU. As perf's default behavior when no PMU is specified is to
+> open the event on all PMUs that advertise/"have" the event, this
+> yielded failures when trying to make the priority of legacy and
+> sysfs/json events uniform - something requested by RISC-V and ARM. A
+> legacy event user on ARM hardware may find their event opened on an
+> uncore PMU which for perf record will fail. Arnaldo suggested skipping
+> such events which this patch implements. Rather than have the skipping
+> conditional on running on ARM, the skipping is done on all
+> architectures as such a fundamental behavioral difference could lead
+> to problems with tools built/depending on perf.
 > 
-> syzbot found the following issue on:
+> An example of perf record failing to open events on x86 is:
+> ```
+> $ perf record -e data_read,cycles,LLC-prefetch-read -a sleep 0.1
+> Error:
+> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0' which will be removed.
+> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (data_read).
+> "dmesg | grep -i perf" may provide additional information.
 > 
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1650d6a7980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b77c8a55ccf1d9e2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e8e879922808870c3437
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
+> Error:
+> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_1' which will be removed.
+> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (data_read).
+> "dmesg | grep -i perf" may provide additional information.
 > 
-> Unfortunately, I don't have any reproducer for this issue yet.
 
-Question for the syzbot people:
+This makes me wonder if this message was overly wordy to begin with. 
+This line is fine:
 
-If I have a patch which I think will cause the issue to become 
-reproducible, is there any way to ask syzbot to apply the same test that 
-failed here to a kernel including my patch?
+  Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0'
+  which will be removed.
 
-Alan Stern
+The next bit about the syscall just repeats. The exit code could be 
+included on the previous line. And the dmesg bit is general advice that 
+could possibly be printed once at the end.
+
+> Error:
+> Failure to open event 'LLC-prefetch-read' on PMU 'cpu' which will be removed.
+> The LLC-prefetch-read event is not supported.
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 2.188 MB perf.data (87 samples) ]
+> 
+> $ perf report --stats
+> Aggregated stats:
+>                 TOTAL events:      17255
+>                  MMAP events:        284  ( 1.6%)
+>                  COMM events:       1961  (11.4%)
+>                  EXIT events:          1  ( 0.0%)
+>                  FORK events:       1960  (11.4%)
+>                SAMPLE events:         87  ( 0.5%)
+>                 MMAP2 events:      12836  (74.4%)
+>               KSYMBOL events:         83  ( 0.5%)
+>             BPF_EVENT events:         36  ( 0.2%)
+>        FINISHED_ROUND events:          2  ( 0.0%)
+>              ID_INDEX events:          1  ( 0.0%)
+>            THREAD_MAP events:          1  ( 0.0%)
+>               CPU_MAP events:          1  ( 0.0%)
+>             TIME_CONV events:          1  ( 0.0%)
+>         FINISHED_INIT events:          1  ( 0.0%)
+> cycles stats:
+>                SAMPLE events:         87
+> ```
+> 
+> Note, if all events fail to open then the data file will contain no
+> samples. This is deliberate as at the point the events are opened
+> there are other events, such as the dummy event for sideband data, and
+> these events will succeed in opening even if the user specified ones
+
+Is a file with only sideband events useful? Is it possible to fail the 
+record command if the event doesn't open anywhere?
+
+I noticed this leads to some different behavior and a libperf warning 
+when you have paranoid=3:
+
+   $ perf record -e cycles -C 0 -- true
+
+   Error:
+   Failure to open event 'cpu_atom/cycles/u' on PMU 'cpu_atom' which will
+   be removed.
+   ...
+   Consider adjusting /proc/sys/kernel/perf_event_paranoid setting
+   ...
+   libperf: Miscounted nr_mmaps 0 vs 28
+   WARNING: No sample_id_all support, falling back to unordered
+   processing
+   [ perf record: Woken up 1 times to write data ]
+   [ perf record: Captured and wrote 0.021 MB perf.data ]
+
+
+> don't. Having a mix of open and broken events leads to a problem of
+> identifying different sources of events.
+ >
+
+In my basic test I saw that the opened event was identified correctly in 
+perf report, unless you have an example that you encountered that we 
+should fix?
+
+One place I saw an issue was with auxtrace events. If there's an event 
+name clash then you're likely to not be able to open the file afterwards 
+because the auxtrace code can't handle an event that didn't open. But I 
+don't know of any name clashes there (I just faked one for testing), and 
+maybe that could be fixed up later in the auxtrace code if there is ever 
+a real one.
+
+Other than the above it does seem to work ok.
+
+> The issue with legacy events is that on RISC-V they want the driver to
+> not have mappings from legacy to non-legacy config encodings for each
+> vendor/model due to size, complexity and difficulty to update. It was
+> reported that on ARM Apple-M? CPUs the legacy mapping in the driver
+> was broken and the sysfs/json events should always take precedent,
+> however, it isn't clear this is still the case. It is the case that
+> without working around this issue a legacy event like cycles without a
+> PMU can encode differently than when specified with a PMU - the
+> non-PMU version favoring legacy encodings, the PMU one avoiding legacy
+> encodings.
+> 
+> The patch removes events and then adjusts the idx value for each
+> evsel. This is done so that the dense xyarrays used for file
+> descriptors, etc. don't contain broken entries. As event opening
+> happens relatively late in the record process, use of the idx value
+> before the open will have become corrupted, so it is expected there
+> are latent bugs hidden behind this change - the change is best
+> effort. As the only vendor that has broken event names is ARM, this
+> will principally effect ARM users. They will also experience warning
+> messages like those above because of the uncore PMU advertising legacy
+> event names.
+
+
+
+> 
+> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>   tools/perf/builtin-record.c | 22 +++++++++++++++++-----
+>   1 file changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index f83252472921..7e99743f7e42 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1364,6 +1364,7 @@ static int record__open(struct record *rec)
+>   	struct perf_session *session = rec->session;
+>   	struct record_opts *opts = &rec->opts;
+>   	int rc = 0;
+> +	bool skipped = false;
+>   
+>   	evlist__for_each_entry(evlist, pos) {
+>   try_again:
+> @@ -1379,15 +1380,26 @@ static int record__open(struct record *rec)
+>   			        pos = evlist__reset_weak_group(evlist, pos, true);
+>   				goto try_again;
+>   			}
+> -			rc = -errno;
+>   			evsel__open_strerror(pos, &opts->target, errno, msg, sizeof(msg));
+> -			ui__error("%s\n", msg);
+> -			goto out;
+> +			ui__error("Failure to open event '%s' on PMU '%s' which will be removed.\n%s\n",
+> +				  evsel__name(pos), evsel__pmu_name(pos), msg);
+> +			pos->skippable = true;
+> +			skipped = true;
+> +		} else {
+> +			pos->supported = true;
+>   		}
+> -
+> -		pos->supported = true;
+>   	}
+>   
+> +	if (skipped) {
+> +		struct evsel *tmp;
+> +		int idx = 0;
+> +
+> +		evlist__for_each_entry_safe(evlist, tmp, pos) {
+> +			if (pos->skippable)
+> +				evlist__remove(evlist, pos);
+> +			pos->core.idx = idx++;
+> +		}
+> +	}
+>   	if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlist)) {
+>   		pr_warning(
+>   "WARNING: Kernel address maps (/proc/{kallsyms,modules}) are restricted,\n"
+
 
