@@ -1,74 +1,47 @@
-Return-Path: <linux-kernel+bounces-404228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224DC9C4121
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:40:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEAA9C412B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:42:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8B021F237B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABB71C20159
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948911A08B2;
-	Mon, 11 Nov 2024 14:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44B11A070E;
+	Mon, 11 Nov 2024 14:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lpYWYoQd"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBHwPj5p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433814EC55
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2D614EC55;
+	Mon, 11 Nov 2024 14:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336022; cv=none; b=Ni8ikYGK6rmLACmo0eEbjvPvBC4FXARn6QRVGhf07KQp9T5In3YEgilATa4CLBLk24QWWgCQWEPqyBbDEC+feABrEw3u7lzzeVCPzvD/Xslaf39HfG5cq5Yyy6uXPYZeR/XVXtpO/q3oRPJfsNT/N5HkeUKRN/0l31hYXkLdgc4=
+	t=1731336113; cv=none; b=Uum+Cktut4ivuPCIl8U3JrRKFwQZDVXtGgOurWSthTT3q98LZOLiekU52MHUmW4dNvb8dGW/q9ut7Mf/rboBNPi7jiv9jyHaMcl0A2mxi0RZwwLs6cYbOc5vPwVPX7/ezT0OkUu/H3hj5uxzOnGVOnltn2t/afH3hmQ8SDhRiF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336022; c=relaxed/simple;
-	bh=fq9gJQClxxuEn+YB4Igeb6OnqsFtKp4jQ2QPEItAL9Q=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:In-Reply-To:
-	 Content-Type:References; b=PnPXc2rfeMXqFlWT179nQ1nEpPuiCSs6StsEmSUpMvWjWxtgJj4bUve5Ax5YM53LczK/ym5lGA+aNoZczm4XL8kf5eRaF5o3bkES0kbpY0+8PN6D3CPIdyfbzodbfNzcceAAU0j/Ioj46F0EpX51w31IVk9gRwfslO3o5H7oZaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lpYWYoQd; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241111144017epoutp022df02c0089233aaa3f0a135efe96f3c4~G8O9v2DnH0692306923epoutp02m
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:40:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241111144017epoutp022df02c0089233aaa3f0a135efe96f3c4~G8O9v2DnH0692306923epoutp02m
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731336017;
-	bh=Ad3FP+ExoHUF9icH51NuRcqmBB1Fehm957KfuyYr74k=;
-	h=Date:From:Subject:To:Cc:In-Reply-To:References:From;
-	b=lpYWYoQdsWxUeA5sczu/CpCkUY0tTXkGRkEbuNiOZGwMh00H3NkIu0XOuS4kj1uH+
-	 fMix0FM9wFZ9jobBwRDQRNfqmtXbjE0PfqzgRxtqiPVw4ntkLi66neqplY4TiL2s9C
-	 BgXd8R2YdbaPrmxj4ZPB6X71zTIZzAq0SjJ6IWGo=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20241111144017epcas5p201e45c7deb51b8a77353b590eb74beca~G8O9OHgbd1338413384epcas5p20;
-	Mon, 11 Nov 2024 14:40:17 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XnBzN0b7yz4x9Pp; Mon, 11 Nov
-	2024 14:40:16 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9C.4D.08574.F4712376; Mon, 11 Nov 2024 23:40:15 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241111144015epcas5p4c8dfeacbef382017023b9f01a92b18b9~G8O7bQzbp3079230792epcas5p4r;
-	Mon, 11 Nov 2024 14:40:15 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241111144015epsmtrp289b348945f3904561b7af618e7a7c607~G8O7aZrEO2928229282epsmtrp29;
-	Mon, 11 Nov 2024 14:40:15 +0000 (GMT)
-X-AuditID: b6c32a44-93ffa7000000217e-2b-6732174f9337
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F0.DB.35203.F4712376; Mon, 11 Nov 2024 23:40:15 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241111144012epsmtip12099e76e51040682300cfdc7fe414ce6~G8O4_8Oj_1138211382epsmtip1_;
-	Mon, 11 Nov 2024 14:40:12 +0000 (GMT)
-Message-ID: <7a79d1fb-60fb-4809-9542-02dfdf1156cd@samsung.com>
-Date: Mon, 11 Nov 2024 20:09:58 +0530
+	s=arc-20240116; t=1731336113; c=relaxed/simple;
+	bh=gQfgqozLAE5g7m9L6Wx0p/96n80+SjfIScZYvj0WqsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uN2/VNYV26e6NJq4bKoi2YicOV7SeV49Ww8eWqCCK/CP8KYAeKd9TpPtzixHaSBVe0rFAJliXhYP7SascD711izASjeCNAbEBRTmlDUVmHf1wp8RWlzmyu0ZU/813ntWRZ3JOKRvpZN3lNhmcdtRDKLo9QL48NEJ/0ynZQX65+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PBHwPj5p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9E0C4CECF;
+	Mon, 11 Nov 2024 14:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731336112;
+	bh=gQfgqozLAE5g7m9L6Wx0p/96n80+SjfIScZYvj0WqsU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PBHwPj5pU+LKgZ74/GqVQtVbFlbMHmQTmxO/Zgy8+uKQrFPK9g65MVNVpFtKXRURi
+	 2XUYux+tbUCyi5DS3cYAZGjz4Rlrsn2Vwwj9+o/sFlubR9lidzpoZt2yIpH9BfUWDJ
+	 NcgjMpsMvRSpSgESlg9K9KstOQ50/lq1hycPntwWhM6ODLhZvSG2NAKf/DB3YrlMh4
+	 O9LOMr418G8+HZMNedKk+FJPpqQk83aQjNBo8GGUbcPgfs399kGX3PvmwLNu6PpkxS
+	 AJjBbzmeXOEajMQuo75yLj0c///X0er86fR4egOOOZId25x+uM0O/JfHiWxwKoGfzq
+	 8tp0SZlJcC6Ag==
+Message-ID: <cd915c18-7230-4c38-a860-d2a777223147@kernel.org>
+Date: Mon, 11 Nov 2024 16:41:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,167 +49,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Subject: Re: [PATCH] usb: dwc3: gadget: Add TxFIFO resizing supports for
- single port RAM
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Alan Stern
-	<stern@rowland.harvard.edu>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"quic_akakum@quicinc.com" <quic_akakum@quicinc.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
-	<dh10.jung@samsung.com>, "naushad@samsung.com" <naushad@samsung.com>,
-	"akash.m5@samsung.com" <akash.m5@samsung.com>, "rc93.raju@samsung.com"
-	<rc93.raju@samsung.com>, "taehyun.cho@samsung.com"
-	<taehyun.cho@samsung.com>, "hongpooh.kim@samsung.com"
-	<hongpooh.kim@samsung.com>, "eomji.oh@samsung.com" <eomji.oh@samsung.com>,
-	"shijie.cai@samsung.com" <shijie.cai@samsung.com>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, "alim.akhtar@samsung.com"
-	<alim.akhtar@samsung.com>
+Subject: Re: [PATCH] mfd: omap-usb-tll: handle clk_prepare return code in
+ usbtll_omap_probe
+To: Andreas Kemnade <andreas@kemnade.info>, Karol P <karprzy7@gmail.com>
+Cc: aaro.koskinen@iki.fi, khilman@baylibre.com, tony@atomide.com,
+ lee@kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org
+References: <20241106223324.479341-1-karprzy7@gmail.com>
+ <20241107001507.5a304718@akair>
+ <CAKwoAfp6iPN0F_kfNbF8xbpX7+Qh+BS55KgmZ5nis0u00vOFhw@mail.gmail.com>
+ <20241110002954.1134398a@akair>
 Content-Language: en-US
-In-Reply-To: <20241109010542.q5walgpxwht6ghbx@synopsys.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAJsWRmVeSWpSXmKPExsWy7bCmuq6/uFG6wZe3VhZvrq5itXgwbxub
-	xZ0F05gsTi1fyGTRvHg9m8WkPVtZLO4+/MFicXnXHDaLRctamS0+Hf3PanH7z15Wi1Wdc4AS
-	33cyWyzY+IjRYsLvC0AdB0UtVi04wO4g6LF/7hp2j4l76jxm3/3B6NG3ZRWjx5b9nxk9Pm+S
-	C2CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpd
-	SaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgUqBXnJhbXJqXrpeXWmJlaGBgZApU
-	mJCd8XLWC6aCe3IVv3e8Z2xgfC/RxcjBISFgIvF7UVQXIxeHkMBuRomnd9tYIZxPjBLfZ89h
-	g3C+MUrM3faMuYuRE6zj8rGrUFV7GSVuHNnMAuG8ZZRYeLuJDaSKV8BO4uCl9+wgNouAqsS1
-	q5cYIeKCEidnPmEBsUUF5CXu35rBDnIHm4ChxLMTNiBhYYEoiT0bD4AtExEIk1h2cTcTyHxm
-	gdVsEhPuTgbrZRYQl7j1ZD4TiM0pYC2x89xeRoi4vETz1tnMIA0SAlc4JNae+8EIcbaLxMdd
-	C1khbGGJV8e3sEPYUhKf3+1lg7CTJfZM+gIVz5A4tOoQ1Mv2EqsXnGEFOZRZQFNi/S59iF18
-	Er2/nzBBwpFXoqNNCKJaVeJU42WoidIS95Zcg9rqIXFk7yl2SFgtZZJYfWEb6wRGhVlIwTIL
-	yWuzkLwzC2HzAkaWVYySqQXFuempyaYFhnmp5fAIT87P3cQITtpaLjsYb8z/p3eIkYmD8RCj
-	BAezkgivhr9+uhBvSmJlVWpRfnxRaU5q8SFGU2D8TGSWEk3OB+aNvJJ4QxNLAxMzMzMTS2Mz
-	QyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamDYHG2+4JBi57thyhSv/yrv3HEuRec22on1N
-	D4eu9cryWWtufo4+UPZ/k/ua17EHdVstC5ZGO/WsjrKofvVONSvT1U0l+H3ztli9mkP99oUH
-	M0W7eMruWU5p1VVkOF953LbqTlzf38Y/jsaK63dxa6veNZwSZtFz4um873W9U7cte8aa7CqY
-	/KlZN0Ra8rVkoGnXxYdffMvkY9gSp2k98pN988ZTIFNNU6/CkS0++U+6Zqro9s86JjMX/tM4
-	kffJav35BZnb7f9wCyxTVv7LOz0jUryva3MBV8Vb+dPmD91WPZvVrvr891Kx1lVBaTVbt9oU
-	OP0urrdr6XO+uv6zTt2iKv2dn8yLGN0Mt8kqsRRnJBpqMRcVJwIALKMG2WMEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsWy7bCSnK6/uFG6wbT1QhZvrq5itXgwbxub
-	xZ0F05gsTi1fyGTRvHg9m8WkPVtZLO4+/MFicXnXHDaLRctamS0+Hf3PanH7z15Wi1Wdc4AS
-	33cyWyzY+IjRYsLvC0AdB0UtVi04wO4g6LF/7hp2j4l76jxm3/3B6NG3ZRWjx5b9nxk9Pm+S
-	C2CL4rJJSc3JLEst0rdL4Mp4OesFU8E9uYrfO94zNjC+l+hi5OSQEDCRuHzsKmsXIxeHkMBu
-	RolnR28zQySkJV7P6mKEsIUlVv57zg5R9JpRomHnJCaQBK+AncTBS+/ZQWwWAVWJa1cvMULE
-	BSVOznzCAmKLCshL3L81A6iGg4NNwFDi2QkbkLCwQJTEno0HwHaJCIRJnDh1GWwMs8B6Nonu
-	HxUQu5YySRxcf4ARIiEucevJfLC9nALWEjvP7YWKm0l0be2CsuUlmrfOZp7AKDQLyRmzkLTP
-	QtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5uZsYwRGqpbmDcfuqD3qHGJk4
-	GA8xSnAwK4nwavjrpwvxpiRWVqUW5ccXleakFh9ilOZgURLnFX/RmyIkkJ5YkpqdmlqQWgST
-	ZeLglGpgkpjGLfOdV+W8rI7gcp8lTn4vnGdpGn0UYhf5L3L347LUOXaeny+a7Fa4e6i9YN/F
-	U3O8nLIuJHv6tiZ9M+ur/LgkKLvuRh7/tp/HGGdklB6LWeSw2zVvVRxX/vFog3MnGe/xKP6e
-	7fHg09XjU5RkGGsz3HnYVrGuMJ6dE+fAJlZyWHONkJjQwaLvW02/layRVJloMbkg+Bt/ygIb
-	O5ePb9NLb/0VXvxFu+Tkrd3XU2dJ25+8dExROOYAV9HVeNPdFz46L2OefzLqmchxpQSe6W/L
-	D3guX5RiYZvQYLtlWubfjJPP27XuNbAavExvLNHtm75B8d/U5OvHBM6mH/GV1JN0mbIk92jf
-	sfeTV5RcU2Ipzkg01GIuKk4EAH7h/uk/AwAA
-X-CMS-MailID: 20241111144015epcas5p4c8dfeacbef382017023b9f01a92b18b9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241107104306epcas5p136bea5d14a1bb3fe9ba1a7830bf366c6
-References: <CGME20241107104306epcas5p136bea5d14a1bb3fe9ba1a7830bf366c6@epcas5p1.samsung.com>
-	<20241107104040.502-1-selvarasu.g@samsung.com>
-	<20241107233403.6li5oawn6d23e6gf@synopsys.com>
-	<0c8b4491-605f-466c-86cd-1f17c70d6b7b@samsung.com>
-	<20241109010542.q5walgpxwht6ghbx@synopsys.com>
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241110002954.1134398a@akair>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-On 11/9/2024 6:35 AM, Thinh Nguyen wrote:
-> ++ Alan Stern
->
-> On Fri, Nov 08, 2024, Selvarasu Ganesan wrote:
->
->>>> +	ram_depth = spram_type ? DWC3_RAM0_DEPTH(dwc->hwparams.hwparams6) :
->>>> +			DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
->>> Don't use spram_type as a boolean. Perhaps define a macro for type value
->>> 1 and 0 (for single vs 2-port)
->> Are you expecting something like below?
+On 10/11/2024 01:29, Andreas Kemnade wrote:
+> Am Thu, 7 Nov 2024 12:12:52 +0100
+> schrieb Karol P <karprzy7@gmail.com>:
+> 
+>> On Thu, 7 Nov 2024 at 00:15, Andreas Kemnade <andreas@kemnade.info> wrote:
+>>>
+>>> Am Wed,  6 Nov 2024 23:33:24 +0100
+>>> schrieb Karol Przybylski <karprzy7@gmail.com>:
+>>>  
+>>>> clk_prepare() is called in usbtll_omap_probe to fill clk array.
+>>>> Return code is not checked, leaving possible error condition unhandled.
+>>>>
+>>>> Added variable to hold return value from clk_prepare() and return statement
+>>>> when it's not successful.
+>>>>
+>>>> Found in coverity scan, CID 1594680
+>>>>
+>>>> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+>>>> ---
+>>>>  drivers/mfd/omap-usb-tll.c | 8 ++++++--
+>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+>>>> index 0f7fdb99c809..28446b082c85 100644
+>>>> --- a/drivers/mfd/omap-usb-tll.c
+>>>> +++ b/drivers/mfd/omap-usb-tll.c
+>>>> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>>>>       struct device                           *dev =  &pdev->dev;
+>>>>       struct usbtll_omap                      *tll;
+>>>>       void __iomem                            *base;
+>>>> -     int                                     i, nch, ver;
+>>>> +     int                                     i, nch, ver, err;
+>>>>
+>>>>       dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+>>>>
+>>>> @@ -251,7 +251,11 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>>>>               if (IS_ERR(tll->ch_clk[i]))
+>>>>                       dev_dbg(dev, "can't get clock : %s\n", clkname);  
+>>>
+>>> if you add more intensive error checking, then why is this error
+>>> ignored and not returned?  
 >>
->> #define DWC3_SINGLE_PORT_RAM     1
->> #define DWC3_TW0_PORT_RAM        0
-> Yes. I think it's more readable if we name the variable to "ram_type"
-> and use the macros above as I suggested.
->
-> If you still plan to use it as boolean, please rename the variable
-> spram_type to is_single_port_ram (no one knows what "spram_type" mean
-> without the programming guide or some documention).
+>> Thank you for the feedback. It does seem that elevated error checking
+>> is not the way
+>> to go in this case. 
+> 
+> As far as I can see everything checks ch_clk[i] for validity before
+> usage. Also clk_enable() called later is checked which would catch
+> clk_prepare() failures, if there were even possible here.
+> 
+> So the only question which I am not 100% sure about is whether having
+> ch_clk sparsly populated is normal operation. If that is the case, then
+> more error checking is not useful. If not, then it might let us better
+> sleep. As said as far as I can see errors are catched later.
+> 
+> @Roger: what is your opintion towards this?
 
-We are fine to use variable name as a is_single_port_ram with boolean.
-Please find the below updated new patch for your review.
+I don't see usb_tll_hs_usb_ch?_clk in any of the OMAP device trees.
+Could it be that they are optional?
+If so then we could convert it to devm_clk_get_optional()?
 
-https://lore.kernel.org/linux-usb/20241111142049.604-1-selvarasu.g@samsung.com/.
+While at that, maybe the device tree binding could also be updated and
+converted to yaml.
 
+> 
+> BTW: If you do this kind of work, you could also use W=1 or
+> CONFIG_WERROR during compiling to catch easy things. At least I see new
+> compile warnings with your patch. 
+> 
+> Regards,
+> Andreas
 
-> < snip >
->
->>> We may need to think a little more on how to budgeting the resource
->>> properly to accomodate for different requirements. If there's no single
->>> formula to satisfy for all platform, perhaps we may need to introduce
->>> parameters that users can set base on the needs of their application.
->> Agree. Need to introduce some parameters to control the required fifos
->> by user that based their usecase.
->> Here's a rephrased version of your proposal:
->>
->> To address the issue of determining the required number of FIFOs for
->> different types of transfers, we propose introducing dynamic FIFO
->> calculation for all type of EP transfers based on the maximum packet
->> size, and remove hard code value for required fifos in driver,
-> The current fifo calculation already takes on the max packet size into
-> account.
->
-> For SuperSpeed and above, we can guess how much fifo is needed base on
-> the maxburst and mult settings. However, for bulk endpoint in highspeed,
-> it needs a bit more checking.
-Agree.
->
->> Additionally, we suggest introducing DT properties(tx-fifo-max-num-iso,
->> tx-fifo-max-bulk and tx-fifo-max-intr) for all types of transfers
-> This constraint should be decided from the function driver. We should
-> try to keep this more generic since your gadget may be used as mass
-> storage device instead of UVC where bulk performance is needed more.
-Agree.
->
->> (except control EP) to allow users to control the required FIFOs instead
->> of relying solely on the tx-fifo-max-num. This approach will provide
->> more flexibility and customization options for users based on their
->> specific use cases.
->>
->> Please let me know if you have any comments on the above approach.
->>
-> How about this: Implement gadget->ops->match_ep() for dwc3 and update
-> the note in usb_ep_autoconfig() API.
->
-> If the function driver looks for an endpoint by passing in the
-> descriptor with wMaxPacketSize set to 0, mark the endpoint to used for
-> performance. This is closely related to the usb_ep_autoconfig() behavior
-> where it returns the endpoint's maxpacket_limit if wMaxPacketSize is not
-> provided. We just need to expand this behavior to look for performance
-> endpoint.
->
-> If the function driver provides the wMaxPacketSize during
-> usb_ep_autoconfig(), then use the minimum required fifo.
->
-> What do you think? Will this work for you?
-
-
-Hi  Thinh,
-
-Thank you for the suggestions. This method makes more sense to us, and 
-we are fine proceeding with it. As we previously discussed, we plan to 
-create a separate patch for allocating resources for bulk EP.
-However, it may take some time on our end as we need to perform 
-additional testing with all possible scenarios. In the meantime, please 
-review and help to merge the patch for the single port RAM FIFO resizing 
-logic.
-
-Thanks,
-Selva
-
->
-> BR,
-> Thinh
+-- 
+cheers,
+-roger
 
