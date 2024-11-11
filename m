@@ -1,176 +1,221 @@
-Return-Path: <linux-kernel+bounces-403803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B65C9C3B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:40:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31CC29C3B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1611C21CA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:40:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83734B224E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517941531C5;
-	Mon, 11 Nov 2024 09:40:02 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AB1156997;
+	Mon, 11 Nov 2024 09:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SkYMK80u"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8C1149C55;
-	Mon, 11 Nov 2024 09:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CF815687C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318001; cv=none; b=Zod/SUaQFDesoykWZ1KRMo6Pc8vk/Dwj5etpLWwHatCC0YO7dS8H9UqmJVjdKr9U21i8WyL3LPCplGV58OVvcrTLvPxNPdcYm+8ek/ZW8QgU4sKBO3RhS/GawX4n/VTXXt0IHJ7qRh/PpXa6Rg/3qBKUZVuuu8JqBJqS0MAr2NI=
+	t=1731318006; cv=none; b=pZd0DJJKJyKFWBskkM6BHWGSeFW8y4Wpt3XZc810HzUY9AkW50cXK4P+x6bubJVRbma789bK5I1ZJBqh+jg/5ilMGTpPgEqwKIfzuyY8n5TKbxLiXnuK/CGSxZDLKKKIgQLTM2Gx3XgZlV1EO4njK6lfL6ZJxsEOZBtSdlzxHAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318001; c=relaxed/simple;
-	bh=P40txRj0/uQ3mq52SEAERh2H6v3P6Bd0QHsKYHZPEBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fPp9fvERwrwhWb9huiwZgUJmyyq7maQA3guzFOXCwPx/pXvW5ZT3Eeyroe0eY8g0RjBvfFyls5pIVVEXrRy0aWJVVNeZqumiSazcnJ5Di6TVEsDHaceEQ5PaRdgmGP9Q+u1C0LyocbUAoHaIEwBLdxfNRvQ26c80Y1U+U0fqk3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xn4GZ3Hl4z1jy0r;
-	Mon, 11 Nov 2024 17:37:58 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C4BA1401F4;
-	Mon, 11 Nov 2024 17:39:45 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemg200008.china.huawei.com (7.202.181.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 17:39:44 +0800
-Message-ID: <4586d072-873f-3df5-9656-38bb7aba358b@huawei.com>
-Date: Mon, 11 Nov 2024 17:39:43 +0800
+	s=arc-20240116; t=1731318006; c=relaxed/simple;
+	bh=SrePIxSbFYjj2HfNvSNCaCC5bOfkmhdL4/yJT9sPHp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KIujdiVau8xnlX5he6JF177yREdETOm/iA/Vb57tcsCNoKW4CxcbH+NsI9BCZX2Lv2n2CNWPrFsmozhaArfIDIfqSU9vI8JGIWkEbyckNFgayR2h48ZLyWLlfdvIx8QcdUWx2rSj9zIAy9LTEXx9jTNxVQBG6fWjXx/AatlnFQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SkYMK80u; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5ceca7df7f0so5630189a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:40:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731318002; x=1731922802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8uq+o2vFZJUqX4/y2uQm9wgc0uDfnPCbnfiej+5FcGg=;
+        b=SkYMK80uK+Bnsm2xABboWe/iLl13dzi0kw0gPUKvS8i4MQYsQLRm6o5qL5hVX693CU
+         OFa5hDuSbSqjlJvPDtL2MjQ81aXUbMUhFjJ8Aafn0fuBViuuQgEO3JVqAJ5FL91zlkRn
+         KT8SlLL10vYqqZr6fDCgG9X+Y3ZfZlVSDIM91mjVpVQ8iy2WO7jMLgGBeAGcsrvVwIN/
+         QXmBVMnPooWivJVBenX5qgocK8wZqq0MpGOE6cEpAHoHlC1Xg5hXuhVRhdlLlsDs68WQ
+         i2zD552r570+WksEl0XpCmnVeXzac6wFERyQgAyzaGh7x6gNsN+H7CQmFNNBB1knRRti
+         371w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731318002; x=1731922802;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8uq+o2vFZJUqX4/y2uQm9wgc0uDfnPCbnfiej+5FcGg=;
+        b=s40Ehusc6L6QycxlbflluNPRFXbY6Mt90STnaQhnXlnNhvZq+d/nhe0nJYllrefrmv
+         SMYMtwLjPJDwKLBWAK0edGeztsu61e+tILqk6oPLub77S9H4Mh9nfnXjmT2UKq0EaMo5
+         5igF5AUKp/kqIDk6SbZ+vZ77nazigzKpSNpkSkfUijGwKPcCTWuXu4Cj+wNwS53fCid/
+         SlRQRkzdXHOVLc5kQqJnt1xlneqJ3kIE59NZAG8ePMTK/fnEOw2ymLKQYxLjOYnkA2bn
+         WR3bXzhBUrIUQaaueFA2knz+T5b1AGTYwCuYbgacSC6JeKrv5Cy63HFRFv2HdeaAntQo
+         E8AA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0FhHHd2SJ38ahMANjdYeOBhTMe4G66LSvtpjKp9YXntyE/JYXAXj2H8SpZhq9bGjFmAM4BwoZkejGm1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdrW8OPjaNAgqSS8Vf3fP/QyU0UbAEo71bo3qGb6kugNEO3GF9
+	J9bPyzIULxtUP/BQzg8Ul1MLE+XDvDBSb0mIX6iUhqAOAApC5oj9Pd/v7rZgxkg=
+X-Google-Smtp-Source: AGHT+IEtwIpih366270iEmy7zBPiGHFqTs9kQiN6axsaFrcWpMU4sHgBmIXXbVCyVCYkUQP1Knn9+w==
+X-Received: by 2002:a05:6402:3198:b0:5ce:c9ae:347e with SMTP id 4fb4d7f45d1cf-5cf0a45d167mr7750194a12.30.1731318002466;
+        Mon, 11 Nov 2024 01:40:02 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03bb85f5sm4646840a12.53.2024.11.11.01.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 01:40:01 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:39:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Vitalii Mordan <mordan@ispras.ru>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	Vitalii Mordan <mordan@ispras.ru>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>
+Subject: Re: [PATCH net v2]: stmmac: dwmac-intel-plat: fix call balance of
+ tx_clk handling routines
+Message-ID: <e1b263d8-adc0-455b-adf1-9247fae1b320@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
-Content-Language: en-US
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-CC: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
-	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
-	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20241024094303.1531810-1-ruanjinjie@huawei.com>
- <Zy9YOTxMv6tVAXzX@visitorckw-System-Product-Name>
- <Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zy9deU5VK3YR+r9N@visitorckw-System-Product-Name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108173334.2973603-1-mordan@ispras.ru>
 
+Hi Vitalii,
 
+kernel test robot noticed the following build warnings:
 
-On 2024/11/9 21:02, Kuan-Wei Chiu wrote:
-> On Sat, Nov 09, 2024 at 08:40:30PM +0800, Kuan-Wei Chiu wrote:
->> Hi Jinjie,
->>
->> On Thu, Oct 24, 2024 at 05:43:03PM +0800, Jinjie Ruan wrote:
->>> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
->>> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
->>> has assigned before, and the error path only free the suite->log's stream
->>> memory but not set it to NULL in string_stream_destroy(), so the later
->>> string_stream_clear() of suite->log in kunit_init_suite() will cause
->>> below UAF bug.
->>>
->>> Set stream pointer to NULL after free in string_stream_destroy()
->>> to fix it.
->>>
->>> 	Unable to handle kernel paging request at virtual address 006440150000030d
->>> 	Mem abort info:
->>> 	  ESR = 0x0000000096000004
->>> 	  EC = 0x25: DABT (current EL), IL = 32 bits
->>> 	  SET = 0, FnV = 0
->>> 	  EA = 0, S1PTW = 0
->>> 	  FSC = 0x04: level 0 translation fault
->>> 	Data abort info:
->>> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>> 	[006440150000030d] address between user and kernel address ranges
->>> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
->>> 	Dumping ftrace buffer:
->>> 	   (ftrace buffer empty)
->>> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
->>> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
->>> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
->>> 	Hardware name: linux,dummy-virt (DT)
->>> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>> 	pc : string_stream_clear+0x54/0x1ac
->>> 	lr : string_stream_clear+0x1a8/0x1ac
->>> 	sp : ffffffc080b47410
->>> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
->>> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
->>> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
->>> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
->>> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
->>> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
->>> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
->>> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
->>> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
->>> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
->>> 	Call trace:
->>> 	 string_stream_clear+0x54/0x1ac
->>> 	 __kunit_test_suites_init+0x108/0x1d8
->>> 	 kunit_exec_run_tests+0xb8/0x100
->>> 	 kunit_module_notify+0x400/0x55c
->>> 	 notifier_call_chain+0xfc/0x3b4
->>> 	 blocking_notifier_call_chain+0x68/0x9c
->>> 	 do_init_module+0x24c/0x5c8
->>> 	 load_module+0x4acc/0x4e90
->>> 	 init_module_from_file+0xd4/0x128
->>> 	 idempotent_init_module+0x2d4/0x57c
->>> 	 __arm64_sys_finit_module+0xac/0x100
->>> 	 invoke_syscall+0x6c/0x258
->>> 	 el0_svc_common.constprop.0+0x160/0x22c
->>> 	 do_el0_svc+0x44/0x5c
->>> 	 el0_svc+0x48/0xb8
->>> 	 el0t_64_sync_handler+0x13c/0x158
->>> 	 el0t_64_sync+0x190/0x194
->>> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
->>> 	---[ end trace 0000000000000000 ]---
->>> 	Kernel panic - not syncing: Oops: Fatal exception
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
->>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>> ---
->>>  lib/kunit/string-stream.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
->>> index 54f4fdcbfac8..00ad518b730b 100644
->>> --- a/lib/kunit/string-stream.c
->>> +++ b/lib/kunit/string-stream.c
->>> @@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
->>>  
->>>  	string_stream_clear(stream);
->>>  	kfree(stream);
->>> +	stream = NULL;
->>
->> Thanks for proposing the fix. However, I don't believe it fully
->> resolves the UAF issue. Changing the stream pointer value within
->> string_stream_destroy() doesn't update the caller's stream pointer, so
->> the issue remains.
->>
->> I think the correct approach would be to set the log pointer to NULL in
->> the error path of kunit_debugfs_create_suite() to address the issue.
->> Let me know if I've missed something or overlooked an obvious detail.
->>
-> BTW, since alloc_string_stream() returns -ENOMEM on error rather than
-> NULL, it's best for the caller to check it with IS_ERR() instead of
-> IS_ERR_OR_NULL(). It's not a big issue, but I can send a cleanup patch
-> later to address this.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vitalii-Mordan/stmmac-dwmac-intel-plat-fix-call-balance-of-tx_clk-handling-routines/20241109-013647
+base:   net/main
+patch link:    https://lore.kernel.org/r/20241108173334.2973603-1-mordan%40ispras.ru
+patch subject: [PATCH net v2]: stmmac: dwmac-intel-plat: fix call balance of tx_clk handling routines
+config: arm-randconfig-r071-20241110 (https://download.01.org/0day-ci/archive/20241111/202411110911.fxtHBKSw-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
 
-Yes, I also notice it, but It's not a big issue. Thank you very much!
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202411110911.fxtHBKSw-lkp@intel.com/
 
-> 
-> Regards,
-> Kuan-Wei
+smatch warnings:
+drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c:163 intel_eth_plat_probe() error: we previously assumed 'dwmac->data' could be null (see line 101)
+
+vim +163 drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
+
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   75  static int intel_eth_plat_probe(struct platform_device *pdev)
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   76  {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   77  	struct plat_stmmacenet_data *plat_dat;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   78  	struct stmmac_resources stmmac_res;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   79  	struct intel_dwmac *dwmac;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   80  	unsigned long rate;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   81  	int ret;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   82  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   83  	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   84  	if (ret)
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   85  		return ret;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   86  
+abea8fd5e801a6 Jisheng Zhang        2023-09-16   87  	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   88  	if (IS_ERR(plat_dat)) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   89  		dev_err(&pdev->dev, "dt configuration failed\n");
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   90  		return PTR_ERR(plat_dat);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   91  	}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   92  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   93  	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
+abea8fd5e801a6 Jisheng Zhang        2023-09-16   94  	if (!dwmac)
+abea8fd5e801a6 Jisheng Zhang        2023-09-16   95  		return -ENOMEM;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   96  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   97  	dwmac->dev = &pdev->dev;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   98  	dwmac->tx_clk = NULL;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26   99  
+b0377116decdee Rob Herring          2023-10-09  100  	dwmac->data = device_get_match_data(&pdev->dev);
+b0377116decdee Rob Herring          2023-10-09 @101  	if (dwmac->data) {
+                                                            ^^^^^^^^^^^
+Check for NULL
+
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  102  		if (dwmac->data->fix_mac_speed)
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  103  			plat_dat->fix_mac_speed = dwmac->data->fix_mac_speed;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  104  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  105  		/* Enable TX clock */
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  106  		if (dwmac->data->tx_clk_en) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  107  			dwmac->tx_clk = devm_clk_get(&pdev->dev, "tx_clk");
+abea8fd5e801a6 Jisheng Zhang        2023-09-16  108  			if (IS_ERR(dwmac->tx_clk))
+abea8fd5e801a6 Jisheng Zhang        2023-09-16  109  				return PTR_ERR(dwmac->tx_clk);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  110  
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  111  			ret = clk_prepare_enable(dwmac->tx_clk);
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  112  			if (ret) {
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  113  				dev_err(&pdev->dev,
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  114  					"Failed to enable tx_clk\n");
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  115  				return ret;
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  116  			}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  117  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  118  			/* Check and configure TX clock rate */
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  119  			rate = clk_get_rate(dwmac->tx_clk);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  120  			if (dwmac->data->tx_clk_rate &&
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  121  			    rate != dwmac->data->tx_clk_rate) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  122  				rate = dwmac->data->tx_clk_rate;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  123  				ret = clk_set_rate(dwmac->tx_clk, rate);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  124  				if (ret) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  125  					dev_err(&pdev->dev,
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  126  						"Failed to set tx_clk\n");
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  127  					goto err_tx_clk_disable;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  128  				}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  129  			}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  130  		}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  131  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  132  		/* Check and configure PTP ref clock rate */
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  133  		rate = clk_get_rate(plat_dat->clk_ptp_ref);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  134  		if (dwmac->data->ptp_ref_clk_rate &&
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  135  		    rate != dwmac->data->ptp_ref_clk_rate) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  136  			rate = dwmac->data->ptp_ref_clk_rate;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  137  			ret = clk_set_rate(plat_dat->clk_ptp_ref, rate);
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  138  			if (ret) {
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  139  				dev_err(&pdev->dev,
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  140  					"Failed to set clk_ptp_ref\n");
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  141  				goto err_tx_clk_disable;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  142  			}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  143  		}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  144  	}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  145  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  146  	plat_dat->bsp_priv = dwmac;
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  147  	plat_dat->eee_usecs_rate = plat_dat->clk_ptp_rate;
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  148  
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  149  	if (plat_dat->eee_usecs_rate > 0) {
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  150  		u32 tx_lpi_usec;
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  151  
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  152  		tx_lpi_usec = (plat_dat->eee_usecs_rate / 1000000) - 1;
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  153  		writel(tx_lpi_usec, stmmac_res.addr + GMAC_1US_TIC_COUNTER);
+b4c5f83ae3f3e2 Rusaimi Amira Ruslan 2020-09-28  154  	}
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  155  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  156  	ret = stmmac_dvr_probe(&pdev->dev, plat_dat, &stmmac_res);
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  157  	if (ret)
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  158  		goto err_tx_clk_disable;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  159  
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  160  	return 0;
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  161  
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  162  err_tx_clk_disable:
+bd8cfad17c9530 Vitalii Mordan       2024-11-08 @163  	if (dwmac->data->tx_clk_en)
+                                                            ^^^^^^^^^^^^^
+Unchecked dereference
+
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  164  		clk_disable_unprepare(dwmac->tx_clk);
+bd8cfad17c9530 Vitalii Mordan       2024-11-08  165  	return ret;
+9efc9b2b04c74e Rusaimi Amira Ruslan 2020-08-26  166  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
