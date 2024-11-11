@@ -1,124 +1,179 @@
-Return-Path: <linux-kernel+bounces-403928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE369C3CC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:15:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 994189C3CCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58D71F2137E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EE628261E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9151185E53;
-	Mon, 11 Nov 2024 11:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC2C18A6DB;
+	Mon, 11 Nov 2024 11:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J7CJ96WJ"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OnwcAa7i"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923A812EBDB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BDC170A15
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731323738; cv=none; b=JIr0YQUnWaRCxHeBDoVBPs+XpYRgqlAwk0FeJQvHURCJFNQ8aDTY9jiFBIVp5cw8WIBwoEFwXNkSWuK1NMVx54L3zSLbHs2R0G0NZJmUT5pfo05ZqmD7ir4KG/lH/RgLzgLHMFj3BUeC3Jmmzf1Br1uqvFI6gFkek6Sk98ENqJ0=
+	t=1731323741; cv=none; b=besUboiHH0fxssW/DVdNrCGkUadFLSbrscZh9H1mrVQ7eGT9BoF8poSvy5gvP99yYzWi5EZpRHKwa8SFCsEZlNES85x28L7goPVO4PbKNrYaZEJKq+Vw2BV3W8Pg/jk8Pz4WiPVjtBKMHbKc5hRtsAzwn6w/I+CPgVloTiQ85Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731323738; c=relaxed/simple;
-	bh=mZ/ARLqLov2Jgx+SQL1giQ6yKDvj3sVaHQWi1+NY48k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXIPpBRvh8Cuml3alvb/UY9JSP0gxdLYRC+zPxXdxBQlC2Z+A6BlEZYRomgTLc/SkAwQfh7TdmkIlm4jaDKTYQJ6FwHk2A8kS/N3y+rL9YPNkHDpZnD428yBoho/N1vFbKGj/xj7RcHC2Q4wQrwm6dusouKvsnoKCALhFGkDtdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J7CJ96WJ; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso2869074a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+	s=arc-20240116; t=1731323741; c=relaxed/simple;
+	bh=UVMY3jncP8KlbJgHSOQbnrh0HSPCD2duUy36Ssl4JeY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EcGiUP/ehUr6nN6EabNxPhtoLSvysP6DmTEBddseZB8YHSVesu4Z1O6RmM6EEQReCwIiVccJ0pBeBKEtPWnmNTclhxahRsO5Ywz4+EktB01HQT4uuMpYUQHbpGsIiTVLiC7ijisozCG9hX+xRzmGzrGI4w8fX+h7gZD3pxVbH3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OnwcAa7i; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so180952366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:15:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731323736; x=1731928536; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mZ/ARLqLov2Jgx+SQL1giQ6yKDvj3sVaHQWi1+NY48k=;
-        b=J7CJ96WJwc01tDfci7GTNJYH5eAezqhNPw/cC1YGfR9toSIEXk3GWyfh2iXClZM8Qv
-         ZTABrDXYpq0Swu5B5yRg8dZAXpZ543eW1F3tdpkKlzJLuFuKPjQz+P3qqMoRQ053+I1c
-         9N+IyxsKFesQ2eXxUMGpC2e0XjCCd6BkcS97pffNHPwpQvZNPOrC1dgrMxnX9bcIQvT5
-         ///ixqGYEeAZJDsWUJYmMvolEU0gHS7OWJXPXFqQ1BZiU7xu+V6QebD26HMGjx8KRBiy
-         rym74DI3r16Epe+ZT7pbyQjdBTq7RrsIJa5BdQSWEaXAbUvDrijcU5rQX0qjU1mP8VPl
-         m7tw==
+        d=tuxon.dev; s=google; t=1731323737; x=1731928537; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
+        b=OnwcAa7iFccdMPXmNNfuo+XSwSVwwhr08r0lXMAp/OEFWu00qv7wHWnONDdCu/5q7C
+         W+/EI+WP3Z4aGv/Ppvei6+w6/cbz/ivJ1SatoGSfcVKgMOCcmzaLKkwV1G11XNH6ap7P
+         4csA/TfJeSCCpI9ss7PEYectSu1/wz3ulgSj62rdCy3uN3X/rG3ip6lo302p20aszzWf
+         J7j5szIPJqSllJjvLBWecWqsy9XqeDSJLTBldqwznATzvsQT9vUSJGUcbQ6+bY4if8Y4
+         HOBtESNHHgYU2Ok3fGARnCPQDliwu771U7Z11sWnW0I+BBPQ1Gd6PZSkb3JN8n72IqO/
+         AXCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731323736; x=1731928536;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mZ/ARLqLov2Jgx+SQL1giQ6yKDvj3sVaHQWi1+NY48k=;
-        b=hUTovwxNUZqXn/wOfWd8oFZTEVtlicTdZzOH6CaSX6DPF2Vm85aqCvmL0ncwYJXQIG
-         3YaK0CMviY13PnyLUpSqpIVh0ltuywbkFmq9dVDZPLGZbnMqEa6AtyDwrL1HJR1ntygN
-         hq5qbP3AFM62kL+I0T24352pETbpcYwEoz1uIamReQVUxXzCG2OAMtfBd6ZFOykSq9w3
-         dmN7D/aybMs1HIQq3IQkgtD/0otTrKQLJNLc4Fvmffzf1F+IOmJ7p4E7l5hI/fquhrWy
-         A7j5nWCoP5lM5EhwzEmdh7z0+muhDIxNf5beKULjsr8CYc50vhFcUj2t/TxRex2ignuR
-         9bJg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7qyl/LPbXy4f798V4gM2csH0llU3MwqWtNtiRK91T2w80etzsujbSocvRQSKNEIsomKDdSHIXavFTJm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3lPke0ZYSBbrTGq1prYOlREqvLpoO/fee5HiefUf2CZ6JHdJs
-	lk3pXNeDZXLDXtGJlF+R7QooEvoh6nWauCyEjbpggnmCROTx/I7lIEDiGRZT2aqMsL2omy/vjmK
-	WW0oX0aYbWUWx4Yt1/slDLhgShZFDkM7K+qIu6Q==
-X-Google-Smtp-Source: AGHT+IErgNUsHwFEPcw1LDgnmP/37mQ9gLeIMsJqdNcIBi6T7tQt5CUK2zvQ5jLJG37H7WOe+k0BWZi9y5dco1D/m+U=
-X-Received: by 2002:a17:90b:4b91:b0:2e1:d5c9:1bc4 with SMTP id
- 98e67ed59e1d1-2e9b165595cmr16888328a91.7.1731323735734; Mon, 11 Nov 2024
- 03:15:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731323737; x=1731928537;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bhZZuPjatSrdZhX9k+zXeie/9aFPE96IB3h2Z1yS2Hc=;
+        b=I3YIaqrS16plGjsKnoLLbF7Ip3o4yG2k+RvOV6NtSBt8dGatfXGhY19x6mjCejSh/A
+         Xg3ihu++4quAOR10X0joJ/uEuBIVKiuwTaqDGGVuYqK3+frqdsqltg+XVO83N3/VSG55
+         nb21ehwqUdBWWqUp/hqsc9zhiQBbt0udAkJXwvVY75DPOM0Vw69Car+T7IAOS5sV19Ju
+         WpDpbQ/DHU2iPnPHsMwiEAbXHIBA1kOxCqlENzrtY4MaVUjcN5r1laWaa1hH+sXiClDw
+         jNKUAbluVhXNCGZoduLpct6+wUNDok4WMfzepxgwsK4xMyboJBe9Da3oG3GuMETJHVzA
+         A0Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6ItgtLC4xDlQpPi8YYjiLfCpJKxk78aO0RNpT4OJcADAn+1K3BBnJNBP+TI51adjU22h4+YMopG3GHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvIvBmeTh/3XyLzHz7jGp8XjSmGCM5Dhs6MYWxMHXDw61u+bk1
+	9qTE10bysrLSR0Tycv/uB76v0j7ygps3xvl1E9ZiTeRMLLTyXPy3wV6RUGJVIWg=
+X-Google-Smtp-Source: AGHT+IFbp4VgcqWBYLe3U0yCi4vd7nmqSuzbqzRywA4zlYZMwP+tOs/p2A4kYUW8+VEuOgG9xmufbQ==
+X-Received: by 2002:a17:907:6d02:b0:a9a:60c1:136d with SMTP id a640c23a62f3a-a9eeff0e570mr1147950966b.22.1731323736778;
+        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176cbsm593593066b.23.2024.11.11.03.15.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 03:15:36 -0800 (PST)
+Message-ID: <9ef0d9df-3d6c-470a-913c-55698148d00e@tuxon.dev>
+Date: Mon, 11 Nov 2024 13:15:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241111104054.GE22801@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 11 Nov 2024 12:15:24 +0100
-Message-ID: <CAKfTPtBHRdHJaT_bjx1RF8bJ8Vc2s582VXMACPyjOno8zE_g=Q@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Saravana Kannan <saravanak@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA
+ transactions
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20241108104958.2931943-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241108104958.2931943-7-claudiu.beznea.uj@bp.renesas.com>
+ <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TYCPR01MB1133233B458F3AC5F7C3602B3865F2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Nov 2024 at 11:41, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
->
-> > I actually quickly hacked up the cpu_overutilized() function to return
-> > true during suspend/resume and the threads are nicely spread out and
-> > running in parallel. That actually reduces the total of the
-> > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
->
-> Right, so that kills EAS and makes it fall through to the regular
-> select_idle_sibling() thing.
->
-> > Peter,
-> >
-> > Would you be open to the scheduler being aware of
-> > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > overutilized behavior during these phases? I know it's a very use case
-> > specific behavior but how often do we NOT want to speed up
-> > suspend/resume? We can make this a CONFIG or a kernel command line
-> > option -- say, fast_suspend or something like that.
->
-> Well, I don't mind if Vincent doesn't. It seems like a very
-> specific/targeted thing and should not affect much else, so it is a
-> relatively safe thing to do.
+Hi, Biju,
 
-I would like to understand why all idle little cpus are not used in
-saravana's example and tasks are packed on the same cpu instead.
+On 10.11.2024 10:37, Biju Das wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: 08 November 2024 10:50
+>> To: geert+renesas@glider.be; mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
+>> krzk+dt@kernel.org; conor+dt@kernel.org; Biju Das <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad
+>> <prabhakar.mahadev-lad.rj@bp.renesas.com>; lgirdwood@gmail.com; broonie@kernel.org;
+>> magnus.damm@gmail.com; linus.walleij@linaro.org; perex@perex.cz; tiwai@suse.com;
+>> p.zabel@pengutronix.de
+>> Cc: linux-renesas-soc@vger.kernel.org; linux-clk@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-sound@vger.kernel.org; linux-gpio@vger.kernel.org; Claudiu.Beznea
+>> <claudiu.beznea@tuxon.dev>; Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>; stable@vger.kernel.org
+>> Subject: [PATCH v2 06/25] ASoC: sh: rz-ssi: Terminate all the DMA transactions
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> In case of full duplex the 1st closed stream doesn't benefit from the dmaengine_terminate_async().
+>> Call it after the companion stream is closed.
+>>
+>> Fixes: 26ac471c5354 ("ASoC: sh: rz-ssi: Add SSI DMAC support")
+> 
+> Maybe add fixes tag for full duplex case as the separation of 
+> Playback/ Capture is introduced in that patch.
 
->
-> Perhaps a more direct hack in is_rd_overutilized() would be even less
-> invasive, changing cpu_overutilized() relies on that getting propagated
-> to rd->overutilized, might as well skip that step, no?
+OK
+
+> 
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Cheers,
+> Biju
+> 
+>> ---
+>>
+>> Changes in v2:
+>> - none
+>>
+>>  sound/soc/renesas/rz-ssi.c | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/sound/soc/renesas/rz-ssi.c b/sound/soc/renesas/rz-ssi.c index 6efd017aaa7f..2d8721156099
+>> 100644
+>> --- a/sound/soc/renesas/rz-ssi.c
+>> +++ b/sound/soc/renesas/rz-ssi.c
+>> @@ -415,8 +415,12 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+>>  	rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
+>>
+>>  	/* Cancel all remaining DMA transactions */
+>> -	if (rz_ssi_is_dma_enabled(ssi))
+>> -		dmaengine_terminate_async(strm->dma_ch);
+>> +	if (rz_ssi_is_dma_enabled(ssi)) {
+>> +		if (ssi->playback.dma_ch)
+>> +			dmaengine_terminate_async(ssi->playback.dma_ch);
+>> +		if (ssi->capture.dma_ch)
+>> +			dmaengine_terminate_async(ssi->capture.dma_ch);
+>> +	}
+>>
+>>  	rz_ssi_set_idle(ssi);
+>>
+>> --
+>> 2.39.2
+> 
 
