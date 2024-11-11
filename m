@@ -1,161 +1,150 @@
-Return-Path: <linux-kernel+bounces-403547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D7B9C370D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BED9C3713
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90991C216C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C5D1C20AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492C4145B18;
-	Mon, 11 Nov 2024 03:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6ED14A0A3;
+	Mon, 11 Nov 2024 03:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2Nc0Pqu"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAEK7ZDG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AED93224;
-	Mon, 11 Nov 2024 03:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256832C18C;
+	Mon, 11 Nov 2024 03:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731295983; cv=none; b=FVjf2CdjyKW8gPe+QX+c9Atxyctle0pFEBJVyRmT24ly1OLBuz8FDQxqzwKKht8f5EZk8gieT6//Wv584NpUemFVfgiOzz8uon1MuBVyT8ysB3P5fdWynRfqNsL9aLxKcVHF+QDIO3i0cpiytwKCjjCWX4ajowOwIX1tUfuhdhM=
+	t=1731296230; cv=none; b=eW0XiafgDY4RJi0M2/9jmkmhsR1RXPUGc7cXjhA9sBFiebDLnlwH14QjVhEQtNDmOC5lF2Y8YiRPaVHPsgRMAVpSp4PR2T/rujCRkKZXcc4PQfEWyS8obQmUd1HMk3U+5YbCeh7+KGhVlt1wvAWR/ZuZY5PNP2Z6d9Hm70RflK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731295983; c=relaxed/simple;
-	bh=119Hr1JV4i6FMGb96EppLEBoxsNsOhaqmgWDTTe90uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJ6usEwYE0VciDRmLAbmJPihZnhTWOhMIoqsGw+F1Dis/LDOnzConib4w13j2vKg0hhi0qkdzJE6DO7crFAAD5EruhQLQgNpCuSdLmKBHrFlIlg2pLKL1dgLvnXU7lhR6/P/1A3GKwL/BGhcmAqFp4YgeFttXw6lg15zg9TNatc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2Nc0Pqu; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-720be27db27so3228552b3a.2;
-        Sun, 10 Nov 2024 19:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731295981; x=1731900781; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vnc8iSgBDQYpuhzLmnUqf5r3aqtYqrFe99ZE9Wq4E00=;
-        b=f2Nc0PqubZAcTdYloLuHhF7fTKFO8be9B4t0fBs1mGwuLZUCyBzkSlgdAYotoWc5Vm
-         AZ0yOmbFC1bOiS3xvo8vAsKZ8m6ENiEKY/PH91RSH+Jv8XYC+VZBoBpCiRIooa/KHJc0
-         0SoTf4rcTBA9T46EvL81NjozvkW1SbEhbMQUeOaCFBuCkjAPEpCLlpVMpQCNpxvcCaJJ
-         b0RIY+AF75PtifVA74XPvaRlFRy+JNOwzq4VSxBrU6oUasHDBxIUVRSgmmmnm/V3Gau8
-         zEYNPvTdyZ8VuZuY8cTtnjxvzPbvb2VjVuHsgcv1ga82naNumzSGFGgsuO6jSkK7YI0g
-         sCKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731295981; x=1731900781;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vnc8iSgBDQYpuhzLmnUqf5r3aqtYqrFe99ZE9Wq4E00=;
-        b=IA4EiwsaoO/3iLdIlorc22XhrWj5RzqwLeF2jKR7t6TPGHY23/ahCqDVCTjl0iqCJl
-         TTPsNKB2iRE4CPEW6qfyJb38va61146SDYRPywuBY19GTt0M1OBSw5yE087WzzwFM60D
-         UAgrGNEm1nb93EYImxFnEi9u63Ftt0XTw+LahBVNO+59GLIxmjajsPVcaiZolqRmZ524
-         eOkLwORj8/dAdLV6n+8JP+o/yR/uxlYwNCDAuJTMTUgt8xJBPgaaAU49zv/OJsc8NWwO
-         CuDLjyJmaE1pRXVpzzBkgW6tBHSHD4BPyasPTXnJH/BVj+lo0CID1F6Gbko6gV5HDDpE
-         9LKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2Zf6iJsWMV4LMhkUiiWljnAYdRy4sCNaJHecFbR6DTXs+9IupK0OTczIV09cmAQQC7rXbaHULXIMBPP4=@vger.kernel.org, AJvYcCU4rdN6DYo+n1UygoeymkbcY8rewdZOZrs2R9cMAw02aeUMd1daLzeWSMckSL/70NQ2QJQakc2SPoeM@vger.kernel.org, AJvYcCWvGtee6Ds6UOItSqb6gqYmFX+pStRB2OwXlDaCklq/HBKNc2yCSwY7fQ9IqAnpzucHXLn5SDuPHnKIgFBG@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+RgFrxn8mSk/KhBvHQQuFN8hnFMPx/Hwx5UL49VpE1Za2c13i
-	lr7c4akx+J8wrG4oaSWZSbqWP23uygw7gbODlojy/L2T9QVhH4hl
-X-Google-Smtp-Source: AGHT+IGubFMG2Haoksb9EuHa8ZAmXouEspyoNaKLDaAT0/mWoTrLOyEsuSJlqQxDDW5RgatsdDRVaQ==
-X-Received: by 2002:a05:6a20:7f8b:b0:1dc:1:3e28 with SMTP id adf61e73a8af0-1dc22b91363mr16340372637.40.1731295981434;
-        Sun, 10 Nov 2024 19:33:01 -0800 (PST)
-Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5bbdecsm7465503a12.29.2024.11.10.19.32.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 19:33:00 -0800 (PST)
-Date: Mon, 11 Nov 2024 11:32:56 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: krzk@kernel.org, hbarnor@chromium.org, dianders@chromium.org,
-	conor.dooley@microchip.com, dmitry.torokhov@gmail.com,
-	jikos@kernel.org, bentiss@kernel.org, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: input: gt7986u-spifw: Remove
- hid-report-addr property
-Message-ID: <ZzF66AChXkYTSIlY@ux-UP-WHL01>
-References: <20241108120311.87795-1-charles.goodix@gmail.com>
- <20241108120311.87795-3-charles.goodix@gmail.com>
- <20241108161350.GA2313139-robh@kernel.org>
+	s=arc-20240116; t=1731296230; c=relaxed/simple;
+	bh=g6bebViV2vgswvScFFgT4ihiXpYioBTgIRcyCJ4wOg0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EtdxJRJHIIVBJ63/e5ZC3TAGzF4hoHysXT+hF93nsHW80Hb0EbR8f+PlVc247kWJjAK49pYbzG2e10E8KAkgKiu+TiqMO6ucpy2K3xVYu88iwOIwPqGNoR4jmniyvjqSTRGClxX8ZjIxmYC9c0/up3KltagtaoVeOo7722sQ21o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAEK7ZDG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AACF0C4CECD;
+	Mon, 11 Nov 2024 03:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731296229;
+	bh=g6bebViV2vgswvScFFgT4ihiXpYioBTgIRcyCJ4wOg0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=lAEK7ZDGnUWWeuGgGHoSBZSIch//gY4F4iZv+vqgfDMvl4H2cXdo1ktf7PTJalbhK
+	 OqPDqc7hZoV+ypChfdcdFWFRgOPUIW2OpBGKmVf4wL3KfMT3qfqkNprFjUWHwoIxoi
+	 8w/5kxlytyCl8AA9bqTbC2JO45bqunfJLZ+sUBno9FnWb1bSNpLoZtxRt8K0RJ1/Du
+	 +doveSPWZ5KWISLC+6CjI6csMkXFnJIOvQoV3YM4yZO6ONSsB0Xv5t6oYDrQ/GvldD
+	 bbSPZsyRjIElY3luIiIy0FHF0x/5R6H5fTHmpj9NbXxSw6TcPnFCIn5FGCDtlu2Lbi
+	 QjecLV+Ifsb0Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09F0D12D49;
+	Mon, 11 Nov 2024 03:37:09 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH v2 0/3] clk: Fix issues related to CLK_IGNORE_UNUSED
+ failures and amlogic glitch free mux
+Date: Mon, 11 Nov 2024 11:37:00 +0800
+Message-Id: <20241111-fix_glitch_free-v2-0-0099fd9ad3e5@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108161350.GA2313139-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANx7MWcC/3WNwQqDMBBEf0X23JS4ltb01P8oInbdJAtqJBFpE
+ f+9qfce3zDzZoPEUTjBvdgg8ipJwpQBTwWQ7ybHSvrMgBov2qBRVt6tG2Qh39rIrNBoqmuDFVU
+ l5NUcOVcO47PJ7CUtIX6Og7X8pf9da6m0QrSGquvrxr19dOMQnNCZwgjNvu9f+2eoY7AAAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731296227; l=2635;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=g6bebViV2vgswvScFFgT4ihiXpYioBTgIRcyCJ4wOg0=;
+ b=5sClNyptQe3+bagbINnhGgZawIIkUqgm0F9mH6dWCZh1WqRUKdk8EPEuNykuNhlrS8kgQYefe
+ +FPz2kz/kQND05wRTL8OF9cTnv6S6R+ApC+whsKI9TACfH4LDcdITbt
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Hi Rob,
+If CLK_OPS_PARENT_ENABLE is configured for clock,
+clk_core_disable_unprepare() is called in clk_disable_unused_subtree().
+Even clocks that are configured with CLK_IGNORE_UNUSED are disabled,
+resulting in the failure of CLK_IGNORE_UNUSED.
 
-On Fri, Nov 08, 2024 at 10:13:50AM -0600, Rob Herring wrote:
-> On Fri, Nov 08, 2024 at 08:03:11PM +0800, Charles Wang wrote:
-> > Since all boards use the same address, drop the goodix,hid-report-addr
-> > property and hardcode it in the driver as a default value.
-> 
-> Where's the driver change?
-> 
-> I don't see the point in defining this and then removing it in the next 
-> patch.
->
+To ensure that amlogic glitch free mux can switch clock channels
+properly, add flag CLK_OPS_PARENT_ENABLE to glitch free mux. The issue
+that CLK_OPS_PARENT_ENABLE in CCF causes CLK_IGNORE_UNUSED to fail is
+also exposed.
 
-Apologies for the confusion. The driver changes will be included in the next version.
+glitch free mux channel switchover failure issue(Test vpu_clk on S4):
+step 1:
+$ cat /sys/kernel/debug/clk/vpu/clk_parent 
+vpu_0
+$ cat /sys/kernel/debug/clk/vpu_0/clk_rate 
+399999994
+$ cat /sys/kernel/debug/clk/vpu_1/clk_rate 
+666666656
+$ echo 1 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
+$ cat /sys/kernel/debug/meson-clk-msr/clks/cts_vpu_clk
+399987500       +/-12500Hz
 
->
-> > 
-> > Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > ---
-> >  .../devicetree/bindings/input/goodix,gt7986u-spifw.yaml    | 7 -------
-> >  1 file changed, 7 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-> > index 8105b9ce2..c9e346a60 100644
-> > --- a/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-> > +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u-spifw.yaml
-> > @@ -36,11 +36,6 @@ properties:
-> >    reset-gpios:
-> >      maxItems: 1
-> >  
-> > -  goodix,hid-report-addr:
-> > -    $ref: /schemas/types.yaml#/definitions/uint32
-> > -    description:
-> > -      The register address for retrieving HID report data.
-> > -
-> >    spi-max-frequency: true
-> >  
-> >  required:
-> > @@ -48,7 +43,6 @@ required:
-> >    - reg
-> >    - interrupts
-> >    - reset-gpios
-> > -  - goodix,hid-report-addr
-> 
-> Dropping a required property is an ABI break.
-> 
-> A devicetree that passes with the schema will not work on current 
-> kernels that require this property.
-> 
+step 2:
+$ echo 0 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
+$ echo 1 > /sys/kernel/debug/clk/vpu/clk_parent 
+$ cat /sys/kernel/debug/clk/vpu/clk_parent 
+vpu_1
+$ cat /sys/kernel/debug/clk/vpu/clk_rate 
+666666656
+$ echo 1 > /sys/kernel/debug/clk/vpu/clk_prepare_enable 
+$ cat /sys/kernel/debug/meson-clk-msr/clks/cts_vpu_clk
+0       +/-3125Hz
 
-Thank you for pointing this out. The next version will include the
-necessary driver modifications.
+In step2, vpu_0 is disabled, and the vpu is not switched to vpu_1. At
+this time, the vpu is still connected to vpu_0 and vpu_0 is disabled at
+this time, resulting in the clk-measure not measuring the clock.
 
-> >  
-> >  unevaluatedProperties: false
-> >  
-> > @@ -68,7 +62,6 @@ examples:
-> >          interrupts = <25 IRQ_TYPE_LEVEL_LOW>;
-> >          reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-> >          spi-max-frequency = <10000000>;
-> > -        goodix,hid-report-addr = <0x22c8c>;
-> >        };
-> >      };
-> >  
-> > -- 
-> > 2.43.0
-> > 
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Changes in v2:
+- The failure of glitch-free mux switching and the suppression of glitch
+are split into two patch.
+- The glitch-free mux adds support for the meson-8 family.
+- Link to v1: https://lore.kernel.org/r/20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com
+
+---
+Chuan Liu (3):
+      clk: Fix the CLK_IGNORE_UNUSED failure issue
+      clk: meson: Fix failure of glitch-free mux switching
+      clk: meson: Fix glitch occurs when setting up glitch-free mux
+
+ drivers/clk/clk.c                  | 67 ++++++++++++++++++++++++++++++++++++--
+ drivers/clk/meson/a1-peripherals.c | 12 +++----
+ drivers/clk/meson/axg.c            | 16 +++++----
+ drivers/clk/meson/c3-peripherals.c |  6 ++--
+ drivers/clk/meson/g12a.c           | 18 ++++++----
+ drivers/clk/meson/gxbb.c           | 18 ++++++----
+ drivers/clk/meson/meson8b.c        | 21 ++++++++++--
+ drivers/clk/meson/s4-peripherals.c | 32 +++++++++---------
+ 8 files changed, 140 insertions(+), 50 deletions(-)
+---
+base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
+change-id: 20240929-fix_glitch_free-290c88923c31
 
 Best regards,
-Charles
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
