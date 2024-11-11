@@ -1,116 +1,118 @@
-Return-Path: <linux-kernel+bounces-404560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783159C4526
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:43:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7F7C9C451F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 091C4B2F689
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:37:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC171F2150F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB1078C9C;
-	Mon, 11 Nov 2024 18:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1291AAE0C;
+	Mon, 11 Nov 2024 18:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="P/3XnOpF"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QTvSjVLN"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565811AA1FC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8AB450EE;
+	Mon, 11 Nov 2024 18:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731350272; cv=none; b=Ft0LlxzsqOeM8BoEVsqOVfernkSpMFn+eEmkCCqNUwSMejdde8FebyZhnulW5aZKS6EM3/DEy1qdMTH0Hso47ktCYHNDz6zubwDeAMSDfBvIcPZ8C6DhgJVsqcTMts6vue+Dz+LhYI1pmpYXZsstfsJuQQrqL2Ytj8haNKPxusU=
+	t=1731350398; cv=none; b=FKJXqhBIytOrbxQ1QrjbgVgsfFiQ23SgI/yZWuxZ9khWU/qQybiJDHE4MgzJVJ/EkZBQHkY3ZWmsIBbTcLt83tuHaOwMDr2NpNYd84L45rD5iflcQ4PRt0iGcvwO5ZUoVuOgiwAb91EKrYYtFmYhDQH5saLcvRkGpvy7nHIBcyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731350272; c=relaxed/simple;
-	bh=DsU4Q2HBDGni7J0QkIg9PUJJLlJaukVlP1T0PLDMdXQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ovt2FwZF9rnhlmwsDZ+mB0mnb2BPDFOXHJm/Cw7Q2dvESPeeqeCMkqOLdet7TBNFMEn/qNFbkWELoXQspKeNCUiAbvIOHRATFyQskAvthe4OliqA2Rvg5vanGrppLuClJ6rhb4EN7RMFmC55FBYkmpDuAe6I/6PKGmj+PN4fICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=P/3XnOpF; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BA4CB240003;
-	Mon, 11 Nov 2024 18:37:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1731350267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMZLU0glgskDaX19CHJonE0wxrjAf1oMMWUu0fOjAj4=;
-	b=P/3XnOpFuElSQsOmH0WVv9SF7oRRXP3TQaf+2ijN+ky2s5E8lE+x/FnUV4FHi7+BPIBAUC
-	bk2piY45QOhtou8vBBb7najMkIDiDZlMgaoZf4M86e1b4JogGDvm1+qctJup0RSPsD/jIP
-	R72p95NJ7rINvKBa7Mi9nAEAb0FA++oWiYiqaRqhRnsF51nrIapn/m+2k9Y84pKwzTXfmp
-	BG7IhabwpSqhpShDQgD4+LV20NBTr8yIYhBicZDaiy8RzHFzAFF/aHD1KpDImbFNbs6tLS
-	RRVepzLQjY0WCIWYdYObQNbp2Rx3fKHV4927tgnkQRelVrIP3PFkiPBS5euhEA==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  =?utf-8?Q?Andr=C3=A9?= Almeida
- <andrealmeid@igalia.com>,
-  Christian Brauner <brauner@kernel.org>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Shuah Khan <skhan@linuxfoundation.org>
-Subject: Re: [PATCH] mm: shmem: Fix variable type to int to evaluate
- negative conditions
-In-Reply-To: <20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com>
-	(Karan Sanghavi's message of "Mon, 11 Nov 2024 17:10:14 +0000")
-References: <20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com>
-Date: Mon, 11 Nov 2024 13:37:43 -0500
-Message-ID: <87ttcdwr9k.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731350398; c=relaxed/simple;
+	bh=Mkf8d4ycutLC3OawYLhiBBp12Y3I2OyMomLoWhibygY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MXJ0sb46uOM7B8/BYfUUsSYRiQB9k981ou8PkEJu9BS3NbNGJCt85DjqVLYxF/+/wDZ6aIRb9yfKthhUWBLTOSHxgfGnsRl3jVWqLwOLVBVtdvVZMc3Yc27QeammzsW93qk3878t1cNLDNsQHZJE27uTtSh6LIcnt+NBS7MdFnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QTvSjVLN; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c805a0753so45913895ad.0;
+        Mon, 11 Nov 2024 10:39:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731350397; x=1731955197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=is2dX1BvkV4gQvPfSQkwfTIdaReamJ5nfgtDMnPyLNk=;
+        b=QTvSjVLNIng+EH4zzlJGK59jrzQh/qfU4qn4tMlOjZ5K/1ZFem+RNbI6IjBbLqrbcT
+         s2BSVNqEcKaUrk1mpMCTjW4fawbyCWs1ghhL9EW1LcgnQyl+l/KbOQ0YVDyLA35S/Gnu
+         s2UGJEx/2I/mc78hJzY7tKfgTr51Jxv/P7eiujn7rB66sCtY/r7oAi+pO4ij4KWu+wqL
+         DQbULRvi/cGx/7xsKAj5WpIWgFm31oC7dCUR9C6PxyURw/kPVC1yBt1MCravv1z7k9np
+         gE7HUMw8lmNjGTh6POl8dX3yJofKMly/qO8bE00tyhIMQEWVDDmhg6upYm9XPkW41IsR
+         +UGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731350397; x=1731955197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=is2dX1BvkV4gQvPfSQkwfTIdaReamJ5nfgtDMnPyLNk=;
+        b=FtFjjG8zQonpsZiNYq8/LI6gGeTDh6jlQYCIlqeQQQdIgMdVco/E6tm04R2xKs8iak
+         Pfvgzh76iZquVvdMFvvaj0e3sNDiqlqbWPhxM1+REG8Smsxg70Ms1bNy8gytTVDwu98u
+         bAhVmNKqWHKdlKY3BNfkucPqT/mQFMU0UWv5YNs1a0GHJNgFDzlSAVkQqGcxJ1bgqsbU
+         7h7eG00XsDZA0U5WNzDr+iV2ME/9+mvYhGJldNQS8GgwjtRqlcnuXgO88xMC4wrUi/K1
+         k7gTd0nRGuLBm58qtKSW9xP/NMygg+60/Qackf7y5X+negIRg1kt8g9sr/Qgd8lTh26N
+         uKDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVnM+1T7TNINWPVCDYP4Ca0Q0y/hDOJu3EBUpiq0D/KpZIMOo4UaKZoHdBY/TyRxZLZdrL27yFGtRgt7wI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl+5apeKteFduWeXjzG0j/PXvyq8/11IxU1KJqMhIPIDYQW+An
+	Cg1zMao5RfIEAsuCHBA8y6bxcBuR2z9NMpoiLKJUaGq8bsWNWoAnC/t0lwys
+X-Google-Smtp-Source: AGHT+IGEYA+Tlv87Xjls4JLjmwWZezIuJutVxmFPz43mU/MFltEMX24LiSAfLkHDhngqoU4rDwvLtw==
+X-Received: by 2002:a17:902:f541:b0:20d:1866:ed6f with SMTP id d9443c01a7336-21183ccf11bmr185647305ad.4.1731350396455;
+        Mon, 11 Nov 2024 10:39:56 -0800 (PST)
+Received: from advait-kdeneon.lan ([2409:40d0:1170:6e90:2801:34a4:f903:135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e4278dsm78621345ad.159.2024.11.11.10.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 10:39:55 -0800 (PST)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	hpa@zytor.com
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH-next] KVM: x86/tdp_mmu: Fix redundant u16 compared to 0
+Date: Tue, 12 Nov 2024 00:09:35 +0530
+Message-Id: <20241111183935.8550-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+Content-Transfer-Encoding: 8bit
 
-Karan Sanghavi <karansanghvi98@gmail.com> writes:
+An unsigned value can never be negative,
+so this test will always evaluate the same way.
+`_as_id` a u16 is compared to 0.
 
-> version variable captures return value from utf8_parse_version
-> function which can be negative, but unsigned won't
-> let it capture, thus missing the further checks on negative values.
->
-> Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
-> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> ---
-> Coverity Message:
-> CID 1601569: (#1 of 1): Unsigned compared against 0 (NO_EFFECT)
-> unsigned_compare: This less-than-zero comparison of an unsigned 
-> value is never true. version < 0U
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+ arch/x86/kvm/mmu/tdp_mmu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-Reviewed-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
-
->
-> Coverity Link:
-> https://scan7.scan.coverity.com/#/project-view/10043/11354?selectedIssue=1601569
-> ---
->  mm/shmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 7987deb2be9b..17a1d4fa8870 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -4367,7 +4367,7 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
->  				    bool latest_version)
->  {
->  	struct shmem_options *ctx = fc->fs_private;
-> -	unsigned int version = UTF8_LATEST;
-> +	int version = UTF8_LATEST;
->  	struct unicode_map *encoding;
->  	char *version_str = param->string + 5;
->  
->
-> ---
-> base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
-> change-id: 20241111-unsignedcompare1601569-05b5932145ef
->
-> Best regards,
-
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 4508d868f1cd..b4e7b6a264d6 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -153,7 +153,7 @@ static struct kvm_mmu_page *tdp_mmu_next_root(struct kvm *kvm,
+ 	for (_root = tdp_mmu_next_root(_kvm, NULL, _only_valid);		\
+ 	     ({ lockdep_assert_held(&(_kvm)->mmu_lock); }), _root;		\
+ 	     _root = tdp_mmu_next_root(_kvm, _root, _only_valid))		\
+-		if (_as_id >= 0 && kvm_mmu_page_as_id(_root) != _as_id) {	\
++		if (kvm_mmu_page_as_id(_root) != _as_id) {	\
+ 		} else
+ 
+ #define for_each_valid_tdp_mmu_root_yield_safe(_kvm, _root, _as_id)	\
 -- 
-Gabriel Krisman Bertazi
+2.34.1
+
 
