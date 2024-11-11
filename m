@@ -1,185 +1,185 @@
-Return-Path: <linux-kernel+bounces-404263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F20D9C4199
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:11:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 310849C419B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7F8CB2317E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:11:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B51B31F22D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05C11A3AB1;
-	Mon, 11 Nov 2024 15:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7030D1A707A;
+	Mon, 11 Nov 2024 15:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoauzZUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="YJfbQFYz"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462561A302E;
-	Mon, 11 Nov 2024 15:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A601A4F09
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731337824; cv=none; b=IgbqyrFGw1H8RD/b1hPwgki/DmlFtqPiM8HIU04i6xLjyw0cg5Y7suvCKyJR/Z1y4iH3KVn62bX47v1GX0J63Kgz9tEGXGJUFInLtHzB+PaV4IcLP6EAy4XyhuXWdsafFdIb/+M/l24hgOFs68kxv/LkTcKCuF1V1Y9eRYX8S+M=
+	t=1731337827; cv=none; b=TfGLGgtvbdpLThoDgDzj8t+BuxpK9yiEqP+ufPMRdF20duUWKZebuxWfzXDrV5bUVdgn8UIDf8lLdzmY91sl7N5bPbViqJJ1r3TNkQD6KJL/sM+v2hUmihjnTW4j+vbMxBrCjpj8H6+cJ1ZRxyG0AGQ44SJUzEi5XLd/LzquXq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731337824; c=relaxed/simple;
-	bh=gPPD2BzNbmDa/kJNcw+8GmA/BYpbtW9RM+xKs4INiH8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KZtwrlwWAsEmJ+iimVB5RLdv1P3IGjOzNUxlf4mH3i8sP/radjMa32UZGaxlNtV52ZRfe/0zSw6fdiw9nHhhxGU2urlh5U6g9GMGg8TCxU62/7JMjgTeyc3OTzbfgly0wMYJmRqMBy9x2oU2BCzWMe1N18DVjLxZXB2B1RKwDfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoauzZUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB85C4CED5;
-	Mon, 11 Nov 2024 15:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731337823;
-	bh=gPPD2BzNbmDa/kJNcw+8GmA/BYpbtW9RM+xKs4INiH8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=HoauzZUb+Az66CkddaEXEDshdWfDHM4Rlb/24Vvglq1yDr6MqkPut/z7sWd1a2aq6
-	 0tuG+aepmB3Ihnf/WHWmTK3v8PMUBHKPzZf/wZ4avKh47/kLwvtH8ljKV5xsDRcODa
-	 +P3n32Rq6fx4liNCKMDxaDlFMOLPI7V482n3P06SWisy5BMXNoivFYwmgXBVY6NPXe
-	 hGj7snJnfhvvaJG/11fuPCHSPGw9r6h3QR72N/3YGRAa3NhtSp2W/93DwgtluJi5Um
-	 KwOXf2L6gn6rK/rEMi5Hxzqxy7wgE+FV3E6jH185qoApSaa6OMYFu2Eg6kWJM9zMcf
-	 9Y6gcP60TbDLA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 11 Nov 2024 10:09:57 -0500
-Subject: [PATCH v4 3/3] fs: add the ability for statmount() to report the
- sb_source
+	s=arc-20240116; t=1731337827; c=relaxed/simple;
+	bh=qGmcoBIEKaX1H0xWi2Qp7OQKOR+qAViu0lO/elGfL/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgK8aDKDSmEsuMzyTL/jmJ05kjATnpQTsc4MyXuR+apq8KudPiR0rJZItoIufFOvGWg6Ykjt3SuiM0NmJLEz+li+xTlZqXjiDcQOpxyRP9wlpxPyjpjuixY96BGriwtybx1XWH62ysyFqbb7/GRztK0WGy/Af4ocoidOBgy6+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=YJfbQFYz; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-72410cc7be9so3572209b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:10:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iiitd.ac.in; s=google; t=1731337825; x=1731942625; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LccvR0IWvQyoOnW9SnRg/FOFACnALCcOHU477bYWR1U=;
+        b=YJfbQFYz7tpcNbtTl165F4o2eTzZ81yhniWhaT4O6oYa6/hRGs83yeh/tePn9mrJaq
+         RQcqc85+gh12pQMb8Fqq/3FOJdOFpvw8jcc5TN+miHX6XVx2xTfr2gnHN/QWRZMaWyQM
+         pP9vjpR9JLj9XPL7GkRW9IpM5nmN6UO7yZOmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731337825; x=1731942625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LccvR0IWvQyoOnW9SnRg/FOFACnALCcOHU477bYWR1U=;
+        b=IDEtut2aQXOi9VfxjcWWdG/qzyCp2NQ/M6Gjn6XCiAnDJAPiNxcaY8iqAkkxF5EgtP
+         KTdn5BGp4d7uhEzuCvu00vOQFe9muON5l+oUP+SuI4c4MgNBZT9A+iAZxnpRFMmPRfY3
+         G0a99uwY+i0skgTEwVnYQZb1j8iMEsne8Y5pBYMVkG9gfcN4Es02lJfI9EbqN60I0UnT
+         FuoDy2i/BViYMqCdA/254lEvlLufljbDAttk461T3/Cp271J8+jaP0wWZKoyDYai6FIO
+         sF9tsQxXLpBh8yLRzHzX2g9V+e7il7b8EPfHI1i1dMBq5t33QRC01N3RvYC1WC9y6s6s
+         Xhtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXtAd//7BL/58/RwK0r8dI2cf472/NBg4o29e9UqfjC8da8w8dePzweGN/8RFLAh0sRQGlc1+KReXrWIu4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYjIUjgOTgO4DeZL1LL6Lp94FUNGqUy/kg1GrH0vUXKX35cEUh
+	I1tn+JShbUDMPLmmV+1xcsK5vNlXC4nqlnPSJ/vDWf/cTqxus1AjD1bx9Ch+X3k=
+X-Google-Smtp-Source: AGHT+IGlvE8MnWFmGfXGoYLBe2FkYBOQtGb2CmMB7BTmUrjaiDql86Va5/IEQq+zyQwlW7/+bzC6yw==
+X-Received: by 2002:a17:90b:4b09:b0:2e2:c98e:c33f with SMTP id 98e67ed59e1d1-2e9b16eb860mr19646569a91.1.1731337825317;
+        Mon, 11 Nov 2024 07:10:25 -0800 (PST)
+Received: from fedora ([103.3.204.81])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd180fsm8628464a91.33.2024.11.11.07.10.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 07:10:24 -0800 (PST)
+Date: Mon, 11 Nov 2024 20:40:14 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Wenjia Zhang <wenjia@linux.ibm.com>
+Cc: Jan Karcher <jaka@linux.ibm.com>, 
+	"D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
+	Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	Anup Sharma <anupnewsmail@gmail.com>, linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
+Message-ID: <niqf7e6xbvkloosm7auwb4wlulkfr66dagdfnbigsn3fedclui@qoag5bzbd3ys>
+References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
+ <ae8e61c6-e407-4303-aece-b7ce4060d73e@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-statmount-v4-3-2eaf35d07a80@kernel.org>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
-In-Reply-To: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>, 
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3821; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gPPD2BzNbmDa/kJNcw+8GmA/BYpbtW9RM+xKs4INiH8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnMh5bC+36IFMy/IY4fO1U7YQ3Z2X80uXPRqNmn
- aWSzELY6u+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZzIeWwAKCRAADmhBGVaC
- FdMrD/9WjfGM+KT3BQKEN/XQbKKdz9LFvJGdDNs3A0E/h+uRXyCfJ7n0Q3xq7WbLkeHg1JU6qZF
- Adb43CjW+Pe1GSa7UYMSBKNNtE0ocgwyDB8oNzMxwR9h2yS7DCztrjG7ilHSMkjA27Uk7i+/nYv
- ZCKYuocjrbNsMGrgRLRc5ZmxdOJ6oF1XMBGWEFyyOTi1mcgiNd8G5dB4U2Tbdw4WINRa5aj/YS2
- jP9AdGr3f53mLgaqD//gERSXvOyt1W9YdFMKFFxV8c5a+xc7uU8qJIysEuhf335FL3wgpIHobi7
- IrfEmGigBdX+HdWcylTMuDwxbHpAyNdLmVtZZRO4JCm55mTmcQJf/gAoi3A5t10+ynzLjf7qXsd
- zbq3H3Da7vFQ06j5Qz1uPn9rFIatNvCXWaxEBC96hH0J3lqB7YF/OzZ4TOpG0TPYfRxEEV57EFb
- 2+meIWYy7A3ed61kx/EcPmFhwKzrQY0R8Z3nnYE8bBmLwyFYHTFX2/UdK3jRMRRVneqdC+dyuBr
- J3A//TBeDxkXxYvcCQtnivJQHuV6SPZ7saY+zle+mdM+GtTe16ZjO5jlp2pedImhxNQW5vImFOO
- JoKGxYVmGLphv+85fMLg62Tedzl0Yd3Z0MxjfjF6z03HHAT8m1avl6d6w/jg67Q4cYsW0jcjK/A
- skdPHKCQAoxQtwQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ae8e61c6-e407-4303-aece-b7ce4060d73e@linux.ibm.com>
 
-/proc/self/mountinfo displays the source for the mount, but statmount()
-doesn't yet have a way to return it. Add a new STATMOUNT_SB_SOURCE flag,
-claim the 32-bit __spare1 field to hold the offset into the str[] array.
+On 11.11.2024 15:11, Wenjia Zhang wrote:
+>
+>
+>On 09.11.24 07:28, Manas via B4 Relay wrote:
+>>From: Manas <manas18244@iiitd.ac.in>
+>>
+>>The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+>>There is only one instance of this function being called and its passed
+>>with a NULL value in place of bc.
+>>
+>>Signed-off-by: Manas <manas18244@iiitd.ac.in>
+>>---
+>>The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+>>There is only one instance of this function being called and its passed
+>>with a NULL value in place of bc.
+>>
+>>Though, the compiler (gcc) optimizes it. Looking at the object dump of
+>>vmlinux (via `objdump -D vmlinux`), a new function clone
+>>(__smc_diag_dump.constprop.0) is added which removes this parameter from
+>>calling convention altogether.
+>>
+>>ffffffff8a701770 <__smc_diag_dump.constprop.0>:
+>>ffffffff8a701770:       41 57                   push   %r15
+>>ffffffff8a701772:       41 56                   push   %r14
+>>ffffffff8a701774:       41 55                   push   %r13
+>>ffffffff8a701776:       41 54                   push   %r12
+>>
+>>There are 5 parameters in original function, but in the cloned function
+>>only 4.
+>>
+>>I believe this patch also fixes this oops bug[1], which arises in the
+>>same function __smc_diag_dump. But I couldn't verify it further. Can
+>>someone please test this?
+>>
+>>[1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+>>---
+>>  net/smc/smc_diag.c | 6 ++----
+>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>>diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+>>index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
+>>--- a/net/smc/smc_diag.c
+>>+++ b/net/smc/smc_diag.c
+>>@@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+>>  static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
+>>  			   struct netlink_callback *cb,
+>>-			   const struct smc_diag_req *req,
+>>-			   struct nlattr *bc)
+>>+			   const struct smc_diag_req *req)
+>>  {
+>>  	struct smc_sock *smc = smc_sk(sk);
+>>  	struct smc_diag_fallback fallback;
+>>@@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>>  	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
+>>  	struct net *net = sock_net(skb->sk);
+>>  	int snum = cb_ctx->pos[p_type];
+>>-	struct nlattr *bc = NULL;
+>>  	struct hlist_head *head;
+>>  	int rc = 0, num = 0;
+>>  	struct sock *sk;
+>>@@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>>  			continue;
+>>  		if (num < snum)
+>>  			goto next;
+>>-		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
+>>+		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
+>>  		if (rc < 0)
+>>  			goto out;
+>>  next:
+>>
+>>---
+>>base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+>>change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+>>
+>>Best regards,
+>
+>That's true that the last parameter is not used. And the patch you 
+>suggested as a cleanup patch looks good to me. However, it should not 
+>fix the bug[1], because it does not match what the bug[1] described. 
+>Thank you, Jeongjun, for testing it! That verified that it indeed 
+>didn't fix the issue. I think the root cause is on handling 
+>idiag_sport. I'll look into it.
+>
+>[1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+>
+>Thanks,
+>Wenjia
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/namespace.c             | 36 +++++++++++++++++++++++++++++++++++-
- include/uapi/linux/mount.h |  3 ++-
- 2 files changed, 37 insertions(+), 2 deletions(-)
+Thank you Wenjia for reviewing this.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index fc4f81891d544305caf863904c0a6e16562fab49..4f034dba5884ce3641b8e4048e21879e4bda896c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -5014,6 +5014,32 @@ static void statmount_fs_subtype(struct kstatmount *s, struct seq_file *seq)
- 		seq_puts(seq, sb->s_subtype);
- }
- 
-+static int statmount_sb_source(struct kstatmount *s, struct seq_file *seq)
-+{
-+	struct super_block *sb = s->mnt->mnt_sb;
-+	struct mount *r = real_mount(s->mnt);
-+
-+	if (sb->s_op->show_devname) {
-+		size_t start = seq->count;
-+		int ret;
-+
-+		ret = sb->s_op->show_devname(seq, s->mnt->mnt_root);
-+		if (ret)
-+			return ret;
-+
-+		if (unlikely(seq_has_overflowed(seq)))
-+			return -EAGAIN;
-+
-+		/* Unescape the result */
-+		seq->buf[seq->count] = '\0';
-+		seq->count = start;
-+		seq_commit(seq, string_unescape_inplace(seq->buf + start, UNESCAPE_OCTAL));
-+	} else if (r->mnt_devname) {
-+		seq_puts(seq, r->mnt_devname);
-+	}
-+	return 0;
-+}
-+
- static void statmount_mnt_ns_id(struct kstatmount *s, struct mnt_namespace *ns)
- {
- 	s->sm.mask |= STATMOUNT_MNT_NS_ID;
-@@ -5077,6 +5103,10 @@ static int statmount_string(struct kstatmount *s, u64 flag)
- 		sm->fs_subtype = start;
- 		statmount_fs_subtype(s, seq);
- 		break;
-+	case STATMOUNT_SB_SOURCE:
-+		sm->sb_source = seq->count;
-+		ret = statmount_sb_source(s, seq);
-+		break;
- 	default:
- 		WARN_ON_ONCE(true);
- 		return -EINVAL;
-@@ -5225,6 +5255,9 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
- 	if (!err && s->mask & STATMOUNT_FS_SUBTYPE)
- 		err = statmount_string(s, STATMOUNT_FS_SUBTYPE);
- 
-+	if (!err && s->mask & STATMOUNT_SB_SOURCE)
-+		err = statmount_string(s, STATMOUNT_SB_SOURCE);
-+
- 	if (!err && s->mask & STATMOUNT_MNT_NS_ID)
- 		statmount_mnt_ns_id(s, ns);
- 
-@@ -5246,7 +5279,8 @@ static inline bool retry_statmount(const long ret, size_t *seq_size)
- }
- 
- #define STATMOUNT_STRING_REQ (STATMOUNT_MNT_ROOT | STATMOUNT_MNT_POINT | \
--			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | STATMOUNT_FS_SUBTYPE)
-+			      STATMOUNT_FS_TYPE | STATMOUNT_MNT_OPTS | \
-+			      STATMOUNT_FS_SUBTYPE | STATMOUNT_SB_SOURCE)
- 
- static int prepare_kstatmount(struct kstatmount *ks, struct mnt_id_req *kreq,
- 			      struct statmount __user *buf, size_t bufsize,
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 2e939dddf9cbabe574dafdb6cff9ad4cf9298a74..2b49e9131d77165899d8e3c17366c6afaa8b7795 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -174,7 +174,7 @@ struct statmount {
- 	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
- 	__u64 mnt_ns_id;	/* ID of the mount namespace */
- 	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
--	__u32 __spare1[1];
-+	__u32 sb_source;	/* [str] Source string of the mount */
- 	__u64 __spare2[48];
- 	char str[];		/* Variable size part containing strings */
- };
-@@ -210,6 +210,7 @@ struct mnt_id_req {
- #define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
- #define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
- #define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-+#define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
- 
- /*
-  * Special @mnt_id values that can be passed to listmount
+Should I make any changes to the commit message if we are going forward with it
+being as a cleanup patch? The commit message itself (barring the cover letter)
+should be enough, I reckon.
 
 -- 
-2.47.0
-
+Manas
 
