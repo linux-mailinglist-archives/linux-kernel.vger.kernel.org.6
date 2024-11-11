@@ -1,106 +1,55 @@
-Return-Path: <linux-kernel+bounces-404346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7811E9C42A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:30:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4AA9C42AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06AE21F231EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:30:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6138B21A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4260D1A0BD7;
-	Mon, 11 Nov 2024 16:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862561A0BD7;
+	Mon, 11 Nov 2024 16:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="vVBPWXGW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lygO0h6i"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="V5PhpvXo"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6217D1448C1;
-	Mon, 11 Nov 2024 16:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8806819C575;
+	Mon, 11 Nov 2024 16:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731342595; cv=none; b=B6jmR+ZkMqhi/3Z8p6V28V5ryJMp78sp+aHoQLSlES+Ya1Ld5hhLwkLvAeF/frV5j06cF9ZRKmsq/4uXyQqv/IYVAQ6CZwq4R6AwSxcpCfCNKiylyf7GduCZ2gNNBJwOlZl6lajix6C0Tc2695kZgU5R/87XrsP8K0qVnAEMyX0=
+	t=1731342657; cv=none; b=GTCExmJqgetgL9Yi7yMZSJlMyqbZFWQxFuzD8EHuFn/cPdUqWJdewVanwlrzWNX0+C/S+OHYOBsLyA4ciHTO577RYk77snyzK44R4EbRuGUmxbGyuqLjZ3iNbYtfv2OdYpfIKMV2NmU1M2AsarZdjo6DlzJvrEqGSV0MghqY8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731342595; c=relaxed/simple;
-	bh=V6+O62JIiZCefN8Y8m3TfT6982eYu19JQLAO0TTpo00=;
+	s=arc-20240116; t=1731342657; c=relaxed/simple;
+	bh=+x8bnIxKFSLgLd0LiO4UJ5+z4gmDHKrgkS3pxB6CIcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OAgIkX2bpeCNs4FnugnY0Ol4u+zlvpZNspBf5C5DEC1bm62CRKwWckulavx9IPLNEY1BJjwYZe+dFhGOw3cnSKcALBxHGr3lHqMV0MsWCqcHKUu7lFA7+IUdoqHQE35Lo2a+/cFBkl4M5EZEWFvgdW2gjQf6GiXoyjwyaqlzWIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=vVBPWXGW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lygO0h6i; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6EEA91380687;
-	Mon, 11 Nov 2024 11:29:51 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Mon, 11 Nov 2024 11:29:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1731342591; x=
-	1731428991; bh=ghB/11Aswprc8zwkP+jhTIoBLnJ8zHQI/9i63LpDVIw=; b=v
-	VBPWXGWMIhdlSBeHsMrTohRJoM9UYbz9S602/raXt/v2wnuBeCIAwo6MOfSiehxJ
-	Lffdqj17L3fmXJ8RWxe1JE6yEoMaaOZGayZXqKGYrKwYAMgerAJn89Ub4vNOLlH3
-	Uv6tQDTmh4AqsgZyLV7oFDSpO8le8Ty+LxkIgve1oLAbZ8XZ6Sb9CSuDJGgpIIeU
-	Wc6HwsyXiLWG7qYJ9iBaJ2GkyXMRVYnwSiGsXlzUHkKUFX7lEV9ap6lCcuZQ66OM
-	wDfp3krIPZdEChaQIT8Au+ki2haIFYrUPpEVToaNcn89geVkW41fFRfXKcb4PDGO
-	q/4iFYcOGHLKgMH9FUlSA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731342591; x=1731428991; bh=ghB/11Aswprc8zwkP+jhTIoBLnJ8zHQI/9i
-	63LpDVIw=; b=lygO0h6iu5AaCpwhuYj6D2rFfQ8oI+8CBZC3IHlHCUQEWl0XEMe
-	O8uvskoLqrfdufaaWl4GDGOmhBjfUT5LhJAeMshlpjAdPli+B8YeNWNbVygWrRbB
-	o4hz79TABlCH4c0ADNIvsFA+fbIfmt/RTj67htJXyCX2VXsYu2qyQMMX7JPAxXe2
-	SsSdX1ON8AKpG3eAe4pVLtkA8He9xKQa7AlknenjpObi0nqBPjdzjvAezHqiGsa5
-	XpJR9XOpTpNe+Mh7cjnFwjyg+b1V5TvAK82AAMx2kp5zkOxxf/i9fmhV7kCXnHHU
-	owZoxwdd/0yqJgao43laGnuB6SxeBKMlDyQ==
-X-ME-Sender: <xms:_jAyZ7QAEzFbsTLZQgAMiaZAexq3jmH4KJ2U8Tg26Xa204ECTlsu_A>
-    <xme:_jAyZ8wgn_1eT9sc21RIcgoxwkDUJxlOqfl8c4Xjl65YT-gBujZwSOVSuP2VziJK1
-    TapehLHA82HNXLbTuA>
-X-ME-Received: <xmr:_jAyZw2XqA-0_-QFebNTZ_x5lwnEUTZm_uL-fwJOYG0JTWoS4HgmzqXkhY43GaDPVCj7Ug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdekkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
-    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
-    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
-    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
-    sehinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:_jAyZ7BqXe3MZEahxAAhi0bZXQ6FHfB19eriQGaKb_C_5k5h29Ho7A>
-    <xmx:_jAyZ0hRJDUYZXjw_0X_dPw81VFtHtPsDaXrOd6sI8M-xwbi2FbPtg>
-    <xmx:_jAyZ_rnwyA5mkhpTuHKmXTwT4GOCzzDP3k5dNVyEjDekKWIYlJRSA>
-    <xmx:_jAyZ_jy6Q4QhMqmOnt7CKK2F2PMXCn6FAr-2DNSKf16LKQarK8m2w>
-    <xmx:_zAyZwh2gvK-KIvzOl_l5p-9pmFTygYPObx6nZsWZnIFGxDFxlpkSNIG>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Nov 2024 11:29:48 -0500 (EST)
-Date: Mon, 11 Nov 2024 18:29:44 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-Message-ID: <j3ob6sbdi4aeiomhnleyic3lyig6oglk4mynibczhqjxbhhb2n@2hsnsn3mxyxq>
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
- <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
- <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
- <9f86d417-9ae7-466e-a48f-27c447bb706d@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M9ruMw5zgzb3ZX1cSXC0M953PD+S7htW4KIzmqXFvPtAK7HoAHr6+Ld163/WFxeENU0ukCLkMyTf/S0KBQMBepsQRr/mdOrV4w6kke7dIh2lOzA5FvDGREz0WhVRi1PcOlurHZo3+bwYKxRRz6YeuzBybWfLZz7SENzL4fqIQzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=V5PhpvXo; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731342651;
+	bh=+x8bnIxKFSLgLd0LiO4UJ5+z4gmDHKrgkS3pxB6CIcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V5PhpvXoJi6Mra+JvR4Eg+IKph3+MR9f/gberukS05wwjidHQUIK0FqSI/pZhmfuQ
+	 JezkGkYvRViJxjXucl5DxB1pN/m/Aw/S4jnp0dro8nrt7adguYUogAw3Xv1K5X34LH
+	 rpABCe6qEcZtOSG+HsWHepf8K1K29uEmxK+B5O2Q=
+Date: Mon, 11 Nov 2024 17:30:51 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: Sung-Chi <lschyi@chromium.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org, chrome-platform@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (cros_ec) register thermal sensors to thermal
+ framework
+Message-ID: <a469852b-4cbd-467c-89de-b1acf6de1402@t-8ch.de>
+References: <20241111074904.1059268-1-lschyi@chromium.org>
+ <20241111095045.1218986-1-lschyi@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,89 +58,149 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9f86d417-9ae7-466e-a48f-27c447bb706d@kernel.dk>
+In-Reply-To: <20241111095045.1218986-1-lschyi@chromium.org>
 
-On Mon, Nov 11, 2024 at 08:57:17AM -0700, Jens Axboe wrote:
-> On 11/11/24 8:51 AM, Kirill A. Shutemov wrote:
-> > On Mon, Nov 11, 2024 at 08:31:28AM -0700, Jens Axboe wrote:
-> >> On 11/11/24 8:25 AM, Kirill A. Shutemov wrote:
-> >>> On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
-> >>>> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
-> >>>>>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
-> >>>>>>  			}
-> >>>>>>  		}
-> >>>>>>  put_folios:
-> >>>>>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
-> >>>>>> -			folio_put(fbatch.folios[i]);
-> >>>>>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-> >>>>>> +			struct folio *folio = fbatch.folios[i];
-> >>>>>> +
-> >>>>>> +			if (folio_test_uncached(folio)) {
-> >>>>>> +				folio_lock(folio);
-> >>>>>> +				invalidate_complete_folio2(mapping, folio, 0);
-> >>>>>> +				folio_unlock(folio);
-> >>>>>
-> >>>>> I am not sure it is safe. What happens if it races with page fault?
-> >>>>>
-> >>>>> The only current caller of invalidate_complete_folio2() unmaps the folio
-> >>>>> explicitly before calling it. And folio lock prevents re-faulting.
-> >>>>>
-> >>>>> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
-> >>>>> also mark the page accessed.
-> >>>>
-> >>>> Ok thanks, let me take a look at that and create a test case that
-> >>>> exercises that explicitly.
-> >>>
-> >>> It might be worth generalizing it to clearing PG_uncached for any page cache
-> >>> lookups that don't come from RWF_UNCACHED.
-> >>
-> >> We can do that - you mean at lookup time? Eg have __filemap_get_folio()
-> >> do:
-> >>
-> >> if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
-> >> 	folio_clear_uncached(folio);
-> >>
-> >> or do you want this logic just in filemap_read()? Arguably it should
-> >> already clear it in the quoted code above, regardless, eg:
-> >>
-> >> 	if (folio_test_uncached(folio)) {
-> >> 		folio_lock(folio);
-> >> 		invalidate_complete_folio2(mapping, folio, 0);
-> >> 		folio_clear_uncached(folio);
-> >> 		folio_unlock(folio);
-> >> 	}
-> >>
-> >> in case invalidation fails.
-> > 
-> > The point is to leave the folio in page cache if there's a
-> > non-RWF_UNCACHED user of it.
+On 2024-11-11 17:50:30+0800, Sung-Chi wrote:
+> From: "Sung-Chi, Li" <lschyi@chromium.org>
 > 
-> Right. The uncached flag should be ephemeral, hitting it should be
-> relatively rare. But if it does happen, yeah we should leave the page in
-> cache.
-> 
-> > Putting the check in __filemap_get_folio() sounds reasonable.
-> 
-> OK will do.
-> 
-> > But I am not 100% sure it would be enough to never get PG_uncached mapped.
-> > Will think about it more.
-> 
-> Thanks!
-> 
-> > Anyway, I think we need BUG_ON(folio_mapped(folio)) inside
-> > invalidate_complete_folio2().
-> 
-> Isn't that a bit rough? Maybe just a:
-> 
-> if (WARN_ON_ONCE(folio_mapped(folio)))
-> 	return;
-> 
-> would do? I'm happy to do either one, let me know what you prefer.
+> cros_ec hwmon driver probes available thermal sensors when probing the
+> driver.  Register these thermal sensors to the thermal framework, such
+> that thermal framework can adopt these sensors as well.
 
-I suggested BUG_ON() because current caller has it. But, yeah, WARN() is
-good enough.
+The driver also supports fan readings. These could also be wired up as
+cooling devices.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> To make cros_ec registrable to thermal framework, the cros_ec dts need
+> the corresponding changes:
+> 
+> &cros_ec {
+> 	#thermal-sensor-cells = <1>;
+> };
+
+If this is the only thing that is meant to be configured I'm wondering
+why the OF variant is needed in the first place.
+Why not register a non-OF thermal device?
+
+Please send the next revision also to the maintainers of the THERMAL
+subsystem so we can figure out the most correct way forward.
+
+> Change-Id: I29b638427c715cb44391496881fc61ad53abccaf
+> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
+> ---
+>  Changes in v2:
+>    - Rename `cros_ec_sensor_data` to `cros_ec_hwmon_thermal_zone_data`.
+>    - Rename `addr` in struct `cros_ec_hwmon_thermal_zone_data` to `idx`.
+>    - Use `cros_ec_hwmon_temp_to_millicelsius` to do value conversion in 
+>      `cros_ec_thermal_get_temp` function.
+>    - Rename `cros_ec_thermal_get_temp` to `cros_ec_hwmon_thermal_get_temp` to
+>      make `cros_ec_hwmon` a prefix.
+>    - Use `%pe` in `cros_ec_hwmon_probe_temp_sensors` when printing out
+>      `data->tz_dev` if failed register thermal device.
+>    - Remove `cros_ec_hwmon_remove`, and the `.remove` value in
+>      `cros_ec_hwmon_driver` since there is no need to call
+>      `devm_thermal_of_zone_unregister` for clean up.
+>    - Revert function signature of `cros_ec_hwmon_probe_temp_sensors` since all
+>      needed parameters are presented.
+>    - Revert include of `linux/list.h` because no list data structure is used.
+> ---
+>  drivers/hwmon/cros_ec_hwmon.c | 41 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> index 5514cf780b8b..81e563e0455f 100644
+> --- a/drivers/hwmon/cros_ec_hwmon.c
+> +++ b/drivers/hwmon/cros_ec_hwmon.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_ec_proto.h>
+> +#include <linux/thermal.h>
+>  #include <linux/types.h>
+>  #include <linux/units.h>
+>  
+> @@ -23,6 +24,12 @@ struct cros_ec_hwmon_priv {
+>  	u8 usable_fans;
+>  };
+>  
+> +struct cros_ec_hwmon_thermal_zone_data {
+> +	struct cros_ec_device *cros_ec;
+> +	struct thermal_zone_device *tz_dev;
+> +	int idx;
+> +};
+> +
+>  static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+>  {
+>  	int ret;
+> @@ -185,11 +192,30 @@ static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
+>  	.info = cros_ec_hwmon_info,
+>  };
+>  
+> +static int cros_ec_hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+> +{
+> +	struct cros_ec_hwmon_thermal_zone_data *data =
+> +		thermal_zone_device_priv(tz);
+> +	int ret;
+> +	u8 val;
+> +
+> +	ret = cros_ec_hwmon_read_temp(data->cros_ec, data->idx, &val);
+> +	if (ret || cros_ec_hwmon_is_error_temp(temp))
+> +		return -ENODATA;
+> +	*temp = cros_ec_hwmon_temp_to_millicelsius(val);
+> +	return 0;
+> +}
+> +
+> +static const struct thermal_zone_device_ops thermal_ops = {
+
+Symbol still needs namespacing.
+
+> +	.get_temp = cros_ec_hwmon_thermal_get_temp,
+> +};
+> +
+>  static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_hwmon_priv *priv,
+>  					     u8 thermal_version)
+>  {
+>  	struct ec_params_temp_sensor_get_info req = {};
+>  	struct ec_response_temp_sensor_get_info resp;
+> +	struct cros_ec_hwmon_thermal_zone_data *data;
+>  	size_t candidates, i, sensor_name_size;
+>  	int ret;
+>  	u8 temp;
+> @@ -216,6 +242,21 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
+>  		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
+>  							    (int)sensor_name_size,
+>  							    resp.sensor_name);
+> +
+> +		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +		if (!data)
+> +			continue;
+> +
+> +		data->idx = i;
+> +		data->cros_ec = priv->cros_ec;
+> +		data->tz_dev = devm_thermal_of_zone_register(
+> +			priv->cros_ec->dev, i, data, &thermal_ops);
+
+Doesn't this also automatically create new hwmon device off of the
+thermal device? That shouldn't happen.
+
+In general I'm not sure how the hwmon and thermal subsystems are meant
+to interact. Is one recommended over the other?
+Should the driver become a first-class thermal driver and use the
+automatic hwmon functionality?
+
+> +		if (IS_ERR_VALUE(data->tz_dev)) {
+> +			dev_err(dev,
+> +				"failed to register %zu thermal sensor, err = %pe",
+> +				i, data->tz_dev);
+
+If !CONFIG_OF || !CONFIG_THERMAL this will always log an error.
+EOPNOTSUP should not trigger that logging.
+
+> +			continue;
+> +		}
+>  	}
+>  }
+>  
+> -- 
+> 2.47.0.277.g8800431eea-goog
+> 
 
