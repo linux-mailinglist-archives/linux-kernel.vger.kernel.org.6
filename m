@@ -1,109 +1,80 @@
-Return-Path: <linux-kernel+bounces-404358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAE99C42CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:42:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55299C42DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:43:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426202842A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:42:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C8B25E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8E31A3A8D;
-	Mon, 11 Nov 2024 16:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B191A254E;
+	Mon, 11 Nov 2024 16:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMt+8H06"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ1qYURT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1EF1A0B13;
-	Mon, 11 Nov 2024 16:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8B189BBF
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343232; cv=none; b=MRqnJ6XiKjKtY9nNarI6/k3HODRTYtZXvsGLClIm/QbauV7UXvRsAvRURi8c96ldRJTTWPK486C5vFnRPb0/kjTJ/x40mVEiV5rkIKgBB42YHgaKAjQMpQglIPcrUHk5HZK8N7PPJmwUJqUo9EVWtUVPH38fgO1zR5pgJvqDZQA=
+	t=1731343339; cv=none; b=aIqej/0pHz9pUdgdckgQQGKpaj+H4/7ithHNoVQigPNPb2OknA6AVblbg4BH6bTlHmfk9O7JX+aMcxkgYOhYZRzpnOwiu9+Ixbh2UB/I0/QZXeYwN9To9XMEt0AmdhVssgqMAiFycrs1olTv7BhNHQIzKKAhtkwJP7Atr+I6sF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343232; c=relaxed/simple;
-	bh=4+LfvrNrOJzDJzYO94ZEFGs1qWzyzDFuwT9KH8sin3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lt7jsKWyzx2mKtW1CCvnRGjdrL4afPW1s5Sil2PlXpDa8kOzDwAEBp2JVYh6DyiO5CeKO/BkbE5cXgjfU0shxHwOsIkF0xDo/0seQSvPje+LRx2LRWgkU+fLVv+mHpgoNuvk+8gj9+/G6c9q3uT8ogFM0xJkS/Att5h9SucVYf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMt+8H06; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A88BC4CECF;
-	Mon, 11 Nov 2024 16:40:27 +0000 (UTC)
+	s=arc-20240116; t=1731343339; c=relaxed/simple;
+	bh=bMvBiLBnkjt3874HBhx/ZepwiWrsNm8t1pyp0Dzw9vM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Fcj2TCx/7QnSThaiRq/WRHdVplqiw0erWiObDkIFhmd3o8cTXIViRNSWa/Fxe6q21QfynbUelXzp6IAHT47hcqsl1zuvFVBYpXXmxZRL8157U+IthGaicVhbYA90U+GOYx2IL0wVmPnue1skd0Kp6sbL9FqYtOW/IL09OOhzWPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ1qYURT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D992C4CECF;
+	Mon, 11 Nov 2024 16:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731343231;
-	bh=4+LfvrNrOJzDJzYO94ZEFGs1qWzyzDFuwT9KH8sin3s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SMt+8H06+j+UMFnKWqdWYpA/uT0dG5C32IVkPJFy1ekeDpFk/xR3CP19Bas/1t/HQ
-	 HIGWbBx78ZPGrWAA1EMeBKidsMpzoBFLN4Xvj4evuMC2bwtwpvyv2McSfZyxFS7eq+
-	 vlSAD0fCzCgCbZHDUFrPMoNRCFi/VRY+YgVU5QpcdDRbe8+cBz0kDx/2Yl1czjc0xO
-	 SuBfQMWBaqi2nLzFN4i9aiBK0r3cdDSLyj8lv2mpkur8WkwW3u/WWdZCjsFKRS84Y/
-	 Q2JOn4aJALdnlrPXu8mnW5P5sNdg+zkwiIAFs9g8LbOO48J+I35rggVV3eQdHJ4iTW
-	 0cyGV/M5pj5LA==
-Date: Mon, 11 Nov 2024 16:40:24 +0000
+	s=k20201202; t=1731343338;
+	bh=bMvBiLBnkjt3874HBhx/ZepwiWrsNm8t1pyp0Dzw9vM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JJ1qYURT4/USA0qQ9SPzD1Jr6mPgThmCVBYRsVQkC+T8zvX2AEVJQB5XzdYoC1XFG
+	 I+Dv8zHL06ZiptgznmMxJ3AnB816j262Q2rkV1CpixB3zpyg30iyHVZVlXAe7wmmJ7
+	 S38ixJcz8/lJq1/I0KakQD+WUAQ64bfs4CenYVbmiPl33VLjWN8qxgfRx9gsR5bjkE
+	 egwiaXIwMM0ap9ZBXNNHfrPdhhRFwSwa3GOnxPwLuIjeNy+Vg8jJhmP3hmYDtbL1k9
+	 /ZoLUzZXT6R/ldYELGUut2hsxctZp0s+tpzfAJfbiinTydLaZ5TLkW0Ocq1kedle+T
+	 +TVDiRXNCWMxQ==
 From: Lee Jones <lee@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Stanislav Jakubek <stano.jakubek@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] dt-bindings: mfd: sprd,sc2731: reference
- sprd,sc2731-efuse bindings
-Message-ID: <20241111164024.GC8552@google.com>
-References: <efd200c3b5b75405e4e450d064b026f10ae2f8e0.1730709384.git.stano.jakubek@gmail.com>
- <cd8cc95b59c31418b174bba521dd2599a7929fda.1730709384.git.stano.jakubek@gmail.com>
- <20241106090509.GL1807686@google.com>
- <20241107155806.GA2774753-robh@kernel.org>
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>, 
+ Jason Wessel <jason.wessel@windriver.com>, 
+ Douglas Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, 
+ kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+In-Reply-To: <20241108-new-maintainer-address-2-v1-1-47c9d71aac11@linaro.org>
+References: <20241108-new-maintainer-address-2-v1-0-47c9d71aac11@linaro.org>
+ <20241108-new-maintainer-address-2-v1-1-47c9d71aac11@linaro.org>
+Subject: Re: (subset) [PATCH 1/2] MAINTAINERS: Use Daniel Thompson's korg
+ address for backlight work
+Message-Id: <173134333678.299614.17079258343612609351.b4-ty@kernel.org>
+Date: Mon, 11 Nov 2024 16:42:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241107155806.GA2774753-robh@kernel.org>
+X-Mailer: b4 0.13.0
 
-On Thu, 07 Nov 2024, Rob Herring wrote:
-
-> On Wed, Nov 06, 2024 at 09:05:09AM +0000, Lee Jones wrote:
-> > On Mon, 04 Nov 2024, Stanislav Jakubek wrote:
-> > 
-> > > Directly reference the sc2731-efuse bindings to simplify the schema.
-> > > Remove the duplicate example from the efuse bindings.
-> > > 
-> > > Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> > > ---
-> > > Changes in V3:
-> > > - new patch due to a missing dependency in the MFD tree 
-> > > 
-> > > Link to V2: https://lore.kernel.org/lkml/ZyExK01iprBHhGm6@standask-GA-A55M-S2HP/
-> > > Link to V1: https://lore.kernel.org/lkml/Zr3X1RoQs7ElTnlJ@standask-GA-A55M-S2HP/
-> > > 
-> > >  .../devicetree/bindings/mfd/sprd,sc2731.yaml  | 10 +------
-> > >  .../bindings/nvmem/sprd,sc2731-efuse.yaml     | 29 -------------------
-> > 
-> > Srini, you happy for this to go in via MFD?
+On Fri, 08 Nov 2024 08:30:44 +0000, Daniel Thompson wrote:
+> Going forward, I'll be using my kernel.org address for upstream work.
 > 
-> Can you? AIUI, you don't have nvmem/sprd,sc2731-efuse.yaml in your tree.
 > 
-> So take patch 1 now and this one will have to go next cycle.
 
-Works for me.
+Applied, thanks!
 
--- 
+[1/2] MAINTAINERS: Use Daniel Thompson's korg address for backlight work
+      commit: 3adec6f907b698b32ab62f70da31b41abed00c59
+
+--
 Lee Jones [李琼斯]
+
 
