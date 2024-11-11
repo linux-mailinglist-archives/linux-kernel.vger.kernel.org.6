@@ -1,164 +1,142 @@
-Return-Path: <linux-kernel+bounces-404682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6129D9C46C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4D09C46CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FBCF28B1D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EE228A930
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C571ACDE7;
-	Mon, 11 Nov 2024 20:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7DD19F46D;
+	Mon, 11 Nov 2024 20:27:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="lo1J19ZG"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ofLOlyzN"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF371A256C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3B91EB36
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356757; cv=none; b=NUQlrtZdI65bwKxQ99FMdZhOEVpPsfjHdxOp8L2icjzC1JxhhAkJTDStpef1zcsRh5Nm3VED04wnzuCGrssSgInTJcDtiVeLS4B+1ScM/kyb3IDA/1buNX4CoDudKKnyLL5ynE+BEUmtgTgz4JN2wsV0yi9/SiYdVCYcMx5lTIQ=
+	t=1731356864; cv=none; b=Zg3evj1oSZrHfSsUIz5FpbjzF14R5U9SxZQBHO+rN9E19u49MIoG4Z8z0WzptbdCoyfQpLD1hasU13BWyrQTlbR/Ssqm91o7Z2rOQ3Kshw4XuBrfxXFKRKEocpjF72iUboonPlVmulVlbzkvF3eRO3tOmzAgovVLwHl+bSGjSqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356757; c=relaxed/simple;
-	bh=2w5AOiqqlQUI7ff1yMnJ4pyBjIIdEcmBrtd1H9hIT58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQoV3759cSJnS/45JW2/y3xarYyMGS9y0fomDOdqBbHQHNE9LVHpfzofkzKNlFwAnMn/LTYlKjenIs6cw1cht3wTLttMa3phGpov6DqyHitn0XbFJYFVBpe7WwPDDY7DZjJIrZEybWj2nXh/l72lwA6yrzq3RmQ3J/zOHga30LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=lo1J19ZG; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ede6803585so4263119a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:25:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1731356755; x=1731961555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZedqqjyJeumj8+2BRCMIUVijoRFqC01LDMvINlLK7gQ=;
-        b=lo1J19ZGSgA495tA2c6mV5GqbRO74mxxvWhVuWWvlrgoywSQL0AqvOssfzc/I0vABN
-         hsKoRixtiL+VDzSKe/nzUdhdyQ9PFtgpn3PmUXv0T5DUKvFpiH45zCkaGMOcaikycVDJ
-         MF8cyvBO33Bd5VfV1N/54oqUQFPl/OnhTYZvM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731356755; x=1731961555;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZedqqjyJeumj8+2BRCMIUVijoRFqC01LDMvINlLK7gQ=;
-        b=qlw54WRj7tctBHhzI9AYlHapE7CIw04k0818/Yr1kxrcUiuuYoPdTrobM9yzpPh5Ds
-         I4xhKqUq9H1OO+wqLG2c34HjQSKiCBBtSffXe4HONmbUXGVlXGeBcGbuTzeHtm97uWoU
-         q1XKXsutm1bK9S7lNcN6J/6stA0xkOiRwzAol7a2N++NbzGAYNkkd6ZAqdaDZj4yvFKq
-         fp9gFdK2lomehg0wc/2mdv3QEGoK3WL6m9AR8Edf1xoiR3G7B/xCJfDtBxIKP1G1pppY
-         Ob7cDMcNcE13tJTpDw5YmEJMuHPgErVp8S2pDx+ijyJSXT2gX8mVxtCvvflmgv3qTZaL
-         2B0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVUnbxYlmsDVnbxOfsSJ2x2ooSp7KbmMk88Qx6QZuaAHIkd4Lg3nLgVTB9yZ9xa7goHO8qGGqUr57QiECE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTpKWEVTBGa4HrbQHDqDTSA3Pg8xdHrXHVj3yS+v9DxZN3RqVw
-	HujDiBXrlK8kzcx0pwW3RVT1emc6avBVvyCjqra8iSDJqtClR2uR+StNrHYtvY4=
-X-Google-Smtp-Source: AGHT+IF2Ru2h4ZQi9WWUaGkF59QU53pPfGyKW8tnYpPW+BjO0RHI3kunAeHAUy1Qepm/XqDiyw7M7g==
-X-Received: by 2002:a17:90b:33cf:b0:2e0:7e80:2011 with SMTP id 98e67ed59e1d1-2e9b0b381efmr19863855a91.16.1731356755368;
-        Mon, 11 Nov 2024 12:25:55 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7f3esm79470755ad.24.2024.11.11.12.25.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 12:25:54 -0800 (PST)
-Date: Mon, 11 Nov 2024 12:25:51 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Sanman Pradhan <sanman.p211993@gmail.com>
-Cc: netdev@vger.kernel.org, alexanderduyck@fb.com, kuba@kernel.org,
-	kernel-team@meta.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
-	mohsin.bashr@gmail.com, sanmanpradhan@meta.com,
-	andrew+netdev@lunn.ch, vadim.fedorenko@linux.dev, sdf@fomichev.me,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5] eth: fbnic: Add PCIe hardware statistics
-Message-ID: <ZzJoT-YLUHuvK1wk@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Sanman Pradhan <sanman.p211993@gmail.com>, netdev@vger.kernel.org,
-	alexanderduyck@fb.com, kuba@kernel.org, kernel-team@meta.com,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	horms@kernel.org, corbet@lwn.net, mohsin.bashr@gmail.com,
-	sanmanpradhan@meta.com, andrew+netdev@lunn.ch,
-	vadim.fedorenko@linux.dev, sdf@fomichev.me,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111195715.1619855-1-sanman.p211993@gmail.com>
+	s=arc-20240116; t=1731356864; c=relaxed/simple;
+	bh=5xq9A5l1i9Igv1/7m4w9nDZzIX3x5k17d5L7FGPm2Dw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RZMEW+TBzCfDMx94GWvGZE1j0xNzfg4WudpVI0Z4jwxVFP2vHV+Fx0GQHmB+DG+4E37eP614aI5IAg3RtmsnbN3MFUBDzEVQu/o6bpoMETt9nGRZuphIWXc7m2i0sn1+Vi2H2kO3NU8hrBlR9svZeYsRPz4INyaRLqApsojMBYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ofLOlyzN; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1497F20003;
+	Mon, 11 Nov 2024 20:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731356860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5xq9A5l1i9Igv1/7m4w9nDZzIX3x5k17d5L7FGPm2Dw=;
+	b=ofLOlyzNIds6ghTysRaYefoQ/z63D8cK21p0RetzdsuNqG0btKw7ivJnvxeltPe6YSDwDE
+	x/o04SiiiPXBU5F+QGqR1t1HfAPswzOsII8N7VlyTinZDHYTM3CvMazrK1gMVyNH+fDo8Y
+	Fd3sZqrwIQQ1bqLsl57VQLwzT/y8o2TtjvsdXEXK6FbgkLWaQjE//0//AO+17qznrUWt03
+	wZhltzUMD8Fv0Lao+7Ms7c3EVfCXELA14BIhkC/dyihvZeKyD6gmnokskqpUlzPwh449Gg
+	EVHp4STgwKh+iDvtQoAb4zJwN7WtJ2Qj1ECB8cswqBQWAzN0m1epZKHohYSLkA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
+Cc: "Vivi, Rodrigo" <rodrigo.vivi@intel.com>,  "Gupta, Anshuman"
+ <anshuman.gupta@intel.com>,  "Deak, Imre" <imre.deak@intel.com>,  Richard
+ Weinberger <richard@nod.at>,  "Vignesh Raghavendra" <vigneshr@ti.com>,
+  "De Marchi, Lucas" <lucas.demarchi@intel.com>,  Thomas =?utf-8?Q?Hellstr?=
+ =?utf-8?Q?=C3=B6m?=
+ <thomas.hellstrom@linux.intel.com>,  Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
+ <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Jani Nikula
+ <jani.nikula@linux.intel.com>,  Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>,  Tvrtko Ursulin <tursulin@ursulin.net>,
+  "Weil, Oren jer" <oren.jer.weil@intel.com>,
+  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+  "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 06/10] mtd: intel-dg: wake card on operations
+In-Reply-To: <CY5PR11MB6366051E35678864805BC89CED582@CY5PR11MB6366.namprd11.prod.outlook.com>
+	(Alexander Usyskin's message of "Mon, 11 Nov 2024 11:29:47 +0000")
+References: <20241022104119.3149051-1-alexander.usyskin@intel.com>
+	<20241022104119.3149051-7-alexander.usyskin@intel.com>
+	<Zx-mPQSHXv5Teq_j@intel.com>
+	<CY5PR11MB621157335FFB1089F49CEF8B954A2@CY5PR11MB6211.namprd11.prod.outlook.com>
+	<CY5PR11MB6366EF9CA6552ADF6E01A557ED4B2@CY5PR11MB6366.namprd11.prod.outlook.com>
+	<Zyk5kueKlusKlwqM@intel.com>
+	<CY5PR11MB636622B23A3646D58A70A920ED522@CY5PR11MB6366.namprd11.prod.outlook.com>
+	<Zy1EAIPEaY8Wlh-h@intel.com>
+	<CY5PR11MB6366769459115688B8AA100AED5F2@CY5PR11MB6366.namprd11.prod.outlook.com>
+	<CY5PR11MB6366051E35678864805BC89CED582@CY5PR11MB6366.namprd11.prod.outlook.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 11 Nov 2024 21:27:37 +0100
+Message-ID: <87msi5o6rq.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111195715.1619855-1-sanman.p211993@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Nov 11, 2024 at 11:57:15AM -0800, Sanman Pradhan wrote:
-> Add PCIe hardware statistics support to the fbnic driver. These stats
-> provide insight into PCIe transaction performance and error conditions.
-> 
-> Which includes, read/write and completion TLP counts and DWORD counts and
-> debug counters for tag, completion credit and NP credit exhaustion
-> 
-> The stats are exposed via debugfs and can be used to monitor PCIe
-> performance and debug PCIe issues.
-> 
-> Signed-off-by: Sanman Pradhan <sanman.p211993@gmail.com>
-> ---
-> v5:
-> 	- Add missing fbnic_dbg_init, fbnic_dbg_exit, fbnic_dbg_fbd_init and fbnic_dbg_fbd_exit functions
-> 	- Add missing entry in fbnic.h
-> 	- Tested on 1-NIC 2-Host system
-> 		- Test Logs:
-> 				Without ping <remote_host>
-> 					# cat /sys/kernel/debug/fbnic/0000\:01\:00.0/pcie_stats
-> 					ob_rd_tlp: 88724
-> 					ob_rd_dword: 1363273
-> 					ob_wr_tlp: 980410
-> 					ob_wr_dword: 105006453
-> 					ob_cpl_tlp: 98665
-> 					ob_cpl_dword: 1363273
-> 					ob_rd_no_tag: 0
-> 					ob_rd_no_cpl_cred: 0
-> 					ob_rd_no_np_cred: 0
-> 				With ping <remote_host>
-> 					# cat /sys/kernel/debug/fbnic/0000\:01\:00.0/pcie_stats
-> 					ob_rd_tlp: 114081
-> 					ob_rd_dword: 1902295
-> 					ob_wr_tlp: 1098457
-> 					ob_wr_dword: 112936622
-> 					ob_cpl_tlp: 128409
-> 					ob_cpl_dword: 1902295
-> 					ob_rd_no_tag: 0
-> 					ob_rd_no_cpl_cred: 0
-> 					ob_rd_no_np_cred: 0
-> v4:
-> 	- https://patchwork.kernel.org/project/netdevbpf/patch/20241109025905.1531196-1-sanman.p211993@gmail.com/
-> 	- Fix indentations
-> 	- Adding missing updates for previous versions
-> v3:
-> 	- https://patchwork.kernel.org/project/netdevbpf/patch/20241108204640.3165724-1-sanman.p211993@gmail.com/
-> 	- Moved PCIe stats to debugfs
-> v2:
-> 	- https://patchwork.kernel.org/project/netdevbpf/patch/20241107020555.321245-1-sanman.p211993@gmail.com/
-> 	- Removed unnecessary code blocks
-> 	- Rephrased the commit message
-> v1:
-> 	- https://patchwork.kernel.org/project/netdevbpf/patch/20241106002625.1857904-1-sanman.p211993@gmail.com/
-> ---
->  .../device_drivers/ethernet/meta/fbnic.rst    |  26 ++++
->  drivers/net/ethernet/meta/fbnic/Makefile      |   1 +
->  drivers/net/ethernet/meta/fbnic/fbnic.h       |   6 +
->  drivers/net/ethernet/meta/fbnic/fbnic_csr.h   |  37 ++++++
->  .../net/ethernet/meta/fbnic/fbnic_debugfs.c   |  68 +++++++++++
->  .../net/ethernet/meta/fbnic/fbnic_devlink.c   |   4 +
->  .../net/ethernet/meta/fbnic/fbnic_hw_stats.c  | 114 ++++++++++++++++++
->  .../net/ethernet/meta/fbnic/fbnic_hw_stats.h  |  12 ++
->  .../net/ethernet/meta/fbnic/fbnic_netdev.c    |   3 +
->  drivers/net/ethernet/meta/fbnic/fbnic_pci.c   |   8 +-
->  10 files changed, 278 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/net/ethernet/meta/fbnic/fbnic_debugfs.c
+Hi Alexander,
 
-Just FYI this patch does not seem to apply to net-next/main. Did you
-rebase?
+Please reduce the context when answering, otherwise it's hard to find
+all places where you commented.
+
+>> > > > That's the part that I'm not sure if I agree. if I remember from s=
+ome
+>> > > > experiments in the past,
+>> > > > when you call to wake up the child, the parent will wakeup first a=
+nyway.
+>> > > >
+>> > > The child (mtd device) does not exist at this point of time.
+>> > > To create MTD device, the partition table should be provided
+>> > > and it read directly from flash that should be powered to do read.
+>> >
+>> > I don't understand... you have the mtd->dev at this point... this is
+>> > the one you should be touching, not the mtd->dev.parent... even at the
+>> > probe, but moreover on everywhere else as well.
+>> >
+>>=20
+>> At the probe time I do not have dev->mtd, but now I see you point here.
+>> I'll separate power management:
+>> - probe before dev->mtd creation will use aux_dev->dev (that will be mtd-
+>> >dev.parent later)
+>> - mtd functions will use mtd->dev
+>>=20
+>> Is this that you have in mind?
+>
+> I've tried it and found out that mtd->dev is not initialized if partition=
+s are present [1].
+> Miquel - this may be the reason why other mtd drivers use pci or platform
+> devices to manage runtime pm.
+> Or I have missed something?
+
+Please keep in mind there is _a lot_ of history behind mtd, and
+sometimes choices from the past cannot be simply "fixed" without
+breaking userspace. The problem with mtd is that the "mtd" structure
+defines nothing with precision. It may be a controller, a chip, a
+partition, or whatever mix of those. In this particular case, I believe
+you are mentioning the KEEP_PARTITIONED_MASTER configuration, which by
+default is unset, which means you'll loose the "top level" mtd device?
+
+However in general I believe the "framework" struct device is maybe less
+relevant than the "bus" struct device when it comes to runtime PM, so
+actually I would eventually expect this device to be used?
+
+> [1] https://elixir.bootlin.com/linux/v6.12-rc6/source/drivers/mtd/mtdcore=
+.c#L1078
+
+Thanks,
+Miqu=C3=A8l
 
