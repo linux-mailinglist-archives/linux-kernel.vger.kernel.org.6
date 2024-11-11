@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-404180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4FC9C405A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:08:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96A0A9C4084
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 058481F212A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:08:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B291C21ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBC219E994;
-	Mon, 11 Nov 2024 14:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Q3snAF8R"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AE319F13B;
+	Mon, 11 Nov 2024 14:17:12 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A93115A85A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF2719CC1C;
+	Mon, 11 Nov 2024 14:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334119; cv=none; b=Wd7v0JMVHnPlCdIfey4G5KITy1oZSWHV8ldaHsi2lk5wvmtoWXXlUSozT8U0Wq0SBaliWNhkP1ultVU98ujw9PjRYrf2feu1gG0dTLvlbjEQd7/jO8y+K6nqXnR7F12K2mLrvP+ZDOTiSA9QRLHasi3RbR2/E0OmTki6YXm9Apc=
+	t=1731334631; cv=none; b=OKXJ+xFaxeJ2Jly2EU6KC3BareEcB5gTHw20Jzt7daYj8z7EB0fuI44t5s7xhYn2KYA0np8395LbXyyEEYmO4Zh1qjvQKhPbVW7E2Towv9/NkiC3NNxfRYcPcILKiGSslarYYNyjsz/Zk2bUg/09twA+O3ru1V/uKPPUyvnCY84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334119; c=relaxed/simple;
-	bh=E8tHW6Lnm5Agt1nj4Y9Sm2FExVqtqCc30XCaxizWhIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GBhfrdhofp0c277Z8FvTEIIOYOTI/ZK/YqKedhTe3yZbd4ytoVlDNxm25MwXgr0PVh+QyEcM0sYDTaoM5H/cPeic4EL2zZ9yMtEVVWf/o/7MxtLS4PYzPxex9RdFrMA2c+P4zxPBk7Pg+sC0U4GhOagn6rhHlhG2wFM/U4qI/CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Q3snAF8R; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2891055c448so1872415fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:08:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731334115; x=1731938915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PmDn4fmT+hcwgS51qhVcBXpxC2DgB/s2ZMPiu9nNnjA=;
-        b=Q3snAF8RqTO3ffAg9BOa+p/PcIuRcWG0ifbTaS56duy7UuQ/j9VBZBy1uGrIBq3aMQ
-         HrvRRHVo9kPD5K5U+H0OCD4x+PC31ExIUZhc0udUsK7rU+iXRO2NboV1UNAYUasgiTZI
-         ubpneZ+yPqcjcyMa4bZEgIWXuyL+FophYu/hj4Hp+E2YAI4TzHNIDKG5tj5ue9pncl0f
-         X6CUukwIOcpq/ddwO88BQJ6/kldtssTSLcuJSo4isiNkE0TkifEBnsdb/yw9IuZslXQs
-         mTKd9jL8WDcuNL6jGOsM2En9O+rXR6446/PF8vN4TeblxUegcomqdhK4Bk2lMNbx2E6w
-         SsWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731334115; x=1731938915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PmDn4fmT+hcwgS51qhVcBXpxC2DgB/s2ZMPiu9nNnjA=;
-        b=Pxm73DPmQfMPhwJ55qb3mIoT9ThvUsnUgSsuAQhs45c96mdGytfVCOn7TGKlsNLf0L
-         dhwiGQWiwu7OcohpXmUrfWHyxyJztQ5yOenI4n7XA73RL+SWPRvRZcJq8cx1yIX7FD39
-         rxoor5ddc4SjxMM0JmDDGoeh1QZ4Wjpx8dmntecmk7n7a4MaJ2r8sAgNABPl7gAaSOmx
-         2NNAtoqwQOd4XZZ+hXKoRNIK11zu3OqILK89EnmlbiJwvRakisc76Y7UPs/Gus3gBsni
-         6QsOHjdf9S39kNBijYYr8tnbSUbVgIKx4pPIzoTz+7lMKWRpEPAuXBhcAGJ6SL37xnBH
-         k1bA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfoL/ESeqtaYMi73T7uUath1RporEdSW7Z2TmmhgrOO7J4l6fVtQG7HeRNhUQ7KejW3FTHAFsKRECA5Xs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS6B9vHigl7Mt1lmDI7Pc/RumFfSd4VU+c68KKRjUV0fd1ZnZB
-	blqibocedoXatuBj6lrX5q67HkwX+vNOjCv6LPyp9UWc2GQUWRKFFV/eSSfelPI=
-X-Google-Smtp-Source: AGHT+IGdcCxlTJ6oOmUoz2nOosPJA727x85N6SHkCMBCewWNWdgUVALhVXS8gvGZ6CBRqRCpqZFcAw==
-X-Received: by 2002:a05:6870:e6c6:b0:25d:f0ba:eab7 with SMTP id 586e51a60fabf-295600bf475mr10068218fac.18.1731334114914;
-        Mon, 11 Nov 2024 06:08:34 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546eddb89sm2817619fac.34.2024.11.11.06.08.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 06:08:33 -0800 (PST)
-Message-ID: <00c51f80-7033-44a0-b007-ca36842e35a5@kernel.dk>
-Date: Mon, 11 Nov 2024 07:08:32 -0700
+	s=arc-20240116; t=1731334631; c=relaxed/simple;
+	bh=atKj27umbsbkvfy41nhNQunjFCIirqrEGyCUijGtQbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gD4fZ9Dhty/gE33SmpQkebSYT/IEdWkscBo5lwGDw/I+yfeUWunkW8v6x5fB9QPFx+mW/ej1HNhw/EIAaRNRuMP64u9zssFTTNoJl93FifvDeADRQll3vpM2jjrsIJSNIGdDB/WIG2VjieTYNKYPsOG7PrTxp3dw7FtmhvkCqM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7999E1A117E;
+	Mon, 11 Nov 2024 15:08:52 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6CDCC1A1174;
+	Mon, 11 Nov 2024 15:08:52 +0100 (CET)
+Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
+	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C4EF2037A;
+	Mon, 11 Nov 2024 15:08:52 +0100 (CET)
+Date: Mon, 11 Nov 2024 15:08:52 +0100
+From: Jan Petrous <jan.petrous@oss.nxp.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v4 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+Message-ID: <ZzIP9OrIi+X/akgg@lsv051416.swis.nl-cdc01.nxp.com>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+ <c902dc2a-9b2a-44a0-be1d-88fb150f4f17@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4] Uncached buffered IO
-To: Stefan Metzmacher <metze@samba.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c902dc2a-9b2a-44a0-be1d-88fb150f4f17@lunn.ch>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 11/11/24 5:55 AM, Stefan Metzmacher wrote:
-> Hi Jens,
+On Tue, Oct 29, 2024 at 01:15:52PM +0100, Andrew Lunn wrote:
+> > +#define GMAC_TX_RATE_125M	125000000	/* 125MHz */
+> > +#define GMAC_TX_RATE_25M	25000000	/* 25MHz */
+> > +#define GMAC_TX_RATE_2M5	2500000		/* 2.5MHz */
 > 
-> I'm wondering about the impact on memory mapped files.
+> With the swap to the new helper, i think 25M and 2M5 are no longer
+> needed.
 > 
-> Let's say one (or more) process(es) called mmap on a file in order to
-> use the content of the file as persistent shared memory.
-> As far as I understand pages from the page cache are used for this.
+
+Sure, I will fix it in v5.
+
+> > +static int s32_gmac_init(struct platform_device *pdev, void *priv)
+> > +{
+> > +	struct s32_priv_data *gmac = priv;
+> > +	int ret;
+> > +
+> > +	ret = clk_set_rate(gmac->tx_clk, GMAC_TX_RATE_125M);
+> > +	if (!ret)
+> > +		ret = clk_prepare_enable(gmac->tx_clk);
+> > +
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Can't set tx clock\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = clk_prepare_enable(gmac->rx_clk);
+> > +	if (ret)
+> > +		dev_dbg(&pdev->dev, "Can't set rx, clock source is disabled.\n");
+> > +	else
+> > +		gmac->rx_clk_enabled = true;
 > 
-> Now another process uses RWF_UNCACHED for a read of the same file.
-> What happens if the pages are removed from the page cache?
-> Or is the removal deferred based on some refcount?
+> Why would this fail? And if it does fail, why is it not fatal? Maybe a
+> comment here.
+> 
+> > +static void s32_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+> > +{
+> > +	struct s32_priv_data *gmac = priv;
+> > +	long tx_clk_rate;
+> > +	int ret;
+> > +
+> > +	if (!gmac->rx_clk_enabled) {
+> > +		ret = clk_prepare_enable(gmac->rx_clk);
+> > +		if (ret) {
+> > +			dev_err(gmac->dev, "Can't set rx clock\n");
+> 
+> dev_err(), so is failing now fatal, but since this is a void function,
+> you cannot report the error up the call stack?
+> 
 
-For mmap, if a given page isn't in page cache, it'll get faulted in.
-Should be fine to have mmap and uncached IO co-exist. If an uncached
-read IO instantiates a page, it'll get reaped when the data has been
-copied. If an uncached IO hits an already existing page (eg mmap faulted
-it in), then it won't get touched. Same thing happens with mixing
-buffered and uncached IO. The latter will only reap parts it
-instantiated to satisfy the operation. That doesn't matter in terms of
-data integrity, only in terms of the policy of uncached leaving things
-alone it didn't create to satisfy the operation.
+I did a homework and checked the issue which was fixed by that 'lazy' rx
+clock enable procedure and got conslusion it is not needed anymore, as I
+was not able to reproduce the issue on the same board but with newer
+kernel version (6.6.32 versus 5.15.73).
 
-This is really no different than say using mmap and evicting pages, they
-will just get faulted in if needed.
+So I will simplify rx clock management in v5.
 
--- 
-Jens Axboe
+BR.
+/Jan
 
