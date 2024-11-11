@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-403846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 161E39C3BAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:08:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 041A09C3BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 982C32825C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:07:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58B3AB20B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F801176240;
-	Mon, 11 Nov 2024 10:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE825176FB6;
+	Mon, 11 Nov 2024 10:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tvfl304a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emlbnqrB"
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D996149C4D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42E8156256
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731319674; cv=none; b=A62RgxrFgIUjTB2uuGQicVYVtB6oEHGFfJSkNHqt6U4AxXYubaxsk3+mqdaTMgv0aBQrV3Ez+KcVftsrGcsHHkv28NvtqwiePfAym0B1mvDs/ZuoBbnKhtz6WM0zk5lY1HMi2S4R9d8kFBfvNSXPJGUn0N3LifBmvgsTDDRUajU=
+	t=1731319699; cv=none; b=C2dXu54OUINb24Abk8XsoUDqYe7DuXXfxq2+kwqwhAXQA3vym7I3jtt714urNQ5H6sGrMp5jOUYyuGO9JpfHJE36ug9YURxREcUWQrbqGuzOc/QUgP+ULUNgVIi82JXesY6xGeJyBydPPWxs17zk+vfmZKuQbBGTsINM+9IQvZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731319674; c=relaxed/simple;
-	bh=EDylGzCINTlcMYhzXXjs1IH58DJ8JzXAdgUHQqn70ho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e3833YLVcDWJEQWHMu2HBX8aQyZKdTZXvCobjat1u2sr1vmFmJzXtJlPxb8QY+3SAQAyKszg0ao2V5t7q60ywVd8bwquJrtQEOa3DXIKppAkmzRAWYCRb3LFtHNO9Sm2Su5BFoB8uZbvGLMuQQ9vY0aFuPq/ffusIBDOTxU2DVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tvfl304a; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731319672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yezwXuy1oqB/Mlke0JXcT/QliEzB4XcNQBVIjSWzpa8=;
-	b=Tvfl304azIRJQIJ9HliptWSfVvFVuULPEMjSRj/x2gEt8WM/0i+hRXEUQsVcNdL598q+Ge
-	OqQs/ffLfjtsUR+pcnOdprtFvgEXFaBP1Xn3qLI3gaKFgwDV8n5XGwR0AeJIao5u/yUS9M
-	tgGBWeuBK7u9CMVGwqTO57CCBt4mqHA=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-453-IAN4fUWaPsyRLyBOYgpatQ-1; Mon, 11 Nov 2024 05:07:50 -0500
-X-MC-Unique: IAN4fUWaPsyRLyBOYgpatQ-1
-X-Mimecast-MFC-AGG-ID: IAN4fUWaPsyRLyBOYgpatQ
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2e9b723c384so2774913a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:07:50 -0800 (PST)
+	s=arc-20240116; t=1731319699; c=relaxed/simple;
+	bh=KaYJXT5HyrEgJW3XO9SZFqE6hQ84mjr09lyKOCGdyic=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OvsdzP3CNOEGn+4xaC/06NWDD/XMrrXMlnUYwZBQqkiUCujkJD+Br2yQGRVPaH4MenocMOOfW3KPtjNtHTSb5pL9/wUYbkWHbYybTzoIAZ/yIAczWAkKlYlsERVuq2eSbaLcX4H28lFBh5d/AoioZQUyaDp2Nn9at2ukXp4XMkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emlbnqrB; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e5f968230bso1726787b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731319697; x=1731924497; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XVV67UX8szQopArKm82MAjjGixRj07cehfuIHdEYCD4=;
+        b=emlbnqrBOwKzTZpnsjmTxwUuB7mDmm9lQP8sOqBexsCoiFhNPeeVkV6TasEkWST7FY
+         vK5rr9ztUGUmipsNrJl2lD2x5qx24df0qp8F+T7yarnNHt2CWBHszB4JysZQWM36MKAe
+         CC8fT6e0KG8zsHl4d283CFc9yHfzUaeShY61QniUAvVh5Y4aBrInGaEtwaPRS1hx5PT9
+         wLPyAM1k0DKuCAyAxxf7QzXc/iJVzr7fqBY5d1+gEAg9wq/C4XhCKWkvbdqNxkDlXYm2
+         pWWLv9uo3kYk3ou0KnTIlB+tH0nMvRIAbzDlB8t0vbUb7E+ERyYNi1vQ9ZWWwKMGqdrE
+         jYaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731319669; x=1731924469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yezwXuy1oqB/Mlke0JXcT/QliEzB4XcNQBVIjSWzpa8=;
-        b=B2AFIZiii7Yh3IFYqgKTaInnVKfeZHnUP082zP0n/Sh80Opuj6A8HMOBhvI28eEhaa
-         VaPqLDsG5K/FxfvLMzIWDJutlsL5nF1NBqGKYEoOXlJfkQwybDrXsAsKOISdamlpYU2Q
-         9ycgdkvZ60rbMKI9ex/UcHoDeq7nta+XqfxiwVa1/DiSF+3OZThVjp9ALA2Vw46bhSSp
-         ftJd223+WFDkB5Mr3qOBtKDEgVdcYSMB1bwVSpH+zbxV/NhS3sa0yDXviWGdLKJMTaCC
-         4Ti2JCbJkBpkO3/OkYvSCdRqUpRNguu0Ifmh+85b3jxKJBWUnfPzzimCDZhSL34roy59
-         o9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtCe4M2L9V0ypIauc33DEn4gAh+YKhKbMRuTB6Zpstu9R/utZjeNz+/8Ycp6ovEhV7ndk2EqRK3MS5oZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHmj9/pJtWqOSkJ41kGBwMOlJNHCwmw7tC9jckWwQpqOB0lN14
-	SnMcIsZ8q2Up+9A9UROnM96bxLpcQHWyOGTgzBUB3i6EQuB31lmRxxZkbrP0P0LJZPrPve/muo7
-	qAESPqed0v8fmQlD4YRoVx8BPV87o+nXPBfffJiUT0Xt4dx4X4bUjdY+7KI4OLgaR+viK7uGf
-X-Received: by 2002:a17:90b:4d0f:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e9b17730f0mr15948436a91.29.1731319669093;
-        Mon, 11 Nov 2024 02:07:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGQkNwwiHyh2arF/dEtQ9CoiCRLtC7ejiIPDEIh4JQE97bKk655Gfxfl4GXdPX+ZWkfZBB+LQ==
-X-Received: by 2002:a17:90b:4d0f:b0:2e2:e91b:f0d3 with SMTP id 98e67ed59e1d1-2e9b17730f0mr15948419a91.29.1731319668715;
-        Mon, 11 Nov 2024 02:07:48 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e6a06asm72304995ad.235.2024.11.11.02.07.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 02:07:48 -0800 (PST)
-Message-ID: <dad7496b-265e-4910-986e-98cefea1b4d0@redhat.com>
-Date: Mon, 11 Nov 2024 20:07:42 +1000
+        d=1e100.net; s=20230601; t=1731319697; x=1731924497;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XVV67UX8szQopArKm82MAjjGixRj07cehfuIHdEYCD4=;
+        b=X5+kJZX0/40aZIdM4NV3uo7TujUAOqeZe2lgKmeUb4yWffsEub/r3Ua5xnUdRtkc31
+         h8H8CoYsoOIDnx7AsgT2FsnQXJBkhWXSna7HKJti1gP2qv8333zEir4CFcHAQ99h/KrU
+         +R/rp+6XYJk30HTCM2UrGvM60m4zF4KswXFoRmFj6tsSPYuOWSQd4a3Pll/O4fXEf80B
+         /a/hPqVCN3yrMkPnOukslxr171eVaBBY3KtzIdAiqGGddnmY2CWkCxP0GNTh0PFEjKGC
+         950K/JK8N4ccSk16L0mrNrN/EFk8WmSF6n4QEI7JWp5Cisl8O1p8Y1RsBrs5pdJaGSvQ
+         nhDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMLZmUX6zsCw9n83o+WTaktJxrkjdFAVytOov0XCm5E1D7A7HnqYwQeiVvrnhNuw8J8gOgJcIFAQNG380=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKoy2s2g/BC+MWlnVcJ4bZ+QxE2oBUCCLjQR+eO4r3PE+PPDB9
+	RWOWs5TJkFtequMoI34jRauYnjmtuGluX1rnp2NF/oMhgLRJ/mQT
+X-Google-Smtp-Source: AGHT+IHdS0HHCkNkWJvTtC1XmxF9ix+W4f0GEUid4prXEQ56YfoEMyaS1O59/E/pcK+xPrwGu/RjtA==
+X-Received: by 2002:a05:6808:144c:b0:3e6:5908:1745 with SMTP id 5614622812f47-3e7946ae3ecmr9723453b6e.21.1731319696639;
+        Mon, 11 Nov 2024 02:08:16 -0800 (PST)
+Received: from AHUANG12-3ZHH9X.lenovo.com (111-254-34-70.dynamic-ip.hinet.net. [111.254.34.70])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5ba191sm8097063a12.22.2024.11.11.02.08.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 02:08:16 -0800 (PST)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: raghavendra.kt@amd.com
+Cc: adrianhuang0701@gmail.com,
+	ahuang12@lenovo.com,
+	akpm@linux-foundation.org,
+	bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	sunjw10@lenovo.com,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com
+Subject: Re: [PATCH 1/1] sched/numa: Fix memory leak due to the overwritten vma->numab_state
+Date: Mon, 11 Nov 2024 18:08:09 +0800
+Message-Id: <20241111100809.20527-1-ahuang12@lenovo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <1794be3c-358c-4cdc-a43d-a1f841d91ef7@amd.com>
+References: <1794be3c-358c-4cdc-a43d-a1f841d91ef7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Change protval as 'pteval_t' in map_range()
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-References: <20241111075249.609493-1-anshuman.khandual@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241111075249.609493-1-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/11/24 5:52 PM, Anshuman Khandual wrote:
-> pgprot_t has been defined as an encapsulated structure with pteval_t as its
-> element. Hence it is prudent to use pteval_t as the type instead of via the
-> size based u64. Besides pteval_t type might be different size later on with
-> FEAT_D128.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> This applies on v6.12-rc7
-> 
->   arch/arm64/kernel/pi/map_range.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+<snip>
+>However since there are 800 threads, I see there might be an opportunity
+>for another thread to enter in the next 'numa_scan_period' while
+>we have not gotten till numab_state allocation.
+>
+>There should be simpler ways to overcome like Vlastimil already pointed
+>in the other thread, and having lock is an overkill.
+>
+>for e.g.,
+>numab_state = kzalloc(..)
+>
+>if we see that some other thread able to successfully assign
+>vma->numab_state with their allocation (with cmpxchg), simply
+>free your allocation.
+>
+>Can you please check if my understanding is correct?
 
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+Thanks for Vlastimil's and Raghu's reviews and comments.
+
+Yes, your understanding is correct. Before submitting this patch,
+I had two internal proposals: lock and cmpxchg. Here is the my cmpxchg
+version (Test passed). If you're ok with this cmpxchg version, may I have
+your reviewed-by? I'll send a v2 then.
+
+---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3356315d7e64..7f99df294583 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3399,10 +3399,16 @@ static void task_numa_work(struct callback_head *work)
+ 
+ 		/* Initialise new per-VMA NUMAB state. */
+ 		if (!vma->numab_state) {
+-			vma->numab_state = kzalloc(sizeof(struct vma_numab_state),
+-				GFP_KERNEL);
+-			if (!vma->numab_state)
++			struct vma_numab_state *ptr;
++
++			ptr = kzalloc(sizeof(*ptr), GFP_KERNEL);
++			if (!ptr)
++				continue;
++
++			if (cmpxchg(&vma->numab_state, NULL, ptr)) {
++				kfree(ptr);
+ 				continue;
++			}
+ 
+ 			vma->numab_state->start_scan_seq = mm->numa_scan_seq;
 
 
