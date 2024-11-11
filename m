@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-404871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7705D9C498D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D10F9C4990
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:08:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C56289298
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 524E7288E67
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D2F1BD4F7;
-	Mon, 11 Nov 2024 23:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA9F1BD4F1;
+	Mon, 11 Nov 2024 23:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S+Gg9nRi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ldar8rr9"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE5B16F0CA;
-	Mon, 11 Nov 2024 23:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB153224FD;
+	Mon, 11 Nov 2024 23:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731366372; cv=none; b=H3YjDkcO8ohtrIHXjLkAx49rmjfOSbDWbKNkp40uhSyIMS+N8Z072Q1pnTyb70Ut9atorEm7iG/k2Kz7RcMIihHfX/uIbgbGhA4cCv0VI5h0Rv5ptAxJ59S2Fr0R0gQbPE8nVYZ1EWYrdJZg6ZOoKnSgbSEKI+z69qy0TZ6ArFM=
+	t=1731366517; cv=none; b=PxjR+GWUgcQe8l8lbge8BJEFQ6tALvs9hzFzQfmo1NuUxoenaxEoEuRfQmzkKodIa+YtE8uIdVqwhxZuYEimG2kd+zWxGF4zH3mKj7K7YvJBp8APcGuvrASGQ8s7VibcwDxtJOJ/uJgYfFzw3cW0NuJEWythEQXsWcirgQ+0i0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731366372; c=relaxed/simple;
-	bh=5cQ0zZajVpfP0QpuAM0B+3kFcgW+YfPO7ZhjFNsXkNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LsGM0DadK1B1wJfU/C93TOodQYKj/bX0FNiN+Gfd9Q7afhHcWq2CUHpBMOmGCkuei7WPKqxgCvP+d0vnKYkRNCrCAzhD4nIUmiE6Uqlp3VvjNAnW5uL8I0MnISahoyMG7sJ0NuWwcK8zbwg82re9dHJuIXTbyru25YBeo2tT9L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S+Gg9nRi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B25CC4CECF;
-	Mon, 11 Nov 2024 23:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731366372;
-	bh=5cQ0zZajVpfP0QpuAM0B+3kFcgW+YfPO7ZhjFNsXkNA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S+Gg9nRivyOHyZripGCNnKCa1o8L3XYcZA5Zrum3/rqRrjztDRo3fPkVSMfcuBDU8
-	 4lH1rH/Jlxk5mtst2T1xiWmFeLPTdpOodh6xJObbGFxFcgi7V2vPX0/0+HUK3mO2ep
-	 McajZR4QGpy+nMDTTp1r5S2dDGsJeODW6JlgVmWtDbPCEpzf8/lAHj0I3tpnha966Q
-	 zDw1Wzh78DRKJ7aWZs0wNi2sFGfFpV3Ri7c50H2cGfWZ58QDkhsObjAi9ow9yE1wsn
-	 A7oe5ai8ZCZHxq2Lcod0G2HqK/v5uV+0dCyYTI7oO9nvsGGypNGz6t+2+BWqoYvePi
-	 o82cYopzw5H8g==
-Date: Mon, 11 Nov 2024 15:06:09 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Richard
- Cochran <richardcochran@gmail.com>, Radu Pirea
- <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh <j.vosburgh@gmail.com>, Andy
- Gospodarek <andy@greyhouse.net>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
- UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>, Vladimir
- Oltean <vladimir.oltean@nxp.com>, donald.hunter@gmail.com,
- danieller@nvidia.com, ecree.xilinx@gmail.com, Andrew Lunn
- <andrew+netdev@lunn.ch>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
- Willem de Bruijn <willemb@google.com>, Shannon Nelson
- <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
- Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH net-next v19 03/10] ptp: Add phc source and helpers to
- register specific PTP clock or get information
-Message-ID: <20241111150609.2b0425f6@kernel.org>
-In-Reply-To: <20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
-References: <20241030-feature_ptp_netnext-v19-0-94f8aadc9d5c@bootlin.com>
-	<20241030-feature_ptp_netnext-v19-3-94f8aadc9d5c@bootlin.com>
+	s=arc-20240116; t=1731366517; c=relaxed/simple;
+	bh=2dUgiGIL+OV+FDuBoW0BOTNZuoMWvPhge96ggVvL1ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YyjU3ZwuBEROlsf8VphoCp8esUR064YmRZeaqINwddS5cKaPlttUOk8+7ZBPrVK3EdeMbbY24/xC3L+iyM/DypD2s3cg1kvOL1qglJhMyMjr0rIDm6S8pQF2y3g9uPxjab6iy++WQHbC/ksPgdkKOMBfO3Mg33CbDKjQZz0Zk9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ldar8rr9; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e5b1aaad96so14515a91.0;
+        Mon, 11 Nov 2024 15:08:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731366515; x=1731971315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2dUgiGIL+OV+FDuBoW0BOTNZuoMWvPhge96ggVvL1ik=;
+        b=ldar8rr9Rz1iFCv7OVzpSXjWCp1t9X2I7QrHABTUAaFjJkT8NIjBfJL4/FPYUntRa4
+         B126pfeemC5mFaX2UbWBuddhdEKKRebgschSjQ5LZXS2aV4pQuyZuOKPaFXr6yH8K3kC
+         Q2wGIZZv/zDHWOY4tL2o7RYidfM9UDQ7ETPov2aX4bKYGCT14Y/XYwemKjsNveBi7ogn
+         UiRWKF3ZoBzkdke24+01A1toIJM21Z+2rKD1UoBa5uzCdycLU/V3svvii+ViyWFfZ03k
+         b/IhZGivu2xTq1/UpBiyjv5B37DaHUBUcVBRrjex5PzE6g7qYKEbsvLEUVwrmjziE+Dx
+         qrZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731366515; x=1731971315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2dUgiGIL+OV+FDuBoW0BOTNZuoMWvPhge96ggVvL1ik=;
+        b=UKy7+PUt9IcUFUHnj/VbHwuAUuc+LNZCohNaiV4w+P8I9tMDV22G8czQZTN1bQuvCf
+         YAJCb2huOlfqXyDid45nYuVPVHVBTzuN/MrRE0OUzP45KvBtAC5QY1vlECBLDZZelwRe
+         yJYuPPPq9NzhJQWtMzMTmwQQjpgm9Cs0KwOVoV5+igPlkLLoMRNcBB5QOvHnA0+ZUkt1
+         jCshk5VdR5wENS9E546KifKHCIAljzhewqbZOxIZdD0025R6fBvAxDtbrkC/Tgq3X7Kd
+         c1xlfh7UTENb1TFT/w0j2aoRcz88mxoR0loEtXfp01+AEAA8uAQKn60Pb7SgF2c25sMY
+         cryg==
+X-Forwarded-Encrypted: i=1; AJvYcCWul1sMdtmWMWjHfCBj5+NFv6UaFmsCMTBSaGMVNlAnfy2mqLe+6kAIhki6JbnwIb3ytlPUjTJ1JQhoSBc=@vger.kernel.org, AJvYcCXCELHbIfs/t9jP5WMm8XE8ctjr5HFLT7A6gUU5w9Chx3eAxZ9Uo8dcS+CglG6C9vh8zdzFTnKTCnNE0Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyArxc8yIc7nytcwqYqCiBJW10c0r3NnUwA6uK+OBjwRHzpEJ9F
+	fy74dhKvGUG0HjMdYZMMecCKTNdtfNwVPxBONUO/B+wrrJRT4ADyZkKDeQce/hciEKhyPXrObV/
+	chfY5YxtPz9uIdj6fQz/gyhDiC78=
+X-Google-Smtp-Source: AGHT+IHNo1PVdjRsh5hRAtFbGIRtDzpYfVEnLIpyvpPX2z3s34m9/9m1eCh7c095/Gkf2Ju3vkEmh4VW/FR6Pxm8NMc=
+X-Received: by 2002:a17:902:e74f:b0:20c:a63e:b678 with SMTP id
+ d9443c01a7336-2118359588dmr86761485ad.14.1731366514892; Mon, 11 Nov 2024
+ 15:08:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241111175842.550fc29d@canb.auug.org.au> <CANiq72=JhmDJJCgcG5ex2A1gvBxCg3wzzutUc3L1HLPrPsHeyA@mail.gmail.com>
+ <CANiq72nyWAhyORsDij6P6U7Ww=eCp6S=LzPWZN4wxGD8JiK+RQ@mail.gmail.com> <20241111141516.1d924b1d@eugeo>
+In-Reply-To: <20241111141516.1d924b1d@eugeo>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 12 Nov 2024 00:08:22 +0100
+Message-ID: <CANiq72kfZa5Xh9vtR7okLCTp64rbTtSX=if-Ht58uXocN9xsRw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the rust tree
+To: Gary Guo <gary@garyguo.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Miguel Ojeda <ojeda@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Oct 2024 14:54:45 +0100 Kory Maincent wrote:
-> @@ -41,6 +43,11 @@ struct ptp_clock {
->  	struct ptp_clock_info *info;
->  	dev_t devid;
->  	int index; /* index into clocks.map */
-> +	enum hwtstamp_source phc_source;
-> +	union { /* Pointer of the phc_source device */
-> +		struct net_device *netdev;
-> +		struct phy_device *phydev;
-> +	};
+On Mon, Nov 11, 2024 at 3:15=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> That sounds reasonable to me. So for next cycles we have a commit that
+> fixes up remaining renames, and then apply the other commits?
 
-Storing the info about the "user" (netdev, phydev) in the "provider"
-(PHC) feels too much like a layering violation. Why do you need this?
+Yeah -- that way at least we get the new infrastructure there.
 
-In general I can't shake the feeling that we're trying to configure 
-the "default" PHC for a narrow use case, while the goal should be 
-to let the user pick the PHC per socket.
+We may need to give other trees a branch with the commits that change
+the mapping, so that they can write new code that does not break when
+we all merge.
 
-> +/**
-> + * netdev_ptp_clock_register() - Register a PTP hardware clock driver for
-> + *				 a net device
-> + *
-> + * @info: Structure describing the new clock.
-> + * @dev:  Pointer of the net device.
+Or perhaps we may just simplify and do a final remapping right after a
+merge window as a special case even if it is not a pure fix -- that
+would be easier to successfully do at once.
 
-> +/**
-> + * ptp_clock_from_netdev() - Does the PTP clock comes from netdev
-> + *
-> + * @ptp:  The clock obtained from net/phy_ptp_clock_register().
-> + *
-> + * Return: True if the PTP clock comes from netdev, false otherwise.
+Either that or we do something fancier to avoid a flag day, but
+hopefully we will not need it.
 
-> +/**
-> + * ptp_clock_netdev() - Obtain the net_device reference of PTP clock
+Thanks!
 
-nit: pick one way to spell netdev ?
-
-> +	ret = ptp_clock_get(dev, ptp);
-> +	if (ret)
-> +		return ERR_PTR(ret);
-
-why do you take references on the ptp device?
+Cheers,
+Miguel
 
