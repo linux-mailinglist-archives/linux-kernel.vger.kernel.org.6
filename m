@@ -1,161 +1,170 @@
-Return-Path: <linux-kernel+bounces-403451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B629C35E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:28:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662FE9C35F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:31:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E41F9B21737
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255762820FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF433200A3;
-	Mon, 11 Nov 2024 01:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Szm8xdL7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312B9EAF9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CF71386DA;
+	Mon, 11 Nov 2024 01:30:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA418482DD;
+	Mon, 11 Nov 2024 01:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731288483; cv=none; b=QxJ5AQa2utG3J+dKXVNYUpxq7OwIei4hDm8Uj3oH7w1g35C/0RA5tbcIbQRGZjjYgbIbqnihtUqoJ7LYwWVxgi476fV22AhORc3q0pAag86iExLzNX6ViW+TAWmY7pUL7G5HmPPF4GEvm+njLEQylzj29zT9xaYnxK6Jk4m4+ZU=
+	t=1731288650; cv=none; b=jWS/8H6vs4XFNAgJDbpbZgI/yTD3M492kkvCI56qtULqnk59a5AIFRQmLsv3sCmymvZqCwW1FhRIkEbjqaB2/7dWxKuOp2/R8Rm2G249Hxqm6Whg1OfTAq561wcht8utZfxg6T/3sS1JZnXbo4wxb8cDmprG3MVi/BGXuTY5GMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731288483; c=relaxed/simple;
-	bh=rmJaCFWLaEKukmoQFYXTWoPzcVFVMWyE+/yJXxOx6k4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rAfHfgsTTgmS73lEHPF7l2mKKB2YSr2tve2o7rolretXqRqpKXRWU+z7Ki8hiY3YkjmYly6PHmuEnU+FAdqJuCcKi4CsuFLbraWfUbFtHoiXvRgOJxwoCIpT+fPylvo0TKlH4FIFbQ9hRtmcLaVSyw8P7UOzFE2a3yY2drDW2hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Szm8xdL7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731288480;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XsueIyR21StC8z8Y1fH80OpJCx4CEL4++SzGNpSB0e8=;
-	b=Szm8xdL7I100eOq4lOPRPL4063eIlQKzSKIt0m+OA06xZSBSbBTUf76b92yIuYGVknSMhr
-	wlty2Aa2q3JLWBDz3aDzT22sTMDTZy+O2tsWOm7aJVeb8zQl/FsLusJgrhYyckuar+Ivhp
-	akCKaDB/H5GRdg0XleJ8+56O6Be0EhQ=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-HU8HTFWYNV-mLFJFt8QeuQ-1; Sun, 10 Nov 2024 20:27:58 -0500
-X-MC-Unique: HU8HTFWYNV-mLFJFt8QeuQ-1
-X-Mimecast-MFC-AGG-ID: HU8HTFWYNV-mLFJFt8QeuQ
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e2eb765285so5015655a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 17:27:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731288478; x=1731893278;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XsueIyR21StC8z8Y1fH80OpJCx4CEL4++SzGNpSB0e8=;
-        b=r60xAnFJzMMy6TiPcm8r/xObpHceSBA/OB+7TkXiksaVfFxBzHn42B4iyG6hMF0eQd
-         eY6TGSXHqu8lfl6rA6HYoNCAlsCBU8P4P4x50LDDEX5nlPBUp9qeNPNAwEArWzv2+Mq9
-         yMK+bvmL/+HeiHlFs7bDHs+JcaEyrB2AUMeMez+Eig9CRg4+nplpD8bWQjMA3jFP3HwA
-         fLlsyVgvlK+q3S8PEG8MLGco1IoA0iDCm/g47jHWbvWuKBI2k2DRNIxZwQ7brJK0/djH
-         c4bXmrhtIqH6IRrD+94X6B7U26CGmAgjYcmKVa9M4fHh+3/6aTyVNbL4FOjngXaq3lyD
-         4usA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyfNDul3vUKOjSOuphXaVbPESmOJuIgIgGoE2w5HV38PlTW01XfYGsKXivJZ4xuU/SYIm/fH131wKGBI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw70nMpyWgfsMCROjrOTPhsN00gvj9lgnRGyeBkFJmIfc7ZPS4G
-	M1mzeM5E0Zqij1yvB8zRAUq9aODtv3jnAM9sDh3WU5dGJjteHlPIwhiB5y54vwiPtxS3VJElpkq
-	MAJqcUHXv6czkbm733CHbhiMquAYu22Jwzlt/36oh07tYkRMYM9cVn3fDbfetTOXU0WEedh/E2C
-	ShcH1j1An/MmbBkLNKNkcmFAuPDUoxuIh5sKkq
-X-Received: by 2002:a17:90b:3847:b0:2e2:e159:8f7b with SMTP id 98e67ed59e1d1-2e9b16e6415mr13589093a91.3.1731288477651;
-        Sun, 10 Nov 2024 17:27:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG2UZCxZDdjpET0emSMpwkmcUbnJkxi3e/4YjQOK8fT8UOV7uYIqku2wZHJSDGRMo1459z1m7GHz7ZEy+uOkt4=
-X-Received: by 2002:a17:90b:3847:b0:2e2:e159:8f7b with SMTP id
- 98e67ed59e1d1-2e9b16e6415mr13589069a91.3.1731288477175; Sun, 10 Nov 2024
- 17:27:57 -0800 (PST)
+	s=arc-20240116; t=1731288650; c=relaxed/simple;
+	bh=Yitza08W5XYTvZe1J/EwMesDT4epJexlDkl8ospyV9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kS9RzAMUqGRgz6BgKybNeszzktmp1hJ9Hekp4gC65gcX97jn+MFP2niIvRBQmFPBGIWwt2kSohVND3CvPKCqmptAAzJefsweU9K+J35kZFsJdEVp9jXDDu4R5Yh32Eq+PlqizFW8gaol0msQKIMrUkRL5AgHjvkucuDLpPoE59o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0E61113D5;
+	Sun, 10 Nov 2024 17:31:16 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFB6E3F66E;
+	Sun, 10 Nov 2024 17:30:42 -0800 (PST)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-mmc@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	linux-watchdog@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-phy@lists.infradead.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org
+Subject: [PATCH 00/14] arm64: dts: allwinner: Add basic Allwinner A523 support
+Date: Mon, 11 Nov 2024 01:30:19 +0000
+Message-ID: <20241111013033.22793-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-v1-v1-1-f10d2cb5e759@daynix.com> <20241106035029-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20241106035029-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 11 Nov 2024 09:27:45 +0800
-Message-ID: <CACGkMEt0spn59oLyoCwcJDdLeYUEibePF7gppxdVX1YvmAr72Q@mail.gmail.com>
-Subject: Re: [PATCH] vhost/net: Set num_buffers for virtio 1.0
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Akihiko Odaki <akihiko.odaki@daynix.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 4:54=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com> =
-wrote:
->
-> On Sun, Sep 15, 2024 at 10:35:53AM +0900, Akihiko Odaki wrote:
-> > The specification says the device MUST set num_buffers to 1 if
-> > VIRTIO_NET_F_MRG_RXBUF has not been negotiated.
-> >
-> > Fixes: 41e3e42108bc ("vhost/net: enable virtio 1.0")
-> > Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
->
-> True, this is out of spec. But, qemu is also out of spec :(
->
-> Given how many years this was out there, I wonder whether
-> we should just fix the spec, instead of changing now.
->
-> Jason, what's your take?
+Hi,
 
-Fixing the spec (if you mean release the requirement) seems to be less risk=
-y.
+this series adds basic DT support for the Allwinner A523 SoC, plus the
+Avaota-A1 router board using the T527 package variant of that SoC.[1]
+Functionality-wise it relies on the pinctrl[2] and clock[3] support
+series, though there is no direct code dependency series to this series
+(apart from the respective binding patches in the two series').
 
-Thanks
+Most of the patches add DT binding documentation for the most basic
+peripherals, the vast majority of them actually being already supported,
+courtesy of identical IP being used. This includes MMC and USB 2.0, so
+with the above mentioned clock and pinctrl support this gives an already
+somewhat usable mainline support for this new SoC family.
+The watchdog is not completely compatible, but is an easy addition, so
+this bit is included in here as well.
 
->
->
-> > ---
-> >  drivers/vhost/net.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > index f16279351db5..d4d97fa9cc8f 100644
-> > --- a/drivers/vhost/net.c
-> > +++ b/drivers/vhost/net.c
-> > @@ -1107,6 +1107,7 @@ static void handle_rx(struct vhost_net *net)
-> >       size_t vhost_hlen, sock_hlen;
-> >       size_t vhost_len, sock_len;
-> >       bool busyloop_intr =3D false;
-> > +     bool set_num_buffers;
-> >       struct socket *sock;
-> >       struct iov_iter fixup;
-> >       __virtio16 num_buffers;
-> > @@ -1129,6 +1130,8 @@ static void handle_rx(struct vhost_net *net)
-> >       vq_log =3D unlikely(vhost_has_feature(vq, VHOST_F_LOG_ALL)) ?
-> >               vq->log : NULL;
-> >       mergeable =3D vhost_has_feature(vq, VIRTIO_NET_F_MRG_RXBUF);
-> > +     set_num_buffers =3D mergeable ||
-> > +                       vhost_has_feature(vq, VIRTIO_F_VERSION_1);
-> >
-> >       do {
-> >               sock_len =3D vhost_net_rx_peek_head_len(net, sock->sk,
-> > @@ -1205,7 +1208,7 @@ static void handle_rx(struct vhost_net *net)
-> >               /* TODO: Should check and handle checksum. */
-> >
-> >               num_buffers =3D cpu_to_vhost16(vq, headcount);
-> > -             if (likely(mergeable) &&
-> > +             if (likely(set_num_buffers) &&
-> >                   copy_to_iter(&num_buffers, sizeof num_buffers,
-> >                                &fixup) !=3D sizeof num_buffers) {
-> >                       vq_err(vq, "Failed num_buffers write");
-> >
-> > ---
-> > base-commit: 46a0057a5853cbdb58211c19e89ba7777dc6fd50
-> > change-id: 20240908-v1-90fc83ff8b09
-> >
-> > Best regards,
-> > --
-> > Akihiko Odaki <akihiko.odaki@daynix.com>
->
+The A523 features 8 Arm Cortex-A55 cores, organised in two clusters,
+clocked separately, with different OPP limits, in some kind of
+little/LITTLE configuration. The GPU is a Arm Mali G57 MC01, and the chip
+also features a single PCIe 2.1 lane, sharing a PHY with some USB 3.1
+controller - which means only one of the two can be used.
+The rest of the SoC is the usual soup of multimedia SoC IP, with eDP
+support and two Gigabit Ethernet MACs among the highlights.
+
+The main feature is patch 11/14, which adds the SoC .dtsi. This for now
+is limited to the parts that are supported and could be tested. At the
+moment there is no PSCI firmware, even the TF-A port from the BSP does
+not seem to work for me. That's why the secondary cores have been omitted
+for now, among other instances of some IP that I couldn't test yet.
+I plan to add them in one of the next revisions.
+
+The last patch adds basic support for the Avaota-A1 router board,
+designed by YuzukiHD, with some boards now built by Pine64.
+
+The mainline firmware side in general is somewhat lacking still: I have
+basic U-Boot support working (including MMC and USB), although still
+without DRAM support. This is for now covered by some binary blob found
+in the (otherwise Open Source) Syterkit firmware, which also provides
+the BSP versions of TF-A and the required (RISC-V) management core
+firmware. Fortunately we have indications that DRAM support is not that
+tricky, as the IP blocks are very similar to already supported, and dev
+boards are on their way to the right people.
+
+Meanwhile I would like people to have a look at those DT bits here. Please
+compare them to the available user manual, and test them if you have access
+to hardware.
+
+Based on v6.12-rc1.
+I pushed a branch with all the three series combined here:
+https://github.com/apritzel/linux/commits/a523-v1/
+
+Cheers,
+Andre
+
+[1] https://linux-sunxi.org/A523#Family_of_sun55iw3
+[2] https://lore.kernel.org/linux-sunxi/20241111005750.13071-1-andre.przywara@arm.com/T/#t
+[3] https://lore.kernel.org/linux-sunxi/20241111004722.10130-1-andre.przywara@arm.com/T/#t
+
+Andre Przywara (14):
+  dt-bindings: mmc: sunxi: Simplify compatible string listing
+  dt-bindings: mmc: sunxi: add compatible strings for Allwinner A523
+  dt-bindings: watchdog: sunxi: add Allwinner A523 compatible string
+  watchdog: sunxi_wdt: Add support for Allwinner A523
+  dt-bindings: i2c: mv64xxx: Add Allwinner A523 compatible string
+  dt-bindings: irq: sun7i-nmi: document the Allwinner A523 NMI
+    controller
+  dt-bindings: phy: document Allwinner A523 USB-2.0 PHY
+  dt-bindings: usb: sunxi-musb: add Allwinner A523 compatible string
+  dt-bindings: usb: add A523 compatible string for EHCI and OCHI
+  dt-bindings: rtc: sun6i: Add Allwinner A523 support
+  arm64: dts: allwinner: Add Allwinner A523 .dtsi file
+  dt-bindings: vendor-prefixes: Add YuzukiHD name
+  dt-bindings: arm: sunxi: Add Avaota A1 board
+  arm64: dts: allwinner: a523: add Avaota-A1 router support
+
+ .../devicetree/bindings/arm/sunxi.yaml        |   5 +
+ .../bindings/i2c/marvell,mv64xxx-i2c.yaml     |   1 +
+ .../allwinner,sun7i-a20-sc-nmi.yaml           |   1 +
+ .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml |  40 +-
+ .../phy/allwinner,sun50i-a64-usb-phy.yaml     |  10 +-
+ .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml |   4 +-
+ .../usb/allwinner,sun4i-a10-musb.yaml         |   1 +
+ .../devicetree/bindings/usb/generic-ehci.yaml |   1 +
+ .../devicetree/bindings/usb/generic-ohci.yaml |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ .../watchdog/allwinner,sun4i-a10-wdt.yaml     |   2 +
+ arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+ .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 386 ++++++++++++++++++
+ .../dts/allwinner/sun55i-t527-avaota-a1.dts   | 311 ++++++++++++++
+ drivers/watchdog/sunxi_wdt.c                  |  11 +
+ 15 files changed, 751 insertions(+), 26 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
+
+-- 
+2.46.2
 
 
