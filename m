@@ -1,133 +1,249 @@
-Return-Path: <linux-kernel+bounces-404138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6651F9C3FA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:37:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F879C3FA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:39:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C2F28271A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:37:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CA061F227E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3680F19D891;
-	Mon, 11 Nov 2024 13:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1832019D8A0;
+	Mon, 11 Nov 2024 13:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Bk5lvahY"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eO2lA6xL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46738194ACC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C1155C29;
+	Mon, 11 Nov 2024 13:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731332266; cv=none; b=kSwyaG0zV8z+ocmWZ0agJOVeN1J0PeJ5ffW7LxJGtfxPCXRIA6QwBq92AgkkuHVigjyVGMyixYbGa668hbmrqdzlBmKMWiADfrRgux6R24/o32yyXUHz9Xw5zDGoc4S+F0alkR1B+wslwLK6nuTIis1qQk5iCOQ4+OObwCuppqc=
+	t=1731332361; cv=none; b=buQFzbL4ANm8Kr49dDS87knAbXoriCT8fhNDZhlp6wjm8CkPgy6q+fXntWNjp/KZ0MoAZlTTjqHkPI4q1lH2wiYCV7ObRWCNv+rZQf6COxzBp3/pGlR3mn6xyPUL7JwiQS5f54M4+0LqZAU8W62kLICP1Yw2PIV6H9lrlL7jIOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731332266; c=relaxed/simple;
-	bh=zldQuZy7Vw8Jc/U9Gqrx5DoU6JGXukbJ4pnR6Ieqjxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sh9G9LBo/0W8hLxbqG1/vC62ZnJMuK1/xTv+aWmxuOPSy9k+8t5qHitAZ5EMwQJemYOFhTMqBPcLOJbaJbfF10pDLvqtkJWMFSrQGT1sFq0pXUPEGvL94Q0tBfPSJDMNIXlyjesS1ftizcisVX2yF/6VsXOJEQm+wn5i7shibs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Bk5lvahY; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43193678216so43091915e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:37:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731332262; x=1731937062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3alwZykr3cxEiilJjH/3zMnNgVJKTf1Srqg5Us7D+k=;
-        b=Bk5lvahYiGE4jL6tcHqoopyu1WfjPDKbyX9SCGrki38ITA/li6vQ4fSa17eLU+lIEI
-         HDrsOhffM/DSoNIop0GykMihgHxucYtxYSCMHPNguohhSSp8co+Kk4SVaVwzEN0rSVQN
-         SHY2N22Xf3167NC32mYBFscPBa48OzLZj63HaCbMkc6wSm4Ze82x+8gHLAwcpI04fqd0
-         h4xKHtRtjYxM4aQG42Cx+4hmCi8Qyn9KSg7UptIO76TJF0Vis95OM3QDqpLEOrrt7K8L
-         OQMJPHmP0VzSIxicV5aWPRJ+Kd7LQMzXMVZA1WMmKPeLPmcoCJGegf0VYyyQJB2lDtt5
-         WNYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731332262; x=1731937062;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H3alwZykr3cxEiilJjH/3zMnNgVJKTf1Srqg5Us7D+k=;
-        b=awGg3e+bbT/T18A5eTjbHc7scIVpXFlG3IY1Uu2XPhBjS6QbAluAqIhyiG0MfM+PCU
-         77bW28fZ2QFXqT3MVvehe3ma9m0UnndSun65Mqz1uDYgBSvs9van6xjq6HfmDJM+0Mde
-         Me20WTpQNIjm4bzQuQDFoYdCH/8WTQ5iO2A8Xq1788tKh9w8HERwojx3YM0ULkTKrhrE
-         YDbpElVCb1Kw2OEc9KF5z5Y1GvDvpN4jCJYUxKYtuSSZonhl8QRp/erzjaFgavsNc6tx
-         OWP2hfYz+JN0tsdSB6XD4zSG67oQfSSO8rNC4O9TyBF3Vzx5UHYiuy3zSj97Wa1vbw7t
-         FaBw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+8pt/9CNM1BBZX5iQSSHYSXNm+59i6tLWYM2+3Teugd25hXT9xfJU4zPcueLIuJQUs4nUdXXf5qTUwyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJPypWceXxQr91ttsbkBSiVivoS0ZTnNJuqjR1eYYSDXzNdEvQ
-	TRBCyiHgIe4OR7PMtpyc7B9LhpPlezxBiyNPwaImXaBbhOePgtIM536pB+WHbs0=
-X-Google-Smtp-Source: AGHT+IHN6VX3szu3asu+FTdSapdN3XKQswp3SlPLA1xm4qyKmZWBrqljtY+pMYxuZ/VQ0J6d4xUkSQ==
-X-Received: by 2002:a05:600c:8715:b0:431:93d8:e1a1 with SMTP id 5b1f17b1804b1-432b751bcc2mr103836265e9.27.1731332261641;
-        Mon, 11 Nov 2024 05:37:41 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b054b3fesm173495965e9.17.2024.11.11.05.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 05:37:41 -0800 (PST)
-Date: Mon, 11 Nov 2024 14:37:38 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] printk: Add force_con printk flag to not suppress
- sysrq header msgs
-Message-ID: <ZzIIouTeCZiwJihg@pathway.suse.cz>
-References: <20241105-printk-loud-con-v2-0-bd3ecdf7b0e4@suse.com>
- <ZyzjcLF-wleMTpoY@pathway.suse.cz>
+	s=arc-20240116; t=1731332361; c=relaxed/simple;
+	bh=ZHl9kaQvP87pfaer5ugsO1tp61Mnu5JhljLuzu4Tf/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s/X+SB6nVY8+C+/NYdLG8krmuI95LpgpKHxqQMA2cgX8QN00usG5wLIYDRkMP0k/T9HV903i0OqRLnQJNCD32YV/RQ3WYOyDVtVLLo5d+tFsRHJd00P67iTbkOEC8DBISECo8YXf2gLWF09WeCG7hTMSO6/ubSPChVa/8dXoiiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eO2lA6xL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731332357;
+	bh=ZHl9kaQvP87pfaer5ugsO1tp61Mnu5JhljLuzu4Tf/Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eO2lA6xLxjaEd1crnztASfRpL09mogrvcvdzvH11lMQ0O7sS4Jr2QAIrZHgrRLnvS
+	 pLY+u2d2lfexmWyO2NGvqwSfeORSJuiraC/RhT9CtuxOZ4vRJ+qEaupO5gr9FUDpYG
+	 1DGNqiWBcRB50pL+bFHM4KuTvTYhDMffHIeezJ+RloRUbITa59aSMOSjRLVNUbfVXd
+	 ft45Bj4Z7IOxsnoRgnvTFzP6ansQX4jsfKN8+VoJnUvauwxROCnHvGhoGC8DqWrWm4
+	 uIcLCqRFMpwFAIK++Ki7q6TTeP7GPjrt9Q9VXXxjIFqZf6ae2erNzQvsIcm2aNLcwa
+	 CwlTKxYzPQofg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AEEE117E363A;
+	Mon, 11 Nov 2024 14:39:16 +0100 (CET)
+Message-ID: <73756cb5-6bd4-4c4e-9d91-1b9c1ca96a37@collabora.com>
+Date: Mon, 11 Nov 2024 14:39:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyzjcLF-wleMTpoY@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: mediatek: Add pinctrl driver
+To: ot907280 <ot_cathy.xu@mediatek.com>, matthias.bgg@gmail.com,
+ sean.wang@kernel.org, linus.walleij@linaro.org
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>,
+ Guodong Liu <guodong.liu@mediatek.com>
+References: <20241111074030.25673-1-ot_cathy.xu@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241111074030.25673-1-ot_cathy.xu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu 2024-11-07 16:57:40, Petr Mladek wrote:
-> On Tue 2024-11-05 16:45:07, Marcos Paulo de Souza wrote:
-> > Hello,
-> > 
-> > This is the second version of the patchset. It now addresses comments
-> > from John and Petr, while also mentioning that the current work solves
-> > one issue on handle_sysrq when the printk messages are deferred.
-> > 
-> > The original cover-letter in is the v1.
-> > 
-> > Please review!
-> > 
-> > Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
-> > ---
-> > Changes in v2:
-> > - Mentioned that it fixes a bug related to loglevel= dance (suggested by John)
-> > - Changed to loud_con to FORCE_CON (John, Petr)
-> > - Don't skip printk delay if FORCE_CON is specified (John)
-> > - Set FORCE_CON when LOG_CONT is handled (John)
-> > - Changed force_con from a per-CPU variable to a global variable because
-> >   we can't disable migration on the callsites. (John, Petr)
-> > - Used is_printk_force_console() on boot_delay_msec(), since it's used
-> >   when the message is stored, instead of setting is as an argument.
-> > - Link to v1: https://lore.kernel.org/r/20241016-printk-loud-con-v1-0-065e4dad6632@suse.com
-> > ---
-> > Marcos Paulo de Souza (2):
-> >       printk: Introduce FORCE_CON flag
-> >       tty: sysrq: Use printk_force_console context on __handle_sysrq
+Il 11/11/24 08:40, ot907280 ha scritto:
+> From: Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>
 > 
-> The patchset looks ready for linux-next from my POV. I am going to
-> push it there tomorrow or on Monday unless anyone complains.
+> Add pinctrl driver for mt8196
 > 
-> There was some bike-shedding about the code style in the reviews.
-> But the proposals did not look like a big win. I think that it
-> is not worth a respin.
 
-JFYI, the patchset has been committed into printk/linux.git,
-branch for-6.13-force-console.
+Please fix the commit title, add a meaningful description ... and also please fix
+your name, as your email is sent by "ot907280" and not from "Cathy Xu".
 
-Best Regards,
-Petr
+> Signed-off-by: Guodong Liu <guodong.liu@mediatek.com>
+> Cathy Xu <ot_cathy.xu@mediatek.com>
+
+You're missing the "Signed-off-by: " part before your name.
+
+> ---
+>   drivers/pinctrl/mediatek/Kconfig              |   12 +
+>   drivers/pinctrl/mediatek/Makefile             |    1 +
+>   drivers/pinctrl/mediatek/pinctrl-mt8196.c     | 1757 +++++++++++
+>   drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 2791 +++++++++++++++++
+>   4 files changed, 4561 insertions(+)
+>   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt8196.c
+>   create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h
+> 
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index a417a031659c..149a78e4216e 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -256,6 +256,18 @@ config PINCTRL_MT8195
+>   	default ARM64 && ARCH_MEDIATEK
+>   	select PINCTRL_MTK_PARIS
+>   
+> +config PINCTRL_MT8196
+> +	bool "MediaTek MT8196 pin control"
+> +	depends on OF
+> +	depends on ARM64 || COMPILE_TEST
+> +	default ARM64 && ARCH_MEDIATEK
+> +	select PINCTRL_MTK_PARIS
+> +	help
+> +	  Say yes here to support pin controller and gpio driver
+> +	  on MediaTek MT8196 SoC.
+> +	  In MTK platform, we support virtual gpio and use it to
+> +	  map specific eint which doesn't have real gpio pin.
+> +
+>   config PINCTRL_MT8365
+>   	bool "MediaTek MT8365 pin control"
+>   	depends on OF
+> diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
+> index 1405d434218e..b4a39c1bafb7 100644
+> --- a/drivers/pinctrl/mediatek/Makefile
+> +++ b/drivers/pinctrl/mediatek/Makefile
+> @@ -35,6 +35,7 @@ obj-$(CONFIG_PINCTRL_MT8186)		+= pinctrl-mt8186.o
+>   obj-$(CONFIG_PINCTRL_MT8188)		+= pinctrl-mt8188.o
+>   obj-$(CONFIG_PINCTRL_MT8192)		+= pinctrl-mt8192.o
+>   obj-$(CONFIG_PINCTRL_MT8195)		+= pinctrl-mt8195.o
+> +obj-$(CONFIG_PINCTRL_MT8196)		+= pinctrl-mt8196.o
+>   obj-$(CONFIG_PINCTRL_MT8365)		+= pinctrl-mt8365.o
+>   obj-$(CONFIG_PINCTRL_MT8516)		+= pinctrl-mt8516.o
+>   obj-$(CONFIG_PINCTRL_MT6397)		+= pinctrl-mt6397.o
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8196.c b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
+> new file mode 100644
+> index 000000000000..6d2bee706718
+> --- /dev/null
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8196.c
+> @@ -0,0 +1,1757 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Mediatek Inc.
+> + * Author: Guodong Liu <Guodong.Liu@mediatek.com>
+> + *
+> + */
+> +
+> +#include <linux/module.h>
+> +#include "pinctrl-mtk-mt8196.h"
+> +#include "pinctrl-paris.h"
+> +
+> +#define PIN_FIELD_BASE(s_pin, e_pin, i_base, s_addr, x_addrs, s_bit, x_bits)  \
+
+It doesn't look like there's any s_pin with a different number from e_pin - unless
+I am misreading something, you can change `s_pin` to be named `se_pin`, so that we
+stop declaring the number twice; makes it a little more readable.
+
+> +	PIN_FIELD_CALC(s_pin, e_pin, i_base, s_addr, x_addrs, s_bit, x_bits, \
+> +		32, 0)
+> +
+> +#define PINS_FIELD_BASE(s_pin, e_pin, i_base, s_addr, x_addrs, s_bit, x_bits) \
+
+Same here.
+
+> +	PIN_FIELD_CALC(s_pin, e_pin, i_base, s_addr, x_addrs, s_bit, x_bits, \
+> +		32, 1)
+> +
+> +static const struct mtk_pin_field_calc mt8196_pin_mode_range[] = {
+> +	PIN_FIELD(0, 270, 0x0300, 0x10, 0, 4),
+> +};
+> +
+> +static const struct mtk_pin_field_calc mt8196_pin_dir_range[] = {
+> +	PIN_FIELD(0, 270, 0x0000, 0x10, 0, 1),
+> +};
+> +
+> +static const struct mtk_pin_field_calc mt8196_pin_di_range[] = {
+> +	PIN_FIELD(0, 270, 0x0200, 0x10, 0, 1),
+> +};
+> +
+> +static const struct mtk_pin_field_calc mt8196_pin_do_range[] = {
+> +	PIN_FIELD(0, 270, 0x0100, 0x10, 0, 1),
+> +};
+> +
+..snip..
+
+> +static const unsigned int mt8196_pull_type[] = {
+> +	MTK_PULL_PU_PD_TYPE,/*0*/		MTK_PULL_PU_PD_TYPE,/*1*/
+> +	MTK_PULL_PU_PD_TYPE,/*2*/		MTK_PULL_PU_PD_TYPE,/*3*/
+> +	MTK_PULL_PU_PD_TYPE,/*4*/		MTK_PULL_PU_PD_TYPE,/*5*/
+> +	MTK_PULL_PU_PD_TYPE,/*6*/		MTK_PULL_PU_PD_TYPE,/*7*/
+> +	MTK_PULL_PU_PD_TYPE,/*8*/		MTK_PULL_PU_PD_TYPE,/*9*/
+> +	MTK_PULL_PU_PD_TYPE,/*10*/		MTK_PULL_PU_PD_TYPE,/*11*/
+> +	MTK_PULL_PU_PD_TYPE,/*12*/		MTK_PULL_PU_PD_TYPE,/*13*/
+> +	MTK_PULL_PU_PD_TYPE,/*14*/		MTK_PULL_PU_PD_TYPE,/*15*/
+> +	MTK_PULL_PU_PD_TYPE,/*16*/		MTK_PULL_PU_PD_TYPE,/*17*/
+> +	MTK_PULL_PU_PD_TYPE,/*18*/		MTK_PULL_PU_PD_TYPE,/*19*/
+> +	MTK_PULL_PU_PD_TYPE,/*20*/		MTK_PULL_PU_PD_TYPE,/*21*/
+> +	MTK_PULL_PU_PD_TYPE,/*22*/		MTK_PULL_PU_PD_TYPE,/*23*/
+> +	MTK_PULL_PU_PD_TYPE,/*24*/		MTK_PULL_PU_PD_TYPE,/*25*/
+> +	MTK_PULL_PU_PD_TYPE,/*26*/		MTK_PULL_PU_PD_TYPE,/*27*/
+> +	MTK_PULL_PU_PD_TYPE,/*28*/		MTK_PULL_PU_PD_TYPE,/*29*/
+> +	MTK_PULL_PU_PD_TYPE,/*30*/		MTK_PULL_PU_PD_TYPE,/*31*/
+> +	MTK_PULL_PU_PD_TYPE,/*32*/		MTK_PULL_PU_PD_TYPE,/*33*/
+> +	MTK_PULL_PU_PD_TYPE,/*34*/		MTK_PULL_PU_PD_TYPE,/*35*/
+> +	MTK_PULL_PU_PD_TYPE,/*36*/		MTK_PULL_PU_PD_TYPE,/*37*/
+> +	MTK_PULL_PU_PD_TYPE,/*38*/		MTK_PULL_PU_PD_TYPE,/*39*/
+> +	MTK_PULL_PU_PD_TYPE,/*40*/		MTK_PULL_PU_PD_TYPE,/*41*/
+> +	MTK_PULL_PU_PD_TYPE,/*42*/		MTK_PULL_PU_PD_TYPE,/*43*/
+> +	MTK_PULL_PU_PD_TYPE,/*44*/		MTK_PULL_PU_PD_TYPE,/*45*/
+> +	MTK_PULL_PU_PD_RSEL_TYPE,/*46*/	MTK_PULL_PU_PD_RSEL_TYPE,/*47*/
+> +	MTK_PULL_PU_PD_RSEL_TYPE,/*48*/	MTK_PULL_PU_PD_RSEL_TYPE,/*49*/
+> +	MTK_PULL_PU_PD_RSEL_TYPE,/*50*/	MTK_PULL_PU_PD_RSEL_TYPE,/*51*/
+
+Please fix the indentation to be consistent.
+
+> +	MTK_PULL_PU_PD_RSEL_TYPE,/*52*/	MTK_PULL_PU_PD_RSEL_TYPE,/*53*/
+
+..snip..
+
+> +
+> +static const struct mtk_pin_soc mt8196_data = {
+> +	.reg_cal	= mt8196_reg_cals,
+> +	.pins	= mtk_pins_mt8196,
+> +	.npins	= ARRAY_SIZE(mtk_pins_mt8196),
+> +	.ngrps	= ARRAY_SIZE(mtk_pins_mt8196),
+
+Where is eint?!
+
+> +	.nfuncs	= 8,
+> +	.gpio_m	= 0,
+> +	.base_names	= mt8196_pinctrl_register_base_names,
+> +	.nbase_names	= ARRAY_SIZE(mt8196_pinctrl_register_base_names),
+> +	.pull_type = mt8196_pull_type,
+> +	.bias_set_combo	= mtk_pinconf_bias_set_combo,
+> +	.bias_get_combo	= mtk_pinconf_bias_get_combo,
+> +	.drive_set	= mtk_pinconf_drive_set_rev1,
+> +	.drive_get	= mtk_pinconf_drive_get_rev1,
+> +	.adv_drive_get	= mtk_pinconf_adv_drive_get_raw,
+> +	.adv_drive_set	= mtk_pinconf_adv_drive_set_raw,
+> +};
+> +
+> +static const struct of_device_id mt8196_pinctrl_of_match[] = {
+> +	{ .compatible = "mediatek,mt8196-pinctrl", .data = &mt8196_data },
+> +	{ }
+
+	{ /* sentinel */ }
+
+> +};
+
+Regards,
+Angelo
+
 
