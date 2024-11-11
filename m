@@ -1,209 +1,237 @@
-Return-Path: <linux-kernel+bounces-404100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3DE9C3F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:02:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873A99C3F19
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1A11C22777
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:02:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 474092869F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248821A38EC;
-	Mon, 11 Nov 2024 12:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECAD1A9B32;
+	Mon, 11 Nov 2024 12:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ScbUPBmS"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrsDClwK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92811A0BD6;
-	Mon, 11 Nov 2024 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAAC1A76C7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329959; cv=none; b=eTMgNk3PudIL3AnvZSa+kaaEtr6xgRfKwNOukG5vw1K4Iwqn6nJ4U2ths1jsSIrVNGp/+OMK5AbL3B6vIS39Mm0k7KakPXhX+jJvbEEBIJt3MqophoL0LjWn+A5IbudthjfiWUKX3HD9yzRSuhnMQyp6qgHTiCN0lUKKrZN8Mww=
+	t=1731329985; cv=none; b=NS2VlqTaNBQqYSGZRnRByeF1a1cVtk0il4PWITgvcNfLdTDpUby0v4GVk69dkooH7M8o/iiH5gx/UfJB3136Z25HAtX1AWgzHkp06o6TVniVDB883C04tELqLxFG8/VWBaE4GH+jUNjhQEaLKrJyx2fPEnIfauR4b0momLndBX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329959; c=relaxed/simple;
-	bh=WpRHWf9iq/dZC8DDSNbIwKO/BMAKNdLDKKsvKcvLKGM=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uJQgQWmJJ/pSw4hudNWc3sSSQ+eXJlmWTSnBAeErZm7FstVIFsjidJYwf50wjA5y33GJzoXdJa5s3zJuTmUKK6UsW8MNPp7hrh1S5W8soPZqyDFRjQRlwp5V0+ENNeT+3GmLQZ+N+1hZ4yxRgequFYb4S6xcWd5vg7GNRrCTEFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ScbUPBmS; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731329957; x=1762865957;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=WpRHWf9iq/dZC8DDSNbIwKO/BMAKNdLDKKsvKcvLKGM=;
-  b=ScbUPBmSIAQjej6ot9hRC8Skhca+hgh8E0CYMSuQ4dMH0UqWuBdoyq9L
-   Sp47tIV56x3ixN1ZCABpvcZVunnHxjJxd2ddfUsDdilB3LduA+Lcb4TMv
-   oILP4sboPzZW+1AqNBES17HrUOFvHh907vSbvyD7+jZXyG+pDdijCykPf
-   ptPRJ4ZyN6djdti/RbLJjkHaeiMj1dcedajPZek9as9fMcoVCD/7xOkUv
-   YIC1111c4/B5gO6o0zzKT+1EGYepmTlxbIRzlqRg6JE50SFM0pHIHIz9e
-   me30y9QeFy6ZMSpnjl+FpDKfrFAiqyuNb0DEKowzABvMsriX6D+bnWYcb
-   A==;
-X-CSE-ConnectionGUID: dZFC6vp0Q/6hLNqL+TdxVg==
-X-CSE-MsgGUID: E95FuZ3MRYODvkit0DG1RQ==
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="37646828"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Nov 2024 05:59:15 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 11 Nov 2024 05:59:07 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 11 Nov 2024 05:59:03 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>
-Subject: [PATCH net-next v2 5/5] net: phy: microchip_t1 : Add initialization of ptp for lan887x
-Date: Mon, 11 Nov 2024 18:28:33 +0530
-Message-ID: <20241111125833.13143-6-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241111125833.13143-1-divya.koppera@microchip.com>
-References: <20241111125833.13143-1-divya.koppera@microchip.com>
+	s=arc-20240116; t=1731329985; c=relaxed/simple;
+	bh=MDntdSSuq+qIjKSBQotnQVTsym0JGVLG/tWfoQbOR48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fRPKy9PziSl4Bb6vVczOugYe/QG0Lm6h94WOAKWT9GKkgLxUJwp3iE4m5ZhcALe8d1hZFwwV3sEC8eWgDCaLxZrUS6l3mUiRA2phnkCm8E5SMbLqN9WbXCDRag67PDvmQ72QR4pcrL+R6OZ7O421k8pZK+KWtKdt2dLLDljDETY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrsDClwK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731329982;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V9aDFUyPXN4swinBMMlYQwHMgntWvhLuJqrPNub41cI=;
+	b=BrsDClwKLCPt4SZpNYHiGNuZkcKyOU2Aa3YmhnXg3yvG/z/7gTDCMb3Ou/vSKA5/fQ0jHN
+	cjlXN7OBbkfQPphyhal7nG8CYk7E1W7zHi0kaDA39ZZZ5NVYP5GaNR7ROcOvHp9bgF1imS
+	gPn1IDrUGoDiFd+We4BsdG0TWnp+S+8=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-232-jjovYiXhO1OtSIfTwez6sw-1; Mon, 11 Nov 2024 07:59:41 -0500
+X-MC-Unique: jjovYiXhO1OtSIfTwez6sw-1
+X-Mimecast-MFC-AGG-ID: jjovYiXhO1OtSIfTwez6sw
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5cf3d144791so945165a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:59:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731329980; x=1731934780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9aDFUyPXN4swinBMMlYQwHMgntWvhLuJqrPNub41cI=;
+        b=UJlz8Zfg2ZhMPwM8CjpmK7d5CMIAGs5PbG72sRpNcGZVJemIZkjzyEhTQ0eoX/+6Vb
+         qpRNaCwnE6gWjsHqsELrh/qzMRQ/tyPuOCXkPpRqDh+LtnROt0orH/YXdhxK6CpyKuf0
+         h5B/p/+0R3lbKmLkj9tuZ8Hxco3E4EbrxV8B4bF2p4UO1I/hYWeT4ixDJ0IwrTJuD+VC
+         sq61hOcrfUhWoyV9JeX0jhYHBasplu7PYnIKEEQelYUNHDc/TtmbhrclxemfrloK1GTe
+         0S4Ap+7jWDaNOOoQU42Na8l0o6TXNOZAYsNHs64mYeWmFvDg4lAPPcGRgqJ9b7YHcfm6
+         PcSQ==
+X-Gm-Message-State: AOJu0Yw6MC+RArf3ZzPu+QbTY1nyD07DTad6YO3etYOgor232nJ/CFKb
+	BE0GQ5n1c07obtTqB+YT2SLDYhsmkigVAmub/oJTXWzEGrV+8n8m23kzZWi95epfMPGopVsvfYf
+	KmNylk7jJMhsE9fVOxwJjTk1+avvrHSJmxctPfMhrlGwA1SZ89mBwHvfkQKO2Pw==
+X-Received: by 2002:a05:6402:3482:b0:5cf:1b53:1bf1 with SMTP id 4fb4d7f45d1cf-5cf1b531ccdmr6307125a12.15.1731329980191;
+        Mon, 11 Nov 2024 04:59:40 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHPwjxjj0wGbO0wl9WwHLB1afUwUXWU8VX68uhPYP/vCxXyLaEHn6NN8d3IbmeRxUaJQkMg5A==
+X-Received: by 2002:a05:6402:3482:b0:5cf:1b53:1bf1 with SMTP id 4fb4d7f45d1cf-5cf1b531ccdmr6307111a12.15.1731329979757;
+        Mon, 11 Nov 2024 04:59:39 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03b7f0f9sm5122110a12.27.2024.11.11.04.59.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 04:59:39 -0800 (PST)
+Message-ID: <a644fed4-aff5-4514-8e35-d6cab642d3dd@redhat.com>
+Date: Mon, 11 Nov 2024 13:59:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
+ subdevice
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ Yunke Cao <yunkec@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>
+References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add initialization of ptp for lan887x.
+Hi Ricardo, Et al.,
 
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
-v1 -> v2
-Fixed below review comment
-  Added ptp support only if interrupts are supported as interrupts are mandatory
-  for ptp.
----
- drivers/net/phy/microchip_t1.c | 40 +++++++++++++++++++++++++++++++---
- 1 file changed, 37 insertions(+), 3 deletions(-)
+On 8-Nov-24 9:25 PM, Ricardo Ribalda wrote:
+> Some notebooks have a button to disable the camera (not to be mistaken
+> with the mechanical cover). This is a standard GPIO linked to the
+> camera via the ACPI table.
+> 
+> 4 years ago we added support for this button in UVC via the Privacy control.
+> This has two issues:
+> - If the camera has its own privacy control, it will be masked
+> - We need to power-up the camera to read the privacy control gpio.
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index 71d6050b2833..63206ae8075d 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -10,11 +10,15 @@
- #include <linux/ethtool.h>
- #include <linux/ethtool_netlink.h>
- #include <linux/bitfield.h>
-+#include "microchip_ptp.h"
- 
- #define PHY_ID_LAN87XX				0x0007c150
- #define PHY_ID_LAN937X				0x0007c180
- #define PHY_ID_LAN887X				0x0007c1f0
- 
-+#define MCHP_PTP_LTC_BASE_ADDR			0xe000
-+#define MCHP_PTP_PORT_BASE_ADDR			(MCHP_PTP_LTC_BASE_ADDR + 0x800)
-+
- /* External Register Control Register */
- #define LAN87XX_EXT_REG_CTL                     (0x14)
- #define LAN87XX_EXT_REG_CTL_RD_CTL              (0x1000)
-@@ -229,6 +233,7 @@
- 
- #define LAN887X_INT_STS				0xf000
- #define LAN887X_INT_MSK				0xf001
-+#define LAN887X_INT_MSK_P1588_MOD_INT_MSK	BIT(3)
- #define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
- #define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
- #define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
-@@ -319,6 +324,8 @@ struct lan887x_regwr_map {
- 
- struct lan887x_priv {
- 	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
-+	struct mchp_ptp_clock *clock;
-+	bool init_done;
- };
- 
- static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
-@@ -1269,8 +1276,19 @@ static int lan887x_get_features(struct phy_device *phydev)
- 
- static int lan887x_phy_init(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int ret;
- 
-+	if (!priv->init_done && phy_interrupt_is_valid(phydev)) {
-+		priv->clock = mchp_ptp_probe(phydev, MDIO_MMD_VEND1,
-+					     MCHP_PTP_LTC_BASE_ADDR,
-+					     MCHP_PTP_PORT_BASE_ADDR);
-+		if (IS_ERR(priv->clock))
-+			return PTR_ERR(priv->clock);
-+
-+		priv->init_done = true;
-+	}
-+
- 	/* Clear loopback */
- 	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
- 				 LAN887X_MIS_CFG_REG2,
-@@ -1470,6 +1488,7 @@ static int lan887x_probe(struct phy_device *phydev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->init_done = false;
- 	phydev->priv = priv;
- 
- 	return lan887x_phy_setup(phydev);
-@@ -1518,6 +1537,7 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 
- static int lan887x_config_intr(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int rc;
- 
- 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-@@ -1537,12 +1557,23 @@ static int lan887x_config_intr(struct phy_device *phydev)
- 
- 		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
- 	}
-+	if (rc < 0)
-+		return rc;
- 
--	return rc < 0 ? rc : 0;
-+	if (phy_is_default_hwtstamp(phydev)) {
-+		return mchp_config_ptp_intr(priv->clock, LAN887X_INT_MSK,
-+					    LAN887X_INT_MSK_P1588_MOD_INT_MSK,
-+					    (phydev->interrupts ==
-+					     PHY_INTERRUPT_ENABLED));
-+	}
-+
-+	return 0;
- }
- 
- static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
-+	int rc = IRQ_NONE;
- 	int irq_status;
- 
- 	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-@@ -1553,10 +1584,13 @@ static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- 
- 	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
- 		phy_trigger_machine(phydev);
--		return IRQ_HANDLED;
-+		rc = IRQ_HANDLED;
- 	}
- 
--	return IRQ_NONE;
-+	if (irq_status & LAN887X_INT_MSK_P1588_MOD_INT_MSK)
-+		rc = mchp_ptp_handle_interrupt(priv->clock);
-+
-+	return rc;
- }
- 
- static int lan887x_cd_reset(struct phy_device *phydev,
--- 
-2.17.1
+Thinking more about this I think we need to start with looking at the userspace
+API for privacy controls, define how we want that to look and then go from
+there.
+
+The reason I'm writing this is because due to my work in drivers/platform/x86
+(pdx86) on EC / ACPI / WMI drivers for non chromebooks I am aware of at least
+4 different methods camera on/off (aka privacy) toggles are being reported
+to userspace at the moment. Adding a v4l2-ctrl on a subdev instead of directly
+on /dev/video# would be adding a 5th method which seems highly undesirable.
+
+Instead I would like to first focus on fixing these userspace API
+inconsistencies agreeing on a single API we want to use everywhere
+going forward. We don't need to fix all drivers at once, but IMHO we
+should agree on what the API should look like and document that and
+any future drivers implementing camera privacy control related code
+then must use the new API.
+
+Lets start with the 3 APIs I'm currently aware of:
+
+1. uvcvideo driver exporting V4L2_CID_PRIVACY on /dev/video#
+uvcvideo seems to be the only user of this CID (i)
+
+2. pdx86 drivers exporting an input evdev with EV_SW,
+SW_CAMERA_LENS_COVER. This is somewhat of a special case
+for some Dell laptops with an electro-mechanical shutter
+operated by the EC. But this is not also used by
+hp-wmi.c where it does not necessarily indicate the
+status of a mechanical cover, but also possibly simply
+disconnecting the camera from the USB bus.
+
+3. pdx86 drivers exporting an input evdev with EV_KEY,
+KEY_CAMERA_ACCESS_ENABLE, KEY_CAMERA_ACCESS_DISABLE
+These KEY codes are based on offical the HUTRR72 HID/HUT
+extension and as such may also be send by USB/I2C/BT HID
+devices.
+
+The only user outside of hid-input.c is the recently added
+drivers/platform/x86/lenovo-wmi-camera.c driver and I'm
+wondering if that should not use SW_CAMERA_LENS_COVER
+instead. I'll ask the driver author about how this 
+
+4. pdx86 drivers exporting an input evdev with EV_KEY,
+KEY_CAMERA. Note this 4th method lacks information on if
+the camera was enabled or disabled. In many cases this
+is send to indicate that the EC has either dropped
+a UVC camera of the bus, or added it to the bus.
+Ideally we would have some helper checking for internal
+UVC camera presence and turn this into 2 or 3.
+
+TL;DR: it a mess.
+
+Circling back to this patch-set, note how 3 of the 4
+currently in use variants today use in input evdev.
+
+I think that using an input evdev (shared with the
+snapshot button if present) will give us a nice out for
+the power-management issue with the V4L2_CID_PRIVACY,
+while at the same time giving a nice opportunity to
+standardize on a single userspace API.
+
+My proposal would be to standardize on SW_CAMERA_LENS_COVER
+I realize that the GPIO does not always indicate a lens
+cover, but the resulting black frames are the same result
+as if there were a lens cover and looking at:
+
+https://support.hp.com/ie-en/document/ish_3960099-3335046-16
+
+and then the second picture when expanding "Locate and use
+the webcam privacy switch" that does look like it may be
+an actual cover which reports back its state through a GPIO.
+
+The reason why I'm not in favor of using
+KEY_CAMERA_ACCESS_ENABLE + KEY_CAMERA_ACCESS_DISABLE is that
+looking at the HUTRR72 it talks about:
+"Enables programmatic access to camera device"
+which suggests that it is a request to the OS / desktop-
+environment to block camera access at the software level,
+rather then reporting back that a hw-level block is in place.
+
+And since these may be used by any HID device we are not of
+control in how these will be used.
+
+Ricardo, what do you think of instead of using a v4l-subdev,
+using an input evdev (shared with the existing one) reporting
+SW_CAMERA_LENS_COVER ?  The v4l-subdev approach will need
+userspace changes anyways and if we are going to make userspace
+changes we might as well use the best API available.
+
+One downside of going the evdev route is that it is a bit
+harder for userspace to map the evdev to a camera:
+
+1. For the various WMI interfaces this already is impossible,
+and just to show a notification it is not necessary (using
+an external cam will make things weird though).
+
+2. For UVC cameras mapping the evdev to the /dev/video#
+node can still be done by looking if they share a parent
+USB interface. This is e.g. already done in apps like
+xawtv looking at the PCI parent to pair up /dev/video#
+for video capture with the ALSA interface exposed for
+sound by bttv cards.
+
+3. We can maybe do something at the media-controller
+level to help userspace linking a camera to its evdev node.
+This would also be helpful for the existing WMI interfaces.
+
+Regards,
+
+Hans
+
+
+
+i) With the exception of drivers/media/pci/intel/ivsc/mei_csi.c
+which has a V4L2_CID_PRIVACY control which always reads 0, so
+I guess we can / should probably drop that.
+
+
+
+p.s.
+
+I do plan to also get back to you on the actually powermanagement
+discussion. But only so many hours in a day, so it will probably
+be a couple of days.
+
 
 
