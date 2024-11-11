@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-403449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A920D9C35DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:24:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17C3C9C35DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26C61C2148A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:24:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B927F1F21BDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 01:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10BD17C69;
-	Mon, 11 Nov 2024 01:23:55 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2C618E2A;
+	Mon, 11 Nov 2024 01:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClNZg+U1"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE52EACD
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB97AD58;
+	Mon, 11 Nov 2024 01:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731288235; cv=none; b=Lu41Kh3JaJyIiXzrEZcmuL9zXwdeI1tO4HladH2obEOjycO4Sb93vZehwc6RAlS3EauBtE2BzHwrUf2LC3D04AfYQWWjMCdDEQoS40zh1Jgcfhq7qur6ytTLnS64k29WP2BITwzOoYcChE3/M5FlnyyL6A1b4GcYsebVFsXmcG4=
+	t=1731288336; cv=none; b=prX/pcqg5+3EzY+7ocRtQy77BdN4CGtN+Yg4DUX4kAolGGWbz3pXZ85DOcxyeUlOZEJgi3qYUnVfwZw05VprlPKH+2TJQgFOfcdecb0zQZlfOtfHC3fEgwK1ww93GaTEH+EkErxThVkR1Ig6Rpo/tonyoqMdowTZ5YVar8WbQbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731288235; c=relaxed/simple;
-	bh=GzDSymeFLcSp5DGb9vI/Zqlut6YtFcb3duNnbPFWwzo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=LfHPwlo7y4CakXeclGTy3lB57E7ewx60fIazDj0BDxWZtvI5CdcCeVSGx9gi+JrJRPXYhMKH8taSGpUMirEXj/aG/7qd0GEFK1zmyJQbc0syVEst+3JVyExXD/n24al+8idu+6MwRa/qMDBaJMEdfyNYaaMK+2PgOFdADB14quc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XmsGM0gv8z1hwRD;
-	Mon, 11 Nov 2024 09:22:03 +0800 (CST)
-Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9A36F1A0188;
-	Mon, 11 Nov 2024 09:23:50 +0800 (CST)
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 09:23:49 +0800
-Subject: Re: [PATCH v2] ubifs: Fix use-after-free in ubifs_tnc_end_commit
-To: Waqar Hameed <waqar.hameed@axis.com>
-CC: Richard Weinberger <richard@nod.at>, Sascha Hauer
-	<s.hauer@pengutronix.de>, <kernel@axis.com>, <linux-mtd@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <e7b5151bb1186e2342ed677cce0ef77592923084.1731088341.git.waqar.hameed@axis.com>
- <3c46013e-809e-cdcf-8648-2ffe2ab6c32b@huawei.com> <pndbjymzrnh.fsf@axis.com>
-From: Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <f43655b7-0283-0008-1475-67174533d21a@huawei.com>
-Date: Mon, 11 Nov 2024 09:23:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+	s=arc-20240116; t=1731288336; c=relaxed/simple;
+	bh=QHVR0GGGN1Y3Qe57p9sktkTdO/4KfFP/Xl52rcTgU0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jWKlyPN3yTVlJ9HjBcIND/WybhglvmUpgucgmyB/Z9XBRJVFg39AbmIlfLJfLJ+hwNkScWAWFRuplPdRe6diClLJntry0vzFhaxb20OZIi11MK74oUkEXJcFDeaqi1ey69juzqDFj0Cmx5ZwQCUZ66Bs45Us/CEvYAs6ZAyJgms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClNZg+U1; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so4977171e87.0;
+        Sun, 10 Nov 2024 17:25:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731288333; x=1731893133; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hjbh6lLUqnJxi3HSXhOyrGpP22ujh50AM4aiBwHCyh8=;
+        b=ClNZg+U1+Md9g/xfbWngChvSlzHG3TRxFTO73+OMAumMhn/Tv/p1g3ycFefrrt1UCS
+         pROI28tf0EQGYolwFxQyKv6WhCtbUaDCXPzcks0b2lzte1pXkrR2KiJxOueQwbQEmWAu
+         JH6hXiPEhGj8Mv1zYfE/cDJMaDt35/6CWA2kaE5DqR6p6a1Phj4pphsjtCy5PVHaiAIn
+         bCpxyAwEEPIwLptTv2mc6o8BfR8K5QgN2M8tdZs0K/ik55hcC2ooNRh3j0A1VfBvwjDG
+         llMQchTv59aED6Ful+2ezSeOfb1RNQYLkwy+CzvqVwD1pO9XxJIOuF6d0QDpVvpGO+W7
+         xMGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731288333; x=1731893133;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hjbh6lLUqnJxi3HSXhOyrGpP22ujh50AM4aiBwHCyh8=;
+        b=HenPX32ulbI5oY9LQWpVQttAA7yWqdXKT/nC8vIc+cl+9WrZTwpQCmrdPSzrqzEMwD
+         bYb8mHVly+HcKBTl7AEArdEoMYYO4uN/42ctcukyvtr7HLY3g5RXlZ8Jj7EObWFSTcTP
+         dp1g6HK+jwMpP8Ol6Xq27SdW0brF4wyg/SnUXboHOQLkgZA9qDjYEolqAY+MI8vTrgxM
+         YtWoNiLXPkYKIzk2Lg6sBcf4sA2lxuY2PvM/GKOG7Upj2c6tNsNjDk7N7r4zPqHjnXs0
+         spygzBYCiJ+s2XYaQNXN95Wt1nifFUbnFq2kSqRJhfwCsj0CCNXlwo2L3X+T6+dm7zP3
+         u1HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWc8uydZ8SagmMR1PIh8honCijMFd1qHU24q18UHw3/mBQOts2iBCViVQlDm4925TGs871ATOYk5z7TTi+8@vger.kernel.org, AJvYcCX9Jl+CLCRRHyvhDA5NOvkyc3/r5YGteEEciMwvgzaYHKODejlhegNEFEKkNoRFsYl9QyTQKeUzWcnw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEp8nxcLNvEQR3fXFo7VXeinaWG84qdhhAFwEC5vdBHyzbq1uj
+	a3XPQfSGdQA4+AqdaENd31SQryFE9ipRNSuunb6Ewh2L5BiRqEedk5UuzYIMO2Ws+w+FrCnYL+d
+	6uOsUYCL2ZFa9Vk+tuT3vu3K95Hw=
+X-Google-Smtp-Source: AGHT+IGM3TTaW39blKH6IzIldaKyw7LDF83ZaE9I6qYRNEv42LlXzuX3QmlZFITFjrJVPXuF8B3ilP7N9GcJ1LTabq4=
+X-Received: by 2002:a05:6512:3e15:b0:539:8fcd:524 with SMTP id
+ 2adb3069b0e04-53d8623fa76mr4343924e87.30.1731288332835; Sun, 10 Nov 2024
+ 17:25:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <pndbjymzrnh.fsf@axis.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk500005.china.huawei.com (7.202.194.90)
+References: <20241007210214.102568-1-linux@treblig.org> <Zy0reBfykkwXA47d@gallifrey>
+ <CAH2r5mvL+xXH_nnoKKKnVPFo_xtOb=8mPSqrG28Dgngx6Aab7Q@mail.gmail.com>
+ <CAH2r5ms1y3XsGmA2kU6Vdvdmg_jnVyd2w7mQPRyX9oh9rFD2tA@mail.gmail.com>
+ <ZzEOuqDwagwoGCMf@jeremy-HP-Z840-Workstation> <CAN05THTgj+_78kG3LFnpU9zsjEEBAsyDZ0P20YL3-DP94r3KUA@mail.gmail.com>
+ <ZzFaSf20nIbppt8w@jeremy-HP-Z840-Workstation>
+In-Reply-To: <ZzFaSf20nIbppt8w@jeremy-HP-Z840-Workstation>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 10 Nov 2024 19:25:21 -0600
+Message-ID: <CAH2r5muJ_+d5zemgPUG8y6stiCmw4nnR=iyK683N1Gii4134TA@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Remove pre-historic unused CIFSSMBCopy
+To: Jeremy Allison <jra@samba.org>
+Cc: ronnie sahlberg <ronniesahlberg@gmail.com>, "Dr. David Alan Gilbert" <linux@treblig.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
+	Bharath S M <bharathsm@microsoft.com>, CIFS <linux-cifs@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/11/11 5:48, Waqar Hameed 写道:
-> On Sat, Nov 09, 2024 at 10:34 +0800 Zhihao Cheng <chengzhihao1@huawei.com> wrote:
-> 
->> 在 2024/10/9 22:46, Waqar Hameed 写道:
->> 3 nits below.
->>
->> 1. Make the title as 'ubifs: authentication: Fix use-after-free in
->> ubifs_tnc_end_commit'
->>
->> 2. At the begining of the commit msg, describe the problem:
->> After TNC tree inserting(which may trigger a znode split and change the
->> znode->parent) and deleting(which may trigger znode freeing), the
->> znode->cparent(which still points to a freed znode) may not be updated at the
->> begining of commit, which could trigger an UAF problem while accessing
->> znode->cparent in write_index().
-> 
-> Alright, will rephrase the commit message a bit.
-> 
->>
->>> Running
->>>     rm -f /etc/test-file.bin
->>>     dd if=/dev/urandom of=/etc/test-file.bin bs=1M count=60 conv=fsync
->>> in a loop, with `CONFIG_UBIFS_FS_AUTHENTICATION`, KASAN reports:
->>>     BUG: KASAN: use-after-free in ubifs_tnc_end_commit+0xa5c/0x1950
->>>     Write of size 32 at addr ffffff800a3af86c by task ubifs_bgt0_20/153
->>>     Call trace:
->>
->> [...]
->>> diff --git a/fs/ubifs/tnc_commit.c b/fs/ubifs/tnc_commit.c
->>> index a55e04822d16..a464eb557585 100644
->>> --- a/fs/ubifs/tnc_commit.c
->>> +++ b/fs/ubifs/tnc_commit.c
->>> @@ -657,6 +657,7 @@ static int get_znodes_to_commit(struct ubifs_info *c)
->>>    		znode->alt = 0;
->>>    		cnext = find_next_dirty(znode);
->>>    		if (!cnext) {
->>
->> 3. I'd like to add the the assertion 'ubifs_assert(c, !znode->parent);'
-> 
-> Wouldn't the assert always be true? Since the root node wouldn't have a
-> parent. Or are we afraid of some other edge cases (bugs?) that might
-> have been missed and want to be defensive here? Either way, I'll add the
-> assert.
+SMB1/SMB2.0 can be disabled fairly easily in the Linux client build,
+but there are occasional requests for it due to SMB1/CIFS still being
+used to access some old devices. Also some of the SMB1 code was moved
+to SMB1 specific files to make that clearer, and to make the module
+smaller when SMB1/SMB2.0 is not enabled. Even when SMB1/SMB2.0 is
+configured in the build, in the future it may be useful to not load
+the SMB1 specific files (put them in a helper module that contains all
+of the SMB1 specific code, rather in the main filesystem module)
+unless the user specifies "vers=3D1.0" on mount.
 
-A defensive code here is to prevent some unknown bugs, in which the last 
-returned znode has a parent, although it looks impossible for current 
-realization.
-> 
->>> +			znode->cparent = NULL;
->>>    			znode->cnext = c->cnext;
->>>    			break;
->>>    		}
->>>
-> .
-> 
+On Sun, Nov 10, 2024 at 7:13=E2=80=AFPM Jeremy Allison <jra@samba.org> wrot=
+e:
+>
+> On Mon, Nov 11, 2024 at 09:02:03AM +1000, ronnie sahlberg wrote:
+> >All of SMB1 should be removed.  Not just disabled but deleted.
+> >
+> >What are the plans in samba? Any timeline to literally delete the smb1 c=
+ode?
+>
+> It can already be compiled out of any build,
+> so it's an option for any distro or user of
+> Samba.
+>
+> I'm not sure deleting the code is needed at
+> this point, as it still has legacy uses
+> (there are still commercial uses of OS/2
+> out there for example).
 
+
+
+--=20
+Thanks,
+
+Steve
 
