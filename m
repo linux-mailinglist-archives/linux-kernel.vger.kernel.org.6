@@ -1,85 +1,139 @@
-Return-Path: <linux-kernel+bounces-404470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDE39C442A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:52:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EA39C445E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72018B2331B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:48:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D80CB2F0D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD9B01AA1FC;
-	Mon, 11 Nov 2024 17:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7861E1AB6C2;
+	Mon, 11 Nov 2024 17:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIc5/qKe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfD79ezb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B5653389;
-	Mon, 11 Nov 2024 17:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877501A0B15;
+	Mon, 11 Nov 2024 17:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347268; cv=none; b=T8Z91Uwvo8ddOuUk35R4h5hNl0ym+644iY/8m/4N2UyVAnRRm3nOWR4So2Q8hBl7h+oNpxEGpTIYMh7pVNdUpad1omvu05cE+ndg0ay5EdNPqus4bmHt3aIqZdhpLOHNlnPwkDyRr+XWTgFKdK7Xc+wlwXSoo7AlWz56F93OBF0=
+	t=1731347318; cv=none; b=NOcqThDy5vuMM1wPQgWcXyDvX8m1UjGJ+88l7oYNcE8wJDGOSRUPKJ6pyl7XVfqVXtApE/dJG4DQ2AhyA6b29hlM2WvpqcdY/TGjMbindVV7y/Q56BUyx1/D1QZHuPalZPfAHzB59RN4c2lDEpvs1kuJfO/910kz1bdrJiZ5lZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347268; c=relaxed/simple;
-	bh=T403nzfrE5JL2WNCmm1K+m6rTp3MIRo8r9U3LdQV20w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbBtG4QyfoAcGnxWEnz16VlDZiLhQnDGqHPfXsszti/bplFkK3ersCz3kdxKzyzqR0suk36pRhLZvzAkJSFF2bEtt47R+pucztJl4tI0s/J9ZMxxsU3EmrZgQdR8UMlU3Gh4Y5CJA6cgOWFkEa4zUwLTfRwyV5Dcw4zmt3F4FME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIc5/qKe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91AEAC4CECF;
-	Mon, 11 Nov 2024 17:47:45 +0000 (UTC)
+	s=arc-20240116; t=1731347318; c=relaxed/simple;
+	bh=Y+khpFiawXKLU/+l8e747ZP6KaaIIh+gTXQA+EIkgkY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DPvJemRwQJoQxtD+/E94bhT9QN6+UU1LAdIPV6I7E1YQg/QNDiOQGtiBMWXP/AWvW8M62xESym5SXM1C6xUn12aYWRhLmWobeje5FRusJjdF4dS/5QWxWsJ5vmzUY6/cHF/Be5CAIcX5FpYOiv2aT0Bv2qJHAm6LcgAgFyG0JQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfD79ezb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 143CEC4CECF;
+	Mon, 11 Nov 2024 17:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731347267;
-	bh=T403nzfrE5JL2WNCmm1K+m6rTp3MIRo8r9U3LdQV20w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XIc5/qKeD9HcnR5O2gQLCSUJbHoxsynZa7NAE3OfwLfKoL8a4SfiosBEGLOQNsB+B
-	 V/BMCC0JjBT6u3NdSglRcql4Gg0AHTrnw9q4Rd2fihCt8ktJmMVcLFC0xg1N87Yz/f
-	 Q6GI0QN5DZoIjaKpzQc0WBM2Lp0siX1ydOXVklD9LeyP/E8aBoWSw5gn3UGH4V4Twx
-	 yEI4Yw85HEOSkfGPRgfIkybL3mS0riDetn8uhe6tC1VtWasoOt2cb9DVZR090wRlVH
-	 ynWwTB/ikB+v/UQGN1p4BRAp7oqJYpNFN2C3SUKWdmVwEQbPmtnKoZDRrRF5sBw6RT
-	 oACuNqlQrLU7g==
-Date: Mon, 11 Nov 2024 17:47:43 +0000
-From: Simon Horman <horms@kernel.org>
-To: Nelson Escobar <neescoba@cisco.com>
-Cc: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christian Benvenuti <benve@cisco.com>,
-	Satish Kharat <satishkh@cisco.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/7] enic: Make MSI-X I/O interrupts come
- after the other required ones
-Message-ID: <20241111174743.GH4507@kernel.org>
-References: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
- <20241108-remove_vic_resource_limits-v3-2-3ba8123bcffc@cisco.com>
+	s=k20201202; t=1731347318;
+	bh=Y+khpFiawXKLU/+l8e747ZP6KaaIIh+gTXQA+EIkgkY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=gfD79ezbyqAT5rvKeu/bcNk+MqWjLhBgv82QIF/tIbz1tWRuHXO2hqhXMblEdVPjh
+	 uLWSskpTn0NmbCS8ovAvPJNwmOCD+sEvFuY5H39CXkmtdFWd5YC2nEieNxQRc/I99o
+	 U7IQ0t8lfGL6a9x7XtdAvZul3zH6DbCJ4SHk4BNHxN4qMgByWrPQNh+GNmgGwLVMFW
+	 5kFUqPoQTKfdsOEBglpmjDw8gP+n70gDwcBkSKANJClp4+04sSwRjT77we8vHjhqgq
+	 0YvS2zBf6EmIbdDpX54lBKmW1z/IT8syb8Ns1cZ4VY6Zjr0qNNt+7l5WToJMnaGMYb
+	 cYYNgkm1oOPEg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3C7D3ABD9;
+	Mon, 11 Nov 2024 17:48:37 +0000 (UTC)
+From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
+Subject: [PATCH 0/5] scsi: ufs: Bug fixes for ufs core and platform drivers
+Date: Mon, 11 Nov 2024 23:18:29 +0530
+Message-Id: <20241111-ufs_bug_fix-v1-0-45ad8b62f02e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108-remove_vic_resource_limits-v3-2-3ba8123bcffc@cisco.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG1DMmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDINAtTSuOTypNj0/LrNA1SzE0TzO2TExLTDRRAuooKEoFCoNNi46trQU
+ ADEBy810AAAA=
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Mike Bi <mikebi@micron.com>, Bean Huo <beanhuo@micron.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Luca Porzio <lporzio@micron.com>, Asutosh Das <quic_asutoshd@quicinc.com>, 
+ Can Guo <quic_cang@quicinc.com>, Pedro Sousa <pedrom.sousa@synopsys.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Peter Wang <peter.wang@mediatek.com>, 
+ Stanley Jhu <chu.stanley@gmail.com>, 
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Santosh Y <santoshsy@gmail.com>, Namjae Jeon <linkinjeon@gmail.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1532;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=Y+khpFiawXKLU/+l8e747ZP6KaaIIh+gTXQA+EIkgkY=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBnMkNyVRymijja4WYsMTq3UufBBioidTEf49F/G
+ g6j4UfgEmiJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZzJDcgAKCRBVnxHm/pHO
+ 9d0jB/449IToaB9ZcYdJONBd23MdNRpN9XTjoQ3UaKzzkCrBwemdD8ACugH5wLUaPzsStvYYt3C
+ 6oYkky5KzIlqwZMoQVr4rSs7t0C+05tD/fKah7PQkWE2sWw6qy5weu7aZdzMMLT4eewC1jVW+OJ
+ 6sDx7OKs23eLysMs5PpefkS/XDYDkowgBvPz0f1E11UQDoA4Ra1Wd84CkcdyqTh0XDMC0EV4D0p
+ fGBOBK0Tpegsz2LI686Q6vrLJQBtn6pZNWAx2GHhNxEGbg97Rg5kF/7FtcnvVdgcDc0CDrxeyOu
+ HAIwSVg9lV19dgsYP/y7m/iTY4qce8LrwLtHgy5oTwjONKG5
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
+X-Endpoint-Received: by B4 Relay for
+ manivannan.sadhasivam@linaro.org/default with auth_id=185
+X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reply-To: manivannan.sadhasivam@linaro.org
 
-On Fri, Nov 08, 2024 at 09:47:48PM +0000, Nelson Escobar wrote:
-> The VIC hardware has a constraint that the MSIX interrupt used for errors
-> be specified as a 7 bit number.  Before this patch, it was allocated after
-> the I/O interrupts, which would cause a problem if 128 or more I/O
-> interrupts are in use.
-> 
-> So make the required interrupts come before the I/O interrupts to
-> guarantee the error interrupt offset never exceeds 7 bits.
-> 
-> Co-developed-by: John Daley <johndale@cisco.com>
-> Signed-off-by: John Daley <johndale@cisco.com>
-> Co-developed-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Nelson Escobar <neescoba@cisco.com>
+Hi,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+This series has several bug fixes that I encountered when the ufs-qcom driver
+was removed and inserted back. But the fixes are applicable to other platform
+glue drivers as well.
+
+This series is tested on Qcom RB5 development board based on SM8250 SoC.
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (5):
+      scsi: ufs: core: Cancel RTC work during ufshcd_remove()
+      scsi: ufs: qcom: Only free platform MSIs when ESI is enabled
+      scsi: ufs: pltfrm: Disable runtime PM during removal of glue drivers
+      scsi: ufs: pltfrm: Drop PM runtime reference count after ufshcd_remove()
+      scsi: ufs: pltfrm: Dellocate HBA during ufshcd_pltfrm_remove()
+
+ drivers/ufs/core/ufshcd.c             |  1 +
+ drivers/ufs/host/cdns-pltfrm.c        |  4 +---
+ drivers/ufs/host/tc-dwc-g210-pltfrm.c |  5 +----
+ drivers/ufs/host/ufs-exynos.c         |  3 +--
+ drivers/ufs/host/ufs-hisi.c           |  4 +---
+ drivers/ufs/host/ufs-mediatek.c       |  5 +----
+ drivers/ufs/host/ufs-qcom.c           |  7 ++++---
+ drivers/ufs/host/ufs-renesas.c        |  4 +---
+ drivers/ufs/host/ufs-sprd.c           |  5 +----
+ drivers/ufs/host/ufshcd-pltfrm.c      | 16 ++++++++++++++++
+ drivers/ufs/host/ufshcd-pltfrm.h      |  1 +
+ 11 files changed, 29 insertions(+), 26 deletions(-)
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241111-ufs_bug_fix-6d17f39afaa4
+
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
 
 
