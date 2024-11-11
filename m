@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-404685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F53B9C46D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:29:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCC69C46D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:30:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EDF828B4F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:29:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C851F24FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCBC1AB52B;
-	Mon, 11 Nov 2024 20:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA261ACDE8;
+	Mon, 11 Nov 2024 20:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjrplZC4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gI8/4gq6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B461A256C;
-	Mon, 11 Nov 2024 20:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610691B95B;
+	Mon, 11 Nov 2024 20:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356981; cv=none; b=p41TsjYbiharGpfx5XkuYydKRbPsTqBtDQF6+xynbwX3c/x4ehQFeFanEs9TzmOfjFNkw8H2WsPVXendwGk8WrqS9yEsCxoiFrFsfxxyeLIZVdCQTzgNmjXQKyi3nMKuanyVrJ0Bi9WW1iRemWNdNNH2dDoRqWZfjMvoH7DJ8PU=
+	t=1731357025; cv=none; b=aK14I5FXthCIEGj5G1KP+hjeQRbHlg3ttr6y6YiPrmZ4rXj5YHW73KxJ8HKDP2N5pisxbMOEpIbQsPzEH+Zf8IKwwjSI/3VHSIEAQZufhpYJJIPrpiNDdDgejpmg5ETb4dH4DUuah3AXHoWEG8iZFgSEMT4eTICe7G9Kkk6vYh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356981; c=relaxed/simple;
-	bh=TGhfK/Yuf5VBRqTPtH4ckQmyZw+vRvADRvDG/zLBITA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeIi1N1KbqD4fftfgCgYBg6S41oqsjRfvwlE7DJA3VgqN4ZDnTXnPcr0BMQ4vJNDhgEMtxfdzFMU5c8GawamivJ87WPWW9l3TiXY7MPp02ElClxNP3Tyh3j9IO921N+j4KRQUHcyT0/CcSqTW3t4ma2xTo5x+6iQ63ed3VpH764=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjrplZC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A765C4CECF;
-	Mon, 11 Nov 2024 20:29:41 +0000 (UTC)
+	s=arc-20240116; t=1731357025; c=relaxed/simple;
+	bh=eFV6Mn9rlXPZKNihJg/acSCpZerYn1vyH7FUQTaubZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=bkwVeRwR+RxAOIL/H48aiTpI9JqAuwxpZwhF1hFN1JFyG4GEwHjoYf+8+NLl8+VvG2jz+UM25VvwRqZzVaq2YfkFlJVIJFZlPY663KOYZkvisrp7ONF0dSawDXA5TPryPq2xX1iyJdMPFCxzYmbMhtgu9s9GgmWsdVCnkPlJgHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gI8/4gq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C84F6C4CECF;
+	Mon, 11 Nov 2024 20:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731356981;
-	bh=TGhfK/Yuf5VBRqTPtH4ckQmyZw+vRvADRvDG/zLBITA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=RjrplZC4qkDm9l5CgivNExKmnfXLB7Sdpe92qq0UPDZZ125isrYuzAqdn0spRVaP6
-	 FzgfCrljMNcQkaXGGqGeNUHgQ41gqElh1eCz8ZtVIgK/0LNAEP/Lqbz0iHQPCtsfu5
-	 qp1tG1uCwnhbLBSYMgqQIE2yk2vff1aDqrBeXxT+W19+3Ec4PsAxObvbIEKlDmgGYJ
-	 Ez0BKs6B39JDlMbz6R+X82C/1Ok37c2TLaov9OV15UDeRKODQ+GpVGcvdsCRR2gT/x
-	 c7QiDyf/NSXXw7oHyaSnVB9ze8kYEw5ZrEtxNWYJFrN9V8v8XfBGhF/YgEJi0bNF1i
-	 FDC0sZ5nNsyxw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 03FD0CE0BA3; Mon, 11 Nov 2024 12:29:41 -0800 (PST)
-Date: Mon, 11 Nov 2024 12:29:41 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+	s=k20201202; t=1731357025;
+	bh=eFV6Mn9rlXPZKNihJg/acSCpZerYn1vyH7FUQTaubZ0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gI8/4gq6Yr6ar+OCNS6VAjGcLnm81nZyKzFPy6mZJ3dUSsi0ZKKaf+3ZDY1W+AQjf
+	 hbmpDvXRA0qa+AjNngfU01CZsUXiiS8blrpbqOW7Hksjgp1BQpdiP/EYkvT1TEQTcD
+	 RLWPjpVMt5mlyBpxrg/r2Ii+vdPgkIrURTp0LasCIUteCWvEpHhn2zEzH1wIOzF5Wu
+	 FW8TrRMeXVFPC/wPCMweLozeYcBbNhzV/2gr8viGSpFhuegah57nYZo1QJNpcDPp5D
+	 wc7OM+pI2/hgbCZW7R+h4P+V3G/xGC+oCHMPcxB1dZrrG7h9O97SQm+0N0EmCh4Vkt
+	 gzLxBTZt4F5QA==
+Date: Mon, 11 Nov 2024 14:30:23 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v9 3/9] PCI: Store all PCIe Supported Link Speeds
+Message-ID: <20241111203023.GA1816689@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,135 +69,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+In-Reply-To: <ZzIFV8UNYSvgZtQM@wunner.de>
 
-On Mon, Nov 11, 2024 at 08:56:34PM +0100, Szőke Benjamin wrote:
-> 2024. 11. 11. 20:22 keltezéssel, Paul E. McKenney írta:
-> > On Mon, Nov 11, 2024 at 07:52:50PM +0100, Szőke Benjamin wrote:
-> > > 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
-> > > > On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
-> > > > > From: Benjamin Szőke <egyszeregy@freemail.hu>
-> > > > > 
-> > > > > The goal is to fix Linux repository for case-insensitive filesystem,
-> > > > > to able to clone it and editable on any operating systems.
-> > > > > 
-> > > > > Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
-> > > > > "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
-> > > > > 
-> > > > > Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
-> > > > 
-> > > > Ummm...  Really?
-> > > > 
-> > > > Just out of curiosity, which operating-system/filesystem combination are
-> > > > you working with?  And why not instead fix that combination to handle
-> > > > mixed case?
-> > > > 
-> > > > 							Thanx, Paul
-> > > 
-> > > Windows and also MacOS is not case sensitive by default. My goal is to
-> > > improve Linux kernel source-tree, to able to develop it in any operating
-> > > systems for example via Visual Studio Code extensions/IntelliSense feature
-> > > or any similar IDE which is usable in any OS.
-> > 
-> > Why not simply enable case sensitivity on the file tree in which you
-> > are processing Linux-kernel source code?
-> > 
-> > For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
-> > For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
-> > 
-> > In some cases it might work better to simply run a Linux VM on top of
-> > Windows or MacOS.
-> > 
-> > They tell me that webservers already do this, so why not also for
-> > Linux-kernel source code?
+On Mon, Nov 11, 2024 at 02:23:35PM +0100, Lukas Wunner wrote:
+> On Fri, Oct 18, 2024 at 05:47:49PM +0300, Ilpo Järvinen wrote:
+> > diff --git a/include/linux/pci.h b/include/linux/pci.h
+> > index be5ed534c39c..a02b77fe7865 100644
+> > --- a/include/linux/pci.h
+> > +++ b/include/linux/pci.h
+> > @@ -303,6 +303,7 @@ enum pci_bus_speed {
+> >  	PCI_SPEED_UNKNOWN		= 0xff,
+> >  };
+> >  
+> > +u8 pcie_get_supported_speeds(struct pci_dev *dev);
+> >  enum pci_bus_speed pcie_get_speed_cap(struct pci_dev *dev);
+> >  enum pcie_link_width pcie_get_width_cap(struct pci_dev *dev);
 > 
-> Why we not solve it as simple as it can in the source code of the Linux
-> kernel with renaming? It would be more robust and more durable to fix this
-> issue/inconviniant in the source as an overal complete solution. Nobody like
-> to figth with configuraition hell of Windows and MacOS, or build up a
-> diskspace consumer Virtual Linux with crappy GUI capapilities for coding big
-> things.
+> I realize this is now already queued as commit 73ee11953294 on pci/bwctrl,
+> nevertheless one belated comment:
 > 
-> Young developers will never be willing to join and contributing in Linux
-> kernel in the future if Linux kernel code is not editable in a high-quality,
-> easy-to-use IDE for, which is usable in any OS.
+> Since there are no callers of pcie_get_supported_speeds() outside the
+> PCI core, the above declaration should probably rather live in
+> drivers/pci/pci.h.
 
-There are a great number of software projects out there that use mixed
-case.  Therefore, can an IDE that does not gracefully handle mixed case
-really be said to be either high quality or easy to use?
+I moved them, thanks!
 
-In other words, you have the option of making the IDE handle this.
+I noticed duplicate declarations for pcie_get_speed_cap() and
+pcie_get_width_cap(), so I'll add a patch to drop them from
+drivers/pci/pci.h.
 
-> Need to improve this kind of things and simplify/modernize developing or
-> never will be solved the following issues:
-> https://www.youtube.com/watch?v=lJLw94pAcBY
-
-Sorry, but that video does not support your point.  In fact, the presenter
-clearly states that this sort of tooling issue is not a real problem
-for the Linux kernel near the middle of that video.
-
-							Thanx, Paul
-
-> > > There were some accepted patches which aim this same goal.
-> > > https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
-> > 
-> > Fair enough, as it is the maintainer's choice.  Which means that
-> > their accepting these case-sensitivity changes does not require other
-> > maintainers to do so.
-> > 
-> > 							Thanx, Paul
-> > 
-> > > > > ---
-> > > > >    tools/memory-model/Documentation/locking.txt                    | 2 +-
-> > > > >    tools/memory-model/Documentation/recipes.txt                    | 2 +-
-> > > > >    tools/memory-model/litmus-tests/README                          | 2 +-
-> > > > >    ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
-> > > > >    4 files changed, 3 insertions(+), 3 deletions(-)
-> > > > >    rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
-> > > > > 
-> > > > > diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
-> > > > > index 65c898c64a93..42bc3efe2015 100644
-> > > > > --- a/tools/memory-model/Documentation/locking.txt
-> > > > > +++ b/tools/memory-model/Documentation/locking.txt
-> > > > > @@ -184,7 +184,7 @@ ordering properties.
-> > > > >    Ordering can be extended to CPUs not holding the lock by careful use
-> > > > >    of smp_mb__after_spinlock():
-> > > > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > > > >    	void CPU0(void)
-> > > > >    	{
-> > > > >    		spin_lock(&mylock);
-> > > > > diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-> > > > > index 03f58b11c252..35996eb1b690 100644
-> > > > > --- a/tools/memory-model/Documentation/recipes.txt
-> > > > > +++ b/tools/memory-model/Documentation/recipes.txt
-> > > > > @@ -159,7 +159,7 @@ lock's ordering properties.
-> > > > >    Ordering can be extended to CPUs not holding the lock by careful use
-> > > > >    of smp_mb__after_spinlock():
-> > > > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > > > >    	void CPU0(void)
-> > > > >    	{
-> > > > >    		spin_lock(&mylock);
-> > > > > diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-> > > > > index d311a0ff1ae6..e3d451346400 100644
-> > > > > --- a/tools/memory-model/litmus-tests/README
-> > > > > +++ b/tools/memory-model/litmus-tests/README
-> > > > > @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
-> > > > >    	spin_lock() sufficient to make ordering apparent to accesses
-> > > > >    	by a process not holding the lock?
-> > > > > -Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > > > +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > >    	As above, but with smp_mb__after_spinlock() immediately
-> > > > >    	following the spin_lock().
-> > > > > diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > > similarity index 100%
-> > > > > rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > > > rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > > -- 
-> > > > > 2.47.0.windows.2
-> > > > > 
-> > > 
-> 
+Bjorn
 
