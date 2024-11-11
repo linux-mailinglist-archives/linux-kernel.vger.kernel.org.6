@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-404666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7F3F9C4663
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:09:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4739C4664
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC4E284A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDEC280DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683C01AD5DE;
-	Mon, 11 Nov 2024 20:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A021ACDE3;
+	Mon, 11 Nov 2024 20:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHz/9ehY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eKMLKTsB"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC23F1EB36;
-	Mon, 11 Nov 2024 20:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744CD1EB36
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731355733; cv=none; b=Q9H/u2336yyieIXCvKAYddEqfSAyudynreYa0O3XqkWAWyzS/i+gLQhnbKyIOykdMjw0Z7mGsD5lTYS610fr9q5Dzc8Elkz7mggqz+387ZaS95U8w34c/h1yumC+AvQy6uvNZUUX5WMJOo6jAb71NX7BrrY8Ns6Ntp2YNr9kUac=
+	t=1731355808; cv=none; b=GSn5BK2YL7CVL+zsJvR40h0UwJ99xVFFgQZv4N5hnUqqsIrWcEfWS94jEf9Gj2v4sInP8/droIF8ZtZDOui/XeH/NvFiiBTnaW5uCiKgPefA6ebC7RPdmWJLcvNFdDsTOMrN1HbRirn5xXTWlizFg3lZ5L0iWvUnoXJRERm1nTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731355733; c=relaxed/simple;
-	bh=yvcGZ7wvpSriLuQnGAH2LPV+5WMP19XcyE6Jnj9x2e8=;
+	s=arc-20240116; t=1731355808; c=relaxed/simple;
+	bh=lq7p7ypp4TN3d83VFQ8h2R1FXXi61Q7cmbLpx8zTkG8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s2chLMGpxSmzkTYWjt5MVkQKFYNmDwnFzMuQlM0LQhnGc0MbYiIwOsBIc40EAVQFN2w4CAYj/AgePFybe8vFDtSGW5+u3nIdh3sAh1dybHb21ccIVkbmBWQ1AOF+zaQTWPaKL4kYoUCyQpnaLdeDQsqfOmxAONQcOHXOeQvdjZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHz/9ehY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3046CC4CECF;
-	Mon, 11 Nov 2024 20:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731355733;
-	bh=yvcGZ7wvpSriLuQnGAH2LPV+5WMP19XcyE6Jnj9x2e8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qHz/9ehYaII/R/J6Z5dOLSi7Mqks01kmg6y8kKQEf+3uPJ8G/O0BsB0OePh37Q7aG
-	 Z2NteCTb4dSh1UJRkYtcxEuySL1etRwqhxGWuSOkhlF+HSukymwaerPF/+6xC1gEW/
-	 J+QsI7R20t/E5Sbk/Q+C0OkXGbtLr2d/+cgBY/k8XH+skU7doKrKHN38eAvn9F6e1n
-	 2E1jcJhrUKG7182Ezz22slS59BUrPUAomTCzQX9hA71b40IoRcHdbZzc2fWpzFKtmJ
-	 qzTG790g7VQd57xmxO8vcYc9owwbaE9fpJJYb5ODcMJxnB9hnA3QNuHxPd11RpN6D/
-	 /C4ufbMvaYnLA==
-Date: Mon, 11 Nov 2024 20:08:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Sung-Chi <lschyi@chromium.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@weissschuh.net>,
-	Jean Delvare <jdelvare@suse.com>, devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: mfd: Add properties for thermal
- sensor cells
-Message-ID: <20241111-scorecard-poster-006eadc757d2@spud>
-References: <20241111074904.1059268-1-lschyi@chromium.org>
- <20241111095045.1218986-1-lschyi@chromium.org>
- <20241111095045.1218986-2-lschyi@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZrutELrBAhmkFqNXEwjk9UbO94bp2D2npxuPnnX8wnQaMcoZ5himKUqU/78vKVUqOIEQyPTSpXvKeg+W/8hJr9xr/O96qpUV3ETC7iAxERKYuZKsoeZz+2tOX8Y4LwPiIsAS7l+jhpPjKaiN4LklJRhUsVIO8ll9rtHDByPEoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eKMLKTsB; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 11 Nov 2024 15:09:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731355804;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dsNlIubHNBjceBMTLdroRRy7Slq6tAzbxUUj5TPWCd4=;
+	b=eKMLKTsB14gvDHJyMe9L+c4WaDWKaek8nl8GTYhAhKyShjB2NU6nA9Q/W28PNH1oAutKx/
+	jGIWckcDmZTgVgHuYeEAU4rb3BFjqUhu2wE4XIiDEUkmSDzT9W45bv3xSauvm19u/OYrcd
+	q2hHByO7jOZPhIsCKKL51i9qX5D7ly8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Gianfranco Trad <gianf.trad@gmail.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: zero-init move_bucket struct in
+ bch2_copygc_get_buckets()
+Message-ID: <vtm2n2sjx4kpkx4slzpve6pv4lxhmotnvrhtqp2qobrmubvz35@s33ak2pst3h2>
+References: <20241111144242.757798-3-gianf.trad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ksCYOGiCtSKkK1An"
-Content-Disposition: inline
-In-Reply-To: <20241111095045.1218986-2-lschyi@chromium.org>
-
-
---ksCYOGiCtSKkK1An
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241111144242.757798-3-gianf.trad@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 11, 2024 at 05:50:31PM +0800, Sung-Chi wrote:
-> The cros_ec supports reading thermal values from thermal sensors
-> connect to it. Add the property '#thermal-sensor-cells' bindings, such
-> that thermal framework can recognize cros_ec as a valid thermal device.
->=20
-> Change-Id: I95a22c0f1a69de547fede5f0f9c43cbd60820789
-  ^^^^^^^^^
-With this removed,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+On Mon, Nov 11, 2024 at 03:42:44PM +0100, Gianfranco Trad wrote:
+> zero-init move_bucket struct b fields in bch2_copygc_get_buckets() 
+> to mitigate later uninit-value-use KMSAN reported bug.
+> 
+> Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
+> Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+> ---
+>  fs/bcachefs/movinggc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/bcachefs/movinggc.c b/fs/bcachefs/movinggc.c
+> index d658be90f737..cdc456b03bec 100644
+> --- a/fs/bcachefs/movinggc.c
+> +++ b/fs/bcachefs/movinggc.c
+> @@ -171,7 +171,8 @@ static int bch2_copygc_get_buckets(struct moving_context *ctxt,
+>  				  lru_pos(BCH_LRU_FRAGMENTATION_START, 0, 0),
+>  				  lru_pos(BCH_LRU_FRAGMENTATION_START, U64_MAX, LRU_TIME_MAX),
+>  				  0, k, ({
+> -		struct move_bucket b = { .k.bucket = u64_to_bucket(k.k->p.offset) };
+> +		struct move_bucket b = { 0 };
+> +		b.k.bucket = u64_to_bucket(k.k->p.offset);
+>  		int ret2 = 0;
 
-Cheers,
-Conor.
-
---ksCYOGiCtSKkK1An
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJkUQAKCRB4tDGHoIJi
-0l7LAQDf5vC4rmjOVHJdnl1yRGQfIecXi0NHoVDdBdBlXIkBbAD/cYiFRUPm6skp
-Me3zWO/oSTkJfYZs1uWQpoZPfNuOcw8=
-=ocft
------END PGP SIGNATURE-----
-
---ksCYOGiCtSKkK1An--
+Providing any sort of initializer should cause the whole struct to be
+initialized, are you and syzbot sure this is the right fix?
 
