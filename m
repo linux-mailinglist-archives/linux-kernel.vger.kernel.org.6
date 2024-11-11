@@ -1,256 +1,152 @@
-Return-Path: <linux-kernel+bounces-404842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D512F9C4930
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:40:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9909C4934
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65554B25128
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:18:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62ED9B266CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D88156C6F;
-	Mon, 11 Nov 2024 22:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C70B1BC08B;
+	Mon, 11 Nov 2024 22:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHMDFY6m"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="grDLkr9L"
+Received: from bumble.maple.relay.mailchannels.net (bumble.maple.relay.mailchannels.net [23.83.214.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B9838F83;
-	Mon, 11 Nov 2024 22:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731363494; cv=none; b=lzurSrxXAfexot7tAvRL2uwvsyIVdXzugef8Dgc498Ip2p8A+61UtfRKH6lWS5EM+q5HwWk1qgJPfqrLnFVxzrVkc1tQGOw9pTGgPhYTtrgd0Zzh/nU0x5dTAS0yePfmbbt6kvzMTJoYyzjG+xqbpQXovTsymGaar6tbLHCBh5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731363494; c=relaxed/simple;
-	bh=LeGtUiwPp7dUSHOMlblfulJI3szSmMXkY1FNvRIxCQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WYnyaCzCpjLckEOfsrjWSOzZmAnW/PMEoNnXw/GVDw6t48th9OG5TjRZjnPyL1+voLLANKTuhATjXI6k6oTqpJ7NGxekI324zS+THhmOzmCzXa7iTqY4LIbQ2M/KlLMijwZn294eL/biV9O/bYEYGoXvigo76Wc37Y1J5+vophE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHMDFY6m; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4609c9b39d0so34010661cf.1;
-        Mon, 11 Nov 2024 14:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731363491; x=1731968291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4gUTNs8Dh8KbUYmm7/7ZTpr23lbHf0Ptz/iifQK4G1M=;
-        b=MHMDFY6m7G6vtIzw2udhQ8L6GP2g6AAO0oqDFloySKaA75i9bAbceKb2KhrPVBWRfs
-         7i/gtC72AqDD7dyoAfdU8OzzwiRcpe4ION5HMY9C7SGUx0UsvAx2KUd81v0BMndJTx/7
-         7fh26Rf6+xjQrGk0NEQ12cBcEXPSvOP9I5yYMnTV9UQFDRGjcDHG6joickgtOs67OnMJ
-         l1AGLZHaZI80OLScfZtNrKJWKo0z2ygrqPmfWudENKAjFxCO9fwIEuwV1yDn3G840MeD
-         ZRy8YkGvHCqQ5kT76d91Nx9AvoKtg5/kLaGB5PA2eJ1dr7gxCAd65MQnkA7fyP7Szstv
-         az0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731363491; x=1731968291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4gUTNs8Dh8KbUYmm7/7ZTpr23lbHf0Ptz/iifQK4G1M=;
-        b=k5Sggl2jRNgIzgyJzan3FLC8gWP5bgvOxYLqEwZ4yGzm4K0OFs2eJZh7uqu7pKHCce
-         gh/eBrkkhuw3qcAWkP4/mLxqrxwujz+5vYLiJGT8yyythqkAMmPlpmxlPQIy5yOQwCiF
-         Hep05KMKk0hM/9XWtHfvwjj5eJ+ruqiXcjcxUcOsuwYjQkgpJgc1M8xl8maIygH8qiYd
-         5qr/KnXH93B4kd+JZN6ppEz4m7x1wWpyPBUtt7/m4PchflrzcaC2+n4hcwAIr54ksOs2
-         0llZmDrYfddVKeGfMr3TVVAUWAvLpkzRf4+34b1kBCOTDZZ9xc3PC5zCfNzbNGp+iwLv
-         ViRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWppHIV1dhjhUhp3TWIwv7NhylmPBjsLBlv/msd4E67V36LHk5SuiB89zpaNqekiA4vVNIghIcWxQHaww94@vger.kernel.org, AJvYcCXbCQyMUKerRaoeXZJvnES6z4a3wKmCKTxFgvxdM89CQhiVXHa8XmFP+9lFk96BGQMQ/Fe/mcXsqqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIbqcnr6QRZFmUpt9+ETlNdCOKDKe0BflhAjHPDj8gVX/fJ4hU
-	WseNVnCh6tww9njZLGL6dFv46dALjYjV928gi00dNS/hoBLZEqZOOREzsoJg7afh/mAAIPrgcKo
-	OAEnbvTqU2jB98pWUlcOjfiq9/mo=
-X-Google-Smtp-Source: AGHT+IFBSFXwho3XyINI2DcEU/Xepv/720ecvGA0qvDaPusA/yXsvod0iClvHMK0JEz9Jm2Fdz03yfn9c4Ds8BzAZio=
-X-Received: by 2002:a05:622a:1b1e:b0:461:1475:6135 with SMTP id
- d75a77b69052e-463093003c5mr217546251cf.1.1731363491551; Mon, 11 Nov 2024
- 14:18:11 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA06C16A397
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=23.83.214.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731364658; cv=fail; b=dinNOGErE4L71ES4+cr33rtrTw5RqeeqXzHgo6C9SpNyddWKhAVDo1epmbaOLO7MFNUSWrmLIE9PXEhhbN6b88MfzGf9yo5RsYfw5pp9ZdpqMX28vaHvd7d7EFrPIvbnAZ/cV/tjECW+q+JIj+VRvwq28+VsXtuIqPKzGee7je4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731364658; c=relaxed/simple;
+	bh=rVXQpgZFFCB0B7kPGYqOLEcaXAM10/xQ6g5TjF+6I8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8xEMySVxNDye6+sPIcPZqnw8Cwpc99iCpt8cu7KHuHwIVCqf5I4DBetFsgHhXyOEEf2RTvMGkzmNyUxWmAf1TkvUvgv5Qk9abVLakivN7b736yGlRxQ0lG0toMgH5K8uVpxFa5Vgcfat5BFaMYGz0UNi+jx7oJ4LX1+dPhj7jk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=grDLkr9L; arc=fail smtp.client-ip=23.83.214.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id EFC65322BF8;
+	Mon, 11 Nov 2024 22:18:44 +0000 (UTC)
+Received: from pdx1-sub0-mail-a311.dreamhost.com (trex-2.trex.outbound.svc.cluster.local [100.112.137.74])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 692AD322B3C;
+	Mon, 11 Nov 2024 22:18:44 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1731363524; a=rsa-sha256;
+	cv=none;
+	b=36cBZsi5eesov9QfMZjnzrg/LcWQgKY5kf1wZaws7g+aC2vjMg/avJLja6X84O/OxKsueU
+	blITRT7jjLmQxipQiognLZB5KKsDTS/CpQ1lo4PHkGd/FAZMOA2im6NBfAv4k6tOATrSPi
+	wFsgVn0WLUBphaeasDHsEgjn3iTyqye32JvHIdOzZr1x+KbtfFU837n9F9j3oC3yGc5tNL
+	MqQ87qqrdMRg4mmCtKuaA3ByPHVEd8N3sjpgSk3MzfuusmLAkrqQ/Cv2q9VbvBI2JgDPbv
+	5t6bpsCOHeOIcv46GyWRzK02dUuuVfn/W5oB2bZkRyco6mVC8SN97zjxK7A6Tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1731363524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=VICFEgoqAp63otwKjTCMukTH3bpEX8BxDVIH/F7xgnU=;
+	b=hI7HsBM8o+l4O6yOEDXR7r/UH4axgB/lmiEVtYGz82DwJ9qUss2CL+t9fpMkOBuwe+fz6b
+	v4MrPltBaj3LxtbObnFcQA8pscgFzOc2P8Jmvw0SolyuxTvVo0miHmWAxvU6JMnw4IjLhN
+	BYq2+jhOZFH5nUtWm7SgRllI6Hpe289U0ZLgVirfSNpZNo9Tnsya89SXkVXyH6KbCg7D43
+	IAvwU6ebyqr0AssK8F+N66NtYWFyShHUGKjws3a8hr8zPWXp0xRpQAWaJXWNblzb47YbPT
+	jRrAZVO+JPHQNZpsJlbiywuU/HrMZn8zDq9tRofRevIxpDSNJPUQII3q+ofGEg==
+ARC-Authentication-Results: i=1;
+	rspamd-56654dd69b-grk87;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Cold-Attack: 7b7202b34599eb7a_1731363524840_2325387013
+X-MC-Loop-Signature: 1731363524840:2052108465
+X-MC-Ingress-Time: 1731363524840
+Received: from pdx1-sub0-mail-a311.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.112.137.74 (trex/7.0.2);
+	Mon, 11 Nov 2024 22:18:44 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a311.dreamhost.com (Postfix) with ESMTPSA id 4XnP8L3wwQz3N;
+	Mon, 11 Nov 2024 14:18:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1731363524;
+	bh=rVXQpgZFFCB0B7kPGYqOLEcaXAM10/xQ6g5TjF+6I8U=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=grDLkr9LQDkA+yPuDhKrvqAFjSkSoQbemh7TU9yAzsCEbt/HavjkCCqOSu+/SGsF1
+	 c6F3iBXU/wemE3/v5CADdb0D2BPELH5Ml3lBnAknCKIehRIw/+PHqyfz4mi52I2RKx
+	 bPXJNzIIig2tLo32ZhCDxlTc4Phss0WB/Y2iETBOy0An/HOJceGHNt9mwcGbbKpHUF
+	 cCrHOBfwkid7z0VNzWxahmVh2SmGY0yiEr0EqIQAVaJj4ppPVziGHgpgThkNa/8OcF
+	 PotTC2UEeyPflRyFcXg+k/jQhs3dPczUw918xn+eMN/KJQhfknwgz5hdkkuJrCGWMr
+	 HVvG+MNz3jwnQ==
+Date: Mon, 11 Nov 2024 14:18:39 -0800
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+	souravpanda@google.com, pasha.tatashin@soleen.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
+Message-ID: <20241111221839.w4rqqlvvkm42jdgm@offworld>
+Mail-Followup-To: Suren Baghdasaryan <surenb@google.com>,
+	akpm@linux-foundation.org, willy@infradead.org,
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+	souravpanda@google.com, pasha.tatashin@soleen.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+References: <20241111205506.3404479-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111191934.17231-1-jiashengjiangcool@gmail.com>
- <8505aa28-5f88-4fcd-b3bc-cb5db89d2a08@baylibre.com> <CANeGvZVE6fX5hV-p1xXsGR=Z=pABzDtvV9wY_XBbLwJUWNVtyQ@mail.gmail.com>
- <b2f6db15-51a8-498d-ab5b-52f0f6a2e098@baylibre.com>
-In-Reply-To: <b2f6db15-51a8-498d-ab5b-52f0f6a2e098@baylibre.com>
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Mon, 11 Nov 2024 17:18:00 -0500
-Message-ID: <CANeGvZW0Ja=pwLuYqZh1KWn3Y7Oany4JvALHWcHoM-jALedSbw@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
-To: David Lechner <dlechner@baylibre.com>
-Cc: jic23@kernel.org, lars@metafoo.de, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com, 
-	tgamblin@baylibre.com, fabrice.gasnier@st.com, benjamin.gaignard@linaro.org, 
-	lee@kernel.org, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241111205506.3404479-1-surenb@google.com>
+User-Agent: NeoMutt/20220429
 
-On Mon, Nov 11, 2024 at 4:15=E2=80=AFPM David Lechner <dlechner@baylibre.co=
-m> wrote:
->
-> On 11/11/24 2:36 PM, Jiasheng Jiang wrote:
-> > On Mon, Nov 11, 2024 at 2:45=E2=80=AFPM David Lechner <dlechner@baylibr=
-e.com> wrote:
-> >>
-> >> On 11/11/24 1:19 PM, Jiasheng Jiang wrote:
-> >>> Add check for the return value of clk_enable() in order to catch the
-> >>> potential exception.
-> >>>
-> >>> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> >>> ---
-> >>> Changelog:
-> >>>
-> >>> v2 -> v3:
-> >>>
-> >>> 1. Simplify code with cleanup helpers.
-> >>>
-> >>> v1 -> v2:
-> >>>
-> >>> 1. Remove unsuitable dev_err_probe().
-> >>> ---
-> >>
-> >> ...
-> >>
-> >>> @@ -492,21 +495,25 @@ static int stm32_counter_write_raw(struct iio_d=
-ev *indio_dev,
-> >>>               return -EINVAL;
-> >>>
-> >>>       case IIO_CHAN_INFO_ENABLE:
-> >>> -             mutex_lock(&priv->lock);
-> >>> -             if (val) {
-> >>> -                     if (!priv->enabled) {
-> >>> -                             priv->enabled =3D true;
-> >>> -                             clk_enable(priv->clk);
-> >>> -                     }
-> >>> -                     regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_=
-CEN);
-> >>> -             } else {
-> >>> -                     regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR=
-1_CEN);
-> >>> -                     if (priv->enabled) {
-> >>> -                             priv->enabled =3D false;
-> >>> -                             clk_disable(priv->clk);
-> >>> +
-> >>> +             scoped_guard(mutex, &priv->lock) {
-> >>> +                     if (val) {
-> >>> +                             if (!priv->enabled) {
-> >>> +                                     priv->enabled =3D true;
-> >>> +                                     ret =3D clk_enable(priv->clk);
-> >>> +                                     if (ret)
-> >>> +                                             return ret;
-> >>> +                             }
-> >>> +                             regmap_set_bits(priv->regmap, TIM_CR1, =
-TIM_CR1_CEN);
-> >>> +                     } else {
-> >>> +                             regmap_clear_bits(priv->regmap, TIM_CR1=
-, TIM_CR1_CEN);
-> >>> +                             if (priv->enabled) {
-> >>> +                                     priv->enabled =3D false;
-> >>> +                                     clk_disable(priv->clk);
-> >>> +                             }
-> >>>                       }
-> >>>               }
-> >>> -             mutex_unlock(&priv->lock);
-> >>> +
-> >>>               return 0;
-> >>>       }
-> >>
-> >>
-> >> Another way to do this that avoids changing the indent
-> >> so much is placing braces around the case body like this.
-> >> This also avoids the compile error from using guard after
-> >> case directly.
-> >>
-> >>
-> >>         case IIO_CHAN_INFO_ENABLE: {
-> >>                 guard(mutex)(&priv->lock);
-> >>
-> >>                 if (val) {
-> >>                         if (!priv->enabled) {
-> >>                                 priv->enabled =3D true;
-> >>                                 ret =3D clk_enable(priv->clk);
-> >>                                 if (ret)
-> >>                                         return ret;
-> >>                         }
-> >>                         regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1=
-_CEN);
-> >>                 } else {
-> >>                         regmap_clear_bits(priv->regmap, TIM_CR1, TIM_C=
-R1_CEN);
-> >>                         if (priv->enabled) {
-> >>                                 priv->enabled =3D false;
-> >>                                 clk_disable(priv->clk);
-> >>                         }
-> >>                 }
-> >>
-> >>                 return 0;
-> >>         }
-> >>
-> >
-> > Looks great.
-> > But there is no indentation between "switch" and "case".
-> > As a result, the closing braces of "switch" and "case" will
-> > be placed in the same column.
-> >
-> > Like this:
-> >
-> > switch(mask) {
-> > case IIO_CHAN_INFO_ENABLE: {
-> >
-> > }
-> > }
-> >
-> > -Jiasheng
->
->
-> Usually, there is a default: case as well, so we could move the
-> final return and make it look like this:
->
->         switch (mask) {
->         case IIO_CHAN_INFO_RAW:
->                 return regmap_write(priv->regmap, TIM_CNT, val);
->
->         case IIO_CHAN_INFO_SCALE:
->                 /* fixed scale */
->                 return -EINVAL;
->
->         case IIO_CHAN_INFO_ENABLE: {
->                 guard(mutex)(&priv->lock);
->                 if (val) {
->                         if (!priv->enabled) {
->                                 priv->enabled =3D true;
->                                 clk_enable(priv->clk);
->                         }
->                         regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CE=
-N);
->                 } else {
->                         regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_=
-CEN);
->                         if (priv->enabled) {
->                                 priv->enabled =3D false;
->                                 clk_disable(priv->clk);
->                         }
->                 }
->                 return 0;
->         }
->                 default:
->                         return -EINVAL;
->         }
->
->
-> And it is unusual, but I found kvm_arm_pmu_v3_get_attr() that
-> also has this double inline brace at the end of a switch statement.
->
->         }
->         }
->
-> So even if it doesn't look so nice, it does seem to be the
-> "correct" style.
+On Mon, 11 Nov 2024, Suren Baghdasaryan wrote:
 
-Thanks, I will submit a v4 patch.
+>To minimize memory overhead, vm_lock implementation is changed from
+>using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+>vm_area_struct members are moved into the last cacheline, resulting
+>in a less fragmented structure:
 
--Jiasheng
+I am not a fan of building a custom lock, replacing a standard one.
+How much do we really care about this? rwsems are quite optimized
+and are known to heavily affect mm performance altogether.
+
+...
+
+>Performance measurements using pft test on x86 do not show considerable
+>difference, on Pixel 6 running Android it results in 3-5% improvement in
+>faults per second.
+
+pft is a very micro benchmark, these results do not justify this change, imo.
+
+Thanks,
+Davidlohr
 
