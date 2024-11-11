@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-404617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B229C45BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DC8B9C45BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3A22283A0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:21:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4FF82839F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B052B1AB515;
-	Mon, 11 Nov 2024 19:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61951AB6C0;
+	Mon, 11 Nov 2024 19:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ml4HaV+x"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6lI8h5u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1426B1A707D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E644A1AA7BA;
+	Mon, 11 Nov 2024 19:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731352904; cv=none; b=QNQ3dzKGLb223Y4DaGLk3GA3CT5XrzZJXB4zFuxMBJdEYw+JYdQ3A6NpD80G5DwJ6C2sG3mhrbhSS3CXFs3kZK6YLR3ysiSWUJB1aLRpqByhTqEAOE0OhNbIPHLrLSOcdAT2eDx/ADNFPrwQxLAUwlam9xdctvSxZaKqgvy3m5c=
+	t=1731352929; cv=none; b=TXsruPx/9/tKJoAgtUZUFw21CO3LzHepuYVoIslDFO97uLrEQuVI4N7mX4dXX8w9R1AN9h9w1CcY+e9xYkhMO+Zbd4ASWTVZ5bnQ9QTp2KivFpXqYhXMnEzFWXQciN69Chd8PGEYRTrLxZnpcAeoObLJeqCJaqmdSykEzps562I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731352904; c=relaxed/simple;
-	bh=yshEmQNfo7lf99gQWxM7QIkdoQdSMmzP8GeA7i6xr74=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BzwUy1fPyzQpCYfj1cFthpHhPYvsDZ7wHDm6TVHJJGZ8w3oRHmMYq7evfqKdlA5DVkme9Xtnq556GlNUuk9YZF6ebS+BSL8MNK1uSlDQfylf63ZAix1kJ8/RlkPHE4D5ob+XnLBd5Osg6LCVgLDb7ioMXUlROi7KT1W8OrqC56s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ml4HaV+x; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id F2F7DE0002;
-	Mon, 11 Nov 2024 19:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731352899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yshEmQNfo7lf99gQWxM7QIkdoQdSMmzP8GeA7i6xr74=;
-	b=Ml4HaV+xJg4aI9v++lFwK6yWYiRMfqAYfZFaigv/ioq+3gIgZrBBR0vcuufs4C2XjnilXi
-	KaWJPkAENm2xUD/pyh3Q0q0O5s6V9RJtncgr9QAfV1Tawkf365GjStMvobKxFb8Jdi2sac
-	mF5tsODuWCBlQvSUEx1JrQYFADDIciByva2Pi3fNR/j6wdKa5XewG89EDUIjqlD0zkQhyG
-	Erf+P8n6qtlqc8JtVSV/5QtwcYOGkEO0jNpw/jNOeP9sve1G1KT62dY+NdZlX4kmIIant5
-	bknC2Osy1PwmHbnDAToBF3PDEHshWPdVy/j8I6qY5dnF0ZDfvs8QmIemGOIRiw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,  Krzysztof Kozlowski
- <krzk@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
- Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
-  Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v2 2/6] memory: ti-aemif: Export aemif_set_cs_timings()
-In-Reply-To: <20241106085507.76425-3-bastien.curutchet@bootlin.com> (Bastien
-	Curutchet's message of "Wed, 6 Nov 2024 09:55:03 +0100")
-References: <20241106085507.76425-1-bastien.curutchet@bootlin.com>
-	<20241106085507.76425-3-bastien.curutchet@bootlin.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Mon, 11 Nov 2024 20:21:37 +0100
-Message-ID: <87ttcdr2ym.fsf@bootlin.com>
+	s=arc-20240116; t=1731352929; c=relaxed/simple;
+	bh=c02hTB78MoPcZ0Dt5j9XxHug0jIQ86D9X3K/ewWt1u8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qGqvSgnDwAJG9KYpn7MhDjkCIwqWt14Ulaiw7imOT9D0YXkguW/KWKePZhJdXhYwzd6wnusYRWK/K3fjaC+8C5iYFz1yuWfbLIosxFaOyXP2oYpYfiz87AW8K3efkOgr0bhU2ShXNawjrnW3uS/xOM+oVNHcq3DxYPvRsdaV/3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6lI8h5u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69464C4CECF;
+	Mon, 11 Nov 2024 19:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731352928;
+	bh=c02hTB78MoPcZ0Dt5j9XxHug0jIQ86D9X3K/ewWt1u8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=S6lI8h5ukNNudMSoQPI8TQUJ1r0QO6459lwmnJHoFzf3/OtKRhFMkLf+qbPVPqkqr
+	 BcDkV2J5Cprd7Yh2oR0VV1Bc8VoJAb/9RrBPrWEbfb2zIDhD9DY15g0MH4+pU3SaPQ
+	 ibUxidFVQ4T+6/eswo8zuoVEKnyY0rg+ZeF8Wm+NnzQBZIKc/wIdG0z5vj2qzaU/4R
+	 8YV/kgf3984f+lU4JI/1BP6vuyGkd9FouVsmWV8E149XMRwNAzBdAVtFwKdPr0dnca
+	 6hXPNrwl4mhPKMiSt29oITHt+M4lkckRozsm7/r/JBDPYLuw6wqAWWiWO6xSmQT0so
+	 5tKh0GphHlcwg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 08A5DCE0BA3; Mon, 11 Nov 2024 11:22:08 -0800 (PST)
+Date: Mon, 11 Nov 2024 11:22:07 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
+Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	lkmm@lists.linux.dev
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+Message-ID: <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
+ <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,26 +65,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
 
+On Mon, Nov 11, 2024 at 07:52:50PM +0100, Szőke Benjamin wrote:
+> 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
+> > On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
+> > > From: Benjamin Szőke <egyszeregy@freemail.hu>
+> > > 
+> > > The goal is to fix Linux repository for case-insensitive filesystem,
+> > > to able to clone it and editable on any operating systems.
+> > > 
+> > > Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
+> > > "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
+> > > 
+> > > Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
+> > 
+> > Ummm...  Really?
+> > 
+> > Just out of curiosity, which operating-system/filesystem combination are
+> > you working with?  And why not instead fix that combination to handle
+> > mixed case?
+> > 
+> > 							Thanx, Paul
+> 
+> Windows and also MacOS is not case sensitive by default. My goal is to
+> improve Linux kernel source-tree, to able to develop it in any operating
+> systems for example via Visual Studio Code extensions/IntelliSense feature
+> or any similar IDE which is usable in any OS.
 
-Hello Bastien,
+Why not simply enable case sensitivity on the file tree in which you
+are processing Linux-kernel source code?
 
-On 06/11/2024 at 09:55:03 +01, Bastien Curutchet <bastien.curutchet@bootlin=
-.com> wrote:
+For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
+For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
 
-> Export the aemif_set_cs_timing() symbol so it can be used by other
-> drivers
->
-> Add a spinlock to protect the CS configuration register from concurrent
-> accesses.
+In some cases it might work better to simply run a Linux VM on top of
+Windows or MacOS.
 
-What concurrent accesses are you trying to protect yourself against?
-I fail to see the use case, but TBH I haven't tried hard enough maybe.
+They tell me that webservers already do this, so why not also for
+Linux-kernel source code?
 
-Also, what justifies the use of a spin-lock in this case?
+> There were some accepted patches which aim this same goal.
+> https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
+> https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
 
-Thanks,
-Miqu=C3=A8l
+Fair enough, as it is the maintainer's choice.  Which means that
+their accepting these case-sensitivity changes does not require other
+maintainers to do so.
+
+							Thanx, Paul
+
+> > > ---
+> > >   tools/memory-model/Documentation/locking.txt                    | 2 +-
+> > >   tools/memory-model/Documentation/recipes.txt                    | 2 +-
+> > >   tools/memory-model/litmus-tests/README                          | 2 +-
+> > >   ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
+> > >   4 files changed, 3 insertions(+), 3 deletions(-)
+> > >   rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
+> > > 
+> > > diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
+> > > index 65c898c64a93..42bc3efe2015 100644
+> > > --- a/tools/memory-model/Documentation/locking.txt
+> > > +++ b/tools/memory-model/Documentation/locking.txt
+> > > @@ -184,7 +184,7 @@ ordering properties.
+> > >   Ordering can be extended to CPUs not holding the lock by careful use
+> > >   of smp_mb__after_spinlock():
+> > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
+> > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+> > >   	void CPU0(void)
+> > >   	{
+> > >   		spin_lock(&mylock);
+> > > diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+> > > index 03f58b11c252..35996eb1b690 100644
+> > > --- a/tools/memory-model/Documentation/recipes.txt
+> > > +++ b/tools/memory-model/Documentation/recipes.txt
+> > > @@ -159,7 +159,7 @@ lock's ordering properties.
+> > >   Ordering can be extended to CPUs not holding the lock by careful use
+> > >   of smp_mb__after_spinlock():
+> > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
+> > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
+> > >   	void CPU0(void)
+> > >   	{
+> > >   		spin_lock(&mylock);
+> > > diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+> > > index d311a0ff1ae6..e3d451346400 100644
+> > > --- a/tools/memory-model/litmus-tests/README
+> > > +++ b/tools/memory-model/litmus-tests/README
+> > > @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
+> > >   	spin_lock() sufficient to make ordering apparent to accesses
+> > >   	by a process not holding the lock?
+> > > -Z6.0+pooncelock+poonceLock+pombonce.litmus
+> > > +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+> > >   	As above, but with smp_mb__after_spinlock() immediately
+> > >   	following the spin_lock().
+> > > diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+> > > similarity index 100%
+> > > rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
+> > > rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
+> > > -- 
+> > > 2.47.0.windows.2
+> > > 
+> 
 
