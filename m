@@ -1,188 +1,288 @@
-Return-Path: <linux-kernel+bounces-404199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013379C40BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B36D9C40CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AA95B21278
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:21:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FE64B225A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656C819FA9D;
-	Mon, 11 Nov 2024 14:20:55 +0000 (UTC)
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2127.outbound.protection.outlook.com [40.107.222.127])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A607A1A256A;
+	Mon, 11 Nov 2024 14:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hyzcif3q"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A556199939;
-	Mon, 11 Nov 2024 14:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.127
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334854; cv=fail; b=egEkZ/eSWTAotbO4sTT1ZuH8qqkumCVht4I6gTu/pNU4GhZJiRK9H6puIcNS6OuUfsErpJPc1iW7YdonCPaXZ6rfGmXr93f+HcvKnXemiKHUV4RJpe8lxapVHBaAtx5R3u02FkhjUxoGoWTDC+RBqTQfI436iuIm31udUjZuT4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334854; c=relaxed/simple;
-	bh=y5k6KXFdhuR4L8TUnvQxF4VSYiSn3F5tn6p3rIHhcV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MKv/mc08uWg1+c5I3fK1Uo0R3xg4xnJ/c1eAcVXAAEARZq4vv8muHoUXZFUmRI9MxzCauWUJzRu747G288UehCrKJVBTM9dEPffpMgAWdosqKl8I3H+8atvPE4zc6VeorTJNDHAeMsY5rCoM/OYuzUHA2Vw20FM1kLY+lONc3YQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U5A+AltWq5uPrJPizG0BEPb9IFzRkf7irOXs0PdG/aOFz8J3twv3fMm8rFPABHjnJiI4voeEQ86UFnZZd4Rt7TDac5Pq6JG9+KX6y295RsacZNVGUTm4KhkYvvH4t9mTIZMKP5BPzIu/j+480y/6IWaJFFexVqV1oAHdaRS9rCYCl5Cf9R8xeIsCqzMdKLvQbttr/PeshhtpAdftsIbyUPtUVRG0Tt8lpKXyw8UqWkQdzwp4ldK+6db+NDNOg6LdzCmB4YwLrJERjbIkQTdWR6q6idxvl/Qr3++is14TLD6CmutmY5xSxJo68PCJ4Ymqc2F/9zh++/0Jzz/keudyKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WewQNG2B59JN1cPK2SxdXDQhc9FH6uQnau2ayvVhwA8=;
- b=c+JBiOjj2I23/N50HZmIhhdQ8ZWEVpW5hcd6DgwDU7dAMraIK/QHpybRMqkGVgINJhoBb1Z1jZchCaIiiMNPMihuQl48r81MKWtUo11h3uMZdh6sUh4ZDtnLGGsISWhinEsO5Y/pJiURUkKjasyxYo21ffWEdlcCxmjcd/9wULyih8mQOW1oT7vZjfB5MwS1Pld5KxrARXFVR0njCwVwYioMImVS+TySNzywolo/Bd5GfoR0YJ+w0xLz/FeylT50Tlf4KtWkoaTtqj0gaHH7getruZET4cKz9O1rzxsS/G9t8KEkt+Nl2npNo/YkVGV5rKUuWc+9L/gBvMqOyMpq3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
- by PN3P287MB1587.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:19a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.26; Mon, 11 Nov
- 2024 14:20:49 +0000
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
- 14:20:49 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: ast@kernel.org,
-	andrii@kernel.org
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shahab Vahedi <list+bpf@vahedi.org>,
-	Vineet Gupta <vgupta@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ARC: bpf_jit_arcv2: Remove redundant condition check
-Date: Mon, 11 Nov 2024 19:49:47 +0530
-Message-ID: <20241111142028.67708-1-hardevsinh.palaniya@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN2PR01CA0045.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:22::20) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:204::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1261A0BD7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731334903; cv=none; b=skEOiauS8oQdT33yiyjXzM98M6lBA0FNU4zOKaITfkJPuz1h1CfNmwnMbYmR1nVkb+IsU73S/JVYNNZ4Q1BdluFMrucL+o3saYoHtN+pplrBoOi1yLW/QbST3XBKF2Wskbkg5kavk7mB4xHzkCO2+jPHPQnfioghCvTlv4UZVn4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731334903; c=relaxed/simple;
+	bh=Fc5wcY/VuB7wFm97v0b2wS8Xt7up11e+n7HfYlCY+EU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=thWa8GtobixE0+iJQLZVRhBtBP1aAKKHsH+KJFvYgO35FO0HY1NzD6FoZYHzLkVPac/domh0CUORR33bX2eBo2ibCPLVbx6mjjISTOhnJ9vXLAjZRkn45JoiIZIY3sGv3EZuVZQVTMz4v9+OkcYk1DguwO3iY6geJGI6hlWMXLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hyzcif3q; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241111142138epoutp04af0811f1f08b1d8a41f9c12a7a6b8af9~G7_rc04H-2334723347epoutp04Q
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:21:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241111142138epoutp04af0811f1f08b1d8a41f9c12a7a6b8af9~G7_rc04H-2334723347epoutp04Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1731334898;
+	bh=YtMkhK1mMby1HD4D2098ozt1HxtvIBpd+MIJB+W7aFk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hyzcif3qUUyO6Ge/Lf3vOg2nYhYvdfaCkRTmagF5oHiiFca3I1gJ4wsxVofDT/rvU
+	 AuuBenqNmI8A5M/HXTPOw5IdTp6zwig7IY3D/J/tLqn6+GHQPhpTo0E/XbCKMQnYpA
+	 4ptHyUG3vStU3EUiBbKZpZN6EIr8HHdSmC+xWBOw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241111142138epcas5p296593bcba6a0ed67984530ac98ba6f41~G7_q2HZ5V2767227672epcas5p27;
+	Mon, 11 Nov 2024 14:21:38 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4XnBYq6DZTz4x9Px; Mon, 11 Nov
+	2024 14:21:35 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A1.60.09770.FE212376; Mon, 11 Nov 2024 23:21:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241111142135epcas5p32c01b213f497f644b304782876118903~G7_oEUOCI1488814888epcas5p3U;
+	Mon, 11 Nov 2024 14:21:35 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241111142135epsmtrp1ff8bf362c3252488bfb1e7463e6551e5~G7_oDY86b1274612746epsmtrp1b;
+	Mon, 11 Nov 2024 14:21:35 +0000 (GMT)
+X-AuditID: b6c32a4a-e25fa7000000262a-4c-673212ef5821
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0E.3B.35203.EE212376; Mon, 11 Nov 2024 23:21:34 +0900 (KST)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241111142132epsmtip29ddaa720366e080ce6ec5dc49c9c8787~G7_llLVo71973719737epsmtip2w;
+	Mon, 11 Nov 2024 14:21:32 +0000 (GMT)
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	quic_akakum@quicinc.com, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stern@rowland.harvard.edu
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	alim.akhtar@samsung.com, Selvarasu Ganesan <selvarasu.g@samsung.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] usb: dwc3: gadget: Add TxFIFO resizing supports for
+ single port RAM
+Date: Mon, 11 Nov 2024 19:50:45 +0530
+Message-ID: <20241111142049.604-1-selvarasu.g@samsung.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|PN3P287MB1587:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86f786db-52ef-4aa6-db74-08dd025c0a5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|1800799024|7416014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4tliVbPSmhlprhlKKnKMTDx7PF/Jjg2gJiJuiLSVIxOsM0pvrAjxTN0xO379?=
- =?us-ascii?Q?BKcVNnaNxVRrnQgL1j1oCB/oOaxVTYDyMOmWqKHYJABFIK+40VGxVBWwkwTO?=
- =?us-ascii?Q?ewwckx0/vstwlUE2VqczMZwjKkz5+QOYpr9nhp97jujeoFaSLZV0cs+7aMxj?=
- =?us-ascii?Q?60hWS8TsK2amauICmZFzsfcIHLGvh7GoHl3QIP8Z6Vf+7CRqQ9qeb2LBX+QZ?=
- =?us-ascii?Q?nJ/jzx9ENBZjm/YkT5i14D0vDuqg3yjWEtmpUdQKiXFi/VygUdQo2+Pq7Qra?=
- =?us-ascii?Q?cR+L2qDgltRlN7JiBWkluAJ8tubVAnplCidMn2484GNctDaXjth5wJGbTV4B?=
- =?us-ascii?Q?yJgXHRUnhJKqvGxMVGA7ap5U5k6ysxG9ZeKOQmm57EyfW98pRJspXsov5Fga?=
- =?us-ascii?Q?rTVuMqgJMjQi3cl4D6CDzLF9hh4z3hw0CjPAr7GFxaLHuQNSiGPItZvF862L?=
- =?us-ascii?Q?0whKHdxzVFcXSYH3WY9w/z3eE5PXkTFupkc8et50tTG3YW/FmA97K9LtS1NE?=
- =?us-ascii?Q?q3DDtOGmB3giRhmy/yimBdlJXh/hFVhK2cAw2PYFYtvBGgjsGlUMfi5Ff8zC?=
- =?us-ascii?Q?399HVTQcbUWbmJsYr1Wu7TuM2x6Y+x86u0rvjtHgKGYcUFUErDkVf57Dt30Z?=
- =?us-ascii?Q?LhinbktzDp66t92DCHeJlC+0dmU2an0cPiTBjISybiSXjn7xrZGVoBOFfGzl?=
- =?us-ascii?Q?bFwGrHSGolB4DYSxPAdo3eBUoOS9aO7Ih6kv5dWGzJKDdJVp66PO9J2PlgW7?=
- =?us-ascii?Q?H21aG2IEKJw2IJB41L7z7ukb5dQOgTx7loijQudOzj096pROqMq1QZEaJxHF?=
- =?us-ascii?Q?s6hbsUyroc3AkND33Dd/NgeeW34k3o8snLjfYHUGMGxG75cLm7vZKPC0xY1c?=
- =?us-ascii?Q?F2moBua9zYcWrk1iwjVmgePE+CGvA70JvLcNGIJvYU8hb/kxDariJvZIkJlv?=
- =?us-ascii?Q?vfN2UZVuPgrktFNg95ubnO0XCt8EWKOQMJMz6VXa7PNnN2GOoOV5o/0bxO9R?=
- =?us-ascii?Q?S40VZ35gU6FY8RRrG+rVLUOKnvLAjyqtakVif4CRBXvemvwFUH8RwSUP5L5v?=
- =?us-ascii?Q?kB36fteaJPXhQU/s2JAfGQK3g1ADwPIdnrssxw6qdkwJ2kPugcsPlJruoWRQ?=
- =?us-ascii?Q?GXoLbbkkvOvSPwTCue9pgxiKvV8aCCMvsPcvBkHvWIFEvuik5z3AnVIAmwU3?=
- =?us-ascii?Q?zb7nnwO5jYIbl6J9XiDjs5unaBhAiuHK0U57q3DQLNmQEJLUTmUxfT5FuzDN?=
- =?us-ascii?Q?5nqY371XE57+IwfcDZIeyQ7YN9hEYq1wox1PQqhN2qP/ERgrBSL4dz0IbGEU?=
- =?us-ascii?Q?pS5IVhE0P2N22rrTD2iPU40QVWlEcLALLijVa6EMMY3585BLnxTQXVMClXS7?=
- =?us-ascii?Q?7pCX6XU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(7416014)(376014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?7UIgS8b8yuUCXtxh8FcIj0B7Y5vmodSL1p5N31xUvJtd/Vo/k7Lq7fVByB+c?=
- =?us-ascii?Q?FaMJ/+/Eb8PXNbIrzoJ1TdiI8dcecY5DZQE2TSIUIz8hIm39LzOqid0Prgiz?=
- =?us-ascii?Q?x6vLK78ISGmNKyxnPzJnRTCbM4jbuDeFbkHXL0OlbPD9Rjh8fkQwzByevj7y?=
- =?us-ascii?Q?0jN75lLk3WtffzWaWv1iayangtZln2KwNT3M70zx7hYFJPR2mhHAZbbDrnQv?=
- =?us-ascii?Q?BbPqyB7nTnO8p8N3iLqoOKn5hPOtpLOkfA1gAuJUmV7vCLOPl0k22ukjeWbz?=
- =?us-ascii?Q?SPobdWJ4D3p9/k+zF9oDYdl8ntXoPUeuJWGlNlBHa33JDg6sVgZodBhq9V+L?=
- =?us-ascii?Q?BYIsXUvHLKoVrdgQ9P/EjZ9CD5SnuW3Gd88qdC6qzUF1C1BcwO3+MAriyVap?=
- =?us-ascii?Q?ZMb+h+iCa+GMN4ZnzdWQjApEWNKTVsZiansto5rstd2jwx4Xg6WaHQV0zdK3?=
- =?us-ascii?Q?18ZEUGA4es4Alua01AMMEzIdsgrNCUjCvAHKXjwMlGNRxF4coUW+4TYiBN/d?=
- =?us-ascii?Q?bc++smbjDHG0B0mLjuKsNMuknrAY+aFSUVJXOR6z0oFChWGzIJBwldmYxmAl?=
- =?us-ascii?Q?RQfqsUhyVghFnDIrLERJ/3MY6UsQaO13rTIrKWr3ExK/d0pbbKh92lgJm7B9?=
- =?us-ascii?Q?eMeMDYKcxDnxbLdyZK1E/qeS8/t4MXsyBVn5ajdqbpBFf0LSIySkR1VsA5zp?=
- =?us-ascii?Q?e3XYa5uRdTmtYJcdBaLBpIEBde+8m5LHNYraMWkjvqXPzOpt1J7VxJz48OTh?=
- =?us-ascii?Q?WxzXOsDdHbwAAmcaawU73qyM6fC8gTpxRWrriC62Sdb6MYs0K2a/BFtmR/lx?=
- =?us-ascii?Q?xnTPQaZoyzoleTrgiq6k7c31HibJ4xQxUc2/tW+W23bg0/TRI+VlBQLW8RGF?=
- =?us-ascii?Q?NsodvmvPJvfgDP9oOberlm3IUue3Q8cKZXTK8htG/l6WsE4MWaZyonuF/hEG?=
- =?us-ascii?Q?qsa2ihh9W/wCioZYLgVtX1f1bxWCgIERJFRvWJhcaPAaR23coav9vx/afw/L?=
- =?us-ascii?Q?phPvuoHo4IQR3VfHP8bxskuBbeT9lWPtmX1d/Kq/qKd9Ik7ZjPJbIfM0+pFq?=
- =?us-ascii?Q?3OOY5pfGmIV++AiADHHtV7f1knkydlzW30eR4mhGmdAHHCcPk3ZiXx+fqlvI?=
- =?us-ascii?Q?FeAGDvjDDeEg9gBgUXCFhdhw6ZI8rSZkg/lZjX4y52TL90RKhS/T1z9mEsHB?=
- =?us-ascii?Q?fGCi9q8b/kbu093j5tbcPiZhsU3kXWTuhB+u5FhB/D/bBd58853qgpncE4zv?=
- =?us-ascii?Q?r3vcgnULDclZB7xPHlmAvZopLDeAdSK+mBG8oZkbVGhmMNtio4CymkVEvv7E?=
- =?us-ascii?Q?3yau9578kvcjOYIxO102ZRQZY4zo2XMPPwWk6o6jTvjFaeX7wRJ0QEaddkVk?=
- =?us-ascii?Q?ZbnYtDmJzoyAKOAjPdVkvtJXPHsc0Wb966OtOuTkS1rZZ5dWoNQVPAwfvHte?=
- =?us-ascii?Q?HpOtBXVySULaKTTGsboihBu00Vhvird1hi3WKxG/n5QeTmv7kAQJIXm12MDC?=
- =?us-ascii?Q?5BdjcXDHyD0GDF4qNDwp4Y3pqQS481mrmDgXXBYgQQ0DzCrHckBLuB6uoojT?=
- =?us-ascii?Q?aVxBZDJdbsRqLyiDiirEoykp2elWX8uch24tAe8dCgvq4+YefRoWE9q+Je46?=
- =?us-ascii?Q?93X/yVVrZXB6Vh9JD7YztcM/YS4UeyPovYzYDYtAONsI?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86f786db-52ef-4aa6-db74-08dd025c0a5b
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 14:20:49.1902
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DtZUtJGYZbmC4Ajnx9SSw7ugDfZFp7sf+SF2xMUhos0uJ+wRYmKzM/ucL6WXmGF8vPqJBxKonA386vYh3Xkl6Nf3EwZkXuCvnKAiid8F3HZ+ElmiSnfN8X5DIBPt9/N2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1587
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPJsWRmVeSWpSXmKPExsWy7bCmhu57IaN0g6cHdS3eXF3FavFg3jY2
+	izsLpjFZnFq+kMmiefF6NotJe7ayWNx9+IPF4vKuOWwWi5a1Mlt8Ovqf1eL2n72sFqs657BY
+	HFn+kcni8vedzBYLNj5itJjw+wJQ20FRi1ULDrA7CHnsn7uG3WPinjqP2Xd/MHr0bVnF6LFl
+	/2dGj8+b5ALYorJtMlITU1KLFFLzkvNTMvPSbZW8g+Od403NDAx1DS0tzJUU8hJzU22VXHwC
+	dN0yc4AeUFIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQUmBToFSfmFpfmpevlpZZY
+	GRoYGJkCFSZkZzxZUFFwQrPi55EtjA2M3xS7GDk5JARMJFbuWMvcxcjFISSwm1Hi2s3rzCAJ
+	IYFPjBKrWyogEt8YJbYt6GCF6fh6/jITRGIvo8T39yfYIZzvQO2TL7N1MXJwsAkYSjw7YQMS
+	FxFYxSjx72gTK4jDLLCbSWLVg/vsIEXCApES89aYgExlEVCVmNdziA3E5hWwkthxaxojxDZN
+	ibV79zBBxAUlTs58wgJiMwvISzRvnQ12t4TADg6Ju7u/sEE0uEjsW/aXHcIWlnh1fAuULSXx
+	sr8Nyk6W2DPpC5SdIXFo1SFmCNteYvWCM6wgtzEDLV6/Sx9iF59E7+8nTCBhCQFeiY42IYhq
+	VYlTjZehtkpL3FtyDRpAHhKt/W8YIaEYKzF7+hnGCYxys5B8MAvJB7MQli1gZF7FKJlaUJyb
+	nlpsWmCUl1oOj8rk/NxNjOCUq+W1g/Hhgw96hxiZOBgPMUpwMCuJ8Gr466cL8aYkVlalFuXH
+	F5XmpBYfYjQFButEZinR5Hxg0s8riTc0sTQwMTMzM7E0NjNUEud93To3RUggPbEkNTs1tSC1
+	CKaPiYNTqoGpbaOMglCygLBjypXEycwld+ort+V2ib3jkDq+r8O8Pv2ugciHzq1yTo8Wsmb+
+	Fiu/kb7y2sMrNgasTFdkXasfidTvOnBLwj7paI7iQuEP6QX2J409+60lD7u+Xv0xSOGQ1jev
+	yJyLgYG1Xgu0T6cu0I8VL54RyxgT+Ijfqz/yuEtaT+MpuQtX61eo/Pxp9GR2agrbVaXA0u3X
+	+tf6L0q7+OFq6cG+x1t3awEDqOyxaGtuyePCDF3B1RqPJ3cV91uEX5qxavckj19J12rebBQ5
+	/dzB+cv2Z4XrReapMno2vZ6lf6VJWPRFy+WFcpmKplMymB9eELx8t3Jit+7ursuph+coVMmJ
+	Py5TMSl8rsRSnJFoqMVcVJwIAJaSYUxCBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSvO57IaN0g3+6Fm+urmK1eDBvG5vF
+	nQXTmCxOLV/IZNG8eD2bxaQ9W1ks7j78wWJxedccNotFy1qZLT4d/c9qcfvPXlaLVZ1zWCyO
+	LP/IZHH5+05miwUbHzFaTPh9AajtoKjFqgUH2B2EPPbPXcPuMXFPncfsuz8YPfq2rGL02LL/
+	M6PH501yAWxRXDYpqTmZZalF+nYJXBlPFlQUnNCs+HlkC2MD4zfFLkZODgkBE4mv5y8zgdhC
+	ArsZJTauNoSIS0u8ntXFCGELS6z895y9i5ELqOYro8S2Bw9Yuxg5ONgEDCWenbABiYsIbGCU
+	eHr5EhuIwyxwkkmi+esjFpBuYYFwidVPm9lAbBYBVYl5PYfAbF4BK4kdt6ZBbdCUWLt3DxNE
+	XFDi5MwnLCALmAXUJdbPEwIJMwvISzRvnc08gZF/FpKqWQhVs5BULWBkXsUomVpQnJueW2xY
+	YJiXWq5XnJhbXJqXrpecn7uJERxDWpo7GLev+qB3iJGJg/EQowQHs5IIr4a/froQb0piZVVq
+	UX58UWlOavEhRmkOFiVxXvEXvSlCAumJJanZqakFqUUwWSYOTqkGpqZ+iWN1U6q6Xpydevzd
+	3EnLstNsOJ10U6dOWLX8t76h4YPrm9Zqyl549dBalfHz5rUFnHed+zb4lR34GFebc0HDmfGV
+	vO07U4P8mOn/gmd9W3QuU2Z5t/mzValm9+qMkqrbOZLmBdSLubrMFGx+VOK39lvmWr6sdt6C
+	B7pdQr8syxMj1Tgt/jsf+JEq9jcvdELPo0WsYumSu4Uq1djeO1h29/9eUXrHRmZDVv4jIb7V
+	M7t4pI0+dvo0u/U8OVxyQUD//AkLvuR7n2593iQ+JXZRpdF8vnn8y1TENcWuT0jZNSvPVljy
+	UeHc7CUl21R5T/CoLl59klWwJF/FLf78y2tNLqlbbmxqfr9fNO+oEktxRqKhFnNRcSIA47XH
+	0xADAAA=
+X-CMS-MailID: 20241111142135epcas5p32c01b213f497f644b304782876118903
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241111142135epcas5p32c01b213f497f644b304782876118903
+References: <CGME20241111142135epcas5p32c01b213f497f644b304782876118903@epcas5p3.samsung.com>
 
-The condition 'if (ARC_CC_AL)' is always true, as ARC_CC_AL is a constant 
-integer. This makes the check redundant, so it is safe to remove.
+The existing implementation of the TxFIFO resizing logic only supports
+scenarios where more than one port RAM is used. However, there is a need
+to resize the TxFIFO in USB2.0-only mode where only a single port RAM is
+available. This commit introduces the necessary changes to support
+TxFIFO resizing in such scenarios.
 
-Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+Cc: stable@vger.kernel.org # 6.12.x: fad16c82: usb: dwc3: gadget: Refine the logic for resizing Tx FIFOs
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
 ---
- arch/arc/net/bpf_jit_arcv2.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/arch/arc/net/bpf_jit_arcv2.c b/arch/arc/net/bpf_jit_arcv2.c
-index 4458e409ca0a..19792ce952be 100644
---- a/arch/arc/net/bpf_jit_arcv2.c
-+++ b/arch/arc/net/bpf_jit_arcv2.c
-@@ -2916,10 +2916,7 @@ bool check_jmp_32(u32 curr_off, u32 targ_off, u8 cond)
- 	addendum = (cond == ARC_CC_AL) ? 0 : INSN_len_normal;
- 	disp = get_displacement(curr_off + addendum, targ_off);
+Changes in v2:
+ - Removed the code change that limits the number of FIFOs for bulk EP,
+   as plan to address this issue in a separate patch.
+ - Renamed the variable spram_type to is_single_port_ram for better
+   understanding.
+ - Link to v1: https://lore.kernel.org/lkml/20241107104040.502-1-selvarasu.g@samsung.com/
+---
+ drivers/usb/dwc3/core.h   |  4 +++
+ drivers/usb/dwc3/gadget.c | 54 +++++++++++++++++++++++++++++++++------
+ 2 files changed, 50 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index eaa55c0cf62f..8306b39e5c64 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -915,6 +915,7 @@ struct dwc3_hwparams {
+ #define DWC3_MODE(n)		((n) & 0x7)
  
--	if (ARC_CC_AL)
--		return is_valid_far_disp(disp);
--	else
--		return is_valid_near_disp(disp);
-+	return is_valid_far_disp(disp);
+ /* HWPARAMS1 */
++#define DWC3_SPRAM_TYPE(n)	(((n) >> 23) & 1)
+ #define DWC3_NUM_INT(n)		(((n) & (0x3f << 15)) >> 15)
+ 
+ /* HWPARAMS3 */
+@@ -925,6 +926,9 @@ struct dwc3_hwparams {
+ #define DWC3_NUM_IN_EPS(p)	(((p)->hwparams3 &		\
+ 			(DWC3_NUM_IN_EPS_MASK)) >> 18)
+ 
++/* HWPARAMS6 */
++#define DWC3_RAM0_DEPTH(n)	(((n) & (0xffff0000)) >> 16)
++
+ /* HWPARAMS7 */
+ #define DWC3_RAM1_DEPTH(n)	((n) & 0xffff)
+ 
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 2fed2aa01407..4f2e063c9091 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -687,6 +687,44 @@ static int dwc3_gadget_calc_tx_fifo_size(struct dwc3 *dwc, int mult)
+ 	return fifo_size;
  }
  
- /*
++/**
++ * dwc3_gadget_calc_ram_depth - calculates the ram depth for txfifo
++ * @dwc: pointer to the DWC3 context
++ */
++static int dwc3_gadget_calc_ram_depth(struct dwc3 *dwc)
++{
++	int ram_depth;
++	int fifo_0_start;
++	bool is_single_port_ram;
++	int tmp;
++
++	/* Check supporting RAM type by HW */
++	is_single_port_ram = DWC3_SPRAM_TYPE(dwc->hwparams.hwparams1);
++
++	/*
++	 * If a single port RAM is utilized, then allocate TxFIFOs from
++	 * RAM0. otherwise, allocate them from RAM1.
++	 */
++	ram_depth = is_single_port_ram ? DWC3_RAM0_DEPTH(dwc->hwparams.hwparams6) :
++			DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
++
++
++	/*
++	 * In a single port RAM configuration, the available RAM is shared
++	 * between the RX and TX FIFOs. This means that the txfifo can begin
++	 * at a non-zero address.
++	 */
++	if (is_single_port_ram) {
++		/* Check if TXFIFOs start at non-zero addr */
++		tmp = dwc3_readl(dwc->regs, DWC3_GTXFIFOSIZ(0));
++		fifo_0_start = DWC3_GTXFIFOSIZ_TXFSTADDR(tmp);
++
++		ram_depth -= (fifo_0_start >> 16);
++	}
++
++	return ram_depth;
++}
++
+ /**
+  * dwc3_gadget_clear_tx_fifos - Clears txfifo allocation
+  * @dwc: pointer to the DWC3 context
+@@ -753,7 +791,7 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+ {
+ 	struct dwc3 *dwc = dep->dwc;
+ 	int fifo_0_start;
+-	int ram1_depth;
++	int ram_depth;
+ 	int fifo_size;
+ 	int min_depth;
+ 	int num_in_ep;
+@@ -773,7 +811,7 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+ 	if (dep->flags & DWC3_EP_TXFIFO_RESIZED)
+ 		return 0;
+ 
+-	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
++	ram_depth = dwc3_gadget_calc_ram_depth(dwc);
+ 
+ 	switch (dwc->gadget->speed) {
+ 	case USB_SPEED_SUPER_PLUS:
+@@ -809,7 +847,7 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+ 
+ 	/* Reserve at least one FIFO for the number of IN EPs */
+ 	min_depth = num_in_ep * (fifo + 1);
+-	remaining = ram1_depth - min_depth - dwc->last_fifo_depth;
++	remaining = ram_depth - min_depth - dwc->last_fifo_depth;
+ 	remaining = max_t(int, 0, remaining);
+ 	/*
+ 	 * We've already reserved 1 FIFO per EP, so check what we can fit in
+@@ -835,9 +873,9 @@ static int dwc3_gadget_resize_tx_fifos(struct dwc3_ep *dep)
+ 		dwc->last_fifo_depth += DWC31_GTXFIFOSIZ_TXFDEP(fifo_size);
+ 
+ 	/* Check fifo size allocation doesn't exceed available RAM size. */
+-	if (dwc->last_fifo_depth >= ram1_depth) {
++	if (dwc->last_fifo_depth >= ram_depth) {
+ 		dev_err(dwc->dev, "Fifosize(%d) > RAM size(%d) %s depth:%d\n",
+-			dwc->last_fifo_depth, ram1_depth,
++			dwc->last_fifo_depth, ram_depth,
+ 			dep->endpoint.name, fifo_size);
+ 		if (DWC3_IP_IS(DWC3))
+ 			fifo_size = DWC3_GTXFIFOSIZ_TXFDEP(fifo_size);
+@@ -3090,7 +3128,7 @@ static int dwc3_gadget_check_config(struct usb_gadget *g)
+ 	struct dwc3 *dwc = gadget_to_dwc(g);
+ 	struct usb_ep *ep;
+ 	int fifo_size = 0;
+-	int ram1_depth;
++	int ram_depth;
+ 	int ep_num = 0;
+ 
+ 	if (!dwc->do_fifo_resize)
+@@ -3113,8 +3151,8 @@ static int dwc3_gadget_check_config(struct usb_gadget *g)
+ 	fifo_size += dwc->max_cfg_eps;
+ 
+ 	/* Check if we can fit a single fifo per endpoint */
+-	ram1_depth = DWC3_RAM1_DEPTH(dwc->hwparams.hwparams7);
+-	if (fifo_size > ram1_depth)
++	ram_depth = dwc3_gadget_calc_ram_depth(dwc);
++	if (fifo_size > ram_depth)
+ 		return -ENOMEM;
+ 
+ 	return 0;
 -- 
-2.43.0
+2.17.1
 
 
