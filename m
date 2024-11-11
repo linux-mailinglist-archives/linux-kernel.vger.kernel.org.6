@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-403981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF6C9C3D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:32:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314749C3D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11BE284E67
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61F961C22B20
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:32:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65662199249;
-	Mon, 11 Nov 2024 11:31:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6421991AA
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CD119AD73;
+	Mon, 11 Nov 2024 11:31:28 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0DE18B477;
+	Mon, 11 Nov 2024 11:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731324678; cv=none; b=NhvjjfyUVg9DNFf5BNMP8wIMGb/o3odUYP5Vc1mpWvxWnnlv8MLLB2/ETFXZFtsGk9oC8gzgrE+M3clkGtOvRD26i2UnZLRgh0DhxyZlKx+sE+05cvEDAaWJiFUbFZkF+6AsNzhAxYBRJn91FJ628uqYYcjXuRVnoIAbA4BAaf8=
+	t=1731324688; cv=none; b=Vu235pAISZyEaqHQLkIOUY/rW5yOmKuXEpcI+93EENjx4xUUFI8OPozGfrvFvZEy2aD+NCjpc3eHhi7v/T75ONgf85tbN412yqk1TYNEufMqQ9ByuqRkjcfz2P7S6xLXGYzs751tOtDasv5EBSkO/Cq/hcEInu6l7sTB+KnVNJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731324678; c=relaxed/simple;
-	bh=P6IqENS6xfIuFFZgeNsg4qDCruzvn+4syWoHMlvrRWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjApuve5HKzERWd54KI/bU1amTf8Fh8+36pAET0h/a0oiTsPYebKXrBloSgJO9J/3VCaOoyX8zOVPnA7M9DywPzGxXlea9MnHeWlSq4F2Sslmb3kQ3LBOkqGkRh+wESIXSCw/vLqlLgfH9u2R2wq5eILQ6nudDg2sceY19BxHak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 126DA1D14;
-	Mon, 11 Nov 2024 03:31:45 -0800 (PST)
-Received: from [10.1.26.32] (e122027.cambridge.arm.com [10.1.26.32])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9A33D3F6A8;
-	Mon, 11 Nov 2024 03:31:13 -0800 (PST)
-Message-ID: <bff9ae58-8587-4f44-a797-d919770978aa@arm.com>
-Date: Mon, 11 Nov 2024 11:31:12 +0000
+	s=arc-20240116; t=1731324688; c=relaxed/simple;
+	bh=byO06VlftwJVrxXzWWMMcmptQKF3tyHFGekyDgcW5LY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=ZbarT0PpEvx+1olenAULRtvaIUKMLd+a2n9YmwM1J90HJnS1kz5vLKemGeP4/5FmyYKADWiTgPB0MhHswqpmowWKXQV3U5XM9lJN93xHug93KCyfD6VoX9HQxxceorLuhLUvvTW9rpWJ1PHNUXcVY9RjCxaFh7DsHyAl427KnWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xn6h05zhdz28fSh;
+	Mon, 11 Nov 2024 19:26:40 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6929B1A0188;
+	Mon, 11 Nov 2024 19:31:22 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 11 Nov 2024 19:31:22 +0800
+Message-ID: <4564c77b-a54d-4307-b043-d08e314c4c5f@huawei.com>
+Date: Mon, 11 Nov 2024 19:31:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,57 +47,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panthor: Fix handling of partial GPU mapping of BOs
-To: Akash Goel <akash.goel@arm.com>, boris.brezillon@collabora.com,
- liviu.dudau@arm.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- mihail.atanassov@arm.com, ketil.johnsen@arm.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, nd@arm.com
-References: <20241111092621.763285-1-akash.goel@arm.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241111092621.763285-1-akash.goel@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+From: Yunsheng Lin <linyunsheng@huawei.com>
+To: Jesper Dangaard Brouer <hawk@kernel.org>,
+	=?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <zhangkun09@huawei.com>, <fanghaiqing@huawei.com>,
+	<liuyonglong@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
+ Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew
+ Morton <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
+ Apalodimas <ilias.apalodimas@linaro.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, kernel-team
+	<kernel-team@cloudflare.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
+ <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+Content-Language: en-US
+In-Reply-To: <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 11/11/2024 09:26, Akash Goel wrote:
-> This commit fixes the handling of partial GPU mapping of buffer objects
-> in Panthor.
-> VM_BIND ioctl allows Userspace to partially map the BOs to GPU.
-> To map a BO, Panthor walks through the sg_table to retrieve the physical
-> address of pages. If the mapping is created at an offset into the BO,
-> then the scatterlist(s) at the beginning have to be skipped to reach the
-> one corresponding to the offset. But the case where the offset didn't
-> point to the first page of desired scatterlist wasn't handled correctly.
-> The bug caused the partial GPU mapping of BO to go wrong for the said
-> case, as the pages didn't get map at the expected virtual address and
-> consequently there were kernel warnings on unmap.
+On 2024/10/26 15:33, Yunsheng Lin wrote:
+
+...
+
+>>>
+>>> AFAIU Jakub's comment on his RFC patch for waiting, he was suggesting
+>>> exactly this: Add the wait, and see if the cases where it can stall turn
+>>> out to be problems in practice.
+>>
+>> +1
+>>
+>> I like Jakub's approach.
 > 
-> Signed-off-by: Akash Goel <akash.goel@arm.com>
-
-Fixes: 647810ec2476 ("drm/panthor: Add the MMU/VM logical block")
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-Thanks,
-Steve
-
-> ---
->  drivers/gpu/drm/panthor/panthor_mmu.c | 1 +
->  1 file changed, 1 insertion(+)
+> As mentioned in Toke's comment, I am still not convinced that there is some
+> easy way of waiting here, doing the kick in the kernel space is hard enough,
+> I am not even sure if kick need to be done or how it can be done in the user
+> space if some page_pool owned page is held from user space for the cases of zero
+> rx copy, io_uring and devmem tcp? killing the userspace app?
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index d8cc9e7d064e..6bc188d9a9ad 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -957,6 +957,7 @@ panthor_vm_map_pages(struct panthor_vm *vm, u64 iova, int prot,
->  
->  		paddr += offset;
->  		len -= offset;
-> +		offset = 0;
->  		len = min_t(size_t, len, size);
->  		size -= len;
->  
+> If you and Toke still think the waiting is the way out for the problem here, maybe
+> we should wait for jakub's opinion and let him decide if he want to proceed with
+> his waiting patch.
 
+Is there any other suggestion/concern about how to fix the problem here?
+
+From the previous discussion, it seems the main concern about tracking the
+inflight pages is about how many inflight pages it is needed.
+
+If there is no other suggestion/concern , it seems the above concern might be
+addressed by using pre-allocated memory to satisfy the mostly used case, and
+use the dynamically allocated memory if/when necessary.
 
