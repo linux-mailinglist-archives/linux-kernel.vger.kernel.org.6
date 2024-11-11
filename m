@@ -1,120 +1,209 @@
-Return-Path: <linux-kernel+bounces-403481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C255E9C3650
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:04:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012AA9C3652
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:04:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD81281384
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6525281785
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC09842048;
-	Mon, 11 Nov 2024 02:04:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6013242A87;
+	Mon, 11 Nov 2024 02:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="2mPhRuqZ"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A892595;
-	Mon, 11 Nov 2024 02:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7AD3C3C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731290667; cv=none; b=a2+MhvJvSWoL85ugYMcy0wJxCv9NUr3sC7OkSwg+fD5dkhBVnh+jqE13DOxs2Jre5Y1+w6y0/GX3S3FqPO4MdS4AJSOnLGqWtAPsuiaXzAj7WdFQPSRPoM46347iAfO/Zg0S+TRKFdd/Z7clSR2MhHOng/yokVFr489fk+M/B8o=
+	t=1731290689; cv=none; b=E+UjnlQ2rpZ0y60E9Z5Iwwj7h5srgSwencvg2eK3ufgAykOaelTeJAN3C0Mn4rqE/bRTRa3BoczM4zAmpDh8uwhVznfA84zTdI3FDD0dtx+YlYA1S7waVIbj4wZG+/UPZpyzqIYothm3bVSFWufdzGsIfGaot6AxMs8l6gseHck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731290667; c=relaxed/simple;
-	bh=LO7e434sgS9tJnUzWErguBOZODemuMKPExl6xxgCHq8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jLCTDxyK+crv/JICTdUC8NiUCCrDSKj5gZ5NZQpvhk0rESPkVTM8lcOk674Hz5G8NsgFUR02vhlCqRZKRhIAAcL6b67RTN58M+3BDmV5/ttVTaaxE/bUmkz19r8L33I2ODc2shJ5e0xbh8sMCvh7nu7rV5NZ8f1IxQ7i6VA8P10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XmtBm75lRz4f3lg9;
-	Mon, 11 Nov 2024 10:04:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 088C11A018D;
-	Mon, 11 Nov 2024 10:04:20 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgB3U4ciZjFnUELHBQ--.593S3;
-	Mon, 11 Nov 2024 10:04:19 +0800 (CST)
-Subject: Re: [PATCH md-6.13] md: remove bitmap file support
-To: =?UTF-8?Q?Dragan_Milivojevi=c4=87?= <galileo@pkm-inc.com>,
- Yu Kuai <yukuai1@huaweicloud.com>, "yukuai (C)" <yukuai3@huawei.com>
-Cc: Song Liu <song@kernel.org>, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "Luse, Paul E" <paul.e.luse@intel.com>
-References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
- <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
- <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
- <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
- <CALtW_agCsNM66DppGO-0Trq2Nzyn3ytg1t8OKACnRT5Yar7vUQ@mail.gmail.com>
- <8ae77126-3e26-2c6a-edb6-83d2f1090ebe@huaweicloud.com>
- <CALtW_ajYN4byY_hWLyKadAyLa9Rmi==j6yCYjLLUuR_nttKMrQ@mail.gmail.com>
- <36659c34-08bf-2103-a762-ce9e75e8262e@huaweicloud.com>
- <CALtW_ai-xfkphuch64f2n544cfWzg__59bwX3Yxkf-N61K-SvA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <8dc1ee79-fd64-70d7-bb48-b38920c1cddd@huaweicloud.com>
-Date: Mon, 11 Nov 2024 10:04:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1731290689; c=relaxed/simple;
+	bh=Jb3OHC346rH3d7EBpYgOqmAuek/eWPJY9BU4l6/XHW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=avdaHuZajTI96QD7Vtd4T4HnfYLH1k6inCOb9O4+/rheFrkNsOuFX4oh/2/s9c+9eg7wTO7WUPx/6GNTwgRwDduHEEtnW/KvFFmaeXV5c9fjul/WdzXk4PGxkexHoc6u8HwVgzxdD6/Q6CRrtptCEAVIfXHBct97WTDCs9na55o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=2mPhRuqZ; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso2757848a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 18:04:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731290687; x=1731895487; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bBmwH7OKzbpHlkPpiA8Z1NL2wLrsRzA8Hd93fxN9JCU=;
+        b=2mPhRuqZjxJrsTE2TylqR0KpNqNQQ5urGjdycAajD4kfngVYQXsDG4WHoPgaS2w+Kf
+         ACd+ye6+vrNP20hGMkkCuSplGbemr3F0EsURkX2vdlphIfN3GnGgAGlO0VdmpA7TYrNf
+         tt7+i8Y5MBOyPh4caoIbSJZhlYaIY3YP9mIDStk5sxxUs2669qOWM9DynGSD1aOGNhQh
+         2wzvZdJxHaEC0UpEY49IUGS0uNUhGyOLpvcJdD3enxp0CBMfxyoGsw94r0/W5SRZjCiT
+         WccFu5119+HCNYGAVWpfT+tr/evkQGWPoQVOG057xlUfQI6IvgX5btmD3YP0y2Maflzt
+         J9MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731290687; x=1731895487;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bBmwH7OKzbpHlkPpiA8Z1NL2wLrsRzA8Hd93fxN9JCU=;
+        b=bFIbRyxpY58QOU1r0t+PoCAVBHy/SX1X0/3DGGU7SOim9GuQwMiRQNTeJyfc0/J00b
+         zNSHPe7F6sIar5qb3OM+PqkC52nimeyOE5rSMTUxzfMDJPc89okdPSBWsvWX8lxqKIp6
+         oP5gcJB18/5FDJXydLFE0WyXaKmroGFDXrQkQqa8y2hIv7KxZZMc1uOYh9KQsNtOe/Uv
+         uzDT4/m6541+7RGcTFCSM+JpNLGAQBgo5xVa8HvNM6lKKBX4/L/fiGOtk15B5HLBmiDg
+         nMD2ZQPYccfMNcqQvk82y1fH6FXHywxLWUyg/cNawOLCoHoe3ZgsAozk4vwu2WsM/ku3
+         VQkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz64inAcQpFPvZU014S+AIIQee74WnnkzQg+cAAknkucG3BYDYn/ik5Dm8YaSM8MIktTMw3dSwcOoC+qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDktq3IMBsDPAOoINg6AJOPXHZttteveB66y6FqLsLpNStver9
+	QAbq7AVDMkPyFI+YciWR6+YN8Cv97ke+r4lghehAMWkM+njAS0FFzzMbOjVxH5Y=
+X-Google-Smtp-Source: AGHT+IHMqG1jSg9i7/WvMFncpUCAP5fTwypEt/VZkEeBBPQjMdwuXS7Om2tEUS7oafdPJ3oWLDXr9A==
+X-Received: by 2002:a17:90a:e7cb:b0:2e0:853a:af47 with SMTP id 98e67ed59e1d1-2e9b1748068mr15826910a91.33.1731290687269;
+        Sun, 10 Nov 2024 18:04:47 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddd646sm65829975ad.62.2024.11.10.18.04.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 18:04:46 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tAJnH-00CzKY-2n;
+	Mon, 11 Nov 2024 13:04:43 +1100
+Date: Mon, 11 Nov 2024 13:04:43 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Stephen Zhang <starzhangzsd@gmail.com>
+Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com,
+	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+Message-ID: <ZzFmOzld1P9ReIiA@dread.disaster.area>
+References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
+ <ZyhAOEkrjZzOQ4kJ@dread.disaster.area>
+ <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
+ <Zyi683yYTcnKz+Y7@dread.disaster.area>
+ <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALtW_ai-xfkphuch64f2n544cfWzg__59bwX3Yxkf-N61K-SvA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3U4ciZjFnUELHBQ--.593S3
-X-Coremail-Antispam: 1UD129KBjvdXoWruFW8WFWfGrW3uFyUArW5ZFb_yoWDZrc_uF
-	4j9r97Z343G39Fga1agF1SkrW5KayxGayUXrZ7XFyFgas3XFyUtrWkAr97uws3Aa45ZrnI
-	gryvg3y7JrZxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
-	r21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-	73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
 
-Hi,
+On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
+> Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 20:15写道：
+> > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
+> > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 11:32写道：
+> > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
 
-在 2024/11/09 10:15, Dragan Milivojević 写道:
-> On Sat, 9 Nov 2024 at 02:44, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> This is not what I expected, can you give the tests procedures in
->> details? Including test machine, create the array and test scrpits.
-> 
-> Server is Dell PowerEdge R7525, 2x AMD EPYC 7313 the rest
-> is in the linked pastebin, let me know if you need more info.
+[snip unnecessary stereotyping, accusations and repeated information]
 
-Yes, as I said please show me you how you creat the array and your test
-script. I must know what you are testing, like single threaded or high
-concurrency. For example your result shows bitmap none close to bitmap
-external, this is impossible in our previous results. I can only guess
-that you're testing single threaded.
+> > AFAICT, this "reserve AG space for inodes" behaviour that you are
+> > trying to acheive is effectively what the inode32 allocator already
+> > implements. By forcing inode allocation into the AGs below 1TB and
+> > preventing data from being allocated in those AGs until allocation
+> > in all the AGs above start failing, it effectively provides the same
+> > functionality but without the constraints of a global first fit
+> > allocation policy.
+> >
+> > We can do this with any AG by setting it up to prefer metadata,
+> > but given we already have the inode32 allocator we can run some
+> > tests to see if setting the metadata-preferred flag makes the
+> > existing allocation policies do what is needed.
+> >
+> > That is, mkfs a new 2TB filesystem with the same 344AG geometry as
+> > above, mount it with -o inode32 and run the workload that fragments
+> > all the free space. What we should see is that AGs in the upper TB
+> > of the filesystem should fill almost to full before any significant
+> > amount of allocation occurs in the AGs in the first TB of space.
 
-BTW, it'll be great if you can provide some perf results of the internal
-bitmap in your case, that will show us directly where is the bottleneck.
+Have you performed this experiment yet?
 
-> 
-> BTW do you guys do performance tests? All of the raid levels are
+I did not ask it idly, and I certainly did not ask it with the intent
+that we might implement inode32 with AFs. It is fundamentally
+impossible to implement inode32 with the proposed AF feature.
 
-We do, but we never test external bitmap.
+The inode32 policy -requires- top down data fill so that AG 0 is the
+*last to fill* with user data. The AF first-fit proposal guarantees
+bottom up fill where AG 0 is the *first to fill* with user data.
 
-+CC Paul
+For example:
 
-Hi, do you have time to add the external bitmap in our test?
+> So for the inode32 logarithm:
+> 1. I need to specify a preferred ag, like ag 0:
+> |----------------------------
+> | ag 0 | ag 1 | ag 2 | ag 3 |
+> +----------------------------
+> 2. Someday space will be used up to 100%, Then we have to growfs to ag 7:
+> +------+------+------+------+------+------+------+------+
+> | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> +------+------+------+------+------+------+------+------+
+> 3. specify another ag for inodes again.
+> 4. repeat 1-3.
 
-Thanks,
-Kuai
+Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
+entire lower 1TB of the filesystem. Hence if we get to all AGs full
+the entire inode32 inode allocation space is full.
 
+Even if we grow the filesystem at this point, we still *cannot*
+allocate more inodes in the inode32 space. That space (AGs 0-1) is
+full even after the growfs.  Hence we will still give ENOSPC, and
+that is -correct behaviour- because the inode32 policy requires this
+behaviour.
+
+IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
+when the inode space is exhausted. Only physically moving data out
+of the lower AGs can fix that problem...
+
+> for the AF logarithm:
+>     mount -o af1=1 $dev $mnt
+> and we are done.
+> |<-----+ af 0 +----->|<af 1>|
+> |----------------------------
+> | ag 0 | ag 1 | ag 2 | ag 3 |
+> +----------------------------
+> because the af is a relative number to ag_count, so when growfs, it will
+> become:
+> |<-----+ af 0 +--------------------------------->|<af 1>|
+> +------+------+------+------+------+------+------+------+
+> | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> +------+------+------+------+------+------+------+------+
+> So just set it once, and run forever.
+
+That is actually the general solution to the original problem being
+reported. I realised this about half way through reading your
+original proposal. This is why I pointed out inode32 and the
+preferred metadata mechanism in the AG allocator policies.
+
+That is, a general solution should only require the highest AG
+to be marked as metadata preferred. Then -all- data allocation will
+then skip over the highest AG until there is no space left in any of
+the lower AGs. This behaviour will be enforced by the existing AG
+iteration allocation algorithms without any change being needed.
+
+Then when we grow the fs, we set the new highest AG to be metadata
+preferred, and that space will now be reserved for inodes until all
+other space is consumed.
+
+Do you now understand why I asked you to test whether the inode32
+mount option kept the data out of the lower AGs until the higher AGs
+were completely filled? It's because I wanted confirmation that the
+metadata preferred flag would do what we need to implement a
+general solution for the problematic workload.
+
+Remeber: free space fragmentation can happen for many reasons - this
+mysql thing is just the latest one discovered.  The best solution is
+having general mechanisms in the filesystem that automatically
+mitigate the effects of free space fragmentation on inode
+allocation. The worst solution is requiring users to tweak knobs...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
