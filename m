@@ -1,135 +1,85 @@
-Return-Path: <linux-kernel+bounces-404065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA149C3EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:50:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4DC9C3EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB431C216BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006E5282893
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B549319DF41;
-	Mon, 11 Nov 2024 12:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NC82gex6"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F5D19CC28;
-	Mon, 11 Nov 2024 12:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF8319D08F;
+	Mon, 11 Nov 2024 12:50:40 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC4315687C;
+	Mon, 11 Nov 2024 12:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329378; cv=none; b=NT/W0hrhjPhKTQQ3wnRLP1xUWFZGIX3BOAoC2SreFoFHlVn2HW4hZ38szDPxK7H+QUoRWtfELIZ8yG6m4Ke+AGIflHnnXGuuIIRtjnFM1HTTeX0EQUZ8FSoSB5r5BlTwlkUv9GY1yBuZO117evCaJb7dH9aJ/Fz+++eCBreE2Rk=
+	t=1731329440; cv=none; b=YzLtYXG+PYkCyMuQXM6K3qr03+K2dtA2GNPJq3XU/v1316DmK8nIpOSIPHZEODJd9ISg3yGRAaa2JgBmbl4Xhd9HBCv6sax6mpFljkw7ApH296zpE5hKNCsj98LxNKPjwuhlqFxT++q+fLpqP2iJv4wM8awaPQ7afHgceQ+JPJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329378; c=relaxed/simple;
-	bh=o4x7aN/mdlbSSlNZEem8kx2O7vSxle7DNvQD16Zo7HE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qj9IaO9gBhCA/Vizce/uvempMtamA4wbuY2PSBFwZKHqWRDHMjWwsZMHbTmfJUATHh3ddVbbrblhP+Bf4Efd6tuH76yC6z0VfmTyOo1ffG2r8xV1v/sWY6k0ytTBsXMnpGSwLV4uzQkV9qIvCVm2xAiTm09PAOwfbsQV7OcBbxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NC82gex6; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20cdb889222so45351895ad.3;
-        Mon, 11 Nov 2024 04:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731329376; x=1731934176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C6rbBAhxvbSFqxCj/b5GrosPob3CSa0FAsJOQC6Oc1I=;
-        b=NC82gex6oOEYYb0S8GQ7hq5S2dBcHjq/h6ykOiSZSwF6/tOPpTazaslM6peKJ+BQEy
-         hOQz+1T+tN3AJkTYzxl4rAPS7Vp3R1z/kGOKiTtfE6+OWjrqOouTG7TQUrpfLyybUADY
-         //IGqDezUPgNHr89DNslpoa1tz7vW9hTZHaKwqGoqNeQA8y3MHHdpP2QUaHeG8teiDTM
-         AaxnZA6V0ot7udKLqRL3eiUZ1KpEgGTJoN2ucw2sifMddw6KiJk+mqunSHAxsrers/KK
-         YZzyLKT6VOpTosgH4nSYP0LMpLkylCqjnb9zBgu9HJ01+zYPrzHR37p/bSBoPgiL8H/z
-         Snjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731329376; x=1731934176;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C6rbBAhxvbSFqxCj/b5GrosPob3CSa0FAsJOQC6Oc1I=;
-        b=qLuKmB8aUHrKOTYRW9nFKpfOsc7w9vmnNrdAdUKznwsMu7ANw6eO2U+Q0xoqgDLPx9
-         29xNaQNYt7WFZEmezwdvJXqlxnsVrJRXXNtzC8tSPIhvj0L4kAeyhLh4knUtlb/zqvRJ
-         ZOk3NSJ0ehAKriW2x0hvxEC1LF+uzbpVTMjobQcZRAzjvN2SRguCY85TgW/zy3pyp+nz
-         2dazYV+etA51iOZfee7HSF2hi5Ut7tbV+Qb3fJrzLDt9jBUmmYgLeeR1X+hd1nn9mE6S
-         1K70sdW3oJrrTFjY6c9656oVLRLzWD2fYm9PsQc24jfqYFtpCi8z/84RrTURHYYgym+U
-         tmlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJv167h5LTVcKwLTIGYO/4YlVJu/ZaflqlmrFWYO4w8sTqxX3sdBdN14TWf/w20td5g5I=@vger.kernel.org, AJvYcCWl1GqkVsvgZ3jyZKRCGG/NnXypJp6WhYLCUt/Z8TJxIbjeGSFpBD5EltkIljKJd5OtXPTbQV3CMkYOZCGN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhSDwwy2WiZ5Vu1rLJyArzGnEQ4er35PYdXPG8P5Jgkvszyvu5
-	Z/EpH9JbpYO8wHdeTeF8xHubMTUKV2/UzhP2wk9poJitCriP9KQY
-X-Google-Smtp-Source: AGHT+IGT1hcUc7CuZIgFiyXHvNaYulWkM/6y5QszBwgDWM93sWBfS6Qg02PssrINipLhfAdakTZtRg==
-X-Received: by 2002:a17:902:c951:b0:20c:872f:6963 with SMTP id d9443c01a7336-21183560518mr183396705ad.33.1731329375794;
-        Mon, 11 Nov 2024 04:49:35 -0800 (PST)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a62d6acsm10550794a91.53.2024.11.11.04.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 04:49:35 -0800 (PST)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: andrii@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Menglong Dong <dongml2@chinatelecom.cn>
-Subject: [PATCH bpf-next] bpf: replace the document for PTR_TO_BTF_ID_OR_NULL
-Date: Mon, 11 Nov 2024 20:49:11 +0800
-Message-Id: <20241111124911.1436911-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731329440; c=relaxed/simple;
+	bh=xuyTolcM5oeWzulx8gokCjIjisBFJI73ZxzAkg9MKi4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Q4bXWKdikPJvSHFot5SAw4jMSYZdhu5Mtjk7X2HD8Yq5kxA94tUD3Dvt6lYHQlCeoI9nzqX5HF3GmkOo+9++eCROzs2b3Ds+Y2KEPcpv80jOqAL1XQuDBBRcTMrToFUDT8PHzkCEJ6H6FQbkf5Dtexv5TMrlxZQET2ywzwic7b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 9454292009C; Mon, 11 Nov 2024 13:50:34 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 8E13592009B;
+	Mon, 11 Nov 2024 12:50:34 +0000 (GMT)
+Date: Mon, 11 Nov 2024 12:50:34 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Lukas Wunner <lukas@wunner.de>
+cc: Bjorn Helgaas <helgaas@kernel.org>, 
+    Jinhui Guo <guojinhui.liam@bytedance.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, 
+    Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [RFC] PCI: Fix the issue of link speed downgrade after link
+ retraining
+In-Reply-To: <Zy3x_QK0vZHOFZvF@wunner.de>
+Message-ID: <alpine.DEB.2.21.2411110503410.9262@angie.orcam.me.uk>
+References: <20241107143758.12643-1-guojinhui.liam@bytedance.com> <20241107153438.GA1614749@bhelgaas> <Zy3x_QK0vZHOFZvF@wunner.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Commit c25b2ae13603 ("bpf: Replace PTR_TO_XXX_OR_NULL with PTR_TO_XXX |
-PTR_MAYBE_NULL") moved the fields around and misplaced the
-documentation for "PTR_TO_BTF_ID_OR_NULL". So, let's replace it in the
-proper place.
+On Fri, 8 Nov 2024, Lukas Wunner wrote:
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- include/linux/bpf.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> > > Some printing information can be obtained when the issue emerges.
+> > > "Card present" is reported twice via external interrupts due to
+> > > a slight tremor when the Samsung NVMe device is plugged in.
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 1b84613b10ac..7da41ae2eac8 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -932,10 +932,6 @@ enum bpf_reg_type {
- 	 * additional context, assume the value is non-null.
- 	 */
- 	PTR_TO_BTF_ID,
--	/* PTR_TO_BTF_ID_OR_NULL points to a kernel struct that has not
--	 * been checked for null. Used primarily to inform the verifier
--	 * an explicit null check is required for this struct.
--	 */
- 	PTR_TO_MEM,		 /* reg points to valid memory region */
- 	PTR_TO_ARENA,
- 	PTR_TO_BUF,		 /* reg points to a read/write buffer */
-@@ -948,6 +944,10 @@ enum bpf_reg_type {
- 	PTR_TO_SOCKET_OR_NULL		= PTR_MAYBE_NULL | PTR_TO_SOCKET,
- 	PTR_TO_SOCK_COMMON_OR_NULL	= PTR_MAYBE_NULL | PTR_TO_SOCK_COMMON,
- 	PTR_TO_TCP_SOCK_OR_NULL		= PTR_MAYBE_NULL | PTR_TO_TCP_SOCK,
-+	/* PTR_TO_BTF_ID_OR_NULL points to a kernel struct that has not
-+	 * been checked for null. Used primarily to inform the verifier
-+	 * an explicit null check is required for this struct.
-+	 */
- 	PTR_TO_BTF_ID_OR_NULL		= PTR_MAYBE_NULL | PTR_TO_BTF_ID,
- 
- 	/* This must be the last entry. Its purpose is to ensure the enum is
--- 
-2.39.5
+ What do you mean by "a slight tremor"?  Do the devices involved fail to 
+negotiate link in the time prescribed by the PCIe specification?  Why is 
+the interrupt sent twice?
 
+> > > To avoid wrongly setting the link speed to 2.5GT/s, only allow
+> > > specific pcie devices to perform link retrain.
+> 
+> With which kernel version are you seeing this?
+> 
+> A set of fixes for the 2.5GT/s retraining feature appeared in v6.12-rc1,
+> specifically f68dea13405c ("PCI: Revert to the original speed after PCIe
+> failed link retraining").
+> 
+> Have you tested whether the latest v6.12 rc is still affected?
+
+ Thanks for chiming in.  I do hope the fixes will have addressed issues 
+like one concerned here.
+
+ NB I have been fully booked recently due to an upcoming patch submission 
+deadline and will continue to be throughout this week, so I may be slow to 
+response.
+
+  Maciej
 
