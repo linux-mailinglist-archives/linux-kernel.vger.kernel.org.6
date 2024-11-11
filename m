@@ -1,149 +1,163 @@
-Return-Path: <linux-kernel+bounces-404007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630B99C3DDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:01:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28CE9C3DE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A081C218A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52AE4B22E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39DE1922D6;
-	Mon, 11 Nov 2024 12:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E98C194136;
+	Mon, 11 Nov 2024 12:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ufns7pd4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jsug0prW"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB84717C91;
-	Mon, 11 Nov 2024 12:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D7117C91;
+	Mon, 11 Nov 2024 12:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731326484; cv=none; b=Zsh52CxMhrBHmpy4pK6F3otfdSnGqDEl4wtSRsHOCfZLiohPig8MI/Abh/XVTs5JIgmV/0wnUCstR+vkrv0mMYpPtTOgTMfFE52kBs3Uk66LO6drzd7mfRUxnoWzloP2a+/L7Q59jC0ZbrPT9iOeRgxkYcu+rSKtW57L5QYAE/4=
+	t=1731326507; cv=none; b=DPfgeCp+bcTk/gHt+Y6QHPw+4YBq6ogwUomRTLXkVELP28on7t3DqeB3u4N4ZK2Yf4ZjTAwV0OkAD61ECGmpq5gOXOa7vXb7e8/CjofgdyHJIp0L39OgYJb/GmPNZzXmIESlF/0DMdyj1ZNB+hip9Yj/SA/AFXUGDSCMBvyIKDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731326484; c=relaxed/simple;
-	bh=zVuvjtKAs+LjZH1OYuewCYgzwIIhVlFF6h3ovVOjueM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBqlhPMdKL43q10KgzfFBijdSieErjt3by9JtqFPRCjsIXtmVquCMNuDeODO5HloJCw7XSXNN8TITgS4xa7GWQEXu3J9rGjI0+eo6bYjFPlHS3by2eSu/xoNmZkOfHRmFmuLGY3/RKYFN4UMlKxmlUqidviPpHHCZ+zvTDYnWxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ufns7pd4; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731326483; x=1762862483;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zVuvjtKAs+LjZH1OYuewCYgzwIIhVlFF6h3ovVOjueM=;
-  b=Ufns7pd4OP0DNefefIumqxTm8QQpSUGZ78Zca4AWP6VNXVkwETXBXUFJ
-   P192/UyLct6zxFJ43w1LUeIZHMy7aAy1kAVUozdOmO+1xUgvOZPZ6qnZh
-   xuI3hMKtxkgaWSOcHUfbezGgzPurkgOrkUU3ZdRmzUowxzCYrCuPOnxUf
-   GSCI6bb7GmKdgLIO5gWDKpLW1wiXxeiU7v/Wx6Qc3kW2L2a7TFDLAdw7Q
-   Cj2wcmXCW65+vgw2vVV4NF/Qjdp1Nspq7eL3u0vD7gHkU89qRZCZYJxSW
-   Z4Zq8wc53cOuJwJ4fT6drD6SV4lP4NRZ0XnXFwOGiXro8IKc/PTFayFyu
-   A==;
-X-CSE-ConnectionGUID: Z7nn/L/ITDaLvCZf/pFRkQ==
-X-CSE-MsgGUID: d+22ClzqTDKRMUFgF8ZusQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31088993"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31088993"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 04:01:22 -0800
-X-CSE-ConnectionGUID: rcCRq3O5TAKxfIenzt6Qsw==
-X-CSE-MsgGUID: Vp/HE32DSgeoXzxisVcxYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="124453001"
-Received: from lkp-server01.sh.intel.com (HELO dc8184e5aea1) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 11 Nov 2024 04:01:19 -0800
-Received: from kbuild by dc8184e5aea1 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tAT6a-0000G9-1N;
-	Mon, 11 Nov 2024 12:01:16 +0000
-Date: Mon, 11 Nov 2024 20:01:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhao Qunqin <zhaoqunqin@loongson.cn>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
-	bp@alien8.de
-Cc: oe-kbuild-all@lists.linux.dev, linux-edac@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@xen0n.name, tony.luck@intel.com, james.morse@arm.com,
-	mchehab@kernel.org, rric@kernel.org, loongarch@lists.linux.dev,
-	Zhao Qunqin <zhaoqunqin@loongson.cn>
-Subject: Re: [PATCH v7 2/2] EDAC: Add EDAC driver for loongson memory
- controller
-Message-ID: <202411111918.lhNjQmXB-lkp@intel.com>
-References: <20241111060939.5349-3-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1731326507; c=relaxed/simple;
+	bh=8PYbB3UhG4WQUHRgPqR55J69aoM3qRSSFc6AA5VVsS8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YhdNaKgZCY6Ev1gh7OFb03FQGMMagyR71XFdkPOQ7IyS1RW7UtCqTaGQsWRzhOsqukRJPrBKfqi+YTKm/uYfZFgDM7534dfxlbxxuDFb/0AJHcdmjQzOBrvQg9ww6doK4PKdGSgX64/uzuXy7EFCPB2x/Bbmw8HNM6/vLqunf/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jsug0prW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so36073335e9.0;
+        Mon, 11 Nov 2024 04:01:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731326504; x=1731931304; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/oZnAKGebo1Vl/ZvvJkLq5df9Ai1X51Vud6nztCpA1I=;
+        b=Jsug0prWNTj8Kz6FANV1vyEDROTCQaX7vljZZaMn9ph5aPM3f9UWylueqCRQBhmJrc
+         Qt/MpPvKkjr6frRxohqiO4iN0nUYh6YbGlNT24MhY6RchPNCTpuNsGJ5nsir6CSmijuz
+         N5IkRFl9DdAMWHkOVGtQO1xWfLlCARJ4KfSBQwH0pfSmRWoMSkcIw+zQxkvs5TUbCdO6
+         ruyDGOSJRGC5/hOcAGRGlu8vZFCeJ7kyHVbUg6OscCT8G7M53iug1NLbRVta2iY5sPwO
+         ok0tCy47W2AIj+HZuk7aKOjRI+wqhdZ6rYoNnwlpl5MW1oUrywpXfrdSHy/gfVFsnnEd
+         e7BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731326504; x=1731931304;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/oZnAKGebo1Vl/ZvvJkLq5df9Ai1X51Vud6nztCpA1I=;
+        b=W/0x0Di/+gPaKW8gGNHZpuBQF03ye/mvbziM3eqfZJbRv4/XC6tPQaUpF+SolNuwj2
+         ru/BJqywnahmHJWEznFGAfqFyiO+jq5LUszqo5549wl9/0iH2tCMgp0S2x84GKdhAC1z
+         KJuEyc0jjurantuhmSsQJcaxpYFpwtcVP1wLtctT27aGaUcikdjIfJuIHGWMRIhqfMFk
+         B+upU/6JeLt+5dxTYhCdB/Ps53B4i9Y5skCJ4KybBynTxpxE1YekC+Ybt6lmmq6KninP
+         wnzia/Rr7O4YehUYh9yE5ndC68xacWq9s4G/yc9x1WpKiQq25O8pHZvJcFT8CtXhL4W1
+         DX0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWLcq8wUQSTiOM66wh55do20bAa06KTNYbD7a87fC5uXJpnLw5pmspl52ZkeR5Fz22Ajusy2/oUWQa8iJs=@vger.kernel.org, AJvYcCXo6t0+unZOa1SwK753ls9jKOziARwOtHT4An1icDEe49Z4kUoocD41HYJkR7zeZpxGC67/cxyvjGZa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyduPnQDHNZrgNGx8lYhB95rVWqvf8MFmrXKURxv0s+NC7Y9Yt4
+	mDXoC+4MNxxyEwMxXcca83AekiE07b/u/vxPpwW+Zk5r8CDs3HeW
+X-Google-Smtp-Source: AGHT+IHljxaWn/UibrMneKIAtzR793B76Pd/t1oDzAkMwnIojSoUiAZuudI8jfQF41wlqTXqOC/TjA==
+X-Received: by 2002:a05:600c:3b2a:b0:431:5aea:964 with SMTP id 5b1f17b1804b1-432b7509769mr103767555e9.19.1731326504049;
+        Mon, 11 Nov 2024 04:01:44 -0800 (PST)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0562860sm173490545e9.22.2024.11.11.04.01.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 04:01:43 -0800 (PST)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: snovitoll@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	oneukum@suse.com,
+	syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH v3] usb/cdc-wdm: fix memory info leak in wdm_read
+Date: Mon, 11 Nov 2024 17:01:39 +0500
+Message-Id: <20241111120139.3483366-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CACzwLxjD0PceaD27Ya6fFxKnSQZajtG2sEArqX6toS8SjNcinw@mail.gmail.com>
+References: <CACzwLxjD0PceaD27Ya6fFxKnSQZajtG2sEArqX6toS8SjNcinw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111060939.5349-3-zhaoqunqin@loongson.cn>
+Content-Transfer-Encoding: 8bit
 
-Hi Zhao,
+syzbot reported "KMSAN: kernel-infoleak in wdm_read", though there is no
+reproducer and the only report for this issue.
 
-kernel test robot noticed the following build errors:
+The check:
 
-[auto build test ERROR on e14232afa94445e03fc3a0291b07a68f3408c120]
+	if (cntr > count)
+		cntr = count;
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhao-Qunqin/dt-bindings-EDAC-for-ls3a5000-memory-controller/20241111-141155
-base:   e14232afa94445e03fc3a0291b07a68f3408c120
-patch link:    https://lore.kernel.org/r/20241111060939.5349-3-zhaoqunqin%40loongson.cn
-patch subject: [PATCH v7 2/2] EDAC: Add EDAC driver for loongson memory controller
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241111/202411111918.lhNjQmXB-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241111/202411111918.lhNjQmXB-lkp@intel.com/reproduce)
+only limits `cntr` to `count` (the number of bytes requested by
+userspace), but it doesn't verify that `desc->ubuf` actually has `count`
+bytes. This oversight can lead to situations where `copy_to_user` reads
+uninitialized data from `desc->ubuf`.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411111918.lhNjQmXB-lkp@intel.com/
+This patch makes sure `cntr` respects` both the `desc->length` and the
+`count` requested by userspace, preventing any uninitialized memory from
+leaking into userspace.
 
-All errors (new ones prefixed by >>):
+syzbot report
+=============
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ wdm_read+0x227/0x1270 drivers/usb/class/cdc-wdm.c:603
+ vfs_read+0x2a1/0xf60 fs/read_write.c:474
+ ksys_read+0x20f/0x4c0 fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __x64_sys_read+0x93/0xe0 fs/read_write.c:627
+ x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-   drivers/edac/loongson_edac.c: In function 'read_ecc':
->> drivers/edac/loongson_edac.c:28:15: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
-      28 |         ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
-         |               ^~~~~
-         |               readl
-   cc1: some warnings being treated as errors
+Reported-by: syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9760fbbd535cee131f81
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+---
+Changes v2 -> v3:
+- reverted kzalloc back to kmalloc as the fix is cntr related (Oliver).
+- added constraint to select the min length from count and desc->length.
+- refactored git commit description as the memory info leak is confirmed.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+Changes v1 -> v2:
+- added explanation comment above kzalloc (Greg).
+- renamed patch title from memory leak to memory info leak (Greg).
+---
+ drivers/usb/class/cdc-wdm.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-
-vim +28 drivers/edac/loongson_edac.c
-
-    18	
-    19	static int read_ecc(struct mem_ctl_info *mci)
-    20	{
-    21		struct loongson_edac_pvt *pvt = mci->pvt_info;
-    22		u64 ecc;
-    23		int cs;
-    24	
-    25		if (!pvt->ecc_base)
-    26			return pvt->last_ce_count;
-    27	
-  > 28		ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
-    29		/* cs0 -- cs3 */
-    30		cs = ecc & 0xff;
-    31		cs += (ecc >> 8) & 0xff;
-    32		cs += (ecc >> 16) & 0xff;
-    33		cs += (ecc >> 24) & 0xff;
-    34	
-    35		return cs;
-    36	}
-    37	
-
+diff --git a/drivers/usb/class/cdc-wdm.c b/drivers/usb/class/cdc-wdm.c
+index 86ee39db013f..dd7349f8a97a 100644
+--- a/drivers/usb/class/cdc-wdm.c
++++ b/drivers/usb/class/cdc-wdm.c
+@@ -598,8 +598,9 @@ static ssize_t wdm_read
+ 		spin_unlock_irq(&desc->iuspin);
+ 	}
+ 
+-	if (cntr > count)
+-		cntr = count;
++	/* Ensure cntr does not exceed available data in ubuf. */
++	cntr = min(count, (size_t) desc->length);
++
+ 	rv = copy_to_user(buffer, desc->ubuf, cntr);
+ 	if (rv > 0) {
+ 		rv = -EFAULT;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
