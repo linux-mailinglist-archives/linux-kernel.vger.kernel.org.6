@@ -1,203 +1,237 @@
-Return-Path: <linux-kernel+bounces-403716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33A39C3987
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:11:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 522F59C398E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:17:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5AB1C209B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:11:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D848C1F2127B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F415C15B;
-	Mon, 11 Nov 2024 08:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D7159565;
+	Mon, 11 Nov 2024 08:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SCjNU1ay"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qITuv7Z3"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6120820B22;
-	Mon, 11 Nov 2024 08:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FCF14885D;
+	Mon, 11 Nov 2024 08:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731312699; cv=none; b=Vk1arJYaNGO39x1vYcDzRRE/A+okmrJStiGChC9Q5Jio5k/EnLkOgyUfu43GfvbgkZS1l3iskf4oXtySKdq2sKti9o7WdFZstsr5X6QuLgCWnTGtKD7I+44WFhsgva55pLxHPkTdGFBAq+8c8sxfrUQI84X6Br5XvTWbof+wGDs=
+	t=1731313014; cv=none; b=TMnhXxBsz1BZ0u9CdU+JPB7s1IPxbEWk0lfTIUl4FpRs/3lv9bkNbvrFQgzx7ns8luom83cMmUQ6Rj9HNWWrDLy4waB6USv+L9hDi1+Omgx8cBcSau76fdFFJTcsTTwVgwmA5vmUKLkg1w88TZwjUzco7A+wdo9dTXkUdbRVaqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731312699; c=relaxed/simple;
-	bh=6jJwGR0OZ353UMWH14ChXmJeglWJyzDkeiqIAP0cUxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tMw2m52GPp8v1IculZBjsQIDI5zL18Z1jqHbqn7OWuG15SOVVS8BLdBpeWTkrYXigVGCJd9thMeFLTpgP3lHzm5LJs8Xh3l9V+rPNKRQlSI324yVe0vsowZEYQ1bEkRg588lKZOpGYyegB/D/eLQszJt+henF9fehJvWI3CnXUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SCjNU1ay; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731312697; x=1762848697;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6jJwGR0OZ353UMWH14ChXmJeglWJyzDkeiqIAP0cUxY=;
-  b=SCjNU1ayPbVReZIuXu7ZpVuIUDOjXAskh1qxYFFwuJEbxv6nN/k0VCfN
-   zXIEnbUhlMyTR0pwnFt1b7Gik4H0U4ZZSbGP44pm0yFGCZvGdJ54NbQLS
-   Blb212lZ1B0C4zUI32oCvXSDWbzLW0Z5cT/Q15NsEjozy82q0gftMplub
-   KKakVAjfvaacBQfUMLQhss8DzDPvp3Ai6vhzAXqfmcbAdsVh037FEtpiQ
-   +bT51dvOlFtx1SmlX1rQdbVL1PDz05wlz4lm7SNZX/gsau8kibf1YvDjd
-   DaxbqkDSrfIrxuOMYSUZknO9zljtiY2zrKZyORagCW7ugneeHNfzjeCFR
-   g==;
-X-CSE-ConnectionGUID: LJhndhDzQKCII51nSIuXMA==
-X-CSE-MsgGUID: z2zq8dCOQq6+nCqHkWD+7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="48627845"
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="48627845"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 00:11:36 -0800
-X-CSE-ConnectionGUID: 9UvOKwY+QPaH+OraXzd1iw==
-X-CSE-MsgGUID: E5WE2EC5QXKGuu4eJJefXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="86962891"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 00:11:31 -0800
-Message-ID: <48df0005-34d1-4bac-9517-16dc6018aa85@intel.com>
-Date: Mon, 11 Nov 2024 10:11:27 +0200
+	s=arc-20240116; t=1731313014; c=relaxed/simple;
+	bh=VQZwEOVPHd1umSAmuNBGweXntUbY7S80zDGI2rUq5hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S4nCtGMY85IZWph0L7mf55AHhUK/RrQVRRz61f920Xhz+xgJGMb/8WsOoI9dZBrnbOVc3lTqK7+TbqCDpz2vVPba/2w5hIfS42vnopJ8bl0p0YMyyG+wIGYdvsKgFIhGAyP1gkBOLYbUvseFSiyyicLO4ZkID5jgF/JCY2aTkg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qITuv7Z3; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731313000;
+	bh=VQZwEOVPHd1umSAmuNBGweXntUbY7S80zDGI2rUq5hU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qITuv7Z3Z+2AGeFFdBwGhIITdYYrghAQOP1NLbOU1s1XlV4cOPg7FKXyItb1sgl7y
+	 j7A2KtEXcBhjwOkQjFh5zPGrgSi7SETFdMadTac2zNl4G9uus1cung9GWovM9D6SaB
+	 mp7xrz4yy9JxzSCRSINOH/jn2j7AkQDswDmhZRiA=
+Date: Mon, 11 Nov 2024 09:16:40 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@weissschuh.net>
+To: "Sung-Chi, Li" <lschyi@chromium.org>
+Cc: jdelvare@suse.com, linux@roeck-us.net, bleung@chromium.org, 
+	chrome-platform@lists.linux.dev, linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (cros_ec) register thermal sensors to thermal
+ framework
+Message-ID: <88c75cba-d8a3-42a4-92fb-d041c9709f47@t-8ch.de>
+References: <20241111074904.1059268-1-lschyi@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] mmc: sdhci-msm: Ensure SD card power isn't ON when
- card removed
-To: Sarthak Garg <quic_sartgarg@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
- quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
- quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, kernel@quicinc.com
-References: <20241105093513.16800-1-quic_sartgarg@quicinc.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241105093513.16800-1-quic_sartgarg@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111074904.1059268-1-lschyi@chromium.org>
 
-On 5/11/24 11:35, Sarthak Garg wrote:
-> Make sure SD card power is not enabled when the card is
-> being removed.
-> On multi-card tray designs, the same card-tray would be used for SD
-> card and SIM cards. If SD card is placed at the outermost location
-> in the tray, then SIM card may come in contact with SD card power-
-> supply while removing the tray. It may result in SIM damage.
-> So in sdhci_msm_handle_pwr_irq we skip the BUS_ON request when the
-> SD card is removed to be in consistent with the MGPI hardware fix to
-> prevent any damage to the SIM card in case of mult-card tray designs.
-> But we need to have a similar check in sdhci_msm_check_power_status to
-> be in consistent with the sdhci_msm_handle_pwr_irq function.
-> Also reset host->pwr and POWER_CONTROL register accordingly since we
-> are not turning ON the power actually.
+Hi!
+
+On 2024-11-11 15:49:04+0800, Sung-Chi, Li wrote:
+> cros_ec hwmon driver probes available thermal sensors when probing the
+> driver.  Register these thermal sensors to the thermal framework, such
+> that thermal framework can adopt these sensors as well.
 > 
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
 > ---
->  drivers/mmc/host/sdhci-msm.c | 20 ++++++++++++++++++--
->  1 file changed, 18 insertions(+), 2 deletions(-)
+>  drivers/hwmon/cros_ec_hwmon.c | 69 +++++++++++++++++++++++++++++++++--
+>  1 file changed, 66 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e00208535bd1..443526c56194 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -1516,10 +1516,11 @@ static void sdhci_msm_check_power_status(struct sdhci_host *host, u32 req_type)
+> diff --git a/drivers/hwmon/cros_ec_hwmon.c b/drivers/hwmon/cros_ec_hwmon.c
+> index 5514cf780b8b..4b1ea431e3d2 100644
+> --- a/drivers/hwmon/cros_ec_hwmon.c
+> +++ b/drivers/hwmon/cros_ec_hwmon.c
+> @@ -7,20 +7,31 @@
+>  
+>  #include <linux/device.h>
+>  #include <linux/hwmon.h>
+> +#include <linux/list.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/cros_ec_commands.h>
+>  #include <linux/platform_data/cros_ec_proto.h>
+> +#include <linux/thermal.h>
+>  #include <linux/types.h>
+>  #include <linux/units.h>
+>  
+> -#define DRV_NAME	"cros-ec-hwmon"
+> +#define DRV_NAME		"cros-ec-hwmon"
+> +#define THERMAL_VAL_OFFSET	200
+>  
+>  struct cros_ec_hwmon_priv {
+>  	struct cros_ec_device *cros_ec;
+>  	const char *temp_sensor_names[EC_TEMP_SENSOR_ENTRIES + EC_TEMP_SENSOR_B_ENTRIES];
+>  	u8 usable_fans;
+> +	struct list_head sensors;
+> +};
+> +
+> +struct cros_ec_sensor_data {
+
+cros_ec_hwmon_thermal_zone_data.
+
+> +	struct cros_ec_device *cros_ec;
+> +	struct thermal_zone_device *tz_dev;
+> +	int addr;
+
+This is not an address, but an index.
+
+> +	struct list_head node;
+>  };
+>  
+>  static int cros_ec_hwmon_read_fan_speed(struct cros_ec_device *cros_ec, u8 index, u16 *speed)
+> @@ -185,11 +196,32 @@ static const struct hwmon_chip_info cros_ec_hwmon_chip_info = {
+>  	.info = cros_ec_hwmon_info,
+>  };
+>  
+> -static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_hwmon_priv *priv,
+> +static int cros_ec_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
+> +{
+> +	struct cros_ec_sensor_data *data = thermal_zone_device_priv(tz);
+> +	int ret;
+> +	u8 val;
+> +
+> +	ret = cros_ec_hwmon_read_temp(data->cros_ec, data->addr, &val);
+> +	if (ret)
+> +		return -ENODATA;
+> +	*temp = (val + THERMAL_VAL_OFFSET - 273) * 1000;
+
+Use cros_ec_hwmon_temp_to_millicelsius() and cros_ec_hwmon_is_error_temp().
+
+> +	return 0;
+> +}
+> +
+> +static const struct thermal_zone_device_ops thermal_ops = {
+> +	.get_temp = cros_ec_thermal_get_temp,
+> +};
+
+Use the cros_ec_hwmon symbol prefix.
+
+> +
+> +static void cros_ec_hwmon_probe_temp_sensors(struct cros_ec_device *cros_ec,
+> +					     struct device *dev,
+> +					     struct cros_ec_hwmon_priv *priv,
+> +					     struct list_head *head,
+>  					     u8 thermal_version)
 >  {
->  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> -	bool done = false;
-> -	u32 val = SWITCHABLE_SIGNALING_VOLTAGE;
->  	const struct sdhci_msm_offset *msm_offset =
->  					msm_host->offset;
-> +	struct mmc_host *mmc = host->mmc;
-> +	bool done = false;
-> +	u32 val = SWITCHABLE_SIGNALING_VOLTAGE;
+>  	struct ec_params_temp_sensor_get_info req = {};
+>  	struct ec_response_temp_sensor_get_info resp;
+> +	struct cros_ec_sensor_data *data;
+>  	size_t candidates, i, sensor_name_size;
+>  	int ret;
+>  	u8 temp;
+> @@ -216,6 +248,23 @@ static void cros_ec_hwmon_probe_temp_sensors(struct device *dev, struct cros_ec_
+>  		priv->temp_sensor_names[i] = devm_kasprintf(dev, GFP_KERNEL, "%.*s",
+>  							    (int)sensor_name_size,
+>  							    resp.sensor_name);
+> +
+> +		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +		if (!data)
+> +			continue;
+> +
+> +		data->addr = i;
+> +		data->cros_ec = cros_ec;
+> +		data->tz_dev = devm_thermal_of_zone_register(
+> +			cros_ec->dev, i, data, &thermal_ops);
 
-Please don't make unrelated changes.  The above 2 lines
-have not changed and should stay where they are.  If you
-feel the need to make cosmetic changes, make a separate
-patch.
+I'm a bit confused. The uses thermal configuration from OF,
+but this driver has no specific OF support.
+Can you provide a usage example in the commit message?
 
->  
->  	pr_debug("%s: %s: request %d curr_pwr_state %x curr_io_level %x\n",
->  			mmc_hostname(host->mmc), __func__, req_type,
-> @@ -1573,6 +1574,13 @@ static void sdhci_msm_check_power_status(struct sdhci_host *host, u32 req_type)
->  				 "%s: pwr_irq for req: (%d) timed out\n",
->  				 mmc_hostname(host->mmc), req_type);
+Does it not need a binding documentation update?
+
+> +		if (IS_ERR_VALUE(data->tz_dev)) {
+> +			dev_err(dev,
+> +				"failed to register %zu thermal sensor, err = %ld",
+> +				i, PTR_ERR(data->tz_dev));
+
+Use %pe.
+
+> +			continue;
+> +		}
+> +
+> +		list_add(&data->node, head);
 >  	}
-> +
-> +	if (mmc->card && mmc->ops && mmc->ops->get_cd &&
-> +		!mmc->ops->get_cd(mmc) && (req_type & REQ_BUS_ON)) {
-
-It would be tidier to have a separate fn for calling get_cd()
-e.g.
-
-static int get_cd(struct sdhci_host *host)
-{
-	struct mmc_host *mmc = host->mmc;
-
-	return mmc->card && mmc->ops && mmc->ops->get_cd ? mmc->ops->get_cd(mmc) : 0;
-}
-
-and put the other check first to avoid calling ->get_cd() for no reason:
-
-	if ((req_type & REQ_BUS_ON) && !get_cd(host)) {
-		...
-
-
-> +		sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
-> +		host->pwr = 0;
-> +	}
-> +
->  	pr_debug("%s: %s: request %d done\n", mmc_hostname(host->mmc),
->  			__func__, req_type);
 >  }
-> @@ -1631,6 +1639,14 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->  		udelay(10);
->  	}
 >  
-> +	if (mmc->card && mmc->ops && mmc->ops->get_cd &&
-> +		!mmc->ops->get_cd(mmc) && irq_status & CORE_PWRCTL_BUS_ON) {
+> @@ -255,8 +304,10 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	priv->cros_ec = cros_ec;
+> +	INIT_LIST_HEAD(&priv->sensors);
+>  
+> -	cros_ec_hwmon_probe_temp_sensors(dev, priv, thermal_version);
+> +	cros_ec_hwmon_probe_temp_sensors(cros_ec, dev, priv, &priv->sensors,
+> +					 thermal_version);
 
-If the card is being removed, how do you know mmc->ops
-won't disappear under you?  You need READ_ONCE otherwise
-e.g.
+cros_ec is already passed as priv->cros_ec.
 
-	const struct mmc_host_ops *mmc_ops = READ_ONCE(mmc->ops);
-
-so like:
-
-static int get_cd(struct sdhci_host *host)
-{
-	struct mmc_host *mmc = host->mmc;
-	const struct mmc_host_ops *mmc_ops = READ_ONCE(mmc->ops);
-
-	return mmc->card && mmc_ops && mmc_ops->get_cd ? mmc_ops->get_cd(mmc) : 0;
-}
-
-
-And again, put the other check first e.g.
-
-	if ((irq_status & CORE_PWRCTL_BUS_ON) && !get_cd(host)) {
-		...
-
-
-> +		irq_ack = CORE_PWRCTL_BUS_FAIL;
-> +		msm_host_writel(msm_host, irq_ack, host,
-> +				msm_offset->core_pwrctl_ctl);
-> +		return;
-> +	}
+>  	cros_ec_hwmon_probe_fans(priv);
+>  
+>  	hwmon_dev = devm_hwmon_device_register_with_info(dev, "cros_ec", priv,
+> @@ -265,6 +316,17 @@ static int cros_ec_hwmon_probe(struct platform_device *pdev)
+>  	return PTR_ERR_OR_ZERO(hwmon_dev);
+>  }
+>  
+> +static void cros_ec_hwmon_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct cros_ec_hwmon_priv *priv = dev_get_drvdata(dev);
+> +	struct cros_ec_sensor_data *iter;
 > +
->  	/* Handle BUS ON/OFF*/
->  	if (irq_status & CORE_PWRCTL_BUS_ON) {
->  		pwr_state = REQ_BUS_ON;
+> +	list_for_each_entry(iter, &priv->sensors, node) {
+> +		devm_thermal_of_zone_unregister(dev, iter->tz_dev);
 
+This shouldn't be needed, the zone will be unregistered automatically by
+the devm framework.
+This also means that .remove and priv->sensors can go away.
+
+> +	}
+> +}
+> +
+>  static const struct platform_device_id cros_ec_hwmon_id[] = {
+>  	{ DRV_NAME, 0 },
+>  	{}
+> @@ -273,6 +335,7 @@ static const struct platform_device_id cros_ec_hwmon_id[] = {
+>  static struct platform_driver cros_ec_hwmon_driver = {
+>  	.driver.name	= DRV_NAME,
+>  	.probe		= cros_ec_hwmon_probe,
+> +	.remove		= cros_ec_hwmon_remove,
+>  	.id_table	= cros_ec_hwmon_id,
+>  };
+>  module_platform_driver(cros_ec_hwmon_driver);
+> -- 
+> 2.47.0.277.g8800431eea-goog
+> 
 
