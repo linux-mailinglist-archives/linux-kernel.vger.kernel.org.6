@@ -1,216 +1,145 @@
-Return-Path: <linux-kernel+bounces-404019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45CED9C3E03
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:10:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8659C3DFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:09:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 693831C218CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FF902830F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DD319CC08;
-	Mon, 11 Nov 2024 12:10:12 +0000 (UTC)
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2090.outbound.protection.outlook.com [40.107.222.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECFB19ADA6;
+	Mon, 11 Nov 2024 12:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="B2A3pUY4"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D97B19ABC4
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731327012; cv=fail; b=LQIKxigTUUcZWqsdqly/iX6GxnzGGrPGfp/3WD8HKTkCSqirsj+yEoSkyc6+rYT4SY2hOSIJ2dQyrlFz4wOgyBKe+ISPP2AS6uGmqp1WexCuOeXegTOqXGqB4ZcWuE5IkcoUCvnAub50qiAvgZSNa8rx57Ewg1ATsH+3l7J8qsk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731327012; c=relaxed/simple;
-	bh=0k70XU2FEI2HZNK7UYrfxr0RQw9wWXw12veNPss7uo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SF4d/zNKRnTFT3lAZDSz7J5vlwc71f5RHWg5cluStm8nJSKDCbl6iyR47WStCDvuD1Jam9c7vlm9qS7zBQIy1sX3ILDSN18vklq1hu5yyNAaqK8RlGwQ5DtOdTFyDSWx0DMcgI9cX4vSuxgcH6vS8xq75zEd5E+11jqQCt4kGqE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ke8WOnsbQMIQgBYGVrznE43hCD+ORT1m8MI4lhtONIQMuk7jaW/KtdL+uAXcQg03BcOHCt+KKs936ploK6Tv28bS9jYD6ulMEiMVoSNHEVPeXyyo53TEtzLivkbUKL7d3e7GYMdoHcYusFNSzbQ8vOygX5lwM9E1iUpQ39ZXjndH9wc78YmcmWw4jbaoETWjonRV0bAnp9MMWMvHSIDnXKJYdNVBdMBpYBPF+pNGSs0POBkNGS3nkZdAyMqmP5mkK9znJNApd6P/AtABoXhMbOmYsi88siLgBIXLryKfFiTs9jarQ2ZqNaQJK9B2rmqLrf1GPq+SMmauORyeXr/uyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bw0cIZJ64UmjbmmNvP66gFrQvqnsPHnKXxghmuvnpPM=;
- b=UE1KKISRhb4/qwaJ5ouU/7LUeHCTTAgvSBYgxRSthwZRJKZKI6F1SmhCOE95+hOPf/gWP9kEGEa7Sr2u7rTBfEt7rC7I+KGtw8fsripyPjEN90rLtq8iqnMQ/lqAyVGxbgMfgH4eA+HkX+mKF3iKCHtgUkoaEK0dChCJzaK8HKV0JonYayXVHe8FcQCgtUrPVFP/d1495Plu8bu/YqBNTG5ZgyjEBqjT/tYmoq8wpuFwIpKbAdVozRLFdG8oT88tpDf73zqkNX+3p8nEnkbaHOjvOofbbrqy6vidkjO5BaiKv9jeJQJ3J/3fdonHoNhgQxuXq/7dfhRlrnKUhaSH2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN3P287MB1171.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1a1::5)
- by PN2P287MB0675.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:15d::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Mon, 11 Nov
- 2024 12:10:07 +0000
-Received: from PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- ([fe80::12a8:c951:3e4b:5a8a]) by PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- ([fe80::12a8:c951:3e4b:5a8a%4]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
- 12:10:07 +0000
-From: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
-To: alexander.deucher@amd.com
-Cc: tarang.raval@siliconsignals.io,
-	Bhavin Sharma <bhavin.sharma@siliconsignals.io>,
-	Chaitanya Dhere <chaitanya.dhere@amd.com>,
-	Jun Lei <jun.lei@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Kenneth Feng <kenneth.feng@amd.com>,
-	Wenjing Liu <wenjing.liu@amd.com>,
-	Roman Li <roman.li@amd.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Leo Ma <hanghong.ma@amd.com>,
-	Ilya Bakoulin <ilya.bakoulin@amd.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4B819ABC5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731326934; cv=none; b=MJbmVW4hVkWb1OeM+NwMMze/PZiPuj0WBevw+ul5c1HyRe72AXFlGZjRGz6gsHFcKAcyx5Nlqf99BTWlz7lsVwl4RJTm6FGZ5UJff+WZ/+xpXtw2HXb/y9N/EZ5uHpNULW8ZI/9SZ29e/9fTFiJW8UesmBskqKsvVqX8cioNZDw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731326934; c=relaxed/simple;
+	bh=zizQgxUJjUFrPYu/U95nAIDgqBgMs8uy7LcYBXmA8Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O23nNO8/C93bg+ZNEXcGdtufwWu985Flfkw9HUmLHyR9tS21fKrfBGzi+g2r47ITULU5WmJ0zPg2hFcskyZ4IenBTPve3Rzrl/oZlonASg5mrGxiWNRgI8PZBVdmuqeAx4WaD4GhDsVSzA73i3O9jgD9zgsfN9J4zYhJZdOUJI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=B2A3pUY4; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d5aedd177so2573458f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:08:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731326930; x=1731931730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zizQgxUJjUFrPYu/U95nAIDgqBgMs8uy7LcYBXmA8Hg=;
+        b=B2A3pUY4RTH0z5k4LtZuBVQU5bVNdW7ksm6fxZdDHUgG/B1SCIid5hDCFXn+wmX9ko
+         RwqFx9WHbmCp1sMgWgmH/wrft5IaT6Ot2h+Jsg7/FEmWern99iC2Zw5L12Iq8FBibq4N
+         NdgXCqawbGqEpZN/ZUhQBc4veuHMrhUDUdTNG8H7fYgy0agC4FdUMYAzblQIYGgpgiXM
+         iCzVa9sh4wkiZWkEPHLB1cTqDRZ/q7RkZq0yK2uTarVPpjdNZar+ZyP2dSnuvhytVKZo
+         8GYD6MvAg53gmQcw8MjxSsVt8XPgTiEnDgQyWBigPEpiQ/SHz+z2Ubb56sRqh/RJ/bbX
+         RkYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731326930; x=1731931730;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zizQgxUJjUFrPYu/U95nAIDgqBgMs8uy7LcYBXmA8Hg=;
+        b=oQIUZ2T2rpBbtOQz088UGxK1X9c7accX0LnuNodI7vxx4UQJUlhn01h8WsQ2F7Vz5e
+         h6aeT7nXQv36NzPm3IYI8Ndiqyxn27OHPqYo87oUNRKJv3Tq4/UFTXmenSGklWttEvuk
+         OHpI8/a4rlqoGn4Z6lTsFfnRT51i9izKndF3gB04Hu0dKGcysWNysbFzr/rtCJ6iWfFN
+         K4juEOGcl+yRXUcEKKKCknCRD0ojzjGyj1rkxN7WeNFRfnfIvkKV06+QG/hEjjzzLQLv
+         gP8Fc3fcfEq1GYwLwmS4fON6s/mrWc31hB5e+2bvo0i3WUQEJbHdP1mawWrrfHf1psbP
+         V8fw==
+X-Forwarded-Encrypted: i=1; AJvYcCX96gNN5hg+Uy+JLqwLzrEGtqqL4clf+jgNMXD8FBheWGW6lPJA775dJMRY57E3w0O/VUNTCeMSyEhhx04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ5oSH4H1FgAFHoS8CpyNtxB8hmom5C/kH3vxQDpRQxYo18Fax
+	byentm6HnWJNQIHJwKDNqLM2p+AzlkZQW7whxublSe8RaKwIE+cDLbSNq39cvp0=
+X-Google-Smtp-Source: AGHT+IESb2lgi5llcF/0yneUYuBGSTFn5srS4ez8tf3me+ouGpBVRxiy7S3mll8POcwSSd1avTopZw==
+X-Received: by 2002:a5d:6482:0:b0:37d:4517:acdb with SMTP id ffacd0b85a97d-381f172a860mr11659759f8f.20.1731326930553;
+        Mon, 11 Nov 2024 04:08:50 -0800 (PST)
+Received: from localhost (p200300f65f28bb0063ffae39110fa2df.dip0.t-ipconnect.de. [2003:f6:5f28:bb00:63ff:ae39:110f:a2df])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed97cd97sm12694879f8f.27.2024.11.11.04.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 04:08:50 -0800 (PST)
+Date: Mon, 11 Nov 2024 13:08:48 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/amd/pm: Remove redundant check
-Date: Mon, 11 Nov 2024 17:38:29 +0530
-Message-ID: <20241111120900.63869-3-bhavin.sharma@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241111120900.63869-1-bhavin.sharma@siliconsignals.io>
-References: <20241111120900.63869-1-bhavin.sharma@siliconsignals.io>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN3PR01CA0096.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:9b::13) To PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:1a1::5)
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than
+ the hardware is capable of
+Message-ID: <c2mdg4pn5rgjdlwet2gmgqvmym36ttlyg5ag2u62a3qtkdwqce@p45gyz5ghgel>
+References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
+ <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
+ <c94271b1-924b-4de6-b3bb-77e16265bb0d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN3P287MB1171:EE_|PN2P287MB0675:EE_
-X-MS-Office365-Filtering-Correlation-Id: f581f3b6-0b35-410e-8e0c-08dd0249c82f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CPR3SYnOrE9XThCcC3vY2ydvoV69/NrUolPcH/P+nkvQDOSBN980MSqW1X2c?=
- =?us-ascii?Q?o1BQW7lVlFb1CivVaz3zLqLOKJYV0GP4v/Q0ZI6/IYGSY/d6Oq1NTui5w43J?=
- =?us-ascii?Q?6Wlda92QvDqwQNcnLmgbBC+/7f3U83X8qH1mVdt4x2FpNIVoK0EaWtQCqOla?=
- =?us-ascii?Q?3tzNrHSBkWp2nmkHdz0V9Hu/2YXkmWQQQ9++EznvLMtKdQL5P06gbhICRKuO?=
- =?us-ascii?Q?ITIOIsaabfyY5guHqA0onmTmzaEV7PgYpSmYOAUxJkkrTcauUxlFZX+08tiV?=
- =?us-ascii?Q?JFcRi1lmbYM5+KD8O/7nwzORnLYDSM506iwLVNxXX0oaHAg2AfkzXpFqfTMi?=
- =?us-ascii?Q?MIKyhpG+8OygAq1+m+9sP7XbD3zRigZqEs0aoev2lpOwOvZhPnDnw3izTQ+f?=
- =?us-ascii?Q?pPdWF6R/uAZ6uAgZh0RFZahRqwaUyJY7koY23L8QKiWZO7D/IhrSDjjKdrIL?=
- =?us-ascii?Q?IXecvsSocMfJXKI4oFnyQONrHJcB6p19I5UKcXx7oEyvj0dvBvlPI/1xMKW3?=
- =?us-ascii?Q?K4uTflIjpVbqs39NROcnj3lw3u+ZiHmbEaP813R2zZsCJMIgmwpjcpUKmZRL?=
- =?us-ascii?Q?W25QRy3xCuMHn17va8dhmjOK679KHgJ8Vt0IpvQZVkuQZ7lP3hOWQ1hE3Tr+?=
- =?us-ascii?Q?a85m0+l7mIrxJn8uzjijun5ei4FLqftgoKKRKUHCPf6Cc45R4oWO2eyz8Axj?=
- =?us-ascii?Q?lGmALp+PpCUrdujWhlMXCCVKGwU5QbuFR3Bi7lPs/6mgJ5M7urUC2MUYbVqi?=
- =?us-ascii?Q?6h/ZkRPnse7BfiZnecn8WAQElSMwcdwjsJ2Fi7IRMMJodn82QFzeioo6KAUt?=
- =?us-ascii?Q?xZrFzhayKTPSbRfMcuQC6m8PTleAfEcWFz431j/64J7mZgN5tR0i7O7Jta7l?=
- =?us-ascii?Q?A9NL2fAWMKzsMm5U2f+V9vqwysQMdG281Gxld69PPCCwtVAJWmJ100EHdGWT?=
- =?us-ascii?Q?MQp6XWRp28CHLTd7EJ7qOrp0PPd6gqLqGPCLIlPAGzoT03RYxeSQRsEvXirZ?=
- =?us-ascii?Q?fQdpFnxlnvEvoVBshJ4oR5DcVwob1u3TQ83ljV97/2uRSyQ+/wbMUzs30YAd?=
- =?us-ascii?Q?OWY1qZoGfWfp42gxnU7IGO6+P0iMbXGqY9Utf5JTt+1pOumSP1lsYl8hmLq1?=
- =?us-ascii?Q?CmxSCfUWXLNEuIIlrerpIPKBs2/K1ZgZ6qVgXEt+sRlCU5FKcgwq6M/ciOM2?=
- =?us-ascii?Q?NGIRT6avv4mbSXZwy9YZ1Y1wi1MVb2NWhdVoggL3aozOTxo9qap9lXOSa+re?=
- =?us-ascii?Q?CyEKw5wnQWnTYnrpeBOjKGrbvLffyAngZpuUXwCcpQW4x//0lebPQi30HFBN?=
- =?us-ascii?Q?Nm7ccc0DwiRiifJOqsXlaPhGACG8AYAJvgts699A8IVeV8FFJ+LZf8eArlJJ?=
- =?us-ascii?Q?WVtJ2hs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1171.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HYM+DYDOjYPSKEdF/uh5AcAKWOxiQm5G//xWKo8ZTPCZ/Wg4gphbw5WlEEJH?=
- =?us-ascii?Q?68JYNCmHaFkzFL2nRveY8PIJdz3wRnFwkj/sxSQrm+447F7baBCVDgWEMjUS?=
- =?us-ascii?Q?uxAeEMfqNIifEyDYg9k2R8mIwk4I1uuxIBeEKMoQUHdSymKA59p2lwqTrYAK?=
- =?us-ascii?Q?lXJeK6AxAvQDuqjdP6lfR95w1FemKEmk3ZAwhCYfAuhWArZr57yEq8V80gxT?=
- =?us-ascii?Q?gHHnMnsxvAqxUF5pY6N2tT3IjsW3u/Uvwqw8pP0K6ctbSj2wKhvl7LALYbDs?=
- =?us-ascii?Q?JdQ9au+M32OzjHhC704FTrzcumbxTNR4Vq5J0Z3SJhbwJClP5Bx5fKDRbqnK?=
- =?us-ascii?Q?oul/S7rjReTs77PWBF2NCLg+fkBkQVOw66YVIVQByobJslVFBfWskH+iSlhD?=
- =?us-ascii?Q?+dyazdsneJ2pkrJy7X2NFYY2pzyAkAnjit3Z01IYAlioSYNJHHSNZPsjbU6F?=
- =?us-ascii?Q?4eNMoFtTRJdbcKdCwC/l3Kn7o3q85QBN5bc8Yuk/Mqbqw9OvB4FLcHddBQpp?=
- =?us-ascii?Q?3eNe6yPFqg91cVj/APjLrLy4TegKM4JFyEPurzHwPvD9h1b9wsqLJM35znho?=
- =?us-ascii?Q?G6ssOO1pX49q2B4gY1haUWKEnvSe2+FkUO8kzgOjQ/3yAcQRwTzUKQid6qOn?=
- =?us-ascii?Q?lM9UJwEFoqVq2wz9T1fsSNoSmcOjmNjK98wIIf5ZQ9GFGI/ea50g319nvKcw?=
- =?us-ascii?Q?LRWDzcXmtYJEjka4qPajJVub659r6jG5lwBWMnIt5CjJpfk5quH1ZEz3gt+Y?=
- =?us-ascii?Q?ixVvRUAEPxiMIgM+4KvTPMyo2Tw97I0q1xBrW3XeLIxkFSJ9zYr8nQtSQ2X+?=
- =?us-ascii?Q?KWl5+XAhxGS7XnZ33vudZmNE9p2KmzIJswtP5RQE6gUkbDTwwEEhGNPXO+s+?=
- =?us-ascii?Q?HcDWkwquv4xJ4GgCJuTMDp2vgRvD/LX3KBMh7RzwFY/WeD6casluHeH6GWtf?=
- =?us-ascii?Q?zdUXo5ZNBTwBoP+SC2smCVLG9jvM2Gd1CDS0vpSwRH61aNJdj6P6L5R4omIe?=
- =?us-ascii?Q?Z/jLSqhl83iOi15SBDFPyD91wqUVmmRi5Jjb7UcmRMkbglmCUQ7Yn0FX+Alc?=
- =?us-ascii?Q?FtYvtJDakEy1Ft10luxTGn7+d5wru5t7Y1qBXu9o0FmJaLq2ixCAMzBw/pm7?=
- =?us-ascii?Q?gJ389iYTwM2OD+n5MmdKFCs1FGaNRsVL55ZPCOn+5uU4xwok4kdUOhO5eMNt?=
- =?us-ascii?Q?GGVfqHhANmIhVNeL8V2E/hTwsj22ob+0JLFikztItC6ZyXU/BUT1gXuRJQJc?=
- =?us-ascii?Q?/PAIR+deZuMy4sWaPaVprUxybrx7+3rV2pSYvgrOV0dBlV0YALfbQSTa97vc?=
- =?us-ascii?Q?PecgBe8kspdzQvRWBKWvCzqgo7DjiQqt7H4sdH3ULnxf/422WlP70npzgQrS?=
- =?us-ascii?Q?2/9e4ElasHmI5WbJfdhKmbny8VhNR3VBgZBc/qDU38oLrieCS4OV7vYlmtAP?=
- =?us-ascii?Q?zDN4jOHXn59EZyqcXr4zC3SuqMEtIgjz4lx1rGSi7u0NpXR/yxD0LgXkHK1t?=
- =?us-ascii?Q?eAC2/cQvjt0z4ZZqQ5Wh97RCEVqKe7Pjmq2l3pvBgFb1oIoGazkvDQYoJhx9?=
- =?us-ascii?Q?lp3xfL2zIhRvXqBmQhSLuROG5VxZ4jGKtRxD7zGXBOzRGgNTz5RKA8mLj8bC?=
- =?us-ascii?Q?Vyz8dg1iHDtaW9g1ehfkuro=3D?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: f581f3b6-0b35-410e-8e0c-08dd0249c82f
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1171.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 12:10:07.1688
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jYW95vwFqZNKYApztPxhJVLvGjWL8Y3y4aPe7j+XuFIvpMtxKJ23c+EOy3UOrToBCFev+0ygC7njGPzWO/HpkP/jzHkG6HXxo10ptHOfoZw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2P287MB0675
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gi7kmm2hjevdp2sm"
+Content-Disposition: inline
+In-Reply-To: <c94271b1-924b-4de6-b3bb-77e16265bb0d@baylibre.com>
 
-The check for tools_size being non-zero is redundant as tools_size is 
-explicitly set to a non-zero value (0x19000). Removing the if condition 
-simplifies the code without altering functionality.
 
-Signed-off-by: Bhavin Sharma <bhavin.sharma@siliconsignals.io>
----
- .../amd/pm/powerplay/smumgr/vega12_smumgr.c   | 24 +++++++++----------
- 1 file changed, 11 insertions(+), 13 deletions(-)
+--gi7kmm2hjevdp2sm
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than
+ the hardware is capable of
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vega12_smumgr.c b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vega12_smumgr.c
-index b52ce135d84d..d3ff6a831ed5 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/smumgr/vega12_smumgr.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/smumgr/vega12_smumgr.c
-@@ -257,20 +257,18 @@ static int vega12_smu_init(struct pp_hwmgr *hwmgr)
- 	priv->smu_tables.entry[TABLE_WATERMARKS].size = sizeof(Watermarks_t);
- 
- 	tools_size = 0x19000;
--	if (tools_size) {
--		ret = amdgpu_bo_create_kernel((struct amdgpu_device *)hwmgr->adev,
--					      tools_size,
--					      PAGE_SIZE,
--					      AMDGPU_GEM_DOMAIN_VRAM,
--					      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].handle,
--					      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].mc_addr,
--					      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].table);
--		if (ret)
--			goto err1;
-+	ret = amdgpu_bo_create_kernel((struct amdgpu_device *)hwmgr->adev,
-+				      tools_size,
-+				      PAGE_SIZE,
-+				      AMDGPU_GEM_DOMAIN_VRAM,
-+				      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].handle,
-+				      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].mc_addr,
-+				      &priv->smu_tables.entry[TABLE_PMSTATUSLOG].table);
-+	if (ret)
-+		goto err1;
- 
--		priv->smu_tables.entry[TABLE_PMSTATUSLOG].version = 0x01;
--		priv->smu_tables.entry[TABLE_PMSTATUSLOG].size = tools_size;
--	}
-+	priv->smu_tables.entry[TABLE_PMSTATUSLOG].version = 0x01;
-+	priv->smu_tables.entry[TABLE_PMSTATUSLOG].size = tools_size;
- 
- 	/* allocate space for AVFS Fuse table */
- 	ret = amdgpu_bo_create_kernel((struct amdgpu_device *)hwmgr->adev,
--- 
-2.43.0
+[dropped Mircea Caprioru from Cc: as their address bounces.]
 
+Hello David,
+
+On Fri, Nov 08, 2024 at 12:52:35PM -0600, David Lechner wrote:
+> On 11/8/24 12:18 PM, Uwe Kleine-K=F6nig wrote:
+> > The ad7124-4 and ad7124-8 both support 16 channel registers. Don't
+> > accept more (logical) channels from dt than that.
+>=20
+> Why should the devicetree be limited by the number of channel
+> registers? Channel registers are a resource than can be
+> dynamically assigned, so it doesn't seem like the devicetree
+> should be specifying that assignment.
+
+Note the device tree isn't limited as I didn't adapt the binding. It's
+just that the driver doesn't bind if too many channels are specified.
+And while your statement about the channels being a dynamic resource is
+right, currently the driver doesn't cope and allocates resources
+statically, and happily assumes there is a CHANNEL_16 register if the
+device tree specifies 17 (or more) logical channels and writes to
+CONFIG_0 then which very likely results in strange effects.
+
+So as long as the driver doesn't implement this (possible) dynamic
+mapping to the CHANNEL registers, it's IMHO right to refuse to bind (or
+alternatively only use the 16 first logical channels).
+
+Best regards
+Uwe
+
+--gi7kmm2hjevdp2sm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcx884ACgkQj4D7WH0S
+/k5H9QgAp/z9QnQ+sHCZdd1yNdGqXRp99Z5F8+7pq9w0DDblAy098aK0u2OOhbg0
++Ts38CwizZ6LrPTuYfpkkPPH+03i5ZKb2vFdJSLgPVJve2kwSxELpu6S4oR+p1nh
+5a9O9xou5u1cXL9R39df4I98zdPaz+CKM430/iJFhzcPDqkC7PyqTgia9l7QWVSG
+T2W/cIEBXyoH/SJcLt53hGi7ZXetbXA8Zp9RM6ZZJ1szBtB4SoHcRVslT1tMDk2q
+jd2hiHWOu6DrZvMb5F26Oq2vL9uv4cM8eBiT3EzsufW5aeo5CB6DMdacorsQjKEe
+PlFARzxFj/M59Df0ctC6uNQllbe8Aw==
+=LIet
+-----END PGP SIGNATURE-----
+
+--gi7kmm2hjevdp2sm--
 
