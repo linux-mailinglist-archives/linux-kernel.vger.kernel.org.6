@@ -1,288 +1,175 @@
-Return-Path: <linux-kernel+bounces-404302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8219C4227
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:50:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EF49C4229
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:52:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF3A3B22876
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E5D2868C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5BA19E98C;
-	Mon, 11 Nov 2024 15:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EBD19E99C;
+	Mon, 11 Nov 2024 15:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zc8RP/56"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="UDuNNtgK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RXlIDeTX"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E4A6026A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448A125777;
+	Mon, 11 Nov 2024 15:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340194; cv=none; b=r3EHg6VjUBGaDoneAMsLBVC04GkccWLFAyMCLr8dSDlgx54n8cM8oiNLJuQM5iEu0O7vJGm2mmoICLHnTwFdm2lWI8kEv31fx/sk6HePgWAva3M1i5KWEzg4JRHx6AE0TmCxMSPr4HgE8fOYvgCwUk33t+VM+n0GVcyK2yAyF24=
+	t=1731340313; cv=none; b=hX+lkmotTQP62veEl7WrB3d/3zIF3VRDG1MoDUvEA1hcYQ/1uqisW/UitafnT+9pIZIM5PWBuoPX8w7L7kOwrHD398YihaoXmN2LJV+/wlxwZBmJxwm5dbty44aUIlW0rmPj4onBbnfXUashXeJ+th/uTWN61kScn4cJ9JOrCoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340194; c=relaxed/simple;
-	bh=MZuDi8YiFcvSQY2GhW+yLY67xviqlcVS6wLgx7J3BBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=eLFz5UhRsDjEiHmOxZkolx6OCIPZwMvJSexuGoPkaDIgft3e/EEIxz2p5AOxI+C3g6OUzLUnyw9iwl4RMk3/1mtLHncuNvSzf3HvWPku8PQ1fyHmBIzwrLZGz2r/U+fRFgpns/riA4NYLEgIwvGCuyKoG0pif6AL7Ov3ELK4Xoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zc8RP/56; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so37453435e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:49:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731340189; x=1731944989; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=7ZiuG6vO285AeoXa2+/Nuxw8bBquuL6RNvtIRl6EjA8=;
-        b=zc8RP/56Y076lvGsUqUsubptJI4v4LekD9kjBJAZYSuTnWrdiNOQ5pnGK+vyoiY/UF
-         cqcf3m1I4dgiOwKTrZ/bU+0jI+HIPu4D0ftrkqLrumviqafUizrhpg8s3dfAS1yRTd4i
-         3X5ITEqoplu9Wtn4GYn0yjAc9gBKrzft5Oh0ZIqSyggMda6jgatxqQI6MFJJCVrshe/M
-         NBV7rZtvXi4akd8L/1R7R0o+BMOnrzjLt6ie++skXHnENM7Bsod4bgYzvFgyA4/yjxdr
-         5pymQ+4pYk+8H/I+CSp8Nqmj6MaTmncD0iAb36aTMhdVV+qaq/14luwUsyu/QnQ7W56C
-         wTrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731340189; x=1731944989;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZiuG6vO285AeoXa2+/Nuxw8bBquuL6RNvtIRl6EjA8=;
-        b=H7Iz0GGNOZbHCtc+bLmCaNHoi2aJiwjFpuJTaFIE6Ml2YcmYGVOcalrdxj8HEnNeVB
-         hqC37VTnKoCaOTb6IAcln3tMXi9tIJPporvFdxx1g7gPBJhBPmdK5ky9vzOodyahRt/7
-         ikTspX8RoyqN6y6VB5YZ9GzOKFUaRTY4Fpio0/zVPhYQr+wsTfHniOi+ZTKIVQ/+Qrim
-         TYrOANFPRMjOfQDO99khUsfvMumMy1mZ5qFfo9YQUbqWHpoUuSdeuYUIXz99d2Tbipg7
-         AFbKaY65JovBUWr0A5maCg8m8IB1eVYCgqwisSHz/XyEwjGrQaePLzd4bPxMxtEzcYO1
-         D1DA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4gKXX6GPS9Awo0fTOPW/eXxOowjYPUw1o0X4QHnes84Ral1FGFeqw95XbKafFpxEHAk7dqy2rv4a3C1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZbqcIZPpqYjmkCotoP1gCGHH51mvPQc6ZvrpPcKCidZhO7Ypr
-	Ag2v0WU1l/7l/7N2dpSfX2SfS5VMwfcDNIUecgNuBfkonxBaYZr52uSXyTINRYg=
-X-Google-Smtp-Source: AGHT+IEf8ZLfYGz4Ep81ktvQnSsWEJgpx9GkGgRDp+Sp5/zXGXroLdE9Ahp4goxrI71QaW6Qs6uJlA==
-X-Received: by 2002:a05:600c:4ecc:b0:431:5a93:4e3c with SMTP id 5b1f17b1804b1-432b7507c0bmr113526115e9.16.1731340189222;
-        Mon, 11 Nov 2024 07:49:49 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.214])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5fc9sm214217075e9.3.2024.11.11.07.49.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 07:49:48 -0800 (PST)
-Message-ID: <7c1a0bbf-12fd-46ef-9db2-183dfa70a334@linaro.org>
-Date: Mon, 11 Nov 2024 15:49:47 +0000
+	s=arc-20240116; t=1731340313; c=relaxed/simple;
+	bh=p0y/edzcANgZ9Yq4x1BTo288Tix9RxkWNx1rV1TI3ww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcjNpVXjxp5WimI+4HjFEOErp3YkKEadSjdu3YYS0YxGGYPUaguqGWy88evkpRTR/ldWnuZ5+rCLX1T1CS9yK/WUusx0iyWHnhei+u/Bc6c+anJMGtH7Nboqa3xTlcCio3V9kl1PPFB4Z7NOKyFa4fKsTxRr7PaI4/wW4ea6Jxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=UDuNNtgK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RXlIDeTX; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6552A1380679;
+	Mon, 11 Nov 2024 10:51:51 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Mon, 11 Nov 2024 10:51:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731340311; x=
+	1731426711; bh=sb7goKiV2lwec3DtIWx/4XS6HkWtaXhVKBL0qgh/MLk=; b=U
+	DuNNtgK30tGFfgc46KCYp1pkTqcNpgfcP0jMEf+aU88lgw1/PHLKV913yGYrPBoS
+	AHzH0TvfNj3XA0n1TBmwR8P8BbZtQ3JK/5i10JZaQ8rzxf9YfQ2y7Jtop+RECWRY
+	N3Dv+SmVmTMfStL4r67tAl8u2NerCveEM2EbmCd+4AOisvYdfsEwzcZtBJa5FqoD
+	4cwJ7vgKWgxDKTnvgUR3PaWePjGNA12xG/5brvw4qAUW3+iiKtqFrZwP/78e6LwX
+	mU+R1ojclGqv5/NqLYSeHErEwpJ0sAd0D4tOJOCmPTUBYRGZYG2SnM9Lobd7Ga09
+	Eoj6wxRj+PQcPWwE5lrtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731340311; x=1731426711; bh=sb7goKiV2lwec3DtIWx/4XS6HkWtaXhVKBL
+	0qgh/MLk=; b=RXlIDeTXFg8aCHV0FLht94dARccM2sXlLp1TjVtRCP7SNh0ZeXI
+	3muWXleEigeqCHIsVaiX6Aupb3UwdMLgtI/LUBQ1L5dYQ6EsBr1HZNwIxFedqeWh
+	z4uEgvSsA2eIjPTfOwIfg+5Q9de9qhL0btjXj3OVxs3ZEkkwJv2EchYKyop5lrl1
+	1ax7EtxXVqCNh/rMPbDd+QTU97Z9r7FkCaJ1W3nCWSQ+y3yDfmS6Qi132+ANXP6h
+	jPV2YhsxJ/iiE0Zk9xweFN3OlyfQbMDBlT7nb8bobo4AMA3XdrmnZhvdd/LWFeyb
+	VRJvfbNYl0f3IWaddvd/Z/sxTV4rC5nYKqg==
+X-ME-Sender: <xms:FigyZwm22GrJqET7MUv8cp0zqiKKWBUpL1ewQ0nmSQYyP3Eok3vBxg>
+    <xme:FigyZ_2zExiXI7erehh_qegwLXJVeTv5a4h8PQJNDm-BPi9GDdMtBn6TfSkWjjFAX
+    tDHzScI5Nl4WcZ9RMA>
+X-ME-Received: <xmr:FigyZ-pItT7PVvnTxvk65ixSYDkfkAkUn0aOxDcJm-r4UF5eE0BzTTr_K0DoXUzKCMMACQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdekudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
+    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
+    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
+    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
+    sehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:FigyZ8mzTfuVg8VymzOzSnBqNo1GZtiEJBZyaf1tf6sQ5wLlXzGANw>
+    <xmx:FigyZ-3mKxfYzkYPDLFgfNHztIsA3RTOb_R2ryVgk0moSzuZog32AA>
+    <xmx:FigyZzvdjDgtzQNE7ujH4FGR5dp8g7e3pwSnrGU3lhlohGczLs8TTw>
+    <xmx:FigyZ6XFvjF44G2vVkwL3TS8pzE92VltzhBAslVGWlnVGNwpmSxdGg>
+    <xmx:FygyZ3k3dqUMHOfCwPljYm0D7RBMstJo2faswK0mDRBpa-S0FxQ_hr-2>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 10:51:48 -0500 (EST)
+Date: Mon, 11 Nov 2024 17:51:44 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
+ <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] perf record: Skip don't fail for events that don't
- open
-To: Ian Rogers <irogers@google.com>, Atish Patra <atishp@rivosinc.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>
-References: <20241026121758.143259-1-irogers@google.com>
- <20241026121758.143259-4-irogers@google.com>
-Content-Language: en-US
-Cc: linux-riscv@lists.infradead.org, beeman@rivosinc.com,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Ze Gao <zegao2021@gmail.com>,
- Weilin Wang <weilin.wang@intel.com>, Ben Gainey <ben.gainey@arm.com>,
- Dominique Martinet <asmadeus@codewreck.org>, Junhao He
- <hejunhao3@huawei.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241026121758.143259-4-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
 
-
-
-On 26/10/2024 1:17 pm, Ian Rogers wrote:
-> Whilst for many tools it is an expected behavior that failure to open
-> a perf event is a failure, ARM decided to name PMU events the same as
-> legacy events and then failed to rename such events on a server uncore
-> SLC PMU. As perf's default behavior when no PMU is specified is to
-> open the event on all PMUs that advertise/"have" the event, this
-> yielded failures when trying to make the priority of legacy and
-> sysfs/json events uniform - something requested by RISC-V and ARM. A
-> legacy event user on ARM hardware may find their event opened on an
-> uncore PMU which for perf record will fail. Arnaldo suggested skipping
-> such events which this patch implements. Rather than have the skipping
-> conditional on running on ARM, the skipping is done on all
-> architectures as such a fundamental behavioral difference could lead
-> to problems with tools built/depending on perf.
+On Mon, Nov 11, 2024 at 08:31:28AM -0700, Jens Axboe wrote:
+> On 11/11/24 8:25 AM, Kirill A. Shutemov wrote:
+> > On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
+> >> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
+> >>>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+> >>>>  			}
+> >>>>  		}
+> >>>>  put_folios:
+> >>>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
+> >>>> -			folio_put(fbatch.folios[i]);
+> >>>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+> >>>> +			struct folio *folio = fbatch.folios[i];
+> >>>> +
+> >>>> +			if (folio_test_uncached(folio)) {
+> >>>> +				folio_lock(folio);
+> >>>> +				invalidate_complete_folio2(mapping, folio, 0);
+> >>>> +				folio_unlock(folio);
+> >>>
+> >>> I am not sure it is safe. What happens if it races with page fault?
+> >>>
+> >>> The only current caller of invalidate_complete_folio2() unmaps the folio
+> >>> explicitly before calling it. And folio lock prevents re-faulting.
+> >>>
+> >>> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
+> >>> also mark the page accessed.
+> >>
+> >> Ok thanks, let me take a look at that and create a test case that
+> >> exercises that explicitly.
+> > 
+> > It might be worth generalizing it to clearing PG_uncached for any page cache
+> > lookups that don't come from RWF_UNCACHED.
 > 
-> An example of perf record failing to open events on x86 is:
-> ```
-> $ perf record -e data_read,cycles,LLC-prefetch-read -a sleep 0.1
-> Error:
-> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0' which will be removed.
-> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (data_read).
-> "dmesg | grep -i perf" may provide additional information.
+> We can do that - you mean at lookup time? Eg have __filemap_get_folio()
+> do:
 > 
-> Error:
-> Failure to open event 'data_read' on PMU 'uncore_imc_free_running_1' which will be removed.
-> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (data_read).
-> "dmesg | grep -i perf" may provide additional information.
+> if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
+> 	folio_clear_uncached(folio);
 > 
-
-This makes me wonder if this message was overly wordy to begin with. 
-This line is fine:
-
-  Failure to open event 'data_read' on PMU 'uncore_imc_free_running_0'
-  which will be removed.
-
-The next bit about the syscall just repeats. The exit code could be 
-included on the previous line. And the dmesg bit is general advice that 
-could possibly be printed once at the end.
-
-> Error:
-> Failure to open event 'LLC-prefetch-read' on PMU 'cpu' which will be removed.
-> The LLC-prefetch-read event is not supported.
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 2.188 MB perf.data (87 samples) ]
+> or do you want this logic just in filemap_read()? Arguably it should
+> already clear it in the quoted code above, regardless, eg:
 > 
-> $ perf report --stats
-> Aggregated stats:
->                 TOTAL events:      17255
->                  MMAP events:        284  ( 1.6%)
->                  COMM events:       1961  (11.4%)
->                  EXIT events:          1  ( 0.0%)
->                  FORK events:       1960  (11.4%)
->                SAMPLE events:         87  ( 0.5%)
->                 MMAP2 events:      12836  (74.4%)
->               KSYMBOL events:         83  ( 0.5%)
->             BPF_EVENT events:         36  ( 0.2%)
->        FINISHED_ROUND events:          2  ( 0.0%)
->              ID_INDEX events:          1  ( 0.0%)
->            THREAD_MAP events:          1  ( 0.0%)
->               CPU_MAP events:          1  ( 0.0%)
->             TIME_CONV events:          1  ( 0.0%)
->         FINISHED_INIT events:          1  ( 0.0%)
-> cycles stats:
->                SAMPLE events:         87
-> ```
+> 	if (folio_test_uncached(folio)) {
+> 		folio_lock(folio);
+> 		invalidate_complete_folio2(mapping, folio, 0);
+> 		folio_clear_uncached(folio);
+> 		folio_unlock(folio);
+> 	}
 > 
-> Note, if all events fail to open then the data file will contain no
-> samples. This is deliberate as at the point the events are opened
-> there are other events, such as the dummy event for sideband data, and
-> these events will succeed in opening even if the user specified ones
+> in case invalidation fails.
 
-Is a file with only sideband events useful? Is it possible to fail the 
-record command if the event doesn't open anywhere?
+The point is to leave the folio in page cache if there's a
+non-RWF_UNCACHED user of it.
 
-I noticed this leads to some different behavior and a libperf warning 
-when you have paranoid=3:
+Putting the check in __filemap_get_folio() sounds reasonable.
 
-   $ perf record -e cycles -C 0 -- true
+But I am not 100% sure it would be enough to never get PG_uncached mapped.
+Will think about it more.
 
-   Error:
-   Failure to open event 'cpu_atom/cycles/u' on PMU 'cpu_atom' which will
-   be removed.
-   ...
-   Consider adjusting /proc/sys/kernel/perf_event_paranoid setting
-   ...
-   libperf: Miscounted nr_mmaps 0 vs 28
-   WARNING: No sample_id_all support, falling back to unordered
-   processing
-   [ perf record: Woken up 1 times to write data ]
-   [ perf record: Captured and wrote 0.021 MB perf.data ]
+Anyway, I think we need BUG_ON(folio_mapped(folio)) inside
+invalidate_complete_folio2().
 
-
-> don't. Having a mix of open and broken events leads to a problem of
-> identifying different sources of events.
- >
-
-In my basic test I saw that the opened event was identified correctly in 
-perf report, unless you have an example that you encountered that we 
-should fix?
-
-One place I saw an issue was with auxtrace events. If there's an event 
-name clash then you're likely to not be able to open the file afterwards 
-because the auxtrace code can't handle an event that didn't open. But I 
-don't know of any name clashes there (I just faked one for testing), and 
-maybe that could be fixed up later in the auxtrace code if there is ever 
-a real one.
-
-Other than the above it does seem to work ok.
-
-> The issue with legacy events is that on RISC-V they want the driver to
-> not have mappings from legacy to non-legacy config encodings for each
-> vendor/model due to size, complexity and difficulty to update. It was
-> reported that on ARM Apple-M? CPUs the legacy mapping in the driver
-> was broken and the sysfs/json events should always take precedent,
-> however, it isn't clear this is still the case. It is the case that
-> without working around this issue a legacy event like cycles without a
-> PMU can encode differently than when specified with a PMU - the
-> non-PMU version favoring legacy encodings, the PMU one avoiding legacy
-> encodings.
-> 
-> The patch removes events and then adjusts the idx value for each
-> evsel. This is done so that the dense xyarrays used for file
-> descriptors, etc. don't contain broken entries. As event opening
-> happens relatively late in the record process, use of the idx value
-> before the open will have become corrupted, so it is expected there
-> are latent bugs hidden behind this change - the change is best
-> effort. As the only vendor that has broken event names is ARM, this
-> will principally effect ARM users. They will also experience warning
-> messages like those above because of the uncore PMU advertising legacy
-> event names.
-
-
-
-> 
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->   tools/perf/builtin-record.c | 22 +++++++++++++++++-----
->   1 file changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index f83252472921..7e99743f7e42 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -1364,6 +1364,7 @@ static int record__open(struct record *rec)
->   	struct perf_session *session = rec->session;
->   	struct record_opts *opts = &rec->opts;
->   	int rc = 0;
-> +	bool skipped = false;
->   
->   	evlist__for_each_entry(evlist, pos) {
->   try_again:
-> @@ -1379,15 +1380,26 @@ static int record__open(struct record *rec)
->   			        pos = evlist__reset_weak_group(evlist, pos, true);
->   				goto try_again;
->   			}
-> -			rc = -errno;
->   			evsel__open_strerror(pos, &opts->target, errno, msg, sizeof(msg));
-> -			ui__error("%s\n", msg);
-> -			goto out;
-> +			ui__error("Failure to open event '%s' on PMU '%s' which will be removed.\n%s\n",
-> +				  evsel__name(pos), evsel__pmu_name(pos), msg);
-> +			pos->skippable = true;
-> +			skipped = true;
-> +		} else {
-> +			pos->supported = true;
->   		}
-> -
-> -		pos->supported = true;
->   	}
->   
-> +	if (skipped) {
-> +		struct evsel *tmp;
-> +		int idx = 0;
-> +
-> +		evlist__for_each_entry_safe(evlist, tmp, pos) {
-> +			if (pos->skippable)
-> +				evlist__remove(evlist, pos);
-> +			pos->core.idx = idx++;
-> +		}
-> +	}
->   	if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlist)) {
->   		pr_warning(
->   "WARNING: Kernel address maps (/proc/{kallsyms,modules}) are restricted,\n"
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
