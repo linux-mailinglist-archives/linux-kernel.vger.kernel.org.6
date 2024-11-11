@@ -1,89 +1,131 @@
-Return-Path: <linux-kernel+bounces-404250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E469C416C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:04:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 266DA9C4152
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4E7283022
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:04:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581451C21C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5951A1A704C;
-	Mon, 11 Nov 2024 15:02:59 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D001A08CB;
+	Mon, 11 Nov 2024 14:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="EeFbWJcG"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24B913A27E;
-	Mon, 11 Nov 2024 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037DF1E481;
+	Mon, 11 Nov 2024 14:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731337379; cv=none; b=sTqxB8bK8KM7yiCtMZpCIjTbHnVsufxjYn4rTiim8nDQbXSnm1bLMYpRbQIBSazs1/14XQzvYxCoKC7yfUA0pvJP64my2NGF1UnJ0Zy99j6o72kyESRPJ2uKAWns327xT8m48LtbefacLF75LF1czB/H47HJUwAKcHExE19ps3Y=
+	t=1731337075; cv=none; b=CbZ+QxIH0sFi1aNEwhaIIRxVhxsLQDWljtep/9GLzS0FO8OyLNLOkSBfHLphQ7J5DJiviVA9Yvsf20DrfmV/jnpIh6H51nYfF4qk4ztIapxfqhAdUOK6XcwETcLXEZAmaPxaVDolHL6wfRFN2zAtbFDTnnmgnKB0TFmMPdHEJ6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731337379; c=relaxed/simple;
-	bh=IOZzTo40L0gMvGdKrM+W9hmXfTvbip8RYuH6dWd8DYM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r0n+T5SI13QYkfth6W/e0zuFBC/+Kkq7hwcTxKbNPuA683ORoyhs/5bCJkw6VJV6qZrCscN3q/Qx7tG8BmjYDnX3s/IKuoyxZUbRo5cgrpnteTBj7S7N0MxW0VytaJBu0wHgNgUNlpXi1mKO22zOXFd+Mr9eMIVPFAtRm9DpD/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XnCRQ2YF3z2Dh0P;
-	Mon, 11 Nov 2024 23:01:06 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D7AF14022D;
-	Mon, 11 Nov 2024 23:02:54 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 11 Nov 2024 23:02:53 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>
-Subject: [PATCH V3 net-next 7/7] net: hibmcge: Add nway_reset supported in this module
-Date: Mon, 11 Nov 2024 22:55:58 +0800
-Message-ID: <20241111145558.1965325-8-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241111145558.1965325-1-shaojijie@huawei.com>
-References: <20241111145558.1965325-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1731337075; c=relaxed/simple;
+	bh=Sr89Ntj8Oh4Wusz4gpla4TFLfVZzIvrFX4pvfeKcCXc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mmZt2rf6j4JSBLWSFe0cfcoUhrDDr2OseyhUndntxu0S3d7YssMgGFHHu20AukqFrPdiEbDNym5pbtZYGh/ZI0JuUeqoYV6jS/Ycf/3Q80ZfO7q0KulEADLmff2qv1BuBleopPJMx8sRpQd5Er1jiKUEPwz4yDbgGsh72SwYt0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=EeFbWJcG; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ECC1F403F1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731337073; bh=tsvrjhMT0aQcOBT2l9uiS8/IawzPz5uPe2uYttTExiA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=EeFbWJcGmo/wT7PHm7ENpBkX3x37IfFlDtsgqaX/0bN6IpcLs6f6zje4q7S/woY8V
+	 bHq959m9Nm6+qZQlORFKy2b1H+RRZPsaVCHqb9J6wWmgUY4zQMXEUDiRcHnwS/1gCB
+	 Tm9lUfdtRqOw8Rb2gYGN/W1G/WdHO2I93O0GtHCPUIYRhSTJsm9jKiFSLPRuY0u/QL
+	 bXx54/I2NllCvIcYaUbgz/lmehvy0rkxR4MUnzPDrqRb0DzHR5CfK+VenPA3AFZwcP
+	 HaI08y7s4yBNWksvgF7V3PCFYfvnWuMUqItVkfCd6cwk/a+L9lAqJPrO2rRxj09BBG
+	 e3tnsdbdCIj8Q==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id ECC1F403F1;
+	Mon, 11 Nov 2024 14:57:52 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: bagasdotme@gmail.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+ mauro.chehab@linux.intel.com, kernel@collabora.com,
+ bob.beckett@collabora.com, nicolas.dufresne@collabora.com
+Subject: Re: [PATCH 2/2] docs: media: Debugging guide for the media subsystem
+In-Reply-To: <20241111095027.m36ef62bltcjbxkc@basti-XPS-13-9310>
+References: <20241028-media_docs_improve_v3-v1-0-2b1b486c223e@collabora.com>
+ <20241028-media_docs_improve_v3-v1-2-2b1b486c223e@collabora.com>
+ <87h68i22ww.fsf@trenco.lwn.net>
+ <20241108101243.a6rxed2lx55hwcmj@basti-XPS-13-9310>
+ <20241111095027.m36ef62bltcjbxkc@basti-XPS-13-9310>
+Date: Mon, 11 Nov 2024 07:57:51 -0700
+Message-ID: <87serxu8b4.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-Add nway_reset supported in this module
+Sebastian Fricke <sebastian.fricke@collabora.com> writes:
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c | 1 +
- 1 file changed, 1 insertion(+)
+> Hey Jonathan,
+>
+> On 08.11.2024 11:12, Sebastian Fricke wrote:
+>>Hey Jon,
+>>
+>>On 07.11.2024 13:40, Jonathan Corbet wrote:
+>>>Sebastian Fricke <sebastian.fricke@collabora.com> writes:
+>>>
+>>>>Provide a guide for developers on how to debug code with a focus on the
+>>>>media subsystem. This document aims to provide a rough overview over the
+>>>>possibilities and a rational to help choosing the right tool for the
+>>>>given circumstances.
+>>>>
+>>>>Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
+>>>>---
+>>>> Documentation/process/debugging/index.rst          |   1 +
+>>>> .../debugging/media_specific_debugging_guide.rst   | 178 +++++++++++++++++++++
+>>>> 2 files changed, 179 insertions(+)
+>>>
+>>>Mostly overall comments here
+>>>
+>>>- much of what's here seems redundant with your other new documents; you
+>>> seem to be going over the same list of tools?  Why not just talk about
+>>> the ones that are unique to the media subsystem?
+>>
+>>I choosed the minimum duplication path because of the perspective that I
+>>envisioned of the reader.
+>>The reader reads that there is a debugging guide for the media
+>>subsystem, which to my ears sounds like:
+>>"Everything you need to know to get started debugging in this subsystem,
+>>with recommendations for useful tools"
+>>and not
+>>"Some specific media bits that expect you to have read every other
+>>debugging documentation and judge yourself which of these tools might be
+>>useful for your debugging".
+>>
+>>I look at that specifically from a perspective that the general
+>>debugging guides are probably going to be extended in the future with
+>>more general debugging tools which might not be as useful for the media
+>>subsystem.
+>
+> @Jon: Does that sound reasonable to you? Or should I rework the page? I
+> think this is especially interesting for the audio debugging guide as
+> well, because this determines how subsystem specific guides should be
+> formatted.
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-index 14df8fb5cd91..5e89f4218e5f 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-@@ -186,6 +186,7 @@ static const struct ethtool_ops hbg_ethtool_ops = {
- 	.get_pauseparam         = hbg_ethtool_get_pauseparam,
- 	.set_pauseparam         = hbg_ethtool_set_pauseparam,
- 	.reset			= hbg_ethtool_reset,
-+	.nway_reset		= phy_ethtool_nway_reset,
- };
- 
- void hbg_ethtool_set_ops(struct net_device *netdev)
--- 
-2.33.0
+I would suggest trying to minimize the amount of duplicated material;
+more duplication is more work to maintain and inevitably goes out of
+sync.  That said, I don't want to send you around in too many circles on
+this; and would not try to require such a change.  It's a suggestion;
+get the docs to where you're happy with them and we'll be glad to take
+them.
 
+Thanks,
+
+jon
 
