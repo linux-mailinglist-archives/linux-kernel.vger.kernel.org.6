@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-404742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429CB9C47FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B60DF9C4802
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:28:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C002FB36744
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:05:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33416B256D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15EA1D7E26;
-	Mon, 11 Nov 2024 20:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CECC1EBA03;
+	Mon, 11 Nov 2024 20:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="NGPyZW9p"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kAvGE5Qw"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D420C1D1726
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E521E9060
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 20:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731358499; cv=none; b=tQMw3Qsea3YpzB9Xl0AJeOS/UmzlaV3szeZKO1x7H6R53kZt+J8fE5+vQA9ZHGH0+BlUQROlimOgTEvNSB+WQTT8FzUkNYlZdJioxVbvbRl6+p0M5dMXtiIwvuiuhuECcOg+yBqd/7K0YpmrcxEbRsTKUnumWOV9jdCT4TcsVj0=
+	t=1731358512; cv=none; b=cyszM1FepapUsFLcAdNv+KweiXwqKKGswsUr2Lpq3a6Qyi2kvvOg5DC27aK6ozFbeIqnEJW93Io1ihhg8rdurdhNwBmdtrQtqYzk/mjrMU+um9nc5waj1Wgu3VHboosM6ihUjLFS37inEVihD0hPCvqnw6FTOP661rWOKyeaUG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731358499; c=relaxed/simple;
-	bh=wYCEI7wvSMLui8WMRpDFv0a+NDWckEqPGqXUbhFxHHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LwOwdCf4W3As5QvsxXGGI8DmwaMWd7eDljlVf8D9W3pb3cV4WmjE1unl/IC0C292E1mYogDl8cGSE10JKXKWSBKQ049zlUru4IW57pBt0aC/F8R8RAfdwUZtFzwifAF4tiK2noYTiSgT2LUV5BMR47g+cYFZyqAtTorU6x0urds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=NGPyZW9p; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so3959826a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:54:57 -0800 (PST)
+	s=arc-20240116; t=1731358512; c=relaxed/simple;
+	bh=/843rvSVp64ub5KwdEW9t5Mo++sK7i8m9eZu/NNp2Xk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kLO8E08SSAB4x7Seb32OwKPaV2NwGh7/332rvd6oaXAACgIriHobQRjacHhX6zxsNDdMqzv1XWYFyjhXxOhqdt/FkBaYZNdRja/9IyYRvQaXoPjKSz+UOMWR2Y9w4XFt7E1VVBjqymdGTIJ2Usqftxs8cYHXBHymz408kda4KBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kAvGE5Qw; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eae6aba72fso52868217b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:55:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1731358497; x=1731963297; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hq3DaQ4YpzTwJN9yZW6Sl3gPyL1m035+b/05XFtk9T8=;
-        b=NGPyZW9pLPhC9nXjvoY7+iCDi7hEEe7Aq4Q1nnrUeilw8TGv/tUAoXjNfpMjejLsFU
-         rXwibYB2aPGCSbhjOFtGcyIzSPw8KpaZp7MaIFpIsnG83mCS7FgWWKnXDvKvISuwy+xF
-         MSAreHKMqyBbzXP6NLnjNwf8VMMkHbgFyUvtOc2ZuNX8wrMDx90l3114cIV2S1iyb8bR
-         pO99P4WTmS/rhknkCCg/CtDnD1uKMpn6ddlASHZyI1IpA3olgS8hbbcPbBjpWo1sMG8/
-         bgrvwH6+8zfRnXewf0+PEHPJHbOIdpFohrZdBcGjgWvCWvkhVc8YSyurqllWi2SDD+Ee
-         BbvQ==
+        d=google.com; s=20230601; t=1731358510; x=1731963310; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YmP4q8GO3tnMB8ElYnP0I9LFxs+1Dml5N/4bHnS7ye8=;
+        b=kAvGE5QwnSxL8++g+0E7Z2eMCV77dydiw379tIsauumD5/gAs6ypOZOIePAYJJHU0/
+         kZS3rz1YqXU3ZUAnYOEtNGIfPmLGW4mrm8OJWi37R8p0anmvz6ZnHs7Bf5Xf+09sOMDX
+         0MF5sDd++IdtcxSmvbOmToqS03q0qsWjCCIjGsTozHXon+TCtnf468g26sXXIm19vNfl
+         6NpjlXZafb3kvSoKJXZZCoN5vfI+ra4I5E+LogcHmb8ib8g/tesugtvGP3uiasXvTpyn
+         IAzYVl80nIzdUHT19v6uehV8i5G/yOzGGFqqskmNjVFrbh2DUxuFxjLZjkdLPByUCPxM
+         LItQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731358497; x=1731963297;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hq3DaQ4YpzTwJN9yZW6Sl3gPyL1m035+b/05XFtk9T8=;
-        b=r7pLMpFTy/p2sUKnMmEhNeYqZWCOGB87MkHZuWqdFUyk+pNk6kV4f7gNQmuUuu6AI8
-         zAequ6806b2/Nibqcs7skPseqTCUb5vxxGoDO7SbxNyIXjvI4FutPAEkSfMu5fEnOptC
-         nLsMWJSCITW3+TaJQPMnlC5lyEaD87pTFHSOMXchJF5pESWnAAg2BY57HeokKRJ1qVrN
-         KUMO14q8+inaIk3b34Wn63kKyBkM/bONE0y71SCiKB+cI6YQHUuOE2Aa5+9h0wTbxQPV
-         8hAeKIz9O8qF7xNRmj9CIbJfVeAEYnx2WVRpjLbrAqN+f069SC/mxdsKuomVmLeMRqd/
-         6rBg==
-X-Gm-Message-State: AOJu0YzAZii4cwQxSmDqdvebBFSQfbo6IMfyJg2nb70KEv+3cSW6ohIO
-	4ySzLWWKsFViWgjAUjTfJlW/JZZiAuESUpTrMFop2my98NaHeJ0Ip8kIGfGpVBw=
-X-Google-Smtp-Source: AGHT+IEEKaEBcK4MgBqd/tJtgjOiUzsMic6zpl+RlG/WSuE/W94Zyl8KoJt+g6fHJT4sQqdqWl8Dag==
-X-Received: by 2002:a17:90a:d88d:b0:2cb:5aaf:c12e with SMTP id 98e67ed59e1d1-2e9b1788b6amr17044135a91.37.1731358497234;
-        Mon, 11 Nov 2024 12:54:57 -0800 (PST)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fd1534sm9059974a91.42.2024.11.11.12.54.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 12:54:56 -0800 (PST)
-From: Deepak Gupta <debug@rivosinc.com>
-Date: Mon, 11 Nov 2024 12:54:08 -0800
-Subject: [PATCH v8 23/29] riscv: Add Firmware Feature SBI extensions
- definitions
+        d=1e100.net; s=20230601; t=1731358510; x=1731963310;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YmP4q8GO3tnMB8ElYnP0I9LFxs+1Dml5N/4bHnS7ye8=;
+        b=Gd8rIWbr9EH/yTimUGJjhnaEKzKDP+8avlo8OLgNGTxnQ+mEpYzpjcKHEmV4xdLFOv
+         YcgkMc8kshtcyAXCWARV5Gh3PK2UDN2+A8cHvz2T9otCCYf0bogIkLoxXy5h8l23rMcT
+         ac/xcw70VejemGuR8VJ1r7eQAvbT3bJhdgHIYsrEqIPCeldkEjVurw2/+QNbL5p0biGR
+         js7pwnvNJbt1Bscy0X853eYZPWFQlX4n2wwKb9+Y9YkJj9nbRgAI+tum2srR//+t/QiB
+         Zz00+3Rzlp0ScINsfMS9gtBXQn3ZAQcM9vICVCegnA/sPVoujVQ4Fqh6PNG5I8WfyBUX
+         BnAg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7relIsgAsp326GOyAp0SNwBYGLkZUixUNltsDW+/EpbPvAA1u1uw6VKZ7iBqHue94wcFmXWg4vwdxuNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy94/46+P0rskBr6jT9fXsXzT86hHhjWv35lzBeiAAYhnKo7+mU
+	8vBE1Q+BCcdO+qJKzFme5AQEMKhD+5tQGV5TYzMOtZw03HR/TxomT+UKMQaFjiYlXTLerZNVfis
+	Vkg==
+X-Google-Smtp-Source: AGHT+IE8wqP80TXUer3yViZvMPgjxLtInm9y/wNhiXq5ErcsTHmSfYSHmgVvG+YL2RzGuqwNIra/g+r9+7k=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:53af:d9fa:522d:99b1])
+ (user=surenb job=sendgmr) by 2002:a25:dc4a:0:b0:e25:5cb1:77d8 with SMTP id
+ 3f1490d57ef6-e337f8ed8bbmr10011276.6.1731358509875; Mon, 11 Nov 2024 12:55:09
+ -0800 (PST)
+Date: Mon, 11 Nov 2024 12:55:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241111-v5_user_cfi_series-v8-23-dce14aa30207@rivosinc.com>
-References: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
-In-Reply-To: <20241111-v5_user_cfi_series-v8-0-dce14aa30207@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
- Vlastimil Babka <vbabka@suse.cz>, 
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>, 
- Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
- andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
- atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
- alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
- rick.p.edgecombe@intel.com
-X-Mailer: b4 0.14.0
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.277.g8800431eea-goog
+Message-ID: <20241111205506.3404479-1-surenb@google.com>
+Subject: [PATCH 0/4] move per-vma lock into vm_area_struct
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
+	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Clément Léger <cleger@rivosinc.com>
+Back when per-vma locks were introduces, vm_lock was moved out of
+vm_area_struct in [1] because of the performance regression caused by
+false cacheline sharing. Recent investigation [2] revealed that the
+regressions is limited to a rather old Broadwell microarchitecture and
+even there it can be mitigated by disabling adjacent cacheline
+prefetching, see [3].
+This patchset moves vm_lock back into vm_area_struct, aligning it at the
+cacheline boundary and changing the cache to be cache-aligned as well.
+This causes VMA memory consumption to grow from 160 (vm_area_struct) + 40
+(vm_lock) bytes to 256 bytes:
 
-Add necessary SBI definitions to use the FWFT extension.
+    slabinfo before:
+     <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+     vma_lock         ...     40  102    1 : ...
+     vm_area_struct   ...    160   51    2 : ...
 
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
----
- arch/riscv/include/asm/sbi.h | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+    slabinfo after moving vm_lock:
+     <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+     vm_area_struct   ...    256   32    2 : ...
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 98f631b051db..754e5cdabf46 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -34,6 +34,7 @@ enum sbi_ext_id {
- 	SBI_EXT_PMU = 0x504D55,
- 	SBI_EXT_DBCN = 0x4442434E,
- 	SBI_EXT_STA = 0x535441,
-+	SBI_EXT_FWFT = 0x46574654,
- 
- 	/* Experimentals extensions must lie within this range */
- 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
-@@ -281,6 +282,32 @@ struct sbi_sta_struct {
- 
- #define SBI_SHMEM_DISABLE		-1
- 
-+/* SBI function IDs for FW feature extension */
-+#define SBI_EXT_FWFT_SET		0x0
-+#define SBI_EXT_FWFT_GET		0x1
-+
-+enum sbi_fwft_feature_t {
-+	SBI_FWFT_MISALIGNED_EXC_DELEG		= 0x0,
-+	SBI_FWFT_LANDING_PAD			= 0x1,
-+	SBI_FWFT_SHADOW_STACK			= 0x2,
-+	SBI_FWFT_DOUBLE_TRAP			= 0x3,
-+	SBI_FWFT_PTE_AD_HW_UPDATING		= 0x4,
-+	SBI_FWFT_LOCAL_RESERVED_START		= 0x5,
-+	SBI_FWFT_LOCAL_RESERVED_END		= 0x3fffffff,
-+	SBI_FWFT_LOCAL_PLATFORM_START		= 0x40000000,
-+	SBI_FWFT_LOCAL_PLATFORM_END		= 0x7fffffff,
-+
-+	SBI_FWFT_GLOBAL_RESERVED_START		= 0x80000000,
-+	SBI_FWFT_GLOBAL_RESERVED_END		= 0xbfffffff,
-+	SBI_FWFT_GLOBAL_PLATFORM_START		= 0xc0000000,
-+	SBI_FWFT_GLOBAL_PLATFORM_END		= 0xffffffff,
-+};
-+
-+#define SBI_FWFT_GLOBAL_FEATURE_BIT		(1 << 31)
-+#define SBI_FWFT_PLATFORM_FEATURE_BIT		(1 << 30)
-+
-+#define SBI_FWFT_SET_FLAG_LOCK			(1 << 0)
-+
- /* SBI spec version fields */
- #define SBI_SPEC_VERSION_DEFAULT	0x1
- #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
+Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 pages,
+which is 5.5MB per 100000 VMAs.
+To minimize memory overhead, vm_lock implementation is changed from
+using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+vm_area_struct members are moved into the last cacheline, resulting
+in a less fragmented structure:
 
+struct vm_area_struct {
+	union {
+		struct {
+			long unsigned int vm_start;      /*     0     8 */
+			long unsigned int vm_end;        /*     8     8 */
+		};                                       /*     0    16 */
+		struct callback_head vm_rcu ;            /*     0    16 */
+	} __attribute__((__aligned__(8)));               /*     0    16 */
+	struct mm_struct *         vm_mm;                /*    16     8 */
+	pgprot_t                   vm_page_prot;         /*    24     8 */
+	union {
+		const vm_flags_t   vm_flags;             /*    32     8 */
+		vm_flags_t         __vm_flags;           /*    32     8 */
+	};                                               /*    32     8 */
+	bool                       detached;             /*    40     1 */
+
+	/* XXX 3 bytes hole, try to pack */
+
+	unsigned int               vm_lock_seq;          /*    44     4 */
+	struct list_head           anon_vma_chain;       /*    48    16 */
+	/* --- cacheline 1 boundary (64 bytes) --- */
+	struct anon_vma *          anon_vma;             /*    64     8 */
+	const struct vm_operations_struct  * vm_ops;     /*    72     8 */
+	long unsigned int          vm_pgoff;             /*    80     8 */
+	struct file *              vm_file;              /*    88     8 */
+	void *                     vm_private_data;      /*    96     8 */
+	atomic_long_t              swap_readahead_info;  /*   104     8 */
+	struct mempolicy *         vm_policy;            /*   112     8 */
+
+	/* XXX 8 bytes hole, try to pack */
+
+	/* --- cacheline 2 boundary (128 bytes) --- */
+	struct vma_lock       vm_lock (__aligned__(64)); /*   128     4 */
+
+	/* XXX 4 bytes hole, try to pack */
+
+	struct {
+		struct rb_node     rb (__aligned__(8));  /*   136    24 */
+		long unsigned int  rb_subtree_last;      /*   160     8 */
+	} __attribute__((__aligned__(8))) shared;        /*   136    32 */
+	struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     0 */
+
+	/* size: 192, cachelines: 3, members: 17 */
+	/* sum members: 153, holes: 3, sum holes: 15 */
+	/* padding: 24 */
+	/* forced alignments: 3, forced holes: 2, sum forced holes: 12 */
+} __attribute__((__aligned__(64)));
+
+Memory consumption per 1000 VMAs becomes 48 pages, saving 2 pages compared
+to the 50 pages in the baseline:
+
+    slabinfo after vm_area_struct changes:
+     <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+     vm_area_struct   ...    192   42    2 : ...
+
+Performance measurements using pft test on x86 do not show considerable
+difference, on Pixel 6 running Android it results in 3-5% improvement in
+faults per second.
+
+[1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.com/
+[2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
+[3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com/
+
+Suren Baghdasaryan (4):
+  mm: introduce vma_start_read_locked{_nested} helpers
+  mm: move per-vma lock into vm_area_struct
+  mm: replace rw_semaphore with atomic_t in vma_lock
+  mm: move lesser used vma_area_struct members into the last cacheline
+
+ include/linux/mm.h        | 163 +++++++++++++++++++++++++++++++++++---
+ include/linux/mm_types.h  |  59 +++++++++-----
+ include/linux/mmap_lock.h |   3 +
+ kernel/fork.c             |  50 ++----------
+ mm/init-mm.c              |   2 +
+ mm/userfaultfd.c          |  14 ++--
+ 6 files changed, 205 insertions(+), 86 deletions(-)
+
+
+base-commit: 931086f2a88086319afb57cd3925607e8cda0a9f
 -- 
-2.45.0
+2.47.0.277.g8800431eea-goog
 
 
