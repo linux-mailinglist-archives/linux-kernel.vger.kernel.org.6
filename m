@@ -1,83 +1,96 @@
-Return-Path: <linux-kernel+bounces-403649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BBC9C3883
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:39:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E149C3885
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 000971C21713
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:39:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C044282309
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80215746E;
-	Mon, 11 Nov 2024 06:39:37 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBD5155A30;
+	Mon, 11 Nov 2024 06:40:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC28513E02E;
-	Mon, 11 Nov 2024 06:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47890155382
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731307177; cv=none; b=TPwGPdmjge80DVV+oPM4BHtGHndRyIa/8Zf5CYUz3crcSxnq4wELb46bJO/oOGgJIThfivRLOEYODAhsjtsyVrPHNMny0BqPCt5Rb6vRHCihExOU3PiWUiZ5DZwUXA0OCvur4yFFpoZeo5nVAk9ofSyWbNT5G3Tgg2UJvAQF1Cc=
+	t=1731307206; cv=none; b=sJHnCe8HoXM0HCh4SVzc7Hc6ohv1kiAld5O5Xbo2AeTGl6QrVsRjUwFcw8JEe5GmITaOxwJIVbURVqn27RLXacjxrpOkiUrE1VxwmPlpwwX64hef20Qgmn0Pv1KGaVZoEBOskIoLec1ns8CTilVx6PXI3U91l2I9DQKYJEpolfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731307177; c=relaxed/simple;
-	bh=XMRwi/lwwuG/4OcjixsIyJzR/dyttShCUKokbIXK1DY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfQJWqtRazfoMnd3fzGBYrNP1PPnJ4hKhDeN6fkr22ILERzF6YlLP7f3F8pzIAwHCSNgj/UjMm6YPFXVrD0Fnkxhb8f2z2vb56Q+mVs/zEgyBt6fvO0qpb0OxL8hi8rYDk8zFzf2Gw3GgN/TRJCefz9sT2RXkzNQfRMjyb8WPFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 3F82B68C7B; Mon, 11 Nov 2024 07:39:32 +0100 (CET)
-Date: Mon, 11 Nov 2024 07:39:32 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v1 04/17] dma-mapping: Add check if IOVA can be used
-Message-ID: <20241111063932.GC23992@lst.de>
-References: <cover.1730298502.git.leon@kernel.org> <9515f330b9615de92a1864ab46acbd95e32634b6.1730298502.git.leon@kernel.org> <5ea594b3-7451-4553-92c1-2590c8baef20@linux.dev>
+	s=arc-20240116; t=1731307206; c=relaxed/simple;
+	bh=EbEkTKtYltYcleYCY2ECP0L6Wbig9QekbCKMJWCfVeA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=J6zXCOxoXeb9qBoNQOFpLyDrzPvxIWbPoq8Cf7Z9tSROEWGOmDSYOKenU+YW9s93KfS73yB9PWbev8VMkANJDJAbzwWLbTGCu4yfrOSax8uZ3gprvf90zBb0J0xsVM7yiD8mdr8mix7bNQmR4M/QlJoOWIkKrKcGor9FNw0KKgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83aac7e7fd7so525182939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 22:40:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731307204; x=1731912004;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hphkCB1iP3K+OyNx8UIKZQK39Qpf6Uhh5LCO7fqBJ7k=;
+        b=YaNNgTASdipQbL392AqixTdT7JemlDiMRFYlcLWgynsJ9rmoeYbHp6/aML1LbW4VQn
+         dNt6teNWPq+dECiCptYx968U6JXO7nOy55EsHZ0GgX1Glq4PJvs/gdRxZmAEZhYUaTSF
+         cpgoJ0MxxfRFSruT0zmVve/2Ccwt9nFVKjXZZBuXF5oDNUQMQPeVsEV5yt/pZNfYjnwv
+         +yVVNTSvEUDtn3xc9Ke5c9SXKyak49Os2fN+Hmo8fNZuV8gWfWsyzw+meagPFBEjLMKt
+         46TqC4RUJ3ngrPK/5IghlAMqW572P2qzxKDqnqPfxL8ay0+qcg5njwh+Lk3gpcjjYsJt
+         idMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwIYtzzwY0+ZMk3ZJ61c/w3RpA1PX21Ofnb1DgKwV4ei/7rKs4b0TDt4gX4XyUhHECot2ibyQTh8LSjN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI56vNoVG00sF7POwI1ifgsMe6+7tWyKYJrGL/rhE8RCZ5N+62
+	eV7yyyhD6FqWR4hphJJHJEXuwdMA2Mrad6kh+P5Po4mOylYHDQVfuH/WuXbYjhvcy6AXV79BYms
+	IwWRodbCv9kUA3oiyYz/djfSOBSwgFmUb25MUeFHk4NGudlE8DxG0kAY=
+X-Google-Smtp-Source: AGHT+IFVnhP2WMzQG+W8Y6ZP1xF+odHxVWxvFzMvPyZMAub77bZXbGYs3RyRRBhCFKSc+EYGswXxXBEOhSaSK2A2m8uVf7NrX+zf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ea594b3-7451-4553-92c1-2590c8baef20@linux.dev>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Received: by 2002:a05:6e02:1a43:b0:3a6:b258:fcd with SMTP id
+ e9e14a558f8ab-3a6f19a01c1mr123989715ab.1.1731307204314; Sun, 10 Nov 2024
+ 22:40:04 -0800 (PST)
+Date: Sun, 10 Nov 2024 22:40:04 -0800
+In-Reply-To: <000000000000ebc1a306219068a5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6731a6c4.050a0220.138bd5.005e.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in get_pat_info
+From: syzbot <syzbot+16b1da89309a06cd0e3a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, bhelgaas@google.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, david@redhat.com, guohui.study@gmail.com, 
+	hpa@zytor.com, jannh@google.com, kirill.shutemov@linux.intel.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
+	mingo@redhat.com, peterz@infradead.org, seanjc@google.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	torvalds@linux-foundation.org, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 10, 2024 at 04:09:11PM +0100, Zhu Yanjun wrote:
->> +
->> +/*
->> + * Use the high bit to mark if we used swiotlb for one or more ranges.
->> + */
->> +#define DMA_IOVA_USE_SWIOTLB		(1ULL << 63)
->
-> A trivial problem.
-> In the above macro, using BIT_ULL(63) is better?
+syzbot has bisected this issue to:
 
-No, and can people please stop suggesting it?  That macro is so fucking
-pointless that it's revolting,
+commit 79a61cc3fc0466ad2b7b89618a6157785f0293b3
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu Sep 12 00:11:23 2024 +0000
 
+    mm: avoid leaving partial pfn mappings around in error case
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11df65f7980000
+start commit:   7758b206117d Merge tag 'tracefs-v6.12-rc6' of git://git.ke..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13df65f7980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15df65f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=921b01cbfd887a9b
+dashboard link: https://syzkaller.appspot.com/bug?extid=16b1da89309a06cd0e3a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148adf40580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1704ae30580000
+
+Reported-by: syzbot+16b1da89309a06cd0e3a@syzkaller.appspotmail.com
+Fixes: 79a61cc3fc04 ("mm: avoid leaving partial pfn mappings around in error case")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
