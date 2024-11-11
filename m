@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-404489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D7759C4445
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:57:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39E89C4447
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08A321F21A9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B85E1F21A6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0261AA1CA;
-	Mon, 11 Nov 2024 17:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE00F1AA1DE;
+	Mon, 11 Nov 2024 17:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DHOij0+X"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwgmUV20"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1915814D283
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB0C14D283;
+	Mon, 11 Nov 2024 17:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347826; cv=none; b=K73UrtNWQWP2vRJ3W5TYHBiS75kDt3sJ+3T4IZ0Zif98ISSoOTBXPnPMOZcaetvTCWmYl//iO158vlACaw1yKRiFOPTujv52Z1I+A9h0A01nM4C7oFJlTEevyu6DT2FfL+dAKaCxo+Cz/xh9VRlJ92uFytFndPssnrmga2uX4M0=
+	t=1731347885; cv=none; b=YKMvvy/T09FBjpsqV2I91hoFdNWUnS3GCs9xaTLTCRIi91IL3LrgJ5LqyYurYVqfHTGtu6y47sCu34TayzjCyC8dMhgOyNP5u+QzelKOxav0ZcPDpF+EGhcz74AN0Fmm84VXufj/nNtbBiMLUt5XQ6y8eNyigVZilSO3dEWbNjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347826; c=relaxed/simple;
-	bh=Ab1oytO8ZVmWhP5fgvNeeofaU0GDgKs6R1o9YfWvfhI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6wRx0qL79Y1a7dmBs8VcZRmkVf3h5hJCpjr4T81ytikc/tSYSsdCNjS2QkL93BOEATo2JEtqapwfvmpcnI67ZRrgiZbg27AFoz4IRMWvMcHHDSAt2nDPbQnYwNvL9yeGaAGZfK++QpX1TUS5aGb4CWhlCgvhfJ0z8bD0A33vaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DHOij0+X; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460b295b9eeso5111cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:57:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731347824; x=1731952624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nhlfklFJzcq9yoGsneqDg/hSgWWKzA1mzsvO36qciE4=;
-        b=DHOij0+XumRMmSNDmBPhSCLsdQjEDo1726bm4x43a6KnrlO2+UxrJw+e0ZRZMkIEuG
-         FDxNcP1TGUUFelAa04h4f4aiZ+uStljBuWvmyIOAboRc/RqngY/zogBkULDVx6oi/3Su
-         861GnRvtNFkE1ZR9nHPg4xcJHKnimgWkdPKNwAkN7hDclJyo/AvBdRzh+7SwRDTFVb9N
-         Kh7ZRFdVWFXeyRtI6xwnaAZZuSC6+IhGNN3c8jdJFW19hYnrpkP+M/2hUPtmqbR1tDSk
-         X8wXF9ZDwDVYfutiRzpNPon9AbGFRcJaT4UKZ7vK3YXw9UFaiGve0ibVBN7LMuIc1juE
-         EoDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731347824; x=1731952624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nhlfklFJzcq9yoGsneqDg/hSgWWKzA1mzsvO36qciE4=;
-        b=AVI6tuacTiGQF9kDiQBRaNvjH5FujFNGGY7tyJGKpGsLG1bdfBGO1DtRTQLmxFhmNU
-         1/9PvvZt7pdO8QnPmdnUe6ZHwVYqc/O6gfGZUF4finPZ+don1++hgcvja5SWJE3aqCvI
-         b9N8gQy8C/2FUla15ix4eUx98cKeQ4wmEacXTrktuFrDkdImFNfSPGXDSoSI8JcuVsq6
-         4Y4DXsd9Sf94vOpZLOM7vnKEukyKpD/Wnsi+5rOex5U0GEHs8m2XZAhperlIt5RMgm65
-         GRocA9QYUjviodXxtNQKH9vJxdCMSP5e3TASX1eIFJdN81rw2tGPdpo362TalRQwugUy
-         s19A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3t36ttXMi3N11IMG0NKUCasRdp/+ufr1H8BoHHL0EwoH3raJAx+TgnBdOyM/3S7yBbRWpwpf8ghMz8tM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzItpflXLZqasBCJxU38zP6qyw6iuIJyP1JD92foJ3M/khvk4cj
-	PwYvugTv16yLa0htRJZAyC4Wg33cEsw81zLCg2oMWS1HW8uWpvDmjqFu8ST/OSpCt6IS9AZweeQ
-	P646QZb7kz+yKnMcYBckJng3078VPxv0bExMB
-X-Gm-Gg: ASbGnctumhENedM1HPk8P6ZTbrrHxW+PylBTreDGpaDvmRGeNyHXjMl21Et88sR/Ptu
-	9jLjMrH4cuibXnyLWzGirG3WeJizXrjKiFEYAWioKpB3ykTH6fqVHPep/jiTMiXg=
-X-Google-Smtp-Source: AGHT+IEu0GW0f3agX+5M8QSU8zfX5ZE8V/0IIfsBmBIY7tz78CEqDSH6OxDkACRTgK6mdAynWf2/DPiX8gol8lD3ylM=
-X-Received: by 2002:a05:622a:1816:b0:461:358e:d635 with SMTP id
- d75a77b69052e-46316a1e46bmr5608461cf.18.1731347823697; Mon, 11 Nov 2024
- 09:57:03 -0800 (PST)
+	s=arc-20240116; t=1731347885; c=relaxed/simple;
+	bh=o3CQlzBRpJV7aSV4DDZJsHMn6BJpLIqcjJ/aGt/TrPw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=ld88jEZGV8e54PtKxDrp1xGBOJiGb7x7GmEzLOFkv6wYFZbyklkmvMKT93KbrOH4xV50RsTwUCIjNhakKk9IOEDGyuFjAxdyir+MS2C1cvcnSJyO4Wmvvu/5QACAJk+q3FjJxqeXviecGrAA/+6Tz+mT+m3M7rcZEYycE9X6CEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwgmUV20; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DC7C4CECF;
+	Mon, 11 Nov 2024 17:58:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731347884;
+	bh=o3CQlzBRpJV7aSV4DDZJsHMn6BJpLIqcjJ/aGt/TrPw=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=pwgmUV20E5aFcgwiIvoi9A192iBJ8Zm9CVa0R7SLCKwUtHCxAbSDAhm7yBGz2lqNr
+	 jETq5UW1TzB8BWPmXi8TZ9WhuhNv5gfmYbIQmJTr83Mm/DKDsdONzg3sARLRzUTLWr
+	 XtqGGPVPnT812jB0Nw6XJ/yj6Yozw1dhC0of3Q98xk9yfk19deIkHKE2a+pfV4HYG1
+	 MWhjiyluh/cLJH6+4dSS2Z5awGosMnSLw+gxt4NuzZZJRbdS0MvpmJCqiO5NUSUSGw
+	 t18OJG06Wdk8UweroCF29N+UUt7Y7igbWNkx2Gl2hi43SzSmreioKTylBHJVD2u1LF
+	 LgbFFtHfTLqUQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,  Raj Kumar Bhagat
+ <quic_rajkbhag@quicinc.com>,  ath12k@lists.infradead.org,
+  linux-wireless@vger.kernel.org,  Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>,  Jeff Johnson <jjohnson@kernel.org>,  Bjorn
+ Andersson <andersson@kernel.org>,  Konrad Dybcio <konradybcio@kernel.org>,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-msm@vger.kernel.org
+Subject: Re: [RFC PATCH v3 0/5] wifi: ath12k: Add wifi device node with WSI
+ for QCN9274 in RDP433
+References: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
+	<49a6ec0d-8a0b-49aa-a9eb-1174cff930f6@kernel.org>
+	<cmvfpctliqggra33u6ituguoxh3jxcuxiyjpbtcjbcgpu6lhoi@4zdthfkc2ed3>
+	<692503b8-cf39-4d6b-b70e-910fcc710d69@kernel.org>
+	<CAA8EJpqMCbyK0dodMNyfs8dNjV2QoB2nyWm233eOS9xo8BaFJg@mail.gmail.com>
+	<9d158c25-197a-49fd-b639-45287a46438f@kernel.org>
+Date: Mon, 11 Nov 2024 19:57:59 +0200
+In-Reply-To: <9d158c25-197a-49fd-b639-45287a46438f@kernel.org> (Krzysztof
+	Kozlowski's message of "Thu, 7 Nov 2024 13:16:56 +0100")
+Message-ID: <87wmh94pqw.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com> <20241108204137.2444151-9-howardchu95@gmail.com>
-In-Reply-To: <20241108204137.2444151-9-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 09:56:52 -0800
-Message-ID: <CAP-5=fW-y3KOCDs4WMHXj03x7s1CkUC-zvx7LmHq6Fh-O9+fCw@mail.gmail.com>
-Subject: Re: [PATCH v7 08/10] perf script: Display off-cpu samples correctly
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> No PERF_SAMPLE_CALLCHAIN in sample_type, but I need perf script to
-> display a callchain, have to specify manually.
->
-> Also, prefer displaying a callchain:
->
->  gvfs-afc-volume    2267 [001] 3829232.955656: 1001115340 offcpu-time:
->             77f05292603f __pselect+0xbf (/usr/lib/x86_64-linux-gnu/libc.s=
-o.6)
->             77f052a1801c [unknown] (/usr/lib/x86_64-linux-gnu/libusbmuxd-=
-2.0.so.6.0.0)
->             77f052a18d45 [unknown] (/usr/lib/x86_64-linux-gnu/libusbmuxd-=
-2.0.so.6.0.0)
->             77f05289ca94 start_thread+0x384 (/usr/lib/x86_64-linux-gnu/li=
-bc.so.6)
->             77f052929c3c clone3+0x2c (/usr/lib/x86_64-linux-gnu/libc.so.6=
-)
->
-> to a raw binary BPF output:
->
-> BPF output: 0000: dd 08 00 00 db 08 00 00  <DD>...<DB>...
->           0008: cc ce ab 3b 00 00 00 00  <CC>=CE=AB;....
->           0010: 06 00 00 00 00 00 00 00  ........
->           0018: 00 fe ff ff ff ff ff ff  .<FE><FF><FF><FF><FF><FF><FF>
->           0020: 3f 60 92 52 f0 77 00 00  ?`.R<F0>w..
->           0028: 1c 80 a1 52 f0 77 00 00  ..<A1>R<F0>w..
->           0030: 45 8d a1 52 f0 77 00 00  E.<A1>R<F0>w..
->           0038: 94 ca 89 52 f0 77 00 00  .<CA>.R<F0>w..
->           0040: 3c 9c 92 52 f0 77 00 00  <..R<F0>w..
->           0048: 00 00 00 00 00 00 00 00  ........
->           0050: 00 00 00 00              ....
->
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+Krzysztof Kozlowski <krzk@kernel.org> writes:
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+> On 07/11/2024 13:03, Dmitry Baryshkov wrote:
+>
+>> On Thu, 7 Nov 2024 at 11:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>
+>>> On 07/11/2024 12:06, Dmitry Baryshkov wrote:
+>>>> On Thu, Nov 07, 2024 at 11:23:20AM +0100, Krzysztof Kozlowski wrote:
+>>>>> On 05/11/2024 19:04, Raj Kumar Bhagat wrote:
+>>>>>> The RDP433 is a Qualcomm Reference Design Platform based on the
+>>>>>> IPQ9574. It features three QCN9274 WiFi devices connected to PCIe1,
+>>>>>> PCIe2, and PCIe3. These devices are also interconnected via a WLAN
+>>>>>> Serial Interface (WSI) connection. This WSI connection is essential
+>>>>>> for exchanging control information among these devices.
+>>>>>>
+>>>>>> This patch series describes the WSI interface found in QCN9274 in
+>>>>>> device tree and uses this device tree node in the Ath12k driver to get the
+>>>>>> details of WSI connection for Multi Link Operation (MLO) among multiple
+>>>>>> QCN9274 devices.
+>>>>>>
+>>>>>> NOTES:
+>>>>>> 1. As ath12k MLO patches are not ready yet, this patchset does not apply
+>>>>>>    to the ath.git ath-next branch and that's why the patchset is marked
+>>>>>>    as RFC. These are the work-in-progress patches we have at the moment.
+>>>>>>    The full set of MLO patches is available at:
+>>>>>>    https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/log/?h=ath12k-mlo-qcn9274
+>>>>>>
+>>>>>> 2. The dependency marked below applies only to the DTS patch. The
+>>>>>>    dt-bindings patches do not have this dependency.
+>>>>>>
+>>>>>> Depends-On: [PATCH V7 0/4] Add PCIe support for IPQ9574
+>>>>>> Link: https://lore.kernel.org/linux-pci/20240801054803.3015572-1-quic_srichara@quicinc.com/
+>>>>>>
+>>>>>> v3:
+>>>>>> - Created a separate binding "qcom,ath12k-wsi.yaml" to describe ath12k PCI
+>>>>>>   devices with WSI interface.
+>>>>>
+>>>>> Thanks for the changes. When you finish with testing/RFC, please send
+>>>>> proper version for review (just remember to keep numbering, next one is
+>>>>> v4 regardless whether this is RFC or not).
+>>>>
+>>>> Isn't the 'RFC' being an invitation for review per the nature of the tag
+>>>> itself?
+>>>
+>>> No, RFC means patch is not ready, might change. This was brought on the
+>>> lists multiple times and some maintainers clearly ignore RFC. Including me.
+>> 
+>> Thanks, point noted. I'll stop marking my patches with RFC tag.
+>
+> Wait, you can keep marking them RFC! It all depends what do you want to
+> achieve. Get some comments on early work or actual review for something
+> you believe is a finished work.
+>
+> I looked here briefly, no comments from me and I assume that was the
+> intention of RFC.
 
-Thanks,
-Ian
+Exactly, we just wanted to have early feedback how to handle this
+feature. We will now incorporate these changes to our work-in-progress
+ath12kl-mlo branches, test them and once everything else in ath12k is
+ready we will submit the next patchset without RFC tag.
 
-> ---
->  tools/perf/builtin-script.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index 6b6d4472db6e..1893d2117aab 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -662,7 +662,7 @@ static int perf_session__check_output_opt(struct perf=
-_session *session)
->
->                 evlist__for_each_entry(session->evlist, evsel) {
->                         not_pipe =3D true;
-> -                       if (evsel__has_callchain(evsel)) {
-> +                       if (evsel__has_callchain(evsel) || evsel__is_offc=
-pu_event(evsel)) {
->                                 use_callchain =3D true;
->                                 break;
->                         }
-> @@ -2353,7 +2353,7 @@ static void process_event(struct perf_script *scrip=
-t,
->         else if (PRINT_FIELD(BRSTACKOFF))
->                 perf_sample__fprintf_brstackoff(sample, thread, attr, fp)=
-;
->
-> -       if (evsel__is_bpf_output(evsel) && PRINT_FIELD(BPF_OUTPUT))
-> +       if (evsel__is_bpf_output(evsel) && !evsel__is_offcpu_event(evsel)=
- && PRINT_FIELD(BPF_OUTPUT))
->                 perf_sample__fprintf_bpf_output(sample, fp);
->         perf_sample__fprintf_insn(sample, evsel, attr, thread, machine, f=
-p, al);
->
-> --
-> 2.43.0
->
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
