@@ -1,471 +1,186 @@
-Return-Path: <linux-kernel+bounces-403797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B379C3AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2659C3AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:38:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCC2E1C21AEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:37:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC7161C21B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0D715624D;
-	Mon, 11 Nov 2024 09:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A5E143C72;
+	Mon, 11 Nov 2024 09:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqhrNvtO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U3/w8/rP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BD5878289;
-	Mon, 11 Nov 2024 09:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E238078289
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731317852; cv=none; b=iXbTkAmfFl+one0Vbe5RTX16UadbL0LpmXVy6+qIqh9nYzFxKPl+684QjmsgO8ghnB38QkOjU5gMZrnhi1RfuD8ObrDvjyjZroJIi9g4+jGZ8vUUnt08Q6KHdowKm8sMWIx47MWvdXmAjqMu3UFu8XEBEaFpm4aWsL6B/oU/e0o=
+	t=1731317882; cv=none; b=S1ReCTeLu62kJV2MM6CFeo2lhuCeTJJOi1wX5sk5KQSa5OcYnSVqSdC4PvnFewpb7sCvbVO5YHBpyNr5re+ODEJzssByqH2HkM4gpM0glLBKGSIazl7GMiWcWk7idsqbCEYk8vU2yR+kmiP0XdzjaVxm642tdD7h6e2lCMe4bZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731317852; c=relaxed/simple;
-	bh=0VT0DgwU4hUwHYcqJKK/CsUnggWcjRObe2eKtg5y1ck=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OlDUPECMnXsWFGA8hqrf+eEDJz23PtgM0sbdUWPOK+KzkI+VeCcUc//IPtnoiiGNxzzfZzvS1REuTKbA3nFpZJwDBzs+EB0W6EOgBVRrgvsMWnRN1+ykR8i/Yr+OUuoKdSFKRHmvpj5eVlFaJxhrams7/QDLBR7vtvuMSIEF2iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqhrNvtO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A48AC4CED0;
-	Mon, 11 Nov 2024 09:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731317852;
-	bh=0VT0DgwU4hUwHYcqJKK/CsUnggWcjRObe2eKtg5y1ck=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=FqhrNvtO3XQ4no4/osquF01ayqHq/kVrgVifWort4/bLLnGMlrd+xyU4iwUUDaXLo
-	 2QHysDB90vMa4wuXcaJQ6heUsLI0ATGbfbhz3HNjK3X8nsC3ZxwVNCBllmbeBoPKBl
-	 Sbps063HEN9tmpfTnoYbvEEs89gfI2NYoGOxZaYpqfSI+XcKaf599L8ejMsycQyOsW
-	 3QZrfMhEYNkXNNSN/lA8V10tE/oj3H1Ey1yOZ0madl5q0C3nrEMSwwEkotKaRxVnq6
-	 cJaasOXWrM1iG7K/mnPl6KV9KxXv9BtcRnHEmrwgdBBZH2cfkvDcCrUS07Amu+zTzM
-	 UOcuTV1Gtn6ZA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2B8D2E9CC;
-	Mon, 11 Nov 2024 09:37:32 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Mon, 11 Nov 2024 17:37:28 +0800
-Subject: [PATCH] clk: meson: Fix children of ro_clk may be tampered with
+	s=arc-20240116; t=1731317882; c=relaxed/simple;
+	bh=WHiKLed6P0aA3mssEu2TJFufpT+8APlPPZ3Fq/+kROo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bh+uNvhayYVTaWzvTV93HCBm0ZLtOF0QK8Fegbb2IF59sPYqJr0ArRkPTQCgYbV/mWMcrvO7LRPnPja50SROebopgRgYISZ8+31VxDc84R1ROwO4tdi32/SRyeIYGfb7OvXm4WrTk3HG5zToraFJA2ppQb0x4KhIjenQsvUeUo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U3/w8/rP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731317878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1AmqhxsL8rzzGELlDSbCXVep29gCA2uUYmEdhtBEA0k=;
+	b=U3/w8/rPxWM/zqzZbOWD7d7wkJKhKUBBt2a8ahZbLxrCdTv49ehzEacDYEllDgFhNWuEob
+	T3ZDUulsCCft+/TepuI8sJ9YfF5mviCEMSQOH83bJcHiDyM/AQjllUdxWdLSdGLCn0QYCR
+	b8CzDismeHjssHL+CppQQMpOsSFibCs=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-393-csG3D0GvM7GsUBo34y7Dqw-1; Mon, 11 Nov 2024 04:37:57 -0500
+X-MC-Unique: csG3D0GvM7GsUBo34y7Dqw-1
+X-Mimecast-MFC-AGG-ID: csG3D0GvM7GsUBo34y7Dqw
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431518e6d8fso31196245e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:37:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731317876; x=1731922676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1AmqhxsL8rzzGELlDSbCXVep29gCA2uUYmEdhtBEA0k=;
+        b=rtn5Ue2U9Wr5kXEpvP+rvgY7ikwzMpltHze8m1544tL0nCbP7nnFqy7Ep6fSemHbq0
+         P3UCML5oPiBlVPhEmNS0KEcmU7ONTVqqZ4zKistWTGBnSFSdigBZKw4jhU2nPDEfVxun
+         JCby90P8TYQk6mz4z4YOpQ/oLPxk4Uv5C7UbEKcTtyZDT8GrqE3wFSktVpKcJrbJQaQc
+         DKcx19OEAjmGAkj9WwmG4SdluOeis0XxOP+4nFSkZ9URZg4zVCqyStnrBnLn6LaTorQA
+         j+XHtqm2BHQWJ4zvf3/GdGJOeRpJJclf+2uShQdCaZnIN675yC4B84eWVMMsplVGifyK
+         UFYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXB2bOzjRiBtrT3y6ewFakSbacNXMfm+5YpVQDKBcAADCYrH0M+vZsOR36Xb7fItfA6MIjgCvsRQmjAtRU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypXQ/24NbyCN3uzOfGRY2N0sYAm/WCnl/8CTQj2+TWkyhONtK1
+	25rMcrkfIXmJxFbqYVIAPldyq61PLpIon/c5z8qyYdI/w47eagOpPfp0bot4cY4C3GxTnn7OZIT
+	1ik9hYnnXqzqxcHmFjHtyqlJAPLLw8NNNGHvZ4pkxX2Em14TjxrJ9V7y8xl1Knw==
+X-Received: by 2002:a05:600c:a384:b0:431:5503:43ca with SMTP id 5b1f17b1804b1-432c5d13d2dmr23591235e9.28.1731317876362;
+        Mon, 11 Nov 2024 01:37:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH2oMu3LJQQXMWQrycmnrzzPfBxLIuhF2LrgaR+bv2sBUs4isWFdYPamE8xbH6ZAPQTH7Xaqw==
+X-Received: by 2002:a05:600c:a384:b0:431:5503:43ca with SMTP id 5b1f17b1804b1-432c5d13d2dmr23591045e9.28.1731317875943;
+        Mon, 11 Nov 2024 01:37:55 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-250.as13285.net. [89.240.117.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa70a226sm210454025e9.28.2024.11.11.01.37.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 01:37:55 -0800 (PST)
+Date: Mon, 11 Nov 2024 09:37:53 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>
+Subject: Re: [PATCH] dl_server: Reset DL server params when rd changes
+Message-ID: <ZzHQcQ4nBYdcbZJ_@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241029225116.3998487-1-joel@joelfernandes.org>
+ <ZyJC9MkbPeF9_rdP@jlelli-thinkpadt14gen4.remote.csb>
+ <20241030195017.GA4171541@google.com>
+ <Zyin7P2WNZMM40tp@jlelli-thinkpadt14gen4.remote.csb>
+ <20241104174109.GA1044726@google.com>
+ <ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb>
+ <74c126bc-911f-45fc-b024-815e134c97cf@redhat.com>
+ <3833509d-e0c1-4fc4-874f-5a10fe3f1633@redhat.com>
+ <5259772c-527b-4ab2-9606-2d1f0d93862a@redhat.com>
+ <a8e3dfbd-0efa-4b4e-bc18-d00abaa79f14@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAFfQMWcC/x2NwQrCMBBEf6Xs2YCJJYK/IrKkm61ZrEnZFBVK/
- 72pc5p3eDMrVFbhCrduBeWPVCm5gT11QCnkJxuJjcGdXW9bzCg/pCRTpOmFZUQtR0mh4sCccQn
- vmZUjfmVJxts4EHl3ufYe2uSs3Pz/3f2xbTsnulnBfgAAAA==
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jian Hu <jian.hu@amlogic.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>, 
- Yu Tu <yu.tu@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731317850; l=13683;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=YxXioEaTtbKEjn0qaJusuyt0oVp19SJ+e2gENpuSvCg=;
- b=lve99QSTWeR4830u6P+GXxi4kW75eZvQBMZfogiMVdx3BYUicBNbWSh8Yy3jJQksisGuhnS+i
- +T6eAG1B1fTCoAiv5qtC73I0kW+poQV5eLDef2UNgavxvAzkx/7OuO6
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8e3dfbd-0efa-4b4e-bc18-d00abaa79f14@redhat.com>
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+On 09/11/24 13:18, Waiman Long wrote:
+> On 11/8/24 10:30 PM, Waiman Long wrote:
+> > I have the patchset to enforce that rebuild_sched_domains_locked() will
+> > only be called at most once per cpuset operation.
+> > 
+> > By adding some debug code to further study the null total_bw issue when
+> > cpuset.cpus.partition is being changed, I found that eliminating the
+> > redundant rebuild_sched_domains_locked() reduced the chance of hitting
+> > null total_bw, it did not eliminate it. By running my cpuset test
+> > script, I hit 250 cases of null total_bw with the v6.12-rc6 kernel. With
+> > my new cpuset patch applied, it reduces it to 120 cases of null
+> > total_bw.
+> > 
+> > I will try to look further for the exact condition that triggers null
+> > total_bw generation.
+> 
+> After further testing, the 120 cases of null total_bw can be classified into
+> the following 3 categories.
+> 
+> 1) 51 cases when an isolated partition with isolated CPUs is created.
+> Isolated CPU is not subjected to scheduling and so a total_bw of 0 is fine
+> and not really a problem.
+> 
+> 2) 67 cases when a nested partitions are being removed (A1 - A2). There is
+> probably caused by some kind of race condtion. If I insert an artifical
+> delay between the removal of A2 and A1, total_bw is fine. If there is no
+> delay, I can see a null total_bw. That shouldn't really a problem in
+> practice, though we may still need to figure out why.
+> 
+> 2) Two cases where null total_bw is seen when a new partition is created by
+> moving all the CPUs in the parent cgroup into its partition and the parent
+> becomes a null partition with no CPU. The following example illustrates the
+> steps.
+> 
+> #!/bin/bash
+> CGRP=/sys/fs/cgroup
+> cd $CGRP
+> echo +cpuset > cgroup.subtree_control
+> mkdir A1
+> cd A1
+> echo 0-1 > cpuset.cpus
+> echo root > cpuset.cpus.partition
+> echo "A1 partition"
+> echo +cpuset > cgroup.subtree_control
+> mkdir A2
+> cd A2
+> echo 0-1 > cpuset.cpus
+> echo root > cpuset.cpus.partition
+> echo "A2 partition"
+> cd ..
+> echo "Remove A2"
+> rmdir A2
+> cd ..
+> echo "Remove A1"
+> rmdir A1
+> 
+> In this corner case, there is actually no change in the set of sched
+> domains. In this case, the sched domain set of CPUs 0-1 is being moved from
+> partition A1 to A2 and vice versa in the removal of A2. This is similar to
+> calling rebuild_sched_domains_locked() twice with the same input. I believe
+> that is the condition that causes null total_bw.
+> 
+> Now the question is why the deadline code behaves this way. It is probably a
+> bug that needs to be addressed.
 
-When setting the rate of a clock using clk_regmap_divider_ro_ops, the
-rate of its children may be tampered with.
+Thanks for the analysis (and the patches). Will take a look, but I
+suspect it might be because in case domains are not destroyed, we clear
+them up (total_bw set to 0), but we don't add fair server contribution
+back because rqs are not attached to domains (as there have been alredy
+attached when such domains were created).
 
-Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock controller driver")
-Fixes: 87173557d2f6 ("clk: meson: clk-pll: remove od parameters")
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-Fixes: 64aa7008e957 ("clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller")
-Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
-Fixes: e787c9c55eda ("clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver")
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
-Background: During the execution of clk_set_rate(), the function 
-clk_core_round_rate_nolock() is called to calculate the matching rate
-and save it to 'core->new_rate'. At the same time, it recalculates and
-updates its 'child->newrate'. Finally, clk_change_rate() is called to
-set all 'new_rates'.
-
-In clk_regmap_divider_ro_ops, there is an implementation of
-'determine_rate'. If a clock (name as 'ro_divider') that references
-clk_regmap_divider_ro_ops is not configured with CLK_DIVIDER_READ_ONLY,
-it will result in the calculation of an incorrect core->new_rate and
-potentially tamper with child->newrate, ultimately leading to the
-corruption of the rate for 'ro_divider's' children.
----
- drivers/clk/meson/a1-peripherals.c |  2 ++
- drivers/clk/meson/axg.c            |  5 +++--
- drivers/clk/meson/g12a.c           | 23 ++++++++++++++---------
- drivers/clk/meson/gxbb.c           | 18 ++++++++++--------
- drivers/clk/meson/meson8-ddr.c     |  2 +-
- drivers/clk/meson/meson8b.c        |  4 +++-
- drivers/clk/meson/s4-peripherals.c |  2 ++
- drivers/clk/meson/s4-pll.c         |  2 +-
- 8 files changed, 36 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 7aa6abb2eb1f..eedf7c2bf970 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -266,6 +266,7 @@ static struct clk_regmap sys_b_div = {
- 		.offset = SYS_CLK_CTRL0,
- 		.shift = 16,
- 		.width = 10,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_b_div",
-@@ -314,6 +315,7 @@ static struct clk_regmap sys_a_div = {
- 		.offset = SYS_CLK_CTRL0,
- 		.shift = 0,
- 		.width = 10,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_a_div",
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 1b08daf579b2..eb86c4d10046 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -71,7 +71,7 @@ static struct clk_regmap axg_fixed_pll = {
- 		.offset = HHI_MPLL_CNTL,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
-@@ -130,7 +130,7 @@ static struct clk_regmap axg_sys_pll = {
- 		.offset = HHI_SYS_PLL_CNTL,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
-@@ -471,6 +471,7 @@ static struct clk_regmap axg_mpll_prediv = {
- 		.offset = HHI_MPLL_CNTL5,
- 		.shift = 12,
- 		.width = 1,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll_prediv",
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d3539fe9f7af..c7c9fdfd021f 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -76,7 +76,7 @@ static struct clk_regmap g12a_fixed_pll = {
- 		.offset = HHI_FIX_PLL_CNTL0,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
-@@ -443,6 +443,7 @@ static struct clk_regmap g12a_cpu_clk_mux1_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL0,
- 		.shift = 20,
- 		.width = 6,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk_dyn1_div",
-@@ -627,6 +628,7 @@ static struct clk_regmap g12b_cpub_clk_mux1_div = {
- 		.offset = HHI_SYS_CPUB_CLK_CNTL,
- 		.shift = 20,
- 		.width = 6,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpub_clk_dyn1_div",
-@@ -746,6 +748,7 @@ static struct clk_regmap sm1_dsu_clk_mux0_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL5,
- 		.shift = 4,
- 		.width = 6,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "dsu_clk_dyn0_div",
-@@ -781,6 +784,7 @@ static struct clk_regmap sm1_dsu_clk_mux1_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL5,
- 		.shift = 20,
- 		.width = 6,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "dsu_clk_dyn1_div",
-@@ -1198,7 +1202,7 @@ static struct clk_regmap g12a_cpu_clk_apb_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 3,
- 		.width = 3,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk_apb_div",
-@@ -1232,7 +1236,7 @@ static struct clk_regmap g12a_cpu_clk_atb_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 6,
- 		.width = 3,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk_atb_div",
-@@ -1266,7 +1270,7 @@ static struct clk_regmap g12a_cpu_clk_axi_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 9,
- 		.width = 3,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk_axi_div",
-@@ -1300,7 +1304,7 @@ static struct clk_regmap g12a_cpu_clk_trace_div = {
- 		.offset = HHI_SYS_CPU_CLK_CNTL1,
- 		.shift = 20,
- 		.width = 3,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "cpu_clk_trace_div",
-@@ -1736,7 +1740,7 @@ static struct clk_regmap sm1_gp1_pll = {
- 		.shift = 16,
- 		.width = 3,
- 		.flags = (CLK_DIVIDER_POWER_OF_TWO |
--			  CLK_DIVIDER_ROUND_CLOSEST),
-+			  CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_READ_ONLY),
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "gp1_pll",
-@@ -1999,7 +2003,7 @@ static struct clk_regmap g12a_hdmi_pll_od = {
- 		.offset = HHI_HDMI_PLL_CNTL0,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od",
-@@ -2017,7 +2021,7 @@ static struct clk_regmap g12a_hdmi_pll_od2 = {
- 		.offset = HHI_HDMI_PLL_CNTL0,
- 		.shift = 18,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od2",
-@@ -2035,7 +2039,7 @@ static struct clk_regmap g12a_hdmi_pll = {
- 		.offset = HHI_HDMI_PLL_CNTL0,
- 		.shift = 20,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
-@@ -4048,6 +4052,7 @@ static struct clk_regmap g12a_ts_div = {
- 		.offset = HHI_TS_CLK_CNTL,
- 		.shift = 0,
- 		.width = 8,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "ts_div",
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 262c318edbd5..e2b419100e0c 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -131,7 +131,7 @@ static struct clk_regmap gxbb_fixed_pll = {
- 		.offset = HHI_MPLL_CNTL,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
-@@ -267,7 +267,7 @@ static struct clk_regmap gxbb_hdmi_pll_od = {
- 		.offset = HHI_HDMI_PLL_CNTL2,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od",
-@@ -285,7 +285,7 @@ static struct clk_regmap gxbb_hdmi_pll_od2 = {
- 		.offset = HHI_HDMI_PLL_CNTL2,
- 		.shift = 22,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od2",
-@@ -303,7 +303,7 @@ static struct clk_regmap gxbb_hdmi_pll = {
- 		.offset = HHI_HDMI_PLL_CNTL2,
- 		.shift = 18,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
-@@ -321,7 +321,7 @@ static struct clk_regmap gxl_hdmi_pll_od = {
- 		.offset = HHI_HDMI_PLL_CNTL + 8,
- 		.shift = 21,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od",
-@@ -339,7 +339,7 @@ static struct clk_regmap gxl_hdmi_pll_od2 = {
- 		.offset = HHI_HDMI_PLL_CNTL + 8,
- 		.shift = 23,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll_od2",
-@@ -357,7 +357,7 @@ static struct clk_regmap gxl_hdmi_pll = {
- 		.offset = HHI_HDMI_PLL_CNTL + 8,
- 		.shift = 19,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "hdmi_pll",
-@@ -413,7 +413,7 @@ static struct clk_regmap gxbb_sys_pll = {
- 		.offset = HHI_SYS_PLL_CNTL,
- 		.shift = 10,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sys_pll",
-@@ -703,6 +703,7 @@ static struct clk_regmap gxbb_mpll_prediv = {
- 		.offset = HHI_MPLL_CNTL5,
- 		.shift = 12,
- 		.width = 1,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll_prediv",
-@@ -911,6 +912,7 @@ static struct clk_regmap gxbb_mpeg_clk_div = {
- 		.offset = HHI_MPEG_CLK_CNTL,
- 		.shift = 0,
- 		.width = 7,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
-diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
-index 4b73ea244b63..950f323072fb 100644
---- a/drivers/clk/meson/meson8-ddr.c
-+++ b/drivers/clk/meson/meson8-ddr.c
-@@ -65,7 +65,7 @@ static struct clk_regmap meson8_ddr_pll = {
- 		.offset = AM_DDR_PLL_CNTL,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "ddr_pll",
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index e4b474c5f86c..4dba11c0ab7e 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -104,7 +104,7 @@ static struct clk_regmap meson8b_fixed_pll = {
- 		.offset = HHI_MPLL_CNTL,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
-@@ -457,6 +457,7 @@ static struct clk_regmap meson8b_mpll_prediv = {
- 		.offset = HHI_MPLL_CNTL5,
- 		.shift = 12,
- 		.width = 1,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpll_prediv",
-@@ -635,6 +636,7 @@ static struct clk_regmap meson8b_mpeg_clk_div = {
- 		.offset = HHI_MPEG_CLK_CNTL,
- 		.shift = 0,
- 		.width = 7,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "mpeg_clk_div",
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index c930cf0614a0..470431355e25 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -175,6 +175,7 @@ static struct clk_regmap s4_sysclk_b_div = {
- 		.offset = CLKCTRL_SYS_CLK_CTRL0,
- 		.shift = 16,
- 		.width = 10,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sysclk_b_div",
-@@ -221,6 +222,7 @@ static struct clk_regmap s4_sysclk_a_div = {
- 		.offset = CLKCTRL_SYS_CLK_CTRL0,
- 		.shift = 0,
- 		.width = 10,
-+		.flags = CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "sysclk_a_div",
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index d8e621e79428..5dc051afc06a 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -72,7 +72,7 @@ static struct clk_regmap s4_fixed_pll = {
- 		.offset = ANACTRL_FIXPLL_CTRL0,
- 		.shift = 16,
- 		.width = 2,
--		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
- 	},
- 	.hw.init = &(struct clk_init_data){
- 		.name = "fixed_pll",
-
----
-base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
-change-id: 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
-
-Best regards,
--- 
-Chuan Liu <chuan.liu@amlogic.com>
-
+Best,
+Juri
 
 
