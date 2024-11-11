@@ -1,165 +1,260 @@
-Return-Path: <linux-kernel+bounces-404600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3298B9C45B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:17:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3269C457A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEF7FB294BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:02:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 333EB1F21CF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657101B654C;
-	Mon, 11 Nov 2024 19:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3591AFB35;
+	Mon, 11 Nov 2024 19:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGV4x7AH"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZuo15Pc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280581B6541
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D661AAE2C;
+	Mon, 11 Nov 2024 19:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731351661; cv=none; b=cv3jL0Xr8N+q18P6REvoivf93YR2N7yCWRA0df+Ggm9uYEdQ9kRyoRGYepJ1FGfd4BFqNQVeHhkuIVH9UiEiwJtWoyMsO0wvpYOhvpjJjJYPCqM1XbtLr4abz4nLfDyt5gErGz2qUKOD5qADfuxG5WiCcgxm9omrJLh5XvNq1ck=
+	t=1731351653; cv=none; b=L/jhslM0+gWVZX/x1sjYd1Ockv3kBw52+fQ9bNMkvWaYTg3AODNniNBh67OAYPrR+xIjmVuCx/lgqOgCD2UwLOzb4ba162WsNkoLmBhko5m3jCful4FdqNVlRZpZsErDnWbxyHNkqBUqeioWHVk7zYUTvp2E2s1+eFJpwZMuYcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731351661; c=relaxed/simple;
-	bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PnKWh/o8jbbIT3dRZHzhsKCc/ZGFW+AP7lyQTXrhzyTcXV5yMwx/YFhVItmAf1EHrSS3aXlfh+bKifYOk0cZQV5EG/eAJ4jTRhNngbStErO/d2gulP3NLGvylsRGjTjDnT7z+r5r+mlLVB9rhHQ4DC5VGT6bvgLjRB9LWd7FC8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iGV4x7AH; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so3630033a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:01:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731351659; x=1731956459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
-        b=iGV4x7AH1odMVqLETFu80/iNRjVQt4pxTOCg9PiQMFUhIVII0666f3XFK30yGr7S80
-         tofq5gXKNHUUl6SUHkqFM+qbA3j4lmD74KWteptXTrapwg6esCwNqQ2s3JhbehKS8e7o
-         af2isH4bH7wssiEI+EFdLaf5kBp/r43xSiMcBha4dmDU6ZoH3/ecYCsdoT3Ki7ZdqBSu
-         su/O1Ocszcm7HMOV3F72g0ZHTvuXww1Y3WCVubJLUKtWPUkS6g+BjbbViBFxOyR26cnm
-         iUe7O46paFaGTWaukOgLg3vkKjspIHdsGYg3W7hUcMIYSNils/r8efcl5XojrEP3HOSR
-         y7sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731351659; x=1731956459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
-        b=eK+KnMl0s9Wo/aTzg+42ppZbUbCQ3eeuTyZPQVVNPv04Io3mwW30tumSJN+Saf4JPC
-         z2CjgXrHcSbLWjvDxiIiTE6FKCCedLUZf/fesQPFws4Fiww2TPNYMOt0d+nzr1r7eAC0
-         hYm/X/1itBeraDAMPArhJ12JxFoUp/1zZ+GCdc7HtXpdyySIKn2eDksdo0PRHEd/yMws
-         ulbbHfBIpLrICz4HL35g80TGpJRS/0YgcLuHKCKdfCjtar1yM26b8H6eD0HmHVtbXkHg
-         qUWR+hoT2Md3rfkFi2GOyAXjkMTLZCvkguuePYU8U7lsBHL3Cd0CBG/zPPdWHwnerMdz
-         0Mfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUgIlDQzghlfSQRzZDmIrP88GP2JOYdqjFqvZapkgUtV56nf/8qm8X3ilgFy9ISaacRwdRiNZkCB2/wA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnDk2IIet+msBKuF1dafc41OAG5I2w3YAAfvRCAQGNmrCww5eC
-	nXr1XpO51ZI84p10Hsli8Zy/kuu5wFdUAuHy1ymf050Nf5gnQJrmm0DCit0U/hJii80H+7VkJat
-	TktIf8rzVLOtJyQViVLAnWVHp50UW2wmA5WhTwQ==
-X-Google-Smtp-Source: AGHT+IF2jLVx9obVTZnhgf77+8GsrSfbzXMFZdzhdPn8n+7CxPCJNvWaVAnxCZRrAOUNBAqC64Ad6y6XMwxwGnavFf4=
-X-Received: by 2002:a17:90b:2743:b0:2e2:d87f:3cc with SMTP id
- 98e67ed59e1d1-2e9b1777659mr16173672a91.23.1731351659370; Mon, 11 Nov 2024
- 11:00:59 -0800 (PST)
+	s=arc-20240116; t=1731351653; c=relaxed/simple;
+	bh=mBGeH5YCHeqpmaVtCC4xNxEVGj3Tk2zJbSDEmkvUaZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Ic+4OSPci9qseKZqAIk8PuBwmUJMNHdU6h/DRG4x2wywZg3zrdsOOK+GzFcg3psPmQ6h9l2QFzM6kXCuQtIsLgz72BffFf+xXaJrKO1WgtYllTFMw7Sm1Vemr9awBfoIeB1J7MehP7EP9tI823b+gwJhnahd6cGS3wlYO+UMZbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZuo15Pc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74332C4CECF;
+	Mon, 11 Nov 2024 19:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731351652;
+	bh=mBGeH5YCHeqpmaVtCC4xNxEVGj3Tk2zJbSDEmkvUaZo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UZuo15PcJS/fEIOQ6yrQZTCNsCHxALYUSOIScmrvPXDJQMhjZNRf770l5Z2728P++
+	 sy8pSV0/eNPBepxRoigBkIKb0XH1OvGgWVyPX22NcqViE6DDwLAVVXWnXuCUzpes09
+	 lHS0vENq4YFXdU0mUsLirNk95YYHGCJlWvdVwUC/u3R3DDoWinOdJrPNexHJoZJvi+
+	 FXMnSuyudT7o6Hbdq9m61YbmKnSrH/ylUSZYPUcgUfq2263puVOgFdFU1l8LgF6TF2
+	 DzNYr+bq6UOg+kK26HjR8uGDJagpRazxz87uTZZxnXAtAB+bvlYg8MxiqUp5Ze5QPO
+	 hRhDf1RlHJlrQ==
+Date: Mon, 11 Nov 2024 13:00:51 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org, Daniel Wagner <dwagner@suse.de>
+Subject: Re: [PATCH v2 1/6] blk-mq: introduce blk_mq_hctx_map_queues
+Message-ID: <20241111190051.GA1805960@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAKfTPtBHRdHJaT_bjx1RF8bJ8Vc2s582VXMACPyjOno8zE_g=Q@mail.gmail.com>
- <CAGETcx9i4t_5Yt48Nfg=nSpZcPXZnPtSJtotUU7gt37wKpF6Vg@mail.gmail.com>
-In-Reply-To: <CAGETcx9i4t_5Yt48Nfg=nSpZcPXZnPtSJtotUU7gt37wKpF6Vg@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 11 Nov 2024 20:00:48 +0100
-Message-ID: <CAKfTPtANwjo+2hJrLRYc3byDGDpes1nHcNd0PsavEiGG+CF9Tg@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Saravana Kannan <saravanak@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111-refactor-blk-affinity-helpers-v2-1-f360ddad231a@kernel.org>
 
-On Mon, 11 Nov 2024 at 19:17, Saravana Kannan <saravanak@google.com> wrote:
->
-> On Mon, Nov 11, 2024 at 3:15=E2=80=AFAM Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
-> >
-> > On Mon, 11 Nov 2024 at 11:41, Peter Zijlstra <peterz@infradead.org> wro=
-te:
-> > >
-> > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
-> > >
-> > > > I actually quickly hacked up the cpu_overutilized() function to ret=
-urn
-> > > > true during suspend/resume and the threads are nicely spread out an=
-d
-> > > > running in parallel. That actually reduces the total of the
-> > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
-> > >
-> > > Right, so that kills EAS and makes it fall through to the regular
-> > > select_idle_sibling() thing.
-> > >
-> > > > Peter,
-> > > >
-> > > > Would you be open to the scheduler being aware of
-> > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > > > overutilized behavior during these phases? I know it's a very use c=
-ase
-> > > > specific behavior but how often do we NOT want to speed up
-> > > > suspend/resume? We can make this a CONFIG or a kernel command line
-> > > > option -- say, fast_suspend or something like that.
-> > >
-> > > Well, I don't mind if Vincent doesn't. It seems like a very
-> > > specific/targeted thing and should not affect much else, so it is a
-> > > relatively safe thing to do.
-> >
-> > I would like to understand why all idle little cpus are not used in
-> > saravana's example and tasks are packed on the same cpu instead.
->
-> If you want to try this on your end and debug it further, it should be
-> pretty easy to reproduce on a Pixel 6 even without my suspend/resume
-> changes.
+On Mon, Nov 11, 2024 at 07:02:09PM +0100, Daniel Wagner wrote:
+> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
+> hardware queue mapping based on affinity information. These two function
+> share common code and only differ on how the affinity information is
+> retrieved. Also, those functions are located in the block subsystem
+> where it doesn't really fit in. They are virtio and pci subsystem
+> specific.
+> 
+> Introduce a new callback in struct bus_type to get the affinity mask.
+> The callbacks can then be populated by the subsystem directly.
+> 
+> All but one driver use the subsystem default affinity masks. hisi_sas v2
+> depends on a driver specific mapping, thus use the optional argument
+> get_queue_affinity to retrieve the mapping.
+> 
+> Original-by : Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
+> ---
+>  block/blk-mq-cpumap.c      | 40 ++++++++++++++++++++++++++++++++++++++++
+>  drivers/pci/pci-driver.c   | 16 ++++++++++++++++
+>  drivers/virtio/virtio.c    | 12 ++++++++++++
+>  include/linux/blk-mq.h     |  5 +++++
+>  include/linux/device/bus.h |  3 +++
+>  5 files changed, 76 insertions(+)
+> 
+> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
+> index 9638b25fd52124f0173e968ebdca5f1fe0b42ad9..4dd703f5ee647fd1ba0b14ca11ddfdefa98a9a25 100644
+> --- a/block/blk-mq-cpumap.c
+> +++ b/block/blk-mq-cpumap.c
+> @@ -54,3 +54,43 @@ int blk_mq_hw_queue_to_node(struct blk_mq_queue_map *qmap, unsigned int index)
+>  
+>  	return NUMA_NO_NODE;
+>  }
+> +
+> +/**
+> + * blk_mq_hctx_map_queues - Create CPU to hardware queue mapping
+> + * @qmap:	CPU to hardware queue map.
+> + * @dev:	The device to map queues.
+> + * @offset:	Queue offset to use for the device.
+> + * @get_irq_affinity:	Optional callback to retrieve queue affinity.
+> + *
+> + * Create a CPU to hardware queue mapping in @qmap. For each queue
+> + * @get_queue_affinity will be called. If @get_queue_affinity is not
+> + * provided, then the bus_type irq_get_affinity callback will be
+> + * used to retrieve the affinity.
+> + */
+> +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
+> +			    struct device *dev, unsigned int offset,
+> +			    get_queue_affinity_fn *get_irq_affinity)
+> +{
+> +	const struct cpumask *mask = NULL;
+> +	unsigned int queue, cpu;
+> +
+> +	for (queue = 0; queue < qmap->nr_queues; queue++) {
+> +		if (get_irq_affinity)
+> +			mask = get_irq_affinity(dev, queue + offset);
+> +		else if (dev->bus->irq_get_affinity)
+> +			mask = dev->bus->irq_get_affinity(dev, queue + offset);
+> +
+> +		if (!mask)
+> +			goto fallback;
+> +
+> +		for_each_cpu(cpu, mask)
+> +			qmap->mq_map[cpu] = qmap->queue_offset + queue;
+> +	}
+> +
+> +	return;
+> +
+> +fallback:
+> +	WARN_ON_ONCE(qmap->nr_queues > 1);
+> +	blk_mq_clear_mq_map(qmap);
+> +}
+> +EXPORT_SYMBOL_GPL(blk_mq_hctx_map_queues);
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 35270172c833186995aebdda6f95ab3ffd7c67a0..59e5f430a380285162a87bd1a9b392bba8066450 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -1670,6 +1670,21 @@ static void pci_dma_cleanup(struct device *dev)
+>  		iommu_device_unuse_default_domain(dev);
+>  }
+>  
+> +/**
+> + * pci_device_irq_get_affinity - get affinity mask queue mapping for PCI device
+> + * @dev: ptr to dev structure
+> + * @irq_vec: interrupt vector number
+> + *
+> + * This function returns for a queue the affinity mask for a PCI device.
 
-You are using the v6.12-rc5 on Pixel6 ?
+From the PCI core perspective, this is only the *IRQ* affinity mask.
+The queue connection is not relevant here and probably confusing.
 
->
-> Just run this on the device to mark all devices as async
-> suspend/resume. This assumes you have CONFIG_PM_DEBUG enabled.
->
-> find /sys/devices/ -name async | while read -r filename; do echo
-> enabled > "$filename"; done
->
-> And look at the dpm_resume_noirq() phase. You should see some kworkers
-> that are runnable but not running for a while while a little CPU is
-> idle. It should happen within a few tries. You need to unplug the USB
-> cable to let the device suspend and wait at least 10 seconds after the
-> screen goes off.
->
-> But even if you fix EAS to pick little CPUs, I think we also want to
-> use the mid and big CPUs. That's not going to happen right?
+  ... - get IRQ affinity mask for device
 
-Who knows ?
-Right now the trace that you shared clearly show a wrong behavior
+  Return the CPU affinity mask for @dev and @irq_vec.
 
->
-> -Saravana
->
-> > >
-> > > Perhaps a more direct hack in is_rd_overutilized() would be even less
-> > > invasive, changing cpu_overutilized() relies on that getting propagat=
-ed
-> > > to rd->overutilized, might as well skip that step, no?
+With the above changes,
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> + */
+> +static const struct cpumask *pci_device_irq_get_affinity(struct device *dev,
+> +					unsigned int irq_vec)
+> +{
+> +	struct pci_dev *pdev = to_pci_dev(dev);
+> +
+> +	return pci_irq_get_affinity(pdev, irq_vec);
+> +}
+> +
+>  const struct bus_type pci_bus_type = {
+>  	.name		= "pci",
+>  	.match		= pci_bus_match,
+> @@ -1677,6 +1692,7 @@ const struct bus_type pci_bus_type = {
+>  	.probe		= pci_device_probe,
+>  	.remove		= pci_device_remove,
+>  	.shutdown	= pci_device_shutdown,
+> +	.irq_get_affinity = pci_device_irq_get_affinity,
+>  	.dev_groups	= pci_dev_groups,
+>  	.bus_groups	= pci_bus_groups,
+>  	.drv_groups	= pci_drv_groups,
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index b9095751e43bb7db5fc991b0cc0979d2e86f7b9b..86390db7e74befa17c9fa146ab6b454bbae3b7f5 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -377,6 +377,17 @@ static void virtio_dev_remove(struct device *_d)
+>  	of_node_put(dev->dev.of_node);
+>  }
+>  
+> +static const struct cpumask *virtio_irq_get_affinity(struct device *_d,
+> +						     unsigned int irq_veq)
+> +{
+> +	struct virtio_device *dev = dev_to_virtio(_d);
+> +
+> +	if (!dev->config->get_vq_affinity)
+> +		return NULL;
+> +
+> +	return dev->config->get_vq_affinity(dev, irq_veq);
+> +}
+> +
+>  static const struct bus_type virtio_bus = {
+>  	.name  = "virtio",
+>  	.match = virtio_dev_match,
+> @@ -384,6 +395,7 @@ static const struct bus_type virtio_bus = {
+>  	.uevent = virtio_uevent,
+>  	.probe = virtio_dev_probe,
+>  	.remove = virtio_dev_remove,
+> +	.irq_get_affinity = virtio_irq_get_affinity,
+>  };
+>  
+>  int __register_virtio_driver(struct virtio_driver *driver, struct module *owner)
+> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+> index 2035fad3131fb60781957095ce8a3a941dd104be..6b40af77bf44afa7112d274b731b591f2a67d68c 100644
+> --- a/include/linux/blk-mq.h
+> +++ b/include/linux/blk-mq.h
+> @@ -922,7 +922,12 @@ int blk_mq_freeze_queue_wait_timeout(struct request_queue *q,
+>  void blk_mq_unfreeze_queue_non_owner(struct request_queue *q);
+>  void blk_freeze_queue_start_non_owner(struct request_queue *q);
+>  
+> +typedef const struct cpumask *(get_queue_affinity_fn)(struct device *dev,
+> +						      unsigned int queue);
+>  void blk_mq_map_queues(struct blk_mq_queue_map *qmap);
+> +void blk_mq_hctx_map_queues(struct blk_mq_queue_map *qmap,
+> +			    struct device *dev, unsigned int offset,
+> +			    get_queue_affinity_fn *get_queue_affinity);
+>  void blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set, int nr_hw_queues);
+>  
+>  void blk_mq_quiesce_queue_nowait(struct request_queue *q);
+> diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+> index cdc4757217f9bb4b36b5c3b8a48bab45737e44c5..b18658bce2c3819fc1cbeb38fb98391d56ec3317 100644
+> --- a/include/linux/device/bus.h
+> +++ b/include/linux/device/bus.h
+> @@ -48,6 +48,7 @@ struct fwnode_handle;
+>   *		will never get called until they do.
+>   * @remove:	Called when a device removed from this bus.
+>   * @shutdown:	Called at shut-down time to quiesce the device.
+> + * @irq_get_affinity:	Get IRQ affinity mask for the device on this bus.
+>   *
+>   * @online:	Called to put the device back online (after offlining it).
+>   * @offline:	Called to put the device offline for hot-removal. May fail.
+> @@ -87,6 +88,8 @@ struct bus_type {
+>  	void (*sync_state)(struct device *dev);
+>  	void (*remove)(struct device *dev);
+>  	void (*shutdown)(struct device *dev);
+> +	const struct cpumask *(*irq_get_affinity)(struct device *dev,
+> +			unsigned int irq_vec);
+>  
+>  	int (*online)(struct device *dev);
+>  	int (*offline)(struct device *dev);
+> 
+> -- 
+> 2.47.0
+> 
 
