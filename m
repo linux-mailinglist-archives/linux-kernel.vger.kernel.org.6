@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-404220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082239C4100
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:34:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9418D9C4103
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09542829A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447BF1F2373E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C839719F118;
-	Mon, 11 Nov 2024 14:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jTPvGWyz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2555019F104;
+	Mon, 11 Nov 2024 14:34:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1701E481;
-	Mon, 11 Nov 2024 14:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF5B19E7F7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731335635; cv=none; b=AWphpsiINQdJLB0yEreJrFfzC6JIS9FSQf3ihLtzH6HDncHrn4sidQbk17wBajT0by+Xoh2ROeGzPBZWTDt0cKXRHVEcm0oECYYVW0GdyBwkmSzvzrEArtPX5GUd8IKSV88v0dW4MIwqrbcrVlYKJu43smcZicP50vnjPGSqlNY=
+	t=1731335644; cv=none; b=gt0gjw95FsnueYo38KrGxBQrM+QqBmO5Bvyx6W42LExEKUpA6+IBSNVLfzD3yKTUvMUA29ALSkEFAld1YCate9cYXMr50WRU1GmbY8VvxBKb2qB4uE2yGNOEnfNL32Kk+ABFagx8y1n6yDJ4rSSdJC8YR32c2OqECCVCtDsztcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731335635; c=relaxed/simple;
-	bh=SewJZP7f9NlP+i+/QC/OUav9taQ94h0x+CLNzfWNZl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7JAwKrpks8bF5OwS4tcvxAtXaRU2zEDvLT/psqEQYnwexq3sRK+u1utB5tT8DmMKxhsjxevlW1IPPEE+jwMC78b21BrJoh/hQHwwW8EUf/f0LnOUs1LuxdrNQVdYYwOu7ADNtEriaBuO82qP7jIfA6pM4m+pSiQtpd2ScfKqYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jTPvGWyz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3C42C4CECF;
-	Mon, 11 Nov 2024 14:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731335634;
-	bh=SewJZP7f9NlP+i+/QC/OUav9taQ94h0x+CLNzfWNZl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jTPvGWyztEaKSUfQSM+9QDWSlt0SZ92xNiyjQhjbSDa39BsYDIgBmlpsDrvOHyYXG
-	 JV9VEVP1vqx0YPAFrKq6JljE1czZ/+U+dBdS0HNHEiUe4sNQaI89RX5AnD/F5frs1X
-	 qq3cTe/vkPyHk9rr9y+/4FPJgNQ0Alh0KwzZvHljM0JlOo8pPO6BgyQEZfGAlhpKWV
-	 nN4IgzkcDZpcRmt7akZEFOR03rJxbTg8tIbPQdL7jF29mPRiofk1srzu4VdYb9E4pY
-	 0JkDJRP0J7erGIkTj8Ecqwjlc4QvhIF3cMm+qLAXrcT+shVDJKp3nU5GCcu8E0c7kM
-	 TAR1vi1+F3bjQ==
-Date: Mon, 11 Nov 2024 15:33:49 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, jdmason@kudzu.us
-Subject: Re: [PATCH v5 0/5] PCI: EP: Add RC-to-EP doorbell with platform MSI
- controller
-Message-ID: <ZzIVzfkZe-hkAb4G@ryzen>
-References: <20241108-ep-msi-v5-0-a14951c0d007@nxp.com>
+	s=arc-20240116; t=1731335644; c=relaxed/simple;
+	bh=qVh/1jyiJl0qCPyE5jmMBodi6154i4qU4P1hjHgwids=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jStklX5d/6RcQjzu+apwf57fzthr3uP+uhgrVTIwT7R9Lm51AORE9Bybtybyp4VmFb+KlP/4r7qTgc/6wfAXqLiAyvl1WiW/djdJznYpDOx6J+qmJoXQ/IAoesiROwpGwey1XeEVUUb6vvEOPQjQujyHSRmmQKL9+DVIO0svTtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83dff8bc954so395512239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:34:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731335642; x=1731940442;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jQs6eYmklB/bHxyHQMxr6RdSnEGF3AKvVeJtW0c9JAI=;
+        b=htA4GoItws5fmSZiPUI7byYpjGnFaJkAESvP1youmMmvHVogfwZhhpk2htVuLJyN6v
+         Ghocdv51/yYOuDoJj6a/jmOH5KQD2s8GVIm41QtihI462CwCR3U0QKSy7LPI6AY79HXo
+         xxH8ChKjkNjybKkBLADtyUD8R6fAiDTKWO/H+l7OO7a9xnlGqtZnq7oueOUrGxiEGESx
+         E4EwHoB/QkS2jvnE4IKU0NrmAiq11udN8k1NrVnSwMWxMnCbGsneKK3mMju96f8Uh6C7
+         hLLhzF2tCSb2VbUU5iWIgKhluwfKKoaMtzl+kaYvSOhrFEhG1n8ArxounpVqNcfYjS4N
+         ns/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWcNqCEQlx6qO4uetTVVxqMRFrZLtgZRRpnvQDMlsOnCJd7z5dg+uIVa+nKg6HjCQWF+NMaxLrEh833InE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzkvVw3VEmjiQmmH6t4vmaBRdsxzCz58zWYjacOZOIEqZBIox2
+	y19dtmqsMUe88jCgWUH61iW504r530EjLV2bhnS7AuJkYO9RDg24q2N1WB3KhMjay6wgNkZ3VH2
+	dh9ESfq0WZ0a8dFotBk3K/ojEhGRFPGD8kUgfh49yB8diinZWZl/TnFc=
+X-Google-Smtp-Source: AGHT+IFgtEuadfZyf35o2zxEyo6J4SJaxSMk3ocmv71u78GxoTDxOMZUE7kTCKQu3nAPpcPSZBOjM8AfDMpv+2oj+UtiJqqBeYxa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108-ep-msi-v5-0-a14951c0d007@nxp.com>
+X-Received: by 2002:a05:6e02:178c:b0:3a6:c27a:6383 with SMTP id
+ e9e14a558f8ab-3a6f1a21ea2mr143329295ab.19.1731335642363; Mon, 11 Nov 2024
+ 06:34:02 -0800 (PST)
+Date: Mon, 11 Nov 2024 06:34:02 -0800
+In-Reply-To: <dd56ff53-672b-47c6-b831-78f1c4b22e17@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673215da.050a0220.138bd5.0087.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
+From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 08, 2024 at 02:43:27PM -0500, Frank Li wrote:
+Hello,
 
-(snip)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> To: Krzysztof Wilczyński <kw@linux.com>
-> To: Kishon Vijay Abraham I <kishon@kernel.org>
-> To: Bjorn Helgaas <bhelgaas@google.com>
-> To: Arnd Bergmann <arnd@arndb.de>
-> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: imx@lists.linux.dev
-> Cc: Niklas Cassel <cassel@kernel.org>
-> Cc: cassel@kernel.org
-> Cc: dlemoal@kernel.org
-> Cc: maz@kernel.org
-> Cc: tglx@linutronix.de
-> Cc: jdmason@kudzu.us
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
+Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
 
-On rk3588:
-Tested-by: Niklas Cassel <cassel@kernel.org>
+Tested on:
 
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1724b4e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
+dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=131d3ea7980000
 
-Note that the series does not apply cleanly on latest pci/endpoint branch.
-
-
-Kind regards,
-Niklas
+Note: testing is done by a robot and is best-effort only.
 
