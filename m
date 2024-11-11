@@ -1,217 +1,203 @@
-Return-Path: <linux-kernel+bounces-404464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08D79C443D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:55:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9D9C4401
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D205B2375A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C41D283551
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AEEF1AA78C;
-	Mon, 11 Nov 2024 17:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4466918A6BD;
+	Mon, 11 Nov 2024 17:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="QdsIBHcq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AGOXF755";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D6Fok6nx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQCynE9Q"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kRYxMzbq"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C501454728;
-	Mon, 11 Nov 2024 17:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27FE8156678
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347048; cv=none; b=O4mL8y0VqB32WokSjbL9bOF9j6v/avMZRsCG0cSInUSdMEMglzhsP1LUoGLDFnqPUT8alIRF3r9+8vAvJtYi6aiVbtkRtqF+sc4MOYQpLsVN5zCigr3S2qQ48CFdoGszhscLKiGwDru9wLZo8ShDon+caLElPf3tsOyK+zqntJc=
+	t=1731347145; cv=none; b=Er5Kpf2DAXhF17c2kPhpMsBDf5z05VMSAP5219CmERhY17FU4KhDQ96SbyRQ9PXiw1mVU0DNyVY8q1koRnrcr3uXE8wlkruLfsQuhaRcD9YopUY0NfFiDPlrwKYBBdv8rIuRCtDQx7xjHHyaRn8832SRSgDc9cfeXLjVzFpP+xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347048; c=relaxed/simple;
-	bh=8msUvZ35GmffzXX36gtrgCsOR2MwdCn5l2jBjHagB/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ax7Ck5wrPjw1w+HWPBUvgajoGx6WDSdC+tPRj7/BVbfE6w7AxNdqehdlgHZ3rGGsM/5TmXcFkYf/jYaNV+FkTS8rZTN4iLuNx5a5uj3k5yRZYu9HMELm8RDoKxW3ocTaoP3yzt7Lg1Xieg17SBloRjdPoURdc76Jeqm7n8sh1e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=QdsIBHcq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AGOXF755; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D6Fok6nx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQCynE9Q; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E8CED1F45A;
-	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731347045; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
-	b=QdsIBHcqz1UtgYzt55dY5coH7df1IGw2RuI33vwE588muPYBnQeQqU4eb+eCTQFxT+K+nW
-	hj65vWMAwQCfSOv2uAjRR01SuF0hH+fsFsZd+bHd4yQDfOQKrp1QZ2TzjxYIiq4UOe+Jbf
-	cVpyA/RJlosJb2FzCBdzr3xjJGC78Vs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731347045;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
-	b=AGOXF755K3pf3rbYEqpzHB4zS+swNJtn+giaMji1R2PS+lCTWx28vn4xlITwp+1Qoqyn9v
-	idZ90L1izWjS4JDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=D6Fok6nx;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OQCynE9Q
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731347043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
-	b=D6Fok6nxpOpKcp68zkOS4JNWcGJfXmQ2gI9TpheEBLwdnZ4bGl59gKwpIepR8SeluS0rX4
-	KiPD3B8PewIIgH+zb2kzYw3jlkButydQdA7tk+jSbqwM2RuQ7BO/bVZH/KNPLhTUygKgYF
-	vMjZKSLXINb6BZc+Rv9dPiMY5mT+zoU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731347043;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iulAbIBsKSsrYbrGT4anAZkT71qiNIQcAAObAS/1gsk=;
-	b=OQCynE9QDy3C0ucdQ+XYpMrzF7FMO0xI3n/76lw8NEagVPxB/eL/a+ODKWt61sKClfWYuD
-	vAVQIBBMOuAtbiCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CEFAC137FB;
-	Mon, 11 Nov 2024 17:44:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Ox16MmNCMmfBIgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 11 Nov 2024 17:44:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 54766A0986; Mon, 11 Nov 2024 18:44:03 +0100 (CET)
-Date: Mon, 11 Nov 2024 18:44:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>, Ian Kent <raven@themaw.net>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] fs: don't let statmount return empty strings
-Message-ID: <20241111174403.qm7eqdl5pxwjhb3h@quack3>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
+	s=arc-20240116; t=1731347145; c=relaxed/simple;
+	bh=0iMwnOCaNUckqNYwj9IxWml8cDp9NfqP6DyiJCASkVI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F+g4Jt4vsl1A6+I641DIOzOfWDh4wtwwwFPobbhq83+JZgbXvQK6J2kkJLGmzBRAeDs5Q1NWKKq+WvXv9NbIvOcoR5MRbVKTzEg0toOxYeIZG7xjQTyBMMAoSKM4+vcawN0d3BKmb7wEA9vqbTo3SA0hVL5JnbqIeHp5V8eIuZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kRYxMzbq; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so275ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:45:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731347143; x=1731951943; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CttvC4iXIitG/QjHtPIpONj7j8KiFKM1bMpkt+sN7a8=;
+        b=kRYxMzbqbeFNysJ35lkb14L7ZgJjFiybRkm1AIBu4XfkQvRFYgkBWpynSvUfiPf1pF
+         RE+KKVNCVnQNxf0fni7sE/x0JUrQONoKmYDeGy/tcU1GmP41fn0AHiLGItvM9dEYQfVF
+         dI9QN6gBejcHI9xRzfcJNHU0Z0WZiQCG9KautOdY6nHcLaEdy1n9j3dCk196k38kPSj0
+         6TTgHu1835WLldE653QdRcXmG7bSge8tqNeFlyVUE40+FzURZGFFA7Y5yvfBTGvZGXtq
+         9va/4bNfBr4dpQV3sD+xNFKESkLet1zdAxWpWBWbMFsVxadbfF8Hgcecbzsh+9i5/jxs
+         pfVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731347143; x=1731951943;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CttvC4iXIitG/QjHtPIpONj7j8KiFKM1bMpkt+sN7a8=;
+        b=dRNGvVLm967UtsGXIpuFwySpm9PCpjsSK40oHkkiKv6fMn/Z2ubQfXRkfZ135pr95A
+         wssauXvbrlXkU1hHPHVWq4talHQazGQ7KHO1IejfUyJ7kDfWtWQjTF7C4WJD0mZgcf1f
+         XJoLP51qVuQNuufQ/Voq7T4L4VO9L6nwbFlDyh/HixAlfroZxhggp4i5TjWDPwpIKz2N
+         BXuQqL74B303tUlEE8XURBGrzYQ0TlmkEcA9NCup/pd383uQ9MDp86I/5JD2/lbAJdJx
+         lmcNKzdNKkfG9FQkXTKjSB/YMDreoARRb/jYG9IvgPv1OfHLe01rfnysa/WV9MaGQmSj
+         ALsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWV1IzeSMVfsIkvmi5BX/MeP8xwWf4ANxSdyN8Ms6+3Oh4hKnHnlv5Vim4hPKUG9xsbSajTpfyI5iXoFnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFL/wok9unhZKWZwLufhzYx1tVHveZ1hWssNuC4GkXNfcfSSh/
+	lf52CNZ9IP5fMIuWrDDdBjxOIDUXM1juc+EYnAIAiX/1AzzG+pqVQHRXhjiiToBWRh7s7JxODhS
+	YN96ixdrcaKfYCZ/Z8wBYwdpxhHoghj4+H0E0
+X-Gm-Gg: ASbGncuv/3L+U60kHvLyG5U9SgNRgzAHkszQWchdPG4P3MZ7+iNEqH1oK/5xTjE9TrS
+	MkjSCfprS1qDJWfh5XsPDWcwDyH3idB7AvqIoLuRIAOzZNphZ+u5n4df/As5aG2g=
+X-Google-Smtp-Source: AGHT+IFFV9mLRnwjUKkTdCz6BKlhqJ1vaYTtYzUC0x+E/M8lH7Sim7BDXEmAO4pMMzkgPM3dJsnkE5+nBf3LjPjq8a8=
+X-Received: by 2002:a05:6e02:1a6d:b0:39e:68d8:2891 with SMTP id
+ e9e14a558f8ab-3a6f8a0618emr9043415ab.6.1731347143054; Mon, 11 Nov 2024
+ 09:45:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241111-statmount-v4-1-2eaf35d07a80@kernel.org>
-X-Rspamd-Queue-Id: E8CED1F45A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	MISSING_XM_UA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+References: <20241108204137.2444151-1-howardchu95@gmail.com> <20241108204137.2444151-4-howardchu95@gmail.com>
+In-Reply-To: <20241108204137.2444151-4-howardchu95@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 11 Nov 2024 09:45:31 -0800
+Message-ID: <CAP-5=fW4pKRdmiQ5J4mdzVfXgKpnzHxHWooSktp5xsy68FQKaA@mail.gmail.com>
+Subject: Re: [PATCH v7 03/10] perf record --off-cpu: Parse off-cpu event
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 11-11-24 10:09:55, Jeff Layton wrote:
-> When one of the statmount_string() handlers doesn't emit anything to
-> seq, the kernel currently sets the corresponding flag and emits an empty
-> string.
-> 
-> Given that statmount() returns a mask of accessible fields, just leave
-> the bit unset in this case, and skip any NULL termination. If nothing
-> was emitted to the seq, then the EOVERFLOW and EAGAIN cases aren't
-> applicable and the function can just return immediately.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
+wrote:
+>
+> Parse the off-cpu event using parse_event, as bpf-output.
+>
+> no-inherit is should be set to 1, here's the reason:
 
-Looks good. Feel free to add:
+nit: s/is should be/should be/
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> We update the BPF perf_event map for direct off-cpu sample dumping (in
+> following patches), it executes as follows:
+>
+> bpf_map_update_value()
+>  bpf_fd_array_map_update_elem()
+>   perf_event_fd_array_get_ptr()
+>    perf_event_read_local()
+>
+> In perf_event_read_local(), there is:
+>
+> int perf_event_read_local(struct perf_event *event, u64 *value,
+>                           u64 *enabled, u64 *running)
+> {
+> ...
+>         /*
+>          * It must not be an event with inherit set, we cannot read
+>          * all child counters from atomic context.
+>          */
+>         if (event->attr.inherit) {
+>                 ret =3D -EOPNOTSUPP;
+>                 goto out;
+>         }
+>
+> Which means no-inherit has to be true for updating the BPF perf_event
+> map.
+>
+> Moreover, for bpf-output events, we primarily want a system-wide event
+> instead of a per-task event.
+>
+> The reason is that in BPF's bpf_perf_event_output(), BPF uses the CPU
+> index to retrieve the perf_event file descriptor it outputs to.
+>
+> Making a bpf-output event system-wide naturally satisfies this
+> requirement by mapping CPU appropriately.
+>
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
 > ---
->  fs/namespace.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index ba77ce1c6788dfe461814b5826fcbb3aab68fad4..28ad153b1fb6f49653c0a85d12da457c4650a87e 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5046,22 +5046,23 @@ static int statmount_string(struct kstatmount *s, u64 flag)
->  	size_t kbufsize;
->  	struct seq_file *seq = &s->seq;
->  	struct statmount *sm = &s->sm;
-> +	u32 start = seq->count;
->  
->  	switch (flag) {
->  	case STATMOUNT_FS_TYPE:
-> -		sm->fs_type = seq->count;
-> +		sm->fs_type = start;
->  		ret = statmount_fs_type(s, seq);
->  		break;
->  	case STATMOUNT_MNT_ROOT:
-> -		sm->mnt_root = seq->count;
-> +		sm->mnt_root = start;
->  		ret = statmount_mnt_root(s, seq);
->  		break;
->  	case STATMOUNT_MNT_POINT:
-> -		sm->mnt_point = seq->count;
-> +		sm->mnt_point = start;
->  		ret = statmount_mnt_point(s, seq);
->  		break;
->  	case STATMOUNT_MNT_OPTS:
-> -		sm->mnt_opts = seq->count;
-> +		sm->mnt_opts = start;
->  		ret = statmount_mnt_opts(s, seq);
->  		break;
->  	default:
-> @@ -5069,6 +5070,12 @@ static int statmount_string(struct kstatmount *s, u64 flag)
->  		return -EINVAL;
->  	}
->  
-> +	/*
-> +	 * If nothing was emitted, return to avoid setting the flag
-> +	 * and terminating the buffer.
-> +	 */
-> +	if (seq->count == start)
-> +		return ret;
->  	if (unlikely(check_add_overflow(sizeof(*sm), seq->count, &kbufsize)))
->  		return -EOVERFLOW;
->  	if (kbufsize >= s->bufsize)
-> 
-> -- 
-> 2.47.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  tools/perf/util/bpf_off_cpu.c | 33 +++++++++++----------------------
+>  1 file changed, 11 insertions(+), 22 deletions(-)
+>
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.=
+c
+> index a590a8ac1f9d..558c5e5c2dc3 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -38,32 +38,21 @@ union off_cpu_data {
+>
+>  static int off_cpu_config(struct evlist *evlist)
+>  {
+> +       char off_cpu_event[64];
+>         struct evsel *evsel;
+> -       struct perf_event_attr attr =3D {
+> -               .type   =3D PERF_TYPE_SOFTWARE,
+> -               .config =3D PERF_COUNT_SW_BPF_OUTPUT,
+> -               .size   =3D sizeof(attr), /* to capture ABI version */
+> -       };
+> -       char *evname =3D strdup(OFFCPU_EVENT);
+> -
+> -       if (evname =3D=3D NULL)
+> -               return -ENOMEM;
+>
+> -       evsel =3D evsel__new(&attr);
+> -       if (!evsel) {
+> -               free(evname);
+> -               return -ENOMEM;
+> +       scnprintf(off_cpu_event, sizeof(off_cpu_event), "bpf-output/no-in=
+herit=3D1,name=3D%s/", OFFCPU_EVENT);
+> +       if (parse_event(evlist, off_cpu_event)) {
+> +               pr_err("Failed to open off-cpu event\n");
+> +               return -1;
+
+Woot, love this! Much happier to see parse_events being used than hand
+crafted attributes. This will help us keep things synchronized via
+event parsing.
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
+>         }
+>
+> -       evsel->core.attr.freq =3D 1;
+> -       evsel->core.attr.sample_period =3D 1;
+> -       /* off-cpu analysis depends on stack trace */
+> -       evsel->core.attr.sample_type =3D PERF_SAMPLE_CALLCHAIN;
+> -
+> -       evlist__add(evlist, evsel);
+> -
+> -       free(evsel->name);
+> -       evsel->name =3D evname;
+> +       evlist__for_each_entry(evlist, evsel) {
+> +               if (evsel__is_offcpu_event(evsel)) {
+> +                       evsel->core.system_wide =3D true;
+> +                       break;
+> +               }
+> +       }
+>
+>         return 0;
+>  }
+> --
+> 2.43.0
+>
 
