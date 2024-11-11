@@ -1,98 +1,313 @@
-Return-Path: <linux-kernel+bounces-404270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641F49C41B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:18:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F179C41C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 166631F23006
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:18:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9F71B23A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E431494BB;
-	Mon, 11 Nov 2024 15:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VD2q4V3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317E213AA38;
+	Mon, 11 Nov 2024 15:20:33 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC5E25777;
-	Mon, 11 Nov 2024 15:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7271BC58;
+	Mon, 11 Nov 2024 15:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338265; cv=none; b=oedb81omG9wyVcgkPX4SxLKppfVhNhWcPDiSv7YBIuQp1LFsmEgi16mEDO0vGFdbAkSkXiN5cKcPfUdtMr39xDL3KBZmSsyz/WrAYaqYHLaTqKz4AFYGnGwxaLlUaqYlQTN+5sR/jgZf12JeN+tyaoMHKTV2Cciq7RV+lCRE70g=
+	t=1731338432; cv=none; b=LAH6GZky2wP++ddGpdxkOLpansrOo9R7FOg+TO1tfrdeOfn8FIdkjRFQfWAOMagTWlepQtlzkCAch/l/d1trmnMr5pkeZwdGIE/LgKpLRa3S5hFOxmrQy2W4FD1xl2eskwBPpeyu5FJaxuuQHwE+MgeXPK0nuE22c4wUIAFiktI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338265; c=relaxed/simple;
-	bh=k75w1qfiXO0fL1kaktNDSe57h1Vzct2emOIenZhdRHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubMCvFWEra8KdPUKzhHNJgCYFjA2tIFFgofxsAoVkrc9CQ/FCQgXPxp4dzCoY+Wm+/kgDMtCT3VYla3KE1eCD5zFPj7X1oMDbR9ant/22b7+70Kljw+WzRlEPBNuKdg5+H00cZ4wuvw1botOWNrCjN7oZc9qVIc63/di+7Y1q6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VD2q4V3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1B7C4CECF;
-	Mon, 11 Nov 2024 15:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731338264;
-	bh=k75w1qfiXO0fL1kaktNDSe57h1Vzct2emOIenZhdRHs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=VD2q4V3ChyOI31Bhu0Kp5CmcGc4N6fSs+7WeUAideKuKQTW1MhGpZHgAxgby/WkNU
-	 7hBqnCXmQJDAF4wZD5CW0UkVPZKzSz8dXi4BIuaXKHRutTYzIc3hkCfRpp7gh1soJZ
-	 5OLKPYotVGezl2C1V4KVdGJNiIKPdXdL5+pX5NK9rGn4lPcCyZsnDOFOT8epKZdF/6
-	 LQ8i/9PVPvaRQ2H1xAzEShdHn/r3sm9ltXPIsTE4hoCmDR5IIY0KOe/S/iPU92ultP
-	 6RmgDb8IQi/Zwo4Zhf8bfUvBU9LpncsutyJuN3JtDzl6VgUDnaF8Y/Da1iS1busmTK
-	 J8C8VYgBURR6Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3C3CDCE00C9; Mon, 11 Nov 2024 07:17:44 -0800 (PST)
-Date: Mon, 11 Nov 2024 07:17:44 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, kernel test robot <oliver.sang@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 08/15] srcu: Add srcu_read_lock_lite() and
- srcu_read_unlock_lite()
-Message-ID: <0726384d-fe56-4f2d-822b-5e94458aa28a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ddf64299-de71-41a2-b575-56ec173faf75@paulmck-laptop>
- <20241015161112.442758-8-paulmck@kernel.org>
- <d07e8f4a-d5ff-4c8e-8e61-50db285c57e9@amd.com>
+	s=arc-20240116; t=1731338432; c=relaxed/simple;
+	bh=cnqbt/Xh8UvrMdtmDUPR9+kGBZQFXIwEQu6Z9OrYXr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gx+ZdOnLpcINQAtgylyNHe08kxeqs5ONTDI5HQ3R/MscJuHbhCmrS81ORTLinglK65+NO9Y6HvqXXG2LxIWVLNzHDwjp9DiRaW126X2U9qXO0A38AX9PJ0N7BrNEsiWXnCUrYGepI0HfHug7r7wzLqmpjV3/jkr+Sao9g5rQ/sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XnCsL26CRz4f3jsX;
+	Mon, 11 Nov 2024 23:20:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 712481A0194;
+	Mon, 11 Nov 2024 23:20:24 +0800 (CST)
+Received: from [10.174.177.210] (unknown [10.174.177.210])
+	by APP4 (Coremail) with SMTP id gCh0CgB3U4exIDJn3+D7BQ--.18810S3;
+	Mon, 11 Nov 2024 23:20:19 +0800 (CST)
+Message-ID: <73a05cb9-569c-9b3c-3359-824e76b14461@huaweicloud.com>
+Date: Mon, 11 Nov 2024 23:20:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d07e8f4a-d5ff-4c8e-8e61-50db285c57e9@amd.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [RFC PATCH 6/6 6.6] libfs: fix infinite directory reads for
+ offset dir
+To: Chuck Lever III <chuck.lever@oracle.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Chuck Lever <cel@kernel.org>, linux-stable <stable@vger.kernel.org>,
+ "harry.wentland@amd.com" <harry.wentland@amd.com>,
+ "sunpeng.li@amd.com" <sunpeng.li@amd.com>,
+ "Rodrigo.Siqueira@amd.com" <Rodrigo.Siqueira@amd.com>,
+ "alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+ "christian.koenig@amd.com" <christian.koenig@amd.com>,
+ "Xinhui.Pan@amd.com" <Xinhui.Pan@amd.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Liam Howlett <liam.howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Greg KH <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>,
+ "srinivasan.shanmugam@amd.com" <srinivasan.shanmugam@amd.com>,
+ "chiahsuan.chung@amd.com" <chiahsuan.chung@amd.com>,
+ "mingo@kernel.org" <mingo@kernel.org>,
+ "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+ "chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+ "zhangpeng.00@bytedance.com" <zhangpeng.00@bytedance.com>,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ "maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+ linux-mm <linux-mm@kvack.org>, "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241111005242.34654-1-cel@kernel.org>
+ <20241111005242.34654-7-cel@kernel.org>
+ <278433c2-611c-6c8e-7964-5c11977b68b7@huaweicloud.com>
+ <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
+From: yangerkun <yangerkun@huaweicloud.com>
+In-Reply-To: <96A93064-8DCE-4B78-9F2A-CF6E7EEABEB1@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3U4exIDJn3+D7BQ--.18810S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxKw48Ar4xCFW5tF45Wr48JFb_yoW3JF17pF
+	Z8Gan8Krs7X34UGr4vv3WDZFyS93Z7Kr45XrZ5W34UJr9Fqr43KF1Iyr4Y9a4UArs3Cr12
+	qF45K343Zw45CrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWrXVW3AwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJMa0UUUUU
+X-CM-SenderInfo: 51dqwvhunx0q5kxd4v5lfo033gof0z/
 
-On Mon, Nov 11, 2024 at 04:47:49PM +0530, Neeraj Upadhyay wrote:
->  
-> > +/**
-> > + * srcu_read_unlock_lite - unregister a old reader from an SRCU-protected structure.
-> > + * @ssp: srcu_struct in which to unregister the old reader.
-> > + * @idx: return value from corresponding srcu_read_lock().
-> > + *
-> > + * Exit a light-weight SRCU read-side critical section.
-> > + */
-> > +static inline void srcu_read_unlock_lite(struct srcu_struct *ssp, int idx)
-> > +	__releases(ssp)
-> > +{
-> > +	WARN_ON_ONCE(idx & ~0x1);
-> > +	srcu_check_read_flavor(ssp, SRCU_READ_FLAVOR_LITE);
-> > +	srcu_lock_release(&ssp->dep_map);
-> > +	__srcu_read_unlock(ssp, idx);
+
+
+在 2024/11/11 22:39, Chuck Lever III 写道:
 > 
-> s/__srcu_read_unlock/__srcu_read_unlock_lite/ ?
+> 
+>> On Nov 10, 2024, at 9:36 PM, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/11/11 8:52, cel@kernel.org 写道:
+>>> From: yangerkun <yangerkun@huawei.com>
+>>> [ Upstream commit 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a ]
+>>> After we switch tmpfs dir operations from simple_dir_operations to
+>>> simple_offset_dir_operations, every rename happened will fill new dentry
+>>> to dest dir's maple tree(&SHMEM_I(inode)->dir_offsets->mt) with a free
+>>> key starting with octx->newx_offset, and then set newx_offset equals to
+>>> free key + 1. This will lead to infinite readdir combine with rename
+>>> happened at the same time, which fail generic/736 in xfstests(detail show
+>>> as below).
+>>> 1. create 5000 files(1 2 3...) under one dir
+>>> 2. call readdir(man 3 readdir) once, and get one entry
+>>> 3. rename(entry, "TEMPFILE"), then rename("TEMPFILE", entry)
+>>> 4. loop 2~3, until readdir return nothing or we loop too many
+>>>     times(tmpfs break test with the second condition)
+>>> We choose the same logic what commit 9b378f6ad48cf ("btrfs: fix infinite
+>>> directory reads") to fix it, record the last_index when we open dir, and
+>>> do not emit the entry which index >= last_index. The file->private_data
+>>
+>> Please notice this requires last_index should never overflow, otherwise
+>> readdir will be messed up.
+> 
+> It would help your cause if you could be more specific
+> than "messed up".
+> 
+> 
+>>> now used in offset dir can use directly to do this, and we also update
+>>> the last_index when we llseek the dir file.
+>>> Fixes: a2e459555c5f ("shmem: stable directory offsets")
+>>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>>> Link: https://lore.kernel.org/r/20240731043835.1828697-1-yangerkun@huawei.com
+>>> Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
+>>> [brauner: only update last_index after seek when offset is zero like Jan suggested]
+>>> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>> Link: https://nvd.nist.gov/vuln/detail/CVE-2024-46701
+>>> [ cel: adjusted to apply to origin/linux-6.6.y ]
+>>> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>> ---
+>>>   fs/libfs.c | 37 +++++++++++++++++++++++++------------
+>>>   1 file changed, 25 insertions(+), 12 deletions(-)
+>>> diff --git a/fs/libfs.c b/fs/libfs.c
+>>> index a87005c89534..b59ff0dfea1f 100644
+>>> --- a/fs/libfs.c
+>>> +++ b/fs/libfs.c
+>>> @@ -449,6 +449,14 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>    xa_destroy(&octx->xa);
+>>>   }
+>>>   +static int offset_dir_open(struct inode *inode, struct file *file)
+>>> +{
+>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>> +
+>>> + file->private_data = (void *)ctx->next_offset;
+>>> + return 0;
+>>> +}
+>>
+>> Looks like xarray is still used.
+> 
+> That's not going to change, as several folks have already
+> explained.
+> 
+> 
+>> I'm in the cc list ,so I assume you saw my set, then I don't know why
+>> you're ignoring my concerns.
+> 
+>> 1) next_offset is 32-bit and can overflow in a long-time running
+>> machine.
+>> 2) Once next_offset overflows, readdir will skip the files that offset
+>> is bigger.
+> 
 
-Right you are!  I am testing the patch.
+I'm sorry, I'm a little busy these days, so I haven't responded to this
+series of emails.
 
-The effect of this bug is that srcu_read_unlock_lite() has a needless
-memory barrier and fails to check for RCU watching, so not a blazing
-emergency.  But it does mean that Andrii was only seeing half of the
-performance benefit of using _lite().
+> In that case, that entry won't be visible via getdents(3)
+> until the directory is re-opened or the process does an
+> lseek(fd, 0, SEEK_SET).
 
-							Thanx, Paul
+Yes.
+
+> 
+> That is the proper and expected behavior. I suspect you
+> will see exactly that behavior with ext4 and 32-bit
+> directory offsets, for example.
+
+Emm...
+
+For this case like this:
+
+1. mkdir /tmp/dir and touch /tmp/dir/file1 /tmp/dir/file2
+2. open /tmp/dir with fd1
+3. readdir and get /tmp/dir/file1
+4. rm /tmp/dir/file2
+5. touch /tmp/dir/file2
+4. loop 4~5 for 2^32 times
+5. readdir /tmp/dir with fd1
+
+For tmpfs now, we may see no /tmp/dir/file2, since the offset has been 
+overflow, for ext4 it is ok... So we think this will be a problem.
+
+> 
+> Does that not directly address your concern? Or do you
+> mean that Erkun's patch introduces a new issue?
+
+Yes, to be honest, my personal feeling is a problem. But for 64bit, it 
+may never been trigger.
+
+> 
+> If there is a problem here, please construct a reproducer
+> against this patch set and post it.
+> 
+> 
+>> Thanks,
+>> Kuai
+>>
+>>> +
+>>>   /**
+>>>    * offset_dir_llseek - Advance the read position of a directory descriptor
+>>>    * @file: an open directory whose position is to be updated
+>>> @@ -462,6 +470,9 @@ void simple_offset_destroy(struct offset_ctx *octx)
+>>>    */
+>>>   static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>   {
+>>> + struct inode *inode = file->f_inode;
+>>> + struct offset_ctx *ctx = inode->i_op->get_offset_ctx(inode);
+>>> +
+>>>    switch (whence) {
+>>>    case SEEK_CUR:
+>>>    offset += file->f_pos;
+>>> @@ -475,8 +486,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+>>>    }
+>>>      /* In this case, ->private_data is protected by f_pos_lock */
+>>> - file->private_data = NULL;
+>>> - return vfs_setpos(file, offset, U32_MAX);
+>>> + if (!offset)
+>>> + file->private_data = (void *)ctx->next_offset;
+>>> + return vfs_setpos(file, offset, LONG_MAX);
+>>>   }
+>>>     static struct dentry *offset_find_next(struct xa_state *xas)
+>>> @@ -505,7 +517,7 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>>>      inode->i_ino, fs_umode_to_dtype(inode->i_mode));
+>>>   }
+>>>   -static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>> +static void offset_iterate_dir(struct inode *inode, struct dir_context *ctx, long last_index)
+>>>   {
+>>>    struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+>>>    XA_STATE(xas, &so_ctx->xa, ctx->pos);
+>>> @@ -514,17 +526,21 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>    while (true) {
+>>>    dentry = offset_find_next(&xas);
+>>>    if (!dentry)
+>>> - return ERR_PTR(-ENOENT);
+>>> + return;
+>>> +
+>>> + if (dentry2offset(dentry) >= last_index) {
+>>> + dput(dentry);
+>>> + return;
+>>> + }
+>>>      if (!offset_dir_emit(ctx, dentry)) {
+>>>    dput(dentry);
+>>> - break;
+>>> + return;
+>>>    }
+>>>      dput(dentry);
+>>>    ctx->pos = xas.xa_index + 1;
+>>>    }
+>>> - return NULL;
+>>>   }
+>>>     /**
+>>> @@ -551,22 +567,19 @@ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>>>   static int offset_readdir(struct file *file, struct dir_context *ctx)
+>>>   {
+>>>    struct dentry *dir = file->f_path.dentry;
+>>> + long last_index = (long)file->private_data;
+>>>      lockdep_assert_held(&d_inode(dir)->i_rwsem);
+>>>      if (!dir_emit_dots(file, ctx))
+>>>    return 0;
+>>>   - /* In this case, ->private_data is protected by f_pos_lock */
+>>> - if (ctx->pos == DIR_OFFSET_MIN)
+>>> - file->private_data = NULL;
+>>> - else if (file->private_data == ERR_PTR(-ENOENT))
+>>> - return 0;
+>>> - file->private_data = offset_iterate_dir(d_inode(dir), ctx);
+>>> + offset_iterate_dir(d_inode(dir), ctx, last_index);
+>>>    return 0;
+>>>   }
+>>>     const struct file_operations simple_offset_dir_operations = {
+>>> + .open = offset_dir_open,
+>>>    .llseek = offset_dir_llseek,
+>>>    .iterate_shared = offset_readdir,
+>>>    .read = generic_read_dir,
+> 
+> 
+> --
+> Chuck Lever
+> 
+> 
+
 
