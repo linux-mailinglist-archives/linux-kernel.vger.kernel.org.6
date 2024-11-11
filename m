@@ -1,232 +1,305 @@
-Return-Path: <linux-kernel+bounces-403515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EED9C36B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:56:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2D89C36B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:56:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AC31C20A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5CE2812B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C752313A3ED;
-	Mon, 11 Nov 2024 02:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6870D142E77;
+	Mon, 11 Nov 2024 02:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBvKOBmS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZbY3mOPY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E90D224D4;
-	Mon, 11 Nov 2024 02:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B490513A27E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731293751; cv=none; b=XLFdUIsWEeq2VUEK8l3Kb+Ai6JUEw7U3rz4jXwy6Wur5jfQkbAuNB/4pjAXRvTsTllbX+nNQQQCD6HX4Gq1D5UOY4ekFBwVd58AWR43OLOMGOYfMkcNY3aNGQAk6tnDZbsD2Zbvku8CxOFqKEZrx+4ZEGmXoijVMvENmPyWIrJU=
+	t=1731293753; cv=none; b=YMHRcM2F/BTcmAGFwCE+W3cirlh9w6mv1awdto0DV7kDOFkcmYdFMCo4HgUj6xUocG9Eho8r2v8U2Tiku+PXhrP7q6RHY3nTA+dQ9u12+xizivfNB/c5zPZtuNFZT0InODpElBH2Qz+sk2Q5gZ2AA+PAd/Wf641QybkEG/63EJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731293751; c=relaxed/simple;
-	bh=HScUf/0mJI0h2P0D1CtSIPUJdAuxe+P+7zYDm1Fxna8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLUVrMr2HfNDvrCod1mC+2Dt7o70rfRUnJdicLc3f+9YDl8cXXg2PHR714YINo/hET8HL4cyHeRasO2vZRcTR3ol6R6vAWN7d8X9KaB+Ck+B1m7ctOjUsBwTUp95f1nKYSwPxFFqxKkGDFabgvTXojd7gDhY/oMYQSsGukH9dd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBvKOBmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7FE5C4CECD;
-	Mon, 11 Nov 2024 02:55:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731293750;
-	bh=HScUf/0mJI0h2P0D1CtSIPUJdAuxe+P+7zYDm1Fxna8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bBvKOBmS2SEx2ss/TPyZHvX2/b9bEfNE1orxM5YqSvJBWTjMTk2biN/hmJDZoniiq
-	 JyrOsRMlAZd/KyDuPCDxLjwZrUZgcWxkfs2EBK8Lp9EQyhhrSM/H/ZtDKBMLK+Ag55
-	 YeZS07o01iXHyZfqkcLqQvNv/tUZo6G6mdQavmWxgNUr1orWWkMXEDjhVWMYIekf1k
-	 41pwM+Ldqlf//Dn9T7EHnA7WTwSp/elcY4+O10SzPl0LJU7yTukoewPvwwP610dKGZ
-	 CzPjLHrb28nt4nw7FMjzvtSV8ju17S2pZLCSosGspyIuZxUF2TIJ0jsJVDKkqban/+
-	 CpjgIDnUYPTPw==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so4965083a12.2;
-        Sun, 10 Nov 2024 18:55:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX9zsQ+Yba/rj3knO0j7jRuR1vfI/EIosmKx6K7beXk4VIJ5stB0N4C1mDprcrFR7CER8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytEgG6wvbmq9CWMitGtxWh1FRDohJrnM78f6FrWYeSAUObdXkX
-	7GOVoowOuAJEo1dDrfCOXBoLhLpZwR+TrerP2pjs7bZgGrdDHRxmWvmjZMsWM4D0zDwBliwUQ6z
-	Kq1E4AqP3wmzKkNi9N+I6k6LkpLM=
-X-Google-Smtp-Source: AGHT+IE9ZVU6MUnQyJE3IEZDEKcc4yDVpoQPgjNAf/AzyzceYa7gsBsvYyyHQWmatNCKqPWzX8N5Di7puhbpLxstkDE=
-X-Received: by 2002:a17:907:9603:b0:a99:ed0c:1d6 with SMTP id
- a640c23a62f3a-a9ef000750cmr1066361766b.49.1731293749308; Sun, 10 Nov 2024
- 18:55:49 -0800 (PST)
+	s=arc-20240116; t=1731293753; c=relaxed/simple;
+	bh=1ZvxRezxJXANBRFOTe55Jek5Kex2eZTOtcEtydvGZOM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Jno98k/W8vMV/7d5NKFd2WmaisUlaD9eZGgX/UvWMjZyhIOlKnj2L6LfUudAsglKqcutQ64+0ovsz0SNLWrOVh2lP5qNhxQ+UACkzkcPvFS/6nM3DjjVGdATLv+XYNWKCycSYmL0OO6qXBS3q/2U/dAgdAo1BddNKevjpHyO6v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZbY3mOPY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731293750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+y3vCNcj9tlE1RFyrQIwWNkyVgS7ApkQcRy6pVYNX4E=;
+	b=ZbY3mOPYjS/nTh3nmA9F9Kua3OAe42NiQGvds3WFCv1snG0M0gmUw65NYq4I7PreqPMbY9
+	CzoUjaHJXZj0+QUZYNglfxTZLz7zLqtKxWZmwJ8dGXiQtNc+Z4IKuLEj94fTOfr96kaaRW
+	U+0QMR6WLH1ZuMXi8iMexXMIPtmXs1I=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-35vZMN0xO-u4pwZIi-lSWw-1; Sun,
+ 10 Nov 2024 21:55:47 -0500
+X-MC-Unique: 35vZMN0xO-u4pwZIi-lSWw-1
+X-Mimecast-MFC-AGG-ID: 35vZMN0xO-u4pwZIi-lSWw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3C31E195608C;
+	Mon, 11 Nov 2024 02:55:46 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.237])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 970DA300019E;
+	Mon, 11 Nov 2024 02:55:40 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] virtio_ring: skip cpu sync when mapping fails
+Date: Mon, 11 Nov 2024 10:55:38 +0800
+Message-ID: <20241111025538.2837-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108033437.2727574-1-lixianglai@loongson.cn>
-In-Reply-To: <20241108033437.2727574-1-lixianglai@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 11 Nov 2024 10:55:37 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7Tmi8LSn6kDsMj8HkhcUb9zY1EOx2-KnpeTriickbaKQ@mail.gmail.com>
-Message-ID: <CAAhV-H7Tmi8LSn6kDsMj8HkhcUb9zY1EOx2-KnpeTriickbaKQ@mail.gmail.com>
-Subject: Re: [PATCH V4 00/11] Added Interrupt controller emulation for
- loongarch kvm
-To: Xianglai Li <lixianglai@loongson.cn>
-Cc: linux-kernel@vger.kernel.org, Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi, Xianglai,
+There's no need to sync DMA for CPU on mapping errors. So this patch
+skips the CPU sync in the error handling path of DMA mapping.
 
-I have applied this series with some build fixes and style fixes at:
-https://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.g=
-it/log/?h=3Dloongarch-kvm
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/virtio/virtio_ring.c | 98 +++++++++++++++++++++---------------
+ 1 file changed, 57 insertions(+), 41 deletions(-)
 
-Please confirm whether it works as expected, thanks.
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index be7309b1e860..b422b5fb22db 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -441,8 +441,10 @@ static void virtqueue_init(struct vring_virtqueue *vq, u32 num)
+  */
+ 
+ static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+-					   const struct vring_desc *desc)
++					   const struct vring_desc *desc,
++					   bool skip_sync)
+ {
++	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+ 	u16 flags;
+ 
+ 	if (!vq->do_unmap)
+@@ -450,16 +452,18 @@ static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+ 
+ 	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+ 
+-	dma_unmap_page(vring_dma_dev(vq),
+-		       virtio64_to_cpu(vq->vq.vdev, desc->addr),
+-		       virtio32_to_cpu(vq->vq.vdev, desc->len),
+-		       (flags & VRING_DESC_F_WRITE) ?
+-		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
++	dma_unmap_page_attrs(vring_dma_dev(vq),
++			     virtio64_to_cpu(vq->vq.vdev, desc->addr),
++			     virtio32_to_cpu(vq->vq.vdev, desc->len),
++			     (flags & VRING_DESC_F_WRITE) ?
++			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
++			     attrs);
+ }
+ 
+ static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+-					  unsigned int i)
++					  unsigned int i, bool skip_sync)
+ {
++	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+ 	struct vring_desc_extra *extra = vq->split.desc_extra;
+ 	u16 flags;
+ 
+@@ -469,20 +473,22 @@ static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+ 		if (!vq->use_dma_api)
+ 			goto out;
+ 
+-		dma_unmap_single(vring_dma_dev(vq),
+-				 extra[i].addr,
+-				 extra[i].len,
+-				 (flags & VRING_DESC_F_WRITE) ?
+-				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
++		dma_unmap_single_attrs(vring_dma_dev(vq),
++				       extra[i].addr,
++				       extra[i].len,
++				       (flags & VRING_DESC_F_WRITE) ?
++				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
++				       attrs);
+ 	} else {
+ 		if (!vq->do_unmap)
+ 			goto out;
+ 
+-		dma_unmap_page(vring_dma_dev(vq),
+-			       extra[i].addr,
+-			       extra[i].len,
+-			       (flags & VRING_DESC_F_WRITE) ?
+-			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
++		dma_unmap_page_attrs(vring_dma_dev(vq),
++				     extra[i].addr,
++				     extra[i].len,
++				     (flags & VRING_DESC_F_WRITE) ?
++				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
++				     attrs);
+ 	}
+ 
+ out:
+@@ -717,10 +723,10 @@ static inline int virtqueue_add_split(struct virtqueue *_vq,
+ 		if (i == err_idx)
+ 			break;
+ 		if (indirect) {
+-			vring_unmap_one_split_indirect(vq, &desc[i]);
++			vring_unmap_one_split_indirect(vq, &desc[i], true);
+ 			i = virtio16_to_cpu(_vq->vdev, desc[i].next);
+ 		} else
+-			i = vring_unmap_one_split(vq, i);
++			i = vring_unmap_one_split(vq, i, true);
+ 	}
+ 
+ free_indirect:
+@@ -775,12 +781,12 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+ 	i = head;
+ 
+ 	while (vq->split.vring.desc[i].flags & nextflag) {
+-		vring_unmap_one_split(vq, i);
++		vring_unmap_one_split(vq, i, false);
+ 		i = vq->split.desc_extra[i].next;
+ 		vq->vq.num_free++;
+ 	}
+ 
+-	vring_unmap_one_split(vq, i);
++	vring_unmap_one_split(vq, i, false);
+ 	vq->split.desc_extra[i].next = vq->free_head;
+ 	vq->free_head = head;
+ 
+@@ -804,7 +810,8 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+ 
+ 		if (vq->do_unmap) {
+ 			for (j = 0; j < len / sizeof(struct vring_desc); j++)
+-				vring_unmap_one_split_indirect(vq, &indir_desc[j]);
++				vring_unmap_one_split_indirect(vq,
++							&indir_desc[j], false);
+ 		}
+ 
+ 		kfree(indir_desc);
+@@ -1221,8 +1228,10 @@ static u16 packed_last_used(u16 last_used_idx)
+ }
+ 
+ static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+-				     const struct vring_desc_extra *extra)
++				     const struct vring_desc_extra *extra,
++				     bool skip_sync)
+ {
++	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+ 	u16 flags;
+ 
+ 	flags = extra->flags;
+@@ -1231,24 +1240,28 @@ static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+ 		if (!vq->use_dma_api)
+ 			return;
+ 
+-		dma_unmap_single(vring_dma_dev(vq),
+-				 extra->addr, extra->len,
+-				 (flags & VRING_DESC_F_WRITE) ?
+-				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
++		dma_unmap_single_attrs(vring_dma_dev(vq),
++				       extra->addr, extra->len,
++				       (flags & VRING_DESC_F_WRITE) ?
++				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
++				       attrs);
+ 	} else {
+ 		if (!vq->do_unmap)
+ 			return;
+ 
+-		dma_unmap_page(vring_dma_dev(vq),
+-			       extra->addr, extra->len,
+-			       (flags & VRING_DESC_F_WRITE) ?
+-			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
++		dma_unmap_page_attrs(vring_dma_dev(vq),
++				     extra->addr, extra->len,
++				     (flags & VRING_DESC_F_WRITE) ?
++				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
++				     attrs);
+ 	}
+ }
+ 
+ static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+-				    const struct vring_packed_desc *desc)
++				    const struct vring_packed_desc *desc,
++				    bool skip_sync)
+ {
++	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+ 	u16 flags;
+ 
+ 	if (!vq->do_unmap)
+@@ -1256,11 +1269,12 @@ static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+ 
+ 	flags = le16_to_cpu(desc->flags);
+ 
+-	dma_unmap_page(vring_dma_dev(vq),
+-		       le64_to_cpu(desc->addr),
+-		       le32_to_cpu(desc->len),
+-		       (flags & VRING_DESC_F_WRITE) ?
+-		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
++	dma_unmap_page_attrs(vring_dma_dev(vq),
++			     le64_to_cpu(desc->addr),
++			     le32_to_cpu(desc->len),
++			     (flags & VRING_DESC_F_WRITE) ?
++			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
++			     attrs);
+ }
+ 
+ static struct vring_packed_desc *alloc_indirect_packed(unsigned int total_sg,
+@@ -1389,7 +1403,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+ 	err_idx = i;
+ 
+ 	for (i = 0; i < err_idx; i++)
+-		vring_unmap_desc_packed(vq, &desc[i]);
++		vring_unmap_desc_packed(vq, &desc[i], true);
+ 
+ free_desc:
+ 	kfree(desc);
+@@ -1539,7 +1553,8 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+ 	for (n = 0; n < total_sg; n++) {
+ 		if (i == err_idx)
+ 			break;
+-		vring_unmap_extra_packed(vq, &vq->packed.desc_extra[curr]);
++		vring_unmap_extra_packed(vq,
++					 &vq->packed.desc_extra[curr], true);
+ 		curr = vq->packed.desc_extra[curr].next;
+ 		i++;
+ 		if (i >= vq->packed.vring.num)
+@@ -1619,7 +1634,8 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+ 		curr = id;
+ 		for (i = 0; i < state->num; i++) {
+ 			vring_unmap_extra_packed(vq,
+-						 &vq->packed.desc_extra[curr]);
++						 &vq->packed.desc_extra[curr],
++						 false);
+ 			curr = vq->packed.desc_extra[curr].next;
+ 		}
+ 	}
+@@ -1636,7 +1652,7 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+ 			len = vq->packed.desc_extra[id].len;
+ 			for (i = 0; i < len / sizeof(struct vring_packed_desc);
+ 					i++)
+-				vring_unmap_desc_packed(vq, &desc[i]);
++				vring_unmap_desc_packed(vq, &desc[i], false);
+ 		}
+ 		kfree(desc);
+ 		state->indir_desc = NULL;
+-- 
+2.31.1
 
-
-Huacai
-
-On Fri, Nov 8, 2024 at 11:53=E2=80=AFAM Xianglai Li <lixianglai@loongson.cn=
-> wrote:
->
-> Before this, the interrupt controller simulation has been completed
-> in the user mode program. In order to reduce the loss caused by frequent
-> switching of the virtual machine monitor from kernel mode to user mode
-> when the guest accesses the interrupt controller, we add the interrupt
-> controller simulation in kvm.
->
-> The following is a virtual machine simulation diagram of interrupted
-> connections:
->   +-----+    +---------+     +-------+
->   | IPI |--> | CPUINTC | <-- | Timer |
->   +-----+    +---------+     +-------+
->                  ^
->                  |
->            +---------+
->            | EIOINTC |
->            +---------+
->             ^       ^
->             |       |
->      +---------+ +---------+
->      | PCH-PIC | | PCH-MSI |
->      +---------+ +---------+
->        ^      ^          ^
->        |      |          |
-> +--------+ +---------+ +---------+
-> | UARTs  | | Devices | | Devices |
-> +--------+ +---------+ +---------+
->
-> In this series of patches, we mainly realized the simulation of
-> IPI EIOINTC PCH-PIC interrupt controller.
->
-> The simulation of IPI EIOINTC PCH-PIC interrupt controller mainly
-> completes the creation simulation of the interrupt controller,
-> the register address space read and write simulation,
-> and the interface with user mode to obtain and set the interrupt
-> controller state for the preservation,
-> recovery and migration of virtual machines.
->
-> IPI simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
-on-3A5000-usermanual-EN/inter-processor-interrupts-and-communication
->
-> EIOINTC simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/tree/main/docs/Loongs=
-on-3A5000-usermanual-EN/io-interrupts/extended-io-interrupts
->
-> PCH-PIC simulation implementation reference:
-> https://github.com/loongson/LoongArch-Documentation/blob/main/docs/Loongs=
-on-7A1000-usermanual-EN/interrupt-controller.adoc
->
-> For PCH-MSI, we used irqfd mechanism to send the interrupt signal
-> generated by user state to kernel state and then to EIOINTC without
-> maintaining PCH-MSI state in kernel state.
->
-> You can easily get the code from the link below:
-> the kernel:
-> https://github.com/lixianglai/linux
-> the branch is: interrupt-v4
->
-> the qemu:
-> https://github.com/lixianglai/qemu
-> the branch is: interrupt-v3
->
-> Please note that the code above is regularly updated based on community
-> reviews.
->
-> change log:
-> V3->V4:
-> 1.Fix some macro definition names and some formatting errors
-> 2.Combine the IPI two device address Spaces into one address device space
-> 3.Optimize the function kvm_vm_ioctl_irq_line implementation, directly ca=
-ll the public function kvm_set_irq for interrupt distribution
-> 4.Optimize the description of the commit log
-> 5.Deleting an interface trace_kvm_iocsr
->
-> V2->V3:
-> 1.Modify the macro definition name:
-> KVM_DEV_TYPE_LA_* ->  KVM_DEV_TYPE_LOONGARCH_*
-> 2.Change the short name for "Extended I/O Interrupt Controller" from EXTI=
-OI to EIOINTC
-> Rename file extioi.c to eiointc.c
-> Rename file extioi.h to eiointc.h
->
-> V1->V2:
-> 1.Remove redundant blank lines according to community comments
-> 2.Remove simplified redundant code
-> 3.Adds 16 bits of read/write interface to the eiointc iocsr address space
-> 4.Optimize user - and kernel-mode data access interfaces: Access
-> fixed length data each time to prevent memory overruns
-> 5.Added virtual eiointc, where interrupts can be routed to cpus other tha=
-n cpu 4
->
-> Cc: Bibo Mao <maobibo@loongson.cn>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: kvm@vger.kernel.org
-> Cc: loongarch@lists.linux.dev
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Tianrui Zhao <zhaotianrui@loongson.cn>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Xianglai li <lixianglai@loongson.cn>
->
-> Xianglai Li (11):
->   LoongArch: KVM: Add iocsr and mmio bus simulation in kernel
->   LoongArch: KVM: Add IPI device support
->   LoongArch: KVM: Add IPI read and write function
->   LoongArch: KVM: Add IPI user mode read and write function
->   LoongArch: KVM: Add EIOINTC device support
->   LoongArch: KVM: Add EIOINTC read and write functions
->   LoongArch: KVM: Add EIOINTC user mode read and write functions
->   LoongArch: KVM: Add PCHPIC device support
->   LoongArch: KVM: Add PCHPIC read and write functions
->   LoongArch: KVM: Add PCHPIC user mode read and write functions
->   LoongArch: KVM: Add irqfd support
->
->  arch/loongarch/include/asm/kvm_eiointc.h |  122 +++
->  arch/loongarch/include/asm/kvm_host.h    |   18 +-
->  arch/loongarch/include/asm/kvm_ipi.h     |   46 +
->  arch/loongarch/include/asm/kvm_pch_pic.h |   61 ++
->  arch/loongarch/include/uapi/asm/kvm.h    |   19 +
->  arch/loongarch/kvm/Kconfig               |    5 +-
->  arch/loongarch/kvm/Makefile              |    4 +
->  arch/loongarch/kvm/exit.c                |   80 +-
->  arch/loongarch/kvm/intc/eiointc.c        | 1055 ++++++++++++++++++++++
->  arch/loongarch/kvm/intc/ipi.c            |  468 ++++++++++
->  arch/loongarch/kvm/intc/pch_pic.c        |  523 +++++++++++
->  arch/loongarch/kvm/irqfd.c               |   97 ++
->  arch/loongarch/kvm/main.c                |   19 +-
->  arch/loongarch/kvm/vcpu.c                |    3 +
->  arch/loongarch/kvm/vm.c                  |   22 +
->  include/linux/kvm_host.h                 |    1 +
->  include/uapi/linux/kvm.h                 |    8 +
->  17 files changed, 2522 insertions(+), 29 deletions(-)
->  create mode 100644 arch/loongarch/include/asm/kvm_eiointc.h
->  create mode 100644 arch/loongarch/include/asm/kvm_ipi.h
->  create mode 100644 arch/loongarch/include/asm/kvm_pch_pic.h
->  create mode 100644 arch/loongarch/kvm/intc/eiointc.c
->  create mode 100644 arch/loongarch/kvm/intc/ipi.c
->  create mode 100644 arch/loongarch/kvm/intc/pch_pic.c
->  create mode 100644 arch/loongarch/kvm/irqfd.c
->
->
-> base-commit: 906bd684e4b1e517dd424a354744c5b0aebef8af
-> --
-> 2.39.1
->
 
