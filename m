@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-404050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A31B9C3E88
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:37:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F4E9C3E8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113AB1F22380
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19851F223B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A26919E82A;
-	Mon, 11 Nov 2024 12:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732AA19D084;
+	Mon, 11 Nov 2024 12:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LDGfpUG3"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jMOJoCm2"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C052F19CC3C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECD814F9E2;
+	Mon, 11 Nov 2024 12:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731328592; cv=none; b=FKL9y7kVNEJjvaaxzE1uUQrGAmkQIV7hoOk8vYRU4M8SXFl14ipI8Rf9rvvuGpHUuCeNtvLXeha10n7/mogbM1YkYXivEARiyzcYHZ1YyD/UPO7RKAkbw9OOQXZhRY/SOPfZhsUEfkAyrn3QDfAVTXB5xrRHCrcaAaKDXLtMdrk=
+	t=1731328653; cv=none; b=n9FwHEjTI6Bqhm/lIuuD944wJ42KgZ1AKd/XRoXkIJEf8Q3VbEc8p/GRIz1o8kfjVg5jmsgPuZBRZDWERcdZ/6U6ukzBvj3XgwUn60KEP7HMbFeFIQqurRt0ci4e/TuHV5jbdFjYBgDZ7D2ULj8Sv4e35cWuUYcS04kYvOMuJGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731328592; c=relaxed/simple;
-	bh=H0MySrUxWDCqvEAcb0pedeQRSOE3Bds2iksJxEoUuwM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f9iFupOpd8V8vSo+LAwMY7YHxSdb6YK1UA4JG+Gqq3oEotBxzVw/3lDEHZsUsu/g85rTbubKkL1DS9h3jdadMYBAt0+kTlR3gRJf6Y3lQzNTtpybnJve/MelKqZVPPddlLTMql0pPwqpIyQf+Rzs9Tjxy8j7wLyVombPpPu5SBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LDGfpUG3; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5BBA01BF209;
-	Mon, 11 Nov 2024 12:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731328589;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qW3wdr4EeYIZ0MLaRPPuH3cK65j246cHF8/ZPxNc2Bo=;
-	b=LDGfpUG3r6SAvyB0iHpIkXFrP9CQ12QOeFNpf5UcYXU+t6/9WL1alKBVgF+NqLVOzt5HkI
-	RJGaFAVgeOIrLylJ7JwiznbRhkMNuvvocphw1ONk+1dThmEvpatSqBARiAb25/GwZ4a1GR
-	YrfybiCo/WwijUlYAx1GtV9kqRV5SKTESGb8JvTzm0iKsz8DKnl6/1rfwc3+I+zI7XgXfl
-	I7Qo4HPnnGUrvbtY96L33pXfpABVFDglcVRP4l1bm7I8061+PnNU4oo6E//UVFw9KhHZpN
-	0PwWzNw0s3X0htqCFXO6GvAL7MY/qW08qiShxEX04p93lqO2wA0c1TyWBsKdkg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 11 Nov 2024 13:36:23 +0100
-Subject: [PATCH v3 4/4] drm/connector: warn when cleaning up a refcounted
- connector
+	s=arc-20240116; t=1731328653; c=relaxed/simple;
+	bh=k1WV2pAD/8xmmFjcMJoAZqWMi8wAr3HzjyLMBii/Jo8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WTvykZZb3s6x/cLvTLzB5XQKY/uvGm6IdwXEHsDfXceYTiUA+9bhDo69qvgjvsD1c0FMI4MsRcAjf4PEClGhGnwVTjLtxVdn0LvCuhPY0UyVOoFDkM705zmPlz8dn6NdWXKFgh7+zjiInWXczos5ol8rdB0gK9SkZjZX2HSwwpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jMOJoCm2; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ABCbHoM043260;
+	Mon, 11 Nov 2024 06:37:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731328637;
+	bh=60UcITJlpU2R+Ybt6O7o94y6gwkZ59cqwJcbrJQ7AmE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=jMOJoCm20vIRQZejgBmb680tW36MSbmMSI0AVm5x1g12jgyyntAz9kOD7oO1K60kh
+	 W16waXS8lVnikAJTKoWQ4IJbx1TbWEI5qEnCc/PZp3kLZG8Kk+tToni/T1wa6gIYzp
+	 SBM+dM74ppd1JZUPhx2xjBv/Eta5h8qVwjdUWnpw=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ABCbHlr110654
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 11 Nov 2024 06:37:17 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 11
+ Nov 2024 06:37:17 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 11 Nov 2024 06:37:17 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ABCbHY5078651;
+	Mon, 11 Nov 2024 06:37:17 -0600
+Date: Mon, 11 Nov 2024 06:37:17 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Arnd Bergmann <arnd@kernel.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, Vibhore Vardhan <vibhore@ti.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Markus Schneider-Pargmann
+	<msp@baylibre.com>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pmdomain: ti_sci: add CONFIG_PM_SLEEP dependency
+Message-ID: <20241111123717.yqnjp4voohi4bhbu@accurate>
+References: <20241111104605.3964041-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-drm-small-improvements-v3-4-a9f576111b41@bootlin.com>
-References: <20241111-drm-small-improvements-v3-0-a9f576111b41@bootlin.com>
-In-Reply-To: <20241111-drm-small-improvements-v3-0-a9f576111b41@bootlin.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241111104605.3964041-1-arnd@kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Calling drm_connector_cleanup() should only be done via the free_cb =>
-.destroy path, which cleans up the struct drm_connector only when the
-refcount drops to zero.
+On 11:46-20241111, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Without CONFIG_PM_SLEEP, the pm_generic_suspend() function cannot be called
+> since it is defined to NULL:
+> 
+> In file included from include/uapi/linux/posix_types.h:5,
+> 		...
+>                  from drivers/pmdomain/ti/ti_sci_pm_domains.c:10:
+> drivers/pmdomain/ti/ti_sci_pm_domains.c: In function 'ti_sci_pd_suspend':
+> include/linux/stddef.h:9:14: error: called object is not a function or function pointer
+>     9 | #define NULL ((void *)0)
+>       |              ^
+> include/linux/pm.h:875:41: note: in expansion of macro 'NULL'
+>   875 | #define pm_generic_suspend              NULL
+>       |                                         ^~~~
+> drivers/pmdomain/ti/ti_sci_pm_domains.c:134:15: note: in expansion of macro 'pm_generic_suspend'
+>   134 |         ret = pm_generic_suspend(dev);
+>       |               ^~~~~~~~~~~~~~~~~~
+> 
+> Fixes: 7c2c8d2651b5 ("pmdomain: ti_sci: add per-device latency constraint management")
 
-A cleanup done with a refcount higher than 0 can result from buggy code,
-e.g. by doing cleanup directly in the drivers teardown code. Serious
-trouble can happen if this happens, so warn about it.
+Arnd, thanks, but the breakage never made it to the pull request.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/drm_connector.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+lkft caught it[1] and I had dropped the series from my queue[2].
+Kevin reposted a v5 of the series with the fixups[3] - hopefully with
+the dependencies merged, we should see that go via Ulf's tree for the
+next window.
 
-diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-index fc35f47e2849ed6786d6223ac9c69e1c359fc648..e0bf9c490af43055de4caaee1580a4befbd608c5 100644
---- a/drivers/gpu/drm/drm_connector.c
-+++ b/drivers/gpu/drm/drm_connector.c
-@@ -624,6 +624,12 @@ void drm_connector_cleanup(struct drm_connector *connector)
- 	struct drm_device *dev = connector->dev;
- 	struct drm_display_mode *mode, *t;
- 
-+	/*
-+	 * Cleanup must happen when the last ref is put, via the
-+	 * drm_connector_free() callback.
-+	 */
-+	WARN_ON(drm_mode_object_read_refcount(&connector->base) != 0);
-+
- 	/* The connector should have been removed from userspace long before
- 	 * it is finally destroyed.
- 	 */
+[1] https://lore.kernel.org/all/CA+G9fYtioQ22nVr9m22+qyMqUNRsGdA=cFw_j1OUv=x8Pcs-bw@mail.gmail.com/
+[2] https://lore.kernel.org/all/7h34k6olu9.fsf@baylibre.com/
+[3] https://lore.kernel.org/linux-pm/20241101-lpm-v6-10-constraints-pmdomain-v5-0-3011aa04622f@baylibre.com/
+
 
 -- 
-2.34.1
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
