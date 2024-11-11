@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-404639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258879C4619
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:46:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E86B9C4620
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75501F22450
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:46:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D57DB24EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C7F1AB512;
-	Mon, 11 Nov 2024 19:46:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A79E1AC427;
+	Mon, 11 Nov 2024 19:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="J+iF+Zeq"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkYuYxdZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A78B170A1A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173E1A7AFD;
+	Mon, 11 Nov 2024 19:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731354361; cv=none; b=mgbpwJhr/1Bz6sLUm3/fdBrPC0MATSg6aAmUy5zD1BX9oS1ZhMScDTcqVrl3/5o0Qcc0kmYLHX7VPPMHMVQYW+QwizfvvvC3/mK+fzzUedF2yLtmQ1G5+/DGEwLyrb8v0NZL/bHqJ0/Q5fidDr+uMEMlQEgl85A1hCUiWW4DI4o=
+	t=1731354380; cv=none; b=YOOzQXxSXrZr9OLC/IzxW2bR2SR307eyfEE342XZpzQ7HWixpTJdzJI9G1SO9dbR85CaTYLFE6XxPuHrsweoMSQXbWrPYe/Nulm0FHxcfYiXGI7vZ2fU6DOufn6NJH7GRvUenHQIOv6a/hB5MGyRHuukqgV6O9BcXNKfv08+wRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731354361; c=relaxed/simple;
-	bh=HhsITk6+6QukLMeqi+pp1Lps9lgVAngKiKP3NPJ3WQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HO44n8GQnSStKHUQ9xy2uY2AowVAdxNVoLRkaIUPX90jUv864EENPjlNOFgDdJ+9kQwccCTAaBTyQwNBZfB7xnNjA6ikrSVHVWeJKbX0NHIdaFuKfIEPK/F6YxW0ccCAGc9TG78/9DrPVSkdz6x1sv8ay7jybRNGw/7ILlJgJz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=J+iF+Zeq; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-28896d9d9deso2271705fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731354358; x=1731959158; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M+UNXPvFiJYKdozi2bLmtL/MfRUPw96dDHh4Di4Qg/E=;
-        b=J+iF+ZeqxFRny0zt/Ta2UZLKKQC36H9gAZkdNrymfWF97LNNi+Bt5xbwUopb+Za0ai
-         vhJmdxPO3/57Ra6T3wHbIXvrpIqrVPkyQWySiy/HBpz0NkQH3lrIZ05IKxtQTTVkmwik
-         Il3fQ36NhCAmkQy9RCbp8qjWR7Gu8LeVHuCS7gnQ3IHZ+ohvgk4AqljpfkokW26DWSTY
-         Fv6r5E2n2Tr1e144+IYiWfjxOIDqjgJLRKFQoR14KxKzboRBMM9w2PA0yv/25cZOh99b
-         Dqr6HJbzDgvz3cEKPLzbh2ibQedpQ4uG2+AQGkP22YhcxuO/qfnvQ01S4+Z7aDtAW8cN
-         HDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731354358; x=1731959158;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M+UNXPvFiJYKdozi2bLmtL/MfRUPw96dDHh4Di4Qg/E=;
-        b=oC0quLfnp5gszmXYOHH4DqaDgL74eFeWEJmgrBiU1z5vDY950ywldXIXRGV7V8A4rE
-         OdwvyCTy9TPWbwOoWjEsuA9daAhbS7WrWw2ZXZVPTZmkfgKnziI5F1aiAtQMBU9jYbJz
-         1t92uTSPsmX8MYe0rXunpU2UIC2MJgxf7pDfwdCE3PQFr8Us3nZ+lww2TVVvrIcwtYQW
-         cYhq3ohP/P5tj3gI60Q84Vu2sVQ7AMyMuuY1WffRWi4THcihJQBfBzvx7orfuJBIxZ8+
-         UA7hz72U9Y+dJAwMMF4q+iA63LmwBerik3WtaMMXe8aJbLNbfGLNLR5cVcoL20Xu1ndK
-         EWyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW11OyQoDP8vplFOYyql3VbLRwuuCFP5BR78GYVYGUGXP6R9dRiDL+uekj3B30tZ4DdLL5IkxUqmi2T1Uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCsOo9iPMZ7H/lke0np0BgtzNYksZF7cXu9gbl2WIro0q2KDVQ
-	M2A/jhRWu0GGKtYrjjgIHss+xAoW63gdaHyWSuCfI7vx35dZd9iwNV8gRwvjDQQ=
-X-Google-Smtp-Source: AGHT+IHzI2fm85aOJIz0hLFIb1FeDMozEBMTSyyRvlCuXW4txD+zMA10To4egPzgrYsuvVd5NCladQ==
-X-Received: by 2002:a05:6870:7010:b0:287:b9:349 with SMTP id 586e51a60fabf-295cd38c966mr165947fac.36.1731354358195;
-        Mon, 11 Nov 2024 11:45:58 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546c8eb0fsm2940001fac.14.2024.11.11.11.45.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 11:45:56 -0800 (PST)
-Message-ID: <8505aa28-5f88-4fcd-b3bc-cb5db89d2a08@baylibre.com>
-Date: Mon, 11 Nov 2024 13:45:55 -0600
+	s=arc-20240116; t=1731354380; c=relaxed/simple;
+	bh=RTX8JtmfQXicA6NSmzoFj+EWO3qXcohs8dzjns8VwpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RBGPevvckC9Dt33xAy1FX8l1sk9XAQ7rXZBSPq41AwFoqVzcLekeesHT8ZpP/Fv7BPFnp4AFSyPPiSYdJDKTMtTl33NmUhHP0TMHOGd5QXDoh5Ljf3ApTo44itEWcLo+HtstRmLXII6Yye8ujFdwBJVZIRjzhuRvusZR7D0TNQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkYuYxdZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EBFC4CECF;
+	Mon, 11 Nov 2024 19:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731354378;
+	bh=RTX8JtmfQXicA6NSmzoFj+EWO3qXcohs8dzjns8VwpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gkYuYxdZWNHKM3Tkh62KdVOx8gsraV/by+6vW/t2oO9qo3Rzu32kwu7cfwZxbvvUw
+	 V24fkCBzbu3iXCUUNeMhfckeBPIi6odWs1HfRW2QjP7pTGTn8pBX2QO1Mg0h6rYHOS
+	 KRsnABD/ktmkV2LzLFNoe1HOGEEMGCb6KQXse81WnCczF56avB/ksVdpjTpS8sFjOZ
+	 w2FTlXbN16huJrk+19UmXhRgqNpPRk3YiRsMRbACH+0Mv2v5qw2SWR9t36W1aM7mAo
+	 vEUtzoenEcjQLGDtgedzh8vSR/M5ti9BGBpGTJULEO/f6/p6Sr31u1XgWDrLctPuIh
+	 npUaEo7b41bKg==
+Date: Mon, 11 Nov 2024 19:46:13 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 3/3] dt-bindings: ata: ahci-platform: add missing
+ iommus property
+Message-ID: <20241111-pasted-primarily-7f665b0b2fa4@spud>
+References: <20241109094623.37518-1-linux@fw-web.de>
+ <20241109094623.37518-4-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] iio: trigger: stm32-timer-trigger: Add check for
- clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>, jic23@kernel.org
-Cc: lars@metafoo.de, mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- u.kleine-koenig@baylibre.com, tgamblin@baylibre.com, fabrice.gasnier@st.com,
- benjamin.gaignard@linaro.org, lee@kernel.org, linux-iio@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241111191934.17231-1-jiashengjiangcool@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241111191934.17231-1-jiashengjiangcool@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/11/24 1:19 PM, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() in order to catch the
-> potential exception.
-> 
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> ---
-> Changelog:
-> 
-> v2 -> v3:
-> 
-> 1. Simplify code with cleanup helpers.
-> 
-> v1 -> v2:
-> 
-> 1. Remove unsuitable dev_err_probe().
-> ---
-
-...
-
-> @@ -492,21 +495,25 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
->  		return -EINVAL;
->  
->  	case IIO_CHAN_INFO_ENABLE:
-> -		mutex_lock(&priv->lock);
-> -		if (val) {
-> -			if (!priv->enabled) {
-> -				priv->enabled = true;
-> -				clk_enable(priv->clk);
-> -			}
-> -			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-> -		} else {
-> -			regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-> -			if (priv->enabled) {
-> -				priv->enabled = false;
-> -				clk_disable(priv->clk);
-> +
-> +		scoped_guard(mutex, &priv->lock) {
-> +			if (val) {
-> +				if (!priv->enabled) {
-> +					priv->enabled = true;
-> +					ret = clk_enable(priv->clk);
-> +					if (ret)
-> +						return ret;
-> +				}
-> +				regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-> +			} else {
-> +				regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-> +				if (priv->enabled) {
-> +					priv->enabled = false;
-> +					clk_disable(priv->clk);
-> +				}
->  			}
->  		}
-> -		mutex_unlock(&priv->lock);
-> +		
->  		return 0;
->  	}
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iY8L1hmlHO5MfZf9"
+Content-Disposition: inline
+In-Reply-To: <20241109094623.37518-4-linux@fw-web.de>
 
 
-Another way to do this that avoids changing the indent
-so much is placing braces around the case body like this.
-This also avoids the compile error from using guard after
-case directly.
+--iY8L1hmlHO5MfZf9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sat, Nov 09, 2024 at 10:46:21AM +0100, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+>=20
+> fix dtbs_check errors in following files:
+>=20
+> arch/arm64/boot/dts/marvell/armada-7040-db.dtb: sata@540000:
+> arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dtb: sata@540000:
+> arch/arm64/boot/dts/marvell/armada-8040-db.dtb: sata@540000:
+> arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtb: sata@540000:
+> arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dtb: sata@540000:
+>   Unevaluated properties are not allowed ('iommus' was unexpected)
+>=20
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 
- 	case IIO_CHAN_INFO_ENABLE: {
-		guard(mutex)(&priv->lock);
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-		if (val) {
-			if (!priv->enabled) {
-				priv->enabled = true;
-				ret = clk_enable(priv->clk);
-				if (ret)
-					return ret;
-			}
-			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-		} else {
-			regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
-			if (priv->enabled) {
-				priv->enabled = false;
-				clk_disable(priv->clk);
-			}
-		}
-		
- 		return 0;
- 	}
+--iY8L1hmlHO5MfZf9
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJfBQAKCRB4tDGHoIJi
+0kZYAP49wOpCPn1XV1CuML8Mzii0hAR7itUchMtHNweyWK5AEAD/WWr+kQyWWHM7
+kPsQBx1TogUJmrldrEIbDvuBrCcWjgE=
+=UM60
+-----END PGP SIGNATURE-----
+
+--iY8L1hmlHO5MfZf9--
 
