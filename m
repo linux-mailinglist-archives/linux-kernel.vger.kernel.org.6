@@ -1,79 +1,98 @@
-Return-Path: <linux-kernel+bounces-404834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D75E9C48DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:13:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4999C48F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCCC284E0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:13:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A496FB30423
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DA21BD032;
-	Mon, 11 Nov 2024 22:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA031BDAAF;
+	Mon, 11 Nov 2024 22:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCQxBffB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFqhzx5P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3A21BC085;
-	Mon, 11 Nov 2024 22:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640811BC9F5;
+	Mon, 11 Nov 2024 22:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731363204; cv=none; b=UdstJqfoFJ3538L4dOzEWbWdnh+NG4f/1rWPrLXaFnixjM3TtM8zY46TGdDKv0d32Sm5U1+khR68C4EqvPAuF1QfUds/dUEDBbKR923pHR2wzhETqTuh55v3u8kBQ/K9S7rmrp+g0mxT77hLePhDFykKl2xXBwcgvH0tdMygP4E=
+	t=1731363212; cv=none; b=Nr+Z/vP5rrxLKEYpYRYEG1A4BnDAiUx8waiFmEKagkTMl5daMdFbbbCnIsGUbYI4dRKcZiKqpF0aGJR1bxyZs69UU8TeILIWZRrxYeYXsI8T1Sy9lDeqJIKu3VnGXZE+ZdH1PPjV5/a21fKsx0xIL+0PfpJzzwPrM9C7rKgnmAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731363204; c=relaxed/simple;
-	bh=ojNX7ewQ5mBn+8GJnYQlZeE9p4+dRMgQGrBXvhs2+fI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m3dqsvGOtMFKSYZvPlxpSw/jPxQSL4UJJNXhDNmypDRyBCASM25lIg6eF0Yf948n0S0YbB3rNg77mGpuFnhfV6CYE5/b5tBJZFlqsPgdkTXZwFRtkGtJ+pu+HUZd01JaNRUyXpgRA81JbNX4uiWJMNZjlA1wjBEzGGkIDNWHHFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCQxBffB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 103DDC4CECF;
-	Mon, 11 Nov 2024 22:13:23 +0000 (UTC)
+	s=arc-20240116; t=1731363212; c=relaxed/simple;
+	bh=EzOqKCAezFm7x87BPNt/zzxHJFID7yktvqQaAuxYHNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tfLiUMXQxF/j1v5neDlG4lvyLeBEicj89hCZpMZsqSKPLMU+x8LKDlDkm9Lk1sJDwbkIbZTrjuYxLxkMKh81Kr+RI2jq435AkEOitG/C1zD2SLJd3PDHsF/5+5LIYT2E/Pa8ewx8Iomv0ZAWDNBUuKtTdLVE4OyaGkPUPP63MRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFqhzx5P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD0EC4CECF;
+	Mon, 11 Nov 2024 22:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731363203;
-	bh=ojNX7ewQ5mBn+8GJnYQlZeE9p4+dRMgQGrBXvhs2+fI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TCQxBffBXyPKj2xKTDl6//xKba0ovCTA31loZDkm0SFTz3sw6YR/BHM/8Le7DZy7s
-	 aiCYcBwPe8OWe/MfHs4mGq7nc3s7/t+YjKfEyECHQK/iqvBQlsJs35JxN7X6ZfVN08
-	 slWovi9O55skKw5snL4fdwVQtWc9kESHJ0xulDXw5Qoh4ldQzDzpv8fSvzFFFch0pV
-	 3V2GeJPXt22BZJYmLPnfGNRntFuddZsepZXdE0M+puQi0SvYuWd2AzvoeXB1w12n1K
-	 Q6oZxiU8WsQlGyfbiZuw6JZuAxamncoYMg1bWVwxR1eT6ibE0HDBv2MJAe2CTM7yqf
-	 551OIgpkhLONw==
-Date: Mon, 11 Nov 2024 14:13:21 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Parav Pandit
- <parav@nvidia.com>, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4] mlx5/core: Schedule EQ comp tasklet only if
- necessary
-Message-ID: <20241111141321.0d723c9d@kernel.org>
-In-Reply-To: <20241105204000.1807095-1-csander@purestorage.com>
-References: <ZypqYHaRbBCGo3FD@x130>
-	<20241105204000.1807095-1-csander@purestorage.com>
+	s=k20201202; t=1731363211;
+	bh=EzOqKCAezFm7x87BPNt/zzxHJFID7yktvqQaAuxYHNk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HFqhzx5PQDJ8XTbqjKmtAw93yoOw8x7o/ZUMlJBX+8O04Mr/GRzq+M1/6R39B45zY
+	 CEF098rtQHm7qtp5m7M/1uTI9rREirdMB2PusnrS8s6pRCochsLOpz2QnRL/FZjN1Z
+	 NRHQ8URAAfWaLgAJ3Yrplk30QyGHmim3xUQBWWaMATzoEGBgMGlMmGIDaxPdWNPbUt
+	 GEGDY1eh6Jx5f00TQKh8b8cf3pswctkUFSOHhrmAa5qUZdagddMg20xYjzrbsf1gUu
+	 R6X4mDmSW0nfnFLOwPPZqnl+cjIfRBoWDEx/IKX/10fWcECLdSJ2f2VrudGmCjCKSx
+	 CztEQHgDVNw6A==
+Date: Mon, 11 Nov 2024 16:13:28 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Alexey Romanov <avromanov@salutedevices.com>
+Cc: linux-crypto@vger.kernel.org, davem@davemloft.net, conor+dt@kernel.org,
+	jbrunet@baylibre.com, herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	khilman@baylibre.com, neil.armstrong@linaro.org,
+	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com,
+	martin.blumenstingl@googlemail.com, clabbe@baylibre.com,
+	vadim.fedorenko@linux.dev, krzysztof.kozlowski+dt@linaro.org,
+	krzk+dt@kernel.org, linux-amlogic@lists.infradead.org,
+	robh+dt@kernel.org
+Subject: Re: [PATCH v10 17/22] dt-bindings: crypto: amlogic,gxl-crypto:
+ support new SoC's
+Message-ID: <173136320834.2047628.12512361262712701273.robh@kernel.org>
+References: <20241108102907.1788584-1-avromanov@salutedevices.com>
+ <20241108102907.1788584-18-avromanov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108102907.1788584-18-avromanov@salutedevices.com>
 
-On Tue,  5 Nov 2024 13:39:59 -0700 Caleb Sander Mateos wrote:
-> Currently, the mlx5_eq_comp_int() interrupt handler schedules a tasklet
-> to call mlx5_cq_tasklet_cb() if it processes any completions. For CQs
-> whose completions don't need to be processed in tasklet context, this
-> adds unnecessary overhead. In a heavy TCP workload, we see 4% of CPU
-> time spent on the tasklet_trylock() in tasklet_action_common(), with a
-> smaller amount spent on the atomic operations in tasklet_schedule(),
-> tasklet_clear_sched(), and locking the spinlock in mlx5_cq_tasklet_cb().
-> TCP completions are handled by mlx5e_completion_event(), which schedules
-> NAPI to poll the queue, so they don't need tasklet processing.
 
-Applied, thanks
+On Fri, 08 Nov 2024 13:29:02 +0300, Alexey Romanov wrote:
+> Now crypto module available at G12A/G12B/S4/A1/SM1/AXG.
+> 
+> 1. Add new compatibles:
+>   - amlogic,g12a-crypto
+>   - amlogic,axg-crypto
+>   - amlogic,a1-crypto
+>   - amlogic,s4-crypto (uses a1-crypto as fallback)
+> 
+> Difference between this compatibles:
+>  * Different registers offset and the number of setup descriptors.
+>  * GXL doesn't support hashing like the others.
+>  * G12A/B and A1/S4 crypto HW don't support 192 AES key.
+>  * GXL, G12A/B and AXG require a reverse IV key before processing.
+> 
+> 2. Add power-domains in schema, which is required only for A1.
+> This is specific vendor design: in old SoC's power domain for
+> crypto HW was not configurable, but in A1-series it is configurable.
+> 
+> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
+> ---
+>  .../bindings/crypto/amlogic,gxl-crypto.yaml   | 24 +++++++++++++++++--
+>  1 file changed, 22 insertions(+), 2 deletions(-)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
