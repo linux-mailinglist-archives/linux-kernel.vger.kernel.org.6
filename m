@@ -1,181 +1,116 @@
-Return-Path: <linux-kernel+bounces-404177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84649C404D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:05:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4709C404E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:05:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C071F22470
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9306C283FF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5AEE19F489;
-	Mon, 11 Nov 2024 14:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36E819F13B;
+	Mon, 11 Nov 2024 14:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cjmKNIGB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nxWkwmhR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C384D19D881;
-	Mon, 11 Nov 2024 14:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF1019F10A;
+	Mon, 11 Nov 2024 14:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731333856; cv=none; b=lf50ePUMso3a0PecN23DtZLJbWcmxRrIGgCEFs+uMm0PTkt5RNeYbHdKv/tYdxjD9mAD78oW1tv4+Qb1gBSv280ZejFcoSw+W7xnlQgi/xBV2kAHay5v5gHjXXZbU2Dx7d/PcA0nQBEAoAUD+McmvtskHfKfaBZUNFpOsdFbbC4=
+	t=1731333880; cv=none; b=q0Gb2qTutnaIfPRqa0SPzg6pxE6W84sgKFzw9q/TQXWdaabUlKsfrHCO3ohCPW0tgy/TA4itDTyL2fctOtthYzDHrEj6zIrGb6wG6jIhSN2sXTk7jCktQGEOr3J7VehoYWjJiIWC10WajBDGAvFOf18KAAxgiwTMA5zsGT39cLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731333856; c=relaxed/simple;
-	bh=Q09Jt7ZkFfl/xY7ARqjQ3NHnuShpjY3RpiJ1qkbipBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PbLQSI+WAhwUSPKsNVnaWD6WnrCoNa4fkxic2FX4UFKWLSFy0fdmlAb0t7gTLXcWb3bioXZuQM3b1hYH1PkC7g5PkuIy6oR6NDt9VvtpTNiKAu/eFtgOd7JDts3NJIeUlve1MkYUraqFElSx8k/yEziF2QLCCVq8KgkOLbXN+vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cjmKNIGB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABB1ied028877;
-	Mon, 11 Nov 2024 14:04:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W3CBRFMje3n7hspwjNJYn3C8cGZoyMfv5EGAAN+vScw=; b=cjmKNIGB2MCcfrO6
-	/lw3esQ6KMiZ3YsquAjapLa8n23KX5LPRlPwG4tj3eTcZp4aG9Hwj7yB3lqZo47q
-	AGE4oMJj/WJ8touIHKUxm4gHELOy4pbGOXRruHDTFyqerppHv/88kGQAnoBoQS4J
-	KEYN4bLlEA8yUvicWvTIf0LCU1FSJFyAmUHztwIbWfEE8KMyW+j1yNLvGv6Fmc/v
-	2tlIVE6mYbesERqL50c1loGbf30+aFOWHkY+3yLPE3cT3UYezz0+dI2TQIg8Emrq
-	uOGbG2cdfXLf55xls5VjBvhniHegpvEzHfKR7Dg3rNHCQ3uezV+jCiJrNGO1BQzH
-	RQpVVQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sweecj12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 14:04:09 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABE49ns008114
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 14:04:09 GMT
-Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 06:04:06 -0800
-Message-ID: <6629313e-a4eb-cca0-ffaf-6aed399da20a@quicinc.com>
-Date: Mon, 11 Nov 2024 19:34:03 +0530
+	s=arc-20240116; t=1731333880; c=relaxed/simple;
+	bh=tfyBpJQLB8RonUSKABvWjDRZpQ89oMSB5iQHnfS4ceo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFNVviKLFulnqiCzg5SwEyR5a0soEQ39smUJqvdk6Wdso8DIP5ZOs13bvIXnTExvLmdhAWBRBegMCvibnKvP4F8BrNuvuIAm0uwfzqrhq+1/kYshodR9Xn/il23UAsnUs8VQpGVEgkHkPU+bHO4wBwNBSG0W2ZNlkpegcocUqx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nxWkwmhR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12CCDC4CECF;
+	Mon, 11 Nov 2024 14:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731333879;
+	bh=tfyBpJQLB8RonUSKABvWjDRZpQ89oMSB5iQHnfS4ceo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nxWkwmhRg56OBVDA41QkDTQkpgoxC1qk+7/jDM8lTmM4EHzrVjIG/XdHgHd8/NCY0
+	 STPAGpnpB3g0iB1Lcn+4dlC5e99JsFJUzQ8PIKh+pupOJ1joU5MaRe52rpGntfFkLa
+	 Dr8xG9ZTMUIt2pe5uFf1kgpt91WeUhCDd2ICTVjw=
+Date: Mon, 11 Nov 2024 15:04:36 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Matt Fleming <mfleming@cloudflare.com>
+Subject: Re: CVE-2024-50219: mm/page_alloc: let GFP_ATOMIC order-0 allocs
+ access highatomic reserves
+Message-ID: <2024111147-spur-stooge-c0b0@gregkh>
+References: <2024110925-CVE-2024-50219-c970@gregkh>
+ <f6e053b5-982d-472b-9c75-95d7f390bd68@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/4] media: venus: hfi_parser: add check to avoid out of
- bound access
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
- <20241105-venus_oob-v1-1-8d4feedfe2bb@quicinc.com>
- <b2yvyaycylsxo2bmynlrqp3pzhge2tjvtvzhmpvon2lzyx3bb4@747g3erapcro>
- <81d6a054-e02a-7c98-0479-0e17076fabd7@quicinc.com>
- <ndlf4bsijb723cctkvd7hkwmo7plbzr3q2dhqc3tpyujbfcr3z@g4rvg5p7vhfs>
- <975f4ecd-2029-469a-8ecf-fbd6397547d4@linaro.org>
- <57544d01-a7c6-1ea6-d408-ffe1678e0b5e@quicinc.com>
- <ql6hftuo7udkqachofws6lcpwx7sbjakonoehm7zsh43kqndsf@rwmiwqngldn2>
- <781ea2fd-637f-b896-aad4-d70f43ad245c@quicinc.com>
- <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <oxbpd3tfemwci6aiv5gs6rleg6lmsuabvvccqibbqddczjklpi@aln6hfloqizo>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: j0Vyqy3ZojGO7CW6VCEWh6uPCPNHeSEe
-X-Proofpoint-GUID: j0Vyqy3ZojGO7CW6VCEWh6uPCPNHeSEe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=903 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411110116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6e053b5-982d-472b-9c75-95d7f390bd68@suse.cz>
 
+On Mon, Nov 11, 2024 at 11:40:49AM +0100, Vlastimil Babka wrote:
+> On 11/9/24 11:15, Greg Kroah-Hartman wrote:
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > mm/page_alloc: let GFP_ATOMIC order-0 allocs access highatomic reserves
+> > 
+> > Under memory pressure it's possible for GFP_ATOMIC order-0 allocations to
+> > fail even though free pages are available in the highatomic reserves. 
+> > GFP_ATOMIC allocations cannot trigger unreserve_highatomic_pageblock()
+> > since it's only run from reclaim.
+> > 
+> > Given that such allocations will pass the watermarks in
+> > __zone_watermark_unusable_free(), it makes sense to fallback to highatomic
+> > reserves the same way that ALLOC_OOM can.
+> > 
+> > This fixes order-0 page allocation failures observed on Cloudflare's fleet
+> > when handling network packets:
+> 
+> Hi,
+> 
+> I would like to dispute the CVE. GFP_ATOMIC page allocations failures can
+> generally happen (typically from network receive path, like here) and should
+> always have a fallback. The impact could be somewhat worse performance at
+> worst. AFAIK they are not affected by panic_on_warn nor panic_on_oom either,
+> it's a pr_warn(), so I don't think there's a DoS vector.
 
+I read this as "there was a failure, with no fallback", but in looking
+at the traceback:
 
-On 11/7/2024 7:24 PM, Dmitry Baryshkov wrote:
-> On Thu, Nov 07, 2024 at 07:05:15PM +0530, Vikash Garodia wrote:
->>
->> On 11/7/2024 6:52 PM, Dmitry Baryshkov wrote:
->>> On Thu, Nov 07, 2024 at 06:32:33PM +0530, Vikash Garodia wrote:
->>>>
->>>> On 11/7/2024 5:37 PM, Bryan O'Donoghue wrote:
->>>>> On 07/11/2024 10:41, Dmitry Baryshkov wrote:
->>>>>>> init_codecs() parses the payload received from firmware and . I don't think we
->>>>>>> can control this part when we have something like this from a malicious firmware
->>>>>>> payload
->>>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED
->>>>>>> ...
->>>>>>> Limiting it to second iteration would restrict the functionality when property
->>>>>>> HFI_PROPERTY_PARAM_CODEC_SUPPORTED is sent for supported number of codecs.
->>>>>> If you can have a malicious firmware (which is owned and signed by
->>>>>> Qualcomm / OEM), then you have to be careful and skip duplicates. So
->>>>>> instead of just adding new cap to core->caps, you have to go through
->>>>>> that array, check that you are not adding a duplicate (and report a
->>>>>> [Firmware Bug] for duplicates), check that there is an empty slot, etc.
->>>>>>
->>>>>> Just ignoring the "extra" entries is not enough.
->>>> Thinking of something like this
->>>>
->>>> for_each_set_bit(bit, &core->dec_codecs, MAX_CODEC_NUM) {
->>>>     if (core->codecs_count >= MAX_CODEC_NUM)
->>>>         return;
->>>>     cap = &caps[core->codecs_count++];
->>>>     if (cap->codec == BIT(bit)) --> each code would have unique bitfield
->>>>         return;
->>>
->>> This won't work and it's pretty obvious why.
->> Could you please elaborate what would break in above logic ?
-> 
-> After the "cap=&caps[core->codecs_count++]" line 'cap' will point to the
-> new entry, which should not contain valid data.
-> 
-> Instead, when processing new 'bit' you should loop over the existing
-> caps and check that there is no match. And only if there is no match
-> the code should be allocating new entry, checking that codecs_count
-> doesn't overflow, etc.
-Got it.
+> >   kswapd1: page allocation failure: order:0, mode:0x820(GFP_ATOMIC),
+> >   nodemask=(null),cpuset=/,mems_allowed=0-7
+> >   CPU: 10 PID: 696 Comm: kswapd1 Kdump: loaded Tainted: G           O 6.6.43-CUSTOM #1
+> >   Hardware name: MACHINE
+> >   Call Trace:
+> >    <IRQ>
+> >    dump_stack_lvl+0x3c/0x50
+> >    warn_alloc+0x13a/0x1c0
+> >    __alloc_pages_slowpath.constprop.0+0xc9d/0xd10
+> >    __alloc_pages+0x327/0x340
+> >    __napi_alloc_skb+0x16d/0x1f0
 
-Regards,
-Vikash
->>
->>>
->>>>> +1
->>>>>
->>>>> This is a more rational argument. If you get a second message, you should surely
->>>>> reinit the whole array i.e. update the array with the new list, as opposed to
->>>>> throwing away the second message because it over-indexes your local storage..
->>>> That would be incorrect to overwrite the array with new list, whenever new
->>>> payload is received.
->>>
->>> I'd say, don't overwrite the array. Instead the driver should extend it
->>> with the new information.
->> That is exactly the existing patch is currently doing.
-> 
-> _new_ information, not a copy of the existing information.
-> 
->>
->> Regards,
->> Vikash
->>>
->>>>
->>>> Regards,
->>>> Vikash
->>>
-> 
+This function DOES have a fallback if this failed, so it's ok here.
+Many other ATOMIC allocations in the kernel do not have fallbacks, which
+would cause a crash.
+
+Note, it is setting the NOWARN flag, so shouldn't this not be warning?
+
+Anyway, you are right, I'll go reject this one, thanks for the review!
+
+thanks,
+
+greg k-h
 
