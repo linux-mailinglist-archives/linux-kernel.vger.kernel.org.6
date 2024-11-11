@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-403863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BFB9C3BF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:30:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0512B9C3BF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540CF1F230DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 376471C2177A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D017185B47;
-	Mon, 11 Nov 2024 10:28:46 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C627C189F5E;
+	Mon, 11 Nov 2024 10:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cr+3CDdQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47D0185E53
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2973E1850AF;
+	Mon, 11 Nov 2024 10:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731320925; cv=none; b=AzUpdDIKC6GJo5L2fCwYbQW6q5Z1Nj6KuEyaGnF37dJ1Ez02m13Dhw29PccHw8KYt6gcE5P5w6jBKh/V7kWhIj7m/2KwGE2tryx9flmQj576CIRCAp966SnzrZ2iHpL+g8tg0kRvK4oYg8sv1IxOY/tiYA486mX9zsWjPsId7TY=
+	t=1731320979; cv=none; b=aMZDAfpqlZ4Qj6AhJ7+CZ3L6kyCrzoFoLF0JJB74xiNkOkrsOFZ7FJJC4D+ta6ZWq1DalrSQ/RWjqivLJdLUzI8uH33TJ/j2pHsDlpX6mhgTEEj2PosDV17HHl9Tqlu+p9CU5q3Mh9iUH3sFAy3y98EfreQ9lCkPEivccCGsD9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731320925; c=relaxed/simple;
-	bh=6rzlKBl+EskF4uspwIhBxRxNs0OCiY0HRy1wC9+e25o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h7ml1uPhqJB7uIjw9CdUGpjVwXF1h5+iX5R9F/CNYU0ldgiIrFaVX1MYnHBELAZ7CGaYpG5SgeKtYa3d56fqr+opgu4GjRcnoN486xWZBc+3vrdUaeHXBjbXaB6yTFWr17iYyxfEv0I7m9vKDLdCNQRY+SAzwAWSk808Kb71ehY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D9621C0008;
-	Mon, 11 Nov 2024 10:28:37 +0000 (UTC)
-Message-ID: <26452229-7461-48aa-987a-28444ace4f28@ghiti.fr>
-Date: Mon, 11 Nov 2024 11:28:37 +0100
+	s=arc-20240116; t=1731320979; c=relaxed/simple;
+	bh=uIZqmnuRJS8ekHv7lZsq7+XDiS0vhUubfUCwr80FMvs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=StV6SaPp16ePDk1JGDAnQmmfJuEyFeFAJuEDtiwKkGS8eStVUrLzLiJ/cOQ8whXqq0G37WsSlJRtBroqd9G5N86Ok68kNdmm9a0KN9k2z/AHB3UrR2Vt42f8G9D+e6MIAj2A7kLBq245oEi6oXuIWUfyxEURaYW2PpRU3M0+39A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cr+3CDdQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C47B6C4CECF;
+	Mon, 11 Nov 2024 10:29:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731320978;
+	bh=uIZqmnuRJS8ekHv7lZsq7+XDiS0vhUubfUCwr80FMvs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Cr+3CDdQv65miQSVhu73OzxU7prbdWiB+XY946y6RQnMjnOJ1OLbUHIaruK/paf3+
+	 q98U5nppe0SlsmjqxQkSki0TzfPSMh2UNKl3wl4uBNY27XyeqIPsS7t0yzMxPcPIMp
+	 ikWcV5f06UsXxinaJRfgyFmKjpwJt2TZ5mQ4msOR/EUfkQUoLisXvXfgcFEnHXdTdn
+	 GPF9Oc3K/Ao+FYHBCXIbN4ptWMaW4+qXS1diuhVKM9HeNh2h5h1qjqMGMJj4iFb7Ky
+	 Z+aS3MQKDbCIAgfDi+zjsi+rToZ4OGJf/TzTmO9RllH4mmkGCMg8lnQynn++RFsSMk
+	 9yzOG8HxwMUdw==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: amlogic: axg-audio: fix Kconfig dependency on RESET_MESON_AUX
+Date: Mon, 11 Nov 2024 11:29:21 +0100
+Message-Id: <20241111102932.3209861-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools: add forwarding header for
- arch/riscv/include/asm/fence.h
-Content-Language: en-US
-To: Andreas Schwab <schwab@suse.de>
-Cc: linux-riscv@lists.infradead.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org
-References: <mvm5xq44bqh.fsf@suse.de>
- <d380fd10-ebc4-4d66-becb-13995372d41a@ghiti.fr> <mvmfrnyxg2n.fsf@suse.de>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <mvmfrnyxg2n.fsf@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Transfer-Encoding: 8bit
 
-Hi Andreas,
+From: Arnd Bergmann <arnd@arndb.de>
 
-On 11/11/2024 10:41, Andreas Schwab wrote:
-> On Nov 04 2024, Alexandre Ghiti wrote:
->
->> Unless you have any objection, we'll try to make Bjorn's patch into
->> 6.12-rc7 instead of yours.
-> It still fails the same:
->
-> In file included from /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/asm/barrier.h:12,
->                   from /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/linux/ring_buffer.h:4,
->                   from libbpf.c:37:
-> /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/asm/../../arch/riscv/include/asm/barrier.h:13:10: fatal error: asm/fence.h: No such file or directory
->     13 | #include <asm/fence.h>
->        |          ^~~~~~~~~~~~~
-> compilation terminated.
-> make[5]: *** [/home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/build/Makefile.build:106: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf.o] Error 1
-> make[5]: *** Waiting for unfinished jobs....
-> make[4]: *** [Makefile:164: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf-in.o] Error 2
-> make[3]: *** [Makefile:63: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids//libbpf/libbpf.a] Error 2
-> make[2]: *** [Makefile:76: bpf/resolve_btfids] Error 2
-> make[1]: *** [/home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/Makefile:1393: tools/bpf/resolve_btfids] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [../Makefile:224: __sub-make] Error 2
->
+As in most cases, using 'imply' is wrong here and does not prevent
+build failures since that code may not be visible to a built-in
+clk driver:
 
-Indeed, Bjorn's patches did not make it into rc7...
+axg-audio.c:(.text+0x15c): undefined reference to `devm_meson_rst_aux_register'
+
+Replace the incorrt 'imply' with the necessary 'depends on'.
+
+Fixes: 664988eb47dd ("clk: amlogic: axg-audio: use the auxiliary reset driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/meson/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 7cb21fc223b0..febb5d7348ff 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -106,7 +106,7 @@ config COMMON_CLK_AXG_AUDIO
+ 	select COMMON_CLK_MESON_SCLK_DIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select REGMAP_MMIO
+-	imply RESET_MESON_AUX
++	depends on RESET_MESON_AUX
+ 	help
+ 	  Support for the audio clock controller on AmLogic A113D devices,
+ 	  aka axg, Say Y if you want audio subsystem to work.
+-- 
+2.39.5
 
 
