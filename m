@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-404536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234839C44DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6A09C44DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF7641F252FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:21:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F7F1F25599
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A3A1AB6C3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C208E1C1AD1;
 	Mon, 11 Nov 2024 18:18:16 +0000 (UTC)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4EF1A9B33;
-	Mon, 11 Nov 2024 18:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECD81A76DD;
+	Mon, 11 Nov 2024 18:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349095; cv=none; b=NI/zmmT/5y0i/KU29BDNvsez/4nql1jQNIvOo2Vq9Qw+ps00Zax5rnFnyia9dDCA5XCIKFju+JPZz7E6JyatmUA0kQFR3dfOHL4SeuxqSEU35RY4YWMtiMJVFZ1m/FQ7ItUfk5JjM071RjYQXBr1RS3c9BR6BcM8nKarW0wMi5w=
+	t=1731349096; cv=none; b=FYO/Z8nIR+eKJQpOCl7IKQA3pvcjs4r4ZbQlqQEE9uUrlcqJNgV2yZmnO8jx+Mdf9UonEvuglrr1GZwKmhHgSvIRB/psoCCulkMufN0EwmgSbWhw8vWRz/aQTwbWrCSaTXlwJ8znnhyqgsabxb71wuUWIsZWe8Zg+ghcHNYQ2fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349095; c=relaxed/simple;
-	bh=HtvMLoBZx4eM3Vdilo3yNeTV5Fp45Iqg0wKDB4QwmDU=;
+	s=arc-20240116; t=1731349096; c=relaxed/simple;
+	bh=NUpHzi7ldruM7wye4rV2MHffa7XW4xvZarJXg/I+Xgg=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bjJuvtT/eF5VMfKje2on6TO1zL8GEQ21ySDF4vIsZYTym0jC4i1CDZdoLhOQ7o0G8ZoODNDyQ8BkF0BfBUChcdu0j2/pzwgxcxsvSBTkbaKtyATaKk/OEaVvbgGkp3GcnNtTbIpD+/PJHpGIL2oonGlCp/gDkqcnnyH+/lXRINM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version:Content-Type; b=EBnn6/GrcD9oX1qdC5bDzaWhXuYPH+3tKbQytES8Q0t7COL9/TZy0tssUbRz1JfDWZ43Ui0IO9MRqWZqorIMnyrUNefPIJciWdEZ+G6NOXcpFMblL7SNbDLP2zsjCr8D2thgOIBuWqGMY/KZ1aHMtfos90C8GC1czJ1sCPQE4ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so630040466b.2;
-        Mon, 11 Nov 2024 10:18:13 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9e8522c10bso746403666b.1;
+        Mon, 11 Nov 2024 10:18:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731349092; x=1731953892;
+        d=1e100.net; s=20230601; t=1731349093; x=1731953893;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eckdRA2Gz50Pl0iUsR156tV+5lFkIuN6FgaOkhY4G4M=;
-        b=kAFQk1Kw1lSvnIR5ZjC2/5vA16Ad/9hlXzkJ7LxtzzM/gelKubLF86yxo8MS4sr1rh
-         zqXr/0qpzxAyDGTfhnQcbL5XzX5P+6lGYaBEoHu9VL5P++hX2RDxs3AHQBZcGc54sbdV
-         AG89l7QzlwdEyV5zQS8kK7/FWJWqJNvw77Qq4lpNUrY/9CA0XTQA+XjNeEQo2pcGmzzc
-         BPh2VaE13sZq0MHNZIskJxb+TAUVhJcdcEGcteRP7wmnQKXXojdIO74VB46ncuPgumar
-         p/sTSrUB9Q+3UawhY3wgOUQ86NSnys8FNRj22uQcAJgE9igqRWWtpwtK048oabG4t3qb
-         GOFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr0BRtgkBmbi52B2KH8vlxz5/k3QquhukGPseLg5RYDb9Cw06JP3BzF4NNcG6JQKbN/QLACEvjbs+V@vger.kernel.org, AJvYcCVsSN5jM05QmLMT2wTe6bxe/dpa253t+2xSsJaKS9pWOTbFDo14PVomiQGMF17EqjguwXuztl7QEqTHBvPo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUGuY8BC3E/C+VnQTuv+EegeyuXxi99NADzskDEqT66i/nEz5e
-	jXF9uXwcwBR6KBx2TnyHgqcWBvbPgIX3ur84MtlB2prYYB0hcJLa
-X-Google-Smtp-Source: AGHT+IHD9WSUDwH4PlIGM00maH6QB8VOUn1a7QCnR3fLMSi0p8bYg2PXCsAsVliSK0qebYRlecvEmA==
-X-Received: by 2002:a17:907:84a:b0:a99:e1a1:473f with SMTP id a640c23a62f3a-a9ef001914fmr1369234166b.57.1731349091955;
-        Mon, 11 Nov 2024 10:18:11 -0800 (PST)
+        bh=L9QaR0BG6R1g4qnhXgnvmqa/ekoM0k94F2vyZtmSUk0=;
+        b=EBmi/ADbzQib5ConeGEpBtClm4ojgU4fronTi+N9tP0Rc/bBIJ8+681vmfB5IemFX4
+         EWyuBYeuY1Ko7SVt9D+T1J6NAhOMDk5LTcZ1BPGqX9n+rzc1GGR+sqxs0JAIxgXUFOo9
+         Dvk7qUvj30Bxogfaiw05WBQlA4tbMmhYgxKX0baxLs5htckFhOXB3XgeByflRfLMPZnL
+         qSXo6zVwWiKwP3nxwdzx5D1PzOsMKkQ5fM+GSFIomZTTqrS5dO8m2nMrgG04in2v0GhK
+         SGeutRsxFejSPA69rTY5fA7Oryi3SZNe36uPoDW2rFzI/u25NRRFKiMduHwk6qDXEolB
+         0d7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpnMZentoPjKAVpUJlyJEE4tqIYXBh7sIWP4bOMzLdWuiC/2kjTBuLfuWIHDBAQsZz1U9ZIkT1xDcK@vger.kernel.org, AJvYcCXUjNSx65JYZV5qsJN418hDoBX3Gfd8xnrtXbRV2myURLO/+thxYg1arhqHNjjayfnN6YXmqDwOxcRKtUsf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnlujk6cP63tWuLdA/ucG3aoHqDqk82H1QbcL4BV0QuTeICx6X
+	PvV5aFsgpg4cXN6J0R1SCg4K+xbpmkarj8dFI5wvgXn68JqNNWvt
+X-Google-Smtp-Source: AGHT+IFRTD3QXRpX84g/OrfQbY0Ox6bUTyQy1uaHky5CSXyrm+co0z+49Rf4f0/uWBqCzAr0o5zw8g==
+X-Received: by 2002:a17:907:7f1b:b0:a9a:17be:fac7 with SMTP id a640c23a62f3a-a9eefeb5cb4mr1224603366b.14.1731349092826;
+        Mon, 11 Nov 2024 10:18:12 -0800 (PST)
 Received: from localhost.localdomain ([193.142.191.186])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a17b64sm617868466b.39.2024.11.11.10.18.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a17b64sm617868466b.39.2024.11.11.10.18.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 10:18:11 -0800 (PST)
+        Mon, 11 Nov 2024 10:18:12 -0800 (PST)
 From: =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@linux.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -66,9 +66,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] arm64: dts: rockchip: Add supported UHS-I rates to sdmmc0 on rock-3b
-Date: Mon, 11 Nov 2024 19:17:25 +0100
-Message-ID: <20241111181807.13211-2-tszucs@linux.com>
+Subject: [PATCH 2/3] arm64: dts: rockchip: Enable sdmmc2 on rock-3b and set it up for SDIO devices
+Date: Mon, 11 Nov 2024 19:17:26 +0100
+Message-ID: <20241111181807.13211-3-tszucs@linux.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241111181807.13211-1-tszucs@linux.com>
 References: <20241111181807.13211-1-tszucs@linux.com>
@@ -81,33 +81,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add all supported UHS-I rates to sdmmc0 and allow 200 MHz maximum clock to
-benefit modern SD cards.
+Enable SDIO on Radxa ROCK 3 Model B M.2 Key E. Add all supported UHS-I rates and
+enable 200 MHz maximum clock. Also, allow host wakeup via SDIO IRQ.
 
 Signed-off-by: Tamás Szűcs <tszucs@linux.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-index 3d0c1ccfaa79..242af5337cdf 100644
+index 242af5337cdf..b7527ba418f7 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
 +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-@@ -670,8 +670,14 @@ &sdmmc0 {
- 	bus-width = <4>;
+@@ -688,14 +688,20 @@ &sdmmc2 {
  	cap-sd-highspeed;
- 	disable-wp;
+ 	cap-sdio-irq;
+ 	keep-power-in-suspend;
 +	max-frequency = <200000000>;
+ 	mmc-pwrseq = <&sdio_pwrseq>;
+ 	non-removable;
  	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
+ 	pinctrl-0 = <&sdmmc2m0_bus4 &sdmmc2m0_clk &sdmmc2m0_cmd>;
 +	sd-uhs-sdr12;
 +	sd-uhs-sdr25;
 +	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
+ 	sd-uhs-sdr104;
 +	sd-uhs-ddr50;
- 	vmmc-supply = <&vcc3v3_sd>;
- 	vqmmc-supply = <&vccio_sd>;
- 	status = "okay";
+ 	vmmc-supply = <&vcc3v3_sys2>;
+ 	vqmmc-supply = <&vcc_1v8>;
+-	status = "disabled";
++	wakeup-source;
++	status = "okay";
+ };
+ 
+ &sfc {
 -- 
 2.45.2
 
