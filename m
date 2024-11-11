@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-403744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8F89C3A08
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:51:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C229C3A07
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C5A1F21F8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6322812FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E913A8F7;
-	Mon, 11 Nov 2024 08:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D1417108A;
+	Mon, 11 Nov 2024 08:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QAmYd0nC"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KcZu/Ms/"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815B642A8A;
-	Mon, 11 Nov 2024 08:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662E13A8F7;
+	Mon, 11 Nov 2024 08:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731315052; cv=none; b=QceaftkjBXLKIlCMWHnmSEW103lmOt+hQvlbeDKTg7wbyEVCtE8YlOYZiD4QKYDe+KW8hwqxKqmkVGhiL4ECvkc2T8kov3mTftBIGPmtr1eJYwRi3EqmuhwpYVVsJvZwJ+cvl0N2b0JVnVLqGKfjGVLqYZWwsG/pv1EVRI2d9nU=
+	t=1731315026; cv=none; b=vBSo5iNL+e8yyJBpPA1R5ZU6No8p9eUP73Vk43IpSyXY+d2fNQY4ViMOa8ymhzhMxFtUOr6JmPmluoyE49lS+/lfcQ4zXBtwrEXH/HYmiF2jaBgOsPm708knShFTRWRJ9qZfHkqUjXKfMYw0qXQmC/hnzs4Z8KTgsZZqMKOFpV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731315052; c=relaxed/simple;
-	bh=HUVu5PzPWctsCfq0WgvE2365SU+hH9xVLEljiQJSADg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aeXQ6fBJK6JVYtCvNCOaAIDjmlVupbWTxf8nKuh+a4VsZdIJR8ytTF5ft1Hd7HSNBe1lLZl/BjhBhSOlK241GjkWk8bZuXco2pJpWpCLPmyaTciXqK7sxijYOOT/vTYBq55rt6RNK9eT7wWswkAshPmgcsmwCx4Rp0S2K0/+Jp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QAmYd0nC; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 08ed9a24a00a11efb88477ffae1fc7a5-20241111
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5F4rAbapCjtRK+5E3cd9kMWPwT8eNM90FXJAZ2gUrmc=;
-	b=QAmYd0nCfOuPJZe7seXjTcC0geKFkwYljm2hIcafUFXFoBnHsAAx6H7sW+8mLfd0BsHRP0Vkf8+FLH+G9kHpq3jRI5dXzoRwa+OLkPEYyAObDs3HQqvgC6UgHW5ibbdkblsUlukcRj7yy7To4P0k5UrThwZ0DoAsVhMc3DlAvh8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:fdaf42e2-9166-4f68-ae9e-1b2c4e8db7bf,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:d8e7e206-6ce0-4172-9755-bd2287e50583,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,UR
-	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 08ed9a24a00a11efb88477ffae1fc7a5-20241111
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <andy-ld.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1010684209; Mon, 11 Nov 2024 16:50:43 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 11 Nov 2024 16:50:41 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 11 Nov 2024 16:50:41 +0800
-From: Andy-ld Lu <andy-ld.lu@mediatek.com>
-To: <angelogioacchino.delregno@collabora.com>, <matthias.bgg@gmail.com>,
-	<ulf.hansson@linaro.org>, <wenbin.mei@mediatek.com>,
-	<mengqi.zhang@mediatek.com>
-CC: <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Andy-ld Lu <andy-ld.lu@mediatek.com>
-Subject: [PATCH] mmc: mtk-sd: Fix MMC_CAP2_CRYPTO flag setting
-Date: Mon, 11 Nov 2024 16:49:31 +0800
-Message-ID: <20241111085039.26527-1-andy-ld.lu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1731315026; c=relaxed/simple;
+	bh=SVgfyvyQTyZIPX9wmYvRf49sg1l4I/UCe9jmDBB5m8s=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=Vw6YgwEEgriO7bhUkayFktmCg93QYfdjaBPlxznJ2YIFYiwG5z4tCo4Wp1D8uciRqFv/TUMTgyoW6TR/YQ9b6Jfgt8UsV/3IGPfLb2K4d1orSVrLMoKfQA8SpzSpqABZru71jUTQcKi7s8nKWXFgu1kS3pOKUJoVGWjckOBTDyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KcZu/Ms/; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1731315011;
+	bh=SVgfyvyQTyZIPX9wmYvRf49sg1l4I/UCe9jmDBB5m8s=;
+	h=From:To:Subject:Mime-Version:Date:Message-ID;
+	b=KcZu/Ms/rLf4nDhXnzfQg9eh+LFtBBukCgYxfkO0XEsS3T9+ArGghW5EQKbVcQLEV
+	 XMxWWVjVqkY2xqQkBgRlugY/FdLH+AkaXjwAe9enZX616E/b3XG4KIBH1x/2SnhMsh
+	 2JDtZrDziums5gMYj5lwFuTJQSD3Bqx2FUIGiOV0=
+X-QQ-GoodBg: 1
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: wngOHNE9nD/oFnxaxhBrZOHVSLFe8z+T5PKahwXedpQ=
+X-QQ-STYLE: 
+X-QQ-mid: t5gz7a-2t1731314988t5018863
+From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
+To: "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>, "=?utf-8?B?YW5kcmV3?=" <andrew@lunn.ch>, "=?utf-8?B?aGthbGx3ZWl0MQ==?=" <hkallweit1@gmail.com>, "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>, "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>
+Cc: "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?Zi5mYWluZWxsaQ==?=" <f.fainelli@gmail.com>, "=?utf-8?B?c2ViYXN0aWFuLmhlc3NlbGJhcnRo?=" <sebastian.hesselbarth@gmail.com>, "=?utf-8?B?bXVndW50aGFudm5t?=" <mugunthanvnm@ti.com>, "=?utf-8?B?Z2VlcnQrcmVuZXNhcw==?=" <geert+renesas@glider.be>, "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>
+Subject: Re:[PATCH] net: phy: fix may not suspend when phy has WoL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Mon, 11 Nov 2024 16:49:47 +0800
+X-Priority: 3
+Message-ID: <tencent_6310D0205C804DD005C7F8AD@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
+In-Reply-To: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
+X-QQ-ReplyHash: 336625114
+X-BIZMAIL-ID: 12981089765913251210
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Mon, 11 Nov 2024 16:49:50 +0800 (CST)
+Feedback-ID: t:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OJG2NVWVA7qwljwhc6kUZrqK1jWEz8IwNYOHngC6RBhWGv9WwVK84k2z
+	/REjMoGGqu23+9ccutqmwHayXaZCdQtB0DlTBehxB1uKJ/X01kDb8GL7xeu5aLTgZ9pD6x0
+	ptu8dq7tpy0dbB8s4q84Duw31tp4zmyy94CDTOKjtrBPnXTU0kLAQybbgz3xrMeX2mrfgCl
+	I5M0HlNCWqSP/qxHyCaUAmK0z1ITICPEnIJsKLNfYkg965DhbrkNkzImg9LbMyPI9Lv8YPu
+	IxRI2R5NhH1gjWOcKG6gj32cTvr6caO2BedwOKQz+wapCxLS8HK1qetLnEfpiVyaH4zWyJC
+	zuinQmp9b9xEgKLgvz1ai004som1Rgw8/CUcbzQPUjLJZ3d2ZCO0v3xUtKtFgbi+o7GRUIY
+	pEQ7zhWnM9zLMeNeFd0DGNNUgen+sbF9wtgOA9W/RuOiQSvruiHT8it/PpxR0nEIt5wHdw/
+	M13ROhfjFWb6nbW3/EQQXSQpS5X/PESCKYG/UFYre65657zGeCasNZPekm45F9luZm/fpQW
+	2UNbUEGWLl2KJN1hgT8cQpj6KrmUpgwkNubyBeTvyTglKEhaXHWBlexZ9bXmywqlsRNXc/b
+	42ShIYs8nyTN8iGl+GuFmqi6HwRpyDmYiZwvpqyfkld9gCGW/zvHq7OwQj/70ZjeuzLXzP1
+	+fIco4vniewJP70Po2ohmnVnm6umPJx72DqUmTq1Buhh4OzCo5kiKYz5eLCvgJIsCd/jG/Q
+	bcR4JXwtUbHCM3pnCxAWZEV6sABiGglkIJLzTLxX7oX6btljSpPu8u/gP5gpSsodZQS+m/U
+	AMr0o0BdWASxWhSOcsPRMnm7NHMAXCjTBmOtdjK5eapC/3zemuw5Tr8Osevz8BwWACU1Rgj
+	wN1pfEj7O+sfTwo6OQlTqaEUJPMjz290XsPG3tvG/xTSD4lsYlpokcMBeGW+TPOg1EPFFdy
+	poOLj93KfNRvXhCiCZQ/C7TCLoLWQqc6TEFL3itTxL7jPpnz6m2FIv1GBCBsyXVsC+MTS9x
+	+LPqZBcdVjJkucGYMPflNraf5ef3WcPUWwRt6uHETLYPgo3BBR6hhz6OZtKnh6ypfOjKGoB
+	g==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-Currently, the MMC_CAP2_CRYPTO flag is set by default for eMMC hosts.
-However, this flag should not be set for hosts that do not support inline
-encryption.
-
-The 'crypto' clock, as described in the documentation, is used for data
-encryption and decryption. Therefore, only hosts that are configured with
-this 'crypto' clock should have the MMC_CAP2_CRYPTO flag set.
-
-Fixes: 7b438d0377fb ("mmc: mtk-sd: add Inline Crypto Engine clock control")
-Fixes: ed299eda8fbb ("mmc: mtk-sd: fix devm_clk_get_optional usage")
-Signed-off-by: Andy-ld Lu <andy-ld.lu@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 022526a1f754..efb0d2d5716b 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -2907,7 +2907,8 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 		host->crypto_clk = devm_clk_get_optional(&pdev->dev, "crypto");
- 		if (IS_ERR(host->crypto_clk))
- 			return PTR_ERR(host->crypto_clk);
--		mmc->caps2 |= MMC_CAP2_CRYPTO;
-+		else if (host->crypto_clk)
-+			mmc->caps2 |= MMC_CAP2_CRYPTO;
- 	}
- 
- 	host->irq = platform_get_irq(pdev, 0);
--- 
-2.46.0
+VGhlIGZvbGxvd2luZyBjb21taXQgaXMgYXBwbGllZCBpbiB2Ni4xMi1yYzEgWzFdLGFuZCBk
+aXNjdXNzZWQgaW4gbGluayBbMl0uDQoNCkxpbms6DQpbMV06aHR0cHM6Ly9naXQua2VybmVs
+Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1p
+dC8/aD12Ni4xMi1yYzEmaWQ9NGY1MzRiN2YwYzhkMmE5ZWM1NTdmOWM3ZDc3Zjk2ZDI5NTE4
+YzY2Ng0KWzJdOmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI0MDYyODA2MDMxOC40
+NTg5MjUtMS15b3V3YW5AbmZzY2hpbmEuY29tLw==
 
 
