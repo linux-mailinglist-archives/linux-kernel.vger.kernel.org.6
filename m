@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-404239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DDC9C4147
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:55:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017279C4149
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5886282F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B768F28310F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F123019FA92;
-	Mon, 11 Nov 2024 14:55:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1991A0BF1;
+	Mon, 11 Nov 2024 14:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImUVFlnS"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F05D1E481
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4871E481;
+	Mon, 11 Nov 2024 14:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336905; cv=none; b=H+nyaYMtB+fVjjUc5lRBbFq/uYWm9ziiDvys5Tl7opD/NrdH2/1kUMf3XmjRUWQxPQh+8W7tE0RMLYm7+L48hjX1GiY8Ew5j1HBP+eVmjNoP1lDh9OVYRsbQqbLm6nAnw1kFNdQ92VKn5zNQP39YBoqu5aKmtGL6z+BavUQ8ir0=
+	t=1731336911; cv=none; b=Bi/XOY9kJuU4t9+XCACEPe9vm8B+xgC/ZqRAFCLPFdekp3Psau9EYEEWg9DTtLXFHWHbbjQnbtqS7NOjUrJqgGWmvPMr+CfMoylJadKj0EbpaPdVTnXvkKK916STMgjMP1yOM2zcNRWwzJ6cBoRsr5QeKSBhNrrWPDBwY+FHBd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336905; c=relaxed/simple;
-	bh=7ttyoxP+6G16qz98MlJHAo2yRy0o/o/w9ER0fK/m+3c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BGXBgJlTZZ0et4k2u/UVpUpy/COBE/ifbmpbWbrIGvqpHiwD1CFTdzaSqNi4pB8A0aDN4rPlAGkaQwXGUUrt+Y/rrJjiQb66c8bidbwnVWI390w8xVTLsU+mtJlFGLavUTmD8cczK9z6LL61ji8T4+KrK2KIZelBcHhsz/w0ppU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so51498855ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:55:03 -0800 (PST)
+	s=arc-20240116; t=1731336911; c=relaxed/simple;
+	bh=II2BHEcC/u8xLBp3ClwUSeB/igExNBmR0NJxatWSy74=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pWGEyPPNeiAoZj4kmBB07KwKwOwyWZSgHYr5C1e5lwNzA7Kp9LK6MAn3OpciXjcY9BJW/q3JOg4JFZ9+Mg+29izJjvlOCnlPgAjkGDO/AAx49KAZRmMusdNqtPz9DL7rLDY/KKvF6W7f5vB7yT4Tez/RAWjGg+RGW40IlrMPkSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ImUVFlnS; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-723f37dd76cso4676250b3a.0;
+        Mon, 11 Nov 2024 06:55:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731336909; x=1731941709; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WK4sa5rLsAlHTQmLVJ7TfENeLqcKiiMDO0eHStMPdhU=;
+        b=ImUVFlnSlYY8f4muf9y04fBErZojIRFSIh0nDOZHcP95GmAJj3bn9yJTZg4RJzKWA4
+         mMjbXsINL7En/o+W4cllVcjmIgaFx2g7kHTVnNyX1l3TC7MHcZWWJqDWn8i93XidIzW/
+         9dLVhwl1h4QVIIHTE62W7aPBoiQ/ydksNlgXewySV+aBMLaN6oYPcTDD+CdXcVhobHYt
+         3tahcR5rQ/48kkEG2KMYFdVlLUiok4g4yqYIs80Kt+15dWny/6f5bdtF4Uwy0RQMgacX
+         Ca6NNrlkZkIXwXGD8b5SLtE2aIKl8gwNf48mMwzNx+RE7aRU0ye/NOfiw9MdaKXo1SKt
+         NRww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731336903; x=1731941703;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sfYn7BWZOcxuOga7Ej6itklBNxMCJS+Kz0QRYp4FzNk=;
-        b=FxA70jwsxxakFOnGlcN4c0r0hRVeNl7L5OjXyZaN9HpPPLCSxq8GvlH+3SaK4aoKNf
-         ocDKnmzgKKT2aQefzllAyhX/yxuwWxCAHQc++hTk4zJtRfrAJsMB/e7jTqyGB5YMhIdr
-         phVb1IqreLlXAB84Jb3IvVVDcTGynhZdGiy6u285mcV3PvfS4nSAcdBXuPzdGyPVa0xV
-         WBpBLn4wyl2wCnEnqNceccBA6nksd23EoequlY/LnowQf8tVKHY3gQnPXyipdeAd80BC
-         Ew/BprN26Wwc7B9iz8WJ4ejVaLILVCGz0mo54AEU564xVNQ91KpXoUQBQX+gDRkAiNYX
-         rPEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUj87WqxWFr/oBKd+HgcNrkJ7DGaxQT/K+ge4QoC1vZTqVUqVTLO4MNMu1a9UU4SZVG+YSoOVJoI3Xk+vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrdFK9FNl1Np5f6uiTwNRKkEoEOOISS1fupxQyh7SDRAALDu4D
-	ASAHCKmdxmNiuGZxVeJSyKBR0Ps4O5u9okP0kMFz7N0Fvb80BraDkWGv+GEwu6BCvuOy5IYR6g7
-	2tFB0thxmLRPhjizunyT8RT0nNdjwbkv5/lQGjUne9gjuSfscsRi2G1g=
-X-Google-Smtp-Source: AGHT+IGYSO7Y/2h2AJG+q3Wj04pLa0S3pgngnWHjNUUkztsd04WO92Kz9R+XFF4sWQwWcORBHD4MGhbiQOCuBGi0m0GIcDMyv1sS
+        d=1e100.net; s=20230601; t=1731336909; x=1731941709;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WK4sa5rLsAlHTQmLVJ7TfENeLqcKiiMDO0eHStMPdhU=;
+        b=wUusdCA957bvuLng4u2o0uj7aKn6qhxAVdDVMFdgU3fmx79+oknTwLOUx8xPTPF7dm
+         2LOa+xom1gkKAOtFdHdmp/txd9FtWAJRAO43hx5rWBxOE1NlIkUDj8O8HfDDm/6wlnlz
+         0zk0aWF7tSBiFQkWm6LKc6WVGILmdCF2EVBIDILVZph+IXH3BJagfEwt8QRM5MFWCf48
+         heOx91kZv4FJjEe74r3RGRqyV6KWxWobLY25ynGvnhBdQEaZi7NXI75MSCvhbBXpctDy
+         AKHQ+0Q6suxdDwLNDQ4Js/hPYYiY1830QOJF04URBVMeOeTMrFn1w5lLGSOyTmptj5xL
+         IMng==
+X-Forwarded-Encrypted: i=1; AJvYcCWufZMQaG6jqhLVDhHoN+0hjO35nEhE2PPTC6VyJ1EFjjiHXjgC8TCNqJZ4zvldM5Dst9xj2qAfdul80SI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2X7JHdTe2c+SPINydP4vvJmaIwNAZKAuBmGWm5DpFvDSXuYLm
+	tSR/F0gwZxRwmTi2ctIDoo80BStblgPcyZJRyhaohuuq3M2Co+h8CurFEGTrrHc=
+X-Google-Smtp-Source: AGHT+IHku2r2iIk02riIT8195NMqeN2zArBSm+pDBHA1njoJbfyyWNQ1Na2tgs9jqOjq/cHv+GuDYw==
+X-Received: by 2002:a17:90b:1c8d:b0:2e2:7f8f:3ad7 with SMTP id 98e67ed59e1d1-2e9b166bbdbmr17662049a91.7.1731336909257;
+        Mon, 11 Nov 2024 06:55:09 -0800 (PST)
+Received: from Emma ([2401:4900:1c94:38cd:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5f90ce5sm9734681a91.31.2024.11.11.06.55.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 06:55:08 -0800 (PST)
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+Date: Mon, 11 Nov 2024 14:55:05 +0000
+Subject: [PATCH] iio: dac: Fix converters spelling typo.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2482:b0:3a6:ad61:800f with SMTP id
- e9e14a558f8ab-3a6f198e699mr134716115ab.1.1731336903217; Mon, 11 Nov 2024
- 06:55:03 -0800 (PST)
-Date: Mon, 11 Nov 2024 06:55:03 -0800
-In-Reply-To: <CAHiZj8gcQgEXB4XZG09m+pOG2vk_xwEYxS93t6kttzNFED6PQA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67321ac7.050a0220.a83d0.0015.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241111-dackconfigcodespell-v1-1-2498567be34c@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAMgaMmcC/x2MywqAIBAAfyX2nJD2gPqV6LCsWy2JikIE0r8nz
+ W0OMwUyJ+EMS1Mg8S1Zgq+i2wboRH+wElsdTGcGXVEW6aLgdzkoWM6RnVOG+hmRp1FjB7WMiXd
+ 5/uu6ve8HfuVm02UAAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Karan Sanghavi <karansanghvi98@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731336905; l=873;
+ i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
+ bh=II2BHEcC/u8xLBp3ClwUSeB/igExNBmR0NJxatWSy74=;
+ b=wu318pKFFAzPZZwRY44LYbUAOCWxrBZug97Fmi2iE7O75TLFWkgyfa4uWrWIzG4HjVcSKlYSc
+ 4SGd4CiU5tjAFQwO78RG0/yrXbgT9ueZbsr7ZQMDMWHt1Z1+yNqSMFW
+X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
+ pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
 
-Hello,
+Correct the converters typo error
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in bch2_copygc
+"convertors" => "converters"
 
-=====================================================
-BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
-BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:646 [inline]
-BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
-BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
-BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x835/0xfe0 fs/bcachefs/movinggc.c:383
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+ drivers/iio/dac/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Local variable b205.i created at:
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x835/0xfe0 fs/bcachefs/movinggc.c:383
+diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+index 45e337c6d256..059994c7caa3 100644
+--- a/drivers/iio/dac/Kconfig
++++ b/drivers/iio/dac/Kconfig
+@@ -61,7 +61,7 @@ config AD5421
+ 	depends on SPI
+ 	help
+ 	  Say yes here to build support for Analog Devices AD5421 loop-powered
+-	  digital-to-analog convertors (DAC).
++	  digital-to-analog converters (DAC).
+ 
+ 	  To compile this driver as module choose M here: the module will be called
+ 	  ad5421.
 
-CPU: 0 UID: 0 PID: 6674 Comm: bch-copygc/loop Not tainted 6.12.0-rc7-syzkaller-g2d5404caa8c7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
-Kernel panic - not syncing: kmsan.panic set ...
-CPU: 0 UID: 0 PID: 6674 Comm: bch-copygc/loop Tainted: G    B              6.12.0-rc7-syzkaller-g2d5404caa8c7-dirty #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
- dump_stack+0x1e/0x30 lib/dump_stack.c:129
- panic+0x4e2/0xcf0 kernel/panic.c:354
- kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
- __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
- rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
- __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
- rhashtable_lookup include/linux/rhashtable.h:646 [inline]
- rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
- bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
- bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
- bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
- bch2_copygc_thread+0x835/0xfe0 fs/bcachefs/movinggc.c:383
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Kernel Offset: disabled
+---
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+change-id: 20241111-dackconfigcodespell-2c39aae651a0
 
-
-Tested on:
-
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13f8535f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
-dashboard link: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1008535f980000
+Best regards,
+-- 
+Karan Sanghavi <karansanghvi98@gmail.com>
 
 
