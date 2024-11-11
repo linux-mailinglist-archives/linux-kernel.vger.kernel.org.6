@@ -1,89 +1,97 @@
-Return-Path: <linux-kernel+bounces-404117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4459C3F40
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:07:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26F819C3F44
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F822898BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:07:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54E311C21905
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:08:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6219119DF62;
-	Mon, 11 Nov 2024 13:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA9B19C566;
+	Mon, 11 Nov 2024 13:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTkSIlPA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lupOlfOA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3A919CC22;
-	Mon, 11 Nov 2024 13:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125DA9461;
+	Mon, 11 Nov 2024 13:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330392; cv=none; b=ihuuJDbwybP4AOTNv3vu9MQpwdX55LpgXwopU2ygZ6CxtVJ8BI5CK771XOnzjvMWtBuaAp7nPmuqyYRIj1Pax6+7pyO5L/0NptD6PAu47NyS9b+OfoG1m1MiRZRdx0ckb3074wAtHvF3f/n6lITxEf0QG/iJnLhZCBBvj3+43PI=
+	t=1731330512; cv=none; b=P8z1RJd6TpCfNFKw10VqtTSvgFY9y+x3hFEmmgDWjh6YIsHKrF3T9x2elqhlLd3PWVRzTwI5tm8JmcidNKCI9DKbtDZoptfgfV7Sszi1YKJ0j9/y6ZPwtGs35kjI/a5LJY5O+lmc0pxEx49x3ska8Nuo/AGjl90ue3sbHExm1L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330392; c=relaxed/simple;
-	bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J2xXrgt5RKuUD1z5HS0oeC011T395qT+hjAZAiDanefRPD5g0cCBmkCeqZEt6pjG4GX/lfXtLo+UJJR6jNiEctq1tjI0J4u4kw3Ia8Ukok40FUze88GZySdv1dGe/dzYTnh5TcVLBXthXznNI7dTrJyXa4eohjQcWtZyrQB3p4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTkSIlPA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93F4EC4CECF;
-	Mon, 11 Nov 2024 13:06:30 +0000 (UTC)
+	s=arc-20240116; t=1731330512; c=relaxed/simple;
+	bh=ndQ47GoQQXd6xUUwXGsSCLhDP2/RsFKYe4Ch6kiXxQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nAgqwTFVOBproYjceX+ssAT6fkg0aTEAWkiQQgHKFgmmsadFwAMkCKoT/3i8VG0oG9JInKFsCfwaKoycCrnKCrsJzdixJwAX0vb0guRLuqBzRIe9SEI5fZBmE96r5TMiHmkpfobElakbq91b+MxYzjcX+OcQwJ5kwK/HC8rxbU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lupOlfOA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F242BC4CECF;
+	Mon, 11 Nov 2024 13:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731330392;
-	bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VTkSIlPAWpyp9E+DKF7zQMR3mA0/CGt2CnO3u7f1rTVS1tX6sVvpgFody47MtLLWo
-	 u8FXu84R0YRfdok5woySFtvvWBTH08QTvyfZ0hlv4PrbUtlCo2v5IuWAKvQmdz2DZC
-	 zCNQRqbjR5equTLF3B2vWwvtMTIcGZzsIhJCJSp0FzEtB9qZ+ilqtFLYSJ/33D80uN
-	 /YK46OUaLScvUEwknh+KdSFjspTY/Dn+LQaOkhIowYTicZgB0hNWQUQoi+ECQXFOjv
-	 c8mWykkV/goP2dxw463YrWRI+GLG6ktmzfC1memCz33ba5zkYAUFYZbs/O8po+t5R+
-	 I9cb+eAcnelcA==
-From: Christian Brauner <brauner@kernel.org>
-To: Tyler Hicks <code@tyhicks.com>,
-	ecryptfs@vger.kernel.org,
-	Colin Ian King <colin.i.king@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] ecryptfs: Fix spelling mistake "validationg" -> "validating"
-Date: Mon, 11 Nov 2024 14:06:22 +0100
-Message-ID: <20241111-revitalisieren-kapelle-52baa92caa72@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241108112509.109891-1-colin.i.king@gmail.com>
-References: <20241108112509.109891-1-colin.i.king@gmail.com>
+	s=k20201202; t=1731330511;
+	bh=ndQ47GoQQXd6xUUwXGsSCLhDP2/RsFKYe4Ch6kiXxQw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lupOlfOARoCIk5u1Q9cL9Y5doiDj/Q/AwTxN1kaJ168zo9doFrY8yw0sb5LNeIsm0
+	 BQ8BWIuFETJV6Jl0eMFOpsoEmTlR7BHJ8RJaS0befhbpujuzWsHyIhPhB1hOxL7D5T
+	 /226KYUReSQqFKSIeet3MVtIWqCYDoOISsIU5qiULwc9oj8DxQetRXh05HHaIx6MM5
+	 S2EPGf57CUbXA74JaYAxr8Zk6wMho4vwLT9QA/cIywuEgAipmAMl0cTMiDaVGmoc4L
+	 0VyjUnaqTzu7CYS6sloCaRsHmuxlirYe8noXNa2q4rrDScByvpK6YccVNSxeJwjfPM
+	 /8JaW4jbUs4ow==
+Message-ID: <7e382bfd-cb1b-4d67-9e2d-a007af86e90d@kernel.org>
+Date: Mon, 11 Nov 2024 13:08:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=926; i=brauner@kernel.org; h=from:subject:message-id; bh=p4803cKuur+nTHiH2XN+bi6bUhrT0USkzF9hWtQRfSw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbMQYa1ZsZXi3m3yASq3hCUWLFAjE5vRdrZhZWB/Qrv nvS0dvQUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJGcywx/RRflsz09tTLh1HQu hs+fJm5bJcpndyfvXuI3Fo2Wf6LBXxkZ9nWteBvDytZn5eS3ObVNwvdnzOancWeY1nifvny1M3I SBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpftool: Fix incorrect format specifier for var
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, 08 Nov 2024 11:25:09 +0000, Colin Ian King wrote:
-> There is a spelling mistake in an error message literal string. Fix it.
+2024-11-11 10:48 UTC+0800 ~ Luo Yifan <luoyifan@cmss.chinamobile.com>
+> In cases where the SIGNED condition is met, the variable var is still
+> used as an unsigned long long. Therefore, the %llu format specifier
+> should be used to avoid incorrect data print. This patch fixes it.
 > 
+> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> ---
+>  tools/bpf/bpftool/btf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
+> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> index 7d2af1ff3..ff58ff85e 100644
+> --- a/tools/bpf/bpftool/btf.c
+> +++ b/tools/bpf/bpftool/btf.c
+> @@ -283,7 +283,7 @@ static int dump_btf_type(const struct btf *btf, __u32 id,
+>  				jsonw_end_object(w);
+>  			} else {
+>  				if (btf_kflag(t))
+> -					printf("\n\t'%s' val=%lldLL", name,
+> +					printf("\n\t'%s' val=%lluLL", name,
+>  					       (unsigned long long)val);
+>  				else
+>  					printf("\n\t'%s' val=%lluULL", name,
 
-Applied to the vfs.ecryptfs branch of the vfs/vfs.git tree.
-Patches in the vfs.ecryptfs branch should appear in linux-next soon.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Hi, I don't think your change is correct, it seems to me that we do want
+to make the distinction between the signed and unsigned version here (as
+for all the other enum cases in the function). What are you trying to
+address, did you find a bug in the output or a warning during compilation?
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.ecryptfs
-
-[1/1] ecryptfs: Fix spelling mistake "validationg" -> "validating"
-      https://git.kernel.org/vfs/vfs/c/ab088c6e4014
+Quentin
 
