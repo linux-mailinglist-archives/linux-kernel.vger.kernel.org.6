@@ -1,132 +1,113 @@
-Return-Path: <linux-kernel+bounces-404541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6899C454B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:52:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C859C44EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D2DFB23297
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A4791F2214C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7811A76DD;
-	Mon, 11 Nov 2024 18:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2951A76CC;
+	Mon, 11 Nov 2024 18:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ge+ZVc7q"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJXtp39l"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CA1527B1
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DA6450EE
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349462; cv=none; b=ZhTsp3cIEbZTwOHEnvFy7ctqO6Mp2oro3aawyPKzyMHQDZZ/uyz74iPtZSHB+Y10F1hctXf6Cxelo+kPzgxvN83wDB1qaPCJEsabtLhyMyi7vYGtSpmFCKT7zo0o/L7limHg2L7dejzZdwHb3Kmx32pG9IFEqd+sAFH2jHPFpDU=
+	t=1731349544; cv=none; b=hTrMFkDRExdjlAN4Er7XTcbn/6ADkGYEm1VWlcfL6BzTjevrgF4IaLVH3In0cMilVrdvzv3g1dif3kd8ynIg9jzVtRlvbzZlvd3HvJIo60Chelb8u0/BRCgQNQN2oHmQCrF8g2qA+Bfy7ng9O9nAUDRdiGWlaq0TB7Vgxny258s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349462; c=relaxed/simple;
-	bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=guwbP3O6yGaVfQ3jLsuq8tTIBL7h5PRhEG0D4eo+Tey9NqzdooF/rePoPY+2haQWSXm70uAQQ0s9hLgPpQgTF6Y9FKfkebpLiH24tVppNIdiOUb+7enB2D5AE4XqH2Rk4Z2hXH8wsFT+IRPvQX/uzTNZyqttHd6REJZdU2wmcnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ge+ZVc7q; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2e88cb0bbso3709287a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:24:20 -0800 (PST)
+	s=arc-20240116; t=1731349544; c=relaxed/simple;
+	bh=XSdIb/2EOCgN7HCMEwphquecmgO/cFXowPlkDf1i3uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fXaRNZfkWhiDNgD9q+pBcLV80X10GvV8NwxM7URJ8SkYmPsXheeJcviGfTRJoZW33yHpcQqJVKinKEEN+QL550alWzScAK3wgujxwrpA6HTyGISgjTpVrQhAhzrCxdmud+b7tkwC0a8JtO4w44l9ytBkuqkw5ZullQTPDcNe+TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJXtp39l; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20c8b557f91so51619195ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:25:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731349460; x=1731954260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
-        b=Ge+ZVc7quCjrHLDXthxDCEPAwpXx9QLeto1nDKLKJBXUcyQ3KXbU5TMX55/DZroApg
-         R7ArtStBNdVhf55AYRaMwSV4L8otYrg0MdxdViFusbvOUbWkJbMdD+qonLHLLhPSXG1d
-         veUy5XAYhMnta2+GwBBQOMr5aQ/0444eSO0qn0/1uGnJFDIhCuSn9zcwnOxybhHb6ozy
-         Mlutm2kOCVom2LSG7qY/1Md0cpnJEeUmE12zlLgXf4euqzbhg5EUrWKAyxRxuQHPcyMA
-         8k2ULJCPwbKVTONmEN2KDk8YMhNr6eT1Y5VR+/ZK+mCLvxhtt+QGmFv6dm2Gs95t9vQH
-         V1mg==
+        d=gmail.com; s=20230601; t=1731349542; x=1731954342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vT6+cn/CwO7PkXOoQQ+UP4WR4C3xsUaYci1Y0e19t/E=;
+        b=UJXtp39l3AGU0uHd6xOPOFfYkeGu39DezisipeOxq3HSw2+KUmh4FDcLtm3lm9aKig
+         cFh+Vcin7CPIitLbz7KPyEvPTv01Cw/Ky80pmMD08s/RBsaBseREMy3uZf9j5PMwLD5U
+         ny03GZ0ggZt6mUMetkljP+AREUkpPiOBLda3xNpx+ZbDcxp81l6BHjgLFwsXurHDst4/
+         KGSnfPbszSgZwl345t8B+jQqP9a4nxidpEO3ImmaD00rxOgYqdUI5zWBza5YdPIm1jes
+         qnDhhtIwuJjsr3A0ODfXmlnZOkjndsjripmQatUzxxMq5UDNdxZOw5W9LyHqtZk0Ggsx
+         EODQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731349460; x=1731954260;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731349542; x=1731954342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nXQykHTezTZ7kJ6EJ8xc0i2v4UMZDUJHkI9nmNcbpis=;
-        b=Zh/kOgw3MasKQ4h3e9iQBgI7nb5bkHuaHj0swnUR/qCEUDxq+f9ioLf4Nc1x4Tc72r
-         fp9lR0vjGpRcQiU0zyZcXmi/dz3U+yLkj+gxwbRlEXg6YAJb0+wsfDRqrCdYVcCxMykO
-         VpISFUrHRC59EgJMmYY2jBAz8miTKsKO44+I2PgRjk1T1etbpA09dhXiy5Kbe9CXBV1o
-         tPofbId/pMjdAK4RDDzP3MQCxd9BskwApy2JfdQIPMenYXeCc4LohfkddUygCM107uaF
-         cUyZ+OIpQbMR++wbGfi8Fd6aX7bBFEOGlkBOHvnc+WVmZtMUTsUWnHd75rcVo7v+5nKQ
-         YF4A==
-X-Forwarded-Encrypted: i=1; AJvYcCWbu43/nXUyXfZSaq/JWxbyqFH70UJvAP2gRki1Ylvl1cBbyy/HFm1VFFzoPvb45P2AVvCVqWnjX2p286s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQU0ZTuSpVsPCsy1zs6cXVj6E4TLEMbOg4xvoYJpooxW45uUJv
-	UL//4mWEK4Ilk+rQ4fd879T0bQRwkXuiQkdlPCb2fYDYIdUYSDK/bKjTsF0EDf9QZ++6h+BZGZJ
-	Fk2efgW7xvRikW3DHJOj4o8qyQz1PIdTFwSwg
-X-Google-Smtp-Source: AGHT+IFkderX9FsAkQ/eC/Ud17ckv4LSSzyIo4hQQMxFMAw9dvOZbg4S5RW9egfYju0Itb68L1146lsXTVMs6GhwThQ=
-X-Received: by 2002:a17:90b:4b86:b0:2e2:991c:d796 with SMTP id
- 98e67ed59e1d1-2e9b171ff6cmr18004783a91.9.1731349459673; Mon, 11 Nov 2024
- 10:24:19 -0800 (PST)
+        bh=vT6+cn/CwO7PkXOoQQ+UP4WR4C3xsUaYci1Y0e19t/E=;
+        b=JxIZhfC+sr1HhzqJs43NDwy1xZc/E8VjVtdobVQDoc2N3c37EQpp1CTTmwkDkLpzds
+         QV3KuEc6Z5GPhz+x1UOu7/1nWzCLCWKWZQWnMZ1t4NNApKe+Nl0nKI+KJ3ZFmYGLieXa
+         CDhHMuqdrdi9ftxNuolmWO8k9k1A8veoEw4Si7qEq1qu/7VHPZgOZMqpFoWEVoEyxpSV
+         N/+mYuSm2fPmi6hGFrcOXDMEq7LKZelxGGlksp0E+mFgg4+eS/pyvNAPgOVIErVfBc4G
+         ntfxyaUdA3OPWT7kM/UnM63+1lwIFMuVe5EfnYBEwxmVMfIT3az674Rxn7hpXx6C3Bs3
+         C+ug==
+X-Gm-Message-State: AOJu0Ywa3MXjnp/DiBa0OnQTbwajOGbD3UComtTlmNzoYY2ltuq/ja9G
+	qLxebab5gsRFzY39Hz/g8OmyD0rGaV4okcF48JlfxFwsSzYR0nC+
+X-Google-Smtp-Source: AGHT+IGk0FxI9pFas46pgRdxkFcmDyebua6WmOmOQJ3zZpcdkmj+er6i4ZlDXAe6brnZnTwk+jEC0Q==
+X-Received: by 2002:a17:902:d508:b0:210:f6ba:a8c9 with SMTP id d9443c01a7336-21183c8cc59mr200651005ad.17.1731349542291;
+        Mon, 11 Nov 2024 10:25:42 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e99a55bf2asm10982753a91.31.2024.11.11.10.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 10:25:40 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 11 Nov 2024 10:25:39 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.12-rc7
+Message-ID: <5c173a84-5c64-4706-82c6-e3ef4bab984f@roeck-us.net>
+References: <CAHk-=wiWK-GCmFGNqknDZzWMZM-u58tmP=jZ9ooTo9b8NURvgQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241111104054.GE22801@noisy.programming.kicks-ass.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Mon, 11 Nov 2024 10:23:40 -0800
-Message-ID: <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Ingo Molnar <mingo@redhat.com>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiWK-GCmFGNqknDZzWMZM-u58tmP=jZ9ooTo9b8NURvgQ@mail.gmail.com>
 
-On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
->
-> > I actually quickly hacked up the cpu_overutilized() function to return
-> > true during suspend/resume and the threads are nicely spread out and
-> > running in parallel. That actually reduces the total of the
-> > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
->
-> Right, so that kills EAS and makes it fall through to the regular
-> select_idle_sibling() thing.
->
-> > Peter,
-> >
-> > Would you be open to the scheduler being aware of
-> > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > overutilized behavior during these phases? I know it's a very use case
-> > specific behavior but how often do we NOT want to speed up
-> > suspend/resume? We can make this a CONFIG or a kernel command line
-> > option -- say, fast_suspend or something like that.
->
-> Well, I don't mind if Vincent doesn't. It seems like a very
-> specific/targeted thing and should not affect much else, so it is a
-> relatively safe thing to do.
->
-> Perhaps a more direct hack in is_rd_overutilized() would be even less
-> invasive, changing cpu_overutilized() relies on that getting propagated
-> to rd->overutilized, might as well skip that step, no?
+On Sun, Nov 10, 2024 at 02:34:05PM -0800, Linus Torvalds wrote:
+> No big surprises, and I think everything is on track for a final 6.12
+> release next weekend.
+> 
+> We've got the usual random driver updates (with gpu and networking
+> dominating - no surprises there either). The arch updates are mostly
+> devicetree fixes, and we have some filesystem fixes (bcachefs, btrfs,
+> nfs,  smb).
+> 
+> Some core mm changes, mostly around error handling corner cases.
+> 
+> Please give this some final "kick the tires" love,
+> 
 
-is_rd_overutilized() sounds good to me. Outside of setting a flag in
-sched.c that the suspend/resume code sets/clears, I can't think of an
-interface that's better at avoiding abuse. Let me know if you have
-any. Otherwise, I'll just go with the flag option. If Vincent gets the
-scheduler to do the right thing without this, I'll happily drop this
-targeted hack.
+Looks good here.
 
--Saravana
+Build results:
+	total: 158 pass: 158 fail: 0
+Qemu test results:
+	total: 549 pass: 549 fail: 0
+Unit test results:
+	pass: 472307 fail: 0
+
+That is with several additional unit tests enabled, and there are no
+patches left in my 'fixes' branch.
+
+Guenter
 
