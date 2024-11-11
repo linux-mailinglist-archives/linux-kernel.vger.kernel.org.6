@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-404773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC039C4873
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:48:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0245D9C48A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:59:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A67B23558
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:21:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5F0B2AE83
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095F71AC423;
-	Mon, 11 Nov 2024 21:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C761D1A9B3E;
+	Mon, 11 Nov 2024 21:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zvhzf9Gx"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGeajZqh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E601EB36
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 21:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBDC1BBBC5;
+	Mon, 11 Nov 2024 21:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731360099; cv=none; b=muxFbfQj3AZY0N6NMJm6XD1758ldRX7oMB2Ba8Jrp0cpC30IYKbQmPEBaR/e+i6HsA/VXfaCL3zr9QnbXKSTf3xxQKc/hKiJC8F2nJQC1UqWrOoqzJFVR/4siTC2I9ETylLaMEWloTCJQRazb8Hu9iO+QuBBiUdNbKXRf809jR4=
+	t=1731360232; cv=none; b=ZCrmiXL9aISGNRhE2ZJGb8cbn7SlH58JQHpvrimzNPD01S/f62GpzrFhJsrgoKfayH1foNHoSsCfEMN+w6L/ML+mBqI23ax4Ie6Fi0tf3V61Jsq1YGbFii+D70WNK5QV130jlAM29bzZ5BT7drc6HXNLcX6JPpPrFWNQHubqe5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731360099; c=relaxed/simple;
-	bh=VFJvq+LERFNyJY8U+s574EYCcRx3GigbkNEAPfZLdkc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lD1CTvAb8noDQFjrB+VzljNF9drZZTHn2GcTOmvDXraTsvLynpoTHyc4TzwNxBhAbaG8WENkMNQH8binImb0eGnhbrGP6CHNTX29hsVhadOyFh6DXYl2rZkrPq+X21cZlwUiGveNtEItKhY5P9/+6wOsgimvQRHTsc5nYz3J4tY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zvhzf9Gx; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e19d8c41so4542e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731360096; x=1731964896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TLnHLRpX4FgJDKaQVlTjZrusIwYcyb5vNTLCS3vgVJc=;
-        b=zvhzf9Gxq1yL9WyTH2n5lOdnYNdEfx4zrjBEvosyl2uOeGljUNpLpXkiSZ2cxNIjmh
-         /vd+GVMm/Q1jvz9RVVPEFiDntCauA3aRRWfaz3xAmHLOwdxWwIK0MvbEUJjDcJC52ywB
-         zr+QkZvmJUwtrMdr+hXUe4/xVu+PmyTWMNY3IXRi5SIvumD2T4wPC+HAMs0nuqAL/dfh
-         inz8R1EhWv0jFdaToGVRgGIfQIwSBLWHLXdGA5zFRqhJ5Es1CQwzqmHEbcWh4E1463vn
-         5Evsy/vqoc6MVEXfptjujMMOyVDXMe9+fjE+LEj346oujT3VwmeItazP96ZmSfz3mi8a
-         Cj2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731360096; x=1731964896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TLnHLRpX4FgJDKaQVlTjZrusIwYcyb5vNTLCS3vgVJc=;
-        b=nF+MxYqoqGWbDkRg+9tW2SMr9dcD6gK2onVQjcHgDCa9gOOzKbQPf+XThvFte5hcZv
-         bVUdH8exiTUv4c8cqp7f041xZwgLUzWUQ+G2TRVBUHuiclvBe7so06H2A6MzK04a+E63
-         LbGDffmnTa+U2xDtmYJiJbWij92JokEBrGM+3nNo8MzmorGNkmmKncLon8KOjzyTOwGq
-         5s3cWwEln+3p5mVpKgHWNq8FmbwIlVle+rTxgTRqOgvx6ix2FSIMuhj4BVYPacV/XEE2
-         EIQz/oiESmQqxMDgleh+C/btRc8KXEj5dGW43jjvEGAqvjkRd1dqLgF/FGcfwItFoXAz
-         3+sg==
-X-Gm-Message-State: AOJu0Yznypi7QDMoynhhI6sIEB1Vy7TTOImO9Wgi7Q6AJIkQWaAu2PPQ
-	r+f3HpffhEbqaNqWXHgyTIZa+fy7rq4dfTVNPqmnrX/Fb4uhgAe4TQHnKqpgu+lJj6HQqCHFpna
-	rikXcQpYg/QPUMhLhLor+cnBD1b4mDQXPbOK7
-X-Gm-Gg: ASbGnctg+3Zk4FnYxFKaveb9Fsvh8LOmSZr8NF8lcAJx6StoHCWgvAo2KjDnxFZZfHB
-	RKVCB9wvgzpRkLkkU9MN7x/CW8QdTK2eNXXkHc2pDA1j/ipLI1xWngiaqlw==
-X-Google-Smtp-Source: AGHT+IFox3Wq6T2Q1LkJY3chOYmzivx2kH9F9FcDQQB+5OTyAW6yTDkFUkoBaDF4bv6wxemMWtOFwRRbrsjFXYyZSpM=
-X-Received: by 2002:a05:6512:10d3:b0:536:88d0:420d with SMTP id
- 2adb3069b0e04-53d99ee6dd5mr105722e87.6.1731360095424; Mon, 11 Nov 2024
- 13:21:35 -0800 (PST)
+	s=arc-20240116; t=1731360232; c=relaxed/simple;
+	bh=NaCDGDciMwXtP8AUG1ZAj+h2gJO6t1bPaGcNDVapqAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZapendPQvE7EBi8VAn3lj7jNYSmFxd7Iq31iAeTSSqBaLz3evLr7idp543obh8SRZnKm8D/rnNmRCimOI9xtgGNM/I650jNkXo7rUkFSYF3UPhOT8uTJsZGQh3x+jE+6EOrDQhU1F2AjZIFkVJH1kzv3LV+sF1XeauLtPwL0F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGeajZqh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A315C4CECF;
+	Mon, 11 Nov 2024 21:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731360231;
+	bh=NaCDGDciMwXtP8AUG1ZAj+h2gJO6t1bPaGcNDVapqAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UGeajZqhjZasGKQm4q6r+WxsrNe2qCdR8p7pVfXpD/oW1Xy/qHoKXKF2ZVi7IlQEu
+	 bQznd75PmHJeMy1KncMfKpBjPnUWuIW6E7HgY45LfIiGB6Kv5JD76iOhJyovUAejMq
+	 NkgaEhkc6Y30Ax1HTcS1Zt5p1ubGbiory1TIjkjuqg8fW3AQ0HAlAEENZGfxpL9++c
+	 qilmeCsNN/1EveDny5370zOPFT0Ke5NnLmoAA4XLloX4IaWqbkpJ61W7Kn3qUmE/q3
+	 GNHKQV2ePkM5uhHrXDa4sgdWjj4Ifd3bWb1Bboe1IrcIBHPhIFKu+a0JGWnFNtNIZc
+	 RV4xF8d6+swXQ==
+Date: Mon, 11 Nov 2024 15:23:49 -0600
+From: Rob Herring <robh@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Conor Dooley <conor@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH 2/5] dt-bindings: arm: ti: Add compatible for AM625-based
+ TQMa62xx SOM family and carrier board
+Message-ID: <20241111212349.GA1955710-robh@kernel.org>
+References: <cover.1730299760.git.matthias.schiffer@ew.tq-group.com>
+ <4f5ad877f44df35a3b2c7f336647f057c4e6377d.1730299760.git.matthias.schiffer@ew.tq-group.com>
+ <20241104-floral-dexterous-7d3fee2ff616@spud>
+ <c73cac598788ccabd1791b1232e8fd9d7ce23ac6.camel@ew.tq-group.com>
+ <20241105-tinsmith-countable-fbb51045bc98@spud>
+ <7286141141fe4930cd2581dac7a1fb36a98e62c4.camel@ew.tq-group.com>
+ <20241106-happy-anything-46f7293f6aca@spud>
+ <068c22af19c07a7c79bb4abb0366a2505b4b1aae.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812181225.1360970-1-peterx@redhat.com>
-In-Reply-To: <20240812181225.1360970-1-peterx@redhat.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 11 Nov 2024 22:20:59 +0100
-Message-ID: <CAG48ez0NNph0Zp2aZ+c1T+U940CvwxcQ+jyEhp3KYZLSWPSrNw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] mm/mprotect: Fix dax puds
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	"Kirill A . Shutemov" <kirill@shutemov.name>, Nicholas Piggin <npiggin@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, James Houghton <jthoughton@google.com>, 
-	Huang Ying <ying.huang@intel.com>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Hugh Dickins <hughd@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Rik van Riel <riel@surriel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Mel Gorman <mgorman@techsingularity.net>, x86@kernel.org, 
-	Ingo Molnar <mingo@redhat.com>, linuxppc-dev@lists.ozlabs.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Oscar Salvador <osalvador@suse.de>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <068c22af19c07a7c79bb4abb0366a2505b4b1aae.camel@ew.tq-group.com>
 
-On Mon, Aug 12, 2024 at 8:12=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
-> Dax supports pud pages for a while, but mprotect on puds was missing sinc=
-e
-> the start.  This series tries to fix that by providing pud handling in
-> mprotect().  The goal is to add more types of pud mappings like hugetlb o=
-r
-> pfnmaps.  This series paves way for it by fixing known pud entries.
+On Mon, Nov 11, 2024 at 10:58:57AM +0100, Matthias Schiffer wrote:
+> On Wed, 2024-11-06 at 16:40 +0000, Conor Dooley wrote:
+> > On Wed, Nov 06, 2024 at 01:03:08PM +0100, Matthias Schiffer wrote:
+> > > On Tue, 2024-11-05 at 18:55 +0000, Conor Dooley wrote:
+> > > > On Tue, Nov 05, 2024 at 11:40:20AM +0100, Matthias Schiffer wrote:
+> > > > > On Mon, 2024-11-04 at 18:47 +0000, Conor Dooley wrote:
+> > > > > > On Mon, Nov 04, 2024 at 10:47:25AM +0100, Matthias Schiffer wrote:
+> > > > > > > The TQMa62xx is a SoM family with a pluggable connector. The MBa62xx is
+> > > > > > > the matching reference/starterkit carrier board.
+> > > > > > 
+> > > > > > Why all the wildcards? Why isn't there a compatible per device in the
+> > > > > > family?
+> > > 
+> > > Because all variants use the same Device Tree. There is also only one compatible and one (main) DTSI
+> > > for the AM62 SoC family, which our Device Trees are based on.
+> > 
+> > So what varies between the members of the family?
+> 
+> There are currently 6 SoCs in the family:
+> - AM6254
+> - AM6252
+> - AM6251
+> - AM6234
+> - AM6232
+> - AM6231
+> 
+> They differ in:
+> - Existence of GPU (AM625 vs AM623)
+> - Number of Cortex-A53 cores (last digit)
+>  
+> All of these use ti,am625 as their SoC-level compatible. The differences are currently handled by U-
+> Boot, which checks various feature flags in the SoC registers and patches the OS DTB accordingly by
+> removing CPU nodes and disabling the GPU node if necessary.
 
-Do people actually use hardware where they can use PUD THP mappings
-for DAX? I thought that was just some esoteric feature that isn't
-actually usable on almost any system.
-Was I wrong about that?
+That's how it should be. Most likely, those are all the same die. 
+Different die are expensive and it takes a high volume to justify the 
+cost.
 
-I think another example that probably doesn't play entirely nice with
-PUD THP mappings is mremap()'s move_page_tables(). If
-dax_get_unmapped_area() allows creating a VMA at an unaligned start
-address (which I think it does?), move_page_tables() can probably end
-up copying from an aligned address mapped with a huge PUD entry to an
-unaligned address that needs to be mapped at the PTE level, and I
-think that will probably cause it to call into get_old_pmd() while a
-huge PUD entry is still present, which will probably get us a
-pud_bad() error or such?
+Rob
 
