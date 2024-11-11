@@ -1,201 +1,96 @@
-Return-Path: <linux-kernel+bounces-404699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFF19C46F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:37:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53DA9C46FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA9B28963B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAC91F23350
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E016E1AD3E2;
-	Mon, 11 Nov 2024 20:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79628145346;
+	Mon, 11 Nov 2024 20:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQcroFBp"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+ImfXkP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF328468;
-	Mon, 11 Nov 2024 20:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201213A250;
+	Mon, 11 Nov 2024 20:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357390; cv=none; b=kWGak2fO7YrbMPUbABAsxRDauZfk8ADQNq6N7xBo8EFiq5U2vqA6iJkLetfXVHQ3W5ol3yp6WiUYMGSXFrMB9iqkjM9MLEmNgtsJKvEDDcUgwoQvfLewBV0YEKSBJnRmS2CGUpUAjao6S4iKI1yXUySGaXnjehtt05Be3X5myu4=
+	t=1731357485; cv=none; b=hvsUtYEtxNQeSPuzh+F+Uyi41O9A3olZvJPdtvl7f25qmoi3+ZAHBjSfmjzxpreCuLqaum1UtzT4Nnq7B0xVQuspRdmYP1w91IK/XTWpRwuY2ck4MV23trhlr2dCGGa4SIIJRbnvx/Jyu7YWkGRic7fUtED2OhDb7mwjbfiCEuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357390; c=relaxed/simple;
-	bh=wOsTfIEPVAc/E+aP97g3sPbLJ98st9z35lDbZEtTEeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ub4i+g+wJRZCMMYipDiNrjexRB/gQUi0X26oyKuq8s3YLV0IJbERd0XLjLBeMGfmdYgybMuoIGI6EQzKfKqfeclMRHays2F6TFQb2GMee0OpOzeyI4HoGD+3uyioAcvdg/cQdgjYsbc/elESEaGo4x88Riiwlv7NII1aKxKLsq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQcroFBp; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460c1ba306bso39802631cf.2;
-        Mon, 11 Nov 2024 12:36:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731357387; x=1731962187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h4HZ0ndgBSEIXVqSFh0OWbpXw2/Yq3xXYi8N9kbsxR4=;
-        b=mQcroFBpV6E9sL6dIW1C0sbNTIL4jKeZS0HO3cE31N3h2aNgCBIMkhenOwoqzoKebl
-         L5bwebtR4lBBAd5xoYGofFJpmDVZHxUTFr3hFUNrGKHQJKXAimN4HSqcfBVwDRiganav
-         qvzzUEFWTe2uAHFKrAizj47/ksvDBmrDCFIEOt+7RDWVVocTvSWBquJDZJk0Mz/+v3LC
-         6xyKkF1Vjz7Uz3iq2yiD7VVsml/nI4jEI3FAaQpAtnnDAbvArbkDV80XeUwhJQQL8pKk
-         6k4qEUBNI+i2egikOzNKbBeS1UpE+hbblVXy4X9F4kJDIwSXIXkks52WK3A6oWXFhxjH
-         bMAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731357387; x=1731962187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h4HZ0ndgBSEIXVqSFh0OWbpXw2/Yq3xXYi8N9kbsxR4=;
-        b=BxlP/AuqNdslSBz2Kr1BdCsiTNiLPupXMK2wQls3p0gOhn1lMSR1Gc4GhsjlQLU5xr
-         UubgGhRfHgIqAO4SxJmAKzyjNXxBBelew8eWfbBUCOhqqgzEK/lA9BQ2Mb53IDj68ojB
-         8hfDJNFFjn5bvPUtd9kfIMaYXEm2xOnD5iRV7qX9Ksu7uHgkua5kDRTL3uNY8gSdlTjS
-         Km7LQjdJF+MBzeL0h1jKHYGSAQ/PvikYww+QxdHmw/1iJXCnL5xN+TE8AghQy4iiQm9n
-         Y6rJ7iEP7+VUUa527xtII7PduEJkyz3Kg8att00rxzwdolUsu5l8BfrgHZuLIUOK8sAk
-         xzuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtZ15qUCT/1HQX7kgachjheswjdFIBoj1daGkz++vX1YfjnY0+K9YCAEs5pvl3M+si5JmlL+tA7Rk=@vger.kernel.org, AJvYcCWo9vU0DX8v6jz6PzCjUeJZ/gctbzfGokOCtz2Lvg/tPFzfQHTiz7Z7mmcLAr75UrVdstPserdICD9ORihH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTPjl2mER7zWwHr1XRKOpBroRtd1vTABqzkwvoVmKf/vBS9hmu
-	+Kp2e+rRPiD16wlksCb71bx+E+9Rtre2BNQ2F+2Hhb804tfo6d7LnA99oy/zBfgonMISQudgBLx
-	lNDjbpWiN3/IBMrSSkDu7Dpewmss=
-X-Google-Smtp-Source: AGHT+IGGFUQEIwnDUiJPFPcrC/oKvlw+uylOh5ATXUlyzXultio50WXUAADdwKWpkEa1W8MriQQZjOqXmZVZqAV7yKc=
-X-Received: by 2002:ac8:7dc8:0:b0:461:29d9:e86 with SMTP id
- d75a77b69052e-4630921899amr212981011cf.0.1731357387457; Mon, 11 Nov 2024
- 12:36:27 -0800 (PST)
+	s=arc-20240116; t=1731357485; c=relaxed/simple;
+	bh=KwaHLfJUIhXroumjHZ4bZlkQwpn6earNMC5wOJS8F3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFADYrDxMPf4jNRC2/mBNmkm5OneZ4v4o3BQt+lWljIJYZRuOPN2aV6xP3FRh3jnVUBMAlji85qoeC9WLwTt21tkE/abRNfmaPv3RTYguAj0DMJ3PrwS3Nyu6LZHOfRXYP89KUX7JNwaK0GY6mQjKfZv8YlxK2k1AuAT0wn38y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+ImfXkP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D41CC4CECF;
+	Mon, 11 Nov 2024 20:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731357485;
+	bh=KwaHLfJUIhXroumjHZ4bZlkQwpn6earNMC5wOJS8F3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s+ImfXkPI1O4CAQC7LGmSngp4INKqyeJCveS2DSuVJVX1UgzHimen+i0RyVKBvEk6
+	 hQN4Z9wDYJzrqvLNKWD7+hhjC761myQjPqeqfGAb9PwqGcW0JzjQF8UtGdneSpGBho
+	 qitioKlKlvo5kwuGk61r6IeO/Ve+XjrpQkXg+xWY1vizwq/d7F2ZpCLLBMUKfQMqWK
+	 bYiq2qedk57RKVeHa6XzX+cOI7Qsjr2GqkiJ17Jwl/dCS77Foo2Qhla7+yuLsWyC/+
+	 3A8d2XysWw8y7QiUgl3smDorGRCHuTQ+0t54NHPTGgJqXGgciIoN6HKu0R7Il42VPM
+	 t12XXSrSSZFCg==
+Date: Mon, 11 Nov 2024 14:38:03 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	Leilk Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: spi: add compatibles for mt7988
+Message-ID: <20241111203803.GA1917413-robh@kernel.org>
+References: <20241109105029.52748-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111191934.17231-1-jiashengjiangcool@gmail.com> <8505aa28-5f88-4fcd-b3bc-cb5db89d2a08@baylibre.com>
-In-Reply-To: <8505aa28-5f88-4fcd-b3bc-cb5db89d2a08@baylibre.com>
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Date: Mon, 11 Nov 2024 15:36:16 -0500
-Message-ID: <CANeGvZVE6fX5hV-p1xXsGR=Z=pABzDtvV9wY_XBbLwJUWNVtyQ@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
-To: David Lechner <dlechner@baylibre.com>
-Cc: jic23@kernel.org, lars@metafoo.de, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com, 
-	tgamblin@baylibre.com, fabrice.gasnier@st.com, benjamin.gaignard@linaro.org, 
-	lee@kernel.org, linux-iio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241109105029.52748-1-linux@fw-web.de>
 
-On Mon, Nov 11, 2024 at 2:45=E2=80=AFPM David Lechner <dlechner@baylibre.co=
-m> wrote:
->
-> On 11/11/24 1:19 PM, Jiasheng Jiang wrote:
-> > Add check for the return value of clk_enable() in order to catch the
-> > potential exception.
-> >
-> > Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-> > ---
-> > Changelog:
-> >
-> > v2 -> v3:
-> >
-> > 1. Simplify code with cleanup helpers.
-> >
-> > v1 -> v2:
-> >
-> > 1. Remove unsuitable dev_err_probe().
-> > ---
->
-> ...
->
-> > @@ -492,21 +495,25 @@ static int stm32_counter_write_raw(struct iio_dev=
- *indio_dev,
-> >               return -EINVAL;
-> >
-> >       case IIO_CHAN_INFO_ENABLE:
-> > -             mutex_lock(&priv->lock);
-> > -             if (val) {
-> > -                     if (!priv->enabled) {
-> > -                             priv->enabled =3D true;
-> > -                             clk_enable(priv->clk);
-> > -                     }
-> > -                     regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CE=
-N);
-> > -             } else {
-> > -                     regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_=
-CEN);
-> > -                     if (priv->enabled) {
-> > -                             priv->enabled =3D false;
-> > -                             clk_disable(priv->clk);
-> > +
-> > +             scoped_guard(mutex, &priv->lock) {
-> > +                     if (val) {
-> > +                             if (!priv->enabled) {
-> > +                                     priv->enabled =3D true;
-> > +                                     ret =3D clk_enable(priv->clk);
-> > +                                     if (ret)
-> > +                                             return ret;
-> > +                             }
-> > +                             regmap_set_bits(priv->regmap, TIM_CR1, TI=
-M_CR1_CEN);
-> > +                     } else {
-> > +                             regmap_clear_bits(priv->regmap, TIM_CR1, =
-TIM_CR1_CEN);
-> > +                             if (priv->enabled) {
-> > +                                     priv->enabled =3D false;
-> > +                                     clk_disable(priv->clk);
-> > +                             }
-> >                       }
-> >               }
-> > -             mutex_unlock(&priv->lock);
-> > +
-> >               return 0;
-> >       }
->
->
-> Another way to do this that avoids changing the indent
-> so much is placing braces around the case body like this.
-> This also avoids the compile error from using guard after
-> case directly.
->
->
->         case IIO_CHAN_INFO_ENABLE: {
->                 guard(mutex)(&priv->lock);
->
->                 if (val) {
->                         if (!priv->enabled) {
->                                 priv->enabled =3D true;
->                                 ret =3D clk_enable(priv->clk);
->                                 if (ret)
->                                         return ret;
->                         }
->                         regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CE=
-N);
->                 } else {
->                         regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_=
-CEN);
->                         if (priv->enabled) {
->                                 priv->enabled =3D false;
->                                 clk_disable(priv->clk);
->                         }
->                 }
->
->                 return 0;
->         }
->
+On Sat, Nov 09, 2024 at 11:50:28AM +0100, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> MT7988 has 2 different spi controllers. Add their compatibles.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> ---
+>  Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
+> index e1f5bfa4433c..ed17815263a8 100644
+> --- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
+> +++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
+> @@ -35,6 +35,8 @@ properties:
+>            - enum:
+>                - mediatek,mt7981-spi-ipm
+>                - mediatek,mt7986-spi-ipm
+> +              - mediatek,mt7988-spi-quad
+> +              - mediatek,mt7988-spi-single
+>                - mediatek,mt8188-spi-ipm
+>            - const: mediatek,spi-ipm
 
-Looks great.
-But there is no indentation between "switch" and "case".
-As a result, the closing braces of "switch" and "case" will
-be placed in the same column.
+Does the fallback make sense for both? Is there some common subset of 
+functionality where they are the same?
 
-Like this:
-
-switch(mask) {
-case IIO_CHAN_INFO_ENABLE: {
-
-}
-}
-
--Jiasheng
+Rob
 
