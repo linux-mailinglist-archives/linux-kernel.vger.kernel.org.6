@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-404671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9849C4673
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:18:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C893B9C46E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7180283282
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8BCB2AD24
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD931AAE19;
-	Mon, 11 Nov 2024 20:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gqxqfibK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582E719F46D;
+	Mon, 11 Nov 2024 20:20:07 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDC41BC4E;
-	Mon, 11 Nov 2024 20:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2BF199238;
+	Mon, 11 Nov 2024 20:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731356329; cv=none; b=JpP+lNumWBxMxvSCnqeEJsKEdsuS4rSMjFKdy1FCKHtBvf3x6bI0FfucooUfbtkjHMrk9IZMT4VsPl7a/Gdj9hTJJfbNcU6GhG9tsZ+OJQNuxSFUbr653oHqpTFry+GmHb8w314zuo6wR8TwnT7UzpNWK9N9zGdkKQ9Rdtk0Heg=
+	t=1731356407; cv=none; b=CeV5frgeuf5MqOlunf1bhwQ4zRsSSvjIMm7YCFtaaJTLC0W/f32y69r0z0yIKaEaXYWhSTIOJpFvCUuDxLecZqAY3S1yIJ2sDeqh+WC+/4ABZQOkzUbCkoWlAIhmQYu8o1pKPHo9yAqV/AuLfuNbSAagbh/wvbjsguSI3sPeWic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731356329; c=relaxed/simple;
-	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
+	s=arc-20240116; t=1731356407; c=relaxed/simple;
+	bh=D2ab2YM8vmaSyptZkkkHd1LRPeWi6Ng0ReSBwZvF19o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTevicbxBOAmWracM6uXHtVMXwXmoLUZ0YHqQDZ782X94ctUXmbWy/sbHqayohP0H2exbLmsxK44ffJMk/Y+6/QkB6pfWS8B2zs1AY34IUMq/v3z97ekJ8islIZxD+QbB4FAyDN994UwabHwlrrbh3r8NlDMdQFH8NH4o0oAtok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gqxqfibK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B07C4CECF;
-	Mon, 11 Nov 2024 20:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731356328;
-	bh=t5DsLHsfXVJLaZWit2f4WmFMkD0tUkZhk7FpjCALETo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gqxqfibKGViofJ8HKYz5PSJPB7/H6OvWWhJ/kb7COtar9EoQ1MgLDvNlR1bmXyw5h
-	 EfYGFIq0amhZd+Ig3cP4u4pSXVCWFo85owkKMFuAjzwS6En24XVQzwpQ38m3qpdOny
-	 FecvGyxmlWvNZNaZXaNvj60n4qs8+PkYOPfxh9GiSAC+D0qFhXsgMkz42TOspX0Zlb
-	 M6YZRSzEDvNA6GIY6QdVdW2a3VHf7GkDMWWkQ96jwp0jPXwyBEOC7GdQ6V5kW+orht
-	 iA+5UA5Nz7BCL5j4f69dTYmc3A1GQxLXj7Wqdsc9/PLNtaADoBXVpzIWJz+51Iejqc
-	 IQLLGUsjqZ8uw==
-Date: Mon, 11 Nov 2024 20:18:44 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Sota4Ever <wachiturroxd150@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2NdFoR9fzIvmMMbfJJxySj2LyDBDLnGz7LG1H1Y1X0W1OtC6cn1m0T2m943/88SP9I7qoKS2QkpKPngVQZSlxQZKQ17vyn0AujQwv8FQOHrQnQBHJoGMKrUREmm3hE7mKPNG8jri0lRQrbI1YXscVvK2GzuL1/F7TF9iZxY/5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id C36622800B4B7;
+	Mon, 11 Nov 2024 21:19:53 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 95F152B3794; Mon, 11 Nov 2024 21:19:53 +0100 (CET)
+Date: Mon, 11 Nov 2024 21:19:53 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Sebastian Ott <sebott@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: arm: samsung: Add compatible for
- Samsung Galaxy S20 FE (SM-G780F)
-Message-ID: <20241111-dreadlock-anaconda-e164c85d1ae7@spud>
-References: <20241109230402.831-1-wachiturroxd150@gmail.com>
- <20241109230402.831-2-wachiturroxd150@gmail.com>
+Subject: Re: lockdep warning in pciehp
+Message-ID: <ZzJm6QrQyT48jGuN@wunner.de>
+References: <f9f13728-ade8-c5b9-0cc3-2fb23db2f051@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MPVSYDEanEQ+DG5z"
-Content-Disposition: inline
-In-Reply-To: <20241109230402.831-2-wachiturroxd150@gmail.com>
-
-
---MPVSYDEanEQ+DG5z
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f9f13728-ade8-c5b9-0cc3-2fb23db2f051@redhat.com>
 
-On Sat, Nov 09, 2024 at 11:04:01PM +0000, Sota4Ever wrote:
-> Add binding for the Samsung Galaxy S20 FE (SM-G780F) board, which is
-> based on the Samsung Exynos990 SoC.
->=20
-> Signed-off-by: Sota4Ever <wachiturroxd150@gmail.com>
+On Mon, Nov 11, 2024 at 06:58:40PM +0100, Sebastian Ott wrote:
+> I stumbled over this lockdep splat during pci hotplug:
+> [   26.016648] ======================================================
+> [   26.019646] WARNING: possible circular locking dependency detected
+> [   26.022785] 6.12.0-rc6+ #176 Not tainted
+> [   26.024776] ------------------------------------------------------
+> [   26.027909] irq/50-pciehp/57 is trying to acquire lock:
+> [   26.030559] ffff0000c02ad700 (&ctrl->reset_lock){.+.+}-{3:3}, at: pciehp_configure_device+0xe4/0x1a0
+> [   26.035423] [   26.035423] but task is already holding lock:
+> [   26.038505] ffff800082f819f8 (pci_rescan_remove_lock){+.+.}-{3:3}, at: pci_lock_rescan_remove+0x24/0x38
+> [   26.043512] [   26.043512] which lock already depends on the new lock.
+[...]
+> I don't think that this could actually happen since this is only called by a
+> single irq thread
 
-I doubt "sota4ever" is an known alias, can you use your name here
-please?
+Correct, it's a false positive, see this earlier analysis from Oct 2023:
 
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml          | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-boards=
-=2Eyaml b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> index b5ba5ffc3..168e77375 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-boards.yaml
-> @@ -240,6 +240,7 @@ properties:
->          items:
->            - enum:
->                - samsung,c1s                     # Samsung Galaxy Note20 =
-5G (SM-N981B)
-> +              - samsung,r8s                     # Samsung Galaxy S20 FE =
-(SM-G780F)
->            - const: samsung,exynos990
-> =20
->        - description: Exynos Auto v9 based boards
-> --=20
-> 2.34.1
->=20
+https://lore.kernel.org/all/20231015093722.GA11283@wunner.de/
 
---MPVSYDEanEQ+DG5z
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> but this splat is kinda annoying and
+> pciehp_configure_device() doesn't seem to do much that
+> needs the reset_lock. How about this?
+> ---->8
+> [PATCH] pciehp: fix lockdep warning
+> 
+> Call pciehp_configure_device() without reset_lock being held to
+> fix the following lockdep warning. The only action that seems to
+> require the reset_lock is writing to ctrl->dsn, so move that to
+> the caller that holds the lock.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJmpAAKCRB4tDGHoIJi
-0rizAP42h+6ryK5OuKYwHGBlhnYmZRsNL+6V9i7RBw14mZ5NXAD/WnsmQirug9Uy
-IvnvhlHbzmHxe/KvQJfQvQfNxwJr/wU=
-=oo5p
------END PGP SIGNATURE-----
+The point is to prevent a slot reset while the bus is being enumerated.
+It's not just for reading the Device Serial Number.  So unfortunately
+it's not that simple.
 
---MPVSYDEanEQ+DG5z--
+Thanks,
+
+Lukas
 
