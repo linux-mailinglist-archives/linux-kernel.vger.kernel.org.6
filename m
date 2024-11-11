@@ -1,124 +1,264 @@
-Return-Path: <linux-kernel+bounces-404319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB00D9C425F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:09:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC5D9C4265
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF252843BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:09:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BED601F24E3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582281A0715;
-	Mon, 11 Nov 2024 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A6A19F113;
+	Mon, 11 Nov 2024 16:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OykWgHsB"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sAS8TiFY"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679A84C66;
-	Mon, 11 Nov 2024 16:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF951448C1
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731341365; cv=none; b=krpo8970vxmO9/a7U+MQVzJBMu9t9mBbHugHYBUMFrUFdt+0l68e3uVrU1B4X/okI4a7mDIvfz+deoinumJKDxnO+ytw17GVMgnpU+JTWb6RDvmDLYB2SmIkXifAaumvDZSdRFDAoBmS5RWhkb4SCr+wzK1VBD8B3nlGZtirCiw=
+	t=1731341429; cv=none; b=LPfGTc9o9lHLMCK/oBFradX7b8Nb9Wmx5zQxCIdiJSmt/MQGa+VlOL5gtGM0B92nU+z9oWz7T4INvewmdMl58jrn0cYvXrCCCuGRYUe+XnqCA/tUIehk1K3DfnQguL6Y4IUJmQXgaN0NzP8ijircKdPgesCPkGtPGAmDuFUCx1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731341365; c=relaxed/simple;
-	bh=C3hDKPMi8ro/fFUzo65/nRh6MyMkcb3ANZPXN8ZCN/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUiPt6lKZMR0Jp1shoHPVKej0wRRDb73nwTXgiQm3jbwSfe1DOiiqorbK1tFiWikOXrzaftO76QHBQXdEafssrtqfenTspYk9qR2DmlY62TQMvvDTVrcN+0p2Gg/CZi4OigFPMmYSyTkX/fgbiszPs0ttxpd8mMdYtxo/5Wqkek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OykWgHsB; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e52582cf8so3654132b3a.2;
-        Mon, 11 Nov 2024 08:09:24 -0800 (PST)
+	s=arc-20240116; t=1731341429; c=relaxed/simple;
+	bh=e7iaHqt/EwDBLBLJCozYGUGnS0CDSgQ11Uen7CkIPr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jEPRAIr93HWQTq28ECEyiy3o2S/QGb9CD+yhtz3dP0B/xtW5AAF+MfLtOSK8dtquPOTgFChfffUYJH4gk2lPDHKtB1yOQ+KWeijIyZo63/pA3pVbGOd6feDu9p8ANCN7UqVgYFH8oBu/6VVDlFnqP+vVduYrUQyWsp9h3oFIvdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sAS8TiFY; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so510685ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:10:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731341363; x=1731946163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
-        b=OykWgHsB/vfLvikTmuSDzS2IHV2mrtfEFsTf4b8Lyq2lfUi/QK0n8OmjO9JlEG3c0F
-         LxKVo+JmAHm5nrMR5EAvDAARYcbJ+lWlsHrw2rO6Dw+Iqw+iKHBz3QMWjbBf9Ppg3XsQ
-         pd9APnaBlcChbx1Rf1GxGrvUwoXVt/xToQ9vo1L0iJddEyhfNG7y3oi78a2TN0/vHZZW
-         0WSkihCEC/a0RdU2CQHkK5NhD9/Pmc6iTExPTT9EcgwtfzeS6krsphV29gw3blz5QUji
-         56KOX5QotQ6DXelVxAHWtpP6P2fAtEMgrDy0eDVrBuFLTb5VmolAo/X23Kag4YgeyJTA
-         MZCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731341363; x=1731946163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1731341427; x=1731946227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/iY+ZJgltXfrniLx2byn6UyLdUM6Quqst+Zysvv4BTA=;
-        b=KoZhyqq3Y+78PXP+XgUJarnrsnekG5EFsApD5Qa3GhLEhtgfOWb6sOJEu4WlVY20sG
-         OOeIfy2/E7fomaJdcahlsKRGxsaDLW49R+/FWfS+Ps5GleoBQ4IOVGwm1jQNsPUL0fKC
-         qe1EK0r0LaJE2Z7qHFRxwfa/il1HpAcjnquvbl/zzAkCWyGq8kUg/wP1yO0cyBlcwsr2
-         m69kUhu7GKiVQfd4ojeKR/nhdYpqftzm9B2H3Yqg2t6cLB5/acsAVhllVHEoi/S0WW9Z
-         yuepz+a0fe9ky2lhvvB9yjne4qdSUCVdjp4zqLWipsSKRFSN7Ve+++B6tFshAvP68xBg
-         mYxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIjr3Ryx3gLP9Fbr1w62Wq/P5Fndr6vakBtofDFFD5kGK/qXAt6Nuy6hLHV89ZL0D/koTvWrkCzltVeo/uuvKM@vger.kernel.org, AJvYcCXp5vaDNgGTfRxRHcZvSI6q4Lncz8PXjNgmlTgmCHq8VpVvlOSE4nLbDhXk68t7HRXd7Nzf4iRq0COw5HvqSs8=@vger.kernel.org, AJvYcCXqrIB9AMEA/pMay2mW7eUC39CHRUh9OFhk66Vf+3cUT1ASlPmSedzzi75Q8jOn+cxsWpcsL0J/HDWLjvQV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBIa5gbgMp0svnGUtHpdHqvjnMwttV/vkMQ23k4E1oDJWC8aYx
-	XoDiw7iXdoW6iGaLe1mqFjKY0+dKPLqEJWmgH3HQ4E4ETB0NadRI
-X-Google-Smtp-Source: AGHT+IGdXJsqRv3gpfBkjoc2DyCKI8nNMGsBFd+J9EL531H+nYTk6Y/yjvFtSiSo7brOE0VEefpjIw==
-X-Received: by 2002:a05:6a00:3c83:b0:710:6e83:cd5e with SMTP id d2e1a72fcca58-7241314669amr20370040b3a.0.1731341363367;
-        Mon, 11 Nov 2024 08:09:23 -0800 (PST)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a1fd2bsm9265322b3a.167.2024.11.11.08.09.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 08:09:22 -0800 (PST)
-Date: Tue, 12 Nov 2024 00:09:19 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
-Message-ID: <ZzIsL7P7wDCP2VBR@visitorckw-System-Product-Name>
-References: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
+        bh=ikffGFv9vfeGkXMvxoClTn0ciNkxNsHM/SDnKUO1+ao=;
+        b=sAS8TiFYha92PbgsLvlEWnX5Gq7CwYM0HQAwSfUS8lAqWAePspfM52+jvLareXdeAX
+         x9I7+PhJq/ZEeoDEl8Qf30Q74eYVv9DALDxtfim8uu4LhjSE2sGeEjsRw1iz4yrfOI9W
+         +xlrBh+F9BkzqDVx8Cl7EzTBjoa3iz4DfxMApRoPt4U8EWW+LB/+CWC3mxFN72Vgbgat
+         7MdktETnx+TgP8Gpla3um9QTOrIM8YBxVY9kezaQqore0qX7Nmo6N4eMI8s6vAgjCJE8
+         YF4kz+erzi/nk9R5pxO0Fl6jCijTESachq5Qvy9xcp0zmV0iQvVN0EqhagBUh3ByxKiK
+         5NmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731341427; x=1731946227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ikffGFv9vfeGkXMvxoClTn0ciNkxNsHM/SDnKUO1+ao=;
+        b=VxeujmKwyGCpB5/DY3iUcwUDczZ+wnqazFYUCF9398kbO5M1CocVu9TI5D4r2z22Rh
+         q6ZPEhuSMrl0VsTjL0WEISWJFMisp36LC58V21NPy3NaFrr7iOpjo2er61IGDXRm0Jju
+         gJc70EFNlmftqmrSJbRiwYbiXTo0FN8ZdBkJvtnACg7lC13EhKmb9Kdssv2GUjaxqBPj
+         evzsWiZnCH4RC/lWQc8PlPmhXnaHZ6ackavY/QzsqQhwmq7Jq0RFFVNXHsRX2c36KXS5
+         8Js4m6h/yRIy2fdhs60g8lP7KlihdelYqDjtEubFBHauKhfSsIYUgQ7WLCHvefRtxxcY
+         Vp9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW69Zu2h8jm2HLYfxSTzfo8s5zHAUnKnkKwxOAuGf+hT8rOM7FsRp4Rys+ojbjjl+ixoK71dINUuubTwTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz97KeYSqr6WY/H5TJnZsVlP/qldKNJGVU8ZBxQshwlWO9NITt3
+	WKVt9NL9JCQ3Og+R2K+YwO59iNEqs2csKgyOMN9EF9l97O0Q/PkhIJSfBVMTx2zw/S5qA+OHSFS
+	zHhzPOKqhor7Fk5EDVC/5Kuwz6b8XxDnFiZsC
+X-Gm-Gg: ASbGnctC+93+UQo+qELXxWvAVA7XgbIZ6wt++7hCo2w85E2gtWD2Fg8C2NvmForG5sR
+	DyQMhxj1+nwN74+sDABc6akXR9UCbpaC5l2LS3kALgCT53bTH0C5nfQpDt0oOlqY=
+X-Google-Smtp-Source: AGHT+IESn27j6H0P/bztSq05yiNWLa9YDDhZOVMUkRhXMtov7HP8xPwzz2i5bc2f1ZIQneV7+bvEsp8r6rXVXFIg6RM=
+X-Received: by 2002:a05:6e02:1aa5:b0:3a6:b3b0:5696 with SMTP id
+ e9e14a558f8ab-3a6f9539f08mr7856935ab.7.1731341427022; Mon, 11 Nov 2024
+ 08:10:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b31a16ef-382f-4b8f-b4d5-1c4d93803779@stanley.mountain>
+References: <20241109160219.49976-1-irogers@google.com> <bfba7266-1903-41ca-9961-aa449f982912@linux.intel.com>
+In-Reply-To: <bfba7266-1903-41ca-9961-aa449f982912@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 11 Nov 2024 08:10:14 -0800
+Message-ID: <CAP-5=fWxMzCDQ7v1W_gMN-Yaz4yiam=5vOc8+bter0vF4cbV+Q@mail.gmail.com>
+Subject: Re: [PATCH v1] perf test: Add a runs-per-test flag
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11, 2024 at 01:54:09PM +0300, Dan Carpenter wrote:
-> Kuan-Wei Chiu pointed out that the kernel doc for kunit_zalloc_skb()
-> needs to include the @gfp information.  Add it.
-> 
-> Reported-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Closes: https://lore.kernel.org/all/Zy+VIXDPuU613fFd@visitorckw-System-Product-Name/
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Nov 11, 2024 at 7:52=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
+om> wrote:
+>
+>
+>
+> On 2024-11-09 11:02 a.m., Ian Rogers wrote:
+> > To detect flakes it is useful to run tests more than once. Add a
+> > runs-per-test flag that will run each test multiple times.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/tests/builtin-test.c | 38 ++++++++++++++++++++-------------
+> >  1 file changed, 23 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin=
+-test.c
+> > index d2cabaa8ad92..574fbd5caff0 100644
+> > --- a/tools/perf/tests/builtin-test.c
+> > +++ b/tools/perf/tests/builtin-test.c
+> > @@ -42,6 +42,8 @@
+> >  static bool dont_fork;
+> >  /* Fork the tests in parallel and wait for their completion. */
+> >  static bool sequential;
+> > +/* Numer of times each test is run. */
+> > +static unsigned int runs_per_test =3D 1;
+> >  const char *dso_to_test;
+> >  const char *test_objdump_path =3D "objdump";
+> >
+> > @@ -490,10 +492,10 @@ static int __cmd_test(struct test_suite **suites,=
+ int argc, const char *argv[],
+> >                               len =3D strlen(test_description(*t, subi)=
+);
+> >                               if (width < len)
+> >                                       width =3D len;
+> > -                             num_tests++;
+> > +                             num_tests +=3D runs_per_test;
+> >                       }
+> >               } else {
+> > -                     num_tests++;
+> > +                     num_tests +=3D runs_per_test;
+> >               }
+> >       }
+>
+> Seems we just need to calculate the num_tests once at the end for each
+> loop. Something as below may works. (not tested)
+>
+> @@ -482,20 +490,19 @@ static int __cmd_test(struct test_suite **suites,
+> int argc, const char *argv[],
+>
+>         for (struct test_suite **t =3D suites; *t; t++) {
+>                 int len =3D strlen(test_description(*t, -1));
+> +               int subi =3D 0, subn =3D 1;
+>
+>                 if (width < len)
+>                         width =3D len;
+>
+>                 if (has_subtests(*t)) {
+> -                       for (int subi =3D 0, subn =3D num_subtests(*t); s=
+ubi
+> < subn; subi++) {
+> +                       for (subn =3D num_subtests(*t); subi < subn; subi=
+++) {
+>                                 len =3D strlen(test_description(*t, subi)=
+);
+>                                 if (width < len)
+>                                         width =3D len;
+> -                               num_tests++;
+>                         }
+> -               } else {
+> -                       num_tests++;
+>                 }
+> +               num_tests +=3D subn * runs_per_test;
+>         }
+>         child_tests =3D calloc(num_tests, sizeof(*child_tests));
+>         if (!child_tests)
 
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+It's basically the same thing, instead of doing increments and then
+multiplying by runs_per_test you just add on runs_per_test and avoid
+the multiply.
 
-Regards,
-Kuan-Wei
+> >       child_tests =3D calloc(num_tests, sizeof(*child_tests));
+> > @@ -556,21 +558,25 @@ static int __cmd_test(struct test_suite **suites,=
+ int argc, const char *argv[],
+> >                       }
+> >
+> >                       if (!has_subtests(*t)) {
+> > -                             err =3D start_test(*t, curr, -1, &child_t=
+ests[child_test_num++],
+> > -                                              width, pass);
+> > -                             if (err)
+> > -                                     goto err_out;
+> > +                             for (unsigned int run =3D 0; run < runs_p=
+er_test; run++) {
+> > +                                     err =3D start_test(*t, curr, -1, =
+&child_tests[child_test_num++],
+> > +                                                     width, pass);
+> > +                                     if (err)
+> > +                                             goto err_out;
+> > +                             }
+> >                               continue;
+> >                       }
+> > -                     for (int subi =3D 0, subn =3D num_subtests(*t); s=
+ubi < subn; subi++) {
+> > -                             if (!perf_test__matches(test_description(=
+*t, subi),
+> > -                                                     curr, argc, argv)=
+)
+> > -                                     continue;
+> > -
+> > -                             err =3D start_test(*t, curr, subi, &child=
+_tests[child_test_num++],
+> > -                                              width, pass);
+> > -                             if (err)
+> > -                                     goto err_out;
+> > +                     for (unsigned int run =3D 0; run < runs_per_test;=
+ run++) {
+> > +                             for (int subi =3D 0, subn =3D num_subtest=
+s(*t); subi < subn; subi++) {
+> > +                                     if (!perf_test__matches(test_desc=
+ription(*t, subi),
+> > +                                                                     c=
+urr, argc, argv))
+> > +                                             continue;
+> > +
+> > +                                     err =3D start_test(*t, curr, subi=
+, &child_tests[child_test_num++],
+> > +                                                     width, pass);
+> > +                                     if (err)
+> > +                                             goto err_out;
+> > +                             }
+>
+> Can we add a wrapper for the start_test()? Something similar to below?
+> It avoids adding the loop for every places using the start_test.
+>
+> +static int start_test(struct test_suite *test, int i, int subi, struct
+> child_test **child,
+> +               int width, int pass)
+> +{
+> +       for (unsigned int run =3D 0; run < runs_per_test; run++) {
+> +               __start_test();
+> +       }
+> +}
 
-> ---
->  include/kunit/skbuff.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/kunit/skbuff.h b/include/kunit/skbuff.h
-> index 345e1e8f0312..07784694357c 100644
-> --- a/include/kunit/skbuff.h
-> +++ b/include/kunit/skbuff.h
-> @@ -20,8 +20,9 @@ static void kunit_action_kfree_skb(void *p)
->   * kunit_zalloc_skb() - Allocate and initialize a resource managed skb.
->   * @test: The test case to which the skb belongs
->   * @len: size to allocate
-> + * @gfp: allocation flags
->   *
-> - * Allocate a new struct sk_buff with GFP_KERNEL, zero fill the give length
-> + * Allocate a new struct sk_buff with gfp flags, zero fill the given length
->   * and add it as a resource to the kunit test for automatic cleanup.
->   *
->   * Returns: newly allocated SKB, or %NULL on error
-> -- 
-> 2.45.2
-> 
-> 
+I think the issue is the code has become overly indented. Having a
+start_test function that starts some number of tests feels less than
+intention revealing. Perhaps (in the future I'd like to tackle other
+things for now, such as new TMAs :-) ) we can create all the child
+tests in one pass, then just have start_test and finish_test work with
+the child tests. (Off topic) Something else I'd like is to move the
+slower running tests to the end of the list of tests so you can see
+the earlier results while waiting.
+
+Thanks,
+Ian
+
+
+> >                       }
+> >               }
+> >               if (!sequential) {
+> > @@ -714,6 +720,8 @@ int cmd_test(int argc, const char **argv)
+> >                   "Do not fork for testcase"),
+> >       OPT_BOOLEAN('S', "sequential", &sequential,
+> >                   "Run the tests one after another rather than in paral=
+lel"),
+> > +     OPT_UINTEGER('r', "runs-per-test", &runs_per_test,
+> > +                  "Run each test the given number of times, default 1"=
+),
+> >       OPT_STRING('w', "workload", &workload, "work", "workload to run f=
+or testing, use '--list-workloads' to list the available ones."),
+> >       OPT_BOOLEAN(0, "list-workloads", &list_workloads, "List the avail=
+able builtin workloads to use with -w/--workload"),
+> >       OPT_STRING(0, "dso", &dso_to_test, "dso", "dso to test"),
+>
 
