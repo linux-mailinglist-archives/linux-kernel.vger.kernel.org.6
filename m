@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-404046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADBC9C3E84
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:36:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4DE69C3E86
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E71F51F223A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C30E1F2247C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABBB319CC1C;
-	Mon, 11 Nov 2024 12:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692919D881;
+	Mon, 11 Nov 2024 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c+gEJNaP"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Uq6BOQts"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E6B14F9E2
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06891158DC8
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731328590; cv=none; b=VZuwIKGsLugXFCuaJ8prwe5zGgFBejn0EhCKTxY9fcxRf90uPLW2Hck05WqbKjhjO4LL+8qv0vgTBq7+y3YGTsfOxCdgF6UYNadu3wA9hVpgTWTLUaEEbRNHjTew7HnHzuCvCgpnLCu85Bx43AMjFyJfcMtE3AidlMVqMSkuPkQ=
+	t=1731328591; cv=none; b=Zvnk9CYf3QPvi6/jD5DtX+Onbc8keWPlyw4qm4qJDHYATdZ6c4HNSJby9F8jalzFQs0VgQ8t5S7miqrfXgg0jfeBfgGDA6sUs9Gh7pglE1TXc3WXp8OQn+AK5RxOejlut3O+NqweDeJPgsQiXNqWQCGW7ptWJYtPxVcaPUdsls8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731328590; c=relaxed/simple;
-	bh=fL0FJMCi1hScPIlgpGJ/cgIhxfwzaCsKDP4Y+fgJtX0=;
+	s=arc-20240116; t=1731328591; c=relaxed/simple;
+	bh=kSdWZv45BDDhUC24J4bi6/wPp6QjTa1J8EaAUgQHctE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4DZSofsxlokWmzlagx6FWoxF5oP4xBP6UuGke5hjk4IGIA3K/enrELv1a7K7Xh3xTfchTgnBjhnzDlwVPYdDSWSiSjCsGPMpz7+yPYca1X8R5iKYkTJVRohFyA//05eD7YXHHmC6kSMi8mbynfNBhXyS824RCelYq1aaxrSTCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c+gEJNaP; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=sWWBLoFU5C9EOLVV4d88AgTpVuw8Vb4vVyzIRYwTJGNQ/jPMAYfJpCIpk2EXJuyTXh5lg8W6R6vNxPRTq2/rIdVMcAWGzOCin4XaKZ50Ufb8ZQXoD9xStjgDoMOYugWQsnUPktFieNY5TqGELGwmoki04MmdOF8Gqm1m6xXvJrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Uq6BOQts; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1291A1BF205;
-	Mon, 11 Nov 2024 12:36:25 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 998591BF203;
+	Mon, 11 Nov 2024 12:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731328586;
+	t=1731328587;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lEuh5s/boyvsj4t0oSTEvebQYcCGEo5tXwMo58H8NSk=;
-	b=c+gEJNaPPByhBM/jbh1R2MB577WMJS78OPLv4pyQ3UKT52lBNxOwIscQTFD6MrVLj63IA4
-	E4m/nOff1S39jBi8g52TmEVu0XITVsfbBhFrIyydAH7iZ6zAK18Hbdl91DBnD6MH8f0uOK
-	fX/BFT7VhWUYtnmrlJ+JT6GqGajZDlfkOPI9ZlSXajQESpPWEQ/8cRfOxzYvtLUn/jnEK6
-	TFRyOAX2HLYJLPhHCwycEIhGGSdnPB79lWuZNiD0ZA2Q71QNRtPJKGqUc58b5PXYfUZYe2
-	TH8Hkt2rmB3L715b2H3F78gWfypjYkWiyfjzOb/aVAHVI5NNzxQz1wKCouaFfw==
+	bh=Gr5nT2Jnw+/2OVk2gGwP/gOTe4r8NyAUC5u+F+sceZw=;
+	b=Uq6BOQtsHDIpjZ9LkBuzskd99TUcAEiOpsOoOXabdCdqVuSs0jba+kLLwlYzoI4As921Qc
+	G1zRVfYyWJqtp5ebcCmTbVSJ9COqlpLfqlK1e8DA61uHhgNVFMozglBSY+BhwtPDgrwp68
+	RRPp1X+xOvAydUXvDfDXt1iM7gJCY0eX2L5jbaNJ1nyPrtx2PL4mxlRLzjOF8QwuNQuN/L
+	Kbd3zo5BfaxzcLMCZ9SaZmdYizBlwXklp0Q3ZhbKcfg5fDAw/IY05N6fDT1zSt7fVrDMEh
+	3fX1gAkvKKGfwVjMiL4/S51jRIkpMt7WLUpSycSByRVKiT5feYBTGF41NUBg5A==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Mon, 11 Nov 2024 13:36:20 +0100
-Subject: [PATCH v3 1/4] drm/drm_mode_object: fix typo in kerneldoc
+Date: Mon, 11 Nov 2024 13:36:21 +0100
+Subject: [PATCH v3 2/4] drm/atomic-helper: improve CRTC enabled/connectors
+ mismatch logging message
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-drm-small-improvements-v3-1-a9f576111b41@bootlin.com>
+Message-Id: <20241111-drm-small-improvements-v3-2-a9f576111b41@bootlin.com>
 References: <20241111-drm-small-improvements-v3-0-a9f576111b41@bootlin.com>
 In-Reply-To: <20241111-drm-small-improvements-v3-0-a9f576111b41@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
@@ -69,27 +70,33 @@ Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
 X-Mailer: b4 0.14.2
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Remove unintended extra word.
+This message reports a mismatch between new_crtc_state->enable and
+has_connectors, which should be either both true or both false. However it
+does not mention which one is true and which is false, which can be useful
+for debugging. Add the value of both avriables to the log message.
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- include/drm/drm_mode_object.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/include/drm/drm_mode_object.h b/include/drm/drm_mode_object.h
-index 08d7a7f0188fea79e2d8ad5ee6cc5044300f1a26..c68edbd126d04d51221f50aa2b4166475543b59f 100644
---- a/include/drm/drm_mode_object.h
-+++ b/include/drm/drm_mode_object.h
-@@ -35,7 +35,7 @@ struct drm_file;
-  * @id: userspace visible identifier
-  * @type: type of the object, one of DRM_MODE_OBJECT\_\*
-  * @properties: properties attached to this object, including values
-- * @refcount: reference count for objects which with dynamic lifetime
-+ * @refcount: reference count for objects with dynamic lifetime
-  * @free_cb: free function callback, only set for objects with dynamic lifetime
-  *
-  * Base structure for modeset objects visible to userspace. Objects can be
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 43cdf39019a44537794cc5a519d139b0cb77073c..3c3bdef9bcf3c4ffcd861744f6607f317ab0c041 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -666,8 +666,9 @@ drm_atomic_helper_check_modeset(struct drm_device *dev,
+ 		}
+ 
+ 		if (new_crtc_state->enable != has_connectors) {
+-			drm_dbg_atomic(dev, "[CRTC:%d:%s] enabled/connectors mismatch\n",
+-				       crtc->base.id, crtc->name);
++			drm_dbg_atomic(dev, "[CRTC:%d:%s] enabled/connectors mismatch (%d/%d)\n",
++				       crtc->base.id, crtc->name,
++				       new_crtc_state->enable, has_connectors);
+ 
+ 			return -EINVAL;
+ 		}
 
 -- 
 2.34.1
