@@ -1,193 +1,142 @@
-Return-Path: <linux-kernel+bounces-404662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9679C4659
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:07:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44BA9C4636
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BEE1F22A93
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474111F225CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67A81AB6DA;
-	Mon, 11 Nov 2024 20:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C871AB6E6;
+	Mon, 11 Nov 2024 19:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="mtlu5rmn"
-Received: from smtp-out.freemail.hu (fmfe19.freemail.hu [46.107.16.212])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="wiJCwiNY"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D280C1AB6E2;
-	Mon, 11 Nov 2024 20:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A4132103;
+	Mon, 11 Nov 2024 19:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731355624; cv=none; b=KJki7VRO2+j+3pqnoNWE+Pwrbt34/0zTBGVM5tq09Mh3Ue+XNPok1uL4t0PyZT6lgIrpjgp7oog2lJl7DCocVljWJjNrW6wd3KKw7zP2vISVVVaWBnAWVcfzPs84fq6ECSBzo3J5RVnTrYAFY8deeUDItl05K4X5tT7OBwsf6R0=
+	t=1731355038; cv=none; b=sB1hUj4zFxCiSDp4Nmwgqdyz1e0sUR8fajH+nSpV0KgkWJcQfjw/yCy0N3uLp20/DdsMVwIlTkQ6HY/4KTo1V6tTCa5SpGMdP/qrztiGlV7M2fKF/hzMWdchtW1f06Ca2F4lYKkLtr5T6Xr+9Wwc4whnrm1y/tr9Vs14Tz8wRa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731355624; c=relaxed/simple;
-	bh=Hn++8tSU4fFQIUoLgm7yHmKEY5A+lPydOBOKhh1w354=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pyvI5/ZdbxQ+zMhufAeDbvraFrEAN68qSiMj8iAh6qINC66m/MxE3T5UzHVm2T7GQI0niHcGXDGFisNL64uBFVbBxSBwNqiLEA7mKla4vsk/Bm69x5WeWdUMNmWQ1kT09hpHiP+QGNdG8qdajKxPXxY8IMa9GkF7qznOJTbgEVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=mtlu5rmn reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnL2n4vjnzQGF;
-	Mon, 11 Nov 2024 20:58:41 +0100 (CET)
-Message-ID: <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
-Date: Mon, 11 Nov 2024 20:56:34 +0100
+	s=arc-20240116; t=1731355038; c=relaxed/simple;
+	bh=wJirKgmJ/fb4yraM+GmtmRES6+6VaVOWDGwoLoNMk2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q6wNIA5odycDnZgs3HXc4DA5iFAXrqNKl1/xikNt/9zR1ecdy3dt9bhCjrtN9i9NNRJMaW4MMe6jWnVxKcL6DQaAigkdydQDGklBKaiqQMVFD15VNrf2QPWe9nBOwBgPzPB4m3YbwZQ24eGaK0mUd0odJnDJZ1MErRe2lP/0xAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=wiJCwiNY; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=y129Aooyw/ghztagVQ8SsBTcstPYEFT7YpGgQUvc4p0=; b=wiJCwiNYQGYJa83vZ9u65ZYbBE
+	teyRW/4QSn1TtS+iMcR7Xg/PHy6K2R/w5I0KL3PvBlP15b7PZdW3hQHlR13aezMZ0VkfycatNSmHo
+	b+C5sfPHbeMsQ3wcRQnenE3/LeCKGcB+IxBpxt5cfyyFNsoTkmfD+JiuB7Jd6aUWyoNDmIsSO1ja+
+	UWpFKPPRSSX9X/a+bpFKlDIuUIxjr4gg9XHPdU/CwVngvTIcy96FS0yvOZxWBm8R0+2r0b5AnnutM
+	c4ZYdjFa8iIus4OfUOjJJapuiX3E5dFWyzJNF1OPPrSvIvwvpspzUI0xAz/4I2h2L5luHvXKXDDV5
+	x5+fTqeQ==;
+Date: Mon, 11 Nov 2024 20:57:08 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Karol P <karprzy7@gmail.com>, aaro.koskinen@iki.fi,
+ khilman@baylibre.com, tony@atomide.com, lee@kernel.org,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org
+Subject: Re: [PATCH] mfd: omap-usb-tll: handle clk_prepare return code in
+ usbtll_omap_probe
+Message-ID: <20241111205708.562abb1c@akair>
+In-Reply-To: <cd915c18-7230-4c38-a860-d2a777223147@kernel.org>
+References: <20241106223324.479341-1-karprzy7@gmail.com>
+	<20241107001507.5a304718@akair>
+	<CAKwoAfp6iPN0F_kfNbF8xbpX7+Qh+BS55KgmZ5nis0u00vOFhw@mail.gmail.com>
+	<20241110002954.1134398a@akair>
+	<cd915c18-7230-4c38-a860-d2a777223147@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-To: paulmck@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- lkmm@lists.linux.dev
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
-Content-Language: hu
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731355122;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=5689; bh=n+MLQor+hAq1sXePCoc6dwhx99rsnP/pezs6o8JAjXI=;
-	b=mtlu5rmntE7BvI+Vib+AzjGPlIsJnu60dIK6vE92T74+cVX5U3o12pmQsJtcu2Ii
-	Cvf+XoNIDZVZYKCl5bwPPTFMmy3SCd8d3hth+BgVq+tODvBakQjDxXcqVOG/wpVcXZB
-	OjK1nUTRszsrkkDhZiZwTnmH+1oas8w1okSQPxwSCDqq57+abHIaxJVTvk9uWV0xZkr
-	yelZr6mYlO/B+YtkInnp8bO8e1AZbRx31E7okO9xih89GrAZVEUBLrli+3rceEtU7uW
-	QYS1vC7rT8bN8b8+lLrhJtMjZkoGMrc1zjGxsfKIyzpAsiXvHt+wTy7LP2vcF46kzob
-	CBQ5FV52OQ==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-2024. 11. 11. 20:22 keltezéssel, Paul E. McKenney írta:
-> On Mon, Nov 11, 2024 at 07:52:50PM +0100, Szőke Benjamin wrote:
->> 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
->>> On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
->>>> From: Benjamin Szőke <egyszeregy@freemail.hu>
->>>>
->>>> The goal is to fix Linux repository for case-insensitive filesystem,
->>>> to able to clone it and editable on any operating systems.
->>>>
->>>> Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
->>>> "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
->>>>
->>>> Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
->>>
->>> Ummm...  Really?
->>>
->>> Just out of curiosity, which operating-system/filesystem combination are
->>> you working with?  And why not instead fix that combination to handle
->>> mixed case?
->>>
->>> 							Thanx, Paul
->>
->> Windows and also MacOS is not case sensitive by default. My goal is to
->> improve Linux kernel source-tree, to able to develop it in any operating
->> systems for example via Visual Studio Code extensions/IntelliSense feature
->> or any similar IDE which is usable in any OS.
-> 
-> Why not simply enable case sensitivity on the file tree in which you
-> are processing Linux-kernel source code?
-> 
-> For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
-> For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
-> 
-> In some cases it might work better to simply run a Linux VM on top of
-> Windows or MacOS.
-> 
-> They tell me that webservers already do this, so why not also for
-> Linux-kernel source code?
+Am Mon, 11 Nov 2024 16:41:47 +0200
+schrieb Roger Quadros <rogerq@kernel.org>:
 
-Why we not solve it as simple as it can in the source code of the Linux kernel 
-with renaming? It would be more robust and more durable to fix this 
-issue/inconviniant in the source as an overal complete solution. Nobody like to 
-figth with configuraition hell of Windows and MacOS, or build up a diskspace 
-consumer Virtual Linux with crappy GUI capapilities for coding big things.
-
-Young developers will never be willing to join and contributing in Linux kernel 
-in the future if Linux kernel code is not editable in a high-quality, 
-easy-to-use IDE for, which is usable in any OS.
-
-Need to improve this kind of things and simplify/modernize developing or never 
-will be solved the following issues:
-https://www.youtube.com/watch?v=lJLw94pAcBY
-
+> Hi,
 > 
->> There were some accepted patches which aim this same goal.
->> https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
->> https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
+> On 10/11/2024 01:29, Andreas Kemnade wrote:
+> > Am Thu, 7 Nov 2024 12:12:52 +0100
+> > schrieb Karol P <karprzy7@gmail.com>:
+> >   
+> >> On Thu, 7 Nov 2024 at 00:15, Andreas Kemnade <andreas@kemnade.info> wrote:  
+> >>>
+> >>> Am Wed,  6 Nov 2024 23:33:24 +0100
+> >>> schrieb Karol Przybylski <karprzy7@gmail.com>:
+> >>>    
+> >>>> clk_prepare() is called in usbtll_omap_probe to fill clk array.
+> >>>> Return code is not checked, leaving possible error condition unhandled.
+> >>>>
+> >>>> Added variable to hold return value from clk_prepare() and return statement
+> >>>> when it's not successful.
+> >>>>
+> >>>> Found in coverity scan, CID 1594680
+> >>>>
+> >>>> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> >>>> ---
+> >>>>  drivers/mfd/omap-usb-tll.c | 8 ++++++--
+> >>>>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> >>>> index 0f7fdb99c809..28446b082c85 100644
+> >>>> --- a/drivers/mfd/omap-usb-tll.c
+> >>>> +++ b/drivers/mfd/omap-usb-tll.c
+> >>>> @@ -202,7 +202,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> >>>>       struct device                           *dev =  &pdev->dev;
+> >>>>       struct usbtll_omap                      *tll;
+> >>>>       void __iomem                            *base;
+> >>>> -     int                                     i, nch, ver;
+> >>>> +     int                                     i, nch, ver, err;
+> >>>>
+> >>>>       dev_dbg(dev, "starting TI HSUSB TLL Controller\n");
+> >>>>
+> >>>> @@ -251,7 +251,11 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+> >>>>               if (IS_ERR(tll->ch_clk[i]))
+> >>>>                       dev_dbg(dev, "can't get clock : %s\n", clkname);    
+> >>>
+> >>> if you add more intensive error checking, then why is this error
+> >>> ignored and not returned?    
+> >>
+> >> Thank you for the feedback. It does seem that elevated error checking
+> >> is not the way
+> >> to go in this case.   
+> > 
+> > As far as I can see everything checks ch_clk[i] for validity before
+> > usage. Also clk_enable() called later is checked which would catch
+> > clk_prepare() failures, if there were even possible here.
+> > 
+> > So the only question which I am not 100% sure about is whether having
+> > ch_clk sparsly populated is normal operation. If that is the case, then
+> > more error checking is not useful. If not, then it might let us better
+> > sleep. As said as far as I can see errors are catched later.
+> > 
+> > @Roger: what is your opintion towards this?  
 > 
-> Fair enough, as it is the maintainer's choice.  Which means that
-> their accepting these case-sensitivity changes does not require other
-> maintainers to do so.
+> I don't see usb_tll_hs_usb_ch?_clk in any of the OMAP device trees.
+> Could it be that they are optional?
+> If so then we could convert it to devm_clk_get_optional()?
 > 
-> 							Thanx, Paul
-> 
->>>> ---
->>>>    tools/memory-model/Documentation/locking.txt                    | 2 +-
->>>>    tools/memory-model/Documentation/recipes.txt                    | 2 +-
->>>>    tools/memory-model/litmus-tests/README                          | 2 +-
->>>>    ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
->>>>    4 files changed, 3 insertions(+), 3 deletions(-)
->>>>    rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
->>>>
->>>> diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
->>>> index 65c898c64a93..42bc3efe2015 100644
->>>> --- a/tools/memory-model/Documentation/locking.txt
->>>> +++ b/tools/memory-model/Documentation/locking.txt
->>>> @@ -184,7 +184,7 @@ ordering properties.
->>>>    Ordering can be extended to CPUs not holding the lock by careful use
->>>>    of smp_mb__after_spinlock():
->>>> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->>>> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>>>    	void CPU0(void)
->>>>    	{
->>>>    		spin_lock(&mylock);
->>>> diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
->>>> index 03f58b11c252..35996eb1b690 100644
->>>> --- a/tools/memory-model/Documentation/recipes.txt
->>>> +++ b/tools/memory-model/Documentation/recipes.txt
->>>> @@ -159,7 +159,7 @@ lock's ordering properties.
->>>>    Ordering can be extended to CPUs not holding the lock by careful use
->>>>    of smp_mb__after_spinlock():
->>>> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->>>> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>>>    	void CPU0(void)
->>>>    	{
->>>>    		spin_lock(&mylock);
->>>> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
->>>> index d311a0ff1ae6..e3d451346400 100644
->>>> --- a/tools/memory-model/litmus-tests/README
->>>> +++ b/tools/memory-model/litmus-tests/README
->>>> @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
->>>>    	spin_lock() sufficient to make ordering apparent to accesses
->>>>    	by a process not holding the lock?
->>>> -Z6.0+pooncelock+poonceLock+pombonce.litmus
->>>> +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>>    	As above, but with smp_mb__after_spinlock() immediately
->>>>    	following the spin_lock().
->>>> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>> similarity index 100%
->>>> rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
->>>> rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>> -- 
->>>> 2.47.0.windows.2
->>>>
->>
+They live in drivers/clk/ti/clk-[54]4xx.c
+But nothing about omap3. So apparently we can have valid use cases
+where these clocks are not available. So no real need more anything
+more than dev_dbg output here. 
 
+Regards,
+Andreas
 
