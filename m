@@ -1,234 +1,155 @@
-Return-Path: <linux-kernel+bounces-403712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40F489C3963
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:06:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28E49C3968
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:07:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C201F21148
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9250C2823AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E3F15B0E2;
-	Mon, 11 Nov 2024 08:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6679515B122;
+	Mon, 11 Nov 2024 08:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZ+sluzQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="G7hrW6fd"
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.65.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354D0146D55;
-	Mon, 11 Nov 2024 08:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A514B077;
+	Mon, 11 Nov 2024 08:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.65.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731312353; cv=none; b=FYkhPZr1GV5BBBraqwvZ99aHBtrFVg9ntVl6CAbEX1Ab7NcQpPZ3dvqTJ8JKQKK80XEiSj8ZfCkB4PtLc1hq3w+RNIjBcXJibWVgKINmS56n8WXDbH29k3N98HbeVE1ORFT2d4Jb8CmfhrC7apk4jPViB6qImn91LnXI6xUc5Tk=
+	t=1731312455; cv=none; b=mv9YMn/5Jyn0aYCm4V/XZfu9FK8zsF6feffYc1P5IVd4U3lS70IwEGPJTApw0Szn7g0C6bHJlh8jgw1Au6VgtoEyZW6SNHXRHsWmsdaZmDRKPrukH9Kepe6VvQ4lvzTJxRhRkWOCu7BvVgDyHO40V1Q9v5Laq2cc7hQ4YknJTfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731312353; c=relaxed/simple;
-	bh=NUzT7qis3G2PMzqGOdQIvYboYyM3fBdfDclpzvRNjS8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sKGlHJzXz25tDmGITb/ZXbtmOELJHKZVWv8AgUHI3iRIkMr6YF2JUHjFoE6IpidROrqk9t6TYkfSmesDpZXkg+HS4vE7D70CSAAiQnZBg4SZ5MOGd/emGp5c/VkRiA693sOWb2ifISlXNq2rEXJHCUpxaCkKG+knfxc7ZM3jyEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cZ+sluzQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7A0AC4CED0;
-	Mon, 11 Nov 2024 08:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731312352;
-	bh=NUzT7qis3G2PMzqGOdQIvYboYyM3fBdfDclpzvRNjS8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cZ+sluzQxyskW6cslZczV85CeTtPovcFVA8N45KWOiCw/ELd+ZQ3dkhGWPgYbm24f
-	 mOivdv8sHlFC6B9x3R+UcQcZZSgykjmko5c0yG98NCHpK/t5QSg1vC3X/XDu4hxVeq
-	 gf6GjoLtl7xjQk5ZzIotgTiVgOXWaA7FVJiaGp0Bgb4rOK0O8egWtwzp+4vnHdo/EH
-	 ISmlS2X7QRxEAXSyHmVNyFDvCR/Lep2DjD2kgcF2ctGp7acGzDQS1jgfmSkHeUNFB9
-	 1Bp+U+Pe+ezIFQaGSM58Fx4IywWto7VX3B+QpuglJZpa1+jWCBmn/dq/IzYo7Vj/BS
-	 Z+fbSvD6dXAuA==
-Date: Mon, 11 Nov 2024 17:05:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Li Huafei <lihuafei1@huawei.com>
-Cc: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
- <namhyung@kernel.org>, <mark.rutland@arm.com>,
- <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
- <irogers@google.com>, <adrian.hunter@intel.com>,
- <kan.liang@linux.intel.com>, <dima@secretsauce.net>,
- <aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] perf probe: Fix the incorrect line number display
- in 'perf probe -l'
-Message-Id: <20241111170549.e4d1ba7b65aee3d890889277@kernel.org>
-In-Reply-To: <20241108181909.3515716-2-lihuafei1@huawei.com>
-References: <20241108181909.3515716-1-lihuafei1@huawei.com>
-	<20241108181909.3515716-2-lihuafei1@huawei.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731312455; c=relaxed/simple;
+	bh=PhwDtEg/LEpTPpLUYCpjCql2vZFz2gWbSSuDrAl9AKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c58tu2wm2RoocEtjuZX4V1yjox+CMR9wQqOeJE3rDvGlkgRMrbTSKVLqgB1GnOg5weioZVIWVwgdYrZfi3JFt4zYO4ZOs5C8oriivhVuFhr2vYPVP5bMxOZaLUFuiO2Wv+rGO20A6ZyZ5KQHqdCiP4gqPV4ljAR0vPCYUs91YFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=G7hrW6fd; arc=none smtp.client-ip=114.132.65.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1731312435;
+	bh=Y1fuglRgUw47/f3KQYozli3/k4/a9X3TSldSFC8XL5o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=G7hrW6fd6BKCGpmY3swi8/cH+8+Dt+0u+dkjl/nPaH1YBmro9pg5Ocwjd+NOKJQtp
+	 dcfTmQ0QCRZlf/jZr06JhM8RHY/qCD3HcnaSQLjIJh66UoRmoQQNjCRGunuG6OlHa3
+	 E5z/e6iZ44oZ8s53DgXaUAr5ruX7cSrRUkgqaAWc=
+X-QQ-mid: bizesmtpsz8t1731312404twhijyk
+X-QQ-Originating-IP: sjAl8FxYTJ6OMhx6nAYKrFe48tSnxFP11GG7iE8sYj8=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 11 Nov 2024 16:06:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6476989594551450920
+From: WangYuli <wangyuli@uniontech.com>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	f.fainelli@gmail.com,
+	sebastian.hesselbarth@gmail.com,
+	mugunthanvnm@ti.com,
+	geert+renesas@glider.be,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] net: phy: fix may not suspend when phy has WoL
+Date: Mon, 11 Nov 2024 16:06:27 +0800
+Message-ID: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NV9lVvsB36OpD6PKvxpVWu6D1z11YJfLSY4u2HvUy/KS3zr3hAkPgjS5
+	okRxcIKaAdmn90ieMiTsXMmXt0/nVVQ1XXMusgHlsiTnU+S6qQE+9CzIz6dX8nYYS2Akf5l
+	IKP3L6K8MtxtBttfe1WbVF7tADyLp17ZdzGIXd4vloeUQLhsOjYslfrG7JeVUvD/92y1xaA
+	c1PfIw2JlRBFcpui3PlRxNtghtUHu19CL8k7CsHD+iXguDwO7eFf4ns5sv7oADNt3XrGNeW
+	SLZkLs9UxcsCr+weGUHOdOUK8//pp/4tyjWQcfiMDuQFX+bMdsvS5GSjoYnFIhlVcYqwxGv
+	0BNhk9YbfbXA6mTIqGffhubRZXneZv7BXSqlYDOa9p/8cymNkHj4Fr2H/xAoZhaJU9qUND1
+	QmcXPYOLO+lAahJZO/izSlMqfxpzs/xMdFj+VMDAurBhjjx9/ANrvoDcsxLMNmEYxVx1plq
+	lkPZr3ISSdM/Vs1+oNaNS/L70nPr4A8HEWpqlxEOjgNdKkSChd3c95SVykWGgzIgFTD6Goy
+	TUsLsjB8PKkjDzPgeuFmcfh7Sbl+dza3Xb+//lmprh00wojN8gs217OP4zd0qZ15KS9A5nN
+	Hu+NUBelClE9/viLC7XZ3tyAlckdeV2phFWsPx0dBis8Ia9Z206iEHlGLPKFEQs/Io5T8PW
+	wbxbUAKw8I0yk+dggcabFHu3a4iqMGRaFJ79lp0m37u/iLq1cJs1QMcb94wJW8/XA/m2XAj
+	GLO3huJcsJ76tCigMOmLyfgF2LO2dkRJOcDE5MQ+R8L5s+ZZmeEgQ52MkubsoTNfVeVecri
+	ZWN10Zx6AewPnupR5i9w9jEo6v+geosZfhvVXZzNIVYgA74wZZcF4I7i5QHL1MwmARgt/Vq
+	WkOX+Oy7zIdbsCw4lE2R9ndo3RzGaEFC9bnplp7cVU4b/b5DTSF520QCIpSx7pf0P4qaFbc
+	LOLFFCzY6FL8kkTy4apwhfV8A0F27FLyMEykllEW7pFqwdsMlUQwE4ZQXXta3DMdugW4xVE
+	ybzlBghd5GA+i/KByC8dhmJ133BpIXXAhMQ8enPJ2MJShZHUleMUhjgPO/tJw=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Sat, 9 Nov 2024 02:19:09 +0800
-Li Huafei <lihuafei1@huawei.com> wrote:
+From: Wentao Guan <guanwentao@uniontech.com>
 
-> I found an issue with the line number display in perf probe -l:
-> 
->   # perf probe -l
->     probe:schedule       (on schedule:-6751@kernel/sched/core.c)
-> 
-> I founded that in debuginfo__find_probe_point(), the fname obtained by
-> cu_find_lineinfo() is different from the result returned by
-> die_get_decl_file(). The 'baseline' and 'lineno' do not correspond to
-> the same file, resulting in an incorrect calculation of the line number
-> (lineno - baseline).
+When system suspends and mdio_bus_phy goes to suspend, if the phy
+enabled wol, phy_suspend will returned -EBUSY, and break system
+suspend.
 
-Good catch!
+Commit 93f41e67dc8f ("net: phy: fix WoL handling when suspending
+the PHY") fixes the case when netdev->wol_enabled=1, but some case,
+netdev->wol_enabled=0 and phydev set wol_enabled enabled, so check
+phydev->wol_enabled.
 
-> 
-> The DWARF dump information shows that the probed address
-> 0xffff800080e55bc4 (i.e., schedule+20) has two source file information:
-> 
->   # readelf --debug-dump=decodedline vmlinux | grep ffff800080e55bc4 -C 2
->   ./arch/arm64/include/asm/current.h:
->   current.h                                     19  0xffff800080e55bc0
->   current.h                                     21  0xffff800080e55bc4               x
->   current.h                                     21  0xffff800080e55bc4       1
-> 
->   kernel/sched/core.c:
->   core.c                                      6777  0xffff800080e55bc4       2       x
->   core.c                                      6777  0xffff800080e55bc4       3       x
->   core.c                                      6777  0xffff800080e55bc4       4       x
->   core.c                                      6780  0xffff800080e55bc4       5       x
-> 
-> The first location corresponds to the inline function get_current(), and
-> cu_find_lineinfo() should have found this entry. However, the probed
-> instruction is actually in the schedule() function, which is
-> disassembled as follows:
-> 
->   crash> disassemble/s schedule
->   Dump of assembler code for function schedule:
->   ./arch/arm64/include/asm/current.h:
->   15      static __always_inline struct task_struct *get_current(void)
->   16      {
->   17              unsigned long sp_el0;
->   18
->   19              asm ("mrs %0, sp_el0" : "=r" (sp_el0));
->      0xffff800080e55bb0 <+0>:     paciasp
->   Dump of assembler code for function schedule:
->   ./arch/arm64/include/asm/current.h:
->   15      static __always_inline struct task_struct *get_current(void)
->   16      {
->   17              unsigned long sp_el0;
->   18
->   19              asm ("mrs %0, sp_el0" : "=r" (sp_el0));
->      0xffff800080e55bb0 <+0>:     paciasp
->      0xffff800080e55bb4 <+4>:     stp     x29, x30, [sp, #-32]!
->      0xffff800080e55bb8 <+8>:     mov     x29, sp
->      0xffff800080e55bbc <+12>:    stp     x19, x20, [sp, #16]
->      0xffff800080e55bc0 <+16>:    mrs     x19, sp_el0
+This case happens when using some out of tree ethernet drivers or
+phy drivers.
 
+Log:
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to suspend: error -16
+PM: Some devices failed to suspend, or early wake event detected
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to suspend: error -16
+PM: Some devices failed to suspend, or early wake event detected
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x10c returns -16
+YT8531S Gigabit Ethernet phytmac_mii_bus-PHYT0046:00:07: PM: failed to freeze: error -16
 
-It looks like get_current() is embedded at `0xffff800080e55bc0`, and
+Link: https://lore.kernel.org/all/20240827092446.7948-1-guanwentao@uniontech.com/
+Fixes: 481b5d938b4a ("net: phy: provide phy_resume/phy_suspend helpers")
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/net/phy/phy_device.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-> 
->   kernel/sched/core.c:
->   6780            if (!task_is_running(tsk))
->      0xffff800080e55bc4 <+20>:    ldr     w0, [x19, #24]
->      0xffff800080e55bc8 <+24>:    cbnz    w0, 0xffff800080e55bf8 <schedule+72>
-
-`0xffff800080e55bc4` is in schedule(). So line info looks strange.
-
-> 
-> And the DWARF function dump information:
-> 
->   <1><11eae66>: Abbrev Number: 88 (DW_TAG_subprogram)
->      <11eae67>   DW_AT_external    : 1
->      <11eae67>   DW_AT_name        : (indirect string, offset: 0x233efb): schedule
->      <11eae6b>   DW_AT_decl_file   : 18
->      <11eae6c>   DW_AT_decl_line   : 6772
->      <11eae6e>   DW_AT_decl_column : 35
->      <11eae6f>   DW_AT_prototyped  : 1
->      <11eae6f>   DW_AT_low_pc      : 0xffff800080e55bb0
->      <11eae77>   DW_AT_high_pc     : 0xb8
->      <11eae7f>   DW_AT_frame_base  : 1 byte block: 9c    (DW_OP_call_frame_cfa)
->      <11eae81>   DW_AT_GNU_all_call_sites: 1
->      <11eae81>   DW_AT_sibling     : <0x11eb12d>
->   <2><11eae85>: Abbrev Number: 50 (DW_TAG_variable)
->      <11eae86>   DW_AT_name        : tsk
->      <11eae8a>   DW_AT_decl_file   : 18
->      <11eae8b>   DW_AT_decl_line   : 6774
->      <11eae8d>   DW_AT_decl_column : 22
->      <11eae8e>   DW_AT_type        : <0x11b2b34>
->      <11eae92>   DW_AT_location    : 0x5be6f0 (location list)
->      <11eae96>   DW_AT_GNU_locviews: 0x5be6ec
->   <2><11eae9a>: Abbrev Number: 78 (DW_TAG_lexical_block)
->      <11eae9b>   DW_AT_low_pc      : 0xffff800080e55bc4
->      <11eaea3>   DW_AT_high_pc     : 0x0
->      <11eaeab>   DW_AT_sibling     : <0x11eaeb9>
-> 
-> Therefore, here we should use the result of die_find_realfunc() +
-> die_get_decl_file(). However, regardless, we should verify if the fname
-> obtained from both is the same.
-
-I think this is a corner case, but to fix this issue, we have to
-change the process pipeline instead of adding a check.
-
-> If they are different, we should use the
-> latter to avoid inconsistencies between lineno, fname, and basefunc.
-
-I think filename comparison may not be enough because the inlined
-function definition can be done in the same file.
-
-<source.h>
-20 static inline void foo()
-21 {...}
-
-<source.c>
-1000 void bar()
-1001 {
-1002	foo();
-	...
-
-In this case, we can check whether the function names are different
-("source.h" != "source.c"), but usually inlined function defined in
-the same file.
-
-<source.c>
-50 static inline void foo()
-51 {...}
-...
-1000 void bar()
-1001 {
-1002	foo();
-	...
-
-In this case, both has the same file name.
-
-Currently debuginfo__find_probe_point() does
-
- (1) Get the line and file from CU's lineinfo
- (2) Get the real function(function instance) of the address
-     (use this function's decl_line/decl_file as basement)
- (2-1) Search the inlined function scope in the real function
-     for the given address.
- (2-2) if there is inlined function, update basement line/file.
- (2-3) verify the filename is same as basement filename.
- (3) calculate the relative line number from basement.
-
-The problem is in (1). Since we have no basement file/line info,
-we can not verify that the file/line info from CU's lineinfo.
-As Li shown above, the lineinfo may have several different lines
-for one address. We need to find most appropriate one based on
-the basement file/line.
-
-Thus what we need are
-
- - Introduce cu_find_lineinfo_at() which gives basement file/line
-   information so that it can choose correct one. (hopefully)
- - Swap the order of (1) and (2*) so that we can pass the basement
-   file/line when searching lineinfo. (Also, (2-3) should be right
-   before (3))
-
-Thank you,
-
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index bc24c9f2786b..12af590bfd99 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -315,6 +315,19 @@ static bool mdio_bus_phy_may_suspend(struct phy_device *phydev)
+ 	if (netdev->ethtool->wol_enabled)
+ 		return false;
+ 
++	/* Ethernet and phy device wol state may not same, netdev->wol_enabled
++	 * disabled, and phydev set wol_enabled enabled, so netdev->wol_enabled
++	 * is not enough.
++	 * Check phydev->wol_enabled.
++	 */
++	struct ethtool_wolinfo wol = { .cmd = ETHTOOL_GWOL };
++
++	phy_ethtool_get_wol(phydev, &wol);
++	if (wol.wolopts) {
++		phydev_warn(phydev, "Phy and mac wol are not compatible\n");
++		return false;
++	}
++
+ 	/* As long as not all affected network drivers support the
+ 	 * wol_enabled flag, let's check for hints that WoL is enabled.
+ 	 * Don't suspend PHY if the attached netdev parent may wake up.
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.45.2
+
 
