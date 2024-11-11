@@ -1,108 +1,183 @@
-Return-Path: <linux-kernel+bounces-404110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E1F9C3F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:05:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42AF59C3F30
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8221F23E01
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65D501C21CC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9AE219E965;
-	Mon, 11 Nov 2024 13:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E4019D884;
+	Mon, 11 Nov 2024 13:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="vqnq1dST"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5Q2k2tq"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19C155CB3;
-	Mon, 11 Nov 2024 13:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96A615853B;
+	Mon, 11 Nov 2024 13:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330259; cv=none; b=XsvyAi1Dq5VUh+Xuu1/4uZFI5W1on3PFIcZ3zN6nPeULVz968Or7ySPyhd4WUguDrHVedtMTuXnoP8AMgctmoVy6fdxz9jUyWokC/ss2d2vT1qiCKeKzE65eQx1st063PqD3lNqxuMUXE4J+Mp5A4TXZXxqA9P1Js4XyfvJ8enE=
+	t=1731330289; cv=none; b=FLYAS0SZWQPJandaYPoAXDaF8W0WLkSpaKus4Dx5EVyW4V6VoP64AtpBoFq/KhOrqLHAMEIcyxX1CD0AoL0xWf7IbgXS+/vurh9pa2gi5+dJhF10DM8oN8l8n6fT90E8Hh1fnqaCsgP/3dfWuNwF3Ypr0awq7PG0sIEVBQEdfL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330259; c=relaxed/simple;
-	bh=gqC/kUedyrtC5XrbMDdoG/YI6RVhmvKtndWDGNJ5BWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e2C8EY58+Qn8xv3CrdZeOGhEFWJ51qTqa/3L+scNaVNpDc05sdAnOrCVazzFx2tesjPSo11Rn3YYpOBtkmJUsw9ZiLY1oxP7a747d7bpdwBMnxNpiLEWCFBB0OXmK13IK8w4xyzCxG9BCIOTnjf850wYGfANGFpjZVsw1Lu6NtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=vqnq1dST; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=2WZioZbMK62yjCWYpF2+yStEVV9m8+tk5g3PAsrD4Hg=; b=vqnq1dSTE4DLsWq7PvwJjagckv
-	wLMdMwbJidH/rwtecbzaIz2T7IbDEUg6OnPrylt8V0L3wVvnFNAGDXQ61BwyOy+h61T2NuALktLmu
-	iNSDm1VdPYTfzuZrO907A2htvGfoaxe1lVLnlZRfHklmydhsCFwuk2daq69tgZlGSziofGNTT3XmU
-	HqxmL3NgCxXUuauvd1HbjaZD/sHRYbmm5PFru4lZpr1QDSiTeIYNCT7UBnBE9hI7Gy9an/35AL+6q
-	DYp5HktoKK8JLYZgXHP7ZFqiKk/4BYoNsiu/ziOnL++sIYLUk52ZXMkcp2IgfWOQZB6kq1DtQukGL
-	p0OHRSzfGUw3U+8q4xqjp7m4P/VKCUxp43gOeziXEbVzneLY9GZQ/wsfWOk+0E7GyxFtoGssiUSPi
-	ytO1o28cWk7KPCmp6FjGkjqmlLkoyKHzJiBCPhS+0c5pkDX2SWqr6GoU/z7Ll/CPGIEjuEBhelgnz
-	3aXhIp2l4bQiDhMbJTH65q6V;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tAU5V-00A3Hc-1B;
-	Mon, 11 Nov 2024 13:04:13 +0000
-Message-ID: <dbcad551-bf66-406b-a6cd-b8047d1cbace@samba.org>
-Date: Mon, 11 Nov 2024 14:04:13 +0100
+	s=arc-20240116; t=1731330289; c=relaxed/simple;
+	bh=hatzcmcpYWhOgP/hmNNf7DP0hfQHOCGuemkUWFuPGpI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LU/fGYz7nJiv/GkCam/8xg5pKZbsJXtO/BHNFKuzAtG2UkxCnYShgdWSvRjGP8EzkVF/xz8T5UlQspg/wYz1Ccd/vb0eob6tGIkuyOpKNMxRlIR0WeoIdJymJIQqJklOtQHgx6xoYe49A05rjHLof8xaC30xOnp5mbvk2ubVPd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5Q2k2tq; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7240fa50694so3167323b3a.1;
+        Mon, 11 Nov 2024 05:04:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731330287; x=1731935087; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=72gZPrPs6Lnv3vB1NA324RXBbJosSR4imJkzuREYYVo=;
+        b=C5Q2k2tqNjxOVnDbqXXA3Sep6oOxbJp07n2H9E16s9DVzTuBB2untstTkIikk9Y8jb
+         /4tFhNiZ9973BkG5cf3ISXkcsjjTs0YSjDmn/2l4DK6GwDp1088xJWPr7I4WYHTs3oG2
+         wY5+Bt3sYstrJWpu2GhyNKLfvqdFkLmiwYTpf1o9XCopMikG3leWGUKsc6HDM/ELtkg0
+         CwGgQMAHN3ECMRptxLMM9HdSeEOAVUMoXg5w/CCNqA4MSahHteIqPx1wwY0vEgjfgVwz
+         5kV/3EJDO3JA3swAR80Gmrh9R9LeUkLLTzP/eWugET2oBjzJGBN3igxt49udIgmL0h7M
+         RhiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731330287; x=1731935087;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=72gZPrPs6Lnv3vB1NA324RXBbJosSR4imJkzuREYYVo=;
+        b=bDjbiUqCo00ljgBhQnKy+cjj5rVevrtGbw2MkmALbu5LgWWkGzQM092G9vAbQoIZrd
+         Ew66dIygwHvexJAv4KP4IGgM/UYVKJIY9IqzI4iBWsXoZrqyHPHcUrdM8EyZN2VGOzMo
+         Q+sdnCwJ6biUGiBBFVMej+Sl811c/5lP3hsIMQczxo4g4xIHPOJPxwnBvxCGyAOKer3H
+         w5xYuXScwzttjehp8xV+OdkDC3EJ0Kel3wF5L7SWhwMN33NJMWjD7fNZk5Utk5GPbfne
+         NbYrWLENT+iWaWTManlC0IcsYEmpnAfZ6VtX5i1eXy/V7Q2QSjtmBnUleH4U1gm3R2T/
+         y8AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOA+6AKcCX9kUvZ1Y07W1ht5GAxP5GYcPGtaAC3bdl8HvnbZG0axCvYxikdm1KOjvhUrnhXCdO@vger.kernel.org, AJvYcCVTYKUmsbeSBkaL4Ho1SQAXb3gzosI+EkzgSxLys4VUL1+3FIIGHEdcqlsiemsMtJ3bSE4QQAWymjwh2Rc=@vger.kernel.org, AJvYcCWlv/u/PUkfPbFglUk4fLkh0JnR0S0INCaQ3L+/VYbw1PsbevEb38p6M1BL5eBRJ874zAJfLZebH9SNWQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNDdW/WFXIjxKH5wbru14H6lX+9SmVlZ5nTzQXrKR6u7NfF2iY
+	AOZ38gTprh+Rco76U1LiKbNM6bbzc4/D869TmwKJULcJ2xrgCBTgbe6NsHUmGbk=
+X-Google-Smtp-Source: AGHT+IFBqDxOxf1PfVYJckn+qxMYKlRIW2aAqR5G/gwisPE+GQFN8erp7XgljKTDwF3QpbDf1rsfWw==
+X-Received: by 2002:a05:6a00:1909:b0:71e:818a:97d9 with SMTP id d2e1a72fcca58-72413278818mr16586268b3a.5.1731330286874;
+        Mon, 11 Nov 2024 05:04:46 -0800 (PST)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724078a7c50sm9355801b3a.60.2024.11.11.05.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 05:04:46 -0800 (PST)
+From: Jeongjun Park <aha310510@gmail.com>
+To: devnull+manas18244.iiitd.ac.in@kernel.org
+Cc: alibuda@linux.alibaba.com,
+	anupnewsmail@gmail.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	guwen@linux.alibaba.com,
+	horms@kernel.org,
+	jaka@linux.ibm.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	manas18244@iiitd.ac.in,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	shuah@kernel.org,
+	tonylu@linux.alibaba.com,
+	wenjia@linux.ibm.com
+Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
+Date: Mon, 11 Nov 2024 22:04:39 +0900
+Message-Id: <20241111130439.7536-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
+References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/13] fs: add read support for RWF_UNCACHED
-To: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <20241108174505.1214230-9-axboe@kernel.dk>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20241108174505.1214230-9-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Jens,
-
-> If the same test case is run with RWF_UNCACHED set for the buffered read,
-> the output looks as follows:
+Manas <devnull+manas18244.iiitd.ac.in@kernel.org> wrote:
+> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+> There is only one instance of this function being called and its passed
+> with a NULL value in place of bc.
 > 
-> Reading bs 65536, uncached 0
->    1s: 153144MB/sec
->    2s: 156760MB/sec
->    3s: 158110MB/sec
->    4s: 158009MB/sec
->    5s: 158043MB/sec
->    6s: 157638MB/sec
->    7s: 157999MB/sec
->    8s: 158024MB/sec
->    9s: 157764MB/sec
->   10s: 157477MB/sec
->   11s: 157417MB/sec
->   12s: 157455MB/sec
->   13s: 157233MB/sec
->   14s: 156692MB/sec
+> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+> ---
+> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+> There is only one instance of this function being called and its passed
+> with a NULL value in place of bc.
 > 
-> which is just chugging along at ~155GB/sec of read performance. Looking
-> at top, we see:
+> Though, the compiler (gcc) optimizes it. Looking at the object dump of
+> vmlinux (via `objdump -D vmlinux`), a new function clone
+> (__smc_diag_dump.constprop.0) is added which removes this parameter from
+> calling convention altogether.
 > 
->   PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
-> 7961 root      20   0  267004      0      0 S  3180   0.0   5:37.95 uncached
-> 8024 axboe     20   0   14292   4096      0 R   1.0   0.0   0:00.13 top
+> ffffffff8a701770 <__smc_diag_dump.constprop.0>:
+> ffffffff8a701770:       41 57                   push   %r15
+> ffffffff8a701772:       41 56                   push   %r14
+> ffffffff8a701774:       41 55                   push   %r13
+> ffffffff8a701776:       41 54                   push   %r12
 > 
-> where just the test app is using CPU, no reclaim is taking place outside
-> of the main thread. Not only is performance 65% better, it's also using
-> half the CPU to do it.
+> There are 5 parameters in original function, but in the cloned function
+> only 4.
+> 
+> I believe this patch also fixes this oops bug[1], which arises in the
+> same function __smc_diag_dump. But I couldn't verify it further. Can
+> someone please test this?
+> 
+> [1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
 
-Do you have numbers of similar code using O_DIRECT just to
-see the impact of the memcpy from the page cache to the userspace
-buffer...
+Unfortunately, I tested it myself and this bug is still triggering. Basically,
+this bug is not triggered in normal situations, but triggered when a race
+condition occurs, so I think the root cause is somewhere else.
 
-Thanks!
-metze
+Regards,
 
+Jeongjun Park
+
+> ---
+>  net/smc/smc_diag.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+> index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
+> --- a/net/smc/smc_diag.c
+> +++ b/net/smc/smc_diag.c
+> @@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+>  
+>  static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
+>  			   struct netlink_callback *cb,
+> -			   const struct smc_diag_req *req,
+> -			   struct nlattr *bc)
+> +			   const struct smc_diag_req *req)
+>  {
+>  	struct smc_sock *smc = smc_sk(sk);
+>  	struct smc_diag_fallback fallback;
+> @@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>  	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
+>  	struct net *net = sock_net(skb->sk);
+>  	int snum = cb_ctx->pos[p_type];
+> -	struct nlattr *bc = NULL;
+>  	struct hlist_head *head;
+>  	int rc = 0, num = 0;
+>  	struct sock *sk;
+> @@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>  			continue;
+>  		if (num < snum)
+>  			goto next;
+> -		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
+> +		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
+>  		if (rc < 0)
+>  			goto out;
+>  next:
+> 
+> ---
+> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+> change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+> 
+> Best regards,
+> -- 
+> Manas <manas18244@iiitd.ac.in>
 
