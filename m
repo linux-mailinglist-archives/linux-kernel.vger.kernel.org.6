@@ -1,58 +1,78 @@
-Return-Path: <linux-kernel+bounces-403855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E689C3BD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:27:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B94C9C3BD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:28:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390141F221A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F931C2167E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9FB17DFE3;
-	Mon, 11 Nov 2024 10:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCA6183CA2;
+	Mon, 11 Nov 2024 10:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="vqlNucr5"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="NJlFjfEw"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAC7178368;
-	Mon, 11 Nov 2024 10:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F8E14600D;
+	Mon, 11 Nov 2024 10:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731320838; cv=none; b=jxxLebGZeCGYHJypgIKu+JpRlVAtWSlqy+bbM+aunVbZ8GE+9ICpwbWr6uQL5sCEwNoDCm5uZyXyZjlaoRNZ0ayHm35OgnPtrrgo/qeJQdMwdbomRDi5Cfvs11ohBFzcnkjGrDZkjORRfu0H8VIHyUwnhqJTXvBo0RD5HhlDJ8c=
+	t=1731320887; cv=none; b=HoW0cWiHkpmKDlgpynax1DmAYa1XZEoKMpUCX6CuoD9iBc/yQ1B1ruGiUOiEunB47yVAEN6IaDQWcch/lnYhY8U3iwkwnbWJZjN6dnfjXt/95wUENkFrCcWEGViztP2qmBx19B7PYTai11/h+HFfLOpL+5KTZ1oa5HKkQLPWPIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731320838; c=relaxed/simple;
-	bh=qX0tOYFqdWmuVqzHqRPWO3tk21m/yO9VzTojXGyzIUI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JbSThanmPqqDk72CPL1InSYeaNAU8LF362OYvwOPMzmlgGT53IdL4AwIfhTeK7d7D9tnCHfFBNjk8S5/X2HHJDZhMcWdHEGC80OT6kmFkS/pH1YGo2Pd1w3OMu8x8wjSZ/LLdqlT2XET7ImZMeLNbKe/qJ7lQICh09cf12Ddres=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=vqlNucr5; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=n9I/rsmSPkccC1qV3PhdqkeMEIkBVG7v4CKI1grF8vI=; b=vqlNucr5OrPliBOoYg4LK2nrG8
-	+l2fK1YdtaqFOk8wG83po4WzeXgBgBwcCKvMI8tBhlq9+r4vvXWucaCDEQ8/+qD+w1HV0CMwvqv8T
-	IJR3pjs1nPjq26EUEfgXlS+cO4sAhWIMUzFYiQLSShpeE5CzZqzvanxedgOlqpXutNQ5EpkDMYidD
-	omYjwbOXSV8UIV0wO45TWZznjoGjWg8IwBaSyD/aoQJmRLf3HwtK35pomRCrry7/TitImQuRaWtL6
-	X/PptMbWvq2rgkFeWq+hN7FX6bdEY8damEuoBJvypk4HlErm4uGJn24HQgK8SIGrNpZQgAHlS5S7L
-	k9+yMVGA==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mazziesaccount@gmail.com,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>,
-	sre@kernel.org
-Subject: [PATCH v2] dt-bindings: mfd: bd71828: Use charger resistor in mOhm instead of MOhm
-Date: Mon, 11 Nov 2024 11:27:01 +0100
-Message-Id: <20241111102701.358133-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1731320887; c=relaxed/simple;
+	bh=cI9q99rlDOxAqO3bS4eVJfx48G3XhrUSNcG3XRTjaLk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uw1bPJE6RvWcA3OlW3iywDZ4V/dRDV3kBtUBAJYUOMSfU0QbsCnDvPi9lbzvWznmeTFMIxPKjk8vHmfUbbWhFDgK2VEzpLIfnAp2qXVyw+lBiL2NUzTKebPbQgcjAaLmMzp26kek8/ieFL3WGanJol+cOPbYlHrI2nMQZvVPcbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=NJlFjfEw; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731320885; x=1762856885;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PpjRqEBAyVw7Qd4OepFho+pIzvM5vUo5vshUaJauZwQ=;
+  b=NJlFjfEwHxfvPwglq3171qleFbPXMuC9gbJbxiP+AdEZp2IKNRaIX0dW
+   PfFH9oxYms4xIf0jIXVB3eEqQ0a1/DF7EK6FCB0PxbMzfJ/8+laXhE8cy
+   HOiu1Fxzsy9vBleL+Xlo2q/PnX4EXC4bfop0mtMjziUAJne5Uvlrw68t9
+   c=;
+X-IronPort-AV: E=Sophos;i="6.12,144,1728950400"; 
+   d="scan'208";a="146200995"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 10:28:02 +0000
+Received: from EX19MTAUEB002.ant.amazon.com [10.0.29.78:20452]
+ by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.51.63:2525] with esmtp (Farcaster)
+ id 63d9a5ec-5156-4eac-8bb3-a9473dc3626f; Mon, 11 Nov 2024 10:28:02 +0000 (UTC)
+X-Farcaster-Flow-ID: 63d9a5ec-5156-4eac-8bb3-a9473dc3626f
+Received: from EX19D008UEA004.ant.amazon.com (10.252.134.191) by
+ EX19MTAUEB002.ant.amazon.com (10.252.135.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 11 Nov 2024 10:28:01 +0000
+Received: from EX19MTAUEB001.ant.amazon.com (10.252.135.35) by
+ EX19D008UEA004.ant.amazon.com (10.252.134.191) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 11 Nov 2024 10:28:01 +0000
+Received: from email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com
+ (10.124.125.2) by mail-relay.amazon.com (10.252.135.35) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Mon, 11 Nov 2024 10:28:01 +0000
+Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
+	by email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com (Postfix) with ESMTPS id 2E751A0227;
+	Mon, 11 Nov 2024 10:28:00 +0000 (UTC)
+From: Ivan Orlov <iorlov@amazon.com>
+To: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
+	<pbonzini@redhat.com>, <seanjc@google.com>, <shuah@kernel.org>,
+	<tglx@linutronix.de>
+CC: Ivan Orlov <iorlov@amazon.com>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<x86@kernel.org>, <pdurrant@amazon.co.uk>, <dwmw@amazon.co.uk>
+Subject: [PATCH v2 0/6] Enhance event delivery error handling
+Date: Mon, 11 Nov 2024 10:27:43 +0000
+Message-ID: <20241111102749.82761-1-iorlov@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,60 +80,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Apparently there was some confusion regarding milliohm vs. megaohm.
-(m/M). Use microohms to be able to properly specify the charger
-resistor like other drivers do. This is not used yet by mainline code
-yet. Specify a current sense resistor in milliohms range rather then
-megaohms range in the examples.
+Currently, the situation when guest accesses MMIO during vectoring is
+handled differently on VMX and SVM: on VMX KVM returns internal error,
+when SVM goes into infinite loop trying to deliver an event again and
+again.
 
-CC: sre@kernel.org
-Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Changes in V2:
-- typo fix
+This patch series eliminates this difference by returning a KVM internal
+error when guest performs MMIO during vectoring for both VMX and SVM.
 
- .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Also, introduce a selftest test case which covers the error handling
+mentioned above.
 
-diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-index fa17686a64f7..09e7d68e92bf 100644
---- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-+++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-@@ -55,14 +55,15 @@ properties:
-     minimum: 0
-     maximum: 1
- 
--  rohm,charger-sense-resistor-ohms:
--    minimum: 10000000
--    maximum: 50000000
-+  rohm,charger-sense-resistor-micro-ohms:
-+    minimum: 10000
-+    maximum: 50000
-+    default: 30000
-     description: |
-       BD71827 and BD71828 have SAR ADC for measuring charging currents.
-       External sense resistor (RSENSE in data sheet) should be used. If some
--      other but 30MOhm resistor is used the resistance value should be given
--      here in Ohms.
-+      other but 30mOhm resistor is used the resistance value should be given
-+      here in microohms.
- 
-   regulators:
-     $ref: /schemas/regulator/rohm,bd71828-regulator.yaml
-@@ -114,7 +115,7 @@ examples:
-             #gpio-cells = <2>;
-             gpio-reserved-ranges = <0 1>, <2 1>;
- 
--            rohm,charger-sense-resistor-ohms = <10000000>;
-+            rohm,charger-sense-resistor-micro-ohms = <10000>;
- 
-             regulators {
-                 buck1: BUCK1 {
+V1 -> V2:
+- Make commit messages more brief, avoid using pronouns
+- Extract SVM error handling into a separate commit
+- Introduce a new X86EMUL_ return type and detect the unhandleable
+vectoring error in vendor-specific check_emulate_instruction instead of
+handling it in the common MMU code (which is specific for cached MMIO)
+
+Ivan Orlov (6):
+  KVM: x86: Add function for vectoring error generation
+  KVM: x86: Add emulation status for vectoring during MMIO
+  KVM: VMX: Handle vectoring error in check_emulate_instruction
+  KVM: SVM: Handle MMIO during vectroing error
+  selftests: KVM: extract lidt into helper function
+  selftests: KVM: Add test case for MMIO during vectoring
+
+ arch/x86/include/asm/kvm_host.h               | 12 ++++-
+ arch/x86/kvm/kvm_emulate.h                    |  2 +
+ arch/x86/kvm/svm/svm.c                        |  9 +++-
+ arch/x86/kvm/vmx/vmx.c                        | 33 +++++-------
+ arch/x86/kvm/x86.c                            | 27 ++++++++++
+ .../selftests/kvm/include/x86_64/processor.h  |  7 +++
+ .../selftests/kvm/set_memory_region_test.c    | 53 ++++++++++++++++++-
+ .../selftests/kvm/x86_64/sev_smoke_test.c     |  2 +-
+ 8 files changed, 119 insertions(+), 26 deletions(-)
+
 -- 
-2.39.5
+2.43.0
 
 
