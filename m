@@ -1,160 +1,79 @@
-Return-Path: <linux-kernel+bounces-403647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024479C3876
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:35:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05159C387C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBADA282396
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 596D51F21FBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACEE155C96;
-	Mon, 11 Nov 2024 06:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gBvS6qrS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79D1156F20;
+	Mon, 11 Nov 2024 06:39:00 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D4014F9F8;
-	Mon, 11 Nov 2024 06:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D092914F108;
+	Mon, 11 Nov 2024 06:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731306905; cv=none; b=GmMmm7LKKBwuJtsPpiuo04r67Zew5zOy9MJ0Wok5fdClzMr+RRcuJ31KDAOgmSm1uG5DUHCHPqZl2HBkMtor0sI3NaWoIxtWPToj7+oN9Sx7O5rq3STwy6vGIVk4sqTSpVw0Gf+15VuXU7FPionHi0r8Xq/8MKMSGXQrmFSwjKc=
+	t=1731307140; cv=none; b=Kz/W2jw8mKuWMPNG+kQoHW/Q64jdmbFpjEG5dR8ccAjUdnBwIwD9WlntLfeKSxu1J905HimEUaTiGKHOXQpwKPTxdJlMSoNVY58S/k8r9Fe5FmCs2beKJwq/z1Edhkqb3AmRRF/ZtDOsGf8KDtndgG8h7AiMTQVu5wf552671mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731306905; c=relaxed/simple;
-	bh=Ch0f7NofSlQP/lO8vheMHhgSna8alrNuunGxDtOYuA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Q33qkdSV90Q2p12lmI3+39l6eXbk1mAw9Y4zQx12z5dl42JPyM3H9jluZ38GZlGzXDnEy6z7va4GEWIwZfitEcq7Rd3EcAD4Bt0dE+BDiEWUOqeptqRvZ7O+rieG5i2Z5QVQ2h9uwFdWnwuAhCm/uqXbecJtq454Zkw1/65epiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gBvS6qrS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731306898;
-	bh=0tNaVeY1YVlUI8jHkrHJWvQnhhN2woCW7W3Az2C0gp4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gBvS6qrSVTmxWkCPZ+iOxNZrdKxKXePqPO/h6O1Z460GAuIgihiWgeqpfDNPpZtoT
-	 fAqRR3BituWCPqKB07hcuXolYbriJPPWONexOEeexNdpimwmu8x8MyNuXCyZEdwZ/i
-	 Tlh7q6jiN1l44QKCQSbiuA6EhvdPch2rkQNfVztdSo+XKlB4ISq72LAdNjdoB5SlPT
-	 yWSnH84522UgQnvjQFKvdEegRW6Q8Fzd10AlAGuCVEiTXoUqWhZwBX+DeUSX0ge8b7
-	 KOcK4vIPXCv+B2y7Nb6s/PxNQF4Z4jitF0kwOwyjvck2zGs3E36EAFF/P5xdRTSSFL
-	 9c2tQJzhbCpLw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xn0CP2YHpz4wbp;
-	Mon, 11 Nov 2024 17:34:57 +1100 (AEDT)
-Date: Mon, 11 Nov 2024 17:34:59 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, Arnd Bergmann
- <arnd@arndb.de>
-Cc: Danilo Krummrich <dakr@kernel.org>, Gary Guo <gary@garyguo.net>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: linux-next: manual merge of the rust tree with the char-misc tree
-Message-ID: <20241111173459.2646d4af@canb.auug.org.au>
+	s=arc-20240116; t=1731307140; c=relaxed/simple;
+	bh=dqOX1/gW8gtAFrPKO9zWd7C8NC3AB/b5YM72EztB0Wo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EraCDuZ43cQSjFfQF6W8IlxvIItvIujyOuLSWsSttAjX5a7vqWs8vThiz7jeNpG88wAmfrZcM8VLdgtnS0LiDFKe0wT68CeWY4KKP4zwGS5mzCNViyepfC7SoW/yd+CC4BvxBLOlK1OImgQGWMCuhGqR2Sg3F8C56TU8RRlXZlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 93F2A68C7B; Mon, 11 Nov 2024 07:38:47 +0100 (CET)
+Date: Mon, 11 Nov 2024 07:38:47 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v1 09/17] docs: core-api: document the IOVA-based API
+Message-ID: <20241111063847.GB23992@lst.de>
+References: <cover.1730298502.git.leon@kernel.org> <881ef0bcf9aa971e995fbdd00776c5140a7b5b3d.1730298502.git.leon@kernel.org> <87ttchwmde.fsf@trenco.lwn.net> <20241108200355.GC189042@unreal> <87h68hwkk8.fsf@trenco.lwn.net> <20241108202736.GD189042@unreal> <20241110104130.GA19265@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gQlbsfWmH_MKIiWP6n2p=+i";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241110104130.GA19265@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
---Sig_/gQlbsfWmH_MKIiWP6n2p=+i
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Nov 10, 2024 at 12:41:30PM +0200, Leon Romanovsky wrote:
+> I tried this today and the output (HTML) in the new section looks
+> so different from the rest of dma-api.rst that I lean to leave
+> the current doc implementation as is.
 
-Hi all,
+Yeah.  The whole DMA API documentation shows it's age and could use
+a major revamp, but for now I'd prefer to stick to the way it is done.
 
-Today's linux-next merge of the rust tree got a conflict in:
+If we have any volunteers for bringing it up to standards I'd be glad
+to help with input and review.
 
-  rust/macros/module.rs
-
-between commit:
-
-  7f15c46a57c3 ("rust: introduce `InPlaceModule`")
-
-from the char-misc tree and commit:
-
-  d072acda4862 ("rust: use custom FFI integer types")
-
-from the rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/macros/module.rs
-index a03266a78cfb,e7a087b7e884..000000000000
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@@ -332,15 -330,21 +332,15 @@@ pub(crate) fn module(ts: TokenStream) -
-                      /// # Safety
-                      ///
-                      /// This function must only be called once.
--                     unsafe fn __init() -> core::ffi::c_int {{
-+                     unsafe fn __init() -> kernel::ffi::c_int {{
- -                        match <{type_} as kernel::Module>::init(&super::s=
-uper::THIS_MODULE) {{
- -                            Ok(m) =3D> {{
- -                                // SAFETY: No data race, since `__MOD` ca=
-n only be accessed by this
- -                                // module and there only `__init` and `__=
-exit` access it. These
- -                                // functions are only called once and `__=
-exit` cannot be called
- -                                // before or during `__init`.
- -                                unsafe {{
- -                                    __MOD =3D Some(m);
- -                                }}
- -                                return 0;
- -                            }}
- -                            Err(e) =3D> {{
- -                                return e.to_errno();
- -                            }}
- +                        let initer =3D
- +                            <{type_} as kernel::InPlaceModule>::init(&sup=
-er::super::THIS_MODULE);
- +                        // SAFETY: No data race, since `__MOD` can only b=
-e accessed by this module
- +                        // and there only `__init` and `__exit` access it=
-. These functions are only
- +                        // called once and `__exit` cannot be called befo=
-re or during `__init`.
- +                        match unsafe {{ initer.__pinned_init(__MOD.as_mut=
-_ptr()) }} {{
- +                            Ok(m) =3D> 0,
- +                            Err(e) =3D> e.to_errno(),
-                          }}
-                      }}
- =20
-
---Sig_/gQlbsfWmH_MKIiWP6n2p=+i
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxpZMACgkQAVBC80lX
-0GwmUQf/T1YTaxbVTgmgElmCsEkIi7D6Y2IbGU9m8vz9BwTBTDa13bv0ZsX4DjcK
-XqDE1hjABzXTPrcVB1LUMCC/ojZvyLWVDqGXMw1PtfAGOvp8sD9AI3qwMDXUT0Fh
-/FadT2tqeE7ikInQQdMMPkFJVG8qpfYtuiK1KBFcG2xUYGMpZIyC3QKakWZwinVn
-+tdGIYrVKzlln3SZYQqmjUvPzLXy+rkx4lHbZ5bTQtTxHFh7fJBw9ezspLb+lMWz
-t4M4zx9EXoIYBN2Ya3djS6KqCDcHhKOBQeA5tH2KWJH0zdoGhgZjJpwVfDdml0Yb
-aQVpikQPELcntCQj92ippvOZwBebZw==
-=swMW
------END PGP SIGNATURE-----
-
---Sig_/gQlbsfWmH_MKIiWP6n2p=+i--
 
