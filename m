@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-404640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E86B9C4620
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9A89C4626
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D57DB24EA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:46:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D03C4B23703
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A79E1AC427;
-	Mon, 11 Nov 2024 19:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F961ABEB5;
+	Mon, 11 Nov 2024 19:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gkYuYxdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwSCkS3g"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173E1A7AFD;
-	Mon, 11 Nov 2024 19:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AAE81A7AFD
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731354380; cv=none; b=YOOzQXxSXrZr9OLC/IzxW2bR2SR307eyfEE342XZpzQ7HWixpTJdzJI9G1SO9dbR85CaTYLFE6XxPuHrsweoMSQXbWrPYe/Nulm0FHxcfYiXGI7vZ2fU6DOufn6NJH7GRvUenHQIOv6a/hB5MGyRHuukqgV6O9BcXNKfv08+wRU=
+	t=1731354410; cv=none; b=bPeFYQ2FEhykI2S8WdefyrN2/A3jFIrcm4nulmGeV6RGDoq8L4IOMrQA9e1M+L6NSsitUzoRTGWmOPRV9wjeJJRVLGkZJx8MIwTvtEbF28JUE6eTyZn3HHqQ/AaWU6884XaVv603lJR0bXSmehpy4BGxcYqbXUlrMosMh6XWKBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731354380; c=relaxed/simple;
-	bh=RTX8JtmfQXicA6NSmzoFj+EWO3qXcohs8dzjns8VwpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RBGPevvckC9Dt33xAy1FX8l1sk9XAQ7rXZBSPq41AwFoqVzcLekeesHT8ZpP/Fv7BPFnp4AFSyPPiSYdJDKTMtTl33NmUhHP0TMHOGd5QXDoh5Ljf3ApTo44itEWcLo+HtstRmLXII6Yye8ujFdwBJVZIRjzhuRvusZR7D0TNQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gkYuYxdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8EBFC4CECF;
-	Mon, 11 Nov 2024 19:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731354378;
-	bh=RTX8JtmfQXicA6NSmzoFj+EWO3qXcohs8dzjns8VwpM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gkYuYxdZWNHKM3Tkh62KdVOx8gsraV/by+6vW/t2oO9qo3Rzu32kwu7cfwZxbvvUw
-	 V24fkCBzbu3iXCUUNeMhfckeBPIi6odWs1HfRW2QjP7pTGTn8pBX2QO1Mg0h6rYHOS
-	 KRsnABD/ktmkV2LzLFNoe1HOGEEMGCb6KQXse81WnCczF56avB/ksVdpjTpS8sFjOZ
-	 w2FTlXbN16huJrk+19UmXhRgqNpPRk3YiRsMRbACH+0Mv2v5qw2SWR9t36W1aM7mAo
-	 vEUtzoenEcjQLGDtgedzh8vSR/M5ti9BGBpGTJULEO/f6/p6Sr31u1XgWDrLctPuIh
-	 npUaEo7b41bKg==
-Date: Mon, 11 Nov 2024 19:46:13 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 3/3] dt-bindings: ata: ahci-platform: add missing
- iommus property
-Message-ID: <20241111-pasted-primarily-7f665b0b2fa4@spud>
-References: <20241109094623.37518-1-linux@fw-web.de>
- <20241109094623.37518-4-linux@fw-web.de>
+	s=arc-20240116; t=1731354410; c=relaxed/simple;
+	bh=SVD/D1neY/VMzCUafgxPxYWWoSXIv9EEnzkncaGe/f8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nt6cyUaP9mg3aisYnYIFuC/Bads2zcsjr/A9ZjLalpYIsV/m13jyNcIo2Op5BAVpERgMqaHDFJB7cMIPkTT8InUUnpIAPT9U9VCTjXfiHbA6DkRcG+WvIStPTSxg13WCFQD8oVO7n8xrfrLMp7j7r/0rePrSYNZkztLqrjOH62w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwSCkS3g; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c8ac50b79so27345ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:46:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731354408; x=1731959208; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yb/lRtOScrkbHEVqeEiNru9i+NEX9M9BCRiwMog+ERw=;
+        b=MwSCkS3gWyEZWgTrC0O8WdnNURPdIQN+4foMKL5wkrt7g8uh5KUB0Ew0LFrmy787Tz
+         4P1YMXL1+tbU8XIQFZT73RcNGk6Cl9OxvkfwehpdWQ8+EtcaAVwc5hbqjGwxB3BDXyPE
+         +tmrlgvgaloHgwdpQB9zhpxK3GBri/7DyjV4U/o3yL2fby2t6SSpjkkaGgoyB1rmtrWC
+         cu3dfQjHWPTi182oaARP3xGr2NW/8Yt0AUW5PRL5gNNszq4wFyg24HhwJGA8ukGf4DiT
+         6UypoFodUDAy+Bo4S24O+HGluFj7qVWQuVwflWpGy38rpMcltnP1YcT1ZC85YPsji5IU
+         qNLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731354408; x=1731959208;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yb/lRtOScrkbHEVqeEiNru9i+NEX9M9BCRiwMog+ERw=;
+        b=P2Dig2jUJfgikdY1N1s1yRGLG6tAy4M4pPfWrNQnQUgWD74K/D9aJQPYYkMr9IGxmG
+         mmZf5MEOu6prAHhcPkLF9TMbpJz1AU0+mPPn0CZRza6vxXO9ijU7v/evmJeEAmzSy+AC
+         AGTAdqTdrh1xkni6Py1yboQXw8FMl0QSHg+z1i1n8XNR3jn1h7eUS0Ws3oEOkSd+3do9
+         JRaWSBSzOk8E5d6tI9hB4L2ETf4Iy5fBmL8v3H5tHe/1FImF/dzlBgHVHj3kq6f23blC
+         5utD47CqxIbO6X46vCc5qpybvzPtwPQOdIukSvOEbFhnhBFxWpNMb0dpWIprfnBWMzo4
+         POvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEv5t4bn30eXqee2FCQpxqJ20MfX4dkVdiDqBZSDj4a1FzG0DLvMQdD+ubkjcupp5RIjRfEYL5QAb9FgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwqNSc7/9fZa+u8h6dNXLRkVzqRjp4ml5jJEUV/hDUJ6Ii0uhl
+	YHvjv6eZSbsvKkPs3SXbikRIrVlrFjULYAPkflGQ83utz8PzCOkHAu5ZnM68Yq+OWAYLU/8ymsh
+	Rwa5lPYdXrrMi8oygoawmcJyMoTTXINBjCEEu
+X-Gm-Gg: ASbGncu2qpmIjBu7vUTIHcq+JUAC3hopFbMVL3uDj8OTCqEs7tFoqs485uCfdOL6upA
+	O44SCbys8MTf45GUDVO4B0BvosJnHCxKI7D2Qgut57ERDxRjw5PRlsWluIdIZBv0=
+X-Google-Smtp-Source: AGHT+IG3Voeoea9hH7MagKOMnVkHeysRZ87ScGQtbCyWe5pD36B+XNBUQSB/AHysZ4FWUFGnwuCGsdWTmHyzBa4M8Q4=
+X-Received: by 2002:a17:902:e541:b0:20c:79f1:fee2 with SMTP id
+ d9443c01a7336-211ab6fd382mr58045ad.10.1731354408310; Mon, 11 Nov 2024
+ 11:46:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iY8L1hmlHO5MfZf9"
-Content-Disposition: inline
-In-Reply-To: <20241109094623.37518-4-linux@fw-web.de>
-
-
---iY8L1hmlHO5MfZf9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241108061500.2698340-1-namhyung@kernel.org>
+In-Reply-To: <20241108061500.2698340-1-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 11 Nov 2024 11:46:37 -0800
+Message-ID: <CAP-5=fWqE6bM=MVQy7P0tTSWW-ZBXY4in_bfQYFK-C4h6L-Ykw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] perf lock contention: Symbolize locks using slab
+ cache names
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 09, 2024 at 10:46:21AM +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
->=20
-> fix dtbs_check errors in following files:
->=20
-> arch/arm64/boot/dts/marvell/armada-7040-db.dtb: sata@540000:
-> arch/arm64/boot/dts/marvell/armada-8040-clearfog-gt-8k.dtb: sata@540000:
-> arch/arm64/boot/dts/marvell/armada-8040-db.dtb: sata@540000:
-> arch/arm64/boot/dts/marvell/armada-8040-mcbin.dtb: sata@540000:
-> arch/arm64/boot/dts/marvell/armada-8040-puzzle-m801.dtb: sata@540000:
->   Unevaluated properties are not allowed ('iommus' was unexpected)
->=20
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+On Thu, Nov 7, 2024 at 10:15=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello,
+>
+> This is to support symbolization of dynamic locks using slab
+> allocator's metadata.  The kernel support is in the bpf-next tree now.
+>
+> It provides the new "kmem_cache" BPF iterator and "bpf_get_kmem_cache"
+> kfunc to get the information from an address.  The feature detection is
+> done using BTF type info and it won't have any effect on old kernels.
+>
+> v2 changes)
+>
+>  * don't use libbpf_get_error()  (Andrii)
+>
+> v1) https://lore.kernel.org/linux-perf-users/20241105172635.2463800-1-nam=
+hyung@kernel.org
+>
+> With this change, it can show locks in a slab object like below.  I
+> added "&" sign to distinguish them from global locks.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+I know the & is intentional but I worry it could later complicate
+parsing of filters. Perhaps @ is a viable alternative. Other than
+that:
 
---iY8L1hmlHO5MfZf9
-Content-Type: application/pgp-signature; name="signature.asc"
+Acked-by: Ian Rogers <irogers@google.com>
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Ian
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJfBQAKCRB4tDGHoIJi
-0kZYAP49wOpCPn1XV1CuML8Mzii0hAR7itUchMtHNweyWK5AEAD/WWr+kQyWWHM7
-kPsQBx1TogUJmrldrEIbDvuBrCcWjgE=
-=UM60
------END PGP SIGNATURE-----
-
---iY8L1hmlHO5MfZf9--
+>     # perf lock con -abl sleep 1
+>      contended   total wait     max wait     avg wait            address =
+  symbol
+>
+>              2      1.95 us      1.77 us       975 ns   ffff9d5e852d3498 =
+  &task_struct (mutex)
+>              1      1.18 us      1.18 us      1.18 us   ffff9d5e852d3538 =
+  &task_struct (mutex)
+>              4      1.12 us       354 ns       279 ns   ffff9d5e841ca800 =
+  &kmalloc-cg-512 (mutex)
+>              2       859 ns       617 ns       429 ns   ffffffffa41c3620 =
+  delayed_uprobe_lock (mutex)
+>              3       691 ns       388 ns       230 ns   ffffffffa41c0940 =
+  pack_mutex (mutex)
+>              3       421 ns       164 ns       140 ns   ffffffffa3a8b3a0 =
+  text_mutex (mutex)
+>              1       409 ns       409 ns       409 ns   ffffffffa41b4cf8 =
+  tracepoint_srcu_srcu_usage (mutex)
+>              2       362 ns       239 ns       181 ns   ffffffffa41cf840 =
+  pcpu_alloc_mutex (mutex)
+>              1       220 ns       220 ns       220 ns   ffff9d5e82b534d8 =
+  &signal_cache (mutex)
+>              1       215 ns       215 ns       215 ns   ffffffffa41b4c28 =
+  tracepoint_srcu_srcu_usage (mutex)
+>
+> The first two were from "task_struct" slab cache.  It happened to
+> match with the type name of object but there's no guarantee.  We need
+> to add type info to slab cache to resolve the lock inside the object.
+> Anyway, the third one has no dedicated slab cache and was allocated by
+> kmalloc.
+>
+> Those slab objects can be used to filter specific locks using -L or
+>  --lock-filter option.  (It needs quotes to avoid special handling in
+> the shell).
+>
+>     # perf lock con -ab -L '&task_struct' sleep 1
+>        contended   total wait     max wait     avg wait         type   ca=
+ller
+>
+>                1     25.10 us     25.10 us     25.10 us        mutex   pe=
+rf_event_exit_task+0x39
+>                1     21.60 us     21.60 us     21.60 us        mutex   fu=
+tex_exit_release+0x21
+>                1      5.56 us      5.56 us      5.56 us        mutex   fu=
+tex_exec_release+0x21
+>
+> The code is available at 'perf/lock-slab-v2' branch in my tree
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+>
+> Thanks,
+> Namhyung
+>
+>
+> Namhyung Kim (4):
+>   perf lock contention: Add and use LCB_F_TYPE_MASK
+>   perf lock contention: Run BPF slab cache iterator
+>   perf lock contention: Resolve slab object name using BPF
+>   perf lock contention: Handle slab objects in -L/--lock-filter option
+>
+>  tools/perf/builtin-lock.c                     |  39 ++++-
+>  tools/perf/util/bpf_lock_contention.c         | 140 +++++++++++++++++-
+>  .../perf/util/bpf_skel/lock_contention.bpf.c  |  70 ++++++++-
+>  tools/perf/util/bpf_skel/lock_data.h          |  15 +-
+>  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |   8 +
+>  tools/perf/util/lock-contention.h             |   2 +
+>  6 files changed, 267 insertions(+), 7 deletions(-)
+>
+> --
+> 2.47.0.277.g8800431eea-goog
+>
 
