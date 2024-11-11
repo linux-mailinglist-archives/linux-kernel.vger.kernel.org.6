@@ -1,209 +1,204 @@
-Return-Path: <linux-kernel+bounces-404152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536C39C3FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:50:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9029C3FBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:44:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99CF1F22AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:50:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA27B2181A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4E19E80F;
-	Mon, 11 Nov 2024 13:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36AA19E7ED;
+	Mon, 11 Nov 2024 13:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzDA4JSh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz8Kzokr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08C319D891;
-	Mon, 11 Nov 2024 13:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC8E14D70E;
+	Mon, 11 Nov 2024 13:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731333046; cv=none; b=exhpGBatjqoaZ/DMqQ3PjDN4zH6snpgbDRtoIU9cnubHPRybaa7Km377ccxwjxC4OjFfPIld5ubpPC493mTkysfC8e724nkKiHk6U25X9GORXEX8zBA4Mg2uaLKQPGTwjjhL8wcZF1Ksk3yE7HUP9x8fIPif5170FWyaY1dXD/M=
+	t=1731332640; cv=none; b=YZamZnDY/yKPKAnxyHDIk/WFvYxgVGRV7fE6q+G2+NSD2lhC60GOqtqLh8yC1cU3VeKakgVLPcjiSbEcWAjU61OzrvLtmrb/Fb7mgu/GTNZFoMcL8TJMHk0OGCWc41mrYj2xr0HAiiPrhPzGwN8JqMVkx7LWxYlMLVg7GZASL24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731333046; c=relaxed/simple;
-	bh=igSTgu76GFYvFftAE7voDBY7egITEGWmPnHa+OO6rVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=qk45XcHKtRYKtaSEbuHg3ZZm8FtriCGK3An8XH+xuUUqxDj5WAWLIEwg0HflrtGm/vmBM7YG+FmZgY5+PM7ceh2IjIjUHYpli51wFVV6cJH7BteLHDjVBpiBLpBVuwIP193a8oqZMVaQ/m4uyXULIdk5QpR0I3qD7BFf7UqlB0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzDA4JSh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74020C4CECF;
-	Mon, 11 Nov 2024 13:50:44 +0000 (UTC)
+	s=arc-20240116; t=1731332640; c=relaxed/simple;
+	bh=8KBvcpOBN/X2BF/ZldtfXAsIa2zzQe8iYbB2KTJR1dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WDFdHyDCks61UT9/kguXlwSifHliKhJGlU8P+NX1NDLS4bJoEiUCLCgPueRbuCus/qLZtdNnie+GECwEwQsh8O09kBrM7YeolmSmJkbyaJgEiCEEatZAhiaOwMV0mLyZk9+1gV7wJbMWbkeq3vr9s4JoJMQ21muQ5u794quXMfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz8Kzokr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FAEEC4CECF;
+	Mon, 11 Nov 2024 13:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731333045;
-	bh=igSTgu76GFYvFftAE7voDBY7egITEGWmPnHa+OO6rVo=;
+	s=k20201202; t=1731332639;
+	bh=8KBvcpOBN/X2BF/ZldtfXAsIa2zzQe8iYbB2KTJR1dc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=EzDA4JSh/YifYwWY1CqgOYZBp2vzv2LuRfLWXxS3RwGj+B7df3/ttMi6DmNkjrBvi
-	 CfHNkbpywglc8uzZ1X+s63h8m6IHgbicUg5UMMUHRaFipYOZiNvOApZMMGZCFaWi2R
-	 ZcLw9X+ctwf1+vCbdYgWmbxj7knLPk2QUio+ECFgqLLvpX9U3eF4J9C+1LazP9efq5
-	 G1fiPHruFy8wlOBC56WQxd3Zkz+jEN/b/Mq7rRYTF76O67VFhBdav6qBOdrjVnDsCZ
-	 VFphSYmhiz3ZcMNyzqvkI0dzBm89niJpepNd0C8fCRIz1hK1L0XvpdYGRMTvpEG8Ee
-	 YQkEJNj2VK+SA==
-From: Georgi Djakov <djakov@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: linux-pm@vger.kernel.org,
+	b=bz8Kzokr11U86eIVk+YnVU+RXlmRHMdSc+/TwFSN5kKaVEv17Z//KEVwjfQ0KXQGT
+	 ibMrDbTXc7km+yK4elJdYeY7+tG5ofN71kzuUWoOwJAV6I8QXiReJnrSqOwb0Jg7KV
+	 XW/aqjpOhM8LfC51Rb3nBlXW2F2RRmJYnXffU8L1aOjbhMMHeL8GaWFYn+WIOBFRRX
+	 bVMgCirhCL/EaLFbZLcmko9jWQNL21Ic/7ochUuYos49eqBfSRgIchFrBcrp3bov3G
+	 OgwXEMvySgLcXG+u1li/iwbt7Xt/Wuo+BB7CnogecEYoNUHQxW7vqL5tZzykV6JDLE
+	 1wCfuZtY0An5w==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tAUhw-0000000CSax-0kdW;
+	Mon, 11 Nov 2024 14:43:56 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: 
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Kevin Hao <haokexin@gmail.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Philipp Stanner <pstanner@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	djakov@kernel.org
-Subject: [GIT PULL] interconnect changes for 6.13
-Date: Mon, 11 Nov 2024 15:43:04 +0200
-Message-Id: <20241111134304.1019885-1-djakov@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	linux-media@vger.kernel.org
+Subject: [PATCH] media: dvb_frontend: cleanup zigzag drift/inversion logic
+Date: Mon, 11 Nov 2024 14:43:54 +0100
+Message-ID: <d24601442407717bed6f101d3186dac5b6de7fc4.1731332632.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hello Greg,
+Move the logic which sets LNB drift and inversion to a separate
+function, to make the code cleaner.
 
-This is the pull request with interconnect changes for the v6.13-rc1 merge
-window. It contains new drivers and clean-ups. As always, the summary is
-in the signed tag.
+No functional changes.
 
-All patches have been in linux-next for at least a week. There are no
-reported issues. Please pull into char-misc-next when possible.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/media/dvb-core/dvb_frontend.c | 83 +++++++++++++++------------
+ 1 file changed, 45 insertions(+), 38 deletions(-)
 
-Thanks,
-Georgi
+diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core/dvb_frontend.c
+index a05aa271a1ba..6ee46bf6e45a 100644
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -375,32 +375,13 @@ static void dvb_frontend_swzigzag_update_delay(struct dvb_frontend_private *fepr
+ 	fepriv->delay = fepriv->min_delay + q2 * HZ / (128 * 128);
+ }
+ 
+-/**
+- * dvb_frontend_swzigzag_autotune - Performs automatic twiddling of frontend
+- *	parameters.
+- *
+- * @fe: The frontend concerned.
+- * @check_wrapped: Checks if an iteration has completed.
+- *		   DO NOT SET ON THE FIRST ATTEMPT.
+- *
+- * return: Number of complete iterations that have been performed.
+- */
+-static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wrapped)
++static void dvb_frontend_swzigzag_inversion_drift(struct dvb_frontend *fe,
++						  int autoinversion)
+ {
+-	int autoinversion;
+-	int ready = 0;
+-	int fe_set_err = 0;
+ 	struct dvb_frontend_private *fepriv = fe->frontend_priv;
+-	struct dtv_frontend_properties *c = &fe->dtv_property_cache, tmp;
+-	int original_inversion = c->inversion;
+-	u32 original_frequency = c->frequency;
+-
+-	/* are we using autoinversion? */
+-	autoinversion = ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
+-			 (c->inversion == INVERSION_AUTO));
+ 
+ 	/* setup parameters correctly */
+-	while (!ready) {
++	while (1) {
+ 		/* calculate the lnb_drift */
+ 		fepriv->lnb_drift = fepriv->auto_step * fepriv->step_size;
+ 
+@@ -415,40 +396,66 @@ static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wra
+ 		switch (fepriv->auto_sub_step) {
+ 		case 0:
+ 			/* try with the current inversion and current drift setting */
+-			ready = 1;
+-			break;
++			return;
+ 
+ 		case 1:
+-			if (!autoinversion) break;
++			if (!autoinversion)
++				return;
+ 
+-			fepriv->inversion = (fepriv->inversion == INVERSION_OFF) ? INVERSION_ON : INVERSION_OFF;
+-			ready = 1;
+-			break;
++			fepriv->inversion = (fepriv->inversion == INVERSION_OFF) ?
++					    INVERSION_ON : INVERSION_OFF;
++			return;
+ 
+ 		case 2:
+-			if (fepriv->lnb_drift == 0) break;
++			if (fepriv->lnb_drift == 0)
++				return;
+ 
+ 			fepriv->lnb_drift = -fepriv->lnb_drift;
+-			ready = 1;
+-			break;
++			return;
+ 
+ 		case 3:
+-			if (fepriv->lnb_drift == 0) break;
+-			if (!autoinversion) break;
++			if (fepriv->lnb_drift == 0)
++				return;
++			if (!autoinversion)
++				return;
+ 
+-			fepriv->inversion = (fepriv->inversion == INVERSION_OFF) ? INVERSION_ON : INVERSION_OFF;
++			fepriv->inversion = (fepriv->inversion == INVERSION_OFF) ?
++					    INVERSION_ON : INVERSION_OFF;
+ 			fepriv->lnb_drift = -fepriv->lnb_drift;
+-			ready = 1;
+-			break;
++			return;
+ 
+ 		default:
+ 			fepriv->auto_step++;
+ 			fepriv->auto_sub_step = 0;
+ 			continue;
+ 		}
+-
+-		if (!ready) fepriv->auto_sub_step++;
+ 	}
++}
++/**
++ * dvb_frontend_swzigzag_autotune - Performs automatic twiddling of frontend
++ *	parameters.
++ *
++ * @fe: The frontend concerned.
++ * @check_wrapped: Checks if an iteration has completed.
++ *		   DO NOT SET ON THE FIRST ATTEMPT.
++ *
++ * return: Number of complete iterations that have been performed.
++ */
++static int dvb_frontend_swzigzag_autotune(struct dvb_frontend *fe, int check_wrapped)
++{
++	int fe_set_err = 0;
++	struct dvb_frontend_private *fepriv = fe->frontend_priv;
++	struct dtv_frontend_properties *c = &fe->dtv_property_cache, tmp;
++	int original_inversion = c->inversion;
++	u32 original_frequency = c->frequency;
++	int autoinversion;
++
++	/* are we using autoinversion? */
++	autoinversion = ((!(fe->ops.info.caps & FE_CAN_INVERSION_AUTO)) &&
++			 (c->inversion == INVERSION_AUTO));
++
++	/* setup parameters correctly */
++	dvb_frontend_swzigzag_inversion_drift(fe, autoinversion);
+ 
+ 	/* if this attempt would hit where we started, indicate a complete
+ 	 * iteration has occurred */
+-- 
+2.47.0
 
-
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/djakov/icc.git tags/icc-6.13-rc1
-
-for you to fetch changes up to b1fd28da86aae5d622ea95711cee8ede39f70369:
-
-  Merge branch 'icc-sar2130p' into icc-next (2024-11-05 01:32:05 +0200)
-
-----------------------------------------------------------------
-interconnect changes for 6.13
-
-This pull request contains the interconnect changes for the 6.13-rc1 merge
-window. It contains new drivers and clean-ups with the following highlights:
-
-Core changes:
-- Remove a useless kfree_const() usage
-- Switch back to struct platform_driver::remove()
-- Use of_property_present() for non-boolean properties
-
-Driver changes:
-- New driver for QCS615 platforms
-- New driver for SAR2130P platforms
-- New driver for QCS8300 platforms
-- Probe defer incase of missing QoS clock dependency in rpmh driver
-- Rename qos_clks_required flag to qos_requires_clocks in rpmh driver
-- Constify pointers to qcom_icc_node in msm8937 driver
-
-Signed-off-by: Georgi Djakov <djakov@kernel.org>
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      interconnect: Remove a useless kfree_const() usage
-
-Dmitry Baryshkov (2):
-      dt-bindings: interconnect: qcom: document SAR2130P NoC
-      interconnect: qcom: add support for SAR2130P
-
-Georgi Djakov (3):
-      Merge branch 'icc-qcs8300' into icc-next
-      Merge branch 'icc-qcs615' into icc-next
-      Merge branch 'icc-sar2130p' into icc-next
-
-Jingyi Wang (1):
-      dt-bindings: interconnect: qcom-bwmon: Document QCS8300 bwmon compatibles
-
-Krzysztof Kozlowski (1):
-      interconnect: qcom: msm8937: constify pointer to qcom_icc_node
-
-Raviteja Laggyshetty (6):
-      interconnect: qcom: icc-rpmh: probe defer incase of missing QoS clock dependency
-      interconnect: qcom: icc-rpmh: rename qos_clks_required flag
-      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in QCS8300 SoC
-      dt-bindings: interconnect: document the RPMh Network-On-Chip interconnect in QCS615 SoC
-      interconnect: qcom: add QCS615 interconnect provider driver
-      interconnect: qcom: add QCS8300 interconnect provider driver
-
-Rob Herring (Arm) (1):
-      interconnect: Use of_property_present() for non-boolean properties
-
-Uwe Kleine-König (1):
-      interconnect: Switch back to struct platform_driver::remove()
-
- .../devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml   |    2 +
- .../devicetree/bindings/interconnect/qcom,qcs615-rpmh.yaml     |   73 +
- .../devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml    |   72 +
- .../devicetree/bindings/interconnect/qcom,sar2130p-rpmh.yaml   |  117 +
- drivers/interconnect/core.c                                    |    4 +-
- drivers/interconnect/imx/imx8mm.c                              |    2 +-
- drivers/interconnect/imx/imx8mn.c                              |    2 +-
- drivers/interconnect/imx/imx8mp.c                              |    2 +-
- drivers/interconnect/imx/imx8mq.c                              |    2 +-
- drivers/interconnect/mediatek/mt8183.c                         |    2 +-
- drivers/interconnect/mediatek/mt8195.c                         |    2 +-
- drivers/interconnect/qcom/Kconfig                              |   29 +
- drivers/interconnect/qcom/Makefile                             |    6 +
- drivers/interconnect/qcom/icc-rpmh.c                           |    5 +-
- drivers/interconnect/qcom/icc-rpmh.h                           |    2 +-
- drivers/interconnect/qcom/msm8909.c                            |    2 +-
- drivers/interconnect/qcom/msm8916.c                            |    2 +-
- drivers/interconnect/qcom/msm8937.c                            |   10 +-
- drivers/interconnect/qcom/msm8939.c                            |    2 +-
- drivers/interconnect/qcom/msm8953.c                            |    2 +-
- drivers/interconnect/qcom/msm8974.c                            |    2 +-
- drivers/interconnect/qcom/msm8976.c                            |    2 +-
- drivers/interconnect/qcom/msm8996.c                            |    2 +-
- drivers/interconnect/qcom/osm-l3.c                             |    2 +-
- drivers/interconnect/qcom/qcm2290.c                            |    2 +-
- drivers/interconnect/qcom/qcs404.c                             |    2 +-
- drivers/interconnect/qcom/qcs615.c                             | 1563 ++++++
- drivers/interconnect/qcom/qcs615.h                             |  128 +
- drivers/interconnect/qcom/qcs8300.c                            | 2088 ++++++++
- drivers/interconnect/qcom/qcs8300.h                            |  177 +
- drivers/interconnect/qcom/qdu1000.c                            |    2 +-
- drivers/interconnect/qcom/sa8775p.c                            |    2 +-
- drivers/interconnect/qcom/sar2130p.c                           | 1930 +++++++
- drivers/interconnect/qcom/sc7180.c                             |    2 +-
- drivers/interconnect/qcom/sc7280.c                             |    6 +-
- drivers/interconnect/qcom/sc8180x.c                            |    2 +-
- drivers/interconnect/qcom/sc8280xp.c                           |    2 +-
- drivers/interconnect/qcom/sdm660.c                             |    2 +-
- drivers/interconnect/qcom/sdm670.c                             |    2 +-
- drivers/interconnect/qcom/sdm845.c                             |    2 +-
- drivers/interconnect/qcom/sdx55.c                              |    2 +-
- drivers/interconnect/qcom/sdx65.c                              |    2 +-
- drivers/interconnect/qcom/sdx75.c                              |    2 +-
- drivers/interconnect/qcom/sm6115.c                             |    2 +-
- drivers/interconnect/qcom/sm6350.c                             |    2 +-
- drivers/interconnect/qcom/sm7150.c                             |    2 +-
- drivers/interconnect/qcom/sm8150.c                             |    2 +-
- drivers/interconnect/qcom/sm8250.c                             |    2 +-
- drivers/interconnect/qcom/sm8350.c                             |    2 +-
- drivers/interconnect/qcom/sm8450.c                             |    2 +-
- drivers/interconnect/qcom/sm8550.c                             |    2 +-
- drivers/interconnect/qcom/sm8650.c                             |    2 +-
- drivers/interconnect/qcom/smd-rpm.c                            |    2 +-
- drivers/interconnect/qcom/x1e80100.c                           |    2 +-
- drivers/interconnect/samsung/exynos.c                          |    2 +-
- include/dt-bindings/interconnect/qcom,qcs615-rpmh.h            |  136 +
- include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h           |  189 +
- include/dt-bindings/interconnect/qcom,sar2130p-rpmh.h          |  137 +
- 58 files changed, 6701 insertions(+), 51 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs615-rpmh.yaml
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,qcs8300-rpmh.yaml
- create mode 100644 Documentation/devicetree/bindings/interconnect/qcom,sar2130p-rpmh.yaml
- create mode 100644 drivers/interconnect/qcom/qcs615.c
- create mode 100644 drivers/interconnect/qcom/qcs615.h
- create mode 100644 drivers/interconnect/qcom/qcs8300.c
- create mode 100644 drivers/interconnect/qcom/qcs8300.h
- create mode 100644 drivers/interconnect/qcom/sar2130p.c
- create mode 100644 include/dt-bindings/interconnect/qcom,qcs615-rpmh.h
- create mode 100644 include/dt-bindings/interconnect/qcom,qcs8300-rpmh.h
- create mode 100644 include/dt-bindings/interconnect/qcom,sar2130p-rpmh.h
 
