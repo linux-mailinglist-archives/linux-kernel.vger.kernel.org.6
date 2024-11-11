@@ -1,81 +1,119 @@
-Return-Path: <linux-kernel+bounces-403677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BB19C38EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:16:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EABA19C38F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D3F28221F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1E72823A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368211581E5;
-	Mon, 11 Nov 2024 07:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC57015ADAF;
+	Mon, 11 Nov 2024 07:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WEN7gPGB"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L2RmQqTK"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B1C4D8CB
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B70154BFF;
+	Mon, 11 Nov 2024 07:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731309407; cv=none; b=c80DzMqu0B0XJdm95/FHH4tQNmdyCtvQviIYhbT7UzJ5aZrRh+KZvcdZJ6gDIExzLqL4M+OnfwQdaVU0S1a/NcL/QHzVZhe6QD5xkrtzBtAkLq3GNqmwORKl3sa5Q7rWpX5EykL5SJi5PHxFIQ975oSloUTgH1dPYDBLdsKjzqk=
+	t=1731309603; cv=none; b=cHr8+TVze2RAQL+nSThBmDcuCVIDVm6ctBE5+ln9QzedQaoWJNOzuMmkqcO7BzcO37rvN3gqkxeVmnEH2egLaOzsL+EI7fwlhnUWIKi2LelCYxhw7CDd/QnqwFDREZ9fpdtJ/JtQ14n+UVhmdOpTVtxDL1eF7kKf3FUyfYkiJoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731309407; c=relaxed/simple;
-	bh=Kn/k+z4zXvqlhPLrKC9C7JFoijQHJ+Nh/3TDsK4egdA=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=JJlCnhPYMYtZXb5LRoGfPyaBVumPaVyitdzN4qsPccvbiMq0+mOLtk87VK4RhA3ZfIBZjITM0XJqTwnqZ0IHR1hnlVtMgA1y5u38OFaol9hQFgPWA/96hxeQg14r0cv9JPnkTR0dupzxypqDbx9mZXSknkf7k8EJQwK4GEjVilo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WEN7gPGB; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731309402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RoTxF+maVAJZkqZIQYQC7KffSClcFIAhswoR2ph/hPY=;
-	b=WEN7gPGBUXbNFHqZGYxBQsbIvvWdu/tlUkHuG7+END4f+tKMbhZeeqLtdSef18lt1Iy+re
-	JmoSR2kyNiNJ1RCHX70XBHmgW5hofPs7kZ/VujzUOuY9qorEe205fKHPpNxGlNwcgrWzYf
-	eqcPhG20exFWFNsCzY4rZmEMp1K0SqA=
+	s=arc-20240116; t=1731309603; c=relaxed/simple;
+	bh=2rkhCrabTh+dME1AyXeh+UGUqDM4G2Qwh/eeTBLxHOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q6EhhXROBPwKBZVp6OEEVNVhfBqGX8htN8GO4ndW6ZmmLTb57qc+iM2Iu7QS49Ects0qhrICZaX4ACG2tPU2tzEGdpKA0XsNjv11cRqettA3wVI6gIA+oxg9AXqJyGZjMAHzVjxKcUZ/knhMghyadsmig4bJwMvavss+XIo1Dms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L2RmQqTK; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7f45ab88e7fso467767a12.1;
+        Sun, 10 Nov 2024 23:20:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731309601; x=1731914401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WOmU+DqOTssuNxVDSw47mJh+RLlQKxt2hGA3wP7JifE=;
+        b=L2RmQqTK9Wjh02aoHCm+tihh3do5fBjvlJSbNcIiGrPFQtaYDWDY8yALCxaMhTkG4e
+         EsrTixWvGiydwQp5LSsvTvIjMFx34pczwzwrKxPJJcVoywalDU89kyRiov6/WDDRRPfp
+         QDXg02VzuHLdtRdxN1JUkDfQxBuyyMXYihEgnU6uigADRGFvDG9Gbsbtew7HotBxfop5
+         0almtxKQsAsAK3zuLbaFNPvxPlvFOxQeZMObxnoBHXUDLG8Il4z/52h3dp1JZ7pLRKZj
+         ftZgbZUZ6MzD+s6bqBhauDTT+P2Jp1uSMdrF49GMxu3GXLyaLtNWWFOoYqaTZs06gUEy
+         TvgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731309601; x=1731914401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WOmU+DqOTssuNxVDSw47mJh+RLlQKxt2hGA3wP7JifE=;
+        b=XqcCpmmUEBxWGZqoBnztay4JwghJ3jG9SgFurZ5P75LSsTi/5XLtS+cAWPo8zu4/o+
+         rGcARBZrKBB7Fv/6ZppYTCST0iSYGH7xrUo5PeMgp57E+5eBKJVBd0N7z6ambkh9DxEQ
+         5AEJHkVrajcRelIg+iBQkYIa9sHODjOuAcFZoITzeHOEJCMLB9qYRzV2rcPyQZOWozTW
+         Xw2QOuIiAgXmM3fS75IPfeTTFuWkfrxrsv7PE+UQMpCtvPmjghj6+IAUAi57MLJzB8//
+         50XgLhsDm8ROrGeuNmftQ33E7nL9gDRh0N1+UTvn6WftGtJ9oA+khzfHwdvLcn99HWWD
+         LfUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvbZEbbeBSFK+dUQA9GDrfVKQ99W5UeSTp5Udx68OESljjB9JlNlxKimrgg0LMIjwtfZrQSViL9KPkXAM=@vger.kernel.org, AJvYcCW09/ecr8sfSxKyLFXOGiys0X8myX2no7joL1/U2PniEXSFeR2X/KJXwH4UGBTbr6HnmAOb5WA8S3i6@vger.kernel.org, AJvYcCXPPnEU/jd0eDGa1VoJLL1oPQP4NSQg9PyAJWtDC1Ej7D+m0u/cE2x8C0f957tTf1QEeac+lPzWobUA0Q==@vger.kernel.org, AJvYcCXQDw6QO6jlTllfm8aq5DCi27WhpPFJKyhNL3BKZmKxnO48E4ta4hEJXRsp4AHueRbkFuw=@vger.kernel.org, AJvYcCXe3CKp5mxhSW4cxE8DhwWPwhfh/C0MHkq7JViaMDjg7aPlG9qCI12jTejWaXRn79MMg281IHD4dBqI/xVy@vger.kernel.org, AJvYcCXhP9h2PLfzFkxIusU1wAY8aAX0s8EZGsOLNrcvNPHFI4x1uiRtfXoS5p7219+LQK3LCicg1Jak/EMv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJpsF9F2ds85IKGzCGkAFdmO6oUR8bxDoNz50yDuwmZIz9RoLB
+	0G5FX+cGFeMIURANWK3p5j947r6u/cFEyVX0AWYGeYBT1fqporW0T8sWDU3klGp+MWttnhisxul
+	LtNyL7yycDM1e7U8/v7yEYnVXI+M=
+X-Google-Smtp-Source: AGHT+IE2GbhyhHM7VLZoUXFICAIpmggZuUxeUy9Xke7HCQ1ScZ37Bf1N00DNPtc+BrABfZWGfVXnr9FTBKVDLWlkvX0=
+X-Received: by 2002:a05:6a20:6a1c:b0:1d8:d880:2069 with SMTP id
+ adf61e73a8af0-1dc228395camr18138782637.3.1731309601118; Sun, 10 Nov 2024
+ 23:20:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <87v7wuy3p5.fsf@mpe.ellerman.id.au>
-Date: Mon, 11 Nov 2024 08:16:29 +0100
-Cc: Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <8A9CA9F3-F780-4F2F-A5CE-8FE43463B84C@linux.dev>
-References: <20241110162139.5179-2-thorsten.blum@linux.dev>
- <87v7wuy3p5.fsf@mpe.ellerman.id.au>
-To: Michael Ellerman <mpe@ellerman.id.au>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <cover.1730298502.git.leon@kernel.org> <9515f330b9615de92a1864ab46acbd95e32634b6.1730298502.git.leon@kernel.org>
+ <5ea594b3-7451-4553-92c1-2590c8baef20@linux.dev> <20241111063932.GC23992@lst.de>
+In-Reply-To: <20241111063932.GC23992@lst.de>
+From: Greg Sword <gregsword0@gmail.com>
+Date: Mon, 11 Nov 2024 15:19:48 +0800
+Message-ID: <CAEz=LcshavSrtGDjhKBPZU9o+5Mr8rPiBPmVL4dxcOmEiqHQSQ@mail.gmail.com>
+Subject: Re: [PATCH v1 04/17] dma-mapping: Add check if IOVA can be used
+To: Christoph Hellwig <hch@lst.de>
+Cc: Zhu Yanjun <yanjun.zhu@linux.dev>, Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Leon Romanovsky <leonro@nvidia.com>, 
+	Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>, 
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Alex Williamson <alex.williamson@redhat.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	=?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11. Nov 2024, at 02:11, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Thorsten Blum <thorsten.blum@linux.dev> writes:
->> The name is Mimi Phuong-Thao Vo.
-> 
-> Is that the correct spelling?
+On Mon, Nov 11, 2024 at 2:39=E2=80=AFPM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Sun, Nov 10, 2024 at 04:09:11PM +0100, Zhu Yanjun wrote:
+> >> +
+> >> +/*
+> >> + * Use the high bit to mark if we used swiotlb for one or more ranges=
+.
+> >> + */
+> >> +#define DMA_IOVA_USE_SWIOTLB                (1ULL << 63)
+> >
+> > A trivial problem.
+> > In the above macro, using BIT_ULL(63) is better?
+>
+> No, and can people please stop suggesting it?  That macro is so fucking
+> pointless that it's revolting,
 
-According to [1] it's correct.
+Why do you hate this macro so much, have you considered the feelings
+of the macro author?
 
-Thanks,
-Thorsten
-
-[1] https://www.linkedin.com/in/mimi-phuong-thao-vo-5768033
+>
+>
 
