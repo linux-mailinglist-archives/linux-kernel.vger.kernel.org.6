@@ -1,96 +1,128 @@
-Return-Path: <linux-kernel+bounces-403513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A854C9C36B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:48:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2DC9C36B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 03:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA1311C21786
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7EE1F22623
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 02:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66872137930;
-	Mon, 11 Nov 2024 02:48:49 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBBD14AA9;
-	Mon, 11 Nov 2024 02:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB0F137930;
+	Mon, 11 Nov 2024 02:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aDgsZc3v"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BCF3C3C;
+	Mon, 11 Nov 2024 02:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731293329; cv=none; b=qlq6u9gcdUt4EO0imcgdEh3Saun+XJhoNMOBmk/lTMKreSdUs1VQYJBi/vitQybJYnRfRJ5aXUz9UWot7MObrknG26mVsvz1as80XviBAXmPdXOzhWjTu+Du3mJygm4QaaD/wNvq9PMzdNcNv9W6GsSGPQWwyt6mzSvgTKaXVPA=
+	t=1731293570; cv=none; b=Ivx4I3mKKZqiybrSxv9/YVEDECjF83M/wrkkc7Eoa/OunX8klapXhDKXZNlM8pI9OWZD+fHdjEvFRkfy+TJVeTaJUBfj2+7c3sv5yHlVTZd70nzJY3xzVx/BHao7a11ygA8Ib9setF9QUlkMeO4+SIbm4EsdGMBHAZ566/JsvfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731293329; c=relaxed/simple;
-	bh=QmGuJK1ujSvO+VjZsAUtUvH2s1ZYjQBcu8wRj70Ovls=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HFvhQ1EnVrOO9ZY0mhmcipaQ6xPhBbZ/svH2RnRQnsKPjiAS3F/JFaXl03W+2qm4orYBxDR4JahD9HLhxTUjPT7XJPhywzziuAzX5HNkMLgraik/y0mUUj6sofMN3y/4P09vue6Zeu0CcYuLD0ow0oYqW3LsrH6ZfUe2Xd1Ejdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee467317083fe9-d18ee;
-	Mon, 11 Nov 2024 10:48:35 +0800 (CST)
-X-RM-TRANSID:2ee467317083fe9-d18ee
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.103])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee167317082e2a-0ff1f;
-	Mon, 11 Nov 2024 10:48:35 +0800 (CST)
-X-RM-TRANSID:2ee167317082e2a-0ff1f
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luo Yifan <luoyifan@cmss.chinamobile.com>
-Subject: [PATCH] bpftool: Fix incorrect format specifier for var
-Date: Mon, 11 Nov 2024 10:48:14 +0800
-Message-Id: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1731293570; c=relaxed/simple;
+	bh=tDmjCi8zJ4eOVXkIRewl+MZnnsV0r///O63ADzMiAJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m8PHPBQWM/uPefoyzCWLCCHpLnvvo6+7AvxUmI3uWlGJuxTQiwXjnr2xwVt1FaqlJ7aIHk3YgsT/6s/5v+D9ohVy3dtO08XrdDUAAhOOCuCzqNLGnaVSjKsyvwI4vGfp4hGeUYghucLkIQFQHJa3RlXXDKWxXqf1zCi9rCv/R/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aDgsZc3v; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731293561;
+	bh=g/FOHCPE2UK3MaRW3btwxddEVADpRzIwOa53MDhB/z8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aDgsZc3vZ/g+Y+Crj1GuRE9AAJp8REfi5WMzT4ugMJki9ZKLq3eh3ybz/9xVbGTY+
+	 XvFQUt0+oUKkzgPHv6Kl1o9bM9BbO4vNbmM7AUIsjkTJAjKnnPa0SZOe0HcfdBIQrr
+	 xeQqyX3fqqYwaoDGF1MfZsTzNguASLwJbR9+MlNHadMS+1fUlKVO5uUTmcIqlG8YwC
+	 SynpalTAzqnfaQ4P2trZ38a8Evj2SBKyMUZcbU/YKFOlhvCibuRA7gO993mhSgjU//
+	 F3bUCtUaAtizWsAjyQBT6Vifv1ukqmGzPyAx4OJHrPI4IMnF7RQIUqtumiR1vqFYGo
+	 I5RSdeHbGmXNw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XmvGw3T7Lz4wbp;
+	Mon, 11 Nov 2024 13:52:39 +1100 (AEDT)
+Date: Mon, 11 Nov 2024 13:52:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Liu Shixin
+ <liushixin2@huawei.com>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: linux-next: manual merge of the block tree with the mm-stable tree
+Message-ID: <20241111135241.1640f547@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/xnEfGR7zq4Gzz6Z4xAC00gY";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-In cases where the SIGNED condition is met, the variable var is still
-used as an unsigned long long. Therefore, the %llu format specifier
-should be used to avoid incorrect data print. This patch fixes it.
+--Sig_/xnEfGR7zq4Gzz6Z4xAC00gY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
----
- tools/bpf/bpftool/btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-index 7d2af1ff3..ff58ff85e 100644
---- a/tools/bpf/bpftool/btf.c
-+++ b/tools/bpf/bpftool/btf.c
-@@ -283,7 +283,7 @@ static int dump_btf_type(const struct btf *btf, __u32 id,
- 				jsonw_end_object(w);
- 			} else {
- 				if (btf_kflag(t))
--					printf("\n\t'%s' val=%lldLL", name,
-+					printf("\n\t'%s' val=%lluLL", name,
- 					       (unsigned long long)val);
- 				else
- 					printf("\n\t'%s' val=%lluULL", name,
--- 
-2.27.0
+Today's linux-next merge of the block tree got a conflict in:
 
+  drivers/block/zram/zram_drv.c
 
+between commit:
 
+  58652f2b6d21 ("zram: permit only one post-processing operation at a time")
+
+from the mm-stable tree and commit:
+
+  5fcfcd51ea1c ("zram: fix NULL pointer in comp_algorithm_show()")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/block/zram/zram_drv.c
+index cee49bb0126d,5223a03cb10e..000000000000
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@@ -2571,7 -2381,8 +2571,9 @@@ static int zram_add(void
+  	zram->disk->fops =3D &zram_devops;
+  	zram->disk->private_data =3D zram;
+  	snprintf(zram->disk->disk_name, 16, "zram%d", device_id);
+ +	atomic_set(&zram->pp_in_progress, 0);
++ 	zram_comp_params_reset(zram);
++ 	comp_algorithm_set(zram, ZRAM_PRIMARY_COMP, default_compressor);
+ =20
+  	/* Actual capacity set using sysfs (/sys/block/zram<id>/disksize */
+  	set_capacity(zram->disk, 0);
+
+--Sig_/xnEfGR7zq4Gzz6Z4xAC00gY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcxcXkACgkQAVBC80lX
+0Gy4BQf9GgDI8Py65qK9izGX5yTBLPuOxtH3tsVbYA2T0dmIkNr5rBB13luCj130
+LtZx/95iyHtVAZcp5XImx4NDYltIIgureSlXWdZ2D6D5Fi9kPKAzAffNJZcIkvoE
+v1qk3mJhvWS3vQ1nKIGJ6TbergLnBjj/d8YeDimvPghpTHWpAl9+RU/o7R9GP9PV
+dMirJG2VUQml2N1mA6MDUBdW9Dl/qsjt10C7LEFRMFxRBaOUbaWgrFiADKOXA+U3
+nwjavYNf/DOLZvenk6q6NGJUqAtaxL/a6moHnES+GA9Sv87w7rndt38gdDzqrChf
+IL4h1tqeUizddFur+WrNfABDxHT3hg==
+=uBGF
+-----END PGP SIGNATURE-----
+
+--Sig_/xnEfGR7zq4Gzz6Z4xAC00gY--
 
