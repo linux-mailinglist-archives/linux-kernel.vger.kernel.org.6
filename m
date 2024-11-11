@@ -1,76 +1,154 @@
-Return-Path: <linux-kernel+bounces-403589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319C99C379A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:46:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A4D9C379B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:47:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E094728174E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B4061F21EA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 04:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D9A8249F;
-	Mon, 11 Nov 2024 04:46:22 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAFE14A0A3;
+	Mon, 11 Nov 2024 04:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtbwppxq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1D736B
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F7C36B;
+	Mon, 11 Nov 2024 04:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731300382; cv=none; b=lwcKjX8f9L1xvGwEZHUxqO9EPiy6Cc5Ct4M4VhOQiCcmpwknNQBtK93j7LUvpl3S0jB7Nt5XTKNx7EVJoDnB3jnGublXt5+KpcTM79865sKN9DDO0xxUcllCJMiuXVAbAlzBEqxlPKRa7CyCMmlFK0Z6SkmIccFqMinqv2qCJcg=
+	t=1731300429; cv=none; b=p8m3BCrmtNn2WiGyKeHgRzwihwbdeeGGWItN095zYdds7tFN7sd4WIi/f1r9XshCmEjw1RVoInMhPZD1Wjw5WqVFTPMtciMZELWIA/CnjNwdHo8ivX5nWtTt1KIcjvLP/dwXw8/zeuV7I1YHfuo6xWJvmwLkj9yiSQFGrJfhBDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731300382; c=relaxed/simple;
-	bh=DMvGmfEDvtElgqHmXKOgpSbLud9yAAR8K01mbx3UyNo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OZK23NSL2oULX/S6hZzQAsNPo/holJxIzhLsLHPLmk6IIIXMLZ3ngEciNuW0xzJEkxOt9RXQlP/gtcY08ZnTbvOONIQUjDEOieNJZ9olzuLz2n1GGEXeRHfYcDLNpdn4ZQ0EPveQngsVdb0qYT3dOPmk+eGGFOFdq6wwAN2vHxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6c01d8df2so38132065ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 20:46:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731300380; x=1731905180;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vlFBqFKm0gW3F5gYh+mJb1nrd1ShSOYEgH021LpBOnI=;
-        b=KqOjX17h7xvyQq9oQ/jFP812jhDzFhPm8cKHCXOecfjNcRQnIju6aMsCrXJNZql6qh
-         fvmjV20EaQUu6uIN/XFQf3jbO0maWAw6D2gMXF0Uu53KE8K8A5CN8t/+hRNZ8RZ7+W90
-         wIpQoWYp0mPe+i1Lpo9c3cOSRYAAKJBjKgdmecUwNmkYJHY60SbLxMvAiAplQwwbbeUZ
-         8DyBmRRB8gfPDavspMHYD2JLa8tKkiJzkhaFBMfEzfW+3FkHGpNhcSj3HbBR0919vuIH
-         kJLcC+gxza4p7KU8dzIXR3zsDbEWvUcn21A6Qhp8gJVZSHQ5sBWD+39BEBWxE1de5lte
-         yhPQ==
-X-Gm-Message-State: AOJu0YwTOa8Ai1NQNlsWMvKA/tIC1htPnSU19XMut9yvUFekkTyNTQ9i
-	vZTuabHHS++h+d4pZRd+frxBeO+jtqojlaQTNhYIe9+qgTLF2U6J/MkxuwcqplvK7JWLq18vW/R
-	a7V33kLE+LqY2IC2q0g7J0zJpEWQPw9fi+OgNTDbIo5vmqWVznfvaehk=
-X-Google-Smtp-Source: AGHT+IGZcxxwwm1VdpL74trmt1Be2YGxRjC9vGpILfD/1Ck+y2XplQjGyt8k9OtBx+wkk0qtLqmNeYYv1zXGDbwLvZJBA6hMtZt+
+	s=arc-20240116; t=1731300429; c=relaxed/simple;
+	bh=EhIIMS56ksJvmkC2J5FJfRvQpQBY4ZwHz0e0AMGl1q0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=qTmEY+4R4T+ZYMORFc+4g6zMhXb4IYy0nmsgzJe2Yl7ZT/Rh8g3lEoBTAFF57Z+HhUKH0AV6mEdZVpio10mhBfPubEdmWmMG/CiRjPgeRGHWBb4YqyDQwI5c2v4JIt0+ofHXZPcrYubu4Io44OPtGeZ1nkN0IYFSpiK1scVU9nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtbwppxq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44410C4CED0;
+	Mon, 11 Nov 2024 04:47:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731300429;
+	bh=EhIIMS56ksJvmkC2J5FJfRvQpQBY4ZwHz0e0AMGl1q0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qtbwppxqaHaZUogmTwiuRCgKzo4hz7Cw0J+FQeNHFH/IpFOwF80DTbe1dMf/9LrGO
+	 CMq5YiWTRszfLgfUj472FVRzz9q/Ylvj8H0yVzRcnQ1VQ5g41pdO383bdvuzjaM6iE
+	 rCs9jvzRy9xeJsay4SuffpNi+kvSDQ3kqrijsU3a29yTY5jv2C2TWilWUp/4qN1rz8
+	 ivoxKEJZdlCVZhdxZKkneFI3uiUqzA6PbLAKxMqgQixzfeeKTmssv3xU9IzXkQb3wU
+	 pWVdYRtu7dn0uKg/IBw1fIAcA5A2/MkNx8xPJn7ORMETEVfoZ36JNf+HOvjT8L2Xi6
+	 6snx8zQkD+0rA==
+Date: Mon, 11 Nov 2024 13:47:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Li Huafei <lihuafei1@huawei.com>
+Cc: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+ <namhyung@kernel.org>, <mark.rutland@arm.com>,
+ <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+ <irogers@google.com>, <adrian.hunter@intel.com>,
+ <kan.liang@linux.intel.com>, <dima@secretsauce.net>,
+ <aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] perf probe: Reset old content before processing the
+ next event string
+Message-Id: <20241111134705.021f73408c0aff41918ab2a5@kernel.org>
+In-Reply-To: <20241108181909.3515716-1-lihuafei1@huawei.com>
+References: <20241108181909.3515716-1-lihuafei1@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:ca49:0:b0:3a6:c000:4490 with SMTP id
- e9e14a558f8ab-3a6f249dc6cmr97340625ab.1.1731300380005; Sun, 10 Nov 2024
- 20:46:20 -0800 (PST)
-Date: Sun, 10 Nov 2024 20:46:19 -0800
-In-Reply-To: <67121037.050a0220.10f4f4.000e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67318c1b.050a0220.1fb99c.0142.GAE@google.com>
-Subject: Re: [syzbot] 
-From: syzbot <syzbot+4deac4f47f33e16f82b7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sat, 9 Nov 2024 02:19:08 +0800
+Li Huafei <lihuafei1@huawei.com> wrote:
 
-***
+> I added two probe events:
+> 
+>   # perf probe -f -a schedule+8
+>   Added new event:
+>     probe:schedule       (on schedule+8)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>           perf record -e probe:schedule -aR sleep 1
+> 
+>   # perf probe -f -a schedule+20
+>   Added new event:
+>     probe:schedule_1     (on schedule+20)
+> 
+>   You can now use it in all perf tools, such as:
+> 
+>           perf record -e probe:schedule_1 -aR sleep 1
+> 
+> However, 'perf probe -l' shows the same offset:
+> 
+>   # perf probe -l
+>     probe:schedule       (on schedule+8@kernel/sched/core.c)
+>     probe:schedule_1     (on schedule+8@kernel/sched/core.c)
+> 
+> __show_perf_probe_events() does not clean up the 'pev' content when
+> parsing the rawlist. If the 'pev->offset' is not set while processing
+> the next probe event string, the offset value of the previous event will
+> be used.  After adding debug information, it was found that indeed there
+> was line number information when processing 'probe:schedule_1', so the
+> offset was not set and used the offset from 'probe:schedule'.
+> 
+> To fix this, in the loop that parses the rawlist, reset the contents of
+> 'tev' and 'pev' to ensure it does not affect the next parsing.
+> 
+> After the modification,  'perf probe -l' shows the following:
+> 
+>   # perf probe -l
+>     probe:schedule       (on schedule+8@kernel/sched/core.c)
+>     probe:schedule_1     (on schedule:-6751@kernel/sched/core.c)
+> 
+> Note that 'probe:schedule_1' is displayed with line number, but the line
+> number seem to be incorrect. This issue is independent of the problem
+> fixed by the current patch and will be addressed in the next patch.
+> 
 
-Subject: 
-Author: kent.overstreet@linux.dev
+Good catch! But we should do the cleanup in clear_perf_probe_event()
+and clear_probe_trace_event().
 
-#syz fix: bcachefs: bch2_btree_write_buffer_flush_going_ro()
+> Fixes: d8f9da240495 ("perf tools: Use zfree() where applicable")
+
+What we need is to revert this change for above 2 functions, because
+without that, it "clear"s the structure correctly. Current code
+releases allocated fields, but not clear all fields. This can lead
+another bug.
+
+Thank you,
+
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+> ---
+>  tools/perf/util/probe-event.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index a17c9b8a7a79..ec0b11f8d881 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -2695,6 +2695,8 @@ static int __show_perf_probe_events(int fd, bool is_kprobe,
+>  next:
+>  		clear_perf_probe_event(&pev);
+>  		clear_probe_trace_event(&tev);
+> +		memset(&tev, 0, sizeof(tev));
+> +		memset(&pev, 0, sizeof(pev));
+>  		if (ret < 0)
+>  			break;
+>  	}
+> -- 
+> 2.25.1
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
