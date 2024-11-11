@@ -1,76 +1,130 @@
-Return-Path: <linux-kernel+bounces-404879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD929C49AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:25:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BF69C49BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75D0BB253DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6342836B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44EC18A6AC;
-	Mon, 11 Nov 2024 23:24:55 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65F1AE014;
+	Mon, 11 Nov 2024 23:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="jHeGS14M"
+Received: from smtp-out.freemail.hu (fmfe20.freemail.hu [46.107.16.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF20015699D
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D7118871F;
+	Mon, 11 Nov 2024 23:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731367495; cv=none; b=CiViXb5s/CjAVQnaXoGuR3opXc69UcOuUKSDE5ZyTxVwtW8GxpITRCFn68LAgGRXuhAyF3uJKvpcF/VE1Stv745ihfgqE2bCksKgA3xEV/dMgnT9nlgO2YXagiDpkHaJKzemQ+1STIn0EVzgdxiSwjXyCSzL3iW7SdjIzAPV0Dk=
+	t=1731367930; cv=none; b=cCLqQHuyFnW2Q7ZGO6s563BT7qsqgDN8CSBHF93ZQR3np0Cdxz6PFRpI1Ny+N6ot4tPCLt/n8oBoY5W1cms/5DG2c2Rjj4jcQJqeRtz0rWxNjS8PBGVbMervpnbvjvAul0uNVJyHU7hYQestmjHbjMwnotHMfJUKmY0EILyJ7n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731367495; c=relaxed/simple;
-	bh=hbIpnS+URpvAyTJ1xTBqOdFUnKaXpRqxrapc6IgmV04=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=GyH7cFE6JoMzpSaL3UsYw8aClSMHb5ax7DWWKzkwqRDYHnk+Kf2zKaFo89KkHykcStY3WYwInnHf6wqqY/UNe9R/JZxfQhHRfivJtCnPEuv7c28jjtaO9KEXiD/NSZCd+1lglNRw9adWd+ie9hC7U+QZHkP8iIwEmxdLCyxBztU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4e41e2732so68355345ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:24:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731367493; x=1731972293;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbIpnS+URpvAyTJ1xTBqOdFUnKaXpRqxrapc6IgmV04=;
-        b=dXbwl7lzh/AIn1Y7J77bHVPZ7HXjrkKaQACQpKQXBWf6FqQ0oVJhdlruiCVOsNq8Do
-         lgzSyP9c4tj/X88UyIMNA4pDaqCOtURqVopun/QjofAa5K8VuIlKXNZjcSm4st8zNu0z
-         CYyeW+zyUkxU+RgMN7XU4KQTuyeWnUo+whHAGgiP5wOy7I1yiTGAVxG3a6JWmgf8ZZUK
-         VIIyOV8gGyIMIGfCFQIGYUzEnkQxcTPbS/hGtldCOIefKSu+lVMG6gRygHX5iOCQTZcF
-         X3LprTsSPffZbqO0ETAe+brjHu0sxIpMubfwIUwdOEgFyx1XwyJqf+QxKaINfw5Sdrsn
-         qkug==
-X-Gm-Message-State: AOJu0YzYkFyo37HUy2IfBXbX++e3LqX+STg1InSdQCYtsxEprhThcq7G
-	nHTrtoBBIMh8fs3/fxN0sEK3l53TG+kxHi0kth/guzbZveFAIFRJ2UMdw01rlKhjbLPjTW/ingE
-	3E0pYBvGYTvi8MGA8Jk7nvfrU0jxvmipzPONbpzsFe+t4aqolU7RL5aA=
-X-Google-Smtp-Source: AGHT+IF8GUKCO3eCRdXWD68a6R5v0vYO9vUhb0v1VsPV69v1NjHDteJ4m4nfH1A9xt1oTQ2nElr9UPci0TfYEJVGlwxnJ6n4GHYM
+	s=arc-20240116; t=1731367930; c=relaxed/simple;
+	bh=PZN8H+nCNm6d6eEGz6KZqWH4rX1zk/SeUw4msKerftI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BsJ0BRwOO76zI8JcFrUYClIksZPIbAuP478UafsjPsEnHhU7dSuSIMLp9HWoHK5fCnV7VeWAJ4s2mvUghrQhb2Jsztb9iecRcYiiCHL5/qWyvMpLABB2Xa/2f8feOxfOLsHjTywi+EAnn6Pz5IoDGQWD10QNK59z6o4OE+Iaua4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=jHeGS14M reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
+Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnQYJ4X6mzC5t;
+	Tue, 12 Nov 2024 00:21:56 +0100 (CET)
+Message-ID: <705daf58-dd30-4935-9864-6489b9b90a35@freemail.hu>
+Date: Tue, 12 Nov 2024 00:21:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4f:0:b0:3a6:b9bf:71ec with SMTP id
- e9e14a558f8ab-3a6f19c2ad3mr152508935ab.8.1731367493174; Mon, 11 Nov 2024
- 15:24:53 -0800 (PST)
-Date: Mon, 11 Nov 2024 15:24:53 -0800
-In-Reply-To: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67329245.050a0220.138bd5.00cd.GAE@google.com>
-Subject: Re: [syzbot] KMSAN: uninit-value in bch2_copygc
-From: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
+ case-insensitive filesystem.
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
+ will@kernel.org, peterz@infradead.org, boqun.feng@gmail.com,
+ npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+ luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, lkmm@lists.linux.dev
+References: <20241111164248.1060-1-egyszeregy@freemail.hu>
+ <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+ <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
+ <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
+ <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
+ <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
+ <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
+ <CAHk-=wiEuh613GjBefTRe-_Eha1X1GoU=1nLt65uccSBC8Ne=A@mail.gmail.com>
+Content-Language: hu
+From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
+In-Reply-To: <CAHk-=wiEuh613GjBefTRe-_Eha1X1GoU=1nLt65uccSBC8Ne=A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731367317;
+	s=20181004; d=freemail.hu;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	l=1846; bh=YKWGWpohuX4Fzq7p1VLZ81e0IBXFrbXOkVkl0oiKp58=;
+	b=jHeGS14MPHGxHqJ6u7G+KxtAcAClfSMwnUbsQM5tmT4KOlQce3l21TWCljprC/hO
+	gD9Ajtw5gUOZCRZPH8rz2gY+xIY2CTBl39C2FMj0TEA8hMCIF+L925jI6dDwumps4rn
+	32E3GsNyaymUhW5EGKEtoQBvz0nyXDMCID9rk85LGEy4zTiRGhnagwMmJ4FeyDTkcfZ
+	iIv5enA6C4lKrbyp7neiHsZULlRkPNg4110dGJ251SnA/qO6v8PmMOtaarkS+eN56uv
+	Hf8UK+Fd1u5aBKPE9KGIQqkwmg9ThZpMRz598HI4JR4TU+DC1EkpgnZxsTEj07w7MWb
+	AOm7KdXbBQ==
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+2024. 11. 11. 23:00 keltezéssel, Linus Torvalds írta:
+> On Mon, 11 Nov 2024 at 13:15, Szőke Benjamin <egyszeregy@freemail.hu> wrote:
+>>
+>> There is a technical issue in the Linux kernel source tree's file naming/styles
+>> in git clone command on case-insensitive filesystem.
+> 
+> No.
+> 
+> This is entirely your problem.
+> 
+> The kernel build does not work, and is not intended to work on broken setups.
+> 
+> If you have a case-insensitive filesystem, you get to keep both broken parts.
+> 
+> I actively hate case-insensitive filesystems. It's a broken model in
+> so many ways. I will not lift a finger to try to help that
+> braindamaged setup.
+> 
+> "Here's a nickel, Kid. Go buy yourself a real computer"
+> 
+>               Linus
 
-***
 
-Subject: KMSAN: uninit-value in bch2_copygc
-Author: gianf.trad@gmail.com
+In this patch my goal is to improve Linux kernel codebase to able to edit/coding 
+in any platform, in an IDE which has a modern GUI.
 
-#syz test
+Chillout, i am not so stupid to compile kernel on this "braindamaged setup", I 
+just like to edit the code and manage it by git commands.
+
+So, this is a tipical Braindamaged setup in 2024 for Generation of a half of Y 
+(like me), Z and Alpha developers.
+
+Windows or MacOS system
+- Visual Studio Code for coding
+     - Git for manage kernel source
+     - IntelliSense in coding
+     - Live coding with other developers
+
+Linux remote server
+- Visual Studio Code remote SSH extension/connection for Linux server
+     - Sync kernel workdir with remote Ubuntu/Debian/RHEL Linux server
+     - Remote SSH compile for X86_64, ARM64 etc ...
+     - Download the build result
+
+Instead of Visual Studio Code it can be possible to use JetBrains, Eclipse and 
+so on any other modern IDE. The actual limitation is only, that there is a 
+filename issue in the Linux kernel source with 
+"Z6.0+pooncelock+poonceLock+pombonce.litmus", why git clone is failed to work 
+well in this case-insensitive OSs.
 
