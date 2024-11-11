@@ -1,264 +1,256 @@
-Return-Path: <linux-kernel+bounces-404840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FEB9C48F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:15:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D512F9C4930
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:40:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B7D289C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:15:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65554B25128
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64801BD9E2;
-	Mon, 11 Nov 2024 22:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D88156C6F;
+	Mon, 11 Nov 2024 22:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eNNvI30K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHMDFY6m"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15EE150990
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B9838F83;
+	Mon, 11 Nov 2024 22:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731363267; cv=none; b=JWL44QKG899ogZIqLScHlLcc1To9bF6zuWh6MJtTSF9cf4bs9QYlan+vSGKLOGrrv5Z6qtXPitQTvE3VG39mlJQ5fjlW4Bk4rJ2LURXYxDMKlzeV9LCvlztRs4XMUG0SDZcgoCtpSNQaXWqWZWy2Hixrovu1NGi8Hji6bnnohS4=
+	t=1731363494; cv=none; b=lzurSrxXAfexot7tAvRL2uwvsyIVdXzugef8Dgc498Ip2p8A+61UtfRKH6lWS5EM+q5HwWk1qgJPfqrLnFVxzrVkc1tQGOw9pTGgPhYTtrgd0Zzh/nU0x5dTAS0yePfmbbt6kvzMTJoYyzjG+xqbpQXovTsymGaar6tbLHCBh5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731363267; c=relaxed/simple;
-	bh=4e2faVv4xnB+7UV+V5ti1fHu/d/YCpjKrYt+AP58qj0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snJ3Ck9UGwN4YsJr4M8O/80ANhgiPaSDX7gTyrnLo05z15+UDQMfgXknD7xMZiAtnxaWTPhnz0EHCUB1kVkiuXdXOI5+dHvPdKADevdYY72ihtaV0xYq15xeClHR8w1+Aw26GJqJ1IboUWj4qFTbOLRkhvndLAaSU8gDtjtf18o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eNNvI30K; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731363265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=i+vO5Chh4XyZzqgY6wUPooEn0FNBsk5Lf4RjLmwEopI=;
-	b=eNNvI30KWvr8Rj8o5F6SvwT39uqMtzFnPKrutKDyjly3GjJ5NRL+pAI2yCNoZ0lgCShN+i
-	X0EkEJrHSjei5n4X+CieQzeiwFWEjWSXpo9/o1PAxf41CwIciSw6i8d3OLf0wkDd/CTDJp
-	eAg97s56UjbM9qfFxsuVJ1dBfu3q3eY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-u6nWHZo-O4CSV4CEIP_l8Q-1; Mon, 11 Nov 2024 17:14:23 -0500
-X-MC-Unique: u6nWHZo-O4CSV4CEIP_l8Q-1
-X-Mimecast-MFC-AGG-ID: u6nWHZo-O4CSV4CEIP_l8Q
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4327bd6bd60so37777975e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:14:23 -0800 (PST)
+	s=arc-20240116; t=1731363494; c=relaxed/simple;
+	bh=LeGtUiwPp7dUSHOMlblfulJI3szSmMXkY1FNvRIxCQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WYnyaCzCpjLckEOfsrjWSOzZmAnW/PMEoNnXw/GVDw6t48th9OG5TjRZjnPyL1+voLLANKTuhATjXI6k6oTqpJ7NGxekI324zS+THhmOzmCzXa7iTqY4LIbQ2M/KlLMijwZn294eL/biV9O/bYEYGoXvigo76Wc37Y1J5+vophE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHMDFY6m; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4609c9b39d0so34010661cf.1;
+        Mon, 11 Nov 2024 14:18:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731363491; x=1731968291; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4gUTNs8Dh8KbUYmm7/7ZTpr23lbHf0Ptz/iifQK4G1M=;
+        b=MHMDFY6m7G6vtIzw2udhQ8L6GP2g6AAO0oqDFloySKaA75i9bAbceKb2KhrPVBWRfs
+         7i/gtC72AqDD7dyoAfdU8OzzwiRcpe4ION5HMY9C7SGUx0UsvAx2KUd81v0BMndJTx/7
+         7fh26Rf6+xjQrGk0NEQ12cBcEXPSvOP9I5yYMnTV9UQFDRGjcDHG6joickgtOs67OnMJ
+         l1AGLZHaZI80OLScfZtNrKJWKo0z2ygrqPmfWudENKAjFxCO9fwIEuwV1yDn3G840MeD
+         ZRy8YkGvHCqQ5kT76d91Nx9AvoKtg5/kLaGB5PA2eJ1dr7gxCAd65MQnkA7fyP7Szstv
+         az0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731363262; x=1731968062;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=i+vO5Chh4XyZzqgY6wUPooEn0FNBsk5Lf4RjLmwEopI=;
-        b=aOwN+T7EsC13+PeA9gIelz7SC+/W/TOFqIfICpelkfQiRyl3TRiph3HtIGxeyyXE3+
-         Vz/2gQm5h9oJV2LeuLK1g0BAU1Gz//0dioszgcf6PgW9a4+8nTMfzQm5crybn2qbJgB0
-         kkCsVQGYVYhY/CHT362RBx+ZxaqAGyNCAClmgj1pv73avd351kWZXjk2+M9alqQnlEaj
-         nEitZhAuDg9KTXbxL+GnYTAKCvscUrAxqAV/GMCCNIzQQqzqsq1xpmZFozc7VOLE/G54
-         sDQGslhBauBcVLCl5N2zlVPmAnrs/u7xHvpiMbnDRCRpHaAvDqAESy497OwjO/oN3GcA
-         ZIuA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+M+fGS4s7Cvs0McU2D0P4MKFnCbQ0RL91YdSPBz14z3se5KT0qFAhrjTqREfbGdxBhMo9SO7bV5i6rUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzi1BPealr6tHHV926PpObOMTd4g/jP4MV9zHMhQAmTzkZW6KfA
-	mSOaxZXijfbyN4h8ZkxqSVjV1HF/Vfig3uiJVMv6f52JSro0/FlVlmE+PyEt9UnZoyoQ7W7wgMX
-	YAIMouy/53esaBxQ3Rf+okioPa4DJ9TAuA1W08rPNTFZZTWIp8GPDgJNAldxbGA==
-X-Received: by 2002:a05:600c:5493:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-432b7508b8amr127838395e9.19.1731363262564;
-        Mon, 11 Nov 2024 14:14:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGVLiJ0g/s6yUPMim4b3RPUgDEhqfWOalae/b5Xgk//XG5JFwtKRIUcqOjRw8kzwpuRybK1EA==
-X-Received: by 2002:a05:600c:5493:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-432b7508b8amr127837945e9.19.1731363262115;
-        Mon, 11 Nov 2024 14:14:22 -0800 (PST)
-Received: from ?IPV6:2003:cb:c730:4300:18eb:6c63:a196:d3a2? (p200300cbc730430018eb6c63a196d3a2.dip0.t-ipconnect.de. [2003:cb:c730:4300:18eb:6c63:a196:d3a2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa737721sm228937965e9.36.2024.11.11.14.14.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 14:14:21 -0800 (PST)
-Message-ID: <6fbef654-36e2-4be5-906e-2a648a845278@redhat.com>
-Date: Mon, 11 Nov 2024 23:14:19 +0100
+        d=1e100.net; s=20230601; t=1731363491; x=1731968291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4gUTNs8Dh8KbUYmm7/7ZTpr23lbHf0Ptz/iifQK4G1M=;
+        b=k5Sggl2jRNgIzgyJzan3FLC8gWP5bgvOxYLqEwZ4yGzm4K0OFs2eJZh7uqu7pKHCce
+         gh/eBrkkhuw3qcAWkP4/mLxqrxwujz+5vYLiJGT8yyythqkAMmPlpmxlPQIy5yOQwCiF
+         Hep05KMKk0hM/9XWtHfvwjj5eJ+ruqiXcjcxUcOsuwYjQkgpJgc1M8xl8maIygH8qiYd
+         5qr/KnXH93B4kd+JZN6ppEz4m7x1wWpyPBUtt7/m4PchflrzcaC2+n4hcwAIr54ksOs2
+         0llZmDrYfddVKeGfMr3TVVAUWAvLpkzRf4+34b1kBCOTDZZ9xc3PC5zCfNzbNGp+iwLv
+         ViRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWppHIV1dhjhUhp3TWIwv7NhylmPBjsLBlv/msd4E67V36LHk5SuiB89zpaNqekiA4vVNIghIcWxQHaww94@vger.kernel.org, AJvYcCXbCQyMUKerRaoeXZJvnES6z4a3wKmCKTxFgvxdM89CQhiVXHa8XmFP+9lFk96BGQMQ/Fe/mcXsqqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIbqcnr6QRZFmUpt9+ETlNdCOKDKe0BflhAjHPDj8gVX/fJ4hU
+	WseNVnCh6tww9njZLGL6dFv46dALjYjV928gi00dNS/hoBLZEqZOOREzsoJg7afh/mAAIPrgcKo
+	OAEnbvTqU2jB98pWUlcOjfiq9/mo=
+X-Google-Smtp-Source: AGHT+IFBSFXwho3XyINI2DcEU/Xepv/720ecvGA0qvDaPusA/yXsvod0iClvHMK0JEz9Jm2Fdz03yfn9c4Ds8BzAZio=
+X-Received: by 2002:a05:622a:1b1e:b0:461:1475:6135 with SMTP id
+ d75a77b69052e-463093003c5mr217546251cf.1.1731363491551; Mon, 11 Nov 2024
+ 14:18:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/4] Add fbind() and NUMA mempolicy support for KVM
- guest_memfd
-To: Vlastimil Babka <vbabka@suse.cz>, Paolo Bonzini <pbonzini@redhat.com>,
- Matthew Wilcox <willy@infradead.org>, Shivank Garg <shivankg@amd.com>
-Cc: x86@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- jack@suse.cz, akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org, kvm@vger.kernel.org,
- chao.gao@intel.com, pgonda@google.com, thomas.lendacky@amd.com,
- seanjc@google.com, luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, arnd@arndb.de, kees@kernel.org,
- bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- Neeraj.Upadhyay@amd.com, linux-coco@lists.linux.dev
-References: <20241105164549.154700-1-shivankg@amd.com>
- <ZypqJ0e-J3C_K8LA@casper.infradead.org>
- <6004eaa4-934c-48f4-b502-cf7e436462fc@amd.com>
- <ZyzYUOX_r3uWin5f@casper.infradead.org>
- <10ffac79-0dba-4c30-991e-f3ca2b5ff639@redhat.com>
- <ff3174f8-c8b5-4fae-a9d9-87546d37c162@suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ff3174f8-c8b5-4fae-a9d9-87546d37c162@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241111191934.17231-1-jiashengjiangcool@gmail.com>
+ <8505aa28-5f88-4fcd-b3bc-cb5db89d2a08@baylibre.com> <CANeGvZVE6fX5hV-p1xXsGR=Z=pABzDtvV9wY_XBbLwJUWNVtyQ@mail.gmail.com>
+ <b2f6db15-51a8-498d-ab5b-52f0f6a2e098@baylibre.com>
+In-Reply-To: <b2f6db15-51a8-498d-ab5b-52f0f6a2e098@baylibre.com>
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Date: Mon, 11 Nov 2024 17:18:00 -0500
+Message-ID: <CANeGvZW0Ja=pwLuYqZh1KWn3Y7Oany4JvALHWcHoM-jALedSbw@mail.gmail.com>
+Subject: Re: [PATCH v3] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
+To: David Lechner <dlechner@baylibre.com>
+Cc: jic23@kernel.org, lars@metafoo.de, mcoquelin.stm32@gmail.com, 
+	alexandre.torgue@foss.st.com, u.kleine-koenig@baylibre.com, 
+	tgamblin@baylibre.com, fabrice.gasnier@st.com, benjamin.gaignard@linaro.org, 
+	lee@kernel.org, linux-iio@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.11.24 12:02, Vlastimil Babka wrote:
-> On 11/8/24 18:31, Paolo Bonzini wrote:
->> On 11/7/24 16:10, Matthew Wilcox wrote:
->>> On Thu, Nov 07, 2024 at 02:24:20PM +0530, Shivank Garg wrote:
->>>> The folio allocation path from guest_memfd typically looks like this...
->>>>
->>>> kvm_gmem_get_folio
->>>>     filemap_grab_folio
->>>>       __filemap_get_folio
->>>>         filemap_alloc_folio
->>>>           __folio_alloc_node_noprof
->>>>             -> goes to the buddy allocator
->>>>
->>>> Hence, I am trying to have a version of filemap_alloc_folio() that takes an mpol.
->>>
->>> It only takes that path if cpuset_do_page_mem_spread() is true.  Is the
->>> real problem that you're trying to solve that cpusets are being used
->>> incorrectly?
->>
->> If it's false it's not very different, it goes to alloc_pages_noprof().
->> Then it respects the process's policy, but the policy is not
->> customizable without mucking with state that is global to the process.
->>
->> Taking a step back: the problem is that a VM can be configured to have
->> multiple guest-side NUMA nodes, each of which will pick memory from the
->> right NUMA node in the host.  Without a per-file operation it's not
->> possible to do this on guest_memfd.  The discussion was whether to use
->> ioctl() or a new system call.  The discussion ended with the idea of
->> posting a *proposal* asking for *comments* as to whether the system call
->> would be useful in general beyond KVM.
->>
->> Commenting on the system call itself I am not sure I like the
->> file_operations entry, though I understand that it's the simplest way to
->> implement this in an RFC series.  It's a bit surprising that fbind() is
->> a total no-op for everything except KVM's guest_memfd.
->>
->> Maybe whatever you pass to fbind() could be stored in the struct file *,
->> and used as the default when creating VMAs; as if every mmap() was
->> followed by an mbind(), except that it also does the right thing with
->> MAP_POPULATE for example.  Or maybe that's a horrible idea?
-> 
-> mbind() manpage has this:
-> 
->         The  specified  policy  will  be  ignored  for  any MAP_SHARED
-> mappings in the specified memory range.  Rather the pages will be allocated
-> according to the memory policy of the thread that caused the page to be
-> allocated. Again, this may not be the thread that called mbind().
+On Mon, Nov 11, 2024 at 4:15=E2=80=AFPM David Lechner <dlechner@baylibre.co=
+m> wrote:
+>
+> On 11/11/24 2:36 PM, Jiasheng Jiang wrote:
+> > On Mon, Nov 11, 2024 at 2:45=E2=80=AFPM David Lechner <dlechner@baylibr=
+e.com> wrote:
+> >>
+> >> On 11/11/24 1:19 PM, Jiasheng Jiang wrote:
+> >>> Add check for the return value of clk_enable() in order to catch the
+> >>> potential exception.
+> >>>
+> >>> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> >>> ---
+> >>> Changelog:
+> >>>
+> >>> v2 -> v3:
+> >>>
+> >>> 1. Simplify code with cleanup helpers.
+> >>>
+> >>> v1 -> v2:
+> >>>
+> >>> 1. Remove unsuitable dev_err_probe().
+> >>> ---
+> >>
+> >> ...
+> >>
+> >>> @@ -492,21 +495,25 @@ static int stm32_counter_write_raw(struct iio_d=
+ev *indio_dev,
+> >>>               return -EINVAL;
+> >>>
+> >>>       case IIO_CHAN_INFO_ENABLE:
+> >>> -             mutex_lock(&priv->lock);
+> >>> -             if (val) {
+> >>> -                     if (!priv->enabled) {
+> >>> -                             priv->enabled =3D true;
+> >>> -                             clk_enable(priv->clk);
+> >>> -                     }
+> >>> -                     regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_=
+CEN);
+> >>> -             } else {
+> >>> -                     regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR=
+1_CEN);
+> >>> -                     if (priv->enabled) {
+> >>> -                             priv->enabled =3D false;
+> >>> -                             clk_disable(priv->clk);
+> >>> +
+> >>> +             scoped_guard(mutex, &priv->lock) {
+> >>> +                     if (val) {
+> >>> +                             if (!priv->enabled) {
+> >>> +                                     priv->enabled =3D true;
+> >>> +                                     ret =3D clk_enable(priv->clk);
+> >>> +                                     if (ret)
+> >>> +                                             return ret;
+> >>> +                             }
+> >>> +                             regmap_set_bits(priv->regmap, TIM_CR1, =
+TIM_CR1_CEN);
+> >>> +                     } else {
+> >>> +                             regmap_clear_bits(priv->regmap, TIM_CR1=
+, TIM_CR1_CEN);
+> >>> +                             if (priv->enabled) {
+> >>> +                                     priv->enabled =3D false;
+> >>> +                                     clk_disable(priv->clk);
+> >>> +                             }
+> >>>                       }
+> >>>               }
+> >>> -             mutex_unlock(&priv->lock);
+> >>> +
+> >>>               return 0;
+> >>>       }
+> >>
+> >>
+> >> Another way to do this that avoids changing the indent
+> >> so much is placing braces around the case body like this.
+> >> This also avoids the compile error from using guard after
+> >> case directly.
+> >>
+> >>
+> >>         case IIO_CHAN_INFO_ENABLE: {
+> >>                 guard(mutex)(&priv->lock);
+> >>
+> >>                 if (val) {
+> >>                         if (!priv->enabled) {
+> >>                                 priv->enabled =3D true;
+> >>                                 ret =3D clk_enable(priv->clk);
+> >>                                 if (ret)
+> >>                                         return ret;
+> >>                         }
+> >>                         regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1=
+_CEN);
+> >>                 } else {
+> >>                         regmap_clear_bits(priv->regmap, TIM_CR1, TIM_C=
+R1_CEN);
+> >>                         if (priv->enabled) {
+> >>                                 priv->enabled =3D false;
+> >>                                 clk_disable(priv->clk);
+> >>                         }
+> >>                 }
+> >>
+> >>                 return 0;
+> >>         }
+> >>
+> >
+> > Looks great.
+> > But there is no indentation between "switch" and "case".
+> > As a result, the closing braces of "switch" and "case" will
+> > be placed in the same column.
+> >
+> > Like this:
+> >
+> > switch(mask) {
+> > case IIO_CHAN_INFO_ENABLE: {
+> >
+> > }
+> > }
+> >
+> > -Jiasheng
+>
+>
+> Usually, there is a default: case as well, so we could move the
+> final return and make it look like this:
+>
+>         switch (mask) {
+>         case IIO_CHAN_INFO_RAW:
+>                 return regmap_write(priv->regmap, TIM_CNT, val);
+>
+>         case IIO_CHAN_INFO_SCALE:
+>                 /* fixed scale */
+>                 return -EINVAL;
+>
+>         case IIO_CHAN_INFO_ENABLE: {
+>                 guard(mutex)(&priv->lock);
+>                 if (val) {
+>                         if (!priv->enabled) {
+>                                 priv->enabled =3D true;
+>                                 clk_enable(priv->clk);
+>                         }
+>                         regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CE=
+N);
+>                 } else {
+>                         regmap_clear_bits(priv->regmap, TIM_CR1, TIM_CR1_=
+CEN);
+>                         if (priv->enabled) {
+>                                 priv->enabled =3D false;
+>                                 clk_disable(priv->clk);
+>                         }
+>                 }
+>                 return 0;
+>         }
+>                 default:
+>                         return -EINVAL;
+>         }
+>
+>
+> And it is unusual, but I found kvm_arm_pmu_v3_get_attr() that
+> also has this double inline brace at the end of a switch statement.
+>
+>         }
+>         }
+>
+> So even if it doesn't look so nice, it does seem to be the
+> "correct" style.
 
-I recall discussing that a couple of times in the context of QEMU. I 
-have some faint recollection that the manpage is a bit imprecise:
+Thanks, I will submit a v4 patch.
 
-IIRC, hugetlb also ends up using the VMA policy for MAP_SHARED mappings 
-during faults (huge_node()->get_vma_policy()) -- but in contrast to 
-shmem, it doesn't end up becoming the "shared" policy for the file, used 
-when accessed through other VMAs.
-
-> 
-> So that seems like we're not very keen on having one user of a file set a
-> policy that would affect other users of the file?
-
-For VMs in QEMU we really want to configure the policy once in the main 
-process and have all other processes (e.g., vhost-user) not worry about 
-that when they mmap() guest memory.
-
-With shmem this works by "shared policy" design (below). For hugetlb, we 
-rely on the fact that mbind()+MADV_POPULATE_WRITE allows us to 
-preallocate NUMA-aware. So with hugetlb we really preallocate all guest 
-RAM to guarantee the NUMA placement.
-
-It would not be the worst idea to have a clean interface to configure 
-file-range policies instead of having this weird shmem mbind() behavior 
-and the hugetlb hack.
-
-Having that said, other filesystem are rarely used for backing VMs, at 
-least in combination with NUMA. So nobody really cared that much for now.
-
-Maybe fbind() would primarily only be useful for in-memory filesystems 
-(shmem/hugetlb/guest_memfd).
-
-> 
-> Now the next paragraph of the manpage says that shmem is different, and
-> guest_memfd is more like shmem than a regular file.
-> 
-> My conclusion from that is that fbind() might be too broad and we don't want
-> this for actual filesystem-backed files? And if it's limited to guest_memfd,
-> it shouldn't be an fbind()?
-
-I was just once again diving into how mbind() on shmem is handled. And 
-in fact, mbind() will call vma->set_policy() to update the per 
-file-range policy. I wonder why we didn't do the same for hugetlb ... 
-but of course, hugetlb must be special in any possible way.
-
-Not saying it's the best idea, but as we are talking about mmap support 
-of guest_memfd (only allowing to fault in shared/faultable pages), one 
-*could* look into implementing mbind()+vma->set_policy() for guest_memfd 
-similar to how shmem handles it.
-
-It would require a (temporary) dummy VMA in the worst case (all private 
-memory).
-
-It sounds a bit weird, though, to require a VMA to configure this, 
-though. But at least it's similar to what shmem does ...
-
--- 
-Cheers,
-
-David / dhildenb
-
+-Jiasheng
 
