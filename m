@@ -1,284 +1,166 @@
-Return-Path: <linux-kernel+bounces-404420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE61C9C438B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06E649C438C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3914F1F21133
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:26:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E241F21523
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D5F1A7AF5;
-	Mon, 11 Nov 2024 17:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35621A9B43;
+	Mon, 11 Nov 2024 17:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yOHbkUY0"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1aB2vl0z"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EC91A706A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EB61A08DF
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346000; cv=none; b=WFeES8400QPrSAF/j0X65C+E5rtKHHq6f4GKRE5ahgqc0Qo/sJN1Z8G27sXqW+/Pb0511ak5QGok1BwiQGkq74QuhqNzRq1uVvh9A5tcM1aeJOPHvXUNJ2rEfriD/YMqkMxNBQhhsQQE25rpnFG0uVQzNcKKF9cHF2iAkXsSlYA=
+	t=1731346008; cv=none; b=OnEJC55vdJzxqOgDvFO/I5dHsRmdbfTj8CUXOcU7mscOj1HguqzsPOy42FSkaF1wxLPaP5hvlAKSklKiFj+uOyVS+2VuRFkU42tFoV/S3tULOmPAn8SoulVWRnobp37pOJrT41YNWj+R1g9Vi2zajZ/BOYQzn9OSkOfeMc/zvNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346000; c=relaxed/simple;
-	bh=5qMqmgSZz1CgtaYeiDnJYb17IEvFM3Wt3+ze2QJ7Csc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JF3py27pPhXmioBPx69vPu8fGMA9/E4+p9DYSTdkJ8iTEUahmqqF4C61D3TtY2iOiqK3rNsaoAXlNWp1oqrahFhvFzqXsSZYt4FLBVSeqKo/V4Gdoyw0HX2b/Ne5it8BbWx4IH9GUI+BIMZ1LPs+DyHX5lCWTdSLECT4T4qSvWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yOHbkUY0; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1731346008; c=relaxed/simple;
+	bh=23WrqE374qcPavVAt8ak/FTD8NqfQn53RxX/2JCrZmM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ch+VrBYSasjzI3lKYSRVlkqruCM8Ppc6hYJ6hnwuKgj+5Yuijgayn1i9pJaR/6gLCJr7j6p5Wz/e0dhtcZOwSmD0l3Jqj/yNotSXa7omJt8HZNbg55D8FMdRksYRNu776ir43+5Hyx0zcJEVz6bElJBYebtpdK7OeZpbk2e2bzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1aB2vl0z; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c87b0332cso334855ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:26:38 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3705b2883so83577247b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:26:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731345998; x=1731950798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BtHqIQ077NK/Kpw1yOeqFT7YzM6NTkAZYzpUap4JxFE=;
-        b=yOHbkUY0Ye2Hu7YH0XZFbDy5UrcVv/JXfW1rspInYnwbd6o7v0woWsBGKfVgO6aEi+
-         9OnSP1r7zZR69yrtiGP9G2QhyPqE9PI6C9upl2xp3btGkd5wkHwcPFxg9a65Won0xZad
-         IN0Y9aJQAbJAlLLDwYiDPsuNkNQN6N+8wkQlWfU86TCP4thC2bnpKLcz6wIDiI1VHkNV
-         TwLRprwgikEyi3ccYFrh+IQSBJdeg1yyGcy1CUcWUSUmeTi1Hh++rluADVUhaENDvJqA
-         Tic8CltuXR4qr43ANpJ1lx/4Pr2RDZYErwOu3ot3bnERbbOen+XYbgp1mGN8hQS5oQTW
-         9Owg==
+        d=google.com; s=20230601; t=1731346006; x=1731950806; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFNzzBptbqFMn5hbeVzVEvhXPizvBNs5CQtEzxCma9I=;
+        b=1aB2vl0zUTiRw/c861HhWUMHfQD0RF/hSG/RUB66+azolO2oKnW4HEkRl0ND8+1nBg
+         XHItKAJGGobjimfyhIZeTI21nIgyhzrRkzzdwfUI+pbKxayuZ41c2keaYnYWFfT2bjU0
+         kY77QegWCAdIJc+F6NyPMR8jV2DH21jEGgzZK6jMsOy7PvbBSpBH66Yc5P62SFjps1Sy
+         xdcr7o+2yd1gDKApwo2DoN9VKsL8OCVjX3XU/M0OC04IBa9Rz5yiFQEGNXFWN6l1ki5E
+         6LjC/3kET0ZEm67+KBnmszEuDjGkmHP0fxuZAsT2ioUMc0qbcXwd1u2u2F8YkLDTPgu4
+         jBZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731345998; x=1731950798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BtHqIQ077NK/Kpw1yOeqFT7YzM6NTkAZYzpUap4JxFE=;
-        b=E70jG9Nho4TYxAKIOsEeG/db4AL4C7KLqqxzmY+H6VYIXDlJdIiszKIyO8llWymx6c
-         mIEKbPyMxQv9UdddmTlEcvYETndN9jtVHaGL9/ATFfla0W+ogcs2iBtkb8KN1HQRGi1x
-         zgOzb056pIHXEKy3E6R+L4eK4aqXkpHg8zg9Z8OQGU6ySgAskvWBcfsuOACi3aOlk6SM
-         +X/HZDasA7KXM2KOSotN/HAyjH0tJekBBGRGULJBwNhzh5+kH45dCDcW7M5Pbaz/272+
-         J8elgo6f0CySynDkVZSnGKfXGHWpGDPFyyLo/Wtt4Y5QTHaArGBo/NpmjnwIpQ4fxbEB
-         NS0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXGkq2PCIz+GWC7rns4EgEH+YOJFWFeYqLJfYjEKTBWDPNyrTOB0J0wlA+tncW9HJQJ5nRZFilTKruQpHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQNvu49y8sdg9TSne899YL0j39lYAb8AMWx+59AKKPpy+Z4Odh
-	7wvyXjrTKdINN73sO+TlG673vf+g9+r9Wa9p7UfuhS1o7JgWp3thN4FBbzovUiq/y8YZJdFteL9
-	PGlU1pQw4eLWXK5eIYp69owAoa2kgzlI1t5EK
-X-Gm-Gg: ASbGncsi41pSoQYapEOWBDNBQuB/68ZICMUuAMlP2RFoTDVXSOvcBHeS46Dx4lY48rN
-	3/ERrv9Wsu5fPgD0u+6bm923TDuwUNVbSDS1wQkinkP8kFcmTKIDX+2bbh2kuD1I=
-X-Google-Smtp-Source: AGHT+IHgErp88bOMfE1J3Q01M453IP2j5pUxjRlUV6LMT18h2fTc3RLfhl4aFLhattLgSrBW2Nw7RxJj79FiohU74yA=
-X-Received: by 2002:a17:902:ecd1:b0:20b:6c3c:d495 with SMTP id
- d9443c01a7336-2118f1d2446mr3763045ad.25.1731345997997; Mon, 11 Nov 2024
- 09:26:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731346006; x=1731950806;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFNzzBptbqFMn5hbeVzVEvhXPizvBNs5CQtEzxCma9I=;
+        b=X5OOpuGJE6TpaVVOim6PeUlMx7p+V8D29w0Q3UDX/imLYag+lSMOK2RC8kKP+NaBcd
+         IuEwR8SEfbKVWCX28BTIDld3Bbhe8bf4hSmNbb3XfKMKVeSFbUH4Dpc8eOWUSgGfYdrh
+         ahmgulRLBVHNwHtRw7k9RKmLpkyACU4sztLis2ekBn9B+scMb7eWvL2Pgdcp5gxiW1U9
+         jrk+x+vlfA1Ook5Nsc8wh0bc/flSG4RgeF20Nd49LF5uciWoje4BqGGDXZpF4Ly++ni9
+         GACpSWrPcV70Uh8FcFSRq4N7zxwKbY9xcdfBo05B3IM+ClzsCUfQOJXKcdq546QLf+OX
+         rh6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWxkD5kVHlXAVXH9NfwU5ILlRyVgom2oaKoH1I15+s2AuCqVoOj2s8/+AjaF2yCI/1jUIY1E+V2mYKcDkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrInKjq/pJelXIiB0Lr97+VO72vbIJFOck5axov0QYfOmfgHLF
+	aw/wJvejiIkeWtyKDlnbzkYXtKTNC1sUzI+gqdHTWCy0uLJbhjq4B/68c0qwTUENDLwG0CSi6Dz
+	K1A==
+X-Google-Smtp-Source: AGHT+IEImE/FFMrQDP3H8KYOmoDoy1BC8s/LYapy2rg6qs6vaGT8I3mAESoIofDSpW3UbZ66iGTODCiktXk=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:3688:b0:6ea:fa4:a365 with SMTP id
+ 00721157ae682-6eaddfec9efmr925017b3.8.1731346005823; Mon, 11 Nov 2024
+ 09:26:45 -0800 (PST)
+Date: Mon, 11 Nov 2024 09:26:44 -0800
+In-Reply-To: <20241111125219.361243118@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241109160219.49976-1-irogers@google.com> <bfba7266-1903-41ca-9961-aa449f982912@linux.intel.com>
- <CAP-5=fWxMzCDQ7v1W_gMN-Yaz4yiam=5vOc8+bter0vF4cbV+Q@mail.gmail.com> <4d5d2514-8378-4b0f-b58f-45dcd239ea51@linux.intel.com>
-In-Reply-To: <4d5d2514-8378-4b0f-b58f-45dcd239ea51@linux.intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 09:26:26 -0800
-Message-ID: <CAP-5=fWsmZPxTqCK7w=9+WqeP_VQy0kE5Pi3P34Tn3EDo+Aa2Q@mail.gmail.com>
-Subject: Re: [PATCH v1] perf test: Add a runs-per-test flag
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@linaro.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20241111115935.796797988@infradead.org> <20241111125219.361243118@infradead.org>
+Message-ID: <ZzI-VHh0GpBUph3l@google.com>
+Subject: Re: [PATCH v2 12/12] x86/kvm/emulate: Avoid RET for fastops
+From: Sean Christopherson <seanjc@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: pbonzini@redhat.com, jpoimboe@redhat.com, tglx@linutronix.de, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org, 
+	jthoughton@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Nov 11, 2024 at 9:14=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
-om> wrote:
->
->
->
-> On 2024-11-11 11:10 a.m., Ian Rogers wrote:
-> > On Mon, Nov 11, 2024 at 7:52=E2=80=AFAM Liang, Kan <kan.liang@linux.int=
-el.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2024-11-09 11:02 a.m., Ian Rogers wrote:
-> >>> To detect flakes it is useful to run tests more than once. Add a
-> >>> runs-per-test flag that will run each test multiple times.
-> >>>
-> >>> Signed-off-by: Ian Rogers <irogers@google.com>
-> >>> ---
-> >>>  tools/perf/tests/builtin-test.c | 38 ++++++++++++++++++++-----------=
---
-> >>>  1 file changed, 23 insertions(+), 15 deletions(-)
-> >>>
-> >>> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/built=
-in-test.c
-> >>> index d2cabaa8ad92..574fbd5caff0 100644
-> >>> --- a/tools/perf/tests/builtin-test.c
-> >>> +++ b/tools/perf/tests/builtin-test.c
-> >>> @@ -42,6 +42,8 @@
-> >>>  static bool dont_fork;
-> >>>  /* Fork the tests in parallel and wait for their completion. */
-> >>>  static bool sequential;
-> >>> +/* Numer of times each test is run. */
-> >>> +static unsigned int runs_per_test =3D 1;
-> >>>  const char *dso_to_test;
-> >>>  const char *test_objdump_path =3D "objdump";
-> >>>
-> >>> @@ -490,10 +492,10 @@ static int __cmd_test(struct test_suite **suite=
-s, int argc, const char *argv[],
-> >>>                               len =3D strlen(test_description(*t, sub=
-i));
-> >>>                               if (width < len)
-> >>>                                       width =3D len;
-> >>> -                             num_tests++;
-> >>> +                             num_tests +=3D runs_per_test;
-> >>>                       }
-> >>>               } else {
-> >>> -                     num_tests++;
-> >>> +                     num_tests +=3D runs_per_test;
-> >>>               }
-> >>>       }
-> >>
-> >> Seems we just need to calculate the num_tests once at the end for each
-> >> loop. Something as below may works. (not tested)
-> >>
-> >> @@ -482,20 +490,19 @@ static int __cmd_test(struct test_suite **suites=
-,
-> >> int argc, const char *argv[],
-> >>
-> >>         for (struct test_suite **t =3D suites; *t; t++) {
-> >>                 int len =3D strlen(test_description(*t, -1));
-> >> +               int subi =3D 0, subn =3D 1;
-> >>
-> >>                 if (width < len)
-> >>                         width =3D len;
-> >>
-> >>                 if (has_subtests(*t)) {
-> >> -                       for (int subi =3D 0, subn =3D num_subtests(*t)=
-; subi
-> >> < subn; subi++) {
-> >> +                       for (subn =3D num_subtests(*t); subi < subn; s=
-ubi++) {
-> >>                                 len =3D strlen(test_description(*t, su=
-bi));
-> >>                                 if (width < len)
-> >>                                         width =3D len;
-> >> -                               num_tests++;
-> >>                         }
-> >> -               } else {
-> >> -                       num_tests++;
-> >>                 }
-> >> +               num_tests +=3D subn * runs_per_test;
-> >>         }
-> >>         child_tests =3D calloc(num_tests, sizeof(*child_tests));
-> >>         if (!child_tests)
-> >
-> > It's basically the same thing, instead of doing increments and then
-> > multiplying by runs_per_test you just add on runs_per_test and avoid
-> > the multiply.
->
-> The "else" should be unnecessary either. But the above is just a nit.
->
-> >
-> >>>       child_tests =3D calloc(num_tests, sizeof(*child_tests));
-> >>> @@ -556,21 +558,25 @@ static int __cmd_test(struct test_suite **suite=
-s, int argc, const char *argv[],
-> >>>                       }
-> >>>
-> >>>                       if (!has_subtests(*t)) {
-> >>> -                             err =3D start_test(*t, curr, -1, &child=
-_tests[child_test_num++],
-> >>> -                                              width, pass);
-> >>> -                             if (err)
-> >>> -                                     goto err_out;
-> >>> +                             for (unsigned int run =3D 0; run < runs=
-_per_test; run++) {
-> >>> +                                     err =3D start_test(*t, curr, -1=
-, &child_tests[child_test_num++],
-> >>> +                                                     width, pass);
-> >>> +                                     if (err)
-> >>> +                                             goto err_out;
-> >>> +                             }
-> >>>                               continue;
-> >>>                       }
-> >>> -                     for (int subi =3D 0, subn =3D num_subtests(*t);=
- subi < subn; subi++) {
-> >>> -                             if (!perf_test__matches(test_descriptio=
-n(*t, subi),
-> >>> -                                                     curr, argc, arg=
-v))
-> >>> -                                     continue;
-> >>> -
-> >>> -                             err =3D start_test(*t, curr, subi, &chi=
-ld_tests[child_test_num++],
-> >>> -                                              width, pass);
-> >>> -                             if (err)
-> >>> -                                     goto err_out;
-> >>> +                     for (unsigned int run =3D 0; run < runs_per_tes=
-t; run++) {
-> >>> +                             for (int subi =3D 0, subn =3D num_subte=
-sts(*t); subi < subn; subi++) {
-> >>> +                                     if (!perf_test__matches(test_de=
-scription(*t, subi),
-> >>> +                                                                    =
- curr, argc, argv))
-> >>> +                                             continue;
-> >>> +
-> >>> +                                     err =3D start_test(*t, curr, su=
-bi, &child_tests[child_test_num++],
-> >>> +                                                     width, pass);
-> >>> +                                     if (err)
-> >>> +                                             goto err_out;
-> >>> +                             }
-> >>
-> >> Can we add a wrapper for the start_test()? Something similar to below?
-> >> It avoids adding the loop for every places using the start_test.
-> >>
-> >> +static int start_test(struct test_suite *test, int i, int subi, struc=
-t
-> >> child_test **child,
-> >> +               int width, int pass)
-> >> +{
-> >> +       for (unsigned int run =3D 0; run < runs_per_test; run++) {
-> >> +               __start_test();
-> >> +       }
-> >> +}
-> >
-> > I think the issue is the code has become overly indented.
->
-> And duplication.
+KVM: x86:
 
-Agreed. Do we want the runs-per-test feature without me overhauling
-all of this? I'm not going to have time any time soon.
+On Mon, Nov 11, 2024, Peter Zijlstra wrote:
+> Since there is only a single fastop() function, convert the FASTOP
+> stuff from CALL_NOSPEC+RET to JMP_NOSPEC+JMP, avoiding the return
+> thunks and all that jazz.
+> 
+> Specifically FASTOPs rely on the return thunk to preserve EFLAGS,
+> which not all of them can trivially do (call depth tracing suffers
+> here).
 
-> > Having a
-> > start_test function that starts some number of tests feels less than
-> > intention revealing. Perhaps (in the future I'd like to tackle other
-> > things for now, such as new TMAs :-) ) we can create all the child
-> > tests in one pass, then just have start_test and finish_test work with
-> > the child tests.
->
-> It may be easier to understand if we have both start_mul/all_tests() and
-> start_single_test().
->
-> > (Off topic) Something else I'd like is to move the
-> > slower running tests to the end of the list of tests so you can see
-> > the earlier results while waiting.
->
-> I'm not sure how useful it is. But for me, I always wait for all the
-> tests complete, no matter how fast the results of the first several
-> cases shows.
+Maybe add an example?  Mostly as a reminder of how to reproduce the call depth
+issues.
 
-Agreed. The issue for me is I tend to run with `perf test -v`, the
-single verbose means report the error from failing tests only. Some
-tests, like testing all metrics, generate 100s of lines of output and
-you may lose test output if you don't have enough shell history. It's
-nice to see in cases like that, that the regular tests passed. Perhaps
-we should also capture test output to a file. That reminds me that I
-wish `perf test list` wrote to stdout rather than stderr, but no doubt
-"fixing" that would lead to complaints about breaking compatibility
-:-/
+  E.g. booting with "retbleed=force,stuff spectre_v2=retpoline,generic" causes
+  KVM-Unit-Test's "emulator" test to fail due to flags being clobbered.
 
-Thanks,
-Ian
+> Objtool strenuously complains about this:
+> 
+>  - indirect call without a .rodata, fails to determine JUMP_TABLE,
+>    annotate
+>  - fastop functions fall through, exception
+>  - unreachable instruction after fastop_return, save/restore
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+The original patch works, but with the fixup KVM fails emulation of an ADC and
+generates:
+
+  ------------[ cut here ]------------
+  Unpatched return thunk in use. This should not happen!
+  WARNING: CPU: 4 PID: 1452 at arch/x86/kernel/cpu/bugs.c:3063 __warn_thunk+0x26/0x30
+  Modules linked in: vhost_net vhost vhost_iotlb tap kvm_intel kvm
+  CPU: 4 UID: 1000 PID: 1452 Comm: qemu Not tainted 6.12.0-rc5-22582d7d68a6-rev/fastops-miti #11
+  Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+  RIP: 0010:__warn_thunk+0x26/0x30
+  Code: 5e ff 7e 05 0f 1f 44 00 00 80 3d 5d 06 5c 01 00 74 05 e9 bd 7d a0 00 48 c7 c7 10 4a 13 82 c6 05 48 06 5c 01 01 e8 31 48 04 00 <0f> 0b e9 a3 7d a0 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90
+  RSP: 0018:ffffc90001743c78 EFLAGS: 00010287
+  RAX: 0000000000000000 RBX: ffff88811877a040 RCX: 0000000000000027
+  RDX: ffff88846f91b208 RSI: 0000000000000001 RDI: ffff88846f91b200
+  RBP: ffffc90001743cc8 R08: ffffffff825195c8 R09: 0000000000000003
+  R10: ffffffff824395e0 R11: ffffffff824e95e0 R12: 0000000000000000
+  R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  FS:  00007f3027400700(0000) GS:ffff88846f900000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: 00007f3029ba3001 CR3: 000000010cdc0000 CR4: 0000000000352eb0
+  Call Trace:
+   <TASK>
+   ? __warn+0x85/0x120
+   ? __warn_thunk+0x26/0x30
+   ? report_bug+0x17d/0x190
+   ? handle_bug+0x53/0x90
+   ? exc_invalid_op+0x14/0x70
+   ? asm_exc_invalid_op+0x16/0x20
+   ? __warn_thunk+0x26/0x30
+   ? __warn_thunk+0x26/0x30
+   warn_thunk_thunk+0x16/0x30
+   ? __kvm_mmu_topup_memory_cache+0x57/0x150 [kvm]
+   init_emulate_ctxt+0xae/0x110 [kvm]
+   x86_decode_emulated_instruction+0x25/0x80 [kvm]
+   x86_emulate_instruction+0x2cb/0x6f0 [kvm]
+   vmx_handle_exit+0x394/0x6e0 [kvm_intel]
+   kvm_arch_vcpu_ioctl_run+0xf40/0x1db0 [kvm]
+   kvm_vcpu_ioctl+0x2e9/0x870 [kvm]
+   ? futex_wake+0x81/0x180
+   ? call_depth_return_thunk+0x6c/0x90
+   ? call_depth_return_thunk+0x66/0x90
+   ? call_depth_return_thunk+0x60/0x90
+   ? call_depth_return_thunk+0x5a/0x90
+   __x64_sys_ioctl+0x8a/0xc0
+   do_syscall_64+0x5b/0x170
+   entry_SYSCALL_64_after_hwframe+0x71/0x79
+  RIP: 0033:0x7f30290cedeb
+  Code: 0f 92 c0 84 c0 75 b0 49 8d 3c 1c e8 ff 47 04 00 85 c0 78 b1 48 83 c4 08 4c 89 e0 5b 41 5c c3 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a0 ff ff ff f7 d8 64 89 01 48
+  RSP: 002b:00007f30273ff748 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+  RAX: ffffffffffffffda RBX: 000000000000ae80 RCX: 00007f30290cedeb
+  RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 000000000000000e
+  RBP: 0000555587e2f1e0 R08: 00007f302923fc10 R09: 0000000000000000
+  R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+  R13: 00007f3029b90780 R14: 00007ffea5ab9640 R15: 00007f30273ffa00
+   </TASK>
+  ---[ end trace 0000000000000000 ]---
 
