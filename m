@@ -1,192 +1,197 @@
-Return-Path: <linux-kernel+bounces-404344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 213EB9C42A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:28:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7811E9C42A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:30:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58C61F2615F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06AE21F231EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC261A3029;
-	Mon, 11 Nov 2024 16:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4260D1A0BD7;
+	Mon, 11 Nov 2024 16:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TIqWgZ8l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="vVBPWXGW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lygO0h6i"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7A31A2632;
-	Mon, 11 Nov 2024 16:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6217D1448C1;
+	Mon, 11 Nov 2024 16:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731342464; cv=none; b=G9ITF7HXZoYKYh5CfbQUG2j7OINisz0Ru5WaMIAQs/oArH8xS9jm4Djw9m02oBmPtmZCqrZ6YRLgqvG+dVZMo4PdTgiOvtjO0DEpozs4qdyMzS4vJb6QYdnkP+eMu6TVFuWSsJ2szBQ26x3ngr808jPKkI53Yrh+toILVw+pzFk=
+	t=1731342595; cv=none; b=B6jmR+ZkMqhi/3Z8p6V28V5ryJMp78sp+aHoQLSlES+Ya1Ld5hhLwkLvAeF/frV5j06cF9ZRKmsq/4uXyQqv/IYVAQ6CZwq4R6AwSxcpCfCNKiylyf7GduCZ2gNNBJwOlZl6lajix6C0Tc2695kZgU5R/87XrsP8K0qVnAEMyX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731342464; c=relaxed/simple;
-	bh=j6L1qp/9wGYf3uO7xJlbRXhFjE9j2olPU53j9pv/rFU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SNW+lsxQ4Mk2LLOOGQl/ph2Oc88uqu9WATmXhYP4Y4mZMBb0IpBRANz5Ta+yv4iTw2MHBz2fm54SJ7l31+R7UYoCJv3ZEWlhu5sWaSfh5Rsfg2fynZR3Om7WSiPqC4iHfs7ssMHmUmPqosNa7oNUhk00IM59AOnqyFkPCxReEmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TIqWgZ8l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24CB9C4CED5;
-	Mon, 11 Nov 2024 16:27:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731342463;
-	bh=j6L1qp/9wGYf3uO7xJlbRXhFjE9j2olPU53j9pv/rFU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=TIqWgZ8lKOQfI83/+QAI9IB9tDiwmnDToy97b0xH05jYhwN1VDHTTt06zuQM8QnAC
-	 NGy2y+1eVD3KmlDje55FBbqTfoQypBdOEXph5I3Ba1Cov3FUTpVjfy1j2TWNSA4mWb
-	 srfLCpDscD1TgNus/FVY4ECuJt3AxDHJEN1UYeMdRE2IcgSqwuoX3dGzTMgzcbBB54
-	 W4mmSE+P1X22mZRCoXD4ckIwhqKxMCWymZnYa+2l05r/tPvUMBXH9zFOUbHKPAAIM6
-	 47C7uRHnNphVd+NEO3G6gwR8mWy/7hTXkVYw3ftgdnmYBBLHC3SPKkpKKI6jcMw90h
-	 CuQNXdZ5HJ31A==
-Message-ID: <f4d40908f4a32441b870cb995a34408be1a5b184.camel@kernel.org>
-Subject: Re: [PATCH v2] nfsd: drop inode parameter from
- nfsd4_change_attribute()
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Neil Brown <neilb@suse.de>, Olga Kornievskaia <okorniev@redhat.com>, Dai
- Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
- linux-nfs@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Mon, 11 Nov 2024 11:27:41 -0500
-In-Reply-To: <ZzIwJXZvLpwt+ENh@tissot.1015granger.net>
-References: <20241111-master-v2-1-e0a52a156a03@kernel.org>
-	 <ZzIwJXZvLpwt+ENh@tissot.1015granger.net>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1731342595; c=relaxed/simple;
+	bh=V6+O62JIiZCefN8Y8m3TfT6982eYu19JQLAO0TTpo00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OAgIkX2bpeCNs4FnugnY0Ol4u+zlvpZNspBf5C5DEC1bm62CRKwWckulavx9IPLNEY1BJjwYZe+dFhGOw3cnSKcALBxHGr3lHqMV0MsWCqcHKUu7lFA7+IUdoqHQE35Lo2a+/cFBkl4M5EZEWFvgdW2gjQf6GiXoyjwyaqlzWIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=vVBPWXGW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lygO0h6i; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6EEA91380687;
+	Mon, 11 Nov 2024 11:29:51 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-08.internal (MEProxy); Mon, 11 Nov 2024 11:29:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1731342591; x=
+	1731428991; bh=ghB/11Aswprc8zwkP+jhTIoBLnJ8zHQI/9i63LpDVIw=; b=v
+	VBPWXGWMIhdlSBeHsMrTohRJoM9UYbz9S602/raXt/v2wnuBeCIAwo6MOfSiehxJ
+	Lffdqj17L3fmXJ8RWxe1JE6yEoMaaOZGayZXqKGYrKwYAMgerAJn89Ub4vNOLlH3
+	Uv6tQDTmh4AqsgZyLV7oFDSpO8le8Ty+LxkIgve1oLAbZ8XZ6Sb9CSuDJGgpIIeU
+	Wc6HwsyXiLWG7qYJ9iBaJ2GkyXMRVYnwSiGsXlzUHkKUFX7lEV9ap6lCcuZQ66OM
+	wDfp3krIPZdEChaQIT8Au+ki2haIFYrUPpEVToaNcn89geVkW41fFRfXKcb4PDGO
+	q/4iFYcOGHLKgMH9FUlSA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731342591; x=1731428991; bh=ghB/11Aswprc8zwkP+jhTIoBLnJ8zHQI/9i
+	63LpDVIw=; b=lygO0h6iu5AaCpwhuYj6D2rFfQ8oI+8CBZC3IHlHCUQEWl0XEMe
+	O8uvskoLqrfdufaaWl4GDGOmhBjfUT5LhJAeMshlpjAdPli+B8YeNWNbVygWrRbB
+	o4hz79TABlCH4c0ADNIvsFA+fbIfmt/RTj67htJXyCX2VXsYu2qyQMMX7JPAxXe2
+	SsSdX1ON8AKpG3eAe4pVLtkA8He9xKQa7AlknenjpObi0nqBPjdzjvAezHqiGsa5
+	XpJR9XOpTpNe+Mh7cjnFwjyg+b1V5TvAK82AAMx2kp5zkOxxf/i9fmhV7kCXnHHU
+	owZoxwdd/0yqJgao43laGnuB6SxeBKMlDyQ==
+X-ME-Sender: <xms:_jAyZ7QAEzFbsTLZQgAMiaZAexq3jmH4KJ2U8Tg26Xa204ECTlsu_A>
+    <xme:_jAyZ8wgn_1eT9sc21RIcgoxwkDUJxlOqfl8c4Xjl65YT-gBujZwSOVSuP2VziJK1
+    TapehLHA82HNXLbTuA>
+X-ME-Received: <xmr:_jAyZw2XqA-0_-QFebNTZ_x5lwnEUTZm_uL-fwJOYG0JTWoS4HgmzqXkhY43GaDPVCj7Ug>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdekkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
+    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
+    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
+    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
+    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
+    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
+    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
+    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
+    sehinhhfrhgruggvrggurdhorhhg
+X-ME-Proxy: <xmx:_jAyZ7BqXe3MZEahxAAhi0bZXQ6FHfB19eriQGaKb_C_5k5h29Ho7A>
+    <xmx:_jAyZ0hRJDUYZXjw_0X_dPw81VFtHtPsDaXrOd6sI8M-xwbi2FbPtg>
+    <xmx:_jAyZ_rnwyA5mkhpTuHKmXTwT4GOCzzDP3k5dNVyEjDekKWIYlJRSA>
+    <xmx:_jAyZ_jy6Q4QhMqmOnt7CKK2F2PMXCn6FAr-2DNSKf16LKQarK8m2w>
+    <xmx:_zAyZwh2gvK-KIvzOl_l5p-9pmFTygYPObx6nZsWZnIFGxDFxlpkSNIG>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Nov 2024 11:29:48 -0500 (EST)
+Date: Mon, 11 Nov 2024 18:29:44 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
+	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <j3ob6sbdi4aeiomhnleyic3lyig6oglk4mynibczhqjxbhhb2n@2hsnsn3mxyxq>
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
+ <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
+ <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
+ <9f86d417-9ae7-466e-a48f-27c447bb706d@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f86d417-9ae7-466e-a48f-27c447bb706d@kernel.dk>
 
-On Mon, 2024-11-11 at 11:26 -0500, Chuck Lever wrote:
-> On Mon, Nov 11, 2024 at 11:01:13AM -0500, Jeff Layton wrote:
-> > The inode that nfs4_open_delegation() passes to this function is
-> > wrong, which throws off the result. The inode will end up getting a
-> > directory-style change attr instead of a regular-file-style one.
-> >=20
-> > Fix up nfs4_delegation_stat() to fetch STATX_MODE, and then drop the
-> > inode parameter from nfsd4_change_attribute(), since it's no longer
-> > needed.
-> >=20
-> > Fixes: c5967721e106 ("NFSD: handle GETATTR conflict with write delegati=
-on")
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> > This version should apply cleanly to v6.12-rc7. Some later patches in
-> > nfsd-next might need to be twiddled as a result, but it should be simpl=
-e
-> > to fix. Also, I fixed up the Fixes: to point to the right commit. This
-> > dates back a bit further than I had originally thought.
->=20
-> Ah. The Fixes: change makes this interesting. If we're not
-> addressing a fix that is limited to in 12-rc, then I lean more
-> towards getting this in via a normal merge window.
->=20
+On Mon, Nov 11, 2024 at 08:57:17AM -0700, Jens Axboe wrote:
+> On 11/11/24 8:51 AM, Kirill A. Shutemov wrote:
+> > On Mon, Nov 11, 2024 at 08:31:28AM -0700, Jens Axboe wrote:
+> >> On 11/11/24 8:25 AM, Kirill A. Shutemov wrote:
+> >>> On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
+> >>>> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
+> >>>>>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+> >>>>>>  			}
+> >>>>>>  		}
+> >>>>>>  put_folios:
+> >>>>>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
+> >>>>>> -			folio_put(fbatch.folios[i]);
+> >>>>>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+> >>>>>> +			struct folio *folio = fbatch.folios[i];
+> >>>>>> +
+> >>>>>> +			if (folio_test_uncached(folio)) {
+> >>>>>> +				folio_lock(folio);
+> >>>>>> +				invalidate_complete_folio2(mapping, folio, 0);
+> >>>>>> +				folio_unlock(folio);
+> >>>>>
+> >>>>> I am not sure it is safe. What happens if it races with page fault?
+> >>>>>
+> >>>>> The only current caller of invalidate_complete_folio2() unmaps the folio
+> >>>>> explicitly before calling it. And folio lock prevents re-faulting.
+> >>>>>
+> >>>>> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
+> >>>>> also mark the page accessed.
+> >>>>
+> >>>> Ok thanks, let me take a look at that and create a test case that
+> >>>> exercises that explicitly.
+> >>>
+> >>> It might be worth generalizing it to clearing PG_uncached for any page cache
+> >>> lookups that don't come from RWF_UNCACHED.
+> >>
+> >> We can do that - you mean at lookup time? Eg have __filemap_get_folio()
+> >> do:
+> >>
+> >> if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
+> >> 	folio_clear_uncached(folio);
+> >>
+> >> or do you want this logic just in filemap_read()? Arguably it should
+> >> already clear it in the quoted code above, regardless, eg:
+> >>
+> >> 	if (folio_test_uncached(folio)) {
+> >> 		folio_lock(folio);
+> >> 		invalidate_complete_folio2(mapping, folio, 0);
+> >> 		folio_clear_uncached(folio);
+> >> 		folio_unlock(folio);
+> >> 	}
+> >>
+> >> in case invalidation fails.
+> > 
+> > The point is to leave the folio in page cache if there's a
+> > non-RWF_UNCACHED user of it.
+> 
+> Right. The uncached flag should be ephemeral, hitting it should be
+> relatively rare. But if it does happen, yeah we should leave the page in
+> cache.
+> 
+> > Putting the check in __filemap_get_folio() sounds reasonable.
+> 
+> OK will do.
+> 
+> > But I am not 100% sure it would be enough to never get PG_uncached mapped.
+> > Will think about it more.
+> 
+> Thanks!
+> 
+> > Anyway, I think we need BUG_ON(folio_mapped(folio)) inside
+> > invalidate_complete_folio2().
+> 
+> Isn't that a bit rough? Maybe just a:
+> 
+> if (WARN_ON_ONCE(folio_mapped(folio)))
+> 	return;
+> 
+> would do? I'm happy to do either one, let me know what you prefer.
 
-Ok.
+I suggested BUG_ON() because current caller has it. But, yeah, WARN() is
+good enough.
 
-> Also, it's pretty late in the -rc window to take fixes that are more
-> than a few lines. I would like to see changes like this get some
-> time in linux-next etc etc (which it has already done for v6.13, but
-> would be difficult to guarantee for v6.12-rc at this point).
->=20
-> So then that changes my concern about this to only reducing the
-> number of pre-requisite patches that will need to be backported to
-> cleanly apply this fix to LTS kernels.
->=20
-> So about this:
->=20
->  - Apply this version of the patch to nfsd-next, but earlier in the
->    series
->=20
->  - Fix up the later patches, as you mentioned above
->=20
->  - Then let automation grab it for LTS 6.11 and 6.12
->=20
-> Does that sound over-caffeinated, or would you be OK if I reordered
-> nfsd-next as described here?
->=20
-
-That sounds fine to me.
-
---=20
-Jeff Layton <jlayton@kernel.org>
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
