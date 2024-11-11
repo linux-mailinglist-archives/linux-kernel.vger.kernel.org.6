@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-404701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53DA9C46FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:38:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A90A99C46FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DAC91F23350
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6169C1F2188E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79628145346;
-	Mon, 11 Nov 2024 20:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52431B1D61;
+	Mon, 11 Nov 2024 20:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+ImfXkP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWXc5pWh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201213A250;
-	Mon, 11 Nov 2024 20:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E32713A250;
+	Mon, 11 Nov 2024 20:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357485; cv=none; b=hvsUtYEtxNQeSPuzh+F+Uyi41O9A3olZvJPdtvl7f25qmoi3+ZAHBjSfmjzxpreCuLqaum1UtzT4Nnq7B0xVQuspRdmYP1w91IK/XTWpRwuY2ck4MV23trhlr2dCGGa4SIIJRbnvx/Jyu7YWkGRic7fUtED2OhDb7mwjbfiCEuk=
+	t=1731357508; cv=none; b=BGJqntR8cLvmAY/iPrANZdTJtgth1nRL8v96HCNKNuPvaJV/RzJbvLUGG0yUy7xSOFAP93lmSjAdLjDm0jsBJ9GruWHtzo4VUQJPKoTCAoV+I50xQyk2dAkPzp1XbqW9SyfKZ1/nFLlzmctXobz8I37XN1cgZuGKhl7uL8Pj7Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357485; c=relaxed/simple;
-	bh=KwaHLfJUIhXroumjHZ4bZlkQwpn6earNMC5wOJS8F3o=;
+	s=arc-20240116; t=1731357508; c=relaxed/simple;
+	bh=TNNplGwAI8gh0I5Pqtu6RqhbXECKQS6cRoMzXUn4TS0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFADYrDxMPf4jNRC2/mBNmkm5OneZ4v4o3BQt+lWljIJYZRuOPN2aV6xP3FRh3jnVUBMAlji85qoeC9WLwTt21tkE/abRNfmaPv3RTYguAj0DMJ3PrwS3Nyu6LZHOfRXYP89KUX7JNwaK0GY6mQjKfZv8YlxK2k1AuAT0wn38y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+ImfXkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D41CC4CECF;
-	Mon, 11 Nov 2024 20:38:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hibvHPgCJiXKlav6vcysfn5HCC5im6Vw3qs91EM5/DNBpo0nV5K3DXuLcD5Eq5u69/Pi4QS0h6XbCZwed3JQp8TQ0AZt+ZF8bL2zCgNbnbfkjb7TmgjaoCJyAFr2L4jVvbNOe8Wh+6NRDReJTz7M2V2yNCb+bNIxB1mDfwgx34U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWXc5pWh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D9AC4CECF;
+	Mon, 11 Nov 2024 20:38:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357485;
-	bh=KwaHLfJUIhXroumjHZ4bZlkQwpn6earNMC5wOJS8F3o=;
+	s=k20201202; t=1731357506;
+	bh=TNNplGwAI8gh0I5Pqtu6RqhbXECKQS6cRoMzXUn4TS0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s+ImfXkPI1O4CAQC7LGmSngp4INKqyeJCveS2DSuVJVX1UgzHimen+i0RyVKBvEk6
-	 hQN4Z9wDYJzrqvLNKWD7+hhjC761myQjPqeqfGAb9PwqGcW0JzjQF8UtGdneSpGBho
-	 qitioKlKlvo5kwuGk61r6IeO/Ve+XjrpQkXg+xWY1vizwq/d7F2ZpCLLBMUKfQMqWK
-	 bYiq2qedk57RKVeHa6XzX+cOI7Qsjr2GqkiJ17Jwl/dCS77Foo2Qhla7+yuLsWyC/+
-	 3A8d2XysWw8y7QiUgl3smDorGRCHuTQ+0t54NHPTGgJqXGgciIoN6HKu0R7Il42VPM
-	 t12XXSrSSZFCg==
-Date: Mon, 11 Nov 2024 14:38:03 -0600
-From: Rob Herring <robh@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Leilk Liu <leilk.liu@mediatek.com>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: spi: add compatibles for mt7988
-Message-ID: <20241111203803.GA1917413-robh@kernel.org>
-References: <20241109105029.52748-1-linux@fw-web.de>
+	b=cWXc5pWhqQbWp8jIQB7Mdj+ZcVrD+jybfBmPAu+aj1vN288Hz7eG220SzV3k4AM0d
+	 USqPCLYyuEIHKJEqd9PVuvfKLkCFYfj91Js+jqOVLf/6WUXyJNY0Cd1PIS8JTUD9tQ
+	 l40zZ/FQPi1/TVlvx9x1T2+vCh109aJI6ZJF74mpIyraO+vuJkCtRkvVEoVF09/IZP
+	 NYRipAmSUc+URcHSkJC3zcSrzNAyaZ7L/xQi8HxMmeYbdfY3PPi8XICP1yhpD5vBwm
+	 V+R7qcuJg0eJ3Cg3/ZR53uA4yO/YJFEci6s3xUM/wIrsClEXkwLB9fWl2SmWSKv893
+	 lkoxVkkrTcAJw==
+Date: Mon, 11 Nov 2024 20:38:22 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 07/14] dt-bindings: phy: document Allwinner A523 USB-2.0
+ PHY
+Message-ID: <20241111-try-wise-ab60e1e488c9@spud>
+References: <20241111013033.22793-1-andre.przywara@arm.com>
+ <20241111013033.22793-8-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dPZZt7w9L6VIEeoP"
+Content-Disposition: inline
+In-Reply-To: <20241111013033.22793-8-andre.przywara@arm.com>
+
+
+--dPZZt7w9L6VIEeoP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241109105029.52748-1-linux@fw-web.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 09, 2024 at 11:50:28AM +0100, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> MT7988 has 2 different spi controllers. Add their compatibles.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-> ---
->  Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> index e1f5bfa4433c..ed17815263a8 100644
-> --- a/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> +++ b/Documentation/devicetree/bindings/spi/mediatek,spi-mt65xx.yaml
-> @@ -35,6 +35,8 @@ properties:
->            - enum:
->                - mediatek,mt7981-spi-ipm
->                - mediatek,mt7986-spi-ipm
-> +              - mediatek,mt7988-spi-quad
-> +              - mediatek,mt7988-spi-single
->                - mediatek,mt8188-spi-ipm
->            - const: mediatek,spi-ipm
+On Mon, Nov 11, 2024 at 01:30:26AM +0000, Andre Przywara wrote:
+> The Allwinner A523 SoC contains a USB-2.0 PHY fully compatible to the
+> one used in the D1/T113s SoCs. This PHY controls the two USB-2.0 ports,
+> there is a separate and quite different PHY for the USB-3.0 port.
+>=20
+> Add the new compatible string, with a fallback to the D1 version.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Does the fallback make sense for both? Is there some common subset of 
-functionality where they are the same?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Rob
+--dPZZt7w9L6VIEeoP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJrPgAKCRB4tDGHoIJi
+0tMhAQDL5lYdoIVI+tyQ5e2LO0x+cNYTehVUHu2f/hlo/r/sBAEA9EHYEDD2CXif
+jOL2MOGtJY1t3gHVTDKPuJvnSVgriwo=
+=da5U
+-----END PGP SIGNATURE-----
+
+--dPZZt7w9L6VIEeoP--
 
