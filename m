@@ -1,181 +1,204 @@
-Return-Path: <linux-kernel+bounces-403608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33ED9C37D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:32:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06089C37D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:33:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD690B215D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F359E1C21416
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBD214A4CC;
-	Mon, 11 Nov 2024 05:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC861537CE;
+	Mon, 11 Nov 2024 05:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="exOncJK8"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="omqKtDo7"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D0A933
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:32:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0778C14F9F8
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731303147; cv=none; b=c4uPxI2W0uigL8wyGr/unL+JgQNGem8iihjo+22YqzXrAgQwd5AoUMXdPuwEn3goeodK7JMMBw0ZRZ0fbcYZnqlYKLu+wqIACLcwW/3bLMxDb7YYyCK2KmvAc0zooiXKeVJ222K2rjQ/RJFRydh4uqJ4T11OG9/Rl74+t1St8Rs=
+	t=1731303214; cv=none; b=Rh5A6pQNCJCB4ZDVe6gqt7irZlwO8cLkj/qA2VNS0MPeJGll6EaAX5D8IdsVAX/6awG6Kz9yX1SybDfSZFbtyiXVEIypUmqpoaWCb8qvA1t5h/QWcFjyAbV7DzZxXc5vBprXcsh6oPd+eCbfMDR8i37ifrBNmddSy32XscupN0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731303147; c=relaxed/simple;
-	bh=r0qJC1SezqBQynGrNDWaqH2I8fe34n0nk3C9hPlNSJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SyY1wAHRKg8l47P1LO1cSTdC6FV9jhqxIfue1nL0mYlUF9LffeWsXpbTAbJYlRt4nrLG5HqOfpCTZJ4oL3ssIuMxgP5+9Dh1AxfcDWkB+TlDBmnqtp0w5aDsWCOu0njcDyobV+69SqWWLJUmm4aZhaut/tqZ0yvXcm+krLstN6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=exOncJK8; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731303137;
-	bh=r0qJC1SezqBQynGrNDWaqH2I8fe34n0nk3C9hPlNSJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=exOncJK86rveHQLz23rROVHwFyB3qde5F04YGB/49JvzxvMGgv0T6aXb1U85CaRuc
-	 7548DFNEqeIvOz9iyqBG6nPq4uIk6lD0fWJFEsyARdYlBm6CAMoZkJ5GGeZoh2IQvV
-	 zZe+Tv0gmlsfLzHTaProapp2dY62m5oZZARDq6Jw=
-X-QQ-mid: bizesmtpsz15t1731303113tpcbqo
-X-QQ-Originating-IP: LqKdR6A/9tP/7Zdlo1TgGaooe3XoVAUEqK6adang8j8=
-Received: from [10.20.53.22] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 11 Nov 2024 13:31:51 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16417097256222115542
-Message-ID: <0356012E12D9C4F2+d5bf77f1-6baa-4e02-b9d4-52fc49997f32@uniontech.com>
-Date: Mon, 11 Nov 2024 13:31:50 +0800
+	s=arc-20240116; t=1731303214; c=relaxed/simple;
+	bh=sbcKthTcc4q13LbsAW8yGi8wstMcdZ9WG7mZdhavg/A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKOjJco5UlmTnl0pSrQqfXzwc3IzZtGtjU++k+l8aC0gxJELYkQ2+Xe0dRav7o7QQEB3yviLKiyebx9p8mDhYiivNtDejZF5MhMgVkhRowYLVk5uIjHqs16Hzc/moDELEEcNHvD2euAcjV3xhyvDrLWv4/4Rzw3jb5PWXzkxk1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=omqKtDo7; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so3426385b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:33:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731303212; x=1731908012; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=m4HVRdgGS5DOA+EYctmE9uWaF+AEiWCZv1bh01Vt6XE=;
+        b=omqKtDo7p9b0eFV/c55UjplA1CF52FAo4vN6UuQ+H8aV7TdM8O/P+70OjcsVl4Uegq
+         14bEjVN28mwBBehLGO0luqIC+VvEJxcBQhMd1/xNfhgTm9HK7S4LsBb/MZoUk2ZZjjcR
+         M9T2iTOoRgOcAFfSeo/EktvZ/vKIV/X/35/Lxnddi9p8xKVf3P5bHDeyTGQWXlcd5WII
+         FNc1u1uObahvg0Iq0MegadZPazh6Es3BfM9KjoA8ver6f3KafgrXeeWm12+mSp5YlGcw
+         x0DC/rJrusmOVFLq9BNVeph8ZV/3SQLdDewSuMLAg4x8QTN3mJwAHGTMccHN1ZHr+QKi
+         PJCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731303212; x=1731908012;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m4HVRdgGS5DOA+EYctmE9uWaF+AEiWCZv1bh01Vt6XE=;
+        b=uA1iKEZWsbqKT8t4DbD4oiTsYqp36O53ozaxyY3XO3Tx8uCAIhA+M5WizLxszrz7rV
+         Hu5myL3pPLM5p9XBKUCf1lxCsQxm6d1LVUYfabiIEWUPJu5TyXVugG2evt2QvtnZpEMm
+         TA+dNcd2pgdgxBR/Vd3N/SZKTWV9CwRAJFHuOom+u/aTcG+Chdy6kySwNHFzq8DNgl3H
+         PIY4S4w4veO+B3kTqJW2sDvT9L+ApJi8k+Bolb+DpcT10EfCJdU/CHobbpuNB6IvsXR9
+         g94qbQavr+txrHU8tL4AZS2wJWd4eA6k17me1IgV59r8zB9YZPcUqAUt/TJ1f3A4xDMB
+         c/kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVF8q9u0r6YsroK15Yyh0IyyAx+BxQqJI6aweFGVmhZ4MG+u9ilyEb15D/cWwgIAqWjXhrc64diV4Bc8b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt/ND0G3MX+oYvDLkOyKiskvqYZDSVBmoRiqOGE/JN1LFl/Psh
+	UUxqc9JixBMPDTExHm7hJH9STjBBO/6TT90djyoMGqcPNUgL/CpiVXMMG0IaZw==
+X-Google-Smtp-Source: AGHT+IHY6okJDvEtYsogRJLe7mNmV55cCGW94l3n3BHyFg2QQU1s60l9Oqs0JWjKaeWbNyoHkDvVGw==
+X-Received: by 2002:a05:6a20:8417:b0:1db:eb2c:a74 with SMTP id adf61e73a8af0-1dc2296b6admr16767552637.12.1731303212263;
+        Sun, 10 Nov 2024 21:33:32 -0800 (PST)
+Received: from thinkpad ([117.193.211.140])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724216f0642sm4314638b3a.151.2024.11.10.21.33.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 21:33:31 -0800 (PST)
+Date: Mon, 11 Nov 2024 11:03:22 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	Frank Li <frank.li@nxp.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+Message-ID: <20241111053322.bh6qhoigqdxui65l@thinkpad>
+References: <20241108002425.GA1631063@bhelgaas>
+ <b5f56ec9-9b5f-5369-52ed-bcf0c8012dbb@quicinc.com>
+ <DU2PR04MB8677ECC185DFF1E2B62B05858C582@DU2PR04MB8677.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Bluetooth: btusb: Add MT7925 support for ID
- 0x13d3:0x3608
-To: Paul Menzel <pmenzel@molgen.mpg.de>, hello@felixjara.me
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, johan.hedberg@gmail.com,
- matthias.bgg@gmail.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, guanwentao@uniontech.com,
- zhanjun@uniontech.com, aaron.ma@canonical.com
-References: <D3E1285F7DBFAB3E+20241108082418.187499-1-wangyuli@uniontech.com>
- <9954d66f-7e1c-4df3-a600-f82139ea9e5b@molgen.mpg.de>
-Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <9954d66f-7e1c-4df3-a600-f82139ea9e5b@molgen.mpg.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------prXwvg4jx33S8hv2mv5kSAoR"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OeS8HGsJZnO5WQ/8ZQ6BffBFbGR9UrRzTYv+R+oNPOkwgdfqFMgDdSHX
-	Wy44DZAinLznguz1eM/svs+91IHgk2ocBVP4edgAKN9n3sjftJ7tXT3SoGSiWtODeBL0EuY
-	h6n8z9f/WAOwhhBUBw0Xkc1rHpekXnyUA2nLykOIY/50BJd/Fv3WhYntwO621a7jXwJ6feU
-	2eqdh8i1Lt4+Vqg9Qmb79fUWiYdccjP6MvtxG2Q5/H7+IVl4P0+raXgxSiY50dMKhSWblun
-	iu/iwkgUShjjnwUjOuFpckKVgNfC2NYX637ZW68WuLqL+S82IamEA2eaDhsuiN8PmhC7rZ+
-	JVaIqsiCEhZDR1aFKqUDBtI8lnZTjTcB0Pefv7Rz9ls3a2d5RqfoDmnHsQEpGo1M8t/ozz/
-	+rX6xhdYr65yOMXM5K3uCIK+Hfl8E28AMrSozBvVA0ELoLOwSgDwkKLrdnsMZxPr3KsGTV8
-	vDlQIkLznlOZm6vPPXNsoaBZpL0RsbOgtR47nohl48VnRaqgqeiKvOb1sKHpvXRHMT3krJZ
-	lszzyEBeehKq3KtSRVnVxcYD+3H9ZVvVWvniA74bJjYMOH/2JKD2bfbuspKXvhJx81Cvubo
-	huwLOsTaxxuXVGgvr+xbpuGgxYqmtehEEQEZsG3lrwLw16vx+mXvsGxV58PNgXQYcVL4gaA
-	CnX2LGbDZwr5sTpcG9hYFMRpxcRuLbCqdT3G/8n9dQNS28i5GgsaLsDt5G7m3uO4IGOSMZB
-	r/MWneSbPbBfWJ+ICcVqkp2jR4rZjtcxYNVgSUzMPHGo103r1FdCd/sroUnm/iMdp62ZP0n
-	X+j25k76mv7CPMHcjVK7YIWx5dvIWkx8su17duxLxYdB7c25dMm20oMERQMfBaGxzAn0NF+
-	mvRHQoJ8FLhHaMLySq3njzY8vONHeBtqSM89z9k7++MwNCQpGw7622KS+z5iIDGsQemvXmj
-	7obgyivlYYNDEmZmJlK7hBc1tLmdsuTGPuKi8g0pLF0NvEF4M33gC/5HN1CUY+NOU6/mrnv
-	jDJlfsfOYVl2zuzpP85ozdB37O2yGxJHBPB8PYj992l61tC91GvTi9pP8DLue7cfw0C6sri
-	fVmZKLAcx57Ax6iWRJfxvH32ThKSrfi8FS1K8IwCGJZ
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DU2PR04MB8677ECC185DFF1E2B62B05858C582@DU2PR04MB8677.eurprd04.prod.outlook.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------prXwvg4jx33S8hv2mv5kSAoR
-Content-Type: multipart/mixed; boundary="------------dFU7eN00AXop4PhYtPWk9804";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Paul Menzel <pmenzel@molgen.mpg.de>, hello@felixjara.me
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, johan.hedberg@gmail.com,
- matthias.bgg@gmail.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, guanwentao@uniontech.com,
- zhanjun@uniontech.com, aaron.ma@canonical.com
-Message-ID: <d5bf77f1-6baa-4e02-b9d4-52fc49997f32@uniontech.com>
-Subject: Re: [PATCH v3] Bluetooth: btusb: Add MT7925 support for ID
- 0x13d3:0x3608
-References: <D3E1285F7DBFAB3E+20241108082418.187499-1-wangyuli@uniontech.com>
- <9954d66f-7e1c-4df3-a600-f82139ea9e5b@molgen.mpg.de>
-In-Reply-To: <9954d66f-7e1c-4df3-a600-f82139ea9e5b@molgen.mpg.de>
+On Mon, Nov 11, 2024 at 03:29:18AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+> > Sent: 2024年11月10日 8:10
+> > To: Bjorn Helgaas <helgaas@kernel.org>; Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org>
+> > Cc: Hongxing Zhu <hongxing.zhu@nxp.com>; jingoohan1@gmail.com;
+> > bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
+> > robh@kernel.org; Frank Li <frank.li@nxp.com>; imx@lists.linux.dev;
+> > kernel@pengutronix.de; linux-pci@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v1] PCI: dwc: Clean up some unnecessary codes in
+> > dw_pcie_suspend_noirq()
+> > 
+> > 
+> > 
+> > On 11/8/2024 5:54 AM, Bjorn Helgaas wrote:
+> > > On Thu, Nov 07, 2024 at 11:13:34AM +0000, Manivannan Sadhasivam
+> > wrote:
+> > >> On Thu, Nov 07, 2024 at 04:44:55PM +0800, Richard Zhu wrote:
+> > >>> Before sending PME_TURN_OFF, don't test the LTSSM stat. Since it's
+> > >>> safe to send PME_TURN_OFF message regardless of whether the link is
+> > >>> up or down. So, there would be no need to test the LTSSM stat before
+> > >>> sending PME_TURN_OFF message.
+> > >>
+> > >> What is the incentive to send PME_Turn_Off when link is not up?
+> > >
+> > > There's no need to send PME_Turn_Off when link is not up.
+> > >
+> > > But a link-up check is inherently racy because the link may go down
+> > > between the check and the PME_Turn_Off.  Since it's impossible for
+> > > software to guarantee the link is up, the Root Port should be able to
+> > > tolerate attempts to send PME_Turn_Off when the link is down.
+> > >
+> > > So IMO there's no need to check whether the link is up, and checking
+> > > gives the misleading impression that "we know the link is up and
+> > > therefore sending PME_Turn_Off is safe."
+> > >
+> > Hi Bjorn,
+> > 
+> > I agree that link-up check is racy but once link is up and link has gone down
+> > due to some reason the ltssm state will not move detect quiet or detect act, it
+> > will go to pre detect quiet (i.e value 0f 0x5).
+> > we can assume if the link is up LTSSM state will greater than detect act even if
+> > the link was down.
+> > 
+> > - Krishna Chaitanya.
+> > >>> Remove the L2 poll too, after the PME_TURN_OFF message is sent out.
+> > >>> Because the re-initialization would be done in
+> > >>> dw_pcie_resume_noirq().
+> > >>
+> > >> As Krishna explained, host needs to wait until the endpoint acks the
+> > >> message (just to give it some time to do cleanups). Then only the
+> > >> host can initiate D3Cold. It matters when the device supports L2.
+> > >
+> > > The important thing here is to be clear about the *reason* to poll for
+> > > L2 and the *event* that must wait for L2.
+> > >
+> > > I don't have any DesignWare specs, but when dw_pcie_suspend_noirq()
+> > > waits for DW_PCIE_LTSSM_L2_IDLE, I think what we're doing is waiting
+> > > for the link to be in the L2/L3 Ready pseudo-state (PCIe r6.0, sec
+> > > 5.2, fig 5-1).
+> > >
+> > > L2 and L3 are states where main power to the downstream component is
+> > > off, i.e., the component is in D3cold (r6.0, sec 5.3.2), so there is
+> > > no link in those states.
+> > >
+> > > The PME_Turn_Off handshake is part of the process to put the
+> > > downstream component in D3cold.  I think the reason for this handshake
+> > > is to allow an orderly shutdown of that component before main power is
+> > > removed.
+> > >
+> > > When the downstream component receives PME_Turn_Off, it will stop
+> > > scheduling new TLPs, but it may already have TLPs scheduled but not
+> > > yet sent.  If power were removed immediately, they would be lost.  My
+> > > understanding is that the link will not enter L2/L3 Ready until the
+> > > components on both ends have completed whatever needs to be done with
+> > > those TLPs.  (This is based on the L2/L3 discussion in the Mindshare
+> > > PCIe book; I haven't found clear spec citations for all of it.)
+> > >
+> > > I think waiting for L2/L3 Ready is to keep us from turning off main
+> > > power when the components are still trying to dispose of those TLPs.
+> > >
+> > > So I think every controller that turns off main power needs to wait
+> > > for L2/L3 Ready.
+> > >
+> > > There's also a requirement that software wait at least 100 ns after
+> > > L2/L3 Ready before turning off refclock and main power (sec
+> > > 5.3.3.2.1).
+> Thanks for the comments.
+> So, the L2 poll is better kept, since PCIe r6.0, sec 5.3.3.2.1 also recommends
+>  1ms to 10ms timeout to check L2 ready or not.
+> The v2 of this patch would only remove the LTSSM stat check when issue
+>  the PME_TURN_OFF message if there are no further comments.
+> 
 
---------------dFU7eN00AXop4PhYtPWk9804
-Content-Type: multipart/mixed; boundary="------------lc09SF6AgsylcJLktEewo2W5"
+If you unconditionally send PME_Turn_Off message, then you'd end up polling for
+L23 Ready, which may result in a timeout and users will see the error message.
+This is my concern.
 
---------------lc09SF6AgsylcJLktEewo2W5
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+- Mani
 
-T24gMjAyNC8xMS84IDE2OjQ4LCBQYXVsIE1lbnplbCB3cm90ZToNCg0KPg0KPiBTaG91bGQg
-dGhlcmUgYmUgYSBzcGFjZSBpbiB5b3VyIG5hbWU6IFdhbmcgWXVsaT8NCj4NCk5vIG5lZWQg
-Oi0pDQoNCj4NCj4gVGhlcmUgaXMgYWxyZWFkeSBhbiBlbnRyeSBmb3IgMTNkMzozNjA4LiAN
-Cg0KU29ycnkuIEkndmUgYmVlbiB3b3JraW5nIG9uIHRoaXMgcGF0Y2ggaW4gdGhlIGJsdWV0
-b290aC1uZXh0IGJyYW5jaCBvZiANCnRoZSBibHVldG9vdGgtbmV4dCByZXBvc2l0b3J5LiBb
-MV0NCg0KU28gSSBkaWQgbm90IG5vdGljZSB0aGUgbmV3IGNoYW5nZXMgdG8gdGhpcyBmaWxl
-Lg0KDQoNClsxXSANCmdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVs
-L2dpdC9ibHVldG9vdGgvYmx1ZXRvb3RoLW5leHQuZ2l0DQoNCg0KPiBTaG91bGQgb25seSBC
-VFVTQl9WQUxJRF9MRV9TVEFURVMgYmUgYWRkZWQ/UGxlYXNlIHVwZGF0ZSB0aGUgY29tbWl0
-IA0KPiBtZXNzYWdlIChzdW1tYXJ5IGFuZCBib2R5KSBhY2NvcmRpbmdseS4NCg0KDQpObyBu
-ZWVkIG5vdy4NCg0KQmVjYXVzZSBvZiBjb21taXQgMGZlYzY1NmQwOGFhICgiQmx1ZXRvb3Ro
-OiBidHVzYjogSW52ZXJ0IExFIFN0YXRlIGZsYWcgDQp0byBzZXQgaW52YWxpZCByYXRoZXIg
-dGhlbiB2YWxpZCIpDQoNCj4NCj4NCj4gS2luZCByZWdhcmRzLA0KPg0KPiBQYXVsDQo+DQot
-LSANCldhbmdZdWxpDQo=
---------------lc09SF6AgsylcJLktEewo2W5
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------lc09SF6AgsylcJLktEewo2W5--
-
---------------dFU7eN00AXop4PhYtPWk9804--
-
---------------prXwvg4jx33S8hv2mv5kSAoR
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZzGWxgUDAAAAAAAKCRDF2h8wRvQL7jrY
-AP44VowUFBFTdi66/4qb7/KoyXwbptsn0Z/hGY/znCZe9QD/VSCt3lW4A+uVQRZokLhP9L9NwtxA
-dBpfl8jCbQSqeg8=
-=ey4H
------END PGP SIGNATURE-----
-
---------------prXwvg4jx33S8hv2mv5kSAoR--
+-- 
+மணிவண்ணன் சதாசிவம்
 
