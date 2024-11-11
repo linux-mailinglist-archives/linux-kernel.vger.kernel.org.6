@@ -1,240 +1,199 @@
-Return-Path: <linux-kernel+bounces-403972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848989C3D46
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:30:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5824C9C3D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4438028514B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1B71F247BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342C419923A;
-	Mon, 11 Nov 2024 11:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6FD189B83;
+	Mon, 11 Nov 2024 11:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SuhjY9Xn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cvLZfqFl"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2050.outbound.protection.outlook.com [40.107.102.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77374189BBB;
-	Mon, 11 Nov 2024 11:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731324565; cv=none; b=h9OmmAzsFi4RtSMxthjmYk87RAigsXQb5ROmSPrAqcZbmjEIi+igJr7Cqyjs2kb/wQneo/P0RRZkyfUKrvWz8sayjtL4Hehnj6/zSIfShlO8Pu46I618e+pPHYcHrK2WmCliFOb0QL1Gvxx1gXTMrUZ6QjMLgm2MzO8ndEdQCQc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731324565; c=relaxed/simple;
-	bh=5cgp7iaZi8tgG12DuQYS4WxE3EZhYIb7ihHP94ue5g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+nVyKDgKgIHU6Uah9clMYVcdklsES2q5Twwygg/1w6//t59ctBMj2kM3zMAqo8shOBRS01aWahSF5N7KCIjchFEIM7CZZoGzpQVNZEMbR2RRJMwK1wguLCTw0z4lI7Satj7rTZ+00gWbspWQQCw+Zv7/yskIKhZ8U2E2ePieZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SuhjY9Xn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B3C040E01FE;
-	Mon, 11 Nov 2024 11:29:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id LH789wugla_b; Mon, 11 Nov 2024 11:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731324553; bh=JihSgH5EEo1zZNt1PcMAqI+W39owOYa2GO/ORFME5H8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SuhjY9XnZ61YUXJC4uvZeRaxLqOrfY2JaVRfozxcZVCcQQoiMIzqFT+q9PDTupY4u
-	 Hz6vFjCezBUMp1Z9ilVs57fs5c6sOSvIgddWYN9XDQQbbHztkqGCUGJnu53EOeNcgV
-	 8xqOueQtp8xg415nHLXdvfrxQ0hxs+W7Rsj2K/Hha8+z9Wpqlt6/OUzOamqctNuVc6
-	 JEhLX+Zm2Uc8Y98c0WDxXUTOa+N3VASdpO9X12FoJ1MKyMVs8g5ps+Bjn7R5OsEuvm
-	 AzdopQYAzqqcC9Vv6zbV2pQAydaDbwevNcOHJGMg73p9bJcofd6iGewT0XED0AvR3Q
-	 cqzSB/hrFEJm9E2wnLLW24/0vbwSxWAbbL1+SDPKBoNr3A47OcbR9RBX56CY2dKTbv
-	 M75Mj7BP7raefAdBGWvIMkUYisRxJ3AsO2Mn5plb8jx6zaoxz3Tx1DhOfR2wKD51kq
-	 FmJ+KskVIy4cHuZqfCBB7FPAQC+gcPEnKb5lhfiWjkwJR7/qjrg4Bx4kkui9Mfgz6S
-	 tQhlJQofepQFryNPWV4eDH4/4QJcNt0cWG699kJQkKCK/fWqHHPYDxKe4BRbKJqddS
-	 v2Z7IqzW1qI2QfQyWdntY6GwFMG/gtHUeUYkCQLXd0A4SK+bD7GxMCW1/J3dk9/p6o
-	 rCqL4WPLRSj3eru4yUfxmUXk=
-Received: from zn.tnic (p200300ea973a31c3329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31c3:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C093040E015F;
-	Mon, 11 Nov 2024 11:28:26 +0000 (UTC)
-Date: Mon, 11 Nov 2024 12:28:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E285F156F44
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731324522; cv=fail; b=WhkDPZMZ42oP9+XuRqArGwcJR481nwRyFXLpDaBbZRp/Nq74tt1GGGu912nH2yAo2rjbitmtLwl33ahmusLy4ZUI9mg/mHm24aAxewbYPoO5a3npbbKSXEXXX5oWNgRYdodmfdx5h4uiKaRoUOjhx/ksEC9xgYJIyToDebXtUTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731324522; c=relaxed/simple;
+	bh=LugCKa9bJXdoOC3d6cyfRzbfQLj9WSo8E37r+xZvrqI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OuVGBMnSpVB1PTqGOGMbIgTwRNJ5HJphdF6YUzFPFuNIa7Bm/bMQFletVDBqHvjsqUgp6RYhPgTDyRyMndv/XRYVTNedx+IhusseGlPIjHqAdB21MrA2bRBMEMcOQ0Dz/ZtkaV9C1tuK6mozI4eu+LTxdJa4dCyP8nuYbh/Q2vU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cvLZfqFl; arc=fail smtp.client-ip=40.107.102.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q+PAqkNzf/mPuoKRPvPxgwnHjYZc5F9cfGENl7HnO8vYq0W9xwYsHrHK6H+921X9E/R82MDpqcGn0aTcspwuLV8htE2RJg2ecA+mvcw0dmWMqLXMv8Ii1eK40w3mOuuNJmDV3azOEHvzSqGTcmx1Kx1EFr1gpqGlAp5hES08B69uqjeZDkVkq3JQJiN7P3jJHVWvJrnr8nLF85vhV086YwNtzYLuWVtMM7t0YduQ2gMNgu2wmE583oXZRhfTVEAi62rwiOL0s4yHQfxxXwrKL7ZECjV+rLPTeKlIRyQSDLjmPTICpzLVnsZSpGmfb5UZjwkzYBfGZnmCjBS427Cg3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pKrTUGc7LR4awNZu6ApJmX76FH3hIosToyB8TG4o5PA=;
+ b=B1YE/gP3ppktRfRfppRZqVHLB9ociSAwokJ7G0yz+XZ1as1S925LK3WRLiUDLbSWCOBui9hO5PoIDMFSVBYqQon3VE7dTq39xHQTEzj0cBqRCf2YjKIPeEZHgDJIirF8q0jpvR7B56edz2YFn0cK2ylDsXLXKthY1zYWuCwOx+ZMThcI/nHTgEDFwlvzU0pndbl/AC/b0DG5JOZPARXKirkH3HAV89uH0lzMgms6vKAJzDQydy4lFwoyTYH3C3O9Wut1EtjJmgjXPxrhYURE7YgT6uNF59j3eLoaaBy3cAKYLpI6j+OTzCozLukT7+zdkP7FlaKn+EIkMYXlrUNsiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pKrTUGc7LR4awNZu6ApJmX76FH3hIosToyB8TG4o5PA=;
+ b=cvLZfqFly7RacyhkMYXlSRtW2kaRM6iRHgWItzNEAp81E8pWXCibsEFFIVCA6Q7tr62SqR8OHvoCz0BiUfP6+Aplx9yt09JnHBCUhj8eWy9kvsw6LhL5PSWSMr+unYGVzM1qyg61QEJHCc4869V7NCgPFbGjuF0yASugKEKGPgk=
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com (2603:10b6:208:31f::11)
+ by DS0PR12MB8767.namprd12.prod.outlook.com (2603:10b6:8:14f::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
+ 2024 11:28:35 +0000
+Received: from BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::d4a:9dd1:afd9:1c70]) by BL1PR12MB5333.namprd12.prod.outlook.com
+ ([fe80::d4a:9dd1:afd9:1c70%4]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
+ 11:28:34 +0000
+From: "Agarwal, Nikhil" <nikhil.agarwal@amd.com>
+To: "Gangurde, Abhijit" <abhijit.gangurde@amd.com>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v15 11/15] EDAC: Add memory repair control feature
-Message-ID: <20241111112819.GCZzHqUz1Sz-vcW09c@fat_crate.local>
-References: <20241101091735.1465-1-shiju.jose@huawei.com>
- <20241101091735.1465-12-shiju.jose@huawei.com>
- <20241104061554.GOZyhmmo9melwI0c6q@fat_crate.local>
- <1ac30acc16ab42c98313c20c79988349@huawei.com>
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC: "git (AMD-Xilinx)" <git@amd.com>, "Simek, Michal" <michal.simek@amd.com>,
+	"Gupta, Nipun" <Nipun.Gupta@amd.com>, "Gangurde, Abhijit"
+	<abhijit.gangurde@amd.com>
+Subject: RE: [PATCH 1/1] cdx: register shutdown callback for cdx controller
+Thread-Topic: [PATCH 1/1] cdx: register shutdown callback for cdx controller
+Thread-Index: AQHbIIAlsF2UGEakjUuXPDEBcrNnuLKyF73Q
+Date: Mon, 11 Nov 2024 11:28:34 +0000
+Message-ID:
+ <BL1PR12MB5333A3682D6D14D28F63DE619D582@BL1PR12MB5333.namprd12.prod.outlook.com>
+References: <20241017103216.316114-1-abhijit.gangurde@amd.com>
+In-Reply-To: <20241017103216.316114-1-abhijit.gangurde@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ActionId=0e27b01a-5382-4bce-ab41-acfdbedaa180;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_ContentBits=0;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Enabled=true;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Method=Privileged;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_Name=Non-Business_New;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SetDate=2024-11-11T11:25:44Z;MSIP_Label_94523dde-f9d1-4aa7-80a9-c0900420d3c3_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5333:EE_|DS0PR12MB8767:EE_
+x-ms-office365-filtering-correlation-id: eb3a70f5-2b69-4b1d-3592-08dd0243fa7b
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?rasqrZl0IJZPs/EFuHYgf+Qp+O5oZP+1s9Gjr4tYevmZhnWHUxNNFBtIm7Tw?=
+ =?us-ascii?Q?22Fv22DmpAy4DsHG474TsKKkq0wr9dRGTtBTrYDs/jcogMRpsCH7nP/Z/fj8?=
+ =?us-ascii?Q?325SrPET2xT4KiKp1I6o4Jqvzk4+UPNQKeeolzD3HbmKjwhfQau3KqjaOptU?=
+ =?us-ascii?Q?/fLWpCYS65juz6TIlE0VnmZOLDXvQgLgfvgV54T1nrN4XY6QgS1jNUFO0i0t?=
+ =?us-ascii?Q?rJXWvFJA7XkFKUZxlodGH+kBjsB1ljxqU0/hBFDCi82DIYn3W/iFmG8PIIEd?=
+ =?us-ascii?Q?Fo5u5QEDN4xGa4ta9oVpHri0heMOKdVwYehNngQ89qeDdkewxEma8hgX8ytw?=
+ =?us-ascii?Q?l/pPHiL21lr/hR4ode998/fZsZ+1EokaYDdoR7DlQq+SYnaqbHxR8raHTdrg?=
+ =?us-ascii?Q?K2lb2UjOx9b0EFKz8RlYdsy6TikMQIgDcQfJku3fdKulJnUernzi1Yc0jDMg?=
+ =?us-ascii?Q?gO+g2ctbmC90lWJmM9NVu3JX1OyaGT7049vBpT/iOj6DSolYR52u9NbiFvDL?=
+ =?us-ascii?Q?SkVGL0+q7ne+NeAu2h3mBna+RrkKevCFekw7zjwGyH53Jo3Tui6xDP6X2sh1?=
+ =?us-ascii?Q?9Y+cZjEaD7QHMGu83RZU/V9MqB8ekDCGE22sr4L13YQ8F96VBtisYDYXVpLE?=
+ =?us-ascii?Q?ofIEYWYEdK+ZfN095RRtbNONU19Jba81IAuuMKpVdhE9XdpfInbCJWJto2OG?=
+ =?us-ascii?Q?B9gB36DrqjnMQhrDA0GvYfc2YfsJtdOGmb3XUGfT6KM5u43QhnruUobKGO8e?=
+ =?us-ascii?Q?24YNLOewT7WKIF5q9Xo1IiLDsMDRW/Qy1+A64I2GAYWT2mAaPMqLbeJVKYGt?=
+ =?us-ascii?Q?NfnSCJDGNStmhHcTOUvnCvKfeG5dp0YBY6gJGR5fLY/2pTbxvq5JBVI1rEJA?=
+ =?us-ascii?Q?I/bvaQSC+zxRhJehLZKFBJ+c4gYd7T6Wxy0pZp/0kZN0CfCE0DwmU+GjHfr8?=
+ =?us-ascii?Q?ufHxOj40C1EetN2pB3jxASGDPRzc24H25Y/8Zby6lEYfCsHyJMFMlmFe9dJv?=
+ =?us-ascii?Q?ajvCkVYSJVVgJuRGZl5ZxAuTPVBQ9oJVherKI/OHHNkWRpdFQSpQuKOVq6S2?=
+ =?us-ascii?Q?zLavOnymCBlu3aITUTJFrID4p/48TTqJEpj3Zi6Y9bceNLmyTU4Y5+9q+F1j?=
+ =?us-ascii?Q?WSQgAAhQ33CwWs1fn4ACvpiFK54qLDuF4e+se2fYKL9L49RJA8Qe+dUdjTxV?=
+ =?us-ascii?Q?INLlkbYfoe4BvzRdHE4KlomGshhEnSr9v1On71FAWyQW5LBdFDXE5oS2fMer?=
+ =?us-ascii?Q?17Vxkp0ETe0S4KeqBk92KtzdLGMtmMgJ2cIubhXu/bQhfLj2p1JmOcLHfj4v?=
+ =?us-ascii?Q?f3lxWQM2AnIV9KnLqD4Olcoo/BSrkCyk0sia8tIXl292RSxj5eaQKQ5Kxf1x?=
+ =?us-ascii?Q?iqZ1Afg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5333.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?INaIder4/yZtjPEHvoy8aSYgn54eeP5j57LCJG3XyCTx9nsc2gchwUKTYBQJ?=
+ =?us-ascii?Q?vOLwqUoc2RtImKA/axYc0IoOZOrN8pDeS8dYPu418Gy/+PE5krIlyYBObv8h?=
+ =?us-ascii?Q?d9yDuaa6gs/bkNZNOo0P4t3aYYYeYNQSv62R7AGXenovrW7CPf4WKantF/Rc?=
+ =?us-ascii?Q?CORNWwEJZVK0skmlGcocsB1oWxTg5HUyUK5C2sYHxLs3MIM16NNNyMSlzHVr?=
+ =?us-ascii?Q?btbFMqNckNzwrC3BRirpmvYkl1dMxiZ7UOWcVFA8Y2ygVJ+2BuG3mwX4GYAo?=
+ =?us-ascii?Q?9LRk4ByuCTNGKzZozKsPSaFpa5LJBkkItqZJlUzh4U/AnRsddHhp57AjTtd1?=
+ =?us-ascii?Q?+1Oykd9CHkif8cVQpbwd3loqxbAByLA7Y+Fqlh7HnYjt65OQM3u2aTqm/s9h?=
+ =?us-ascii?Q?WoU31X0lSobKjh1myAUEn1qZTbgH8PvCI1+NGnOoFeH1JwthD7kMNc7h0V8w?=
+ =?us-ascii?Q?SnLetfgrlzI0O5Ho157zxefb29T/Xg1GmvKY8r04gq/SPYK7mrdqTeJZtnVn?=
+ =?us-ascii?Q?+SQ3qb644SrlqUfn6d6gJVTlZarVwTNOOqpnE8cAcxB4WihAYWjiNoj7ET/A?=
+ =?us-ascii?Q?Rcs2mvfGyr23hxSexnTFUxZf+u4dzRbw0lLbWX11OvG3P4tPFrYZBIu9nTJr?=
+ =?us-ascii?Q?42HwBRLA3/P+dDmi7gujzeVwC2SSLcNSVxpL7bhMsWggidxz/y/IC5vTAhrv?=
+ =?us-ascii?Q?zvbik29zcNhVR7aTVA43K+/kXk36O7oE0DAs/D5S7RbFYjSIbtRK9+yqHdiE?=
+ =?us-ascii?Q?UKP3lMBugbLmgmr3cBCsOXubbtPP1sfTcvuVd03kW0hubNEi/uxtrfVwWhVX?=
+ =?us-ascii?Q?UpY49e+gpWkrTTTfJTl/GLt4m13GGRP7+XVq/t153I27JURVrIEC81GuHevm?=
+ =?us-ascii?Q?rCatsfBAlNCFTSh4R/KMPH1QImzW4BY1nzjbfpu2cAOUuvig/aNHOQsyiU1T?=
+ =?us-ascii?Q?noENBHD9rSfGAjRIdSR6lEoSxrbUbipworJydsqENyNP+vC9OmZRs+ZmJ3hC?=
+ =?us-ascii?Q?u0TnVexxWL1Od47arlL+m6eWevGwCshCqy5WLXfEOGofyLKK4APGZRfJv8Lh?=
+ =?us-ascii?Q?71bx3ulPQ82tXzVPHdm76yHrdvic4Pj7rdRf3Sl/zi5kt+lO2Bhl+/09fBzU?=
+ =?us-ascii?Q?Zfe66Qb4RqWUZSzxZYFhQNTJNNyazZbmeHNYwH6JcxVmBphragzP/OUSRrOf?=
+ =?us-ascii?Q?ETc/F233iDuYvkzZOkvy1QtdyYih8sZnM0+g/jh/kCDsHELaWyEyq4Zgl9ZL?=
+ =?us-ascii?Q?eZ5KurLHHv3wLyGr0D9kMCc3NYLN4gGbZzeCs2uD6N+JNPC6HG0URiCQJdHV?=
+ =?us-ascii?Q?wWo42PiBSfZrR/AyM8XBd7NKb2JQigxU+wLUT5lAjMsuNhBDYAMDJcbvRFga?=
+ =?us-ascii?Q?SUu7oRt7dPNyAZuntzPRNxlqpYvtFHZWfMCbFChChK4iKLo99mTb99u5ikWO?=
+ =?us-ascii?Q?sgvTWBcMSUK0cBuJqGpps25R6LuUJKnMTwuPideTHXMdWp8wkfHEA+ejKbTO?=
+ =?us-ascii?Q?rocZOe5YO5cmSp7/kRs8HeNA1yVf5FRkysS9iaJ7+74w9401Wh9L7YUYX5PQ?=
+ =?us-ascii?Q?YLkWRka6jfZwtDXsE2k=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1ac30acc16ab42c98313c20c79988349@huawei.com>
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5333.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb3a70f5-2b69-4b1d-3592-08dd0243fa7b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2024 11:28:34.4793
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ab9LZRmB90OUIZ4Rfw6p8HIEbdlOaaZ5CRR72p96bkHDPCzOHEBnVTQjyEpzrnRw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8767
 
-On Mon, Nov 04, 2024 at 01:05:31PM +0000, Shiju Jose wrote:
-> More detailed explanation of PPR and memory sparing and use cases was added
-> in Documentation/edac/memory_repair.rst, which is part of the last common
-> patch ("EDAC: Add documentation for RAS feature control") added for
-> documentation of various RAS features supported in this series. Was not sure
-> the file to be part of this patch or not.
 
-If the commit message doesn't contain a justification for a patch's existence,
-why do you even bother sending it?
 
-IOW, no redirections pls - just state here what the use case is in short. You
-can always go nuts into details in the docs.
+> -----Original Message-----
+> From: Abhijit Gangurde <abhijit.gangurde@amd.com>
+>=20
+> register shutdown callback for cdx controller platform device to handle g=
+raceful
+> connection closure of rpmsg transport.
+> Also, handle shutdown of cdx bus device by disabling the bus.
+>=20
+> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
+> ---
+>  drivers/cdx/cdx.c                       | 5 ++++-
+>  drivers/cdx/controller/cdx_controller.c | 6 ++++++
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c index 07371cb653d3..65=
+5a056bca4e
+> 100644
+> --- a/drivers/cdx/cdx.c
+> +++ b/drivers/cdx/cdx.c
+> @@ -338,8 +338,11 @@ static void cdx_shutdown(struct device *dev)  {
+>  	struct cdx_driver *cdx_drv =3D to_cdx_driver(dev->driver);
+>  	struct cdx_device *cdx_dev =3D to_cdx_device(dev);
+> +	struct cdx_controller *cdx =3D cdx_dev->cdx;
+>=20
+> -	if (cdx_drv && cdx_drv->shutdown)
+> +	if (cdx_dev->is_bus && cdx_dev->enabled && cdx->ops->bus_disable)
+> +		cdx->ops->bus_disable(cdx, cdx_dev->bus_num);
+> +	else if (cdx_drv && cdx_drv->shutdown)
+>  		cdx_drv->shutdown(cdx_dev);
+Please drop else from here.
 
-> persist_mode used to readback the value of persist_mode presently set.  For
-> eg.  1 - soft memory sparing for a sparing instance, though the CXL memory
-> device supports both soft and hard sparing, which is configurable.
-> persist_mode_avail used to return the temporary and permanent repair
-> capability of the device.  
+Also, as suggested by Greg, please split this patch into 2 separate patches=
+=20
+for device shutdown and controller shutdown.
 
-Wait, sysfs does a one value per file thing. What does persist_mode_avail
-give?
-
-Surely you can't dump a list of all available modes...
-
-From that doc:
-
-root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/mem_repair0/persist_mode_avail
-0
-
-Does that mean only sPPR is available?
-
-If only one mode is available, why am I even querying things? There's no other
-option.
-
-Catch my drift?
-
-> Also I will update here with more details which was given in the last part
-> of this document about DPA.  Some memory devices (For eg. a CXL memory
-> device) may expect the Device Physical Address(DPA) for a repair operation
-> instead of Host Physical Address(HPA), because it may not have an active
-> mapping in the main host address physical address map.  'dpa_support'
-> attribute used to return this info to the user.  
-
-All this stuff needs to be documented properly and especially how one is
-supposed to use this interface. Not have people go read CXL specs just to be
-able to even try to use this. I'd like to see clear steps in the docs what to
-do and what they mean.
-
-> The nibble mask actually for CXL memory PPR and memory sparing operations,
-> which is reported by the device in DRAM Event Record and to the userspace in the
-> CXL DRAM trace event.
-> Please see the details from the spec.
-
-This is *exactly* what I mean!
-
-If I have to see the spec in order to use an interface, than that's a major
-fail.
-
-> I was not sure add or not these CXL specific details in this EDAC document.
-
-So that document should contain enough info on how to use the interface. You
-can always put links to the spec giving people further reading but some
-initial how-do-I-use-this-damn-thing example should be there so that people
-can find their way around this.
-
-> The visibility of these control attributes to the user  in sysfs is decided
-> by the is_visible() callback in the EDAC, which in turn depends on a memory
-> device support or not the control of a repair attribute. 
-
-That still doesn't answer my question: what are valid values I can put in all
-those?
-
-Try as many as I can until one sticks?
-
-This is not a good interface.
-
-And since sysfs does one-value-per-file, dumping ranges here is kinda wrong.
-
-> This attribute used request to determine availability of resources for a repair operation
-> (For eg. memory PPR and sparing operation) for a given address and memory attributes set.
-> The device may return result for this request in different ways.
-> For example, in CXL device request query resource command for a,  
-> 1. PPR operation returns resource availability as a return code of the command. 
-> 2. memory sparing operation, the device will report the resource availability by producing a
-> Memory Sparing Event Record and  memory sparing trace event to the userspace.
-> 
-> May be 'dry-run' better name instead of query?
-
-Maybe this should not exist at all: my simple thinking would say that
-determining whether resources are available should be part of the actual
-repair operation. If none are there, it should return "no resources
-available". If there are, it should simply use them and do the repair.
-
-Exposing this as an explicit step sounds silly.
-
-> >Yeh, this needs to be part of the interface and not hidden in some obscure doc.
-> Adding this info in Documentation/edac/memory_repair.rst is sufficient? 
-
-Yap, for example. You can always concentrate the whole documentation there and
-point to it from everywhere else.
-
-> The details of the repairing control was added in
-> Documentation/edac/memory_repair.rst, which is part of the common
-> patch ("EDAC: Add documentation for RAS feature control").
-
-Ok, point to it pls in this doc so that people can find it.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
