@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-404088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4B79C3EEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:59:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94119C3F3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD681C223A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:58:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DB289044
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500751AB6E9;
-	Mon, 11 Nov 2024 12:55:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4084B19E826;
+	Mon, 11 Nov 2024 13:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VyghVp8f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F0719DF7A;
-	Mon, 11 Nov 2024 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9651A0B12
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 13:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329702; cv=none; b=R18QLaHJZQIjeNAsx/9oHIRW7tGk+c45g1EF0dNR69+3TyNBhuvuUbGyZp9h4ooj5HtvtB7qxMbZBTNkOa9rLfiREl64cA4rv+WgcP/rRK1oeJmi0Nxg9SJIWpXR+QUpKK14pTeLs0D7BggF95S9pBxJKFSsm1tjkpWUYiJhgYE=
+	t=1731330313; cv=none; b=DQ7qQ+Ii0FH21m71pgfZFAw2JVfTHQBeRD6Pnr4BIt1kJmIDjP5L1oO4QUqfX1xX1zyzRN+PGvoMmWs2VYZOxwDzIJSMhw4DF07a6nKNGrlw+NwBKALXFogLOJuTsVFbFmg5AnCn2RGICL3Y4Bm7Rqrx0yiv+dx/Zq/gkyp+Q9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329702; c=relaxed/simple;
-	bh=tyU/E7IdI0PoI6xnGSKBcD21KiHHsKL6ZTo0hZJt4KA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A8/Hx+ww3eTvWDmN9W7dSdRDFsWsVK/RhuTHTsFDUJjcP/gl1odhnS1NYCasMyCMc3k3DgIiubs1VR6c7nOM3w0RFUfrTzofD/hKjOJXihJQUmgwIZrXZ70sB5rgh2uFtDXayW1vgzw3lR1rtlVM3T7zqvGLapR+vlkSsGELEuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xn8dc3l0Wz4f3kpP;
-	Mon, 11 Nov 2024 20:54:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 94E4C1A06D7;
-	Mon, 11 Nov 2024 20:54:57 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP4 (Coremail) with SMTP id gCh0CgB3n4Oe_jFnllryBQ--.36628S7;
-	Mon, 11 Nov 2024 20:54:57 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH RESEND V2 5/5] Xarray: use xa_mark_t in xas_squash_marks() to keep code consistent
-Date: Tue, 12 Nov 2024 05:53:59 +0800
-Message-Id: <20241111215359.246937-6-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241111215359.246937-1-shikemeng@huaweicloud.com>
-References: <20241111215359.246937-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1731330313; c=relaxed/simple;
+	bh=SVHh1fatO0oQO4UReWs7wXWXGCXs6Dml1ZS/FKUTm/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-type; b=sjsG2w++hMj9/HimvJvkrfHPFPy3FselN3ge6dShtCqlZBn+nHu5ZMOtNOIxZw67oXVAvyimst+yIZ7D5elqe1SWdHctmR0+FC5mSrozjm9NZpjzhgiRZHS01lJVoAg0y2O7tpMu18ziCoVfGZlGg6AG8bk0NtXB8suM8nkfn6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VyghVp8f; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731330311;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1cOooKZkaMPDXtuTp8ptu0pElUOFrvu05o1tdMQaEFY=;
+	b=VyghVp8f2v/WAu90OKu9ndtfSnI7FQUqsj+AYmz8q6c728qnz9U6pRtyvYSsZSTydG0OPR
+	MUgmfjhjtzPdYpz7cwQXk/cDhJuZLfJgdpDStKtZFsideUt6FJMxYgB6/frsnCrPLskI8t
+	jXUwuQ1z7lGxwX/E3Ki7k+nDAZIFH9U=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-ppjqHuYlMm2SY4kQiRg0TQ-1; Mon,
+ 11 Nov 2024 08:05:05 -0500
+X-MC-Unique: ppjqHuYlMm2SY4kQiRg0TQ-1
+X-Mimecast-MFC-AGG-ID: ppjqHuYlMm2SY4kQiRg0TQ
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8950B1953945;
+	Mon, 11 Nov 2024 13:05:04 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.45.224.51])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 723E31956086;
+	Mon, 11 Nov 2024 13:05:01 +0000 (UTC)
+From: Jan Stancek <jstancek@redhat.com>
+To: donald.hunter@gmail.com,
+	kuba@kernel.org
+Cc: pabeni@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jstancek@redhat.com
+Subject: [PATCH 1/2] tools: ynl: add script dir to sys.path
+Date: Mon, 11 Nov 2024 14:04:44 +0100
+Message-ID: <97c08d1fdbd374ec6216a59d3b08f03d376ce2aa.1730976866.git.jstancek@redhat.com>
+In-Reply-To: <cover.1730976866.git.jstancek@redhat.com>
+References: <cover.1730976866.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-type: text/plain
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3n4Oe_jFnllryBQ--.36628S7
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UuF13JryrGFWxCFyfWFg_yoW8GrWkpF
-	97C3s8Ka1xA3WUKrnFvan7t345Ja1kK3yjyr4xGwnayFZ8Gr1Yqay7tryjqFnxGFy8ZFy3
-	Cr1Fg3y5Wa1UZw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2
-	AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
-	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
-	WUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU
-	s3kuDUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Besides xas_squash_marks(), all functions use xa_mark_t type to iterate
-all possible marks. Use xa_mark_t in xas_squash_marks() to keep code
-consistent.
+Python options like PYTHONSAFEPATH or -P [1] do not add script
+directory to PYTHONPATH. ynl depends on this path to build and run.
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+[1] This option is default for Fedora rpmbuild since introduction of
+    https://fedoraproject.org/wiki/Changes/PythonSafePath
+
+Signed-off-by: Jan Stancek <jstancek@redhat.com>
 ---
- lib/xarray.c | 20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ tools/net/ynl/cli.py       | 3 +++
+ tools/net/ynl/ethtool.py   | 2 ++
+ tools/net/ynl/ynl-gen-c.py | 3 +++
+ 3 files changed, 8 insertions(+)
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 4231af284bd8..a74795911f1c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -125,16 +125,20 @@ static inline void node_mark_all(struct xa_node *node, xa_mark_t mark)
-  */
- static void xas_squash_marks(const struct xa_state *xas)
- {
--	unsigned int mark = 0;
-+	xa_mark_t mark = 0;
- 	unsigned int limit = xas->xa_offset + xas->xa_sibs + 1;
+diff --git a/tools/net/ynl/cli.py b/tools/net/ynl/cli.py
+index b8481f401376..873463dbdcc0 100755
+--- a/tools/net/ynl/cli.py
++++ b/tools/net/ynl/cli.py
+@@ -3,9 +3,12 @@
  
--	do {
--		unsigned long *marks = xas->xa_node->marks[mark];
--		if (find_next_bit(marks, limit, xas->xa_offset + 1) == limit)
--			continue;
--		__set_bit(xas->xa_offset, marks);
--		bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
--	} while (mark++ != (__force unsigned)XA_MARK_MAX);
-+	for (;;) {
-+		unsigned long *marks = node_marks(xas->xa_node, mark);
-+
-+		if (find_next_bit(marks, limit, xas->xa_offset + 1) != limit) {
-+			__set_bit(xas->xa_offset, marks);
-+			bitmap_clear(marks, xas->xa_offset + 1, xas->xa_sibs);
-+		}
-+		if (mark == XA_MARK_MAX)
-+			break;
-+		mark_inc(mark);
-+	}
- }
+ import argparse
+ import json
++import pathlib
+ import pprint
++import sys
+ import time
  
- /* extracts the offset within this node from the index */
++sys.path.append(pathlib.Path(__file__).resolve().parent.as_posix())
+ from lib import YnlFamily, Netlink, NlError
+ 
+ 
+diff --git a/tools/net/ynl/ethtool.py b/tools/net/ynl/ethtool.py
+index 63c471f075ab..ebb0a11f67bf 100755
+--- a/tools/net/ynl/ethtool.py
++++ b/tools/net/ynl/ethtool.py
+@@ -3,11 +3,13 @@
+ 
+ import argparse
+ import json
++import pathlib
+ import pprint
+ import sys
+ import re
+ import os
+ 
++sys.path.append(pathlib.Path(__file__).resolve().parent.as_posix())
+ from lib import YnlFamily
+ 
+ def args_to_req(ynl, op_name, args, req):
+diff --git a/tools/net/ynl/ynl-gen-c.py b/tools/net/ynl/ynl-gen-c.py
+index 717530bc9c52..a86e88019e22 100755
+--- a/tools/net/ynl/ynl-gen-c.py
++++ b/tools/net/ynl/ynl-gen-c.py
+@@ -4,12 +4,15 @@
+ import argparse
+ import collections
+ import filecmp
++import pathlib
+ import os
+ import re
+ import shutil
++import sys
+ import tempfile
+ import yaml
+ 
++sys.path.append(pathlib.Path(__file__).resolve().parent.as_posix())
+ from lib import SpecFamily, SpecAttrSet, SpecAttr, SpecOperation, SpecEnumSet, SpecEnumEntry
+ 
+ 
 -- 
-2.30.0
+2.43.0
 
 
