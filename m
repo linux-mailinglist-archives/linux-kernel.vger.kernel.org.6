@@ -1,247 +1,178 @@
-Return-Path: <linux-kernel+bounces-404790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BE649C4866
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:45:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B959C4845
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CF90B2DE48
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F3B287107
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228BA1BD9CC;
-	Mon, 11 Nov 2024 21:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EC1BCA1C;
+	Mon, 11 Nov 2024 21:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="Mgw4HU9T"
-Received: from smtp-out.freemail.hu (fmfe06.freemail.hu [46.107.16.199])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="c1vjcDsC"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF681ACDE7;
-	Mon, 11 Nov 2024 21:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73B2159596;
+	Mon, 11 Nov 2024 21:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731361165; cv=none; b=BzKEdPae0dLQ3WHdoS/7QC3nrgPmRv5B8bHd2H9i8Uo6H7q41ooFK6AcdLy0/4WeAmkZivzpKTFWNQPwKSYPFlkuTo6hJ1A/FRQ4Li/jCvGoF37U0Lp9HcdXhHohimFph765kTYg2mDwGEwsw85bn98VdwDOlY7GJw5PCZbWKQw=
+	t=1731361212; cv=none; b=iv4asz4UDETTdseosllhIqgP+s1/xGB71vZHMSNdpwdR+g+cStnDfJq14k+CDho+Kkg5y8UsQQT6GKj8rHpO1WzzrmOzvodEQEpv7YeZaCIfaVMU5z1sV/eFg3Joivr7McKDOGwUgQLUs5aW4XkLQyP8cJPc35iySXgO44ANTxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731361165; c=relaxed/simple;
-	bh=7mtrYbKX1PzvX0aWs2QT3B2Csk5pIZ87YKCO3xMdJCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doh9TBTBoWXzyLU4+20l+q1ktJI3hukbum3fA742ZoWpm8knLeBh0G/kBdt8l4HkKiI1FvaQvDg5qxiWcncVnLGX94JnNwDqC3/qLiiXJRRWk92MSFu/TjDdsjEBfa9d6a2syzF2mfDygEfnyA14+fjQ5Gg9WoaR1FiDua2Sqbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=Mgw4HU9T reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnNGp364BzFLy;
-	Mon, 11 Nov 2024 22:39:14 +0100 (CET)
-Message-ID: <10ffb1e1-163d-4e30-9be3-0f229f3b7492@freemail.hu>
-Date: Mon, 11 Nov 2024 22:39:07 +0100
+	s=arc-20240116; t=1731361212; c=relaxed/simple;
+	bh=sA4S5GrurcnvZwXK+Q7lWveGwLgSBYO/MtiyCWSY88g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TGbuhmP3HS0POMsrRstLTSffSxWR4umNFMLixgyDao4lc6nLgYvU94x5/zvRTLec/9mBdTV+3p08Gm0jW3x1RBpc7gNBe1+TbN7Z784+JezIClPv/xeLgRfn4LAeSMKgUnm+/fuF7EjT91es49vBgLZi/ykQGvcNleNhexsPY1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=c1vjcDsC; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731361208;
+	bh=sA4S5GrurcnvZwXK+Q7lWveGwLgSBYO/MtiyCWSY88g=;
+	h=From:Subject:Date:To:Cc:From;
+	b=c1vjcDsCvMUttwepDX2XEXb9W10YiQkrUR+19fl6eixaQSlEjX4PSX/Tgd7xMEXai
+	 Ojlf2eOc1VJFTjsiwGirHkS69iepXVwf9CqzNnAnOTyADvHAnYNmRJN1yiXQQCPHuc
+	 1Z7XD/4Af2mijd3ZUNnZO8mtjAgOADkq6dr8w1fY=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH v4 0/9] power: supply: extension API
+Date: Mon, 11 Nov 2024 22:40:02 +0100
+Message-Id: <20241111-power-supply-extensions-v4-0-7240144daa8e@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: paulmck@kernel.org, stern@rowland.harvard.edu, parri.andrea@gmail.com,
- will@kernel.org, peterz@infradead.org, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- lkmm@lists.linux.dev, torvalds@linux-foundation.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
- <ZzJ13eM2SNNB3fl7@tardis.local>
-Content-Language: hu
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <ZzJ13eM2SNNB3fl7@tardis.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731361155;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=8385; bh=GJDf37E7zz9efSWD5z/VGlGxs8Mo0IVFgh397H9UMhE=;
-	b=Mgw4HU9TJA0EG5rSyo4xXvh9c+4YyaQf/o9uyRKetNMB/tc4lB53J5RQ7/AEje9o
-	gs7D4W3NSlrYy9hVnPeqn+oy/A3PBIuJM6FemKsl6tOqo6iweo7QuMfV/xliZ0bBayK
-	I9t+QkolzEnenrJNNiGVwIW1vJ2QdLcVoTZquEtcnetEnel8ZQZexlGHafpIKnUeJgQ
-	xZcDCxNhXHR983XcjfmfBrO1DK789JiT2GyZ702SUoV7mYy1VjBBLdbSkdFqR7nIw9n
-	ijyMRy8bLyPexdo7vNOo17tTV+jXS2HvH+AJkI2ZMEM8WgR2kTXe2hlmDGr5RxcAGHW
-	/m1z2KlptA==
+X-B4-Tracking: v=1; b=H4sIALJ5MmcC/3XQ3Q6CMAwF4Fchu3amlDGZV76H8UJYkSUGcAXUG
+ N7d4U80US5Pk35tzk0weUcs1tFNeBocu6YOQS0iUVT7+kDS2ZAFAirQgLJtzuQl9217vEq6dFR
+ PKyxhZY0yZQrGGhG2W0+luzzk7S7kynHX+Ovj0BBP07epZ80hliBzlWpt0EBui82ZHDMXVV8ta
+ +rEBA/4jWXzGAYMbWGTNIcY9/YvlnwwA2oeSwKmkUrKTVJm9PvZ+OzA06kPpXavIsbxDkd0+GJ
+ yAQAA
+X-Change-ID: 20240602-power-supply-extensions-07d949f509d9
+To: Sebastian Reichel <sre@kernel.org>, Armin Wolf <W_Armin@gmx.de>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
+ Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ chrome-platform@lists.linux.dev, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731361208; l=4188;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=sA4S5GrurcnvZwXK+Q7lWveGwLgSBYO/MtiyCWSY88g=;
+ b=uYldgXVTiNhz+gLJBqywFV59dxJa69QAU+2IInUNJYgpDJHNP1ryCIvuVQvcPn0dSkoWQvH4t
+ XIe3TwT62V2AA9677YWAngGVVrmO+AYWHrr2XHkiSw2sge2ul+9UAXJ
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-2024. 11. 11. 22:23 keltezéssel, Boqun Feng írta:
-> On Mon, Nov 11, 2024 at 10:15:30PM +0100, Sz"oke Benjamin wrote:
->> 2024. 11. 11. 21:29 keltezéssel, Paul E. McKenney írta:
->>> On Mon, Nov 11, 2024 at 08:56:34PM +0100, Sz"oke Benjamin wrote:
->>>> 2024. 11. 11. 20:22 keltezéssel, Paul E. McKenney írta:
->>>>> On Mon, Nov 11, 2024 at 07:52:50PM +0100, Sz"oke Benjamin wrote:
->>>>>> 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
->>>>>>> On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
->>>>>>>> From: Benjamin Sz"oke <egyszeregy@freemail.hu>
->>>>>>>>
->>>>>>>> The goal is to fix Linux repository for case-insensitive filesystem,
->>>>>>>> to able to clone it and editable on any operating systems.
->>>>>>>>
->>>>>>>> Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
->>>>>>>> "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
->>>>>>>>
->>>>>>>> Signed-off-by: Benjamin Sz"oke <egyszeregy@freemail.hu>
->>>>>>>
->>>>>>> Ummm...  Really?
->>>>>>>
->>>>>>> Just out of curiosity, which operating-system/filesystem combination are
->>>>>>> you working with?  And why not instead fix that combination to handle
->>>>>>> mixed case?
->>>>>>>
->>>>>>> 							Thanx, Paul
->>>>>>
->>>>>> Windows and also MacOS is not case sensitive by default. My goal is to
->>>>>> improve Linux kernel source-tree, to able to develop it in any operating
->>>>>> systems for example via Visual Studio Code extensions/IntelliSense feature
->>>>>> or any similar IDE which is usable in any OS.
->>>>>
->>>>> Why not simply enable case sensitivity on the file tree in which you
->>>>> are processing Linux-kernel source code?
->>>>>
->>>>> For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
->>>>> For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
->>>>>
->>>>> In some cases it might work better to simply run a Linux VM on top of
->>>>> Windows or MacOS.
->>>>>
->>>>> They tell me that webservers already do this, so why not also for
->>>>> Linux-kernel source code?
->>>>
->>>> Why we not solve it as simple as it can in the source code of the Linux
->>>> kernel with renaming? It would be more robust and more durable to fix this
->>>> issue/inconviniant in the source as an overal complete solution. Nobody like
->>>> to figth with configuraition hell of Windows and MacOS, or build up a
->>>> diskspace consumer Virtual Linux with crappy GUI capapilities for coding big
->>>> things.
->>>>
->>>> Young developers will never be willing to join and contributing in Linux
->>>> kernel in the future if Linux kernel code is not editable in a high-quality,
->>>> easy-to-use IDE for, which is usable in any OS.
->>>
->>> There are a great number of software projects out there that use mixed
->>> case.  Therefore, can an IDE that does not gracefully handle mixed case
->>> really be said to be either high quality or easy to use?
->>>
->>> In other words, you have the option of making the IDE handle this.
->>>
->>>> Need to improve this kind of things and simplify/modernize developing or
->>>> never will be solved the following issues:
->>>> https://www.youtube.com/watch?v=lJLw94pAcBY
->>>
->>> Sorry, but that video does not support your point.  In fact, the presenter
->>> clearly states that this sort of tooling issue is not a real problem
->>> for the Linux kernel near the middle of that video.
->>>
->>> 							Thanx, Paul
->>>
->>>>>> There were some accepted patches which aim this same goal.
->>>>>> https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
->>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
->>>>>
->>>>> Fair enough, as it is the maintainer's choice.  Which means that
->>>>> their accepting these case-sensitivity changes does not require other
->>>>> maintainers to do so.
->>>>>
->>>>> 							Thanx, Paul
->>>>>
->>>>>>>> ---
->>>>>>>>      tools/memory-model/Documentation/locking.txt                    | 2 +-
->>>>>>>>      tools/memory-model/Documentation/recipes.txt                    | 2 +-
->>>>>>>>      tools/memory-model/litmus-tests/README                          | 2 +-
->>>>>>>>      ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
->>>>>>>>      4 files changed, 3 insertions(+), 3 deletions(-)
->>>>>>>>      rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
->>>>>>>>
->>>>>>>> diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
->>>>>>>> index 65c898c64a93..42bc3efe2015 100644
->>>>>>>> --- a/tools/memory-model/Documentation/locking.txt
->>>>>>>> +++ b/tools/memory-model/Documentation/locking.txt
->>>>>>>> @@ -184,7 +184,7 @@ ordering properties.
->>>>>>>>      Ordering can be extended to CPUs not holding the lock by careful use
->>>>>>>>      of smp_mb__after_spinlock():
->>>>>>>> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->>>>>>>> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>>>>>>>      	void CPU0(void)
->>>>>>>>      	{
->>>>>>>>      		spin_lock(&mylock);
->>>>>>>> diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
->>>>>>>> index 03f58b11c252..35996eb1b690 100644
->>>>>>>> --- a/tools/memory-model/Documentation/recipes.txt
->>>>>>>> +++ b/tools/memory-model/Documentation/recipes.txt
->>>>>>>> @@ -159,7 +159,7 @@ lock's ordering properties.
->>>>>>>>      Ordering can be extended to CPUs not holding the lock by careful use
->>>>>>>>      of smp_mb__after_spinlock():
->>>>>>>> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->>>>>>>> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>>>>>>>      	void CPU0(void)
->>>>>>>>      	{
->>>>>>>>      		spin_lock(&mylock);
->>>>>>>> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
->>>>>>>> index d311a0ff1ae6..e3d451346400 100644
->>>>>>>> --- a/tools/memory-model/litmus-tests/README
->>>>>>>> +++ b/tools/memory-model/litmus-tests/README
->>>>>>>> @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
->>>>>>>>      	spin_lock() sufficient to make ordering apparent to accesses
->>>>>>>>      	by a process not holding the lock?
->>>>>>>> -Z6.0+pooncelock+poonceLock+pombonce.litmus
->>>>>>>> +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>>>>>>      	As above, but with smp_mb__after_spinlock() immediately
->>>>>>>>      	following the spin_lock().
->>>>>>>> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>>>>>> similarity index 100%
->>>>>>>> rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
->>>>>>>> rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>>>>>>> -- 
->>>>>>>> 2.47.0.windows.2
->>>>>>>>
->>>>>>
->>>>
->>
->> There is a technical issue in the Linux kernel source tree's file
->> naming/styles in git clone command on case-insensitive filesystem.
->>
->>
->> warning: the following paths have collided (e.g. case-sensitive paths
->> on a case-insensitive filesystem) and only one from the same
->> colliding group is in the working tree:
->>
->>    'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
->>    'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
->>
->>
->> As you a maintainer, what is your suggestion to fix it in the source code of
->> the Linux kernel? Please send a real technical suggestion not just how could
->> it be done in an other way (which is out of the scope now).
->>
->> Is my renaming patch correct to solve it? Question is what is the most
-> 
-> No, because once you do a checkout to a commit that previous to your
-> changes, things are going to break again. The real "issue" is git use
-> case-sensitive file names, so unless you can rewrite the whole history,
-> your "solution" goes nowhere.
-> 
-> Regards,
-> Boqun
-> 
->> effective and proper fix/solution which can be commited into the Linux
->> kernel repo to fix it.
+Introduce a mechanism for drivers to extend the properties implemented
+by a power supply.
 
+Motivation
+----------
 
-My renaming solution can not fix the old history line, but after this patch in 
-latest master branch there are no any issue anymore, in git cloning. This the 
-bare minimum solution which can fix its "cloning" issue for the future.
+Various drivers, mostly in platform/x86 extend the ACPI battery driver
+with additional sysfs attributes to implement more UAPIs than are
+exposed through ACPI by using various side-channels, like WMI,
+nonstandard ACPI or EC communication.
+
+While the created sysfs attributes look similar to the attributes
+provided by the powersupply core, there are various deficiencies:
+
+* They don't show up in uevent payload.
+* They can't be queried with the standard in-kernel APIs.
+* They don't work with triggers.
+* The extending driver has to reimplement all of the parsing,
+  formatting and sysfs display logic.
+* Writing a extension driver is completely different from writing a
+  normal power supply driver.
+* ~Properties can not be properly overriden.~
+  (Overriding is now explicitly forbidden)
+
+The proposed extension API avoids all of these issues.
+An extension is just a "struct power_supply_ext" with the same kind of
+callbacks as in a normal "struct power_supply_desc".
+
+The API is meant to be used via battery_hook_register(), the same way as
+the current extensions.
+
+When testing, please enable lockdep to make sure the locking is correct.
+
+Contents
+--------
+
+* Patch 1 to 6 are preparation patches.
+* Patch 7 implements the extension API itself.
+* Patch 8 adds extension support to test_power.c
+* Patch 9 converts the in-tree cros_charge-control driver to the
+  extension API.
+
+Open issues
+-----------
+
+* As this is only useful with the hooks of CONFIG_ACPI_BATTERY, should
+  it also be gated behind this or another config?
+* Is an rw_semaphore acceptable?
+
+[0] https://lore.kernel.org/lkml/20240528-cros_ec-charge-control-v2-0-81fb27e1cff4@weissschuh.net/
+
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v4:
+- Drop RFC state
+- Integrate locking commit
+- Reregister hwmon device
+- Link to v3: https://lore.kernel.org/r/20240904-power-supply-extensions-v3-0-62efeb93f8ec@weissschuh.net
+
+Changes in v3:
+- Make naming more consistent
+- Readd locking
+- Allow multiple active extensions
+- Allow passing a "void *ext_data" when registering
+- Switch example driver from system76 to cros_charge-control
+- Link to v2: https://lore.kernel.org/r/20240608-power-supply-extensions-v2-0-2dcd35b012ad@weissschuh.net
+
+Changes in v2:
+- Drop locking patch, let's figure out the API first
+- Allow registration of multiple extensions
+- Pass extension to extension callbacks as parameter
+- Disallow property overlap between extensions and core psy
+- Drop system76/pdx86 maintainers, as the system76 changes are only RFC
+  state anyways
+- Link to v1: https://lore.kernel.org/r/20240606-power-supply-extensions-v1-0-b45669290bdc@weissschuh.net
+
+---
+Thomas Weißschuh (9):
+      power: supply: sysfs: print single value in uevent for POWER_SUPPLY_PROP_CHARGE_BEHAVIOUR
+      power: supply: core: rename psy_has_property() to psy_desc_has_property()
+      power: supply: core: introduce power_supply_has_property()
+      power: supply: hwmon: prepare for power supply extensions
+      power: supply: sysfs: prepare for power supply extensions
+      power: supply: sysfs: rework uevent property loop
+      power: supply: core: implement extension API
+      power: supply: test-power: implement a power supply extension
+      power: supply: cros_charge-control: use power_supply extensions
+
+ drivers/power/supply/cros_charge-control.c | 205 +++++++++++------------------
+ drivers/power/supply/power_supply.h        |  16 +++
+ drivers/power/supply/power_supply_core.c   | 175 ++++++++++++++++++++++--
+ drivers/power/supply/power_supply_hwmon.c  |  50 ++++---
+ drivers/power/supply/power_supply_sysfs.c  |  85 ++++++------
+ drivers/power/supply/test_power.c          | 102 ++++++++++++++
+ include/linux/power_supply.h               |  32 +++++
+ 7 files changed, 456 insertions(+), 209 deletions(-)
+---
+base-commit: 83bce34420eaf91506957703bf9a31d8581ed6cb
+change-id: 20240602-power-supply-extensions-07d949f509d9
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
