@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-404119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C299C3F47
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:09:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E519C3F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:10:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6641F21BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3821B1F225A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C1219CCFC;
-	Mon, 11 Nov 2024 13:09:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C04153BED;
-	Mon, 11 Nov 2024 13:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E6A19CCEC;
+	Mon, 11 Nov 2024 13:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aZmqv6ae"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D47158558;
+	Mon, 11 Nov 2024 13:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330571; cv=none; b=XnfirOG/Idr8pLOHCoOtTLXn8WMDEyDNczLfsuUPgKIFRtKrj2RqAy4sQMA1cVIB+4RHcNbjx+mknfRht4gXrGobLrTJ6HTSuZEJrm1R7SclCZspyvZuBksi9u5VQoDtPs9+X7G9k5q4RFPKux6FzyrG1d9sRiCKK7PFs4Fodns=
+	t=1731330603; cv=none; b=Cw6oFFBHYw9mmTD895jXoSWEdYHLi096Z+rZGWci9QsbM9tlEI7WpGs4Tz2nUvwvibhMnkluRVKHZ180MrCxTIsdm7wTENRIeZRe227pIZvpHeahAzZSzD2CcWgmsYMK9SFE6hbDIIJP+Ywy4dN8gy8UEK7I6alxM9Dy56Oug8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330571; c=relaxed/simple;
-	bh=zAnfbjazIKCKkvUjNTVKN/Fduo3MPuJ3ZujI3eyZNtc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OwUzxXsZUK3Nv9zzXB2qgXvZegQChzs7SQ/FpxrM1LQ9sZoLBk1o3E+CYHigxEiCMvdVvDv9uiC7j+3T0Ku4m5OeJgre2SX34G3mMtWSl9yr/Ja7nqe6gSF1k/Mx1kENJpzaf6nKJwKDIfML2gmiMoYhFgaP9G4RxZIjCO5zHLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 695071CE0;
-	Mon, 11 Nov 2024 05:09:55 -0800 (PST)
-Received: from [10.57.91.162] (unknown [10.57.91.162])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69E743F66E;
-	Mon, 11 Nov 2024 05:09:20 -0800 (PST)
-Message-ID: <a63e7c3b-ce96-47a5-b462-d5de3a2edb56@arm.com>
-Date: Mon, 11 Nov 2024 13:09:20 +0000
+	s=arc-20240116; t=1731330603; c=relaxed/simple;
+	bh=ousX+3GHB7wGIoraQ08Zoo2gBqx1LoCHpPOMTrH2VIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pFPb4C+ZI4CLos6n6jKCmivL4ejHeIkeZ+y/zELYtEA+RL6gLsvA9dWtg7VnZpF87DSuPv4rQ78gys2kHGfVkDJuZI5Yobv17o4F3HkTpZZ19OyG52SdCG0MZTF0TVfnT/nWED73oZ3bblUyMx8GFzj8zvxDpqrg+wz3Tbijmsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aZmqv6ae; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABCAQ8d032406;
+	Mon, 11 Nov 2024 13:09:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kHv4y8gXFcsSx9Dqojo1tzxhO75dEf8tLjEd853vz/g=; b=aZmqv6aeQ4Hx+1H0
+	9Gg8zIlR3E+bqvAFJgstkcbf4Tcgy/VKHyRFcDR8HaPxDACQXeRW2T/bdMyJaDvU
+	LYAGeAQqTUxRutYeYROnZY53pxC6VxQcmHNo3RXbU5JRUIFTjEAz4zSf9fpqEgwJ
+	s3Jrru0qyAhkolZgulrkp62Wtkkw6S9UOJCGiW6KR8ft/x4u/FTQ8Nj4vl8CaI4s
+	Ouex+snmLddVTb24y6fG0VadFDQqO4xc2p1t5dqhDmNQO1+HPiagUCH+2mxPIc3+
+	OAjaZeY/G/9u2zQkRIwOLsXuCJc5MvI23e/12rTaXT487yxBAkn4ksM68nqHmAX2
+	P8GD1Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42syy248a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 13:09:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABD9u04030767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 13:09:56 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
+ 2024 05:09:51 -0800
+Message-ID: <9179759d-7af1-409f-8130-1136c9ae4ecd@quicinc.com>
+Date: Mon, 11 Nov 2024 18:39:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,139 +64,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFCv1 0/7] vfio: Allow userspace to specify the address
- for each MSI vector
-To: Nicolin Chen <nicolinc@nvidia.com>, maz@kernel.org, tglx@linutronix.de,
- bhelgaas@google.com, alex.williamson@redhat.com
-Cc: jgg@nvidia.com, leonro@nvidia.com, shameerali.kolothum.thodi@huawei.com,
- dlemoal@kernel.org, kevin.tian@intel.com, smostafa@google.com,
- andriy.shevchenko@linux.intel.com, reinette.chatre@intel.com,
- eric.auger@redhat.com, ddutile@redhat.com, yebin10@huawei.com,
- brauner@kernel.org, apatel@ventanamicro.com,
- shivamurthy.shastri@linutronix.de, anna-maria@linutronix.de,
- nipun.gupta@amd.com, marek.vasut+renesas@mailbox.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org
-References: <cover.1731130093.git.nicolinc@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <cover.1731130093.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8775p: Add CPU OPP tables to
+ scale DDR/L3
+To: Brian Masney <bmasney@redhat.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        Shivnandan Kumar
+	<quic_kshivnan@quicinc.com>
+References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
+ <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-2-074e0fb80b33@quicinc.com>
+ <ZxEwVShJuMH4J1Hp@x1>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <ZxEwVShJuMH4J1Hp@x1>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0xJapzRg2XawwIJthEUOccaVD2sA96hm
+X-Proofpoint-ORIG-GUID: 0xJapzRg2XawwIJthEUOccaVD2sA96hm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=889 suspectscore=0
+ lowpriorityscore=0 clxscore=1011 spamscore=0 adultscore=0 impostorscore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411110109
 
-On 2024-11-09 5:48 am, Nicolin Chen wrote:
-> On ARM GIC systems and others, the target address of the MSI is translated
-> by the IOMMU. For GIC, the MSI address page is called "ITS" page. When the
-> IOMMU is disabled, the MSI address is programmed to the physical location
-> of the GIC ITS page (e.g. 0x20200000). When the IOMMU is enabled, the ITS
-> page is behind the IOMMU, so the MSI address is programmed to an allocated
-> IO virtual address (a.k.a IOVA), e.g. 0xFFFF0000, which must be mapped to
-> the physical ITS page: IOVA (0xFFFF0000) ===> PA (0x20200000).
-> When a 2-stage translation is enabled, IOVA will be still used to program
-> the MSI address, though the mappings will be in two stages:
->    IOVA (0xFFFF0000) ===> IPA (e.g. 0x80900000) ===> 0x20200000
-> (IPA stands for Intermediate Physical Address).
-> 
-> If the device that generates MSI is attached to an IOMMU_DOMAIN_DMA, the
-> IOVA is dynamically allocated from the top of the IOVA space. If attached
-> to an IOMMU_DOMAIN_UNMANAGED (e.g. a VFIO passthrough device), the IOVA is
-> fixed to an MSI window reported by the IOMMU driver via IOMMU_RESV_SW_MSI,
-> which is hardwired to MSI_IOVA_BASE (IOVA==0x8000000) for ARM IOMMUs.
-> 
-> So far, this IOMMU_RESV_SW_MSI works well as kernel is entirely in charge
-> of the IOMMU translation (1-stage translation), since the IOVA for the ITS
-> page is fixed and known by kernel. However, with virtual machine enabling
-> a nested IOMMU translation (2-stage), a guest kernel directly controls the
-> stage-1 translation with an IOMMU_DOMAIN_DMA, mapping a vITS page (at an
-> IPA 0x80900000) onto its own IOVA space (e.g. 0xEEEE0000). Then, the host
-> kernel can't know that guest-level IOVA to program the MSI address.
-> 
-> To solve this problem the VMM should capture the MSI IOVA allocated by the
-> guest kernel and relay it to the GIC driver in the host kernel, to program
-> the correct MSI IOVA. And this requires a new ioctl via VFIO.
 
-Once VFIO has that information from userspace, though, do we really need 
-the whole complicated dance to push it right down into the irqchip layer 
-just so it can be passed back up again? AFAICS 
-vfio_msi_set_vector_signal() via VFIO_DEVICE_SET_IRQS already explicitly 
-rewrites MSI-X vectors, so it seems like it should be pretty 
-straightforward to override the message address in general at that 
-level, without the lower layers having to be aware at all, no?
+
+On 10/17/2024 9:12 PM, Brian Masney wrote:
+> On Thu, Oct 17, 2024 at 02:58:31PM +0530, Jagadeesh Kona wrote:
+>> +	cpu0_opp_table: opp-table-cpu0 {
+>> +		compatible = "operating-points-v2";
+>> +		opp-shared;
+>> +
+>> +		cpu0_opp_1267mhz: opp-1267200000 {
+>> +			opp-hz = /bits/ 64 <1267200000>;
+>> +			opp-peak-kBps = <6220800 29491200>;
+>> +		};
+>> +
+>> +		cpu0_opp_1363mhz: opp-1363200000 {
+>> +			opp-hz = /bits/ 64 <1363200000>;
+>> +			opp-peak-kBps = <6220800 29491200>;
+>> +		};
+> 
+> [snip]
+> 
+>> +	cpu4_opp_table: opp-table-cpu4 {
+>> +		compatible = "operating-points-v2";
+>> +		opp-shared;
+>> +
+>> +		cpu4_opp_1267mhz: opp-1267200000 {
+>> +			opp-hz = /bits/ 64 <1267200000>;
+>> +			opp-peak-kBps = <6220800 29491200>;
+>> +		};
+>> +
+>> +		cpu4_opp_1363mhz: opp-1363200000 {
+>> +			opp-hz = /bits/ 64 <1363200000>;
+>> +			opp-peak-kBps = <6220800 29491200>;
+>> +		};
+> 
+> There's no functional differences in the cpu0 and cpu4 opp tables. Can
+> a single table be used?
+> 
+> This aligns with my recollection that this particular SoC only has the
+> gold cores.
+> 
+> Brian
+> 
+
+Thanks Brian for your review. Sorry for the delayed response.
+
+We require separate OPP tables for CPU0 and CPU4 to allow independent
+scaling of DDR and L3 frequencies for each CPU domain, with the final
+DDR and L3 frequencies being an aggregate of both.
+
+If we use a single OPP table for both CPU domains, then _allocate_opp_table() [1]
+won't be invoked for CPU4. As a result both CPU devices will end up in sharing
+the same ICC path handle, which could lead to one CPU device overwriting the bandwidth
+votes of other.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/opp/core.c#n1588
 
 Thanks,
-Robin.
-
-> Extend the VFIO path to allow an MSI target IOVA to be forwarded into the
-> kernel and pushed down to the GIC driver.
-> 
-> Add VFIO ioctl VFIO_IRQ_SET_ACTION_PREPARE with VFIO_IRQ_SET_DATA_MSI_IOVA
-> to carry the data.
-> 
-> The downstream calltrace is quite long from the VFIO to the ITS driver. So
-> in order to carry the MSI IOVA from the top to its_irq_domain_alloc(), add
-> patches in a leaf-to-root order:
-> 
->    vfio_pci_core_ioctl:
->      vfio_pci_set_irqs_ioctl:
->        vfio_pci_set_msi_prepare:                           // PATCH-7
->          pci_alloc_irq_vectors_iovas:                      // PATCH-6
->            __pci_alloc_irq_vectors:                        // PATCH-5
->              __pci_enable_msi/msix_range:                  // PATCH-4
->                msi/msix_capability_init:                   // PATCH-3
->                  msi/msix_setup_msi_descs:
->                    msi_insert_msi_desc();                  // PATCH-1
->                  pci_msi_setup_msi_irqs:
->                    msi_domain_alloc_irqs_all_locked:
->                      __msi_domain_alloc_locked:
->                        __msi_domain_alloc_irqs:
->                          __irq_domain_alloc_irqs:
->                            irq_domain_alloc_irqs_locked:
->                              irq_domain_alloc_irqs_hierarchy:
->                                msi_domain_alloc:
->                                  irq_domain_alloc_irqs_parent:
->                                    its_irq_domain_alloc(); // PATCH-2
-> 
-> Note that this series solves half the problem, since it only allows kernel
-> to set the physical PCI MSI/MSI-X on the device with the correct head IOVA
-> of a 2-stage translation, where the guest kernel does the stage-1 mapping
-> that MSI IOVA (0xEEEE0000) to its own vITS page (0x80900000) while missing
-> the stage-2 mapping from that IPA to the physical ITS page:
->    0xEEEE0000 ===> 0x80900000 =x=> 0x20200000
-> A followup series should fill that gap, doing the stage-2 mapping from the
-> vITS page 0x80900000 to the physical ITS page (0x20200000), likely via new
-> IOMMUFD ioctl. Once VMM sets up this stage-2 mapping, VM will act the same
-> as bare metal relying on a running kernel to handle the stage-1 mapping:
->    0xEEEE0000 ===> 0x80900000 ===> 0x20200000
-> 
-> This series (prototype) is on Github:
-> https://github.com/nicolinc/iommufd/commits/vfio_msi_giova-rfcv1/
-> It's tested by hacking the host kernel to hard-code a stage-2 mapping.
-> 
-> Thanks!
-> Nicolin
-> 
-> Nicolin Chen (7):
->    genirq/msi: Allow preset IOVA in struct msi_desc for MSI doorbell
->      address
->    irqchip/gic-v3-its: Bypass iommu_cookie if desc->msi_iova is preset
->    PCI/MSI: Pass in msi_iova to msi_domain_insert_msi_desc
->    PCI/MSI: Allow __pci_enable_msi_range to pass in iova
->    PCI/MSI: Extract a common __pci_alloc_irq_vectors function
->    PCI/MSI: Add pci_alloc_irq_vectors_iovas helper
->    vfio/pci: Allow preset MSI IOVAs via VFIO_IRQ_SET_ACTION_PREPARE
-> 
->   drivers/pci/msi/msi.h             |   3 +-
->   include/linux/msi.h               |  11 +++
->   include/linux/pci.h               |  18 ++++
->   include/linux/vfio_pci_core.h     |   1 +
->   include/uapi/linux/vfio.h         |   8 +-
->   drivers/irqchip/irq-gic-v3-its.c  |  21 ++++-
->   drivers/pci/msi/api.c             | 136 ++++++++++++++++++++----------
->   drivers/pci/msi/msi.c             |  20 +++--
->   drivers/vfio/pci/vfio_pci_intrs.c |  41 ++++++++-
->   drivers/vfio/vfio_main.c          |   3 +
->   kernel/irq/msi.c                  |   6 ++
->   11 files changed, 212 insertions(+), 56 deletions(-)
-> 
-
+Jagadeesh
+ 
 
