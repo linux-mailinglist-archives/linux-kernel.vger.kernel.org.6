@@ -1,119 +1,72 @@
-Return-Path: <linux-kernel+bounces-404051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4E9C3E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:37:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D66E9C3E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19851F223B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DC361C20E23
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732AA19D084;
-	Mon, 11 Nov 2024 12:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jMOJoCm2"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECD814F9E2;
-	Mon, 11 Nov 2024 12:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24A019B3EE;
+	Mon, 11 Nov 2024 12:38:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3E0139578
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731328653; cv=none; b=n9FwHEjTI6Bqhm/lIuuD944wJ42KgZ1AKd/XRoXkIJEf8Q3VbEc8p/GRIz1o8kfjVg5jmsgPuZBRZDWERcdZ/6U6ukzBvj3XgwUn60KEP7HMbFeFIQqurRt0ci4e/TuHV5jbdFjYBgDZ7D2ULj8Sv4e35cWuUYcS04kYvOMuJGE=
+	t=1731328682; cv=none; b=eAHAf/tVehIazAOJtUCxp61fG6X729WnEMT6+bOxN7GQxZH/RWHD4OskzozbXiSQznYsn0BbsxNmHhCMFkdb0YK3+nUdGP8JeP9U+o49iEN2E50gjOGM2w3AC1jFhv4khVZXWwXo4iegjgGHCjPVAWU5j+TGCORWFcjbmb9ot88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731328653; c=relaxed/simple;
-	bh=k1WV2pAD/8xmmFjcMJoAZqWMi8wAr3HzjyLMBii/Jo8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WTvykZZb3s6x/cLvTLzB5XQKY/uvGm6IdwXEHsDfXceYTiUA+9bhDo69qvgjvsD1c0FMI4MsRcAjf4PEClGhGnwVTjLtxVdn0LvCuhPY0UyVOoFDkM705zmPlz8dn6NdWXKFgh7+zjiInWXczos5ol8rdB0gK9SkZjZX2HSwwpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jMOJoCm2; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ABCbHoM043260;
-	Mon, 11 Nov 2024 06:37:17 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731328637;
-	bh=60UcITJlpU2R+Ybt6O7o94y6gwkZ59cqwJcbrJQ7AmE=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=jMOJoCm20vIRQZejgBmb680tW36MSbmMSI0AVm5x1g12jgyyntAz9kOD7oO1K60kh
-	 W16waXS8lVnikAJTKoWQ4IJbx1TbWEI5qEnCc/PZp3kLZG8Kk+tToni/T1wa6gIYzp
-	 SBM+dM74ppd1JZUPhx2xjBv/Eta5h8qVwjdUWnpw=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4ABCbHlr110654
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 11 Nov 2024 06:37:17 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 11
- Nov 2024 06:37:17 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 11 Nov 2024 06:37:17 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ABCbHY5078651;
-	Mon, 11 Nov 2024 06:37:17 -0600
-Date: Mon, 11 Nov 2024 06:37:17 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Arnd Bergmann <arnd@kernel.org>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, Vibhore Vardhan <vibhore@ti.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Markus Schneider-Pargmann
-	<msp@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pmdomain: ti_sci: add CONFIG_PM_SLEEP dependency
-Message-ID: <20241111123717.yqnjp4voohi4bhbu@accurate>
-References: <20241111104605.3964041-1-arnd@kernel.org>
+	s=arc-20240116; t=1731328682; c=relaxed/simple;
+	bh=Pta5Vk0xiyZy9XOL/JeY8IfKaulwL616tyjQn3snYR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dDOuhJr7//YNG/K/xxGpQegQz9/4N3lrYhxthwK/t4G5nCBbZNzZdT6YDK6OYjFzAzyo+i5TanPlRbwld9/uqW4ByJatdHkgMIjG+bgLtwY2XItxp2LA0kkXSdirQDNfOsjWrgCfqIR2W/bg+aZ15pNnW0/P8B5VCzqav3lNqHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45A6E1CE0;
+	Mon, 11 Nov 2024 04:38:30 -0800 (PST)
+Received: from [10.1.36.17] (e127648.arm.com [10.1.36.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EADF03F6A8;
+	Mon, 11 Nov 2024 04:37:58 -0800 (PST)
+Message-ID: <a491e879-364c-4b57-aa69-28608d8af4f0@arm.com>
+Date: Mon, 11 Nov 2024 12:37:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241111104605.3964041-1-arnd@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/3] tick-sched: Keep tick on if hrtimer is due imminently
+To: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ linux-kernel@vger.kernel.org, Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20241108174839.1016424-1-joel@joelfernandes.org>
+ <20241108174839.1016424-3-joel@joelfernandes.org>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20241108174839.1016424-3-joel@joelfernandes.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11:46-20241111, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 11/8/24 17:48, Joel Fernandes (Google) wrote:
+> In highres mode, the kernel only considers timer wheel events when
+> considering whether to keep the tick on (via get_next_interrupt()).
 > 
-> Without CONFIG_PM_SLEEP, the pm_generic_suspend() function cannot be called
-> since it is defined to NULL:
+> This seems odd because it consider several other reasons to keep the
+> tick on. Further, turning off the tick does not help because once idle
+> exit happens due to that imminent hrtimer interrupt, the tick hrtimer
+> interrupt is requeued. That means more hrtimer rbtree operations for not
+> much benefit.
 > 
-> In file included from include/uapi/linux/posix_types.h:5,
-> 		...
->                  from drivers/pmdomain/ti/ti_sci_pm_domains.c:10:
-> drivers/pmdomain/ti/ti_sci_pm_domains.c: In function 'ti_sci_pd_suspend':
-> include/linux/stddef.h:9:14: error: called object is not a function or function pointer
->     9 | #define NULL ((void *)0)
->       |              ^
-> include/linux/pm.h:875:41: note: in expansion of macro 'NULL'
->   875 | #define pm_generic_suspend              NULL
->       |                                         ^~~~
-> drivers/pmdomain/ti/ti_sci_pm_domains.c:134:15: note: in expansion of macro 'pm_generic_suspend'
->   134 |         ret = pm_generic_suspend(dev);
->       |               ^~~~~~~~~~~~~~~~~~
-> 
-> Fixes: 7c2c8d2651b5 ("pmdomain: ti_sci: add per-device latency constraint management")
+> Ideally we should not have to do anything because the cpuidle governor
+> should not try to the stop the tick because it knows about this
+> situation, but apparently it still does try to stop the tick.
 
-Arnd, thanks, but the breakage never made it to the pull request.
-
-lkft caught it[1] and I had dropped the series from my queue[2].
-Kevin reposted a v5 of the series with the fixups[3] - hopefully with
-the dependencies merged, we should see that go via Ulf's tree for the
-next window.
-
-[1] https://lore.kernel.org/all/CA+G9fYtioQ22nVr9m22+qyMqUNRsGdA=cFw_j1OUv=x8Pcs-bw@mail.gmail.com/
-[2] https://lore.kernel.org/all/7h34k6olu9.fsf@baylibre.com/
-[3] https://lore.kernel.org/linux-pm/20241101-lpm-v6-10-constraints-pmdomain-v5-0-3011aa04622f@baylibre.com/
-
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Any details on this? Which governor?
 
