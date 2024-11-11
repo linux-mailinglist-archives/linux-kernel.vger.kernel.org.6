@@ -1,139 +1,192 @@
-Return-Path: <linux-kernel+bounces-404490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39E89C4447
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:58:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA189C4481
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B85E1F21A6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67492B22255
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE00F1AA1DE;
-	Mon, 11 Nov 2024 17:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5269D1AAE0C;
+	Mon, 11 Nov 2024 17:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pwgmUV20"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOvniEwq"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB0C14D283;
-	Mon, 11 Nov 2024 17:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A1314D283;
+	Mon, 11 Nov 2024 17:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347885; cv=none; b=YKMvvy/T09FBjpsqV2I91hoFdNWUnS3GCs9xaTLTCRIi91IL3LrgJ5LqyYurYVqfHTGtu6y47sCu34TayzjCyC8dMhgOyNP5u+QzelKOxav0ZcPDpF+EGhcz74AN0Fmm84VXufj/nNtbBiMLUt5XQ6y8eNyigVZilSO3dEWbNjM=
+	t=1731347893; cv=none; b=ecrlAXfsmKqnSgakFSw9TjpVNlcvv/FvSgMi8ZOG009Y3n421U2NCZfN4Q5RSvdu5nyIggzb+HNjpiRk0Fj8ARZ9FD2T7cAwNrvHZutdncz7GMBfUt12A2Nl/2uiUJTJCKm6s7yLBMl5BG8OAPrE+2ryu5/y/NvTwPCEFagsxpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347885; c=relaxed/simple;
-	bh=o3CQlzBRpJV7aSV4DDZJsHMn6BJpLIqcjJ/aGt/TrPw=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ld88jEZGV8e54PtKxDrp1xGBOJiGb7x7GmEzLOFkv6wYFZbyklkmvMKT93KbrOH4xV50RsTwUCIjNhakKk9IOEDGyuFjAxdyir+MS2C1cvcnSJyO4Wmvvu/5QACAJk+q3FjJxqeXviecGrAA/+6Tz+mT+m3M7rcZEYycE9X6CEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pwgmUV20; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DC7C4CECF;
-	Mon, 11 Nov 2024 17:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731347884;
-	bh=o3CQlzBRpJV7aSV4DDZJsHMn6BJpLIqcjJ/aGt/TrPw=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=pwgmUV20E5aFcgwiIvoi9A192iBJ8Zm9CVa0R7SLCKwUtHCxAbSDAhm7yBGz2lqNr
-	 jETq5UW1TzB8BWPmXi8TZ9WhuhNv5gfmYbIQmJTr83Mm/DKDsdONzg3sARLRzUTLWr
-	 XtqGGPVPnT812jB0Nw6XJ/yj6Yozw1dhC0of3Q98xk9yfk19deIkHKE2a+pfV4HYG1
-	 MWhjiyluh/cLJH6+4dSS2Z5awGosMnSLw+gxt4NuzZZJRbdS0MvpmJCqiO5NUSUSGw
-	 t18OJG06Wdk8UweroCF29N+UUt7Y7igbWNkx2Gl2hi43SzSmreioKTylBHJVD2u1LF
-	 LgbFFtHfTLqUQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,  Raj Kumar Bhagat
- <quic_rajkbhag@quicinc.com>,  ath12k@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  Jeff Johnson <jjohnson@kernel.org>,  Bjorn
- Andersson <andersson@kernel.org>,  Konrad Dybcio <konradybcio@kernel.org>,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-arm-msm@vger.kernel.org
-Subject: Re: [RFC PATCH v3 0/5] wifi: ath12k: Add wifi device node with WSI
- for QCN9274 in RDP433
-References: <20241105180444.770951-1-quic_rajkbhag@quicinc.com>
-	<49a6ec0d-8a0b-49aa-a9eb-1174cff930f6@kernel.org>
-	<cmvfpctliqggra33u6ituguoxh3jxcuxiyjpbtcjbcgpu6lhoi@4zdthfkc2ed3>
-	<692503b8-cf39-4d6b-b70e-910fcc710d69@kernel.org>
-	<CAA8EJpqMCbyK0dodMNyfs8dNjV2QoB2nyWm233eOS9xo8BaFJg@mail.gmail.com>
-	<9d158c25-197a-49fd-b639-45287a46438f@kernel.org>
-Date: Mon, 11 Nov 2024 19:57:59 +0200
-In-Reply-To: <9d158c25-197a-49fd-b639-45287a46438f@kernel.org> (Krzysztof
-	Kozlowski's message of "Thu, 7 Nov 2024 13:16:56 +0100")
-Message-ID: <87wmh94pqw.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1731347893; c=relaxed/simple;
+	bh=pfv1aUuAyB1V7kpVXxrt4xJT5uoHOXAUmdiy1dXw850=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=SO5zr0/PqWd/6LXwyR6RJk21PS83kbcc6u1+PiRbI7MTfN0F1lyqeP8OPk2THcUDIo2aKZ5htaYCCheAddk5GkmZPXvrUllpBV1nvbfiW5X7YIlw+U31nTRLk48cJKPb/b+2r2VXvfI+ZTnkZwr+30viVhd+1mdtl6n4IUcLAcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FOvniEwq; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b13ff3141aso355919385a.1;
+        Mon, 11 Nov 2024 09:58:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731347891; x=1731952691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eWd+AjjN8r+ZEiXPSSHyKtvGpI4+DyWu+bjKTvlcvP4=;
+        b=FOvniEwqPMfZRF1XCELqVB3uRvkdGLJB78Ez3kn+ujUGm6XnMKlRWkxT24pyqXiAn4
+         wEjHIIKQiNBi/wsY+ivWn0O8S8PlbedKG5Et5cCqxVx8aFrYyTvlSqZMUgmEgUHNmr29
+         o/Zmy/BnhvlZSDUQDp1hHwqYwthCxJHnwDKDypm+qCgjTCocasbAtAnnHZhGI3gFenns
+         OEKLh6Xfwr+1DuGJVK/T8WamqQQ1OKUjr4b7zs/8MNEyez4ypqHiYP/+4S7cyk6kxN4t
+         Rg4oiO+yK5JyUBt+pVEEvjMRZmU2G/roUDrbrHpRzZJpLsfMbcZxATu/G/K+adqWQON6
+         Wxcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731347891; x=1731952691;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eWd+AjjN8r+ZEiXPSSHyKtvGpI4+DyWu+bjKTvlcvP4=;
+        b=E2IGkUin8LYqcuUz4eTFCQy8W/eKZX/Wtw/rA1yrgUWawDnH0/H6KeaZJ1BqJn0Z+V
+         C9sWmx2tyuZzee/fRwRRuf5JJ85B4fty9vzbQWpPxoMqZ8zlKoc6TzQbuVs2I+25szwV
+         nuC/tDUSPHPcP6jLjGwEsoLGgrQ/u5RPpmKYtuK6dj8jrLfhCYbo4ghZluZzQWV4cSyT
+         +zikU0apXYeQXv9Bx1jZ4+Dm2Twp3em1L/Rtc9EY/AAg5P1MKTBGFEhaRCsAGpi4U25O
+         m+CahTCpOjlZGEjlE7/lKSkOBNpP4o6cT4vR2bNC4F4YmtZ6AwvZHLd0Z+8wzh/8K8b5
+         y/jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcG2lbz5OXAIgpA/AGatfVQ2B+syiU9baflQC1JaUSxMzItV1Tnk3OVpNj6nWwJYQBJo+DIZ6G@vger.kernel.org, AJvYcCW7mTFQHtJEoP5idd9gdQz77b47Y8km/qrRpUSCfqZNCjg8t/2umbBTCFkkVjD1NSt4hKGegg5G42ZOCb8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzceo7OtrJk1NW4bopfUr/IbsGD4vID675JdmOcM+65+fbuWpOj
+	5RvLlRK9foc6iKuE9n0/6x43Ic7KEWbJh+k2/UazP3dn31avG4RY
+X-Google-Smtp-Source: AGHT+IGcXV3Ka0MzggMGHC05+2UrOkriOvJ7qmRUm3WqX7WvMO37jBaWWh9wPAZVNM7rbE3eHdJRxg==
+X-Received: by 2002:a05:620a:2985:b0:7b1:4948:109f with SMTP id af79cd13be357-7b331e75540mr1839857685a.57.1731347890969;
+        Mon, 11 Nov 2024 09:58:10 -0800 (PST)
+Received: from localhost (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac678c2sm515974085a.61.2024.11.11.09.58.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 09:58:10 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:58:09 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Philo Lu <lulie@linux.alibaba.com>, 
+ netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ dsahern@kernel.org, 
+ horms@kernel.org, 
+ antony.antony@secunet.com, 
+ steffen.klassert@secunet.com, 
+ linux-kernel@vger.kernel.org, 
+ dust.li@linux.alibaba.com, 
+ jakub@cloudflare.com, 
+ fred.cc@alibaba-inc.com, 
+ yubing.qiuyubing@alibaba-inc.com
+Message-ID: <673245b18be9c_b4a05294bc@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241108054836.123484-1-lulie@linux.alibaba.com>
+References: <20241108054836.123484-1-lulie@linux.alibaba.com>
+Subject: Re: [PATCH v8 net-next 0/4] udp: Add 4-tuple hash for connected
+ sockets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Krzysztof Kozlowski <krzk@kernel.org> writes:
+Philo Lu wrote:
+> This patchset introduces 4-tuple hash for connected udp sockets, to make
+> connected udp lookup faster.
+> 
+> Stress test results (with 1 cpu fully used) are shown below, in pps:
+> (1) _un-connected_ socket as server
+>     [a] w/o hash4: 1,825176
+>     [b] w/  hash4: 1,831750 (+0.36%)
+> 
+> (2) 500 _connected_ sockets as server
+>     [c] w/o hash4:   290860 (only 16% of [a])
+>     [d] w/  hash4: 1,889658 (+3.1% compared with [b])
+> With hash4, compute_score is skipped when lookup, so [d] is slightly
+> better than [b].
+> 
+> Patch1: Add a new counter for hslot2 named hash4_cnt, to avoid cache line
+>         miss when lookup.
+> Patch2: Add hslot/hlist_nulls for 4-tuple hash.
+> Patch3 and 4: Implement 4-tuple hash for ipv4 and ipv6.
+> 
+> The detailed motivation is described in Patch 3.
+> 
+> The 4-tuple hash increases the size of udp_sock and udp_hslot. Thus add it
+> with CONFIG_BASE_SMALL, i.e., it's a no op with CONFIG_BASE_SMALL.
+> 
+> changelogs:
+> v7 -> v8:
+> - add EXPORT_SYMBOL for ipv6.ko build
+> 
+> v6 -> v7 (Kuniyuki Iwashima):
+> - export udp_ehashfn to be used by udpv6 rehash
+> 
+> v5 -> v6 (Paolo Abeni):
+> - move udp_table_hash4_init from patch2 to patch1
+> - use hlist_nulls for lookup-rehash race
+> - add test results in commit log
+> - add more comment, e.g., for rehash4 used in hash4
+> - add ipv6 support (Patch4), and refactor some functions for better
+>   sharing, without functionality change
+> 
+> v4 -> v5 (Paolo Abeni):
+> - add CONFIG_BASE_SMALL with which udp hash4 does nothing
+> 
+> v3 -> v4 (Willem de Bruijn):
+> - fix mistakes in udp_pernet_table_alloc()
+> 
+> RFCv2 -> v3 (Gur Stavi):
+> - minor fix in udp_hashslot2() and udp_table_init()
+> - add rcu sync in rehash4()
+> 
+> RFCv1 -> RFCv2:
+> - add a new struct for hslot2
+> - remove the sockopt UDP_HASH4 because it has little side effect for
+>   unconnected sockets
+> - add rehash in connect()
+> - re-organize the patch into 3 smaller ones
+> - other minor fix
+> 
+> v7:
+> https://lore.kernel.org/all/20241105121225.12513-1-lulie@linux.alibaba.com/
+> v6:
+> https://lore.kernel.org/all/20241031124550.20227-1-lulie@linux.alibaba.com/
+> v5:
+> https://lore.kernel.org/all/20241018114535.35712-1-lulie@linux.alibaba.com/
+> v4:
+> https://lore.kernel.org/all/20241012012918.70888-1-lulie@linux.alibaba.com/
+> v3:
+> https://lore.kernel.org/all/20241010090351.79698-1-lulie@linux.alibaba.com/
+> RFCv2:
+> https://lore.kernel.org/all/20240924110414.52618-1-lulie@linux.alibaba.com/
+> RFCv1:
+> https://lore.kernel.org/all/20240913100941.8565-1-lulie@linux.alibaba.com/
+> 
+> Philo Lu (4):
+>   net/udp: Add a new struct for hash2 slot
+>   net/udp: Add 4-tuple hash list basis
+>   ipv4/udp: Add 4-tuple hash for connected socket
+>   ipv6/udp: Add 4-tuple hash for connected socket
+> 
+>  include/linux/udp.h |  11 ++
+>  include/net/udp.h   | 137 +++++++++++++++++++++++--
+>  net/ipv4/udp.c      | 245 +++++++++++++++++++++++++++++++++++++++-----
+>  net/ipv6/udp.c      | 117 +++++++++++++++++++--
+>  4 files changed, 468 insertions(+), 42 deletions(-)
 
-> On 07/11/2024 13:03, Dmitry Baryshkov wrote:
->
->> On Thu, 7 Nov 2024 at 11:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>
->>> On 07/11/2024 12:06, Dmitry Baryshkov wrote:
->>>> On Thu, Nov 07, 2024 at 11:23:20AM +0100, Krzysztof Kozlowski wrote:
->>>>> On 05/11/2024 19:04, Raj Kumar Bhagat wrote:
->>>>>> The RDP433 is a Qualcomm Reference Design Platform based on the
->>>>>> IPQ9574. It features three QCN9274 WiFi devices connected to PCIe1,
->>>>>> PCIe2, and PCIe3. These devices are also interconnected via a WLAN
->>>>>> Serial Interface (WSI) connection. This WSI connection is essential
->>>>>> for exchanging control information among these devices.
->>>>>>
->>>>>> This patch series describes the WSI interface found in QCN9274 in
->>>>>> device tree and uses this device tree node in the Ath12k driver to get the
->>>>>> details of WSI connection for Multi Link Operation (MLO) among multiple
->>>>>> QCN9274 devices.
->>>>>>
->>>>>> NOTES:
->>>>>> 1. As ath12k MLO patches are not ready yet, this patchset does not apply
->>>>>>    to the ath.git ath-next branch and that's why the patchset is marked
->>>>>>    as RFC. These are the work-in-progress patches we have at the moment.
->>>>>>    The full set of MLO patches is available at:
->>>>>>    https://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git/log/?h=ath12k-mlo-qcn9274
->>>>>>
->>>>>> 2. The dependency marked below applies only to the DTS patch. The
->>>>>>    dt-bindings patches do not have this dependency.
->>>>>>
->>>>>> Depends-On: [PATCH V7 0/4] Add PCIe support for IPQ9574
->>>>>> Link: https://lore.kernel.org/linux-pci/20240801054803.3015572-1-quic_srichara@quicinc.com/
->>>>>>
->>>>>> v3:
->>>>>> - Created a separate binding "qcom,ath12k-wsi.yaml" to describe ath12k PCI
->>>>>>   devices with WSI interface.
->>>>>
->>>>> Thanks for the changes. When you finish with testing/RFC, please send
->>>>> proper version for review (just remember to keep numbering, next one is
->>>>> v4 regardless whether this is RFC or not).
->>>>
->>>> Isn't the 'RFC' being an invitation for review per the nature of the tag
->>>> itself?
->>>
->>> No, RFC means patch is not ready, might change. This was brought on the
->>> lists multiple times and some maintainers clearly ignore RFC. Including me.
->> 
->> Thanks, point noted. I'll stop marking my patches with RFC tag.
->
-> Wait, you can keep marking them RFC! It all depends what do you want to
-> achieve. Get some comments on early work or actual review for something
-> you believe is a finished work.
->
-> I looked here briefly, no comments from me and I assume that was the
-> intention of RFC.
+Acked-by: Willem de Bruijn <willemb@google.com>
 
-Exactly, we just wanted to have early feedback how to handle this
-feature. We will now incorporate these changes to our work-in-progress
-ath12kl-mlo branches, test them and once everything else in ath12k is
-ready we will submit the next patchset without RFC tag.
+My expertise in routing is limited, fair warning.
+But I see no significant remaining issues.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
