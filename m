@@ -1,87 +1,119 @@
-Return-Path: <linux-kernel+bounces-404417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C97C9C4381
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:25:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263719C4389
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FA71F223C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:25:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0F5B259CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE641A76DE;
-	Mon, 11 Nov 2024 17:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF781A727D;
+	Mon, 11 Nov 2024 17:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0WTjtB3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YZmsLlt+"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36531A7253;
-	Mon, 11 Nov 2024 17:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21871A725A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731345907; cv=none; b=LJqd/pJOaHLLUHw5HxWOv1mALPa5wJTcuVcceWPPgJLzR4/qIaF2rRpaxWn81kM7hVy+QC11aaoarzthDEB0SWyK5UhMgFWaxS/iWwx+Gii6V/xhCDxwL1WDxA8IRO0AjCgBMT7AW2moUa+g4YQQKQbQ2AZvAyVpScg8O6cD4g0=
+	t=1731345955; cv=none; b=DXZC6zlP9SNEp14lLgbcERfMivuC7m/cX6RI4+C62R0XG3yteo6KQuZmYn4PhgCOn3xy0Emma+M0xEG2Q6h3z2NTV98pshc1jWnNx+qaanar2Pr1VZbnuEqMnIAfa3TkMnmeLOUguINO1Iszp8k/OOBMFxWeatLPeCP0XsuNWoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731345907; c=relaxed/simple;
-	bh=xQJPuTKPFMshEo9Gly010d2kEqMnM5zc2zSmlWXfGds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tzJ50mjSr+1n3H8lVOo6W77qAmyop3LDsSqHrYuhXbbuve4x4MS92UrW8UhbfiRSxts2TQ4+8kFh/42sBDr95O8bLuY37u4oR8EcurlyysCgLz5qtLaOMLQz74JO/sS1RJVMbGNi98/oWLa7XQSnm3e1oGMpuwi7lAmO+1oKyEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m0WTjtB3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oJUvmaLMls4QyVzgHd/CRZouPmHJ7haStEfbTpiaAew=; b=m0WTjtB3Wzbx5YCUos/R4iC9nd
-	RsodqXy5/xaK5T2nSiM70xxtagh1+X9FDg/T0WngMNVYuBCDSNDQwFNS3ylYNvsS/+Rn87wsNNHQC
-	zVrF0HIhto6Jpbr6Fr0bywwxtMlftHam8UkVpKnE95siACzcS/duhgakqZAx9kNVqvMscs97IX8Xp
-	t3zEvAlCA1feLMpFJX6ElXvbeUWfsW1VSsWsGBpic8Z3jl82OLsdj0O+aMgvFboOyg+3HNFx3yiqm
-	0MLERIyBN//COqsniZUidzmAiuyF9VOngXQlivO5BmFneBBd9HwXs+0USuUphA7uYcdBVXV1+oXy+
-	0dT3KpVw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tAY9t-0000000D4Dx-1vG2;
-	Mon, 11 Nov 2024 17:25:01 +0000
-Date: Mon, 11 Nov 2024 17:25:01 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHSET v2 0/15] Uncached buffered IO
-Message-ID: <ZzI97bky3Rwzw18C@casper.infradead.org>
-References: <20241110152906.1747545-1-axboe@kernel.dk>
+	s=arc-20240116; t=1731345955; c=relaxed/simple;
+	bh=ZTk11ZVemdflfr0virzfjHPwj/DySg68gOxo+IYI7+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HK+jG/iKB4inVGTkvpruBULwf/sEIxJfHcSDnhbWFiK4i0ctN8qWXYR048gS0BReyvz3nfIYXlhsoEmsGsv5CBZPMFIFWfX/ZoT4sMZnsU4BVoLyOrkxUcD3CJVNnnd0eUNYPbH8r/676CYFARN9RxfQHKcZrMf5YZiDVWv7amY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YZmsLlt+; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a007743e7so5663144e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:25:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1731345949; x=1731950749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jH1JjioDnQEXEHp1YxtApalVozz8jy8hPAeJoS9fBbM=;
+        b=YZmsLlt+y7Rd0Omr+40zZ/HfxSdmp0NmvrfXBCqw62B7x5Va7ImQLM/xAqXjDKFADe
+         3aYUcZtVg56gQ7lboA9dN1oU/LsqMNnPCjephIRAXq/pSISP6oTEwnzzhjG7C10sU7XZ
+         vPAOOFagaSsKbSzmRmU1/JkdEVAFMqst0Sh+0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731345949; x=1731950749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jH1JjioDnQEXEHp1YxtApalVozz8jy8hPAeJoS9fBbM=;
+        b=MknQs7hf5guRmkYQ2VDTaV91psEaovmKGMlaCOVkuT7a540r3QVD/Kd1PqICEec+pR
+         r60ehLViQI9F6y+7DpcYavxR4nXTMum1f1cpl2LbSPEccdKwK2pK1rdN2w4njsIlo6Uq
+         pXebeR8Ib+2wXPwvE9pvp2Thn70VpVRBFxKaAGlLq6b27aQ6gi47WUwRmPP1Z/YGujsW
+         QkX+CQmr54atzVmnhsOiewN+OpDewsTgej+TCKhqRcyaimw4S8Wa/V+OeZcwHYl3JDxO
+         u05D9y7X/8pdTHG1ZSzvyxfgUrkKIP6gsqmfK7dWIDYveyytKGNFx0HDVl+bNSVKw4Bh
+         08qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgIoMEAE5Mi+r6SAQ9vbOg0iRr7aCbFRolEVyzDhTuloHWEOR9DvI3JvhWvgFrsUmf4z05siSQZa6oes4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc+5UO2Buq0VGx/Fc3X4Q+TPDbrvEN4VPv3d4b35ZiVlo/dpHP
+	Cd8wvbH+LwDlJU3zb8ySXorZzCFIiy0ds6rXYN8zNEzaXydd0ygGEY2DTA57r9wCFntEa/w76oT
+	wgA==
+X-Google-Smtp-Source: AGHT+IGGfvtJLVBfh2McmeAp+NYZNpxJhPhdGH9he+pe0j1H//qk/dxUTMhZYtlPL0c98oOVEOKwGA==
+X-Received: by 2002:a05:6512:acf:b0:539:adb0:b86 with SMTP id 2adb3069b0e04-53d862308eemr5745608e87.14.1731345949532;
+        Mon, 11 Nov 2024 09:25:49 -0800 (PST)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53d826af020sm1621648e87.268.2024.11.11.09.25.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 09:25:48 -0800 (PST)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb3c3d5513so40979231fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:25:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV0TF1eszSnhycGrz1FKU8OF2/JV3/uhCgGINQ7kG10LqcJxaz3oFVBGMqYdrsqain+cz/Tq42CHUjRyr4=@vger.kernel.org
+X-Received: by 2002:a05:651c:1593:b0:2fb:60a0:f4e1 with SMTP id
+ 38308e7fff4ca-2ff201b29a7mr58237271fa.24.1731345947358; Mon, 11 Nov 2024
+ 09:25:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110152906.1747545-1-axboe@kernel.dk>
+References: <20241111075000.111509-1-charles.goodix@gmail.com> <20241111075000.111509-2-charles.goodix@gmail.com>
+In-Reply-To: <20241111075000.111509-2-charles.goodix@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 11 Nov 2024 09:25:31 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UDGqVHxFLEh1e5BW5p1Db+WNjntuSqFjf5uSFLncJUvw@mail.gmail.com>
+Message-ID: <CAD=FV=UDGqVHxFLEh1e5BW5p1Db+WNjntuSqFjf5uSFLncJUvw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: input: Goodix GT7986U SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: robh@kernel.org, krzk@kernel.org, hbarnor@chromium.org, 
+	conor.dooley@microchip.com, dmitry.torokhov@gmail.com, jikos@kernel.org, 
+	bentiss@kernel.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 10, 2024 at 08:27:52AM -0700, Jens Axboe wrote:
-> 5 years ago I posted patches adding support for RWF_UNCACHED, as a way
-> to do buffered IO that isn't page cache persistent. The approach back
-> then was to have private pages for IO, and then get rid of them once IO
-> was done. But that then runs into all the issues that O_DIRECT has, in
-> terms of synchronizing with the page cache.
+Hi,
 
-Today's a holiday, and I suspect you're going to do a v3 before I have
-a chance to do a proper review of this version of the series.
+On Sun, Nov 10, 2024 at 11:50=E2=80=AFPM Charles Wang <charles.goodix@gmail=
+.com> wrote:
+>
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>
+> NOTE: these bindings are distinct from the bindings used with the
+> GT7986U when the chip is running I2C firmware. For some background,
+> see discussion on the mailing lists in the thread:
+>
+> https://lore.kernel.org/r/20241018020815.3098263-2-charles.goodix@gmail.c=
+om
+>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7986u-spifw.yaml  | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
 
-I think "uncached" isn't quite the right word.  Perhaps 'RWF_STREAMING'
-so that userspace is indicating that this is a streaming I/O and the
-kernel gets to choose what to do with that information.
+As far as I can tell this looks fine now. Thanks!
 
-Also, do we want to fail I/Os to filesystems which don't support
-it?  I suppose really sophisticated userspace might fall back to
-madvise(DONTNEED), but isn't most userspace going to just clear the flag
-and retry the I/O?
-
-Um.  Now I've looked, we also have posix_fadvise(POSIX_FADV_NOREUSE),
-which is currently a noop.  But would we be better off honouring
-POSIX_FADV_NOREUSE than introducing RWF_UNCACHED?  I'll think about this
-some more while I'm offline.
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
