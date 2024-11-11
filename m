@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-404363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3489C42E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:44:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FC99C42E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4094E2820E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0AE1F21A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212A31A2C29;
-	Mon, 11 Nov 2024 16:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AE91A4E76;
+	Mon, 11 Nov 2024 16:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nc4FGU5I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLtK4rKL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C79B1A256E;
-	Mon, 11 Nov 2024 16:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2D1A3BC8;
+	Mon, 11 Nov 2024 16:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343432; cv=none; b=rm7JWJcDVpYVOwCbvvjl8qUVF5U0Vw3hKcr2xAYjjCYWZ+2469vizf40BTcgX+O2AetnGmBwtUtDiIH3H/8XkdWg8NqkujI62THI8/CfUsoMoULxXiFcKbzPvHjBrsZPi8NtTZPASm1af8h18jFR79L+wJwvnCa+JyTe30+jJ3E=
+	t=1731343435; cv=none; b=peDs/v/F+Wd45sn+l/JxcGRFHbp8P4mofjxu5tHyOriNmgy/bJrPZREh9B8lXENu5hrLl2WRnwSA//X3XLzAArZGvqoZv9gNFNGa8wYXlBhNJPcSTMjj0wdubAIyx9J//ytl6HLpBIuBMlF5Js4uHIhaBEpJ5IM3mgAkc/ArX6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343432; c=relaxed/simple;
-	bh=nG6iTzLFLjsLDmo/ST31XIcMDE99NoMA5MCsudLilOs=;
+	s=arc-20240116; t=1731343435; c=relaxed/simple;
+	bh=+THKv8bFBNp01IW6Q6So54Rj6RkeI0Ny3NWfKq5gGK4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BWR6+ztclFGd0BU5tY9QqT6QZ20IAdrsqrHLB4BgoiQ14bOvlDc6ejyB+r+K1qbfyN5DmC+ywWGdB1L9otI7UVio/7TMInZcTSKP183uqCRtvG6jRVgHdx+/K0hdXyA/wP5WxQDWoWJbYsJjNLdlL2kqbcXArjAF40Ya7JHe3YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nc4FGU5I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D385C4CED4;
-	Mon, 11 Nov 2024 16:43:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sfRtt4CAdQ9Vw9xXlfFOjuC97egu6k5bSgny+5rjsVc+mArKkd1mKwizdbb5P3gx1BFdtDnV4QdaCX199ELVtg8ChPQo7A/1n2oLPUyHZwUH9H+NQCuYy92LekXoxCgnUjDKJmvI9Sh2ADrd6NPTihrY5tHSvSKixgKXX+Em1Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLtK4rKL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD48C4CED7;
+	Mon, 11 Nov 2024 16:43:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731343432;
-	bh=nG6iTzLFLjsLDmo/ST31XIcMDE99NoMA5MCsudLilOs=;
+	s=k20201202; t=1731343435;
+	bh=+THKv8bFBNp01IW6Q6So54Rj6RkeI0Ny3NWfKq5gGK4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Nc4FGU5IL/zyOcxlmD9PnplkFpxcMylo57MEO5Ck3ZuPDx/G0RI0Yzc0EXJ7J6N2O
-	 bjDzbJTcnZnEPmFmPIL5/ecFoOPwKbJXdbyBsI9e+jgi+6evBkXo6NBeTo+5KOyfT3
-	 DBBXTw2/fopDpwj9FlpHfJrxFwgTWgt3Xy0wpqAPKaX9n8QrLXnzuxw/5t6wKg2mug
-	 eQP5+ty6ejGfyOPLeRUgI7UBVbXIC0FyY7rd52GOFuJ04h17SoNnoHvMbmWRm1vhOu
-	 ryCaKPtg4OB2rPnTBaqbKla9wg5Ww0TJj/sEaLJ9mIHnhUHFmMuONzpFP0wU22CHRM
-	 +xu1ZIJPxPKWA==
+	b=BLtK4rKL+gpP+pQFX/tBVJ+hUGq8ay9mokFf+ENetcB3Ytp3YNQJcFwiroTwhNW3l
+	 wOOTS6vcYOW3P3ldDnuKW4W/yrkawF6FTVY80esbz23/p79sQxOl5S1JWvCL157Z2C
+	 bE7Krbjjdh5Wqp2d0tFDRXOVlioooHJWWZGTmeodd+ZXSjIGJYdYqp/iEAvuZIwo9t
+	 TFF1DyePzhqw/NgfPGnJUjvrrWOzCfjj3pYCg2kXUkJvjtc4KxtIKq2+3PGlcH356k
+	 34+Bv3Q59sxsyWscJi2OpZ/okO3Z2LkkHrXU4+ReSF0iTpbVBmtopXuHAqueCypLRR
+	 yKmLuiqlz2RxQ==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, peter.ujfalusi@linux.intel.com, 
- yung-chuan.liao@linux.intel.com, ranjani.sridharan@linux.intel.com, 
- daniel.baluta@nxp.com, kai.vehmanen@linux.intel.com, 
- pierre-louis.bossart@linux.dev, 
- Suraj Sonawane <surajsonawane0215@gmail.com>
-Cc: perex@perex.cz, tiwai@suse.com, sound-open-firmware@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241107063609.11627-1-surajsonawane0215@gmail.com>
-References: <20241107063609.11627-1-surajsonawane0215@gmail.com>
-Subject: Re: [PATCH v3] ASoc: SOF: ipc4-pcm: fix uninit-value in
- sof_ipc4_pcm_dai_link_fixup_rate
-Message-Id: <173134342880.341130.18079450114790118970.b4-ty@kernel.org>
-Date: Mon, 11 Nov 2024 16:43:48 +0000
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241105135942.526624-1-olivier.moysan@foss.st.com>
+References: <20241105135942.526624-1-olivier.moysan@foss.st.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: stm32: add missing port property
+Message-Id: <173134343208.341130.17895048996231459327.b4-ty@kernel.org>
+Date: Mon, 11 Nov 2024 16:43:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,17 +66,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-355e8
 
-On Thu, 07 Nov 2024 12:06:09 +0530, Suraj Sonawane wrote:
-> Fix an issue detected by the Smatch tool:
+On Tue, 05 Nov 2024 14:59:41 +0100, Olivier Moysan wrote:
+> Add missing port property in STM32 SPDIFRX binding.
+> This will prevent potential warning:
+> Unevaluated properties are not allowed ('port' was unexpected)
 > 
-> sound/soc/sof/ipc4-pcm.c: sof_ipc4_pcm_dai_link_fixup_rate()
-> error: uninitialized symbol 'be_rate'.
 > 
-> The warning highlights a case where `be_rate` could remain uninitialized
-> if `num_input_formats` is zero, which would cause undefined behavior
-> when setting `rate->min` and `rate->max` based on `be_rate`.
-> 
-> [...]
 
 Applied to
 
@@ -82,8 +79,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoc: SOF: ipc4-pcm: fix uninit-value in sof_ipc4_pcm_dai_link_fixup_rate
-      commit: 9a59718a5340aa0240a442115eb499de2ed18ee4
+[1/1] ASoC: dt-bindings: stm32: add missing port property
+      commit: 98d34ddd43de0b040bd3ff74b511be7074b0b310
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
