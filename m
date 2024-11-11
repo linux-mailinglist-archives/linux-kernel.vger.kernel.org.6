@@ -1,158 +1,315 @@
-Return-Path: <linux-kernel+bounces-404892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B61D9C49ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 00:44:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8BC9C4A5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 01:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A47A281E3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:44:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 298A0B31A3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F2E1BD032;
-	Mon, 11 Nov 2024 23:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA561C75E2;
+	Mon, 11 Nov 2024 23:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6IusLK2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lh92ITRy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB4515884A
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BC21BD4E5
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 23:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731368641; cv=none; b=iM2H1Cl7iHR3ALnwqzHpJMHX/3MwyjNoVI3cXTnKa5qNzr+4B8xpSBb6rhbTISdKrXIzepvOHyCcC0Rn1b9SE32jNcbbNMUBifI0J220TcHQzSNKtOxOQUKBNIChGKOJZnEIW601ETdomqJEdHnfWAQCVjsAJubYq+Uyt70TYws=
+	t=1731369187; cv=none; b=dp3yQht1zRJUJMjjW9CQjKTnIJhSWoG8aLHekzATIdd4TFz2CgN5PaZhnHl8ryrR3c/cfPrOdFb+rI7KGzIwDthu/y2yI6bCsbQm5OySIBEMxjLQYxikSb62QHuupgMBcAMYwMZ+KZy/1pt4HZT+ptaCUgCBw1dBngF/fIF+txU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731368641; c=relaxed/simple;
-	bh=fKkuplvt6skLtqPdWckn41dtT4ds87GqhM7iVDWP1bM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGSjbDHo8QD98JmpRqGF6pwfRuFoRTreHn3yjTZsO5Jw7ij7bUhnjM+uVkyAPV2pr2poFSDFNQ61BwxvbQoEMs0943Z16PcvU9XkIKYqKboGdeIBc5tmifQsB6EyTj2UlZ/vLW/wJQcSk4oD1VB0HHdzTiMCA9EvuK2/5tK1WRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6IusLK2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C528CC4CECF;
-	Mon, 11 Nov 2024 23:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731368641;
-	bh=fKkuplvt6skLtqPdWckn41dtT4ds87GqhM7iVDWP1bM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H6IusLK2nh5l/Lvcw+v4mVo9ZvuHaMWlVI6qTQke3zJK1MwHMNuv2NMFWDeHcB5XK
-	 Hj+6jzSVUPn6N5nAAVF6Ks6VllbkijLjO9hpaDoZ2r+QLbMbda6LpBoIxY54R5rsD1
-	 OnDZ+CF7XZP4L/TLsogc8MdcfTaLT3aWoIMVGRH00rNqbupzZQljFPwLugDCfsjF7F
-	 BeQnAXjkXVLpbuqKbB/sYcDi0ABySfdRvR/QWxVHSJ0MV5O36pvnw6A5HOrG0GemFH
-	 d8hbnPIihmovLahM2j/4Mv58/51F/z14Aqya8oIu2kEAQKdzIWr0hQeybUZZCGUG8I
-	 bh89qyYfhgpIw==
-Date: Tue, 12 Nov 2024 00:43:58 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc: linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
- from now
-Message-ID: <ZzKWvislBnjV9kpf@pavilion.home>
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-2-joel@joelfernandes.org>
+	s=arc-20240116; t=1731369187; c=relaxed/simple;
+	bh=7NCM52geTfBcZVNCYhIyo7vmw19c3BLRh1o05oV2Nkc=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=tVknqiYvlSBPAtDWJ2sj06MKYaibakhnOV09PXevwVn/PDrHF9PF0qbVW89NYFJay4dJM3jicDkm7HsPGmW0fDKBgePBl9iuzUvQT776teghdwd0f08TBJwpcbyZRiKDIJrs7C9iAQ/dsB7A87xgkOxQxE8FjdluxG2zxTXyd1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lh92ITRy; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731369185; x=1762905185;
+  h=date:from:to:cc:subject:message-id;
+  bh=7NCM52geTfBcZVNCYhIyo7vmw19c3BLRh1o05oV2Nkc=;
+  b=lh92ITRyGdu5DfEALkCzYzkBIkdDT+2dVA/+aDYBBghi2+ZTr3TsABCI
+   24LKAB8mIuaAJx6Tf7C6PUwG5FLiImKgeAZkHGg18nktZD7S8l+48n0+j
+   BFQNQoBnqSFmk2fDti+uhQqUBne4WWlGJyxZ64UmZaI8TXNcM+nnhw7VU
+   7oeRIO/81al+xHL9Z3B7P+lvEXM0dxdhlHr21bb4nXRvR6FsNN2d/aukd
+   l/VWznw43seKGF6WpDTT7iVhbLy4a+CnfmguZdp9MAVb4gKHd0q909Nmv
+   R1LOSPJ5hfnPf94fmvZv9LvNk9mOSRF1x088HUtcS5RDZv4WS7DfUJRJs
+   g==;
+X-CSE-ConnectionGUID: APvwBebNQJe0g5YlNs/ZqA==
+X-CSE-MsgGUID: Y7Y3cKQLR8+QO/Lirx8G0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41751979"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="41751979"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 15:53:05 -0800
+X-CSE-ConnectionGUID: Fq8j688sRsCaAfy5H1qzJw==
+X-CSE-MsgGUID: 0kNMw/5UTFmuYItUYZCXpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="87550402"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Nov 2024 15:53:03 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAeDM-0000Gh-2O;
+	Mon, 11 Nov 2024 23:53:00 +0000
+Date: Tue, 12 Nov 2024 07:52:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/core] BUILD SUCCESS
+ c554aa9ca976480839af342204e05bb4ce8367d5
+Message-ID: <202411120727.kePwShLF-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241108174839.1016424-2-joel@joelfernandes.org>
 
-Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a écrit :
-> During tick restart, we use last_tick and forward it past now.
-> 
-> Since we are forwarding past now, we can simply use now as a reference
-> instead of last_tick. This patch removes last_tick and does so.
-> 
-> This patch potentially does more mul/imul than the existing code,
-> as sometimes forwarding past now need not be done if last_tick > now.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+branch HEAD: c554aa9ca976480839af342204e05bb4ce8367d5  uprobes: Re-order struct uprobe_task to save some space
 
-Which is not uncommon if idle exited because of a non-timer interrupt
-(remote wake up IPI or hardware interrupt).
+elapsed time: 725m
 
-It's also cheaper with hrtimer_forward() if now - last_tick < TICK_NSEC
-which is not uncommon either if idle exited because of a wake-up from the tick
-(schedule_timeout for example).
+configs tested: 223
+configs skipped: 4
 
-> However, the patch is a cleanup which reduces LOC and reduces the size
-> of struct tick_sched.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Reducing the overhead of idle exit and consolidating its code within existing
-forward API is more important than a per-cpu field.
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    clang-20
+alpha                               defconfig    gcc-14.2.0
+arc                              allmodconfig    clang-20
+arc                               allnoconfig    gcc-14.2.0
+arc                              allyesconfig    clang-20
+arc                          axs101_defconfig    clang-20
+arc                                 defconfig    gcc-14.2.0
+arc                   randconfig-001-20241111    gcc-14.2.0
+arc                   randconfig-001-20241112    gcc-14.2.0
+arc                   randconfig-002-20241111    gcc-14.2.0
+arc                   randconfig-002-20241112    gcc-14.2.0
+arm                              allmodconfig    clang-20
+arm                               allnoconfig    gcc-14.2.0
+arm                              allyesconfig    clang-20
+arm                         assabet_defconfig    gcc-14.2.0
+arm                         at91_dt_defconfig    gcc-14.2.0
+arm                                 defconfig    gcc-14.2.0
+arm                            dove_defconfig    clang-20
+arm                            dove_defconfig    gcc-14.2.0
+arm                      footbridge_defconfig    gcc-14.2.0
+arm                           imxrt_defconfig    gcc-14.2.0
+arm                      jornada720_defconfig    clang-20
+arm                   milbeaut_m10v_defconfig    gcc-14.2.0
+arm                   randconfig-001-20241111    gcc-14.2.0
+arm                   randconfig-001-20241112    gcc-14.2.0
+arm                   randconfig-002-20241111    gcc-14.2.0
+arm                   randconfig-002-20241112    gcc-14.2.0
+arm                   randconfig-003-20241111    gcc-14.2.0
+arm                   randconfig-003-20241112    gcc-14.2.0
+arm                   randconfig-004-20241111    gcc-14.2.0
+arm                   randconfig-004-20241112    gcc-14.2.0
+arm                           u8500_defconfig    gcc-14.2.0
+arm                         vf610m4_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-20
+arm64                             allnoconfig    gcc-14.2.0
+arm64                               defconfig    gcc-14.2.0
+arm64                 randconfig-001-20241111    gcc-14.2.0
+arm64                 randconfig-001-20241112    gcc-14.2.0
+arm64                 randconfig-002-20241111    gcc-14.2.0
+arm64                 randconfig-002-20241112    gcc-14.2.0
+arm64                 randconfig-003-20241111    gcc-14.2.0
+arm64                 randconfig-003-20241112    gcc-14.2.0
+arm64                 randconfig-004-20241111    gcc-14.2.0
+arm64                 randconfig-004-20241112    gcc-14.2.0
+csky                             alldefconfig    clang-20
+csky                             alldefconfig    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                                defconfig    gcc-14.2.0
+csky                  randconfig-001-20241111    gcc-14.2.0
+csky                  randconfig-001-20241112    gcc-14.2.0
+csky                  randconfig-002-20241111    gcc-14.2.0
+csky                  randconfig-002-20241112    gcc-14.2.0
+hexagon                          allmodconfig    clang-20
+hexagon                           allnoconfig    gcc-14.2.0
+hexagon                          allyesconfig    clang-20
+hexagon                             defconfig    gcc-14.2.0
+hexagon               randconfig-001-20241111    gcc-14.2.0
+hexagon               randconfig-001-20241112    gcc-14.2.0
+hexagon               randconfig-002-20241111    gcc-14.2.0
+hexagon               randconfig-002-20241112    gcc-14.2.0
+i386                             allmodconfig    clang-19
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    clang-19
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    clang-19
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20241111    gcc-11
+i386        buildonly-randconfig-001-20241112    clang-19
+i386        buildonly-randconfig-002-20241111    gcc-11
+i386        buildonly-randconfig-002-20241112    clang-19
+i386        buildonly-randconfig-003-20241111    gcc-11
+i386        buildonly-randconfig-003-20241112    clang-19
+i386        buildonly-randconfig-004-20241111    gcc-11
+i386        buildonly-randconfig-004-20241112    clang-19
+i386        buildonly-randconfig-005-20241111    gcc-11
+i386        buildonly-randconfig-005-20241112    clang-19
+i386        buildonly-randconfig-006-20241111    gcc-11
+i386        buildonly-randconfig-006-20241112    clang-19
+i386                                defconfig    clang-19
+i386                  randconfig-001-20241111    gcc-11
+i386                  randconfig-001-20241112    clang-19
+i386                  randconfig-002-20241111    gcc-11
+i386                  randconfig-002-20241112    clang-19
+i386                  randconfig-003-20241111    gcc-11
+i386                  randconfig-003-20241112    clang-19
+i386                  randconfig-004-20241111    gcc-11
+i386                  randconfig-004-20241112    clang-19
+i386                  randconfig-005-20241111    gcc-11
+i386                  randconfig-005-20241112    clang-19
+i386                  randconfig-006-20241111    gcc-11
+i386                  randconfig-006-20241112    clang-19
+i386                  randconfig-011-20241111    gcc-11
+i386                  randconfig-011-20241112    clang-19
+i386                  randconfig-012-20241111    gcc-11
+i386                  randconfig-012-20241112    clang-19
+i386                  randconfig-013-20241111    gcc-11
+i386                  randconfig-013-20241112    clang-19
+i386                  randconfig-014-20241111    gcc-11
+i386                  randconfig-014-20241112    clang-19
+i386                  randconfig-015-20241111    gcc-11
+i386                  randconfig-015-20241112    clang-19
+i386                  randconfig-016-20241111    gcc-11
+i386                  randconfig-016-20241112    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch                           defconfig    gcc-14.2.0
+loongarch             randconfig-001-20241111    gcc-14.2.0
+loongarch             randconfig-001-20241112    gcc-14.2.0
+loongarch             randconfig-002-20241111    gcc-14.2.0
+loongarch             randconfig-002-20241112    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                          amiga_defconfig    clang-20
+m68k                                defconfig    gcc-14.2.0
+m68k                            mac_defconfig    gcc-14.2.0
+m68k                        mvme16x_defconfig    gcc-14.2.0
+microblaze                       allmodconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+microblaze                       allyesconfig    gcc-14.2.0
+microblaze                          defconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                           ip22_defconfig    clang-20
+mips                        qi_lb60_defconfig    clang-20
+nios2                             allnoconfig    gcc-14.2.0
+nios2                               defconfig    gcc-14.2.0
+nios2                 randconfig-001-20241111    gcc-14.2.0
+nios2                 randconfig-001-20241112    gcc-14.2.0
+nios2                 randconfig-002-20241111    gcc-14.2.0
+nios2                 randconfig-002-20241112    gcc-14.2.0
+openrisc                          allnoconfig    clang-20
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-12
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    clang-20
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-12
+parisc                randconfig-001-20241111    gcc-14.2.0
+parisc                randconfig-001-20241112    gcc-14.2.0
+parisc                randconfig-002-20241111    gcc-14.2.0
+parisc                randconfig-002-20241112    gcc-14.2.0
+parisc64                            defconfig    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    clang-20
+powerpc                          allyesconfig    gcc-14.2.0
+powerpc                     asp8347_defconfig    clang-20
+powerpc               mpc834x_itxgp_defconfig    clang-20
+powerpc                 mpc836x_rdk_defconfig    clang-20
+powerpc                     mpc83xx_defconfig    clang-20
+powerpc                      ppc44x_defconfig    gcc-14.2.0
+powerpc                       ppc64_defconfig    clang-20
+powerpc               randconfig-001-20241111    gcc-14.2.0
+powerpc               randconfig-001-20241112    gcc-14.2.0
+powerpc               randconfig-002-20241111    gcc-14.2.0
+powerpc               randconfig-002-20241112    gcc-14.2.0
+powerpc               randconfig-003-20241111    gcc-14.2.0
+powerpc               randconfig-003-20241112    gcc-14.2.0
+powerpc                     sequoia_defconfig    clang-20
+powerpc                     skiroot_defconfig    gcc-14.2.0
+powerpc                         wii_defconfig    gcc-14.2.0
+powerpc64             randconfig-001-20241111    gcc-14.2.0
+powerpc64             randconfig-001-20241112    gcc-14.2.0
+powerpc64             randconfig-002-20241111    gcc-14.2.0
+powerpc64             randconfig-002-20241112    gcc-14.2.0
+powerpc64             randconfig-003-20241111    gcc-14.2.0
+powerpc64             randconfig-003-20241112    gcc-14.2.0
+riscv                            allmodconfig    gcc-14.2.0
+riscv                             allnoconfig    clang-20
+riscv                            allyesconfig    gcc-14.2.0
+riscv                               defconfig    gcc-12
+riscv                 randconfig-001-20241111    gcc-14.2.0
+riscv                 randconfig-001-20241112    gcc-14.2.0
+riscv                 randconfig-002-20241111    gcc-14.2.0
+riscv                 randconfig-002-20241112    gcc-14.2.0
+s390                             allmodconfig    gcc-14.2.0
+s390                              allnoconfig    clang-20
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    gcc-12
+s390                  randconfig-001-20241111    gcc-14.2.0
+s390                  randconfig-001-20241112    gcc-14.2.0
+s390                  randconfig-002-20241111    gcc-14.2.0
+s390                  randconfig-002-20241112    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-12
+sh                ecovec24-romimage_defconfig    clang-20
+sh                          polaris_defconfig    clang-20
+sh                    randconfig-001-20241111    gcc-14.2.0
+sh                    randconfig-001-20241112    gcc-14.2.0
+sh                    randconfig-002-20241111    gcc-14.2.0
+sh                    randconfig-002-20241112    gcc-14.2.0
+sh                           se7343_defconfig    clang-20
+sh                           se7712_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc64                             defconfig    gcc-12
+sparc64               randconfig-001-20241111    gcc-14.2.0
+sparc64               randconfig-001-20241112    gcc-14.2.0
+sparc64               randconfig-002-20241111    gcc-14.2.0
+sparc64               randconfig-002-20241112    gcc-14.2.0
+um                               allmodconfig    clang-20
+um                                allnoconfig    clang-20
+um                               allyesconfig    clang-20
+um                                  defconfig    gcc-12
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20241111    gcc-14.2.0
+um                    randconfig-001-20241112    gcc-14.2.0
+um                    randconfig-002-20241111    gcc-14.2.0
+um                    randconfig-002-20241112    gcc-14.2.0
+um                           x86_64_defconfig    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64                              defconfig    clang-19
+x86_64                              defconfig    gcc-11
+x86_64                                  kexec    gcc-12
+x86_64                               rhel-8.3    gcc-12
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20241111    gcc-14.2.0
+xtensa                randconfig-001-20241112    gcc-14.2.0
+xtensa                randconfig-002-20241111    gcc-14.2.0
+xtensa                randconfig-002-20241112    gcc-14.2.0
+xtensa                         virt_defconfig    gcc-14.2.0
 
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/time/tick-sched.c | 7 ++-----
->  kernel/time/tick-sched.h | 1 -
->  kernel/time/timer_list.c | 1 -
->  3 files changed, 2 insertions(+), 7 deletions(-)
-> 
-> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> index 71a792cd8936..52a4eda664cf 100644
-> --- a/kernel/time/tick-sched.c
-> +++ b/kernel/time/tick-sched.c
-> @@ -837,11 +837,9 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
->  
->  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
->  {
-> +	/* Set the time to expire on the next tick and not some far away future. */
->  	hrtimer_cancel(&ts->sched_timer);
-> -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
-> -
-> -	/* Forward the time to expire in the future */
-> -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
-> +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC) * TICK_NSEC);
-
-We don't want to rewrite hrtimer_forward() but, after all, the current expiry is
-enough a relevant information.
-
-How about just this? It's worth it as it now forwards after the real last programmed
-tick, which should be close enough from @now with a delta below TICK_NSEC, or even
-better @now is below the expiry. Therefore it should resume as just a no-op
-or at worst an addition within hrtimer_forward():
-
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 753a184c7090..ffd0c026a248 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
- static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
- {
- 	hrtimer_cancel(&ts->sched_timer);
--	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
- 
- 	/* Forward the time to expire in the future */
- 	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
-
-
-As for removing last_tick, I think it's a precious debugging information. But
-it's lagging behind the record of the first time only the tick got stopped within
-the last trip to idle. So it could become this instead:
-
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 753a184c7090..af013f7733b2 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1042,12 +1041,11 @@ static void tick_nohz_stop_tick(struct tick_sched *ts, int cpu)
- 	if (!tick_sched_flag_test(ts, TS_FLAG_STOPPED)) {
- 		calc_load_nohz_start();
- 		quiet_vmstat();
--
--		ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
- 		tick_sched_flag_set(ts, TS_FLAG_STOPPED);
- 		trace_tick_stop(1, TICK_DEP_MASK_NONE);
- 	}
- 
-+	ts->last_tick = hrtimer_get_expires(&ts->sched_timer);
- 	ts->next_tick = expires;
- 
- 	/*
-
-Thanks!
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
