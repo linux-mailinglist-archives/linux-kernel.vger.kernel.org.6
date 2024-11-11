@@ -1,60 +1,64 @@
-Return-Path: <linux-kernel+bounces-404806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1799D9C4874
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:48:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE729C48CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C373C283978
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:48:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79045B2D1B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27E61BBBE0;
-	Mon, 11 Nov 2024 21:47:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B581BCA0D;
+	Mon, 11 Nov 2024 21:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ORgrNDsA"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qznPYQl3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AD038F83;
-	Mon, 11 Nov 2024 21:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF8238F83;
+	Mon, 11 Nov 2024 21:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731361679; cv=none; b=GEwyzeVv4jKwOa+/qjxfDhOYjVFXGXnWJRKe717Ms8gWx2wy3PmDSc3Q3aaJ9BGRLSrVKkeF/H3RUqPVFX7wH7qp7XYeBaH62FViWcq/iWwqmFuwYEmT+mIqGUuNZxv7715wPchU5lmBZUJMZwvbjZWIGCuSg0cZxYbxhZlROqk=
+	t=1731361686; cv=none; b=qhTXJcAnvtgG6wVREvMlaXZw0JitCqnJ6DxFemw3cPsQ+nLbVpu1+1tO2iDUGTUPVIRSsAL9Odbv4AocLmXx0i+5iVXv+o1uplWS7kYgPb43qQYRtVUFBMHz5vDmBVgcJqn2MNu0c+WbICBU0TVZwrXV5jv26oPtdYZA9Bp/m0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731361679; c=relaxed/simple;
-	bh=BSBxAtTcGQpXnmN5PIotiHJ3HpTUs4yvl5mk0Ne2Zpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KfbGNBexRdljwxzufNSGnkeQqpRroc2K5uoejaJERkKmcgjNOl1Z64NaXrIY5TNZLorMxLNauB11e5vt1ty4UXf+NsOv59xzgTXxf56KDi9nkpPk88e8jGDr5VDT2u9HqnougnBpvcWHHmPNMP06lVLs8aPhYR5YGrjtIsddZFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ORgrNDsA; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 30A8640006;
-	Mon, 11 Nov 2024 21:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731361674;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g2b4scH3PheFozFLPBiOdBcm1frxxscZgJklXEJTI+E=;
-	b=ORgrNDsApFJAXIlghO7ADZBZShp2JPVY1Y2q72fERJMhFQQ0H0WGk/ugUaRe4z0Rhcti6v
-	gg5YRX3ujHhU5Z0GU/nnqnjIfyjakgMolvoxkLQbBpqDQAOjhPozKghR+zYY/eMYPox8Br
-	8fOs23Vdb8h+h6rODi8IvccP+ILAeBso/HRis3257iSqm4GrGmw8/sbDKHr90Q8rh30Vh4
-	9U7+5osF9YvsVOp05UXXo0fUzcvcAzTiqkuFBuEmMdB2vGBqSdVH2qb+lO2LqGKek1mG9p
-	HenFUlRYr5aGhwth98wy7TjGlEhvw2m4UzpHLQsn8FAEKuqqMifoxaZTuf9I2Q==
-Date: Mon, 11 Nov 2024 22:47:51 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Yiting Deng <yiting.deng@amlogic.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 0/3] support for amlogic rtc
-Message-ID: <173136163495.3310623.12434068921554307587.b4-ty@bootlin.com>
-References: <20241108-rtc-v5-0-0194727c778b@amlogic.com>
+	s=arc-20240116; t=1731361686; c=relaxed/simple;
+	bh=ZCOvFl3ljOT1d/HT5jzqQ4LIcu2lHhvhGjA+BbuEEmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=M5DwxnRotsYw/2cim5RiAbUyR6/xlWP6eQH+HfhfIiz8d7TNaKJECvgEpTlY2tNfuVeTJFuqRAn40EzhXJd/Xt+ELRms0riNIu4Rsiz68AEgB1gMaxtAaG68GkeTPyOnVYLpDJEHilVO9htI8/rT8Bvm6LlcFXyNwwStnuE7BeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qznPYQl3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29ABCC4CED4;
+	Mon, 11 Nov 2024 21:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731361686;
+	bh=ZCOvFl3ljOT1d/HT5jzqQ4LIcu2lHhvhGjA+BbuEEmY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qznPYQl3jtziu4z/tj4RY3NOvDxM30kU/1nSyuPM5WES7UoI2HjEZz0M6Mt+h9wZG
+	 MUEABE7OsBKVw11hGt/a9b5lrIG3nJTa5AcjkJJGt7cuvTbM7VJu9kMxdMYzKqwzeG
+	 qQ/eh9r0V5gT4paWPLU2PkNkvvPbHGMsjTVmjzwg7isERQc2JCfq6rbQFPOiD2asWJ
+	 5XWG3WuCDbBajDyiJZpgafmA8bk8T7wMR3abM3YdIlMX8gxQAu3eU9AMWYwLBFVvpj
+	 ORUjUVjL4XGSjxy28VRTmkDXI0GGIuH0kH4w3ps9POQiVPpOEXScrygFAYnSYJ5gYr
+	 LKEQ4oZdaQlAg==
+Date: Mon, 11 Nov 2024 15:48:04 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	=?utf-8?Q?netdev=40vger=2Ekernel=2Eorg_Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH v1 1/2] PCI/sysfs: Change read permissions for VPD
+ attributes
+Message-ID: <20241111214804.GA1820183@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,27 +67,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241108-rtc-v5-0-0194727c778b@amlogic.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20241111211738.GD71181@unreal>
 
-On Fri, 08 Nov 2024 13:54:40 +0800, Xianwei Zhao wrote:
-> Add rtc driver and bindigns for the amlogic A4(A113L2) and A5(A113X2) SoCs.
+[+cc Thomas]
+
+On Mon, Nov 11, 2024 at 11:17:38PM +0200, Leon Romanovsky wrote:
+> On Mon, Nov 11, 2024 at 02:41:04PM -0600, Bjorn Helgaas wrote:
+> > On Thu, Nov 07, 2024 at 08:56:56PM +0200, Leon Romanovsky wrote:
+> > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > 
+> > > The Vital Product Data (VPD) attribute is not readable by regular
+> > > user without root permissions. Such restriction is not really needed
+> > > for many devices in the world, as data presented in that VPD is not
+> > > sensitive and access to the HW is safe and tested.
+> > > 
+> > > This change aligns the permissions of the VPD attribute to be accessible
+> > > for read by all users, while write being restricted to root only.
+> > > 
+> > > For the driver, there is a need to opt-in in order to allow this
+> > > functionality.
+> > 
+> > I don't think the use case is very strong (and not included at all
+> > here).
 > 
+> I will add the use case, which is running monitoring application without
+> need to be root. IMHO reducing number of applications that require
+> privileged access is a very strong case. I personally try to avoid
+> applications with root/setuid privileges.
+
+Avoiding root/setuid is a very good thing.  I just don't think using
+VPD directly from userspace is a great idea because VPD is so slow and
+sometimes unreliable to read.  And apparently this is a pretty unusual
+situation since I haven't heard similar requests for other devices.
+
+Sort of ironic that some vendors, especially Intel and AMD, add new
+Device IDs for devices that work exactly the same as their
+predecessors, so we are continually adding to the pci_device_id
+tables, while here we apparently the same Device ID is used for
+devices that differ in ways we actually want to know about.
+
+> > If we do need to do this, I think it's a property of the device, not
+> > the driver.
 > 
+> But how will device inform PCI core about safe VPD read?
+> Should I add new field to struct pci_device_id? Add a quirk?
+> Otherwise, I will need to add a line "pci_dev->downgrade_vpd_read=true"
+> to mlx5 probe function and it won't change a lot from current
+> implementation.
 
-Applied, thanks!
+To me it looks like a pci_dev bit, not a pci_driver bit.
 
-[1/3] dt-bindings: rtc: Add Amlogic A4 and A5 RTC
-      https://git.kernel.org/abelloni/c/12defbf1429c
-[2/3] rtc: support for the Amlogic on-chip RTC
-      https://git.kernel.org/abelloni/c/db26c3d6eb01
-[3/3] MAINTAINERS: Add an entry for Amlogic RTC driver
-      https://git.kernel.org/abelloni/c/cf6f2ddfd039
+I would set it .probe() so all the code is in one place.  And it's not
+related to a device defect, as most quirks are.
 
-Best regards,
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Bjorn
 
