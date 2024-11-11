@@ -1,180 +1,182 @@
-Return-Path: <linux-kernel+bounces-403812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEE19C3B29
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:45:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100839C3B2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8177CB20CD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:44:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2ACD280D62
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D20C155359;
-	Mon, 11 Nov 2024 09:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BA5lv5ac"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53F91531C0;
+	Mon, 11 Nov 2024 09:45:02 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13D224D6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37CF143C72;
+	Mon, 11 Nov 2024 09:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318289; cv=none; b=N4FYTXstd8tLMHMVDzPib/G8/XYkpxVz4+G5G4vLDB/dXMTm07iBomh67kbHNPzaD32XzJV0M1QefN5rrVRaH1c0q61ltkSMym26NiXeslwBh78GtkOMFHp3oZGBcITeGod/IiFvNgb5zxmjjOj0ubG0Ev3fVgeR9rMwgnFZg+k=
+	t=1731318302; cv=none; b=vBlNh5QNopoEr36AZxoFWRijZsQx12ZI+d+ZQsCF1Rr7zZfNQBjbpSFHMlnFqkqSX1bBUnhj44+Q3diay6Smcf1aJxvzN7C5SaEej+S/F2xm001Fp6UvkB+Z6fgyEjoTMmczAh+FlzBw4+b5zyyWxw/hjt+0NBP26EU43lVpAhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318289; c=relaxed/simple;
-	bh=Y8VkXg5N4fjvLMeubnNBYWRYj1+b5e3Ehqe5iTDD1Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rr2GiUfu0Jvy6Zpvrbiwb9+gSwam60788pIXEVCuIMTHSgA1ACJ9FHdanZKlSggJAY9w/eWAIBgdEGlVNQ/F2IUy1n0B9YW3Z+94MqhiizM7j4DCpaV+PkPCrVfSj4t6LR9+ArCzeo04Yt62nG+/CcRzHZMIHRn+wkl0tCq7MTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BA5lv5ac; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539fb49c64aso6093942e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:44:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731318284; x=1731923084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wYdHFQll/Jvx2aqgW7/Di3dB8XVUvFfsGgA/LhZ5sYk=;
-        b=BA5lv5ack7m3e6k+7MGybq0hU6NMLa+nmpHfKNXzDzMTh/eCj7lYCW7yCMq+8WelsY
-         a0z8Wugt3UyDy8V3jVmbJDW37BaOGN4DJCl0aLf8IAGr1jdT8cMubQHu93awsG77Fg4r
-         ND/hOGTUL3cU2B4eafp7y74vQXO785rMJShAB4hj7i4lSqMn4tRNdYjb3J/a4G8OUVdc
-         H1pAHKyysqpTQDXS4GZ+vwc6VACUmg63aBZjAqhDIyNDmXiNsP2wz3vYiZevNQJtUw9D
-         rGSPq/ax2CJg2nefQ1jNS1zdYn9rpxiJbIduD743ewTk/n6jtzqZvrkObsr+H2KKByRq
-         DQYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731318284; x=1731923084;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wYdHFQll/Jvx2aqgW7/Di3dB8XVUvFfsGgA/LhZ5sYk=;
-        b=cte9N4RKKdvTg0glCORlLX3GQROFQQrJ3dRtRPWMxfAM+/3Qfx3jh4hZ7N/sY9IOpn
-         5wKkJWU05oNHKkMqSlZIfwvQmgkqtBAppsqnvuX7aTvVx4uLsauk07SqOjthHLJRSHUy
-         nPEc9fh8tCKlHnSn0uCXWm3nInf4FaeHo+3TT00bjvvl7inbYR+N/JdsqF3h9oIQAdZ0
-         NnIGqGzefq8cH5dXI5+ooiTkFNOQAyApYlGPfB+NyeBTR6qksPM2ye3HBO7fZvyjHs94
-         2roqCDM1RHo7mBIvzozoCEwmVhf1CKq28kx1nHdGdK0/RXlHH+ObqvSN4qv1jCWHjKHu
-         GGXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB32uIm1WkhTf6Lu9kPiAtUsYCiXkd8hH7/lFR9qlUUYCuN4hEv2pXN33z9FL1M+WGGRbofiYZ+l90S9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykIPTaH1ldfUImPYwwMVE9jrQor/DFO8VC/ih7aOMN7uS6mfJM
-	uEFTE1x2F1EfWFqt/IrdguzyMECP2TSLRnNlV7G+LTRacirO2QmfCsSSoZp5D2k=
-X-Google-Smtp-Source: AGHT+IHK4vdhia2NXp3GYgdHBXfS5JmphfkYhtaQbxfub0asvj1UBs6mvIxTwhKb1VDqrzP+d2MjPA==
-X-Received: by 2002:a05:6512:6d6:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-53d862c6fa8mr6556182e87.17.1731318284409;
-        Mon, 11 Nov 2024 01:44:44 -0800 (PST)
-Received: from ?IPV6:2001:a61:1361:b001:5d85:e56f:d14e:8442? ([2001:a61:1361:b001:5d85:e56f:d14e:8442])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dc4c97sm570367566b.131.2024.11.11.01.44.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 01:44:44 -0800 (PST)
-Message-ID: <825be5e2-31b2-4cd6-a283-05935ea6161f@suse.com>
-Date: Mon, 11 Nov 2024 10:44:43 +0100
+	s=arc-20240116; t=1731318302; c=relaxed/simple;
+	bh=fZNzFehdsn1KYuBdyXoOclvk0TirGAtQUi7fLN6E00Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbb0RbQOohiJTWFxHs/aPYElqBXDxo0+YS0z2AYbEBlowKWbHFjcI/YJJzA7pLrsViU2bChQ4fe5MQKFkBwgqF1kpnXtjO3W7Dc+R+AE8mdoHcFe52RGba4W469a+hXf7kWw9fFYeZk3QPY+EtKF6M+oFyIdXZe/sEaIo8f5Tw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: QdeBMHObTxqGGq77nM22kA==
+X-CSE-MsgGUID: MsWjFg1cSiWCavtgXzfRRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30972332"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30972332"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:45:00 -0800
+X-CSE-ConnectionGUID: /eX76d9LRjOk6/8VeX37PA==
+X-CSE-MsgGUID: UvJCofyfTlmID8eXgH3kkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
+   d="scan'208";a="91926457"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 01:44:55 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1tAQya-0000000DXxa-0N1Q;
+	Mon, 11 Nov 2024 11:44:52 +0200
+Date: Mon, 11 Nov 2024 11:44:51 +0200
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Aren <aren@peacevolution.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Kaustabh Chakraborty <kauschluss@disroot.org>,
+	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
+	Ondrej Jirman <megi@xff.cz>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
+ possible
+Message-ID: <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-11-aren@peacevolution.org>
+ <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
+ <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
+ <ZzEPACoblmcQD9yu@surfacebook.localdomain>
+ <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb/cdc-wdm: fix memory leak of wdm_device
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
- syzbot+9760fbbd535cee131f81@syzkaller.appspotmail.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, oneukum@suse.com
-References: <000000000000e875fa0620253803@google.com>
- <20241109152821.3476218-1-snovitoll@gmail.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20241109152821.3476218-1-snovitoll@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 09.11.24 16:28, Sabyrzhan Tasbolatov wrote:
+On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
+> On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
+> > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
+> > > On Mon, Nov 04, 2024 at 10:40:16AM +0200, Andy Shevchenko wrote:
+> > > > On Sat, Nov 02, 2024 at 03:50:41PM -0400, Aren Moynihan wrote:
 
-Hi,
+...
 
-> syzbot reported "KMSAN: kernel-infoleak in wdm_read", though there is no
-> reproducer and the only report for this issue. This might be
-> a false-positive, but while the reading the code, it seems,
-> there is the way to leak kernel memory.
-
-As far as I can tell, the leak is real.
-
-> Here what I understand so far from the report happening
-> with ubuf in drivers/usb/class/cdc-wdm.c:
+> > > > >  #define STK3310_REGFIELD(name)						    \
+> > > > >  	do {								    \
+> > > > >  		data->reg_##name =					    \
+> > > > > -			devm_regmap_field_alloc(&client->dev, regmap,	    \
+> > > > > +			devm_regmap_field_alloc(dev, regmap,		    \
+> > > > >  				stk3310_reg_field_##name);		    \
+> > > > > -		if (IS_ERR(data->reg_##name)) {				    \
+> > > > > -			dev_err(&client->dev, "reg field alloc failed.\n"); \
+> > > > > -			return PTR_ERR(data->reg_##name);		    \
+> > > > > -		}							    \
+> > > > > +		if (IS_ERR(data->reg_##name))				    \
+> > > > 
+> > > > > +			return dev_err_probe(dev,			    \
+> > > > > +				PTR_ERR(data->reg_##name),		    \
+> > > > 
+> > > > AFAICS these two can be put on one.
+> > > 
+> > > This doesn't leave room for whitespace between the end of line and "\",
+> > 
+> > Is it a problem?
 > 
-> 1. kernel buffer "ubuf" is allocated during cdc-wdm device creation in
->     the "struct wdm_device":
+> It feels a bit camped and not as readable to me:
+> 
+> #define STK3310_REGFIELD(name)						    \
+> 	do {								    \
+> 		data->reg_##name =					    \
+> 			devm_regmap_field_alloc(dev, regmap,		    \
+> 				stk3310_reg_field_##name);		    \
+> 		if (IS_ERR(data->reg_##name))				    \
+> 			return dev_err_probe(dev, PTR_ERR(data->reg_##name),\
+> 					     "reg field alloc failed.\n");  \
+> 	} while (0)
 
-Yes
-[..]
+Rather this way (besides the fact of having spaces instead of TABs for
+the last formatting, in such case you even can simply add yet another
+column with spaces):
 
-> 2. during wdm_create() it calls wdm_in_callback() which MAY fill "ubuf"
->     for the first time via memmove if conditions are met.
+#define STK3310_REGFIELD(name)								\
+	do {										\
+		data->reg_##name =							\
+			devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
+		if (IS_ERR(data->reg_##name))						\
+			return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+					     "reg field alloc failed.\n");		\
+	} while (0)
 
-Yes.
-[..]
+> Removing a level of indentation makes it much better
 
-> 3. if conditions are not fulfilled in step 2., then calling read() syscall
->     which calls wdm_read(), should leak the random kernel memory via
->     copy_to_user() from "ubuf" buffer which is allocated in kmalloc-256.
+You can do it differently
 
-Yes, sort of.
+#define STK3310_REGFIELD(name)							\
+do {										\
+	data->reg_##name =							\
+		devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
+	if (IS_ERR(data->reg_##name))						\
+		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+				     "reg field alloc failed.\n");		\
+} while (0)
 
->   
-> -	desc->ubuf = kmalloc(desc->wMaxCommand, GFP_KERNEL);
-> +	desc->ubuf = kzalloc(desc->wMaxCommand, GFP_KERNEL);
->   	if (!desc->ubuf)
->   		goto err;
+> #define STK3310_REGFIELD(name) ({						\
+> 	data->reg_##name = devm_regmap_field_alloc(dev, regmap,			\
+> 						   stk3310_reg_field_##name);   \
+> 	if (IS_ERR(data->reg_##name))						\
+> 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+> 				     "reg field alloc failed\n");		\
+> })
 
-No. I am sorry, but the fix is wrong. Absolutely wrong.
+I am against unneeded use of GNU extensions.
 
-Let's look at the code of wdm_read():
+> > > replacing "do { } while (0)" with "({ })" and deindenting could make
+> > > enough room to clean this up the formatting of this macro though.
+> > 
+> > do {} while (0) is C standard, ({}) is not.
+> 
+> ({ }) is used throughout the kernel, and is documented as such[1]. I
+> don't see a reason to avoid it, if it helps readability.
 
-                 cntr = desc->length;
-Here the method determines how much data is in the buffer.
-"length" initially is zero, because the descriptor itself
-is allocated with kzalloc. It is increased in the callback.
+I don't see how it makes things better here, and not everybody is familiar with
+the concept even if it's used in the kernel here and there. Also if a tool is
+being used in one case it doesn't mean it's suitable for another.
 
-                 spin_unlock_irq(&desc->iuspin);
-         }
+> 1: the "GNU Extensions" section of Documentation/kernel-hacking/hacking.rst
 
-         if (cntr > count)
-                 cntr = count;
+-- 
+With Best Regards,
+Andy Shevchenko
 
-This is _supposed_ to make sure that user space does not get more
-than we have in the buffer.
-
-         rv = copy_to_user(buffer, desc->ubuf, cntr);
-         if (rv > 0) {
-                 rv = -EFAULT;
-                 goto err;
-         }
-
-         spin_lock_irq(&desc->iuspin);
-
-         for (i = 0; i < desc->length - cntr; i++)
-                 desc->ubuf[i] = desc->ubuf[i + cntr];
-
-         desc->length -= cntr;
-
-Here we decrease the count of what we have in the buffer.
-
-Now please look at the check again
-
-"cntr" is what we have in the buffer.
-"count" is how much user space wants.
-
-We should limit what we copy to the amount we have in the buffer.
-But that is not what the check does. Instead it makes sure we never
-copy more than user space requested. But we do not check whether
-the buffer has enough data to satisfy the read.
-
-You have discovered the bug. If you want to propose a fix, the honor is yours.
-Or do you want me to fix it?
-
-tl;dr: Excellent catch, wrong fix
-
-	Regards
-		Oliver
 
 
