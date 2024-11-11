@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-404253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA059C4173
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:05:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A21D9C417B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 485B02839CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:05:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDBD6283481
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9674D8CE;
-	Mon, 11 Nov 2024 15:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776AE1A08C2;
+	Mon, 11 Nov 2024 15:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Pk5AIIoc"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="PV4pGUhd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803C91E481
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497421E481
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:07:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731337526; cv=none; b=F07qXUHaqNQ+FsAwUI0j28JQ7i0tKpWBkWRnDS8SodjipVPbdpxVFPOm+/E2UtDBqrkMa2TLhmUx6x0oa/Fnwyh5UVnL1RNbqQ5IOKSt4qWG9RQgu/jpZzOUzWh4pAAbcF2sUKNcB7JN3fuqpQS1aOrvmwWkyXMCJPPwnkPtuz8=
+	t=1731337633; cv=none; b=PwMySUlQvvB6y87iD59z7hXB37H31hkkb6uhHIhPkQNgVIfIJoCgoIzsukFr1WhhMWfp8AlTSBMbQZa1SD/c77MZlgxB/ns0Ncvt6GFAIYpLfJQTtyan86mBOwZ6eMgw1k9Nd+z4jz2LWKiAp6DrzGSiS69Aozb2MC625F21Nng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731337526; c=relaxed/simple;
-	bh=pLCBWyOsezbkGbKj20wKcVS9Rh7859sxQ8iqgYIhwsk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iZKTRgy32yuFpHAPOGuBCsZjTVvCkIFxY+a1L+/36EV27O/1lWa4XDngXRwXQO+LjgMfwzZtGVhQKOLwOSoDW2v6dNvOMW6ouPQPd884y4ZLYyRWNq0Vw16isvIOsUF28/AKrE8jQwVLCaD3EGxu+2y4qSXXlqJoMsmFD+flMC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Pk5AIIoc; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e600add5dcso2111114b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:05:24 -0800 (PST)
+	s=arc-20240116; t=1731337633; c=relaxed/simple;
+	bh=urF7+ZrvJb01w3jQbw0zJapXP5NGYyamAOImQFBwpt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YyiCpnNQBLquHxmiA0z8o5uUrVwrZQmrVatRvsw+6bbur3H84QiD8FNzOBgJ3MR/wNlv4VUK8OwmtrBnfyA7tgg4b+SbISRN7RWJKwBNCR2m2wwXQwC+WeR9Kpm1c+sPho5sJ88wkGimJcSq+aiGK2c0rj2nQSDP0NUWBYsGRF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=PV4pGUhd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-211a4682fcaso5071755ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:07:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731337523; x=1731942323; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FANAFwLPA6uDqavKV1Ik7k6rIhcZlXUpeawJn43pCcQ=;
-        b=Pk5AIIocAqFuw/NP+bFB+ao672vk2LV5UOBozrznBZ3WlA+a8Zjl5ySF5v9rfFkwH8
-         RAiGGsr9ZDLhex3eOaQtnwBVftJ7J9o0pQNhBGyB43P6n7zemjg07xppUV3SHgbQ9/H+
-         iXTETe/O34BashTVMMC48c+KRfCI/Ub+PWSu6p/h9hAgABIgckY8ctj25woeWfvz/EYo
-         sUA8HNDDrTyPbnQI8reeI9xk2lvIR/SFJnDWpGpVbBMFQS6Okm3t/zmbPvK7k6/P2BdH
-         q9S+Yg/7fIRjE5DMb983Ewg56p3uOkb4SmCtkooMxHCp8KnX4EfmM5tRgdIOF9vHPDK+
-         zmIw==
+        d=iiitd.ac.in; s=google; t=1731337630; x=1731942430; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pv2dsGLy5hlCQCQMw0mRaxqTomq041o04AFI/16zT3I=;
+        b=PV4pGUhddsHcFzJ+vyyAQ6giPL2F6lEud7GBrzsakFXnILW/NKNMVNZGnV55iihicZ
+         SosT9KiLWr2TgAlfC/J6o+ttbeZTjGLHg6YhsgGolVjZj1jyIwe5+PBe4Y61IaN3pnjq
+         QkwRsWvB0j/wa+lx5S35TYk+IFBtCzNX78qmw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731337523; x=1731942323;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FANAFwLPA6uDqavKV1Ik7k6rIhcZlXUpeawJn43pCcQ=;
-        b=iuhJl1SzHZPxx7s9XTblys0utovf77NZYLTeK3QD2SgC5l8ai6kw8JYI9aICXXsct/
-         C0OFM7opjitX91JQsUiqY46hWMnaxPdAzr5TXPzfGJcCS/dnGTIrVdo4ubAYOggWmEk0
-         9MFxq6AaiV+K2iO4dQsMa74+D3n9ZzYY6Mp2ZaHw69WsBYENGvqAhUi6C1uW7dun2ZQK
-         qFMnRedn41h6oSjGsWD3ljtLuPa1rqHcFhGeM5oIOVmSfYteNbM9vOjEQjpFsJ4oaQ3f
-         OZuKaL2PZd88cBfZWPZswdJzppUobrOinSGuDee5zq8Gdr51RA+mIR+hZ4qSf3eujsSK
-         mIUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzu52K+YEYX6jG7OT/7yIStBlwFX0aIABOHh94MMeHKbT9CjE6LHls4JzROj9U5UjImJWNNI7G2W5c8w4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbnuxaK6YiKaMcMB80s3G5K8LDgb1lEcxmMUillUHHjU1o7/5r
-	Ynnj26/zL9ICFckPq5Fg2bRqYArtK9fmHE6PXRcq3VnxxylalO2ndf3QIUmAMXY=
-X-Google-Smtp-Source: AGHT+IF4w0LezImfqUcdRk269iIRvUC3rDvyBtvyPDo1aUTBP1jSwl4AHjLVgkaGbGSvT/MFoIohTQ==
-X-Received: by 2002:a05:6808:1919:b0:3e6:ccc:2d91 with SMTP id 5614622812f47-3e794721891mr10371106b6e.29.1731337523644;
-        Mon, 11 Nov 2024 07:05:23 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e78ccb845csm2096711b6e.28.2024.11.11.07.05.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 07:05:22 -0800 (PST)
-Message-ID: <76edefe6-fb20-4169-8cbe-d8b864b04c7a@kernel.dk>
-Date: Mon, 11 Nov 2024 08:05:21 -0700
+        d=1e100.net; s=20230601; t=1731337630; x=1731942430;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pv2dsGLy5hlCQCQMw0mRaxqTomq041o04AFI/16zT3I=;
+        b=lRwlH+ZwCsIfPY5XuANa0DzNNBb1eoKJxn5U8jA+lrMHwfmNj6AEgJDIJ1Eia/kv9d
+         DAbQ3rb/nRmk0FyUeNwP65rRBBsUCEPgMChMUhMlV21T44GZzafP0J7M7sdbX/An4FnF
+         n6ytQ7WiqUtOenrbbMhRuZnBkPUroZvQ4+4e/RcwC8gyq9SwgExWs+5aJeV/eM41uEju
+         PgQcrlBx3M0Q5gkmgaV5nacTosl4DBhm5WDNjWaTEXELdO1RDqvQMGQkgk+b2+P2AVyV
+         u56mv7cVjznSdepl1noS4XS84QhnqX6hQC5fAg+G0RGbwlmV7yp6xUybEzDnKDQyX6+P
+         XvwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRYt2YiryLRoT7Lbu+Xgw9pF/RX6Bs6iMhIcl/LGoDnkELMPGWGS0mh9bVU6SHBdrMp2jNNYr9bWcVTzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdK3oA1A4Injyw52mVrX52MeKZLJmTR+f4OPAZs0dcCTzm9U/f
+	tvPYhr4zZCKZYbfrQ7TLGsr8ozP4n/PHWlPDVRwa9kuTgNOHmvZNCkYtTLEIDp0=
+X-Google-Smtp-Source: AGHT+IE/3RHLj44jfPFU+OP+sItz5ZLYB/FRD/A5nKaMuQaTLI3Nu/IGfIXNjgRWqWRSQGrK7OssHg==
+X-Received: by 2002:a17:903:110c:b0:211:6b31:2f30 with SMTP id d9443c01a7336-211835ccb20mr180272005ad.50.1731337630325;
+        Mon, 11 Nov 2024 07:07:10 -0800 (PST)
+Received: from fedora ([103.3.204.81])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc8287sm77078295ad.48.2024.11.11.07.07.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 07:07:09 -0800 (PST)
+Date: Mon, 11 Nov 2024 20:36:58 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: devnull+manas18244.iiitd.ac.in@kernel.org, alibuda@linux.alibaba.com, 
+	anupnewsmail@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	guwen@linux.alibaba.com, horms@kernel.org, jaka@linux.ibm.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, shuah@kernel.org, tonylu@linux.alibaba.com, wenjia@linux.ibm.com
+Subject: Re: [PATCH] Remove unused function parameter in __smc_diag_dump
+Message-ID: <p2b37jlmexphoab2fohx6npcwfxx3cgajbn67taxbpqhh2qn42@m4fmmkihgm53>
+References: <20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in>
+ <20241111130439.7536-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4] Uncached buffered IO
-From: Jens Axboe <axboe@kernel.dk>
-To: Stefan Metzmacher <metze@samba.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
- <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
- <00c51f80-7033-44a0-b007-ca36842e35a5@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <00c51f80-7033-44a0-b007-ca36842e35a5@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241111130439.7536-1-aha310510@gmail.com>
 
-On 11/11/24 7:08 AM, Jens Axboe wrote:
-> On 11/11/24 5:55 AM, Stefan Metzmacher wrote:
->> Hi Jens,
+On 11.11.2024 22:04, Jeongjun Park wrote:
+>Manas <devnull+manas18244.iiitd.ac.in@kernel.org> wrote:
+>> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+>> There is only one instance of this function being called and its passed
+>> with a NULL value in place of bc.
 >>
->> I'm wondering about the impact on memory mapped files.
+>> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+>> ---
+>> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+>> There is only one instance of this function being called and its passed
+>> with a NULL value in place of bc.
 >>
->> Let's say one (or more) process(es) called mmap on a file in order to
->> use the content of the file as persistent shared memory.
->> As far as I understand pages from the page cache are used for this.
+>> Though, the compiler (gcc) optimizes it. Looking at the object dump of
+>> vmlinux (via `objdump -D vmlinux`), a new function clone
+>> (__smc_diag_dump.constprop.0) is added which removes this parameter from
+>> calling convention altogether.
 >>
->> Now another process uses RWF_UNCACHED for a read of the same file.
->> What happens if the pages are removed from the page cache?
->> Or is the removal deferred based on some refcount?
-> 
-> For mmap, if a given page isn't in page cache, it'll get faulted in.
-> Should be fine to have mmap and uncached IO co-exist. If an uncached
-> read IO instantiates a page, it'll get reaped when the data has been
-> copied. If an uncached IO hits an already existing page (eg mmap faulted
-> it in), then it won't get touched. Same thing happens with mixing
-> buffered and uncached IO. The latter will only reap parts it
-> instantiated to satisfy the operation. That doesn't matter in terms of
-> data integrity, only in terms of the policy of uncached leaving things
-> alone it didn't create to satisfy the operation.
-> 
-> This is really no different than say using mmap and evicting pages, they
-> will just get faulted in if needed.
+>> ffffffff8a701770 <__smc_diag_dump.constprop.0>:
+>> ffffffff8a701770:       41 57                   push   %r15
+>> ffffffff8a701772:       41 56                   push   %r14
+>> ffffffff8a701774:       41 55                   push   %r13
+>> ffffffff8a701776:       41 54                   push   %r12
+>>
+>> There are 5 parameters in original function, but in the cloned function
+>> only 4.
+>>
+>> I believe this patch also fixes this oops bug[1], which arises in the
+>> same function __smc_diag_dump. But I couldn't verify it further. Can
+>> someone please test this?
+>>
+>> [1] https://syzkaller.appspot.com/bug?extid=271fed3ed6f24600c364
+>
+>Unfortunately, I tested it myself and this bug is still triggering. Basically,
+>this bug is not triggered in normal situations, but triggered when a race
+>condition occurs, so I think the root cause is somewhere else.
+>
+Thank you Jeongjun for reviewing this.
 
-Turns out that was nonsense, as per Kiril's comments on the other thread.
-For pages that are actually mapped, we'll have to skip the invalidation
-as it's not safe to do so.
+>> ---
+>>  net/smc/smc_diag.c | 6 ++----
+>>  1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+>> index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
+>> --- a/net/smc/smc_diag.c
+>> +++ b/net/smc/smc_diag.c
+>> @@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+>>
+>>  static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
+>>  			   struct netlink_callback *cb,
+>> -			   const struct smc_diag_req *req,
+>> -			   struct nlattr *bc)
+>> +			   const struct smc_diag_req *req)
+>>  {
+>>  	struct smc_sock *smc = smc_sk(sk);
+>>  	struct smc_diag_fallback fallback;
+>> @@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>>  	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
+>>  	struct net *net = sock_net(skb->sk);
+>>  	int snum = cb_ctx->pos[p_type];
+>> -	struct nlattr *bc = NULL;
+>>  	struct hlist_head *head;
+>>  	int rc = 0, num = 0;
+>>  	struct sock *sk;
+>> @@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+>>  			continue;
+>>  		if (num < snum)
+>>  			goto next;
+>> -		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
+>> +		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
+>>  		if (rc < 0)
+>>  			goto out;
+>>  next:
+>>
+>> ---
+>> base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+>> change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+>>
+>> Best regards,
+>> --
+>> Manas <manas18244@iiitd.ac.in>
 
 -- 
-Jens Axboe
-
+Manas
 
