@@ -1,83 +1,175 @@
-Return-Path: <linux-kernel+bounces-404093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844319C3F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:00:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF6A79C3F03
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60DE1C2249E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836CD284FB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB1019F487;
-	Mon, 11 Nov 2024 12:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="NJu89gx2"
-Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1794719F47E;
-	Mon, 11 Nov 2024 12:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6982D1A070E;
+	Mon, 11 Nov 2024 12:55:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6682219F47E;
+	Mon, 11 Nov 2024 12:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329746; cv=none; b=HRTAOWtUY3HxiiBjWtOAPOwtUXRFViDtNtsmTZSMbykqV50NAtmFhiykDSEFZFZdXSOdm4uQ+NcMHRgHafrTA0LvH3N1mE8bl/jF7+PGwtEMDpVm/SFakNPWsv7biEVGxEDG8M/bhJdjQItiLMiPC+UXjaB5M/g0RboCCJO2jlc=
+	t=1731329756; cv=none; b=FnB/xG+GHaGD8yANOWJOZYfN6AHfIRim+eS0k8YVy8w/YyV/RE3dYBHHJ/U4f/zbHgB8byE7Zd1S8j6PDEnyBffxoxM+CYQg/0Mzg1fShX1PniQI1JfO+6hWs6mKwX10p7kfmrvHC0pwUEuCR4Qms5WiHQXpOZcpYfic4pM+90Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329746; c=relaxed/simple;
-	bh=qRe/F76H/58frwLfvI3LBKbI4uSiq7qspmyH+LRyX1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fHGVzkCzPxvDbzZi7EPKdiHTswzQGaHYTck6xbELVEuD8WZ2beCJKOpUqpJub+SD7VwrOgvINFJp8J7HAxu6gqTvXuqgAC93DUbgDUSS5emnsw/o0XbRsWnM+/xQxDu0t+VK3YqnfOKgzMiCQu9djjRYWezOwR6qgSaxqAl6BKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=NJu89gx2; arc=none smtp.client-ip=144.76.82.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-	s=42; h=From:Cc:To:Date:Message-ID;
-	bh=qRe/F76H/58frwLfvI3LBKbI4uSiq7qspmyH+LRyX1Q=; b=NJu89gx2+QbjuwtdHd17k4ai9q
-	+/mCnxFmT47or1dA7jWHUZtWJsdX0PD0TFI4RN9AQVDtJuehuwynkaT5lM5Tjtm6nQPno5t+AxXD6
-	8E4jRIL4ctIwjby6fPZSHSoutH12csjdrVU9xG/6NRYYyOVYx/X+VmPy/FiigqWkE3GJqv2h1SWFu
-	xk6GqjOEz15jdGReWm2REPD8WgFQ9Am/z2oimu01PcuAs4+v92ep08qVtSKauUGVWxsOSylE0CMO9
-	XOgfC1p3Pf9/+4LJOYJ8LLAfbUxqwnbsHVMXpd8YEYYgOrKjlfvE8tIKxGClb/xzPkRsYow/uFtEm
-	WmpPDA6tAat3EyrLykEb2AaOvibgdP8ah0Edq+uP2ELa1sU0K/1fHVsFfMgr9j2JRcnv6N+sCXcGh
-	8ek1kyBccTH7aSzZaTbmdRVQB5WmEIQXYstU4fKthxdbLw62gsv/RD2h1tvZTMoTOpuL2D/rwF3xC
-	LPLF2mfvZHvnALrG9qjr/g2e;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-	(Exim)
-	id 1tATxD-00A3CN-1S;
-	Mon, 11 Nov 2024 12:55:39 +0000
-Message-ID: <63af3bba-c824-4b2c-a670-6329eeb232aa@samba.org>
-Date: Mon, 11 Nov 2024 13:55:38 +0100
+	s=arc-20240116; t=1731329756; c=relaxed/simple;
+	bh=qhkVxFOMf1xxZ2nYYbWGmBKmSZ/u0vQh+1FH4lvbdN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMMaFHjelsYpFSNg8CSbBrjBDiScqxQgewfomEcgAO2iCUAvdnhrZ/iGA+Ua/4rd8IVAtlYcCB2rtpeKKd6yuDO5QwO8ZBEHcmF3WQoQt9pkpoLbix+Yji+Q4K0KceWGANRFq1GGg0ZIwnI+CBbpAhCcjg4p7L1VDbTj9AyZ+lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 496AD1CE0;
+	Mon, 11 Nov 2024 04:56:22 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B01C3F66E;
+	Mon, 11 Nov 2024 04:55:51 -0800 (PST)
+Date: Mon, 11 Nov 2024 12:55:50 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] perf arm-spe: Prepare for adding data source
+ packet implementations for other cores
+Message-ID: <20241111125550.GA350698@e132581.arm.com>
+References: <20241108202946.16835-1-ilkka@os.amperecomputing.com>
+ <20241108202946.16835-2-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v4] Uncached buffered IO
-To: Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org
-Cc: hannes@cmpxchg.org, clm@meta.com, linux-kernel@vger.kernel.org
-References: <20241108174505.1214230-1-axboe@kernel.dk>
-Content-Language: en-US, de-DE
-From: Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <20241108174505.1214230-1-axboe@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108202946.16835-2-ilkka@os.amperecomputing.com>
 
-Hi Jens,
+On Fri, Nov 08, 2024 at 08:29:45PM +0000, Ilkka Koskinen wrote:
+> 
+> Split Data Source Packet handling to prepare adding support for
+> other implementations.
+> 
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
 
-I'm wondering about the impact on memory mapped files.
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-Let's say one (or more) process(es) called mmap on a file in order to
-use the content of the file as persistent shared memory.
-As far as I understand pages from the page cache are used for this.
-
-Now another process uses RWF_UNCACHED for a read of the same file.
-What happens if the pages are removed from the page cache?
-Or is the removal deferred based on some refcount?
-
-Thanks!
-metze
-
+> ---
+>  tools/perf/util/arm-spe.c | 42 ++++++++++++++++++++++++++++-----------
+>  1 file changed, 30 insertions(+), 12 deletions(-)
+> 
+> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> index dbf13f47879c..3064c3f22806 100644
+> --- a/tools/perf/util/arm-spe.c
+> +++ b/tools/perf/util/arm-spe.c
+> @@ -103,6 +103,18 @@ struct arm_spe_queue {
+>         u32                             flags;
+>  };
+> 
+> +struct data_source_handle {
+> +       const struct midr_range *midr_ranges;
+> +       void (*ds_synth)(const struct arm_spe_record *record,
+> +                        union perf_mem_data_src *data_src);
+> +};
+> +
+> +#define DS(range, func)                                        \
+> +       {                                               \
+> +               .midr_ranges = range,                   \
+> +               .ds_synth = arm_spe__synth_##func,      \
+> +       }
+> +
+>  static void arm_spe_dump(struct arm_spe *spe __maybe_unused,
+>                          unsigned char *buf, size_t len)
+>  {
+> @@ -532,6 +544,10 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
+>         }
+>  }
+> 
+> +static const struct data_source_handle data_source_handles[] = {
+> +       DS(common_ds_encoding_cpus, data_source_common),
+> +};
+> +
+>  static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
+>                                         union perf_mem_data_src *data_src)
+>  {
+> @@ -555,12 +571,14 @@ static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
+>                 data_src->mem_lvl |= PERF_MEM_LVL_REM_CCE1;
+>  }
+> 
+> -static bool arm_spe__is_common_ds_encoding(struct arm_spe_queue *speq)
+> +static bool arm_spe__synth_ds(struct arm_spe_queue *speq,
+> +                             const struct arm_spe_record *record,
+> +                             union perf_mem_data_src *data_src)
+>  {
+>         struct arm_spe *spe = speq->spe;
+> -       bool is_in_cpu_list;
+>         u64 *metadata = NULL;
+> -       u64 midr = 0;
+> +       u64 midr;
+> +       unsigned int i;
+> 
+>         /* Metadata version 1 assumes all CPUs are the same (old behavior) */
+>         if (spe->metadata_ver == 1) {
+> @@ -592,18 +610,20 @@ static bool arm_spe__is_common_ds_encoding(struct arm_spe_queue *speq)
+>                 midr = metadata[ARM_SPE_CPU_MIDR];
+>         }
+> 
+> -       is_in_cpu_list = is_midr_in_range_list(midr, common_ds_encoding_cpus);
+> -       if (is_in_cpu_list)
+> -               return true;
+> -       else
+> -               return false;
+> +       for (i = 0; i < ARRAY_SIZE(data_source_handles); i++) {
+> +               if (is_midr_in_range_list(midr, data_source_handles[i].midr_ranges)) {
+> +                       data_source_handles[i].ds_synth(record, data_src);
+> +                       return true;
+> +               }
+> +       }
+> +
+> +       return false;
+>  }
+> 
+>  static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
+>                                       const struct arm_spe_record *record)
+>  {
+>         union perf_mem_data_src data_src = { .mem_op = PERF_MEM_OP_NA };
+> -       bool is_common = arm_spe__is_common_ds_encoding(speq);
+> 
+>         if (record->op & ARM_SPE_OP_LD)
+>                 data_src.mem_op = PERF_MEM_OP_LOAD;
+> @@ -612,9 +632,7 @@ static u64 arm_spe__synth_data_source(struct arm_spe_queue *speq,
+>         else
+>                 return 0;
+> 
+> -       if (is_common)
+> -               arm_spe__synth_data_source_common(record, &data_src);
+> -       else
+> +       if (!arm_spe__synth_ds(speq, record, &data_src))
+>                 arm_spe__synth_memory_level(record, &data_src);
+> 
+>         if (record->type & (ARM_SPE_TLB_ACCESS | ARM_SPE_TLB_MISS)) {
+> --
+> 2.47.0
+> 
+> 
 
