@@ -1,133 +1,113 @@
-Return-Path: <linux-kernel+bounces-403612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33BC9C37EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:55:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C5D9C3813
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF8B1F21D4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:55:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07511C21245
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 05:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1A5154C04;
-	Mon, 11 Nov 2024 05:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633B614A630;
+	Mon, 11 Nov 2024 05:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wzAIWO/j"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ak1rTMor"
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.154.197.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1267614F9F9
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7505A18E1F
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 05:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.154.197.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731304510; cv=none; b=VYtxFty9R1B6NmeGtlnPcUzhf3Tv3AOayvKlTA7m5F2cf7G1ucz5qKaP5Ci3baBAvtUxqlMBVsl66P+v7lzaR4IzQVze/wpWqZFNPlPIKkSKnRLkRCilmRaHZu3rNuBAc2873sxV1n0kHujiA2xMkVplAsa/Kpl70qM7OjXf0nM=
+	t=1731304716; cv=none; b=GDVSj4DB3SZDgA3N/LX3xDLowoBOsYiGqnYPDGFEAG1tJaAuC/W+trrwxJ2M47ahl3A0GLt8mzPQPzgNTJKpIRegy1Nw2NSEDUwKEv37RCS64URSjahCRI44BT0tLS21RtdH+dPm452fCzI2x3PeBqc+X4xlo2A6uK52N2nMi7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731304510; c=relaxed/simple;
-	bh=1wbt4id5qTsT4HTO1+224rcxhAAHXiof/62rdh090/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dgv3bc02TZzgpVxLfBMek5vtV5rbzpNdVIHZ83jWfV+UgWszOt0pOWr2aNvg+DC7XQr/Wj/yltFrOMMFfTnRfAO3tY7R9qoHo0Ijwjooywwmuu11adEywAYQjX+xgo9ZOLD/b+KBd8tDWSMHxxQzDUB3obwVex5ezKDRG8afK/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wzAIWO/j; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72061bfec2dso3812788b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 21:55:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731304507; x=1731909307; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nAWcQ5veHhNVgjM+Swr4gUazUOqqofF4VZks+AvSvMY=;
-        b=wzAIWO/j9YvQkdELYgkwtoNij8P8ybBB9a4zGew03rdX2Bb/M+ZaXSBjaCdppWNFNe
-         a5FXlmOCA83+k8bFrdQwRAcNb/NB3GcjPRsQ34oK5+pZmb89yzjFKe9LX1RY3P9FiQZG
-         m8a34tB+67P9NXCFaE1yn5FdBFGvJTOlb+YnBJB/njGML0Up8n56Bm2yN6y2SvwSQ4Uc
-         0fKLEpYLIU8a5NFVGAiLrGCH0qgYbKAvdz5k9KuGEbUUOSnOiWGIcLBstVmn5meJbb1g
-         aMDgml63bPAL/nnrvzyszgwjWIQR0ULk222aYZwUhZWgxDUkgxXqqTuEhM2g8HbXkfbO
-         qq3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731304507; x=1731909307;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nAWcQ5veHhNVgjM+Swr4gUazUOqqofF4VZks+AvSvMY=;
-        b=lGOn43H892BM9fTC0Ly48ZB/yhIn3jRvLRSGUzmZmM140boaQWOj0jLpVPY13COdt7
-         qYh2jJMnzxIsgiaegPJmRKD+itGd6nrBedMVjPSrTOOrF29d9Pzly9EB+phPsNDeMN2a
-         Shydiao1rFS5W1Ib10px6ekPn3eTK7M+4Puy1M6yAj7MS0uDpLBGwMQZKoMkcgnkzfQi
-         /4G/lKLGP3Jx+vcFepu/kKYFqfLXEjaW9XlbgDH17sq2PNgTsYGYP+gAPNME0WGA1PNx
-         x5fxHeW6Qh3bdD55CA41yk9PeAgRTX3IJAcfdcDc8s5QzlszGO2aCjAAtqNusxaMSrFU
-         7iKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjP5DGaccZw9/7wtSTx6GNdvttG3HpATgC+uQsR5pBOBC5PasoiZq9Gop1mMaRFFJlswaEMcj7tpvbR4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNBvrtRtTE6N5TA6a4/FM+F1tPvw7eAJU/aTpO0mCeJsej/5+Q
-	MzxwxKEwKdYLSkWB/FV3h/CaDTEPSCnDCV7H4LdEmeRB+TEnnH53rAvxn+sNHgg=
-X-Google-Smtp-Source: AGHT+IHtqVtA35vMC4e1EnNTvwTwqSJFlJzhlZOFgx3RSPLljVG5nE5Fqy9JY0g2bqUZOQmsSp1QUQ==
-X-Received: by 2002:a05:6a00:198a:b0:71e:415:c4c6 with SMTP id d2e1a72fcca58-724133d215amr13597006b3a.26.1731304507363;
-        Sun, 10 Nov 2024 21:55:07 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724079a3d5bsm8443325b3a.106.2024.11.10.21.55.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 21:55:06 -0800 (PST)
-Date: Mon, 11 Nov 2024 11:25:04 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Cody Eksal <masterr3c0rd@epochal.quest>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Yangtao Li <tiny.windzz@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nishanth Menon <nm@ti.com>, Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Parthiban <parthiban@linumiz.com>,
-	Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v2 12/13] cpufreq: sun50i: add a100 cpufreq support
-Message-ID: <20241111055504.2f3szrd5ahudvtqm@vireshk-i7>
-References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
- <20241031070232.1793078-13-masterr3c0rd@epochal.quest>
- <20241111041311.hleaz5fgipsyxigm@vireshk-i7>
- <CAGb2v646NHFAni=P+iC8OZsWMpg0PJc=kYbuWaY=C0-W-q6qAw@mail.gmail.com>
+	s=arc-20240116; t=1731304716; c=relaxed/simple;
+	bh=7aL5LzELG0tTYPdM5LGYfOHO7YjqPtAI8/gSpPTe1o8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qf09DbAS5cLz5dctdjS5TbIuMGyVH2FAWnKKXp722pftNAKUm2K9UdXP+StrFmaw2TcS3qApfGWDlTL6FY67OjAP3Q1TiGQIyMga4OSWNSpS0AsShVQRKmoLnTDres6n+TJ+rMsarHGYKCswkiDi+pyDbbmef/9pwdbxhtW5h5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ak1rTMor; arc=none smtp.client-ip=43.154.197.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1731304627;
+	bh=QlBcGlE34Va4z6tdQ+526erMjntc98YXGGaX0KDIwFY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ak1rTMor1XWSxuhlKl5Ltqgc4hzAnbfkosfrvJGT5JIw1bubL7JDJ1rUVPtDdhdTA
+	 rVeS0TV/Nq5QYdSEwNyLHFCWPp9GSCJWaMMzeO98vnbTPTbZQnbVS10UIg/28wml7x
+	 Pb+dgaBpW5VA9C+dTFAqud5rnuJvpmIDh7OQIEhM=
+X-QQ-mid: bizesmtpsz8t1731304618tqb3uu4
+X-QQ-Originating-IP: cvSgHr798D+Apd+pU6Xa5MeG/bYWCOgtQ5O9wX/QAV4=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 11 Nov 2024 13:56:56 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17814725511772650801
+From: WangYuli <wangyuli@uniontech.com>
+To: rostedt@goodmis.org,
+	warthog9@eaglescrag.net,
+	wangyuli@uniontech.com
+Cc: linux-kernel@vger.kernel.org,
+	standby24x7@gmail.com,
+	jkosina@suse.cz,
+	akpm@linux-foundation.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Subject: [RESEND. PATCH] tools/testing: Fix typo "accesing"
+Date: Mon, 11 Nov 2024 13:56:53 +0800
+Message-ID: <26276A748DB510FE+20241111055653.908372-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGb2v646NHFAni=P+iC8OZsWMpg0PJc=kYbuWaY=C0-W-q6qAw@mail.gmail.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NiCl4APqUksbusz+C6FyrKfsm0znqwED6gDtyM/HfaRtvOvGIbYmN3QU
+	cVF7AUu/EZJu05TKjj+/N1EFxvYzqaMncwS/9qkAVpRWCvujAlPGqIPR/Mwqd1XiYmgjs9H
+	yUbVvi4fiBrFIyMZGvPEpG+Q1oVOAGMfUvObUeo3RB0S2/31HHJgf3GwjWjOmENJLXRfXjK
+	e9TyPthlsVJ2SeY6EKE1SKwR/2VLSleKOqChTBPRj4fvQPb5p5CcIS7G46TM1mPtRpEWR+j
+	0SlI7+BTpEJ8fbe8vdwbddO+zbXCKQRphuZrf81ENZpiwac07bxTcfSC8AbRkEot/Ni7siT
+	E5sd22dD7UNZVVUdlbUtQDcZrltavFZANgBeXgA92Ats6et1t6GT0ckRPOdXN6W4kFkGy6w
+	dQoGGWRb4rs5J6iFpseGfcxYQiEl0iOQ3VtsazyCwH07qS/1wX3Gox391+oHAVu6XZmuqnM
+	d2FvRUTj+LiNOqt99ScxjyhwBrRCvSDrhHIB6B9HB89uFQpMaYx85FeCDFFPU15ltUHgelg
+	c/unGvye82G8o06K537JXxmBvZdM13RbrhG4sQ8kLjhZ4VH61fFkdiZL3TJMBOZpd+cusVc
+	EWSj7cKl9DUaVcA+vLYoscUdX8ztvu9Ra6W8rAL2SfGtkwDWyzXPQJzbkAR0lpj1xtLLrtv
+	m590puKGwBnixCAZIzHBNFuKxk6JLVC+bzRAEWUyQHSIINFpRe8fuVWoxTJ5mZb35RBcG36
+	k1jYQpAWcxSinae6JzsQj/tFzCMKjr8V12QvYkWqMaADqBTZc+nABHN1uByt1Y7f/nwOuMA
+	EgQETBgMgE10B9pSqA9EeUfc/ShG/3N6r/C3CVXlOIQ7BbK/ptvuPWvdLHrGvKjAruB9ctK
+	gJNzlEoSVFcsDlP5upRbWrOxLHEn9nw6sjtP9guk8NKTLAchtmtP9OSymPRJMoVVHxYvHIW
+	7IV8Ci3JC5p3D2rX0uzdCAE5alV4aBh/RzdHVfOWQmpACQkAaSIwsPxtCw/zyLZDS7rmKxK
+	zMTQZwH1dVZXK2feYxguuRCUHfvznWdSF4TV27SQ==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-On 11-11-24, 13:30, Chen-Yu Tsai wrote:
-> On Mon, Nov 11, 2024 at 12:13 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 31-10-24, 04:02, Cody Eksal wrote:
-> > > From: Shuosheng Huang <huangshuosheng@allwinnertech.com>
-> > >
-> > > Let's add cpufreq nvmem based for allwinner a100 soc. It's similar to h6,
-> > > let us use efuse_xlate to extract the differentiated part.
-> > >
-> > > Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
-> > > [masterr3c0rd@epochal.quest: add A100 to opp_match_list]
-> > > Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
-> > > ---
-> > > Changes in V2:
-> > >  - Add the A100 to the cpufreq-dt-platdev blacklist.
-> >
-> > Can this be applied to the cpufreq tree separately ?
-> 
-> Yes.
-> 
-> Acked-by: Chen-Yu Tsai <wens@csie.org>
+There is a spelling mistake of 'accesing' in comments which should
+be 'accessing'.
 
-Applied. Thanks.
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ tools/testing/ktest/examples/include/defaults.conf | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/testing/ktest/examples/include/defaults.conf b/tools/testing/ktest/examples/include/defaults.conf
+index 63a1a83f4f0b..f6d8517a471e 100644
+--- a/tools/testing/ktest/examples/include/defaults.conf
++++ b/tools/testing/ktest/examples/include/defaults.conf
+@@ -46,7 +46,7 @@ CLEAR_LOG = 1
+ 
+ SSH_USER = root
+ 
+-# For accesing the machine, we will ssh to root@machine.
++# For accessing the machine, we will ssh to root@machine.
+ SSH := ssh ${SSH_USER}@${MACHINE}
+ 
+ # Update this. The default here is ktest will ssh to the target box
 -- 
-viresh
+2.45.2
+
 
