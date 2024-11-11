@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-404392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559269C4332
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:07:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EEB49C432B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F5FB22173
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B521F213CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269AA1A3A80;
-	Mon, 11 Nov 2024 17:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5571A3BC3;
+	Mon, 11 Nov 2024 17:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eVRL0dlP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1oudpA56"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SDKeN6gz"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7C12AF1C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED752AF1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344695; cv=none; b=KgBst2NBN4ARAdQsBTqXGhLWnABKwrhnkvscGdKLzI/ciAdo6uq1ELw7F6+m4R4E77nBg/4lg9YmRttY7aX5l2p7nfiOUUM1nZ14aVMJF6ftgVmPmtadrf8fTYcVctdtX9mNpvLnAsqHMhCo+iG0UtzOVtoB0IVaNi4jWsO/WRQ=
+	t=1731344758; cv=none; b=ayYwYKWSNmEANX6yZU5fG8RGQJTBB7Zae7OAvbdVmeQMgObwgvwCk+mP4MLmNIUrmiCCINGkMoyvQB+bIM1qnMDSDVGuPLkr0yyOGesQgRjNh1nj0bsZe5TlD63mdK1s57cVZXBHaScsPtBjayz5g0tjSzhhr8q2sWxHkCrD/e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344695; c=relaxed/simple;
-	bh=/cQSO12xjoXZeCu3GfeRSnSVBAnVS5PQ4CLchFp837o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxKGD8ISH/6/XJjioftF2FQJ/ooSEePnJ9+utOuSxToxyv7BhR9nzC5JwolFrzyPAuUsLLtMxdJC904wz5h6JjDMorWwYU7R/NHrZ8M1hXceNisjYzr23dxLXJ/TyaN1xdmHIabf6lGyMTAmj0P2yw5N2SV05UwSZCyGKMdRz7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eVRL0dlP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1oudpA56; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 11 Nov 2024 18:04:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1731344691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebwGfJO17+1+k7VTbKQrJt2zHv2/RjHTI4fHgxadG3k=;
-	b=eVRL0dlPa8p/yztz6h7G5ujB3HP/E2dsGjabQIg9mmpIq7aMjebm4LEowpjz0SWFkoSYmE
-	JWEvjgaGUOS0PrnHX+l03g3TVmTw5hzdKA6ifPygLPcWoePvuOUtnusMJwcF2/IAf+cgty
-	p3fw4H91d2CYB0nNRCLZjgxd9/1/grAgL4EvJ1rmFAgPrQHcCueZYFoEm/T/v5ciyq5aCQ
-	ZbFZrcL6lf+IHIT/0zgZWrqkY1GHbtOi7XTLy/XTi6WH7VAs+jcKuHPF4X8SSqhe3ZpkVx
-	LTGhDfE/uuZQELBK7gM7i0frGPTIxuTZY7Lz8s+aiaL02/wWi9AkRrZPT1Hmxg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1731344691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ebwGfJO17+1+k7VTbKQrJt2zHv2/RjHTI4fHgxadG3k=;
-	b=1oudpA56vIGLxv0+UdZtEXTUjii/bpmnxK5aigAjLUzaKpz9zK9k9VGTzOp0TEPP3t4F7J
-	CCajMsZqS7Yn9+AQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de,
-	syzbot <syzbot+6ea37e2e6ffccf41a7e6@syzkaller.appspotmail.com>
-Subject: Re: [PATCH] kernfs: Use RCU for kernfs_node::name lookup.
-Message-ID: <20241111170450.mUxDpLiW@linutronix.de>
-References: <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
- <66a745bb-d381-471c-aeee-3800a504f87d@paulmck-laptop>
- <20241102001224.2789-1-hdanton@sina.com>
- <ZyV2DfuIPsISds-1@Boquns-Mac-mini.local>
- <ZykNhbMOrlgCXFYJ@slm.duckdns.org>
- <20241108100503.H-__545n@linutronix.de>
- <Zy5EIHUwoXjK1sAJ@slm.duckdns.org>
- <20241108222406.n5azgO98@linutronix.de>
- <Zy6ROmfQhUvYK9YK@slm.duckdns.org>
+	s=arc-20240116; t=1731344758; c=relaxed/simple;
+	bh=9Vxu4PVNL5H9HSoxipc0S+5ubdT+EHw1LzDtaf7KFgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hvg6DR1LI55yR8634FTRu0FjgdQP8kIyg2GhVuwUCNwjNjTCze5iyy7yFuWgkk2HZ7JIDMHaoA9yJtZ2BuxfF44q5zvQVl+cWPUhrOaW77C/SFVkWUZNYXp1HwJBTwerGVFqj3Inr2KqRPhUJ0BfnwNWK6l3P74pQPbdPgGByho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SDKeN6gz; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431ac30d379so40856005e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:05:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731344754; x=1731949554; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VhwVnEvd/icTbdtV0Bsqw2Le6kUPshvavFqFjWXtU9A=;
+        b=SDKeN6gzYO5B9F1crf+ERz/4vXTRnqN+d22dEW/AFokqaxMpdXUaaT0aPQp5Uoh24P
+         YMZIjU4BGduY6xaRBfqq4N3M1ORlEq8qNsTbM9aj/GiBnS5EZpE6FNZKZmoD132BREGV
+         phYuPExjy+//45U2R+aKjHCpcUlY7YYzbE1V2dCaxq7ePSb6T/LHAKY+vEk6yGPsBdv7
+         wGKguZ2kBayhD8qzGBKt5e53MyD8pl4KrgfoqQcZRTY9oTmsI1rpwjwoeMKmsjJ3Y1UV
+         NUJBLf2JoLEr0sqNN8X8K10z7IU6QzyDPb1EquPxqXxu1XVZCaM4K+jfx6lvGn+unrmD
+         Yp1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731344754; x=1731949554;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VhwVnEvd/icTbdtV0Bsqw2Le6kUPshvavFqFjWXtU9A=;
+        b=OaFQ4ZxhVx7xd1Oejpl+6taK+9E6dlgJsXfDWwrkN61L7gM/Y7DuIaOGZHOuXuS1Hr
+         c2clvcoi+6+p2u4ACAfY/qeha6PYj8uBPVuSOyKkFkIu7ff2JcQvyxC0l59WlUiva88P
+         AZzlBPm8/MMJTH0DnMmfQCUGvnidopE/1lV89P6fEn6cic70Yq9IOTCGKRyL/FYddMHw
+         5c3HPynAC4CvLZXE4+UWKBegRMlLmTFdoBZVTiozTN2aW7SfY0UVLNDTnXmfzDFu/J9W
+         0g5kj+c6EeI7EcXoLX+gmepAdtJlZIji0XHd2TJ1cjCYHJkAYVFCBI2ymMgi6WEL1Bkz
+         VcXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbOSIczp2lP/FXyT3F64gvBUltykndbTrv5ekVHpr2F2KmCXt5yiP553+XziEadrsVtrKTbaRzZec+zcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykHGwelrlAB4E56ximkbJnt95F0Uli2ixQiHEgBgQO+rqXjcbK
+	/Yy4BIS0QoThcisEnFCN9aYxO5RCAv5HfgBGp99az1KA7dd3XBHP9folIw43dh4=
+X-Google-Smtp-Source: AGHT+IGmxEngfhr8mOFW4iGYAg8DChGdAiotEKJEfg+dwPTD2oqfbLS3GUMXXOepidKKbY3RfbZf2Q==
+X-Received: by 2002:a05:600c:8608:b0:431:46fe:4cc1 with SMTP id 5b1f17b1804b1-432bb99a52emr92207255e9.10.1731344753731;
+        Mon, 11 Nov 2024 09:05:53 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa6b2c32sm215555395e9.10.2024.11.11.09.05.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 09:05:53 -0800 (PST)
+Message-ID: <f2c8b587-117b-401d-a5ab-ae59dae1dfd3@suse.com>
+Date: Mon, 11 Nov 2024 18:05:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Zy6ROmfQhUvYK9YK@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
+ ro_after_init section RO failed
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+ linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+ <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-08 12:31:22 [-1000], Tejun Heo wrote:
-> Hello, Sebastian.
-Hi Tejun,
+On 11/9/24 11:35, Christophe Leroy wrote:
+> Once module init has succeded it is too late to cancel loading.
+> If setting ro_after_init data section to read-only fails, all we
+> can do is to inform the user through a warning.
 
-> On Fri, Nov 08, 2024 at 11:24:06PM +0100, Sebastian Andrzej Siewior wrote:
-> > Instead of using kernfs_rename_lock for lookups of ::name use RCU for
-> > lookup. Rely on kn's kernfs_root::kernfs_rwsem for update
-> > synchronisation.
-> >=20
-> > The .*_locked() have been moved into the callers.
-> > The lock in kernfs_get_parent() has been dropped, the parent node should
-> > node vanish underneath us. The RCU read-lock and atomic_inc_not_zero()
-> > is a safety net in case it does.
-> > kernfs_fop_readdir() no longer drops kernfs_root::kernfs_rwsem to ensure
-> > the name pointer does not vanish while the page fault is handled.
-> > kernfs_notify_workfn() gained the lock for the same reason.
->=20
-> I owe an apology. I was just thinking about cgroups. Sysfs, I think, does
+Makes sense to me. If I'm looking correctly, set_memory_ro() could
+mostly fail when splitting large pages. If we wanted to fix this
+cleanly, I wonder if it would be possible to divide the function into
+two. The first one which does the necessary splitting, can fail and is
+called prior to a module init, and the second one that eventually
+updates page table attributes and is called after the init.
 
-no worries.
+> 
+> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+> Closes: https://lore.kernel.org/all/20230915082126.4187913-1-ruanjinjie@huawei.com/
+> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> ---
+>  kernel/module/main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 2de4ad7af335..1bf4b0db291b 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
+>  #endif
+>  	ret = module_enable_rodata_ro_after_init(mod);
+>  	if (ret)
+> -		goto fail_mutex_unlock;
+> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
+> +			mod->name, __func__, ret);
+> +
 
-> allow moving node a different parent, which IIRC is used by netdevs. How
-> about something like this:
->=20
-> - Add a KERNFS_ROOT flag indicating that parent-changing moves aren't
->   allowed.
->=20
-> - Update kernfs_rename_ns() to trigger warning and fail if the above flag=
- is
->   set and new_parent is different from the old one.
->=20
-> - Create a separate interface which uses RCU instead of rename lock for n=
-ame
->   / path lookups. The RCU ones should trigger warning if used when the ab=
-ove
->   KERNFS_ROOT flag is not set.
+The __func__ magic constant here expands to "do_init_module" but the
+message should rather say that "module_enable_rodata_ro_after_init"
+failed.
 
-Let me check if I understood. We have three users of kernfs:
+>  	mod_tree_remove_init(mod);
+>  	module_arch_freeing_init(mod);
+>  	for_class_mod_mem_type(type, init) {
+> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
+>  
+>  	return 0;
+>  
+> -fail_mutex_unlock:
+> -	mutex_unlock(&module_mutex);
+>  fail_free_freeinit:
+>  	kfree(freeinit);
+>  fail:
 
-- cgroup
-  cgroup1_rename(): parent check (would get the new KERNFS_ROOT flag)
-
-- resctrl
-  rdtgroup_rename(): seems to allow any "mon group" directory
-  different parent possible.
-
-- sysfs
-  sysfs_move_dir_ns(): reame to a different parent
-
-That new RCU interface would be used by cgroup only and sysfs/ resctrl
-would remain using the "old" code?
-If so, would you  prefer=20
-|struct kernfs_node {
-|	=E2=80=A6
-|	union {
-|		const char              name;
-|		const char              __rcu *name_rcu;
-|	}
-
-to avoid patching resctrl + sysfs for for the rcu_derference name
-lookup?
-
-> Thanks.
-
-Sebastian
+-- 
+Cheers,
+Petr
 
