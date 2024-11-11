@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-404316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60FF9C424F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:02:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BC89C4254
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB58287711
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B0A288505
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2108E149E17;
-	Mon, 11 Nov 2024 16:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FAF1448C1;
+	Mon, 11 Nov 2024 16:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z38NPxLI"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Lnui4sA0"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9A813C3F2
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E75813C3F2
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 16:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340936; cv=none; b=Gq44s2qKTifyi5AJI/gyRfNuK6sKlBf9AYwI3Zs0jGlw2DvEEoqmQcgDmyAPnpU7gE888EQ8vtKM+I2sRHMFDIlco6bohzuTmuTsW4fXKQDIvXyFl52Xy4lFnTNopDpOxVCghbg7p3EQT79u8ORZiZM56xro5M60y+Osdy1IAKo=
+	t=1731341005; cv=none; b=V8wXl8M0hMB/Sr5FQzvyixEZzxEnFY2LUb2nnPrunduZD5qxWxTbVaoMrk4clb6o3RM2LnOD80cnh0vikF2VzZ9nnwcUSOptqG/fhCECjRXzQhDJvK/1CsbihO6pJXgxodwsz0inTjAigyhl//ALc+JPEslXpNAFSsugBLSN1Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340936; c=relaxed/simple;
-	bh=CQ9Sw7fcqvjg7WQQ5OAcKFHGVWUJEp5ve8sL7cBh/X0=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BCGq+YeNJVCyAUOrQjMoGC0XsFR6TgvMupyNKNwBCaOiGeZMjwofKO1YbTW0JaEoYjFq/6kw3r9N19e6r+q+YzeYZjvNfKVcDUaW6tpq7TlTyHrIrXSL6/ptlinz33fkwbIOG9dhc3CuCcDgxmDVzCllNSR4vyDAcejmh9lp08A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z38NPxLI; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4316cce103dso59182625e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:02:14 -0800 (PST)
+	s=arc-20240116; t=1731341005; c=relaxed/simple;
+	bh=RMcY9dVuvJYHvQZXGJIyg3WpxmaCxUvAXlj08zgoK68=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n3etlvSxRea1aRJxBnSjPyxhzepG2dVSBMLX4JrS1I8+gXsfg5H0zjFTy/AMtO3sxWFyQte2qixhpjIMZ0IRh013Vt/FgTkP39Bx7FlfjHhVhxpJnNW03HZQZ8veLklluc4iQCpEqD9V2F0y4/6K05UT6sUZWjS6aGaoCUoZklw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Lnui4sA0; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-27b7a1480bdso1866035fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:03:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731340933; x=1731945733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zNTdYjuZhy64JHds08+8Qi9c87EJbOLQsau9tlMXGws=;
-        b=Z38NPxLIVER8GYyhlI5+LOPtxLd0/BjGl07Uz/BSHJXwRYDbPgBo5jg9PeMyB3r+oT
-         I+Mrq/36xk+ZD4UsRv9jfWriaTmF36pEizoTx6bbtwenxPg9fvcoroOz24gRR77teBoL
-         yxfuyPzJXbCrakPi2hm+om5MPBcMtyIq9005FpeaKkNgp3gRcmQSkcZ8azkHKr8vyOyI
-         xfvsLQjqThJ+I5rH3z46B3WuqijnpnWk1aGS1p2HYURPZrE1Q6XPbQQmI8ofBAqCZLUO
-         w3+zvTL0Xrzi1JAg4SEo3IjgQ4dHHGFcZgsncKpD/zztXlnT/XKOKu7ZhicHnQWsEbI3
-         sk6g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731341003; x=1731945803; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/N8FbaMperQCZPDQIvnd2hsxjkQB8NICoW/WVIIrTK0=;
+        b=Lnui4sA0SdPqgX+jj232OiFg5LQJpy1v55VAzh9LzELrJeBO+uIRTmtzuqzaKZ3hAZ
+         /DDAXyIeA0/uRBhqXe2IIboB3huMGBih5a+DQdr9sA0MouBcq34kyD0TNfqH29EobLh+
+         TYp1+lLPW0+YneSm6R+FLrBeF5o5ARgkUI1fgSa056+jR4Mvsr8B1f0lk0QhCjSQXo3z
+         /AtrjYULnpTtlNE+yZVRvx7MqZkxQN9ZJ2xFZG6pnOHZGWbod/rzXqqP0+8Y5VorkW48
+         AvMxqN3FChnc1aBSSSPZSBzA8aDDsxs/aj2MkOUEOmto4YkeYZJ9C04J0DPWYuPt98ul
+         OumA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731340933; x=1731945733;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1731341003; x=1731945803;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNTdYjuZhy64JHds08+8Qi9c87EJbOLQsau9tlMXGws=;
-        b=Fm2ALOO4QlWjLx/Na+RwzKpLoHGNnVY7Tok8tPbSlQnCMSo9ObeT+7QhVqnobdcgE+
-         c9ZQgSUCofRECP8SLH5mF7exw13brqmSL0cHK437Dv4S/RWkM80/loTLHnT/gMYZ5kTv
-         Hjt8k1NhSpGFGmnwNEcnwCWbo3O6wXSj+BhTFcy8mDATdOsKODd+9XpKDxS3ISnzKn8D
-         5yAVMjRdRAapFsNF6NVHg5vyUxbcP6uWEOpi59K2iuDGzwoYaMBNDZixbbaUQMRnx29F
-         QS8lWNwGg2E3KLtgFjTFpvcNk8imH5B8CU+Ldp+/aCxCWMIzEloDYZjTu7j13WyIhvcV
-         NYBg==
-X-Gm-Message-State: AOJu0Ywa+eGnageFrX5EQtwQw7hqBwmiBBxb2fO5I8nPyIsZxqY+tZBh
-	B20luC/hywBHdfNN1wvK9Pb28p6T7kiyavo49lE1wbumKLhfFIqlBi3hyH7/R/s=
-X-Google-Smtp-Source: AGHT+IFs9kqvRfuZtP1E6uwgQ5wItTkrYyqnfQURTQ94xTon1d4AR+XsfHtnQwpU9hswaBlWc9+W3A==
-X-Received: by 2002:a05:600c:154c:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-432b750acb9mr121499505e9.15.1731340932329;
-        Mon, 11 Nov 2024 08:02:12 -0800 (PST)
-Received: from [192.168.42.30] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c2161sm179836285e9.31.2024.11.11.08.02.11
+        bh=/N8FbaMperQCZPDQIvnd2hsxjkQB8NICoW/WVIIrTK0=;
+        b=O+FS6oLJJ7Zz7A7EeGEsK6nUkoNqrhqEsog5ud079OXpT5IZ0FvcMRSHDjB4bYMEyo
+         h4dbsEHxF80bPWYFBOCDWkOpnx7ohNl4HlvpUlCKVEtGqcNXqjQj0LhU1LnwT41MTaBw
+         obGRuJ+x/sRRTPeXqjEE/pVG7+kw0CmJ3RiHfsU+TRHDaziBm/4WE818lj5jfutuUDRM
+         9ur/8N2kqpvvVAZ4rWETKyl1022XzYahIvgMArqBPxYeMt4PZygI4ZeuuD/AhfMFL5i5
+         qBx7CxUhjfifQ7rgh5PvaKnh4bjWHqotVDeDLzvgzDFO/gwfJG1pussHbOu/SGZEeEoZ
+         g+0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWhBfohtSY4e+VreeJFPD6m2xGbwb7MIUY2hMXUc1VaHZ1hD4RYtRVwO8JMkhEJu82VqJvbKAMaP3sEgJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0dWeppSoxoBwxrjHUQ1R0ATTrV2MKmkCp1109AxkKJ/ud2d7r
+	6E6iSs1j3473tm2WoHQxsnDUvUZaAOTzjzCgnODLVRdDbiICBEWMRwWEudEJlt4=
+X-Google-Smtp-Source: AGHT+IEeMYF9fjp84gVQ5HjlsLWjQNij4qGsNBDmcSGf6EKVQAKNreK+WhsXtiaTLQ9OQ1rpyf+sQA==
+X-Received: by 2002:a05:6871:582a:b0:270:2c3:f362 with SMTP id 586e51a60fabf-2956027f6e9mr10361835fac.32.1731341003314;
+        Mon, 11 Nov 2024 08:03:23 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29546cf44cesm2825954fac.21.2024.11.11.08.03.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 08:02:12 -0800 (PST)
-From: Giovanni Gherdovich <giovanni.gherdovich@suse.com>
-X-Google-Original-From: Giovanni Gherdovich <ggherdovich@suse.com>
-Message-ID: <d86b8a16-6e1d-4580-83b6-fb186d8b8996@suse.com>
-Date: Mon, 11 Nov 2024 17:02:10 +0100
+        Mon, 11 Nov 2024 08:03:21 -0800 (PST)
+Message-ID: <182b9144-9a68-4e60-9a1b-4284731ab367@baylibre.com>
+Date: Mon, 11 Nov 2024 10:03:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,40 +75,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] sched_ext: Rename
- scx_bpf_dispatch[_vtime]_from_dsq*() -> scx_bpf_dsq_move[_vtime]*()
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, sched-ext@meta.com,
- arighi@nvidia.com, multics69@gmail.com, me@mostlynerdless.de,
- dschatzberg@meta.com, yougmark94@gmail.com, void@manifault.com
-References: <20241110200308.103681-1-tj@kernel.org>
- <20241110200308.103681-4-tj@kernel.org>
+Subject: Re: [PATCH v5 6/6] iio: adc: ad4851: add ad485x driver
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
+References: <20241101112358.22996-1-antoniu.miclaus@analog.com>
+ <20241101112358.22996-7-antoniu.miclaus@analog.com>
+ <de120709-b60b-4e85-912e-b60ca18a8001@baylibre.com>
+ <CY4PR03MB339993CDE9BA8DD3976CF2F29B5C2@CY4PR03MB3399.namprd03.prod.outlook.com>
+ <1f2b8d91-19be-46b7-9202-824aa177dff6@baylibre.com>
+ <146a24a7-d7a1-4969-98c0-f621a1709dd7@baylibre.com>
+ <20241109153946.4f4df9d2@jic23-huawei>
 Content-Language: en-US
-In-Reply-To: <20241110200308.103681-4-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241109153946.4f4df9d2@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hello,
-
-On Sun Nov 10, 2024 21:02, Tejun Heo wrote:
-> In sched_ext API, a repeatedly reported pain point is the overuse of the
-> verb "dispatch" and confusion around "consume": [...]
+On 11/9/24 9:39 AM, Jonathan Cameron wrote:
+> On Thu, 7 Nov 2024 10:47:52 -0600
+> David Lechner <dlechner@baylibre.com> wrote:
 > 
-> Clean up the API with the following renames:
+>> On 11/7/24 10:13 AM, David Lechner wrote:
+>>> On 11/7/24 4:51 AM, Miclaus, Antoniu wrote:  
+>>
+>>
+>>>>> I'm pretty sure that calibscale and calibbias also need to take into
+>>>>> account if resolution boost is enabled or not.  
+>>>>
+>>>> Can you please detail a bit on this topic? I am not sure what I should do.
+>>>>  
+>>>
+>>> We haven't implemented oversampling yet in ad4695 yet, so I don't know
+>>> exactly what we need to do either. ;-)
+>>>
+>>> But this is how I would test it to see if it is working correctly or
+>>> not. We will need to test this with a 20-bit chip since that is the
+>>> only one that will change the _scale attribute when oversampling is
+>>> enabled.
+>>>
+>>> First, with oversampling disabled (_oversampling_ratio = 1), generate
+>>> a constant voltage of 1V for the input. Read the _raw attribute. Let's
+>>> call this value raw0. Read the _scale attribute, call it scale0 and
+>>> the _offset attribute, call it offset0.
+>>>
+>>> Then we should have (raw0 + offset0) * scale0 = 1000 mV (+/- some
+>>> noise).
+>>>
+>>> Then change the offset calibrate to 100 mV. To do this, we reverse
+>>> the calculation 100 mV / scale0 = calibbias (raw units). Write the
+>>> raw value to the _calibbias attribute. Then read the _raw
+>>> attribute again, call it raw0_with_calibbias.
+>>>
+>>> This time, we should have (raw0_with_calibbias + offset0) * scale0
+>>> = 1100 mV (+/- some noise).
+>>>
+>>> Then set _calibbias back to 0 and repeat the above by setting the
+>>> _calibscale attribute to 0.90909 (this is 1 / 1.1, which should  
+>>
+
+After a bit more testing, I realized I was testing with a
+differential channel, this math only applies to that.
+
+For a single ended channel, applying a calibscale of 1.1 with
+a generated signal of 1V will cause the measured value to change
+from 1V to 1.1V as one might expect.
+
+
+>> Now that I have written this, this has me second-guessing if I
+>> implemented calibscale correctly on ad4695. It would seem more
+>> logical that if we have an actual input voltage of 1 V and a
+>> calibscale of 1.1, then the resulting processed value we read
+>> should be 1100 mV.
+>>
+>> Jonathan, can you set me straight? The sysfs ABI docs aren't
+>> clear on this point.
 > 
-> 1. scx_bpf_dispatch[_vtime]()		-> scx_bpf_dsq_insert[_vtime]()
-> 2. scx_bpf_consume()			-> scx_bpf_dsq_move_to_local()
-> 3. scx_bpf_dispatch[_vtime]_from_dsq*()	-> scx_bpf_dsq_move[_vtime]*()
+> Deliberately vague in this case.  calibbias is kind of the wild west
+> of ABI. Often we have no meaningful information on what the tweak
+> register settings actually do beyond 'up vs down'.  In some cases
+> the datasheets even refer to them as taps up or taps down.
 > 
-> This patch performs the third set of renames. Compatibility is maintained
-> by: [...]
+> I don't think we've ever said if it should be consistent as you
+> change other parameters.  If you care about calibration you probably
+> need to redo it for your new settings anyway and tweak the calibbias
+> /calibscale till it gives the right values.
+> 
+> Obviously that is easier to do if you have a consistent scheme for
+> a given device and if possible allow calibrating at just one setting
+> but I don't think we can apply general rules.
+> 
 
-Thanks Tejun.
+Thanks for the clarification.
 
-For the whole series,
+> Jonathan
+> 
+>>
+>>> add 10% to the measured raw value). Read, the _raw attribute again,
+>>> call it raw0_with_caliscale.
+>>>
+>>> This time, we should have (raw0_with_caliscale + offset0) * scale0
+>>> = 1100 mV (+/- some noise).
+>>>
+>>> Set _calibscale back to 0. Then set _oversampling_ratio to 2. Read
+>>> _scale and _offset again, call these scale1 and offset1.
+>>>
+>>> Then repeat the steps above using scale1 and offset1 in the
+>>> calculations. The raw values will be different but the resulting
+>>> processed values (mV) should all be the same if the attributes
+>>> are implemented correctly.
+>>>   
+> 
 
-Acked-by: Giovanni Gherdovich <ggherdovich@suse.com>
-
-
-Giovanni
 
