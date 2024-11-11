@@ -1,174 +1,433 @@
-Return-Path: <linux-kernel+bounces-404207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498D49C40D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:25:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D89C89C40D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAC491F22BE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52E28B2229B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D80C19F430;
-	Mon, 11 Nov 2024 14:25:30 +0000 (UTC)
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01on2123.outbound.protection.outlook.com [40.107.239.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23A61A08C1;
+	Mon, 11 Nov 2024 14:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7lObpHW"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C97156678;
-	Mon, 11 Nov 2024 14:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.239.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731335129; cv=fail; b=nqfYSG+grPfP4vRtvR9VDxjSfs3jflSoZ13fwffZRJZyW5xpxlk6NIJe9XagNKdqezpjLemoIuf7myG6WSv0H1j0LSBwFu8Ne7d+oACUZlWF6Zd2W7NrgQlMdt4I6F1mSKJMbSfPu8l9z8K+9Ap1g/byZPI9/x16SyCEK3LvcJ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731335129; c=relaxed/simple;
-	bh=VQv1A4hMv+AzZNwVAx074GJQDPhdmioJWddsk3pMfeU=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=m4vZ9VfaWQJbirdczoXNLKpQU4sIgFWMdacPHoAgiZECTG0ugsfAbO7DT4FMQqgsIm9b0hliYxnpKmKnnOrEZIjT+Yvw9eTfSFOwppZ2xx+QWnBWTpj/JHj6YSNDV1kd33A9jtCml9tOkrDz0F7AqiXaNz+JrLV5o6xT1WleO7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.239.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ip8Q0uXMeJCQOngC8F+FMtRAknAr6KHnduB1hxAWF4VFTjdanAy0Q01YT10njs9vSVppSX9ce+koMqKKv4dkqlfuTFTNcGy2OCJX6I6GC8ARpBW6vD9iwIsdGE4drUZoxBkudWrwZF6r/oAUboEbTV+kgvv6lDCQStjmxmlcHwWDFh0TZzSGCbEzUotz5uORtyIKNO/8AKcjaa1k0oSz2PSQKjgOmLMOKE6bwAlQa/3fhaD600RbjfVtrmOQxYDmwPpmcsBP3uymKYSa/LxAxO167Er1E/G1E2zntiVA+e4WExvZXrHus7DEXSsGJyD6aUP6J5PahcqbTZOs6fswdg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kivwbkyPkZ1zgwpzmg25W5gQq+8MrGkOVVPzJug4F/8=;
- b=I6HQQ4musdSZV+ttgFeT/4ZRn4P2jh58FCPh1Zy18TOx4znoHYULihzSDGkbAd97m8GMGht+eMlhJrBE/u6/IAZ0j/c0W2DSxfq57paMRTUaqLXC0eW7aQxxHN5B9VDSkFQuDEeWAYvLjG+ntZLK6TheFtZn0pp5OEIUVsbC1z42GUDd8sPllU1HDjQa14Fll9nzRtpXZJ4K5XfgckJCl7pfP1E/Ha23jGEQ7sryDn+picjhH7yeHdVOYCjVYjetNiJYY9BOMnCs8MVPadJI7f/F5DFVcE61DTa2Zv37fy9odpUjapeRcJw4CMRwsHqkFQIXWgTzs4dRIgCk842TKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:204::8)
- by MAYP287MB3659.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:14b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Mon, 11 Nov
- 2024 14:25:21 +0000
-Received: from PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac]) by PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- ([fe80::1134:92d7:1f68:2fac%3]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
- 14:25:21 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: akpm@linux-foundation.org,
-	bcain@quicinc.com
-Cc: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	Nathan Chancellor <nathan@kernel.org>,
-	linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] hexagon: time: Remove redundant null check for resource
-Date: Mon, 11 Nov 2024 19:54:10 +0530
-Message-ID: <20241111142458.67854-1-hardevsinh.palaniya@siliconsignals.io>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: PN3PR01CA0069.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:99::12) To PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:204::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712DE19FA92;
+	Mon, 11 Nov 2024 14:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731335171; cv=none; b=KPfH5MYkweopANQPdw4AsUp6Qu3TWcHWtg2NwXfQEd85efWPoTN8L1mKSMXS1G1r0lJSRrINa47u20NRkYLIgC6fZySD6LOp1mvH88a5m0hEmZrb4cjEquYZYB6YCvicrCgay5Xkctnlkuoi47MqSlbIsLyYCng89SvKhydm3ws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731335171; c=relaxed/simple;
+	bh=hapXi8GFcfuNfCI3GbgrWfcIITIDhd32luEnxxJvL6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jIlwv0pTES7oInZCasiyWfa9NGPGEmlJO/On1XHxIrsG6yt551j8G6hXF49ov3E5HhW8rgk2kG5mHAsmTAKIVzl6LNeK+hoiCmOrw7Qn0wQM+C5hP2o/cwK/RKwp5MAY7RM0zCZTkPTnWgEVGZ96o3mG/eaC3WeT7cHVc67IktU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J7lObpHW; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso214698166b.1;
+        Mon, 11 Nov 2024 06:26:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731335168; x=1731939968; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YarspSDft1pkwbqjUkTnnfdI6PdmguJoxF+IkD1JXG4=;
+        b=J7lObpHWwo4lAWYAMU9bPd1G5wkoZAaLyRmiUa80uRqxj0ucMVblJrIOgDADH05cAI
+         VPeFKFRLJX97q2EV6aIdwvm9PCJxG+byKLjy0VzBPcmALi7cc+x9crFOWSMxC22I5khr
+         Stp/2k7XS9FpRPPBWQVGRyhOewFVeKnAm1kOhFZKj/1RsV2ZS2efQ6EHohWSltSQgBQb
+         n4498W7anZ4XAu+rOdCizFVxwGLjzpyGJaPs0pVqO83ctXMb+vt9u4iP10wYgrm9VkEJ
+         b9npPJpwrzoyXGPH5qlseUTMa9gIvc7W0IQ6Gj9eXzfOJ0lwuTbNRMqr6eR5+4tj7m7e
+         Fsjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731335168; x=1731939968;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YarspSDft1pkwbqjUkTnnfdI6PdmguJoxF+IkD1JXG4=;
+        b=JcydMBLH6Km/xT6Ug9qvY+X7D+5gZPvLh8Ql28/jhHWQf8EpR/kwkbcnlGOkOnVgAN
+         DbGPPnksG2IMk8UpJd5Fmr22SwTtcCwf2Vn53XLGS8XypucbTcdBB9sdzvDXJglXPYby
+         mAE6xC4goH0ndihhxIkXivGnShyUWMjixQtl0AV+hbCs0Ch12/zwbfpOvlb0EkW5QSFO
+         /w4Nr9v2yhxO2GJtK58Kc2ubfkt5U7trpUteWdDE9rm9qQD6WgrwXoPPltuWIPGfKuQL
+         KqS7kQEiy1/fgwIEH758yTWmU35lOrGv0m8wkaOpucxsbACoxn1bhA6pJlSO/7vmUTyI
+         H0FA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1XianhnlbEO0s09XYbvHEnevcS2paz17ost7KKGKiFq6Amqnqk54zdX8qxs+VxpdSKWLfTg2HKpT9DSc6@vger.kernel.org, AJvYcCWQT1FqipV0ModjEQf5m/YQgU93eyy9dsIdc53CuAXvKV6SpaaiEVMZ/W3qSMToSv3VoEe8nnO4lGcjGFt1lw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpJUiMGC/H9PsbgNmy1+/BlRNrtoCe/coXDNpa4SragaEbJ3A5
+	PhzYR1aA0NbYzKc/KTURQBaFVqIYPgF/vcUFq5Tc2EtH1gKxyLwVCVvU0uDHWNXIxYk85RfuXJX
+	SOTcTANgEu+pWoAuvI3GTPzYOF3o=
+X-Google-Smtp-Source: AGHT+IGia4ssXtS9zEz3H0cyLf/YsQYO93OGud10PttfkhoGcFBs3hxTEAgwmf0Fb3QuY7CWsvchQn0ymTRY/mV5kxY=
+X-Received: by 2002:a17:907:608a:b0:a99:499f:4cb7 with SMTP id
+ a640c23a62f3a-a9eeff0e34fmr1305857766b.23.1731335167314; Mon, 11 Nov 2024
+ 06:26:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0P287MB2843:EE_|MAYP287MB3659:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddac8092-7a2b-4638-e515-08dd025cac5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PSgb+GK9QwixIgqZfNx6eTC45CxBdwAGxzUTU8DrdjKPWhKxp6dxyuFHjdsY?=
- =?us-ascii?Q?987QX93G5VLyzAmu3phZ0G72JOnrA8OToQDtugfvX29aicFlULTVbvoTvwn3?=
- =?us-ascii?Q?Kz0NzM+RJ7kL0dnKR7QLpJ+3mUd9EguccDVhet+siY80sopAip1VNkhT6YIq?=
- =?us-ascii?Q?VdzyzWZpBeJoMQgQIxcddKqtvz4hoDCVy10wXmHj1xPbICSzrulC3JPBZLTD?=
- =?us-ascii?Q?5m6zhge+6yq1SM+y84+wYke/vf94Y0YJJzDeq2/WXf4ZsT6U1A5ko4Ec+ZPz?=
- =?us-ascii?Q?YLWEW3xkJO82RfJjj+Oku8p5lJpoWYSy/5YLepmQRilG9WpfS/uwxE8yjyRk?=
- =?us-ascii?Q?OZP9soxuwQlq6o1TqwGMlCHUajsmhI5cKIMrHywhoG+LBnQkttpHQUt+7N5R?=
- =?us-ascii?Q?c22gmFt6Y35EAT+S5XtIZWD+aKCe1y4YdPKVACaHsdDj7XPxLkepNIX3vqxa?=
- =?us-ascii?Q?+bvUfM1BVVL1E7I/IwYLMWVyAV3cK40O65YjvYwEyrIpdr/1EhbS1sfl9GIf?=
- =?us-ascii?Q?JE/g2EX9DjuiSqDqvOLmR6cPT3gUycX5ukGeeMUcvAuXmdaa7V5hJkdLansf?=
- =?us-ascii?Q?nbYvRd7Fykly6A3dxpxIkWONGyBVfUWAS4DTOHLgZ5emFAbE3zNXnQxqNW+8?=
- =?us-ascii?Q?bolualKgd7OVUWXIL4sp0iFzkatdmMoqFwJnTyPTVJ7Skv8o5BIusE3ZrPf0?=
- =?us-ascii?Q?iA0w5soJAGAbQHeEBeZSVThDSxQPrOUOF08nO/rVt9Q2HHWiMVjhidlQk5tR?=
- =?us-ascii?Q?Iqyee2ue9WYBbbuoGruBaI5legOhx/yH+4UEQTOmaUs5CmNsi9dt7TXGBo9z?=
- =?us-ascii?Q?eqRTEpexj9J/HX8vSK/SGotL2MWHyhAAlvx/8/Uy9lWmTcV4oeymN1s82NpC?=
- =?us-ascii?Q?DS2IfO8v3aUizVVaJpBTpkrbYYV4drf4DAf1XG0TGBe4bd6IlmK/KaPPGXuO?=
- =?us-ascii?Q?0BulKnZ+Hx6JwDIRDWgfy/BpabLUw7Ma4OZuTOzF65g+YyN0jZDrfUU7MivA?=
- =?us-ascii?Q?JPMqz8qFastb3G7L3ud6OO/ZFS+kE0P+lXWkFHY6HvVM8kwsl6ZZK9CYVPhn?=
- =?us-ascii?Q?iIZhR+XuG+QxwXVBpytD+xaTwnJp+QiSmPSj911npLlbSirPIZ2kNhu6Azqs?=
- =?us-ascii?Q?E8snq4WI5propZPYycGfqIwmTs9Vn9zw6CtiBioNnBxv9F1D1IwTcor1YQpv?=
- =?us-ascii?Q?oZLxXG1D0KfJ1LwQlGUlEUUAHm+nA+Jq6CQ+znCCdS6EImKwO8lppEFFjZYw?=
- =?us-ascii?Q?wHHG5/+4wUs08+0d6zNV12zMSp3Ivz7Jtza3HqN6MGFJv5mJbWbdXbs1qJKy?=
- =?us-ascii?Q?OmJe0dTq0zJ8xrFo+zTvG9bcNklFyP029gXre/fhh91MK+kNWVa+zp2Ht2JR?=
- =?us-ascii?Q?lgm4ar8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2843.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?p6zR0mDWyL5fMy0rVGdHKhWGOiv3B0yWyMUG+lZsfOLrrSF/7+EWPsQSvwka?=
- =?us-ascii?Q?b/xY/ZqOJ8/V/sFOvG/7eefO3XvMnJpSUc4EUIYgAirTdlaRIhnomIQjUCoF?=
- =?us-ascii?Q?0U6L18NCbg4qNft/Npj1BxVD3FL85UYk7LA/INLUqvvgq7BWa4+q7vbBuuZp?=
- =?us-ascii?Q?b6JD0wVDBL6TmlY9e1k8wdxAjZdUVVbBGImKYcqQ+1KJf5dkeIXfJSvk9wxw?=
- =?us-ascii?Q?9i+nQdk+tvYFIbB27zSElbfegeV40G4nFeiXhc91o2h1f6/VdqewnLLbkn/W?=
- =?us-ascii?Q?+lLnRtPiFsSeALa1xQElN5Dvl/qbs7fPYfZYBJTHDUlvl/gsv2UGGQnOw5Vp?=
- =?us-ascii?Q?dfM/7X/AXJMPGpWiR95wW7oq2IWOFY/F+12NJJW4EU3nPKm4sqzJNEZZGCXO?=
- =?us-ascii?Q?5H83Fadd+7mgugzBHlSaOHJH5wQIZpBPAXqRdmTM/zAQO6xAbBr4tyxWMPHe?=
- =?us-ascii?Q?fJKT6zOUNJz1HqXmd6cNJTixzwoKHsvf/eWfIQEjU1JlIdkpXxgLWLLbHFOX?=
- =?us-ascii?Q?gSEUZkMoRv91qOEABkxdHmPh43ssEbfHXWCxVNYiEqOPuqNwa16NzEwl8txD?=
- =?us-ascii?Q?2F3bCZX8BhSTxRMDyZdIwwtM+m+K5/dIp0Yu3LREkjDcsbzBaD4e9yPWvlsA?=
- =?us-ascii?Q?rVw2vlLFsrTRjOvx3fIx1oB5t3UewzDjy/fbIrfBlVGp1P9YtbvGLgcxurvL?=
- =?us-ascii?Q?zIOyxd+BUzImo7hcSzN/CPercoMXRUUCAo+AuQ7qaYEozHrdMM6A0dV5gkJ1?=
- =?us-ascii?Q?UwkZQmPFitNWD8GfI1RNlKxecxWx9hk8ndb4om3wypaGntezHXf/46fZUkPx?=
- =?us-ascii?Q?xFLf772uC/ETEHNTx/YAIKRyz59Cop7si4Ip9XEeiCan464cFoYe7cl8Yl/8?=
- =?us-ascii?Q?FJd/dEONhlhDgJWQObFbXYI7XjvP5ucNh7/lRMYeEdvaxVjuqDUrQ4AFZ4+S?=
- =?us-ascii?Q?G5ylaJ+I6sf84r3DU91AJp6W9z2N5p1tCJoNLxLn42UKYmlwPErqeMXTG4y3?=
- =?us-ascii?Q?peY/K0mgEcpKKm91WdkKlTtlUUF4KSXmo8E0wUbQcgTpdqx9ELAuQJSjM5Eq?=
- =?us-ascii?Q?luXoGq3ulga52PH2MGZdj70IAAdUfVn9CZ/TxX7EJDvsmpkgFS3vHzv2+9Ti?=
- =?us-ascii?Q?6g1X5bemFUhGJYIDJixibtqm1l8w3ccK/gcq6ZsVm5vneSkfUSRFCXkiFBD6?=
- =?us-ascii?Q?eZX+0g783EDUORVBFVXPdqwH6rZo9HAac2h8AhXgIu5KdbmoVoIODUfDMuIO?=
- =?us-ascii?Q?1kcmVNJE35+N60/UxNTD9mTBI4vIFtsHGgYXanAdeQP8WQyKPNJWGK6q02iT?=
- =?us-ascii?Q?cR7X/vPk8nqSPWPZCHkoIqigpW1OhvNHkueYsCvEu6t8wXfMtblEA/+Pjj8m?=
- =?us-ascii?Q?VTrb/BHYAeCl49a95ypg3s2dZdYxQ6cmjTCELWUfTg8DwumSKRrWVvQU0GS3?=
- =?us-ascii?Q?4oiS9oaCMorWpFgTIUy9tkJycNwMi6wTAi4IupkOadDtHf2cdZC9kIJk7Vhk?=
- =?us-ascii?Q?Gc8hR2pGhMIIVSUGTGWUoHyOS3v4atTqhPAQOaM5po93hWCaQUsobj6c5CIs?=
- =?us-ascii?Q?tkjKtxsYCpCvYp7W8iEX1Z64fmJ3ae73LC8ABad2yURFQ4PjvL0j5WvZa0iw?=
- =?us-ascii?Q?6hCdLBY9DNVoE2Eg4/j/RVwsXdYo5bDC5ZgrUKhXv7t4?=
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddac8092-7a2b-4638-e515-08dd025cac5e
-X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2843.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 14:25:21.0072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LbO6a6aiT10VkRnoNJUa3jHcx9lcCkUKBKNvIZI0SE5WjOYiKrdoeLYTUV4Cb5CEldPLrqm7J6dFfaHjDQLyL4mx25YZysdyiNxryA92mUkhwG0gnaxOdtmh90sLuuG5
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAYP287MB3659
+References: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
+In-Reply-To: <672ecc13.050a0220.138bd5.0038.GAE@google.com>
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+Date: Mon, 11 Nov 2024 19:55:29 +0530
+Message-ID: <CAHiZj8gcQgEXB4XZG09m+pOG2vk_xwEYxS93t6kttzNFED6PQA@mail.gmail.com>
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_copygc
+To: syzbot <syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com>
+Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: multipart/mixed; boundary="000000000000a2c4530626a3e14b"
 
-Null check for 'resource' before assignment is unnecessary because the
-variable 'resource' is initialized to NULL at the beginning of the function.
+--000000000000a2c4530626a3e14b
+Content-Type: multipart/alternative; boundary="000000000000a2c44a0626a3e149"
 
-Signed-off-by: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
----
- arch/hexagon/kernel/time.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+--000000000000a2c44a0626a3e149
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/hexagon/kernel/time.c b/arch/hexagon/kernel/time.c
-index f0f207e2a694..6f851e1cd4ee 100644
---- a/arch/hexagon/kernel/time.c
-+++ b/arch/hexagon/kernel/time.c
-@@ -170,8 +170,7 @@ static void __init time_init_deferred(void)
- 
- 	ce_dev->cpumask = cpu_all_mask;
- 
--	if (!resource)
--		resource = rtos_timer_device.resource;
-+	resource = rtos_timer_device.resource;
- 
- 	/*  ioremap here means this has to run later, after paging init  */
- 	rtos_timer = ioremap(resource->start, resource_size(resource));
--- 
-2.43.0
+#syz test
 
+On Sat, Nov 9, 2024 at 8:12=E2=80=AFAM syzbot <
+syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com> wrote:
+
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
+> git://git.ker..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D11361d5f98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6fdf74cce3772=
+23b
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3D8689d10f1894eedf774d
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12348f40580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11e7b58798000=
+0
+>
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc=
+9.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc=
+9.xz
+> mounted in repro:
+> https://storage.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376
+> [inline]
+> BUG: KMSAN: uninit-value in __rhashtable_lookup
+> include/linux/rhashtable.h:607 [inline]
+> BUG: KMSAN: uninit-value in rhashtable_lookup
+> include/linux/rhashtable.h:646 [inline]
+> BUG: KMSAN: uninit-value in rhashtable_lookup_fast
+> include/linux/rhashtable.h:672 [inline]
+> BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144
+> [inline]
+> BUG: KMSAN: uninit-value in bch2_copygc_get_buckets
+> fs/bcachefs/movinggc.c:170 [inline]
+> BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0
+> fs/bcachefs/movinggc.c:221
+>  rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
+>  __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
+>  rhashtable_lookup include/linux/rhashtable.h:646 [inline]
+>  rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
+>  bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
+>  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+>  bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
+>  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
+>  kthread+0x3e2/0x540 kernel/kthread.c:389
+>  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Local variable b205.i created at:
+>  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+>  bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221
+>  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
+>
+> CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted
+> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 09/13/2024
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> Kernel panic - not syncing: kmsan.panic set ...
+> CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G    B
+> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120
+>  dump_stack+0x1e/0x30 lib/dump_stack.c:129
+>  panic+0x4e2/0xcf0 kernel/panic.c:354
+>  kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218
+>  __msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318
+>  rht_ptr_rcu include/linux/rhashtable.h:376 [inline]
+>  __rhashtable_lookup include/linux/rhashtable.h:607 [inline]
+>  rhashtable_lookup include/linux/rhashtable.h:646 [inline]
+>  rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]
+>  bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]
+>  bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]
+>  bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221
+>  bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381
+>  kthread+0x3e2/0x540 kernel/kthread.c:389
+>  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/672ecc13.050a0220.138bd5=
+.0038.GAE%40google.com
+> .
+>
+
+--000000000000a2c44a0626a3e149
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Sat, Nov 9, 2024 at 8:12=E2=80=AFAM syzbot=
+ &lt;<a href=3D"mailto:syzbot%2B8689d10f1894eedf774d@syzkaller.appspotmail.=
+com">syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com</a>&gt; wrote:<b=
+r></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex=
+;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
+<br>
+syzbot found the following issue on:<br>
+<br>
+HEAD commit:=C2=A0 =C2=A0 2e1b3cc9d7f7 Merge tag &#39;arm-fixes-6.12-2&#39;=
+ of git://git.ker..<br>
+git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
+console+strace: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D1136=
+1d5f980000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
+com/x/log.txt?x=3D11361d5f980000</a><br>
+kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
+=3D6fdf74cce377223b" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
+.appspot.com/x/.config?x=3D6fdf74cce377223b</a><br>
+dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3D8689d1=
+0f1894eedf774d" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
+pot.com/bug?extid=3D8689d10f1894eedf774d</a><br>
+compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0Debian clang version 15.0.6, GNU ld (GN=
+U Binutils for Debian) 2.40<br>
+syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
+epro.syz?x=3D12348f40580000" rel=3D"noreferrer" target=3D"_blank">https://s=
+yzkaller.appspot.com/x/repro.syz?x=3D12348f40580000</a><br>
+C reproducer:=C2=A0 =C2=A0<a href=3D"https://syzkaller.appspot.com/x/repro.=
+c?x=3D11e7b587980000" rel=3D"noreferrer" target=3D"_blank">https://syzkalle=
+r.appspot.com/x/repro.c?x=3D11e7b587980000</a><br>
+<br>
+Downloadable assets:<br>
+disk image: <a href=3D"https://storage.googleapis.com/syzbot-assets/08456e3=
+7db58/disk-2e1b3cc9.raw.xz" rel=3D"noreferrer" target=3D"_blank">https://st=
+orage.googleapis.com/syzbot-assets/08456e37db58/disk-2e1b3cc9.raw.xz</a><br=
+>
+vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/cc957f7ba8=
+0b/vmlinux-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
+e.googleapis.com/syzbot-assets/cc957f7ba80b/vmlinux-2e1b3cc9.xz</a><br>
+kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/7579f=
+e72ed89/bzImage-2e1b3cc9.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
+torage.googleapis.com/syzbot-assets/7579fe72ed89/bzImage-2e1b3cc9.xz</a><br=
+>
+mounted in repro: <a href=3D"https://storage.googleapis.com/syzbot-assets/5=
+903d7d7fe58/mount_4.gz" rel=3D"noreferrer" target=3D"_blank">https://storag=
+e.googleapis.com/syzbot-assets/5903d7d7fe58/mount_4.gz</a><br>
+<br>
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:<br>
+Reported-by: <a href=3D"mailto:syzbot%2B8689d10f1894eedf774d@syzkaller.apps=
+potmail.com" target=3D"_blank">syzbot+8689d10f1894eedf774d@syzkaller.appspo=
+tmail.com</a><br>
+<br>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D<br>
+BUG: KMSAN: uninit-value in rht_ptr_rcu include/linux/rhashtable.h:376 [inl=
+ine]<br>
+BUG: KMSAN: uninit-value in __rhashtable_lookup include/linux/rhashtable.h:=
+607 [inline]<br>
+BUG: KMSAN: uninit-value in rhashtable_lookup include/linux/rhashtable.h:64=
+6 [inline]<br>
+BUG: KMSAN: uninit-value in rhashtable_lookup_fast include/linux/rhashtable=
+.h:672 [inline]<br>
+BUG: KMSAN: uninit-value in bucket_in_flight fs/bcachefs/movinggc.c:144 [in=
+line]<br>
+BUG: KMSAN: uninit-value in bch2_copygc_get_buckets fs/bcachefs/movinggc.c:=
+170 [inline]<br>
+BUG: KMSAN: uninit-value in bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.=
+c:221<br>
+=C2=A0rht_ptr_rcu include/linux/rhashtable.h:376 [inline]<br>
+=C2=A0__rhashtable_lookup include/linux/rhashtable.h:607 [inline]<br>
+=C2=A0rhashtable_lookup include/linux/rhashtable.h:646 [inline]<br>
+=C2=A0rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]<br>
+=C2=A0bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]<br>
+=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
+=C2=A0bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221<br>
+=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
+=C2=A0kthread+0x3e2/0x540 kernel/kthread.c:389<br>
+=C2=A0ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147<br>
+=C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244<br>
+<br>
+Local variable b205.i created at:<br>
+=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
+=C2=A0bch2_copygc+0x15b3/0x58f0 fs/bcachefs/movinggc.c:221<br>
+=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
+<br>
+CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Not tainted 6.12.0-rc6-syzkal=
+ler-00077-g2e1b3cc9d7f7 #0<br>
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 09/13/2024<br>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D<br>
+Kernel panic - not syncing: kmsan.panic set ...<br>
+CPU: 0 UID: 0 PID: 5796 Comm: bch-copygc/loop Tainted: G=C2=A0 =C2=A0 B=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 6.12.0-rc6-syzkaller-00077-g2=
+e1b3cc9d7f7 #0<br>
+Tainted: [B]=3DBAD_PAGE<br>
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 09/13/2024<br>
+Call Trace:<br>
+=C2=A0&lt;TASK&gt;<br>
+=C2=A0__dump_stack lib/dump_stack.c:94 [inline]<br>
+=C2=A0dump_stack_lvl+0x216/0x2d0 lib/dump_stack.c:120<br>
+=C2=A0dump_stack+0x1e/0x30 lib/dump_stack.c:129<br>
+=C2=A0panic+0x4e2/0xcf0 kernel/panic.c:354<br>
+=C2=A0kmsan_report+0x2c7/0x2d0 mm/kmsan/report.c:218<br>
+=C2=A0__msan_warning+0x95/0x120 mm/kmsan/instrumentation.c:318<br>
+=C2=A0rht_ptr_rcu include/linux/rhashtable.h:376 [inline]<br>
+=C2=A0__rhashtable_lookup include/linux/rhashtable.h:607 [inline]<br>
+=C2=A0rhashtable_lookup include/linux/rhashtable.h:646 [inline]<br>
+=C2=A0rhashtable_lookup_fast include/linux/rhashtable.h:672 [inline]<br>
+=C2=A0bucket_in_flight fs/bcachefs/movinggc.c:144 [inline]<br>
+=C2=A0bch2_copygc_get_buckets fs/bcachefs/movinggc.c:170 [inline]<br>
+=C2=A0bch2_copygc+0x1d3f/0x58f0 fs/bcachefs/movinggc.c:221<br>
+=C2=A0bch2_copygc_thread+0x7f7/0xfa0 fs/bcachefs/movinggc.c:381<br>
+=C2=A0kthread+0x3e2/0x540 kernel/kthread.c:389<br>
+=C2=A0ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147<br>
+=C2=A0ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244<br>
+=C2=A0&lt;/TASK&gt;<br>
+Kernel Offset: disabled<br>
+Rebooting in 86400 seconds..<br>
+<br>
+<br>
+---<br>
+This report is generated by a bot. It may contain errors.<br>
+See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
+https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
+syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
+.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
+<br>
+syzbot will keep track of this issue. See:<br>
+<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
+k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
+<br>
+If the report is already addressed, let syzbot know by replying with:<br>
+#syz fix: exact-commit-title<br>
+<br>
+If you want syzbot to run the reproducer, reply with:<br>
+#syz test: git://repo/address.git branch-or-commit-hash<br>
+If you attach or paste a git patch, syzbot will apply it before testing.<br=
+>
+<br>
+If you want to overwrite report&#39;s subsystems, reply with:<br>
+#syz set subsystems: new-subsystem<br>
+(See the list of subsystem names on the web dashboard)<br>
+<br>
+If the report is a duplicate of another one, reply with:<br>
+#syz dup: exact-subject-of-another-report<br>
+<br>
+If you want to undo deduplication, reply with:<br>
+#syz undup<br>
+<br>
+-- <br>
+You received this message because you are subscribed to the Google Groups &=
+quot;syzkaller-bugs&quot; group.<br>
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
+rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
+To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
+syzkaller-bugs/672ecc13.050a0220.138bd5.0038.GAE%40google.com" rel=3D"noref=
+errer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/6=
+72ecc13.050a0220.138bd5.0038.GAE%40google.com</a>.<br>
+</blockquote></div>
+
+--000000000000a2c44a0626a3e149--
+--000000000000a2c4530626a3e14b
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-v6KMSAN-fix-uninit-value-in-bch2_copygc.patch"
+Content-Disposition: attachment; 
+	filename="0001-v6KMSAN-fix-uninit-value-in-bch2_copygc.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3d48d7j0>
+X-Attachment-Id: f_m3d48d7j0
+
+RnJvbSA5NzBiYWMwMzVkMDgzMjllNDA2OTAxNDA1ZmU2MzVjN2I2NjZmMzg1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
+aWwuY29tPgpEYXRlOiBNb24sIDExIE5vdiAyMDI0IDE5OjQ5OjA1ICswNTMwClN1YmplY3Q6IFtQ
+QVRDSCB2Nl0gS01TQU46IGZpeCB1bmluaXQtdmFsdWUgaW4gYmNoMl9jb3B5Z2MKCnN5eiB0ZXN0
+CgpTaWduZWQtb2ZmLWJ5OiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21haWwu
+Y29tPgotLS0KIGZzL2JjYWNoZWZzL21vdmluZ2djLmMgfCAyICsrCiAxIGZpbGUgY2hhbmdlZCwg
+MiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZnMvYmNhY2hlZnMvbW92aW5nZ2MuYyBiL2Zz
+L2JjYWNoZWZzL21vdmluZ2djLmMKaW5kZXggZDY1OGJlOTBmLi44YTY1NjhkYzUgMTAwNjQ0Ci0t
+LSBhL2ZzL2JjYWNoZWZzL21vdmluZ2djLmMKKysrIGIvZnMvYmNhY2hlZnMvbW92aW5nZ2MuYwpA
+QCAtMzI3LDYgKzMyNyw4IEBAIHN0YXRpYyBpbnQgYmNoMl9jb3B5Z2NfdGhyZWFkKHZvaWQgKmFy
+ZykKIAl1NjQgbGFzdCwgd2FpdDsKIAlpbnQgcmV0ID0gMDsKIAorCW1lbXNldCgmY3R4dCwgMCwg
+c2l6ZW9mKGN0eHQpKTsKKwogCWJ1Y2tldHMgPSBremFsbG9jKHNpemVvZihzdHJ1Y3QgYnVja2V0
+c19pbl9mbGlnaHQpLCBHRlBfS0VSTkVMKTsKIAlpZiAoIWJ1Y2tldHMpCiAJCXJldHVybiAtRU5P
+TUVNOwotLSAKMi4zNC4xCgo=
+--000000000000a2c4530626a3e14b--
 
