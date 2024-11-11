@@ -1,103 +1,109 @@
-Return-Path: <linux-kernel+bounces-404690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718EA9C46E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:32:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB59C46E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37642289AED
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B9828A33D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0A21B6541;
-	Mon, 11 Nov 2024 20:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F136B1AF0D0;
+	Mon, 11 Nov 2024 20:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMWfXXUN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDqWnnkX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88711AA78A;
-	Mon, 11 Nov 2024 20:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5099A8468;
+	Mon, 11 Nov 2024 20:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731357096; cv=none; b=Iw+XWtXkHINYEWpTQxiTk7gHmLS9zu/5n5Ng3lIocNqlX+4EQKHUfFfa8tGCuefsfkI0RY5dEpEebU6iqI4Tscrl6lSxXqDKXFYH9cfFAsC2fyv2Sl3hSs/BKf1jUA2Enp5OymrwCUpqbdnUW63W75T2u6bS35XmrIhFdaFjoPk=
+	t=1731357126; cv=none; b=Ku6uV4yRD8+FTFj8JJqiJCWyKRPtoY4QFBpZ84qmqnpeauUN8GIzu56B7B8SCXxLAJCHT+kRmoTIXVD/R6CzxPexV+ardhjdCr27/fGResBO/S/mld+YOGiJQH9OIIKt66KqzT3pUh1WqFxoRU3VAxbTEwe/EcDJUMepvbtKYlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731357096; c=relaxed/simple;
-	bh=x9aXapsZuaqPnOXzfdDhI/RnimcdxYeMxnTT1TJaOFQ=;
+	s=arc-20240116; t=1731357126; c=relaxed/simple;
+	bh=1JKreAiXrQHyGt4F0i/ifIUcZwMi9FkZdg60KkL1b10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=INANpV/fI/SbsX7Ls0oqACRgA0SB8samFO9u7ZboZuLio+OroB6k8bPfuynvmdxJvLXZ7b3YHijmlO0E3CYqsLZwJGIRo/q4j1ElwLJW1zWPw1EiABpUx/Kqy8DxEgrQhmKIWBU7ru6NjYlQGAs9szRbj5CYgJtODAfj7Y4mDqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMWfXXUN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD95FC4CECF;
-	Mon, 11 Nov 2024 20:31:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpY6TWCm8F9is+wplhr2vWarv/cEEKRoBbnjqgf6Vlm5fS4CBOlQbmv9meyP26GIaRDkG/oYSTW2NTdPIJ5p+EOPuvPhO9mC55ndFdFwZZnFJOqYdbiHT8KFiE+kQ14dOLSQyGj0Zur8ZOATolXvqGb+RKjp+d8iVwSLfwHylAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YDqWnnkX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1636DC4CECF;
+	Mon, 11 Nov 2024 20:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731357096;
-	bh=x9aXapsZuaqPnOXzfdDhI/RnimcdxYeMxnTT1TJaOFQ=;
+	s=k20201202; t=1731357125;
+	bh=1JKreAiXrQHyGt4F0i/ifIUcZwMi9FkZdg60KkL1b10=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tMWfXXUNORLhTI3cTOwE0A1ETqw8UqTMRqqc7Wc0Bkt653CuvRspCpYP7fc0Y36y6
-	 U8WaealJUt2xHAtYBFe7eZDTV2jeYuHZvELjZas9GEzTFAMZhY9ZpEU3HteYQzDCsg
-	 hYkUkXN0ydmkAUTk1BViQWHmDzMi0rPfRobRsB3dHgb7YKio9ls4wiN0KhCYPcdwPc
-	 gFbE+AQGN/10ogmpEeLNejEXBa7K/y8IBOngyxuU+EeHnU+Xpd9ab7w+ZHA5lPMj/f
-	 FbuMeh0dsk0ekGZ+MaZwgfb3g4QYNHQaOSW+3UWVMRt/nPXwsWmMdWphKd8IscJCLU
-	 khb2nGadcHbcQ==
-Date: Mon, 11 Nov 2024 20:31:31 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Icenowy Zheng <uwu@icenowy.me>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: clk: sunxi-ng: add compatible for the
- A523 CCU
-Message-ID: <20241111-deepness-escapable-0a3bac2b3505@spud>
-References: <20241111004722.10130-1-andre.przywara@arm.com>
- <20241111004722.10130-5-andre.przywara@arm.com>
+	b=YDqWnnkXcGVQUzu9ZfIxBV1kHCrZBa2nPgUoEGSNfkjS7+fSm0La7JIWCEl1lYwj5
+	 hjmEBxTZ4QYYIOFJ5Lrd2plVwFtO5rrG/RDcBVI4n9HH9rWvl/vrZAvKzKRQNNIpFR
+	 C2/c57j4OTO6JBWbAHnUWmu5B8Mi02SUsw9QnQ2e65wMMfXTLzK5AP05fSDUkNZBe8
+	 hbHjZaLV+K1Tcl21YuElk/zwz0CddvB4ZIOrY87gFSJYTQV5Ht65/e9SJvH3DzFev0
+	 QpjiQ8lrVpcojcTrghkadqaGTjU9roZbwGNxKrsNIH5J3mzvzuEzr3MuOoLasU8tQU
+	 K5RJSEU/2SM2w==
+Date: Mon, 11 Nov 2024 22:31:58 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Fix read permissions for VPD attributes
+Message-ID: <20241111203158.GC71181@unreal>
+References: <cover.1731005223.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Asf0m3qumdcixdxJ"
-Content-Disposition: inline
-In-Reply-To: <20241111004722.10130-5-andre.przywara@arm.com>
-
-
---Asf0m3qumdcixdxJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1731005223.git.leonro@nvidia.com>
 
-On Mon, Nov 11, 2024 at 12:47:19AM +0000, Andre Przywara wrote:
-> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-> the main CCU.
->=20
-> Add the new compatible string, along with the required input clock
-> lists.
-> Also add the DT binding headers, listing all the clocks with their ID
-> numbers.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On Thu, Nov 07, 2024 at 08:56:55PM +0200, Leon Romanovsky wrote:
+> From: Leon Romanovsky <leonro@nvidia.com>
+> 
+> Changelog:
+> v1: 
+>  * Changed implementation from open-read-to-everyone to be opt-in
+>  * Removed stable and Fixes tags, as it seems like feature now.
+> v0: https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
+> 
+> --------------------------------------------------------------------------
+> Hi,
+> 
+> The Vital Product Data (VPD) sysfs file is not readable by unprivileged
+> users. This limitation is not necessary and can be removed at least for
+> devices which are known as safe.
+> 
+> Thanks
+> 
+> Leon Romanovsky (2):
+>   PCI/sysfs: Change read permissions for VPD attributes
+>   net/mlx5: Enable unprivileged read of PCI VPD file
+> 
+>  drivers/net/ethernet/mellanox/mlx5/core/main.c | 1 +
+>  drivers/pci/vpd.c                              | 9 ++++++++-
+>  include/linux/pci.h                            | 7 ++++++-
+>  3 files changed, 15 insertions(+), 2 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Bjorn,
 
---Asf0m3qumdcixdxJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Does this version resolve your concerns about broken devices in the field?
 
------BEGIN PGP SIGNATURE-----
+Thanks
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzJpowAKCRB4tDGHoIJi
-0tv9AP4nwUN0sO11WBtf8cOH5uXB5Pv2Hk5WrGcCfONvtDz1IgD9EYWzRej9LYZ/
-B8R9KRR9KHpIv6Sm0pXaJ7C7pqYOSAA=
-=4MSE
------END PGP SIGNATURE-----
-
---Asf0m3qumdcixdxJ--
+> 
+> -- 
+> 2.47.0
+> 
+> 
 
