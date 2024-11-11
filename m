@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-404233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF12D9C4131
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:44:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CA29C412F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:43:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05AF1C219AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7ED1F2461B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE611A01DD;
-	Mon, 11 Nov 2024 14:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85281A0737;
+	Mon, 11 Nov 2024 14:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxT8ixkB"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAPLUC2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB84C14EC55;
-	Mon, 11 Nov 2024 14:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD9B14EC55;
+	Mon, 11 Nov 2024 14:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336274; cv=none; b=M51vEe427oXTgDBUnMjQmDVzm8i3x8yhl5Xb9+w+FMGDGmnYHW/Oj+685fL6QZu/6gVOdmRZ1sVP2Dayp5OrgI3icSHftw3N1PnjAQiZSaFKYT0fM5pIFKmHDKdJrXh/HybzALddO26c1lvKfWTNBaIgAqtmFwwAOsCF6lAT+Ig=
+	t=1731336198; cv=none; b=SwmdpLB2o0+BA2Qc2R268huL68/MD/56N6AS+SuDjsd56evFM6264GHkNMkRNc6K/83pCi4BJqvqkvISdlCQvnDFTPZJrkA0tcmfLIBAuNXGiOxSkm6vS9PttfsAEeKlNgBuef1OE55NxjslaZM5wJfWub1BG9y+MQ7l0Gjz8Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336274; c=relaxed/simple;
-	bh=6sAXDPQRSWwacQoNdT90XODSqmSn/qQbRANJn47Mbw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=irWSANDe/PXsFptIYUdMSWnftc0Tyho3T3p3/07kIWNUBkq+O2jTCsLE13dDfSP4g7XrkVPDC7AO7xy6wcJxuVWpkjFV8jH6wqdfgaQN2jEFwYA4YpayHWYX5cvbubDCZv04+uOIAruyRmR/0WJMBcBUQDlFPEuZjbFOygUSzBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxT8ixkB; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9aa8895facso869954166b.2;
-        Mon, 11 Nov 2024 06:44:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731336271; x=1731941071; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0N/0KQp3+3ibidp+do6cjFRrLqVCbMyVj/s0qA5h/fQ=;
-        b=hxT8ixkB1IGzV3VdlHsdg8Fv94sT2Nt7pANPjmmZ6IO+z/U5FOqUgQaJjfjccfeNsP
-         ustUU1tXSOpp6kIvFYI/a5CDxBUTgxIdEbO3NB4Ht4zHa92nOAxXnOofm1SyNknjJr7f
-         8HdNCEUYktOHwlDsMEuWaIL4khJvXbuhGRM9L3VvvAnLnHVFAEXN+iQDW6u7N3p1FzIh
-         wsQFy0H+ONep2xy7SEwkdvY8f35nLmeFRiM8S8zceNm3CixbCsZaCK0eXuIvgsO6pqvP
-         lnYiRwmBjGcjEmLYPqsT1pSFu0/Mote+QKM/KyY0Aq4Lz/04vbf8nwXJBgVoEQK+jc/j
-         lmVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731336271; x=1731941071;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0N/0KQp3+3ibidp+do6cjFRrLqVCbMyVj/s0qA5h/fQ=;
-        b=Vs3igj0PaB4t0eFAnloCikg1siwh2iiYm8wYS2/+nmFN3+WKd8xiGDMCeVO2taSDkg
-         3iPnkLV5XPW9K6gXTGkqaG6fED+Qlp1DrJb1sOUtTe2FoFtFxYmZckLBGgCNoJl9u8x3
-         BU+x0nnOprkEeKidDuPx1SXJHWdGuKaYwO+JEjQbI2yvvzMhk8EpdzVE677nKp8MItIv
-         BiPUyR7h2K+9WlD5eYRkvr+qasV1w2sQf6MY178qJoHMd9CW7GqqgUncvXingaa+tBLg
-         5D5DUN3O0EZL/kz2c6706BnedsM14kSXc/QL3IxyJhcxE1j6Cu5PeG+taU9qOJ2NUcZY
-         cl3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMmG8/qW9te78GgYtSZymaXavxGAqtyphP3O3Zdp9VGy34ArAg7BjP0SW8RxzbI5kMuQWXdgs9+fQhsqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrjwdRF+gCIcRsf9UkP8Skt2rxU9kD+bvlx8LSbeZ0GQnjF/yf
-	HRf4uQLItZqdkgzEti1EXcUupyh6lZ8Nw80LWY3kIpHm8q3R40XO
-X-Google-Smtp-Source: AGHT+IGlyRaYr0Nn1HPopNxyI1tt/fBE6zIRdApGKslpDc/b1WF+UP8l+PRffW6XhueuDpAEyzt8tQ==
-X-Received: by 2002:a17:907:97c7:b0:a99:ec3c:15cd with SMTP id a640c23a62f3a-a9ef0009412mr1266831766b.54.1731336270814;
-        Mon, 11 Nov 2024 06:44:30 -0800 (PST)
-Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:e7bf:a27b:6748:3bd1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee1aa544asm594584366b.167.2024.11.11.06.44.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 06:44:30 -0800 (PST)
-From: Gianfranco Trad <gianf.trad@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Gianfranco Trad <gianf.trad@gmail.com>,
-	syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
-Subject: [PATCH] bcachefs: zero-init move_bucket struct in bch2_copygc_get_buckets()
-Date: Mon, 11 Nov 2024 15:42:44 +0100
-Message-ID: <20241111144242.757798-3-gianf.trad@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731336198; c=relaxed/simple;
+	bh=IvgpzAjrbobQhEQYMR1QAcU4uwyiBVZfhHgYMl4JV5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nHT8rUSoaLxvfqJ82wSCbk5YT6Mtc6rPrzSBaL+9KFtL/lxTWf7DPb43XI0KmIcbNEJMJa4DSWJb4FcCZMuq4j36UMYAZh/HYNbyK8+nZazx2MZv5Y3oOZjZAKfzGy/5idJGk/cGK6Dlxk4V4FQaHWWyy0PN7D0xQJiwayjHcPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAPLUC2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC22DC4CED5;
+	Mon, 11 Nov 2024 14:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731336197;
+	bh=IvgpzAjrbobQhEQYMR1QAcU4uwyiBVZfhHgYMl4JV5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tAPLUC2wmFDUkOdXA+48dkkNBwQCz2AXPrtymXSzntSk/d84qFI8HoqdRHAhjogpq
+	 GK512d1P3+miEouEyxWdcChgBIVCQEH6e4zkipex+ga2Ze+5wYakEgkCR8+yaqL8HW
+	 B8Dh3L6L+GGopl7KhicGrnCapiGSgM8DJHwqBZSmtYWta5Yyb4Cp6UZHsyO6WAIrdB
+	 hbonzP4Bo3oSISi0V6IuDGobeDvcPdqKnCKUhSRxajFR7Ivtqq8xzIJB7bUOrnfea/
+	 8u3Y548L2IN4XhIkKRHrEEbaeST5lMivnaeKeViiZRPueNE1HpOKEy906Vio78oj7c
+	 2/k/vJ7bcC1Bg==
+Date: Mon, 11 Nov 2024 15:43:12 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	imx@lists.linux.dev, dlemoal@kernel.org, maz@kernel.org,
+	tglx@linutronix.de, jdmason@kudzu.us
+Subject: Re: [PATCH v5 3/5] PCI: endpoint: pci-epf-test: Add doorbell test
+ support
+Message-ID: <ZzIYAIGjHQJqR5Qt@ryzen>
+References: <20241108-ep-msi-v5-0-a14951c0d007@nxp.com>
+ <20241108-ep-msi-v5-3-a14951c0d007@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108-ep-msi-v5-3-a14951c0d007@nxp.com>
 
-zero-init move_bucket struct b fields in bch2_copygc_get_buckets() 
-to mitigate later uninit-value-use KMSAN reported bug.
+On Fri, Nov 08, 2024 at 02:43:30PM -0500, Frank Li wrote:
 
-Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
-Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
-Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
----
- fs/bcachefs/movinggc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+(snip)
 
-diff --git a/fs/bcachefs/movinggc.c b/fs/bcachefs/movinggc.c
-index d658be90f737..cdc456b03bec 100644
---- a/fs/bcachefs/movinggc.c
-+++ b/fs/bcachefs/movinggc.c
-@@ -171,7 +171,8 @@ static int bch2_copygc_get_buckets(struct moving_context *ctxt,
- 				  lru_pos(BCH_LRU_FRAGMENTATION_START, 0, 0),
- 				  lru_pos(BCH_LRU_FRAGMENTATION_START, U64_MAX, LRU_TIME_MAX),
- 				  0, k, ({
--		struct move_bucket b = { .k.bucket = u64_to_bucket(k.k->p.offset) };
-+		struct move_bucket b = { 0 };
-+		b.k.bucket = u64_to_bucket(k.k->p.offset);
- 		int ret2 = 0;
- 
- 		saw++;
--- 
-2.43.0
+> +static void pci_epf_enable_doorbell(struct pci_epf_test *epf_test, struct pci_epf_test_reg *reg)
+> +{
+> +	enum pci_barno bar = reg->doorbell_bar;
+> +	struct pci_epf *epf = epf_test->epf;
+> +	struct pci_epc *epc = epf->epc;
+> +	struct pci_epf_bar db_bar;
+> +	struct msi_msg *msg;
+> +	u64 doorbell_addr;
+> +	u32 align;
+> +	int ret;
+> +
+> +	align = epf_test->epc_features->align;
+> +	align = align ? align : 128;
+> +
+> +	if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
+> +		align = max(epf_test->epc_features->bar[bar].fixed_size, align);
+> +
+> +	if (bar < BAR_0 || bar == epf_test->test_reg_bar || !epf->db_msg) {
+> +		reg->status |= STATUS_DOORBELL_ENABLE_FAIL;
+> +		return;
+> +	}
+> +
+> +	msg = &epf->db_msg[0].msg;
+> +	doorbell_addr = msg->address_hi;
+> +	doorbell_addr <<= 32;
+> +	doorbell_addr |= msg->address_lo;
+> +
+> +	db_bar.phys_addr = round_down(doorbell_addr, align);
+> +	db_bar.barno = bar;
+> +	db_bar.size = epf->bar[bar].size;
+> +	db_bar.flags = epf->bar[bar].flags;
+> +	db_bar.addr = NULL;
 
+Some of the code above ...
+
+> +
+> +	ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no, &db_bar);
+> +	if (!ret)
+> +		reg->status |= STATUS_DOORBELL_ENABLE_SUCCESS;
+> +}
+> +
+
+
+
+> @@ -909,12 +998,46 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  	if (ret)
+>  		return ret;
+>  
+> +	ret = pci_epf_alloc_doorbell(epf, 1);
+> +	if (!ret) {
+> +		struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
+> +		struct msi_msg *msg = &epf->db_msg[0].msg;
+> +		u32 align = epc_features->align;
+> +		u64 doorbell_addr;
+> +		enum pci_barno bar;
+> +
+> +		bar = pci_epc_get_next_free_bar(epc_features, test_reg_bar + 1);
+> +
+> +		ret = request_irq(epf->db_msg[0].virq, pci_epf_test_doorbell_handler, 0,
+> +				  "pci-test-doorbell", epf_test);
+> +		if (ret) {
+> +			dev_err(&epf->dev,
+> +				"Failed to request irq %d, doorbell feature is not supported\n",
+> +				epf->db_msg[0].virq);
+> +			return 0;
+> +		}
+> +
+> +		align = align ? align : 128;
+> +
+> +		if (epf_test->epc_features->bar[bar].type == BAR_FIXED)
+> +			align = max(epf_test->epc_features->bar[bar].fixed_size, align);
+> +
+> +		doorbell_addr = msg->address_hi;
+> +		doorbell_addr <<= 32;
+> +		doorbell_addr |= msg->address_lo;
+> +
+> +		reg->doorbell_addr = doorbell_addr & (align - 1);
+> +		reg->doorbell_data = msg->data;
+> +		reg->doorbell_bar = bar;
+
+... seems to be duplicated in this function.
+
+Perhaps create a helper function so that you don't need to duplicate it.
+
+Also one function is doing:
+reg->doorbell_addr = doorbell_addr & (align - 1);
+
+to align, the other one is doing:
+round_down(doorbell_addr, align);
+
+Which seems to be a bit inconsistent.
+Anyway, if you move this to a helper, they will both use the same
+way to align the address.
+(May I suggest that you use ALIGN_DOWN() in the helper.)
+
+
+Kind regards,
+Niklas
 
