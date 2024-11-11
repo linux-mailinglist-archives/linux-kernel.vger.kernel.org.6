@@ -1,394 +1,154 @@
-Return-Path: <linux-kernel+bounces-404362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94939C42E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:44:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E45E9C42EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D566B26620
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF5161F24FFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6621A254F;
-	Mon, 11 Nov 2024 16:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="ubkxAkNU"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB5C1A262D;
+	Mon, 11 Nov 2024 16:47:56 +0000 (UTC)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5687E1A2557;
-	Mon, 11 Nov 2024 16:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD3414AD3F;
+	Mon, 11 Nov 2024 16:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343401; cv=none; b=I9ca6Saf+I4B8NrqKuTWUoIa5DK4aumkbYS8uRNj39V6HoYhXMpcVt0dumlnchJ09EpBeqag2O84Q4cnEL8pyexPt3dGgbijhk5PBTKXGQv/Irf+kVBaPFVg3GquRmkx79H9fSciZMLo16/UlomjruOMf/IQAiCNGMCvSLJ3JjU=
+	t=1731343676; cv=none; b=bGMm8ge0g3W6UjCgd8ad7GprhGUGNsXhpnAMevmSlkudK2mwlFlJKlzM6oF+9TmKCXPRuEx4316olxCWOR0r8HlFEabA1uPm3VhNxdZOQhgk3t9bQmkoJpVSv9i3O2uEY/7u4OJ+iJMOUtEHUX4+lRJc6y8T/zmuwr12KcSA1a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343401; c=relaxed/simple;
-	bh=iY5fip8VyNQjTCxGP3Jharf4ojvtFdjPkPIjSgZXFaw=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=dINKsMdCegHfwhi3vKUOO8+UvAu1NjE9XU+M7vqg3dZj1JQDJuLZQL2cDZs1Fo6Y//5fSUatkJuE3CYzQP958GQ34et/4A5Vovjrf10h1ZPXfKn2XwqyToRXZUtIiIrPIEFC8IHdQPy8fCqA78e0zKP/4LgVtzIU7qi9okL5+as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=ubkxAkNU; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
-	by mail.mainlining.org (Postfix) with ESMTPSA id ED7DEE45C8;
-	Mon, 11 Nov 2024 16:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1731343397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T42R792JdevvZyQSNGT8kxHjhg5sAWnAp+dMYDJ6GJc=;
-	b=ubkxAkNUr7GNYZ+v0ArVLSzr/EULwR6TtQoStHOwpnR9Z8+xSwtpOFdMKQMTu10QxxaipZ
-	+NAgITNeavUiQT8hNPEbtQeAZ3oi3fjjELR3s/1T8AK168ewSfu6fuJnQ4V2Dnl+Oyilbg
-	4mTfp1D6vKBN9n7XdUuBW1AGgkemYXl3ewK0MlRdCiE6oqgnoPqpiw8D4B6S7XGfM5I2Mk
-	szWCBExugqcumpkBlgdDmh7CLgC6JN283CTh+BMnRv6zKeP1u+VL3QH3O+lTt0pf0i12+1
-	YpJzeQgOVe29ku9tsWdAmFXPWj7XOoRCkz8H1cyRHVaw08aHRqU/JpBE+aW1yQ==
+	s=arc-20240116; t=1731343676; c=relaxed/simple;
+	bh=cv7HOX0Be8oHN7NlH//fc5XDhKL3U1WcsBw8HaIGpAs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQm3NId4XXmxj4F4PQs2OUD3aL7drNyxPb4OczKjUUx85/NXsMnHlBYg0ajyYsbj6U00Yf3Pkp9NYA0BLuT02fCOeigJ6HtOm8wI9QtL8L8EdAQZqhiC7pdYSF37ARhkQqO6QBRFGa+0ZCZvmfXt13DNOHCPz+5bhvhmmCwT/8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e681bc315so3351885b3a.0;
+        Mon, 11 Nov 2024 08:47:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731343674; x=1731948474;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yVmNpVa6d/vTSwVDSMcQM5C6SueKqprysTTJDf+O7Ww=;
+        b=MG9iN78W9Gl29k/H2cWMD8jaZMANy7m0FVWb48jKZXKcxcYjHoXiWbIgkVsoVWp30r
+         Y0XEXxpUbp9Z4BFYplKXBNld4T5c9fo5J5O4ngw0jY/tbH8ZKCI+JwVmvHhVaF59nG0w
+         Anffk5hCLrFOU06BZUH1CDDahRvFonppQcA34pORj6zsXnzkUypVRYlvw1bh5YM/9y6T
+         Ar+vP3AJ6dIbYb0Q3kFySRpTJluZB16G5f8UnxQk0txn+EnmyQ3iZdq/Ryfo81mh1Kq3
+         Bs+O8WWvXBPw/9BphYhvWZ4JWNoj7tmA7KWnECFk91EqRErBpwBWctTSL4nEfS4ni0BC
+         0Z+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWK/w2Ibyi9/7SwdJ4t3Rb8A9l/Vh7VrnHbWUvSw0ID4B48z7HnVxKjByy4ZMsJhX2cEWRqbyA6BBk3do4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdMbxS+5VPQGu2utj4IRmGNC75NX8ml/O3KlUiCjLnYMSSx7uZ
+	OQr5rZwQU2cr020IYDevijVFYM+sLG2ViCgC11WutDrVV9tXanOEo1nP2g==
+X-Google-Smtp-Source: AGHT+IGSM7pZgBQnjHeMc2NFU1cL0j9i+gxsihDAEjJ3LFHOucYoiCJyTai75Q2+UnECBNXfPwgS5A==
+X-Received: by 2002:a05:6a00:21c4:b0:71e:7f08:492c with SMTP id d2e1a72fcca58-72413f4c526mr20021547b3a.1.1731343673645;
+        Mon, 11 Nov 2024 08:47:53 -0800 (PST)
+Received: from localhost.localdomain (124x33x176x97.ap124.ftth.ucom.ne.jp. [124.33.176.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a5ea27sm9232913b3a.177.2024.11.11.08.47.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 08:47:53 -0800 (PST)
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+To: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sparse@vger.kernel.org,
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Subject: [PATCH v2] linux/bits: simplify GENMASK_INPUT_CHECK()
+Date: Tue, 12 Nov 2024 01:43:30 +0900
+Message-ID: <20241111164743.339117-2-mailhol.vincent@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 11 Nov 2024 17:43:16 +0100
-From: barnabas.czeman@mainlining.org
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio
- <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
- <thara.gopinath@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz
- Luba <lukasz.luba@arm.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon
- <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org, iommu@lists.linux.dev,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Subject: Re: [PATCH v4 08/10] arm64: dts: qcom: Add initial support for
- MSM8917
-In-Reply-To: <ZzHf9J0Y2uB7_vy4@linaro.org>
-References: <20241109-msm8917-v4-0-8be9904792ab@mainlining.org>
- <20241109-msm8917-v4-8-8be9904792ab@mainlining.org>
- <ZzHf9J0Y2uB7_vy4@linaro.org>
-Message-ID: <0cf2a202c3eaccd4046a88f770e43807@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2564; i=mailhol.vincent@wanadoo.fr; h=from:subject; bh=cv7HOX0Be8oHN7NlH//fc5XDhKL3U1WcsBw8HaIGpAs=; b=owGbwMvMwCV2McXO4Xp97WbG02pJDOlGpvot4dKidyLWMF5kWtCXdrI8WdSAKeuFncmbk7+Pc zutZ13fUcrCIMbFICumyLKsnJNboaPQO+zQX0uYOaxMIEMYuDgFYCK7fBn+GS3w26X36fefI3Yt uZ9WqmilBX9lKr+48MTt7XIvojI/v2ZkWHf8/rmtiYLyml/9zp64m1g67SzD8RNHnzvNOp/dtkQ okh8A
+X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp; fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
 Content-Transfer-Encoding: 8bit
 
-On 2024-11-11 11:44, Stephan Gerhold wrote:
-> On Sat, Nov 09, 2024 at 01:08:10PM +0100, Barnabás Czémán wrote:
->> From: Otto Pflüger <otto.pflueger@abscue.de>
->> 
->> Add initial support for MSM8917 SoC.
->> 
->> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
->> [reword commit, rebase, fix schema errors]
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
->>  arch/arm64/boot/dts/qcom/msm8917.dtsi | 1997 
->> +++++++++++++++++++++++++++++++++
->>  1 file changed, 1997 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/msm8917.dtsi 
->> b/arch/arm64/boot/dts/qcom/msm8917.dtsi
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..f866843772684c695069debfc764f7a0a58843bb
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/msm8917.dtsi
->> @@ -0,0 +1,1997 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +
->> +#include <dt-bindings/clock/qcom,gcc-msm8917.h>
->> +#include <dt-bindings/clock/qcom,rpmcc.h>
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/power/qcom-rpmpd.h>
->> +#include <dt-bindings/soc/qcom,apr.h>
->> +#include <dt-bindings/sound/qcom,q6dsp-lpass-ports.h>
->> +#include <dt-bindings/thermal/thermal.h>
->> +
->> +/ {
->> +	interrupt-parent = <&intc>;
->> +
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	aliases {
->> +		mmc0 = &sdhc_1; /* SDC1 eMMC slot */
->> +		mmc1 = &sdhc_2; /* SDC2 SD card slot */
->> +	};
-> 
-> I think we put aliases in each board separately nowadays, see e.g.
-> commit 154f23a8d70c ("arm64: dts: qcom: msm8916: Move aliases to
-> boards").
-> 
->> [...]
->> +		domain-idle-states {
->> +			cluster_sleep_0: cluster-sleep-0 {
->> +				compatible = "domain-idle-state";
->> +				arm,psci-suspend-param = <0x41000023>;
->> +				entry-latency-us = <700>;
->> +				exit-latency-us = <650>;
->> +				min-residency-us = <1972>;
->> +			};
->> +
->> +			cluster_sleep_1: cluster-sleep-1 {
->> +				compatible = "domain-idle-state";
->> +				arm,psci-suspend-param = <0x41000043>;
->> +				entry-latency-us = <240>;
->> +				exit-latency-us = <280>;
->> +				min-residency-us = <806>;
->> +			};
-> 
-> This is strange, the deeper sleep state has lower timings than the
-> previous one?
-> 
->> +
->> +			cluster_sleep_2: cluster-sleep-2 {
->> +				compatible = "domain-idle-state";
->> +				arm,psci-suspend-param = <0x41000053>;
->> +				entry-latency-us = <700>;
->> +				exit-latency-us = <1000>;
->> +				min-residency-us = <6500>;
->> +			};
->> +		};
->> [...]
->> +
->> +	rpm: remoteproc {
->> +		compatible = "qcom,msm8917-rpm-proc", "qcom,rpm-proc";
->> +
->> +		smd-edge {
->> +			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
->> +			qcom,ipc = <&apcs 8 0>;
-> 
-> Can you use mboxes here?
-> 
->> +			qcom,smd-edge = <15>;
->> +
->> [...]
->> +
->> +		mpss_mem: mpss@86800000 {
->> +			/*
->> +			 * The memory region for the mpss firmware is generally
->> +			 * relocatable and could be allocated dynamically.
->> +			 * However, many firmware versions tend to fail when
->> +			 * loaded to some special addresses, so it is hard to
->> +			 * define reliable alloc-ranges.
->> +			 *
->> +			 * alignment = <0x0 0x400000>;
->> +			 * alloc-ranges = <0x0 0x86800000 0x0 0x8000000>;
->> +			 */
-> 
-> Not sure how many devices you have access to, but have you tried if 
-> this
-> is actually still the case? I'd have hoped they fixed those issues in
-> the firmware.
-This is come from msm8916.dtsi and it is not used yet because of not 
-upstreamed modem patch,
-maybe better to remove it, i guess.
-> 
-> Thanks for using alloc-ranges instead of fixed addresses BTW :)
-> 
->> +			reg = <0x0 0x86800000 0x0 0>; /* size is device-specific */
->> +			no-map;
->> +			status = "disabled";
->> +		};
->> +
->> [...]
->> +	smp2p-adsp {
->> +		compatible = "qcom,smp2p";
->> +		qcom,smem = <443>, <429>;
->> +
->> +		interrupts = <GIC_SPI 291 IRQ_TYPE_EDGE_RISING>;
->> +
->> +		mboxes = <&apcs 10>;
->> +
->> +		qcom,local-pid = <0>;
->> +		qcom,remote-pid = <2>;
->> +
->> +		adsp_smp2p_out: master-kernel {
->> +			qcom,entry-name = "master-kernel";
->> +
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		adsp_smp2p_in: slave-kernel {
->> +			qcom,entry-name = "slave-kernel";
->> +
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->> +	smp2p-modem {
->> +		compatible = "qcom,smp2p";
->> +		qcom,smem = <435>, <428>;
->> +
->> +		interrupts = <GIC_SPI 27 IRQ_TYPE_EDGE_RISING>;
->> +
->> +		qcom,ipc = <&apcs 8 14>;
-> 
-> You have mboxes for adsp above, what about modem and
-> 
->> +
->> +		qcom,local-pid = <0>;
->> +		qcom,remote-pid = <1>;
->> +
->> +		modem_smp2p_out: master-kernel {
->> +			qcom,entry-name = "master-kernel";
->> +
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		modem_smp2p_in: slave-kernel {
->> +			qcom,entry-name = "slave-kernel";
->> +
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->> +	smp2p-wcnss {
->> +		compatible = "qcom,smp2p";
->> +		qcom,smem = <451>, <431>;
->> +
->> +		interrupts = <GIC_SPI 143 IRQ_TYPE_EDGE_RISING>;
->> +
->> +		qcom,ipc = <&apcs 8 18>;
-> 
-> ... wcnss?
-> 
->> +
->> +		qcom,local-pid = <0>;
->> +		qcom,remote-pid = <4>;
->> +
->> +		wcnss_smp2p_out: master-kernel {
->> +			qcom,entry-name = "master-kernel";
->> +
->> +			#qcom,smem-state-cells = <1>;
->> +		};
->> +
->> +		wcnss_smp2p_in: slave-kernel {
->> +			qcom,entry-name = "slave-kernel";
->> +
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->> [...]
->> +
->> +		restart@4ab000 {
->> +			compatible = "qcom,pshold";
->> +			reg = <0x004ab000 0x4>;
->> +		};
-> 
-> You have PSCI for shutting down, do you actually need this?
-> 
->> [...]
->> +		blsp_i2c4: i2c@78b8000 {
->> +			compatible = "qcom,i2c-qup-v2.2.1";
->> +			reg = <0x078b8000 0x500>;
->> +			interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gcc GCC_BLSP1_QUP4_I2C_APPS_CLK>,
->> +				 <&gcc GCC_BLSP1_AHB_CLK>;
->> +			clock-names = "core", "iface";
->> +			dmas = <&blsp1_dma 10>, <&blsp1_dma 11>;
->> +			dma-names = "tx", "rx";
->> +			pinctrl-0 = <&i2c4_default>;
->> +			pinctrl-1 = <&i2c4_sleep>;
->> +			pinctrl-names = "default", "sleep";
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			status = "disabled";
->> +		};
->> +
->> +		blsp_i2c5: i2c@7af5000 {
-> 
-> Please use a full label here with the BLSP number and QUP instance
-> (&blspX_i2cY). This corresponds to the name of the clock, so this node
-> is actually
-> 
->> +			compatible = "qcom,i2c-qup-v2.2.1";
->> +			reg = <0x07af5000 0x600>;
->> +			interrupts = <GIC_SPI 299 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gcc GCC_BLSP2_QUP1_I2C_APPS_CLK>,
-> 
-> ... &blsp2_i2c1.
-> 
-> I guess the current naming is taken from downstream, but I think they
-> just assigned consecutive numbers to all the QUP instances they needed.
-> This will cause headaches in the future if someone wants to add an
-> instance that wasn't used by QC in the reference designs.
-> 
->> +				 <&gcc GCC_BLSP2_AHB_CLK>;
->> +			clock-names = "core", "iface";
->> +			dmas = <&blsp2_dma 4>, <&blsp2_dma 5>;
->> +			dma-names = "tx", "rx";
->> +			pinctrl-0 = <&i2c5_default>;
->> +			pinctrl-1 = <&i2c5_sleep>;
-> 
-> &blsp2_i2c1_default/sleep for clarity
-> 
->> +			pinctrl-names = "default", "sleep";
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			status = "disabled";
->> +		};
->> +
->> +		blsp_spi6: spi@7af6000 {
-> 
-> &blsp2_spi2
-> 
->> +			compatible = "qcom,spi-qup-v2.2.1";
->> +			reg = <0x07af6000 0x600>;
->> +			interrupts = <GIC_SPI 300 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&gcc GCC_BLSP2_QUP2_SPI_APPS_CLK>,
->> +				 <&gcc GCC_BLSP2_AHB_CLK>;
->> +			clock-names = "core", "iface";
->> +			dmas = <&blsp2_dma 6>, <&blsp2_dma 7>;
->> +			dma-names = "tx", "rx";
->> +			pinctrl-0 = <&spi6_default>;
->> +			pinctrl-1 = <&spi6_sleep>;
-> 
-> &blsp2_spi2_default/sleep
-> 
->> +			pinctrl-names = "default", "sleep";
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			status = "disabled";
->> +		};
->> +
->> [...]
->> +		timer@b120000 {
->> +			#address-cells = <1>;
->> +			#size-cells = <1>;
->> +			ranges;
->> +			compatible = "arm,armv7-timer-mem";
->> +			reg = <0x0b120000 0x1000>;
->> +			clock-frequency = <19200000>;
-> 
-> Should be unneeded unless the firmware is broken. Can you try dropping
-> it and see if you get a warning in dmesg?
-> 
->> [...]
->> +		};
->> +	};
->> +
->> +	timer {
->> +		compatible = "arm,armv8-timer";
->> +		interrupts = <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4) | 
->> IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 3 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 4 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> +			     <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->> +		clock-frequency = <19200000>;
-> 
-> Same here.
-> 
-> Thanks,
-> Stephan
+Because of the shortcut logic of the && operator, below expression:
+
+  __builtin_choose_expr(condition, boolean_expression, false)
+
+can be simplified as:
+
+  condition && boolean_expression
+
+Applied to GENMASK_INPUT_CHECK(),
+
+  __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
+
+can be replaced by:
+
+  __is_constexpr((l) > (h)) && (l) > (h)
+
+Finally, above expression is nearly the same as the expansion of
+statically_true((l) > (h)), except from the use of __is_constexpr()
+instead of __builtin_constant_p().
+
+Introduce _statically_true() which is similar to statically_true()
+but with __is_constexpr(). Apply _statically_true() to simplify
+GENMASK_INPUT_CHECK().
+
+Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+---
+This change passes the unit tests from CONFIG_BITS_TEST, including the
+extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
+
+[1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
+Link: https://git.kernel.org/torvalds/c/6d511020e13d
+
+
+** Changelog **
+
+v1 -> v2:
+
+   - introduce _statically_true(), taking inspiration from
+     statically_true() as introduced in commit 22f546873149 ("minmax:
+     improve macro expansion and type checking")
+
+Link: https://lore.kernel.org/all/20240609073513.256179-1-mailhol.vincent@wanadoo.fr/
+---
+ include/linux/bits.h     | 5 ++---
+ include/linux/compiler.h | 1 +
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/bits.h b/include/linux/bits.h
+index 60044b608817..01713e1eda56 100644
+--- a/include/linux/bits.h
++++ b/include/linux/bits.h
+@@ -20,9 +20,8 @@
+  */
+ #if !defined(__ASSEMBLY__)
+ #include <linux/build_bug.h>
+-#define GENMASK_INPUT_CHECK(h, l) \
+-	(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
+-		__is_constexpr((l) > (h)), (l) > (h), 0)))
++#include <linux/compiler.h>
++#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(_statically_true((l) > (h)))
+ #else
+ /*
+  * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 4d4e23b6e3e7..fee66166eca2 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -307,6 +307,7 @@ static inline void *offset_to_ptr(const int *off)
+  * values to determine that the condition is statically true.
+  */
+ #define statically_true(x) (__builtin_constant_p(x) && (x))
++#define _statically_true(x) (__is_constexpr(x) && (x))
+ 
+ /*
+  * This is needed in functions which generate the stack canary, see
+-- 
+2.45.2
+
 
