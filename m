@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-403936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CECD9C3CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:19:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862679C3CA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A790B21A62
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75611C216AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAEF1946C2;
-	Mon, 11 Nov 2024 11:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE00A188905;
+	Mon, 11 Nov 2024 11:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j2OLYZwp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lsVs5Ns7"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE9189B8C;
-	Mon, 11 Nov 2024 11:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2BA14A4CC
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731323938; cv=none; b=OQy00DCrPQPcp360UllVTn6ihK/zkU2x9kjz9jEhbGDOq9G5v2hazI32bxk6+PdMsSCd1tkBzkMNH+39N5G5uf879C5lAENe9DKnAU7mcbU0FCO3Xa/LLy+FZjD8b0KCyz+zYlpGxhFVwhEgFiZNyL/EseOZhM0mdYeo3XXzBCE=
+	t=1731323293; cv=none; b=lttHHRDj+06RwygdoeXOn+IGaithG173KJmaW6Of9xDK3IZ4E4DfOyoN6GdqpJCYXX22bB+Ls/o07v2hj73GMJ9DYy4iOr8Aggn29/OR5LB9Cwvr8WylyAxK6MxA/Bpy7D3qBnjGSyCYBtEI/EvcYgPsmWBmNuAYNjE26azhN6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731323938; c=relaxed/simple;
-	bh=jQc3iETDBc6tRQ9h0BRxDqfkc220WkwrPq9IuxaperY=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=rcb1LFZS+NdFqhR2uZeDYbFsp6WLIh9IwuvKd+VqjQSxQ/kpKhfwYt6HLNoQioWBKaX9mGXyqUj2AOzoITU50O7EVroutQjtXN+kIhtWPSAoIxeNi2YbRMdmQVEmttQ0yYcGN3nJiP6Z0N2sZ2g5lvWTZfsMyIVYwEfalLnz47E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j2OLYZwp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=EuW8AIEfA7ZEbhSbDFIsFL71b7M2MQAgzyGLo9WNeIs=; b=j2OLYZwpQIEMw0H/6EuV+UURf5
-	505jntmBLe9FaNTX79ZsAZeJ9zk5LpVnXLLRy/WuqiSDo0gkha+uDPpuDhHQXuZWLjc1V0e+yjXuZ
-	4A3jUXRx3E5cW+BwrTaCwpX41eLpo3/P5fFD0f1n1A933mzHz98E9lkV1ws+b2RNoIMYFc/0WPr8a
-	tAr6NdBQCMiO2t8/7fLlP2FZwwzNREkSW1BqXWcWuZc9FPFueCgqn11jdu7q9cHOpe3HtKUuk96cu
-	SHOwmAjXVMu8bpRrwQ7xniSFXTaoZu8lFOFueAwQ8JNtix9IISnT6eHgtuFjK5dAYgJgI/VV/X0d7
-	P+rjUcUw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tASRU-0000000CpwL-1p1l;
-	Mon, 11 Nov 2024 11:18:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 1514E3021DA; Mon, 11 Nov 2024 12:18:47 +0100 (CET)
-Message-Id: <20241111111817.826286643@infradead.org>
-User-Agent: quilt/0.65
-Date: Mon, 11 Nov 2024 11:54:38 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: mcgrof@kernel.org
-Cc: x86@kernel.org,
- hpa@zytor.com,
- petr.pavlu@suse.com,
- samitolvanen@google.com,
- da.gomez@samsung.com,
- masahiroy@kernel.org,
- nathan@kernel.org,
- nicolas@fjasle.eu,
- linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org,
- linux-kbuild@vger.kernel.org,
- hch@infradead.org,
- gregkh@linuxfoundation.org,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [RFC][PATCH 8/8] module: Provide EXPORT_SYMBOL*_FOR() helpers
-References: <20241111105430.575636482@infradead.org>
+	s=arc-20240116; t=1731323293; c=relaxed/simple;
+	bh=KrzJzC5LjIibjn2LH2QxndnXkbjvaFOu7KX1OY6Y2S8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BLexZsX7oKrySAfKyHR6Y57UAEEFtos8cxr97DlgvU5CSF90eQtnJQCUuvickviQrp/8wvZURKkcZelDeFOCbJVhQuwa9O/pIjP8u0jbP8fl/xF6EWig8fgdn1pI0U0ARo9IMt2e0tQiWjACNxgH9ONASKrhFCTcXJU6EovwhVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lsVs5Ns7; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a6b4ca29bso644769766b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 03:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731323290; x=1731928090; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JaOpQCnb58xwQNpZJwrt/dM577zB1AHFFgREUTf53Ns=;
+        b=lsVs5Ns7v6s2hgGqNxi4GsbiwNcoUmoIQP60jsFv3r11zjG8IIXMXj481uoCNReRBK
+         VAYa0LHFURO/l7Ip8fHRNsf1YSSiGUG3RrmhHCmfkY/GBIDJ1Xv/UwijxZFNMVUmsxFo
+         93ZctszrjbbKfYKblkvcJNAf82w3MVB9dk67sdPHrvNGXIgbP0vfEgKmv77MgWfZeWjL
+         uQ5MDLDQ1XoMGMMJwKpBpocZ63ar3rFTlMSzLjkzTpyseQwF7KzerFTUSES9T9MNnAmL
+         YgnYcMptPu6dtMmJrm5YEv1u83Nbowu3DeHAAsXNYL7VERbNNoVRW4eVtXHfCRD6PK1a
+         DedA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731323290; x=1731928090;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JaOpQCnb58xwQNpZJwrt/dM577zB1AHFFgREUTf53Ns=;
+        b=ImhT/bJ3KQzXyiVgx2V6+PbKnWeVtc6nKXT15g0C8erxzpSiubz9QmkAbTlevs702p
+         GFHpO25mERZL4zbPrmLdFHDC5KqaWyLacoFxDpNgUeerQoN30kSDy5LvrkyVmPLJClVm
+         UFIBHRIdWNaNll/gnWzOvjtu2dq/oqiHxwJcd/sH/eyyyf/Lx+szM9nEnTPqO/Xa2KBB
+         1KqOMB/YTv2hLJnPyWqAKnzZUzMxbf2KAWLCQXItzGQ1wblOd5PTWL0wBJZSrTqJoL/6
+         7tdXEpiPRX51tWy9sDGzry6/Kz6OCN8zrDqRAZGVzcrU4zn0MM5gkVXwYvGz7xuOnY08
+         JL2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOYkV99pM35rgUCDjlA+ZysRpWF/y+aIgNzZZS4n67f50rHt5iTRJAb5+hahe1bsDb5u9lSWHgsRTdnXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rDVbrZVJG7pNNbuvjCStb+cjSNb9r+zs9j7bPZAfm3Oxi76U
+	sfXiVAU6Vh864yESamrX28wGdV80BsaRJ0Dp4hU0ODWy/9CWqu49bc75ZBJR20g=
+X-Google-Smtp-Source: AGHT+IE8zTmpxJbeHHX6TsTo02EB6CL9dlS72DZFJARMZpcutHBxnoMI2RjnZgYXTYNZ3xGbE2kN8Q==
+X-Received: by 2002:a17:907:3fa2:b0:a99:5f16:3539 with SMTP id a640c23a62f3a-a9eefcebbd5mr1287269866b.0.1731323289768;
+        Mon, 11 Nov 2024 03:08:09 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0deef4bsm576319966b.138.2024.11.11.03.08.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 03:08:09 -0800 (PST)
+Date: Mon, 11 Nov 2024 14:08:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ajay Gupta <ajayg@nvidia.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Haotien Hsu <haotienh@nvidia.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] usb: typec: fix potential array underflow in
+ ucsi_ccg_sync_control()
+Message-ID: <c69ef0b3-61b0-4dde-98dd-97b97f81d912@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-Because Christoph and Masahiro-san asked for it :-)
+The "command" variable can be controlled by the user via debugfs.  The
+worry is that if con_index is zero then "&uc->ucsi->connector[con_index
+- 1]" would be an array underflow.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Fixes: 170a6726d0e2 ("usb: typec: ucsi: add support for separate DP altmode devices")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- include/linux/export.h |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/typec/ucsi/ucsi_ccg.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/include/linux/export.h
-+++ b/include/linux/export.h
-@@ -70,4 +70,7 @@
- #define EXPORT_SYMBOL_NS(sym, ns)	__EXPORT_SYMBOL(sym, "", ns)
- #define EXPORT_SYMBOL_NS_GPL(sym, ns)	__EXPORT_SYMBOL(sym, "GPL", ns)
+diff --git a/drivers/usb/typec/ucsi/ucsi_ccg.c b/drivers/usb/typec/ucsi/ucsi_ccg.c
+index bccfc03b5986..fcb8e61136cf 100644
+--- a/drivers/usb/typec/ucsi/ucsi_ccg.c
++++ b/drivers/usb/typec/ucsi/ucsi_ccg.c
+@@ -644,6 +644,10 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
+ 	    uc->has_multiple_dp) {
+ 		con_index = (uc->last_cmd_sent >> 16) &
+ 			UCSI_CMD_CONNECTOR_MASK;
++		if (con_index == 0) {
++			ret = -EINVAL;
++			goto unlock;
++		}
+ 		con = &uc->ucsi->connector[con_index - 1];
+ 		ucsi_ccg_update_set_new_cam_cmd(uc, con, &command);
+ 	}
+@@ -651,6 +655,7 @@ static int ucsi_ccg_sync_control(struct ucsi *ucsi, u64 command)
+ 	ret = ucsi_sync_control_common(ucsi, command);
  
-+#define EXPORT_SYMBOL_FOR(sym, mods)	EXPORT_SYMBOL_NS(sym, "MODULE_" mods)
-+#define EXPORT_SYMBOL_GPL_FOR(sym, mods) EXPORT_SYMBOL_NS_GPL(sym, "MODULE_" mods)
-+
- #endif /* _LINUX_EXPORT_H */
-
+ 	pm_runtime_put_sync(uc->dev);
++unlock:
+ 	mutex_unlock(&uc->lock);
+ 
+ 	return ret;
+-- 
+2.45.2
 
 
