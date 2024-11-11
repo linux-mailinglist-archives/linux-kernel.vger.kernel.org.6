@@ -1,186 +1,327 @@
-Return-Path: <linux-kernel+bounces-403684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F109C3907
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:28:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1D59C3909
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A8651F21E16
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C03CA281095
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3F0158DD0;
-	Mon, 11 Nov 2024 07:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D821547F2;
+	Mon, 11 Nov 2024 07:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AV5g3dX5"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2067.outbound.protection.outlook.com [40.107.249.67])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WQM9QBYB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B404D8CB;
-	Mon, 11 Nov 2024 07:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731310130; cv=fail; b=gM6GNNqeReSwiNqfCLM00lhHUu45dS3ZNd7m9rUcbzyaQxBJ8t3PTBBVCocIITIT7ur3m0C7hX7qZzyFogMZbEtJGZfYL8Crzb+2a/LhBmxj4JGPsRjDcN/iV/SR1UBNyDWKxgtPQpt7Er6QNQ99j16mxHyQR/Z/s5tp9CH4TQM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731310130; c=relaxed/simple;
-	bh=EB6UhGB2NsOpsrEUuLNPQvlJ84bp2C6hpFCY7PCHoJQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Bk/4d4xIiF4vCURsxJDz3AQUGK09F67G8h41fK2xWO9umdTP3il3+01eqqgFgxOwnxmq1BdAefNauffxxQQwpY+iMt4FwgpV5w0e3zPjwcIu58paivgJ8XC/xSqpHTB6NciZehmSxLkvAHbW+dGmmDZIzhgfM+FiYhy4LPM6GvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AV5g3dX5; arc=fail smtp.client-ip=40.107.249.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wSwz7eEEMGxdDKVzmCHDidxLacFKvy3jitosd9bDf2+Np4NX82pRyS5x3PK1kPfMEIIHElIUPfgDsTOLNdS2Gfs15rVds+9R7mQeuIBNUiK/lW+bPhU5ObM4MtxTpkgkg+lLN6u+3f32X3CKrt2Ias6h/MAs9b0kSlaf8wH8kbK59Ej9DZeGbVYRi4RixR4Vdn9qBtYe/IRo5zJc4CC7vC/9iVvPt5L3/XS+J0BxIT2UM4fLRUV2Kvohp5WbifYRkICv/s1A73s7XC0buq/fzigFhiMfISeSg4G1J43YJVnobI5JLFZH+4muru06Ny3Aeub5tQONulKxi3wZf3tI7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EB6UhGB2NsOpsrEUuLNPQvlJ84bp2C6hpFCY7PCHoJQ=;
- b=Z5JZbUPm8DBawFTU1Y+oD9lVw3pFmRBjLvdEblzbCU1S83578DwQJrLmek3UIknwaapU60XajZV5po8zq+KecWeCCYgmLPYEIky83CUxeOfQCGN70xN5LknZpdHTH9tsGf5Voz7nC2MNjsz51rOml0vqwLcCXynTuqNJ+FihpwXY8/bJW2+gP0hIS1BNCFrSDcLWr3D5xyZVXgpjzzGtCns/rRk6WIofltbXGxJMnT+Bl48xAqn9WF/Fe6TzKvl0gauPhehKaLhbRMsO0UWJ3uJUx9KbGVNKyJ9HUyD4RRZsWkBTi/RDW/FlabBnDuSw9quWgscjgZC3OFoXMiITEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EB6UhGB2NsOpsrEUuLNPQvlJ84bp2C6hpFCY7PCHoJQ=;
- b=AV5g3dX53DqGarknuydZ7vDa6n0cdAPASv5agvjNO8FuHL3Cr0sIoDkhen0fBtDW9ujaAAIG4WQmZM+34kdeBg+qRPlQVujpR7DsRUFLqzswGfjB9lDH5X9rjenfoW7xh7cIVVVeekZFvAEcPsaUwoXKsBweDPvd8DF31e7dhdm8ISHtTMVH/mLo63wwxYL6Aj+32/aH6zy3OpJXE8O6GoxDvnH0ZIolGJM2p97FmNlI9Bw0B2j57yg26z9F7Qsd0YB61KUJfj4vAHmKNP8t5es+jk3gGQEeuRkc/KvfI9bsw91VYWQKk25DnQ2g2Ceu0sXrOSDMyoxs3+A0P6BeHw==
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com (2603:10a6:20b:42c::17)
- by DBAPR04MB7477.eurprd04.prod.outlook.com (2603:10a6:10:1a9::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.28; Mon, 11 Nov
- 2024 07:28:45 +0000
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684]) by AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684%7]) with mapi id 15.20.8137.027; Mon, 11 Nov 2024
- 07:28:45 +0000
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Frank Li
-	<frank.li@nxp.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: RE: [PATCH v2 net-next 1/5] net: enetc: add Rx checksum offload for
- i.MX95 ENETC
-Thread-Topic: [PATCH v2 net-next 1/5] net: enetc: add Rx checksum offload for
- i.MX95 ENETC
-Thread-Index: AQHbM96K3RveBsHlx0mg/hdPKFgO+bKxrpNQ
-Date: Mon, 11 Nov 2024 07:28:44 +0000
-Message-ID:
- <AS8PR04MB8849441B5718183BE61BDA8E96582@AS8PR04MB8849.eurprd04.prod.outlook.com>
-References: <20241111015216.1804534-1-wei.fang@nxp.com>
- <20241111015216.1804534-2-wei.fang@nxp.com>
-In-Reply-To: <20241111015216.1804534-2-wei.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8849:EE_|DBAPR04MB7477:EE_
-x-ms-office365-filtering-correlation-id: dd556984-c083-426c-127b-08dd022279af
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kfANetHSpWIfw3CjkSgbq7IiswNA8J7aJUYJGnKyu3hhHg5yuwZsow5yfcEa?=
- =?us-ascii?Q?743VwUdg7EeHMnpL281CKA3CUdgwbURGxXe50dMXqFJjL7JP2oo7b3p0PLzi?=
- =?us-ascii?Q?Vyp9TzhIfQIyVuxYwB/n6d9fViK9VJ4H8c5BMvMRsojmwn8q8Dz7uH27a6C/?=
- =?us-ascii?Q?7PjpumQpkLdIBLI/OpropZP85H5z5xhidyXipQoA+mypqWKhJbqyDA/VS3uk?=
- =?us-ascii?Q?elGg576V5AmjwCLREUT2tnyHDtw1lRMFeG7j/KZW02g/hvtwSRaHJDt3QKij?=
- =?us-ascii?Q?FuhuiDQDqiSQMgOZ5YrTQxQhuMXw+9oaksNcAomDILg+yBOdgaSKTmKfb/De?=
- =?us-ascii?Q?6SwLcq9Hmv8oULavtZLocfFJ9jFDz5j+r5w4KAYxUFp4zozLOe1F4Txnw6x4?=
- =?us-ascii?Q?HIoCar+z7qigwZf8yYymQNHVpFt5K04MDxfxmGuNUAfJhJ7zoYZUPHruMMj7?=
- =?us-ascii?Q?EVwbLwZJvVLxMmR2mTlrCU3DcSRFEI+ZBhaK3LyXHU2ZpA704TxUlfRcOMBU?=
- =?us-ascii?Q?LbsXI9WTrwNqilgWuEUplrqiOOOfUXqFBtAcK9CgspjAynIv1ZBrq+B22t6o?=
- =?us-ascii?Q?pS6o/CenY+Yi0CPEhm/Li9MV3h5Ko+IlbeqUqVm9SJj3S0LOJVPG3ipxZ/oT?=
- =?us-ascii?Q?YtD982tLjz9gOJMWBFpvX/RkMo4EQwHp1El0eZxr5SS3WfREyzYH6dcF/U1K?=
- =?us-ascii?Q?43qIMCmCpI1G78uma5ERlieqJG7c4HpMdrqlrdD4M/uA4CWIgLBY9G144OAM?=
- =?us-ascii?Q?/9MOTOUR8VYdXJUKPD6ljSCpX2G5gXKTzEXtifEeqDg7vn6UWOWCILCjIKcJ?=
- =?us-ascii?Q?BSOYueU/VrWOw4UPvdeJdYqXOfPDUv/O6XEfTBP+St3Q0llPrmt8HMFoqat+?=
- =?us-ascii?Q?Q3yIUHS95DWOzKyGZNAN3MSuJMkGZFIvad69HpybnRTCBdHB3GRTqbzb0xGM?=
- =?us-ascii?Q?tcZrT1VEdTiocEfz2pPeDW0UGb2NXsKGOSKpKajw+rKuin3uOMGBq7Bgsnwj?=
- =?us-ascii?Q?zz0NmLnCiMMQSLTMZzkwmB8BtyJ9lTHZLINgrS4JPG+QB/IzP2+n/U6pobjZ?=
- =?us-ascii?Q?goV1G7w+Q27azqpVtwv1eAUwuMe+5VGPWgRa4h5O34SJ1AX8zKIgKUgrqhN/?=
- =?us-ascii?Q?o1BX0GJg7F8Xtk2nQ5k2FPVuwZ5ylVzgxxma246MTBhNnYS67fvFBnw97Zxt?=
- =?us-ascii?Q?R/1EvJt+NUuCPHvVR3mgvFvFgHkQBcRkoPH/+FBBFqMf9schemh/GLbfRLQW?=
- =?us-ascii?Q?M07XySPMxdhzWet5MkzsGyCtIhku7Z0tWTyT16n2SIdmK19lswHfF3bArpMu?=
- =?us-ascii?Q?IkxKbrdzIFMbUIjqRzTYu+UpaTzt48RdTfw4i4qh3MQXgTyKEq4D5G7G9LNl?=
- =?us-ascii?Q?o4+T5Y4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8849.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?v/P61u/TDYM72CaWkn9vp2uH8NvADK0e7rVKv/ed0dOhCebQwDbsQvGKScEp?=
- =?us-ascii?Q?wRKhLxM7wl3wFjCJP0U3NbxCstltrrQYPiA9tdFWb7wmLtrG3vWjjSgO7B15?=
- =?us-ascii?Q?OP1lLi2aQGmV3KUK9tUdeplQCDv2P2mPvR3x0En/fVzl2/eSbDicGqzWCAQg?=
- =?us-ascii?Q?8+1AOl+geseMLiaogR6u6fqEG37yvWb44jkP3in+83bbg2op1nixA891jV1m?=
- =?us-ascii?Q?Mhjcxo8oFizGAUNDLqd/1J/iuaSZR2NPqjnDIvpKvrCh4reae8cbJ3ctUYEB?=
- =?us-ascii?Q?+GIZF1bVUOcn3uunHLmPvpK9c2+Xuca1zpH6M+a2gA+DJJKezkMvJc6wpZ/P?=
- =?us-ascii?Q?MyucqLhntVgg1he4OTprgCY5UnsYySmOHfaNbG+Mjp14qNQfpONoFGict/Pp?=
- =?us-ascii?Q?MYqv8tCFZHTcP4vz/nJL0ATGsjYsW9RjJJSs78nrUWPEyBbS5Slh4hyZjMiG?=
- =?us-ascii?Q?eurhroKNtowOahGyMlDQ2zatocLon0pP9T3+m7ei6HHj1zcQ+aSyvgTuywvy?=
- =?us-ascii?Q?ugA7OttvfAyr4A/5b/Y3NClHj7lehMVYXHhhcamNcfslgtvds6SD6T9xBuuL?=
- =?us-ascii?Q?lEZZegEe7k1R4VG7eaNLThpEbZEtwE/bNFyOhf/pJcIED4CoTPjD53UIAdPp?=
- =?us-ascii?Q?acFhT3Zko77M7Gc9HhxYcea3ndQL6nTYJMJ62gKnunpghZVw9eb2RO8ySsPf?=
- =?us-ascii?Q?AEYYfw5eBU/H4N+uV+r8HzBVAwSQEeAOEQWwlj8qbUXYyTWKXb0yn6k9SR1q?=
- =?us-ascii?Q?mNRPfWBpRI/rbyjBzosIyPyRgEWZsFxuECWVQHHCzxVxKKZXnD5YfIdaEGvD?=
- =?us-ascii?Q?CIzoS69oQ96qE0VayQSpzuSUZF+/mgqUATu9XjhOLR/EqzV5gCXOqhzibJCg?=
- =?us-ascii?Q?b9haaVWX2JfYN5SQ2m1JZOen67b9FmvKT+gNovMDSSFOU02xnJoVdM4Iv1M4?=
- =?us-ascii?Q?+r2D0m/ow870kAmVdDgYNnSxyGSz+OF2E7UILb6EGIeIbLpB9lPqb7kgDYza?=
- =?us-ascii?Q?Ce3Zrw2iYBt+KIWC65bdqZEC6MxbXvhqyH9OatBhV7K6GuHjTzPHgDUil9SN?=
- =?us-ascii?Q?9qR6DNgRv0JSN69YgFXS9nmYwajDTZy2IDx6FOxoZhPHQJsCEGHPcdnXve/9?=
- =?us-ascii?Q?JsvWFricC8TVrsHJIPZkOSnppJl3CBgV9mSCVHYOiwUa6EOWMX+uy+zwEF5l?=
- =?us-ascii?Q?7bHciGDQOHAOD3UXVgAGujXxUIy8Dvb5d8T0QY+MJbrRwCPDlfG/N0oxE2l9?=
- =?us-ascii?Q?4rsSKXKTh14Pe3AjcE7E/aRHqlqVFWzG48STlAhbCkJJc0jgjC6HhSlalT5Y?=
- =?us-ascii?Q?/Dy7YEQP+qIgvMxLdONHje8spHIPYxZmYqCQWQ1Gj1NT4+gsMwYR/zrwPtIB?=
- =?us-ascii?Q?pjbkpL3HBbL1WpgMnKSwK50a2So5OMaF9axbxDXKv02cOniLbmXT1cXB7c4B?=
- =?us-ascii?Q?csi65JUjRKTNCFwjogWMMWfT9hgey4gO7hy6PWNF+/+ZcX3ZdA2HBpMFp4P+?=
- =?us-ascii?Q?iiuG71wp84h1YE/d/E1GuVkuwSQiDbYOQDRQHS60bjSLdbI4H662xu7HIVNn?=
- =?us-ascii?Q?hEB1NOxQpnL0YQYn/40Nf4vV/YX4kXT3uVjGdU/p?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FEC73176
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731310227; cv=none; b=U3Ra0ykpG5wVykzRislRmf0cyPTxcXV/CXaR7fzs3zW/oIJTcHoA8bChD5ZDcdVQ9gCIX+M83YjOLBHf7miN9knjkKqOXGPtwOuYXq6CgLyhEbw1uYTPl3kKlG5CD+YKi66OX0QWRg+2U4yacpK942D20taol/4tJPlpmMBMADw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731310227; c=relaxed/simple;
+	bh=y7m+qe/6Hk9OqmIwKPFA2Ws457l9mrlbLZfBIIaqhx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2j8WRQY0qPRpOycoGN+t2zYDtvTuetPhRYuim5zHzvFm3f3bXqnJree/3mUmlEwPJSXHf2sFJMXuxt/zRCBPMtlu6D+UaoZGmgVP+hPBS6EqDdcdY6nGDXrrDnKrKNCTE34Y/JKz64y9ZS9LGiOxOeiKykKBgweWw3Hmn7wW9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WQM9QBYB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731310224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YXJTAPJRJSE40v52va9xJnnCxZQQit5rD5JjIYG43lo=;
+	b=WQM9QBYBIUdZWainUdzyGyLjAb5J0OCD4y/o3zdjJaGxNFRzesD4DCxtcOhQO6vkAWM6qe
+	WOLR9W1nTGp+2sMrQDQr1Hvo1aM+9Mm6CfXgMgxfzavh9f4T2csQV7Y4xQWCUKDAjX2NaZ
+	zKRMvEzeLX8idihLpmSyy3zHnMaJ2vs=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-138-0zaEqePdPUO1wS-CoBw5nw-1; Mon, 11 Nov 2024 02:30:22 -0500
+X-MC-Unique: 0zaEqePdPUO1wS-CoBw5nw-1
+X-Mimecast-MFC-AGG-ID: 0zaEqePdPUO1wS-CoBw5nw
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2fb5cdaba8aso26501711fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 23:30:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731310221; x=1731915021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YXJTAPJRJSE40v52va9xJnnCxZQQit5rD5JjIYG43lo=;
+        b=tzVwxGRaotCLOUYsxKSEywGDubLUAKXln2GyiyT2Q20+ISyi1+/Www4aG6JoXbd6Py
+         vsqvN1y9NeEX7Y8LZsCDM/muMR99/ELZtoXsc31tOzh4YYpdGKF+doFgruze5coMrq/I
+         FROa08SQd7iThvblZIbk5Dz/ftuKvajmpcU04LqARxF6l501mTcCIMNgp69fj9ulL75A
+         BUSNoxhE7O+yW1hpx4jQAxayT6UP2T0ncMHXpKZjbr94plSKCoPn2G94+o5L+8nSJBj6
+         BxnaQwKTLeor3jtyOYEhYxN5x3a5UBq9Ffdq9U1Je+jhTAmmLXQx3SEPVwrP5mgLm2SX
+         H89w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAe3Kt3zOkviJfsJC4Ug7lnSLskBuCLiJgNJpH9pdeNkaEVhxXL8khy5JxkXCdFlQO7KisV3t+HGcv9NI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9zOLxqdzQDrPlcgfXxw4R5STUkxKN7tJygXxLnPO5FpIf/I9g
+	gbV2NWeT7kFsesHJYvvqVw3P6lDhHVkxoxueuvaBCTrfXmpjC4gDGO9NF1jpGJ+NKJMYl7SEzSy
+	YQGiHhwe5HBXnWIsbQfbvU51IusjdAv1ACWM8qrarS86z8peCelj49oF7yq/pTg==
+X-Received: by 2002:a05:6512:1108:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53d862c7292mr7325555e87.23.1731310220802;
+        Sun, 10 Nov 2024 23:30:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEbA8GHrAoHhI8IG5qB5I52hrPURR4gyZorTCm5EgyxcOpYDfczigvh0oECQWwPpX6q7xCCzw==
+X-Received: by 2002:a05:6512:1108:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53d862c7292mr7325532e87.23.1731310220304;
+        Sun, 10 Nov 2024 23:30:20 -0800 (PST)
+Received: from redhat.com ([2.52.135.185])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a176d6sm564756866b.13.2024.11.10.23.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 23:30:19 -0800 (PST)
+Date: Mon, 11 Nov 2024 02:30:13 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] virtio_ring: skip cpu sync when mapping fails
+Message-ID: <20241111022931-mutt-send-email-mst@kernel.org>
+References: <20241111025538.2837-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8849.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd556984-c083-426c-127b-08dd022279af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Nov 2024 07:28:44.9793
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zyzkr0h3LIwCICARq9MEZgqwRfVgwRzqzDYx2B5LcRMz1iA2PlwJCGDleMpOLA3Ud/G4ZXYovdpeTXdTBoSeJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7477
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111025538.2837-1-jasowang@redhat.com>
 
-> -----Original Message-----
-> From: Wei Fang <wei.fang@nxp.com>
-> Sent: Monday, November 11, 2024 3:52 AM
-[...]
-> Subject: [PATCH v2 net-next 1/5] net: enetc: add Rx checksum offload for
-> i.MX95 ENETC
->=20
-> ENETC rev 4.1 supports TCP and UDP checksum offload for receive, the bit
-> 108 of the Rx BD will be set if the TCP/UDP checksum is correct. Since th=
-is
-> capability is not defined in register, the rx_csum bit is added to struct
-> enetc_drvdata to indicate whether the device supports Rx checksum offload=
-.
->=20
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> v2: no changes
-> ---
+On Mon, Nov 11, 2024 at 10:55:38AM +0800, Jason Wang wrote:
+> There's no need to sync DMA for CPU on mapping errors. So this patch
+> skips the CPU sync in the error handling path of DMA mapping.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+DMA sync is idempotent.
+Extra work for slow path.  Why do we bother?
+
+> ---
+>  drivers/virtio/virtio_ring.c | 98 +++++++++++++++++++++---------------
+>  1 file changed, 57 insertions(+), 41 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index be7309b1e860..b422b5fb22db 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -441,8 +441,10 @@ static void virtqueue_init(struct vring_virtqueue *vq, u32 num)
+>   */
+>  
+>  static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+> -					   const struct vring_desc *desc)
+> +					   const struct vring_desc *desc,
+> +					   bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>  
+>  	if (!vq->do_unmap)
+> @@ -450,16 +452,18 @@ static void vring_unmap_one_split_indirect(const struct vring_virtqueue *vq,
+>  
+>  	flags = virtio16_to_cpu(vq->vq.vdev, desc->flags);
+>  
+> -	dma_unmap_page(vring_dma_dev(vq),
+> -		       virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> -		       virtio32_to_cpu(vq->vq.vdev, desc->len),
+> -		       (flags & VRING_DESC_F_WRITE) ?
+> -		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	dma_unmap_page_attrs(vring_dma_dev(vq),
+> +			     virtio64_to_cpu(vq->vq.vdev, desc->addr),
+> +			     virtio32_to_cpu(vq->vq.vdev, desc->len),
+> +			     (flags & VRING_DESC_F_WRITE) ?
+> +			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +			     attrs);
+>  }
+>  
+>  static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+> -					  unsigned int i)
+> +					  unsigned int i, bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	struct vring_desc_extra *extra = vq->split.desc_extra;
+>  	u16 flags;
+>  
+> @@ -469,20 +473,22 @@ static unsigned int vring_unmap_one_split(const struct vring_virtqueue *vq,
+>  		if (!vq->use_dma_api)
+>  			goto out;
+>  
+> -		dma_unmap_single(vring_dma_dev(vq),
+> -				 extra[i].addr,
+> -				 extra[i].len,
+> -				 (flags & VRING_DESC_F_WRITE) ?
+> -				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_single_attrs(vring_dma_dev(vq),
+> +				       extra[i].addr,
+> +				       extra[i].len,
+> +				       (flags & VRING_DESC_F_WRITE) ?
+> +				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				       attrs);
+>  	} else {
+>  		if (!vq->do_unmap)
+>  			goto out;
+>  
+> -		dma_unmap_page(vring_dma_dev(vq),
+> -			       extra[i].addr,
+> -			       extra[i].len,
+> -			       (flags & VRING_DESC_F_WRITE) ?
+> -			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_page_attrs(vring_dma_dev(vq),
+> +				     extra[i].addr,
+> +				     extra[i].len,
+> +				     (flags & VRING_DESC_F_WRITE) ?
+> +				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				     attrs);
+>  	}
+>  
+>  out:
+> @@ -717,10 +723,10 @@ static inline int virtqueue_add_split(struct virtqueue *_vq,
+>  		if (i == err_idx)
+>  			break;
+>  		if (indirect) {
+> -			vring_unmap_one_split_indirect(vq, &desc[i]);
+> +			vring_unmap_one_split_indirect(vq, &desc[i], true);
+>  			i = virtio16_to_cpu(_vq->vdev, desc[i].next);
+>  		} else
+> -			i = vring_unmap_one_split(vq, i);
+> +			i = vring_unmap_one_split(vq, i, true);
+>  	}
+>  
+>  free_indirect:
+> @@ -775,12 +781,12 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>  	i = head;
+>  
+>  	while (vq->split.vring.desc[i].flags & nextflag) {
+> -		vring_unmap_one_split(vq, i);
+> +		vring_unmap_one_split(vq, i, false);
+>  		i = vq->split.desc_extra[i].next;
+>  		vq->vq.num_free++;
+>  	}
+>  
+> -	vring_unmap_one_split(vq, i);
+> +	vring_unmap_one_split(vq, i, false);
+>  	vq->split.desc_extra[i].next = vq->free_head;
+>  	vq->free_head = head;
+>  
+> @@ -804,7 +810,8 @@ static void detach_buf_split(struct vring_virtqueue *vq, unsigned int head,
+>  
+>  		if (vq->do_unmap) {
+>  			for (j = 0; j < len / sizeof(struct vring_desc); j++)
+> -				vring_unmap_one_split_indirect(vq, &indir_desc[j]);
+> +				vring_unmap_one_split_indirect(vq,
+> +							&indir_desc[j], false);
+>  		}
+>  
+>  		kfree(indir_desc);
+> @@ -1221,8 +1228,10 @@ static u16 packed_last_used(u16 last_used_idx)
+>  }
+>  
+>  static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+> -				     const struct vring_desc_extra *extra)
+> +				     const struct vring_desc_extra *extra,
+> +				     bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>  
+>  	flags = extra->flags;
+> @@ -1231,24 +1240,28 @@ static void vring_unmap_extra_packed(const struct vring_virtqueue *vq,
+>  		if (!vq->use_dma_api)
+>  			return;
+>  
+> -		dma_unmap_single(vring_dma_dev(vq),
+> -				 extra->addr, extra->len,
+> -				 (flags & VRING_DESC_F_WRITE) ?
+> -				 DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_single_attrs(vring_dma_dev(vq),
+> +				       extra->addr, extra->len,
+> +				       (flags & VRING_DESC_F_WRITE) ?
+> +				       DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				       attrs);
+>  	} else {
+>  		if (!vq->do_unmap)
+>  			return;
+>  
+> -		dma_unmap_page(vring_dma_dev(vq),
+> -			       extra->addr, extra->len,
+> -			       (flags & VRING_DESC_F_WRITE) ?
+> -			       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +		dma_unmap_page_attrs(vring_dma_dev(vq),
+> +				     extra->addr, extra->len,
+> +				     (flags & VRING_DESC_F_WRITE) ?
+> +				     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +				     attrs);
+>  	}
+>  }
+>  
+>  static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+> -				    const struct vring_packed_desc *desc)
+> +				    const struct vring_packed_desc *desc,
+> +				    bool skip_sync)
+>  {
+> +	unsigned long attrs = skip_sync ? DMA_ATTR_SKIP_CPU_SYNC : 0;
+>  	u16 flags;
+>  
+>  	if (!vq->do_unmap)
+> @@ -1256,11 +1269,12 @@ static void vring_unmap_desc_packed(const struct vring_virtqueue *vq,
+>  
+>  	flags = le16_to_cpu(desc->flags);
+>  
+> -	dma_unmap_page(vring_dma_dev(vq),
+> -		       le64_to_cpu(desc->addr),
+> -		       le32_to_cpu(desc->len),
+> -		       (flags & VRING_DESC_F_WRITE) ?
+> -		       DMA_FROM_DEVICE : DMA_TO_DEVICE);
+> +	dma_unmap_page_attrs(vring_dma_dev(vq),
+> +			     le64_to_cpu(desc->addr),
+> +			     le32_to_cpu(desc->len),
+> +			     (flags & VRING_DESC_F_WRITE) ?
+> +			     DMA_FROM_DEVICE : DMA_TO_DEVICE,
+> +			     attrs);
+>  }
+>  
+>  static struct vring_packed_desc *alloc_indirect_packed(unsigned int total_sg,
+> @@ -1389,7 +1403,7 @@ static int virtqueue_add_indirect_packed(struct vring_virtqueue *vq,
+>  	err_idx = i;
+>  
+>  	for (i = 0; i < err_idx; i++)
+> -		vring_unmap_desc_packed(vq, &desc[i]);
+> +		vring_unmap_desc_packed(vq, &desc[i], true);
+>  
+>  free_desc:
+>  	kfree(desc);
+> @@ -1539,7 +1553,8 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+>  	for (n = 0; n < total_sg; n++) {
+>  		if (i == err_idx)
+>  			break;
+> -		vring_unmap_extra_packed(vq, &vq->packed.desc_extra[curr]);
+> +		vring_unmap_extra_packed(vq,
+> +					 &vq->packed.desc_extra[curr], true);
+>  		curr = vq->packed.desc_extra[curr].next;
+>  		i++;
+>  		if (i >= vq->packed.vring.num)
+> @@ -1619,7 +1634,8 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+>  		curr = id;
+>  		for (i = 0; i < state->num; i++) {
+>  			vring_unmap_extra_packed(vq,
+> -						 &vq->packed.desc_extra[curr]);
+> +						 &vq->packed.desc_extra[curr],
+> +						 false);
+>  			curr = vq->packed.desc_extra[curr].next;
+>  		}
+>  	}
+> @@ -1636,7 +1652,7 @@ static void detach_buf_packed(struct vring_virtqueue *vq,
+>  			len = vq->packed.desc_extra[id].len;
+>  			for (i = 0; i < len / sizeof(struct vring_packed_desc);
+>  					i++)
+> -				vring_unmap_desc_packed(vq, &desc[i]);
+> +				vring_unmap_desc_packed(vq, &desc[i], false);
+>  		}
+>  		kfree(desc);
+>  		state->indir_desc = NULL;
+> -- 
+> 2.31.1
+
 
