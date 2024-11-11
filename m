@@ -1,141 +1,174 @@
-Return-Path: <linux-kernel+bounces-404307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3139C4231
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:56:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEF79C4238
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:57:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 581BFB23504
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 745A4B27883
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A691C19E7F3;
-	Mon, 11 Nov 2024 15:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981A41A00D1;
+	Mon, 11 Nov 2024 15:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="qcDp9IRI"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ASQzsI++"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFA925777
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4675D25777
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731340586; cv=none; b=Q+5Ko3DhnoCy6jthjF7lbXGAJTI/UtP+Bw4mLfnlnZWuPUS3TeWG7BYdlgJiI6+MHcItyC30V25dGzlncHlIrk9ylA/u4REyOEZh4OmmJjGyY6pwzBN0CIDHcu1UKTnub+H45aGfygp9c0AQZrZUmbX3O86Q80W+SZZARpn4qE8=
+	t=1731340644; cv=none; b=GZbw5CR/g4ivX5vWdzW0nnPTwUI/J7GfuPdTIjme0cVvQTAsORyBj8hAEoIPorJ9cHk9V8vOqBK5QfJHRYljP1bI5C8Om2vqk/vT984bZS8Pzm8LDMOwZhfFF2wp68mTUZshG8DpSvhfcD3E5TcnA3X2+JwE6677aapOGB7wkEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731340586; c=relaxed/simple;
-	bh=cCNT2ol2RaNL8QVF2pjDveoEZz7Jxa2QkNQhEUYkYo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uWZj1Ar4u6AjvHiTol8fv5jFdPtEZmQgWz5jJ2XRMV60N0m8N1ZjHTzahVGylW8Wwj52CLPp/MUWr4W+vAWCNHlvXZ6D/2dbZVTN3AxNOXdV6IPNfkvo/XxSXny168G+1nBSrk2ZE4/oc0TFOxnBZj6JTk62ky46PwvORBYLpKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=qcDp9IRI; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e291cbbf05bso4429297276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:56:24 -0800 (PST)
+	s=arc-20240116; t=1731340644; c=relaxed/simple;
+	bh=/Ezjw7iweKivIIad7vOgJKgtvb4WVv8UnM9lGfTv6Sw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z4dlDrDGelg68TnBDoefCN7Gl1SP6GturouEN/zYA0xJr1rSq7WCcEtMqw8nyTaE0qoj0mv2RYQpH81Fgandj0acpMw9DWyAYdmwy5Swxtu+e25i5aZ0ftoNP2WB3QH/kzcgwNZLFClSGxD6Bqc35muzxA/EsaGeNC9SV0UfJBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ASQzsI++; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5ee55fa4b31so1810547eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:57:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1731340583; x=1731945383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5eepnCx5XvB+VM5l1QUXLjJbZ0P2/X2OA8fzFLl3SzU=;
-        b=qcDp9IRI9iJBZNlEGJd3YJndvhXX2M1Zd7TSbri24s94kaMYvMgSAkW50EjPpUk6+0
-         wc12h/bMw/vMz9CjoEnaMdmMrysche7bjQc67bpj5zl4vzPu+b1wSbkq6yp3R+5014e9
-         DJyRHaPdfMTzdzQ9QGFckt9CQ6wE/tOVHCfLo=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731340639; x=1731945439; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ju3j5igJOosMwn70qDznK7zcecUMPNasKKnWD2d241M=;
+        b=ASQzsI++4fC+THxAREH0hheEtWa0toeeo5LgkTR1+2NYGzmOrKS9GjUmcOKZC/gxdP
+         ptI5M7h1XlTvvkq+QSKqKQR6VWxpGyCpgBAMp6Hlc/bZDVmAUwwcafaoACAyH1v5Levw
+         8gZtOzoOoDJ6v4g0GJ73lHfoySHKV3BcuSy1KGO1Utn8WiSw92tpyyBDDWcjn+QrqGQS
+         2FM3cLmdW/7N8nhNG8ZrXYCRGhoED9svuiGo6eTCLnDfvsiOROC3MYU0PXmfRNXUfaZu
+         dio6ZXwFNuO7iZdlb0VKbcLmkfVZnu+WQBhsu6tQu91n2dXkWNLl4VV/7GYv7uFhs0FM
+         XXNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731340583; x=1731945383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5eepnCx5XvB+VM5l1QUXLjJbZ0P2/X2OA8fzFLl3SzU=;
-        b=uoPMcm1Z/Tpt3ASio3RgXzRlnG7HzIz6EhPrdd5tT2SxgEsjdN1jCH7iX96ONDthbd
-         qOBn+0wO8Km0OVr/k9atjCLhH0pkGs+2GP0OMmks/j8yij993LLtQVQ0T8+l05sqHF4o
-         ceNUrcswa55wHSrG/lyeWJB/7z6t1IU8ftaO4HBfa9f+f2NbtOt9GqNss4fVtfue0mNO
-         gYAeWeiVeuajEOIUhHzS3a6JVfY/tPHBpvz4ru43prFlk8p8afQFpa8PzwruliV+ffpY
-         ivqdJblOiRMa3QBGjl4mWmz4UPGMHvB+5eULB7LdmaWtAssdkU7mZVFEeAB82K5oJn5/
-         BYMA==
-X-Gm-Message-State: AOJu0YzPDrUJXWfvyp2NXg1Wp+nGmD5hJAz9cpDvzoxo7LVvZ7gT1S0P
-	iKs4gD9lE4b+EtbKtYfQ7oz2UoE9dLb4ZC4crpLzumrgcQ56PKpT8/xKYE+QVmn1V5pPn45KJXn
-	XvsrCt4QmAZU5DYujjiezOy/tPO04C8HBIaDGxg==
-X-Google-Smtp-Source: AGHT+IEsYe8rSzyy5OhUBmXTPMZEtvHUcFj0mASzLRnereBtuYGoI07J/H8OkIFWUNj7aFDjt1XNoPm72ujSF5LeyX4=
-X-Received: by 2002:a05:6902:2846:b0:e33:2e:eac1 with SMTP id
- 3f1490d57ef6-e337f88bd3cmr11064673276.30.1731340583346; Mon, 11 Nov 2024
- 07:56:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731340639; x=1731945439;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ju3j5igJOosMwn70qDznK7zcecUMPNasKKnWD2d241M=;
+        b=qBPBzKFKJ101n6XfJhvPnQO7P3MVFySGrm0NMg5CzYRdbs6by135uh77EQ8BHfda8z
+         UEFiMV101Vs5ppcGSzZg+jVZljMrLiEiOfsYdZIVem+rj1j5nIQqaPxMlJudtvLEzFhA
+         GgU75IPUong53cfJUt5DlcZALjm4IMSltQY3TvCRQJBbbmLhSBgKoKZCMCzn5SSbogC5
+         mn/OfDe/lN/PvU7hK26zNOptDgG4hkMiRP6gt9UPH654CU0fk3oSlVG7pVmBi8KPQ2W8
+         W96LHea5x08r6xV36AEKzbPFcZUfc1Q8hQWlsTovwGui9tuuFFcx0rNfC2HSN52DhvOM
+         RC5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWXqSyurFyfjnGRkNraG89YefBBgmtDn05g716krgQQ6OzAF7k01LRc/TCvDT77cU7QT0LpkawNDNuoJHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0WJgtzmnI6NLICpu4Pk7u5fXjJCX8ExSrDBsc3TrP4ceLoVDz
+	p8PskJcChmOcKWvYavyGgrUcRaRat8Lz3hxJnf2VMEqxAdukN/jfZbxz+fNGVSM=
+X-Google-Smtp-Source: AGHT+IGaR1PqbbjtaiXdsjeWdZcHVhMIc95tbonrmfCgnNUfOPReGyI9Wcp+ZBXIqvomwXE4PDwxzA==
+X-Received: by 2002:a05:6820:179a:b0:5ed:feae:d5bd with SMTP id 006d021491bc7-5ee57cc4966mr8725265eaf.3.1731340639428;
+        Mon, 11 Nov 2024 07:57:19 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ee4952777fsm1975301eaf.26.2024.11.11.07.57.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 07:57:18 -0800 (PST)
+Message-ID: <9f86d417-9ae7-466e-a48f-27c447bb706d@kernel.dk>
+Date: Mon, 11 Nov 2024 08:57:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108174839.1016424-1-joel@joelfernandes.org>
- <20241108174839.1016424-3-joel@joelfernandes.org> <a491e879-364c-4b57-aa69-28608d8af4f0@arm.com>
-In-Reply-To: <a491e879-364c-4b57-aa69-28608d8af4f0@arm.com>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Mon, 11 Nov 2024 10:56:12 -0500
-Message-ID: <CAEXW_YTxgpEzA4Vo5+pX=iNYG=xioN=J+bh9YLdSFEc4bEXhLA@mail.gmail.com>
-Subject: Re: [RFC 2/3] tick-sched: Keep tick on if hrtimer is due imminently
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-kernel@vger.kernel.org, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
+ clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20241110152906.1747545-1-axboe@kernel.dk>
+ <20241110152906.1747545-9-axboe@kernel.dk>
+ <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
+ <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+ <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
+ <1c45f4e0-c222-4c47-8b65-5d4305fdb998@kernel.dk>
+ <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <bi5byc65zc54au7mrzf3lcfyhwfvnbigz3f3cn3a4ski6oecbw@rbnepvj4qrgf>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 11, 2024 at 7:38=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 11/8/24 17:48, Joel Fernandes (Google) wrote:
-> > In highres mode, the kernel only considers timer wheel events when
-> > considering whether to keep the tick on (via get_next_interrupt()).
-> >
-> > This seems odd because it consider several other reasons to keep the
-> > tick on. Further, turning off the tick does not help because once idle
-> > exit happens due to that imminent hrtimer interrupt, the tick hrtimer
-> > interrupt is requeued. That means more hrtimer rbtree operations for no=
-t
-> > much benefit.
-> >
-> > Ideally we should not have to do anything because the cpuidle governor
-> > should not try to the stop the tick because it knows about this
-> > situation, but apparently it still does try to stop the tick.
->
-> Any details on this? Which governor?
+On 11/11/24 8:51 AM, Kirill A. Shutemov wrote:
+> On Mon, Nov 11, 2024 at 08:31:28AM -0700, Jens Axboe wrote:
+>> On 11/11/24 8:25 AM, Kirill A. Shutemov wrote:
+>>> On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
+>>>> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
+>>>>>> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+>>>>>>  			}
+>>>>>>  		}
+>>>>>>  put_folios:
+>>>>>> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
+>>>>>> -			folio_put(fbatch.folios[i]);
+>>>>>> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+>>>>>> +			struct folio *folio = fbatch.folios[i];
+>>>>>> +
+>>>>>> +			if (folio_test_uncached(folio)) {
+>>>>>> +				folio_lock(folio);
+>>>>>> +				invalidate_complete_folio2(mapping, folio, 0);
+>>>>>> +				folio_unlock(folio);
+>>>>>
+>>>>> I am not sure it is safe. What happens if it races with page fault?
+>>>>>
+>>>>> The only current caller of invalidate_complete_folio2() unmaps the folio
+>>>>> explicitly before calling it. And folio lock prevents re-faulting.
+>>>>>
+>>>>> I think we need to give up PG_uncached if we see folio_mapped(). And maybe
+>>>>> also mark the page accessed.
+>>>>
+>>>> Ok thanks, let me take a look at that and create a test case that
+>>>> exercises that explicitly.
+>>>
+>>> It might be worth generalizing it to clearing PG_uncached for any page cache
+>>> lookups that don't come from RWF_UNCACHED.
+>>
+>> We can do that - you mean at lookup time? Eg have __filemap_get_folio()
+>> do:
+>>
+>> if (folio_test_uncached(folio) && !(fgp_flags & FGP_UNCACHED))
+>> 	folio_clear_uncached(folio);
+>>
+>> or do you want this logic just in filemap_read()? Arguably it should
+>> already clear it in the quoted code above, regardless, eg:
+>>
+>> 	if (folio_test_uncached(folio)) {
+>> 		folio_lock(folio);
+>> 		invalidate_complete_folio2(mapping, folio, 0);
+>> 		folio_clear_uncached(folio);
+>> 		folio_unlock(folio);
+>> 	}
+>>
+>> in case invalidation fails.
+> 
+> The point is to leave the folio in page cache if there's a
+> non-RWF_UNCACHED user of it.
 
-I noticed this in Qemu (virtualized hardware). Actually I need to
-update the commit message. I think it is not because of the governor
-but because of lack of guest cpuidle support.
+Right. The uncached flag should be ephemeral, hitting it should be
+relatively rare. But if it does happen, yeah we should leave the page in
+cache.
 
-static void cpuidle_idle_call(void)
-{
-....
-  if (cpuidle_not_available(drv, dev)) {
-    tick_nohz_idle_stop_tick();
-    default_idle_call();
-    goto exit_idle;
-  }
-...
-Over here dev and drv are NULL for me. I will also test on real hardware.
+> Putting the check in __filemap_get_folio() sounds reasonable.
 
-Also maybe the " if (cpuidle_not_available(drv, dev))" condition
-should do some more work to determine if tick_nohz_idle_stop_tick()
-should be called instead of unconditionally calling it?
+OK will do.
 
-Pasting relevant parts of my .config:
+> But I am not 100% sure it would be enough to never get PG_uncached mapped.
+> Will think about it more.
 
-# grep IDLE .config
-CONFIG_NO_HZ_IDLE=3Dy
-CONFIG_ARCH_CPUIDLE_HALTPOLL=3Dy
-CONFIG_ACPI_PROCESSOR_IDLE=3Dy
-# CPU Idle
-CONFIG_CPU_IDLE=3Dy
-# CONFIG_CPU_IDLE_GOV_LADDER is not set
-CONFIG_CPU_IDLE_GOV_MENU=3Dy
-# CONFIG_CPU_IDLE_GOV_TEO is not set
-CONFIG_CPU_IDLE_GOV_HALTPOLL=3Dy
-CONFIG_HALTPOLL_CPUIDLE=3Dy
-# end of CPU Idle
-CONFIG_INTEL_IDLE=3Dy
+Thanks!
 
-thanks,
+> Anyway, I think we need BUG_ON(folio_mapped(folio)) inside
+> invalidate_complete_folio2().
 
- - Joel
+Isn't that a bit rough? Maybe just a:
+
+if (WARN_ON_ONCE(folio_mapped(folio)))
+	return;
+
+would do? I'm happy to do either one, let me know what you prefer.
+
+-- 
+Jens Axboe
 
