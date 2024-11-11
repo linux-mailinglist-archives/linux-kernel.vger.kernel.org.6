@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-404549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0449C9C4502
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:33:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E819C453D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE36F284049
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BADEAB256E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B223A1AA78A;
-	Mon, 11 Nov 2024 18:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eB7PRkM0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253181A9B33;
+	Mon, 11 Nov 2024 18:33:21 +0000 (UTC)
+Received: from yyz.mikelr.com (yyz.mikelr.com [170.75.163.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FD014F117;
-	Mon, 11 Nov 2024 18:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10D414F117
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 18:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.75.163.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731349990; cv=none; b=XmwjRStXXU0g/ooNpGrw1VsMBEW3xD2pZqlSU2ur7aJHYXGNB2i4JDZ8yqEt0IKPEoL3IKBoh/jIUL0vEvfPJ4HUbzpLOcWlYPZjaXHiWK4+Zds6BABEwjeUwsksIY6Xx00Q/g+6gESwgNrZN/Uds44N/E0q76qQGeZqlfnhXZo=
+	t=1731350000; cv=none; b=ableAse/Xrf3XfclLOcAsnWxNjYpFKmxkynwTKZ8jVz7XLpWdr/GEGQDar1IeT1wWxn2sCQldCZUujqt7A5SXB2OJHWJojnUvCEGl2ZtUbXr8eYGsLdqaIX2cKkTBJp5+/rOtr2LVT8Mr7IyayLyBWQiGuwWtgOEvjlqGHQAPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731349990; c=relaxed/simple;
-	bh=3B/5kUYL8W4cwhJZ8ncK+YOGBwMwcZd5A7SQVXdUjpo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KbNlUprHqnAD/nErWq01iqCYhG3EYZNar1fxgp9IzOY4sAJ7G0V9FSeNT1CCnmDHdO+yBeFJF69UgW1BVid2m6ljDnWOCbzVLs/ulM4RTdlYCgqT+4uPIp98tKOdWGTPk74DRhz4+Typf+yD8eoCAAxJUHeN4DosLjYbP+1H54k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eB7PRkM0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C2FFC4CECF;
-	Mon, 11 Nov 2024 18:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731349989;
-	bh=3B/5kUYL8W4cwhJZ8ncK+YOGBwMwcZd5A7SQVXdUjpo=;
-	h=From:Date:Subject:To:Cc:From;
-	b=eB7PRkM0tXHORqfiHIBcRDu5y+IkUJbJfzKwEJ51BPQxCfXaLr7PUbHsy/n+6kYcP
-	 5sVWVtULEnSeAcTbFuxHYZ1BFlZ1sN3In6ADELGEEwFModnm/K58IXO6Jeqlldk9f2
-	 Stj7iOodNoR2rhClQEOVXy1AaZXUqM5HlvcfnD23mIACZPvlJXYxi6zlxo6b7u5EeP
-	 6oWok625A3KZ9fOmrSMEcAELv3GfTCGHPDjdfnH7dKfHKFnVkuqp4HoHQmQys3XYvP
-	 fe3EYWXp/9bkK5vHxlBugJhtEojgvodqfdF+QzvSDG2rYmt5WCpC8/VDYAI63tavnb
-	 ZXnveMeQwOy0w==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 11 Nov 2024 18:32:58 +0000
-Subject: [PATCH] kselftest/arm64: Enable build of PAC tests with LLVM=1
+	s=arc-20240116; t=1731350000; c=relaxed/simple;
+	bh=WtRh060pFXnEbb1RL5Llocr/Ie55dloclFd1qlV9uO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hVEYyN0Un+8QdDfRGXEUa2acOOmxsiPhwzX/36+uiSQN0QuajUrZYDYFNdP/9Dx0snU1EPcINSjj9zoz7r/NFhbUH8aHGORm2CrqU06zwSDpVeUqhTB9SoC2rDMZohSGyPb98ewV3bOBuoN07Cp2APFDsCPhMWgcONe7bs5eqIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com; spf=pass smtp.mailfrom=mikelr.com; arc=none smtp.client-ip=170.75.163.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mikelr.com
+Received: from basin.localnet (unknown [IPv6:2607:f2c0:e554:1200:4b8f:795f:f483:85bf])
+	by yyz.mikelr.com (Postfix) with ESMTPA id 65B77727AD;
+	Mon, 11 Nov 2024 13:33:11 -0500 (EST)
+From: Mikel Rychliski <mikel@mikelr.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ David Laight <David.Laight@aculab.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: Fix off-by-one error in __access_ok
+Date: Mon, 11 Nov 2024 13:33:10 -0500
+Message-ID: <2987600.vYhyI6sBWr@basin>
+In-Reply-To: <382372a83d1644f8b3a701ff7e14d5f1@AcuMS.aculab.com>
+References:
+ <20241109210313.440495-1-mikel@mikelr.com>
+ <382372a83d1644f8b3a701ff7e14d5f1@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-arm64-selftest-pac-clang-v1-1-08599ceee418@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANlNMmcC/x2MSwqAMAwFryJZG2hF/F1FXNSaasAfjYhQvLvB2
- Q3MewmEIpNAlyWIdLPwsavYPAO/uH0m5EkdClOUVkEXt6pEoTVcJBeezqNfNUQ/NmYiU7e2akH
- nZ6TAz3/dD+/7AYmktUhqAAAA
-X-Change-ID: 20241111-arm64-selftest-pac-clang-cb80de079169
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1515; i=broonie@kernel.org;
- h=from:subject:message-id; bh=3B/5kUYL8W4cwhJZ8ncK+YOGBwMwcZd5A7SQVXdUjpo=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnMk3iGC0+I1ctBJ6Drd9vqX4HeZ5w93WHhdwde
- gKKAdXgreOJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZzJN4gAKCRAk1otyXVSH
- 0N9zB/sGxMPQGy1POFWcAZb/Bw9nz1cJKiFiWxfYnMrZeE4DTxzQXvwgAD0ZdwJKBL+WdWubUrq
- HxP9lpgZywM/WlPVh8UvOkn8aOwYfeLwzqGtw6GmDwT3ZLywgSZXYgB+/LHewyuLLxwheKgOQhK
- 29iy0o4kd9SiKG2mdU2IUD2o/ODaA5aqPzE29iICx6prBe2HerBZcCk5wERHaKPlZwgq/juprJE
- zkBWNyF116RLWExxgAviOGGQuE9owohxbgteEyxkwpN6d4G+nvT7qCjvirFxsKyOTfVem0AJ2fG
- Pmr064U/ore/bqcfF0pQ4DqzlJE2jBqaKHqsHShaYsuGXdva
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Currently we don't build the PAC selftests when building with LLVM=1 since
-we attempt to test for PAC support in the toolchain before we've set up the
-build system to point at LLVM in lib.mk, which has to be one of the last
-things in the Makefile.
+Hi David,
 
-Since all versions of LLVM supported for use with the kernel have PAC
-support we can just sidestep the issue by just assuming PAC is there when
-doing a LLVM=1 build.
+Thanks for the review:
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/pauth/Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
+On Sunday, November 10, 2024 2:36:49 P.M. EST David Laight wrote:
+> From: Mikel Rychliski
+> 
+> > Sent: 09 November 2024 21:03
+> > 
+> > We were checking one byte beyond the actual range that would be accessed.
+> > Originally, valid_user_address would consider the user guard page to be
+> > valid, so checks including the final accessible byte would still succeed.
+> 
+> Did it allow the entire page or just the first byte?
+> The test for ignoring small constant sizes rather assumes that accesses
+> to the guard page are errored (or transfers start with the first byte).
+> 
 
-diff --git a/tools/testing/selftests/arm64/pauth/Makefile b/tools/testing/selftests/arm64/pauth/Makefile
-index 72e290b0b10c1ea5bf1b84232f70844a601b8129..b5a1c80e0ead6932d2441a192b9758a049e3b3f8 100644
---- a/tools/testing/selftests/arm64/pauth/Makefile
-+++ b/tools/testing/selftests/arm64/pauth/Makefile
-@@ -7,8 +7,14 @@ CC := $(CROSS_COMPILE)gcc
- endif
- 
- CFLAGS += -mbranch-protection=pac-ret
-+
-+# All supported LLVMs have PAC, test for GCC
-+ifeq ($(LLVM),1)
-+pauth_cc_support := 1
-+else
- # check if the compiler supports ARMv8.3 and branch protection with PAuth
- pauth_cc_support := $(shell if ($(CC) $(CFLAGS) -march=armv8.3-a -E -x c /dev/null -o /dev/null 2>&1) then echo "1"; fi)
-+endif
- 
- ifeq ($(pauth_cc_support),1)
- TEST_GEN_PROGS := pac
+valid_user_address() allowed the whole guard page. __access_ok() was 
+inconsistent about ranges including the guard page (and, as you mention, would 
+continue to be with this change).
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241111-arm64-selftest-pac-clang-cb80de079169
+The problem is before 86e6b1547b3d, the off-by-one calculation just lead to 
+another harmless inconsistency in checks including the guard page. Now it 
+prohibits reads of the last mapped userspace byte.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+> > diff --git a/arch/x86/include/asm/uaccess_64.h
+> > b/arch/x86/include/asm/uaccess_64.h index b0a887209400..3e0eb72c036f
+> > 100644
+> > --- a/arch/x86/include/asm/uaccess_64.h
+> > +++ b/arch/x86/include/asm/uaccess_64.h
+> > @@ -100,9 +100,11 @@ static inline bool __access_ok(const void __user
+> > *ptr, unsigned long size)> 
+> >  	if (__builtin_constant_p(size <= PAGE_SIZE) && size <= PAGE_SIZE) 
+{
+> >  	
+> >  		return valid_user_address(ptr);
+> >  	
+> >  	} else {
+> > 
+> > -		unsigned long sum = size + (__force unsigned long)ptr;
+> > +		unsigned long end = (__force unsigned long)ptr;
+> > 
+> > -		return valid_user_address(sum) && sum >= (__force 
+unsigned long)ptr;
+> > +		if (size)
+> > +			end += size - 1;
+> > +		return valid_user_address(end) && end >= (__force 
+unsigned long)ptr;
+> 
+> Why not:
+> 	if (statically_true(size <= PAGE_SIZE) || !size)
+> 		return vaid_user_address(ptr);
+> 	end = ptr + size - 1;
+> 	return ptr <= end && valid_user_address(end);
+
+Sure, agree this works as well.
+
+> Although it is questionable whether a zero size should be allowed.
+> Also, if you assume that the actual copies are 'reasonably sequential',
+> it is valid to just ignore the length completely.
+> 
+> It also ought to be possible to get the 'size == 0' check out of the common
+> path. Maybe something like:
+> 	if (statically_true(size <= PAGE_SIZE)
+> 		return vaid_user_address(ptr);
+> 	end = ptr + size - 1;
+> 	return (ptr <= end || (end++, !size)) && valid_user_address(end);
+
+The first issue I ran into with the size==0 is that __import_iovec() is 
+checking access for vectors with io_len==0 (and the check needs to succeed, 
+otherwise userspace will get a -EFAULT). Not sure if there are others.
+
+Similarly, the iovec case is depending on access_ok(0, 0) succeeding. So with 
+the example here, end underflows and gets rejected.
+
+
 
 
