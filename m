@@ -1,167 +1,150 @@
-Return-Path: <linux-kernel+bounces-404634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664C69C45FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:38:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325809C460B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54C77B25CB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:38:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27542832E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84891A7AFD;
-	Mon, 11 Nov 2024 19:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26A41A7AFD;
+	Mon, 11 Nov 2024 19:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="hciuQT28"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U4QNyNbw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521C9155391
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B91B8468;
+	Mon, 11 Nov 2024 19:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731353895; cv=none; b=ilmzde/l1N4aL+i4jN7Q/HWF0MwxJr4OjoMD+UrAZ2cTT7GjZY0izeYMDv7liDL0BZrZ4mslLPZ5yH7ygbqBnB6hZ82B5Yw0U3HkyMfM/Fbzh0JERLoZzlGxZkCy8bClHNiqqfQDQh/4/S71kNomx6VROIZOV/Z3IH/7LQ/UuFg=
+	t=1731354100; cv=none; b=nXH0EZ9P3uy1+dkeAw0rVBZLuG87Zi+O/M8U8Ic9We3XFcNRy25p8utt9k07dMvAaMv4PBg3WXPhR7r/95ROWf2JhnN4xlVqN5o2+hUfTDcXhVt6EbcjHD+zDmxs63bRvmBjy+naOCoDgXAMKB96qkAbznI1sG2dPusMSbtxDJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731353895; c=relaxed/simple;
-	bh=zIDq+wn2ZjN9W8VtepbTyHymh6yI0tWnPC0D5hNEgIo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u1tHk4xJbSHoZYbmNdSYqbiWygbg21fZaUKDFWp7lbBtJVF3uBJCg35v8+zzjOLtG3jXrDsQiNeFO4GnZu1UokSIGfb0olA2FmcFXQTfcQAe1mUh6kHv4VE500xoSRLoqvYFTJMhKwTkEvpZAA95DbxYyTszbQg9yoEeTxaKTYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=hciuQT28; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e29047bec8fso4542919276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:38:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1731353892; x=1731958692; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zIDq+wn2ZjN9W8VtepbTyHymh6yI0tWnPC0D5hNEgIo=;
-        b=hciuQT28+QOnYsvn/LUSYUfO6phmOgIbF2GiAE1kYTmenT/CY2FW/P8mFQCkS/PPOf
-         HJA0+aFFB1iYEfHkeop57Zz23gZpKpRqwKINBTfLyF9HvgovQlVJ470NQYPkUIv11Ur3
-         PspVsc5xDAF7g3bIjpeWrPzROXI/RA81g7JUwUPprKZaJJRlqJC4ZJdutw9SEKESFNl8
-         +pqAtEAeYUR7v0ilBypc1CAZbkpCKVFueMjKR36QFeTMjpCoXIdnzWN/YR3V0rS5FJBV
-         AnB/NyOJnL5RdBuj5lKqrxYcfN7yMpqDcTXyR5DM1725F7gq6U9yyG/Vz7u0EkDxwVGr
-         ChUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731353892; x=1731958692;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zIDq+wn2ZjN9W8VtepbTyHymh6yI0tWnPC0D5hNEgIo=;
-        b=JGOTjHl1K0D7jeFnfXMLN+GCcaAvE1rCerWO5pZagUmKsL8tT3QD9bY0S1xBqb1Caz
-         10zwzvvPqLzOP8KHkHkW8oHk9OHn6IpmsenJYJG86Q+4Im3/Dm2AVBFRxrOWCv8u+uA3
-         95XMJY4knrUoGTb0MvJrU9F7V7Yp5QivGPPTjNsaYTSh9S+Omdwxf1YjwWAW68V6Llfo
-         1y2E+LitCuGouHCcNOGXlZVjFUfIOnXarcEyUnAG3Rl5iNfAh0J/qS07yGE+AXSx2SNl
-         JsfUJP/AE7LJ8o64vGuiOTuKAIywNkv0wLQnHHXo4iGNk0k77X3l9x3oqbAY7/30WoR4
-         GbDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOyKCVA/YI9JE7At6YjWzYDPHK0xJX0B9VE7pvYIurClzm/1v+whYVDoHY7MhvcOETawOzxuvfN7aVVsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5bTAdWuSx2R18zxGknYViT+6HKr3VQy8NnSM+HYiURPyUfZBQ
-	4Jx1uWchU+GqTTHIjb6m2mpwZtqpzRa18g3BdnjeOk6VikvS64gG4YQK95T3GkX4qe5pXBtBOda
-	YUz9TTESBt0Q2987ks0ikvNfWytzbmD83IA20Xw==
-X-Google-Smtp-Source: AGHT+IGrzE9YOTJL8kh9UHgOa4K+djVvshiDKaOhVhkh2nkzaovFe2fUmA1QrMwh0iRipVpdfEjceCefaOy8bml9H5s=
-X-Received: by 2002:a05:690c:4c11:b0:6e2:fcb5:52fa with SMTP id
- 00721157ae682-6eade448b92mr111732767b3.9.1731353892217; Mon, 11 Nov 2024
- 11:38:12 -0800 (PST)
+	s=arc-20240116; t=1731354100; c=relaxed/simple;
+	bh=E2Be+Um0D29lPNZMVbka1SWU3QlOOJ8gKrM8Hna7fD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kMZB2J2fpokXJUZs5vktPuM38MZtIlyzqp/zcuVDtvne+X7ZNKRk6N5PshYL558oIY1TXtjIkaudlaNAqMU7+9Hy8HK3okC0BVUmDIuWxAc3+e/BFXcP8hRTqubt5fLL7jd8/eKblmHERue/g3yjH+oGNz76B6j+FySs8rqKDEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U4QNyNbw; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731354099; x=1762890099;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=E2Be+Um0D29lPNZMVbka1SWU3QlOOJ8gKrM8Hna7fD0=;
+  b=U4QNyNbwfVb2bcdQZ3n2Apnaig6vH1dy8zCxy4Fqmze3TzBC5McVO0m5
+   EGE0o6giKeONZF/NdBpUwEYcxKTSMHQvgnjTqACNsFquJ038SNZ+yEn3R
+   I3Zndm0+/IViUxI/QlYIuXpOyVkmULD90cUnI9rCmaK+c0Cdt1KIxlxL/
+   SZQ3ZSVGZ2Vcah59zv+kT73MAp7QmugliCH3TJKOrUILjul3GjpK7dumC
+   dCx6JaIGGsb80+TNA8zvha/FonzEEiSa8aFBxNGCoSHwVPfockOV8rjeP
+   0Gtl1IbISkBHuo2M/uHVnhV64tUM3q9RyKOu52mWxrZ6UcqGX3IXFALxS
+   g==;
+X-CSE-ConnectionGUID: pjp8c9NRS6mcppWmxLB0vA==
+X-CSE-MsgGUID: CQo/WM0kRcaaTsXaeWTdpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="34963072"
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="34963072"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 11:41:38 -0800
+X-CSE-ConnectionGUID: lxuSWyxxSQOrPh6VQfbszA==
+X-CSE-MsgGUID: Kcn6ta7pTJmzHSdxAWeG7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,146,1728975600"; 
+   d="scan'208";a="91855774"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.223.216]) ([10.124.223.216])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 11:41:36 -0800
+Message-ID: <4702f25d-0b01-484c-b542-767dcec97256@intel.com>
+Date: Mon, 11 Nov 2024 11:41:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
- <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com>
- <ZySV3KKXSyIreRI4@kekkonen.localdomain> <CAPY8ntDF8W+xRBXbe=LYpg21LL7-svhCySTSJHRNiDzQs4Xw5Q@mail.gmail.com>
- <Zy3oKnHBiGOq8Uoj@kekkonen.localdomain>
-In-Reply-To: <Zy3oKnHBiGOq8Uoj@kekkonen.localdomain>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 11 Nov 2024 19:37:56 +0000
-Message-ID: <CAPY8ntD4Q4f5fSC+xW=j-5T38_Zb5x7pGQM4RYVzrz+NJMGtUQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer exposures
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 07/10] x86/virt/tdx: Trim away tail null CMRs
+To: Kai Huang <kai.huang@intel.com>, kirill.shutemov@linux.intel.com,
+ tglx@linutronix.de, bp@alien8.de, peterz@infradead.org, mingo@redhat.com,
+ hpa@zytor.com, dan.j.williams@intel.com, seanjc@google.com,
+ pbonzini@redhat.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com,
+ adrian.hunter@intel.com, nik.borisov@suse.com
+References: <cover.1731318868.git.kai.huang@intel.com>
+ <fba5b229f4e0a80aa8bb1001c1aa27fddec5f172.1731318868.git.kai.huang@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <fba5b229f4e0a80aa8bb1001c1aa27fddec5f172.1731318868.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Sakari
+On 11/11/24 02:39, Kai Huang wrote:
+> TDX architecturally supports up to 32 CMRs.  The global metadata field
+> "NUM_CMRS" reports the number of CMR entries that can be read by the
+> kernel.  However, that field may just report the maximum number of CMRs
+> albeit the actual number of CMRs is smaller, in which case there are
+> tail null CMRs (size is 0).
+> 
+> Trim away those null CMRs, and print valid CMRs since they are useful
+> at least to developers.
+> 
+> More information about CMR can be found at "Intel TDX ISA Background:
+> Convertible Memory Ranges (CMRs)" in TDX 1.5 base spec [1], and
+> "CMR_INFO" in TDX 1.5 ABI spec [2].
+> 
+> Now get_tdx_sys_info() just reads kernel-needed global metadata to
+> kernel structure, and it is auto-generated.  Add a wrapper function
+> init_tdx_sys_info() to invoke get_tdx_sys_info() and provide room to do
+> additional things like dealing with CMRs.
 
-On Fri, 8 Nov 2024 at 10:30, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->
-> Hi Dave,
->
-> On Thu, Nov 07, 2024 at 12:43:52PM +0000, Dave Stevenson wrote:
-> > Hi Sakari
-> >
-> > On Fri, 1 Nov 2024 at 08:48, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Jai,
-> > >
-> > > On Tue, Oct 29, 2024 at 02:27:36PM +0530, Jai Luthra wrote:
-> > > > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > > >
-> > > > The HBLANK control was read-only, and always configured such
-> > > > that the sensor HTS register was 3448. This limited the maximum
-> > > > exposure time that could be achieved to around 1.26 secs.
-> > > >
-> > > > Make HBLANK read/write so that the line time can be extended,
-> > > > and thereby allow longer exposures (and slower frame rates).
-> > > > Retain the overall HTS setting when changing modes rather than
-> > > > resetting it to a default.
-> > >
-> > > It looks like this changes horizontal blanking at least in some cases. Does
-> > > this also work as expected in binned modes, for instance?
-> > >
-> > > Many sensors have image quality related issues on untested albeit
-> > > functional line length values.
-> > >
-> > > So my question is: how has this been validated?
-> >
-> > Validated by Sony, or others?
-> > I've tested a range of values in all modes and not observed any image
-> > quality issues.
->
-> Somehow at least. :-)
->
-> >
-> > From previous discussions with Sony, they always provide their big
-> > spreadsheet of register values for the specific mode and frame rate
-> > requested. I don't think they even officially state that changing
-> > VTS/FRM_LENGTH_LINES to change the framerate is permitted.
-> > There are some Sony datasheets (eg imx258) that state "set to X. Any
-> > other value please confirm with Sony", but that isn't the case for the
-> > imx219 datasheet. I take that as it is permitted within the defined
-> > ranges.
->
-> I'm not that much concerned of vertical blanking, changing that within the
-> valid range has effects on the image itself very seldom. Horizontal
-> blanking is different though and this is what the patch makes changeable,
-> including a change in the default value. Of course there are big
-> differences between sensors here.
+I'm not sure I understand why this patch is here.
 
-The intention was that the default value shouldn't change, and as the
-overall PIXELS_PER_LINE value was meant to be retained on a mode
-change the value used should only change if an application changes
-V4L2_CID_HBLANK. If I blundered in the implementation of that, then
-that should be fixed (I know Jacopo made comments, but I haven't had a
-chance to investigate).
-
-I doubt we'd get validation from Sony beyond the contents of the
-datasheet. Potentially as the sensor is so old they don't have the
-information or engineers involved.
-I'm happy to set up a test system and capture a set of images with
-HBLANK from min to max at some increment. With the same exposure and
-gain they should all be identical as long as there isn't any movement
-(rolling shutter with longer readout times and all that). Would that
-be satisfactory?
-
-For contrast, the IMX290 datasheet states that VMAX shall be fixed at
-0x465 for all-pixel mode / 0x2ee for 720p mode, and HMAX should be
-changed for frame rate control. As you say, sensors differ.
-
- Dave
-
-> --
-> Kind regards,
->
-> Sakari Ailus
+What does trimming buy us in the first place?
 
