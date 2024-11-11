@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-403695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736129C3929
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:48:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C49C392E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A2D28221A
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0874282362
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FA3315D5CE;
-	Mon, 11 Nov 2024 07:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED4B16D9B8;
+	Mon, 11 Nov 2024 07:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="dZT6giQf"
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="dlAFicXl"
 Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1DF155741;
-	Mon, 11 Nov 2024 07:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EC01607B7;
+	Mon, 11 Nov 2024 07:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731311279; cv=none; b=Fr+7huH71E3ZW6jo4K4/fVkYnHu17rwlpr+6senSqJFQjFFuFqpXxawoPHh6GdbyBIQEuxLeh/7po3pTkXqRAklPDVyo1X7UWIebTHRgdflbOzxRI7vSUuEt3zXWVhM2Af3yfSuM5cpPiloqrkSmOz6rGHLx7OvgPE/7eefgEWw=
+	t=1731311282; cv=none; b=eNlJxjYy0j0uCpHAuImHUBshyrwaM5q7vcQPKotv768+e7R0dra1ROg8N8nz1AXNpJKGnniOyCI9nTyPWBQvKcz62Ohkca5UDnCyufNLxZjARZt7fMx1jGRkukUAoPGRynUNIdY9p7tq101WuSoW+na3VtjTVXyG3ImqxZOsAl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731311279; c=relaxed/simple;
-	bh=FgBt3Jg123yYyp1wUYmUaLQCSARYYCtAyEm2IhlMMkg=;
+	s=arc-20240116; t=1731311282; c=relaxed/simple;
+	bh=Z1uGebRBkKkZtL1tFXiaL5apND2WmW9hxwaVDMMY2kY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iu/Ia/ru+DBU3bF7gKfgSD4VlF+YcBL7oVhFbKADNOGOGGxCwfJg7rBzFuERNRu3ry+me+hvFumgZmTtl6GHz6i0IJvxDskzH8yzvD6IfIGmKlrA4db3ahmJ9Jo8PiBXmOKM2HcahfH7BnCWSewanK9FPJBlzAlxDyAdU0qWeCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=dZT6giQf; arc=none smtp.client-ip=193.68.50.107
+	 MIME-Version:Content-Type; b=ex51QPnfXUO37Y35D4GcGSIJtNjTFHt9jQ3tsBUzV7dOeogwv9e/DvU+cw0xCqZ5XEGV2NPd7Dtml3Dz/jCQQfN0msN73Xk6HbT8zJ3SG4gz4418QjzP6a8gCyrKtVK7y7CA/LaFPWhx+HJYGV+QkQV3qeghRZ7BS/qm25njVHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=dlAFicXl; arc=none smtp.client-ip=193.68.50.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
 Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C8744A043B;
-	Mon, 11 Nov 2024 08:47:49 +0100 (CET)
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 78FE8A07D3;
+	Mon, 11 Nov 2024 08:47:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=zsgQV6ELrg9oFQ/7FJ1q
-	djm9jhFe9TnMay+N17iy5hQ=; b=dZT6giQfDuW+IGUa3NKO2gWhiBnqJ4u87f6Z
-	N4JtRiz/GZ2XfnCFzuN02VF6ixz2Yw55nZvHRniwj1PhQs4M7Ie7q9xqDEo3AJ1m
-	S/znaXvmNI2uL1lYWiKFEjfKU623VsKgB2UZamFG+Os7YqjoOUCOV9on3EUwwKDY
-	MjkEjedCoofrV4vii6RQes09ULmrlFYpSrzgFzIFHple1p1LB4q1xxR63QL82YKm
-	QmwuV/IarRgvagssfEgEYnUn9LoR5tPtJWJPBspKyNq6ASy5FSHg/7gdU4gDm7DW
-	wLp5/DI4oeASiFLfORLDJUkz7miAS5U+Ei7Niah5BlnHhAVRBGFFOftpiDgzPM1M
-	vgksv9+CpZ0Kyvbo0t5Xt8AfAqj2SX77SQ2DxrQNYMA1It4RZ7/5oTbC3JgMTYqJ
-	+ztLEDlY+9o1zq0LSohPLS4gYb1jmUxR2g9a5yCuZQ5FII0SNWGfc63XE/bqZbIN
-	IBe348wLvjBKKGOLphV8g+1dpNuSEtUuJqjKIZtKlckLUm1wOJCi0OQhkhm9DwvP
-	SGzp4X/YmUZ6ugZVOJ88bUohWbev5w5F1eSfQWY9rAW6+Bkg0RiYctlMTY+JGgEs
-	NKvZ1CMMJ9R/v+VHQ47n3Cc8TPE6COoegvGXvDIIwm181SD24jJHIqmrOFc1/9Qj
-	4JPnsXs=
+	:reply-to:subject:subject:to:to; s=mail; bh=s7Qv8bFCt61AxHdLQqwm
+	kNSey58feeSf0MIsETdNM+Y=; b=dlAFicXloL5u790zM40xO1OesOTs66mcjua6
+	rwvgBphxq4k12rPKp17k7OCLiaQsTyNyEZ5vTXjuLwH1fahqKuiMZANRtnAo7r4p
+	PmjcSH5/D2Mphq945/Q6M/xPKmIht6+uYlEhud1s40NXqdp9H/xCuppSNz7kaPpQ
+	Y/xuHZ8f9qXIT/NVJ4ELRYubxc7VVX57JzcLtp7Bv7HVvVK/SORq56RYorCiZcRk
+	zxADZUnkdqO5ujOLDYZ2lPJB5zkScVqL+ouJNVaWBVVJzkZYSZumgJnZTQA1YszB
+	OvJ3Ii4siHdh4Luug19cL0svr8uASojUrXPW5OXkkuU0JFNtfM2S/vcIs2jM7HI0
+	8S9BlRi7dEALrt0Q6/pgaZrmsjEyx9TIUDyqR80WA2W4IOfwQhu/XjAOUjZm5wzc
+	BItIObdXk9fUJQ33yV/Vc/l8Xt7AB6NuUbWHyqioxEowde7KgyUwVDZorEt6M1LR
+	2yVY6N75HEYqCyhxVX9hPfebjYyNQVJMM4zlPb6yM+5TaMTDfkg5dv19k+Wdw6PM
+	nP+92qTkpuUzATRrR0v8KLnuIFx7FVcSGsWzDvZy0sqz9AoAU/06kXRuLC+LYxbz
+	0T2tPUEMViU6luCgREQDh32/79UkPtPwjxAC6Z7WBMF297WEUSnuzNjFgP6WETYY
+	+SVzQUc=
 From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Samuel
- Holland" <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH v4 5/7] power: ip5xxx_power: Check for optional bits
-Date: Mon, 11 Nov 2024 08:47:18 +0100
-Message-ID: <20241111074720.1727163-5-csokas.bence@prolan.hu>
+To: Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH v4 6/7] dt-bindings: trivial-devices: Add Injoinic IP5306
+Date: Mon, 11 Nov 2024 08:47:19 +0100
+Message-ID: <20241111074720.1727163-6-csokas.bence@prolan.hu>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241111074720.1727163-1-csokas.bence@prolan.hu>
 References: <20241111074720.1727163-1-csokas.bence@prolan.hu>
@@ -67,81 +68,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1731311269;VERSION=7980;MC=3696430840;ID=287559;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1731311269;VERSION=7980;MC=1976759226;ID=287560;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
 X-ESET-Antispam: OK
 X-EsetResult: clean, is OK
 X-EsetId: 37303A2980D9485561716B
 
-Some parts may not have certain control bits. These bits
-however may be non-essential to the system's operation,
-as the default behaviour is the one we would set anyways,
-or the bits are not applicable for said part (e. g. enabling
-NTC on a part without an NTC pin, or one where it cannot
-be disabled via registers anyways).
+It is to be handled with the rest of the IP51xx/52xx family.
 
 Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
- drivers/power/supply/ip5xxx_power.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
-index 3a739a969dde..02e2a0c95407 100644
---- a/drivers/power/supply/ip5xxx_power.c
-+++ b/drivers/power/supply/ip5xxx_power.c
-@@ -111,6 +111,7 @@ struct ip5xxx {
- 	} const_curr;
- };
- 
-+#define REG_FIELD_UNSUPPORTED { .lsb = 1 }
- /* Register fields layout. Unsupported registers marked as { .lsb = 1 } */
- struct ip5xxx_regfield_config {
- 	const struct reg_field charger_enable;
-@@ -204,9 +205,11 @@ static int ip5xxx_initialize(struct power_supply *psy)
- 	 * Disable shutdown under light load.
- 	 * Enable power on when under load.
- 	 */
--	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.light_load_shutdown.enable, 0);
--	if (ret)
--		return ret;
-+	if (ip5xxx->regs.boost.light_load_shutdown.enable) {
-+		ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.light_load_shutdown.enable, 0);
-+		if (ret)
-+			return ret;
-+	}
- 	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.load_powerup_en, 1);
- 	if (ret)
- 		return ret;
-@@ -229,9 +232,11 @@ static int ip5xxx_initialize(struct power_supply *psy)
- 	 * Enable the NTC.
- 	 * Configure the button for two presses => LED, long press => shutdown.
- 	 */
--	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.ntc_dis, 0);
--	if (ret)
--		return ret;
-+	if (ip5xxx->regs.battery.ntc_dis) {
-+		ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.ntc_dis, 0);
-+		if (ret)
-+			return ret;
-+	}
- 	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.btn.wled_mode, 1);
- 	if (ret)
- 		return ret;
-@@ -505,9 +510,12 @@ static int ip5xxx_battery_set_voltage_max(struct ip5xxx *ip5xxx, int val)
- 	if (ret)
- 		return ret;
- 
--	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.vset_en, 1);
--	if (ret)
--		return ret;
-+	/* Don't try to auto-detect battery type, even if the IC could */
-+	if (ip5xxx->regs.battery.vset_en) {
-+		ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.vset_en, 1);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return 0;
- }
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 9bf0fb17a05e..1538f1ce3238 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -147,6 +147,8 @@ properties:
+           - injoinic,ip5207
+             # Injoinic IP5209 2.4A Power Bank IC with I2C
+           - injoinic,ip5209
++            # Injoinic IP5306 2.1A Power Bank IC with I2C option
++          - injoinic,ip5306
+             # Inspur Power System power supply unit version 1
+           - inspur,ipsps1
+             # Intersil ISL29028 Ambient Light and Proximity Sensor
 -- 
 2.34.1
 
