@@ -1,120 +1,83 @@
-Return-Path: <linux-kernel+bounces-404410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37439C4370
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:19:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066949C4372
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA461F22402
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:19:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2561F223E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A351AA7BF;
-	Mon, 11 Nov 2024 17:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850AF1A704B;
+	Mon, 11 Nov 2024 17:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWuzs81W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SukEesPX"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411041AA781;
-	Mon, 11 Nov 2024 17:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231F71494BB
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731345492; cv=none; b=PTEiPjWoKDHZuFXkIxczdNJ4I5WHNhTD34hpv1Z25ggELauY5UgZCg3chcsBSTYqgTjvZWMRrQj8Uk6xdrfQ6WIqbzrqV6bRqEjsEMBeUwqqto2xnVf/PZRBFy89vDequyKOfcq5uJzplqcLiaFuMmIjM3aHg8Zc4d8j0XoNAMc=
+	t=1731345562; cv=none; b=Q5pplR1cLvyNQdGfFwgnn2nAZq1HTbi5iTAJlfPAKa2cSsJDByb0FgRlIzmz7woe84hfnEo814Jc3b3Sc9SKg6c4HGJzl0yg6Ql9JG/MBQXJ7jQUoiwYR3QIuSn5WIs3ZMHMRqJZlDFv7cbDFVpIWYMZrHCDc6OdjfUBte7dL7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731345492; c=relaxed/simple;
-	bh=rHf271R2KuETkNEiM6Gx5NyfytQwQyRduPp9khGq67c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnS2gP63TCdIUKapqtEZezoean7Pb9sHKDwShnuC32DDHd4me2vlYX2us20dvmupLN8Jy7ClqVBBxROaG9AvIR7hrWjA81QURv1iKMwFv+BxRqoLMiR63sIYCJB9WlniJtsjLt20bhBGjf0yXOS77Ft5EriEktXAkZiAvcvqAQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWuzs81W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D38DC4AF09;
-	Mon, 11 Nov 2024 17:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731345491;
-	bh=rHf271R2KuETkNEiM6Gx5NyfytQwQyRduPp9khGq67c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BWuzs81WQ4XALvKxzc7LldTevsLRBizzCSNnGR0LmHVd1Xs6YoOaGgUFpVw2d5G9x
-	 14S6MxD1tQ+Zy27NjykeSa/PYlZJRblPAcn8v66OeAqWm4DF3hynKHtXXdhCJbHWNQ
-	 Tr10jRbl/bJ7GybwEYqanHLcXayV1YJpwmsZ8ug2bwe+4LLT/GhqM9LWiS+fKQol74
-	 JzL5t9yogh1kH8rZCnoFiKuCIlN/KT9XiJp689k1s5hweAEwOmNdScmj7mFLQ/IVid
-	 QCBQi+9L43LsfuHJCl48PksgWJoeb+ghmDQvxrmG4sOpNj9W33/LR/2wtMtjAz5DrG
-	 s248TwbmkUDFg==
-Date: Mon, 11 Nov 2024 14:18:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	"Steinar H. Gunderson" <sesse@google.com>
-Subject: Re: [PATCH 1/3] perf disasm: Introduce symbol__disassemble_objdump()
-Message-ID: <ZzI8UKdy4dg2Tf6L@x1>
-References: <20241111151734.1018476-1-acme@kernel.org>
- <20241111151734.1018476-2-acme@kernel.org>
- <CAP-5=fXxwf2wJf-JN7p5F_-V7WdDt_s9jk+Mz5YMkH+9gkpJUg@mail.gmail.com>
+	s=arc-20240116; t=1731345562; c=relaxed/simple;
+	bh=hNUeqD+lVsJBRbEFkK4PmdQAcN/BCXV1PSZ3SYH4tC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lf77wLKMk6f0h1IdNDCD2YkLtbsh1wO6OmQ97Gp9CBQ+V3a/5HGc3e13U5BGT2Gun+k8W6kQ2njFhjE3cuL4ErSH5N1QncqglPKlFkkYqlHbHcsaam0BZO/JP2np5U1VXbnHR7QN/lIcOSj+g3e6mujW4MNOBNkRrhvCvUV27vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SukEesPX; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vt8QrytlM6V2BUYi8TToKbcS7cl84Bzk+nOqQuQcapI=; b=SukEesPXyt7+N2QyisJfBalF7k
+	t68isgZ8AUvFf29f8ztiWoUz/RXl5+BsbEiyJ1/O06+iatuOHkMApIPEAx4CXF58Oo7RDBEiT6GD7
+	nDD/EL3SJqBB0M/H4KP91d+RA4V2W3oO762eAISI06oIjwO6kDp9v4JSv0Gn/HUZrt64IgBqwG0KJ
+	9DPoYIupOeaO0IV/PT7S3ALl/HMzBvP8n7fjy9YeEBn3GGE5LKC4jk9NIX8kxt8MR8RpIBZ3I9Tim
+	c3aVgtWpDVMpf0SGAHaXWITm26Mgf2s8k7Pi3Yx5prLVG7BDD4p7B7EXyz4GemVDFSP0sKP1LZBvV
+	ITpv3WNA==;
+Received: from [179.118.191.54] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tAY4A-005ZCK-Ur; Mon, 11 Nov 2024 18:19:07 +0100
+Message-ID: <9b753080-87c3-424e-a2a9-d4b04c1dbec4@igalia.com>
+Date: Mon, 11 Nov 2024 14:19:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: shmem: Fix variable type to int to evaluate negative
+ conditions
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>,
+ Gabriel Krisman Bertazi <gabriel@krisman.be>
+References: <20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXxwf2wJf-JN7p5F_-V7WdDt_s9jk+Mz5YMkH+9gkpJUg@mail.gmail.com>
 
-On Mon, Nov 11, 2024 at 08:15:53AM -0800, Ian Rogers wrote:
-> On Mon, Nov 11, 2024 at 7:17 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> >
-> > With the first disassemble method in perf, the parsing of objdump
-> > output, just like we have for llvm and capstone.
-> >
-> > This paves the way to allow the user to specify what disassemblers are
-> > preferred and to also to at some point allow building without the
-> > objdump method.
-> >
-> > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Steinar H. Gunderson <sesse@google.com>
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Em 11/11/2024 14:10, Karan Sanghavi escreveu:
+> version variable captures return value from utf8_parse_version
+> function which can be negative, but unsigned won't
+> let it capture, thus missing the further checks on negative values.
 > 
-> Acked-by: Ian Rogers <irogers@google.com>
-> 
-> Nit below relating to a pre-existing condition in the code.
+> Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-<SNIP>
+Reviewed-by: André Almeida <andrealmeid@igalia.com>
 
-> > +#ifdef HAVE_LIBLLVM_SUPPORT
-> > +       err = symbol__disassemble_llvm(symfs_filename, sym, args);
-> > +       if (err == 0)
-> > +               goto out_remove_tmp;
-> > +#endif
-> > +#ifdef HAVE_LIBCAPSTONE_SUPPORT
-> > +       err = symbol__disassemble_capstone(symfs_filename, sym, args);
-> > +       if (err == 0)
-> > +               goto out_remove_tmp;
-> > +#endif
-> > +       err = symbol__disassemble_objdump(symfs_filename, sym, args);
-
-> This sure does read like the symbol will be disassembled 3 times if
-> those ifdefs are defined. Is there anyway to make the code look more
-> intuitive?
-
-This will end up being rewritten, the end result is a loop where the
-list of disassemblers to try is iterated and as soon as one succeeeds
-(returns zero), the loop is exited.
-
-- Arnaldo
 
