@@ -1,131 +1,427 @@
-Return-Path: <linux-kernel+bounces-403646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C509C3874
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:34:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0420C9C3831
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DFE82822EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92282810F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C3915624B;
-	Mon, 11 Nov 2024 06:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3201537DA;
+	Mon, 11 Nov 2024 06:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FW/fxHuY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PhxcrIhT"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D88A156230;
-	Mon, 11 Nov 2024 06:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372972914
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731306858; cv=none; b=Jifh4Ju/luSOmshYy6nblCBkCvMjN56Hd5vfevr91SXHai5vm+n11yXrBRQD4d6rhIX8+W8scF408yrfh3nYROjqCw+Ezl4MgATOqjYE0vvPM5FCjSPKjRd9ctOMn+7XtK8dRM95VUV3J7QvbpEZ0/uHa+8Q7Rpu2ehslYQg2z8=
+	t=1731305350; cv=none; b=aUn8SpGuPgjGXke+8QY+7DWyToukrCX6GUjLmuMxEx7/0RDhEfxoYGlGhZpXj3NwjpzZX+nyaY/yl2o+A3qpLl0c7iAntZXBMJ2J3U4knK2vaUL1UApNcq8xoTfZC7Gv/q8kTwKALEOfooI5cb1Q4M0q8qI1vUphgAD1kt+eQOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731306858; c=relaxed/simple;
-	bh=L6aBYdUFJ+8rtjgXcrfup8W0UgsAFwzRbXo0gbeZSpg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=RHiC7HmCNnoNJMpWg+zftWnlyFoRo9+Gtq9Z0l70VEcANxADdptH1q12gDoarIvZizlX7rJuLsFsk7MpfajzSUQ5TKJZ8ICpkf1BovCALCewTc1m+EF/Q0EN964PwPY7ZpqVNR+PnpAgwOEugkmK/baS+mtNSPTj65LCHAiO5ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FW/fxHuY; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731306857; x=1762842857;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=L6aBYdUFJ+8rtjgXcrfup8W0UgsAFwzRbXo0gbeZSpg=;
-  b=FW/fxHuYMZ7wAXR4Xt25E/qhvLYfR34YCKm8v1ZJq4FHuUuvAVG3qsyv
-   Hs5piM5YFiRxH5F/O6VuwsYjUro5VqPT8AZupOETahd24BYSqa2tKeryH
-   pqbZTP+ge4ckQFyZ5tZBbrLuhz1+xB7YUbFIqGbG/N0GzxGr9fTNgYSri
-   xnae3I/rG4o10aa7ReRYMR8Ncfr86r8HCNLDFYhUsRWrqyEjCm4HEyTd7
-   8i76myb1/wsaPyoj4dKoaiTd3LSh+Ozn6IRNjKgcXAorndH5NUtlssyZU
-   OcIUULi6eZyFS1lV4t7GH0k8pFTplgcSZGbOgwO4DKpwbUWoQXtRAo5Va
-   A==;
-X-CSE-ConnectionGUID: 97Kn9+SoTBefvY63QMODcg==
-X-CSE-MsgGUID: lO4iju5PSvWUGtaWSlxx5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11252"; a="41715634"
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="41715634"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:34:17 -0800
-X-CSE-ConnectionGUID: YvgAcfbUStSx7H7HpQgFrA==
-X-CSE-MsgGUID: d2yujnEgQ2GKrrD6H2w/cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,144,1728975600"; 
-   d="scan'208";a="117684706"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2024 22:34:14 -0800
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: bp@alien8.de,
-	tony.luck@intel.com
-Cc: tglx@linutronix.de,
-	dave.hansen@linux.intel.com,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	yazen.ghannam@amd.com,
-	sohil.mehta@intel.com,
-	nik.borisov@suse.com,
-	x86@kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	qiuxu.zhuo@intel.com
-Subject: [PATCH v4 8/8] x86/mce: Fix typos
-Date: Mon, 11 Nov 2024 14:04:28 +0800
-Message-Id: <20241111060428.44258-9-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241111060428.44258-1-qiuxu.zhuo@intel.com>
-References: <20241025024602.24318-1-qiuxu.zhuo@intel.com>
- <20241111060428.44258-1-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1731305350; c=relaxed/simple;
+	bh=M9/YujzwjtaWY8i/x6w1puBUWDnrFtt+Byo34imRGF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s5GEgl97PGqQBiPX7SzqnyBqJQCYr41pguyorywMiapn3b2PvtVaSSkVoFE8nq1TJhh2u08PJKMJRCcHZM40ViPFyqqHACnf29/5EIssJDpmxxPxw1RKLW3nSRYrh26uF+5enkpfC+nj+m4Qy7VcyGtGs4Z1pSBGKm7hA8KiPYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PhxcrIhT; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so6268563e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 10 Nov 2024 22:09:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1731305346; x=1731910146; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZyQBQEV98yv/woCTRM+FX9mylAGnZdfErnfCF33GHc=;
+        b=PhxcrIhT5iN+rUHeSVUsFG4CLIQuSXO5wipVomfo9AWZ+zeDtafvpsVA5whDfmndtK
+         G6kLxWCiR7AjnXb8tA9nhtezhVuAzqi5orrvGzONBXVHg1W/6ZnWIBn+FcO28u7DMh35
+         j2QG/oTCDkBfDvVzMxVMvyyrXseS7t6r0dj+s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731305346; x=1731910146;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PZyQBQEV98yv/woCTRM+FX9mylAGnZdfErnfCF33GHc=;
+        b=E5UQGVricNBlYBWxKXb8hhfw4dZDXk1LSbV+VVGjrIyMyV4JGlcs9gC6FZn+oib3hI
+         KKQer0fX+6J2xIjsLalnICVrGNt2T++oIRTMQ1DOB+JTv5kcNOoz2oy1tqp4iAiDZXlu
+         a1YrDVl4QqliYSdRt6x7ylEjKQnMhNXE3usUMaVstcW3ZOLyGQfbn9WFcx7lo7zv272E
+         eSIrvTNvLuJ1UH4/4UdkPh86D83qxMoDJM8pg+GRECvQ08PwMZdhRzaaHJOFSGkLNfsI
+         Qo93oIBxTDNZICRP0j7H7Gmgbdd1wQGDFVPtc0Ol35vixoUFOIrY0/i6c9qR25uFmmLs
+         ngxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWTeYEV7vAQp70dZ+pK8SlbTQ3UFwmsAnfgN77Q8Rn9SVCjqcJDIOEd16wrVDney5jFcuQV7jB4pY1LNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaCJEpPL1F7LUa44C0/dxNkAwHTXjD0kgKRk51AV4/zmtb0veJ
+	xRGLDtxvDXp2yG97djYY+FQlA9vXipUDcTVgpKw3AGEqTGCsDcXUNIeknw0pz7dfIALzWUiO1vP
+	nCsnk+XbJkyzQKuowizjFk8mdxzYgdvx3J53K
+X-Google-Smtp-Source: AGHT+IEnfO2StxBrmWnhMFWGmi+xwnKJAetjQkOpS36XJ4HiELKh/UuFNYBmx7o8pIyjJrN5CFqBjZyrXVey72WQVRQ=
+X-Received: by 2002:a05:6512:3f17:b0:539:e94d:b490 with SMTP id
+ 2adb3069b0e04-53d862ebf33mr4008765e87.43.1731305346272; Sun, 10 Nov 2024
+ 22:09:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241107121637.1117089-1-srasheed@marvell.com>
+In-Reply-To: <20241107121637.1117089-1-srasheed@marvell.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Mon, 11 Nov 2024 11:38:58 +0530
+Message-ID: <CAH-L+nO97YLd+gG1dGfyi=xZUCLJg+GsGAv=Dyf-4hA3-TP--A@mail.gmail.com>
+Subject: Re: [PATCH net-next] octeon_ep: add ndo ops for VFs in PF driver
+To: Shinas Rasheed <srasheed@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, hgani@marvell.com, 
+	sedara@marvell.com, vimleshk@marvell.com, thaller@redhat.com, 
+	wizhao@redhat.com, kheib@redhat.com, egallen@redhat.com, konguyen@redhat.com, 
+	horms@kernel.org, frank.feng@synaxg.com, 
+	Veerasenareddy Burru <vburru@marvell.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000030fc1806269cf015"
 
-Fix typos in comments.
+--00000000000030fc1806269cf015
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
-Changes in v4:
-  - No changes.
+Hi Shinas,
 
-Changes in v3:
-  - Collect "Reviewed-by:" from Nikolay & Sohil.
-  - Remove the detail typos from the commit message (Sohil).
+On Thu, Nov 7, 2024 at 5:47=E2=80=AFPM Shinas Rasheed <srasheed@marvell.com=
+> wrote:
+>
+> These APIs are needed to support applicaitons that use netlink to get VF
+[d] typo in applications
+> information from a PF driver.
+>
+> Signed-off-by: Shinas Rasheed <srasheed@marvell.com>
+> ---
+>  .../ethernet/marvell/octeon_ep/octep_main.c   | 98 +++++++++++++++++++
+>  .../ethernet/marvell/octeon_ep/octep_main.h   |  1 +
+>  .../marvell/octeon_ep/octep_pfvf_mbox.c       | 22 ++++-
+>  .../marvell/octeon_ep/octep_pfvf_mbox.h       |  3 +
+>  4 files changed, 122 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c b/driver=
+s/net/ethernet/marvell/octeon_ep/octep_main.c
+> index 549436efc204..129c68f5a4ba 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.c
+> @@ -1137,6 +1137,95 @@ static int octep_set_features(struct net_device *d=
+ev, netdev_features_t features
+>         return err;
+>  }
+>
+> +static int octep_get_vf_config(struct net_device *dev, int vf, struct if=
+la_vf_info *ivi)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       ivi->vf =3D vf;
+> +       ether_addr_copy(ivi->mac, oct->vf_info[vf].mac_addr);
+> +       ivi->vlan =3D 0;
+> +       ivi->qos =3D 0;
+> +       ivi->spoofchk =3D 0;
+> +       ivi->linkstate =3D IFLA_VF_LINK_STATE_ENABLE;
+> +       ivi->trusted =3D true;
+> +       ivi->max_tx_rate =3D 10000;
+> +       ivi->min_tx_rate =3D 0;
+> +
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_mac(struct net_device *dev, int vf, u8 *mac)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +       int i, err;
+> +
+> +       if (!is_valid_ether_addr(mac)) {
+> +               dev_err(&oct->pdev->dev, "Invalid  MAC Address %pM\n", ma=
+c);
+> +               return -EADDRNOTAVAIL;
+> +       }
+> +
+> +       dev_dbg(&oct->pdev->dev, "set vf-%d mac to %pM\n", vf, mac);
+> +       for (i =3D 0; i < ETH_ALEN; i++)
+> +               oct->vf_info[vf].mac_addr[i] =3D mac[i];
+[Kalesh] Is there any reason to no do a memcpy here or a ether_addr_copy()?
+> +       oct->vf_info[vf].flags |=3D  OCTEON_PFVF_FLAG_MAC_SET_BY_PF;
+> +
+> +       err =3D octep_ctrl_net_set_mac_addr(oct, vf, mac, true);
+> +       if (err) {
+> +               dev_err(&oct->pdev->dev, "Set VF%d MAC address failed via=
+ host control Mbox\n", vf);
+[d] looks like this return is unnecessary. You can "return rc" at the
+end of the function.
+> +               return err;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_vlan(struct net_device *dev, int vf, u16 vlan, u=
+8 qos, __be16 vlan_proto)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Setting VF VLAN not supported\n");
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_spoofchk(struct net_device *dev, int vf, bool se=
+tting)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Setting VF spoof check not supported\n"=
+);
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_trust(struct net_device *dev, int vf, bool setti=
+ng)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Setting VF trust not supported\n");
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_rate(struct net_device *dev, int vf, int min_tx_=
+rate, int max_tx_rate)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Setting VF rate not supported\n");
+> +       return 0;
+> +}
+> +
+> +static int octep_set_vf_link_state(struct net_device *dev, int vf, int l=
+ink_state)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Setting VF link state not supported\n")=
+;
+> +       return 0;
+> +}
+> +
+> +static int octep_get_vf_stats(struct net_device *dev, int vf, struct ifl=
+a_vf_stats *vf_stats)
+> +{
+> +       struct octep_device *oct =3D netdev_priv(dev);
+> +
+> +       dev_err(&oct->pdev->dev, "Getting VF stats not supported\n");
+> +       return 0;
+> +}
+[Kalesh] Do not expose the support for these unsupported hooks in
+struct net_device_ops. Stack has a check for the support before
+invoking the callback.
+> +
+>  static const struct net_device_ops octep_netdev_ops =3D {
+>         .ndo_open                =3D octep_open,
+>         .ndo_stop                =3D octep_stop,
+> @@ -1146,6 +1235,15 @@ static const struct net_device_ops octep_netdev_op=
+s =3D {
+>         .ndo_set_mac_address     =3D octep_set_mac,
+>         .ndo_change_mtu          =3D octep_change_mtu,
+>         .ndo_set_features        =3D octep_set_features,
+> +       /* for VFs */
+> +       .ndo_get_vf_config       =3D octep_get_vf_config,
+> +       .ndo_set_vf_mac          =3D octep_set_vf_mac,
+> +       .ndo_set_vf_vlan         =3D octep_set_vf_vlan,
+> +       .ndo_set_vf_spoofchk     =3D octep_set_vf_spoofchk,
+> +       .ndo_set_vf_trust        =3D octep_set_vf_trust,
+> +       .ndo_set_vf_rate         =3D octep_set_vf_rate,
+> +       .ndo_set_vf_link_state   =3D octep_set_vf_link_state,
+> +       .ndo_get_vf_stats        =3D octep_get_vf_stats,
+>  };
+>
+>  /**
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h b/driver=
+s/net/ethernet/marvell/octeon_ep/octep_main.h
+> index fee59e0e0138..3b56916af468 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_main.h
+> @@ -220,6 +220,7 @@ struct octep_iface_link_info {
+>  /* The Octeon VF device specific info data structure.*/
+>  struct octep_pfvf_info {
+>         u8 mac_addr[ETH_ALEN];
+> +       u32 flags;
+>         u32 mbox_version;
+>  };
+>
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c b/d=
+rivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> index e6eb98d70f3c..be21ad5ec75e 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.c
+> @@ -156,12 +156,23 @@ static void octep_pfvf_set_mac_addr(struct octep_de=
+vice *oct,  u32 vf_id,
+>  {
+>         int err;
+>
+> +       if (oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) {
+> +               dev_err(&oct->pdev->dev,
+> +                       "VF%d attampted to override administrative set MA=
+C address\n",
+[d] typo in "attempted"
+> +                       vf_id);
+> +               rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> +               return;
+> +       }
+> +
+>         err =3D octep_ctrl_net_set_mac_addr(oct, vf_id, cmd.s_set_mac.mac=
+_addr, true);
+>         if (err) {
+>                 rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> -               dev_err(&oct->pdev->dev, "Set VF MAC address failed via h=
+ost control Mbox\n");
+> +               dev_err(&oct->pdev->dev, "Set VF%d MAC address failed via=
+ host control Mbox\n",
+> +                       vf_id);
+>                 return;
+>         }
+> +
+> +       ether_addr_copy(oct->vf_info[vf_id].mac_addr, cmd.s_set_mac.mac_a=
+ddr);
+>         rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+>  }
+>
+> @@ -171,10 +182,17 @@ static void octep_pfvf_get_mac_addr(struct octep_de=
+vice *oct,  u32 vf_id,
+>  {
+>         int err;
+>
+> +       if (oct->vf_info[vf_id].flags & OCTEON_PFVF_FLAG_MAC_SET_BY_PF) {
+> +               dev_dbg(&oct->pdev->dev, "VF%d MAC address set by PF\n", =
+vf_id);
+> +               ether_addr_copy(rsp->s_set_mac.mac_addr, oct->vf_info[vf_=
+id].mac_addr);
+> +               rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+> +               return;
+> +       }
+>         err =3D octep_ctrl_net_get_mac_addr(oct, vf_id, rsp->s_set_mac.ma=
+c_addr);
+>         if (err) {
+>                 rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_NACK;
+> -               dev_err(&oct->pdev->dev, "Get VF MAC address failed via h=
+ost control Mbox\n");
+> +               dev_err(&oct->pdev->dev, "Get VF%d MAC address failed via=
+ host control Mbox\n",
+> +                       vf_id);
+>                 return;
+>         }
+>         rsp->s_set_mac.type =3D OCTEP_PFVF_MBOX_TYPE_RSP_ACK;
+> diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h b/d=
+rivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> index 0dc6eead292a..339977c7131a 100644
+> --- a/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> +++ b/drivers/net/ethernet/marvell/octeon_ep/octep_pfvf_mbox.h
+> @@ -23,6 +23,9 @@ enum octep_pfvf_mbox_version {
+>
+>  #define OCTEP_PFVF_MBOX_VERSION_CURRENT        OCTEP_PFVF_MBOX_VERSION_V=
+2
+>
+> +/* VF flags */
+> +#define OCTEON_PFVF_FLAG_MAC_SET_BY_PF  BIT_ULL(0) /* PF has set VF MAC =
+address */
+> +
+>  enum octep_pfvf_mbox_opcode {
+>         OCTEP_PFVF_MBOX_CMD_VERSION,
+>         OCTEP_PFVF_MBOX_CMD_SET_MTU,
+> --
+> 2.25.1
+>
+>
 
-Changes in v2:
-  - Collect "Reviewed-by:" from Tony.
 
- arch/x86/kernel/cpu/mce/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--=20
+Regards,
+Kalesh A P
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 0f0c6e9d9183..6e194ccffc7c 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -1144,7 +1144,7 @@ static noinstr int mce_start(int *no_way_out)
- 	} else {
- 		/*
- 		 * Subject: Now start the scanning loop one by one in
--		 * the original callin order.
-+		 * the original calling order.
- 		 * This way when there are any shared banks it will be
- 		 * only seen by one CPU before cleared, avoiding duplicates.
- 		 */
-@@ -1917,7 +1917,7 @@ static void apply_quirks_amd(struct cpuinfo_x86 *c)
- 	/* This should be disabled by the BIOS, but isn't always */
- 	if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
- 		/*
--		 * disable GART TBL walk error reporting, which
-+		 * disable GART TLB walk error reporting, which
- 		 * trips off incorrectly with the IOMMU & 3ware
- 		 * & Cerberus:
- 		 */
--- 
-2.17.1
+--00000000000030fc1806269cf015
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIGWUlJNLx/fF86SgpO2KuJ067nKx/tmCCla12ItdBKARMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTExMTA2MDkwNlowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCnDPG9W2Yq
+mwTqtK8TSqzJZf8e8OjPGEM1LoH6EGnYG+1T++uiEzCdzxAFn6O3wX+wb/5MZa0DltoqUpgFaiHA
+CsK0MB6T6ua6R2IY3k4pHXj/gv5krhkJWqvqs8WE09MKzi3QRX77RJQXBxD4a6tHmWIRR91jCTq5
+m1dgpyWcb3T+uj1ZFkbX7E7QQ8kG+v9349DeavSO++a3aya/xl9AApcmRbghktR/fUZngl7e59qN
+pMCTB7kpSa750vTCn3/Y9pKihQ2N45gTT0yLOxgS13UzKL5ZYRs6VJIOzW2rmKmKw05ZTULKpGPL
+P3D5eDOnmisqrl2wO7tihLK0wQGK
+--00000000000030fc1806269cf015--
 
