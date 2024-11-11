@@ -1,102 +1,64 @@
-Return-Path: <linux-kernel+bounces-404278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066169C41C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:25:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5029C41CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6E7C284E22
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642811F225D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3741D1A071C;
-	Mon, 11 Nov 2024 15:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E568214B962;
+	Mon, 11 Nov 2024 15:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="QjtZcKRo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XQUTh0U6"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kc93dQ8C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5415D19E83D;
-	Mon, 11 Nov 2024 15:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEBE49625;
+	Mon, 11 Nov 2024 15:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731338730; cv=none; b=J9/ECqTiQ19qap5BlSnuEaPVvOQBvmYkwG3FCF3ef7PwK5SoU9MZL2lWOBp/KW3CoCG4kfMw9RKTgjYsrPLTIg7sRCidLJOmpSnbE+1UtM31qOhK1SBgyJhCtgwSJlPc8Qa/+BO3T8LYsQyLeZ5Y4oEhuhMuYZWVPJBrftgY0CM=
+	t=1731338810; cv=none; b=nuTFfUizonHAZQAobQWKGklkx3QtfQ7K+8n68AfUTiij0T0N9e+A4DqrjPC1JUFXW8FsCPlVQdnGKfpU5X0rrglLUCnxvXMAYWV18/5CNvQtB9TcN6W+5U0Z9nY29Q/FRBe/ZkNtrnypB9K2ahkRnxXhaM0sQRhpH37AtmjXr38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731338730; c=relaxed/simple;
-	bh=9dAavv9p0sYccDojVJZ4cl0x/ONLpn4wEDpC1dF2Yek=;
+	s=arc-20240116; t=1731338810; c=relaxed/simple;
+	bh=aRpz3GDck8LbCUy52HRyneKWrKaslIMPNIow1APgFFw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4J5sXccMCa3ggVOhBe2b0GfMIYZQDm5mwI/UY6LjwluRO4AOOgvLZub/fhviK7aghnKfOU5zrkus9oCH6XaHhOCipl555Xp7kEvlC0qX2W6ZXiQg+Y399ZalIywKrU3meVzKE1faFo+4JuEEyBzvUExyBwSsawYlRzI6f/O2O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=QjtZcKRo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XQUTh0U6; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3E9AB114019E;
-	Mon, 11 Nov 2024 10:25:26 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 11 Nov 2024 10:25:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1731338726; x=
-	1731425126; bh=glOUfK74CVhSoPgVs5u0b45fN1MMozNH166QZjbcnEQ=; b=Q
-	jtZcKRo+2VpN4sUOq6yeXY6iXnPAJ8V+hUOO/Z8SlYs+Uv51jxnGIZ45NGbB5zyS
-	GEcpRhOQp5oscadc/X5/OnmqJwLOBVr7XUeJjkET6sUO1YnTRQyXac6slT3AZE3m
-	BCiNuT1agTMW0HEf9dXNWmvybpW+75VefSJZvJBkQU+OpMYMZtLfGFpxZI4mdiZG
-	yV5UETeicoGCp3BoHxLaIDqMNikoP0fhPntLGBc0TkNx5CAP0wRC4ZxKMJjxOLQ0
-	7g6Y8XGio6BktXBqjDbDY0X9px+8x2lln7Md8FZ2BQ7BINSZMBG4rgpVSDVLwPNU
-	FmK78jJCJi9BdslcOOOgw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1731338726; x=1731425126; bh=glOUfK74CVhSoPgVs5u0b45fN1MMozNH166
-	QZjbcnEQ=; b=XQUTh0U65YU2xIul68Mzm28z75M4sE+fjHFJ8UNRfpBWlWvgqzA
-	3x6uVQYywpgL3TfLp9mT8mjgRuJCt2XL4beqKgwLMnFuP4cDHI8LYmbH+oVkqisO
-	D+FPiYEk6rhnpIhI73Bg/Errrr9pgxod2nUa7zr9Q95Bxms+zuTzCgt34vgPDvvq
-	/Q5/OPzAz6QVm7XLX/xO/EQuy5e/4EB376PP0OQwqV6/uWnMfIg4AiUM7ZcNU55j
-	aIr5GI6U5MmJ0GjYxUw5gF2NhHD5yHG1ShJrLn67m9GcVCTOsCjt9bYxpddED2eM
-	s82B/IPmesoQuMUl4Vgrs3w91TweJOpBmZw==
-X-ME-Sender: <xms:5SEyZytzf-awNTUQA_fsk4AuajFFJRhPKI7PvqxT_J1ASWRoxXSScg>
-    <xme:5SEyZ3fHVmOW5htonIOpaLjH9XuEIw7aU-vexuxnHja11iCfGRZMhzMzGdB9PQl-W
-    YASTyNgwkNjyrDj0kU>
-X-ME-Received: <xmr:5SEyZ9wvPE6MvQ7yw55g4gIQXjowvB8My5olGKUQ880MgK-JO2eSJq2z_vJ3HIMC3PJ2EQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddruddvgdejhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecu
-    hfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhessh
-    hhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepffdvveeuteduhffhffev
-    lefhteefveevkeelveejudduvedvuddvleetudevhfeknecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdr
-    nhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrgigsohgvsehkvghrnhgvlhdrughkpdhrtghpthhtoheplhhinhhugidqmhhmsehk
-    vhgrtghkrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehhrghnnhgvshestghmphigtghhghdrohhr
-    ghdprhgtphhtthhopegtlhhmsehmvghtrgdrtghomhdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllhih
-    sehinhhfrhgruggvrggurdhorhhg
-X-ME-Proxy: <xmx:5SEyZ9N0U44CUqbSqv3zKoRsSHgyzuhPF1AghXGUFt0Q2h2c9Fhwvw>
-    <xmx:5SEyZy8URn0WCx4h6gEaXWcLoDMOT6RI-FNdVb9Dw1unc62pceiViw>
-    <xmx:5SEyZ1VuMyusLWPGkuwiH5f2F6aqngqdVLbWyrMg3IlJd-FszAAm4w>
-    <xmx:5SEyZ7fp_3jaPLwm0viNLfSITIG_KEV_J0eX3EOBzrrz_gAZbDIRfg>
-    <xmx:5iEyZ3Md7drl-dsVDO8u2-_oW9d20OToy6R9KBhxt5WPFXDuLU_tL6xZ>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 Nov 2024 10:25:23 -0500 (EST)
-Date: Mon, 11 Nov 2024 17:25:19 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, 
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-Message-ID: <kda46xt3rzrb7xs34flewgxnv5vb34bvkfngsmu3y2tycyuva5@4uy4w332ulhc>
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfyCqz6xwkJKZLkmZIQb1zTGMlB+hhP/OsiZM/zPzmaDdYKju4+/42IJvXKthI1iarf7OrDTxdaOcd3icdCTUdAEdsvE5OGVT6n5NUb2QSHro+CyecZbJMxdcgowPXG1Xo63h8GnoChKzXcaRthHMKXUA6Eb3AQICU4E5Tt3CNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kc93dQ8C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049D2C4CECF;
+	Mon, 11 Nov 2024 15:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731338810;
+	bh=aRpz3GDck8LbCUy52HRyneKWrKaslIMPNIow1APgFFw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Kc93dQ8Cmpqrluh3NGcSGYEPERq7TncA7MjZDKNRscM0LjMtJ2A+R4MXGYWWaeZhZ
+	 X/nPDhiL+bG0AAJo5QMBiaX0N5ihimzSwoTqdFQLYMSL/lItr+ppiA0v2ZuaA4EhR2
+	 fu+4N6o9oQKAA5f+BdCrtHWaKvEfDuzxoVgmoLe2FtrcRrfPwwHFvogw1+wzTcUvbE
+	 XajxdV82ap3yabCHrlVbjFAcixkC2//Vz69p5v7YApLWmRyFeZmr5DGa74eqBr1/HH
+	 FsHBsNdboXFCzxEtUmNrWp+7ZaiGZml2ZvE9EMZuzc6DEfLZ+2+jYIWnIWrZutH4Rq
+	 yCzaHEFI6RTkw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 8CA28CE00C9; Mon, 11 Nov 2024 07:26:49 -0800 (PST)
+Date: Mon, 11 Nov 2024 07:26:49 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org,
+	kernel test robot <oliver.sang@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 06/12] srcu: Add srcu_read_lock_lite() and
+ srcu_read_unlock_lite()
+Message-ID: <71a72bcc-ba85-4f86-9d41-cccfd433fa09@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+ <20241009180719.778285-6-paulmck@kernel.org>
+ <e46a4c37-47d3-4a02-a7a5-278d047dd7a2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,38 +67,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
+In-Reply-To: <e46a4c37-47d3-4a02-a7a5-278d047dd7a2@amd.com>
 
-On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
-> On 11/11/24 2:15 AM, Kirill A. Shutemov wrote:
-> >> @@ -2706,8 +2712,16 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
-> >>  			}
-> >>  		}
-> >>  put_folios:
-> >> -		for (i = 0; i < folio_batch_count(&fbatch); i++)
-> >> -			folio_put(fbatch.folios[i]);
-> >> +		for (i = 0; i < folio_batch_count(&fbatch); i++) {
-> >> +			struct folio *folio = fbatch.folios[i];
-> >> +
-> >> +			if (folio_test_uncached(folio)) {
-> >> +				folio_lock(folio);
-> >> +				invalidate_complete_folio2(mapping, folio, 0);
-> >> +				folio_unlock(folio);
-> > 
-> > I am not sure it is safe. What happens if it races with page fault?
-> > 
-> > The only current caller of invalidate_complete_folio2() unmaps the folio
-> > explicitly before calling it. And folio lock prevents re-faulting.
-> > 
-> > I think we need to give up PG_uncached if we see folio_mapped(). And maybe
-> > also mark the page accessed.
+On Mon, Nov 11, 2024 at 06:24:58PM +0530, Neeraj Upadhyay wrote:
 > 
-> Ok thanks, let me take a look at that and create a test case that
-> exercises that explicitly.
+> >  
+> >  /*
+> > - * Returns approximate total of the readers' ->srcu_lock_count[] values
+> > - * for the rank of per-CPU counters specified by idx.
+> > + * Computes approximate total of the readers' ->srcu_lock_count[] values
+> > + * for the rank of per-CPU counters specified by idx, and returns true if
+> > + * the caller did the proper barrier (gp), and if the count of the locks
+> > + * matches that of the unlocks passed in.
+> >   */
+> > -static unsigned long srcu_readers_lock_idx(struct srcu_struct *ssp, int idx)
+> > +static bool srcu_readers_lock_idx(struct srcu_struct *ssp, int idx, bool gp, unsigned long unlocks)
+> >  {
+> >  	int cpu;
+> > +	unsigned long mask = 0;
+> >  	unsigned long sum = 0;
+> >  
+> >  	for_each_possible_cpu(cpu) {
+> >  		struct srcu_data *sdp = per_cpu_ptr(ssp->sda, cpu);
+> >  
+> >  		sum += atomic_long_read(&sdp->srcu_lock_count[idx]);
+> > +		if (IS_ENABLED(CONFIG_PROVE_RCU))
+> > +			mask = mask | READ_ONCE(sdp->srcu_reader_flavor);
+> >  	}
+> > -	return sum;
+> > +	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask - 1)),
+> > +		  "Mixed reader flavors for srcu_struct at %ps.\n", ssp);
+> 
+> I am trying to understand the (unlikely) case where synchronize_srcu() is done before any
+> srcu reader lock/unlock lite call is done. Can new SRCU readers fail to observe the
+> updates?
 
-It might be worth generalizing it to clearing PG_uncached for any page cache
-lookups that don't come from RWF_UNCACHED.
+If a SRCU reader fail to observe the index flip, then isn't it the case
+that the synchronize_rcu() invoked from srcu_readers_active_idx_check()
+must wait on it?
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> > +	if (mask & SRCU_READ_FLAVOR_LITE && !gp)
+> > +		return false;
+> 
+> So, srcu_readers_active_idx_check() can potentially return false for very long
+> time, until the CPU executing srcu_readers_active_idx_check() does
+> at least one read lock/unlock lite call?
+
+That is correct.  The theory is that until after an srcu_read_lock_lite()
+has executed, there is no need to wait on it.  Does the practice match the
+theory in this case, or is there some sequence of events that I missed?
+
+> > +	return sum == unlocks;
+> >  }
+> >  
+> >  /*
+> > @@ -473,6 +482,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
+> >   */
+> >  static bool srcu_readers_active_idx_check(struct srcu_struct *ssp, int idx)
+> >  {
+> > +	bool did_gp = !!(raw_cpu_read(ssp->sda->srcu_reader_flavor) & SRCU_READ_FLAVOR_LITE);
+> 
+> sda->srcu_reader_flavor is only set when CONFIG_PROVE_RCU is enabled. But we
+> need the reader flavor information for srcu lite variant to work. So, lite
+> variant does not work when CONFIG_PROVE_RCU is disabled. Am I missing something
+> obvious here?
+
+At first glance, it appears that I am the one who missed something obvious.
+Including in testing, which failed to uncover this issue.
+
+Thank you for the careful reviews!
+
+							Thanx, Paul
+
+> - Neeraj
+> 
+> >  	unsigned long unlocks;
+> >  
+> >  	unlocks = srcu_readers_unlock_idx(ssp, idx);
+> > @@ -482,13 +492,16 @@ static bool srcu_readers_active_idx_check(struct srcu_struct *ssp, int idx)
+> >  	 * unlock is counted. Needs to be a smp_mb() as the read side may
+> >  	 * contain a read from a variable that is written to before the
+> >  	 * synchronize_srcu() in the write side. In this case smp_mb()s
+> > -	 * A and B act like the store buffering pattern.
+> > +	 * A and B (or X and Y) act like the store buffering pattern.
+> >  	 *
+> > -	 * This smp_mb() also pairs with smp_mb() C to prevent accesses
+> > -	 * after the synchronize_srcu() from being executed before the
+> > -	 * grace period ends.
+> > +	 * This smp_mb() also pairs with smp_mb() C (or, in the case of X,
+> > +	 * Z) to prevent accesses after the synchronize_srcu() from being
+> > +	 * executed before the grace period ends.
+> >  	 */
+> > -	smp_mb(); /* A */
+> > +	if (!did_gp)
+> > +		smp_mb(); /* A */
+> > +	else
+> > +		synchronize_rcu(); /* X */
+> >  
+> >  	/*
+> >  	 * If the locks are the same as the unlocks, then there must have
+> > @@ -546,7 +559,7 @@ static bool srcu_readers_active_idx_check(struct srcu_struct *ssp, int idx)
+> >  	 * which are unlikely to be configured with an address space fully
+> >  	 * populated with memory, at least not anytime soon.
+> >  	 */
+> > -	return srcu_readers_lock_idx(ssp, idx) == unlocks;
+> > +	return srcu_readers_lock_idx(ssp, idx, did_gp, unlocks);
+> >  }
+> >  
+> 
 
