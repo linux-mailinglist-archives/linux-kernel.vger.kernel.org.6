@@ -1,142 +1,135 @@
-Return-Path: <linux-kernel+bounces-403906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3669C3C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:56:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494979C3C85
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E4228252B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F0E1F21B29
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F4517C7BD;
-	Mon, 11 Nov 2024 10:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A4C17DFE3;
+	Mon, 11 Nov 2024 10:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="il/YDmB/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CQEiY+Rm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qdqy/mwE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0D2175D34
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BF815B554;
+	Mon, 11 Nov 2024 10:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322597; cv=none; b=QX8TgSmih1gG2TghAw5x+p/3NbjzqkHoezTIQVhsRciYZCfGFlotambwYdw7MquYe4ZtSxzNXLrzIgdtaqjJpqnYiSc4f4T9xCgssITtacQY5+rdG7Uqu2t2auj1fKSnfyERcWLU1ayX+OSDlCNsUl1iXJSyxOITpO+WlLjY9oU=
+	t=1731322687; cv=none; b=VvcbDl5KvVTXrgd9o/GE9GpveFdiPqEXvZg+DXpFX1YWZVClzciLwbQ7AshaR62d2ERkOLw5+f12O3UAy554MgRJdkSwUwA5wfr5/2QdxshxOMwV6jOHZOrziVLe8XNcgRwtHsD4vPfp3AeUeWvV9M1esdv/derW5B1+BQH9PLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322597; c=relaxed/simple;
-	bh=xyu2W+AkhEUFrLCZO/aFXuBzwn1sWoS3HvpP6+mglTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJz/gKdIhFBhawGsiCzu/ZhvfVOX3nC9FtEIRHQ7RLkthxbEEKrLvfMUjN5n52ioISHP5VROnADp8GWsE3oFKbtSf2mgy7+JAGQT2KmlYuu1ITej8PKFaSGYURHNAVD2PCUjVQeJYp1XFIlRl/PuiAb4L8J+ICBXg/2cFEHQGuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=il/YDmB/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731322595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1731322687; c=relaxed/simple;
+	bh=YQJZRFo52/HQ/muQvuNf4IrKqg4TTHcArziP5maS8/M=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ekw2GqG6tM8UP4Nh318u1wP7gDuK816n9gJramHxmTF99hwt9ApedFq04fPso4hEtRtoLsEJOqVmFL8tJkhXNWyWbnuOSJPevSc0RAwITOLqERXD0/00+7hihm/U+igMTjmEBDjUUCPnF53+b6ytDE6WUXihfPlLGrspDobadGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CQEiY+Rm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qdqy/mwE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 11 Nov 2024 10:58:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731322683;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PzxqFjD6NsHew4NyK62jDoA1MQuiNh2M1h/kJUKkO+w=;
-	b=il/YDmB/rKdLU0paZKBte+vzrX65cqqNejz8gwzFPrrV9c6Q2Tgyw1txfLUNp1oX5artx+
-	IwnzgwT0rrif/7iBaTyiLEKzM+RX7tWIgsmF7uWlyn0D18b0doUEzlK11W+jIQQrbxHwFp
-	hTk2/yjr6SDUtCOwzOAu2Sa5iI8ZS+g=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-tX_-tBiMNumxF_u03GvLBw-1; Mon, 11 Nov 2024 05:56:33 -0500
-X-MC-Unique: tX_-tBiMNumxF_u03GvLBw-1
-X-Mimecast-MFC-AGG-ID: tX_-tBiMNumxF_u03GvLBw
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-381d0582ad3so3654896f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:56:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322592; x=1731927392;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PzxqFjD6NsHew4NyK62jDoA1MQuiNh2M1h/kJUKkO+w=;
-        b=ssUEQvaFA6h3yLG16VR415nqMxKqU7My2rKhI65rFeRWeAY5PCyVmUCmmDYeG3HDP1
-         p1N/FzE3A6ubY/0/bHhCEy/hrP96gkKghO/TlpqQssYUUHoZHxKF/s63uV93nYpCamtA
-         KeGNQkwh4BLCkU32prw5BBpCfXziKjouI0hBwOukKYWBlR1E3Xb8O8ia/PtAV7nYZbDb
-         nr1GXc5PNUkc6OEBS/L+4iIfhQjoxWBFOY1gvFsJyGTh5PiTLuRCnzuccCL/qlQheww/
-         +Ywc0jTWnQSAXWcVIlrzEATZBmFmiRhXVHpxYnln0vFglyWk+KCNUtiL8ozlaNL4rLrQ
-         XUyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzlobcqfl+Aaj0qah1/cn2Mvmk3UBNbr34L60XEjMEFDMJgAZtFKuYY6HdRZkvPDo2wcBSB3jANS4aCMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqEfakIUbjypY6DoWMusWS6JqqYEJRyoIeohAOr+4XCwzCC62B
-	8NMBpaWFeRIKVYGvCHPuAXJFRQ/HUVe8X6Y2khyZrBgLAozuY3Qb3f2m/7K4caAZCvp81yD+Cn2
-	/4sybF+AaBp3Py7+hFtXn2XdoNK0ZvwwKNHMWnJNKvcZAGw26kvuwhlAxacOTVA==
-X-Received: by 2002:a05:6000:782:b0:37d:612c:5e43 with SMTP id ffacd0b85a97d-381f1838df9mr13309458f8f.0.1731322591716;
-        Mon, 11 Nov 2024 02:56:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH4fjQnzFja0IJnI8AD28pvo7qsfh9Pd6dcZnWBKwZ9TR9z3dtExcl6hKH6mrCYf74gr9Y9+w==
-X-Received: by 2002:a05:6000:782:b0:37d:612c:5e43 with SMTP id ffacd0b85a97d-381f1838df9mr13309436f8f.0.1731322591400;
-        Mon, 11 Nov 2024 02:56:31 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-250.as13285.net. [89.240.117.250])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9f8984sm12792910f8f.71.2024.11.11.02.56.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 02:56:30 -0800 (PST)
-Date: Mon, 11 Nov 2024 10:56:29 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] cgroup/cpuset: Enforce at most one
- rebuild_sched_domains_locked() call per operation
-Message-ID: <ZzHi3VIQAx4AJ3lP@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241110025023.664487-1-longman@redhat.com>
- <20241110025023.664487-3-longman@redhat.com>
+	bh=Jx3/zF4Rh7ajUfWVXZeaK+oRaRQklRF04heoVHN+TKc=;
+	b=CQEiY+Rm8E63bDJGI7btR7ArWe7rJjlRndFpbMFvnAy+fp1DZKCYBMUhskz27TBiivqPm6
+	yqM+04SvJZ0N2cpKsfDxj4vAyu/+fJIpssxBkIXB5/dKd6JJKnwB1BcfM0OQ8TfVTrWqcC
+	AfHRsYKgut9jVIEmndaTYJ02o77zjW4liEVVEe/H5RC0cosOpoavQPBWjrnZC9xgVfMPT9
+	YFnAhMSBt9EDCZYqQT7iFCla1fyw0Nh0iNkVD2wrILq8/3ilhWErsd47CS50E4I6KukwAz
+	ZXECG9sOUs/I1i0Xts9duO1SWGQ7qy6zMXKoTvYfIR/BBdGoyL7gza69MKIafg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731322683;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jx3/zF4Rh7ajUfWVXZeaK+oRaRQklRF04heoVHN+TKc=;
+	b=Qdqy/mwEtJlcxRpxfd7aB4jFku8g4vx9HEpBWNur66c7Z65/lZtWdyjM1hMWWC5styZpmV
+	lVIKpQhMeFJ/f4AQ==
+From: "tip-bot2 for Stephen Rothwell" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: locking/core] iio: magnetometer: fix if () scoped_guard() formatting
+Cc: kernel test robot <lkp@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
+References: <20241108154258.21411-1-przemyslaw.kitszel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241110025023.664487-3-longman@redhat.com>
+Message-ID: <173132268163.32228.9504803007436629008.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi,
+The following commit has been merged into the locking/core branch of tip:
 
-On 09/11/24 21:50, Waiman Long wrote:
-> Since commit ff0ce721ec21 ("cgroup/cpuset: Eliminate unncessary
-> sched domains rebuilds in hotplug"), there is only one
-> rebuild_sched_domains_locked() call per hotplug operation. However,
-> writing to the various cpuset control files may still casue more than
-> one rebuild_sched_domains_locked() call to happen in some cases.
-> 
-> Juri had found that two rebuild_sched_domains_locked() calls in
-> update_prstate(), one from update_cpumasks_hier() and another one from
-> update_partition_sd_lb() could cause cpuset partition to be created
-> with null total_bw for DL tasks. IOW, DL tasks may not be scheduled
-> correctly in such a partition.
-> 
-> A sample command sequence that can reproduce null total_bw is as
-> follows.
-> 
->   # echo Y >/sys/kernel/debug/sched/verbose
->   # echo +cpuset >/sys/fs/cgroup/cgroup.subtree_control
->   # mkdir /sys/fs/cgroup/test
->   # echo 0-7 > /sys/fs/cgroup/test/cpuset.cpus
->   # echo 6-7 > /sys/fs/cgroup/test/cpuset.cpus.exclusive
->   # echo root >/sys/fs/cgroup/test/cpuset.cpus.partition
-> 
-> Fix this double rebuild_sched_domains_locked() calls problem
-> by replacing existing calls with cpuset_force_rebuild() except
-> the rebuild_sched_domains_cpuslocked() call at the end of
-> cpuset_handle_hotplug(). Checking of the force_sd_rebuild flag is
-> now done at the end of cpuset_write_resmask() and update_prstate()
-> to determine if rebuild_sched_domains_locked() should be called or not.
-> 
-> The cpuset v1 code can still call rebuild_sched_domains_locked()
-> directly as double rebuild_sched_domains_locked() calls is not possible.
-> 
-> Reported-by: Juri Lelli <juri.lelli@redhat.com>
-> Closes: https://lore.kernel.org/lkml/ZyuUcJDPBln1BK1Y@jlelli-thinkpadt14gen4.remote.csb/
-> Signed-off-by: Waiman Long <longman@redhat.com>
+Commit-ID:     9a884bdb6e9560c6da44052d5248e89d78c983a6
+Gitweb:        https://git.kernel.org/tip/9a884bdb6e9560c6da44052d5248e89d78c983a6
+Author:        Stephen Rothwell <sfr@canb.auug.org.au>
+AuthorDate:    Fri, 08 Nov 2024 16:41:27 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 11 Nov 2024 11:49:47 +01:00
 
-This indeed works for me and fixes things with the test above (on v2).
+iio: magnetometer: fix if () scoped_guard() formatting
 
-Tested-by: Juri Lelli <juri.lelli@redhat.com>
+Add mising braces after an if condition that contains scoped_guard().
 
-Thanks!
-Juri
+This style is both preferred and necessary here, to fix warning after
+scoped_guard() change in commit fcc22ac5baf0 ("cleanup: Adjust
+scoped_guard() macros to avoid potential warning") to have if-else inside
+of the macro. Current (no braces) use in af8133j_set_scale() yields
+the following warnings:
+af8133j.c:315:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
+af8133j.c:316:3: warning: add explicit braces to avoid dangling else [-Wdangling-else]
 
+Fixes: fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential warning")
+Closes: https://lore.kernel.org/oe-kbuild-all/202409270848.tTpyEAR7-lkp@intel.com/
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Link: https://lore.kernel.org/r/20241108154258.21411-1-przemyslaw.kitszel@intel.com
+---
+ drivers/iio/magnetometer/af8133j.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/af8133j.c
+index d81d89a..acd291f 100644
+--- a/drivers/iio/magnetometer/af8133j.c
++++ b/drivers/iio/magnetometer/af8133j.c
+@@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *data,
+ 	 * When suspended, just store the new range to data->range to be
+ 	 * applied later during power up.
+ 	 */
+-	if (!pm_runtime_status_suspended(dev))
++	if (!pm_runtime_status_suspended(dev)) {
+ 		scoped_guard(mutex, &data->mutex)
+ 			ret = regmap_write(data->regmap,
+ 					   AF8133J_REG_RANGE, range);
++	}
+ 
+ 	pm_runtime_enable(dev);
+ 
 
