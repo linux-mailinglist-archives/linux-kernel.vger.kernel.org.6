@@ -1,283 +1,818 @@
-Return-Path: <linux-kernel+bounces-403691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26269C3920
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:45:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5223E9C392D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA3D282195
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3A41F21BC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C010C158DD0;
-	Mon, 11 Nov 2024 07:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8314316DC36;
+	Mon, 11 Nov 2024 07:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOl3SnRk"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="uThgbu/F"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C02B67F;
-	Mon, 11 Nov 2024 07:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C096214AD2B;
+	Mon, 11 Nov 2024 07:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731311144; cv=none; b=hyEOO5Id8yMxD8ZeRS13lJXElJb6MgCe5qi7kJfg1WW3bMuDf8e1B0pzRF5FI9RvBFgsKmmtKvCpjLPMc+5cJnD/l2JHAXkPtbWYJY3dfu82Rt4HnKy4aJjGzVoh5J9ztRbcGPb+JPkHrmGZ8lcq6xGLJhdGHYhZSs1cXwZ1Lxw=
+	t=1731311280; cv=none; b=aH+gEiqo1NEbR4h3ExhPmKF9wm7R4bs5l8vblYKdj8AHorHvk0cjBsbnJifplstYiV7cRsTAKJmd7WcWgrgjcqhEfH87dDiheSAXcjBjz8qgwdI9H3WEHp/1q4SQn1mEIprcW3jTrUtXyYcdWmkboSvAE7RClYB5pAAwSwAvZyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731311144; c=relaxed/simple;
-	bh=HSHjlJQZFGGqSbgGh5jrRl7Y3YvM28pedTin90gBhtU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s030gLUmLkuG9qwmjpY/T4x0wDM+oSEeeA/wrWIgs5JI3wI1OzSHXeFasgZQpLbtXzLXP0dECOsautDMHAMTawWdR39QJLBISyEer0n8JqiopzaoBNlZtHRbKbGk81snYaKT/k9LXz2zPIRY4kGSCAqsrZi3sPzBL5q2Fyolz6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOl3SnRk; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a4031f69fso711432066b.0;
-        Sun, 10 Nov 2024 23:45:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731311140; x=1731915940; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tlYEoLWgXvf50waTFfyvkqu6l2VBpvmR0XQbzw8Cmd8=;
-        b=lOl3SnRkPgPyFggWqkVMMTGmJpMbTdYlmssEE8Q4XWBb58ADS0CFMnSZWBauZlZdcG
-         Slh70Y8uNRBiSXZ+W32f6s8uNLyoOZ919xWVcUyABN6HfThG2vh/Jd0ersXm/v2uH4XP
-         yBXRcC6iMdV7Pr5bGrUpqKX05Ug8uRe35tyej2oIy5D6zip1DPaJ+RAgjodXhyMYk6AO
-         kK7JRYiMD7eivA92f/WMzbsNcXsJsb87e5UEP7+6kT/Z660maDdWDGqO4G1JREwoj3Fj
-         bnzl0CtFDweVHhdmb1VWwLGKe8/P0sMRG15uSRpTHMve362xl12lomT/ZAvpDVDpULCE
-         fqxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731311140; x=1731915940;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tlYEoLWgXvf50waTFfyvkqu6l2VBpvmR0XQbzw8Cmd8=;
-        b=dN454pGZVe+bNsPDOvM9QlpNNoMs68YHShU/N9IfpmeNXQkDR4DUlP3IstZFtoddO3
-         v1zcZkBJAJbe2gcTPBY8yFt9I9OA2N5JxiQaAcMdzIuJBuT/Tb8042iDafSKaud8UeZN
-         1g6dyRynfShPj/4isaxrSKdNk5iqyQH5XE2nTETC3ZZR3cY3wtdiQRLjwu+fustrCwpi
-         W5iwJ1VJOeSFTWyophmeHlQhkBxzpCs0Duj8qmt7O/2w75uEjxEDdcSy/AT/UPmSBxcg
-         gyRsJXLZOp6eRVcOtbHh12jILBoNGVR24a6JG9aj0zSOkS8U32s44Rf8Vf8bLk6NTmlW
-         KJSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSHCoYuDjTK3+RcgnObrW1DkVQJ/82NoQO6dJcBbluU5KCFD+cT2IzuIa8AaKPFHcSiVz4LdzETci9@vger.kernel.org, AJvYcCXeUaLzD0n0WxJnz8UGnCHJR7IBmcnnTFpThKebMxCDCyDIGmETLKLyU5suMvBOBkvejKyXZv+Zhu3ZopOB@vger.kernel.org, AJvYcCXtvZgvDm+8u9eL+RF+71K02MMFNli/MFG0K73ufBd9PMAhFqBi68o0tL6NzDv6J+z7njETszfHTqrD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyux+Ls2Hwrcei8W6J9J7HFyT5Ay6j5xCWz9GheiMIIKa21upn7
-	8n7V0M6HR37r+KdtjvXqRUnPNY8+Wv27vdRmfnVrqvQncj5dbeacKU6Vj0O4UNFDQDVUiQN3mw7
-	AOvI+neZPorC+4f/70uEUI3ZTo+M=
-X-Google-Smtp-Source: AGHT+IH0KLR+0s7nW02uC0eKWTUgxxMYz1DzkxED3149OYbLx/SStp/Kw6ce/5yR+YmhbYjwOTnDum2ZPJHSCyvFgkY=
-X-Received: by 2002:a17:907:25c2:b0:a99:ecaf:4543 with SMTP id
- a640c23a62f3a-a9eeff41732mr1209496866b.25.1731311140145; Sun, 10 Nov 2024
- 23:45:40 -0800 (PST)
+	s=arc-20240116; t=1731311280; c=relaxed/simple;
+	bh=GLcL7OysIZmmBy11h4SwtPB5W7rzbVje81ou9z8rvkc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d0oGlzTfWHL4KCKeg79ZiBB4P3lnzm3l85kXNfCxJgWROIEZ1ng6fllqMeMcgCP0QhJKs2xBsdTFHZt0oAtzSZcWkWVAgjLMLZfdaBJINdl1lOOc+h7ZMBjWfepnDcdM2O+0gzmSIfVW4Ie/KI1nHe/LY56CaWRdsP8M6WjRoEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=uThgbu/F; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id D1DDCA02FA;
+	Mon, 11 Nov 2024 08:47:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=+1kpk6bopCA6lvlfhNgkvWPJianLjo7nXDzO1z3iMoU=; b=
+	uThgbu/F4KS27MIdDLPVnFwfEKItZa+GegtvQ6QO2v8xFYQWv1lqF1bfB+WMMS2C
+	O6U4+CBmV3/CNgM574/BUOd0g0A9tQnUT5yT8JVORMLsxijaUfZvh1CQHWwHwH3x
+	2pYp8fnVVr9yDNSIbrOGmrIXprR3M5G9GkvTx8Tu8b95zQ8MQUvXaZki0LsGXGFW
+	ERR/lg01JHt1Edhb5CzWENpn+lTV5+MIOkhQ/c4p2nZWK7JrBw4NdR3+lcdjcg4r
+	/sZQutB8qU7D1GnTLBUFnGJCpGmVCJFlbB4LoAr254eYuSMdCw8Bpx6AElJ+1Onj
+	t0tC+MWG7UR+yw7SXXUwbacfO1xHIxrqqbkK/JbfXqnATO+c1WpjlO4EGA7TQrKi
+	6yXEs9n5tEYcAD9nxbvZqp+VWzhGISVIvgolC4vgfxR7+fmtcq2YDm5ObCmftz6V
+	Q7ba5nJd16zXVwOkbJW4GbpK9+m6XWmx97EmPpVjgCphSs7XRPmbyuGrcBOETl2j
+	Kan+ep+m4j5XEdnRyZ+dfmlkFFmt9PVcxU76zgLd9V3wGAK6AGGWJdoOKhfyh5bg
+	LjyAfB7qGsnD4o28wViM6/Gztab+X2Pc++wWhK6ZnbmwZEa7DcN1puv+XTxd32w4
+	apeyvxUyLer/dwX+UBdHjkBefpqfzwj2Dg9zeZam1h0=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Samuel
+ Holland" <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH v4 1/7] power: ip5xxx_power: Use regmap_field API
+Date: Mon, 11 Nov 2024 08:47:14 +0100
+Message-ID: <20241111074720.1727163-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106023916.440767-1-j2anfernee@gmail.com> <20241106023916.440767-2-j2anfernee@gmail.com>
- <6c20875c-4145-4c91-b3b5-8f70ecb126f0@amperemail.onmicrosoft.com>
- <CA+4VgcJD74ar9zQCj38M2w8FzGWpq+u5Z7ip9M7a1Lu7u8rojw@mail.gmail.com>
- <20241109134228.4359d803@jic23-huawei> <20241109142943.3d960742@jic23-huawei>
-In-Reply-To: <20241109142943.3d960742@jic23-huawei>
-From: Yu-Hsian Yang <j2anfernee@gmail.com>
-Date: Mon, 11 Nov 2024 15:45:03 +0800
-Message-ID: <CA+4VgcJ=8wDWWnmgEt-UkEUfnfD8kGtHe44G5+dcRYt=KdwNfw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: iio: adc: Add binding for Nuvoton
- NCT720x ADCs
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Chanh Nguyen <chanh@amperemail.onmicrosoft.com>, avifishman70@gmail.com, 
-	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, 
-	yuenn@google.com, benjaminfair@google.com, lars@metafoo.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com, 
-	dlechner@baylibre.com, javier.carrasco.cruz@gmail.com, andy@kernel.org, 
-	marcelo.schmitt@analog.com, olivier.moysan@foss.st.com, 
-	mitrutzceclan@gmail.com, matteomartelli3@gmail.com, alisadariana@gmail.com, 
-	joao.goncalves@toradex.com, marius.cristea@microchip.com, 
-	mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com, 
-	yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1731311266;VERSION=7980;MC=1792284896;ID=287555;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D9485561716B
 
-Dear Jonathan Cameron,
+The IP53xx series [1] has a much different register
+layout than the 51xx/52xx [2] currently supported
+by this driver. To accommodate supporting the former,
+refactor the code to use the flexible regmap_field API.
 
-For property read-vin-data-size, we have a internal discussion.
+[1] https://sharvielectronics.com/wp-content/uploads/2021/07/IP5306-I2C-registers.pdf
+[2] https://www.windworkshop.cn/wp-content/uploads/2022/04/IP5209-IP5109-IP5207-IP5108-I2C-registers.pdf
 
-For Nuvoton NCT7201/NCT7202 chip,
-Take an example as to Vin1:
-The VIN reading supports Byte read (One Byte) and Word read (Two Byte)
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
 
-For Byte read:
-First read Index 00h to get VIN1 MSB, then read Index 0Fh Bit 3~7 to
-get VIN1 LSB.
-Index 0Fh is a shared LSB for all VINs.
+Notes:
+    Changes in v2:
+    * s/&ip5xxx->regs/ip5xxx->regs/g
+      * and then undo it for the ADC regs...
+    * s/;/,/ on `ip51xx_fields`
+    * and some other typos...
+    Changes in v3:
+    * keep `ip5xxx_read()` name
+    * check `field` for non-NULL
+    Changes in v4:
+    * fix bit order
+    * whitespace
 
-For Word read:
-Read Index 00h and get 2 Byte (VIN1 MSB and VIN1 LSB).
+ drivers/power/supply/ip5xxx_power.c | 451 ++++++++++++++++++----------
+ 1 file changed, 293 insertions(+), 158 deletions(-)
 
-We would refer your suggestion,
-we  declare a property named "nvuoton,read-vin-data-size" with default valu=
-e 16
-for user to use.
+diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
+index 82263646ddc6..2d4435881a9e 100644
+--- a/drivers/power/supply/ip5xxx_power.c
++++ b/drivers/power/supply/ip5xxx_power.c
+@@ -7,76 +7,132 @@
+ #include <linux/power_supply.h>
+ #include <linux/regmap.h>
+ 
+-#define IP5XXX_SYS_CTL0			0x01
+-#define IP5XXX_SYS_CTL0_WLED_DET_EN		BIT(4)
+-#define IP5XXX_SYS_CTL0_WLED_EN			BIT(3)
+-#define IP5XXX_SYS_CTL0_BOOST_EN		BIT(2)
+-#define IP5XXX_SYS_CTL0_CHARGER_EN		BIT(1)
+-#define IP5XXX_SYS_CTL1			0x02
+-#define IP5XXX_SYS_CTL1_LIGHT_SHDN_EN		BIT(1)
+-#define IP5XXX_SYS_CTL1_LOAD_PWRUP_EN		BIT(0)
+-#define IP5XXX_SYS_CTL2			0x0c
+-#define IP5XXX_SYS_CTL2_LIGHT_SHDN_TH		GENMASK(7, 3)
+-#define IP5XXX_SYS_CTL3			0x03
+-#define IP5XXX_SYS_CTL3_LONG_PRESS_TIME_SEL	GENMASK(7, 6)
+-#define IP5XXX_SYS_CTL3_BTN_SHDN_EN		BIT(5)
+-#define IP5XXX_SYS_CTL4			0x04
+-#define IP5XXX_SYS_CTL4_SHDN_TIME_SEL		GENMASK(7, 6)
+-#define IP5XXX_SYS_CTL4_VIN_PULLOUT_BOOST_EN	BIT(5)
+-#define IP5XXX_SYS_CTL5			0x07
+-#define IP5XXX_SYS_CTL5_NTC_DIS			BIT(6)
+-#define IP5XXX_SYS_CTL5_WLED_MODE_SEL		BIT(1)
+-#define IP5XXX_SYS_CTL5_BTN_SHDN_SEL		BIT(0)
+-#define IP5XXX_CHG_CTL1			0x22
+-#define IP5XXX_CHG_CTL1_BOOST_UVP_SEL		GENMASK(3, 2)
+-#define IP5XXX_CHG_CTL2			0x24
+-#define IP5XXX_CHG_CTL2_BAT_TYPE_SEL		GENMASK(6, 5)
+-#define IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_2V	(0x0 << 5)
+-#define IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_3V	(0x1 << 5)
+-#define IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_35V	(0x2 << 5)
+-#define IP5XXX_CHG_CTL2_CONST_VOLT_SEL		GENMASK(2, 1)
+-#define IP5XXX_CHG_CTL4			0x26
+-#define IP5XXX_CHG_CTL4_BAT_TYPE_SEL_EN		BIT(6)
+-#define IP5XXX_CHG_CTL4A		0x25
+-#define IP5XXX_CHG_CTL4A_CONST_CUR_SEL		GENMASK(4, 0)
+-#define IP5XXX_MFP_CTL0			0x51
+-#define IP5XXX_MFP_CTL1			0x52
+-#define IP5XXX_GPIO_CTL2		0x53
+-#define IP5XXX_GPIO_CTL2A		0x54
+-#define IP5XXX_GPIO_CTL3		0x55
+-#define IP5XXX_READ0			0x71
+-#define IP5XXX_READ0_CHG_STAT			GENMASK(7, 5)
+-#define IP5XXX_READ0_CHG_STAT_IDLE		(0x0 << 5)
+-#define IP5XXX_READ0_CHG_STAT_TRICKLE		(0x1 << 5)
+-#define IP5XXX_READ0_CHG_STAT_CONST_VOLT	(0x2 << 5)
+-#define IP5XXX_READ0_CHG_STAT_CONST_CUR		(0x3 << 5)
+-#define IP5XXX_READ0_CHG_STAT_CONST_VOLT_STOP	(0x4 << 5)
+-#define IP5XXX_READ0_CHG_STAT_FULL		(0x5 << 5)
+-#define IP5XXX_READ0_CHG_STAT_TIMEOUT		(0x6 << 5)
+-#define IP5XXX_READ0_CHG_OP			BIT(4)
+-#define IP5XXX_READ0_CHG_END			BIT(3)
+-#define IP5XXX_READ0_CONST_VOLT_TIMEOUT		BIT(2)
+-#define IP5XXX_READ0_CHG_TIMEOUT		BIT(1)
+-#define IP5XXX_READ0_TRICKLE_TIMEOUT		BIT(0)
+-#define IP5XXX_READ0_TIMEOUT			GENMASK(2, 0)
+-#define IP5XXX_READ1			0x72
+-#define IP5XXX_READ1_WLED_PRESENT		BIT(7)
+-#define IP5XXX_READ1_LIGHT_LOAD			BIT(6)
+-#define IP5XXX_READ1_VIN_OVERVOLT		BIT(5)
+-#define IP5XXX_READ2			0x77
+-#define IP5XXX_READ2_BTN_PRESS			BIT(3)
+-#define IP5XXX_READ2_BTN_LONG_PRESS		BIT(1)
+-#define IP5XXX_READ2_BTN_SHORT_PRESS		BIT(0)
+-#define IP5XXX_BATVADC_DAT0		0xa2
+-#define IP5XXX_BATVADC_DAT1		0xa3
+-#define IP5XXX_BATIADC_DAT0		0xa4
+-#define IP5XXX_BATIADC_DAT1		0xa5
+-#define IP5XXX_BATOCV_DAT0		0xa8
+-#define IP5XXX_BATOCV_DAT1		0xa9
++#define IP5XXX_BAT_TYPE_4_2V			0x0
++#define IP5XXX_BAT_TYPE_4_3V			0x1
++#define IP5XXX_BAT_TYPE_4_35V			0x2
++#define IP5XXX_CHG_STAT_IDLE			0x0
++#define IP5XXX_CHG_STAT_TRICKLE		0x1
++#define IP5XXX_CHG_STAT_CONST_VOLT		0x2
++#define IP5XXX_CHG_STAT_CONST_CUR		0x3
++#define IP5XXX_CHG_STAT_CONST_VOLT_STOP	0x4
++#define IP5XXX_CHG_STAT_FULL			0x5
++#define IP5XXX_CHG_STAT_TIMEOUT		0x6
+ 
+ struct ip5xxx {
+ 	struct regmap *regmap;
+ 	bool initialized;
++	struct {
++		struct {
++			/* Charger enable */
++			struct regmap_field *enable;
++			/* Constant voltage value */
++			struct regmap_field *const_volt_sel;
++			/* Constant current value */
++			struct regmap_field *const_curr_sel;
++			/* Charger status */
++			struct regmap_field *status;
++			/* Charging ended flag */
++			struct regmap_field *chg_end;
++			/* Timeout flags (CV, charge, trickle) */
++			struct regmap_field *timeout;
++			/* Overvoltage limit */
++			struct regmap_field *vin_overvolt;
++		} charger;
++		struct {
++			/* Boost converter enable */
++			struct regmap_field *enable;
++			struct {
++				/* Light load shutdown enable */
++				struct regmap_field *enable;
++				/* Light load shutdown current limit */
++				struct regmap_field *i_limit;
++			} light_load_shutdown;
++			/* Automatic powerup on increased load */
++			struct regmap_field *load_powerup_en;
++			/* Automatic powerup on VIN pull-out */
++			struct regmap_field *vin_pullout_en;
++			/* Undervoltage limit */
++			struct regmap_field *undervolt_limit;
++			/* Light load status flag */
++			struct regmap_field *light_load_status;
++		} boost;
++		struct {
++			/* NTC disable */
++			struct regmap_field *ntc_dis;
++			/* Battery voltage type */
++			struct regmap_field *type;
++			/* Battery voltage autoset from Vset pin */
++			struct regmap_field *vset_en;
++			struct {
++				/* Battery measurement registers */
++				struct ip5xxx_battery_adc_regs {
++					struct regmap_field *low;
++					struct regmap_field *high;
++				} volt, curr, open_volt;
++			} adc;
++		} battery;
++		struct {
++			/* Double/long press shutdown enable */
++			struct regmap_field *shdn_enable;
++			/* WLED activation: double press or long press */
++			struct regmap_field *wled_mode;
++			/* Shutdown activation: double press or long press */
++			struct regmap_field *shdn_mode;
++			/* Long press time */
++			struct regmap_field *long_press_time;
++			/* Button pressed */
++			struct regmap_field *pressed;
++			/* Button long-pressed */
++			struct regmap_field *long_pressed;
++			/* Button short-pressed */
++			struct regmap_field *short_pressed;
++		} btn;
++		struct {
++			/* WLED enable */
++			struct regmap_field *enable;
++			/* WLED detect */
++			struct regmap_field *detect_en;
++			/* WLED present */
++			struct regmap_field *present;
++		} wled;
++	} regs;
++};
++
++/* Register fields layout. Unsupported registers marked as { .lsb = 1 } */
++struct ip5xxx_regfield_config {
++	const struct reg_field charger_enable;
++	const struct reg_field charger_const_volt_sel;
++	const struct reg_field charger_const_curr_sel;
++	const struct reg_field charger_status;
++	const struct reg_field charger_chg_end;
++	const struct reg_field charger_timeout;
++	const struct reg_field charger_vin_overvolt;
++	const struct reg_field boost_enable;
++	const struct reg_field boost_llshdn_enable;
++	const struct reg_field boost_llshdn_i_limit;
++	const struct reg_field boost_load_powerup_en;
++	const struct reg_field boost_vin_pullout_en;
++	const struct reg_field boost_undervolt_limit;
++	const struct reg_field boost_light_load_status;
++	const struct reg_field battery_ntc_dis;
++	const struct reg_field battery_type;
++	const struct reg_field battery_vset_en;
++	const struct reg_field battery_adc_volt_low;
++	const struct reg_field battery_adc_volt_high;
++	const struct reg_field battery_adc_curr_low;
++	const struct reg_field battery_adc_curr_high;
++	const struct reg_field battery_adc_ovolt_low;
++	const struct reg_field battery_adc_ovolt_high;
++	const struct reg_field btn_shdn_enable;
++	const struct reg_field btn_wled_mode;
++	const struct reg_field btn_shdn_mode;
++	const struct reg_field btn_long_press_time;
++	const struct reg_field btn_pressed;
++	const struct reg_field btn_long_pressed;
++	const struct reg_field btn_short_pressed;
++	const struct reg_field wled_enable;
++	const struct reg_field wled_detect_en;
++	const struct reg_field wled_present;
+ };
+ 
+ /*
+@@ -87,24 +143,30 @@ struct ip5xxx {
+  *  2) Attempt the initialization sequence on each subsequent register access
+  *     until it succeeds.
+  */
+-static int ip5xxx_read(struct ip5xxx *ip5xxx, unsigned int reg,
++static int ip5xxx_read(struct ip5xxx *ip5xxx, struct regmap_field *field,
+ 		       unsigned int *val)
+ {
+ 	int ret;
+ 
+-	ret = regmap_read(ip5xxx->regmap, reg, val);
++	if (!field)
++		return -EOPNOTSUPP;
++
++	ret = regmap_field_read(field, val);
+ 	if (ret)
+ 		ip5xxx->initialized = false;
+ 
+ 	return ret;
+ }
+ 
+-static int ip5xxx_update_bits(struct ip5xxx *ip5xxx, unsigned int reg,
+-			      unsigned int mask, unsigned int val)
++static int ip5xxx_write(struct ip5xxx *ip5xxx, struct regmap_field *field,
++			unsigned int val)
+ {
+ 	int ret;
+ 
+-	ret = regmap_update_bits(ip5xxx->regmap, reg, mask, val);
++	if (!field)
++		return -EOPNOTSUPP;
++
++	ret = regmap_field_write(field, val);
+ 	if (ret)
+ 		ip5xxx->initialized = false;
+ 
+@@ -123,28 +185,24 @@ static int ip5xxx_initialize(struct power_supply *psy)
+ 	 * Disable shutdown under light load.
+ 	 * Enable power on when under load.
+ 	 */
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL1,
+-				 IP5XXX_SYS_CTL1_LIGHT_SHDN_EN |
+-				 IP5XXX_SYS_CTL1_LOAD_PWRUP_EN,
+-				 IP5XXX_SYS_CTL1_LOAD_PWRUP_EN);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.light_load_shutdown.enable, 0);
++	if (ret)
++		return ret;
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.load_powerup_en, 1);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/*
+ 	 * Enable shutdown after a long button press (as configured below).
+ 	 */
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL3,
+-				 IP5XXX_SYS_CTL3_BTN_SHDN_EN,
+-				 IP5XXX_SYS_CTL3_BTN_SHDN_EN);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.btn.shdn_enable, 1);
+ 	if (ret)
+ 		return ret;
+ 
+ 	/*
+ 	 * Power on automatically when VIN is removed.
+ 	 */
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL4,
+-				 IP5XXX_SYS_CTL4_VIN_PULLOUT_BOOST_EN,
+-				 IP5XXX_SYS_CTL4_VIN_PULLOUT_BOOST_EN);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.boost.vin_pullout_en, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -152,12 +210,13 @@ static int ip5xxx_initialize(struct power_supply *psy)
+ 	 * Enable the NTC.
+ 	 * Configure the button for two presses => LED, long press => shutdown.
+ 	 */
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL5,
+-				 IP5XXX_SYS_CTL5_NTC_DIS |
+-				 IP5XXX_SYS_CTL5_WLED_MODE_SEL |
+-				 IP5XXX_SYS_CTL5_BTN_SHDN_SEL,
+-				 IP5XXX_SYS_CTL5_WLED_MODE_SEL |
+-				 IP5XXX_SYS_CTL5_BTN_SHDN_SEL);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.ntc_dis, 0);
++	if (ret)
++		return ret;
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.btn.wled_mode, 1);
++	if (ret)
++		return ret;
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.btn.shdn_mode, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -186,24 +245,24 @@ static int ip5xxx_battery_get_status(struct ip5xxx *ip5xxx, int *val)
+ 	unsigned int rval;
+ 	int ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, IP5XXX_READ0, &rval);
++	ret = ip5xxx_read(ip5xxx, ip5xxx->regs.charger.status, &rval);
+ 	if (ret)
+ 		return ret;
+ 
+-	switch (rval & IP5XXX_READ0_CHG_STAT) {
+-	case IP5XXX_READ0_CHG_STAT_IDLE:
++	switch (rval) {
++	case IP5XXX_CHG_STAT_IDLE:
+ 		*val = POWER_SUPPLY_STATUS_DISCHARGING;
+ 		break;
+-	case IP5XXX_READ0_CHG_STAT_TRICKLE:
+-	case IP5XXX_READ0_CHG_STAT_CONST_CUR:
+-	case IP5XXX_READ0_CHG_STAT_CONST_VOLT:
++	case IP5XXX_CHG_STAT_TRICKLE:
++	case IP5XXX_CHG_STAT_CONST_CUR:
++	case IP5XXX_CHG_STAT_CONST_VOLT:
+ 		*val = POWER_SUPPLY_STATUS_CHARGING;
+ 		break;
+-	case IP5XXX_READ0_CHG_STAT_CONST_VOLT_STOP:
+-	case IP5XXX_READ0_CHG_STAT_FULL:
++	case IP5XXX_CHG_STAT_CONST_VOLT_STOP:
++	case IP5XXX_CHG_STAT_FULL:
+ 		*val = POWER_SUPPLY_STATUS_FULL;
+ 		break;
+-	case IP5XXX_READ0_CHG_STAT_TIMEOUT:
++	case IP5XXX_CHG_STAT_TIMEOUT:
+ 		*val = POWER_SUPPLY_STATUS_NOT_CHARGING;
+ 		break;
+ 	default:
+@@ -218,22 +277,22 @@ static int ip5xxx_battery_get_charge_type(struct ip5xxx *ip5xxx, int *val)
+ 	unsigned int rval;
+ 	int ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, IP5XXX_READ0, &rval);
++	ret = ip5xxx_read(ip5xxx, ip5xxx->regs.charger.status, &rval);
+ 	if (ret)
+ 		return ret;
+ 
+-	switch (rval & IP5XXX_READ0_CHG_STAT) {
+-	case IP5XXX_READ0_CHG_STAT_IDLE:
+-	case IP5XXX_READ0_CHG_STAT_CONST_VOLT_STOP:
+-	case IP5XXX_READ0_CHG_STAT_FULL:
+-	case IP5XXX_READ0_CHG_STAT_TIMEOUT:
++	switch (rval) {
++	case IP5XXX_CHG_STAT_IDLE:
++	case IP5XXX_CHG_STAT_CONST_VOLT_STOP:
++	case IP5XXX_CHG_STAT_FULL:
++	case IP5XXX_CHG_STAT_TIMEOUT:
+ 		*val = POWER_SUPPLY_CHARGE_TYPE_NONE;
+ 		break;
+-	case IP5XXX_READ0_CHG_STAT_TRICKLE:
++	case IP5XXX_CHG_STAT_TRICKLE:
+ 		*val = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
+ 		break;
+-	case IP5XXX_READ0_CHG_STAT_CONST_CUR:
+-	case IP5XXX_READ0_CHG_STAT_CONST_VOLT:
++	case IP5XXX_CHG_STAT_CONST_CUR:
++	case IP5XXX_CHG_STAT_CONST_VOLT:
+ 		*val = POWER_SUPPLY_CHARGE_TYPE_STANDARD;
+ 		break;
+ 	default:
+@@ -248,11 +307,11 @@ static int ip5xxx_battery_get_health(struct ip5xxx *ip5xxx, int *val)
+ 	unsigned int rval;
+ 	int ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, IP5XXX_READ0, &rval);
++	ret = ip5xxx_read(ip5xxx, ip5xxx->regs.charger.timeout, &rval);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (rval & IP5XXX_READ0_TIMEOUT)
++	if (rval)
+ 		*val = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
+ 	else
+ 		*val = POWER_SUPPLY_HEALTH_GOOD;
+@@ -265,7 +324,7 @@ static int ip5xxx_battery_get_voltage_max(struct ip5xxx *ip5xxx, int *val)
+ 	unsigned int rval;
+ 	int ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, IP5XXX_CHG_CTL2, &rval);
++	ret = ip5xxx_read(ip5xxx, ip5xxx->regs.battery.type, &rval);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -273,14 +332,14 @@ static int ip5xxx_battery_get_voltage_max(struct ip5xxx *ip5xxx, int *val)
+ 	 * It is not clear what this will return if
+ 	 * IP5XXX_CHG_CTL4_BAT_TYPE_SEL_EN is not set...
+ 	 */
+-	switch (rval & IP5XXX_CHG_CTL2_BAT_TYPE_SEL) {
+-	case IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_2V:
++	switch (rval) {
++	case IP5XXX_BAT_TYPE_4_2V:
+ 		*val = 4200000;
+ 		break;
+-	case IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_3V:
++	case IP5XXX_BAT_TYPE_4_3V:
+ 		*val = 4300000;
+ 		break;
+-	case IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_35V:
++	case IP5XXX_BAT_TYPE_4_35V:
+ 		*val = 4350000;
+ 		break;
+ 	default:
+@@ -291,16 +350,16 @@ static int ip5xxx_battery_get_voltage_max(struct ip5xxx *ip5xxx, int *val)
+ }
+ 
+ static int ip5xxx_battery_read_adc(struct ip5xxx *ip5xxx,
+-				   u8 lo_reg, u8 hi_reg, int *val)
++				   struct ip5xxx_battery_adc_regs *regs, int *val)
+ {
+ 	unsigned int hi, lo;
+ 	int ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, lo_reg, &lo);
++	ret = ip5xxx_read(ip5xxx, regs->low, &lo);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = ip5xxx_read(ip5xxx, hi_reg, &hi);
++	ret = ip5xxx_read(ip5xxx, regs->high, &hi);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -335,32 +394,28 @@ static int ip5xxx_battery_get_property(struct power_supply *psy,
+ 		return ip5xxx_battery_get_voltage_max(ip5xxx, &val->intval);
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+-		ret = ip5xxx_battery_read_adc(ip5xxx, IP5XXX_BATVADC_DAT0,
+-					      IP5XXX_BATVADC_DAT1, &raw);
++		ret = ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.volt, &raw);
+ 
+ 		val->intval = 2600000 + DIV_ROUND_CLOSEST(raw * 26855, 100);
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_OCV:
+-		ret = ip5xxx_battery_read_adc(ip5xxx, IP5XXX_BATOCV_DAT0,
+-					      IP5XXX_BATOCV_DAT1, &raw);
++		ret = ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.open_volt, &raw);
+ 
+ 		val->intval = 2600000 + DIV_ROUND_CLOSEST(raw * 26855, 100);
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_CURRENT_NOW:
+-		ret = ip5xxx_battery_read_adc(ip5xxx, IP5XXX_BATIADC_DAT0,
+-					      IP5XXX_BATIADC_DAT1, &raw);
++		ret = ip5xxx_battery_read_adc(ip5xxx, &ip5xxx->regs.battery.adc.curr, &raw);
+ 
+ 		val->intval = DIV_ROUND_CLOSEST(raw * 149197, 200);
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
+-		ret = ip5xxx_read(ip5xxx, IP5XXX_CHG_CTL4A, &rval);
++		ret = ip5xxx_read(ip5xxx, ip5xxx->regs.charger.const_curr_sel, &rval);
+ 		if (ret)
+ 			return ret;
+ 
+-		rval &= IP5XXX_CHG_CTL4A_CONST_CUR_SEL;
+ 		val->intval = 100000 * rval;
+ 		return 0;
+ 
+@@ -373,12 +428,11 @@ static int ip5xxx_battery_get_property(struct power_supply *psy,
+ 		if (ret)
+ 			return ret;
+ 
+-		ret = ip5xxx_read(ip5xxx, IP5XXX_CHG_CTL2, &rval);
++		ret = ip5xxx_read(ip5xxx, ip5xxx->regs.charger.const_volt_sel, &rval);
+ 		if (ret)
+ 			return ret;
+ 
+-		rval &= IP5XXX_CHG_CTL2_CONST_VOLT_SEL;
+-		val->intval = vmax + 14000 * (rval >> 1);
++		val->intval = vmax + 14000 * rval;
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE_MAX:
+@@ -401,26 +455,23 @@ static int ip5xxx_battery_set_voltage_max(struct ip5xxx *ip5xxx, int val)
+ 
+ 	switch (val) {
+ 	case 4200000:
+-		rval = IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_2V;
++		rval = IP5XXX_BAT_TYPE_4_2V;
+ 		break;
+ 	case 4300000:
+-		rval = IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_3V;
++		rval = IP5XXX_BAT_TYPE_4_3V;
+ 		break;
+ 	case 4350000:
+-		rval = IP5XXX_CHG_CTL2_BAT_TYPE_SEL_4_35V;
++		rval = IP5XXX_BAT_TYPE_4_35V;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_CHG_CTL2,
+-				 IP5XXX_CHG_CTL2_BAT_TYPE_SEL, rval);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.type, rval);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = ip5xxx_update_bits(ip5xxx, IP5XXX_CHG_CTL4,
+-				 IP5XXX_CHG_CTL4_BAT_TYPE_SEL_EN,
+-				 IP5XXX_CHG_CTL4_BAT_TYPE_SEL_EN);
++	ret = ip5xxx_write(ip5xxx, ip5xxx->regs.battery.vset_en, 1);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -443,7 +494,7 @@ static int ip5xxx_battery_set_property(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_STATUS:
+ 		switch (val->intval) {
+ 		case POWER_SUPPLY_STATUS_CHARGING:
+-			rval = IP5XXX_SYS_CTL0_CHARGER_EN;
++			rval = 1;
+ 			break;
+ 		case POWER_SUPPLY_STATUS_DISCHARGING:
+ 		case POWER_SUPPLY_STATUS_NOT_CHARGING:
+@@ -452,25 +503,22 @@ static int ip5xxx_battery_set_property(struct power_supply *psy,
+ 		default:
+ 			return -EINVAL;
+ 		}
+-		return ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL0,
+-					  IP5XXX_SYS_CTL0_CHARGER_EN, rval);
++		return ip5xxx_write(ip5xxx, ip5xxx->regs.charger.enable, rval);
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
+ 		return ip5xxx_battery_set_voltage_max(ip5xxx, val->intval);
+ 
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
+ 		rval = val->intval / 100000;
+-		return ip5xxx_update_bits(ip5xxx, IP5XXX_CHG_CTL4A,
+-					  IP5XXX_CHG_CTL4A_CONST_CUR_SEL, rval);
++		return ip5xxx_write(ip5xxx, ip5xxx->regs.charger.const_curr_sel, rval);
+ 
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
+ 		ret = ip5xxx_battery_get_voltage_max(ip5xxx, &vmax);
+ 		if (ret)
+ 			return ret;
+ 
+-		rval = ((val->intval - vmax) / 14000) << 1;
+-		return ip5xxx_update_bits(ip5xxx, IP5XXX_CHG_CTL2,
+-					  IP5XXX_CHG_CTL2_CONST_VOLT_SEL, rval);
++		rval = (val->intval - vmax) / 14000;
++		return ip5xxx_write(ip5xxx, ip5xxx->regs.charger.const_volt_sel, rval);
+ 
+ 	default:
+ 		return -EINVAL;
+@@ -515,20 +563,19 @@ static int ip5xxx_boost_get_property(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_ONLINE:
+-		ret = ip5xxx_read(ip5xxx, IP5XXX_SYS_CTL0, &rval);
++		ret = ip5xxx_read(ip5xxx, ip5xxx->regs.boost.enable, &rval);
+ 		if (ret)
+ 			return ret;
+ 
+-		val->intval = !!(rval & IP5XXX_SYS_CTL0_BOOST_EN);
++		val->intval = !!rval;
+ 		return 0;
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+-		ret = ip5xxx_read(ip5xxx, IP5XXX_CHG_CTL1, &rval);
++		ret = ip5xxx_read(ip5xxx, ip5xxx->regs.boost.undervolt_limit, &rval);
+ 		if (ret)
+ 			return ret;
+ 
+-		rval &= IP5XXX_CHG_CTL1_BOOST_UVP_SEL;
+-		val->intval = 4530000 + 100000 * (rval >> 2);
++		val->intval = 4530000 + 100000 * rval;
+ 		return 0;
+ 
+ 	default:
+@@ -550,14 +597,11 @@ static int ip5xxx_boost_set_property(struct power_supply *psy,
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_ONLINE:
+-		rval = val->intval ? IP5XXX_SYS_CTL0_BOOST_EN : 0;
+-		return ip5xxx_update_bits(ip5xxx, IP5XXX_SYS_CTL0,
+-					  IP5XXX_SYS_CTL0_BOOST_EN, rval);
++		return ip5xxx_write(ip5xxx, ip5xxx->regs.boost.enable, !!val->intval);
+ 
+ 	case POWER_SUPPLY_PROP_VOLTAGE_MIN_DESIGN:
+-		rval = ((val->intval - 4530000) / 100000) << 2;
+-		return ip5xxx_update_bits(ip5xxx, IP5XXX_CHG_CTL1,
+-					  IP5XXX_CHG_CTL1_BOOST_UVP_SEL, rval);
++		rval = (val->intval - 4530000) / 100000;
++		return ip5xxx_write(ip5xxx, ip5xxx->regs.boost.undervolt_limit, rval);
+ 
+ 	default:
+ 		return -EINVAL;
+@@ -583,13 +627,99 @@ static const struct power_supply_desc ip5xxx_boost_desc = {
+ static const struct regmap_config ip5xxx_regmap_config = {
+ 	.reg_bits		= 8,
+ 	.val_bits		= 8,
+-	.max_register		= IP5XXX_BATOCV_DAT1,
++	.max_register		= 0xa9,
++};
++
++static struct ip5xxx_regfield_config ip51xx_fields = {
++	.charger_enable = REG_FIELD(0x01, 1, 1),
++	.charger_const_volt_sel = REG_FIELD(0x24, 1, 2),
++	.charger_const_curr_sel = REG_FIELD(0x25, 0, 4),
++	.charger_status = REG_FIELD(0x71, 5, 7),
++	.charger_chg_end = REG_FIELD(0x71, 3, 3),
++	.charger_timeout = REG_FIELD(0x71, 0, 2),
++	.charger_vin_overvolt = REG_FIELD(0x72, 5, 5),
++	.boost_enable = REG_FIELD(0x01, 2, 2),
++	.boost_llshdn_enable = REG_FIELD(0x02, 1, 1),
++	.boost_llshdn_i_limit = REG_FIELD(0x0c, 3, 7),
++	.boost_load_powerup_en = REG_FIELD(0x02, 0, 0),
++	.boost_vin_pullout_en = REG_FIELD(0x04, 5, 5),
++	.boost_undervolt_limit = REG_FIELD(0x22, 2, 3),
++	.boost_light_load_status = REG_FIELD(0x72, 6, 6),
++	.battery_ntc_dis = REG_FIELD(0x07, 6, 6),
++	.battery_type = REG_FIELD(0x24, 5, 6),
++	.battery_vset_en = REG_FIELD(0x26, 6, 6),
++	.battery_adc_volt_low = REG_FIELD(0xa2, 0, 7),
++	.battery_adc_volt_high = REG_FIELD(0xa3, 0, 5),
++	.battery_adc_curr_low = REG_FIELD(0xa4, 0, 7),
++	.battery_adc_curr_high = REG_FIELD(0xa5, 0, 5),
++	.battery_adc_ovolt_low = REG_FIELD(0xa8, 0, 7),
++	.battery_adc_ovolt_high = REG_FIELD(0xa9, 0, 5),
++	.btn_shdn_enable = REG_FIELD(0x03, 5, 5),
++	.btn_wled_mode = REG_FIELD(0x07, 1, 1),
++	.btn_shdn_mode = REG_FIELD(0x07, 0, 0),
++	.btn_long_press_time = REG_FIELD(0x03, 6, 7),
++	.btn_pressed = REG_FIELD(0x77, 3, 3),
++	.btn_long_pressed = REG_FIELD(0x77, 1, 1),
++	.btn_short_pressed = REG_FIELD(0x77, 0, 0),
++	.wled_enable = REG_FIELD(0x01, 3, 3),
++	.wled_detect_en = REG_FIELD(0x01, 4, 4),
++	.wled_present = REG_FIELD(0x72, 7, 7),
+ };
+ 
++#define ip5xxx_setup_reg(_field, _reg) \
++			do { \
++				if (likely(cfg->_field.lsb <= cfg->_field.msb)) { \
++					struct regmap_field *_tmp = devm_regmap_field_alloc(dev, \
++							ip5xxx->regmap, cfg->_field); \
++					if (!IS_ERR(_tmp)) \
++						ip5xxx->regs._reg = _tmp; \
++				} \
++			} while (0)
++
++static void ip5xxx_setup_regs(struct device *dev, struct ip5xxx *ip5xxx,
++			      const struct ip5xxx_regfield_config *cfg)
++{
++	ip5xxx_setup_reg(charger_enable, charger.enable);
++	ip5xxx_setup_reg(charger_const_volt_sel, charger.const_volt_sel);
++	ip5xxx_setup_reg(charger_const_curr_sel, charger.const_curr_sel);
++	ip5xxx_setup_reg(charger_status, charger.status);
++	ip5xxx_setup_reg(charger_chg_end, charger.chg_end);
++	ip5xxx_setup_reg(charger_timeout, charger.timeout);
++	ip5xxx_setup_reg(charger_vin_overvolt, charger.vin_overvolt);
++	ip5xxx_setup_reg(boost_enable, boost.enable);
++	ip5xxx_setup_reg(boost_llshdn_enable, boost.light_load_shutdown.enable);
++	ip5xxx_setup_reg(boost_llshdn_i_limit, boost.light_load_shutdown.i_limit);
++	ip5xxx_setup_reg(boost_load_powerup_en, boost.load_powerup_en);
++	ip5xxx_setup_reg(boost_vin_pullout_en, boost.vin_pullout_en);
++	ip5xxx_setup_reg(boost_undervolt_limit, boost.undervolt_limit);
++	ip5xxx_setup_reg(boost_light_load_status, boost.light_load_status);
++	ip5xxx_setup_reg(battery_ntc_dis, battery.ntc_dis);
++	ip5xxx_setup_reg(battery_type, battery.type);
++	ip5xxx_setup_reg(battery_vset_en, battery.vset_en);
++	ip5xxx_setup_reg(battery_adc_volt_low, battery.adc.volt.low);
++	ip5xxx_setup_reg(battery_adc_volt_high, battery.adc.volt.high);
++	ip5xxx_setup_reg(battery_adc_curr_low, battery.adc.curr.low);
++	ip5xxx_setup_reg(battery_adc_curr_high, battery.adc.curr.high);
++	ip5xxx_setup_reg(battery_adc_ovolt_low, battery.adc.open_volt.low);
++	ip5xxx_setup_reg(battery_adc_ovolt_high, battery.adc.open_volt.high);
++	ip5xxx_setup_reg(btn_shdn_enable, btn.shdn_enable);
++	ip5xxx_setup_reg(btn_wled_mode, btn.wled_mode);
++	ip5xxx_setup_reg(btn_shdn_mode, btn.shdn_mode);
++	ip5xxx_setup_reg(btn_long_press_time, btn.long_press_time);
++	ip5xxx_setup_reg(btn_pressed, btn.pressed);
++	ip5xxx_setup_reg(btn_long_pressed, btn.long_pressed);
++	ip5xxx_setup_reg(btn_short_pressed, btn.short_pressed);
++	ip5xxx_setup_reg(wled_enable, wled.enable);
++	ip5xxx_setup_reg(wled_detect_en, wled.detect_en);
++	ip5xxx_setup_reg(wled_present, wled.present);
++}
++
+ static int ip5xxx_power_probe(struct i2c_client *client)
+ {
++	const struct ip5xxx_regfield_config *fields = &ip51xx_fields;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct device *dev = &client->dev;
++	const struct of_device_id *of_id;
+ 	struct power_supply *psy;
+ 	struct ip5xxx *ip5xxx;
+ 
+@@ -601,6 +731,11 @@ static int ip5xxx_power_probe(struct i2c_client *client)
+ 	if (IS_ERR(ip5xxx->regmap))
+ 		return PTR_ERR(ip5xxx->regmap);
+ 
++	of_id = i2c_of_match_device(dev->driver->of_match_table, client);
++	if (of_id)
++		fields = (const struct ip5xxx_regfield_config *)of_id->data;
++	ip5xxx_setup_regs(dev, ip5xxx, fields);
++
+ 	psy_cfg.of_node = dev->of_node;
+ 	psy_cfg.drv_data = ip5xxx;
+ 
+@@ -616,10 +751,10 @@ static int ip5xxx_power_probe(struct i2c_client *client)
+ }
+ 
+ static const struct of_device_id ip5xxx_power_of_match[] = {
+-	{ .compatible = "injoinic,ip5108" },
+-	{ .compatible = "injoinic,ip5109" },
+-	{ .compatible = "injoinic,ip5207" },
+-	{ .compatible = "injoinic,ip5209" },
++	{ .compatible = "injoinic,ip5108", .data = &ip51xx_fields },
++	{ .compatible = "injoinic,ip5109", .data = &ip51xx_fields },
++	{ .compatible = "injoinic,ip5207", .data = &ip51xx_fields },
++	{ .compatible = "injoinic,ip5209", .data = &ip51xx_fields },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ip5xxx_power_of_match);
+-- 
+2.34.1
 
-Jonathan Cameron <jic23@kernel.org> =E6=96=BC 2024=E5=B9=B411=E6=9C=889=E6=
-=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=8810:29=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> On Sat, 9 Nov 2024 13:42:28 +0000
-> Jonathan Cameron <jic23@kernel.org> wrote:
->
-> > On Wed, 6 Nov 2024 17:22:35 +0800
-> > Yu-Hsian Yang <j2anfernee@gmail.com> wrote:
-> >
-> > > Dear Chanh Nguyen,
-> > >
-> > > Thank you for your response.
-> > >
-> > > Chanh Nguyen <chanh@amperemail.onmicrosoft.com> =E6=96=BC 2024=E5=B9=
-=B411=E6=9C=886=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8812:58=E5=AF=
-=AB=E9=81=93=EF=BC=9A
-> > > >
-> > > >
-> > > >
-> > > > On 06/11/2024 09:39, Eason Yang wrote:
-> > > > > This adds a binding specification for the Nuvoton NCT7201/NCT7202
-> > > > > family of ADCs.
-> > > > >
-> > > > > Signed-off-by: Eason Yang <j2anfernee@gmail.com>
-> > > > > ---
-> > > > >   .../bindings/iio/adc/nuvoton,nct720x.yaml     | 47 ++++++++++++=
-+++++++
-> > > > >   MAINTAINERS                                   |  1 +
-> > > > >   2 files changed, 48 insertions(+)
-> > > > >   create mode 100644 Documentation/devicetree/bindings/iio/adc/nu=
-voton,nct720x.yaml
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/iio/adc/nuvoton,nc=
-t720x.yaml b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..3052039af10e
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.y=
-aml
-> > > > > @@ -0,0 +1,47 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/iio/adc/nuvoton,nct720x.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Nuvoton nct7202 and similar ADCs
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Eason Yang <yhyang2@nuvoton.com>
-> > > > > +
-> > > > > +description: |
-> > > > > +   Family of ADCs with i2c interface.
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    enum:
-> > > > > +      - nuvoton,nct7201
-> > > > > +      - nuvoton,nct7202
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  read-vin-data-size:
-> > > >
-> > > > Is it generic property or vendor property? I tried to find in the
-> > > > https://github.com/torvalds/linux/tree/master/Documentation/devicet=
-ree/bindings
-> > > > , but it seems this property hasn't been used on other devices.
-> > > >
-> > > > If it is vendor property, then I think it should include a vendor
-> > > > prefix. For examples:
-> > > >
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/adi%2Cad7780.yaml#L50
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/fsl%2Cvf610-adc.yaml#L42
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/st%2Cstmpe-adc.yaml#L22
-> > > >
-> > > >
-> > >
-> > > I would add a vendor prefix for it.
-> >
-> > Why do we want this at all?  Is this device sufficiently high
-> > performance that Linux will ever want to trade of resolution against
-> > sampling speed?
-> >
-> > If so that seems like a policy control that belongs in userspace. Note
-> > that to support that in IIO I would want a strong justification for why=
- we dno't
-> > just set it to 16 always. We just go for maximum resolution in the vast=
- majority
-> > of drivers that support control of this.
-> I'd misunderstood what this is. It's a control no what the i2c word size =
-is.
-> Do we actually care about supporting rubbish i2c controllers?  How many
-> can't do a word access?
->
-> If you do it should be detected from the controller rather than in DT.
->
-> >
-> >
-> > >
-> > > > > +    description: number of data bits per read vin
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > > > +    enum: [8, 16]
-> > > > > +
-> > > > > +required:
-> > > > > +  - compatible
-> > > > > +  - reg
-> > > > > +  - read-vin-data-size
-> > > > > +
-> > > > > +additionalProperties: false
-> > > > > +
-> > > > > +examples:
-> > > > > +  - |
-> > > > > +    i2c {
-> > > > > +        #address-cells =3D <1>;
-> > > > > +        #size-cells =3D <0>;
-> > > > > +
-> > > > > +        nct7202@1d {
-> > > >
-> > > > I think the Node name should follow
-> > > > https://devicetree-specification.readthedocs.io/en/latest/chapter2-=
-devicetree-basics.html#generic-names-recommendation
-> > > >
-> > > >
-> > > > For some examples that were merged before
-> > > >
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/adi%2Cad7091r5.yaml#L102
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/maxim%2Cmax1238.yaml#L73
-> > > > https://github.com/torvalds/linux/blob/master/Documentation/devicet=
-ree/bindings/iio/adc/ti%2Cadc081c.yaml#L49
-> > > >
-> > >
-> > > I would change it for the node naming.
-> > >
-> > > > > +            compatible =3D "nuvoton,nct7202";
-> > > > > +            reg =3D <0x1d>;
-> > > > > +            read-vin-data-size =3D <8>;
-> > > > > +        };
-> > > > > +    };
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index 91d0609db61b..68570c58e7aa 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -2746,6 +2746,7 @@ L:      openbmc@lists.ozlabs.org (moderated=
- for non-subscribers)
-> > > > >   S:  Supported
-> > > > >   F:  Documentation/devicetree/bindings/*/*/*npcm*
-> > > > >   F:  Documentation/devicetree/bindings/*/*npcm*
-> > > > > +F:   Documentation/devicetree/bindings/iio/adc/nuvoton,nct720x.y=
-aml
-> > > > >   F:  Documentation/devicetree/bindings/rtc/nuvoton,nct3018y.yaml
-> > > > >   F:  arch/arm/boot/dts/nuvoton/nuvoton-npcm*
-> > > > >   F:  arch/arm/mach-npcm/
-> > > >
-> >
-> >
->
+
 
