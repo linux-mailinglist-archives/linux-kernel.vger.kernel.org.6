@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-404122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A109C3F51
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:11:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911AF9C3F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:11:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C0851C21EDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:11:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559BD28579D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC4319CC22;
-	Mon, 11 Nov 2024 13:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB7119E7F7;
+	Mon, 11 Nov 2024 13:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c+6fUgTT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="KuO2EG7h"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A051158558;
-	Mon, 11 Nov 2024 13:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D664E158558;
+	Mon, 11 Nov 2024 13:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731330662; cv=none; b=KMtZ7EXjO9xMPYLKQntj7ZK4Oe44OZ5kyCKeQ82IHCFvt0VU1DA3MWWGWB3n7Q2hapa4LxWTX23dmyOlprRAke3+Sb9EiYwa6f4XjTM0MMckQz8aRDru3o/BgqA1CxxbhuVJVcz/WjhZsQRPtGZ3JD+NTTBTS+hhHtsUUSNWtzc=
+	t=1731330675; cv=none; b=cKdhfNqYwN+MaQ/yesD0vF5rZsp9v8L14Jb+q7JtYi6CQJS5ZjzO1vpi/naOMLg5RqMW+SGnaA/SQNfFQu7IzXNwe18titM5DkiRi6/iLGrHEh76ZnKvVrO651cqYrZz1s+dd2fsOnNpTd3eLhDvJJV2i1/lPkDYW7N7SsSonec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731330662; c=relaxed/simple;
-	bh=LDFPHDpTO0jfHPz//SlbU0SzK20oKkqQGjmHrBR1gbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UcDIJ19eZfZ6nhMGjN0MvJFAGPEd18bprDGUE/tguTAGrHsYom3viBVRj24pdnLZlGSNiZ7zuZ6+dSBGgOlhl8CuDXzCmPN3V/baPCQ2gtgdNkaXx1LglAwJq8d+CercJAujBk1xHLURjzrHTA+8Vmq6SWs83yHAm6vzqOizWf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c+6fUgTT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABBa7Sg020024;
-	Mon, 11 Nov 2024 13:10:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2+JOVLWsfMahws3OIYU+n+q2eo0s0kTrtpqSJxkHTtg=; b=c+6fUgTTwGvORhMZ
-	nI739gQsudY/ee82rHayAR/35x2853IfLNr0KsVtf54KwsWrGm0zoyc6alDB+MET
-	ab0ZoTkxr8Guyo5Wm8+vnRakqL/b/2EXBAZHcEgxvf8L/BnmHY4O+c/FeH9CG/6R
-	Lxuwu+ef78IKV9B0d7ztWUiyGb/4N8s+PCiZSYrHRje1AWAijjEnqbFU0b5ZPHTF
-	eQG35MimJ4ksK9v+MRfzTmQFr7Gzf/LiLPDgaTtooMi6pT+qnCFw9zEi3+xYAEwh
-	hfCU1cU2gK182rZPcCAgrhf+s8QpP34kOMW9tsx040MJouSLwR2h4QFjrJNozXG2
-	y87M7Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t11846bd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 13:10:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABDAvOn009580
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 11 Nov 2024 13:10:58 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
- 2024 05:10:54 -0800
-Message-ID: <9f096970-3408-4ea4-803f-2c63b4b60e6a@quicinc.com>
-Date: Mon, 11 Nov 2024 18:40:51 +0530
+	s=arc-20240116; t=1731330675; c=relaxed/simple;
+	bh=pcvUj6hiQws2lylwq5PlCi5h3lu5Ev1MrCrkJ29r3H8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XXQ9k26M4NBkl+dX8UEKZbKiMCjlQHkKOb0IKw0Zpe5i990f10RrQPigPFhAro02rXf258czkKjDonZyqn2NyQdCMzEBbKsa3ozNtjv47GajflrSdr0r2tJRSVHzCnD3Wjp2xt02SUDYrtrlKO3hmaxSvsrTfYRsTq+pAGeIpak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=KuO2EG7h; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id AUCBtWVCtj1r8AUCCtNM7Z; Mon, 11 Nov 2024 14:11:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731330668;
+	bh=k6+U7vZ/tn1IEQn4DKT3rhNOeOOohqN78QfNcyAx/YQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=KuO2EG7hxR5vLmuSpVztvlr/EJ4dUoRAmCfUZ/KdlWxMyiPuzc0Pp2QtyOVGopIVj
+	 H75lqaf4Bx4Cu8dPOeZAVDDtKMB3MPC6btSQFd2Xn3EMeTNUCcbr/3/JOzjunAFoof
+	 cOyM6NBZ4g6qakikw2E26yXblZ8pm0OJw4fuuE5hTqQDEILhc3e2NfD8vADEq8ebqG
+	 B38T2AFtOYhGYD0uJflxSRHjLhhSvkrppeK1cBJ7Lg8ngRRDLk3f0/dVMBuQVyCCa8
+	 bWkUo8ZOqGpRGhg7lmDCBJvV33mTnTFZtC75qGbCMkP5FJPJfJS+LTJNQH18cYHu6j
+	 tUJyDvoXyrSeA==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 11 Nov 2024 14:11:08 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Bodo Stroesser <bostroesser@gmail.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org
+Subject: [PATCH] scsi: target: tcmu: Constify some structures
+Date: Mon, 11 Nov 2024 14:10:56 +0100
+Message-ID: <f83cd8469cc17391178e1181e8c26c4c1fb6028f.1731330634.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sa8775p: Add LMH interrupts support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya Kakitapalli" <quic_skakitap@quicinc.com>
-References: <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-0-074e0fb80b33@quicinc.com>
- <20241017-sa8775p-cpufreq-l3-ddr-scaling-v1-3-074e0fb80b33@quicinc.com>
- <de2561cf-4aa8-4b7c-889b-4c3737857bdb@oss.qualcomm.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <de2561cf-4aa8-4b7c-889b-4c3737857bdb@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ubRlwkMhHMsQlQUGMdkBpuvj3zCdyclW
-X-Proofpoint-GUID: ubRlwkMhHMsQlQUGMdkBpuvj3zCdyclW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- bulkscore=0 mlxlogscore=551 lowpriorityscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411110109
+Content-Transfer-Encoding: 8bit
 
+'struct nla_policy' and 'struct match_table_t' are not modified in this
+driver.
 
+Constifying these structures moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers, which is the case of struct nla_policy.
 
-On 10/26/2024 5:57 PM, Konrad Dybcio wrote:
-> On 17.10.2024 11:28 AM, Jagadeesh Kona wrote:
->> Add LMH interrupts support to indicate if there is any
->> thermal throttle.
->>
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
-> 
-> 'support' doesn't fit here, you're describing the interrupts, passing
-> them to the cpufreq node. 
-> 
-> Adding support for interrupts would be fitting if you e.g. added code
-> in the driver that would start consuming them.
-> 
-> The code itself looks in line with the docs
-> 
-> Konrad
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  93188	   6933	    338	 100459	  1886b	drivers/target/target_core_user.o
 
-Sure, will update the commit text in next series.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  93508	   6581	    338	 100427	  1884b	drivers/target/target_core_user.o
 
-Thanks,
-Jagadeesh
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+---
+ drivers/target/target_core_user.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 717931267bda..0f5d820af119 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -361,7 +361,7 @@ static const struct genl_multicast_group tcmu_mcgrps[] = {
+ 	[TCMU_MCGRP_CONFIG] = { .name = "config", },
+ };
+ 
+-static struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX+1] = {
++static const struct nla_policy tcmu_attr_policy[TCMU_ATTR_MAX + 1] = {
+ 	[TCMU_ATTR_DEVICE]	= { .type = NLA_STRING },
+ 	[TCMU_ATTR_MINOR]	= { .type = NLA_U32 },
+ 	[TCMU_ATTR_CMD_STATUS]	= { .type = NLA_S32 },
+@@ -2430,7 +2430,7 @@ enum {
+ 	Opt_cmd_ring_size_mb, Opt_err,
+ };
+ 
+-static match_table_t tokens = {
++static const match_table_t tokens = {
+ 	{Opt_dev_config, "dev_config=%s"},
+ 	{Opt_dev_size, "dev_size=%s"},
+ 	{Opt_hw_block_size, "hw_block_size=%d"},
+-- 
+2.47.0
+
 
