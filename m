@@ -1,43 +1,55 @@
-Return-Path: <linux-kernel+bounces-404601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9A29C457E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:02:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546089C457B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B30D1F22016
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:02:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 690E1B3150A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 987EB1AA788;
-	Mon, 11 Nov 2024 19:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="PgBd5q5e"
-Received: from smtp-out.freemail.hu (fmfe06.freemail.hu [46.107.16.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11831AAE31;
+	Mon, 11 Nov 2024 18:53:56 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE0B1AA790;
-	Mon, 11 Nov 2024 19:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2FC19CD1B;
+	Mon, 11 Nov 2024 18:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731351702; cv=none; b=UwW0ExHl0zHLYR2RjC7F314tonFaRvwjGM4JpR1rMvhQB1OTFetZG9PUCOOGcZCVOt2SmN2YHrkBfxcD7qo4omW3cevrWlZHdfwgLHLHst0P+ibV1xd2wAHe3ypvDjxgvhyA4U/5+jVuk5ramMtoFsrB2QUjgbYsmxXKbJwmYf0=
+	t=1731351236; cv=none; b=hPq+hqOsNvTcv6CP0tr59wp2I7J+P0XLLMhIwON2o+Ig+tkXWb6AaXVdbYXYxM6WfYyn+GLVt9hGxQbQyXCAotsLcxBQTupl0XL2yKUuMy7RVNmgnF30uGklt4wykpJ2ZxR+0b9k9OinUPTm4eu+90d6M8XiLxY7sP5TErythzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731351702; c=relaxed/simple;
-	bh=UtSgjuzEwSV4pK01rFMS52u5MHc7iMF3VZbj5BclubE=;
+	s=arc-20240116; t=1731351236; c=relaxed/simple;
+	bh=z5Ib76vyYe0BpY23WC3IVBifpL+ItBJOpSqR1nCIaIU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvrYd+awDOTRSTHk9aG/1MyulINPFYqnA6C7ppli59wyefNHVVB7F9rsPaGmykCuxTIYXOMKnaKG6bigxZSpKZNyhFfVRHZfBOdErYuvcEpH2DXD9eXUdXLgG76+M3hq1Sm6qZ3x865CE+Y1rpci5/IC2Q25baOtZYFhLWZttn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=PgBd5q5e reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XnJdC4gP3zG0m;
-	Mon, 11 Nov 2024 19:54:55 +0100 (CET)
-Message-ID: <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
-Date: Mon, 11 Nov 2024 19:52:50 +0100
+	 In-Reply-To:Content-Type; b=D5sMk1pNw8c6BSyqWr8fQeAPtELzwcgqCh5BF4Rvyybw74uT94JGc3PJ2teuKQIX8rue71Mzlt91ti10krtUyh/1lQUNr0OJD0qLUvnBzsoeBQYq+inQCO3No1ljs0aw0e6269OUeQv3dYrnYNgC2ugTa166MiduCqun8RgvcLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XnJbs66gJz9sSZ;
+	Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id TyAyAoVco0MG; Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XnJbs4tpgz9sSY;
+	Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 851398B764;
+	Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id HD31GV42XuDC; Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+Received: from [192.168.233.59] (unknown [192.168.233.59])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1B6C18B763;
+	Mon, 11 Nov 2024 19:53:45 +0100 (CET)
+Message-ID: <b74f0845-4916-47eb-945b-eb91ae05fc91@csgroup.eu>
+Date: Mon, 11 Nov 2024 19:53:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,117 +57,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-To: paulmck@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- lkmm@lists.linux.dev
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
-Content-Language: hu
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
+Subject: Re: [RFC PATCH 2/3] module: Don't fail module loading when setting
+ ro_after_init section RO failed
+To: Daniel Gomez <da.gomez@samsung.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>,
+ linux-modules@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <737f952790c96a09ad5e51689918b97ef9b29174.1731148254.git.christophe.leroy@csgroup.eu>
+ <CGME20241109103554eucas1p1548e0da57cccb9546a88402f1f5c94be@eucas1p1.samsung.com>
+ <164e5f22f8ab59d1d516e3c992efdd9f83ab4819.1731148254.git.christophe.leroy@csgroup.eu>
+ <D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <D5HZV4A6SC9A.25U3Q0WUVDJHZ@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1731351296;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=4004; bh=qJ/mzoKk4xgDRJxP72WGwXHAX6ngG7CWXgNfNcEi594=;
-	b=PgBd5q5eHam1yg0N9i+NrmxBnFazq8c0uviLO6US4oSVUnttTQadBlXaNcHx6aH1
-	EWiOwGusokhAQzuEu0AnCZ7b9zo1e/ySRTiMOjc02ShC/fnH0D4HmG4x7l3x0uql+ae
-	QiAYip7QSywkJxnOSOl+tWgRlJ1tM1mtB94IswhJwRpGzKT3hfO1PQS04Z9t0Reju9A
-	02FbA1RPUIa8CrNQy0Nl7KmQLH5znbIP5czZpm4hYrQM4AsmFjE6dxVBp8Xq4eHAAir
-	+rF8UX0fbkYdPhNrnH6lmj7nsX/gZL3rU3RxhnAsgMzWxRuBw533mdjbx5cBBlLJtMB
-	F1Izdskttg==
 
-2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
-> On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
->> From: Benjamin Szőke <egyszeregy@freemail.hu>
+
+
+Le 09/11/2024 à 23:17, Daniel Gomez a écrit :
+> On Sat Nov 9, 2024 at 11:35 AM CET, Christophe Leroy wrote:
+>> Once module init has succeded it is too late to cancel loading.
+>> If setting ro_after_init data section to read-only fails, all we
+>> can do is to inform the user through a warning.
 >>
->> The goal is to fix Linux repository for case-insensitive filesystem,
->> to able to clone it and editable on any operating systems.
->>
->> Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
->> "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
->>
->> Signed-off-by: Benjamin Szőke <egyszeregy@freemail.hu>
-> 
-> Ummm...  Really?
-> 
-> Just out of curiosity, which operating-system/filesystem combination are
-> you working with?  And why not instead fix that combination to handle
-> mixed case?
-> 
-> 							Thanx, Paul
-
-Windows and also MacOS is not case sensitive by default. My goal is to improve 
-Linux kernel source-tree, to able to develop it in any operating systems for 
-example via Visual Studio Code extensions/IntelliSense feature or any similar 
-IDE which is usable in any OS.
-
-There were some accepted patches which aim this same goal.
-https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
-https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
-
-
-> 
+>> Reported-by: Thomas Gleixner <tglx@linutronix.de>
+>> Closes: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F20230915082126.4187913-1-ruanjinjie%40huawei.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C26b5ca7363e54210439b08dd010c4865%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638667874457200373%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=ZeJ%2F3%2B2Nx%2FBf%2FWLFEkhxKlDhZk8LNkz0fs%2Fg2xMcOjY%3D&reserved=0
+>> Fixes: d1909c022173 ("module: Don't ignore errors from set_memory_XX()")
+>> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 >> ---
->>   tools/memory-model/Documentation/locking.txt                    | 2 +-
->>   tools/memory-model/Documentation/recipes.txt                    | 2 +-
->>   tools/memory-model/litmus-tests/README                          | 2 +-
->>   ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
->>   4 files changed, 3 insertions(+), 3 deletions(-)
->>   rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
+>>   kernel/module/main.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
 >>
->> diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
->> index 65c898c64a93..42bc3efe2015 100644
->> --- a/tools/memory-model/Documentation/locking.txt
->> +++ b/tools/memory-model/Documentation/locking.txt
->> @@ -184,7 +184,7 @@ ordering properties.
->>   Ordering can be extended to CPUs not holding the lock by careful use
->>   of smp_mb__after_spinlock():
+>> diff --git a/kernel/module/main.c b/kernel/module/main.c
+>> index 2de4ad7af335..1bf4b0db291b 100644
+>> --- a/kernel/module/main.c
+>> +++ b/kernel/module/main.c
+>> @@ -2583,7 +2583,9 @@ static noinline int do_init_module(struct module *mod)
+>>   #endif
+>>   	ret = module_enable_rodata_ro_after_init(mod);
+>>   	if (ret)
+>> -		goto fail_mutex_unlock;
+>> +		pr_warn("%s: %s() returned %d, ro_after_init data might still be writable\n",
+>> +			mod->name, __func__, ret);
+>> +
+>>   	mod_tree_remove_init(mod);
+>>   	module_arch_freeing_init(mod);
+>>   	for_class_mod_mem_type(type, init) {
+>> @@ -2622,8 +2624,6 @@ static noinline int do_init_module(struct module *mod)
 >>   
->> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>   	void CPU0(void)
->>   	{
->>   		spin_lock(&mylock);
->> diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
->> index 03f58b11c252..35996eb1b690 100644
->> --- a/tools/memory-model/Documentation/recipes.txt
->> +++ b/tools/memory-model/Documentation/recipes.txt
->> @@ -159,7 +159,7 @@ lock's ordering properties.
->>   Ordering can be extended to CPUs not holding the lock by careful use
->>   of smp_mb__after_spinlock():
->>   
->> -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
->> +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
->>   	void CPU0(void)
->>   	{
->>   		spin_lock(&mylock);
->> diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
->> index d311a0ff1ae6..e3d451346400 100644
->> --- a/tools/memory-model/litmus-tests/README
->> +++ b/tools/memory-model/litmus-tests/README
->> @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
->>   	spin_lock() sufficient to make ordering apparent to accesses
->>   	by a process not holding the lock?
->>   
->> -Z6.0+pooncelock+poonceLock+pombonce.litmus
->> +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->>   	As above, but with smp_mb__after_spinlock() immediately
->>   	following the spin_lock().
->>   
->> diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->> similarity index 100%
->> rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
->> rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
->> -- 
->> 2.47.0.windows.2
->>
+>>   	return 0;
+> 
+> I think it would make sense to propagate the error. But that would
+> require changing modprobe.c. What kind of error can we expect when this
+> happens?
 
+AFAIK, on powerpc it fails with EINVAL when
+- The area is a vmalloc or module area and is a hugepage area
+- The area is not vmalloc or io register and MMU is not powerpc radix MMU
+
+Otherwise it propagates the error from apply_to_existing_page_range(). 
+IIUC it will return EINVAL when it hits a leaf PTE in upper directories.
+
+On other architectures it can be different, I know some architecture try 
+to split the pages when they hit hugepages and that can fail.
+
+
+But I believe if it works the first time it should work next time as well.
+
+> 
+>>   
+>> -fail_mutex_unlock:
+>> -	mutex_unlock(&module_mutex);
+>>   fail_free_freeinit:
+>>   	kfree(freeinit);
+>>   fail:
+> 
 
