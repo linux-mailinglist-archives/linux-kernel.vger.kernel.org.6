@@ -1,93 +1,216 @@
-Return-Path: <linux-kernel+bounces-404284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74429C41E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:33:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65C19C41E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898C71F24FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:33:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257EFB23616
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D119F130;
-	Mon, 11 Nov 2024 15:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D58C1A0B0E;
+	Mon, 11 Nov 2024 15:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOYr/emS"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+sF+K/7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A3D339A0;
-	Mon, 11 Nov 2024 15:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B1A1A0AE9;
+	Mon, 11 Nov 2024 15:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731339156; cv=none; b=uKLV5rNwweZRdBGqDNe8XyRlUsP1eUwjr1YMYlV+a+uC5lbVLsrprAHjj4ibWEV1t2oTgqRHSmIo5Sr+O9m0qN1D0ApR8uiLPZzwDEZqQEebqTpKev2kafUn1ZAU0dg8Abrjua8Y3PfjmvFZSHV4jF3oHecRN3bfuGbUlJjZY1s=
+	t=1731339173; cv=none; b=ppHPTzqzYaPPyJCZMTY+625qpC3wBJ1WFqcMazavrAUoo9FfAt6q5SliWyVkGOnazpCKCYsyTzkSvduzwf/d3mu/Gy/ano0U9tuVmVTi0FASb2WQuWOJmS+eHRcYgEutlu97uGYxDBZ9iHCf6l/4biaeBC9uoo0DOFhEq2knwMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731339156; c=relaxed/simple;
-	bh=4dtLWJYlffHE+FCD0GMA/gShdphBSPEvhwHTIGZTc0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=twjWp9brKkU5q03L6ZmkFh23kCfAdyA5RMeoVXu/6IiVQEDh+bHZVQzyWLRYqcuD9WBYo6aGSGYGeIbxSymWrqEgWTdykHO9ULdRqG0asKkBc27EdrjCRLMV/NNkJM4s/ezN02IXUe9wnzsEyQ/SYJuxYHslanlojLOhotxUOE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOYr/emS; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so5171995e87.1;
-        Mon, 11 Nov 2024 07:32:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731339153; x=1731943953; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4dtLWJYlffHE+FCD0GMA/gShdphBSPEvhwHTIGZTc0U=;
-        b=mOYr/emSI1pRJoGP3JMFRbl91VXZ/zkrUy0l3TE69aGG4CeJCdTN20QcZFKSGgJGHJ
-         XUC9L0k79XPw1tmDv2eLqhBZJonmZ7FRDCprLJ2qUSybchXQNkB8QpATQ57R616kKg0J
-         osus+pktrv852vHv8PThuQr7nmhRYOBS/fl1SdmouPVsnFn33Tqngs/cdcqhQny2dJUv
-         HDyqWZhwU3L3LFIqR2jqNBnp/PzoUDBvrHEX8AhXKBafXkYKai3ET64a3wbtSs9dPwsk
-         AKgiIcIOYDogOaX/pW+EykUbVB/K5vd6BwrlJyRwnSytIQN/RrZGADedmtd76h56+bqa
-         31Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731339153; x=1731943953;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4dtLWJYlffHE+FCD0GMA/gShdphBSPEvhwHTIGZTc0U=;
-        b=auYKWkGa+WMd0FBv4fdI5zhPVREUSedOv8+T0Bv4eBhE43h0jPufY4R8fWHi13CK0v
-         hpYUZdUh4EaXi60X7BsGDW21TZLT/BZy46qhXF4U7tEyMHZotX8N6butwyQkembdaHPo
-         kXRnKWQf8tnesmRSey9CA4aYhhnh5w+cOMoMvmpKwMZslBCjXQJxmU0eFlpxMe8QobQl
-         jtr/zCVmQYpgY/xEBnaMMDtApmA7nIPH1Y0A+JYoEfoOHKSxPEVi2zEjdqDcYmiX5y3p
-         SEMJudXrIcqWdeYF57HL6Ag7sHah0ueesbNCPKG3s9Y8LJjPOpWnlnjmyYc27S8uEzgi
-         Motg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTe/mB43z1L5zVehkY9xNjiC9fsE4xj4GeTz0h0NqwIYWfk3vw8fGDci6aiNorl3jJkw26v1KqcGv+9FY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY107Ygu5y/+y79cRunLu5975dlsjEICeRJ/LwkJ8arVXuQ9O9
-	ZPe7TeLr+g51ziuc6GG3hGsRqmeS3CCFIL+aWLOhqubzQw6juJlJY2J8nLTr4I+QA2mSpVIM1MQ
-	UAyjr/NjpiLSVe0IljHh6pgG6s9Y=
-X-Google-Smtp-Source: AGHT+IFuiqYDT9JdC80x9CPndyU414wpLcL/PyRMvDOTe4bSWrY9Foalx3TwTZMRqSaymMhfEtjOkrojGWv8DxyUzwQ=
-X-Received: by 2002:a05:651c:1501:b0:2fb:5cff:fcd8 with SMTP id
- 38308e7fff4ca-2ff20281d5amr44961441fa.34.1731339152770; Mon, 11 Nov 2024
- 07:32:32 -0800 (PST)
+	s=arc-20240116; t=1731339173; c=relaxed/simple;
+	bh=JRCExL56hEso6nxlo5+9mWAiDru0uRJpvy6CKQe1Eyg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=PXhYgrMS5pOZBtxizvXuVE5zqx8R59ayeCuFGdohawMDE5Z6Q4zM9CrbrcMaZhoqbQ6P/Ur1XpiewBEagU52Bk/d6XRd4vNmDKDwzwt7x/jFO+286T600NWRrc5223Mv92iCyvB1GJM3ZXkxZn9gO8r6tvSGyQiVlEDfda/1smI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A+sF+K/7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDB9AC4CECF;
+	Mon, 11 Nov 2024 15:32:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731339173;
+	bh=JRCExL56hEso6nxlo5+9mWAiDru0uRJpvy6CKQe1Eyg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=A+sF+K/739rUF8+V77C28gdkGMV5oHrmNnc4k7kfU6eTxp/miuOAyOKl8OuXhGzvi
+	 nx/nSCMtEYIbgWXFtoLnyL5J+Pznt7UuCcQovRO4/k06/mXJpXLWlWgVVOyaHc2TL6
+	 JKSamnnpjqmO+c2EW9Nw6SpB8gUTkV4TqzxybcQ6miqIPAHXuG+1OYppLghWn7wlFR
+	 fHEfO4iEHMCwsugvW83DjMenqlX1mr7mA6WiaWRcDTJDhdoiots7DuLpwWR9V+hVAQ
+	 REXMWMi8l9ofk9OYKJz4coBP6Yp4jWVjlnBzYtCuMEQ1RsZfZlYBRmkLaNwx/GjfkG
+	 5B0oaDAk694tQ==
+Date: Mon, 11 Nov 2024 09:32:50 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110-borrow-mut-v4-0-053976068215@gmail.com> <20241110-borrow-mut-v4-6-053976068215@gmail.com>
-In-Reply-To: <20241110-borrow-mut-v4-6-053976068215@gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Mon, 11 Nov 2024 10:31:56 -0500
-Message-ID: <CAJ-ks9mSu0Wivnsn605ZTFHiYqK4VEhURO-7rj5jFAwSxJsABg@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] rust: add improved version of `ForeignOwnable::borrow_mut`
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
+References: <20241110145339.3635437-1-quic_wasimn@quicinc.com>
+Message-Id: <173133346523.1281746.5040282370031807643.robh@kernel.org>
+Subject: Re: [PATCH 0/5] arm64: qcom: Add support for QCS9075 boards
 
-This series conflicts with Gary's FFI types series:
 
-https://lore.kernel.org/all/20240913213041.395655-4-gary@garyguo.net/
+On Sun, 10 Nov 2024 20:23:34 +0530, Wasim Nazir wrote:
+> Add support for Qualcomm's rb8, ride/ride-r3 boards using QCS9075 SoC.
+> 
+> QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
+> without safety monitorng feature of SAfetyIsLand subsystem.
+> This subsystem continues to supports other features like built-in
+> self-test, error-detection, reset-handling, etc.
+> 
+> Wasim Nazir (5):
+>   dt-bindings: arm: qcom,ids: add SoC ID for QCS9075
+>   soc: qcom: socinfo: add QCS9075 SoC ID
+>   dt-bindings: arm: qcom: Document rb8/ride/ride-r3 on QCS9075
+>   arm64: dts: qcom: Add support for QCS9075 RB8
+>   arm64: dts: qcom: Add support for QCS9075 Ride & Ride-r3
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   9 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   3 +
+>  arch/arm64/boot/dts/qcom/qcs9075-rb8.dts      | 287 ++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts  |  12 +
+>  arch/arm64/boot/dts/qcom/qcs9075-ride.dts     |  12 +
+>  drivers/soc/qcom/socinfo.c                    |   1 +
+>  include/dt-bindings/arm/qcom,ids.h            |   1 +
+>  7 files changed, 325 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-rb8.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> 
+> 
+> base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
+> --
+> 2.47.0
+> 
+> 
+> 
 
-I've rebased it locally. Shall I send a v5?
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/qcs9075-rb8.dtb qcom/qcs9075-ride-r3.dtb qcom/qcs9075-ride.dtb' for 20241110145339.3635437-1-quic_wasimn@quicinc.com:
+
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: rsc@18200000: 'power-domains' is a required property
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+
+
+
+
+
 
