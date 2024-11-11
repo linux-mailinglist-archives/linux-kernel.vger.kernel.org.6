@@ -1,119 +1,95 @@
-Return-Path: <linux-kernel+bounces-403664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7609C38CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:01:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4909C38D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E34D91C216C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 537B12822BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4B815533B;
-	Mon, 11 Nov 2024 07:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6B614E2E6;
+	Mon, 11 Nov 2024 07:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="r+63b0K0"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="hI2I9w5M"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2A51BC4E;
-	Mon, 11 Nov 2024 07:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF5B1BC4E
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731308484; cv=none; b=jeRysQmKbie/mGO8Z2A1Kn18SxGxt9ftb5dnYNu5MyjWqncTb74AR2CNLWMOy5Yl/5ThjjyTVFtsEkSN2iMAMJ6qtnfQLUb/4V2yQ+PUyOlNInj2IUz9we37kQPNnPTrk+Ni9dnPvxh51sufxLAbe2/Rw1Nf4VWjaIADYs+30jI=
+	t=1731308550; cv=none; b=dvfGv6iXfnjHWnGkVW5wdZrjrQSPkyfmFwCRVvgLTzRnew3c9hW1wtEYI6FL0vASeTqrSLkMGhlu3jhzHphd9/YPIgn6alozuhnFiuvGRM7cMi0ipKMQ+6Z/PAsS08pKfwbAbIIReZtfguo8RJfMSuc3oLauo3CFlOHX8lFMRjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731308484; c=relaxed/simple;
-	bh=74vSH8jCobkm++QUMiqDjqjUNoYfF8wPfC9bI7z4j/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lBFYImTYbZHd0oHJxjFedvDPoX0TVToX+vlNM1rngbRgBbidjzMW21P3VwngrgXAVnAuEjpUDYiNQAHhKiMAVSD9E/D14/Ts/pBcWNNeXhorBP/1c+bnhfwsfgsn7CnnXuwxmt49FBUla/4Ncqj3HzXzdM3qbwwcUld0JpwFW1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=r+63b0K0; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731308422; x=1731913222; i=w_armin@gmx.de;
-	bh=zNhs8knv1TCaWn97GwAPPU6qGMOy7JbpyIodoN/c8QU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=r+63b0K0P/0U822PPvBcdwoKSfYLY6jp24GrRIA179qU8ezuVLXYFEMqpUMiLobZ
-	 hwGZ3VG55oq9n8IwptrUkDzbVG9iaZbEGa5IOP0hKvht+uiLbV4n6zEKflCPcMpiX
-	 hqc9mKYaQKpaOpcwdJogJoQwAfHI3wkAaBOpN78o35XFI9VB3s/slo4rwKMvRE7xc
-	 are//8jab7jRnlVrC2G72FYN+EDQHDVfhQGImUxTR6uHWiAw9FCBQTx24vl7T+j0f
-	 JFIL+HQUqRHDdGIioycReXzY0+UPcS0CxZSJtOhu7WLPuRTN9FZdYTJp15/QgU3tg
-	 +OHc6z5OXqPDyq8KQQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N1wlv-1tuCZr1VhB-015N07; Mon, 11
- Nov 2024 08:00:22 +0100
-Message-ID: <ec54d642-3aba-4e7b-954a-8fba79e73e31@gmx.de>
-Date: Mon, 11 Nov 2024 08:00:20 +0100
+	s=arc-20240116; t=1731308550; c=relaxed/simple;
+	bh=iA1oh/4Q/HU+BX+PmjHJcjZETPGATVMFlpvDSeenBfI=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=P5gqpHwmi+Hy7HctvhuAn6B3k+XJbsDpdo6hIQ5zHwIXa0BbDa7DxSm/hbL92C3H4ixkCEd8gJUCdIMCBZmDaFlAyYQU4/r+pHfp89i/Z3roaEAcHmXI9dUwP09P1MjTvXi3TaTH9vaWPjR8Bi2UboRfSfqFcv90CvFVev3n5XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=hI2I9w5M; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1731308540; x=1731567740;
+	bh=iA1oh/4Q/HU+BX+PmjHJcjZETPGATVMFlpvDSeenBfI=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=hI2I9w5M8RDQJ9SPCnpJdMlynz9MPOlq1IawmwOALy2yOypVao30nK2NHQXpSqP9H
+	 0Osh5vNogDRoG46dletA5rz1DxCnG+yiUSr4xNlsQapjJ8NkWdB0umIP6FQ+tlvC5G
+	 Wa+tg1A10Q3WD8Lr11mXS25bmMasUBsw0KxRIUZUizX2c1K+dsRzPQHhQFFUvFq4ft
+	 sNTVWiAmBofFX/WYpqkSnN1YPE+tzNEKkf89Ng0O/hD+NbDw+ZNj1MMHIyYa+CRAQc
+	 LGS2+WE+9V+Td3pwodQ9hp8eGxg9Z4Bqz1NfYpE9zV6g0KMfn6NGk3Z8d6KGaZdfJR
+	 dcVOPHjciyOVQ==
+Date: Mon, 11 Nov 2024 07:02:12 +0000
+To: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+From: "Michael C. Pratt" <mcpratt@pm.me>
+Cc: "Michael C . Pratt" <mcpratt@pm.me>, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 2 0/1] sched/syscalls: Allow setting niceness using sched_param struct
+Message-ID: <20241111070152.9781-1-mcpratt@pm.me>
+Feedback-ID: 27397442:user:proton
+X-Pm-Message-ID: db2b9cebd61657804d3a9d03352bcac13811c470
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Fix thermal profile handling
-From: Armin Wolf <W_Armin@gmx.de>
-To: corentin.chary@gmail.com, luke@ljones.dev, mohamed.ghanmi@supcom.tn
-Cc: srinivas.pandruvada@linux.intel.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, Michael@phoronix.com,
- casey.g.bowman@intel.com, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241107003811.615574-1-W_Armin@gmx.de>
-Content-Language: en-US
-In-Reply-To: <20241107003811.615574-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:HjN1o2zjOt7nusRjgNryQIspf3nQlnHJ20jI+aY6jUCCHOWxJTX
- fUDA24rsPsXLpURTTf9ACOpoV3H7gnGTsrDLybtFoN3SNx9Di9OODiN7BJjIWlB5VOBse6O
- 2588EUC1hvFNfphUd1yRJLg8qUd47PGwm2TnZnhx5QMfjbT6fpmwUw4kClkcP+QF2k98jtg
- glgnVXxHe6NhBx6RhhphA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:sZOy9ODJwEA=;ZK1mtjO4E5uQQjd27Zlj9JP7vXv
- v2NJQggl/ijGXS2YYhi1bDJQZm1Vhg/iBvnt86UZP0+bCf9ltilgLijXASS7MpLEqy06NvOsn
- 5QzqoE1NkF1+y+hXQyjLD5LJ0aoh1bA8DEKiomBoAFGB/lsPSXw6wBXOsAz62isj8g3HzKY8I
- iU2Q8H725Zz15tmZeV9r3YoyyWJeRqowgLPFAHmOsEPuYSrn4ck3D23ra+A7tIp/cA+BlgyiZ
- rSP5DnjcVU12YQCaXJm+yLk7Y/qe4NRvQ2UTTCWP+4vbgpHemV//st+wCfA5uKnh+6kUeFS6L
- YwD9RDdE3l9FOViTecda1g2bfMjemiFF5dDj+RKajYxhRHREXG2QYJXSXdsL2KoTJPayO6i40
- KlOGmLLnRbeSA4OTbKYHY/y2cvulG3x98d+IORXZL12A/IFtSVWQC5hZ+1IJl/S5DsZcCMBHC
- ibefX+L/lJrQXKVoVZ6FjMxc95eZynSIwo65oLA987vPyxNJrfX60y25Wv9mpZjJSZm5PQrfC
- TzDV08XQwQno0ezjYqLZ56txy2bcOkz81r6+iwovPD/ve1x0PZDoMajXJNCKQj/whFCd/QiR6
- 8nRwIjt0p1XEtWL427v2q9D4aIP7AqE8c7FvrXunqeGYY8IYEkMT5KOZxwOa2Gyf3X7ex+EkW
- u6lzrNRaAqFe/LffQ9YrUUX1DzdLeVmNqjC1p2kIZsCO+gAKUbhEbMa0pdfP3X3qJOmwnruXb
- P/48w8cWsMNN/Ktbf21TY7kcqdRd3m0XTelDs6WRnBotElYMCdKIrPEZlrlJKDQP6c3m0Z3rl
- vgOxBNUpxLvJixbgZVfwTrlQ==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Am 07.11.24 um 01:38 schrieb Armin Wolf:
+Dear Linus and devs,
 
-> When support for Vivobook fan profiles was added, the new thermal
-> profiles where used inconsistently.
->
-> This patch series aims to fix this issue. Compile-tested only.
+I don't want to take much of your time, this is a very simple patch.
+I am concerned that it is being ignored without a good reason.
+This is my third time sending it, the first being within the merge window
+for 6.12 which I was hoping this would be included in.
 
-Whats your opinion on this, Ilpo? The first patch was already tested by Casey, and
-the second patch should be low risk despite being only compile-tested by me.
+This patch is a short and safe way to expand the current ABI regarding
+the ability to set a process priority at the moment of process creation.
+For example, there currently is no way to set a process priority
+for normal processes made with the posix_spawn*() family of functions.
 
-Thanks,
-Armin Wolf
+Since it is unsafe to directly change the static priority
+for non-RT processes, the niceness value is modified instead
+in order to result in the same effective priority as what is requested.
+Any requested priority outside the effect of the niceness range is invalid.
 
-> Changes since v1:
-> - drop already applied patch
-> - change commit description of first patch
-> - add second patch based on a suggestion of Hans
->
-> Armin Wolf (2):
->    platform/x86: asus-wmi: Fix inconsistent use of thermal policies
->    platform/x86: asus-wmi: Use platform_profile_cycle()
->
->   drivers/platform/x86/asus-wmi.c | 88 +++++++++------------------------
->   1 file changed, 22 insertions(+), 66 deletions(-)
->
-> --
-> 2.39.5
->
->
+Peter had responded with a concern that the value passed in
+to sched_priority should be the niceness value itself in this case,
+however, for the functions used to query the accepted range,
+sched_get_priority_max() and sched_get_priority_min(),
+as defined by POSIX, a negative value indicates failure.
+This would also be inconsistent with other usage of the value.
+Therefore, I believe this remains to be the correct way to implement it.
+I replied as such and got no reply back.
+
+I still think I have a good idea here, but for whatever reason,
+this being in my opinion one of the simplest and most sensible patches
+that I have tried to send so far, is being met with
+mostly dead silence or misunderstanding of the situation...
+So I am opening up the conversation to a wider audience.
+
+Thanks for reading
+
 
