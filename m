@@ -1,330 +1,140 @@
-Return-Path: <linux-kernel+bounces-404396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3273A9C4337
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:09:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8659C434C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B20611F21E6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:09:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8984FB23489
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F16A1A3A8D;
-	Mon, 11 Nov 2024 17:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4771A08C2;
+	Mon, 11 Nov 2024 17:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="K6AMPVyq"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcvI2Ze/"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC892AF1C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012CB2AF1C
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731344960; cv=none; b=UnM3RBn1m8KHOEZQ6NI9S2xPZyATK3DG1jCIOzwMO1uqSElyr8RRawcZdJY81u70h92ybhWbUqUkocCruPTTg8kd9XcPv1M36dPeJA1QIX6u4aDHk0PKXEg3i4kK6Xx93n8k5a6uA6Gmzp0dkylHjKIOiYr8K4cYyVfjvUahKHc=
+	t=1731345023; cv=none; b=ckUKLuKlfIdHLvr3pfEF37YZwvCJDBoSeRyfNagD3+f5i3/a+idpCjtf9Yc1CgkXCOLdAjz4DfYdf4b+O3tbckfYGQFmVRZ0exTnLC/TZnFXPSn2/IttFoIjEpe3D7/GbfWAakin+FHKblrqtkI8hOUbGZHn6N2sFvak0CtJ0Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731344960; c=relaxed/simple;
-	bh=FWFU++bHMwg8DYm85y0XjcNuvtTGRgPVpTC09F8Y7xE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gydyy0aE0Y1tlrt1PmYrIzeCDWS7dmkzMOLEBwUDfiqiTj9uX+7pIsgE24mKQyJ0N4ag1XkYE7YZNv2BJQF6qOvenTKKErucW2bcqOT7wAD3tSO+mvIig+aXndgWDPche1d/Fl3Br11lHkJJB1jr/+qp8uXyuup5uco9notpFqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=K6AMPVyq; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71811aba576so2984535a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:09:17 -0800 (PST)
+	s=arc-20240116; t=1731345023; c=relaxed/simple;
+	bh=f6HKmU0BnhqArbMEdHgt52C/V4l6/0SHG91cR5UNajo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=T0GVU0m4aFCvYg3RnKlbC7WhJPoxZUJt3lkrjD+i9fbN0v7gUHGIteYvmEY9jaLfDeXINtLsu3MXZbEcIpAASVWaT794qgYbXyyBoZjeVi5MOY/UiwITDtkdZGQ9wSX+pNr5k3cwzsGjzYgyuv+KJi2vISypszNHdpQUeecu5ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcvI2Ze/; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c6f492d2dso52012125ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:10:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731344956; x=1731949756; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=f6fLv7NDwAwgh2zTfiGl9xXcUzRaOQnOkOpbb/tKGe0=;
-        b=K6AMPVyqy4twA+xwqmYbYJytw4z2hIsW+NQr4mbx7rDwRPZsc7P3UQzXYOiXxOq5vz
-         XnHipzTeBHtAZ4NLD7DD3NVjGPdJSVG+5w9/M8KmNpvAxX0J/6D56QJCwzH8bo9RIXC1
-         RjdzoihivyhdzLBock49IEDiK9K/D1UwDgT6p0nSdcc2cJxWdeJOAnvVijHqD7Z1QIVo
-         qTaz8qanaTOUa2K87l9n4vw5pEHAGB0h1ubA64MA0kDtmTyQYek5/O25pB951VjmR35Z
-         LwOO2k2vpmltuxR3uWFQj8R7IKSsq/qtuB82SQ4QMz8oxK9lo7vWbq2nP8U8rg0eyxq2
-         cNvw==
+        d=gmail.com; s=20230601; t=1731345021; x=1731949821; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7TmUgvo3rAWWE5RdXfwA5YP+7FX339w5GtAM0VCDDD0=;
+        b=GcvI2Ze/XmPmKgNe2RTspQeHdVjYtJU9C6p8cylN5sqQfMsiDpBkqyPJgIxK/0T5Rp
+         CXmF4Cr5YE0GPNi4IG8s3OdDoIBYgmm1d3AhYum6LUlYB7MP3L2XUed6c9XdCAgjKBLS
+         8Ve13cvsFNQdx5pljVTpjH0eO84H6EdTVWel8m+c05DuFLW1ykmVAhIEfH/xONI/QxGU
+         gwJBw57xOAaL6L2OyBJwvEMoOm4weXi+H5UsaWnAkp0wUbIVpd1EGcuoSTRii2vwZNtQ
+         R8L5ChFwk7A5EVYxps2ohola0jSnvpGnyE3ebO1hNpXXhMYGXAEY+XPqEkNtN98xzFe+
+         l8wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731344956; x=1731949756;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f6fLv7NDwAwgh2zTfiGl9xXcUzRaOQnOkOpbb/tKGe0=;
-        b=pHxQYRu30iIece7Pbdc7a0La3XuPbqGyLCqjZD4Pj6snqjmMBAXp2dBaj5kqX2JTFM
-         H0gFfD8gnFArOt8prRodXzZ5Tt0SRtuwrZzyEZUQJh60N3yhOCOm8klSXMv0+eOpd7AH
-         hdJ/e4d3uWxHxWNDZcxZg59VxjbsrJIGkhnSvld17ile5PDxctCOYjht+WHD/sVsCUd5
-         smDiNRVmfRoWG/vAMN+dSR3poSLsN1iFEN00iJ9xr4aF0W7ygVjXudhksPEAraIMAKt6
-         Jc8bCFow32oyrNfyLmRdlE+v5cHBUbe4IVJpzacRat/1pdjFJ56ilHDg1Y5vibXxDEcz
-         FLQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqFCnvtzDKfNHDlJfBEzUnZBGdjzOUIBu71Ag1nTBhnLZm/72VMcKlj5GQ9JXAMUlz4AimwemVaqtuEFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrolYQ3sfZ/kLgl6q/5cDaVkpWvqBey4MA1PZ381U+YbPQl+Qc
-	wHIUdpQCqYocjqmwiVoW4G9ZEj8iBBGiiXgvBiKm8Wf3r7kNjObPz8M8NZFun/Q=
-X-Google-Smtp-Source: AGHT+IFNZamT2bZFDaSjw1Yl3jaxXvbQV8DNZNoPpnlYjKrFHE1JGXIOAPe3KflgKlcoZRhw+QrWwg==
-X-Received: by 2002:a9d:4c12:0:b0:710:e1e4:1bc3 with SMTP id 46e09a7af769-71a1b013b2bmr6535107a34.6.1731344956471;
-        Mon, 11 Nov 2024 09:09:16 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a107eb5desm2315700a34.3.2024.11.11.09.09.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 09:09:15 -0800 (PST)
-Message-ID: <31db6462-83d1-48b6-99b9-da38c399c767@kernel.dk>
-Date: Mon, 11 Nov 2024 10:09:14 -0700
+        d=1e100.net; s=20230601; t=1731345021; x=1731949821;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7TmUgvo3rAWWE5RdXfwA5YP+7FX339w5GtAM0VCDDD0=;
+        b=EfXdmRRqOECXeIUG/lTTO5jJV2LiL6Kb3ogNghJEIokDw2bPfXfDGjKAVzfuQONvbe
+         hoFC9QUF6DJWScap7+U5/ryddySYqeKby5GUCQiHmyRUIUX+oaCgwEhktwejowf1RioU
+         Ty5MKsNWlOxBkjWSoqFfvDF8pJP92MuUsTRtzivOpwATExjy+dyRReCBFpAQT+zxh0Kr
+         bZNOvmSPUjgJ6n3w5rCr7o5N70C4hfi8PMg1TIWJFtjjPAButnXl8QNORArYS2pdn289
+         rNHs+6VmssztAMg8n9T9bPHXulXaO9pWvqBSUI3ixprgCUf2QLuhd64iD6fuWWNRu60w
+         3qTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9SPpHq0uJLyAFyuqb++NES6w+n84tFTFNsE7qjO8SLGq+DTe3GC84jIqt+B0EfUBVwGkuAgNeuzEJV4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKp8vx9PBG7x05bOoEEvSb7bSGCKsvhKMpQkpAL74LHNfcPLV9
+	btgcxF0Kg56VLhokwrCbzy/PbSGlNRaQ7rUobRouK3CRShwVJxZZ
+X-Google-Smtp-Source: AGHT+IGD1ihYcH9brUb7aGVIfVLJtUoQAP/4IyOgHMw8BdSSSs6Gal7OVKQdot3j4F9M9LWLtKEVxw==
+X-Received: by 2002:a17:902:f641:b0:20b:58f2:e1a0 with SMTP id d9443c01a7336-2118350b048mr197466545ad.18.1731345019981;
+        Mon, 11 Nov 2024 09:10:19 -0800 (PST)
+Received: from Emma ([2401:4900:1c94:38cd:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e41884sm78216555ad.119.2024.11.11.09.10.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 09:10:19 -0800 (PST)
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+Date: Mon, 11 Nov 2024 17:10:14 +0000
+Subject: [PATCH] mm: shmem: Fix variable type to int to evaluate negative
+ conditions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
-From: Jens Axboe <axboe@kernel.dk>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
- linux-kernel@vger.kernel.org, willy@infradead.org
-References: <20241110152906.1747545-1-axboe@kernel.dk>
- <20241110152906.1747545-9-axboe@kernel.dk>
- <s3sqyy5iz23yfekiwb3j6uhtpfhnjasiuxx6pufhb4f4q2kbix@svbxq5htatlh>
- <221590fa-b230-426a-a8ec-7f18b74044b8@kernel.dk>
- <ZzIfwmGkbHwaSMIn@infradead.org>
- <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <04fd04b3-c19e-4192-b386-0487ab090417@kernel.dk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHY6MmcC/x2MQQqAIBAAvxJ7TnBNhfpKdDBbbQ9ZKEUQ/T1pb
+ nOYeaBQZiowNA9kurjwnqpg24BfXYokeKkOSiqNFXGmwjHR4vftcJnQSjS2F9LMpu8UakMBanx
+ kCnz/43F63w+Y7ChHaAAAAA==
+To: Hugh Dickins <hughd@google.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Gabriel Krisman Bertazi <gabriel@krisman.be>, 
+ =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+ Christian Brauner <brauner@kernel.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Shuah Khan <skhan@linuxfoundation.org>, 
+ Karan Sanghavi <karansanghvi98@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731345016; l=1302;
+ i=karansanghvi98@gmail.com; s=20241017; h=from:subject:message-id;
+ bh=f6HKmU0BnhqArbMEdHgt52C/V4l6/0SHG91cR5UNajo=;
+ b=bdyobIMGN6Bm/v1Ve6FUxxV44b3xLkYGetIq5ykQsmBrIdSIc1b2u9JazqbzbhlsLHW37m05d
+ Asasy9eUt3/Dt/C+a5scNEjXyYpd27srLaOmzomKxwQkbvCb/P7Z5t0
+X-Developer-Key: i=karansanghvi98@gmail.com; a=ed25519;
+ pk=UAcbefT1C06npNVDJHdgpPqTm4WE9IhaA1fmJb3A37Y=
 
-On 11/11/24 8:17 AM, Jens Axboe wrote:
-> On 11/11/24 8:16 AM, Christoph Hellwig wrote:
->> On Mon, Nov 11, 2024 at 07:12:35AM -0700, Jens Axboe wrote:
->>> Ok thanks, let me take a look at that and create a test case that
->>> exercises that explicitly.
->>
->> Please add RWF_UNCACHED to fsstress.c in xfstests also.  That is our
->> exerciser for concurrent issuing of different I/O types to hit these
->> kinds of corner cases.
-> 
-> Sure, can do.
+version variable captures return value from utf8_parse_version
+function which can be negative, but unsigned won't
+let it capture, thus missing the further checks on negative values.
 
-Not familiar with fsstress at all, but something like the below? Will
-use it if available, if it gets EOPNOTSUPP it'll just fallback to
-using writev_f()/readv_f() instead.
+Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+Coverity Message:
+CID 1601569: (#1 of 1): Unsigned compared against 0 (NO_EFFECT)
+unsigned_compare: This less-than-zero comparison of an unsigned 
+value is never true. version < 0U
 
-Did give it a quick test spin and I see uncached reads and writes on the
-kernel that supports it.
+Coverity Link:
+https://scan7.scan.coverity.com/#/project-view/10043/11354?selectedIssue=1601569
+---
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/ltp/fsstress.c b/ltp/fsstress.c
-index 3d248ee25791..6430f10efbc7 100644
---- a/ltp/fsstress.c
-+++ b/ltp/fsstress.c
-@@ -82,6 +82,12 @@ static int renameat2(int dfd1, const char *path1,
- #define RENAME_WHITEOUT		(1 << 2)	/* Whiteout source */
- #endif
- 
-+#ifndef RWF_UNCACHED
-+#define RWF_UNCACHED		0x80
-+#endif
-+
-+static int have_rwf_uncached = 1;
-+
- #define FILELEN_MAX		(32*4096)
- 
- typedef enum {
-@@ -117,6 +123,7 @@ typedef enum {
- 	OP_COLLAPSE,
- 	OP_INSERT,
- 	OP_READ,
-+	OP_READ_UNCACHED,
- 	OP_READLINK,
- 	OP_READV,
- 	OP_REMOVEFATTR,
-@@ -143,6 +150,7 @@ typedef enum {
- 	OP_URING_READ,
- 	OP_URING_WRITE,
- 	OP_WRITE,
-+	OP_WRITE_UNCACHED,
- 	OP_WRITEV,
- 	OP_EXCHANGE_RANGE,
- 	OP_LAST
-@@ -248,6 +256,7 @@ void	zero_f(opnum_t, long);
- void	collapse_f(opnum_t, long);
- void	insert_f(opnum_t, long);
- void	unshare_f(opnum_t, long);
-+void	read_uncached_f(opnum_t, long);
- void	read_f(opnum_t, long);
- void	readlink_f(opnum_t, long);
- void	readv_f(opnum_t, long);
-@@ -273,6 +282,7 @@ void	unlink_f(opnum_t, long);
- void	unresvsp_f(opnum_t, long);
- void	uring_read_f(opnum_t, long);
- void	uring_write_f(opnum_t, long);
-+void	write_uncached_f(opnum_t, long);
- void	write_f(opnum_t, long);
- void	writev_f(opnum_t, long);
- void	exchangerange_f(opnum_t, long);
-@@ -315,6 +325,7 @@ struct opdesc	ops[OP_LAST]	= {
- 	[OP_COLLAPSE]	   = {"collapse",      collapse_f,	1, 1 },
- 	[OP_INSERT]	   = {"insert",	       insert_f,	1, 1 },
- 	[OP_READ]	   = {"read",	       read_f,		1, 0 },
-+	[OP_READ_UNCACHED] = {"read_uncached", read_uncached_f,	1, 0 },
- 	[OP_READLINK]	   = {"readlink",      readlink_f,	1, 0 },
- 	[OP_READV]	   = {"readv",	       readv_f,		1, 0 },
- 	/* remove (delete) extended attribute */
-@@ -346,6 +357,7 @@ struct opdesc	ops[OP_LAST]	= {
- 	[OP_URING_WRITE]   = {"uring_write",   uring_write_f,	1, 1 },
- 	[OP_WRITE]	   = {"write",	       write_f,		4, 1 },
- 	[OP_WRITEV]	   = {"writev",	       writev_f,	4, 1 },
-+	[OP_WRITE_UNCACHED]= {"write_uncaced", write_uncached_f,4, 1 },
- 	[OP_EXCHANGE_RANGE]= {"exchangerange", exchangerange_f,	2, 1 },
- }, *ops_end;
- 
-@@ -4635,6 +4647,76 @@ readv_f(opnum_t opno, long r)
- 	close(fd);
- }
- 
-+void
-+read_uncached_f(opnum_t opno, long r)
-+{
-+	int		e;
-+	pathname_t	f;
-+	int		fd;
-+	int64_t		lr;
-+	off64_t		off;
-+	struct stat64	stb;
-+	int		v;
-+	char		st[1024];
-+	struct iovec	iov;
-+
-+	if (!have_rwf_uncached) {
-+		readv_f(opno, r);
-+		return;
-+	}
-+
-+	init_pathname(&f);
-+	if (!get_fname(FT_REGFILE, r, &f, NULL, NULL, &v)) {
-+		if (v)
-+			printf("%d/%lld: read - no filename\n", procid, opno);
-+		free_pathname(&f);
-+		return;
-+	}
-+	fd = open_path(&f, O_RDONLY);
-+	e = fd < 0 ? errno : 0;
-+	check_cwd();
-+	if (fd < 0) {
-+		if (v)
-+			printf("%d/%lld: read - open %s failed %d\n",
-+				procid, opno, f.path, e);
-+		free_pathname(&f);
-+		return;
-+	}
-+	if (fstat64(fd, &stb) < 0) {
-+		if (v)
-+			printf("%d/%lld: read - fstat64 %s failed %d\n",
-+				procid, opno, f.path, errno);
-+		free_pathname(&f);
-+		close(fd);
-+		return;
-+	}
-+	inode_info(st, sizeof(st), &stb, v);
-+	if (stb.st_size == 0) {
-+		if (v)
-+			printf("%d/%lld: read - %s%s zero size\n", procid, opno,
-+			       f.path, st);
-+		free_pathname(&f);
-+		close(fd);
-+		return;
-+	}
-+	lr = ((int64_t)random() << 32) + random();
-+	off = (off64_t)(lr % stb.st_size);
-+	iov.iov_len = (random() % FILELEN_MAX) + 1;
-+	iov.iov_base = malloc(iov.iov_len);
-+	e = preadv2(fd, &iov, 1, off, RWF_UNCACHED) < 0 ? errno : 0;
-+	if (e == EOPNOTSUPP) {
-+		have_rwf_uncached = 0;
-+		e = 0;
-+	}
-+	free(iov.iov_base);
-+	if (v)
-+		printf("%d/%lld: read uncached %s%s [%lld,%d] %d\n",
-+		       procid, opno, f.path, st, (long long)off,
-+		       (int)iov.iov_len, e);
-+	free_pathname(&f);
-+	close(fd);
-+}
-+
- void
- removefattr_f(opnum_t opno, long r)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 7987deb2be9b..17a1d4fa8870 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4367,7 +4367,7 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
+ 				    bool latest_version)
  {
-@@ -5509,6 +5591,70 @@ writev_f(opnum_t opno, long r)
- 	close(fd);
- }
+ 	struct shmem_options *ctx = fc->fs_private;
+-	unsigned int version = UTF8_LATEST;
++	int version = UTF8_LATEST;
+ 	struct unicode_map *encoding;
+ 	char *version_str = param->string + 5;
  
-+void
-+write_uncached_f(opnum_t opno, long r)
-+{
-+	int		e;
-+	pathname_t	f;
-+	int		fd;
-+	int64_t		lr;
-+	off64_t		off;
-+	struct stat64	stb;
-+	int		v;
-+	char		st[1024];
-+	struct iovec	iov;
-+
-+	if (!have_rwf_uncached) {
-+		writev_f(opno, r);
-+		return;
-+	}
-+
-+	init_pathname(&f);
-+	if (!get_fname(FT_REGm, r, &f, NULL, NULL, &v)) {
-+		if (v)
-+			printf("%d/%lld: write - no filename\n", procid, opno);
-+		free_pathname(&f);
-+		return;
-+	}
-+	fd = open_path(&f, O_WRONLY);
-+	e = fd < 0 ? errno : 0;
-+	check_cwd();
-+	if (fd < 0) {
-+		if (v)
-+			printf("%d/%lld: write - open %s failed %d\n",
-+				procid, opno, f.path, e);
-+		free_pathname(&f);
-+		return;
-+	}
-+	if (fstat64(fd, &stb) < 0) {
-+		if (v)
-+			printf("%d/%lld: write - fstat64 %s failed %d\n",
-+				procid, opno, f.path, errno);
-+		free_pathname(&f);
-+		close(fd);
-+		return;
-+	}
-+	inode_info(st, sizeof(st), &stb, v);
-+	lr = ((int64_t)random() << 32) + random();
-+	off = (off64_t)(lr % MIN(stb.st_size + (1024 * 1024), MAXFSIZE));
-+	off %= maxfsize;
-+	iov.iov_len = (random() % FILELEN_MAX) + 1;
-+	iov.iov_base = malloc(iov.iov_len);
-+	memset(iov.iov_base, nameseq & 0xff, iov.iov_len);
-+	e = pwritev2(fd, &iov, 1, off, RWF_UNCACHED) < 0 ? errno : 0;
-+	free(iov.iov_base);
-+	if (v)
-+		printf("%d/%lld: write uncached %s%s [%lld,%d] %d\n",
-+		       procid, opno, f.path, st, (long long)off,
-+		       (int)iov.iov_len, e);
-+	free_pathname(&f);
-+	close(fd);
-+	if (e == EOPNOTSUPP) {
-+		writev_f(opno, r);
-+		have_rwf_uncached = 0;
-+	}
-+}
-+
- char *
- xattr_flag_to_string(int flag)
- {
 
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241111-unsignedcompare1601569-05b5932145ef
+
+Best regards,
 -- 
-Jens Axboe
+Karan Sanghavi <karansanghvi98@gmail.com>
+
 
