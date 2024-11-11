@@ -1,144 +1,145 @@
-Return-Path: <linux-kernel+bounces-403728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01FC9C39B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:39:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4419C39C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9746B1F21008
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9B8DB21D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29E1684B0;
-	Mon, 11 Nov 2024 08:39:19 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D0E16A930;
+	Mon, 11 Nov 2024 08:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="eTgZGCat"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5D342A8A;
-	Mon, 11 Nov 2024 08:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAE2158533
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731314359; cv=none; b=I9ujIY5sXKpr7+Q+SUcxF5xN4uQ7UBKaCJ15imzD6jpsCZQ/YUVse/nuIHvHB+MyGzAklLNEBuPRIV8oYJlTUjfqdiWi1ls+HAzow0h6VYITviy9XeVL2au1iQwBSPaznG9gDw6J5VxgTUsXwwFWR6IwUE7WEjA6DjLJLHtQ89k=
+	t=1731314407; cv=none; b=gOj76Itn3IvtaH9MOX3nukw3EtkuZ10dzGRsdAdUl3ytg4nk+0VIA1Krbc3EEZB/G7xpXezqior9ejEeU1IBH8gBxUNi1j+rhcrI+6xt7JKF8HIpCVbt505HZjQPsNjSQ0YspVvgDpZ7s0o3Qee0XVT21WgQGoXVZfvXzsC0BTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731314359; c=relaxed/simple;
-	bh=lYYYEUm2oPHWg2EHbK4EHCvhRqZvYy5u46TnSMY16mI=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=XnhOb0IsBe5tZEEbZJt8DJ9oDEENrjcy1yHhyB5E0/w+K1fuLtiHadpPlbN1URnTy5tzPqBL+ZQ8IhMYG/x1XTIug7o5nz6aP/xZwxue9DOv98hdH/5V7v/snbAKwPIBTms0GecvSMZhmlvsTpiUSM24+bsCWum997k7Nd0Fxnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xn2wb1nvlz10VB1;
-	Mon, 11 Nov 2024 16:37:19 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3DA53140257;
-	Mon, 11 Nov 2024 16:39:11 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 11 Nov 2024 16:39:09 +0800
-CC: <yangyicong@hisilicon.com>, Xu Yang <xu.yang_2@nxp.com>, John Garry
-	<john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, James Clark
-	<james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, Leo Yan
-	<leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
-	<mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
-	<kan.liang@linux.intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Huacai Chen
-	<chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>, Athira Rajeev
-	<atrajeev@linux.vnet.ibm.com>, Ben Zong-You Xie <ben717@andestech.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Sandipan Das
-	<sandipan.das@amd.com>, Benjamin Gray <bgray@linux.ibm.com>, Ravi Bangoria
-	<ravi.bangoria@amd.com>, =?UTF-8?Q?Cl=c3=a9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>, "Masami Hiramatsu (Google)"
-	<mhiramat@kernel.org>, Dima Kogan <dima@secretsauce.net>, "Dr. David Alan
- Gilbert" <linux@treblig.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, Junhao He <hejunhao3@huawei.com>
-Subject: Re: [PATCH v2 8/8] perf pmu: Move pmu_metrics_table__find and remove
- ARM override
-To: Ian Rogers <irogers@google.com>
-References: <20241107162035.52206-1-irogers@google.com>
- <20241107162035.52206-9-irogers@google.com>
- <5a57de7c-924e-ccd6-8981-b9fddc647465@huawei.com>
- <CAP-5=fWw04Qi+3=y7M4uMrhgrFWpnF7mZ09yb4v0P0qFT1Gfnw@mail.gmail.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <e8603b0c-86db-c258-179a-f228c43ebf0b@huawei.com>
-Date: Mon, 11 Nov 2024 16:39:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1731314407; c=relaxed/simple;
+	bh=0TMlo/1M8pZzt8wgzxGNWdRDANNk60XXJly6Ts5W8zQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uH5mTFRESiwFJ9vG049w6jshsnJy87pdGcEZe4lFmTJl9bhn+i2zgTyrAFfuWb27UgR5S0WzD2ekPhpowLyKwPqUo5poKUOVicbjDx+xdOqKiubGqTuy8hzeP64AKXn5sYhzDTY9nhHanwUCdvE948eonk7YCpN5TgesYG4Cy6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=eTgZGCat; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so3606666b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 00:40:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1731314403; x=1731919203; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wmVlHwTvUCQZE9KPsrgpDC1tNLtWbhTIHRQ7dvfrGVg=;
+        b=eTgZGCatF9cCjPZRIX8ctOVuIqcUqgXQB5QSxWBBJykKitqQBCr5DWqKQKLZOVszZ5
+         kVEbvhilA+uraXdb6e+wkv2bxeiHY0C7nr140i5vS75pfFD+KX4k2+nA5VWdlGq9X9oA
+         F3mZrZwTsIXFIf9RC9itKA2rv2D/kdQnvWbmR1cbA6D8zkU707i4ng8AZ4mFd609jgJY
+         mEDtwCfQ6PS32WTyZfng4mVW8s9dIPcU8kb2bNEAULPowakEsQX+cuU6f3pAI8fjS44r
+         DCjGyY8XKt4KD+4JH3nGGhO88iC1kYdXWwCLmXALXEJIhxtod7ERS+3bUfXOQxEDxU/h
+         OE4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731314403; x=1731919203;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmVlHwTvUCQZE9KPsrgpDC1tNLtWbhTIHRQ7dvfrGVg=;
+        b=QKWd8YFlR9UAJ1V/pCh5gek4VyJW89SVzE/FHsoMBoR+rTdE0ryJmMMwsUD4eeJQ25
+         F1vI0o03nQUOhcLwA/7knrQlyD7zcks9LpwuvZS3Koyx4HAVZV+lHqazyl+6CIfKwSyG
+         cZzHQyKLBQuqK5zbKv5GKWlK7M1zYKF0S2s/sX3uguQHGYd330+cJeEG/ROUq8nE0eyp
+         0yP4NLSuj9MNG8IK3zFhNf/nv/25wTKZUHy2vO0BmfJdJPAn8r/9mJrOIoS7CgUPfL2B
+         ThjzxJ2c3QRlBECMV9rh4UZUn5FgNUkUJ21F2v8BxsJB0rHQXIpgMMwaXcz1+h8eyBnQ
+         OGHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZXCK2UWq03Oi9uVNqUGp8fgeuqu2+lla0juEEHAP22PXw6wPCgndnO9k4UpTmtN8/KTdh6lBCKxtuFx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZR+JtnnD4KkKxxYA4mUdXRctPgoZcg4A0SmYQXcsKIQxEOmCV
+	jD63lWbbA4uK1bVjtYwdFLkvi0o/MX2dNtdSsOPslGwPFxnd4UaAfDFjQHmwmKA=
+X-Google-Smtp-Source: AGHT+IEqi8Zzo53EDLQgkbshFItq7KP14ICwi1neU9DQh0SL40H9eZsefl555LkYfSNJKXXktPJHUg==
+X-Received: by 2002:a05:6a00:894:b0:71e:cf8:d6fa with SMTP id d2e1a72fcca58-724132c04d3mr16972946b3a.15.1731314403597;
+        Mon, 11 Nov 2024 00:40:03 -0800 (PST)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a571ccsm8425130b3a.196.2024.11.11.00.39.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 00:40:03 -0800 (PST)
+Message-ID: <cfb6ef05-5ee0-4d7f-a0b1-c35826603351@bytedance.com>
+Date: Mon, 11 Nov 2024 16:39:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAP-5=fWw04Qi+3=y7M4uMrhgrFWpnF7mZ09yb4v0P0qFT1Gfnw@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] docs/mm: add VMA locks documentation
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Jann Horn <jannh@google.com>, Alice Ryhl <aliceryhl@google.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ Suren Baghdasaryan <surenb@google.com>, Hillf Danton <hdanton@sina.com>,
+ Qi Zheng <zhengqi.arch@bytedance.com>, SeongJae Park <sj@kernel.org>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+Content-Language: en-US
+In-Reply-To: <20241108135708.48567-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/11/10 0:10, Ian Rogers wrote:
-> On Sat, Nov 9, 2024 at 2:54 AM Yicong Yang <yangyicong@huawei.com> wrote:
->>
->> Hi,
->>
->> On 2024/11/8 0:20, Ian Rogers wrote:
->>> Move pmu_metrics_table__find to the jevents.py generated pmu-events.c
->>> and remove indirection override for ARM. The movement removes
->>> perf_pmu__find_metrics_table that exists to enable the ARM
->>> override. The ARM override isn't necessary as just the CPUID, not PMU,
->>> is used in the metric table lookup. On non-ARM the CPU argument is
->>> just ignored for the CPUID, for ARM -1 is passed so that the CPUID for
->>> the first logical CPU is read.
->>
->> Since the logic here's already been touching, is it possible to step it further to just
->> ignore the CPUID matching when finding the system metrics/events tables? It's may not be
->> that reasonable for finding a system metrics/events from the CPUID, since one system PMU may
->> exists on different platforms with different CPU types.
-> 
-> The issue is for conciseness reasons we let metrics and metric
-> thresholds refer to other metrics, for example:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/pmu-events/arch/x86/icelakex/icx-metrics.json#n78
-> ```
->     {
->         "BriefDescription": "This category represents fraction of
-> slots where no uops are being delivered due to a lack of required
-> resources for accepting new uops in the Backend",
->         "MetricExpr": "topdown\\-be\\-bound / (topdown\\-fe\\-bound +
-> topdown\\-bad\\-spec + topdown\\-retiring + topdown\\-be\\-bound) + 5
-> * cpu@INT_MISC.RECOVERY_CYCLES\\,cmask\\=1\\,edge@ / tma_info_slots",
->         "MetricGroup": "TmaL1;TopdownL1;tma_L1_group",
->         "MetricName": "tma_backend_bound",
->         "MetricThreshold": "tma_backend_bound > 0.2",
->         "MetricgroupNoGroup": "TopdownL1",
->         "PublicDescription": "This category represents fraction of
-> slots where no uops are being delivered due to a lack of required
-> resources for accepting new uops in the Backend. Backend is the
-> portion of the processor core where the out-of-order scheduler
-> dispatches ready uops into their respective execution units; and once
-> completed these uops get retired according to program order. For
-> example; stalls due to data-cache misses or stalls due to the divider
-> unit being overloaded are both categorized under Backend Bound.
-> Backend Bound is further divided into two main categories: Memory
-> Bound and Core Bound. Sample with: TOPDOWN.BACKEND_BOUND_SLOTS",
->         "ScaleUnit": "100%"
->     },
-> ```
-> 
-> The system metrics were added on top of this and we never rethought
-> the design. For a metric to refer to another metric there needs to be
-> some kind of place we look up from and for that we use the CPUID
-> associated table. Perhaps the easiest thing is that if no CPUID table
-> is matched we have an empty table.
-> 
 
-thanks for the clarificaiton. ok then it's different from my problem and I
-shouldn't have mixed them up.
 
-Thanks.
+On 2024/11/8 21:57, Lorenzo Stoakes wrote:
+> Locking around VMAs is complicated and confusing. While we have a number of
+> disparate comments scattered around the place, we seem to be reaching a
+> level of complexity that justifies a serious effort at clearly documenting
+> how locks are expected to be used when it comes to interacting with
+> mm_struct and vm_area_struct objects.
+> 
+> This is especially pertinent as regards the efforts to find sensible
+> abstractions for these fundamental objects in kernel rust code whose
+> compiler strictly requires some means of expressing these rules (and
+> through this expression, self-document these requirements as well as
+> enforce them).
+> 
+> The document limits scope to mmap and VMA locks and those that are
+> immediately adjacent and relevant to them - so additionally covers page
+> table locking as this is so very closely tied to VMA operations (and relies
+> upon us handling these correctly).
+> 
+> The document tries to cover some of the nastier and more confusing edge
+> cases and concerns especially around lock ordering and page table teardown.
+> 
+> The document is split between generally useful information for users of mm
+> interfaces, and separately a section intended for mm kernel developers
+> providing a discussion around internal implementation details.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+
+For the page table locks part:
+
+Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
+
+> +
+> +.. note:: Interestingly, :c:func:`!pte_offset_map_lock` holds an RCU read lock
+> +          while the PTE page table lock is held.
+> +
+
+Yes, some paths will free PTE pages asynchronously by RCU (currently
+only in collapse_pte_mapped_thp() and retract_page_tables(), and maybe
+in madvise(MADV_DONTNEED) or even more places in the future), so the
+RCU read lock in pte_offset_map_lock() can ensure the stability of the
+PTE page. Although the spinlock can also be used as an RCU critical
+section, holding the RCU read lock at the same time allows
+spin_unlock(ptl) and pte_unmap(pte) to be called separately later.
+
+Thanks!
 
