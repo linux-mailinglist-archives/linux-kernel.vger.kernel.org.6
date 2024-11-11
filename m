@@ -1,198 +1,229 @@
-Return-Path: <linux-kernel+bounces-404642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C299C4627
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:47:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477B89C4628
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37D8B25D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5B41F22524
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6871AF0CC;
-	Mon, 11 Nov 2024 19:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5931AA1FC;
+	Mon, 11 Nov 2024 19:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IL/vZUxi"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFUcJVf1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E3F2AEE0;
-	Mon, 11 Nov 2024 19:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C1613B58A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731354426; cv=none; b=QLokDvPnuTKBdY/4YSOSbvL64eCAM4AMYVAcfMXIBtocevmDM20uZkpT/yfqvcvqFvLdKNrGbJzBLFuRhPNp5+YlD5W0E2UkZFPs14KGGoNAh8z1+gWifpkvZ8L+B9Qlbr03huKOmolGs3FwX0bBM9V84b9TeLwcxwpEV+w3ycI=
+	t=1731354472; cv=none; b=kNgSQRo5ZvfwbRShOocpIO7w0IK8V1MCCwd8x3HcNupzc3bouoXxBlpOvB9t1VLElsX0nvt0IMWBdnJWwUj0U5Na836XcIBNaoyUHwAiqSkg90d4Zs30rYrz02hecQNpYiAnJiSR6p4IxQvRj/oazi3SOIPOiq5XqN7ZHCZojAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731354426; c=relaxed/simple;
-	bh=waIrtis7FuR7Y1TSuVP41KBpxAm+KAfN9/b1pnq4nsI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pMW8QcLkOkWwh+pmYpW6ES4F7A/viHriUCrKG08kHbH5OUfLcO5c/eUoAIajn4ajqTsiQSEGqwTfVEeFVsudTtTS+8k/+coRHK2jO7UqN5PPhIdTvvI+tFXgATOBVcXhwCCUY6tYox+TIAVSSMDQDjl4RgMeJt3G7gWvvChx5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IL/vZUxi; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5B446240003;
-	Mon, 11 Nov 2024 19:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731354420;
+	s=arc-20240116; t=1731354472; c=relaxed/simple;
+	bh=4qo6Que+sjBWt2LWpLfsuLVtt2uAHc1d9txYLZM6/OE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fq+JnBe7f3WEU1KR+8ihnQBPHt30RVQo1419cSZQHnmIaAvTdgCXHmNyv2lh9OJiSY7w2f6fE5SXY2PEaYQIF2cKTsjnMjnvBZbOdGdvC6W5Y0uiS92nHT53GHzp6psYvfyplpjxadgC1vAeWANYbC/TMsT1oureHWI2wngu8Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFUcJVf1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731354469;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6LitTWAgz24VNApIoun+JJSEVyh1XHLlrSrHK1MMSQ=;
-	b=IL/vZUxi6rK1Dv1dIs5JYGW4WrA/+dbJ3FQVaSV4YJqsLfSaTj+YXSaX8JvX+3tjU5rL60
-	/JoCG5XACc5Xrv1qyECGgsQNVC5FoYeBGqYjCLD2l3VJefUbeLUUc1AUyHMLdsdHTZKlu3
-	88e7m0P+Jtj6gLDq6Hc78XqewP4yzCff9A4yn1pSPHUi1AaSVxJ3kMPgclBUlEzgaP8kIq
-	UqMODls0FJtTPkkvQN+fuX5mbIKLWRJfljM3KVUq36RS35hs/zHJ3YkCfjLs7bdd2YjQdt
-	P8u3aE+C2sRiZkNq1HjHeEo2klTaEgZNmJ4O9wGoQWfR0HDL7yZ5dy3uXgU8aw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>,
-  <alex.aring@gmail.com>,  <davem@davemloft.net>,  <edumazet@google.com>,
-  <horms@kernel.org>,  <kuba@kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-usb@vger.kernel.org>,  <linux-wpan@vger.kernel.org>,
-  <netdev@vger.kernel.org>,  <pabeni@redhat.com>,
-  <stefan@datenfreihafen.org>,  <syzkaller-bugs@googlegroups.com>, Dmitry
- Antipov <dmantipov@yandex.ru>
-Subject: Re: [PATCH] mac802154: add a check for slave data list before delete
-In-Reply-To: <20241108145420.2445641-1-lizhi.xu@windriver.com> (Lizhi Xu's
-	message of "Fri, 8 Nov 2024 22:54:20 +0800")
-References: <672b9f03.050a0220.350062.0276.GAE@google.com>
-	<20241108145420.2445641-1-lizhi.xu@windriver.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Mon, 11 Nov 2024 20:46:57 +0100
-Message-ID: <87msi5pn7y.fsf@bootlin.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MFNHJfTeC9GG1TEdozy+vGwd4DL1R7mc+Hff2axsnX8=;
+	b=SFUcJVf1TiVZV75xQB69AHI4vp3gAgP5CYaAwVKjCrH2oajbnPR30S+Of9vVpVGI2IQREY
+	szkbxmuPdmVhyXy8rXWbDcFpM5sgOmU8VbzrW3O+B2PWj7oZr22s3SSrMDnJUBFvWAj6GG
+	I9ZOtAlg725sR42kpTKm6VQHJ6ADr4A=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-208-YVwLO7LUO5GKEGpCfouRug-1; Mon, 11 Nov 2024 14:47:48 -0500
+X-MC-Unique: YVwLO7LUO5GKEGpCfouRug-1
+X-Mimecast-MFC-AGG-ID: YVwLO7LUO5GKEGpCfouRug
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316ac69e6dso37594175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:47:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731354467; x=1731959267;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MFNHJfTeC9GG1TEdozy+vGwd4DL1R7mc+Hff2axsnX8=;
+        b=sC/Js8zGpjLiQ2L/S4H6UrYfmsIKsNphrJchUWbJzS9GTDxMcKAMJVJHm3RsFqDc4J
+         d2llHXVeVU98jocN8+gMNnU9qNGxZfONSqiKGKLxFmc71LtlWDlTxDZcXvezcZE2GU9+
+         avCRwleJ6NFmnDSULIMdyNok+3WrSO3JNCY998WGAwVUlvfe1/OpDqyU3v/upv4VXWmr
+         DIMy2pOV0DafLUMV19BkbMwxDX3dMWyvlIdxoUxal9+++cJ3SEhZsA1bDjJkQUFA0LX3
+         pNtzhzY5i0vM7jVp31pA8Vug4/JLt/6/oA94e/bIDKO7g2xpHDQSzRUoQq6JFDKEklJ1
+         1EhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDwxzoJoG00TRhjQvafqlzfumPb9YV3bQPduL77CgrD+VaxHQMKm+SKpTVnwcckLjP4uPZLSVGaQmDy/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDln+EavgQS/8P9ogsaISBGejgxSYRxnzPDDllInhA+YtBtCRL
+	zQvRXKBDF7HZTsW9sRFtHFnoEoPHkXv7oM65zAIJ1w7P4Np9RnW3QX22N0AaTAwU/jb7uWw/gEg
+	95Cn5UXESKZ9IrJREKh8sMt8jp10BkYCxy9Kd/na1qnyJ/Vnlw9dJYBXAxWt4tQ==
+X-Received: by 2002:a05:600d:b:b0:432:bb4d:cd66 with SMTP id 5b1f17b1804b1-432bb4dced6mr94996995e9.11.1731354467406;
+        Mon, 11 Nov 2024 11:47:47 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEioONBvT5NYFDZb98CjO8Loe4WxhQ9GjJjGWW7JQAFE3vykyOc9hDLu0UHXPhqno5NoGcz1A==
+X-Received: by 2002:a05:600d:b:b0:432:bb4d:cd66 with SMTP id 5b1f17b1804b1-432bb4dced6mr94996865e9.11.1731354467027;
+        Mon, 11 Nov 2024 11:47:47 -0800 (PST)
+Received: from ?IPV6:2003:cb:c730:4300:18eb:6c63:a196:d3a2? (p200300cbc730430018eb6c63a196d3a2.dip0.t-ipconnect.de. [2003:cb:c730:4300:18eb:6c63:a196:d3a2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05302e1sm184134455e9.9.2024.11.11.11.47.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 11:47:46 -0800 (PST)
+Message-ID: <d9b23bde-f3c7-4991-8cbe-3915bb9279d0@redhat.com>
+Date: Mon, 11 Nov 2024 20:47:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Support large folios for tmpfs
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: willy@infradead.org, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, da.gomez@samsung.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1731038280.git.baolin.wang@linux.alibaba.com>
+ <3d49fbf8-866f-485b-b7fa-a89bbfb3cd7c@redhat.com>
+ <fabfc6d6-6693-40ca-b2c6-769882b19178@linux.alibaba.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <fabfc6d6-6693-40ca-b2c6-769882b19178@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 09.11.24 08:12, Baolin Wang wrote:
+> 
+> 
+> On 2024/11/8 23:30, David Hildenbrand wrote:
+>> On 08.11.24 05:12, Baolin Wang wrote:
+>>> Traditionally, tmpfs only supported PMD-sized huge folios. However
+>>> nowadays
+>>> with other file systems supporting any sized large folios, and extending
+>>> anonymous to support mTHP, we should not restrict tmpfs to allocating
+>>> only
+>>> PMD-sized huge folios, making it more special. Instead, we should allow
+>>> tmpfs can allocate any sized large folios.
+>>>
+>>> Considering that tmpfs already has the 'huge=' option to control the huge
+>>> folios allocation, we can extend the 'huge=' option to allow any sized
+>>> huge
+>>> folios. The semantics of the 'huge=' mount option are:
+>>>
+>>> huge=never: no any sized huge folios
+>>> huge=always: any sized huge folios
+>>> huge=within_size: like 'always' but respect the i_size
+>>> huge=advise: like 'always' if requested with fadvise()/madvise()
+>>>
+>>> Note: for tmpfs mmap() faults, due to the lack of a write size hint,
+>>> still
+>>> allocate the PMD-sized huge folios if huge=always/within_size/advise
+>>> is set.
+>>
+>> So, no fallback to smaller sizes for now in case we fail to allocate a
+>> PMD one? Of course, this can be added later fairly easily.
+> 
+> Right. I have no strong preference on this. If no one objects, I can add
+> a fallback to smaller large folios if the PMD sized allocation fails in
+> the next version.
 
-On 08/11/2024 at 22:54:20 +08, Lizhi Xu <lizhi.xu@windriver.com> wrote:
+I'm fine with a staged approach, to perform this change separately.
 
-> syzkaller reported a corrupted list in ieee802154_if_remove. [1]
->
-> Remove an IEEE 802.15.4 network interface after unregister an IEEE 802.15=
-.4
-> hardware device from the system.
->
-> CPU0					CPU1
-> =3D=3D=3D=3D					=3D=3D=3D=3D
-> genl_family_rcv_msg_doit		ieee802154_unregister_hw
-> ieee802154_del_iface			ieee802154_remove_interfaces
-> rdev_del_virtual_intf_deprecated	list_del(&sdata->list)
-> ieee802154_if_remove
-> list_del_rcu
+> 
+>>> Moreover, the 'deny' and 'force' testing options controlled by
+>>> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the
+>>> same
+>>> semantics. The 'deny' can disable any sized large folios for tmpfs, while
+>>> the 'force' can enable PMD sized large folios for tmpfs.
+>>>
+>>> Any comments and suggestions are appreciated. Thanks.
+>>>
+>>> Hi David,
+>>> I did not add a new Kconfig option to control the default behavior of
+>>> 'huge='
+>>> in the current version. I have not changed the default behavior at this
+>>> time, and let's see if there is a need for this.
+>>
+>> Likely we want to change the default at some point so people might get a
+>> benefit in more scenarios automatically. But I did not investigate how
+>> /tmp is mapped as default by Fedora, for example.
+> 
+> Personally, adding a cmdline to change the default value might be more
+> useful than the Kconfig. Anyway, I still want to investigate if there is
+> a real need.
 
-FYI this is a "duplicate" but with a different approach than:
-https://lore.kernel.org/linux-wpan/87v7wtpngj.fsf@bootlin.com/T/#m02cebe86e=
-c0171fc4d3350676bbdd4a7e3827077
+Likely both will be reasonable to have.
 
-Thanks,
-Miqu=C3=A8l
+FWIW, "systemctl cat tmp.mount" on a Fedora40 system tells me
+"Options=mode=1777,strictatime,nosuid,nodev,size=50%%,nr_inodes=1m"
 
->
-> Avoid this issue, by adding slave data state bit SDATA_STATE_LISTDONE, set
-> SDATA_STATE_LISTDONE when unregistering the hardware from the system, and
-> add state bit SDATA_STATE_LISTDONE judgment before removing the interface
-> to delete the list.=20
->
-> [1]
-> kernel BUG at lib/list_debug.c:58!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-> CPU: 0 UID: 0 PID: 6277 Comm: syz-executor157 Not tainted 6.12.0-rc6-syzk=
-aller-00005-g557329bcecc2 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> RIP: 0010:__list_del_entry_valid_or_report+0xf4/0x140 lib/list_debug.c:56
-> Code: e8 a1 7e 00 07 90 0f 0b 48 c7 c7 e0 37 60 8c 4c 89 fe e8 8f 7e 00 0=
-7 90 0f 0b 48 c7 c7 40 38 60 8c 4c 89 fe e8 7d 7e 00 07 90 <0f> 0b 48 c7 c7=
- a0 38 60 8c 4c 89 fe e8 6b 7e 00 07 90 0f 0b 48 c7
-> RSP: 0018:ffffc9000490f3d0 EFLAGS: 00010246
-> RAX: 000000000000004e RBX: dead000000000122 RCX: d211eee56bb28d00
-> RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-> RBP: ffff88805b278dd8 R08: ffffffff8174a12c R09: 1ffffffff2852f0d
-> R10: dffffc0000000000 R11: fffffbfff2852f0e R12: dffffc0000000000
-> R13: dffffc0000000000 R14: dead000000000100 R15: ffff88805b278cc0
-> FS:  0000555572f94380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000056262e4a3000 CR3: 0000000078496000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __list_del_entry_valid include/linux/list.h:124 [inline]
->  __list_del_entry include/linux/list.h:215 [inline]
->  list_del_rcu include/linux/rculist.h:157 [inline]
->  ieee802154_if_remove+0x86/0x1e0 net/mac802154/iface.c:687
->  rdev_del_virtual_intf_deprecated net/ieee802154/rdev-ops.h:24 [inline]
->  ieee802154_del_iface+0x2c0/0x5c0 net/ieee802154/nl-phy.c:323
->  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
->  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
->  genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2551
->  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:729 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:744
->  ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2607
->  ___sys_sendmsg net/socket.c:2661 [inline]
->  __sys_sendmsg+0x292/0x380 net/socket.c:2690
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Reported-and-tested-by: syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail=
-.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D985f827280dc3a6e7e92
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
->  net/mac802154/ieee802154_i.h | 1 +
->  net/mac802154/iface.c        | 4 ++++
->  2 files changed, 5 insertions(+)
->
-> diff --git a/net/mac802154/ieee802154_i.h b/net/mac802154/ieee802154_i.h
-> index 08dd521a51a5..6771c0569516 100644
-> --- a/net/mac802154/ieee802154_i.h
-> +++ b/net/mac802154/ieee802154_i.h
-> @@ -101,6 +101,7 @@ enum {
->=20=20
->  enum ieee802154_sdata_state_bits {
->  	SDATA_STATE_RUNNING,
-> +	SDATA_STATE_LISTDONE,
->  };
->=20=20
->  /* Slave interface definition.
-> diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
-> index c0e2da5072be..aed2fc63395d 100644
-> --- a/net/mac802154/iface.c
-> +++ b/net/mac802154/iface.c
-> @@ -683,6 +683,9 @@ void ieee802154_if_remove(struct ieee802154_sub_if_da=
-ta *sdata)
->  {
->  	ASSERT_RTNL();
->=20=20
-> +	if (test_bit(SDATA_STATE_LISTDONE, &sdata->state))
-> +		return;
-> +
->  	mutex_lock(&sdata->local->iflist_mtx);
->  	list_del_rcu(&sdata->list);
->  	mutex_unlock(&sdata->local->iflist_mtx);
-> @@ -698,6 +701,7 @@ void ieee802154_remove_interfaces(struct ieee802154_l=
-ocal *local)
->  	mutex_lock(&local->iflist_mtx);
->  	list_for_each_entry_safe(sdata, tmp, &local->interfaces, list) {
->  		list_del(&sdata->list);
-> +		set_bit(SDATA_STATE_LISTDONE, &sdata->state);
->=20=20
->  		unregister_netdevice(sdata->dev);
->  	}
+To be precise:
+
+$ grep tmpfs /etc/mtab
+vendorfw /usr/lib/firmware/vendor tmpfs rw,relatime,mode=755,inode64 0 0
+devtmpfs /dev devtmpfs rw,nosuid,size=4096k,nr_inodes=4063361,mode=755,inode64 0 0
+tmpfs /dev/shm tmpfs rw,nosuid,nodev,inode64 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,size=6511156k,nr_inodes=819200,mode=755,inode64 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,size=16277892k,nr_inodes=1048576,inode64 0 0
+tmpfs /run/user/100813 tmpfs rw,nosuid,nodev,relatime,size=3255576k,nr_inodes=813894,mode=700,uid=100813,gid=100813,inode64 0 0
+
+
+Having a way to change the default will likely be extremely helpful.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
