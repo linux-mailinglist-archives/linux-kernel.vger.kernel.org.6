@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-403630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B076E9C384D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:19:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A0919C384F
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46681B2180C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:19:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEB82822AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DE915532A;
-	Mon, 11 Nov 2024 06:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACA315533B;
+	Mon, 11 Nov 2024 06:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="GGKZWmu6"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kpgbYIFO"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F93A1EF1D;
-	Mon, 11 Nov 2024 06:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B7C1EF1D;
+	Mon, 11 Nov 2024 06:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731305972; cv=none; b=ShavnLVNqJGK6SGZLYhvmGiDLqvUuXmFQvJSN1fm6gYhvrkqiR9sHETeXvRE0ZHTT2CxTxfap/JdTQHkjRTJSnGGhXIjBgQm4Iw8Djw0NvPVq2FwqbPQE6CJpKzmDfTcgQHvWul1HTRpj/PTwaZjI3G8OTEFRP/mvbMrfxW4BYI=
+	t=1731306133; cv=none; b=H9MTLpbtwZeZ407whOW3DPDRvCzEWda5Efv/TmuqICo29ikpUw3H3oPa8MFBXYPyuP7nxjxrLPZ95fCZB1APHXzUTPaA2kAgAsfuyN/lTh/DFx/BzurHmPkD0oaXdoDFC4t1D0C8sUGjNiq7Ipu/F1YwwFXKUukZN2joQntRf2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731305972; c=relaxed/simple;
-	bh=Lg53M/R7zkmgm7QVC7CbS+N0DQXZYxbKQDd8WKdmnsk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=sMIoeeNrs8RwsToqPXR8GlWMl/Su7ZCNBFWpCwgBdjMOrU1upa/Nvqhc6DTsxxtnRC43x92Hz5CweExLUR66rl+xSmRsGnjikH3+ATsiJgDqrPyI7Edu8Bk15JWT4T5tNz1Tg7xEGceXqwayacEckXYbjQnscVoYL+kvO2e2y3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=GGKZWmu6; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.1.148] (unknown [222.129.38.136])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 51DF23F0A6;
-	Mon, 11 Nov 2024 06:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731305960;
-	bh=Lg53M/R7zkmgm7QVC7CbS+N0DQXZYxbKQDd8WKdmnsk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type;
-	b=GGKZWmu6dQ70k0FFbTJ9462v2I6lIgVwcsHaNL8oRA8jQ6Bk1gyc8xTSApKZGSMMx
-	 u7tIQaAhstgVj67fcozKcLvQfYueCxB5FZWF/gyH3MXr79HmJzeoxu8GLhpMBtYwFy
-	 D5MVsSsqJlEDIQ6f1mhONisauv1rRPkB+jNWGA3d4R0sizaxKVw7kDFsiBm3BWC3Hv
-	 kZpsjrJcBvSk6g6ySW58AUKtR5e25SdPvJRnnJ3HguR0xGLawuEiURzEGKZtqCegGe
-	 /dIimnFApBcxbQZiS3BLhoPYvHwlyjouhKoNxgmQpwXR4Ly1/2z5wdoUTK0vxA+7ql
-	 GtxVJrqSMfThA==
-Message-ID: <da650a93-6d21-444b-adb7-045566f53d5a@canonical.com>
-Date: Mon, 11 Nov 2024 14:19:07 +0800
+	s=arc-20240116; t=1731306133; c=relaxed/simple;
+	bh=6o1Wagd0uUVsHIpGzUJpqU/Rw+/J5VBWI+It9NIq3S8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pK/b5iREWvZi7ctmyOgSQOrMc+xCAy52r1ekUTemevFi5F9H1YfPgG6TsNnt9NpBs8AyULKXgCqGEdbGKGqh6hYWJUUXKbAd5Y7V1w8utVmLb/6bkjvaAlETeYBLsntrmqJbBlH5v0LQZXuHHYBVlxTxpPblWiCI4GXZX2hLkwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kpgbYIFO; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbca51687so41110705ad.1;
+        Sun, 10 Nov 2024 22:22:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731306131; x=1731910931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VBWbka6tcunvnkswMnINMIR9eUmPBlJrKkb4tiWy/N4=;
+        b=kpgbYIFOzkV6dJog7O8OBrqApoP+5jPwkGHYpwnsTY1hQz1dPQiyBkZ2o+3iF3h8+q
+         g3/zxqEsMyzajjM0Oko6TjmIS1vD3rZ8gW18zGShfRt1Wt6qfl8PuP0llrW4+e/UK/8e
+         NDilwsDWBtved0GukQDVjfgD7cDVYdgCVf4BS8pAb9YxRfVX0vgJp+0oZGllwbjew2m9
+         8nutJ06A3V6Q9IXdQTR96b7ZKIK71oVu+Mq171jXmJ9bOgVHtWoA6XrVQiymItpsh2oq
+         QFbscNbBPw94/wIrN8RouIwkPR2z7qCCqVFg9HwNixPdiaTAAf+XhpXxRGnp8aAW3KFI
+         0b6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731306131; x=1731910931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VBWbka6tcunvnkswMnINMIR9eUmPBlJrKkb4tiWy/N4=;
+        b=Egf0Y1j2ZF8YKNudKDzDlmujbmesE3sP1VsKnDWWJc8T2dDPBDMaxrjN57vW21sJgq
+         AtviZ+BsiKCXDPXHSCAWLmAuLGETQAksUz8zDH55mTX4gZDfqqavsVQSO27q/7NlR/gx
+         ybDIosqUts0NYOfIdLByfxI3cjM93h3XwVuPrqxRBmNCkr+PwgaCsPErajVHEcYfm520
+         v/PKKzzgM/hyODuom0tjdoPwzIYC/v2cuykwaePyvvvFqRfJj427zpT8M0/9Qi8Apv4v
+         GKum3ELi1EmSqReXY9h5wsIO38HwbryHOG93SqUlcWYRi0OWhKQV9/jOSNpRsH5FNhhh
+         o3tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXzvvaivMAgeAPgskzjU8GqH09lFrCypXqElRfDAIUNzBkM2IueAgGThsRuscp5sAgY88OF46P7mNdoBl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx1pYWvUpNfjk60snmL5K4sH0K6Ggqz/QhVf1wCO48LcXa4EAk
+	dLrhiJEblFgbM5uIsxpe/QqC4DCp5NtC4BGg0Ow9vBFo4qhEfjbA
+X-Google-Smtp-Source: AGHT+IHd1rVyG32K6mQRKSb5g8ZV+d4A7We4fZ1OI0UfFHjiqq+RNsFYAsV/vC0TZstA2Sqob/yLUA==
+X-Received: by 2002:a17:902:d2cb:b0:20b:a25e:16c5 with SMTP id d9443c01a7336-211835c0f65mr162005455ad.53.1731306131446;
+        Sun, 10 Nov 2024 22:22:11 -0800 (PST)
+Received: from localhost.localdomain ([103.150.184.35])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e68960sm69051915ad.220.2024.11.10.22.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 10 Nov 2024 22:22:11 -0800 (PST)
+From: Xiang Zhang <hawkxiang.cpp@gmail.com>
+To: lduncan@suse.com,
+	cleech@redhat.co,
+	michael.christie@oracle.com,
+	James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xiang Zhang <hawkxiang.cpp@gmail.com>
+Subject: [PATCH] scsi: iscsi: special case for GET_HOST_STATS
+Date: Mon, 11 Nov 2024 14:21:50 +0800
+Message-ID: <20241111062150.86091-1-hawkxiang.cpp@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-To: even.xu@intel.com
-Cc: bentiss@kernel.org, corbet@lwn.net, jikos@kernel.org,
- linux-doc@vger.kernel.org, linux-input@vger.kernel.or,
- linux-kernel@vger.kernel.org, rui1.zhang@intel.com,
- srinivas.pandruvada@linux.intel.com, xinpeng.sun@intel.com
-References: <20241024081023.1468951-5-even.xu@intel.com>
-Subject: Re: [PATCH v1 04/22] HID: intel-thc-hid: intel-thc: Add THC PIO
- operation APIs
-Content-Language: en-US
-From: Aaron Ma <aaron.ma@canonical.com>
-Autocrypt: addr=aaron.ma@canonical.com; keydata=
- xsBNBFffeLkBCACi4eE4dPsgWN6B9UDOVcAvb5QgU/hRG6yS0I1lGKQv4KA+bke0c5g8clbO
- 9gIlIl2bityfA9NzBsDik4Iei3AxMbFyxv9keMwcOFQBIOZF0P3f05qjxftF8P+yp9QTV4hp
- BkFzsXzWRgXN3r8hU8wqZybepF4B1C83sm2kQ5A5N0AUGbZli9i2G+/VscG9sWfLy8T7f4YW
- MjmlijCjoV6k29vsmTWQPZ7EApNpvR5BnZQPmQWzkkr0lNXlsKcyLgefQtlwg6drK4fe4wz0
- ouBIHJEiXE1LWK1hUzkCUASra4WRwKk1Mv/NLLE/aJRqEvF2ukt3uVuM77RWfl7/H/v5ABEB
- AAHNIUFhcm9uIE1hIDxhYXJvbi5tYUBjYW5vbmljYWwuY29tPsLAdwQTAQgAIQUCV994uQIb
- AwULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRDNxCzQfVU6ntJ9B/9aVy0+RkLqF9QpLmw+
- LAf1m3Fd+4ZarPTerqDqkLla3ekYhbrEtlI1mYuB5f+gtrIjmcW27gacHdslKB9YwaL8B4ZB
- GJKhcrntLg4YPzYUnXZkHHTv1hMw7fBYw82cBT+EbG0Djh6Po6Ihqyr3auHhfFcp1PZH4Mtq
- 6hN5KaDZzF/go+tRF5e4bn61Nhdue7mrhFSlfkzLG2ehHWmRV+S91ksH81YDFnazK0sRINBx
- V1S8ts3WJ2f1AbgmnDlbK3c/AfI5YxnIHn/x2ZdXj1P/wn7DgZHmpMy5DMuk0gN34NLUPLA/
- cHeKoBAF8emugljiKecKBpMTLe8FrVOxbkrazsBNBFffeLkBCACweKP3Wx+gK81+rOUpuQ00
- sCyKzdtMuXXJ7oL4GzYHbLfJq+F+UHpQbytVGTn3R5+Y61v41g2zTYZooaC+Hs1+ixf+buG2
- +2LZjPSELWPNzH9lsKNlCcEvu1XhyyHkBDbnFFHWlUlql3nSXMo//dOTG/XGKaEaZUxjCLUC
- 8ehLc16DJDvdXsPwWhHrCH/4k92F6qQ14QigBMsl75jDTDJMEYgRYEBT1D/bwxdIeoN1BfIG
- mYgf059RrWax4SMiJtVDSUuDOpdwoEcZ0FWesRfbFrM+k/XKiIbjMZSvLunA4FIsOdWYOob4
- Hh0rsm1G+fBLYtT+bE26OWpQ/lSn4TdhABEBAAHCwF8EGAEIAAkFAlffeLkCGwwACgkQzcQs
- 0H1VOp6p5Af/ap5EVuP1AhFdPD3pXLNrUUt72W3cuAOjXyss43qFC2YRjGfktrizsDjQU46g
- VKoD6EW9XUPgvYM+k8BJEoXDLhHWnCnMKlbHP3OImxzLRhF4kdlnLicz1zKRcessQatRpJgG
- NIiD+eFyh0CZcWBO1BB5rWikjO/idicHao2stFdaBmIeXvhT9Xp6XNFEmzOmfHps+kKpWshY
- 9LDAU0ERBNsW4bekOCa/QxfqcbZYRjrVQvya0EhrPhq0bBpzkIL/7QSBMcdv6IajTlHnLARF
- nAIofCEKeEl7+ksiRapL5Nykcbt4dldE3sQWxIybC94SZ4inENKw6I8RNpigWm0R5w==
-In-Reply-To: <20241024081023.1468951-5-even.xu@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Even,
+Special case for ISCSI_UEVENT_GET_HOST_STATS:
+- On success: send reply and stats from iscsi_get_host_stats()
+  within if_recv_msg().
+- On error: fall through.
 
-It fails to be applied on v6.12-rc7.
+Signed-off-by: Xiang Zhang <hawkxiang.cpp@gmail.com>
+---
+ drivers/scsi/scsi_transport_iscsi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-There is no file intel-thc-hw.h.
+diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
+index fde7de3b1e55..ad4186da1cb4 100644
+--- a/drivers/scsi/scsi_transport_iscsi.c
++++ b/drivers/scsi/scsi_transport_iscsi.c
+@@ -4113,6 +4113,8 @@ iscsi_if_rx(struct sk_buff *skb)
+ 				break;
+ 			if (ev->type == ISCSI_UEVENT_GET_CHAP && !err)
+ 				break;
++			if (ev->type == ISCSI_UEVENT_GET_HOST_STATS && !err)
++				break;
+ 			err = iscsi_if_send_reply(portid, nlh->nlmsg_type,
+ 						  ev, sizeof(*ev));
+ 			if (err == -EAGAIN && --retries < 0) {
+-- 
+2.44.0
 
-Regards,
-Aaron
 
