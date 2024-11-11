@@ -1,155 +1,107 @@
-Return-Path: <linux-kernel+bounces-404668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56149C4669
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:12:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5639C466B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C47F1F22AEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86ED81F22C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6976F1ACDE7;
-	Mon, 11 Nov 2024 20:12:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAA81ACDE7;
+	Mon, 11 Nov 2024 20:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aJumCQrN";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aJumCQrN"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1TBBsVa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC741A2846;
-	Mon, 11 Nov 2024 20:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44322159596;
+	Mon, 11 Nov 2024 20:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731355969; cv=none; b=pFVadmyiJU+8RehvQAnGM+yKkMDxjlDGEr98V8o2FDyc4131KpgwWBBuOlw3VLOK2ZaJnEtWOa5sRp8ea/eIpiqTbqINcdNV3xONkjIMl1higieK22joQB4o4iDBQNWGzSGgaz992l/2ZB8OiD65tzdOwDndFgQ/pIE34hYmreQ=
+	t=1731356090; cv=none; b=rFRn4jOVdzxCHIzUm/rrlpRXbrCnDLIv3KHs3ssRbxIUbCM3hZqx5tEu1KZkZHlHn+r3WEjMa6FQ6Px+XSm1H8bukW2w1cuploqtRvY9FEARZ056Tfm6Jo5vrg+oIyas2Ethuc2sX+yTqs0WLj+XFs6IC/slu5AJ7EVFpKcAYqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731355969; c=relaxed/simple;
-	bh=GDpo5XUbDvTYBZOz3sSuPu22HWXvQHccFYdm81ABpTw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JlPMHX0W5YL6heWTaF1LpA9f8Q0yY8FxQaQItjHXxFhTf9Uq9Y6jK+xLnmacrTMMcSQltJnyl+8HYbiioAPMxnqlPjnSStJnMv/EObdkNMiGx+6dDCi6frs/NgdKAIxVUuH4mMPhYiEKcLV1PE25l4dph9xpWzSp8F2+o5hXCXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aJumCQrN; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aJumCQrN; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1731355966;
-	bh=GDpo5XUbDvTYBZOz3sSuPu22HWXvQHccFYdm81ABpTw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aJumCQrNKYSr/Yd8/URxC7kO+QDWUxG1Q3CDRTb5nIzKy4ozuyU6VJ/QlWW71IigQ
-	 p2DJZRp5YSof/Y0Ueh4HndQaKAD500nkyZ7lwfHuewceYR2cHK9fY40pMt8UuiLoZV
-	 c2DOm3LhuMzzhZ+enRu+B4z9MAfQZLEZ6jUjirVA=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 40ED81285FB5;
-	Mon, 11 Nov 2024 15:12:46 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id E2m7NtIDHpbL; Mon, 11 Nov 2024 15:12:46 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1731355966;
-	bh=GDpo5XUbDvTYBZOz3sSuPu22HWXvQHccFYdm81ABpTw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aJumCQrNKYSr/Yd8/URxC7kO+QDWUxG1Q3CDRTb5nIzKy4ozuyU6VJ/QlWW71IigQ
-	 p2DJZRp5YSof/Y0Ueh4HndQaKAD500nkyZ7lwfHuewceYR2cHK9fY40pMt8UuiLoZV
-	 c2DOm3LhuMzzhZ+enRu+B4z9MAfQZLEZ6jUjirVA=
-Received: from [10.106.168.49] (unknown [167.220.104.49])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id AEF3B1280659;
-	Mon, 11 Nov 2024 15:12:45 -0500 (EST)
-Message-ID: <5f2b10d550dd0d596b37d20e275c69e85cc718a7.camel@HansenPartnership.com>
-Subject: Re: [PATCH v2] tpm: Opt-in in disable PCR integrity protection
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
- linux-integrity@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Peter
- Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 11 Nov 2024 12:12:44 -0800
-In-Reply-To: <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
-References: <20241107095138.78209-1-jarkko@kernel.org>
-	 <76d9ae11c339b589a8ec94f010e7439b7ce7d283.camel@HansenPartnership.com>
-	 <D5FZT0QPHL0O.231WD6VUHC48X@kernel.org>
-	 <10296fd8b0fcbf1d813577ef41738ffea12b70d1.camel@HansenPartnership.com>
-	 <dd51366e50de86e8a6002f2f53801c53a9b770f3.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1731356090; c=relaxed/simple;
+	bh=SrjtaIdKJS7bJOBErGq8Is2rp89VJCeImbgSZk1ay5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fOJRewFW5mwTbzkgPSUyNhTymJPnViW4wnwsBqW2O9chPRiek2LVb3pwWp7+hYXW3wXgyaezG/TPv2acitRD25PauKb8WPfq2u8pDmzsj0Tvk1ej+Ln2bji522TWtGG9jQffR07cGQZXY1T2mif2HsmYsEkJ5WSMHvBT6gOncog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1TBBsVa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80F47C4CECF;
+	Mon, 11 Nov 2024 20:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731356089;
+	bh=SrjtaIdKJS7bJOBErGq8Is2rp89VJCeImbgSZk1ay5I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=U1TBBsVadrFBK9AMqgxoUOkRkglr3lw7dCtJjYZWHxnzciqdmTwZcBTd5afj+uTot
+	 L5RQuj/df1gdzNKTUITykdlPIhZUt6yZjBhA3V/S0nqKP2rtvAWDEiacErhnLVHxG/
+	 QF7NJUHgiKd3i4vDgpOVUarnebuuev9j5AwYmq48Dcpgw94WaJEbM17tSwpomG8mjY
+	 aBIJE+KKljf0toznKVaF3D07qmgeJH8SUfmVkAAHU4kUaqipdy6lprLFeE7U/WoNxX
+	 CPVEbEb3EXS+rJjdrkc+q1J7S2XWavBNQ81qE61nRd2w9QNtqPe+wHX8baomWsgdeT
+	 lL1N3Jg03ukXQ==
+Date: Mon, 11 Nov 2024 14:14:48 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shijith Thotton <sthotton@marvell.com>
+Cc: bhelgaas@google.com, ilpo.jarvinen@linux.intel.com,
+	Jonathan.Cameron@huawei.com, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, rafael@kernel.org,
+	scott@os.amperecomputing.com, jerinj@marvell.com,
+	schalla@marvell.com, vattunuru@marvell.com
+Subject: Re: [PATCH v4] PCI: hotplug: Add OCTEON PCI hotplug controller driver
+Message-ID: <20241111201448.GA1814761@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111134523.2796699-1-sthotton@marvell.com>
 
-On Mon, 2024-11-11 at 14:53 -0500, Mimi Zohar wrote:
-> On Thu, 2024-11-07 at 08:52 -0500, James Bottomley wrote:
-> > On Thu, 2024-11-07 at 15:49 +0200, Jarkko Sakkinen wrote:
-> > > On Thu Nov 7, 2024 at 3:20 PM EET, James Bottomley wrote:
-> > > > On Thu, 2024-11-07 at 11:51 +0200, Jarkko Sakkinen wrote:
-> > > > [...]
-> > > > > +void tpm_buf_append_auth(struct tpm_chip *chip, struct
-> > > > > tpm_buf
-> > > > > *buf,
-> > > > > +                        u8 attributes, u8 *passphrase, int
-> > > > > passphrase_len)
-> > > > > +{
-> > > > > +       /* offset tells us where the sessions area begins */
-> > > > > +       int offset = buf->handles * 4 + TPM_HEADER_SIZE;
-> > > > > +       u32 len = 9 + passphrase_len;
-> > > > > +
-> > > > > +       if (tpm_buf_length(buf) != offset) {
-> > > > > +               /* not the first session so update the
-> > > > > existing
-> > > > > length */
-> > > > > +               len += get_unaligned_be32(&buf-
-> > > > > >data[offset]);
-> > > > > +               put_unaligned_be32(len, &buf->data[offset]);
-> > > > > +       } else {
-> > > > > +               tpm_buf_append_u32(buf, len);
-> > > > > +       }
-> > > > > +       /* auth handle */
-> > > > > +       tpm_buf_append_u32(buf, TPM2_RS_PW);
-> > > > > +       /* nonce */
-> > > > > +       tpm_buf_append_u16(buf, 0);
-> > > > > +       /* attributes */
-> > > > > +       tpm_buf_append_u8(buf, 0);
-> > > > > +       /* passphrase */
-> > > > > +       tpm_buf_append_u16(buf, passphrase_len);
-> > > > > +       tpm_buf_append(buf, passphrase, passphrase_len);
-> > > > > +}
-> > > > > +
-> > > > 
-> > > > The rest of the code looks fine, but if you're going to extract
-> > > > this as a separate function instead of doing the open coded
-> > > > struct
-> > > > tpm2_null_auth that was there originally, you should probably
-> > > > extract and use the tpm2_buf_append_auth() function in
-> > > > trusted_tpm2.c
-> > > 
-> > > So this was straight up from Mimi's original patch :-)
-> > 
-> > Yes, I had the same comment prepped for that too.
+On Mon, Nov 11, 2024 at 07:15:11PM +0530, Shijith Thotton wrote:
+> This patch introduces a PCI hotplug controller driver for the OCTEON
+> PCIe device. The OCTEON PCIe device is a multi-function device where the
+> first function serves as the PCI hotplug controller.
 > 
-> But it wasn't sent ...
-
-no.
-
-> > 
-> > > Hmm... was there duplicate use for this in the patch? I'll check
-> > > this.
-> > 
-> > The original open coded the empty auth append with struct
-> > tpm2_null_auth since it's the only user.  However, since we do have
-> > another user in trusted keys, it might make sense to consolidate.
+>                +--------------------------------+
+>                |           Root Port            |
+>                +--------------------------------+
+>                                |
+>                               PCIe
+>                                |
+> +---------------------------------------------------------------+
+> |              OCTEON PCIe Multifunction Device                 |
+> +---------------------------------------------------------------+
+>              |                    |              |            |
+>              |                    |              |            |
+> +---------------------+  +----------------+  +-----+  +----------------+
+> |      Function 0     |  |   Function 1   |  | ... |  |   Function 7   |
+> | (Hotplug controller)|  | (Hotplug slot) |  |     |  | (Hotplug slot) |
+> +---------------------+  +----------------+  +-----+  +----------------+
+>              |
+>              |
+> +-------------------------+
+> |   Controller Firmware   |
+> +-------------------------+
 > 
-> Instead of delaying the current patch from being upstreamed, perhaps
-> this change can be deferred?
+> The hotplug controller driver enables hotplugging of non-controller
+> functions within the same device. During probing, the driver removes
+> the non-controller functions and registers them as PCI hotplug slots.
+> These slots are added back by the driver, only upon request from the
+> device firmware.
+> 
+> The controller uses MSI-X interrupts to notify the host of hotplug
+> events initiated by the OCTEON firmware. Additionally, the driver
+> allows users to enable or disable individual functions via sysfs slot
+> entries, as provided by the PCI hotplug framework.
 
-I don't see why not; it was the introduction of the new function rather
-than going back to the struct tpm2_null_auth_area of the original that
-caught my attention.
+Can we say something here about what the benefit of this driver is?
+For example, does it save power?
 
-James
+What causes the function 0 firmware to request a hot-add or
+hot-removal of another function?
 
+Bjorn
 
