@@ -1,158 +1,253 @@
-Return-Path: <linux-kernel+bounces-404845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9E19C4908
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:23:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F23A9C492B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8096284555
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:23:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16D76B27E84
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E43150990;
-	Mon, 11 Nov 2024 22:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992021BCA1B;
+	Mon, 11 Nov 2024 22:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="bdJ5RNfd"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEvBQt68"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E2E16C451
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5755716C451;
+	Mon, 11 Nov 2024 22:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731363788; cv=none; b=Shn6M4ddnFhdpE5ruGqxf0rnUir8IaimrpZ9zA4Dtn2liYqrIbsR6K3Jxvj+HYS4qHecVwYN5Z5J78NtzgmSxaz1B2UtwcLDE8oiu+WXvSgkQdredu7eQ+U685743/6kJh2JNsloHhoAelNMf0Div+lq/gZe3a+MAcIN6kDWXS0=
+	t=1731363795; cv=none; b=ZlPVZnzx6Yxy/YNw43t6ImRBvySeWjze3GI4MqQxmxioDxr4HkeKYnru7wKtshnx2zkqS5gf+8ik1WQdZJ5Q2CQ4Xu7SEpnJIFN1KKJDTjp3E+h4Cxa+RnOMW5V2xdHBaS8snnQENW2M7b9/fBhLoIIBOwbGANfGI51x0cFlHt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731363788; c=relaxed/simple;
-	bh=oEkq5JQuZ0g+PteOabUnceUzJjXO3FWbvb0iXjHZDpw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oIJGQP/iQFPfXU16nvXX9mgrHtMdzOdwIymo/cDbKhgmF6gIZzdkbjH//0LHf8GZ9AP0UeRxsYmCytR9Dspzqo0pyZQkTQTNsQBXKUHcE0abQF6ufq1cNwUcWycifjZk9m1S+NnO1GyNwcr0ekZT+/GPjM3dJUbncWJvOIRUBe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=bdJ5RNfd; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
-	by cmsmtp with ESMTPS
-	id AUa3tXSybvH7lAcoFt8h5c; Mon, 11 Nov 2024 22:22:59 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id AcoEt1J9P2oH8AcoFt97jO; Mon, 11 Nov 2024 22:22:59 +0000
-X-Authority-Analysis: v=2.4 cv=aKb2q69m c=1 sm=1 tr=0 ts=673283c3
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7T7KSl7uo7wA:10
- a=vVgwA9Hib2JlT8r2P8IA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QuuLV8RyuuVn5LsdO/A41b5qscG32jUw1xdRZuRx+yg=; b=bdJ5RNfduZCRpxWEX6hIqSthKH
-	FTrrIIZTFqrF5L1x6K8hpRT2ePufSi0hTV+ZvVn7Hu2iwPJsIny4fU3k9NnazJIltpgU+RnjCf8lh
-	4V8sqkmVATnc14qcYUH4wDC0yuL0VqRPoyinpwa0tBF6g7fas+g4K9seXUJt5GdTLZ+lyvH2L5vOr
-	uRpfWWIxhtPZmVFpaUND1UH9U5X03mf7jZW6ZfKeABx6TwirDJO2jqcvv5mI96xYT79AQzqjiW8f7
-	9QX2R35vsLfgem1jEXapJBYlYcvl37s9uVkZNi2Xov+k/q0nctJrNDP5ApNxSsR8k/wBSPCNj+NV7
-	4rz8BzeA==;
-Received: from [177.238.21.80] (port=27680 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tAcoC-001lqJ-2Y;
-	Mon, 11 Nov 2024 16:22:56 -0600
-Message-ID: <d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
-Date: Mon, 11 Nov 2024 16:22:53 -0600
+	s=arc-20240116; t=1731363795; c=relaxed/simple;
+	bh=SrKi8yEGLUqZQbWobBL3c2MT2C7UeatXwBHABdEFGhk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RWwwd+FHwQlAntRKlN0m+pwthBX/ARd/0RDLt7GrL8ZFK+GwOr7rGV47y63iIZKLg6MQF+BCIkjzJmZLL2AG1HBFeWZSPA+Q3YrJHlWMXBZzdExXAJi+vytkv75aHTQrKCb8jrFGbbL59XIEXE72QTIUDA5hX/tFqtuyClFP7Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEvBQt68; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1474b1377so397880285a.2;
+        Mon, 11 Nov 2024 14:23:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731363793; x=1731968593; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKJrUNekn+fLC6kP93590FUWGJ6YXqoOuHlp1oOaerI=;
+        b=nEvBQt68GetpvsAgayPafODA007uYY5EjW3K4JpXWS6nGTxNiPHOJ3DxQ7Z7fOF/WK
+         kJSEhYnY4kOV/0gi496V3zOGokBWyR+WvDuBYRqBc5ckdwBEAgJyKoexaxFZSuRcso4u
+         VACGm4vCErSyP/uvpZ9dbIMuDEY86euYtbvpRh+x+bLAZlALOKBC+TdI/XQ+ZOAIdn80
+         Nq/mYVlmsWGipSCPZz0Y+3F1QLv6G3c4bJK1JrqSgq5IBWq9SwklQSjdicjeMfN0CSmc
+         mFCj0uIdmcUpCsI1n6yUNTK4NxUl0+NgWhNGhq6hha9QuDJcREL7RvH9DzxrKhtW3/IC
+         yEkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731363793; x=1731968593;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xKJrUNekn+fLC6kP93590FUWGJ6YXqoOuHlp1oOaerI=;
+        b=hTo9yuVVzjS9PfJs7hkXzyE1Buo/0/doDRhP4YoEPzy1W8LWx5B5o4Y+/3PKvUS6vf
+         rlhrDWldeaoOK6MvVRK/XORD5h7UZunUJn+y+spIi/gpNgGnmFlbf2eDkENF18Ddlgba
+         8Plfzg9Dly+9XL8lqekwAnumnvrxfEpTTJ9Qo1bWu+Z0xAzGAeVvsc63IEf6PdyT7VQD
+         gMGRhlTS/E5qaTtvb46Q5N6nHBPu0IvWyBdDWW4joQ1dGch7fuGglMel2MlcGO9AJekx
+         XHs8/0iSEF2VcMnkxRTcOZBIoz5XcR0RDeoGcwrd/kqiIXcJmPYE9Xp28RycPg3Wl40N
+         KQ7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX33th3BHdcKwQPbdE+wQlXTwtYfYcEI6pP7NlLRot4G6HMu3j9vX8FZn3IMO2D+Kv0TSVnIHSiGXsjRMRW@vger.kernel.org, AJvYcCXZzBx/HAzHbO6jebvLii5MrHPV3rvI1HYdg5xkBp0bYV2ls3LDgoLyYjpkZ5VwmT6BZUx98PQ8GpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBu5rXEooSnMmD268iz13d5+r/IYDEc6mLL5jsNmWzNWZbS1OK
+	QHkneuI9vp7P4wwGFyFALffFO0UJT87kOvy6ak9EzuS+94npElGl
+X-Google-Smtp-Source: AGHT+IGFThbZRbYxwToYYeuVu+7TuIAwrVPuAA2eieBL7N+tsgVpKFWjBEQC2tvJmKh1er5auG0BMA==
+X-Received: by 2002:a05:620a:1aaa:b0:7ac:b118:a732 with SMTP id af79cd13be357-7b331dd2fb1mr2162857285a.32.1731363793253;
+        Mon, 11 Nov 2024 14:23:13 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dc06sm535599885a.12.2024.11.11.14.23.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 14:23:13 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: dlechner@baylibre.com
+Cc: jic23@kernel.org,
+	lars@metafoo.de,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	u.kleine-koenig@baylibre.com,
+	tgamblin@baylibre.com,
+	fabrice.gasnier@st.com,
+	benjamin.gaignard@linaro.org,
+	lee@kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v4] iio: trigger: stm32-timer-trigger: Add check for clk_enable()
+Date: Mon, 11 Nov 2024 22:23:10 +0000
+Message-Id: <20241111222310.12339-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2][next] UAPI: ethtool: Use __struct_group() in
- struct ethtool_link_settings
-To: Jakub Kicinski <kuba@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Michael Chan <michael.chan@broadcom.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- Kees Cook <kees@kernel.org>
-References: <cover.1730238285.git.gustavoars@kernel.org>
- <9e9fb0bd72e5ba1e916acbb4995b1e358b86a689.1730238285.git.gustavoars@kernel.org>
- <20241109100213.262a2fa0@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20241109100213.262a2fa0@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tAcoC-001lqJ-2Y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:27680
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNOrfkgLaGBrfr/2eKt4iNNVrlHdnlyEuzjAzLlvs2fPBX0g6ICLH1PRDNnUAEDCBOsgiATyLRyhvmLHKuLx3JFTKb169Jndt3scYLvMXYqG/lgtFfwr
- es0YFYpR/V3PAL5LRrMxGoX9aVA5ghhFtCdJpnuFmQYnm7z7sPkg+G3WDIoA4J15yqk7zYvZhG4GEO8GBZOkJSonv06sklpjEvnB1c9lJCx13Cuy1PiC2Pv8
 
+Add check for the return value of clk_enable() in order to catch the
+potential exception.
 
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
-On 09/11/24 12:02, Jakub Kicinski wrote:
-> On Tue, 29 Oct 2024 15:55:35 -0600 Gustavo A. R. Silva wrote:
->> Use the `__struct_group()` helper to create a new tagged
->> `struct ethtool_link_settings_hdr`. This structure groups together
->> all the members of the flexible `struct ethtool_link_settings`
->> except the flexible array. As a result, the array is effectively
->> separated from the rest of the members without modifying the memory
->> layout of the flexible structure.
->>
->> This new tagged struct will be used to fix problematic declarations
->> of middle-flex-arrays in composite structs[1].
-> 
-> Possibly a very noob question, but I'm updating a C++ library with
-> new headers and I think this makes it no longer compile.
-> 
-> $ cat > /tmp/t.cpp<<EOF
-> extern "C" {
-> #include "include/uapi/linux/ethtool.h"
-> }
-> int func() { return 0; }
-> EOF
-> 
-> $ g++ /tmp/t.cpp -I../linux -o /dev/null -c -W -Wall -O2
-> In file included from /usr/include/linux/posix_types.h:5,
->                   from /usr/include/linux/types.h:9,
->                   from ../linux/include/uapi/linux/ethtool.h:18,
->                   from /tmp/t.cpp:2:
-> ../linux/include/uapi/linux/ethtool.h:2515:24: error: ‘struct ethtool_link_settings::<unnamed union>::ethtool_link_settings_hdr’ invalid; an anonymous union may only have public non-static data members [-fpermissive]
->   2515 |         __struct_group(ethtool_link_settings_hdr, hdr, /* no attrs */,
->        |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> 
-> I don't know much about C++, tho, so quite possibly missing something
-> obvious.
+v3 -> v4:
 
-We are in the same situation here.
+1. Place braces around the case body.
 
-It seems C++ considers it ambiguous to define a struct with a tag such
-as `struct TAG { MEMBERS } ATTRS NAME;` within an anonymous union.
+v2 -> v3:
 
-Let me look into this further...
---
-Gustavo
+1. Simplify code with cleanup helpers.
+
+v1 -> v2:
+
+1. Remove unsuitable dev_err_probe().
+---
+ drivers/iio/trigger/stm32-timer-trigger.c | 45 ++++++++++++++---------
+ 1 file changed, 27 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/iio/trigger/stm32-timer-trigger.c b/drivers/iio/trigger/stm32-timer-trigger.c
+index 0684329956d9..d599d50fbb3b 100644
+--- a/drivers/iio/trigger/stm32-timer-trigger.c
++++ b/drivers/iio/trigger/stm32-timer-trigger.c
+@@ -119,7 +119,7 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 			     unsigned int frequency)
+ {
+ 	unsigned long long prd, div;
+-	int prescaler = 0;
++	int prescaler = 0, ret;
+ 	u32 ccer;
+ 
+ 	/* Period and prescaler values depends of clock rate */
+@@ -150,10 +150,12 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 	if (ccer & TIM_CCER_CCXE)
+ 		return -EBUSY;
+ 
+-	mutex_lock(&priv->lock);
++	guard(mutex)(&priv->lock);
+ 	if (!priv->enabled) {
+ 		priv->enabled = true;
+-		clk_enable(priv->clk);
++		ret = clk_enable(priv->clk);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	regmap_write(priv->regmap, TIM_PSC, prescaler);
+@@ -173,7 +175,6 @@ static int stm32_timer_start(struct stm32_timer_trigger *priv,
+ 
+ 	/* Enable controller */
+ 	regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
+-	mutex_unlock(&priv->lock);
+ 
+ 	return 0;
+ }
+@@ -307,7 +308,7 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 	struct stm32_timer_trigger *priv = dev_get_drvdata(dev);
+ 	struct iio_trigger *trig = to_iio_trigger(dev);
+ 	u32 mask, shift, master_mode_max;
+-	int i;
++	int i, ret;
+ 
+ 	if (stm32_timer_is_trgo2_name(trig->name)) {
+ 		mask = TIM_CR2_MMS2;
+@@ -322,15 +323,16 @@ static ssize_t stm32_tt_store_master_mode(struct device *dev,
+ 	for (i = 0; i <= master_mode_max; i++) {
+ 		if (!strncmp(master_mode_table[i], buf,
+ 			     strlen(master_mode_table[i]))) {
+-			mutex_lock(&priv->lock);
++			guard(mutex)(&priv->lock);
+ 			if (!priv->enabled) {
+ 				/* Clock should be enabled first */
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret)
++					return ret;
+ 			}
+ 			regmap_update_bits(priv->regmap, TIM_CR2, mask,
+ 					   i << shift);
+-			mutex_unlock(&priv->lock);
+ 			return len;
+ 		}
+ 	}
+@@ -482,6 +484,7 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 				   int val, int val2, long mask)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
++	int ret;
+ 
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+@@ -491,12 +494,14 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 		/* fixed scale */
+ 		return -EINVAL;
+ 
+-	case IIO_CHAN_INFO_ENABLE:
+-		mutex_lock(&priv->lock);
++	case IIO_CHAN_INFO_ENABLE: {
++		guard(mutex)(&priv->lock);
+ 		if (val) {
+ 			if (!priv->enabled) {
+ 				priv->enabled = true;
+-				clk_enable(priv->clk);
++				ret = clk_enable(priv->clk);
++				if (ret)
++					return ret;
+ 			}
+ 			regmap_set_bits(priv->regmap, TIM_CR1, TIM_CR1_CEN);
+ 		} else {
+@@ -506,9 +511,10 @@ static int stm32_counter_write_raw(struct iio_dev *indio_dev,
+ 				clk_disable(priv->clk);
+ 			}
+ 		}
+-		mutex_unlock(&priv->lock);
++
+ 		return 0;
+ 	}
++	}
+ 
+ 	return -EINVAL;
+ }
+@@ -601,7 +607,7 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 				 unsigned int mode)
+ {
+ 	struct stm32_timer_trigger *priv = iio_priv(indio_dev);
+-	int sms = stm32_enable_mode2sms(mode);
++	int sms = stm32_enable_mode2sms(mode), ret;
+ 
+ 	if (sms < 0)
+ 		return sms;
+@@ -609,12 +615,15 @@ static int stm32_set_enable_mode(struct iio_dev *indio_dev,
+ 	 * Triggered mode sets CEN bit automatically by hardware. So, first
+ 	 * enable counter clock, so it can use it. Keeps it in sync with CEN.
+ 	 */
+-	mutex_lock(&priv->lock);
+-	if (sms == 6 && !priv->enabled) {
+-		clk_enable(priv->clk);
+-		priv->enabled = true;
++	scoped_guard(mutex, &priv->lock) {
++		if (sms == 6 && !priv->enabled) {
++			ret = clk_enable(priv->clk);
++			if (ret)
++				return ret;
++
++			priv->enabled = true;
++		}
+ 	}
+-	mutex_unlock(&priv->lock);
+ 
+ 	regmap_update_bits(priv->regmap, TIM_SMCR, TIM_SMCR_SMS, sms);
+ 
+-- 
+2.25.1
 
 
