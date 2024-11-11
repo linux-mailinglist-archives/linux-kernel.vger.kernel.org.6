@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-404176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788F99C4049
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:04:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0FD9C3FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF412830EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CCFC285F4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE551A2541;
-	Mon, 11 Nov 2024 14:03:45 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932BC19E97B;
+	Mon, 11 Nov 2024 13:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMeHDRPw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0790019F116
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF1B19E7F3;
+	Mon, 11 Nov 2024 13:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731333825; cv=none; b=Im6JiSodBjtUKcZ2sfudQ5xe5xvke7AtNKACkKHBSEXeX5gDUtPZTnnPn+mVN3aXZ/CKFW2KNhDWbPBmXZ5ZG86Iamc0dMo8PforObs37zNOn9ZYDLvFRp8q0Wi5wX38urN/+U4LZrJv4QfPBkCN4msdwzQMakf3hc610TFbyaM=
+	t=1731333299; cv=none; b=NIZQTJSgjTnY6Tbv2XNqqGNpk6bqcA5/lgcAjPtzBYGogXorGpbaA43xcmQeZj/NYKRaCRE9EBAy8yfKBhiKTO5CkmU1yeKA9l/NdhNEZx3cRbLSIujKyuTvsa+zAVgwan2RhCrPYidhkSYljUACxh660CCXv/XOWZ8giQJ+iSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731333825; c=relaxed/simple;
-	bh=L6QNkAQguYbBczWLlOEsvUgTc6ZH8pr0HFmtJJIUWn0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bGBI2agWAfnYcz2VcqVhNAlwSf16c9iC/IHlHTGUv1Hmzn95asyTBdPcqZ55NKVzZsy3nzsDUZZ/iDXZxcCt3tLm9ku6HXjTPhYLmKWNioYfhITZzMMM9wwcNdE4atMuL2hplSur1sQNsChvNAWBOBQJq+hUreG1QgfPDnJLl8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XnB8j6lQvz4f3jsk
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:03:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 19F901A018C
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:03:36 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP2 (Coremail) with SMTP id Syh0CgBHqOStDjJnXGDsBQ--.26141S2;
-	Mon, 11 Nov 2024 22:03:35 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH] freezer, sched: report the frozen task stat as 'D'
-Date: Mon, 11 Nov 2024 13:54:31 +0000
-Message-Id: <20241111135431.1813729-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731333299; c=relaxed/simple;
+	bh=Rjs1jrNMYmsLc1015VUvOXMFguCnVmldjZ3ChN/Xhk4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rNpZBgclwRFEJ/x7ogMxOLvLMSsbjqDdLR3UphRemM1C9V2JjqX9I/5SOUicoAzr4C4GRSlsX2ixbTutIk8Mhl9Zy/d/Lje/ixcHhhTIfnAPVaPynTQnHHDuLRRAw3OWYS28F0STlba05zHTXHJk6zF5Hc4sDWWqlV8ypGyCGcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMeHDRPw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 674DCC4CED6;
+	Mon, 11 Nov 2024 13:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731333298;
+	bh=Rjs1jrNMYmsLc1015VUvOXMFguCnVmldjZ3ChN/Xhk4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OMeHDRPwTo7a/NAgf/rNxNEb/9JmWkN0ZJPZWsq8oeWjE0JW85PLqcPVNU4xhC7Ww
+	 sorpqyRlasDKxSUvlofXkO+FIjFtPmQEalPiFsSO/qQxfY5ZPkoSjUFaMWdQa6uFt6
+	 UHwC2mtUS7DqH0qbZuy0YmRQZtRud5cZK1Fw1zSA6eZHwRn9YeUoH0LCNSZrJk5Xpw
+	 IY4NS1d39qX0XIJDQI7KFbsQ6F5xBiHXBnyMMAEQD64HHNZchMhPa5acHPR4OjXHtc
+	 50rDZzVWhl5UAKLK35i02DAg4WIOZwKsRmlu8qJm68IIMMPXz8koiTeI468IFk8sz7
+	 Ijg+MwiRo+fQQ==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-288d4da7221so2437836fac.1;
+        Mon, 11 Nov 2024 05:54:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUJKGCjFl+8NcWXKi5z8D89AuLodW44pqhnOu2PbzPvLri1Sf7PtIyJIPA7gORLJlwKLmOYJ4+r8b8=@vger.kernel.org, AJvYcCW+/IG8EnrwCwQM1C4CVH8Pyr8BzR7b4YmjaUvrhtCPV4l1aGVGvNpsfuuf3UkvDcNX/4K6aqTNS/ycJwk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdl0llbabmOcNInCta+7wF8t2g6IHVhC2Y4Hw8WKsALGZk2ldm
+	B/m7XapSXxgdEz2I9v/5tNNvD4EsQDALwalfCvrXSP2jgsKOsdGX68dFL9u42fzRUuPiIM68qG2
+	jFuldkbctKfMqQZ/ONebZnYGoPTs=
+X-Google-Smtp-Source: AGHT+IFR+kLg1jK/nBNUD03fNNcBn24h36a1Kg6p1I0dLiKQdViNNgeVyLEdCLKYmkYhyu7OU3yzUKvA0rmDdZ6IKVI=
+X-Received: by 2002:a05:6870:3312:b0:277:ecd2:7b7 with SMTP id
+ 586e51a60fabf-2955ffe9868mr10202835fac.7.1731333297633; Mon, 11 Nov 2024
+ 05:54:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHqOStDjJnXGDsBQ--.26141S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFy7Zw4UKFy3Zry8ur4rKrg_yoW8Xw1kpF
-	Zxur47Ga4IkFyUCr9rA3W7Wa48WanFyr12kFZ0gF47GFy8XF1Y9rn2vry5tr45CrWFyFWU
-	Ars8Kr97C39rA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <3607404.iIbC2pHGDl@rjwysocki.net> <1889415.atdPhlSkOF@rjwysocki.net>
+ <64a63f1c-088d-43dc-85c3-cecf8b59764f@arm.com>
+In-Reply-To: <64a63f1c-088d-43dc-85c3-cecf8b59764f@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 11 Nov 2024 14:54:43 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
+Message-ID: <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH v0.1 5/6] sched/topology: Allow .setpolicy() cpufreq
+ drivers to enable EAS
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Chen Ridong <chenridong@huawei.com>
+On Mon, Nov 11, 2024 at 12:54=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> On 11/8/24 16:41, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Some cpufreq drivers, like intel_pstate, have built-in governors that
+> > are used instead of regular cpufreq governors, schedutil in particular,
+> > but they can work with EAS just fine, so allow EAS to be used with
+> > those drivers.
+> >
+> > Also update the debug message printed when the cpufreq governor in
+> > use is not schedutil and the related comment, to better match the
+> > code after the change.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > I'm not sure how much value there is in refusing to enable EAS without
+> > schedutil in general.  For instance, if there are no crossover points
+> > between the cost curves for different perf domains, EAS may as well be
+> > used with the performance and powersave governors AFAICS.
+>
+> Agreed, but having no cross-over points or no DVFS at all should be the
+> only instances, right?
 
-Before the commit f5d39b020809 ("freezer,sched: Rewrite core freezer
-logic"), the frozen task stat was reported as 'D' in cgroup v1.
-However, after rewriting core freezer logic, the frozen task stat is
-reported as 'R'. This is confusing, especially when a task with stat of
-'S' is frozen.
+Not really.  This is the most obvious case, but there are other less
+obvious ones.
 
-This can be reproduced as bellow step:
-cd /sys/fs/cgroup/freezer/
-mkdir test
-sleep 1000 &
-[1] 739         // task whose stat is 'S'
-echo 739 > test/cgroup.procs
-echo FROZEN > test/freezer.state
-ps -aux | grep 739
-root     739  0.1  0.0   8376  1812 pts/0    R    10:56   0:00 sleep 1000
+Say there are two cross-over points: The  "performance" and
+"powersave" governors should still be fine with EAS in that case.
 
-As shown above, a task whose stat is 'S' was changed to 'R' when it was
-frozen. To solve this issue, simply maintain the same reported state as
-before the rewrite.
+Or what if somebody has a governor in user space that generally
+behaves like schedutil?
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- include/linux/sched.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Or what about ondemand?  Is it alway completely broken with EAS?
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f0f23efdb245..878acce2f8d6 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1630,8 +1630,9 @@ static inline unsigned int __task_state_index(unsigned int tsk_state,
- 	 * We're lying here, but rather than expose a completely new task state
- 	 * to userspace, we can make this appear as if the task has gone through
- 	 * a regular rt_mutex_lock() call.
-+	 * Report the frozen task uninterruptible.
- 	 */
--	if (tsk_state & TASK_RTLOCK_WAIT)
-+	if (tsk_state & TASK_RTLOCK_WAIT || tsk_state & TASK_FROZEN)
- 		state = TASK_UNINTERRUPTIBLE;
- 
- 	return fls(state);
--- 
-2.34.1
+> For plain (non-intel_pstate) powersave and performance we could replace
+> sugov_effective_cpu_perf()
+> that determines the OPP of the perf-domain by the OPP they will be
+> choosing, but for the rest?
 
+I generally think that depending on schedutil for EAS is a mistake.
+
+I would just print a warning that results may be suboptimal or
+generally not as expected if the cpufreq governor is not schedutil
+instead of preventing EAS from running at all.
+
+> Also there is the entire uclamp thing, not sure what the best
+> solution is there.
+> Will intel_pstate just always ignore it? Might be better then to
+> depend on !intel_pstate?
+
+Well, it can be made dependent on policy->policy =3D=3D
+CPUFREQ_POLICY_POWERSAVE if gov is NULL or similar, but honestly why
+bother?
+
+> > ---
+> >  kernel/sched/topology.c |    6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > Index: linux-pm/kernel/sched/topology.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/kernel/sched/topology.c
+> > +++ linux-pm/kernel/sched/topology.c
+> > @@ -251,7 +251,7 @@ static bool sched_is_eas_possible(const
+> >               return false;
+> >       }
+> >
+> > -     /* Do not attempt EAS if schedutil is not being used. */
+> > +     /* Do not attempt EAS with a cpufreq governor other than scheduti=
+l. */
+> >       for_each_cpu(i, cpu_mask) {
+> >               policy =3D cpufreq_cpu_get(i);
+> >               if (!policy) {
+> > @@ -263,9 +263,9 @@ static bool sched_is_eas_possible(const
+> >               }
+> >               gov =3D policy->governor;
+> >               cpufreq_cpu_put(policy);
+> > -             if (gov !=3D &schedutil_gov) {
+> > +             if (gov && gov !=3D &schedutil_gov) {
+> >                       if (sched_debug()) {
+> > -                             pr_info("rd %*pbl: Checking EAS, scheduti=
+l is mandatory\n",
+> > +                             pr_info("rd %*pbl: Checking EAS, cpufreq =
+governor is not schedutil\n",
+> >                                       cpumask_pr_args(cpu_mask));
+> >                       }
+> >                       return false;
+> >
+> >
+> >
+> >
+>
+>
 
