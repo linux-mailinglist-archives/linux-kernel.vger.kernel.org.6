@@ -1,98 +1,83 @@
-Return-Path: <linux-kernel+bounces-404835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4999C48F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:16:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3224C9C48E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A496FB30423
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9D11F237F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EA031BDAAF;
-	Mon, 11 Nov 2024 22:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFqhzx5P"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB011C460B;
+	Mon, 11 Nov 2024 22:13:38 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640811BC9F5;
-	Mon, 11 Nov 2024 22:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E817D19CCF9;
+	Mon, 11 Nov 2024 22:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731363212; cv=none; b=Nr+Z/vP5rrxLKEYpYRYEG1A4BnDAiUx8waiFmEKagkTMl5daMdFbbbCnIsGUbYI4dRKcZiKqpF0aGJR1bxyZs69UU8TeILIWZRrxYeYXsI8T1Sy9lDeqJIKu3VnGXZE+ZdH1PPjV5/a21fKsx0xIL+0PfpJzzwPrM9C7rKgnmAs=
+	t=1731363218; cv=none; b=Ub8qbb0AzIGIES43O2SXY1XY2Nex6nuAueutK0CQlCKHh6nDgk0lqlSIfAubIlbv7n2bvD/UaKDCnU9agVHm23JBduDmXtPF0OdlcpokaNEJ3DDKiJtPY2SALSDcjOiESAEstDieomSZPCUhb2R2Dp5ivRiKpL0tCydYI6/TMW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731363212; c=relaxed/simple;
-	bh=EzOqKCAezFm7x87BPNt/zzxHJFID7yktvqQaAuxYHNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tfLiUMXQxF/j1v5neDlG4lvyLeBEicj89hCZpMZsqSKPLMU+x8LKDlDkm9Lk1sJDwbkIbZTrjuYxLxkMKh81Kr+RI2jq435AkEOitG/C1zD2SLJd3PDHsF/5+5LIYT2E/Pa8ewx8Iomv0ZAWDNBUuKtTdLVE4OyaGkPUPP63MRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFqhzx5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD0EC4CECF;
-	Mon, 11 Nov 2024 22:13:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731363211;
-	bh=EzOqKCAezFm7x87BPNt/zzxHJFID7yktvqQaAuxYHNk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HFqhzx5PQDJ8XTbqjKmtAw93yoOw8x7o/ZUMlJBX+8O04Mr/GRzq+M1/6R39B45zY
-	 CEF098rtQHm7qtp5m7M/1uTI9rREirdMB2PusnrS8s6pRCochsLOpz2QnRL/FZjN1Z
-	 NRHQ8URAAfWaLgAJ3Yrplk30QyGHmim3xUQBWWaMATzoEGBgMGlMmGIDaxPdWNPbUt
-	 GEGDY1eh6Jx5f00TQKh8b8cf3pswctkUFSOHhrmAa5qUZdagddMg20xYjzrbsf1gUu
-	 R6X4mDmSW0nfnFLOwPPZqnl+cjIfRBoWDEx/IKX/10fWcECLdSJ2f2VrudGmCjCKSx
-	 CztEQHgDVNw6A==
-Date: Mon, 11 Nov 2024 16:13:28 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Alexey Romanov <avromanov@salutedevices.com>
-Cc: linux-crypto@vger.kernel.org, davem@davemloft.net, conor+dt@kernel.org,
-	jbrunet@baylibre.com, herbert@gondor.apana.org.au,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	khilman@baylibre.com, neil.armstrong@linaro.org,
-	linux-arm-kernel@lists.infradead.org, kernel@salutedevices.com,
-	martin.blumenstingl@googlemail.com, clabbe@baylibre.com,
-	vadim.fedorenko@linux.dev, krzysztof.kozlowski+dt@linaro.org,
-	krzk+dt@kernel.org, linux-amlogic@lists.infradead.org,
-	robh+dt@kernel.org
-Subject: Re: [PATCH v10 17/22] dt-bindings: crypto: amlogic,gxl-crypto:
- support new SoC's
-Message-ID: <173136320834.2047628.12512361262712701273.robh@kernel.org>
-References: <20241108102907.1788584-1-avromanov@salutedevices.com>
- <20241108102907.1788584-18-avromanov@salutedevices.com>
+	s=arc-20240116; t=1731363218; c=relaxed/simple;
+	bh=0pzkDcZa27th5r1mT3IOcbNpaPIMmYssDvg03QLQrgk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mmH4mf/33owHvHxGmoGt5Jl8yjmyAoaCS6F3R7yAydbqEm9gWR0lur2N8sQHPnrF6HJFAsvMFm6GvPPxDU8aJ3M7dm9N2XzS7CjOGcyiWw7/ueLampxvw75HvvH9M0RTzpMP8TiJIXiKc2lFteWZuPKwb5GbICXm7DQOTW4UIXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689BBC4AF09;
+	Mon, 11 Nov 2024 22:13:36 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 5230310604CE; Mon, 11 Nov 2024 23:13:34 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <cover.1730720720.git.stano.jakubek@gmail.com>
+References: <cover.1730720720.git.stano.jakubek@gmail.com>
+Subject: Re: (subset) [PATCH v2 0/3] sc27xx-fuel-gauge: fix battery detect
+Message-Id: <173136321432.772650.14902922989173539092.b4-ty@collabora.com>
+Date: Mon, 11 Nov 2024 23:13:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241108102907.1788584-18-avromanov@salutedevices.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-On Fri, 08 Nov 2024 13:29:02 +0300, Alexey Romanov wrote:
-> Now crypto module available at G12A/G12B/S4/A1/SM1/AXG.
+On Mon, 04 Nov 2024 14:03:27 +0100, Stanislav Jakubek wrote:
+> Marked this as V2, since the DTS (last) patch is a continuation of
+> the 2nd patch from [1].
 > 
-> 1. Add new compatibles:
->   - amlogic,g12a-crypto
->   - amlogic,axg-crypto
->   - amlogic,a1-crypto
->   - amlogic,s4-crypto (uses a1-crypto as fallback)
+> [1] https://lore.kernel.org/lkml/cover.1723716331.git.stano.jakubek@gmail.com/
 > 
-> Difference between this compatibles:
->  * Different registers offset and the number of setup descriptors.
->  * GXL doesn't support hashing like the others.
->  * G12A/B and A1/S4 crypto HW don't support 192 AES key.
->  * GXL, G12A/B and AXG require a reverse IV key before processing.
+> Stanislav Jakubek (3):
+>   dt-bindings: power: supply: sc27xx-fg: document deprecated
+>     bat-detect-gpio
+>   power: supply: sc27xx: Fix battery detect GPIO probe
+>   arm64: dts: sprd: Fix battery-detect-gpios property
 > 
-> 2. Add power-domains in schema, which is required only for A1.
-> This is specific vendor design: in old SoC's power domain for
-> crypto HW was not configurable, but in A1-series it is configurable.
-> 
-> Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
-> ---
->  .../bindings/crypto/amlogic,gxl-crypto.yaml   | 24 +++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
-> 
+> [...]
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
+
+[1/3] dt-bindings: power: supply: sc27xx-fg: document deprecated bat-detect-gpio
+      commit: 2da0cb9f03bd9b726fa1b4accb210ef2ab439925
+[2/3] power: supply: sc27xx: Fix battery detect GPIO probe
+      commit: f29cc6d9a3917f98f1fb109f0c8841dd095f3fb0
+
+Best regards,
+-- 
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
