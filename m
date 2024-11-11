@@ -1,149 +1,197 @@
-Return-Path: <linux-kernel+bounces-404259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEBB9C418D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:09:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950869C418B
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:08:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9751F21D39
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:09:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D431C2085D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3AC1A08D7;
-	Mon, 11 Nov 2024 15:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kt8v90Qo"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0EC1A256C;
+	Mon, 11 Nov 2024 15:08:33 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1221BC58;
-	Mon, 11 Nov 2024 15:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43CD19CD1B
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 15:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731337723; cv=none; b=tLELwmZidw6wHjhNM70BkY7dweNoOki4aOmV6L7Bld1ybsbUApdk0z3XPJjqSNsxgczifs+vjKW3/cEACtQQPlhfDD4XLGVB7bfM99v1QOf2L3aPU28fvKl0rfxb539LiTnPRPHj4DaQfLKVrclNSK+nUy3Z+eLZL+DZlhH9zX4=
+	t=1731337712; cv=none; b=u+OiRmgxbSXTGc1GClgAg9z6FarD0zgEu03iyQC/SC0dpSHUTfbf0sLMQ8r0XofnkgYjVBS3ow1n6xBFF6Fibtcqbl/VWbh6+JNDZtDDVcLyk7tLLlWsciBhDJzmm9yJM55xzvItfJWkJx8vBcaeJIwSjJtnKVv4EfkmyFo6QUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731337723; c=relaxed/simple;
-	bh=jbTdKOoq0RfDWqSZxOikCxvNlJa2f2WxDBd7h7Ay/B8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bAZxwf4BnlfC+gIIEU0zc/uwthkOlTGM+oeyVdHnYKgcX3RMcZO8mRQCarU/jUPx/1MVfTgGKkyM2VhJdinineJvtpQnumAow0EwAQwFM3idSbzTEBOATcSXnFooIy/1eqD/zyrgDGy/nOWkl+F7iOpXjgcgYo7pAqkVH0Tzy6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kt8v90Qo; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3b4663e40so17556255ab.2;
-        Mon, 11 Nov 2024 07:08:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731337721; x=1731942521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xqDjKD0MpVgCKxlaiJrPGJcWbnb48b/VsDJVF/AEcyY=;
-        b=Kt8v90QoFl93dJft9T+eFZoGpAMahlTK2m2FfBwUfz5DZx5AGBwhQ9HXlOJHAik/b0
-         aeVKwi1LjRDEWMF0qvNb0maLFSPP3xu6F38Niu9VJ01zFiQfl/FM60upRId55DhOl/jK
-         TYD2k+RVMMwWcgRPzDSZve1sHhGBUBUXOXu1TjkaqSOuInnBrocQA1MrCxrvhU8hxi/S
-         eXWuaRH/cK5U5GKiigrDsfvpoUv8GOXE/OrfGprImfvDVjWjI5uzT1KCuxfbqbqMSkKF
-         q9/gDDleaCcgU6fqd8m2g3urQlp/jZ6Tuhf3eSdoFwYlUnIp//zYndYA290bAnXsSTSh
-         s2ww==
+	s=arc-20240116; t=1731337712; c=relaxed/simple;
+	bh=FDCLdt6jTXusBq+H45UNYrhQXqtWmVoWcVPMg+KNF/c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AJN78+hX7pY0ORRfKh/PShnZTITShkA2W7W23WlBMxwwH0gJEosFrb/l98OUgFyhHKG4+9RIPesbaOGb486gPqZ6jlNbMtOzkNOlITedZjmpL5BzlG62fIy4cBnX3OBn2X6lcVar3+ymuViPFPk+N4N2J36KepRPtxHHL75rlVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6a9cb7efdso46871525ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 07:08:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731337721; x=1731942521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xqDjKD0MpVgCKxlaiJrPGJcWbnb48b/VsDJVF/AEcyY=;
-        b=bQIgwcNAfDvJLIplONm64sCroAYFfQujfncLqyS0eOt5ur4Tnz1S+HbUVdrukUk5IR
-         KS9RrchoEXifx2oz3aWwxFJznAD2OmrQE6fGRJWwxpWtAOLkfEG+QKMB03A576GKVrzW
-         ooZSJx/mkmh4BH3bKrz6ydu0UVcK3uZBQOSH9eXAtiXfqsU1bRBmh9ZPwAaI4Z8pQ0sd
-         CtQ6BWF3vhqyVM8r/d20rHl9RQX8h8l/VzYt8cFIWAFlPlN7ALSCwL1waF+2DE2tu1tH
-         bDJxwYhWjO89mYtmQt0O12gAi+ZL1bGTaY1qJCMmGOrZ+RCqsaCgh8nJipmmOboXHx7O
-         DmCw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Yc4yGF5BlWKWXwra2Fl4roSP7OtpQllmObXIR8SK92MXI5av1n706rUjGWXC7o95KI9cQBtHWd5Qxlkq@vger.kernel.org, AJvYcCXPGscPYvTghfCshp40BTY8Q2s2x+NlbBXg2FaQK0zYEZ/hWVJHK7kLKh0dfifpbWCSqStzxgsQUUJFMvis@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs562fW+2+A8x/tl2sEKUpJDK/fGn6pwX/KFSGePCUAwVUjSel
-	hQzQq6nZwnG17hg9wdl2qHfC6NA9uq6o6ag/E54ZIdC4fFvizfkBM6YTcByVEDJ8xwacg1Kb0v/
-	XTefz0MD1MCeQRassw5ttHXy+0lQ=
-X-Google-Smtp-Source: AGHT+IH2DqHNH1lAaBPMKHfZf8DIZICij4huNrVtkaYHzbXzeXmfugxejRRHAtF2NyamwSTWbJkMJPmJyjEc/FaMe+0=
-X-Received: by 2002:a05:6e02:160b:b0:3a3:4164:eec9 with SMTP id
- e9e14a558f8ab-3a6f1a15cb8mr141413625ab.14.1731337721225; Mon, 11 Nov 2024
- 07:08:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731337710; x=1731942510;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zZABHj6qRef2ZQjH9g/cV4sIBVHktb/q6XswMeQxqNg=;
+        b=Nluv2nbWFzZ+KhmCy+uBC2HIVUygzFdCjadoAftz36lf9HnrnvA1R3QuAYkIFRXpog
+         Rloa31ZdoDlWi9raqulvLB71SJM8XFQ8dkNTQa2LJVs2wTjopzI7E+nbu57jiIIkVXY6
+         sjpXoYR1sf8e66FpRGB25XfErD/hfOMoGUPDI3Kq+xR4dZSIJhTZTop7Lyb0wMjZOOTp
+         0Et488ps6DSd3FLz33mks58o0dfzYnV4+mXClE/AQ5OeqWoUJAvwPxXpQ8SRQxRdR1vT
+         TVp9ioup6/VPp66E8tNM0nJ4tdH9Lsj5pXuqs6X71RpK9hKc0lYkqGs09Qf8qi5WOD55
+         ZJMA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1d+QwFwD4hvodBt9ai0CEw+RahWeJJAA2kyUiMwDfR1PZ6NCce9GGWnrAAv6KzREbwjkZ7/qggw8xXOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfoZHn4LPNUKxe4KrttJODAZW9mkO4ZTkz6wKMwxOM2UIfzRw5
+	nZ5vJXLDmz7+a10yG9vkKa1nZOcPOCNZgbWIQ+SwX9XEGldkLwBfL6e0zNeTM0UqaEaITlZVsUv
+	AKDXZOU02qpPjoB/QbX3SR432W47V42ZXgnlddHDEm9JwXhgt0qvqzgk=
+X-Google-Smtp-Source: AGHT+IHNFa+TL3YwCbai22qPDbdHnv9vPxDALx9Tn4KEQIkwvaOL/l5nc2QICiQt4GF6u5UQcHGIux9+0uHaFkflJzwGBiWkfr2p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241110-adreno-smmu-aparture-v2-0-9b1fb2ee41d4@oss.qualcomm.com> <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
-In-Reply-To: <20241110-adreno-smmu-aparture-v2-2-9b1fb2ee41d4@oss.qualcomm.com>
-From: Rob Clark <robdclark@gmail.com>
+X-Received: by 2002:a05:6e02:180e:b0:3a0:9829:100b with SMTP id
+ e9e14a558f8ab-3a6f1a44d6fmr138535375ab.21.1731337709857; Mon, 11 Nov 2024
+ 07:08:29 -0800 (PST)
 Date: Mon, 11 Nov 2024 07:08:29 -0800
-Message-ID: <CAF6AEGvD95RyUXDBjgmoefgO6QyeRw3tpa7EG1MLFKdxcoZ-4g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] drm/msm/adreno: Setup SMMU aparture for
- per-process page table
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Sean Paul <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Simona Vetter <simona@ffwll.ch>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67321ded.050a0220.a83d0.0016.GAE@google.com>
+Subject: [syzbot] [input?] [usb?] UBSAN: shift-out-of-bounds in s32ton
+From: syzbot <syzbot+3fa2af55f15bd21cada9@syzkaller.appspotmail.com>
+To: bentiss@kernel.org, jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 10, 2024 at 9:31=E2=80=AFAM Bjorn Andersson
-<bjorn.andersson@oss.qualcomm.com> wrote:
->
-> Support for per-process page tables requires the SMMU aparture to be
-> setup such that the GPU can make updates with the SMMU. On some targets
-> this is done statically in firmware, on others it's expected to be
-> requested in runtime by the driver, through a SCM call.
->
-> One place where configuration is expected to be done dynamically is the
-> QCS6490 rb3gen2.
->
-> The downstream driver does this unconditioanlly on any A6xx and newer,
+Hello,
 
-nit, s/unconditioanlly/unconditionally/
+syzbot found the following issue on:
 
-> so follow suite and make the call.
->
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+HEAD commit:    226ff2e681d0 usb: typec: ucsi: Convert connector specific ..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=169619f7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=358c1689354aeef3
+dashboard link: https://syzkaller.appspot.com/bug?extid=3fa2af55f15bd21cada9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Reviewed-by: Rob Clark <robdclark@gmail.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e48f2af8afd7/disk-226ff2e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/76328e28b54c/vmlinux-226ff2e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ab9f75a466a2/bzImage-226ff2e6.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3fa2af55f15bd21cada9@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in drivers/hid/hid-core.c:1352:16
+shift exponent 4294967295 is too large for 32-bit type 'int'
+CPU: 1 UID: 0 PID: 31701 Comm: kworker/1:9 Not tainted 6.12.0-rc6-syzkaller-00103-g226ff2e681d0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x2a5/0x480 lib/ubsan.c:468
+ s32ton.cold+0x37/0x9c drivers/hid/hid-core.c:1352
+ hid_set_field+0x1e0/0x370 drivers/hid/hid-core.c:1905
+ hidinput_input_event+0x290/0x430 drivers/hid/hid-input.c:1865
+ input_event_dispose drivers/input/input.c:321 [inline]
+ input_handle_event+0x14e/0x14d0 drivers/input/input.c:369
+ input_inject_event+0x1bb/0x370 drivers/input/input.c:428
+ __led_set_brightness drivers/leds/led-core.c:52 [inline]
+ led_set_brightness_nopm drivers/leds/led-core.c:323 [inline]
+ led_set_brightness_nosleep drivers/leds/led-core.c:354 [inline]
+ led_set_brightness+0x211/0x290 drivers/leds/led-core.c:316
+ kbd_led_trigger_activate+0xcb/0x110 drivers/tty/vt/keyboard.c:1036
+ led_trigger_set+0x59a/0xc60 drivers/leds/led-triggers.c:212
+ led_match_default_trigger drivers/leds/led-triggers.c:269 [inline]
+ led_match_default_trigger drivers/leds/led-triggers.c:263 [inline]
+ led_trigger_set_default drivers/leds/led-triggers.c:287 [inline]
+ led_trigger_set_default+0x1bd/0x2a0 drivers/leds/led-triggers.c:276
+ led_classdev_register_ext+0x78c/0x9e0 drivers/leds/led-class.c:555
+ led_classdev_register include/linux/leds.h:273 [inline]
+ input_leds_connect+0x552/0x8e0 drivers/input/input-leds.c:145
+ input_attach_handler.isra.0+0x181/0x260 drivers/input/input.c:1027
+ input_register_device+0xa84/0x1110 drivers/input/input.c:2470
+ hidinput_connect+0x1d9c/0x2ba0 drivers/hid/hid-input.c:2343
+ hid_connect+0x13a8/0x18a0 drivers/hid/hid-core.c:2234
+ hid_hw_start drivers/hid/hid-core.c:2349 [inline]
+ hid_hw_start+0xaa/0x140 drivers/hid/hid-core.c:2340
+ ms_probe+0x195/0x500 drivers/hid/hid-microsoft.c:391
+ __hid_device_probe drivers/hid/hid-core.c:2699 [inline]
+ hid_device_probe+0x2eb/0x490 drivers/hid/hid-core.c:2736
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3672
+ hid_add_device+0x37f/0xa70 drivers/hid/hid-core.c:2882
+ usbhid_probe+0xd3b/0x1410 drivers/hid/usbhid/hid-core.c:1431
+ usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3672
+ usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
+ usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:658
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
+ driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
+ __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
+ bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:459
+ __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
+ bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:534
+ device_add+0x114b/0x1a70 drivers/base/core.c:3672
+ usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5903
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+---[ end trace ]---
 
 
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/ms=
-m/adreno/adreno_gpu.c
-> index 076be0473eb5..75f5367e73ca 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -572,8 +572,19 @@ struct drm_gem_object *adreno_fw_create_bo(struct ms=
-m_gpu *gpu,
->
->  int adreno_hw_init(struct msm_gpu *gpu)
->  {
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       int ret;
-> +
->         VERB("%s", gpu->name);
->
-> +       if (adreno_gpu->info->family >=3D ADRENO_6XX_GEN1 &&
-> +           qcom_scm_set_gpu_smmu_aperture_is_available()) {
-> +               /* We currently always use context bank 0, so hard code t=
-his */
-> +               ret =3D qcom_scm_set_gpu_smmu_aperture(0);
-> +               if (ret)
-> +                       DRM_DEV_ERROR(gpu->dev->dev, "unable to set SMMU =
-aperture: %d\n", ret);
-> +       }
-> +
->         for (int i =3D 0; i < gpu->nr_rings; i++) {
->                 struct msm_ringbuffer *ring =3D gpu->rb[i];
->
->
-> --
-> 2.45.2
->
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
