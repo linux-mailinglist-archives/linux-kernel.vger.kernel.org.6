@@ -1,98 +1,145 @@
-Return-Path: <linux-kernel+bounces-404484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71ED49C44AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:13:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4059D9C4435
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 423AAB29701
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F2928926A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD8D1A76DD;
-	Mon, 11 Nov 2024 17:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCB31A76CB;
+	Mon, 11 Nov 2024 17:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="MwtmfSxA"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pw+WHS1A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC97C53389;
-	Mon, 11 Nov 2024 17:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A956253389;
+	Mon, 11 Nov 2024 17:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347655; cv=none; b=r0kEWt79/LFU3zg2jCYFO509dJ0yBpwVkVHlU+q9jxuO4DHHpOaFU0NioknK9F2P3u9tg81srfuC8EHoxRp6st1WWSyTv1oif6CrH2Jc3Af4uiZdynfsR7H39upAyMR36UrW5K4p40iS0mlqXdO3D6po28SiUOTnCwUQ6RUwCFw=
+	t=1731347632; cv=none; b=AnxtCgYNnWn/+kZiUYQlBgvvMKzvagGaxakVxBWPukq5wkrUAlJ8GvJOzUWr763rqnBCOlxwR2DJO8GhLvRYjM0xu9lm6F4Rf6/bKkDRfXDOmiGPE27doCFgfy1fXEv4FqBkt6ESDJZfu8pmCx38Su/PX9yo8Bf5nC9n/5uM/Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347655; c=relaxed/simple;
-	bh=RQuehUcu7CPF8BzmE6YF+Hi6bonnL+vCx1x91FtB77Q=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=AdA8nKdoxWOfzcakLhD6/cpt8cJvkvyKirWpl6qXEBkyIEwqgmm4Dgzj5FbAd1nZTWzo8d9/I+yxkY91ayJt0rMRRNqCXwtz8zRzBbg4Ne83ZdQbp4x7UGWsnGDsrErqw/BnRpJlwS02+6EfXJvHMdpeCWqLRYzyHammYvIHbnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=MwtmfSxA; arc=none smtp.client-ip=18.132.163.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731347639;
-	bh=RQuehUcu7CPF8BzmE6YF+Hi6bonnL+vCx1x91FtB77Q=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=MwtmfSxAeBrpGREOuvQBAKowDITw+bRLkqsKwe/fj/Y1Sma4mUUNSyyDq9+LoEZ8z
-	 P7SX4pGevD5Aie90gc/CrmQ2vIBiHqsNPudYAxtiTjvWa2fSAeHEt+jVpbjguLHRYo
-	 1oztXU11iPhVE9wAd6IzZy/dg3VE9eKqz5u8kbSg=
-X-QQ-GoodBg: 1
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: HxKBLVwctrUt98P+84o/bvHPxqJKkf1pbjYx6rm38RI=
-X-QQ-STYLE: 
-X-QQ-mid: t5gz7a-2t1731347617t5659572
-From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
-To: "=?utf-8?B?QW5kcmV3IEx1bm4=?=" <andrew@lunn.ch>
-Cc: "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>, "=?utf-8?B?aGthbGx3ZWl0MQ==?=" <hkallweit1@gmail.com>, "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>, "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?Zi5mYWluZWxsaQ==?=" <f.fainelli@gmail.com>, "=?utf-8?B?c2ViYXN0aWFuLmhlc3NlbGJhcnRo?=" <sebastian.hesselbarth@gmail.com>, "=?utf-8?B?bXVndW50aGFudm5t?=" <mugunthanvnm@ti.com>, "=?utf-8?B?Z2VlcnQrcmVuZXNhcw==?=" <geert+renesas@glider.be>
-Subject: Re: [PATCH] net: phy: fix may not suspend when phy has WoL
+	s=arc-20240116; t=1731347632; c=relaxed/simple;
+	bh=Fsu1/owX5uR9OfwC4B9okARn57VLAiFArAKG5RlL9HM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzy8K8id8Ew2HHbcH54uSkrFzIdJaIOlPgy3ypJTtVo1TmxbrMlMS8FAjUTATD5KYiVGzdjMjMCQl+uyR7C9sOXCPRcJ7S10G4Zt5WCQM7W6/t/byRWcvpKLzi2Ww/+KukW4DK+nkOFCP4T+GEXulofzSeH0sNuSKxvYCvO0fRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pw+WHS1A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B21E9C4CED7;
+	Mon, 11 Nov 2024 17:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731347632;
+	bh=Fsu1/owX5uR9OfwC4B9okARn57VLAiFArAKG5RlL9HM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pw+WHS1AW2OetHJDf0CKGAI3+abzCg4/drobGeP6pEGZ/x6/cqHLErnGL4in7+kxG
+	 pCsMmjcxIETyYZSiPoT0PJSmKJeo2VUwEl9jVuZaPAxcv85G9vpD2LURiI/ABm0O7D
+	 zKrsZpV/VsFX3/TQcTAqBYtZPVkSiA0z4jjDw/gTKUyAsqdoj5C/qZgldOyzx4gFxt
+	 nxgbR8KLlilp/tXlXwOrgC1ekIpj3tMm02iuzgypek4MpRTuO6ba3rNcS04a0LyMdO
+	 +q/m73+6M3Knx5jkQqmcyoka3wKPkBYriVwwuknVKUN6S7BFiCEJWON0RUW66OX0o6
+	 B0kQoym8Hiypg==
+Date: Mon, 11 Nov 2024 14:53:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Remove redundant variable assignment
+Message-ID: <ZzJErOTawAelWAQd@x1>
+References: <20241111082713.274761-1-luoyifan@cmss.chinamobile.com>
+ <ZzJCEadEKi8LiSTm@x1>
+ <ZzJEGipP_AvUoPWw@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 12 Nov 2024 01:53:37 +0800
-X-Priority: 3
-Message-ID: <tencent_36F99FAA42FE3D9C1BC36653@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
-	<tencent_6056758936AF2CEE58AEBC36@qq.com>
-	<3e486556-e654-4b3a-82c2-602c853788f0@lunn.ch>
-In-Reply-To: <3e486556-e654-4b3a-82c2-602c853788f0@lunn.ch>
-X-QQ-ReplyHash: 3341295578
-X-BIZMAIL-ID: 18139226908605465664
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Tue, 12 Nov 2024 01:53:38 +0800 (CST)
-Feedback-ID: t:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OBlwWD/GWDEohf/ygnOrzPn/4/fjZPsUuAHdKBwfFfLnEuWd3mSYk1ZY
-	Y/ABAu9sScJS8jyVd97C9oXM19D1OfYJUS72g0JP/Ns7YD6i37+Iyrt+OUyzfdM+L2N9aF4
-	0pTXNRgB198CmsSEYruwWHZduKR4uaxuXkwpPLaRcvY3+aBqRxCKfhSOcOvTh+ORSNaqZxf
-	Cmz6f7M58qizBrNcR4ubB/M0ZkiBlWDS1B58zb69g/9LmgzjfdEoB4OXO0Z/MdDHGNkkQOZ
-	ZOXm2O0C9fx41X1aSQfatF2INubR8mlQD75eYLCUuwUs3ZV1ZjcZXv5ezi1ZcludGu90qeR
-	cE8C749gmQgtJdPqE0E/jFwkb8toCd4LLf44rKSBn8PaXlQQ9URfs89cveeIzfxMfsd9kk8
-	1SOhYQT5V5lZef7b7BlMA0WO+eA00+kercj22E85gv40XkfdPza55xExudiUq+Ex4+/DPD7
-	PVLstiMXNy9ham7QI+6P9ngPCaXs9j74H+OnTjkFt0KkMSwK5ejwj+flEFZhVWSC04/rrmO
-	tAvusHZpkYdxcn6jpzf8bAv1lM+8bU1Bant3eLKomDJ+GQhh4eppSV2JtPI/1wCTuRgb267
-	7fhoEsZCUO9N3c0c2i0j9Y4BYOl+K7EuzT8khoxBgEmi7DrDyWirIPEuKoV6eQp0KkeiUJb
-	+bYnjm06vMT8s2p6LvxpPnkn/EWaAktt1OvOk7zPSWubZp3ddbS7lqdQULDiT4WRRWolhPU
-	C9znCEJkP5qgGrdAS3EUu0bP7Fjcevysj0dUP+b8R6s3UP95v25LiYM6UmyA7fnvRBGHy2q
-	njQLH0nd0Pq+HZgWNRtE/3wPolKMzx//PQpu6SsosO/aMfbZ4GHQdgqefNj1qbbXWoC9dt4
-	MgGvAEX2GoJ0nB89lPX/OJMN8btPRveAKDe3AJf7QByRwn0mKWLbmXz85zWQt//suHRkwCq
-	eRch+yGMAonWLlwvGDzFejbY0OXmDmZbb9qnkqtUORaOD0ZsgqnSQRunfIkPizZ+8hEM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzJEGipP_AvUoPWw@x1>
 
-VGhhbmtzLCBJIHdpbGwgcGF5IGF0dGVudGlvbiB0byBpdCBpbiB0aGUgZnV0dXJlLg0KDQpC
-UnMNCldlbnRhbyBHdWFu
+On Mon, Nov 11, 2024 at 02:51:28PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Nov 11, 2024 at 02:42:46PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Mon, Nov 11, 2024 at 04:27:13PM +0800, Luo Yifan wrote:
+> > > This patch makes a minor change that removes the redundant assignment
+> > > to the variable ret, simplifying the code.
+> > 
+> > Thanks, applied to perf-tools-next,
+> 
+> Are you build testing these patches?
+> 
+>  GEN     perf-archive
+>   CC      /tmp/build/perf-tools-next/libsubcmd/sigchain.o
+>   GEN     perf-iostat
+>   INSTALL libbpf_headers
+>   LD      /tmp/build/perf-tools-next/libsubcmd/libsubcmd-in.o
+>   AR      /tmp/build/perf-tools-next/libsubcmd/libsubcmd.a
+> jvmti/jvmti_agent.c: In function ‘jvmti_write_code’:
+> jvmti/jvmti_agent.c:366:13: error: variable ‘ret’ set but not used [-Werror=unused-but-set-variable]
+>   366 |         int ret = -1;
+>       |             ^~~
+> cc1: all warnings being treated as errors
+> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:106: /tmp/build/perf-tools-next/jvmti/jvmti_agent.o] Error 1
+> make[2]: *** [Makefile.perf:936: /tmp/build/perf-tools-next/jvmti/jvmti-in.o] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+>   CC      /tmp/build/perf-tools-next/util/header.o
+>   LD      /tmp/build/perf-tools-next/util/perf-util-in.o
+>   LD      /tmp/build/perf-tools-next/perf-util-in.o
+> make[1]: *** [Makefile.perf:292: sub-make] Error 2
+> make: *** [Makefile:119: install-bin] Error 2
+> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+> ⬢ [acme@toolbox perf-tools-next]$
+> 
+> The original patch by Stephane has it right, that initial ret = -1 is
+> used when there are other problems and the code goes to a label at the
+> end, returning that -1.
+> 
+> But the code was changed later and problems were introduced, so you
+> removed something simple at the end and somehow missed that it breaks
+> the build (at least for me) and when I go look at the code, I see the
+> other problems, so please take the time to try and investigate this and
+> fix the 'ret' variable usage.
+> 
+> I'm removing this patch from my local tree.
 
+Ok, some of the other functions use the label at the end + return ret
+and looks nice, but the jvmti_write_code() one has this problem since
+day one, just look at the other routines and fix this one, please.
+
+- Arnaldo
+ 
+> Thanks,
+>  
+> > - Arnaldo
+> >  
+> > > Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> > > ---
+> > >  tools/perf/jvmti/jvmti_agent.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+> > > index 526dcaf9f..751219143 100644
+> > > --- a/tools/perf/jvmti/jvmti_agent.c
+> > > +++ b/tools/perf/jvmti/jvmti_agent.c
+> > > @@ -408,9 +408,7 @@ jvmti_write_code(void *agent, char const *sym,
+> > >  
+> > >  	funlockfile(fp);
+> > >  
+> > > -	ret = 0;
+> > > -
+> > > -	return ret;
+> > > +	return 0;
+> > >  }
+> > >  
+> > >  int
+> > > -- 
+> > > 2.27.0
+> > > 
+> > > 
 
