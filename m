@@ -1,59 +1,75 @@
-Return-Path: <linux-kernel+bounces-404351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91AF9C42BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:39:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4269C42C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC53AB25484
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:37:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9A68B28E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 16:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A619D1A0BF8;
-	Mon, 11 Nov 2024 16:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242EC1A2557;
+	Mon, 11 Nov 2024 16:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HP5Y7Res"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9sdQfw6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20F39ACC;
-	Mon, 11 Nov 2024 16:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AE71A0B13;
+	Mon, 11 Nov 2024 16:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731343046; cv=none; b=A5t081pyFHw5RNpM4d7+Ekd9bALyovGWrrIkMTUpwyf8v1SqZs8uJZkSkXWMB+ME/1BJp0ESV/vwk5Q8CB/gaglIj9Mbdc2luopOXrc64wewoAmVS+fmPKHdwJfF1CcyZvL8ga2d+V0UROw456etst51T65UIkJFSKMIajPzogc=
+	t=1731343171; cv=none; b=RT/7f3pLjaIdQ8sMabWvYitDv7f+vu7KsOo2O3CcbOeYCwzBhDjaxJ9YWKGb62UlZjC+CJzdOBC1wX0rKzbEoiuFNJK1H6Ile7VvAnd4g8Ycp7OmQSDre+Ybtjvlw9ivQ36dWQlrZeqDnDPYtJ7ddgXdGXqrgfeIojiGzeZxRKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731343046; c=relaxed/simple;
-	bh=oHwjeeaU61MO6gUa1vCGM9RwoOm9d2EsLQhDBWf6xKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hDBjMJSaYubSp/EZvEkbfrHlAcQiR/73HYCgYbDONkuWGCxKqpH3rALzuBObuAgQpf6bIA8sHsqh6gj/fMDM1jXyUYI9WucC7lACeVRueylLC+2iUyQXj6mtVkbH+Oe7KreclcO7tpkYtyGUJoODcorrA3TWx2peKpg6r0kj8W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HP5Y7Res; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF6FCC4CECF;
-	Mon, 11 Nov 2024 16:37:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731343045;
-	bh=oHwjeeaU61MO6gUa1vCGM9RwoOm9d2EsLQhDBWf6xKc=;
+	s=arc-20240116; t=1731343171; c=relaxed/simple;
+	bh=CPBhudnuPHjnrtj9sZ573qgLAxZlwozAgd+JQpg1yFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gdzRnvRqj0JbKG1RzNGD9HODbLNWu+XsF5fgUUL5ck7sVrPnASc4UQovChSYXf2Rw8NwA/RYcv6p06xT/HkiJa5VPlozO4c9+7taJZoedfDZyrbZ4oVHgtZiKLAgR90HdeHzucog8Uhlk0/l5ijpvVXVRwP6LZ3TvnEzc4cQL3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9sdQfw6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADCCC4CECF;
+	Mon, 11 Nov 2024 16:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731343171;
+	bh=CPBhudnuPHjnrtj9sZ573qgLAxZlwozAgd+JQpg1yFs=;
 	h=From:To:Cc:Subject:Date:From;
-	b=HP5Y7ResNnnEPiNt/6jP56EmwDMIW/uCtoiPK0otJxUYD221O2A3UuON+rTc9dLsR
-	 RzyeUHfDCjGt4ROBictnxcOir1bpiCQjfjN56NTcABrUZY6qe5e94/fNNgYcxIBfxA
-	 nBCwC1dgjxWMfo/YihoIU/f2xEpAIj0iBstZL/xs=
-From: Shuah Khan <skhan@linuxfoundation.org>
-To: gregkh@linuxfoundation.org,
-	corbet@lwn.net
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	workflows@vger.kernel.org,
-	rdunlap@infradead.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Subject: [PATCH v2] Documentation/CoC: spell out enforcement for unacceptable behaviors
-Date: Mon, 11 Nov 2024 09:37:23 -0700
-Message-Id: <20241111163723.9002-1-skhan@linuxfoundation.org>
-X-Mailer: git-send-email 2.40.1
+	b=J9sdQfw6h82dzj6t7DC4KAkU2I1UcRYN4yzN3Go4Ek3Da/Zt1U0z5z7abUfjS0lzk
+	 oAF+c+SPqCXYG9PcZKW8e4zUK5OG/05CFRMUjsGmhernuqpSK6NCDkPPNBWcdvCaoZ
+	 qEspsYXuFXgDTgIQ5InrqV/A2YS1BCqMlaJ2WGRwzgQgLO8xJrf/tLKyK/09nApGec
+	 2JFK6amypbNcXFA0XMHjoo5ZCPztfHCRBiSomriZujxwVKTirNkNn3LFlggVBeZgZ7
+	 s+oFX3PLIu53VGSjX3qmq4lQ6n2ntp5Dj4eUv2doJFC6WxS5OZ5JLIZ3CO8v/x7/NU
+	 S3xekm48pG0nQ==
+From: Amit Shah <amit@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	x86@kernel.org,
+	linux-doc@vger.kernel.org
+Cc: amit.shah@amd.com,
+	thomas.lendacky@amd.com,
+	bp@alien8.de,
+	tglx@linutronix.de,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	pawan.kumar.gupta@linux.intel.com,
+	corbet@lwn.net,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	daniel.sneddon@linux.intel.com,
+	kai.huang@intel.com,
+	sandipan.das@amd.com,
+	boris.ostrovsky@oracle.com,
+	Babu.Moger@amd.com,
+	david.kaplan@amd.com,
+	dwmw@amazon.co.uk,
+	andrew.cooper3@citrix.com,
+	Amit Shah <amit@kernel.org>
+Subject: [RFC PATCH v2 0/3] Add support for the ERAPS feature
+Date: Mon, 11 Nov 2024 17:39:10 +0100
+Message-ID: <20241111163913.36139-1-amit@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,95 +78,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Code of Conduct committee's goal first and foremost is to bring about
-change to ensure our community continues to foster respectful discussions.
+Newer AMD CPUs (Zen5+) have the ERAPS feature bit that allows us to remove the
+RSB filling loops required during context switches and VM exits.
 
-In the interest of transparency, the CoC enforcement policy is formalized
-for unacceptable behaviors.
+This patchset implements the feature to:
+* remove the need for RSB filling on context switches and VMEXITs in host and
+  guests
+* allow KVM guests to use the full default RSB stack
 
-Update the Code of Conduct Interpretation document with the enforcement
-information.
+The feature isn't yet part of an APM update that details its working, so this
+is still tagged as RFC.
 
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Jonathan Corbet <corbet@lwn.net>
-Acked-by: Steven Rostedt <rostedt@goodmis.org>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
----
+The v1 posting resulted in some questions on patch 1 -- I've included the
+context and comments in the commit text for patch 1 in this posting.
 
-Changes since v1:
-- Updates Acks with Ted's ack.
-- Fixes subsection formatting as per Randy's suggestion.
-- Fixes a spelling error.
+v2:
+* reword comments to highlight context switch as the main trigger for RSB
+  flushes in hardware (Dave Hansen)
+* Split out outdated comment updates in (v1) patch1 to be a standalone
+  patch1 in this series, to reinforce RSB filling is only required for RSB
+  poisoning cases for AMD
+  * Remove mentions of BTC/BTC_NO (Andrew Cooper)
+* Add braces in case stmt (kernel test robot)
+* s/boot_cpu_has/cpu_feature_enabled (Boris Petkov)
 
- .../code-of-conduct-interpretation.rst        | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
+Amit Shah (3):
+  x86: cpu/bugs: update SpectreRSB comments for AMD
+  x86: cpu/bugs: add support for AMD ERAPS feature
+  x86: kvm: svm: add support for ERAPS and FLUSH_RAP_ON_VMRUN
 
-diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
-index 66b07f14714c..ebddf218341d 100644
---- a/Documentation/process/code-of-conduct-interpretation.rst
-+++ b/Documentation/process/code-of-conduct-interpretation.rst
-@@ -156,3 +156,55 @@ overridden decisions including complete and identifiable voting details.
- Because how we interpret and enforce the Code of Conduct will evolve over
- time, this document will be updated when necessary to reflect any
- changes.
-+
-+Enforcement for Unacceptable Behavior Code of Conduct Violations
-+----------------------------------------------------------------
-+
-+The Code of Conduct committee works to ensure that our community continues
-+to be inclusive and fosters diverse discussions and viewpoints, and works
-+to improve those characteristics over time. The Code of Conduct committee
-+takes measures to restore productive and respectful collaboration when an
-+unacceptable behavior has negatively impacted that relationship.
-+
-+Seek public apology for the violation
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The Code of Conduct Committee publicly calls out the behavior in the
-+setting in which the violation has taken place, seeking public apology
-+for the violation.
-+
-+A public apology for the violation is the first step towards rebuilding
-+the trust. Trust is essential for the continued success and health of the
-+community which operates on trust and respect.
-+
-+Remedial measures if there is no public apology for the violation
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+The Code of Conduct Committee determines the next course of action
-+to restore the healthy collaboration by recommending remedial measure(s)
-+to the TAB for approval.
-+
-+- Ban violator from participating in the kernel development process for
-+  a period of up to a full kernel development cycle. The Code of Conduct
-+  Committee could require public apology as a condition for lifting the
-+  ban.
-+
-+The scope of the ban for a period of time could include:
-+
-+    a. denying patch contributions and pull requests
-+    b. pausing collaboration with the violator by ignoring their
-+       contributions and/or blocking their email account(s)
-+    c. blocking their access to kernel.org accounts and mailing lists
-+
-+Once the TAB approves one or more of the measures outlined in the scope of
-+the ban by a two-thirds vote, the Code of Conduct Committee will enforce
-+the TAB approved measure(s) in collaboration with the community, maintainers,
-+sub-maintainers, and kernel.org administrators.
-+
-+The effectiveness of the remedial measure(s) approved by the TAB depends
-+on the trust and cooperation from the community, maintainers, sub-maintainers,
-+and kernel.org administrators in enforcing them.
-+
-+The Code of Conduct Committee sincerely hopes that unacceptable behaviors
-+that require seeking public apologies continue to be exceedingly rare
-+occurrences in the future.
+ Documentation/admin-guide/hw-vuln/spectre.rst |  5 ++-
+ arch/x86/include/asm/cpufeatures.h            |  1 +
+ arch/x86/include/asm/nospec-branch.h          | 12 +++++
+ arch/x86/include/asm/svm.h                    |  6 ++-
+ arch/x86/kernel/cpu/bugs.c                    | 34 ++++++++------
+ arch/x86/kvm/cpuid.c                          | 18 +++++++-
+ arch/x86/kvm/svm/svm.c                        | 44 +++++++++++++++++++
+ arch/x86/kvm/svm/svm.h                        | 15 +++++++
+ 8 files changed, 117 insertions(+), 18 deletions(-)
+
 -- 
-2.40.1
+2.47.0
 
 
