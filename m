@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-403777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38CD59C3ABC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:18:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C389C3AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694631C218C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C503B1C21A71
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C2A176231;
-	Mon, 11 Nov 2024 09:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB0F1714B2;
+	Mon, 11 Nov 2024 09:17:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZrRpMmS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBFFvHa6"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BE81714D3;
-	Mon, 11 Nov 2024 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE8F15B135;
+	Mon, 11 Nov 2024 09:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731316695; cv=none; b=BwBP7hXjlezfovgscZVU335xscxlYy1EZYOQbWwgiP/eo2CzdkAA4nV0r0MdR+ecZDBc7lBBZl1duXbRczjq/+kxY/J27TjHea/+nKq28bUo+G99oUoY97nB5q/CSBdF2qKvk1qkDJkk8sET8iEfrnD3gjjd0UaxboZ97OCGVM8=
+	t=1731316678; cv=none; b=a6lOD2KGyJVV8rWzgNUCajZujg4b+CD0XGJk16bUjnSqEsUBRx6WxykH5CyAZylRT5CQCTcJiUGKeoWhOYpEnyzDTd8jy0O5jmV1k1JNxLErZ8w66BPP5Q3XB3kPgu+nE91zrM+S0LBsrgLvq53Gs7AbKwrJ5Ey1s9xmq0o2/rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731316695; c=relaxed/simple;
-	bh=CjWPjlsrG6f0aJgbWTLsSXlIywGkUpFxlCdUEkC7EmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YA7CFT7E3bB5CJG55sE6sRZyXsBnpj+6kuYW/L+VefWMeP2cZ2E+Gc5JkXJzPk8KNPocHXdhWFsJg9nvmbLjp30k1YRhmYCt3bAomPbGLgA20n/RLA0YpnWCjztdVmTDFS99aCECqOOcxMippIs2EP94j8unSkuDfETqAbRvBoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZrRpMmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B1CC4CED4;
-	Mon, 11 Nov 2024 09:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731316695;
-	bh=CjWPjlsrG6f0aJgbWTLsSXlIywGkUpFxlCdUEkC7EmQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RZrRpMmSnTS7BlJI4hWwTif2Otv09ws03qQCnfrt7pwK7kfLfKVlDjfP/RpElx8Fw
-	 MruEncw6mgtoTUan3dYISV3auLpeRFko6VW/DGZPw3P7StEVx4XFEkZXMNnPkQdHh5
-	 aBGaBCbEzKPACdXWpwXRFtCQ5rGNlSlQAkg6zc1i6AWE2tGQhU4GxxNdQp0RV6sYEz
-	 S86K1wnIT3nXmby1IMyOF4XY25NhYbKSsm7U8K3BQlFtC/6DKf5bEGjYElHlj0oPzH
-	 +rtPx90jeD7Yx7UAn9yjjgrUEf8fU9WilbtvYb3AUTwZvfaWNrrySQY434mr+bgG58
-	 1FLp0tHTc6xYQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Ian Kent <raven@themaw.net>,
-	Josef Bacik <josef@toxicpanda.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 0/2] fs: allow statmount to fetch the subtype and devname
-Date: Mon, 11 Nov 2024 10:17:20 +0100
-Message-ID: <20241111-ruhezeit-renovieren-d78a10af973f@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org>
+	s=arc-20240116; t=1731316678; c=relaxed/simple;
+	bh=Zp8dcjXzFMrOFGBN9Ry967Doem9Ags0iEDztcikfI4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gu0CJcQL+ENwoPR0dHxXItfBt+LigcBEmJS3f3YRan4KZVu4g5ZElWBTMNUnrS5BbTPqmql37w64aCYVbtUDb41MSr0+sa30n4WUEA3aqH2Gy+m/3ZDlAWfhiUnxNsz0k1aoiJur1tup1EFYoR0mQbCcENx1SXxsL8gGt6SJHco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBFFvHa6; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e5ffbc6acbso2531271b6e.3;
+        Mon, 11 Nov 2024 01:17:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731316676; x=1731921476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SgzDV6XTYtXT/ZAEBGBUP7h48Bysqg7RCg25yVB5U/k=;
+        b=aBFFvHa6TjQRRYej1m2W/DFwPwWqw2BaGBLCbX7i4kgJ/I9UeU51QgZg79ZVYOcDLu
+         vpMdHOLOEZ1Ee/WcYp6nh1Yq9RRTlqCPySpTY7K6HZbuWpR5wmnM5xJAclaM4FGp6mc8
+         0zMwV/zY3EKXx6xuFWiDNbF8jnhcn+bmBbiVL1SQpfuDmE3u3dM/IWlioRnPuY0xjMsO
+         e7yk15FpI7I8pvURMfbishd26UjaOeeBoOQRWtOtpgev+bHbknMorqwcxS0hjVMF5N3k
+         m/9VXsUmDPAkxVs2fSv4une1y9ngzrlt4x4rWukKo9+ktF0eJpzSh6j1IrW1rC0qXMJK
+         YU2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731316676; x=1731921476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgzDV6XTYtXT/ZAEBGBUP7h48Bysqg7RCg25yVB5U/k=;
+        b=An6Oqxt8sKVfPjYD3WUGLkqmdT8HNUTPuqceiw0IQD8+WlxP3wDpMvjdULihytl4Kp
+         9QoE/sg4Htwo6lkmlryiAZzkz0dI1CY3Z4QYIoOHnazPS/P+2Pcna67jyll7NNyUkR27
+         ClG7EpHcmTvn7Le82/zHLWzvOR/3VfLeciohtoDx+R+JuthAfgHnyJOviUv/oqIOVAx3
+         5Xfh9EtIhMKrRWCafvc56Knwjt75640T/wLBlFGIFQ1R/4N+FKG6RtthZlA9YBZ9x666
+         0I/K9mzStcLPRIyk5RDm5B5dL9gQ/+L44KZVKyQRLGR5hic6piXi9jsl6v+g//mXyaLp
+         UpNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW6yzQcBryLnw9s1bD8SVi/2bsARrqdt0qDmWOaZbA2NY1+olHAJDVdgZRQzolRo+1mawJXFq8832z@vger.kernel.org, AJvYcCWhXhd3ZhdO/aiav9m84Tqb1+3pWCirj22Sq0LBn7+g1Hd7xAngx1A47TBBilfGZ8UN5zRGFPkKZ7htN4UP@vger.kernel.org, AJvYcCXtIyJciPC2D6y1ZzySt/W82YBESkbi+xp9LqcRvED0ob9LMwUKMriCRVljXIWoKf24gpyaC435@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbh6U/i5bjtIqGlFxNdw5/SzgbfooS79MS4NBC/c5kOQepu3xc
+	yf3tXrxGAhlCbk/7ymTQaBIetGi4VgGQFMMO76273zCiYkHEo5du
+X-Google-Smtp-Source: AGHT+IH5XF4fHujuj+ksffR1RtxhphO0REZBT78S9uIbUEfLxCgT7hRETIpEKjykIRYtuUK5CY8I6Q==
+X-Received: by 2002:a05:6808:16ab:b0:3e7:5af4:f8e7 with SMTP id 5614622812f47-3e794680de1mr10057389b6e.1.1731316676277;
+        Mon, 11 Nov 2024 01:17:56 -0800 (PST)
+Received: from [192.168.0.101] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f41f5bab50sm6863158a12.25.2024.11.11.01.17.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 01:17:55 -0800 (PST)
+Message-ID: <cb718d0f-75a5-4720-b0c1-d8fb1f1c653b@gmail.com>
+Date: Mon, 11 Nov 2024 17:17:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1359; i=brauner@kernel.org; h=from:subject:message-id; bh=CjWPjlsrG6f0aJgbWTLsSXlIywGkUpFxlCdUEkC7EmQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbnj7bova2JInv0W8xuZmfeaYqlz9ZJ/lEb+eT7vbAO cxdj1dO6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIwm+GfybXTIyYzu3dvSrg dqqfVLdw81bls0c6g8s3zDdeH8ya8Ibhn7rqj75KYdbV0jYKr1/P3PTiek5e5763Rb4bP2q3cgZ b8AIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: net: nuvoton: Add schema for Nuvoton
+ MA35 family GMAC
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
+ schung@nuvoton.com, yclu4@nuvoton.com, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241106111930.218825-1-a0987203069@gmail.com>
+ <20241106111930.218825-2-a0987203069@gmail.com>
+ <f3c6b67f-5c15-43e2-832e-28392fbe52ec@lunn.ch>
+ <21a00f02-7f2f-46da-a67f-be3e64019303@gmail.com>
+ <9455e2f6-b41d-476e-bda9-fc01958e48d5@lunn.ch>
+Content-Language: en-US
+From: Joey Lu <a0987203069@gmail.com>
+In-Reply-To: <9455e2f6-b41d-476e-bda9-fc01958e48d5@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Nov 2024 16:00:05 -0500, Jeff Layton wrote:
-> Meta has some internal logging that scrapes /proc/self/mountinfo today.
-> I'd like to convert it to use listmount()/statmount(), so we can do a
-> better job of monitoring with containers. We're missing some fields
-> though. This patchset adds them.
-> 
-> 
 
-I know Karel has been wanting this for libmount as well. Thanks for
-doing this! It would be nice if you could also add some selftests!
+On 11/7/24 21:18, Andrew Lunn wrote:
+> On Thu, Nov 07, 2024 at 06:31:26PM +0800, Joey Lu wrote:
+>> Dear Andrew,
+>>
+>> Thank you for your reply.
+>>
+>> Andrew Lunn 於 11/7/2024 2:13 AM 寫道:
+>>>> +  phy-mode:
+>>>> +    enum:
+>>>> +      - rmii
+>>>> +      - rgmii-id
+>>> The phy-mode deepened on the board design. All four rgmii values are
+>>> valid.
+>> I will add them.
+>>>> +
+>>>> +  tx_delay:
+>>>> +    maxItems: 1
+>>>> +    description:
+>>>> +      Control transmit clock path delay in nanoseconds.
+>>>> +
+>>>> +  rx_delay:
+>>>> +    maxItems: 1
+>>>> +    description:
+>>>> +      Control receive clock path delay in nanoseconds.
+>>> If you absolutely really need these, keep them, but i suggest you drop
+>>> them. They just cause confusion, when ideally we want the PHY to be
+>>> adding RGMII delays, not the MAC.
+>>>
+>>> If you do need them, then they should be in pS.
+>> I will fix it.
+>>
+>> We have customers who use a fixed link instead of a PHY, so these properties
+>> may be necessary.
+> That is a legitimate use case which can require the MAC to add delays,
+> but i generally try to get the switch on the other end to add the
+> delays, just to keep with the uniform setup.
+>
+> Also, please take a look at ethernet-controller.yaml, these should be
+> called rx-internal-delay-ps & tx-internal-delay-ps.
+>
+> 	Andrew
 
----
+Thank you, sir. I will use rx-internal-delay-ps and tx-internal-delay-ps 
+instead.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+                 Joey
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/2] fs: add the ability for statmount() to report the fs_subtype
-      https://git.kernel.org/vfs/vfs/c/ddfdeccd46bd
-[2/2] fs: add the ability for statmount() to report the mnt_devname
-      https://git.kernel.org/vfs/vfs/c/6fb42b3c00cd
 
