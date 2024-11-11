@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-404231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C329C412D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:42:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF12D9C4131
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1408B22916
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E05AF1C219AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732291A070E;
-	Mon, 11 Nov 2024 14:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE611A01DD;
+	Mon, 11 Nov 2024 14:44:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jDLBZcXK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hxT8ixkB"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF87914EC55
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB84C14EC55;
+	Mon, 11 Nov 2024 14:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336153; cv=none; b=O8ZyTdwc3B9l2XzDUh2BsLCDx9fKXiuL+aVCA0QRp3WD8avQJL5iFTcJGCMOb4EjZxgeAPSwed7zt6AmCAY/Jsm4MzFjQrKSunDYRMwPYuJVshgPOBW4rFugzi+xYLebaRQMVVZZ8S8d2r7ee1Dc8WtshQw5cMuT5lUdeOilyiI=
+	t=1731336274; cv=none; b=M51vEe427oXTgDBUnMjQmDVzm8i3x8yhl5Xb9+w+FMGDGmnYHW/Oj+685fL6QZu/6gVOdmRZ1sVP2Dayp5OrgI3icSHftw3N1PnjAQiZSaFKYT0fM5pIFKmHDKdJrXh/HybzALddO26c1lvKfWTNBaIgAqtmFwwAOsCF6lAT+Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336153; c=relaxed/simple;
-	bh=+1oWh/LzPW60m5bFM8foJqUITuKw9B7yVXnnwhDzG4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMGIDoY+NsB3hdPiXvJI9yEvD9Bjd6M6OLFwSIeEB/6hdkp0n9sNB8lr7iKZiofHCfGFHA2v8L4OzlSxIlzQitn1kgrTHcXOR+YgpiS+7Ts+KENJfzAX+EQYOecTOUQ8c+M+E4PK4E0DooXCj/vw9NefgBtHN0LHqu5ULDe9Fjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jDLBZcXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47058C4CECF;
-	Mon, 11 Nov 2024 14:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731336153;
-	bh=+1oWh/LzPW60m5bFM8foJqUITuKw9B7yVXnnwhDzG4o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jDLBZcXKTtYDPnMJki95AGMLFxGHWOb0ruM20XVxVUGW9N0zxXrsR3ZJFVspiQBvC
-	 1FK9EjYr8DBLyrALfEwoeNPbxR97gBtCncJpkWEMV2lZWVWyAf1QDA0BjRKxmq1GM3
-	 yBWwEHZTl/H+jd+jd/m9fR4g782p6DrBZFtzgHEs=
-Date: Mon, 11 Nov 2024 15:42:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>
-Subject: Re: [RFC] syzkaller/docs: reporting kernel security bugs guide
-Message-ID: <2024111129-hence-resigned-b2e7@gregkh>
-References: <CACzwLxjdRmD02Uu+3umNEvP-b9fXuT6WWS+a9gYhOeQEayK_ww@mail.gmail.com>
- <2024111124-hardly-jaundice-08c4@gregkh>
+	s=arc-20240116; t=1731336274; c=relaxed/simple;
+	bh=6sAXDPQRSWwacQoNdT90XODSqmSn/qQbRANJn47Mbw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=irWSANDe/PXsFptIYUdMSWnftc0Tyho3T3p3/07kIWNUBkq+O2jTCsLE13dDfSP4g7XrkVPDC7AO7xy6wcJxuVWpkjFV8jH6wqdfgaQN2jEFwYA4YpayHWYX5cvbubDCZv04+uOIAruyRmR/0WJMBcBUQDlFPEuZjbFOygUSzBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hxT8ixkB; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9aa8895facso869954166b.2;
+        Mon, 11 Nov 2024 06:44:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731336271; x=1731941071; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0N/0KQp3+3ibidp+do6cjFRrLqVCbMyVj/s0qA5h/fQ=;
+        b=hxT8ixkB1IGzV3VdlHsdg8Fv94sT2Nt7pANPjmmZ6IO+z/U5FOqUgQaJjfjccfeNsP
+         ustUU1tXSOpp6kIvFYI/a5CDxBUTgxIdEbO3NB4Ht4zHa92nOAxXnOofm1SyNknjJr7f
+         8HdNCEUYktOHwlDsMEuWaIL4khJvXbuhGRM9L3VvvAnLnHVFAEXN+iQDW6u7N3p1FzIh
+         wsQFy0H+ONep2xy7SEwkdvY8f35nLmeFRiM8S8zceNm3CixbCsZaCK0eXuIvgsO6pqvP
+         lnYiRwmBjGcjEmLYPqsT1pSFu0/Mote+QKM/KyY0Aq4Lz/04vbf8nwXJBgVoEQK+jc/j
+         lmVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731336271; x=1731941071;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0N/0KQp3+3ibidp+do6cjFRrLqVCbMyVj/s0qA5h/fQ=;
+        b=Vs3igj0PaB4t0eFAnloCikg1siwh2iiYm8wYS2/+nmFN3+WKd8xiGDMCeVO2taSDkg
+         3iPnkLV5XPW9K6gXTGkqaG6fED+Qlp1DrJb1sOUtTe2FoFtFxYmZckLBGgCNoJl9u8x3
+         BU+x0nnOprkEeKidDuPx1SXJHWdGuKaYwO+JEjQbI2yvvzMhk8EpdzVE677nKp8MItIv
+         BiPUyR7h2K+9WlD5eYRkvr+qasV1w2sQf6MY178qJoHMd9CW7GqqgUncvXingaa+tBLg
+         5D5DUN3O0EZL/kz2c6706BnedsM14kSXc/QL3IxyJhcxE1j6Cu5PeG+taU9qOJ2NUcZY
+         cl3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWMmG8/qW9te78GgYtSZymaXavxGAqtyphP3O3Zdp9VGy34ArAg7BjP0SW8RxzbI5kMuQWXdgs9+fQhsqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrjwdRF+gCIcRsf9UkP8Skt2rxU9kD+bvlx8LSbeZ0GQnjF/yf
+	HRf4uQLItZqdkgzEti1EXcUupyh6lZ8Nw80LWY3kIpHm8q3R40XO
+X-Google-Smtp-Source: AGHT+IGlyRaYr0Nn1HPopNxyI1tt/fBE6zIRdApGKslpDc/b1WF+UP8l+PRffW6XhueuDpAEyzt8tQ==
+X-Received: by 2002:a17:907:97c7:b0:a99:ec3c:15cd with SMTP id a640c23a62f3a-a9ef0009412mr1266831766b.54.1731336270814;
+        Mon, 11 Nov 2024 06:44:30 -0800 (PST)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:e7bf:a27b:6748:3bd1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee1aa544asm594584366b.167.2024.11.11.06.44.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 Nov 2024 06:44:30 -0800 (PST)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Gianfranco Trad <gianf.trad@gmail.com>,
+	syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Subject: [PATCH] bcachefs: zero-init move_bucket struct in bch2_copygc_get_buckets()
+Date: Mon, 11 Nov 2024 15:42:44 +0100
+Message-ID: <20241111144242.757798-3-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024111124-hardly-jaundice-08c4@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 11, 2024 at 03:37:27PM +0100, Greg KH wrote:
-> On Mon, Nov 11, 2024 at 06:24:36PM +0500, Sabyrzhan Tasbolatov wrote:
-> > Hello,
-> > 
-> > Greg,
-> > Could you please confirm that the updated version of
-> > reporting Linux kernel security bugs guide is correct
-> > since kernel.org is CNA as of February 13, 2024 and
-> > with linux-cve-announce reference?
-> > 
-> > The updated doc and drawn diagram is available
-> > in this PR of syzkaller project:
-> > https://github.com/google/syzkaller/pull/5461
-> 
-> I can't read this mess:
-> 	https://github.com/google/syzkaller/pull/5461/commits/35b45ef3c4600fd62f5d05a17fc6855fc0b5e402
-> 
-> So I have no idea, sorry.
+zero-init move_bucket struct b fields in bch2_copygc_get_buckets() 
+to mitigate later uninit-value-use KMSAN reported bug.
 
-Ah, the graph is at the bottom of the page, kind of messy...
+Reported-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=8689d10f1894eedf774d
+Tested-by: syzbot+8689d10f1894eedf774d@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
+ fs/bcachefs/movinggc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Anyway, as I have stated numerous times, I DO NOT RECOMMEND EVER
-CONTACTING the linux-distros mailing list for lots of various reasons.
-You do so at your own risk and liability (i.e. doing so imparts a number
-of requirements on you!)  So be VERY VERY VERY careful to ever tell
-anyone to do so as the side affects can be very bad in some cases (i.e.
-they "blackmail" you to release information even if you don't have a
-fix.)
+diff --git a/fs/bcachefs/movinggc.c b/fs/bcachefs/movinggc.c
+index d658be90f737..cdc456b03bec 100644
+--- a/fs/bcachefs/movinggc.c
++++ b/fs/bcachefs/movinggc.c
+@@ -171,7 +171,8 @@ static int bch2_copygc_get_buckets(struct moving_context *ctxt,
+ 				  lru_pos(BCH_LRU_FRAGMENTATION_START, 0, 0),
+ 				  lru_pos(BCH_LRU_FRAGMENTATION_START, U64_MAX, LRU_TIME_MAX),
+ 				  0, k, ({
+-		struct move_bucket b = { .k.bucket = u64_to_bucket(k.k->p.offset) };
++		struct move_bucket b = { 0 };
++		b.k.bucket = u64_to_bucket(k.k->p.offset);
+ 		int ret2 = 0;
+ 
+ 		saw++;
+-- 
+2.43.0
 
-good luck!
-
-greg k-h
 
