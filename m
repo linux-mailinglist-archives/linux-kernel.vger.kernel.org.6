@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-404864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3F99C4955
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:51:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42669C4957
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 23:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2FB1F23ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55D1F1F2558A
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7D61B0F2B;
-	Mon, 11 Nov 2024 22:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1B51BC9FB;
+	Mon, 11 Nov 2024 22:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="XlKi6OPw"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMmgLN2v"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722928468
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 22:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2539B156F5E;
+	Mon, 11 Nov 2024 22:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731365467; cv=none; b=qsd/+zijsCyQ9H73/fg254ewZw9qeGibOpB0UeIYBdPCalF9HXurJEVweIU2HFZZxVaLkmw0BmfHVwxWRdlIpodaHyWl7odMlhEFyDQKelcFWKGX7KEPjpm3uqrDaxRAAq8xtq0ugeq46c5CAUKrRtaHdjqhUMpV0/Y6ZgY89UY=
+	t=1731365513; cv=none; b=TWIwXZAnyFxip3bJVNJECy+xGzw2T7D9LVev/gdrc8Q2z03HzZkTw7SFpKQGRs1nKlxRmjr/COpjIBIcQtjD78aBFb6i1NxJN2U5UAlpMiLL3g9yizuyqVgM0ZAP0ml2QopAiebltVlXjLXiSJcZzUFZlTp0JyLXK1PTaC21J04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731365467; c=relaxed/simple;
-	bh=NyhDWCmh/e17XfKVoxY6SLJ29UtaIpJ+DelPVZzkvOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uxTNdWVAxchN8I7M7x19thxHIEw4VsRotEiCp3SiwC0Q7fOgZUmIargYjOmZvaUScDNRCFXSzY7p0qdA054Y4/p9xF/gSlWe1keMgueXv6aWuyssQ4kUARCBV2Yd4CvIj1XN8HY4LJrMvf1BxM0nqStKXUsHIoDP5iC6K4qrfPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=XlKi6OPw; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a6bcbd23c9so19397345ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:51:05 -0800 (PST)
+	s=arc-20240116; t=1731365513; c=relaxed/simple;
+	bh=sJ4Soy4X8jXcqT/MKWvjDRJdwDeELmOTBVoKIYInFdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n+MVJclVv0IIx07HwcJkZntIJ+unJ9CIAYmHxlruSx+kaqo09mwxeMvVSRC1meaHykofDXQMs3OX0pQ8O1+NR3Lgrz1bWPxEzPJizhxRMIX8MJiknYF2Q7vS0IiTk9yCpsMxYYsoBXfB9MgTHVK3CP5UhwOcP4H6AYyBcPDZpow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMmgLN2v; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-84fdf96b31aso1838504241.2;
+        Mon, 11 Nov 2024 14:51:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731365464; x=1731970264; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fTdDzCYRBRhSLyboKtTQOLAFBt9x0DbQTEdRVM6MA34=;
-        b=XlKi6OPwcW9nXsDNMSE4muia2f7TOxnVD3xkPskrqUopCq7c44hXwbtcFRE3aU90kN
-         UJKpk4p8XGScesk1Iwd8P8vBaCv8C198CE+qZwqnV1GQ8RCJmKxbzydtokRLuveST+Ul
-         A/JC7USaQW6I+yh//1t/rhyHvhAlrJQnXPyz4eZKND51jWSIOysx8ut58oVccl9rZDFh
-         3ptN7YKOGHTGCjE1roZsvgBY59GdaV2vBGnESQ3CEAf4EEiimzPGJpIoYNRhAIz+x8cs
-         hVmtr4WyYfrBuHGXZzSyzisSj6juLyJ8P2+0UwIGwOsz8MnHI3BlKK085g4QAL9iZVSH
-         xexA==
+        d=gmail.com; s=20230601; t=1731365511; x=1731970311; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KQl50ASVKori1aU7G1WY6tJUmNCetIqIxTMQTgNJ8kg=;
+        b=OMmgLN2vXhV+FYaWvmenKxpoeFDGwoQFBGioXwwP1ajCw+M2u9F66b3PDJ+OU49HQp
+         7qIDMlidbwHZq+UMdMgIRtAVN8AmfjlfvaN4mz8BkAjjqUAdYBfvLX++lsYlFYWxlzIs
+         OnCkmZKBPtiKl0rM3eulZr0oQEtgTBkBD4vifeYtphQyru5JtMnz3NFwIIWtbpnLh3QX
+         4u7nq8XE1lz9+OJaoh+UazAwX3Z3NxWHJo7bjdm1zucKcmR0BJQMnAGeIiWOpb6u1NUr
+         t7GtWPN+aqW7mBOu6LaM196KKwi8typqIoCj4D3g8wzTDZZpi0huTq1CoOrjVTaLRiPu
+         Qzow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731365464; x=1731970264;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTdDzCYRBRhSLyboKtTQOLAFBt9x0DbQTEdRVM6MA34=;
-        b=BCbEO9WpFLQr+20AaJdaDXa2clEaj1rp+or+3W9m81WvHsmpvPv4/Emjl8y/bnO2qM
-         +aX8h6XAjJa+FT5ADV3pAZtMzVW7EaFweFqPBMdYLoK+698ciuCuoJCwV8JjtChoagO9
-         2Cfxd6w/T1bl9E87KIa7IOxnTAX5B5oad8t0I6Iofj6q3f57qVp4T3pxRswQA8/O90vC
-         HOOHLBjssnKoxeFBvmVYjnrqK+4bIdJJdovLqqVIboiX9b3PVl7/h7CvcYJZvEjplK1g
-         eg3EPPVpDT9bhLcNcL0vDCJxn0C4+0mjnV/jNb98x/LCQd5E9PAA+NHoTk1kQxCnvquA
-         MnUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVk61Hg55jfGpXCeicTlZejdS08vRvprY3W1QzsiwzTNsA7+sAT8PxGpfeziXwZbgexlR5E2aXJHF7E9k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzdGZU5AMoU0cxZPd+mev1WJShUaenql6EKQKa3oQFSV0FAkyy
-	w42CHpKnynLiXxuVDqjGkLYTR2Am0tnmWmIIeEyvyhZj0vfsoD43FHyv00SsN9Y=
-X-Google-Smtp-Source: AGHT+IEtIUyvJdzpK4c4ujWrQA/hnBETNtlG/7l6hYXi6h+y3fgZDr4h4pUhVLK64ZeQM/TV6wduHw==
-X-Received: by 2002:a05:6e02:19ce:b0:3a6:c1ad:3a02 with SMTP id e9e14a558f8ab-3a70c8990e2mr4057645ab.24.1731365464197;
-        Mon, 11 Nov 2024 14:51:04 -0800 (PST)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6f987e20asm16884155ab.56.2024.11.11.14.51.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 14:51:03 -0800 (PST)
-Message-ID: <b15fd3d7-6add-4220-8c24-afb725177466@baylibre.com>
-Date: Mon, 11 Nov 2024 17:51:02 -0500
+        d=1e100.net; s=20230601; t=1731365511; x=1731970311;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KQl50ASVKori1aU7G1WY6tJUmNCetIqIxTMQTgNJ8kg=;
+        b=Mst/c3M/+vyYzm1wfx4OTd7/HCIxqk6yN5qVpdYlVgwCHdUGNMCtLvzchDj/Tq1DC/
+         D/cqIGJpuSm3sWfCCZwE70Y+eSe7uB1g11B6kLZ8VAd+hDdb7XaKtsqXhuz/GHxSm6bB
+         LJky0Cwd2aJ+zcFinNzD1ABuXbFJsaDKDYhyDLnCypajFoLWfeeYFdcKPN+0NUMtvf96
+         HmApl485SILuf5HXtW2Ymp/ut3RfC4nlwPFhhqroitkIbar3SMJpgI7eBP6dSdpPWTHj
+         9FMBQHWtJ0h89NV99MBAb5y+jSAkft6Vtr3QvUojRnAt/IYNsmK4jxAZCVZUZFHRcaOG
+         Hu7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsc07J58p60nAGV5fU+Z0jbxXd/RX4e2zfvicpWEMZLEJZSaAqL/bY/0FGGi9g3QM2MYm9wK2QrUEjhWk=@vger.kernel.org, AJvYcCXs8JoCr53v1O+tt4iubGfCTE4VK71HITen7G7TfkeCSYpI4lh7M/tM+507mfSq3gZd53y/Sz9VtnCRpC154bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8JiJMfMb571S9dyhiYyN0mZSvL/qOVGatUMtKnkNGChg1y2Er
+	7d9/8XsSLPwvfwbl/LEyVp3NxT9LSuN1VmdA5fur8jQPD8uXy0pCQOgCZ1YLfvUh2yJk0d7S8fQ
+	2Slpb0r0hO0A6QXgQ+ijRPD4v744=
+X-Google-Smtp-Source: AGHT+IE2YGxxbqCK2DC6cCxuCjY72oZoTCCw7zs/q3dmYzS3MCOQAzruXEf69l3b2YytZ3hreigJPJMD2tEq3F3u0RM=
+X-Received: by 2002:a05:6102:38ca:b0:4a5:b159:8557 with SMTP id
+ ada2fe7eead31-4ac29776538mr502334137.4.1731365511017; Mon, 11 Nov 2024
+ 14:51:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] iio: adc: ad4695: add custom regmap bus callbacks
-To: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111-tgamblin-ad4695_improvements-v1-0-698af4512635@baylibre.com>
- <20241111-tgamblin-ad4695_improvements-v1-3-698af4512635@baylibre.com>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <20241111-tgamblin-ad4695_improvements-v1-3-698af4512635@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241111112615.179133-1-alistair@alistair23.me>
+ <x6OyXuGQi1xeknAX_pjcl17BOpxRM6OGtLWGhGOH4LUgghJaP29a4ebzCT21QdfxBb88PwZCc2U7zizrTTSzVg==@protonmail.internalid>
+ <20241111112615.179133-2-alistair@alistair23.me> <87cyj2t2l1.fsf@kernel.org>
+In-Reply-To: <87cyj2t2l1.fsf@kernel.org>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 12 Nov 2024 08:51:25 +1000
+Message-ID: <CAKmqyKM5eOM=+vmvF8t8Um=Cjtx3ykhx9BRibQhDB_mWF2tKGA@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] rust: bindings: Support some inline static functions
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alistair Francis <alistair@alistair23.me>, linux-kernel@vger.kernel.org, 
+	boqun.feng@gmail.com, me@kloenk.dev, benno.lossin@proton.me, 
+	tmgross@umich.edu, aliceryhl@google.com, gary@garyguo.net, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, alex.gaynor@gmail.com, 
+	alistair.francis@wdc.com, bjorn3_gh@protonmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 11, 2024 at 9:47=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> "Alistair Francis" <alistair@alistair23.me> writes:
+>
+> > The kernel includes a large number of static inline functions that are
+> > defined in header files. One example is the crypto_shash_descsize()
+> > function which is defined in hash.h as
+> >
+> > static inline unsigned int crypto_shash_descsize(struct crypto_shash *t=
+fm)
+> > {
+> >       return tfm->descsize;
+> > }
+> >
+> > bindgen is currently unable to generate bindings to these functions as
+> > they are not publically exposed (they are static after all).
+>
+> Very cool!
+>
+> What does this mean for our minimum bindgen version? Is the feature safe
 
-On 2024-11-11 10:59, Trevor Gamblin wrote:
-> Add a custom implementation of regmap read/write callbacks using the SPI
-> bus. This allows them to be performed at a lower SCLK rate than data
-> reads. Previously, all SPI transfers were being performed at a lower
-> speed, but with this change sample data is read at the max bus speed
-> while the register reads/writes remain at the lower rate.
+There are no changes to the minimum bindgen version :)
+
+The next release of bindgen will support it without the experimental
+flag [1], but 0.65.1 and newer will all work.
+
+> to use in our current required version of 0.65.1? Did the feature change
+> in significant ways between 0.65.1 and whatever version it will be
+> stable in?
+
+There are no breaking changes in the changelog that I can find. There
+are improvements to support more functions, but as we use an
+allow-list that doesn't affect us.
+
+Eventually when the minimum bindgen is updated we can remove the
+experimental flag, but otherwise it should work with everything newer
+than 0.65.
+
+1: https://github.com/rust-lang/rust-bindgen/blob/main/CHANGELOG.md?plain=
+=3D1#L219
+
 >
-> Also remove .can_multi_write from the AD4695 driver's regmap_configs, as
-> this isn't implemented or needed.
 >
-> For some background context, see:
+> > diff --git a/rust/bindgen_static_functions b/rust/bindgen_static_functi=
+ons
+> > new file mode 100644
+> > index 000000000000..1f24360daeb3
+> > --- /dev/null
+> > +++ b/rust/bindgen_static_functions
+> > @@ -0,0 +1,6 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +# Don't generate structs
+> > +--blocklist-type '.*'
+> > +
+> > +--allowlist-function blk_mq_rq_to_pdu
 >
-> https://lore.kernel.org/linux-iio/20241028163907.00007e12@Huawei.com/
+> Should this be moved to the "Remove blk helper" patch?
+
+I need a function here, otherwise nothing is generated and it fails to
+build. As this would be added in the next patch anyway I just added it
+here to maintain bisectability.
+
+Alistair
+
 >
-> Suggested-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
-Found a couple more bugs after some testing. I'll wait until EOD on 
-Wednesday to send a v2, in case there are any other review comments.
+>
+> Best regards,
+> Andreas Hindborg
+>
+>
 
