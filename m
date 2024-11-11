@@ -1,152 +1,256 @@
-Return-Path: <linux-kernel+bounces-404610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE4F9C459E
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:12:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEAF9C45A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00BB283493
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8AF1F21FF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15EE1AAE2C;
-	Mon, 11 Nov 2024 19:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879E51AA7A4;
+	Mon, 11 Nov 2024 19:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HC400pap"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="snNG1GWe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B965014B965
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4521B1AB6EB;
+	Mon, 11 Nov 2024 19:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731352337; cv=none; b=pLtWyjUL2h/608R9zBwCwI2yd9Q9EVKua6fvo/4WJuMUjzxjGqbAjfeXpAKlGGXx8EXdPXhEkT0988UW4B0VHAf5J2aA7cFJLprsV4p0ac5ABe7nyzVH4vbIuAjZQyMyKmtmJb5A/42c1lRTH6sFRyKmNrg9ej7VOX0LV7Bky1M=
+	t=1731352344; cv=none; b=j5Les+gaAxvFXc+vyPF4RfpVGjGXvZnrXpheJQWedM5TZXRoDHcSjYNuqF/gxQ+BSUjgwTK9UVqBDYOnub7fVb5xcXg2XB2HqXyRv8GhP5DV5mr+DnF9F6T8jGjgb4DaMzRf0eXKnR5GxA89e+wKDgC8HxmzIJhdGdKDze+EWEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731352337; c=relaxed/simple;
-	bh=o8iJVODvf7LcF/eKC+p+GcC3b7QDS5bj3e6XA68aep0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m37/1EJdYno7NWtNp+7kYZvEKYeVBrrfx/TwVfO7Fdf6N1BgUBtynfj+zpHEsT8e3TQ1CngTd4vQK4AqZfTfWGM4+FYlsVuZXoGtC98oKUjFeXKLklbnnDYnUCtPNkeqsC7F2p8R3HUj+eQPQKA76D2w4rAk9rmtRcjtQmQB6M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HC400pap; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7f46d5d1ad5so286319a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:12:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731352335; x=1731957135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o8iJVODvf7LcF/eKC+p+GcC3b7QDS5bj3e6XA68aep0=;
-        b=HC400pap6+GmBDaMO+PmN44vhuWle4T3uTgVom9AT4pMgQIXtkcAizVtZD8lLOTPZT
-         0edOCbleUlPU1H4ijZXLT2AFqfLb4LQIBLF5OXLSGFPCtIEuxppAqfzspjRvtTymQqkK
-         eh/6gbwam//foy0jnmawbFZs+n4xz3SXU22A7PJiEG4G0EhNjXA+eTBc5XjgzHliNOoH
-         wmHT34yygODFeo2LWEeoWm9BwhOGtTpin8NztQ2wMB7Tg7GzolySixnrl1+hmEGtJ/f+
-         MZ2w8lBtSJW5C0Ii+daCrQAf1osr6vb5IzHHH001UIAHNA3kxYRbFS0RQ1uwz0YUZEl9
-         WW4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731352335; x=1731957135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o8iJVODvf7LcF/eKC+p+GcC3b7QDS5bj3e6XA68aep0=;
-        b=dhkayBhwSMq/9sB6nHIdOiwFVXZTv0zqX9qzWWSSI1UMX5cVipy9RKdOU7ns6Gi+1b
-         0FNAfsgZXIY3GTktwhn/28yP+X3aOChKr2VTf55yAfF9N66jMWge3gLJL6oUkTOLhMUz
-         7lU3xoCoDDGu7HE5L5aKdQTTXxHMcBWmKYuP4ZlA3T81dgZQwydatPfOVeIbi026B4f8
-         RMMsLJhgt//FK+2UIw5hfXq0UmOyr9rPegY9AYKcwpL/s82AJSV5qWEuAfJuEN9ZO50+
-         3NCAw9jgx1377N4sNusG3SuwJ+bnzbhhbyyuom/36BS2GQLa9O/XxUOh70QvyPVYL2h3
-         Z9hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHcH7fsYvMMa8zy6gAEeNJQNHm7DKQ6welm11cPfPVsV6tHkLJ5N6ONUPpGzLQ4jDrRA7xUUOl/74TTac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3eceFgX8fVFVgpy/j1xhe0ahIx+GG/Knqeaj5QIxyFHbqyt09
-	hVmxjBcTYvWDevGFfIqM/uGevYROmBjEas6Y9M167RXTLKoyzr5ieQZL71Bat6F7B4Hbrk3qqFp
-	fSgkbUFNK2LSkZaqk8NN2eqEbKL9pspph6xSd2w==
-X-Google-Smtp-Source: AGHT+IFDm/QfKBXJlv9ZGVdtgav9/uVsDqhPq2Lvn556Xh0/jVW68lLyjDQdPrcuQ4856z2LzjpXymmFXyY5r6YJcIs=
-X-Received: by 2002:a17:90a:d405:b0:2e2:a8e0:85e9 with SMTP id
- 98e67ed59e1d1-2e9b172d9c9mr19666661a91.18.1731352335000; Mon, 11 Nov 2024
- 11:12:15 -0800 (PST)
+	s=arc-20240116; t=1731352344; c=relaxed/simple;
+	bh=IZc/E43DZuxHSv7IWU524y8l2UZ+In8MU2dQR2LV2c0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=J79X5WROTrCU5fbHWdeLxBs+92IMmViXdk6iuCm+8iY10AyzEmKaukkfAiFkFZCpvsZVGK4Lk1li5Qf/DfJludXhvIMwLF7zy726Jdm5HkOXxTwaXlE6LYvRiKo5xx/0sJPUQsS3zh9pOGnnMP26i6n3VKXTd/MQu/tfzwbiig4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=snNG1GWe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABIeDvw007739;
+	Mon, 11 Nov 2024 19:12:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=FUTeFv
+	TTJcfuHgqmvdOMhd7j6g2HNrW0Yp2+VxRnmRc=; b=snNG1GWeEJx2C8HGfH/t/5
+	mHk8exV8kJ88+IRUKmyvgSkrhpz0/u/Qv6IPydzaJBAFBndGRsK9RmKeUpJ9Kt92
+	pkeYQsSjvElpFkL/KDzkFzCl2VDhcWPxiUoKOazjuYplZceMSJXgUpN4k+LVXGQI
+	6VjMa5UKERwW36qO2qdqalo0HORwmiPjcQqq9Ch9opzImc3r9ydQtpCr6/Vtq6w5
+	89ieZSx5vNMzHqmWkrIZOg/FRx30G0xVOoISsOZGIGELVvwwextVHjEtOABmgkx+
+	/PaMdtLzmYOO0mOkJb85O1MCAwtqveAmai/YZ5fQ3ljd0gbQxGYtUg9Jyt1lzHxA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42uqdb83d6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 19:12:14 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ABIrcav002761;
+	Mon, 11 Nov 2024 19:12:13 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tms12qje-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 19:12:13 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ABJCCih29033182
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 11 Nov 2024 19:12:13 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A011E5805E;
+	Mon, 11 Nov 2024 19:12:12 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CD1058043;
+	Mon, 11 Nov 2024 19:12:12 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.110.57])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 11 Nov 2024 19:12:12 +0000 (GMT)
+Message-ID: <6a8b48e600e0fd294619b5dfa97b5c796eb2ea2f.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Suspend PCR extends and log appends when rebooting
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Stefan Berger <stefanb@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Tushar Sugandhi
+	 <tusharsu@linux.microsoft.com>
+Date: Mon, 11 Nov 2024 14:12:11 -0500
+In-Reply-To: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+References: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
- <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
- <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
- <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAGETcx_1uyZ3M1LtSkZDHiTwDQj8M54V-=geRqJYkZXo9ZbU6w@mail.gmail.com>
- <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
-In-Reply-To: <CAKfTPtBBq0mMat4FWPYprxZX52VFrKrrDMqvXBROuY4T-95+GQ@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 11 Nov 2024 20:12:03 +0100
-Message-ID: <CAKfTPtB90_ywaVooR=MGfjhxz2mf=kOeEzdDWKh=7jfcuu7xQg@mail.gmail.com>
-Subject: Re: Very high scheduling delay with plenty of idle CPUs
-To: Saravana Kannan <saravanak@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
-	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
-	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
-	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: QFuWBJCemRiAXVNja5tx3nb7XWfGom7w
+X-Proofpoint-GUID: QFuWBJCemRiAXVNja5tx3nb7XWfGom7w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 clxscore=1011
+ adultscore=0 mlxlogscore=999 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411110150
 
-On Mon, 11 Nov 2024 at 20:01, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Mon, 11 Nov 2024 at 19:24, Saravana Kannan <saravanak@google.com> wrot=
-e:
-> >
-> > On Mon, Nov 11, 2024 at 2:41=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> > >
-> > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
-> > >
-> > > > I actually quickly hacked up the cpu_overutilized() function to ret=
-urn
-> > > > true during suspend/resume and the threads are nicely spread out an=
-d
-> > > > running in parallel. That actually reduces the total of the
-> > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
-> > >
-> > > Right, so that kills EAS and makes it fall through to the regular
-> > > select_idle_sibling() thing.
-> > >
-> > > > Peter,
-> > > >
-> > > > Would you be open to the scheduler being aware of
-> > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
-> > > > overutilized behavior during these phases? I know it's a very use c=
-ase
-> > > > specific behavior but how often do we NOT want to speed up
-> > > > suspend/resume? We can make this a CONFIG or a kernel command line
-> > > > option -- say, fast_suspend or something like that.
-> > >
-> > > Well, I don't mind if Vincent doesn't. It seems like a very
-> > > specific/targeted thing and should not affect much else, so it is a
-> > > relatively safe thing to do.
-> > >
-> > > Perhaps a more direct hack in is_rd_overutilized() would be even less
-> > > invasive, changing cpu_overutilized() relies on that getting propagat=
-ed
-> > > to rd->overutilized, might as well skip that step, no?
-> >
-> > is_rd_overutilized() sounds good to me. Outside of setting a flag in
->
-> At know I'm not convinced that this is a solution but just a quick
-> hack for your problem. We must understand 1st what is wrong
+On Fri, 2024-10-11 at 11:05 -0400, Stefan Berger wrote:
 
-And you should better switch to performance cpufreq governor to
-disable eas and run at max freq if your further wants to decrease
-latency
 
->
-> > sched.c that the suspend/resume code sets/clears, I can't think of an
-> > interface that's better at avoiding abuse. Let me know if you have
-> > any. Otherwise, I'll just go with the flag option. If Vincent gets the
-> > scheduler to do the right thing without this, I'll happily drop this
-> > targeted hack.
-> >
-> > -Saravana
+> To avoid the following types of error messages from the TPM driver, suspe=
+nd
+> PCR extends once the reboot notifier has been called.  This avoids trying=
+ to
+> use the TPM after the TPM subsystem has been shut down.
+>=20
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>=20
+> This error could be observed on a ppc64 machine running SuSE Linux.
+>=20
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+
+No need to send a separate post about the patch.  Any comments not part of =
+the
+patch description belong here.
+
+>  security/integrity/ima/ima.h       |  1 +
+>  security/integrity/ima/ima_init.c  | 16 ++++++++++++++++
+>  security/integrity/ima/ima_queue.c | 27 +++++++++++++++++++++++++++
+>  3 files changed, 44 insertions(+)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index c51e24d24d1e..d3f46232b8b9 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -274,6 +274,7 @@ bool ima_template_has_modsig(const struct ima_templat=
+e_desc *ima_template);
+>  int ima_restore_measurement_entry(struct ima_template_entry *entry);
+>  int ima_restore_measurement_list(loff_t bufsize, void *buf);
+>  int ima_measurements_show(struct seq_file *m, void *v);
+> +void ima_measurements_suspend(void);
+>  unsigned long ima_get_binary_runtime_size(void);
+>  int ima_init_template(void);
+>  void ima_init_template_list(void);
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/i=
+ma_init.c
+> index 4e208239a40e..ac630d8d3049 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/err.h>
+>  #include <linux/ima.h>
+> +#include <linux/reboot.h>
+>  #include <generated/utsrelease.h>
+> =20
+>  #include "ima.h"
+> @@ -115,6 +116,19 @@ void __init ima_load_x509(void)
+>  }
+>  #endif
+> =20
+> +static int ima_reboot_notify(struct notifier_block *nb,
+> +                      unsigned long action,
+> +                      void *data)
+> +{
+> +	ima_measurements_suspend();
+> +
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block ima_reboot_notifier =3D {
+> +	.notifier_call =3D ima_reboot_notify,
+> +};
+> +
+>  int __init ima_init(void)
+>  {
+>  	int rc;
+> @@ -152,6 +166,8 @@ int __init ima_init(void)
+> =20
+>  	ima_init_key_queue();
+> =20
+> +	register_reboot_notifier(&ima_reboot_notifier);
+> +
+>  	ima_measure_critical_data("kernel_info", "kernel_version",
+>  				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+>  				  NULL, 0);
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 532da87ce519..b8613b6c1a39 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -44,6 +44,12 @@ struct ima_h_table ima_htable =3D {
+>   */
+>  static DEFINE_MUTEX(ima_extend_list_mutex);
+> =20
+> +/*
+> + * Used internally by the kernel to suspend-resume ima measurements.
+> + * Protected by ima_extend_list_mutex.
+> + */
+
+Tushar's original patch incorrectly provided both a function to suspend and
+resume appending records to the IMA measurement list and extending the TPM =
+PCR.
+This patch only suspends appending records to the IMA measurement list and
+extending the TPM PCR.  Please replace the word "suspend-resume" in the com=
+ment
+above with just "suspend".
+
+> +static bool suspend_ima_measurements;
+> +
+>  /* lookup up the digest value in the hash table, and return the entry */
+>  static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+>  						       int pcr)
+> @@ -148,6 +154,13 @@ static int ima_pcr_extend(struct tpm_digest *digests=
+_arg, int pcr)
+>  	return result;
+>  }
+> =20
+> +void ima_measurements_suspend(void)
+> +{
+> +	mutex_lock(&ima_extend_list_mutex);
+> +	suspend_ima_measurements =3D true;
+> +	mutex_unlock(&ima_extend_list_mutex);
+> +}
+> +
+>  /*
+>   * Add template entry to the measurement list and hash table, and
+>   * extend the pcr.
+> @@ -176,6 +189,20 @@ int ima_add_template_entry(struct ima_template_entry=
+ *entry, int violation,
+>  		}
+>  	}
+> =20
+> +	/*
+> +	 * suspend_ima_measurements will be set if the system is
+> +	 * undergoing kexec soft boot to a new kernel.
+> +	 * suspending measurements in this short window ensures the
+> +	 * consistency of the IMA measurement list during copying
+> +	 * of the kexec buffer.
+> +	 */
+
+Tushar's patch did not register a reboot notifier.  Please update the above
+comment accordingly.
+
+> +	if (suspend_ima_measurements) {
+> +		audit_cause =3D "measurements_suspended";
+> +		audit_info =3D 0;
+> +		result =3D -ENODEV;
+> +		goto out;
+> +	}
+> +
+>  	result =3D ima_add_digest_entry(entry,
+>  				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
+>  	if (result < 0) {
+
+thanks,
+
+Mimi
 
