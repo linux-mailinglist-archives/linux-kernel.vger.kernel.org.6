@@ -1,275 +1,181 @@
-Return-Path: <linux-kernel+bounces-404813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6DE29C488C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:53:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746339C488E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 22:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47E481F25560
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:53:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABD32830FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 21:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D461BBBEE;
-	Mon, 11 Nov 2024 21:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFD1BBBEA;
+	Mon, 11 Nov 2024 21:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ak5L2qER"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="io5miDFT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426681B07AE;
-	Mon, 11 Nov 2024 21:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3944638F83;
+	Mon, 11 Nov 2024 21:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731361974; cv=none; b=leia3OirskIEGvbKFYyjtg8Mb2PZzZUYvsDh8VAsS+Gg6O8g1MvKZG/tXEFuopLEkhzEheqVG/PTBEeUMhfzGLNWF21C3M4PhD1iCYP30iKEjKU4DRA8SgI6k87ohYstLPFCWIPsUvoO9dzj0aZy6tbe5p2rUKk08LsMkfBfof0=
+	t=1731362074; cv=none; b=Em8kqOo11c5HoUkkiKMp1Y59zUPQ+YEGzQTzUhs6iKTGHjyOuCLYWyDOEkJmtUjpNHIBKPHsq31bn25RDzVWSh8BnnscHA83fu8E2ejXCx2nZ09Y9YSs9IYZEijcEErM9wx8eB5Sw2fFv164YnU6EZ+FHZe9BHOVdNM2B52NK5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731361974; c=relaxed/simple;
-	bh=wU4MaCwNpPRIiYIlmT71Gbl/aE7LJigMVuVfQEJNcPQ=;
+	s=arc-20240116; t=1731362074; c=relaxed/simple;
+	bh=GeEOpknn2g8B/jcqak5KC6c+DyBxdoY4g1+LKLSK8I0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqnNGypAumASEovsFp6KB7KG3s5gjqCxCV6HGfJxrHwrXA3tVdtZmDI7dHe812weLpmNRA6oetbOldSeTjSYh0GPnjjzofBOyvjLpgXQYnMPQ2sLa5jlHhJ5+GCeR1oqbTlF4ivUtXP5R5R+o1alKZ9kicLSw+iJ9ozWt0pxEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ak5L2qER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0797CC4CECF;
-	Mon, 11 Nov 2024 21:52:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YWxppCJGYg5+MKraSAf6n++523sk9EcfcX7rVae3tV6CnKQrmFni1zUqSdYSSW1++tfFDBFibjaqmyxtDmocFirHojoMcT/PaNRcPIEzt+k1pI2cDYbKwKOjZqNFxfK4RZy5kL+QiTjkvsFZfkvGjY02Z7unipTnmG58unk92iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=io5miDFT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB7CC4CECF;
+	Mon, 11 Nov 2024 21:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731361974;
-	bh=wU4MaCwNpPRIiYIlmT71Gbl/aE7LJigMVuVfQEJNcPQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ak5L2qERP3a/KKZ3ydtd8b6w+fXypG6u/LdxrTVJ7QPFNtFu0aoUm40tD/UUgImLc
-	 o+A86z2ZiKfi92TEvUh/jpp3B7wyCD4IbPVgdkMYbh5IHwoiq/Q7qqiRtuV0coqMdJ
-	 fPO3Ly/+OphDUqkEIzsVSyeKimPhFxP4qfyYHX7ku+3jEZhpIllmogl0hpAbNJN5ju
-	 yJYfuoouFEM1XVUl7bQ2gPGI/zjXB83tbjp3oodnGdNsAS11qaUyeVaxf9DoneR5Hp
-	 zCBGmTAQ1PnSnRlGo4hZknZ2hQirbW/yBhySnQzxLKQoqQsJ3TptGrr/44pvOFxwMJ
-	 UMOzdueIgKE1A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9D28FCE0BA3; Mon, 11 Nov 2024 13:52:53 -0800 (PST)
-Date: Mon, 11 Nov 2024 13:52:53 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: =?utf-8?B?U3rFkWtl?= Benjamin <egyszeregy@freemail.hu>
-Cc: Boqun Feng <boqun.feng@gmail.com>, stern@rowland.harvard.edu,
-	parri.andrea@gmail.com, will@kernel.org, peterz@infradead.org,
-	npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-	luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, lkmm@lists.linux.dev,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH] tools/memory-model: Fix litmus-tests's file names for
- case-insensitive filesystem.
-Message-ID: <b08abb1d-2c29-4d76-a815-83e72355a343@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20241111164248.1060-1-egyszeregy@freemail.hu>
- <69be42c9-331f-4fb5-a6ae-c2932ada0a47@paulmck-laptop>
- <8925322d-1983-4e35-82f9-d8b86d32e6a6@freemail.hu>
- <1a6342c9-e316-4c78-9a07-84f45cbebb54@paulmck-laptop>
- <ec6e297b-02fb-4f57-9fc1-47751106a7d2@freemail.hu>
- <5acaaaa0-7c17-4991-aff6-8ea293667654@paulmck-laptop>
- <a42da186-195c-40af-b4ee-0eaf6672cf2c@freemail.hu>
- <ZzJ13eM2SNNB3fl7@tardis.local>
- <10ffb1e1-163d-4e30-9be3-0f229f3b7492@freemail.hu>
+	s=k20201202; t=1731362073;
+	bh=GeEOpknn2g8B/jcqak5KC6c+DyBxdoY4g1+LKLSK8I0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=io5miDFTkppzvNl4mKUAy52FHdl44PjMSxklknmg9itmupyCWPRw1sgEne/qNT8gv
+	 YhhZ3xS1g7TvNrrfLchRk07NaRI9SZh1Brgn2m3nmRN/0jVZFomXxU+0mcaS7YCYJV
+	 D9pM3tbEGEARToRH9jx9zzA/BoD08OC33ZEiIUOVB2T2Ey4M7jFJCM9Ux6S28LhcyE
+	 stz/WzSNMT0lVUO+0nGQjMhtBLynj/Fo8pPDed+/dsrhcbUSj8UislQGx89+ilzLBO
+	 AC339qXXZXgbw34Go+NjYVAjc/HlIEYYsNzjYX/GolCKOwgAucb3qc4C1bYYnCWabP
+	 KQPMKOiSeer8g==
+Date: Mon, 11 Nov 2024 22:54:30 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
+	bsegall@google.com, Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: FAILED: Patch "posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER
+ on clone" failed to apply to v4.19-stable tree
+Message-ID: <ZzJ9Fr-dV7lCG8m9@pavilion.home>
+References: <20241106021416.184155-1-sashal@kernel.org>
+ <ZyyVHAwmFIyTc3rR@pavilion.home>
+ <2024110957-anaconda-papaya-2f0a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <10ffb1e1-163d-4e30-9be3-0f229f3b7492@freemail.hu>
+In-Reply-To: <2024110957-anaconda-papaya-2f0a@gregkh>
 
-On Mon, Nov 11, 2024 at 10:39:07PM +0100, Szőke Benjamin wrote:
-> 2024. 11. 11. 22:23 keltezéssel, Boqun Feng írta:
-> > On Mon, Nov 11, 2024 at 10:15:30PM +0100, Sz"oke Benjamin wrote:
-> > > 2024. 11. 11. 21:29 keltezéssel, Paul E. McKenney írta:
-> > > > On Mon, Nov 11, 2024 at 08:56:34PM +0100, Sz"oke Benjamin wrote:
-> > > > > 2024. 11. 11. 20:22 keltezéssel, Paul E. McKenney írta:
-> > > > > > On Mon, Nov 11, 2024 at 07:52:50PM +0100, Sz"oke Benjamin wrote:
-> > > > > > > 2024. 11. 11. 17:54 keltezéssel, Paul E. McKenney írta:
-> > > > > > > > On Mon, Nov 11, 2024 at 05:42:47PM +0100, egyszeregy@freemail.hu wrote:
-> > > > > > > > > From: Benjamin Sz"oke <egyszeregy@freemail.hu>
-> > > > > > > > > 
-> > > > > > > > > The goal is to fix Linux repository for case-insensitive filesystem,
-> > > > > > > > > to able to clone it and editable on any operating systems.
-> > > > > > > > > 
-> > > > > > > > > Rename "Z6.0+pooncelock+poonceLock+pombonce.litmus" to
-> > > > > > > > > "Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus".
-> > > > > > > > > 
-> > > > > > > > > Signed-off-by: Benjamin Sz"oke <egyszeregy@freemail.hu>
-> > > > > > > > 
-> > > > > > > > Ummm...  Really?
-> > > > > > > > 
-> > > > > > > > Just out of curiosity, which operating-system/filesystem combination are
-> > > > > > > > you working with?  And why not instead fix that combination to handle
-> > > > > > > > mixed case?
-> > > > > > > > 
-> > > > > > > > 							Thanx, Paul
-> > > > > > > 
-> > > > > > > Windows and also MacOS is not case sensitive by default. My goal is to
-> > > > > > > improve Linux kernel source-tree, to able to develop it in any operating
-> > > > > > > systems for example via Visual Studio Code extensions/IntelliSense feature
-> > > > > > > or any similar IDE which is usable in any OS.
-> > > > > > 
-> > > > > > Why not simply enable case sensitivity on the file tree in which you
-> > > > > > are processing Linux-kernel source code?
-> > > > > > 
-> > > > > > For MacOS:  https://discussions.apple.com/thread/251191099?sortBy=rank
-> > > > > > For Windows:  https://learn.microsoft.com/en-us/windows/wsl/case-sensitivity
-> > > > > > 
-> > > > > > In some cases it might work better to simply run a Linux VM on top of
-> > > > > > Windows or MacOS.
-> > > > > > 
-> > > > > > They tell me that webservers already do this, so why not also for
-> > > > > > Linux-kernel source code?
-> > > > > 
-> > > > > Why we not solve it as simple as it can in the source code of the Linux
-> > > > > kernel with renaming? It would be more robust and more durable to fix this
-> > > > > issue/inconviniant in the source as an overal complete solution. Nobody like
-> > > > > to figth with configuraition hell of Windows and MacOS, or build up a
-> > > > > diskspace consumer Virtual Linux with crappy GUI capapilities for coding big
-> > > > > things.
-> > > > > 
-> > > > > Young developers will never be willing to join and contributing in Linux
-> > > > > kernel in the future if Linux kernel code is not editable in a high-quality,
-> > > > > easy-to-use IDE for, which is usable in any OS.
-> > > > 
-> > > > There are a great number of software projects out there that use mixed
-> > > > case.  Therefore, can an IDE that does not gracefully handle mixed case
-> > > > really be said to be either high quality or easy to use?
-> > > > 
-> > > > In other words, you have the option of making the IDE handle this.
-> > > > 
-> > > > > Need to improve this kind of things and simplify/modernize developing or
-> > > > > never will be solved the following issues:
-> > > > > https://www.youtube.com/watch?v=lJLw94pAcBY
-> > > > 
-> > > > Sorry, but that video does not support your point.  In fact, the presenter
-> > > > clearly states that this sort of tooling issue is not a real problem
-> > > > for the Linux kernel near the middle of that video.
-> > > > 
-> > > > 							Thanx, Paul
-> > > > 
-> > > > > > > There were some accepted patches which aim this same goal.
-> > > > > > > https://gitlab.freedesktop.org/drm/kernel/-/commit/231bb9b4c42398db3114c087ba39ba00c4b7ac2c
-> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git/commit/?h=for-curr&id=8bf275d61925cff45568438c73f114e46237ad7e
-> > > > > > 
-> > > > > > Fair enough, as it is the maintainer's choice.  Which means that
-> > > > > > their accepting these case-sensitivity changes does not require other
-> > > > > > maintainers to do so.
-> > > > > > 
-> > > > > > 							Thanx, Paul
-> > > > > > 
-> > > > > > > > > ---
-> > > > > > > > >      tools/memory-model/Documentation/locking.txt                    | 2 +-
-> > > > > > > > >      tools/memory-model/Documentation/recipes.txt                    | 2 +-
-> > > > > > > > >      tools/memory-model/litmus-tests/README                          | 2 +-
-> > > > > > > > >      ...> Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} | 0
-> > > > > > > > >      4 files changed, 3 insertions(+), 3 deletions(-)
-> > > > > > > > >      rename tools/memory-model/litmus-tests/{Z6.0+pooncelock+poonceLock+pombonce.litmus => Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus} (100%)
-> > > > > > > > > 
-> > > > > > > > > diff --git a/tools/memory-model/Documentation/locking.txt b/tools/memory-model/Documentation/locking.txt
-> > > > > > > > > index 65c898c64a93..42bc3efe2015 100644
-> > > > > > > > > --- a/tools/memory-model/Documentation/locking.txt
-> > > > > > > > > +++ b/tools/memory-model/Documentation/locking.txt
-> > > > > > > > > @@ -184,7 +184,7 @@ ordering properties.
-> > > > > > > > >      Ordering can be extended to CPUs not holding the lock by careful use
-> > > > > > > > >      of smp_mb__after_spinlock():
-> > > > > > > > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > > > > > > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > > > > > > > >      	void CPU0(void)
-> > > > > > > > >      	{
-> > > > > > > > >      		spin_lock(&mylock);
-> > > > > > > > > diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-> > > > > > > > > index 03f58b11c252..35996eb1b690 100644
-> > > > > > > > > --- a/tools/memory-model/Documentation/recipes.txt
-> > > > > > > > > +++ b/tools/memory-model/Documentation/recipes.txt
-> > > > > > > > > @@ -159,7 +159,7 @@ lock's ordering properties.
-> > > > > > > > >      Ordering can be extended to CPUs not holding the lock by careful use
-> > > > > > > > >      of smp_mb__after_spinlock():
-> > > > > > > > > -	/* See Z6.0+pooncelock+poonceLock+pombonce.litmus. */
-> > > > > > > > > +	/* See Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus. */
-> > > > > > > > >      	void CPU0(void)
-> > > > > > > > >      	{
-> > > > > > > > >      		spin_lock(&mylock);
-> > > > > > > > > diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-> > > > > > > > > index d311a0ff1ae6..e3d451346400 100644
-> > > > > > > > > --- a/tools/memory-model/litmus-tests/README
-> > > > > > > > > +++ b/tools/memory-model/litmus-tests/README
-> > > > > > > > > @@ -149,7 +149,7 @@ Z6.0+pooncelock+pooncelock+pombonce.litmus
-> > > > > > > > >      	spin_lock() sufficient to make ordering apparent to accesses
-> > > > > > > > >      	by a process not holding the lock?
-> > > > > > > > > -Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > > > > > > > +Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > > > > > >      	As above, but with smp_mb__after_spinlock() immediately
-> > > > > > > > >      	following the spin_lock().
-> > > > > > > > > diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > > > > > > similarity index 100%
-> > > > > > > > > rename from tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus
-> > > > > > > > > rename to tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+after_spinlock+pombonce.litmus
-> > > > > > > > > -- 
-> > > > > > > > > 2.47.0.windows.2
-> > > > > > > > > 
-> > > > > > > 
-> > > > > 
-> > > 
-> > > There is a technical issue in the Linux kernel source tree's file
-> > > naming/styles in git clone command on case-insensitive filesystem.
-> > > 
-> > > 
-> > > warning: the following paths have collided (e.g. case-sensitive paths
-> > > on a case-insensitive filesystem) and only one from the same
-> > > colliding group is in the working tree:
-> > > 
-> > >    'tools/memory-model/litmus-tests/Z6.0+pooncelock+poonceLock+pombonce.litmus'
-> > >    'tools/memory-model/litmus-tests/Z6.0+pooncelock+pooncelock+pombonce.litmus'
-> > > 
-> > > 
-> > > As you a maintainer, what is your suggestion to fix it in the source code of
-> > > the Linux kernel? Please send a real technical suggestion not just how could
-> > > it be done in an other way (which is out of the scope now).
+Hi Greg,
 
-Fixing it in the IDEs is absolutely in scope from where I sit.
-
-> > > Is my renaming patch correct to solve it? Question is what is the most
+Le Sat, Nov 09, 2024 at 03:54:09PM +0100, Greg KH a �crit :
+> On Thu, Nov 07, 2024 at 11:23:24AM +0100, Frederic Weisbecker wrote:
+> > Le Tue, Nov 05, 2024 at 09:14:15PM -0500, Sasha Levin a �crit :
+> > > The patch below does not apply to the v4.19-stable tree.
+> > > If someone wants it applied there, or to any other stable or longterm
+> > > tree, then please email the backport, including the original git commit
+> > > id to <stable@vger.kernel.org>.
+> > > 
+> > > Thanks,
+> > > Sasha
 > > 
-> > No, because once you do a checkout to a commit that previous to your
-> > changes, things are going to break again. The real "issue" is git use
-> > case-sensitive file names, so unless you can rewrite the whole history,
-> > your "solution" goes nowhere.
+> > Please try this:
 > > 
-> > Regards,
-> > Boqun
+> > ---
+> > >From ee0d95090203b7ee4cb1f29c586cd7d0dbf79fff Mon Sep 17 00:00:00 2001
+> > From: Benjamin Segall <bsegall@google.com>
+> > Date: Fri, 25 Oct 2024 18:35:35 -0700
+> > Subject: [PATCH] posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone
 > > 
-> > > effective and proper fix/solution which can be commited into the Linux
-> > > kernel repo to fix it.
+> > When cloning a new thread, its posix_cputimers are not inherited, and
+> > are cleared by posix_cputimers_init(). However, this does not clear the
+> > tick dependency it creates in tsk->tick_dep_mask, and the handler does
+> > not reach the code to clear the dependency if there were no timers to
+> > begin with.
+> > 
+> > Thus if a thread has a cputimer running before clone/fork, all
+> > descendants will prevent nohz_full unless they create a cputimer of
+> > their own.
+> > 
+> > Fix this by entirely clearing the tick_dep_mask in copy_process().
+> > (There is currently no inherited state that needs a tick dependency)
+> > 
+> > Process-wide timers do not have this problem because fork does not copy
+> > signal_struct as a baseline, it creates one from scratch.
+> > 
+> > Fixes: b78783000d5c ("posix-cpu-timers: Migrate to use new tick dependency mask model")
+> > Signed-off-by: Ben Segall <bsegall@google.com>
+> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> > Cc: stable@vger.kernel.org
+> > Link: https://lore.kernel.org/all/xm26o737bq8o.fsf@google.com
+> > ---
+> >  include/linux/tick.h | 8 ++++++++
+> >  kernel/fork.c        | 2 ++
+> >  2 files changed, 10 insertions(+)
+> > 
+> > diff --git a/include/linux/tick.h b/include/linux/tick.h
+> > index 443726085f6c..832381b812c2 100644
+> > --- a/include/linux/tick.h
+> > +++ b/include/linux/tick.h
+> > @@ -233,12 +233,19 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+> >  	if (tick_nohz_full_enabled())
+> >  		tick_nohz_dep_set_task(tsk, bit);
+> >  }
+> > +
+> >  static inline void tick_dep_clear_task(struct task_struct *tsk,
+> >  				       enum tick_dep_bits bit)
+> >  {
+> >  	if (tick_nohz_full_enabled())
+> >  		tick_nohz_dep_clear_task(tsk, bit);
+> >  }
+> > +
+> > +static inline void tick_dep_init_task(struct task_struct *tsk)
+> > +{
+> > +	atomic_set(&tsk->tick_dep_mask, 0);
+> > +}
+> > +
+> >  static inline void tick_dep_set_signal(struct signal_struct *signal,
+> >  				       enum tick_dep_bits bit)
+> >  {
+> > @@ -272,6 +279,7 @@ static inline void tick_dep_set_task(struct task_struct *tsk,
+> >  				     enum tick_dep_bits bit) { }
+> >  static inline void tick_dep_clear_task(struct task_struct *tsk,
+> >  				       enum tick_dep_bits bit) { }
+> > +static inline void tick_dep_init_task(struct task_struct *tsk) { }
+> >  static inline void tick_dep_set_signal(struct signal_struct *signal,
+> >  				       enum tick_dep_bits bit) { }
+> >  static inline void tick_dep_clear_signal(struct signal_struct *signal,
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index b65871600507..1fb06d8952bc 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -91,6 +91,7 @@
+> >  #include <linux/kcov.h>
+> >  #include <linux/livepatch.h>
+> >  #include <linux/thread_info.h>
+> > +#include <linux/tick.h>
+> >  
+> >  #include <asm/pgtable.h>
+> >  #include <asm/pgalloc.h>
+> > @@ -1829,6 +1830,7 @@ static __latent_entropy struct task_struct *copy_process(
+> >  	acct_clear_integrals(p);
+> >  
+> >  	posix_cpu_timers_init(p);
+> > +	tick_dep_init_task(p);
+> >  
+> >  	p->io_context = NULL;
+> >  	audit_set_context(p, NULL);
+> > -- 
+> > 2.46.0
+> > 
+> > 
 > 
-> My renaming solution can not fix the old history line, but after this patch
-> in latest master branch there are no any issue anymore, in git cloning. This
-> the bare minimum solution which can fix its "cloning" issue for the future.
+> What is the git id of this in Linus's tree?
 
-Not so.  The issue will keep arising, both within the Linux kernel tree
-and in other projects, repeatedly breaking your IDEs.  You will find
-yourself playing an eternal game of whack-a-mole, a game that I have no
-interest in participating in myself.
+b5413156bad9 (posix-cpu-timers: Clear TICK_DEP_BIT_POSIX_TIMER on clone)
 
-Sure, I worked on upper-case-only systems back in the 1970s and early
-1980s, but that was a very long time ago.  Most of those systems had
-six-bit bytes and all of them were programmed using either paper tape
-or punched cards.
+Thanks.
 
-Single-case-only is just as obsolete as that paper tape and those
-punched cards.
-
-So fix the IDEs!!!
-
-*Then* you will have solved the problem for the case of checking old
-versions from the Linux-kernel git tree, new versions where mixed case
-slipped back in, and for other projects as well, past, present and future.
-
-If you are still not convinced, your other option is to convince Linus
-Torvalds to give me a direct order instructing me to accept your patch.
-
-And who knows?  He is quite young, so he might be easier to persuade.
-
-Until then, the answer is "no".
-
-							Thanx, Paul
+> 
+> thanks,
+> 
+> greg k-h
 
