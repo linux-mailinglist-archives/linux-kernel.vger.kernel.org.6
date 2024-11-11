@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-403901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE659C3C6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:50:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1959C3C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 918091F22216
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13872B2209C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA4D1714B9;
-	Mon, 11 Nov 2024 10:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C816F0EC;
+	Mon, 11 Nov 2024 10:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="V0bE5FtE"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BhwQvEZj"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5108E158555
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 10:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5741474B9;
+	Mon, 11 Nov 2024 10:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731322196; cv=none; b=uZTOCBA2fAlEJrTBFvlUvESXLX2bco4o5ZlcCdLI7P6hTU7tc/aCPj+jdnXDR3BGzGMqulgMY1sqHYuTpDsx/58M0qO81FZ/T3KNO5z6Lj+eQuckrgHGoBfipaBCWEdzLyqMmLicJ9zwtyCUzzPCFUJ5iMnr4N0nE0T1ssAdwPc=
+	t=1731322339; cv=none; b=cE1zp9VcwJUeHl152+ifrUEs3Ztmv9KlEpL3juzD047UWH32zqR/IKeXjbQJGXr0vOb/OhnJobNRSo6oVUJR/ch5luz5SMqlAtT7Hj1Ta/tRGcwnSd5vcqLWZdK9auKdQQ5+E6hDb7sGBh4LPOwFKn6ox6cu97XOuBOcgoUflvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731322196; c=relaxed/simple;
-	bh=PaRLH8uPQK1MXk6HcuVk24LMz8AsMK0vCWsZhKwPVCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bX+Q7EgLIMf3g8cA7+59QHmvw/Q7+cpfNFI5IbnR4Amq0njXulyOfZy0VcTUcvAd9VQPqThuHWlSDgfs3YFFT5mxIeRcWtfYoGphDYSo5uG1CedX7/7RN6zq0oPL21fkcQs9sd8gifDV66m9xwyZ2jgvlH0uSlrirZq2LX1mZ64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=V0bE5FtE; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e290222fdd0so4212776276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 02:49:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1731322193; x=1731926993; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3kwuzcMlaOY77zVC5V+o32P2Py31dCZW2YdTPwgCdiY=;
-        b=V0bE5FtEcHomMp+v/Oy2jdm8aO1tyDU4VSK/v2BjH1uNmQIpEXpJpT/E/kcWkmGHn1
-         m4dEyXugZscIcUP3y86dbZAt2t1kGV2mEMbsDKqOxTDzlE5UL7dcPzV8Bv1XALQNHhu+
-         UdjP4RKtEx1cuXgsysCBBVqG6wPTInLzJzs6Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731322193; x=1731926993;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3kwuzcMlaOY77zVC5V+o32P2Py31dCZW2YdTPwgCdiY=;
-        b=nkrK/xCvVQqsNI9bSAChTPtfy5VS8BqpQAErn2tY1WWySnttJ8fVUXKQ2xLAkWEHdN
-         3a/OnGmHkJHNj/d9LJIgnYZaUGJeYYzXfxCre9v+wzdBzkMCDIw98gmjw3T1YQOjy7J7
-         6gqMPVfASjlrkn2kyrtzVgyOpbosbjBmhEY1OjYyVUW6AbNyY6c486EOS8cTydHn2NEA
-         Ne4drZQH5mBydBpwWzJvJxBRt8NPkh0fGKosETdPGzstUmUI1diEcNxRBJi7z3Ot0C2Q
-         IUUVs3fAoH/JcNrE6NH8OQ4G+uSMhFo/vjLcN+I0Bzy0oaRxujjHpfEuBJZjExxwGLI1
-         l5Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/O5jKSN/EWDJXbC/Pjj/cK8jUIohzNRy8K974eK1sNp9E7hWbbAU2fVYDHCrOaWw06osZs6HT0uQWU2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbXQcfVJmmIt9zSOXOXV5rdpAk9F/woDTQYyyqy0TtvpSezU8/
-	uEuTE0gGNXLyE9lx3hNpfiqliPtvTil92JPf8ToYHW+/dwnYt5DCd7CMvQygHBlTTMp64Xud9c/
-	VWbwYAIIZC1BnP/KyhXQ4KWmlQakLD4NbgixEHA==
-X-Google-Smtp-Source: AGHT+IFcWDGFlyzuXcdDBtQBlsRyrxy0kv6wAbUjD4WWe/Ob5ewjgR8GKVWOK0mwsazDOliP2zoXZ7J6AZrpyuHVuF0=
-X-Received: by 2002:a05:6902:982:b0:e30:d468:743b with SMTP id
- 3f1490d57ef6-e337f881a72mr11128509276.27.1731322193272; Mon, 11 Nov 2024
- 02:49:53 -0800 (PST)
+	s=arc-20240116; t=1731322339; c=relaxed/simple;
+	bh=+OE7WuuVlD51jNyVk5FSaLOcHh1ptk5gSQB2t8VF1qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COdHTSq/TVLcLocyqVX8Wp2qte6BwH6u85NT9GtM5qTB9pqbS8dDHAb52Y+7UclsDWZKoJAFgJM7QCk0wx7bVTdbkM093ZDQg2oQ/ay65jknn+nj8fdRDlDUMMJcFC4deQuFutRFrilnXVnS7N4e7vEbs2JGtXVfsv2z79cil+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BhwQvEZj; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4A35A40E0169;
+	Mon, 11 Nov 2024 10:52:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ru_z-eOfPiSA; Mon, 11 Nov 2024 10:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731322329; bh=qMd8DDSKjRjWBUjILwppfrvCZfCueYmajCWJiijRdsY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BhwQvEZjZjfQPFxGS6b8ZQCeWikSo4FH7K064fo8grvqWDR3k/+X3JWlAfiuzt5pQ
+	 z0Qe+gjbU38/tjFBTEWEflE3OhWSLGOqAIom6jT3kryKV10op5zt0OMIkhoq7FDdGb
+	 qLnXScFFTAyCN04jw7Q65AnujaTGu77T5sQ6aHAa+pKBROiO5CNaC1bquMqjvhBk2J
+	 kPrZ2quVViQqdBXfYtH2sUPI52gcGXlxP2N2+7bn+dylf4sh8zKTAq2wrWqw23byRE
+	 ZJNZkr3UwktOCkM9bKMFWdOcU82izkx2GEAw/FopEXy7g+7Q6kvne5MLi091SFYAmM
+	 YCRFywhz6exsnxl5fVsRBASn0z7Ob1oZgBSVrt/7Zo0M5VrwjgjPkCLtrbVW4f4j4R
+	 HGNKPv1qWxf8+CzvZukDnS9SU7PV3VcpZQNgqFJIuPA3KMxG/xy0EraMO3YV1DdQFQ
+	 oXnUJ3Mg3of80XdO4pIe7ftduwNAaqFuwvSNnB+n5I7SB/c9TpHw3w4x3GHDz64klA
+	 376KFbbjA8sjtV6v8FEwgqKu0V/fPw+FSPC+IkrH45ipU1S29SgiFMKB3chw/qzUMk
+	 IRjI052IPHV2WNg5hGzDfVNeX5EYnYNNUfWlHaXjjEgcfitvS0M0iFMHpqK+rYcfs9
+	 RW0wBBZOHKHwaiD7dSKNx5xY=
+Received: from zn.tnic (p200300ea973a31c3329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:973a:31c3:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9511640E015F;
+	Mon, 11 Nov 2024 10:51:58 +0000 (UTC)
+Date: Mon, 11 Nov 2024 11:51:52 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+Message-ID: <20241111105152.GBZzHhyL4EkqJ5z84X@fat_crate.local>
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <20241101160019.GKZyT7E6DrVhCijDAH@fat_crate.local>
+ <6816f40e-f5aa-1855-ef7e-690e2b0fcd1b@amd.com>
+ <4115f048-5032-8849-bb92-bdc79fc5a741@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107-statmount-v3-0-da5b9744c121@kernel.org> <20241107-statmount-v3-1-da5b9744c121@kernel.org>
-In-Reply-To: <20241107-statmount-v3-1-da5b9744c121@kernel.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 11 Nov 2024 11:49:42 +0100
-Message-ID: <CAJfpegsdyZzqj52RS=T-tCyfKM9za2ViFkni5cwy1cVhNBO7JA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] fs: add the ability for statmount() to report the fs_subtype
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Ian Kent <raven@themaw.net>, Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4115f048-5032-8849-bb92-bdc79fc5a741@amd.com>
 
-On Thu, 7 Nov 2024 at 22:00, Jeff Layton <jlayton@kernel.org> wrote:
+On Mon, Nov 11, 2024 at 02:16:00PM +0530, Nikunj A. Dadhania wrote:
+> That was the reason I had not implemented "free" counterpart.
 
-> +       /*
-> +        * If nothing was emitted, return to avoid setting the flag
-> +        * and terminating the buffer.
-> +        */
-> +       if (seq->count == start)
-> +               return ret;
+Then let's simplify this too because it is kinda silly right now:
 
-First of all, I don't think it's okay to subtly change behavior of
-other string attributes in this patch.   If that is what we want, it
-should be separated into a separate prep or followup patch.
+---
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index a72400704421..efddccf4b2c6 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -96,7 +96,7 @@ static u64 sev_hv_features __ro_after_init;
+ /* Secrets page physical address from the CC blob */
+ static u64 secrets_pa __ro_after_init;
+ 
+-static struct snp_msg_desc *snp_mdesc;
++static struct snp_msg_desc snp_mdesc;
+ 
+ /* Secure TSC values read using TSC_INFO SNP Guest request */
+ static u64 snp_tsc_scale __ro_after_init;
+@@ -2749,19 +2749,13 @@ EXPORT_SYMBOL_GPL(snp_msg_init);
+ 
+ struct snp_msg_desc *snp_msg_alloc(void)
+ {
+-	struct snp_msg_desc *mdesc;
++	struct snp_msg_desc *mdesc = &snp_mdesc;
+ 
+ 	BUILD_BUG_ON(sizeof(struct snp_guest_msg) > PAGE_SIZE);
+ 
+-	if (snp_mdesc)
+-		return snp_mdesc;
+-
+-	mdesc = kzalloc(sizeof(struct snp_msg_desc), GFP_KERNEL);
+-	if (!mdesc)
+-		return ERR_PTR(-ENOMEM);
++	memset(mdesc, 0, sizeof(struct snp_msg_desc));
+ 
+-	mdesc->secrets = (__force struct snp_secrets_page *)ioremap_encrypted(secrets_pa,
+-									      PAGE_SIZE);
++	mdesc->secrets = (__force struct snp_secrets_page *)ioremap_encrypted(secrets_pa, PAGE_SIZE);
+ 	if (!mdesc->secrets)
+ 		return ERR_PTR(-ENODEV);
+ 
+@@ -2783,8 +2777,6 @@ struct snp_msg_desc *snp_msg_alloc(void)
+ 	mdesc->input.resp_gpa = __pa(mdesc->response);
+ 	mdesc->input.data_gpa = __pa(mdesc->certs_data);
+ 
+-	snp_mdesc = mdesc;
+-
+ 	return mdesc;
+ 
+ e_free_response:
 
-Clearing the returned mask if there's no subtype does sound like the
-right thing to do.  But it makes it impossible to detect whether the
-running kernel supports returning subtype or not.  Missing the
-STATMOUNT_FS_SUBTYPE in statmount.mask may mean two different things:
+-- 
+Regards/Gruss,
+    Boris.
 
- - kernel supports returning subtype and filesystem does not have a subtype
-
- - kernel does not support returning a subtype and the filesystem may
-or may not have a subtype
-
-I think we can live with  that, but it would be really good if there
-was a universal way to detect whether a particular feature is
-supported on the running kernel or not, and not have to rely on
-syscall specific ways.
-
-Thanks,
-Miklos
+https://people.kernel.org/tglx/notes-about-netiquette
 
