@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-403726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5409C39B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:36:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE0859C39B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD291F21068
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FC91F21579
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0881F15D5C5;
-	Mon, 11 Nov 2024 08:36:20 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63CE1662FA;
+	Mon, 11 Nov 2024 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KEYBnQ/E"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBEF42A8A;
-	Mon, 11 Nov 2024 08:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677BF42A8A
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731314179; cv=none; b=W9KP+B7tQTEAUOTl/IxBBAyQkkxwo2jR1JpU1p6lC+o3n3+6K/dMrG3mf810cBcIsSCPBPJ6WGvVd08imesxhaukNyboGV0EMkaduu0xwk7iIeGeaY3jcPsTx+V7Bl9xK9Hd3rdDEV2ffVerWiFIQBZQWonQX4UV7JK4c7BaWRw=
+	t=1731314233; cv=none; b=dsRDuLU2ucJSYYBBW4jvFiTXW7tXg4ET5xydhYhFMceOwwKuJjLJNQaarCwuYqYYKyrZMrTR14jWAMF7utt4Q84KOYpYG+Zw+AuBEi2757HsDEYAe1LZffoe4aAmCCRrnYGzWFqtycwl6lTY887nFpvaX0fKY45HSXZnxyxfbj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731314179; c=relaxed/simple;
-	bh=gpbvNr/dPkU6IH8UnXNGrUDcONXcmRNRpINhen4Frqo=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=Re6oyioDX/yDeKvUwdl2uMd0kcTWqilchkRXRqUKwaynvR4SrPxc3yJTKGkJkmdfxIrIoxIBGMOwxZ+rl1g9YFv+cDh3seLMYb7t8pRXgEDezMFIQV3lQm+sbN8/n/BqfJJxmPDYd9d6bw9FCLDHXEomEf0Q03wwf1YqhToSYXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: fde93ae0a00711efa216b1d71e6e1362-20241111
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:674c722c-e011-4853-999c-d80aa1612fe2,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-30
-X-CID-META: VersionHash:82c5f88,CLOUDID:5824cc9b858add5dafbae508937569c9,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: fde93ae0a00711efa216b1d71e6e1362-20241111
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 846668443; Mon, 11 Nov 2024 16:36:05 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 8444316002081;
-	Mon, 11 Nov 2024 16:36:05 +0800 (CST)
-X-ns-mid: postfix-6731C1F5-4405791175
-Received: from [10.42.116.241] (unknown [10.42.116.241])
-	by node4.com.cn (NSMail) with ESMTPA id 03EB216002081;
-	Mon, 11 Nov 2024 08:36:03 +0000 (UTC)
-Message-ID: <b09c4396-1578-45bb-b1fb-23c1f91cabe7@kylinos.cn>
-Date: Mon, 11 Nov 2024 16:36:03 +0800
+	s=arc-20240116; t=1731314233; c=relaxed/simple;
+	bh=SSX2S4tLU3+tI1quOKFDgN4HoiaVYP+wrBKENYGKgI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UjjTXBhMNjUDFw9nBREFH3jsBZg0oa/POgoE5Hz33dcXvqFwESuhrc3ribFEtl5+oxKbzUd5EwNabcRSUC55YYOI1DeDFwWhhrlT0xD0cWnebiMRy2LDaAWUQdXSX18KWk5ZOmNpO9NYTB9DHaYO8zvpJEKwHqMprJG79sydHos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KEYBnQ/E; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731314229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lcpmht/nC/6Ldeh7ooxXZiHchbJtFHR1QbkXPfVWBzE=;
+	b=KEYBnQ/ENkT0xudBEa8XEQYVLpP+eDjkFvXzS7YSe61/hrlYr2ATb1kvoMaKszSDolxlXr
+	pbhbGm5qSEOKpKRqSSOxDAS/SNTCUa6m3bjGCOAGPJFfXGhl9MBKFSuo5xySmzIHq2TW0z
+	Kb54+ivcRsw3gBDaWaqZ7Ymw6RcH4Zw=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-544-AvKHJuBCNL2mgc3MoW5_vg-1; Mon, 11 Nov 2024 03:37:05 -0500
+X-MC-Unique: AvKHJuBCNL2mgc3MoW5_vg-1
+X-Mimecast-MFC-AGG-ID: AvKHJuBCNL2mgc3MoW5_vg
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-7edd6662154so2988682a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 00:37:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731314224; x=1731919024;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lcpmht/nC/6Ldeh7ooxXZiHchbJtFHR1QbkXPfVWBzE=;
+        b=WSWyojzjjRAwrtvLinafUoZAthAtWEOI2II9yMQ76bf8W153PigtmxbtsymEDiOERl
+         yQJDdkinsra3xRxM0cthXp38trbE2MuldPL/NkTx5NVhBrcXJLh2wOip1D4sUQDqipRK
+         SHzeoZGvlgPeJFfsHEJHwQyu8AzVSLW7FsCme4oiNI0stOcSofzwjV4O8sP7bd5ldlnR
+         JJKR4WjgFpDp3jgyl254w0QGYfpYIda1n1FtXDAYJ7XrEWmqQr9F1ljX1WtaAJeMDwBN
+         0YcUut28RnB8iTn2UI9+hgVSVBftD9LYUU3xhG975ap3O2QW2D4UrPvHGNrhoumxDi2G
+         TFLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHPQaC6hIXnb7Oc3B1wmP3vAnMMJ6tokbD06IYXz5nTe6Db4XKdCnq8jsWoKJo2AjHnUzPCCFVy6KIEhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXi+m36y83wxtMo8mKzz2/OcQsQpJ1xztEndxmyu++7TTgQfz3
+	mHP9D0iUBKRjOgt088Mu1k24GrRea3QsHr8/AaucP6pr+VKh64E7A6XHS6oJsVMxeoDlZZRhLp5
+	apAcOuujUtJ1q2YUknHmNAuZzh2qiRu5odjmyhs2e3sKDEOP6ETZD7H82xaYpu352SWbv00Uffm
+	CwksZp8Cn/0TOW1qOsuFmEDtiQniYsA8zP8igw
+X-Received: by 2002:a17:90b:2642:b0:2e2:e4d3:3401 with SMTP id 98e67ed59e1d1-2e9b16ab979mr15603595a91.20.1731314223958;
+        Mon, 11 Nov 2024 00:37:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGkW8ZHgY8oLa66OOGt0FSKjysNNtKl/NkU5rD9hEEpLrZ1hrx/0G+1xyjW7t0R1U+85Oa0ZRTBG5IovF9dKoo=
+X-Received: by 2002:a17:90b:2642:b0:2e2:e4d3:3401 with SMTP id
+ 98e67ed59e1d1-2e9b16ab979mr15603578a91.20.1731314223570; Mon, 11 Nov 2024
+ 00:37:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [RFC] hwmon: (nct6775-core) Fix overflows seen when writing limit
- attributes
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241111025538.2837-1-jasowang@redhat.com> <20241111022931-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20241111022931-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 11 Nov 2024 16:36:52 +0800
+Message-ID: <CACGkMEuCx=ht2Q75xJ11EGsjuZPWcTTpGh7OyVEHCOhGDB5f7A@mail.gmail.com>
+Subject: Re: [PATCH] virtio_ring: skip cpu sync when mapping fails
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-hi Guenter Roeck,
-   Excuse me, may I ask a question?
-   When I see this commit (Fixes: 0403e10bf082 ("hwmon: (nct6775-core) 
-Fix underflows seen when writing limit attributes")), I found an issue,
-DIV_ROUND_CLOSEST() after kstrtoul() results in an overflow if a large
-number such as 18446744073709551615 is provided by the user.
-Fix it by reordering clamp_val() and DIV_ROUND_CLOSEST() operations.
+On Mon, Nov 11, 2024 at 3:30=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Mon, Nov 11, 2024 at 10:55:38AM +0800, Jason Wang wrote:
+> > There's no need to sync DMA for CPU on mapping errors. So this patch
+> > skips the CPU sync in the error handling path of DMA mapping.
+> >
+> > Signed-off-by: Jason Wang <jasowang@redhat.com>
+>
+> DMA sync is idempotent.
+> Extra work for slow path.  Why do we bother?
 
-If the issue described above does indeed exist, I will send an formal patch.
+dma_map_sg() did this, since current virtio hack sg mappings to per
+page mapping, we lose such optimization.
 
+Actually the path is not necessarily slowpath in some setups like
+swiotlb or VDUSE.
 
-diff --git a/drivers/hwmon/nct6775-core.c b/drivers/hwmon/nct6775-core.c
-index 934fed3dd586..12ee2ca4a6d6 100644
---- a/drivers/hwmon/nct6775-core.c
-+++ b/drivers/hwmon/nct6775-core.c
-@@ -2878,8 +2878,7 @@ store_target_temp(struct device *dev, struct 
-device_attribute *attr,
-         if (err < 0)
-                 return err;
+Thanks
 
--       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0,
--                       data->target_temp_mask);
-+       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 
-1000), 1000);
-
-         mutex_lock(&data->update_lock);
-         data->target_temp[nr] = val;
-@@ -2959,7 +2958,7 @@ store_temp_tolerance(struct device *dev, struct 
-device_attribute *attr,
-                 return err;
-
-         /* Limit tolerance as needed */
--       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, 
-data->tolerance_mask);
-+       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, data->tolerance_mask * 
-1000), 1000);
-
-         mutex_lock(&data->update_lock);
-         data->temp_tolerance[index][nr] = val;
-@@ -3085,7 +3084,7 @@ store_weight_temp(struct device *dev, struct 
-device_attribute *attr,
-         if (err < 0)
-                 return err;
-
--       val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), 0, 255);
-+       val = DIV_ROUND_CLOSEST(clamp_val(val, 0, 25500), 1000);
-
-         mutex_lock(&data->update_lock);
-         data->weight_temp[index][nr] = val;
-
-Thanks!
 
