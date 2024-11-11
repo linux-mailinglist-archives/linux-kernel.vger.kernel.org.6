@@ -1,95 +1,108 @@
-Return-Path: <linux-kernel+bounces-403723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0289C39A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:26:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5A89C399E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06EFA1F21FF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70251C217A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0FA166F3A;
-	Mon, 11 Nov 2024 08:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Wo++aYoa"
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979BC15D5B6;
-	Mon, 11 Nov 2024 08:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFED15DBAE;
+	Mon, 11 Nov 2024 08:25:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB88E14F9F9
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 08:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731313543; cv=none; b=W2sFoUpdl+SNFbrtTw6OZKAmaPngJuY5xEM9fX7Deflj5KKThI0/iupPmuhfaoylnrcEUby3GlWMTF1+PO8dw+n2TFYJa1SycDlTt//hMb6/VyrOigpFBzUQy7uDLowpnZLWXEpYHFvZx60lVT/KfwS7mp+ZN1fhxWD2zd4pjQs=
+	t=1731313534; cv=none; b=SCtgGjQwAK7FQaZsd8RcEYBu/536aLhRV5N6uiO6sXiR6EVXjodpOMqEXVFRn/2+3Sn6KjqtqL/PXTPNWJhpYiFIlaubZ1FyQOgJZkXFrZEQ8BujnTuIqx4C3AIMS5hJuSmqpzv5lM9ez7psReAgtYGA0W55pFel0jsbBwiyct0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731313543; c=relaxed/simple;
-	bh=iUNJr9JpCgUAFhS4PTw+aoLYhjfk39kNk25iEyfmiwk=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=np61xWKj9hgkD2KxtS7ehbJ/TA4ArmfTuVtCORsg/LHD0BRbSQgajMNr5WL/MFYhJzbgoRIi4FjVt1aHZuAo5nug3NA+xVEshJzHEEzDpQC932MMjbyp8sG7y9dQldKRKbkzCFOVWIrqcNUnIHPlxxvLGWisCgUe44G0oEiRhhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Wo++aYoa; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1731313515;
-	bh=iUNJr9JpCgUAFhS4PTw+aoLYhjfk39kNk25iEyfmiwk=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=Wo++aYoajBPiEgK7aWRHoodWUcMIpVCnl6B67GIddpTDFOfasMOeNGVADKnZiUp4S
-	 Z16HDCJyfwUTfRFlFFU2MaoDeVUTYxZHaRVX8v7taqbuQd2KaYRGN1tuqlcNKaGnPh
-	 1Q3VoFjN8ntYpd3PWi6yaUhfrE9VNWKXfoBzpek4=
-X-QQ-GoodBg: 1
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: II5XqY6UgBSPuwSJdV4h1sWF9RwlXlN1tTxEkxkg9ss=
-X-QQ-STYLE: 
-X-QQ-mid: t5gz7a-2t1731313494t2020445
-From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
-To: "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>, "=?utf-8?B?YW5kcmV3?=" <andrew@lunn.ch>, "=?utf-8?B?aGthbGx3ZWl0MQ==?=" <hkallweit1@gmail.com>, "=?utf-8?B?bGludXg=?=" <linux@armlinux.org.uk>, "=?utf-8?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?utf-8?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?utf-8?B?a3ViYQ==?=" <kuba@kernel.org>, "=?utf-8?B?cGFiZW5p?=" <pabeni@redhat.com>
-Cc: "=?utf-8?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?5Y2g5L+K?=" <zhanjun@uniontech.com>, "=?utf-8?B?Zi5mYWluZWxsaQ==?=" <f.fainelli@gmail.com>, "=?utf-8?B?c2ViYXN0aWFuLmhlc3NlbGJhcnRo?=" <sebastian.hesselbarth@gmail.com>, "=?utf-8?B?bXVndW50aGFudm5t?=" <mugunthanvnm@ti.com>, "=?utf-8?B?Z2VlcnQrcmVuZXNhcw==?=" <geert+renesas@glider.be>, "=?utf-8?B?546L5pix5Yqb?=" <wangyuli@uniontech.com>
-Subject: Re:[PATCH] net: phy: fix may not suspend when phy has WoL
+	s=arc-20240116; t=1731313534; c=relaxed/simple;
+	bh=mdOmjwQRttA3OfEOxlXFP74Ez1riL/PdBjj+q5o+kQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lN99+CGWYjrRY2Egvt1uCno4RgrUbr6UsODhiCFaoBNHoyN0rhqQ17KR4nqFsuCSD0K6lFJdtPQiTHdwmigI3dd1zkrOiZnAKQc7uySGz+eC1CJGlOxRRR3gqIUJ5eG16ZgIOW729CAOD89vGtWHb8nsqw6xaIJsARu2rLe0KUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D61AA1D14;
+	Mon, 11 Nov 2024 00:26:00 -0800 (PST)
+Received: from [10.1.36.17] (e127648.arm.com [10.1.36.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 138993F6A8;
+	Mon, 11 Nov 2024 00:25:26 -0800 (PST)
+Message-ID: <6eb8c1ce-9823-4d6a-a04c-6a9dc1c346c8@arm.com>
+Date: Mon, 11 Nov 2024 08:25:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Mon, 11 Nov 2024 16:24:53 +0800
-X-Priority: 3
-Message-ID: <tencent_6056758936AF2CEE58AEBC36@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
-In-Reply-To: <ACDD37BE39A4EE18+20241111080627.1076283-1-wangyuli@uniontech.com>
-X-QQ-ReplyHash: 336625114
-X-BIZMAIL-ID: 229188807990292030
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Mon, 11 Nov 2024 16:24:55 +0800 (CST)
-Feedback-ID: t:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: ODcDgdcDagQKFEj6VVv/pQAUyQj5A1ryfXxtD0UBQTQeFSqLDEnvWrQg
-	yMjQC3pOxzt1/f9Jvz49ktMVh4P5pLhTEQ74Uu8TD9L9ioiVgRhslwvo6xaw0Nb2v0p+dMY
-	AE/f8d4ZlBRRbVm178G4iwPSWfSwTm/CdUoFH8L5N5Fy7SQ43SP+frZu6KnzoiyWK3sYTIa
-	3qrIguhsuMB8DZfaAx0TNpUa9y43i0jPKNbDlGG0rtMpgXXf8G2T2ZagaXjPkgYMMoNYm+O
-	1SBmrQpKyovPQKxUMxQLMJuaznpn20R9+INFk+XR2eJzPY2cechaRtwhuF1g1Rmh/ClN5Yi
-	D0HTXiI+vkUnvHLkfIN4GvNHX21m6/c91ljHAB5eFSWm5uL/yxiYvYYnJ8/E6ulK5DWg2d1
-	a+aHY/0qOh93mbpoWSdDtgNLoKGgxuP18j40OguW2JRKDzUkk5UMfDoyyYzl611JhAUJoK7
-	aSHmZyJ4IItO0/SW1DZSg5F2O0V6O7elA3pybBQSyy4wm07/iAaFkXx/iOiDAIJl12j7l2s
-	d0J3fkTlyT2AQmR7C8/6Rr24rVFW9z29sz8s/+HFlO04BZiLOtxUuz6nl1mMIEm8y//itl0
-	cw0fKTf5JPDVJ67qlhxZ3WE8TdacozFTMrnPzI4qWo2xMfz8cUxQCoKKA7mNa//0sn2SffK
-	Xdukm+HMtEC0/Q301vj5hc/X36AdzrMsiNfQqqO+ZW0xFyy15ImQVUOLslohqrcAT53FOaR
-	Hvl3b8Ifma/4jnU4d4zOtStSkmVErhte/qPb7ucmr1otXimJq2icb2wCGjusrzdhMx4j5ip
-	eQu+EbTxhBQ5nOmQCntY/orCvs/Ti7RVI+rXecno/IyMqQIBjq9XWFltLNT4/S14wR76bV6
-	A1dVIswxnfuMiF92pl4SEjb6A4rBNvTztxPjLNdWaD1hHdD9qWiSoA0TxXEqAjO34p9UGHY
-	lkg/O6yqbe68L/kbkKFXuHDuy+xw4y3pAYhjr4T+ogtph6q8OBgZVoLlA
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Saravana Kannan <saravanak@google.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Benjamin Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ LKML <linux-kernel@vger.kernel.org>, wuyun.abel@bytedance.com,
+ youssefesmat@chromium.org, Thomas Gleixner <tglx@linutronix.de>,
+ efault@gmx.de, John Stultz <jstultz@google.com>,
+ Vincent Palomares <paillon@google.com>,
+ Tobias Huschle <huschle@linux.ibm.com>
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <20241108083133.GD38786@noisy.programming.kicks-ass.net>
+ <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
+ <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com>
+ <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-TkFL
+On 11/11/24 06:15, Saravana Kannan wrote:
+[...]
+>>> Can we tell the scheduler to just spread out all the tasks during
+>>> suspend/resume? Doesn't make a lot of sense to try and save power
+>>> during a suspend/resume. It's almost always cheaper/better to do those
+>>> quickly.
+>>
+>> That would increase the resume latency right since each runnable task
+>> needs to go through a full idle CPU selection cycle? Isn't time a
+>> consideration / concern in the resume path? Unless we go through the
+>> slow path, it is very likely we'll end up making the same task
+>> placement decisions again?
+> 
+> I actually quickly hacked up the cpu_overutilized() function to return
+> true during suspend/resume and the threads are nicely spread out and
+> running in parallel. That actually reduces the total of the
+> dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
+> 
+> Also, this whole email thread started because I'm optimizing the
+> suspend/resume code to reduce a lot of sleeps/wakeups and the number
+> of kworker threads. And with that + over utilization hack, resume time
+> has dropped to 60ms.
+> 
+> Peter,
+> 
+> Would you be open to the scheduler being aware of
+> dpm_suspend*()/dpm_resume*() phases and triggering the CPU
+> overutilized behavior during these phases? I know it's a very use case
+> specific behavior but how often do we NOT want to speed up
+> suspend/resume? We can make this a CONFIG or a kernel command line
+> option -- say, fast_suspend or something like that.
+>
 
+Just to confirm, you essentially want to disable EAS during
+suspend/resume, or does sis also not give you an acceptable
+placement?
+
+Regards,
+Christian
 
