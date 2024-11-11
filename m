@@ -1,155 +1,359 @@
-Return-Path: <linux-kernel+bounces-404011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B969C3DE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:03:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A959C3DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:06:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34291F21481
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:03:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA35F1C2129D
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1C017C227;
-	Mon, 11 Nov 2024 12:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFEE19C552;
+	Mon, 11 Nov 2024 12:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kw9mM5Mt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0awGXRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEC17C91
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 12:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DB717C227;
+	Mon, 11 Nov 2024 12:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731326619; cv=none; b=k2PtLrKEE4Xk9Va9AAYdBhCb7kIAkaYB3M0g60WFGz6fYyAqFASKqvpTKzvq6+akPC1G0ahVxmweD4llzofJmB9WHYD3juJaEwrtSQ2MGXUEUGtWxycZ99Ha/870yfiiVYCPAr3fYQA5a9HVLcWkF1nbJSTh0Q71yGW21ttc4KM=
+	t=1731326763; cv=none; b=e/o0Lw86RHglDl89LP9DsSIh9WPM8Hq3pgKrrBpu+ubj1Tspf4L9oOP4X+jvX2VJeE0IAuqeijXCUUIottigNpQioBWsAls5RLUHYIFc0hI0VImCMNkBAR09xSAW4SuOxu2iyHzV86zw1xx7+dDBfrU9vboihKtnFGslTuLZy74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731326619; c=relaxed/simple;
-	bh=0hetY8uIMEqVRKNJElojeolvV3479Cxlp5RUjM0iE/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OCJo1H5Hc4uAeGzifaNx3SXxtCe5XITBo7c1GQ7aiF46bq860x43SNlh2MDUHiUGmoKHBeA5i6rIrq0Q011ZElO47wwBQkCvkZCUC1T6AGtVANsUDa9kl2BkKyAgDOim6Ivpp0RpZ3eqwYwjQdURUz4peelNyQviZ4yW2mICXDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kw9mM5Mt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731326617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRpNVm2ysOu8vdoKpxHcBNsUyipR7w7qRAL2/gqNzEc=;
-	b=Kw9mM5MtrmqHpjUXP+/I/iMORTzjl4ikJyZT6bRyj/NU++h/0LOlx1KFJWnPhRu4/Az7kM
-	NnrSM5keZR0IAoJgCjg07DSSbEblxAVCRn4oPzu1yTC+C/Wq4/JpVWmJAtcwTbAWMSgc6s
-	02oGt7P7NUgSOfgtIi96QxJaIDSsJIk=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-348-iDpqqgvLPkecH0lCApyEAQ-1; Mon, 11 Nov 2024 07:03:35 -0500
-X-MC-Unique: iDpqqgvLPkecH0lCApyEAQ-1
-X-Mimecast-MFC-AGG-ID: iDpqqgvLPkecH0lCApyEAQ
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a99f43c4c7bso309553166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 04:03:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731326614; x=1731931414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mRpNVm2ysOu8vdoKpxHcBNsUyipR7w7qRAL2/gqNzEc=;
-        b=eDbW1yVJTuPqGLsP2tuXd8JZhvj48M5+vD3PtuMahucDspRrjOhr0beUuEcHTx0P23
-         IVyh6BwcHNaya27FqQ29s/pn72Y+ezmrWuodATq/uyEm6rPX15TRmxYf1y64M6NziC3h
-         jIyN4Wat68MKEuX6/zWSemy2VYx3YID1iKhk+XZWZ+3uNrjG+u2SjJOJxPIkjv1hdt6U
-         eWDlFk8GRbCdeX6LsBQPdMSAXHnQwggJCv6LDP/HmQoh/QugpILJoLCaLZDKv5nU2X21
-         mI4x3PVT/MxXh72tmHPocHu9kMQK8RDB5x3YnYdL8d1q1XAtfCNx0LWm86gwcINJBzS+
-         SjAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWj1sZS6u1NWVblW4Zq79e56N01+MDe2xuZt8RLunykgsrIszVo4yRCWP80WTC0srQ2AZfX9mA7I8qAitY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0xyqI7zMAz8DC8jlFz2G3S/gBjWCGwKNDrZ8gJs9V3Thar7Lr
-	31JUqrVQo8mxMqEdvJxFjTVzM7O5JxiLJ/K4VDAkuy6s0ZVNjm/dzJ46qC64Xah9fIaPvZUgP0k
-	OB1wSE8cWcK08IPoy1eJGmcxuUnlvJTbF/bH+yZAkUL46YY4j0WT8NlFjVCM+rg==
-X-Received: by 2002:a17:907:6d28:b0:a9a:2afc:e4cc with SMTP id a640c23a62f3a-a9ef0050e63mr1185216166b.58.1731326614248;
-        Mon, 11 Nov 2024 04:03:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJWchcYStfBvYd+ipw3WE4m9baAoVo0YVLDMr8rJI2MTxP68VvWvEA+f6wkEfg1VCcKVP5+w==
-X-Received: by 2002:a17:907:6d28:b0:a9a:2afc:e4cc with SMTP id a640c23a62f3a-a9ef0050e63mr1185213166b.58.1731326613786;
-        Mon, 11 Nov 2024 04:03:33 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a450besm582118666b.43.2024.11.11.04.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 04:03:33 -0800 (PST)
-Message-ID: <0786dee3-8605-408d-b05a-e1736c6481a3@redhat.com>
-Date: Mon, 11 Nov 2024 13:03:32 +0100
+	s=arc-20240116; t=1731326763; c=relaxed/simple;
+	bh=UCW7BqmixN2pLlJElKI1Xe0+wYaHXT8NUMauyfANU4E=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eoosgzwSJZ81Q8+7t/AxeoNuWGkFGQNOC17D8udYVB6bOxKPyN1C7fwHU+zr3hc0VRhDspfiVyXr1sMCSoUFhUViZtCd9HnASKKhJpc2Z/W0uE7Dp2nb7HJXhjcO79EynGGlQzTXQTmpMGyeeVh1mpev7zr45D60zOkoJRRNFDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0awGXRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACC8C4CECF;
+	Mon, 11 Nov 2024 12:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731326763;
+	bh=UCW7BqmixN2pLlJElKI1Xe0+wYaHXT8NUMauyfANU4E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=K0awGXRAjm/hwCIGgDmDjnNMNbKcPwy6i3JGvltnhZHkwbSW7OldpO+oZQ1l2AsF7
+	 ue+7wF8gm9BOykFpbHegoh3BBEWvv/nZsbeK3cHeDkKe10zt8HljGvqwAJ2wDTDYv1
+	 PnuKur1yOaoX4df0Ulmzg3pMJ+HJu5Ue3cTY1di7jh/awesU0HkrRg3G8zCzhM7Ndj
+	 bd8kBzNVNe65PqzswH/J99xV7/ki2FVba+aUs2j2n7za4xgeJeDMaF1xGQu6A+bnhi
+	 9PHGVGfQiO/nRKHW4+EtojYQKeu4jhEqZ6c3ifkfN38K9v4QNm04ooz6sFlPqdOnEC
+	 xFLgQVGXzplmw==
+Date: Mon, 11 Nov 2024 21:05:59 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Li Huafei <lihuafei1@huawei.com>, Masami Hiramatsu (Google)
+ <mhiramat@kernel.org>
+Cc: <acme@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+ <namhyung@kernel.org>, <mark.rutland@arm.com>,
+ <alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+ <irogers@google.com>, <adrian.hunter@intel.com>,
+ <kan.liang@linux.intel.com>, <dima@secretsauce.net>,
+ <aleksander.lobakin@intel.com>, <linux-perf-users@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] perf probe: Fix the incorrect line number display
+ in 'perf probe -l'
+Message-Id: <20241111210559.055c990dc94e95666f6464a2@kernel.org>
+In-Reply-To: <20241111170549.e4d1ba7b65aee3d890889277@kernel.org>
+References: <20241108181909.3515716-1-lihuafei1@huawei.com>
+	<20241108181909.3515716-2-lihuafei1@huawei.com>
+	<20241111170549.e4d1ba7b65aee3d890889277@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] media: uvcvideo: Implement the Privacy GPIO as a
- subdevice
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, Yunke Cao <yunkec@chromium.org>,
- Hans Verkuil <hverkuil@xs4all.nl>
-References: <20241108-uvc-subdev-v2-0-85d8a051a3d3@chromium.org>
- <5b5f3bb7-7933-4861-be81-30345e333395@redhat.com>
- <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CANiDSCta62P5+1aR9Ks8c6sd3_grCV3C+Le=UjKGkiohyf0R2g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Ricardo,
+Hi Li,
 
-On 9-Nov-24 5:29 PM, Ricardo Ribalda wrote:
-> Hi Hans
+On Mon, 11 Nov 2024 17:05:49 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> Currently debuginfo__find_probe_point() does
 > 
-> On Sat, 9 Nov 2024 at 16:37, Hans de Goede <hdegoede@redhat.com> wrote:
-
-<snip>
-
-Note only replying to the button remark here, to try and disentangle
-that from the general power-management discussions.
-
->> One downside is that this stops UVC button presses from working when
->> not streaming. But userspace will typically only open the /dev/video#
->> node if it plans to stream anyways so there should not be much of
->> a difference wrt button press behavior.
+>  (1) Get the line and file from CU's lineinfo
+>  (2) Get the real function(function instance) of the address
+>      (use this function's decl_line/decl_file as basement)
+>  (2-1) Search the inlined function scope in the real function
+>      for the given address.
+>  (2-2) if there is inlined function, update basement line/file.
+>  (2-3) verify the filename is same as basement filename.
+>  (3) calculate the relative line number from basement.
 > 
-> I do not personally use the button, but it is currently implemented as
-> a standard HID device. Making it only work during streamon() might be
-> a bit weird.
-> I am afraid that if there is a button we should keep the current behaviour.
+> The problem is in (1). Since we have no basement file/line info,
+> we can not verify that the file/line info from CU's lineinfo.
+> As Li shown above, the lineinfo may have several different lines
+> for one address. We need to find most appropriate one based on
+> the basement file/line.
+> 
+> Thus what we need are
+> 
+>  - Introduce cu_find_lineinfo_at() which gives basement file/line
+>    information so that it can choose correct one. (hopefully)
+>  - Swap the order of (1) and (2*) so that we can pass the basement
+>    file/line when searching lineinfo. (Also, (2-3) should be right
+>    before (3))
+> 
 
-There are 2 sort of "snapshot" buttons on UVC cameras
+Can you check below change fixes your issue?
 
-1. Snapshot buttons handled through the UVC protocol / USB interface.
-These require the UVC interface to be powered on and the status interrupt
-URB to be submitted (uvc_status_start() called).
+Thank you,
 
-These will only work if the /dev/video# node is open, otherwise the UVC
-interface is powered down and the status interrupt URB is not submitted.
+From 3027c4d3c8be874a7c84a98e73fe0837fd135129 Mon Sep 17 00:00:00 2001
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Date: Mon, 11 Nov 2024 20:56:00 +0900
+Subject: [PATCH] perf-probe: Fix --line option to show correct offset line
+ number from function
 
-IOW most of the time these already do not work, since most of the time
-userspace will not have /dev/video# open (otherwise we would have
-the power-consumption issues this patch-series tries to fix everywhere).
+Fix --line option to show correct offset if the DWARF line info of the
+probe address has the statement lines in differnt functions.
 
-IMHO not having these working only when /dev/video# is open and instead
-only having them working when streaming is a not a big deal since usually
-userspace will only open /dev/video# to stream anyways (except for udev
-probing, but that is very short lived and does not help with the button).
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+---
+ tools/perf/util/dwarf-aux.c    | 78 ++++++++++++++++++++++++++++------
+ tools/perf/util/dwarf-aux.h    |  7 +++
+ tools/perf/util/probe-finder.c | 44 +++++++++++++------
+ 3 files changed, 105 insertions(+), 24 deletions(-)
 
-2. Snapshot buttons which use a separate standard USB HID interface
+diff --git a/tools/perf/util/dwarf-aux.c b/tools/perf/util/dwarf-aux.c
+index 92eb9c8dc3e5..0bffec6962b8 100644
+--- a/tools/perf/util/dwarf-aux.c
++++ b/tools/perf/util/dwarf-aux.c
+@@ -60,14 +60,33 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die)
+ 	return dwarf_formstring(&attr);
+ }
+ 
++static Dwarf_Line *get_next_statement_line(Dwarf_Lines *lines, size_t *idx, Dwarf_Addr addr)
++{
++	bool is_statement = false;
++	Dwarf_Line *line;
++	Dwarf_Addr laddr;
++	size_t l = *idx;
++
++	while (!is_statement) {
++		line = dwarf_onesrcline(lines, ++l);
++		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
++			dwarf_linebeginstatement(line, &is_statement) != 0)
++				return NULL;
++		if (laddr > addr)
++			return NULL;
++	}
++	*idx = l;
++	return line;
++}
++
+ /* Unlike dwarf_getsrc_die(), cu_getsrc_die() only returns statement line */
+-static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
++static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr,
++								 Dwarf_Lines **lines_p, size_t *idx)
+ {
+ 	Dwarf_Addr laddr;
+ 	Dwarf_Lines *lines;
+ 	Dwarf_Line *line;
+ 	size_t nlines, l, u, n;
+-	bool flag;
+ 
+ 	if (dwarf_getsrclines(cu_die, &lines, &nlines) != 0 ||
+ 	    nlines == 0)
+@@ -91,16 +110,14 @@ static Dwarf_Line *cu_getsrc_die(Dwarf_Die *cu_die, Dwarf_Addr addr)
+ 		if (!line || dwarf_lineaddr(line, &laddr) != 0)
+ 			return NULL;
+ 	} while (laddr == addr);
+-	l++;
+ 	/* Going forward to find the statement line */
+-	do {
+-		line = dwarf_onesrcline(lines, l++);
+-		if (!line || dwarf_lineaddr(line, &laddr) != 0 ||
+-		    dwarf_linebeginstatement(line, &flag) != 0)
+-			return NULL;
+-		if (laddr > addr)
+-			return NULL;
+-	} while (!flag);
++	line = get_next_statement_line(lines, &l, addr);
++	if (!line)
++		return NULL;
++	if (lines_p)
++		*lines_p = lines;
++	if (idx)
++		*idx = l;
+ 
+ 	return line;
+ }
+@@ -129,7 +146,7 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 		goto out;
+ 	}
+ 
+-	line = cu_getsrc_die(cu_die, addr);
++	line = cu_getsrc_die(cu_die, addr, NULL, NULL);
+ 	if (line && dwarf_lineno(line, lineno) == 0) {
+ 		*fname = dwarf_linesrc(line, NULL, NULL);
+ 		if (!*fname)
+@@ -141,6 +158,43 @@ int cu_find_lineinfo(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 	return (*lineno && *fname) ? *lineno : -ENOENT;
+ }
+ 
++/**
++ * cu_find_lineinfo_after - Get a line number after file:line for given address
++ * @cu_die: a CU DIE
++ * @addr: An address
++ * @lineno: a pointer which returns the line number
++ * @fname: the filename where searching the line
++ * @baseline: the basement line number
++ *
++ * Find a line number after @baseline in @fname for @addr in @cu_die.
++ * Return the found line number, or -ENOENT if not found.
++ */
++int cu_find_lineinfo_after(Dwarf_Die *cu_die, Dwarf_Addr addr,
++					int *lineno, const char *fname, int baseline)
++{
++	const char *line_fname;
++	Dwarf_Lines *lines;
++	Dwarf_Line *line;
++	size_t idx = 0;
++
++	if (cu_find_lineinfo(cu_die, addr, &line_fname, lineno) < 0)
++		return -ENOENT;
++
++	if (!strcmp(line_fname, fname) && baseline <= *lineno)
++		return *lineno;
++
++	line = cu_getsrc_die(cu_die, addr, &lines, &idx);
++
++	while (line && dwarf_lineno(line, lineno) == 0) {
++		line_fname = dwarf_linesrc(line, NULL, NULL);
++		if (line_fname && !strcmp(line_fname, fname) && baseline <= *lineno)
++			return *lineno;
++		line = get_next_statement_line(lines, &idx, addr);
++	}
++
++	return -ENOENT;
++}
++
+ static int __die_find_inline_cb(Dwarf_Die *die_mem, void *data);
+ 
+ /**
+diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
+index bd7505812569..19edf21e2f78 100644
+--- a/tools/perf/util/dwarf-aux.h
++++ b/tools/perf/util/dwarf-aux.h
+@@ -23,6 +23,13 @@ const char *cu_get_comp_dir(Dwarf_Die *cu_die);
+ int cu_find_lineinfo(Dwarf_Die *cudie, Dwarf_Addr addr,
+ 		     const char **fname, int *lineno);
+ 
++/*
++ * Get the most likely line number for given address in given filename
++ * and basement line number.
++ */
++int cu_find_lineinfo_after(Dwarf_Die *cudie, Dwarf_Addr addr,
++					int *lineno, const char *fname, int baseline);
++
+ /* Walk on functions at given address */
+ int cu_walk_functions_at(Dwarf_Die *cu_die, Dwarf_Addr addr,
+ 			 int (*callback)(Dwarf_Die *, void *), void *data);
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 13ff45d3d6a4..efcacb5568e5 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1578,7 +1578,8 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ {
+ 	Dwarf_Die cudie, spdie, indie;
+ 	Dwarf_Addr _addr = 0, baseaddr = 0;
+-	const char *fname = NULL, *func = NULL, *basefunc = NULL, *tmp;
++	const char *fname = NULL, *func = NULL, *basefunc = NULL;
++	const char *basefname = NULL, *tmp;
+ 	int baseline = 0, lineno = 0, ret = 0;
+ 
+ 	/* We always need to relocate the address for aranges */
+@@ -1592,11 +1593,7 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 		goto end;
+ 	}
+ 
+-	/* Find a corresponding line (filename and lineno) */
+-	cu_find_lineinfo(&cudie, (Dwarf_Addr)addr, &fname, &lineno);
+-	/* Don't care whether it failed or not */
+-
+-	/* Find a corresponding function (name, baseline and baseaddr) */
++	/* Find the basement function (name, baseline and baseaddr) */
+ 	if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
+ 		/* Get function entry information */
+ 		func = basefunc = dwarf_diename(&spdie);
+@@ -1607,10 +1604,16 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 			goto post;
+ 		}
+ 
+-		fname = die_get_decl_file(&spdie);
++		basefname = die_get_decl_file(&spdie);
++		if (!basefname) {
++			lineno = 0;
++			goto post;
++		}
++
+ 		if (addr == baseaddr) {
+ 			/* Function entry - Relative line number is 0 */
+ 			lineno = baseline;
++			fname = basefname;
+ 			goto post;
+ 		}
+ 
+@@ -1627,7 +1630,9 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 				 */
+ 				lineno = die_get_call_lineno(&indie);
+ 				fname = die_get_call_file(&indie);
+-				break;
++				if (!fname || strcmp(fname, basefname))
++					lineno = 0;
++				goto post;
+ 			} else {
+ 				/*
+ 				 * addr is in an inline function body.
+@@ -1636,20 +1641,35 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 				 * be the entry line of the inline function.
+ 				 */
+ 				tmp = dwarf_diename(&indie);
+-				if (!tmp ||
+-				    dwarf_decl_line(&indie, &baseline) != 0)
+-					break;
++				basefname = die_get_decl_file(&indie);
++				if (!tmp || !basefname ||
++				    dwarf_decl_line(&indie, &baseline) != 0) {
++					lineno = 0;
++					goto post;
++				}
+ 				func = tmp;
+ 				spdie = indie;
+ 			}
+ 		}
++	}
++
++	if (!lineno) {
++		/* Find a corresponding line (filename and lineno) */
++		if (cu_find_lineinfo_after(&cudie, (Dwarf_Addr)addr, &lineno,
++								   basefname, baseline) < 0)
++			lineno = 0;
++		else
++			fname = basefname;
++	}
++
++post:
++	if (lineno) {
+ 		/* Verify the lineno and baseline are in a same file */
+ 		tmp = die_get_decl_file(&spdie);
+ 		if (!tmp || (fname && strcmp(tmp, fname) != 0))
+ 			lineno = 0;
+ 	}
+ 
+-post:
+ 	/* Make a relative line number or an offset */
+ 	if (lineno)
+ 		ppt->line = lineno - baseline;
+-- 
+2.47.0.277.g8800431eea-goog
 
-Since these use a separate USB interface, using the usb-hid driver.
-These do always work and these are handled completely independent
-of the UVC driver so it does not matter what we do in the UVC driver.
 
-I hope this helps clarify the button situation.
-
-Regards,
-
-Hans
-
-
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
