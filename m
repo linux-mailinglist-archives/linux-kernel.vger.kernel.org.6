@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-404515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F339C44A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:11:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BAF9C44A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CC02830E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:11:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 482731F21B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2361AB6E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71541AB6EF;
 	Mon, 11 Nov 2024 18:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Dz6gdD3K"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bpYaCKR/"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CBD1AA1FC;
-	Mon, 11 Nov 2024 18:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403231AA788;
+	Mon, 11 Nov 2024 18:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731348632; cv=none; b=mDa3pXu3oXVdq9O2XCDz+w/gDbUrPgH+08FLSrlAYprzDbaeI6f0RsyOZcS6xowclBWnhvnaxiO/8zAt8youqCCb22aNY6Ej7QacQ/qSMwlsK9twv5schpPGnV85wCJaP5AWlnY1VxTWR4Le34Ud31Jji/ZmsfGvtBhCtCgOYX0=
+	t=1731348632; cv=none; b=BtZAxbX5hseh9xJ78P03WDh+KzCoPp2JoUoyArZwD74s3gztPZ4it6sO7SdKB3/iRT3FmCumFbHAVWyasr8p2NTUpaJcC5FRtFndLVPA5HsGOZL0LlZlj42fIoMniXH2nD50tVAy2vKBrP72UQEEaXhlmBef4W14Wz09Qq/LCVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731348632; c=relaxed/simple;
-	bh=8H8xBXK1HgMOQ+vsSlHOZrCpBpOh7Wa+WddZuG0gJME=;
+	bh=MI2iFMI5An6EgbYmS5WZjVZcL7OiZNeX5hsm8wgEhfQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XlmCNbqG2ArbxK/BtT1xjWKnIM/5MYeGRJtK8Yrpk72VqXl0f/mlNghqQfzrjYlVvdlpgAv4s/HUCOCGIX8zgKWqdh6SXqjTwUlpYWKIQyxhRpkLiPB7594utBETHD/KrYk+JIs2+GG2mYS3GWYA5grQe1C9OKS7c5jLu5M92jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Dz6gdD3K; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=ubXRdL46hV9oxJ507IfSXBkmfScyzvRLT+iyC3qeptwXgk5K3NfN08FrC/A3HsFkvuK84iXSSLgW4rmAtdVS+iQUZH49O0aYEruOydH/VmNzCkK4pJBkw83ln1Me1tnW5hrv+++DALyChUlOI+QPrM9iCAICqSxXHvpizbyPbiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bpYaCKR/; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1731348626;
-	bh=8H8xBXK1HgMOQ+vsSlHOZrCpBpOh7Wa+WddZuG0gJME=;
+	bh=MI2iFMI5An6EgbYmS5WZjVZcL7OiZNeX5hsm8wgEhfQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dz6gdD3K2TBD9RO43ZUaklQcdPxzwQMa4ug7LVTRJ02Lbr3/moDFSw5s05MvXBEAa
-	 Rt5A+Xmo4smMhHABQYjGLZVle3qVBWM53ENB44ohqfilLnoIR5zGtQfun+N9OaszF9
-	 rNflUchacH3heP9fwzo8KTh5vNELxOqNzGCQ0RjU=
+	b=bpYaCKR/ti753hGae9vVGVXskE4lgZBY59QptDMTD37pYrEVMb7p1XqF5x7vnENoI
+	 f9YPeaDEWLOEeLcP/HRl3kJz7aWaqOwlLSMkDvPD6ynQ5Oy2yIESvgODKLaP2hCJBz
+	 H60sBkaz8fugZYjKSzVIzPz9XoC+uWpNafXgEL4Y=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 11 Nov 2024 19:09:37 +0100
-Subject: [PATCH v7 3/4] drm: panel-backlight-quirks: Add Framework 13 matte
- panel
+Date: Mon, 11 Nov 2024 19:09:38 +0100
+Subject: [PATCH v7 4/4] drm: panel-backlight-quirks: Add Framework 13
+ glossy and 2.8k panels
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241111-amdgpu-min-backlight-quirk-v7-3-f662851fda69@weissschuh.net>
+Message-Id: <20241111-amdgpu-min-backlight-quirk-v7-4-f662851fda69@weissschuh.net>
 References: <20241111-amdgpu-min-backlight-quirk-v7-0-f662851fda69@weissschuh.net>
 In-Reply-To: <20241111-amdgpu-min-backlight-quirk-v7-0-f662851fda69@weissschuh.net>
 To: Alex Deucher <alexander.deucher@amd.com>, 
@@ -70,46 +70,49 @@ Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
  linux-doc@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731348626; l=1592;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731348626; l=1550;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=8H8xBXK1HgMOQ+vsSlHOZrCpBpOh7Wa+WddZuG0gJME=;
- b=SsWiSHcju57hPOqWYpNBRHXQOeyPsQ0H9go2sfjMDozSoFIbgmJ1DHFx/wRLqrgHQzaugrCF2
- r5+YMI1pVNGBGKhAvDw4fihbwJaBcJfXVbOKeTXG2mW4CX+IPW+ofoQ
+ bh=C5Ys8GE15MeKqVacQaK1KCVt6nQBigVpuprfdOPO5K4=;
+ b=/YkPFAPlCsFMyBCs1GWM9MsNLQIinCIm6SZTJTQwCilQi7+QWSO8uGcuabC+6CPLmdKmhyR2S
+ IjHqYHneHjkDPsk0E5X3ac6LzlZsjOZdVwgRlJWAog/h/H+EfQ6h4Z9
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The value of "min_input_signal" returned from ATIF on a Framework AMD 13
-is "12". This leads to a fairly bright minimum display backlight.
+From: "Dustin L. Howett" <dustin@howett.net>
 
-Add a quirk to override that the minimum backlight PWM to "0" which
-leads to a much lower minimum brightness, which is still visible.
+I have tested these panels on the Framework Laptop 13 AMD with firmware
+revision 3.05 (latest at time of submission).
 
-Tested on a Framework AMD 13 BIOS 3.05 with the matte panel.
-
-Link: https://community.frame.work/t/25711/9
-Link: https://community.frame.work/t/47036
+Signed-off-by: Dustin L. Howett <dustin@howett.net>
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Tested-by: Dustin L. Howett <dustin@howett.net>
 Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 Reviewed-by: Harry Wentland <harry.wentland@amd.com>
 ---
- drivers/gpu/drm/drm_panel_backlight_quirks.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/gpu/drm/drm_panel_backlight_quirks.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/drivers/gpu/drm/drm_panel_backlight_quirks.c b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-index 6b8bbed77c7f1f3570a6e68c276244cfe4386f6c..f2aefff618ddbb6c2170db5c9f535f3b6a465d1d 100644
+index f2aefff618ddbb6c2170db5c9f535f3b6a465d1d..c477d98ade2b41314d4218281ced7d3c4d087769 100644
 --- a/drivers/gpu/drm/drm_panel_backlight_quirks.c
 +++ b/drivers/gpu/drm/drm_panel_backlight_quirks.c
-@@ -17,6 +17,14 @@ struct drm_panel_min_backlight_quirk {
- };
- 
- static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks[] = {
-+	/* 13 inch matte panel */
+@@ -25,6 +25,22 @@ static const struct drm_panel_min_backlight_quirk drm_panel_min_backlight_quirks
+ 		.ident.name = "NE135FBM-N41",
+ 		.min_brightness = 0,
+ 	},
++	/* 13 inch glossy panel */
 +	{
 +		.dmi_match.field = DMI_BOARD_VENDOR,
 +		.dmi_match.value = "Framework",
-+		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0bca),
++		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x095f),
 +		.ident.name = "NE135FBM-N41",
++		.min_brightness = 0,
++	},
++	/* 13 inch 2.8k panel */
++	{
++		.dmi_match.field = DMI_BOARD_VENDOR,
++		.dmi_match.value = "Framework",
++		.ident.panel_id = drm_edid_encode_panel_id('B', 'O', 'E', 0x0cb4),
++		.ident.name = "NE135A1M-NY1",
 +		.min_brightness = 0,
 +	},
  };
