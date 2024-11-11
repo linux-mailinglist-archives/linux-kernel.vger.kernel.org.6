@@ -1,153 +1,287 @@
-Return-Path: <linux-kernel+bounces-403809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D399C3B1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:42:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C85C9C3B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165701C21DE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7381F213F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06CB14B956;
-	Mon, 11 Nov 2024 09:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30061531C0;
+	Mon, 11 Nov 2024 09:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0J85s4Tb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HFqNBeb/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0J85s4Tb";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HFqNBeb/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y5UFuB0z"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6950F224D6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7406E143C72
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731318116; cv=none; b=Zwaa0nzdidHtWNmyH0AcYUUpiXjN0pW3l3ygkPv75nGQ1+Nz/OPNyqtvlheUZF3GtcNHIuhImU/1XFgMeeUZd+8+Pe292f3cacRd1x3Bj0IK/2b6bAjOqBDQYx6hwZDhyWG+ZfRfNNMa6K3dk2CEyeMHUE9/SIPZeOj9rezqkhc=
+	t=1731318194; cv=none; b=iEzmtLgmPyjJ0LJxeIGyXvbnIJIzSAXPQsitYgVitpAGAFBspW1qmuKqLwirpVRvLNMoUY8xzxcoGSTaVBZw3Uej6wkBUVSfAvEhr+EfIAM+LxKACO7ZlqNvTGYeN+QvIYiceyKaZX93qk8PvD6ltc2SYKwegNazsJ/4XpqEMu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731318116; c=relaxed/simple;
-	bh=MoiU8XfhCwZhfNBNDdPejz1ykAeuY27WjcKaAkDOMzM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EPz1gddWtMZvOLgAr1XQYCx2uiqHb5aiAsmBILdrzcA3mPc6T2Qw0LH54YfQBr1VhNJX2ryTj6xljm6iqUZ6aMAs5fw/ohVXJOxyhT1y+Yjg62BxHG3d6lTKGMET32bBYl+xvuK1AeJEOvZ0JfvPEhznxB71qmCYLyYszrjlhHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0J85s4Tb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HFqNBeb/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0J85s4Tb; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HFqNBeb/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from hawking.nue2.suse.org (unknown [10.168.4.11])
-	by smtp-out2.suse.de (Postfix) with ESMTP id 977841F38F;
-	Mon, 11 Nov 2024 09:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731318112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcW3XJ6RBr7sYPiVps5XbwDo8mGo2lps7pml0tEgRE8=;
-	b=0J85s4Tb6TLfFK+PGfAYx5YGxHRgGuPs1mVdg1H59IkIetpYq98lSyZSHuB7NWwePVAYi+
-	mvgNOvzVOLTHqLtqul0MMODopf7Uy9MBmDGp/qK6fFV2YnZw1d3IYcNFOB9fcsvlQTe13/
-	PTug7oXAfejTqTG3ojrzvoWiQ6sV8uU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731318112;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcW3XJ6RBr7sYPiVps5XbwDo8mGo2lps7pml0tEgRE8=;
-	b=HFqNBeb/niypMYyTBmrNfnFfbKMaqNxlpQgcimnxw1ZzyzBqMBoP4lzDR+dsaZHOo/d4KP
-	k5Rb/k4FrHFj25Ag==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731318112; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcW3XJ6RBr7sYPiVps5XbwDo8mGo2lps7pml0tEgRE8=;
-	b=0J85s4Tb6TLfFK+PGfAYx5YGxHRgGuPs1mVdg1H59IkIetpYq98lSyZSHuB7NWwePVAYi+
-	mvgNOvzVOLTHqLtqul0MMODopf7Uy9MBmDGp/qK6fFV2YnZw1d3IYcNFOB9fcsvlQTe13/
-	PTug7oXAfejTqTG3ojrzvoWiQ6sV8uU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731318112;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcW3XJ6RBr7sYPiVps5XbwDo8mGo2lps7pml0tEgRE8=;
-	b=HFqNBeb/niypMYyTBmrNfnFfbKMaqNxlpQgcimnxw1ZzyzBqMBoP4lzDR+dsaZHOo/d4KP
-	k5Rb/k4FrHFj25Ag==
-Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
-	id 3AF244A0564; Mon, 11 Nov 2024 10:41:52 +0100 (CET)
-From: Andreas Schwab <schwab@suse.de>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org,  =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>,
-  Charlie Jenkins <charlie@rivosinc.com>,  Paul Walmsley
- <paul.walmsley@sifive.com>,  Palmer Dabbelt <palmer@dabbelt.com>,  Albert
- Ou <aou@eecs.berkeley.edu>,  Andrea Parri <parri.andrea@gmail.com>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: add forwarding header for
- arch/riscv/include/asm/fence.h
-In-Reply-To: <d380fd10-ebc4-4d66-becb-13995372d41a@ghiti.fr> (Alexandre
-	Ghiti's message of "Mon, 4 Nov 2024 11:02:14 +0100")
-References: <mvm5xq44bqh.fsf@suse.de>
-	<d380fd10-ebc4-4d66-becb-13995372d41a@ghiti.fr>
-X-Yow: I think my CAREER is RUINED!!
-Date: Mon, 11 Nov 2024 10:41:52 +0100
-Message-ID: <mvmfrnyxg2n.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731318194; c=relaxed/simple;
+	bh=0Env1cU8tBTck/fVL6y2P9Hq+F7x6zgPNQ1HKcQSs5k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c2QKNVJ5vkl9/aIbNkITrbVLp2HOhjyRppo5wFkXEG0g3Q60AsS1EjRTBPyrTp/BwHtb5O28ZEbSUHfoCsnzK7ZMyp8gq8ZwDbcPP1SGX18gkBsKlNmqagSmB+3QvP6t9Il8HDwS/aFFi8neyvpIPprlIx23SjU4L/U+Z0J67No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y5UFuB0z; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53c779ef19cso5017779e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 01:43:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731318189; x=1731922989; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=F81d418/dgSFgNmhf+DwcLjYnEzb5puEU2g3sPEbLUc=;
+        b=y5UFuB0zDFn/BFO5fxPEfmdQ/Y7jRwXYsGXtm1oqWkK/Oo4dzfMx0J5vL2z2hpZgH4
+         Jswze9DUtoFvfcmIrYhphNHyaVamJYLNqehi5PCm4q7BGSV9mkNP27692jyQdFJqis6O
+         qCqQfKP2RX9EOD0SYfIf7N/MlefrPaiHeg4GoxYc0xjx838PzEFmcSnMltwgBd7KE4dv
+         31pyFJW1yOoG1rcdXdejSN/QsbIps3uXj8JBr4EFiUtm4E3R6QvY81P/rQKVBJbcflPs
+         lecYsAo1D7ywnLvIiLlZvylaweeWdLWOBC4xQ1oK34ZGD2WBYCKdv4bs8Gq2tSo3cF3B
+         lKZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731318189; x=1731922989;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F81d418/dgSFgNmhf+DwcLjYnEzb5puEU2g3sPEbLUc=;
+        b=Ldf4HKGrtmYkN9lH11fg+psOLgi0cmlMDp56JhAXA1kpj2AA4YEzmjs6o34WeUG2z5
+         3Jrm1Z0JRBonJJSHA3S3X56Gg9PdVFBcUNvin8nFlBUNdZD7DIZBcOoSw/f/CZlUI4H0
+         gupqpgUgI4baERRJs1p7riftoR/fJx1xpXC6vPZEhRA5zxJi95iRPvE9khm3S3QE6a0h
+         g1QxxG8AinNA8gtquYtIG8uH6NbbHVM4SMIFTkj9CfTs9ikqxbaRnzl1ZxTB/ZwOoe5e
+         rTuMP0GBB74dOtqJtMnzMOl5qrPX5m5txhY7yfdUjkwHY3b/LAVBDS7DlE5mKw4FXe39
+         HW1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXqm1LWT2ezZB39gqCr50cSDHH/Q+nCMUjnC58loxQqyJ/X94n2QCVothdCJDGV/ZPrh4fNwJ/2cClrotE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHUT4O247rUihRHywgt4dt0IZuEpGQCprFabDWMTAhBbMoVzuu
+	LAw699UT98L5br/oUcvZBoZlU7rH9Wl+3O1j44brPh7mOPMQqQTQ4eHQ7IuBtWiM7N5IwXtcLyS
+	WwvJhSdi+ErJNNQhRhBBl8zTHGT/dOtiM5kMi
+X-Google-Smtp-Source: AGHT+IF2x57Z7XMNCa+ef2yVg0uzd7FjeiHQvJ0EEojuH3UqlZRr9IrpABgaNQwvhJ3ebmQ70jRKsps4V/XNqiynSkA=
+X-Received: by 2002:a05:651c:881:b0:2fb:628c:2580 with SMTP id
+ 38308e7fff4ca-2ff201e6d03mr58683031fa.2.1731318189316; Mon, 11 Nov 2024
+ 01:43:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.70 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_NO_TLS_LAST(0.10)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ONE(0.00)[1];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.infradead.org,rivosinc.com,sifive.com,dabbelt.com,eecs.berkeley.edu,gmail.com,vger.kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid]
-X-Spam-Score: -2.70
-X-Spam-Flag: NO
+References: <6731d090.050a0220.138bd5.0061.GAE@google.com>
+In-Reply-To: <6731d090.050a0220.138bd5.0061.GAE@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 11 Nov 2024 10:42:58 +0100
+Message-ID: <CACT4Y+Y+zqL7QwohQ+SDhuZ0=RE2H8U+yYHYWtSyLZ6xpw_-FQ@mail.gmail.com>
+Subject: Re: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in
+ fb_pad_unaligned_buffer (2)
+To: syzbot <syzbot+6649e4a17d8ebca21a28@syzkaller.appspotmail.com>
+Cc: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Nov 04 2024, Alexandre Ghiti wrote:
+On Mon, 11 Nov 2024 at 10:38, syzbot
+<syzbot+6649e4a17d8ebca21a28@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    6efbea77b390 Merge tag 'arm64-fixes' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=144e8c5f980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4c9b3fd66df7ebb7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6649e4a17d8ebca21a28
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-6efbea77.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/fe29ba490b2c/vmlinux-6efbea77.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/08bf31ef1152/bzImage-6efbea77.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+6649e4a17d8ebca21a28@syzkaller.appspotmail.com
+>
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in fb_pad_unaligned_buffer+0x43c/0x470 drivers/video/fbdev/core/fbmem.c:116
+> Read of size 1 at addr ffff888041c73758 by task syz.3.3711/20535
+>
+> CPU: 2 UID: 0 PID: 20535 Comm: syz.3.3711 Not tainted 6.12.0-rc3-syzkaller-00183-g6efbea77b390 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:377 [inline]
+>  print_report+0xc3/0x620 mm/kasan/report.c:488
+>  kasan_report+0xd9/0x110 mm/kasan/report.c:601
+>  fb_pad_unaligned_buffer+0x43c/0x470 drivers/video/fbdev/core/fbmem.c:116
+>  bit_putcs_unaligned drivers/video/fbdev/core/bitblit.c:130 [inline]
+>  bit_putcs+0x86a/0xdf0 drivers/video/fbdev/core/bitblit.c:188
+>  fbcon_putcs+0x364/0x480 drivers/video/fbdev/core/fbcon.c:1308
+>  do_update_region+0x1f8/0x3f0 drivers/tty/vt/vt.c:609
+>  update_region+0xc1/0x160 drivers/tty/vt/vt.c:633
+>  vcs_write+0x7cd/0xdb0 drivers/tty/vt/vc_screen.c:698
+>  do_loop_readv_writev fs/read_write.c:857 [inline]
+>  do_loop_readv_writev fs/read_write.c:842 [inline]
+>  vfs_writev+0x6da/0xdd0 fs/read_write.c:1066
+>  do_writev+0x137/0x370 fs/read_write.c:1111
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f20a6d7dff9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f20a7aa2038 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+> RAX: ffffffffffffffda RBX: 00007f20a6f36058 RCX: 00007f20a6d7dff9
+> RDX: 0000000000000004 RSI: 0000000020000a40 RDI: 0000000000000007
+> RBP: 00007f20a6df0296 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 00007f20a6f36058 R15: 00007ffc5a9e3328
+>  </TASK>
+>
+> Allocated by task 18704:
+>  kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+>  kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+>  poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+>  __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+>  kasan_kmalloc include/linux/kasan.h:257 [inline]
+>  __do_kmalloc_node mm/slub.c:4264 [inline]
+>  __kmalloc_noprof+0x1e8/0x400 mm/slub.c:4276
+>  kmalloc_noprof include/linux/slab.h:882 [inline]
+>  fbcon_set_font+0x434/0xb60 drivers/video/fbdev/core/fbcon.c:2516
 
-> Unless you have any objection, we'll try to make Bjorn's patch into
-> 6.12-rc7 instead of yours.
+Is there synchronization between fbcon_do_set_font and uses of the font?
+fbcon_do_set_font sets data/width/height separately which potentially
+may cause such bugs (new data used with old width).
 
-It still fails the same:
 
-In file included from /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/asm/barrier.h:12,
-                 from /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/linux/ring_buffer.h:4,
-                 from libbpf.c:37:
-/home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/include/asm/../../arch/riscv/include/asm/barrier.h:13:10: fatal error: asm/fence.h: No such file or directory
-   13 | #include <asm/fence.h>
-      |          ^~~~~~~~~~~~~
-compilation terminated.
-make[5]: *** [/home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/tools/build/Makefile.build:106: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf.o] Error 1
-make[5]: *** Waiting for unfinished jobs....
-make[4]: *** [Makefile:164: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids/libbpf/staticobjs/libbpf-in.o] Error 2
-make[3]: *** [Makefile:63: /home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/linux-obj/tools/bpf/resolve_btfids//libbpf/libbpf.a] Error 2
-make[2]: *** [Makefile:76: bpf/resolve_btfids] Error 2
-make[1]: *** [/home/abuild/rpmbuild/BUILD/kernel-default-6.12~rc7/linux-6.12-rc7/Makefile:1393: tools/bpf/resolve_btfids] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [../Makefile:224: __sub-make] Error 2
-
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+>  con_font_set drivers/tty/vt/vt.c:4804 [inline]
+>  con_font_op+0x7fd/0xf50 drivers/tty/vt/vt.c:4851
+>  vt_k_ioctl drivers/tty/vt/vt_ioctl.c:474 [inline]
+>  vt_ioctl+0x4ca/0x2f80 drivers/tty/vt/vt_ioctl.c:751
+>  tty_ioctl+0x651/0x15d0 drivers/tty/tty_io.c:2803
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:907 [inline]
+>  __se_sys_ioctl fs/ioctl.c:893 [inline]
+>  __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>
+> The buggy address belongs to the object at ffff888041c70000
+>  which belongs to the cache kmalloc-8k of size 8192
+> The buggy address is located 6728 bytes to the right of
+>  allocated 7440-byte region [ffff888041c70000, ffff888041c71d10)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888041c74000 pfn:0x41c70
+> head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> flags: 0xfff00000000240(workingset|head|node=0|zone=1|lastcpupid=0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000240 ffff88801b043180 ffffea0001265810 ffffea000151d410
+> raw: ffff888041c74000 0000000000020001 00000001f5000000 0000000000000000
+> head: 00fff00000000240 ffff88801b043180 ffffea0001265810 ffffea000151d410
+> head: ffff888041c74000 0000000000020001 00000001f5000000 0000000000000000
+> head: 00fff00000000003 ffffea0001071c01 ffffffffffffffff 0000000000000000
+> head: ffff888000000008 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd28c0(GFP_NOWAIT|__GFP_IO|__GFP_FS|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5055, tgid 5055 (dhcpcd), ts 868171753255, free_ts 868153154119
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+>  prep_new_page mm/page_alloc.c:1545 [inline]
+>  get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
+>  __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4733
+>  alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+>  alloc_slab_page mm/slub.c:2412 [inline]
+>  allocate_slab mm/slub.c:2578 [inline]
+>  new_slab+0x2ba/0x3f0 mm/slub.c:2631
+>  ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+>  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+>  __slab_alloc_node mm/slub.c:3961 [inline]
+>  slab_alloc_node mm/slub.c:4122 [inline]
+>  __do_kmalloc_node mm/slub.c:4263 [inline]
+>  __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+>  kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+>  __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+>  alloc_skb include/linux/skbuff.h:1322 [inline]
+>  netlink_dump+0x2c1/0xcc0 net/netlink/af_netlink.c:2292
+>  netlink_recvmsg+0xa0d/0xf30 net/netlink/af_netlink.c:1983
+>  sock_recvmsg_nosec net/socket.c:1051 [inline]
+>  sock_recvmsg+0x1f6/0x250 net/socket.c:1073
+>  ____sys_recvmsg+0x219/0x6b0 net/socket.c:2826
+>  ___sys_recvmsg+0x115/0x1a0 net/socket.c:2868
+>  __sys_recvmsg+0x114/0x1e0 net/socket.c:2898
+> page last free pid 18495 tgid 18495 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1108 [inline]
+>  free_unref_page+0x5f4/0xdc0 mm/page_alloc.c:2638
+>  __put_partials+0x14c/0x170 mm/slub.c:3145
+>  qlink_free mm/kasan/quarantine.c:163 [inline]
+>  qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+>  kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+>  __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+>  kasan_slab_alloc include/linux/kasan.h:247 [inline]
+>  slab_post_alloc_hook mm/slub.c:4085 [inline]
+>  slab_alloc_node mm/slub.c:4134 [inline]
+>  __kmalloc_cache_noprof+0x11e/0x300 mm/slub.c:4290
+>  kmalloc_noprof include/linux/slab.h:878 [inline]
+>  kzalloc_noprof include/linux/slab.h:1014 [inline]
+>  ref_tracker_alloc+0x17c/0x5b0 lib/ref_tracker.c:203
+>  __netdev_tracker_alloc include/linux/netdevice.h:4050 [inline]
+>  netdev_hold include/linux/netdevice.h:4079 [inline]
+>  netdev_hold include/linux/netdevice.h:4074 [inline]
+>  register_netdevice+0x164b/0x1e90 net/core/dev.c:10511
+>  veth_newlink+0x366/0x9e0 drivers/net/veth.c:1830
+>  rtnl_newlink_create net/core/rtnetlink.c:3539 [inline]
+>  __rtnl_newlink+0x1197/0x1920 net/core/rtnetlink.c:3759
+>  rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3772
+>  rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6675
+>  netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2551
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0x53c/0x7f0 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:729 [inline]
+>  __sock_sendmsg net/socket.c:744 [inline]
+>  __sys_sendto+0x479/0x4d0 net/socket.c:2214
+>
+> Memory state around the buggy address:
+>  ffff888041c73600: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff888041c73680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> >ffff888041c73700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>                                                     ^
+>  ffff888041c73780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>  ffff888041c73800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/syzkaller-bugs/6731d090.050a0220.138bd5.0061.GAE%40google.com.
 
