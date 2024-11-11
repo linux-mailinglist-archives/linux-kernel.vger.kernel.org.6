@@ -1,114 +1,95 @@
-Return-Path: <linux-kernel+bounces-403631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A0919C384F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:22:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797CA9C3853
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 07:23:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EEB82822AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:22:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFE91F21FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 06:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACA315533B;
-	Mon, 11 Nov 2024 06:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kpgbYIFO"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46B7C1EF1D;
-	Mon, 11 Nov 2024 06:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A39155393;
+	Mon, 11 Nov 2024 06:23:21 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8C5A933;
+	Mon, 11 Nov 2024 06:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731306133; cv=none; b=H9MTLpbtwZeZ407whOW3DPDRvCzEWda5Efv/TmuqICo29ikpUw3H3oPa8MFBXYPyuP7nxjxrLPZ95fCZB1APHXzUTPaA2kAgAsfuyN/lTh/DFx/BzurHmPkD0oaXdoDFC4t1D0C8sUGjNiq7Ipu/F1YwwFXKUukZN2joQntRf2Q=
+	t=1731306201; cv=none; b=tvAdqnquk4D+vXXeU2AbNMRtnnAwUf75sfOH1CvMQQ/XD++33vstIGTKCdF43IjnLIP0BO0dFXV3uwWP1Z/XWsDsVC8h4wugqPAG/D9NDQeDg84L8dDvEpF+ip7N6LlElpxn9iuRQNkwZUahfwCvA79al7DvhlsTgObcz1psAQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731306133; c=relaxed/simple;
-	bh=6o1Wagd0uUVsHIpGzUJpqU/Rw+/J5VBWI+It9NIq3S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pK/b5iREWvZi7ctmyOgSQOrMc+xCAy52r1ekUTemevFi5F9H1YfPgG6TsNnt9NpBs8AyULKXgCqGEdbGKGqh6hYWJUUXKbAd5Y7V1w8utVmLb/6bkjvaAlETeYBLsntrmqJbBlH5v0LQZXuHHYBVlxTxpPblWiCI4GXZX2hLkwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kpgbYIFO; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbca51687so41110705ad.1;
-        Sun, 10 Nov 2024 22:22:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731306131; x=1731910931; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VBWbka6tcunvnkswMnINMIR9eUmPBlJrKkb4tiWy/N4=;
-        b=kpgbYIFOzkV6dJog7O8OBrqApoP+5jPwkGHYpwnsTY1hQz1dPQiyBkZ2o+3iF3h8+q
-         g3/zxqEsMyzajjM0Oko6TjmIS1vD3rZ8gW18zGShfRt1Wt6qfl8PuP0llrW4+e/UK/8e
-         NDilwsDWBtved0GukQDVjfgD7cDVYdgCVf4BS8pAb9YxRfVX0vgJp+0oZGllwbjew2m9
-         8nutJ06A3V6Q9IXdQTR96b7ZKIK71oVu+Mq171jXmJ9bOgVHtWoA6XrVQiymItpsh2oq
-         QFbscNbBPw94/wIrN8RouIwkPR2z7qCCqVFg9HwNixPdiaTAAf+XhpXxRGnp8aAW3KFI
-         0b6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731306131; x=1731910931;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VBWbka6tcunvnkswMnINMIR9eUmPBlJrKkb4tiWy/N4=;
-        b=Egf0Y1j2ZF8YKNudKDzDlmujbmesE3sP1VsKnDWWJc8T2dDPBDMaxrjN57vW21sJgq
-         AtviZ+BsiKCXDPXHSCAWLmAuLGETQAksUz8zDH55mTX4gZDfqqavsVQSO27q/7NlR/gx
-         ybDIosqUts0NYOfIdLByfxI3cjM93h3XwVuPrqxRBmNCkr+PwgaCsPErajVHEcYfm520
-         v/PKKzzgM/hyODuom0tjdoPwzIYC/v2cuykwaePyvvvFqRfJj427zpT8M0/9Qi8Apv4v
-         GKum3ELi1EmSqReXY9h5wsIO38HwbryHOG93SqUlcWYRi0OWhKQV9/jOSNpRsH5FNhhh
-         o3tg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzvvaivMAgeAPgskzjU8GqH09lFrCypXqElRfDAIUNzBkM2IueAgGThsRuscp5sAgY88OF46P7mNdoBl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx1pYWvUpNfjk60snmL5K4sH0K6Ggqz/QhVf1wCO48LcXa4EAk
-	dLrhiJEblFgbM5uIsxpe/QqC4DCp5NtC4BGg0Ow9vBFo4qhEfjbA
-X-Google-Smtp-Source: AGHT+IHd1rVyG32K6mQRKSb5g8ZV+d4A7We4fZ1OI0UfFHjiqq+RNsFYAsV/vC0TZstA2Sqob/yLUA==
-X-Received: by 2002:a17:902:d2cb:b0:20b:a25e:16c5 with SMTP id d9443c01a7336-211835c0f65mr162005455ad.53.1731306131446;
-        Sun, 10 Nov 2024 22:22:11 -0800 (PST)
-Received: from localhost.localdomain ([103.150.184.35])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e68960sm69051915ad.220.2024.11.10.22.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 10 Nov 2024 22:22:11 -0800 (PST)
-From: Xiang Zhang <hawkxiang.cpp@gmail.com>
-To: lduncan@suse.com,
-	cleech@redhat.co,
-	michael.christie@oracle.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1731306201; c=relaxed/simple;
+	bh=iP7Frx9UHTyfKys12nXpS+cOQ5XpYUkhERAgTZoqnEo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=aKPlOAI8vtZUrGDy8naOkYcGOsuCou+x8/VAYsNLQtNVlfnjzRoFvC4MSboN4KHx5YKS8dyNL+p3Bj2rEX5KlJyesIoE2z6Q+LDG6z3w4naoh4YWZfPX5SY2KoF54I5DgRCd5S5302As4mvUr2RGm0ufOqxJ6k0kGlPjyjGOfFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee76731a2d3663-0267f;
+	Mon, 11 Nov 2024 14:23:15 +0800 (CST)
+X-RM-TRANSID:2ee76731a2d3663-0267f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.55.1.70])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee96731a2d1f6c-170ed;
+	Mon, 11 Nov 2024 14:23:15 +0800 (CST)
+X-RM-TRANSID:2ee96731a2d1f6c-170ed
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: martin.lau@linux.dev
+Cc: eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Xiang Zhang <hawkxiang.cpp@gmail.com>
-Subject: [PATCH] scsi: iscsi: special case for GET_HOST_STATS
-Date: Mon, 11 Nov 2024 14:21:50 +0800
-Message-ID: <20241111062150.86091-1-hawkxiang.cpp@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] samples/bpf: Remove unused variables
+Date: Sun, 10 Nov 2024 22:23:12 -0800
+Message-Id: <20241111062312.3541-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Special case for ISCSI_UEVENT_GET_HOST_STATS:
-- On success: send reply and stats from iscsi_get_host_stats()
-  within if_recv_msg().
-- On error: fall through.
+These variables are never referenced in the code, just remove them
 
-Signed-off-by: Xiang Zhang <hawkxiang.cpp@gmail.com>
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
 ---
- drivers/scsi/scsi_transport_iscsi.c | 2 ++
- 1 file changed, 2 insertions(+)
+ samples/bpf/tc_l2_redirect_kern.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/scsi/scsi_transport_iscsi.c b/drivers/scsi/scsi_transport_iscsi.c
-index fde7de3b1e55..ad4186da1cb4 100644
---- a/drivers/scsi/scsi_transport_iscsi.c
-+++ b/drivers/scsi/scsi_transport_iscsi.c
-@@ -4113,6 +4113,8 @@ iscsi_if_rx(struct sk_buff *skb)
- 				break;
- 			if (ev->type == ISCSI_UEVENT_GET_CHAP && !err)
- 				break;
-+			if (ev->type == ISCSI_UEVENT_GET_HOST_STATS && !err)
-+				break;
- 			err = iscsi_if_send_reply(portid, nlh->nlmsg_type,
- 						  ev, sizeof(*ev));
- 			if (err == -EAGAIN && --retries < 0) {
+diff --git a/samples/bpf/tc_l2_redirect_kern.c b/samples/bpf/tc_l2_redirect_kern.c
+index fd2fa0004330..729657d77802 100644
+--- a/samples/bpf/tc_l2_redirect_kern.c
++++ b/samples/bpf/tc_l2_redirect_kern.c
+@@ -64,8 +64,6 @@ int _l2_to_iptun_ingress_forward(struct __sk_buff *skb)
+ 	void *data_end = (void *)(long)skb->data_end;
+ 	int key = 0, *ifindex;
+ 
+-	int ret;
+-
+ 	if (data + sizeof(*eth) > data_end)
+ 		return TC_ACT_OK;
+ 
+@@ -115,8 +113,6 @@ int _l2_to_iptun_ingress_redirect(struct __sk_buff *skb)
+ 	void *data_end = (void *)(long)skb->data_end;
+ 	int key = 0, *ifindex;
+ 
+-	int ret;
+-
+ 	if (data + sizeof(*eth) > data_end)
+ 		return TC_ACT_OK;
+ 
 -- 
-2.44.0
+2.17.1
+
+
 
 
