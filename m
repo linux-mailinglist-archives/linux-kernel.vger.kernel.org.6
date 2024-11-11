@@ -1,98 +1,128 @@
-Return-Path: <linux-kernel+bounces-404202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB869C40C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:22:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB999C40CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:22:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A81E9282C35
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:22:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ECE31C20E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521FB1A0BC3;
-	Mon, 11 Nov 2024 14:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76831A08A3;
+	Mon, 11 Nov 2024 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAwkcDFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AFHYuwSH"
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEEB15A85A;
-	Mon, 11 Nov 2024 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A561A0BD7
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334899; cv=none; b=L7I545BRK4iQ3k9yp02AfH4YOZCfXifb49P+dgZLIPYrGdqa4PYjG8rJSD67r8m5LSqejPoXsd9ZYDYQCgfMmSuM83vKb/qwKWxyGKphNfSH2OejoIDm7QORhbgfLOb3Tw0n/LleNmcdXOg4LUcMssoEPb6Rbry7cDWT+neDwhk=
+	t=1731334911; cv=none; b=dtKiRIO5x8V/K5EzXtJ/Vdg2/I2TJWziYE2iAjVVijKS10rKKGgO4MkZlphwgelU/BWqSg/xYWNGa/94rXp6+9y5A6dWIwg15u/HDWu8TNTWYiJC7c+gqIDXEA4qLqsXYmev5bllZypsn0ltm2LDhH9yrQ4CbAipBppiGwnSZYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334899; c=relaxed/simple;
-	bh=8gFxrMF3/Wvj4TqvD2naF6Bn2LPzxX0evtSWpelx57o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=MZm5vPeR2FXe1WRlDjsT55naZoXCjtwmnsYB5xN9I7cGdpBM4prxg9Wfct4Fmdlwu0Lip3B9+5EZ5F2K2HM97/5N8uiitZf9oyPrSIUUmVBOenVTRYJKo7X9vxO3RjPdnrZzQpT9DdipRwVQEy8NdVUf7St5VSGvY0miQuXDDnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAwkcDFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB4FC4CECF;
-	Mon, 11 Nov 2024 14:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731334899;
-	bh=8gFxrMF3/Wvj4TqvD2naF6Bn2LPzxX0evtSWpelx57o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=PAwkcDFS4zG83uPaMR3lA8iyrQEuEuKGTHmWCDGKtBlargPulzfKSXlkRRZ9CUxO7
-	 nx2UlHXMO3N/ymPiLop8R1fVzqeIpDLhsg2qW14WDG1wTVxFXGcK+0N1xch4HqZjgb
-	 pv9bFgphwOcYJPE20wuqYXhFFJwB2O4e89RXG/tx/zWo3i7+PS6s4ZtNQtThpgXpBT
-	 8a6yMZBb7598uB0p8BRrDR5Y7hN/2+vzWqrgA5Ea7rXVIeZHPQMWaJ94c8uB6lrlqI
-	 6J+XAtinEorEYFUvuOdWWVNCTY9De8SlmA66BxlXQXgIO1Gjco69cQWT3OZdRmeDB9
-	 rIRTWdz5Rekbg==
-From: Mark Brown <broonie@kernel.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abaci Robot <abaci@linux.alibaba.com>
-In-Reply-To: <20241111065425.103645-1-jiapeng.chong@linux.alibaba.com>
-References: <20241111065425.103645-1-jiapeng.chong@linux.alibaba.com>
-Subject: Re: [PATCH -next] spi: apple: Remove unnecessary .owner for
- apple_spi_driver
-Message-Id: <173133489800.303244.15265150821669602652.b4-ty@kernel.org>
-Date: Mon, 11 Nov 2024 14:21:38 +0000
+	s=arc-20240116; t=1731334911; c=relaxed/simple;
+	bh=sXs4BHvFeo0Y3ulkHWsHHmqqUYuxQyte2TAFTyzb7v0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OWOs3WgsnoJEEsNPt9qkmnoZiERCqZnCIawbUK2bkuoYOiilXdMHNph21Wz7BFIfswR8s3Q/pa8ks60KqgySb/vLLlCfIpYmCelX9GZU/0B5Ho7YmMwKLxMTDVKhorsGADv8N3M9rBNObkiUsFoEKphu4wXGl5SFxaPWRwUBFPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AFHYuwSH; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7181885ac34so2933531a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 06:21:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731334908; x=1731939708; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HctBMgT84vBY4hzxiEZh7IsHrKp0XhtLMHme3Byg9B4=;
+        b=AFHYuwSHkLOjleYo12O6HpOQ1zq8ctfn8d3wHhdhlREz/FNOVTNRkIAPh8QUP1lTBc
+         IvNTjwsr1bC4N3QamFxcRMzMPpblwO3rQgVSjcYYUyhY5vLylWbioSBAcAPFVtWeMgXG
+         Ro+gyZ0iOAdMVQbdyhU7WG9bStj4Qlj/jBqdBzqcwzHBwLWF1Foiy1Qiyzl0fZMiUimD
+         7kNSh/o3EdjD11iKKTi7S2dO8irH+dW/X9yWnGHpJLRfBlQmEptnytoqac9JM6fOwt6D
+         pkT6dO0JideppueNRZ2fdd1bMLKjZIbeG9LcrmzxqGRxDWBeET9NIwe4EQ7+NkVFlXzT
+         qRmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731334908; x=1731939708;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HctBMgT84vBY4hzxiEZh7IsHrKp0XhtLMHme3Byg9B4=;
+        b=NN4svboKrAbTDN0CKQ3rG/7UHGCJoftFcb4O/8V/j6NVfsawL4jf3gLn/wul4o85bn
+         vf5/3gJIRpQw5MgWpTXoqPxdd8bH/dDYWRGZmr9xV+bq6/khu50qWLpXimBRRg/REuVF
+         P9JZg/w3vvaHp6xLN+9qAMmQyLH6XOojl+RlrBZGM41d+rs6EfWC1sXdQCXck3nv9nbw
+         xH1Ypug7gie8V8Q/ME20Bgaul5COe649f6AFlaAt/lw26zEJf6krsMQLHPrJnpuPVFsI
+         gCaj3kM5rxYu7mV3oXVwBui8S2DFmXX07jm0gkALYphd/aK/Bjbob1eBeved80jDxgfe
+         2Wdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbC+6quNKSuMXsqUvgWV65lymZ4pNlnfoSAUqMf7HASYExaXS9cNRHJBjweKCkz2n+drKXCzBTpoxSavQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1wT3X95KerR6N8j72G2CvchKC5loP5UMRc3XZUjl4Gj2X7T3E
+	KmqCMWjNyd+8n8wOYd+IcBaREfs98am7qn7L/M8ELyf4K9vOWdF10Ubk4/Y+0yM=
+X-Google-Smtp-Source: AGHT+IGVzdut7knNu4orGH/0e/98hy5mbsEg8EUQyO8+g5vXJP3AchBYsjwGGywSvzlxSF70zNgyPw==
+X-Received: by 2002:a05:6830:2116:b0:718:e44:6da9 with SMTP id 46e09a7af769-71a1c1d2fa3mr11254324a34.11.1731334908011;
+        Mon, 11 Nov 2024 06:21:48 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a107ebd43sm2266321a34.6.2024.11.11.06.21.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 06:21:47 -0800 (PST)
+Message-ID: <8636a00f-81e6-4439-9778-abce6e0c931b@baylibre.com>
+Date: Mon, 11 Nov 2024 08:21:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-355e8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: ad7124: Don't create more channels than the
+ hardware is capable of
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241108181813.272593-4-u.kleine-koenig@baylibre.com>
+ <20241108181813.272593-5-u.kleine-koenig@baylibre.com>
+ <c94271b1-924b-4de6-b3bb-77e16265bb0d@baylibre.com>
+ <c2mdg4pn5rgjdlwet2gmgqvmym36ttlyg5ag2u62a3qtkdwqce@p45gyz5ghgel>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <c2mdg4pn5rgjdlwet2gmgqvmym36ttlyg5ag2u62a3qtkdwqce@p45gyz5ghgel>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Nov 2024 14:54:25 +0800, Jiapeng Chong wrote:
-> Remove .owner field if calls are used which set it automatically.
+On 11/11/24 6:08 AM, Uwe Kleine-König wrote:
+> [dropped Mircea Caprioru from Cc: as their address bounces.]
 > 
-> ./drivers/spi/spi-apple.c:522:3-8: No need to set .owner here. The core will do it.
+> Hello David,
 > 
+> On Fri, Nov 08, 2024 at 12:52:35PM -0600, David Lechner wrote:
+>> On 11/8/24 12:18 PM, Uwe Kleine-König wrote:
+>>> The ad7124-4 and ad7124-8 both support 16 channel registers. Don't
+>>> accept more (logical) channels from dt than that.
+>>
+>> Why should the devicetree be limited by the number of channel
+>> registers? Channel registers are a resource than can be
+>> dynamically assigned, so it doesn't seem like the devicetree
+>> should be specifying that assignment.
 > 
+> Note the device tree isn't limited as I didn't adapt the binding. It's
+> just that the driver doesn't bind if too many channels are specified.
+> And while your statement about the channels being a dynamic resource is
+> right, currently the driver doesn't cope and allocates resources
+> statically, and happily assumes there is a CHANNEL_16 register if the
+> device tree specifies 17 (or more) logical channels and writes to
+> CONFIG_0 then which very likely results in strange effects.
+> 
+> So as long as the driver doesn't implement this (possible) dynamic
+> mapping to the CHANNEL registers, it's IMHO right to refuse to bind (or
+> alternatively only use the 16 first logical channels).
+> 
+> Best regards
+> Uwe
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: apple: Remove unnecessary .owner for apple_spi_driver
-      commit: c6d0529fb70c14e3ea67ac70211ed4359bbac99d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Understood. It would be nice to implement such dynamic allocation
+in the future but as a fix to backport to stable kernels, this makes
+sense.
 
