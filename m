@@ -1,207 +1,147 @@
-Return-Path: <linux-kernel+bounces-404081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF449C3EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:57:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8365B9C3DDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBB1C21E5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:57:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488592829BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816DC1A3BDE;
-	Mon, 11 Nov 2024 12:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A076619ABD8;
+	Mon, 11 Nov 2024 11:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EOLiYe0z"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H5syxAM7"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B5019CD0E;
-	Mon, 11 Nov 2024 12:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C23719995E;
+	Mon, 11 Nov 2024 11:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731329679; cv=none; b=DHIXopa74fjTmzA3SIwGbtqT0zWfocW7kl+3KnoV16jD/V+1zsNA30Dcuz3xhZYVTmEFS/Bi8MP8h5CAeSojf4yrxdxdIALjgvET+QPER8lwf7vEsv1jKs+zyGMWt1Xc0wp+07CtoiyNJzCQupmp7zuJq20DQFq2VJVzW7PBfvA=
+	t=1731326386; cv=none; b=rpZdqMasw6zxraVZFeQmkx2+iBXo0CyCu6qcyy4CNVyFlGAKy3VJyqog8UNZl/Na2oi0mIhP5WkRRLWuomtXlHGIZT/4DM2hc8uxYhPGnxzutGQTYP4CWQZaQtrRsx7dXg6plt5AugDw/PT5CAc50g2iRRBzBnkCHzIbWRCbfJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731329679; c=relaxed/simple;
-	bh=53DniVL2kNJAh6YH3okCJEaYKY7wFXMzVRHLvbrhu4k=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=o2f0QGHQLVUOAVfihHOHMCp9g0Tv9xU2bgH1/m/z4ip2hS4TEyNKkokFXi7i5oAskUJV0Py4fIcrPzK4Tz+dQsoyPRnZZ1VaAkPdtUCFb/g3HML9sYcHmuiJIQpS3ADl2Gx4tNgDS6GwqBMMcmvMtP5RVnOO3xL9XWwro7TypEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EOLiYe0z; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=dYFXJA1/fZVGzxQ5AQj4cq8phZVmCHY7eA+a7xfnNgw=; b=EOLiYe0zU+So1jL4PO+NCMf/Cn
-	zT6rzJR6daK1Nh8Y8Skab6HGr1A5aVJAc3G2gstHJgsZCIakK9a83uf1IoHEgbsRZY/ALcXxVoF2p
-	nIpaB/0V0s5G1nazrw9z0V5bKNFgcoeqSMY2l8/8u7xBC2qQ0e32c6/IwWs1ZqEBCHM87ay/XoZ39
-	BOhicg/vcR8ZKkMtYx43GQI2dQ4oVBoLheJMusOoeELwEUU2YX1j3UPiy3JjI0NJzXehtYKhGQZGB
-	VQFq15QT8riG39vpECe/6LLyIAlVvDG1FTgyz5VSkiMg6+3Jl6qG8YT6dU/+xOTnn30hVF7eF01gD
-	11C0gq8Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tATw9-0000000Cqjc-2ZQt;
-	Mon, 11 Nov 2024 12:54:33 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id C98D4300C1F; Mon, 11 Nov 2024 13:54:32 +0100 (CET)
-Message-Id: <20241111125218.222910882@infradead.org>
-User-Agent: quilt/0.65
-Date: Mon, 11 Nov 2024 12:59:37 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: seanjc@google.com,
- pbonzini@redhat.com,
- jpoimboe@redhat.com,
- tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
- x86@kernel.org,
- kvm@vger.kernel.org,
- jthoughton@google.com,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH v2 02/12] objtool: Convert ANNOTATE_NOENDBR to ANNOTATE
-References: <20241111115935.796797988@infradead.org>
+	s=arc-20240116; t=1731326386; c=relaxed/simple;
+	bh=KNU4wY5wjmSygjsz8VFqZf/kfLQiRGmzqRW7gpjXsQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Akf8pUvKjwycHaThZvesbwQRJqAqPVarXSCVfKwzibhPVplmT1W89b23t9wHCHSvTgWpPwm2M6vYJjsKEnqLxbj0QF4L015qQJIvD+nPNSRFUn6cwSDueeisGwRA7iMSqQQvuL0uYDJ62V3DscuqwUN7cbQDoVtJna8B5XrLw9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H5syxAM7; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99eb8b607aso651503366b.2;
+        Mon, 11 Nov 2024 03:59:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731326383; x=1731931183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4KXooGMOhmi1Th3JVflxn1LYQFUXTjJHyv8htJbwU4E=;
+        b=H5syxAM7OtSiBApwZpzfTbP+L21TtjzL6Xzszir6w4ztYsSeeDFn+fMSjOJ4cYTkD9
+         kA0UoC0EPkYvXmjlDoUZY2mIkcH4ep6fdLR9BEY5s/pcTPNxir2m+lrYEinf0EgN4X/f
+         KfygUMDrh2zXJFonyIkjJki8E7hEf1YzpAeoJU0LxAy8LGyuSQq+I6DhAKmC9ZKCkWLj
+         36H2xb13W/ySMyHA+3HhUz944KsX4bTI/r5tAundXcfOpzYGmcd8Fkd7de0yRXndbFR8
+         eGpfISX5xyquo5AobWESgysSGXs0mvtdOcV4WVWZt87tzIglHGOHxS5vWu6SfpD3nZIK
+         uF/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731326383; x=1731931183;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4KXooGMOhmi1Th3JVflxn1LYQFUXTjJHyv8htJbwU4E=;
+        b=IR7CiQAO7A7FJdmGOEuZUMG0qrc+OASrmhSXzazmblHpgCV86dcCrhjBI0XfrmXzi/
+         oDSWzqOyD7xwCokWpimEvst9nb17DNw04r51+DQt+DxZbiNCOzWltAQhNItaFZxCUjOE
+         o305obyye8XIiVo8QjfkKUuRicAzKf/aMlU6x8ntpVaxk2x3LLZ/eUl2iFptw5l0aUCF
+         A3Gwg3G1tpU1EfSPiri5u1DeP1RwuV+C5ZY0/vMQQ+wmgcwDUFXtFqWJ0UcXEedOUevY
+         7VlNpnTver+vrmCNAk+U923d8Tv2BId+TfkLz6d1esz14CuwgABli4/w/pf1q3sJoDHz
+         73mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjvQiJ2YiluS6ugDpMCInrzDGB4eFnTDu3GkZdrB7BNyQ5FM2NZM4PnEo4OctJcU3H3W5rGzDzKJ/IlG8=@vger.kernel.org, AJvYcCWO0iSwgTvAAixsxmp9AIx2rlYV0+KdT/KXt0vBQ7m9IEan9RhqMm12Yt/Glwyf/L7XHn+TjlK8DaLvNA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFD+3QKgmH9KcoayTB/1lEGjgsh0k1iAvcyqatVNOsX94wI66d
+	Gjw3wX91+24JRlakK1mx6wPNSVbkulalkZMOZ8iN5RiXBoQpCdQ1
+X-Google-Smtp-Source: AGHT+IF00jAtfRc2EUX+k3JSZj7csi0+1+brLEMrWXf/8w0U7/FZXLloGHMckhc11kzEm58d/QUUAQ==
+X-Received: by 2002:a17:907:7b86:b0:a9d:e01e:ffa9 with SMTP id a640c23a62f3a-a9eeff449femr1173865766b.33.1731326382147;
+        Mon, 11 Nov 2024 03:59:42 -0800 (PST)
+Received: from [172.27.51.98] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0e2e41bsm586296566b.191.2024.11.11.03.59.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Nov 2024 03:59:41 -0800 (PST)
+Message-ID: <aabb11f4-74ea-4e57-a085-3448e64a2d07@gmail.com>
+Date: Mon, 11 Nov 2024 13:59:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/2] mlx5/core: deduplicate
+ {mlx5_,}eq_update_ci()
+To: Parav Pandit <parav@nvidia.com>,
+ Caleb Sander Mateos <csander@purestorage.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <ZyxMsx8o7NtTAWPp@x130>
+ <20241107183054.2443218-1-csander@purestorage.com>
+ <20241107183054.2443218-2-csander@purestorage.com>
+ <CY8PR12MB71954BBB822554D67F08A1CBDC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <CY8PR12MB71954BBB822554D67F08A1CBDC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/objtool.h             |   17 ++++-------------
- include/linux/objtool_types.h       |    5 +++++
- tools/include/linux/objtool_types.h |    5 +++++
- tools/objtool/check.c               |   32 +++++---------------------------
- 4 files changed, 19 insertions(+), 40 deletions(-)
 
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -45,12 +45,6 @@
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #endif
- 
--#define ANNOTATE_NOENDBR					\
--	"986: \n\t"						\
--	".pushsection .discard.noendbr\n\t"			\
--	".long 986b\n\t"					\
--	".popsection\n\t"
--
- #define ASM_REACHABLE							\
- 	"998:\n\t"							\
- 	".pushsection .discard.reachable\n\t"				\
-@@ -64,6 +58,8 @@
- 	".long " __stringify(x) "\n\t"				\
- 	".popsection\n\t"
- 
-+#define ANNOTATE_NOENDBR	ASM_ANNOTATE(ANNOTYPE_NOENDBR)
-+
- #else /* __ASSEMBLY__ */
- 
- /*
-@@ -122,13 +118,6 @@
- #endif
- .endm
- 
--.macro ANNOTATE_NOENDBR
--.Lhere_\@:
--	.pushsection .discard.noendbr
--	.long	.Lhere_\@
--	.popsection
--.endm
--
- /*
-  * Use objtool to validate the entry requirement that all code paths do
-  * VALIDATE_UNRET_END before RET.
-@@ -161,6 +150,8 @@
- 	.popsection
- .endm
- 
-+#define ANNOTATE_NOENDBR	ANNOTATE type=ANNOTYPE_NOENDBR
-+
- #endif /* __ASSEMBLY__ */
- 
- #else /* !CONFIG_OBJTOOL */
---- a/include/linux/objtool_types.h
-+++ b/include/linux/objtool_types.h
-@@ -54,4 +54,9 @@ struct unwind_hint {
- #define UNWIND_HINT_TYPE_SAVE		6
- #define UNWIND_HINT_TYPE_RESTORE	7
- 
-+/*
-+ * Annotate types
-+ */
-+#define ANNOTYPE_NOENDBR		1
-+
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/include/linux/objtool_types.h
-+++ b/tools/include/linux/objtool_types.h
-@@ -54,4 +54,9 @@ struct unwind_hint {
- #define UNWIND_HINT_TYPE_SAVE		6
- #define UNWIND_HINT_TYPE_RESTORE	7
- 
-+/*
-+ * Annotate types
-+ */
-+#define ANNOTYPE_NOENDBR		1
-+
- #endif /* _LINUX_OBJTOOL_TYPES_H */
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -2339,32 +2339,12 @@ static int read_annotate(struct objtool_
- 	return 0;
- }
- 
--static void __annotate_nop(int type, struct instruction *insn)
-+static void __annotate_noendbr(int type, struct instruction *insn)
- {
--}
--
--static int read_noendbr_hints(struct objtool_file *file)
--{
--	struct instruction *insn;
--	struct section *rsec;
--	struct reloc *reloc;
--
--	rsec = find_section_by_name(file->elf, ".rela.discard.noendbr");
--	if (!rsec)
--		return 0;
-+	if (type != ANNOTYPE_NOENDBR)
-+		return;
- 
--	for_each_reloc(rsec, reloc) {
--		insn = find_insn(file, reloc->sym->sec,
--				 reloc->sym->offset + reloc_addend(reloc));
--		if (!insn) {
--			WARN("bad .discard.noendbr entry");
--			return -1;
--		}
--
--		insn->noendbr = 1;
--	}
--
--	return 0;
-+	insn->noendbr = 1;
- }
- 
- static int read_retpoline_hints(struct objtool_file *file)
-@@ -2637,12 +2617,10 @@ static int decode_sections(struct objtoo
- 	if (ret)
- 		return ret;
- 
--	ret = read_annotate(file, __annotate_nop);
--
- 	/*
- 	 * Must be before read_unwind_hints() since that needs insn->noendbr.
- 	 */
--	ret = read_noendbr_hints(file);
-+	ret = read_annotate(file, __annotate_noendbr);
- 	if (ret)
- 		return ret;
- 
+On 08/11/2024 12:49, Parav Pandit wrote:
+> 
+>> From: Caleb Sander Mateos <csander@purestorage.com>
+>> Sent: Friday, November 8, 2024 12:01 AM
+>>
+>> The logic of eq_update_ci() is duplicated in mlx5_eq_update_ci(). The only
+>> additional work done by mlx5_eq_update_ci() is to increment
+>> eq->cons_index. Call eq_update_ci() from mlx5_eq_update_ci() to avoid
+>> the duplication.
+>>
+>> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+>> ---
+>>   drivers/net/ethernet/mellanox/mlx5/core/eq.c | 9 +--------
+>>   1 file changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>> b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>> index 859dcf09b770..078029c81935 100644
+>> --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+>> @@ -802,19 +802,12 @@ struct mlx5_eqe *mlx5_eq_get_eqe(struct mlx5_eq
+>> *eq, u32 cc)  }  EXPORT_SYMBOL(mlx5_eq_get_eqe);
+>>
+>>   void mlx5_eq_update_ci(struct mlx5_eq *eq, u32 cc, bool arm)  {
+>> -	__be32 __iomem *addr = eq->doorbell + (arm ? 0 : 2);
+>> -	u32 val;
+>> -
+>>   	eq->cons_index += cc;
+>> -	val = (eq->cons_index & 0xffffff) | (eq->eqn << 24);
+>> -
+>> -	__raw_writel((__force u32)cpu_to_be32(val), addr);
+>> -	/* We still want ordering, just not swabbing, so add a barrier */
+>> -	wmb();
+>> +	eq_update_ci(eq, arm);
+>>   }
+>>   EXPORT_SYMBOL(mlx5_eq_update_ci);
+>>
+>>   static void comp_irq_release_pci(struct mlx5_core_dev *dev, u16 vecidx)  {
+>> --
+>> 2.45.2
+> 
+> Reviewed-by: Parav Pandit <parav@nvidia.com>
+> 
 
+Acked-by: Tariq Toukan <tariqt@nvidia.com>
 
 
