@@ -1,128 +1,218 @@
-Return-Path: <linux-kernel+bounces-403753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581049C3A48
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:56:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DDC9C3A3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 09:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05BF81F222DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E505D1F2116E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 08:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CF6176FB6;
-	Mon, 11 Nov 2024 08:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CF116DED2;
+	Mon, 11 Nov 2024 08:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="HE5zLSal"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rdxcxwr8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671AC16A92D;
-	Mon, 11 Nov 2024 08:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BA13A8F7;
+	Mon, 11 Nov 2024 08:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731315324; cv=none; b=BCWF3K5n9JgG38BH28ZSidxzHVTjId0XUHdmYKqaIIcwE8VqhidFm44ua8IfHMYwosUB9n+SEHP6NqFcFDcPMhaxILTGfF4wnl4lM9hRtlxL1NQdJhdOEGrM7Ad5o8twK4EKNDAM/IfIzRyvNfIyqmM/YO5ZkEh8bjtfacHj7aA=
+	t=1731315322; cv=none; b=QUtPKqAulYZbjTHqV/twDV6YXO6cpuGed7DJYbSfd/e9LyX6bkNjItawA7O8uB4nPiVWJr86nvoioyxfKH/UevWI5KjbZPz+ieOcSAAeYVVE3BsaiyzDv9PCIbz7xSqwWuXmMB56fb0NsjgdWaa+zXL67vQw4TtOBJkhbEnl2/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731315324; c=relaxed/simple;
-	bh=okXkeaudfF6vxLWD7UajzsUYJHTBDszStlEsrOIBidk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oZlhPMFK0eCZQLlHnX+v2N5OGZaGHaU1y8jE3PibuOeZj1pgI2H3ey0GAvCJOx7SW/2ukEfwI2pGHnwtR0hiW6201N8cdxrbKA1WiNB66kJIfbl3YKUuwsXlwPwBaBHkQFySOyAp4MHBzQaryfdRbHEl0sjAAMr1SuzOiYd6skQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=HE5zLSal; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=tWeoJ2YH0hMM/bpEZuLYgNNrB0jkugiqWSczyaTdFrA=; b=HE5zLSal0mQpRQ74F8X8WmeaN9
-	KdGMTKrtTaJWZ2y6elbpKzNl3eIfuXY6F7VOsIqbZYmnauC/Xq2W6BeMlmlR9uWdtH2Y8KX91m9vZ
-	J1Xy6vuJILbQdKaW497ikTFX1BtYuJMDflgYkw92l5pOrskgZ0bybkdc0f9AUGcUL7vi//7ILJY2Q
-	LfqCh4rak4MyhZIzkoql+gfDpfbODyNtyhFCXtbRx6aX4U/VG8ou3/cVhkwk0J9hOXyfEhKty2V04
-	ZDzExQ5IgZzNFxEJ9Oz5uyyhnoeKikh4olGYuYq/DBtfXRbStaxliET9/LMMje/pGpSrV1AfRbiwp
-	AnIw9B/Q==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tAQCW-0005w8-3O; Mon, 11 Nov 2024 09:55:12 +0100
-Received: from [185.17.218.86] (helo=zen.localdomain)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tAQCV-000LxI-13;
-	Mon, 11 Nov 2024 09:55:11 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Mon, 11 Nov 2024 09:54:50 +0100
-Subject: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
- ti,nwkrq-voltage-sel option
+	s=arc-20240116; t=1731315322; c=relaxed/simple;
+	bh=x7IlPwxPkGmp/hr8l2CGnxFQG2qSW+jnBIMkJfPJW1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=J3udxA6MVhSGxnjPBZdI5WALgCSbwTC8Cplacdn0LEGERPWMtOKXTHBx8BubVVyFzH++hKdTJwf7/YAYXa1QSJ/tW2c4TR/RColBJeFYWExGi7a7c4zFxf2biGV+UPM+KEzveTryWXuzUpX+WwiqgXYO5xFe/2pt5t1/rvrFH4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rdxcxwr8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAM03lV029830;
+	Mon, 11 Nov 2024 08:55:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NwncJfMNZTZgF5BtQGwSCtCg3ZfB4IiJbm4zx0JwVV4=; b=Rdxcxwr8hR6svK4M
+	l8il/J9RQJzEmQhU93JkQznhdjgkiJF6KODTAhoUUSJzcAlokwUekcHt9J2HQW+u
+	nANT7zQqq5dwGioZoYe5OpSRMdlPSJk/Lm2/8QXBTMydvfGeoidR89vzPsdW29Zq
+	X1zZO3E4ERQeu3WYGsB0wS1MJCULtHkZYxRO7n19vYZrYn2q4CJlHltl6yBFF9TJ
+	OZR1DjM+9B4MUY1yQl3VHUeSidHagAf8dlrdIjHm2pDROZdRBdRi2Xhcq1d1cU2B
+	sFKyFPGlHlUzY1Nw68f+4trCdwPnveVWiBAIv/mCd7Qf7W9caNOa1kZT79lCxPjk
+	gE5TCg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42t0wjuk8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 08:55:16 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AB8tFHx001603
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 08:55:15 GMT
+Received: from [10.216.36.177] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
+ 2024 00:55:12 -0800
+Message-ID: <f5ad350d-5d73-4382-9253-bfd9a5798047@quicinc.com>
+Date: Mon, 11 Nov 2024 14:25:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
-References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
-In-Reply-To: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27454/Sun Nov 10 10:45:07 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: qcom: qcs615: Add QUPv3 configuration
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
+References: <20241011103346.22925-1-quic_vdadhani@quicinc.com>
+ <15238992-4ede-4b85-9947-391baaa4c8a9@oss.qualcomm.com>
+ <332f7a0a-d9df-49bd-81d5-cc04c50183b9@quicinc.com>
+ <1d374609-8448-43dc-9eec-2407669ae925@oss.qualcomm.com>
+Content-Language: en-US
+From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+In-Reply-To: <1d374609-8448-43dc-9eec-2407669ae925@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: G93-nIU63HqJwYIllUDTwGWMaKg2804w
+X-Proofpoint-ORIG-GUID: G93-nIU63HqJwYIllUDTwGWMaKg2804w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
+ phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411110075
 
-nWKRQ supports an output voltage of either the internal reference voltage
-(3.6V) or the reference voltage of the digital interface 0 - 6V.
-Add the devicetree option ti,nwkrq-voltage-sel to be able to select
-between them.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
- Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-index f1d18a5461e05296998ae9bf09bdfa1226580131..a77c560868d689e92ded08b9deb43e5a2b89bf2b 100644
---- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-+++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
-@@ -106,6 +106,18 @@ properties:
-       Must be half or less of "clocks" frequency.
-     maximum: 18000000
- 
-+  ti,nwkrq-voltage-sel:
-+    $ref: /schemas/types.yaml#/definitions/uint8
-+    description:
-+      nWKRQ Pin GPO buffer voltage rail configuration.
-+      The option of this properties will tell which
-+      voltage rail is used for the nWKRQ Pin.
-+    oneOf:
-+      - description: Internal voltage rail
-+        const: 0
-+      - description: VIO voltage rail
-+        const: 1
-+
-   wakeup-source:
-     $ref: /schemas/types.yaml#/definitions/flag
-     description:
-@@ -157,6 +169,7 @@ examples:
-             device-state-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
-             device-wake-gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
-             reset-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+            ti,nwkrq-voltage-sel = /bits/ 8 <0>;
-             wakeup-source;
-         };
-     };
+On 10/28/2024 6:38 PM, Konrad Dybcio wrote:
+> On 28.10.2024 12:19 PM, Viken Dadhaniya wrote:
+>>
+>>
+>> On 10/26/2024 1:10 AM, Konrad Dybcio wrote:
+>>> On 11.10.2024 12:33 PM, Viken Dadhaniya wrote:
+>>>> Add DT support for QUPv3 Serial Engines.
+>>>>
+>>>> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>> +    qup_opp_table: opp-table-qup {
+>>>> +        compatible = "operating-points-v2";
+>>>
+>>> opp-shared;
+>>
+>> Added in v2.
+>>
+>>>
+>>>> +
+>>>> +        opp-75000000 {
+>>>> +            opp-hz = /bits/ 64 <75000000>;
+>>>> +            required-opps = <&rpmhpd_opp_low_svs>;
+>>>> +        };
+>>>> +
+>>>> +        opp-100000000 {
+>>>> +            opp-hz = /bits/ 64 <100000000>;
+>>>> +            required-opps = <&rpmhpd_opp_svs>;
+>>>> +        };
+>>>> +
+>>>> +        opp-128000000 {
+>>>> +            opp-hz = /bits/ 64 <128000000>;
+>>>> +            required-opps = <&rpmhpd_opp_nom>;
+>>>> +        };
+>>>> +    };
+>>>> +
+>>>>        psci {
+>>>>            compatible = "arm,psci-1.0";
+>>>>            method = "smc";
+>>>> @@ -392,6 +427,24 @@
+>>>>                #size-cells = <1>;
+>>>>            };
+>>>>    +        gpi_dma0: qcom,gpi-dma@800000  {
+>>>> +            compatible = "qcom,sdm845-gpi-dma";
+>>>
+>>> You must define a new compatible for qcs615, sdm845 is used as a fallback
+>>> (so that we don't have to add new driver entries). You will however need
+>>> to submit a separate dt-bindings change.
+>>
+>> We have added sdm845 in compatible due to below comment in driver file
+>>
+>> File: https://github.com/torvalds/linux/blob/81983758430957d9a5cb3333fe324fd70cf63e7e/drivers/dma/qcom/gpi.c#L2284
+>>
+>>    /*
+>>     * Do not grow the list for compatible devices. Instead use
+>>     * qcom,sdm845-gpi-dma (for ee_offset = 0x0) or qcom,sm6350-gpi-dma
+>>     * (for ee_offset = 0x10000).
+>>     */
+>>
+>> Do we still require new compatible for qcs615 ?
+> 
+> The comment concerns the driver side. All devicetree compatible strings
+> present in the tree must be documented in Documentation/devicetree/bindings/
+> which is where you should add your one as well.
+> 
 
--- 
-2.46.2
+Thanks, Pushed separate patch for GPI documentation patch.
+https://lore.kernel.org/all/w66ki7lwrqol24iptikn7ccna25ujqoywjena5ulekf6vynxny@dylbj2r34h7l/T/
 
+
+>>
+>>>
+>>>> +            reg = <0x0 0x800000 0x0 0x60000>;
+>>>> +            #dma-cells = <3>;
+>>>> +            interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
+>>>> +                     <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
+>>>> +            dma-channels = <8>;
+>>>> +            dma-channel-mask = <0xf>;
+>>>> +            iommus = <&apps_smmu 0xd6 0x0>;
+>>>> +            status = "disabled";
+>>>
+>>> Any reason?
+>>
+>> By default, we are disabling all nodes. In the target-specific file, we will update them based on the required use case.
+>>
+>>>
+>>>> +        };
+>>>> +
+>>>>            qupv3_id_0: geniqup@8c0000 {
+>>>>                compatible = "qcom,geni-se-qup";
+>>>>                reg = <0x0 0x8c0000 0x0 0x6000>;
+>>>> @@ -400,6 +453,7 @@
+>>>>                     <&gcc GCC_QUPV3_WRAP_0_S_AHB_CLK>;
+>>>>                clock-names = "m-ahb",
+>>>>                          "s-ahb";
+>>>> +            iommus = <&apps_smmu 0xc3 0x0>;
+>>>
+>>> This looks like a separate fix
+>>
+>> One QUP and UART (console) related change has been added as part of the base DTSI. Now, we are adding all remaining QUP and I2C/SPI/UART configurations with IOMMUs and other properties.
+>>
+>> Is there any specific reason to make this a separate fix?
+> 
+> Did this work properly before?
+
+Earlier, we verified the console UART use case, and it worked.
+
+> 
+> Konrad
 
