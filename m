@@ -1,80 +1,137 @@
-Return-Path: <linux-kernel+bounces-404479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DD69C4429
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:52:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D6A9C442E
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE2A1F265BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FB641F265D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5D31AB503;
-	Mon, 11 Nov 2024 17:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9CF1A76DD;
+	Mon, 11 Nov 2024 17:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bLtk0Ral"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a72DBlje"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1332D1AA7BF;
-	Mon, 11 Nov 2024 17:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688421A4F0A;
+	Mon, 11 Nov 2024 17:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731347372; cv=none; b=oPD/OFtvmtjR2Jgq0FBS6dM86uMza/P9IJlCxbW7cnqzd82yuCLzwnerH1ihl4SXtJfN/4sFStprwgdN2oirzXyQpKB690dBuhfswnpFqqESPiD1+Swefc1UXqGYIajp6mQ1cxx4CL216b9V35Odow+WyqnRoR0r040sgoG2bWY=
+	t=1731347486; cv=none; b=GMtBylFwCtfwci1GgRpa0+N+i0MVATtFKcseVXrlLb8GHfsW1zI67b+0syuxqieEDxijz+31eakALV9ZMKpa4P3TzJJIW2VF3YEKV5udKxMvIeVlNnWcsA+C/xPJwYoHwj0I97qv/ByzwJ29z4tIQrLYMPAuba1ODbr3ZAToL54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731347372; c=relaxed/simple;
-	bh=L3GZntAmPUUqW5omPxjEYocwCLXEPfEJFR8CPMxG9Lo=;
+	s=arc-20240116; t=1731347486; c=relaxed/simple;
+	bh=qucWoD3U+wiP62CZ51ISOtD1EZMtjZ56hiKOnRr9a+Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImIA9jktobgLhHuump9TLCsHH7oF6jDOV7UqfIwVQnkU/0Cnyt4N1LSk3FOAz/2J9aa9IhHPnW1P7qBpuW6HtKV2euUl5npBvz3adzVqFfsPThhECvwptE/ym2a0ELUk+lN1jBbzIzUZWZ6tTSik11PxYiQxDHIJaHwCxoVdHZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bLtk0Ral; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC369C4CED4;
-	Mon, 11 Nov 2024 17:49:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JypYWUzRvkk4s/DLqEMVU3o7gBWUMXV8pTbgBfWgPNrjijNr9iF8O83lcFrpOGIfPYwTYAsj17u9nnkobK88WQqQRyiysHippFn9WBs5sxIaMMfoB56P8+CMCPUKXvVLiiMDBRp63NNZbMePKm4K+lOpihIPBoqEPQZl0d4RRo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a72DBlje; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FACC4CECF;
+	Mon, 11 Nov 2024 17:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731347371;
-	bh=L3GZntAmPUUqW5omPxjEYocwCLXEPfEJFR8CPMxG9Lo=;
+	s=k20201202; t=1731347486;
+	bh=qucWoD3U+wiP62CZ51ISOtD1EZMtjZ56hiKOnRr9a+Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bLtk0Ral7YovejtQjT1ZaOLi3t2OdfteZHFsXcyw/f7JHDFZcHRmf5Ht78b83h72u
-	 kgi/asrgJz0qo97qJAnMRJysqLCUMzjrQE719esda9tgfyswfxhGNFICCU5wBprtNE
-	 374jYnmcdO1oM03We24f92wlgDcuPuO0ZVqCushAQ1NrXQMjSnx3mHELqjwujEBg37
-	 Qf1EwwzORVhXid04xCHY7X/Wcrdn9P17aV4xw1gAlHsMga2OiWWA8rlRzfZwpvUMkz
-	 16OtB3TlwAtd3QW7/NwVqEBAmMEIox+hzDxP+xtNmoh1F8fDx9Cp5ia6DOPYl+8Y/L
-	 oYQI/r7u37QpQ==
-Date: Mon, 11 Nov 2024 17:49:27 +0000
-From: Simon Horman <horms@kernel.org>
-To: Nelson Escobar <neescoba@cisco.com>
-Cc: John Daley <johndale@cisco.com>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christian Benvenuti <benve@cisco.com>,
-	Satish Kharat <satishkh@cisco.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+	b=a72DBljeqeGThd3CzNjMQL0M1EFKTtmfaHZ4/+ilEJXUs7by9EcV/JAGqkXYsBE97
+	 azQ2l3qke8tr65iSHx4Z0WMXwzfqzWe5FWh1k0r1pFNLt4dKeNZNJjUDgy+4gCvmsH
+	 BGXecJ6Brxm3yR/Js2GmdrDau+p+mux7O20u7AxbF++iB6PBHJxX1+9jCc/kicEFOf
+	 I/PmFNl4Qxbu1i6CdHb7JR6uSfAdWSHCBFEREjCjiAeXIP0f24Xv0FtFCTAOcGZ275
+	 byRCuIaeMWHP8iWhdmvKEXHL94Ut3PfbOOPFfCmQnbV6TN1SwedoySMK/7yrsBFylz
+	 K9ZbcHOa5YkmA==
+Date: Mon, 11 Nov 2024 14:51:22 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Luo Yifan <luoyifan@cmss.chinamobile.com>
+Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 7/7] enic: Move kdump check into
- enic_adjust_resources()
-Message-ID: <20241111174927.GK4507@kernel.org>
-References: <20241108-remove_vic_resource_limits-v3-0-3ba8123bcffc@cisco.com>
- <20241108-remove_vic_resource_limits-v3-7-3ba8123bcffc@cisco.com>
+Subject: Re: [PATCH] perf tools: Remove redundant variable assignment
+Message-ID: <ZzJEGipP_AvUoPWw@x1>
+References: <20241111082713.274761-1-luoyifan@cmss.chinamobile.com>
+ <ZzJCEadEKi8LiSTm@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241108-remove_vic_resource_limits-v3-7-3ba8123bcffc@cisco.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzJCEadEKi8LiSTm@x1>
 
-On Fri, Nov 08, 2024 at 09:47:53PM +0000, Nelson Escobar wrote:
-> Move the kdump check into enic_adjust_resources() so that everything
-> that modifies resources is in the same function.
+On Mon, Nov 11, 2024 at 02:42:46PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Mon, Nov 11, 2024 at 04:27:13PM +0800, Luo Yifan wrote:
+> > This patch makes a minor change that removes the redundant assignment
+> > to the variable ret, simplifying the code.
 > 
-> Co-developed-by: John Daley <johndale@cisco.com>
-> Signed-off-by: John Daley <johndale@cisco.com>
-> Co-developed-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Satish Kharat <satishkh@cisco.com>
-> Signed-off-by: Nelson Escobar <neescoba@cisco.com>
+> Thanks, applied to perf-tools-next,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Are you build testing these patches?
 
+ GEN     perf-archive
+  CC      /tmp/build/perf-tools-next/libsubcmd/sigchain.o
+  GEN     perf-iostat
+  INSTALL libbpf_headers
+  LD      /tmp/build/perf-tools-next/libsubcmd/libsubcmd-in.o
+  AR      /tmp/build/perf-tools-next/libsubcmd/libsubcmd.a
+jvmti/jvmti_agent.c: In function ‘jvmti_write_code’:
+jvmti/jvmti_agent.c:366:13: error: variable ‘ret’ set but not used [-Werror=unused-but-set-variable]
+  366 |         int ret = -1;
+      |             ^~~
+cc1: all warnings being treated as errors
+make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:106: /tmp/build/perf-tools-next/jvmti/jvmti_agent.o] Error 1
+make[2]: *** [Makefile.perf:936: /tmp/build/perf-tools-next/jvmti/jvmti-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  CC      /tmp/build/perf-tools-next/util/header.o
+  LD      /tmp/build/perf-tools-next/util/perf-util-in.o
+  LD      /tmp/build/perf-tools-next/perf-util-in.o
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:119: install-bin] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+⬢ [acme@toolbox perf-tools-next]$
+
+The original patch by Stephane has it right, that initial ret = -1 is
+used when there are other problems and the code goes to a label at the
+end, returning that -1.
+
+But the code was changed later and problems were introduced, so you
+removed something simple at the end and somehow missed that it breaks
+the build (at least for me) and when I go look at the code, I see the
+other problems, so please take the time to try and investigate this and
+fix the 'ret' variable usage.
+
+I'm removing this patch from my local tree.
+
+Thanks,
+ 
+> - Arnaldo
+>  
+> > Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> > ---
+> >  tools/perf/jvmti/jvmti_agent.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
+> > index 526dcaf9f..751219143 100644
+> > --- a/tools/perf/jvmti/jvmti_agent.c
+> > +++ b/tools/perf/jvmti/jvmti_agent.c
+> > @@ -408,9 +408,7 @@ jvmti_write_code(void *agent, char const *sym,
+> >  
+> >  	funlockfile(fp);
+> >  
+> > -	ret = 0;
+> > -
+> > -	return ret;
+> > +	return 0;
+> >  }
+> >  
+> >  int
+> > -- 
+> > 2.27.0
+> > 
+> > 
 
