@@ -1,134 +1,234 @@
-Return-Path: <linux-kernel+bounces-403995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EE99C3DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:47:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D309C3DAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B45E1C219C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877A91C21E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A174A18BBA8;
-	Mon, 11 Nov 2024 11:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2713194ACC;
+	Mon, 11 Nov 2024 11:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cqsSjQ2/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m//7VbKV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6CF15666B;
-	Mon, 11 Nov 2024 11:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622D018990D;
+	Mon, 11 Nov 2024 11:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731325669; cv=none; b=PUjS50r1We6Jh5PqsJMDhh3+o/bCF6P0FGKV4jpKEOhWQTuFaxiPSulJuolABAPWqRSYQ5ugWQZ8V+JNJVE4LF4ktQI9LuxUUUnDqjxUpWKDn1DKwowGPgaa/bByEoOuRkzjp7R0b3h6GvcYu+OxIGVnTS9mqqLUWXf92xcO/Bg=
+	t=1731325488; cv=none; b=FEEGu9AxoI20Vx1cghuTchimHqYlW8UL0vFBg7QNbHHSdl/5po59o87Dc8pLZrsDr+oiSP0b8uHIgPObCLnBdzj7jDFTy7ggXv39SXVtq/shCyjhBsAsFvC8Gn1GIC2gmY0QRRLOopcDgg3ykxULdZcM9ng+7cq5qpQz1GQ2Bi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731325669; c=relaxed/simple;
-	bh=5djMP0zfplNhwi+uRW+WX0FrSX70E2848BtYGXQR5Cs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kxLkXm9qv0L65VAafIvL5ooIIZgRFSc9N1ek+eh6QStT8IujbuDyNYF4ug2qEwv4k4Qx4zzxrYmrfb4F3Y6MjOkxcCfLTXsQbi2Mw2XOxJJmYLhpx6xEUnJvRwAeJ63e05l34F3bFE1izqVPjr9i9/AuS1xNpaT1jPZyi6GGMn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cqsSjQ2/; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731325667; x=1762861667;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=5djMP0zfplNhwi+uRW+WX0FrSX70E2848BtYGXQR5Cs=;
-  b=cqsSjQ2/EzBaG2vgRfToRQfPs22nHobCnjfiOTRXRoHEVjjXSR0kbXY8
-   928x4Xe9XBL4kv8bmv6dlYjWuW7Ai/Alb4ses+PdrIaTkRmXH/5ahOHTQ
-   B3hdGnCs8rghYmUSssc43UEISSQ6aml5azqwnM7c5hmyQ7uacJp+1MDG+
-   dM/0N/kL4wn0S8x7kJVdm60hlPSya3DVtHjAa2ej+C4H6H0aD5LG+veiy
-   /tTFdJTUSc1d87Zt06BIag0uwIo9K+LE33qVQSS8FMFDFyn+WSetZvEpQ
-   b6aa4P6kOT2T1aCrlQf1MoI2/ox5JGUGUoHzw2mHAafDyEdYw5aUA1AAc
-   g==;
-X-CSE-ConnectionGUID: ion0PxhPQbezV6Gyi/tYCA==
-X-CSE-MsgGUID: kyzb8klQR4ef7QorsrZHFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31293997"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="31293997"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 03:47:46 -0800
-X-CSE-ConnectionGUID: ci7DUUYTRP6Yd9RjZA+j8w==
-X-CSE-MsgGUID: 3QYAQafmTGijx5ef0bBYVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
-   d="scan'208";a="87685693"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 03:47:43 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: zhangheng <zhangheng@kylinos.cn>
-Cc: marcel@holtmann.org,  johan.hedberg@gmail.com,  luiz.dentz@gmail.com,
-  erick.archer@outlook.com,  kees@kernel.org,  geert@linux-m68k.org,
-  jirislaby@kernel.org,  linux-bluetooth@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] tty: rfcomm: use sysfs_emit() instead of sprintf()
-In-Reply-To: <20241109091748.4037589-1-zhangheng@kylinos.cn>
-	(zhangheng@kylinos.cn's message of "Sat, 9 Nov 2024 17:17:48 +0800")
-References: <20241109091748.4037589-1-zhangheng@kylinos.cn>
-Date: Mon, 11 Nov 2024 19:44:10 +0800
-Message-ID: <87y11qyoz9.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731325488; c=relaxed/simple;
+	bh=Rhej/lpztwWzOmacoWk1FMzPVVXs+E+sfhO+vraQMto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t1Yyj3+AM1Jm8vcp5IAkFeRZTc+mhWMSeKiPz9l59beAvzJeBh26lp8x0D0gKJeLiCBV1D6QgTYAlRRoZPPjSo3qZJs0DcLrNp7kpCB9KP1udbzY6YwQ2LQC8IK3M78/jKajL7yYLpoFBvKrGFbKBDZ6z7ul9exndx4r9WF1qhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m//7VbKV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AAMtmST010319;
+	Mon, 11 Nov 2024 11:44:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	35Kq6UjEobmTy+XxoDoy4c7Z6Kl1wibH+RL9wBYN0Xw=; b=m//7VbKVO7NK8yny
+	0O2+ZQcH8Ok+ZyPEd+0bw0WWpJj/GpWH26xaFVno4N+U9ERDZN5poFHJXeDrKAqE
+	Xy8vmIwR698p011wY7uzuOP3VqmHYo8nytLU/K1XhpcOP0qQ537G95N7PKbF7JdO
+	MUWf4Lt1mBIdXDPCWOhpAB98+mDnq9MDfVY3dUOWoIxwVUCFDt5zM76t7MeQaDSj
+	2fC1L6ZaY0hlPxkyc3WkicGTnOjJql34WGs55T146egRee5fC5spXwzSu/Ax4KHw
+	RYC0HJT88eysSl2ZzSJuoKsbOLSFVx8BidufedeLXpbqPdhU+iGKwYLr6oXMQb0k
+	dZgy3A==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42sxr5v5g8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 11:44:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ABBiaGg005695
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 11 Nov 2024 11:44:36 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 11 Nov
+ 2024 03:44:30 -0800
+Message-ID: <07ec014e-4113-4cca-b731-e080489f01c6@quicinc.com>
+Date: Mon, 11 Nov 2024 17:14:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/7] thermal/drivers/tsens: Add TSENS enable and
+ calibration support for V2
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <srinivas.kandagatla@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <rafael@kernel.org>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <quic_srichara@quicinc.com>,
+        <quic_varada@quicinc.com>
+References: <20241107140550.3260859-1-quic_mmanikan@quicinc.com>
+ <20241107140550.3260859-4-quic_mmanikan@quicinc.com>
+ <z24xwwdtd6rytktxtuagiwbiukwd5tvfhotbbydizwsjtlnaob@q3ujwf2eiwds>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <z24xwwdtd6rytktxtuagiwbiukwd5tvfhotbbydizwsjtlnaob@q3ujwf2eiwds>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XZo3bOFa70FdGRz50gkrfAHzWOWzCeIs
+X-Proofpoint-GUID: XZo3bOFa70FdGRz50gkrfAHzWOWzCeIs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 malwarescore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=999 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411110098
 
-Hi, Heng,
 
-Thanks for your patch.
 
-zhangheng <zhangheng@kylinos.cn> writes:
+On 11/9/2024 5:53 AM, Dmitry Baryshkov wrote:
+> On Thu, Nov 07, 2024 at 07:35:46PM +0530, Manikanta Mylavarapu wrote:
+>> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+>>
+>> SoCs without RPM need to enable sensors and calibrate them from the kernel.
+>> The IPQ5332 and IPQ5424 use the tsens v2.3.3 IP and do not have RPM.
+>> Therefore, add a new calibration function for V2, as the tsens.c calib
+>> function only supports V1. Also add new feature_config, ops and data for
+>> IPQ5332, IPQ5424.
+>>
+>> Although the TSENS IP supports 16 sensors, not all are used. The hw_id
+>> is used to enable the relevant sensors.
+>>
+>> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>> Changes in V7:
+>> 	- Move val calculation out of switch-case and assign default
+>> 	  values to shift, slope and czero and then change them under
+>> 	  switch-case in tsens_v2_calibrate_sensor().
+>>
+>>  drivers/thermal/qcom/tsens-v2.c | 176 ++++++++++++++++++++++++++++++++
+>>  drivers/thermal/qcom/tsens.c    |   8 +-
+>>  drivers/thermal/qcom/tsens.h    |   4 +-
+>>  3 files changed, 186 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
+>> index 0cb7301eca6e..6d2783577139 100644
+>> --- a/drivers/thermal/qcom/tsens-v2.c
+>> +++ b/drivers/thermal/qcom/tsens-v2.c
+>> @@ -4,13 +4,32 @@
+>>   * Copyright (c) 2018, Linaro Limited
+>>   */
+>>  
+>> +#include <linux/bitfield.h>
+>>  #include <linux/bitops.h>
+>>  #include <linux/regmap.h>
+>> +#include <linux/nvmem-consumer.h>
+>>  #include "tsens.h"
+>>  
+>>  /* ----- SROT ------ */
+>>  #define SROT_HW_VER_OFF	0x0000
+>>  #define SROT_CTRL_OFF		0x0004
+>> +#define SROT_MEASURE_PERIOD	0x0008
+>> +#define SROT_Sn_CONVERSION	0x0060
+>> +#define V2_SHIFT_DEFAULT	0x0003
+>> +#define V2_SLOPE_DEFAULT	0x0cd0
+>> +#define V2_CZERO_DEFAULT	0x016a
+>> +#define ONE_PT_SLOPE		0x0cd0
+>> +#define TWO_PT_SHIFTED_GAIN	921600
+>> +#define ONE_PT_CZERO_CONST	94
+>> +#define SW_RST_DEASSERT		0x0
+>> +#define SW_RST_ASSERT		0x1
+>> +#define MEASURE_PERIOD_2mSEC	0x1
+>> +#define RSEULT_FORMAT_TEMP	0x1
+>> +#define TSENS_ENABLE		0x1
+>> +#define SENSOR_CONVERSION(n)	(((n) * 4) + SROT_Sn_CONVERSION)
+>> +#define CONVERSION_SHIFT_MASK	GENMASK(24, 23)
+>> +#define CONVERSION_SLOPE_MASK	GENMASK(22, 10)
+>> +#define CONVERSION_CZERO_MASK	GENMASK(9, 0)
+>>  
+>>  /* ----- TM ------ */
+>>  #define TM_INT_EN_OFF			0x0004
+>> @@ -50,6 +69,17 @@ static struct tsens_features ipq8074_feat = {
+>>  	.trip_max_temp	= 204000,
+>>  };
+>>  
+>> +static struct tsens_features ipq5332_feat = {
+>> +	.ver_major	= VER_2_X_NO_RPM,
+>> +	.crit_int	= 1,
+>> +	.combo_int	= 1,
+>> +	.adc		= 0,
+>> +	.srot_split	= 1,
+>> +	.max_sensors	= 16,
+>> +	.trip_min_temp	= 0,
+>> +	.trip_max_temp	= 204000,
+>> +};
+>> +
+>>  static const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
+>>  	/* ----- SROT ------ */
+>>  	/* VERSION */
+>> @@ -59,6 +89,10 @@ static const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
+>>  	/* CTRL_OFF */
+>>  	[TSENS_EN]     = REG_FIELD(SROT_CTRL_OFF,    0,  0),
+>>  	[TSENS_SW_RST] = REG_FIELD(SROT_CTRL_OFF,    1,  1),
+>> +	[SENSOR_EN]    = REG_FIELD(SROT_CTRL_OFF,    3,  18),
+>> +	[CODE_OR_TEMP] = REG_FIELD(SROT_CTRL_OFF,    21, 21),
+>> +
+>> +	[MAIN_MEASURE_PERIOD] = REG_FIELD(SROT_MEASURE_PERIOD, 0, 7),
+>>  
+>>  	/* ----- TM ------ */
+>>  	/* INTERRUPT ENABLE */
+>> @@ -104,6 +138,126 @@ static const struct reg_field tsens_v2_regfields[MAX_REGFIELDS] = {
+>>  	[TRDY] = REG_FIELD(TM_TRDY_OFF, 0, 0),
+>>  };
+>>  
+>> +static int tsens_v2_calibrate_sensor(struct device *dev, struct tsens_sensor *sensor,
+>> +				     struct regmap *map,  u32 mode, u32 base0, u32 base1)
+>> +{
+>> +	u32 shift = V2_SHIFT_DEFAULT;
+>> +	u32 slope = V2_SLOPE_DEFAULT, czero = V2_CZERO_DEFAULT, val;
+>> +	char name[8];
+>> +	int ret;
+>> +
+>> +	/* Read offset value */
+>> +	ret = snprintf(name, sizeof(name), "s%d", sensor->hw_id);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = nvmem_cell_read_variable_le_u32(dev, name, &sensor->offset);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Based on calib mode, program SHIFT, SLOPE and CZERO */
+>> +	switch (mode) {
+>> +	case TWO_PT_CALIB:
+>> +		slope = (TWO_PT_SHIFTED_GAIN / (base1 - base0));
+>> +
+>> +		czero = (base0 + sensor->offset - ((base1 - base0) / 3));
+>> +
+>> +		fallthrough;
+>> +	case ONE_PT_CALIB2:
+>> +		czero = base0 + sensor->offset - ONE_PT_CZERO_CONST;
+> 
+> THis will override czero calculation from TWO_PT_CALIB case.
+> 
 
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
+I will replace 'fallthrough' with 'break' to avoid override.
 
-Please provide a cover letter [0/4] for your series, and send your
-series with `git send-email '[0/4]' '[1/4]' ... '[4/4]', so that it will
-be shown as a thread in most email clients, like shown in lore,
-
-https://lore.kernel.org/linux-mm/20241107101005.69121-1-21cnbao@gmail.com/
-
-While your email are shown as separate emails,
-
-https://lore.kernel.org/lkml/20241109091748.4037589-1-zhangheng@kylinos.cn/
-
-If there are no direct relationship among 4 patches in series, you can
-send them separately instead of a series.
-
-> Signed-off-by: zhangheng <zhangheng@kylinos.cn>
-> ---
->  net/bluetooth/rfcomm/tty.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
-> index af80d599c337..21a5b5535ebc 100644
-> --- a/net/bluetooth/rfcomm/tty.c
-> +++ b/net/bluetooth/rfcomm/tty.c
-> @@ -201,14 +201,14 @@ static ssize_t address_show(struct device *tty_dev,
->  			    struct device_attribute *attr, char *buf)
->  {
->  	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
-> -	return sprintf(buf, "%pMR\n", &dev->dst);
-> +	return sysfs_emit(buf, "%pMR\n", &dev->dst);
->  }
->  
->  static ssize_t channel_show(struct device *tty_dev,
->  			    struct device_attribute *attr, char *buf)
->  {
->  	struct rfcomm_dev *dev = dev_get_drvdata(tty_dev);
-> -	return sprintf(buf, "%d\n", dev->channel);
-> +	return sysfs_emit(buf, "%d\n", dev->channel);
->  }
->  
->  static DEVICE_ATTR_RO(address);
-
---
-Best Regards,
-Huang, Ying
+Thanks & Regards,
+Manikanta.
 
