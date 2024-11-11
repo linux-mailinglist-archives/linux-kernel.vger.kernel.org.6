@@ -1,154 +1,149 @@
-Return-Path: <linux-kernel+bounces-404006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A80C9C3DDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:00:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630B99C3DDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 13:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 574D6B242B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A081C218A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 12:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4217319C552;
-	Mon, 11 Nov 2024 12:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39DE1922D6;
+	Mon, 11 Nov 2024 12:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuvNKBFg"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ufns7pd4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEA4199943;
-	Mon, 11 Nov 2024 12:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB84717C91;
+	Mon, 11 Nov 2024 12:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731326405; cv=none; b=kkFeR0pqV1OIFOlWuuL0ckfxRGsShCpcrXw4VtJbiXZQ7AQtjSXK4Acc0Wza1UGm9N4cwfRLpiTSqQ6UDh7zVVOBUb1t0vy0jCPfZ4u6u7eiT7FafpfAO9G+WZ/OsV4XmpwgrPqyYy2mXumVk3KpKBZ8F5uDNgKHXDGEtX7xm7s=
+	t=1731326484; cv=none; b=Zsh52CxMhrBHmpy4pK6F3otfdSnGqDEl4wtSRsHOCfZLiohPig8MI/Abh/XVTs5JIgmV/0wnUCstR+vkrv0mMYpPtTOgTMfFE52kBs3Uk66LO6drzd7mfRUxnoWzloP2a+/L7Q59jC0ZbrPT9iOeRgxkYcu+rSKtW57L5QYAE/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731326405; c=relaxed/simple;
-	bh=aeOsBBfNgbMgQSr1NnwyxTSfx3+qg+WQGpKzj08cjqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hiFWMWObBu+XAmUY4k/p74OUSAkHZz0Vey6qhOInWaS2GQmSSDX1vry5rKzDmYiOuOSHyt1e6qPd9oItQdpft2IHo+Jt7myFkjIWTzW9EwIu8JMn0FoRfCy77ZvXh0qKuRPB4k5jTRn1kUkT7rHXmt8AZ7w3Jj8h2162ZNUprzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuvNKBFg; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so188542266b.0;
-        Mon, 11 Nov 2024 04:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731326402; x=1731931202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ERz2Qab/QZHhmp5ujVARsacqaYheTwZvXRQSx29cBsY=;
-        b=iuvNKBFg8P3JMe5bizOeWjTKqe87+Bw8aoDThhHn9dRsqMNmQSio73UGNjZQan6Wng
-         dgpwJyLv3cw0q/R4aYaVV1InSi+7JPbMWLf2z0Sqf965WNFLl/tJVAe1No2G98GTRQAF
-         OZO5xup74bOBK0reGayY2ZLl3LTKI/DSLgqgNsrXevLOFlWF0nT7nD6KtySWVUdq6DVP
-         8r+1x6OUpnxBwytXMwsEDEjzrDZPP6XbtCPUUbDRV5hD00QFANOnc5CUzH4WQduhudkp
-         vWbSAFmAs/eDYoxDNkjTJ6NmT1cKFqlACka8yHBc31mnXNq30rGq1f0NNPEPj1rXMbbn
-         zNWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731326402; x=1731931202;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ERz2Qab/QZHhmp5ujVARsacqaYheTwZvXRQSx29cBsY=;
-        b=A1KTHZnrNhd3/ZStLvQGX9X8N8gEOkmGmNDJKTSikmN9pfVUlaNJvR8kbZqpOhOjl1
-         Sufils/Yqgh/SswOhi3/5VLi9XKPUZYWA93gfw9bhV3km9G3pP4qGRUbB/REfqT+T45v
-         sI2rK/LcoItQd+xjJSBTdemh0B3+vGEBppNgPdJYiXKHHUUL0OxvHVg/BLB+LVzA5+GN
-         4GgbAP1OHn2/CDU9w6Di0mV9dR3HUaEvc/doU14byKm7FNwpGlNH9IAHkerNwet14ofo
-         A4ts3p1236/yRGF+CIPW7Himqs8Huy3pJdJ6YHHcaBpsMFDhPBBPD+vsjmPyY+7mJM3l
-         /QQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCv1VKkmw7teADE7fp6aRpOOydZcrMIsN6cdNqkzIjSmjOZsQYRNuYo2eznN1ISYMfFmMxKkvBiuUYkA==@vger.kernel.org, AJvYcCVUt2++MR0kpkspqS3SJJ5jngJ1FrGzZdO308P9psyG+a8FPhR9vfGLx9SCuSW3c0E1xhL3ntSsiSDFnUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOD09wMDKD0IAgLaTCr8MIi0HgMGNBJIWaHNvlfxSTk8p3iNdK
-	uFPHD3/fo/HdYPhKnxSwh2q/rm+GqnsxxKeg3ZlGWZOy3UAgbpEq
-X-Google-Smtp-Source: AGHT+IElto91yI/s7EETqqUQ6isEerHA+zumw4wYVTzMGHsiInbZsOqOX2Jy0VD1W+4Ay5TlSktDLA==
-X-Received: by 2002:a17:907:94c1:b0:a9e:d417:c725 with SMTP id a640c23a62f3a-a9eefebd49emr1221025466b.3.1731326400309;
-        Mon, 11 Nov 2024 04:00:00 -0800 (PST)
-Received: from [172.27.51.98] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0dee5e6sm584993166b.137.2024.11.11.03.59.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Nov 2024 04:00:00 -0800 (PST)
-Message-ID: <f1a56268-f1d5-4204-be34-5c7a1749bcd9@gmail.com>
-Date: Mon, 11 Nov 2024 13:59:57 +0200
+	s=arc-20240116; t=1731326484; c=relaxed/simple;
+	bh=zVuvjtKAs+LjZH1OYuewCYgzwIIhVlFF6h3ovVOjueM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sBqlhPMdKL43q10KgzfFBijdSieErjt3by9JtqFPRCjsIXtmVquCMNuDeODO5HloJCw7XSXNN8TITgS4xa7GWQEXu3J9rGjI0+eo6bYjFPlHS3by2eSu/xoNmZkOfHRmFmuLGY3/RKYFN4UMlKxmlUqidviPpHHCZ+zvTDYnWxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ufns7pd4; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731326483; x=1762862483;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zVuvjtKAs+LjZH1OYuewCYgzwIIhVlFF6h3ovVOjueM=;
+  b=Ufns7pd4OP0DNefefIumqxTm8QQpSUGZ78Zca4AWP6VNXVkwETXBXUFJ
+   P192/UyLct6zxFJ43w1LUeIZHMy7aAy1kAVUozdOmO+1xUgvOZPZ6qnZh
+   xuI3hMKtxkgaWSOcHUfbezGgzPurkgOrkUU3ZdRmzUowxzCYrCuPOnxUf
+   GSCI6bb7GmKdgLIO5gWDKpLW1wiXxeiU7v/Wx6Qc3kW2L2a7TFDLAdw7Q
+   Cj2wcmXCW65+vgw2vVV4NF/Qjdp1Nspq7eL3u0vD7gHkU89qRZCZYJxSW
+   Z4Zq8wc53cOuJwJ4fT6drD6SV4lP4NRZ0XnXFwOGiXro8IKc/PTFayFyu
+   A==;
+X-CSE-ConnectionGUID: Z7nn/L/ITDaLvCZf/pFRkQ==
+X-CSE-MsgGUID: d+22ClzqTDKRMUFgF8ZusQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31088993"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31088993"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 04:01:22 -0800
+X-CSE-ConnectionGUID: rcCRq3O5TAKxfIenzt6Qsw==
+X-CSE-MsgGUID: Vp/HE32DSgeoXzxisVcxYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,145,1728975600"; 
+   d="scan'208";a="124453001"
+Received: from lkp-server01.sh.intel.com (HELO dc8184e5aea1) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 11 Nov 2024 04:01:19 -0800
+Received: from kbuild by dc8184e5aea1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAT6a-0000G9-1N;
+	Mon, 11 Nov 2024 12:01:16 +0000
+Date: Mon, 11 Nov 2024 20:01:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zhao Qunqin <zhaoqunqin@loongson.cn>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+	bp@alien8.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-edac@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel@xen0n.name, tony.luck@intel.com, james.morse@arm.com,
+	mchehab@kernel.org, rric@kernel.org, loongarch@lists.linux.dev,
+	Zhao Qunqin <zhaoqunqin@loongson.cn>
+Subject: Re: [PATCH v7 2/2] EDAC: Add EDAC driver for loongson memory
+ controller
+Message-ID: <202411111918.lhNjQmXB-lkp@intel.com>
+References: <20241111060939.5349-3-zhaoqunqin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 1/2] mlx5/core: relax memory barrier in
- eq_update_ci()
-To: Parav Pandit <parav@nvidia.com>,
- Caleb Sander Mateos <csander@purestorage.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <ZyxMsx8o7NtTAWPp@x130>
- <20241107183054.2443218-1-csander@purestorage.com>
- <CY8PR12MB7195A03D0F6C66D906354549DC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <CY8PR12MB7195A03D0F6C66D906354549DC5D2@CY8PR12MB7195.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111060939.5349-3-zhaoqunqin@loongson.cn>
+
+Hi Zhao,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on e14232afa94445e03fc3a0291b07a68f3408c120]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhao-Qunqin/dt-bindings-EDAC-for-ls3a5000-memory-controller/20241111-141155
+base:   e14232afa94445e03fc3a0291b07a68f3408c120
+patch link:    https://lore.kernel.org/r/20241111060939.5349-3-zhaoqunqin%40loongson.cn
+patch subject: [PATCH v7 2/2] EDAC: Add EDAC driver for loongson memory controller
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241111/202411111918.lhNjQmXB-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241111/202411111918.lhNjQmXB-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411111918.lhNjQmXB-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/edac/loongson_edac.c: In function 'read_ecc':
+>> drivers/edac/loongson_edac.c:28:15: error: implicit declaration of function 'readq'; did you mean 'readl'? [-Werror=implicit-function-declaration]
+      28 |         ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
+         |               ^~~~~
+         |               readl
+   cc1: some warnings being treated as errors
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
+vim +28 drivers/edac/loongson_edac.c
 
-On 08/11/2024 12:46, Parav Pandit wrote:
-> 
->> From: Caleb Sander Mateos <csander@purestorage.com>
->> Sent: Friday, November 8, 2024 12:01 AM
->>
->> The memory barrier in eq_update_ci() after the doorbell write is a significant
->> hot spot in mlx5_eq_comp_int(). Under heavy TCP load, we see 3% of CPU
->> time spent on the mfence instruction.
->>
->> 98df6d5b877c ("net/mlx5: A write memory barrier is sufficient in EQ ci
->> update") already relaxed the full memory barrier to just a write barrier in
->> mlx5_eq_update_ci(), which duplicates eq_update_ci(). So replace mb() with
->> wmb() in eq_update_ci() too.
->>
->> On strongly ordered architectures, no barrier is actually needed because the
->> MMIO writes to the doorbell register are guaranteed to appear to the device in
->> the order they were made. However, the kernel's ordered MMIO primitive
->> writel() lacks a convenient big-endian interface.
->> Therefore, we opt to stick with __raw_writel() + a barrier.
->>
->> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
->> ---
->> v2: keep memory barrier instead of using ordered writel()
->>
->>   drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
->> b/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
->> index 4b7f7131c560..b1edc71ffc6d 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h
->> @@ -70,11 +70,11 @@ static inline void eq_update_ci(struct mlx5_eq *eq, int
->> arm)
->>   	__be32 __iomem *addr = eq->doorbell + (arm ? 0 : 2);
->>   	u32 val = (eq->cons_index & 0xffffff) | (eq->eqn << 24);
->>
->>   	__raw_writel((__force u32)cpu_to_be32(val), addr);
->>   	/* We still want ordering, just not swabbing, so add a barrier */
->> -	mb();
->> +	wmb();
->>   }
->>
->>   int mlx5_eq_table_init(struct mlx5_core_dev *dev);  void
->> mlx5_eq_table_cleanup(struct mlx5_core_dev *dev);  int
->> mlx5_eq_table_create(struct mlx5_core_dev *dev);
->> --
->> 2.45.2
-> 
-> Reviewed-by: Parav Pandit <parav@nvidia.com>
-> 
+    18	
+    19	static int read_ecc(struct mem_ctl_info *mci)
+    20	{
+    21		struct loongson_edac_pvt *pvt = mci->pvt_info;
+    22		u64 ecc;
+    23		int cs;
+    24	
+    25		if (!pvt->ecc_base)
+    26			return pvt->last_ce_count;
+    27	
+  > 28		ecc = readq(pvt->ecc_base + ECC_CS_COUNT_REG);
+    29		/* cs0 -- cs3 */
+    30		cs = ecc & 0xff;
+    31		cs += (ecc >> 8) & 0xff;
+    32		cs += (ecc >> 16) & 0xff;
+    33		cs += (ecc >> 24) & 0xff;
+    34	
+    35		return cs;
+    36	}
+    37	
 
-Acked-by: Tariq Toukan <tariqt@nvidia.com>
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
