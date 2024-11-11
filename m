@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-404599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BC49C457D
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:01:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3298B9C45B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 20:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09891282C52
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEF7FB294BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 19:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCF81AB6DA;
-	Mon, 11 Nov 2024 19:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657101B654C;
+	Mon, 11 Nov 2024 19:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="MKcVCczT"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iGV4x7AH"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0766F1AB50D;
-	Mon, 11 Nov 2024 19:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280581B6541
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731351657; cv=none; b=a5pmm3hGoiH2q7AjfIJeZpXODeWEx/DnxK6gn6viRBZnt8e5nuM9rGF2Q22U20+ZtXFB/9JGikGjxjhi/hVMLkK4UDz6uHVRqr0c7O3HiZWWVRaMkCC5N+cPW0YAB+GhW1JNIA09c+9+y2EgYj+U5SwY6nRaiJycv+XKgcpC2pg=
+	t=1731351661; cv=none; b=cv3jL0Xr8N+q18P6REvoivf93YR2N7yCWRA0df+Ggm9uYEdQ9kRyoRGYepJ1FGfd4BFqNQVeHhkuIVH9UiEiwJtWoyMsO0wvpYOhvpjJjJYPCqM1XbtLr4abz4nLfDyt5gErGz2qUKOD5qADfuxG5WiCcgxm9omrJLh5XvNq1ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731351657; c=relaxed/simple;
-	bh=KzVPifvp+iOa3Bg8cKfqMmkzoZgJjO8HG4nRsmMmkk8=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=S71tFXzZG8/Yi33iJ9e7sInt5rCfjWq+ELOJMSKvgPQguxGs4dtQLoB/8t1NX/LhI2mwD2wOzpJxphjmySz7bCrucFUy/IIFq5gPZBwry84PNhYMhneOjN/fkCXcbZq3z4D5sckoA3zqw3jj7vJf2FM4KictTgN6j6apIihwam4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=MKcVCczT; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1731351635; x=1731956435; i=frank-w@public-files.de;
-	bh=KzVPifvp+iOa3Bg8cKfqMmkzoZgJjO8HG4nRsmMmkk8=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MKcVCczT0LrVOyHtFxP6kLVEyg9Rr1DOfg6dN97+eLgdVgfXSbbOnfGXL1iKXBZ0
-	 rHAaRovRfKpQNZGMSya3G3Dv5TxiU+75oDJFhacN/Rxg2cEl0HXP/GYix8bKjWJ4M
-	 6gdr2JSpVTgy5Dr2pBKRgdfOPBZmg5D18sn3t9RH1xp/RH1VRplnf0051FoPN5jXf
-	 PnhewIyAfYQDpXChudBkazHUfPhknM7/2B6Qs0ylrCskhmoi7GKCa8gMj7vj+GNaz
-	 WHJhAINo5m0iF/ECPlrbAnzZCX4DOScoSfkV3UHEE+qj1eY5Qo9aYq3Xw4Kb5EadF
-	 s+i/HtgRthArqrIJsg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.144.196] ([217.61.144.196]) by
- trinity-msg-rest-gmx-gmx-live-67cd9ff8f8-qxw8q (via HTTP); Mon, 11 Nov 2024
- 19:00:35 +0000
+	s=arc-20240116; t=1731351661; c=relaxed/simple;
+	bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PnKWh/o8jbbIT3dRZHzhsKCc/ZGFW+AP7lyQTXrhzyTcXV5yMwx/YFhVItmAf1EHrSS3aXlfh+bKifYOk0cZQV5EG/eAJ4jTRhNngbStErO/d2gulP3NLGvylsRGjTjDnT7z+r5r+mlLVB9rhHQ4DC5VGT6bvgLjRB9LWd7FC8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iGV4x7AH; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so3630033a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 11:01:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731351659; x=1731956459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
+        b=iGV4x7AH1odMVqLETFu80/iNRjVQt4pxTOCg9PiQMFUhIVII0666f3XFK30yGr7S80
+         tofq5gXKNHUUl6SUHkqFM+qbA3j4lmD74KWteptXTrapwg6esCwNqQ2s3JhbehKS8e7o
+         af2isH4bH7wssiEI+EFdLaf5kBp/r43xSiMcBha4dmDU6ZoH3/ecYCsdoT3Ki7ZdqBSu
+         su/O1Ocszcm7HMOV3F72g0ZHTvuXww1Y3WCVubJLUKtWPUkS6g+BjbbViBFxOyR26cnm
+         iUe7O46paFaGTWaukOgLg3vkKjspIHdsGYg3W7hUcMIYSNils/r8efcl5XojrEP3HOSR
+         y7sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731351659; x=1731956459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2pDpviTPcDcUwyjjidyPIVbYpMJaTM72lZ7bBM0bluE=;
+        b=eK+KnMl0s9Wo/aTzg+42ppZbUbCQ3eeuTyZPQVVNPv04Io3mwW30tumSJN+Saf4JPC
+         z2CjgXrHcSbLWjvDxiIiTE6FKCCedLUZf/fesQPFws4Fiww2TPNYMOt0d+nzr1r7eAC0
+         hYm/X/1itBeraDAMPArhJ12JxFoUp/1zZ+GCdc7HtXpdyySIKn2eDksdo0PRHEd/yMws
+         ulbbHfBIpLrICz4HL35g80TGpJRS/0YgcLuHKCKdfCjtar1yM26b8H6eD0HmHVtbXkHg
+         qUWR+hoT2Md3rfkFi2GOyAXjkMTLZCvkguuePYU8U7lsBHL3Cd0CBG/zPPdWHwnerMdz
+         0Mfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUgIlDQzghlfSQRzZDmIrP88GP2JOYdqjFqvZapkgUtV56nf/8qm8X3ilgFy9ISaacRwdRiNZkCB2/wA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnDk2IIet+msBKuF1dafc41OAG5I2w3YAAfvRCAQGNmrCww5eC
+	nXr1XpO51ZI84p10Hsli8Zy/kuu5wFdUAuHy1ymf050Nf5gnQJrmm0DCit0U/hJii80H+7VkJat
+	TktIf8rzVLOtJyQViVLAnWVHp50UW2wmA5WhTwQ==
+X-Google-Smtp-Source: AGHT+IF2jLVx9obVTZnhgf77+8GsrSfbzXMFZdzhdPn8n+7CxPCJNvWaVAnxCZRrAOUNBAqC64Ad6y6XMwxwGnavFf4=
+X-Received: by 2002:a17:90b:2743:b0:2e2:d87f:3cc with SMTP id
+ 98e67ed59e1d1-2e9b1777659mr16173672a91.23.1731351659370; Mon, 11 Nov 2024
+ 11:00:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-090addc5-80b8-4d9f-8f01-ed2c519e0d3d-1731351635476@trinity-msg-rest-gmx-gmx-live-67cd9ff8f8-qxw8q>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: ot_cathy.xu@mediatek.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, sean.wang@kernel.org,
- linus.walleij@linaro.org
-Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- guodong.liu@mediatek.corp-partner.google.com, guodong.liu@mediatek.com
-Subject: Aw: [PATCH] pinctrl: mediatek: Add pinctrl driver
-Content-Type: text/plain; charset=UTF-8
-Importance: normal
-Date: Mon, 11 Nov 2024 19:00:35 +0000
-Sensitivity: Normal
-In-Reply-To: <20241111074030.25673-1-ot_cathy.xu@mediatek.com>
-References: <20241111074030.25673-1-ot_cathy.xu@mediatek.com>
-X-Priority: 3
-X-UI-CLIENT-META-MAIL-DROP: W10=
-X-Provags-ID: V03:K1:Ozjf8sg7sz1HlEchb8Y+cG4HP+g7ZDiilByq1d+03bVEVcgQ9K0XMDkll7rll0qLgITIE
- ZRXCP79R5bR4FbrOFYRZFZV24agGu9MeLINTAn+IiWWWtWN7bdcpMLeou+bBIyEIf18xDIMpdrSV
- G3dap+gsWMuJOy6FmOc0oMSmNYmRTOUPBZAysz2YfIMAr96RStSuZ1aDYZ2pRlu8hQIUsjxFRQrb
- 35pp50DzueMKPBgbh3ePBTnmVlvS3E+h9tq0NieKZMB7PhJ9imgyFutu1wujwBvHLr1RblmMq5ad
- TjxYsWottylZQLn3jZljR2jUTMsb7Lcs1Ihwkv+dnMn/TcO/611KbYA3CrJ7SS8BGg=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Cxp8uh7T7Lo=;8fe5xqojxII002tLFune4TqJJoC
- gZkvtiBWOB2zgESItk/7vPr7m3XzF2906z9pRMI+TK6cyBsvNgiOqrCW5kD2Bz1ayu4yTC77a
- wjDpBWy4/v3bnRX0CgV2KB63aa2VhoN7l8NY8IMwAoA/gX/7GDUDivS5eICyGpV08NU6amwCK
- zCC/UGQoY+JloFmJn07M6MU94UyI3Yec2h1+47MzTMQdDlCi4QxOB7JEUgKeYXAQhJXPC42N2
- pcsGbAE/RuOPh+s5UgI5gdibRK/2DID+Z5Mm78BDJY8R46SZnFV+ru6524RtJ6hL4lAZTwTjI
- qtyYKz3RxzSzdQ1QdwqIKmPDXWDhlM1z3YWArCqZ59C9Y56C0hkclxjWOHV3YyXYS8jz9IQMd
- N7Kj69kG9VIiN93AuUr0pgh0anLqchRMW4oTs0NClgJCJHD5VnApKmq905mHYLt8r6wG5NCda
- u4xK4y/MyzX5YvQTAXF8wbqz/HprgVVVgurjCPAXGEnuWlY1zhmb3swsjTzmwU1zbZIMe1e5V
- m8k8wPJW8hnif912XQ8QEnPsvmgI9Y/Gw6c5zSRpPsZif3byyilT9TU3qc/BtC7cWcc8JPaYk
- kLv8uCNffBBxhnD3YWdhDYLfuWB1rFpbbP+9+zY6J0rPjsz945B2wDzenafTxjIQj+OFIvdN6
- oACatyGTpNh3R0vFBa4q230qNfQiy2PLyGbywWq41w==
+References: <CAGETcx830PZyr_oZAkghR=CLsThLUX1hZRxrNK_FNSLuF2TBAw@mail.gmail.com>
+ <20241108083133.GD38786@noisy.programming.kicks-ass.net> <CAGETcx-CvWVc=TP5OmUL_iF7fSb1awJB1G8NghM1q_6dYKXkQQ@mail.gmail.com>
+ <cc8831c7-8ea2-0ee7-061f-73352d7832ad@amd.com> <CAGETcx9qDK+QUiP8z1iNYXwjHz39oZzOZmhj4p=icU1BuVtcug@mail.gmail.com>
+ <20241111104054.GE22801@noisy.programming.kicks-ass.net> <CAKfTPtBHRdHJaT_bjx1RF8bJ8Vc2s582VXMACPyjOno8zE_g=Q@mail.gmail.com>
+ <CAGETcx9i4t_5Yt48Nfg=nSpZcPXZnPtSJtotUU7gt37wKpF6Vg@mail.gmail.com>
+In-Reply-To: <CAGETcx9i4t_5Yt48Nfg=nSpZcPXZnPtSJtotUU7gt37wKpF6Vg@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 11 Nov 2024 20:00:48 +0100
+Message-ID: <CAKfTPtANwjo+2hJrLRYc3byDGDpes1nHcNd0PsavEiGG+CF9Tg@mail.gmail.com>
+Subject: Re: Very high scheduling delay with plenty of idle CPUs
+To: Saravana Kannan <saravanak@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Benjamin Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	wuyun.abel@bytedance.com, youssefesmat@chromium.org, 
+	Thomas Gleixner <tglx@linutronix.de>, efault@gmx.de, John Stultz <jstultz@google.com>, 
+	Vincent Palomares <paillon@google.com>, Tobias Huschle <huschle@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-&gt; Gesendet: Montag, 11. November 2024 um 08:40
-&gt; Von: ot907280 <ot_cathy.xu@mediatek.com>
-&gt; Betreff: [PATCH] pinctrl: mediatek: Add pinctrl driver
-&gt;
-&gt; From: Guodong Liu <guodong.liu@mediatek.corp-partner.google.com>
-&gt;
-&gt; Add pinctrl driver for mt8196
+On Mon, 11 Nov 2024 at 19:17, Saravana Kannan <saravanak@google.com> wrote:
+>
+> On Mon, Nov 11, 2024 at 3:15=E2=80=AFAM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+> >
+> > On Mon, 11 Nov 2024 at 11:41, Peter Zijlstra <peterz@infradead.org> wro=
+te:
+> > >
+> > > On Sun, Nov 10, 2024 at 10:15:07PM -0800, Saravana Kannan wrote:
+> > >
+> > > > I actually quickly hacked up the cpu_overutilized() function to ret=
+urn
+> > > > true during suspend/resume and the threads are nicely spread out an=
+d
+> > > > running in parallel. That actually reduces the total of the
+> > > > dpm_resume*() phases from 90ms to 75ms on my Pixel 6.
+> > >
+> > > Right, so that kills EAS and makes it fall through to the regular
+> > > select_idle_sibling() thing.
+> > >
+> > > > Peter,
+> > > >
+> > > > Would you be open to the scheduler being aware of
+> > > > dpm_suspend*()/dpm_resume*() phases and triggering the CPU
+> > > > overutilized behavior during these phases? I know it's a very use c=
+ase
+> > > > specific behavior but how often do we NOT want to speed up
+> > > > suspend/resume? We can make this a CONFIG or a kernel command line
+> > > > option -- say, fast_suspend or something like that.
+> > >
+> > > Well, I don't mind if Vincent doesn't. It seems like a very
+> > > specific/targeted thing and should not affect much else, so it is a
+> > > relatively safe thing to do.
+> >
+> > I would like to understand why all idle little cpus are not used in
+> > saravana's example and tasks are packed on the same cpu instead.
+>
+> If you want to try this on your end and debug it further, it should be
+> pretty easy to reproduce on a Pixel 6 even without my suspend/resume
+> changes.
 
-Hi
+You are using the v6.12-rc5 on Pixel6 ?
 
-you should add your SoC to commit-/patch-title too.
+>
+> Just run this on the device to mark all devices as async
+> suspend/resume. This assumes you have CONFIG_PM_DEBUG enabled.
+>
+> find /sys/devices/ -name async | while read -r filename; do echo
+> enabled > "$filename"; done
+>
+> And look at the dpm_resume_noirq() phase. You should see some kworkers
+> that are runnable but not running for a while while a little CPU is
+> idle. It should happen within a few tries. You need to unplug the USB
+> cable to let the device suspend and wait at least 10 seconds after the
+> screen goes off.
+>
+> But even if you fix EAS to pick little CPUs, I think we also want to
+> use the mid and big CPUs. That's not going to happen right?
 
-regards Frank
-</guodong.liu@mediatek.corp-partner.google.com></ot_cathy.xu@mediatek.com>
+Who knows ?
+Right now the trace that you shared clearly show a wrong behavior
+
+>
+> -Saravana
+>
+> > >
+> > > Perhaps a more direct hack in is_rd_overutilized() would be even less
+> > > invasive, changing cpu_overutilized() relies on that getting propagat=
+ed
+> > > to rd->overutilized, might as well skip that step, no?
 
