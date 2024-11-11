@@ -1,138 +1,221 @@
-Return-Path: <linux-kernel+bounces-404459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BB79C43ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:43:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752469C43F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 18:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16A381F216E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:43:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC7F1F225F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 17:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D141AA1DC;
-	Mon, 11 Nov 2024 17:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DFy7uowh"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDCB1A76BC
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 17:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E18C1AAE1B;
+	Mon, 11 Nov 2024 17:42:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F0114D283;
+	Mon, 11 Nov 2024 17:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731346900; cv=none; b=kQ6hLQuhaCFAiR8TWNrYhmePuneq8Jvaq9ddtvh/YChJbZ+QpTukna4+vWS5TsorADiznzL8sUOMZjNrJRKV2gpq5hR2/wz5M3CnFhtc6tcJqy73+sKv+IyCUobmDuUYT64Zat+78FMzbWxSIUdN4mZSpzV6pHV5duieU/PoyjQ=
+	t=1731346957; cv=none; b=e5djbGSQIuM9CKU37D7Gfmo2fk8TPWqBvht6XnwL0eqHAl3F67LVeQePfaaM7DqjN5dMHHZ2vMkOofW175Fj+N2BXfFn9ABqSjk8E931j98xTJHBzudsVBuySxdUFCT+Xk7C/JoSeg7W4MLp28SmKKYtV5MQEyMVndDCKCC5klI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731346900; c=relaxed/simple;
-	bh=j767+Q1r37SUH2n615lZg0OOIFpm90KEXiFOwlHbyOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EGK2xfuUvvzHMs32D+2vKJU3bMXh0+Do0dk4yOYW4UV5ztsERhT2pRD7OWiGexYtqHvlkjB2MxctzNZ7IPHb7MMVUqftWEhlS6K5JAiYQH53EDJ5lfHGZiaX/LiJrSYdcYhdUe8YjTxs5P6p4vFOdSoYoobIS05BKBOzn9SNOm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DFy7uowh; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460969c49f2so2571cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 09:41:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731346898; x=1731951698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4eIWyin90eSMWDk2KIoYfMdKN5d2WbTrGD/3InglUdw=;
-        b=DFy7uowhrkj1q+nlR8CLXPmUDQuqPb8UrYyDo5FcUQpRRxPQfKGuduMra21MquFHeC
-         myNtnwqwGFY6Pn8unZZ+sz3Mwym95Yz3y5he8BktyHbf99ARUxlZlMf8p0rutJXW/+Lu
-         foGZN0SKOgneC7pKmQcIkddaq//uL/7JscLek4tCnGYO50GhDP0rhay7SALpIG9FHuBq
-         AEPF2C8xf8VlADxTyoKzhov4+s6L/HeMFsSR5OZXySg1kInlRk+8nnVS5K1T963nlaLN
-         ZIGRK56AqJEEdZh3sUXRQ5L0KUkFyAi7pG8Z0y7TXUTkUAnnmY1riiDLa7X/Rk84pwP2
-         NIyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731346898; x=1731951698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4eIWyin90eSMWDk2KIoYfMdKN5d2WbTrGD/3InglUdw=;
-        b=kwSBy6htYKqMf2Nqc9ldxJjbCGFFgktuKwcQ96GK18Jw6W2UjJCG2pc+VjnGPHCUsN
-         XQ56/0om/+BQe6PdT/62TSQjB8yQ+5zyU5gaGTbIy+YpF66Uqgg4U/rYS0+DjBPjZc3r
-         5ofAWB96g1cAIDk8KGHN0QVz0EjBVVwvB13aMOSBUqRgigCSyIwRGRGdWUZbBiAKvyKg
-         EBuebwQPfKigprdlXFQBTtQMuofV4Av5dtJJzBm3JWOtWeIcjjioL8Lozj68hXmg3n1A
-         gcoTXDenEL0Zhh9tOfScelLieoR/FXtYMpwv8YPjF8MWSicY/fQOxRlxh2vaeFqVViwD
-         J7LA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz3RDmeHNjRh9P2RX3Kizw83CnA58fjS1QtHQ8l6gexWNd71UYx47BQrddgicCx/h4GdClrWRPe111kSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS4xLd/i/pPgDWEsW2lm0CwM278r8gdu/SqM8hwQFBHCENmoqU
-	JEg8gbkUaihodi44SAUS6TlgsmD1nDrf848jeS6UzwltzBHZWZ/y8+tMlkCAswI3Vmw1MPI9kB8
-	khxcTIy5qWdqxfrjVxbBAQUIzoGhrxu+Wm3qf
-X-Gm-Gg: ASbGncsA7yp0gkCTLPYL4F+IPgw8rET5FtYsgjPLuyg/a1Fm2KZdWyQ80mYBgGUnfUP
-	TksG/AfZXJQOXf8/EOtOd0o77s303r6b9P+8xa05K+zuEvmMALdXcnOx1AW+9eEw=
-X-Google-Smtp-Source: AGHT+IFXHqqr9T9fYqBjdk/y4XDoYoQXljKGYDZzdrbYdE3NEYkwRL0/DPAPhGpQprT/9y8WY5pCe2FdqGVr6tBHEcs=
-X-Received: by 2002:a05:622a:1454:b0:45f:9b3:c7d4 with SMTP id
- d75a77b69052e-46316965e68mr5312121cf.6.1731346897791; Mon, 11 Nov 2024
- 09:41:37 -0800 (PST)
+	s=arc-20240116; t=1731346957; c=relaxed/simple;
+	bh=cmj7w/AC35+7igYwRW+VE0YRdC0RtuUs2QaBfiFGsz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qq2ZqUo8q55LBJleSh/lh9kZU5hTGeyMAitpLv63YuKnV8iXPVFHP42GwScuYeMEtH1/RiqIDJWv6tYKJWPRw3QVggHPTJASaNH8S0InHlVq7HCgTO5zUNdfOm0YUJWTub4Wizo3KPFQxfT9GJ/QSSR1+tW8oOySgOv2roHNOls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22A6B1480;
+	Mon, 11 Nov 2024 09:43:03 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC2493F59E;
+	Mon, 11 Nov 2024 09:42:28 -0800 (PST)
+Date: Mon, 11 Nov 2024 17:42:25 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-phy@lists.infradead.org,
+ linux-mmc@vger.kernel.org, Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devicetree@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, Andi Shyti
+ <andi.shyti@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ linux-watchdog@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, linux-usb@vger.kernel.org, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Conor
+ Dooley <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
+Subject: Re: [PATCH 00/14] arm64: dts: allwinner: Add basic Allwinner A523
+ support
+Message-ID: <20241111174225.7360c6e4@donnerap.manchester.arm.com>
+In-Reply-To: <173133346581.1281779.16221268010355943435.robh@kernel.org>
+References: <20241111013033.22793-1-andre.przywara@arm.com>
+	<173133346581.1281779.16221268010355943435.robh@kernel.org>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com> <20241108204137.2444151-3-howardchu95@gmail.com>
-In-Reply-To: <20241108204137.2444151-3-howardchu95@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 11 Nov 2024 09:41:26 -0800
-Message-ID: <CAP-5=fUXvpgZ-bkCYjYaTu0OOkqETx+TStKJOupx1y5woS8PWw@mail.gmail.com>
-Subject: Re: [PATCH v7 02/10] perf evsel: Expose evsel__is_offcpu_event() for
- future use
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+On Mon, 11 Nov 2024 09:32:53 -0600
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-Not sure if no commit message body is okay. Otherwise:
+Hi Rob,
 
-Reviewed-by: Ian Rogers <irogers@google.com>
+> On Mon, 11 Nov 2024 01:30:19 +0000, Andre Przywara wrote:
+> > Hi,
+> > 
+> > this series adds basic DT support for the Allwinner A523 SoC, plus the
+> > Avaota-A1 router board using the T527 package variant of that SoC.[1]
+> > Functionality-wise it relies on the pinctrl[2] and clock[3] support
+> > series, though there is no direct code dependency series to this series
+> > (apart from the respective binding patches in the two series').
+> > 
+> > Most of the patches add DT binding documentation for the most basic
+> > peripherals, the vast majority of them actually being already supported,
+> > courtesy of identical IP being used. This includes MMC and USB 2.0, so
+> > with the above mentioned clock and pinctrl support this gives an already
+> > somewhat usable mainline support for this new SoC family.
+> > The watchdog is not completely compatible, but is an easy addition, so
+> > this bit is included in here as well.
+> > 
+> > The A523 features 8 Arm Cortex-A55 cores, organised in two clusters,
+> > clocked separately, with different OPP limits, in some kind of
+> > little/LITTLE configuration. The GPU is a Arm Mali G57 MC01, and the chip
+> > also features a single PCIe 2.1 lane, sharing a PHY with some USB 3.1
+> > controller - which means only one of the two can be used.
+> > The rest of the SoC is the usual soup of multimedia SoC IP, with eDP
+> > support and two Gigabit Ethernet MACs among the highlights.
+> > 
+> > The main feature is patch 11/14, which adds the SoC .dtsi. This for now
+> > is limited to the parts that are supported and could be tested. At the
+> > moment there is no PSCI firmware, even the TF-A port from the BSP does
+> > not seem to work for me. That's why the secondary cores have been omitted
+> > for now, among other instances of some IP that I couldn't test yet.
+> > I plan to add them in one of the next revisions.
+> > 
+> > The last patch adds basic support for the Avaota-A1 router board,
+> > designed by YuzukiHD, with some boards now built by Pine64.
+> > 
+> > The mainline firmware side in general is somewhat lacking still: I have
+> > basic U-Boot support working (including MMC and USB), although still
+> > without DRAM support. This is for now covered by some binary blob found
+> > in the (otherwise Open Source) Syterkit firmware, which also provides
+> > the BSP versions of TF-A and the required (RISC-V) management core
+> > firmware. Fortunately we have indications that DRAM support is not that
+> > tricky, as the IP blocks are very similar to already supported, and dev
+> > boards are on their way to the right people.
+> > 
+> > Meanwhile I would like people to have a look at those DT bits here. Please
+> > compare them to the available user manual, and test them if you have access
+> > to hardware.
+> > 
+> > Based on v6.12-rc1.
+> > I pushed a branch with all the three series combined here:
+> > https://github.com/apritzel/linux/commits/a523-v1/
+> > 
+> > Cheers,
+> > Andre
+> > 
+> > [1] https://linux-sunxi.org/A523#Family_of_sun55iw3
+> > [2] https://lore.kernel.org/linux-sunxi/20241111005750.13071-1-andre.przywara@arm.com/T/#t
+> > [3] https://lore.kernel.org/linux-sunxi/20241111004722.10130-1-andre.przywara@arm.com/T/#t
+> > 
+> > Andre Przywara (14):
+> >   dt-bindings: mmc: sunxi: Simplify compatible string listing
+> >   dt-bindings: mmc: sunxi: add compatible strings for Allwinner A523
+> >   dt-bindings: watchdog: sunxi: add Allwinner A523 compatible string
+> >   watchdog: sunxi_wdt: Add support for Allwinner A523
+> >   dt-bindings: i2c: mv64xxx: Add Allwinner A523 compatible string
+> >   dt-bindings: irq: sun7i-nmi: document the Allwinner A523 NMI
+> >     controller
+> >   dt-bindings: phy: document Allwinner A523 USB-2.0 PHY
+> >   dt-bindings: usb: sunxi-musb: add Allwinner A523 compatible string
+> >   dt-bindings: usb: add A523 compatible string for EHCI and OCHI
+> >   dt-bindings: rtc: sun6i: Add Allwinner A523 support
+> >   arm64: dts: allwinner: Add Allwinner A523 .dtsi file
+> >   dt-bindings: vendor-prefixes: Add YuzukiHD name
+> >   dt-bindings: arm: sunxi: Add Avaota A1 board
+> >   arm64: dts: allwinner: a523: add Avaota-A1 router support
+> > 
+> >  .../devicetree/bindings/arm/sunxi.yaml        |   5 +
+> >  .../bindings/i2c/marvell,mv64xxx-i2c.yaml     |   1 +
+> >  .../allwinner,sun7i-a20-sc-nmi.yaml           |   1 +
+> >  .../bindings/mmc/allwinner,sun4i-a10-mmc.yaml |  40 +-
+> >  .../phy/allwinner,sun50i-a64-usb-phy.yaml     |  10 +-
+> >  .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml |   4 +-
+> >  .../usb/allwinner,sun4i-a10-musb.yaml         |   1 +
+> >  .../devicetree/bindings/usb/generic-ehci.yaml |   1 +
+> >  .../devicetree/bindings/usb/generic-ohci.yaml |   1 +
+> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+> >  .../watchdog/allwinner,sun4i-a10-wdt.yaml     |   2 +
+> >  arch/arm64/boot/dts/allwinner/Makefile        |   1 +
+> >  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 386 ++++++++++++++++++
+> >  .../dts/allwinner/sun55i-t527-avaota-a1.dts   | 311 ++++++++++++++
+> >  drivers/watchdog/sunxi_wdt.c                  |  11 +
+> >  15 files changed, 751 insertions(+), 26 deletions(-)
+> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts
+> > 
+> > --
+> > 2.46.2
+> > 
+> > 
+> >   
+> 
+> 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y allwinner/sun55i-t527-avaota-a1.dtb' for 20241111013033.22793-1-andre.przywara@arm.com:
+> 
+> In file included from arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dts:6:
+> arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi:6:10: fatal error: dt-bindings/clock/sun55i-a523-ccu.h: No such file or directory
+>     6 | #include <dt-bindings/clock/sun55i-a523-ccu.h>
 
-Thanks,
-Ian
+Argh, the headers, forgot about them! I was hoping there would only be a
+complaint about the undocumented compatible strings, and I didn't want to
+tie the three series together unnecessarily, to avoid a harder to handle
+28-patch series.
 
-> ---
->  tools/perf/util/evsel.c | 2 +-
->  tools/perf/util/evsel.h | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index f780e30aa259..695f831b463d 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1193,7 +1193,7 @@ static void evsel__set_default_freq_period(struct r=
-ecord_opts *opts,
->         }
->  }
->
-> -static bool evsel__is_offcpu_event(struct evsel *evsel)
-> +bool evsel__is_offcpu_event(struct evsel *evsel)
->  {
->         return evsel__is_bpf_output(evsel) && evsel__name_is(evsel, OFFCP=
-U_EVENT);
->  }
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 04934a7af174..7f68004507d8 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -554,4 +554,6 @@ u64 evsel__bitfield_swap_branch_flags(u64 value);
->  void evsel__set_config_if_unset(struct perf_pmu *pmu, struct evsel *evse=
-l,
->                                 const char *config_name, u64 val);
->
-> +bool evsel__is_offcpu_event(struct evsel *evsel);
-> +
->  #endif /* __PERF_EVSEL_H */
-> --
-> 2.43.0
->
+I hope this doesn't prevent actual review by people, my github has
+the combined story, in case people want to avoid the issue:
+https://github.com/apritzel/linux/commits/a523-v1/
+
+Cheers,
+Andre
+
+>       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[3]: *** [scripts/Makefile.dtbs:129: arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb] Error 1
+> make[2]: *** [scripts/Makefile.build:478: arch/arm64/boot/dts/allwinner] Error 2
+> make[2]: Target 'arch/arm64/boot/dts/allwinner/sun55i-t527-avaota-a1.dtb' not remade because of errors.
+> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1399: allwinner/sun55i-t527-avaota-a1.dtb] Error 2
+> make: *** [Makefile:224: __sub-make] Error 2
+> make: Target 'allwinner/sun55i-t527-avaota-a1.dtb' not remade because of errors.
+> 
+> 
+> 
+> 
+> 
+
 
