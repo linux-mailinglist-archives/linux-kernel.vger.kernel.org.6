@@ -1,194 +1,102 @@
-Return-Path: <linux-kernel+bounces-403862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-403875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B389C3BED
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451E9C3C26
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 11:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A46B1F22349
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3231F220C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 10:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99AF19AA46;
-	Mon, 11 Nov 2024 10:28:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23091170A1A;
+	Mon, 11 Nov 2024 10:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="u0sz+tHH"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="GyegV+ae";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="VUr+ZHPB"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC7E1974EA;
-	Mon, 11 Nov 2024 10:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646AD2B9A9;
+	Mon, 11 Nov 2024 10:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731320897; cv=none; b=GRhd7SDwu/8DL4xvVa207eANVCZI7nJgPEUcYHpQFu6/qdSQaFmzN9c8QMTL3lvhg0D89NmOu/ZK6pSXJFxtEY5w07MgcGzXD7/md6xugrYIUtZSE1BkfBo9frKb4FMejzcOHmdMvdc03WSoy2c+p9xfDVYL84cVLEgd9GrlvBE=
+	t=1731321433; cv=none; b=IwQlhZax0JkrD1FWpUyzM+crOmjMNMwUN+6i41u3xKgAOr9uSRLd5GgryCQp8+m15BJNdtDyrlOCgDUcVbc2rKIttCTy6GpV1Prhy/M0Y/aTSeip0irfWTc9MVln1kR2+qC8zgZuGpaPzBantYmAAvAtEqgLx30TK9db4MbZKt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731320897; c=relaxed/simple;
-	bh=n797KENeKcPht39qvTxwH1l7x2mQGbvAXrsEkK9O7tc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P70TDOOh96ZUnWDRNf+ZzulkWO9+RKTCSPxn2B2H/Gy4VaBaRZvZOkVSPqnN2WvMb2SgXwv6VQzfJspuhZW+NTTIhZWDCf7yjjRzTdH+8zgwh4NVm5thG00jDrXPWg3W3+NVetac+0iVDgpbXLdntrAQliqVLkHR5cCn4OsaFic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=u0sz+tHH; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731320896; x=1762856896;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=jzdWoNEEE0WCR0PGgVygWDKm9UBymLpK5xCN/dEO6dw=;
-  b=u0sz+tHHc9tFvgGCUrAoP6Pv7qD/wFtJDYAspu71YI8DzXVr7cDIALzz
-   8OWcNg/PkFd1ACkfXQmGvzDaJk6igbVZBzS+iAKFh0koY8Z4nyiDpG+KN
-   vYCPFj8quAkRVsgqerYfo9K2LTr62OVUW7s9Rzc/h+/kIFyDIX/Kpf/ao
-   8=;
-X-IronPort-AV: E=Sophos;i="6.12,144,1728950400"; 
-   d="scan'208";a="351182686"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 10:28:13 +0000
-Received: from EX19MTAUEA001.ant.amazon.com [10.0.0.204:10291]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.51.63:2525] with esmtp (Farcaster)
- id f0e955ec-5ede-4893-9ec9-faaa533e2b5d; Mon, 11 Nov 2024 10:28:11 +0000 (UTC)
-X-Farcaster-Flow-ID: f0e955ec-5ede-4893-9ec9-faaa533e2b5d
-Received: from EX19D008UEA004.ant.amazon.com (10.252.134.191) by
- EX19MTAUEA001.ant.amazon.com (10.252.134.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 11 Nov 2024 10:28:10 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D008UEA004.ant.amazon.com (10.252.134.191) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 11 Nov 2024 10:28:10 +0000
-Received: from email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Mon, 11 Nov 2024 10:28:10 +0000
-Received: from dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com (dev-dsk-iorlov-1b-d2eae488.eu-west-1.amazon.com [10.253.74.38])
-	by email-imr-corp-prod-iad-all-1b-3ae3de11.us-east-1.amazon.com (Postfix) with ESMTPS id 5DF85A0227;
-	Mon, 11 Nov 2024 10:28:08 +0000 (UTC)
-From: Ivan Orlov <iorlov@amazon.com>
-To: <bp@alien8.de>, <dave.hansen@linux.intel.com>, <mingo@redhat.com>,
-	<pbonzini@redhat.com>, <seanjc@google.com>, <shuah@kernel.org>,
-	<tglx@linutronix.de>
-CC: Ivan Orlov <iorlov@amazon.com>, <hpa@zytor.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<x86@kernel.org>, <pdurrant@amazon.co.uk>, <dwmw@amazon.co.uk>
-Subject: [PATCH v2 6/6] selftests: KVM: Add test case for MMIO during vectoring
-Date: Mon, 11 Nov 2024 10:27:49 +0000
-Message-ID: <20241111102749.82761-7-iorlov@amazon.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241111102749.82761-1-iorlov@amazon.com>
-References: <20241111102749.82761-1-iorlov@amazon.com>
+	s=arc-20240116; t=1731321433; c=relaxed/simple;
+	bh=P4AaAvIbVWhclYykSBnt3aFnOH4jiTuUtEOJcfctRgM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lKKOQXw4RXQavZ7w+47xT2ymNgmySX5SHYbeGQHNHOMpm8p7gKVMNiVSTMWO0KJ7i201FcMNuCl636mQJ0vrGwdusXzzx1HrfJmQC3yD4lla8/9PKlrT+ZlCKSW88tGT/BW8yM/PjSFS+FdLchChibxZaSNge8ABIH4sAZbt2sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=GyegV+ae; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=VUr+ZHPB; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com B58D3E0003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1731320893; bh=P4AaAvIbVWhclYykSBnt3aFnOH4jiTuUtEOJcfctRgM=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=GyegV+aee58DzkfNlXRFoF4adTSRQXWZ3ii6b0PfqTI8e3bn9qK8fnmS6SsyVz+pm
+	 x8FgYoPdue0+yiaDinbTvRFdItmT3idD/HbfVLKBSZW+Nd/40HQWw9oHCZWmsjFYeS
+	 68LSBe0kCBq80fji/QT9iCBSCNPqUy1CcyO5pqXIf4mhMwaVA/7Dh1v9/wsa1I/8G8
+	 p479qpaNpDv0/jIQdPeSNP4/2VkQp7DXW9jkjXjTuWboLdTwEc6f143GxQ79RoDtvc
+	 LG8r94N+Xm0sDUN+gju2AP5r8UdpuL+UCugDT5S4KEUW3bFfCe/UeuVm/sSpvCAGb7
+	 s7GMO0qoWeq0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1731320893; bh=P4AaAvIbVWhclYykSBnt3aFnOH4jiTuUtEOJcfctRgM=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
+	b=VUr+ZHPBfcAaqAs/wtG98BsE2/rvkQjhwqZVNKFQJoJex+Nlj3DAZlrABkLMG9/zv
+	 ImfgEluhbllTijEtQeo070KVmMDM/CoFMaSgYccZ1vTyRR1K3BlrfYQZW7JRCgTeJi
+	 yvDCMogZMV1rzmIcvspOakBkhnAO9jRH7BZQeNfxexHrR5NdXnyrp4aSo14Lr5CS+b
+	 9q8tkSfV8BBFymvLHLmPS6ESvx5mb9hOLPs4d1Rs65DFzwm1VLoDJvU2MiTs6Siud8
+	 N9FQNwJzSGOUCyfJg/OS/az5wnWg+he4NOCcldfQ0IYXhn4FffyXoi8qErSKjOvsfH
+	 Et9KlKTjn3sWA==
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+To: "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
+	"njavali@marvell.com" <njavali@marvell.com>,
+	"GR-QLogic-Storage-Upstream@marvell.com"
+	<GR-QLogic-Storage-Upstream@marvell.com>
+CC: "James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "bvanassche@acm.org" <bvanassche@acm.org>,
+	"quinn.tran@cavium.com" <quinn.tran@cavium.com>,
+	"himanshu.madhani@oracle.com" <himanshu.madhani@oracle.com>,
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux@yadro.com" <linux@yadro.com>, "hare@suse.de" <hare@suse.de>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] Fix bugs in qla2xxx driver
+Thread-Topic: [PATCH v3 0/3] Fix bugs in qla2xxx driver
+Thread-Index: AQHbGzIvZMV/oTAyUkWQTinjaU2zibKiTS4AgA/FPwA=
+Date: Mon, 11 Nov 2024 10:28:12 +0000
+Message-ID: <021F3B9D-6DD0-4DD8-BDF0-D7D1A633621D@yadro.com>
+References: <20241010163236.27969-1-a.kovaleva@yadro.com>
+ <93FA6AD1-9959-4E4C-A447-9CF694A6A024@yadro.com>
+In-Reply-To: <93FA6AD1-9959-4E4C-A447-9CF694A6A024@yadro.com>
+Accept-Language: ru-RU, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <359718AC88BC8847AB811981A58BCAAC@yadro.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Extend the 'set_memory_region_test' with a test case which covers the
-MMIO during vectoring error handling. The test case
-
-1) Sets an IDT descriptor base to point to an MMIO address
-2) Generates a #GP in the guest
-3) Verifies that we got a correct exit reason and suberror code
-4) Verifies that we got a corrent reported GPA in internal.data[3]
-
-Also, add a definition of non-canonical address to processor.h
-
-Signed-off-by: Ivan Orlov <iorlov@amazon.com>
----
-V1 -> V2:
-- Get rid of pronouns, redundant comments and incorrect wording
-- Define noncanonical address in processor.h
-- Fix indentation and wrap lines at 80 columns
-
- .../selftests/kvm/include/x86_64/processor.h  |  2 +
- .../selftests/kvm/set_memory_region_test.c    | 51 +++++++++++++++++++
- 2 files changed, 53 insertions(+)
-
-diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
-index 1a60c99b5833..997df5003edb 100644
---- a/tools/testing/selftests/kvm/include/x86_64/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
-@@ -1165,6 +1165,8 @@ void vm_install_exception_handler(struct kvm_vm *vm, int vector,
- /* If a toddler were to say "abracadabra". */
- #define KVM_EXCEPTION_MAGIC 0xabacadabaULL
- 
-+#define NONCANONICAL 0xaaaaaaaaaaaaaaaaull
-+
- /*
-  * KVM selftest exception fixup uses registers to coordinate with the exception
-  * handler, versus the kernel's in-memory tables and KVM-Unit-Tests's in-memory
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index a1c53cc854a5..d65a9f20aa1a 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -553,6 +553,56 @@ static void test_add_overlapping_private_memory_regions(void)
- 	close(memfd);
- 	kvm_vm_free(vm);
- }
-+
-+static void guest_code_mmio_during_vectoring(void)
-+{
-+	const struct desc_ptr idt_desc = {
-+		.address = MEM_REGION_GPA,
-+		.size = 0xFFF,
-+	};
-+
-+	set_idt(&idt_desc);
-+
-+	/* Generate a #GP by dereferencing a non-canonical address */
-+	*((uint8_t *)NONCANONICAL) = 0x1;
-+
-+	GUEST_ASSERT(0);
-+}
-+
-+/*
-+ * This test points the IDT descriptor base to an MMIO address. It should cause
-+ * a KVM internal error when an event occurs in the guest.
-+ */
-+static void test_mmio_during_vectoring(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_run *run;
-+	struct kvm_vm *vm;
-+	u64 expected_gpa;
-+
-+	pr_info("Testing MMIO during vectoring error handling\n");
-+
-+	vm = vm_create_with_one_vcpu(&vcpu, guest_code_mmio_during_vectoring);
-+	virt_map(vm, MEM_REGION_GPA, MEM_REGION_GPA, 1);
-+
-+	run = vcpu->run;
-+
-+	vcpu_run(vcpu);
-+	TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_INTERNAL_ERROR);
-+	TEST_ASSERT(run->internal.suberror == KVM_INTERNAL_ERROR_DELIVERY_EV,
-+		    "Unexpected suberror = %d", vcpu->run->internal.suberror);
-+	TEST_ASSERT(run->internal.ndata != 4, "Unexpected internal error data array size = %d",
-+		    run->internal.ndata);
-+
-+	/* The reported GPA should be IDT base + offset of the GP vector */
-+	expected_gpa = MEM_REGION_GPA + GP_VECTOR * sizeof(struct idt_entry);
-+
-+	TEST_ASSERT(run->internal.data[3] == expected_gpa,
-+		    "Unexpected GPA = %llx (expected %lx)",
-+		    vcpu->run->internal.data[3], expected_gpa);
-+
-+	kvm_vm_free(vm);
-+}
- #endif
- 
- int main(int argc, char *argv[])
-@@ -568,6 +618,7 @@ int main(int argc, char *argv[])
- 	 * KVM_RUN fails with ENOEXEC or EFAULT.
- 	 */
- 	test_zero_memory_regions();
-+	test_mmio_during_vectoring();
- #endif
- 
- 	test_invalid_memory_region_flags();
--- 
-2.43.0
-
+T24gVGh1LCAxMCBPY3QgMjAyNCAxOTozMjozMyArMDMwMCwgQW5hc3Rhc2lhIEtvdmFsZXZhIHdy
+b3RlOg0KPiBUaGlzIHNlcmllcyBvZiBwYXRjaGVzIGNvbnRhaW5zIDMgc2VwYXJhdGUgY2hhbmdl
+cyB0aGF0IGZpeCBzb21lIGJ1Z3MgaW4NCj4gdGhlIHFsYTJ4eHggZHJpdmVyLg0KPiAtLS0NCj4g
+djM6DQo+IC0gRml4IGJ1aWxkIGlzc3VlIGluIHBhdGNoIDENCj4gdjI6DQo+IC0gQ2hhbmdlIGEg
+c3BpbmxvY2sgd3JhcCB0byBhIFdSSVRFX09OQ0UoKSBpbiBwYXRjaCAxDQo+IC0gQWRkIFJldmll
+d2VkLWJ5IHRhZ3Mgb24gcGF0Y2hlcyAyIGFuZCAzDQo+IC0tLQ0KPiBBbmFzdGFzaWEgS292YWxl
+dmEgKDMpOg0KPiBzY3NpOiBxbGEyeHh4OiBEcm9wIHN0YXJ2YXRpb24gY291bnRlciBvbiBzdWNj
+ZXNzDQo+IHNjc2k6IHFsYTJ4eHg6IE1ha2UgdGFyZ2V0IHNlbmQgY29ycmVjdCBMT0dPDQo+IHNj
+c2k6IHFsYTJ4eHg6IFJlbW92ZSBpbmNvcnJlY3QgdHJhcA0KPg0KPiBkcml2ZXJzL3Njc2kvcWxh
+Mnh4eC9xbGFfaW9jYi5jIHwgMTEgKysrKysrKysrKysNCj4gZHJpdmVycy9zY3NpL3FsYTJ4eHgv
+cWxhX2lzci5jIHwgNCArKysrDQo+IGRyaXZlcnMvc2NzaS9xbGEyeHh4L3FsYV90YXJnZXQuYyB8
+IDE2ICsrKysrKystLS0tLS0tLS0NCj4gMyBmaWxlcyBjaGFuZ2VkLCAyMiBpbnNlcnRpb25zKCsp
+LCA5IGRlbGV0aW9ucygtKQ0KPg0KDQoNCkdlbnRsZSBwaW5nDQoNCg0KDQoNCg0K
 
