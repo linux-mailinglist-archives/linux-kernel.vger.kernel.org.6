@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-404187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-404188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7EA9C4067
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB6A9C4068
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 15:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B3B282292
-	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9682AB21420
+	for <lists+linux-kernel@lfdr.de>; Mon, 11 Nov 2024 14:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3621A0716;
-	Mon, 11 Nov 2024 14:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961B019F130;
+	Mon, 11 Nov 2024 14:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="c/edJvfM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="p5hlPuYP"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EcSaGMBb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="GxuLtTHp"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE4C19EED6
-	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982641A0737
+	for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 14:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731334296; cv=none; b=Zz0JgHHoL3O6J+6OGW8PYKRY299SyEYTmazOVU3gxKuKwq6BI2UPYibyWFk9Iu1UQLZPBFKLrQQcVnA2/V9Ngelu4H7yVHsRdSJP2Ny1jkgja3Pw3cZgCfsswBUZlWM3qPSUWlnTvuLNEDI3a7OHqdL7WlA1di4uq8yXrtUySz4=
+	t=1731334300; cv=none; b=Hdc5Ls2Az450WHPpKy/d0qefDyj4Oi5V4ZUTTpgRvPGOMTsPI8JlRUfTY4fqE5xgl7gof5Kv296Hd8nyRQRp/9MmzTXNVd9MFj6Vt2w/WO4BfRWgwo1c9CIg1Smoafx6GmEbYuRipK3Gz20O2YIWzcPwomR1o88fvx35VqgRaGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731334296; c=relaxed/simple;
-	bh=8pb4UR4/zwLbkpEYgyhu1nBJvL4J6fIO1wRkKUpzm4g=;
+	s=arc-20240116; t=1731334300; c=relaxed/simple;
+	bh=ITLTQe4IwIVfMF9vMHmkjHkFPbTvcSak1wsm0nCNqqE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R1k3/wB8otWnQCANPMsCUqsIi52KAqiY/IqFsuI3UJeWh2t3m521Qb5DnAqIB1Xk96zSqixUew/nOFM5AcLRZYZjb1KvVdqILDAkhP8KuqqIxAbM4yGMqUfjOSopAaqCDE+tQpk25cnOGJVF2+2i/yTGD1j0nAlepSV2T1jeqP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=c/edJvfM; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=p5hlPuYP reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version:Content-Type; b=UN0P9kyGAJr4wnHr59Sph5GqK1RE/3vb59A8qUZwWKfSOyT6tEkhBGpSPdOZaT4ss6GzHSQY/TEjxIhfAp9W9M7FY3FtpUKuWM8vdMi/x1w/RkgtjBU1GXN6Fx+KCZw06kzlAShhWHkp06FOd7VrIRoACjYkFubnZ+d+xo3R/Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EcSaGMBb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=GxuLtTHp reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1731334294; x=1762870294;
+  t=1731334298; x=1762870298;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=WR1WQ/cnkQsXrWWXZYmpm17RJl4u8k3dN8N9efKquJU=;
-  b=c/edJvfMXsRmL76q5qUz5W2Ljsdmnd/uwVuH+C4Xqt2AfCkkQuXJl4jF
-   hUzUg1PpCs73nIxiRfQEQqHVfigTJs9GeP4/YQ3ZQDVpVDeMD5dFKYE/p
-   +WcM8qxf/NYjaZxtkBCIPm6nCI81UZYNavvAFOkR0EGz21Al+s9leVM+/
-   a3xlOWtxXqRMEVeRVXB/Vg65zG/xLwYe7aTH8BT/I7l+s7ZnOTI8rnMYw
-   1jgbEMvxDZPQwAev+EszjMXvoV2e6XgPRnJ5VK2gZZ7D3VUMffcv+ODWw
-   0DkUCJ8ow6+HfhxubxYdbl1FvESbw90qZReq1JyDHySYKRJXMviyMsHSn
-   Q==;
-X-CSE-ConnectionGUID: UAqgTLXhQuyKpxnEyE9YAg==
-X-CSE-MsgGUID: Go7VMIUVRru87jnOUl2ypQ==
+  bh=oCv9AlYEwKdYqm17u15TzBK9bW+nvaK/He+UnkJ6eow=;
+  b=EcSaGMBblXOk0hhgFdNFLYU6DJego5DUx77lNSi1TZmYvLS7Es8Ee61l
+   bppqKCfCNHhC9XbOrN2T1RlbWIHIAuSOYevrXTp/MShkhA9vuAzLJrh7S
+   KWuR36H0IAPXQkygn3/pQwsE9H382w8FfZEV5Lk+1gyuo9ERRtwyRthW7
+   hhy8Mz3ry9VWD0vQpIBjEj7IwWOf8spsEPt4l+nIwkY0AmLnfo5rNujeF
+   dgcxhdy/sVdGfHFEZjiSa7Itl6uDtFVgC/zExLL2PZ6jWXMT2AcyHu5wG
+   vstK+gexrSwezN0Ysffysk45vNW4ZlXAdS4Iwg/+uSkv8aBSCiCsj+qNt
+   g==;
+X-CSE-ConnectionGUID: Vkll+ek1TEyv5ptsUbyTJA==
+X-CSE-MsgGUID: 5n/cIIAJQ+m2unzB+/RX/Q==
 X-IronPort-AV: E=Sophos;i="6.12,145,1728943200"; 
-   d="scan'208";a="39967039"
+   d="scan'208";a="39967040"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 11 Nov 2024 15:11:33 +0100
-X-CheckPoint: {67321095-1A-F5DC7025-F79421CB}
-X-MAIL-CPID: 743DB381725107AB55C2ACF803FC5396_0
-X-Control-Analysis: str=0001.0A682F16.67321095.00AE,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 27920166E07;
-	Mon, 11 Nov 2024 15:11:29 +0100 (CET)
+  by mx1.tq-group.com with ESMTP; 11 Nov 2024 15:11:37 +0100
+X-CheckPoint: {67321099-25-F5DC7025-F79421CB}
+X-MAIL-CPID: 2BF4CDB44D290D73AE1164C742094A63_0
+X-Control-Analysis: str=0001.0A682F24.6732109A.0045,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 89DBD166E08;
+	Mon, 11 Nov 2024 15:11:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1731334289;
+	s=dkim; t=1731334293;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WR1WQ/cnkQsXrWWXZYmpm17RJl4u8k3dN8N9efKquJU=;
-	b=p5hlPuYPYKgqS6vlz/bWFZHZ9u2fBSMbwttKWgCcNUKnaqm2lToUTUaWpCMk0Kb6Owpvs4
-	lPt7P1bruvtm3y3p+U+5kZ7Ha8jZTxFYd+e4F9TR3U+uLHwVc500b9wUsVnjDDxSLMbuEv
-	cRodO35YdYPKkeOU/muI7FyDyWjfvc2ehBdh1D6hLCGhpDWq+t9zVR0/IPnhHXnJjydWfB
-	qWkGMfhbkF/kZZqglmnm6ePeqlATumIqyQeWr00eIn45VRqkrJV6wovwgyylkMAyzFrsHZ
-	QQxEvbvWOeNJHbbgTjXqFTmoa07yuL1mfcccL5YbX+aNDllafjfWIhgcxSjFNw==
+	bh=oCv9AlYEwKdYqm17u15TzBK9bW+nvaK/He+UnkJ6eow=;
+	b=GxuLtTHpEptkkAif8bvKt5A0gavUAaqwZGIMI3D1S7ksGEx1i2Ki0jjspcISbIbGo3WoBP
+	YOIbojCkY6+Eqxx7rW6fPTt6ACONSlAZCV2nGe2NpOZQLqtQXiNPYdWZbeHpPJlYrYf0/a
+	KkBdRj5BmH+CRRcCI9ijM3HwEapBbOLfvvWTfesEarG/p+Fbc7cpfqNS1eo7srRadYY5z0
+	wqh46st1l8g0SmeEovkNOnEqNL1ik4HXJU8O6m/vD58zuFNP+60hJYITZFs1F3SF7Nxmrb
+	35NGw01yhCxZc0qfNEIgkSRXgehuuNFniWSw1MbVbEZts4AMGR9jyoj5Mu54rw==
 From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 To: Lee Jones <lee@kernel.org>
 Cc: linux@ew.tq-group.com,
 	linux-kernel@vger.kernel.org,
+	Gregor Herburger <gregor.herburger@tq-group.com>,
 	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v7 4/5] mfd: tqmx86: make IRQ setup errors non-fatal
-Date: Mon, 11 Nov 2024 15:10:31 +0100
-Message-ID: <2b5522362098d54c6203be6da95bbc545a21fd49.1731325758.git.matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v7 5/5] mfd: tqmx86: add I2C IRQ support
+Date: Mon, 11 Nov 2024 15:10:32 +0100
+Message-ID: <c1b0769e00a8a4e463cffe725e939b0e5c2992c8.1731325758.git.matthias.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <cover.1731325758.git.matthias.schiffer@ew.tq-group.com>
 References: <cover.1731325758.git.matthias.schiffer@ew.tq-group.com>
@@ -88,61 +89,70 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-GPIO IRQ setup can fail either because an invalid IRQ was passed as a
-parameter, or because the GPIO controller does not support interrupts.
-Neither is severe enough to stop the whole probe; simply disable IRQ
-support in the GPIO resource when setup fails.
+From: Gregor Herburger <gregor.herburger@tq-group.com>
 
-The code is made a bit more robust by introduing an enum for the
-resource list indices instead of assuming that the IRQ is at index 0.
+The i2c-ocores controller can run in interrupt mode on tqmx86 modules.
+Add a module parameter to allow configuring the IRQ number, similar to the
+handling of the GPIO IRQ.
 
+The new code and module parameter refer to the I2C controller as "I2C1",
+as the TQMx86 PLD actually contains a second I2C controller, for which
+driver support will be added in the future.
+
+Signed-off-by: Gregor Herburger <gregor.herburger@tq-group.com>
 Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 ---
- drivers/mfd/tqmx86.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/mfd/tqmx86.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-index 8aa448a67c9a5..d2704526f9d4b 100644
+index d2704526f9d4b..1cba3b67b0fb9 100644
 --- a/drivers/mfd/tqmx86.c
 +++ b/drivers/mfd/tqmx86.c
-@@ -68,13 +68,15 @@ static const struct resource tqmx_watchdog_resources[] = {
- 	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
- };
+@@ -50,6 +50,7 @@
+ #define TQMX86_REG_IO_EXT_INT_9			2
+ #define TQMX86_REG_IO_EXT_INT_12		3
+ #define TQMX86_REG_IO_EXT_INT_MASK		0x3
++#define TQMX86_REG_IO_EXT_INT_I2C1_SHIFT	0
+ #define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
+ #define TQMX86_REG_SAUC		0x17
  
--/*
-- * The IRQ resource must be first, since it is updated with the
-- * configured IRQ in the probe function.
-- */
-+enum tqmx86_gpio_resource_type {
-+	TQMX86_GPIO_IO,
-+	TQMX86_GPIO_IRQ,
+@@ -60,8 +61,19 @@ static uint gpio_irq;
+ module_param(gpio_irq, uint, 0);
+ MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (valid parameters: 7, 9, 12)");
+ 
+-static const struct resource tqmx_i2c_soft_resources[] = {
+-	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
++static uint i2c1_irq;
++module_param(i2c1_irq, uint, 0);
++MODULE_PARM_DESC(i2c1_irq, "I2C1 IRQ number (valid parameters: 7, 9, 12)");
++
++enum tqmx86_i2c1_resource_type {
++	TQMX86_I2C1_IO,
++	TQMX86_I2C1_IRQ,
 +};
 +
- static struct resource tqmx_gpio_resources[] = {
--	DEFINE_RES_IRQ(0),
--	DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
-+	[TQMX86_GPIO_IO] = DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
++static struct resource tqmx_i2c_soft_resources[] = {
++	[TQMX86_I2C1_IO] = DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
 +	/* Placeholder for IRQ resource */
-+	[TQMX86_GPIO_IRQ] = {},
++	[TQMX86_I2C1_IRQ] = {},
  };
  
- static struct i2c_board_info tqmx86_i2c_devices[] = {
-@@ -255,13 +257,8 @@ static int tqmx86_probe(struct platform_device *pdev)
- 	if (gpio_irq) {
- 		err = tqmx86_setup_irq(dev, "GPIO", gpio_irq, io_base,
- 				       TQMX86_REG_IO_EXT_INT_GPIO_SHIFT);
--		if (err)
--			return err;
--
--		/* Assumes the IRQ resource is first. */
--		tqmx_gpio_resources[0].start = gpio_irq;
--	} else {
--		tqmx_gpio_resources[0].flags = 0;
-+		if (!err)
-+			tqmx_gpio_resources[TQMX86_GPIO_IRQ] = DEFINE_RES_IRQ(gpio_irq);
- 	}
- 
+ static const struct resource tqmx_watchdog_resources[] = {
+@@ -264,6 +276,13 @@ static int tqmx86_probe(struct platform_device *pdev)
  	ocores_platform_data.clock_khz = tqmx86_board_id_to_clk_rate(dev, board_id);
+ 
+ 	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT) {
++		if (i2c1_irq) {
++			err = tqmx86_setup_irq(dev, "I2C1", i2c1_irq, io_base,
++					       TQMX86_REG_IO_EXT_INT_I2C1_SHIFT);
++			if (!err)
++				tqmx_i2c_soft_resources[TQMX86_I2C1_IRQ] = DEFINE_RES_IRQ(i2c1_irq);
++		}
++
+ 		err = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
+ 					   tqmx86_i2c_soft_dev,
+ 					   ARRAY_SIZE(tqmx86_i2c_soft_dev),
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
