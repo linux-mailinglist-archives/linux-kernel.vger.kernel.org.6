@@ -1,103 +1,153 @@
-Return-Path: <linux-kernel+bounces-405970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B8B9C5973
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:46:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DBA9C5A0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:14:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1171F23C98
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A66BB32B9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA501F892C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD451F81B3;
 	Tue, 12 Nov 2024 13:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VNoZer1X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TNS9lz2e";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KUnatkAx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629B91F81AC;
-	Tue, 12 Nov 2024 13:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7D21F8191
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731419182; cv=none; b=ecRlGaWf1m9oATbrn20xs6E/AkvJYbJD9dvXADfMS1e4M+wDLu8xHCLe2dRCYFlPh2I/1V3aPFMUJmoRo9PIT5+vPHCmIjRlZSi24P98wommMLM2RwtaLZgcZYzmUTaWyHkLurDoQ6QUY8IJTmbQ71NqBe+0vx52M83+wtVeUoc=
+	t=1731419183; cv=none; b=ubfESBYOy3EizyqY/s3ImKB9+NDLcpiPaSNlFOTsUdKJPcv+6py6bGuPAe8wq+o3SEtYmSf9RpjItl/lZMoBLEX6Ngk9ZNQj5m+zckUokZzkD7R1prAhRCuGgh70tFoiNdGLuxSL+sPA3BO3/kulzro6UwspH5lEXy+D64vsbT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731419182; c=relaxed/simple;
-	bh=k6W+HKSuc4CzrIJX0IoN770edZbxi3Ko9sF7Bizv6jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EqQROuQpVV9hs2Ob5O+vlZKUkoG3wI0l0HS4xBXuFS2/lacT9eh6tMDiMQqkJi0TjWDYQRDFHxYw5C/vWBiMJNrOYulg4WZ7irtGyon4eiVTjm/QOi64wTrwd550h475zoJIXvs1Ecbkmu+rVihpkGquSxYrOHGBv6HG/CNTB2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VNoZer1X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F160DC4CED9;
-	Tue, 12 Nov 2024 13:46:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731419182;
-	bh=k6W+HKSuc4CzrIJX0IoN770edZbxi3Ko9sF7Bizv6jw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VNoZer1X/koJEZkkYAW1p0Z0nOFRO0+PMkNpldz6DxOUXGN+OlMI7iisT8AJDWnrK
-	 OkMROkHg2++QDnze9P3GkePn3jfLgM7Ks9HLn7N20/LQO+v1rZs7QFOZB2mn5B5Lyx
-	 8q1+qafWxSs+PZCR6PtnK8NDwfH872dw4mL6JALKeW8iK3MXvY90Igb2zUHVuKyOn0
-	 fITIpv4TlPNBsdPgoFXgHxYW5umzTuzvDzbvCCtpyCssd9LSy3ptPKfpJ5jPvNEwPA
-	 ox12mW2Fth/lucCe6rjtEEgha/+i8ZzYRLVTufz7IcuRDM8WpvBa+0Z3jN+RLwZvOt
-	 TyRuE76r+7zcw==
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e29218d34f8so4053074276.1;
-        Tue, 12 Nov 2024 05:46:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXBkUaVQNChELmampcuxwx98SlPJ9c3Mdc2MJ9d1Rv7zsrQk6Vc6XpV5LyGAT8x94DUITzDTfAxuJ/V@vger.kernel.org, AJvYcCXiDWlJAyCJsBGP712Rt08Cac4M8i6W6Qpz5mDJbsrt9/qVvWJ3ly7CCmqVphnH2AZZyyNK198nOtVfOe3T@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPjABTmpUui31XR4CWXYaY3HwjpBJnR71mVd8YkTnk3B8b40K7
-	Nk4kC7JgepCgdb2Fg98mqRJ6jcA3DA4N9ikcdrCj88B9MQFmVYUIUK5vN2QNTEpOajsFnRxjJhT
-	3dfloNaQ+w0WrQ+QJ2v24286mog==
-X-Google-Smtp-Source: AGHT+IEn0C0WfCG7tbpSyf5xX7DxWFdOpXhSBoAZ5hwE4Pr7xdWiEcgqvO/UcDsq9RdhhFj/OdlcAN30PYOvXPkThlA=
-X-Received: by 2002:a05:6902:1507:b0:e28:e700:2821 with SMTP id
- 3f1490d57ef6-e3380067b96mr12346210276.25.1731419181152; Tue, 12 Nov 2024
- 05:46:21 -0800 (PST)
+	s=arc-20240116; t=1731419183; c=relaxed/simple;
+	bh=gKShv7+G+/jj6/jXNcXUElgPO+Tlumb8gNlcoxF1x88=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=m9y356bFC2fUWRRgw1zYlw21/2/A2UKGS9zSKtvOj+OwnTpPICTfmnSYufRMtFBzCKgIb/JN9o5D8QzR7y56w9/YyN5fbx3VeDGOQPXMkwSHOMozfxebcoRPJwh+Mydxjcl9E2ludsYjhsYC7hdXKLnHHeP4aAUArQuk7Irbw5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TNS9lz2e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KUnatkAx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731419179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmxrs8QHJz5PAmm33VLO/J5Su+9eR3M9rqggTcHIdxI=;
+	b=TNS9lz2ef0A5oPo9qOoS/rFOmhq7vuSyV1aFTCrXmazMLMFnXHoutveF7ENGjJfGqOSpqe
+	9HZ7GD5+GwAtUKOB2L0ZLsadpdB64L0QKbFkQUv3Vn9zCyUETRwU2gy5AvwNg1ANgkkmeq
+	okOy52FFllZKais+deWoJB++n19MObSrAZpdKbvCkaBukvDlw1ddXqKUFtJmx+DVrdmEWZ
+	N8EsQOWi3vtokzMzuGkr3epg1/2QyDzOq6c63p/GhjKzQHn0thVHC/SfZxnoHwwfoXmFCW
+	d1XmGowxmNqZ2ubIf5n4ak2vvFM18M5jLXHkSqVSah7ffxCVJoqFCHGHEi6VdQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731419179;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Fmxrs8QHJz5PAmm33VLO/J5Su+9eR3M9rqggTcHIdxI=;
+	b=KUnatkAxt18uhOvqM4NmiOkuw3OsUs6j9FKI+/ctAB96hFRsSoU9rQKrxnWPHCpToViuMY
+	1pcup05ajDWqEwCQ==
+To: Frederic Weisbecker <frederic@kernel.org>, "Joel Fernandes (Google)"
+ <joel@joelfernandes.org>
+Cc: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 1/3] tick-sched: Remove last_tick and calculate next tick
+ from now
+In-Reply-To: <ZzKWvislBnjV9kpf@pavilion.home>
+References: <20241108174839.1016424-1-joel@joelfernandes.org>
+ <20241108174839.1016424-2-joel@joelfernandes.org>
+ <ZzKWvislBnjV9kpf@pavilion.home>
+Date: Tue, 12 Nov 2024 14:46:23 +0100
+Message-ID: <874j4co98w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112-am64-overlay-bool-v1-0-b9d1faff444e@solid-run.com>
-In-Reply-To: <20241112-am64-overlay-bool-v1-0-b9d1faff444e@solid-run.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 12 Nov 2024 07:46:09 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJAQswTo2eWxLw62wqb-2i=_9W84_v_tW+TSW4kgNK3_A@mail.gmail.com>
-Message-ID: <CAL_JsqJAQswTo2eWxLw62wqb-2i=_9W84_v_tW+TSW4kgNK3_A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] of: add support for value "false" to of_property_read_bool
-To: Josua Mayer <josua@solid-run.com>
-Cc: Saravana Kannan <saravanak@google.com>, Nishanth Menon <nm@ti.com>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Jon Nettleton <jon@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, rabeeh@solid-run.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 12, 2024 at 12:41=E2=80=AFAM Josua Mayer <josua@solid-run.com> =
-wrote:
+On Tue, Nov 12 2024 at 00:43, Frederic Weisbecker wrote:
+> Le Fri, Nov 08, 2024 at 05:48:34PM +0000, Joel Fernandes (Google) a =C3=
+=A9crit :
+
+>> During tick restart, we use last_tick and forward it past now.
+>>
+>> Since we are forwarding past now, we can simply use now as a reference
+>> instead of last_tick. This patch removes last_tick and does so.
+>>
+>> This patch potentially does more mul/imul than the existing code,
+>> as sometimes forwarding past now need not be done if last_tick > now.
+>> However, the patch is a cleanup which reduces LOC and reduces the size
+>> of struct tick_sched.
+
+May I politely ask you to read and follow the Documentation
+vs. changelogs?
+
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#change=
+log
+
+Also
+
+git grep 'This patch' Documentation/process
+
+might give you a hint.
+
+>> -	/* Forward the time to expire in the future */
+>> -	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
+>> +	hrtimer_set_expires(&ts->sched_timer, DIV_ROUND_UP_ULL(now, TICK_NSEC)=
+ * TICK_NSEC);
+
+How is a division and multiplication in this hotpath helpful? That's
+awfully slow on 32-bit machines and pointless on 64-bit too.
+
+Using now is also wrong as it breaks the sched_skew_tick distribution by
+aligning the tick on all CPUs again.
+
+IOW, this "cleanup" is making things worse.
+
+> We don't want to rewrite hrtimer_forward() but, after all, the current ex=
+piry is
+> enough a relevant information.
 >
-> Boolean type properties are usually considered true if present and false
-> when they do not exist. This works well for many in-tree board dts and
-> existing drivers.
+> How about just this? It's worth it as it now forwards after the real last=
+ programmed
+> tick, which should be close enough from @now with a delta below TICK_NSEC=
+, or even
+> better @now is below the expiry. Therefore it should resume as just a no-=
+op
+> or at worst an addition within hrtimer_forward():
 >
-> When users need to overrride boolean values from included dts,
-> /delete-property/ is recommend. This however does not work in overlays
-> (addons).
+> diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+> index 753a184c7090..ffd0c026a248 100644
+> --- a/kernel/time/tick-sched.c
+> +++ b/kernel/time/tick-sched.c
+> @@ -838,7 +838,6 @@ EXPORT_SYMBOL_GPL(get_cpu_iowait_time_us);
+>  static void tick_nohz_restart(struct tick_sched *ts, ktime_t now)
+>  {
+>  	hrtimer_cancel(&ts->sched_timer);
+> -	hrtimer_set_expires(&ts->sched_timer, ts->last_tick);
+>=20=20
+>  	/* Forward the time to expire in the future */
+>  	hrtimer_forward(&ts->sched_timer, now, TICK_NSEC);
 
-As soon as someone needs to delete a non-boolean property, we're back
-to the same problem. If you want to fix it, you need to fix it for any
-property.
+That's just wrong. ts->sched_timer.expires contains a tick in the
+future. If tick_nohz_stop_tick() set it to 10 ticks in the future and
+the CPU goes out of idle due to a device interrupt before the timer
+expires, then hrtimer_forward() will do nothing because expires is ahead
+of now.
 
+Which means the CPU is not idle and has no tick until the delayed tick
+which was set by tick_nohz_stop_tick() expires. Not really correct.
 
-> Geert pointed out [1] that there are several invitations for using
-> strings "true" and "false" on boolean properties: [1], [2], [3].
+Thanks,
 
-There's always bad examples...
-
-> Add support for a string value "false" to be considered false on boolean
-> properties by changing of_property_read_bool implementation.
-
-Any existing s/w will treat 'foo =3D "false"' as true. It's an ABI.
-
-Rob
+        tglx
 
