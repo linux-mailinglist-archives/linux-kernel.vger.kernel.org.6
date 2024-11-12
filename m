@@ -1,140 +1,209 @@
-Return-Path: <linux-kernel+bounces-406057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 715A29C5A7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:36:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 112629C5A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 299DD1F23BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:36:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C447C287EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:37:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668541FF052;
-	Tue, 12 Nov 2024 14:36:03 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8DA1FF02B;
+	Tue, 12 Nov 2024 14:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PhBksXze"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7411FF037;
-	Tue, 12 Nov 2024 14:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB871FCC50;
+	Tue, 12 Nov 2024 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731422163; cv=none; b=norr6HWjpZbRt09lP3vfx5rJ8ZKTde+K0/yNvvg/QTeQEw+XDtieHYYpcMhVTu8IVhApPNlAtcjpQEsLpegj26Egz2KgI8TfI09rB29VgaGJzlxgcYJiRjMzHZvyaOM/FZhdrtq7qsGK1ogg5zW90NRuJ53ftU6kqTsqmIaC444=
+	t=1731422209; cv=none; b=eWb5j/Juxj/0xQuoajci8mBRcpj1tAAm0JGjJ707CaAoc4TQZRUE+6KjWRV37JDQvahHPOYTLUK3qmiOq9c6oRwAqTOltALYknjyFxCz+3H/yDnDr8f3UYjHWTME3s+4ZHQ9H2h18wAAfin7kG+W/nJz6WxFS5Trb4Yhj/t6FaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731422163; c=relaxed/simple;
-	bh=z6wXrTyhnVn+itxOawVwCYRcAi07QMtXojdxaGdMHmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o/E6Z3cwa8YHXRHSiVG0sWvRW9y3Os622KuUpVov90wi/3SK+nLWQdl9so0IAf+ql/JiciXUTsmRRWgC1+TxzPkw5CNrqNjYBHxHxlzx2AY9o4LnDsohYkjO3H3xJwnEiPAR4MXHdsoNQUhG0XQl8h4Z3z8XoMPHz+C67Xk0mB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20ce5e3b116so51012845ad.1;
-        Tue, 12 Nov 2024 06:36:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731422161; x=1732026961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H/b6whg1Fuu9dsUqH1kstDqi5ac2SXC82I/0cqQa6CQ=;
-        b=tAKIeTR0qUXXSeymcHE4vU0hPjb7lqVd8WwFQGYunGciePfys23fj3C2GdLbBJyz61
-         ub7ymXvZ3oVy/bVqBhIfEJpvRwvHyiz0B6Yq6ZB/788FvVZksEiBP3AEgYpCOLunCc/l
-         r/31neBLkFFkL2aFZuq62XphdRZp3kqhhaMkdO+w+cVxRR2B/NfFF0vIv2yl36dyS9F7
-         CozAqqdUQ6RaDTf6sxOgkmco9p3gM12sc5KlfT9FjX8gOL2O6GQRjabmydHlay7kNVOD
-         0rteCquc/i4JMMH0JCtgRZU9cKFfYCTHVCX5OXOLGYBIrLSBj2yCe8q9pD44SsZ601wo
-         YmLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV477djBqLJxtHAU0LekdR7SKnpP/2tfR+XQtkcC8TpAhnber5UKNTe2XIFa94c6SlOFretOFlrE0Nh@vger.kernel.org, AJvYcCX2al1XBjvzhWW8EzCZBnOMi9oyc5bax2/JOWWQ2589E6EelUaY5Izbg84s4G1RkVrKDAk5IPBaCo3M+nRB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwfXsbpdfL4OObs0blAY138lEkyZmeWKrlv/0ITxHsnFtRiB1c
-	Nu94IL5igOIf+3DbIh+vwax4hakiciXTffXEAPKLZg/aehHZSPY00QHyhNnAjAy8Pw==
-X-Google-Smtp-Source: AGHT+IEvylM1Sz6Cjl79eHiLdMLsrfhmTxFJkqLW6o1ZZX1q50Vz3S5gYK40ZlIuouKZgymsV44e8A==
-X-Received: by 2002:a17:903:1c6:b0:20c:8cc4:cf1b with SMTP id d9443c01a7336-21183e11495mr226690465ad.43.1731422160890;
-        Tue, 12 Nov 2024 06:36:00 -0800 (PST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e5a4a3sm94765295ad.185.2024.11.12.06.36.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 06:36:00 -0800 (PST)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2b549799eso4552753a91.3;
-        Tue, 12 Nov 2024 06:36:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU4nno/1Sy2rYNW4FNt+VTkx4GMZv8TFEzKGZOyLvetwNgtM22KtrTZwNGX6eWkEBXor7mvnau0wCJxQRbN@vger.kernel.org, AJvYcCWVNRHYcOw7mqirhlEbNDSywM/2L1Doca5Vi6608BRrwmo5gBcBz+C/D3PR4eDMJGisggmaDxTnw19L@vger.kernel.org
-X-Received: by 2002:a17:90b:4b84:b0:2cf:c9ab:e747 with SMTP id
- 98e67ed59e1d1-2e9b16e26b2mr24419741a91.1.1731422160606; Tue, 12 Nov 2024
- 06:36:00 -0800 (PST)
+	s=arc-20240116; t=1731422209; c=relaxed/simple;
+	bh=5hjTkMNjb3O6ASwW8LoDjAWSFytKM+PMu6z1Tq9qPpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nQC+Ygpdv1/KfRsW2v/4qvYoaFL+SdDAlSpp+bbB81qDfIvV8VIMusT9jl8sn2y8l03cBK1iMe7UksLA8hVnOKsZ74zK7zVUUAeQT6vRXvIjiKKKn4H7LLaEOhd3rAoPilydcyb25B3LxFV/Xb3gUNE7y0DZ8uJakpNpDVDy9G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PhBksXze; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4ACEaGiT042166;
+	Tue, 12 Nov 2024 08:36:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1731422176;
+	bh=jBVDDEfe2NJA7Dck/V0fwYhzTcJE8DfuUO5x0gs/GXI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=PhBksXze6nYjV9YXpFQ72gvZRkf9jcNUR2F5/2uA45mJ3cZfb1nqFRNsGMFzJPVCA
+	 ilM2BxuMV4d/gRHtWYao70lAV/BkW8g5pPe2SU7JxKbLsqTak+wsf1KQSPOPfInGwY
+	 YsOBblBDH0PFUKO+0t8f78+0zlPJmMzB339gG+jE=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ACEaGSd033999;
+	Tue, 12 Nov 2024 08:36:16 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 12
+ Nov 2024 08:36:15 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 12 Nov 2024 08:36:15 -0600
+Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4ACEaAGH047110;
+	Tue, 12 Nov 2024 08:36:11 -0600
+Message-ID: <bd0e6e92-820e-45ca-8dcf-7194bdd2e510@ti.com>
+Date: Tue, 12 Nov 2024 20:06:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-4-tszucs@linux.com>
- <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
-In-Reply-To: <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se>
-From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
-Date: Tue, 12 Nov 2024 15:35:49 +0100
-X-Gmail-Original-Message-ID: <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
-Message-ID: <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Dragan Simic <dsimic@manjaro.org>, 
-	Chukun Pan <amadeus@jmu.edu.cn>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jonas,
-
-I agree; it's not possible to tell if the user will use a PCIe/USB,
-PCIe/UART, SDIO/UART, perhaps USB/UART device, or any other HIF
-combination. The way I see it is UART8 is hardwired to the M2E, so
-there is a reasonable expectation that it should work too if need be.
-
-Kind regards,
-Tamas
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 2/2] net: ti: icssg-prueth: Fix clearing of
+ IEP_CMP_CFG registers during iep_init
+To: Roger Quadros <rogerq@kernel.org>, <vigneshr@ti.com>,
+        <m-karicheri2@ti.com>, <jan.kiszka@siemens.com>,
+        <javier.carrasco.cruz@gmail.com>, <jacob.e.keller@intel.com>,
+        <horms@kernel.org>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        <danishanwar@ti.com>
+References: <20241106074040.3361730-1-m-malladi@ti.com>
+ <20241106074040.3361730-3-m-malladi@ti.com>
+ <f28bf97c-783d-489c-9549-0dd0f576497e@kernel.org>
+ <db77a358-a4d3-444e-971e-aa348ad8c8b7@ti.com>
+ <ee3aeadb-9897-428c-83e2-3e208f095d1d@kernel.org>
+Content-Language: en-US
+From: Meghana Malladi <m-malladi@ti.com>
+In-Reply-To: <ee3aeadb-9897-428c-83e2-3e208f095d1d@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
 
-Tam=C3=A1s Sz=C5=B1cs
-tszucs@linux.com
+On 12/11/24 18:47, Roger Quadros wrote:
+> 
+> 
+> On 12/11/2024 11:04, Meghana Malladi wrote:
+>>
+>> On 11/11/24 19:23, Roger Quadros wrote:
+>>> Hi,
+>>>
+>>> On 06/11/2024 09:40, Meghana Malladi wrote:
+>>>> When ICSSG interfaces are brought down and brought up again, the
+>>>> pru cores are shut down and booted again, flushing out all the memories
+>>>> and start again in a clean state. Hence it is expected that the
+>>>> IEP_CMP_CFG register needs to be flushed during iep_init() to ensure
+>>>> that the existing residual configuration doesn't cause any unusual
+>>>> behavior. If the register is not cleared, existing IEP_CMP_CFG set for
+>>>> CMP1 will result in SYNC0_OUT signal based on the SYNC_OUT register values.
+>>>>
+>>>> After bringing the interface up, calling PPS enable doesn't work as
+>>>> the driver believes PPS is already enabled, (iep->pps_enabled is not
+>>>> cleared during interface bring down) and driver  will just return true
+>>>> even though there is no signal. Fix this by setting the iep->pps_enable
+>>>> and iep->perout_enable flags to false during the link down.
+>>>>
+>>>> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
+>>>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+>>>> ---
+>>>>    drivers/net/ethernet/ti/icssg/icss_iep.c | 10 ++++++++++
+>>>>    1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/ti/icssg/icss_iep.c b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>>> index 5d6d1cf78e93..03abc25ced12 100644
+>>>> --- a/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>>> +++ b/drivers/net/ethernet/ti/icssg/icss_iep.c
+>>>> @@ -195,6 +195,12 @@ static void icss_iep_enable_shadow_mode(struct icss_iep *iep)
+>>>>          icss_iep_disable(iep);
+>>>>    +    /* clear compare config */
+>>>> +    for (cmp = IEP_MIN_CMP; cmp < IEP_MAX_CMP; cmp++) {
+>>>> +        regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+>>>> +                   IEP_CMP_CFG_CMP_EN(cmp), 0);
+>>>> +    }
+>>>> +
+>>>
+>>> A bit later we are clearing compare status. Can clearing CMP be done in same for loop?
+>>>
+>>
+>> Yes it can be done in the same loop, I will update that.
+>>
+>>>>        /* disable shadow mode */
+>>>>        regmap_update_bits(iep->map, ICSS_IEP_CMP_CFG_REG,
+>>>>                   IEP_CMP_CFG_SHADOW_EN, 0);
+>>>> @@ -778,6 +784,10 @@ int icss_iep_exit(struct icss_iep *iep)
+>>>>            ptp_clock_unregister(iep->ptp_clock);
+>>>>            iep->ptp_clock = NULL;
+>>>>        }
+>>>> +
+>>>> +    iep->pps_enabled = false;
+>>>> +    iep->perout_enabled = false;
+>>>> +
+>>>
+>>> But how do you keep things in sync with user space?
+>>> User might have enabled PPS or PEROUT and then put SLICE0 interface down.
+>>> Then if SLICE0 is brought up should PPS/PEROUT keep working like before?
+>>
+>> No, why? Because either both SLICE0 and SLICE1 run when atleast one interface is up and both SLICE0 and SLICE1 are stopped when both the interfaces are brought down. So when SLICE0 is brought down, SLICE1 is also brought down. Next time you bring an interface up, it is a fresh boot for both SLICE1 and SLICE0. In this case, just like how we register for ptp clock (this is handled by the driver in icss_iep_init(),
+>> pps also needs to be enabled (this has to be done by the user).
+> 
+> I just checked that PPS/PEROUT sysfs don't implement the show hook. So there
+> is nothing to be in sync with user space.
+> 
 
-On Mon, Nov 11, 2024 at 8:12=E2=80=AFPM Jonas Karlman <jonas@kwiboo.se> wro=
-te:
->
-> Hi Tam=C3=A1s,
->
-> On 2024-11-11 19:17, Tam=C3=A1s Sz=C5=B1cs wrote:
-> > Enable UART lines on Radxa ROCK 3 Model B M.2 Key E.
-> >
-> > Signed-off-by: Tam=C3=A1s Sz=C5=B1cs <tszucs@linux.com>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm=
-64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > index b7527ba418f7..61d4ba2d312a 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
-> > @@ -732,7 +732,7 @@ &uart8 {
-> >       pinctrl-names =3D "default";
-> >       pinctrl-0 =3D <&uart8m0_xfer &uart8m0_ctsn &uart8m0_rtsn>;
-> >       uart-has-rtscts;
-> > -     status =3D "disabled";
-> > +     status =3D "okay";
->
-> This should probably be enabled using an dt-overlay, there is no UART
-> device embedded on the board and the reason I left it disabled in
-> original board DT submission.
->
-> On second thought maybe they should be enabled, think PCIe and USB lines
-> on the M.2 Key E is already enabled by default. I probably only tested
-> with a pcie/usb wifi/bt card and not a sido/uart wifi/bt card.
->
-> Regards,
-> Jonas
->
-> >  };
-> >
-> >  &usb_host0_ehci {
->
+I see, thanks for confirming this.
+
+>>
+>>> We did call ptp_clock_unregister() so it should unregister the PPS as well.
+>>> What I'm not sure is if it calls the ptp->enable() hook to disable the PPS/PEROUT.
+>>>
+>>> If yes then that should take care of the flags as well.
+>>>
+>>
+>> No, ptp_clock_unregister() doesn't unregister PPS.
+>>
+>>> If not then you need to call the relevant hooks explicitly but just after
+>>> ptp_clock_unregister().
+>>> e.g.
+>>>      if (iep->pps_enabled)
+>>>          icss_iep_pps_enable(iep, false);
+>>>      else if (iep->perout_enabled)
+>>>          icss_iep_perout_enable(iep, NULL, false);
+>>>
+>>
+>> This doesn't work because if pps_enabled is already true, it goes to icss_iep_pps_enable(), but inside it checks if pps_enabled is true, if so it returns 0, without acutally enabling pps. Which is why we need to set pps_enable and perout_enable to false.
+> 
+> Note that we are passing false in the last argument. i.e. we want to disable PPS/PEROUT.
+> I don't see why it won't work.
+> 
+
+I think I overlooked the false part, my bad. Setting pps_enable and 
+perout_enable to false and calling relevant hooks - 
+icss_iep_pps_enable()/icss_iep_perout_enable(). In both the cases the 
+output behavior is same, but the later one is a cleaner approach. I will 
+update it.
+
+>>
+>>> But this means that user has to again setup PPS/PEROUT.
+>>>
+>>
+>> So yes, this is the expected behavior for user to setup PPS/PEROUT after bringing up an interface. To clarify when user needs to again setup PPS:
+>>
+>> 1. eth1 and eth2 are up, and one interface is brought down -> PPS/PEROUT will be working the same
+>> 2. No interface is up, and one interface is brought up -> PPS/PEROUT needs to be enabled
+> 
+> OK.
+> 
+>>
+>>>>        icss_iep_disable(iep);
+>>>>          return 0;
+>>>
+> 
 
