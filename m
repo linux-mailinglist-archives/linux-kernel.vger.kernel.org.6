@@ -1,151 +1,149 @@
-Return-Path: <linux-kernel+bounces-405340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC8F9C5002
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:55:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DF29C500E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEF71F21293
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:55:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92A48B2700A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB920A5FB;
-	Tue, 12 Nov 2024 07:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D637820B7FA;
+	Tue, 12 Nov 2024 07:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5StVuah"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EMot6XBg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12181209F4A;
-	Tue, 12 Nov 2024 07:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E82205E37;
+	Tue, 12 Nov 2024 07:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398023; cv=none; b=CNszVTxCfuOI0eYsY/CZk1onVdXoHomV0dEfpE18hOqYMu97glFTIst3eDzvnWE3XLHW/J1zM0FZuCtiEg88zS6sKbWkQ07xxjOuGDxHHUxS/kd+XNWWJ+fG+FeslJV9CmemHJf4tyUrTdSthdqS8zGthGtLlkVffCpAYlGf8Ps=
+	t=1731398081; cv=none; b=upwve5aAPwj0DnZ+YrX4x4Yg0ZPQHgLEVq+O5G2CAuy+L/lMy1bo8tbxzHNXo6krEfFQprg5W55eOBdhxFDEo3hUpliFIa0bvH2UJUHVYwwWiRFk+mqfzpz+xh0pwxHtLJkVIIfL0VLQidj/8eF/VB1hvfJMXkf7ZPk3ooIc7ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398023; c=relaxed/simple;
-	bh=aNauZ/Ih/QkT/dVs7qqIjV3TANMpfFtHW7+Wmb08jek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cR0ZTeuJliB+4KJTOEtT+gTxFxlmTApTq8qih/ZTYg66gburRexOlN1GIYnWkVaQovCkDHBUKDN4VgYs/x5xmLvl5JPZFsn3tGnoAz+wYkc5/yJ6406tXKlFglxAqO+d5Ber4ifbvFn2BKSNPlwEhbCI5K98fYgZUvAznrfY9Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5StVuah; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2506800b3a.1;
-        Mon, 11 Nov 2024 23:53:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731398020; x=1732002820; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bUgoxxvXrdhSJUKoJyf/O9v+5uKNcqCPwgTAuJ4BG7s=;
-        b=k5StVuahyiiO7KN2syrqVzoiJQoNBGi4VDfp5PzeOIB6lETijR+QTD5k5yf/nVXNIX
-         U7B1y/koPL8VYtiQqWmec7lRSnBVnG5MlTG/R8zMdhzRAeRNtGEMxMhwKQSg3t2NcHJO
-         cjUCbctYZtVGDXGK89L9zWbZaaFYDYFbt2WbGoDWE6z/2aUuYJ1CyXNZSBxGk96VxHSw
-         +9UYtAMFJ8PSsvqv3VcywndHOxMooQdpdZ+yefYeCgYwJb00AZd0fZINvYqEqr3CEZys
-         6yVdu1ND7YxjuBTCkQW2Hn8+xkJokakL/Fvw0UeJsqRJXPwGizGl6bhsux4lmuosZgnG
-         ksMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731398020; x=1732002820;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUgoxxvXrdhSJUKoJyf/O9v+5uKNcqCPwgTAuJ4BG7s=;
-        b=sqth2KThKTm5bwSjy3YWsfIV9mVKN+1vNQqHWoTr7ONjBVM3Ng+LRmbpqsHkF390uB
-         jE2qe40F+J9uZRws8GNULOCd3ONJh/c2JUnVBPyDHnwTt3+aTo7Fu2/jUuwet6HTq8RG
-         NsPiHyvHaHeSvfZxIkfhiedwj9Xai/v1BmYC1rYJ8o5BzliiA8gDumZ0sQ8rvB27ZjIk
-         c9i9cIroCnPfAEVOklhjhVlu2oHfJboTMrKXesXnyk6d+e5qAZkiXxQ3FYkqu5MbR4QM
-         iJ2jkCVrmXG+xTsVCo5gJZxnxVKcOjdZBBjI6cZKdmCSHiz/6FYxpePKc5NvgqaTKtrS
-         2y3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNCf9seypxgpVWSBWEEFYHyRj4VNYDlLlNmx4/m8LXV3ToBrHlZjAmlP//92NqskFZGDHtcJavOosbg+E=@vger.kernel.org, AJvYcCX+azBmUDVftd3Ff6ZXG/fCYrhKSVJZgkbrN3QIIAqTxhYAIJzIGODfat+lbB5cvtVyMGD3DCs+jxOE4Cdgr/+M2ys=@vger.kernel.org, AJvYcCXxgnQBGFdJh5EfasuZvrWSUS7Tzc9r+vXglW5Xn6RkZ3InZWeRbK4uWaMevdNJs7fUqWqXSoezstka4g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlym+J4AvRTn10gtV3GheKiS4z4TmwSlkiwzy8Kh04lPcZmwa0
-	WkmSK3M+B+lvrGTIswtn3VoeBbvZsKcFq2ECyd+VaKeL84mJJwV8
-X-Google-Smtp-Source: AGHT+IH4s7RgAlk5NeJXz45kGRRPxv9SbFPlQhFQl+z6UduWSSD31KYzEVYWdy1FjRFjXJxIydK7jg==
-X-Received: by 2002:a05:6a00:b56:b0:71e:5a1d:ecdc with SMTP id d2e1a72fcca58-7241334a09dmr21966921b3a.17.1731398020189;
-        Mon, 11 Nov 2024 23:53:40 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7240799bb78sm10424749b3a.95.2024.11.11.23.53.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 23:53:39 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:23:32 +0530
-From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com, krzk@kernel.org,
-	linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, kernel-team@android.com,
-	willmcvicker@google.com
-Subject: Re: [PATCH 2/2] scsi: ufs: exynos: remove superfluous function
- parameter
-Message-ID: <20241112075332.lhssmh44a77uyvit@thinkpad>
-References: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
- <20241030102715.3312308-2-tudor.ambarus@linaro.org>
+	s=arc-20240116; t=1731398081; c=relaxed/simple;
+	bh=B7T6rH98Pun81Q0J4vmg63UTyhk1+HV6gmwVAT5X4lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u0mMh4mriddiWZOPFkqlys0sfHLAwEIH0Zcovel+eZ11ZZrjcuzoGs2/swpAJjWSzP0KSYMMyKyvCXPyZ5+EjbQr8GkptTiSSbP1pphj9nuwGq6jVQygnDYdn3DbiaUlyDFBh84iEM92DjnGgyXunws4fk5r39VfUqTi3bTx43s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EMot6XBg; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731398079; x=1762934079;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=B7T6rH98Pun81Q0J4vmg63UTyhk1+HV6gmwVAT5X4lA=;
+  b=EMot6XBgDLKD9mG+HUr+tgGk3qab+2uw1K/qxqA6OMfiWl4vzUuPk4ET
+   ZT7WMsutKHG3NbdHMA6JupBK9+Xj0GMWVxxvXK+s0MoN+XRx1p9NWOX3M
+   kEyrjXlNYfG2Y81m/m8Yfs5egxDkas47TRWS4qHYkge3MRbQp80FPDsna
+   IOzIJXPoaAJC5whca9VUPXjnxbczo/ZmZiwb+2FDf2s85ok2e0dhVupw/
+   RfIA+1kyt07xTUK9wj5seyKpX61fhnW0GJnuRzfDkgIwTK3WXZYGFsYo9
+   v/fm39u9ed8kqsgvXBKPO/enIjjGrukT5s87wpP0P50NYpd6kGG0lEtjw
+   w==;
+X-CSE-ConnectionGUID: jM7UVzOuR7mZFyRDSfmzOA==
+X-CSE-MsgGUID: qx9catwkQ9CdwMvB8hRRfQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="30623719"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="30623719"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:54:39 -0800
+X-CSE-ConnectionGUID: tXNP3PGQS0COdAds28Ow1A==
+X-CSE-MsgGUID: L1iUEA27Q9OltbTQbXvQSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="92272960"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.246.20.233])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:54:37 -0800
+Date: Tue, 12 Nov 2024 08:54:31 +0100
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: Song Liu <song@kernel.org>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH md-6.13] md: remove bitmap file support
+Message-ID: <20241112085327.00007de3@linux.intel.com>
+In-Reply-To: <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+References: <20241107125911.311347-1-yukuai1@huaweicloud.com>
+ <CAPhsuW7Ry0iUs6X7P4jL5CX3+8EGfb5uL=g-q_8jVR-g19ummQ@mail.gmail.com>
+ <ef4dcb9e-a2fa-d9dc-70c1-e58af6e71227@huaweicloud.com>
+ <CAPhsuW4tcXqL3K3Pdgy_LDK9E6wnuzSkgWbmyXXqAa=qjAnv7A@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030102715.3312308-2-tudor.ambarus@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 30, 2024 at 10:27:15AM +0000, Tudor Ambarus wrote:
-> The pointer to device can be obtained from ufs->hba->dev,
-> remove superfluous function parameter.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+On Thu, 7 Nov 2024 17:28:43 -0800
+Song Liu <song@kernel.org> wrote:
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> On Thu, Nov 7, 2024 at 5:03=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> =
+wrote:
+> >
+> > Hi,
+> >
+> > =E5=9C=A8 2024/11/08 7:41, Song Liu =E5=86=99=E9=81=93: =20
+> > > On Thu, Nov 7, 2024 at 5:02=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.c=
+om> wrote: =20
+> > >>
+> > >> From: Yu Kuai <yukuai3@huawei.com>
+> > >>
+> > >> The bitmap file has been marked as deprecated for more than a year n=
+ow,
+> > >> let's remove it, and we don't need to care about this case in the new
+> > >> bitmap.
+> > >>
+> > >> Signed-off-by: Yu Kuai <yukuai3@huawei.com> =20
+> > >
+> > > What happens when an old array with bitmap file boots into a kernel
+> > > without bitmap file support? =20
+> >
+> > If mdadm is used with bitmap file support, then kenel will just ignore
+> > the bitmap, the same as none bitmap. Perhaps it's better to leave a
+> > error message? =20
+>=20
+> Yes, we should print some error message before assembling the array.
+>=20
+> > And if mdadm is updated, reassemble will fail. =20
 
-- Mani
+I would be great if mdadm can just ignore it too. It comes from config file=
+, so
+simply you can ignore bitmap entry if it is different than "internal" or
+"clustered". You can print error however you must do it somewhere else (out=
+side
+config.c), otherwise user would be always prompted about that on every conf=
+ig
+read - probably we don't need to make it such noise but maybe we should (us=
+er
+may not notice change if we are not screaming it loud). I have no opinion h=
+ere.
 
-> ---
->  drivers/ufs/host/ufs-exynos.c | 4 ++--
->  drivers/ufs/host/ufs-exynos.h | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index db89ebe48bcd..7e381ab1011d 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -198,7 +198,7 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
->  	exynos_ufs_ctrl_clkstop(ufs, false);
->  }
->  
-> -static int exynosauto_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
-> +static int exynosauto_ufs_drv_init(struct exynos_ufs *ufs)
->  {
->  	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
->  
-> @@ -1424,7 +1424,7 @@ static int exynos_ufs_init(struct ufs_hba *hba)
->  	exynos_ufs_fmp_init(hba, ufs);
->  
->  	if (ufs->drv_data->drv_init) {
-> -		ret = ufs->drv_data->drv_init(dev, ufs);
-> +		ret = ufs->drv_data->drv_init(ufs);
->  		if (ret) {
->  			dev_err(dev, "failed to init drv-data\n");
->  			goto out;
-> diff --git a/drivers/ufs/host/ufs-exynos.h b/drivers/ufs/host/ufs-exynos.h
-> index 1646c4a9bb08..9670dc138d1e 100644
-> --- a/drivers/ufs/host/ufs-exynos.h
-> +++ b/drivers/ufs/host/ufs-exynos.h
-> @@ -182,7 +182,7 @@ struct exynos_ufs_drv_data {
->  	unsigned int quirks;
->  	unsigned int opts;
->  	/* SoC's specific operations */
-> -	int (*drv_init)(struct device *dev, struct exynos_ufs *ufs);
-> +	int (*drv_init)(struct exynos_ufs *ufs);
->  	int (*pre_link)(struct exynos_ufs *ufs);
->  	int (*post_link)(struct exynos_ufs *ufs);
->  	int (*pre_pwr_change)(struct exynos_ufs *ufs,
-> -- 
-> 2.47.0.199.ga7371fff76-goog
-> 
-> 
+The first rule is always data access- we should not break that if possible.=
+ I
+think case I think it is possible to keep them assembled.
 
--- 
-மணிவண்ணன் சதாசிவம்
+>=20
+> I think we should ship this with 6.14 (not 6.13), so that we have
+> more time testing different combinations of old/new mdadm
+> and kernel. WDYT?
+
+Later is better because it decreases possibility that someone would met the
+case with new kernel and old mdadm, where probably some ioctl/sysfs writes
+fails will be observed.
+
+I would say that we should wait around one year after removing it from mdad=
+m.
+That is preferred by me.
+
+I will merge Kuai changes soon, before the release. I think it is valuable =
+to
+have it blocked in new mdadm release.
+
+Mariusz
 
