@@ -1,117 +1,185 @@
-Return-Path: <linux-kernel+bounces-406703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 919D49C6275
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:21:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF469C626D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225F21F227FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5BB1F21442
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87AA219E57;
-	Tue, 12 Nov 2024 20:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B25219E2F;
+	Tue, 12 Nov 2024 20:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWixwCvn"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CevHzvYN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEAA219E4A
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD5D2185B3
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 20:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731442876; cv=none; b=FIw3EHjzBZI6gqx/b1XVJfbhDcJ4E0178hTy2mAgjw0udvFzGf7P4PHixHkdNq5enEl+AEUxpuH9CYTtdIp8eDvVIGNj8uj0KsFZSwnqawTL8198EHuXYnnhx6eAeeFv1nOHiNqian8mG2DOgI2u/wvy239e13kYd4iMjGAOkno=
+	t=1731442801; cv=none; b=p3j6hqiaZn7HAXB9jsmdhCDyk0Cn3JpmSMEllIXKbUETN5Oao19wFWJWUy2UxLSEmnxK5yfSJUUiVNzw3c2oQnfYppWoWyBOqErKZXsW3cTGQX86ilYcx+XCTcWH7mduM15AuFbC99QsQ6bps+8/y208WHFZVI3J0XJJEmyOHeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731442876; c=relaxed/simple;
-	bh=K2w+PlHPlo9o1IZR67+Lm+A6U2fwgx/nWa6HGBhLAmY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a3UHWLOYGC6RkEHxGbBQCAMEmSIjlGCzwo3vcUaqlrPdRDYox8KAAvYlbsWt8ptGTwsSp/0TGrxd/VxRLQ0rANuZbRU+qllGBeHsn6JX4Bp/sq6P4e1TnC+QVweoS0HmKFXnt9biOCmfzDpgnlvPTQ23j1XBmlDPDpePTRmQhaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWixwCvn; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso4587048b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:21:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731442874; x=1732047674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dbiGSlNTgDwTJN5h/RN4sB+oarsdMT2KJU6Z+wI74rg=;
-        b=LWixwCvnENQ6zsAHNJmnw8ZcPBsjBSNAq+pI95e1GMziCxNAHaVVj11SI03dgVbs5S
-         eaipkgwHu9Gd3IKogWdKJfCdfDwG+w7vOOFtYBYjMrmhtn7e/YQ+OEny+J12eOE8JjNJ
-         d6ClJGgxOHrHQqY6Z+jRRfNUZacXHmczvtQm8U4ouGFm86BRCp9wNdYt+3ZZNqQEwqan
-         pcnwaUKsqUGbgZJE4EkIDID0SrmRCFBIGK/iYv3ObgXlsiyWsGRqrpskO6UeU9rYpEjr
-         8uflZsxRHEqxzBhaB1B/mnDlFGh50mnQkwXS1NaFu9ycUjW3+/9QSFvNXAJxBknbkGPd
-         Yvyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731442874; x=1732047674;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dbiGSlNTgDwTJN5h/RN4sB+oarsdMT2KJU6Z+wI74rg=;
-        b=q8+r0Lo05Yqa5wHkOwjeb9n+RG3ZUysfMDhj6Fvh2XIg/qDwA0iz7xaViQR0Dp7Ycv
-         Rcshn/OMItp6A/HCtvHx+eyyA5wsD9UbnbRIZRL1j8rIzyKegliyvWMQNSSaIBrf+M4R
-         YVJnbSUpxA0PaX0vbAkDT1zt1LK1wd/qZQ6r/cEpZwyXIzvLvDiG/1jilcsxQEaHhxiq
-         hSGy9efMFyUQcs6kR/5gSjA98JFwhLxnQEDAI3vvZwOo/qNbxxfqSz5s/46VZdAoCJs9
-         Dnd/6XXukJTV2rSx7KdPRistTK31clsy8Busxc0pzsOOrjk1iyIV6/a80lKCHQQce6JS
-         cVlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVl6kkOkXNt9RWIsrCItAl5pQrzNbH7EWBQhZxmqBpGw7VmeOUsHyLndAnx2DHJNEmbo7mIoOndtCTbXyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrJJ4b642GtQ8PDWULTpvsLxM3frtCpt4L1hCmluO0KxAs4PPZ
-	jehPelqifanxsnIFf1mncob2QZOgT8ilnp1q6HH+LdbuXTFrhhBY
-X-Google-Smtp-Source: AGHT+IF8s8LMQCn97/AHb0IzllQNTPrQ7bwyT2+wh2XqWtjaQWOr6zVDI2pD+uQRuslwgRmTZ3zkmQ==
-X-Received: by 2002:a05:6a00:14d3:b0:71d:ee1b:c854 with SMTP id d2e1a72fcca58-724132a134dmr24661188b3a.9.1731442874123;
-        Tue, 12 Nov 2024 12:21:14 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:23d:98b3:efff:2469:dece:37c7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a571besm11589098b3a.194.2024.11.12.12.21.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 12:21:13 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH] regulator: aat2870-regulator: replace division condition with direct comparison
-Date: Wed, 13 Nov 2024 01:50:41 +0530
-Message-Id: <20241112202041.16980-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731442801; c=relaxed/simple;
+	bh=U3bw4s/i0+eozZS7kG2uTdJ5X0ebW75hqS6031sKcNM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rHVoYqqF9DnE582zZsKv1FLQFHpOTTZssmWrt5+GZK2S03BThV8sphBaJWID/YBsN6uLPlu6isFhlCLot8OD5tdvvRY950onVh6QcDm9VFwPA/ic4vbip332QTQRVAPKHgsdP/F0WrFtfae9wiJFXQmSRR0cj3CS6nTJT00VrCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CevHzvYN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731442798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WXlvQkvFWX/vPGCP4GfItyIf5yJB87PKwwJ7kOXASbs=;
+	b=CevHzvYNrHFytSiaT/Lp+G2m2XAs8fXuASLigLkV65h2f24PnGaNguOls3j9FvccgfRAq7
+	qiUsx+YU6UkdYFhSbKp73QaflVojmfXFy2CzUmi2CGc7sEEB4cqwfB3J82Pf6/quvP8VIb
+	aALzLvJdpedDqRRY2qj4W+/ex6/C+EQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-SSKmdJ4cMNaqMlq2w3V5xg-1; Tue,
+ 12 Nov 2024 15:19:53 -0500
+X-MC-Unique: SSKmdJ4cMNaqMlq2w3V5xg-1
+X-Mimecast-MFC-AGG-ID: SSKmdJ4cMNaqMlq2w3V5xg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 655E0195608A;
+	Tue, 12 Nov 2024 20:19:51 +0000 (UTC)
+Received: from bfoster (unknown [10.22.80.120])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D65DD19560A3;
+	Tue, 12 Nov 2024 20:19:48 +0000 (UTC)
+Date: Tue, 12 Nov 2024 15:21:21 -0500
+From: Brian Foster <bfoster@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org, clm@meta.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org
+Subject: Re: [PATCH 08/15] mm/filemap: add read support for RWF_UNCACHED
+Message-ID: <ZzO4wUTNQk-Hh-sT@bfoster>
+References: <3da73668-a954-47b9-b66d-bb2e719f5590@kernel.dk>
+ <ZzLkF-oW2epzSEbP@infradead.org>
+ <e9b191ad-7dfa-42bd-a419-96609f0308bf@kernel.dk>
+ <ZzOEzX0RddGeMUPc@bfoster>
+ <7a4ef71f-905e-4f2a-b3d2-8fd939c5a865@kernel.dk>
+ <3f378e51-87e7-499e-a9fb-4810ca760d2b@kernel.dk>
+ <ZzOiC5-tCNiJylSx@bfoster>
+ <b1dcd133-471f-40da-ab75-d78ea9a8fa4c@kernel.dk>
+ <ZzOu9G3whgonO8Ae@bfoster>
+ <f26d1d04-3dfb-40d3-b878-9c731459650d@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f26d1d04-3dfb-40d3-b878-9c731459650d@kernel.dk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Fix an issue detected by the Smatch tool:
+On Tue, Nov 12, 2024 at 12:45:58PM -0700, Jens Axboe wrote:
+> On 11/12/24 12:39 PM, Brian Foster wrote:
+> > On Tue, Nov 12, 2024 at 12:08:45PM -0700, Jens Axboe wrote:
+> >> On 11/12/24 11:44 AM, Brian Foster wrote:
+> >>> On Tue, Nov 12, 2024 at 10:19:02AM -0700, Jens Axboe wrote:
+> >>>> On 11/12/24 10:06 AM, Jens Axboe wrote:
+> >>>>> On 11/12/24 9:39 AM, Brian Foster wrote:
+> >>>>>> On Tue, Nov 12, 2024 at 08:14:28AM -0700, Jens Axboe wrote:
+> >>>>>>> On 11/11/24 10:13 PM, Christoph Hellwig wrote:
+> >>>>>>>> On Mon, Nov 11, 2024 at 04:42:25PM -0700, Jens Axboe wrote:
+> >>>>>>>>> Here's the slightly cleaned up version, this is the one I ran testing
+> >>>>>>>>> with.
+> >>>>>>>>
+> >>>>>>>> Looks reasonable to me, but you probably get better reviews on the
+> >>>>>>>> fstests lists.
+> >>>>>>>
+> >>>>>>> I'll send it out once this patchset is a bit closer to integration,
+> >>>>>>> there's the usual chicken and egg situation with it. For now, it's quite
+> >>>>>>> handy for my testing, found a few issues with this version. So thanks
+> >>>>>>> for the suggestion, sure beats writing more of your own test cases :-)
+> >>>>>>>
+> >>>>>>
+> >>>>>> fsx support is probably a good idea as well. It's similar in idea to
+> >>>>>> fsstress, but bashes the same file with mixed operations and includes
+> >>>>>> data integrity validation checks as well. It's pretty useful for
+> >>>>>> uncovering subtle corner case issues or bad interactions..
+> >>>>>
+> >>>>> Indeed, I did that too. Re-running xfstests right now with that too.
+> >>>>
+> >>>> Here's what I'm running right now, fwiw. It adds RWF_UNCACHED support
+> >>>> for both the sync read/write and io_uring paths.
+> >>>>
+> >>>
+> >>> Nice, thanks. Looks reasonable to me at first glance. A few randomish
+> >>> comments inlined below.
+> >>>
+> >>> BTW, I should have also mentioned that fsx is also useful for longer
+> >>> soak testing. I.e., fstests will provide a decent amount of coverage as
+> >>> is via the various preexisting tests, but I'll occasionally run fsx
+> >>> directly and let it run overnight or something to get the op count at
+> >>> least up in the 100 millions or so to have a little more confidence
+> >>> there isn't some rare/subtle bug lurking. That might be helpful with
+> >>> something like this. JFYI.
+> >>
+> >> Good suggestion, I can leave it running overnight here as well. Since
+> >> I'm not super familiar with it, what would be a good set of parameters
+> >> to run it with?
+> >>
+> > 
+> > Most things are on by default, so I'd probably just go with that. -p is
+> > useful to get occasional status output on how many operations have
+> > completed and you could consider increasing the max file size with -l,
+> > but usually I don't use more than a few MB or so if I increase it at
+> > all.
+> 
+> When you say default, I'd run it without arguments. And then it does
+> nothing :-)
+> 
+> Not an fs guy, I never run fsx. I run xfstests if I make changes that
+> may impact the page cache, writeback, or file systems.
+> 
+> IOW, consider this a "I'm asking my mom to run fsx, I need to be pretty
+> specific" ;-)
+> 
 
-drivers/regulator/aat2870-regulator.c:142 aat2870_get_regulator() warn:
-replace divide condition '(id - 1) / 2' with '(id - 1) >= 2'
+Heh. In that case I'd just run something like this:
 
-The division '(id - 1) / 2' was used to check if the regulator ID
-is greater than or equal to 2, which can be confusing and less
-readable. Replacing it with '(id - 1) >= 2' makes the code clearer
-by directly comparing the regulator ID. This change also removes
-reliance on integer division, which could be harder to understand
-and may introduce subtle bugs.
+	fsx -p 100000 <file>
 
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
- drivers/regulator/aat2870-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+... and see how long it survives. It may not necessarily be an uncached
+I/O problem if it fails, but depending on how reproducible a failure is,
+that's where a cli knob comes in handy.
 
-diff --git a/drivers/regulator/aat2870-regulator.c b/drivers/regulator/aat2870-regulator.c
-index 970d86f2b..b48d2987a 100644
---- a/drivers/regulator/aat2870-regulator.c
-+++ b/drivers/regulator/aat2870-regulator.c
-@@ -139,7 +139,7 @@ static struct aat2870_regulator *aat2870_get_regulator(int id)
- 	ri->enable_shift = id - AAT2870_ID_LDOA;
- 	ri->enable_mask = 0x1 << ri->enable_shift;
- 
--	ri->voltage_addr = (id - AAT2870_ID_LDOA) / 2 ?
-+	ri->voltage_addr = (id - AAT2870_ID_LDOA) >= 2 ?
- 			   AAT2870_LDO_CD : AAT2870_LDO_AB;
- 	ri->voltage_shift = (id - AAT2870_ID_LDOA) % 2 ? 0 : 4;
- 	ri->voltage_mask = 0xF << ri->voltage_shift;
--- 
-2.34.1
+> > Random other thought: I also wonder if uncached I/O should be an
+> > exclusive mode more similar to like how O_DIRECT or AIO is implemented.
+> > But I dunno, maybe it doesn't matter that much (or maybe others will
+> > have opinions on the fstests list).
+> 
+> Should probably exclude it with DIO, as it should not do anything there
+> anyway. Eg if you ask for DIO, it gets turned off. For some of the other
+> exclusions, they seem kind of wonky to me. Why can you use libaio and
+> io_uring at the same time, for example?
+> 
+
+To your earlier point, if I had to guess it's probably just because it's
+grotty test code with sharp edges.
+
+Brian
+
+> io_uring will work just fine with both buffered and direct IO, and it'll
+> do the right thing with uncached as well. AIO is really a DIO only
+> thing, not useful for anything else.
+> 
+> -- 
+> Jens Axboe
+> 
 
 
