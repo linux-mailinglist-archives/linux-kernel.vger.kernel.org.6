@@ -1,87 +1,242 @@
-Return-Path: <linux-kernel+bounces-406052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6AC9C5A71
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:34:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5754A9C5A75
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:34:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 020881F22456
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:34:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C9D28546E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD36A1FEFDF;
-	Tue, 12 Nov 2024 14:32:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073B91FB3;
+	Tue, 12 Nov 2024 14:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wo9EdhFn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O03eL8K9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wo9EdhFn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O03eL8K9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91051FCC42
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8571F7093;
+	Tue, 12 Nov 2024 14:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421928; cv=none; b=TP/FjR44F9c1MSfQ/fbLKUzeDzJTO3Wg75ZT8Ug658zoupuyxlrvlplAQ7hbEszTsq5/gpOU1ryu3PNzluzVNMAXSaPkfHtClIC8KTPIy98D3U7mknWBEQd/uU1kqIy03/+6s3Sbzq90dD7jlw3KQJ/UVd9zXdKCJM2ISJLiRXc=
+	t=1731422080; cv=none; b=XAO5743dvbZy5woLUZini5EHv3aBjENxSItROC/uimnhiwYpRNm11Esz1sSik2Hd9YtW8876s1SNkZHgyYzsEoHBlg2ZLnDycqcQnxphYo2/ebEh6Erwn+Lj+nzLrzBtRmjMtOWbHcciSl4FY/xoLBcb6IioGEvwJyaK4dfLva4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421928; c=relaxed/simple;
-	bh=fAR7NsHOFHIqrJXvbMl4qc0UVdjQmpaMiqyavC+tHJ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MwTEt8bzxzachfbn3TPblv6v2YSG3eVf5NzgHl58ZsGTvSvBbm39h32bzqnDdJlOESopah0ScCrHnsME/P8cxH7uiRMVHDtXPiXtjLPrnQ4+O5X123Mt3eWlppKQ8rLdECuu5oqjeuT/3aMBiDMlT8/kxBIQ5mRGCu3LMd162GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so62019745ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 06:32:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731421926; x=1732026726;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nBWs2Zd4T8e9v0oYYaH0pBxxLwc7TOyhEeIoWtbFK8Q=;
-        b=vPN6IsqlQFFRp8QvPUbcRy874++pEYyPuTTdY22bt2xekJcsQkS6KqkP8OMYtjoLsT
-         OqDQbsZCwQMmH15rR4XeEcfwg46YzVLCz3vCz0WVID7fbFAvGUKYgCBYtpX/qBzfGUdP
-         jEfkpHm4X/Zh0smm80jXr2MERKVQCNhJFUDeL5oorBvxyIhYHSGtmE9Mybog/krbRCVn
-         34wCu1UN1D0+yhSSIXC20q99UFwk5pgJe5U3S4V/FgZWE7DqPa9j9v1TjQQVuurL0tyD
-         4+QBaoxfz4Jgaq57NWnOYDWS/JezYVZYS9khaTuSiJ4ORueqx9LMpXKedSs6CwAOzv1o
-         +fpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFPxaHMZLKzwpOdZD/QA0KnFeC5z1CMGP6lSkdPjqOshmuSr8MIgkrMFsAScfyVPIVOynwNDTgL3uf8AM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6RMaN0BkjUXOhZvs/rY0SszzKxGesDQuPzxmNiqCrqeX5kuhy
-	SKJylzjy4Dbc9oP/FixbhBQ6YjEAmgoyYDk0xOH/wlqA4Ewbl3YTBjMFBQQmSX51VJLQX6JKO1d
-	6V+GWoCyT5fOLdvh0kOsU4yHBTWKHCptFtM3riCHpzhMvDIpfLXUTPBg=
-X-Google-Smtp-Source: AGHT+IH+odsalTFOJKKKW5uexg6WaA9g4d0Qrx20qSXJsuWc8jFUFFgObR0N2apLEnR9cuwGy55QGSNpcSZOkcSZ/64ixYTgB++E
+	s=arc-20240116; t=1731422080; c=relaxed/simple;
+	bh=38Cat+mTHIwEdTCRWoxB7/cJ0Tc2zilueN0nvwFkzdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iIqytdvR5ruVSwJ38vuSsL9UUgO22Q1fL56Ie5/+1Qi+03wWYN0wvAcjrbTMNwHdLrsiG7Bn9JJvjXPg2WWMwZZWMOylTvNKB6Mqz45pW4MLYFEunsCIbP7lUuEpYQbN9I1+el4UahW+kmMReb3QAAmUELwgVJ81/9bJeysjn3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wo9EdhFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O03eL8K9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wo9EdhFn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O03eL8K9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A9CF21F451;
+	Tue, 12 Nov 2024 14:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731422076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
+	b=Wo9EdhFnFAPvNY6+Z/KkEpCRCgsFAEUyzleJ/yRlSenPkIf5+L41vB51cKs5Q/cEdcKog0
+	8SAtVddMNLSeJJ6x0MQPrxNZcI0xxZZ7qNUCRy/zM/p/7BNl++NsiXUG+/dDtxYCc5k94j
+	Nn3aKdoypSaj8TpMD9TC6WGgW19yQso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731422076;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
+	b=O03eL8K9wy1y+iKsGzoVaQRu02eW6PlnV1TTGzJ0h7LKiHePkrTphVhygcxPljAUnSdlvY
+	6Ka/D5pmlQeDB0CQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731422076; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
+	b=Wo9EdhFnFAPvNY6+Z/KkEpCRCgsFAEUyzleJ/yRlSenPkIf5+L41vB51cKs5Q/cEdcKog0
+	8SAtVddMNLSeJJ6x0MQPrxNZcI0xxZZ7qNUCRy/zM/p/7BNl++NsiXUG+/dDtxYCc5k94j
+	Nn3aKdoypSaj8TpMD9TC6WGgW19yQso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731422076;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9VVQgsqOYFZoxlytwLwYIeskoXYMoZVzYMX1BO/EMw8=;
+	b=O03eL8K9wy1y+iKsGzoVaQRu02eW6PlnV1TTGzJ0h7LKiHePkrTphVhygcxPljAUnSdlvY
+	6Ka/D5pmlQeDB0CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9795313301;
+	Tue, 12 Nov 2024 14:34:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nQT8JHxnM2cHfgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 12 Nov 2024 14:34:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 47094A08D0; Tue, 12 Nov 2024 15:34:36 +0100 (CET)
+Date: Tue, 12 Nov 2024 15:34:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: Asahi Lina <lina@asahilina.net>
+Cc: Jan Kara <jack@suse.cz>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Sergio Lopez Pascual <slp@redhat.com>,
+	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH] dax: Allow block size > PAGE_SIZE
+Message-ID: <20241112143436.c2irwddrwopusqad@quack3>
+References: <20241104105711.mqk4of6frmsllarn@quack3>
+ <7f0c0a15-8847-4266-974e-c3567df1c25a@asahilina.net>
+ <ZylHyD7Z+ApaiS5g@dread.disaster.area>
+ <21f921b3-6601-4fc4-873f-7ef8358113bb@asahilina.net>
+ <20241106121255.yfvlzcomf7yvrvm7@quack3>
+ <672bcab0911a2_10bc62943f@dwillia2-xfh.jf.intel.com.notmuch>
+ <20241107100105.tktkxs5qhkjwkckg@quack3>
+ <28308919-7e47-49e4-a821-bcd32f73eecb@asahilina.net>
+ <20241108121641.jz3qdk2qez262zw2@quack3>
+ <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a87:b0:3a4:e8cc:2aaa with SMTP id
- e9e14a558f8ab-3a6f1a07897mr183506185ab.10.1731421925894; Tue, 12 Nov 2024
- 06:32:05 -0800 (PST)
-Date: Tue, 12 Nov 2024 06:32:05 -0800
-In-Reply-To: <20241112.231215.1262254749077533950.konishi.ryusuke@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673366e5.050a0220.5d845.0005.GAE@google.com>
-Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_find_entry
-From: syzbot <syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6866a71-dde9-44a2-8b0e-d6d3c4c702f8@asahilina.net>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Hello,
+On Tue 12-11-24 18:49:46, Asahi Lina wrote:
+> On 11/8/24 9:16 PM, Jan Kara wrote:
+> > On Fri 08-11-24 01:09:54, Asahi Lina wrote:
+> >> On 11/7/24 7:01 PM, Jan Kara wrote:
+> >>> On Wed 06-11-24 11:59:44, Dan Williams wrote:
+> >>>> Jan Kara wrote:
+> >>>> [..]
+> >>>>>> This WARN still feels like the wrong thing, though. Right now it is the
+> >>>>>> only thing in DAX code complaining on a page size/block size mismatch
+> >>>>>> (at least for virtiofs). If this is so important, I feel like there
+> >>>>>> should be a higher level check elsewhere, like something happening at
+> >>>>>> mount time or on file open. It should actually cause the operations to
+> >>>>>> fail cleanly.
+> >>>>>
+> >>>>> That's a fair point. Currently filesystems supporting DAX check for this in
+> >>>>> their mount code because there isn't really a DAX code that would get
+> >>>>> called during mount and would have enough information to perform the check.
+> >>>>> I'm not sure adding a new call just for this check makes a lot of sense.
+> >>>>> But if you have some good place in mind, please tell me.
+> >>>>
+> >>>> Is not the reason that dax_writeback_mapping_range() the only thing
+> >>>> checking ->i_blkbits because 'struct writeback_control' does writeback
+> >>>> in terms of page-index ranges?
+> >>>
+> >>> To be fair, I don't remember why we've put the assertion specifically into
+> >>> dax_writeback_mapping_range(). But as Dave explained there's much more to
+> >>> this blocksize == pagesize limitation in DAX than just doing writeback in
+> >>> terms of page-index ranges. The whole DAX entry tracking in xarray would
+> >>> have to be modified to properly support other entry sizes than just PTE &
+> >>> PMD sizes because otherwise the entry locking just doesn't provide the
+> >>> guarantees that are expected from filesystems (e.g. you could have parallel
+> >>> modifications happening to a single fs block in pagesize < blocksize case).
+> >>>
+> >>>> All other dax entry points are filesystem controlled that know the
+> >>>> block-to-pfn-to-mapping relationship.
+> >>>>
+> >>>> Recall that dax_writeback_mapping_range() is historically for pmem
+> >>>> persistence guarantees to make sure that applications write through CPU
+> >>>> cache to media.
+> >>>
+> >>> Correct.
+> >>>
+> >>>> Presumably there are no cache coherency concerns with fuse and dax
+> >>>> writes from the guest side are not a risk of being stranded in CPU
+> >>>> cache. Host side filesystem writeback will take care of them when / if
+> >>>> the guest triggers a storage device cache flush, not a guest page cache
+> >>>> writeback.
+> >>>
+> >>> I'm not so sure. When you call fsync(2) in the guest on virtiofs file, it
+> >>> should provide persistency guarantees on the file contents even in case of
+> >>> *host* power failure. So if the guest is directly mapping host's page cache
+> >>> pages through virtiofs, filemap_fdatawrite() call in the guest must result
+> >>> in fsync(2) on the host to persist those pages. And as far as I vaguely
+> >>> remember that happens by KVM catching the arch_wb_cache_pmem() calls and
+> >>> issuing fsync(2) on the host. But I could be totally wrong here.
+> >>
+> >> I don't think that's how it actually works, at least on arm64.
+> >> arch_wb_cache_pmem() calls dcache_clean_pop() which is either dc cvap or
+> >> dc cvac. Those are trapped by HCR_EL2<TPC>, and that is never set by KVM.
+> >>
+> >> There was some discussion of this here:
+> >> https://lore.kernel.org/all/20190702055937.3ffpwph7anvohmxu@US-160370MP2.local/
+> > 
+> > I see. Thanks for correcting me.
+> > 
+> >> But I'm not sure that all really made sense then.
+> >>
+> >> msync() and fsync() should already provide persistence. Those end up
+> >> calling vfs_fsync_range(), which becomes a FUSE fsync(), which fsyncs
+> >> (or fdatasyncs) the whole file. What I'm not so sure is whether there
+> >> are any other codepaths that also need to provide those guarantees which
+> >> *don't* end up calling fsync on the VFS. For example, the manpages kind
+> >> of imply munmap() syncs, though as far as I can tell that's not actually
+> >> the case. If there are missing sync paths, then I think those might just
+> >> be broken right now...
+> > 
+> > munmap(2) is not an issue because that has no persistency guarantees in
+> > case of power failure attached to it. Thinking about it some more I agree
+> > that just dropping dax_writeback_mapping_range() from virtiofs should be
+> > safe. The modifications are going to be persisted by the host eventually
+> > (so writeback as such isn't needed) and all crash-safe guarantees are
+> > revolving around calls like fsync(2), sync(2), sync_fs(2) which get passed
+> > by fuse and hopefully acted upon on the host. I'm quite confident with this
+> > because even standard filesystems such as ext4 flush disk caches only in
+> > response to operations like these (plus some in journalling code but that's
+> > a separate story).
+> > 
+> > 								Honza
+> 
+> I think we should go with that then. Should I send it as Suggested-by:
+> Dan or do you want to send it?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I say go ahead and send it with Dan's suggested-by :)
 
-Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
-Tested-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         2d5404ca Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13600130580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=96d5d14c47d97015c624
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d201a7980000
-
-Note: testing is done by a robot and is best-effort only.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
