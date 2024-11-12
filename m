@@ -1,285 +1,355 @@
-Return-Path: <linux-kernel+bounces-406783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F5F9C63EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:01:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239149C63EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:02:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 070FA283BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CD4282478
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D32F219E4C;
-	Tue, 12 Nov 2024 22:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99100D53C;
+	Tue, 12 Nov 2024 22:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IAO6dxTK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IjiAaie+"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8594320370A;
-	Tue, 12 Nov 2024 22:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731448857; cv=fail; b=mcVmSJelAfot9vB4CV15YgdGM//FiFBAjgK3h8VPmBMWfWeisxqeP+V4iQKlYpFsL3Be1FEqbX39p44KoF+anpURFI78mE1HQl9SOFjea/77yyrqfRZxQEmbWLl/ASWvQ0XL0Us4GLjTnYGVHXVrZ8PzoQaF3d4XhZR/Bm8LL7A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731448857; c=relaxed/simple;
-	bh=DZ4juMh9rA7Vbhq3kr9z5L424B7UbfSLyd2rG15Sa8U=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QklgCfj48VhxRDnkTGwSUfxHO8tOHDJpxKQYbguV1G+RapcTzHMzJpSoMjY6p47nK3SuQH/gMvxRWuHGQmbweWl6xdNOkgh7B6bZFwvsHxCBff6ISv/vj4FG9343XtpVYHk8UfpsfHzB+f2nJFXXfm6PGIjA3Hu5MINeRED8FeI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IAO6dxTK; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731448856; x=1762984856;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DZ4juMh9rA7Vbhq3kr9z5L424B7UbfSLyd2rG15Sa8U=;
-  b=IAO6dxTKykZhCogfi72D6w8KGY2C/gX8WFssSyHOOi6anw0iLkMitSkP
-   HfAmAsocnKUOMBFr5TKf641uCY6bCVrtvVZyU/0tFEAk+8twWqeY2o0VC
-   foJL6gT7+CpVb3GcGuR8bqM+vOTM5KGto0Fbk6fqU/SVjmuAbRSshjLqU
-   Oh3eA4vsP1ojJdZYqOq91OfubcITIKgxaMX0dnpJgDRQoUncuq7OOWrVL
-   PaO3zvb7S3XpHntK5yFm/Eq91Kv9COUmdFJx3n64XLIHP7MNxu7Ijsfr3
-   F8Aewtg+J5IaWrkvqgBS35C/n7XxreePY2ywhbp9+Mj+t5HGtcoVRMAwV
-   A==;
-X-CSE-ConnectionGUID: D42T80xgRpeVxM7NTwlQhw==
-X-CSE-MsgGUID: U2WtOTIqQVyZXja6ugohPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="31411975"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="31411975"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 14:00:49 -0800
-X-CSE-ConnectionGUID: QK9QJB/sTjWaUnkEl6EWig==
-X-CSE-MsgGUID: 78J8tDamQGGcaDeB7VamvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="88081888"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Nov 2024 14:00:48 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 12 Nov 2024 14:00:48 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 12 Nov 2024 14:00:48 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.177)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 12 Nov 2024 14:00:47 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=myJqYdG3QpqVzWfSSvMz5BKNd+Twu+FIfvB3//Rmzr/rHJnmVb20REKpB/WvVdOHOL2PSNN0DiRfquw9zMPJ1nJaZUcuStEl595Pkuz/AFUPfJdaSHMBROL++YbeDcf/YmNoEfW78UcEMKfA1XFNc0UQhftTlIBb8guhBr4bUeJ2J3pkEs3UgTSAi9442+n7Ir0kY+oG67WVuU/JUTB+Bgg80OeTjR9GX2qj0LbvmEhn2MY17HtNTgBJOW9acG3rrDjktJt0Ew2dTQYCdcHAMPkafwPFyDUX63LK1vwrAMV1tDzOqFpbEkabT3xebZ1SI2mLaWFViJTkwctgwWcylA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m+jQ6RGm4QvohDJFI0Gp4+wDmed9vumIwpXs6qN5tEU=;
- b=gGM0GpF1UgDywh4isMBX1ZtkvmVON9XzO3wB+R3EZoAd2VTfCkiLIp4E06jK+PyVGXRjPNwTMm49cRiVVH9GrxWWNGNzgtJzS778TmMe5K/r73ngZnoWhwT6jtS7QWfDVJkgkBdaW+2ZqKXjO+0sa3tvk2pLx0M+TjOxLHmQFRyalhz6seMBf9sVdGNFSbuZ8CqjWphGwHyY8ogJaT1D+OCgk7xqDoyZxx9ZIbs5aeTULOgtoT1XHJgqd9a/AltkDysfKNh69G8HY1B++r7x6nUT6Eal1Opt1rt8auTBfiDJ//WN4KNxYfC1I5lq/5MH+k5l7Y0R0tzDA8AIn+mB2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB7097.namprd11.prod.outlook.com (2603:10b6:510:20c::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.16; Tue, 12 Nov
- 2024 22:00:43 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 22:00:38 +0000
-Message-ID: <71eb17c7-acca-412c-bd59-17ee5aa0aa07@intel.com>
-Date: Tue, 12 Nov 2024 14:00:36 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 6/7] x86/resctrl: Add write option to "mba_MBps_event"
- file
-To: Fenghua Yu <fenghua.yu@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
-	Peter Newman <peternewman@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <skhan@linuxfoundation.org>, "x86@kernel.org" <x86@kernel.org>
-CC: James Morse <james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-References: <20241029172832.93963-1-tony.luck@intel.com>
- <20241029172832.93963-7-tony.luck@intel.com>
- <6a677a4b-7163-cc2d-a615-6b8c499eb281@intel.com>
- <SJ1PR11MB60833197C3FCC0B3CF9AA290FC562@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <7f5f1f66-df3e-bebd-4786-7fe8a8115f05@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <7f5f1f66-df3e-bebd-4786-7fe8a8115f05@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4P221CA0005.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:303:8b::10) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD65200C96
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 22:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731448908; cv=none; b=pHszjHqp0rLjmpY/m6eJEqPJT96NdiQULDUJKsSc7hDQWrrb/o4+O+6tg1E6rrQyjphMilmWU0lyQiZH7nyVREqR4sdPyM4r2hU5e16dvAijpfNuhZav80zmTLXmC6EgTNM4C253vdcXIqMsGZKanURtwPOglg5rGwixVmqwPvg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731448908; c=relaxed/simple;
+	bh=Y0aNkmKFCpDDccaBvVL0PGURgXUhlOqLjnutaRkc2PE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jFeSt4ppQzCtQsieIYFD5cjgH2APSw/cIzuW/HZqiyKsSwpTg/BiUF8Hk8oV84P4ZaVIt9GyTOXqxoOzVApFLHc8OMEAWyI1Me+7F2abEt6iUKM8p2pjYhXieXrDFXZMD5lQqhc/Bk7Banls9vkw1Me0O2KP/HqbS4W93r9ea20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IjiAaie+; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <37bba7bc-0d6f-4655-abd7-b6c86b12193a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731448903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EPtkxjvAVwU0DI8Qn1XziXmAzaij4FeJ2B9g+Ad9oho=;
+	b=IjiAaie+W/u9TlsExpIAcZEPZK4NRVgz6I5bwIfzdMkw2RFzIGFl54H2O6birivT+0LI9a
+	qzzyLcZVuzO21O4UzicERcfb2DjukzePISmoWfkKxxBI8EfzzJrJ/qojSAKdtr44gKqGDh
+	5K/GxSXalTleDTkqp/7n/8O9NbnGVt8=
+Date: Tue, 12 Nov 2024 22:01:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB7097:EE_
-X-MS-Office365-Filtering-Correlation-Id: f9159d32-7750-4af0-0795-08dd0365715d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MUpJUXlPL2JZdzBGVGNXYVlWOXZBd2pudEhLVkZuTlVJR2pGOENwQ3NCbjh1?=
- =?utf-8?B?bW9yZ2tSbFJTamQwdkxYcHFLcWMyUklQejg1UlNwZUIzc2VRVTNIeVhiUDhH?=
- =?utf-8?B?SytvWUZHZEV5MjR1VTdnUkFBYi93cno4ZkR4QWRiVko0eVJmWU50clU4U2F3?=
- =?utf-8?B?ZEJ4NlZiY3Vyb1pxM0NFWTNnMUFiUlkwR3p0WkZ0SnFnZ1ZFSmxPNjFXVGt4?=
- =?utf-8?B?R2owaU1XeEhRY0FtcjNWWkpyS1U3Y0Rvd2QxRmZ0Yi96Z01ZZGRNNmVhc3Vw?=
- =?utf-8?B?TUdEUkZUbC9xUkc1dHJCQkw5aEtLN2JyOUdzWG5wTjBJYzM4b0RRRDF3Nzk0?=
- =?utf-8?B?RUg5ZE5aOHl0OXc4amM1NWpkUk9zcERLbUNveVo0aWxKYlZHekdoVm4vdnRi?=
- =?utf-8?B?U2pmOFVsVjJoQUVYRG95M1lYalFSaldQQ3pQaGVCblNMMGQwazVZa1ZlQVZR?=
- =?utf-8?B?RGsvTlBCZ2NVRTNvS2d4QU8yVkRkNlIxaG9YVDA1K21uWTR5bzBGL3FiaXEx?=
- =?utf-8?B?NDJTTm5OYmRKTmRRc0VHOXVyeE1pTjdpb2svTVRTcnZNdGQyNWx3QmRjampJ?=
- =?utf-8?B?dG95aFI4S0tEeHc5VTR1bjIvS0pPL2xKa2RjbjFuT25xNEdTZHkvbHE0aUw1?=
- =?utf-8?B?WkZCZ3BuYmo4WjhqRmVFMi9YQm5SSUpFTU00SVJreEc2UmlQcS92V0EvV2NV?=
- =?utf-8?B?TEtpZzVsUjNPTVRERnBONVV0K3EvSXZHSkNmM1VrVy9uSlRUWG5ybG1PUDFB?=
- =?utf-8?B?YmVpMHZJUGp5K3l4dXY3Mnd0M3hkV2dwWnpmYWpDaU5iMmFoOTliRHZmV2E3?=
- =?utf-8?B?WHlWb3d0blNHbFhkQmpINGdtS0NUM21TclN0azdad2FxaDduSEU4UnNJWEdB?=
- =?utf-8?B?LzNtKzlkQjRjaXVOdjVyL213YnV6ZU5yQ2gzWmpQaXBFcDBtQ3VuWE41UVpO?=
- =?utf-8?B?RlZYMkpCNWIyc0JVTTZLK2d3TjIySWx4WmJZR3pBZnpqa2cyaUlyZnlmcWRx?=
- =?utf-8?B?NFhoV0d1S3dwZjByd25WK3JTM1NjNzh2bjdCMWx3ZSs1YllaWWNXenl1dEwy?=
- =?utf-8?B?VlNHZGhVcW80aURzTmFsTThKMVlodkNJTDdkTlBmV2lFRU94aUxuSnZoRndy?=
- =?utf-8?B?dVI1OXlMeisyaHk3dDZJS0diSDIvNWp6elg5RjFBaHkrc21xTlBmQjNPWmtv?=
- =?utf-8?B?c0g4NS9qcGhwOGp4akREWjhYYWwvcHVhM1ZoSEh2bEVKSjBOYTVRRHFsWmtS?=
- =?utf-8?B?eWZYNVJ5NSs0MDZEQnp4VHUwTTFiYzJLMmtkelE5Y3FYbTdHZnI4T0dKOGN2?=
- =?utf-8?B?RjRlcmxUM1FDQVpGdnBSSFZ5ODl6cVB1bzFpbnE1aFNUaURDRkdLV1dBMTVs?=
- =?utf-8?B?MnJWZUJlU1BOaHluSWd1Z1JNT0JSUlZuSUl3QU9XNS9zanllRXRJVXV4VWtX?=
- =?utf-8?B?UzdYVVpZdlZNeUtycEFvS29mVzl2WVErOUhIS3NKOFpCOWFKSnIxYWw5WEhM?=
- =?utf-8?B?WUlrSEJ5Szh6N00ydkRzTWt1eExHWGF6QlZnT0w4ckd1bStIQjJmNXBkMjFD?=
- =?utf-8?B?d0VPbkQ1SmwwcXdvejd5SWFpZ2RLNkxGRXpYS05pcUZVQndKWnk5eDhIUmlB?=
- =?utf-8?B?MFFqdmVzd2w0Lzgvb09yQVZ0bmFXc3NiVFNiQXkyRXZ0SUw4N0RkT1dwSVBu?=
- =?utf-8?B?QVh1VFExRExjbUR4T3ZjQzlmV2ZmK005L2QyTGxzeFYyYUttbTlvWmRpdmk2?=
- =?utf-8?Q?MiCcbArhoQgee/gCyq3MmPqVYddF8Q9I+9GZ/VT?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RGZaRnlnUFZQWk52Z1hwaVJlTUpvanByTzF4d2tsNkxwWHdIRnNSRG9qcUtE?=
- =?utf-8?B?VXVTYkVQT25hY0lnOVFiSUM1UVVTMnFMT1E1SXk5NTV5ZWk4Mmg0c3h1WXQ5?=
- =?utf-8?B?MjVmZFZzM2ZlN1V1VWVPeThGbitKbm1hWnBGUlNkeHdpeWVJcW14enhVc1Ex?=
- =?utf-8?B?Ti93aUNNZlNsK2pRUEwxdGFzTzhaZmlyY2JCQUJ1WDZtODljazhGZHk5OFJZ?=
- =?utf-8?B?OVMvUUNBYW9nZDdiaXZlemVqWW1tMGVnSWlwUzNqKyt0RXhaR3ArNEQvSlJq?=
- =?utf-8?B?NjlaUUxjRk5tYXRORVpQell4bHRIRHpiRENuSWlYZndQKzVpZ2ZGaGo4cTAx?=
- =?utf-8?B?TVpIb0Z2MFAweEo2SDZKN1duNm9VNjlwS1dqT1Rpc3JrZ3A2ajZJcUU1UVBp?=
- =?utf-8?B?MkZkRjhGZFl4SWdtWStFWmVVT0FaTlB5STlJTWd1SUI0R2F0TzNlY0txNUh0?=
- =?utf-8?B?MXZOMlhxb0JtYlg5UTZqZVk4YWtIeG1KNWRBbWJpUnNxWE9NL2pxM0Ixbnlj?=
- =?utf-8?B?ekZ4UGlKRncvbEtZcExSNlQzY2dSeWx6aXRmYm5jam53RXRoNlMwREcvaHZ2?=
- =?utf-8?B?bUNLUjVCS2VFT1Z6SlZwSnZpL1l6RmVtcEo5RDRBVVdGL2xhNWcxVXBlbEI3?=
- =?utf-8?B?alowY0hRRzVma24xZjRwODEyYmMwQXFaajU4aVZ1YnpzeUhJbE9NQ0Y1VENz?=
- =?utf-8?B?VzNzbnBNUzA3L2lCK0plK0g5dnFsZ3dENFJnbWlZQUNLV0tMdlVqbGh6MGp4?=
- =?utf-8?B?RzNON2sramtSOU00YWdRb1JoOEpSMG9JajIrNFM0bFByTEJwQkJRSjF3Q3hk?=
- =?utf-8?B?K2ZRZ1FhalN3N3lYQWFnRjErdzNRd3BHcVVPY3lhVGNISURqZDhLcVFicjIz?=
- =?utf-8?B?REp5N1U3MXZMQVJabE5XaEs0d1NqTmRyZ1pveGRyWG9UNkNhbGlkZGZOVXlj?=
- =?utf-8?B?ZkVVN29CVGZQVWt5a2dzYXNQalBhOEVjc1RmeG13N1FJSXE3VjRMbnkwdW5p?=
- =?utf-8?B?ZXdxazBhY01mOW9DS3Z6eHFOMzNvU1g5am0rcUpVQ0lHZ0ZhSWRGOFB0N0R6?=
- =?utf-8?B?T05TVXBzV1BlRkJrYUtjUTJ5dE8waFU0YjgrRXNBQVpKMUNGTUVOY1ZORUVw?=
- =?utf-8?B?THc4T2t0RUt5L0hrUmdlc1gvOGVPTUllUWxIM0lkMSszeHllRVJSd1ZYZ2JB?=
- =?utf-8?B?L0tHQU41T2M3cUVzRTExTEUyaGdaZGxneWd2NGQwb25BQ1g0cTRrcFpJUk9O?=
- =?utf-8?B?cW80ZEFWdXhOajVzbG5ZR01CQmN0Q3liRHJvV2EwQ0d4eUFicmhCb3A0SjAv?=
- =?utf-8?B?eWkrcFZRdXZRWnk5VDM1UFhmcFdXZ1ZaM0JPenptU3FhN2dXL2prY2FYaHBQ?=
- =?utf-8?B?d1NhUDZYZmxHUmY1dSt2S1JQT0ZXUHJ2R01EVFBqY2Z2a2lUV2ZFK2o2bWhM?=
- =?utf-8?B?NGgrUW9NTTUxdTN3QldZbDBMMDl6QmMrSlZGUXNqdlYydEVoZ2NuR2sxTmJj?=
- =?utf-8?B?YTZpb2s0bC8za0sxNVlaai91ZXhkV0xzQThuYVVUS3JWbDNEeXJuWWVLMzNW?=
- =?utf-8?B?bGhPeTdta0w2U1lIM0JVMDBsbFI1bkc1UDU4VnB6OHNVbnpZUHFGbHFJZXFW?=
- =?utf-8?B?ZUtCRDJNTnVkOGNtbkZCVi91VXhBc3JiL0tnOHBLVXBtQUtVcGdDUm9JaEdv?=
- =?utf-8?B?UGJqU2FyamRwTWlmUnhnYkpXdlVGd1NXM1NVNCtEQlhiUENoMktqci81VVVE?=
- =?utf-8?B?MFc4MEJxOTVTUEsyK2Q4blZpVEdhMmRudDBWamNOU05CNlkzVHFKOW1oSUVt?=
- =?utf-8?B?M284RnFVWW1SWWY5aUs5T3JNa0s0M2kvR3pxa0hldWYwbGRGc0lYcW8rOVR1?=
- =?utf-8?B?SGJ6NzVqMHVXNzlLaDZzbUZKeS92ejNrOG9jbVNEYWIwZWZ3ZjVtdEZxSmxQ?=
- =?utf-8?B?ZjM3bGxwNEIzQ3VXZHFHUG5WcXZ0bC9td2JqM3R1bkIxMlFVbDRrOXJFK1Q5?=
- =?utf-8?B?SjVyUk01L3FxMGpuYzRnaFZtc2dpbTF0WCtKV1lhNXZ3WFppTzdJcCtjV3lZ?=
- =?utf-8?B?TXlSN3Y2bytXTTNCUzVJd2tpNE9jWnNzQmdTN2xDK0FEWWI1MGgrZlgrNEpy?=
- =?utf-8?B?M2g4K1UwZzl2ZXM2bFFHMUpweDNYQ2lkMkwyN1pmKzBKNEF0S2x4WUpiVllh?=
- =?utf-8?B?clE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f9159d32-7750-4af0-0795-08dd0365715d
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 22:00:38.6613
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p0BFjF4oDH2QQNvzm2+NxYrSW4Eu0qCSUqqI6XNcgOIg66oN0k8kKuwUS5oyvLH7F//YpVJXlnwTagTvO7H24gVHO6gvinvRyKmldgu0j9w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7097
-X-OriginatorOrg: intel.com
+Subject: Re: [PATCH net-next v3 1/5] net: phy: microchip_ptp : Add header file
+ for Microchip ptp library
+To: Divya Koppera <divya.koppera@microchip.com>, andrew@lunn.ch,
+ arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com
+References: <20241112133724.16057-1-divya.koppera@microchip.com>
+ <20241112133724.16057-2-divya.koppera@microchip.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241112133724.16057-2-divya.koppera@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Fenghua and Tony,
-
-On 11/1/24 5:57 PM, Fenghua Yu wrote:
-> Hi, Tony,
+On 12/11/2024 13:37, Divya Koppera wrote:
+> This ptp header file library will cover ptp macros for future phys in
+> Microchip where addresses will be same but base offset and mmd address
+> may changes.
 > 
-> On 11/1/24 16:55, Luck, Tony wrote:
->>>> +   if (!strcmp(buf, "mbm_local_bytes")) {
->>>> +           if (is_mbm_local_enabled())
->>>> +                   rdtgrp->mba_mbps_event = QOS_L3_MBM_LOCAL_EVENT_ID;
->>>> +           else
->>>> +                   ret = -ENXIO;
->>>> +   } else if (!strcmp(buf, "mbm_total_bytes")) {
->>>> +           if (is_mbm_total_enabled())
->>>> +                   rdtgrp->mba_mbps_event = QOS_L3_MBM_TOTAL_EVENT_ID;
->>>
->>>
->>> User may think each time toggling the local/total event will effect MBA.
->>> And they may create usage case like frequently changing the events to
->>> maintain/adjust both total and local within bw boundary.
->>>
->>> But toggling mba_mbps_event faster than 1sec doesn't have any effect on
->>> MBA SC because MBA SC is called every one second.
->>>
->>> Maybe need to add a ratelimit of 1 second on calling this function? And
->>> adding info in the document that toggling speed should be slower than 1
->>> second?
->>
->> The limit would need to be per ctrl_mon group, not on calls to this function.
->> It's perfectly ok to switch multiple groups in a short interval.
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
+> ---
+> v2 -> v3
+> - No changes
 > 
-> Agree.
+> v1 -> v2
+> - Fixed sparse warnings and compilation errors/warnings reported by kernel
+>    test robot
+> ---
+>   drivers/net/phy/microchip_ptp.h | 217 ++++++++++++++++++++++++++++++++
+>   1 file changed, 217 insertions(+)
+>   create mode 100644 drivers/net/phy/microchip_ptp.h
 > 
->>
->> I'm not sure how to rate limit here. I could add a delay so that the write()
->> call blocks until enough time passes before making the change. But
->> what should I do if a user submits more writes to the file? Queue them
->> all and apply at one second intervals?
-> 
-> Maybe define "mba_mbps_last_time" in rdtgroup. Then
-> 
-> if (time_before(jiffies, rdtgrp->mba_mbps_last_time + HZ) {
->     rdt_last_cmd_printf("Too fast (>1/s) mba_MBps event change)\n");
->         rdtgroup_kn_unlock(of->kn);
->     return -EAGAIN;
-> }
-> rdtgrp->mba_mbps_last_time = jiffies;
+> diff --git a/drivers/net/phy/microchip_ptp.h b/drivers/net/phy/microchip_ptp.h
+> new file mode 100644
+> index 000000000000..26a9a65c1810
+> --- /dev/null
+> +++ b/drivers/net/phy/microchip_ptp.h
+> @@ -0,0 +1,217 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + * Copyright (C) 2024 Microchip Technology
+> + */
+> +
+> +#ifndef _MICROCHIP_PTP_H
+> +#define _MICROCHIP_PTP_H
+> +
+> +#if IS_ENABLED(CONFIG_MICROCHIP_PHYPTP)
+> +
+> +#include <linux/ptp_clock_kernel.h>
+> +#include <linux/ptp_clock.h>
+> +#include <linux/ptp_classify.h>
+> +#include <linux/net_tstamp.h>
+> +#include <linux/mii.h>
+> +#include <linux/phy.h>
+> +
+> +#define MCHP_PTP_CMD_CTL(b)			((b) + 0x0)
+> +#define MCHP_PTP_CMD_CTL_LTC_STEP_NSEC		BIT(6)
+> +#define MCHP_PTP_CMD_CTL_LTC_STEP_SEC		BIT(5)
+> +#define MCHP_PTP_CMD_CTL_CLOCK_LOAD		BIT(4)
+> +#define MCHP_PTP_CMD_CTL_CLOCK_READ		BIT(3)
+> +#define MCHP_PTP_CMD_CTL_EN			BIT(1)
+> +#define MCHP_PTP_CMD_CTL_DIS			BIT(0)
+> +
+> +#define MCHP_PTP_REF_CLK_CFG(b)			((b) + 0x2)
+> +#define MCHP_PTP_REF_CLK_SRC_250MHZ		0x0
+> +#define MCHP_PTP_REF_CLK_PERIOD_OVERRIDE	BIT(9)
+> +#define MCHP_PTP_REF_CLK_PERIOD			4
+> +#define MCHP_PTP_REF_CLK_CFG_SET	(MCHP_PTP_REF_CLK_SRC_250MHZ |\
+> +					 MCHP_PTP_REF_CLK_PERIOD_OVERRIDE |\
+> +					 MCHP_PTP_REF_CLK_PERIOD)
+> +
+> +#define MCHP_PTP_LTC_SEC_HI(b)			((b) + 0x5)
+> +#define MCHP_PTP_LTC_SEC_MID(b)			((b) + 0x6)
+> +#define MCHP_PTP_LTC_SEC_LO(b)			((b) + 0x7)
+> +#define MCHP_PTP_LTC_NS_HI(b)			((b) + 0x8)
+> +#define MCHP_PTP_LTC_NS_LO(b)			((b) + 0x9)
+> +#define MCHP_PTP_LTC_RATE_ADJ_HI(b)		((b) + 0xc)
+> +#define MCHP_PTP_LTC_RATE_ADJ_HI_DIR		BIT(15)
+> +#define MCHP_PTP_LTC_RATE_ADJ_LO(b)		((b) + 0xd)
+> +#define MCHP_PTP_LTC_STEP_ADJ_HI(b)		((b) + 0x12)
+> +#define MCHP_PTP_LTC_STEP_ADJ_HI_DIR		BIT(15)
+> +#define MCHP_PTP_LTC_STEP_ADJ_LO(b)		((b) + 0x13)
+> +#define MCHP_PTP_LTC_READ_SEC_HI(b)		((b) + 0x29)
+> +#define MCHP_PTP_LTC_READ_SEC_MID(b)		((b) + 0x2a)
+> +#define MCHP_PTP_LTC_READ_SEC_LO(b)		((b) + 0x2b)
+> +#define MCHP_PTP_LTC_READ_NS_HI(b)		((b) + 0x2c)
+> +#define MCHP_PTP_LTC_READ_NS_LO(b)		((b) + 0x2d)
+> +#define MCHP_PTP_OP_MODE(b)			((b) + 0x41)
+> +#define MCHP_PTP_OP_MODE_DIS			0
+> +#define MCHP_PTP_OP_MODE_STANDALONE		1
+> +#define MCHP_PTP_LATENCY_CORRECTION_CTL(b)	((b) + 0x44)
+> +#define MCHP_PTP_PREDICTOR_EN			BIT(6)
+> +#define MCHP_PTP_TX_PRED_DIS			BIT(1)
+> +#define MCHP_PTP_RX_PRED_DIS			BIT(0)
+> +#define MCHP_PTP_LATENCY_SETTING		(MCHP_PTP_PREDICTOR_EN | \
+> +						 MCHP_PTP_TX_PRED_DIS | \
+> +						 MCHP_PTP_RX_PRED_DIS)
+> +
+> +#define MCHP_PTP_INT_EN(b)			((b) + 0x0)
+> +#define MCHP_PTP_INT_STS(b)			((b) + 0x01)
+> +#define MCHP_PTP_INT_TX_TS_OVRFL_EN		BIT(3)
+> +#define MCHP_PTP_INT_TX_TS_EN			BIT(2)
+> +#define MCHP_PTP_INT_RX_TS_OVRFL_EN		BIT(1)
+> +#define MCHP_PTP_INT_RX_TS_EN			BIT(0)
+> +#define MCHP_PTP_INT_ALL_MSK		(MCHP_PTP_INT_TX_TS_OVRFL_EN | \
+> +					 MCHP_PTP_INT_TX_TS_EN | \
+> +					 MCHP_PTP_INT_RX_TS_OVRFL_EN |\
+> +					 MCHP_PTP_INT_RX_TS_EN)
+> +
+> +#define MCHP_PTP_CAP_INFO(b)			((b) + 0x2e)
+> +#define MCHP_PTP_TX_TS_CNT(v)			(((v) & GENMASK(11, 8)) >> 8)
+> +#define MCHP_PTP_RX_TS_CNT(v)			((v) & GENMASK(3, 0))
+> +
+> +#define MCHP_PTP_RX_PARSE_CONFIG(b)		((b) + 0x42)
+> +#define MCHP_PTP_RX_PARSE_L2_ADDR_EN(b)		((b) + 0x44)
+> +#define MCHP_PTP_RX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x45)
+> +
+> +#define MCHP_PTP_RX_TIMESTAMP_CONFIG(b)		((b) + 0x4e)
+> +#define MCHP_PTP_RX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
+> +
+> +#define MCHP_PTP_RX_VERSION(b)			((b) + 0x48)
+> +#define MCHP_PTP_RX_TIMESTAMP_EN(b)		((b) + 0x4d)
+> +
+> +#define MCHP_PTP_RX_INGRESS_NS_HI(b)		((b) + 0x54)
+> +#define MCHP_PTP_RX_INGRESS_NS_HI_TS_VALID	BIT(15)
+> +
+> +#define MCHP_PTP_RX_INGRESS_NS_LO(b)		((b) + 0x55)
+> +#define MCHP_PTP_RX_INGRESS_SEC_HI(b)		((b) + 0x56)
+> +#define MCHP_PTP_RX_INGRESS_SEC_LO(b)		((b) + 0x57)
+> +#define MCHP_PTP_RX_MSG_HEADER2(b)		((b) + 0x59)
+> +
+> +#define MCHP_PTP_TX_PARSE_CONFIG(b)		((b) + 0x82)
+> +#define MCHP_PTP_PARSE_CONFIG_LAYER2_EN		BIT(0)
+> +#define MCHP_PTP_PARSE_CONFIG_IPV4_EN		BIT(1)
+> +#define MCHP_PTP_PARSE_CONFIG_IPV6_EN		BIT(2)
+> +
+> +#define MCHP_PTP_TX_PARSE_L2_ADDR_EN(b)		((b) + 0x84)
+> +#define MCHP_PTP_TX_PARSE_IPV4_ADDR_EN(b)	((b) + 0x85)
+> +
+> +#define MCHP_PTP_TX_VERSION(b)			((b) + 0x88)
+> +#define MCHP_PTP_MAX_VERSION(x)			(((x) & GENMASK(7, 0)) << 8)
+> +#define MCHP_PTP_MIN_VERSION(x)			((x) & GENMASK(7, 0))
+> +
+> +#define MCHP_PTP_TX_TIMESTAMP_EN(b)		((b) + 0x8d)
+> +#define MCHP_PTP_TIMESTAMP_EN_SYNC		BIT(0)
+> +#define MCHP_PTP_TIMESTAMP_EN_DREQ		BIT(1)
+> +#define MCHP_PTP_TIMESTAMP_EN_PDREQ		BIT(2)
+> +#define MCHP_PTP_TIMESTAMP_EN_PDRES		BIT(3)
+> +#define MCHP_PTP_TIMESTAMP_EN_ALL		(MCHP_PTP_TIMESTAMP_EN_SYNC |\
+> +						 MCHP_PTP_TIMESTAMP_EN_DREQ |\
+> +						 MCHP_PTP_TIMESTAMP_EN_PDREQ |\
+> +						 MCHP_PTP_TIMESTAMP_EN_PDRES)
+> +
+> +#define MCHP_PTP_TX_TIMESTAMP_CONFIG(b)		((b) + 0x8e)
+> +#define MCHP_PTP_TX_TIMESTAMP_CONFIG_PTP_FCS_DIS BIT(0)
+> +
+> +#define MCHP_PTP_TX_MOD(b)			((b) + 0x8f)
+> +#define MCHP_PTP_TX_MOD_PTP_SYNC_TS_INSERT	BIT(12)
+> +#define MCHP_PTP_TX_MOD_PTP_FU_TS_INSERT	BIT(11)
+> +
+> +#define MCHP_PTP_TX_EGRESS_NS_HI(b)		((b) + 0x94)
+> +#define MCHP_PTP_TX_EGRESS_NS_HI_TS_VALID	BIT(15)
+> +
+> +#define MCHP_PTP_TX_EGRESS_NS_LO(b)		((b) + 0x95)
+> +#define MCHP_PTP_TX_EGRESS_SEC_HI(b)		((b) + 0x96)
+> +#define MCHP_PTP_TX_EGRESS_SEC_LO(b)		((b) + 0x97)
+> +#define MCHP_PTP_TX_MSG_HEADER2(b)		((b) + 0x99)
+> +
+> +#define MCHP_PTP_TSU_GEN_CONFIG(b)		((b) + 0xc0)
+> +#define MCHP_PTP_TSU_GEN_CFG_TSU_EN		BIT(0)
+> +
+> +#define MCHP_PTP_TSU_HARD_RESET(b)		((b) + 0xc1)
+> +#define MCHP_PTP_TSU_HARDRESET			BIT(0)
+> +
+> +/* Represents 1ppm adjustment in 2^32 format with
+> + * each nsec contains 4 clock cycles in 250MHz.
+> + * The value is calculated as following: (1/1000000)/((2^-32)/4)
+> + */
+> +#define MCHP_PTP_1PPM_FORMAT			17179
+> +#define MCHP_PTP_FIFO_SIZE			8
+> +#define MCHP_PTP_MAX_ADJ				31249999
+> +
+> +#define BASE_CLK(p)		((p)->clk_base_addr)
+> +#define BASE_PORT(p)		((p)->port_base_addr)
+> +#define PTP_MMD(p)		((p)->mmd)
+> +
+> +enum ptp_fifo_dir {
+> +	PTP_INGRESS_FIFO,
+> +	PTP_EGRESS_FIFO
+> +};
+> +
+> +struct mchp_ptp_clock {
+> +	struct mii_timestamper mii_ts;
+> +	struct phy_device *phydev;
+> +
+> +	struct sk_buff_head tx_queue;
+> +	struct sk_buff_head rx_queue;
+> +
+> +	struct list_head rx_ts_list;
+> +	/* Lock for Rx ts fifo */
+> +	spinlock_t rx_ts_lock;
+> +
+> +	int hwts_tx_type;
+> +	enum hwtstamp_rx_filters rx_filter;
+> +	int layer;
+> +	int version;
+> +
+> +	struct ptp_clock *ptp_clock;
+> +	struct ptp_clock_info caps;
+> +
+> +	/* Lock for phc */
+> +	struct mutex ptp_lock;
+> +
+> +	u16 port_base_addr;
+> +	u16 clk_base_addr;
+> +	u8 mmd;
+> +};
 
-This seems like enforcing an unnecessary limitation. For example, this would mean
-that user space needs to wait for a second to undo a change to the monitoring event
-in case there was a mistake. This seems like an unnecessary restriction to me.
+I believe, the current design of mchp_ptp_clock has some issues:
 
-I am also afraid that there may be some corner cases where a write to the file and
-the actual run of the overflow handler  (on every domain) may not be exactly HZ apart.
+struct mchp_ptp_clock {
+         struct mii_timestamper     mii_ts;             /*     0    48 */
+         struct phy_device *        phydev;             /*    48     8 */
+         struct sk_buff_head        tx_queue;           /*    56    24 */
+         /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+         struct sk_buff_head        rx_queue;           /*    80    24 */
+         struct list_head           rx_ts_list;         /*   104    16 */
+         spinlock_t                 rx_ts_lock          /*   120     4 */
+         int                        hwts_tx_type;       /*   124     4 */
+         /* --- cacheline 2 boundary (128 bytes) --- */
+         enum hwtstamp_rx_filters   rx_filter;          /*   128     4 */
+         int                        layer;              /*   132     4 */
+         int                        version;            /*   136     4 */
 
-Bandwidth allocation remains to be adjusted in either direction with at most the bandwidth
-granularity. A user attempting to toggle bandwidth event cannot expecting large
-changes in allocated bandwidth even if the events differ significantly.
+         /* XXX 4 bytes hole, try to pack */
 
-Surely we can explore more if we learn about a specific use case.
+         struct ptp_clock *         ptp_clock;          /*   144     8 */
+         struct ptp_clock_info      caps;               /*   152   184 */
+         /* --- cacheline 5 boundary (320 bytes) was 16 bytes ago --- */
+         struct mutex               ptp_lock;           /*   336    32 */
+         u16                        port_base_addr;     /*   368     2 */
+         u16                        clk_base_addr;      /*   370     2 */
+         u8                         mmd;                /*   372     1 */
 
->> Maybe it would be better to just to add some additional text to the
->> documentation pointing out that resctrl only checks bandwidth once
->> per second to make throttling adjustments. So changes to the event
->> will only have effect after some seconds have passed?
-> 
-> 
-> Add additional text would be great.
+         /* size: 376, cachelines: 6, members: 16 */
+         /* sum members: 369, holes: 1, sum holes: 4 */
+         /* padding: 3 */
+         /* last cacheline: 56 bytes */
+};
 
+tx_queue will be splitted across 2 cache lines and will have spinlock on 
+the cache line next to `struct sk_buff * next`. That means 2 cachelines
+will have to fetched to have an access to it - may lead to performance
+issues.
 
-Agreed.
+Another issue is that locks in tx_queue and rx_queue, and rx_ts_lock
+share the same cache line which, again, can have performance issues on
+systems which can potentially have several rx/tx queues/irqs.
 
-Reinette
+It would be great to try to reorder the struct a bit.
+
+> +
+> +struct mchp_ptp_rx_ts {
+> +	struct list_head list;
+> +	u32 seconds;
+> +	u32 nsec;
+> +	u16 seq_id;
+> +};
+> +
+> +struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev, u8 mmd,
+> +				      u16 clk_base, u16 port_base);
+> +
+> +int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
+> +			 u16 reg, u16 val, bool enable);
+> +
+> +irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock);
+> +
+> +#else
+> +
+> +static inline struct mchp_ptp_clock *mchp_ptp_probe(struct phy_device *phydev,
+> +						    u8 mmd, u16 clk_base,
+> +						    u16 port_base)
+> +{
+> +	return NULL;
+> +}
+> +
+> +static inline int mchp_config_ptp_intr(struct mchp_ptp_clock *ptp_clock,
+> +				       u16 reg, u16 val, bool enable)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline irqreturn_t mchp_ptp_handle_interrupt(struct mchp_ptp_clock *ptp_clock)
+> +{
+> +	return IRQ_NONE;
+> +}
+> +
+> +#endif //CONFIG_MICROCHIP_PHYPTP
+> +
+> +#endif //_MICROCHIP_PTP_H
+
 
