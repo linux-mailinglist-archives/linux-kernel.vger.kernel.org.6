@@ -1,181 +1,230 @@
-Return-Path: <linux-kernel+bounces-405834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8359C580A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:42:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B959C58E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DCEAB34671
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C810B312B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8F51FA823;
-	Tue, 12 Nov 2024 12:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA781F77AD;
+	Tue, 12 Nov 2024 12:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8L7J4Uu"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="dIs8MaFu"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E47B1591F0;
-	Tue, 12 Nov 2024 12:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9941C2AF1B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731414757; cv=none; b=aV5UQ57hG24bjSeTG8fsOvFEd+K8R67jHeFGyV0TGVutzVAQ4Vd/qeVBXwX5A+XlivTDD7zJmm0cNgf+UsfbXYDekeh4yaOsp+cKzV2XC+0eXsFH6bCKYNzIoOOQdW0O6NVFj1VpPQbHneFrz7gdu3/yBCT0QJuZXKaQOOrSaU0=
+	t=1731414745; cv=none; b=GvNw86XcbeTSewqaQmHOV7OGjjbdph8a9Nf5dLSQx4nLkr8O3tBPp0xt8otgmyAW8l1iUfkehI13YUZl+1rxbAaiNafvZOEXG4IQ60nak2w8r224vPDYN6Oh9lIXKK6fnYfmcHub2HS8yyn+GFpvKvH8gVC8OjtF4tUmMriRRyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731414757; c=relaxed/simple;
-	bh=tBgqVT0kf3DnBE6rWOx3JIn1Zygy5++OjNbPdIAJLF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdO98UzGh407rfDAsUqhC6LhwVc3jDYWzRfezzB3NopXC624PRnSMndyMDq8cfvRrBrDGNE725PnL8jicffi/dS2ZoCCnjYpQOfCaa+OKPKQOJaW9zx7oLrgaljo3bzoagduMt+D0GgAIzWHXZmDlLdgyN0Zyg9olwfryd8fBpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8L7J4Uu; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9e8522c10bso867250466b.1;
-        Tue, 12 Nov 2024 04:32:35 -0800 (PST)
+	s=arc-20240116; t=1731414745; c=relaxed/simple;
+	bh=2ExIiMEoIVsusLk6+aOr+Ea+OBKoExWdnHGIJbdXKFY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cFDDyLWzoUtntLDN3HMPEs35BRAxSxwypcSu8LbxaLbF1zzOQ1S/iM0r7mlMMD7oCLAA9viFftMEn2qEFNe2y3SvYPm2nWe8ry10Bm2drvYPfBTIbRiPi4ZZ2uoVLZoBJUjUBeTM5JHTPQ2YNiC0i/ld63c7ZboXP1xRx0aBR7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=dIs8MaFu; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso6249098e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:32:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731414754; x=1732019554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUb3nok/AqP7r33O+yPL3KeymIM3B7Unh2DohKMeZnI=;
-        b=Q8L7J4UuCJvDFQozSYDP8AOg/Z1x8OQUUrSk58/Ag8L0gi1aY8WphfTxzYa5kZi0wV
-         rkenLUF0AZtH96iksgAnNVw4YAUFBiQ65pwAposBt6BE56LyKDI98Pw3L/7nrLS8wl74
-         cMWbLOgxnEjhcMaroNEuIIvt0tF7wB7JowVPOB6Omus9Z8yuBpsulZogJkqavy8qrnXe
-         7b/6dWn6x22XpOCkcDeXqP3hQQDsKiRL+UoB27FfmMjOVpnFEOBEf5+gYzaXBGSUvSqS
-         kFl4K+2DiE96WPYof/WO47U9Ax6na/vY6xO+F+XXPYZZvD9RRC9ABa8VSMpB1LOmVLDG
-         Tn7Q==
+        d=openvpn.net; s=google; t=1731414742; x=1732019542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8mN/9jLDEEeojmQl31wzMN9jzJ1OIuvDrwKoT9iOXns=;
+        b=dIs8MaFuKQtCb9wfh8v4BM4T+4NgOVSsqozqpXPQ2ycki2I/P3EKAMKJbCNs8LWWkZ
+         6/1J7o4gYVbQtlkEs38w/edHfp/5SunTA0IgVs8pEQjnAjjwzZf7dezkS49HKKY5J3+n
+         dwChv7rFv28ja6A1605YrJn3Jqtl2VOOYkq2WoigCRwU4I9VluWNUFL1xEC3IPnP+Ggv
+         M19rD25s62A/9bwMH+UFwg0BAC1bQLn7a4SsyS1+n2gUIqvlqliNBFBY/fJKOuJsQw+z
+         zlGHws7EmmdNbO6G9vr/kh4ko0GJ31ezaaCYJpM8bIATL1+XW4kz3P2MwgM69nm9px2C
+         nsjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731414754; x=1732019554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GUb3nok/AqP7r33O+yPL3KeymIM3B7Unh2DohKMeZnI=;
-        b=JLJfRYbWz9RlrSQT116B+mgzl3189plNOB8fFYSc+mkFxDvj994y24EBQy/gxVCwSF
-         AjfUGhRCbWogqe9D1l9ForYsOF8LKplEBxmS11MGFw1ZpVzcsolhRp0FdY8NYV61w2u8
-         Dx/SkXpB012kcJLssig0aKFDGYbxVa3k7qR4jPEQ3u1M8b+YiZL5DHK0gn0UiMleP6MM
-         hag8OCSbipvaDBHOnlBgSVw59ZPI18geUHNaLXOjwxxbRK1YRp85mNgNZ/YlXdWWEJoc
-         WBTtf71YkqkIucu9ndboEM0Q3+6NOP3tOYxtUThQnBpHhIgt3cQ8whS4Sv2KhrEu70gC
-         e6vw==
-X-Forwarded-Encrypted: i=1; AJvYcCU11OdeZ18C7O8fC7NsOvmECF8q6d1hHtokhWOi+VgWLV096XJRGzUEfZw7oQxfmhrjEKngZp2lC6kvScg=@vger.kernel.org, AJvYcCVanlvoavQWR5Npx14do/GQfA+Tj92F96atX0lNnb6D32yKs6N+gg5G6dK8HNGYn+5u0zpcaRkbiEBW@vger.kernel.org, AJvYcCWc8SjTWO7RN4TiPs/6kFpglBcGWfpNQsg9g4fUVwDsbj4XkTVK33J2/gdRrTglEMgPpBDcMi92CqKKILtH@vger.kernel.org, AJvYcCXSV1KkrHB7fOyKaGkO6Irw660Jr+UTMAwrXUiOO8S0eKau3SujqEFfHCbhXnL2/yzmaBAJsD2+JEDe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr2bgh6BjGTDcVVyj0ZUviJHjlezrqcpg4XPN2HJHlDUI8MNc5
-	uXCPMUI79MKG1Q1MykJjFqTQUgDGeigkzQ+sz4BqFwgO4fDok3mqj/OPAVws9a42+ZfaU/mnzQ8
-	StGWeo7Xf6B6kxfLqfQGjfbtG0N4=
-X-Google-Smtp-Source: AGHT+IHsekqXC8V0d+CZha3eqodR3E96t9ckKwPOB07f+j+M/7b8jWQS1qzjFRSvfRjwlg4Rl2gJoAnqrU5IZqFd6j0=
-X-Received: by 2002:a17:907:9492:b0:a9a:1575:23e3 with SMTP id
- a640c23a62f3a-a9eefeecbf6mr1635915466b.19.1731414753506; Tue, 12 Nov 2024
- 04:32:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731414742; x=1732019542;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8mN/9jLDEEeojmQl31wzMN9jzJ1OIuvDrwKoT9iOXns=;
+        b=Y+WRorVWOUrYSb76dspaPlPN2uzOFXyIjNsr7dSWPpE+FltQElUzawnbIn9f/0mo5u
+         rOmSqEQT8N8bslHEpJEbAP6qAb0gRzEoBzihBrURlZt/DmECvI68aL9ik05ZfuqrrEAN
+         TeF/KLRLGH2YKTkaWKRn0uBsQPW4G4aXolTdc3lIJ62H8M7huDySI4LKqbRFAVAekXZn
+         y4VtqZuMtpqeFkN1mYFAMuy2MQZ6eAy5a6lQJO+KGmlFK5lQIrL1QE3oGwGNo0pdMvHt
+         GvyYaMbXczKGEfiBqwf6WnW1v00ZBQhaUkr7Z10plKOa1qzEUnHSBVyKySdxZS00hbT7
+         0paQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIqdqWAxOUleAV8P1hu5gT57oyUnx1jp4j6gLfM02T9pK8UHACCrkAzHgf9kR9dlTqA1XI1C1tXX9okVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx+DD+7wUZI/sQO9LXAGcUtAqAYa0LgMszBOKWHd5co7zH1sGJ
+	OwliOSs7JFjtibvtkt0relTINg8llpbILMV5rOMprHyWNThIyPsDPipNhm08GZU=
+X-Google-Smtp-Source: AGHT+IFMNwasfmiLl+Z9KOviColnfocGmaijKon2fqUAscqOXZuAu8ZEgK7JfUz/X8ViRyTrfePqIw==
+X-Received: by 2002:a05:6512:3053:b0:539:8a7d:9fbf with SMTP id 2adb3069b0e04-53d862be452mr8213078e87.46.1731414741594;
+        Tue, 12 Nov 2024 04:32:21 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:e829:c484:5241:93b2? ([2001:67c:2fbc:1:e829:c484:5241:93b2])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa523a0esm239919655e9.0.2024.11.12.04.32.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 04:32:21 -0800 (PST)
+Message-ID: <52960609-2d3a-4e75-a31d-6643a0411435@openvpn.net>
+Date: Tue, 12 Nov 2024 13:32:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241102195037.3013934-3-aren@peacevolution.org>
- <20241102195037.3013934-11-aren@peacevolution.org> <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
- <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
- <ZzEPACoblmcQD9yu@surfacebook.localdomain> <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
- <ZzHSE9Nrf4YySJrq@smile.fi.intel.com> <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
-In-Reply-To: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 12 Nov 2024 14:31:57 +0200
-Message-ID: <CAHp75Vfm_7Gq5a-v1+=WCq2w0Am0VF+z_NPenHbuvV-Mj+MX4A@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where possible
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Aren <aren@peacevolution.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Kaustabh Chakraborty <kauschluss@disroot.org>, =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
-	Ondrej Jirman <megi@xff.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, 
-	phone-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 14/23] ovpn: implement peer lookup logic
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+ Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-14-de4698c73a25@openvpn.net> <ZyivdrpZhx4WpMbn@hog>
+ <77c2a569-6f6c-41d2-ad85-2b0d71e9bae4@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <77c2a569-6f6c-41d2-ad85-2b0d71e9bae4@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 12:15=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
-> On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
-> > On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
-> > > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
-> > > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
-> >
-> > You can do it differently
-> >
-> > #define STK3310_REGFIELD(name)                                         =
-               \
-> > do {                                                                   =
-       \
-> >       data->reg_##name =3D                                             =
-         \
-> >               devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##=
-name); \
-> >       if (IS_ERR(data->reg_##name))                                    =
-       \
-> >               return dev_err_probe(dev, PTR_ERR(data->reg_##name),     =
-       \
-> >                                    "reg field alloc failed.\n");       =
-       \
-> > } while (0)
-> >
-> > > #define STK3310_REGFIELD(name) ({                                    =
-       \
-> > >     data->reg_##name =3D devm_regmap_field_alloc(dev, regmap,        =
-         \
-> > >                                                stk3310_reg_field_##na=
-me);   \
-> > >     if (IS_ERR(data->reg_##name))                                    =
-       \
-> > >             return dev_err_probe(dev, PTR_ERR(data->reg_##name),     =
-       \
-> > >                                  "reg field alloc failed\n");        =
-       \
-> > > })
-> >
-> > I am against unneeded use of GNU extensions.
-> >
-> > > > > replacing "do { } while (0)" with "({ })" and deindenting could m=
-ake
-> > > > > enough room to clean this up the formatting of this macro though.
-> > > >
-> > > > do {} while (0) is C standard, ({}) is not.
-> > >
-> > > ({ }) is used throughout the kernel, and is documented as such[1]. I
-> > > don't see a reason to avoid it, if it helps readability.
-> >
-> > I don't see how it makes things better here, and not everybody is famil=
-iar with
-> > the concept even if it's used in the kernel here and there. Also if a t=
-ool is
-> > being used in one case it doesn't mean it's suitable for another.
->
-> Just to throw in my subjective view here: I don't expect anyone with
-> some base level knowledge of C will have doubts about the semantics of
-> ({ ... }) and compared to that I find do { ... } while (0) less optimal,
-> because it's more verbose and when spotting the "do {" part, the
-> semantic only gets clear when you also see the "while (0)".
+On 12/11/2024 02:18, Sergey Ryazanov wrote:
+> On 04.11.2024 13:26, Sabrina Dubroca wrote:
+>> 2024-10-29, 11:47:27 +0100, Antonio Quartulli wrote:
+>>>   struct ovpn_peer *ovpn_peer_get_by_transp_addr(struct ovpn_struct 
+>>> *ovpn,
+>>>                              struct sk_buff *skb)
+>>>   {
+>>> -    struct ovpn_peer *peer = NULL;
+>>> +    struct ovpn_peer *tmp, *peer = NULL;
+>>>       struct sockaddr_storage ss = { 0 };
+>>> +    struct hlist_nulls_head *nhead;
+>>> +    struct hlist_nulls_node *ntmp;
+>>> +    size_t sa_len;
+>>>       if (unlikely(!ovpn_peer_skb_to_sockaddr(skb, &ss)))
+>>>           return NULL;
+>>>       if (ovpn->mode == OVPN_MODE_P2P)
+>>> -        peer = ovpn_peer_get_by_transp_addr_p2p(ovpn, &ss);
+>>> +        return ovpn_peer_get_by_transp_addr_p2p(ovpn, &ss);
+>>> +
+>>> +    switch (ss.ss_family) {
+>>> +    case AF_INET:
+>>> +        sa_len = sizeof(struct sockaddr_in);
+>>> +        break;
+>>> +    case AF_INET6:
+>>> +        sa_len = sizeof(struct sockaddr_in6);
+>>> +        break;
+>>> +    default:
+>>> +        return NULL;
+>>> +    }
+>>
+>> You could get rid of that switch by having ovpn_peer_skb_to_sockaddr
+>> also set sa_len (or return 0/the size).
 
-Seems we have to agree on a disagreement.
+Yeah, makes sense. Thanks!
 
-> Having said
-> that I also dislike the "do" starting on column 0, IMHO the RHS of the
-> #define should be intended.
+>>
+>>> +
+>>> +    nhead = ovpn_get_hash_head(ovpn->peers->by_transp_addr, &ss, 
+>>> sa_len);
+>>> +
+>>> +    rcu_read_lock();
+>>> +    hlist_nulls_for_each_entry_rcu(tmp, ntmp, nhead,
+>>> +                       hash_entry_transp_addr) {
+>>
+>> I think that's missing the retry in case we ended up in the wrong
+>> bucket due to a peer rehash?
 
-This argument I kinda accept.
+Oh, for some reason I convinced myself that this is handled behind the 
+scene, but indeed the lookup must be explicitly restarted.
 
-> So if you ask me, this is not an unneeded use of an extension. The
-> extension is used to improve readabilty and I blame the C standard to
-> not support this syntax.
+will fix it, thanks for pointing this out!
 
-Here I agree with you.
 
-> While I'm in critics mode: I consider hiding a return in a macro bad
-> style.
+> 
+> Nice catch! I am also wondering why the 'nulls' variant was selected, 
+> but there are no nulls value verification with the search respin.
+> 
+> Since we started discussing the list API, why the 'nulls' variant is 
+> used for address hash tables and the normal variant is used for the 
+> peer-id lookup?
 
-So, summarizing the discussion we have a split, hence Jonathan is our
-arbiter here to judge.
+Because the nulls variant is used only for tables where a re-hash can 
+happen.
 
---=20
-With Best Regards,
-Andy Shevchenko
+The peer-id table does not expect its objected to be re-used or 
+re-hashed since the ID of a peer cannot change throughout its lifetime.
+
+
+Regards,
+
+
+> 
+>>
+>>> +        if (!ovpn_peer_transp_match(tmp, &ss))
+>>> +            continue;
+>>> +
+>>> +        if (!ovpn_peer_hold(tmp))
+>>> +            continue;
+>>> +
+>>> +        peer = tmp;
+>>> +        break;
+>>> +    }
+>>> +    rcu_read_unlock();
+>>>       return peer;
+>>>   }
+> 
+> -- 
+> Sergey
+> 
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
