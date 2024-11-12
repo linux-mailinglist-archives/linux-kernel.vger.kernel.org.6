@@ -1,172 +1,116 @@
-Return-Path: <linux-kernel+bounces-405530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBA99C52DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E149C5298
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:00:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D6BEB23397
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:53:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D38CB26982
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038CE20E021;
-	Tue, 12 Nov 2024 09:53:12 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4F020E329;
+	Tue, 12 Nov 2024 09:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLM+QhvL"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B811AB535
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503EF1E4AD;
+	Tue, 12 Nov 2024 09:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731405191; cv=none; b=aPLk4hudzNTDleTf9ldUfTuZkxQ5aIa0lbNIm3lGDAY82xSMTrjDuD1zDufvaTfbhGveeVmeYH8L/O0oBm2zANq0S2vNrazcaaNKrac2eeAZusy0aqpspm9O2evtSRGUZzllEbLuh5GhXWDUF7l6FHWlgu8PXSy+nYXs0vvooZE=
+	t=1731405293; cv=none; b=B3Pm/8Y/fQYYlYfww8SaeWW0Nhd1Qblsgh/yVfJM2YtopNMi4saMBNS1a3kIC5NhPBYTdP5CJ5u1rL5Sy+W2FXBhRODi5n3S4bQXXESb55LLtwc34tY24reZza2ZlpNUiZ2v9DZva9VipeltaK0aPTa1KOHCXqIraRFSSQEEeq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731405191; c=relaxed/simple;
-	bh=WsZ8LcEWNbDDgjK5KwWMgvnnkvhbKcNw9V6HRRfXyG0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=LeT5VjmBPVmrlP66PUPJq/R+TatEop5I76F6J9kNE5QGZiim6zzE635+p2v3QjLoyVu1bM+qwm/Wv41/Z9M65e7P4Fi3SCyWaj21UFSvhgqM9nJBuJijOrFMhr21mfE5tMvUF0ETr+fLh+9FOUGEtEm7tpKIz4FtDYUsNlfFGGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-103-vk1W0v29MPuncJV1L6TE2A-1; Tue, 12 Nov 2024 09:53:00 +0000
-X-MC-Unique: vk1W0v29MPuncJV1L6TE2A-1
-X-Mimecast-MFC-AGG-ID: vk1W0v29MPuncJV1L6TE2A
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Tue, 12 Nov
- 2024 09:52:59 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Tue, 12 Nov 2024 09:52:59 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Mikel Rychliski' <mikel@mikelr.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] x86: Fix off-by-one error in __access_ok
-Thread-Topic: [PATCH] x86: Fix off-by-one error in __access_ok
-Thread-Index: AQHbMuurJ3dP3nIEdEmbtgzS5bNbELKw4lyggAGIHQCAAPqCgA==
-Date: Tue, 12 Nov 2024 09:52:59 +0000
-Message-ID: <b718357a6f9441428e771f1a4b60d710@AcuMS.aculab.com>
-References: <20241109210313.440495-1-mikel@mikelr.com>
- <382372a83d1644f8b3a701ff7e14d5f1@AcuMS.aculab.com>
- <2987600.vYhyI6sBWr@basin>
-In-Reply-To: <2987600.vYhyI6sBWr@basin>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731405293; c=relaxed/simple;
+	bh=/UP/yZkPRx3ksy8REvHcWTGDFGN+/6SFJSjOIYISfGA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UOHBhaRwQmPVfT1Ymfvs41vYj8EmuWkcH+LJ3U3kjCwpUjhFFrYqqJd+To+KGBXnvRwisuiEzXH4gNOByGgoER9lYBz8ypuUPHwe2b+d/cr296Q7/8YHGa3WLCrhYPK/K+4+abxdl4d18mdbK1oPxBA+EHuW6+c73qRmXIiUdlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLM+QhvL; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eac969aso30971735e9.1;
+        Tue, 12 Nov 2024 01:54:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731405290; x=1732010090; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qaivvDChRb0InDJ8FMMWKeFE9ZD3AcLndPDWrjVqzRQ=;
+        b=NLM+QhvLEahbKphah1oF5eKJ75uI99agV+cNz4Fz4SL+La2V14YpgU0MTPwQRDRc76
+         f0LAm3ORrtngRRMu0cLdN3yBM9AjwEC1F4kLKiJO+DKQfYgaGWI0xyFT/OaMd2ZN8wBi
+         369h3rYeYZ3J5UZPqm5kvOi1VHMaDjTcUQgRAUcYDNjccFMfV7OxtUv5NctnONxMjGJZ
+         qSsf6J//8iZzXL5RbNUSTHixCWrDP4F3kMhQuRfZl8pSZyExOZbN9RdJOhxpcSaPSWjP
+         NWYpaz2ihLUKvUKIhoAUKSxUDe3HJqCSVVR0795sTRnD7Yl4vUn9G6zBOTNQhQciT0VK
+         r/8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731405290; x=1732010090;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qaivvDChRb0InDJ8FMMWKeFE9ZD3AcLndPDWrjVqzRQ=;
+        b=pKva1J8B1hptmgvjWmbYReMYUNvSB9EzTp7ClgBNbXnATuwHQrjwZOSS3B2zSYIOY7
+         db03JhC0bzBNmX1/WDzZp55lGWfbWNx+HTPaHP54YfZu94JwmarTeNE0/gW8CHd+1Ctc
+         rLiLNWSR3pkUgYyQAdR2ooQPzZe8CcyDK2ssuVnzru4lWODCaCKO2RnpgFV9HW6TqjCA
+         nCDQy/E6+8+Vfq2serwcT1HxgLgZbM5Kzea86UFhPWgj3aXEPVeze977epMvISrR0YxE
+         tP1Io+ua0NOSaVMPb2qgPkTzPz3hkh2MeNWmmLtSUb1UaFvbB6KIvGbx96ZIR8ss7x/2
+         JzPw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9F3i3n1loBjYRKk+BPO33CQPlyuDQbyXP/ZaR9RirdcQZmFH/BwWQuDWdqoHj96Lz/O+r7Nodval3E6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ0SPnvthe8Anj4Dufbt6ky6UgVpZrf8Xo86sKoUd0l4KoCYET
+	Sm3KFvT0gZWJbRIlR34hFFYpaft0Zb+L8ffwiORsBekwcRrdJ9kVt+Tn3vmTf6+yjw==
+X-Google-Smtp-Source: AGHT+IH6q+2c0ZvH4Mqyc5GpFUfzI4kxFJ9JrF8Pz4fdBojwceABr9m8BAiE7+L6NGf3ItAa2jqiGA==
+X-Received: by 2002:a05:600c:3ba9:b0:431:47e7:9f45 with SMTP id 5b1f17b1804b1-432b686ec45mr142761445e9.11.1731405290361;
+        Tue, 12 Nov 2024 01:54:50 -0800 (PST)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa74bab3sm238757095e9.43.2024.11.12.01.54.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 01:54:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Gabriel Krisman Bertazi <gabriel@krisman.be>,
+	Christian Brauner <brauner@kernel.org>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	linux-mm@kvack.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mm: shmem: Fix error checking on utf8_parse_version failures
+Date: Tue, 12 Nov 2024 09:54:49 +0000
+Message-Id: <20241112095449.461196-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XYgyGCDfAtmSASbyQhKWFzIZNBPjumjY8leriUyQozU_1731405179
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-From: Mikel Rychliski
-> Sent: 11 November 2024 18:33
->=20
-> Hi David,
->=20
-> Thanks for the review:
->=20
-> On Sunday, November 10, 2024 2:36:49 P.M. EST David Laight wrote:
-> > From: Mikel Rychliski
-> >
-> > > Sent: 09 November 2024 21:03
-> > >
-> > > We were checking one byte beyond the actual range that would be acces=
-sed.
-> > > Originally, valid_user_address would consider the user guard page to =
-be
-> > > valid, so checks including the final accessible byte would still succ=
-eed.
-> >
-> > Did it allow the entire page or just the first byte?
-> > The test for ignoring small constant sizes rather assumes that accesses
-> > to the guard page are errored (or transfers start with the first byte).
-> >
->=20
-> valid_user_address() allowed the whole guard page. __access_ok() was
-> inconsistent about ranges including the guard page (and, as you mention, =
-would
-> continue to be with this change).
->=20
-> The problem is before 86e6b1547b3d, the off-by-one calculation just lead =
-to
-> another harmless inconsistency in checks including the guard page. Now it
-> prohibits reads of the last mapped userspace byte.
+Currently the error check on the call to utf8_parse_version is always
+false because version is an unsigned int and this can never be less
+than zero. Because version is required to be an unsigned int, fix the
+issue by casting it to int just for the error check.
 
-So if you could find code that didn't read the first byte of a short buffer
-first you could access the first page of kernel memory.
-(Ignoring the STAC/CLAC instructions.)
-So that has always been wrong!
+Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ mm/shmem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-OTOH I suspect that all user accesses start with the first byte
-and are either 'reasonably sequential' or recheck an updated pointer.
-So an architecture with a guard page (not all do) need only check
-the base address of a user buffer for being below/equal to the
-guard page.
-
-...
-> > Why not:
-> > =09if (statically_true(size <=3D PAGE_SIZE) || !size)
-> > =09=09return vaid_user_address(ptr);
-> > =09end =3D ptr + size - 1;
-> > =09return ptr <=3D end && valid_user_address(end);
->=20
-> Sure, agree this works as well.
-
-But is likely to replicate the valid_user_address() code.
-
-> > Although it is questionable whether a zero size should be allowed.
-> > Also, if you assume that the actual copies are 'reasonably sequential',
-> > it is valid to just ignore the length completely.
-> >
-> > It also ought to be possible to get the 'size =3D=3D 0' check out of th=
-e common
-> > path. Maybe something like:
-> > =09if (statically_true(size <=3D PAGE_SIZE)
-> > =09=09return vaid_user_address(ptr);
-> > =09end =3D ptr + size - 1;
-> > =09return (ptr <=3D end || (end++, !size)) && valid_user_address(end);
->=20
-> The first issue I ran into with the size=3D=3D0 is that __import_iovec() =
-is
-> checking access for vectors with io_len=3D=3D0 (and the check needs to su=
-cceed,
-> otherwise userspace will get a -EFAULT). Not sure if there are others.
-
-I've looked at __import_iovec() in the past.
-The API is horrid! and the 32bit compat version is actually faster.
-It doesn't need to call access_ok() either the check is done later.
-
-> Similarly, the iovec case is depending on access_ok(0, 0) succeeding. So =
-with
-> the example here, end underflows and gets rejected.
-
-I've even wondered what the actual issue is with speculative kernel
-reads from get_user().
-The read itself can't be an issue (a valid user address will also displace
-any cache lines), so I think the value read must be used to form an
-address in order for any kernel data to be leaked.
-You might find a compare (eg the length in import_iovec() but that can
-only expose high bits of a byte - and probably requires i-cache timing.
-But I'm not expert - and the experts hide the fine details.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 7987deb2be9b..b69e1d8816fa 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4377,7 +4377,7 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
+ 				       "in the format: utf8-<version number>");
+ 
+ 		version = utf8_parse_version(version_str);
+-		if (version < 0)
++		if ((int)version < 0)
+ 			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
+ 	}
+ 
+-- 
+2.39.5
 
 
