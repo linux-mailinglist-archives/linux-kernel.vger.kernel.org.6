@@ -1,308 +1,162 @@
-Return-Path: <linux-kernel+bounces-405928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3951A9C5981
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:49:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB4D9C5A0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:15:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0634B44960
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:29:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769B5B45014
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123B114A60D;
-	Tue, 12 Nov 2024 13:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5A018A95D;
+	Tue, 12 Nov 2024 13:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QnMeUxCL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTZHxdJt"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C70175D29;
-	Tue, 12 Nov 2024 13:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B885317CA1F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731418007; cv=none; b=q/9SH/bk6k538z148wJTu4oqRtD+8lnX+Q2DsGQ4n/6tAdQabmDd6R5i96xT3YeE/sW3WwxIGO1gRbGa3BkDQCqnvwkzmtFcfCOHXrsQim91DRGTPa8o2tuhDH1xHWrTG0Bepsq7PpwoRUCSKCQjshE0lCUvXAevmVK4gUrnkQM=
+	t=1731418012; cv=none; b=RRGESQ+ipAVxA/IZJ+UT4BPiHj2TScyzoyOaaawOncBdjQnURBgXN07IHFLc1EfIKFUVwDyLhQ+2aKF1cz+oG4Aescpbk4ofEqiAX7rLLp5dbGIt7/ybZ3Rjky58bxtCoWGlp6DPpx8ahfq+s5MjSFlmYJ5y4dIuWXZ2cSf38/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731418007; c=relaxed/simple;
-	bh=oIMbZ9ptwU5KFKmKrw/D9b3binA2sVxMb9XxonfGc1g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=blXvRAYL95Kn0rOXy+wK0ZtAg4vw/xl1uhgS08w60zKHCvTd7273bjwcPHa0N5h8u6Erh6L3QLNWJf0V93fwclic9GXwvZNiwJFhmX6x39CB2UeuGx2zxPDJ4vr2arcIfaxSxELv9K6TSzfHrBLWWZn36/JGklXrfIbkHGT8w68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QnMeUxCL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47F58C4CED9;
-	Tue, 12 Nov 2024 13:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731418006;
-	bh=oIMbZ9ptwU5KFKmKrw/D9b3binA2sVxMb9XxonfGc1g=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=QnMeUxCLzClWOU2bu8KffM7OELAykYwejmx5ZQGXbb8lC2AjkU51ueq8tuQq9rqaw
-	 OJxmri0LNftIWxmM7rhqB5233k1FOEt7PX+eqchs3SBFDY6Lx7RdA2+T/bd0iwoUcX
-	 5y050vofS4HARtDQ0CmCuqJPPPlalTbaTYaQqUNblsyn+qJ/uk2855WFT2H26+K2JG
-	 dutqUOfkUSO1QhF7CAqfaTV492jLBbpw9jePva4XNw7Nb2AYpg7lHPcU+K5GMC7LDx
-	 2bSGPR6+fhGzXYrLYOosuxoG4X7yaaQs5JsRE/VAYX60F7OpGJ7b0c94TTq3RROpvn
-	 dJnFCC1fWVrtw==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 12 Nov 2024 14:26:20 +0100
-Subject: [PATCH v3 5/8] scsi: replace blk_mq_pci_map_queues with
- blk_mq_hctx_map_queues
+	s=arc-20240116; t=1731418012; c=relaxed/simple;
+	bh=tRnACknh/1EhHRTAz3cx2wXfmMECs90wmR2MIdzMzUE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Twfu3G30ZzhAsVdrRKMuIpPeELWtP1mECoZKauGOR1aFTctFmO5HW0Y3G6tSbS7uckgsGVKgaZmdt5Ptiyg86Fwrl2t5zMPP1SnY57Ah4nvzDlFPcn04jt0uwB7OJ9kBscmtAZ6CfMSpwcIAvUWZd8NHBlnKMkJBfwPdjgI+owM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kTZHxdJt; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so44916765e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731418009; x=1732022809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
+        b=kTZHxdJtUdGSuIEXQCVn9K03tYIzi3oadEzCKoygNbjRrQlvKZLj9BPFK841Aol5j0
+         bYLZi3gshr9FD7mPXtGzZV9mN4pX44OD04hjo/Fu/azkxv1lobLR5iCJW1V7OHstnMmy
+         lA971YAqm5ve8ReKIm2ItucLRMns3hr8R16OfopxwHqnkXYMNoIrDNXaYwZRkkupAg2c
+         GdAQWqUyGZwxbRn1dxlX/Amu8LugZEBMuT0rm2/8poujWyRD5v6L2iOC2QIrANmBo8MR
+         kF5J7nflDuPOf+LrXP5iCamdLAMBtXGMJ7pwXZ2FyRPVz5uXP8VJ/HplfCEP87yrMQCi
+         sqeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731418009; x=1732022809;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dRmLbf/bz31mm/eeVY/iGKbUEcxPetAbKwSG1URLvJ0=;
+        b=wbJhEkUbY5Wsjos9ovUd064RtxVj7MsW87eEvMB+tw+lOfZRHnizEJoQji47Mvpa0S
+         RX8VyvIXuXR7tZgs/BCxK64h2yqUYOu/WnHiWqBzkUIaHO0ibxVa6FGdWDSgw1cqn/Yj
+         6BmVHIL1PqjlhBX2HGH5/lbQ5eLdBQygpJOP3Jx7SVKlxPZIE3uTaMMAe2ufuKhL4q7z
+         v13AelPuIFZrCCHyTUhv+2128l5qr73SSw94UqJ6WUF9Xyrsq7W61QyM3pS3QgweBx/L
+         7Qe4PJcUkeXgfRmxrcavegDjR8dps4S8FEFR8dA7Cbw+bgctGya6lTTLB7WnYOkUdro3
+         8fDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyyuRXQFUCAB+UCJ7fBWdjMv4WTupPjc8u4EcUe8fvk/obznO6BtUuTeWT8N22OObMMfJ5G7RvLUwVciY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznOj7WvR7SF8cAavOSQBD8WXS6/R196DMnx+LM/1GXmJQ59+5H
+	HXAS4FslkMg5lrAG4S29sqxEjTtZXWsgGerfu5Es+f71SOp0sSbrBBGmiP9wngg=
+X-Google-Smtp-Source: AGHT+IFTQlXSukq+djtZ02mrwHjUmWSAl2HtnKbbzOayDUOl3KycAHIOi0rl6/yfP9eUPu5iRkh9QA==
+X-Received: by 2002:a05:600c:3514:b0:42f:4f6:f8f3 with SMTP id 5b1f17b1804b1-432b74fde60mr137847665e9.7.1731418009251;
+        Tue, 12 Nov 2024 05:26:49 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8? ([2a01:e0a:982:cbb0:860c:aff4:d0e9:9db8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b0566544sm205123355e9.24.2024.11.12.05.26.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 05:26:48 -0800 (PST)
+Message-ID: <e1b810f6-b5b3-43aa-9cc1-e9601589ddf5@linaro.org>
+Date: Tue, 12 Nov 2024 14:26:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v5 1/5] dt-bindings: pinctrl: modify gpio-cells property
+To: xianwei.zhao@amlogic.com, Linus Walleij <linus.walleij@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241112-a4_pinctrl-v5-0-3460ce10c480@amlogic.com>
+ <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20241112-a4_pinctrl-v5-1-3460ce10c480@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-refactor-blk-affinity-helpers-v3-5-573bfca0cbd8@kernel.org>
-References: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
-In-Reply-To: <20241112-refactor-blk-affinity-helpers-v3-0-573bfca0cbd8@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
- linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
- storagedev@microchip.com, linux-nvme@lists.infradead.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.2
 
-Replace all users of blk_mq_pci_map_queues with the more generic
-blk_mq_hctx_map_queues. This in preparation to retire
-blk_mq_pci_map_queues.
+Hi,
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Daniel Wagner <wagi@kernel.org>
----
- drivers/scsi/fnic/fnic_main.c             | 3 +--
- drivers/scsi/hisi_sas/hisi_sas.h          | 1 -
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    | 4 ++--
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +--
- drivers/scsi/mpi3mr/mpi3mr.h              | 1 -
- drivers/scsi/mpi3mr/mpi3mr_os.c           | 2 +-
- drivers/scsi/mpt3sas/mpt3sas_scsih.c      | 3 +--
- drivers/scsi/pm8001/pm8001_init.c         | 2 +-
- drivers/scsi/pm8001/pm8001_sas.h          | 1 -
- drivers/scsi/qla2xxx/qla_nvme.c           | 3 +--
- drivers/scsi/qla2xxx/qla_os.c             | 4 ++--
- drivers/scsi/smartpqi/smartpqi_init.c     | 7 +++----
- 12 files changed, 13 insertions(+), 21 deletions(-)
+On 12/11/2024 11:26, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> Extend the value range of #gpio-cells property, including [2, 3],
+> to compatible with Amlogic A4 SoC and later chips's pinctrl module.
+> The early GPIO parameter number is 2, and the later GPIO parameter
+> number is 3.
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>   .../devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml       | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+> index e707c222a07f..6b53577dea59 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/amlogic,meson-pinctrl-common.yaml
+> @@ -36,7 +36,7 @@ $defs:
+>         gpio-controller: true
+>   
+>         "#gpio-cells":
+> -        const: 2
+> +        enum: [2, 3]
+>   
+>         gpio-ranges:
+>           maxItems: 1
+> 
 
-diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
-index adec0df24bc475ea4d7d8089ea0f75fe96746956..74a782780cc4f8b298168bb14809973a8206095f 100644
---- a/drivers/scsi/fnic/fnic_main.c
-+++ b/drivers/scsi/fnic/fnic_main.c
-@@ -16,7 +16,6 @@
- #include <linux/spinlock.h>
- #include <linux/workqueue.h>
- #include <linux/if_ether.h>
--#include <linux/blk-mq-pci.h>
- #include <scsi/fc/fc_fip.h>
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_transport.h>
-@@ -601,7 +600,7 @@ void fnic_mq_map_queues_cpus(struct Scsi_Host *host)
- 		return;
- 	}
- 
--	blk_mq_pci_map_queues(qmap, l_pdev, FNIC_PCI_OFFSET);
-+	blk_mq_hctx_map_queues(qmap, &l_pdev->dev, FNIC_PCI_OFFSET);
- }
- 
- static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index d223f482488fc6cebc2838e92ae7ec70fb4e1437..010479a354eeeb47bbee24102e450aa3b7ea6197 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -9,7 +9,6 @@
- 
- #include <linux/acpi.h>
- #include <linux/blk-mq.h>
--#include <linux/blk-mq-pci.h>
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/dmapool.h>
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 4cd3a3eab6f1c47c962565a74cd7284dad1db12e..7858c807be5eacb70ded5ec9399c6531a4ef6116 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -3322,8 +3322,8 @@ static void hisi_sas_map_queues(struct Scsi_Host *shost)
- 		if (i == HCTX_TYPE_POLL)
- 			blk_mq_map_queues(qmap);
- 		else
--			blk_mq_pci_map_queues(qmap, hisi_hba->pci_dev,
--					      BASE_VECTORS_V3_HW);
-+			blk_mq_hctx_map_queues(qmap, &hisi_hba->pci_dev->dev,
-+					       BASE_VECTORS_V3_HW);
- 		qoff += qmap->nr_queues;
- 	}
- }
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 8e75e2e279a40ae5fdc6b7b07a7aed15241a8d54..0180bb56de52bb57f15fae22df0d413cdd576ba3 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -37,7 +37,6 @@
- #include <linux/poll.h>
- #include <linux/vmalloc.h>
- #include <linux/irq_poll.h>
--#include <linux/blk-mq-pci.h>
- 
- #include <scsi/scsi.h>
- #include <scsi/scsi_cmnd.h>
-@@ -3193,7 +3192,7 @@ static void megasas_map_queues(struct Scsi_Host *shost)
- 	map = &shost->tag_set.map[HCTX_TYPE_DEFAULT];
- 	map->nr_queues = instance->msix_vectors - offset;
- 	map->queue_offset = 0;
--	blk_mq_pci_map_queues(map, instance->pdev, offset);
-+	blk_mq_hctx_map_queues(map, &instance->pdev->dev, offset);
- 	qoff += map->nr_queues;
- 	offset += map->nr_queues;
- 
-diff --git a/drivers/scsi/mpi3mr/mpi3mr.h b/drivers/scsi/mpi3mr/mpi3mr.h
-index 81bb408ce56d8f9599e6f62276666bedce6d0d32..57ccea42ece1ecf1c471ee744213453b13db0ea1 100644
---- a/drivers/scsi/mpi3mr/mpi3mr.h
-+++ b/drivers/scsi/mpi3mr/mpi3mr.h
-@@ -12,7 +12,6 @@
- 
- #include <linux/blkdev.h>
- #include <linux/blk-mq.h>
--#include <linux/blk-mq-pci.h>
- #include <linux/delay.h>
- #include <linux/dmapool.h>
- #include <linux/errno.h>
-diff --git a/drivers/scsi/mpi3mr/mpi3mr_os.c b/drivers/scsi/mpi3mr/mpi3mr_os.c
-index 5f2f67acf8bf3194cb8ec78904096ffb4bdd7ff2..e898b476af6dc84eb150ec867e6be8dd1b2d4d8a 100644
---- a/drivers/scsi/mpi3mr/mpi3mr_os.c
-+++ b/drivers/scsi/mpi3mr/mpi3mr_os.c
-@@ -4042,7 +4042,7 @@ static void mpi3mr_map_queues(struct Scsi_Host *shost)
- 		 */
- 		map->queue_offset = qoff;
- 		if (i != HCTX_TYPE_POLL)
--			blk_mq_pci_map_queues(map, mrioc->pdev, offset);
-+			blk_mq_hctx_map_queues(map, &mrioc->pdev->dev, offset);
- 		else
- 			blk_mq_map_queues(map);
- 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index f2a55aa5fe65036a3beabae5c0c6e9db835d2aab..efb95fcef7ed71fc5daea215508e04b602d31663 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -53,7 +53,6 @@
- #include <linux/pci.h>
- #include <linux/interrupt.h>
- #include <linux/raid_class.h>
--#include <linux/blk-mq-pci.h>
- #include <linux/unaligned.h>
- 
- #include "mpt3sas_base.h"
-@@ -11890,7 +11889,7 @@ static void scsih_map_queues(struct Scsi_Host *shost)
- 		 */
- 		map->queue_offset = qoff;
- 		if (i != HCTX_TYPE_POLL)
--			blk_mq_pci_map_queues(map, ioc->pdev, offset);
-+			blk_mq_hctx_map_queues(map, &ioc->pdev->dev, offset);
- 		else
- 			blk_mq_map_queues(map);
- 
-diff --git a/drivers/scsi/pm8001/pm8001_init.c b/drivers/scsi/pm8001/pm8001_init.c
-index 33e1eba62ca12c2555419197ecdbebad817e4a6d..035e102979f0de34b637be81e0f64b588a3893c8 100644
---- a/drivers/scsi/pm8001/pm8001_init.c
-+++ b/drivers/scsi/pm8001/pm8001_init.c
-@@ -101,7 +101,7 @@ static void pm8001_map_queues(struct Scsi_Host *shost)
- 	struct blk_mq_queue_map *qmap = &shost->tag_set.map[HCTX_TYPE_DEFAULT];
- 
- 	if (pm8001_ha->number_of_intr > 1) {
--		blk_mq_pci_map_queues(qmap, pm8001_ha->pdev, 1);
-+		blk_mq_hctx_map_queues(qmap, &pm8001_ha->pdev->dev, 1);
- 		return;
- 	}
- 
-diff --git a/drivers/scsi/pm8001/pm8001_sas.h b/drivers/scsi/pm8001/pm8001_sas.h
-index ced6721380a85345a74a87ebd2facdaa513f8768..c46470e0cf63b7b18b9572c8d6b4f4ddf489aa2b 100644
---- a/drivers/scsi/pm8001/pm8001_sas.h
-+++ b/drivers/scsi/pm8001/pm8001_sas.h
-@@ -56,7 +56,6 @@
- #include <scsi/sas_ata.h>
- #include <linux/atomic.h>
- #include <linux/blk-mq.h>
--#include <linux/blk-mq-pci.h>
- #include "pm8001_defs.h"
- 
- #define DRV_NAME		"pm80xx"
-diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
-index 8f4cc136a9c9c46f5f2d5408f9b7688ef520a8a3..2b2eeec159880d0178eb07455a7eac0e63d66af4 100644
---- a/drivers/scsi/qla2xxx/qla_nvme.c
-+++ b/drivers/scsi/qla2xxx/qla_nvme.c
-@@ -8,7 +8,6 @@
- #include <linux/delay.h>
- #include <linux/nvme.h>
- #include <linux/nvme-fc.h>
--#include <linux/blk-mq-pci.h>
- #include <linux/blk-mq.h>
- 
- static struct nvme_fc_port_template qla_nvme_fc_transport;
-@@ -841,7 +840,7 @@ static void qla_nvme_map_queues(struct nvme_fc_local_port *lport,
- {
- 	struct scsi_qla_host *vha = lport->private;
- 
--	blk_mq_pci_map_queues(map, vha->hw->pdev, vha->irq_offset);
-+	blk_mq_hctx_map_queues(map, &vha->hw->pdev->dev, vha->irq_offset);
- }
- 
- static void qla_nvme_localport_delete(struct nvme_fc_local_port *lport)
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 7f980e6141c28282d4c4a0123dda96e36e1f180e..acf26d09fa4563409d50fbba118f3b37732a7c8b 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -13,7 +13,6 @@
- #include <linux/mutex.h>
- #include <linux/kobject.h>
- #include <linux/slab.h>
--#include <linux/blk-mq-pci.h>
- #include <linux/refcount.h>
- #include <linux/crash_dump.h>
- #include <linux/trace_events.h>
-@@ -8070,7 +8069,8 @@ static void qla2xxx_map_queues(struct Scsi_Host *shost)
- 	if (USER_CTRL_IRQ(vha->hw) || !vha->hw->mqiobase)
- 		blk_mq_map_queues(qmap);
- 	else
--		blk_mq_pci_map_queues(qmap, vha->hw->pdev, vha->irq_offset);
-+		blk_mq_hctx_map_queues(qmap, &vha->hw->pdev->dev,
-+				       vha->irq_offset);
- }
- 
- struct scsi_host_template qla2xxx_driver_template = {
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 870f37b7054644426a2695e857c45a0a12aff051..501af16d872b1295071a99208248f1d83f072ab5 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -19,7 +19,6 @@
- #include <linux/bcd.h>
- #include <linux/reboot.h>
- #include <linux/cciss_ioctl.h>
--#include <linux/blk-mq-pci.h>
- #include <scsi/scsi_host.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_device.h>
-@@ -6547,10 +6546,10 @@ static void pqi_map_queues(struct Scsi_Host *shost)
- 	struct pqi_ctrl_info *ctrl_info = shost_to_hba(shost);
- 
- 	if (!ctrl_info->disable_managed_interrupts)
--		return blk_mq_pci_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT],
--			      ctrl_info->pci_dev, 0);
-+		blk_mq_hctx_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT],
-+				       &ctrl_info->pci_dev->dev, 0);
- 	else
--		return blk_mq_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT]);
-+		blk_mq_map_queues(&shost->tag_set.map[HCTX_TYPE_DEFAULT]);
- }
- 
- static inline bool pqi_is_tape_changer_device(struct pqi_scsi_dev *device)
+This is not what I expected, this allows 3 cells for all Amlogic pinctrl,
+which is wrong.
 
--- 
-2.47.0
+Instead, remove "#gpio-cells" definition from amlogic,meson-pinctrl-common.yaml
+and add them in all amlogic,meson-pinctrl-XXX.yaml with const: 2, and then when you
+introduce A4/A5, add a new amlogic,meson-pinctrl-a5.yaml with const: 3.
 
+Neil
 
