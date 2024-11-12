@@ -1,190 +1,145 @@
-Return-Path: <linux-kernel+bounces-406838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4699C653C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:35:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2549C655B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F6BB2E330
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:11:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14112B2E0E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C0C21B436;
-	Tue, 12 Nov 2024 23:11:25 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507071B86E4;
+	Tue, 12 Nov 2024 23:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b="QSjWisTh"
+Received: from a.peacevolution.org (a.peacevolution.org [206.189.193.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B221745F
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 23:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D886121A71D;
+	Tue, 12 Nov 2024 23:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.193.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731453084; cv=none; b=TFdMqPMZ1tfCD1/WHAoUW/n0WtwXW/XdOtYWvSp3SA41+QzT2fWamuxk8DSC75Kpywx6N7ZuGL1TLFysbT03upS37a+72CelSQsYMoXy+0kFqiUENqJmGRWe6QVtArqDe+N6gV7KAWkDTy0Eki2DhGrgyNn7zXtxA1vSck7ptBI=
+	t=1731453109; cv=none; b=Yo824P4nSJX26NdVywh7MJQv1DK+pYSTJ2cagofLJt5TP7hGmoRDDOsB2GqUDlORB98hd6T6wGdj0EoB8aUCVnm7bS452/bu3hkT6iwRkPdD495TBKIUlNU1jAYlySAVO69BN2xtYtgaFhtibqMYVmfExH9flcu+hXoftv+BXsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731453084; c=relaxed/simple;
-	bh=L9rBHqApwdnc2DVWE9Veoh320K7ODI1cNRzcl4FrX40=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dBoJhBNBMrIzgtCCqIEyJbWrCpiXCnwmI9jdzAOIXFdBiEpuDsCXM28Mp82/Md8ovsdB8S9rTNirhGKr871A5zims4qssdqe7RNGZgHnKpX9amuct195fqvLOJ713FcxFiQM+r97Mhldu1M/iUBE1Mk1SVt4+YHxreiDr3Ys9tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6bf539ceaso1648925ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 15:11:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731453082; x=1732057882;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E/a3qnjKzc/NjAB0FQeBNMWHH6zCMWt0F3EpC4Sgkw0=;
-        b=vdtrjFMVRBOWJYhyItB178LAroSvwP75TtF+lGbE3eUxJFyDrfRJbajTz/UZ87sb8h
-         goTQg3F2CbDFrRZNgmOHgP+cz9isJWbgdYmgC9KQrFy94q/FdoNNoPo6v54A+quaCbWK
-         cf8xS4ASAdtWm3u28+UgovflUn5HXhl2vXA2ikIX6NWiDCq2uzBkkOCshJgDHZkTDevT
-         FVT99JBiyVzAKzbGLdJgS1gZvYIo0crsmSCG3JeriicvrvjE+SG+cLvk5sd3YOLTa0zg
-         5StR1qV0CS0+IcDvlbpjc/o45UxeBsEpmIu7zdyxsMu4zvARzJh/doQPEZdVMnQrYn3M
-         e/cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzj+TmtY357ck9vsNPxo+qLEfc7K8aIKgWDksUSswTmWAvknEOffj6jvyw93evj8l1cXEefLMeHBp0MIU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxccYh4khwKGUgGouFpVBUKYGl5otvKkw28uPPhBbXXTOIRpSPW
-	u/W7Sfgc/Gng3Fh7QUHoWzDZBpyTe4O8NsPaxviZJy9ub18VnzUdnJaMShvD4WJC9AYsmA2BPiK
-	CcvXdxf8s6OEvNF3kPdJw73qnEJ3hQyn54VdvgVPTfdDKEOHZA/XrFFc=
-X-Google-Smtp-Source: AGHT+IFI9pJk3Vf5ankS08mphSrTzz+cxsZu3UCj/BO8Oca1cq8ROcRgCHijIVM923BbskCDPEXYF0px3ElUdlVEufe8BfGoCZte
+	s=arc-20240116; t=1731453109; c=relaxed/simple;
+	bh=NmO64Sjewa/+GsTTNydYxbpRHAP/H0Q6gTgckdfbwNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8t2LILVja1mLC0VJ2zoEKE4vJ6s/yNDI88fxW9JRd2WszGaHxgMDPsPh454Y1XySFqmHJOE3jmTAxm7Q9pQ02HL+TJO4lDMoNPv9cjBOuV2WmP61gE8iLGR+pxHBJUg6iuh/U7zCFPFTHieUF3jx1P1liMKEh4xRUGUI96nNJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org; spf=pass smtp.mailfrom=peacevolution.org; dkim=pass (1024-bit key) header.d=peacevolution.org header.i=@peacevolution.org header.b=QSjWisTh; arc=none smtp.client-ip=206.189.193.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=peacevolution.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=peacevolution.org
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+	by a.peacevolution.org (Postfix) with ESMTPA id D08794C739;
+	Tue, 12 Nov 2024 23:11:39 +0000 (UTC)
+Date: Tue, 12 Nov 2024 18:11:37 -0500
+From: Aren <aren@peacevolution.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Kaustabh Chakraborty <kauschluss@disroot.org>, =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, 
+	Ondrej Jirman <megi@xff.cz>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v4 4/6] iio: light: stk3310: use dev_err_probe where
+ possible
+Message-ID: <6jwurbs27slfpsredvpxfgwjkurkqvfmzccaxnfgtuh4aks3c6@ciapprv3wsex>
+References: <20241102195037.3013934-3-aren@peacevolution.org>
+ <20241102195037.3013934-11-aren@peacevolution.org>
+ <ZyiIcDaANjxwtCz-@smile.fi.intel.com>
+ <m7x526sv5krgt4t2whn5ykyktoz5u7ihsxv3qa5yue3ucbk6lb@37spwsmlcylm>
+ <ZzEPACoblmcQD9yu@surfacebook.localdomain>
+ <xubjmxig4luag27ifnmqmv3x3bvzhwczwvw34kw6tssaa2d24t@ysnqh5e3g7sz>
+ <ZzHSE9Nrf4YySJrq@smile.fi.intel.com>
+ <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4b:b0:3a6:e960:ef9b with SMTP id
- e9e14a558f8ab-3a6f24b0f33mr174107775ab.4.1731453081993; Tue, 12 Nov 2024
- 15:11:21 -0800 (PST)
-Date: Tue, 12 Nov 2024 15:11:21 -0800
-In-Reply-To: <6731d0cf.050a0220.138bd5.0063.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6733e099.050a0220.2a2fcc.0000.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] general protection fault in six_lock_ip_waiter
-From: syzbot <syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4ibd5tgpt3uzbmouqdiiv5pvfxebo5qsmgn3xh6rlb73qevatv@cajznxqnlca3>
+X-Spamd-Bar: /
+Authentication-Results: auth=pass smtp.auth=aren@peacevolution.org smtp.mailfrom=aren@peacevolution.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=peacevolution.org;
+	s=dkim; t=1731453101;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:content-transfer-encoding:in-reply-to:references;
+	bh=/XvnojsbDU2iklE9xJFwgVgRWENV+XinNVMN6pOt4es=;
+	b=QSjWisTh28m3ad1tuS8ksPEWHblcKQJX1GVqDMfbdGFRlCO9UKjCCII5U0UztBmrE6NUW1
+	ajTb4KKLxsSIaHAKj3gbmwqW91BnTF6mZ0TQDRXEPGHJTR0fJFipdfoO1DNQLMvoEaffwy
+	Uz5hZTjJ+fCuSFtKzzlpepmg9SJyEi0=
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Nov 12, 2024 at 11:15:54AM +0100, Uwe Kleine-König wrote:
+> Hello Andy, hello Aren,
+> 
+> On Mon, Nov 11, 2024 at 11:44:51AM +0200, Andy Shevchenko wrote:
+> > On Sun, Nov 10, 2024 at 04:34:30PM -0500, Aren wrote:
+> > > On Sun, Nov 10, 2024 at 09:52:32PM +0200, Andy Shevchenko wrote:
+> > > > Sun, Nov 10, 2024 at 02:14:24PM -0500, Aren kirjoitti:
+> > 
+> > You can do it differently
+> > 
+> > #define STK3310_REGFIELD(name)							\
+> > do {										\
+> > 	data->reg_##name =							\
+> > 		devm_regmap_field_alloc(dev, regmap, stk3310_reg_field_##name);	\
+> > 	if (IS_ERR(data->reg_##name))						\
+> > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+> > 				     "reg field alloc failed.\n");		\
+> > } while (0)
+> > 
+> > > #define STK3310_REGFIELD(name) ({						\
+> > > 	data->reg_##name = devm_regmap_field_alloc(dev, regmap,			\
+> > > 						   stk3310_reg_field_##name);   \
+> > > 	if (IS_ERR(data->reg_##name))						\
+> > > 		return dev_err_probe(dev, PTR_ERR(data->reg_##name),		\
+> > > 				     "reg field alloc failed\n");		\
+> > > })
+> > 
+> > I am against unneeded use of GNU extensions.
+> > 
+> > > > > replacing "do { } while (0)" with "({ })" and deindenting could make
+> > > > > enough room to clean this up the formatting of this macro though.
+> > > > 
+> > > > do {} while (0) is C standard, ({}) is not.
+> > > 
+> > > ({ }) is used throughout the kernel, and is documented as such[1]. I
+> > > don't see a reason to avoid it, if it helps readability.
+> > 
+> > I don't see how it makes things better here, and not everybody is familiar with
+> > the concept even if it's used in the kernel here and there. Also if a tool is
+> > being used in one case it doesn't mean it's suitable for another.
+> 
+> Just to throw in my subjective view here: I don't expect anyone with
+> some base level knowledge of C will have doubts about the semantics of
+> ({ ... }) and compared to that I find do { ... } while (0) less optimal,
+> because it's more verbose and when spotting the "do {" part, the
+> semantic only gets clear when you also see the "while (0)". Having said
+> that I also dislike the "do" starting on column 0, IMHO the RHS of the
+> #define should be intended.
 
-HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b2a4c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=13b85e45ca365499aad5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b2a4c0580000
+Thank you, this sums up my opinion on this better than I could have (and
+some bits I hadn't considered).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3022e9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4c8c676ae511/vmlinux-3022e9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9434a43ad72f/bzImage-3022e9d0.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/8c323cc169b7/mount_12.gz
+> So if you ask me, this is not an unneeded use of an extension. The
+> extension is used to improve readabilty and I blame the C standard to
+> not support this syntax.
+> 
+> While I'm in critics mode: I consider hiding a return in a macro bad
+> style.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com
+Yeah... probably worse than any of the formatting options here. I guess
+the proper way would be to use devm_regmap_field_bulk_alloc, but that's
+well outside the scope of this series. Perhaps it would make sense to
+move the macro definition to just before the function it's used in so
+it's at least a little easier to spot?
 
-RBP: 00007f85c3d27090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f85c3135f80 R15: 00007fffe91d3d88
- </TASK>
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000e: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-CPU: 0 UID: 0 PID: 5577 Comm: syz.0.15 Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5065
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d f8 ed ac 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 19 56 8e 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000cb6e0d0 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a13e R12: ffff88801f93a440
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000070
-FS:  00007f85c3d276c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd2b4000000 CR3: 000000005671c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- six_lock_ip_waiter+0x9e/0x160 fs/bcachefs/six.c:553
- six_lock_ip fs/bcachefs/six.h:253 [inline]
- six_lock_ip_intent fs/bcachefs/six.h:366 [inline]
- six_lock_intent fs/bcachefs/six.h:366 [inline]
- bkey_cached_alloc fs/bcachefs/btree_key_cache.c:169 [inline]
- btree_key_cache_create fs/bcachefs/btree_key_cache.c:220 [inline]
- btree_key_cache_fill+0x59a/0x2920 fs/bcachefs/btree_key_cache.c:309
- bch2_btree_path_traverse_cached+0x84e/0xbe0 fs/bcachefs/btree_key_cache.c:361
- bch2_btree_path_traverse_one+0x45d/0x2940 fs/bcachefs/btree_iter.c:1159
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- bch2_trans_update_get_key_cache+0x6c0/0x1230 fs/bcachefs/btree_update.c:494
- bch2_trans_update+0x9b1/0x2550 fs/bcachefs/btree_update.c:539
- bch2_inode_write fs/bcachefs/inode.h:139 [inline]
- bch2_create_trans+0xdfb/0x1af0 fs/bcachefs/fs-common.c:179
- __bch2_create+0x7ae/0xf60 fs/bcachefs/fs.c:522
- bch2_mknod fs/bcachefs/fs.c:673 [inline]
- bch2_create+0xea/0x1b0 fs/bcachefs/fs.c:687
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_open fs/open.c:1438 [inline]
- __se_sys_open fs/open.c:1434 [inline]
- __x64_sys_open+0x225/0x270 fs/open.c:1434
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f85c2f7e719
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f85c3d27038 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f85c3135f80 RCX: 00007f85c2f7e719
-RDX: 00000000000000a0 RSI: 000000000014927e RDI: 0000000020000180
-RBP: 00007f85c3d27090 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
-R13: 0000000000000000 R14: 00007f85c3135f80 R15: 00007fffe91d3d88
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x69/0x2050 kernel/locking/lockdep.c:5065
-Code: b6 04 30 84 c0 0f 85 9b 16 00 00 45 31 f6 83 3d f8 ed ac 0e 00 0f 84 b6 13 00 00 89 54 24 54 89 5c 24 68 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 19 56 8e 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000cb6e0d0 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a13e R12: ffff88801f93a440
-R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000070
-FS:  00007f85c3d276c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd2b4000000 CR3: 000000005671c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	b6 04                	mov    $0x4,%dh
-   2:	30 84 c0 0f 85 9b 16 	xor    %al,0x169b850f(%rax,%rax,8)
-   9:	00 00                	add    %al,(%rax)
-   b:	45 31 f6             	xor    %r14d,%r14d
-   e:	83 3d f8 ed ac 0e 00 	cmpl   $0x0,0xeacedf8(%rip)        # 0xeacee0d
-  15:	0f 84 b6 13 00 00    	je     0x13d1
-  1b:	89 54 24 54          	mov    %edx,0x54(%rsp)
-  1f:	89 5c 24 68          	mov    %ebx,0x68(%rsp)
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 ff             	mov    %r15,%rdi
-  33:	e8 19 56 8e 00       	call   0x8e5651
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ - Aren
 
