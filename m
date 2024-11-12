@@ -1,127 +1,236 @@
-Return-Path: <linux-kernel+bounces-405151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F309C4D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:08:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED79C4D95
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:09:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F12D286A7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1571F2372A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D9920821D;
-	Tue, 12 Nov 2024 04:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42961208230;
+	Tue, 12 Nov 2024 04:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvAfu4os"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWMa90aM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855411553AB;
-	Tue, 12 Nov 2024 04:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7664720494F;
+	Tue, 12 Nov 2024 04:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384525; cv=none; b=ZZyL5gNX14cikgZQCx1DMMczhzGfCvbNF5ZPS+3hLSEhTGHI6JQevV7YmImT0BxiT/MERLlm7C7KDrZC+Mn+srQoYNx913E9UMdFB20otShek+JYRfazzneOLjsFePjqWI76pCw5tTAdJuLaBhlgNUoPDPzy2qMnjMO7ILk1Q18=
+	t=1731384561; cv=none; b=UIf0MFSM76uamdbiyDHYb17L3Uvk/1PG4kTtqyoI887IqWewCayksd8SsZGUFL1Lbc2laW6UYG4MBOr6/SkivmiWXoDK4ZWMma6ERkGw1jv+7YTDgKMmqASpyUnQcOovX0Bepi5HpiAANi8/FXq150RHLq9wbU5eAFohXqoIyUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384525; c=relaxed/simple;
-	bh=x44oSdF0nwBPGTpVBEx+1NZSMpUJQedkRCb7nBMhKMw=;
+	s=arc-20240116; t=1731384561; c=relaxed/simple;
+	bh=pR0BtV89O5c28HlJXTslOQmSq8i0VdMQqs5jp/cnj4M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FYB8YDW1oiI8a9ZA6Vqa6gNeKNLn4hktV8JO75HE67G+4oU+c7zzQG4stwhbefqy+jxqtJJsJBgaetRoStyNNS4o66FFlC8PNNHA6kfL51bGC9PrVNQFNX6itrIN6UHl+/2i6VqGkEb26bwJJwOnREFvDJ9gO5n0bamqxtT6Zkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvAfu4os; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ee386ce3dfso4699929a12.1;
-        Mon, 11 Nov 2024 20:08:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731384523; x=1731989323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LQnNufH5nF3Uw0ZlVqwMJJAJ0p73ToD5HmlOSlkMruU=;
-        b=DvAfu4osCTM4opfBPon2MxO38MzFhjIZzs+03MOkmoCO1Elg5bbx6ghHgv7z/Xfsng
-         LHjm09+44/GPhAFHue87eqAaKTo9mv/dumMU0ZzTLKp5YM/UH+yv6qg08CEufOrV0O38
-         MbKo6AJtjN8JjRbF2RhtxsfEuqmw7QsCFZEQXSeOiM0DtzZdZ9l3Idcmi60QYSe44DtN
-         aFIFbAmg7HJIU21eQVNJuE+9bCh8cFy++b3HjGryaoIKp8+C+DYmnMyx1qms/fB3nfwK
-         JnbdLDLi24eK7ZkwG4EOoEY5PK3Zc5tvzaVNWtSx2vpCkphu6A4UbBpop1f03GLonsI1
-         nHsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731384523; x=1731989323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LQnNufH5nF3Uw0ZlVqwMJJAJ0p73ToD5HmlOSlkMruU=;
-        b=E1Kusk7EvD5B4VwH4sjzE4cuQW0AfKWU2ftGji2rqSSjX/X2H59BA9vYJh7rNh4ruM
-         +E7Ec518HoscxHdLvfCSEtdz6+sq3pNsYo+wFktMKR1aSbA8F4XraiX1/K4tnAZePi+j
-         iA9eoljOn6BxroOXsXfwRbx45qRuBNebf94jCa4cTmP2tZtOo9+txIwPUw8UwULU7uVo
-         epuOe+k4z3jce6iW/azL+iicL/evGfTO9mCEhnJOasrIdrkmM1q98d93u80MYttGpnMz
-         TFfmAvr2LieArt8AHUFRRna4X0qpSEv+2cuG4fhTqm/Y/PYgg1VOXc/3MP1Pt8UYZJw7
-         +tsg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0UmDITSbP+bEyZGccT5GVakZ85jSeuoF6lk4H/ce76zjmmMCY1mMoxO7wAsh1LYPF+e2ZBsTk7OwIaPgE@vger.kernel.org, AJvYcCXth4hKWZaBpRW5WihTXp/r2C4+qScS3L6xuyGXvlBYr54nXHBwGIz6bTRahX+kXU1R9kg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBb+OVuLvMW2JhTUUi1ejKNUx1+I7xpp3IgVpIoh3qC4pcU9zo
-	f0znA8s5yXbx9scEX6WzOz093UVynxv601SQ+5YKNmOe0OZE0075Xjw8dsHpRnT9UEDOaeyx0MT
-	Io7xVSqYkKdCzKZHZss0fCdZ65Ho=
-X-Google-Smtp-Source: AGHT+IGDJzpDc0ps2CN5aFTmaMRmVqKuqF3PMSugsWmzNm2gbi/ZWw5m9L49BoCN3W855CARtjc7/i563+qpLL66Gqg=
-X-Received: by 2002:a17:90b:4b45:b0:2e0:8780:ecb with SMTP id
- 98e67ed59e1d1-2e9b1f64d99mr23732679a91.12.1731384522738; Mon, 11 Nov 2024
- 20:08:42 -0800 (PST)
+	 To:Cc:Content-Type; b=EZ+PO2hECXLNpL1y9OJDOrdblEPkvJkZWPeaQjB0JWM4d0zQCQdbPSA5WZ7obRHBLWyDXel76iWK/kGvjGEpszqxvfybWWuvNiUh9zSXjNysL7mfbvC/vI3JpkEpjCwd61b2bD3Fu5lOJcVOvexurRB83P1iKje6pPcMBMrLIRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWMa90aM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6EAC4AF09;
+	Tue, 12 Nov 2024 04:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731384561;
+	bh=pR0BtV89O5c28HlJXTslOQmSq8i0VdMQqs5jp/cnj4M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eWMa90aM8vmXm3QDmMl7620F2UhYvu7a6kfzejmyc+ZsWSOU2KND7KWoXmAEyW6RZ
+	 tlqXMNrWThUaB+pyOstes05Jevr/4rfWHADdNxVMXrRDMaYGzcfSgUFG3H95VSrvOo
+	 AXuo4cYVPEBVVoh+64JGORTU4dldDEKvKCXFF5e5fykR5tYhK7BFgCo9YZiJjqIov+
+	 7JM8VH0Snux9uCnCdEXibzYa2D3NRY/RoSoW9ze0XjuL+Uv64seT2hF2zC/qBGdmcS
+	 TjnUMjJAD2hV4S6Bt3o68aq+W42276DtW5jr9W05naxj/SVDLi/cRY2AY3txoZx6t3
+	 cdfpdbWXDte5Q==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so46833881fa.0;
+        Mon, 11 Nov 2024 20:09:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpjJrzQX/cBoBPWZywmlYR9NR0Ft1NdXDLzFczDXwatIoz/rKJxmWhF1ESlg4XA5jhDnNvObEISxF16S46QQ==@vger.kernel.org, AJvYcCUwgLHeIIlKSs66SOfW+OFyEkLZOpK5S7tQSpHSDmyoZv3YeSIkl+uw4zZm4GlsExRPfA49+mOXI0Deaa8=@vger.kernel.org, AJvYcCVgXwncbS88Up1LWyKVVYUsKTGfr5ZVj4YfmjIcJygGChiLsn1kZpVC2x281Eny1Tp1Rl6Xsab66kWUXpPD@vger.kernel.org, AJvYcCWUyc2XVh4egDLGUfZdv9SKZwMvdKaRXieU1PuDW8JrjeZDa64ckprndrIJP77Gfdh06WkI2pRBm5W+BvbE9rQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIw3QQUvrSVGwiL03rg5pKNyEH7usenoXMf2dUJVN6jSKk7nPi
+	5i7DGmy7J1Y7yXgUtR8dzFLygwUkm/4ReYADsu9OZqBjBCVrwG3ZzrWGgu2tjlxkz8/6YumojiC
+	WYu/t/MyicGroAaRlYtAi8nU7NFQ=
+X-Google-Smtp-Source: AGHT+IHCz5Kq6glWndE0YFj2o5thdpPMvoFZsNuNTIzXPJG19tiU0tqQWVzQvxPj8BIf5QDsKUvqgDusa+OmiJvxhUw=
+X-Received: by 2002:a05:651c:198a:b0:2fb:4c5c:3f7d with SMTP id
+ 38308e7fff4ca-2ff426972bemr5425751fa.5.1731384559779; Mon, 11 Nov 2024
+ 20:09:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
-In-Reply-To: <20241111024814.272940-1-luoyifan@cmss.chinamobile.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 11 Nov 2024 20:08:30 -0800
-Message-ID: <CAEf4BzYgqb=NcSCJiJQEPUPhE02cUZqaFdYc4FJXvQUeXxhHJA@mail.gmail.com>
-Subject: Re: [PATCH] bpftool: Fix incorrect format specifier for var
-To: Luo Yifan <luoyifan@cmss.chinamobile.com>
-Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241030170106.1501763-21-samitolvanen@google.com> <20241030170106.1501763-39-samitolvanen@google.com>
+In-Reply-To: <20241030170106.1501763-39-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 12 Nov 2024 13:08:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
+Message-ID: <CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com>
+Subject: Re: [PATCH v5 18/19] kbuild: Add gendwarfksyms as an alternative to genksyms
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 10, 2024 at 6:48=E2=80=AFPM Luo Yifan <luoyifan@cmss.chinamobil=
-e.com> wrote:
+On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
 >
-> In cases where the SIGNED condition is met, the variable var is still
-> used as an unsigned long long. Therefore, the %llu format specifier
-> should be used to avoid incorrect data print. This patch fixes it.
+> When MODVERSIONS is enabled, allow selecting gendwarfksyms as the
+> implementation, but default to genksyms.
 >
-> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Acked-by: Neal Gompa <neal@gompa.dev>
 > ---
->  tools/bpf/bpftool/btf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  kernel/module/Kconfig  | 25 ++++++++++++++++++++++++-
+>  scripts/Makefile       |  2 +-
+>  scripts/Makefile.build | 41 +++++++++++++++++++++++++++++++++--------
+>  3 files changed, 58 insertions(+), 10 deletions(-)
 >
-> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-> index 7d2af1ff3..ff58ff85e 100644
-> --- a/tools/bpf/bpftool/btf.c
-> +++ b/tools/bpf/bpftool/btf.c
-> @@ -283,7 +283,7 @@ static int dump_btf_type(const struct btf *btf, __u32=
- id,
->                                 jsonw_end_object(w);
->                         } else {
->                                 if (btf_kflag(t))
-> -                                       printf("\n\t'%s' val=3D%lldLL", n=
-ame,
-> +                                       printf("\n\t'%s' val=3D%lluLL", n=
-ame,
->                                                (unsigned long long)val);
+> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+> index f9e5f82fa88b..e6b2427e5c19 100644
+> --- a/kernel/module/Kconfig
+> +++ b/kernel/module/Kconfig
+> @@ -169,13 +169,36 @@ config MODVERSIONS
+>           make them incompatible with the kernel you are running.  If
+>           unsure, say N.
+>
+> +choice
+> +       prompt "Module versioning implementation"
+> +       depends on MODVERSIONS
+> +       default GENKSYMS
+> +       help
+> +         Select the tool used to calculate symbol versions for modules.
+> +
+> +         If unsure, select GENKSYMS.
+> +
+> +config GENKSYMS
+> +       bool "genksyms (from source code)"
+> +       help
+> +         Calculate symbol versions from pre-processed source code using
+> +         genksyms.
+> +
+> +         If unsure, say Y.
+> +
+>  config GENDWARFKSYMS
+> -       bool
+> +       bool "gendwarfksyms (from debugging information)"
+>         depends on DEBUG_INFO
+>         # Requires full debugging information, split DWARF not supported.
+>         depends on !DEBUG_INFO_REDUCED && !DEBUG_INFO_SPLIT
+>         # Requires ELF object files.
+>         depends on !LTO
+> +       help
+> +         Calculate symbol versions from DWARF debugging information usin=
+g
+> +         gendwarfksyms. Requires DEBUG_INFO to be enabled.
+> +
+> +         If unsure, say N.
+> +endchoice
+>
+>  config ASM_MODVERSIONS
+>         bool
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index d7fec46d38c0..8533f4498885 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -53,7 +53,7 @@ hostprogs +=3D unifdef
+>  targets +=3D module.lds
+>
+>  subdir-$(CONFIG_GCC_PLUGINS) +=3D gcc-plugins
+> -subdir-$(CONFIG_MODVERSIONS) +=3D genksyms
+> +subdir-$(CONFIG_GENKSYMS) +=3D genksyms
+>  subdir-$(CONFIG_GENDWARFKSYMS) +=3D gendwarfksyms
+>  subdir-$(CONFIG_SECURITY_SELINUX) +=3D selinux
+>  subdir-$(CONFIG_SECURITY_IPE) +=3D ipe
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 8f423a1faf50..d2a0440cdb79 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -107,18 +107,31 @@ cmd_cpp_i_c       =3D $(CPP) $(c_flags) -o $@ $<
+>  $(obj)/%.i: $(obj)/%.c FORCE
+>         $(call if_changed_dep,cpp_i_c)
+>
+> +getexportsymbols =3D $(NM) $(1) | sed -n 's/.* __export_symbol_\(.*\)/$(=
+2)/p'
+> +
+> +gendwarfksyms =3D scripts/gendwarfksyms/gendwarfksyms    \
+> +       $(if $(1), --symtypes $(2))                     \
+> +       $(if $(KBUILD_GENDWARFKSYMS_STABLE), --stable)
+> +
+>  genksyms =3D scripts/genksyms/genksyms           \
+>         $(if $(1), -T $(2))                     \
+>         $(if $(KBUILD_PRESERVE), -p)            \
+>         -r $(or $(wildcard $(2:.symtypes=3D.symref)), /dev/null)
+>
+>  # These mirror gensymtypes_S and co below, keep them in synch.
+> +ifdef CONFIG_GENDWARFKSYMS
+> +symtypes_dep_c =3D $(obj)/%.o
+> +cmd_gensymtypes_c =3D $(if $(skip_gendwarfksyms),,       \
+> +       $(call getexportsymbols,$(2:.symtypes=3D.o),\1) | \
+> +       $(gendwarfksyms) $(2:.symtypes=3D.o))
+> +else
+>  cmd_gensymtypes_c =3D $(CPP) -D__GENKSYMS__ $(c_flags) $< | $(genksyms)
+> +endif # CONFIG_GENDWARFKSYMS
+>
+>  quiet_cmd_cc_symtypes_c =3D SYM $(quiet_modtag) $@
+>        cmd_cc_symtypes_c =3D $(call cmd_gensymtypes_c,true,$@) >/dev/null
+>
+> -$(obj)/%.symtypes : $(obj)/%.c FORCE
+> +$(obj)/%.symtypes : $(obj)/%.c $(symtypes_dep_c) FORCE
+>         $(call cmd,cc_symtypes_c)
+>
+>  # LLVM assembly
+> @@ -314,19 +327,31 @@ $(obj)/%.ll: $(obj)/%.rs FORCE
+>  # This is convoluted. The .S file must first be preprocessed to run guar=
+ds and
+>  # expand names, then the resulting exports must be constructed into plai=
+n
+>  # EXPORT_SYMBOL(symbol); to build our dummy C file, and that gets prepro=
+cessed
+> -# to make the genksyms input.
+> +# to make the genksyms input or compiled into an object for gendwarfksym=
+s.
+>  #
+>  # These mirror gensymtypes_c and co above, keep them in synch.
+> -cmd_gensymtypes_S =3D                                                   =
+      \
+> -   { echo "\#include <linux/kernel.h>" ;                                =
+    \
+> -     echo "\#include <asm/asm-prototypes.h>" ;                          =
+    \
+> -     $(NM) $@ | sed -n 's/.* __export_symbol_\(.*\)/EXPORT_SYMBOL(\1);/p=
+' ; } | \
+> -    $(CPP) -D__GENKSYMS__ $(c_flags) -xc - | $(genksyms)
+> +getasmexports =3D                                                       =
+         \
+> +   { echo "\#include <linux/kernel.h>" ;                               \
+> +     echo "\#include <linux/string.h>" ;                               \
+> +     echo "\#include <asm/asm-prototypes.h>" ;                         \
+> +     $(call getexportsymbols,$(2:.symtypes=3D.o),EXPORT_SYMBOL(\1);) ; }
+> +
+> +ifdef CONFIG_GENDWARFKSYMS
+> +cmd_gensymtypes_S =3D                                                   =
+ \
+> +       $(getasmexports) |                                              \
+> +       $(CC) $(c_flags) -c -o $(2:.symtypes=3D.gendwarfksyms.o) -xc -;  =
+ \
+> +       $(call getexportsymbols,$(2:.symtypes=3D.o),\1) |                =
+ \
+> +       $(gendwarfksyms) $(2:.symtypes=3D.gendwarfksyms.o)
 
-the fix should be casting to (long long) instead
 
-pw-bot: cr
+I do not want to see crazy suffix replacements like this.
 
->                                 else
->                                         printf("\n\t'%s' val=3D%lluULL", =
-name,
-> --
-> 2.27.0
->
->
->
+I decided to delete this.
+https://lore.kernel.org/linux-kbuild/20241111171753.2917697-2-masahiroy@ker=
+nel.org/T/#u
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
