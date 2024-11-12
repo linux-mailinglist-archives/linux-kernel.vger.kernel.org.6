@@ -1,154 +1,193 @@
-Return-Path: <linux-kernel+bounces-406732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9E79C62E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:50:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3119C62E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DAEB284A3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:50:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E3661F21CF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 20:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651CB21A6E0;
-	Tue, 12 Nov 2024 20:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EA8219E59;
+	Tue, 12 Nov 2024 20:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JdLQsuLQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZuzibMm"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5068721A4D3;
-	Tue, 12 Nov 2024 20:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5BB217919;
+	Tue, 12 Nov 2024 20:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731444548; cv=none; b=B9D92jUm9nJEyudX6AJnHu9DIizHop5cq5j+Mzkvdt8rs6hpusgx/cuIYsRVAfOReiBTCjwiJWJfa7IHi8K3+w/RYV3TDr9BTsI46P0Ame/poYkiHCpZHBR+LLX1IGIE88ejzoYutx5f8znEGEsrxMt2XQIoFYiv25DX3qV3oTY=
+	t=1731444763; cv=none; b=e6PvNw7qoW66q8NB5fj88ScfpuF18TzU8hC11f+JbMdaoBPFdKp5YsWoeCizXt1ecm4IVfTMgSQBQVkyERjToTamjKbos4NSEeg3izIiQ7XWpRHU8Y9nPilE+iuWp0cG5Xhx4tgdFjuXv6f2pcY70p30N8dZAcc8m7hR7iF3+Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731444548; c=relaxed/simple;
-	bh=/rSeHu7zkTxOoB2w0eZFUseiim5HRaPOCs/WLBveNas=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A+/P4v7ncLYyQAtsT+8eGK3pn1vGB8nMyjweJAC8YdPQ+AhPN6sDpT9Ond0Yjte1i5PjCFcJoFEHWCfCqywwx44CawTZN44/BjRpxUNp7GgzDBZJOtXdGZ4cW5Q0Nxu0NIT267DeOMl7JEedNOgLv0cakySyHpRD2bw7RDAYQDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JdLQsuLQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACC2Z8P004914;
-	Tue, 12 Nov 2024 20:48:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	btWpVYSXKw7V+IZKeZaeyEmliMxjHTdKR3S69w1GQHY=; b=JdLQsuLQJ4Ues36t
-	Y9Dbr2zSPPSCt9moc3texN5LcyOWc72tJ0UCMM4ySt/mAWUqfwp6IWAleaS9DM3g
-	S11llBHCE4LkbOf0Z4N/Y2bZcSA2P+p1j6wIyotagoHdKs5JlQ5C8TkFE/VQ6x2t
-	v0aNKo1dpHSme4gTvQ3GIh7WXbLzXzDdtCYjiXL1+SqDeS4n2njKo+66SaHiw5Q2
-	R2Cf3kBRJzroqpTEX8V7vm7mBnq409otB2oITKBOBS5dQqaP6lUwNu5rBXEf9TcS
-	rarovxY0B0d5W8/pMuuLIQG5vrIk3zN3jQyK8rrS8x7wjKsQ6Peq/M3WP6wP6Uhk
-	b5UR2Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42uwt5js45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 20:48:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ACKmqoX030642
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 12 Nov 2024 20:48:52 GMT
-Received: from [10.216.22.98] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 12 Nov
- 2024 12:48:46 -0800
-Message-ID: <4cfd1ebc-1a95-43d4-b36a-8b183c6dfd16@quicinc.com>
-Date: Wed, 13 Nov 2024 02:18:43 +0530
+	s=arc-20240116; t=1731444763; c=relaxed/simple;
+	bh=9GMfZQ5Ip9KHeMMy0DqnWqvkp/JNNRJp6GKyIdRHYew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cA/77/vxdRgVh/B3fmzzq0jK4tc9DcEYLG8aMjkt21KmkmpN31xQ/oI1aQhJUm2H+d+gbYMZtCJzAZuPmQxz0aWTv+z2xoswpiY+9vzfzRDh3ImVQw7LX4E98V9txjjDETVEzA2nlaeGCgr00l4mC5ZH70/OGUWM03VMvlAVBko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZuzibMm; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6ea8419a57eso65119537b3.1;
+        Tue, 12 Nov 2024 12:52:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731444760; x=1732049560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8aTdOwZNBTcb2LQzKC0Do+9aYHX1AwZT62fazeLw4DY=;
+        b=lZuzibMmWj6MQQUmpYsBoxoLqy69O1xAcnIsMnYDa8h9n5ItCaL6nbLovIZeiUVYhJ
+         B9eLoC4tZKUB5TB1sT1NlRVZz7xGhATGXhGcpiZSX4YoIsYn5yL2fIiNK6nOOj78yEoL
+         cfrWY3T5qtBpsNYQP35cJ59v+1NVkMsYNZ6KJQfD1c3Uwi39LzIMVquJVqeBYAvzjTlw
+         zTGZKsVF7rWAHfJE4g9Nu9tSKwTvxDpPxdIKciKv80ba4Zk7NhXVmDNHF7t7UTVrSHmJ
+         TKSu30o+unWWJis/jQGGNIEjrTk6SlWnNb1r8M+jIeDy2Y8jxnmNBxAqbVzcLZE/tk+i
+         JRug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731444760; x=1732049560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8aTdOwZNBTcb2LQzKC0Do+9aYHX1AwZT62fazeLw4DY=;
+        b=ryL2DWalVZShXW87ONvtV/5qlZNrDNGOe38h3p4WmxSeNqYbHm19qg1uS0WK0e4BeY
+         6vInF4GdKgjmPy3uqp5YkJ8o/ngK/8Jk9lQrlOauIUkOadKg3qBo3L+Qz447fpWJ393w
+         uitVyBXmZ6Xb2kRGgQDxknprpWGtHSQuLR9EJzgIvN7LXqNVcXw6XVu8bULlsURrpJ/y
+         LZHd9zk3ATsATxYqzYV1CTtl7+3MmqI/ZUFX04g83VPZfaYrNXDhDhO8z4fgiVycFiUl
+         pjR2cRNqsAN98UAwPe/ZknDZAeiSuXXyc2cS44oTtudWPryhRZjL0PWsMP9bfqpWILcs
+         TE3w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4MLiNA9SHuuQYLnOQrqC6EDb9hL7z7i9SluyQYd2TDxPWlNCbf1vure2vBKUtXq/FSONPazh4terDhtY=@vger.kernel.org, AJvYcCWcnamgfkPQZRb2gf2DqUNt16Y3u54bdNFJzC7ekf7UaZkH+OnK8eGGUBtTxX5gNfPhXO7JnmeoxQtuhx+dqMO3FQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy28HUQCckK27ZtgysjDPNxYxW16ASqJQ8slKBZ4Kkx66CCzELh
+	CSrUXF1mlI0oEiHQGhhg4c2maLEMVJtNIR8v14NZuw4WobB+hv8VOzOe1irQoyj41OGsN5LxpyP
+	souVIAPMznQPHQBW1CApXnp59KEc=
+X-Google-Smtp-Source: AGHT+IF7dzOX/zvcy0OGiIP17c32BwGtbUHj2hIdt0DWLi5dgQk78VIUEBg2g+QptCmHoAEM9VZpj6KlNoaKUI6Jly0=
+X-Received: by 2002:a05:690c:9b10:b0:6d7:f32:735b with SMTP id
+ 00721157ae682-6eadde3dacamr166872777b3.27.1731444759030; Tue, 12 Nov 2024
+ 12:52:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sa8775p-ride: Enable Adreno 663
- GPU
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-References: <20241030-a663-gpu-support-v3-0-bdf1d9ce6021@quicinc.com>
- <20241030-a663-gpu-support-v3-2-bdf1d9ce6021@quicinc.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20241030-a663-gpu-support-v3-2-bdf1d9ce6021@quicinc.com>
+References: <20241108204137.2444151-1-howardchu95@gmail.com>
+ <20241108204137.2444151-5-howardchu95@gmail.com> <CAP-5=fV8_DxYxKy4A71z0gb82u8W+8qGXvVDSEW2A1GOfSf=oA@mail.gmail.com>
+In-Reply-To: <CAP-5=fV8_DxYxKy4A71z0gb82u8W+8qGXvVDSEW2A1GOfSf=oA@mail.gmail.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Tue, 12 Nov 2024 12:52:29 -0800
+Message-ID: <CAH0uvogqT9w7nY7gCyD_agXzTvfbGr1ywrBf-U2OPB2ZN9OqTQ@mail.gmail.com>
+Subject: Re: [PATCH v7 04/10] perf record --off-cpu: Preparation of off-cpu
+ BPF program
+To: Ian Rogers <irogers@google.com>
+Cc: acme@kernel.org, peterz@infradead.org, namhyung@kernel.org, 
+	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: FnuMSCIHtTnhNeS6xwPFUxN1_ZHrWLSz
-X-Proofpoint-ORIG-GUID: FnuMSCIHtTnhNeS6xwPFUxN1_ZHrWLSz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 suspectscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411120167
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/2024 12:32 PM, Akhil P Oommen wrote:
-> From: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> 
-> Enable GPU for sa8775p-ride platform and provide path for zap
-> shader.
-> 
-> Signed-off-by: Puranam V G Tejaswi <quic_pvgtejas@quicinc.com>
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> index 0c1b21def4b6..4901163df8f3 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-> @@ -407,6 +407,14 @@ queue3 {
->  	};
->  };
->  
-> +&gpu {
-> +	status = "okay";
-> +};
-> +
-> +&gpu_zap_shader {
-> +	firmware-name = "qcom/sa8775p/a663_zap.mbn";
-> +};
-> +
->  &i2c11 {
->  	clock-frequency = <400000>;
->  	pinctrl-0 = <&qup_i2c11_default>;
-> 
+Hi Ian,
 
-Bjorn,
 
-Please ignore this patch for now. This is probably not the right
-platform dtsi file where gpu should be enabled. I am discussing about
-this internally. Will send a revision or a new patch based on the
-conclusion.
+On Mon, Nov 11, 2024 at 9:47=E2=80=AFAM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Fri, Nov 8, 2024 at 12:41=E2=80=AFPM Howard Chu <howardchu95@gmail.com=
+> wrote:
+> >
+> > Set the perf_event map in BPF for dumping off-cpu samples.
+> >
+> > Set the offcpu_thresh to specify the threshold.
+> >
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > ---
+> >  tools/perf/util/bpf_off_cpu.c          | 20 ++++++++++++++++++++
+> >  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
+> >  2 files changed, 22 insertions(+)
+> >
+> > diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cp=
+u.c
+> > index 558c5e5c2dc3..cfe5b17393e9 100644
+> > --- a/tools/perf/util/bpf_off_cpu.c
+> > +++ b/tools/perf/util/bpf_off_cpu.c
+> > @@ -13,6 +13,7 @@
+> >  #include "util/cgroup.h"
+> >  #include "util/strlist.h"
+> >  #include <bpf/bpf.h>
+> > +#include <internal/xyarray.h>
+> >
+> >  #include "bpf_skel/off_cpu.skel.h"
+> >
+> > @@ -73,6 +74,23 @@ static void off_cpu_start(void *arg)
+> >                 bpf_map_update_elem(fd, &pid, &val, BPF_ANY);
+> >         }
+> >
+> > +       /* update BPF perf_event map */
+> > +       evsel =3D evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
+> > +       if (evsel =3D=3D NULL) {
+> > +               pr_err("%s evsel not found\n", OFFCPU_EVENT);
+> > +               return;
+> > +       }
+> > +
+> > +       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
+> > +               err =3D bpf_map__update_elem(skel->maps.offcpu_output, =
+&pcpu.cpu, sizeof(__u32),
+> > +                                          xyarray__entry(evsel->core.f=
+d, i, 0),
+> > +                                          sizeof(__u32), BPF_ANY);
+> > +               if (err) {
+> > +                       pr_err("Failed to update perf event map for dir=
+ect off-cpu dumping\n");
+> > +                       return;
+> > +               }
+> > +       }
+> > +
+> >         skel->bss->enabled =3D 1;
+> >  }
+> >
+> > @@ -261,6 +279,8 @@ int off_cpu_prepare(struct evlist *evlist, struct t=
+arget *target,
+> >                 }
+> >         }
+> >
+> > +       skel->bss->offcpu_thresh =3D opts->off_cpu_thresh * 1000;
+> > +
+> >         err =3D off_cpu_bpf__attach(skel);
+> >         if (err) {
+> >                 pr_err("Failed to attach off-cpu BPF skeleton\n");
+> > diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/b=
+pf_skel/off_cpu.bpf.c
+> > index c152116df72f..dc6acafb9353 100644
+> > --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> > @@ -97,6 +97,8 @@ const volatile bool uses_cgroup_v1 =3D false;
+> >
+> >  int perf_subsys_id =3D -1;
+> >
+> > +__u64 offcpu_thresh;
+>
+> nit: would be nice to include the unit in the variable name, ie
+> offcpu_thresh_us.
 
--Akhil.
+I didn't see it yesterday sorry, but in BPF the unit should be
+nanosecond, so I'll do offcpu_thresh_ns.
+
+Thanks,
+Howard
+
+>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+>
+> Thanks,
+> Ian
+>
+> > +
+> >  /*
+> >   * Old kernel used to call it task_struct->state and now it's '__state=
+'.
+> >   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
+> > --
+> > 2.43.0
+> >
 
