@@ -1,99 +1,220 @@
-Return-Path: <linux-kernel+bounces-405134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D949C4D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:30:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020509C4D58
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87CC81F21636
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44AB2282EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C262D1DFE4;
-	Tue, 12 Nov 2024 03:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4775205ADF;
+	Tue, 12 Nov 2024 03:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjhjPaS3"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="b3KTTQbr"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD4641C79;
-	Tue, 12 Nov 2024 03:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202182040BD
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731382198; cv=none; b=XpbeXEvitQ7OMVklowdDhlcBWsqA/RElbH52giKiUEWzGO3GEsxE9b8DtYfaq0qEq82UmGvfYkcBoofopvzj2KDuycK2ZjsMeI+YNMhbYqljg8IvpEiV/NeAu8KJUG622ISAzgYb84UTUFGJrUr8/i3lA4Kaqgv/jRTnPzxtmA4=
+	t=1731382286; cv=none; b=ihZVlZURgknyv6D6x5Jug2/iBeo9fzjC9y+Pvr4ET/I/hyMuJDLvlYTBGOFyl3ONr78/ZqxEx8GxuSgwMl6iyscrtxaWV2VCHySw9roBXmYv7JaveqsnazJZ8shbvXSL24UdIGVXzIlMhu/JxHn3FSoeQmysPjdcj+fCvD8fNYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731382198; c=relaxed/simple;
-	bh=6UpsJSWh4Oa+OP2fFrBg1S/DUIRXHnoS8t0cgV8rsjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVaYMMOw7NLBmuf3lV9Kd+xsjTmdfRTMyR6+UdxupqkiSU+rYsH6e2UTDCmq2op4cKi9ZhCXY82h7k/4qKAcO5zn9MZBvHVf7oymMCUSS/MT1/sTrRcfYdwnMF/WeyOk4IxwoUQEVovbO/J20IJUWiutYss8OVYU/XKLkxFW8Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjhjPaS3; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f450f7f11dso1393641a12.2;
-        Mon, 11 Nov 2024 19:29:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731382196; x=1731986996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WQiBHYPub6Sg3L2ZwXeizlo4TlXYG1XXGaB98Hlmo+8=;
-        b=PjhjPaS3+Sh+gjoXeSw9LYRPOq9PAFN9Jo8uSyUdnnOnYrTrqgIIwZMh7pwB+7+nCn
-         wiRq2jUwPyssu2vaEiFlFWv2+SiXy5aR1zjOZN6Wj0oCEv1+xlNVWk6EAnAdHe421SeM
-         3iEx71Is7i/VvCk8B7USEMKyNKjvJavOG8D/sSD+YfLpj+btmkExIEfYfWzL5guYP63g
-         pOq+9xOT4sRpQjztuSUyupG7FVVnB5387Mj/XE7faE6n8WmzUFBL7QoRYfuswW1X0m9y
-         qXvp/ivbr9cWnCNsNalRa/KfhH5AZuAst7UEdWq51xlwLgrBJD1dLT+JFMeWlRnbe/M9
-         xLpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731382196; x=1731986996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WQiBHYPub6Sg3L2ZwXeizlo4TlXYG1XXGaB98Hlmo+8=;
-        b=N91EcXYF7fImE5UrMbXKAJPOV2ZIY1w5Gm8nqDzZZWhrrhm6dna3uNOOYFgtQ7yk2M
-         rEWMJoWsPBiA/NuX1S09VtPiFpZo4FCa7lQkdd3JTyE/xfOsWqNASN4igNfyKm6mDVT8
-         KbUrsl00/izCV9LdZLb7aDSZyOZwFLSuEQsUTE8NUSvYmrDzZOhTOLZw6bxZE0f9fiyQ
-         VGOPke9CS3GZEtWA8lKbdWyEf+vtA41rE7FXr9WyOQVVvKByX/8NRBkVFNvKBYDF67iz
-         Sl/XFrbJAvbtpi0CNAr0RBV+YFGlc2fnEkEiRWWnfSSdVxCCJCQBA6yEYsznRzbMIAqx
-         8jaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBGaSEo4MEFBsAFyPWuZSso2bthOodI1xA2wEkOID4fVmc+p09hlhml3AyzjDTk3n8XeEomkUbybNZWYY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxjEj0+qSy5xQdo71IL5nOpYGtLw33K6nZk4stQo6s9gLXN1FS
-	N3Fq3iHNJWd5if7mZdN8sb3cqYPvN3tx/OUczb6mPbx51GEmZPdK
-X-Google-Smtp-Source: AGHT+IHDXSszEJD03BfzgPGcxE5WwSbJuMNqQ02jfPw1X4peHEBxadHEU1nXOuxbZfEOLBr8vMmykg==
-X-Received: by 2002:a17:90b:5250:b0:2e2:e769:dffe with SMTP id 98e67ed59e1d1-2e9b1773bf8mr20709987a91.30.1731382195873;
-        Mon, 11 Nov 2024 19:29:55 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177e59c45sm83858255ad.197.2024.11.11.19.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 19:29:55 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Mon, 11 Nov 2024 19:29:53 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Huisong Li <lihuisong@huawei.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jdelvare@suse.com, liuyonglong@huawei.com, zhanjie9@hisilicon.com
-Subject: Re: [PATCH] hwmon: (acpi_power_meter) Fix fail to load module on
- platform without _PMD method
-Message-ID: <1369a551-3464-4874-863f-df453c6e5c55@roeck-us.net>
-References: <20241112021228.22914-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1731382286; c=relaxed/simple;
+	bh=arMwYedM5z1BplfM19lGAQOd05lkZU9Ol1jWXqcwErg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SyPn8yyafv/qSz8Rwr4mxdgnNvBIjo2GvBnq16trBjPBjkCBr2gPd6Swbi+74EIcTjN9KFdK9Pd7ruil/0b8E+Q3ejKvdwLwfv+nEog3IQ8623ceL7PTjcVGmLIgFRc8cSPSJMKjk5ISpcmuooLIcIiJ6FTBathnYfIeVJWqz74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=b3KTTQbr; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <71703c20-8311-ce3f-fbed-27d2ec3a2c82@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731382279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pna6SXgYoiw79mo+51okm8aGfboIHogded/oCv5Bm6I=;
+	b=b3KTTQbrWZIboZAHqhUwg8rC0mnfnDxaOPwfy283v0OyopMj0IBKvkmN2B3dP0TAkGTLAf
+	bVRdr/AFp1I35+cuHGj7yayQeKbWTKN0MsCvIWTdgym9RyqDfiWifXhuViDk6h39BBJ2SN
+	ksyL3hg6UHRFqg7joiCaEke9L8CXr8Y=
+Date: Tue, 12 Nov 2024 11:30:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112021228.22914-1-lihuisong@huawei.com>
+Subject: Re: [PATCH] lib/alloc_tag: Remove the sysctl configuration to prevent
+ users from disabling it at runtime
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, Hao Ge <gehao@kylinos.cn>
+References: <20241108075004.131911-1-hao.ge@linux.dev>
+ <CAJuCfpEp_3Dz32fdpUaUbPaP6KZ+0fXmXBvBV1jRt9Q+LMRQAQ@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Hao Ge <hao.ge@linux.dev>
+In-Reply-To: <CAJuCfpEp_3Dz32fdpUaUbPaP6KZ+0fXmXBvBV1jRt9Q+LMRQAQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 12, 2024 at 10:12:28AM +0800, Huisong Li wrote:
-> As ACPI spec said, _PMD method is optional. The acpi_power_meter
-> shouldn't fail to load when the platform hasn't _PMD method.
-> 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+Hi Suren
 
-Applied.
 
-Thanks,
-Guenter
+Firstly, please forgive me for my improper wording in the commit message.
+
+After sending it, I realized that I should have used "suggestion" 
+instead of "decided".
+
+Secondly, please forgive me for taking a few days to respond. I've been 
+quite busy these days.
+
+
+Let's continue to discuss this issue.
+
+
+On 11/9/24 02:16, Suren Baghdasaryan wrote:
+> On Thu, Nov 7, 2024 at 11:50 PM Hao Ge <hao.ge@linux.dev> wrote:
+>> From: Hao Ge <gehao@kylinos.cn>
+>>
+>> After much consideration,I have decided to remove
+>> the "mem_profiling" sysctl interface to prevent
+>> users from dynamically enabling or disabling the
+>> MEMORY ALLOCATION PROFILING feature at runtime.
+>>
+>> I have taken the following actions: I set
+>> CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT=y to
+>> enable memory allocation profiling by default,
+>> and then made adjustments to mem_profiling dynamically
+>> during runtime.
+>>
+>> When I ran the OOM test program, I obtained useful
+>> information that was indeed very helpful for debugging.
+>>
+>> [ 1023.065402] Memory allocations:
+>> [ 1023.065407]     12.8 GiB     6546 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
+>> [ 1023.065412]      873 MiB   229985 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
+>> [ 1023.065415]      187 MiB    29732 mm/slub.c:2412 func:alloc_slab_page
+>> [ 1023.065418]     99.8 MiB    25560 mm/memory.c:1065 func:folio_prealloc
+>> [ 1023.065421]     47.2 MiB     3189 mm/readahead.c:434 func:ra_alloc_folio
+>> [ 1023.065424]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
+>> [ 1023.065428]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
+>> [ 1023.065430]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
+>> [ 1023.065433]     25.6 MiB     6546 mm/huge_memory.c:1161 func:__do_huge_pmd_anonymous_page
+>> [ 1023.065436]     23.5 MiB     6017 mm/shmem.c:1771 func:shmem_alloc_folio
+>>
+>> After running echo 0 > /proc/sys/vm/mem_profiling
+>> and then executing the same test program,
+>> I obtained the following results
+>>
+>> [ 1156.509699] Memory allocations:
+>> [ 1156.509703]      187 MiB    29645 mm/slub.c:2412 func:alloc_slab_page
+>> [ 1156.509707]      142 MiB     9357 mm/readahead.c:434 func:ra_alloc_folio
+>> [ 1156.509710]      136 MiB    41325 arch/arm64/mm/fault.c:986 func:vma_alloc_zeroed_movable_folio
+>> [ 1156.509713]     99.7 MiB    25531 mm/memory.c:1065 func:folio_prealloc
+>> [ 1156.509716]     56.0 MiB       28 mm/huge_memory.c:1328 func:do_huge_pmd_anonymous_page
+>> [ 1156.509719]     30.0 MiB       15 mm/khugepaged.c:1072 func:alloc_charge_folio
+>> [ 1156.509723]     28.6 MiB      514 mm/compaction.c:1880 func:compaction_alloc
+>> [ 1156.509725]     26.3 MiB     7460 mm/readahead.c:264 func:page_cache_ra_unbounded
+>> [ 1156.509728]     25.8 MiB     6592 mm/page_ext.c:271 func:alloc_page_ext
+>> [ 1156.509730]     23.5 MiB     6016 mm/shmem.c:1771 func:shmem_alloc_folio
+>>
+>> Because mem_profiling was disabled by executing
+>> echo 0 > /proc/sys/vm/mem_profiling,we are unable to
+>> record memory allocation information after the disablement.
+> Naturally you are unable to track the allocations after disabling it.
+> You disabled it as root, so I assume you know what you are doing.
+>
+>> These output logs can mislead users. And similarly, the same
+>> applies to alloc_info.
+> I would understand if you made /proc/allocinfo empty after disabling
+> it to avoid confusing the user, but ripping out the ability to
+> enable/disable profiling at runtime does not make sense to me. Once
+> you collect required data, disabling profiling gets you back the
+> performance that you pay for it. There are usecases when a program on
+> a remote device periodically enables profiling for some time, records
+> the difference in allocations and then disables it. Your change breaks
+> such users.
+
+
+Actually, my original intention was also to make /proc/allocinfo empty 
+when disabling it,
+
+but I considered the following scenario: after we disable it and clear 
+/proc/allocinfo,
+
+we then start a memory-intensive application,
+
+such as our OOM (Out-Of-Memory) test program.
+
+If we later enable it again, the issue described in my commit message 
+would still arise.
+
+Perhaps we need to further consider how to handle this situation.
+
+Thanks Best regards Hao
+
+>> We already have boot parameters that allow users to
+>> choose whether to enable or disable.
+>> In order to maintain the accuracy of memory allocation
+>> information,I have decided to remove the runtime switch.
+> Well, I disagree with your decision.
+> NAK.
+>
+>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+>> ---
+>>   lib/alloc_tag.c | 26 --------------------------
+>>   1 file changed, 26 deletions(-)
+>>
+>> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+>> index 81e5f9a70f22..47fa969c23f3 100644
+>> --- a/lib/alloc_tag.c
+>> +++ b/lib/alloc_tag.c
+>> @@ -227,31 +227,6 @@ struct page_ext_operations page_alloc_tagging_ops = {
+>>   };
+>>   EXPORT_SYMBOL(page_alloc_tagging_ops);
+>>
+>> -#ifdef CONFIG_SYSCTL
+>> -static struct ctl_table memory_allocation_profiling_sysctls[] = {
+>> -       {
+>> -               .procname       = "mem_profiling",
+>> -               .data           = &mem_alloc_profiling_key,
+>> -#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
+>> -               .mode           = 0444,
+>> -#else
+>> -               .mode           = 0644,
+>> -#endif
+>> -               .proc_handler   = proc_do_static_key,
+>> -       },
+>> -};
+>> -
+>> -static void __init sysctl_init(void)
+>> -{
+>> -       if (!mem_profiling_support)
+>> -               memory_allocation_profiling_sysctls[0].mode = 0444;
+>> -
+>> -       register_sysctl_init("vm", memory_allocation_profiling_sysctls);
+>> -}
+>> -#else /* CONFIG_SYSCTL */
+>> -static inline void sysctl_init(void) {}
+>> -#endif /* CONFIG_SYSCTL */
+>> -
+>>   static int __init alloc_tag_init(void)
+>>   {
+>>          const struct codetag_type_desc desc = {
+>> @@ -264,7 +239,6 @@ static int __init alloc_tag_init(void)
+>>          if (IS_ERR(alloc_tag_cttype))
+>>                  return PTR_ERR(alloc_tag_cttype);
+>>
+>> -       sysctl_init();
+>>          procfs_init();
+>>
+>>          return 0;
+>> --
+>> 2.25.1
+>>
 
