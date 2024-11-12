@@ -1,228 +1,121 @@
-Return-Path: <linux-kernel+bounces-405149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44ACF9C4D8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:03:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCD59C4D90
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 05:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757D8B225BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F352287124
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A797C205E08;
-	Tue, 12 Nov 2024 04:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC4120822C;
+	Tue, 12 Nov 2024 04:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="rzwSYY2D"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNBgoJHA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85B71DFE4
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DEB2038BA;
+	Tue, 12 Nov 2024 04:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731384200; cv=none; b=piJwEPpuyB6S6aFYgrELO+PX6zQjwEUmnsB4c4bQSSxNkcwWrUpaiscT7WdMeXNb8eK/pe0xPbJ6FzuYens7+g+YCOqjhzroWMD9kTuV908ms20ITPWMNLPj+a/91/xa6RoZwcTzRWKCk6xfw/eh/o1XJ2A1jKey9rW/PqXKccs=
+	t=1731384364; cv=none; b=Nb34lfNHGvnPRflQTewyy3HozSqRipuRyitIxmzKubfDKc0PiNuVO4OVqymny7OhHkwjdcP/t24Qsab/m3wm77kzUhppt3ajbptnZCcNnDFjEwa2QTrxs+rzAHQMZU8+gABYvrjTfDmjJ9Rx4YmF0FiYFlsS0xeSequ1ib7qxGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731384200; c=relaxed/simple;
-	bh=AmystDOCWU9Gy9nkcnXSuFUTc46boQFhfNNb53UmWDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rDNUJLU7gAcTJ9uC2EdGclzV+4lsqKh2tj85tDJIEo/WFZb7bSfAF7dhq90TOBA+8Tg1GvI/+W3LpVMT0gv+jjSaNPjEvmyiI/ffr+4+uGVDSDZUM+nx6SoLp1/nTwfBzP+hiKzYlRQwoyS9XPzNG2aKrsGP56fjVz/BzTw56Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=rzwSYY2D; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731384195; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=WvbGuu5qZxiTcUXoqyvrii6MYDsHms+3eRcUahSrvSc=;
-	b=rzwSYY2DzyjDdi9Ef4lhGTgGzDxSqnS347i6zkNYbL1Sf17uMcXbBpdIOiXRvOYgml5kbfAdsgG5HQokyJDzCA6MpOGQut5F3Jpi2SCDh62RMnyatEOdyFI9flSvjQVirzlWaFXSK5Rocafda4rUM3U7Tkc7/p/4a0DWGkxWm8E=
-Received: from 30.221.128.202(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJFTf3q_1731384193 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 12 Nov 2024 12:03:15 +0800
-Message-ID: <0f525b1e-820c-4bbd-b8ba-59a16fd73ade@linux.alibaba.com>
-Date: Tue, 12 Nov 2024 12:03:13 +0800
+	s=arc-20240116; t=1731384364; c=relaxed/simple;
+	bh=FHke1KQcD8QEibCAXGq1prANLtcdE3Qip9NGZ8so138=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UenylDrgpgjFXOCgLSvzlmd2x/++tICZQkpzv7b3VbARKJ+CMuA5s3dV+J84w+DM1Qnt/GbQB/++ZH/aobS+zjHMQHamlkEXqWS1MIP9NVPvaXsaoXqnPu6/YCo4qOqDqtiJsJFECJJ7aiKYt1uVm/vPlyAUWKoiCAHSWS3OOQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNBgoJHA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B53C4CEDF;
+	Tue, 12 Nov 2024 04:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731384363;
+	bh=FHke1KQcD8QEibCAXGq1prANLtcdE3Qip9NGZ8so138=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZNBgoJHA5wNXMNUg4ZyDtVJvytVDggGjakai+NsKjE0ReEkscttntk9VX7BxIbVMV
+	 fxLGj9TqkVKzwWWAzV4m2N5m88UmWWPelrFG07R5YjVgTyvStLJGX1pDx3Tkbokh8w
+	 9bIUeQ+ZZkPMBLz3uESazlqU6/8zyt4NoMj9/mvBMcOjZytXiR9QVyvbW9mXyz6FL2
+	 ab14YpfFFrd7BZ4q91LGn7JZAmJ38GYhSzNL2hQ6Nj4b3ujJ6pLa6OWnbDBQJ/Pu/r
+	 EAgOz1gS2mpc3R6OEydFWaqVWOEzvpEtodT6jlnW1yid76Gf5EJLQps8aeF9TpZ8xq
+	 yurKCto9PRbbw==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb559b0b00so41988091fa.0;
+        Mon, 11 Nov 2024 20:06:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU3dCKsvVPf6R/cnOnITmn8V39EsTy3wIANjusanJHtLeI4zNoFraBLXYHDF4CwaSMoc1vr2TSZ2vOx3c1U1w==@vger.kernel.org, AJvYcCV4DMYH5Jr8IB7BKhjq4R7D2kNb8/S+5PUaqGtdtdEqYmfzmFoxmcZx+ZY75bgz0V5hPpeG7esZdVHOdG4=@vger.kernel.org, AJvYcCWaHes3ZkyttVnKVtYzK6WEN5sPUleLUAL2MMp5a4EUJ4U4rRb1piGJrketAV1QZ1ZFpbqqIkQ/1T0kIic6woU=@vger.kernel.org, AJvYcCWfQCoN/iR2gWDMjQZfQTCSQPq8mRLHpu/eNFaK6FQ2ST6Kn103B4rmyWzqAu4r4NVu1w9bLKovwUJDbA43@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyowl4PtYQJt8aWBygIYmPZigYdPwY4FLjyp/itmU8l4hu2Ywp
+	ckKLrrbPN/dcXqMl56070x6Ugup5oqiwuyqlmVCUD/Fy7hIj9zIv2DtGW1+UJYZyErx5HhK+KSJ
+	6Qrt/UvdgxoWJiofIrsmf5gdmmaA=
+X-Google-Smtp-Source: AGHT+IFaRU5m6t+1lg1Mo1HuXiGTzkpRRzVCu43z16mgHhFLkoiREKNarCRpBVHxgtf18ImVdw8EvH+O6j07/ZYcwMM=
+X-Received: by 2002:a05:651c:988:b0:2fb:8df3:2291 with SMTP id
+ 38308e7fff4ca-2ff2016d246mr72169041fa.16.1731384362113; Mon, 11 Nov 2024
+ 20:06:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] erofs: free pclusters if no cached folio is attached
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
-Cc: chao@kernel.org, huyue2@coolpad.com, jefflexu@linux.alibaba.com,
- dhavale@google.com, linux-erofs@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20241112041129.541307-1-guochunhai@vivo.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20241112041129.541307-1-guochunhai@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241030170106.1501763-21-samitolvanen@google.com> <20241030170106.1501763-22-samitolvanen@google.com>
+In-Reply-To: <20241030170106.1501763-22-samitolvanen@google.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 12 Nov 2024 13:05:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+Message-ID: <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
+ common include
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
+com> wrote:
+>
+> To avoid duplication between host programs, move the crc32 code to a
+> shared header file.
+
+
+Only the motivation to use this long table is to keep compatibility
+between genksyms and gendwarfksyms.
+I do not think this should be exposed to other programs.
+
+
+If you avoid the code duplication, you can do
+
+// scripts/gendwarfksyms/crc.c
+#include "../genksyms/crc.c"
 
 
 
-On 2024/11/12 12:11, Chunhai Guo wrote:
-> Once a pcluster is fully decompressed and there are no attached cached
-> folios, its corresponding `struct z_erofs_pcluster` will be freed. This
-> will significantly reduce the frequency of calls to erofs_shrink_scan()
-> and the memory allocated for `struct z_erofs_pcluster`.
-> 
-> The tables below show approximately a 96% reduction in the calls to
-> erofs_shrink_scan() and in the memory allocated for `struct
-> z_erofs_pcluster` after applying this patch. The results were obtained
-> by performing a test to copy a 4.1GB partition on ARM64 Android devices
-> running the 6.6 kernel with an 8-core CPU and 12GB of memory.
-> 
-> 1. The reduction in calls to erofs_shrink_scan():
-> +-----------------+-----------+----------+---------+
-> |                 | w/o patch | w/ patch |  diff   |
-> +-----------------+-----------+----------+---------+
-> | Average (times) |   11390   |   390    | -96.57% |
-> +-----------------+-----------+----------+---------+
-> 
-> 2. The reduction in memory released by erofs_shrink_scan():
-> +-----------------+-----------+----------+---------+
-> |                 | w/o patch | w/ patch |  diff   |
-> +-----------------+-----------+----------+---------+
-> | Average (Byte)  | 133612656 | 4434552  | -96.68% |
-> +-----------------+-----------+----------+---------+
-> 
-> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
-> ---
-> v4 -> v5:
->   - modify subject to be more formal
->   - `--pcl->lockref.count == 0` --> `!--pcl->lockref.count`
-> 
-> v3 -> v4:
->   - modify the patch as Gao Xiang suggested in v3.
-> 
-> v2 -> v3:
->   - rename erofs_prepare_to_release_pcluster() to __erofs_try_to_release_pcluster()
->   - use trylock in z_erofs_put_pcluster() instead of erofs_try_to_release_pcluster()
-> 
-> v1: https://lore.kernel.org/linux-erofs/588351c0-93f9-4a04-a923-15aae8b71d49@linux.alibaba.com/
-> change since v1:
->   - rebase this patch on "sunset z_erofs_workgroup` series
->   - remove check on pcl->partial and get rid of `be->try_free`
->   - update test results base on 6.6 kernel
-> ---
->   fs/erofs/zdata.c | 54 ++++++++++++++++++++++++++++++++----------------
->   1 file changed, 36 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
-> index 6b73a2307460..737f33d28c40 100644
-> --- a/fs/erofs/zdata.c
-> +++ b/fs/erofs/zdata.c
-> @@ -885,14 +885,11 @@ static void z_erofs_rcu_callback(struct rcu_head *head)
->   			struct z_erofs_pcluster, rcu));
->   }
->   
-> -static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-> +static bool __erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
->   					  struct z_erofs_pcluster *pcl)
->   {
-> -	int free = false;
-> -
-> -	spin_lock(&pcl->lockref.lock);
->   	if (pcl->lockref.count)
-> -		goto out;
-> +		return false;
->   
->   	/*
->   	 * Note that all cached folios should be detached before deleted from
-> @@ -900,7 +897,7 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
->   	 * orphan old pcluster when the new one is available in the tree.
->   	 */
->   	if (erofs_try_to_free_all_cached_folios(sbi, pcl))
-> -		goto out;
-> +		return false;
->   
->   	/*
->   	 * It's impossible to fail after the pcluster is freezed, but in order
-> @@ -909,8 +906,16 @@ static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
->   	DBG_BUGON(__xa_erase(&sbi->managed_pslots, pcl->index) != pcl);
->   
->   	lockref_mark_dead(&pcl->lockref);
-> -	free = true;
-> -out:
-> +	return true;
-> +}
-> +
-> +static bool erofs_try_to_release_pcluster(struct erofs_sb_info *sbi,
-> +					  struct z_erofs_pcluster *pcl)
-> +{
-> +	bool free;
-> +
-> +	spin_lock(&pcl->lockref.lock);
-> +	free = __erofs_try_to_release_pcluster(sbi, pcl);
->   	spin_unlock(&pcl->lockref.lock);
->   	if (free) {
->   		atomic_long_dec(&erofs_global_shrink_cnt);
-> @@ -942,16 +947,25 @@ unsigned long z_erofs_shrink_scan(struct erofs_sb_info *sbi,
->   	return freed;
->   }
->   
-> -static void z_erofs_put_pcluster(struct z_erofs_pcluster *pcl)
-> +static void z_erofs_put_pcluster(struct erofs_sb_info *sbi,
-> +		struct z_erofs_pcluster *pcl, bool try_free)
->   {
-> +	bool free = false;
-> +
->   	if (lockref_put_or_lock(&pcl->lockref))
->   		return;
->   
->   	DBG_BUGON(__lockref_is_dead(&pcl->lockref));
-> -	if (pcl->lockref.count == 1)
-> -		atomic_long_inc(&erofs_global_shrink_cnt);
-> -	--pcl->lockref.count;
-> +	if (!--pcl->lockref.count) {
-> +		if (try_free && xa_trylock(&sbi->managed_pslots)) {
-> +			free = __erofs_try_to_release_pcluster(sbi, pcl);
-> +			xa_unlock(&sbi->managed_pslots);
-> +		}
-> +		atomic_long_add(!free, &erofs_global_shrink_cnt);
-> +	}
->   	spin_unlock(&pcl->lockref.lock);
-> +	if (free)
-> +		call_rcu(&pcl->rcu, z_erofs_rcu_callback);
->   }
->   
->   static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
-> @@ -972,7 +986,7 @@ static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
->   	 * any longer if the pcluster isn't hosted by ourselves.
->   	 */
->   	if (fe->mode < Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE)
-> -		z_erofs_put_pcluster(pcl);
-> +		z_erofs_put_pcluster(EROFS_I_SB(fe->inode), pcl, false);
->   
->   	fe->pcl = NULL;
->   }
-> @@ -1274,6 +1288,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
->   	int i, j, jtop, err2;
->   	struct page *page;
->   	bool overlapped;
-> +	bool try_free = true;
->   
->   	mutex_lock(&pcl->lock);
->   	be->nr_pages = PAGE_ALIGN(pcl->length + pcl->pageofs_out) >> PAGE_SHIFT;
-> @@ -1332,8 +1347,10 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
->   		for (i = 0; i < pclusterpages; ++i) {
->   			page = be->compressed_pages[i];
->   			if (!page ||
-> -			    erofs_folio_is_managed(sbi, page_folio(page)))
-> +			    erofs_folio_is_managed(sbi, page_folio(page))) {
 
-another issue:
 
-			if (!page)
-				continue;
-			if (erofs_folio_is_managed(sbi, page_folio(page)) {
-				try_free = false;
-				continue;
-			}
+>
+> Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> Acked-by: Neal Gompa <neal@gompa.dev>
 
-!page could happen if some memory allocation is failed and
-we need to bail out.
+Does this Ack add any value?
 
-Thanks,
-Gao Xiang
+Acked-by is meaningful only when it is given by someone who
+maintains the relevant area or has established a reputation.
+
+$ git grep "Neal Gompa"
+$ git shortlog -n -s | grep "Neal Gompa"
+     2 Neal Gompa
+
+His Ack feels more like "I like it" rather than a qualified endorsement.
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
