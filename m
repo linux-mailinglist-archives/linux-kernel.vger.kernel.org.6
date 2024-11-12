@@ -1,65 +1,58 @@
-Return-Path: <linux-kernel+bounces-406030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17229C5A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:26:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229D59C5A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 15:27:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 888031F25781
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3A72811DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C226200B9D;
-	Tue, 12 Nov 2024 14:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E1B200C90;
+	Tue, 12 Nov 2024 14:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX6I+zoH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nwym0DBh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972532003DB;
-	Tue, 12 Nov 2024 14:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D491FEFA8
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 14:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731421410; cv=none; b=blHpjR1FJreRGQws3gN3ZVnZP4+g4PG1RrCXJI8S09f1JwA+K6mvtk5FlU0rIFcOemcmjz/f6TARYBUiJ4JbgH3ADecowbHUJC2HB4jA00XmugjB7gfLWo//66RPF+z7h4t91qYqMPCTKOXvoFFVz7o94CjF5aIfbzShema1nWs=
+	t=1731421416; cv=none; b=rc0rrmovpfYNmCNicdi+fN6fcNS4kaPE92KNrNqyZuOKneAX1nI7ceRcZPAKz0okZ7q9jjSrcaLItD4vgScVMPCCAUe1Cc0ODXmRSsqimqXHEI2hmQXj0iqMEdRs2GO0cNKzG+mY8E/uaMjHC75fsrWmoKk+rKoYxNVHxGHVcfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731421410; c=relaxed/simple;
-	bh=1Mtlm//q48SrsPqs3+PH5LEw1zSw/x3ZR0//41DWXT0=;
+	s=arc-20240116; t=1731421416; c=relaxed/simple;
+	bh=7BtrEplH3qQrg9kZixHgQN9470zkhnd7tdHddmuV+9U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=flY/InRaWfZtuzxFeMTySS8iJl+mRx7iWXTeZVudaqbpwCg975/XgvPTYU7eLIV5yavSjO5/ZCMP/566OzVW5XnIttIIfnecNA631/icB7rmNoQOnwMsWwcB/b7VXRqB4fbR2pD0M+lZ7ACyX/k+k0Io3U+ss9aLRzd0Ea9pFNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bX6I+zoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BFCC4CECD;
-	Tue, 12 Nov 2024 14:23:26 +0000 (UTC)
+	 MIME-Version; b=qVK3S9zAvcWLwClK5R1/HJiWaBF4pW4q9MVQgezZrmIG46PKKl5165Xi1F83i2ihe1KDUBgjxw5gv2ZHaoqsIgGl40PzotcU6HAPZW39jbQmrWeGwau8iejK7ye4wmXaqUpuBjoBC3FgbaGvFryOg9IMDapoGVkjQy0QxoM5Vwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nwym0DBh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42AD8C4CECD;
+	Tue, 12 Nov 2024 14:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731421410;
-	bh=1Mtlm//q48SrsPqs3+PH5LEw1zSw/x3ZR0//41DWXT0=;
+	s=k20201202; t=1731421416;
+	bh=7BtrEplH3qQrg9kZixHgQN9470zkhnd7tdHddmuV+9U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bX6I+zoHIDtpnApj8lTc4/kUq9/Avb5U6PIJXGr6R7ZH+w5tkNcKKlu21bICUDGN/
-	 vayr3D5njBiqePvwXiwHyfN3kXc06v69j6prrZAqfNIOoSrm+C+z3Q4pL4M9q7C9uS
-	 wuZcO0UGrrDCK82FPd8TKMDwRf9wA/+UEHiQzK67WXEbvJsJe0NzgqK9g5y85trGjw
-	 1q7fRsyVwt8VkR8OxvGOhleSa7Ia/nqon3h/KDe5lg2kCq7+DLI23O2etxWOwsasvC
-	 OoogZcMGZcCTjUSo3xgRwG4+kM9yXk8NPYiZZoznEPGulBno+uw9HmRgV70VCAv/Ql
-	 rD/v3aloGzdYQ==
+	b=Nwym0DBhhcTIwnkBrtiXN0Zp9WMkosF7kKibRx7BQA2VpqG9VTmW7/kNN32GigUWh
+	 eGEyA7c0DhVnewNn5JsR7G4Y/OS87vA3OTF+26Cyk9BPin48X3G26F0212UQzRdxs5
+	 2fF4KMleehk7g1LT102UKvgu3K+Kgb+CRtd8OYe5N8PsO8gmkRaDdYTQOHPDuYoLnH
+	 uUCMVkYtOmeqfNL3fXTDdopjA1jGPL9L7PaS1xyiXrP/Maw2ThvyAqaxbOsjspiRgA
+	 QaWbRGasHp2OEqfAng5Ky7fOBZL8hRp0+PYYsUFsd6A984tK0DIanGey074Rcajr58
+	 AE9BAL0WVPomQ==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <kees@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
 	Michal Hocko <mhocko@kernel.org>,
 	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
 	linux-mm@kvack.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	rcu@vger.kernel.org,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: [PATCH 13/21] kthread: Make sure kthread hasn't started while binding it
-Date: Tue, 12 Nov 2024 15:22:37 +0100
-Message-ID: <20241112142248.20503-14-frederic@kernel.org>
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>
+Subject: [PATCH 15/21] mm: Create/affine kcompactd to its preferred node
+Date: Tue, 12 Nov 2024 15:22:39 +0100
+Message-ID: <20241112142248.20503-16-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241112142248.20503-1-frederic@kernel.org>
 References: <20241112142248.20503-1-frederic@kernel.org>
@@ -71,82 +64,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure the kthread is sleeping in the schedule_preempt_disabled()
-call before calling its handler when kthread_bind[_mask]() is called
-on it. This provides a sanity check verifying that the task is not
-randomly blocked later at some point within its function handler, in
-which case it could be just concurrently awaken, leaving the call to
-do_set_cpus_allowed() without any effect until the next voluntary sleep.
+Kcompactd is dedicated to a specific node. As such it wants to be
+preferrably affine to it, memory and CPUs-wise.
 
-Rely on the wake-up ordering to ensure that the newly introduced "started"
-field returns the expected value:
-
-    TASK A                                   TASK B
-    ------                                   ------
-READ kthread->started
-wake_up_process(B)
-   rq_lock()
-   ...
-   rq_unlock() // RELEASE
-                                           schedule()
-                                              rq_lock() // ACQUIRE
-                                              // schedule task B
-                                              rq_unlock()
-                                              WRITE kthread->started
-
-Similarly, writing kthread->started before subsequent voluntary sleeps
-will be visible after calling wait_task_inactive() in
-__kthread_bind_mask(), reporting potential misuse of the API.
-
-Upcoming patches will make further use of this facility.
+Use the proper kthread API to achieve that. As a bonus it takes care of
+CPU-hotplug events and CPU-isolation on its behalf.
 
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Michal Hocko <mhocko@suse.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/kthread.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ mm/compaction.c | 43 +++----------------------------------------
+ 1 file changed, 3 insertions(+), 40 deletions(-)
 
-diff --git a/kernel/kthread.c b/kernel/kthread.c
-index 9bb36897b6c6..b9bdb21a0101 100644
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -53,6 +53,7 @@ struct kthread_create_info
- struct kthread {
- 	unsigned long flags;
- 	unsigned int cpu;
-+	int started;
- 	int result;
- 	int (*threadfn)(void *);
- 	void *data;
-@@ -382,6 +383,8 @@ static int kthread(void *_create)
- 	schedule_preempt_disabled();
- 	preempt_enable();
- 
-+	self->started = 1;
-+
- 	ret = -EINTR;
- 	if (!test_bit(KTHREAD_SHOULD_STOP, &self->flags)) {
- 		cgroup_kthread_ready();
-@@ -540,7 +543,9 @@ static void __kthread_bind(struct task_struct *p, unsigned int cpu, unsigned int
- 
- void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
+diff --git a/mm/compaction.c b/mm/compaction.c
+index a2b16b08cbbf..a31c0f5758cf 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -3154,15 +3154,9 @@ void wakeup_kcompactd(pg_data_t *pgdat, int order, int highest_zoneidx)
+ static int kcompactd(void *p)
  {
-+	struct kthread *kthread = to_kthread(p);
- 	__kthread_bind_mask(p, mask, TASK_UNINTERRUPTIBLE);
-+	WARN_ON_ONCE(kthread->started);
+ 	pg_data_t *pgdat = (pg_data_t *)p;
+-	struct task_struct *tsk = current;
+ 	long default_timeout = msecs_to_jiffies(HPAGE_FRAG_CHECK_INTERVAL_MSEC);
+ 	long timeout = default_timeout;
+ 
+-	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
+-
+-	if (!cpumask_empty(cpumask))
+-		set_cpus_allowed_ptr(tsk, cpumask);
+-
+ 	set_freezable();
+ 
+ 	pgdat->kcompactd_max_order = 0;
+@@ -3233,10 +3227,12 @@ void __meminit kcompactd_run(int nid)
+ 	if (pgdat->kcompactd)
+ 		return;
+ 
+-	pgdat->kcompactd = kthread_run(kcompactd, pgdat, "kcompactd%d", nid);
++	pgdat->kcompactd = kthread_create_on_node(kcompactd, pgdat, nid, "kcompactd%d", nid);
+ 	if (IS_ERR(pgdat->kcompactd)) {
+ 		pr_err("Failed to start kcompactd on node %d\n", nid);
+ 		pgdat->kcompactd = NULL;
++	} else {
++		wake_up_process(pgdat->kcompactd);
+ 	}
  }
  
- /**
-@@ -554,7 +559,9 @@ void kthread_bind_mask(struct task_struct *p, const struct cpumask *mask)
-  */
- void kthread_bind(struct task_struct *p, unsigned int cpu)
- {
-+	struct kthread *kthread = to_kthread(p);
- 	__kthread_bind(p, cpu, TASK_UNINTERRUPTIBLE);
-+	WARN_ON_ONCE(kthread->started);
+@@ -3254,30 +3250,6 @@ void __meminit kcompactd_stop(int nid)
+ 	}
  }
- EXPORT_SYMBOL(kthread_bind);
  
+-/*
+- * It's optimal to keep kcompactd on the same CPUs as their memory, but
+- * not required for correctness. So if the last cpu in a node goes
+- * away, we get changed to run anywhere: as the first one comes back,
+- * restore their cpu bindings.
+- */
+-static int kcompactd_cpu_online(unsigned int cpu)
+-{
+-	int nid;
+-
+-	for_each_node_state(nid, N_MEMORY) {
+-		pg_data_t *pgdat = NODE_DATA(nid);
+-		const struct cpumask *mask;
+-
+-		mask = cpumask_of_node(pgdat->node_id);
+-
+-		if (cpumask_any_and(cpu_online_mask, mask) < nr_cpu_ids)
+-			/* One of our CPUs online: restore mask */
+-			if (pgdat->kcompactd)
+-				set_cpus_allowed_ptr(pgdat->kcompactd, mask);
+-	}
+-	return 0;
+-}
+-
+ static int proc_dointvec_minmax_warn_RT_change(const struct ctl_table *table,
+ 		int write, void *buffer, size_t *lenp, loff_t *ppos)
+ {
+@@ -3337,15 +3309,6 @@ static struct ctl_table vm_compaction[] = {
+ static int __init kcompactd_init(void)
+ {
+ 	int nid;
+-	int ret;
+-
+-	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+-					"mm/compaction:online",
+-					kcompactd_cpu_online, NULL);
+-	if (ret < 0) {
+-		pr_err("kcompactd: failed to register hotplug callbacks.\n");
+-		return ret;
+-	}
+ 
+ 	for_each_node_state(nid, N_MEMORY)
+ 		kcompactd_run(nid);
 -- 
 2.46.0
 
