@@ -1,110 +1,100 @@
-Return-Path: <linux-kernel+bounces-405655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E4E39C572A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:00:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE2A9C575E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63527B3075B
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:53:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25D64B32137
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EA42229EE;
-	Tue, 12 Nov 2024 10:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870F1CD215;
+	Tue, 12 Nov 2024 10:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXCskZvc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cE529qV5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912D7227B8F;
-	Tue, 12 Nov 2024 10:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7323DAC18;
+	Tue, 12 Nov 2024 10:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731407858; cv=none; b=aE04Ztdi1XpIQTFMnZ6H4ZC6w9KyZdYrZ2ZXli29UIhyWzpqR127qoug+Tw1cjCeGAzbFC4BGp77J/PSp7SdMePHtYShoDE8c/1PiQju6xhJSLBnw9cRmM/ETurvgx5nRoBuo9VFBDPUj+AF524YJEHOnn5EFZ2zjtQ/3EOwWMs=
+	t=1731407888; cv=none; b=rlNJdkCe8b2RoHo6lS9DlCUVL3eVoIBucJgWDFlClXKFzm6fFrom3NoUVAoHOd+7lBD/Hcw0qhaYsftYeEKtcEhvTZU4qgWHwKscQwvaPOgZj8gAvc0qwW9Wb9fONgyVNBDgMb2jWAzzBKGv6J6O/s3mZJ0T1mwrwqdnsUZGHqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731407858; c=relaxed/simple;
-	bh=P/cWhJSzT3puwSZtlig6ZrMwW8z69zWDYWcHupE6Rt8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jOwmSzGYYWU6RY07E5vAgGbhPKejq9vMV1wpN7pj/yWJCD0ENpsLGp+scmDELioPcmKNQiimgnm26BDfUEngb7aGRN7bj6OZnv4boyCZBm+gwSFb4BAvOOfSbjMNuCZk5bLPqGDGbbz0pHCV2nzGF4TCP6SnQ04dO754HNR5U08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXCskZvc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA76C4CECD;
-	Tue, 12 Nov 2024 10:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731407858;
-	bh=P/cWhJSzT3puwSZtlig6ZrMwW8z69zWDYWcHupE6Rt8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aXCskZvcklrVg6zOgYlnxaT9bxAabnQfXkFIXICfqH1LiqjQ58XURu8aZ4pUaDiD3
-	 YMHP/2z9Ws9IfMp/xKD/WLrue7fyGquY9LrCFTTbL50v7c7f+vfUmUps5ZdfSx2EQR
-	 DJ4jbp6rCfHqJQtyRHO/+MUJxfnifaVhYtQ7RP3DoZGFKAAMPDnd929zqAmQg72qKF
-	 pwFT5p2Blnd4uRLjF0OzVh6AyTAv/9KGL4l7RiJBhnsP6mn/GZ9gGv4y92/S3ksFXF
-	 1L3o1PxQObNMUr5H66gBaH0dSl98Efq5Eqnw66fKvn46vMhhiOL3Clqj8eB8su9Xbs
-	 I3otYSaQ0AuEw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Luo Yifan <luoyifan@cmss.chinamobile.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	arnaud.pouliquen@foss.st.com,
-	lgirdwood@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 10/12] ASoC: stm: Prevent potential division by zero in stm32_sai_get_clk_div()
-Date: Tue, 12 Nov 2024 05:37:12 -0500
-Message-ID: <20241112103718.1653723-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241112103718.1653723-1-sashal@kernel.org>
-References: <20241112103718.1653723-1-sashal@kernel.org>
+	s=arc-20240116; t=1731407888; c=relaxed/simple;
+	bh=qF8JGdf/0mGdjzYO7DP7kHts4/WoQANssCTIjAVjDss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXyxClc0TdPo28Aayq26yoI7Coni5KnYXYYlWYFSI2pYP8lZeE+JKc83LDDQXkTbefjiToE6MKIT9KLNf0HiWfXqlinNc0l8J35kvYFMQNwbqga5UbUS4F+2c8SG82gJx7nATRmoF/0jT3UtnKdj8wza4OiI+3FlVrWuBH5ETE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cE529qV5; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731407887; x=1762943887;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qF8JGdf/0mGdjzYO7DP7kHts4/WoQANssCTIjAVjDss=;
+  b=cE529qV5i7iQAcdAsEhbuzZ9lAL2Wk1X+rhplr+FVoDrpJaFBhCnNmkd
+   O7hrXBvAvpo0/ibyZIcGXz+GnxYFX9p5qnjDsANAd6KqMYDxzj1kVUhQI
+   zeK9zFZwkvY4/5Z0o5qp9Uv00dodOqkc/6PJ7yOtL1R00ZMo3vQ7iOe8P
+   nzxcX6FDIOVAiUDWbEojg/+yO6UYLVUAEnj+zoi1sWxN+W84MjXqhxPzt
+   ot0sljSL16N7kWEtPngqI1VcHyi5TCzqr6cNMZEN75Nqp5WyAns2LaDrj
+   sGyJFLy8RLLDXnBTO2FqNS82nKcSRMt0vyj9kDbR9T5OXtwWgGEJpbJjO
+   g==;
+X-CSE-ConnectionGUID: o159H8hATGGR04/qlGJgZw==
+X-CSE-MsgGUID: Y/Jbt6HZQ/G6Fj+4C/gOeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="31330498"
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="31330498"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:38:06 -0800
+X-CSE-ConnectionGUID: 77uiAGmWTViu8lVPjZb/aQ==
+X-CSE-MsgGUID: qBYZYSd5RK6zlTAA1PN46A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87343607"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:38:03 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tAoHX-0000000DwKd-44wz;
+	Tue, 12 Nov 2024 12:37:59 +0200
+Date: Tue, 12 Nov 2024 12:37:59 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, heiko@sntech.de,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com, tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com, tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v5 2/4] gpio: rockchip: change the GPIO version judgment
+ logic
+Message-ID: <ZzMwB8UQUR6BYAzI@smile.fi.intel.com>
+References: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+ <20241112015408.3139996-3-ye.zhang@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.116
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112015408.3139996-3-ye.zhang@rock-chips.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Luo Yifan <luoyifan@cmss.chinamobile.com>
+On Tue, Nov 12, 2024 at 09:54:06AM +0800, Ye Zhang wrote:
+> Have a list of valid IDs and default to -ENODEV.
 
-[ Upstream commit 23569c8b314925bdb70dd1a7b63cfe6100868315 ]
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-This patch checks if div is less than or equal to zero (div <= 0). If
-div is zero or negative, the function returns -EINVAL, ensuring the
-division operation is safe to perform.
-
-Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
-Reviewed-by: Olivier Moysan <olivier.moysan@foss.st.com>
-Link: https://patch.msgid.link/20241107015936.211902-1-luoyifan@cmss.chinamobile.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/stm/stm32_sai_sub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index 3d237f75e81f5..0629aa5f2fe4b 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -317,7 +317,7 @@ static int stm32_sai_get_clk_div(struct stm32_sai_sub_data *sai,
- 	int div;
- 
- 	div = DIV_ROUND_CLOSEST(input_rate, output_rate);
--	if (div > SAI_XCR1_MCKDIV_MAX(version)) {
-+	if (div > SAI_XCR1_MCKDIV_MAX(version) || div <= 0) {
- 		dev_err(&sai->pdev->dev, "Divider %d out of range\n", div);
- 		return -EINVAL;
- 	}
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
