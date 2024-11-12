@@ -1,104 +1,54 @@
-Return-Path: <linux-kernel+bounces-405040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5575E9C4C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:13:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0BA9C4C96
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:29:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A39D28A6F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:13:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65A31B25A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5029204F7A;
-	Tue, 12 Nov 2024 02:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PX5xbTv3"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A9F19E96A;
+	Tue, 12 Nov 2024 02:23:38 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D618519CC17;
-	Tue, 12 Nov 2024 02:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF17F50F;
+	Tue, 12 Nov 2024 02:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731377627; cv=none; b=aZzZ3nsktmWEI1wKPFHis/yE5Zk8d+2m+29LHn5JTpOYjtMCYfJtCkOfO69wvq15Ink6UIKnwhycYmm0fZFscHnFPtcHpPP13fzpakpOIfx0Z/r45+8O4rxGOVnbzpgHv8IbzMxn7LlusQYQ642Bc3PNVgCDgU/w3k+x3CVTk0M=
+	t=1731378218; cv=none; b=OVUVh9UFHekm7JXXQOwtk5o08X3Wo4tMMm9DLEpFwSU7//5Zf6CsCXUfzGJoClRqPyGD6mQDmKqHTzQqhKcgnoa3zbVTtove0kSM6ogJczKvbfoHDjXLo7He6b5EZPzE/qtgDIWha21XMdBxLQt0Qc6tm74mo/4wUXAQUvCy0V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731377627; c=relaxed/simple;
-	bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EVYOvedO8NocAL6Mh8F/7ttXhiMkV/JCKXZceEsj5fapd2ZKJeSqy+fVd7d8Z7V8xkHFiORh8/GS4/JbCEReZXDWSO04FUravxgpZSNqlkMjc5VU1ls5p7+Jpmn4F69euBjWnLW44s+wix6idunG4vPLzOzjJG1UHLk5JzFvtZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PX5xbTv3; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ee51d9ae30so3693588a12.1;
-        Mon, 11 Nov 2024 18:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731377625; x=1731982425; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=PX5xbTv3MlN7gowIWJjWuiLib+AO+oEXQ1fTUxpauMHxnQPClnXQdznAHhyyu+4HtV
-         U7cyuQhOeTBsozx8ltyXCDGopRfXP8cmmkKQs7dcF6Vu0BL4ydOEWhbwbOZzySkHAVzz
-         NstQunn91B3lVUR5RKmStgm63ppD+sl1sSHR9GA4RCjwFrggqM9+7g9tKSIp2j64anF+
-         wfkBflTzfY8OMQS9lg0fg9mNTLd0M7evMpzdd4Ubd2m0iPLFRn5cYDB9utuhA8RnZB3O
-         aEdCG9A8pNSYQdBRcC/W2CMl5kWEjNCMfcBcJRj+kR/4+D1mwidq9RvUIGVWlz3lRnKX
-         tOHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731377625; x=1731982425;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
-        b=rQBaCjM5qF3R3kMwvmdfi4w3nMYUEFAI6eJNp0KPt+y8soIqI/Yp36HYMTxT5yOgy4
-         qiG2ieI1dI6xabI8X9+N2u8YS4Zt1c6GffbiHm8/tbzTMkk3Cmmu/tpvBVv2sXfhMFiC
-         M67wXxwx+3xYc9CfRizILlXTi9tWnPmf56xMa51vqa4nDon8sIHLKI8h/73yH7s9/k7H
-         8Rh4q9ScVRdv+TMlyW3r1x3qi8pbbLttfFw2Ztzi7+QK8UH/LJQMgYJr5txY/GyogY07
-         Qer/AEazZGG8IQY6IWLEp9eTZCQUGSSaPyPp1fOY2ESL3irpRmXy2An0Dg4A9cWOkNhS
-         Lynw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5aHTWf/J8CTkvGgE+t2F4GoBCZBq3s3wMwNQfuTwaOoV5r8ti5iXeTisaRYG9fGRFXNo8NJTmssi0@vger.kernel.org, AJvYcCUD/eseBT3rHvkEF5PBinvJ48dZpX7T937ErvlzmuBYztQKaON6kr0LhmkvXW3vUteF9RukaJ6IQ+9MpQeyp1y3@vger.kernel.org, AJvYcCUidnz3NytGHVUAQGrKwD2cXaJjovAsDN+wIpzia84KrFRvZHwEl01FaJ5QdGxq3UV6e2vUDBf0g3gt9id9@vger.kernel.org, AJvYcCWeGmdk+4ATodVuZMhgZKqW4WGT03vPhWtOCAVj8cp/3UNQyx4ZjI7jKBs1fxxXSgE/3hY0FOOQDjUJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5NjXhddd7iMruV6F11kc34y9OO7JanoAnRm9ULlkT9unYhg4q
-	mPFdo7tUiA89YmK++DXfWZV+1DRPvXK8ttHm53lcEEspzw4gqONdftTOS5cn6/hatA==
-X-Google-Smtp-Source: AGHT+IH+5UXelKsDy3oJZlypf0Kktdqo9U9iQ7oteV++YKpkDWgiAzqsABr0X0CYYwoE+B2WGNVBmQ==
-X-Received: by 2002:a17:90b:52cd:b0:2e2:e597:6cd3 with SMTP id 98e67ed59e1d1-2e9b173943emr20532167a91.17.1731377625050;
-        Mon, 11 Nov 2024 18:13:45 -0800 (PST)
-Received: from localhost.localdomain ([119.139.196.191])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e9a5fee67fsm9223414a91.49.2024.11.11.18.13.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 18:13:44 -0800 (PST)
-From: h1k0n <ybzjyhk@gmail.com>
-To: charlie@rivosinc.com
-Cc: ajones@ventanamicro.com,
-	andy.chiu@sifive.com,
-	aou@eecs.berkeley.edu,
-	conor.dooley@microchip.com,
-	conor@kernel.org,
-	corbet@lwn.net,
-	devicetree@vger.kernel.org,
-	evan@rivosinc.com,
-	guoren@kernel.org,
-	jernej.skrabec@gmail.com,
-	jrtc27@jrtc27.com,
-	jszhang@kernel.org,
-	krzk+dt@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	robh@kernel.org,
-	samuel.holland@sifive.com,
-	samuel@sholland.org,
-	shuah@kernel.org,
-	wens@csie.org
-Subject: D1 vlenb
-Date: Tue, 12 Nov 2024 10:12:26 +0800
-Message-Id: <20241112021227.357-1-ybzjyhk@gmail.com>
-X-Mailer: git-send-email 2.40.0.windows.1
-In-Reply-To: <20240911-xtheadvector-v10-3-8d3930091246@rivosinc.com>
-References: <20240911-xtheadvector-v10-3-8d3930091246@rivosinc.com>
+	s=arc-20240116; t=1731378218; c=relaxed/simple;
+	bh=NwOubgdHIIpjYC991G4+DrMfD8Gc/C2T1lYTvXvcmLY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fb8JcUOuXbHrGQhj4CSV6ijPNoV1y76yIRdl0QuSPZ0YDL0k0WNozMi5tVBSxLY7T3Ex32TUxI3PhMhvGq8YMECABL2ZLtrgw2YsIDXAgaa44XgskIzMxvhmJP9RZrDensuVaeuOSq1T25XspOOm4fRuubmIabuOZvXrv6uDERc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XnVYR2Jq4zQsv0;
+	Tue, 12 Nov 2024 10:22:19 +0800 (CST)
+Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id 918251800A5;
+	Tue, 12 Nov 2024 10:23:32 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 12 Nov 2024 10:23:32 +0800
+Received: from localhost.localdomain (10.28.79.22) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 Nov 2024 10:23:31 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <linux-hwmon@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux@roeck-us.net>, <jdelvare@suse.com>,
+	<liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
+Subject: [PATCH] hwmon: (acpi_power_meter) Fix fail to load module on platform without _PMD method
+Date: Tue, 12 Nov 2024 10:12:28 +0800
+Message-ID: <20241112021228.22914-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.22.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,5 +56,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
+
+As ACPI spec said, _PMD method is optional. The acpi_power_meter
+shouldn't fail to load when the platform hasn't _PMD method.
+
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ drivers/hwmon/acpi_power_meter.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hwmon/acpi_power_meter.c b/drivers/hwmon/acpi_power_meter.c
+index 6c8a9c863528..2f1c9d97ad21 100644
+--- a/drivers/hwmon/acpi_power_meter.c
++++ b/drivers/hwmon/acpi_power_meter.c
+@@ -680,8 +680,9 @@ static int setup_attrs(struct acpi_power_meter_resource *resource)
+ {
+ 	int res = 0;
+ 
++	/* _PMD method is optional. */
+ 	res = read_domain_devices(resource);
+-	if (res)
++	if (res != -ENODEV)
+ 		return res;
+ 
+ 	if (resource->caps.flags & POWER_METER_CAN_MEASURE) {
+-- 
+2.22.0
 
 
