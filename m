@@ -1,178 +1,131 @@
-Return-Path: <linux-kernel+bounces-406372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3379C5F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:43:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE669C60DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30DB2BA1DF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:02:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96581B27058
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D4821315C;
-	Tue, 12 Nov 2024 16:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423F8208224;
+	Tue, 12 Nov 2024 16:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DnkSp0Mg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kbnMvFI6"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6281920E03C
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C668206E7C
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 16:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731430723; cv=none; b=uqymNopDiDrn31bbvGvWyR2IF4qxG1bp+hf3PHq5J2/ySUFPx2tVCtkKZd4zu/pHQLDKOT2NVWrIAcwBUklCZioGCgsOWKWOttzkHENDYVQ8k5hJx11+T7mJosdXHcp10L74wm+Bvm3LVyKyOCxS2qpmXmYFmK86t2weQG2cU4w=
+	t=1731430699; cv=none; b=h7j16ZE1xPGaNe/MKzaoxK6s2326L0Ymur3h9MLl2UKhrD/NiFzOkAqmkos9rYATCzitWb6jUZNF6CI8t4gnjx5ZnbJAs0CstKvtsYakgF2goOPTlSqO5OcrAojDYPBFG4HhZ3VID/R5qy1KXU0RTym1/a+LtvLpSra71d257u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731430723; c=relaxed/simple;
-	bh=aeoydx0HLFHSStAdMKkZnSfEwsDzUEWxHMeOyr5IZs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rats7ftPfj2MAWUqxzAf9McBC/a5oEJEr4nSO5Yjbq9EeQZA9uqU5GS4+/iFeBSj6GCRyuRxwMRTOmq9QUC8Oj3bNsiQNzhZpG3GC2zza+n7lAQJAmm+amrM+Xuvj0BSfCmd7dFc8iqGiYL/ZzI6+u0IbuDhd9ux+kCJWBi9ujY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DnkSp0Mg; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731430721; x=1762966721;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aeoydx0HLFHSStAdMKkZnSfEwsDzUEWxHMeOyr5IZs4=;
-  b=DnkSp0Mg6FyNcGumNju9bdsn1nHsmqt082aQGJNox2eHQ6+1M8emEWxU
-   283hqjdYL2Rq8M5xh4diXk7oW9+IG7Ry+Dv34uknLOGGG2QmN8clwKL3w
-   I66cCWNDdjDN1sI1x8cWVYujoRTU50P1cQBGPpXvhOclB1kedcJDBp9vY
-   KCEAb8U78ucPeM1NJoSXm7EA9yJxgrhOIHxUFc2shwhiLogVgx/LEi+OX
-   dVWAc6lbpn2tETdjxPbmXMvvkzz3bNaUECyGquIT5TOtwwDBPqLXszU7Y
-   5GgEDFtC07LYxG7HvfKWtJWmjUo6MKSZDDLMGF9jtv8xLPISib4zFXgAh
-   g==;
-X-CSE-ConnectionGUID: BvztCIvfR0qGKj9OckRXTA==
-X-CSE-MsgGUID: aYVt6IumTNGobpxiTOQgsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="41888157"
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="41888157"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 08:58:40 -0800
-X-CSE-ConnectionGUID: TTsunEUaTSiwLWuDYqCwdA==
-X-CSE-MsgGUID: FpX1XzS+RM+WhOuJGDmlnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,148,1728975600"; 
-   d="scan'208";a="91597022"
-Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Nov 2024 08:58:38 -0800
-Received: from kbuild by bcfed0da017c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tAuDr-0001YD-1w;
-	Tue, 12 Nov 2024 16:58:35 +0000
-Date: Wed, 13 Nov 2024 00:57:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chunhai Guo <guochunhai@vivo.com>, xiang@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, chao@kernel.org,
-	huyue2@coolpad.com, jefflexu@linux.alibaba.com, dhavale@google.com,
-	linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: Re: [PATCH] erofs: add sysfs node to drop all compression-related
- caches
-Message-ID: <202411130033.ZP2Akhk8-lkp@intel.com>
-References: <20241112091403.586545-1-guochunhai@vivo.com>
+	s=arc-20240116; t=1731430699; c=relaxed/simple;
+	bh=uw6GZpPLfyeji4d0zzVBBXtfO7VGREIoZj1JUlXSkwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2SPBVREPvT0rnQ7KsOi9dpaWpqAV+7ksu4VzvoJRBVzgvpCxyEgzUtX1Vz/6h3HFHaLw+Bf+Zix0yfV4AuL7zIK3jUqxGO8mh3iGuFPXLoQLFT3uqgHjxBJQ2shlp4Rrr06qCnbmMQl8YlqsAtlcjYDVZFTezZz9biBaCmIQno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kbnMvFI6; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460b295b9eeso263941cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 08:58:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731430697; x=1732035497; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Q349X4O3ThW9mGj94pBdAshyZ9YK6Y/LlQyE9ZF8/4=;
+        b=kbnMvFI6fwIchPm0dHHewOUH8LwcSxBjRwS0O8Noun2hXeV0aYplspYFGdVUCRX8id
+         nKhCLntfjMAy4HWZfFCSmPqwPR7FW01gK78X48rf5Yh1AT6CS0/aCumfccAWNYjHwb4B
+         vILKZmPod3jw7+IPlPDU3dQ3zZyAgxevHCdfIiYnI/L5EYf8PJoDeEycH/vyR7BHpu/u
+         rB54gtwpmFbJ9y8N1t660fun013EFHOdaBINIsgJhITreiDaihD2o60jVb185N+1lp57
+         guoCRLvdXsRnyGMmt5ND4xHUYGPkxgbf2TFVLVI79/6uB8XOZDI5L2YGK6jBqx2ZMGyu
+         O3Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731430697; x=1732035497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6Q349X4O3ThW9mGj94pBdAshyZ9YK6Y/LlQyE9ZF8/4=;
+        b=MgKcCUgDb7Q2Ajx98Sv7QePH6vYsZxPanZX8gGkVdLk5//8mNH2sXHqv+0agsghJDj
+         VJ5EygM8wqDF2pvaAC+q3UOqKfQXSobl/Evs2yo9P1fmNcX+yAN2L/Y3OAGHV5UymkTE
+         6JvgCAU41vG8HN05JhTqyzNoxbh3pa9ragIbzGB4Pvd0n9xzV/uE3bhtOO5bvPydfm5c
+         b2z9pd1CezOhcWRxQcSocG0A6fXC2S4qe8dG9IE6y+x2MtmQIdE52+GPgg601+7M3erU
+         NLTP/1y4lywJwN3Fy0rajbg4791c7MAgjb+u/xqcu0s2XXQqTdUr93WyH/gLAK0D46X8
+         OFmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5eyUEVJLYq0L2KwjuVwL9xxsJHMTObW5SNTcShMBj7exgth2EPQGL90wgfP+WJ9c72fiN4TdJiP7KHrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd+NqtOqrUMzYY3AhH62XkGuvJ/sWKR9OTfNiZtpOzX9mnCZxc
+	dccvxZtuKS/1K/iBP4uyMl5rHXCxBgnQ338MvYAtTgs5Z7ZRuWq7S3og5WJKf5hVEk0xS61Zo04
+	1DPzwRtJU7mI2tItbE5Pqt99ub4Euv7T6iGzV
+X-Gm-Gg: ASbGncsKl1HOmWfdMeA38i0YJT81XUNbffED3CrpYGawwxEe0NZ4UA4URXJ69RvYmKs
+	/AYTRGfQ+z/rQTBm0Zm2F3Q45eCT1a3G7MXR5keW6Aymb2Hf3B/DyntXfPWyPNw==
+X-Google-Smtp-Source: AGHT+IHXNK6wQ46kS3qqgXDpujV8J8Zp6o5bogO1xLkDGWaaY7Yqk5Zv20VA3J7KtvY5Q0Jucz8mZPryLXDwsX3i80I=
+X-Received: by 2002:ac8:5d94:0:b0:461:66ea:ea70 with SMTP id
+ d75a77b69052e-46342894062mr2679711cf.15.1731430696665; Tue, 12 Nov 2024
+ 08:58:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112091403.586545-1-guochunhai@vivo.com>
+References: <20241111205506.3404479-1-surenb@google.com> <20241111205506.3404479-3-surenb@google.com>
+ <07a72c38-22f5-4b99-9d74-0877eaf2bee2@suse.cz> <CAJuCfpFvPis7mdHDsgK=H54SXDNpbJDpDQ2aVYKiFViueQj4Sg@mail.gmail.com>
+In-Reply-To: <CAJuCfpFvPis7mdHDsgK=H54SXDNpbJDpDQ2aVYKiFViueQj4Sg@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 12 Nov 2024 08:58:05 -0800
+Message-ID: <CAJuCfpGOjnwXuDh4y3O=8NzRtGFwMS8qEpmiYMSaC9JbWFLfZg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, hannes@cmpxchg.org, 
+	mjguzik@gmail.com, oliver.sang@intel.com, mgorman@techsingularity.net, 
+	david@redhat.com, peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, 
+	paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, 
+	hughd@google.com, minchan@google.com, jannh@google.com, 
+	shakeel.butt@linux.dev, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chunhai,
+On Tue, Nov 12, 2024 at 8:08=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Tue, Nov 12, 2024 at 7:57=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> =
+wrote:
+> >
+> > On 11/11/24 21:55, Suren Baghdasaryan wrote:
+> > > @@ -511,7 +476,6 @@ void __vm_area_free(struct vm_area_struct *vma)
+> > >  {
+> > >       vma_numab_state_free(vma);
+> > >       free_anon_vma_name(vma);
+> > > -     vma_lock_free(vma);
+> > >       kmem_cache_free(vm_area_cachep, vma);
+> > >  }
+> >
+> > Have you investigated if this allows to perform vma_numab_state_free() =
+and
+> > free_anon_vma_name() immediately, and only kfree_rcu() the vma itself,
+> > instead of performing all this in a call_rcu() callback?
+>
+> Yes, it should be fine to free them immediately. lock_vma_under_rcu()
+> does not use neither vma->numab_state, nor vma->anon_name.
+>
+> >
+> > Of course if we succeed converting vma's to SLAB_TYPESAFE_RCU this imme=
+diate
+> > freeing of numab state and anon_vma_name would be implied, but maybe it=
+'s an
+> > useful intermediate step on its own.
+>
+> I'm thinking maybe I should post SLAB_TYPESAFE_RCU conversion before
+> anything else. It's simple and quite uncontroversial. I will probably
+> do that today.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on xiang-erofs/dev-test]
-[also build test ERROR on xiang-erofs/dev xiang-erofs/fixes linus/master v6.12-rc7 next-20241112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chunhai-Guo/erofs-add-sysfs-node-to-drop-all-compression-related-caches/20241112-170412
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git dev-test
-patch link:    https://lore.kernel.org/r/20241112091403.586545-1-guochunhai%40vivo.com
-patch subject: [PATCH] erofs: add sysfs node to drop all compression-related caches
-config: i386-randconfig-003-20241112 (https://download.01.org/0day-ci/archive/20241113/202411130033.ZP2Akhk8-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241113/202411130033.ZP2Akhk8-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411130033.ZP2Akhk8-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from fs/erofs/sysfs.c:9:
-   In file included from fs/erofs/internal.h:11:
-   In file included from include/linux/dax.h:6:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> fs/erofs/sysfs.c:175:3: error: call to undeclared function 'z_erofs_shrink_scan'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     175 |                 z_erofs_shrink_scan(sbi, ~0UL);
-         |                 ^
-   1 warning and 1 error generated.
-
-
-vim +/z_erofs_shrink_scan +175 fs/erofs/sysfs.c
-
-   132	
-   133	static ssize_t erofs_attr_store(struct kobject *kobj, struct attribute *attr,
-   134							const char *buf, size_t len)
-   135	{
-   136		struct erofs_sb_info *sbi = container_of(kobj, struct erofs_sb_info,
-   137							s_kobj);
-   138		struct erofs_attr *a = container_of(attr, struct erofs_attr, attr);
-   139		unsigned char *ptr = __struct_ptr(sbi, a->struct_type, a->offset);
-   140		unsigned long t;
-   141		int ret;
-   142	
-   143		switch (a->attr_id) {
-   144		case attr_pointer_ui:
-   145			if (!ptr)
-   146				return 0;
-   147			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   148			if (ret)
-   149				return ret;
-   150			if (t != (unsigned int)t)
-   151				return -ERANGE;
-   152	#ifdef CONFIG_EROFS_FS_ZIP
-   153			if (!strcmp(a->attr.name, "sync_decompress") &&
-   154			    (t > EROFS_SYNC_DECOMPRESS_FORCE_OFF))
-   155				return -EINVAL;
-   156	#endif
-   157			*(unsigned int *)ptr = t;
-   158			return len;
-   159		case attr_pointer_bool:
-   160			if (!ptr)
-   161				return 0;
-   162			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   163			if (ret)
-   164				return ret;
-   165			if (t != 0 && t != 1)
-   166				return -EINVAL;
-   167			*(bool *)ptr = !!t;
-   168			return len;
-   169		case attr_drop_caches:
-   170			ret = kstrtoul(skip_spaces(buf), 0, &t);
-   171			if (ret)
-   172				return ret;
-   173			if (t != 1)
-   174				return -EINVAL;
- > 175			z_erofs_shrink_scan(sbi, ~0UL);
-   176			return len;
-   177		}
-   178		return 0;
-   179	}
-   180	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Uh, I forgot that I can't post SLAB_TYPESAFE_RCU until I eliminate
+this vma_lock_free() call inside __vm_area_free(). So, I have to
+bundle moving vm_lock into vm_area_struct with SLAB_TYPESAFE_RCU.
 
