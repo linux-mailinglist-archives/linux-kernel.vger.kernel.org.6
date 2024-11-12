@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-405042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51199C4C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:14:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D36C9C4C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768171F21D10
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D83E28A721
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 02:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21F205AD6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4043D205AAD;
 	Tue, 12 Nov 2024 02:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y1tt2SVt"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520001F81AA
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="l9ljt9vU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE61204020
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 02:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731377659; cv=none; b=QnMFxUxq1UfK8Mo5uBSjgQmvr7Kgpx+4D445epi1BbBKbjZB4Wut9xD0XRRaHzJD/kRCKvk9+x7gcWgqutrotfGxd47Ue/gs1yfJ4SPDepnmJHPv2x3g4BqBKmaemo3M9H6PZaEv0tpF5wCdDp82dLhUM0e4HweNe041kxsmDBs=
+	t=1731377659; cv=none; b=ltRt6YzxMJNryBzH4su4zA9QPOCWtFZBKD85VMWwjcHuacansd7Tsy8r4LRRll123Q7qSYLJhCSUeNTQpm+544vX3tvQv3AJmk476BeCz0dfVyB6ek+xgiKBGRvdgLO4RKmQP6Y0VjQXEsZlEds1mweIwVv6zn2zI6Fg/yrnWTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731377659; c=relaxed/simple;
-	bh=GoUXh85/ta4X0mC4I+KzAJdDrgfXzCAFi21Dc9QgFMo=;
+	bh=mB6YChzRNUb89kEXrNUMFwEfd1nO9KA8x9mgACv5raA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cmRgJaoYuty825M/RMb7hWP3OocRrH5ABw/yEsX1Ahs73lOzQaPUBe1K/rioQvNllW0KcGaaBGBNqQ6OKRDsb7ChUyJfhrrqv1SYEV2aBnjG3Gk/NuQOF9VinSo8k/fws4wrDi/B2Nxr0DCO0iUzoB5wdw5v88vs3L+mHIa6H5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y1tt2SVt; arc=none smtp.client-ip=117.135.210.3
+	 MIME-Version; b=ZwgTstnIJlUTZyvPUiRhGRD6sSIxPEULDYpuMRKKkHPrf2ItHd0l+80B0HJTn4QQKzIebQABSDF3N4oCXdC4T5H3qDXZr1ecO5migLtEnAh0YBBlrF/Gk6w37KjgY6ZE0hiokoKIvIPZXEpCDTqjP+RJCVeekIgLb4eZE8Bb93E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=l9ljt9vU; arc=none smtp.client-ip=117.135.210.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=E90ke
-	3p1bBvvYHkXob+K38hvtEJ1J0q0pJu6+12nWt4=; b=Y1tt2SVtXQac2iSN5+zAS
-	Y0qd1axeIy0w9adHV0hBBx+N797jW3A6Ij/Yyy8c2FVgIa3hA0pqbUwMUCvSCv+d
-	xlTg+Mc/s4aw6uvf/sd8yuRgJRHjVzrr+5eUqWnnnEHbij3wX5vP7crXMkBOPNNK
-	RyNPyN6Xj4ZicQhCa2G08w=
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=65pDS
+	qkez0ViZ6AbD2cPQF2JYryGHDJ0TXhKb02lB20=; b=l9ljt9vUf2ed+vxSHP1Z6
+	iolQ9agaBiaSIboW3E/c11vRooqUjl4TYCCDDgciHhkRVZcbuAAvDwytOHr7JLXB
+	nT3jAFe7M6kfGP++voSoiv7C2K0BasP3e3ezSSyLciAV0DRbrMH0wXYITVxtKodz
+	3wgLUyTdMx7K0WPY2kmVCU=
 Received: from localhost.localdomain (unknown [111.48.58.13])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3_4hwuTJnfZjdGw--.189S4;
-	Tue, 12 Nov 2024 10:12:07 +0800 (CST)
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wD3_4hwuTJnfZjdGw--.189S5;
+	Tue, 12 Nov 2024 10:12:09 +0800 (CST)
 From: 412574090@163.com
 To: sudipm.mukherjee@gmail.com,
 	mpe@ellerman.id.au,
@@ -55,9 +55,9 @@ To: sudipm.mukherjee@gmail.com,
 Cc: linux-kernel@vger.kernel.org,
 	xiongxin@kylinos.cn,
 	weiyufeng <weiyufeng@kylinos.cn>
-Subject: [PATCH v2 2/4] parport: change struct parport member to iobase
-Date: Tue, 12 Nov 2024 10:11:51 +0800
-Message-Id: <20241112021153.18146-3-412574090@163.com>
+Subject: [PATCH v2 3/4] parport: add parport_data struct
+Date: Tue, 12 Nov 2024 10:11:52 +0800
+Message-Id: <20241112021153.18146-4-412574090@163.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241112021153.18146-1-412574090@163.com>
 References: <20241112021153.18146-1-412574090@163.com>
@@ -68,743 +68,546 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_4hwuTJnfZjdGw--.189S4
-X-Coremail-Antispam: 1Uf129KBjvAXoWfAF4fXF43Cr1fJryDAFW7twb_yoW5XF4fAo
-	Z3GryfAasYywn3JF48Grn2qFWxX34ku3Z8CF43Crs8ZasFvw4fGF1xGr47Ka1agw13Gr93
-	Xa40qw1UAF18ZrW8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVdcfUUUUU
-X-CM-SenderInfo: yursklauqziqqrwthudrp/1tbizQuVAGcyuTAGXQABsV
+X-CM-TRANSID:_____wD3_4hwuTJnfZjdGw--.189S5
+X-Coremail-Antispam: 1Uf129KBjvAXoW3ZF47KF4DWFyUKF43WFyfWFg_yoW8AFWfKo
+	ZxKrWSy34rtw1fJFWrtr1qqFWkZF1xJas8C34fArn8A3srJw4ruFy8Ga1jka17WF4rKr1f
+	Z34UJw4FqFy8try8n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVpBTDUUUU
+X-CM-SenderInfo: yursklauqziqqrwthudrp/xtbBXwSVAGcysvCbkQAAsT
 
 From: weiyufeng <weiyufeng@kylinos.cn>
 
-change struct parport member base and base_hi to iobase and iobase_hi
-for ioport. because iomem type will be added, in that case,mapbase,
-mapbase_hi will be added in struct parport. this can distinguish between
-these two types.
+add parport_data struct,save iobase,iobase_hi,irq,dma for parport.
 
 Signed-off-by: weiyufeng <weiyufeng@kylinos.cn>
 ---
- drivers/ata/pata_parport/bpck6.c        |  2 +-
- drivers/ata/pata_parport/pata_parport.c |  2 +-
- drivers/auxdisplay/ks0108.c             |  4 +--
- drivers/net/hamradio/baycom_epp.c       | 10 +++---
- drivers/net/hamradio/baycom_par.c       |  6 ++--
- drivers/net/plip/plip.c                 |  2 +-
- drivers/parport/daisy.c                 |  2 +-
- drivers/parport/parport_gsc.c           |  8 ++---
- drivers/parport/parport_ip32.c          |  8 ++---
- drivers/parport/parport_mfc3.c          |  2 +-
- drivers/parport/parport_pc.c            | 42 ++++++++++++-------------
- drivers/parport/parport_sunbpp.c        | 24 +++++++-------
- drivers/parport/procfs.c                |  2 +-
- drivers/parport/share.c                 |  6 ++--
- drivers/scsi/imm.c                      |  8 ++---
- drivers/scsi/ppa.c                      | 10 +++---
- include/linux/parport.h                 |  4 +--
- include/linux/parport_pc.h              | 18 +++++------
- sound/drivers/mts64.c                   |  6 ++--
- sound/drivers/portman2x4.c              |  6 ++--
- 20 files changed, 85 insertions(+), 87 deletions(-)
+ arch/powerpc/include/asm/parport.h  |   5 +-
+ arch/sparc/include/asm/parport_64.h |  13 +--
+ drivers/parisc/superio.c            |   9 ++-
+ drivers/parport/parport_cs.c        |  73 ++++++++---------
+ drivers/parport/parport_pc.c        | 119 +++++++++++++++++-----------
+ drivers/parport/parport_serial.c    |   7 +-
+ include/linux/parport.h             |   8 ++
+ include/linux/parport_pc.h          |   8 +-
+ 8 files changed, 143 insertions(+), 99 deletions(-)
 
-diff --git a/drivers/ata/pata_parport/bpck6.c b/drivers/ata/pata_parport/bpck6.c
-index 62c2b53325e1..bb681a38be7f 100644
---- a/drivers/ata/pata_parport/bpck6.c
-+++ b/drivers/ata/pata_parport/bpck6.c
-@@ -394,7 +394,7 @@ static void bpck6_disconnect(struct pi_adapter *pi)
- static int bpck6_test_port(struct pi_adapter *pi)
+diff --git a/arch/powerpc/include/asm/parport.h b/arch/powerpc/include/asm/parport.h
+index 42cc321ed754..9acfa608c531 100644
+--- a/arch/powerpc/include/asm/parport.h
++++ b/arch/powerpc/include/asm/parport.h
+@@ -21,6 +21,7 @@ static int parport_pc_find_nonpci_ports (int autoirq, int autodma)
+ 	int propsize;
+ 	int count = 0;
+ 	int virq;
++	struct parport_data tmp_pdata;
+ 
+ 	for_each_compatible_node(np, "parallel", "pnpPNP,400") {
+ 		prop = of_get_property(np, "reg", &propsize);
+@@ -32,8 +33,8 @@ static int parport_pc_find_nonpci_ports (int autoirq, int autodma)
+ 		if (!virq)
+ 			continue;
+ 
+-		if (parport_pc_probe_port(io1, io2, virq, autodma, NULL, 0)
+-				!= NULL)
++		parport_data_ioport_init(&tmp_pdata, io1, io2, virq, autodma);
++		if (parport_pc_probe_port(tmp_pdata, NULL, 0) != NULL)
+ 			count++;
+ 	}
+ 	return count;
+diff --git a/arch/sparc/include/asm/parport_64.h b/arch/sparc/include/asm/parport_64.h
+index 4f530a270760..ff2b7855fbb7 100644
+--- a/arch/sparc/include/asm/parport_64.h
++++ b/arch/sparc/include/asm/parport_64.h
+@@ -115,13 +115,14 @@ static int ecpp_probe(struct platform_device *op)
+ 	unsigned long d_len;
+ 	struct device_node *parent;
+ 	struct parport *p;
++	struct parport_data tmp_pdata;
+ 	int slot, err;
+ 
+ 	parent = op->dev.of_node->parent;
+ 	if (of_node_name_eq(parent, "dma")) {
+-		p = parport_pc_probe_port(base, base + 0x400,
+-					  op->archdata.irqs[0], PARPORT_DMA_NOFIFO,
+-					  op->dev.parent->parent, 0);
++		parport_data_ioport_init(&tmp_pdata, base, base + 0x400,
++					op->archdata.irqs[0], PARPORT_DMA_NOFIFO);
++		p = parport_pc_probe_port(tmp_pdata, op->dev.parent->parent, 0);
+ 		if (!p)
+ 			return -ENOMEM;
+ 		dev_set_drvdata(&op->dev, p);
+@@ -169,9 +170,9 @@ static int ecpp_probe(struct platform_device *op)
+ 	ns87303_modify(config, PTR,
+ 		       0, PTR_LPT_REG_DIR);
+ 
+-	p = parport_pc_probe_port(base, base + 0x400,
+-				  op->archdata.irqs[0],
+-				  slot,
++	parport_data_ioport_init(&tmp_pdata, base, base + 0x400,
++				op->archdata.irqs[0], slot);
++	p = parport_pc_probe_port(tmp_pdata,
+ 				  op->dev.parent,
+ 				  0);
+ 	err = -ENOMEM;
+diff --git a/drivers/parisc/superio.c b/drivers/parisc/superio.c
+index e973c6893203..ca162c3bbe09 100644
+--- a/drivers/parisc/superio.c
++++ b/drivers/parisc/superio.c
+@@ -418,10 +418,11 @@ static void __init superio_serial_init(void)
+ static void __init superio_parport_init(void)
  {
- 	dev_dbg(&pi->dev, "PARPORT indicates modes=%x for lp=0x%lx\n",
--		pi->pardev->port->modes, pi->pardev->port->base);
-+		pi->pardev->port->modes, pi->pardev->port->iobase);
+ #ifdef CONFIG_PARPORT_PC
+-	if (!parport_pc_probe_port(sio_dev.pp_base,
+-			0 /*base_hi*/,
+-			PAR_IRQ, 
+-			PARPORT_DMA_NONE /* dma */,
++	struct parport_data tmp_pdata;
++
++	parport_data_ioport_init(&tmp_pdata, sio_dev.pp_base, 0,
++				PAR_IRQ, PARPORT_DMA_NONE);
++	if (!parport_pc_probe_port(tmp_pdata,
+ 			NULL /*struct pci_dev* */,
+ 			0 /* shared irq flags */))
  
- 	/* look at the parport device to see what modes we can use */
- 	if (pi->pardev->port->modes & PARPORT_MODE_EPP)
-diff --git a/drivers/ata/pata_parport/pata_parport.c b/drivers/ata/pata_parport/pata_parport.c
-index 93ebf566b54e..c2d6ad7e43af 100644
---- a/drivers/ata/pata_parport/pata_parport.c
-+++ b/drivers/ata/pata_parport/pata_parport.c
-@@ -539,7 +539,7 @@ static struct pi_adapter *pi_init_one(struct parport *parport,
+diff --git a/drivers/parport/parport_cs.c b/drivers/parport/parport_cs.c
+index 8e7e3ac4bb87..5b2437f710cc 100644
+--- a/drivers/parport/parport_cs.c
++++ b/drivers/parport/parport_cs.c
+@@ -118,42 +118,43 @@ static int parport_config_check(struct pcmcia_device *p_dev, void *priv_data)
  
- 	pi->delay = (delay == -1) ? pi->proto->default_delay : delay;
- 	pi->mode = mode;
--	pi->port = parport->base;
-+	pi->port = parport->iobase;
- 
- 	par_cb.private = pi;
- 	pi->pardev = parport_register_dev_model(parport, DRV_NAME, &par_cb, id);
-diff --git a/drivers/auxdisplay/ks0108.c b/drivers/auxdisplay/ks0108.c
-index 51587f0fdaae..ee046955ac2d 100644
---- a/drivers/auxdisplay/ks0108.c
-+++ b/drivers/auxdisplay/ks0108.c
-@@ -112,7 +112,7 @@ static void ks0108_parport_attach(struct parport *port)
+ static int parport_config(struct pcmcia_device *link)
  {
- 	struct pardev_cb ks0108_cb;
+-    parport_info_t *info = link->priv;
+-    struct parport *p;
+-    int ret;
+-
+-    dev_dbg(&link->dev, "parport_config\n");
+-
+-    if (epp_mode)
+-	    link->config_index |= FORCE_EPP_MODE;
+-
+-    ret = pcmcia_loop_config(link, parport_config_check, NULL);
+-    if (ret)
+-	    goto failed;
+-
+-    if (!link->irq)
+-	    goto failed;
+-    ret = pcmcia_enable_device(link);
+-    if (ret)
+-	    goto failed;
+-
+-    p = parport_pc_probe_port(link->resource[0]->start,
+-			      link->resource[1]->start,
+-			      link->irq, PARPORT_DMA_NONE,
+-			      &link->dev, IRQF_SHARED);
+-    if (p == NULL) {
+-	    pr_notice("parport_cs: parport_pc_probe_port() at 0x%3x, irq %u failed\n",
+-		      (unsigned int)link->resource[0]->start, link->irq);
+-	goto failed;
+-    }
+-
+-    p->modes |= PARPORT_MODE_PCSPP;
+-    if (epp_mode)
+-	p->modes |= PARPORT_MODE_TRISTATE | PARPORT_MODE_EPP;
+-    info->ndev = 1;
+-    info->port = p;
+-
+-    return 0;
++	parport_info_t *info = link->priv;
++	struct parport *p;
++	struct parport_data tmp_pdata;
++	int ret;
++
++	dev_dbg(&link->dev, "parport_config\n");
++
++	if (epp_mode)
++		link->config_index |= FORCE_EPP_MODE;
++
++	ret = pcmcia_loop_config(link, parport_config_check, NULL);
++	if (ret)
++		goto failed;
++
++	if (!link->irq)
++		goto failed;
++	ret = pcmcia_enable_device(link);
++	if (ret)
++		goto failed;
++
++	parport_data_ioport_init(&tmp_pdata, link->resource[0]->start,
++				link->resource[1]->start,
++				link->irq, PARPORT_DMA_NONE);
++	p = parport_pc_probe_port(tmp_pdata, &link->dev, IRQF_SHARED);
++	if (p == NULL) {
++		pr_notice("parport_cs: parport_pc_probe_port() at 0x%3x, irq %u failed\n",
++				(unsigned int)link->resource[0]->start, link->irq);
++		goto failed;
++	}
++
++	p->modes |= PARPORT_MODE_PCSPP;
++	if (epp_mode)
++		p->modes |= PARPORT_MODE_TRISTATE | PARPORT_MODE_EPP;
++	info->ndev = 1;
++	info->port = p;
++
++	return 0;
  
--	if (port->base != ks0108_port)
-+	if (port->iobase != ks0108_port)
- 		return;
- 
- 	memset(&ks0108_cb, 0, sizeof(ks0108_cb));
-@@ -140,7 +140,7 @@ static void ks0108_parport_attach(struct parport *port)
- 
- static void ks0108_parport_detach(struct parport *port)
- {
--	if (port->base != ks0108_port)
-+	if (port->iobase != ks0108_port)
- 		return;
- 
- 	if (!ks0108_pardevice) {
-diff --git a/drivers/net/hamradio/baycom_epp.c b/drivers/net/hamradio/baycom_epp.c
-index 1b7fd6d49a96..0b070ee7016a 100644
---- a/drivers/net/hamradio/baycom_epp.c
-+++ b/drivers/net/hamradio/baycom_epp.c
-@@ -306,7 +306,7 @@ static int eppconfig(struct baycom_state *bc)
- 		bc->cfg.extmodem ? "ext" : "int", bc->cfg.fclk, bc->cfg.bps,
- 		(bc->cfg.fclk + 8 * bc->cfg.bps) / (16 * bc->cfg.bps),
- 		bc->cfg.loopback ? ",loopback" : "");
--	sprintf(portarg, "%ld", bc->pdev->port->base);
-+	sprintf(portarg, "%ld", bc->pdev->port->iobase);
- 	printk(KERN_DEBUG "%s: %s -s -p %s -m %s\n", bc_drvname, eppconfig_path, portarg, modearg);
- 
- 	return call_usermodehelper(eppconfig_path, argv, envp, UMH_WAIT_PROC);
-@@ -828,14 +828,14 @@ static int epp_open(struct net_device *dev)
-         }
- #if 0
-         if (pp->irq < 0) {
--		pr_err("%s: parport at 0x%lx has no irq\n", bc_drvname, pp->base);
-+		pr_err("%s: parport at 0x%lx has no irq\n", bc_drvname, pp->iobase);
- 		parport_put_port(pp);
-                 return -ENXIO;
-         }
- #endif
- 	if ((~pp->modes) & (PARPORT_MODE_TRISTATE | PARPORT_MODE_PCSPP | PARPORT_MODE_SAFEININT)) {
- 		pr_err("%s: parport at 0x%lx cannot be used\n",
--		       bc_drvname, pp->base);
-+		       bc_drvname, pp->iobase);
- 		parport_put_port(pp);
-                 return -EIO;
- 	}
-@@ -857,11 +857,11 @@ static int epp_open(struct net_device *dev)
- 	bc->pdev = parport_register_dev_model(pp, dev->name, &par_cb, i);
- 	parport_put_port(pp);
-         if (!bc->pdev) {
--		pr_err("%s: cannot register parport at 0x%lx\n", bc_drvname, pp->base);
-+		pr_err("%s: cannot register parport at 0x%lx\n", bc_drvname, pp->iobase);
-                 return -ENXIO;
-         }
-         if (parport_claim(bc->pdev)) {
--		pr_err("%s: parport at 0x%lx busy\n", bc_drvname, pp->base);
-+		pr_err("%s: parport at 0x%lx busy\n", bc_drvname, pp->iobase);
-                 parport_unregister_device(bc->pdev);
-                 return -EBUSY;
-         }
-diff --git a/drivers/net/hamradio/baycom_par.c b/drivers/net/hamradio/baycom_par.c
-index 4b57874c2463..4fc324a28c86 100644
---- a/drivers/net/hamradio/baycom_par.c
-+++ b/drivers/net/hamradio/baycom_par.c
-@@ -307,12 +307,12 @@ static int par96_open(struct net_device *dev)
- 		return -ENXIO;
- 	}
- 	if (pp->irq < 0) {
--		pr_err("baycom_par: parport at 0x%lx has no irq\n", pp->base);
-+		pr_err("baycom_par: parport at 0x%lx has no irq\n", pp->iobase);
- 		parport_put_port(pp);
- 		return -ENXIO;
- 	}
- 	if ((~pp->modes) & (PARPORT_MODE_PCSPP | PARPORT_MODE_SAFEININT)) {
--		pr_err("baycom_par: parport at 0x%lx cannot be used\n", pp->base);
-+		pr_err("baycom_par: parport at 0x%lx cannot be used\n", pp->iobase);
- 		parport_put_port(pp);
- 		return -ENXIO;
- 	}
-@@ -339,7 +339,7 @@ static int par96_open(struct net_device *dev)
- 		return -ENXIO;
- 	}
- 	if (parport_claim(bc->pdev)) {
--		pr_err("baycom_par: parport at 0x%lx busy\n", pp->base);
-+		pr_err("baycom_par: parport at 0x%lx busy\n", pp->iobase);
- 		parport_unregister_device(bc->pdev);
- 		return -EBUSY;
- 	}
-diff --git a/drivers/net/plip/plip.c b/drivers/net/plip/plip.c
-index d81163bc910a..374eafcec2a3 100644
---- a/drivers/net/plip/plip.c
-+++ b/drivers/net/plip/plip.c
-@@ -1286,7 +1286,7 @@ static void plip_attach (struct parport *port)
- 		strcpy(dev->name, name);
- 
- 		dev->irq = port->irq;
--		dev->base_addr = port->base;
-+		dev->base_addr = port->iobase;
- 		if (port->irq == -1) {
- 			printk(KERN_INFO "plip: %s has no IRQ. Using IRQ-less mode,"
- 		                 "which is fairly inefficient!\n", port->name);
-diff --git a/drivers/parport/daisy.c b/drivers/parport/daisy.c
-index 2231dbfd870d..83502170a6ba 100644
---- a/drivers/parport/daisy.c
-+++ b/drivers/parport/daisy.c
-@@ -68,7 +68,7 @@ static void add_dev(int devnum, struct parport *port, int daisy)
- /* Clone a parport (actually, make an alias). */
- static struct parport *clone_parport(struct parport *real, int muxport)
- {
--	struct parport *extra = parport_register_port(real->base,
-+	struct parport *extra = parport_register_port(real->iobase,
- 						       real->irq,
- 						       real->dma,
- 						       real->ops);
-diff --git a/drivers/parport/parport_gsc.c b/drivers/parport/parport_gsc.c
-index c7e18382dc01..9490c431bd6c 100644
---- a/drivers/parport/parport_gsc.c
-+++ b/drivers/parport/parport_gsc.c
-@@ -249,8 +249,8 @@ static struct parport *parport_gsc_probe_port(unsigned long base,
- 	}
- 	priv->ctr = 0xc;
- 	priv->ctr_writable = 0xff;
--	p->base = base;
--	p->base_hi = base_hi;
-+	p->iobase = base;
-+	p->iobase_hi = base_hi;
- 	p->irq = irq;
- 	p->modes = PARPORT_MODE_PCSPP | PARPORT_MODE_SAFEININT;
- 	p->ops = ops;
-@@ -272,12 +272,12 @@ static struct parport *parport_gsc_probe_port(unsigned long base,
- 	}
- 
- 	p->dev = &padev->dev;
--	p->base_hi = base_hi;
-+	p->iobase_hi = base_hi;
- 	p->modes = tmp.modes;
- 	p->size = (p->modes & PARPORT_MODE_EPP)?8:3;
- 	p->private_data = priv;
- 
--	pr_info("%s: PC-style at 0x%lx", p->name, p->base);
-+	pr_info("%s: PC-style at 0x%lx", p->name, p->iobase);
- 	p->irq = irq;
- 	if (p->irq == PARPORT_IRQ_AUTO) {
- 		p->irq = PARPORT_IRQ_NONE;
-diff --git a/drivers/parport/parport_ip32.c b/drivers/parport/parport_ip32.c
-index 0919ed99ba94..44150fe2d0ed 100644
---- a/drivers/parport/parport_ip32.c
-+++ b/drivers/parport/parport_ip32.c
-@@ -301,7 +301,7 @@ struct parport_ip32_private {
- #define __pr_probe(...)							\
- 	do { if (verbose_probing) printk(__VA_ARGS__); } while (0)
- #define pr_probe(p, fmt, ...)						\
--	__pr_probe(KERN_INFO PPIP32 "0x%lx: " fmt, (p)->base , ##__VA_ARGS__)
-+	__pr_probe(KERN_INFO PPIP32 "0x%lx: " fmt, (p)->iobase, ##__VA_ARGS__)
- 
- /*
-  * parport_ip32_dump_state - print register status of parport
-@@ -2038,8 +2038,8 @@ static __init struct parport *parport_ip32_probe_port(void)
- 		err = -ENOMEM;
- 		goto fail;
- 	}
--	p->base = MACE_BASE + offsetof(struct sgi_mace, isa.parallel);
--	p->base_hi = MACE_BASE + offsetof(struct sgi_mace, isa.ecp1284);
-+	p->iobase = MACE_BASE + offsetof(struct sgi_mace, isa.parallel);
-+	p->iobase_hi = MACE_BASE + offsetof(struct sgi_mace, isa.ecp1284);
- 	p->private_data = priv;
- 
- 	*ops = parport_ip32_ops;
-@@ -2131,7 +2131,7 @@ static __init struct parport *parport_ip32_probe_port(void)
- 	parport_ip32_dump_state(p, "end init", 0);
- 
- 	/* Print out what we found */
--	pr_info("%s: SGI IP32 at 0x%lx (0x%lx)", p->name, p->base, p->base_hi);
-+	pr_info("%s: SGI IP32 at 0x%lx (0x%lx)", p->name, p->iobase, p->iobase_hi);
- 	if (p->irq != PARPORT_IRQ_NONE)
- 		pr_cont(", irq %d", p->irq);
- 	pr_cont(" [");
-diff --git a/drivers/parport/parport_mfc3.c b/drivers/parport/parport_mfc3.c
-index bb1817218d7b..c64b9ca1b604 100644
---- a/drivers/parport/parport_mfc3.c
-+++ b/drivers/parport/parport_mfc3.c
-@@ -74,7 +74,7 @@
- static struct parport *this_port[MAX_MFC] = {NULL, };
- static volatile int dummy; /* for trigger readds */
- 
--#define pia(dev) ((struct pia *)(dev->base))
-+#define pia(dev) ((struct pia *)(dev->iobase))
- static struct parport_operations pp_mfc3_ops;
- 
- static void mfc3_write_data(struct parport *p, unsigned char data)
+ failed:
+ 	parport_cs_release(link);
 diff --git a/drivers/parport/parport_pc.c b/drivers/parport/parport_pc.c
-index 609c10d4bc31..160d87449913 100644
+index 160d87449913..b4e959a2d8a1 100644
 --- a/drivers/parport/parport_pc.c
 +++ b/drivers/parport/parport_pc.c
-@@ -1380,7 +1380,7 @@ static struct superio_struct *find_superio(struct parport *p)
- {
- 	int i;
- 	for (i = 0; i < NR_SUPERIOS; i++)
--		if (superios[i].io == p->base)
-+		if (superios[i].io == p->iobase)
- 			return &superios[i];
- 	return NULL;
- }
-@@ -1448,7 +1448,7 @@ static int parport_SPP_supported(struct parport *pb)
- 		/* That didn't work, but the user thinks there's a
- 		 * port here. */
- 		pr_info("parport 0x%lx (WARNING): CTR: wrote 0x%02x, read 0x%02x\n",
--			pb->base, w, r);
-+			pb->iobase, w, r);
+@@ -2022,9 +2022,7 @@ static int parport_dma_probe(struct parport *p)
+ static LIST_HEAD(ports_list);
+ static DEFINE_SPINLOCK(ports_lock);
  
- 	/* Try the data register.  The data lines aren't tri-stated at
- 	 * this stage, so we expect back what we wrote. */
-@@ -1467,9 +1467,9 @@ static int parport_SPP_supported(struct parport *pb)
- 		/* Didn't work, but the user is convinced this is the
- 		 * place. */
- 		pr_info("parport 0x%lx (WARNING): DATA: wrote 0x%02x, read 0x%02x\n",
--			pb->base, w, r);
-+			pb->iobase, w, r);
- 		pr_info("parport 0x%lx: You gave this address, but there is probably no parallel port there!\n",
--			pb->base);
-+			pb->iobase);
+-static struct parport *__parport_pc_probe_port(unsigned long int base,
+-					       unsigned long int base_hi,
+-					       int irq, int dma,
++static struct parport *__parport_pc_probe_port(struct parport_data data,
+ 					       struct device *dev,
+ 					       int irqflags,
+ 					       unsigned int mode_mask,
+@@ -2044,7 +2042,7 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
+ 		/* We need a physical device to attach to, but none was
+ 		 * provided. Create our own. */
+ 		pdev = platform_device_register_simple("parport_pc",
+-						       base, NULL, 0);
++						       data.iobase, NULL, 0);
+ 		if (IS_ERR(pdev))
+ 			return NULL;
+ 		dev = &pdev->dev;
+@@ -2052,7 +2050,7 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
+ 		ret = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(24));
+ 		if (ret) {
+ 			dev_err(dev, "Unable to set coherent dma mask: disabling DMA\n");
+-			dma = PARPORT_DMA_NONE;
++			data.dma = PARPORT_DMA_NONE;
+ 		}
  	}
  
- 	/* It's possible that we can't read the control register or
-@@ -1609,7 +1609,7 @@ static int parport_ECP_supported(struct parport *pb)
+@@ -2065,13 +2063,17 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
+ 		goto out2;
  
- 	priv->fifo_depth = i;
- 	if (verbose_probing)
--		pr_debug("0x%lx: FIFO is %d bytes\n", pb->base, i);
-+		pr_debug("0x%lx: FIFO is %d bytes\n", pb->iobase, i);
+ 	/* a misnomer, actually - it's allocate and reserve parport number */
+-	p = parport_register_port(base, irq, dma, ops);
++	p = parport_register_port(data.iobase, data.irq, data.dma, ops);
+ 	if (!p)
+ 		goto out3;
  
- 	/* Find out writeIntrThreshold */
- 	frob_econtrol(pb, 1<<2, 1<<2);
-@@ -1624,7 +1624,7 @@ static int parport_ECP_supported(struct parport *pb)
- 	if (i <= priv->fifo_depth) {
- 		if (verbose_probing)
- 			pr_debug("0x%lx: writeIntrThreshold is %d\n",
--			       pb->base, i);
-+			       pb->iobase, i);
- 	} else
- 		/* Number of bytes we know we can write if we get an
- 		   interrupt. */
-@@ -1647,7 +1647,7 @@ static int parport_ECP_supported(struct parport *pb)
- 	if (i <= priv->fifo_depth) {
- 		if (verbose_probing)
- 			pr_info("0x%lx: readIntrThreshold is %d\n",
--				pb->base, i);
-+				pb->iobase, i);
- 	} else
- 		/* Number of bytes we can read if we get an interrupt. */
- 		i = 0;
-@@ -1661,14 +1661,14 @@ static int parport_ECP_supported(struct parport *pb)
- 	switch (pword) {
- 	case 0:
- 		pword = 2;
--		pr_warn("0x%lx: Unsupported pword size!\n", pb->base);
-+		pr_warn("0x%lx: Unsupported pword size!\n", pb->iobase);
- 		break;
- 	case 2:
- 		pword = 4;
--		pr_warn("0x%lx: Unsupported pword size!\n", pb->base);
-+		pr_warn("0x%lx: Unsupported pword size!\n", pb->iobase);
- 		break;
- 	default:
--		pr_warn("0x%lx: Unknown implementation ID\n", pb->base);
-+		pr_warn("0x%lx: Unknown implementation ID\n", pb->iobase);
- 		fallthrough;	/* Assume 1 */
- 	case 1:
- 		pword = 1;
-@@ -1677,15 +1677,15 @@ static int parport_ECP_supported(struct parport *pb)
+-	base_res = request_region(base, 3, p->name);
+-	if (!base_res)
++	if (p->iobase) {
++		base_res = request_region(data.iobase, 3, p->name);
++		if (!base_res)
++			goto out4;
++	} else {
+ 		goto out4;
++	}
  
- 	if (verbose_probing) {
- 		pr_debug("0x%lx: PWord is %d bits\n",
--		       pb->base, 8 * pword);
-+		       pb->iobase, 8 * pword);
- 
- 		pr_debug("0x%lx: Interrupts are ISA-%s\n",
--		       pb->base, config & 0x80 ? "Level" : "Pulses");
-+		       pb->iobase, config & 0x80 ? "Level" : "Pulses");
- 
- 		configb = inb(CONFIGB(pb));
- 		pr_debug("0x%lx: ECP port cfgA=0x%02x cfgB=0x%02x\n",
--		       pb->base, config, configb);
--		pr_debug("0x%lx: ECP settings irq=", pb->base);
-+		       pb->iobase, config, configb);
-+		pr_debug("0x%lx: ECP settings irq=", pb->iobase);
- 		if ((configb >> 3) & 0x07)
- 			pr_cont("%d", intrline[(configb >> 3) & 0x07]);
- 		else
-@@ -2085,7 +2085,7 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
+ 	memcpy(ops, &parport_pc_ops, sizeof(struct parport_operations));
+ 	priv->ctr = 0xc;
+@@ -2085,18 +2087,18 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
  	priv->port = p;
  
  	p->dev = dev;
--	p->base_hi = base_hi;
-+	p->iobase_hi = base_hi;
+-	p->iobase_hi = base_hi;
++	p->iobase_hi = data.iobase_hi;
  	p->modes = PARPORT_MODE_PCSPP | PARPORT_MODE_SAFEININT;
  	p->private_data = priv;
  
-@@ -2111,9 +2111,9 @@ static struct parport *__parport_pc_probe_port(unsigned long int base,
+-	if (base_hi) {
+-		ECR_res = request_region(base_hi, 3, p->name);
++	if (p->iobase_hi) {
++		ECR_res = request_region(data.iobase_hi, 3, p->name);
+ 		if (ECR_res)
+ 			parport_ECR_present(p);
+ 	}
  
- 	p->size = (p->modes & PARPORT_MODE_EPP) ? 8 : 3;
+-	if (base != 0x3bc) {
+-		EPP_res = request_region(base+0x3, 5, p->name);
++	if (p->iobase != 0x3bc) {
++		EPP_res = request_region(data.iobase + 0x3, 5, p->name);
+ 		if (EPP_res)
+ 			if (!parport_EPP_supported(p))
+ 				parport_ECPEPP_supported(p);
+@@ -2191,13 +2193,16 @@ do {									\
+ 		pr_info("%s: irq %d detected\n", p->name, probedirq);
  
--	pr_info("%s: PC-style at 0x%lx", p->name, p->base);
--	if (p->base_hi && priv->ecr)
--		pr_cont(" (0x%lx)", p->base_hi);
-+	pr_info("%s: PC-style at 0x%lx", p->name, p->iobase);
-+	if (p->iobase_hi && priv->ecr)
-+		pr_cont(" (0x%lx)", p->iobase_hi);
- 	if (p->irq == PARPORT_IRQ_AUTO) {
- 		p->irq = PARPORT_IRQ_NONE;
- 		parport_irq_probe(p);
-@@ -2299,11 +2299,11 @@ void parport_pc_unregister_port(struct parport *p)
- #endif
- 	if (p->irq != PARPORT_IRQ_NONE)
- 		free_irq(p->irq, p);
--	release_region(p->base, 3);
-+	release_region(p->iobase, 3);
- 	if (p->size > 3)
--		release_region(p->base + 3, p->size - 3);
-+		release_region(p->iobase + 3, p->size - 3);
- 	if (p->modes & PARPORT_MODE_ECP)
--		release_region(p->base_hi, 3);
+ 	/* If No ECP release the ports grabbed above. */
+-	if (ECR_res && (p->modes & PARPORT_MODE_ECP) == 0) {
+-		release_region(base_hi, 3);
+-		ECR_res = NULL;
++	if ((p->modes & PARPORT_MODE_ECP) == 0) {
++		if (p->iobase_hi && ECR_res) {
++			release_region(p->iobase_hi, 3);
++			ECR_res = NULL;
++		}
+ 	}
++
+ 	/* Likewise for EEP ports */
+-	if (EPP_res && (p->modes & PARPORT_MODE_EPP) == 0) {
+-		release_region(base+3, 5);
++	if (p->iobase && EPP_res && (p->modes & PARPORT_MODE_EPP) == 0) {
++		release_region(p->iobase + 3, 5);
+ 		EPP_res = NULL;
+ 	}
+ 	if (p->irq != PARPORT_IRQ_NONE) {
+@@ -2257,10 +2262,10 @@ do {									\
+ 
+ out5:
+ 	if (ECR_res)
+-		release_region(base_hi, 3);
 +		release_region(p->iobase_hi, 3);
- #if defined(CONFIG_PARPORT_PC_FIFO) && defined(HAS_DMA)
- 	if (priv->dma_buf)
- 		dma_free_coherent(p->physport->dev, PAGE_SIZE,
-diff --git a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
-index 949236a7a27c..c7a56a0b04a0 100644
---- a/drivers/parport/parport_sunbpp.c
-+++ b/drivers/parport/parport_sunbpp.c
-@@ -50,7 +50,7 @@
- 
- static void parport_sunbpp_disable_irq(struct parport *p)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	u32 tmp;
- 
- 	tmp = sbus_readl(&regs->p_csr);
-@@ -60,7 +60,7 @@ static void parport_sunbpp_disable_irq(struct parport *p)
- 
- static void parport_sunbpp_enable_irq(struct parport *p)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	u32 tmp;
- 
- 	tmp = sbus_readl(&regs->p_csr);
-@@ -70,7 +70,7 @@ static void parport_sunbpp_enable_irq(struct parport *p)
- 
- static void parport_sunbpp_write_data(struct parport *p, unsigned char d)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 
- 	sbus_writeb(d, &regs->p_dr);
- 	dprintk((KERN_DEBUG "wrote 0x%x\n", d));
-@@ -78,14 +78,14 @@ static void parport_sunbpp_write_data(struct parport *p, unsigned char d)
- 
- static unsigned char parport_sunbpp_read_data(struct parport *p)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 
- 	return sbus_readb(&regs->p_dr);
+ 	if (EPP_res)
+-		release_region(base+0x3, 5);
+-	release_region(base, 3);
++		release_region(p->iobase + 0x3, 5);
++	release_region(p->iobase, 3);
+ out4:
+ 	parport_del_port(p);
+ out3:
+@@ -2273,14 +2278,24 @@ do {									\
+ 	return NULL;
  }
  
- static unsigned char status_sunbpp_to_pc(struct parport *p)
+-struct parport *parport_pc_probe_port(unsigned long int base,
+-				      unsigned long int base_hi,
+-				      int irq, int dma,
++void parport_data_ioport_init(struct parport_data *tmp_pdata,
++			      unsigned long iobase,
++			      unsigned long iobase_hi,
++			      int irq, int dma)
++{
++	memset(tmp_pdata, 0, sizeof(struct parport_data));
++	tmp_pdata->iobase = iobase;
++	tmp_pdata->iobase_hi = iobase_hi;
++	tmp_pdata->irq = irq;
++	tmp_pdata->dma = dma;
++}
++EXPORT_SYMBOL(parport_data_ioport_init);
++
++struct parport *parport_pc_probe_port(struct parport_data data,
+ 				      struct device *dev,
+ 				      int irqflags)
  {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	unsigned char bits = 0;
- 	unsigned char value_tcr = sbus_readb(&regs->p_tcr);
- 	unsigned char value_ir = sbus_readb(&regs->p_ir);
-@@ -108,7 +108,7 @@ static unsigned char status_sunbpp_to_pc(struct parport *p)
+-	return __parport_pc_probe_port(base, base_hi, irq, dma,
+-				       dev, irqflags, 0, 0);
++	return __parport_pc_probe_port(data, dev, irqflags, 0, 0);
+ }
+ EXPORT_SYMBOL(parport_pc_probe_port);
  
- static unsigned char control_sunbpp_to_pc(struct parport *p)
+@@ -2325,6 +2340,7 @@ static int sio_ite_8872_probe(struct pci_dev *pdev, int autoirq, int autodma,
+ 	short inta_addr[6] = { 0x2A0, 0x2C0, 0x220, 0x240, 0x1E0 };
+ 	u32 ite8872set;
+ 	u32 ite8872_lpt, ite8872_lpthi;
++	struct parport_data tmp_pdata;
+ 	u8 ite8872_irq, type;
+ 	int irq;
+ 	int i;
+@@ -2407,8 +2423,9 @@ static int sio_ite_8872_probe(struct pci_dev *pdev, int autoirq, int autodma,
+ 	 * Release the resource so that parport_pc_probe_port can get it.
+ 	 */
+ 	release_region(inta_addr[i], 32);
+-	if (parport_pc_probe_port(ite8872_lpt, ite8872_lpthi,
+-				   irq, PARPORT_DMA_NONE, &pdev->dev, 0)) {
++	parport_data_ioport_init(&tmp_pdata, ite8872_lpt, ite8872_lpthi, irq,
++				PARPORT_DMA_NONE);
++	if (parport_pc_probe_port(tmp_pdata, &pdev->dev, 0)) {
+ 		pr_info("parport_pc: ITE 8872 parallel port: io=0x%X",
+ 			ite8872_lpt);
+ 		if (irq != PARPORT_IRQ_NONE)
+@@ -2447,6 +2464,7 @@ static struct parport_pc_via_data via_8231_data = {
+ static int sio_via_probe(struct pci_dev *pdev, int autoirq, int autodma,
+ 			 const struct parport_pc_via_data *via)
  {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	unsigned char bits = 0;
- 	unsigned char value_tcr = sbus_readb(&regs->p_tcr);
- 	unsigned char value_or = sbus_readb(&regs->p_or);
-@@ -136,7 +136,7 @@ static unsigned char parport_sunbpp_frob_control(struct parport *p,
- 						 unsigned char mask,
- 						 unsigned char val)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	unsigned char value_tcr = sbus_readb(&regs->p_tcr);
- 	unsigned char value_or = sbus_readb(&regs->p_or);
- 
-@@ -195,7 +195,7 @@ static unsigned char parport_sunbpp_read_status(struct parport *p)
- 
- static void parport_sunbpp_data_forward (struct parport *p)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	unsigned char value_tcr = sbus_readb(&regs->p_tcr);
- 
- 	dprintk((KERN_DEBUG "forward\n"));
-@@ -205,7 +205,7 @@ static void parport_sunbpp_data_forward (struct parport *p)
- 
- static void parport_sunbpp_data_reverse (struct parport *p)
- {
--	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->base;
-+	struct bpp_regs __iomem *regs = (struct bpp_regs __iomem *)p->iobase;
- 	u8 val = sbus_readb(&regs->p_tcr);
- 
- 	dprintk((KERN_DEBUG "reverse\n"));
-@@ -308,13 +308,13 @@ static int bpp_probe(struct platform_device *op)
- 
- 	parport_sunbpp_enable_irq(p);
- 
--	regs = (struct bpp_regs __iomem *)p->base;
-+	regs = (struct bpp_regs __iomem *)p->iobase;
- 
- 	value_tcr = sbus_readb(&regs->p_tcr);
- 	value_tcr &= ~P_TCR_DIR;
- 	sbus_writeb(value_tcr, &regs->p_tcr);
- 
--	pr_info("%s: sunbpp at 0x%lx\n", p->name, p->base);
-+	pr_info("%s: sunbpp at 0x%lx\n", p->name, p->iobase);
- 
- 	dev_set_drvdata(&op->dev, p);
- 
-@@ -346,7 +346,7 @@ static void bpp_remove(struct platform_device *op)
- 		free_irq(p->irq, p);
++	struct parport_data tmp_pdata;
+ 	u8 tmp, tmp2, siofunc;
+ 	u8 ppcontrol = 0;
+ 	int dma, irq;
+@@ -2587,7 +2605,8 @@ static int sio_via_probe(struct pci_dev *pdev, int autoirq, int autodma,
  	}
  
--	of_iounmap(&op->resource[0], (void __iomem *) p->base, p->size);
-+	of_iounmap(&op->resource[0], (void __iomem *) p->iobase, p->size);
- 	parport_put_port(p);
- 	kfree(ops);
+ 	/* finally, do the probe with values obtained */
+-	if (parport_pc_probe_port(port1, port2, irq, dma, &pdev->dev, 0)) {
++	parport_data_ioport_init(&tmp_pdata, port1, port2, irq, dma);
++	if (parport_pc_probe_port(tmp_pdata, &pdev->dev, 0)) {
+ 		pr_info("parport_pc: VIA parallel port: io=0x%X", port1);
+ 		if (irq != PARPORT_IRQ_NONE)
+ 			pr_cont(", irq=%d", irq);
+@@ -2868,6 +2887,7 @@ static int parport_pc_pci_probe(struct pci_dev *dev,
+ {
+ 	int err, count, n, i = id->driver_data;
+ 	struct pci_parport_data *data;
++	struct parport_data tmp_pdata;
  
-diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
-index 3f809fff317b..5505aba51c3c 100644
---- a/drivers/parport/procfs.c
-+++ b/drivers/parport/procfs.c
-@@ -128,7 +128,7 @@ static int do_hardware_base_addr(const struct ctl_table *table, int write,
- 	if (write) /* permissions prevent this anyway */
- 		return -EACCES;
- 
--	len += scnprintf(buffer, sizeof(buffer), "%lu\t%lu\n", port->base, port->base_hi);
-+	len += scnprintf(buffer, sizeof(buffer), "%lu\t%lu\n", port->iobase, port->iobase_hi);
- 
- 	if (len > *lenp)
- 		len = *lenp;
-diff --git a/drivers/parport/share.c b/drivers/parport/share.c
-index 427abdf3c4c4..0d44d7a9c88f 100644
---- a/drivers/parport/share.c
-+++ b/drivers/parport/share.c
-@@ -7,8 +7,6 @@
-  *          Philip Blundell <philb@gnu.org>
-  *	    Andrea Arcangeli
-  *
-- * based on work by Grant Guenther <grant@torque.net>
-- *          and Philip Blundell
-  *
-  * Any part of this program may be used in documents licensed under
-  * the GNU Free Documentation License, Version 1.1 or any later version
-@@ -435,7 +433,7 @@ struct parport *parport_register_port(unsigned long base, int irq, int dma,
- 		return NULL;
- 
- 	/* Init our structure */
--	tmp->base = base;
-+	tmp->iobase = base;
- 	tmp->irq = irq;
- 	tmp->dma = dma;
- 	tmp->muxport = tmp->daisy = tmp->muxsel = -1;
-@@ -931,7 +929,7 @@ struct parport *parport_find_base(unsigned long base)
- 
- 	spin_lock(&parportlist_lock);
- 	list_for_each_entry(port, &portlist, list) {
--		if (port->base == base) {
-+		if (port->iobase == base) {
- 			result = parport_get_port(port);
- 			break;
+ 	if (i < last_sio)
+ 		/* This is an onboard Super-IO and has already been probed */
+@@ -2913,9 +2933,10 @@ static int parport_pc_pci_probe(struct pci_dev *dev,
+ 			printk(KERN_DEBUG "PCI parallel port detected: %04x:%04x, I/O at %#lx(%#lx), IRQ %d\n",
+ 			       id->vendor, id->device, io_lo, io_hi, irq);
  		}
-diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-index 1d4c7310f1a6..e1f4c4916e18 100644
---- a/drivers/scsi/imm.c
-+++ b/drivers/scsi/imm.c
-@@ -69,7 +69,7 @@ static DEFINE_SPINLOCK(arbitration_lock);
- 
- static void got_it(imm_struct *dev)
++		parport_data_ioport_init(&tmp_pdata, io_lo, io_hi,
++					irq, PARPORT_DMA_NONE);
+ 		data->ports[count] =
+-			__parport_pc_probe_port(io_lo, io_hi, irq,
+-						PARPORT_DMA_NONE, &dev->dev,
++			__parport_pc_probe_port(tmp_pdata, &dev->dev,
+ 						IRQF_SHARED,
+ 						cards[i].mode_mask,
+ 						cards[i].ecr_writable);
+@@ -3002,35 +3023,35 @@ static int parport_pc_pnp_probe(struct pnp_dev *dev,
+ 						const struct pnp_device_id *id)
  {
--	dev->base = dev->dev->port->base;
-+	dev->base = dev->dev->port->iobase;
- 	if (dev->cur_cmd)
- 		imm_scsi_pointer(dev->cur_cmd)->phase = 1;
- 	else
-@@ -1199,8 +1199,8 @@ static int __imm_attach(struct parport *pb)
- 	}
- 	dev->waiting = NULL;
- 	finish_wait(&waiting, &wait);
--	dev->base = dev->dev->port->base;
--	dev->base_hi = dev->dev->port->base_hi;
-+	dev->base = dev->dev->port->iobase;
-+	dev->base_hi = dev->dev->port->iobase_hi;
- 	w_ctr(dev->base, 0x0c);
+ 	struct parport *pdata;
+-	unsigned long io_lo, io_hi;
+-	int dma, irq;
++	struct parport_data tmp_pdata;
  
- 	/* Done configuration */
-@@ -1225,7 +1225,7 @@ static int __imm_attach(struct parport *pb)
- 	if (!host)
- 		goto out1;
- 	host->no_highmem = true;
--	host->io_port = pb->base;
-+	host->io_port = pb->iobase;
- 	host->n_io_port = ports;
- 	host->dma_channel = -1;
- 	host->unique_id = pb->number;
-diff --git a/drivers/scsi/ppa.c b/drivers/scsi/ppa.c
-index a06329b47851..6ce4fe9fc5d0 100644
---- a/drivers/scsi/ppa.c
-+++ b/drivers/scsi/ppa.c
-@@ -64,7 +64,7 @@ static DEFINE_SPINLOCK(arbitration_lock);
++	memset(&tmp_pdata, 0, sizeof(struct parport_data));
+ 	if (pnp_port_valid(dev, 0) &&
+ 		!(pnp_port_flags(dev, 0) & IORESOURCE_DISABLED)) {
+-		io_lo = pnp_port_start(dev, 0);
++		tmp_pdata.iobase = pnp_port_start(dev, 0);
+ 	} else
+ 		return -EINVAL;
  
- static void got_it(ppa_struct *dev)
+ 	if (pnp_port_valid(dev, 1) &&
+ 		!(pnp_port_flags(dev, 1) & IORESOURCE_DISABLED)) {
+-		io_hi = pnp_port_start(dev, 1);
++		tmp_pdata.iobase_hi = pnp_port_start(dev, 1);
+ 	} else
+-		io_hi = 0;
++		tmp_pdata.iobase_hi = 0;
+ 
+ 	if (pnp_irq_valid(dev, 0) &&
+ 		!(pnp_irq_flags(dev, 0) & IORESOURCE_DISABLED)) {
+-		irq = pnp_irq(dev, 0);
++		tmp_pdata.irq = pnp_irq(dev, 0);
+ 	} else
+-		irq = PARPORT_IRQ_NONE;
++		tmp_pdata.irq = PARPORT_IRQ_NONE;
+ 
+ 	if (pnp_dma_valid(dev, 0) &&
+ 		!(pnp_dma_flags(dev, 0) & IORESOURCE_DISABLED)) {
+-		dma = pnp_dma(dev, 0);
++		tmp_pdata.dma = pnp_dma(dev, 0);
+ 	} else
+-		dma = PARPORT_DMA_NONE;
++		tmp_pdata.dma = PARPORT_DMA_NONE;
+ 
+ 	dev_info(&dev->dev, "reported by %s\n", dev->protocol->name);
+-	pdata = parport_pc_probe_port(io_lo, io_hi, irq, dma, &dev->dev, 0);
++	pdata = parport_pc_probe_port(tmp_pdata, &dev->dev, 0);
+ 	if (pdata == NULL)
+ 		return -ENODEV;
+ 
+@@ -3077,13 +3098,17 @@ static struct platform_driver parport_pc_platform_driver = {
+ static int __attribute__((unused))
+ parport_pc_find_isa_ports(int autoirq, int autodma)
  {
--	dev->base = dev->dev->port->base;
-+	dev->base = dev->dev->port->iobase;
- 	if (dev->cur_cmd)
- 		ppa_scsi_pointer(dev->cur_cmd)->phase = 1;
- 	else
-@@ -232,7 +232,7 @@ static inline void epp_reset(unsigned short ppb)
-  */
- static inline void ecp_sync(ppa_struct *dev)
++	struct parport_data tmp_pdata;
+ 	int count = 0;
+ 
+-	if (parport_pc_probe_port(0x3bc, 0x7bc, autoirq, autodma, NULL, 0))
++	parport_data_ioport_init(&tmp_pdata, 0x3bc, 0x7bc, autoirq, autodma);
++	if (parport_pc_probe_port(tmp_pdata, NULL, 0))
+ 		count++;
+-	if (parport_pc_probe_port(0x378, 0x778, autoirq, autodma, NULL, 0))
++	parport_data_ioport_init(&tmp_pdata, 0x378, 0x778, autoirq, autodma);
++	if (parport_pc_probe_port(tmp_pdata, NULL, 0))
+ 		count++;
+-	if (parport_pc_probe_port(0x278, 0x678, autoirq, autodma, NULL, 0))
++	parport_data_ioport_init(&tmp_pdata, 0x278, 0x678, autoirq, autodma);
++	if (parport_pc_probe_port(tmp_pdata, NULL, 0))
+ 		count++;
+ 
+ 	return count;
+@@ -3352,6 +3377,7 @@ __setup("parport_init_mode=", parport_init_mode_setup);
+ 
+ static int __init parport_pc_init(void)
  {
--	int i, ppb_hi = dev->dev->port->base_hi;
-+	int i, ppb_hi = dev->dev->port->iobase_hi;
++	struct parport_data tmp_pdata;
+ 	int err;
  
- 	if (ppb_hi == 0)
- 		return;
-@@ -472,7 +472,7 @@ static int ppa_init(ppa_struct *dev)
+ 	if (parse_parport_params())
+@@ -3370,8 +3396,9 @@ static int __init parport_pc_init(void)
+ 				break;
+ 			if (io_hi[i] == PARPORT_IOHI_AUTO)
+ 				io_hi[i] = 0x400 + io[i];
+-			parport_pc_probe_port(io[i], io_hi[i],
+-					irqval[i], dmaval[i], NULL, 0);
++			parport_data_ioport_init(&tmp_pdata, io[i], io_hi[i],
++						irqval[i], dmaval[i]);
++			parport_pc_probe_port(tmp_pdata, NULL, 0);
+ 		}
+ 	} else
+ 		parport_pc_find_ports(irqval[0], dmaval[0]);
+diff --git a/drivers/parport/parport_serial.c b/drivers/parport/parport_serial.c
+index 3644997a8342..cc6ee3f0ab3e 100644
+--- a/drivers/parport/parport_serial.c
++++ b/drivers/parport/parport_serial.c
+@@ -648,6 +648,7 @@ static int parport_register(struct pci_dev *dev, const struct pci_device_id *id)
+ 		return -ENODEV;
  
- 	if (autodetect) {
- 		int modes = dev->dev->port->modes;
--		int ppb_hi = dev->dev->port->base_hi;
-+		int ppb_hi = dev->dev->port->iobase_hi;
- 
- 		/* Mode detection works up the chain of speed
- 		 * This avoids a nasty if-then-else-if-... tree
-@@ -1081,7 +1081,7 @@ static int __ppa_attach(struct parport *pb)
- 	}
- 	dev->waiting = NULL;
- 	finish_wait(&waiting, &wait);
--	dev->base = dev->dev->port->base;
-+	dev->base = dev->dev->port->iobase;
- 	w_ctr(dev->base, 0x0c);
- 
- 	/* Done configuration */
-@@ -1105,7 +1105,7 @@ static int __ppa_attach(struct parport *pb)
- 	if (!host)
- 		goto out1;
- 	host->no_highmem = true;
--	host->io_port = pb->base;
-+	host->io_port = pb->iobase;
- 	host->n_io_port = ports;
- 	host->dma_channel = -1;
- 	host->unique_id = pb->number;
+ 	for (n = 0; n < card->numports; n++) {
++		struct parport_data tmp_pdata;
+ 		struct parport *port;
+ 		int lo = card->addr[n].lo;
+ 		int hi = card->addr[n].hi;
+@@ -684,8 +685,10 @@ static int parport_register(struct pci_dev *dev, const struct pci_device_id *id)
+ 				"PCI parallel port detected: I/O at %#lx(%#lx), IRQ %d\n",
+ 				io_lo, io_hi, irq);
+ 		}
+-		port = parport_pc_probe_port (io_lo, io_hi, irq,
+-			      PARPORT_DMA_NONE, &dev->dev, IRQF_SHARED);
++		parport_data_ioport_init(&tmp_pdata, io_lo, io_hi,
++					irq, PARPORT_DMA_NONE);
++		port = parport_pc_probe_port(tmp_pdata, &dev->dev,
++						IRQF_SHARED);
+ 		if (port) {
+ 			priv->port[priv->num_par++] = port;
+ 			success = 1;
 diff --git a/include/linux/parport.h b/include/linux/parport.h
-index 464c2ad28039..4e39c400d002 100644
+index 4e39c400d002..308eadce42dd 100644
 --- a/include/linux/parport.h
 +++ b/include/linux/parport.h
-@@ -182,8 +182,8 @@ struct ieee1284_info {
+@@ -180,6 +180,14 @@ struct ieee1284_info {
+ 	struct semaphore irq;
+ };
  
++struct parport_data {
++	/* for ioport */
++	unsigned long iobase;   /* base address for ioport */
++	unsigned long iobase_hi;        /* base address (hi - ECR) */
++	int irq;
++	int dma;
++};
++
  /* A parallel port */
  struct parport {
--	unsigned long base;	/* base address */
--	unsigned long base_hi;  /* base address (hi - ECR) */
-+	unsigned long iobase;	/* base address for ioport */
-+	unsigned long iobase_hi;  /* base address (hi - ECR) */
- 	unsigned int size;	/* IO extent */
- 	const char *name;
- 	unsigned int modes;
+ 	unsigned long iobase;	/* base address for ioport */
 diff --git a/include/linux/parport_pc.h b/include/linux/parport_pc.h
-index f1ec5c10c3b3..4d92c831d06a 100644
+index 4d92c831d06a..d6c3f323caa1 100644
 --- a/include/linux/parport_pc.h
 +++ b/include/linux/parport_pc.h
-@@ -6,15 +6,15 @@
+@@ -230,11 +230,13 @@ static __inline__ void parport_pc_enable_irq(struct parport *p)
+ extern void parport_pc_release_resources(struct parport *p);
  
- /* --- register definitions ------------------------------- */
+ extern int parport_pc_claim_resources(struct parport *p);
++extern void parport_data_ioport_init(struct parport_data *tmp_pdata,
++				     unsigned long iobase,
++				     unsigned long iobase_hi,
++				     int irq, int dma);
  
--#define ECONTROL(p) ((p)->base_hi + 0x2)
--#define CONFIGB(p)  ((p)->base_hi + 0x1)
--#define CONFIGA(p)  ((p)->base_hi + 0x0)
--#define FIFO(p)     ((p)->base_hi + 0x0)
--#define EPPDATA(p)  ((p)->base    + 0x4)
--#define EPPADDR(p)  ((p)->base    + 0x3)
--#define CONTROL(p)  ((p)->base    + 0x2)
--#define STATUS(p)   ((p)->base    + 0x1)
--#define DATA(p)     ((p)->base    + 0x0)
-+#define ECONTROL(p) ((p)->iobase_hi + 0x2)
-+#define CONFIGB(p)  ((p)->iobase_hi + 0x1)
-+#define CONFIGA(p)  ((p)->iobase_hi + 0x0)
-+#define FIFO(p)     ((p)->iobase_hi + 0x0)
-+#define EPPDATA(p)  ((p)->iobase    + 0x4)
-+#define EPPADDR(p)  ((p)->iobase    + 0x3)
-+#define CONTROL(p)  ((p)->iobase    + 0x2)
-+#define STATUS(p)   ((p)->iobase    + 0x1)
-+#define DATA(p)     ((p)->iobase    + 0x0)
- 
- struct parport_pc_private {
- 	/* Contents of CTR. */
-diff --git a/sound/drivers/mts64.c b/sound/drivers/mts64.c
-index 6fc255a6754d..fc6033b7118b 100644
---- a/sound/drivers/mts64.c
-+++ b/sound/drivers/mts64.c
-@@ -932,7 +932,7 @@ static int snd_mts64_probe(struct platform_device *pdev)
- 	strcpy(card->driver, DRIVER_NAME);
- 	strcpy(card->shortname, "ESI " CARD_NAME);
- 	sprintf(card->longname,  "%s at 0x%lx, irq %i", 
--		card->shortname, p->base, p->irq);
-+		card->shortname, p->iobase, p->irq);
- 
- 	mts64_cb.private = card;			 /* private */
- 	pardev = parport_register_dev_model(p,		 /* port */
-@@ -947,7 +947,7 @@ static int snd_mts64_probe(struct platform_device *pdev)
- 
- 	/* claim parport */
- 	if (parport_claim(pardev)) {
--		dev_dbg(card->dev, "Cannot claim parport 0x%lx\n", pardev->port->base);
-+		dev_dbg(card->dev, "Cannot claim parport 0x%lx\n", pardev->port->iobase);
- 		err = -EIO;
- 		goto free_pardev;
- 	}
-@@ -986,7 +986,7 @@ static int snd_mts64_probe(struct platform_device *pdev)
- 		goto __err;
- 	}
- 
--	dev_info(card->dev, "ESI Miditerminal 4140 on 0x%lx\n", p->base);
-+	dev_info(card->dev, "ESI Miditerminal 4140 on 0x%lx\n", p->iobase);
- 	return 0;
- 
- release_pardev:
-diff --git a/sound/drivers/portman2x4.c b/sound/drivers/portman2x4.c
-index 54d818d2f53d..1e833feb7907 100644
---- a/sound/drivers/portman2x4.c
-+++ b/sound/drivers/portman2x4.c
-@@ -717,7 +717,7 @@ static int snd_portman_probe(struct platform_device *pdev)
- 	strcpy(card->driver, DRIVER_NAME);
- 	strcpy(card->shortname, CARD_NAME);
- 	sprintf(card->longname,  "%s at 0x%lx, irq %i", 
--		card->shortname, p->base, p->irq);
-+		card->shortname, p->iobase, p->irq);
- 
- 	portman_cb.private = card;			   /* private */
- 	pardev = parport_register_dev_model(p,		   /* port */
-@@ -732,7 +732,7 @@ static int snd_portman_probe(struct platform_device *pdev)
- 
- 	/* claim parport */
- 	if (parport_claim(pardev)) {
--		dev_dbg(card->dev, "Cannot claim parport 0x%lx\n", pardev->port->base);
-+		dev_dbg(card->dev, "Cannot claim parport 0x%lx\n", pardev->port->iobase);
- 		err = -EIO;
- 		goto free_pardev;
- 	}
-@@ -771,7 +771,7 @@ static int snd_portman_probe(struct platform_device *pdev)
- 		goto __err;
- 	}
- 
--	dev_info(card->dev, "Portman 2x4 on 0x%lx\n", p->base);
-+	dev_info(card->dev, "Portman 2x4 on 0x%lx\n", p->iobase);
- 	return 0;
- 
- release_pardev:
+ /* PCMCIA code will want to get us to look at a port.  Provide a mechanism. */
+-extern struct parport *parport_pc_probe_port(unsigned long base,
+-					     unsigned long base_hi,
+-					     int irq, int dma,
++extern struct parport *parport_pc_probe_port(struct parport_data data,
+ 					     struct device *dev,
+ 					     int irqflags);
+ extern void parport_pc_unregister_port(struct parport *p);
 -- 
 2.25.1
 
