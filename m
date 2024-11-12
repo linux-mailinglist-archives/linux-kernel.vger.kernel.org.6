@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-405500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23F69C522A
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:35:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8AA9C526D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A6B1F23946
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:35:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A63284077
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF12120EA29;
-	Tue, 12 Nov 2024 09:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCA720E03E;
+	Tue, 12 Nov 2024 09:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTbm41fY"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Edqr9xHV"
+Received: from mail-m1045.netease.com (mail-m1045.netease.com [154.81.10.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9074620E015;
-	Tue, 12 Nov 2024 09:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00A520CCE9;
+	Tue, 12 Nov 2024 09:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731404122; cv=none; b=WPvQm+q8qwRI8eozvz7HgMS/C/aS0s9qqFloCdumSwgYQ5n5gOUuKNs6KLeO2aSa6W5vON2JrQ+0ZJwPgtVsEIfcKRVCBx5m1CmKLtBMxktRluy8SgnQReeT2YjuL89PRi1cUeOEdh7G1a59J75uHHNWn4B4t3ReyekDPtAddQA=
+	t=1731405048; cv=none; b=r3hwizIOplNB393z3o5AwOHFmq+Xxomi8wXE6rfW8ABviFnvtLtsPvJwPxyhvvyj9q7rhqwrpNXwOhKiIprQnjtqB/qj0k2HLTbWs16msQr+DO+XrphYJoPnKjOyc9htgoEVKYOy1zpuXlRdWZ3RzQn5UNurfR6GLSr2gycsSaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731404122; c=relaxed/simple;
-	bh=Ulfos9jKmMp9FRRzcWaNP9pRqcDXWjbtCIFpVe+BjzM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=hyw1hNQnYceJ5ZkdA5ot1EKTUcTDUeb92P9ihiFv+5nyuNReb+FCN0AtoA2G68hjShiaZA9zeGgNzW5lifGA/04pdnBSarI4Dyw6Cyvaf6nwNcw/7XuNQ1o7Q3QIoMX4XhqXx+gbVkAwTsBSpRxtq5wWE0vxn1i4G+NMYOm5qrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZTbm41fY; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f1292a9bso6639130e87.2;
-        Tue, 12 Nov 2024 01:35:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731404118; x=1732008918; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2dA/CSJ1mXRX1iIfc9wkyf+fvE+0vTa/19Nc9jWmsE=;
-        b=ZTbm41fY3Pmam8B76DmvYzU3cM+OWaoDi3t8FpZEzqCjUkJwtQuU/iFB7Z0RKQMJSR
-         RzfWGBVXmHYvt/jqXtU1ZdASeFztqDIB5dBXUgDYznGiGX/BJ3ytyHTfKDvdFxyUdN6i
-         gq2aL9gOxUmzK9d5LAzUEa/mVrOiJveLjgaS2u/Ahs4fQb2l2LQ5a8Pxe1VgS4y2B4Xg
-         v6/nFfBud0UvsVjX7MNiHtqu4Z1rIHq/TC7fbTl/RLNctwEzQhlCB4zrwoBKC7EFM+dc
-         BkCnfxawOgR4fb5VL7mfYbrTc/GK2/Gj1X9X8n+yGiVPZmoAIYd2/fqA4RvDbVxcKegd
-         ogCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731404118; x=1732008918;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/2dA/CSJ1mXRX1iIfc9wkyf+fvE+0vTa/19Nc9jWmsE=;
-        b=dgsF0ofNAAyAV6u/W5dq3Z+KedpKo7EfyHAn0zT80PU+w8nlv9GWTww2/7NrMiibO9
-         qKq0DAKmNe1VWb5kpwKxXQymQ1tCxUOg3i7ZlevXlX2/NWoIeLE6hAnN3rF/JTNBE/eK
-         0ySUP3nevtcnQBU4ySP14zICWA7bUFlh7sB/jI+qdGtzVlDkO1bmdmDMvtTH+opKJ36O
-         KBH4CyCTXrVBUDaFyZOUR/PF7IbVUbM4QaAku0+fKCIMoLL0Si03yWuDAD9N5Ru95/Hv
-         LOTzIDO+BpwiPStsw1Y4eVvyJ22zhZScnJx01vqmlkpVzpzDqhfdYgnXVode/LoRuAWL
-         huDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nmffQ0hnN3RiZrTYEbi7UgeLJwllrf7Mx732oCYMul3zfwWA8+1wfHc7C8d/KsDLol534FpoRAAOpUo=@vger.kernel.org, AJvYcCWy7w9OP5oXfbKu/7lWHKTudiLEKj7k/tfnwouhPF6mqW+9oK3R1Vwqqlxi/Gozq/LxMFBDQ9p/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXCGBsh1jtVwIkp53DpBe3kp9JB1Lv/kRMhMjlKWtx2knsz4TM
-	gUSuAXpQ3YsL0FQ14eZhn9sO6uDFf74jUgyW+bOGf4l0FIoZgw41vLKbug==
-X-Google-Smtp-Source: AGHT+IFIhvdsWxGDaHpDPZFOhDaxNLymcA5oHrHaD/i0n7/b4Fl+3DYEGfak+N0uLU404q5aq+Dp0Q==
-X-Received: by 2002:a05:6512:2389:b0:539:ebb6:7b36 with SMTP id 2adb3069b0e04-53d862c587dmr7358493e87.25.1731404117991;
-        Tue, 12 Nov 2024 01:35:17 -0800 (PST)
-Received: from imac ([2a02:8010:60a0:0:a1ef:92f5:9114:b131])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432b05c18e0sm206352035e9.28.2024.11.12.01.35.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 01:35:17 -0800 (PST)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: kuba@kernel.org,  pabeni@redhat.com,  davem@davemloft.net,
-  edumazet@google.com,  horms@kernel.org,  netdev@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] tools: ynl: add script dir to sys.path
-In-Reply-To: <b26537cdb6e1b24435b50b2ef81d71f31c630bc1.1731399562.git.jstancek@redhat.com>
-	(Jan Stancek's message of "Tue, 12 Nov 2024 09:21:32 +0100")
-Date: Tue, 12 Nov 2024 09:34:54 +0000
-Message-ID: <m2serwu75t.fsf@gmail.com>
-References: <cover.1731399562.git.jstancek@redhat.com>
-	<b26537cdb6e1b24435b50b2ef81d71f31c630bc1.1731399562.git.jstancek@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1731405048; c=relaxed/simple;
+	bh=XHialZyZOzF+GsLmhXh8aADlthJnr1ug3hIWROfJHuY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=knSPmwQMYUPkkwWyJxAEPXWMr9VYIx7Tmrk0UpyF7ZIf7DzuUeSW1Xvb7zEYG+Qj5sEWI5zNEdc6L79s0TM95RFeW8WVapBSN5SWeEYw9FcKrleNY9XBrydLn4+1CqfZvVEd7/sG+HQQ8qMkB+/74laoCCsmyoHUh6AcZhKq+HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Edqr9xHV; arc=none smtp.client-ip=154.81.10.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 275d3f0f;
+	Tue, 12 Nov 2024 09:54:11 +0800 (GMT+08:00)
+From: Ye Zhang <ye.zhang@rock-chips.com>
+To: Ye Zhang <ye.zhang@rock-chips.com>,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	heiko@sntech.de,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	mika.westerberg@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	tao.huang@rock-chips.com,
+	finley.xiao@rock-chips.com,
+	tim.chen@rock-chips.com,
+	elaine.zhang@rock-chips.com
+Subject: [PATCH v5 0/4] gpio: rockchip: Update the GPIO driver
+Date: Tue, 12 Nov 2024 09:54:04 +0800
+Message-Id: <20241112015408.3139996-1-ye.zhang@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkoYS1ZCTU5MTR4fQkJKTB1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a931e14101309d8kunm275d3f0f
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSI6GDo*ATIuAho1PzQ4SSJI
+	FDUaCz1VSlVKTEhKSExNT05IS05MVTMWGhIXVQIeVQETGhUcOwkUGBBWGBMSCwhVGBQWRVlXWRIL
+	WUFZTkNVSUlVTFVKSk9ZV1kIAVlBSkhOQjcG
+DKIM-Signature:a=rsa-sha256;
+	b=Edqr9xHVK5HY+RYR2Qhw5SKDHWdFh7d+vTKB1XYxCAtdo3oeM9ecLpupl6n6F1dt7Z4gQvdO3HMvS4uMJmJ9jzt0VqXORY8GIAJgmLweh84pPMbebd7r6iyMkqgyijxQw4dDHqY76dMaVUlLd7t+rxD53+RwB9thn3v5ssf8CyE=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=6AuQFO64sIU4rM/H0ID+uAjI797Zr2ZRce2AWgFdwng=;
+	h=date:mime-version:subject:message-id:from;
 
-Jan Stancek <jstancek@redhat.com> writes:
+GPIO driver support acpi and new version, set input direction in
+irq_request_resources, fix division error and debounce config error.
 
-> Python options like PYTHONSAFEPATH or -P [1] do not add script
-> directory to PYTHONPATH. ynl depends on this path to build and run.
->
-> [1] This option is default for Fedora rpmbuild since introduction of
->     https://fedoraproject.org/wiki/Changes/PythonSafePath
->
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> Acked-by: Jakub Kicinski <kuba@kernel.org>
+Changes since v1:
+- Split commits with multiple changes into separate commits.
+- Adjust backportable fix to the forefront.
+- Modify messages of some commits.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Changes since v2:
+- Optimize version number comments.
+- Modify the GPIO version judgment logic.
+- Use devm_clk_get_enabled to simplify the code.
+- Use guard instead of mutex_lock to simplify the code.
+- Use irq_hw_number_t and irqd_to_hwirq() in the request irq function.
+- Since list_first_entry cannot return NULL, remove the NULL check.
+- Temporarily do not add support for ACPI.
+
+Changes since v3:
+- Give up modifying the debounce config because it is not actually used.
+- Do not add support for retrieving clocks using 'clock-names'.
+
+Change since v4:
+- Leave the V2 case first and the V1 case last in version judgment.
+- Fix the error message in version judgment.
+
+Ye Zhang (4):
+  gpio: rockchip: explan the format of the GPIO version ID
+  gpio: rockchip: change the GPIO version judgment logic
+  gpio: rockchip: support new version GPIO
+  gpio: rockchip: Set input direction when request irq
+
+ drivers/gpio/gpio-rockchip.c | 29 +++++++++++++++++++++++------
+ 1 file changed, 23 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
 
