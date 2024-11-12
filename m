@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-406462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D7F9C5F5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:45:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99DE9C5F60
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD492829F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:45:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8C7282615
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 17:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5B4213EFD;
-	Tue, 12 Nov 2024 17:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CCE2141A4;
+	Tue, 12 Nov 2024 17:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fLW8F3Nt"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALyCMJsv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC02D2139A1
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 17:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1B61A4F21;
+	Tue, 12 Nov 2024 17:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731433529; cv=none; b=W1Y6Ch+gF71Rg5hgCnJAHjoT0uRehMIirQ4065/bxK6cufvgf42zhRO5raAk/O4A1LDJLN30aEf2KmL8WhhVt9s+dkC+y10YsqmLshJ2RR2ehLAYJXzHvb/iYday47VZD16FFUo03NzRrpMJIwAgQo0MU8YJGbMreCFPUMENzrA=
+	t=1731433564; cv=none; b=AorQLm+bwe/lgN3z2wzESEYIg6/euNhDJcUGMLX1R4U3lycMMvljZTGT8NX00nhWPSOVzn/PKL7DiBbLGE44yngwo2VZmiRXUm07KnH2LBf9Aj1pamblu2uEqWzduMjq3FyhY1zF+oTRkrBY0Yr3wwVQypYwbkdACxThx/tu9hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731433529; c=relaxed/simple;
-	bh=Yinkl93UP/31pxFUSB5Jq606xcPJ8D/z+uVQsMOQcyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SHufdTVVJoC4mkcxfbq/1q2IrXP6nPMRedFoVHb7HTsm5eq2m6ijq6PNpMPT20SAP7D6Awojh3lJCwfrLYWNThgoeaEPUY2Yq8wyM8BJZQvzM1zVnCEccrGbTFMzGEpLqljU9PtW+nnUMGBZomvpOOnspsOctDaj/NxztGzQKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fLW8F3Nt; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a6c1cfcb91so24921915ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 09:45:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1731433525; x=1732038325; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ECpNk3WVDKxbHxhK0N6QRh+9W6qmtXb+Bcm8kSS24fI=;
-        b=fLW8F3NtUDwUF7UCzWAkc21yOiJDrpEPyFTGXHJhUv3375KRhG14yIQLr9OgTG4cFE
-         i22GKdcD6JI/bsgmu+nSPC4DIfFuJtynNy3IvAmUlZwrDPzzYcB3PnsKvFKvky6dhr58
-         odzzrWHMqGjGLj7rjmZtNvoqp7/As+zQiioiw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731433525; x=1732038325;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ECpNk3WVDKxbHxhK0N6QRh+9W6qmtXb+Bcm8kSS24fI=;
-        b=k4yB2GdCAEyQzGO9H+uD04D7wu3AXrERpXwWOiydYUy01QH+SatjB+b5k1jxjwChW+
-         iXA2ILl4MtKK7stgbbD9d0/3RhdWZV2HBt1csto8ZhNwLQ6NuAjMya/6JAs1P9xuSuCp
-         VCNrCMsBenRJjlYrV0kH6Nwm7m/F518WUlwDjvDeXyHtBQ33Jf+/rFb4th0AUdwDQ6QR
-         EVBNCMYuRouHheY8cdsAAQ6R6ERSeTRTLK6EtfI2lbtEvd/Hlp8NQ9Mqs77xqMMTTyTY
-         lam+V0357M/8chpNapzbgmsRdLHybEaWi22MxY79eecvjoAoFyXC4nrE3VucxdYuzWRc
-         9Dug==
-X-Forwarded-Encrypted: i=1; AJvYcCWlBn6+JAcafIntdM+UMedYk2kfUDy16+Mn9CGK3Dc73c0Xkp3bCBqgFUXgCNJVPcDjVjVyzfDet1pkajk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyneS9VVBGOf45sVo9a2KcUTmeJY4KWZnn9rZmj6s+8//S9OXjg
-	QMKjWtrzsHjI+x3bQ+/3Ep23fLRcUMi56R0JrcK+C433XMQg0n2mrZewG1sWgiA=
-X-Google-Smtp-Source: AGHT+IEcXBAYv4/mLCHfvUtLQLJl2VENS1NC1IgYaxRc/OxGwWR3LyGd7ehckrw2AjOPHQRtvikMZw==
-X-Received: by 2002:a05:6e02:745:b0:3a4:e99a:cffc with SMTP id e9e14a558f8ab-3a70c895f97mr41435405ab.20.1731433524938;
-        Tue, 12 Nov 2024 09:45:24 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6f984856csm23083155ab.44.2024.11.12.09.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 09:45:24 -0800 (PST)
-Message-ID: <d9bcf2df-8201-4eea-8e98-d305a4671736@linuxfoundation.org>
-Date: Tue, 12 Nov 2024 10:45:22 -0700
+	s=arc-20240116; t=1731433564; c=relaxed/simple;
+	bh=FYqoPFYrwvLuyx28eQcUzR0RgOVazKdDDyp0xfXcmhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U0DchZwbjterXO82ga+cxj7RT9jNOggEZfioTUvVKydUGWzm0ec5GiN025UDvD2j7i0+4fppQJU1pGkWEDkOZdXk9CQO/NB8e1e1ogQjjM/P9mnzCL0PS48+S2GuyAWRklH2nKsrxB29ShAitj5ul+M4nUckL1lT0noDk8HjGTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALyCMJsv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA232C4CECD;
+	Tue, 12 Nov 2024 17:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731433563;
+	bh=FYqoPFYrwvLuyx28eQcUzR0RgOVazKdDDyp0xfXcmhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ALyCMJsvDL5DSsX2uc3VXK/FIfxoPaKy5rin8YjJyqrGqzv5cAR00nWAHnIKe4Gru
+	 qoXL4+x6tplC+JDI1pKY+a7p1U7LBo/qpVj0t5ssEPW+iosdkaPOGp4TAKkQDjarsp
+	 UzIdr1/sIcguMN7RhT/nuI8TLUMI0fUunqF2Mq3gUH55ezTd5ceONhmgWwWyW7C+dl
+	 NAT3NduKG6E1Q07kGKnpFc+6HYaVJXF3rvzBMhqmGCVNzlW9Lr/AO2FILHgpI/zLVv
+	 +ppRyjj7Jfoqk625EcRMZkLEuN7YDANyroAC3xMuD2FazhBwcdM3N53Voo71Zfdr6H
+	 oMS/LBxU/LEYQ==
+Date: Tue, 12 Nov 2024 17:45:59 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andreas Kemnade <andreas@kemnade.info>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mfd: bd71815: Fix rsense and typos
+Message-ID: <20241112-surgery-clean-f1f6c0bb5248@spud>
+References: <0efd8e9de0ae8d62ee4c6b78cc565b04007a245d.1731430700.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/CoC: spell out enforcement for unacceptable
- behaviors
-To: Mark Brown <broonie@kernel.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Miguel Ojeda <ojeda@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Steven Rostedt <rostedt@goodmis.org>, Dan Williams
- <dan.j.williams@intel.com>, Dave Airlie <airlied@gmail.com>,
- DRI Development <dri-devel@lists.freedesktop.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241108161853.12325-1-skhan@linuxfoundation.org>
- <ZzJkAJEjKidV8Fiz@phenom.ffwll.local>
- <ba3d5492-e774-452f-9fe0-e68b743c6b0d@linuxfoundation.org>
- <ZzNppQIQm6O6lnfW@finisterre.sirena.org.uk>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ZzNppQIQm6O6lnfW@finisterre.sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tJUu9GKmxcfm3z/Q"
+Content-Disposition: inline
+In-Reply-To: <0efd8e9de0ae8d62ee4c6b78cc565b04007a245d.1731430700.git.mazziesaccount@gmail.com>
 
-On 11/12/24 07:43, Mark Brown wrote:
-> On Mon, Nov 11, 2024 at 02:50:45PM -0700, Shuah Khan wrote:
->> On 11/11/24 13:07, Simona Vetter wrote:
-> 
->>> Personal take, but I think a forced public apology as the primary or at
->>> least initial coc enforcement approach is one of the worst.
-> 
-> ...
-> 
->> This document isn't intended to be a complete summary of all actions the
->> CoC takes in response to reports. There is a lot of back and forth with
->> the individuals to bring about change before the CoC asks for an apology.
-> 
-> I guess it would be good to explicitly call out (possibly in an
-> incremental change on top of this one) that the specific enforcement
-> steps here are examples, and are mainly for cases where a more
-> mediation/education based approach fails or extreme cases where they're
-> inappropriate?  Neither the existing document nor the current change
-> make that explicit (at least to my reading), it's clear from for example
-> the reports that are sent that the existing practice is to try to use
-> those approaches first but I'm not sure that people would realise that
-> from this document alone.
 
-Thank you Mark. I will add more content to the document distilling the
-discussion on this thread in the interest of transparency.
+--tJUu9GKmxcfm3z/Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-thanks,
--- Shuah
+On Tue, Nov 12, 2024 at 07:01:06PM +0200, Matti Vaittinen wrote:
+> The sense resistor used for measuring currents is typically some tens of
+> milli Ohms. It has accidentally been documented to be tens of mega Ohms.
+> Fix the size of this resistor and a few copy-paste errors while at it.
+>=20
+> Drop the unsuitable 'rohm,charger-sense-resistor-ohms' property (which
+> can't represent resistors smaller than one Ohm), and introduce a new
+> 'rohm,charger-sense-resistor-micro-ohms' property with appropriate
+> minimum, maximum and default values instead.
+>=20
+> Fixes: 4238dc1e6490 ("dt_bindings: mfd: Add ROHM BD71815 PMIC")
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+--tJUu9GKmxcfm3z/Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzOUVwAKCRB4tDGHoIJi
+0lWgAP45+Y1GowIP1Po4Q4NZAG32naTgDZYWqPixI9b8VI/eSQD/Z4FcBK1IX+Tt
+KALW4R1IyiVjqCHlvjIsmEIC3QbW2Q0=
+=0mRa
+-----END PGP SIGNATURE-----
+
+--tJUu9GKmxcfm3z/Q--
 
