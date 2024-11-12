@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-405338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF649C502D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:02:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DFBD9C4FFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED600B2C04C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:54:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330DE288260
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DB51C1AD1;
-	Tue, 12 Nov 2024 07:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C0A20CCD4;
+	Tue, 12 Nov 2024 07:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSl0hY7w"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="xMIXRiN2"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846FC1534EC;
-	Tue, 12 Nov 2024 07:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4075620A5FB;
+	Tue, 12 Nov 2024 07:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731398002; cv=none; b=jzjVBEvjRnosN8KBahbHcaHd42rJC8vr8R3TKWi8u9tO8vHJAnaXMelhSyf9vi/udSs/0X4OIy1M2F3BU7W561ziEhSD50VtAU9GREwVCw47WPEQW4SunIHNdI8WvO2vC0wJluUKORhR6vpPvxW4m6DcswRc2vQmgFOemo92TZk=
+	t=1731398010; cv=none; b=pmmCnRjm4ITJsVNMoO0IZfor25JKBR5qf6b6zAJdB7VMbfxEqUy+cgQpz8ve6n2bH+2noU+amLsDXkD55ca3YeJYkqtkdGywT8ggpRCYI4k0wY0WpStpOCO936kocx0vPd0SJO0OSx7SGulujM0P6DkXWEOOiKSaMESvqVkYWUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731398002; c=relaxed/simple;
-	bh=w//YaLtowwTiTj2jD3v4WbwaEv02Z59trMzH+54Y4kE=;
+	s=arc-20240116; t=1731398010; c=relaxed/simple;
+	bh=Ya9WJPZN2OZYUG7WeVzwc7TbneVeAAM4iyiHiQz6I44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOOYBGqFhrzNNWOLMNw9w0fpZ9F0OdlhV4KNTJYiJow/7oqOBiWhZbqw8/8aLaTgqOntmjos1m5vuQc2WaMUEeQnrehEvKs6iao+h6J/dAVS8o0euk0k3GpnVcnbnF77EN8YKCZvzqycF1huh8sIjZ0EZlvYQjU0/oP6iFOK0W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSl0hY7w; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720c286bcd6so4664328b3a.3;
-        Mon, 11 Nov 2024 23:53:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731398001; x=1732002801; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FZdzgcIljMlUObBvcBKwGCR4bvqsV+cW+n+UDROLFU0=;
-        b=ZSl0hY7wUkEKkP4fRQw9qTQC7tj7P5TYaZ9NPNu4nVVsnRH2PLaGSPqPh2zdxm57w9
-         5Gu2D9HK7dUY07VsbJjEJ/UpmCiPDAhr0keYB0+bsBIKlNPEAq/Hzyc7Lcepia6sTjSF
-         GqrDfNIT3dsgh/YOkdC+es+9gePoZBSWwPXGIf1hdkTZo8zl/lIGEiURfwCZrcSd0OI/
-         8NEInmmEiS7S1ymjWgP2jUk6N1F9Keqs7Zr/36alOpjcMwuN59n64oSQj4OFjgvkooaJ
-         99hXMgB5F1haRDLE7BEKWT1PfskEJC6vZZ8U9rMs2TEzn30XF9pDFK3A9FKC5gtJtsQC
-         SmLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731398001; x=1732002801;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FZdzgcIljMlUObBvcBKwGCR4bvqsV+cW+n+UDROLFU0=;
-        b=X0YTH0RjfXYKiQNL6b8mYXcksDWM8FQg+qAaywCBSrt6y98YwK2s7C8ELL18lbpQcf
-         EbbHXTim+7H3EyqkpP6LCVxaEGC21VfHcCDfeI4DB0n2Tmb6WKSHrZj+B3Okx8aYmtTu
-         PMK0lDNnGdLfGumHCb8nIdSKRjKl9HOfa4D3LWE7kbYhu/SCEBhUgQMv7e3egqTRqE5j
-         dXTuQUegcUzekCzfdtUtQhFptBMCZzXmOhx3KfsRC5i5lPnFFBTBPtKE1ANiW245VPrb
-         hEtNVfSXwH1XXAayIBi5wyUrwF+eWoXMGC2aKkWMVKAVhn+uEs6T+g/YkxVdsUCGVw+1
-         L3IA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCfIgImAmbOowNiPMMoEGoW7Zm+T8fVwW1bOnMoUKHENLqVddf5ErtHDnZjA+UkPIdFJNlp/Az1wjU+G4=@vger.kernel.org, AJvYcCVddK8T3S5LfGIcY4cywiCOu3ril6rWQ5hjOXRepQutGpWxdeIOrtAG4RuSDneMcCLlux2v/FvBohmt741x8mVt5oU=@vger.kernel.org, AJvYcCW9UyAkenc38Ddnff2wKSFsqhMtF7ANDnYu53ug7VC0HEucD2uOVdSenZEO9sJYGth8IcrITFut1yM5PQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPzAy4eW1iyTgys2Jqse1Jid3tj3qC2K2mTLOloCbn/XRrqhb7
-	K8b1V5NcWtVzbS1rB/d8RzyadLwk9ZMBtgSYQn8xj2cuudBpt2QV
-X-Google-Smtp-Source: AGHT+IFOyHj/UkfZuck4267vweXr7tX25rTZjP9yXmcate30Q5rUAyasg/Lb0W80EKNNt7nBcNybgw==
-X-Received: by 2002:a05:6a00:23d1:b0:71e:573f:5673 with SMTP id d2e1a72fcca58-724132ce0bamr20411427b3a.15.1731398000772;
-        Mon, 11 Nov 2024 23:53:20 -0800 (PST)
-Received: from thinkpad ([117.213.103.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407a56a16sm10689026b3a.182.2024.11.11.23.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Nov 2024 23:53:20 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:23:12 +0530
-From: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com, krzk@kernel.org,
-	linux-scsi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	andre.draszik@linaro.org, kernel-team@android.com,
-	willmcvicker@google.com
-Subject: Re: [PATCH 1/2] scsi: ufs: exynos: remove empty drv_init method
-Message-ID: <20241112075312.v3ir4ewg4kglckpf@thinkpad>
-References: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGjkXru4BAoRTr10h5LSXMNID5bZnqGRJG/8wvIrr/HZVt0PHYUVRgBwAqcuQB1gugaYmyde49fSlX3rrVFxgGYvMiafz8FxMHZjjK+l2VQmBqkfTzCuMGei1UWaS9V2nkMxgDM6N8yk0T/Y+ST3exwUAls+O1W85bokMVbORko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=xMIXRiN2; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=+CicQmBbCv29/xiHgnZ+Z8sv1AVWbLap/TSIARQnGHM=; b=xMIXRi
+	N2PIo5n168pq6k9vmSSzzqCHxptA0SI+y5n3L0tCLIZhtm3a3t1ohY6ZTTm5RYUQtvbUWpojGNyPy
+	Gsk8qzVA7l6Ebda2oGm9dFrT3D05OFPq3H5l220kmK2HYpx0jRavWoZUcGTgMvCG/+4J2vLLTRYKg
+	BPGKkLH5kZWG2ZvlVOyX65GHfJnr3bphceIuQDkUnpJtRRNJYYXUqQ7m4BB/84gxp7cQOX0/eBCYP
+	lG5hfGg0b3W3fknLd64sjDeMqhAEpbUA/W8LSMf0sObp1mhJ0a1MwvOBMLakF0BaXoqTgjFXgKqZY
+	mWHody1XGZWgxVUmLN47IAbqDMcA==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tAliH-0004Xm-8l; Tue, 12 Nov 2024 08:53:25 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tAliG-000LDs-1k;
+	Tue, 12 Nov 2024 08:53:24 +0100
+Date: Tue, 12 Nov 2024 08:53:23 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] can: tcan4x5x: add option for selecting nWKRQ
+ voltage
+Message-ID: <2ioqxdymcgx2tnz6cvcuibom6mwam32sushu7kv6bo4e6vemlf@m53nguyzqlyp>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241112-bizarre-cuttlefish-of-excellence-ff4e83-mkl@pengutronix.de>
+ <lfgpif7zqwr3ojopcnxmktdhfpeui5yjrxp5dbzhlz7h3ewhle@3lbg553ujfgq>
+ <20241112-doberman-of-original-discourse-a50070-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,52 +74,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241030102715.3312308-1-tudor.ambarus@linaro.org>
+In-Reply-To: <20241112-doberman-of-original-discourse-a50070-mkl@pengutronix.de>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27455/Mon Nov 11 10:58:33 2024)
 
-On Wed, Oct 30, 2024 at 10:27:14AM +0000, Tudor Ambarus wrote:
-> Remove empty method. When the method is not set, the call is not made,
-> saving a few cycles.
+Hi Marc,
+
+On Tue, Nov 12, 2024 at 08:52:14AM +0100, Marc Kleine-Budde wrote:
+> On 12.11.2024 08:44:00, Sean Nyekjaer wrote:
+> > Hi Marc,
+> > 
+> > On Tue, Nov 12, 2024 at 08:38:26AM +0100, Marc Kleine-Budde wrote:
+> > > On 11.11.2024 09:54:48, Sean Nyekjaer wrote:
+> > > > This series adds support for setting the nWKRQ voltage.
+> > > 
+> > > IIRC the yaml change should be made before the driver change. Please
+> > > make the yaml changes the 1st patch in the series.
+> > > 
+> > > Marc
+> > > 
+> > 
+> > I know, so I have added, prerequisite-change-id as pr the b4 manual.
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/ufs/host/ufs-exynos.c | 6 ------
->  1 file changed, 6 deletions(-)
+> I mean the order of patches in this series. First the yaml patch, then
+> the code change.
 > 
-> diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-> index 9ec318ef52bf..db89ebe48bcd 100644
-> --- a/drivers/ufs/host/ufs-exynos.c
-> +++ b/drivers/ufs/host/ufs-exynos.c
-> @@ -198,11 +198,6 @@ static inline void exynos_ufs_ungate_clks(struct exynos_ufs *ufs)
->  	exynos_ufs_ctrl_clkstop(ufs, false);
->  }
->  
-> -static int exynos7_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
-> -{
-> -	return 0;
-> -}
-> -
->  static int exynosauto_ufs_drv_init(struct device *dev, struct exynos_ufs *ufs)
->  {
->  	struct exynos_ufs_uic_attr *attr = ufs->drv_data->uic_attr;
-> @@ -2036,7 +2031,6 @@ static const struct exynos_ufs_drv_data exynos_ufs_drvs = {
->  				  EXYNOS_UFS_OPT_BROKEN_RX_SEL_IDX |
->  				  EXYNOS_UFS_OPT_SKIP_CONNECTION_ESTAB |
->  				  EXYNOS_UFS_OPT_USE_SW_HIBERN8_TIMER,
-> -	.drv_init		= exynos7_ufs_drv_init,
->  	.pre_link		= exynos7_ufs_pre_link,
->  	.post_link		= exynos7_ufs_post_link,
->  	.pre_pwr_change		= exynos7_ufs_pre_pwr_change,
-> -- 
-> 2.47.0.199.ga7371fff76-goog
-> 
+> regards,
+> Marc
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Oh, noted thanks!
+
+/Sean
 
