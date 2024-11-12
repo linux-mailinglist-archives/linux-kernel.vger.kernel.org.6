@@ -1,209 +1,214 @@
-Return-Path: <linux-kernel+bounces-406479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F2EB9C634D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:21:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E949C627A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:24:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68074B3E5E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D155B2B75B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401ED215027;
-	Tue, 12 Nov 2024 17:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7894121733B;
+	Tue, 12 Nov 2024 17:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xv3yOpqb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leM9g1tw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EB421442E;
-	Tue, 12 Nov 2024 17:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33552144CB;
+	Tue, 12 Nov 2024 17:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434350; cv=none; b=aeoezTAT0WBW/fNcGDvwa06QVUL/PZ8XyP8PokJv6CSXZO5IGSAHqMIlGKi5WYqM1yh4gsTSJS7R3Nw0qBxgSH1Du+RspHRAx3u95ZNZxMpOvM9R6wa1vJ7m1u5Xtbp2izb1OGv9PFrkj+LC6arLpxKiFUmAlPnYnXPuZWAK5kc=
+	t=1731434371; cv=none; b=jAHBXFE25VaprCE8LtVhi3E4WsFx3Rk+8bG4LAqZSrJ/dSO71trFS7cKu9R4gPzhBU2oXewvWCaEnGENf0lgEoyzZ9S5rBqWRvmT1uPSpHiU5WWCtFriOpSp+dsfQTK/EmA72xNkJXtlET8qcuOejEyNk72GXPbIunqxzZWahxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434350; c=relaxed/simple;
-	bh=nBqJQ+9Rz7LqvO8HNtJko2uMGpeDf0A8fllkrbNh13U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Latpfh7/W7Y2n2n5/sYkDEa2zqXj7024Fp3MchTtKAr5ET+fKFiz1AQ8Zg3qJY+dqkSajK/ES2CCr86gI96UMo0n5DWGh+GMxn7AZNbw8Yyh4fNLagFOOO2Cdpsjw3+KRuYeI2puStsGIX3umDOG60SLfm20uIKoji3OfxLlciE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xv3yOpqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D73DC4CECD;
-	Tue, 12 Nov 2024 17:59:07 +0000 (UTC)
+	s=arc-20240116; t=1731434371; c=relaxed/simple;
+	bh=wXCw1HCeuSt/vVeQUJWNGdsHcK2BT2IDvmf7fX1EKmM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ntfJQitdmI96APAuRNzZ+xiYhSosxRJLOnwTX1maVyIhAZcdWhDqiLY2t3wu2kgfPi1fWD0TQ36eZ9rvYtLvbuek9xWLHpkiYnRJAo+lc5PuqolV8gx0vKWUUvz48QonhRe2Ko1fkqWfZAAY7FjgomBsNpesJNsPc3PD3gl1Uik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leM9g1tw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D43EC4CECD;
+	Tue, 12 Nov 2024 17:59:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731434350;
-	bh=nBqJQ+9Rz7LqvO8HNtJko2uMGpeDf0A8fllkrbNh13U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xv3yOpqbU5jc8KCbzcJqp2C9IdPY824gNn7Xn1fLE3gMMO3O6Ku7iYI1DEATDxkXd
-	 /WnJ6ytFAnJ4mkcnKYmlWJT0mBOUk1aweXSDKptnpUY4bL8kFA4AQIcjSeKZUfNhg1
-	 zvM1eX4lJQhfBLJPbuH2ffxaq//pE7JWSUS0aY0yv1n8D5gsKWjhFKR0j/q8gHu2Hu
-	 SlrvrLYHM1sGlUAXVB/d/5c1sIgwPCw4wpsF5Bm+knPeiANlml0PxjQYIiiKCcicZU
-	 fYfhz5UKKQb/TZ1cbF7nAgLmVhfBXpAR3oo2HGlON4aqGWWwP4sGpDqMMLeDx6bw0/
-	 YfnsCKbpv96IA==
-Date: Tue, 12 Nov 2024 17:59:05 +0000
-From: Conor Dooley <conor@kernel.org>
-To: mjchen <mjchen0829@gmail.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, sudeep.holla@arm.com, peng.fan@nxp.com,
-	arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mjchen@nuvoton.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-Message-ID: <20241112-fender-mug-8eb81a6727e0@spud>
-References: <20241112053059.3361-1-mjchen0829@gmail.com>
- <20241112053059.3361-2-mjchen0829@gmail.com>
+	s=k20201202; t=1731434371;
+	bh=wXCw1HCeuSt/vVeQUJWNGdsHcK2BT2IDvmf7fX1EKmM=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=leM9g1twN2GBlyIEkhw5oxePTDf6OIhpbgPxUbE90/j70yrnA7a0FHWIHPLXj0i9E
+	 +a3pNz/UVENeTyCJEw7+OslTVgDGFUz0818enYl8IJqYHhN9IeFvtzUiZgaf/zCiko
+	 apqazSUwF6UQ0ufWWIIHoATqCBYych5Qn7tUt3/dgsFwfxDqOP2SwcSmpx3HiJzakZ
+	 1o52JHYhLmEaL5W14UwhLPLHjX/LxhRgb8KMdcmIU/GsTv0J6Tz1fbTn1ew+527nfD
+	 WTSPD6uVz6iqcrUPmcE1BP+q471NEJG7eyOcsvwJQ3fe8WOHpNXciLop8ArURwmLlU
+	 hCKHKj/64yYFQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="k0rDWj3vLf/SiQCG"
-Content-Disposition: inline
-In-Reply-To: <20241112053059.3361-2-mjchen0829@gmail.com>
-
-
---k0rDWj3vLf/SiQCG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 12 Nov 2024 19:59:27 +0200
+Message-Id: <D5KE9BP4M319.2G0BNVFSLUUEX@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <roberto.sassu@huawei.com>, "Tushar
+ Sugandhi" <tusharsu@linux.microsoft.com>
+Subject: Re: [PATCH v2] ima: Suspend PCR extends and log appends when
+ rebooting
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <zohar@linux.ibm.com>
+X-Mailer: aerc 0.18.2
+References: <20241112165206.756351-1-stefanb@linux.ibm.com>
+In-Reply-To: <20241112165206.756351-1-stefanb@linux.ibm.com>
 
-On Tue, Nov 12, 2024 at 05:30:58AM +0000, mjchen wrote:
-> Add YAML bindings for MA35D1 SoC keypad.
->=20
-> Signed-off-by: mjchen <mjchen0829@gmail.com>
+On Tue Nov 12, 2024 at 6:52 PM EET, Stefan Berger wrote:
+> To avoid the following types of error messages due to a failure by the TP=
+M
+> driver to use the TPM, suspend TPM PCR extensions and the appending of
+> entries to the IMA log once IMA's reboot notifier has been called. This
+> avoids trying to use the TPM after the TPM subsystem has been shut down.
+>
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>
+> This error could be observed on a ppc64 machine running SuSE Linux where
+> processes are still accessing files after devices have been shut down.
+>
+> Suspending the IMA log and PCR extensions shortly before reboot does not
+> seem to open a significant measurement gap since neither TPM quoting woul=
+d
+> work for attestation nor that new log entries could be written to anywher=
+e
+> after devices have been shut down. However, there's a time window between
+> the invocation of the reboot notifier and the shutdown of devices in
+> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+> running_helpers to exit. During this time window IMA could now miss log
+> entries even though attestation would still work. The reboot of the syste=
+m
+> shortly after may make this small gap insignificant.
+>
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>
 > ---
->  .../bindings/input/nuvoton,ma35d1-keypad.yaml | 89 +++++++++++++++++++
->  1 file changed, 89 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d=
-1-keypad.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypa=
-d.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
-> new file mode 100644
-> index 000000000000..71debafc3890
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
-> @@ -0,0 +1,89 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  v2:
+>   - followed Mimi's suggestions
+>
+> ---
+>  security/integrity/ima/ima.h       |  1 +
+>  security/integrity/ima/ima_init.c  |  2 ++
+>  security/integrity/ima/ima_queue.c | 43 ++++++++++++++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 3c323ca213d4..3f1a82b7cd71 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
+>  int ima_init_template(void);
+>  void ima_init_template_list(void);
+>  int __init ima_init_digests(void);
+> +void __init ima_init_reboot_notifier(void);
+>  int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event=
+,
+>  			  void *lsm_data);
+> =20
+> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/i=
+ma_init.c
+> index 4e208239a40e..a2f34f2d8ad7 100644
+> --- a/security/integrity/ima/ima_init.c
+> +++ b/security/integrity/ima/ima_init.c
+> @@ -152,6 +152,8 @@ int __init ima_init(void)
+> =20
+>  	ima_init_key_queue();
+> =20
+> +	ima_init_reboot_notifier();
 > +
-> +title: Nuvoton MA35D1 Keypad
+>  	ima_measure_critical_data("kernel_info", "kernel_version",
+>  				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+>  				  NULL, 0);
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 532da87ce519..9b3c9587313f 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -16,6 +16,7 @@
+>   */
+> =20
+>  #include <linux/rculist.h>
+> +#include <linux/reboot.h>
+>  #include <linux/slab.h>
+>  #include "ima.h"
+> =20
+> @@ -44,6 +45,12 @@ struct ima_h_table ima_htable =3D {
+>   */
+>  static DEFINE_MUTEX(ima_extend_list_mutex);
+> =20
+> +/*
+> + * Used internally by the kernel to suspend measurements.
+> + * Protected by ima_extend_list_mutex.
+> + */
+> +static bool ima_measurements_suspended;
 > +
-> +maintainers:
-> +  - Ming-jen Chen <mjchen0829@gmail.com>
+>  /* lookup up the digest value in the hash table, and return the entry */
+>  static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+>  						       int pcr)
+> @@ -176,6 +183,17 @@ int ima_add_template_entry(struct ima_template_entry=
+ *entry, int violation,
+>  		}
+>  	}
+> =20
+> +	/*
+> +	 * ima_measurements_suspended will be set before the TPM subsystem has
+> +	 * been shut down.
+> +	 */
+> +	if (ima_measurements_suspended) {
+> +		audit_cause =3D "measurements_suspended";
+> +		audit_info =3D 0;
+> +		result =3D -ENODEV;
+> +		goto out;
+> +	}
 > +
-> +allOf:
-> +  - $ref: /schemas/input/matrix-keymap.yaml#
+>  	result =3D ima_add_digest_entry(entry,
+>  				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
+>  	if (result < 0) {
+> @@ -211,6 +229,31 @@ int ima_restore_measurement_entry(struct ima_templat=
+e_entry *entry)
+>  	return result;
+>  }
+> =20
+> +static void ima_measurements_suspend(void)
+> +{
+> +	mutex_lock(&ima_extend_list_mutex);
+> +	ima_measurements_suspended =3D true;
+> +	mutex_unlock(&ima_extend_list_mutex);
+> +}
 > +
-> +properties:
-> +  compatible:
-> +    const: nuvoton,ma35d1-kpi
+> +static int ima_reboot_notifier(struct notifier_block *nb,
+> +			       unsigned long action,
+> +			       void *data)
+> +{
+> +	ima_measurements_suspend();
 > +
-> +  debounce-period:
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block ima_reboot_nb =3D {
+> +	.notifier_call =3D ima_reboot_notifier,
+> +};
+> +
+> +void __init ima_init_reboot_notifier(void)
+> +{
+> +	register_reboot_notifier(&ima_reboot_nb);
+> +}
+> +
+>  int __init ima_init_digests(void)
+>  {
+>  	u16 digest_size;
 
-Not a common property, so it needs a vendor prefix.
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192]
-> +    description: |
-> +      Key debounce period select, specified in terms of keypad IP clock =
-cycles.
-> +      Valid values include 0 (no debounce) and specific clock cycle valu=
-es:
-> +      8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, and 8192.
-> +
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-> +  nuvoton,key-scan-time:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Set the time it takes to scan each key in the keypad, in clock cyc=
-les of the IP.
-> +      This parameter controls how frequently the keypad is scanned, adju=
-sting the response time.
-> +      The valid range is from 1 to 256 clock cycles.
-> +    minimum: 1
-> +    maximum: 256
-> +
-> +  nuvoton,key-scan-time-div:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Set a divider that adjusts the scan time for each key.
-> +      This value scales the time it takes to scan each key
-> +      by multiplying the key-scan-time by the specified factor.
-> +      For example, if you set key-scan-time to 64 cycles and configure k=
-ey-scan-time-div to 2,
-> +      the scan time for each key will be increased to 128 cycles (64 cyc=
-les * 2). time.
-> +    minimum: 1
-> +    maximum: 256
-
-Why are both of these properties required? Why not just provide a single
-value and let the driver figure it out (and why not use the standard
-input property poll-interval)?
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - linux,keymap
-> +  - debounce-period
-> +  - nuvoton,key-scan-time
-> +  - nuvoton,key-scan-time-div
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/input/input.h>
-> +    keypad@404A0000 {
-> +      compatible =3D "nuvoton,ma35d1-kpi";
-> +      reg =3D <0x404A0000 0x10000>;
-> +      interrupts =3D <79>;
-> +      clocks =3D <&clk>;
-> +      keypad,num-rows =3D <2>;
-> +      keypad,num-columns =3D <2>;
-> +
-> +      linux,keymap =3D <
-> +         MATRIX_KEY(0, 0, KEY_ENTER)
-> +         MATRIX_KEY(0, 1, KEY_ENTER)
-> +         MATRIX_KEY(1, 0, KEY_SPACE)
-> +         MATRIX_KEY(1, 1, KEY_Z)
-> +      >;
-> +
-> +      debounce-period =3D <8>;
-> +      nuvoton,key-scan-time =3D <1>;
-> +      nuvoton,key-scan-time-div =3D <24>;
-> +    };
-> --=20
-> 2.25.1
->=20
-
---k0rDWj3vLf/SiQCG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZzOXaQAKCRB4tDGHoIJi
-0pYPAQDDf02Gop88JjPTAhEapsw6Y2RsUuUw+y3t6GLs5WaYTQD6A9rBf5mY07HN
-IdLXIMBrLZwIVIq8TP0uaaLeB9wcgQI=
-=p5T+
------END PGP SIGNATURE-----
-
---k0rDWj3vLf/SiQCG--
+BR, Jarkko
 
