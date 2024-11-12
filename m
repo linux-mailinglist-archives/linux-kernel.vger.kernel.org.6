@@ -1,201 +1,153 @@
-Return-Path: <linux-kernel+bounces-406831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85C19C6544
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8119C656F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76833B39CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA723B3491A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102FF21B456;
-	Tue, 12 Nov 2024 23:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CD021B456;
+	Tue, 12 Nov 2024 23:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="BmZo0SjY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c3eNB34l"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YNYl4oPT"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DC21531C4;
-	Tue, 12 Nov 2024 23:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361081531C4;
+	Tue, 12 Nov 2024 23:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731452594; cv=none; b=Na5dsDMJ+JvVWyZE8Ii4riUcqKJwKfVw+sUds+jm6tVY27iAT9Y2fBhoCcwex8Eev89igWp/sPXABVnOAjXQ4tLZVL7DwmilM2dHCdnH5G3kIFGws79AlVhMFqUmyus0H9QGGIlCqvcwcW2+ZKuXsyESWIaKPrH2+k935QEgx7k=
+	t=1731452692; cv=none; b=PmB/wYn3fwSRczWPch2QiwV6SaZd9FxbpULGbMl2Nus/58oUUqnJ8kdWyUDGEm13jYVgS2SFD8ymebdcTtbv2RTnUr5tFc3z+EhMwWyTF4RNf6ByFdTMNfJAnYt86YZvm90ovc9HK6UWgbwf/kric/8Sc3s4G0pGhq13vvLcNgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731452594; c=relaxed/simple;
-	bh=x+y8/UzMtqi36p1A9OnR8/J/5AGKh+xLS9ee6QQzDLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UD0Ztm0qwNQ1/lNJSLTOiFGh0us2QQgWyt53Bha370qFo/wWnMG62m5IIhMmBpDoB2mofmcPBRcfF9Iaq30xncj3sN+gk7sRlvOuRli7W+QFqzcPYlkUbnRqY/s5gn8xRshBeTKvQlImLvz/p5WeUcem4WL5ti8gh1a1Wns3ZKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=BmZo0SjY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c3eNB34l; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8A0771380439;
-	Tue, 12 Nov 2024 18:03:11 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Tue, 12 Nov 2024 18:03:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731452591;
-	 x=1731538991; bh=/RtfmugiFxrOsJ4jjn0jMQET4n5c564vMOygL27bFDA=; b=
-	BmZo0SjYdtFt9zs8tUBZIFdcbRsnZBw8Z7QbqGjMNbIX1aQ1nz+L4exzAtSAbivB
-	jEXAE+JH8E5bpNB3zWHrLNwjeLsYXv+dBucoRPq/70Oc8t7IBKdZF/wL6+H5/ex6
-	cFUOMonAgBbwOsddXovqET19YCvrx4DLbYMUEhsac0YcpuiKOg8dyQnuhXCIGxs4
-	t4L72rCtBa0d5RPTUiKf8OMjTWhxqEAgx7akLyPkBgZ+JfxlQ3b08sdIZSrsTz8B
-	Z+QVwsopT8+rip51h4L7aQNLfuFlhvEWzrhY+8GRERBTs29Cq1G5+Zl0kuVCWslG
-	ZXWFkmZ6jTw7Ax1IpR5x/Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731452591; x=
-	1731538991; bh=/RtfmugiFxrOsJ4jjn0jMQET4n5c564vMOygL27bFDA=; b=c
-	3eNB34lnOuuW5EPehWtIDY82cpC3/aMN2GJydOigHJO9k8BP4hddIt+tdFuRLQZi
-	IkrJ7EjevuPLoMTjyLURAspchLmB2g4tvBaqyn8E9Fc/XpFUkmcBcD/9QGf9JDSj
-	LsYTUPfd8F72BaxcR7Q80swJK2VdkZyBhmJ8LqZNj9w7Fzs7ZIuUDUeg8QwpXFg+
-	doYYMIalZfq7zreT0fHBQgKTLNgS5fdZxfOBtc3+Oe9C1k9C52oF83baHho2xBJl
-	hUBcCR5IKCDgTYj0HKzPqUc8vS9bmSySFMQyQBoF4H6Lcio9OSyRJGaF+fff+TT3
-	bChyYZlruWTKXzripg+Xg==
-X-ME-Sender: <xms:r94zZxH_B9vJEiQcwOUxnoDcTUTlMcezbaR5tRpdDKngPcdvkNhS3w>
-    <xme:r94zZ2X8MpsP5TfXXw9kw4AyCdYa01qToOXyKGa80EEdKMrX7IC7esm04phZklUAk
-    NA0xujaxd0mP22SnmM>
-X-ME-Received: <xmr:r94zZzKN9B0e3mo9RKZpC80vzy6uHjp0UgH_rgc0pxkXQhm_5wFsRDD9cMFFWI8Qad7GN0h1rYhRiGGVDTe429YHsXuF>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehgddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
-    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
-    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepgeeghfejjeegtdfgfefhtdfhuedvjedu
-    leeflefhjeetleeikeejgeeggefggedunecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
-    sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruh
-    hnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
-    hrtghpthhtoheptghhrhhishhtihgrnhessghrrghunhgvrhdrihhopdhrtghpthhtohep
-    phgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegslhhutggrseguvg
-    gsihgrnhdrohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdr
-    tghomh
-X-ME-Proxy: <xmx:r94zZ3F29kLupuw7xpTsAB_qSUr-bl4nKYmGEKn7UfyZ95agci3_Yg>
-    <xmx:r94zZ3W4yVvs3eCgzEKo5eF2dWr_dmKYkKy53QFEgfaiA4VX3LJoAA>
-    <xmx:r94zZyNEX1MWJCyTZrIsT48MEvJyxrTaVgQgEBscyQZ2UV-xeVxm6A>
-    <xmx:r94zZ20GqbM4J7Rqvn4cgJbpKtJy78gjrJLmPdYvJGAPW6A2rPrwgA>
-    <xmx:r94zZ3QVyhWe7XdmpffAoLTMatIBM5m-899lk9khzlkhtssGYNMa-8Tw>
-Feedback-ID: i313944f9:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 12 Nov 2024 18:03:09 -0500 (EST)
-Message-ID: <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
-Date: Wed, 13 Nov 2024 00:03:08 +0100
+	s=arc-20240116; t=1731452692; c=relaxed/simple;
+	bh=uVca2jGYpWUvOxYC184KdSetOQQ3dXnnGdAzfG68pw4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WOsQlQuvNACRRexuD7KoMiLa2Eeup0pf56Edkk/SLE29AidGWGOw+iM5xd39URCtdKh6hbCgh9V7WdRcTK5gUM6i904eJQsLc32UrFLyOIP0t0LRtVT9NAkGYBV4rWi2xdAfMXlRVVD4XGOvrGtj76vvFuBLJjvoZRSTEDc3AoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YNYl4oPT; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 61A3B100003;
+	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 61A3B100003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1731452689;
+	bh=GzpLeQmauji/V5ygVX6H57e5rXHsmuG1+VVjGr5bYFk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=YNYl4oPTELNlAq5DjPqmHHpKXGnnpzWVgTWF0UwXU233aYiC1djwvfJG1oIDSOtAi
+	 fFphLpYPW2NW+etIwNtrx5sA7j8jqZr41TfCYV7u/kI6z/iw4U5FhzcE3KFoYpUlx+
+	 EJufX9pSTO5snqQSf6z8kXIYsNqFPqDB8lJ+9sv9a/hxu2vaVWoooscLJHQJKySaZ6
+	 EAGGpeN2NKlokZS/na0akBegTRubqqiIJ3rt8luKbAtW5znYS0vQofM2AWhnTsSfre
+	 Yqd5v1CsRumzzpyCL2yJ4L63UKzP/pv6mXdPXErqU91jxMW7AbmNgj1Lt701jflieY
+	 n6ZaPXhBGq5Zg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Wed, 13 Nov 2024 02:04:49 +0300 (MSK)
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, "Rob
+ Herring" <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v5 0/3] Add A1 Soc audio clock controller driver
+Date: Wed, 13 Nov 2024 02:04:40 +0300
+Message-ID: <20241112230443.1406460-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] pidfs: implement file handle support
-Content-Language: en-GB
-To: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Amir Goldstein <amir73il@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- christian@brauner.io, paul@paul-moore.com, bluca@debian.org,
- Chuck Lever <chuck.lever@oracle.com>
-References: <20241101135452.19359-1-erin.shepherd@e43.eu>
- <20241112-banknoten-ehebett-211d59cb101e@brauner>
-From: Erin Shepherd <erin.shepherd@e43.eu>
-In-Reply-To: <20241112-banknoten-ehebett-211d59cb101e@brauner>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189131 [Nov 12 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/11/12 21:28:00
+X-KSMG-LinksScanning: Clean, bases: 2024/11/12 22:50:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/12 21:10:00 #26864167
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+This series adds support for audio clock and reset controllers on A1 SoC family.
 
-On 12/11/2024 14:10, Christian Brauner wrote:
-> Sorry for the delayed reply (I'm recovering from a lengthy illness.).
-No worries on my part, and I hope you're feeling better!
-> I like the idea in general. I think this is really useful. A few of my
-> thoughts but I need input from Amir and Jeff:
->
-> * In the last patch of the series you already implement decoding of
->   pidfd file handles by adding a .fh_to_dentry export_operations method.
->
->   There are a few things to consider because of how open_by_handle_at()
->   works.
->
->   - open_by_handle_at() needs to be restricted so it only creates pidfds
->     from pidfs file handles that resolve to a struct pid that is
->     reachable in the caller's pid namespace. In other words, it should
->     mirror pidfd_open().
->
->     Put another way, open_by_handle_at() must not be usable to open
->     arbitrary pids to prevent a container from constructing a pidfd file
->     handle for a process that lives outside it's pid namespace
->     hierarchy.
->
->     With this restriction in place open_by_handle_at() can be available
->     to let unprivileged processes open pidfd file handles.
->
->     Related to that, I don't think we need to make open_by_handle_at()
->     open arbitrary pidfd file handles via CAP_DAC_READ_SEARCH. Simply
->     because any process in the initial pid namespace can open any other
->     process via pidfd_open() anyway because pid namespaces are
->     hierarchical.
->
->     IOW, CAP_DAC_READ_SEARCH must not override the restriction that the
->     provided pidfs file handle must be reachable from the caller's pid
->     namespace.
+Changes v4 [4] -> v5
+ - moved changes of aux reset driver to series [5]
+ - added reset controller on top of audio-vad
+ - merged into single file
+ - reworked variables/defines naming
+ - added clk81 clock hierarchy
+ - added TDMIN_VAD-related clocks
+ - excluded DT patch (it will submitted separately)
 
-The pid_vnr(pid) == 0 check catches this case -- we return an error to the
-caller if there isn't a pid mapping in the caller's namespace
+Changes v3 [3] -> v4
+ - Use auxiliary reset device implemented in [4]
+ - Split the driver into files
+ - Use common with axg-audio yaml schema
+ - Unify clock-names with axg-audio
 
-Perhaps I should have called this out explicitly.
+Changes v2 [2] -> v3
+ - reset:
+   * added auxiliary device
+ - yaml:
+   * added declaration of optional clocks
+   * fixed names in example and another cosmetics
+ - clocks:
+   * reworked naming
+   * stop using of "core" clock name
+   * fixed wrong parenting
 
->   - open_by_handle_at() uses may_decode_fh() to determine whether it's
->     possible to decode a file handle as an unprivileged user. The
->     current checks don't make sense for pidfs. Conceptually, I think
->     there don't need to place any restrictions based on global
->     CAP_DAC_READ_SEARCH, owning user namespace of the superblock or
->     mount on pidfs file handles.
->
->     The only restriction that matters is that the requested pidfs file
->     handle is reachable from the caller's pid namespace.
+Changes v1 [1] -> v2:
+ - Detached from v1's series (patch 2, 3, 4, 25)
+ - Reuse some of defines from axg-audio
+ - Split the controller into two memory regions
 
-I wonder if this could be handled through an addition to export_operations'
-flags member?
+Links:
+ [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
+ [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
+ [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
+ [4] https://lore.kernel.org/all/20240913121152.817575-1-jan.dakinevich@salutedevices.com/
+ [5] https://lore.kernel.org/all/20241112230056.1406222-1-jan.dakinevich@salutedevices.com/
 
->   - A pidfd always has exactly a single inode and a single dentry.
->     There's no aliases.
->
->   - Generally, in my naive opinion, I think that decoding pidfs file
->     handles should be a lot simpler than decoding regular path based
->     file handles. Because there should be no need to verify any
->     ancestors, or reconnect paths. Pidfs also doesn't have directory
->     inodes, only regular inodes. In other words, any dentry is
->     acceptable.
->
->     Essentially, the only thing we need is for exportfs_decode_fh_raw()
->     to verify that the provided pidfs file handle is resolvable in the
->     caller's pid namespace. If so we're done. The challenge is how to
->     nicely plumb this into the code without it sticking out like a sore
->     thumb.
+Jan Dakinevich (3):
+  clk: meson: axg: share the set of audio helper macros
+  dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
+    driver
+  clk: meson: a1: add the audio clock controller driver
 
-Theoretically you should be able to use PIDFD_SELF as well (assuming that
-makes its way into mainline this release :-)) but I am a bit concerned about
-potentially polluting the open_by_handle_at logic with pidfd specificities.
+ .../clock/amlogic,axg-audio-clkc.yaml         |   4 +
+ drivers/clk/meson/Kconfig                     |  14 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/a1-audio.c                  | 841 ++++++++++++++++++
+ drivers/clk/meson/axg-audio.c                 | 215 +----
+ drivers/clk/meson/meson-audio.h               | 156 ++++
+ .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 139 +++
+ 7 files changed, 1190 insertions(+), 180 deletions(-)
+ create mode 100644 drivers/clk/meson/a1-audio.c
+ create mode 100644 drivers/clk/meson/meson-audio.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
 
->   - Pidfs should not be exportable via NFS. It doesn't make sense.
-
-Hmm, I guess I might have made that possible, though I'm certainly not
-familiar enough with the internals of nfsd to be able to test if I've done
-so.
-
-I guess probably this case calls for another export_ops flag? Not like we're
-short on them
-
-Thanks,
-    - Erin
+-- 
+2.34.1
 
 
