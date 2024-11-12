@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-405880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC39C586D
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:59:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9AE9C5873
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DF71F23553
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:59:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13A901F2333E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C5E13212A;
-	Tue, 12 Nov 2024 12:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A69113A3F2;
+	Tue, 12 Nov 2024 13:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FzHqa3ar"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZyV/1KV3"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6851292CE
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FE445979
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416364; cv=none; b=NC0tiiWvGd6XjI/x/ZO1tEmAcYF1aYP+70HuK28Rb43AyzomrmBd7ISOQRZpIrnWVg6LA0st2hajHyAX/Y9v3zs3jsKef9MmbZ9262IFL/NJN7qiUuqv4o+Qpq0rws7fN8iyE9s4f5YKxrHytop+XdZHA0U4j0ehszHXlp27bGU=
+	t=1731416427; cv=none; b=Q7ZkZ7y/6MVbKqk5HG9Bxgx9iH6frsUJQNVxzbPz4izOx9u0MjmX7/QpV9V68rYNK8juQ9nOmHb4IBkKC0Z8aXpoitbDbF+3Cbjr9zrTGxDMB00858qBw6zrKPEGgQy/NrfhXct5aZZ8Jzyd4sxtBhOhBVVSdIVrGBR+7OMQDFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416364; c=relaxed/simple;
-	bh=O1ra4cc8YXF6OcVwIaYhFtkTaBxbuaqHKor32feVjhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AYiXCzqfaPDkNyb1+yZeLexIen0JiSfh9xmQPo6ug/A87M5y0FgsSpX8TyM7lgDy8KgzzgAUmcpw5hjRvDXpJN4SUYLsqKhXBn6hXhmza7KzeXxVLC9GzieG5gY1s/6XR6R8OXuk8jZi1cbPbKb4c1D8h4Slh2gQWoQjbFfXz5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FzHqa3ar; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316cce103dso70682515e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:59:21 -0800 (PST)
+	s=arc-20240116; t=1731416427; c=relaxed/simple;
+	bh=6OSMeGKtQqEz6pt4CLSfVWP64uVuHB5pe0dkYt4nkKU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hI8dFQmnjidR8FCXmOUHdoMKYqNCnt6JYMuovztlXRJhmCk06QJmacpAgjYuG2QPXiuf+15ziOjsFtY/TrC5j2yftZnlZSTkNDvNzYXfyh7BHH+wEhIvtavT9OoPJtNCgPf8YeqT1m+mKs1P10J7i4Cyapp2uXtUimr66Rhz6e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZyV/1KV3; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so732055266b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 05:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731416360; x=1732021160; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cfaiPLSE/cSMEniC7rNx14oY4I502rUQz+kbxcUTM/M=;
-        b=FzHqa3ar7dMC1zz4SEoyk+b8jk55Z942h7b2WqkdmZxprNjgr3Werl1yphBws75eVP
-         mfs3usrcASUjcMrGV2vS0K/dSSSiW8P56K7/7r64o366tC27/dKnf73y9R3mfcCviekT
-         N0m0tfNQZuXVGIuRKceb6JIEHJ49SKRiAw83gx9SmX1Q2tqeeOkO2G04KI/SbQb0ay1X
-         O/WBcP39bJ0GN1rcRRjSBKHYqRS8LQ8uIEc+tFOKLis7rVecSpuWiWXtbC8tWgIx/cNV
-         S7FHAAy3Nh0x7HN7hddw4hUnux9QiiOeSTRb+zLbPrgfnDXLnzONBGjddnF5+ec++qXV
-         lVPg==
+        d=linaro.org; s=google; t=1731416424; x=1732021224; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6OSMeGKtQqEz6pt4CLSfVWP64uVuHB5pe0dkYt4nkKU=;
+        b=ZyV/1KV3tpWvTjCE95Yf58ZUOEbNIZKoAiwqH6F6qzVCdtJrGOw1t+sgUi8Nl+qj1y
+         08CZ2/lYN2a7/fZ4A8SuUwxaNSRVdOg4IQoe6lwltOWBtY9qoASZwjHu7WNHYsPNt2Q0
+         Koc8aY8kANohcCwutO3AZ9El+RPJvWXrYE/9q9JKe31rUAdnxoq/eoETUjyOG3kC6/lo
+         wvzOjuuDBQlU1r3HIwhlgyJE+EH9ADwxM6c2XdYp0EEw/H+4Fp33yi53kPow74P7iWRb
+         WTvZ96xHvIi4O9XtxcAnP5RGEm8awH9z7or3IwZ1QTNxVox4ifvvtlNd0F7Ycu7uIhU2
+         Xi0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731416360; x=1732021160;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cfaiPLSE/cSMEniC7rNx14oY4I502rUQz+kbxcUTM/M=;
-        b=msLIyQKwmG8Xc6T6w3e2BNrQah4ZbmeowQSpBzF9Q+SSzXum5gkAsvvzGj9rO6AQny
-         h3TicCVZsFCVgIf8HEM7gmixAMcC6tEP0B3WvDK7OLVHDnKCtVk7hBGUZT1pnk6LsG2+
-         oQ2xBqVuGnfGbWSGaWLxRFVF4XU7NBTvbaBuIWh8A+RALHjJbjVhM3qaB2jCybGzaZRZ
-         R06vbGJM2DOjLkIakKxbcJZBLpCHdHTPElfOp4Lv33uk8r0H9q3Y445Ym+WHNUVDdp1t
-         CJRv1UMdjzCc5YE7sIsguSKcRfbPXv4pLBPLl3XFDVo73FjVRHhB21suMwJCnNt99Qvx
-         FPGQ==
-X-Gm-Message-State: AOJu0YxxkUJjmoA1OGNeYJUry3PjPEXeOFM71eZmCrJSAggvlvlGaGMz
-	DQj+90W0KZ/TmSoOp9QJVcyUR3gChjjhL0pfJuQ7PUX9J8x1H370PDRfUOiue/0=
-X-Google-Smtp-Source: AGHT+IFU6xTdnYAb/vcuPafz5OnVgaag1P8H6I72Di3zG/EFdT2LjuKgZeQulxlN4dthmJnEGi4hdA==
-X-Received: by 2002:a05:6000:1541:b0:37d:2ea4:bfcc with SMTP id ffacd0b85a97d-381f186bc9bmr15525328f8f.13.1731416360468;
-        Tue, 12 Nov 2024 04:59:20 -0800 (PST)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381ed9ec1b1sm15705648f8f.82.2024.11.12.04.59.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 04:59:20 -0800 (PST)
-Date: Tue, 12 Nov 2024 13:59:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Chris Down <chris@chrisdown.name>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 04/11] printk: Support toggling per-console loglevel
- via syslog() and cmdline
-Message-ID: <ZzNRJr21HiHXBAFO@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
+        d=1e100.net; s=20230601; t=1731416424; x=1732021224;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6OSMeGKtQqEz6pt4CLSfVWP64uVuHB5pe0dkYt4nkKU=;
+        b=DZr2wgr6BdNDvKNHd950lNURns4KkQF3YGgU6MBTb3BA4Rvm45Vi0mEFyPPPxlCnZe
+         9eFHM9h4SvCJEoRDUhKYDoaFCbt+lAqid/NkFzUSVnSgvNcRajL+DpF0xZBKTcOwrKxh
+         g0ExFz/Wi4NLFAIvwv9pt2F/FNXb7XZCPM4DuLGH6zgQjHWr8m0meoCaB4paefPRquWk
+         NIRLTKygDWPbEZfjRNzUS4l4PYvlu5YzEp4iXJEWSA1v7SwBe1KO0IHEkBxzIhSFUYu7
+         2yaap/goEdI4tigQ14Hmw1P7dE6VWZF5C7vSR5rhhRbJXU6JBZ9CoPLL34gGTEhZba6c
+         vNBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEVlGN4NJBl+xX97GdqdQzy9ZFf64HXTKwFHCuBje6MgdAzIY/65AdAaVfUUgvwzO51nAkOjXE91a0lA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQam+IOdwMUxLZkBcvOZSnS4aJGtmtG36mTEmLJkaVphTq0eg2
+	x9kTNFK53KDPJpLIBrb2sirCr6AiVDPsuNNOrkl9GjmtDrlNFpWOCDiN18XVVbg=
+X-Google-Smtp-Source: AGHT+IHNxQPlxbO39/cx0Bj0wtirFeB+QLLR3F4SPq6zq+0AX5aNWZRe22SFOp6JVWXV6bMG2CpGIQ==
+X-Received: by 2002:a17:907:3e1a:b0:a9e:b610:8586 with SMTP id a640c23a62f3a-a9eefeade5dmr1417029866b.5.1731416424054;
+        Tue, 12 Nov 2024 05:00:24 -0800 (PST)
+Received: from [192.168.0.48] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a17684sm720243066b.34.2024.11.12.05.00.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Nov 2024 05:00:23 -0800 (PST)
+Message-ID: <e0633e3a-8670-4541-b4ff-9f000b47b746@linaro.org>
+Date: Tue, 12 Nov 2024 13:00:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <07141a533c4071c364c4f2eda6d97a9a89797e67.1730133890.git.chris@chrisdown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] media: venus: hfi_parser: avoid OOB access beyond
+ payload word count
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241105-venus_oob-v1-0-8d4feedfe2bb@quicinc.com>
+ <20241105-venus_oob-v1-2-8d4feedfe2bb@quicinc.com>
+ <474d3c62-5747-45b9-b5c3-253607b0c17a@linaro.org>
+ <9098b8ef-76e0-f976-2f4e-1c6370caf59e@quicinc.com>
+ <f53a359a-cffe-4c3a-9f83-9114d666bf04@linaro.org>
+ <c9783a99-724a-cdf0-7e76-7cbf2c77d63f@quicinc.com>
+ <f6e661da-6a8f-4555-881e-264e8518f50c@linaro.org>
+ <410e1531-6c1b-fb29-2748-eca57fc13481@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <410e1531-6c1b-fb29-2748-eca57fc13481@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 2024-10-28 16:45:40, Chris Down wrote:
-> A new module parameter (ignore_per_console_loglevel) is added, which can
-> be set via the kernel command line or at runtime through
-> /sys/module/printk/parameters/ignore_per_console_loglevel. When set, the
-> per-console loglevels are ignored, and the global console loglevel
-> (console_loglevel) is used for all consoles.
-> 
-> During sysrq, we temporarily disable per-console loglevels to ensure all
-> requisite messages are printed to the console. This is necessary because
-> sysrq is often used in dire circumstances where access to
-> /sys/class/console may not be trivially possible.
-> 
-> Additionally, the syslog actions SYSLOG_ACTION_CONSOLE_ON and
-> SYSLOG_ACTION_CONSOLE_OFF are augmented to save and restore the state of
-> ignore_per_console_loglevel. This allows administrators to enable or
-> disable per-console loglevels dynamically using the syslog() system
-> call, as supported in userspace by things like dmesg.
-> 
-> This is useful when debugging issues with message emission, or when
-> needing to quickly break glass and revert to global loglevel only.
-> 
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -1298,6 +1313,16 @@ bool per_console_loglevel_is_set(const struct console *con)
->   * 1. con->level. The locally set, console-specific loglevel. Optional, only
->   *    valid if >0.
->   * 2. console_loglevel. The default global console loglevel, always present.
+On 12/11/2024 12:58, Vikash Garodia wrote:
+> One thing that we can do here is to increment the word count with the step size
+> of the data consumed ?
 
-I think that I have suggested to remove the above comment because
-it was obvious from the code. I am in doubts now because use
-extendended it below ;-)
+I think that's the right thing to do.
 
-> + * The behaviour can be further changed by the following printk module
-> + * parameters:
-> + *
-> + * 1. ignore_loglevel. Can be set at boot or at runtime with
-> + *    /sys/module/printk/parameters/ignore_loglevel. Overrides absolutely
-> + *    everything since it's used to debug.
-> + * 2. ignore_per_console_loglevel. Existing per-console loglevel values are left
-> + *    intact, but are ignored in favour of console_loglevel as long as this is
-> + *    true. Also manipulated through syslog(SYSLOG_ACTION_CONSOLE_{ON,OFF}).
-
-I like that it is summarized in one place. I like the comment after all ;-)
-
-That said, it is also nicely summarized in
-Documentation/admin-guide/per-console-loglevel.rst
-So, it might be enough to mention it here.
-
->   */
->  enum loglevel_source
->  console_effective_loglevel_source(const struct console *con)
-
-Best Regards,
-Petr
+---
+bod
 
