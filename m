@@ -1,124 +1,247 @@
-Return-Path: <linux-kernel+bounces-406738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE0C9C630C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5342C9C630D
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC4E1F236EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D94041F247F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 21:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7472121A4A0;
-	Tue, 12 Nov 2024 21:04:59 +0000 (UTC)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2964821A4C3;
+	Tue, 12 Nov 2024 21:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="P4k1jOqj"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA5F13FD99;
-	Tue, 12 Nov 2024 21:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469CF20BB4B
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 21:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731445499; cv=none; b=WmJoYURjhGvywCiYrNgK6KJPo+evl4xv/iR6xLWuoCsmpr4aogtUG+NomF6/OVWrtzo/PUc5UpfV2k8dKu57cKd0cvATZVUTim2Xf4ieWl6s6TgGUCyMsTzyNUqp7nDNR0QYwzv6gPUbP57ApRZrxFT+hrdMVpinlNV8EHQSInY=
+	t=1731445499; cv=none; b=Jyzqi+1/d9IA02sEdVCK6S/CA7yhCCnt8AiZpgVSTfjJdnTIjfXCXIyEQydFlQ/aPW6FRpPCKia3jri07cQaeYy6JxXOiIzdWgJC2lOWGuWTdezldJW3hHSLgX+bO47h5GceDhjGsWSqOeUH7imTbh3PuWPOoBtgZo/1PUDGsCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731445499; c=relaxed/simple;
-	bh=TQ0/exzLDepX41JCJH6DPzgifIgtqk1K/F5c9oW43sQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nZRDsCNzlFy8jpSdJ6bn2T4HtRAiXFbcnzXsOCUviEK6Swch7+4i8tGZzQPKpVcxJFSnhPoOGx1UHI2k0WOY2TXJa+AJmoMa8j3b6Cu1o2QvX91zgBXAoSL5tQxXRFIMLbkt88FLCEgXTzJMLEkkTamZ6EVjhffb5xPo1EcJERg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e625b00bcso5013411b3a.3;
-        Tue, 12 Nov 2024 13:04:57 -0800 (PST)
+	bh=FoS6mKJ4QYEkCPVvnFJ7XziCjZTMJd6wKkNqNuTngdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ouQRehI/jVnmUdcCE/SJFdiGL53JRPVj7puwiknfjUSGVoY8r/cf4T2NqznYG+9NP4xSgySIXgxbst56yjOijfmfCedumbGkbCLUtoMHiNfEsuaz6nEpqRLfX/hWwSex8lrbyoq2D7ewxSak73yPJfNiGvxld+gmbLvUfLknqz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=P4k1jOqj; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99f646ff1bso920715466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:04:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1731445495; x=1732050295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B4tt3FPTBKGUI9N/u9zyu/Mn7wKwRgvQ0xoN5SDOL+0=;
+        b=P4k1jOqjQSZBDEomzGLSqTxTWSmSaRJGLKUqjDkp4zPb88VEbrkC0xx0zoSen6zGDr
+         U8Gy5pIHZIw6Ni2QviwRcOyAeI9P/IvaKoY+YvQJqgjb+lWNT3QkWfSnm1Yd3fXylA6X
+         sW80LGsK7szQ4rEKXURxxH43KTzGE+r4f+1JU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731445497; x=1732050297;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/CvDHNQkFyG+LMIK7/fleVlgZZt4uzRHNtjY9nOElHs=;
-        b=a++uzm1lw1JEUm2G05UHswk4uQTl8rARTwlouCOKDSez0NUL/BIEqzs0ipEp4boKm2
-         cEbHc3CzsUC/sR4mgG9CmrHVypgQniSJhunLmPW5anY1Dqr0SHJYhQC9BsM7Byrd8Ocl
-         zO23mXzJzFOlC7KwwGQLSu1JDcv3JMea2rLyR3MlDtcokVEIxk381uVWXMcd7pvGeLo9
-         81d6Nlt2KmnOsBhYN+5T7f/Q4EPvVj49jOl33/8ZpLhWeLtCssNrbaOx99iPgFomelhu
-         5pyoN1G8J7lt012YTDENf558WGwhpUPfYGtN+gAJuHMJ3f27eqZFPOjgiFnbY7hZSh2r
-         vG/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUuAq7xOpsOfohW3qeqvyLukQeif4EYsF6Cnwx8PK5tcTIXEzc15R3A1KXR0Ny71uDCVeyKpUQUQ2+rh95C@vger.kernel.org, AJvYcCWX4ZtzaGfpwDr53U1C9fF++j6txKsQ4qMhV/99s1RqeTvvQr/SrtgezSRkDNS0rjnfQ4kw1+or4PBl@vger.kernel.org
-X-Gm-Message-State: AOJu0YyduvcRHrzgXsc5gCuOMtWiI+LJ3poT9J6PcyBdNBFK87IAazWT
-	ASlaSW76pc8J648PVQeh5041HmiEz3fdxJh3CZ/ekEepn95sYpWW6ZnRWiEo
-X-Google-Smtp-Source: AGHT+IGcsWdrF+tY1KFaOyONuadw6SUdOxmTDjuraVog9v/493S6TI4E8TdZYxni9VT/AGxN5L4oDw==
-X-Received: by 2002:a05:6a20:6a28:b0:1d9:270a:947a with SMTP id adf61e73a8af0-1dc7049839fmr1030587637.30.1731445495282;
+        d=1e100.net; s=20230601; t=1731445495; x=1732050295;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B4tt3FPTBKGUI9N/u9zyu/Mn7wKwRgvQ0xoN5SDOL+0=;
+        b=iYm6nS5NM/5UM5vS4R9e6fM73hDSd6SB2u07SIBiOgs3CAaLhitLrzBBdskYAOR/qs
+         1HVpN6v/lAZJKJEBArO1Jkh6bPqrLr2Ui2MDns/9Myl4+30sBfSQv+9Pmu1eLuCJ5tX1
+         S6Pe2WiIYoVLYxYstNbmby/5phwy7hR9cUw8CVRx8F9OriqBb/ujv1Zr1eVwz4y3SUWY
+         csKZBy+lTsfO9JiekmKQV9g8hKHFcVIG2We29TFQSBXB/UE+uWHCZSB8pKqFIi415ruT
+         vMupqJQPubseiveU/Q/70/wq7VbcBnwHl73eXDrDC6+ZdRR6VrcnXXcumDrACr6txFD8
+         6urg==
+X-Gm-Message-State: AOJu0Yxb4IffpMdEtUNe55yAwntXxNPXW3ejwHucoWijY4B4oIdmzNSI
+	ZmR/YfU6Y1z3Em8qHqSUiQUp6NDtvnhC1qlAKWAWAiID8ymuzGOv460PmQcs9Ag=
+X-Google-Smtp-Source: AGHT+IFAth2VPwPjh+p8is6GciMPk9cenlRwc3eBPnOWrQMwlg3eG8DP58S5jEhpIwUF8emf9eP5yQ==
+X-Received: by 2002:a17:907:5ca:b0:a99:374e:f3cb with SMTP id a640c23a62f3a-aa1c57ae760mr358957266b.46.1731445495232;
         Tue, 12 Nov 2024 13:04:55 -0800 (PST)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com. [209.85.215.179])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72407860a6bsm11711321b3a.6.2024.11.12.13.04.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+Received: from localhost (77.33.185.121.dhcp.fibianet.dk. [77.33.185.121])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9ee0a17635sm766028966b.17.2024.11.12.13.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 12 Nov 2024 13:04:54 -0800 (PST)
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so4442108a12.2;
-        Tue, 12 Nov 2024 13:04:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV9krSG7hQVEOIafQS8XxZejSU7QuY8Iv2k8K0r/Gr9UK7uVSz5OynsMG8Pned4i0ti+uyblMsepXhX@vger.kernel.org, AJvYcCVBIxXaDrcbrql94nch0MXR3zOV+j9dEHon1yq/A5sj1yH+lAkaRW05zfF4N6nwgi+4WhKUkPpLONYhjxT7@vger.kernel.org
-X-Received: by 2002:a17:90b:524e:b0:2e2:d859:1603 with SMTP id
- 98e67ed59e1d1-2e9f2d5c5a7mr421987a91.25.1731445494243; Tue, 12 Nov 2024
- 13:04:54 -0800 (PST)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Jeff King <peff@peff.net>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH v2] setlocalversion: work around "git describe" performance
+Date: Tue, 12 Nov 2024 22:05:00 +0100
+Message-ID: <20241112210500.2266762-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241111181807.13211-1-tszucs@linux.com> <20241111181807.13211-4-tszucs@linux.com>
- <4ba81dfa-f276-4e05-b46b-92f50dbcfcc4@kwiboo.se> <CA+GksrJLpeU8x-kjR1Ng3ySf+giiufCsJuBssng9qoX1PjAunA@mail.gmail.com>
- <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
-In-Reply-To: <9330ebb370780c001fd2aaee49aec9e8@manjaro.org>
-From: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>
-Date: Tue, 12 Nov 2024 22:04:43 +0100
-X-Gmail-Original-Message-ID: <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-Message-ID: <CA+GksrJjDPve29Vh7ZFhM+JFp058xmXZAPeuLuFth7v=JeiH2w@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Enable UART8 on rock-3b
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@linux.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, FUKAUMI Naoki <naoki@radxa.com>, Chukun Pan <amadeus@jmu.edu.cn>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Dragan,
+Contrary to expectations, passing a single candidate tag to "git
+describe" is slower than not passing any --match options.
 
-On Tue, Nov 12, 2024 at 4:07=E2=80=AFPM Dragan Simic <dsimic@manjaro.org> w=
-rote:
-> Please correct me if I'm wrong, but isn't this UART supposed to be
-> used for the Bluetooth part of an SDIO WiFi + Bluetooth module, in
-> form of a non-standard M.2 module that Radxa sells?
+  $ time git describe --debug
+  ...
+  traversed 10619 commits
+  ...
+  v6.12-rc5-63-g0fc810ae3ae1
 
-UART8 is supposed to be used for any radio module connected to the M2E
-connector.
-It will typically be responsible for Bluetooth or BLE but it could be
-802.15.4 or whatever. In any case, all wanting to use it will need the
-uart8 node enabled.
+  real    0m0.169s
 
->
-> With that in mind, I see very little sense in just enabling the UART,
-> without defining the entire Bluetooth interface, which AFAIK produces
+  $ time git describe --match=v6.12-rc5 --debug
+  ...
+  traversed 1310024 commits
+  v6.12-rc5-63-g0fc810ae3ae1
 
-Defining a bluetooth node would hardwire idiosyncrasies of a given
-radio module's Bluetooth core. Sure you could add a sleep clock, all
-kind of sideband signals for wakeups, reset, power down, etc. But hey,
-some will use them, some won't. I think it's undesirable and
-unnecessary. You can hciattach from here and most will work just like
-that. Tighter integration or anything special, module specific on top
-should be handled individially, on a case-by-case basis. This is a dev
-board after all. I say trick of all trades.
+  real    0m1.281s
 
-> nasty looking error messages in the kernel log when there's actually
-> nothing connected to the UART.
+In fact, the --debug output shows that git traverses all or most of
+history. For some repositories and/or git versions, those 1.3s are
+actually 10-15 seconds.
 
-My dmesg is clean as a whistle
-root@rock-3b:~# dmesg | grep -E 'fe6c0000|ttyS0'
-[    0.344818] fe6c0000.serial: ttyS0 at MMIO 0xfe6c0000 (irq =3D 26,
-base_baud =3D 1500000) is a 16550A
-What kind of nasty errors do you recall?
+This has been acknowledged as a performance bug in git [1], and a fix
+is on its way [2]. However, no solution is yet in git.git, and even
+when one lands, it will take quite a while before it finds its way to
+a release and for $random_kernel_developer to pick that up.
 
-Kind regards,
-Tamas
+So rewrite the logic to use plumbing commands. For each of the
+candidate values of $tag, we ask: (1) is $tag even an annotated
+tag? (2) Is it eligible to describe HEAD, i.e. an ancestor of
+HEAD? (3) If so, how many commits are in $tag..HEAD?
+
+I have tested that this produces the same output as the current script
+for ~700 random commits between v6.9..v6.10. For those 700 commits,
+and in my git repo, the 'make -s kernelrelease' command is on average
+~4 times faster with this patch applied (geometric mean of ratios).
+
+For the commit mentioned in Josh's original report [3], the
+time-consuming part of setlocalversion goes from
+
+$ time git describe --match=v6.12-rc5 c1e939a21eb1
+v6.12-rc5-44-gc1e939a21eb1
+
+real    0m1.210s
+
+to
+
+$ time git rev-list --count --left-right v6.12-rc5..c1e939a21eb1
+0       44
+
+real    0m0.037s
+
+[1] https://lore.kernel.org/git/20241101113910.GA2301440@coredump.intra.peff.net/
+[2] https://lore.kernel.org/git/20241106192236.GC880133@coredump.intra.peff.net/
+[3] https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b109b2.1730337435.git.jpoimboe@kernel.org/
+
+Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+
+v2: Drop odd here-doc, use "set -- $()" instead. Update commit log to
+mention the git.git patches in flight.
+
+ scripts/setlocalversion | 53 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 16 deletions(-)
+
+diff --git a/scripts/setlocalversion b/scripts/setlocalversion
+index 38b96c6797f4..1e3b01ec096c 100755
+--- a/scripts/setlocalversion
++++ b/scripts/setlocalversion
+@@ -30,6 +30,26 @@ if test $# -gt 0 -o ! -d "$srctree"; then
+ 	usage
+ fi
+ 
++try_tag() {
++	tag="$1"
++
++	# Is $tag an annotated tag?
++	[ "$(git cat-file -t "$tag" 2> /dev/null)" = "tag" ] || return 1
++
++	# Is it an ancestor of HEAD, and if so, how many commits are in $tag..HEAD?
++	set -- $(git rev-list --count --left-right "$tag"...HEAD 2> /dev/null)
++
++	# $1 is 0 if and only if $tag is an ancestor of HEAD. Use
++	# string comparison, because $1 is empty if the 'git rev-list'
++	# command somehow failed.
++	[ "$1" = 0 ] || return 1
++
++	# $2 is the number of commits in the range $tag..HEAD, possibly 0.
++	count="$2"
++
++	return 0
++}
++
+ scm_version()
+ {
+ 	local short=false
+@@ -61,33 +81,33 @@ scm_version()
+ 	# stable kernel:    6.1.7      ->  v6.1.7
+ 	version_tag=v$(echo "${KERNELVERSION}" | sed -E 's/^([0-9]+\.[0-9]+)\.0(.*)$/\1\2/')
+ 
++	# try_tag initializes count if the tag is usable.
++	count=
++
+ 	# If a localversion* file exists, and the corresponding
+ 	# annotated tag exists and is an ancestor of HEAD, use
+ 	# it. This is the case in linux-next.
+-	tag=${file_localversion#-}
+-	desc=
+-	if [ -n "${tag}" ]; then
+-		desc=$(git describe --match=$tag 2>/dev/null)
++	if [ -n "${file_localversion#-}" ] ; then
++		try_tag "${file_localversion#-}"
+ 	fi
+ 
+ 	# Otherwise, if a localversion* file exists, and the tag
+ 	# obtained by appending it to the tag derived from
+ 	# KERNELVERSION exists and is an ancestor of HEAD, use
+ 	# it. This is e.g. the case in linux-rt.
+-	if [ -z "${desc}" ] && [ -n "${file_localversion}" ]; then
+-		tag="${version_tag}${file_localversion}"
+-		desc=$(git describe --match=$tag 2>/dev/null)
++	if [ -z "${count}" ] && [ -n "${file_localversion}" ]; then
++		try_tag "${version_tag}${file_localversion}"
+ 	fi
+ 
+ 	# Otherwise, default to the annotated tag derived from KERNELVERSION.
+-	if [ -z "${desc}" ]; then
+-		tag="${version_tag}"
+-		desc=$(git describe --match=$tag 2>/dev/null)
++	if [ -z "${count}" ]; then
++		try_tag "${version_tag}"
+ 	fi
+ 
+-	# If we are at the tagged commit, we ignore it because the version is
+-	# well-defined.
+-	if [ "${tag}" != "${desc}" ]; then
++	# If we are at the tagged commit, we ignore it because the
++	# version is well-defined. If none of the attempted tags exist
++	# or were usable, $count is still empty.
++	if [ -z "${count}" ] || [ "${count}" -gt 0 ]; then
+ 
+ 		# If only the short version is requested, don't bother
+ 		# running further git commands
+@@ -95,14 +115,15 @@ scm_version()
+ 			echo "+"
+ 			return
+ 		fi
++
+ 		# If we are past the tagged commit, we pretty print it.
+ 		# (like 6.1.0-14595-g292a089d78d3)
+-		if [ -n "${desc}" ]; then
+-			echo "${desc}" | awk -F- '{printf("-%05d", $(NF-1))}'
++		if [ -n "${count}" ]; then
++			printf "%s%05d" "-" "${count}"
+ 		fi
+ 
+ 		# Add -g and exactly 12 hex chars.
+-		printf '%s%s' -g "$(echo $head | cut -c1-12)"
++		printf '%s%.12s' -g "$head"
+ 	fi
+ 
+ 	if ${no_dirty}; then
+-- 
+2.47.0
+
 
