@@ -1,1339 +1,199 @@
-Return-Path: <linux-kernel+bounces-405414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22E19C5106
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:44:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F8C9C510B
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 09:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8170D282663
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61297281CFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A393420A5FF;
-	Tue, 12 Nov 2024 08:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DCB20DD6A;
+	Tue, 12 Nov 2024 08:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="RYeybT8H"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zPatxn6d"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2086.outbound.protection.outlook.com [40.107.236.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2300120B812;
-	Tue, 12 Nov 2024 08:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731400916; cv=none; b=N/WuXZeMc/Ta5OD5kZq2YPNLFNxX+G7SRWK25SKdS/aMFpYoU+5QO/BxTwowdf/lTO8Gor1fe+G7RdWKWnBMYjJECBhIQvXcGrm6AbLYXDtbnSHXOJP1OEYEUYxY0vtW2cGciqbkMdW9CKl/eu0cVSP0K5WN4J0kwMnx+AGs7n4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731400916; c=relaxed/simple;
-	bh=GxtnvSMpqsWwBc9LQa257AfGAsNDDZtw9MEmBKQlOe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kc7Ez8U+1A8rbVKt19ZgtyVdnbaLWRWWZqs6s2CTsfKPhzHB9D/6E76Tuo/lWAdFKA631FMJOiF7+coyyDym/ZXqIckUYJc8/FZEB2R2Sjpliq59LCadOE4kcqrOV/oTW4KBjtwTOTqaLHPQwqV5kcCzTH4qkCHasU2hk595GaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=RYeybT8H; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731400906;
-	bh=guofuncCx9LHvRciGxxQfxaRlHdEfqABn5ehxOafR68=;
-	h=From:To:Cc:Subject:Date:From;
-	b=RYeybT8HXi34ZAZ3cLGxm6aBEQkMgW6jIAlBflqcU/s3x6a9uFYds6WvV1AZOi9r6
-	 OwjZh641NGqLA5lN3OGXWV6J9Lu1OXqRme5K6zCwKuSZf/2LbfJo0aECVLE+se9pEH
-	 r7AMuzR69+JeQ6LKSfdKhNuG6ni/hpPt0uehnDv9IVOQwh4yqVTQC4mMLAoXIRuJoi
-	 j6TrCOPZmdhsJgVuyyxmuuDZP2kZyYHddO2jh7///ysevO+teKMqjAyT8vL3o59fxI
-	 GpOywAd0A9iNo9EP0lds8U1exHpIOKA2KYLSl7j4ttI1EKj+MyXiXDJjYg6uZfbKeF
-	 y4wH1G5wKA2dQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XnfzF2Ms9z4wyh;
-	Tue, 12 Nov 2024 19:41:45 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: linux-edac@vger.kernel.org
-Cc: <linuxppc-dev@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>,
-	bp@alien8.de,
-	tony.luck@intel.com
-Subject: [PATCH] EDAC/powerpc: Remove PPC_MAPLE drivers
-Date: Tue, 12 Nov 2024 19:41:34 +1100
-Message-ID: <20241112084134.411964-1-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B8E20B7E5;
+	Tue, 12 Nov 2024 08:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731401037; cv=fail; b=WoBsDek30TZWkfGjBIlSjy940Dz7gLw8wdbNV13Ao9l1b9LlYS/laz6pCwK+WZSFntK+VQyVcCk1JekTvN0idGmIUUX1rORlJg9g7CToFEZwuaZt2TUU9IZnPy7RlVsLTuviDhyrL8jp5/Oiec2ixYQATOepmovuINDNVn7srSo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731401037; c=relaxed/simple;
+	bh=ULq4xB9zpW6MR4DGLXeMY1gbl/5+b+1SKV0pOP4PZlo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tsGJxXQo7Bm4M4LssmlZY5AOXgXjo3MzrgTcA+AIgQb1tqVYB0DFPOlqoxx1e4GNPM13gvNIyzFJk1OVjRHaojGbCRaAW+D49ZC5mTLctffwnov0yMKX5aZ27YU/j9F4/PvQLktme/rAIOF7oN6pX2KsNlg7/3MYtcGH+Kdcryk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zPatxn6d; arc=fail smtp.client-ip=40.107.236.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NnOB+7X8rPZGiens/rOUAqN6K5EqHgZcc9esO68KDR6oqy3NuPdWu0bW+ZZJ9pSrBu4Sjwgq9+tv/b3ZSotinOuAWBZU6qb2xkdl61PJ3mEHUDM8AmqehUJEyj6cuJhlAr2W5iyFGzavsBFT0dl7mWgwq9+Q+5rtvduWwm5F4NvADl1cy1vY8VLKdbG6wW9Nj0aMiVMw8UaJiyxGazpH/WoAITYyv8XLqa26E8IobZmnFSfxy1QHyYBxL1U7muqDrvv3Y8WMied0B13tSj+Xvc8DNcc7zwQJKoSJNwRVpv8sDhjHYdqSsaEt9dEaZcq57c3fp9pp/sb4fSNfxfwilg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p2XX3NjOWBselvIGoWIVSH6+Z+XEqWFx9BKsBtC7mIU=;
+ b=kqE5jtSLRtFa81vUOBRnQXFSXME9PFDCdqrn7avW3H7X8gU2oOG+MZa7BRzmVP1s88tTOA5j8Uv3eQ9IhTYkgxtZG/IrP3TimHNjQ7Z9uwL8HnKTmflw6kJZAU1T4z7GRBWLZe7BsB8iSph1alvkEjQBFrfTdsblFIzEH5OggW8lYQ1G5VdHHCEUAxiHWsf5AP8P9km08lcCw6Gat7KegD/TcEX3jTqPl+r49X4xsVBn5im0LCezsum/3WarkHTAJ0KkvjJYrxhAviP5k4YA6CBy9NIaNx9Vg8sGRvScLqVKMeKCsV++G5RcW5E1HVmWbqrhrrkK+wFS331o1ohXlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p2XX3NjOWBselvIGoWIVSH6+Z+XEqWFx9BKsBtC7mIU=;
+ b=zPatxn6d6itfRYnA2nG7Hu9t2y1Xt6t+j3H3utFynwJ2a+1P49+TipWOWNcC0jup7EpDAke00FypHo4hHun/21qL/F2azcvuxoUdfKqT5gdCN6RWFU0d6XGLLu4+BP/mKAwv5AD+PKfWOXKKgNnViJGQd9HCpXsx5a7xCE0gMuY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
+ DM4PR12MB6661.namprd12.prod.outlook.com (2603:10b6:8:b7::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8137.28; Tue, 12 Nov 2024 08:43:53 +0000
+Received: from DS7PR12MB6309.namprd12.prod.outlook.com
+ ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
+ ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 08:43:52 +0000
+Message-ID: <c7bd5e75-0f6f-6718-ce52-533bfad4f37e@amd.com>
+Date: Tue, 12 Nov 2024 14:13:43 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+ kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+ dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+ pbonzini@redhat.com
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <20241101160019.GKZyT7E6DrVhCijDAH@fat_crate.local>
+ <6816f40e-f5aa-1855-ef7e-690e2b0fcd1b@amd.com>
+ <4115f048-5032-8849-bb92-bdc79fc5a741@amd.com>
+ <20241111105152.GBZzHhyL4EkqJ5z84X@fat_crate.local>
+ <df1da11b-6413-8198-1bb0-587212942dbc@amd.com>
+ <20241111113054.GAZzHq7m-HqMz9Vqiv@fat_crate.local>
+ <0c13ab0e-ee34-5769-2039-32427ec4cf62@amd.com>
+ <20241111134215.GBZzIJtw-T0mWVKG5l@fat_crate.local>
+From: "Nikunj A. Dadhania" <nikunj@amd.com>
+In-Reply-To: <20241111134215.GBZzIJtw-T0mWVKG5l@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0124.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:6::9) To DS7PR12MB6309.namprd12.prod.outlook.com
+ (2603:10b6:8:96::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|DM4PR12MB6661:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed5b6daa-9385-4d7f-b415-08dd02f6228f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K3NRcG1aTVRreWNPd3RRUkFkT1ZsUHpmYmdxeHhQbjIrT1dkcENDNXNqZFRi?=
+ =?utf-8?B?b0VLeEFGVmpwbTJnaVRoWlhmdWZwYndjVjE0czBnMU1DQVBsc0lBL3ZybTVK?=
+ =?utf-8?B?WG9NQ2pkNnhyckZtemhQdzROSnFQendJMitYUUlxUUF3bnlxcmpwVGF4MnJo?=
+ =?utf-8?B?MDdzM0VmdkpkazUrckdicWZBRFBSTjNXdnh3UmhXMlFZa2NNZWI4c0FKdTlD?=
+ =?utf-8?B?OWlIVjI2MzRCM05KTXdrcG5mbWt1RTdwQmZyVFA2RVpkNzBDQy9CQjhmazg5?=
+ =?utf-8?B?M201dHJ2UUROQ2hJNzhyMnJRSUZWb2p0V1JCelZmYkE1ZU1oYnNDQnNWaTV1?=
+ =?utf-8?B?U21SMmdoakFlTmJnZTkwZUtqVGJMdERmY3hKejJXNU45NTY3alpyWEtBZmNv?=
+ =?utf-8?B?c0hZYytkNlJTa05vRVVKTGk1cm1LcHVseEVic0FOSUVxRVJ6Vnk3b3lVb0xl?=
+ =?utf-8?B?K0lmdERUNEx2Vm1GZFpqSkpSMndCUTcwUEozMnZlb1Yxb2sxVGpsVmFXOHBs?=
+ =?utf-8?B?d1pRUCt2VGo3VTAzVmdRQ0RJTFZaN25YOUxkeERPN3o3UlNqclVVR1JHRTAr?=
+ =?utf-8?B?L09QbnFwR3U1S0J4V3NlWitPSzZuTkw4amFuYmcwTHJQaC90ckhGZWU4ME4r?=
+ =?utf-8?B?bmRSN25HNUdjcjN3bzkyUG9KQnZZUzRVQnA5cUVvR2NHWFVwM0JtdVRkbldQ?=
+ =?utf-8?B?L29hallMY3VRUHJENmVYSEtKdVFjV0ZiYmNyMEdkQU1iNUFiaEd1UzBmRTM1?=
+ =?utf-8?B?N2ZiRjYxU0c3c01RTXIvQTlRQTkwUXl5dURYNHNjdnlwVjl0NVJhVUFNTXIv?=
+ =?utf-8?B?UjczQW80MVVSWWF0YWJvL0ZIUklrQlZ1UTRZZ1laLzZlT2lVWUNPWEVBN0hk?=
+ =?utf-8?B?QXZTNkJaVmlKajVWclhTc09ubEo2ektrWTJHMXBxTThMRy9pNVdyZzhCZlht?=
+ =?utf-8?B?clplUGNDVkc1R1RXaGV1dnNqMk9kdTNxMVRRVkpkTmd3VGV6QjlTdDZBcTZa?=
+ =?utf-8?B?M210dUwzeFFnQkphalo5MHZLM0RuSjc4dEdtTUpubnFRZEVDQTE2cU56WUY5?=
+ =?utf-8?B?VHFpcVI5MG5GMlVJenNmSGt4YzZzbEFmeDNhU2dMd3NOcGRSMVozb2c5UzZJ?=
+ =?utf-8?B?Z0JHbDJQWGFDa3ExSDZhck8zbE1lMEhZUi9oQlZpKzEybVAyczdoYkkycWZn?=
+ =?utf-8?B?TGNGT2htaGg2QUZzRGNxak92ZjBLVUlMMVJpWk5vY3BlbEY0dXRIdURaNGNi?=
+ =?utf-8?B?NFlDOVBxNW1YMmpoVkVvWjluS0p5VGxFNHA2aHZwNXoyUHVkV0FONEo0eFls?=
+ =?utf-8?B?eGNaM1F3cGJSeTNSQTVpRTY1YWh5bk9GNFhUNFpQSFVONWhCYlVCc1liZnBi?=
+ =?utf-8?B?d0FBUHJoK1BmdktnQzJYTTdPaTYxcWRscklVdnpleCsweHEvbUcwcENBVW8v?=
+ =?utf-8?B?QmRld1RuM2YvOFg3UjBZWDRBaWJhRHQ4anB0eXI1Ymd3QnJvRHRMRVorSUFi?=
+ =?utf-8?B?TlFSQUhWRVFTWHhoZ3pDMW4reSsvU081cVBMTUptekdoQi9ZcUd4UFBpWTJV?=
+ =?utf-8?B?NGpjMlh2UkFOUy9RRXlaT090VDFlWTZnLzEvQVJiWE9SNjdqK09JUWRMTS9L?=
+ =?utf-8?B?NGhGTk00ZDBLTW1nNWdCQnkxelBlcllTbnFZQVRYbVJZTDhBWEc3WFdsMk91?=
+ =?utf-8?B?SGhoNExvcC9XUlI4UEhqNXE3Yyt3aVVRSGh3VEx0WEszVFVuNTN1bmp6RGNH?=
+ =?utf-8?Q?zm7DGI6pKzGijLvkt8OPgJYaQZeiGLmKfa6X2Z5?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UHI2cDFKNllaMEJvZTBVZGxCVTVGTitLN0o5M2lybnV0MzRZMC9zUmVGcEl3?=
+ =?utf-8?B?TmpWak5PRVUxREc4NUtvc1hCV0o3dTlYcThURWpzeUU2ZFZST2dXU1gvVk1K?=
+ =?utf-8?B?Yit4RjNubDFxOEhGaGc5VVE4ci9VR01xS0NpSjBJaEVXRm1vQlUxVDZsS2hm?=
+ =?utf-8?B?UFg2UjdMS240ZVVRKzVhL08vRnhRaEttUVRNbVJDWWpKQnEyYXNVejZHUlFZ?=
+ =?utf-8?B?YzBONXdTcFhqblloTzZHTTc2dTNSRDU4STMrb1E5blM3aWxvMHR6ZW1yYm9I?=
+ =?utf-8?B?RGZBUmZNVUhjWVpDK2U0WmVuSFhEbUhlbzRkSTY0d1YyMDhIWWhCaVdkMkdy?=
+ =?utf-8?B?N1R0eG9DN2pEak8ySExidkhjU3huWXRhUWJPOUlLV0JrbkV4dzNpaHFIOENH?=
+ =?utf-8?B?eVRBOUhQcUV1akRFYisvR0JMeVZjSzZESFRtL2laLzh3b01nTC9EYmFHU20x?=
+ =?utf-8?B?Ujdrc0JoeHhZNFJ2MXNFak1DaHM2dnB1R2h4SlVmOTA2bWQwbzdwa3dTQ1ox?=
+ =?utf-8?B?NW9teUpyNzNhQTYxWmNabjFjbk84bkNwSDJqQzB3QW82RHlqc2Z3VFg4Y0lV?=
+ =?utf-8?B?TldtSks1dDRqWUJSaW5ONkxEYTZiNFpIZTZQTDNyZkRPcFJ3bmcvbExOQ01F?=
+ =?utf-8?B?cTVMYjJodlFobzNXbmRHcXhOMFlqS3lyLzgwTG1pQ2ZnNVZkWjI0aHRsaTRr?=
+ =?utf-8?B?S1U2dnF0dThxb1pFTmg3TG1EdndsU1Flam5QeU0rWStXVlMzald5VVhzWllD?=
+ =?utf-8?B?VWh1SnI1OUE0MVdYTmcwOVlveVFNUzlzMmlCeFBkNnBjQS9aTnZ0dSs1dnYx?=
+ =?utf-8?B?Z2M2OVk5TzIyNks3TEdwNzRSVThZdWxHZEtwaUVkOFlyTmZ5VDJYUE4wSktW?=
+ =?utf-8?B?cnBjbmdrOVJoU25pTGtreVZ4M29LR1c4TWxaVklUeWRZbGVyeXhWNzUwMk9W?=
+ =?utf-8?B?cXhUV25TQm5IZ0s0M2FPMGp6QjRKb3hXZzR6QWpiMHhWQzI5RE5iUjEvZVBz?=
+ =?utf-8?B?Uks1elZWenVCZzcwaGpERUVDVHE2SGFEb1hkbFpKME5GV3JsTW44bkZSNTdD?=
+ =?utf-8?B?a0FvUitJTENEYUtLQ3BKR3ExTGxKMmxscG84M05WTGkrcDhKTTFQejlOS0FM?=
+ =?utf-8?B?QkNEWGJNYmF6N3dnWkRPcWQ2d25vSVVoQ0IzN29VRDZkN3FVTmtnL3JNSHQz?=
+ =?utf-8?B?NXhNenhDbzZDbUV0WUdDWmRVS2ZKci90WTJvbDZQU0R0dW56SGJtZmV1eVJC?=
+ =?utf-8?B?aTNjVDF4S3lHTDhKZWV3VUFxcVcrblpmYUhqc0FSQnNwd21iRGlMelJiTUgr?=
+ =?utf-8?B?UlRRTGVEZ0gvU3h4VFZnZFdwcUVwUjlJa2pqaFRaam00dG9rd1lvOWlzTlk4?=
+ =?utf-8?B?R00xTjlGUDRITlBWOGJBY3cybFN0N2Q5Q2JDYWlKVk9RNmFLdjRtR09wWDlY?=
+ =?utf-8?B?VGhIZTc2VEVJbjcyTHR2NERLVFg3ZTVXbGZRVVZUOVFtc3JDTHVLQnR5di8z?=
+ =?utf-8?B?MjJ1TWlpUngrTDdNLzNiSHRGdWNMTU9wSDNOWTBKS1RZeXREbUJPcmUvdFpt?=
+ =?utf-8?B?emtQR2RPL0VIenFMT3Nzakgyd1U0VU96KzhueDZyMTJiTllVQTZ3Y1R3SG15?=
+ =?utf-8?B?VzZjVUIzaGtkbVh5cjdiWUQ4eFp5dFZtV0tCSjNBWmpqYUtuN0J0S3MyZzRm?=
+ =?utf-8?B?SzdRbWtvdVpCbnBHZnNkSDZSS2wwMzVodVlSaitkNHU3WEthdXpLS0txWmpq?=
+ =?utf-8?B?STNnVC96V04vNmMxTEFYVEMvbklRK1l3UVJ1cmNKYk1MTTNqNHlGc2RhNzk5?=
+ =?utf-8?B?TGZEcElZdXBLV3NKTFZXNTFMVDFTUU9jbUV1M3IyTWhuWTZrU25uNVhWNmRL?=
+ =?utf-8?B?NktFSGxSbU0wcFNQTFZOTWVyUjY1Q3MvMDdvTzNlekNiR3RvdVROSUlIWExl?=
+ =?utf-8?B?SzdJVVNWNmZ0Q1dncWJrYittVWRuREtGWk83N2ZTSEpGVi85Vy9rdE9lOVdh?=
+ =?utf-8?B?L3FWUDJRKzdTVFZWdnBXUVRtd1FncHk1YWYySHg1OVpOMmJtUlJ5dUdCeVZy?=
+ =?utf-8?B?K3hUUzlqR3RPc1pMK05pVWd1dU5LZldlNGtiWkFieWZBR01xK0NtQThlMXBi?=
+ =?utf-8?Q?p9hJl1jhqxxbsDChb2xL8/mo1?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed5b6daa-9385-4d7f-b415-08dd02f6228f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 08:43:52.8772
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lhKFyzOOUwxrJak2TGVYdQWtFQtU7frXdKWM53WGy9BPPJJ5Lt4pimPOtvOctKYaAs0SwKEH+khlN49lrcAoNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6661
 
-These two drivers are only buildable for the powerpc "maple" platform
-(CONFIG_PPC_MAPLE), which has now been removed, see
-commit 62f8f307c80e ("powerpc/64: Remove maple platform").
 
-Remove the drivers.
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- drivers/edac/Kconfig        |  18 --
- drivers/edac/Makefile       |   2 -
- drivers/edac/amd8111_edac.c | 596 ------------------------------------
- drivers/edac/amd8111_edac.h | 118 -------
- drivers/edac/amd8131_edac.c | 358 ----------------------
- drivers/edac/amd8131_edac.h | 107 -------
- 6 files changed, 1199 deletions(-)
- delete mode 100644 drivers/edac/amd8111_edac.c
- delete mode 100644 drivers/edac/amd8111_edac.h
- delete mode 100644 drivers/edac/amd8131_edac.c
- delete mode 100644 drivers/edac/amd8131_edac.h
+On 11/11/2024 7:12 PM, Borislav Petkov wrote:
+> On Mon, Nov 11, 2024 at 05:14:43PM +0530, Nikunj A. Dadhania wrote:
+>> Memory allocated for the request, response and certs_data is not
+>> freed and we will clear the mdesc when sev-guest driver calls
+>> snp_msg_alloc().
+> 
+> Ah, right.
+> 
+> Yeah, this was a weird scheme anyway - a static pointer mdesc but then the
+> things it points to get dynamically allocated. So yeah, a full dynamic
+> allocation makes it a much more normal pattern.
 
-The removal commit is in the powerpc/next branch:
-  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next
+I have pushed the updated tree here: https://github.com/AMDESE/linux-kvm/commits/sectsc-guest-wip/
 
-I can take this via the powerpc tree if that's easiest, let me know.
+Will wait for your comments on rest of the patches before I post the next version.
 
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 81af6c344d6b..06f7b43a6f78 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -311,24 +311,6 @@ config EDAC_CELL
- 	  Cell Broadband Engine internal memory controller
- 	  on platform without a hypervisor
- 
--config EDAC_AMD8131
--	tristate "AMD8131 HyperTransport PCI-X Tunnel"
--	depends on PCI && PPC_MAPLE
--	help
--	  Support for error detection and correction on the
--	  AMD8131 HyperTransport PCI-X Tunnel chip.
--	  Note, add more Kconfig dependency if it's adopted
--	  on some machine other than Maple.
--
--config EDAC_AMD8111
--	tristate "AMD8111 HyperTransport I/O Hub"
--	depends on PCI && PPC_MAPLE
--	help
--	  Support for error detection and correction on the
--	  AMD8111 HyperTransport I/O Hub chip.
--	  Note, add more Kconfig dependency if it's adopted
--	  on some machine other than Maple.
--
- config EDAC_CPC925
- 	tristate "IBM CPC925 Memory Controller (PPC970FX)"
- 	depends on PPC64
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index faf310eec4a6..f9cf19d8d13d 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -63,8 +63,6 @@ i10nm_edac-y				:= i10nm_base.o
- obj-$(CONFIG_EDAC_I10NM)		+= i10nm_edac.o skx_edac_common.o
- 
- obj-$(CONFIG_EDAC_CELL)			+= cell_edac.o
--obj-$(CONFIG_EDAC_AMD8111)		+= amd8111_edac.o
--obj-$(CONFIG_EDAC_AMD8131)		+= amd8131_edac.o
- 
- obj-$(CONFIG_EDAC_HIGHBANK_MC)		+= highbank_mc_edac.o
- obj-$(CONFIG_EDAC_HIGHBANK_L2)		+= highbank_l2_edac.o
-diff --git a/drivers/edac/amd8111_edac.c b/drivers/edac/amd8111_edac.c
-deleted file mode 100644
-index a6d3013d5823..000000000000
---- a/drivers/edac/amd8111_edac.c
-+++ /dev/null
-@@ -1,596 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * amd8111_edac.c, AMD8111 Hyper Transport chip EDAC kernel module
-- *
-- * Copyright (c) 2008 Wind River Systems, Inc.
-- *
-- * Authors:	Cao Qingtao <qingtao.cao@windriver.com>
-- * 		Benjamin Walsh <benjamin.walsh@windriver.com>
-- * 		Hu Yongqi <yongqi.hu@windriver.com>
-- */
--
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/interrupt.h>
--#include <linux/bitops.h>
--#include <linux/edac.h>
--#include <linux/pci_ids.h>
--#include <asm/io.h>
--
--#include "edac_module.h"
--#include "amd8111_edac.h"
--
--#define AMD8111_EDAC_REVISION	" Ver: 1.0.0"
--#define AMD8111_EDAC_MOD_STR	"amd8111_edac"
--
--#define PCI_DEVICE_ID_AMD_8111_PCI	0x7460
--
--enum amd8111_edac_devs {
--	LPC_BRIDGE = 0,
--};
--
--enum amd8111_edac_pcis {
--	PCI_BRIDGE = 0,
--};
--
--/* Wrapper functions for accessing PCI configuration space */
--static int edac_pci_read_dword(struct pci_dev *dev, int reg, u32 *val32)
--{
--	int ret;
--
--	ret = pci_read_config_dword(dev, reg, val32);
--	if (ret != 0)
--		printk(KERN_ERR AMD8111_EDAC_MOD_STR
--			" PCI Access Read Error at 0x%x\n", reg);
--
--	return ret;
--}
--
--static void edac_pci_read_byte(struct pci_dev *dev, int reg, u8 *val8)
--{
--	int ret;
--
--	ret = pci_read_config_byte(dev, reg, val8);
--	if (ret != 0)
--		printk(KERN_ERR AMD8111_EDAC_MOD_STR
--			" PCI Access Read Error at 0x%x\n", reg);
--}
--
--static void edac_pci_write_dword(struct pci_dev *dev, int reg, u32 val32)
--{
--	int ret;
--
--	ret = pci_write_config_dword(dev, reg, val32);
--	if (ret != 0)
--		printk(KERN_ERR AMD8111_EDAC_MOD_STR
--			" PCI Access Write Error at 0x%x\n", reg);
--}
--
--static void edac_pci_write_byte(struct pci_dev *dev, int reg, u8 val8)
--{
--	int ret;
--
--	ret = pci_write_config_byte(dev, reg, val8);
--	if (ret != 0)
--		printk(KERN_ERR AMD8111_EDAC_MOD_STR
--			" PCI Access Write Error at 0x%x\n", reg);
--}
--
--/*
-- * device-specific methods for amd8111 PCI Bridge Controller
-- *
-- * Error Reporting and Handling for amd8111 chipset could be found
-- * in its datasheet 3.1.2 section, P37
-- */
--static void amd8111_pci_bridge_init(struct amd8111_pci_info *pci_info)
--{
--	u32 val32;
--	struct pci_dev *dev = pci_info->dev;
--
--	/* First clear error detection flags on the host interface */
--
--	/* Clear SSE/SMA/STA flags in the global status register*/
--	edac_pci_read_dword(dev, REG_PCI_STSCMD, &val32);
--	if (val32 & PCI_STSCMD_CLEAR_MASK)
--		edac_pci_write_dword(dev, REG_PCI_STSCMD, val32);
--
--	/* Clear CRC and Link Fail flags in HT Link Control reg */
--	edac_pci_read_dword(dev, REG_HT_LINK, &val32);
--	if (val32 & HT_LINK_CLEAR_MASK)
--		edac_pci_write_dword(dev, REG_HT_LINK, val32);
--
--	/* Second clear all fault on the secondary interface */
--
--	/* Clear error flags in the memory-base limit reg. */
--	edac_pci_read_dword(dev, REG_MEM_LIM, &val32);
--	if (val32 & MEM_LIMIT_CLEAR_MASK)
--		edac_pci_write_dword(dev, REG_MEM_LIM, val32);
--
--	/* Clear Discard Timer Expired flag in Interrupt/Bridge Control reg */
--	edac_pci_read_dword(dev, REG_PCI_INTBRG_CTRL, &val32);
--	if (val32 & PCI_INTBRG_CTRL_CLEAR_MASK)
--		edac_pci_write_dword(dev, REG_PCI_INTBRG_CTRL, val32);
--
--	/* Last enable error detections */
--	if (edac_op_state == EDAC_OPSTATE_POLL) {
--		/* Enable System Error reporting in global status register */
--		edac_pci_read_dword(dev, REG_PCI_STSCMD, &val32);
--		val32 |= PCI_STSCMD_SERREN;
--		edac_pci_write_dword(dev, REG_PCI_STSCMD, val32);
--
--		/* Enable CRC Sync flood packets to HyperTransport Link */
--		edac_pci_read_dword(dev, REG_HT_LINK, &val32);
--		val32 |= HT_LINK_CRCFEN;
--		edac_pci_write_dword(dev, REG_HT_LINK, val32);
--
--		/* Enable SSE reporting etc in Interrupt control reg */
--		edac_pci_read_dword(dev, REG_PCI_INTBRG_CTRL, &val32);
--		val32 |= PCI_INTBRG_CTRL_POLL_MASK;
--		edac_pci_write_dword(dev, REG_PCI_INTBRG_CTRL, val32);
--	}
--}
--
--static void amd8111_pci_bridge_exit(struct amd8111_pci_info *pci_info)
--{
--	u32 val32;
--	struct pci_dev *dev = pci_info->dev;
--
--	if (edac_op_state == EDAC_OPSTATE_POLL) {
--		/* Disable System Error reporting */
--		edac_pci_read_dword(dev, REG_PCI_STSCMD, &val32);
--		val32 &= ~PCI_STSCMD_SERREN;
--		edac_pci_write_dword(dev, REG_PCI_STSCMD, val32);
--
--		/* Disable CRC flood packets */
--		edac_pci_read_dword(dev, REG_HT_LINK, &val32);
--		val32 &= ~HT_LINK_CRCFEN;
--		edac_pci_write_dword(dev, REG_HT_LINK, val32);
--
--		/* Disable DTSERREN/MARSP/SERREN in Interrupt Control reg */
--		edac_pci_read_dword(dev, REG_PCI_INTBRG_CTRL, &val32);
--		val32 &= ~PCI_INTBRG_CTRL_POLL_MASK;
--		edac_pci_write_dword(dev, REG_PCI_INTBRG_CTRL, val32);
--	}
--}
--
--static void amd8111_pci_bridge_check(struct edac_pci_ctl_info *edac_dev)
--{
--	struct amd8111_pci_info *pci_info = edac_dev->pvt_info;
--	struct pci_dev *dev = pci_info->dev;
--	u32 val32;
--
--	/* Check out PCI Bridge Status and Command Register */
--	edac_pci_read_dword(dev, REG_PCI_STSCMD, &val32);
--	if (val32 & PCI_STSCMD_CLEAR_MASK) {
--		printk(KERN_INFO "Error(s) in PCI bridge status and command"
--			"register on device %s\n", pci_info->ctl_name);
--		printk(KERN_INFO "SSE: %d, RMA: %d, RTA: %d\n",
--			(val32 & PCI_STSCMD_SSE) != 0,
--			(val32 & PCI_STSCMD_RMA) != 0,
--			(val32 & PCI_STSCMD_RTA) != 0);
--
--		val32 |= PCI_STSCMD_CLEAR_MASK;
--		edac_pci_write_dword(dev, REG_PCI_STSCMD, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check out HyperTransport Link Control Register */
--	edac_pci_read_dword(dev, REG_HT_LINK, &val32);
--	if (val32 & HT_LINK_LKFAIL) {
--		printk(KERN_INFO "Error(s) in hypertransport link control"
--			"register on device %s\n", pci_info->ctl_name);
--		printk(KERN_INFO "LKFAIL: %d\n",
--			(val32 & HT_LINK_LKFAIL) != 0);
--
--		val32 |= HT_LINK_LKFAIL;
--		edac_pci_write_dword(dev, REG_HT_LINK, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check out PCI Interrupt and Bridge Control Register */
--	edac_pci_read_dword(dev, REG_PCI_INTBRG_CTRL, &val32);
--	if (val32 & PCI_INTBRG_CTRL_DTSTAT) {
--		printk(KERN_INFO "Error(s) in PCI interrupt and bridge control"
--			"register on device %s\n", pci_info->ctl_name);
--		printk(KERN_INFO "DTSTAT: %d\n",
--			(val32 & PCI_INTBRG_CTRL_DTSTAT) != 0);
--
--		val32 |= PCI_INTBRG_CTRL_DTSTAT;
--		edac_pci_write_dword(dev, REG_PCI_INTBRG_CTRL, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check out PCI Bridge Memory Base-Limit Register */
--	edac_pci_read_dword(dev, REG_MEM_LIM, &val32);
--	if (val32 & MEM_LIMIT_CLEAR_MASK) {
--		printk(KERN_INFO
--			"Error(s) in mem limit register on %s device\n",
--			pci_info->ctl_name);
--		printk(KERN_INFO "DPE: %d, RSE: %d, RMA: %d\n"
--			"RTA: %d, STA: %d, MDPE: %d\n",
--			(val32 & MEM_LIMIT_DPE)  != 0,
--			(val32 & MEM_LIMIT_RSE)  != 0,
--			(val32 & MEM_LIMIT_RMA)  != 0,
--			(val32 & MEM_LIMIT_RTA)  != 0,
--			(val32 & MEM_LIMIT_STA)  != 0,
--			(val32 & MEM_LIMIT_MDPE) != 0);
--
--		val32 |= MEM_LIMIT_CLEAR_MASK;
--		edac_pci_write_dword(dev, REG_MEM_LIM, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--}
--
--static struct resource *legacy_io_res;
--static int at_compat_reg_broken;
--#define LEGACY_NR_PORTS	1
--
--/* device-specific methods for amd8111 LPC Bridge device */
--static void amd8111_lpc_bridge_init(struct amd8111_dev_info *dev_info)
--{
--	u8 val8;
--	struct pci_dev *dev = dev_info->dev;
--
--	/* First clear REG_AT_COMPAT[SERR, IOCHK] if necessary */
--	legacy_io_res = request_region(REG_AT_COMPAT, LEGACY_NR_PORTS,
--					AMD8111_EDAC_MOD_STR);
--	if (!legacy_io_res)
--		printk(KERN_INFO "%s: failed to request legacy I/O region "
--			"start %d, len %d\n", __func__,
--			REG_AT_COMPAT, LEGACY_NR_PORTS);
--	else {
--		val8 = __do_inb(REG_AT_COMPAT);
--		if (val8 == 0xff) { /* buggy port */
--			printk(KERN_INFO "%s: port %d is buggy, not supported"
--				" by hardware?\n", __func__, REG_AT_COMPAT);
--			at_compat_reg_broken = 1;
--			release_region(REG_AT_COMPAT, LEGACY_NR_PORTS);
--			legacy_io_res = NULL;
--		} else {
--			u8 out8 = 0;
--			if (val8 & AT_COMPAT_SERR)
--				out8 = AT_COMPAT_CLRSERR;
--			if (val8 & AT_COMPAT_IOCHK)
--				out8 |= AT_COMPAT_CLRIOCHK;
--			if (out8 > 0)
--				__do_outb(out8, REG_AT_COMPAT);
--		}
--	}
--
--	/* Second clear error flags on LPC bridge */
--	edac_pci_read_byte(dev, REG_IO_CTRL_1, &val8);
--	if (val8 & IO_CTRL_1_CLEAR_MASK)
--		edac_pci_write_byte(dev, REG_IO_CTRL_1, val8);
--}
--
--static void amd8111_lpc_bridge_exit(struct amd8111_dev_info *dev_info)
--{
--	if (legacy_io_res)
--		release_region(REG_AT_COMPAT, LEGACY_NR_PORTS);
--}
--
--static void amd8111_lpc_bridge_check(struct edac_device_ctl_info *edac_dev)
--{
--	struct amd8111_dev_info *dev_info = edac_dev->pvt_info;
--	struct pci_dev *dev = dev_info->dev;
--	u8 val8;
--
--	edac_pci_read_byte(dev, REG_IO_CTRL_1, &val8);
--	if (val8 & IO_CTRL_1_CLEAR_MASK) {
--		printk(KERN_INFO
--			"Error(s) in IO control register on %s device\n",
--			dev_info->ctl_name);
--		printk(KERN_INFO "LPC ERR: %d, PW2LPC: %d\n",
--			(val8 & IO_CTRL_1_LPC_ERR) != 0,
--			(val8 & IO_CTRL_1_PW2LPC) != 0);
--
--		val8 |= IO_CTRL_1_CLEAR_MASK;
--		edac_pci_write_byte(dev, REG_IO_CTRL_1, val8);
--
--		edac_device_handle_ue(edac_dev, 0, 0, edac_dev->ctl_name);
--	}
--
--	if (at_compat_reg_broken == 0) {
--		u8 out8 = 0;
--		val8 = __do_inb(REG_AT_COMPAT);
--		if (val8 & AT_COMPAT_SERR)
--			out8 = AT_COMPAT_CLRSERR;
--		if (val8 & AT_COMPAT_IOCHK)
--			out8 |= AT_COMPAT_CLRIOCHK;
--		if (out8 > 0) {
--			__do_outb(out8, REG_AT_COMPAT);
--			edac_device_handle_ue(edac_dev, 0, 0,
--						edac_dev->ctl_name);
--		}
--	}
--}
--
--/* General devices represented by edac_device_ctl_info */
--static struct amd8111_dev_info amd8111_devices[] = {
--	[LPC_BRIDGE] = {
--		.err_dev = PCI_DEVICE_ID_AMD_8111_LPC,
--		.ctl_name = "lpc",
--		.init = amd8111_lpc_bridge_init,
--		.exit = amd8111_lpc_bridge_exit,
--		.check = amd8111_lpc_bridge_check,
--	},
--	{0},
--};
--
--/* PCI controllers represented by edac_pci_ctl_info */
--static struct amd8111_pci_info amd8111_pcis[] = {
--	[PCI_BRIDGE] = {
--		.err_dev = PCI_DEVICE_ID_AMD_8111_PCI,
--		.ctl_name = "AMD8111_PCI_Controller",
--		.init = amd8111_pci_bridge_init,
--		.exit = amd8111_pci_bridge_exit,
--		.check = amd8111_pci_bridge_check,
--	},
--	{0},
--};
--
--static int amd8111_dev_probe(struct pci_dev *dev,
--				const struct pci_device_id *id)
--{
--	struct amd8111_dev_info *dev_info = &amd8111_devices[id->driver_data];
--	int ret = -ENODEV;
--
--	dev_info->dev = pci_get_device(PCI_VENDOR_ID_AMD,
--					dev_info->err_dev, NULL);
--
--	if (!dev_info->dev) {
--		printk(KERN_ERR "EDAC device not found:"
--			"vendor %x, device %x, name %s\n",
--			PCI_VENDOR_ID_AMD, dev_info->err_dev,
--			dev_info->ctl_name);
--		goto err;
--	}
--
--	if (pci_enable_device(dev_info->dev)) {
--		printk(KERN_ERR "failed to enable:"
--			"vendor %x, device %x, name %s\n",
--			PCI_VENDOR_ID_AMD, dev_info->err_dev,
--			dev_info->ctl_name);
--		goto err_dev_put;
--	}
--
--	/*
--	 * we do not allocate extra private structure for
--	 * edac_device_ctl_info, but make use of existing
--	 * one instead.
--	*/
--	dev_info->edac_idx = edac_device_alloc_index();
--	dev_info->edac_dev =
--		edac_device_alloc_ctl_info(0, dev_info->ctl_name, 1,
--					   NULL, 0, 0, dev_info->edac_idx);
--	if (!dev_info->edac_dev) {
--		ret = -ENOMEM;
--		goto err_dev_put;
--	}
--
--	dev_info->edac_dev->pvt_info = dev_info;
--	dev_info->edac_dev->dev = &dev_info->dev->dev;
--	dev_info->edac_dev->mod_name = AMD8111_EDAC_MOD_STR;
--	dev_info->edac_dev->ctl_name = dev_info->ctl_name;
--	dev_info->edac_dev->dev_name = dev_name(&dev_info->dev->dev);
--
--	if (edac_op_state == EDAC_OPSTATE_POLL)
--		dev_info->edac_dev->edac_check = dev_info->check;
--
--	if (dev_info->init)
--		dev_info->init(dev_info);
--
--	if (edac_device_add_device(dev_info->edac_dev) > 0) {
--		printk(KERN_ERR "failed to add edac_dev for %s\n",
--			dev_info->ctl_name);
--		goto err_edac_free_ctl;
--	}
--
--	printk(KERN_INFO "added one edac_dev on AMD8111 "
--		"vendor %x, device %x, name %s\n",
--		PCI_VENDOR_ID_AMD, dev_info->err_dev,
--		dev_info->ctl_name);
--
--	return 0;
--
--err_edac_free_ctl:
--	edac_device_free_ctl_info(dev_info->edac_dev);
--err_dev_put:
--	pci_dev_put(dev_info->dev);
--err:
--	return ret;
--}
--
--static void amd8111_dev_remove(struct pci_dev *dev)
--{
--	struct amd8111_dev_info *dev_info;
--
--	for (dev_info = amd8111_devices; dev_info->err_dev; dev_info++)
--		if (dev_info->dev->device == dev->device)
--			break;
--
--	if (!dev_info->err_dev)	/* should never happen */
--		return;
--
--	if (dev_info->edac_dev) {
--		edac_device_del_device(dev_info->edac_dev->dev);
--		edac_device_free_ctl_info(dev_info->edac_dev);
--	}
--
--	if (dev_info->exit)
--		dev_info->exit(dev_info);
--
--	pci_dev_put(dev_info->dev);
--}
--
--static int amd8111_pci_probe(struct pci_dev *dev,
--				const struct pci_device_id *id)
--{
--	struct amd8111_pci_info *pci_info = &amd8111_pcis[id->driver_data];
--	int ret = -ENODEV;
--
--	pci_info->dev = pci_get_device(PCI_VENDOR_ID_AMD,
--					pci_info->err_dev, NULL);
--
--	if (!pci_info->dev) {
--		printk(KERN_ERR "EDAC device not found:"
--			"vendor %x, device %x, name %s\n",
--			PCI_VENDOR_ID_AMD, pci_info->err_dev,
--			pci_info->ctl_name);
--		goto err;
--	}
--
--	if (pci_enable_device(pci_info->dev)) {
--		printk(KERN_ERR "failed to enable:"
--			"vendor %x, device %x, name %s\n",
--			PCI_VENDOR_ID_AMD, pci_info->err_dev,
--			pci_info->ctl_name);
--		goto err_dev_put;
--	}
--
--	/*
--	 * we do not allocate extra private structure for
--	 * edac_pci_ctl_info, but make use of existing
--	 * one instead.
--	*/
--	pci_info->edac_idx = edac_pci_alloc_index();
--	pci_info->edac_dev = edac_pci_alloc_ctl_info(0, pci_info->ctl_name);
--	if (!pci_info->edac_dev) {
--		ret = -ENOMEM;
--		goto err_dev_put;
--	}
--
--	pci_info->edac_dev->pvt_info = pci_info;
--	pci_info->edac_dev->dev = &pci_info->dev->dev;
--	pci_info->edac_dev->mod_name = AMD8111_EDAC_MOD_STR;
--	pci_info->edac_dev->ctl_name = pci_info->ctl_name;
--	pci_info->edac_dev->dev_name = dev_name(&pci_info->dev->dev);
--
--	if (edac_op_state == EDAC_OPSTATE_POLL)
--		pci_info->edac_dev->edac_check = pci_info->check;
--
--	if (pci_info->init)
--		pci_info->init(pci_info);
--
--	if (edac_pci_add_device(pci_info->edac_dev, pci_info->edac_idx) > 0) {
--		printk(KERN_ERR "failed to add edac_pci for %s\n",
--			pci_info->ctl_name);
--		goto err_edac_free_ctl;
--	}
--
--	printk(KERN_INFO "added one edac_pci on AMD8111 "
--		"vendor %x, device %x, name %s\n",
--		PCI_VENDOR_ID_AMD, pci_info->err_dev,
--		pci_info->ctl_name);
--
--	return 0;
--
--err_edac_free_ctl:
--	edac_pci_free_ctl_info(pci_info->edac_dev);
--err_dev_put:
--	pci_dev_put(pci_info->dev);
--err:
--	return ret;
--}
--
--static void amd8111_pci_remove(struct pci_dev *dev)
--{
--	struct amd8111_pci_info *pci_info;
--
--	for (pci_info = amd8111_pcis; pci_info->err_dev; pci_info++)
--		if (pci_info->dev->device == dev->device)
--			break;
--
--	if (!pci_info->err_dev)	/* should never happen */
--		return;
--
--	if (pci_info->edac_dev) {
--		edac_pci_del_device(pci_info->edac_dev->dev);
--		edac_pci_free_ctl_info(pci_info->edac_dev);
--	}
--
--	if (pci_info->exit)
--		pci_info->exit(pci_info);
--
--	pci_dev_put(pci_info->dev);
--}
--
--/* PCI Device ID talbe for general EDAC device */
--static const struct pci_device_id amd8111_edac_dev_tbl[] = {
--	{
--	PCI_VEND_DEV(AMD, 8111_LPC),
--	.subvendor = PCI_ANY_ID,
--	.subdevice = PCI_ANY_ID,
--	.class = 0,
--	.class_mask = 0,
--	.driver_data = LPC_BRIDGE,
--	},
--	{
--	0,
--	}			/* table is NULL-terminated */
--};
--MODULE_DEVICE_TABLE(pci, amd8111_edac_dev_tbl);
--
--static struct pci_driver amd8111_edac_dev_driver = {
--	.name = "AMD8111_EDAC_DEV",
--	.probe = amd8111_dev_probe,
--	.remove = amd8111_dev_remove,
--	.id_table = amd8111_edac_dev_tbl,
--};
--
--/* PCI Device ID table for EDAC PCI controller */
--static const struct pci_device_id amd8111_edac_pci_tbl[] = {
--	{
--	PCI_VEND_DEV(AMD, 8111_PCI),
--	.subvendor = PCI_ANY_ID,
--	.subdevice = PCI_ANY_ID,
--	.class = 0,
--	.class_mask = 0,
--	.driver_data = PCI_BRIDGE,
--	},
--	{
--	0,
--	}			/* table is NULL-terminated */
--};
--MODULE_DEVICE_TABLE(pci, amd8111_edac_pci_tbl);
--
--static struct pci_driver amd8111_edac_pci_driver = {
--	.name = "AMD8111_EDAC_PCI",
--	.probe = amd8111_pci_probe,
--	.remove = amd8111_pci_remove,
--	.id_table = amd8111_edac_pci_tbl,
--};
--
--static int __init amd8111_edac_init(void)
--{
--	int val;
--
--	printk(KERN_INFO "AMD8111 EDAC driver "	AMD8111_EDAC_REVISION "\n");
--	printk(KERN_INFO "\t(c) 2008 Wind River Systems, Inc.\n");
--
--	/* Only POLL mode supported so far */
--	edac_op_state = EDAC_OPSTATE_POLL;
--
--	val = pci_register_driver(&amd8111_edac_dev_driver);
--	val |= pci_register_driver(&amd8111_edac_pci_driver);
--
--	return val;
--}
--
--static void __exit amd8111_edac_exit(void)
--{
--	pci_unregister_driver(&amd8111_edac_pci_driver);
--	pci_unregister_driver(&amd8111_edac_dev_driver);
--}
--
--
--module_init(amd8111_edac_init);
--module_exit(amd8111_edac_exit);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Cao Qingtao <qingtao.cao@windriver.com>");
--MODULE_DESCRIPTION("AMD8111 HyperTransport I/O Hub EDAC kernel module");
-diff --git a/drivers/edac/amd8111_edac.h b/drivers/edac/amd8111_edac.h
-deleted file mode 100644
-index 200cab1b3e42..000000000000
---- a/drivers/edac/amd8111_edac.h
-+++ /dev/null
-@@ -1,118 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * amd8111_edac.h, EDAC defs for AMD8111 hypertransport chip
-- *
-- * Copyright (c) 2008 Wind River Systems, Inc.
-- *
-- * Authors:	Cao Qingtao <qingtao.cao@windriver.com>
-- * 		Benjamin Walsh <benjamin.walsh@windriver.com>
-- * 		Hu Yongqi <yongqi.hu@windriver.com>
-- */
--
--#ifndef _AMD8111_EDAC_H_
--#define _AMD8111_EDAC_H_
--
--/************************************************************
-- *	PCI Bridge Status and Command Register, DevA:0x04
-- ************************************************************/
--#define REG_PCI_STSCMD	0x04
--enum pci_stscmd_bits {
--	PCI_STSCMD_SSE		= BIT(30),
--	PCI_STSCMD_RMA		= BIT(29),
--	PCI_STSCMD_RTA		= BIT(28),
--	PCI_STSCMD_SERREN	= BIT(8),
--	PCI_STSCMD_CLEAR_MASK	= (PCI_STSCMD_SSE |
--				   PCI_STSCMD_RMA |
--				   PCI_STSCMD_RTA)
--};
--
--/************************************************************
-- *	PCI Bridge Memory Base-Limit Register, DevA:0x1c
-- ************************************************************/
--#define REG_MEM_LIM     0x1c
--enum mem_limit_bits {
--	MEM_LIMIT_DPE   = BIT(31),
--	MEM_LIMIT_RSE   = BIT(30),
--	MEM_LIMIT_RMA   = BIT(29),
--	MEM_LIMIT_RTA   = BIT(28),
--	MEM_LIMIT_STA   = BIT(27),
--	MEM_LIMIT_MDPE  = BIT(24),
--	MEM_LIMIT_CLEAR_MASK  = (MEM_LIMIT_DPE |
--				 MEM_LIMIT_RSE |
--				 MEM_LIMIT_RMA |
--				 MEM_LIMIT_RTA |
--				 MEM_LIMIT_STA |
--				 MEM_LIMIT_MDPE)
--};
--
--/************************************************************
-- *	HyperTransport Link Control Register, DevA:0xc4
-- ************************************************************/
--#define REG_HT_LINK	0xc4
--enum ht_link_bits {
--	HT_LINK_LKFAIL	= BIT(4),
--	HT_LINK_CRCFEN	= BIT(1),
--	HT_LINK_CLEAR_MASK = (HT_LINK_LKFAIL)
--};
--
--/************************************************************
-- *	PCI Bridge Interrupt and Bridge Control, DevA:0x3c
-- ************************************************************/
--#define REG_PCI_INTBRG_CTRL	0x3c
--enum pci_intbrg_ctrl_bits {
--	PCI_INTBRG_CTRL_DTSERREN	= BIT(27),
--	PCI_INTBRG_CTRL_DTSTAT		= BIT(26),
--	PCI_INTBRG_CTRL_MARSP		= BIT(21),
--	PCI_INTBRG_CTRL_SERREN		= BIT(17),
--	PCI_INTBRG_CTRL_PEREN		= BIT(16),
--	PCI_INTBRG_CTRL_CLEAR_MASK	= (PCI_INTBRG_CTRL_DTSTAT),
--	PCI_INTBRG_CTRL_POLL_MASK	= (PCI_INTBRG_CTRL_DTSERREN |
--					   PCI_INTBRG_CTRL_MARSP |
--					   PCI_INTBRG_CTRL_SERREN)
--};
--
--/************************************************************
-- *		I/O Control 1 Register, DevB:0x40
-- ************************************************************/
--#define REG_IO_CTRL_1 0x40
--enum io_ctrl_1_bits {
--	IO_CTRL_1_NMIONERR	= BIT(7),
--	IO_CTRL_1_LPC_ERR	= BIT(6),
--	IO_CTRL_1_PW2LPC	= BIT(1),
--	IO_CTRL_1_CLEAR_MASK	= (IO_CTRL_1_LPC_ERR | IO_CTRL_1_PW2LPC)
--};
--
--/************************************************************
-- *		Legacy I/O Space Registers
-- ************************************************************/
--#define REG_AT_COMPAT 0x61
--enum at_compat_bits {
--	AT_COMPAT_SERR		= BIT(7),
--	AT_COMPAT_IOCHK		= BIT(6),
--	AT_COMPAT_CLRIOCHK	= BIT(3),
--	AT_COMPAT_CLRSERR	= BIT(2),
--};
--
--struct amd8111_dev_info {
--	u16 err_dev;	/* PCI Device ID */
--	struct pci_dev *dev;
--	int edac_idx;	/* device index */
--	char *ctl_name;
--	struct edac_device_ctl_info *edac_dev;
--	void (*init)(struct amd8111_dev_info *dev_info);
--	void (*exit)(struct amd8111_dev_info *dev_info);
--	void (*check)(struct edac_device_ctl_info *edac_dev);
--};
--
--struct amd8111_pci_info {
--	u16 err_dev;	/* PCI Device ID */
--	struct pci_dev *dev;
--	int edac_idx;	/* pci index */
--	const char *ctl_name;
--	struct edac_pci_ctl_info *edac_dev;
--	void (*init)(struct amd8111_pci_info *dev_info);
--	void (*exit)(struct amd8111_pci_info *dev_info);
--	void (*check)(struct edac_pci_ctl_info *edac_dev);
--};
--
--#endif /* _AMD8111_EDAC_H_ */
-diff --git a/drivers/edac/amd8131_edac.c b/drivers/edac/amd8131_edac.c
-deleted file mode 100644
-index 28610ba514f4..000000000000
---- a/drivers/edac/amd8131_edac.c
-+++ /dev/null
-@@ -1,358 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-only
--/*
-- * amd8131_edac.c, AMD8131 hypertransport chip EDAC kernel module
-- *
-- * Copyright (c) 2008 Wind River Systems, Inc.
-- *
-- * Authors:	Cao Qingtao <qingtao.cao@windriver.com>
-- * 		Benjamin Walsh <benjamin.walsh@windriver.com>
-- * 		Hu Yongqi <yongqi.hu@windriver.com>
-- */
--
--#include <linux/module.h>
--#include <linux/init.h>
--#include <linux/interrupt.h>
--#include <linux/io.h>
--#include <linux/bitops.h>
--#include <linux/edac.h>
--#include <linux/pci_ids.h>
--
--#include "edac_module.h"
--#include "amd8131_edac.h"
--
--#define AMD8131_EDAC_REVISION	" Ver: 1.0.0"
--#define AMD8131_EDAC_MOD_STR	"amd8131_edac"
--
--/* Wrapper functions for accessing PCI configuration space */
--static void edac_pci_read_dword(struct pci_dev *dev, int reg, u32 *val32)
--{
--	int ret;
--
--	ret = pci_read_config_dword(dev, reg, val32);
--	if (ret != 0)
--		printk(KERN_ERR AMD8131_EDAC_MOD_STR
--			" PCI Access Read Error at 0x%x\n", reg);
--}
--
--static void edac_pci_write_dword(struct pci_dev *dev, int reg, u32 val32)
--{
--	int ret;
--
--	ret = pci_write_config_dword(dev, reg, val32);
--	if (ret != 0)
--		printk(KERN_ERR AMD8131_EDAC_MOD_STR
--			" PCI Access Write Error at 0x%x\n", reg);
--}
--
--/* Support up to two AMD8131 chipsets on a platform */
--static struct amd8131_dev_info amd8131_devices[] = {
--	{
--	.inst = NORTH_A,
--	.devfn = DEVFN_PCIX_BRIDGE_NORTH_A,
--	.ctl_name = "AMD8131_PCIX_NORTH_A",
--	},
--	{
--	.inst = NORTH_B,
--	.devfn = DEVFN_PCIX_BRIDGE_NORTH_B,
--	.ctl_name = "AMD8131_PCIX_NORTH_B",
--	},
--	{
--	.inst = SOUTH_A,
--	.devfn = DEVFN_PCIX_BRIDGE_SOUTH_A,
--	.ctl_name = "AMD8131_PCIX_SOUTH_A",
--	},
--	{
--	.inst = SOUTH_B,
--	.devfn = DEVFN_PCIX_BRIDGE_SOUTH_B,
--	.ctl_name = "AMD8131_PCIX_SOUTH_B",
--	},
--	{.inst = NO_BRIDGE,},
--};
--
--static void amd8131_pcix_init(struct amd8131_dev_info *dev_info)
--{
--	u32 val32;
--	struct pci_dev *dev = dev_info->dev;
--
--	/* First clear error detection flags */
--	edac_pci_read_dword(dev, REG_MEM_LIM, &val32);
--	if (val32 & MEM_LIMIT_MASK)
--		edac_pci_write_dword(dev, REG_MEM_LIM, val32);
--
--	/* Clear Discard Timer Timedout flag */
--	edac_pci_read_dword(dev, REG_INT_CTLR, &val32);
--	if (val32 & INT_CTLR_DTS)
--		edac_pci_write_dword(dev, REG_INT_CTLR, val32);
--
--	/* Clear CRC Error flag on link side A */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_A, &val32);
--	if (val32 & LNK_CTRL_CRCERR_A)
--		edac_pci_write_dword(dev, REG_LNK_CTRL_A, val32);
--
--	/* Clear CRC Error flag on link side B */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_B, &val32);
--	if (val32 & LNK_CTRL_CRCERR_B)
--		edac_pci_write_dword(dev, REG_LNK_CTRL_B, val32);
--
--	/*
--	 * Then enable all error detections.
--	 *
--	 * Setup Discard Timer Sync Flood Enable,
--	 * System Error Enable and Parity Error Enable.
--	 */
--	edac_pci_read_dword(dev, REG_INT_CTLR, &val32);
--	val32 |= INT_CTLR_PERR | INT_CTLR_SERR | INT_CTLR_DTSE;
--	edac_pci_write_dword(dev, REG_INT_CTLR, val32);
--
--	/* Enable overall SERR Error detection */
--	edac_pci_read_dword(dev, REG_STS_CMD, &val32);
--	val32 |= STS_CMD_SERREN;
--	edac_pci_write_dword(dev, REG_STS_CMD, val32);
--
--	/* Setup CRC Flood Enable for link side A */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_A, &val32);
--	val32 |= LNK_CTRL_CRCFEN;
--	edac_pci_write_dword(dev, REG_LNK_CTRL_A, val32);
--
--	/* Setup CRC Flood Enable for link side B */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_B, &val32);
--	val32 |= LNK_CTRL_CRCFEN;
--	edac_pci_write_dword(dev, REG_LNK_CTRL_B, val32);
--}
--
--static void amd8131_pcix_exit(struct amd8131_dev_info *dev_info)
--{
--	u32 val32;
--	struct pci_dev *dev = dev_info->dev;
--
--	/* Disable SERR, PERR and DTSE Error detection */
--	edac_pci_read_dword(dev, REG_INT_CTLR, &val32);
--	val32 &= ~(INT_CTLR_PERR | INT_CTLR_SERR | INT_CTLR_DTSE);
--	edac_pci_write_dword(dev, REG_INT_CTLR, val32);
--
--	/* Disable overall System Error detection */
--	edac_pci_read_dword(dev, REG_STS_CMD, &val32);
--	val32 &= ~STS_CMD_SERREN;
--	edac_pci_write_dword(dev, REG_STS_CMD, val32);
--
--	/* Disable CRC Sync Flood on link side A */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_A, &val32);
--	val32 &= ~LNK_CTRL_CRCFEN;
--	edac_pci_write_dword(dev, REG_LNK_CTRL_A, val32);
--
--	/* Disable CRC Sync Flood on link side B */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_B, &val32);
--	val32 &= ~LNK_CTRL_CRCFEN;
--	edac_pci_write_dword(dev, REG_LNK_CTRL_B, val32);
--}
--
--static void amd8131_pcix_check(struct edac_pci_ctl_info *edac_dev)
--{
--	struct amd8131_dev_info *dev_info = edac_dev->pvt_info;
--	struct pci_dev *dev = dev_info->dev;
--	u32 val32;
--
--	/* Check PCI-X Bridge Memory Base-Limit Register for errors */
--	edac_pci_read_dword(dev, REG_MEM_LIM, &val32);
--	if (val32 & MEM_LIMIT_MASK) {
--		printk(KERN_INFO "Error(s) in mem limit register "
--			"on %s bridge\n", dev_info->ctl_name);
--		printk(KERN_INFO "DPE: %d, RSE: %d, RMA: %d\n"
--			"RTA: %d, STA: %d, MDPE: %d\n",
--			val32 & MEM_LIMIT_DPE,
--			val32 & MEM_LIMIT_RSE,
--			val32 & MEM_LIMIT_RMA,
--			val32 & MEM_LIMIT_RTA,
--			val32 & MEM_LIMIT_STA,
--			val32 & MEM_LIMIT_MDPE);
--
--		val32 |= MEM_LIMIT_MASK;
--		edac_pci_write_dword(dev, REG_MEM_LIM, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check if Discard Timer timed out */
--	edac_pci_read_dword(dev, REG_INT_CTLR, &val32);
--	if (val32 & INT_CTLR_DTS) {
--		printk(KERN_INFO "Error(s) in interrupt and control register "
--			"on %s bridge\n", dev_info->ctl_name);
--		printk(KERN_INFO "DTS: %d\n", val32 & INT_CTLR_DTS);
--
--		val32 |= INT_CTLR_DTS;
--		edac_pci_write_dword(dev, REG_INT_CTLR, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check if CRC error happens on link side A */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_A, &val32);
--	if (val32 & LNK_CTRL_CRCERR_A) {
--		printk(KERN_INFO "Error(s) in link conf and control register "
--			"on %s bridge\n", dev_info->ctl_name);
--		printk(KERN_INFO "CRCERR: %d\n", val32 & LNK_CTRL_CRCERR_A);
--
--		val32 |= LNK_CTRL_CRCERR_A;
--		edac_pci_write_dword(dev, REG_LNK_CTRL_A, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--
--	/* Check if CRC error happens on link side B */
--	edac_pci_read_dword(dev, REG_LNK_CTRL_B, &val32);
--	if (val32 & LNK_CTRL_CRCERR_B) {
--		printk(KERN_INFO "Error(s) in link conf and control register "
--			"on %s bridge\n", dev_info->ctl_name);
--		printk(KERN_INFO "CRCERR: %d\n", val32 & LNK_CTRL_CRCERR_B);
--
--		val32 |= LNK_CTRL_CRCERR_B;
--		edac_pci_write_dword(dev, REG_LNK_CTRL_B, val32);
--
--		edac_pci_handle_npe(edac_dev, edac_dev->ctl_name);
--	}
--}
--
--static struct amd8131_info amd8131_chipset = {
--	.err_dev = PCI_DEVICE_ID_AMD_8131_APIC,
--	.devices = amd8131_devices,
--	.init = amd8131_pcix_init,
--	.exit = amd8131_pcix_exit,
--	.check = amd8131_pcix_check,
--};
--
--/*
-- * There are 4 PCIX Bridges on ATCA-6101 that share the same PCI Device ID,
-- * so amd8131_probe() would be called by kernel 4 times, with different
-- * address of pci_dev for each of them each time.
-- */
--static int amd8131_probe(struct pci_dev *dev, const struct pci_device_id *id)
--{
--	struct amd8131_dev_info *dev_info;
--
--	for (dev_info = amd8131_chipset.devices; dev_info->inst != NO_BRIDGE;
--		dev_info++)
--		if (dev_info->devfn == dev->devfn)
--			break;
--
--	if (dev_info->inst == NO_BRIDGE) /* should never happen */
--		return -ENODEV;
--
--	/*
--	 * We can't call pci_get_device() as we are used to do because
--	 * there are 4 of them but pci_dev_get() instead.
--	 */
--	dev_info->dev = pci_dev_get(dev);
--
--	if (pci_enable_device(dev_info->dev)) {
--		pci_dev_put(dev_info->dev);
--		printk(KERN_ERR "failed to enable:"
--			"vendor %x, device %x, devfn %x, name %s\n",
--			PCI_VENDOR_ID_AMD, amd8131_chipset.err_dev,
--			dev_info->devfn, dev_info->ctl_name);
--		return -ENODEV;
--	}
--
--	/*
--	 * we do not allocate extra private structure for
--	 * edac_pci_ctl_info, but make use of existing
--	 * one instead.
--	 */
--	dev_info->edac_idx = edac_pci_alloc_index();
--	dev_info->edac_dev = edac_pci_alloc_ctl_info(0, dev_info->ctl_name);
--	if (!dev_info->edac_dev)
--		return -ENOMEM;
--
--	dev_info->edac_dev->pvt_info = dev_info;
--	dev_info->edac_dev->dev = &dev_info->dev->dev;
--	dev_info->edac_dev->mod_name = AMD8131_EDAC_MOD_STR;
--	dev_info->edac_dev->ctl_name = dev_info->ctl_name;
--	dev_info->edac_dev->dev_name = dev_name(&dev_info->dev->dev);
--
--	if (edac_op_state == EDAC_OPSTATE_POLL)
--		dev_info->edac_dev->edac_check = amd8131_chipset.check;
--
--	if (amd8131_chipset.init)
--		amd8131_chipset.init(dev_info);
--
--	if (edac_pci_add_device(dev_info->edac_dev, dev_info->edac_idx) > 0) {
--		printk(KERN_ERR "failed edac_pci_add_device() for %s\n",
--			dev_info->ctl_name);
--		edac_pci_free_ctl_info(dev_info->edac_dev);
--		return -ENODEV;
--	}
--
--	printk(KERN_INFO "added one device on AMD8131 "
--		"vendor %x, device %x, devfn %x, name %s\n",
--		PCI_VENDOR_ID_AMD, amd8131_chipset.err_dev,
--		dev_info->devfn, dev_info->ctl_name);
--
--	return 0;
--}
--
--static void amd8131_remove(struct pci_dev *dev)
--{
--	struct amd8131_dev_info *dev_info;
--
--	for (dev_info = amd8131_chipset.devices; dev_info->inst != NO_BRIDGE;
--		dev_info++)
--		if (dev_info->devfn == dev->devfn)
--			break;
--
--	if (dev_info->inst == NO_BRIDGE) /* should never happen */
--		return;
--
--	if (dev_info->edac_dev) {
--		edac_pci_del_device(dev_info->edac_dev->dev);
--		edac_pci_free_ctl_info(dev_info->edac_dev);
--	}
--
--	if (amd8131_chipset.exit)
--		amd8131_chipset.exit(dev_info);
--
--	pci_dev_put(dev_info->dev);
--}
--
--static const struct pci_device_id amd8131_edac_pci_tbl[] = {
--	{
--	PCI_VEND_DEV(AMD, 8131_BRIDGE),
--	.subvendor = PCI_ANY_ID,
--	.subdevice = PCI_ANY_ID,
--	.class = 0,
--	.class_mask = 0,
--	.driver_data = 0,
--	},
--	{
--	0,
--	}			/* table is NULL-terminated */
--};
--MODULE_DEVICE_TABLE(pci, amd8131_edac_pci_tbl);
--
--static struct pci_driver amd8131_edac_driver = {
--	.name = AMD8131_EDAC_MOD_STR,
--	.probe = amd8131_probe,
--	.remove = amd8131_remove,
--	.id_table = amd8131_edac_pci_tbl,
--};
--
--static int __init amd8131_edac_init(void)
--{
--	printk(KERN_INFO "AMD8131 EDAC driver " AMD8131_EDAC_REVISION "\n");
--	printk(KERN_INFO "\t(c) 2008 Wind River Systems, Inc.\n");
--
--	/* Only POLL mode supported so far */
--	edac_op_state = EDAC_OPSTATE_POLL;
--
--	return pci_register_driver(&amd8131_edac_driver);
--}
--
--static void __exit amd8131_edac_exit(void)
--{
--	pci_unregister_driver(&amd8131_edac_driver);
--}
--
--module_init(amd8131_edac_init);
--module_exit(amd8131_edac_exit);
--
--MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Cao Qingtao <qingtao.cao@windriver.com>");
--MODULE_DESCRIPTION("AMD8131 HyperTransport PCI-X Tunnel EDAC kernel module");
-diff --git a/drivers/edac/amd8131_edac.h b/drivers/edac/amd8131_edac.h
-deleted file mode 100644
-index 5f362abdaf12..000000000000
---- a/drivers/edac/amd8131_edac.h
-+++ /dev/null
-@@ -1,107 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * amd8131_edac.h, EDAC defs for AMD8131 hypertransport chip
-- *
-- * Copyright (c) 2008 Wind River Systems, Inc.
-- *
-- * Authors:	Cao Qingtao <qingtao.cao@windriver.com>
-- * 		Benjamin Walsh <benjamin.walsh@windriver.com>
-- * 		Hu Yongqi <yongqi.hu@windriver.com>
-- */
--
--#ifndef _AMD8131_EDAC_H_
--#define _AMD8131_EDAC_H_
--
--#define DEVFN_PCIX_BRIDGE_NORTH_A	8
--#define DEVFN_PCIX_BRIDGE_NORTH_B	16
--#define DEVFN_PCIX_BRIDGE_SOUTH_A	24
--#define DEVFN_PCIX_BRIDGE_SOUTH_B	32
--
--/************************************************************
-- *	PCI-X Bridge Status and Command Register, DevA:0x04
-- ************************************************************/
--#define REG_STS_CMD	0x04
--enum sts_cmd_bits {
--	STS_CMD_SSE	= BIT(30),
--	STS_CMD_SERREN	= BIT(8)
--};
--
--/************************************************************
-- *	PCI-X Bridge Interrupt and Bridge Control Register,
-- ************************************************************/
--#define REG_INT_CTLR	0x3c
--enum int_ctlr_bits {
--	INT_CTLR_DTSE	= BIT(27),
--	INT_CTLR_DTS	= BIT(26),
--	INT_CTLR_SERR	= BIT(17),
--	INT_CTLR_PERR	= BIT(16)
--};
--
--/************************************************************
-- *	PCI-X Bridge Memory Base-Limit Register, DevA:0x1C
-- ************************************************************/
--#define REG_MEM_LIM	0x1c
--enum mem_limit_bits {
--	MEM_LIMIT_DPE 	= BIT(31),
--	MEM_LIMIT_RSE 	= BIT(30),
--	MEM_LIMIT_RMA 	= BIT(29),
--	MEM_LIMIT_RTA 	= BIT(28),
--	MEM_LIMIT_STA	= BIT(27),
--	MEM_LIMIT_MDPE	= BIT(24),
--	MEM_LIMIT_MASK	= MEM_LIMIT_DPE|MEM_LIMIT_RSE|MEM_LIMIT_RMA|
--				MEM_LIMIT_RTA|MEM_LIMIT_STA|MEM_LIMIT_MDPE
--};
--
--/************************************************************
-- *	Link Configuration And Control Register, side A
-- ************************************************************/
--#define REG_LNK_CTRL_A	0xc4
--
--/************************************************************
-- *	Link Configuration And Control Register, side B
-- ************************************************************/
--#define REG_LNK_CTRL_B  0xc8
--
--enum lnk_ctrl_bits {
--	LNK_CTRL_CRCERR_A	= BIT(9),
--	LNK_CTRL_CRCERR_B	= BIT(8),
--	LNK_CTRL_CRCFEN		= BIT(1)
--};
--
--enum pcix_bridge_inst {
--	NORTH_A = 0,
--	NORTH_B = 1,
--	SOUTH_A = 2,
--	SOUTH_B = 3,
--	NO_BRIDGE = 4
--};
--
--struct amd8131_dev_info {
--	int devfn;
--	enum pcix_bridge_inst inst;
--	struct pci_dev *dev;
--	int edac_idx;	/* pci device index */
--	char *ctl_name;
--	struct edac_pci_ctl_info *edac_dev;
--};
--
--/*
-- * AMD8131 chipset has two pairs of PCIX Bridge and related IOAPIC
-- * Controller, and ATCA-6101 has two AMD8131 chipsets, so there are
-- * four PCIX Bridges on ATCA-6101 altogether.
-- *
-- * These PCIX Bridges share the same PCI Device ID and are all of
-- * Function Zero, they could be discrimated by their pci_dev->devfn.
-- * They share the same set of init/check/exit methods, and their
-- * private structures are collected in the devices[] array.
-- */
--struct amd8131_info {
--	u16 err_dev;	/* PCI Device ID for AMD8131 APIC*/
--	struct amd8131_dev_info *devices;
--	void (*init)(struct amd8131_dev_info *dev_info);
--	void (*exit)(struct amd8131_dev_info *dev_info);
--	void (*check)(struct edac_pci_ctl_info *edac_dev);
--};
--
--#endif /* _AMD8131_EDAC_H_ */
--
--- 
-2.47.0
-
+Regards
+Nikunj
 
