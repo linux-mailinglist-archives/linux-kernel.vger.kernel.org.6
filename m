@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-405700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284BC9C55FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:13:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B5F9C570C
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:54:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDEC31F2570E
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A218DB44C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D5021E109;
-	Tue, 12 Nov 2024 10:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52E21EBB0;
+	Tue, 12 Nov 2024 10:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jI9dYNl+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhFJpe8u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB22144DD;
-	Tue, 12 Nov 2024 10:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90F921E12B;
+	Tue, 12 Nov 2024 10:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731408592; cv=none; b=n7sVMa97aONK75kbszA/bO8UD0l1AhlfBdPn/L6enjf+h6rX9oMgFVgIgCtBOufarRMyAFZs/tAba1bjGHQGlwjWHlYVQDaCs4Fx3lmyackxzsJGeCFfYAhJCTjd62FftFntmKp5Enyk/IO2+U5xiS8JujJTLVImVlox/eW41GY=
+	t=1731408598; cv=none; b=Z2Gg/pfFLKSr6sz7hDQkmQpfG+UbgoYU3mHWY4AY1RwFafu8jtSHok+EKHtTx2eUswRGQG6HaZWPR9m5vIn6XJwH35jBzFQliH4CsV2igufeXh9KxjVKjoA0fgFyMprc2arJF81c6jdfEQxfVahEZM/66QWI3xOxVohCREHnJXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731408592; c=relaxed/simple;
-	bh=AtPXSJPOS66+Z5FHOSHA1nto8ZK/kyNSpsSHLrWs5/c=;
+	s=arc-20240116; t=1731408598; c=relaxed/simple;
+	bh=B/bUlKOyUlTKI5Vq3sRcX+JJOx9sQVWitnlmWMDGFsM=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Fr2F/PwD0VCvAHlvaHMfqtEGOupdn3uBZnBnqYaDV5pcVZ4e9buycYgAM428znyLlQTi8XHio3Gx6lsb512uAjXRKe3uSO9Algp7dZmWEF4DmGAjNN8evrchB5OQkPUTwWqPI/KOCSi+W3ctoilj9Uf/9VZGj99EPfSXzMYPD7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jI9dYNl+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A38C4CECD;
-	Tue, 12 Nov 2024 10:49:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=qGqFuEcwKh1Xy1/ji2SPchzTb3cMQSg1mXwd+W+FH+5EKrWzm8y+K1z4qC9cjm+efBC+HLASyQgVVNcuukdwVv3v9lSit/Q5PX1GBfJvU3ny6MKYIrF5MKMv/QpN6MFDiaeach5yCIp888uFUswIQRuCA2yWPoCZTt+HPFo1zi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhFJpe8u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D49E8C4CECD;
+	Tue, 12 Nov 2024 10:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731408592;
-	bh=AtPXSJPOS66+Z5FHOSHA1nto8ZK/kyNSpsSHLrWs5/c=;
+	s=k20201202; t=1731408598;
+	bh=B/bUlKOyUlTKI5Vq3sRcX+JJOx9sQVWitnlmWMDGFsM=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=jI9dYNl+802YiW4J0l1PW1syhvy0C6CqZQaqDv5cf+Y1uPv2SM9/YA3SYrCP+PJ1Z
-	 UjWJm5JMkK1vHp+r/LD+gYTV7PcQU52+qZkDQhe+j0rpzsn8p6wmYtLwAynTPd677c
-	 8zQhHjIO6GraT6ocD85fIMUMhHk3p80PPa6bx10j1l0PEhzzd/xuYDmgX4KP+pVcdN
-	 n6otmQkWWC8SqddI8N26WpIXsgoNOtXvNoBe/eaFrsUgzA/fgKMcInl6DrGbitheFU
-	 CjMTAKTcqWTSVUF0EaW9GcOS5zqGEPFkz91iZLylJ7faMNuNKhdJRTQcj+PABX8jBz
-	 4XY61Hy3AMAHg==
+	b=XhFJpe8uaST6D+2FzfQ+USjS3vjqJx0UhnSc571OW+OJ/6jTLeiu2IaXHaJ/5YhmJ
+	 wVnO0TY58eGWvEY1298hzRi0TMQMeZBbzvcW68MYK94qIE4hdLaCeJNFY8FGc/dlV1
+	 8cbSYdb56iuaIR9QAKijYPkg0iOERrVwZkzbi8pij7Eqjvwnzjbgfzfoz+R8PCn3K9
+	 4gqdcU2CpxqzoSKDxfzmHXtnORO1PWDHgXbn1Z70tl4FTJ8G3mKeHmmMOrqvFFw+n2
+	 GBKv6LvhRtsLWRmW7rbgCsYsOJV2h1zcp9CZhsKCJci/o5Q6yymqavqKeWwwpAjkm/
+	 gOC2D12dbU4jg==
 From: Andreas Hindborg <a.hindborg@kernel.org>
 To: "Tamir Duberstein" <tamird@gmail.com>
 Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
@@ -50,14 +50,14 @@ Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
   "Trevor Gross" <tmgross@umich.edu>,  "Danilo Krummrich"
  <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
   <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/6] rust: arc: split unsafe block, add missing comment
-In-Reply-To: <20241110-borrow-mut-v4-3-053976068215@gmail.com> (Tamir
-	Duberstein's message of "Sun, 10 Nov 2024 09:14:04 -0500")
+Subject: Re: [PATCH v4 5/6] rust: reorder `ForeignOwnable` items
+In-Reply-To: <20241110-borrow-mut-v4-5-053976068215@gmail.com> (Tamir
+	Duberstein's message of "Sun, 10 Nov 2024 09:14:06 -0500")
 References: <20241110-borrow-mut-v4-0-053976068215@gmail.com>
-	<GyQMlmsMJztS8VRmtonRm9SXHamrxnnho2wrVDFQ0D1DBpZPHYlXktSItEjQko7-4annfwtJXhbXWeMtQaFz4w==@protonmail.internalid>
-	<20241110-borrow-mut-v4-3-053976068215@gmail.com>
-Date: Tue, 12 Nov 2024 11:09:49 +0100
-Message-ID: <871pzgsqz6.fsf@kernel.org>
+	<SmLmswOjFRt4blVoyuX7Ipu6Sw_74rk2q2SF8TtEPTwQgIDaaDDf9XO5tvIBBr2IshmNuDw3pZp4rmwS5zknag==@protonmail.internalid>
+	<20241110-borrow-mut-v4-5-053976068215@gmail.com>
+Date: Tue, 12 Nov 2024 11:10:57 +0100
+Message-ID: <87wmh8rccu.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,8 +68,10 @@ Content-Type: text/plain
 
 "Tamir Duberstein" <tamird@gmail.com> writes:
 
-> The new SAFETY comment style is taken from existing comments in `deref`
-> and `drop.
+> `{into,from}_foreign` before `borrow` is slightly more logical.
+>
+> This removes an inconsistency with `kbox.rs` which already uses this
+> ordering.
 >
 > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
