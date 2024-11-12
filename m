@@ -1,318 +1,137 @@
-Return-Path: <linux-kernel+bounces-406538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEBB9C6088
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:36:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A5C9C608A
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B33F285A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:36:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D60C2829A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0326215024;
-	Tue, 12 Nov 2024 18:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2500217910;
+	Tue, 12 Nov 2024 18:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="VUP3FlB2"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="LLMLWPG9"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2318B19F13C
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CA72076A9
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731436592; cv=none; b=MFZPtE0i3igVq3I5wS5yH657vwHnkmuHJVi1x7Pfl1LkMGotXY/dhWb1ayR56a8GEl94IvJPBRZ9nc9DU28MB4y8pzSq2lOFM0gVUO67g+dwEcVeTkEblURQs49SrZIP+wE39xiO85tUdqPk9LG8i+veQ2jVI/isUmg9STSC+so=
+	t=1731436601; cv=none; b=RUWPSUJFFonSNH/6AAWd2u+l3YTH4i2YW9bfINzRZVQ/lAUU0qAEn81Jv9YE/Oc0QGFGnyxnTzV6IqFN8IWrcBW0R8DoA/Z+ghChuvWB73c/qLyChwSxkiTJPI+fYVhSSgXKrk62dpMG0j2g2bXxTMekI3vFB+MtWujgD1PcMEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731436592; c=relaxed/simple;
-	bh=+55KiKJDO0XlLRpgGt/vQ9q4UhxzJcIzO9UWJpYd12M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FPAA6EWlVqsEd3Tf2z08/Fm393qLTzl5YDf+jYTuzQQPDSR5CSv5M3QZ/G9HXpUAXljTOSnTmbUs2YPNtUs/ArezLgLTtGErZMZ5nJP4vtowVy0BvL/yW9MppwY2cqWLotDQ/rnRjYZkDgd/LBD1HZkSIB+yoPdV0PduweMEnP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=VUP3FlB2; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731436589;
-	bh=+55KiKJDO0XlLRpgGt/vQ9q4UhxzJcIzO9UWJpYd12M=;
-	h=From:Date:Subject:To:Cc:From;
-	b=VUP3FlB2+Kc+yJhI/SOLhjnRbtwISSxMgEmZtBl8XdahhjkJfLo2nUIGmmQw4nI5t
-	 YStZcNCjdmKS/xgTCfo1Pu16DoQqsDagZLoQeA0LZh4ycRHd7sJI9Wo4mchkdyb9oa
-	 CX2RiPFqgpM16JA3kI9fNLgyanukaC9t3Hg5SAB8=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 12 Nov 2024 19:36:10 +0100
-Subject: [PATCH v3] drm/radeon: Switch radeon_connector to struct drm_edid
+	s=arc-20240116; t=1731436601; c=relaxed/simple;
+	bh=azghq7xbd5HjGFxISImNbKjXih69XGVh33v7PA7eBEc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRZkxOqFzkzVY/lb7CScKRN7r4ZkyJf+WpYsAhFeqEyFr2F7WpatZo2QxCWfqwmsr8/vCF1GpHcpDfSN8J77eBt9NIdc8UuVIQTKDLPt/sBn7SlA2KBKyaV1lLm0YvkOPoEgjYiRCHx2KYpxhY6RgVPQPoZaIPMVeMmEODpFFWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=LLMLWPG9; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a6ababa9f7so23558845ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:36:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1731436598; x=1732041398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUhkJ9T1JdCDSEr0F9PO92yz7yHijqbqEqub4Hd7CK4=;
+        b=LLMLWPG9ZO0tuWVmZ+68iSmE+0GdvzaLnjL1AjfqwUgZVvwSSmhNOzwWw4zgxNbBXc
+         3HETOVwEAq0Nv0M7Tx//5jcXCGn7jsJvKHGyELJOIwfTz6dNMcEXF75jT+5lwRxAdXK2
+         llGTbCmOoBKiA0YVrKtCvrgx47Xgi0WKgqj08=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731436598; x=1732041398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUhkJ9T1JdCDSEr0F9PO92yz7yHijqbqEqub4Hd7CK4=;
+        b=EDnadRri0GwvPWYvoclaTf77cc2JHAXsxyZapq5RvCvutpWwGVbigIcH+o/xD/ZL9g
+         c3pa5zm7ckSy9Xr/MNgrAitWRWEcWIGVuQdTilGKeBRbVyIPIex06BCHH70wpL4ZUqYM
+         y5YILL5PwwnlxsFgaunN239dVU5+LcdcY5I928wxrnPm7pJmTvDsQDG2uT9aixrNG2uB
+         pS91a01aUCAOrTCQXX0OMFmTtvQ8eCvztD986rsdOvV6IHEEroP8o+pqfI/Ve/2j2cVx
+         3McrWb5lNoRTz3PWqV/jtbixfsANSKz6pw4pPi8iFUkJtu2zl3m51ES8HbLSDZsPZtPw
+         cPEQ==
+X-Gm-Message-State: AOJu0Ywqytv7tVHSXxuAy01yz26U/iOecyJGDnKQx2i/yIr5IAxymRYP
+	2BmhlZSFOrWL7GtCSKB1qtKGrM+D0H9YL0ijepS1Vl+c6lfd8cESyEfUnT4/urg=
+X-Google-Smtp-Source: AGHT+IEaXM85sMxzs2AFEHW2JI6ps/Y3PiUs0Q1LmO9k7EIraEAbZHW+vFXf5skFGJihk5fhVzNCtA==
+X-Received: by 2002:a05:6e02:17cb:b0:3a6:c493:7396 with SMTP id e9e14a558f8ab-3a6f19a00bbmr184012385ab.3.1731436597851;
+        Tue, 12 Nov 2024 10:36:37 -0800 (PST)
+Received: from localhost (222.121.121.34.bc.googleusercontent.com. [34.121.121.222])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a6f9820fa2sm22893285ab.13.2024.11.12.10.36.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:36:37 -0800 (PST)
+Date: Tue, 12 Nov 2024 18:36:36 +0000
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Aashish Sharma <shraash@google.com>,
+	Vineeth Pillai <vineeth@bitbyteword.org>
+Subject: Re: [PATCH] sched/deadline: Do not start hrtick if its disabled for
+ DL
+Message-ID: <20241112183636.GB2061573@google.com>
+References: <20241112012240.1887813-1-joel@joelfernandes.org>
+ <ZzMI9dYjWKqNtQzv@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241112-radeon-drm_edid-v3-1-8c1d9cf92915@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIABmgM2cC/3XNQQ6CMBQE0KuYrq3h/4IUV97DGIPtx3Zh0Raqh
- nB3Cy40IS5nknkzsEDeUmC71cA8RRts61IQ6xVTpnYX4lanzDDDPJMgua81tY5rfz2RtppXTaZ
- IiS0hliytbp4a+5zFw/GTPd37BHff0tjQtf41v0aY2v8HETjw/Fw2WkMFAmn/IBtCUKY3G0cdm
- 8CIPwjiEsGEFFIgFAVIAL1AxnF8Axa5BjINAQAA
-X-Change-ID: 20240818-radeon-drm_edid-9f0cec36e227
-To: Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731436588; l=10962;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=+55KiKJDO0XlLRpgGt/vQ9q4UhxzJcIzO9UWJpYd12M=;
- b=jKt0rDrggKJ4oAIJCQEqkEOlc4RZo+XzccjJ0uhAVpaLubbjJNunQbuO8gl01L4xUOUeyMl4e
- osnfHZha4A/Ad2yYP7ig9x/PkGg92NF2d+Pkt7wc5VtVtabK556P3Mw
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzMI9dYjWKqNtQzv@jlelli-thinkpadt14gen4.remote.csb>
 
-"struct drm_edid" is the safe and recommended alternative to "struct edid".
+On Tue, Nov 12, 2024 at 07:51:17AM +0000, Juri Lelli wrote:
+> Hi Joel,
+> 
+> On 12/11/24 01:22, Joel Fernandes (Google) wrote:
+> > Fix an issue where high-resolution timers causes aggressive preemptions,
+> > leading to increased idle times in CFS tasks (which are inside the DL
+> > server). The problem was traced to improper usage of hrtick_enabled(),
+> > which could start high-resolution ticks unexpectedly causing repeated
+> > preemptions.
+> > 
+> > The fix replaces this call with hrtick_enabled_dl(), aligning it with
+> > scheduler feature checks.
+> > 
+> > Reported-by: Aashish Sharma <shraash@google.com>
+> > Reported-by: Vineeth Pillai <vineeth@bitbyteword.org>
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > ---
+> >  kernel/sched/deadline.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > index b216e6deeac4..d46502b9ce58 100644
+> > --- a/kernel/sched/deadline.c
+> > +++ b/kernel/sched/deadline.c
+> > @@ -2121,7 +2121,7 @@ static struct task_struct *pick_next_task_dl(struct rq *rq)
+> >  	if (!p->dl_server)
+> >  		set_next_task_dl(rq, p, true);
+> >  
+> > -	if (hrtick_enabled(rq))
+> > +	if (hrtick_enabled_dl(rq))
+> >  		start_hrtick_dl(rq, &p->dl);
+> >  
+> >  	return p;
+> > -- 
+> 
+> I'm not sure I'm seeing this in current code. We have two users in
+> deadline.c and they both use hrtick_enabled_dl (after a recent fix by
+> Phil).
 
-Rename the member to make sure that no usage sites are missed,
-as "struct drm_edid" has some restrictions, for example it can not be
-used with kfree().
+Ah you're right. The latest kernel we are on is on 6.6 so this got missed.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Changes in v3:
-- Rebase onto drm-next
-- Link to v2: https://lore.kernel.org/r/20240822-radeon-drm_edid-v2-1-58321551811d@weissschuh.net
+Thanks Juri for your quick reply and pointing out the missing patches!
 
-Changes in v2:
-- Simplify some logic as drm_edid_*()-APIs can handle NULL
-- Correctly use drm_edid_read_switcheroo()
-- Link to v1: https://lore.kernel.org/r/20240818-radeon-drm_edid-v1-1-4b7fdd19132e@weissschuh.net
----
-This is only compile-tested.
----
- drivers/gpu/drm/radeon/radeon_audio.c      |  4 +--
- drivers/gpu/drm/radeon/radeon_combios.c    |  4 +--
- drivers/gpu/drm/radeon/radeon_connectors.c | 56 +++++++++++++-----------------
- drivers/gpu/drm/radeon/radeon_mode.h       |  5 ++-
- 4 files changed, 31 insertions(+), 38 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/radeon_audio.c b/drivers/gpu/drm/radeon/radeon_audio.c
-index 47aa06a9a94221555a4828f41a57cbe03d637ee1..59d0e47c94d0d6195e83195e90a2ad1509734c2d 100644
---- a/drivers/gpu/drm/radeon/radeon_audio.c
-+++ b/drivers/gpu/drm/radeon/radeon_audio.c
-@@ -311,7 +311,7 @@ static void radeon_audio_write_sad_regs(struct drm_encoder *encoder)
- 	if (!connector)
- 		return;
- 
--	sad_count = drm_edid_to_sad(radeon_connector->edid, &sads);
-+	sad_count = drm_edid_to_sad(drm_edid_raw(radeon_connector->drm_edid), &sads);
- 	if (sad_count < 0)
- 		DRM_ERROR("Couldn't read SADs: %d\n", sad_count);
- 	if (sad_count <= 0)
-@@ -335,7 +335,7 @@ static void radeon_audio_write_speaker_allocation(struct drm_encoder *encoder)
- 	if (!connector)
- 		return;
- 
--	sad_count = drm_edid_to_speaker_allocation(radeon_connector->edid, &sadb);
-+	sad_count = drm_edid_to_speaker_allocation(drm_edid_raw(radeon_connector->drm_edid), &sadb);
- 	if (sad_count < 0) {
- 		DRM_DEBUG("Couldn't read Speaker Allocation Data Block: %d\n",
- 			  sad_count);
-diff --git a/drivers/gpu/drm/radeon/radeon_combios.c b/drivers/gpu/drm/radeon/radeon_combios.c
-index df8d7f56b0289996fef8e049d7ce36295f37314d..f4947acd0419ce02052d9f9b9604bd80e494327a 100644
---- a/drivers/gpu/drm/radeon/radeon_combios.c
-+++ b/drivers/gpu/drm/radeon/radeon_combios.c
-@@ -390,10 +390,10 @@ bool radeon_combios_check_hardcoded_edid(struct radeon_device *rdev)
- }
- 
- /* this is used for atom LCDs as well */
--struct edid *
-+const struct drm_edid *
- radeon_bios_get_hardcoded_edid(struct radeon_device *rdev)
- {
--	return drm_edid_duplicate(drm_edid_raw(rdev->mode_info.bios_hardcoded_edid));
-+	return drm_edid_dup(rdev->mode_info.bios_hardcoded_edid);
- }
- 
- static struct radeon_i2c_bus_rec combios_setup_i2c_bus(struct radeon_device *rdev,
-diff --git a/drivers/gpu/drm/radeon/radeon_connectors.c b/drivers/gpu/drm/radeon/radeon_connectors.c
-index f9c73c55f04f76ed5c78e9169004f8a7dea6004e..203fea5b01463807396c19fc107489779f068aac 100644
---- a/drivers/gpu/drm/radeon/radeon_connectors.c
-+++ b/drivers/gpu/drm/radeon/radeon_connectors.c
-@@ -261,7 +261,7 @@ static void radeon_connector_get_edid(struct drm_connector *connector)
- 	struct radeon_device *rdev = dev->dev_private;
- 	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
- 
--	if (radeon_connector->edid)
-+	if (radeon_connector->drm_edid)
- 		return;
- 
- 	/* on hw with routers, select right port */
-@@ -271,8 +271,8 @@ static void radeon_connector_get_edid(struct drm_connector *connector)
- 	if ((radeon_connector_encoder_get_dp_bridge_encoder_id(connector) !=
- 	     ENCODER_OBJECT_ID_NONE) &&
- 	    radeon_connector->ddc_bus->has_aux) {
--		radeon_connector->edid = drm_get_edid(connector,
--						      &radeon_connector->ddc_bus->aux.ddc);
-+		radeon_connector->drm_edid = drm_edid_read_ddc(connector,
-+							       &radeon_connector->ddc_bus->aux.ddc);
- 	} else if ((connector->connector_type == DRM_MODE_CONNECTOR_DisplayPort) ||
- 		   (connector->connector_type == DRM_MODE_CONNECTOR_eDP)) {
- 		struct radeon_connector_atom_dig *dig = radeon_connector->con_priv;
-@@ -280,22 +280,22 @@ static void radeon_connector_get_edid(struct drm_connector *connector)
- 		if ((dig->dp_sink_type == CONNECTOR_OBJECT_ID_DISPLAYPORT ||
- 		     dig->dp_sink_type == CONNECTOR_OBJECT_ID_eDP) &&
- 		    radeon_connector->ddc_bus->has_aux)
--			radeon_connector->edid = drm_get_edid(&radeon_connector->base,
--							      &radeon_connector->ddc_bus->aux.ddc);
-+			radeon_connector->drm_edid = drm_edid_read_ddc(&radeon_connector->base,
-+								       &radeon_connector->ddc_bus->aux.ddc);
- 		else if (radeon_connector->ddc_bus)
--			radeon_connector->edid = drm_get_edid(&radeon_connector->base,
--							      &radeon_connector->ddc_bus->adapter);
-+			radeon_connector->drm_edid = drm_edid_read_ddc(&radeon_connector->base,
-+								       &radeon_connector->ddc_bus->adapter);
- 	} else if (vga_switcheroo_handler_flags() & VGA_SWITCHEROO_CAN_SWITCH_DDC &&
- 		   connector->connector_type == DRM_MODE_CONNECTOR_LVDS &&
- 		   radeon_connector->ddc_bus) {
--		radeon_connector->edid = drm_get_edid_switcheroo(&radeon_connector->base,
--								 &radeon_connector->ddc_bus->adapter);
-+		radeon_connector->drm_edid = drm_edid_read_switcheroo(&radeon_connector->base,
-+								      &radeon_connector->ddc_bus->adapter);
- 	} else if (radeon_connector->ddc_bus) {
--		radeon_connector->edid = drm_get_edid(&radeon_connector->base,
--						      &radeon_connector->ddc_bus->adapter);
-+		radeon_connector->drm_edid = drm_edid_read_ddc(&radeon_connector->base,
-+							       &radeon_connector->ddc_bus->adapter);
- 	}
- 
--	if (!radeon_connector->edid) {
-+	if (!radeon_connector->drm_edid) {
- 		/* don't fetch the edid from the vbios if ddc fails and runpm is
- 		 * enabled so we report disconnected.
- 		 */
-@@ -306,34 +306,30 @@ static void radeon_connector_get_edid(struct drm_connector *connector)
- 			/* some laptops provide a hardcoded edid in rom for LCDs */
- 			if (((connector->connector_type == DRM_MODE_CONNECTOR_LVDS) ||
- 			     (connector->connector_type == DRM_MODE_CONNECTOR_eDP)))
--				radeon_connector->edid = radeon_bios_get_hardcoded_edid(rdev);
-+				radeon_connector->drm_edid = radeon_bios_get_hardcoded_edid(rdev);
- 		} else {
- 			/* some servers provide a hardcoded edid in rom for KVMs */
--			radeon_connector->edid = radeon_bios_get_hardcoded_edid(rdev);
-+			radeon_connector->drm_edid = radeon_bios_get_hardcoded_edid(rdev);
- 		}
- 	}
-+
-+	drm_edid_connector_update(&radeon_connector->base, radeon_connector->drm_edid);
- }
- 
- static void radeon_connector_free_edid(struct drm_connector *connector)
- {
- 	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
- 
--	kfree(radeon_connector->edid);
--	radeon_connector->edid = NULL;
-+	drm_edid_free(radeon_connector->drm_edid);
-+	radeon_connector->drm_edid = NULL;
- }
- 
- static int radeon_ddc_get_modes(struct drm_connector *connector)
- {
- 	struct radeon_connector *radeon_connector = to_radeon_connector(connector);
--	int ret;
- 
--	if (radeon_connector->edid) {
--		drm_connector_update_edid_property(connector, radeon_connector->edid);
--		ret = drm_add_edid_modes(connector, radeon_connector->edid);
--		return ret;
--	}
--	drm_connector_update_edid_property(connector, NULL);
--	return 0;
-+	drm_edid_connector_update(connector, radeon_connector->drm_edid);
-+	return drm_edid_connector_add_modes(connector);
- }
- 
- static struct drm_encoder *radeon_best_single_encoder(struct drm_connector *connector)
-@@ -869,7 +865,7 @@ radeon_lvds_detect(struct drm_connector *connector, bool force)
- 
- 	/* check for edid as well */
- 	radeon_connector_get_edid(connector);
--	if (radeon_connector->edid)
-+	if (radeon_connector->drm_edid)
- 		ret = connector_status_connected;
- 	/* check acpi lid status ??? */
- 
-@@ -1012,13 +1008,12 @@ radeon_vga_detect(struct drm_connector *connector, bool force)
- 		radeon_connector_free_edid(connector);
- 		radeon_connector_get_edid(connector);
- 
--		if (!radeon_connector->edid) {
-+		if (!radeon_connector->drm_edid) {
- 			DRM_ERROR("%s: probed a monitor but no|invalid EDID\n",
- 					connector->name);
- 			ret = connector_status_connected;
- 		} else {
--			radeon_connector->use_digital =
--				!!(radeon_connector->edid->input & DRM_EDID_INPUT_DIGITAL);
-+			radeon_connector->use_digital = drm_edid_is_digital(radeon_connector->drm_edid);
- 
- 			/* some oems have boards with separate digital and analog connectors
- 			 * with a shared ddc line (often vga + hdmi)
-@@ -1270,7 +1265,7 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
- 		radeon_connector_free_edid(connector);
- 		radeon_connector_get_edid(connector);
- 
--		if (!radeon_connector->edid) {
-+		if (!radeon_connector->drm_edid) {
- 			DRM_ERROR("%s: probed a monitor but no|invalid EDID\n",
- 					connector->name);
- 			/* rs690 seems to have a problem with connectors not existing and always
-@@ -1286,8 +1281,7 @@ radeon_dvi_detect(struct drm_connector *connector, bool force)
- 				broken_edid = true; /* defer use_digital to later */
- 			}
- 		} else {
--			radeon_connector->use_digital =
--				!!(radeon_connector->edid->input & DRM_EDID_INPUT_DIGITAL);
-+			radeon_connector->use_digital = drm_edid_is_digital(radeon_connector->drm_edid);
- 
- 			/* some oems have boards with separate digital and analog connectors
- 			 * with a shared ddc line (often vga + hdmi)
-diff --git a/drivers/gpu/drm/radeon/radeon_mode.h b/drivers/gpu/drm/radeon/radeon_mode.h
-index 4063d3801e819ba2726b63225e5f3f7d85eb760f..0ac57ff1b9185d8594029441258c8dfe37c724d6 100644
---- a/drivers/gpu/drm/radeon/radeon_mode.h
-+++ b/drivers/gpu/drm/radeon/radeon_mode.h
-@@ -41,7 +41,6 @@
- struct drm_fb_helper;
- struct drm_fb_helper_surface_size;
- 
--struct edid;
- struct drm_edid;
- struct radeon_bo;
- struct radeon_device;
-@@ -524,7 +523,7 @@ struct radeon_connector {
- 	bool use_digital;
- 	/* we need to mind the EDID between detect
- 	   and get modes due to analog/digital/tvencoder */
--	struct edid *edid;
-+	const struct drm_edid *drm_edid;
- 	void *con_priv;
- 	bool dac_load_detect;
- 	bool detected_by_load; /* if the connection status was determined by load */
-@@ -846,7 +845,7 @@ radeon_get_crtc_scanout_position(struct drm_crtc *crtc, bool in_vblank_irq,
- 				 const struct drm_display_mode *mode);
- 
- extern bool radeon_combios_check_hardcoded_edid(struct radeon_device *rdev);
--extern struct edid *
-+extern const struct drm_edid *
- radeon_bios_get_hardcoded_edid(struct radeon_device *rdev);
- extern bool radeon_atom_get_clock_info(struct drm_device *dev);
- extern bool radeon_combios_get_clock_info(struct drm_device *dev);
-
----
-base-commit: 377dda2cff59825079aee3906aa4904779747b0b
-change-id: 20240818-radeon-drm_edid-9f0cec36e227
-
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+ - Joel
 
 
