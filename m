@@ -1,152 +1,148 @@
-Return-Path: <linux-kernel+bounces-405294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023509C4F9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:39:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F8A9C4F83
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 08:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862BD1F26D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:39:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EFE1B253EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 07:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300FB20BB3B;
-	Tue, 12 Nov 2024 07:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WZMgCD/3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D053420ADDD;
+	Tue, 12 Nov 2024 07:36:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EF820B814;
-	Tue, 12 Nov 2024 07:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0801A727D
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 07:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731397092; cv=none; b=Gg617zf61Tl0nuEcBWWeE/cCWsIBQE/YuIR7aoDJEaZjTxgMTBrAKz4M5MNUDbt4sAjei7pWOFFc2ww6YAnvtHCrhV8X2kA5MPYGynCX5Jzh5fzNn/6jc8uxHWdVOZkqbdNG3R/OYRKJNPXOpM1dck0/dmXXIzChxYNFUAP9Mw4=
+	t=1731396961; cv=none; b=Es/uUIcjquyE1SAAIlPZgssf8G48yUeBx9MzdTK/2QtG5UW5qyomIRp0ICGQGlxwi5JE+2t8SnB2iImySfTHpVIRSDepL9GCzTC/bifo9K+t0ZbQbWk4RKafUmA8VjALtJosmtIVtPctbApsrrPBSZOurYR2zZATePauvtFR+hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731397092; c=relaxed/simple;
-	bh=wMpGoehg1J/B3n5jSNSrNlfUDzijvrljKuSJUktw21o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q0/OKCYlucHosH8AvjR1vOpwtg/uVBjFfjGeZUcfTgIY5VRIbJoHjfvzR3rBSMNJ25mXB0yRbD9P/EY81YEbCHz7yVE87q6+S24q0VRGxoBe6Js22jkaPyBkjS448vmdgJMUusX+1oICD17G6lJ2B2ukb5SRYJ++pPkne+qG8Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WZMgCD/3; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731397091; x=1762933091;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wMpGoehg1J/B3n5jSNSrNlfUDzijvrljKuSJUktw21o=;
-  b=WZMgCD/3LDUgUBgjYEmlrHT+vkvTYThnmaWZ0an1F4tRnG0a2LHr8+bY
-   mZBNESsNRuEKYelfeafQm628x9IKe7z37yrLpGrCNWkriMoBVoPXeTAPW
-   Z82lYMl7OsrEmcyVZ9V3y0LlQFA5VbHrB08GNS9IVboucw0wwkzSgb52V
-   3+Dgi3CAV81Sow/DFyRFOfWQbVanH21fUFzrrfJyblXojywtPDQLPIkjs
-   cK9kvzXZDDqDAEtJfNAm5Bc0YLd9GlE/cCxQGqoNRxguNr9NtcsXeLAVb
-   ZhMSFmjuEiIAPT0FbvzTa5Kvdy665Rf+oFmddB2OncnZW1OoMPGZIuRQK
-   w==;
-X-CSE-ConnectionGUID: r2z7AeLQQ0CcB7a+QIUw2Q==
-X-CSE-MsgGUID: OV1V894QTTSHzPfWqYXhFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11253"; a="42598621"
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="42598621"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:10 -0800
-X-CSE-ConnectionGUID: ACOXBA0fQl+UndL2pYoT6Q==
-X-CSE-MsgGUID: cjJW8phnTEepnbzucvUpnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
-   d="scan'208";a="110595076"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Nov 2024 23:38:06 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	binbin.wu@linux.intel.com,
-	dmatlack@google.com,
-	isaku.yamahata@intel.com,
-	isaku.yamahata@gmail.com,
-	nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH v2 05/24] KVM: VMX: Teach EPT violation helper about private mem
-Date: Tue, 12 Nov 2024 15:35:39 +0800
-Message-ID: <20241112073539.22056-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
-References: <20241112073327.21979-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1731396961; c=relaxed/simple;
+	bh=MTusJ+VIblS7XuG1K9vvab4HGqAvOzQdo69w87y3F6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dz6ZvlOYoMQ+fEbdQdC0ayQcpfgxaue7SqxN20wkikh7iZN0TXKIbww6GA++0CIBUWxVzwM/oucQcQB8YjGk6cNOjTN/ioPbsaFso5UPF6g5VPbW/MqmBwf83jSO0xh7G9jhCZg9mnElUSItgmu+vyo+l5s8rKWAMiWMdo7DrN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAlRA-0004gT-SY; Tue, 12 Nov 2024 08:35:44 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tAlRA-000NDS-0N;
+	Tue, 12 Nov 2024 08:35:44 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id BF6B4371246;
+	Tue, 12 Nov 2024 07:35:43 +0000 (UTC)
+Date: Tue, 12 Nov 2024 08:35:43 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Sean Nyekjaer <sean@geanix.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
+ ti,nwkrq-voltage-sel option
+Message-ID: <20241112-sincere-warm-quetzal-e854ac-mkl@pengutronix.de>
+References: <20241111-tcan-wkrqv-v2-0-9763519b5252@geanix.com>
+ <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kgu6nm6qbttpidbk"
+Content-Disposition: inline
+In-Reply-To: <20241111-tcan-wkrqv-v2-2-9763519b5252@geanix.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Rick Edgecombe <rick.p.edgecombe@intel.com>
 
-Teach EPT violation helper to check shared mask of a GPA to find out
-whether the GPA is for private memory.
+--kgu6nm6qbttpidbk
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] dt-bindings: can: tcan4x5x: Document the
+ ti,nwkrq-voltage-sel option
+MIME-Version: 1.0
 
-When EPT violation is triggered after TD accessing a private GPA, KVM will
-exit to user space if the corresponding GFN's attribute is not private.
-User space will then update GFN's attribute during its memory conversion
-process. After that, TD will re-access the private GPA and trigger EPT
-violation again. Only with GFN's attribute matches to private, KVM will
-fault in private page, map it in mirrored TDP root, and propagate changes
-to private EPT to resolve the EPT violation.
+On 11.11.2024 09:54:50, Sean Nyekjaer wrote:
+> nWKRQ supports an output voltage of either the internal reference voltage
+> (3.6V) or the reference voltage of the digital interface 0 - 6V.
+> Add the devicetree option ti,nwkrq-voltage-sel to be able to select
+> between them.
+>=20
+> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> ---
+>  Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml | 13 ++++++++=
++++++
+>  1 file changed, 13 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml b=
+/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> index f1d18a5461e05296998ae9bf09bdfa1226580131..a77c560868d689e92ded08b9d=
+eb43e5a2b89bf2b 100644
+> --- a/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> +++ b/Documentation/devicetree/bindings/net/can/ti,tcan4x5x.yaml
+> @@ -106,6 +106,18 @@ properties:
+>        Must be half or less of "clocks" frequency.
+>      maximum: 18000000
+> =20
+> +  ti,nwkrq-voltage-sel:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    description:
+> +      nWKRQ Pin GPO buffer voltage rail configuration.
+> +      The option of this properties will tell which
+> +      voltage rail is used for the nWKRQ Pin.
+> +    oneOf:
+> +      - description: Internal voltage rail
+> +        const: 0
+> +      - description: VIO voltage rail
+> +        const: 1
 
-Relying on GFN's attribute tracking xarray to determine if a GFN is
-private, as for KVM_X86_SW_PROTECTED_VM, may lead to endless EPT
-violations.
+We usually don't want to put register values into the DT. Is 0, i.e. the
+internal voltage rail the default? Is using a boolean better here?
 
-Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
-TDX MMU part 2 v2:
- - Rename kvm_is_private_gpa() to vt_is_tdx_private_gpa() (Paolo)
+regards,
+Marc
 
-TDX MMU part 2 v1:
- - Split from "KVM: TDX: handle ept violation/misconfig exit"
----
- arch/x86/kvm/vmx/common.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-diff --git a/arch/x86/kvm/vmx/common.h b/arch/x86/kvm/vmx/common.h
-index 78ae39b6cdcd..7a592467a044 100644
---- a/arch/x86/kvm/vmx/common.h
-+++ b/arch/x86/kvm/vmx/common.h
-@@ -6,6 +6,12 @@
- 
- #include "mmu.h"
- 
-+static inline bool vt_is_tdx_private_gpa(struct kvm *kvm, gpa_t gpa)
-+{
-+	/* For TDX the direct mask is the shared mask. */
-+	return !kvm_is_addr_direct(kvm, gpa);
-+}
-+
- static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
- 					     unsigned long exit_qualification)
- {
-@@ -28,6 +34,9 @@ static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
- 		error_code |= (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) ?
- 			      PFERR_GUEST_FINAL_MASK : PFERR_GUEST_PAGE_MASK;
- 
-+	if (vt_is_tdx_private_gpa(vcpu->kvm, gpa))
-+		error_code |= PFERR_PRIVATE_ACCESS;
-+
- 	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0);
- }
- 
--- 
-2.43.2
+--kgu6nm6qbttpidbk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmczBUwACgkQKDiiPnot
+vG/mHwf/V/AdTguFVuFRCKsEV/Otsvn2jZqArMnu6ejpMEmdSJ0obfxwglmq8l68
+dfHjq+Or5XCgR6NxLoSWeG6cKFgTatO+YToo7T2heLFncFbHYH8rgzOdI7dwitLy
+Tb9GJEQD+/O7pPhQCi3r1iMfjjGIfwfoHPTD0xB+qxkqJERv+LP0w/0g5aVM5BmI
+pnTOUtZ64jRBkpFTCXoeS3XwT/ve1JUy/+ShV1TNhub0CKVx7ds/ZHxxsHb5YKc0
+kp/QqTkDUpb4qADVwyUVhtDZSMqN7MNWvCSJ5hj529hajySeCXF2zpvQdPDPJpam
+9Ywrs6wqj/j75pejy4WqDQwQLUU6Zg==
+=h1Jh
+-----END PGP SIGNATURE-----
+
+--kgu6nm6qbttpidbk--
 
