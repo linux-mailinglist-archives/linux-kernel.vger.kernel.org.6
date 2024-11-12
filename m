@@ -1,91 +1,274 @@
-Return-Path: <linux-kernel+bounces-405126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438299C4D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:29:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7ED9C4D41
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 04:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B535AB295D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF2A1F21FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 03:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6F3207A28;
-	Tue, 12 Nov 2024 03:23:09 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2807E207A03;
+	Tue, 12 Nov 2024 03:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HwlH0RL1"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8662C205E07
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8388720494F
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 03:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731381789; cv=none; b=pvizz/7tlm387QVxn9g3k802fhqH3yqsLfNY955IbNITNGAZPTRPdyp9Sa/IKvLx+pT2tr6f36Uv2bWDAgEszR82zKlTpNOfE4QMJzEUXP4LgnCe1q7FQcYuqFk1pz317fHCn1S+3yoVq+1/TCg4JP9rJUttDYpHw9g5DvBcQy8=
+	t=1731381823; cv=none; b=YWdKHinMaiPV3/d4CbvTbDVmUFDExxcCAEcNMHBkkmLVhRR8We1y9gHN4Vhg3k+4eISS3rbWnqTOiVebQ3DKXusMt9NvU+iZCesklppxr0x+DstcUjThqH1WKTBFpE3C1hJM/+gWDGzSFe78PL6h/u+vzy+QguwqW3dU8h6DHBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731381789; c=relaxed/simple;
-	bh=c59rq/7n3PHZV+Suo9gZ6Sof0WvUW1q/ji67zSE35eg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gZk6dSM4nKc0AqjJ3eJqMR+40nGnAByFdqk0RI8cwEwedYRBNBs7lpLgPaKUrZRqkpxKTRVvBaenDcUfJfQ37ARuSFL8xUJ7bUjCX+XEuuT7KvXOJpGLeI3lRIytH6sriYqqwhFw0UcfipQqEAGe3tpGEgZTRSiByHKs6bU7xK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a6b563871eso63735935ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:23:07 -0800 (PST)
+	s=arc-20240116; t=1731381823; c=relaxed/simple;
+	bh=Ra0QFnf4lEv1zU6q2C32gJqUo9yHbnUeOxC/9C5oBrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=nYxjLD8vzWAOyQXiY9t/dOpkrOsnz4m7e2VQJQJgwjteOjkPrNkd0tpch3VbYLjmgqqGaMFZId0N5XZ2upW1k4v11JiAnQLhnt+Eeq0Gcs1VZ5ABAweV0Llx81B2CVqVa1ZhTIP3ASgwlsPOGVYjShv66hG/D1JC7uGvGrz3/Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HwlH0RL1; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460b295b9eeso84911cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Nov 2024 19:23:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731381820; x=1731986620; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XZ4JdoZQje+kaOr0XJAZHdsqYNTycxGtA/GqVUYAWS0=;
+        b=HwlH0RL12DJO+iafBf4dZlAuE8vWFb07JSBu1/VQif/9z+nnnlfNd/6apM2BL9fMBA
+         Y5OHF9PCpgFR7V/WibuFZJn706jCMECz1S5viyP7Pzle+Bn5qDpRshNu40qUsjEgBeaS
+         Oc6ukYKEZR3w2uDjYMB2P9cZS6QVHIf5sYpEbvn2+Dshx6tBBVepx7Nzeltmr9cItASj
+         dgtMV+hfhEw3mZg3TWjMf2WlabtONLkmP8zO2UUqcGhpCmOejzzCxdebCVVmW27HJvKv
+         j9jBr/EJageByxs3Ho51TIyWGm1I7ubq+UBycye5WqAbpLkuy/Y4V5haLURYQ/XKqF5N
+         C4sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731381787; x=1731986587;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmAGIQngpXa/1+2VC6uEAt5s/OZNY5/G7HFFw9+3pkI=;
-        b=wtqB2d78zULnUVW8rKjqNYZCd81K5zzAS/aykjwpvUXDzXFWPaFhKC62sEbfnig5oZ
-         6QOMgzIQyov0llLQUaqkCC4+8ix5SNvkVUqYi0a57gnO8/e9+axg4nnp7irA3dgrEg/f
-         stVeuQOc3u2EfM+QOpX3eDYSC5WQ0UqitQfRYJr4KQyFn6B6byDVNcr/anXI0vhk24gX
-         dhmDam3Mdg/tvYy0DVOq8ftjJiHcpRsoe9Rio+sgU9I4aZs1dKDKYJABzOf8sqPGwEtN
-         FYYJmb2AExnaoHNL83kjO0YwuDVrOr5S2TOdy59cMvk3g1JsZrElyIHCACOnvW9eXxn0
-         4Zow==
-X-Forwarded-Encrypted: i=1; AJvYcCVhS6lmtDz2+UjVs+DUzYJ4RqHozBIIfF6Z1WOYmf23OhVSecg8yuiT547IYkZHzZp3JODX/yN66PqbfZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx0LI1qWwBuxytRJJ/+/CIJtGGkZfTOK06uSAcBpmvQBzyQEJi
-	28QkRElyEE1fQEAkcYzQ6OTepRObNb2pORA6Z2G0Sb26vhpjL+6bXmQyTkolxqFUlPSooquGL2u
-	UNX3rCau4Xb5t+7gvFNXk4SB5NNX9VJ05xVbZvtNf6Lw1GZyCq0/TnUE=
-X-Google-Smtp-Source: AGHT+IFnZynlEK9QhImG9NWvPseVWbTnlWM+8+8PwejoxDtnQc2IgH3PqxrpxZ8IU6RvIxJs5G11NXwh3DX79PwcdetZgOD4vPjM
+        d=1e100.net; s=20230601; t=1731381820; x=1731986620;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XZ4JdoZQje+kaOr0XJAZHdsqYNTycxGtA/GqVUYAWS0=;
+        b=PQvc1HEgY5qDQNw5ktT13EJc5AfXKrOT4i8Hnv39T82aTlQYHeWiTGKM+fi0XsY2bY
+         gQutjTjza/PD35Y4gN4UMiiHBVMeVOIa+sakBrQTP3uujfwENMeQeDIx9WwKJorotFo3
+         kaVB1J/o2t8JNK7f+heimDxjOue+GdO2sILP3mhpBqZrLMZAliARJTnK36vaHo/+9mg3
+         TcrFyYSGp5sLsgTckiM12PI5q29Otv6DjtNTjqtYkxRHzAhsy+wO+BGUivxltqgMudbi
+         QNvVicTCRZ1CWaAbGkj/4FuWECNLnEWJ/PTSskqhaVNrTX+0dOzmwwQ2MgNXxsjr8NJt
+         2CPA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4/6kPNtnAabuWp3nGxJzJoyUDX9IcgiC5SzGxFzcyT/CDdiC9bJw2pfPAm03kFk73E6In0giykP+5IsI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtEv0Uz3yVn4tI04XxUk6gCka2Z1JtpEDPgQNnUCQqx4pbPMNw
+	rshdfkren8VgdNq3LOYkb22qL5hEqe57fjNgd0Yo/Zu3SjjtOy33zrGXVIAm0RhYhC0xN+ib+wb
+	jK+asxMS74kZs06tHXx0V38t0c4U8LGj9g8mI
+X-Gm-Gg: ASbGncuaZqoKPUR9/dOYaEDUxitwK66cYVtytp1t4MpBk5CeC+7lekpGj+0wPgR0NT8
+	B6qGdc/mdNNGVfRiyUoDlesiO2Iwjylkr55PYIn/lVTfweV1bOawqgFvJQ5nLPg==
+X-Google-Smtp-Source: AGHT+IH2X7R9EaxE8yEh/tFib5yP3+5ARuM042kvBNJm/BiVdasUXL+ESmr0khwLuuJ9NriFWoyJUV1Agr69/n8aGG0=
+X-Received: by 2002:a05:622a:190a:b0:462:c96a:bb30 with SMTP id
+ d75a77b69052e-4633ef60502mr2057411cf.2.1731381820135; Mon, 11 Nov 2024
+ 19:23:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:348c:b0:3a5:e5cf:c5b6 with SMTP id
- e9e14a558f8ab-3a6f19e2641mr168214415ab.10.1731381786682; Mon, 11 Nov 2024
- 19:23:06 -0800 (PST)
-Date: Mon, 11 Nov 2024 19:23:06 -0800
-In-Reply-To: <000000000000307a8e0615918f2b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6732ca1a.050a0220.1fb99c.0162.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] WARNING in attr_data_get_block (4)
-From: syzbot <syzbot+8e034d7422d389827720@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mail@seo-local.net, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
+References: <20241111205506.3404479-1-surenb@google.com> <pbcublsqoi6yeev767ezc7qfmcvxipbvz2towavhfgzlmzt26r@h3cwlmrmt7da>
+In-Reply-To: <pbcublsqoi6yeev767ezc7qfmcvxipbvz2towavhfgzlmzt26r@h3cwlmrmt7da>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 11 Nov 2024 19:23:29 -0800
+Message-ID: <CAJuCfpHt2vSoWi_43VP6CbUBycy2ky_g4fSRwbn9iCi1EsMeHg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] move per-vma lock into vm_area_struct
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	akpm@linux-foundation.org, willy@infradead.org, lorenzo.stoakes@oracle.com, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
+	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Nov 11, 2024 at 6:35=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Suren Baghdasaryan <surenb@google.com> [241111 15:55]:
+> > Back when per-vma locks were introduces, vm_lock was moved out of
+> > vm_area_struct in [1] because of the performance regression caused by
+> > false cacheline sharing. Recent investigation [2] revealed that the
+> > regressions is limited to a rather old Broadwell microarchitecture and
+> > even there it can be mitigated by disabling adjacent cacheline
+> > prefetching, see [3].
+> > This patchset moves vm_lock back into vm_area_struct, aligning it at th=
+e
+> > cacheline boundary and changing the cache to be cache-aligned as well.
+> > This causes VMA memory consumption to grow from 160 (vm_area_struct) + =
+40
+> > (vm_lock) bytes to 256 bytes:
+> >
+> >     slabinfo before:
+> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+> >      vma_lock         ...     40  102    1 : ...
+> >      vm_area_struct   ...    160   51    2 : ...
+> >
+> >     slabinfo after moving vm_lock:
+> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+> >      vm_area_struct   ...    256   32    2 : ...
+> >
+> > Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 page=
+s,
+> > which is 5.5MB per 100000 VMAs.
+> > To minimize memory overhead, vm_lock implementation is changed from
+> > using rw_semaphore (40 bytes) to an atomic (8 bytes) and several
+> > vm_area_struct members are moved into the last cacheline, resulting
+> > in a less fragmented structure:
+> >
+> > struct vm_area_struct {
+> >       union {
+> >               struct {
+> >                       long unsigned int vm_start;      /*     0     8 *=
+/
+> >                       long unsigned int vm_end;        /*     8     8 *=
+/
+> >               };                                       /*     0    16 *=
+/
+> >               struct callback_head vm_rcu ;            /*     0    16 *=
+/
+> >       } __attribute__((__aligned__(8)));               /*     0    16 *=
+/
+> >       struct mm_struct *         vm_mm;                /*    16     8 *=
+/
+> >       pgprot_t                   vm_page_prot;         /*    24     8 *=
+/
+> >       union {
+> >               const vm_flags_t   vm_flags;             /*    32     8 *=
+/
+> >               vm_flags_t         __vm_flags;           /*    32     8 *=
+/
+> >       };                                               /*    32     8 *=
+/
+> >       bool                       detached;             /*    40     1 *=
+/
+> >
+> >       /* XXX 3 bytes hole, try to pack */
+> >
+> >       unsigned int               vm_lock_seq;          /*    44     4 *=
+/
+> >       struct list_head           anon_vma_chain;       /*    48    16 *=
+/ 40 + 16
+> >       /* --- cacheline 1 boundary (64 bytes) --- */
+> >       struct anon_vma *          anon_vma;             /*    64     8 *=
+/ 56 + 8
+> >       const struct vm_operations_struct  * vm_ops;     /*    72     8 *=
+/
+> >       long unsigned int          vm_pgoff;             /*    80     8 *=
+/
+> >       struct file *              vm_file;              /*    88     8 *=
+/
+> >       void *                     vm_private_data;      /*    96     8 *=
+/
+> >       atomic_long_t              swap_readahead_info;  /*   104     8 *=
+/
+> >       struct mempolicy *         vm_policy;            /*   112     8 *=
+/
+> >
+> >       /* XXX 8 bytes hole, try to pack */
+> >
+> >       /* --- cacheline 2 boundary (128 bytes) --- */
+> >       struct vma_lock       vm_lock (__aligned__(64)); /*   128     4 *=
+/
+> >
+> >       /* XXX 4 bytes hole, try to pack */
+> >
+> >       struct {
+> >               struct rb_node     rb (__aligned__(8));  /*   136    24 *=
+/
+> >               long unsigned int  rb_subtree_last;      /*   160     8 *=
+/
+> >       } __attribute__((__aligned__(8))) shared;        /*   136    32 *=
+/
+> >       struct vm_userfaultfd_ctx  vm_userfaultfd_ctx;   /*   168     0 *=
+/
+>
+> This is 8 bytes on my compile, I guess you have userfaultfd disabled?
 
-commit 1fd21919de6de245b63066b8ee3cfba92e36f0e9
-Author: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Date:   Thu Aug 22 11:43:32 2024 +0000
+Yeah, I show here results with the defconfig. After I move things
+around at the end we will have space for to keep everything under 3
+cachelines.
 
-    fs/ntfs3: Stale inode instead of bad
+>
+> Considering this will end up being 256 anyways these changes may not
+> matter, but we can pack this better.
+> 1. move vm_lock to after anon_vma (ends up at 64B in the end)
+> 2. move vm_lock_seq to after vm_lock
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d5b8c0580000
-start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1a07d5da4eb21586
-dashboard link: https://syzkaller.appspot.com/bug?extid=8e034d7422d389827720
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171bf3a9180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1084f189180000
+Nope, for performance reasons it's important to keep vm_lock_seq in
+the first cacheline. It's used very extensively when read-locking the
+VMA.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+> 4. move struct to the new 112 offset (which is 8B aligned at 112)
+> 3. move detached to the end of the structure
 
-#syz fix: fs/ntfs3: Stale inode instead of bad
+detached also should stay in the first cacheline, otherwise we will
+get performance regression. I spent a week experimenting with what we
+can and can't move :)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> This should limit the holes and maintain the alignments.
+>
+> The down side is detached is now in the last used cache line and away
+> from what would probably be used with it, but maybe it doesn't matter
+> considering prefetch.
+
+It very much does matter :)
+
+>
+> But maybe you have other reasons for the placement?
+>
+> >
+> >       /* size: 192, cachelines: 3, members: 17 */
+> >       /* sum members: 153, holes: 3, sum holes: 15 */
+> >       /* padding: 24 */
+> >       /* forced alignments: 3, forced holes: 2, sum forced holes: 12 */
+> > } __attribute__((__aligned__(64)));
+> >
+> > Memory consumption per 1000 VMAs becomes 48 pages, saving 2 pages compa=
+red
+> > to the 50 pages in the baseline:
+> >
+> >     slabinfo after vm_area_struct changes:
+> >      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+> >      vm_area_struct   ...    192   42    2 : ...
+> >
+> > Performance measurements using pft test on x86 do not show considerable
+> > difference, on Pixel 6 running Android it results in 3-5% improvement i=
+n
+> > faults per second.
+> >
+> > [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google=
+.com/
+> > [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
+> > [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT=
+_kbfP_pR+-2g@mail.gmail.com/
+> >
+> > Suren Baghdasaryan (4):
+> >   mm: introduce vma_start_read_locked{_nested} helpers
+> >   mm: move per-vma lock into vm_area_struct
+> >   mm: replace rw_semaphore with atomic_t in vma_lock
+> >   mm: move lesser used vma_area_struct members into the last cacheline
+> >
+> >  include/linux/mm.h        | 163 +++++++++++++++++++++++++++++++++++---
+> >  include/linux/mm_types.h  |  59 +++++++++-----
+> >  include/linux/mmap_lock.h |   3 +
+> >  kernel/fork.c             |  50 ++----------
+> >  mm/init-mm.c              |   2 +
+> >  mm/userfaultfd.c          |  14 ++--
+> >  6 files changed, 205 insertions(+), 86 deletions(-)
+> >
+> >
+> > base-commit: 931086f2a88086319afb57cd3925607e8cda0a9f
+> > --
+> > 2.47.0.277.g8800431eea-goog
+> >
 
