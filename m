@@ -1,93 +1,131 @@
-Return-Path: <linux-kernel+bounces-405836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE3C9C57D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:36:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CE09C57E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404222839A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC551283884
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 12:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1B11CD21F;
-	Tue, 12 Nov 2024 12:36:01 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9981CD21B;
+	Tue, 12 Nov 2024 12:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5qsyFyw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D272AF1B
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 12:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14261CD209;
+	Tue, 12 Nov 2024 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731414961; cv=none; b=YCz3LpeMZGhks/rSbZryTOeGvprKtXAtrlpBtT4koIasxaCUgF2oMX8n6OKtLH15tTCuY8TeCVXSTYYXn8e5fEBtjYtJNEEzHOSuaXP4giSFR2N3dw9Amxydqt4P3qPvQ8gJLn2f45MPgoICiii2BpperD6Vc/zv+Qhv9VTwpy0=
+	t=1731415018; cv=none; b=fAJ71uzqLWrxz30vYsF941vjGrgwT5cvRkQAjCxsTnvQl22Kp7x4Kw2Kqps/dNdCTQFQ87lJOFyusP+haEZWXqCtWrEsSdhrMAP2hBPMjgKdurIgMYVQ3tJOCB70g2UzpNOx384DNt1RTXUCsWK+d2hfPQlPI0MWGWck6dyse7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731414961; c=relaxed/simple;
-	bh=TX6nXkG48NPAUvRTtP+52T9qR769R1a2oi79kkdWE8U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cybhiCx86nWP4sqAveEY5A0DjgErrib7xbCAITf4Y+AGT1U7Bt805XB2F0a31NMWOoHNkqlxCUQIWEMLVyYZ7Mo6UfMNRbIZF3fVWEo6xJd94bMYNFlC1cSV5gOtipdN7ERQGKFhdD3eiB8cFz6dAiJTifqSnk3YNabnMO2QRiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so62038335ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 04:35:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731414959; x=1732019759;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xntS/3Wne3S8rhOx2uZtXl5NplE/+EkZHaYPSmCvfC8=;
-        b=oJxch1Y4oLcqLhTYn1WlVgDwwNy6rfyxcgnqEDdiE00CaDLXUcdODE4pbaKipe+rYh
-         tEjFrlQ9KIM3xSpY8W13jIwnx772EuwmwOsrL1TIfIJUHFWHuuR6+RYM1ywFj+jUYlFI
-         Xq/hj+w0F+IUDrATYEH4zDWHX84zex4P/tS/lm9/PR0cdjvtFwZ1yy2/rbRc3CA09d2v
-         kX99BmLqoVTBv+DPWYJSz/HJ5AjHtdKFP2fg2Y3joRvUeModdnNq4C5dQGu5GDc1OBNz
-         8BuDO129IyaHhHa2flVp6BGUjoqiTGs8i4uAYFo1lELa75RfPZUmZyZAvOYdCqq5SGQk
-         jy/w==
-X-Gm-Message-State: AOJu0YwG56gw66+kdqUFg2OLM2qipZHvBRar7Jzoq/X/T4++ykvYLMI5
-	NL5Me8AZuGJ0oi/gx8ilxDgIcZpd2n51Q2WBj204jjGLKRtZ+iG0w/VRMphkxOMtBJ2okjL5EVz
-	WXDTW5KUSwQBc46AM1q4C+LnJJKAcvAkn0Zp2GoASkihLBCXAz4DWafs=
-X-Google-Smtp-Source: AGHT+IGYnQvZQCMk9n5Xo8czgabgVuLdt6H3PXSgPFrgzqL46TcUVxLY4sjO6/ilbD1x35BKLl033gvLwpddjcKYYeHpYVubFfJU
+	s=arc-20240116; t=1731415018; c=relaxed/simple;
+	bh=Kjm50GlWkADfbPmKO9HpqOyEB9KY9gzdVAbYexdFo5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfgaMcVhnmdjSQIGvQEbLHqi0PTgMm7xvhF5SuBt7NjCceBIB/W1w8cB1X5UjUgbwfc0f4dclA1rwJF+jD06jeBjxFV5jVH6DKr4dmeT5OE5NNgIj0MZENX/j3OU7Mxs84/imbsCU+By7hrLOYGTROcpbRdxyqL4zVaNYmyhR/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5qsyFyw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEF18C4CECD;
+	Tue, 12 Nov 2024 12:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731415018;
+	bh=Kjm50GlWkADfbPmKO9HpqOyEB9KY9gzdVAbYexdFo5o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5qsyFywbupCvXB6XPv88BdVgDCVY8j19r2OBJNz44yyUew+kON1s8Nbj9akYVB+a
+	 t479ehr4IbvuqLJqMmNw0aH1nyhaxOqpkMCOop7Ct7OvWGEKIZYJxJSc5+P1cf9++c
+	 FD62zxAqP8t7wf30/UtHkgHLEQDbXTlpYlXrPn8Uc/KhWTJ4oVbgWrj8b41UCgcQIs
+	 sv4E9B4Evoyjdq42l3Tk30TnzHhXZ8Ish2MogKlOp8w8BJuym0tR+l6ksNdZavsOwW
+	 xE0N1+4XWPf0vr5wkzYj9veuWzOZqc58G7WGRxioBu9e4FEM7SM+MMJKf+qMxTDdXr
+	 lqVmosCZUgf7A==
+Date: Tue, 12 Nov 2024 13:36:51 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: frank-w@public-files.de, Andrew Lunn <andrew@lunn.ch>,
+	Frank Wunderlich <linux@fw-web.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Hans de Goede <hdegoede@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v1 1/3] arm64: dts: marvell: Fix anyOf conditional failed
+Message-ID: <ZzNL4_dFxHfMmMcR@ryzen>
+References: <20241109094623.37518-1-linux@fw-web.de>
+ <20241109094623.37518-2-linux@fw-web.de>
+ <e534c723-6d65-433f-8ab5-1c0d424d7367@lunn.ch>
+ <9B1A5D20-3DE5-40C1-8B2D-B1C4F53FA5F4@public-files.de>
+ <CAL_JsqJnOa_9Poz86vOWBCQigvv-Ab4Tt1hrwTxSa5zNraVxXQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1ca2:b0:3a4:e62b:4dfd with SMTP id
- e9e14a558f8ab-3a70c80ee27mr24098545ab.7.1731414959223; Tue, 12 Nov 2024
- 04:35:59 -0800 (PST)
-Date: Tue, 12 Nov 2024 04:35:59 -0800
-In-Reply-To: <672b9f03.050a0220.350062.0276.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67334baf.050a0220.a0661.041a.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
-From: syzbot <syzbot+985f827280dc3a6e7e92@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJnOa_9Poz86vOWBCQigvv-Ab4Tt1hrwTxSa5zNraVxXQ@mail.gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon, Nov 11, 2024 at 10:25:12AM -0600, Rob Herring wrote:
+> > >
+> > >I don't know the yaml too well, but it is not obvious how adding a few
+> > >status = "disabled"; status = "okay"; fixes a "'anyOf' conditional failed".
+> > >
+> > >Maybe you can expand the explanation a bit?
+> > >
+> > >       Andrew
+> >
+> > Hi angelo,
+> >
+> > I guess the dtbs_check only checks required properties from yaml if the node is enabled.
+> 
+> Yes, that is exactly how it works.
+> 
+> Rob
 
-***
+Hello Rob,
 
-Subject: Re: [syzbot] [wpan?] [usb?] BUG: corrupted list in ieee802154_if_remove
-Author: lizhi.xu@windriver.com
+If we look at e.g. this binding:
+Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
 
-net device has been unregistered, since the rcu grace period it must be run before ieee802154_if_remove
+We can see that it does not define iommu-map in the binding,
+likewise the binding does have:
+unevaluatedProperties: false
 
-#syz test
 
-diff --git a/net/mac802154/iface.c b/net/mac802154/iface.c
-index c0e2da5072be..6f24f1760969 100644
---- a/net/mac802154/iface.c
-+++ b/net/mac802154/iface.c
-@@ -684,7 +684,8 @@ void ieee802154_if_remove(struct ieee802154_sub_if_data *sdata)
- 	ASSERT_RTNL();
- 
- 	mutex_lock(&sdata->local->iflist_mtx);
--	list_del_rcu(&sdata->list);
-+	if (!list_empty(&sdata->local->interfaces))
-+		list_del_rcu(&sdata->list);
- 	mutex_unlock(&sdata->local->iflist_mtx);
- 
- 	synchronize_rcu();
+If I apply my patch that adds iommu-map for e.g. the pcie2x1l0 node:
+(the patch does not add anything to the binding above):
+https://lore.kernel.org/linux-rockchip/20241107123732.1160063-2-cassel@kernel.org/
+
+
+If look at the pcie2x1l0 node, it is marked as status = "disabled"
+in arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
+
+but is marked as status = "enabled"
+in arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+
+If I run CHECK_DTBS for this dts/dtb:
+$ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make CHECK_DTBS=y rockchip/rk3588-rock-5b.dtb
+  DTC [C] arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dtb
+$ 
+
+No warnings.
+
+What am I missing?
+
+Considering the warning in this series where the binding also
+had unevaluatedProperties: false
+I would have expected the same error for the pcie2x1l0 node.
+
+(And if I look at most PCI controler bindings, they actually do define
+iommu-map, so it seems a requirement for it to be defined if used.)
+
+
+Kind regards,
+Niklas
 
