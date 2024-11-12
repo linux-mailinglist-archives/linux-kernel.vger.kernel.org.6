@@ -1,422 +1,226 @@
-Return-Path: <linux-kernel+bounces-405895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08A49C58A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:09:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE669C58A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 14:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E8131F23213
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BF528115E
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 13:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C75413BAE2;
-	Tue, 12 Nov 2024 13:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ED913BC0D;
+	Tue, 12 Nov 2024 13:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajKAAbaG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="O87fqqxp"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2080.outbound.protection.outlook.com [40.107.249.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6919E15688C;
-	Tue, 12 Nov 2024 13:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731416915; cv=none; b=HkH8odAqiwdWnh7ZNnW12t8t4MOtGA8SXf7TT4ora704miK6hU78lqThbXybaUc3xDU+heKt8RZfVjvbRZtHYOEEr/zuieGmfpibQWGquFTQSZEALxnD8FgjECJnODs4P9e625KdjtL0XajFn2lsiD+wrc/H80T7te/Gav7hoPs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731416915; c=relaxed/simple;
-	bh=2gOyKvJrNoYV0gN7FdPkeZjJPBPgvem/G1SB7ge5K6k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LQG2b8spmyKdciGR0CBYhriadY86WQByhh2P6eTQDxt/2l15wgPyweaz3G6bNLf59N6wQD3w5ptdSEoJowGpKpyl9XzXpPo4EBsGYj/OdlRA9iNlBooWEOTcUi7Ea4nANnZkayAc65QcsWALcNPO0NBFkcZADlE5nZvqUvbDCtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajKAAbaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5660CC4CED5;
-	Tue, 12 Nov 2024 13:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731416915;
-	bh=2gOyKvJrNoYV0gN7FdPkeZjJPBPgvem/G1SB7ge5K6k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ajKAAbaGACkuXbjxxM/BfBLYXC5Tp5e6wBb7l5bnUvefFXCy4TYc6cweeCOi/yFX+
-	 8XW3JveVgQS2/tpg2VFon/Aj2KuXiVQGrrvcEsF7dcb6JXbNJewBl/QF3zIfD3pRY9
-	 IE/eMVE9bdYRAmgr7UeT2BdGCa0wc2uOea0rZlrCE4ufNpxl8EleqUUAh5CENxAV6P
-	 urMCauDxqWEL8EWEeWZug2vqZ9XCFPpmfQkoL+yNHxiNLUsclIVrDmOyFFxqhaMtLu
-	 Km1nj1qJOXz8L3BDaTNcMSaV2RHdRkTuPu4nimOpufA4h/gkZcvOK/lzAhAbNxRmXt
-	 jiDquzO6wd+Qg==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 12 Nov 2024 13:08:16 +0000
-Subject: [PATCH v2 3/3] kselftest/arm64: Add FPMR coverage to fp-ptrace
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2071136358
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 13:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731416968; cv=fail; b=Hsm64o686b97qvxWISEd5mIQ/1RwnBSBl4sl6QRcPT/QMBzA7fDwInaiG2S6pQLyx9in+uK11YI/rnOJl5OjVuaayoRCVeqOznja/QSEQYJvstE9zRepaCDu6PgJcOOKuHNXoSIOemE1xi39aDSjzdm9KfoKmYr1JyfsnhcH9WE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731416968; c=relaxed/simple;
+	bh=8BQd8a1Q1qAdwb5J3k/lt9Tgv1Z/mFOleV7DzIYminQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Xc9m8eodpGrpHEed/2zg+Ed3UgNGOf1LIoRgO3ufcGkvG4qGRnwkJVXqLuVt32ONfQl8DTuLyXmaTYKCbr3+fbKwL4AGyV11j5nr2k5ucuWR9YHFFETjH9uJlEjiiffgw2o99pwTYRo6heg8MBuBiB9EctbdNLrd2RUW+jMm/j8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=O87fqqxp; arc=fail smtp.client-ip=40.107.249.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JKpGFDzZa4qX5PU+bVcWrsn8QMktcFXnca6QGSQ71Zh33/DxVX75smex0lBsoUgc124y7ZSAOVFrT3M731M+f9Qnsz76ehFd9gKITnIXVNMMzlnsOjd6d1hFwli2f5iEvuGv4k4dVlfWa0TWQJPD/iJPFocNiHKoL9FMY7s6gvcxiCjNceGZrLVMdTG3cporHnvgSp2+r2e7la1t9r1d6g+2QBmB7mCnkholgUOQsvDq8rmGFjV8LFz0tNuU9BZhe/95qLGAJ5qvw8qYn+dgj0zAgz1BgJDd+jN8xLBuBlwptrL7IxJbpkngBL+UDgCejirnQpEEkk+SkP2OqlvRsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=X9lXdItkn843nTQyKZfIhXb7sjSGLKNJ4CERkGGkIhQ=;
+ b=rRn11j0NjX9q/mxCyDGvGInDXuc0sJpX/Ag8WeckbDHrbtQeyc32uWRyvpT5Ndj3W10SFpq5a4hEVQ0WOItOsuyQKMgikLBc8V21jGC3Y5iiyU8BENzcT/46j/iMDDeICltHXIoERwImAMOeu7BrLMl+taW0fJCL9KPxqa56YYnFwLZdm6grKAdU8wXo1q/tbg93rKAMLmAd0Ryg++nMrpErHl3oMkcDm4E9T/RJ/vg5LMCKU3G0wbkaB+o4QnuZ0yM8as3a0HmyD28JQDY/9tKvBEPnAlngMfof9sbkX6/1RyJQ3VUy4e16T82gxdl92nL6cFeXqXAh7woWQpBPDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X9lXdItkn843nTQyKZfIhXb7sjSGLKNJ4CERkGGkIhQ=;
+ b=O87fqqxpMXN7EmM+g11FlYuLsggdFHxY0OmjcnocpVJ2Rp7n/YHFItitaCN0Bl3mDi4SAPmAfY9d4cbZvu0jOtENJZ6taUMI/07LZxUYrfZyD9mIdCnO/k6VhI5l3V7ooK5fKCHr43fuxd24ziVAknrz1P88wEekkp3F8gEeTdaZ4nfOfvB1tmrpYI2HYgDuIQdeKpsag8W40eYjjyqDov5UHCAB6NlrP0ONqSZX59htvMS/2nKtDPhCgSryOfl9iUlmNEtQPWxfh2TxYTu2/sjwXvlRMdb7c7ZozKHkfKQP4BSTN4jJSLyMZ8kDLOY08nOLLcAarQPZ4eVKYC3xkA==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI1PR04MB9787.eurprd04.prod.outlook.com (2603:10a6:800:1d8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.29; Tue, 12 Nov
+ 2024 13:09:20 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
+ 13:09:20 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Subject: RE: [PATCH] drivers: core: clear wake irq in device_unbind_cleanup
+Thread-Topic: [PATCH] drivers: core: clear wake irq in device_unbind_cleanup
+Thread-Index: AQHbNBsiLuERqOydIk25BCtx4F2EIbKzh3sAgAAW9QA=
+Date: Tue, 12 Nov 2024 13:09:19 +0000
+Message-ID:
+ <PAXPR04MB8459A924A74FE917897F9F5288592@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20241111092131.1693319-1-peng.fan@oss.nxp.com>
+ <2024111207-baggie-eskimo-d2b0@gregkh>
+In-Reply-To: <2024111207-baggie-eskimo-d2b0@gregkh>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI1PR04MB9787:EE_
+x-ms-office365-filtering-correlation-id: a0d64069-2bf1-4216-4af1-08dd031b3855
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?j8zuFBGwu8iwjB/34OukAVZjceXuItQdbmfzyxplWmz5F+4Xbkgtmi3cZnd8?=
+ =?us-ascii?Q?0m4rh9GoFtxd1swQK8laK7CQGLCitdd1MHkLBCmVfuRM1FERg8q79eervzcx?=
+ =?us-ascii?Q?0Wrq6h5KCTX7JAlCqtQC6LH/V6yeTi4zfI79xpDPf1FVoW7ec2rBLYbc2cvW?=
+ =?us-ascii?Q?qxCmZIi0u485C9LVX5UTnTJAts6IgH0d9By6W99DKpZuvaFXFdG+mNMZ8gGL?=
+ =?us-ascii?Q?GcryQkW8uHUoK4vQW0mpJexIIp4R5dPb42nTX6JmcIbo/jwviFOs2sphtbDn?=
+ =?us-ascii?Q?txW3xVrq5ROyD5dWx0z5WYdMjPeqb0MuPp8wMJrmkq3z2F0M++0bd+YSuhDh?=
+ =?us-ascii?Q?jNlnajbp4C1Yen55duHz6Kuc8EcZcZ9t4A69AkQx3MNM5uQ8DLTe3jFbObPm?=
+ =?us-ascii?Q?Q3G/bCmEV4UFA4Kz9xevs+DjpTa7hmf7NV7/9gtz2s8ieNnKMlYAf3nsH+/d?=
+ =?us-ascii?Q?Wcl2BMBIFw710IcSG5mr/IoBxrraSba4gmCnzUgvuF+/KN427z11tOdJ8lAa?=
+ =?us-ascii?Q?F7SQnEU4C53fzJB1K49onPhar6ZrCPGYaTXNKhTZadm9DXpLNbUzl1AMrGes?=
+ =?us-ascii?Q?K9oJXaFnmiKtLj/L0pfr85/3219q7E+eFS3/UDJMBWBe3gPgGoJbkljkzVDY?=
+ =?us-ascii?Q?NZGvyRCHrYmgJnK94X39WlRfkOUrP80o4XIt4Xw3G9viS0GqPNVaUivB7Gue?=
+ =?us-ascii?Q?yKSslU77UBDq4AOHeVZ2xV/TwogyxXJgy514zYA/mO0BlI8FWEseysdT7KVe?=
+ =?us-ascii?Q?eItn3JMxsJAbJXYT4IzHV9mhjuHaT/i2kTCjpUmJ6W/e2+dEWDSXMogibcAj?=
+ =?us-ascii?Q?J/3djqf4FcZxDvwMTACG8VOwTSfXJpUnqhUo1EKs+U2chbmNGntu3apBtpI8?=
+ =?us-ascii?Q?bCe47mTl/fYvvhiTbZD/jMFIQzfoXvc2wk7NRV9tnYbn6DSMTmxKvxlb37Kf?=
+ =?us-ascii?Q?ppaX9b3CH00cnGWBYVV+yBmM75hl2mLy5Cmo2En97YQFnLyI/f/F7FanTBYf?=
+ =?us-ascii?Q?FVLwLtfaQG9ozQNKBnWfYFWHQ93S8wCrNDRWSftZVUXNQPfp5caC5o4yLO1b?=
+ =?us-ascii?Q?ANJkvV6/6PyqKPsZNrLHmDu0/4t+5ZgfAdEPxlgqq9KraPsQ+ll3TrbiVF4N?=
+ =?us-ascii?Q?EtGLC42MNMR9DTRx6rFwttBUwVFtcS6Q3ErYwe4/bfsIl08xxLsZeEL3AUt5?=
+ =?us-ascii?Q?kiRFWOtPyeeAzMjlwIxcN4Rjql+LSPFZbHXeamU5mSlU9u5Qcd0pk53JI7ye?=
+ =?us-ascii?Q?IAGCk4vS4CRKxXQUAIAtMHj9xqlVncVAHbIDhXV1ppGKvjlAb1KvnMaULFdU?=
+ =?us-ascii?Q?a83y1CpWNus4sFjjZmTAnmg0?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?rS6yuQyrUmsv9GpS88Wyqia+M0aFXsHd/XpFcW0tiUeK3zECv1gcvwHAorK8?=
+ =?us-ascii?Q?bk60SfxhrsvogAX3Gtc4TNP6iFoAT2V1d9UUfWPjfnGROhkYYDoIg1N1BN5I?=
+ =?us-ascii?Q?aDnN+WYM9mZSPI0k7/Irx1/FZpYdrfFM5m+IFg02Aj0euo72aEtPNfbdiAHB?=
+ =?us-ascii?Q?xO7IFcfT05gQYvCPMSK2M2KgmyD0yZjJPU9IWT2lvAXavRYbuMnhviwF1bup?=
+ =?us-ascii?Q?VR+IZ+Izmi72ocOq6zJXl9IFg4UsKGBAhwsUWN/E8vnhWgPYDfiwzSZrcxO8?=
+ =?us-ascii?Q?Z4gdM24PDK1jkD6TFeJurqn56UIkVBrbYB79RgNJAu5rNTE2LCaNdLVmoPY8?=
+ =?us-ascii?Q?Q4nibQnm1Wva3ssQTG5UghH8imlfmX1Uoiy4tIfvXHHqQ4c1DqkLGWVSHC53?=
+ =?us-ascii?Q?YQg7iIsp3FXJQhfkWkL9aPJolDx/Gh07eienub1wFjFphv3Mp9gCOn12btZV?=
+ =?us-ascii?Q?Bq6x975RcOUY/rnDr/THqPwEhkY0rQi82r7VaRZEiF5tcWpCe7WwGE6oD07Y?=
+ =?us-ascii?Q?cNW2HuU+yEng9Fk12NzbuzttlhQgiVmqtzE7qjpUcofQmn08qxh2i/xypcfV?=
+ =?us-ascii?Q?o330I+9UjvjY6fj6ktlpVs+LBehVGYFB9NTiF8yDapVK8beFquMhRPCcrDCi?=
+ =?us-ascii?Q?IKIF0Ba6+vWrv2GZ/AQasTC/fvOO9sbrVlJnXzFjb9miCEs0b1hbXOddhEyK?=
+ =?us-ascii?Q?mmUDdp9o6srzXIdqW49p9EV7xmQnNgUDGB4G/TRdkSqL8DfYrqQu1FO4G4M+?=
+ =?us-ascii?Q?VnO93gI/olPmN/UCDqDsjSQmcgWBy9IjMPOkgOW/YOcwKFE0kyVJS1hUcNeE?=
+ =?us-ascii?Q?Ufdaz4y4a0QGPFBFrwoW/IKaDpW3hk+gCoFkIu0EGG2Cep3ZeYNR8adknWKq?=
+ =?us-ascii?Q?eGhQoKOix8j0hwYBzv2dAEcg6eq5xiy+XS8MFne5DmqsWXcKgjuex0F24rUF?=
+ =?us-ascii?Q?MKO1uIiemJDHxmaCvidjZmjjCMMdhIFD2Cd0PqaeXKOh/avr26OBJuDZ32KJ?=
+ =?us-ascii?Q?vvgXyB1g0GqKWHmuzvtji4wvoa5f5aFmIRue3m3v/ytYY8IZ4mk1AyN0MUVs?=
+ =?us-ascii?Q?LtbKJbbD6/Afp+Xe4Wri+y90hzN4IjfMoMmhsSTQ8n1bPZ0j/CzwlOxC9XBE?=
+ =?us-ascii?Q?uLtLN0XHMyvmR1HEsVIrL/Th4oMt7ZqQP7/2rUPg2UEkBhOc7h+LC2QD+6MV?=
+ =?us-ascii?Q?bcWQZjOR2OVETpkgRVQ8wyaYPzpbPokNe2vvdyzUKPiz8i65ZdqSVPNzv3er?=
+ =?us-ascii?Q?a61aBJuuZ6eChTO/Jfsb61aY0PllDG/XTrzoDXfWqhv1L/43+lUnuHKDgPdv?=
+ =?us-ascii?Q?70bJQqC2FuUZQOhEHY0JPGAvNo4bh4ser65D/TW/KuJ8wJBuTtBLXaiyqFMo?=
+ =?us-ascii?Q?VCcnc93KhkpoSzSsglhoo1BxjfUCo34snA00sxziy+dhGpDgvgotDKR9f7Tr?=
+ =?us-ascii?Q?LSj2R8ah2MvML4FMciZsPbewP+7By39cKIUVeV3RyZSwxzKbooaodVCTPh1p?=
+ =?us-ascii?Q?/Tp4j51szsxSsuFUBIhExx3jQph5BLk1tFBfKSfY4mIrz/tUB84OyFsCvnFC?=
+ =?us-ascii?Q?z4V1pRJFzWgHcx/zuhM=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241112-arm64-fp-ptrace-fpmr-v2-3-250b57c61254@kernel.org>
-References: <20241112-arm64-fp-ptrace-fpmr-v2-0-250b57c61254@kernel.org>
-In-Reply-To: <20241112-arm64-fp-ptrace-fpmr-v2-0-250b57c61254@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-355e8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10366; i=broonie@kernel.org;
- h=from:subject:message-id; bh=2gOyKvJrNoYV0gN7FdPkeZjJPBPgvem/G1SB7ge5K6k=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnM1NJ7n/1qslnTpDexD783I3N0/3CJa25iJGYW
- ivh4g53yOKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZzNTSQAKCRAk1otyXVSH
- 0HdOB/9a1iojXt1HYxTYJI2eZB+j1/TYSVtduAxbeAEpZlyjooXtVleKcpGe0gNbXyb1qTCch+o
- Asgi8impochJFSc7sntVXsxQDNREmvRvtDoY2MibLJ6QPVkHOEYiAc/Z4/N07SFkfyUthm4pQIs
- 5i8NhEcj3pdDldhpPQejcASa3wgwlvZ4MUhU4uQpCk7hPhjUUeQMwVoNFiNVYWFwuSNjLXY4BIV
- e/SRVzvUP+DSXymmEMRcvXVirUgINpnYGNXQPnlCn9HRtc9Xx/cH/clh8ZpPrm/ush5M+/GcwPW
- rkhBvuNbzd4W89JWI/TpfMBzmSau+TcF4xg4ATyTaAsS5QCD
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0d64069-2bf1-4216-4af1-08dd031b3855
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2024 13:09:19.9989
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: y3WCPQqIuqCiLbSSpTdhcwzXvDKM546hV5C3YWdoWgvqK0A7bTF6L3Ar+GlUYCLaznWIVLLn6LeY1S//u5QAPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9787
 
-Add coverage for FPMR to fp-ptrace. FPMR can be available independently of
-SVE and SME, if SME is supported then FPMR is cleared by entering and
-exiting streaming mode. As with other registers we generate random values
-to load into the register, we restrict these to bitfields which are always
-defined. We also leave bitfields where the valid values are affected by
-the set of supported FP8 formats zero to reduce complexity, it is unlikely
-that specific bitfields will be affected by ptrace issues.
+Hi Greg
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/fp/fp-ptrace-asm.S |  23 +++--
- tools/testing/selftests/arm64/fp/fp-ptrace.c     | 126 +++++++++++++++++++++++
- tools/testing/selftests/arm64/fp/fp-ptrace.h     |   2 +
- tools/testing/selftests/arm64/fp/sme-inst.h      |   2 +
- 4 files changed, 146 insertions(+), 7 deletions(-)
+> Subject: Re: [PATCH] drivers: core: clear wake irq in
+> device_unbind_cleanup
+>=20
+> On Mon, Nov 11, 2024 at 05:21:30PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > With dev_pm_clear_wake_irq in device_unbind_cleanup, there is no
+> need
+> > to invoke dev_pm_clear_wake_irq in driver remove hook explicitly.
+> >
+> > Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/base/dd.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/base/dd.c b/drivers/base/dd.c index
+> > f0e4b4aba885..ea3a871bdd11 100644
+> > --- a/drivers/base/dd.c
+> > +++ b/drivers/base/dd.c
+> > @@ -26,6 +26,7 @@
+> >  #include <linux/wait.h>
+> >  #include <linux/async.h>
+> >  #include <linux/pm_runtime.h>
+> > +#include <linux/pm_wakeirq.h>
+> >  #include <linux/pinctrl/devinfo.h>
+> >  #include <linux/slab.h>
+> >
+> > @@ -556,6 +557,7 @@ static void device_unbind_cleanup(struct
+> device *dev)
+> >  		dev->pm_domain->dismiss(dev);
+> >  	pm_runtime_reinit(dev);
+> >  	dev_pm_set_driver_flags(dev, 0);
+> > +	dev_pm_clear_wake_irq(dev);
+>=20
+> I don't understand, you say you don't need to invoke it, yet you are
+> calling it here.
 
-diff --git a/tools/testing/selftests/arm64/fp/fp-ptrace-asm.S b/tools/testing/selftests/arm64/fp/fp-ptrace-asm.S
-index 5e7e9c878f2ce797e3ba5f4033a42526830393e6..6195b9969d67e15d46ca71f1d273b2d43ef4ae7a 100644
---- a/tools/testing/selftests/arm64/fp/fp-ptrace-asm.S
-+++ b/tools/testing/selftests/arm64/fp/fp-ptrace-asm.S
-@@ -71,14 +71,12 @@ check_sm_in:
- 	tbz	x7, #SVCR_SM_SHIFT, check_sve_in
- 
- 	// Load FFR if we have FA64
--	mov	x4, #0
--	tbz	x0, #HAVE_FA64_SHIFT, load_sve
--	mov	x4, #1
-+	ubfx	x4, x0, #HAVE_FA64_SHIFT, #1
- 	b	load_sve
- 
- 	// SVE?
- check_sve_in:
--	tbz	x0, #HAVE_SVE_SHIFT, wait_for_writes
-+	tbz	x0, #HAVE_SVE_SHIFT, check_fpmr_in
- 	mov	x4, #1
- 
- load_sve:
-@@ -143,6 +141,13 @@ load_sve:
- 	ldr	p14, [x7, #14, MUL VL]
- 	ldr	p15, [x7, #15, MUL VL]
- 
-+	// This has to come after we set PSTATE.SM
-+check_fpmr_in:
-+	tbz	x0, #HAVE_FPMR_SHIFT, wait_for_writes
-+	adrp	x7, fpmr_in
-+	ldr	x7, [x7, :lo12:fpmr_in]
-+	msr	FPMR, x7
-+
- wait_for_writes:
- 	// Wait for the parent
- 	brk #0
-@@ -166,6 +171,12 @@ wait_for_writes:
- 	stp	q28, q29, [x7, #16 * 28]
- 	stp	q30, q31, [x7, #16 * 30]
- 
-+	tbz	x0, #HAVE_FPMR_SHIFT, check_sme_out
-+	mrs	x7, REG_FPMR
-+	adrp	x6, fpmr_out
-+	str	x7, [x6, :lo12:fpmr_out]
-+
-+check_sme_out:
- 	tbz	x0, #HAVE_SME_SHIFT, check_sve_out
- 
- 	rdsvl	11, 1
-@@ -197,9 +208,7 @@ check_sm_out:
- 	tbz	x7, #SVCR_SM_SHIFT, check_sve_out
- 
- 	// Do we have FA64 and FFR?
--	mov	x4, #0
--	tbz	x0, #HAVE_FA64_SHIFT, read_sve
--	mov	x4, #1
-+	ubfx	x4, x0, #HAVE_FA64_SHIFT, #1
- 	b	read_sve
- 
- 	// SVE?
-diff --git a/tools/testing/selftests/arm64/fp/fp-ptrace.c b/tools/testing/selftests/arm64/fp/fp-ptrace.c
-index 56cf6e02c535b5c1cf1134c5b1973605c96024ee..4930e03a7b9903eab85a1e004354939f6a9fe9d4 100644
---- a/tools/testing/selftests/arm64/fp/fp-ptrace.c
-+++ b/tools/testing/selftests/arm64/fp/fp-ptrace.c
-@@ -31,6 +31,14 @@
- 
- #include "fp-ptrace.h"
- 
-+#include <linux/bits.h>
-+
-+#define FPMR_LSCALE2_MASK                               GENMASK(37, 32)
-+#define FPMR_NSCALE_MASK                                GENMASK(31, 24)
-+#define FPMR_LSCALE_MASK                                GENMASK(22, 16)
-+#define FPMR_OSC_MASK                                   GENMASK(15, 15)
-+#define FPMR_OSM_MASK                                   GENMASK(14, 14)
-+
- /* <linux/elf.h> and <sys/auxv.h> don't like each other, so: */
- #ifndef NT_ARM_SVE
- #define NT_ARM_SVE 0x405
-@@ -48,11 +56,22 @@
- #define NT_ARM_ZT 0x40d
- #endif
- 
-+#ifndef NT_ARM_FPMR
-+#define NT_ARM_FPMR 0x40e
-+#endif
-+
- #define ARCH_VQ_MAX 256
- 
- /* VL 128..2048 in powers of 2 */
- #define MAX_NUM_VLS 5
- 
-+/*
-+ * FPMR bits we can set without doing feature checks to see if values
-+ * are valid.
-+ */
-+#define FPMR_SAFE_BITS (FPMR_LSCALE2_MASK | FPMR_NSCALE_MASK | \
-+			FPMR_LSCALE_MASK | FPMR_OSC_MASK | FPMR_OSM_MASK)
-+
- #define NUM_FPR 32
- __uint128_t v_in[NUM_FPR];
- __uint128_t v_expected[NUM_FPR];
-@@ -78,6 +97,8 @@ char zt_in[ZT_SIG_REG_BYTES];
- char zt_expected[ZT_SIG_REG_BYTES];
- char zt_out[ZT_SIG_REG_BYTES];
- 
-+uint64_t fpmr_in, fpmr_expected, fpmr_out;
-+
- uint64_t sve_vl_out;
- uint64_t sme_vl_out;
- uint64_t svcr_in, svcr_expected, svcr_out;
-@@ -128,6 +149,11 @@ static bool fa64_supported(void)
- 	return getauxval(AT_HWCAP2) & HWCAP2_SME_FA64;
- }
- 
-+static bool fpmr_supported(void)
-+{
-+	return getauxval(AT_HWCAP2) & HWCAP2_FPMR;
-+}
-+
- static bool compare_buffer(const char *name, void *out,
- 			   void *expected, size_t size)
- {
-@@ -233,6 +259,8 @@ static void run_child(struct test_config *config)
- 		flags |= HAVE_SME2;
- 	if (fa64_supported())
- 		flags |= HAVE_FA64;
-+	if (fpmr_supported())
-+		flags |= HAVE_FPMR;
- 
- 	load_and_save(flags);
- 
-@@ -321,6 +349,14 @@ static void read_child_regs(pid_t child)
- 		iov_child.iov_len = sizeof(zt_out);
- 		read_one_child_regs(child, "ZT", &iov_parent, &iov_child);
- 	}
-+
-+	if (fpmr_supported()) {
-+		iov_parent.iov_base = &fpmr_out;
-+		iov_parent.iov_len = sizeof(fpmr_out);
-+		iov_child.iov_base = &fpmr_out;
-+		iov_child.iov_len = sizeof(fpmr_out);
-+		read_one_child_regs(child, "FPMR", &iov_parent, &iov_child);
-+	}
- }
- 
- static bool continue_breakpoint(pid_t child,
-@@ -595,6 +631,26 @@ static bool check_ptrace_values_zt(pid_t child, struct test_config *config)
- 	return compare_buffer("initial ZT", buf, zt_in, ZT_SIG_REG_BYTES);
- }
- 
-+static bool check_ptrace_values_fpmr(pid_t child, struct test_config *config)
-+{
-+	uint64_t val;
-+	struct iovec iov;
-+	int ret;
-+
-+	if (!fpmr_supported())
-+		return true;
-+
-+	iov.iov_base = &val;
-+	iov.iov_len = sizeof(val);
-+	ret = ptrace(PTRACE_GETREGSET, child, NT_ARM_FPMR, &iov);
-+	if (ret != 0) {
-+		ksft_print_msg("Failed to read initial FPMR: %s (%d)\n",
-+			       strerror(errno), errno);
-+		return false;
-+	}
-+
-+	return compare_buffer("initial FPMR", &val, &fpmr_in, sizeof(val));
-+}
- 
- static bool check_ptrace_values(pid_t child, struct test_config *config)
- {
-@@ -629,6 +685,9 @@ static bool check_ptrace_values(pid_t child, struct test_config *config)
- 	if (!check_ptrace_values_zt(child, config))
- 		pass = false;
- 
-+	if (!check_ptrace_values_fpmr(child, config))
-+		pass = false;
-+
- 	return pass;
- }
- 
-@@ -832,11 +891,18 @@ static void set_initial_values(struct test_config *config)
- {
- 	int vq = __sve_vq_from_vl(vl_in(config));
- 	int sme_vq = __sve_vq_from_vl(config->sme_vl_in);
-+	bool sm_change;
- 
- 	svcr_in = config->svcr_in;
- 	svcr_expected = config->svcr_expected;
- 	svcr_out = 0;
- 
-+	if (sme_supported() &&
-+	    (svcr_in & SVCR_SM) != (svcr_expected & SVCR_SM))
-+		sm_change = true;
-+	else
-+		sm_change = false;
-+
- 	fill_random(&v_in, sizeof(v_in));
- 	memcpy(v_expected, v_in, sizeof(v_in));
- 	memset(v_out, 0, sizeof(v_out));
-@@ -883,6 +949,21 @@ static void set_initial_values(struct test_config *config)
- 			memset(zt_expected, 0, ZT_SIG_REG_BYTES);
- 		memset(zt_out, 0, sizeof(zt_out));
- 	}
-+
-+	if (fpmr_supported()) {
-+		fill_random(&fpmr_in, sizeof(fpmr_in));
-+		fpmr_in &= FPMR_SAFE_BITS;
-+
-+		/* Entering or exiting streaming mode clears FPMR */
-+		if (sm_change)
-+			fpmr_expected = 0;
-+		else
-+			fpmr_expected = fpmr_in;
-+	} else {
-+		fpmr_in = 0;
-+		fpmr_expected = 0;
-+		fpmr_out = 0;
-+	}
- }
- 
- static bool check_memory_values(struct test_config *config)
-@@ -933,6 +1014,12 @@ static bool check_memory_values(struct test_config *config)
- 	if (!compare_buffer("saved ZT", zt_out, zt_expected, ZT_SIG_REG_BYTES))
- 		pass = false;
- 
-+	if (fpmr_out != fpmr_expected) {
-+		ksft_print_msg("Mismatch in saved FPMR: %lx != %lx\n",
-+			       fpmr_out, fpmr_expected);
-+		pass = false;
-+	}
-+
- 	return pass;
- }
- 
-@@ -1010,6 +1097,36 @@ static void fpsimd_write(pid_t child, struct test_config *test_config)
- 			       strerror(errno), errno);
- }
- 
-+static bool fpmr_write_supported(struct test_config *config)
-+{
-+	if (!fpmr_supported())
-+		return false;
-+
-+	if (!sve_sme_same(config))
-+		return false;
-+
-+	return true;
-+}
-+
-+static void fpmr_write_expected(struct test_config *config)
-+{
-+	fill_random(&fpmr_expected, sizeof(fpmr_expected));
-+	fpmr_expected &= FPMR_SAFE_BITS;
-+}
-+
-+static void fpmr_write(pid_t child, struct test_config *config)
-+{
-+	struct iovec iov;
-+	int ret;
-+
-+	iov.iov_len = sizeof(fpmr_expected);
-+	iov.iov_base = &fpmr_expected;
-+	ret = ptrace(PTRACE_SETREGSET, child, NT_ARM_FPMR, &iov);
-+	if (ret != 0)
-+		ksft_print_msg("Failed to write FPMR: %s (%d)\n",
-+			       strerror(errno), errno);
-+}
-+
- static void sve_write_expected(struct test_config *config)
- {
- 	int vl = vl_expected(config);
-@@ -1266,6 +1383,12 @@ static struct test_definition base_test_defs[] = {
- 		.set_expected_values = fpsimd_write_expected,
- 		.modify_values = fpsimd_write,
- 	},
-+	{
-+		.name = "FPMR write",
-+		.supported = fpmr_write_supported,
-+		.set_expected_values = fpmr_write_expected,
-+		.modify_values = fpmr_write,
-+	},
- };
- 
- static struct test_definition sve_test_defs[] = {
-@@ -1475,6 +1598,9 @@ int main(void)
- 	if (fa64_supported())
- 		ksft_print_msg("FA64 supported\n");
- 
-+	if (fpmr_supported())
-+		ksft_print_msg("FPMR supported\n");
-+
- 	ksft_set_plan(tests);
- 
- 	/* Get signal handers ready before we start any children */
-diff --git a/tools/testing/selftests/arm64/fp/fp-ptrace.h b/tools/testing/selftests/arm64/fp/fp-ptrace.h
-index 36ca627e1980f6a384d9ed0f2e9d4bd32d90f893..c06919aaf1f70bee4b607f71e3213ef2ddf8b97d 100644
---- a/tools/testing/selftests/arm64/fp/fp-ptrace.h
-+++ b/tools/testing/selftests/arm64/fp/fp-ptrace.h
-@@ -14,10 +14,12 @@
- #define HAVE_SME_SHIFT		1
- #define HAVE_SME2_SHIFT		2
- #define HAVE_FA64_SHIFT		3
-+#define HAVE_FPMR_SHIFT		4
- 
- #define HAVE_SVE	(1 << HAVE_SVE_SHIFT)
- #define HAVE_SME	(1 << HAVE_SME_SHIFT)
- #define HAVE_SME2	(1 << HAVE_SME2_SHIFT)
- #define HAVE_FA64	(1 << HAVE_FA64_SHIFT)
-+#define HAVE_FPMR	(1 << HAVE_FPMR_SHIFT)
- 
- #endif
-diff --git a/tools/testing/selftests/arm64/fp/sme-inst.h b/tools/testing/selftests/arm64/fp/sme-inst.h
-index 9292bba5400bb81b8e34769fa3eb70811746d8b8..85b9184e0835c59dbd5674b0210e6b9a43c1be4c 100644
---- a/tools/testing/selftests/arm64/fp/sme-inst.h
-+++ b/tools/testing/selftests/arm64/fp/sme-inst.h
-@@ -5,6 +5,8 @@
- #ifndef SME_INST_H
- #define SME_INST_H
- 
-+#define REG_FPMR                                        S3_3_C4_C4_2
-+
- /*
-  * RDSVL X\nx, #\imm
-  */
+I mean not need to invoke it in driver.remove hook. With this patch, we
+could remove
+https://elixir.bootlin.com/linux/v6.11.7/source/drivers/input/touchscreen/t=
+i_am335x_tsc.c#L498
+and same to other drivers.
 
--- 
-2.39.5
+>=20
+> What commit id does this fix?=20
 
+I am thinking to take this as a improvement, with core code
+has this, the various drivers no need explicitly invoke it
+in their own driver remove hook.
+
+ And what bug is this resolving?  What
+> drivers are broken without this?
+
+See here:
+https://lore.kernel.org/all/ZymxvLMkkktRoCXZ@google.com/
+
+Thanks,
+Peng.
+
+>=20
+> thanks,
+>=20
+> greg k-h
 
