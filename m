@@ -1,209 +1,147 @@
-Return-Path: <linux-kernel+bounces-406557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33EE19C60BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:48:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84639C60C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 19:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B79081F22FD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 692AA282F29
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 18:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBB621790F;
-	Tue, 12 Nov 2024 18:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AA7217F27;
+	Tue, 12 Nov 2024 18:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="caSx4oKt"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZk0boJd"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F26230994
-	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18802178EE
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 18:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731437283; cv=none; b=q+cVB5NrI9flM87x6LiiB0CAAmU4bg9GXywBG2Z0FAea7g91ftZGwg512cUDC8AfOQBs0HyV9PPpRWl5pteL2BLh6CXU2rKT76BoMdAagmWQRn+5Yy68FCwsgbXeBZchNGJAp0hahw0oyktdfH1LqYYF0b86q0+XTKVRnYHzG4U=
+	t=1731437318; cv=none; b=XIJnPv35Y1kDDOAfVWdHefeTvIlkXTFFrW6lk1sVF/Br6Syx353LP7YPAA/9Erx/z31WfsW0bFl+x5R7HleTbqxa++yly5qcA4zV6/JhJgWtZKtMeR68JSqoAALFbMNsU+xzm/nUefk1rRWmx5Am9r/26zL5CzJGnq7l/8MKcvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731437283; c=relaxed/simple;
-	bh=AYu6tM5ynIawKqMjM+E4hN+OaSd/oaQv1ZLr8hqDLcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b8i2G3pW0WQ9fGnFxHla3X5bq1PKa3ylgzneYZ7CAgBlQJmUCYvUp2xURSbzFDd/H5ZkHEuxUYcCH9B05tB7M20HLCyAQpzlsD9XUJ+ltytY7svrfl5EcoAzmtSq5EraJ8GpljG/8XEhm61bJmL/uCfy/Chd4w1bbeZbLUD1ZCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=caSx4oKt; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-290d8d53893so2525009fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:00 -0800 (PST)
+	s=arc-20240116; t=1731437318; c=relaxed/simple;
+	bh=nZFqPwj9BUmaePBPVbuDjEfu7haZCtJGCGtPxjBdfVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r5RoiQH+BdV4WN3OV1JrQpqPLxdkwdBetDeKHSsFimBddLm5J0ZecM9YWxITOC/J0RfJ/ptOEF5c7gr9V36lY3pRIz1RWO5TyvFOxppwwD0nZpgTsFonhktV0cq+okE4ZqFGl7W8Hn5+r9f9kK4dUAYmEJd/lE5+1jVPlKiY94A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZk0boJd; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6ecaa45af7bso9451877b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:48:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1731437279; x=1732042079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
-        b=caSx4oKtmrQnPiyw17x0o0KCIcSdXPDLG5uPL1f0G2zGbUKsz71wdhVPXAf+DwOG/4
-         AVfqb6MtbcIxM3YRR/u2DvQ+fbR+FgOLuOh2h9ZibBLeB8r8couIsGtWpqE67aTJrWZ0
-         cuwuKPW/Ks+iiSNBp9P82kI10kVc8uVYTfKLPck84BBte2nT+Yq6L5I6mF8zraChgP/N
-         HiZnHX/bp3rqReJBJg16vs+0XDEiKjoYIIBo0g1gaqO9UW1a8YkIZZhbg8Td+fq9+cHA
-         WhkyNBYK0UyxntaaQ+feaGPvIXlX1zDLuU6AFPh1aXkbt7lwQdUL4YzNhhqPkwDQYu9X
-         vhmQ==
+        d=linaro.org; s=google; t=1731437316; x=1732042116; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vLfb7kUGJLjR3dpRxNjHUX8zNIZ2DpFKhaioXvi+P10=;
+        b=dZk0boJdnyXKMW4zV7hFcJB3rYCnur/aSB+WvOdAIOXAgKwaezat708kClyF6v0/1J
+         hNg4tTzzmnShjLUqy5dRpPcgbWGPGR4DD9uvchoCTFEtQ+sjj9VPn4fPQyI3Z2hUYn0s
+         fEztvP7tLnzjrdHHylW7+60UnFnldvrilgY9qZmJqFmLqQEvdgtYATsfdhrXI27t4TXA
+         7QhkLQN6UkpTv2F1iMuVMnmRUaXNjtS8GJMK/XsP8c03nxOIeuRwU7Z2BzkNh/Yf9taO
+         VcU44HrehPYN8ahpPqZuykNP0k2vsWaM0znj6e38wac1DF3Ujr5VhX7BaBk+3EiiMnmv
+         nAMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731437279; x=1732042079;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEKWtbV5azCN1LS/TrOFInpSTESMK9RCRhSvphgR+zE=;
-        b=ZIVbi2UdafzX0zlJoABCu2TDkPIXF/Blh9EW4D3s8U9X+bFgfKPs/7UNjbDN29C9ah
-         2XLd5fhvfX5IMg2nGaxxwqG0ZRedUBtEwQxzw32op+czIYXACdDuVuSGKdA65zjYh3kb
-         SCH+KS4cks1bFbuCf7r1gW2pdvuNtDzuWY+DXr7LOZxyNDict/NP4YqXtPjXGpzy4LOP
-         ZD0cJoQaWWr9haIq5HPaCW6iasMkoNCaFtGAUUhY6I8kmced8IjldlSJhecMQPTq4zT+
-         Tl+W9M5mMgclsd5/Kx0yTLkoRxP/yaGBM/G4jOz3CjsWoAfeA14McqtVbmbCJ9Oq5VPL
-         3b7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8x9aPyMwZiCOZiNKWDJ24sDXJo54h4r/fUIVSZSaXqZb34O101qdKAsmxWfJnnvwwSWXCU3UtWJBuIiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyddMs6qynyElWD5Ct1IFyvxjESlWccTgEUnFRd8BYwnJwyEi+X
-	7KLetaAuT1IPCRnll/zL5RTuROSA0rdYge1IvCR5295S+y+39HaE/iiU5854E+vNJ+4Oa8iM3jS
-	3CTw=
-X-Google-Smtp-Source: AGHT+IEbUQIAv8rwvNy1b5k48spMrO6qHPjvfMhK8WTkm9KlJBHwjMMwhaZ9S+HNwCgrodi6AerXxg==
-X-Received: by 2002:a05:6870:20a:b0:25a:eca3:6b5e with SMTP id 586e51a60fabf-2956004793fmr13932152fac.9.1731437279605;
-        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-295e8eb8c53sm14182fac.8.2024.11.12.10.47.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Nov 2024 10:47:59 -0800 (PST)
-Message-ID: <58ebc5a8-941b-4c3d-a3b2-3985d7eeea30@kernel.dk>
-Date: Tue, 12 Nov 2024 11:47:57 -0700
+        d=1e100.net; s=20230601; t=1731437316; x=1732042116;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vLfb7kUGJLjR3dpRxNjHUX8zNIZ2DpFKhaioXvi+P10=;
+        b=oaMZ3pBJO4IffHnSmaCh61w837zj3gVagBD9C89C2xEWd/5v0BCo0/fTeeQOWmulg9
+         zRwYIy+Kxl7nlgRZF9YCaypY+lqYgUG6NTBNO4GXL22W3DwQcETcSvCyuNtnzTSqcSfJ
+         T+mtQ7XJiMm8DrpGarN90ZWPmZJwn1Hq7rM6+0URCdqCDsjgcCkMrmaHSAnJ0TJnodjT
+         ZEogHhHY7J7rjMvlVkK6lDj+HVASij5PXVX3hf47COiPkljnbJwb9xZ5TdEMaGkVlY7n
+         MDTahhcZFppQQo6Z//9lh9qUDQ4oU5KIgIBmWwzHIKLCi57QKgdC8E/QRJ78I7HchmFY
+         f/1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqfp4zR/1u9BpA75OCmV6Sf2B+spFkYWVGqg2mLk4JdRbx1GhKAykB2NvH8HZJ2qGLZJMbk0Fklk/8t60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFxVMf+UkRiHZOKPO2knBnQ5rY7ePp1+PKyxgbaNv/CUuD/C/M
+	2N/a9wJKCHtzZIkTR+u7eozjEeYs89k92Nm0k7wSICh5ugW7CtE/44M0Pwum+GOa7ud+dcAk52n
+	do2wI1PTp4iFUIiLIlKi+wXps/8ynFUg6+zXI7A==
+X-Google-Smtp-Source: AGHT+IHU1F4In8hSy3BHO7PzehPnwak0Jka/B7VCySs0mHPl9uCBdzOrrdhGUm0wtjc2hrnl2RWBoqNBIdeikfPQLfY=
+X-Received: by 2002:a05:690c:6d10:b0:6be:54e1:f1f3 with SMTP id
+ 00721157ae682-6ecb30a5145mr1527607b3.0.1731437315975; Tue, 12 Nov 2024
+ 10:48:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] ext4: add RWF_UNCACHED write support
-To: Brian Foster <bfoster@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
- clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
- kirill@shutemov.name, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
-References: <20241111234842.2024180-1-axboe@kernel.dk>
- <20241111234842.2024180-13-axboe@kernel.dk> <ZzOD_qV5tpv9nbw7@bfoster>
- <df2b9a81-3ebd-48fe-a205-2d4007fe73d1@kernel.dk> <ZzOaaInUHOmlAL-o@bfoster>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <ZzOaaInUHOmlAL-o@bfoster>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241030125512.2884761-1-quic_sibis@quicinc.com>
+ <CAPDyKFoY8CnxF7JXzkT9_WXyM-TJhW4kmTw=H8NEzch32N1_7Q@mail.gmail.com>
+ <ZyJeuVIbWkohymW5@pluto> <20241106071215.jhnzcn4vkdfr3peg@bogus>
+ <CAPDyKFr-pmXEhgUgCapzQX3Hn_UAM632TaG8SdkQXaCn5-y42g@mail.gmail.com> <ZzOOPJ_gI9TGadzV@hovoldconsulting.com>
+In-Reply-To: <ZzOOPJ_gI9TGadzV@hovoldconsulting.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 12 Nov 2024 19:48:00 +0100
+Message-ID: <CAPDyKFqnnw1A+R_wohpV7orKV4oGJNyxD+QL667iWq9d_odmfw@mail.gmail.com>
+Subject: Re: [PATCH V5 0/6] firmware: arm_scmi: Misc Fixes
+To: Johan Hovold <johan@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	Cristian Marussi <cristian.marussi@arm.com>, jassisinghbrar@gmail.com, 
+	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org, 
+	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/12/24 11:11 AM, Brian Foster wrote:
-> On Tue, Nov 12, 2024 at 10:13:12AM -0700, Jens Axboe wrote:
->> On 11/12/24 9:36 AM, Brian Foster wrote:
->>> On Mon, Nov 11, 2024 at 04:37:39PM -0700, Jens Axboe wrote:
->>>> IOCB_UNCACHED IO needs to prune writeback regions on IO completion,
->>>> and hence need the worker punt that ext4 also does for unwritten
->>>> extents. Add an io_end flag to manage that.
->>>>
->>>> If foliop is set to foliop_uncached in ext4_write_begin(), then set
->>>> FGP_UNCACHED so that __filemap_get_folio() will mark newly created
->>>> folios as uncached. That in turn will make writeback completion drop
->>>> these ranges from the page cache.
->>>>
->>>> Now that ext4 supports both uncached reads and writes, add the fop_flag
->>>> FOP_UNCACHED to enable it.
->>>>
->>>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
->>>> ---
->>>>  fs/ext4/ext4.h    |  1 +
->>>>  fs/ext4/file.c    |  2 +-
->>>>  fs/ext4/inline.c  |  7 ++++++-
->>>>  fs/ext4/inode.c   | 18 ++++++++++++++++--
->>>>  fs/ext4/page-io.c | 28 ++++++++++++++++------------
->>>>  5 files changed, 40 insertions(+), 16 deletions(-)
->>>>
->>> ...
->>>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->>>> index 54bdd4884fe6..afae3ab64c9e 100644
->>>> --- a/fs/ext4/inode.c
->>>> +++ b/fs/ext4/inode.c
->>>> @@ -1138,6 +1138,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  	int ret, needed_blocks;
->>>>  	handle_t *handle;
->>>>  	int retries = 0;
->>>> +	fgf_t fgp_flags;
->>>>  	struct folio *folio;
->>>>  	pgoff_t index;
->>>>  	unsigned from, to;
->>>> @@ -1164,6 +1165,15 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  			return 0;
->>>>  	}
->>>>  
->>>> +	/*
->>>> +	 * Set FGP_WRITEBEGIN, and FGP_UNCACHED if foliop contains
->>>> +	 * foliop_uncached. That's how generic_perform_write() informs us
->>>> +	 * that this is an uncached write.
->>>> +	 */
->>>> +	fgp_flags = FGP_WRITEBEGIN;
->>>> +	if (*foliop == foliop_uncached)
->>>> +		fgp_flags |= FGP_UNCACHED;
->>>> +
->>>>  	/*
->>>>  	 * __filemap_get_folio() can take a long time if the
->>>>  	 * system is thrashing due to memory pressure, or if the folio
->>>> @@ -1172,7 +1182,7 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->>>>  	 * the folio (if needed) without using GFP_NOFS.
->>>>  	 */
->>>>  retry_grab:
->>>> -	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
->>>> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
->>>>  					mapping_gfp_mask(mapping));
->>>>  	if (IS_ERR(folio))
->>>>  		return PTR_ERR(folio);
->>>
->>> JFYI, I notice that ext4 cycles the folio lock here in this path and
->>> thus follows up with a couple checks presumably to accommodate that. One
->>> is whether i_mapping has changed, which I assume means uncached state
->>> would have been handled/cleared externally somewhere..? I.e., if an
->>> uncached folio is somehow truncated/freed without ever having been
->>> written back?
->>>
->>> The next is a folio_wait_stable() call "in case writeback began ..."
->>> It's not immediately clear to me if that is possible here, but taking
->>> that at face value, is it an issue if we were to create an uncached
->>> folio, drop the folio lock, then have some other task dirty and
->>> writeback the folio (due to a sync write or something), then have
->>> writeback completion invalidate the folio before we relock it here?
->>
->> I don't either of those are an issue. The UNCACHED flag will only be set
->> on a newly created folio, it does not get inherited for folios that
->> already exist.
->>
-> 
-> Right.. but what I was wondering for that latter case is if the folio is
-> created here by ext4, so uncached is set before it is unlocked.
-> 
-> On second look I guess the uncached completion invalidation should clear
-> mapping and thus trigger the retry logic here. That seems reasonable
-> enough, but is it still possible to race with writeback?
-> 
-> Maybe this is a better way to ask.. what happens if a write completes to
-> an uncached folio that is already under writeback? For example, uncached
-> write 1 completes, submits for writeback and returns to userspace. Then
-> write 2 begins and redirties the same folio before the uncached
-> writeback completes.
-> 
-> If I follow correctly, if write 2 is also uncached, it eventually blocks
-> in writeback submission (folio_prepare_writeback() ->
-> folio_wait_writeback()). It looks like folio lock is held there, so
-> presumably that would bypass the completion time invalidation in
-> folio_end_uncached(). But what if write 2 was not uncached or perhaps
-> writeback completion won the race for folio lock vs. the write side
-> (between locking the folio for dirtying and later for writeback
-> submission)? Does anything prevent invalidation of the folio before the
-> second write is submitted for writeback?
-> 
-> IOW, I'm wondering if the uncached completion time invalidation also
-> needs a folio dirty check..?
+On Tue, 12 Nov 2024 at 18:20, Johan Hovold <johan@kernel.org> wrote:
+>
+> On Tue, Nov 12, 2024 at 04:56:26PM +0100, Ulf Hansson wrote:
+> > On Wed, 6 Nov 2024 at 08:12, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> > > On Wed, Oct 30, 2024 at 04:28:41PM +0000, Cristian Marussi wrote:
+> > > > On Wed, Oct 30, 2024 at 05:19:39PM +0100, Ulf Hansson wrote:
+> > > > > On Wed, 30 Oct 2024 at 13:55, Sibi Sankar <quic_sibis@quicinc.com> wrote:
+> > > > > >
+> > > > > > The series addresses the kernel warnings reported by Johan at [1] and are
+> > > > > > are required to X1E cpufreq device tree changes to land.
+> > > > > >
+> > > > > > [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> > > > > >
+> > > > > > Duplicate levels:
+> > > > > > arm-scmi arm-scmi.0.auto: Level 2976000 Power 218062 Latency 30us Ifreq 2976000 Index 10
+> > > > > > arm-scmi arm-scmi.0.auto: Level 3206400 Power 264356 Latency 30us Ifreq 3206400 Index 11
+> > > > > > arm-scmi arm-scmi.0.auto: Level 3417600 Power 314966 Latency 30us Ifreq 3417600 Index 12
+> > > > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> > > > > > arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> > > > > > arm-scmi arm-scmi.0.auto: Level 4012800 Power 528848 Latency 30us Ifreq 4012800 Index 15
+> > > > > >
+> > > > > > ^^ exist because SCP reports duplicate values for the highest sustainable
+> > > > > > freq for perf domains 1 and 2. These are the only freqs that appear as
+> > > > > > duplicates and will be fixed with a firmware update. FWIW the warnings
+> > > > > > that we are addressing in this series will also get fixed by a firmware
+> > > > > > update but they still have to land for devices already out in the wild.
+> > > > > >
+> > > > > > V4:
+> > > > > > * Rework debugfs node creation patch [Ulf/Dmitry]
+> > > > > > * Reduce report level to dev_info and tag it with FW_BUG [Johan/Dmitry]
+> > > > > > * Add cc stable and err logs to patch 1 commit message [Johan]
+>
+> > Sorry for the delay. I have picked up the remaining patches from this
+> > series. All applied for fixes and by adding stable tags to them,
+> > thanks!
+>
+> As I reported here:
+>
+>         https://lore.kernel.org/lkml/ZyTQ9QD1tEkhQ9eu@hovoldconsulting.com/
+>
+> I'm seeing a hard reset on the x1e80100 CRD and Lenovo ThinkPad T14s
+> when accessing the cpufreq sysfs attributes.
+>
+> Sibi tracked it down to the first patch in this series ("firmware:
+> arm_scmi: Ensure that the message-id supports fastchannel") and
+> reverting that one indeed fixes the reset.
+>
+> Unfortunately this was only discussed on IRC and was never reported in
+> this thread.
+>
+> Ulf, could you please drop the first patch again until we've figured out
+> how best to handle this?
 
-Ah ok, I see what you mean. If the folio is dirty, the unmapping will
-fail. But I guess with the recent change, we'll actually unmap it first.
-I'll add the folio dirty check, thanks!
+Done, thanks!
 
--- 
-Jens Axboe
+Kind regards
+Uffe
 
