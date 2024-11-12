@@ -1,147 +1,201 @@
-Return-Path: <linux-kernel+bounces-406816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-406831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8989C65B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 01:05:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85C19C6544
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Nov 2024 00:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0800AB32428
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 22:52:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76833B39CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 23:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5540821B42F;
-	Tue, 12 Nov 2024 22:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102FF21B456;
+	Tue, 12 Nov 2024 23:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CXXu+kDI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b="BmZo0SjY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c3eNB34l"
+Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA33221A6EC;
-	Tue, 12 Nov 2024 22:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DC21531C4;
+	Tue, 12 Nov 2024 23:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731451957; cv=none; b=am4NjZ54dxRUt6acWKOAFWjmqkt1QbivAxAAng3sN0h3ipUc7H8EUdjDMS7dM4kp/LZEtKtWRE4c9Nn8U+nRSmRXqabqhh8H0Zr9RUM8+F/n9x30CFkV/z/hzchkTkuZFOTk2Pm5l21p18N5omcpF3a9AqJe1V36CPvvaiJ1sOQ=
+	t=1731452594; cv=none; b=Na5dsDMJ+JvVWyZE8Ii4riUcqKJwKfVw+sUds+jm6tVY27iAT9Y2fBhoCcwex8Eev89igWp/sPXABVnOAjXQ4tLZVL7DwmilM2dHCdnH5G3kIFGws79AlVhMFqUmyus0H9QGGIlCqvcwcW2+ZKuXsyESWIaKPrH2+k935QEgx7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731451957; c=relaxed/simple;
-	bh=+TmRNrWhyk0NyksbrpfjrLdNlIatOZKJUZsfBmYqBuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZDj2PxGzWaakeJD3UvITdit279G8JFxFewJfdrnExS/5IQ5WUxP1OH1yX4qk1cHsAoPGhmKmEQzcx7PMtvK3cjZeB+ZMuhsyrgM1MZr9t7hPZ2kzFPl3tvnadegpSYzyxp7IoGE59oOqCw8k82Dh0Tx8SIBgVZrcMba47ccr3jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CXXu+kDI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731451947;
-	bh=5SUS8h1FDCOnKZcauReWecwOZMznU7f7Y2JZrN2r7SM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=CXXu+kDI+tNZf5t4hU+9MepqNkXRKecTsLUDfkD8cLhBKKdyTWYfquSsJlpvF344Y
-	 VKVZmOOmhNNbDuDGIr1+IdqpkfduvmuizhJOsnSTmP50eP7UnFsti56DPD1lx8VgAh
-	 ybOU6Qru/ua/RVb6FlAF8hgAp/Q/nH/YbFBj7HWWyzZ74KSJdzEC8QDcLpyVgg8xGM
-	 MojYK0H7AIh22pR7GEvnEg6QdXactTsEURGPnzSy/nAKnolByGXvjD3/Ru5p09CmCw
-	 u57X2oGdq8zoFQEukwFRl8UH4SVOwFBSnkeirkBLEK+DE4yUAhoijg28X+QRQBBkkp
-	 KdSa3KzeVEP6Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xp1rq4VQPz4x8C;
-	Wed, 13 Nov 2024 09:52:27 +1100 (AEDT)
-Date: Wed, 13 Nov 2024 09:52:28 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Michael Ellerman <mpe@ellerman.id.au>, Masahiro Yamada
- <masahiroy@kernel.org>
-Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nathan Chancellor <nathan@kernel.org>
-Subject: linux-next: manual merge of the powerpc tree with the kbuild tree
-Message-ID: <20241113095228.4ac96776@canb.auug.org.au>
+	s=arc-20240116; t=1731452594; c=relaxed/simple;
+	bh=x+y8/UzMtqi36p1A9OnR8/J/5AGKh+xLS9ee6QQzDLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UD0Ztm0qwNQ1/lNJSLTOiFGh0us2QQgWyt53Bha370qFo/wWnMG62m5IIhMmBpDoB2mofmcPBRcfF9Iaq30xncj3sN+gk7sRlvOuRli7W+QFqzcPYlkUbnRqY/s5gn8xRshBeTKvQlImLvz/p5WeUcem4WL5ti8gh1a1Wns3ZKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu; spf=pass smtp.mailfrom=e43.eu; dkim=pass (2048-bit key) header.d=e43.eu header.i=@e43.eu header.b=BmZo0SjY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c3eNB34l; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=e43.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=e43.eu
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8A0771380439;
+	Tue, 12 Nov 2024 18:03:11 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Tue, 12 Nov 2024 18:03:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=e43.eu; h=cc:cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1731452591;
+	 x=1731538991; bh=/RtfmugiFxrOsJ4jjn0jMQET4n5c564vMOygL27bFDA=; b=
+	BmZo0SjYdtFt9zs8tUBZIFdcbRsnZBw8Z7QbqGjMNbIX1aQ1nz+L4exzAtSAbivB
+	jEXAE+JH8E5bpNB3zWHrLNwjeLsYXv+dBucoRPq/70Oc8t7IBKdZF/wL6+H5/ex6
+	cFUOMonAgBbwOsddXovqET19YCvrx4DLbYMUEhsac0YcpuiKOg8dyQnuhXCIGxs4
+	t4L72rCtBa0d5RPTUiKf8OMjTWhxqEAgx7akLyPkBgZ+JfxlQ3b08sdIZSrsTz8B
+	Z+QVwsopT8+rip51h4L7aQNLfuFlhvEWzrhY+8GRERBTs29Cq1G5+Zl0kuVCWslG
+	ZXWFkmZ6jTw7Ax1IpR5x/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731452591; x=
+	1731538991; bh=/RtfmugiFxrOsJ4jjn0jMQET4n5c564vMOygL27bFDA=; b=c
+	3eNB34lnOuuW5EPehWtIDY82cpC3/aMN2GJydOigHJO9k8BP4hddIt+tdFuRLQZi
+	IkrJ7EjevuPLoMTjyLURAspchLmB2g4tvBaqyn8E9Fc/XpFUkmcBcD/9QGf9JDSj
+	LsYTUPfd8F72BaxcR7Q80swJK2VdkZyBhmJ8LqZNj9w7Fzs7ZIuUDUeg8QwpXFg+
+	doYYMIalZfq7zreT0fHBQgKTLNgS5fdZxfOBtc3+Oe9C1k9C52oF83baHho2xBJl
+	hUBcCR5IKCDgTYj0HKzPqUc8vS9bmSySFMQyQBoF4H6Lcio9OSyRJGaF+fff+TT3
+	bChyYZlruWTKXzripg+Xg==
+X-ME-Sender: <xms:r94zZxH_B9vJEiQcwOUxnoDcTUTlMcezbaR5tRpdDKngPcdvkNhS3w>
+    <xme:r94zZ2X8MpsP5TfXXw9kw4AyCdYa01qToOXyKGa80EEdKMrX7IC7esm04phZklUAk
+    NA0xujaxd0mP22SnmM>
+X-ME-Received: <xmr:r94zZzKN9B0e3mo9RKZpC80vzy6uHjp0UgH_rgc0pxkXQhm_5wFsRDD9cMFFWI8Qad7GN0h1rYhRiGGVDTe429YHsXuF>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehgddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeen
+    ucfhrhhomhepgfhrihhnucfuhhgvphhhvghrugcuoegvrhhinhdrshhhvghphhgvrhguse
+    gvgeefrdgvuheqnecuggftrfgrthhtvghrnhepgeeghfejjeegtdfgfefhtdfhuedvjedu
+    leeflefhjeetleeikeejgeeggefggedunecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepvghrihhnrdhshhgvphhhvghrugesvgegfedrvghupdhn
+    sggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhgruh
+    hnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomhdprhgtph
+    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtoheptghhrhhishhtihgrnhessghrrghunhgvrhdrihhopdhrtghpthhtohep
+    phgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphhtthhopegslhhutggrseguvg
+    gsihgrnhdrohhrghdprhgtphhtthhopegthhhutghkrdhlvghvvghrsehorhgrtghlvgdr
+    tghomh
+X-ME-Proxy: <xmx:r94zZ3F29kLupuw7xpTsAB_qSUr-bl4nKYmGEKn7UfyZ95agci3_Yg>
+    <xmx:r94zZ3W4yVvs3eCgzEKo5eF2dWr_dmKYkKy53QFEgfaiA4VX3LJoAA>
+    <xmx:r94zZyNEX1MWJCyTZrIsT48MEvJyxrTaVgQgEBscyQZ2UV-xeVxm6A>
+    <xmx:r94zZ20GqbM4J7Rqvn4cgJbpKtJy78gjrJLmPdYvJGAPW6A2rPrwgA>
+    <xmx:r94zZ3QVyhWe7XdmpffAoLTMatIBM5m-899lk9khzlkhtssGYNMa-8Tw>
+Feedback-ID: i313944f9:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 12 Nov 2024 18:03:09 -0500 (EST)
+Message-ID: <05af74a9-51cc-4914-b285-b50d69758de7@e43.eu>
+Date: Wed, 13 Nov 2024 00:03:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OJSHOma8eTbb221uzinmuQ5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] pidfs: implement file handle support
+Content-Language: en-GB
+To: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ christian@brauner.io, paul@paul-moore.com, bluca@debian.org,
+ Chuck Lever <chuck.lever@oracle.com>
+References: <20241101135452.19359-1-erin.shepherd@e43.eu>
+ <20241112-banknoten-ehebett-211d59cb101e@brauner>
+From: Erin Shepherd <erin.shepherd@e43.eu>
+In-Reply-To: <20241112-banknoten-ehebett-211d59cb101e@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/OJSHOma8eTbb221uzinmuQ5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On 12/11/2024 14:10, Christian Brauner wrote:
+> Sorry for the delayed reply (I'm recovering from a lengthy illness.).
+No worries on my part, and I hope you're feeling better!
+> I like the idea in general. I think this is really useful. A few of my
+> thoughts but I need input from Amir and Jeff:
+>
+> * In the last patch of the series you already implement decoding of
+>   pidfd file handles by adding a .fh_to_dentry export_operations method.
+>
+>   There are a few things to consider because of how open_by_handle_at()
+>   works.
+>
+>   - open_by_handle_at() needs to be restricted so it only creates pidfds
+>     from pidfs file handles that resolve to a struct pid that is
+>     reachable in the caller's pid namespace. In other words, it should
+>     mirror pidfd_open().
+>
+>     Put another way, open_by_handle_at() must not be usable to open
+>     arbitrary pids to prevent a container from constructing a pidfd file
+>     handle for a process that lives outside it's pid namespace
+>     hierarchy.
+>
+>     With this restriction in place open_by_handle_at() can be available
+>     to let unprivileged processes open pidfd file handles.
+>
+>     Related to that, I don't think we need to make open_by_handle_at()
+>     open arbitrary pidfd file handles via CAP_DAC_READ_SEARCH. Simply
+>     because any process in the initial pid namespace can open any other
+>     process via pidfd_open() anyway because pid namespaces are
+>     hierarchical.
+>
+>     IOW, CAP_DAC_READ_SEARCH must not override the restriction that the
+>     provided pidfs file handle must be reachable from the caller's pid
+>     namespace.
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+The pid_vnr(pid) == 0 check catches this case -- we return an error to the
+caller if there isn't a pid mapping in the caller's namespace
 
-  arch/powerpc/Makefile
+Perhaps I should have called this out explicitly.
 
-between commit:
+>   - open_by_handle_at() uses may_decode_fh() to determine whether it's
+>     possible to decode a file handle as an unprivileged user. The
+>     current checks don't make sense for pidfs. Conceptually, I think
+>     there don't need to place any restrictions based on global
+>     CAP_DAC_READ_SEARCH, owning user namespace of the superblock or
+>     mount on pidfs file handles.
+>
+>     The only restriction that matters is that the requested pidfs file
+>     handle is reachable from the caller's pid namespace.
 
-  de51342c5157 ("kbuild: add $(objtree)/ prefix to some in-kernel build art=
-ifacts")
+I wonder if this could be handled through an addition to export_operations'
+flags member?
 
-from the kbuild tree and commit:
+>   - A pidfd always has exactly a single inode and a single dentry.
+>     There's no aliases.
+>
+>   - Generally, in my naive opinion, I think that decoding pidfs file
+>     handles should be a lot simpler than decoding regular path based
+>     file handles. Because there should be no need to verify any
+>     ancestors, or reconnect paths. Pidfs also doesn't have directory
+>     inodes, only regular inodes. In other words, any dentry is
+>     acceptable.
+>
+>     Essentially, the only thing we need is for exportfs_decode_fh_raw()
+>     to verify that the provided pidfs file handle is resolvable in the
+>     caller's pid namespace. If so we're done. The challenge is how to
+>     nicely plumb this into the code without it sticking out like a sore
+>     thumb.
 
-  bee08a9e6ab0 ("powerpc: Adjust adding stack protector flags to KBUILD_CLA=
-GS for clang")
+Theoretically you should be able to use PIDFD_SELF as well (assuming that
+makes its way into mainline this release :-)) but I am a bit concerned about
+potentially polluting the open_by_handle_at logic with pidfd specificities.
 
-from the powerpc tree.
+>   - Pidfs should not be exportable via NFS. It doesn't make sense.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Hmm, I guess I might have made that possible, though I'm certainly not
+familiar enough with the internals of nfsd to be able to test if I've done
+so.
 
---=20
-Cheers,
-Stephen Rothwell
+I guess probably this case calls for another export_ops flag? Not like we're
+short on them
 
-diff --cc arch/powerpc/Makefile
-index 321b596d2550,99af7953e844..000000000000
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@@ -402,9 -403,11 +403,11 @@@ prepare: stack_protector_prepar
-  PHONY +=3D stack_protector_prepare
-  stack_protector_prepare: prepare0
-  ifdef CONFIG_PPC64
-- 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard-offset=3D$(shell awk '=
-{if ($$2 =3D=3D "PACA_CANARY") print $$3;}' $(objtree)/include/generated/as=
-m-offsets.h))
-+ 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard=3Dtls -mstack-protecto=
-r-guard-reg=3Dr13 \
- -				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "PACA_C=
-ANARY") print $$3;}' include/generated/asm-offsets.h))
-++				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "PACA_C=
-ANARY") print $$3;}' $(objtree)/include/generated/asm-offsets.h))
-  else
-- 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard-offset=3D$(shell awk '=
-{if ($$2 =3D=3D "TASK_CANARY") print $$3;}' $(objtree)/include/generated/as=
-m-offsets.h))
-+ 	$(eval KBUILD_CFLAGS +=3D -mstack-protector-guard=3Dtls -mstack-protecto=
-r-guard-reg=3Dr2 \
- -				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "TASK_C=
-ANARY") print $$3;}' include/generated/asm-offsets.h))
-++				-mstack-protector-guard-offset=3D$(shell awk '{if ($$2 =3D=3D "TASK_C=
-ANARY") print $$3;}' $(objtree)/include/generated/asm-offsets.h))
-  endif
-  endif
- =20
+Thanks,
+    - Erin
 
---Sig_/OJSHOma8eTbb221uzinmuQ5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcz3CwACgkQAVBC80lX
-0GynbQf/QT9xN5Sadagwxsdm+jnyJshU9thoOA+VE1BCgAD92+Ejeoqi9n4OaHyW
-Znl+GF3VDsGajimTDFXoOJM1Wo52jvMNonXMezv4gpR/q2SobxfoKQ8MhKDW2gnF
-ZdSeoSWKxCEeNYuMNMoDDwFuncgz+CXTrQIBFnJc1R4tZfUjLU9aDcu1zT20c9w7
-ohToakX5p4aizTudR7Hqcb0jvV0LcxuZUGa3x2dqc1humE2D2JRADrMbc2dj0cKV
-OvZMQia1n4v6gxz7IgzJSGu0thVwNXB9MRNH17UnHOegxIgh0U4xsDZ1nslllAQz
-u7ZR+nJ6JhTxsjFXuLXv3TVILH6BjA==
-=STb3
------END PGP SIGNATURE-----
-
---Sig_/OJSHOma8eTbb221uzinmuQ5--
 
