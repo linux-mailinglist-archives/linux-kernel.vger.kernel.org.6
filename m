@@ -1,591 +1,409 @@
-Return-Path: <linux-kernel+bounces-405579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-405581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1869C5324
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:23:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBDE9C5318
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 11:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71438B31201
-	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C408C1F26450
+	for <lists+linux-kernel@lfdr.de>; Tue, 12 Nov 2024 10:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA802123FC;
-	Tue, 12 Nov 2024 10:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC292123D6;
+	Tue, 12 Nov 2024 10:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="N+3f/Sbs"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2135.outbound.protection.outlook.com [40.107.215.135])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ObsaxiO8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9C20EA2D;
-	Tue, 12 Nov 2024 10:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.135
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731406647; cv=fail; b=jR8FNCPN4aXfzQQJF79XyPq74eqXiLZcDCNxbVg0AO4LzPvnUGaBmrk6XGoXDOmq/SUXVXPAO45+1SruPS6oZOEwBQRdikFc4U+2RpHzqI+eYkHZFuD7RmYhcu7j1DRCzrqHcZiRCcq9op3sVv+oi+8G+bw1Qs75e6T2CQDrAQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731406647; c=relaxed/simple;
-	bh=CnaBf+fZEg6YZKDNJ88dfjH03Qaflsg+oeV/9pQmGnM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=SKQgJVqI7BbdrQD5nlsu/sWQ3kM4ddyz6MB7j73NJxqjYsMuopv7mCs52CoU7MNcJYViu2+QGdcaxIkPhD7K41EeMaqCKgHU3a0wDZzWvzIy0hrUteKu5OsDb1zE6R7mE8+nZJlfl7wRdv+tNydU5jRPYlOYi2xsEhSJjgsuJlk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=N+3f/Sbs; arc=fail smtp.client-ip=40.107.215.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hW/dkvmSxxQquVFt9qX9cIgKibujcSsAvTMD+qc61Lc9dEkF8LPU+SSKwchdwJeAd80+u91qwxsfpLJ2nUInWHuhrAIh7IZaqe+W5b7mC3PY56oOU9F1ceghfuhJGIhIqoY39/sKRp8z7A5Rr8saxPerPiM4x7V39aZA8uXl6uU5UR0hmmklDh4RWgMTwtva8AC831KunDHFwkk9hMh876P7o0CAS0iwNhen5nttdwQ1V2kzOZZRCU7jBRm2Wtsanb9UN5qaZ4Ly5Fo3JaACnj7TgJr7JSYe3FvxJuqOKI0utKqSztzS+uoc9hF8S0JxlqJil9KIcpQMw6tMy03lEA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dlpYBojbHJHPbG3DwycboMAbXpRXbaZ47cWYZml1k0g=;
- b=EQdloAGfwmOtrAYEmWdQdZEOxlT3tUpFzRvcM79SP2yrD5VE05hEqvNnUQy2jXW7fEJhGdcst8SKXL8m2nP3i8hWvWll2A844/tow/hHECw6si6YS4a6T7lUU3wEXnHLynm4lR/nCfzlRL38aACX02oahDDOOk58cQr+cnxeAAsCex0Lj1eJUFi65YlX0sqw2u3gwXr5Rfsff/IWyzTFhyiuwjwu+1nvkMsqL83oidI9r89+Dy8ws5rJ0XSYY85b8IskqfCvgVCtvmQOFsxd3I/Lv4ds3/PWg0CTrbIe49v+aTtPtvdLgkA7PIZwfEs0ma+Wfb5E778eCKfmiDCVmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dlpYBojbHJHPbG3DwycboMAbXpRXbaZ47cWYZml1k0g=;
- b=N+3f/SbsJNvdJuCAnFaPU8z5gzxdkA/fKxNJzCDSl1UmOLQANTrn6QIuyCH7i4wzF4a7fUa4wX4sYEP2CjjKEt49BMzNJedooTq2YkofwYKenPPrDvuLcai1C/A+YfXAKsM23yhKtiHQssYhEy221u6/GRFyWOQeQ6CuFQUSvFKqoce6cHAiE+rd5emOSJ/p8eie3bJj7PsEso557gM/6U8BSnoCBjEtUfDdxVPpC9cOtd537W4/0MEtnCee5rk3feNDszqrIL6a/UBhFUJxPCsfSclvSePZsKc3KPrdjPt0+YC4JNR7xPATnP+jNhdaT8eVaWBO9tbnRROMvur9SQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from SI2PR03MB5786.apcprd03.prod.outlook.com (2603:1096:4:150::10)
- by TYZPR03MB8587.apcprd03.prod.outlook.com (2603:1096:405:b6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Tue, 12 Nov
- 2024 10:17:20 +0000
-Received: from SI2PR03MB5786.apcprd03.prod.outlook.com
- ([fe80::3f37:cacc:420b:9b86]) by SI2PR03MB5786.apcprd03.prod.outlook.com
- ([fe80::3f37:cacc:420b:9b86%3]) with mapi id 15.20.8137.027; Tue, 12 Nov 2024
- 10:17:20 +0000
-Message-ID: <e13bc132-fc90-4378-852b-1ff45a6872b9@amlogic.com>
-Date: Tue, 12 Nov 2024 18:16:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: meson: Fix children of ro_clk may be tampered with
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jian Hu <jian.hu@amlogic.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>,
- Yu Tu <yu.tu@amlogic.com>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241111-fix_childclk_of_roclk_has_been_tampered_with-v1-1-f8c1b6ffdcb0@amlogic.com>
- <1jr07g25da.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1jr07g25da.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0007.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::11) To SI2PR03MB5786.apcprd03.prod.outlook.com
- (2603:1096:4:150::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB792123E1
+	for <linux-kernel@vger.kernel.org>; Tue, 12 Nov 2024 10:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731406766; cv=none; b=Z7+wCgAnqtr1Ay72dami2fLYsJvUp2mFCtdI+VSl/MLD/DX5kK8pmjeg9lj4i5FrJoQjnVStaJ1+iHm3HkHk8mKup1Gecv9T32fMJeWQBEAsAuZrOoyoRNUyA6+ACpxbXEyKBPBbq+UoH/H7WIc3Eap+qiRK1QdC2H3BkhEUy60=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731406766; c=relaxed/simple;
+	bh=hOV0Cyam6/MaGDK/wCOTgJNkoOmx/0lpY0GypN54K+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RFiJbdYL/ljFlvjwEeTGOD+EWZn7PmsR9rbcjEt2avDtX3mkGxgQTqYTHZTGM1cCdfvs/sqR0hy4P3WBPtFiKCHxz5dKp8bcI+/oe4wqw1uCZP8jp+LalQb2KRbKelbgIPjnWN+sWwOJot/v/IXDlRXj1H8kg3kTbQNVrxJTVOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ObsaxiO8; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731406763; x=1762942763;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hOV0Cyam6/MaGDK/wCOTgJNkoOmx/0lpY0GypN54K+s=;
+  b=ObsaxiO8wCxBjuGXOnW89falT4/h5sl30+kAUdTrGVqHyf6o7N/ih4To
+   Hr82Ut8Q48ZYeygBwy++d+IbHK174po3XTxbOzeFYkgnfaKPqA6Trs6B6
+   PwbpbL2W2fZZs/chXoTz4cfJZQb5Yr9sI/lMWHIXUony5ceVbz/IF2bjQ
+   9UWi+B8La9UlVCsoFAR5g5aNfZ/LqMPisAP3QXhBGjC94+zPp3F2y7VHL
+   pjdHwvprF+WQ62DLv2IIunaar4WZ2CBQzdPRLM3ptlgnOHpH1AdW5iPMi
+   EcyRUQJv+JWYdCnt8UVrdP0d3AqTvqV1tejh9C46erWDPEdUNn+6BnYio
+   Q==;
+X-CSE-ConnectionGUID: kQ6gfpjaTVKVaxWPhET9aQ==
+X-CSE-MsgGUID: dlt1pk3zQ4iA73sbUK3UGw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31405567"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31405567"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 02:19:22 -0800
+X-CSE-ConnectionGUID: OvNBB8TvQ8qCQI2O7h2cYQ==
+X-CSE-MsgGUID: GV6Wll5HRcGYT+8l9mpCVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,147,1728975600"; 
+   d="scan'208";a="87802267"
+Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 12 Nov 2024 02:19:14 -0800
+Received: from kbuild by bcfed0da017c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tAnzL-0000hp-20;
+	Tue, 12 Nov 2024 10:19:11 +0000
+Date: Tue, 12 Nov 2024 18:18:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org,
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com,
+	hughd@google.com, minchan@google.com, jannh@google.com,
+	shakeel.butt@linux.dev, souravpanda@google.com,
+	pasha.tatashin@soleen.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	surenb@google.com
+Subject: Re: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
+Message-ID: <202411121840.hE2wZKgE-lkp@intel.com>
+References: <20241111205506.3404479-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR03MB5786:EE_|TYZPR03MB8587:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15370f9e-63ef-41b4-5150-08dd03033133
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eG1Fa0NZTXFQVVdEd2Z1cFpkRlVZL0JPbnNEdFJ5ZHZBN3JyYy9ERFZEejdq?=
- =?utf-8?B?ajhJMXZ4cjVITlpxRm9XLy9ZMXVDR0NSZlVPbnBBRE05N1VEUmFuU1l1YXpD?=
- =?utf-8?B?YUZLZ2FoQWNZVmg5Ulk3R2ZoajdVN2VycUFGUHRVNVlwWWdoeDZZd29iQ2tT?=
- =?utf-8?B?L2JCMEs5VWE0UDBxZ3pWdmRjcFlVbW1DWHF6NGVuZE1uT0x6ZHYyTEhxckV6?=
- =?utf-8?B?Z0daNU5QcFhWRWNleUdiM2dLRStVTEdybFYxbDNDeklldWI2eTc0RzdXNHdH?=
- =?utf-8?B?cE12UTJidlFTWGdBTFRZS2FhY3J0dHdnQjMwRGorVmc2N1ZPbkJqb24rZm5O?=
- =?utf-8?B?am1kNWttUWc3amhqZ0k4WE5ySG9SK0JpZ2ZZaFRqOHdYUzhsYXgyckswcGE0?=
- =?utf-8?B?QVZ6c0JVZVloR1J1LzVEZmc0ZUM3RXQzTVhSUUd0alphV0QxY0JtNUhZdTFK?=
- =?utf-8?B?aFR5dVprWEJpbzlKQnorWFhZQWtVendYZ3R3WTNpQmtVZXJZeUZEY1BZMll1?=
- =?utf-8?B?ekZGeFdvVWNzeUt0Z0NHYXhwUFYzQ01VTVJIRTB5bzRzMU9KT3NwbG1ZbWJ0?=
- =?utf-8?B?YlV0NW55SUxXSXlXd1p0bHQ5dU55bW9tY3VsYy9WODVTK1NMSHUzdEdVYTlx?=
- =?utf-8?B?dFcwQzBDTWFyOE15LzRzWnhRb3NVbWdvU3dOT1hFam41amNnWXZMYk9KNjQz?=
- =?utf-8?B?c2NhVjMzbnJhWlVnVzJFSHZ4dW1IeFhnV1NpUTBrTjF4WW94UUhSWHlKcUNM?=
- =?utf-8?B?TEg4UXNaRE1aZHlTL0NpNkw0T29YLzFnK3lkMTE0Z3VFclBXVVBTUFhjSlBl?=
- =?utf-8?B?bEVsaG02enhhZnFoMzNsbzludmFUUmE4LzNRVENCQzArTnNDMFRqZk5kMjl0?=
- =?utf-8?B?Q3BkMk93Z0lzWjRzeXd6bGhmbk02Z0tSa3YzYkxIRENDUXpWMXkxS2RFb1JR?=
- =?utf-8?B?bzRzMHVDMXBSWmluTXdCMDlNdS9rOGlTM3ZweCtWTHdhbUs3enk2b2Y4UVV5?=
- =?utf-8?B?SGRucUhJMVhvNVYxYnJUSXhqRW1LWTdmSnZoZHV6NmFyd3RqdFllQ2ZBNjBJ?=
- =?utf-8?B?WXozazM4bEthUUp4aTBLOFlxdTNwTmp0VjAzRG9WSVlRT04yeUtWOHZHZ3dh?=
- =?utf-8?B?QjRLQjQ0UDcvMnZ4Q2Z2a1ZTd3IvRTBEdFcvdWlmWm5yeHFmYmN0SnNHWkww?=
- =?utf-8?B?UnhndE9oTzZ1VDRQWEhKR3R6S0g2UU1OVzNmZFN1eG14Mm4xdmNnVC9nejJF?=
- =?utf-8?B?R3RxV2VGVm82TWk5TWY2T1RydnRKOUZyYm8waERqRkJTWWNkZE44UGNwYTBS?=
- =?utf-8?B?Zzh3VVFCRmdTN2hvcndRU1dPRElMeG1jdklvUEUvZkkweEtpRk9STXpxYlU2?=
- =?utf-8?B?SWZpUTJvVFlCSWFJK3FMWVdNdkZuZmtCVTB3V3NzY2s4ZVJKNWN0TFZZQzd3?=
- =?utf-8?B?ZnNDd3dvRkkzYy96TkhIZHVneW1rOGpjdlNwL0JJR0c4Z3B3QUtjL01EamEw?=
- =?utf-8?B?dHdwL3hRQjNsbjdqMy9ZdjFSR1psWXN4dWdEdnB1Vklsa1ArcDRudkZyRWli?=
- =?utf-8?B?dG1Ed0EzVGNjeDRQVFZ6alNwdkpsMkFlcTNndUZnUVlacnYzNStRa1dQRElU?=
- =?utf-8?B?ZkxxZGtqV0lTNDZ3L1pZSVdRMnpXaUs5UUxJby9TNUwwZXZ2MDVwQkFaMXl5?=
- =?utf-8?B?emtBMzVQRVZyd0ZhMTF1M2tUZGF4ektzV2xJVE94SE5SZmNDUTdIT2hiRzZ1?=
- =?utf-8?Q?HJGm5kQDtgjQXBUoSOZYC/rfJ0qmdcp63zRYxBB?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR03MB5786.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?enVmTUR4S1hmYUtwditRQWt2K3J5OXlCeGhxVmV4bkNXZWU5L1dhQUwyakRB?=
- =?utf-8?B?Qjg0RjljWXZDNk9TS2JWbWRuTlY0Tmd1K3BwcFVqaWtuT2t2THd4N05BWmdl?=
- =?utf-8?B?TTRrK3ZsYytMY2RCQTJacVBFUzRWeFB1Rlc5WHl1Zm9aMHVpOXo3YjJoNitV?=
- =?utf-8?B?MmZSbllpNjA4NW5yZEgrOTkyWVV1V2V0MnFPdExCRVkrNHhGQmx5TzlleTVM?=
- =?utf-8?B?VDk0OUFWMDBObTBIcWNVQ3NvZzBndVdsSE5CVStUYnRSeWpSSFl5OHEwVzhh?=
- =?utf-8?B?a2oraXFiV1djMHgxdEM3NWJ4OWxiTnN4eEl1OUJyU0MrdE9nZmE0blBHUDE2?=
- =?utf-8?B?cytaaGp4aklJVFhuNHFYQTQzOEtTVlNlSXBBaHpYanI0SEtNaS9ndTJYLzVR?=
- =?utf-8?B?eVJFZjZtT0FCZVBlNWZoRTF6SHhzNWJESzVSWkNTOWlvZ1dSZmJHckVZeklJ?=
- =?utf-8?B?TzNQd3RzSEY2YUQ0OFlkVmJxY0hhUTlma2ZXSzFEU0tTaXVwcW12TVRGN0Zv?=
- =?utf-8?B?NW1iZStLL3JTV280MGh1V2czRmc1SFh4dld6VTB0OUhlbWNnT082MjdZR1Bv?=
- =?utf-8?B?ZWlNbWc5NE5EU2lrUXJYTFdvWFFXWFRCdXdtMjBwQU5LRmNXUWI1RERxaG5u?=
- =?utf-8?B?Z2tOeTk0VFdqOThKcWk5eEwvYWR3dEE0M0JBM2JDZW9XdlhKeUNrMWJtM0Jm?=
- =?utf-8?B?WlJKRjdKOFZlYUtHb3dWU1FmVk15SnI0TmhUNEo2SWVTeWdPaGRqMFRBQTNh?=
- =?utf-8?B?TGlFNjVhSGVhUko2YXROUEl3WFpLQmJZVnZiMFNXVTQ2QzNBVnpSa1l5MzJw?=
- =?utf-8?B?VWdQalgvVFcydE5WZHc0ODl6eXE0eTJqL2czNER3R0tnSHQ5a1plWXpCUmNX?=
- =?utf-8?B?akc0T2xiZjZ2dkphczVLVG0rZldnQUxNdGI1T2Rwcmp5N1h4aTdZQlBveUlT?=
- =?utf-8?B?RVMvbGNjT3lXV3RtRjE2R09WdGVzT2txZks5MWpzdUN1ZUM3KzdHYUZIZXBK?=
- =?utf-8?B?dE9ycTQ1blBLR013anFXSkNBWTdsbGd6WE9kblkxdXBQNWpRV2pSOHhnaFlC?=
- =?utf-8?B?aVc2cEZGSGRvQU93TnBPeEZJbWpHWE1kanpLMmpSK1Z6OUluSWF5VmNQS01S?=
- =?utf-8?B?UHU1bDVGSlg2a3F6dHpNaUYrcWRFT1FBbE1jZERyMnVLMHBwbUMxSXZhcTZy?=
- =?utf-8?B?QVkwUjVuRWdJY2J5UjNmeDhoMWdJaTlLb0QrOVNFdVFaQTJENG9WY2ZCM0gz?=
- =?utf-8?B?ejN5VjA3bEpEVFh0RWtIMkRuS1BQRkZhbHRwRExqRUtWQzNSNjN1TVo1U3hR?=
- =?utf-8?B?d05KTmRueHRFNC9xTjZhWGJNbVVwVGcvWkdBMml5dmxZdi9jUFpuelJCNVlB?=
- =?utf-8?B?S2lMd3IvWm1aQmtKSFUxVjBFU1lHT3ViWERya0tKT0pFVzQzQ2R6NVExKzVF?=
- =?utf-8?B?bDhHdXlmV1c0MXZCSnNORldNc1lidTFlcFdta2E1MnJzTVMvWXF2N2xQNVVC?=
- =?utf-8?B?R1FpWHkwMHRTR3AzRjBseUNFbysxdW9hS0pINlczblVJYlNzNjhJOWpQSWI3?=
- =?utf-8?B?Y3NSZ2JFWTFmYS95R2FYOXBpelQxWlNxUlNEL2p3c2tRZDN3eHQzMmEwU3p5?=
- =?utf-8?B?K3BWbXFUR0NZUTFVQW5LU0lVMW1GZ1hBMzFDTUVVaFMxTGkxdzZXajJqdWR1?=
- =?utf-8?B?dDJNVFppekthTFJlSnF3VEU5K2ZweWIrT05rdTVDT1RseURZM1hSK0w5WERl?=
- =?utf-8?B?ZFJ1bkprWTF5cTVtSHJlY2hlT3FTbjdOZjJpZE80OWdXaGF1dDN6U3B5QnBt?=
- =?utf-8?B?Ti9ZSlRFQlYzKzUra1V2bFNSSTA2SS9ZOXJGQldKZ0JWak9Nb3NjaWNRQmtZ?=
- =?utf-8?B?bWh2VGQ5VHc0eGxXMHJRb28yT1REaThYQTBDT0kvV0svZUluZHpjblNXYVZn?=
- =?utf-8?B?VHVHT2U0MTlBQzNQRmRVVlNOeDVnOUQ2YXBwNFBlY1o1RXpkZ2lROTVtaU9H?=
- =?utf-8?B?R3BVMGx3NXFBc2JVRG8vRTd6QStjOTJseGMvdWJLMGxYczFZaXkwOFQyT0ty?=
- =?utf-8?B?eU45Y0VTNEZGaFpWZFF1WXdwT0pRbGZrN2ZyMTI3dFJvQ3RFQlNaWmFSWjRR?=
- =?utf-8?Q?gPQSnv4EGS2OgleUhvR0GYgNV?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15370f9e-63ef-41b4-5150-08dd03033133
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR03MB5786.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Nov 2024 10:17:20.3867
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7JhAtY/UeiHZQyfDNb7iTJuQ/XopHX0F2z5qMEBaYolf8jIdXv+DpM+0hnRPj1m+6PSAVoC/vFYW6plOy1ZiNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8587
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111205506.3404479-3-surenb@google.com>
+
+Hi Suren,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 931086f2a88086319afb57cd3925607e8cda0a9f]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Suren-Baghdasaryan/mm-introduce-vma_start_read_locked-_nested-helpers/20241112-050531
+base:   931086f2a88086319afb57cd3925607e8cda0a9f
+patch link:    https://lore.kernel.org/r/20241111205506.3404479-3-surenb%40google.com
+patch subject: [PATCH 2/4] mm: move per-vma lock into vm_area_struct
+config: hexagon-randconfig-002-20241112 (https://download.01.org/0day-ci/archive/20241112/202411121840.hE2wZKgE-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241112/202411121840.hE2wZKgE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411121840.hE2wZKgE-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+         |                            ^
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:1143:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:33:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:187:1: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     187 | _SIG_SET_OP(signotset, _sig_not)
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/signal.h:174:10: note: expanded from macro '_SIG_SET_OP'
+     174 |         case 4: set->sig[3] = op(set->sig[3]);                          \
+         |                 ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:1143:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:33:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:187:1: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     187 | _SIG_SET_OP(signotset, _sig_not)
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/signal.h:175:20: note: expanded from macro '_SIG_SET_OP'
+     175 |                 set->sig[2] = op(set->sig[2]);                          \
+         |                                  ^        ~
+   include/linux/signal.h:186:24: note: expanded from macro '_sig_not'
+     186 | #define _sig_not(x)     (~(x))
+         |                            ^
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:1143:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:33:
+   In file included from include/linux/percpu-rwsem.h:7:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:187:1: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+     187 | _SIG_SET_OP(signotset, _sig_not)
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/signal.h:175:3: note: expanded from macro '_SIG_SET_OP'
+     175 |                 set->sig[2] = op(set->sig[2]);                          \
+         |                 ^        ~
+   include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+      62 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2234:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/hexagon/include/asm/dma.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/hexagon/include/asm/dma.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from kernel/dma/direct.c:7:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/hexagon/include/asm/dma.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> kernel/dma/direct.c:147:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     146 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     147 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     148 |                     !(gfp & (GFP_DMA32 | GFP_DMA))) {
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:52: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                    ^~~~
+>> kernel/dma/direct.c:147:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     146 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     147 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     148 |                     !(gfp & (GFP_DMA32 | GFP_DMA))) {
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:61: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                             ^~~~
+>> kernel/dma/direct.c:147:20: warning: shift count >= width of type [-Wshift-count-overflow]
+     146 |                 if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     147 |                     phys_limit < DMA_BIT_MASK(64) &&
+         |                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+     148 |                     !(gfp & (GFP_DMA32 | GFP_DMA))) {
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^
+   include/linux/compiler.h:55:47: note: expanded from macro 'if'
+      55 | #define if(cond, ...) if ( __trace_if_var( !!(cond , ## __VA_ARGS__) ) )
+         |                            ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/compiler.h:57:86: note: expanded from macro '__trace_if_var'
+      57 | #define __trace_if_var(cond) (__builtin_constant_p(cond) ? (cond) : __trace_if_value(cond))
+         |                                                                     ~~~~~~~~~~~~~~~~~^~~~~
+   include/linux/compiler.h:68:3: note: expanded from macro '__trace_if_value'
+      68 |         (cond) ?                                        \
+         |          ^~~~
+   38 warnings and 3 errors generated.
+--
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:12:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:12:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:12:
+   In file included from include/linux/interrupt.h:11:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   include/linux/mm.h:877:2: error: call to undeclared function 'vma_lock_init'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     877 |         vma_lock_init(&vma->vm_lock);
+         |         ^
+   include/linux/mm.h:877:2: note: did you mean 'osq_lock_init'?
+   include/linux/osq_lock.h:23:20: note: 'osq_lock_init' declared here
+      23 | static inline void osq_lock_init(struct optimistic_spin_queue *lock)
+         |                    ^
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   include/linux/mm.h:877:22: error: no member named 'vm_lock' in 'struct vm_area_struct'
+     877 |         vma_lock_init(&vma->vm_lock);
+         |                        ~~~  ^
+   include/linux/mm.h:878:7: error: no member named 'vm_lock_seq' in 'struct vm_area_struct'
+     878 |         vma->vm_lock_seq = UINT_MAX;
+         |         ~~~  ^
+   In file included from drivers/iio/adc/fsl-imx25-gcq.c:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2234:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/iio/adc/fsl-imx25-gcq.c:116:8: warning: shift count is negative [-Wshift-count-negative]
+     116 |                      MX25_ADCQ_ITEM(0, chan->channel));
+         |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mfd/imx25-tsadc.h:54:3: note: expanded from macro 'MX25_ADCQ_ITEM'
+      54 |                 _MX25_ADCQ_ITEM((item) - 8, (x)) : _MX25_ADCQ_ITEM((item), (x)))
+         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mfd/imx25-tsadc.h:52:39: note: expanded from macro '_MX25_ADCQ_ITEM'
+      52 | #define _MX25_ADCQ_ITEM(item, x)        ((x) << ((item) * 4))
+         |                                              ^  ~~~~~~~~~~~~
+   8 warnings and 3 errors generated.
 
 
-On 11/12/2024 5:01 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
->
-> On Mon 11 Nov 2024 at 17:37, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> When setting the rate of a clock using clk_regmap_divider_ro_ops, the
->> rate of its children may be tampered with.
->>
->> Fixes: 84af914404db ("clk: meson: a1: add Amlogic A1 Peripherals clock controller driver")
->> Fixes: 87173557d2f6 ("clk: meson: clk-pll: remove od parameters")
->> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
->> Fixes: 64aa7008e957 ("clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller")
->> Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
->> Fixes: e787c9c55eda ("clk: meson: S4: add support for Amlogic S4 SoC PLL clock driver")
-> Think about stable trying to pick up this ...
->
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->> Background: During the execution of clk_set_rate(), the function
->> clk_core_round_rate_nolock() is called to calculate the matching rate
->> and save it to 'core->new_rate'. At the same time, it recalculates and
->> updates its 'child->newrate'. Finally, clk_change_rate() is called to
->> set all 'new_rates'.
->>
->> In clk_regmap_divider_ro_ops, there is an implementation of
->> 'determine_rate'. If a clock (name as 'ro_divider') that references
->> clk_regmap_divider_ro_ops is not configured with CLK_DIVIDER_READ_ONLY,
->> it will result in the calculation of an incorrect core->new_rate and
->> potentially tamper with child->newrate, ultimately leading to the
->> corruption of the rate for 'ro_divider's' children.
-> A slitghtly more simple way to put it, is that ro_ops have the regular
-> determine_rate function, so it can actually alter the rate.
->
-> That should be in the commit description, not where it will be dropped.
->
-> Requiring the flag in addition to ro_ops in redundant.
-> Plus, it is not the platform that should be fixed but the divider
-> driver.
->
-> Just put the content of the CLK_DIVIDER_READ_ONLY if clause into a
-> function, clk_regmap_div_ro_determine_rate(), and use it
-> - directly for ro_ops
-> - under if clause for regular ops.
+vim +147 kernel/dma/direct.c
 
-The approach of adding clk_regmap_div_ro_determine_rate() will be
-inconsistent with the style in clk-divider.c in CCF, and
-CLK_DIVIDER_READ_ONLY will also become meaningless for our driver.
-Do we need to maintain the style of clk-divider.c in CCF?
+aea7e2a86a94b25 kernel/dma/direct.c Christoph Hellwig      2021-10-21  117  
+26749b3201ab05e kernel/dma/direct.c Christoph Hellwig      2020-06-15  118  static struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
+92826e967535db2 kernel/dma/direct.c Christoph Hellwig      2022-04-23  119  		gfp_t gfp, bool allow_highmem)
+a8463d4b0e47d1f lib/dma-noop.c      Christian Borntraeger  2016-02-02  120  {
+90ae409f9eb3bca kernel/dma/direct.c Christoph Hellwig      2019-08-20  121  	int node = dev_to_node(dev);
+080321d3b3139b3 lib/dma-direct.c    Christoph Hellwig      2017-12-22  122  	struct page *page = NULL;
+a7ba70f1787f977 kernel/dma/direct.c Nicolas Saenz Julienne 2019-11-21  123  	u64 phys_limit;
+a8463d4b0e47d1f lib/dma-noop.c      Christian Borntraeger  2016-02-02  124  
+633d5fce78a61e8 kernel/dma/direct.c David Rientjes         2020-06-11  125  	WARN_ON_ONCE(!PAGE_ALIGNED(size));
+633d5fce78a61e8 kernel/dma/direct.c David Rientjes         2020-06-11  126  
+aea7e2a86a94b25 kernel/dma/direct.c Christoph Hellwig      2021-10-21  127  	if (is_swiotlb_for_alloc(dev))
+aea7e2a86a94b25 kernel/dma/direct.c Christoph Hellwig      2021-10-21  128  		return dma_direct_alloc_swiotlb(dev, size);
+aea7e2a86a94b25 kernel/dma/direct.c Christoph Hellwig      2021-10-21  129  
+25a4ce564921db0 kernel/dma/direct.c Petr Tesarik           2023-02-20  130  	gfp |= dma_direct_optimal_gfp_mask(dev, &phys_limit);
+633d5fce78a61e8 kernel/dma/direct.c David Rientjes         2020-06-11  131  	page = dma_alloc_contiguous(dev, size, gfp);
+92826e967535db2 kernel/dma/direct.c Christoph Hellwig      2022-04-23  132  	if (page) {
+92826e967535db2 kernel/dma/direct.c Christoph Hellwig      2022-04-23  133  		if (!dma_coherent_ok(dev, page_to_phys(page), size) ||
+92826e967535db2 kernel/dma/direct.c Christoph Hellwig      2022-04-23  134  		    (!allow_highmem && PageHighMem(page))) {
+633d5fce78a61e8 kernel/dma/direct.c David Rientjes         2020-06-11  135  			dma_free_contiguous(dev, page, size);
+90ae409f9eb3bca kernel/dma/direct.c Christoph Hellwig      2019-08-20  136  			page = NULL;
+90ae409f9eb3bca kernel/dma/direct.c Christoph Hellwig      2019-08-20  137  		}
+92826e967535db2 kernel/dma/direct.c Christoph Hellwig      2022-04-23  138  	}
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  139  again:
+90ae409f9eb3bca kernel/dma/direct.c Christoph Hellwig      2019-08-20  140  	if (!page)
+633d5fce78a61e8 kernel/dma/direct.c David Rientjes         2020-06-11  141  		page = alloc_pages_node(node, gfp, get_order(size));
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  142  	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
+f689a3ab7b8ece9 kernel/dma/direct.c Chen Yu                2024-08-31  143  		__free_pages(page, get_order(size));
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  144  		page = NULL;
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  145  
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  146  		if (IS_ENABLED(CONFIG_ZONE_DMA32) &&
+a7ba70f1787f977 kernel/dma/direct.c Nicolas Saenz Julienne 2019-11-21 @147  		    phys_limit < DMA_BIT_MASK(64) &&
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  148  		    !(gfp & (GFP_DMA32 | GFP_DMA))) {
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  149  			gfp |= GFP_DMA32;
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  150  			goto again;
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  151  		}
+de7eab301de7886 lib/dma-direct.c    Takashi Iwai           2018-04-16  152  
+fbce251baa6e357 kernel/dma/direct.c Christoph Hellwig      2019-02-13  153  		if (IS_ENABLED(CONFIG_ZONE_DMA) && !(gfp & GFP_DMA)) {
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  154  			gfp = (gfp & ~GFP_DMA32) | GFP_DMA;
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  155  			goto again;
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  156  		}
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  157  	}
+95f183916d4b0bc lib/dma-direct.c    Christoph Hellwig      2018-01-09  158  
+b18814e767a4455 kernel/dma/direct.c Christoph Hellwig      2018-11-04  159  	return page;
+b18814e767a4455 kernel/dma/direct.c Christoph Hellwig      2018-11-04  160  }
+b18814e767a4455 kernel/dma/direct.c Christoph Hellwig      2018-11-04  161  
 
->
->> ---
->>   drivers/clk/meson/a1-peripherals.c |  2 ++
->>   drivers/clk/meson/axg.c            |  5 +++--
->>   drivers/clk/meson/g12a.c           | 23 ++++++++++++++---------
->>   drivers/clk/meson/gxbb.c           | 18 ++++++++++--------
->>   drivers/clk/meson/meson8-ddr.c     |  2 +-
->>   drivers/clk/meson/meson8b.c        |  4 +++-
->>   drivers/clk/meson/s4-peripherals.c |  2 ++
->>   drivers/clk/meson/s4-pll.c         |  2 +-
->>   8 files changed, 36 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
->> index 7aa6abb2eb1f..eedf7c2bf970 100644
->> --- a/drivers/clk/meson/a1-peripherals.c
->> +++ b/drivers/clk/meson/a1-peripherals.c
->> @@ -266,6 +266,7 @@ static struct clk_regmap sys_b_div = {
->>                .offset = SYS_CLK_CTRL0,
->>                .shift = 16,
->>                .width = 10,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sys_b_div",
->> @@ -314,6 +315,7 @@ static struct clk_regmap sys_a_div = {
->>                .offset = SYS_CLK_CTRL0,
->>                .shift = 0,
->>                .width = 10,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sys_a_div",
->> diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
->> index 1b08daf579b2..eb86c4d10046 100644
->> --- a/drivers/clk/meson/axg.c
->> +++ b/drivers/clk/meson/axg.c
->> @@ -71,7 +71,7 @@ static struct clk_regmap axg_fixed_pll = {
->>                .offset = HHI_MPLL_CNTL,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "fixed_pll",
->> @@ -130,7 +130,7 @@ static struct clk_regmap axg_sys_pll = {
->>                .offset = HHI_SYS_PLL_CNTL,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sys_pll",
->> @@ -471,6 +471,7 @@ static struct clk_regmap axg_mpll_prediv = {
->>                .offset = HHI_MPLL_CNTL5,
->>                .shift = 12,
->>                .width = 1,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "mpll_prediv",
->> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> index d3539fe9f7af..c7c9fdfd021f 100644
->> --- a/drivers/clk/meson/g12a.c
->> +++ b/drivers/clk/meson/g12a.c
->> @@ -76,7 +76,7 @@ static struct clk_regmap g12a_fixed_pll = {
->>                .offset = HHI_FIX_PLL_CNTL0,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "fixed_pll",
->> @@ -443,6 +443,7 @@ static struct clk_regmap g12a_cpu_clk_mux1_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL0,
->>                .shift = 20,
->>                .width = 6,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpu_clk_dyn1_div",
->> @@ -627,6 +628,7 @@ static struct clk_regmap g12b_cpub_clk_mux1_div = {
->>                .offset = HHI_SYS_CPUB_CLK_CNTL,
->>                .shift = 20,
->>                .width = 6,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpub_clk_dyn1_div",
->> @@ -746,6 +748,7 @@ static struct clk_regmap sm1_dsu_clk_mux0_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL5,
->>                .shift = 4,
->>                .width = 6,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "dsu_clk_dyn0_div",
->> @@ -781,6 +784,7 @@ static struct clk_regmap sm1_dsu_clk_mux1_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL5,
->>                .shift = 20,
->>                .width = 6,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "dsu_clk_dyn1_div",
->> @@ -1198,7 +1202,7 @@ static struct clk_regmap g12a_cpu_clk_apb_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL1,
->>                .shift = 3,
->>                .width = 3,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpu_clk_apb_div",
->> @@ -1232,7 +1236,7 @@ static struct clk_regmap g12a_cpu_clk_atb_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL1,
->>                .shift = 6,
->>                .width = 3,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpu_clk_atb_div",
->> @@ -1266,7 +1270,7 @@ static struct clk_regmap g12a_cpu_clk_axi_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL1,
->>                .shift = 9,
->>                .width = 3,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpu_clk_axi_div",
->> @@ -1300,7 +1304,7 @@ static struct clk_regmap g12a_cpu_clk_trace_div = {
->>                .offset = HHI_SYS_CPU_CLK_CNTL1,
->>                .shift = 20,
->>                .width = 3,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "cpu_clk_trace_div",
->> @@ -1736,7 +1740,7 @@ static struct clk_regmap sm1_gp1_pll = {
->>                .shift = 16,
->>                .width = 3,
->>                .flags = (CLK_DIVIDER_POWER_OF_TWO |
->> -                       CLK_DIVIDER_ROUND_CLOSEST),
->> +                       CLK_DIVIDER_ROUND_CLOSEST | CLK_DIVIDER_READ_ONLY),
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "gp1_pll",
->> @@ -1999,7 +2003,7 @@ static struct clk_regmap g12a_hdmi_pll_od = {
->>                .offset = HHI_HDMI_PLL_CNTL0,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od",
->> @@ -2017,7 +2021,7 @@ static struct clk_regmap g12a_hdmi_pll_od2 = {
->>                .offset = HHI_HDMI_PLL_CNTL0,
->>                .shift = 18,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od2",
->> @@ -2035,7 +2039,7 @@ static struct clk_regmap g12a_hdmi_pll = {
->>                .offset = HHI_HDMI_PLL_CNTL0,
->>                .shift = 20,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll",
->> @@ -4048,6 +4052,7 @@ static struct clk_regmap g12a_ts_div = {
->>                .offset = HHI_TS_CLK_CNTL,
->>                .shift = 0,
->>                .width = 8,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "ts_div",
->> diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
->> index 262c318edbd5..e2b419100e0c 100644
->> --- a/drivers/clk/meson/gxbb.c
->> +++ b/drivers/clk/meson/gxbb.c
->> @@ -131,7 +131,7 @@ static struct clk_regmap gxbb_fixed_pll = {
->>                .offset = HHI_MPLL_CNTL,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "fixed_pll",
->> @@ -267,7 +267,7 @@ static struct clk_regmap gxbb_hdmi_pll_od = {
->>                .offset = HHI_HDMI_PLL_CNTL2,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od",
->> @@ -285,7 +285,7 @@ static struct clk_regmap gxbb_hdmi_pll_od2 = {
->>                .offset = HHI_HDMI_PLL_CNTL2,
->>                .shift = 22,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od2",
->> @@ -303,7 +303,7 @@ static struct clk_regmap gxbb_hdmi_pll = {
->>                .offset = HHI_HDMI_PLL_CNTL2,
->>                .shift = 18,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll",
->> @@ -321,7 +321,7 @@ static struct clk_regmap gxl_hdmi_pll_od = {
->>                .offset = HHI_HDMI_PLL_CNTL + 8,
->>                .shift = 21,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od",
->> @@ -339,7 +339,7 @@ static struct clk_regmap gxl_hdmi_pll_od2 = {
->>                .offset = HHI_HDMI_PLL_CNTL + 8,
->>                .shift = 23,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll_od2",
->> @@ -357,7 +357,7 @@ static struct clk_regmap gxl_hdmi_pll = {
->>                .offset = HHI_HDMI_PLL_CNTL + 8,
->>                .shift = 19,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "hdmi_pll",
->> @@ -413,7 +413,7 @@ static struct clk_regmap gxbb_sys_pll = {
->>                .offset = HHI_SYS_PLL_CNTL,
->>                .shift = 10,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sys_pll",
->> @@ -703,6 +703,7 @@ static struct clk_regmap gxbb_mpll_prediv = {
->>                .offset = HHI_MPLL_CNTL5,
->>                .shift = 12,
->>                .width = 1,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "mpll_prediv",
->> @@ -911,6 +912,7 @@ static struct clk_regmap gxbb_mpeg_clk_div = {
->>                .offset = HHI_MPEG_CLK_CNTL,
->>                .shift = 0,
->>                .width = 7,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "mpeg_clk_div",
->> diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
->> index 4b73ea244b63..950f323072fb 100644
->> --- a/drivers/clk/meson/meson8-ddr.c
->> +++ b/drivers/clk/meson/meson8-ddr.c
->> @@ -65,7 +65,7 @@ static struct clk_regmap meson8_ddr_pll = {
->>                .offset = AM_DDR_PLL_CNTL,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "ddr_pll",
->> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
->> index e4b474c5f86c..4dba11c0ab7e 100644
->> --- a/drivers/clk/meson/meson8b.c
->> +++ b/drivers/clk/meson/meson8b.c
->> @@ -104,7 +104,7 @@ static struct clk_regmap meson8b_fixed_pll = {
->>                .offset = HHI_MPLL_CNTL,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "fixed_pll",
->> @@ -457,6 +457,7 @@ static struct clk_regmap meson8b_mpll_prediv = {
->>                .offset = HHI_MPLL_CNTL5,
->>                .shift = 12,
->>                .width = 1,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "mpll_prediv",
->> @@ -635,6 +636,7 @@ static struct clk_regmap meson8b_mpeg_clk_div = {
->>                .offset = HHI_MPEG_CLK_CNTL,
->>                .shift = 0,
->>                .width = 7,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "mpeg_clk_div",
->> diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
->> index c930cf0614a0..470431355e25 100644
->> --- a/drivers/clk/meson/s4-peripherals.c
->> +++ b/drivers/clk/meson/s4-peripherals.c
->> @@ -175,6 +175,7 @@ static struct clk_regmap s4_sysclk_b_div = {
->>                .offset = CLKCTRL_SYS_CLK_CTRL0,
->>                .shift = 16,
->>                .width = 10,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sysclk_b_div",
->> @@ -221,6 +222,7 @@ static struct clk_regmap s4_sysclk_a_div = {
->>                .offset = CLKCTRL_SYS_CLK_CTRL0,
->>                .shift = 0,
->>                .width = 10,
->> +             .flags = CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "sysclk_a_div",
->> diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
->> index d8e621e79428..5dc051afc06a 100644
->> --- a/drivers/clk/meson/s4-pll.c
->> +++ b/drivers/clk/meson/s4-pll.c
->> @@ -72,7 +72,7 @@ static struct clk_regmap s4_fixed_pll = {
->>                .offset = ANACTRL_FIXPLL_CTRL0,
->>                .shift = 16,
->>                .width = 2,
->> -             .flags = CLK_DIVIDER_POWER_OF_TWO,
->> +             .flags = CLK_DIVIDER_POWER_OF_TWO | CLK_DIVIDER_READ_ONLY,
->>        },
->>        .hw.init = &(struct clk_init_data){
->>                .name = "fixed_pll",
->>
->> ---
->> base-commit: 664988eb47dd2d6ae1d9e4188ec91832562f8f26
->> change-id: 20241111-fix_childclk_of_roclk_has_been_tampered_with-61dbcc623746
->>
->> Best regards,
-> --
-> Jerome
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
